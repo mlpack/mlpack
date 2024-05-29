@@ -20,7 +20,7 @@
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-4.3.0.tar.gz">current stable version (4.3.0)</a>
+    <a href="https://www.mlpack.org/files/mlpack-4.4.0.tar.gz">current stable version (4.4.0)</a>
   </em>
 </p>
 
@@ -40,7 +40,7 @@ programs, Python bindings, Julia bindings, Go bindings and R bindings.
 
  - Quickstart guides: [C++](doc/quickstart/cpp.md),
    [CLI](doc/quickstart/cli.md), [Python](doc/quickstart/python.md),
-   [R](doc/quickstart/R.md), [Julia](doc/quickstart/julia.md),
+   [R](doc/quickstart/r.md), [Julia](doc/quickstart/julia.md),
    [Go](doc/quickstart/go.md)
  - [mlpack homepage](https://www.mlpack.org/)
  - [mlpack documentation](https://www.mlpack.org/docs.html)
@@ -270,7 +270,7 @@ bindings for many languages at once.
 
 The command-line programs have no extra dependencies.  The set of programs that
 will be compiled is detailed and documented on the [command-line program
-documentation page](https://www.mlpack.org/doc/stable/cli_documentation.html).
+documentation page](doc/user/bindings/cli.md).
 
 From the root of the mlpack sources, run the following commands to build and
 install the command-line bindings:
@@ -322,7 +322,7 @@ specify a custom Python interpreter with the CMake option
 
 ### 4.iii. R bindings
 
-*See also the [R quickstart](doc/quickstart/R.md).*
+*See also the [R quickstart](doc/quickstart/r.md).*
 
 mlpack's R bindings are available as the R package
 [mlpack](https://cran.r-project.org/web/packages/mlpack/index.html) on CRAN.

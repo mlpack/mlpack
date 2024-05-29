@@ -49,25 +49,25 @@ BINDING_LONG_DESC(
     "The kernels that are supported are listed below:"
     "\n\n"
     " * 'linear': the standard linear dot product (same as normal PCA):\n"
-    "    K(x, y) = x^T y\n"
+    "    `K(x, y) = x^T y`\n"
     "\n"
     " * 'gaussian': a Gaussian kernel; requires bandwidth:\n"
-    "    K(x, y) = exp(-(|| x - y || ^ 2) / (2 * (bandwidth ^ 2)))\n"
+    "    `K(x, y) = exp(-(|| x - y || ^ 2) / (2 * (bandwidth ^ 2)))`\n"
     "\n"
     " * 'polynomial': polynomial kernel; requires offset and degree:\n"
-    "    K(x, y) = (x^T y + offset) ^ degree\n"
+    "    `K(x, y) = (x^T y + offset) ^ degree`\n"
     "\n"
     " * 'hyptan': hyperbolic tangent kernel; requires scale and offset:\n"
-    "    K(x, y) = tanh(scale * (x^T y) + offset)\n"
+    "    `K(x, y) = tanh(scale * (x^T y) + offset)`\n"
     "\n"
     " * 'laplacian': Laplacian kernel; requires bandwidth:\n"
-    "    K(x, y) = exp(-(|| x - y ||) / bandwidth)\n"
+    "    `K(x, y) = exp(-(|| x - y ||) / bandwidth)`\n"
     "\n"
     " * 'epanechnikov': Epanechnikov kernel; requires bandwidth:\n"
-    "    K(x, y) = max(0, 1 - || x - y ||^2 / bandwidth^2)\n"
+    "    `K(x, y) = max(0, 1 - || x - y ||^2 / bandwidth^2)`\n"
     "\n"
     " * 'cosine': cosine distance:\n"
-    "    K(x, y) = 1 - (x^T y) / (|| x || * || y ||)\n"
+    "    `K(x, y) = 1 - (x^T y) / (|| x || * || y ||)`\n"
     "\n"
     "The parameters for each of the kernels should be specified with the "
     "options " + PRINT_PARAM_STRING("bandwidth") + ", " +
@@ -97,7 +97,7 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("Kernel principal component analysis on Wikipedia",
     "https://en.wikipedia.org/wiki/Kernel_principal_component_analysis");
 BINDING_SEE_ALSO("Kernel Principal Component Analysis (pdf)",
-    "http://pca.narod.ru/scholkopf_kernel.pdf");
+    "https://pca.narod.ru/scholkopf_kernel.pdf");
 BINDING_SEE_ALSO("KernelPCA class documentation",
     "@src/mlpack/methods/kernel_pca/kernel_pca.hpp");
 

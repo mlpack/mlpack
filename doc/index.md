@@ -18,7 +18,7 @@ seen in action on mlpack's [homepage](https://www.mlpack.org/)).
 
 In addition to its [powerful C++ interface](quickstart/cpp.md), mlpack also
 provides [command-line programs](quickstart/cli.md), and bindings to the
-[Python](quickstart/python.md), [R](quickstart/R.md),
+[Python](quickstart/python.md), [R](quickstart/r.md),
 [Julia](quickstart/julia.md), and [Go](quickstart/go.md) languages.
 
 _If you use mlpack, please [cite the software](citation.md)._
@@ -120,6 +120,8 @@ Prepare data for machine learning algorithms.
 
 Transform data from one space to another.
 
+ * [`LocalCoordinateCoding`](user/methods/local_coordinate_coding.md): local
+   coordinate coding with dictionary learning
  * [`NMF`](user/methods/nmf.md): non-negative matrix factorization
  * [`PCA`](user/methods/pca.md): principal components analysis
  * [`SparseCoding`](user/methods/sparse_coding.md): sparse coding with
@@ -139,11 +141,11 @@ Tools for assembling a full data science pipeline.
 mlpack's bindings to other languages have less complete functionality than
 mlpack in C++, but almost all the same algorithms are available.
 
-| ***Python*** | -- | [quickstart](quickstart/python.md) | -- | [reference](https://www.mlpack.org/doc/python_documentation.html) |
-| ***Julia*** | -- | [quickstart](quickstart/julia.md) | -- | [reference](https://www.mlpack.org/doc/julia_documentation.html) |
-| ***R*** | -- | [quickstart](quickstart/R.md) | -- | [reference](https://www.mlpack.org/doc/r_documentation.html)
-| ***Command-line programs*** | -- | [quickstart](quickstart/cli.md) | -- | [reference](https://www.mlpack.org/doc/cli_documentation.html) |
-| ***Go*** | -- | [quickstart](quickstart/go.md) | -- | [reference](https://www.mlpack.org/doc/go_documentation.html) |
+| ***Python*** | -- | [quickstart](quickstart/python.md) | -- | [reference](user/bindings/python.md) |
+| ***Julia*** | -- | [quickstart](quickstart/julia.md) | -- | [reference](user/bindings/julia.md) |
+| ***R*** | -- | [quickstart](quickstart/r.md) | -- | [reference](user/bindings/r.md)
+| ***Command-line programs*** | -- | [quickstart](quickstart/cli.md) | -- | [reference](user/bindings/cli.md) |
+| ***Go*** | -- | [quickstart](quickstart/go.md) | -- | [reference](user/bindings/go.md) |
 
 ## Examples and further documentation
 
@@ -156,6 +158,12 @@ For additional documentation beyond what is covered in all the resources above,
 the source code should be consulted.  Each method is fully documented.
 
 ## Developer documentation
+
+The following general documentation can be useful if you are interested in
+contributing to mlpack:
+
+ * [The mlpack community](developer/community.md)
+ * [mlpack and Google Summer of Code](developer/gsoc.md)
 
 Throughout the codebase, mlpack uses some common template parameter policies.
 These are documented below.
@@ -174,3 +182,8 @@ for other languages:
    bindings
  * [Automatic bindings](developer/bindings.md): details on mlpack's automatic
    binding generator system.
+
+## Changelog
+
+For a list of changes in each version of mlpack, see the
+[changelog](HISTORY.md).

@@ -41,8 +41,7 @@ std::cout << "Average density of encoded test data: "
 
 #### See also:
 
-<!-- TODO: add LCC link -->
-
+ * [`LocalCoordinateCoding`](local_coordinate_coding.md)
  * [`LARS`](lars.md) (used internally by `SparseCoding`)
  * [mlpack transformations](../../index.md#transformations)
  * [Sparse dictionary learning on Wikipedia](https://en.wikipedia.org/wiki/Sparse_dictionary_learning)
@@ -150,7 +149,8 @@ function can be used to encode new data points.
      of `data`.  Each row represents the weight associated with each atom in
      the dictionary.
 
-After encoding, the original data can be recovered as `sc.Dictionary() * data`.
+After encoding, the original data can be recovered (approximately) as
+`sc.Dictionary() * data`.
 
 ### Other Functionality
 
@@ -288,8 +288,6 @@ In addition, the [constructors](#constructors) and
 [`Train()` functions](#training) have a template parameter
 `DictionaryInitializer` that can be used for custom behavior.
 
-<!-- TODO: check whether it works on sparse data -->
-
  * `MatType`: the type of the matrix to use (e.g. `arma::mat`, `arma::fmat`,
    etc.).  The given `MatType` must support the Armadillo API and hold a
    floating-point element type (e.g. `float`, `double`, etc.).
@@ -297,7 +295,7 @@ In addition, the [constructors](#constructors) and
  * `DictionaryInitializer`: the strategy used to initialize the dictionary.  By
    default, `DataDependentRandomInitializer` is used.
 
-#### ```MatType```: Different Element Types
+#### `MatType`: Different Element Types
 
 `MatType` specifies the type of matrix used for training data and internal
 representation of the dictionary.  Any matrix type that implements the Armadillo
@@ -332,10 +330,9 @@ std::cout << "Codes matrix size: " << codes.n_rows << " x " << codes.n_cols
 arma::fmat recon = sc.Dictionary() * codes;
 double error = std::sqrt(arma::norm(dataset - recon, "fro") / dataset.n_elem);
 std::cout << "RMSE of reconstructed matrix: " << error << "." << std::endl;
-
 ```
 
-#### ```DictionaryInitializer```: Different Dictionary Initialization Strategies
+#### `DictionaryInitializer`: Different Dictionary Initialization Strategies
 
 The `DictionaryInitializer` template class specifies the strategy to be used to
 initialize the dictionary when `Train()` is called.

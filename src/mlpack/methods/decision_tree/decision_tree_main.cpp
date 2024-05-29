@@ -40,8 +40,8 @@ BINDING_LONG_DESC(
     "\n\n"
     "The training set and associated labels are specified with the " +
     PRINT_PARAM_STRING("training") + " and " + PRINT_PARAM_STRING("labels") +
-    " parameters, respectively.  The labels should be in the range [0, "
-    "num_classes - 1]. Optionally, if " +
+    " parameters, respectively.  The labels should be in the range `[0, "
+    "num_classes - 1]`. Optionally, if " +
     PRINT_PARAM_STRING("labels") + " is not specified, the labels are assumed "
     "to be the last dimension of the training dataset."
     "\n\n"
@@ -90,14 +90,13 @@ BINDING_EXAMPLE(
         "test_labels", "test_labels", "predictions", "predictions"));
 
 // See also...
-BINDING_SEE_ALSO("Decision stump", "#decision_stump");
 BINDING_SEE_ALSO("Random forest", "#random_forest");
 BINDING_SEE_ALSO("Decision trees on Wikipedia",
     "https://en.wikipedia.org/wiki/Decision_tree_learning");
 BINDING_SEE_ALSO("Induction of Decision Trees (pdf)",
-    "https://link.springer.com/content/pdf/10.1007/BF00116251.pdf");
-BINDING_SEE_ALSO("DecisionTree class documentation",
-    "@src/mlpack/methods/decision_tree/decision_tree.hpp");
+    "http://www.cs.bc.edu/~alvarez/ML/QuinlanID3Paper.pdf");
+BINDING_SEE_ALSO("DecisionTree C++ class documentation",
+    "@doc/user/methods/decision_tree.md");
 
 // Datasets.
 PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",

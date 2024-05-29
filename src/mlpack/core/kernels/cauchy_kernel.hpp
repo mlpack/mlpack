@@ -76,6 +76,11 @@ class CauchyKernel
     ar(CEREAL_NVP(bandwidth));
   }
 
+  // Get the kernel bandwidth.
+  const double Bandwidth() const { return bandwidth; }
+  // Modify the kernel bandwidth.
+  void Bandwidth(const double bw) { this->bandwidth = bw; }
+
  private:
   //! Kernel bandwidth.
   double bandwidth;

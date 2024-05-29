@@ -106,7 +106,7 @@ macro (add_markdown_docs directory name languages wrappers)
     set(WRAPPER_PUSH_BACK_CODE
         "${WRAPPER_PUSH_BACK_CODE}\n  addWrapperDocs.push_back(${val});")
   endforeach()
-  
+
   if(NOT ${WRAPPERS} EQUAL "")
     foreach(method ${${name}_VALID_METHODS})
       set(VALID_METHODS_PUSH_BACK_CODE
@@ -163,10 +163,10 @@ function (post_markdown_setup)
   math(EXPR cat_limit "${NUM_MARKDOWN_CATEGORIES} - 1")
   foreach (i RANGE ${cat_limit})
     list (GET CATEGORIES ${i} cat)
-    # Put the things in this category in a div.
-    string(CONCAT header_code "${MARKDOWN_HEADER_CODE}  cout << "
-        "\"<div class=\\\"category\\\" markdown=\\\"1\\\">\" << endl;\n  "
-        "cout << \"<h5>${cat}:</h5>\" << endl;\n")
+    # Put the things in this category in a details block.
+    string(CONCAT header_code "${MARKDOWN_HEADER_CODE}"
+        "  cout << \"<li><details><summary>${cat}</summary>\" << endl;\n"
+        "  cout << \"<ul>\" << endl;\n")
     set(MARKDOWN_HEADER_CODE ${header_code})
 
     # Add an option for this binding.
@@ -183,7 +183,11 @@ function (post_markdown_setup)
     endforeach ()
 
     set (MARKDOWN_HEADER_CODE
-        "${MARKDOWN_HEADER_CODE}\n  cout << \"</div>\" << endl << endl;")
+        "${MARKDOWN_HEADER_CODE}\n"
+        "  cout << \"</ul>\" << endl;\n"
+        "  cout << \"</details>\" << endl;\n"
+        "  cout << \"</li>\" << endl;\n"
+        "  cout << endl;\n\n")
   endforeach ()
 
   foreach (name ${MARKDOWN_NAMES})
@@ -218,30 +222,35 @@ function (post_markdown_setup)
       "${BINDING_SOURCE_DIR}/print_param_table.hpp"
       "${BINDING_SOURCE_DIR}/print_param_table.cpp"
       "${BINDING_SOURCE_DIR}/program_doc_wrapper.hpp"
-      "${BINDING_SOURCE_DIR}/replace_all_copy.hpp"
-      "${BINDING_SOURCE_DIR}/generate_markdown.cpp")
+      "${BINDING_SOURCE_DIR}/replace_all_copy.hpp")
   target_link_libraries(generate_markdown ${MLPACK_LIBRARIES})
   add_dependencies(generate_markdown markdown_copy)
   set_target_properties(generate_markdown PROPERTIES
       COMPILE_FLAGS -DBINDING_TYPE=BINDING_TYPE_MARKDOWN
       RUNTIME_OUTPUT_DIRECTORY ${BINDING_BINARY_DIR})
 
-  add_custom_target(markdown ALL
+  add_custom_target(markdown_setup ALL
       ${CMAKE_COMMAND} -E make_directory
           ${CMAKE_BINARY_DIR}/doc/
-      COMMAND ${CMAKE_COMMAND}
-          -DPROGRAM=${BINDING_BINARY_DIR}/generate_markdown
-          -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/doc/mlpack.md
-          -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake
-      COMMAND ${CMAKE_COMMAND} -E copy
-          ${BINDING_SOURCE_DIR}/res/change_language.js
-          ${CMAKE_BINARY_DIR}/doc/res/change_languages.js
-      COMMAND ${CMAKE_COMMAND} -E copy
-          ${BINDING_SOURCE_DIR}/res/menu_bg.png
-          ${CMAKE_BINARY_DIR}/doc/res/menu_bg.png
-      COMMAND ${CMAKE_COMMAND} -E copy
-          ${BINDING_SOURCE_DIR}/res/formatting.css
-          ${CMAKE_BINARY_DIR}/doc/res/formatting.css
       DEPENDS generate_markdown
-      COMMENT "Generating Markdown documentation for mlpack bindings...")
+      COMMENT "Setting up environment for Markdown documentation build...")
+  add_custom_target(markdown DEPENDS markdown_setup)
+  foreach (lang ${MARKDOWN_ALL_LANGUAGES_LIST})
+    add_custom_target(markdown_${lang} ALL
+        COMMAND ${CMAKE_COMMAND}
+            -DPROGRAM=${BINDING_BINARY_DIR}/generate_markdown
+            -DPROGRAM_OPT1="${lang}"
+            -DPROGRAM_OPT2="docs"
+            -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/doc/${lang}.md
+            -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake
+        COMMAND ${CMAKE_COMMAND}
+            -DPROGRAM=${BINDING_BINARY_DIR}/generate_markdown
+            -DPROGRAM_OPT1="${lang}"
+            -DPROGRAM_OPT2="sidebar"
+            -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/doc/${lang}.sidebar.html
+            -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake
+        COMMENT "Building Markdown documentation for ${lang}..."
+        DEPENDS markdown_setup)
+    add_dependencies(markdown markdown_${lang})
+  endforeach ()
 endfunction ()

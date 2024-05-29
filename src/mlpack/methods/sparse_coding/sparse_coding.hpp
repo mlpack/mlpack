@@ -108,7 +108,7 @@ namespace mlpack {
  * the Encode() function.
  *
  * @tparam DictionaryInitializationPolicy The class to use to initialize the
- *     dictionary; must have 'void Initialize(const arma::mat& data, arma::mat&
+ *     dictionary; must have 'void Initialize(const MatType& data, MatType&
  *     dictionary)' function.
  */
 template<typename MatType = arma::mat>
@@ -127,7 +127,7 @@ class SparseCoding
    *
    * If you want to initialize the dictionary to a custom matrix, consider
    * either writing your own DictionaryInitializer class (with void
-   * Initialize(const arma::mat& data, arma::mat& dictionary) function), or call
+   * Initialize(const MatType& data, MatType& dictionary) function), or call
    * the constructor that does not take a data matrix, then call Dictionary() to
    * set the dictionary matrix to a matrix of your choosing, and then call
    * Train() with NothingInitializer (i.e. Train<NothingInitializer>(data)).

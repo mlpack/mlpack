@@ -81,7 +81,7 @@ different mlpack learners, or to interface with other machine learning toolkits.
 ## Using mlpack for movie recommendations
 
 In this example, we'll train a collaborative filtering model using mlpack's
-[`cf()`](https://www.mlpack.org/doc/stable/r_documentation.html#cf) method.
+[`cf()`](../user/bindings/r.md#cf) method.
 We'll train this on the
 [MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we'll
 use the model that we train to give recommendations.
@@ -154,7 +154,7 @@ Lots of other functions are available with different functionality.  A full list
 of each of these functions and full documentation can be found on the following
 page:
 
- - [R documentation](https://www.mlpack.org/doc/stable/r_documentation.html)
+ - [R documentation](../user/bindings/r.md)
 
 Also, mlpack is much more flexible from C++ and allows much greater
 functionality.  So, more complicated tasks are possible if you are willing to
