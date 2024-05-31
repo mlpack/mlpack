@@ -61,6 +61,44 @@ void CreateMultipleSplitData(arma::mat& d, arma::rowvec& r, const size_t count,
   }
 }
 
+void CreateMultipleSplitFloatData(arma::fmat& d, arma::frowvec& r, const size_t count,
+    arma::frowvec& values)
+{
+  d = arma::fmat(10, count, arma::fill::randu);
+  r = arma::frowvec(count);
+
+  // Group 1.
+  for (size_t i = 0; i < count / 5; i++)
+  {
+    d(3, i) = i;
+    r(i) = values[0];
+  }
+  // Group 2.
+  for (size_t i = count / 5; i < (count / 5) * 2; i++)
+  {
+    d(3, i) = i;
+    r(i) = values[1];
+  }
+  // Group 3.
+  for (size_t i = (count / 5) * 2; i < (count / 5) * 3; i++)
+  {
+    d(3, i) = i;
+    r(i) = values[2];
+  }
+  // Group 4.
+  for (size_t i = (count / 5) * 3; i < (count / 5) * 4; i++)
+  {
+    d(3, i) = i;
+    r(i) = values[3];
+  }
+  // Group 5.
+  for (size_t i = (count / 5) * 4; i < count; i++)
+  {
+    d(3, i) = i;
+    r(i) = values[4];
+  }
+}
+
 /**
  * Make sure the LinearLoss is of all elements is 1, when the elements are 
  * all equal.
@@ -193,7 +231,7 @@ TEST_CASE("FloatEarlyTerminateTest", "[AdaBoostRegressorTest]")
   arma::frowvec responses;
   arma::frowvec values = {0.0, 1.0, 2.0, 1.0, 0.0};
 
-  CreateMultipleSplitData(dataset, responses, 1000, values);
+  CreateMultipleSplitFloatData(dataset, responses, 1000, values);
 
   AdaBoostRegressor<> abr(dataset, responses, 20 /*numTrees*/, 1/*minLeaves*/, 
                         0/*minGainSplit*/, 0/*maxDepth*/);
