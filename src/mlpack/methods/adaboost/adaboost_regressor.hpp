@@ -38,29 +38,6 @@
 namespace mlpack {
 
 /**
- * The Adaboost regressor class.
- * An AdaBoost regressor is a meta-estimator that begins by fitting a
- * regressor on the original dataset and then fits additional copies of the
- * regressor on the same dataset but where the weights of instances are
- * adjusted according to the error of the current prediction. As such,
- * subsequent regressors focus more on difficult cases.
- *
- * This class implements the algorithm known as AdaBoost.R2.
- *
- * @code
- * @article{
- *   author = {Harris Drucker},
- *   title = {Improving Regressors using Boosting Techniques},
- *   publication name = {International Conference on Machine Learning},
- *   month = july,
- *   year = {1997},
- *   issn = {978-1-55860-486-5},
- *   pages = {107–-115},
- * }
- * @endcode
- */
-
-/**
  * LossFunctionType : to calculate the loss for each traning example.
  * FitnessFunction : the measure of goodness to use when deciding on tree splits.
  * DimensionSelectionType: the strategy used for proposing dimensions to attempt to split on.
@@ -102,15 +79,15 @@ public:
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType, typename ResponsesType>
+  template<typename MatType, typename ElemType>
   AdaBoostRegressor(const MatType& dataset,
-               const arma::Row<ResponsesType>& responses,
-               const size_t numTrees = 20,
-               const size_t minimumLeafSize = 10,
-               const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 4,
-               DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                    const arma::Row<ElemType>& responses,
+                    const size_t numTrees = 20,
+                    const size_t minimumLeafSize = 10,
+                    const double minimumGainSplit = 1e-7,
+                    const size_t maximumDepth = 4,
+                    DimensionSelectionType dimensionSelector =
+                        DimensionSelectionType());
 
   /**
    * Create a AdaBoost regressor, training on the given data and responses with
@@ -129,16 +106,16 @@ public:
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType, typename ResponsesType>
+  template<typename MatType, typename ElemType>
   AdaBoostRegressor(const MatType& dataset,
-               const data::DatasetInfo& datasetInfo,
-               const arma::Row<ResponsesType>& responses,
-               const size_t numTrees = 20,
-               const size_t minimumLeafSize = 10,
-               const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 4,
-               DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                    const data::DatasetInfo& datasetInfo,
+                    const arma::Row<ElemType>& responses,
+                    const size_t numTrees = 20,
+                    const size_t minimumLeafSize = 10,
+                    const double minimumGainSplit = 1e-7,
+                    const size_t maximumDepth = 4,
+                    DimensionSelectionType dimensionSelector =
+                        DimensionSelectionType());
 
   /**
    * Train the AdaBoost regressor on the given data and responses with the given
@@ -156,9 +133,9 @@ public:
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<typename MatType, typename ResponsesType>
+  template<typename MatType, typename ElemType>
   double Train(const MatType& data,
-               const arma::Row<ResponsesType>& responses,
+               const arma::Row<ElemType>& responses,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
@@ -184,10 +161,10 @@ public:
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<typename MatType, typename ResponsesType>
+  template<typename MatType, typename ElemType>
   double Train(const MatType& data,
                const data::DatasetInfo& datasetInfo,
-               const arma::Row<ResponsesType>& responses,
+               const arma::Row<ElemType>& responses,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
@@ -211,9 +188,9 @@ public:
    * @param data Set of points to predict.
    * @param predictions Output predictions for each point in the dataset.
    */
-  template<typename MatType, typename ResponsesType>
+  template<typename MatType, typename ElemType>
   void Predict(const MatType& data,
-                arma::Row<ResponsesType>& predictions) const;
+                arma::Row<ElemType>& predictions) const;
 
   //! Access a tree in the forest.
   const DecisionTreeType& Tree(const size_t i) const { return trees[i]; }
@@ -248,10 +225,10 @@ public:
    * @tparam MatType The type of data matrix (i.e. arma::mat).
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<bool UseDatasetInfo, typename MatType, typename ResponsesType>
+  template<bool UseDatasetInfo, typename MatType, typename ElemType>
   double Train(const MatType& data,
                const data::DatasetInfo& datasetInfo,
-               const arma::Row<ResponsesType>& responses,
+               const arma::Row<ElemType>& responses,
                const size_t numTrees,
                const size_t minimumLeafSize,
                const double minimumGainSplit,

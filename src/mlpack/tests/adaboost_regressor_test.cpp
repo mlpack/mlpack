@@ -187,6 +187,28 @@ TEST_CASE("EarlyTerminateTest", "[AdaBoostRegressorTest]")
   REQUIRE(abr.NumTrees() == 1);
 }
 
+TEST_CASE("FloatEarlyTerminateTest", "[AdaBoostRegressorTest]")
+{
+  arma::fmat dataset;
+  arma::frowvec responses;
+  arma::frowvec values = {0.0, 1.0, 2.0, 1.0, 0.0};
+
+  CreateMultipleSplitData(dataset, responses, 1000, values);
+
+  AdaBoostRegressor<> abr(dataset, responses, 20 /*numTrees*/, 1/*minLeaves*/, 
+                        0/*minGainSplit*/, 0/*maxDepth*/);
+  arma::frowvec preds;
+  abr.Predict(dataset, preds);
+
+  // Ensure that the predictions are perfect.
+  for (size_t i = 0; i < responses.n_elem; ++i)
+    REQUIRE(preds[i] == responses[i]);
+
+  // Ensure that number of trees trained is 1, since 1st tree can do perfect 
+  // predictions.
+  REQUIRE(abr.NumTrees() == 1);
+}
+
 /**
  * Make sure an empty model cannot predict.
  */
@@ -196,6 +218,16 @@ TEST_CASE("EmptyPredictTest", "[AdaBoostRegressorTest]")
 
   arma::mat points(10, 100, arma::fill::randu);
   arma::Row<double> predictions;
+  REQUIRE_THROWS_AS(abr.Predict(points, predictions), std::invalid_argument);
+  REQUIRE_THROWS_AS(abr.Predict(points.col(0)), std::invalid_argument);
+}
+
+TEST_CASE("FloatEmptyPredictTest", "[AdaBoostRegressorTest]")
+{
+  AdaBoostRegressor<> abr; // No training.
+
+  arma::fmat points(10, 100, arma::fill::randu);
+  arma::Row<float> predictions;
   REQUIRE_THROWS_AS(abr.Predict(points, predictions), std::invalid_argument);
   REQUIRE_THROWS_AS(abr.Predict(points.col(0)), std::invalid_argument);
 }

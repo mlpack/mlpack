@@ -18,7 +18,6 @@
 
 namespace mlpack{
 
-// Construct, don't train
 template<
     typename LossFunctionType,
     typename FitnessFunction,
@@ -45,7 +44,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
 >
-template<typename MatType, typename ResponsesType>
+template<typename MatType, typename ElemType>
 AdaBoostRegressor<
     LossFunctionType,
     FitnessFunction,
@@ -53,13 +52,13 @@ AdaBoostRegressor<
     NumericSplitType,
     CategoricalSplitType
 >::AdaBoostRegressor(const MatType& dataset,
-               const arma::Row<ResponsesType>& responses,
-               const size_t numTrees,
-               const size_t minimumLeafSize,
-               const double minimumGainSplit,
-               const size_t maximumDepth,
-               DimensionSelectionType dimensionSelector) :
-    avgGain(0.0)
+                     const arma::Row<ElemType>& responses,
+                     const size_t numTrees,
+                     const size_t minimumLeafSize,
+                     const double minimumGainSplit,
+                     const size_t maximumDepth,
+                     DimensionSelectionType dimensionSelector) :
+                      avgGain(0.0)
 {
   // Pass off work to the Train() method.
   data::DatasetInfo info; // Ignored.
@@ -74,7 +73,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
 >
-template<typename MatType, typename ResponsesType>
+template<typename MatType, typename ElemType>
 AdaBoostRegressor<
     LossFunctionType,
     FitnessFunction,
@@ -82,14 +81,14 @@ AdaBoostRegressor<
     NumericSplitType,
     CategoricalSplitType
 >::AdaBoostRegressor(const MatType& dataset,
-               const data::DatasetInfo& datasetInfo,
-               const arma::Row<ResponsesType>& responses,
-               const size_t numTrees,
-               const size_t minimumLeafSize,
-               const double minimumGainSplit,
-               const size_t maximumDepth,
-               DimensionSelectionType dimensionSelector) :
-      avgGain(0.0)
+                     const data::DatasetInfo& datasetInfo,
+                     const arma::Row<ElemType>& responses,
+                     const size_t numTrees,
+                     const size_t minimumLeafSize,
+                     const double minimumGainSplit,
+                     const size_t maximumDepth,
+                     DimensionSelectionType dimensionSelector) :
+                       avgGain(0.0)
 {
   // Pass off work to the Train() method
   Train<true>(dataset, datasetInfo, responses,
@@ -104,7 +103,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
 >
-template<typename MatType, typename ResponsesType>
+template<typename MatType, typename ElemType>
 double AdaBoostRegressor<
     LossFunctionType,
     FitnessFunction,
@@ -112,7 +111,7 @@ double AdaBoostRegressor<
     NumericSplitType,
     CategoricalSplitType
 >::Train(const MatType& dataset,
-         const arma::Row<ResponsesType>& responses,
+         const arma::Row<ElemType>& responses,
          const size_t numTrees,
          const size_t minimumLeafSize,
          const double minimumGainSplit,
@@ -132,7 +131,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
 >
-template<typename MatType, typename ResponsesType>
+template<typename MatType, typename ElemType>
 double AdaBoostRegressor<
     LossFunctionType,
     FitnessFunction,
@@ -141,7 +140,7 @@ double AdaBoostRegressor<
     CategoricalSplitType
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
-         const arma::Row<ResponsesType>& responses,
+         const arma::Row<ElemType>& responses,
          const size_t numTrees,
          const size_t minimumLeafSize,
          const double minimumGainSplit,
@@ -213,7 +212,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
 >
-template<typename MatType, typename ResponsesType>
+template<typename MatType, typename ElemType>
 void AdaBoostRegressor<
     LossFunctionType,
     FitnessFunction,
@@ -221,7 +220,7 @@ void AdaBoostRegressor<
     NumericSplitType,
     CategoricalSplitType
 >::Predict(const MatType& data,
-           arma::Row<ResponsesType>& predictions) const
+           arma::Row<ElemType>& predictions) const
 {
   // Check edge case.
   if (trees.size() == 0)
@@ -280,7 +279,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
 >
-template<bool UseDatasetInfo, typename MatType, typename ResponsesType>
+template<bool UseDatasetInfo, typename MatType, typename ElemType>
 double AdaBoostRegressor<
     LossFunctionType,
     FitnessFunction,
@@ -289,7 +288,7 @@ double AdaBoostRegressor<
     CategoricalSplitType
 >::Train(const MatType& data,
          const data::DatasetInfo& datasetInfo,
-         const arma::Row<ResponsesType>& responses,
+         const arma::Row<ElemType>& responses,
          const size_t numTrees,
          const size_t minimumLeafSize,
          const double minimumGainSplit,
@@ -308,7 +307,7 @@ double AdaBoostRegressor<
 
 
   // To be used for prediction.
-  arma::Row<ResponsesType> predictedValues(responses.n_cols);
+  arma::Row<ElemType> predictedValues(responses.n_cols);
 
   double totalGain = 0.0;
 
@@ -333,11 +332,11 @@ double AdaBoostRegressor<
     tree.Predict(data, predictedValues);
 
     // Calculate loss based on given lossFunction.
-    arma::Row<ResponsesType> diff = predictedValues - responses;
-    arma::Row<ResponsesType> errorVec = LossFunctionType::Calculate(diff);
+    arma::Row<ElemType> diff = predictedValues - responses;
+    arma::Row<ElemType> errorVec = LossFunctionType::Calculate(diff);
 
     // Calculate the average loss.
-    ResponsesType avgLoss = arma::accu(errorVec % weights);
+    ElemType avgLoss = arma::accu(errorVec % weights);
     trees.push_back(tree);
 
     if (avgLoss <= 0)
