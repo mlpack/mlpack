@@ -148,7 +148,9 @@ class DatasetMapper
   size_t Dimensionality() const;
 
   /**
-   * Remove a dimension and its corresponding mappings.
+   * Remove a dimension and its corresponding mappings. Note that all dimensions
+   * after the deleted dimension will have their indices shifted forward by 1,
+   * and dimensionality will be reduced by 1.
    *
    * @param dimension Dimension to remove.
    */

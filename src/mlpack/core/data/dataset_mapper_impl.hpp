@@ -245,6 +245,14 @@ inline void DatasetMapper<PolicyType, InputType>::RemoveDimension(
 
   types.erase(types.begin() + dimension);
   maps.erase(dimension);
+
+  // Shift all dimensions after the deleted dimension forward by 1
+  size_t next = dimension + 1;
+  while (next <= types.size()) {
+    maps[next-1] = std::move(maps[next]);
+    maps.erase(next);
+    ++next;
+  }
 }
 
 template<typename PolicyType, typename InputType>
