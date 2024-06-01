@@ -230,6 +230,23 @@ inline size_t DatasetMapper<PolicyType, InputType>::Dimensionality() const
   return types.size();
 }
 
+// Remove a dimension
+template<typename PolicyType, typename InputType>
+inline void DatasetMapper<PolicyType, InputType>::RemoveDimension(
+    const size_t dimension)
+{
+  if (dimension >= types.size())
+  {
+    std::ostringstream oss;
+    oss << "requested to remove dimension " << dimension << ", but dataset only "
+        << "has " << types.size() << " dimensions";
+    throw std::invalid_argument(oss.str());
+  }
+
+  types.erase(types.begin() + dimension);
+  maps.erase(dimension);
+}
+
 template<typename PolicyType, typename InputType>
 inline const PolicyType& DatasetMapper<PolicyType, InputType>::Policy() const
 {
