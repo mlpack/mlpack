@@ -4,6 +4,8 @@
 
 _????-??-??_
 
+  * Distribute STB headers as part of R package (#3724, #3726).
+
 
 ## mlpack 4.4.0
 
