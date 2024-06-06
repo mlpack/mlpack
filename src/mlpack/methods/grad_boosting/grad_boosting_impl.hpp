@@ -162,6 +162,7 @@ void Classify(const MatType& test,
 template<
   bool UseExistingWeakLearner,
   typename MatType,
+  typename WeightsType,
   typename WeakLearnerType,
   typename... WeakLearnerArgs
 >
@@ -170,8 +171,9 @@ struct WLTrainer
   static WeakLearnerType Train(const MatType& data,
                                 const arma::Row<size_t>& labels,
                                 const size_t numClasses,
+                                const WeightsType& weights,
                                 const WeakLearnerType& wl,
-                                WeakLearnerArgs&&...)
+                                WeakLearnerArgs&&... /*weakLearnerArgs*/)
   {
     // Use the existing weak learner to train a new one with new weights.
     // API requirement: there is a constructor with this signature:
@@ -183,15 +185,43 @@ struct WLTrainer
     //
     // This trains the new WeakLearnerType using the hyperparameters from the
     // given WeakLearnerType.
-    return WeakLearnerType(wl, data, labels, numClasses);
+    return WeakLearnerType(wl, data, labels, numClasses, weights);
   }
 };
+
+template<
+    typename MatType,
+    typename WeightsType,
+    typename WeakLearnerType,
+    typename... WeakLearnerArgs
+>
+struct WLTrainer<
+    false, MatType, WeightsType, WeakLearnerType, WeakLearnerArgs...
+>
+{
+  static WeakLearnerType Train(
+      const MatType& data,
+      const arma::Row<size_t>& labels,
+      const size_t numClasses,
+      const WeightsType& weights,
+      const WeakLearnerType& /* wl */,
+      WeakLearnerArgs&&... weakLearnerArgs)
+  {
+    // When UseExistingWeakLearner is false, we use the given hyperparameters.
+    // (This is the preferred approach that supports more types of weak
+    // learners.)
+    return WeakLearnerType(data, labels, numClasses, weights,
+        weakLearnerArgs...);
+  }
+};
+
 
 struct DefaultWeakLearnerArgs
 {
   // Define default values for the weak learner arguments here.
   static constexpr double defaultValue1 = 1.0;
   static constexpr int defaultValue2 = 42;
+  static constexpr int defaultValue3 = 42;
 };
 
 
@@ -210,8 +240,7 @@ void GradBoosting<WeakLearnerType, MatType>::TrainInternal(
   // Call the main TrainInternal function with default arguments
   return TrainInternal<UseExistingWeakLearner>(
       data, labels, numModels, numClasses, wl,
-      DefaultWeakLearnerArgs::defaultValue1,
-      DefaultWeakLearnerArgs::defaultValue2);
+      DefaultWeakLearnerArgs::defaultValue1);
 }
 
 
@@ -235,6 +264,14 @@ void GradBoosting<WeakLearnerType, MatType>::
                 WeakLearnerArgs&&... weakLearnerArgs) 
 {
 
+  // Load the initial weights into a 2-D matrix.
+  const ElemType initWeight = 1.0 / ElemType(data.n_cols * numClasses);
+  MatType D(numClasses, data.n_cols);
+  D.fill(initWeight);
+
+  // Weights are stored in this row vector.
+  arma::Row<ElemType> weights(labels.n_cols);
+
   weakLearners.clear();
   
   arma::Row<size_t> residue = labels; 
@@ -242,10 +279,13 @@ void GradBoosting<WeakLearnerType, MatType>::
   for (size_t model = 0; model < numModels; ++model) 
   {
 
+    // Build the weight vectors.
+    weights = sum(D);
+
     WeakLearnerType w = WLTrainer<
-      UseExistingWeakLearner, MatType, WeakLearnerType,
-      WeakLearnerArgs...
-    >::Train(data, residue, numClasses, wl, weakLearnerArgs...);
+        UseExistingWeakLearner, MatType, arma::Row<ElemType>, WeakLearnerType,
+        WeakLearnerArgs...
+    >::Train(data, residue, numClasses, weights, wl, weakLearnerArgs...);
 
     weakLearners.push_back(w);
 
