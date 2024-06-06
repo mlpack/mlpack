@@ -281,7 +281,7 @@ For custom termination policies, see
 
 ---
 
-#### ***`RandomInit`***:
+#### ***`RandomAMFInitialization`***:
 
  - Initialize `W` and `H` as uniform random in the range `[0, 1]`.
 
