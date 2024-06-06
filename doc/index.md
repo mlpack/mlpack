@@ -120,6 +120,7 @@ Prepare data for machine learning algorithms.
 
 Transform data from one space to another.
 
+ * [`AMF`](user/methods/amf.md): alternating matrix factorization
  * [`LocalCoordinateCoding`](user/methods/local_coordinate_coding.md): local
    coordinate coding with dictionary learning
  * [`NMF`](user/methods/nmf.md): non-negative matrix factorization

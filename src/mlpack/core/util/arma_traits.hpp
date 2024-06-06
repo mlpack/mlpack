@@ -254,6 +254,32 @@ struct GetSparseMatType<arma::SpMat<eT>>
   typedef arma::SpMat<eT> type;
 };
 
+// Get whether or not the given type is a dense matrix type.
+
+template<typename MatType>
+struct IsDenseMatType
+{
+  constexpr static bool value = false;
+};
+
+template<typename eT>
+struct IsDenseMatType<arma::Mat<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename eT>
+struct IsDenseMatType<arma::Col<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename eT>
+struct IsDenseMatType<arma::Row<eT>>
+{
+  constexpr static bool value = true;
+};
+
 // Get whether or not the given type is a base matrix type (e.g. not an
 // expression).
 

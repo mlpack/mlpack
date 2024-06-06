@@ -67,8 +67,8 @@ class BatchSVDPolicy
       MaxIterationTermination iter(maxIterations);
 
       // Do singular value decomposition using the batch SVD algorithm.
-      AMF<MaxIterationTermination, RandomAMFInitialization, SVDBatchLearning>
-          svdbatch(iter);
+      AMF<MaxIterationTermination, RandomAMFInitialization,
+          SVDBatchLearning<arma::mat>> svdbatch(iter);
 
       svdbatch.Apply(cleanedData, rank, w, h);
     }

@@ -146,7 +146,7 @@ template<typename MatType = arma::mat>
 using SVDBatchFactorizer = AMF<
     SimpleResidueTermination,
     RandomAcolInitialization<>,
-    SVDBatchLearning>;
+    SVDBatchLearning<MatType>>;
 
 /**
  * SVDIncompleteIncrementalFactorizer factorizes given matrix V into two
@@ -160,7 +160,7 @@ template<class MatType = arma::mat>
 using SVDIncompleteIncrementalFactorizer = AMF<
     SimpleResidueTermination,
     RandomAcolInitialization<>,
-    SVDIncompleteIncrementalLearning>;
+    SVDIncompleteIncrementalLearning<MatType>>;
 
 /**
  * SVDCompleteIncrementalFactorizer factorizes given matrix V into two matrices
