@@ -227,10 +227,11 @@ endif()
 target_compile_definitions(mlpack_test PUBLIC -DMLPACK_ENABLE_ANN_SERIALIZATION)
 if (CMAKE_VERSION VERSION_GREATER "3.16.0" AND USE_PRECOMPILED_HEADERS)
   target_precompile_headers(mlpack_test PUBLIC
-      "../core.hpp"
-      "../../mlpack.hpp"
-      <ensmallen.hpp>
-      <armadillo>)
+      "../prereqs.hpp"
+      "catch.hpp"
+      "test_catch_tools.hpp"
+      "serialization.hpp")
+  set_source_files_properties(main.cpp PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 endif ()
 
 # Copy test data into right place.
