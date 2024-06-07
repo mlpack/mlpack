@@ -6,15 +6,18 @@
 # Set generic minimization flags for all platforms.
 # These flags are the same for all cross-compilation cases and they are
 # mainly to reduce the binary footprint.
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -fdata-sections -ffunction-sections")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -s -fdata-sections -ffunction-sections")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fomit-frame-pointer -fno-unwind-tables")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-asynchronous-unwind-tables -fvisibility=hidden")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fshort-enums -finline-small-functions")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -findirect-inlining -fno-common")
-#-flto -fuse-ld=gold # There is an issue with gold link when compiling on 
-# Ubuntu 16. At that point gcc linker did not integrate the flto support 
-# inside and it was a separate plugin that need to be added. Therefore, 
-# this can be added when mlpack Azure CI moves toward Ubuntu 20.
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmerge-all-constants -fno-ident")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-unroll-loops -fno-math-errno")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-stack-protector -Wl,-z,norelro")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto -Wl,--hash-style=gnu -Wl,--build-id=none")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -nostartfiles") ## this get us 400KB alone
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-nmagic,-Bsymbolic")
+
 
 set(BOARD_NAME "" CACHE STRING "Specify Board name to optimize for.")
 string(TOUPPER ${BOARD_NAME} BOARD)
