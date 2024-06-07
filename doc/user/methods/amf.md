@@ -95,6 +95,8 @@ intentionally chosen.  The default template parameters simply configure the
 algorithm as non-negative matrix factorization (NMF), and so in that situation
 the [`NMF`](nmf.md) class can be used instead.
 
+---
+
 A number of convenient typedefs are possible to configure the `AMF` class as a
 predefined algorithm.  It may be easier to use these than to manually specify
 each template parameter.
@@ -109,6 +111,8 @@ each template parameter.
    - See the [`SVDCompleteIncrementalLearning`](#svdcompleteincrementallearning)
      update rule.
 
+---
+
  * `SVDIncompleteIncrementalFactorizer<VMatType = arma::mat>`
    - Use incomplete incremental SVD factorizer (Algorithm 2 from Chih-Chao Ma's
      [A Guide to Singular Value Decomposition for Collaborative Filtering](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=9d14285a32d268b69d51e7036d5a391c007df886).
@@ -122,6 +126,8 @@ each template parameter.
      [`SVDIncompleteIncrementalLearning`](#svdincompleteincrementallearning)
      update rule.
 
+---
+
  * `SVDCompleteIncrementalFactorizer<VMatType = arma::mat>`
    - Use complete incremental SVD factorizer (Algorithm 3 from Chih-Chao Ma's
      [A Guide to Singular Value Decomposition for Collaborative Filtering](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=9d14285a32d268b69d51e7036d5a391c007df886).
@@ -133,10 +139,14 @@ each template parameter.
      [`RandomAcolInitialization`](#randomacolinitializationn-default).
    - See the [`SVDBatchLearning`](#svdbatchlearning) update rule.
 
- * [`NMF`]`<TerminationPolicyType, InitializationRuleType, UpdateRuleType>`
+---
+
+ * `NMF<TerminationPolicyType, InitializationRuleType, UpdateRuleType>`
    - Perform non-negative matrix factorization using multiplicative distance
      update rules.
    - See the [`NMF`](nmf.md) class documentation for more details.
+
+---
 
 ### `TerminationPolicyType`
 
@@ -311,7 +321,7 @@ For custom termination policies, see
 ---
 
 For custom initialization rules, see
-[Custom: `InitializationRuleType`s](#custom-initializationruletypes).
+[Custom `InitializationRuleType`s](#custom-initializationruletypes).
 
 ---
 
