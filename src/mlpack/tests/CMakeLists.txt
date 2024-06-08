@@ -224,7 +224,6 @@ endif()
 
 # This has to be added here so that cotire picks it up (even though it is in
 # individual tests).
-target_compile_definitions(mlpack_test PUBLIC -DMLPACK_ENABLE_ANN_SERIALIZATION)
 if (CMAKE_VERSION VERSION_GREATER "3.16.0" AND USE_PRECOMPILED_HEADERS)
   target_precompile_headers(mlpack_test PUBLIC
       "../prereqs.hpp"
