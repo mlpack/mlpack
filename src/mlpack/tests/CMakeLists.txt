@@ -229,11 +229,15 @@ if (CMAKE_VERSION VERSION_GREATER "3.16.0" AND USE_PRECOMPILED_HEADERS)
     # MSVC RAM usage is decreased significantly if mlpack.hpp is included as a
     # precompiled header.  (It is still pretty slow, but this is necessary to
     # avoid a C1060 on Azure Pipelines.)
+    target_compile_definitions(mlpack_test PUBLIC
+        -DMLPACK_ENABLE_ANN_SERIALIZATION)
     target_precompile_headers(mlpack_test PUBLIC
         "../../mlpack.hpp"
         "catch.hpp"
         "test_catch_tools.hpp"
-        "serialization.hpp")
+        "serialization.hpp"
+        <ensmallen.hpp>
+        <armadillo>)
   else ()
     target_precompile_headers(mlpack_test PUBLIC
         "../prereqs.hpp"
