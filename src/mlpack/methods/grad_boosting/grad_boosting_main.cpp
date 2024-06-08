@@ -29,7 +29,7 @@
 #include <mlpack/bindings/cli/mlpack_main.hpp>
 
 // Importing grad_boosting model.
-#include <grad_boosting_model.hpp>
+#include <mlpack/methods/grad_boosting/grad_boosting_model.hpp>
 
 // Defining namespaces.
 using namespace std;
