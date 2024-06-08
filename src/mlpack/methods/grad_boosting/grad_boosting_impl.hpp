@@ -148,84 +148,24 @@ void GradBoosting<WeakLearnerType, MatType>::Classify(const VecType& point,
 
 
 template<typename WeakLearnerType, typename MatType>
-void Classify(const MatType& test,
+void GradBoosting<WeakLearnerType, MatType>::Classify(const MatType& test,
               arma::Row<size_t>& predictedLabels) 
 {
-  for (size_t i = 0; i < test.size(); ++i) {
+
+  if(predictedLabels.n_cols != test.n_rows)
+  {
+    predictedLabels.clear();
+    predictedLabels.resize(test.n_rows);
+  }
+
+  for (size_t i = 0; i < test.n_rows; ++i) 
+  {
     size_t prediction;
-    Classify(test[i], prediction);
-    predictedLabels[i] = prediction;
+    Classify<arma::rowvec>(test.row(i), prediction);
+    predictedLabels(i) = prediction;
   }
+
 }
-
-
-template<
-  bool UseExistingWeakLearner,
-  typename MatType,
-  typename WeightsType,
-  typename WeakLearnerType,
-  typename... WeakLearnerArgs
->
-struct WLTrainer
-{
-  static WeakLearnerType Train(const MatType& data,
-                                const arma::Row<size_t>& labels,
-                                const size_t numClasses,
-                                const WeightsType& weights,
-                                const WeakLearnerType& wl,
-                                WeakLearnerArgs&&... /*weakLearnerArgs*/)
-  {
-    // Use the existing weak learner to train a new one with new weights.
-    // API requirement: there is a constructor with this signature:
-    //
-    //    WeakLearnerType(const WeakLearnerType&,
-    //                    MatType& data,
-    //                    LabelsType& labels,
-    //                    const size_t numClasses)
-    //
-    // This trains the new WeakLearnerType using the hyperparameters from the
-    // given WeakLearnerType.
-    return WeakLearnerType(wl, data, labels, numClasses, weights);
-  }
-};
-
-template<
-    typename MatType,
-    typename WeightsType,
-    typename WeakLearnerType,
-    typename... WeakLearnerArgs
->
-struct WLTrainer<
-    false, MatType, WeightsType, WeakLearnerType, WeakLearnerArgs...
->
-{
-  static WeakLearnerType Train(
-      const MatType& data,
-      const arma::Row<size_t>& labels,
-      const size_t numClasses,
-      const WeightsType& weights,
-      const WeakLearnerType& /* wl */,
-      WeakLearnerArgs&&... weakLearnerArgs)
-  {
-    // When UseExistingWeakLearner is false, we use the given hyperparameters.
-    // (This is the preferred approach that supports more types of weak
-    // learners.)
-    return WeakLearnerType(data, labels, numClasses, weights,
-        weakLearnerArgs...);
-  }
-};
-
-
-struct DefaultWeakLearnerArgs
-{
-  // Define default values for the weak learner arguments here.
-  static constexpr double defaultValue1 = 1.0;
-  static constexpr int defaultValue2 = 42;
-  static constexpr int defaultValue3 = 42;
-};
-
-
-
 
 // This function uses default arguments
 template<typename WeakLearnerType, typename MatType>
@@ -237,10 +177,19 @@ void GradBoosting<WeakLearnerType, MatType>::TrainInternal(
     const size_t numClasses,
     const WeakLearnerType& wl)
 {
+
+  const size_t minimumLeafSize=10;
+  const double minimumGainSplit=1e-7;
+  const size_t maximumDepth=1;
+  const AllDimensionSelect dimensionSelector;
+
   // Call the main TrainInternal function with default arguments
   return TrainInternal<UseExistingWeakLearner>(
       data, labels, numModels, numClasses, wl,
-      DefaultWeakLearnerArgs::defaultValue1);
+      minimumLeafSize,
+      minimumGainSplit,
+      maximumDepth,
+      dimensionSelector);
 }
 
 
@@ -274,7 +223,7 @@ void GradBoosting<WeakLearnerType, MatType>::
 
   weakLearners.clear();
   
-  arma::Row<size_t> residue = labels; 
+  arma::Row<size_t> residue = labels;
 
   for (size_t model = 0; model < numModels; ++model) 
   {
@@ -282,17 +231,18 @@ void GradBoosting<WeakLearnerType, MatType>::
     // Build the weight vectors.
     weights = sum(D);
 
-    WeakLearnerType w = WLTrainer<
-        UseExistingWeakLearner, MatType, arma::Row<ElemType>, WeakLearnerType,
-        WeakLearnerArgs...
-    >::Train(data, residue, numClasses, weights, wl, weakLearnerArgs...);
+    WeakLearnerType w(data, residue, numClasses, 
+      std::forward<WeakLearnerArgs>(weakLearnerArgs)...);
 
     weakLearners.push_back(w);
 
-    arma::Row<size_t> predictions = residue;
+    arma::Row<size_t> predictions(residue.n_cols, arma::fill::zeros);
     w.Classify(data, predictions);
 
-    residue = residue - predictions;
+    for (size_t i = 0; i < labels.n_cols; ++i) 
+    {
+      residue(i) = (size_t)abs((double)residue(i) - (double)predictions(i));
+    }
         
   }
 }
