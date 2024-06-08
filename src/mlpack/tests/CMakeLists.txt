@@ -225,11 +225,22 @@ endif()
 # This has to be added here so that cotire picks it up (even though it is in
 # individual tests).
 if (CMAKE_VERSION VERSION_GREATER "3.16.0" AND USE_PRECOMPILED_HEADERS)
-  target_precompile_headers(mlpack_test PUBLIC
-      "../prereqs.hpp"
-      "catch.hpp"
-      "test_catch_tools.hpp"
-      "serialization.hpp")
+  if (MSVC)
+    # MSVC RAM usage is decreased significantly if mlpack.hpp is included as a
+    # precompiled header.  (It is still pretty slow, but this is necessary to
+    # avoid a C1060 on Azure Pipelines.)
+    target_precompile_headers(mlpack_test PUBLIC
+        "../../mlpack.hpp"
+        "catch.hpp"
+        "test_catch_tools.hpp"
+        "serialization.hpp")
+  else ()
+    target_precompile_headers(mlpack_test PUBLIC
+        "../prereqs.hpp"
+        "catch.hpp"
+        "test_catch_tools.hpp"
+        "serialization.hpp")
+  endif ()
   set_source_files_properties(main.cpp PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 endif ()
 
