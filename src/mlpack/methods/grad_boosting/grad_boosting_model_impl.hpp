@@ -16,10 +16,10 @@
 #define MLPACK_METHODS_GRADBOOSTING_GRADBOOSTING_MODEL_IMPL_HPP
 
 // Uses the grad_boosting class algorithms.
-#include <grad_boosting.hpp>
+#include "grad_boosting.hpp"
 
 // Base definition of the GradBoostingModel class.
-#include <grad_boosting_model.hpp>
+#include "grad_boosting_model.hpp"
 
 // Defined inside the mlpack namespace.
 namespace mlpack {

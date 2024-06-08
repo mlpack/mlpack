@@ -141,6 +141,6 @@ class GradBoostingModel {
 }
 
 // Include implementation.
-#include <grad_boosting_model_impl.hpp>
+#include "grad_boosting_model_impl.hpp"
 
 #endif
