@@ -327,7 +327,7 @@ if (StbImage_FOUND)
 
   # Make sure that we can link STB in multiple translation units.
   include(CMake/TestStaticSTB.cmake)
-  if (NOT CMAKE_HAS_WORKING_STATIC_STB)
+  if (NOT CMAKE_HAS_WORKING_STATIC_STB AND NOT CMAKE_CROSSCOMPILING)
     message(FATAL_ERROR "STB implementations's static mode cannot link across "
         "multiple translation units!  Try upgrading your STB implementation, "
         "or using the auto-downloader (set DOWNLOAD_DEPENDENCIES=ON in the "
