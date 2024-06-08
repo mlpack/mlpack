@@ -15,7 +15,7 @@
 #define MLPACK_METHODS_GRADBOOSTING_GRADBOOSTING_IMPL_HPP
 
 // Base definition of the GradBoostingModel class.
-#include <mlpack/methods/grad_boosting/grad_boosting.hpp>
+#include <grad_boosting.hpp>
 #include <mlpack/core.hpp>
 
 // Defined within the mlpack namespace.

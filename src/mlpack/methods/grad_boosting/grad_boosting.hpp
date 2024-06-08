@@ -189,11 +189,12 @@ class GradBoosting
  private:
 
   template<bool UseExistingWeakLearner>
-  void TrainInternal(const MatType& data,
-                      const arma::Row<size_t>& labels,
-                      const size_t numModels,
-                      const size_t numClasses,
-                      const WeakLearnerType& wl);
+  void TrainInternal(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numModels,
+    const size_t numClasses,
+    const WeakLearnerType& wl);
 
   /**
    * Internal utility training function.  `wl` is not used if
@@ -225,6 +226,6 @@ CEREAL_TEMPLATE_CLASS_VERSION((typename WeakLearnerType, typename MatType),
   (mlpack::GradBoosting<WeakLearnerType, MatType>), (1));
 
 // Include implementation.
-#include <mlpack/methods/grad_boosting/grad_boosting_impl.hpp>
+#include <grad_boosting_impl.hpp>
 
 #endif

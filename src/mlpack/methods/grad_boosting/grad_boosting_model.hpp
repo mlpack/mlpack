@@ -141,6 +141,6 @@ class GradBoostingModel {
 }
 
 // Include implementation.
-#include <mlpack/methods/grad_boosting/grad_boosting_model_impl.hpp>
+#include <grad_boosting_model_impl.hpp>
 
 #endif
