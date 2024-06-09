@@ -122,7 +122,7 @@ class GradBoosting
               const arma::Row<size_t>& labels,
               const size_t numClasses,
               const size_t numModels,
-              const WeakLearnerType& learner);
+              const WeakLearnerType learner);
 
   void Train(const MatType& data,
               const arma::Row<size_t>& labels,

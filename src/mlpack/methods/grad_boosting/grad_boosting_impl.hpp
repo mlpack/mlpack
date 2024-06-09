@@ -92,7 +92,7 @@ void GradBoosting<WeakLearnerType, MatType>::
         const arma::Row<size_t>& labels,
         const size_t numClasses,
         const size_t numModels,
-        const WeakLearnerType& learner)
+        const WeakLearnerType learner)
 {
   return TrainInternal<true>(data, labels, numModels, numClasses, learner);
 }
@@ -231,8 +231,20 @@ void GradBoosting<WeakLearnerType, MatType>::
     // Build the weight vectors.
     weights = sum(D);
 
-    WeakLearnerType w(data, residue, numClasses, 
-      std::forward<WeakLearnerArgs>(weakLearnerArgs)...);
+    WeakLearnerType* wPtr;
+
+    if(UseExistingWeakLearner)
+    {
+      wPtr = new WeakLearnerType(wl, data, residue, numClasses, weights,
+        std::forward<WeakLearnerArgs>(weakLearnerArgs)...);
+    }
+    else 
+    {
+      wPtr = new WeakLearnerType(data, residue, numClasses,
+        std::forward<WeakLearnerArgs>(weakLearnerArgs)...);
+    }
+
+    WeakLearnerType w = *wPtr;
 
     weakLearners.push_back(w);
 
