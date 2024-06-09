@@ -244,8 +244,8 @@ if (CMAKE_VERSION VERSION_GREATER "3.16.0" AND USE_PRECOMPILED_HEADERS)
         "catch.hpp"
         "test_catch_tools.hpp"
         "serialization.hpp")
+    set_source_files_properties(main.cpp PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
   endif ()
-  set_source_files_properties(main.cpp PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 endif ()
 
 # Copy test data into right place.
