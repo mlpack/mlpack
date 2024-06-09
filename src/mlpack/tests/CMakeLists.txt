@@ -233,7 +233,6 @@ if (CMAKE_VERSION VERSION_GREATER "3.16.0" AND USE_PRECOMPILED_HEADERS)
         -DMLPACK_ENABLE_ANN_SERIALIZATION)
     target_precompile_headers(mlpack_test PUBLIC
         "../../mlpack.hpp"
-        "catch.hpp"
         "test_catch_tools.hpp"
         "serialization.hpp"
         <ensmallen.hpp>
