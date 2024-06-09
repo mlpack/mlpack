@@ -106,7 +106,4 @@
   #define MLPACK_USE_OPENMP
 #endif
 
-// We need to be able to mark functions deprecated.
-#include <mlpack/core/util/deprecated.hpp>
-
 #endif
