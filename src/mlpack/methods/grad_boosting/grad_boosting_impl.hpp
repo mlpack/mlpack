@@ -138,6 +138,8 @@ void GradBoosting<WeakLearnerType, MatType>::Classify(const VecType& point,
                                                       size_t& prediction)
 {
 
+  prediction = 0;
+
   for (size_t i = 0; i < weakLearners.size(); ++i) 
   {
     size_t tempPred = weakLearners[i].Classify(point);
@@ -149,19 +151,16 @@ void GradBoosting<WeakLearnerType, MatType>::Classify(const VecType& point,
 
 template<typename WeakLearnerType, typename MatType>
 void GradBoosting<WeakLearnerType, MatType>::Classify(const MatType& test,
-              arma::Row<size_t>& predictedLabels) 
+                                                      arma::Row<size_t>& predictedLabels) 
 {
 
-  if(predictedLabels.n_cols != test.n_rows)
-  {
-    predictedLabels.clear();
-    predictedLabels.resize(test.n_rows);
-  }
+  predictedLabels.clear();
+  predictedLabels.resize(test.n_cols);
 
-  for (size_t i = 0; i < test.n_rows; ++i) 
+  for (size_t i = 0; i < test.n_cols; ++i) 
   {
     size_t prediction;
-    Classify<arma::rowvec>(test.row(i), prediction);
+    Classify<arma::colvec>(test.col(i), prediction);
     predictedLabels(i) = prediction;
   }
 
