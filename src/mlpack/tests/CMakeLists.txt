@@ -226,6 +226,13 @@ endif()
 # individual tests).
 if (CMAKE_VERSION VERSION_GREATER "3.16.0" AND USE_PRECOMPILED_HEADERS)
   if (MSVC)
+    # NOTE: this is a workaround for a Github runner issue caused by a bad
+    # update.  See https://github.com/actions/runner-images/issues/10004 for
+    # more details.  It's likely that this workaround doesn't need to be here
+    # for long.
+    target_compile_definitions(mlpack_test PUBLIC
+        -D_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR)
+
     # MSVC RAM usage is decreased significantly if mlpack.hpp is included as a
     # precompiled header.  (It is still pretty slow, but this is necessary to
     # avoid a C1060 on Azure Pipelines.)
