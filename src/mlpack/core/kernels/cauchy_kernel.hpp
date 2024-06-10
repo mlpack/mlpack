@@ -77,7 +77,7 @@ class CauchyKernel
   }
 
   // Get the kernel bandwidth.
-  const double Bandwidth() const { return bandwidth; }
+  double Bandwidth() const { return bandwidth; }
   // Modify the kernel bandwidth.
   void Bandwidth(const double bw) { this->bandwidth = bw; }
 
