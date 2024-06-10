@@ -382,7 +382,7 @@ fi
 cp doc/sidebar.html "$template_html_sidebar";
 
 # Process all the .md files.
-for f in README.md HISTORY.md `find ./doc/ -iname '*.md'`;
+for f in README.md `find ./doc/ -iname '*.md'`;
 do
   # Skip the JOSS paper...
   if [[ $f == *"joss_paper"* ]]; then
