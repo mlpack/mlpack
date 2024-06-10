@@ -1421,7 +1421,7 @@ For example, the following command will perform KPCA on the dataset `'input'` us
 ### See also
 
  - [Kernel principal component analysis on Wikipedia](https://en.wikipedia.org/wiki/Kernel_principal_component_analysis)
- - [Kernel Principal Component Analysis (pdf)](https://pca.narod.ru/scholkopf_kernel.pdf)
+ - [Nonlinear Component Analysis as a Kernel Eigenvalue Problem](https://www.mlpack.org/papers/kpca.pdf)
  - [KernelPCA class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kernel_pca/kernel_pca.hpp)
 
 ## kmeans()
