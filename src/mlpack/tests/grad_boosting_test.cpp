@@ -22,11 +22,11 @@ using namespace mlpack;
 using namespace data;
 
 /**
- * This test case runs the GradBoosting model on the UCI Iris dataset. 
+ * This test case runs the GradBoosting model on the Iris dataset. 
  * Tests if the model gives a training accuracy > 60, without 
  * initiating a weak learner. Used default empty constructor.
 */
-TEST_CASE("GBTrainMethod1", "[GradBoostGeneralTest]") 
+TEST_CASE("GBIrisTrainMethod1", "[GradBoostGeneralTest]") 
 {
   arma::mat db;
   if (!data::Load("iris.csv", db))
@@ -63,11 +63,11 @@ TEST_CASE("GBTrainMethod1", "[GradBoostGeneralTest]")
 }
 
 /**
- * This test case runs the GradBoosting model on the UCI Iris dataset.
+ * This test case runs the GradBoosting model on the Iris dataset.
  * Tests if the model gives a training accuracy > 60 given the data and a 
  * pre-initiated weak learner. Used default empty constructor.
 */
-TEST_CASE("GBTrainMethod2", "[GradBoostGeneralTest]") 
+TEST_CASE("GBIrisTrainMethod2", "[GradBoostGeneralTest]") 
 {
   arma::mat db;
   if (!data::Load("iris.csv", db))
@@ -109,11 +109,11 @@ TEST_CASE("GBTrainMethod2", "[GradBoostGeneralTest]")
 }
 
 /**
- * This test case runs the GradBoosting model on the UCI Iris dataset.
+ * This test case runs the GradBoosting model on the Iris dataset.
  * Tests if the model gives a training accuracy > 60 given the data and a 
  * weak learner arguments. Used default empty constructor.
 */
-TEST_CASE("GBTrainMethod3", "[GradBoostGeneralTest]") 
+TEST_CASE("GBIrisTrainMethod3", "[GradBoostGeneralTest]") 
 {
   arma::mat db;
   if (!data::Load("iris.csv", db))
@@ -155,6 +155,55 @@ TEST_CASE("GBTrainMethod3", "[GradBoostGeneralTest]")
   }
 
   accuracy = accuracy / ((double) labels.n_elem);
+  accuracy *= 100.0;
+
+  REQUIRE(accuracy > 60);
+
+}
+
+/**
+ * This test case runs the GradBoosting model on the Iris dataset.
+ * Tests if the model gives a testing accuracy > 60 given the data.
+ * Used default empty constructor.
+*/
+TEST_CASE("GBIrisTrainTestSplit", "[GradBoostGeneralTest]") 
+{
+  arma::mat db;
+  if (!data::Load("iris_train.csv", db))
+    FAIL("Cannot load test dataset iris_train.csv!");
+  
+  arma::Row<size_t> labels;
+  if (!data::Load("iris_train_labels.csv", labels))
+    FAIL("Cannot load labels for iris iris_train_labels.txt");
+
+  arma::mat testDb;
+  if (!data::Load("iris_test.csv", testDb))
+    FAIL("Cannot load test dataset iris_test.csv!");
+
+  arma::Row<size_t> testLabels;
+  if (!data::Load("iris_test_labels.csv", testLabels))
+    FAIL("Cannot load test dataset iris_test_labels.csv!");
+
+  const size_t numClasses = arma::max(labels.row(0)) + 1;
+  const size_t numModels = 5;
+
+  GradBoosting gb;
+
+  gb.Train(db, labels, numClasses, numModels);
+
+  arma::Row<size_t> predictions;
+  gb.Classify(testDb, predictions);
+
+  double accuracy = 0;
+  for (size_t i = 0; i < testLabels.n_elem; i++) 
+  {
+    if(testLabels(i) == predictions(i)) 
+    {
+      accuracy++;
+    }
+  }
+
+  accuracy = accuracy / ((double) testLabels.n_elem);
   accuracy *= 100.0;
 
   REQUIRE(accuracy > 60);
