@@ -40,7 +40,11 @@ namespace mlpack {
 
 // 
 template<
-  typename WeakLearnerType = ID3DecisionStump, 
+  typename WeakLearnerType = DecisionTree<GiniGain,
+         BestBinaryNumericSplit,
+         AllCategoricalSplit,
+         AllDimensionSelect,
+         false>, 
   typename MatType = arma::mat>
 class GradBoosting 
 {

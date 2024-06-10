@@ -179,7 +179,7 @@ void GradBoosting<WeakLearnerType, MatType>::TrainInternal(
 
   const size_t minimumLeafSize=10;
   const double minimumGainSplit=1e-7;
-  const size_t maximumDepth=1;
+  const size_t maximumDepth=2;
   const AllDimensionSelect dimensionSelector;
 
   // Call the main TrainInternal function with default arguments
