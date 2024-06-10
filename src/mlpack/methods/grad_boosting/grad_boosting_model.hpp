@@ -2,7 +2,7 @@
  * @file methods/grad_boosting/grad_boosting_model.hpp
  * @author Abhimanyu Dayal
  *
- * A serializable Gradient Boosting model, used by the Gradient Boosting binding.
+ * Gradient Boosting model used by the Gradient Boosting binding.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -47,7 +47,7 @@ class GradBoostingModel {
   //! Non-NULL if using decision stumps.
   // For now this is the only one we have as we're only using Decision stumps.
   // GradBoosting class contains the algorithms for the model implementation.
-  GradBoosting<ID3DecisionStump*> dsBoost;
+  GradBoosting dsBoost;
 
   //! Number of dimensions in training data.
   size_t dimensionality;

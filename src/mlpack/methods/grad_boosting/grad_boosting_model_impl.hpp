@@ -55,7 +55,7 @@ inline GradBoostingModel::GradBoostingModel(const GradBoostingModel& other) :
   weakLearnerType(other.weakLearnerType),
   dsBoost(other.dsBoost == nullptr ? nullptr :
     // Defaulted to ID3 Decision Stump with arma::mat MatType
-    new GradBoosting(*other.dsBoost)),
+    new GradBoosting(other.dsBoost)),
   dimensionality(other.dimensionality)
 {
   // Nothing to do.
@@ -84,7 +84,7 @@ inline GradBoostingModel& GradBoostingModel::operator=(const GradBoostingModel& 
     delete dsBoost;
     dsBoost = (other.dsBoost == NULL) ? NULL :
       // Defaulted to ID3 Decision Stump with arma::mat MatType
-      new GradBoosting(*other.dsBoost);
+      new GradBoosting(other.dsBoost);
 
     dimensionality = other.dimensionality;
   }
