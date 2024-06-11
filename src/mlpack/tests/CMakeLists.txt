@@ -63,6 +63,7 @@ add_executable(mlpack_test
   facilities_test.cpp
   fastmks_test.cpp
   gmm_test.cpp
+  grad_boosting_test.cpp
   hmm_test.cpp
   hpt_test.cpp
   hoeffding_tree_test.cpp
@@ -161,6 +162,7 @@ add_executable(mlpack_test
   main_tests/gmm_generate_test.cpp
   main_tests/gmm_probability_test.cpp
   main_tests/gmm_train_test.cpp
+  main_tests/grad_boosting_test.cpp
   main_tests/hmm_generate_test.cpp
   main_tests/hmm_loglik_test.cpp
   main_tests/hmm_test_utils.hpp
