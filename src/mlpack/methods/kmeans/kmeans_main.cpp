@@ -111,7 +111,8 @@ BINDING_SEE_ALSO("k-means++", "https://en.wikipedia.org/wiki/K-means%2B%2B");
 BINDING_SEE_ALSO("Using the triangle inequality to accelerate k-means (pdf)",
     "https://cdn.aaai.org/ICML/2003/ICML03-022.pdf");
 BINDING_SEE_ALSO("Making k-means even faster (pdf)",
-    "https://epubs.siam.org/doi/pdf/10.1137/1.9781611972801.12");
+    "https://www.cse.iitd.ac.in/~rjaiswal/2015/col870/Project/Faster-k-means/"
+    "Hamerly.pdf");
 BINDING_SEE_ALSO("Accelerating exact k-means algorithms with geometric"
     " reasoning (pdf)", "http://reports-archive.adm.cs.cmu.edu/anon/anon/usr/"
     "ftp/usr0/ftp/2000/CMU-CS-00-105.pdf");

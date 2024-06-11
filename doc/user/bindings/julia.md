@@ -429,9 +429,8 @@ julia> using mlpack: decision_tree
 julia> output_model, predictions, probabilities = decision_tree( ;
           input_model=nothing, labels=Int[], maximum_depth=0,
           minimum_gain_split=1e-07, minimum_leaf_size=20,
-          print_training_accuracy=false, print_training_error=false,
-          test=zeros(0, 0), test_labels=Int[], training=zeros(0, 0),
-          verbose=false, weights=zeros(0, 0))
+          print_training_accuracy=false, test=zeros(0, 0), test_labels=Int[],
+          training=zeros(0, 0), verbose=false, weights=zeros(0, 0))
 ```
 
 An implementation of an ID3-style decision tree for classification, which supports categorical data.  Given labeled data with numeric or categorical features, a decision tree can be trained and saved; or, an existing decision tree can be used for classification on new points. [Detailed documentation](#decision_tree_detailed-documentation).
@@ -449,7 +448,6 @@ An implementation of an ID3-style decision tree for classification, which suppor
 | `minimum_gain_split` | [`Float64`](#doc_Float64) | Minimum gain for node splitting. | `1e-07` |
 | `minimum_leaf_size` | [`Int`](#doc_Int) | Minimum number of points in a leaf. | `20` |
 | `print_training_accuracy` | [`Bool`](#doc_Bool) | Print the training accuracy. | `false` |
-| `print_training_error` | [`Bool`](#doc_Bool) | Print the training error (deprecated; will be removed in mlpack 4.0.0). | `false` |
 | `test` | [`Tuple{Array{Bool, 1}, Array{Float64, 2}}`](#doc_Tuple_Array_Bool__1___Array_Float64__2__) | Testing dataset (may be categorical). | `zeros(0, 0)` |
 | `test_labels` | [`Int vector-like`](#doc_Int_vector_like) | Test point labels, if accuracy calculation is desired. | `Int[]` |
 | `training` | [`Tuple{Array{Bool, 1}, Array{Float64, 2}}`](#doc_Tuple_Array_Bool__1___Array_Float64__2__) | Training dataset (may be categorical). | `zeros(0, 0)` |
@@ -473,7 +471,7 @@ Train and evaluate using a decision tree.  Given a dataset containing numeric or
 
 The training set and associated labels are specified with the `training` and `labels` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
 
-When a model is trained, the `output_model` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `input_model` parameter.  The `input_model` parameter may not be specified when the `training` parameter is specified.  The `minimum_leaf_size` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `minimum_gain_split` parameter specifies the minimum gain that is needed for the node to split.  The `maximum_depth` parameter specifies the maximum depth of the tree.  If `print_training_error` is specified, the training error will be printed.
+When a model is trained, the `output_model` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `input_model` parameter.  The `input_model` parameter may not be specified when the `training` parameter is specified.  The `minimum_leaf_size` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `minimum_gain_split` parameter specifies the minimum gain that is needed for the node to split.  The `maximum_depth` parameter specifies the maximum depth of the tree.  If `print_training_accuracy` is specified, the training accuracy will be printed.
 
 Test data may be specified with the `test` parameter, and if performance numbers are desired for that test set, labels may be specified with the `test_labels` parameter.  Predictions for each test point may be saved via the `predictions` output parameter.  Class probabilities for each prediction may be saved with the `probabilities` output parameter.
 
@@ -1402,7 +1400,7 @@ julia> transformed = kernel_pca(input, "gaussian")
 ### See also
 
  - [Kernel principal component analysis on Wikipedia](https://en.wikipedia.org/wiki/Kernel_principal_component_analysis)
- - [Kernel Principal Component Analysis (pdf)](https://pca.narod.ru/scholkopf_kernel.pdf)
+ - [Nonlinear Component Analysis as a Kernel Eigenvalue Problem](https://www.mlpack.org/papers/kpca.pdf)
  - [KernelPCA class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kernel_pca/kernel_pca.hpp)
 
 ## kmeans()
@@ -1495,7 +1493,7 @@ julia> final, _ = kmeans(10, data; initial_centroids=initial,
  - [dbscan()](#dbscan)
  - [k-means++](https://en.wikipedia.org/wiki/K-means%2B%2B)
  - [Using the triangle inequality to accelerate k-means (pdf)](https://cdn.aaai.org/ICML/2003/ICML03-022.pdf)
- - [Making k-means even faster (pdf)](https://epubs.siam.org/doi/pdf/10.1137/1.9781611972801.12)
+ - [Making k-means even faster (pdf)](https://www.cse.iitd.ac.in/~rjaiswal/2015/col870/Project/Faster-k-means/Hamerly.pdf)
  - [Accelerating exact k-means algorithms with geometric reasoning (pdf)](http://reports-archive.adm.cs.cmu.edu/anon/anon/usr/ftp/usr0/ftp/2000/CMU-CS-00-105.pdf)
  - [A dual-tree algorithm for fast k-means clustering with large k (pdf)](http://www.ratml.org/pub/pdf/2017dual.pdf)
  - [KMeans class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kmeans/kmeans.hpp)
@@ -1873,7 +1871,7 @@ julia> new_codes, _, _ =
 
  - [sparse_coding()](#sparse_coding)
  - [Nonlinear learning using local coordinate coding (pdf)](https://papers.nips.cc/paper/3875-nonlinear-learning-using-local-coordinate-coding.pdf)
- - [LocalCoordinateCoding C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/local_coordinate_coding/local_coordinate_coding.hpp)
+ - [LocalCoordinateCoding C++ class documentation](../../user/methods/local_coordinate_coding.md)
 
 ## logistic_regression()
 {: #logistic_regression }
@@ -2119,9 +2117,9 @@ julia> centroids, _ = mean_shift(data)
 
 ```julia
 julia> using mlpack: nbc
-julia> output, output_model, output_probs, predictions, probabilities
-          = nbc( ; incremental_variance=false, input_model=nothing,
-          labels=Int[], test=zeros(0, 0), training=zeros(0, 0), verbose=false)
+julia> output_model, predictions, probabilities = nbc( ;
+          incremental_variance=false, input_model=nothing, labels=Int[],
+          test=zeros(0, 0), training=zeros(0, 0), verbose=false)
 ```
 
 An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model can be trained and saved, or, a pre-trained model can be used for classification. [Detailed documentation](#nbc_detailed-documentation).
@@ -2146,9 +2144,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`Int vector-like`](#doc_Int_vector_like) | The matrix in which the predicted labels for the test set will be written (deprecated). | 
 | `output_model` | [`NBCModel`](#doc_model) | File to save trained Naive Bayes model to. | 
-| `output_probs` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | The matrix in which the predicted probability of labels for the test set will be written (deprecated). | 
 | `predictions` | [`Int vector-like`](#doc_Int_vector_like) | The matrix in which the predicted labels for the test set will be written. | 
 | `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | The matrix in which the predicted probability of labels for the test set will be written. | 
 
@@ -2167,8 +2163,6 @@ The `incremental_variance` parameter can be used to force the training to use an
 
 If classifying a test set is desired, the test set may be specified with the `test` parameter, and the classifications may be saved with the `predictions`predictions  parameter.  If saving the trained model is desired, this may be done with the `output_model` output parameter.
 
-Note: the `output` and `output_probs` parameters are deprecated and will be removed in mlpack 4.0.0.  Use `predictions` and `probabilities` instead.
-
 ### Example
 For example, to train a Naive Bayes classifier on the dataset ``data`` with labels ``labels`` and save the model to ``nbc_model``, the following command may be used:
 
@@ -2176,7 +2170,7 @@ For example, to train a Naive Bayes classifier on the dataset ``data`` with labe
 julia> using CSV
 julia> data = CSV.read("data.csv")
 julia> labels = CSV.read("labels.csv"; type=Int)
-julia> _, nbc_model, _, _, _ = nbc(labels=labels, training=data)
+julia> nbc_model, _, _ = nbc(labels=labels, training=data)
 ```
 
 Then, to use ``nbc_model`` to predict the classes of the dataset ``test_set`` and save the predicted classes to ``predictions``, the following command may be used:
@@ -2184,7 +2178,7 @@ Then, to use ``nbc_model`` to predict the classes of the dataset ``test_set`` an
 ```julia
 julia> using CSV
 julia> test_set = CSV.read("test_set.csv")
-julia> predictions, _, _, _, _ = nbc(input_model=nbc_model,
+julia> _, predictions, _ = nbc(input_model=nbc_model,
             test=test_set)
 ```
 
@@ -2559,9 +2553,9 @@ julia> data_mod = pca(data; decomposition_method="randomized",
 
 ```julia
 julia> using mlpack: perceptron
-julia> output, output_model, predictions = perceptron( ;
-          input_model=nothing, labels=Int[], max_iterations=1000, test=zeros(0,
-          0), training=zeros(0, 0), verbose=false)
+julia> output_model, predictions = perceptron( ; input_model=nothing,
+          labels=Int[], max_iterations=1000, test=zeros(0, 0), training=zeros(0,
+          0), verbose=false)
 ```
 
 An implementation of a perceptron---a single level neural network--=for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation).
@@ -2586,7 +2580,6 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`Int vector-like`](#doc_Int_vector_like) | The matrix in which the predicted labels for the test set will be written. | 
 | `output_model` | [`PerceptronModel`](#doc_model) | Output for trained perceptron model. | 
 | `predictions` | [`Int vector-like`](#doc_Int_vector_like) | The matrix in which the predicted labels for the test set will be written. | 
 
@@ -2597,9 +2590,6 @@ This program implements a perceptron, which is a single level neural network. Th
 
 This program allows loading a perceptron from a model (via the `input_model` parameter) or training a perceptron given training data (via the `training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (via the `test` parameter) and the classification results on the test set may be saved with the `predictions` output parameter.  The perceptron model may be saved with the `output_model` output parameter.
 
-Note: the following parameter is deprecated and will be removed in mlpack 4.0.0: `output`.
-Use `predictions` instead of `output`.
-
 ### Example
 The training data given with the `training` option may have class labels as its last dimension (so, if the training data is in CSV format, labels should be the last column).  Alternately, the `labels` parameter may be used to specify a separate matrix of labels.
 
@@ -2609,7 +2599,7 @@ All these options make it easy to train a perceptron, and then re-use that perce
 julia> using CSV
 julia> training_data = CSV.read("training_data.csv")
 julia> training_labels = CSV.read("training_labels.csv"; type=Int)
-julia> _, perceptron_model, _ = perceptron(labels=training_labels,
+julia> perceptron_model, _ = perceptron(labels=training_labels,
             training=training_data)
 ```
 
@@ -2618,7 +2608,7 @@ Then, this model can be re-used for classification on the test data ``test_data`
 ```julia
 julia> using CSV
 julia> test_data = CSV.read("test_data.csv")
-julia> _, _, predictions = perceptron(input_model=perceptron_model,
+julia> _, predictions = perceptron(input_model=perceptron_model,
             test=test_data)
 ```
 
@@ -3405,7 +3395,7 @@ julia> codes, _, _ = sparse_coding(input_model=model,
 
 ```julia
 julia> using mlpack: adaboost
-julia> output, output_model, predictions, probabilities = adaboost( ;
+julia> output_model, predictions, probabilities = adaboost( ;
           input_model=nothing, iterations=1000, labels=Int[], test=zeros(0, 0),
           tolerance=1e-10, training=zeros(0, 0), verbose=false,
           weak_learner="decision_stump")
@@ -3435,7 +3425,6 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`Int vector-like`](#doc_Int_vector_like) | Predicted labels for the test set. | 
 | `output_model` | [`AdaBoostModel`](#doc_model) | Output trained AdaBoost model. | 
 | `predictions` | [`Int vector-like`](#doc_Int_vector_like) | Predicted labels for the test set. | 
 | `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Predicted class probabilities for each point in the test set. | 
@@ -3451,9 +3440,6 @@ This program allows training of an AdaBoost model, and then application of that 
 
 Once a model is trained or loaded, it may be used to provide class predictions for a given test dataset.  A test dataset may be specified with the `test` parameter.  The predicted classes for each point in the test dataset are output to the `predictions` output parameter.  The AdaBoost model itself is output to the `output_model` output parameter.
 
-Note: the following parameter is deprecated and will be removed in mlpack 4.0.0: `output`.
-Use `predictions` instead of `output`.
-
 ### Example
 For example, to run AdaBoost on an input dataset ``data`` with labels ``labels``and perceptrons as the weak learner type, storing the trained model in ``model``, one could use the following command: 
 
@@ -3461,7 +3447,7 @@ For example, to run AdaBoost on an input dataset ``data`` with labels ``labels``
 julia> using CSV
 julia> data = CSV.read("data.csv")
 julia> labels = CSV.read("labels.csv"; type=Int)
-julia> _, model, _, _ = adaboost(labels=labels, training=data,
+julia> model, _, _ = adaboost(labels=labels, training=data,
             weak_learner="perceptron")
 ```
 
@@ -3470,7 +3456,7 @@ Similarly, an already-trained model in ``model`` can be used to provide class pr
 ```julia
 julia> using CSV
 julia> test_data = CSV.read("test_data.csv")
-julia> _, _, predictions, _ = adaboost(input_model=model,
+julia> _, predictions, _ = adaboost(input_model=model,
             test=test_data)
 ```
 
