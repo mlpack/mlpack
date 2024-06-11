@@ -3,8 +3,7 @@
  * @author Abhimanyu Dayal
  *
  * A program to implement gradient boosting model. 
- * This file defines the templates for the documentation, 
- * as well as define the BINDING_FUNCTION()
+ * This file defines the BINDING_FUNCTION()
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license. You should have received a copy of the
