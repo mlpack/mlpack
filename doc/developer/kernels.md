@@ -129,24 +129,35 @@ At this time, there is only one kernel trait that is used in mlpack code:
 
 ## List of kernels and classes that use a `KernelType`
 
-mlpack comes with a number of pre-written kernels that satisfy the `KernelType`
-policy:
+mlpack comes with a number of pre-implemented and ready-to-use kernels:
 
- - `LinearKernel`
- - `ExampleKernel` -- an example kernel with more documentation
- - `GaussianKernel`
- - `HyperbolicTangentKernel`
- - `EpanechnikovKernel`
- - `CosineDistance`
- - `LaplacianKernel`
- - `PolynomialKernel`
- - `TriangularKernel`
- - `SphericalKernel`
- - `PSpectrumStringKernel` -- operates on strings, not vectors
+ * [`GaussianKernel`](../user/core.md#gaussiankernel): standard Gaussian/radial
+   basis function/RBF kernel
+ * [`CauchyKernel`](../user/core.md#cauchykernel): Cauchy kernel, with longer
+   tails than the standard Gaussian kernel
+ * [`CosineSimilarity`](../user/core.md#cosinesimilarity): dot-product vector
+   similarity
+ * [`EpanechnikovKernel`](../user/core.md#epanechnikovkernel): Epanechnikov
+   kernel (parabolic), with zero tails
+ * [`HyperbolicTangentKernel`](../user/core.md#hyperbolictangentkernel):
+   hyperbolic tangent kernel (not positive definite)
+ * [`LaplacianKernel`](../user/core.md#laplaciankernel): Laplacian
+   kernel/exponential kernel
+ * [`LinearKernel`](../user/core.md#linearkernel): linear (dot-product) kernel
+ * [`PolynomialKernel`](../user/core.md#polynomialkernel): arbitrary-power
+   polynomial kernel with offset
+ * [`PSpectrumStringKernel`](../user/core.md#pspectrumstringkernel): kernel to
+   compute length-p subsequence match counts
+ * [`SphericalKernel`](../user/core.md#sphericalkernel):
+   spherical/uniform/rectangular window kernel
+ * [`TriangularKernel`](../user/core.md#triangularkernel): triangular kernel,
+   with zero tails
+ * [Implement a custom kernel](../user/core.md#implement-a-custom-kernel)
 
 These kernels (or a custom kernel) may be used in a variety of mlpack methods:
 
- - `KernelPCA` - kernel principal components analysis
- - `FastMKS` - fast max-kernel search
- - `NystroemMethod` - the Nystroem method for sampling
- - `IPMetric` - a metric built on a kernel
+ * [`KDE`](/src/mlpack/methods/kde/kde.hpp)
+ * [`MeanShift`](/src/mlpack/methods/mean_shift/mean_shift.hpp)
+ * [`KernelPCA`](/src/mlpack/methods/kernel_pca/kernel_pca.hpp)
+ * [`FastMKS`](/src/mlpack/methods/fastmks/fastmks.hpp)
+ * [`NystroemMethod`](/src/mlpack/methods/nystroem_method/nystroem_method.hpp)
