@@ -71,7 +71,6 @@ template<typename OptimizerType,
          typename FirstCallbackType,
          typename... CallbackTypes,
          typename, typename, typename>
-mlpack_deprecated /** To be removed in mlpack 5.0.0; use the overload below. */
 double SoftmaxRegression<MatType>::Train(const MatType& data,
                                          const arma::Row<size_t>& labels,
                                          const size_t numClasses,
@@ -224,7 +223,7 @@ inline void SoftmaxRegression<MatType>::Classify(
 }
 
 template<typename MatType>
-inline mlpack_deprecated void SoftmaxRegression<MatType>::Classify(
+inline void SoftmaxRegression<MatType>::Classify(
     const MatType& dataset,
     typename SoftmaxRegression<MatType>::DenseMatType& probabilities) const
 {
