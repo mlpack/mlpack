@@ -128,14 +128,16 @@ template<typename VecType>
 size_t GradBoosting<WeakLearnerType, MatType>::Classify(const VecType& point) 
 {
   size_t prediction;
-  Classify(point, prediction);
+  arma::Row<ElemType> probabilities;
+  Classify(point, prediction, probabilities);
   return prediction;
 }
 
 template<typename WeakLearnerType, typename MatType>
 template<typename VecType>
 void GradBoosting<WeakLearnerType, MatType>::Classify(const VecType& point,
-                                                      size_t& prediction)
+                                                      size_t& prediction,
+                                                      arma::Row<ElemType>& probabilities)
 {
 
   prediction = 0;
@@ -156,14 +158,32 @@ void GradBoosting<WeakLearnerType, MatType>::Classify(const MatType& test,
 
   predictedLabels.clear();
   predictedLabels.resize(test.n_cols);
+  arma::Row<ElemType> probabilities;
 
   for (size_t i = 0; i < test.n_cols; ++i) 
   {
     size_t prediction;
-    Classify<arma::colvec>(test.col(i), prediction);
+    Classify<arma::colvec>(test.col(i), prediction, probabilities);
     predictedLabels(i) = prediction;
   }
+}
 
+
+template<typename WeakLearnerType, typename MatType>
+void GradBoosting<WeakLearnerType, MatType>::Classify(const MatType& test,
+                                                      arma::Row<size_t>& predictedLabels,
+                                                      arma::Row<ElemType>& probabilities) 
+{
+
+  predictedLabels.clear();
+  predictedLabels.resize(test.n_cols);
+
+  for (size_t i = 0; i < test.n_cols; ++i) 
+  {
+    size_t prediction;
+    Classify<arma::colvec>(test.col(i), prediction, probabilities);
+    predictedLabels(i) = prediction;
+  }
 }
 
 // This function uses default arguments

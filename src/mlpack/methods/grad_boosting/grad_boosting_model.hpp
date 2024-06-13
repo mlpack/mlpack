@@ -44,10 +44,8 @@ class GradBoostingModel {
   //! The type of weak learner.
   size_t weakLearnerType;
 
-  //! Non-NULL if using decision stumps.
-  // For now this is the only one we have as we're only using Decision stumps.
   // GradBoosting class contains the algorithms for the model implementation.
-  GradBoosting dsBoost;
+  GradBoosting gbModel;
 
   //! Number of dimensions in training data.
   size_t dimensionality;
@@ -63,7 +61,6 @@ class GradBoostingModel {
   // For now, we're not using this constructor anywhere.
   GradBoostingModel(const arma::Col<size_t>& mappings,
                     const size_t weakLearnerType);
-
 
 
   // ### OPERATION CONSTRUCTORS

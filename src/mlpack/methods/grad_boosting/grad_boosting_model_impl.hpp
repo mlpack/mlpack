@@ -29,8 +29,8 @@ namespace mlpack {
 inline GradBoostingModel::GradBoostingModel() :
   // weakLearnerType initialised to 0, i.e. Decision Stump
   weakLearnerType(0),
-  // dsBoost value set to NULL
-  dsBoost(NULL),
+  // gbModel value set to NULL
+  gbModel(NULL),
   // Set dimensionality to 0
   dimensionality(0)
 {
@@ -43,7 +43,7 @@ inline GradBoostingModel::GradBoostingModel(const arma::Col<size_t>& mappings,
                                             const size_t weakLearnerType) :
   mappings(mappings),
   weakLearnerType(weakLearnerType),
-  dsBoost(NULL),
+  gbModel(NULL),
   dimensionality(0)
 {
   // Nothing to do.
@@ -53,9 +53,9 @@ inline GradBoostingModel::GradBoostingModel(const arma::Col<size_t>& mappings,
 inline GradBoostingModel::GradBoostingModel(const GradBoostingModel& other) :
   mappings(other.mappings),
   weakLearnerType(other.weakLearnerType),
-  dsBoost(other.dsBoost == nullptr ? nullptr :
+  gbModel(other.gbModel == nullptr ? nullptr :
     // Defaulted to ID3 Decision Stump with arma::mat MatType
-    new GradBoosting(other.dsBoost)),
+    new GradBoosting(other.gbModel)),
   dimensionality(other.dimensionality)
 {
   // Nothing to do.
@@ -65,11 +65,11 @@ inline GradBoostingModel::GradBoostingModel(const GradBoostingModel& other) :
 inline GradBoostingModel::GradBoostingModel(GradBoostingModel&& other) :
   mappings(std::move(other.mappings)),
   weakLearnerType(other.weakLearnerType),
-  dsBoost(other.dsBoost),
+  gbModel(other.gbModel),
   dimensionality(other.dimensionality)
 {
   other.weakLearnerType = 0;
-  other.dsBoost = NULL;
+  other.gbModel = NULL;
   other.dimensionality = 0;
 }
 
@@ -81,10 +81,10 @@ inline GradBoostingModel& GradBoostingModel::operator=(const GradBoostingModel& 
     mappings = other.mappings;
     weakLearnerType = other.weakLearnerType;
 
-    delete dsBoost;
-    dsBoost = (other.dsBoost == NULL) ? NULL :
+    delete gbModel;
+    gbModel = (other.gbModel == NULL) ? NULL :
       // Defaulted to ID3 Decision Stump with arma::mat MatType
-      new GradBoosting(other.dsBoost);
+      new GradBoosting(other.gbModel);
 
     dimensionality = other.dimensionality;
   }
@@ -99,8 +99,8 @@ inline GradBoostingModel& GradBoostingModel::operator=(GradBoostingModel&& other
     mappings = std::move(other.mappings);
     weakLearnerType = other.weakLearnerType;
 
-    dsBoost = other.dsBoost;
-    other.dsBoost = nullptr;
+    gbModel = other.gbModel;
+    other.gbModel = nullptr;
 
     dimensionality = other.dimensionality;
   }
@@ -110,7 +110,7 @@ inline GradBoostingModel& GradBoostingModel::operator=(GradBoostingModel&& other
 //! Deconstructor
 inline GradBoostingModel::~GradBoostingModel()
 {
-  delete dsBoost;
+  delete gbModel;
 }
 
 //! Train the model.
@@ -121,10 +121,10 @@ inline void GradBoostingModel::Train(
   const size_t numModels)
 {
   dimensionality = data.n_rows;
-  delete dsBoost;
+  delete gbModel;
   
   // Defaulted to ID3 Decision Stump with arma::mat MatType
-  dsBoost = new GradBoosting(data, labels, numClasses,
+  gbModel = new GradBoosting(data, labels, numClasses,
     numModels);
 }
 
@@ -133,14 +133,14 @@ inline void GradBoostingModel::Classify(const arma::mat& testData,
                                         arma::Row<size_t>& predictions,
                                         arma::mat& probabilities)
 {
-  dsBoost->Classify(testData, predictions, probabilities);
+  gbModel->Classify(testData, predictions, probabilities);
 }
 
 //! Classify test points. Not including probabilities.
 inline void GradBoostingModel::Classify (const arma::mat& testData,
                                           arma::Row<size_t>& predictions)
 {
-  dsBoost->Classify(testData, predictions);
+  gbModel->Classify(testData, predictions);
 }
 
 } // namespace mlpack
