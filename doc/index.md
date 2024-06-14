@@ -170,7 +170,7 @@ Throughout the codebase, mlpack uses some common template parameter policies.
 These are documented below.
 
  * [The `ElemType` policy](developer/elemtype.md): element types for data
- * [The `MetricType` policy](developer/metrics.md): distance metrics
+ * [The `DistanceType` policy](developer/distances.md): distance metrics
  * [The `KernelType` policy](developer/kernels.md): kernel functions
  * [The `TreeType` policy](developer/trees.md): space trees (ball trees,
    KD-trees, etc.)

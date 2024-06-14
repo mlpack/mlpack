@@ -20,10 +20,10 @@ namespace mlpack {
  * The RangeSearchRules class is a template helper class used by RangeSearch
  * class when performing range searches.
  *
- * @tparam MetricType The metric to use for computation.
+ * @tparam DistanceType The distance metric to use for computation.
  * @tparam TreeType The tree type to use; must adhere to the TreeType API.
  */
-template<typename MetricType, typename TreeType>
+template<typename DistanceType, typename TreeType>
 class RangeSearchRules
 {
  public:
@@ -41,7 +41,7 @@ class RangeSearchRules
    * @param range Range to search for.
    * @param neighbors Vector to store resulting neighbors in.
    * @param distances Vector to store resulting distances in.
-   * @param metric Instantiated metric.
+   * @param distance Instantiated distance metric.
    * @param sameSet If true, the query and reference set are taken to be the
    *      same, and a query point will not return itself in the results.
    */
@@ -50,7 +50,7 @@ class RangeSearchRules
                    const RangeType<ElemType>& range,
                    std::vector<std::vector<size_t> >& neighbors,
                    std::vector<std::vector<ElemType> >& distances,
-                   MetricType& metric,
+                   DistanceType& distance,
                    const bool sameSet = false);
 
   /**
@@ -141,8 +141,8 @@ class RangeSearchRules
   //! The vector the resultant neighbor distances should be stored in.
   std::vector<std::vector<ElemType> >& distances;
 
-  //! The instantiated metric.
-  MetricType& metric;
+  //! The instantiated distance metric.
+  DistanceType& distance;
 
   //! If true, the query and reference set are taken to be the same.
   bool sameSet;

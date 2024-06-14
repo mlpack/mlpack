@@ -21,12 +21,12 @@ namespace mlpack {
 
 // Construct the object, taking ownership of the data matrix.
 template<typename SortPolicy,
-         typename MetricType,
+         typename DistanceType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-RASearch<SortPolicy, MetricType, MatType, TreeType>::
+RASearch<SortPolicy, DistanceType, MatType, TreeType>::
 RASearch(MatType referenceSetIn,
          const bool naive,
          const bool singleMode,
@@ -35,7 +35,7 @@ RASearch(MatType referenceSetIn,
          const bool sampleAtLeaves,
          const bool firstLeafExact,
          const size_t singleSampleLimit,
-         const MetricType metric) :
+         const DistanceType distance) :
     referenceTree(naive ? NULL : BuildTree<Tree>(
         std::move(referenceSetIn), oldFromNewReferences)),
     referenceSet(naive ? new MatType(std::move(referenceSetIn)) :
@@ -49,19 +49,19 @@ RASearch(MatType referenceSetIn,
     sampleAtLeaves(sampleAtLeaves),
     firstLeafExact(firstLeafExact),
     singleSampleLimit(singleSampleLimit),
-    metric(metric)
+    distance(distance)
 {
   // Nothing to do.
 }
 
 // Construct the object.
 template<typename SortPolicy,
-         typename MetricType,
+         typename DistanceType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-RASearch<SortPolicy, MetricType, MatType, TreeType>::
+RASearch<SortPolicy, DistanceType, MatType, TreeType>::
 RASearch(Tree* referenceTree,
          const bool singleMode,
          const double tau,
@@ -69,7 +69,7 @@ RASearch(Tree* referenceTree,
          const bool sampleAtLeaves,
          const bool firstLeafExact,
          const size_t singleSampleLimit,
-         const MetricType metric) :
+         const DistanceType distance) :
     referenceTree(referenceTree),
     referenceSet(&referenceTree->Dataset()),
     treeOwner(false),
@@ -81,18 +81,18 @@ RASearch(Tree* referenceTree,
     sampleAtLeaves(sampleAtLeaves),
     firstLeafExact(firstLeafExact),
     singleSampleLimit(singleSampleLimit),
-    metric(metric)
+    distance(distance)
 // Nothing else to initialize.
 {  }
 
 // Empty constructor.
 template<typename SortPolicy,
-         typename MetricType,
+         typename DistanceType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-RASearch<SortPolicy, MetricType, MatType, TreeType>::
+RASearch<SortPolicy, DistanceType, MatType, TreeType>::
 RASearch(const bool naive,
          const bool singleMode,
          const double tau,
@@ -100,7 +100,7 @@ RASearch(const bool naive,
          const bool sampleAtLeaves,
          const bool firstLeafExact,
          const size_t singleSampleLimit,
-         const MetricType metric) :
+         const DistanceType distance) :
     referenceTree(NULL),
     referenceSet(new MatType()),
     treeOwner(false),
@@ -112,7 +112,7 @@ RASearch(const bool naive,
     sampleAtLeaves(sampleAtLeaves),
     firstLeafExact(firstLeafExact),
     singleSampleLimit(singleSampleLimit),
-    metric(metric)
+    distance(distance)
 {
   // Build the tree on the empty dataset, if necessary.
   if (!naive)
@@ -127,12 +127,12 @@ RASearch(const bool naive,
  * deleting.  The others will take care of themselves.
  */
 template<typename SortPolicy,
-         typename MetricType,
+         typename DistanceType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-RASearch<SortPolicy, MetricType, MatType, TreeType>::
+RASearch<SortPolicy, DistanceType, MatType, TreeType>::
 ~RASearch()
 {
   if (treeOwner && referenceTree)
@@ -143,12 +143,12 @@ RASearch<SortPolicy, MetricType, MatType, TreeType>::
 
 // Train on a new reference set.
 template<typename SortPolicy,
-         typename MetricType,
+         typename DistanceType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void RASearch<SortPolicy, MetricType, MatType, TreeType>::Train(
+void RASearch<SortPolicy, DistanceType, MatType, TreeType>::Train(
     MatType referenceSet)
 {
   // Clean up the old tree, if we built one.
@@ -185,12 +185,12 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Train(
 
 //! Set the reference tree to a new reference tree.
 template<typename SortPolicy,
-         typename MetricType,
+         typename DistanceType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void RASearch<SortPolicy, MetricType, MatType, TreeType>::Train(
+void RASearch<SortPolicy, DistanceType, MatType, TreeType>::Train(
     Tree* referenceTree)
 {
   if (naive)
@@ -213,12 +213,12 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Train(
  * distances.
  */
 template<typename SortPolicy,
-         typename MetricType,
+         typename DistanceType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void RASearch<SortPolicy, MetricType, MatType, TreeType>::
+void RASearch<SortPolicy, DistanceType, MatType, TreeType>::
 Search(const MatType& querySet,
        const size_t k,
        arma::Mat<size_t>& neighbors,
@@ -260,11 +260,11 @@ Search(const MatType& querySet,
   neighborPtr->set_size(k, querySet.n_cols);
   distancePtr->set_size(k, querySet.n_cols);
 
-  typedef RASearchRules<SortPolicy, MetricType, Tree> RuleType;
+  typedef RASearchRules<SortPolicy, DistanceType, Tree> RuleType;
 
   if (naive)
   {
-    RuleType rules(*referenceSet, querySet, k, metric, tau, alpha, naive,
+    RuleType rules(*referenceSet, querySet, k, distance, tau, alpha, naive,
         sampleAtLeaves, firstLeafExact, singleSampleLimit, false);
 
     // Find how many samples from the reference set we need and sample uniformly
@@ -284,7 +284,7 @@ Search(const MatType& querySet,
   }
   else if (singleMode)
   {
-    RuleType rules(*referenceSet, querySet, k, metric, tau, alpha, naive,
+    RuleType rules(*referenceSet, querySet, k, distance, tau, alpha, naive,
         sampleAtLeaves, firstLeafExact, singleSampleLimit, false);
 
     // If the reference root node is a leaf, then the sampling has already been
@@ -316,7 +316,7 @@ Search(const MatType& querySet,
     Tree* queryTree = BuildTree<Tree>(const_cast<MatType&>(querySet),
         oldFromNewQueries);
 
-    RuleType rules(*referenceSet, queryTree->Dataset(), k, metric, tau, alpha,
+    RuleType rules(*referenceSet, queryTree->Dataset(), k, distance, tau, alpha,
         naive, sampleAtLeaves, firstLeafExact, singleSampleLimit, false);
     typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
@@ -395,12 +395,12 @@ Search(const MatType& querySet,
 }
 
 template<typename SortPolicy,
-         typename MetricType,
+         typename DistanceType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
+void RASearch<SortPolicy, DistanceType, MatType, TreeType>::Search(
     Tree* queryTree,
     const size_t k,
     arma::Mat<size_t>& neighbors,
@@ -424,8 +424,8 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
   distances.set_size(k, querySet.n_cols);
 
   // Create the helper object for the tree traversal.
-  typedef RASearchRules<SortPolicy, MetricType, Tree> RuleType;
-  RuleType rules(*referenceSet, queryTree->Dataset(), k, metric, tau, alpha,
+  typedef RASearchRules<SortPolicy, DistanceType, Tree> RuleType;
+  RuleType rules(*referenceSet, queryTree->Dataset(), k, distance, tau, alpha,
       naive, sampleAtLeaves, firstLeafExact, singleSampleLimit, false);
 
   // Create the traverser.
@@ -451,12 +451,12 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
 }
 
 template<typename SortPolicy,
-         typename MetricType,
+         typename DistanceType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
+void RASearch<SortPolicy, DistanceType, MatType, TreeType>::Search(
     const size_t k,
     arma::Mat<size_t>& neighbors,
     arma::mat& distances)
@@ -476,8 +476,8 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
   distancePtr->set_size(k, referenceSet->n_cols);
 
   // Create the helper object for the tree traversal.
-  typedef RASearchRules<SortPolicy, MetricType, Tree> RuleType;
-  RuleType rules(*referenceSet, *referenceSet, k, metric, tau, alpha, naive,
+  typedef RASearchRules<SortPolicy, DistanceType, Tree> RuleType;
+  RuleType rules(*referenceSet, *referenceSet, k, distance, tau, alpha, naive,
       sampleAtLeaves, firstLeafExact, singleSampleLimit, true /* same sets */);
 
   if (naive)
@@ -537,12 +537,12 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
 }
 
 template<typename SortPolicy,
-         typename MetricType,
+         typename DistanceType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void RASearch<SortPolicy, MetricType, MatType, TreeType>::ResetQueryTree(
+void RASearch<SortPolicy, DistanceType, MatType, TreeType>::ResetQueryTree(
     Tree* queryNode) const
 {
   queryNode->Stat().Bound() = SortPolicy::WorstDistance();
@@ -553,13 +553,13 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::ResetQueryTree(
 }
 
 template<typename SortPolicy,
-         typename MetricType,
+         typename DistanceType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 template<typename Archive>
-void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
+void RASearch<SortPolicy, DistanceType, MatType, TreeType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   // Serialize preferences for search.
@@ -584,7 +584,7 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
       setOwner = true;
     }
     ar(CEREAL_POINTER(const_cast<MatType*&>(referenceSet)));
-    ar(CEREAL_NVP(metric));
+    ar(CEREAL_NVP(distance));
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
     if (cereal::is_loading<Archive>())
@@ -620,7 +620,7 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
         delete referenceSet;
 
       referenceSet = &referenceTree->Dataset();
-      metric = referenceTree->Metric();
+      distance = referenceTree->Distance();
       setOwner = false;
     }
   }

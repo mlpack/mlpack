@@ -2,7 +2,7 @@
  * @file facilities_test.cpp
  * @author Khizir Siddiqui
  *
- * Test file for facilities in metrics.
+ * Test file for facilities in distance metrics.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

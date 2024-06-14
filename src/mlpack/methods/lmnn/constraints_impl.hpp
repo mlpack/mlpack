@@ -17,8 +17,8 @@
 
 namespace mlpack {
 
-template<typename MetricType>
-Constraints<MetricType>::Constraints(
+template<typename DistanceType>
+Constraints<DistanceType>::Constraints(
     const arma::mat& /* dataset */,
     const arma::Row<size_t>& labels,
     const size_t k) :
@@ -36,8 +36,8 @@ Constraints<MetricType>::Constraints(
   }
 }
 
-template<typename MetricType>
-inline void Constraints<MetricType>::ReorderResults(
+template<typename DistanceType>
+inline void Constraints<DistanceType>::ReorderResults(
                                             const arma::mat& distances,
                                             arma::Mat<size_t>& neighbors,
                                             const arma::vec& norms)
@@ -77,8 +77,8 @@ inline void Constraints<MetricType>::ReorderResults(
 }
 
 // Calculates k similar labeled nearest neighbors.
-template<typename MetricType>
-void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
+template<typename DistanceType>
+void Constraints<DistanceType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
                                               const arma::mat& dataset,
                                               const arma::Row<size_t>& labels,
                                               const arma::vec& norms)
@@ -114,8 +114,8 @@ void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
 
 // Calculates k similar labeled nearest neighbors  on a
 // batch of data points.
-template<typename MetricType>
-void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
+template<typename DistanceType>
+void Constraints<DistanceType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
                                               const arma::mat& dataset,
                                               const arma::Row<size_t>& labels,
                                               const arma::vec& norms,
@@ -161,8 +161,8 @@ void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
 }
 
 // Calculates k differently labeled nearest neighbors.
-template<typename MetricType>
-void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
+template<typename DistanceType>
+void Constraints<DistanceType>::Impostors(arma::Mat<size_t>& outputMatrix,
                                         const arma::mat& dataset,
                                         const arma::Row<size_t>& labels,
                                         const arma::vec& norms)
@@ -198,8 +198,8 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
 
 // Calculates k differently labeled nearest neighbors. The function
 // writes back calculated neighbors & distances to passed matrices.
-template<typename MetricType>
-void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
+template<typename DistanceType>
+void Constraints<DistanceType>::Impostors(arma::Mat<size_t>& outputNeighbors,
                                         arma::mat& outputDistance,
                                         const arma::mat& dataset,
                                         const arma::Row<size_t>& labels,
@@ -237,8 +237,8 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
 
 // Calculates k differently labeled nearest neighbors on a
 // batch of data points.
-template<typename MetricType>
-void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
+template<typename DistanceType>
+void Constraints<DistanceType>::Impostors(arma::Mat<size_t>& outputMatrix,
                                         const arma::mat& dataset,
                                         const arma::Row<size_t>& labels,
                                         const arma::vec& norms,
@@ -285,8 +285,8 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
 
 // Calculates k differently labeled nearest neighbors & distances on a
 // batch of data points.
-template<typename MetricType>
-void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
+template<typename DistanceType>
+void Constraints<DistanceType>::Impostors(arma::Mat<size_t>& outputNeighbors,
                                         arma::mat& outputDistance,
                                         const arma::mat& dataset,
                                         const arma::Row<size_t>& labels,
@@ -335,8 +335,8 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
 
 // Calculates k differently labeled nearest neighbors & distances over some
 // data points.
-template<typename MetricType>
-void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
+template<typename DistanceType>
+void Constraints<DistanceType>::Impostors(arma::Mat<size_t>& outputNeighbors,
                                         arma::mat& outputDistance,
                                         const arma::mat& dataset,
                                         const arma::Row<size_t>& labels,
@@ -384,8 +384,8 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
 
 // Generates {data point, target neighbors, impostors} triplets using
 // TargetNeighbors() and Impostors().
-template<typename MetricType>
-void Constraints<MetricType>::Triplets(arma::Mat<size_t>& outputMatrix,
+template<typename DistanceType>
+void Constraints<DistanceType>::Triplets(arma::Mat<size_t>& outputMatrix,
                                        const arma::mat& dataset,
                                        const arma::Row<size_t>& labels,
                                        const arma::vec& norms)
@@ -418,8 +418,8 @@ void Constraints<MetricType>::Triplets(arma::Mat<size_t>& outputMatrix,
   }
 }
 
-template<typename MetricType>
-inline void Constraints<MetricType>::Precalculate(
+template<typename DistanceType>
+inline void Constraints<DistanceType>::Precalculate(
                                          const arma::Row<size_t>& labels)
 {
   // Make sure the calculation is necessary.

@@ -58,7 +58,7 @@ namespace mlpack {
  * k.Cluster(data, 6, centroids); // 6 clusters.
  * @endcode
  *
- * @tparam MetricType The distance metric to use for this KMeans; see LMetric
+ * @tparam DistanceType The distance metric to use for this KMeans; see LMetric
  *     for an example.
  * @tparam InitialPartitionPolicy Initial partitioning policy; must implement a
  *     default constructor and either 'void Cluster(const arma::mat&, const
@@ -67,14 +67,14 @@ namespace mlpack {
  * @tparam EmptyClusterPolicy Policy for what to do on an empty cluster; must
  *     implement a default constructor and 'void EmptyCluster(const arma::mat&
  *     data, const size_t emptyCluster, const arma::mat& oldCentroids,
- *     arma::mat& newCentroids, arma::Col<size_t>& counts, MetricType& metric,
- *     const size_t iteration)'.
+ *     arma::mat& newCentroids, arma::Col<size_t>& counts,
+ *     DistanceType& distance, const size_t iteration)'.
  * @tparam LloydStepType Implementation of single Lloyd step to use.
  *
  * @see RandomPartition, SampleInitialization, RefinedStart, AllowEmptyClusters,
  *      MaxVarianceNewCluster, NaiveKMeans, ElkanKMeans
  */
-template<typename MetricType = EuclideanDistance,
+template<typename DistanceType = EuclideanDistance,
          typename InitialPartitionPolicy = SampleInitialization,
          typename EmptyClusterPolicy = MaxVarianceNewCluster,
          template<class, class> class LloydStepType = NaiveKMeans,
@@ -88,15 +88,15 @@ class KMeans
    *
    * @param maxIterations Maximum number of iterations allowed before giving up
    *     (0 is valid, but the algorithm may never terminate).
-   * @param metric Optional MetricType object; for when the metric has state
-   *     it needs to store.
+   * @param distance Optional DistanceType object; for when the distance metric
+   *     has state it needs to store.
    * @param partitioner Optional InitialPartitionPolicy object; for when a
    *     specially initialized partitioning policy is required.
    * @param emptyClusterAction Optional EmptyClusterPolicy object; for when a
    *     specially initialized empty cluster policy is required.
    */
   KMeans(const size_t maxIterations = 1000,
-         const MetricType metric = MetricType(),
+         const DistanceType distance = DistanceType(),
          const InitialPartitionPolicy partitioner = InitialPartitionPolicy(),
          const EmptyClusterPolicy emptyClusterAction = EmptyClusterPolicy());
 
@@ -170,9 +170,16 @@ class KMeans
   size_t& MaxIterations() { return maxIterations; }
 
   //! Get the distance metric.
-  const MetricType& Metric() const { return metric; }
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  const DistanceType& Metric() const { return distance; }
   //! Modify the distance metric.
-  MetricType& Metric() { return metric; }
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  DistanceType& Metric() { return distance; }
+
+  //! Get the distance metric.
+  const DistanceType& Distance() const { return distance; }
+  //! Modify the distance metric.
+  DistanceType& Distance() { return distance; }
 
   //! Get the initial partitioning policy.
   const InitialPartitionPolicy& Partitioner() const { return partitioner; }
@@ -193,7 +200,7 @@ class KMeans
   //! Maximum number of iterations before giving up.
   size_t maxIterations;
   //! Instantiated distance metric.
-  MetricType metric;
+  DistanceType distance;
   //! Instantiated initial partitioning policy.
   InitialPartitionPolicy partitioner;
   //! Instantiated empty cluster policy.

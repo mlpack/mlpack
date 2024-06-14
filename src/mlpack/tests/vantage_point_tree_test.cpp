@@ -130,9 +130,9 @@ void CheckBound(TreeType& tree)
     // Ensure that the bound contains all descendant points.
     for (size_t i = 0; i < tree.NumPoints(); ++i)
     {
-      ElemType dist = tree.Bound().Metric().Evaluate(tree.Bound().Center(),
+      ElemType dist = tree.Bound().Distance().Evaluate(tree.Bound().Center(),
           tree.Dataset().col(tree.Point(i)));
-      ElemType hollowDist = tree.Bound().Metric().Evaluate(
+      ElemType hollowDist = tree.Bound().Distance().Evaluate(
           tree.Bound().HollowCenter(),
           tree.Dataset().col(tree.Point(i)));
 
@@ -148,9 +148,9 @@ void CheckBound(TreeType& tree)
     // Ensure that the bound contains all descendant points.
     for (size_t i = 0; i < tree.NumDescendants(); ++i)
     {
-      ElemType dist = tree.Bound().Metric().Evaluate(tree.Bound().Center(),
+      ElemType dist = tree.Bound().Distance().Evaluate(tree.Bound().Center(),
           tree.Dataset().col(tree.Descendant(i)));
-      ElemType hollowDist = tree.Bound().Metric().Evaluate(
+      ElemType hollowDist = tree.Bound().Distance().Evaluate(
           tree.Bound().HollowCenter(),
           tree.Dataset().col(tree.Descendant(i)));
 

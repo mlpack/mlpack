@@ -45,10 +45,10 @@ namespace mlpack {
  * }
  * @endcode
  *
- * @tparam MetricType The type of metric to use for computation.
+ * @tparam DistanceType The type of distance metric to use for computation.
  * @tparam OptimizerType Optimizer to use for developing distance.
  */
-template<typename MetricType = SquaredEuclideanDistance,
+template<typename DistanceType = SquaredEuclideanDistance,
          typename OptimizerType = ens::AMSGrad>
 class LMNN
 {
@@ -61,12 +61,12 @@ class LMNN
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
    * @param k Number of targets to consider.
-   * @param metric Type of metric used for computation.
+   * @param distance Type of distance metric used for computation.
    */
   LMNN(const arma::mat& dataset,
        const arma::Row<size_t>& labels,
        const size_t k,
-       const MetricType metric = MetricType());
+       const DistanceType distance = DistanceType());
 
 
   /**
@@ -126,7 +126,7 @@ class LMNN
   size_t range;
 
   //! Metric to be used.
-  MetricType metric;
+  DistanceType distance;
 
   //! The optimizer to use.
   OptimizerType optimizer;

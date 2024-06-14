@@ -18,7 +18,7 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename TreeType>
+template<typename DistanceType, typename TreeType>
 class DualTreeKMeansRules
 {
  public:
@@ -27,7 +27,7 @@ class DualTreeKMeansRules
                       arma::Row<size_t>& assignments,
                       arma::vec& upperBounds,
                       arma::vec& lowerBounds,
-                      MetricType& metric,
+                      DistanceType& distance,
                       const std::vector<bool>& prunedPoints,
                       const std::vector<size_t>& oldFromNewCentroids,
                       std::vector<bool>& visited);
@@ -64,7 +64,7 @@ class DualTreeKMeansRules
   arma::Row<size_t>& assignments;
   arma::vec& upperBounds;
   arma::vec& lowerBounds;
-  MetricType& metric;
+  DistanceType& distance;
 
   const std::vector<bool>& prunedPoints;
 
