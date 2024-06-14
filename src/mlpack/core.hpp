@@ -41,7 +41,6 @@
 #include <mlpack/core/util/conv_to.hpp>
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/io.hpp>
-#include <mlpack/core/util/deprecated.hpp>
 #include <mlpack/core/data/data.hpp>
 #include <mlpack/core/math/math.hpp>
 

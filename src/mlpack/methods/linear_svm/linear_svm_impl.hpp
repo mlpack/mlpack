@@ -45,7 +45,6 @@ LinearSVM<ModelMatType>::LinearSVM(
 
 template<typename ModelMatType>
 template<typename OptimizerType, typename... CallbackTypes, typename, typename>
-mlpack_deprecated /** Will be removed in mlpack 5.0.0. **/
 LinearSVM<ModelMatType>::LinearSVM(
     const arma::mat& data,
     const arma::Row<size_t>& labels,
@@ -66,7 +65,6 @@ LinearSVM<ModelMatType>::LinearSVM(
 
 template<typename ModelMatType>
 template<typename OptimizerType, typename>
-mlpack_deprecated /** Will be removed in mlpack 5.0.0. **/
 LinearSVM<ModelMatType>::LinearSVM(
     const arma::mat& data,
     const arma::Row<size_t>& labels,
@@ -258,7 +256,6 @@ void LinearSVM<ModelMatType>::Classify(
 }
 
 template<typename ModelMatType>
-mlpack_deprecated
 void LinearSVM<ModelMatType>::Classify(
     const arma::mat& data,
     arma::mat& scores) const
