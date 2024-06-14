@@ -966,9 +966,10 @@ The `IoUDistance` class implements the intersection-over-union distance metric,
 a measure of the overlap between two bounding boxes related to the
 [Jaccard index](https://en.wikipedia.org/wiki/Jaccard_index).
 
-For two bounding boxes, the `IoUDistance` is computed as `1 - (area of
-intersection / area of union)`.  If the bounding boxes overlap completely, the
-distance is 0; if they do not overlap at all, the distance is 1.
+For two bounding boxes, the `IoUDistance` is computed as
+`1 - (area of intersection / area of union)`.
+If the bounding boxes overlap completely, the distance is 0; if they do not
+overlap at all, the distance is 1.
 
 ---
 
@@ -1071,8 +1072,8 @@ method (fast max-kernel search).
 
  * `d = IPMetric<KernelType>()`
    - Construct a new `IPMetric` using a default-constructed `KernelType`.
-   - A default constructor for `KernelType` must be available (e.g. `k =
-     KernelType()`).
+   - A default constructor for `KernelType` must be available
+     (e.g. `k = KernelType()`).
 
  * `d = IPMetric<KernelType>(kernel)`
    - Construct a new `IPMetric` using the given `kernel` (a `KernelType`
@@ -1130,6 +1131,13 @@ std::cout << "  ek(x2, x3): " << ek.Evaluate(x2, x3) << "." << std::endl;
 std::cout << "  ip(x2, x3): " << ip1.Evaluate(x2, x3) << "." << std::endl;
 std::cout << std::endl;
 
+std::cout << "  ek(x1, x3): " << ek.Evaluate(x1, x3) << "." << std::endl;
+std::cout << "  ip(x1, x3): " << ip1.Evaluate(x1, x3) << "." << std::endl;
+std::cout << std::endl;
+
+// Change the bandwidth of the kernel.
+ip1.Kernel().Bandwidth(2.0);
+std::cout << "With bandwidth 2.0:" << std::endl;
 std::cout << "  ek(x1, x3): " << ek.Evaluate(x1, x3) << "." << std::endl;
 std::cout << "  ip(x1, x3): " << ip1.Evaluate(x1, x3) << "." << std::endl;
 std::cout << std::endl;
