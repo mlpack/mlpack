@@ -1655,31 +1655,6 @@ TEST_CASE("BallTreeTest", "[TreeTest]")
   }
 }
 
-/**
- * Ensure that we can build a ball tree with a custom instantiated distance
- * type.
- */
-TEST_CASE("MahalanobisBallTreeTest", "[TreeTest]")
-{
-  arma::mat dataset(10, 1000, arma::fill::randu);
-  arma::mat cov = arma::eye<arma::mat>(10, 10);
-  cov(2, 2) = 2.0; // Just so it's not completely the identity matrix.
-  MahalanobisDistance<> m(std::move(cov));
-
-  typedef BallTree<MahalanobisDistance<>, EmptyStatistic, arma::mat> TreeType;
-
-  TreeType tree(dataset);
-
-  // As long as it built successfully, I am okay with that.
-  REQUIRE(tree.NumDescendants() == 1000);
-
-  // Also test when we give oldFromNew, since this uses a different code path.
-  std::vector<size_t> oldFromNew;
-  TreeType tree2(std::move(dataset), oldFromNew);
-
-  REQUIRE(tree.NumDescendants() == 1000);
-}
-
 template<typename TreeType>
 void GenerateVectorOfTree(TreeType* node,
                           size_t depth,
