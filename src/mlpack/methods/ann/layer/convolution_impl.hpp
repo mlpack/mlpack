@@ -432,8 +432,8 @@ void ConvolutionType<
                   dilatedMappedError.slice(outMap + offset * maps),
                   rotatedFilters.slice((outMap * inMaps) + inMap),
                   curG,
-                  1, 
-                  1, 
+                  strideWidth, 
+                  strideHeight, 
                   1, 
                   1, 
                   true); 
@@ -519,8 +519,8 @@ void ConvolutionType<
             tempCube.slice(inMap + fullInputOffset),
             curError,
             gradientTemp.slice((outMap * inMaps) + inMap),
-            1,
-            1,
+            strideWidth,
+            strideHeight,
             strideWidth,
             strideHeight,
             true);
