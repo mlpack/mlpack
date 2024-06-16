@@ -101,11 +101,11 @@ int main()
 mlpack comes with a number of pre-written distance metrics that satisfy the
 `DistanceType` policy:
 
-<!-- TODO: link to the core.md documentation -->
-
- - `ManhattanDistance`
- - `EuclideanDistance`
- - `ChebyshevDistance`
- - `MahalanobisDistance`
- - `LMetric` (for arbitrary L-metrics)
- - `IPMetric` (requires a [KernelType](kernels.md) parameter)
+ - [`ManhattanDistance`](../user/core.md#lmetric)
+ - [`EuclideanDistance`](../user/core.md#lmetric)
+ - [`ChebyshevDistance`](../user/core.md#lmetric)
+ - [`MahalanobisDistance`](../user/core.md#mahalanobisdistance)
+ - [`LMetric`](../user/core.md#lmetric) (for arbitrary L-metrics)
+ - [`IPMetric`](../user/core.md#ipmetrickerneltype) (requires a
+   [KernelType](kernels.md) parameter)
+ - [`IoUDistance`](../user/core.md#ioudistance)

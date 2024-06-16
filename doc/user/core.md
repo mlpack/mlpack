@@ -873,8 +873,8 @@ Supported metrics:
  * [`LMetric`](#lmetric): generalized L-metric/Lp-metric, including
    Manhattan/Euclidean/Chebyshev distances
  * [`IoUDistance`](#ioudistance): intersection-over-union distance
- * [`IPMetric<KernelType>`](#ipmetric): inner product metric (e.g. induced
-   metric over a [Mercer kernel](#kernels))
+ * [`IPMetric<KernelType>`](#ipmetrickerneltype): inner product metric (e.g.
+   induced metric over a [Mercer kernel](#kernels))
  * [`MahalanobisDistance`](#mahalanobisdistance): weighted Euclidean distance
    with weights specified by a covariance matrix
  * [Implement a custom metric](../developer/distances.md)
