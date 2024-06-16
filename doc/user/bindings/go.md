@@ -10,7 +10,7 @@ Further useful mlpack documentation links are given below.
 
  - [mlpack homepage](https://www.mlpack.org/)
  - [mlpack on Github](https://github.com/mlpack/mlpack)
- - [mlpack main documentation page](https://www.mlpack.org/docs.html)
+ - [mlpack main documentation page](https://www.mlpack.org/doc/index.html)
 
 See also the quickstart guide for Go:
 
