@@ -363,3 +363,35 @@ TEST_CASE("LecunNormalInitTest", "[InitRulesTest]")
   REQUIRE(weights3d.n_cols == cols);
   REQUIRE(weights3d.n_slices == slices);
 }
+
+/**
+ * Simple test of the LayerInitialization class.
+ */
+TEST_CASE("LayerInitTest", "[InitRulesTest]")
+{
+  Linear* linearModule_0 = new Linear(5);
+  Linear* linearModule_1 = new Linear(2);
+
+  arma::mat linearModule_0_params = arma::randu(30, 1);
+  arma::mat linearModule_1_params = arma::randu(12, 1);
+
+  // Set the parameters of the layers outside of the network.
+  linearModule_0->Parameters() = linearModule_0_params;
+  linearModule_1->Parameters() = linearModule_1_params;
+
+  arma::mat input = arma::ones(5, 1);
+  arma::mat response;
+  NegativeLogLikelihood outputLayer;
+
+  FFN<NegativeLogLikelihood, LayerInitialization> model(
+      std::move(outputLayer));
+  model.Add(linearModule_0);
+  model.Add(linearModule_1);
+  model.Add<LogSoftMax>();
+  model.Predict(input, response);
+
+  // The model parameters should be the same as the parameters of
+  // the layers, that we set outside of the network.
+  REQUIRE(arma::accu(model.Parameters() - arma::join_vert(
+      linearModule_0_params, linearModule_1_params)) == 0);
+}
