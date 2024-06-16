@@ -42,7 +42,7 @@ programs, Python bindings, Julia bindings, Go bindings and R bindings.
    [R](doc/quickstart/r.md), [Julia](doc/quickstart/julia.md),
    [Go](doc/quickstart/go.md)
  - [mlpack homepage](https://www.mlpack.org/)
- - [mlpack documentation](https://www.mlpack.org/docs.html)
+ - [mlpack documentation](https://www.mlpack.org/doc/index.html)
  - [Examples repository](https://github.com/mlpack/examples/)
  - [Tutorials](doc/tutorials/README.md)
  - [Development Site (Github)](https://github.com/mlpack/mlpack/)
