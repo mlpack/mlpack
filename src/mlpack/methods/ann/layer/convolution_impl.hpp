@@ -382,11 +382,15 @@ void ConvolutionType<
       inMaps * higherInDimensions * batchSize);
   gTemp.zeros();
 
-  const bool usingPadding = (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0);
+  const bool usingPadding = 
+    (padWLeft != 0 || padWRight != 0 || 
+     padHTop != 0 || padHBottom != 0);
 
-  CubeType dilatedMappedError(mappedError.n_rows * (strideWidth == 1 ? 1 : strideWidth - 1),
-                              mappedError.n_cols * (strideHeight == 1 ? 1 : strideHeight - 1),
-                              mappedError.n_slices);
+  CubeType dilatedMappedError(
+    mappedError.n_rows * (strideWidth == 1 ? 1 : strideWidth - 1),
+    mappedError.n_cols * (strideHeight == 1 ? 1 : strideHeight - 1),
+    mappedError.n_slices
+  );
   #pragma omp parallel for collapse(3)
   for (size_t i = 0; i < mappedError.n_slices; ++i)
   {
