@@ -31,6 +31,12 @@ class InitTraits
    * This is true if the initialization method is used for a single layer.
    */
   static const bool UseLayer = true;
+
+  /**
+   * This is true if the initialization method should use the parameters
+   * of the network.
+   */
+  static const bool UseNetwork = false;
 };
 
 } // namespace mlpack

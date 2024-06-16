@@ -172,6 +172,9 @@ class InitTraits<KathirvalavakumarSubavathiInitialization>
   //! The kathirvalavakumar subavath initialization rule is applied over the
   //! entire network.
   static const bool UseLayer = false;
+  //! The kathirvalavakumar initialization rule does not use the network to set
+  //! the weights.
+  static const bool UseNetwork = false;
 };
 
 

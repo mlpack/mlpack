@@ -162,6 +162,9 @@ class InitTraits<NguyenWidrowInitialization>
  public:
   //! The Nguyen-Widrow initialization rule is applied over the entire network.
   static const bool UseLayer = false;
+  //! The Nguyen-Widrow initialization rule uses the network to set
+  //! the weights.
+  static const bool UseNetwork = true;
 };
 
 } // namespace mlpack

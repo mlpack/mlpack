@@ -25,5 +25,6 @@
 #include "oivs_init.hpp"
 #include "orthogonal_init.hpp"
 #include "random_init.hpp"
+#include "layer_init.hpp"
 
 #endif
