@@ -692,7 +692,10 @@ double DecisionTree<FitnessFunction,
 
       // If the gain is the best possible, no need to keep looking.
       if (bestGain >= 0.0)
+      {
+        nodeGain = bestGain;
         break;
+      }
     }
   }
 
@@ -789,6 +792,8 @@ double DecisionTree<FitnessFunction,
         UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   }
 
+  nodeGain = bestGain;
+
   return -bestGain;
 }
 
@@ -862,7 +867,10 @@ double DecisionTree<FitnessFunction,
 
       // If the gain is the best possible, no need to keep looking.
       if (bestGain >= 0.0)
+      {
+        nodeGain = bestGain;
         break;
+      } 
     }
   }
 
@@ -946,6 +954,8 @@ double DecisionTree<FitnessFunction,
         UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   }
 
+  nodeGain = bestGain;
+
   return -bestGain;
 }
 
@@ -995,6 +1005,21 @@ void DecisionTree<FitnessFunction,
 
   children[CalculateDirection(point)]->Classify(point, prediction,
       probabilities);
+}
+
+//! Prune the tree to reduce complexity.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename DimensionSelectionType,
+         bool NoRecursion>
+void DecisionTree<FitnessFunction,
+                  NumericSplitType,
+                  CategoricalSplitType,
+                  DimensionSelectionType,
+                  NoRecursion>::Prune(double threshold)
+{
+  
 }
 
 //! Return the class for a set of points.

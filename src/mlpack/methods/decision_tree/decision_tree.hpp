@@ -496,6 +496,8 @@ class DecisionTree :
   std::vector<DecisionTree*> children;
   //! The dimension this node splits on.
   size_t splitDimension;
+  //! The best gain on the particular node.
+  double nodeGain;
 
   union
   {
@@ -587,6 +589,8 @@ class DecisionTree :
                const double minimumGainSplit,
                const size_t maximumDepth,
                DimensionSelectionType& dimensionSelector);
+
+  void Prune(double threshold);
 };
 
 /**
