@@ -1013,13 +1013,34 @@ template<typename FitnessFunction,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
          bool NoRecursion>
-void DecisionTree<FitnessFunction,
+bool DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   DimensionSelectionType,
                   NoRecursion>::Prune(double threshold)
 {
-  
+
+  size_t numChildren = node->NumChildren();
+
+  for(size_t i = 0; i < numChildren; ++i)
+  {
+    bool store = numChildren[i]->Prune(threshold);
+    if(store == true)
+    {
+      children.erase(children.begin() + i);
+      numChildren--;
+    }
+  }
+
+  bool flag = false;
+  if(node->nodeGain < threshold)
+  {
+    flag = 1;
+    delete node; 
+  }
+
+  return flag;
+
 }
 
 //! Return the class for a set of points.

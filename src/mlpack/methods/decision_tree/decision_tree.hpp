@@ -590,7 +590,7 @@ class DecisionTree :
                const size_t maximumDepth,
                DimensionSelectionType& dimensionSelector);
 
-  void Prune(double threshold);
+  bool Prune(double threshold);
 };
 
 /**
