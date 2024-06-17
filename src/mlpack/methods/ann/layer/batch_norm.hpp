@@ -165,11 +165,6 @@ class BatchNormType : public Layer<MatType>
   //! Modify the parameters.
   MatType& Parameters() { return weights; }
 
-  //! Get the epsilon.
-  const double& Epsilon() const { return eps; }
-  //! Modify the epsilon.
-  double& Epsilon() { return eps; }
-
   //! Get the gamma.
   const MatType& Gamma() const { return gamma; }
   //! Modify the gamma.
@@ -194,7 +189,9 @@ class BatchNormType : public Layer<MatType>
   size_t InputSize() const { return size; }
 
   //! Get the epsilon value.
-  double Epsilon() const { return eps; }
+  const double &Epsilon() const { return eps; }
+  //! Modify the epsilon.
+  double& Epsilon() { return eps; }
 
   //! Get the momentum value.
   double Momentum() const { return momentum; }
