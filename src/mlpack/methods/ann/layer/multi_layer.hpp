@@ -48,7 +48,11 @@ class MultiLayer : public Layer<MatType>
   MultiLayer& operator=(MultiLayer&& other);
 
   //! Virtual destructor: delete all held layers.
-  virtual ~MultiLayer(){}
+  virtual ~MultiLayer()
+  {
+    for (size_t i = 0; i < network.size(); ++i)
+      delete network[i];
+  }
 
   //! Create a copy of the MultiLayer (this is safe for polymorphic use).
   virtual MultiLayer* Clone() const { return new MultiLayer(*this); }
