@@ -1393,3 +1393,25 @@ TEST_CASE("DifferentMaximumDepthTest", "[DecisionTreeTest]")
   REQUIRE(d2.Child(0).NumChildren() == 2);
   REQUIRE(d2.Child(1).NumChildren() == 2);
 }
+
+/**
+ * Check if the Pruning method is removing nodes if they 
+ * don't meet threshold conditions.
+ */
+TEST_CASE("DifferentMaximumDepthTest", "[DecisionTreeTest]")
+{
+  arma::mat dataset;
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2.csv", dataset))
+    FAIL("Cannot load test dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt!");
+
+  DecisionTree<> d(dataset, labels, 3, 10, 1e-7, 1);
+
+  // Set the threshold high to ensure that it deletes root node.
+  bool flag = d.Prune(10);
+
+  REQUIRE(flag == true);
+}
+

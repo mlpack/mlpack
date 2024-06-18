@@ -453,6 +453,8 @@ class DecisionTree :
                 arma::Row<size_t>& predictions,
                 arma::mat& probabilities) const;
 
+  bool Prune(double threshold);
+
   /**
    * Serialize the tree.
    */
@@ -589,8 +591,6 @@ class DecisionTree :
                const double minimumGainSplit,
                const size_t maximumDepth,
                DimensionSelectionType& dimensionSelector);
-
-  bool Prune(double threshold);
 };
 
 /**
