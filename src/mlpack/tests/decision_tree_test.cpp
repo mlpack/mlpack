@@ -1398,7 +1398,7 @@ TEST_CASE("DifferentMaximumDepthTest", "[DecisionTreeTest]")
  * Check if the Pruning method is removing nodes if they 
  * don't meet threshold conditions.
  */
-TEST_CASE("DifferentMaximumDepthTest", "[DecisionTreeTest]")
+TEST_CASE("PruningBaseTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
