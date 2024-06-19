@@ -1019,7 +1019,6 @@ bool DecisionTree<FitnessFunction,
                   DimensionSelectionType,
                   NoRecursion>::Prune(double threshold)
 {
-
   size_t numChildren = node->NumChildren();
 
   for(size_t i = 0; i < numChildren; ++i)
