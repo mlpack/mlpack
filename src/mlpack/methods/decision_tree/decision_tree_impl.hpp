@@ -1028,6 +1028,7 @@ bool DecisionTree<FitnessFunction,
     {
       children.erase(children.begin() + i);
       numChildren--;
+      i--;
     }
   }
 
