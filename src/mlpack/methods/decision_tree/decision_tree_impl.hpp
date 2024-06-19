@@ -1024,7 +1024,7 @@ bool DecisionTree<FitnessFunction,
   for (size_t i = 0; i < numChildren; ++i)
   {
     bool store = numChildren[i]->Prune(threshold);
-    if(store == true)
+    if (store == true)
     {
       children.erase(children.begin() + i);
       numChildren--;
