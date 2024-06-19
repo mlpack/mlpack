@@ -1039,7 +1039,6 @@ bool DecisionTree<FitnessFunction,
   }
 
   return flag;
-
 }
 
 //! Return the class for a set of points.
