@@ -47,7 +47,6 @@ inline LinearRegression<ModelMatType>::LinearRegression(
 
 template<typename ModelMatType>
 template<typename T>
-mlpack_deprecated /** Will be removed in mlpack 5.0.0. */
 inline double LinearRegression<ModelMatType>::Train(
     const arma::mat& predictors,
     const arma::rowvec& responses,
@@ -59,7 +58,6 @@ inline double LinearRegression<ModelMatType>::Train(
 
 template<typename ModelMatType>
 template<typename T>
-mlpack_deprecated /** Will be removed in mlpack 5.0.0. */
 inline double LinearRegression<ModelMatType>::Train(
     const arma::mat& predictors,
     const arma::rowvec& responses,
