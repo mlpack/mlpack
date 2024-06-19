@@ -1021,7 +1021,7 @@ bool DecisionTree<FitnessFunction,
 {
   size_t numChildren = node->NumChildren();
 
-  for(size_t i = 0; i < numChildren; ++i)
+  for (size_t i = 0; i < numChildren; ++i)
   {
     bool store = numChildren[i]->Prune(threshold);
     if(store == true)
