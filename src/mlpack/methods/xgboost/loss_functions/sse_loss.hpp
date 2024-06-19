@@ -38,7 +38,7 @@ class SSELoss
   }
 
   /**
-   * Returns the initial predition for gradient boosting.
+   * Returns the initial prediction for gradient boosting.
    */
   template<typename VecType>
   typename VecType::elem_type InitialPrediction(const VecType& values)
@@ -89,7 +89,14 @@ class SSELoss
     gradients = (input.row(1) - input.row(0)).t();
     hessians = arma::vec(input.n_cols, arma::fill::ones);
 
-    return std::pow(ApplyL1(accu(gradients)), 2) / (accu(hessians) + lambda);
+    // Apply L1 regularization to the sum of gradients.
+    double sumGradients = accu(gradients);
+    double regGradients = ApplyL1(sumGradients, alpha);
+
+    // Calculate the loss using the regularized gradients and hessians.
+    double loss = std::pow(regGradients, 2) / (accu(hessians) + lambda);
+
+    return loss;
   }
  private:
   //! The L1 regularization parameter.

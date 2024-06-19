@@ -16,6 +16,7 @@
 
 // Base definition of the XGBoostModel class.
 #include "xgboost.hpp"
+#include "loss_functions/sse_loss.hpp"
 #include <mlpack/core.hpp>
 
 // Defined within the mlpack namespace.
@@ -61,19 +62,32 @@ double ComputeLearningRate(const MatType& predictions,
     return bestLearningRate;
 }
 
+arma::Row<size_t> Loss(arma::Row<size_t>& residue, arma::Row<size_t>& predictions, double& loss)
+{
+  // Defining alpha and lambda values (for regularization).
+  double alpha = 10;
+  double lambda = 10;
+  
+  SSELoss lossObj(alpha, lambda);
 
-double ApplyL1(const double sumGradients, const double alpha) {
-    if (sumGradients > alpha) {
-        return sumGradients - alpha;
-    } else if (sumGradients < -alpha) {
-        return sumGradients + alpha;
-    }
-    return 0;
-}
+  arma::mat combinedInput(2, residue.n_cols);
 
+  for (size_t i = 0; i < residue.n_cols ; ++i)
+  {
+    combinedInput(0, i) = residue(i);
+    combinedInput(1, i) = predictions(i);
+  }
 
-double ApplyL2(const double sumGradients, const double lambda) {
-    return sumGradients / (1 + lambda);
+  // Weight vector we will not use for now
+  arma::mat weights; 
+
+  loss = lossObj.Evaluate<false, arma::mat, arma::mat>(combinedInput, weights);
+
+  double leafVal = lossObj.OutputLeafValue(combinedInput, weights);
+
+  arma::Row<size_t> output(residue.n_cols, arma::fill::value(leafVal));
+
+  return predictions + output;
 }
 
 template<typename WeakLearnerType, typename MatType>
@@ -128,13 +142,10 @@ void XGBoost<WeakLearnerType, MatType>::
     // Compute the learning rate for this iteration.
     double learningRate = ComputeLearningRate(predictions, residue);
 
-    for (size_t i = 0; i < labels.n_cols; ++i) 
-    {
-      double grad = (double)residue(i) - (double)(learningRate * predictions(i));
-      double gradL1 = ApplyL1(grad, alpha); // Apply L1 regularization
-      double gradL2 = ApplyL2(gradL1, lambda); // Apply L2 regularization on the L1 regularized gradient
-      residue(i) = (size_t)abs(gradL2);
-    }
+    predictions = learningRate * predictions;
+
+    double loss; 
+    residue = Loss(residue, predictions, loss);
 
     delete wPtr;
         
