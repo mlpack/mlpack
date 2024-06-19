@@ -453,6 +453,13 @@ class DecisionTree :
                 arma::Row<size_t>& predictions,
                 arma::mat& probabilities) const;
 
+  /**
+   * Prune the tree to reduce the chances of a overfitting by reducing the branches
+   * with lower gain than a threshold value.
+   *
+   * @param threshold Determines the minimum required gain for a particular node
+   * below which the node may be pruned.
+   */
   bool Prune(double threshold);
 
   /**
