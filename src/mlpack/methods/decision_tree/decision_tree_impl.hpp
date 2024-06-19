@@ -1032,7 +1032,7 @@ bool DecisionTree<FitnessFunction,
   }
 
   bool flag = false;
-  if(node->nodeGain < threshold)
+  if (node->nodeGain < threshold)
   {
     flag = 1;
     delete node; 
