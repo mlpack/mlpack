@@ -2,8 +2,8 @@
  * @file methods/xgboost/loss_functions/sse_loss.hpp
  * @author Rishabh Garg
  *
- * The sum of squared error loss class, which is a loss funtion for gradient
- * xgboost based decision trees.
+ * The sum of squared error loss class, which is a loss function for
+ * xgboost.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
