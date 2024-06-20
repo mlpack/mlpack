@@ -17,10 +17,9 @@
 
 namespace mlpack {
 
-
-template<typename InputDataType, typename OutputDataType>
-NearestInterpolation<InputDataType, OutputDataType>::
-  NearestInterpolation():
+template<typename MatType>
+NearestInterpolationType<MatType>::NearestInterpolationType():
+  Layer<MatType>(),
   inRowSize(0),
   inColSize(0),
   outRowSize(0),
@@ -31,27 +30,89 @@ NearestInterpolation<InputDataType, OutputDataType>::
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-NearestInterpolation<InputDataType, OutputDataType>::
-NearestInterpolation(const size_t inRowSize,
+template<typename MatType>
+NearestInterpolationType<MatType>::
+NearestInterpolationType(const size_t inRowSize,
                      const size_t inColSize,
                      const size_t outRowSize,
                      const size_t outColSize,
                      const size_t depth) :
-    inRowSize(inRowSize),
-    inColSize(inColSize),
-    outRowSize(outRowSize),
-    outColSize(outColSize),
-    depth(depth),
-    batchSize(0)
+  Layer<MatType>(),
+  inRowSize(inRowSize),
+  inColSize(inColSize),
+  outRowSize(outRowSize),
+  outColSize(outColSize),
+  depth(depth),
+  batchSize(0)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void NearestInterpolation<InputDataType, OutputDataType>::Forward(
-  const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename MatType>
+NearestInterpolationType<MatType>::
+NearestInterpolationType(const NearestInterpolationType& other) :
+  Layer<MatType>(),
+  inRowSize(other.inRowSize),
+  inColSize(other.inColSize),
+  outRowSize(other.outRowSize),
+  outColSize(other.outColSize),
+  depth(other.depth),
+  batchSize(other.batchSize)
+{
+  // Nothing to do here. 
+}
+
+template<typename MatType>
+NearestInterpolationType<MatType>::
+NearestInterpolationType(NearestInterpolationType&& other) :
+  Layer<MatType>(std::move(other)),
+  inRowSize(std::move(other.inRowSize)),
+  inColSize(std::move(other.inColSize)),
+  outRowSize(std::move(other.outRowSize)),
+  outColSize(std::move(other.outColSize)),
+  depth(std::move(other.depth)),
+  batchSize(std::move(other.batchSize))
+{
+  // Nothing to do here.
+}
+
+template<typename MatType>
+NearestInterpolationType<MatType>&
+NearestInterpolationType<MatType>::
+operator=(const NearestInterpolationType& other) 
+{
+  if (&other != this) {
+    Layer<MatType>::operator=(other);
+    inRowSize = other.inRowSize;
+    inColSize = other.inColSize;
+    outRowSize = other.outRowSize;
+    outColSize = other.outColSize;
+    depth = other.depth;
+    batchSize = other.batchSize;
+  }
+  return *this;
+}
+
+template<typename MatType>
+NearestInterpolationType<MatType>&
+NearestInterpolationType<MatType>::
+operator=(NearestInterpolationType&& other) 
+{
+  if (&other != this) {
+    Layer<MatType>::operator=(std::move(other));
+    inRowSize = std::move(other.inRowSize);
+    inColSize = std::move(other.inColSize);
+    outRowSize = std::move(other.outRowSize);
+    outColSize = std::move(other.outColSize);
+    depth = std::move(other.depth);
+    batchSize = std::move(other.batchSize);
+  }
+  return *this;
+}
+
+template<typename MatType>
+void NearestInterpolationType<MatType>::Forward(
+  const MatType& input, MatType& output)
 {
   batchSize = input.n_cols;
   if (output.is_empty())
@@ -65,7 +126,7 @@ void NearestInterpolation<InputDataType, OutputDataType>::Forward(
   assert(inRowSize >= 2);
   assert(inColSize >= 2);
 
-  arma::cube inputAsCube(const_cast<arma::Mat<eT>&>(input).memptr(),
+  arma::cube inputAsCube(const_cast<MatType&>(input).memptr(),
       inRowSize, inColSize, depth * batchSize, false, false);
   arma::cube outputAsCube(output.memptr(), outRowSize, outColSize,
       depth * batchSize, false, true);
@@ -90,12 +151,11 @@ void NearestInterpolation<InputDataType, OutputDataType>::Forward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void NearestInterpolation<InputDataType, OutputDataType>::Backward(
-  const arma::Mat<eT>& /*input*/,
-  const arma::Mat<eT>& gradient,
-  arma::Mat<eT>& output)
+template<typename MatType>
+void NearestInterpolationType<MatType>::Backward(
+  const MatType& /*input*/,
+  const MatType& gradient,
+  MatType& output)
 {
   if (output.is_empty())
   {
@@ -112,7 +172,7 @@ void NearestInterpolation<InputDataType, OutputDataType>::Backward(
 
   arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
       depth * batchSize, false, true);
-  arma::cube gradientAsCube(((arma::Mat<eT>&) gradient).memptr(), outRowSize,
+  arma::cube gradientAsCube(((MatType&) gradient).memptr(), outRowSize,
       outColSize, depth * batchSize, false, false);
 
   double scaleRow = (double)(inRowSize) / outRowSize;
@@ -142,9 +202,16 @@ void NearestInterpolation<InputDataType, OutputDataType>::Backward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename MatType>
+void NearestInterpolationType<MatType>::ComputeOutputDimensions()
+{
+  this->outputDimensions[0] = outRowSize * outColSize * depth;
+  this->outputDimensions[1] = batchSize;
+}
+
+template<typename MatType>
 template<typename Archive>
-void NearestInterpolation<InputDataType, OutputDataType>::serialize(
+void NearestInterpolationType<MatType>::serialize(
   Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(inRowSize));

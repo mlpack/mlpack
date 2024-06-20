@@ -46,6 +46,7 @@
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/multihead_attention.hpp>
+#include <mlpack/methods/ann/layer/nearest_interpolation.hpp>
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/padding.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
