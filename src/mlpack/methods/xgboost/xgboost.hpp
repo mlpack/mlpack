@@ -21,9 +21,20 @@
 // Written in mlpack namespace.
 namespace mlpack {
 
+template<typename WeakLearnerType, typename MatType>
 class XGBoost
 {
+  XGBoost() {/*Nothing to do*/}
 
+  private:
+
+  template<bool UseExistingWeakLearner, typename... WeakLearnerArgs>
+  void TrainInternal(const MatType& data,
+                const arma::Row<size_t>& labels,
+                const size_t numModels,
+                const size_t numClasses,
+                const WeakLearnerType& wl,
+                WeakLearnerArgs&&... weakLearnerArgs);
 };
 
 }

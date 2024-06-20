@@ -83,11 +83,7 @@ arma::Row<size_t> Loss(arma::Row<size_t>& residue, arma::Row<size_t>& prediction
 
   loss = lossObj.Evaluate<false, arma::mat, arma::mat>(combinedInput, weights);
 
-  double leafVal = lossObj.OutputLeafValue(combinedInput, weights);
-
-  arma::Row<size_t> output(residue.n_cols, arma::fill::value(leafVal));
-
-  return predictions + output;
+  return residue - predictions;
 }
 
 template<typename WeakLearnerType, typename MatType>
@@ -110,6 +106,9 @@ void XGBoost<WeakLearnerType, MatType>::
   arma::Row<ElemType> weights(labels.n_cols);
 
   weakLearners.clear();
+
+  // Define pruning threshold
+  double pruningThreshold = 1;
   
   arma::Row<size_t> residue = labels;
 
@@ -134,10 +133,11 @@ void XGBoost<WeakLearnerType, MatType>::
 
     WeakLearnerType w = *wPtr;
 
-    weakLearners.push_back(w);
-
     arma::Row<size_t> predictions(residue.n_cols, arma::fill::zeros);
     w.Classify(data, predictions);
+    w.Prune(pruningThreshold);
+
+    weakLearners.push_back(w);
 
     // Compute the learning rate for this iteration.
     double learningRate = ComputeLearningRate(predictions, residue);
