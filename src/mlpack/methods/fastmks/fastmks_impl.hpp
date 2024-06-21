@@ -576,7 +576,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
           continue; // Don't return the point as its own candidate.
 
         const double eval = distance.Kernel().Evaluate(referenceSet->col(q),
-                                                     referenceSet->col(r));
+                                                       referenceSet->col(r));
 
         if (eval > pqueue.top().first)
         {

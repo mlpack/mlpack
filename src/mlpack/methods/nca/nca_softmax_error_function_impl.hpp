@@ -63,8 +63,8 @@ double SoftmaxErrorFunction<DistanceType>::Evaluate(const arma::mat& coordinates
 //! for a given batch size and from an initial index.
 template<typename DistanceType>
 double SoftmaxErrorFunction<DistanceType>::Evaluate(const arma::mat& coordinates,
-                                                  const size_t begin,
-                                                  const size_t batchSize)
+                                                    const size_t begin,
+                                                    const size_t batchSize)
 {
   // Unfortunately each evaluation will take O(N) time because it requires a
   // scan over all points in the dataset.  Our objective is to compute p_i.
@@ -110,7 +110,7 @@ double SoftmaxErrorFunction<DistanceType>::Evaluate(const arma::mat& coordinates
 //! The non-separable implementation, where Precalculate() is used.
 template<typename DistanceType>
 void SoftmaxErrorFunction<DistanceType>::Gradient(const arma::mat& coordinates,
-                                                arma::mat& gradient)
+                                                  arma::mat& gradient)
 {
   // Calculate the denominators and numerators, if necessary.
   Precalculate(coordinates);
@@ -159,9 +159,9 @@ void SoftmaxErrorFunction<DistanceType>::Gradient(const arma::mat& coordinates,
 template <typename DistanceType>
 template <typename GradType>
 void SoftmaxErrorFunction<DistanceType>::Gradient(const arma::mat& coordinates,
-                                                const size_t begin,
-                                                GradType& gradient,
-                                                const size_t batchSize)
+                                                  const size_t begin,
+                                                  GradType& gradient,
+                                                  const size_t batchSize)
 {
   // The gradient involves two matrix terms which are eventually combined into
   // one.

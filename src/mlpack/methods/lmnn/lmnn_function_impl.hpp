@@ -20,11 +20,11 @@ namespace mlpack {
 
 template<typename DistanceType>
 LMNNFunction<DistanceType>::LMNNFunction(const arma::mat& datasetIn,
-                                       const arma::Row<size_t>& labelsIn,
-                                       size_t k,
-                                       double regularization,
-                                       size_t range,
-                                       DistanceType distance) :
+                                         const arma::Row<size_t>& labelsIn,
+                                         size_t k,
+                                         double regularization,
+                                         size_t range,
+                                         DistanceType distance) :
     k(k),
     distance(distance),
     regularization(regularization),

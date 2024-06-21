@@ -38,7 +38,7 @@ DTBRules(const arma::mat& dataSet,
 template<typename DistanceType, typename TreeType>
 inline mlpack_force_inline
 double DTBRules<DistanceType, TreeType>::BaseCase(const size_t queryIndex,
-                                                const size_t referenceIndex)
+                                                  const size_t referenceIndex)
 {
   // Check if the points are in the same component at this iteration.
   // If not, return the distance between them.  Also, store a better result as
@@ -76,7 +76,7 @@ double DTBRules<DistanceType, TreeType>::BaseCase(const size_t queryIndex,
 
 template<typename DistanceType, typename TreeType>
 double DTBRules<DistanceType, TreeType>::Score(const size_t queryIndex,
-                                             TreeType& referenceNode)
+                                               TreeType& referenceNode)
 {
   size_t queryComponentIndex = connections.Find(queryIndex);
 
@@ -98,8 +98,8 @@ double DTBRules<DistanceType, TreeType>::Score(const size_t queryIndex,
 
 template<typename DistanceType, typename TreeType>
 double DTBRules<DistanceType, TreeType>::Rescore(const size_t queryIndex,
-                                               TreeType& /* referenceNode */,
-                                               const double oldScore)
+                                                 TreeType& /* referenceNode */,
+                                                 const double oldScore)
 {
   // We don't need to check component membership again, because it can't
   // change inside a single iteration.
@@ -109,7 +109,7 @@ double DTBRules<DistanceType, TreeType>::Rescore(const size_t queryIndex,
 
 template<typename DistanceType, typename TreeType>
 double DTBRules<DistanceType, TreeType>::Score(TreeType& queryNode,
-                                             TreeType& referenceNode)
+                                               TreeType& referenceNode)
 {
   // If all the queries belong to the same component as all the references
   // then we prune.
@@ -129,8 +129,8 @@ double DTBRules<DistanceType, TreeType>::Score(TreeType& queryNode,
 
 template<typename DistanceType, typename TreeType>
 double DTBRules<DistanceType, TreeType>::Rescore(TreeType& queryNode,
-                                               TreeType& /* referenceNode */,
-                                               const double oldScore) const
+                                                 TreeType& /* referenceNode */,
+                                                 const double oldScore) const
 {
   const double bound = CalculateBound(queryNode);
   return (oldScore > bound) ? DBL_MAX : oldScore;

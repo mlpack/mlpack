@@ -79,7 +79,7 @@ RangeSearchRules<DistanceType, TreeType>::BaseCase(
 template<typename DistanceType, typename TreeType>
 typename RangeSearchRules<DistanceType, TreeType>::ElemType
 RangeSearchRules<DistanceType, TreeType>::Score(const size_t queryIndex,
-                                              TreeType& referenceNode)
+                                                TreeType& referenceNode)
 {
   // We must get the minimum and maximum distances and store them in this
   // object.
@@ -152,7 +152,7 @@ RangeSearchRules<DistanceType, TreeType>::Rescore(
 template<typename DistanceType, typename TreeType>
 typename RangeSearchRules<DistanceType, TreeType>::ElemType
 RangeSearchRules<DistanceType, TreeType>::Score(TreeType& queryNode,
-                                              TreeType& referenceNode)
+                                                TreeType& referenceNode)
 {
   RangeType<ElemType> distances;
   if (TreeTraits<TreeType>::FirstPointIsCentroid)

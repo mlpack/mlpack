@@ -19,7 +19,7 @@ namespace mlpack {
 
 template<typename DistanceType, typename MatType>
 HamerlyKMeans<DistanceType, MatType>::HamerlyKMeans(const MatType& dataset,
-                                                  DistanceType& distance) :
+                                                    DistanceType& distance) :
     dataset(dataset),
     distance(distance),
     distanceCalculations(0)

@@ -48,7 +48,7 @@ BallBound<DistanceType, VecType>::BallBound(const size_t dimension) :
  */
 template<typename DistanceType, typename VecType>
 BallBound<DistanceType, VecType>::BallBound(const ElemType radius,
-                                           const VecType& center) :
+                                            const VecType& center) :
     radius(radius),
     center(center),
     distance(new DistanceType()),
