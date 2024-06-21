@@ -83,8 +83,8 @@ class DropoutType : public Layer<MatType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename T = MatType, typename std::enable_if_t<arma::is_arma_type<T>::value, int> = 0>
-  void ForwardImpl(const T& input, T& output);
+  template<typename MatType, typename std::enable_if_t<arma::is_arma_type<MatType>::value>* = 0>
+  void ForwardImpl(const MatType& input, MatType& output);
 
   /**
    * General implementation of the forward pass of the dropout layer.
@@ -92,8 +92,8 @@ class DropoutType : public Layer<MatType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename T = MatType, typename std::enable_if_t<!arma::is_arma_type<T>::value, int> = 0>
-  void ForwardImpl(const T& input, T& output);
+  template<typename MatType, typename std::enable_if_t<!arma::is_arma_type<MatType>::value>* = 0>
+  void ForwardImpl(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of the dropout layer.
