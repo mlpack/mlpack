@@ -171,10 +171,11 @@ void NearestInterpolationType<MatType>::Backward(
   assert(outRowSize >= 2);
   assert(outColSize >= 2);
 
-  arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
-      depth * batchSize, false, true);
-  arma::cube gradientAsCube(((MatType&) gradient).memptr(), outRowSize,
-      outColSize, depth * batchSize, false, false);
+  arma::cube outputAsCube;
+  arma::cube gradientAsCube;
+
+  MakeAlias(outputAsCube, output, inRowSize, inColSize, depth*batchSize, 0, true);
+  MakeAlias(gradientAsCube, gradient, outRowSize, outColSize, depth*batchSize, 0, false);
 
   double scaleRow = (double)(inRowSize) / outRowSize;
   double scaleCol = (double)(inColSize) / outColSize;
