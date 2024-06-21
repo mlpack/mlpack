@@ -21,7 +21,7 @@ namespace mlpack {
 //! Construct the tree.
 template<typename DistanceType, typename StatisticType, typename MatType>
 Octree<DistanceType, StatisticType, MatType>::Octree(const MatType& dataset,
-                                                   const size_t maxLeafSize) :
+                                                     const size_t maxLeafSize) :
     begin(0),
     count(dataset.n_cols),
     bound(dataset.n_rows),
@@ -147,7 +147,7 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
 //! Construct the tree.
 template<typename DistanceType, typename StatisticType, typename MatType>
 Octree<DistanceType, StatisticType, MatType>::Octree(MatType&& dataset,
-                                                   const size_t maxLeafSize) :
+                                                     const size_t maxLeafSize) :
     begin(0),
     count(dataset.n_cols),
     bound(dataset.n_rows),

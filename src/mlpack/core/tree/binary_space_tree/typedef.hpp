@@ -259,10 +259,10 @@ using MaxRPTree = BinarySpaceTree<DistanceType,
  */
 template<typename DistanceType, typename StatisticType, typename MatType>
 using RPTree = BinarySpaceTree<DistanceType,
-                                  StatisticType,
-                                  MatType,
-                                  HRectBound,
-                                  RPTreeMeanSplit>;
+                               StatisticType,
+                               MatType,
+                               HRectBound,
+                               RPTreeMeanSplit>;
 
 /**
  * The Universal B-tree. When recursively splitting nodes, the class

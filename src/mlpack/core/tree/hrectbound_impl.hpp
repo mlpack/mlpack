@@ -514,7 +514,7 @@ HRectBound<DistanceType, ElemType>::RangeDistance(
       return RangeType<ElemType>(loSum, hiSum);
     else if (DistanceType::Power == 2)
       return RangeType<ElemType>((ElemType) std::sqrt(loSum),
-                                       (ElemType) std::sqrt(hiSum));
+                                 (ElemType) std::sqrt(hiSum));
     else
     {
       return RangeType<ElemType>(

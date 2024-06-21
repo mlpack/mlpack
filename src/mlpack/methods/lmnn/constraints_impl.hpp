@@ -38,9 +38,9 @@ Constraints<DistanceType>::Constraints(
 
 template<typename DistanceType>
 inline void Constraints<DistanceType>::ReorderResults(
-                                            const arma::mat& distances,
-                                            arma::Mat<size_t>& neighbors,
-                                            const arma::vec& norms)
+    const arma::mat& distances,
+    arma::Mat<size_t>& neighbors,
+    const arma::vec& norms)
 {
   // Shortcut...
   if (neighbors.n_rows == 1)
@@ -79,9 +79,9 @@ inline void Constraints<DistanceType>::ReorderResults(
 // Calculates k similar labeled nearest neighbors.
 template<typename DistanceType>
 void Constraints<DistanceType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
-                                              const arma::mat& dataset,
-                                              const arma::Row<size_t>& labels,
-                                              const arma::vec& norms)
+                                                const arma::mat& dataset,
+                                                const arma::Row<size_t>& labels,
+                                                const arma::vec& norms)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -116,11 +116,11 @@ void Constraints<DistanceType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
 // batch of data points.
 template<typename DistanceType>
 void Constraints<DistanceType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
-                                              const arma::mat& dataset,
-                                              const arma::Row<size_t>& labels,
-                                              const arma::vec& norms,
-                                              const size_t begin,
-                                              const size_t batchSize)
+                                                const arma::mat& dataset,
+                                                const arma::Row<size_t>& labels,
+                                                const arma::vec& norms,
+                                                const size_t begin,
+                                                const size_t batchSize)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -163,9 +163,9 @@ void Constraints<DistanceType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
 // Calculates k differently labeled nearest neighbors.
 template<typename DistanceType>
 void Constraints<DistanceType>::Impostors(arma::Mat<size_t>& outputMatrix,
-                                        const arma::mat& dataset,
-                                        const arma::Row<size_t>& labels,
-                                        const arma::vec& norms)
+                                          const arma::mat& dataset,
+                                          const arma::Row<size_t>& labels,
+                                          const arma::vec& norms)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -200,10 +200,10 @@ void Constraints<DistanceType>::Impostors(arma::Mat<size_t>& outputMatrix,
 // writes back calculated neighbors & distances to passed matrices.
 template<typename DistanceType>
 void Constraints<DistanceType>::Impostors(arma::Mat<size_t>& outputNeighbors,
-                                        arma::mat& outputDistance,
-                                        const arma::mat& dataset,
-                                        const arma::Row<size_t>& labels,
-                                        const arma::vec& norms)
+                                          arma::mat& outputDistance,
+                                          const arma::mat& dataset,
+                                          const arma::Row<size_t>& labels,
+                                          const arma::vec& norms)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -239,11 +239,11 @@ void Constraints<DistanceType>::Impostors(arma::Mat<size_t>& outputNeighbors,
 // batch of data points.
 template<typename DistanceType>
 void Constraints<DistanceType>::Impostors(arma::Mat<size_t>& outputMatrix,
-                                        const arma::mat& dataset,
-                                        const arma::Row<size_t>& labels,
-                                        const arma::vec& norms,
-                                        const size_t begin,
-                                        const size_t batchSize)
+                                          const arma::mat& dataset,
+                                          const arma::Row<size_t>& labels,
+                                          const arma::vec& norms,
+                                          const size_t begin,
+                                          const size_t batchSize)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -287,12 +287,12 @@ void Constraints<DistanceType>::Impostors(arma::Mat<size_t>& outputMatrix,
 // batch of data points.
 template<typename DistanceType>
 void Constraints<DistanceType>::Impostors(arma::Mat<size_t>& outputNeighbors,
-                                        arma::mat& outputDistance,
-                                        const arma::mat& dataset,
-                                        const arma::Row<size_t>& labels,
-                                        const arma::vec& norms,
-                                        const size_t begin,
-                                        const size_t batchSize)
+                                          arma::mat& outputDistance,
+                                          const arma::mat& dataset,
+                                          const arma::Row<size_t>& labels,
+                                          const arma::vec& norms,
+                                          const size_t begin,
+                                          const size_t batchSize)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -337,12 +337,12 @@ void Constraints<DistanceType>::Impostors(arma::Mat<size_t>& outputNeighbors,
 // data points.
 template<typename DistanceType>
 void Constraints<DistanceType>::Impostors(arma::Mat<size_t>& outputNeighbors,
-                                        arma::mat& outputDistance,
-                                        const arma::mat& dataset,
-                                        const arma::Row<size_t>& labels,
-                                        const arma::vec& norms,
-                                        const arma::uvec& points,
-                                        const size_t numPoints)
+                                          arma::mat& outputDistance,
+                                          const arma::mat& dataset,
+                                          const arma::Row<size_t>& labels,
+                                          const arma::vec& norms,
+                                          const arma::uvec& points,
+                                          const size_t numPoints)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -386,9 +386,9 @@ void Constraints<DistanceType>::Impostors(arma::Mat<size_t>& outputNeighbors,
 // TargetNeighbors() and Impostors().
 template<typename DistanceType>
 void Constraints<DistanceType>::Triplets(arma::Mat<size_t>& outputMatrix,
-                                       const arma::mat& dataset,
-                                       const arma::Row<size_t>& labels,
-                                       const arma::vec& norms)
+                                         const arma::mat& dataset,
+                                         const arma::Row<size_t>& labels,
+                                         const arma::vec& norms)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -420,7 +420,7 @@ void Constraints<DistanceType>::Triplets(arma::Mat<size_t>& outputMatrix,
 
 template<typename DistanceType>
 inline void Constraints<DistanceType>::Precalculate(
-                                         const arma::Row<size_t>& labels)
+    const arma::Row<size_t>& labels)
 {
   // Make sure the calculation is necessary.
   if (precalculated)

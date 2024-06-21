@@ -226,7 +226,7 @@ void CellBound<DistanceType, ElemType>::AddBound(
 template<typename DistanceType, typename ElemType>
 template<typename MatType>
 void CellBound<DistanceType, ElemType>::InitHighBound(size_t numEqualBits,
-                                                    const MatType& data)
+                                                      const MatType& data)
 {
   arma::Col<AddressElemType> tmpHiAddress(hiAddress);
   arma::Col<AddressElemType> tmpLoAddress(hiAddress);
@@ -315,7 +315,7 @@ void CellBound<DistanceType, ElemType>::InitHighBound(size_t numEqualBits,
 template<typename DistanceType, typename ElemType>
 template<typename MatType>
 void CellBound<DistanceType, ElemType>::InitLowerBound(size_t numEqualBits,
-                                                     const MatType& data)
+                                                       const MatType& data)
 {
   arma::Col<AddressElemType> tmpHiAddress(loAddress);
   arma::Col<AddressElemType> tmpLoAddress(loAddress);
@@ -659,8 +659,7 @@ inline ElemType CellBound<DistanceType, ElemType>::MaxDistance(
  */
 template<typename DistanceType, typename ElemType>
 inline ElemType CellBound<DistanceType, ElemType>::MaxDistance(
-    const CellBound& other)
-    const
+    const CellBound& other) const
 {
   ElemType maxSum = std::numeric_limits<ElemType>::lowest();
 

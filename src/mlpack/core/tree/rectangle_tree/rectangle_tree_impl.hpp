@@ -27,7 +27,7 @@ template<typename DistanceType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 void RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
-              AuxiliaryInformationType>::
+                   AuxiliaryInformationType>::
 BuildStatistics(RectangleTree* node)
 {
   // Recurse first.

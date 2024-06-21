@@ -128,9 +128,9 @@ void LMNNFunction<DistanceType>::Shuffle()
 // Update cache transformation matrices.
 template<typename DistanceType>
 inline void LMNNFunction<DistanceType>::UpdateCache(
-                                          const arma::mat& transformation,
-                                          const size_t begin,
-                                          const size_t batchSize)
+    const arma::mat& transformation,
+    const size_t begin,
+    const size_t batchSize)
 {
   // Are there any empty transformation matrices?
   size_t index = oldTransformationMatrices.size();
@@ -185,10 +185,10 @@ inline void LMNNFunction<DistanceType>::UpdateCache(
 // Calculate norm of change in transformation.
 template<typename DistanceType>
 inline void LMNNFunction<DistanceType>::TransDiff(
-                                std::map<size_t, double>& transformationDiffs,
-                                const arma::mat& transformation,
-                                const size_t begin,
-                                const size_t batchSize)
+    std::map<size_t, double>& transformationDiffs,
+    const arma::mat& transformation,
+    const size_t begin,
+    const size_t batchSize)
 {
   for (size_t i = begin; i < begin + batchSize; ++i)
   {
@@ -340,8 +340,8 @@ double LMNNFunction<DistanceType>::Evaluate(const arma::mat& transformation)
 //! Calculate cost over batches.
 template<typename DistanceType>
 double LMNNFunction<DistanceType>::Evaluate(const arma::mat& transformation,
-                                          const size_t begin,
-                                          const size_t batchSize)
+                                            const size_t begin,
+                                            const size_t batchSize)
 {
   double cost = 0;
 
@@ -470,7 +470,7 @@ double LMNNFunction<DistanceType>::Evaluate(const arma::mat& transformation,
 template<typename DistanceType>
 template<typename GradType>
 void LMNNFunction<DistanceType>::Gradient(const arma::mat& transformation,
-                                        GradType& gradient)
+                                          GradType& gradient)
 {
   // Apply distance metric over dataset.
   transformedDataset = transformation * dataset;
@@ -601,9 +601,9 @@ void LMNNFunction<DistanceType>::Gradient(const arma::mat& transformation,
 template<typename DistanceType>
 template<typename GradType>
 void LMNNFunction<DistanceType>::Gradient(const arma::mat& transformation,
-                                        const size_t begin,
-                                        GradType& gradient,
-                                        const size_t batchSize)
+                                          const size_t begin,
+                                          GradType& gradient,
+                                          const size_t batchSize)
 {
   // Apply distance metric over dataset.
   transformedDataset = transformation * dataset;
@@ -739,8 +739,8 @@ void LMNNFunction<DistanceType>::Gradient(const arma::mat& transformation,
 template<typename DistanceType>
 template<typename GradType>
 double LMNNFunction<DistanceType>::EvaluateWithGradient(
-                                   const arma::mat& transformation,
-                                   GradType& gradient)
+    const arma::mat& transformation,
+    GradType& gradient)
 {
   double cost = 0;
 
@@ -880,10 +880,10 @@ double LMNNFunction<DistanceType>::EvaluateWithGradient(
 template<typename DistanceType>
 template<typename GradType>
 double LMNNFunction<DistanceType>::EvaluateWithGradient(
-                                   const arma::mat& transformation,
-                                   const size_t begin,
-                                   GradType& gradient,
-                                   const size_t batchSize)
+    const arma::mat& transformation,
+    const size_t begin,
+    GradType& gradient,
+    const size_t batchSize)
 {
   double cost = 0;
 
