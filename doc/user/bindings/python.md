@@ -428,9 +428,9 @@ An example usage to run DBSCAN on the dataset in `'input'` with a radius of 0.5 
 >>> d = decision_tree(check_input_matrices=False, copy_all_inputs=False,
         input_model=None, labels=np.empty([0], dtype=np.uint64),
         maximum_depth=0, minimum_gain_split=1e-07, minimum_leaf_size=20,
-        print_training_accuracy=False, print_training_error=False,
-        test=np.empty([0, 0]), test_labels=np.empty([0], dtype=np.uint64),
-        training=np.empty([0, 0]), verbose=False, weights=np.empty([0, 0]))
+        print_training_accuracy=False, test=np.empty([0, 0]),
+        test_labels=np.empty([0], dtype=np.uint64), training=np.empty([0, 0]),
+        verbose=False, weights=np.empty([0, 0]))
 >>> output_model = d['output_model']
 >>> predictions = d['predictions']
 >>> probabilities = d['probabilities']
@@ -452,7 +452,6 @@ An implementation of an ID3-style decision tree for classification, which suppor
 | `minimum_gain_split` | [`float`](#doc_float) | Minimum gain for node splitting. | `1e-07` |
 | `minimum_leaf_size` | [`int`](#doc_int) | Minimum number of points in a leaf. | `20` |
 | `print_training_accuracy` | [`bool`](#doc_bool) | Print the training accuracy. | `False` |
-| `print_training_error` | [`bool`](#doc_bool) | Print the training error (deprecated; will be removed in mlpack 4.0.0). | `False` |
 | `test` | [`categorical matrix`](#doc_categorical_matrix) | Testing dataset (may be categorical). | `np.empty([0, 0])` |
 | `test_labels` | [`int vector`](#doc_int_vector) | Test point labels, if accuracy calculation is desired. | `np.empty([0], dtype=np.uint64)` |
 | `training` | [`categorical matrix`](#doc_categorical_matrix) | Training dataset (may be categorical). | `np.empty([0, 0])` |
@@ -476,7 +475,7 @@ Train and evaluate using a decision tree.  Given a dataset containing numeric or
 
 The training set and associated labels are specified with the `training` and `labels` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
 
-When a model is trained, the `output_model` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `input_model` parameter.  The `input_model` parameter may not be specified when the `training` parameter is specified.  The `minimum_leaf_size` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `minimum_gain_split` parameter specifies the minimum gain that is needed for the node to split.  The `maximum_depth` parameter specifies the maximum depth of the tree.  If `print_training_error` is specified, the training error will be printed.
+When a model is trained, the `output_model` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `input_model` parameter.  The `input_model` parameter may not be specified when the `training` parameter is specified.  The `minimum_leaf_size` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `minimum_gain_split` parameter specifies the minimum gain that is needed for the node to split.  The `maximum_depth` parameter specifies the maximum depth of the tree.  If `print_training_accuracy` is specified, the training accuracy will be printed.
 
 Test data may be specified with the `test` parameter, and if performance numbers are desired for that test set, labels may be specified with the `test_labels` parameter.  Predictions for each test point may be saved via the `predictions` output parameter.  Class probabilities for each prediction may be saved with the `probabilities` output parameter.
 
@@ -1422,7 +1421,7 @@ For example, the following command will perform KPCA on the dataset `'input'` us
 ### See also
 
  - [Kernel principal component analysis on Wikipedia](https://en.wikipedia.org/wiki/Kernel_principal_component_analysis)
- - [Kernel Principal Component Analysis (pdf)](https://pca.narod.ru/scholkopf_kernel.pdf)
+ - [Nonlinear Component Analysis as a Kernel Eigenvalue Problem](https://www.mlpack.org/papers/kpca.pdf)
  - [KernelPCA class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kernel_pca/kernel_pca.hpp)
 
 ## kmeans()
@@ -1513,7 +1512,7 @@ To run k-means on that same dataset with initial centroids specified in `'initia
  - [dbscan()](#dbscan)
  - [k-means++](https://en.wikipedia.org/wiki/K-means%2B%2B)
  - [Using the triangle inequality to accelerate k-means (pdf)](https://cdn.aaai.org/ICML/2003/ICML03-022.pdf)
- - [Making k-means even faster (pdf)](https://epubs.siam.org/doi/pdf/10.1137/1.9781611972801.12)
+ - [Making k-means even faster (pdf)](https://www.cse.iitd.ac.in/~rjaiswal/2015/col870/Project/Faster-k-means/Hamerly.pdf)
  - [Accelerating exact k-means algorithms with geometric reasoning (pdf)](http://reports-archive.adm.cs.cmu.edu/anon/anon/usr/ftp/usr0/ftp/2000/CMU-CS-00-105.pdf)
  - [A dual-tree algorithm for fast k-means clustering with large k (pdf)](http://www.ratml.org/pub/pdf/2017dual.pdf)
  - [KMeans class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kmeans/kmeans.hpp)
@@ -1839,7 +1838,7 @@ An implementation of Local Coordinate Coding (LCC), a data transformation techni
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
 | `initial_dictionary` | [`matrix`](#doc_matrix) | Optional initial dictionary. | `np.empty([0, 0])` |
-| `input_model` | [`LocalCoordinateCodingType`](#doc_model) | Input LCC model. | `None` |
+| `input_model` | [`LocalCoordinateCoding<>Type`](#doc_model) | Input LCC model. | `None` |
 | `lambda_` | [`float`](#doc_float) | Weighted l1-norm regularization parameter. | `0` |
 | `max_iterations` | [`int`](#doc_int) | Maximum number of iterations for LCC (0 indicates no limit). | `0` |
 | `normalize` | [`bool`](#doc_bool) | If set, the input data matrix will be normalized before coding. | `False` |
@@ -1857,7 +1856,7 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 |------------|------------|-------------------|
 | `codes` | [`matrix`](#doc_matrix) | Output codes matrix. | 
 | `dictionary` | [`matrix`](#doc_matrix) | Output dictionary matrix. | 
-| `output_model` | [`LocalCoordinateCodingType`](#doc_model) | Output for trained LCC model. | 
+| `output_model` | [`LocalCoordinateCoding<>Type`](#doc_model) | Output for trained LCC model. | 
 
 ### Detailed documentation
 {: #local_coordinate_coding_detailed-documentation }
@@ -1892,7 +1891,7 @@ An LCC model may be saved using the `output_model` output parameter.  Then, to e
 
  - [sparse_coding()](#sparse_coding)
  - [Nonlinear learning using local coordinate coding (pdf)](https://papers.nips.cc/paper/3875-nonlinear-learning-using-local-coordinate-coding.pdf)
- - [LocalCoordinateCoding C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/local_coordinate_coding/local_coordinate_coding.hpp)
+ - [LocalCoordinateCoding C++ class documentation](../../user/methods/local_coordinate_coding.md)
 
 ## logistic_regression()
 {: #logistic_regression }
@@ -2150,9 +2149,7 @@ For example, to run mean shift clustering on the dataset `'data'` and store the 
         incremental_variance=False, input_model=None, labels=np.empty([0],
         dtype=np.uint64), test=np.empty([0, 0]), training=np.empty([0, 0]),
         verbose=False)
->>> output = d['output']
 >>> output_model = d['output_model']
->>> output_probs = d['output_probs']
 >>> predictions = d['predictions']
 >>> probabilities = d['probabilities']
 ```
@@ -2180,9 +2177,7 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`int vector`](#doc_int_vector) | The matrix in which the predicted labels for the test set will be written (deprecated). | 
 | `output_model` | [`NBCModelType`](#doc_model) | File to save trained Naive Bayes model to. | 
-| `output_probs` | [`matrix`](#doc_matrix) | The matrix in which the predicted probability of labels for the test set will be written (deprecated). | 
 | `predictions` | [`int vector`](#doc_int_vector) | The matrix in which the predicted labels for the test set will be written. | 
 | `probabilities` | [`matrix`](#doc_matrix) | The matrix in which the predicted probability of labels for the test set will be written. | 
 
@@ -2201,8 +2196,6 @@ The `incremental_variance` parameter can be used to force the training to use an
 
 If classifying a test set is desired, the test set may be specified with the `test` parameter, and the classifications may be saved with the `predictions`predictions  parameter.  If saving the trained model is desired, this may be done with the `output_model` output parameter.
 
-Note: the `output` and `output_probs` parameters are deprecated and will be removed in mlpack 4.0.0.  Use `predictions` and `probabilities` instead.
-
 ### Example
 For example, to train a Naive Bayes classifier on the dataset `'data'` with labels `'labels'` and save the model to `'nbc_model'`, the following command may be used:
 
@@ -2215,7 +2208,7 @@ Then, to use `'nbc_model'` to predict the classes of the dataset `'test_set'` an
 
 ```python
 >>> output = nbc(input_model=nbc_model, test=test_set)
->>> predictions = output['output']
+>>> predictions = output['predictions']
 ```
 
 ### See also
@@ -2607,7 +2600,6 @@ For example, to reduce the dimensionality of the matrix `'data'` to 5 dimensions
         input_model=None, labels=np.empty([0], dtype=np.uint64),
         max_iterations=1000, test=np.empty([0, 0]), training=np.empty([0, 0]),
         verbose=False)
->>> output = d['output']
 >>> output_model = d['output_model']
 >>> predictions = d['predictions']
 ```
@@ -2635,7 +2627,6 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`int vector`](#doc_int_vector) | The matrix in which the predicted labels for the test set will be written. | 
 | `output_model` | [`PerceptronModelType`](#doc_model) | Output for trained perceptron model. | 
 | `predictions` | [`int vector`](#doc_int_vector) | The matrix in which the predicted labels for the test set will be written. | 
 
@@ -2645,9 +2636,6 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 This program implements a perceptron, which is a single level neural network. The perceptron makes its predictions based on a linear predictor function combining a set of weights with the feature vector.  The perceptron learning rule is able to converge, given enough iterations (specified using the `max_iterations` parameter), if the data supplied is linearly separable.  The perceptron is parameterized by a matrix of weight vectors that denote the numerical weights of the neural network.
 
 This program allows loading a perceptron from a model (via the `input_model` parameter) or training a perceptron given training data (via the `training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (via the `test` parameter) and the classification results on the test set may be saved with the `predictions` output parameter.  The perceptron model may be saved with the `output_model` output parameter.
-
-Note: the following parameter is deprecated and will be removed in mlpack 4.0.0: `output`.
-Use `predictions` instead of `output`.
 
 ### Example
 The training data given with the `training` option may have class labels as its last dimension (so, if the training data is in CSV format, labels should be the last column).  Alternately, the `labels` parameter may be used to specify a separate matrix of labels.
@@ -3392,7 +3380,7 @@ An implementation of Sparse Coding with Dictionary Learning.  Given a dataset, t
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
 | `initial_dictionary` | [`matrix`](#doc_matrix) | Optional initial dictionary matrix. | `np.empty([0, 0])` |
-| `input_model` | [`SparseCodingType`](#doc_model) | File containing input sparse coding model. | `None` |
+| `input_model` | [`SparseCoding<>Type`](#doc_model) | File containing input sparse coding model. | `None` |
 | `lambda1` | [`float`](#doc_float) | Sparse coding l1-norm regularization parameter. | `0` |
 | `lambda2` | [`float`](#doc_float) | Sparse coding l2-norm regularization parameter. | `0` |
 | `max_iterations` | [`int`](#doc_int) | Maximum number of iterations for sparse coding (0 indicates no limit). | `0` |
@@ -3412,7 +3400,7 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 |------------|------------|-------------------|
 | `codes` | [`matrix`](#doc_matrix) | Matrix to save the output sparse codes of the test matrix (--test_file) to. | 
 | `dictionary` | [`matrix`](#doc_matrix) | Matrix to save the output dictionary to. | 
-| `output_model` | [`SparseCodingType`](#doc_model) | File to save trained sparse coding model to. | 
+| `output_model` | [`SparseCoding<>Type`](#doc_model) | File to save trained sparse coding model to. | 
 
 ### Detailed documentation
 {: #sparse_coding_detailed-documentation }

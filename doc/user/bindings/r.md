@@ -47,7 +47,8 @@ R> library(mlpack)
 R> d <- approx_kfn(algorithm="ds", calculate_error=FALSE,
         exact_distances=matrix(numeric(), 0, 0), input_model=NA, k=0,
         num_projections=5, num_tables=5, query=matrix(numeric(), 0, 0),
-        reference=matrix(numeric(), 0, 0), verbose=FALSE)
+        reference=matrix(numeric(), 0, 0), verbose=getOption("mlpack.verbose",
+        FALSE))
 R> distances <- d$distances
 R> neighbors <- d$neighbors
 R> output_model <- d$output_model
@@ -71,7 +72,7 @@ An implementation of two strategies for furthest neighbor search.  This can be u
 | `num_tables` | [`integer`](#doc_integer) | Number of hash tables to use. | `5` |
 | `query` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing query points. | `matrix(numeric(), 0, 0)` |
 | `reference` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing the reference dataset. | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -144,7 +145,8 @@ R> neighbors <- output$neighbors
 R> library(mlpack)
 R> d <- bayesian_linear_regression(center=FALSE, input=matrix(numeric(),
         0, 0), input_model=NA, responses=matrix(numeric(), 0, 0), scale=FALSE,
-        test=matrix(numeric(), 0, 0), verbose=FALSE)
+        test=matrix(numeric(), 0, 0), verbose=getOption("mlpack.verbose",
+        FALSE))
 R> output_model <- d$output_model
 R> predictions <- d$predictions
 R> stds <- d$stds
@@ -165,7 +167,7 @@ An implementation of the bayesian linear regression. [Detailed documentation](#b
 | `responses` | [`numeric vector`](#doc_numeric_vector) | Matrix of responses/observations (y). | `matrix(numeric(), 0, 0)` |
 | `scale` | [`logical`](#doc_logical) | Scale each feature by their standard deviations if enabled. | `FALSE` |
 | `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing points to regress on (test points). | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -234,7 +236,8 @@ R> d <- cf(algorithm="NMF", all_user_recommendations=FALSE,
         min_residue=1e-05, neighbor_search="euclidean", neighborhood=5,
         normalization="none", query=matrix(integer(), 0, 0), rank=0,
         recommendations=5, seed=0, test=matrix(numeric(), 0, 0),
-        training=matrix(numeric(), 0, 0), verbose=FALSE)
+        training=matrix(numeric(), 0, 0), verbose=getOption("mlpack.verbose",
+        FALSE))
 R> output <- d$output
 R> output_model <- d$output_model
 ```
@@ -264,7 +267,7 @@ An implementation of several collaborative filtering (CF) techniques for recomme
 | `seed` | [`integer`](#doc_integer) | Set the random seed (0 uses std::time(NULL)). | `0` |
 | `test` | [`numeric matrix`](#doc_numeric_matrix) | Test set to calculate RMSE on. | `matrix(numeric(), 0, 0)` |
 | `training` | [`numeric matrix`](#doc_numeric_matrix) | Input dataset to perform CF on. | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -354,7 +357,7 @@ R> recommendations <- output$output
 R> library(mlpack)
 R> d <- dbscan(epsilon=1, input=matrix(numeric(), 0, 0), min_size=5,
         naive=FALSE, selection_type="ordered", single_mode=FALSE,
-        tree_type="kd", verbose=FALSE)
+        tree_type="kd", verbose=getOption("mlpack.verbose", FALSE))
 R> assignments <- d$assignments
 R> centroids <- d$centroids
 ```
@@ -375,7 +378,7 @@ An implementation of DBSCAN clustering.  Given a dataset, this can compute and r
 | `selection_type` | [`character`](#doc_character) | If using point selection policy, the type of selection to use ('ordered', 'random'). | `"ordered"` |
 | `single_mode` | [`logical`](#doc_logical) | If set, single-tree range search (not dual-tree) will be used. | `FALSE` |
 | `tree_type` | [`character`](#doc_character) | If using single-tree or dual-tree search, the type of tree to use ('kd', 'r', 'r-star', 'x', 'hilbert-r', 'r-plus', 'r-plus-plus', 'cover', 'ball'). | `"kd"` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -420,10 +423,10 @@ R> dbscan(input=input, epsilon=0.5, min_size=5)
 R> library(mlpack)
 R> d <- decision_tree(input_model=NA, labels=matrix(integer(), 0, 0),
         maximum_depth=0, minimum_gain_split=1e-07, minimum_leaf_size=20,
-        print_training_accuracy=FALSE, print_training_error=FALSE,
-        test=matrix(numeric(), 0, 0), test_labels=matrix(integer(), 0, 0),
-        training=matrix(numeric(), 0, 0), verbose=FALSE,
-        weights=matrix(numeric(), 0, 0))
+        print_training_accuracy=FALSE, test=matrix(numeric(), 0, 0),
+        test_labels=matrix(integer(), 0, 0), training=matrix(numeric(), 0, 0),
+        verbose=getOption("mlpack.verbose", FALSE), weights=matrix(numeric(), 0,
+        0))
 R> output_model <- d$output_model
 R> predictions <- d$predictions
 R> probabilities <- d$probabilities
@@ -444,11 +447,10 @@ An implementation of an ID3-style decision tree for classification, which suppor
 | `minimum_gain_split` | [`numeric`](#doc_numeric) | Minimum gain for node splitting. | `1e-07` |
 | `minimum_leaf_size` | [`integer`](#doc_integer) | Minimum number of points in a leaf. | `20` |
 | `print_training_accuracy` | [`logical`](#doc_logical) | Print the training accuracy. | `FALSE` |
-| `print_training_error` | [`logical`](#doc_logical) | Print the training error (deprecated; will be removed in mlpack 4.0.0). | `FALSE` |
 | `test` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Testing dataset (may be categorical). | `matrix(numeric(), 0, 0)` |
 | `test_labels` | [`integer vector`](#doc_integer_vector) | Test point labels, if accuracy calculation is desired. | `matrix(integer(), 0, 0)` |
 | `training` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Training dataset (may be categorical). | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 | `weights` | [`numeric matrix`](#doc_numeric_matrix) | The weight of labels | `matrix(numeric(), 0, 0)` |
 
 ### Output options
@@ -468,7 +470,7 @@ Train and evaluate using a decision tree.  Given a dataset containing numeric or
 
 The training set and associated labels are specified with the `training` and `labels` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
 
-When a model is trained, the `output_model` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `input_model` parameter.  The `input_model` parameter may not be specified when the `training` parameter is specified.  The `minimum_leaf_size` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `minimum_gain_split` parameter specifies the minimum gain that is needed for the node to split.  The `maximum_depth` parameter specifies the maximum depth of the tree.  If `print_training_error` is specified, the training error will be printed.
+When a model is trained, the `output_model` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `input_model` parameter.  The `input_model` parameter may not be specified when the `training` parameter is specified.  The `minimum_leaf_size` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `minimum_gain_split` parameter specifies the minimum gain that is needed for the node to split.  The `maximum_depth` parameter specifies the maximum depth of the tree.  If `print_training_accuracy` is specified, the training accuracy will be printed.
 
 Test data may be specified with the `test` parameter, and if performance numbers are desired for that test set, labels may be specified with the `test_labels` parameter.  Predictions for each test point may be saved via the `predictions` output parameter.  Class probabilities for each prediction may be saved with the `probabilities` output parameter.
 
@@ -506,7 +508,8 @@ R> predictions <- output$predictions
 R> library(mlpack)
 R> d <- det(folds=10, input_model=NA, max_leaf_size=10, min_leaf_size=5,
         path_format="lr", skip_pruning=FALSE, test=matrix(numeric(), 0, 0),
-        training=matrix(numeric(), 0, 0), verbose=FALSE)
+        training=matrix(numeric(), 0, 0), verbose=getOption("mlpack.verbose",
+        FALSE))
 R> output_model <- d$output_model
 R> tag_counters_file <- d$tag_counters_file
 R> tag_file <- d$tag_file
@@ -532,7 +535,7 @@ An implementation of density estimation trees for the density estimation task.  
 | `skip_pruning` | [`logical`](#doc_logical) | Whether to bypass the pruning process and output the unpruned tree only. | `FALSE` |
 | `test` | [`numeric matrix`](#doc_numeric_matrix) | A set of test points to estimate the density of. | `matrix(numeric(), 0, 0)` |
 | `training` | [`numeric matrix`](#doc_numeric_matrix) | The data set on which to build a density estimation tree. | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -573,7 +576,7 @@ This program also can provide density estimates for a set of test points, specif
 ```R
 R> library(mlpack)
 R> d <- emst(input=matrix(numeric(), 0, 0), leaf_size=1, naive=FALSE,
-        verbose=FALSE)
+        verbose=getOption("mlpack.verbose", FALSE))
 R> output <- d$output
 ```
 
@@ -589,7 +592,7 @@ An implementation of the Dual-Tree Boruvka algorithm for computing the Euclidean
 | `input` | [`numeric matrix`](#doc_numeric_matrix) | Input data matrix. | `**--**` |
 | `leaf_size` | [`integer`](#doc_integer) | Leaf size in the kd-tree.  One-element leaves give the empirically best performance, but at the cost of greater memory requirements. | `1` |
 | `naive` | [`logical`](#doc_logical) | Compute the MST using O(n^2) naive algorithm. | `FALSE` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -635,7 +638,7 @@ R> library(mlpack)
 R> d <- fastmks(bandwidth=1, base=2, degree=2, input_model=NA, k=0,
         kernel="linear", naive=FALSE, offset=0, query=matrix(numeric(), 0, 0),
         reference=matrix(numeric(), 0, 0), scale=1, single=FALSE,
-        verbose=FALSE)
+        verbose=getOption("mlpack.verbose", FALSE))
 R> indices <- d$indices
 R> kernels <- d$kernels
 R> output_model <- d$output_model
@@ -662,7 +665,7 @@ An implementation of the single-tree and dual-tree fast max-kernel search (FastM
 | `reference` | [`numeric matrix`](#doc_numeric_matrix) | The reference dataset. | `matrix(numeric(), 0, 0)` |
 | `scale` | [`numeric`](#doc_numeric) | Scale of kernel (for hyptan kernel). | `1` |
 | `single` | [`logical`](#doc_logical) | If true, single-tree search is used (as opposed to dual-tree search. | `FALSE` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -710,7 +713,7 @@ R> d <- gmm_train(diagonal_covariance=FALSE, gaussians=0,
         input=matrix(numeric(), 0, 0), input_model=NA,
         kmeans_max_iterations=1000, max_iterations=250, no_force_positive=FALSE,
         noise=0, percentage=0.02, refined_start=FALSE, samplings=100, seed=0,
-        tolerance=1e-10, trials=1, verbose=FALSE)
+        tolerance=1e-10, trials=1, verbose=getOption("mlpack.verbose", FALSE))
 R> output_model <- d$output_model
 ```
 
@@ -737,7 +740,7 @@ An implementation of the EM algorithm for training Gaussian mixture models (GMMs
 | `seed` | [`integer`](#doc_integer) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
 | `tolerance` | [`numeric`](#doc_numeric) | Tolerance for convergence of EM. | `1e-10` |
 | `trials` | [`integer`](#doc_integer) | Number of trials to perform in training GMM. | `1` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -792,7 +795,8 @@ R> new_gmm <- output$output_model
 
 ```R
 R> library(mlpack)
-R> d <- gmm_generate(input_model=NA, samples=0, seed=0, verbose=FALSE)
+R> d <- gmm_generate(input_model=NA, samples=0, seed=0,
+        verbose=getOption("mlpack.verbose", FALSE))
 R> output <- d$output
 ```
 
@@ -808,7 +812,7 @@ A sample generator for pre-trained GMMs.  Given a pre-trained GMM, this can samp
 | `input_model` | [`GMM`](#doc_model) | Input GMM model to generate samples from. | `**--**` |
 | `samples` | [`integer`](#doc_integer) | Number of samples to generate. | `**--**` |
 | `seed` | [`integer`](#doc_integer) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -847,7 +851,7 @@ R> samples <- output$output
 ```R
 R> library(mlpack)
 R> d <- gmm_probability(input=matrix(numeric(), 0, 0), input_model=NA,
-        verbose=FALSE)
+        verbose=getOption("mlpack.verbose", FALSE))
 R> output <- d$output
 ```
 
@@ -862,7 +866,7 @@ A probability calculator for GMMs.  Given a pre-trained GMM and a set of points,
 | `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
 | `input` | [`numeric matrix`](#doc_numeric_matrix) | Input matrix to calculate probabilities of. | `**--**` |
 | `input_model` | [`GMM`](#doc_model) | Input GMM to use as model. | `**--**` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -902,7 +906,7 @@ R> probs <- output$output
 R> library(mlpack)
 R> d <- hmm_train(batch=FALSE, gaussians=0, input_file="",
         input_model=NA, labels_file="", seed=0, states=0, tolerance=1e-05,
-        type="gaussian", verbose=FALSE)
+        type="gaussian", verbose=getOption("mlpack.verbose", FALSE))
 R> output_model <- d$output_model
 ```
 
@@ -924,7 +928,7 @@ An implementation of training algorithms for Hidden Markov Models (HMMs). Given 
 | `states` | [`integer`](#doc_integer) | Number of hidden states in HMM (necessary, unless model_file is specified). | `0` |
 | `tolerance` | [`numeric`](#doc_numeric) | Tolerance of the Baum-Welch algorithm. | `1e-05` |
 | `type` | [`character`](#doc_character) | Type of HMM: discrete \| gaussian \| diag_gmm \| gmm. | `"gaussian"` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -962,7 +966,7 @@ Optionally, a pre-created HMM model can be used as a guess for the transition ma
 ```R
 R> library(mlpack)
 R> d <- hmm_generate(length=0, model=NA, seed=0, start_state=0,
-        verbose=FALSE)
+        verbose=getOption("mlpack.verbose", FALSE))
 R> output <- d$output
 R> state <- d$state
 ```
@@ -980,7 +984,7 @@ A utility to generate random sequences from a pre-trained Hidden Markov Model (H
 | `model` | [`HMMModel`](#doc_model) | Trained HMM to generate sequences with. | `**--**` |
 | `seed` | [`integer`](#doc_integer) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
 | `start_state` | [`integer`](#doc_integer) | Starting state of sequence. | `0` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -1024,7 +1028,7 @@ R> states <- output$state
 ```R
 R> library(mlpack)
 R> d <- hmm_loglik(input=matrix(numeric(), 0, 0), input_model=NA,
-        verbose=FALSE)
+        verbose=getOption("mlpack.verbose", FALSE))
 R> log_likelihood <- d$log_likelihood
 ```
 
@@ -1039,7 +1043,7 @@ A utility for computing the log-likelihood of a sequence for Hidden Markov Model
 | `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
 | `input` | [`numeric matrix`](#doc_numeric_matrix) | File containing observations, | `**--**` |
 | `input_model` | [`HMMModel`](#doc_model) | File containing HMM. | `**--**` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -1078,7 +1082,7 @@ R> hmm_loglik(input=seq, input_model=hmm)
 ```R
 R> library(mlpack)
 R> d <- hmm_viterbi(input=matrix(numeric(), 0, 0), input_model=NA,
-        verbose=FALSE)
+        verbose=getOption("mlpack.verbose", FALSE))
 R> output <- d$output
 ```
 
@@ -1093,7 +1097,7 @@ A utility for computing the most probable hidden state sequence for Hidden Marko
 | `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
 | `input` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing observations, | `**--**` |
 | `input_model` | [`HMMModel`](#doc_model) | Trained HMM to use. | `**--**` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -1137,7 +1141,7 @@ R> d <- hoeffding_tree(batch_mode=FALSE, bins=10, confidence=0.95,
         max_samples=5000, min_samples=100, numeric_split_strategy="binary",
         observations_before_binning=100, passes=1, test=matrix(numeric(), 0, 0),
         test_labels=matrix(integer(), 0, 0), training=matrix(numeric(), 0, 0),
-        verbose=FALSE)
+        verbose=getOption("mlpack.verbose", FALSE))
 R> output_model <- d$output_model
 R> predictions <- d$predictions
 R> probabilities <- d$probabilities
@@ -1166,7 +1170,7 @@ An implementation of Hoeffding trees, a form of streaming decision tree for clas
 | `test` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Testing dataset (may be categorical). | `matrix(numeric(), 0, 0)` |
 | `test_labels` | [`integer vector`](#doc_integer_vector) | Labels of test data. | `matrix(integer(), 0, 0)` |
 | `training` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Training dataset (may be categorical). | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -1227,7 +1231,7 @@ R> d <- kde(abs_error=0, algorithm="dual-tree", bandwidth=1,
         mc_break_coef=0.4, mc_entry_coef=3, mc_probability=0.95,
         monte_carlo=FALSE, query=matrix(numeric(), 0, 0),
         reference=matrix(numeric(), 0, 0), rel_error=0.05, tree="kd-tree",
-        verbose=FALSE)
+        verbose=getOption("mlpack.verbose", FALSE))
 R> output_model <- d$output_model
 R> predictions <- d$predictions
 ```
@@ -1255,7 +1259,7 @@ An implementation of kernel density estimation with dual-tree algorithms. Given 
 | `reference` | [`numeric matrix`](#doc_numeric_matrix) | Input reference dataset use for KDE. | `matrix(numeric(), 0, 0)` |
 | `rel_error` | [`numeric`](#doc_numeric) | Relative error tolerance for the prediction. | `0.05` |
 | `tree` | [`character`](#doc_character) | Tree to use for the prediction.('kd-tree', 'ball-tree', 'cover-tree', 'octree', 'r-tree'). | `"kd-tree"` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -1317,7 +1321,7 @@ R> library(mlpack)
 R> d <- kernel_pca(bandwidth=1, center=FALSE, degree=1,
         input=matrix(numeric(), 0, 0), kernel="", kernel_scale=1,
         new_dimensionality=0, nystroem_method=FALSE, offset=0,
-        sampling="kmeans", verbose=FALSE)
+        sampling="kmeans", verbose=getOption("mlpack.verbose", FALSE))
 R> output <- d$output
 ```
 
@@ -1340,7 +1344,7 @@ An implementation of Kernel Principal Components Analysis (KPCA).  This can be u
 | `nystroem_method` | [`logical`](#doc_logical) | If set, the Nystroem method will be used. | `FALSE` |
 | `offset` | [`numeric`](#doc_numeric) | Offset, for 'hyptan' and 'polynomial' kernels. | `0` |
 | `sampling` | [`character`](#doc_character) | Sampling scheme to use for the Nystroem method: 'kmeans', 'random', 'ordered' | `"kmeans"` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -1395,7 +1399,7 @@ R> transformed <- output$output
 ### See also
 
  - [Kernel principal component analysis on Wikipedia](https://en.wikipedia.org/wiki/Kernel_principal_component_analysis)
- - [Kernel Principal Component Analysis (pdf)](https://pca.narod.ru/scholkopf_kernel.pdf)
+ - [Nonlinear Component Analysis as a Kernel Eigenvalue Problem](https://www.mlpack.org/papers/kpca.pdf)
  - [KernelPCA class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kernel_pca/kernel_pca.hpp)
 
 ## kmeans()
@@ -1411,7 +1415,7 @@ R> d <- kmeans(algorithm="naive", allow_empty_clusters=FALSE,
         input=matrix(numeric(), 0, 0), kill_empty_clusters=FALSE,
         kmeans_plus_plus=FALSE, labels_only=FALSE, max_iterations=1000,
         percentage=0.02, refined_start=FALSE, samplings=100, seed=0,
-        verbose=FALSE)
+        verbose=getOption("mlpack.verbose", FALSE))
 R> centroid <- d$centroid
 R> output <- d$output
 ```
@@ -1439,7 +1443,7 @@ An implementation of several strategies for efficient k-means clustering. Given 
 | `refined_start` | [`logical`](#doc_logical) | Use the refined initial point strategy by Bradley and Fayyad to choose initial points. | `FALSE` |
 | `samplings` | [`integer`](#doc_integer) | Number of samplings to perform for refined start (use when --refined_start is specified). | `100` |
 | `seed` | [`integer`](#doc_integer) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -1485,7 +1489,7 @@ R> final <- output$centroid
  - [dbscan()](#dbscan)
  - [k-means++](https://en.wikipedia.org/wiki/K-means%2B%2B)
  - [Using the triangle inequality to accelerate k-means (pdf)](https://cdn.aaai.org/ICML/2003/ICML03-022.pdf)
- - [Making k-means even faster (pdf)](https://epubs.siam.org/doi/pdf/10.1137/1.9781611972801.12)
+ - [Making k-means even faster (pdf)](https://www.cse.iitd.ac.in/~rjaiswal/2015/col870/Project/Faster-k-means/Hamerly.pdf)
  - [Accelerating exact k-means algorithms with geometric reasoning (pdf)](http://reports-archive.adm.cs.cmu.edu/anon/anon/usr/ftp/usr0/ftp/2000/CMU-CS-00-105.pdf)
  - [A dual-tree algorithm for fast k-means clustering with large k (pdf)](http://www.ratml.org/pub/pdf/2017dual.pdf)
  - [KMeans class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kmeans/kmeans.hpp)
@@ -1501,7 +1505,7 @@ R> library(mlpack)
 R> d <- lars(input=matrix(numeric(), 0, 0), input_model=NA, lambda1=0,
         lambda2=0, no_intercept=FALSE, no_normalize=FALSE,
         responses=matrix(numeric(), 0, 0), test=matrix(numeric(), 0, 0),
-        use_cholesky=FALSE, verbose=FALSE)
+        use_cholesky=FALSE, verbose=getOption("mlpack.verbose", FALSE))
 R> output_model <- d$output_model
 R> output_predictions <- d$output_predictions
 ```
@@ -1524,7 +1528,7 @@ An implementation of Least Angle Regression (Stagewise/laSso), also known as LAR
 | `responses` | [`numeric matrix`](#doc_numeric_matrix) | Matrix of responses/observations (y). | `matrix(numeric(), 0, 0)` |
 | `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing points to regress on (test points). | `matrix(numeric(), 0, 0)` |
 | `use_cholesky` | [`logical`](#doc_logical) | Use Cholesky decomposition during computation rather than explicitly computing the full Gram matrix. | `FALSE` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -1594,7 +1598,8 @@ R> d <- linear_svm(delta=1, epochs=50, input_model=NA,
         no_intercept=FALSE, num_classes=0, optimizer="lbfgs", seed=0,
         shuffle=FALSE, step_size=0.01, test=matrix(numeric(), 0, 0),
         test_labels=matrix(integer(), 0, 0), tolerance=1e-10,
-        training=matrix(numeric(), 0, 0), verbose=FALSE)
+        training=matrix(numeric(), 0, 0), verbose=getOption("mlpack.verbose",
+        FALSE))
 R> output_model <- d$output_model
 R> predictions <- d$predictions
 R> probabilities <- d$probabilities
@@ -1625,7 +1630,7 @@ An implementation of linear SVM for multiclass classification. Given labeled dat
 | `test_labels` | [`integer vector`](#doc_integer_vector) | Matrix containing test labels. | `matrix(integer(), 0, 0)` |
 | `tolerance` | [`numeric`](#doc_numeric) | Convergence tolerance for optimizer. | `1e-10` |
 | `training` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the training set (the matrix of predictors, X). | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -1686,7 +1691,7 @@ R> d <- lmnn(batch_size=50, center=FALSE, distance=matrix(numeric(), 0,
         linear_scan=FALSE, max_iterations=100000, normalize=FALSE,
         optimizer="amsgrad", passes=50, print_accuracy=FALSE, range=1, rank=0,
         regularization=0.5, seed=0, step_size=0.01, tolerance=1e-07,
-        verbose=FALSE)
+        verbose=getOption("mlpack.verbose", FALSE))
 R> centered_data <- d$centered_data
 R> output <- d$output
 R> transformed_data <- d$transformed_data
@@ -1719,7 +1724,7 @@ An implementation of Large Margin Nearest Neighbors (LMNN), a distance learning 
 | `seed` | [`integer`](#doc_integer) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
 | `step_size` | [`numeric`](#doc_numeric) | Step size for AMSGrad, BB_SGD and SGD (alpha). | `0.01` |
 | `tolerance` | [`numeric`](#doc_numeric) | Maximum tolerance for termination of AMSGrad, BB_SGD, SGD or L-BFGS. | `1e-07` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -1788,7 +1793,8 @@ R> library(mlpack)
 R> d <- local_coordinate_coding(atoms=0,
         initial_dictionary=matrix(numeric(), 0, 0), input_model=NA, lambda=0,
         max_iterations=0, normalize=FALSE, seed=0, test=matrix(numeric(), 0, 0),
-        tolerance=0.01, training=matrix(numeric(), 0, 0), verbose=FALSE)
+        tolerance=0.01, training=matrix(numeric(), 0, 0),
+        verbose=getOption("mlpack.verbose", FALSE))
 R> codes <- d$codes
 R> dictionary <- d$dictionary
 R> output_model <- d$output_model
@@ -1813,7 +1819,7 @@ An implementation of Local Coordinate Coding (LCC), a data transformation techni
 | `test` | [`numeric matrix`](#doc_numeric_matrix) | Test points to encode. | `matrix(numeric(), 0, 0)` |
 | `tolerance` | [`numeric`](#doc_numeric) | Tolerance for objective function. | `0.01` |
 | `training` | [`numeric matrix`](#doc_numeric_matrix) | Matrix of training data (X). | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -1858,7 +1864,7 @@ R> new_codes <- output$codes
 
  - [sparse_coding()](#sparse_coding)
  - [Nonlinear learning using local coordinate coding (pdf)](https://papers.nips.cc/paper/3875-nonlinear-learning-using-local-coordinate-coding.pdf)
- - [LocalCoordinateCoding C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/local_coordinate_coding/local_coordinate_coding.hpp)
+ - [LocalCoordinateCoding C++ class documentation](../../user/methods/local_coordinate_coding.md)
 
 ## logistic_regression()
 {: #logistic_regression }
@@ -1872,7 +1878,8 @@ R> d <- logistic_regression(batch_size=64, decision_boundary=0.5,
         input_model=NA, labels=matrix(integer(), 0, 0), lambda=0,
         max_iterations=10000, optimizer="lbfgs", print_training_accuracy=FALSE,
         step_size=0.01, test=matrix(numeric(), 0, 0), tolerance=1e-10,
-        training=matrix(numeric(), 0, 0), verbose=FALSE)
+        training=matrix(numeric(), 0, 0), verbose=getOption("mlpack.verbose",
+        FALSE))
 R> output_model <- d$output_model
 R> predictions <- d$predictions
 R> probabilities <- d$probabilities
@@ -1899,7 +1906,7 @@ An implementation of L2-regularized logistic regression for two-class classifica
 | `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing test dataset. | `matrix(numeric(), 0, 0)` |
 | `tolerance` | [`numeric`](#doc_numeric) | Convergence tolerance for optimizer. | `1e-10` |
 | `training` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the training set (the matrix of predictors, X). | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -1966,7 +1973,8 @@ R> library(mlpack)
 R> d <- lsh(bucket_size=500, hash_width=0, input_model=NA, k=0,
         num_probes=0, projections=10, query=matrix(numeric(), 0, 0),
         reference=matrix(numeric(), 0, 0), second_hash_size=99901, seed=0,
-        tables=30, true_neighbors=matrix(integer(), 0, 0), verbose=FALSE)
+        tables=30, true_neighbors=matrix(integer(), 0, 0),
+        verbose=getOption("mlpack.verbose", FALSE))
 R> distances <- d$distances
 R> neighbors <- d$neighbors
 R> output_model <- d$output_model
@@ -1993,7 +2001,7 @@ An implementation of approximate k-nearest-neighbor search with locality-sensiti
 | `seed` | [`integer`](#doc_integer) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
 | `tables` | [`integer`](#doc_integer) | The number of hash tables to be used. | `30` |
 | `true_neighbors` | [`integer matrix`](#doc_integer_matrix) | Matrix of true neighbors to compute recall with (the recall is printed when -v is specified). | `matrix(integer(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -2043,7 +2051,7 @@ This program also has many other parameters to control its functionality; see th
 R> library(mlpack)
 R> d <- mean_shift(force_convergence=FALSE, in_place=FALSE,
         input=matrix(numeric(), 0, 0), labels_only=FALSE, max_iterations=1000,
-        radius=0, verbose=FALSE)
+        radius=0, verbose=getOption("mlpack.verbose", FALSE))
 R> centroid <- d$centroid
 R> output <- d$output
 ```
@@ -2063,7 +2071,7 @@ A fast implementation of mean-shift clustering using dual-tree range search.  Gi
 | `labels_only` | [`logical`](#doc_logical) | If specified, only the output labels will be written to the file specified by --output_file. | `FALSE` |
 | `max_iterations` | [`integer`](#doc_integer) | Maximum number of iterations before mean shift terminates. | `1000` |
 | `radius` | [`numeric`](#doc_numeric) | If the distance between two centroids is less than the given radius, one will be removed.  A radius of 0 or less means an estimate will be calculated and used for the radius. | `0` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -2109,10 +2117,9 @@ R> centroids <- output$centroid
 R> library(mlpack)
 R> d <- nbc(incremental_variance=FALSE, input_model=NA,
         labels=matrix(integer(), 0, 0), test=matrix(numeric(), 0, 0),
-        training=matrix(numeric(), 0, 0), verbose=FALSE)
-R> output <- d$output
+        training=matrix(numeric(), 0, 0), verbose=getOption("mlpack.verbose",
+        FALSE))
 R> output_model <- d$output_model
-R> output_probs <- d$output_probs
 R> predictions <- d$predictions
 R> probabilities <- d$probabilities
 ```
@@ -2131,7 +2138,7 @@ An implementation of the Naive Bayes Classifier, used for classification. Given 
 | `labels` | [`integer vector`](#doc_integer_vector) | A file containing labels for the training set. | `matrix(integer(), 0, 0)` |
 | `test` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the test set. | `matrix(numeric(), 0, 0)` |
 | `training` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the training set. | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -2139,9 +2146,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`integer vector`](#doc_integer_vector) | The matrix in which the predicted labels for the test set will be written (deprecated). | 
 | `output_model` | [`NBCModel`](#doc_model) | File to save trained Naive Bayes model to. | 
-| `output_probs` | [`numeric matrix`](#doc_numeric_matrix) | The matrix in which the predicted probability of labels for the test set will be written (deprecated). | 
 | `predictions` | [`integer vector`](#doc_integer_vector) | The matrix in which the predicted labels for the test set will be written. | 
 | `probabilities` | [`numeric matrix`](#doc_numeric_matrix) | The matrix in which the predicted probability of labels for the test set will be written. | 
 
@@ -2160,8 +2165,6 @@ The `incremental_variance` parameter can be used to force the training to use an
 
 If classifying a test set is desired, the test set may be specified with the `test` parameter, and the classifications may be saved with the `predictions`predictions  parameter.  If saving the trained model is desired, this may be done with the `output_model` output parameter.
 
-Note: the `output` and `output_probs` parameters are deprecated and will be removed in mlpack 4.0.0.  Use `predictions` and `probabilities` instead.
-
 ### Example
 For example, to train a Naive Bayes classifier on the dataset `"data"` with labels `"labels"` and save the model to `"nbc_model"`, the following command may be used:
 
@@ -2174,7 +2177,7 @@ Then, to use `"nbc_model"` to predict the classes of the dataset `"test_set"` an
 
 ```R
 R> output <- nbc(input_model=nbc_model, test=test_set)
-R> predictions <- output$output
+R> predictions <- output$predictions
 ```
 
 ### See also
@@ -2196,8 +2199,8 @@ R> d <- nca(armijo_constant=0.0001, batch_size=50,
         input=matrix(numeric(), 0, 0), labels=matrix(integer(), 0, 0),
         linear_scan=FALSE, max_iterations=500000, max_line_search_trials=50,
         max_step=1e+20, min_step=1e-20, normalize=FALSE, num_basis=5,
-        optimizer="sgd", seed=0, step_size=0.01, tolerance=1e-07, verbose=FALSE,
-        wolfe=0.9)
+        optimizer="sgd", seed=0, step_size=0.01, tolerance=1e-07,
+        verbose=getOption("mlpack.verbose", FALSE), wolfe=0.9)
 R> output <- d$output
 ```
 
@@ -2225,7 +2228,7 @@ An implementation of neighborhood components analysis, a distance learning techn
 | `seed` | [`integer`](#doc_integer) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
 | `step_size` | [`numeric`](#doc_numeric) | Step size for stochastic gradient descent (alpha). | `0.01` |
 | `tolerance` | [`numeric`](#doc_numeric) | Maximum tolerance for termination of SGD or L-BFGS. | `1e-07` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 | `wolfe` | [`numeric`](#doc_numeric) | Wolfe condition parameter for L-BFGS. | `0.9` |
 
 ### Output options
@@ -2270,7 +2273,8 @@ R> d <- knn(algorithm="dual_tree", epsilon=0, input_model=NA, k=0,
         leaf_size=20, query=matrix(numeric(), 0, 0), random_basis=FALSE,
         reference=matrix(numeric(), 0, 0), rho=0.7, seed=0, tau=0,
         tree_type="kd", true_distances=matrix(numeric(), 0, 0),
-        true_neighbors=matrix(integer(), 0, 0), verbose=FALSE)
+        true_neighbors=matrix(integer(), 0, 0),
+        verbose=getOption("mlpack.verbose", FALSE))
 R> distances <- d$distances
 R> neighbors <- d$neighbors
 R> output_model <- d$output_model
@@ -2299,7 +2303,7 @@ An implementation of k-nearest-neighbor search using single-tree and dual-tree a
 | `tree_type` | [`character`](#doc_character) | Type of tree to use: 'kd', 'vp', 'rp', 'max-rp', 'ub', 'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', 'r-plus-plus', 'spill', 'oct'. | `"kd"` |
 | `true_distances` | [`numeric matrix`](#doc_numeric_matrix) | Matrix of true distances to compute the effective error (average relative error) (it is printed when -v is specified). | `matrix(numeric(), 0, 0)` |
 | `true_neighbors` | [`integer matrix`](#doc_integer_matrix) | Matrix of true neighbors to compute the recall (it is printed when -v is specified). | `matrix(integer(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -2347,7 +2351,8 @@ R> d <- kfn(algorithm="dual_tree", epsilon=0, input_model=NA, k=0,
         leaf_size=20, percentage=1, query=matrix(numeric(), 0, 0),
         random_basis=FALSE, reference=matrix(numeric(), 0, 0), seed=0,
         tree_type="kd", true_distances=matrix(numeric(), 0, 0),
-        true_neighbors=matrix(integer(), 0, 0), verbose=FALSE)
+        true_neighbors=matrix(integer(), 0, 0),
+        verbose=getOption("mlpack.verbose", FALSE))
 R> distances <- d$distances
 R> neighbors <- d$neighbors
 R> output_model <- d$output_model
@@ -2375,7 +2380,7 @@ An implementation of k-furthest-neighbor search using single-tree and dual-tree 
 | `tree_type` | [`character`](#doc_character) | Type of tree to use: 'kd', 'vp', 'rp', 'max-rp', 'ub', 'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', 'r-plus-plus', 'oct'. | `"kd"` |
 | `true_distances` | [`numeric matrix`](#doc_numeric_matrix) | Matrix of true distances to compute the effective error (average relative error) (it is printed when -v is specified). | `matrix(numeric(), 0, 0)` |
 | `true_neighbors` | [`integer matrix`](#doc_integer_matrix) | Matrix of true neighbors to compute the recall (it is printed when -v is specified). | `matrix(integer(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -2421,7 +2426,7 @@ R> library(mlpack)
 R> d <- nmf(initial_h=matrix(numeric(), 0, 0),
         initial_w=matrix(numeric(), 0, 0), input=matrix(numeric(), 0, 0),
         max_iterations=10000, min_residue=1e-05, rank=0, seed=0,
-        update_rules="multdist", verbose=FALSE)
+        update_rules="multdist", verbose=getOption("mlpack.verbose", FALSE))
 R> h <- d$h
 R> w <- d$w
 ```
@@ -2443,7 +2448,7 @@ An implementation of non-negative matrix factorization.  This can be used to dec
 | `rank` | [`integer`](#doc_integer) | Rank of the factorization. | `**--**` |
 | `seed` | [`integer`](#doc_integer) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
 | `update_rules` | [`character`](#doc_character) | Update rules for each iteration; ( multdist \| multdiv \| als ). | `"multdist"` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -2496,7 +2501,8 @@ R> H <- output$h
 ```R
 R> library(mlpack)
 R> d <- pca(decomposition_method="exact", input=matrix(numeric(), 0, 0),
-        new_dimensionality=0, scale=FALSE, var_to_retain=0, verbose=FALSE)
+        new_dimensionality=0, scale=FALSE, var_to_retain=0,
+        verbose=getOption("mlpack.verbose", FALSE))
 R> output <- d$output
 ```
 
@@ -2514,7 +2520,7 @@ An implementation of several strategies for principal components analysis (PCA),
 | `new_dimensionality` | [`integer`](#doc_integer) | Desired dimensionality of output dataset. If 0, no dimensionality reduction is performed. | `0` |
 | `scale` | [`logical`](#doc_logical) | If set, the data will be scaled before running PCA, such that the variance of each feature is 1. | `FALSE` |
 | `var_to_retain` | [`numeric`](#doc_numeric) | Amount of variance to retain; should be between 0 and 1.  If 1, all variance is retained.  Overrides -d. | `0` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -2557,8 +2563,8 @@ R> data_mod <- output$output
 R> library(mlpack)
 R> d <- perceptron(input_model=NA, labels=matrix(integer(), 0, 0),
         max_iterations=1000, test=matrix(numeric(), 0, 0),
-        training=matrix(numeric(), 0, 0), verbose=FALSE)
-R> output <- d$output
+        training=matrix(numeric(), 0, 0), verbose=getOption("mlpack.verbose",
+        FALSE))
 R> output_model <- d$output_model
 R> predictions <- d$predictions
 ```
@@ -2577,7 +2583,7 @@ An implementation of a perceptron---a single level neural network--=for classifi
 | `max_iterations` | [`integer`](#doc_integer) | The maximum number of iterations the perceptron is to be run | `1000` |
 | `test` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the test set. | `matrix(numeric(), 0, 0)` |
 | `training` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the training set. | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -2585,7 +2591,6 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`integer vector`](#doc_integer_vector) | The matrix in which the predicted labels for the test set will be written. | 
 | `output_model` | [`PerceptronModel`](#doc_model) | Output for trained perceptron model. | 
 | `predictions` | [`integer vector`](#doc_integer_vector) | The matrix in which the predicted labels for the test set will be written. | 
 
@@ -2595,9 +2600,6 @@ Results are returned in a R list.  The keys of the list are the names of the out
 This program implements a perceptron, which is a single level neural network. The perceptron makes its predictions based on a linear predictor function combining a set of weights with the feature vector.  The perceptron learning rule is able to converge, given enough iterations (specified using the `max_iterations` parameter), if the data supplied is linearly separable.  The perceptron is parameterized by a matrix of weight vectors that denote the numerical weights of the neural network.
 
 This program allows loading a perceptron from a model (via the `input_model` parameter) or training a perceptron given training data (via the `training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (via the `test` parameter) and the classification results on the test set may be saved with the `predictions` output parameter.  The perceptron model may be saved with the `output_model` output parameter.
-
-Note: the following parameter is deprecated and will be removed in mlpack 4.0.0: `output`.
-Use `predictions` instead of `output`.
 
 ### Example
 The training data given with the `training` option may have class labels as its last dimension (so, if the training data is in CSV format, labels should be the last column).  Alternately, the `labels` parameter may be used to specify a separate matrix of labels.
@@ -2634,7 +2636,8 @@ Note that all of the options may be specified at once: predictions may be calcul
 R> library(mlpack)
 R> d <- preprocess_split(input=matrix(numeric(), 0, 0),
         input_labels=matrix(integer(), 0, 0), no_shuffle=FALSE, seed=0,
-        stratify_data=FALSE, test_ratio=0.2, verbose=FALSE)
+        stratify_data=FALSE, test_ratio=0.2, verbose=getOption("mlpack.verbose",
+        FALSE))
 R> test <- d$test
 R> test_labels <- d$test_labels
 R> training <- d$training
@@ -2656,7 +2659,7 @@ A utility to split data into a training and testing dataset.  This can also spli
 | `seed` | [`integer`](#doc_integer) | Random seed (0 for std::time(NULL)). | `0` |
 | `stratify_data` | [`logical`](#doc_logical) | Stratify the data according to labels | `FALSE` |
 | `test_ratio` | [`numeric`](#doc_numeric) | Ratio of test set; if not set,the ratio defaults to 0.2 | `0.2` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -2727,7 +2730,7 @@ R> X_test <- output$test
 ```R
 R> library(mlpack)
 R> d <- preprocess_binarize(dimension=0, input=matrix(numeric(), 0, 0),
-        threshold=0, verbose=FALSE)
+        threshold=0, verbose=getOption("mlpack.verbose", FALSE))
 R> output <- d$output
 ```
 
@@ -2743,7 +2746,7 @@ A utility to binarize a dataset.  Given a dataset, this utility converts each va
 | `dimension` | [`integer`](#doc_integer) | Dimension to apply the binarization. If not set, the program will binarize every dimension by default. | `0` |
 | `input` | [`numeric matrix`](#doc_numeric_matrix) | Input data matrix. | `**--**` |
 | `threshold` | [`numeric`](#doc_numeric) | Threshold to be applied for binarization. If not set, the threshold defaults to 0.0. | `0` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -2789,7 +2792,8 @@ R> Y <- output$output
 ```R
 R> library(mlpack)
 R> preprocess_describe(dimension=0, input=matrix(numeric(), 0, 0),
-        population=FALSE, precision=4, row_major=FALSE, verbose=FALSE, width=8)
+        population=FALSE, precision=4, row_major=FALSE,
+        verbose=getOption("mlpack.verbose", FALSE), width=8)
 ```
 
 A utility for printing descriptive statistics about a dataset.  This prints a number of details about a dataset in a tabular format. [Detailed documentation](#preprocess_describe_detailed-documentation).
@@ -2806,7 +2810,7 @@ A utility for printing descriptive statistics about a dataset.  This prints a nu
 | `population` | [`logical`](#doc_logical) | If specified, the program will calculate statistics assuming the dataset is the population. By default, the program will assume the dataset as a sample. | `FALSE` |
 | `precision` | [`integer`](#doc_integer) | Precision of the output statistics. | `4` |
 | `row_major` | [`logical`](#doc_logical) | If specified, the program will calculate statistics across rows, not across columns.  (Remember that in mlpack, a column represents a point, so this option is generally not necessary.) | `FALSE` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 | `width` | [`integer`](#doc_integer) | Width of the output table. | `8` |
 
 
@@ -2845,7 +2849,8 @@ R> preprocess_describe(input=X, width=10, precision=5, verbose=TRUE)
 R> library(mlpack)
 R> d <- preprocess_scale(epsilon=1e-06, input=matrix(numeric(), 0, 0),
         input_model=NA, inverse_scaling=FALSE, max_value=1, min_value=0,
-        scaler_method="standard_scaler", seed=0, verbose=FALSE)
+        scaler_method="standard_scaler", seed=0,
+        verbose=getOption("mlpack.verbose", FALSE))
 R> output <- d$output
 R> output_model <- d$output_model
 ```
@@ -2867,7 +2872,7 @@ A utility to perform feature scaling on datasets using one of sixtechniques.  Bo
 | `min_value` | [`integer`](#doc_integer) | Starting value of range for min_max_scaler. | `0` |
 | `scaler_method` | [`character`](#doc_character) | method to use for scaling, the default is standard_scaler. | `"standard_scaler"` |
 | `seed` | [`integer`](#doc_integer) | Random seed (0 for std::time(NULL)). | `0` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -2933,7 +2938,8 @@ R> X_scaled <- output$output
 ```R
 R> library(mlpack)
 R> d <- preprocess_one_hot_encoding(dimensions=c(),
-        input=matrix(numeric(), 0, 0), verbose=FALSE)
+        input=matrix(numeric(), 0, 0), verbose=getOption("mlpack.verbose",
+        FALSE))
 R> output <- d$output
 ```
 
@@ -2948,7 +2954,7 @@ A utility to do one-hot encoding on features of dataset. [Detailed documentation
 | `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
 | `dimensions` | [`vector of integers`](#doc_vector_of_integers) | Index of dimensions that need to be one-hot encoded (if unspecified, all categorical dimensions are one-hot encoded). | `c()` |
 | `input` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Matrix containing data. | `**--**` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -2991,7 +2997,7 @@ R> X_ouput <- output$output
 R> library(mlpack)
 R> d <- radical(angles=150, input=matrix(numeric(), 0, 0),
         noise_std_dev=0.175, objective=FALSE, replicates=30, seed=0, sweeps=0,
-        verbose=FALSE)
+        verbose=getOption("mlpack.verbose", FALSE))
 R> output_ic <- d$output_ic
 R> output_unmixing <- d$output_unmixing
 ```
@@ -3012,7 +3018,7 @@ An implementation of RADICAL, a method for independent component analysis (ICA).
 | `replicates` | [`integer`](#doc_integer) | Number of Gaussian-perturbed replicates to use (per point) in Radical2D. | `30` |
 | `seed` | [`integer`](#doc_integer) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
 | `sweeps` | [`integer`](#doc_integer) | Number of sweeps; each sweep calls Radical2D once for each pair of dimensions. | `0` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -3056,7 +3062,8 @@ R> d <- random_forest(input_model=NA, labels=matrix(integer(), 0, 0),
         maximum_depth=0, minimum_gain_split=0, minimum_leaf_size=1,
         num_trees=10, print_training_accuracy=FALSE, seed=0, subspace_dim=0,
         test=matrix(numeric(), 0, 0), test_labels=matrix(integer(), 0, 0),
-        training=matrix(numeric(), 0, 0), verbose=FALSE, warm_start=FALSE)
+        training=matrix(numeric(), 0, 0), verbose=getOption("mlpack.verbose",
+        FALSE), warm_start=FALSE)
 R> output_model <- d$output_model
 R> predictions <- d$predictions
 R> probabilities <- d$probabilities
@@ -3083,7 +3090,7 @@ An implementation of the standard random forest algorithm by Leo Breiman for cla
 | `test` | [`numeric matrix`](#doc_numeric_matrix) | Test dataset to produce predictions for. | `matrix(numeric(), 0, 0)` |
 | `test_labels` | [`integer vector`](#doc_integer_vector) | Test dataset labels, if accuracy calculation is desired. | `matrix(integer(), 0, 0)` |
 | `training` | [`numeric matrix`](#doc_numeric_matrix) | Training dataset. | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 | `warm_start` | [`logical`](#doc_logical) | If true and passed along with `training` and `input_model` then trains more trees on top of existing model. | `FALSE` |
 
 ### Output options
@@ -3145,7 +3152,8 @@ R> d <- krann(alpha=0.95, first_leaf_exact=FALSE, input_model=NA, k=0,
         leaf_size=20, naive=FALSE, query=matrix(numeric(), 0, 0),
         random_basis=FALSE, reference=matrix(numeric(), 0, 0),
         sample_at_leaves=FALSE, seed=0, single_mode=FALSE,
-        single_sample_limit=20, tau=5, tree_type="kd", verbose=FALSE)
+        single_sample_limit=20, tau=5, tree_type="kd",
+        verbose=getOption("mlpack.verbose", FALSE))
 R> distances <- d$distances
 R> neighbors <- d$neighbors
 R> output_model <- d$output_model
@@ -3175,7 +3183,7 @@ An implementation of rank-approximate k-nearest-neighbor search (kRANN)  using s
 | `single_sample_limit` | [`integer`](#doc_integer) | The limit on the maximum number of samples (and hence the largest node you can approximate). | `20` |
 | `tau` | [`numeric`](#doc_numeric) | The allowed rank-error in terms of the percentile of the data. | `5` |
 | `tree_type` | [`character`](#doc_character) | Type of tree to use: 'kd', 'ub', 'cover', 'r', 'x', 'r-star', 'hilbert-r', 'r-plus', 'r-plus-plus', 'oct'. | `"kd"` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -3224,7 +3232,7 @@ R> d <- softmax_regression(input_model=NA, labels=matrix(integer(), 0,
         0), lambda=0.0001, max_iterations=400, no_intercept=FALSE,
         number_of_classes=0, test=matrix(numeric(), 0, 0),
         test_labels=matrix(integer(), 0, 0), training=matrix(numeric(), 0, 0),
-        verbose=FALSE)
+        verbose=getOption("mlpack.verbose", FALSE))
 R> output_model <- d$output_model
 R> predictions <- d$predictions
 R> probabilities <- d$probabilities
@@ -3248,7 +3256,7 @@ An implementation of softmax regression for classification, which is a multiclas
 | `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing test dataset. | `matrix(numeric(), 0, 0)` |
 | `test_labels` | [`integer vector`](#doc_integer_vector) | Matrix containing test labels. | `matrix(integer(), 0, 0)` |
 | `training` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the training set (the matrix of predictors, X). | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -3305,7 +3313,7 @@ R> d <- sparse_coding(atoms=15, initial_dictionary=matrix(numeric(), 0,
         0), input_model=NA, lambda1=0, lambda2=0, max_iterations=0,
         newton_tolerance=1e-06, normalize=FALSE, objective_tolerance=0.01,
         seed=0, test=matrix(numeric(), 0, 0), training=matrix(numeric(), 0, 0),
-        verbose=FALSE)
+        verbose=getOption("mlpack.verbose", FALSE))
 R> codes <- d$codes
 R> dictionary <- d$dictionary
 R> output_model <- d$output_model
@@ -3332,7 +3340,7 @@ An implementation of Sparse Coding with Dictionary Learning.  Given a dataset, t
 | `seed` | [`integer`](#doc_integer) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
 | `test` | [`numeric matrix`](#doc_numeric_matrix) | Optional matrix to be encoded by trained model. | `matrix(numeric(), 0, 0)` |
 | `training` | [`numeric matrix`](#doc_numeric_matrix) | Matrix of training data (X). | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -3390,9 +3398,9 @@ R> codes <- output$codes
 R> library(mlpack)
 R> d <- adaboost(input_model=NA, iterations=1000,
         labels=matrix(integer(), 0, 0), test=matrix(numeric(), 0, 0),
-        tolerance=1e-10, training=matrix(numeric(), 0, 0), verbose=FALSE,
+        tolerance=1e-10, training=matrix(numeric(), 0, 0),
+        verbose=getOption("mlpack.verbose", FALSE),
         weak_learner="decision_stump")
-R> output <- d$output
 R> output_model <- d$output_model
 R> predictions <- d$predictions
 R> probabilities <- d$probabilities
@@ -3413,7 +3421,7 @@ An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for classific
 | `test` | [`numeric matrix`](#doc_numeric_matrix) | Test dataset. | `matrix(numeric(), 0, 0)` |
 | `tolerance` | [`numeric`](#doc_numeric) | The tolerance for change in values of the weighted error during training. | `1e-10` |
 | `training` | [`numeric matrix`](#doc_numeric_matrix) | Dataset for training AdaBoost. | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 | `weak_learner` | [`character`](#doc_character) | The type of weak learner to use: 'decision_stump', or 'perceptron'. | `"decision_stump"` |
 
 ### Output options
@@ -3422,7 +3430,6 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`integer vector`](#doc_integer_vector) | Predicted labels for the test set. | 
 | `output_model` | [`AdaBoostModel`](#doc_model) | Output trained AdaBoost model. | 
 | `predictions` | [`integer vector`](#doc_integer_vector) | Predicted labels for the test set. | 
 | `probabilities` | [`numeric matrix`](#doc_numeric_matrix) | Predicted class probabilities for each point in the test set. | 
@@ -3437,9 +3444,6 @@ For more information about the algorithm, see the paper "Improved Boosting Algor
 This program allows training of an AdaBoost model, and then application of that model to a test dataset.  To train a model, a dataset must be passed with the `training` option.  Labels can be given with the `labels` option; if no labels are specified, the labels will be assumed to be the last column of the input dataset.  Alternately, an AdaBoost model may be loaded with the `input_model` option.
 
 Once a model is trained or loaded, it may be used to provide class predictions for a given test dataset.  A test dataset may be specified with the `test` parameter.  The predicted classes for each point in the test dataset are output to the `predictions` output parameter.  The AdaBoost model itself is output to the `output_model` output parameter.
-
-Note: the following parameter is deprecated and will be removed in mlpack 4.0.0: `output`.
-Use `predictions` instead of `output`.
 
 ### Example
 For example, to run AdaBoost on an input dataset `"data"` with labels `"labels"`and perceptrons as the weak learner type, storing the trained model in `"model"`, one could use the following command: 
@@ -3475,7 +3479,8 @@ R> predictions <- output$predictions
 R> library(mlpack)
 R> d <- linear_regression(input_model=NA, lambda=0,
         test=matrix(numeric(), 0, 0), training=matrix(numeric(), 0, 0),
-        training_responses=matrix(numeric(), 0, 0), verbose=FALSE)
+        training_responses=matrix(numeric(), 0, 0),
+        verbose=getOption("mlpack.verbose", FALSE))
 R> output_model <- d$output_model
 R> output_predictions <- d$output_predictions
 ```
@@ -3494,7 +3499,7 @@ An implementation of simple linear regression and ridge regression using ordinar
 | `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing X' (test regressors). | `matrix(numeric(), 0, 0)` |
 | `training` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing training set X (regressors). | `matrix(numeric(), 0, 0)` |
 | `training_responses` | [`numeric vector`](#doc_numeric_vector) | Optional vector containing y (responses). If not given, the responses are assumed to be the last row of the input file. | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
 
@@ -3550,7 +3555,8 @@ R> X_test_responses <- output$output_predictions
 ```R
 R> library(mlpack)
 R> d <- image_converter(channels=0, dataset=matrix(numeric(), 0, 0),
-        height=0, input=c(), quality=90, save=FALSE, verbose=FALSE, width=0)
+        height=0, input=c(), quality=90, save=FALSE,
+        verbose=getOption("mlpack.verbose", FALSE), width=0)
 R> output <- d$output
 ```
 
@@ -3569,7 +3575,7 @@ A utility to load an image or set of images into a single dataset that can then 
 | `input` | [`vector of characters`](#doc_vector_of_characters) | Image filenames which have to be loaded/saved. | `**--**` |
 | `quality` | [`integer`](#doc_integer) | Compression of the image if saved as jpg (0-100). | `90` |
 | `save` | [`logical`](#doc_logical) | Save a dataset as images. | `FALSE` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 | `width` | [`integer`](#doc_integer) | Width of the image. | `0` |
 
 ### Output options
