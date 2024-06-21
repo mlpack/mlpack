@@ -125,7 +125,7 @@ class LMNN
   //! Range after which impostors need to be recalculated.
   size_t range;
 
-  //! Metric to be used.
+  //! Distance to be used.
   DistanceType distance;
 
   //! The optimizer to use.
