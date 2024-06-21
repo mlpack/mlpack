@@ -65,11 +65,11 @@ LogSoftMaxType<MatType>::operator=(LogSoftMaxType&& other)
 template<typename MatType>
 void LogSoftMaxType<MatType>::Forward(const MatType& input, MatType& output)
 {
-  MatType maxInput = repmat(max(input), input.n_rows, 1);
-  output = (maxInput - input);
+  MatType maxInput = repmat(max(input), input.n_rows, 1); 
+  output = maxInput - input;
 
   // Function to calculate Padé approximant for exp(-x) for x positive
-  auto padeApproximant = [](double x) {
+  auto padeApproximant = [](double x) -> double {
     static constexpr double numCoeffs[] = {120, -60, 12}; 
     static constexpr double denCoeffs[] = {120, 60, 12}; 
 
@@ -79,9 +79,14 @@ void LogSoftMaxType<MatType>::Forward(const MatType& input, MatType& output)
     return num / den;
   };
 
-  output.transform([padeApproximant](double x) {
-    return padeApproximant(x);
-  });
+  #pragma omp parallel for collapse(2)
+  for (size_t i = 0; i < output.n_rows; ++i)
+  {
+    for (size_t j = 0; j < output.n_cols; ++j)
+    {
+      output(i, j) = padeApproximant(output(i, j));
+    }
+  }
 
   maxInput.each_row() += log(sum(output));
   output = input - maxInput;
