@@ -126,10 +126,11 @@ void NearestInterpolationType<MatType>::Forward(
   assert(inRowSize >= 2);
   assert(inColSize >= 2);
 
-  arma::cube inputAsCube(const_cast<MatType&>(input).memptr(),
-      inRowSize, inColSize, depth * batchSize, false, false);
-  arma::cube outputAsCube(output.memptr(), outRowSize, outColSize,
-      depth * batchSize, false, true);
+  arma::cube inputAsCube;
+  arma::cube outputAsCube;
+
+  MakeAlias(inputAsCube, input, inRowSize, inColSize, depth*batchSize, 0, false);
+  MakeAlias(outputAsCube, output, outRowSize, outColSize, depth*batchSize, 0, true);
 
   double scaleRow = (double) inRowSize / (double) outRowSize;
   double scaleCol = (double) inColSize / (double) outColSize;
