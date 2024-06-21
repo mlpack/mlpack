@@ -1,8 +1,8 @@
 /**
- * @file methods/xgboost/loss_functions/sse_loss.hpp
+ * @file methods/decision_tree/sse_gain.hpp
  * @author Rishabh Garg
  *
- * The sum of squared error loss class, which is a loss funtion for gradient
+ * The sum of squared error loss class, which is a loss function for gradient
  * xgboost based decision trees.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -25,13 +25,13 @@ namespace mlpack {
  *
  * Loss = 1 / 2 * (Observed - Predicted)^2
  */
-class SSELoss
+class SSEGain
 {
  public:
   // Default constructor---No regularization.
-  SSELoss() : alpha(0), lambda(0) { /* Nothing to do. */}
+  SSEGain() : alpha(0), lambda(0) { /* Nothing to do. */}
 
-  SSELoss(const double alpha, const double lambda):
+  SSEGain(const double alpha, const double lambda):
       alpha(alpha), lambda(lambda)
   {
     // Nothing to do.
@@ -66,8 +66,15 @@ class SSELoss
    * @param begin The begin index to calculate gain.
    * @param end The end index to calculate gain.
    */
-  double Evaluate(const size_t begin, const size_t end)
+  template<bool UseWeights, typename MatType, typename WeightVecType>
+  double Evaluate(const MatType& input, 
+                  const WeightVecType& /* weights */,
+                  const size_t begin, 
+                  const size_t end)
   {
+    gradients = (input.row(1) - input.row(0)).t();
+    hessians = arma::vec(input.n_cols, arma::fill::ones);
+
     return std::pow(ApplyL1(accu(gradients.subvec(begin, end))), 2) /
         (accu(hessians.subvec(begin, end)) + lambda);
   }

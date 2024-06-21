@@ -19,6 +19,7 @@
 #include "information_gain.hpp"
 #include "mad_gain.hpp"
 #include "mse_gain.hpp"
+#include "sse_gain.hpp"
 
 #include "best_binary_numeric_split.hpp"
 #include "random_binary_numeric_split.hpp"
