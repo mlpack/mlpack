@@ -89,7 +89,7 @@ class NCA
   //! Labels reference.
   const arma::Row<size_t>& labels;
 
-  //! Metric to be used.
+  //! Distance to be used.
   DistanceType distance;
 
   //! The function to optimize.
