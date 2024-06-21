@@ -31,7 +31,6 @@ template<typename MatType = arma::mat>
 class NearestInterpolationType : public Layer<MatType>
 {
  public:
-
   //! Create the NearestInterpolation object.
   NearestInterpolationType();
 
@@ -85,27 +84,22 @@ class NearestInterpolationType : public Layer<MatType>
   size_t const& InRowSize() const { return inRowSize; }
   //! Modify the row size of the input.
   size_t& InRowSize() { return inRowSize; }
-  
   //! Get the column size of the input.
   size_t const& InColSize() const { return inColSize; }
   //! Modify the column size of the input.
   size_t& InColSize() { return inColSize; }
-  
   //! Get the row size of the output.
   size_t const& OutRowSize() const { return outRowSize; }
   //! Modify the row size of the output.
   size_t& OutRowSize() { return outRowSize; }
-  
   //! Get the column size of the output.
   size_t const& OutColSize() const { return outColSize; }
   //! Modify the column size of the output.
   size_t& OutColSize() { return outColSize; }
-  
   //! Get the depth of the input.
   size_t const& InDepth() const { return depth; }
   //! Modify the depth of the input.
   size_t& InDepth() { return depth; }
-  
   /**
    * Serialize the layer.
    */

@@ -33,10 +33,10 @@ NearestInterpolationType<MatType>::NearestInterpolationType():
 template<typename MatType>
 NearestInterpolationType<MatType>::
 NearestInterpolationType(const size_t inRowSize,
-                     const size_t inColSize,
-                     const size_t outRowSize,
-                     const size_t outColSize,
-                     const size_t depth) :
+                         const size_t inColSize,
+                         const size_t outRowSize,
+                         const size_t outColSize,
+                         const size_t depth) :
   Layer<MatType>(),
   inRowSize(inRowSize),
   inColSize(inColSize),
