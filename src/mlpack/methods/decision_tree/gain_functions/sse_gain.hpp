@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/sse_gain.hpp
+ * @file methods/decision_tree/gain_functions/sse_gain.hpp
  * @author Rishabh Garg
  *
  * The sum of squared error loss class, which is a loss function for gradient

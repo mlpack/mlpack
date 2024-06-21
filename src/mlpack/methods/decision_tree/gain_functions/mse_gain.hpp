@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/mse_gain.hpp
+ * @file methods/decision_tree/gain_functions/mse_gain.hpp
  * @author Rishabh Garg
  *
  * The mean squared error gain class, which is a fitness funtion for
@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_DECISION_TREE_MSE_GAIN_HPP
 
 #include <mlpack/prereqs.hpp>
-#include "utils.hpp"
+#include "mlpack/methods/decision_tree/utils.hpp"
 
 namespace mlpack {
 

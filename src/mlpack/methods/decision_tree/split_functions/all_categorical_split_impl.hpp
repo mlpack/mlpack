@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/all_categorical_split_impl.hpp
+ * @file methods/decision_tree/split_functions/all_categorical_split_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the AllCategoricalSplit categorical split class.

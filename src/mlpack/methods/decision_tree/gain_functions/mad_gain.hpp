@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/mad_gain.hpp
+ * @file methods/decision_tree/gain_functions/mad_gain.hpp
  * @author Rishabh Garg
  *
  * The mean absolute deviation gain class, a fitness function for regression
@@ -15,7 +15,7 @@ n.
 #define MLPACK_METHODS_DECISION_TREE_MAD_GAIN_HPP
 
 #include <mlpack/prereqs.hpp>
-#include "utils.hpp"
+#include "mlpack/methods/decision_tree/utils.hpp"
 
 namespace mlpack {
 

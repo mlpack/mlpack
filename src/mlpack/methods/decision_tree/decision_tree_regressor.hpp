@@ -15,12 +15,14 @@
 
 #include <mlpack/core.hpp>
 
-#include "mad_gain.hpp"
-#include "mse_gain.hpp"
-#include "best_binary_numeric_split.hpp"
-#include "all_categorical_split.hpp"
-#include "random_binary_numeric_split.hpp"
-#include "all_dimension_select.hpp"
+#include "gain_functions/mad_gain.hpp"
+#include "gain_functions/mse_gain.hpp"
+
+#include "split_functions/best_binary_numeric_split.hpp"
+#include "split_functions/all_categorical_split.hpp"
+#include "split_functions/random_binary_numeric_split.hpp"
+
+#include "select_functions/all_dimension_select.hpp"
 
 namespace mlpack {
 
