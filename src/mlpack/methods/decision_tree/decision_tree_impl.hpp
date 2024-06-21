@@ -1019,11 +1019,11 @@ bool DecisionTree<FitnessFunction,
                   DimensionSelectionType,
                   NoRecursion>::Prune(double threshold)
 {
-  size_t numChildren = node->NumChildren();
+  size_t numChildren = NumChildren();
 
   for (size_t i = 0; i < numChildren; ++i)
   {
-    bool store = numChildren[i]->Prune(threshold);
+    bool store = children[i]->Prune(threshold);
     if (store == true)
     {
       children.erase(children.begin() + i);
@@ -1033,7 +1033,7 @@ bool DecisionTree<FitnessFunction,
   }
 
   bool flag = false;
-  if (node->nodeGain < threshold)
+  if (nodeGain < threshold)
   {
     flag = 1;
     delete node; 
