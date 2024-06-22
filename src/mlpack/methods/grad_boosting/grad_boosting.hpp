@@ -45,6 +45,7 @@ template<
          AllCategoricalSplit,
          AllDimensionSelect,
          false>, 
+  // typename WeakLearnerType = XGBTree, 
   typename MatType = arma::mat>
 class GradBoosting 
 {
