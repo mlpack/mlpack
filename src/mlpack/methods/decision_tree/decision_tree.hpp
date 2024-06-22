@@ -611,6 +611,15 @@ typedef DecisionTree<InformationGain,
                      AllCategoricalSplit,
                      AllDimensionSelect,
                      true> ID3DecisionStump;
+
+/**
+ * Convenience typedef for XGBoost trees.
+ */
+typedef DecisionTree<SSEGain,
+                     BestBinaryNumericSplit,
+                     AllCategoricalSplit,
+                     AllDimensionSelect,
+                     true> XGBTree;
 } // namespace mlpack
 
 // Include implementation.
