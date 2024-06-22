@@ -21,7 +21,7 @@
 // Written in mlpack namespace.
 namespace mlpack {
 
-template<typename WeakLearnerType, typename MatType>
+template<typename WeakLearnerType = XGBTree, typename MatType=arma::mat>
 class XGBoost
 {
   XGBoost() {/*Nothing to do*/}
