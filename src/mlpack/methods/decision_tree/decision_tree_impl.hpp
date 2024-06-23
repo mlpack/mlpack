@@ -699,6 +699,10 @@ double DecisionTree<FitnessFunction,
   // Did we split or not?  If so, then split the data and create the children.
   if (bestDim != datasetInfo.Dimensionality())
   {
+    // Store the information about the feature contributions
+    featureFrequency[bestDim]++;
+    featureCover[bestDim] += featureFrequency;
+
     dimensionType = (size_t) datasetInfo.Type(bestDim);
     splitDimension = bestDim;
 
@@ -869,6 +873,10 @@ double DecisionTree<FitnessFunction,
   // Did we split or not?  If so, then split the data and create the children.
   if (bestDim != data.n_rows)
   {
+    // Store the information about the feature contributions
+    featureFrequency[bestDim]++;
+    featureCover[bestDim] += featureFrequency;
+    
     // We know that the split is numeric.
     size_t numChildren =
         NumericSplit::NumChildren(classProbabilities[0], *this);

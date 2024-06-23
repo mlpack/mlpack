@@ -462,6 +462,12 @@ class DecisionTree :
   //! Get the number of children.
   size_t NumChildren() const { return children.size(); }
 
+  //! Get the Feature frequency information
+  map<size_t, size_t> FeatureFrequency() { return featureFrequency; }
+
+  //! Get the Feature gain information
+  map<size_t, double> FeatureCover() { return featureCover; }
+
   //! Get the child of the given index.
   const DecisionTree& Child(const size_t i) const { return *children[i]; }
   //! Modify the child of the given index (be careful!).
@@ -496,6 +502,10 @@ class DecisionTree :
   std::vector<DecisionTree*> children;
   //! The dimension this node splits on.
   size_t splitDimension;
+  //! Stores the number of times a particular feature was used to split
+  map<size_t, size_t> featureFrequency;
+  //! Stores the net gain provided by a particular feature for splitting
+  map<size_t, double> featureCover;
 
   union
   {
