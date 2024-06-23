@@ -15,19 +15,9 @@
 
 #include <mlpack/core.hpp>
 
-#include "gain_functions/gini_gain.hpp"
-#include "gain_functions/information_gain.hpp"
-#include "gain_functions/mad_gain.hpp"
-#include "gain_functions/mse_gain.hpp"
-#include "gain_functions/sse_gain.hpp"
-
-#include "split_functions/best_binary_numeric_split.hpp"
-#include "split_functions/random_binary_numeric_split.hpp"
-#include "split_functions/all_categorical_split.hpp"
-
-#include "select_functions/all_dimension_select.hpp"
-#include "select_functions/random_dimension_select.hpp"
-#include "select_functions/multiple_random_dimension_select.hpp"
+#include "gain_functions/gain_functions.hpp"
+#include "split_functions/split_functions.hpp"
+#include "select_functions/select_functions.hpp"
 
 namespace mlpack {
 
