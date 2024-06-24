@@ -14,7 +14,8 @@
 #ifndef MLPACK_METHODS_XGBOOST_FEATURE_IMPORTANCE_HPP
 #define MLPACK_METHODS_XGBOOST_FEATURE_IMPORTANCE_HPP
 
-#include "xgboost.hpp"
+// #include "xgboost.hpp"
+#include <map>
 
 namespace mlpack {
 
@@ -31,6 +32,26 @@ namespace mlpack {
  *   feature to the model. For each feature, it sums the improvement in accuracy 
  *   (reduction in loss) brought by the feature when it is used in tree splits.
  */
+
+class FeatureImportance {
+  public: 
+
+  map<size_t, size_t> featureFrequency;
+  map<size_t, double> featureCover;
+
+  FeatureImportance() { /*Nothing to do*/ }
+
+  void increaseFeatureFrequency(size_t index, size_t increment)
+  {
+    featureFrequency[index] += increment;
+  }
+
+  void increaseFeatureCover(size_t index, double increment)
+  {
+    featureCover[index] += increment;
+  }
+
+};
 
 }
 

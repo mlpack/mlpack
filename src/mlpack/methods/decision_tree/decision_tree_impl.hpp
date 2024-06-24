@@ -878,8 +878,8 @@ double DecisionTree<FitnessFunction,
   if (bestDim != data.n_rows)
   {
     // Store the information about the feature contributions
-    featImp.featureFrequency[bestDim]++;
-    featImp.featureCover[bestDim] += featureFrequency;
+    featImp.increaseFeatureFrequency(bestDim, 1);
+    featImp.increaseFeatureCover(bestDim, bestGain);
     
     // We know that the split is numeric.
     size_t numChildren =
