@@ -13,8 +13,12 @@
 #define MLPACK_METHODS_DECISION_TREE_DECISION_TREE_IMPL_HPP
 
 #include "decision_tree.hpp"
+#include "mlpack/methods/xgboost/feature_importance.hpp"
 
 namespace mlpack {
+
+// Initiating a FeatureImportance object.
+FeatureImportance featImp;
 
 //! Construct and train without weight.
 template<typename FitnessFunction,
@@ -700,8 +704,8 @@ double DecisionTree<FitnessFunction,
   if (bestDim != datasetInfo.Dimensionality())
   {
     // Store the information about the feature contributions
-    featureFrequency[bestDim]++;
-    featureCover[bestDim] += featureFrequency;
+    featImp.featureFrequency[bestDim]++;
+    featImp.featureCover[bestDim] += featureFrequency;
 
     dimensionType = (size_t) datasetInfo.Type(bestDim);
     splitDimension = bestDim;
@@ -874,8 +878,8 @@ double DecisionTree<FitnessFunction,
   if (bestDim != data.n_rows)
   {
     // Store the information about the feature contributions
-    featureFrequency[bestDim]++;
-    featureCover[bestDim] += featureFrequency;
+    featImp.featureFrequency[bestDim]++;
+    featImp.featureCover[bestDim] += featureFrequency;
     
     // We know that the split is numeric.
     size_t numChildren =
