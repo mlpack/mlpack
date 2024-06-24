@@ -34,10 +34,13 @@ namespace mlpack {
  */
 
 class FeatureImportance {
-  public: 
 
+  private:
   map<size_t, size_t> featureFrequency;
   map<size_t, double> featureCover;
+
+
+  public: 
 
   FeatureImportance() { /*Nothing to do*/ }
 
