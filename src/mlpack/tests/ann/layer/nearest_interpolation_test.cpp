@@ -37,7 +37,7 @@ TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
   input[2] = 2.0;
   input[3] = 4.0;
   NearestInterpolation layer(inRowSize, inColSize, outRowSize,
-                               outColSize, depth);
+      outColSize, depth);
 
   expectedOutput << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000
                  << 2.0000 << 2.0000 << arma::endr
@@ -72,7 +72,7 @@ TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
          << 4 << 5 << 6 << arma::endr;
   input1.reshape(6, 1);
   NearestInterpolation layer1(inRowSize, inColSize, outRowSize,
-                                outColSize, depth);
+      outColSize, depth);
 
   layer1.Forward(input1, output1);
   layer1.Backward(output1, output1, unzoomedOutput1);

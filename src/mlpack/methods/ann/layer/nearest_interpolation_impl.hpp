@@ -81,7 +81,8 @@ NearestInterpolationType<MatType>&
 NearestInterpolationType<MatType>::
 operator=(const NearestInterpolationType& other) 
 {
-  if (&other != this) {
+  if (&other != this)
+  {
     Layer<MatType>::operator=(other);
     inRowSize = other.inRowSize;
     inColSize = other.inColSize;
@@ -98,7 +99,8 @@ NearestInterpolationType<MatType>&
 NearestInterpolationType<MatType>::
 operator=(NearestInterpolationType&& other) 
 {
-  if (&other != this) {
+  if (&other != this)
+  {
     Layer<MatType>::operator=(std::move(other));
     inRowSize = std::move(other.inRowSize);
     inColSize = std::move(other.inColSize);
@@ -129,8 +131,8 @@ void NearestInterpolationType<MatType>::Forward(
   arma::cube inputAsCube;
   arma::cube outputAsCube;
 
-  MakeAlias(inputAsCube, input, inRowSize, inColSize, depth*batchSize, 0, false);
-  MakeAlias(outputAsCube, output, outRowSize, outColSize, depth*batchSize, 0, true);
+  MakeAlias(inputAsCube, input, inRowSize, inColSize, depth * batchSize, 0, false);
+  MakeAlias(outputAsCube, output, outRowSize, outColSize, depth * batchSize, 0, true);
 
   double scaleRow = (double) inRowSize / (double) outRowSize;
   double scaleCol = (double) inColSize / (double) outColSize;
@@ -174,8 +176,8 @@ void NearestInterpolationType<MatType>::Backward(
   arma::cube outputAsCube;
   arma::cube gradientAsCube;
 
-  MakeAlias(outputAsCube, output, inRowSize, inColSize, depth*batchSize, 0, true);
-  MakeAlias(gradientAsCube, gradient, outRowSize, outColSize, depth*batchSize, 0, false);
+  MakeAlias(outputAsCube, output, inRowSize, inColSize, depth * batchSize, 0, true);
+  MakeAlias(gradientAsCube, gradient, outRowSize, outColSize, depth * batchSize, 0, false);
 
   double scaleRow = (double)(inRowSize) / outRowSize;
   double scaleCol = (double)(inColSize) / outColSize;

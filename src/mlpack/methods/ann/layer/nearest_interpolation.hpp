@@ -39,20 +39,19 @@ class NearestInterpolationType : public Layer<MatType>
                            const size_t outRowSize,
                            const size_t outColSize,
                            const size_t depth);
-
-  NearestInterpolationType* Clone() const { 
+  NearestInterpolationType* Clone() const {
     return new NearestInterpolationType(*this);
   }
 
   virtual ~NearestInterpolationType() { }
 
-  //! Copy the given ConcatenateType layer.
+  //! Copy the given NearestInterpolationType layer.
   NearestInterpolationType(const NearestInterpolationType& other);
-  //! Take ownership of the given ConcatenateType layer.
+  //! Take ownership of the given NearestInterpolationType layer.
   NearestInterpolationType(NearestInterpolationType&& other);
-  //! Copy the given ConcatenateType layer.
+  //! Copy the given NearestInterpolationType layer.
   NearestInterpolationType& operator=(const NearestInterpolationType& other);
-  //! Take ownership of the given ConcatenateType layer.
+  //! Take ownership of the given NearestInterpolationType layer.
   NearestInterpolationType& operator=(NearestInterpolationType&& other);
 
   /**
