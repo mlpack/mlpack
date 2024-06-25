@@ -17,7 +17,7 @@ use of the `DistanceType` template parameter.  Any distance metric passed as a
 
 The signature of the `Evaluate()` function is straightforward:
 
-```c++
+```
 template<typename VecTypeA, typename VecTypeB>
 double Evaluate(const VecTypeA& a, const VecTypeB& b);
 ```
@@ -42,6 +42,7 @@ which implements the L2 distance:
 ```c++
 class ExampleDistance
 {
+ public:
   // Default constructor is required.
   ExampleDistance() { }
 
@@ -59,43 +60,33 @@ class ExampleDistance
 Then, this distance metric can easily be used inside of other mlpack algorithms.
 For example, the code below runs range search on a random dataset with the
 `ExampleDistance`, by instantiating a `RangeSearch` object that uses the
-`ExampleDistance`.  Then, the number of results are printed.  The `RangeSearch`
-class takes three template parameters: `DistanceType`, `MatType`, and
-`TreeType`.  (All three have defaults, so we will just leave `MatType` and
-`TreeType` to their defaults.)
+`ExampleDistance` with ball trees.  Then, the number of results are printed.
+The `RangeSearch` class takes three template parameters: `DistanceType`,
+`MatType`, and `TreeType`.
 
 ```c++
-#include <mlpack.hpp>
-#include "example_distance.hpp" // A file that contains ExampleDistance.
+// Create a random dataset with 10 dimensions and 5000 points.
+arma::mat data = arma::randu<arma::mat>(10, 5000);
 
-using namespace mlpack;
-using namespace std;
+// Instantiate the RangeSearch object with the ExampleDistance.
+mlpack::RangeSearch<ExampleDistance, arma::mat, mlpack::BallTree> rs(data);
 
-int main()
-{
-  // Create a random dataset with 10 dimensions and 5000 points.
-  arma::mat data = arma::randu<arma::mat>(10, 5000);
+// These vectors will store the results.
+std::vector<std::vector<size_t>> neighbors;
+std::vector<std::vector<double>> distances;
 
-  // Instantiate the RangeSearch object with the ExampleDistance.
-  RangeSearch<ExampleDistance> rs(data);
+// Create a random 10-dimensional query point.
+arma::vec query = arma::randu<arma::vec>(10);
 
-  // These vectors will store the results.
-  vector<vector<size_t>> neighbors;
-  vector<vector<double>> distances;
+// Find those points with distance (according to ExampleDistance) between 1
+// and 2 from the query point.
+rs.Search(query, mlpack::Range(1.0, 2.0), neighbors, distances);
 
-  // Create a random 10-dimensional query point.
-  arma::vec query = arma::randu<arma::vec>(10);
-
-  // Find those points with distance (according to ExampleDistance) between 1
-  // and 2 from the query point.
-  rs.Search(query, Range(1.0, 2.0), neighbors, distances);
-
-  // Now, print the number of points inside the desired range.  We know that
-  // neighbors and distances will have length 1, since there was only one query
-  // point.
-  cout << neighbors[0].size() << " points within the range [1.0, 2.0] of the "
-      << "query point!" << endl;
-}
+// Now, print the number of points inside the desired range.  We know that
+// neighbors and distances will have length 1, since there was only one query
+// point.
+std::cout << neighbors[0].size() << " points within the range [1.0, 2.0] of the"
+    << " query point!" << std::endl;
 ```
 
 mlpack comes with a number of pre-written distance metrics that satisfy the
