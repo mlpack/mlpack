@@ -299,6 +299,7 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param featImp Pointer to FeatureImportance object to store feature info
    * @return The final entropy of decision tree.
    */
   template<typename MatType, typename LabelsType>
@@ -328,6 +329,7 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param featImp Pointer to FeatureImportance object to store feature info
    * @return The final entropy of decision tree.
    */
   template<typename MatType, typename LabelsType>
@@ -360,6 +362,7 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param featImp Pointer to FeatureImportance object to store feature info
    * @return The final entropy of decision tree.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
@@ -394,6 +397,7 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param featImp Pointer to FeatureImportance object to store feature info
    * @return The final entropy of decision tree.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
@@ -551,6 +555,7 @@ class DecisionTree :
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
+   * @param featImp Pointer to FeatureImportance object to store feature info
    * @return The final entropy of decision tree.
    */
   template<bool UseWeights, typename MatType, typename WeightsType>
@@ -581,6 +586,7 @@ class DecisionTree :
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
+   * @param featImp Pointer to FeatureImportance object to store feature info
    * @return The final entropy of decision tree.
    */
   template<bool UseWeights, typename MatType, typename WeightsType>
