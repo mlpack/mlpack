@@ -29,6 +29,8 @@
 #include "random_dimension_select.hpp"
 #include "multiple_random_dimension_select.hpp"
 
+#include "mlpack/methods/xgboost/feature_importance.hpp"
+
 namespace mlpack {
 
 /**
@@ -308,7 +310,8 @@ class DecisionTree :
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               FeatureImportance* featImp = nullptr);
 
   /**
    * Train the decision tree on the given data, assuming that all dimensions are
@@ -335,7 +338,8 @@ class DecisionTree :
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               FeatureImportance* featImp = nullptr);
 
   /**
    * Train the decision tree on the given weighted data.  This will overwrite
@@ -370,7 +374,8 @@ class DecisionTree :
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
                const std::enable_if_t<arma::is_arma_type<typename
-                   std::remove_reference<WeightsType>::type>::value>* = 0);
+                   std::remove_reference<WeightsType>::type>::value>* = 0,
+               FeatureImportance* featImp = nullptr);
 
   /**
    * Train the decision tree on the given weighted data, assuming that all
@@ -402,7 +407,8 @@ class DecisionTree :
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
                const std::enable_if_t<arma::is_arma_type<typename
-                   std::remove_reference<WeightsType>::type>::value>* = 0);
+                   std::remove_reference<WeightsType>::type>::value>* = 0,
+               FeatureImportance* featImp = nullptr);
 
   /**
    * Classify the given point, using the entire tree.  The predicted label is
@@ -558,7 +564,8 @@ class DecisionTree :
                const size_t minimumLeafSize,
                const double minimumGainSplit,
                const size_t maximumDepth,
-               DimensionSelectionType& dimensionSelector);
+               DimensionSelectionType& dimensionSelector,
+               FeatureImportance* featImp = nullptr);
 
   /**
    * Corresponding to the public Train() method, this method is designed for
@@ -586,7 +593,8 @@ class DecisionTree :
                const size_t minimumLeafSize,
                const double minimumGainSplit,
                const size_t maximumDepth,
-               DimensionSelectionType& dimensionSelector);
+               DimensionSelectionType& dimensionSelector,
+               FeatureImportance* featImp = nullptr);
 };
 
 /**

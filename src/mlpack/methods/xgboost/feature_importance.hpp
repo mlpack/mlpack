@@ -86,7 +86,7 @@ class FeatureImportance {
 
     for(; it != featureCover.end(); ++it)
     {
-      pq.push({-it->second, it->first});
+      pq.push({-(it->second), it->first});
     }
 
     while(!pq.empty())
