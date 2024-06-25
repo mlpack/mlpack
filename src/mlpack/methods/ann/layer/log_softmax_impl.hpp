@@ -62,33 +62,44 @@ LogSoftMaxType<MatType>::operator=(LogSoftMaxType&& other)
   return *this;
 }
 
+
 template<typename MatType>
-void LogSoftMaxType<MatType>::Forward(const MatType& input, MatType& output)
+void LogSoftMaxType<MatType>::ForwardImpl(const MatType& input,
+                                          MatType& output,
+                                          const typename std::enable_if_t<
+                                          arma::is_arma_type<MatType>::value>*)
 {
-  MatType maxInput = repmat(max(input), input.n_rows, 1); 
-  output = maxInput - input;
+  MatType maxInput = repmat(max(input), input.n_rows, 1);
+  output = (maxInput - input);
 
-  // Function to calculate Padé approximant for exp(-x) for x positive
-  auto padeApproximant = [](double x) -> double {
-    static constexpr double numCoeffs[] = {120, -60, 12}; 
-    static constexpr double denCoeffs[] = {120, 60, 12}; 
-
-    double num = numCoeffs[0] + x * (numCoeffs[1] + x * numCoeffs[2]);
-    double den = denCoeffs[0] + x * (denCoeffs[1] + x * denCoeffs[2]);
-
-    return num / den;
-  };
-
+  // Approximation of the base-e exponential function. The acuracy however is
+  // about 0.00001 lower as using exp. Credits go to Leon Bottou.
   #pragma omp parallel for collapse(2)
-  for (size_t i = 0; i < output.n_rows; ++i)
-  {
-    for (size_t j = 0; j < output.n_cols; ++j)
-    {
-      output(i, j) = padeApproximant(output(i, j));
-    }
+  for (size_t i = 0; i < output.n_rows; i++) {
+      for (size_t j = 0; j < output.n_cols; j++) {
+          double x = output(i, j);
+          if (x < 13.0) {
+              static constexpr double A0 = 1.0;
+              static constexpr double A1 = 0.125;
+              static constexpr double A2 = 0.0078125;
+              static constexpr double A3 = 0.00032552083;
+              static constexpr double A4 = 1.0172526e-5;
+              double y = A0 + x * (A1 + x * (A2 + x * (A3 + x * A4)));
+              y *= y;
+              y *= y;
+              y *= y;
+              y = 1 / y;
+              output(i, j) = y;
+          } else {
+              output(i, j) = 0.0;
+          }
+      }
   }
 
-  maxInput.each_row() += log(sum(output));
+  #pragma omp parallel for
+  for (size_t i = 0; i < maxInput.n_rows; i++) {
+    maxInput.row(i) += arma::log(arma::accu(output.row(i)));
+  }
   output = input - maxInput;
 }
 
