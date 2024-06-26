@@ -74,7 +74,7 @@ void LogSoftMaxType<MatType>::ForwardImpl(const MatType& input,
                                           const typename std::enable_if_t<
                                               arma::is_arma_type<MatType>::value>*)
 {
-  MatType maxInput = arma::repmat(arma::max(input, 0), input.n_rows, 1);
+  MatType maxInput = repmat(max(input, 0), input.n_rows, 1);
   output = (maxInput - input);
 
   // Approximation of the base-e exponential function. The accuracy, however, is
