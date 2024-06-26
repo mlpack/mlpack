@@ -94,8 +94,10 @@ void DropoutType<MatType>::ForwardImpl(const T& input, T& output)
   {
     mask.randu(input.n_rows, input.n_cols);
     #pragma omp parallel for collapse(2)
-    for (size_t i = 0; i < input.n_rows; ++i) {
-      for (size_t j = 0; j < input.n_cols; ++j) {
+    for (size_t i = 0; i < input.n_rows; ++i)
+    {
+      for (size_t j = 0; j < input.n_cols; ++j)
+      {
         mask(i, j) = (mask(i, j) > this->ratio) ? 1.0 : 0.0;
       }
     }
@@ -115,8 +117,10 @@ void DropoutType<MatType>::ForwardImpl(const T& input, T& output)
   {
     mask.randu(input.n_rows, input.n_cols);
     #pragma omp parallel for collapse(2)
-    for (size_t i = 0; i < input.n_rows; ++i) {
-      for (size_t j = 0; j < input.n_cols; ++j) {
+    for (size_t i = 0; i < input.n_rows; ++i)
+    {
+      for (size_t j = 0; j < input.n_cols; ++j)
+      {
         mask(i, j) = (mask(i, j) > this->ratio) ? 1.0 : 0.0;
       }
     }
