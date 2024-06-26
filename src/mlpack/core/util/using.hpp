@@ -30,6 +30,7 @@ namespace mlpack {
   using arma::mean;
   using arma::norm;
   using arma::normalise;
+  using arma::ones;
   using arma::pow;
   using arma::randi;
   using arma::randn;
@@ -41,6 +42,7 @@ namespace mlpack {
   using arma::sum;
   using arma::trans;
   using arma::vectorise;
+  using arma::zeros;
 
 #ifdef MLPACK_HAS_COOT
 
@@ -57,6 +59,7 @@ namespace mlpack {
   using coot::mean;
   using coot::norm;
   using coot::normalise;
+  using coot::ones;
   using coot::pow;
   using coot::randi;
   using coot::randn;
@@ -68,6 +71,7 @@ namespace mlpack {
   using coot::sum;
   using coot::trans;
   using coot::vectorise;
+  using coot::zeros;
 
 #endif
 

@@ -153,11 +153,11 @@ TEST_CASE("SparseNMFAcolDistTest", "[NMFTest]")
     // Get an initialization.
     arma::mat iw, ih;
     RandomAcolInitialization<>::Initialize(v, r, iw, ih);
-    GivenInitialization g(std::move(iw), std::move(ih));
+    GivenInitialization<> g(std::move(iw), std::move(ih));
 
     // The GivenInitialization will force the same initialization for both
     // Apply() calls.
-    AMF<SimpleResidueTermination, GivenInitialization> nmf(srt, g);
+    AMF<SimpleResidueTermination, GivenInitialization<>> nmf(srt, g);
     nmf.Apply(v, r, w, h);
     nmf.Apply(dv, r, dw, dh);
 
@@ -212,11 +212,11 @@ TEST_CASE("SparseNMFALSTest", "[NMFTest]")
       // Get an initialization.
       arma::mat iw, ih;
       RandomAcolInitialization<>::Initialize(v, r, iw, ih);
-      GivenInitialization g(std::move(iw), std::move(ih));
+      GivenInitialization<> g(std::move(iw), std::move(ih));
 
       SimpleResidueTermination srt(1e-10, 10000);
-      AMF<SimpleResidueTermination, GivenInitialization, NMFALSUpdate> nmf(srt,
-          g);
+      AMF<SimpleResidueTermination, GivenInitialization<>, NMFALSUpdate>
+          nmf(srt, g);
       nmf.Apply(v, r, w, h);
       nmf.Apply(dv, r, dw, dh);
 
@@ -300,4 +300,33 @@ TEST_CASE("NonNegNMFALSTest", "[NMFTest]")
 
   REQUIRE((arma::all(vectorise(w) >= 0)
       && arma::all(vectorise(h) >= 0)));
+}
+
+/**
+ * Check that NoInitialization doesn't do anything to the elements of a matrix.
+ */
+TEMPLATE_TEST_CASE("NoInitializationTest", "[NMFTest]", float, double)
+{
+  typedef TestType eT;
+
+  arma::Mat<eT> W, H;
+  W.randu(100, 5);
+  H.randu(5, 50);
+  arma::Mat<eT> oldW = W;
+  arma::Mat<eT> oldH = H;
+
+  arma::Mat<eT> V(100, 50, fill::zeros);
+
+  REQUIRE_NOTHROW(NoInitialization::Initialize(V, 5, W, H));
+  REQUIRE_NOTHROW(NoInitialization::InitializeOne(V, 5, W, true));
+  REQUIRE_NOTHROW(NoInitialization::InitializeOne(V, 5, H, false));
+
+  REQUIRE(arma::approx_equal(oldW, W, "both", 1e-5, 1e-5));
+  REQUIRE(arma::approx_equal(oldH, H, "both", 1e-5, 1e-5));
+
+  // And if something is the wrong size, it should throw an exception.
+  W.set_size(10, 10);
+
+  REQUIRE_THROWS(NoInitialization::Initialize(V, 5, W, H));
+  REQUIRE_THROWS(NoInitialization::InitializeOne(V, 5, W, true));
 }

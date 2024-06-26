@@ -33,7 +33,7 @@ void PrintLeafMembership(DTree<MatType, int>* dtree,
 
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    const typename MatType::vec_type testPoint = data.unsafe_col(i);
+    const typename GetColType<MatType>::type testPoint = data.unsafe_col(i);
     const int leafTag = dtree->FindBucket(testPoint);
     const size_t label = labels[i];
     table(leafTag, label) += 1;
@@ -247,7 +247,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
     double cvVal = 0.0;
     for (size_t i = 0; i < test.n_cols; ++i)
     {
-      typename MatType::vec_type testPoint = test.unsafe_col(i);
+      typename GetColType<MatType>::type testPoint = test.unsafe_col(i);
       cvVal += cvDTree.ComputeValue(testPoint);
     }
 

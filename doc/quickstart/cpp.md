@@ -6,7 +6,7 @@ gives a few examples of usage, and pointers to deeper documentation.
 Keep in mind that mlpack also has interfaces to other languages, and quickstart
 guides for those other languages are available too.  If that is what you are
 looking for, see the quickstarts for [Python](python.md),
-[the command line](cli.md), [Julia](julia.md), [R](R.md), or [Go](go.md).
+[the command line](cli.md), [Julia](julia.md), [R](r.md), or [Go](go.md).
 
 ## Installing mlpack
 
@@ -57,6 +57,20 @@ cd vcpkg
 ```
 
 If the version is out of date, please [create an issue or pull request](https://github.com/Microsoft/vcpkg) on the vcpkg repository.
+
+## Installing mlpack from Conan
+
+The mlpack recipe in [Conan](https://conan.io/) is kept up to date by the Conan team members and the community contributors.
+
+Follow the instructions on [this page on how to set up Conan](https://conan.io/downloads).
+
+Install mlpack:
+
+```shell
+conan install --requires="mlpack/[*]" --build=missing
+```
+
+If the version is outdated or there is a new release version, please [create an issue or pull request](https://github.com/conan-io/conan-center-index) on the conan-center-index repository.
 
 ## Simple quickstart example
 
@@ -138,7 +152,7 @@ example command that uses `g++`, and assumes the file above is saved as
 `cpp_quickstart_1.cpp`.
 
 ```sh
-g++ -O3 -std=c++14 -o cpp_quickstart_1 cpp_quickstart_1.cpp -larmadillo -fopenmp
+g++ -O3 -std=c++17 -o cpp_quickstart_1 cpp_quickstart_1.cpp -larmadillo -fopenmp
 ```
 
 Then, you can run the program easily:
@@ -245,7 +259,7 @@ This can be compiled the same way as before, assuming the code is saved as
 `cpp_quickstart_2.cpp`:
 
 ```sh
-g++ -O3 -std=c++14 -o cpp_quickstart_2 cpp_quickstart_2.cpp -fopenmp -larmadillo
+g++ -O3 -std=c++17 -o cpp_quickstart_2 cpp_quickstart_2.cpp -fopenmp -larmadillo
 ```
 
 And then it can be easily run:

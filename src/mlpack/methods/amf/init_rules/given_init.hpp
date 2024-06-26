@@ -23,6 +23,7 @@ namespace mlpack {
  * not use std::move() during the Initialize() method, so it can be reused for
  * multiple AMF objects, but will incur copies of the W and H matrices.
  */
+template<typename MatType = arma::mat>
 class GivenInitialization
 {
  public:
@@ -30,12 +31,12 @@ class GivenInitialization
   GivenInitialization() : wIsGiven(false), hIsGiven(false) { }
 
   // Initialize the GivenInitialization object with the given matrices.
-  GivenInitialization(const arma::mat& w, const arma::mat& h) :
+  GivenInitialization(const MatType& w, const MatType& h) :
     w(w), h(h), wIsGiven(true), hIsGiven(true) { }
 
   // Initialize the GivenInitialization object, taking control of the given
   // matrices.
-  GivenInitialization(const arma::mat&& w, const arma::mat&& h) :
+  GivenInitialization(const MatType&& w, const MatType&& h) :
     w(std::move(w)),
     h(std::move(h)),
     wIsGiven(true),
@@ -43,7 +44,7 @@ class GivenInitialization
   { }
 
   // Initialize either H or W with the given matrix.
-  GivenInitialization(const arma::mat& m, const bool whichMatrix = true)
+  GivenInitialization(const MatType& m, const bool whichMatrix = true)
   {
     if (whichMatrix)
     {
@@ -60,7 +61,7 @@ class GivenInitialization
   }
 
   // Initialize either H or W, taking control of the given matrix.
-  GivenInitialization(const arma::mat&& m, const bool whichMatrix = true)
+  GivenInitialization(const MatType&& m, const bool whichMatrix = true)
   {
     if (whichMatrix)
     {
@@ -84,11 +85,11 @@ class GivenInitialization
    * @param W W matrix, to be initialized to given matrix.
    * @param H H matrix, to be initialized to given matrix.
    */
-  template<typename MatType>
-  inline void Initialize(const MatType& V,
+  template<typename VMatType>
+  inline void Initialize(const VMatType& V,
                          const size_t r,
-                         arma::mat& W,
-                         arma::mat& H)
+                         MatType& W,
+                         MatType& H)
   {
     // Make sure the initial W, H matrices are given
     if (!wIsGiven)
@@ -139,10 +140,10 @@ class GivenInitialization
    * @param M W or H matrix, to be initialized to given matrix.
    * @param whichMatrix If true, initialize W. Otherwise, initialize H.
    */
-  template<typename MatType>
-  inline void InitializeOne(const MatType& V,
+  template<typename VMatType>
+  inline void InitializeOne(const VMatType& V,
                             const size_t r,
-                            arma::mat& M,
+                            MatType& M,
                             const bool whichMatrix = true)
   {
     if (whichMatrix)
@@ -207,9 +208,9 @@ class GivenInitialization
 
  private:
   //! The W matrix for initialization.
-  arma::mat w;
+  MatType w;
   //! The H matrix for initialization.
-  arma::mat h;
+  MatType h;
   //! Whether initial W is given.
   bool wIsGiven;
   //! Whether initial H is given.

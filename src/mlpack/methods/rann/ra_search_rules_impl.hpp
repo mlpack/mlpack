@@ -60,7 +60,7 @@ RASearchRules(const arma::mat& referenceSet,
   numSamplesReqd = RAUtil::MinimumSamplesReqd(n, k, tau, alpha);
 
   // Initialize some statistics to be collected during the search.
-  numSamplesMade = arma::zeros<arma::Col<size_t> >(querySet.n_cols);
+  numSamplesMade = zeros<arma::Col<size_t>>(querySet.n_cols);
   numDistComputations = 0;
   samplingRatio = (double) numSamplesReqd / (double) n;
 

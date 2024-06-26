@@ -177,45 +177,12 @@ class BayesianLinearRegression
            typename = void, /* so MetaInfoExtractor does not get confused */
            typename = typename std::enable_if<
                std::is_same<typename ResponsesType::elem_type, ElemType>::value
-           >::type,
-           typename = typename std::enable_if<
-               !std::is_same<ResponsesType, arma::rowvec>::value
-           >::type>
-  ElemType Train(const MatType& data,
-                 const ResponsesType& responses);
-
-  template<typename MatType,
-           typename ResponsesType,
-           typename = void, /* so MetaInfoExtractor does not get confused */
-           typename = typename std::enable_if<
-               std::is_same<typename ResponsesType::elem_type, ElemType>::value
            >::type>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
-                 const bool centerData);
-
-  template<typename MatType,
-           typename ResponsesType,
-           typename = void, /* so MetaInfoExtractor does not get confused */
-           typename = typename std::enable_if<
-               std::is_same<typename ResponsesType::elem_type, ElemType>::value
-           >::type>
-  ElemType Train(const MatType& data,
-                 const ResponsesType& responses,
-                 const bool centerData,
-                 const bool scaleData);
-
-  template<typename MatType,
-           typename ResponsesType,
-           typename = void, /* so MetaInfoExtractor does not get confused */
-           typename = typename std::enable_if<
-               std::is_same<typename ResponsesType::elem_type, ElemType>::value
-           >::type>
-  ElemType Train(const MatType& data,
-                 const ResponsesType& responses,
-                 const bool centerData,
-                 const bool scaleData,
-                 const size_t maxIterations);
+                 const std::optional<bool> centerData = std::nullopt,
+                 const std::optional<bool> scaleData = std::nullopt,
+                 const std::optional<size_t> maxIterations = std::nullopt);
 
   template<typename MatType,
            typename ResponsesType,

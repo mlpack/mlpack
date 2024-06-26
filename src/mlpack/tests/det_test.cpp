@@ -30,10 +30,46 @@
 using namespace mlpack;
 using namespace std;
 
+template<typename MatType>
+class TestDTree : public DTree<MatType>
+{
+ public:
+  TestDTree() : DTree<MatType>() { }
+
+  TestDTree(const typename DTree<MatType>::StatType& maxVals,
+            const typename DTree<MatType>::StatType& minVals,
+            const size_t totalPoints) :
+      DTree<MatType>(maxVals, minVals, totalPoints) { }
+
+  TestDTree(MatType& data) : DTree<MatType>(data) { }
+
+  size_t& Start() { return DTree<MatType>::start; }
+  size_t& End() { return DTree<MatType>::end; }
+  double& LogVolume() { return DTree<MatType>::logVolume; }
+
+  bool FindSplit(const MatType& data,
+                 size_t& splitDim,
+                 typename MatType::elem_type& splitValue,
+                 double& leftError,
+                 double& rightError,
+                 const size_t minLeafSize = 5) const
+  {
+    return DTree<MatType>::FindSplit(data, splitDim, splitValue, leftError,
+        rightError, minLeafSize);
+  }
+
+  size_t SplitData(MatType& data,
+                   const size_t splitDim,
+                   const typename MatType::elem_type splitValue,
+                   arma::Col<size_t>& oldFromNew) const
+  {
+    return DTree<MatType>::SplitData(data, splitDim, splitValue, oldFromNew);
+  }
+};
+
 // Tests for the private functions.  We cannot perform these if we are on
 // Windows because we cannot make private functions accessible using the macro
 // trick above.
-#ifndef _WIN32
 TEST_CASE("TestGetMaxMinVals", "[DETTest]")
 {
   arma::mat testData(3, 5);
@@ -57,14 +93,14 @@ TEST_CASE("TestComputeNodeError", "[DETTest]")
   arma::vec maxVals("7 7 8");
   arma::vec minVals("3 0 1");
 
-  DTree<arma::mat> testDTree(maxVals, minVals, 5);
+  TestDTree<arma::mat> testDTree(maxVals, minVals, 5);
   double trueNodeError = -log(4.0) - log(7.0) - log(7.0);
 
-  REQUIRE((double) testDTree.logNegError ==
+  REQUIRE((double) testDTree.LogNegError() ==
       Approx(trueNodeError).epsilon(1e-12));
 
-  testDTree.start = 3;
-  testDTree.end = 5;
+  testDTree.Start() = 3;
+  testDTree.End() = 5;
 
   double nodeError = testDTree.LogNegativeError(5);
   trueNodeError = 2 * log(2.0 / 5.0) - log(4.0) - log(7.0) - log(7.0);
@@ -96,7 +132,7 @@ TEST_CASE("TestFindSplit", "[DETTest]")
                { 5, 0, 1, 7, 1 },
                { 5, 6, 7, 1, 8 } };
 
-  DTree<arma::mat> testDTree(testData);
+  TestDTree<arma::mat> testDTree(testData);
 
   size_t obDim;
   double obLeftError, obRightError, obSplit;
@@ -107,7 +143,7 @@ TEST_CASE("TestFindSplit", "[DETTest]")
   double trueRightError = 2 * log(3.0 / 5.0) - (log(7.0) + log(4.0) +
       log(2.5));
 
-  testDTree.logVolume = log(7.0) + log(4.0) + log(7.0);
+  testDTree.LogVolume() = log(7.0) + log(4.0) + log(7.0);
   REQUIRE(testDTree.FindSplit(
       testData, obDim, obSplit, obLeftError, obRightError, 1));
 
@@ -126,7 +162,7 @@ TEST_CASE("TestSplitData", "[DETTest]")
                { 5, 0, 1, 7, 1 },
                { 5, 6, 7, 1, 8 } };
 
-  DTree<arma::mat> testDTree(testData);
+  TestDTree<arma::mat> testDTree(testData);
 
   arma::Col<size_t> oTest(5);
   oTest = { 1, 2, 3, 4, 5 };
@@ -157,7 +193,7 @@ TEST_CASE("TestSparseFindSplit", "[DETTest]")
 
   arma::sp_mat testData(realData);
 
-  DTree<arma::sp_mat> testDTree(testData);
+  TestDTree<arma::sp_mat> testDTree(testData);
 
   size_t obDim;
   double obLeftError, obRightError, obSplit;
@@ -169,7 +205,7 @@ TEST_CASE("TestSparseFindSplit", "[DETTest]")
   double trueRightError = 2 * log(4.0 / 7.0) -
       (log(7.0) + log(6.5) + log(8.0) + log(6.0));
 
-  testDTree.logVolume = log(7.0) + log(7.0) + log(8.0) + log(6.0);
+  testDTree.LogVolume() = log(7.0) + log(7.0) + log(8.0) + log(6.0);
   REQUIRE(testDTree.FindSplit(
       testData, obDim, obSplit, obLeftError, obRightError, 1));
 
@@ -191,7 +227,7 @@ TEST_CASE("TestSparseSplitData", "[DETTest]")
 
   arma::sp_mat testData(realData);
 
-  DTree<arma::sp_mat> testDTree(testData);
+  TestDTree<arma::sp_mat> testDTree(testData);
 
   arma::Col<size_t> oTest(7);
   oTest = { 1, 2, 3, 4, 5, 6, 7 };
@@ -212,8 +248,6 @@ TEST_CASE("TestSparseSplitData", "[DETTest]")
   REQUIRE(oTest[5] == 6);
   REQUIRE(oTest[6] == 7);
 }
-
-#endif
 
 // Tests for the public functions.
 
@@ -264,12 +298,12 @@ TEST_CASE("TestGrow", "[DETTest]")
 
   // Test node errors for every node (these are private functions).
 #ifndef _WIN32
-  REQUIRE(testDTree.logNegError == Approx(rootError).epsilon(1e-12));
-  REQUIRE(testDTree.Left()->logNegError == Approx(lError).epsilon(1e-12));
-  REQUIRE(testDTree.Right()->logNegError == Approx(rError).epsilon(1e-12));
-  REQUIRE(testDTree.Right()->Left()->logNegError ==
+  REQUIRE(testDTree.LogNegError() == Approx(rootError).epsilon(1e-12));
+  REQUIRE(testDTree.Left()->LogNegError() == Approx(lError).epsilon(1e-12));
+  REQUIRE(testDTree.Right()->LogNegError() == Approx(rError).epsilon(1e-12));
+  REQUIRE(testDTree.Right()->Left()->LogNegError() ==
       Approx(rlError).epsilon(1e-12));
-  REQUIRE(testDTree.Right()->Right()->logNegError ==
+  REQUIRE(testDTree.Right()->Right()->LogNegError() ==
       Approx(rrError).epsilon(1e-12));
 #endif
 

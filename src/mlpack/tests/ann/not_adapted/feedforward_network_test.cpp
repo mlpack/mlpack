@@ -134,7 +134,7 @@ TEST_CASE("CheckCopyMovingReparametrizationNetworkTest",
 TEST_CASE("HighwayNetworkTest", "[FeedForwardNetworkTest]")
 {
   arma::mat dataset;
-  dataset.load("mnist_first250_training_4s_and_9s.arm");
+  dataset.load("mnist_first250_training_4s_and_9s.csv");
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)

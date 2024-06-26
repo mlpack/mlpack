@@ -5,7 +5,7 @@ command-line and gives a few examples of usage, and pointers to deeper
 documentation.
 
 This quickstart guide is also available for [C++](cpp.md), [Python](python.md),
-[R](R.md), [Julia](julia.md), and [Go](go.md).
+[R](r.md), [Julia](julia.md), and [Go](go.md).
 
 ## Installing mlpack
 
@@ -164,6 +164,7 @@ Out for Justice (1991)
 Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb (1964)
 Schindler's List (1993)
 ```
+
 ## Next steps with mlpack
 
 Now that you have done some simple work with mlpack, you have seen how it can

@@ -106,20 +106,20 @@ class StringEncodingDictionary
 };
 
 /*
- * Specialization of the StringEncodingDictionary class for MLPACK_STRING_VIEW.
+ * Specialization of the StringEncodingDictionary class for std::string_view.
  */
 template<>
-class StringEncodingDictionary<MLPACK_STRING_VIEW>
+class StringEncodingDictionary<std::string_view>
 {
  public:
   //! A convenient alias for the internal type of the map.
   using MapType = std::unordered_map<
-      MLPACK_STRING_VIEW,
+      std::string_view,
       size_t,
-      std::hash<MLPACK_STRING_VIEW>>;
+      std::hash<std::string_view>>;
 
   //! The type of the token that the dictionary stores.
-  using TokenType = MLPACK_STRING_VIEW;
+  using TokenType = std::string_view;
 
   //! Construct the default class.
   StringEncodingDictionary() = default;
@@ -156,7 +156,7 @@ class StringEncodingDictionary<MLPACK_STRING_VIEW>
    *
    * @param token The given token.
    */
-  bool HasToken(const MLPACK_STRING_VIEW token) const
+  bool HasToken(const std::string_view token) const
   {
     return mapping.find(token) != mapping.end();
   }
@@ -168,7 +168,7 @@ class StringEncodingDictionary<MLPACK_STRING_VIEW>
    *
    * @param token The given token.
    */
-  size_t AddToken(const MLPACK_STRING_VIEW token)
+  size_t AddToken(const std::string_view token)
   {
     tokens.emplace_back(token);
 
@@ -185,7 +185,7 @@ class StringEncodingDictionary<MLPACK_STRING_VIEW>
    *
    * @param token The given token.
    */
-  size_t Value(const MLPACK_STRING_VIEW token) const
+  size_t Value(const std::string_view token) const
   {
     return mapping.at(token);
   }

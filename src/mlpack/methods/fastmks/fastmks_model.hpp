@@ -17,7 +17,7 @@
 #include <mlpack/core/kernels/kernel_traits.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
 #include <mlpack/core/kernels/polynomial_kernel.hpp>
-#include <mlpack/core/kernels/cosine_distance.hpp>
+#include <mlpack/core/kernels/cosine_similarity.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include <mlpack/core/kernels/epanechnikov_kernel.hpp>
 #include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
@@ -38,7 +38,7 @@ class FastMKSModel
   {
     LINEAR_KERNEL,
     POLYNOMIAL_KERNEL,
-    COSINE_DISTANCE,
+    COSINE_SIMILARITY,
     GAUSSIAN_KERNEL,
     EPANECHNIKOV_KERNEL,
     TRIANGULAR_KERNEL,
@@ -142,7 +142,7 @@ class FastMKSModel
   //! This will only be non-NULL if this is the type of kernel we are using.
   FastMKS<PolynomialKernel>* polynomial;
   //! This will only be non-NULL if this is the type of kernel we are using.
-  FastMKS<CosineDistance>* cosine;
+  FastMKS<CosineSimilarity>* cosine;
   //! This will only be non-NULL if this is the type of kernel we are using.
   FastMKS<GaussianKernel>* gaussian;
   //! This will only be non-NULL if this is the type of kernel we are using.

@@ -134,7 +134,7 @@ inline void AddTask::Binarize(const arma::field<arma::vec>& input,
   output = arma::field<arma::mat>(input.n_elem);
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    output.at(i) = arma::zeros(3, input.at(i).n_elem);
+    output.at(i) = zeros(3, input.at(i).n_elem);
     for (size_t j = 0; j < input.at(i).n_elem; ++j)
     {
       size_t val = input.at(i).at(j);

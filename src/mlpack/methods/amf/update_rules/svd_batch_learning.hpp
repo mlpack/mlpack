@@ -16,6 +16,21 @@
 
 namespace mlpack {
 
+// Forward declarations (implementations at end of file).
+template<typename MatType, typename WHMatType>
+void ComputeDeltaW(const MatType& V,
+                   const WHMatType& W,
+                   const WHMatType& H,
+                   const double kw,
+                   WHMatType& deltaW);
+
+template<typename MatType, typename WHMatType>
+void ComputeDeltaH(const MatType& V,
+                   const WHMatType& W,
+                   const WHMatType& H,
+                   const double kh,
+                   WHMatType& deltaH);
+
 /**
  * This class implements SVD batch learning with momentum. This procedure is
  * described in the following paper:
@@ -37,6 +52,7 @@ namespace mlpack {
  * is performed with gradient descent. To make gradient descent faster, momentum
  * is added.
  */
+template<typename WHMatType = arma::mat>
 class SVDBatchLearning
 {
  public:
@@ -85,33 +101,15 @@ class SVDBatchLearning
    */
   template<typename MatType>
   inline void WUpdate(const MatType& V,
-                      arma::mat& W,
-                      const arma::mat& H)
+                      WHMatType& W,
+                      const WHMatType& H)
   {
-    size_t n = V.n_rows;
-    size_t m = V.n_cols;
-
-    size_t r = W.n_cols;
-
     // initialize the momentum of this iteration.
     mW = momentum * mW;
 
     // Compute the step.
-    arma::mat deltaW;
-    deltaW.zeros(n, r);
-    for (size_t i = 0; i < n; ++i)
-    {
-      for (size_t j = 0; j < m; ++j)
-      {
-        const double val = V(i, j);
-        if (val != 0)
-          deltaW.row(i) += (val - dot(W.row(i), H.col(j))) *
-                                            trans(H.col(j));
-      }
-      // Add regularization.
-      if (kw != 0)
-        deltaW.row(i) -= kw * W.row(i);
-    }
+    WHMatType deltaW;
+    ComputeDeltaW(V, W, H, kw, deltaW);
 
     // Add the step to the momentum.
     mW += u * deltaW;
@@ -130,32 +128,15 @@ class SVDBatchLearning
    */
   template<typename MatType>
   inline void HUpdate(const MatType& V,
-                      const arma::mat& W,
-                      arma::mat& H)
+                      const WHMatType& W,
+                      WHMatType& H)
   {
-    size_t n = V.n_rows;
-    size_t m = V.n_cols;
-
-    size_t r = W.n_cols;
-
     // Initialize the momentum of this iteration.
     mH = momentum * mH;
 
     // Compute the step.
-    arma::mat deltaH;
-    deltaH.zeros(r, m);
-    for (size_t j = 0; j < m; ++j)
-    {
-      for (size_t i = 0; i < n; ++i)
-      {
-        const double val = V(i, j);
-        if (val != 0)
-          deltaH.col(j) += (val - dot(W.row(i), H.col(j))) * W.row(i).t();
-      }
-      // Add regularization.
-      if (kh != 0)
-        deltaH.col(j) -= kh * H.col(j);
-    }
+    WHMatType deltaH;
+    ComputeDeltaH(V, W, H, kh, deltaH);
 
     // Add this step to the momentum.
     mH += u * deltaH;
@@ -186,71 +167,118 @@ class SVDBatchLearning
   double momentum;
 
   //! Momentum matrix for matrix W
-  arma::mat mW;
+  WHMatType mW;
   //! Momentum matrix for matrix H
-  arma::mat mH;
+  WHMatType mH;
 }; // class SVDBatchLearning
 
-//! TODO : Merge this template specialized function for sparse matrix using
-//!        common row_col_iterator
-
-/**
- * WUpdate function specialization for sparse matrix
- */
-template<>
-inline void SVDBatchLearning::WUpdate<arma::sp_mat>(const arma::sp_mat& V,
-                                                    arma::mat& W,
-                                                    const arma::mat& H)
+template<typename MatType, typename WHMatType>
+void ComputeDeltaW(const MatType& V,
+                   const WHMatType& W,
+                   const WHMatType& H,
+                   const double kw,
+                   WHMatType& deltaW)
 {
-  const size_t n = V.n_rows;
-  const size_t r = W.n_cols;
+  const size_t n = (size_t) V.n_rows;
+  const size_t m = (size_t) V.n_cols;
+  const size_t r = (size_t) W.n_cols;
 
-  mW = momentum * mW;
+  deltaW.zeros(n, r);
+  for (size_t i = 0; i < n; ++i)
+  {
+    for (size_t j = 0; j < m; ++j)
+    {
+      const double val = V(i, j);
+      if (val != 0)
+        deltaW.row(i) += (val - dot(W.row(i), H.col(j))) * trans(H.col(j));
+    }
+    // Add regularization.
+    if (kw != 0)
+      deltaW.row(i) -= kw * W.row(i);
+  }
+}
 
-  arma::mat deltaW;
+// Specialization for sparse matrices: don't iterate over zero-valued elements.
+template<typename eT, typename WHMatType>
+void ComputeDeltaW(const arma::SpMat<eT>& V,
+                   const WHMatType& W,
+                   const WHMatType& H,
+                   const double kw,
+                   WHMatType& deltaW)
+{
+  const size_t n = (size_t) V.n_rows;
+  const size_t m = (size_t) V.n_cols;
+  const size_t r = (size_t) W.n_cols;
+
   deltaW.zeros(n, r);
 
-  for (arma::sp_mat::const_iterator it = V.begin(); it != V.end(); ++it)
+  typename arma::SpMat<eT>::const_iterator it = V.begin();
+  while (it != V.end())
   {
     const size_t row = it.row();
     const size_t col = it.col();
     deltaW.row(it.row()) += (*it - dot(W.row(row), H.col(col))) *
-                                             trans(H.col(col));
+        trans(H.col(col));
+
+    ++it;
   }
 
   if (kw != 0)
     deltaW -= kw * W;
-
-  mW += u * deltaW;
-  W += mW;
 }
 
-template<>
-inline void SVDBatchLearning::HUpdate<arma::sp_mat>(const arma::sp_mat& V,
-                                                    const arma::mat& W,
-                                                    arma::mat& H)
+template<typename MatType, typename WHMatType>
+void ComputeDeltaH(const MatType& V,
+                   const WHMatType& W,
+                   const WHMatType& H,
+                   const double kh,
+                   WHMatType& deltaH)
 {
-  const size_t m = V.n_cols;
-  const size_t r = W.n_cols;
+  const size_t n = (size_t) V.n_rows;
+  const size_t m = (size_t) V.n_cols;
+  const size_t r = (size_t) W.n_cols;
 
-  mH = momentum * mH;
+  deltaH.zeros(r, m);
+  for (size_t j = 0; j < m; ++j)
+  {
+    for (size_t i = 0; i < n; ++i)
+    {
+      const double val = V(i, j);
+      if (val != 0)
+        deltaH.col(j) += (val - dot(W.row(i), H.col(j))) * W.row(i).t();
+    }
+    // Add regularization.
+    if (kh != 0)
+      deltaH.col(j) -= kh * H.col(j);
+  }
+}
 
-  arma::mat deltaH;
+// Specialization for sparse matrices: don't iterate over zero-valued elements.
+template<typename eT, typename WHMatType>
+void ComputeDeltaH(const arma::SpMat<eT>& V,
+                   const WHMatType& W,
+                   const WHMatType& H,
+                   const double kh,
+                   WHMatType& deltaH)
+{
+  const size_t n = (size_t) V.n_rows;
+  const size_t m = (size_t) V.n_cols;
+  const size_t r = (size_t) W.n_cols;
+
   deltaH.zeros(r, m);
 
-  for (arma::sp_mat::const_iterator it = V.begin(); it != V.end(); ++it)
+  typename arma::SpMat<eT>::const_iterator it = V.begin();
+  while (it != V.end())
   {
     const size_t row = it.row();
     const size_t col = it.col();
-    deltaH.col(col) += (*it - dot(W.row(row), H.col(col))) *
-        W.row(row).t();
+    deltaH.col(col) += (*it - dot(W.row(row), H.col(col))) * W.row(row).t();
+
+    ++it;
   }
 
   if (kh != 0)
     deltaH -= kh * H;
-
-  mH += u * deltaH;
-  H += mH;
 }
 
 } // namespace mlpack

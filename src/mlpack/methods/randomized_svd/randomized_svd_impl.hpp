@@ -106,7 +106,7 @@ inline void RandomizedSVD::Apply(const InMatType& data,
   else
   {
     R.randn(data.n_cols, iteratedPower);
-    Q = (data * R) - (rowMean * (arma::ones<MatType>(1, data.n_cols) * R));
+    Q = (data * R) - (rowMean * (ones<MatType>(1, data.n_cols) * R));
   }
 
   // Form a matrix Q whose columns constitute a
@@ -125,7 +125,7 @@ inline void RandomizedSVD::Apply(const InMatType& data,
   {
     if (data.n_cols >= data.n_rows)
     {
-      Q = (data * Q) - rowMean * (arma::ones<MatType>(1, data.n_cols) * Q);
+      Q = (data * Q) - rowMean * (ones<MatType>(1, data.n_cols) * Q);
       arma::lu(Q, v, Q);
       Q = (data.t() * Q) - repmat(rowMean.t() * Q, data.n_cols, 1);
     }
@@ -133,7 +133,7 @@ inline void RandomizedSVD::Apply(const InMatType& data,
     {
       Q = (data.t() * Q) - repmat(rowMean.t() * Q, data.n_cols, 1);
       arma::lu(Q, v, Q);
-      Q = (data * Q) - (rowMean * (arma::ones<MatType>(1, data.n_cols) * Q));
+      Q = (data * Q) - (rowMean * (ones<MatType>(1, data.n_cols) * Q));
     }
 
     // Computing the LU decomposition is more efficient than computing the QR
@@ -155,7 +155,7 @@ inline void RandomizedSVD::Apply(const InMatType& data,
   // applied to Q.
   if (data.n_cols >= data.n_rows)
   {
-    Qdata = (data * Q) - rowMean * (arma::ones<MatType>(1, data.n_cols) * Q);
+    Qdata = (data * Q) - rowMean * (ones<MatType>(1, data.n_cols) * Q);
     arma::svd_econ(u, s, v, Qdata);
     v = Q * v;
   }

@@ -132,7 +132,7 @@ Estimate(const arma::mat& observations,
       if (std::is_same<Distribution, DiagonalGaussianDistribution>::value)
       {
         arma::vec covariance = sum((tmp % tmp) %
-            (arma::ones<arma::vec>(observations.n_rows) *
+            (ones<arma::vec>(observations.n_rows) *
             trans(exp(condLogProb.col(i) - probRowSums[i]))), 1);
 
         // Apply covariance constraint.
@@ -243,7 +243,7 @@ Estimate(const arma::mat& observations,
       if (std::is_same<Distribution, DiagonalGaussianDistribution>::value)
       {
         arma::vec cov = sum((tmp % tmp) %
-            (arma::ones<arma::vec>(observations.n_rows) *
+            (ones<arma::vec>(observations.n_rows) *
             trans(exp(condLogProb.col(i) +
                             logProbabilities - probRowSums[i]))), 1);
 

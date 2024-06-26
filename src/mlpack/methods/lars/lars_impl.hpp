@@ -41,7 +41,6 @@ inline LARS<ModelMatType>::LARS(
 { /* Nothing left to do. */ }
 
 template<typename ModelMatType>
-mlpack_deprecated
 inline LARS<ModelMatType>::LARS(
     const bool useCholesky,
     const arma::mat& gramMatrix,
@@ -249,7 +248,6 @@ inline LARS<ModelMatType>& LARS<ModelMatType>::operator=(
 }
 
 template<typename ModelMatType>
-mlpack_deprecated
 inline double LARS<ModelMatType>::Train(const arma::mat& matX,
                                         const arma::rowvec& y,
                                         arma::vec& beta,
@@ -658,31 +656,6 @@ LARS<ModelMatType>::Train(const MatType& matX,
     if (maxCorr < tolerance)
       break;
 
-    // Floats require a really large tolerance for this condition.
-    const ElemType tol = (std::is_same<ElemType, double>::value) ? 1e-6 : 0.01;
-    if ((matGram != &matGramInternal) &&
-        ((maxActiveCorr - minActiveCorr) / maxActiveCorr) > tol)
-    {
-      // Construct the error message to match the user's settings.
-      std::cout << "maxActiveCorr: " << maxActiveCorr << " minActiveCorr: " << minActiveCorr << "; result " << ((maxActiveCorr - minActiveCorr) / maxActiveCorr) << "; tol " << tol << "\n";
-      std::ostringstream oss;
-      oss << "LARS::Train(): correlation conditions violated; check that your "
-          << "given Gram matrix is properly computed on ";
-      if (fitIntercept)
-        oss << "mean-centered ";
-      else
-        oss << "non-mean-centered ";
-      if (normalizeData)
-        oss << "unit-variance (normalized) ";
-      else
-        oss << "non-normalized ";
-      oss << "data";
-      if (lambda2 > 0.0)
-        oss << " with lambda2 = " << lambda2 << " added to the diagonal";
-      oss << "!";
-      throw std::runtime_error(oss.str());
-    }
-
     // Add the variable to the active set and update the Gram matrix as
     // necessary.
     if (!lassocond)
@@ -707,7 +680,10 @@ LARS<ModelMatType>::Train(const MatType& matX,
     // Compute signs of correlations.
     arma::Col<ElemType> s(activeSet.size());
     for (size_t i = 0; i < activeSet.size(); ++i)
-      s(i) = corr(activeSet[i]) / fabs(corr(activeSet[i]));
+    {
+      const size_t j = activeSet[i];
+      s[i] = (ElemType) (corr(j) == 0.0 ? 0.0 : (corr(j) > 0) ? 1.0 : -1.0);
+    }
 
     // Compute the "equiangular" direction in parameter space (betaDirection).
     // We use quotes because in the case of non-unit norm variables, this need
@@ -770,10 +746,10 @@ LARS<ModelMatType>::Train(const MatType& matX,
           matGramActive(i, j) = (*matGram)(activeSet[i], activeSet[j]);
 
       // Check for singularity.
-      MatType matS = s * arma::ones<MatType>(1, activeSet.size());
+      MatType matS = s * ones<MatType>(1, activeSet.size());
       const bool solvedOk = solve(unnormalizedBetaDirection,
           matGramActive % trans(matS) % matS,
-          arma::ones<MatType>(activeSet.size(), 1));
+          ones<MatType>(activeSet.size(), 1));
       if (solvedOk)
       {
         // Ok, no singularity.
@@ -794,11 +770,13 @@ LARS<ModelMatType>::Train(const MatType& matX,
         // need to take a step with the previous beta direction towards the next
         // variable we will add.
         s = s.subvec(0, activeSet.size() - 1); // Drop last element.
-        matS = s * arma::ones<MatType>(1, activeSet.size());
+        matGramActive = matGramActive.submat(0, 0, activeSet.size() - 1,
+            activeSet.size() - 1);
+        matS = s * ones<MatType>(1, activeSet.size());
         // This worked last iteration, so there can't be a singularity.
         solve(unnormalizedBetaDirection,
             matGramActive % trans(matS) % matS,
-            arma::ones<MatType>(activeSet.size(), 1));
+            ones<MatType>(activeSet.size(), 1));
         normalization = 1.0 / std::sqrt(sum(unnormalizedBetaDirection));
         betaDirection = normalization * unnormalizedBetaDirection % s;
       }

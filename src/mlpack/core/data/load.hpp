@@ -83,6 +83,7 @@ bool Load(const std::string& filename,
  *
  * The supported types of files are the same as found in Armadillo:
  *
+ *  - CSV (coord_ascii), denoted by .csv or .txt
  *  - TSV (coord_ascii), denoted by .tsv or .txt
  *  - TXT (coord_ascii), denoted by .txt
  *  - Raw binary (raw_binary), denoted by .bin
@@ -109,7 +110,8 @@ template<typename eT>
 bool Load(const std::string& filename,
           arma::SpMat<eT>& matrix,
           const bool fatal = false,
-          const bool transpose = true);
+          const bool transpose = true,
+          const FileType inputLoadType = FileType::AutoDetect);
 
 /**
  * Load a column vector from a file, guessing the filetype from the extension.

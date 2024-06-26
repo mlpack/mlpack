@@ -47,11 +47,11 @@ class RandomAcolInitialization
   RandomAcolInitialization()
   { }
 
-  template<typename MatType>
+  template<typename MatType, typename WHMatType>
   inline static void Initialize(const MatType& V,
                                 const size_t r,
-                                arma::mat& W,
-                                arma::mat& H)
+                                WHMatType& W,
+                                WHMatType& H)
   {
     const size_t n = V.n_rows;
     const size_t m = V.n_cols;
@@ -70,8 +70,7 @@ class RandomAcolInitialization
     {
       for (size_t randCol = 0; randCol < columnsToAverage; randCol++)
       {
-        // .col() does not work in this case, as of Armadillo 3.920.
-        W.unsafe_col(col) += V.col(RandInt(0, m));
+        W.col(col) += V.col(RandInt(0, m));
       }
     }
 
@@ -80,6 +79,54 @@ class RandomAcolInitialization
 
     // Initialize H to random values.
     H.randu(r, m);
+  }
+
+  /**
+   * Initialize the matrix W or H only.
+   *
+   * @param V Input matrix.
+   * @param r Rank of matrix.
+   * @param M W or H matrix.
+   * @param whichMatrix If true, initialize W. Otherwise, initialize H.
+   */
+  template<typename MatType, typename WHMatType>
+  inline static void InitializeOne(const MatType& V,
+                                   const size_t r,
+                                   WHMatType& M,
+                                   const bool whichMatrix = true)
+  {
+    const size_t n = V.n_rows;
+    const size_t m = V.n_cols;
+
+    if (columnsToAverage > m)
+    {
+      Log::Warn << "Number of random columns (columnsToAverage) is more than "
+          << "the number of columns available in the V matrix; weird results "
+          << "may ensue!" << std::endl;
+    }
+
+    if (whichMatrix)
+    {
+      // Initialize W matrix.
+      M.zeros(n, r);
+
+      // Initialize W matrix with random columns.
+      for (size_t col = 0; col < r; col++)
+      {
+        for (size_t randCol = 0; randCol < columnsToAverage; randCol++)
+        {
+          M.col(col) += V.col(RandInt(0, m));
+        }
+      }
+
+      // Now divide by p.
+      M /= columnsToAverage;
+    }
+    else
+    {
+      // Initialize H to random values.
+      M.randu(r, m);
+    }
   }
 
   //! Serialize the object (in this case, there is nothing to serialize).

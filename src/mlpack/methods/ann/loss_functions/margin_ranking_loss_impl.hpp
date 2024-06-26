@@ -37,7 +37,7 @@ typename MatType::elem_type MarginRankingLossType<MatType>::Forward(
   const MatType& prediction2 = prediction.rows(predictionRows / 2,
       predictionRows - 1);
 
-  double lossSum = accu(max(arma::zeros(size(target)),
+  double lossSum = accu(max(zeros(size(target)),
       -target % (prediction1 - prediction2) + margin));
 
   if (reduction)

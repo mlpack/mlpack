@@ -16,6 +16,7 @@ else
   output_dir=doc/html;
 fi
 
+# If the header and footer already exist, they will not be overwritten.
 template_html_header="${output_dir}/template.html.header";
 template_html_footer="${output_dir}/template.html.footer";
 template_html_sidebar="${output_dir}/template.html.sidebar";
@@ -79,11 +80,11 @@ run_kramdown()
   # - We also only catch the second part of the link '](' because the name of
   #   the link could be spread on multiple lines.
   #
-  # We start by trying to catch a special case of README.md, which our
-  # documentation puts in a slightly different place.  In addition, because
-  # README.md is being moved to the root of the documentation, we must adjust
-  # links in that file differently.
-  if [[ $input_file != "README.md" ]];
+  # We start by trying to catch the special cases README.md and HISTORY.md,
+  # which our documentation puts in a slightly different place.  In addition,
+  # because those files are being moved to the root of the documentation, we
+  # must adjust links differently.
+  if [[ $input_file != "README.md" ]] && [[ $input_file != "HISTORY.md" ]];
   then
     sed -i "s|\]([./]*README.md)|](${link_root}README.html)|g" $input_file.tmp;
     sed -i "s|\]([./]*README.md#[0-9]-\([^ ]*\))|](${link_root}README.html#\1)|g" $input_file.tmp;
@@ -104,27 +105,83 @@ run_kramdown()
     sed -i 's/\](#[0-9]-\([^ ]*\))/](#\1)/g' $input_file.tmp;
     sed -i 's/\](#[0-9][0-9]\([^ ]*\))/](#\1)/g' $input_file.tmp;
     sed -i 's/\](#[0-9]\([^ ]*\))/](#\1)/g' $input_file.tmp;
+
+    # For HISTORY.md, we want to turn all references to Github issues into
+    # actual links, and all references to Github usernames into links to their
+    # profile.
+    if [[ $input_file == "HISTORY.md" ]];
+    then
+      sed -i 's/#\([0-9][0-9]*\)/[#\1](https:\/\/github.com\/mlpack\/mlpack\/issues\/\1)/g' $input_file.tmp;
+      sed -i 's/\([^`]\)@\([a-zA-Z0-9_-][a-zA-Z0-9_-]*\)/\1[@\2](https:\/\/github.com\/\2)/g' $input_file.tmp;
+    fi
   fi
 
   # Replace any links to source files with a link to the current version of the
   # source file on Github.
   sed -i 's/\](\/src\/\([^ ]*\)\.hpp)/](https:\/\/github.com\/mlpack\/mlpack\/blob\/master\/src\/\1.hpp)/' $input_file.tmp;
 
-  kramdown \
-      -x parser-gfm \
-      --syntax-highlighter rouge \
-      --syntax-highlighter-opts '{ default_lang: c++ }' \
-      --auto_ids \
-      $input_file.tmp > "$output_file.tmp" || exit 1;
+  # If this is binding documentation or quickstart documentation, don't set the
+  # default language to C++.
+  set_lang=1;
+  if [[ `dirname $input_file` == "./doc/user/bindings" ]];
+  then
+    set_lang=0;
+  elif [[ `dirname $input_file` == "./doc/quickstart" ]];
+  then
+    if [[ `basename $input_file .md` != "cpp" ]];
+    then
+      set_lang=0;
+    fi
+  elif [[ $input_file == "HISTORY.md" ]];
+  then
+    set_lang=0;
+  fi
+
+  if [[ "$set_lang" == "0" ]];
+  then
+    kramdown \
+        -x parser-gfm \
+        --syntax-highlighter rouge \
+        --auto_ids \
+        $input_file.tmp > "$output_file.tmp" || exit 1;
+  else
+    kramdown \
+        -x parser-gfm \
+        --syntax-highlighter rouge \
+        --syntax-highlighter-opts '{ default_lang: c++ }' \
+        --auto_ids \
+        $input_file.tmp > "$output_file.tmp" || exit 1;
+  fi
   cat "$template_html_header" | sed "s|LINKROOT|$link_root|" > "$output_file";
 
   # Create the sidebar.  Extract anchors from the page, unless we are looking at
   # index.md, since the permanent part of the sidebar links all over index.md
-  # anyway.
-  cat "$template_html_sidebar" | sed "s|LINKROOT|$link_root|" >> "$output_file";
-  if [[ $input_file != "doc/index.md" ]];
+  # anyway.  If we are looking at binding documentation, use a slightly
+  # different sidebar.
+  if { [[ $dir_name != "user/bindings" ]] && \
+       [[ $dir_name != "quickstart" ]] } ||
+     [[ $input_file == "./doc/quickstart/cpp.md" ]];
   then
+    cat "$template_html_sidebar" | sed "s|LINKROOT|$link_root|" \
+        >> "$output_file";
     create_page_sidebar_section "$output_file.tmp" "$output_file" "$dir_name";
+  else
+    echo "Using custom sidebar...";
+    cat "$template_html_sidebar" | sed "s|LINKROOT|$link_root|" |\
+        sed 's|<details> <!-- default closed for non-binding pages -->|<details open="true">|' |\
+        sed 's|<details open="true"> <!-- default open for non-binding pages -->|<details>|' \
+        >> "$output_file";
+    # Some pages may have a custom sidebar HTML file.  (Specifically,
+    # generated language bindings.)
+    if [[ $dir_name == "user/bindings" ]];
+    then
+      cat "${input_file/%.md/.sidebar.html}" | sed "s|LINKROOT|$link_root|" \
+          >> "$output_file";
+    else
+      sidebar_file=`basename $input_file .md`.sidebar.html;
+      cat "./doc/user/bindings/$sidebar_file" | sed "s|LINKROOT|$link_root|" \
+          >> "$output_file";
+    fi
   fi
 
   # Add clickable anchors to h2 and h3 headers.
@@ -176,26 +233,26 @@ EOF
 # appends a sidebar list to the output HTML.
 create_page_sidebar_section()
 {
-  input_file="$1";
-  output_file="$2";
-  dir_name="$3"; # The directory containing the documentation.
-  input_file_base=`basename "$input_file" .html.tmp`;
+  sb_input_file="$1";
+  sb_output_file="$2";
+  sb_dir_name="$3"; # The directory containing the documentation.
+  sb_input_file_base=`basename "$sb_input_file" .html.tmp`;
 
   # Extract h2/h3 anchors into a list.  For individual method documentation, we
   # only extract h3 anchors because those use h2s as their headings.  And, for
   # core.md, we want to extract both h2 and h3 anchors.
-  if [[ "$dir_name" == "user/methods" ]];
+  if [[ "$sb_dir_name" == "user/methods" ]];
   then
     # The page title on individual methods is encoded as an h2.
-    page_title=`grep '<h2 id=' "$input_file" |\
+    page_title=`grep '<h2 id=' "$sb_input_file" |\
         head -1 |\
         sed 's/^<h2 id="[^"]*">\(.*\)<\/h2>/\1/'`;
 
-    grep '<h3 id=' "$input_file" | sed 's/<h3 id="\([^"]*\)">\(.*\)<\/h3>/<li><a href="#\1">\2<\/a><\/li>/' > "$output_file.side.tmp";
-  elif [[ "$input_file_base" == "core" ]];
+    grep '<h3 id=' "$sb_input_file" | sed 's/<h3 id="\([^"]*\)">\(.*\)<\/h3>/<li><a href="#\1">\2<\/a><\/li>/' > "$sb_output_file.side.tmp";
+  elif [[ "$sb_input_file_base" == "core" ]];
   then
     # The page title on the core class documentation page is encoded as an h1.
-    page_title=`grep '<h1 id=' "$input_file" |\
+    page_title=`grep '<h1 id=' "$sb_input_file" |\
         head -1 |\
         sed 's/^<h1 id="[^"]*">\(.*\)<\/h1>/\1/'`;
 
@@ -208,8 +265,9 @@ create_page_sidebar_section()
     # ...
     #
     # and then we'll construct the actual sidebar using that list.
-    grep '<h[23] id=' "$input_file" |\
-        sed 's/^<\(h[23]\) id="\([^"]*\)">\(.*\)<\/h[23]>/\1\t\2\t\3/' > "$output_file.side.list.tmp";
+    grep '<h[23] id=' "$sb_input_file" |\
+        sed 's/^<\(h[23]\) id="\([^"]*\)">\(.*\)<\/h[23]>/\1\t\2\t\3/' \
+        > "$sb_output_file.side.list.tmp";
     in_block=0;
     while read line; do
       # First, extract the pieces of each line.
@@ -225,79 +283,106 @@ create_page_sidebar_section()
         if [ "$in_block" = "1" ];
         then
           # We have to close the previous block.
-          echo "</ul></details></li>" >> "$output_file.side.tmp";
+          echo "</ul></details></li>" >> "$sb_output_file.side.tmp";
         fi
 
         # Create the new details block.
-        echo "<li><details><summary>" >> "$output_file.side.tmp";
-        echo "<a href=\"#$anchor_name\">" >> "$output_file.side.tmp";
-        echo "$anchor_title" >> "$output_file.side.tmp";
-        echo "</a>" >> "$output_file.side.tmp";
-        echo "</summary>" >> "$output_file.side.tmp";
-        echo "<ul>" >> "$output_file.side.tmp";
+        echo "<li><details><summary>" >> "$sb_output_file.side.tmp";
+        echo "<a href=\"#$anchor_name\">" >> "$sb_output_file.side.tmp";
+        echo "$anchor_title" >> "$sb_output_file.side.tmp";
+        echo "</a>" >> "$sb_output_file.side.tmp";
+        echo "</summary>" >> "$sb_output_file.side.tmp";
+        echo "<ul>" >> "$sb_output_file.side.tmp";
         in_block=1;
       else
-        echo "  <li><a href=\"#$anchor_name\">" >> "$output_file.side.tmp";
-        echo "  $anchor_title" >> "$output_file.side.tmp";
-        echo "  </a></li>" >> "$output_file.side.tmp";
+        echo "  <li><a href=\"#$anchor_name\">" >> "$sb_output_file.side.tmp";
+        echo "  $anchor_title" >> "$sb_output_file.side.tmp";
+        echo "  </a></li>" >> "$sb_output_file.side.tmp";
       fi
-    done < "$output_file.side.list.tmp";
+    done < "$sb_output_file.side.list.tmp";
 
     # Close the last h2 block, if we need to.
     if [ "$in_block" = "1" ];
     then
-      echo "</ul></details></li>" >> "$output_file.side.tmp";
+      echo "</ul></details></li>" >> "$sb_output_file.side.tmp";
     fi
 
-    rm -f "$output_file.side.list.tmp";
+    rm -f "$sb_output_file.side.list.tmp";
   else
     # On other pages, the page title is encoded as an h1.
-    page_title=`grep '<h1 id=' "$input_file" |\
+    page_title=`grep '<h1 id=' "$sb_input_file" |\
         head -1 |\
         sed 's/^<h1 id="[^"]*">\(.*\)<\/h1>/\1/'`;
 
-    grep '<h2 id=' "$input_file" | sed 's/<h2 id="\([^"]*\)">\(.*\)<\/h2>/<li><a href="#\1">\2<\/a><\/li>/' > "$output_file.side.tmp";
+    grep '<h2 id=' "$sb_input_file" |\
+        sed 's/<h2 id="\([^"]*\)">\(.*\)<\/h2>/<li><a href="#\1">\2<\/a><\/li>/' \
+        > "$sb_output_file.side.tmp";
   fi
-  lines=`cat "$output_file.side.tmp" | wc -l`;
+  lines=`cat "$sb_output_file.side.tmp" | wc -l`;
 
-  echo "<ul>" >> "$output_file";
+  echo "<ul>" >> "$sb_output_file";
 
   # Make the top of the sidebar.
   if [ -n "$page_title" ];
   then
-    echo "<li class=\"page_title\"><b>$page_title</b> <a href=\"#\">[top]</a>" >> "$output_file";
+    echo "<li class=\"page_title\"><b>$page_title</b> <a href=\"#\">[top]</a>" >> "$sb_output_file";
   else
-    echo "<li><a href=\"#\">[top of page]</a>" >> "$output_file";
+    echo "<li><a href=\"#\">[top of page]</a>" >> "$sb_output_file";
   fi
 
   if [[ "$lines" -gt 0 ]];
   then
-    echo "<ul>" >> "$output_file";
-    cat "$output_file.side.tmp" >> "$output_file";
-    echo "</ul>" >> "$output_file";
+    echo "<ul>" >> "$sb_output_file";
+    cat "$sb_output_file.side.tmp" >> "$sb_output_file";
+    echo "</ul>" >> "$sb_output_file";
   fi
-  echo "</li>" >> "$output_file";
-  echo "</ul>" >> "$output_file";
-  echo "</div>" >> "$output_file";
+  echo "</li>" >> "$sb_output_file";
+  echo "</ul>" >> "$sb_output_file";
+  echo "</div>" >> "$sb_output_file";
 
-  rm -f "$output_file.side.tmp";
+  rm -f "$sb_output_file.side.tmp";
 }
+
+# Save any existing template.
+if [ -f "$template_html_header" ];
+then
+  mv "$template_html_header" template.html.header.tmp;
+fi
+
+if [ -f "$template_html_footer" ];
+then
+  mv "$template_html_footer" template.html.footer.tmp;
+fi
 
 rm -rf "$output_dir";
 mkdir -p "$output_dir";
-cp doc/css/* "$output_dir";
-mkdir -p "$output_dir/user/img/";
-cp doc/img/* "$output_dir/user/img/";
+cp -v doc/css/* "$output_dir";
+mkdir -p "$output_dir/img/";
+cp -v doc/img/* "$output_dir/img/";
 mkdir -p "$output_dir/tutorials/res/";
-cp doc/tutorials/res/* "$output_dir/tutorials/res/";
+cp -v doc/tutorials/res/* "$output_dir/tutorials/res/";
 
-# Create the template files we will use.
-create_template_header "$template_html_header";
-create_template_footer "$template_html_footer";
+# Create the template files we will use, if they don't already exist.
+if [ -f template.html.header.tmp ];
+then
+  mv template.html.header.tmp "$template_html_header";
+else
+  create_template_header "$template_html_header";
+  del_header=1;
+fi
+
+if [ -f template.html.footer.tmp ];
+then
+  mv template.html.footer.tmp "$template_html_footer";
+else
+  create_template_footer "$template_html_footer";
+  del_footer=1;
+fi
+
 cp doc/sidebar.html "$template_html_sidebar";
 
 # Process all the .md files.
-for f in README.md `find ./doc/ -iname '*.md'`;
+for f in README.md HISTORY.md `find ./doc/ -iname '*.md'`;
 do
   # Skip the JOSS paper...
   if [[ $f == *"joss_paper"* ]]; then
@@ -320,7 +405,12 @@ do
   echo "Checking links in $f...";
 
   # To run checklink we have to strip out some perl stderr warnings...
-  checklink -qs --follow-file-links --suppress-broken 405 --suppress-broken 301 "$f" 2>&1 |
+  checklink -qs \
+      --follow-file-links \
+      --suppress-broken 405 \
+      --suppress-broken 301 \
+      -X "https://eigen.tuxfamily.org/index.php\?title=Main_Page" \
+      -X "https://mlpack.slack.com/" "$f" 2>&1 |
       grep -v 'Use of uninitialized value' > checklink_out;
   if [ -s checklink_out ];
   then
@@ -331,5 +421,12 @@ do
 done
 
 # Remove temporary files.
-rm -f "$template_html_header";
-rm -f "$template_html_footer";
+if [ "a$del_header" == "a1" ];
+then
+  rm -f "$template_html_header";
+fi
+
+if [ "a$del_footer" == "a1" ];
+then
+  rm -f "$template_html_footer";
+fi
