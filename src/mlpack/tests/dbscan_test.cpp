@@ -22,11 +22,11 @@ using namespace mlpack;
  * These will be removed when we refactor the Bounds to accept MatType.
  * For now, we will keep the following declarations.
  */
-template<typename MetricType>
-using FloatHRectBound = HRectBound<MetricType, float>;
+template<typename DistanceType>
+using FloatHRectBound = HRectBound<DistanceType, float>;
 
-template<typename MetricType, typename StatisticType, typename MatType>
-using FloatKDTree = BinarySpaceTree<MetricType, StatisticType, MatType,
+template<typename DistanceType, typename StatisticType, typename MatType>
+using FloatKDTree = BinarySpaceTree<DistanceType, StatisticType, MatType,
                                     FloatHRectBound, MidpointSplit>;
 
 TEST_CASE("OneClusterTest", "[DBSCANTest]")

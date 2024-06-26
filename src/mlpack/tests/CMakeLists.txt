@@ -57,6 +57,7 @@ add_executable(mlpack_test
   decision_tree_test.cpp
   det_test.cpp
   digamma_test.cpp
+  distance_test.cpp
   distribution_test.cpp
   drusilla_select_test.cpp
   emst_test.cpp

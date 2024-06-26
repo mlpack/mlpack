@@ -1537,7 +1537,7 @@ TEST_CASE("RPTreeTest", "[TreeTest]")
   }
 }
 
-template<typename TreeType, typename MetricType>
+template<typename TreeType, typename DistanceType>
 void CheckRPTreeSplit(const TreeType& tree)
 {
   typedef typename TreeType::ElemType ElemType;
@@ -1552,7 +1552,7 @@ void CheckRPTreeSplit(const TreeType& tree)
     ElemType maxDist = 0;
     for (size_t k =0; k < tree.Left()->NumDescendants(); ++k)
     {
-      ElemType dist = MetricType::Evaluate(center,
+      ElemType dist = DistanceType::Evaluate(center,
           tree.Dataset().col(tree.Left()->Descendant(k)));
 
       if (dist > maxDist)
@@ -1561,7 +1561,7 @@ void CheckRPTreeSplit(const TreeType& tree)
 
     for (size_t k =0; k < tree.Right()->NumDescendants(); ++k)
     {
-      ElemType dist = MetricType::Evaluate(center,
+      ElemType dist = DistanceType::Evaluate(center,
           tree.Dataset().col(tree.Right()->Descendant(k)));
 
       REQUIRE(maxDist <= dist *
@@ -1569,8 +1569,8 @@ void CheckRPTreeSplit(const TreeType& tree)
     }
   }
 
-  CheckRPTreeSplit<TreeType, MetricType>(*tree.Left());
-  CheckRPTreeSplit<TreeType, MetricType>(*tree.Right());
+  CheckRPTreeSplit<TreeType, DistanceType>(*tree.Left());
+  CheckRPTreeSplit<TreeType, DistanceType>(*tree.Right());
 }
 
 TEST_CASE("RPTreeSplitTest", "[TreeTest]")
@@ -1653,30 +1653,6 @@ TEST_CASE("BallTreeTest", "[TreeTest]")
     // Now check that each point is contained inside of all bounds above it.
     CheckPointBounds(root);
   }
-}
-
-/**
- * Ensure that we can build a ball tree with a custom instantiated metric type.
- */
-TEST_CASE("MahalanobisBallTreeTest", "[TreeTest]")
-{
-  arma::mat dataset(10, 1000, arma::fill::randu);
-  arma::mat cov = arma::eye<arma::mat>(10, 10);
-  cov(2, 2) = 2.0; // Just so it's not completely the identity matrix.
-  MahalanobisDistance<> m(std::move(cov));
-
-  typedef BallTree<MahalanobisDistance<>, EmptyStatistic, arma::mat> TreeType;
-
-  TreeType tree(dataset);
-
-  // As long as it built successfully, I am okay with that.
-  REQUIRE(tree.NumDescendants() == 1000);
-
-  // Also test when we give oldFromNew, since this uses a different code path.
-  std::vector<size_t> oldFromNew;
-  TreeType tree2(std::move(dataset), oldFromNew);
-
-  REQUIRE(tree.NumDescendants() == 1000);
 }
 
 template<typename TreeType>
@@ -1828,7 +1804,7 @@ void CheckSelfChild(const TreeType& node)
   REQUIRE(found == true);
 }
 
-template<typename TreeType, typename MetricType>
+template<typename TreeType, typename DistanceType>
 void CheckCovering(const TreeType& node)
 {
   // Return if a leaf.  No checking necessary.
@@ -1845,13 +1821,13 @@ void CheckCovering(const TreeType& node)
   {
     const size_t childPoint = node.Child(i).Point();
 
-    double distance = MetricType::Evaluate(dataset.col(nodePoint),
+    double distance = DistanceType::Evaluate(dataset.col(nodePoint),
         dataset.col(childPoint));
 
     REQUIRE(distance <= maxDistance);
 
     // Check the child.
-    CheckCovering<TreeType, MetricType>(node.Child(i));
+    CheckCovering<TreeType, DistanceType>(node.Child(i));
   }
 }
 

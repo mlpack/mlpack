@@ -20,14 +20,14 @@
 
 namespace mlpack {
 
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
          typename SplitType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-class RectangleTree<MetricType, StatisticType, MatType, SplitType,
+class RectangleTree<DistanceType, StatisticType, MatType, SplitType,
                     DescentType, AuxiliaryInformationType>::DualTreeTraverser
 {
  public:

@@ -414,7 +414,7 @@ The `KMeans<>` class also takes three template parameters, which can be
 modified to change the behavior of the k-means algorithm.  There are three
 template parameters:
 
- - `MetricType`: controls the distance metric used for clustering (by default,
+ - `DistanceType`: controls the distance metric used for clustering (by default,
    the squared Euclidean distance is used)
  - `InitialPartitionPolicy`: the method by which initial clusters are set; by
    default, `SampleInitialization` is used
@@ -445,42 +445,42 @@ how to modify them.
 
 Most machine learning algorithms in mlpack support modifying the distance
 metric, and `KMeans<>` is no exception.  Similar to `NeighborSearch` (see the
-"MetricType policy class" section in the
+"DistanceType policy class" section in the
 [NeighborSearch tutorial](neighbor_search.md)), any of mlpack's
 metric classes (found in `mlpack/core/metrics/`) can be given as an argument.
 The `LMetric` class is a good example implementation.
 
-A class fulfilling the [MetricType policy](../developer/metrics.md) must
+A class fulfilling the [DistanceType policy](../developer/distances.md) must
 provide the following two functions:
 
 ```c++
 // Empty constructor is required.
-MetricType();
+DistanceType();
 
 // Compute the distance between two points.
 template<typename VecType>
 double Evaluate(const VecType& a, const VecType& b);
 ```
 
-Most of the standard metrics that could be used are stateless and therefore the
-`Evaluate()` method is implemented statically.  However, there are metrics, such
-as the Mahalanobis distance (`MahalanobisDistance`), that store state.  To this
-end, an instantiated `MetricType` object is stored within the `KMeans` class.
-The example below shows how to pass an instantiated `MahalanobisDistance` in the
-constructor.
+Most of the standard distance metrics that could be used are stateless and
+therefore the `Evaluate()` method is implemented statically.  However, there are
+metrics, such as the Mahalanobis distance (`MahalanobisDistance`), that store
+state.  To this end, an instantiated `DistanceType` object is stored within the
+`KMeans` class.  The example below shows how to pass an instantiated
+`MahalanobisDistance` in the constructor.
 
 ```c++
 // The initialized Mahalanobis distance.
 extern MahalanobisDistance distance;
 
 // We keep the default arguments for the maximum number of iterations, but pass
-// our instantiated metric.
+// our instantiated distance metric.
 KMeans<MahalanobisDistance> k(1000, distance);
 ```
 
-***Note***: While the `MetricType` policy only requires two methods, one of
+***Note***: While the `DistanceType` policy only requires two methods, one of
 which is an empty constructor, more can always be added.  `MahalanobisDistance`
-also has constructors with parameters, because it is a stateful metric.
+also has constructors with parameters, because it is a stateful distance metric.
 
 ### Changing the initial partitioning strategy used for k-means
 
@@ -546,7 +546,7 @@ not work very well for most settings.  See the documentation for
 If the `Cluster()` method returns point assignments instead of centroids, then
 valid initial assignments must be returned for every point in the dataset.
 
-As with the `MetricType` template parameter, an initialized
+As with the `DistanceType` template parameter, an initialized
 `InitialPartitionPolicy` can be passed to the constructor of `KMeans` as a
 fourth argument.
 
@@ -603,12 +603,12 @@ the `LloydStepType` policy:
 Note that the `LloydStepType` policy is itself a template template parameter,
 and must accept two template parameters of its own:
 
- - `MetricType`: the type of metric to use
+ - `DistanceType`: the type of distance metric to use
  - `MatType`: the type of data matrix to use
 
 The `LloydStepType` policy also mandates three functions:
 
- - a constructor: `LloydStepType(const MatType& dataset, MetricType& metric);`
+ - a constructor: `LloydStepType(const MatType& dataset, DistanceType& distance);`
  - an `Iterate()` function:
 
 ```c++

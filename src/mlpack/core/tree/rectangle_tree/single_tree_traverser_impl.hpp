@@ -21,28 +21,28 @@
 
 namespace mlpack {
 
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
          typename SplitType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
               AuxiliaryInformationType>::
 SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0)
 { /* Nothing to do */ }
 
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
          typename SplitType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+void RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
                    AuxiliaryInformationType>::
 SingleTreeTraverser<RuleType>::Traverse(
     const size_t queryIndex,

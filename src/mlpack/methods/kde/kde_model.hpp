@@ -132,7 +132,7 @@ class KDEWrapperBase
  * is needed.
  */
 template<typename KernelType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 class KDEWrapper : public KDEWrapperBase

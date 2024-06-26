@@ -311,9 +311,9 @@ Similar to the [`NeighborSearch` class](neighbor_search.md), the `RangeSearch`
 class is very extensible, having the following template arguments:
 
 ```c++
-template<typename MetricType = EuclideanDistance,
+template<typename DistanceType = EuclideanDistance,
          typename MatType = arma::mat,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType = KDTree>
 class RangeSearch;
@@ -322,29 +322,29 @@ class RangeSearch;
 By choosing different components for each of these template classes, a very
 arbitrary range searching object can be constructed.
 
-### `MetricType` policy class
+### `DistanceType` policy class
 
-The `MetricType` policy class allows the range search to take place in any
+The `DistanceType` policy class allows the range search to take place in any
 arbitrary metric space.  The `LMetric` class is a good example implementation.
-A `MetricType` class must provide the following functions:
+A `DistanceType` class must provide the following functions:
 
 ```c++
 // Empty constructor is required.
-MetricType();
+DistanceType();
 
 // Compute the distance between two points.
 template<typename VecType>
 double Evaluate(const VecType& a, const VecType& b);
 ```
 
-Internally, the `RangeSearch` class keeps an instantiated `MetricType` class
-(which can be given in the constructor).   This is useful for a metric like the
-Mahalanobis distance (`MahalanobisDistance`), which must store state (the
-covariance matrix).  Therefore, you can write a non-static `MetricType` class
-and use it seamlessly with `RangeSearch`.
+Internally, the `RangeSearch` class keeps an instantiated `DistanceType` class
+(which can be given in the constructor).   This is useful for a distance metric
+like the Mahalanobis distance (`MahalanobisDistance`), which must store state
+(the covariance matrix).  Therefore, you can write a non-static `DistanceType`
+class and use it seamlessly with `RangeSearch`.
 
-See also the [documentation for the `MetricType`
-policy](../developer/metrics.md).
+See also the
+[documentation for the `DistanceType` policy](../developer/distances.md).
 
 ### `MatType` policy class
 
