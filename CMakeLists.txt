@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.6)
 project(mlpack C CXX)
 
-include(CMake/cotire.cmake)
 include(CMake/CheckHash.cmake)
 include(CMake/Autodownload.cmake)
 include(CMake/ConfigureCrossCompile.cmake)
@@ -17,6 +16,7 @@ option(BUILD_TESTS "Build tests. (Note: time consuming!)" OFF)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DOWNLOAD_DEPENDENCIES "Automatically download dependencies if not available." OFF)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
+option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." ON)
 
 # Set minimum library versions required by mlpack.
 #
@@ -106,13 +106,13 @@ option(MATHJAX
 option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
 enable_testing()
 
-# Set required standard to C++14.
-set(CMAKE_CXX_STANDARD 14)
+# Set required standard to C++17.
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Ensure that GCC is new enough, if the compiler is GCC.
-if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5)
-  message(FATAL_ERROR "GCC version (${CMAKE_CXX_COMPILER_VERSION}) is too old! 5.x or newer is required.")
+if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 8)
+  message(FATAL_ERROR "GCC version (${CMAKE_CXX_COMPILER_VERSION}) is too old! 8.x or newer is required.")
 endif ()
 
 # Include modules in the CMake directory.
@@ -164,7 +164,7 @@ endif ()
 # If we are using MSVC, we need /bigobj.
 if (MSVC)
   set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /Zm200 /Zc:__cplusplus")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /Zc:__cplusplus")
 endif ()
 
 # If we are using MINGW, we need sections and big-obj, otherwise we create too

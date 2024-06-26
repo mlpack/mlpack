@@ -54,23 +54,23 @@ void PrintMethodInit(
   {
     if (d.cppType == "std::string")
     {
-      std::string value = MLPACK_ANY_CAST<std::string>(d.value);
+      std::string value = std::any_cast<std::string>(d.value);
       std::cout << prefix << goParamName << ": \""
                 << value << "\"," << std::endl;
     }
     else if (d.cppType == "double")
     {
-      double value = MLPACK_ANY_CAST<double>(d.value);
+      double value = std::any_cast<double>(d.value);
       std::cout << prefix << goParamName << ": " << value << "," << std::endl;
     }
     else if (d.cppType == "int")
     {
-      int value = MLPACK_ANY_CAST<int>(d.value);
+      int value = std::any_cast<int>(d.value);
       std::cout << prefix << goParamName << ": " << value << "," << std::endl;
     }
     else if (d.cppType == "bool")
     {
-      bool value = MLPACK_ANY_CAST<bool>(d.value);
+      bool value = std::any_cast<bool>(d.value);
       if (value == 0)
         std::cout << prefix << goParamName << ": false," << std::endl;
       else

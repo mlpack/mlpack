@@ -64,12 +64,10 @@ BINDING_LONG_DESC(
     PRINT_PARAM_STRING("test_set_estimates") + " output parameter.");
 
 // See also...
-BINDING_SEE_ALSO("Density estimation tree (DET) tutorial",
-    "@doc/tutorials/det.md");
 BINDING_SEE_ALSO("Density estimation on Wikipedia",
     "https://en.wikipedia.org/wiki/Density_estimation");
 BINDING_SEE_ALSO("Density estimation trees (pdf)",
-    "http://www.mlpack.org/papers/det.pdf");
+    "https://www.mlpack.org/papers/det.pdf");
 BINDING_SEE_ALSO("DTree class documentation",
     "@src/mlpack/methods/det/dtree.hpp");
 

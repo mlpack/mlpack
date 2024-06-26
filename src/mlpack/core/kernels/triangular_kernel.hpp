@@ -87,7 +87,7 @@ class TriangularKernel
   //! Get the bandwidth of the kernel.
   double Bandwidth() const { return bandwidth; }
   //! Modify the bandwidth of the kernel.
-  double& Bandwidth() { return bandwidth; }
+  void Bandwidth(const double bandwidth) { this->bandwidth = bandwidth; }
 
   //! Serialize the kernel.
   template<typename Archive>

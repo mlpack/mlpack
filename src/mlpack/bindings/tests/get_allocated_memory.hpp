@@ -33,7 +33,7 @@ void* GetAllocatedMemory(
     util::ParamData& d,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
-  return (*MLPACK_ANY_CAST<T>(&d.value)).memptr();
+  return (*std::any_cast<T>(&d.value)).memptr();
 }
 
 template<typename T>
@@ -43,7 +43,7 @@ void* GetAllocatedMemory(
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // Here we have a model; return its memory location.
-  return *MLPACK_ANY_CAST<T*>(&d.value);
+  return *std::any_cast<T*>(&d.value);
 }
 
 template<typename T>

@@ -13,7 +13,6 @@ steps:
 - script: |
     set -e
     sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
-    unset BOOST_ROOT
     brew install libomp openblas armadillo cereal ensmallen
 
     if [ "$(binding)" == "python" ]; then
@@ -29,7 +28,6 @@ steps:
 
 # Configure mlpack (CMake)
 - script: |
-    unset BOOST_ROOT
     mkdir build && cd build
     if [ "$(binding)" == "go" ]; then
       export GOPATH=$PWD/src/mlpack/bindings/go

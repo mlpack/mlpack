@@ -108,7 +108,7 @@ class Perceptron
    *      purposes.
    */
   template<typename WeightsType>
-  mlpack_deprecated /* was previously only used by AdaBoost */
+  [[deprecated("Use other constructors")]]
   Perceptron(const Perceptron& other,
              const MatType& data,
              const arma::Row<size_t>& labels,
@@ -116,23 +116,6 @@ class Perceptron
              const WeightsType& instanceWeights,
              const typename std::enable_if<
                  arma::is_arma_type<WeightsType>::value>::type* = 0);
-
-  /**
-   * Train the perceptron on the given data for up to the maximum number of
-   * iterations (specified in the constructor or through MaxIterations()).  A
-   * single iteration corresponds to a single pass through the data, so if you
-   * want to pass through the dataset only once, set MaxIterations() to 1.
-   *
-   * This training does not reset the model weights, so you can call Train() on
-   * multiple datasets sequentially.
-   *
-   * @param data Dataset on which training should be performed.
-   * @param labels Labels of the dataset.
-   * @param numClasses Number of classes in the data.
-   */
-  void Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses);
 
   /**
    * Train the perceptron on the given data for up to the given maximum number
@@ -154,27 +137,7 @@ class Perceptron
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
-             const size_t maxIterations);
-
-  /**
-   * Train the perceptron on the given data for up to the maximum number of
-   * iterations (specified in the constructor or through MaxIterations()).  A
-   * single iteration corresponds to a single pass through the data, so if you
-   * want to pass through the dataset only once, set MaxIterations() to 1.
-   *
-   * This training does not reset the model weights, so you can call Train() on
-   * multiple datasets sequentially.
-   *
-   * @param data Dataset on which training should be performed.
-   * @param labels Labels of the dataset.
-   * @param numClasses Number of classes in the data.
-   * @param instanceWeights Cost matrix. Stores the cost of mispredicting
-   *      instances.  This is useful for boosting.
-   */
-  void Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const arma::rowvec& instanceWeights);
+             const std::optional<size_t> maxIterations = std::nullopt);
 
   /**
    * Train the perceptron on the given data for up to the given maximum number
@@ -199,7 +162,7 @@ class Perceptron
              const arma::Row<size_t>& labels,
              const size_t numClasses,
              const arma::rowvec& instanceWeights,
-             const size_t maxIterations);
+             const std::optional<size_t> maxIterations = std::nullopt);
 
   /**
    * After training, use the weights matrix to classify `point`, and return the

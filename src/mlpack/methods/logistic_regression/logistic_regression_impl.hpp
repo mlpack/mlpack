@@ -206,7 +206,6 @@ void LogisticRegression<MatType>::Classify(const MatType& dataset,
 }
 
 template<typename MatType>
-mlpack_deprecated
 void LogisticRegression<MatType>::Classify(const MatType& dataset,
                                            MatType& probabilities) const
 {

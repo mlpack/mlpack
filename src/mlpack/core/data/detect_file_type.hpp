@@ -64,6 +64,12 @@ inline FileType AutoDetect(std::fstream& stream,
  */
 inline FileType DetectFromExtension(const std::string& filename);
 
+/**
+ * Count the number of columns in the file.  The file must be a CSV/TSV/TXT file
+ * with no header.
+ */
+inline size_t CountCols(std::fstream& stream);
+
 } // namespace data
 } // namespace mlpack
 

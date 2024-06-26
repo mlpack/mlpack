@@ -26,7 +26,7 @@ template<typename T>
 T& GetParam(util::ParamData& d)
 {
   // No mapping is needed, so just cast it directly.
-  return *MLPACK_ANY_CAST<T>(&d.value);
+  return *std::any_cast<T>(&d.value);
 }
 
 /**

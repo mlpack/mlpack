@@ -71,7 +71,7 @@ void CheckVectors(const vector<vector<ValueType>>& a,
  */
 TEST_CASE("DictionaryEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<MLPACK_STRING_VIEW>;
+  using DictionaryType = StringEncodingDictionary<std::string_view>;
 
   arma::mat output;
   DictionaryEncoding<SplitByAnyOf::TokenType> encoder;
@@ -108,7 +108,7 @@ TEST_CASE("DictionaryEncodingTest", "[StringEncodingTest]")
  */
 TEST_CASE("UnicodeDictionaryEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<MLPACK_STRING_VIEW>;
+  using DictionaryType = StringEncodingDictionary<std::string_view>;
 
   arma::mat output;
   DictionaryEncoding<SplitByAnyOf::TokenType> encoder;
@@ -142,7 +142,7 @@ TEST_CASE("UnicodeDictionaryEncodingTest", "[StringEncodingTest]")
  */
 TEST_CASE("OnePassDictionaryEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<MLPACK_STRING_VIEW>;
+  using DictionaryType = StringEncodingDictionary<std::string_view>;
 
   vector<vector<size_t>> output;
   DictionaryEncoding<SplitByAnyOf::TokenType> encoder(
@@ -179,10 +179,10 @@ TEST_CASE("OnePassDictionaryEncodingTest", "[StringEncodingTest]")
  */
 TEST_CASE("SplitByAnyOfTokenizerTest", "[StringEncodingTest]")
 {
-  std::vector<MLPACK_STRING_VIEW> tokens;
-  MLPACK_STRING_VIEW line(stringEncodingInput[0]);
+  std::vector<std::string_view> tokens;
+  std::string_view line(stringEncodingInput[0]);
   SplitByAnyOf tokenizer(" ,.");
-  MLPACK_STRING_VIEW token = tokenizer(line);
+  std::string_view token = tokenizer(line);
 
   while (!token.empty())
   {
@@ -217,10 +217,10 @@ TEST_CASE("SplitByAnyOfTokenizerUnicodeTest", "[StringEncodingTest]")
     "\xE2\x93\x82\xE2\x93\x81\xE2\x93\x85\xE2\x92\xB6\xE2\x92\xB8\xE2\x93\x80"
   };
 
-  std::vector<MLPACK_STRING_VIEW> tokens;
-  MLPACK_STRING_VIEW line(stringEncodingUtf8Input[2]);
+  std::vector<std::string_view> tokens;
+  std::string_view line(stringEncodingUtf8Input[2]);
   SplitByAnyOf tokenizer(" ,.");
-  MLPACK_STRING_VIEW token = tokenizer(line);
+  std::string_view token = tokenizer(line);
   while (!token.empty())
   {
     tokens.push_back(token);
@@ -289,7 +289,7 @@ TEST_CASE("OnePassDictionaryEncodingIndividualCharactersTest",
  */
 TEST_CASE("StringEncodingCopyTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<MLPACK_STRING_VIEW>;
+  using DictionaryType = StringEncodingDictionary<std::string_view>;
   arma::sp_mat output;
   DictionaryEncoding<SplitByAnyOf::TokenType> encoderCopy;
   SplitByAnyOf tokenizer(" ,.");
@@ -325,7 +325,7 @@ TEST_CASE("StringEncodingCopyTest", "[StringEncodingTest]")
  */
 TEST_CASE("StringEncodingMoveTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<MLPACK_STRING_VIEW>;
+  using DictionaryType = StringEncodingDictionary<std::string_view>;
   arma::sp_mat output;
   DictionaryEncoding<SplitByAnyOf::TokenType> encoderCopy;
   SplitByAnyOf tokenizer(" ,.");
@@ -384,21 +384,21 @@ void CheckDictionaries(const StringEncodingDictionary<TokenType>& expected,
 
 /**
  * This is a specialization of the CheckDictionaries() function for
- * the MLPACK_STRING_VIEW token type.
+ * the std::string_view token type.
  */
 template<>
 void CheckDictionaries(
-    const StringEncodingDictionary<MLPACK_STRING_VIEW>& expected,
-    const StringEncodingDictionary<MLPACK_STRING_VIEW>& obtained)
+    const StringEncodingDictionary<std::string_view>& expected,
+    const StringEncodingDictionary<std::string_view>& obtained)
 {
   /* MapType is equal to
    *
-   * std::unordered_map<MLPACK_STRING_VIEW,
+   * std::unordered_map<std::string_view,
    *                    size_t,
-   *                    boost::hash<MLPACK_STRING_VIEW>>.
+   *                    boost::hash<std::string_view>>.
    */
   using MapType =
-      typename StringEncodingDictionary<MLPACK_STRING_VIEW>::MapType;
+      typename StringEncodingDictionary<std::string_view>::MapType;
 
   const std::deque<std::string>& expectedTokens = expected.Tokens();
   const std::deque<std::string>& tokens = obtained.Tokens();
@@ -451,9 +451,9 @@ TEST_CASE("StringEncodingDictionarySerialization", "[StringEncodingTest]")
 
   for (const string& line : stringEncodingInput)
   {
-    MLPACK_STRING_VIEW lineView(line);
+    std::string_view lineView(line);
 
-    MLPACK_STRING_VIEW token = tokenizer(lineView);
+    std::string_view token = tokenizer(lineView);
 
     while (!tokenizer.IsTokenEmpty(token))
     {
@@ -538,7 +538,7 @@ TEST_CASE("CharExtractDictionaryEncodingSerialization", "[StringEncodingTest]")
  */
 TEST_CASE("BagOfWordsEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<MLPACK_STRING_VIEW>;
+  using DictionaryType = StringEncodingDictionary<std::string_view>;
 
   arma::mat output;
   BagOfWordsEncoding<SplitByAnyOf::TokenType> encoder;
@@ -613,7 +613,7 @@ TEST_CASE("BagOfWordsEncodingTest", "[StringEncodingTest]")
  */
 TEST_CASE("VectorBagOfWordsEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<MLPACK_STRING_VIEW>;
+  using DictionaryType = StringEncodingDictionary<std::string_view>;
 
   vector<vector<size_t>> output;
   BagOfWordsEncoding<SplitByAnyOf::TokenType> encoder(
@@ -707,7 +707,7 @@ TEST_CASE("VectorBagOfWordsEncodingIndividualCharactersTest",
  */
 TEST_CASE("RawCountSmoothIdfEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<MLPACK_STRING_VIEW>;
+  using DictionaryType = StringEncodingDictionary<std::string_view>;
 
   arma::mat output;
   TfIdfEncoding<SplitByAnyOf::TokenType> encoder;
@@ -809,7 +809,7 @@ TEST_CASE("RawCountSmoothIdfEncodingTest", "[StringEncodingTest]")
  */
 TEST_CASE("VectorRawCountSmoothIdfEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<MLPACK_STRING_VIEW>;
+  using DictionaryType = StringEncodingDictionary<std::string_view>;
 
   vector<vector<double>> output;
   TfIdfEncoding<SplitByAnyOf::TokenType> encoder(
@@ -968,7 +968,7 @@ TEST_CASE("VectorRawCountSmoothIdfEncodingIndividualCharactersTest",
  */
 TEST_CASE("TfIdfRawCountEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<MLPACK_STRING_VIEW>;
+  using DictionaryType = StringEncodingDictionary<std::string_view>;
 
   arma::mat output;
   TfIdfEncoding<SplitByAnyOf::TokenType> encoder(
@@ -1018,7 +1018,7 @@ TEST_CASE("TfIdfRawCountEncodingTest", "[StringEncodingTest]")
  */
 TEST_CASE("VectorTfIdfRawCountEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<MLPACK_STRING_VIEW>;
+  using DictionaryType = StringEncodingDictionary<std::string_view>;
 
   vector<vector<double>> output;
   TfIdfEncoding<SplitByAnyOf::TokenType>

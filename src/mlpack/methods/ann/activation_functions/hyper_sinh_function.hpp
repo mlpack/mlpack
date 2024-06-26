@@ -2,7 +2,24 @@
  * @file methods/ann/activation_functions/hyper_sinh_function.hpp
  * @author Mayank Raj
  *
- * Definition and implementation of the Hyper-sinh function.
+ * Definition of the hyper-sinh function as described by
+ * L. Parisi et al. (2021) (full reference below).
+ *
+ * Original implementation in Python by Luca Parisi as per https://github.com/luca-parisi/hyper_sinh
+ *
+ * For more information, see the following paper.
+ *
+ * @code
+ * @article{parisi2021hyper,
+ *   title={hyper-sinh: An accurate and reliable function from shallow to deep learning in TensorFlow and Keras},
+ *   author={Parisi, Luca and Ma, Renfei and RaviChandran, Narrendar and Lanzillotta, Matteo},
+ *   journal={Machine Learning with Applications},
+ *   volume={6},
+ *   pages={100112},
+ *   year={2021},
+ *   publisher={Elsevier}
+ * }
+ * @endcode
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

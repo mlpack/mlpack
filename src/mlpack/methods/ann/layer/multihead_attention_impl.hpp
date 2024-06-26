@@ -54,19 +54,19 @@ MultiheadAttentionType(
 
 template <typename MatType, typename RegularizerType>
 void MultiheadAttentionType<MatType, RegularizerType>::SetWeights(
-    typename MatType::elem_type* weightsPtr)
+    const MatType& weightsIn)
 {
-  MakeAlias(weights, weightsPtr, (4 * embedDim + 4) * embedDim, 1);
+  MakeAlias(weights, weightsIn, (4 * embedDim + 4) * embedDim, 1);
 
-  MakeAlias(queryWt, weightsPtr, embedDim, embedDim);
-  MakeAlias(keyWt, weightsPtr + embedDim * embedDim, embedDim, embedDim);
-  MakeAlias(valueWt, weightsPtr + 2 * embedDim * embedDim, embedDim, embedDim);
-  MakeAlias(outWt, weightsPtr + 3 * embedDim * embedDim, embedDim, embedDim);
+  MakeAlias(queryWt, weightsIn, embedDim, embedDim);
+  MakeAlias(keyWt, weightsIn, embedDim, embedDim, embedDim * embedDim);
+  MakeAlias(valueWt, weightsIn, embedDim, embedDim, 2 * embedDim * embedDim);
+  MakeAlias(outWt, weightsIn, embedDim, embedDim, 3 * embedDim * embedDim);
 
-  MakeAlias(qBias, weightsPtr + 4 * embedDim * embedDim, embedDim, 1);
-  MakeAlias(kBias, weightsPtr + (4 * embedDim + 1) * embedDim, embedDim, 1);
-  MakeAlias(vBias, weightsPtr + (4 * embedDim + 2) * embedDim, embedDim, 1);
-  MakeAlias(outBias, weightsPtr + (4 * embedDim + 3) * embedDim, 1, embedDim);
+  MakeAlias(qBias, weightsIn, embedDim, 1, 4 * embedDim * embedDim);
+  MakeAlias(kBias, weightsIn, embedDim, 1, (4 * embedDim + 1) * embedDim);
+  MakeAlias(vBias, weightsIn, embedDim, 1, (4 * embedDim + 2) * embedDim);
+  MakeAlias(outBias, weightsIn, 1, embedDim, (4 * embedDim + 3) * embedDim);
 }
 
 template <typename MatType, typename RegularizerType>

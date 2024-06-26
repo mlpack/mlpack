@@ -32,17 +32,6 @@ inline void RegressionDistribution::Train(const arma::mat& observations)
   err.Train(observations.row(0) - fitted);
 }
 
-/**
- * Estimate parameters using provided observation weights.
- *
- * @param weights Probability that given observation is from distribution.
- */
-inline void RegressionDistribution::Train(const arma::mat& observations,
-                                          const arma::vec& weights)
-{
-  Train(observations, arma::rowvec(weights.t()));
-}
-
 inline void RegressionDistribution::Train(const arma::mat& observations,
                                           const arma::rowvec& weights)
 {
@@ -65,14 +54,6 @@ inline double RegressionDistribution::Probability(
   arma::rowvec fitted;
   rf.Predict(observation.rows(1, observation.n_rows - 1), fitted);
   return err.Probability(observation(0) - fitted.t());
-}
-
-inline void RegressionDistribution::Predict(const arma::mat& points,
-                                            arma::vec& predictions) const
-{
-  arma::rowvec rowPredictions;
-  Predict(points, rowPredictions);
-  predictions = rowPredictions.t();
 }
 
 inline void RegressionDistribution::Predict(const arma::mat& points,

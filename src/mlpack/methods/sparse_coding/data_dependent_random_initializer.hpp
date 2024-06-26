@@ -34,9 +34,10 @@ class DataDependentRandomInitializer
    * @param atoms Number of atoms in dictionary.
    * @param dictionary Dictionary to initialize.
    */
-  static void Initialize(const arma::mat& data,
+  template<typename MatType>
+  static void Initialize(const MatType& data,
                          const size_t atoms,
-                         arma::mat& dictionary)
+                         MatType& dictionary)
   {
     // Set the size of the dictionary.
     dictionary.set_size(data.n_rows, atoms);

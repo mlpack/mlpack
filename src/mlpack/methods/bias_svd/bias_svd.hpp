@@ -50,7 +50,9 @@ namespace mlpack {
  * @endcode
  *
  */
-template<typename OptimizerType = ens::StandardSGD>
+template<typename OptimizerType = ens::StandardSGD,
+         typename MatType = arma::mat,
+         typename VecType = arma::vec>
 class BiasSVD
 {
  public:
@@ -76,12 +78,12 @@ class BiasSVD
    * @param p Item bias.
    * @param q User bias.
    */
-  void Apply(const arma::mat& data,
+  void Apply(const MatType& data,
              const size_t rank,
-             arma::mat& u,
-             arma::mat& v,
-             arma::vec& p,
-             arma::vec& q);
+             MatType& u,
+             MatType& v,
+             VecType& p,
+             VecType& q);
 
  private:
   //! Number of optimization iterations.

@@ -35,7 +35,7 @@ TEST_CASE("JacobianFlexibleReLULayerTest", "[ANNLayerTest]")
     FlexibleReLU module;
     arma::mat moduleParams(module.WeightSize(), 1);
     module.CustomInitialize(moduleParams, module.WeightSize());
-    module.SetWeights((double*) moduleParams.memptr());
+    module.SetWeights(moduleParams);
 
     double error = JacobianTest(module, input);
     REQUIRE(error <= 1e-5);

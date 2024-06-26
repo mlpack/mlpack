@@ -70,6 +70,15 @@ class EpanechnikovKernel
    */
   inline double Normalizer(const size_t dimension);
 
+  // Get the bandwidth of the kernel.
+  double Bandwidth() const { return bandwidth; }
+  // Modify the bandwidth of the kernel.
+  void Bandwidth(const double bandwidth)
+  {
+    this->bandwidth = bandwidth;
+    this->inverseBandwidthSquared = 1.0 / (bandwidth * bandwidth);
+  }
+
   /**
    * Serialize the kernel.
    */

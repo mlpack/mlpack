@@ -107,7 +107,7 @@ inline std::string PrintLanguage(const std::string& language)
   else
   {
     throw std::invalid_argument("PrintLanguage(): unknown "
-        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+        "BindingInfo::Language(): " + language + "!");
   }
 }
 
@@ -220,14 +220,25 @@ class mlpackModel
 
 } // namespace priv
 
-// Utility function that returns the first word (as delimited by spaces) of a
-// string.
-inline std::string ToUnderscores(const std::string& str)
+// Utility function that replaces all characters that may not be valid as anchor
+// names.
+inline std::string ToValidHTMLAnchor(const std::string& str)
 {
   std::string ret(str);
   std::replace(ret.begin(), ret.end(), ' ', '_');
   std::replace(ret.begin(), ret.end(), '{', '_');
   std::replace(ret.begin(), ret.end(), '}', '_');
+  std::replace(ret.begin(), ret.end(), '*', '_');
+  std::replace(ret.begin(), ret.end(), '-', '_');
+  std::replace(ret.begin(), ret.end(), ',', '_');
+  std::replace(ret.begin(), ret.end(), '(', '_');
+  std::replace(ret.begin(), ret.end(), ')', '_');
+  std::replace(ret.begin(), ret.end(), '.', '_');
+  std::replace(ret.begin(), ret.end(), '/', '_');
+  if (std::isdigit(ret[0]) || ret[0] == '_')
+  {
+    ret = "a_" + ret;
+  }
   return ret;
 }
 
@@ -237,12 +248,10 @@ inline std::string ToUnderscores(const std::string& str)
 inline std::string PrintTypeDocs()
 {
   std::ostringstream oss;
-  oss << "<div id=\"" << BindingInfo::Language()
-      << "\" class=\"language-types\" markdown=\"1\">" << std::endl;
-  oss << "## data formats" << std::endl;
-  oss << "{: .language-types-h2 #" << BindingInfo::Language()
-      << "_data-formats }" << std::endl;
+  oss << "## Data Formats" << std::endl;
   oss << std::endl;
+  // This is used for formatting, to provide wider spacing between types.
+  oss << "<div id=\"data-formats-div\" markdown=\"1\">" << std::endl;
 
   // Iterate through each of the types that we care about.
   oss << "mlpack bindings for " << PrintLanguage(BindingInfo::Language())
@@ -263,144 +272,142 @@ inline std::string PrintTypeDocs()
   data.required = false;
   data.input = true;
   data.loaded = false;
-  data.value = MLPACK_ANY(int(0));
+  data.value = std::any(int(0));
 
   std::string type = GetPrintableType<int>(data);
-  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
-      << ToUnderscores(type) << " }: " << PrintTypeDoc<int>(data) << std::endl;
+  oss << " - `" << type << "`{: #doc_" << ToValidHTMLAnchor(type) << "}: "
+      << PrintTypeDoc<int>(data) << std::endl;
 
   data.tname = std::string(typeid(double).name());
   data.cppType = "double";
-  data.value = MLPACK_ANY(double(0.0));
+  data.value = std::any(double(0.0));
 
   type = GetPrintableType<double>(data);
-  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
-      << ToUnderscores(type) << " }: " << PrintTypeDoc<double>(data)
-      << std::endl;
+  oss << " - `" << type << "`{: #doc_" << ToValidHTMLAnchor(type) << " }: "
+      << PrintTypeDoc<double>(data) << std::endl;
 
   data.tname = std::string(typeid(bool).name());
   data.cppType = "double";
-  data.value = MLPACK_ANY(bool(0.0));
+  data.value = std::any(bool(0.0));
 
   type = GetPrintableType<bool>(data);
-  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
-      << ToUnderscores(type) << " }: " << PrintTypeDoc<bool>(data) << std::endl;
+  oss << " - `" << type << "`{: #doc_" << ToValidHTMLAnchor(type) << " }: "
+      << PrintTypeDoc<bool>(data) << std::endl;
 
   data.tname = std::string(typeid(std::string).name());
   data.cppType = "std::string";
-  data.value = MLPACK_ANY(std::string(""));
+  data.value = std::any(std::string(""));
 
   type = GetPrintableType<std::string>(data);
-  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
-      << ToUnderscores(type) << " }: " << PrintTypeDoc<std::string>(data)
-      << std::endl;
+  oss << " - `" << type << "`{: #doc_" << ToValidHTMLAnchor(type) << " }: "
+      << PrintTypeDoc<std::string>(data) << std::endl;
 
   data.tname = std::string(typeid(std::vector<int>).name());
   data.cppType = "std::vector<int>";
-  data.value = MLPACK_ANY(std::vector<int>());
+  data.value = std::any(std::vector<int>());
 
   type = GetPrintableType<std::vector<int>>(data);
-  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
-      << ToUnderscores(type) << " }: " << PrintTypeDoc<std::vector<int>>(data)
-      << std::endl;
+  oss << " - `" << type << "`{: #doc_" << ToValidHTMLAnchor(type) << " }: "
+      << PrintTypeDoc<std::vector<int>>(data) << std::endl;
 
   data.tname = std::string(typeid(std::vector<std::string>).name());
   data.cppType = "std::vector<std::string>";
-  data.value = MLPACK_ANY(std::vector<std::string>());
+  data.value = std::any(std::vector<std::string>());
 
   type = GetPrintableType<std::vector<std::string>>(data);
-  oss << " - `" << type << "`{: " << "#doc_" << BindingInfo::Language() << "_"
-      << ToUnderscores(type) << " }: "
-      << PrintTypeDoc<std::vector<std::string>>(data) << std::endl;
+  oss << " - `" << type << "`{: " << "#doc_" << ToValidHTMLAnchor(type)
+      << " }: " << PrintTypeDoc<std::vector<std::string>>(data) << std::endl;
 
   data.tname = std::string(typeid(arma::mat).name());
   data.cppType = "arma::mat";
-  data.value = MLPACK_ANY(arma::mat());
+  data.value = std::any(arma::mat());
 
   type = GetPrintableType<arma::mat>(data);
-  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
-      << ToUnderscores(type) << " }: " << PrintTypeDoc<arma::mat>(data)
-      << std::endl;
+  oss << " - `" << type << "`{: #doc_" << ToValidHTMLAnchor(type) << " }: "
+      << PrintTypeDoc<arma::mat>(data) << std::endl;
 
   data.tname = std::string(typeid(arma::Mat<size_t>).name());
   data.cppType = "arma::Mat<size_t>";
-  data.value = MLPACK_ANY(arma::Mat<size_t>());
+  data.value = std::any(arma::Mat<size_t>());
 
+  // Make sure that we don't print the same type twice, if the integer matrix
+  // type is the same type as the regular matrix type.
+  std::string oldType = type;
   type = GetPrintableType<arma::Mat<size_t>>(data);
-  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
-      << ToUnderscores(type) << " }: " << PrintTypeDoc<arma::Mat<size_t>>(data)
-      << std::endl;
+  if (type != oldType)
+  {
+    oss << " - `" << type << "`{: #doc_" << ToValidHTMLAnchor(type) << " }: "
+        << PrintTypeDoc<arma::Mat<size_t>>(data) << std::endl;
+  }
 
   data.tname = std::string(typeid(arma::rowvec).name());
   data.cppType = "arma::rowvec";
-  data.value = MLPACK_ANY(arma::rowvec());
+  data.value = std::any(arma::rowvec());
   const std::string& rowType = GetPrintableType<arma::rowvec>(data);
 
-  oss << " - `" << rowType << "`{: #doc_" << BindingInfo::Language() << "_"
-      << ToUnderscores(rowType) << " }: " << PrintTypeDoc<arma::rowvec>(data)
-      << std::endl;
+  oss << " - `" << rowType << "`{: #doc_" << ToValidHTMLAnchor(rowType)
+      << " }: " << PrintTypeDoc<arma::rowvec>(data) << std::endl;
 
   data.tname = std::string(typeid(arma::Row<size_t>).name());
   data.cppType = "arma::Row<size_t>";
-  data.value = MLPACK_ANY(arma::Row<size_t>());
+  data.value = std::any(arma::Row<size_t>());
   const std::string& urowType = GetPrintableType<arma::Row<size_t>>(data);
 
-  oss << " - `" << urowType << "`{: #doc_" << BindingInfo::Language() << "_"
-      << ToUnderscores(urowType) << " }: "
-      << PrintTypeDoc<arma::Row<size_t>>(data)
-      << std::endl;
+  if (urowType != rowType)
+  {
+    oss << " - `" << urowType << "`{: #doc_" << ToValidHTMLAnchor(urowType)
+        << " }: " << PrintTypeDoc<arma::Row<size_t>>(data) << std::endl;
+  }
 
   data.tname = std::string(typeid(arma::vec).name());
   data.cppType = "arma::vec";
-  data.value = MLPACK_ANY(arma::vec());
+  data.value = std::any(arma::vec());
   const std::string& colType = GetPrintableType<arma::vec>(data);
 
   // For some languages there is no distinction between column and row vectors.
   // If that is the case, then don't print both.
   if (colType != rowType)
   {
-    oss << " - `" << colType << "`{: #doc_" << BindingInfo::Language() << "_"
-        << ToUnderscores(colType) << " }: " << PrintTypeDoc<arma::vec>(data)
-        << std::endl;
+    oss << " - `" << colType << "`{: #doc_" << ToValidHTMLAnchor(colType)
+        << " }: " << PrintTypeDoc<arma::vec>(data) << std::endl;
   }
 
   data.tname = std::string(typeid(arma::Col<size_t>).name());
   data.cppType = "arma::Col<size_t>";
-  data.value = MLPACK_ANY(arma::Col<size_t>());
+  data.value = std::any(arma::Col<size_t>());
   const std::string& ucolType = GetPrintableType<arma::Col<size_t>>(data);
 
   // For some languages there is no distinction between column and row vectors.
   // If that is the case, then don't print both.
   if (ucolType != urowType)
   {
-    oss << " - `" << ucolType << "`{ #doc_" << BindingInfo::Language() << "_"
-        << ToUnderscores(ucolType) << " }: "
-        << PrintTypeDoc<arma::Col<size_t>>(data) << std::endl;
+    oss << " - `" << ucolType << "`{ #doc_" << ToValidHTMLAnchor(ucolType)
+        << " }: " << PrintTypeDoc<arma::Col<size_t>>(data) << std::endl;
   }
 
   data.tname =
       std::string(typeid(std::tuple<data::DatasetInfo, arma::mat>).name());
   data.cppType = "std::tuple<data::DatasetInfo, arma::mat>";
-  data.value = MLPACK_ANY(std::tuple<data::DatasetInfo, arma::mat>());
+  data.value = std::any(std::tuple<data::DatasetInfo, arma::mat>());
 
   type = GetPrintableType<std::tuple<data::DatasetInfo, arma::mat>>(data);
-  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
-      << ToUnderscores(type) << " }: "
+  oss << " - `" << type << "`{: #doc_" << ToValidHTMLAnchor(type) << " }: "
       << PrintTypeDoc<std::tuple<data::DatasetInfo, arma::mat>>(data)
       << std::endl;
 
   data.tname = std::string(typeid(priv::mlpackModel).name());
   data.cppType = "mlpackModel";
-  data.value = MLPACK_ANY(new priv::mlpackModel());
+  data.value = std::any(new priv::mlpackModel());
 
   type = GetPrintableType<priv::mlpackModel*>(data);
-  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language()
-      << "_model }: " << PrintTypeDoc<priv::mlpackModel*>(data) << std::endl;
+  oss << " - `" << type << "`{: #doc_model }: "
+      << PrintTypeDoc<priv::mlpackModel*>(data) << std::endl;
 
   // Clean up memory.
-  delete MLPACK_ANY_CAST<priv::mlpackModel*>(data.value);
+  delete std::any_cast<priv::mlpackModel*>(data.value);
 
-  oss << std::endl << "</div>" << std::endl;
+  oss << "</div>" << std::endl;
+  oss << std::endl;
 
   return oss.str();
 }
@@ -750,8 +757,7 @@ inline std::string ParamType(util::Params& p, util::ParamData& d)
   if (result)
     anchorType = "model";
 
-  return "[`" + output + "`](#doc_" + BindingInfo::Language() + "_" +
-      ToUnderscores(anchorType) + ")";
+  return "[`" + output + "`](#doc_" + ToValidHTMLAnchor(anchorType) + ")";
 }
 
 inline std::string ImportExtLib()

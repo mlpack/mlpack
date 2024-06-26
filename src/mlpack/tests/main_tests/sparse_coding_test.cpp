@@ -234,7 +234,7 @@ TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingModelVerTest",
   LoadData(inputData, testData);
 
   mat initialDictionary = inputData.cols(0, 1);
-  SparseCoding* c = new SparseCoding();
+  SparseCoding<>* c = new SparseCoding<>();
 
   // Input trained model and initial_dictionary.
   SetInputParam("input_model", c);
@@ -340,8 +340,8 @@ TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingModelReuseTest",
   arma::mat codes = std::move(params.Get<arma::mat>("codes"));
 
   // Reset passed parameters.
-  SparseCoding* m = params.Get<SparseCoding*>("output_model");
-  params.Get<SparseCoding*>("output_model") = NULL;
+  SparseCoding<>* m = params.Get<SparseCoding<>*>("output_model");
+  params.Get<SparseCoding<>*>("output_model") = NULL;
   CleanMemory();
   ResetSettings();
 

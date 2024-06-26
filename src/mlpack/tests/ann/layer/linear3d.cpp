@@ -36,7 +36,7 @@ TEST_CASE("SimpleLinear3DLayerTest", "[ANNLayerTest]")
   module.InputDimensions() = std::vector<size_t>({ 4, 2 });
   module.ComputeOutputDimensions();
   arma::mat weights(module.WeightSize(), 1);
-  module.SetWeights(weights.memptr());
+  module.SetWeights(weights);
 
   module.Parameters().randu();
 
@@ -74,7 +74,7 @@ TEST_CASE("JacobianLinear3DLayerTest", "[ANNLayerTest]")
     module.InputDimensions() = std::vector<size_t>({ inSize, nPoints });
     module.ComputeOutputDimensions();
     arma::mat weights(module.WeightSize(), 1);
-    module.SetWeights(weights.memptr());
+    module.SetWeights(weights);
 
     module.Parameters().randu();
 

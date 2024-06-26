@@ -40,8 +40,8 @@ BINDING_LONG_DESC(
     "\n\n"
     "The training set and associated labels are specified with the " +
     PRINT_PARAM_STRING("training") + " and " + PRINT_PARAM_STRING("labels") +
-    " parameters, respectively.  The labels should be in the range [0, "
-    "num_classes - 1]. Optionally, if " +
+    " parameters, respectively.  The labels should be in the range `[0, "
+    "num_classes - 1]`. Optionally, if " +
     PRINT_PARAM_STRING("labels") + " is not specified, the labels are assumed "
     "to be the last dimension of the training dataset."
     "\n\n"
@@ -99,11 +99,11 @@ BINDING_SEE_ALSO("@decision_tree", "#decision_tree");
 BINDING_SEE_ALSO("@hoeffding_tree", "#hoeffding_tree");
 BINDING_SEE_ALSO("@softmax_regression", "#softmax_regression");
 BINDING_SEE_ALSO("Random forest on Wikipedia",
-        "https://en.wikipedia.org/wiki/Random_forest");
-BINDING_SEE_ALSO("Random forests (pdf)",
-        "https://link.springer.com/content/pdf/10.1023/A:1010933404324.pdf");
+    "https://en.wikipedia.org/wiki/Random_forest");
+BINDING_SEE_ALSO("Random forests (pdf)", "https://www.eecis.udel.edu/~shatkay"
+    "/Course/papers/BreimanRandomForests2001.pdf");
 BINDING_SEE_ALSO("RandomForest C++ class documentation",
-        "@src/mlpack/methods/random_forest/random_forest.cpp");
+    "@src/mlpack/methods/random_forest/random_forest.hpp");
 
 PARAM_MATRIX_IN("training", "Training dataset.", "t");
 PARAM_UROW_IN("labels", "Labels for training dataset.", "l");

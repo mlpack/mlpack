@@ -118,7 +118,7 @@ class BatchNormType : public Layer<MatType>
   /**
    * Reset the layer parameters.
    */
-  void SetWeights(typename MatType::elem_type* weightsPtr);
+  void SetWeights(const MatType& weightsIn);
 
   /**
    * Initialize the weight matrix of the layer.
@@ -126,9 +126,7 @@ class BatchNormType : public Layer<MatType>
    * @param W Weight matrix to initialize.
    * @param elements Number of elements.
    */
-  void CustomInitialize(
-      MatType& W,
-      const size_t elements);
+  void CustomInitialize(MatType& W, const size_t elements);
 
   /**
    * Forward pass of the Batch Normalization layer. Transforms the input data
@@ -160,15 +158,23 @@ class BatchNormType : public Layer<MatType>
    * @param error The calculated error
    * @param gradient The calculated gradient.
    */
-  void Gradient(const MatType& input,
-                const MatType& error,
-                MatType& gradient);
+  void Gradient(const MatType& input, const MatType& error, MatType& gradient);
 
   //! Get the parameters.
   const MatType& Parameters() const { return weights; }
   //! Modify the parameters.
   MatType& Parameters() { return weights; }
 
+  //! Get the gamma.
+  const MatType& Gamma() const { return gamma; }
+  //! Modify the gamma.
+  MatType& Gamma() { return gamma; }
+
+  //! Get the beta.
+  const MatType& Beta() const { return beta; }
+  //! Modify the beta.
+  MatType& Beta() { return beta; }
+  
   //! Get the mean over the training data.
   const MatType& TrainingMean() const { return runningMean; }
   //! Modify the mean over the training data.
@@ -183,7 +189,9 @@ class BatchNormType : public Layer<MatType>
   size_t InputSize() const { return size; }
 
   //! Get the epsilon value.
-  double Epsilon() const { return eps; }
+  const double &Epsilon() const { return eps; }
+  //! Modify the epsilon.
+  double& Epsilon() { return eps; }
 
   //! Get the momentum value.
   double Momentum() const { return momentum; }

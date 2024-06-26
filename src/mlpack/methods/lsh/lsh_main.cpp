@@ -70,7 +70,7 @@ BINDING_SEE_ALSO("@krann", "#krann");
 BINDING_SEE_ALSO("Locality-sensitive hashing on Wikipedia",
     "https://en.wikipedia.org/wiki/Locality-sensitive_hashing");
 BINDING_SEE_ALSO("Locality-sensitive hashing scheme based on p-stable"
-    "  distributions(pdf)", "http://mlpack.org/papers/lsh.pdf");
+    "  distributions(pdf)", "https://www.mlpack.org/papers/lsh.pdf");
 BINDING_SEE_ALSO("LSHSearch C++ class documentation",
     "@src/mlpack/methods/lsh/lsh.hpp");
 

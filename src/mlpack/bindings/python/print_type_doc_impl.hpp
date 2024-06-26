@@ -67,11 +67,11 @@ std::string PrintTypeDoc(
 {
   if (std::is_same<T, std::vector<int>>::value)
   {
-    return "A list of integers; i.e., [0, 1, 2].";
+    return "A list of integers; i.e., `[0, 1, 2]`.";
   }
   else if (std::is_same<T, std::vector<std::string>>::value)
   {
-    return "A list of strings; i.e., [\"hello\", \"goodbye\"].";
+    return "A list of strings; i.e., `[\"hello\", \"goodbye\"]`.";
   }
   else
   {

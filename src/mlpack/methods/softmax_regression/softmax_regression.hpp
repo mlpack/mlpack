@@ -167,7 +167,7 @@ class SoftmaxRegression
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
            >::value>::type>
-  mlpack_deprecated /* To be removed in mlpack 5.0.0; use the overload below. */
+  [[deprecated("Will be removed in mlpack 5.0.0, use other Train() variants")]]
   double Train(const MatType& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
@@ -290,7 +290,8 @@ class SoftmaxRegression
    * @param dataset Matrix of data points to be classified.
    * @param probabilities Class probabilities for each point.
    */
-  mlpack_deprecated /** To be removed in mlpack 5.0.0. */
+  [[deprecated("Will be removed in mlpack 5.0.0, use other Classify() "
+      "variants")]]
   void Classify(const MatType& dataset,
                 DenseMatType& probabilities) const;
 

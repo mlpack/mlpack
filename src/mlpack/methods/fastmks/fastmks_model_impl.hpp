@@ -36,7 +36,7 @@ inline FastMKSModel::FastMKSModel(const FastMKSModel& other) :
     polynomial(other.polynomial == NULL ? NULL :
         new FastMKS<PolynomialKernel>(*other.polynomial)),
     cosine(other.cosine == NULL ? NULL :
-        new FastMKS<CosineDistance>(*other.cosine)),
+        new FastMKS<CosineSimilarity>(*other.cosine)),
     gaussian(other.gaussian == NULL ? NULL :
         new FastMKS<GaussianKernel>(*other.gaussian)),
     epan(other.epan == NULL ? NULL :
@@ -98,7 +98,7 @@ inline FastMKSModel& FastMKSModel::operator=(const FastMKSModel& other)
     if (other.polynomial)
       polynomial = new FastMKS<PolynomialKernel>(*other.polynomial);
     if (other.cosine)
-      cosine = new FastMKS<CosineDistance>(*other.cosine);
+      cosine = new FastMKS<CosineSimilarity>(*other.cosine);
     if (other.gaussian)
       gaussian = new FastMKS<GaussianKernel>(*other.gaussian);
     if (other.epan)
@@ -164,7 +164,7 @@ inline bool FastMKSModel::Naive() const
       return linear->Naive();
     case POLYNOMIAL_KERNEL:
       return polynomial->Naive();
-    case COSINE_DISTANCE:
+    case COSINE_SIMILARITY:
       return cosine->Naive();
     case GAUSSIAN_KERNEL:
       return gaussian->Naive();
@@ -187,7 +187,7 @@ inline bool& FastMKSModel::Naive()
       return linear->Naive();
     case POLYNOMIAL_KERNEL:
       return polynomial->Naive();
-    case COSINE_DISTANCE:
+    case COSINE_SIMILARITY:
       return cosine->Naive();
     case GAUSSIAN_KERNEL:
       return gaussian->Naive();
@@ -210,7 +210,7 @@ inline bool FastMKSModel::SingleMode() const
       return linear->SingleMode();
     case POLYNOMIAL_KERNEL:
       return polynomial->SingleMode();
-    case COSINE_DISTANCE:
+    case COSINE_SIMILARITY:
       return cosine->SingleMode();
     case GAUSSIAN_KERNEL:
       return gaussian->SingleMode();
@@ -233,7 +233,7 @@ inline bool& FastMKSModel::SingleMode()
       return linear->SingleMode();
     case POLYNOMIAL_KERNEL:
       return polynomial->SingleMode();
-    case COSINE_DISTANCE:
+    case COSINE_SIMILARITY:
       return cosine->SingleMode();
     case GAUSSIAN_KERNEL:
       return gaussian->SingleMode();
@@ -339,8 +339,8 @@ void FastMKSModel::BuildModel(util::Timers& timers,
           base);
       break;
 
-    case COSINE_DISTANCE:
-      cosine = new FastMKS<CosineDistance>(singleMode, naive);
+    case COSINE_SIMILARITY:
+      cosine = new FastMKS<CosineSimilarity>(singleMode, naive);
       BuildFastMKSModel(timers, *cosine, kernel, std::move(referenceData), base);
       break;
 
@@ -411,7 +411,7 @@ void FastMKSModel::serialize(Archive& ar, const uint32_t /* version */)
       ar(CEREAL_POINTER(polynomial));
       break;
 
-    case COSINE_DISTANCE:
+    case COSINE_SIMILARITY:
       ar(CEREAL_POINTER(cosine));
       break;
 
@@ -476,7 +476,7 @@ inline void FastMKSModel::Search(
     case POLYNOMIAL_KERNEL:
       Search(timers, *polynomial, querySet, k, indices, kernels, base);
       break;
-    case COSINE_DISTANCE:
+    case COSINE_SIMILARITY:
       Search(timers, *cosine, querySet, k, indices, kernels, base);
       break;
     case GAUSSIAN_KERNEL:
@@ -511,7 +511,7 @@ inline void FastMKSModel::Search(
     case POLYNOMIAL_KERNEL:
       polynomial->Search(k, indices, kernels);
       break;
-    case COSINE_DISTANCE:
+    case COSINE_SIMILARITY:
       cosine->Search(k, indices, kernels);
       break;
     case GAUSSIAN_KERNEL:

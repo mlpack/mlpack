@@ -184,20 +184,9 @@ void PrintR(util::Params& params,
        << endl;
   for (const string& opt : inputOptions)
   {
-    if (opt != "verbose")
-    {
-      util::ParamData& d = parameters.at(opt);
-      params.functionMap[d.tname]["PrintInputProcessing"](d, NULL, NULL);
-    }
+    util::ParamData& d = parameters.at(opt);
+    params.functionMap[d.tname]["PrintInputProcessing"](d, NULL, NULL);
   }
-
-  // Special handling for verbose output.
-  cout << "  if (verbose) {" << endl;
-  cout << "    EnableVerbose()" << endl;
-  cout << "  } else {" << endl;
-  cout << "    DisableVerbose()" << endl;
-  cout << "  }" << endl;
-  cout << endl;
 
   // Mark output parameters as passed.
   cout << "  # Mark all output options as passed." << endl;

@@ -35,43 +35,43 @@ inline arma::file_type ToArmaFileType(const FileType& type)
     case FileType::AutoDetect:
       return arma::auto_detect;
       break;
-    
+
     case FileType::RawASCII:
       return arma::raw_ascii;
       break;
-    
+
     case FileType::ArmaASCII:
       return arma::arma_ascii;
       break;
-    
+
     case FileType::CSVASCII:
       return arma::csv_ascii;
       break;
-    
+
     case FileType::RawBinary:
       return arma::raw_binary;
       break;
-    
+
     case FileType::ArmaBinary:
       return arma::arma_binary;
       break;
-    
+
     case FileType::PGMBinary:
       return arma::pgm_binary;
       break;
-    
+
     case FileType::PPMBinary:
       return arma::ppm_binary;
       break;
-    
+
     case FileType::HDF5Binary:
       return arma::hdf5_binary;
       break;
-    
+
     case FileType::CoordASCII:
       return arma::coord_ascii;
       break;
-    
+
     default:
       return arma::file_type_unknown;
       break;

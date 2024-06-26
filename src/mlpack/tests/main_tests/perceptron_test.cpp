@@ -62,10 +62,10 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronOutputDimensionTest",
   RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_cols == testSize);
 
   // Check output have only single row.
-  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_rows == 1);
 }
 
 /**
@@ -104,16 +104,16 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronLabelsLessDimensionTest",
   RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_cols == testSize);
 
   // Check output have only single row.
-  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_rows == 1);
 
   inputData.shed_row(inputData.n_rows - 1);
 
   // Store outputs.
   arma::Row<size_t> output;
-  output = std::move(params.Get<arma::Row<size_t>>("output"));
+  output = std::move(params.Get<arma::Row<size_t>>("predictions"));
 
   // Reset data passed.
   CleanMemory();
@@ -130,48 +130,14 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronLabelsLessDimensionTest",
   RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_cols == testSize);
 
   // Check output have only single row.
-  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_rows == 1);
 
   // Check that initial output and final output matrix
   // from two models are same.
-  CheckMatrices(output, params.Get<arma::Row<size_t>>("output"));
-}
-
-/**
- * This test can be removed in mlpack 4.0.0. This tests that the output and
- * predictions outputs are the same.
- */
-TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronOutputPredictionsCheck",
-                 "[PerceptronMainTest][BindingTests]")
-{
-  arma::mat trainX1;
-  arma::Row<size_t> labelsX1;
-
-  // Loading a train data set with 3 classes.
-  if (!data::Load("vc2.csv", trainX1))
-  {
-    FAIL("Could not load the train data (vc2.csv)");
-  }
-
-  // Loading the corresponding labels to the dataset.
-  if (!data::Load("vc2_labels.txt", labelsX1))
-  {
-    FAIL("Could not load the train data (vc2_labels.csv)");
-  }
-
-  SetInputParam("training", std::move(trainX1)); // Training data.
-  // Labels for the training data.
-  SetInputParam("labels", std::move(labelsX1));
-
-  // Training model using first training dataset.
-  RUN_BINDING();
-
-  // Check that the outputs are the same.
-  CheckMatrices(params.Get<arma::Row<size_t>>("output"),
-                params.Get<arma::Row<size_t>>("predictions"));
+  CheckMatrices(output, params.Get<arma::Row<size_t>>("predictions"));
 }
 
 /**
@@ -202,7 +168,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronModelReuseTest",
   RUN_BINDING();
 
   arma::Row<size_t> output;
-  output = std::move(params.Get<arma::Row<size_t>>("output"));
+  output = std::move(params.Get<arma::Row<size_t>>("predictions"));
 
   // Reset passed parameters.
   PerceptronModel* m = params.Get<PerceptronModel*>("output_model");
@@ -217,14 +183,14 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronModelReuseTest",
   RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_cols == testSize);
 
   // Check output have only single row.
-  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_rows == 1);
 
   // Check that initial output and final output matrix
   // using saved model are same.
-  CheckMatrices(output, params.Get<arma::Row<size_t>>("output"));
+  CheckMatrices(output, params.Get<arma::Row<size_t>>("predictions"));
 }
 
 /**

@@ -16,10 +16,10 @@
 
 namespace mlpack {
 
-template<typename OptimizerType>
-BiasSVD<OptimizerType>::BiasSVD(const size_t iterations,
-                                const double alpha,
-                                const double lambda) :
+template<typename OptimizerType, typename MatType, typename VecType>
+BiasSVD<OptimizerType, MatType, VecType>::BiasSVD(const size_t iterations,
+                                                  const double alpha,
+                                                  const double lambda) :
     iterations(iterations),
     alpha(alpha),
     lambda(lambda)
@@ -27,13 +27,13 @@ BiasSVD<OptimizerType>::BiasSVD(const size_t iterations,
   // Nothing to do.
 }
 
-template<typename OptimizerType>
-void BiasSVD<OptimizerType>::Apply(const arma::mat& data,
-                                   const size_t rank,
-                                   arma::mat& u,
-                                   arma::mat& v,
-                                   arma::vec& p,
-                                   arma::vec& q)
+template<typename OptimizerType, typename MatType, typename VecType>
+void BiasSVD<OptimizerType, MatType, VecType>::Apply(const MatType& data,
+                                                     const size_t rank,
+                                                     MatType& u,
+                                                     MatType& v,
+                                                     VecType& p,
+                                                     VecType& q)
 {
   // batchSize is 1 in our implementation of Bias SVD.
   // batchSize other than 1 has not been supported yet.
@@ -47,7 +47,7 @@ void BiasSVD<OptimizerType>::Apply(const arma::mat& data,
       iterations * data.n_cols);
 
   // Get optimized parameters.
-  arma::mat parameters = biasSVDFunc.GetInitialPoint();
+  MatType parameters = biasSVDFunc.GetInitialPoint();
   optimizer.Optimize(biasSVDFunc, parameters);
 
   // Constants for extracting user and item matrices.

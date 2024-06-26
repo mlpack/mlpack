@@ -32,7 +32,7 @@ void DeleteAllocatedMemoryImpl(
     util::ParamData& d,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
-  (*MLPACK_ANY_CAST<T>(&d.value)).clear();
+  (*std::any_cast<T>(&d.value)).clear();
 }
 
 template<typename T>
@@ -42,7 +42,7 @@ void DeleteAllocatedMemoryImpl(
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // Delete the allocated memory (hopefully we actually own it).
-  delete *MLPACK_ANY_CAST<T*>(&d.value);
+  delete *std::any_cast<T*>(&d.value);
 }
 
 template<typename T>

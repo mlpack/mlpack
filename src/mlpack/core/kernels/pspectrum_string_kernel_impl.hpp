@@ -25,6 +25,12 @@ inline PSpectrumStringKernel::PSpectrumStringKernel(
     const std::vector<std::vector<std::string> >& datasets,
     const size_t p) : p(p)
 {
+  if (p == 0)
+  {
+    throw std::invalid_argument(
+        "PSpectrumStringKernel::PSpectrumStringKernel(): p must be positive");
+  }
+
   // We have to assemble the counts of substrings.  This is not a particularly
   // fast operation, unfortunately, but it only needs to be done once.
   Log::Info << "Assembling counts of substrings of length " << p << "."

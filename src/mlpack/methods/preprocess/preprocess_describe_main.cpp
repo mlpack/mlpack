@@ -64,7 +64,9 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
+#if BINDING_TYPE == BINDING_TYPE_CLI
 BINDING_SEE_ALSO("@preprocess_imputer", "#preprocess_imputer");
+#endif
 BINDING_SEE_ALSO("@preprocess_split", "#preprocess_split");
 
 // Define parameters for data.

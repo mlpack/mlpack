@@ -26,7 +26,7 @@ namespace cli {
 template<typename T>
 void SetParam(
     util::ParamData& d,
-    const MLPACK_ANY& value,
+    const std::any& value,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
     const typename std::enable_if<!std::is_same<T,
@@ -34,7 +34,7 @@ void SetParam(
     const typename std::enable_if<!std::is_same<T, bool>::value>::type* = 0)
 {
   // No mapping is needed.
-  d.value = *MLPACK_ANY_CAST<T>(&value);
+  d.value = *std::any_cast<T>(&value);
 }
 
 /**
@@ -43,7 +43,7 @@ void SetParam(
 template<typename T>
 void SetParam(
     util::ParamData& d,
-    const MLPACK_ANY& /* value */,
+    const std::any& /* value */,
     const typename std::enable_if<std::is_same<T, bool>::value>::type* = 0)
 {
   // Force set to the value of whether or not this was passed.
@@ -57,15 +57,15 @@ void SetParam(
 template<typename T>
 void SetParam(
     util::ParamData& d,
-    const MLPACK_ANY& value,
+    const std::any& value,
     const typename std::enable_if<arma::is_arma_type<T>::value ||
                                   std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   // We're setting the string filename.
   typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
-  TupleType& tuple = *MLPACK_ANY_CAST<TupleType>(&d.value);
-  std::get<0>(std::get<1>(tuple)) = MLPACK_ANY_CAST<std::string>(value);
+  TupleType& tuple = *std::any_cast<TupleType>(&d.value);
+  std::get<0>(std::get<1>(tuple)) = std::any_cast<std::string>(value);
 }
 
 /**
@@ -75,14 +75,14 @@ void SetParam(
 template<typename T>
 void SetParam(
     util::ParamData& d,
-    const MLPACK_ANY& value,
+    const std::any& value,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // We're setting the string filename.
   typedef std::tuple<T*, typename ParameterType<T>::type> TupleType;
-  TupleType& tuple = *MLPACK_ANY_CAST<TupleType>(&d.value);
-  std::get<1>(tuple) = MLPACK_ANY_CAST<std::string>(value);
+  TupleType& tuple = *std::any_cast<TupleType>(&d.value);
+  std::get<1>(tuple) = std::any_cast<std::string>(value);
 }
 
 /**
@@ -97,7 +97,7 @@ template<typename T>
 void SetParam(util::ParamData& d, const void* input, void* /* output */)
 {
   SetParam<typename std::remove_pointer<T>::type>(
-      const_cast<util::ParamData&>(d), *((MLPACK_ANY*) input));
+      const_cast<util::ParamData&>(d), *((std::any*) input));
 }
 
 } // namespace cli

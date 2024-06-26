@@ -54,7 +54,7 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("Independent component analysis on Wikipedia",
     "https://en.wikipedia.org/wiki/Independent_component_analysis");
 BINDING_SEE_ALSO("ICA using spacings estimates of entropy (pdf)",
-    "http://www.jmlr.org/papers/volume4/learned-miller03a/"
+    "https://www.jmlr.org/papers/volume4/learned-miller03a/"
     "learned-miller03a.pdf");
 BINDING_SEE_ALSO("Radical C++ class documentation",
     "@src/mlpack/methods/radical/radical.hpp");

@@ -5,7 +5,7 @@
 #
 #   PROGRAM: the program to run to.
 #   OUTPUT_FILE: the file to store the output in.
-execute_process(COMMAND ${PROGRAM} OUTPUT_FILE ${OUTPUT_FILE}
+execute_process(COMMAND ${PROGRAM} ${PROGRAM_OPT1} ${PROGRAM_OPT2} OUTPUT_FILE ${OUTPUT_FILE}
     ERROR_VARIABLE err)
 
 if (err)

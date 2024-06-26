@@ -237,4 +237,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     params.Get<double>("model_bw_out") =
         params.Get<GaussianKernel*>("model_in")->Bandwidth() * 2.0;
   }
+
+  // Provide some output if the user asked for it.
+  Log::Info << "Here is some verbose output!" << std::endl;
 }

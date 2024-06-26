@@ -191,7 +191,7 @@ class Layer
    *    implementations should use MakeAlias() with weightsPtr to wrap the
    *    weights of a layer.
    */
-  virtual void SetWeights(typename MatType::elem_type* /* weightsPtr */) { }
+  virtual void SetWeights(const MatType& /* weightsIn */) { }
 
   /**
    * Get the total number of trainable weights in the layer.

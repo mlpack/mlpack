@@ -36,7 +36,7 @@ std::string DefaultParamImpl(
   if (std::is_same<T, bool>::value)
     oss << "False";
   else
-    oss << MLPACK_ANY_CAST<T>(data.value);
+    oss << std::any_cast<T>(data.value);
 
   return oss.str();
 }
@@ -51,7 +51,7 @@ std::string DefaultParamImpl(
 {
   // Print each element in an array delimited by square brackets.
   std::ostringstream oss;
-  const T& vector = MLPACK_ANY_CAST<T>(data.value);
+  const T& vector = std::any_cast<T>(data.value);
   oss << "[";
   if (std::is_same<T, std::vector<std::string>>::value)
   {
@@ -92,7 +92,7 @@ std::string DefaultParamImpl(
     util::ParamData& data,
     const typename std::enable_if<std::is_same<T, std::string>::value>::type*)
 {
-  const std::string& s = *MLPACK_ANY_CAST<std::string>(&data.value);
+  const std::string& s = *std::any_cast<std::string>(&data.value);
   return "'" + s + "'";
 }
 

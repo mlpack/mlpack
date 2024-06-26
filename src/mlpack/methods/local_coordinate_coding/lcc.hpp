@@ -75,9 +75,13 @@ namespace mlpack {
  * }
  * @endcode
  */
+template<typename MatType = arma::mat>
 class LocalCoordinateCoding
 {
  public:
+  typedef typename GetColType<MatType>::type ColType;
+  typedef typename GetRowType<MatType>::type RowType;
+
   /**
    * Set the parameters to LocalCoordinateCoding, and train the dictionary.
    * This constructor will also initialize the dictionary using the given
@@ -85,7 +89,7 @@ class LocalCoordinateCoding
    *
    * If you want to initialize the dictionary to a custom matrix, consider
    * either writing your own DictionaryInitializer class (with void
-   * Initialize(const arma::mat& data, arma::mat& dictionary) function), or call
+   * Initialize(const MatType& data, MatType& dictionary) function), or call
    * the constructor that does not take a data matrix, then call Dictionary() to
    * set the dictionary matrix to a matrix of your choosing, and then call
    * Train() with NothingInitializer (i.e.  Train<NothingInitializer>(data)).
@@ -99,7 +103,7 @@ class LocalCoordinateCoding
    * @param initializer Intializer to use.
    */
   template<typename DictionaryInitializer = DataDependentRandomInitializer>
-  LocalCoordinateCoding(const arma::mat& data,
+  LocalCoordinateCoding(const MatType& data,
                         const size_t atoms,
                         const double lambda,
                         const size_t maxIterations = 0,
@@ -132,7 +136,7 @@ class LocalCoordinateCoding
    * @return The final objective value.
    */
   template<typename DictionaryInitializer = DataDependentRandomInitializer>
-  double Train(const arma::mat& data,
+  double Train(const MatType& data,
                const DictionaryInitializer& initializer =
                    DictionaryInitializer());
 
@@ -142,7 +146,7 @@ class LocalCoordinateCoding
    * @param data Matrix containing points to encode.
    * @param codes Output matrix to store codes in.
    */
-  void Encode(const arma::mat& data, arma::mat& codes);
+  void Encode(const MatType& data, MatType& codes);
 
   /**
    * Learn dictionary by solving linear system.
@@ -153,9 +157,18 @@ class LocalCoordinateCoding
    *    the coding matrix Z that are non-zero (the adjacency matrix for the
    *    bipartite graph of points and atoms)
    */
-  void OptimizeDictionary(const arma::mat& data,
-                          const arma::mat& codes,
+  void OptimizeDictionary(const MatType& data,
+                          const MatType& codes,
                           const arma::uvec& adjacencies);
+
+  /**
+   * Compute objective function given the list of adjacencies.
+   *
+   * @param data Matrix containing points to encode.
+   * @param codes Output matrix to store codes in.
+   */
+  double Objective(const MatType& data,
+                   const MatType& codes) const;
 
   /**
    * Compute objective function given the list of adjacencies.
@@ -166,8 +179,8 @@ class LocalCoordinateCoding
    *    the coding matrix Z that are non-zero (the adjacency matrix for the
    *    bipartite graph of points and atoms)
    */
-  double Objective(const arma::mat& data,
-                   const arma::mat& codes,
+  double Objective(const MatType& data,
+                   const MatType& codes,
                    const arma::uvec& adjacencies) const;
 
   //! Get the number of atoms.
@@ -176,9 +189,9 @@ class LocalCoordinateCoding
   size_t& Atoms() { return atoms; }
 
   //! Accessor for dictionary.
-  const arma::mat& Dictionary() const { return dictionary; }
+  const MatType& Dictionary() const { return dictionary; }
   //! Mutator for dictionary.
-  arma::mat& Dictionary() { return dictionary; }
+  MatType& Dictionary() { return dictionary; }
 
   //! Get the L1 regularization parameter.
   double Lambda() const { return lambda; }
@@ -204,7 +217,7 @@ class LocalCoordinateCoding
   size_t atoms;
 
   //! Dictionary (columns are atoms).
-  arma::mat dictionary;
+  MatType dictionary;
 
   //! l1 regularization term.
   double lambda;
@@ -216,6 +229,9 @@ class LocalCoordinateCoding
 };
 
 } // namespace mlpack
+
+CEREAL_TEMPLATE_CLASS_VERSION((typename MatType),
+    (mlpack::LocalCoordinateCoding<MatType>), (1));
 
 // Include implementation.
 #include "lcc_impl.hpp"

@@ -39,12 +39,12 @@ AMF<TerminationPolicyType, InitializationRuleType, UpdateRuleType>::AMF(
 template<typename TerminationPolicyType,
          typename InitializationRuleType,
          typename UpdateRuleType>
-template<typename MatType>
+template<typename MatType, typename WHMatType>
 double AMF<TerminationPolicyType, InitializationRuleType, UpdateRuleType>::
 Apply(const MatType& V,
       const size_t r,
-      arma::mat& W,
-      arma::mat& H)
+      WHMatType& W,
+      WHMatType& H)
 {
   // Initialize W and H.
   initializationRule.Initialize(V, r, W, H);
@@ -57,11 +57,15 @@ Apply(const MatType& V,
   terminationPolicy.Initialize(V);
 
   // check if termination conditions are met
+  size_t iter = 0;
   while (!terminationPolicy.IsConverged(W, H))
   {
     // Update the values of W and H based on the update rules provided.
     update.WUpdate(V, W, H);
     update.HUpdate(V, W, H);
+    ++iter;
+    Log::Debug << "AMF::Apply(): iteration " << iter
+        << "; termination condition " << terminationPolicy.Index() << ".\n";
   }
 
   // get final residue and iteration count from termination policy

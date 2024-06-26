@@ -17,6 +17,11 @@ void ${PROGRAM_NAME}_call(SEXP params, SEXP timers)
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
   util::Timers& t = *Rcpp::as<Rcpp::XPtr<util::Timers>>(timers);
 
+  if (p.Has("verbose"))
+    Log::Info.ignoreInput = false;
+  else
+    Log::Info.ignoreInput = true;
+
   BINDING_FUNCTION(p, t);
 }
 

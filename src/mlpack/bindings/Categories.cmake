@@ -2,10 +2,10 @@
 # category you choose is not in this list, an error will
 # be thrown.
 set (CATEGORIES
-    "classification"
-    "regression"
-    "clustering"
-    "geometry"
-    "preprocessing"
-    "misc. / other"
-    "transformations")
+    "Classification"
+    "Regression"
+    "Clustering"
+    "Geometry"
+    "Preprocessing"
+    "Misc. / Other"
+    "Transformations")

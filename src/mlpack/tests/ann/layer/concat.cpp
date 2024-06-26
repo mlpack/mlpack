@@ -31,14 +31,14 @@ TEST_CASE("SimpleConcatLayerTest", "[ANNLayerTest]")
   moduleA->InputDimensions() = std::vector<size_t>({ 10 });
   moduleA->ComputeOutputDimensions();
   arma::mat weightsA(moduleA->WeightSize(), 1);
-  moduleA->SetWeights((double*) weightsA.memptr());
+  moduleA->SetWeights(weightsA);
   moduleA->Parameters().randu();
 
   Linear* moduleB = new Linear(10);
   moduleB->InputDimensions() = std::vector<size_t>({ 10 });
   moduleB->ComputeOutputDimensions();
   arma::mat weightsB(moduleB->WeightSize(), 1);
-  moduleB->SetWeights((double*) weightsB.memptr());
+  moduleB->SetWeights(weightsB);
   moduleB->Parameters().randu();
 
   Concat module;
@@ -92,13 +92,13 @@ TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
   moduleA->InputDimensions() = std::vector<size_t>({ inputWidth, inputHeight });
   moduleA->ComputeOutputDimensions();
   arma::mat weightsA(moduleA->WeightSize(), 1);
-  moduleA->SetWeights((double*) weightsA.memptr());
+  moduleA->SetWeights(weightsA);
   moduleA->Parameters().randu();
 
   moduleB->InputDimensions() = std::vector<size_t>({ inputWidth, inputHeight });
   moduleB->ComputeOutputDimensions();
   arma::mat weightsB(moduleB->WeightSize(), 1);
-  moduleB->SetWeights((double*) weightsB.memptr());
+  moduleB->SetWeights(weightsB);
   moduleB->Parameters().randu();
 
   // Compute output of each layer.

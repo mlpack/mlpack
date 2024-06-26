@@ -72,7 +72,8 @@ class SimpleResidueTermination
    * @param W Basis matrix of output.
    * @param H Encoding matrix of output.
    */
-  bool IsConverged(arma::mat& W, arma::mat& H)
+  template<typename MatType>
+  bool IsConverged(MatType& W, MatType& H)
   {
     // Calculate the norm and compute the residue, but do it by hand, so as to
     // avoid calculating (W*H), which may be very large.

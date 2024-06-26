@@ -75,33 +75,14 @@ class NMFMultiplicativeDivergenceUpdate
    * @param W Basis matrix to be updated.
    * @param H Encoding matrix.
    */
-  template<typename MatType>
+  template<typename MatType, typename WHMatType>
   inline static void WUpdate(const MatType& V,
-                             arma::mat& W,
-                             const arma::mat& H)
+                             WHMatType& W,
+                             const WHMatType& H)
   {
     // Simple implementation left in the header file.
-    arma::mat t1;
-    arma::rowvec t2;
-
-    t1 = W * H;
-    for (size_t i = 0; i < W.n_rows; ++i)
-    {
-      for (size_t j = 0; j < W.n_cols; ++j)
-      {
-        // Writing this as a single expression does not work as of Armadillo
-        // 3.920.  This should be fixed in a future release, and then the code
-        // below can be fixed.
-        // t2 = H.row(j) % V.row(i) / t1.row(i);
-        t2.set_size(H.n_cols);
-        for (size_t k = 0; k < t2.n_elem; ++k)
-        {
-          t2(k) = H(j, k) * V(i, k) / t1(i, k);
-        }
-
-        W(i, j) = W(i, j) * sum(t2) / sum(H.row(j));
-      }
-    }
+    W %= ((V / (W * H + 1e-15)) * H.t()) /
+        (repmat(sum(H, 1).t(), W.n_rows, 1) + 1e-15);
   }
 
   /**
@@ -119,33 +100,14 @@ class NMFMultiplicativeDivergenceUpdate
    * @param W Basis matrix.
    * @param H Encoding matrix to updated.
    */
-  template<typename MatType>
+  template<typename MatType, typename WHMatType>
   inline static void HUpdate(const MatType& V,
-                            const arma::mat& W,
-                            arma::mat& H)
+                             const WHMatType& W,
+                             WHMatType& H)
   {
     // Simple implementation left in the header file.
-    arma::mat t1;
-    arma::colvec t2;
-
-    t1 = W * H;
-    for (size_t i = 0; i < H.n_rows; ++i)
-    {
-      for (size_t j = 0; j < H.n_cols; ++j)
-      {
-        // Writing this as a single expression does not work as of Armadillo
-        // 3.920.  This should be fixed in a future release, and then the code
-        // below can be fixed.
-        // t2 = W.col(i) % V.col(j) / t1.col(j);
-        t2.set_size(W.n_rows);
-        for (size_t k = 0; k < t2.n_elem; ++k)
-        {
-          t2(k) = W(k, i) * V(k, j) / t1(k, j);
-        }
-
-        H(i, j) = H(i, j) * sum(t2) / sum(W.col(i));
-      }
-    }
+    H %= (W.t() * (V / (W * H + 1e-15))) /
+        (repmat(sum(W, 0).t(), 1, H.n_cols) + 1e-15);
   }
 
   //! Serialize the object (in this case, there is nothing to serialize).

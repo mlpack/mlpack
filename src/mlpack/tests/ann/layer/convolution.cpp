@@ -77,7 +77,7 @@ TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
   module1.ComputeOutputDimensions();
   arma::mat weights1(module1.WeightSize(), 1);
   REQUIRE(weights1.n_elem == 10);
-  module1.SetWeights(weights1.memptr());
+  module1.SetWeights(weights1);
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 48, 49);
@@ -100,7 +100,7 @@ TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
   module2.ComputeOutputDimensions();
   arma::mat weights2(module2.WeightSize(), 1);
   REQUIRE(weights2.n_elem == 10);
-  module2.SetWeights(weights2.memptr());
+  module2.SetWeights(weights2);
 
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 48, 49);
@@ -218,7 +218,7 @@ TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
   layer.InputDimensions() = std::vector<size_t>({ 4, 1, 2 });
   layer.ComputeOutputDimensions();
   arma::mat layerWeights(layer.WeightSize(), 1);
-  layer.SetWeights(layerWeights.memptr());
+  layer.SetWeights(layerWeights);
   output.set_size(layer.OutputSize(), 3);
 
   // Set weights to 1.0 and bias to 0.0.
@@ -250,7 +250,7 @@ TEST_CASE("ConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
   module.InputDimensions() = std::vector<size_t>({ 12, 13, 2 });
   module.ComputeOutputDimensions();
   arma::mat weights(module.WeightSize(), 1);
-  module.SetWeights(weights.memptr());
+  module.SetWeights(weights);
 
   RandomInitialization().Initialize(module.Weight());
   module.Bias().ones();
@@ -290,7 +290,7 @@ TEST_CASE("NoBiasConvolutionLayerTestCase", "[ANNLayerTest]")
   layer.ComputeOutputDimensions();
   REQUIRE(layer.WeightSize() == 8);
   arma::mat layerWeights(layer.WeightSize(), 1);
-  layer.SetWeights(layerWeights.memptr());
+  layer.SetWeights(layerWeights);
   REQUIRE(layer.Bias().n_elem == 0);
   output.set_size(layer.OutputSize(), 3);
 
@@ -350,7 +350,7 @@ TEST_CASE("AdvancedConvolutionLayerTest", "[ANNLayerTest]")
   layerWeights(15) = -0.2283206;
   layerWeights(16) = 0.3204123974;
   layerWeights(17) = 0.2334779799;
-  layer.SetWeights(layerWeights.memptr());
+  layer.SetWeights(layerWeights);
   output.set_size(layer.OutputSize(), 3);
 
   layer.Forward(input, output);
@@ -428,7 +428,7 @@ TEST_CASE("AdvancedConvolutionLayerWithStrideTest", "[ANNLayerTest]")
   layerWeights(15) = -0.12563613;
   layerWeights(16) = -0.1114468053;
   layerWeights(17) = -0.3029643595;
-  layer.SetWeights(layerWeights.memptr());
+  layer.SetWeights(layerWeights);
   output.set_size(layer.OutputSize(), 3);
 
   layer.Forward(input, output);
@@ -451,7 +451,7 @@ TEST_CASE("NonSquareConvolutionTest", "[ANNLayerTest]")
   module1.InputDimensions() = std::vector<size_t>({ 7, 7 });
   module1.ComputeOutputDimensions();
   arma::mat weights1(module1.WeightSize(), 1);
-  module1.SetWeights(weights1.memptr());
+  module1.SetWeights(weights1);
 
   arma::mat data(49, 10, arma::fill::randu);
   arma::mat forwardResult(module1.OutputSize(), 10, arma::fill::zeros);

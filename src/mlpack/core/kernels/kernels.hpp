@@ -15,7 +15,7 @@
 #include "kernel_traits.hpp"
 
 #include "cauchy_kernel.hpp"
-#include "cosine_distance.hpp"
+#include "cosine_similarity.hpp"
 #include "epanechnikov_kernel.hpp"
 #include "example_kernel.hpp"
 #include "gaussian_kernel.hpp"

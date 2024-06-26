@@ -72,20 +72,20 @@ inline void RandomizedBlockKrylovSVD::Apply(const InMatType& data,
 
   // Create a working matrix using data from writable auxiliary memory
   // (K matrix). Doing so avoids an unnecessary copy in upcoming step.
-  MakeAlias(block, K.memptr(), data.n_rows, blockSize, false);
+  MakeAlias(block, K, data.n_rows, blockSize, false);
   arma::qr_econ(block, R, data * G);
 
   for (size_t blockOffset = block.n_elem; blockOffset < K.n_elem;
       blockOffset += block.n_elem)
   {
     // Temporary working matrix to store the result in the correct place.
-    MakeAlias(blockIteration, K.memptr() + blockOffset, block.n_rows,
-        block.n_cols, false);
+    MakeAlias(blockIteration, K, block.n_rows, block.n_cols, blockOffset,
+        false);
 
     arma::qr_econ(blockIteration, R, data * (data.t() * block));
 
     // Update working matrix for the next iteration.
-    MakeAlias(block, K.memptr() + blockOffset, block.n_rows, block.n_cols,
+    MakeAlias(block, K, block.n_rows, block.n_cols, blockOffset,
         false);
   }
 

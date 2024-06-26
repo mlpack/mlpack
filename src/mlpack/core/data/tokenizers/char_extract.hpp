@@ -36,7 +36,7 @@ class CharExtract
    *
    * @param str String view to retrieve the next token from.
    */
-  int operator()(MLPACK_STRING_VIEW& str) const
+  int operator()(std::string_view& str) const
   {
     if (str.empty())
       return EOF;

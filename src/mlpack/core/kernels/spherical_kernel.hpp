@@ -29,6 +29,15 @@ class SphericalKernel
     bandwidthSquared(std::pow(bandwidth, 2.0))
   { /* Nothing to do. */ }
 
+  // Get the bandwidth.
+  double Bandwidth() const { return bandwidth; }
+  // Modify the bandwidth.
+  void Bandwidth(const double bandwidth)
+  {
+    this->bandwidth = bandwidth;
+    this->bandwidthSquared = bandwidth * bandwidth;
+  }
+
   /**
    * Evaluate the spherical kernel with the given two vectors.
    *

@@ -27,7 +27,7 @@ void GetParam(util::ParamData& d,
               const void* /* input */,
               void* output)
 {
-  *((T**) output) = const_cast<T*>(MLPACK_ANY_CAST<T>(&d.value));
+  *((T**) output) = const_cast<T*>(std::any_cast<T>(&d.value));
 }
 
 } // namespace python

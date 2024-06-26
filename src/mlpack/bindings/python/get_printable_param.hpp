@@ -32,7 +32,7 @@ std::string GetPrintableParam(
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   std::ostringstream oss;
-  oss << MLPACK_ANY_CAST<T>(data.value);
+  oss << std::any_cast<T>(data.value);
   return oss.str();
 }
 
@@ -44,7 +44,7 @@ std::string GetPrintableParam(
     util::ParamData& data,
     const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0)
 {
-  const T& t = MLPACK_ANY_CAST<T>(data.value);
+  const T& t = std::any_cast<T>(data.value);
 
   std::ostringstream oss;
   for (size_t i = 0; i < t.size(); ++i)
@@ -61,7 +61,7 @@ std::string GetPrintableParam(
     const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   // Get the matrix.
-  const T& matrix = MLPACK_ANY_CAST<T>(data.value);
+  const T& matrix = std::any_cast<T>(data.value);
 
   std::ostringstream oss;
   oss << matrix.n_rows << "x" << matrix.n_cols << " matrix";
@@ -78,7 +78,7 @@ std::string GetPrintableParam(
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   std::ostringstream oss;
-  oss << data.cppType << " model at " << MLPACK_ANY_CAST<T*>(data.value);
+  oss << data.cppType << " model at " << std::any_cast<T*>(data.value);
   return oss.str();
 }
 
@@ -92,7 +92,7 @@ std::string GetPrintableParam(
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   // Get the matrix.
-  const T& tuple = MLPACK_ANY_CAST<T>(data.value);
+  const T& tuple = std::any_cast<T>(data.value);
   const arma::mat& matrix = std::get<1>(tuple);
 
   std::ostringstream oss;

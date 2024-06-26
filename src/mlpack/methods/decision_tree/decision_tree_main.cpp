@@ -40,8 +40,8 @@ BINDING_LONG_DESC(
     "\n\n"
     "The training set and associated labels are specified with the " +
     PRINT_PARAM_STRING("training") + " and " + PRINT_PARAM_STRING("labels") +
-    " parameters, respectively.  The labels should be in the range [0, "
-    "num_classes - 1]. Optionally, if " +
+    " parameters, respectively.  The labels should be in the range `[0, "
+    "num_classes - 1]`. Optionally, if " +
     PRINT_PARAM_STRING("labels") + " is not specified, the labels are assumed "
     "to be the last dimension of the training dataset."
     "\n\n"
@@ -57,8 +57,8 @@ BINDING_LONG_DESC(
     "the minimum gain that is needed for the node to split.  The " +
     PRINT_PARAM_STRING("maximum_depth") + " parameter specifies "
     "the maximum depth of the tree.  If " +
-    PRINT_PARAM_STRING("print_training_error") + " is specified, the training "
-    "error will be printed."
+    PRINT_PARAM_STRING("print_training_accuracy") + " is specified, the "
+    "training accuracy will be printed."
     "\n\n"
     "Test data may be specified with the " + PRINT_PARAM_STRING("test") + " "
     "parameter, and if performance numbers are desired for that test set, "
@@ -90,14 +90,13 @@ BINDING_EXAMPLE(
         "test_labels", "test_labels", "predictions", "predictions"));
 
 // See also...
-BINDING_SEE_ALSO("Decision stump", "#decision_stump");
 BINDING_SEE_ALSO("Random forest", "#random_forest");
 BINDING_SEE_ALSO("Decision trees on Wikipedia",
     "https://en.wikipedia.org/wiki/Decision_tree_learning");
 BINDING_SEE_ALSO("Induction of Decision Trees (pdf)",
-    "https://link.springer.com/content/pdf/10.1007/BF00116251.pdf");
-BINDING_SEE_ALSO("DecisionTree class documentation",
-    "@src/mlpack/methods/decision_tree/decision_tree.hpp");
+    "http://www.cs.bc.edu/~alvarez/ML/QuinlanID3Paper.pdf");
+BINDING_SEE_ALSO("DecisionTree C++ class documentation",
+    "@doc/user/methods/decision_tree.md");
 
 // Datasets.
 PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",
@@ -115,9 +114,6 @@ PARAM_DOUBLE_IN("minimum_gain_split", "Minimum gain for node splitting.", "g",
     1e-7);
 PARAM_INT_IN("maximum_depth", "Maximum depth of the tree (0 means no limit).",
     "D", 0);
-// This is deprecated and should be removed in mlpack 4.0.0.
-PARAM_FLAG("print_training_error", "Print the training error (deprecated; will "
-      "be removed in mlpack 4.0.0).", "e");
 PARAM_FLAG("print_training_accuracy", "Print the training accuracy.", "a");
 
 // Output parameters.
@@ -180,12 +176,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
       [](double x) { return (x > 0.0 && x < 1.0); }, true,
       "gain split must be a fraction in range [0,1]");
 
-  if (params.Has("print_training_error"))
-  {
-    Log::Warn << "The option " << PRINT_PARAM_STRING("print_training_error")
-        << " is deprecated and will be removed in mlpack 4.0.0." << std::endl;
-  }
-
   // Load the model or build the tree.
   DecisionTreeModel* model;
   arma::mat trainingSet;
@@ -223,8 +213,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     {
       arma::Row<double> weights =
           std::move(params.Get<arma::Mat<double>>("weights"));
-      if (params.Has("print_training_error") ||
-          params.Has("print_training_accuracy"))
+      if (params.Has("print_training_accuracy"))
       {
         model->tree = DecisionTree<>(trainingSet, model->info, labels,
             numClasses, std::move(weights), minLeafSize, minimumGainSplit,
@@ -239,7 +228,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     }
     else
     {
-      if (params.Has("print_training_error"))
+      if (params.Has("print_training_accuracy"))
       {
         model->tree = DecisionTree<>(trainingSet, model->info, labels,
             numClasses, minLeafSize, minimumGainSplit, maxDepth);
@@ -253,8 +242,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     }
 
     // Do we need to print training error?
-    if (params.Has("print_training_error") ||
-        params.Has("print_training_accuracy"))
+    if (params.Has("print_training_accuracy"))
     {
       arma::Row<size_t> predictions;
       arma::mat probabilities;

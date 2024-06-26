@@ -100,7 +100,7 @@ BINDING_EXAMPLE(
 // See also...
 BINDING_SEE_ALSO("@linear_regression", "#linear_regression");
 BINDING_SEE_ALSO("Least angle regression (pdf)",
-    "http://mlpack.org/papers/lars.pdf");
+    "https://mlpack.org/papers/lars.pdf");
 BINDING_SEE_ALSO("LARS C++ class documentation",
     "@src/mlpack/methods/lars/lars.hpp");
 

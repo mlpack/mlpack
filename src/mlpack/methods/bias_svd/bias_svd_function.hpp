@@ -15,6 +15,7 @@
 #define MLPACK_METHODS_BIAS_SVD_BIAS_SVD_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/make_alias.hpp>
 #include <ensmallen.hpp>
 
 namespace mlpack {
@@ -54,7 +55,7 @@ class BiasSVDFunction
    * @param parameters Parameters(user/item matrices/bias) of the
    *     decomposition.
    */
-  double Evaluate(const arma::mat& parameters) const;
+  double Evaluate(const MatType& parameters) const;
 
   /**
    * Evaluates the cost function for one training example. Useful for the SGD
@@ -65,7 +66,7 @@ class BiasSVDFunction
    * @param start First index of the training examples to be used.
    * @param batchSize Size of batch to evaluate.
    */
-  double Evaluate(const arma::mat& parameters,
+  double Evaluate(const MatType& parameters,
                   const size_t start,
                   const size_t batchSize = 1) const;
 
@@ -77,8 +78,8 @@ class BiasSVDFunction
    *     decomposition.
    * @param gradient Calculated gradient for the parameters.
    */
-  void Gradient(const arma::mat& parameters,
-                arma::mat& gradient) const;
+  void Gradient(const MatType& parameters,
+                MatType& gradient) const;
 
   /**
    * Evaluates the gradient of the cost function over one training example.
@@ -94,16 +95,16 @@ class BiasSVDFunction
    * @param batchSize Size of batch to calculate gradient for.
    */
   template <typename GradType>
-  void Gradient(const arma::mat& parameters,
+  void Gradient(const MatType& parameters,
                 const size_t start,
                 GradType& gradient,
                 const size_t batchSize = 1) const;
 
   //! Return the initial point for the optimization.
-  const arma::mat& GetInitialPoint() const { return initialPoint; }
+  const MatType& GetInitialPoint() const { return initialPoint; }
 
   //! Return the dataset passed into the constructor.
-  const arma::mat& Dataset() const { return data; }
+  const MatType& Dataset() const { return data; }
 
   //! Return the number of training examples. Useful for SGD optimizer.
   size_t NumFunctions() const { return data.n_cols; }
@@ -124,7 +125,7 @@ class BiasSVDFunction
   //! Rating data.  This will be an alias until Shuffle() is called.
   MatType data;
   //! Initial parameter point.
-  arma::mat initialPoint;
+  MatType initialPoint;
   //! Rank used for matrix factorization.
   size_t rank;
   //! Regularization parameter for the optimization.

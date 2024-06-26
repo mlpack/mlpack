@@ -1,17 +1,17 @@
 /**
- * @file core/kernels/cosine_distance.hpp
+ * @file core/kernels/cosine_similarity.hpp
  * @author Ryan Curtin
  *
- * This implements the cosine distance (or cosine similarity) between two
- * vectors, which is a measure of the angle between the two vectors.
+ * This implements the cosine similarity between two vectors, which is a measure
+ * of the angle between the two vectors.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_KERNELS_COSINE_DISTANCE_HPP
-#define MLPACK_CORE_KERNELS_COSINE_DISTANCE_HPP
+#ifndef MLPACK_CORE_KERNELS_COSINE_SIMILARITY_HPP
+#define MLPACK_CORE_KERNELS_COSINE_SIMILARITY_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/kernels/kernel_traits.hpp>
@@ -27,7 +27,7 @@ namespace mlpack {
  *
  * and this class assumes the standard L2 inner product.
  */
-class CosineDistance
+class CosineSimilarity
 {
  public:
   /**
@@ -47,7 +47,7 @@ class CosineDistance
 
 //! Kernel traits for the cosine distance.
 template<>
-class KernelTraits<CosineDistance>
+class KernelTraits<CosineSimilarity>
 {
  public:
   //! The cosine kernel is normalized: K(x, x) = 1 for all x.
@@ -57,9 +57,12 @@ class KernelTraits<CosineDistance>
   static const bool UsesSquaredDistance = false;
 };
 
+// This name is deprecated and can be removed in mlpack 5.0.0.
+typedef CosineSimilarity CosineDistance;
+
 } // namespace mlpack
 
 // Include implementation.
-#include "cosine_distance_impl.hpp"
+#include "cosine_similarity_impl.hpp"
 
 #endif

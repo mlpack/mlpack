@@ -67,10 +67,10 @@ class NMFALSUpdate
    * @param W Basis matrix to be updated.
    * @param H Encoding matrix.
    */
-  template<typename MatType>
+  template<typename MatType, typename WHMatType>
   inline static void WUpdate(const MatType& V,
-                             arma::mat& W,
-                             const arma::mat& H)
+                             WHMatType& W,
+                             const WHMatType& H)
   {
     // The call to inv() sometimes fails; so we are using the psuedoinverse.
     // W = (inv(H * H.t()) * H * V.t()).t();
@@ -100,10 +100,10 @@ class NMFALSUpdate
    * @param W Basis matrix.
    * @param H Encoding matrix to be updated.
    */
-  template<typename MatType>
+  template<typename MatType, typename WHMatType>
   inline static void HUpdate(const MatType& V,
-                             const arma::mat& W,
-                             arma::mat& H)
+                             const WHMatType& W,
+                             WHMatType& H)
   {
     H = pinv(W.t() * W) * W.t() * V;
 

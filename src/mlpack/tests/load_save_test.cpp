@@ -193,12 +193,71 @@ TEST_CASE("LoadSparseTXTTest", "[LoadSaveTest]")
   double temp = 0.1;
   for (int i = 0; it != it_end; ++it, temp += 0.1, ++i)
   {
-    REQUIRE((double)(*it) == Approx(temp).epsilon(1e-7));
-    REQUIRE((int)(it.row()) == i + 1);
-    REQUIRE((int)it.col() == i + 2);
+    REQUIRE((double) (*it) == Approx(temp).epsilon(1e-7));
+    REQUIRE((int) (it.row()) == i + 1);
+    REQUIRE((int) it.col() == i + 2);
   }
   // Remove the file.
   remove("test_sparse_file.txt");
+}
+
+/**
+ * Make sure sparse coordinate list autodetection works.
+ */
+TEST_CASE("LoadSparseAutodetectTest", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test_file.csv", fstream::out);
+
+  f << "1, 3, 4.0" << endl;
+  f << "2, 4, 5.0" << endl;
+  f << "3, 6, -3.0" << endl;
+
+  f.close();
+
+  arma::sp_mat test;
+
+  REQUIRE(data::Load("test_file.csv", test, true) == true);
+
+  REQUIRE(test.n_rows == 7);
+  REQUIRE(test.n_cols == 4);
+
+  REQUIRE(test.at(3, 1) == Approx(4.0));
+  REQUIRE(test.at(4, 2) == Approx(5.0));
+  REQUIRE(test.at(6, 3) == Approx(-3.0));
+
+  remove("test_file.csv");
+}
+
+/**
+ * Make sure sparse coordinate list autodetection fails when the number of
+ * columns is wrong.
+ */
+TEST_CASE("LoadSparseAutodetectNotCoordinateListTest", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test_file.csv", fstream::out);
+
+  f << "1, 0, 0, 4" << endl;
+  f << "0, 1, 0, 3" << endl;
+  f << "1, 0, 0, 0" << endl;
+
+  f.close();
+
+  arma::sp_mat test;
+
+  REQUIRE(data::Load("test_file.csv", test, true) == true);
+
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 3);
+
+  REQUIRE(test.at(0, 0) == Approx(1.0));
+  REQUIRE(test.at(3, 0) == Approx(4.0));
+  REQUIRE(test.at(1, 1) == Approx(1.0));
+  REQUIRE(test.at(3, 1) == Approx(3.0));
+  REQUIRE(test.at(0, 2) == Approx(1.0));
+
+  remove("test_file.csv");
 }
 
 /**
@@ -402,8 +461,8 @@ TEST_CASE("SaveSparseBinaryTest", "[LoadSaveTest]")
   {
     double val = (*it);
     REQUIRE(val == Approx(temp).epsilon(1e-7));
-    REQUIRE((int)(it.row()) == i);
-    REQUIRE((int)it.col() == i);
+    REQUIRE((int) (it.row()) == i);
+    REQUIRE((int) it.col() == i);
   }
 
   // Remove the file.

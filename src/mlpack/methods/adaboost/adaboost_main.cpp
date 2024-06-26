@@ -84,14 +84,7 @@ BINDING_LONG_DESC(
     "classes for each point in the test dataset are output to the " +
     PRINT_PARAM_STRING("predictions") + " output parameter.  The AdaBoost "
     "model itself is output to the " + PRINT_PARAM_STRING("output_model") +
-    " output parameter."
-    "\n\n"
-    "Note: the following parameter is deprecated and "
-    "will be removed in mlpack 4.0.0: " + PRINT_PARAM_STRING("output") +
-    "."
-    "\n"
-    "Use " + PRINT_PARAM_STRING("predictions") + " instead of " +
-    PRINT_PARAM_STRING("output") + '.');
+    " output parameter.");
 
 // Example.
 BINDING_EXAMPLE(
@@ -113,13 +106,13 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("AdaBoost on Wikipedia", "https://en.wikipedia.org/wiki/"
-        "AdaBoost");
+    "AdaBoost");
 BINDING_SEE_ALSO("Improved boosting algorithms using confidence-rated "
-        "predictions (pdf)", "http://rob.schapire.net/papers/SchapireSi98.pdf");
+    "predictions (pdf)", "http://rob.schapire.net/papers/SchapireSi98.pdf");
 BINDING_SEE_ALSO("Perceptron", "#perceptron");
-BINDING_SEE_ALSO("Decision Stump", "#decision_stump");
-BINDING_SEE_ALSO("mlpack::adaboost::AdaBoost C++ class documentation",
-        "@src/mlpack/methods/adaboost/adaboost.hpp");
+BINDING_SEE_ALSO("Decision Trees", "#decision_tree");
+BINDING_SEE_ALSO("AdaBoost C++ class documentation",
+    "@doc/user/methods/adaboost.md");
 
 // Input for training.
 PARAM_MATRIX_IN("training", "Dataset for training AdaBoost.", "t");
@@ -127,8 +120,6 @@ PARAM_UROW_IN("labels", "Labels for the training set.", "l");
 
 // Classification options.
 PARAM_MATRIX_IN("test", "Test dataset.", "T");
-// PARAM_UROW_OUT("output") is deprecated and will be removed in mlpack 4.0.0.
-PARAM_UROW_OUT("output", "Predicted labels for the test set.", "o");
 PARAM_UROW_OUT("predictions", "Predicted labels for the test set.", "P");
 PARAM_MATRIX_OUT("probabilities", "Predicted class probabilities for each "
     "point in the test set.", "p");
@@ -178,10 +169,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         "no task will be performed");
   }
 
-  RequireAtLeastOnePassed(params, { "output_model", "output", "predictions" },
-      false, "no results will be saved");
+  RequireAtLeastOnePassed(params, { "output_model", "predictions" }, false,
+      "no results will be saved");
 
-  // "output" will be removed in mlpack 4.0.0.
   ReportIgnoredParam(params, {{ "test", false }}, "predictions");
 
   AdaBoostModel* m;
@@ -266,8 +256,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     data::RevertLabels(predictedLabels, m->Mappings(), results);
 
     // Save the predicted labels.
-    if (params.Has("output"))
-      params.Get<arma::Row<size_t>>("output") = results;
     if (params.Has("predictions"))
       params.Get<arma::Row<size_t>>("predictions") = std::move(results);
     if (params.Has("probabilities"))

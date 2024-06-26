@@ -90,8 +90,7 @@ BINDING_SEE_ALSO("Nonlinear learning using local coordinate coding (pdf)",
         "https://papers.nips.cc/paper/3875-nonlinear-learning-using-local-"
         "coordinate-coding.pdf");
 BINDING_SEE_ALSO("LocalCoordinateCoding C++ class documentation",
-        "@src/mlpack/methods/local_coordinate_coding/local_coordinate_coding."
-        "hpp");
+        "@doc/user/methods/local_coordinate_coding.md");
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "Matrix of training data (X).", "t");
@@ -106,9 +105,9 @@ PARAM_FLAG("normalize", "If set, the input data matrix will be normalized "
 PARAM_DOUBLE_IN("tolerance", "Tolerance for objective function.", "o", 0.01);
 
 // Load/save a model.
-PARAM_MODEL_IN(LocalCoordinateCoding, "input_model", "Input LCC model.", "m");
-PARAM_MODEL_OUT(LocalCoordinateCoding, "output_model", "Output for trained LCC "
-    "model.", "M");
+PARAM_MODEL_IN(LocalCoordinateCoding<>, "input_model", "Input LCC model.", "m");
+PARAM_MODEL_OUT(LocalCoordinateCoding<>, "output_model",
+    "Output for trained LCC model.", "M");
 
 // Test on another dataset.
 PARAM_MATRIX_IN("test", "Test points to encode.", "T");
@@ -143,9 +142,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   ReportIgnoredParam(params, {{ "training", false }}, "tolerance");
 
   // Do we have an existing model?
-  LocalCoordinateCoding* lcc = NULL;
+  LocalCoordinateCoding<>* lcc = NULL;
   if (params.Has("input_model"))
-    lcc = params.Get<LocalCoordinateCoding*>("input_model");
+    lcc = params.Get<LocalCoordinateCoding<>*>("input_model");
 
   if (params.Has("training"))
   {
@@ -171,7 +170,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         [](double x) { return x > 0; }, 1,
         "Tolerance should be a positive real number");
 
-    lcc = new LocalCoordinateCoding(0, 0.0);
+    lcc = new LocalCoordinateCoding<>(0, 0.0);
 
     lcc->Lambda() = params.Get<double>("lambda");
     lcc->Atoms() = (size_t) params.Get<int>("atoms");
@@ -257,5 +256,5 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   // Save the dictionary and the model.
   params.Get<mat>("dictionary") = lcc->Dictionary();
-  params.Get<LocalCoordinateCoding*>("output_model") = lcc;
+  params.Get<LocalCoordinateCoding<>*>("output_model") = lcc;
 }

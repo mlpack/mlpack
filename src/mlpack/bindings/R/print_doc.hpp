@@ -55,19 +55,28 @@ void PrintDoc(util::ParamData& d,
       oss << ".  Default value \"";
       if (d.cppType == "std::string")
       {
-        oss << MLPACK_ANY_CAST<std::string>(d.value);
+        oss << std::any_cast<std::string>(d.value);
       }
       else if (d.cppType == "double")
       {
-        oss << MLPACK_ANY_CAST<double>(d.value);
+        oss << std::any_cast<double>(d.value);
       }
       else if (d.cppType == "int")
       {
-        oss << MLPACK_ANY_CAST<int>(d.value);
+        oss << std::any_cast<int>(d.value);
       }
       else if (d.cppType == "bool")
       {
-        oss << (MLPACK_ANY_CAST<bool>(d.value) ? "TRUE" : "FALSE");
+        // If the option is `verbose`, be sure to print the use of the global
+        // mlpack package option as a default.
+        if (d.name == "verbose")
+        {
+          oss << "getOption(\"mlpack.verbose\", FALSE)";
+        }
+        else
+        {
+          oss << (std::any_cast<bool>(d.value) ? "TRUE" : "FALSE");
+        }
       }
       oss << "\"";
     }

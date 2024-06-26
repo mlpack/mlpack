@@ -61,12 +61,7 @@ BINDING_LONG_DESC(
     " may be saved with the " + PRINT_PARAM_STRING("predictions") +"predictions"
     "  parameter.  If saving the trained model is desired, this may be "
     "done with the " + PRINT_PARAM_STRING("output_model") + " output "
-    "parameter."
-    "\n\n"
-    "Note: the " + PRINT_PARAM_STRING("output") + " and " +
-    PRINT_PARAM_STRING("output_probs") + " parameters are deprecated and will "
-    "be removed in mlpack 4.0.0.  Use " + PRINT_PARAM_STRING("predictions") +
-    " and " + PRINT_PARAM_STRING("probabilities") + " instead.");
+    "parameter.");
 
 // Example.
 BINDING_EXAMPLE(
@@ -83,8 +78,8 @@ BINDING_EXAMPLE(
     "classes to " + PRINT_DATASET("predictions") + ", the following command "
     "may be used:"
     "\n\n" +
-    PRINT_CALL("nbc", "input_model", "nbc_model", "test", "test_set", "output",
-        "predictions"));
+    PRINT_CALL("nbc", "input_model", "nbc_model", "test", "test_set",
+        "predictions", "predictions"));
 
 // See also...
 BINDING_SEE_ALSO("@softmax_regression", "#softmax_regression");
@@ -92,7 +87,7 @@ BINDING_SEE_ALSO("@random_forest", "#random_forest");
 BINDING_SEE_ALSO("Naive Bayes classifier on Wikipedia",
     "https://en.wikipedia.org/wiki/Naive_Bayes_classifier");
 BINDING_SEE_ALSO("NaiveBayesClassifier C++ class documentation",
-    "@src/mlpack/methods/naive_bayes/naive_bayes_classifier.cpp");
+    "@src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp");
 
 // A struct for saving the model with mappings.
 struct NBCModel
@@ -126,14 +121,8 @@ PARAM_FLAG("incremental_variance", "The variance of each class will be "
 
 // Test parameters.
 PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
-// The parameter 'output' is deprecated and will be removed in mlpack 4.
-PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
-    " test set will be written (deprecated).", "o");
 PARAM_UROW_OUT("predictions", "The matrix in which the predicted labels for the"
     " test set will be written.", "a");
-// The parameter 'output_probs' is deprecated and can be removed in mlpack 4.
-PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
-    " of labels for the test set will be written (deprecated).", "");
 PARAM_MATRIX_OUT("probabilities", "The matrix in which the predicted"
     " probability of labels for the test set will be written.", "p");
 
@@ -143,9 +132,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RequireOnlyOnePassed(params, { "training", "input_model" }, true);
   ReportIgnoredParam(params, {{ "training", false }}, "labels");
   ReportIgnoredParam(params, {{ "training", false }}, "incremental_variance");
-  RequireAtLeastOnePassed(params, { "output", "predictions", "output_model",
-      "output_probs", "probabilities" }, false, "no output will be saved");
-  ReportIgnoredParam(params, {{ "test", false }}, "output");
+  RequireAtLeastOnePassed(params, { "predictions", "output_model",
+      "probabilities" }, false, "no output will be saved");
   ReportIgnoredParam(params, {{ "test", false }}, "predictions");
   if (params.Has("input_model") && !params.Has("test"))
     Log::Warn << "No test set given; no task will be performed!" << std::endl;
@@ -208,23 +196,20 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     model->nbc.Classify(testingData, predictions, probabilities);
     timers.Stop("nbc_testing");
 
-    if (params.Has("output") || params.Has("predictions"))
+    if (params.Has("predictions"))
     {
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
       data::RevertLabels(predictions, model->mappings, rawResults);
 
       if (params.Has("predictions"))
-        params.Get<Row<size_t>>("predictions") = rawResults;
-      if (params.Has("output"))
-        params.Get<Row<size_t>>("output") = std::move(rawResults);
+        params.Get<Row<size_t>>("predictions") = std::move(rawResults);
     }
-    if (params.Has("output_probs") || params.Has("probabilities"))
+
+    if (params.Has("probabilities"))
     {
       if (params.Has("probabilities"))
-        params.Get<mat>("probabilities") = probabilities;
-      if (params.Has("output_probs"))
-        params.Get<mat>("output_probs") = std::move(probabilities);
+        params.Get<mat>("probabilities") = std::move(probabilities);
     }
   }
 

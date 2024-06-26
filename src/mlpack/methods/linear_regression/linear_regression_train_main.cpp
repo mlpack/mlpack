@@ -52,9 +52,6 @@ BINDING_EXAMPLE(
         "y_train"));
 
 // See also...
-BINDING_SEE_ALSO("Linear/ridge regression tutorial",
-    "@doc/tutorials/linear_regression.md");
-
 PARAM_MATRIX_IN_REQ("training", "Matrix containing training set X (regressors).",
     "t");
 PARAM_ROW_IN("training_responses", "Optional vector containing y "

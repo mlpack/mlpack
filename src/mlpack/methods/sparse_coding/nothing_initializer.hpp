@@ -31,9 +31,10 @@ class NothingInitializer
    * for SparseCoding if the dictionary is not set manually before running the
    * method.
    */
-  static void Initialize(const arma::mat& /* data */,
+  template<typename MatType>
+  static void Initialize(const MatType& /* data */,
                          const size_t /* atoms */,
-                         arma::mat& /* dictionary */)
+                         MatType& /* dictionary */)
   {
     // Do nothing!
   }

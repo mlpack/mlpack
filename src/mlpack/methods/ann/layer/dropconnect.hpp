@@ -124,7 +124,7 @@ class DropConnectType : public Layer<MatType>
   size_t WeightSize() const { return baseLayer->WeightSize(); }
 
   // Set the weights to use the given memory `weightsPtr`.
-  void SetWeights(typename MatType::elem_type* weightsPtr);
+  void SetWeights(const MatType& weightsIn);
 
   /**
    * Serialize the layer.

@@ -61,7 +61,6 @@ BINDING_EXAMPLE(
 
 // Classification options.
 PARAM_MATRIX_IN_REQ("test", "Test dataset.", "T");
-// PARAM_UROW_OUT("output") is deprecated and will be removed in mlpack 4.0.0.
 PARAM_UROW_OUT("predictions", "Predicted labels for the test set.", "P");
 
 // Loading/saving of a model.

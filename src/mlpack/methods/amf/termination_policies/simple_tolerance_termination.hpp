@@ -18,15 +18,15 @@ namespace mlpack {
 
 /**
  * This class implements residue tolerance termination policy. Termination
- * criterion is met when increase in residue value drops below the given tolerance.
- * To accommodate spikes certain number of successive residue drops are accepted.
- * This upper imit on successive drops can be adjusted with reverseStepCount.
- * Secondary termination criterion terminates algorithm when iteration count
- * goes above the threshold.
+ * criterion is met when increase in residue value drops below the given
+ * tolerance.  To accommodate spikes certain number of successive residue drops
+ * are accepted.  This upper limit on successive drops can be adjusted with
+ * reverseStepCount.  Secondary termination criterion terminates algorithm when
+ * iteration count goes above the threshold.
  *
  * @see AMF
  */
-template <class MatType>
+template<typename MatType, typename WHMatType = arma::mat>
 class SimpleToleranceTermination
 {
  public:
@@ -43,8 +43,8 @@ class SimpleToleranceTermination
       reverseStepTolerance(reverseStepTolerance),
       reverseStepCount(0),
       isCopy(false),
-      c_indexOld(0),
-      c_index(0)
+      cIndexOld(0),
+      cIndex(0)
   { }
 
   /**
@@ -62,21 +62,19 @@ class SimpleToleranceTermination
 
     this->V = &V;
 
-    c_index = 0;
-    c_indexOld = 0;
+    cIndex = 0;
+    cIndexOld = 0;
   }
 
   /**
-   * Check if termination criterio is met.
+   * Check if termination criterion is met.
    *
    * @param W Basis matrix of output.
    * @param H Encoding matrix of output.
    */
-  bool IsConverged(arma::mat& W, arma::mat& H)
+  bool IsConverged(WHMatType& W, WHMatType& H)
   {
-    arma::mat WH;
-
-    WH = W * H;
+    WHMatType WH = W * H;
 
     // Compute residue.
     residueOld = residue;
@@ -86,17 +84,17 @@ class SimpleToleranceTermination
     size_t count = 0;
     for (size_t i = 0; i < n; ++i)
     {
-        for (size_t j = 0; j < m; ++j)
+      for (size_t j = 0; j < m; ++j)
+      {
+        double temp = 0;
+        if ((temp = (*V)(i, j)) != 0)
         {
-            double temp = 0;
-            if ((temp = (*V)(i, j)) != 0)
-            {
-                temp = (temp - WH(i, j));
-                temp = temp * temp;
-                sum += temp;
-                count++;
-            }
+          temp = (temp - WH(i, j));
+          temp = temp * temp;
+          sum += temp;
+          count++;
         }
+      }
     }
 
     residue = sum;
@@ -120,8 +118,8 @@ class SimpleToleranceTermination
         this->W = W;
         this->H = H;
         // Store residue values.
-        c_index = residue;
-        c_indexOld = residueOld;
+        cIndex = residue;
+        cIndexOld = residueOld;
       }
       // Increase successive drop count.
       reverseStepCount++;
@@ -132,7 +130,7 @@ class SimpleToleranceTermination
       // Initialize successive drop count.
       reverseStepCount = 0;
       // If residue is droped below minimum scrap stored values.
-      if (residue <= c_indexOld && isCopy == true)
+      if (residue <= cIndexOld && isCopy == true)
       {
         isCopy = false;
       }
@@ -147,7 +145,7 @@ class SimpleToleranceTermination
       {
         W = this->W;
         H = this->H;
-        residue = c_index;
+        residue = cIndex;
       }
       return true;
     }
@@ -195,10 +193,10 @@ class SimpleToleranceTermination
   bool isCopy;
 
   //! Variables to store information of minimum residue poi.
-  arma::mat W;
-  arma::mat H;
-  double c_indexOld;
-  double c_index;
+  WHMatType W;
+  WHMatType H;
+  double cIndexOld;
+  double cIndex;
 }; // class SimpleToleranceTermination
 
 } // namespace mlpack

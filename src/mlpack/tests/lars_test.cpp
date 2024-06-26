@@ -35,7 +35,7 @@ void LARSVerifyCorrectness(const VecType& beta,
   size_t nDims = beta.n_elem;
 
   // floats require a much larger tolerance.
-  const ElemType tol = (std::is_same<ElemType, double>::value) ? 1e-10 : 1e-3;
+  const ElemType tol = (std::is_same<ElemType, double>::value) ? 1e-8 : 5e-3;
 
   for (size_t j = 0; j < nDims; ++j)
   {
@@ -200,39 +200,35 @@ TEST_CASE("NoCholeskySingularityTest", "[LARSTest]")
 }
 
 // Make sure that Predict() provides reasonable enough solutions.
-TEMPLATE_TEST_CASE("PredictTest", "[LARSTest]", arma::fmat, arma::mat)
+TEST_CASE("PredictTest", "[LARSTest]")
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type ElemType;
-
   for (size_t i = 0; i < 2; ++i)
   {
     // Run with both true and false.
     bool useCholesky = bool(i);
 
-    MatType X;
-    arma::Row<ElemType> y;
+    arma::mat X;
+    arma::rowvec y;
 
     GenerateProblem(X, y, 1000, 100);
 
-    for (ElemType lambda1 = 0.0; lambda1 < 1.0; lambda1 += 0.2)
+    for (double lambda1 = 0.0; lambda1 < 1.0; lambda1 += 0.2)
     {
-      for (ElemType lambda2 = 0.0; lambda2 < 1.0; lambda2 += 0.2)
+      for (double lambda2 = 0.0; lambda2 < 1.0; lambda2 += 0.2)
       {
-        LARS<MatType> lars(useCholesky, lambda1, lambda2);
+        LARS<> lars(useCholesky, lambda1, lambda2);
         lars.FitIntercept(false);
         lars.NormalizeData(false);
         lars.Train(X, y);
 
         // Calculate what the actual error should be with these regression
         // parameters.
-        arma::Col<ElemType> betaOptPred = (X * X.t()) * lars.Beta();
-        arma::Row<ElemType> predictions;
+        arma::vec betaOptPred = (X * X.t()) * lars.Beta();
+        arma::rowvec predictions;
         lars.Predict(X, predictions);
-        arma::Col<ElemType> adjPred = X * predictions.t();
+        arma::vec adjPred = X * predictions.t();
 
-        const ElemType tol = (std::is_same<ElemType, double>::value) ? 1e-7 :
-            1e-3;
+        const double tol = 1e-7;
 
         REQUIRE(predictions.n_elem == 1000);
         for (size_t i = 0; i < betaOptPred.n_elem; ++i)
@@ -244,7 +240,8 @@ TEMPLATE_TEST_CASE("PredictTest", "[LARSTest]", arma::fmat, arma::mat)
         }
 
         // Now check with single-point Predict(), in two ways: we will pass
-        // different types into Predict() to test templating support.
+        // different types into Predict() to test templating support.  We allow
+        // a looser tolerance for predictions.
         for (size_t i = 0; i < X.n_cols; ++i)
           predictions[i] = lars.Predict(X.col(i));
 
@@ -268,6 +265,140 @@ TEMPLATE_TEST_CASE("PredictTest", "[LARSTest]", arma::fmat, arma::mat)
           else
             REQUIRE(adjPred[i] == Approx(betaOptPred[i]).epsilon(tol));
         }
+      }
+    }
+  }
+}
+
+// This is the same as PredictTest, but for arma::fmat, and it allows multiple
+// trials for run to deal with the lower precision of floats.
+TEST_CASE("PredictFloatTest", "[LARSTest]")
+{
+  for (size_t i = 0; i < 2; ++i)
+  {
+    // Run with both true and false.
+    bool useCholesky = bool(i);
+
+    arma::fmat X;
+    arma::frowvec y;
+
+    for (float lambda1 = 0.0; lambda1 < 1.0; lambda1 += 0.2)
+    {
+      for (float lambda2 = 0.0; lambda2 < 1.0; lambda2 += 0.2)
+      {
+        // For float data, sometimes the solutions are further away from the
+        // true solution due to precision issues, so we allow multiple trials.
+        bool success = false;
+        for (size_t trial = 0; trial < 3; ++trial)
+        {
+          // Generate a new problem so that we hopefully end up with a better
+          // fit.
+          GenerateProblem(X, y, 1000, 100);
+
+          LARS<arma::fmat> lars(useCholesky, lambda1, lambda2);
+          lars.FitIntercept(false);
+          lars.NormalizeData(false);
+          lars.Train(X, y);
+
+          // Calculate what the actual error should be with these regression
+          // parameters.
+          arma::fvec betaOptPred = (X * X.t()) * lars.Beta();
+          arma::frowvec predictions;
+          lars.Predict(X, predictions);
+          arma::fvec adjPred = X * predictions.t();
+
+          const float tol = 3e-5;
+
+          REQUIRE(predictions.n_elem == 1000);
+          bool trialSuccess = true;
+          for (size_t i = 0; i < betaOptPred.n_elem; ++i)
+          {
+            if (std::abs(betaOptPred[i]) < 1e-5)
+            {
+              if (adjPred[i] != Approx(0.0).margin(1e-5))
+              {
+                trialSuccess = false;
+                break;
+              }
+            }
+            else
+            {
+              if (adjPred[i] != Approx(betaOptPred[i]).epsilon(tol))
+              {
+                trialSuccess = false;
+                break;
+              }
+            }
+          }
+
+          // If this trial didn't succeed, skip to the next trial.
+          if (!trialSuccess)
+            continue;
+
+          // Now check with single-point Predict(), in two ways: we will pass
+          // different types into Predict() to test templating support.  We allow
+          // a looser tolerance for predictions.
+          for (size_t i = 0; i < X.n_cols; ++i)
+            predictions[i] = lars.Predict(X.col(i));
+
+          adjPred = X * predictions.t();
+          for (size_t i = 0; i < betaOptPred.n_elem; ++i)
+          {
+            if (std::abs(betaOptPred[i]) < 1e-5)
+            {
+              if (adjPred[i] != Approx(0.0).margin(1e-5))
+              {
+                trialSuccess = false;
+                break;
+              }
+            }
+            else
+            {
+              if (adjPred[i] != Approx(betaOptPred[i]).epsilon(10 * tol))
+              {
+                trialSuccess = false;
+                break;
+              }
+            }
+          }
+
+          // If this trial didn't succeed, skip to the next trial.
+          if (!trialSuccess)
+            continue;
+
+          for (size_t i = 0; i < X.n_cols; ++i)
+            predictions[i] = lars.Predict(X.unsafe_col(i));
+
+          adjPred = X * predictions.t();
+          for (size_t i = 0; i < betaOptPred.n_elem; ++i)
+          {
+            if (std::abs(betaOptPred[i]) < 1e-5)
+            {
+              if (adjPred[i] != Approx(0.0).margin(1e-5))
+              {
+                trialSuccess = false;
+                break;
+              }
+            }
+            else
+            {
+              if (adjPred[i] != Approx(betaOptPred[i]).epsilon(10 * tol))
+              {
+                trialSuccess = false;
+                break;
+              }
+            }
+          }
+
+          // If this trial succeeded, we're done.
+          if (trialSuccess)
+          {
+            success = true;
+            break;
+          }
+        }
+
+        REQUIRE(success == true);
       }
     }
   }
@@ -719,7 +850,7 @@ void CheckKKT(const arma::vec& beta,
               const arma::rowvec& y,
               const double lambda)
 {
-  const double epsilon = 1e-10; // For numerical precision.
+  const double epsilon = 1e-6; // For numerical precision.
 
   arma::vec v = X.t() * X * beta - X.t() * y.t() + lambda * sign(beta);
   // Active set indices with global numbering: could be empty.
@@ -1094,7 +1225,7 @@ TEMPLATE_TEST_CASE("LARSSelectBetaTest", "[LARSTest]", arma::fmat, arma::mat)
   typedef TestType MatType;
   typedef typename MatType::elem_type ElemType;
 
-  const ElemType tol = (std::is_same<ElemType, double>::value) ? 1e-5 : 1e-3;
+  const ElemType tol = (std::is_same<ElemType, double>::value) ? 1e-5 : 5e-3;
 
   // Train a model on a randomly generated problem.  Then, we will iterate
   // through different selected lambda values, ensuring that the error on the

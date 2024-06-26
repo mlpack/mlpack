@@ -71,7 +71,7 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("DBSCAN on Wikipedia", "https://en.wikipedia.org/wiki/DBSCAN");
 BINDING_SEE_ALSO("A density-based algorithm for discovering clusters in large "
     "spatial databases with noise (pdf)",
-    "http://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf");
+    "https://cdn.aaai.org/KDD/1996/KDD96-037.pdf");
 BINDING_SEE_ALSO("DBSCAN class documentation",
     "@src/mlpack/methods/dbscan/dbscan.hpp");
 

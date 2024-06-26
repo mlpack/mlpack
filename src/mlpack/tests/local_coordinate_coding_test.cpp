@@ -18,7 +18,10 @@
 using namespace arma;
 using namespace mlpack;
 
-void VerifyCorrectness(const vec& beta, const vec& errCorr, double lambda)
+template<typename MatType, typename VecType>
+void VerifyCorrectness(const MatType& beta,
+                       const VecType& errCorr,
+                       const double lambda)
 {
   const double tol = 0.1;
   size_t nDims = beta.n_elem;
@@ -43,15 +46,18 @@ void VerifyCorrectness(const vec& beta, const vec& errCorr, double lambda)
   }
 }
 
-
-TEST_CASE("LocalCoordinateCodingTestCodingStep",
-          "[LocalCoordinateCodingTest]")
+TEMPLATE_TEST_CASE("LocalCoordinateCodingTestCodingStep",
+    "[LocalCoordinateCodingTest]", arma::mat, arma::fmat)
 {
+  typedef TestType MatType;
+  typedef arma::Col<typename MatType::elem_type> VecType;
+
   double lambda1 = 0.1;
   uword nAtoms = 10;
 
-  mat X;
-  X.load("mnist_first250_training_4s_and_9s.arm");
+  mat inX; // The .arm file is saved as an arma::mat.
+  inX.load("mnist_first250_training_4s_and_9s.csv");
+  MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
 
   // normalize each point since these are images
@@ -60,37 +66,40 @@ TEST_CASE("LocalCoordinateCodingTestCodingStep",
     X.col(i) /= norm(X.col(i), 2);
   }
 
-  mat Z;
-  LocalCoordinateCoding lcc(X, nAtoms, lambda1, 10);
+  MatType Z;
+  LocalCoordinateCoding<MatType> lcc(X, nAtoms, lambda1, 10);
   lcc.Encode(X, Z);
 
-  mat D = lcc.Dictionary();
+  MatType D = lcc.Dictionary();
 
   for (uword i = 0; i < nPoints; ++i)
   {
-    vec sqDists = vec(nAtoms);
+    VecType sqDists(nAtoms);
     for (uword j = 0; j < nAtoms; ++j)
     {
       sqDists[j] = arma::norm(D.col(j) - X.col(i));
     }
-    mat Dprime = D * diagmat(1.0 / sqDists);
-    mat zPrime = Z.unsafe_col(i) % sqDists;
+    MatType Dprime = D * diagmat(1.0 / sqDists);
+    MatType zPrime = Z.unsafe_col(i) % sqDists;
 
-    vec errCorr = trans(Dprime) * (Dprime * zPrime - X.unsafe_col(i));
+    VecType errCorr = trans(Dprime) * (Dprime * zPrime - X.unsafe_col(i));
     VerifyCorrectness(zPrime, errCorr, 0.5 * lambda1);
   }
 }
 
-TEST_CASE("LocalCoordinateCodingTestDictionaryStep",
-          "[LocalCoordinateCodingTest]")
+TEMPLATE_TEST_CASE("LocalCoordinateCodingTestDictionaryStep",
+    "[LocalCoordinateCodingTest]", arma::mat, arma::fmat)
 {
+  typedef TestType MatType;
+
   const double tol = 0.1;
 
   double lambda = 0.1;
   uword nAtoms = 10;
 
-  mat X;
-  X.load("mnist_first250_training_4s_and_9s.arm");
+  mat inX; // File is saved as an arma::mat.
+  inX.load("mnist_first250_training_4s_and_9s.csv");
+  MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
 
   // normalize each point since these are images
@@ -99,15 +108,15 @@ TEST_CASE("LocalCoordinateCodingTestDictionaryStep",
     X.col(i) /= norm(X.col(i), 2);
   }
 
-  mat Z;
-  LocalCoordinateCoding lcc(X, nAtoms, lambda, 10);
+  MatType Z;
+  LocalCoordinateCoding<MatType> lcc(X, nAtoms, lambda, 10);
   lcc.Encode(X, Z);
   uvec adjacencies = find(Z);
   lcc.OptimizeDictionary(X, Z, adjacencies);
 
-  mat D = lcc.Dictionary();
+  MatType D = lcc.Dictionary();
 
-  mat grad = zeros(D.n_rows, D.n_cols);
+  MatType grad = zeros<MatType>(D.n_rows, D.n_cols);
   for (uword i = 0; i < nPoints; ++i)
   {
     grad += (D - repmat(X.unsafe_col(i), 1, nAtoms)) *
@@ -118,26 +127,30 @@ TEST_CASE("LocalCoordinateCodingTestDictionaryStep",
   REQUIRE(norm(grad, "fro") == Approx(0.0).margin(tol));
 }
 
-TEST_CASE("LocalCoordinateCodingSerializationTest",
-          "[LocalCoordinateCodingTest]")
+TEMPLATE_TEST_CASE("LocalCoordinateCodingSerializationTest",
+    "[LocalCoordinateCodingTest]", arma::mat, arma::fmat)
 {
-  mat X = randu<mat>(100, 100);
+  typedef TestType MatType;
+
+  MatType X = randu<MatType>(100, 100);
   size_t nAtoms = 10;
 
-  LocalCoordinateCoding lcc(nAtoms, 0.05, 2 /* don't care about quality */);
+  LocalCoordinateCoding<MatType> lcc(nAtoms, 0.05,
+      2 /* don't care about quality */);
   lcc.Train(X);
 
-  mat Y = randu<mat>(100, 200);
-  mat codes;
+  MatType Y = randu<MatType>(100, 200);
+  MatType codes;
   lcc.Encode(Y, codes);
 
-  LocalCoordinateCoding lccXml(50, 0.1), lccJson(12, 0.0), lccBinary(0, 0.0);
+  LocalCoordinateCoding<MatType> lccXml(50, 0.1), lccJson(12, 0.0),
+      lccBinary(0, 0.0);
   SerializeObjectAll(lcc, lccXml, lccJson, lccBinary);
 
   CheckMatrices(lcc.Dictionary(), lccXml.Dictionary(), lccJson.Dictionary(),
       lccBinary.Dictionary());
 
-  mat xmlCodes, jsonCodes, binaryCodes;
+  MatType xmlCodes, jsonCodes, binaryCodes;
   lccXml.Encode(Y, xmlCodes);
   lccJson.Encode(Y, jsonCodes);
   lccBinary.Encode(Y, binaryCodes);
@@ -167,14 +180,17 @@ TEST_CASE("LocalCoordinateCodingSerializationTest",
  * Test that LocalCoordinateCoding::Train() returns finite final objective
  * value.
  */
-TEST_CASE("LocalCoordinateCodingTrainReturnObjective",
-          "[LocalCoordinateCodingTest]")
+TEMPLATE_TEST_CASE("LocalCoordinateCodingTrainReturnObjective",
+    "[LocalCoordinateCodingTest]", arma::mat, arma::fmat)
 {
+  typedef TestType MatType;
+
   double lambda1 = 0.1;
   uword nAtoms = 10;
 
-  mat X;
-  X.load("mnist_first250_training_4s_and_9s.arm");
+  mat inX; // File is saved as arma::mat.
+  inX.load("mnist_first250_training_4s_and_9s.csv");
+  MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
 
   // Normalize each point since these are images.
@@ -183,7 +199,7 @@ TEST_CASE("LocalCoordinateCodingTrainReturnObjective",
     X.col(i) /= norm(X.col(i), 2);
   }
 
-  LocalCoordinateCoding lcc(nAtoms, lambda1, 10);
+  LocalCoordinateCoding<MatType> lcc(nAtoms, lambda1, 10);
   double objVal = lcc.Train(X);
 
   REQUIRE(std::isfinite(objVal) == true);

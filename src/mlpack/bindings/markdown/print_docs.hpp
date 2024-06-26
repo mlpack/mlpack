@@ -21,8 +21,7 @@
  * Output is printed to stdout.
  */
 void PrintHeaders(const std::string& bindingName,
-                  const std::vector<std::string>& languages,
-                  const std::vector<bool>& addWrapperDocs);
+                  const bool addWrapperDocs);
 
 /**
  * Given the current settings of IO, print Markdown documentation for the
@@ -34,8 +33,7 @@ void PrintHeaders(const std::string& bindingName,
  * @param languages The set of languages to print documentation for.
  */
 void PrintDocs(const std::string& bindingName,
-               const std::vector<std::string>& languages,
                const std::vector<std::string>& validMethods,
-               const std::vector<bool>& addWrapperDocs);
+               const bool addWrapperDocs);
 
 #endif

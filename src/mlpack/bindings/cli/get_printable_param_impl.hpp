@@ -30,7 +30,7 @@ std::string GetPrintableParam(
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* /* junk */)
 {
   std::ostringstream oss;
-  oss << MLPACK_ANY_CAST<T>(data.value);
+  oss << std::any_cast<T>(data.value);
   return oss.str();
 }
 
@@ -41,7 +41,7 @@ std::string GetPrintableParam(
     const typename std::enable_if<util::IsStdVector<T>::value>::type*
         /* junk */)
 {
-  const T& t = MLPACK_ANY_CAST<T>(data.value);
+  const T& t = std::any_cast<T>(data.value);
 
   std::ostringstream oss;
   for (size_t i = 0; i < t.size(); ++i)
@@ -80,7 +80,7 @@ std::string GetPrintableParam(
 {
   // Extract the string from the tuple that's being held.
   typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
-  const TupleType* tuple = MLPACK_ANY_CAST<TupleType>(&data.value);
+  const TupleType* tuple = std::any_cast<TupleType>(&data.value);
 
   std::ostringstream oss;
   oss << "'" << std::get<0>(std::get<1>(*tuple)) << "'";
@@ -108,7 +108,7 @@ std::string GetPrintableParam(
 {
   // Extract the string from the tuple that's being held.
   typedef std::tuple<T*, typename ParameterType<T>::type> TupleType;
-  const TupleType* tuple = MLPACK_ANY_CAST<TupleType>(&data.value);
+  const TupleType* tuple = std::any_cast<TupleType>(&data.value);
 
   std::ostringstream oss;
   oss << std::get<1>(*tuple);
