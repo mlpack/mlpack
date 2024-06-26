@@ -68,7 +68,6 @@ void LogSoftMaxType<MatType>::Forward(const MatType& input, MatType& output)
   ForwardImpl(input, output);
 }
 
-
 template<typename MatType>
 void LogSoftMaxType<MatType>::ForwardImpl(const MatType& input,
                                           MatType& output,
@@ -123,7 +122,6 @@ void LogSoftMaxType<MatType>::ForwardImpl(const MatType& input,
 
   output = input - maxInput;
 }
-
 
 #ifdef MLPACK_HAS_COOT
 
