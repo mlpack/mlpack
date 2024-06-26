@@ -20,12 +20,12 @@
 namespace mlpack {
 
 // Initialize with the given kernel.
-template<typename MetricType>
-SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(
+template<typename DistanceType>
+SoftmaxErrorFunction<DistanceType>::SoftmaxErrorFunction(
     const arma::mat& datasetIn,
     const arma::Row<size_t>& labelsIn,
-    MetricType metric) :
-    metric(metric),
+    DistanceType distance) :
+    distance(distance),
     precalculated(false)
 {
   MakeAlias(dataset, datasetIn, datasetIn.n_rows, datasetIn.n_cols, 0, false);
@@ -33,8 +33,8 @@ SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(
 }
 
 //! Shuffle the dataset.
-template<typename MetricType>
-void SoftmaxErrorFunction<MetricType>::Shuffle()
+template<typename DistanceType>
+void SoftmaxErrorFunction<DistanceType>::Shuffle()
 {
   arma::mat newDataset;
   arma::Row<size_t> newLabels;
@@ -49,8 +49,8 @@ void SoftmaxErrorFunction<MetricType>::Shuffle()
 }
 
 //! The non-separable implementation, which uses Precalculate() to save time.
-template<typename MetricType>
-double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates)
+template<typename DistanceType>
+double SoftmaxErrorFunction<DistanceType>::Evaluate(const arma::mat& coordinates)
 {
   // Calculate the denominators and numerators, if necessary.
   Precalculate(coordinates);
@@ -61,10 +61,10 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates)
 
 //! The separated objective function, which does not use Precalculate(),
 //! for a given batch size and from an initial index.
-template<typename MetricType>
-double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
-                                                  const size_t begin,
-                                                  const size_t batchSize)
+template<typename DistanceType>
+double SoftmaxErrorFunction<DistanceType>::Evaluate(const arma::mat& coordinates,
+                                                    const size_t begin,
+                                                    const size_t batchSize)
 {
   // Unfortunately each evaluation will take O(N) time because it requires a
   // scan over all points in the dataset.  Our objective is to compute p_i.
@@ -83,8 +83,8 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
         continue;
 
       // We want to evaluate exp(-D(A x_i, A x_k)).
-      double eval = std::exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
-                                              stretchedDataset.unsafe_col(k)));
+      double eval = std::exp(-distance.Evaluate(
+          stretchedDataset.unsafe_col(i), stretchedDataset.unsafe_col(k)));
 
       // If they are in the same class, update the numerator.
       if (labels[i] == labels[k])
@@ -108,9 +108,9 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
 }
 
 //! The non-separable implementation, where Precalculate() is used.
-template<typename MetricType>
-void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
-                                                arma::mat& gradient)
+template<typename DistanceType>
+void SoftmaxErrorFunction<DistanceType>::Gradient(const arma::mat& coordinates,
+                                                  arma::mat& gradient)
 {
   // Calculate the denominators and numerators, if necessary.
   Precalculate(coordinates);
@@ -134,8 +134,8 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
     for (size_t k = (i + 1); k < stretchedDataset.n_cols; ++k)
     {
       // Calculate p_ik and p_ki first.
-      double eval = std::exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
-                                         stretchedDataset.unsafe_col(k)));
+      double eval = std::exp(-distance.Evaluate(
+          stretchedDataset.unsafe_col(i), stretchedDataset.unsafe_col(k)));
       double p_ik = 0, p_ki = 0;
       p_ik = eval / denominators(i);
       p_ki = eval / denominators(k);
@@ -156,12 +156,12 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
 }
 
 //! The separable implementation for a given batch size and an initial index.
-template <typename MetricType>
+template <typename DistanceType>
 template <typename GradType>
-void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
-                                                const size_t begin,
-                                                GradType& gradient,
-                                                const size_t batchSize)
+void SoftmaxErrorFunction<DistanceType>::Gradient(const arma::mat& coordinates,
+                                                  const size_t begin,
+                                                  GradType& gradient,
+                                                  const size_t batchSize)
 {
   // The gradient involves two matrix terms which are eventually combined into
   // one.
@@ -189,8 +189,8 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
         continue;
 
       // Calculate the numerator of p_ik.
-      double eval = std::exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
-                                         stretchedDataset.unsafe_col(k)));
+      double eval = std::exp(-distance.Evaluate(
+          stretchedDataset.unsafe_col(i), stretchedDataset.unsafe_col(k)));
 
       // If the points are in the same class, we must add to the second term of
       // the gradient as well as the numerator of p_i.  We will divide by the
@@ -231,14 +231,14 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
   }
 }
 
-template<typename MetricType>
-const arma::mat SoftmaxErrorFunction<MetricType>::GetInitialPoint() const
+template<typename DistanceType>
+const arma::mat SoftmaxErrorFunction<DistanceType>::GetInitialPoint() const
 {
   return arma::eye<arma::mat>(dataset.n_rows, dataset.n_rows);
 }
 
-template<typename MetricType>
-void SoftmaxErrorFunction<MetricType>::Precalculate(
+template<typename DistanceType>
+void SoftmaxErrorFunction<DistanceType>::Precalculate(
     const arma::mat& coordinates)
 {
   // Ensure it is the right size.
@@ -270,8 +270,8 @@ void SoftmaxErrorFunction<MetricType>::Precalculate(
     for (size_t j = (i + 1); j < stretchedDataset.n_cols; ++j)
     {
       // Evaluate exp(-d(x_i, x_j)).
-      double eval = std::exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
-                                         stretchedDataset.unsafe_col(j)));
+      double eval = std::exp(-distance.Evaluate(
+          stretchedDataset.unsafe_col(i), stretchedDataset.unsafe_col(j)));
 
       // Add this to the denominators of both p_i and p_j: K(i, j) = K(j, i).
       denominators[i] += eval;

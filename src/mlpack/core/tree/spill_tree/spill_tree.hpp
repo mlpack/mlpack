@@ -53,7 +53,7 @@ namespace mlpack {
  * }
  * @endcode
  *
- * @tparam MetricType The metric used for tree-building.
+ * @tparam DistanceType The distance metric used for tree-building.
  * @tparam StatisticType Extra data contained in the node.  See statistic.hpp
  *     for the necessary skeleton interface.
  * @tparam MatType The dataset class.
@@ -62,12 +62,12 @@ namespace mlpack {
  *     particular node into two parts. Its definition decides the way this split
  *     is done.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
-         template<typename HyperplaneMetricType>
+         template<typename HyperplaneDistanceType>
             class HyperplaneType = AxisOrthogonalHyperplane,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename SplitDistanceType, typename SplitMatType>
             class SplitType = MidpointSpaceSplit>
 class SpillTree
 {
@@ -77,7 +77,7 @@ class SpillTree
   //! The type of element held in MatType.
   typedef typename MatType::elem_type ElemType;
   //! The bound type.
-  typedef typename HyperplaneType<MetricType>::BoundType BoundType;
+  typedef typename HyperplaneType<DistanceType>::BoundType BoundType;
 
  private:
   //! The left child node.
@@ -95,7 +95,7 @@ class SpillTree
   //! Flag to distinguish overlapping nodes from non-overlapping nodes.
   bool overlappingNode;
   //! Splitting hyperplane represented by this node.
-  HyperplaneType<MetricType> hyperplane;
+  HyperplaneType<DistanceType> hyperplane;
   //! The bound object for this node.
   BoundType bound;
   //! Any extra data contained in the node.
@@ -274,10 +274,14 @@ class SpillTree
   bool Overlap() const { return overlappingNode; }
 
   //! Get the Hyperplane instance.
-  const HyperplaneType<MetricType>& Hyperplane() const { return hyperplane; }
+  const HyperplaneType<DistanceType>& Hyperplane() const { return hyperplane; }
 
-  //! Get the metric that the tree uses.
-  MetricType Metric() const { return MetricType(); }
+  //! Get the distance metric that the tree uses.
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  DistanceType Metric() const { return DistanceType(); }
+
+  //! Get the distance metric that the tree uses.
+  DistanceType Distance() const { return DistanceType(); }
 
   //! Return the number of children in this node.
   size_t NumChildren() const;

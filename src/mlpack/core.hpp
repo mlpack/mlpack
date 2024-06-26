@@ -49,7 +49,8 @@
   #include <mlpack/core/util/backtrace.hpp>
 #endif
 
-#include <mlpack/core/dists/dists.hpp>
+#include <mlpack/core/distances/distances.hpp>
+#include <mlpack/core/distributions/distributions.hpp>
 #include <mlpack/core/kernels/kernels.hpp>
 #include <mlpack/core/metrics/metrics.hpp>
 #include <mlpack/core/tree/tree.hpp>

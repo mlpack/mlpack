@@ -1192,25 +1192,6 @@ TEST_CASE("LaplaceDistributionLogProbabilityTest", "[DistributionTest]")
 }
 
 /**
- * Mahalanobis Distance serialization test.
- */
-TEST_CASE("MahalanobisDistanceTest", "[DistributionTest]")
-{
-  MahalanobisDistance<> d;
-  d.Covariance().randu(50, 50);
-
-  MahalanobisDistance<> xmlD, jsonD, binaryD;
-
-  SerializeObjectAll(d, xmlD, jsonD, binaryD);
-
-  // Check the covariance matrices.
-  CheckMatrices(d.Covariance(),
-                xmlD.Covariance(),
-                jsonD.Covariance(),
-                binaryD.Covariance());
-}
-
-/**
  * Regression distribution serialization test.
  */
 TEST_CASE("RegressionDistributionTest", "[DistributionTest]")

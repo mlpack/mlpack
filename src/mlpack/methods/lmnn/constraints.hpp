@@ -27,12 +27,12 @@ namespace mlpack {
  * data point) and Triplets() (Generates sets of {dataset, target neighbors,
  * impostors} tripltets.)
  */
-template<typename MetricType = SquaredEuclideanDistance>
+template<typename DistanceType = SquaredEuclideanDistance>
 class Constraints
 {
  public:
   //! Convenience typedef.
-  typedef NeighborSearch<NearestNeighborSort, MetricType> KNN;
+  typedef NeighborSearch<NearestNeighborSort, DistanceType> KNN;
 
   /**
    * Constructor for creating a Constraints instance.

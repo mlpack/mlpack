@@ -22,13 +22,13 @@ namespace mlpack {
  * help write tree-independent (but still optimized) tree-based algorithms.  See
  * mlpack/core/tree/tree_traits.hpp for more information.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
          typename SplitType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
-class TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
+class TreeTraits<RectangleTree<DistanceType, StatisticType, MatType, SplitType,
                                DescentType, AuxiliaryInformationType>>
 {
  public:
@@ -75,14 +75,14 @@ class TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
  * Since the R+/R++ tree can not have overlapping children, we should define
  * traits for the R+/R++ tree.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
          typename SplitPolicyType,
          template<typename> class SweepType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
-class TreeTraits<RectangleTree<MetricType,
+class TreeTraits<RectangleTree<DistanceType,
     StatisticType,
     MatType,
     RPlusTreeSplit<SplitPolicyType,

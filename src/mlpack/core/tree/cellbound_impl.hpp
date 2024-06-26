@@ -23,8 +23,8 @@ namespace mlpack {
 /**
  * Empty constructor.
  */
-template<typename MetricType, typename ElemType>
-inline CellBound<MetricType, ElemType>::CellBound() :
+template<typename DistanceType, typename ElemType>
+inline CellBound<DistanceType, ElemType>::CellBound() :
     dim(0),
     bounds(NULL),
     loBound(arma::Mat<ElemType>()),
@@ -39,8 +39,8 @@ inline CellBound<MetricType, ElemType>::CellBound() :
  * Initializes to specified dimensionality with each dimension the empty
  * set.
  */
-template<typename MetricType, typename ElemType>
-inline CellBound<MetricType, ElemType>::CellBound(const size_t dimension) :
+template<typename DistanceType, typename ElemType>
+inline CellBound<DistanceType, ElemType>::CellBound(const size_t dimension) :
     dim(dimension),
     bounds(new RangeType<ElemType>[dim]),
     loBound(arma::Mat<ElemType>(dim, maxNumBounds)),
@@ -60,9 +60,9 @@ inline CellBound<MetricType, ElemType>::CellBound(const size_t dimension) :
 /**
  * Copy constructor necessary to prevent memory leaks.
  */
-template<typename MetricType, typename ElemType>
-inline CellBound<MetricType, ElemType>::CellBound(
-    const CellBound<MetricType, ElemType>& other) :
+template<typename DistanceType, typename ElemType>
+inline CellBound<DistanceType, ElemType>::CellBound(
+    const CellBound<DistanceType, ElemType>& other) :
     dim(other.Dim()),
     bounds(new RangeType<ElemType>[dim]),
     loBound(other.loBound),
@@ -80,11 +80,11 @@ inline CellBound<MetricType, ElemType>::CellBound(
 /**
  * Same as the copy constructor.
  */
-template<typename MetricType, typename ElemType>
+template<typename DistanceType, typename ElemType>
 inline CellBound<
-    MetricType,
-    ElemType>& CellBound<MetricType, ElemType>::operator=(
-    const CellBound<MetricType, ElemType>& other)
+    DistanceType,
+    ElemType>& CellBound<DistanceType, ElemType>::operator=(
+    const CellBound<DistanceType, ElemType>& other)
 {
   if (this == &other)
     return *this;
@@ -116,9 +116,9 @@ inline CellBound<
 /**
  * Move constructor: take possession of another bound's information.
  */
-template<typename MetricType, typename ElemType>
-inline CellBound<MetricType, ElemType>::CellBound(
-    CellBound<MetricType, ElemType>&& other) :
+template<typename DistanceType, typename ElemType>
+inline CellBound<DistanceType, ElemType>::CellBound(
+    CellBound<DistanceType, ElemType>&& other) :
     dim(other.dim),
     bounds(other.bounds),
     loBound(std::move(other.loBound)),
@@ -137,8 +137,8 @@ inline CellBound<MetricType, ElemType>::CellBound(
 /**
  * Destructor: clean up memory.
  */
-template<typename MetricType, typename ElemType>
-inline CellBound<MetricType, ElemType>::~CellBound()
+template<typename DistanceType, typename ElemType>
+inline CellBound<DistanceType, ElemType>::~CellBound()
 {
   if (bounds)
     delete[] bounds;
@@ -147,8 +147,8 @@ inline CellBound<MetricType, ElemType>::~CellBound()
 /**
  * Resets all dimensions to the empty set.
  */
-template<typename MetricType, typename ElemType>
-inline void CellBound<MetricType, ElemType>::Clear()
+template<typename DistanceType, typename ElemType>
+inline void CellBound<DistanceType, ElemType>::Clear()
 {
   for (size_t k = 0; k < dim; ++k)
   {
@@ -166,8 +166,8 @@ inline void CellBound<MetricType, ElemType>::Clear()
  *
  * @param centroid Vector which the centroid will be written to.
  */
-template<typename MetricType, typename ElemType>
-inline void CellBound<MetricType, ElemType>::Center(
+template<typename DistanceType, typename ElemType>
+inline void CellBound<DistanceType, ElemType>::Center(
     arma::Col<ElemType>& center) const
 {
   // Set size correctly if necessary.
@@ -178,9 +178,9 @@ inline void CellBound<MetricType, ElemType>::Center(
     center(i) = bounds[i].Mid();
 }
 
-template<typename MetricType, typename ElemType>
+template<typename DistanceType, typename ElemType>
 template<typename MatType>
-void CellBound<MetricType, ElemType>::AddBound(
+void CellBound<DistanceType, ElemType>::AddBound(
     const arma::Col<ElemType>& loCorner,
     const arma::Col<ElemType>& hiCorner,
     const MatType& data)
@@ -223,10 +223,10 @@ void CellBound<MetricType, ElemType>::AddBound(
 }
 
 
-template<typename MetricType, typename ElemType>
+template<typename DistanceType, typename ElemType>
 template<typename MatType>
-void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits,
-                                                    const MatType& data)
+void CellBound<DistanceType, ElemType>::InitHighBound(size_t numEqualBits,
+                                                      const MatType& data)
 {
   arma::Col<AddressElemType> tmpHiAddress(hiAddress);
   arma::Col<AddressElemType> tmpLoAddress(hiAddress);
@@ -312,10 +312,10 @@ void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits,
   }
 }
 
-template<typename MetricType, typename ElemType>
+template<typename DistanceType, typename ElemType>
 template<typename MatType>
-void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits,
-                                                     const MatType& data)
+void CellBound<DistanceType, ElemType>::InitLowerBound(size_t numEqualBits,
+                                                       const MatType& data)
 {
   arma::Col<AddressElemType> tmpHiAddress(loAddress);
   arma::Col<AddressElemType> tmpLoAddress(loAddress);
@@ -402,9 +402,9 @@ void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits,
   }
 }
 
-template<typename MetricType, typename ElemType>
+template<typename DistanceType, typename ElemType>
 template<typename MatType>
-void CellBound<MetricType, ElemType>::UpdateAddressBounds(const MatType& data)
+void CellBound<DistanceType, ElemType>::UpdateAddressBounds(const MatType& data)
 {
   numBounds = 0;
 
@@ -470,9 +470,9 @@ void CellBound<MetricType, ElemType>::UpdateAddressBounds(const MatType& data)
 /**
  * Calculates minimum bound-to-point squared distance.
  */
-template<typename MetricType, typename ElemType>
+template<typename DistanceType, typename ElemType>
 template<typename VecType>
-inline ElemType CellBound<MetricType, ElemType>::MinDistance(
+inline ElemType CellBound<DistanceType, ElemType>::MinDistance(
     const VecType& point,
     typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
@@ -495,9 +495,9 @@ inline ElemType CellBound<MetricType, ElemType>::MinDistance(
       // each's absolute value to itself and then sum those two, our
       // result is the non negative half of the equation times two;
       // then we raise to power Power.
-      if (MetricType::Power == 1)
+      if (DistanceType::Power == 1)
         sum += lower + std::fabs(lower) + higher + std::fabs(higher);
-      else if (MetricType::Power == 2)
+      else if (DistanceType::Power == 2)
       {
         ElemType dist = lower + std::fabs(lower) + higher + std::fabs(higher);
         sum += dist * dist;
@@ -505,7 +505,7 @@ inline ElemType CellBound<MetricType, ElemType>::MinDistance(
       else
       {
         sum += std::pow((lower + std::fabs(lower)) +
-            (higher + std::fabs(higher)), (ElemType) MetricType::Power);
+            (higher + std::fabs(higher)), (ElemType) DistanceType::Power);
       }
 
       if (sum >= minSum)
@@ -520,30 +520,30 @@ inline ElemType CellBound<MetricType, ElemType>::MinDistance(
   // to be); then cancel out the constant of 2 (which may have been squared now)
   // that was introduced earlier.  The compiler should optimize out the if
   // statement entirely.
-  if (MetricType::Power == 1)
+  if (DistanceType::Power == 1)
     return minSum * 0.5;
-  else if (MetricType::Power == 2)
+  else if (DistanceType::Power == 2)
   {
-    if (MetricType::TakeRoot)
+    if (DistanceType::TakeRoot)
       return (ElemType) std::sqrt(minSum) * 0.5;
     else
       return minSum * 0.25;
   }
   else
   {
-    if (MetricType::TakeRoot)
+    if (DistanceType::TakeRoot)
       return (ElemType) std::pow((double) minSum,
-          1.0 / (double) MetricType::Power) / 2.0;
+          1.0 / (double) DistanceType::Power) / 2.0;
     else
-      return minSum / std::pow(2.0, MetricType::Power);
+      return minSum / std::pow(2.0, DistanceType::Power);
   }
 }
 
 /**
  * Calculates minimum bound-to-bound squared distance.
  */
-template<typename MetricType, typename ElemType>
-ElemType CellBound<MetricType, ElemType>::MinDistance(const CellBound& other)
+template<typename DistanceType, typename ElemType>
+ElemType CellBound<DistanceType, ElemType>::MinDistance(const CellBound& other)
     const
 {
   Log::Assert(dim == other.dim);
@@ -565,9 +565,9 @@ ElemType CellBound<MetricType, ElemType>::MinDistance(const CellBound& other)
         //   (x * 2)^2 / 4 = x^2
 
         // The compiler should optimize out this if statement entirely.
-        if (MetricType::Power == 1)
+        if (DistanceType::Power == 1)
           sum += (lower + std::fabs(lower)) + (higher + std::fabs(higher));
-        else if (MetricType::Power == 2)
+        else if (DistanceType::Power == 2)
         {
           ElemType dist = lower + std::fabs(lower) + higher + std::fabs(higher);
           sum += dist * dist;
@@ -575,7 +575,7 @@ ElemType CellBound<MetricType, ElemType>::MinDistance(const CellBound& other)
         else
         {
           sum += std::pow((lower + std::fabs(lower)) +
-              (higher + std::fabs(higher)), (ElemType) MetricType::Power);
+              (higher + std::fabs(higher)), (ElemType) DistanceType::Power);
         }
 
         if (sum >= minSum)
@@ -587,31 +587,31 @@ ElemType CellBound<MetricType, ElemType>::MinDistance(const CellBound& other)
     }
 
   // The compiler should optimize out this if statement entirely.
-  if (MetricType::Power == 1)
+  if (DistanceType::Power == 1)
     return minSum * 0.5;
-  else if (MetricType::Power == 2)
+  else if (DistanceType::Power == 2)
   {
-    if (MetricType::TakeRoot)
+    if (DistanceType::TakeRoot)
       return (ElemType) std::sqrt(minSum) * 0.5;
     else
       return minSum * 0.25;
   }
   else
   {
-    if (MetricType::TakeRoot)
+    if (DistanceType::TakeRoot)
       return (ElemType) std::pow((double) minSum,
-          1.0 / (double) MetricType::Power) / 2.0;
+          1.0 / (double) DistanceType::Power) / 2.0;
     else
-      return minSum / std::pow(2.0, MetricType::Power);
+      return minSum / std::pow(2.0, DistanceType::Power);
   }
 }
 
 /**
  * Calculates maximum bound-to-point squared distance.
  */
-template<typename MetricType, typename ElemType>
+template<typename DistanceType, typename ElemType>
 template<typename VecType>
-inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
+inline ElemType CellBound<DistanceType, ElemType>::MaxDistance(
     const VecType& point,
     typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
@@ -627,12 +627,12 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
       ElemType v = std::max(fabs(point[d] - loBound(d, i)),
           fabs(hiBound(d, i) - point[d]));
 
-      if (MetricType::Power == 1)
+      if (DistanceType::Power == 1)
         sum += v; // v is non-negative.
-      else if (MetricType::Power == 2)
+      else if (DistanceType::Power == 2)
         sum += v * v;
       else
-        sum += std::pow(v, (ElemType) MetricType::Power);
+        sum += std::pow(v, (ElemType) DistanceType::Power);
     }
 
     if (sum > maxSum)
@@ -640,15 +640,15 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
   }
 
   // The compiler should optimize out this if statement entirely.
-  if (MetricType::TakeRoot)
+  if (DistanceType::TakeRoot)
   {
-    if (MetricType::Power == 1)
+    if (DistanceType::Power == 1)
       return maxSum;
-    else if (MetricType::Power == 2)
+    else if (DistanceType::Power == 2)
       return (ElemType) std::sqrt(maxSum);
     else
       return (ElemType) std::pow((double) maxSum, 1.0 /
-          (double) MetricType::Power);
+          (double) DistanceType::Power);
   }
 
   return maxSum;
@@ -657,10 +657,9 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
 /**
  * Computes maximum distance.
  */
-template<typename MetricType, typename ElemType>
-inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
-    const CellBound& other)
-    const
+template<typename DistanceType, typename ElemType>
+inline ElemType CellBound<DistanceType, ElemType>::MaxDistance(
+    const CellBound& other) const
 {
   ElemType maxSum = std::numeric_limits<ElemType>::lowest();
 
@@ -677,12 +676,12 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
             fabs(hiBound(d, i) - other.loBound(d, j)));
 
         // The compiler should optimize out this if statement entirely.
-        if (MetricType::Power == 1)
+        if (DistanceType::Power == 1)
           sum += v; // v is non-negative.
-        else if (MetricType::Power == 2)
+        else if (DistanceType::Power == 2)
           sum += v * v;
         else
-          sum += std::pow(v, (ElemType) MetricType::Power);
+          sum += std::pow(v, (ElemType) DistanceType::Power);
       }
 
       if (sum > maxSum)
@@ -690,15 +689,15 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
     }
 
   // The compiler should optimize out this if statement entirely.
-  if (MetricType::TakeRoot)
+  if (DistanceType::TakeRoot)
   {
-    if (MetricType::Power == 1)
+    if (DistanceType::Power == 1)
       return maxSum;
-    else if (MetricType::Power == 2)
+    else if (DistanceType::Power == 2)
       return (ElemType) std::sqrt(maxSum);
     else
       return (ElemType) std::pow((double) maxSum, 1.0 /
-          (double) MetricType::Power);
+          (double) DistanceType::Power);
   }
 
   return maxSum;
@@ -707,9 +706,9 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
 /**
  * Calculates minimum and maximum bound-to-bound squared distance.
  */
-template<typename MetricType, typename ElemType>
+template<typename DistanceType, typename ElemType>
 inline RangeType<ElemType>
-CellBound<MetricType, ElemType>::RangeDistance(
+CellBound<DistanceType, ElemType>::RangeDistance(
     const CellBound& other) const
 {
   ElemType minLoSum = std::numeric_limits<ElemType>::max();
@@ -741,20 +740,20 @@ CellBound<MetricType, ElemType>::RangeDistance(
         }
 
         // The compiler should optimize out this if statement entirely.
-        if (MetricType::Power == 1)
+        if (DistanceType::Power == 1)
         {
           loSum += vLo; // vLo is non-negative.
           hiSum += vHi; // vHi is non-negative.
         }
-        else if (MetricType::Power == 2)
+        else if (DistanceType::Power == 2)
         {
           loSum += vLo * vLo;
           hiSum += vHi * vHi;
         }
         else
         {
-          loSum += std::pow(vLo, (ElemType) MetricType::Power);
-          hiSum += std::pow(vHi, (ElemType) MetricType::Power);
+          loSum += std::pow(vLo, (ElemType) DistanceType::Power);
+          hiSum += std::pow(vHi, (ElemType) DistanceType::Power);
         }
       }
 
@@ -764,20 +763,20 @@ CellBound<MetricType, ElemType>::RangeDistance(
         maxHiSum = hiSum;
     }
 
-  if (MetricType::TakeRoot)
+  if (DistanceType::TakeRoot)
   {
-    if (MetricType::Power == 1)
+    if (DistanceType::Power == 1)
       return RangeType<ElemType>(minLoSum, maxHiSum);
-    else if (MetricType::Power == 2)
+    else if (DistanceType::Power == 2)
       return RangeType<ElemType>((ElemType) std::sqrt(minLoSum),
                                        (ElemType) std::sqrt(maxHiSum));
     else
     {
       return RangeType<ElemType>(
           (ElemType) std::pow((double) minLoSum, 1.0 /
-            (double) MetricType::Power),
+            (double) DistanceType::Power),
           (ElemType) std::pow((double) maxHiSum, 1.0 /
-            (double) MetricType::Power));
+            (double) DistanceType::Power));
     }
   }
 
@@ -787,10 +786,10 @@ CellBound<MetricType, ElemType>::RangeDistance(
 /**
  * Calculates minimum and maximum bound-to-point squared distance.
  */
-template<typename MetricType, typename ElemType>
+template<typename DistanceType, typename ElemType>
 template<typename VecType>
 inline RangeType<ElemType>
-CellBound<MetricType, ElemType>::RangeDistance(
+CellBound<DistanceType, ElemType>::RangeDistance(
     const VecType& point,
     typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
@@ -830,20 +829,20 @@ CellBound<MetricType, ElemType>::RangeDistance(
       }
 
       // The compiler should optimize out this if statement entirely.
-      if (MetricType::Power == 1)
+      if (DistanceType::Power == 1)
       {
         loSum += vLo; // vLo is non-negative.
         hiSum += vHi; // vHi is non-negative.
       }
-      else if (MetricType::Power == 2)
+      else if (DistanceType::Power == 2)
       {
         loSum += vLo * vLo;
         hiSum += vHi * vHi;
       }
       else
       {
-        loSum += std::pow(vLo, (ElemType) MetricType::Power);
-        hiSum += std::pow(vHi, (ElemType) MetricType::Power);
+        loSum += std::pow(vLo, (ElemType) DistanceType::Power);
+        hiSum += std::pow(vHi, (ElemType) DistanceType::Power);
       }
     }
     if (loSum < minLoSum)
@@ -852,20 +851,20 @@ CellBound<MetricType, ElemType>::RangeDistance(
       maxHiSum = hiSum;
   }
 
-  if (MetricType::TakeRoot)
+  if (DistanceType::TakeRoot)
   {
-    if (MetricType::Power == 1)
+    if (DistanceType::Power == 1)
       return RangeType<ElemType>(minLoSum, maxHiSum);
-    else if (MetricType::Power == 2)
+    else if (DistanceType::Power == 2)
       return RangeType<ElemType>((ElemType) std::sqrt(minLoSum),
                                        (ElemType) std::sqrt(maxHiSum));
     else
     {
       return RangeType<ElemType>(
           (ElemType) std::pow((double) minLoSum, 1.0 /
-              (double) MetricType::Power),
+              (double) DistanceType::Power),
           (ElemType) std::pow((double) maxHiSum, 1.0 /
-              (double) MetricType::Power));
+              (double) DistanceType::Power));
     }
   }
 
@@ -875,10 +874,10 @@ CellBound<MetricType, ElemType>::RangeDistance(
 /**
  * Expands this region to include a new point.
  */
-template<typename MetricType, typename ElemType>
+template<typename DistanceType, typename ElemType>
 template<typename MatType>
-inline CellBound<MetricType, ElemType>&
-CellBound<MetricType, ElemType>::operator|=(const MatType& data)
+inline CellBound<DistanceType, ElemType>&
+CellBound<DistanceType, ElemType>::operator|=(const MatType& data)
 {
   Log::Assert(data.n_rows == dim);
 
@@ -905,9 +904,9 @@ CellBound<MetricType, ElemType>::operator|=(const MatType& data)
 /**
  * Expands this region to encompass another bound.
  */
-template<typename MetricType, typename ElemType>
-inline CellBound<MetricType, ElemType>&
-CellBound<MetricType, ElemType>::operator|=(const CellBound& other)
+template<typename DistanceType, typename ElemType>
+inline CellBound<DistanceType, ElemType>&
+CellBound<DistanceType, ElemType>::operator|=(const CellBound& other)
 {
   assert(other.dim == dim);
 
@@ -943,9 +942,9 @@ CellBound<MetricType, ElemType>::operator|=(const CellBound& other)
 /**
  * Determines if a point is within this bound.
  */
-template<typename MetricType, typename ElemType>
+template<typename DistanceType, typename ElemType>
 template<typename VecType>
-inline bool CellBound<MetricType, ElemType>::Contains(
+inline bool CellBound<DistanceType, ElemType>::Contains(
     const VecType& point) const
 {
   for (size_t i = 0; i < point.n_elem; ++i)
@@ -968,24 +967,24 @@ inline bool CellBound<MetricType, ElemType>::Contains(
 /**
  * Returns the diameter of the hyperrectangle (that is, the longest diagonal).
  */
-template<typename MetricType, typename ElemType>
-inline ElemType CellBound<MetricType, ElemType>::Diameter() const
+template<typename DistanceType, typename ElemType>
+inline ElemType CellBound<DistanceType, ElemType>::Diameter() const
 {
   ElemType d = 0;
   for (size_t i = 0; i < dim; ++i)
     d += std::pow(bounds[i].Hi() - bounds[i].Lo(),
-        (ElemType) MetricType::Power);
+        (ElemType) DistanceType::Power);
 
-  if (MetricType::TakeRoot)
-    return (ElemType) std::pow((double) d, 1.0 / (double) MetricType::Power);
+  if (DistanceType::TakeRoot)
+    return (ElemType) std::pow((double) d, 1.0 / (double) DistanceType::Power);
 
   return d;
 }
 
 //! Serialize the bound object.
-template<typename MetricType, typename ElemType>
+template<typename DistanceType, typename ElemType>
 template<typename Archive>
-void CellBound<MetricType, ElemType>::serialize(
+void CellBound<DistanceType, ElemType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
@@ -996,7 +995,7 @@ void CellBound<MetricType, ElemType>::serialize(
   ar(CEREAL_NVP(numBounds));
   ar(CEREAL_NVP(loAddress));
   ar(CEREAL_NVP(hiAddress));
-  ar(CEREAL_NVP(metric));
+  ar(CEREAL_NVP(distance));
 }
 
 } // namespace mlpack

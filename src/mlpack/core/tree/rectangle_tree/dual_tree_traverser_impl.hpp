@@ -21,14 +21,14 @@
 
 namespace mlpack {
 
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
          typename SplitType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
               AuxiliaryInformationType>::
 DualTreeTraverser<RuleType>::DualTreeTraverser(RuleType& rule) :
     rule(rule),
@@ -38,14 +38,14 @@ DualTreeTraverser<RuleType>::DualTreeTraverser(RuleType& rule) :
     numBaseCases(0)
 { /* Nothing to do */ }
 
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
          typename SplitType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+void RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
                    AuxiliaryInformationType>::
 DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
                                       RectangleTree& referenceNode)

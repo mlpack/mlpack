@@ -25,20 +25,21 @@ namespace mlpack {
  * looking for the KMeans class instead of this one.  This class is used by
  * KMeans as the actual implementation of the Lloyd iteration.
  *
- * @param MetricType Type of metric used with this implementation.
+ * @param DistanceType Type of distance metric used with this implementation.
  * @param MatType Matrix type (arma::mat or arma::sp_mat).
  */
-template<typename MetricType, typename MatType>
+template<typename DistanceType, typename MatType>
 class NaiveKMeans
 {
  public:
   /**
-   * Construct the NaiveKMeans object with the given dataset and metric.
+   * Construct the NaiveKMeans object with the given dataset and distance
+   * metric.
    *
    * @param dataset Dataset.
-   * @param metric Instantiated metric.
+   * @param distance Instantiated distance metric.
    */
-  NaiveKMeans(const MatType& dataset, MetricType& metric);
+  NaiveKMeans(const MatType& dataset, DistanceType& distance);
 
   /**
    * Run a single iteration of the Lloyd algorithm, updating the given centroids
@@ -59,8 +60,8 @@ class NaiveKMeans
  private:
   //! The dataset.
   const MatType& dataset;
-  //! The instantiated metric.
-  MetricType& metric;
+  //! The instantiated distance metric.
+  DistanceType& distance;
 
   //! Number of distance calculations.
   size_t distanceCalculations;

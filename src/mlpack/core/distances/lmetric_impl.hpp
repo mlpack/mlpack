@@ -1,5 +1,5 @@
 /**
- * @file core/metrics/lmetric_impl.hpp
+ * @file core/distances/lmetric_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of template specializations of LMetric class.
@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_METRICS_LMETRIC_IMPL_HPP
-#define MLPACK_CORE_METRICS_LMETRIC_IMPL_HPP
+#ifndef MLPACK_CORE_DISTANCES_LMETRIC_IMPL_HPP
+#define MLPACK_CORE_DISTANCES_LMETRIC_IMPL_HPP
 
 // In case it hasn't been included.
 #include "lmetric.hpp"

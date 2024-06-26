@@ -18,13 +18,13 @@
 namespace mlpack {
 
 template<
-    typename MetricType,
+    typename DistanceType,
     typename StatisticType,
     typename MatType,
     typename RootPointPolicy
 >
 template<typename RuleType>
-class CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+class CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
     DualTreeTraverser
 {
  public:
@@ -63,7 +63,7 @@ class CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   struct DualCoverTreeMapEntry
   {
     //! The node this entry refers to.
-    CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>*
+    CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>*
         referenceNode;
     //! The score of the node.
     double score;

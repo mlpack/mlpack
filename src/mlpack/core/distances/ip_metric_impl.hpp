@@ -1,5 +1,5 @@
 /**
- * @file core/metrics/ip_metric_impl.hpp
+ * @file core/distances/ip_metric_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the IPMetric.
@@ -9,13 +9,13 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_FASTMKS_IP_METRIC_IMPL_HPP
-#define MLPACK_METHODS_FASTMKS_IP_METRIC_IMPL_HPP
+#ifndef MLPACK_CORE_DISTANCES_IP_METRIC_IMPL_HPP
+#define MLPACK_CORE_DISTANCES_IP_METRIC_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "ip_metric.hpp"
 
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
 
 namespace mlpack {

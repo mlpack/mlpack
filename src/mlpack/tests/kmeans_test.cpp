@@ -103,10 +103,10 @@ TEST_CASE("AllowEmptyClusterTest", "[KMeansTest]")
   arma::Col<size_t> countsOld = counts;
 
   // Make sure the method doesn't modify any points.
-  LMetric<2, true> metric;
+  LMetric<2, true> distance;
 
   AllowEmptyClusters::EmptyCluster(kMeansData, 2, centroids, centroids, counts,
-      metric, 0);
+      distance, 0);
 
   // Make sure no assignments were changed.
   for (size_t i = 0; i < assignments.n_elem; ++i)
@@ -136,10 +136,10 @@ TEST_CASE("KillEmptyClusterTest", "[KMeansTest]")
   arma::Col<size_t> countsOld = counts;
 
   // Make sure the method modify the specified point.
-  LMetric<2, true> metric;
+  LMetric<2, true> distance;
 
   KillEmptyClusters::EmptyCluster(kMeansData, 2, centroids, centroids, counts,
-      metric, 0);
+      distance, 0);
 
   // Make sure no assignments were changed.
   for (size_t i = 0; i < assignments.n_elem; ++i)
@@ -173,11 +173,11 @@ TEST_CASE("MaxVarianceNewClusterTest", "[KMeansTest]")
 
   arma::Col<size_t> counts("3 2 0");
 
-  LMetric<2, true> metric;
+  LMetric<2, true> distance;
 
   // This should only change one point.
   MaxVarianceNewCluster mvnc;
-  mvnc.EmptyCluster(data, 2, centroids, centroids, counts, metric, 0);
+  mvnc.EmptyCluster(data, 2, centroids, centroids, counts, distance, 0);
 
   // Add the variance of each point's distance away from the cluster.  I think
   // this is the sensible thing to do.
@@ -189,11 +189,11 @@ TEST_CASE("MaxVarianceNewClusterTest", "[KMeansTest]")
 
     for (size_t j = 0; j < centroids.n_cols; ++j)
     {
-      const double distance = metric.Evaluate(data.col(i), centroids.col(j));
+      const double dist = distance.Evaluate(data.col(i), centroids.col(j));
 
-      if (distance < minDistance)
+      if (dist < minDistance)
       {
-        minDistance = distance;
+        minDistance = dist;
         closestCluster = j;
       }
     }

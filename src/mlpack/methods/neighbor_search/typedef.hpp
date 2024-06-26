@@ -17,7 +17,7 @@
 // In case someone included this directly.
 #include "neighbor_search.hpp"
 
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 
 #include "sort_policies/nearest_neighbor_sort.hpp"
 #include "sort_policies/furthest_neighbor_sort.hpp"
@@ -43,7 +43,7 @@ typedef NeighborSearch<FurthestNeighborSort, EuclideanDistance> KFN;
  * @tparam TreeType The tree type to use; must adhere to the TreeType API,
  *     and implement Defeatist Traversers.
  */
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType = SPTree>
 using DefeatistKNN = NeighborSearch<

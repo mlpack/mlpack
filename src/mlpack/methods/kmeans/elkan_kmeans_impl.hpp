@@ -17,21 +17,21 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename MatType>
-ElkanKMeans<MetricType, MatType>::ElkanKMeans(const MatType& dataset,
-                                              MetricType& metric) :
+template<typename DistanceType, typename MatType>
+ElkanKMeans<DistanceType, MatType>::ElkanKMeans(const MatType& dataset,
+                                                DistanceType& distance) :
     dataset(dataset),
-    metric(metric),
+    distance(distance),
     distanceCalculations(0)
 {
   // Nothing to do here.
 }
 
 // Run a single iteration of Elkan's algorithm for Lloyd iterations.
-template<typename MetricType, typename MatType>
-double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
-                                                 arma::mat& newCentroids,
-                                                 arma::Col<size_t>& counts)
+template<typename DistanceType, typename MatType>
+double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
+                                                   arma::mat& newCentroids,
+                                                   arma::Col<size_t>& counts)
 {
   // Clear new centroids.
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
@@ -66,11 +66,11 @@ double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
   {
     for (size_t j = i + 1; j < centroids.n_cols; ++j)
     {
-      const double distance = metric.Evaluate(centroids.col(i),
-                                              centroids.col(j));
+      const double dist = distance.Evaluate(centroids.col(i),
+                                            centroids.col(j));
       distanceCalculations++;
-      clusterDistances(i, j) = distance;
-      clusterDistances(j, i) = distance;
+      clusterDistances(i, j) = dist;
+      clusterDistances(j, i) = dist;
     }
   }
 
@@ -110,7 +110,8 @@ double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
         if (mustRecalculate[i])
         {
           mustRecalculate[i] = false;
-          dist = metric.Evaluate(dataset.col(i), centroids.col(assignments[i]));
+          dist = distance.Evaluate(dataset.col(i),
+                                   centroids.col(assignments[i]));
           lowerBounds(assignments[i], i) = dist;
           upperBounds(i) = dist;
           distanceCalculations++;
@@ -132,8 +133,8 @@ double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
             dist > 0.5 * clusterDistances(assignments[i], c))
         {
           // Compute d(x, c).  If d(x, c) < d(x, c(x)) then assign c(x) = c.
-          const double pointDist = metric.Evaluate(dataset.col(i),
-                                                   centroids.col(c));
+          const double pointDist = distance.Evaluate(dataset.col(i),
+                                                     centroids.col(c));
           lowerBounds(c, i) = pointDist;
           distanceCalculations++;
           if (pointDist < dist)
@@ -160,7 +161,7 @@ double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
     if (counts[c] > 0)
       newCentroids.col(c) /= counts[c];
 
-    moveDistances(c) = metric.Evaluate(newCentroids.col(c), centroids.col(c));
+    moveDistances(c) = distance.Evaluate(newCentroids.col(c), centroids.col(c));
     cNorm += std::pow(moveDistances(c), 2.0);
     distanceCalculations++;
   }

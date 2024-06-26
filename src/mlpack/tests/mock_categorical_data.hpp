@@ -12,7 +12,7 @@
 #define MLPACK_TESTS_MOCK_CATEGORICAL_DATA_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/dists/discrete_distribution.hpp>
+#include <mlpack/core/distributions/discrete_distribution.hpp>
 
 /**
  * Create a mock categorical dataset for testing classification.

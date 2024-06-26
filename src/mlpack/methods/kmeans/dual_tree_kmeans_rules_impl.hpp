@@ -16,14 +16,14 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename TreeType>
-DualTreeKMeansRules<MetricType, TreeType>::DualTreeKMeansRules(
+template<typename DistanceType, typename TreeType>
+DualTreeKMeansRules<DistanceType, TreeType>::DualTreeKMeansRules(
     const arma::mat& centroids,
     const arma::mat& dataset,
     arma::Row<size_t>& assignments,
     arma::vec& upperBounds,
     arma::vec& lowerBounds,
-    MetricType& metric,
+    DistanceType& distance,
     const std::vector<bool>& prunedPoints,
     const std::vector<size_t>& oldFromNewCentroids,
     std::vector<bool>& visited) :
@@ -32,7 +32,7 @@ DualTreeKMeansRules<MetricType, TreeType>::DualTreeKMeansRules(
     assignments(assignments),
     upperBounds(upperBounds),
     lowerBounds(lowerBounds),
-    metric(metric),
+    distance(distance),
     prunedPoints(prunedPoints),
     oldFromNewCentroids(oldFromNewCentroids),
     visited(visited),
@@ -49,9 +49,9 @@ DualTreeKMeansRules<MetricType, TreeType>::DualTreeKMeansRules(
   traversalInfo.LastReferenceNode() = (TreeType*) this;
 }
 
-template<typename MetricType, typename TreeType>
+template<typename DistanceType, typename TreeType>
 inline mlpack_force_inline
-double DualTreeKMeansRules<MetricType, TreeType>::BaseCase(
+double DualTreeKMeansRules<DistanceType, TreeType>::BaseCase(
     const size_t queryIndex,
     const size_t referenceIndex)
 {
@@ -67,31 +67,31 @@ double DualTreeKMeansRules<MetricType, TreeType>::BaseCase(
 
   // Calculate the distance.
   ++baseCases;
-  const double distance = metric.Evaluate(dataset.col(queryIndex),
-                                          centroids.col(referenceIndex));
+  const double dist = distance.Evaluate(dataset.col(queryIndex),
+                                        centroids.col(referenceIndex));
 
-  if (distance < upperBounds[queryIndex])
+  if (dist < upperBounds[queryIndex])
   {
     lowerBounds[queryIndex] = upperBounds[queryIndex];
-    upperBounds[queryIndex] = distance;
+    upperBounds[queryIndex] = dist;
     assignments[queryIndex] = (TreeTraits<TreeType>::RearrangesDataset) ?
         oldFromNewCentroids[referenceIndex] : referenceIndex;
   }
-  else if (distance < lowerBounds[queryIndex])
+  else if (dist < lowerBounds[queryIndex])
   {
-    lowerBounds[queryIndex] = distance;
+    lowerBounds[queryIndex] = dist;
   }
 
   // Cache this information for the next time BaseCase() is called.
   lastQueryIndex = queryIndex;
   lastReferenceIndex = referenceIndex;
-  lastBaseCase = distance;
+  lastBaseCase = dist;
 
-  return distance;
+  return dist;
 }
 
-template<typename MetricType, typename TreeType>
-inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
+template<typename DistanceType, typename TreeType>
+inline double DualTreeKMeansRules<DistanceType, TreeType>::Score(
     const size_t queryIndex,
     TreeType& /* referenceNode */)
 {
@@ -104,8 +104,8 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
   return 0;
 }
 
-template<typename MetricType, typename TreeType>
-inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
+template<typename DistanceType, typename TreeType>
+inline double DualTreeKMeansRules<DistanceType, TreeType>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
@@ -290,8 +290,8 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
   return score;
 }
 
-template<typename MetricType, typename TreeType>
-inline double DualTreeKMeansRules<MetricType, TreeType>::Rescore(
+template<typename DistanceType, typename TreeType>
+inline double DualTreeKMeansRules<DistanceType, TreeType>::Rescore(
     const size_t /* queryIndex */,
     TreeType& /* referenceNode */,
     const double oldScore)
@@ -300,8 +300,8 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Rescore(
   return oldScore;
 }
 
-template<typename MetricType, typename TreeType>
-inline double DualTreeKMeansRules<MetricType, TreeType>::Rescore(
+template<typename DistanceType, typename TreeType>
+inline double DualTreeKMeansRules<DistanceType, TreeType>::Rescore(
     TreeType& queryNode,
     TreeType& referenceNode,
     const double oldScore)

@@ -1,5 +1,5 @@
 /**
- * @file core/metrics/ip_metric.hpp
+ * @file core/distances/ip_metric.hpp
  * @author Ryan Curtin
  *
  * Inner product induced metric.  If given a kernel function, this gives the
@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_FASTMKS_IP_METRIC_HPP
-#define MLPACK_METHODS_FASTMKS_IP_METRIC_HPP
+#ifndef MLPACK_CORE_DISTANCES_IP_METRIC_HPP
+#define MLPACK_CORE_DISTANCES_IP_METRIC_HPP
 
 namespace mlpack {
 

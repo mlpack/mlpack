@@ -51,7 +51,7 @@ size_t RStarTreeSplit::ReinsertPoints(TreeType* tree,
       tree->Bound().Center(center);
       for (size_t i = 0; i < sorted.size(); ++i)
       {
-        sorted[i].first = tree->Metric().Evaluate(center,
+        sorted[i].first = tree->Distance().Evaluate(center,
             tree->Dataset().col(tree->Point(i)));
         sorted[i].second = tree->Point(i);
       }

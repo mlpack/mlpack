@@ -1,5 +1,5 @@
 /**
- * @file core/dists/dists.hpp
+ * @file core/distributions/distributions.hpp
  * @author Ryan Curtin
  *
  * Convenience include for all distributions.
@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DISTS_DISTS_HPP
-#define MLPACK_CORE_DISTS_DISTS_HPP
+#ifndef MLPACK_CORE_DISTRIBUTIONS_DISTRIBUTIONS_HPP
+#define MLPACK_CORE_DISTRIBUTIONS_DISTRIBUTIONS_HPP
 
 #include "diagonal_gaussian_distribution.hpp"
 #include "discrete_distribution.hpp"

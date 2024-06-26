@@ -17,9 +17,9 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename StatisticType, typename MatType>
+template<typename DistanceType, typename StatisticType, typename MatType>
 template<typename RuleType>
-Octree<MetricType, StatisticType, MatType>::SingleTreeTraverser<RuleType>::
+Octree<DistanceType, StatisticType, MatType>::SingleTreeTraverser<RuleType>::
     SingleTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0)
@@ -27,9 +27,10 @@ Octree<MetricType, StatisticType, MatType>::SingleTreeTraverser<RuleType>::
   // Nothing to do.
 }
 
-template<typename MetricType, typename StatisticType, typename MatType>
+template<typename DistanceType, typename StatisticType, typename MatType>
 template<typename RuleType>
-void Octree<MetricType, StatisticType, MatType>::SingleTreeTraverser<RuleType>::
+void
+Octree<DistanceType, StatisticType, MatType>::SingleTreeTraverser<RuleType>::
     Traverse(const size_t queryIndex, Octree& referenceNode)
 {
   // If we are a leaf, run the base cases.

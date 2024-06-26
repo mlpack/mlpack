@@ -82,7 +82,7 @@ class SVDCompleteIncrementalLearning
    * @param H Encoding matrix.
    */
   template<typename WHMatType>
-  inline void WUpdate(const MatType& V,
+  inline void WUpdate(const MatType& /* V */,
                       WHMatType& W,
                       const WHMatType& H)
   {

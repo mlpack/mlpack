@@ -13,6 +13,7 @@
  */
 #ifndef MLPACK_CORE_METRICS_IOU_HPP
 #define MLPACK_CORE_METRICS_IOU_HPP
+
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
@@ -29,21 +30,15 @@ namespace mlpack {
  * Where x0 and y0 are bottom left bounding box coordinates and h, w are
  * height and width of the bounding box.
  *
- * @tparam useCoordinates Toggles between the two representation of bounding box.
- *                        If true, each value in vector represents a coordinate 
- *                        in the formate x0, y0, x1, y1. Else the bounding box is
- *                        represented as x0, y0, h, w.
+ * @tparam useCoordinates Toggles between the two representation of bounding
+ *     box.  If true, each value in vector represents a coordinate in the
+ *     format x0, y0, x1, y1. Else the bounding box is represented as x0, y0,
+ *     h, w.
  */
 template<bool UseCoordinates = false>
 class IoU
 {
  public:
-  //! Default constructor required to satisfy the Metric policy.
-  IoU()
-  {
-    // Nothing to do here.
-  }
-
   /**
    * Computes the Intersection over Union metric between of two
    * bounding boxes having pattern bx, by, h, w.

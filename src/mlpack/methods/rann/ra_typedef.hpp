@@ -16,7 +16,7 @@
 // In case someone included this directly.
 #include "ra_search.hpp"
 
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 
 #include <mlpack/methods/neighbor_search/sort_policies/nearest_neighbor_sort.hpp>
 #include <mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp>

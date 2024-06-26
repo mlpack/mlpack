@@ -1,5 +1,5 @@
 /*
- * @file core/dists/laplace_distribution.hpp
+ * @file core/distributions/laplace_distribution.hpp
  * @author Zhihao Lou
  * @author Rohan Raj
  *
@@ -10,7 +10,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #ifndef MLPACK_CORE_DISTRIBUTIONS_LAPLACE_DISTRIBUTION_HPP
 #define MLPACK_CORE_DISTRIBUTIONS_LAPLACE_DISTRIBUTION_HPP
 

@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 #include <mlpack/core/math/make_alias.hpp>
 #include <mlpack/core/math/shuffle_data.hpp>
 
@@ -40,7 +40,7 @@ namespace mlpack {
  * operate on one point in the dataset.  This is useful for optimizers like
  * stochastic gradient descent (see mlpack::optimization::SGD).
  */
-template<typename MetricType = SquaredEuclideanDistance>
+template<typename DistanceType = SquaredEuclideanDistance>
 class SoftmaxErrorFunction
 {
  public:
@@ -56,7 +56,7 @@ class SoftmaxErrorFunction
    */
   SoftmaxErrorFunction(const arma::mat& dataset,
                        const arma::Row<size_t>& labels,
-                       MetricType metric = MetricType());
+                       DistanceType metric = DistanceType());
 
   /**
    * Shuffle the dataset.
@@ -138,7 +138,7 @@ class SoftmaxErrorFunction
   arma::Row<size_t> labels;
 
   //! The instantiated metric.
-  MetricType metric;
+  DistanceType distance;
 
   //! Last coordinates.  Used for the non-separable Evaluate() and Gradient().
   arma::mat lastCoordinates;

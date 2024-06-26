@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_LMNN_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 
 #include "constraints.hpp"
 
@@ -32,16 +32,16 @@ namespace mlpack {
  * where x_n represents a point and A is the current scaling matrix.
  *
  * This class is more flexible than the original paper, allowing an arbitrary
- * metric function to be used in place of || A x_i - A x_j ||^2, meaning that
- * the squared Euclidean distance is not the only allowed metric for LMNN.
- * However, that is probably the best way to use this class.
+ * distance metric function to be used in place of || A x_i - A x_j ||^2,
+ * meaning that the squared Euclidean distance is not the only allowed metric
+ * for LMNN.  However, that is probably the best way to use this class.
  *
  * In addition to the standard Evaluate() and Gradient() functions which mlpack
  * optimizers use, overloads of Evaluate() and Gradient() are given which only
  * operate on one point in the dataset.  This is useful for optimizers like
  * stochastic gradient descent (see ens::SGD).
  */
-template<typename MetricType = SquaredEuclideanDistance>
+template<typename DistanceType = SquaredEuclideanDistance>
 class LMNNFunction
 {
  public:
@@ -53,14 +53,14 @@ class LMNNFunction
    * @param k Number of target neighbors to be used.
    * @param regularization Regularization value.
    * @param range Range after which impostors need to be recalculated.
-   * @param metric Type of metric used for computation.
+   * @param distance Type of distance metric used for computation.
    */
   LMNNFunction(const arma::mat& dataset,
                const arma::Row<size_t>& labels,
                size_t k,
                double regularization,
                size_t range,
-               MetricType metric = MetricType());
+               DistanceType distance = DistanceType());
 
 
   /**
@@ -202,11 +202,11 @@ class LMNNFunction
   //! Initial impostors.
   arma::Mat<size_t> impostors;
   //! Cache distance. Used to avoid repetive calculation.
-  arma::mat distance;
+  arma::mat distanceMat;
   //! Number of target neighbors.
   size_t k;
-  //! The instantiated metric.
-  MetricType metric;
+  //! The instantiated distance metric.
+  DistanceType distance;
   //! Regularization value.
   double regularization;
   //! Keep iterations count.
@@ -214,7 +214,7 @@ class LMNNFunction
   //! Range after which impostors need to be recalculated.
   size_t range;
   //! Constraints Object.
-  Constraints<MetricType> constraint;
+  Constraints<DistanceType> constraint;
   //! Holds pre-calculated cij.
   arma::mat pCij;
   //! Holds the norm of each data point.

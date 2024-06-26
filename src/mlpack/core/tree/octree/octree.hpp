@@ -18,7 +18,7 @@
 
 namespace mlpack {
 
-template<typename MetricType = EuclideanDistance,
+template<typename DistanceType = EuclideanDistance,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat>
 class Octree
@@ -49,7 +49,7 @@ class Octree
   size_t count;
   //! The minimum bounding rectangle of the points held in the node (and its
   //! children).
-  HRectBound<MetricType> bound;
+  HRectBound<DistanceType> bound;
   //! The dataset.
   MatType* dataset;
   //! The parent (NULL if this node is the root).
@@ -60,8 +60,8 @@ class Octree
   ElemType parentDistance;
   //! The distance to the furthest descendant, cached to speed things up.
   ElemType furthestDescendantDistance;
-  //! An instantiated metric.
-  MetricType metric;
+  //! An instantiated distance metric.
+  DistanceType distance;
 
  public:
   /**
@@ -257,9 +257,9 @@ class Octree
   Octree*& Parent() { return parent; }
 
   //! Return the bound object for this node.
-  const HRectBound<MetricType>& Bound() const { return bound; }
+  const HRectBound<DistanceType>& Bound() const { return bound; }
   //! Modify the bound object for this node.
-  HRectBound<MetricType>& Bound() { return bound; }
+  HRectBound<DistanceType>& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
@@ -269,8 +269,12 @@ class Octree
   //! Return the number of children in this node.
   size_t NumChildren() const;
 
-  //! Return the metric that this tree uses.
-  MetricType Metric() const { return MetricType(); }
+  //! Return the distance metric that this tree uses.
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  DistanceType Metric() const { return distance; }
+
+  //! Return the distance metric that this tree uses.
+  DistanceType Distance() const { return distance; }
 
   /**
    * Return the index of the nearest child node to the given query point.  If

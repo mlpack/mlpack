@@ -18,13 +18,13 @@
 
 namespace mlpack {
 
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
 SpillTree(
     const MatType& data,
     const double tau,
@@ -55,13 +55,13 @@ SpillTree(
   stat = StatisticType(*this);
 }
 
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
 SpillTree(
     MatType&& data,
     const double tau,
@@ -92,13 +92,13 @@ SpillTree(
   stat = StatisticType(*this);
 }
 
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
 SpillTree(
     SpillTree* parent,
     arma::Col<size_t>& points,
@@ -127,13 +127,13 @@ SpillTree(
  * Create a hybrid spill tree by copying the other tree.  Be careful!  This can
  * take a long time and use a lot of memory.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
 SpillTree(const SpillTree& other) :
     left(NULL),
     right(NULL),
@@ -194,14 +194,14 @@ SpillTree(const SpillTree& other) :
 /**
  * Copy assignment operator: copy the given other tree.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>&
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
 operator=(const SpillTree& other)
 {
   if (this == &other)
@@ -276,13 +276,13 @@ operator=(const SpillTree& other)
 /**
  * Move constructor.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
 SpillTree(SpillTree&& other) :
     left(other.left),
     right(other.right),
@@ -321,14 +321,14 @@ SpillTree(SpillTree&& other) :
 /**
  * Move assignment operator: take ownership of the given tree.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>&
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
 operator=(SpillTree&& other)
 {
   if (this == &other)
@@ -381,14 +381,14 @@ operator=(SpillTree&& other)
 /**
  * Initialize the tree from an archive.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
 template<typename Archive>
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
 SpillTree(
     Archive& ar,
     const typename std::enable_if_t<cereal::is_loading<Archive>()>*) :
@@ -404,13 +404,13 @@ SpillTree(
  * destructors in turn.  This will invalidate any pointers or references to any
  * nodes which are children of this one.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
     ~SpillTree()
 {
   delete left;
@@ -422,13 +422,13 @@ SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     delete dataset;
 }
 
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-inline bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+inline bool SpillTree<DistanceType, StatisticType, MatType, HyperplaneType,
     SplitType>::IsLeaf() const
 {
   return !left;
@@ -437,13 +437,13 @@ inline bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
 /**
  * Returns the number of children in this node.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+inline size_t SpillTree<DistanceType, StatisticType, MatType, HyperplaneType,
     SplitType>::NumChildren() const
 {
   if (left && right)
@@ -460,14 +460,14 @@ inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
  * returned is not necessarily the nearest).  If this is a leaf node, it will
  * return NumChildren() (invalid index).
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
 template<typename VecType>
-size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+size_t SpillTree<DistanceType, StatisticType, MatType, HyperplaneType,
     SplitType>::GetNearestChild(
     const VecType& point,
     typename std::enable_if_t<IsVector<VecType>::value>*)
@@ -486,14 +486,14 @@ size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
  * returned is not necessarily the furthest).  If this is a leaf node, it will
  * return NumChildren() (invalid index).
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
 template<typename VecType>
-size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+size_t SpillTree<DistanceType, StatisticType, MatType, HyperplaneType,
     SplitType>::GetFurthestChild(
     const VecType& point,
     typename std::enable_if_t<IsVector<VecType>::value>*)
@@ -512,13 +512,13 @@ size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
  * returned is not necessarily the nearest).  If it can't decide it will
  * return NumChildren() (invalid index).
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+size_t SpillTree<DistanceType, StatisticType, MatType, HyperplaneType,
     SplitType>::GetNearestChild(const SpillTree& queryNode)
 {
   if (IsLeaf() || !left || !right)
@@ -538,13 +538,13 @@ size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
  * returned is not necessarily the furthest).  If this is a leaf node, it will
  * return NumChildren() (invalid index).
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+size_t SpillTree<DistanceType, StatisticType, MatType, HyperplaneType,
     SplitType>::GetFurthestChild(const SpillTree& queryNode)
 {
   if (IsLeaf() || !left || !right)
@@ -562,15 +562,15 @@ size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
  * Return a bound on the furthest point in the node from the center.  This
  * returns 0 unless the node is a leaf.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-inline typename SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+inline typename SpillTree<DistanceType, StatisticType, MatType, HyperplaneType,
     SplitType>::ElemType
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
     FurthestPointDistance() const
 {
   if (!IsLeaf())
@@ -587,30 +587,30 @@ SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
  * furthest descendant distance may be less than what this method returns (but
  * it will never be greater than this).
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-inline typename SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+inline typename SpillTree<DistanceType, StatisticType, MatType, HyperplaneType,
     SplitType>::ElemType
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
     FurthestDescendantDistance() const
 {
   return furthestDescendantDistance;
 }
 
 //! Return the minimum distance from the center to any bound edge.
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-inline typename SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+inline typename SpillTree<DistanceType, StatisticType, MatType, HyperplaneType,
     SplitType>::ElemType
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
     MinimumBoundDistance() const
 {
   return bound.MinWidth() / 2.0;
@@ -619,14 +619,14 @@ SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 /**
  * Return the specified child.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-inline SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+inline SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>&
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
     Child(const size_t child) const
 {
   if (child == 0)
@@ -638,13 +638,13 @@ SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 /**
  * Return the number of points contained in this node.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+inline size_t SpillTree<DistanceType, StatisticType, MatType, HyperplaneType,
     SplitType>::NumPoints() const
 {
   if (IsLeaf())
@@ -655,13 +655,13 @@ inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
 /**
  * Return the number of descendants contained in the node.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+inline size_t SpillTree<DistanceType, StatisticType, MatType, HyperplaneType,
     SplitType>::NumDescendants() const
 {
   return count;
@@ -670,13 +670,13 @@ inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
 /**
  * Return the index of a particular descendant contained in this node.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+inline size_t SpillTree<DistanceType, StatisticType, MatType, HyperplaneType,
     SplitType>::Descendant(const size_t index) const
 {
   if (IsLeaf() || overlappingNode)
@@ -694,13 +694,13 @@ inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
 /**
  * Return the index of a particular point contained in this node.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+inline size_t SpillTree<DistanceType, StatisticType, MatType, HyperplaneType,
     SplitType>::Point(const size_t index) const
 {
   if (IsLeaf())
@@ -709,13 +709,13 @@ inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
   return (size_t() - 1);
 }
 
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+void SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
     SplitNode(arma::Col<size_t>& points,
               const size_t maxLeafSize,
               const double tau,
@@ -736,7 +736,7 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     return; // We can't split this.
   }
 
-  const bool split = SplitType<MetricType, MatType>::SplitSpace(bound,
+  const bool split = SplitType<DistanceType, MatType>::SplitSpace(bound,
       *dataset, points, hyperplane);
   // The node may not be always split. For instance, if all the points are the
   // same, we can't split them.
@@ -775,21 +775,21 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   left->Center(leftCenter);
   right->Center(rightCenter);
 
-  const ElemType leftParentDistance = MetricType::Evaluate(center, leftCenter);
-  const ElemType rightParentDistance = MetricType::Evaluate(center,
+  const ElemType leftParentDistance = DistanceType::Evaluate(center, leftCenter);
+  const ElemType rightParentDistance = DistanceType::Evaluate(center,
       rightCenter);
 
   left->ParentDistance() = leftParentDistance;
   right->ParentDistance() = rightParentDistance;
 }
 
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+bool SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
     SplitPoints(const double tau,
                 const double rho,
                 const arma::Col<size_t>& points,
@@ -869,13 +869,13 @@ bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 }
 
 // Default constructor (private), for cereal.
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
     SpillTree() :
     left(NULL),
     right(NULL),
@@ -895,14 +895,14 @@ SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 /**
  * Serialize the tree.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
 template<typename Archive>
-void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+void SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
     serialize(Archive& ar, const uint32_t /* version */)
 {
   // If we're loading, and we have children, they need to be deleted.
