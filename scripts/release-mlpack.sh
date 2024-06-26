@@ -137,11 +137,11 @@ sed --in-place 's/([0-9]\.[0-9]\.[0-9])/('$MAJOR'.'$MINOR'.'$PATCH')/g' \
 sed --in-place 's/mlpack [0-9]\.[0-9]\.[0-9]/mlpack '$MAJOR'.'$MINOR'.'$PATCH'/g' \
     README.md;
 
-sed --in-place 's/### mlpack ?[.]?[.]?/### mlpack '$MAJOR'.'$MINOR'.'$PATCH'/g' HISTORY.md;
+sed --in-place 's/## mlpack ?[.]?[.]?/## mlpack '$MAJOR'.'$MINOR'.'$PATCH'/g' HISTORY.md;
 year=`date +%Y`;
 month=`date +%m`;
 day=`date +%d`;
-sed --in-place 's/###### ????-??-??/###### '$year'-'$month'-'$day'/g' \
+sed --in-place 's/_????-??-??_/_'$year'-'$month'-'$day'_/g' \
     HISTORY.md;
 
 # Get the latest release of ensmallen.
@@ -167,8 +167,9 @@ git add src/mlpack/core/util/version.hpp \
 git commit -m "Update and release version $MAJOR.$MINOR.$PATCH.";
 
 changelog_str=`cat HISTORY.md |\
-    awk '/^### /{f=0} /^### mlpack '"$MAJOR"'.'"$MINOR"'.'"$PATCH"'/{f=1} f{print}' |\
+    awk '/^## /{f=0} /^## mlpack '"$MAJOR"'.'"$MINOR"'.'"$PATCH"'/{f=1} f{print}' |\
     grep -v '^#' |\
+    grep -v '^_' |\
     tr '\n' '!' |\
     sed -e 's/!  [ ]*/ /g' |\
     tr '!' '\n'`;
@@ -180,10 +181,13 @@ sed --in-place 's/MLPACK_VERSION_PATCH [0-9]*$/MLPACK_VERSION_PATCH '$(($PATCH +
     src/mlpack/core/util/version.hpp;
 sed --in-place 's/ensmallen-'$ens_ver'.tar.gz/ensmallen-latest.tar.gz/' CMakeLists.txt;
 
-echo "### mlpack ?.?.?" > HISTORY.md.new;
-echo "###### ????-??-??" >> HISTORY.md.new;
+echo "# mlpack changelog" > HISTORY.md.new;
 echo "" >> HISTORY.md.new;
-cat HISTORY.md >> HISTORY.md.new;
+echo "## mlpack ?.?.?" >> HISTORY.md.new;
+echo "" >> HISTORY.md.new;
+echo "_????-??-??_" >> HISTORY.md.new;
+echo "" >> HISTORY.md.new;
+cat HISTORY.md | grep -v '^# mlpack changelog' >> HISTORY.md.new;
 mv HISTORY.md.new HISTORY.md;
 
 git add HISTORY.md;
@@ -199,11 +203,8 @@ hub pull-request \
     -b mlpack:master \
     -h $github_user:release-$MAJOR.$MINOR.$PATCH \
     -m "Release version $MAJOR.$MINOR.$PATCH" \
-    -m "This automatically-generated pull request adds the commits necessary to
-make the $MAJOR.$MINOR.$PATCH release." \
-    -m "Once the PR is merged, mlpack-bot will tag the release as HEAD~1 (so
-that it doesn't include the new HISTORY block) and publish it." \
-    -m "Or, well, hopefully that will happen someday." \
+    -m "This automatically-generated pull request adds the commits necessary to make the $MAJOR.$MINOR.$PATCH release." \
+    -m "Once the PR is merged, mlpack-bot will tag the release as HEAD~1 (so that it doesn't include the new HISTORY block) and publish it." \
     -m "When you merge this PR, be sure to merge it using a *rebase*." \
     -m "### Changelog" \
     -m "$changelog_str" \
@@ -213,4 +214,5 @@ echo "";
 echo "Switching back to 'master' branch.";
 echo "If you want to access the release branch again, use \`git checkout " \
     "release-$MAJOR.$MINOR.$PATCH\`.";
+git checkout master;
 echo 0;
