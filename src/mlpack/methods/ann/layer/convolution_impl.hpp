@@ -357,6 +357,7 @@ void ConvolutionType<
   }
 }
 
+
 template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
@@ -382,38 +383,41 @@ void ConvolutionType<
       inMaps * higherInDimensions * batchSize);
   gTemp.zeros();
 
-  const bool usingPadding = 
-    (padWLeft != 0 || padWRight != 0 || 
-     padHTop != 0 || padHBottom != 0);
+  const bool usingPadding =
+      (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0);
 
-  CubeType dilatedMappedError(
-    mappedError.n_rows * (strideWidth == 1 ? 1 : strideWidth - 1),
-    mappedError.n_cols * (strideHeight == 1 ? 1 : strideHeight - 1),
-    mappedError.n_slices
-  );
-  #pragma omp parallel for collapse(3)
-  for (size_t i = 0; i < mappedError.n_slices; ++i)
+  // To perform the backward pass, we need to rotate all the filters.
+  CubeType rotatedFilters(weight.n_rows,
+      weight.n_cols, weight.n_slices);
+
+  // To perform the backward pass, we need to dilate all the mappedError.
+  CubeType dilatedMappedError;
+  if (strideHeight == 1 && strideWidth == 1)
   {
-    for (size_t j = 0; j < mappedError.n_cols; ++j)
+    MakeAlias(dilatedMappedError, mappedError, mappedError.n_rows,
+        mappedError.n_cols, mappedError.n_slices);
+  }
+  else
+  {
+    dilatedMappedError.zeros(mappedError.n_rows * strideWidth -
+        (strideWidth - 1), mappedError.n_cols * strideHeight -
+        (strideHeight - 1), mappedError.n_slices);
+    #pragma omp parallel for collapse(3) schedule(static)
+    for (size_t i = 0; i < mappedError.n_slices; ++i)
     {
-      for (size_t k = 0; k < mappedError.n_rows; ++k)
+      for (size_t j = 0; j < mappedError.n_cols; ++j)
       {
-        if (strideHeight > 1 || strideWidth > 1)
+        for (size_t k = 0; k < mappedError.n_rows; ++k)
         {
           dilatedMappedError(k * strideWidth, j * strideHeight, i)
               = mappedError(k, j, i);
-        }
-        else
-        {
-          dilatedMappedError(k, j, i) = mappedError(k, j, i);
         }
       }
     }
   }
 
-  CubeType rotatedFilters(weight.n_rows, weight.n_cols, weight.n_slices);
-  #pragma omp parallel for
-  for (size_t map = 0; map < weight.n_slices; ++map)
+  #pragma omp parallel for schedule(static)
+  for (size_t map = 0; map < (size_t) (maps * inMaps); ++map)
   {
     Rotate180(weight.slice(map), rotatedFilters.slice(map));
   }
@@ -424,32 +428,40 @@ void ConvolutionType<
   MakeAlias(outputCube, output, apparentWidth, apparentHeight,
       inMaps * higherInDimensions * batchSize);
 
-  #pragma omp parallel for collapse(2)
+  // See Forward() for the overall iteration strategy.
+  #pragma omp parallel for schedule(dynamic)
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
-      for (size_t inMap = 0; inMap < (size_t) inMaps; ++inMap)
+    const size_t fullInputOffset = offset * inMaps;
+    const size_t fullOutputOffset = offset * maps;
+
+    // Iterate over input maps.
+    for (size_t inMap = 0; inMap < (size_t) inMaps; ++inMap)
+    {
+      // Iterate over output maps.
+      MatType& curG = outputCube.slice(inMap + fullInputOffset);
+      for (size_t outMap = 0; outMap < maps; ++outMap)
       {
-          MatType& curG = outputCube.slice(inMap + offset * inMaps);
-          for (size_t outMap = 0; outMap < maps; ++outMap)
-          {
-              BackwardConvolutionRule::Convolution(
-                  dilatedMappedError.slice(outMap + offset * maps),
-                  rotatedFilters.slice((outMap * inMaps) + inMap),
-                  curG,
-                  strideWidth, 
-                  strideHeight, 
-                  1, 
-                  1, 
-                  true); 
-          }
+        BackwardConvolutionRule::Convolution(
+            dilatedMappedError.slice(outMap + fullOutputOffset),
+            rotatedFilters.slice((outMap * inMaps) + inMap),
+            curG,
+            1,
+            1,
+            1,
+            1,
+            true);
       }
+    }
   }
+
   MatType temp(padding.OutputDimensions()[0] * padding.OutputDimensions()[1] *
       inMaps * higherInDimensions, batchSize);
   CubeType tempCube;
   MakeAlias(tempCube, temp, padding.OutputDimensions()[0],
       padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
   paddingBackward.Forward(output, temp);
+
   if (usingPadding)
   {
     gTemp = tempCube.tube(
@@ -463,6 +475,8 @@ void ConvolutionType<
     gTemp = tempCube;
   }
 }
+
+
 template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
@@ -523,8 +537,8 @@ void ConvolutionType<
             tempCube.slice(inMap + fullInputOffset),
             curError,
             gradientTemp.slice((outMap * inMaps) + inMap),
-            strideWidth,
-            strideHeight,
+            1,
+            1,
             strideWidth,
             strideHeight,
             true);
