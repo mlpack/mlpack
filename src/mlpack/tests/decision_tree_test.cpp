@@ -11,6 +11,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/decision_tree.hpp>
+#include <mlpack/methods/xgboost/feature_importance.hpp>
 
 #include "catch.hpp"
 #include "serialization.hpp"
@@ -1392,4 +1393,29 @@ TEST_CASE("DifferentMaximumDepthTest", "[DecisionTreeTest]")
   REQUIRE(d2.NumChildren() == 2);
   REQUIRE(d2.Child(0).NumChildren() == 2);
   REQUIRE(d2.Child(1).NumChildren() == 2);
+}
+
+/**
+ * Test if the feature importance function works.
+ */
+TEST_CASE("FeatureImportanceTest", "[DecisionTreeTest]")
+{
+  arma::mat dataset;
+  arma::Row<size_t> labels;
+  data::DatasetInfo di;
+  MockCategoricalData(dataset, labels, di);
+
+  arma::Row<double> weights = arma::ones<arma::Row<double>>(labels.n_elem);
+
+  size_t numFeatures = dataset.n_cols;
+
+  FeatureImportance* fi = new FeatureImportance();
+
+  DecisionTree<> d(5);
+  d.Train(dataset, di, labels, 5, 10, fi);
+  
+  fi->RankByFrequency();
+
+  REQUIRE((fi->rankByFrequency).size() == numFeatures);
+
 }
