@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_XGBOOST_LOSS_FUNCTIONS_SSE_LOSS_HPP
-#define MLPACK_METHODS_XGBOOST_LOSS_FUNCTIONS_SSE_LOSS_HPP
+#ifndef MLPACK_METHODS_DECISION_TREE_SSE_GAIN_HPP
+#define MLPACK_METHODS_DECISION_TREE_SSE_GAIN_HPP
 
 #include <mlpack/prereqs.hpp>
 
