@@ -19,31 +19,26 @@ namespace mlpack {
 
 template<typename MatType>
 NearestInterpolationType<MatType>::NearestInterpolationType():
-  Layer<MatType>(),
-  inRowSize(0),
-  inColSize(0),
-  outRowSize(0),
-  outColSize(0),
-  depth(0),
-  batchSize(0)
+  Layer<MatType>()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
 NearestInterpolationType<MatType>::
-NearestInterpolationType(const size_t inRowSize,
-                         const size_t inColSize,
-                         const size_t outRowSize,
-                         const size_t outColSize,
-                         const size_t depth) :
+NearestInterpolationType(const double scaleFactor) :
+  Layer<MatType>()
+{
+  scaleFactors = std::vector<double>(2);
+  scaleFactors[0] = scaleFactor;
+  scaleFactors[1] = scaleFactor;
+}
+
+template<typename MatType>
+NearestInterpolationType<MatType>::
+NearestInterpolationType(const std::vector<double> scaleFactors) :
   Layer<MatType>(),
-  inRowSize(inRowSize),
-  inColSize(inColSize),
-  outRowSize(outRowSize),
-  outColSize(outColSize),
-  depth(depth),
-  batchSize(0)
+  scaleFactors(scaleFactors)
 {
   // Nothing to do here.
 }
@@ -52,12 +47,7 @@ template<typename MatType>
 NearestInterpolationType<MatType>::
 NearestInterpolationType(const NearestInterpolationType& other) :
   Layer<MatType>(),
-  inRowSize(other.inRowSize),
-  inColSize(other.inColSize),
-  outRowSize(other.outRowSize),
-  outColSize(other.outColSize),
-  depth(other.depth),
-  batchSize(other.batchSize)
+  scaleFactors(other.scaleFactors)
 {
   // Nothing to do here. 
 }
@@ -66,12 +56,7 @@ template<typename MatType>
 NearestInterpolationType<MatType>::
 NearestInterpolationType(NearestInterpolationType&& other) :
   Layer<MatType>(std::move(other)),
-  inRowSize(std::move(other.inRowSize)),
-  inColSize(std::move(other.inColSize)),
-  outRowSize(std::move(other.outRowSize)),
-  outColSize(std::move(other.outColSize)),
-  depth(std::move(other.depth)),
-  batchSize(std::move(other.batchSize))
+  scaleFactors(std::move(other.scaleFactors))
 {
   // Nothing to do here.
 }
@@ -84,12 +69,7 @@ operator=(const NearestInterpolationType& other)
   if (&other != this)
   {
     Layer<MatType>::operator=(other);
-    inRowSize = other.inRowSize;
-    inColSize = other.inColSize;
-    outRowSize = other.outRowSize;
-    outColSize = other.outColSize;
-    depth = other.depth;
-    batchSize = other.batchSize;
+    scaleFactors = other.scaleFactors;
   }
   return *this;
 }
@@ -102,12 +82,7 @@ operator=(NearestInterpolationType&& other)
   if (&other != this)
   {
     Layer<MatType>::operator=(std::move(other));
-    inRowSize = std::move(other.inRowSize);
-    inColSize = std::move(other.inColSize);
-    outRowSize = std::move(other.outRowSize);
-    outColSize = std::move(other.outColSize);
-    depth = std::move(other.depth);
-    batchSize = std::move(other.batchSize);
+    scaleFactors = std::move(other.scaleFactors);
   }
   return *this;
 }
@@ -116,39 +91,33 @@ template<typename MatType>
 void NearestInterpolationType<MatType>::Forward(
   const MatType& input, MatType& output)
 {
-  batchSize = input.n_cols;
-  if (output.is_empty())
-    output.set_size(outRowSize * outColSize * depth, batchSize);
-  else
-  {
-    assert(output.n_rows == outRowSize * outColSize * depth);
-    assert(output.n_cols == batchSize);
-  }
+  size_t channels = this->inputDimensions[0];
 
-  assert(inRowSize >= 2);
-  assert(inColSize >= 2);
+  size_t outRowSize = this->outputDimensions[1];
+  size_t outColSize = this->outputDimensions[2];
+
+  size_t inRowSize = this->inputDimensions[1];
+  size_t inColSize = this->inputDimensions[2];
+
+  assert(output.n_rows == channels);
+  assert(output.n_cols == outRowSize * outColSize);
 
   arma::cube inputAsCube;
   arma::cube outputAsCube;
 
-  MakeAlias(inputAsCube, input, inRowSize, inColSize, depth * batchSize, 0, false);
-  MakeAlias(outputAsCube, output, outRowSize, outColSize, depth * batchSize, 0, true);
+  MakeAlias(inputAsCube, input, channels, inRowSize, inColSize, 0, false);
+  MakeAlias(outputAsCube, output, channels, outRowSize, outColSize, 0, true);
 
-  double scaleRow = (double) inRowSize / (double) outRowSize;
-  double scaleCol = (double) inColSize / (double) outColSize;
-
-  for (size_t i = 0; i < outRowSize; ++i)
+  for (size_t i = 0; i < channels; ++i)
   {
-    const size_t rOrigin = std::floor(i * scaleRow);
-
-    for (size_t j = 0; j < outColSize; ++j)
+    for (size_t j = 0; j < outRowSize; ++j)
     {
-      const size_t cOrigin = std::floor(j * scaleCol);
-
-      for (size_t k = 0; k < depth * batchSize; ++k)
+      size_t rOrigin = std::floor(j * 1.0f / scaleFactors[0]);
+      for (size_t k = 0; k < outColSize; ++k)
       {
-        outputAsCube(i, j, k) = inputAsCube.slice(k)(
-            rOrigin, cOrigin);
+        size_t cOrigin = std::floor(k * 1.0f / scaleFactors[1]);
+
+        outputAsCube(i, j, k) = inputAsCube(i, rOrigin, cOrigin);
       }
     }
   }
@@ -160,47 +129,32 @@ void NearestInterpolationType<MatType>::Backward(
   const MatType& gradient,
   MatType& output)
 {
-  if (output.is_empty())
-  {
-    output.zeros(inRowSize * inColSize * depth, batchSize);
-  }
-  else
-  {
-    assert(output.n_rows == inRowSize * inColSize * depth);
-    assert(output.n_cols == batchSize);
-  }
+  size_t channels = this->inputDimensions[0];
 
-  assert(outRowSize >= 2);
-  assert(outColSize >= 2);
+  size_t outRowSize = this->outputDimensions[1];
+  size_t outColSize = this->outputDimensions[2];
+
+  size_t inRowSize = this->inputDimensions[1];
+  size_t inColSize = this->inputDimensions[2];
+
+  assert(output.n_rows == channels);
+  assert(output.n_cols == inRowSize * inColSize);
 
   arma::cube outputAsCube;
   arma::cube gradientAsCube;
 
-  MakeAlias(outputAsCube, output, inRowSize, inColSize, depth * batchSize, 0, true);
-  MakeAlias(gradientAsCube, gradient, outRowSize, outColSize, depth * batchSize, 0, false);
+  MakeAlias(outputAsCube, output, channels, inRowSize, inColSize, 0, true);
+  MakeAlias(gradientAsCube, gradient, channels, outRowSize, outColSize, 0, false);
 
-  double scaleRow = (double)(inRowSize) / outRowSize;
-  double scaleCol = (double)(inColSize) / outColSize;
-
-  if (gradient.n_elem == output.n_elem)
+  for (size_t i = 0; i < channels; ++i)
   {
-    outputAsCube = gradientAsCube;
-  }
-  else
-  {
-    for (size_t i = 0; i < outRowSize; ++i)
+    for (size_t j = 0; j < outRowSize; ++j)
     {
-      const size_t rOrigin = std::floor(i * scaleRow);
-
-      for (size_t j = 0; j < outColSize; ++j)
+      size_t rOrigin = std::floor(j * 1.0f / scaleFactors[0]);
+      for (size_t k = 0; k < outColSize; ++k)
       {
-        const size_t cOrigin = std::floor(j * scaleCol);
-
-        for (size_t k = 0; k < depth * batchSize; ++k)
-        {
-          outputAsCube(rOrigin, cOrigin, k) +=
-              gradientAsCube(i, j, k);
-        }
+        size_t cOrigin = std::floor(k * 1.0f / scaleFactors[1]);
+        outputAsCube(i, rOrigin, cOrigin) += gradientAsCube(i, j, k);
       }
     }
   }
@@ -209,8 +163,12 @@ void NearestInterpolationType<MatType>::Backward(
 template<typename MatType>
 void NearestInterpolationType<MatType>::ComputeOutputDimensions()
 {
-  this->outputDimensions[0] = outRowSize * outColSize * depth;
-  this->outputDimensions[1] = batchSize;
+  assert(this->inputDimensions.size() - 1 == scaleFactors.size());
+  this->outputDimensions = this->inputDimensions;
+  for (size_t i = 1; i < this->InputDimensions().size(); i++)
+  {
+    this->outputDimensions[i] = std::round((double)this->outputDimensions[i] * scaleFactors[i-1]);
+  }
 }
 
 template<typename MatType>
@@ -218,11 +176,7 @@ template<typename Archive>
 void NearestInterpolationType<MatType>::serialize(
   Archive& ar, const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(inRowSize));
-  ar(CEREAL_NVP(inColSize));
-  ar(CEREAL_NVP(outRowSize));
-  ar(CEREAL_NVP(outColSize));
-  ar(CEREAL_NVP(depth));
+  ar(CEREAL_NVP(scaleFactors));
 }
 
 } // namespace mlpack

@@ -33,12 +33,9 @@ class NearestInterpolationType : public Layer<MatType>
  public:
   //! Create the NearestInterpolation object.
   NearestInterpolationType();
+  NearestInterpolationType(const double scaleFactor);
+  NearestInterpolationType(const std::vector<double> scaleFactors);
 
-  NearestInterpolationType(const size_t inRowSize,
-                           const size_t inColSize,
-                           const size_t outRowSize,
-                           const size_t outColSize,
-                           const size_t depth);
   NearestInterpolationType* Clone() const {
     return new NearestInterpolationType(*this);
   }
@@ -78,27 +75,10 @@ class NearestInterpolationType : public Layer<MatType>
                 const MatType& gradient,
                 MatType& output);
 
+  //! Compute the output dimensions of the layer, based on the internal values
+  //! of `InputDimensions()`.
   void ComputeOutputDimensions();
-  //! Get the row size of the input.
-  size_t const& InRowSize() const { return inRowSize; }
-  //! Modify the row size of the input.
-  size_t& InRowSize() { return inRowSize; }
-  //! Get the column size of the input.
-  size_t const& InColSize() const { return inColSize; }
-  //! Modify the column size of the input.
-  size_t& InColSize() { return inColSize; }
-  //! Get the row size of the output.
-  size_t const& OutRowSize() const { return outRowSize; }
-  //! Modify the row size of the output.
-  size_t& OutRowSize() { return outRowSize; }
-  //! Get the column size of the output.
-  size_t const& OutColSize() const { return outColSize; }
-  //! Modify the column size of the output.
-  size_t& OutColSize() { return outColSize; }
-  //! Get the depth of the input.
-  size_t const& InDepth() const { return depth; }
-  //! Modify the depth of the input.
-  size_t& InDepth() { return depth; }
+
   /**
    * Serialize the layer.
    */
@@ -106,18 +86,9 @@ class NearestInterpolationType : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally stored row size of the input.
-  size_t inRowSize;
-  //! Locally stored column size of the input.
-  size_t inColSize;
-  //! Locally stored row size of the output.
-  size_t outRowSize;
-  //! Locally stored column size of the input.
-  size_t outColSize;
-  //! Locally stored depth of the input.
-  size_t depth;
-  //! Locally stored number of input points.
-  size_t batchSize;
+  //! Vector of scale factors to scale different dimensions.
+  //! If the data has multiple dimensions, but scaleFactors has 1 value, it will scale all axes based on this value.
+  std::vector<double> scaleFactors;
 }; // class NearestInterpolation
 
 typedef NearestInterpolationType<arma::mat> NearestInterpolation;
