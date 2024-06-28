@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_DECISION_TREE_MSE_GAIN_HPP
 
 #include <mlpack/prereqs.hpp>
-#include "mlpack/methods/decision_tree/utils.hpp"
+#include <mlpack/methods/decision_tree/utils.hpp>
 
 namespace mlpack {
 
