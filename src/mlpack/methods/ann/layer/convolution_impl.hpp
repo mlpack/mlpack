@@ -357,7 +357,6 @@ void ConvolutionType<
   }
 }
 
-
 template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
@@ -454,14 +453,12 @@ void ConvolutionType<
       }
     }
   }
-
   MatType temp(padding.OutputDimensions()[0] * padding.OutputDimensions()[1] *
       inMaps * higherInDimensions, batchSize);
   CubeType tempCube;
   MakeAlias(tempCube, temp, padding.OutputDimensions()[0],
       padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
   paddingBackward.Forward(output, temp);
-
   if (usingPadding)
   {
     gTemp = tempCube.tube(
@@ -475,7 +472,6 @@ void ConvolutionType<
     gTemp = tempCube;
   }
 }
-
 
 template<
     typename ForwardConvolutionRule,
