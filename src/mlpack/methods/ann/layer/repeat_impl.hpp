@@ -156,7 +156,7 @@ void RepeatType<MatType>::ComputeOutputDimensions()
   // element to the input elements.  This will be used in the backward
   // pass with a simple matrix multiplication.
   backIdxs.set_size(inputSize, sizeMult);
-  UintCol counts(inputSize, arma::fill::zeros);
+  UintCol counts(inputSize, GetFillType<UintCol>::zeros);
   for (size_t i = 0; i < outIdxs.n_elem; i++)
   {
     arma::uword r = outIdxs.at(i);

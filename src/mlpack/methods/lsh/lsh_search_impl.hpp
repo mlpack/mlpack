@@ -299,7 +299,8 @@ void LSHSearch<SortPolicy, MatType>::Train(MatType referenceSet,
 
   // Now, using the hash vectors for each table, count the number of rows we
   // have in the second hash table.
-  arma::Row<size_t> secondHashBinCounts(secondHashSize, arma::fill::zeros);
+  arma::Row<size_t> secondHashBinCounts(secondHashSize,
+      arma::fill::zeros);
   for (size_t i = 0; i < secondHashVectors.n_elem; ++i)
     secondHashBinCounts[secondHashVectors[i]]++;
 

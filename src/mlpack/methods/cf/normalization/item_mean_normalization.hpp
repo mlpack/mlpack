@@ -90,7 +90,8 @@ class ItemMeanNormalization
   {
     // Calculate itemMean.
     itemMean = arma::vec(cleanedData.n_rows, arma::fill::zeros);
-    arma::Col<size_t> ratingNum(cleanedData.n_rows, arma::fill::zeros);
+    arma::Col<size_t> ratingNum(cleanedData.n_rows,
+        arma::fill::zeros);
     arma::sp_mat::iterator it = cleanedData.begin();
     arma::sp_mat::iterator it_end = cleanedData.end();
     for (; it != it_end; ++it)

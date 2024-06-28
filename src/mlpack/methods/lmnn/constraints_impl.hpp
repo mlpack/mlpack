@@ -401,7 +401,8 @@ void Constraints<DistanceType>::Triplets(arma::Mat<size_t>& outputMatrix,
   arma::Mat<size_t> targetNeighbors(k, dataset.n_cols);;
   TargetNeighbors(targetNeighbors, dataset, labels, norms);
 
-  outputMatrix = arma::Mat<size_t>(3, k * k * N , arma::fill::zeros);
+  outputMatrix = arma::Mat<size_t>(3, k * k * N ,
+      arma::fill::zeros);
 
   for (size_t i = 0, r = 0; i < N; ++i)
   {
