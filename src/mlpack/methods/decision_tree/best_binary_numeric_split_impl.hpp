@@ -118,11 +118,10 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       --classCounts(sortedLabels[index - 1], 1);
       ++classCounts(sortedLabels[index - 1], 0);
     }
-
     // Make sure that the value has changed.
-    if (data[sortedIndices[index]] == data[sortedIndices[index - 1]])
+    if (data[sortedIndices[index - 1]] == data[sortedIndices[index]])
       continue;
-
+ 
     // Calculate the gain for the left and right child.  Only use weights if
     // needed.
     const double leftGain = UseWeights ?
@@ -218,7 +217,7 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
-    double& splitInfo,
+    arma::vec& splitInfo,
     AuxiliarySplitInfo& /* aux */,
     FitnessFunction& fitnessFunction)
 {
@@ -314,23 +313,25 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       // We can take a shortcut: no split will be better than this, so just
       // take this one. The actual split value will be halfway between the
       // value at index - 1 and index.
-      splitInfo = (data[sortedIndices[index - 1]] +
+      splitInfo.set_size(1);
+      splitInfo[0] = (data[sortedIndices[index - 1]] +
           data[sortedIndices[index]]) / 2.0;
 
       // In some very extreme cases, floating-point inaccuracies can lead to the
       // split result being the upper bound, which is problematic for later as
       // all the child points will be sent to the left child.  If this happens,
       // bump it down incrementally.
-      if (splitInfo == data[sortedIndices[index]])
-        splitInfo = std::nexttoward(splitInfo, data[sortedIndices[index - 1]]);
-
+      if (splitInfo[0] == data[sortedIndices[index]])
+        splitInfo[0] = std::nexttoward(
+            splitInfo[0], data[sortedIndices[index - 1]]);
       return gain;
     }
      if (gain > bestFoundGain)
     {
       // We still have a better split.
       bestFoundGain = gain;
-      splitInfo = (data[sortedIndices[index - 1]] +
+      splitInfo.set_size(1);
+      splitInfo[0] = (data[sortedIndices[index - 1]] +
           data[sortedIndices[index]]) / 2.0;
       improved = true;
 
@@ -338,8 +339,9 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       // split result being the upper bound, which is problematic for later as
       // all the child points will be sent to the left child.  If this happens,
       // bump it down incrementally.
-      if (splitInfo == data[sortedIndices[index]])
-        splitInfo = std::nexttoward(splitInfo, data[sortedIndices[index - 1]]);
+      if (splitInfo[0] == data[sortedIndices[index]])
+        splitInfo[0] = std::nexttoward(
+            splitInfo[0], data[sortedIndices[index - 1]]);
     }
   }
 
@@ -371,7 +373,7 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
-    double& splitInfo,
+    arma::vec& splitInfo,
     AuxiliarySplitInfo& /* aux */,
     FitnessFunction& fitnessFunction)
 {
@@ -475,23 +477,25 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       // We can take a shortcut: no split will be better than this, so just
       // take this one. The actual split value will be halfway between the
       // value at index - 1 and index.
-      splitInfo = (data[sortedIndices[index - 1]] +
+      splitInfo.set_size(1);
+      splitInfo[0] = (data[sortedIndices[index - 1]] +
           data[sortedIndices[index]]) / 2.0;
 
       // In some very extreme cases, floating-point inaccuracies can lead to the
       // split result being the upper bound, which is problematic for later as
       // all the child points will be sent to the left child.  If this happens,
       // bump it down incrementally.
-      if (splitInfo == data[sortedIndices[index]])
-        splitInfo = std::nexttoward(splitInfo, data[sortedIndices[index - 1]]);
-
+      if (splitInfo[0] == data[sortedIndices[index]])
+        splitInfo[0] = std::nexttoward(
+            splitInfo[0], data[sortedIndices[index - 1]]);
       return gain;
     }
     if (gain > bestFoundGain)
     {
       // We still have a better split.
       bestFoundGain = gain;
-      splitInfo = (data[sortedIndices[index - 1]] +
+      splitInfo.set_size(1);
+      splitInfo[0] = (data[sortedIndices[index - 1]] +
           data[sortedIndices[index]]) / 2.0;
       improved = true;
 
@@ -499,8 +503,9 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       // split result being the upper bound, which is problematic for later as
       // all the child points will be sent to the left child.  If this happens,
       // bump it down incrementally.
-      if (splitInfo == data[sortedIndices[index]])
-        splitInfo = std::nexttoward(splitInfo, data[sortedIndices[index - 1]]);
+      if (splitInfo[0] == data[sortedIndices[index]])
+        splitInfo[0] = std::nexttoward(
+            splitInfo[0], data[sortedIndices[index - 1]]);
     }
   }
   // If we didn't improve, return the original gain exactly as we got it
@@ -520,10 +525,12 @@ template<typename FitnessFunction>
 template<typename ElemType>
 size_t BestBinaryNumericSplit<FitnessFunction>::CalculateDirection(
     const ElemType& point,
-    const double& splitInfo,
+    const arma::vec& splitInfo,
     const AuxiliarySplitInfo& /* aux */)
 {
-  if (point <= splitInfo)
+  if (splitInfo.n_elem == 0)
+    return SIZE_MAX;
+  else if (point <= splitInfo[0])
     return 0; // Go left.
   else
     return 1; // Go right.
