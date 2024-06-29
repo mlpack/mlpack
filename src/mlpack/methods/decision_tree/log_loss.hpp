@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_XGBOOST_LOG_LOSS_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <cmath>
 
 namespace mlpack {
 /**
