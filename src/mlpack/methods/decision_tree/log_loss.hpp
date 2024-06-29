@@ -2,7 +2,8 @@
  * @file methods/decision_tree/gain_functions/log_loss.hpp
  * @author Abhimanyu Dayal
  *
- * The logistic gain class, which is a gain function for xgboost.
+ * The logistic gain class, which is a gain function for xgboost. 
+ * Multiclass classification tasks.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -69,8 +70,10 @@ class LogLoss
                   const size_t end)
   {
 
-    size_t n_rows = input.n_rows; // Number of classes
-    size_t n_cols = input.n_cols; // Number of samples
+    // Number of samples
+    size_t n_rows = input.n_rows; 
+    // Number of classes
+    size_t n_cols = input.n_cols; 
 
     arma::mat probabilities(n_rows, n_cols);
     for (size_t i = 0; i < n_cols; ++i) {
