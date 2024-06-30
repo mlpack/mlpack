@@ -165,6 +165,7 @@ typename MatType::elem_type FFN<
 
   Log::Info << "FFN::Train(): final objective of trained model is " << out
       << "." << std::endl;
+  Quantize();
   return out;
 }
 
@@ -392,29 +393,64 @@ void FFN<
 
     // Serialize the network itself.
     ar(CEREAL_NVP(network));
-    ar(CEREAL_NVP(parameters));
 
     // Serialize the expected input size.
     ar(CEREAL_NVP(inputDimensions));
 
+    // Serialize the quantization status and scale.
+    ar(CEREAL_NVP(isQuantized));
+    ar(CEREAL_NVP(quantizationScale));
+
+    if (isQuantized)
+    {
+      // Serialize quantized parameters.
+      ar(CEREAL_NVP(quantizedParameters));
+    }
+    else
+    {
+      // Serialize regular parameters.
+      ar(CEREAL_NVP(parameters));
+    }
+
     // If we are loading, we need to initialize the weights.
     if (cereal::is_loading<Archive>())
     {
-      // We can clear these members, since it's not possible to serialize in the
-      // middle of training and resume.
+      // Clear these members as it's not possible to serialize in the middle of training and resume.
       predictors.clear();
       responses.clear();
-
       networkOutput.clear();
       networkDelta.clear();
-
       layerMemoryIsSet = false;
       inputDimensionsAreSet = false;
 
-      // The weights in `parameters` will be correctly set for each layer in the
-      // first call to Forward().
+      if (isQuantized)
+      {
+        Dequantize();
+      }
     }
   #endif
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void FFN<OutputLayerType, InitializationRuleType, MatType>::Quantize()
+{
+  float maxAbs = arma::abs(parameters).max();
+  quantizationScale = 127.0 / maxAbs;
+  quantizedParameters = arma::conv_to<arma::imat>::from(parameters * quantizationScale);
+  quantizedParameters.for_each([](arma::imat::elem_type& val) { val = std::clamp<int>(val, -128, 127); });
+
+  isQuantized = true;
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void FFN<OutputLayerType, InitializationRuleType, MatType>::Dequantize()
+{
+  parameters = arma::conv_to<arma::mat>::from(quantizedParameters) / quantizationScale;
+  isQuantized = false;
 }
 
 template<typename OutputLayerType,
