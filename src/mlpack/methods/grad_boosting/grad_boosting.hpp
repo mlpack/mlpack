@@ -129,6 +129,17 @@ class GradBoosting
               const size_t numModels,
               const WeakLearnerType learner);
 
+  /**
+   * Train Gradient Boosting on the given dataset, using the given parameters.
+   *
+   * Default values are not used for `numModels`; instead, it is used to specify
+   * the number of weak learners (models) to train.
+   *
+   * @param data Dataset to train on.
+   * @param labels Labels for each point in the dataset.
+   * @param numClasses The number of classes in the dataset.
+   * @param numModels Number of boosting rounds.
+   */
   void Train(const MatType& data,
               const arma::Row<size_t>& labels,
               const size_t numClasses,
