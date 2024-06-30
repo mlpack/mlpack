@@ -429,6 +429,10 @@ class FFN
    */
   void Shuffle();
 
+  void Quantize();
+
+  void Dequantize();
+
   /**
    * Prepare the network for training on the given data.
    *
@@ -554,6 +558,21 @@ class FFN
   //! If true, each layer has its inputDimensions properly set, and
   //! `totalInputSize` and `totalOutputSize` are valid.
   bool inputDimensionsAreSet;
+
+  //! Indicates if the model is quantized. Quantization is a process that
+  //! approximates a neural network that uses floating-point numbers by a
+  //! neural network of low bit width numbers. 
+  bool isQuantized;
+
+  //! Holds the quantized parameters of the model. Quantization converts
+  //! parameters from floating point to integers, which are stored in this
+  //! matrix. This is used only when `isQuantized` is true.
+  arma::imat quantizedParameters;
+
+  //! The scale used for quantization. This is a multiplicative factor that
+  //! is used to convert floating point numbers to integers and vice versa.
+  //! This value is used to maintain the accuracy of the quantized model.
+  float quantizationScale;
 
   // RNN will call `CheckNetwork()`, which is private.
   friend class RNN<OutputLayerType, InitializationRuleType, MatType>;
