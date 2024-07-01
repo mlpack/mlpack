@@ -16,7 +16,7 @@
 #include "epanechnikov_kernel.hpp"
 #include <mlpack/core/util/log.hpp>
 
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 
 namespace mlpack {
 

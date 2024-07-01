@@ -15,9 +15,9 @@
 
 #include <mlpack/core.hpp>
 
-#include "gain_functions/gain_functions.hpp"
-#include "split_functions/split_functions.hpp"
-#include "select_functions/select_functions.hpp"
+#include <split_functions/split_functions.hpp>
+#include <select_functions/select_functions.hpp>
+#include <gain_functions/gain_functions.hpp>
 
 namespace mlpack {
 

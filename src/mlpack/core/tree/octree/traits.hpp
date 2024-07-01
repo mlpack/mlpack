@@ -22,10 +22,10 @@ namespace mlpack {
  * tree-independent (but still optimized) tree-based algorithms.  See
  * mlpack/core/tree/tree_traits.hpp for more information.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType>
-class TreeTraits<Octree<MetricType, StatisticType, MatType>>
+class TreeTraits<Octree<DistanceType, StatisticType, MatType>>
 {
  public:
   /**

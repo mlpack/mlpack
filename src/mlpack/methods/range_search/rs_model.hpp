@@ -82,7 +82,7 @@ class RSWrapperBase
 /**
  * RSWrapper is a wrapper class for most RangeSearch types.
  */
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 class RSWrapper : public RSWrapperBase
@@ -156,7 +156,7 @@ class RSWrapper : public RSWrapperBase
  * the leaf size into account when building trees.  The implementations of
  * Train() and bichromatic Search() take this leaf size into account.
  */
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 class LeafSizeRSWrapper : public RSWrapper<TreeType>

@@ -12,7 +12,7 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 #include <mlpack/methods/nca/nca_main.cpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 

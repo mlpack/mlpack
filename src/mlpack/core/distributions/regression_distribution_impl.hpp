@@ -1,5 +1,5 @@
 /**
- * @file core/dists/regression_distribution_impl.hpp
+ * @file core/distributions/regression_distribution_impl.hpp
  * @author Michael Fox
  *
  * Implementation of conditional Gaussian distribution for HMM regression
@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DISTS_REGRESSION_DISTRIBUTION_IMPL_HPP
-#define MLPACK_CORE_DISTS_REGRESSION_DISTRIBUTION_IMPL_HPP
+#ifndef MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_IMPL_HPP
+#define MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_IMPL_HPP
 
 #include "regression_distribution.hpp"
 

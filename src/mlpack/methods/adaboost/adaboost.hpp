@@ -123,7 +123,7 @@ class AdaBoost
    * @param other Weak learner that has already been initialized.
    */
   template<typename WeakLearnerInType>
-  mlpack_deprecated /* to be removed in mlpack 5.0.0 */
+  [[deprecated("Will be removed in mlpack 5.0.0, use other constructors")]]
   AdaBoost(const MatType& data,
            const arma::Row<size_t>& labels,
            const size_t numClasses,
@@ -178,9 +178,9 @@ class AdaBoost
    * @param maxIterations Number of boosting rounds.
    * @param tolerance The tolerance for change in values of rt.
    * @return The upper bound for training error.
-   */ 
+   */
   template<typename WeakLearnerInType>
-  mlpack_deprecated /* to be removed in mlpack 5.0.0 */
+  [[deprecated("Will be removed in mlpack 5.0.0, use other Train() variants")]]
   ElemType Train(
       const MatType& data,
       const arma::Row<size_t>& labels,

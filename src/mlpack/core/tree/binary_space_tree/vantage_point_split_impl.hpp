@@ -27,20 +27,21 @@ SplitNode(const BoundType& bound, MatType& data, const size_t begin,
   size_t vantagePointIndex = 0;
 
   // Find the best vantage point.
-  SelectVantagePoint(bound.Metric(), data, begin, count, vantagePointIndex, mu);
+  SelectVantagePoint(bound.Distance(), data, begin, count, vantagePointIndex,
+      mu);
 
   // If all points are equal, we can't split.
   if (mu == 0)
     return false;
 
-  splitInfo = SplitInfo(bound.Metric(), data.col(vantagePointIndex), mu);
+  splitInfo = SplitInfo(bound.Distance(), data.col(vantagePointIndex), mu);
 
   return true;
 }
 
 template<typename BoundType, typename MatType, size_t MaxNumSamples>
 void VantagePointSplit<BoundType, MatType, MaxNumSamples>::
-SelectVantagePoint(const MetricType& metric, const MatType& data,
+SelectVantagePoint(const DistanceType& distance, const MatType& data,
     const size_t begin, const size_t count, size_t& vantagePoint, ElemType& mu)
 {
   arma::Col<ElemType> distances(MaxNumSamples);
@@ -74,7 +75,7 @@ SelectVantagePoint(const MetricType& metric, const MatType& data,
     distances.set_size(samples.n_elem);
 
     for (size_t j = 0; j < samples.n_elem; ++j)
-      distances[j] = metric.Evaluate(data.col(vantagePointCandidates[i]),
+      distances[j] = distance.Evaluate(data.col(vantagePointCandidates[i]),
           data.col(samples[j]));
 
     const ElemType spread = sum(distances % distances) / samples.n_elem;

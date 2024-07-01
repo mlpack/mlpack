@@ -21,26 +21,26 @@ namespace mlpack {
  * Takes in a reference to the dataset. Copies the data, initializes
  * all of the member variables and constraint object and generate constraints.
  */
-template<typename MetricType, typename OptimizerType>
-LMNN<MetricType, OptimizerType>::LMNN(const arma::mat& dataset,
+template<typename DistanceType, typename OptimizerType>
+LMNN<DistanceType, OptimizerType>::LMNN(const arma::mat& dataset,
                        const arma::Row<size_t>& labels,
                        const size_t k,
-                       const MetricType metric) :
+                       const DistanceType distance) :
     dataset(dataset),
     labels(labels),
     k(k),
     regularization(0.5),
     range(1),
-    metric(metric)
+    distance(distance)
 { /* nothing to do */ }
 
-template<typename MetricType, typename OptimizerType>
+template<typename DistanceType, typename OptimizerType>
 template<typename... CallbackTypes>
-void LMNN<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix,
+void LMNN<DistanceType, OptimizerType>::LearnDistance(arma::mat& outputMatrix,
     CallbackTypes&&... callbacks)
 {
   // LMNN objective function.
-  LMNNFunction<MetricType> objFunction(dataset, labels, k,
+  LMNNFunction<DistanceType> objFunction(dataset, labels, k,
       regularization, range);
 
   // See if we were passed an initialized matrix. outputMatrix (L) must be

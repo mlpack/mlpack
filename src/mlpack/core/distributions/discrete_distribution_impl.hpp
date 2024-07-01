@@ -1,5 +1,5 @@
 /**
- * @file core/dists/discrete_distribution_impl.hpp
+ * @file core/distributions/discrete_distribution_impl.hpp
  * @author Ryan Curtin
  * @author Rohan Raj
  *

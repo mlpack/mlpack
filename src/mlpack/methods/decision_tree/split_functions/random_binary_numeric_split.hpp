@@ -120,26 +120,28 @@ class RandomBinaryNumericSplit
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       const double minimumGainSplit,
-      double& splitInfo,
+      arma::vec& splitInfo,
       AuxiliarySplitInfo& aux,
       FitnessFunction& fitnessFunction,
       const bool splitIfBetterGain = false);
 
   /**
-   * Returns 2, since the binary split always has two children.
+   * If a split was found, returns the number of children of the split.
+   * Otherwise returns zero. A binary split always has two children.
    *
    * @param splitInfo Auxiliary information for the split.
    * @param aux Auxiliary split information, which may be modified on a
    *      successful split.
    */
-  static size_t NumChildren(const double& /* splitInfo */,
+  static size_t NumChildren(const arma::vec& splitInfo,
                             const AuxiliarySplitInfo& /* aux */)
   {
-    return 2;
+    return splitInfo.n_elem == 0 ? 0 : 2;
   }
 
   /**
-   * Given a point, calculate which child it should go to (left or right).
+   * If a split was found, given a point, calculate which child it should 
+   * go to (left or right). Otherwise if there was no split, returns SIZE_MAX.
    *
    * @param point Point to calculate direction of.
    * @param splitInfo Auxiliary information for the split.
@@ -148,7 +150,7 @@ class RandomBinaryNumericSplit
   template<typename ElemType>
   static size_t CalculateDirection(
       const ElemType& point,
-      const double& splitInfo,
+      const arma::vec& splitInfo,
       const AuxiliarySplitInfo& /* aux */);
 };
 

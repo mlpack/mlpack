@@ -12,7 +12,7 @@
  */
 #include "kmeans.hpp"
 
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 #include <mlpack/core/util/sfinae_utility.hpp>
 #include <mlpack/core/util/size_checks.hpp>
 
@@ -81,23 +81,23 @@ bool GetInitialAssignmentsOrCentroids(
 /**
  * Construct the K-Means object.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType,
          typename MatType>
 KMeans<
-    MetricType,
+    DistanceType,
     InitialPartitionPolicy,
     EmptyClusterPolicy,
     LloydStepType,
     MatType>::
 KMeans(const size_t maxIterations,
-       const MetricType metric,
+       const DistanceType distance,
        const InitialPartitionPolicy partitioner,
        const EmptyClusterPolicy emptyClusterAction) :
     maxIterations(maxIterations),
-    metric(metric),
+    distance(distance),
     partitioner(partitioner),
     emptyClusterAction(emptyClusterAction)
 {
@@ -110,13 +110,13 @@ KMeans(const size_t maxIterations,
  * centroids too.  If this is properly inlined, there shouldn't be any
  * performance penalty whatsoever.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType,
          typename MatType>
 inline void KMeans<
-    MetricType,
+    DistanceType,
     InitialPartitionPolicy,
     EmptyClusterPolicy,
     LloydStepType,
@@ -134,13 +134,13 @@ Cluster(const MatType& data,
  * Perform k-means clustering on the data, returning a list of cluster
  * assignments and the centroids of each cluster.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType,
          typename MatType>
 void KMeans<
-    MetricType,
+    DistanceType,
     InitialPartitionPolicy,
     EmptyClusterPolicy,
     LloydStepType,
@@ -200,7 +200,7 @@ Cluster(const MatType& data,
 
   size_t iteration = 0;
 
-  LloydStepType<MetricType, MatType> lloydStep(data, metric);
+  LloydStepType<DistanceType, MatType> lloydStep(data, distance);
   arma::mat centroidsOther;
   double cNorm;
 
@@ -222,10 +222,10 @@ Cluster(const MatType& data,
         Log::Info << "Cluster " << i << " is empty.\n";
         if (iteration % 2 == 0)
           emptyClusterAction.EmptyCluster(data, i, centroids, centroidsOther,
-              counts, metric, iteration);
+              counts, distance, iteration);
         else
           emptyClusterAction.EmptyCluster(data, i, centroidsOther, centroids,
-              counts, metric, iteration);
+              counts, distance, iteration);
       }
     }
 
@@ -260,13 +260,13 @@ Cluster(const MatType& data,
  * Perform k-means clustering on the data, returning a list of cluster
  * assignments and the centroids of each cluster.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType,
          typename MatType>
 void KMeans<
-    MetricType,
+    DistanceType,
     InitialPartitionPolicy,
     EmptyClusterPolicy,
     LloydStepType,
@@ -313,11 +313,11 @@ Cluster(const MatType& data,
 
     for (size_t j = 0; j < centroids.n_cols; ++j)
     {
-      const double distance = metric.Evaluate(data.col(i), centroids.col(j));
+      const double dist = distance.Evaluate(data.col(i), centroids.col(j));
 
-      if (distance < minDistance)
+      if (dist < minDistance)
       {
-        minDistance = distance;
+        minDistance = dist;
         closestCluster = j;
       }
     }
@@ -327,20 +327,20 @@ Cluster(const MatType& data,
   }
 }
 
-template<typename MetricType,
+template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType,
          typename MatType>
 template<typename Archive>
-void KMeans<MetricType,
+void KMeans<DistanceType,
             InitialPartitionPolicy,
             EmptyClusterPolicy,
             LloydStepType,
             MatType>::serialize(Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(maxIterations));
-  ar(CEREAL_NVP(metric));
+  ar(CEREAL_NVP(distance));
   ar(CEREAL_NVP(partitioner));
   ar(CEREAL_NVP(emptyClusterAction));
 }
