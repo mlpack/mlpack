@@ -5,6 +5,7 @@
 _????-??-??_
 
   * Distribute STB headers as part of R package (#3724, #3726).
+  * Added OpenMP support for fast approximation (#3685). 
 
 
 ## mlpack 4.4.0
