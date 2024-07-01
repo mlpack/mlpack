@@ -453,7 +453,8 @@ double DecisionTree<FitnessFunction,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     const size_t maximumDepth,
-    DimensionSelectionType dimensionSelector)
+    DimensionSelectionType dimensionSelector,
+    FeatureImportance* featImp = nullptr)
 {
   // Sanity check on data.
   util::CheckSameSizes(data, labels, "DecisionTree::Train()");
@@ -472,7 +473,7 @@ double DecisionTree<FitnessFunction,
   arma::rowvec weights; // Fake weights, not used.
   return Train<false>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels,
       numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector);
+      dimensionSelector, featImp);
 }
 
 //! Train on the given data, assuming all dimensions are numeric.
@@ -493,7 +494,8 @@ double DecisionTree<FitnessFunction,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     const size_t maximumDepth,
-    DimensionSelectionType dimensionSelector)
+    DimensionSelectionType dimensionSelector,
+    FeatureImportance* featImp = nullptr)
 {
   // Sanity check on data.
   util::CheckSameSizes(data, labels, "DecisionTree::Train()");
@@ -512,7 +514,7 @@ double DecisionTree<FitnessFunction,
   arma::rowvec weights; // Fake weights, not used.
   return Train<false>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses,
       weights, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector);
+      dimensionSelector, featImp);
 }
 
 //! Train on the given weighted data.
@@ -539,7 +541,8 @@ double DecisionTree<FitnessFunction,
     const std::enable_if_t<
         arma::is_arma_type<
         typename std::remove_reference<
-        WeightsType>::type>::value>*)
+        WeightsType>::type>::value>*,
+    FeatureImportance* featImp = nullptr)
 {
   // Sanity check on data.
   util::CheckSameSizes(data, labels, "DecisionTree::Train()");
@@ -559,7 +562,7 @@ double DecisionTree<FitnessFunction,
   // Pass off work to the Train() method.
   return Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels,
       numClasses, tmpWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector);
+      dimensionSelector, featImp);
 }
 
 //! Train on the given weighted data.
@@ -585,7 +588,8 @@ double DecisionTree<FitnessFunction,
     const std::enable_if_t<
         arma::is_arma_type<
         typename std::remove_reference<
-        WeightsType>::type>::value>*)
+        WeightsType>::type>::value>*,
+    FeatureImportance* featImp = nullptr)
 {
   // Sanity check on data.
   util::CheckSameSizes(data, labels, "DecisionTree::Train()");
@@ -605,7 +609,7 @@ double DecisionTree<FitnessFunction,
   // Pass off work to the Train() method.
   return Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses,
       tmpWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector);
+      dimensionSelector, featImp);
 }
 
 //! Train on the given data, assuming all dimensions are numeric.
@@ -630,7 +634,8 @@ double DecisionTree<FitnessFunction,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     const size_t maximumDepth,
-    DimensionSelectionType& dimensionSelector)
+    DimensionSelectionType& dimensionSelector,
+    FeatureImportance* featImp = nullptr)
 {
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
@@ -699,6 +704,14 @@ double DecisionTree<FitnessFunction,
   // Did we split or not?  If so, then split the data and create the children.
   if (bestDim != datasetInfo.Dimensionality())
   {
+    // Store the information about the feature contributions 
+    // only if featImp option given
+    if(featImp != nullptr)
+    {
+      featImp.featureFrequency[bestDim]++;
+      featImp.featureCover[bestDim] += featureFrequency;
+    }
+
     dimensionType = (size_t) datasetInfo.Type(bestDim);
     splitDimension = bestDim;
 
@@ -762,7 +775,7 @@ double DecisionTree<FitnessFunction,
         child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, datasetInfo, labels, numClasses,
             weights, currentCol - currentChildBegin, minimumGainSplit,
-            maximumDepth - 1, dimensionSelector);
+            maximumDepth - 1, dimensionSelector, featImp);
       }
       else
       {
@@ -770,7 +783,7 @@ double DecisionTree<FitnessFunction,
         double childGain = child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, datasetInfo, labels, numClasses,
             weights, minimumLeafSize, minimumGainSplit, maximumDepth - 1,
-            dimensionSelector);
+            dimensionSelector, featImp);
         bestGain += double(childCounts[i]) / double(count) * (-childGain);
       }
       children.push_back(child);
@@ -813,7 +826,8 @@ double DecisionTree<FitnessFunction,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     const size_t maximumDepth,
-    DimensionSelectionType& dimensionSelector)
+    DimensionSelectionType& dimensionSelector,
+    FeatureImportance* featImp = nullptr)
 {
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
@@ -869,6 +883,14 @@ double DecisionTree<FitnessFunction,
   // Did we split or not?  If so, then split the data and create the children.
   if (bestDim != data.n_rows)
   {
+    // Store the information about the feature contributions 
+    // only if featImp option given
+    if(featImp != nullptr)
+    {
+      featImp.featureFrequency[bestDim]++;
+      featImp.featureCover[bestDim] += featureFrequency;
+    }
+
     // We know that the split is numeric.
     size_t numChildren =
         NumericSplit::NumChildren(classProbabilities, *this);
@@ -920,7 +942,7 @@ double DecisionTree<FitnessFunction,
         child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, labels, numClasses, weights,
             currentCol - currentChildBegin, minimumGainSplit, maximumDepth - 1,
-            dimensionSelector);
+            dimensionSelector, featImp);
       }
       else
       {
@@ -928,7 +950,7 @@ double DecisionTree<FitnessFunction,
         double childGain = child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, labels, numClasses, weights,
             minimumLeafSize, minimumGainSplit, maximumDepth - 1,
-            dimensionSelector);
+            dimensionSelector, featImp);
         bestGain += double(childCounts[i]) / double(count) * (-childGain);
       }
       children.push_back(child);

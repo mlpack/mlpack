@@ -30,6 +30,8 @@
 #include "random_dimension_select.hpp"
 #include "multiple_random_dimension_select.hpp"
 
+#include "mlpack/methods/xgboost/feature_importance.hpp"
+
 namespace mlpack {
 
 /**
@@ -298,6 +300,7 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param featImp Pointer to FeatureImportance object to store feature info
    * @return The final entropy of decision tree.
    */
   template<typename MatType, typename LabelsType>
@@ -309,7 +312,8 @@ class DecisionTree :
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               FeatureImportance* featImp = nullptr);
 
   /**
    * Train the decision tree on the given data, assuming that all dimensions are
@@ -326,6 +330,7 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param featImp Pointer to FeatureImportance object to store feature info
    * @return The final entropy of decision tree.
    */
   template<typename MatType, typename LabelsType>
@@ -336,7 +341,8 @@ class DecisionTree :
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               FeatureImportance* featImp = nullptr);
 
   /**
    * Train the decision tree on the given weighted data.  This will overwrite
@@ -357,6 +363,7 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param featImp Pointer to FeatureImportance object to store feature info
    * @return The final entropy of decision tree.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
@@ -371,7 +378,8 @@ class DecisionTree :
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
                const std::enable_if_t<arma::is_arma_type<typename
-                   std::remove_reference<WeightsType>::type>::value>* = 0);
+                   std::remove_reference<WeightsType>::type>::value>* = 0,
+               FeatureImportance* featImp = nullptr);
 
   /**
    * Train the decision tree on the given weighted data, assuming that all
@@ -390,6 +398,7 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param featImp Pointer to FeatureImportance object to store feature info
    * @return The final entropy of decision tree.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
@@ -403,7 +412,8 @@ class DecisionTree :
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
                const std::enable_if_t<arma::is_arma_type<typename
-                   std::remove_reference<WeightsType>::type>::value>* = 0);
+                   std::remove_reference<WeightsType>::type>::value>* = 0,
+               FeatureImportance* featImp = nullptr);
 
   /**
    * Classify the given point, using the entire tree.  The predicted label is
@@ -546,6 +556,7 @@ class DecisionTree :
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
+   * @param featImp Pointer to FeatureImportance object to store feature info
    * @return The final entropy of decision tree.
    */
   template<bool UseWeights, typename MatType, typename WeightsType>
@@ -559,7 +570,8 @@ class DecisionTree :
                const size_t minimumLeafSize,
                const double minimumGainSplit,
                const size_t maximumDepth,
-               DimensionSelectionType& dimensionSelector);
+               DimensionSelectionType& dimensionSelector,
+               FeatureImportance* featImp = nullptr);
 
   /**
    * Corresponding to the public Train() method, this method is designed for
@@ -575,6 +587,7 @@ class DecisionTree :
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
+   * @param featImp Pointer to FeatureImportance object to store feature info
    * @return The final entropy of decision tree.
    */
   template<bool UseWeights, typename MatType, typename WeightsType>
@@ -587,7 +600,8 @@ class DecisionTree :
                const size_t minimumLeafSize,
                const double minimumGainSplit,
                const size_t maximumDepth,
-               DimensionSelectionType& dimensionSelector);
+               DimensionSelectionType& dimensionSelector,
+               FeatureImportance* featImp = nullptr);
 };
 
 /**
