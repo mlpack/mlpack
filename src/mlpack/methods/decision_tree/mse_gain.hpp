@@ -34,7 +34,7 @@ class MSEGain
    * sure to use 'gain >= 0.0' and not 'gain == 0.0'. The values vector
    * should always be of type arma::Row<double> or arma::rowvec.
    *
-   * @param values Set of values to evaluate MAD gain on.
+   * @param values Set of values to evaluate MSE gain on.
    * @param weights Weights associated to each value.
    * @param begin Start index.
    * @param end End index.
