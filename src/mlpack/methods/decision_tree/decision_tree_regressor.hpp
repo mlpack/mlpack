@@ -450,7 +450,7 @@ class DecisionTreeRegressor :
     //! The dimension of the split, for internal nodes.
     size_t splitDimension;
   };
-  //! For internal nodes, the type of the split variable. 
+  //! For internal nodes, the type of the split variable.
   size_t dimensionType;
   //! For internal nodes, the split information for the splitter.
   arma::vec splitInfo;

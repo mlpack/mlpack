@@ -270,7 +270,7 @@ else
 
 See also the following fully-working examples:
 
- - [Loan default prediction with `DecisionTree`](https://github.com/mlpack/examples/blob/master/loan_default_prediction_with_decision_tree/loan-default-prediction-with-decision-tree-cpp.ipynb)
+ - [Loan default prediction with `DecisionTree`](https://github.com/mlpack/examples/blob/master/jupyter_notebook/decision_tree/loan_default_prediction/loan-default-prediction-cpp.ipynb)
 
 ### Advanced Functionality: Template Parameters
 

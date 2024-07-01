@@ -289,7 +289,7 @@ if (ab.WeakLearners() > 0)
 
 See also the following fully-working examples:
 
- - [Graduate admission classification with `AdaBoost`](https://github.com/mlpack/examples/blob/master/graduate_admission_classification_with_Adaboost/graduate-admission-classification-with-adaboost-cpp.ipynb)
+ - [Graduate admission classification with `AdaBoost`](https://github.com/mlpack/examples/blob/master/jupyter_notebook/adaboost/graduate_admission_classification/graduate-admission-classification-cpp.ipynb)
 
 ### Advanced Functionality: Template Parameters
 

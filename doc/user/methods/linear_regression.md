@@ -229,9 +229,9 @@ for (size_t t = 0; t < 3; ++t)
 
 See also the following fully-working examples:
 
- - [Salary prediction with `LinearRegression`](https://github.com/mlpack/examples/blob/master/salary_prediction_with_linear_regression/salary-prediction-linear-regression-cpp.ipynb)
- - [Avocado price prediction with `LinearRegression`](https://github.com/mlpack/examples/blob/master/avocado_price_prediction_with_linear_regression/avocado_price_prediction_with_lr_cpp.ipynb)
- - [California housing price prediction with `LinearRegression`](https://github.com/mlpack/examples/blob/master/california_housing_price_prediction_with_linear_regression/california_housing_price_prediction_with_lr_cpp.ipynb)
+ - [Salary prediction with `LinearRegression`](https://github.com/mlpack/examples/blob/master/jupyter_notebook/linear_regression/salary_prediction/salary-prediction-cpp.ipynb)
+ - [Avocado price prediction with `LinearRegression`](https://github.com/mlpack/examples/blob/master/jupyter_notebook/linear_regression/avocado_price_prediction/avocado_price_prediction_cpp.ipynb)
+ - [California housing price prediction with `LinearRegression`](https://github.com/mlpack/examples/blob/master/jupyter_notebook/linear_regression/california_housing_price_prediction/california_housing_price_prediction_cpp.ipynb)
 
 ### Advanced Functionality: Different Element Types
 
