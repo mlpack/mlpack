@@ -22,6 +22,170 @@
 // Defined within the mlpack namespace.
 namespace mlpack {
 
+// Empty constructor.
+template<typename WeakLearnerType, typename MatType>
+XGBoost<WeakLearnerType, MatType>::XGBoost() :
+    numClasses(0),
+    numModels(0)
+{
+// Nothing to do.
+}
+
+// In case the user has already initialised the weak learner
+// Weak learner type "WeakLearnerInType" defined by the template
+/**
+ * Constructor.
+ *
+ * @param data Input data
+ * @param labels Corresponding labels
+ * @param numModels Number of weak learners
+ * @param numClasses Number of classes
+ * @param other Weak Learner, which has been initialized already.
+ */
+template<typename WeakLearnerType, typename MatType>
+XGBoost<WeakLearnerType, MatType>::
+  XGBoost(const MatType& data,
+                const arma::Row<size_t>& labels,
+                const size_t numClasses,
+                const size_t numModels,
+                const WeakLearnerType& other) :
+
+  numClasses(numClasses),
+  numModels(numModels)
+
+{
+  (void) TrainInternal<true>(data, labels, numClasses, other);
+}
+
+// In case the user inputs the arguments for the Weak Learner
+/**
+ * Constructor.
+ *
+ * @param data Input data
+ * @param labels Corresponding labels
+ * @param numModels Number of weak learners
+ * @param numClasses Number of classes
+ * @param other Weak Learner, which has been initialized already.
+ */
+template<typename WeakLearnerType, typename MatType>
+
+// Variadic template to the Weak Learner arguments
+template<typename... WeakLearnerArgs>
+XGBoost<WeakLearnerType, MatType>::
+XGBoost(const MatType& data,
+              const arma::Row<size_t>& labels,
+              const size_t numClasses,
+              const size_t numModels,
+              WeakLearnerArgs&&... weakLearnerArgs) :
+  numModels(numModels)
+{
+  WeakLearnerType other; // Will not be used.
+  (void) TrainInternal<false>(data, labels, numClasses, other,
+      weakLearnerArgs...);
+}
+
+// Train XGBoost with a given weak learner.
+
+template<typename WeakLearnerType, typename MatType>
+void XGBoost<WeakLearnerType, MatType>::
+  Train(const MatType& data,
+        const arma::Row<size_t>& labels,
+        const size_t numClasses,
+        const size_t numModels,
+        const WeakLearnerType learner)
+{
+  return TrainInternal<true>(data, labels, numModels, numClasses, learner);
+}
+
+template<typename WeakLearnerType, typename MatType>
+void XGBoost<WeakLearnerType, MatType>::
+  Train(const MatType& data,
+        const arma::Row<size_t>& labels,
+        const size_t numClasses,
+        const size_t numModels)
+{
+  WeakLearnerType other; // Will not be used.
+  return TrainInternal<false>(data, labels, numModels, numClasses, other);
+}
+
+template<typename WeakLearnerType, typename MatType>
+template<typename... WeakLearnerArgs>
+void XGBoost<WeakLearnerType, MatType>::
+  Train(const MatType& data,
+        const arma::Row<size_t>& labels,
+        const size_t numClasses,
+        const size_t numModels,
+        WeakLearnerArgs&&... weakLearnerArgs)
+{
+  WeakLearnerType other; // Will not be used.
+  return TrainInternal<false>(data, labels, numModels, numClasses, other,
+    weakLearnerArgs...);
+}
+
+// Classify the given test point.
+template<typename WeakLearnerType, typename MatType>
+template<typename VecType>
+size_t XGBoost<WeakLearnerType, MatType>::Classify(const VecType& point) 
+{
+  size_t prediction;
+  arma::Row<ElemType> probabilities;
+  Classify(point, prediction, probabilities);
+  return prediction;
+}
+
+template<typename WeakLearnerType, typename MatType>
+template<typename VecType>
+void XGBoost<WeakLearnerType, MatType>::Classify(const VecType& point,
+                                                      size_t& prediction,
+                                                      arma::Row<ElemType>& probabilities)
+{
+
+  prediction = 0;
+
+  for (size_t i = 0; i < weakLearners.size(); ++i) 
+  {
+    size_t tempPred = weakLearners[i].Classify(point);
+    prediction += tempPred;
+  }
+
+}
+
+
+template<typename WeakLearnerType, typename MatType>
+void XGBoost<WeakLearnerType, MatType>::Classify(const MatType& test,
+                                                      arma::Row<size_t>& predictedLabels) 
+{
+
+  predictedLabels.clear();
+  predictedLabels.resize(test.n_cols);
+  arma::Row<ElemType> probabilities;
+
+  for (size_t i = 0; i < test.n_cols; ++i) 
+  {
+    size_t prediction;
+    Classify<arma::colvec>(test.col(i), prediction, probabilities);
+    predictedLabels(i) = prediction;
+  }
+}
+
+
+template<typename WeakLearnerType, typename MatType>
+void XGBoost<WeakLearnerType, MatType>::Classify(const MatType& test,
+                                                      arma::Row<size_t>& predictedLabels,
+                                                      arma::Row<ElemType>& probabilities) 
+{
+
+  predictedLabels.clear();
+  predictedLabels.resize(test.n_cols);
+
+  for (size_t i = 0; i < test.n_cols; ++i) 
+  {
+    size_t prediction;
+    Classify<arma::colvec>(test.col(i), prediction, probabilities);
+    predictedLabels(i) = prediction;
+  }
+}
+
 // Define a function to compute the learning rate based on the current model predictions.
 template<typename MatType>
 double ComputeLearningRate(const MatType& predictions,
@@ -60,30 +224,6 @@ double ComputeLearningRate(const MatType& predictions,
     }
 
     return bestLearningRate;
-}
-
-arma::Row<size_t> Loss(arma::Row<size_t>& residue, arma::Row<size_t>& predictions, double& loss)
-{
-  // Defining alpha and lambda values (for regularization).
-  double alpha = 10;
-  double lambda = 10;
-  
-  SSELoss lossObj(alpha, lambda);
-
-  arma::mat combinedInput(2, residue.n_cols);
-
-  for (size_t i = 0; i < residue.n_cols ; ++i)
-  {
-    combinedInput(0, i) = residue(i);
-    combinedInput(1, i) = predictions(i);
-  }
-
-  // Weight vector we will not use for now
-  arma::mat weights; 
-
-  loss = lossObj.Evaluate<false, arma::mat, arma::mat>(combinedInput, weights);
-
-  return residue - predictions;
 }
 
 template<typename WeakLearnerType, typename MatType>
@@ -142,10 +282,10 @@ void XGBoost<WeakLearnerType, MatType>::
     // Compute the learning rate for this iteration.
     double learningRate = ComputeLearningRate(predictions, residue);
 
-    predictions = learningRate * predictions;
-
-    double loss; 
-    residue = Loss(residue, predictions, loss);
+    for (size_t i = 0; i < labels.n_cols; ++i) 
+    {
+      residue(i) = (size_t)abs((double)residue(i) - (double)(learningRate * predictions(i)));
+    }
 
     delete wPtr;
         
