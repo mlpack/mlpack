@@ -194,7 +194,8 @@ See also the [simple usage example](#simple-usage-example) for a trivial use of
 
 ---
 
-Train a decision tree regressor on mixed categorical data.
+Train a decision tree regressor on mixed categorical data and save the model to
+disk.
 
 ```c++
 // Load a categorical dataset.
@@ -235,6 +236,9 @@ tree.Predict(testData, testPredictions);
 const double testAverageError = arma::mean(testResponses - testPredictions);
 std::cout << "Average error on test set: " << testAverageError << "."
     << std::endl;
+
+// Save the tree to "tree.bin" with the name "tree".
+mlpack::data::Save("tree.bin", "tree", tree);
 ```
 
 ---
