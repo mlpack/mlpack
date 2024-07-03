@@ -161,9 +161,9 @@ def to_matrix_with_info(x, dtype, copy=False):
 
     d = np.zeros([dims])
     if copy:
-      out = np.asarray(x, dtype=dtype, copy=True)
+      out = np.array(x, dtype=dtype, copy=True)
     else:
-      out = np.asarray(x, dtype=dtype, copy=None)
+      out = np.array(x, dtype=dtype, copy=None)
 
     # Since we don't have a great way to check if these are using the same
     # memory location, we will probe manually (ugh).
