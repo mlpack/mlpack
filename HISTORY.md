@@ -4,7 +4,9 @@
 
 _????-??-??_
 
-  * Distribute STB headers as part of R package (#3724, #3726).
+ * Distribute STB headers as part of R package (#3724, #3726).
+
+ * Update Python bindings to support NumPy 2.x (#3752).
 
 
 ## mlpack 4.4.0
