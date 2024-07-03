@@ -160,7 +160,10 @@ def to_matrix_with_info(x, dtype, copy=False):
       dims = len(x)
 
     d = np.zeros([dims])
-    out = np.array(x, dtype=dtype, copy=copy) # Try to avoid copy...
+    if copy:
+      out = np.asarray(x, dtype=dtype, copy=True)
+    else:
+      out = np.asarray(x, dtype=dtype, copy=None)
 
     # Since we don't have a great way to check if these are using the same
     # memory location, we will probe manually (ugh).
