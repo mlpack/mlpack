@@ -1281,6 +1281,15 @@ std::cout << "Squared Mahalanobis distance on 32-bit floating point data:"
     << std::endl;
 std::cout << " - Points 3 and 5:   " << d1 << "." << std::endl;
 std::cout << " - Points 11 and 31: " << d2 << "." << std::endl;
+
+// Note that a transformation matrix can be recovered from Q with a QR
+// decomposition.
+arma::mat recoveredW = arma::qr(md.Q());
+if (arma::norm(recoveredW * dataset - transformedDataset, "F") < 1e-5)
+{
+  std::cout << "Data transformed with QR decomposition of Q matrix is "
+      << "the same as data transformed with W." << std::endl;
+}
 ```
 
 ---
