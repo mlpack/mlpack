@@ -69,14 +69,12 @@ class DropoutType : public Layer<MatType>
   //! Take ownership of the given DropoutType.
   DropoutType& operator=(DropoutType&& other);
 
-
   /**
    * Ordinary feed forward pass of the dropout layer.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename MatType>
   void Forward(const MatType& input, MatType& output);
 
   /**
