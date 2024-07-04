@@ -170,12 +170,11 @@ TEST_CASE("NCAWithOptimizerCallback", "[CallbackTest]")
                    " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  NCA<SquaredEuclideanDistance> nca(data, labels);
-
   arma::mat outputMatrix;
   std::stringstream stream;
 
-  nca.LearnDistance(outputMatrix, ens::ProgressBar(70, stream));
+  NCA nca;
+  nca.LearnDistance(data, labels, outputMatrix, ens::ProgressBar(70, stream));
   REQUIRE(stream.str().length() > 0);
 }
 

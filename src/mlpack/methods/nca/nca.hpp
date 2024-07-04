@@ -18,6 +18,23 @@
 
 namespace mlpack {
 
+// This utility template struct detects whether the first element in a
+// parameter pack is an Armadillo type.  It is entirely for the deprecated
+// constructor below and can be removed when that is removed during the
+// release of mlpack 5.0.0.
+template<typename... CallbackTypes>
+struct FirstElementIsArma
+{
+  static constexpr bool value = false;
+};
+
+template<typename T, typename... CallbackTypes>
+struct FirstElementIsArma<T, CallbackTypes...>
+{
+  static constexpr bool value = arma::is_arma_type<
+      typename std::remove_reference<T>::type>::value;
+};
+
 /**
  * An implementation of Neighborhood Components Analysis, both a linear
  * dimensionality reduction technique and a distance learning technique.  The
@@ -42,7 +59,7 @@ namespace mlpack {
  * @endcode
  */
 template<typename DistanceType = SquaredEuclideanDistance,
-         typename OptimizerType = ens::StandardSGD>
+         typename DeprecatedOptimizerType = ens::StandardSGD>
 class NCA
 {
  public:
@@ -55,9 +72,13 @@ class NCA
    * @param labels Input dataset labels.
    * @param distance Instantiated distance metric to use.
    */
+  [[deprecated("Will be removed in mlpack 5.0.0.  Pass the dataset directly to "
+               "LearnDistance() instead.")]]
   NCA(const arma::mat& dataset,
       const arma::Row<size_t>& labels,
       DistanceType distance = DistanceType());
+
+  NCA(DistanceType distance = DistanceType());
 
   /**
    * Perform Neighborhood Components Analysis.  The output distance learning
@@ -71,32 +92,77 @@ class NCA
    * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    */
-  template<typename... CallbackTypes>
+  template<typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type,
+           typename = typename std::enable_if<
+               !FirstElementIsArma<CallbackTypes...>::value
+           >::type>
+  [[deprecated("Will be removed in mlpack 5.0.0.  Use the version that takes a "
+               "dataset as a parameter.")]]
   void LearnDistance(arma::mat& outputMatrix, CallbackTypes&&... callbacks);
 
+  template<typename MatType,
+           typename LabelsType,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
+  void LearnDistance(const MatType& dataset,
+                     const LabelsType& labels,
+                     MatType& outputMatrix,
+                     CallbackTypes&&... callbacks) const;
+
+  template<typename MatType,
+           typename LabelsType,
+           typename OptimizerType,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsOptimizer<
+               OptimizerType,
+               SoftmaxErrorFunction<MatType, LabelsType, DistanceType>,
+               MatType
+           >::value>::type>
+  void LearnDistance(const MatType& dataset,
+                     const LabelsType& labels,
+                     MatType& outputMatrix,
+                     OptimizerType& optimizer,
+                     CallbackTypes&&... callbacks) const;
+
   //! Get the dataset reference.
-  const arma::mat& Dataset() const { return dataset; }
+  [[deprecated("Will be removed in mlpack 5.0.0.")]]
+  const arma::mat& Dataset() const { return *dataset; }
   //! Get the labels reference.
-  const arma::Row<size_t>& Labels() const { return labels; }
+  [[deprecated("Will be removed in mlpack 5.0.0.")]]
+  const arma::Row<size_t>& Labels() const { return *labels; }
 
   //! Get the optimizer.
-  const OptimizerType& Optimizer() const { return optimizer; }
-  OptimizerType& Optimizer() { return optimizer; }
+  [[deprecated("Will be removed in mlpack 5.0.0.  Use the LearnDistance() "
+               "version that takes the optimizer as a parameter instead.")]]
+  const DeprecatedOptimizerType& Optimizer() const { return optimizer; }
+  //! Modify the optimizer.
+  [[deprecated("Will be removed in mlpack 5.0.0.  Use the LearnDistance() "
+               "version that takes the optimizer as a parameter instead.")]]
+  DeprecatedOptimizerType& Optimizer() { return optimizer; }
+
+  //! Get the distance.
+  const DistanceType Distance() const { return distance; }
+  //! Modify the distance.
+  DistanceType& Distance() { return distance; }
+
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //! Dataset reference.
-  const arma::mat& dataset;
-  //! Labels reference.
-  const arma::Row<size_t>& labels;
+  //! Dataset pointer (will be removed in mlpack 5.0.0).
+  const arma::mat* dataset;
+  //! Labels reference (will be removed in mlpack 5.0.0).
+  const arma::Row<size_t>* labels;
+  //! The optimizer to use (will be removed in mlpack 5.0.0).
+  DeprecatedOptimizerType optimizer;
 
   //! Distance to be used.
   DistanceType distance;
-
-  //! The function to optimize.
-  SoftmaxErrorFunction<DistanceType> errorFunction;
-
-  //! The optimizer to use.
-  OptimizerType optimizer;
 };
 
 } // namespace mlpack
