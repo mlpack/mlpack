@@ -1,6 +1,6 @@
 /**
  * @file methods/ann/layer/nearest_interpolation_impl.hpp
- * @author Abhinav Anand
+ * @author Andrew Furey
  *
  * Implementation of the NearestInterpolation layer.
  *
@@ -29,16 +29,17 @@ NearestInterpolationType<MatType>::
 NearestInterpolationType(const double scaleFactor) :
   Layer<MatType>()
 {
-  scaleFactors = std::vector<double>(2);
-  scaleFactors[0] = scaleFactor;
-  scaleFactors[1] = scaleFactor;
+  scaleFactors = std::vector<double>(this->inputDimensions.size());
+  for (size_t i = 0; i < scaleFactors.size(); i++) {
+    scaleFactors[i] = scaleFactor;
+  }
 }
 
 template<typename MatType>
 NearestInterpolationType<MatType>::
 NearestInterpolationType(const std::vector<double> scaleFactors) :
   Layer<MatType>(),
-  scaleFactors(scaleFactors)
+  scaleFactors(std::move(scaleFactors))
 {
   // Nothing to do here.
 }
@@ -91,16 +92,13 @@ template<typename MatType>
 void NearestInterpolationType<MatType>::Forward(
   const MatType& input, MatType& output)
 {
-  size_t channels = this->inputDimensions[0];
+  const size_t channels = this->inputDimensions[0];
 
-  size_t outRowSize = this->outputDimensions[1];
-  size_t outColSize = this->outputDimensions[2];
+  const size_t outRowSize = this->outputDimensions[1];
+  const size_t outColSize = this->outputDimensions[2];
 
-  size_t inRowSize = this->inputDimensions[1];
-  size_t inColSize = this->inputDimensions[2];
-
-  assert(output.n_rows == channels);
-  assert(output.n_cols == outRowSize * outColSize);
+  const size_t inRowSize = this->inputDimensions[1];
+  const size_t inColSize = this->inputDimensions[2];
 
   arma::cube inputAsCube;
   arma::cube outputAsCube;
@@ -129,16 +127,13 @@ void NearestInterpolationType<MatType>::Backward(
   const MatType& gradient,
   MatType& output)
 {
-  size_t channels = this->inputDimensions[0];
+  const size_t channels = this->inputDimensions[0];
 
-  size_t outRowSize = this->outputDimensions[1];
-  size_t outColSize = this->outputDimensions[2];
+  const size_t outRowSize = this->outputDimensions[1];
+  const size_t outColSize = this->outputDimensions[2];
 
-  size_t inRowSize = this->inputDimensions[1];
-  size_t inColSize = this->inputDimensions[2];
-
-  assert(output.n_rows == channels);
-  assert(output.n_cols == inRowSize * inColSize);
+  const size_t inRowSize = this->inputDimensions[1];
+  const size_t inColSize = this->inputDimensions[2];
 
   arma::cube outputAsCube;
   arma::cube gradientAsCube;
@@ -163,7 +158,9 @@ void NearestInterpolationType<MatType>::Backward(
 template<typename MatType>
 void NearestInterpolationType<MatType>::ComputeOutputDimensions()
 {
-  assert(this->inputDimensions.size() - 1 == scaleFactors.size());
+  if (this->inputDimensions.size() - 1 == scaleFactors.size()) {
+    throw std::runtime_error("Scale factors must match.");
+  }
   this->outputDimensions = this->inputDimensions;
   for (size_t i = 1; i < this->InputDimensions().size(); i++)
   {

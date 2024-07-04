@@ -1,6 +1,7 @@
+//
 /**
- * @file methods/ann/layer/nearest_interpolation.hpp
- * @author Abhinav Anand
+ * @filer methods/ann/layer/nearest_interpolation.hpp
+ * @author Andrew Furey
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license. You should have received a copy of the
@@ -33,7 +34,19 @@ class NearestInterpolationType : public Layer<MatType>
  public:
   //! Create the NearestInterpolation object.
   NearestInterpolationType();
+
+  /**Create NearestInterpolation Object with the same scaleFactor along 
+   * each dimension
+   * 
+   * @tparam scaleFactor Number to scale each dimension by.
+   */
   NearestInterpolationType(const double scaleFactor);
+
+  /**Create NearestInterpolation Object with the same scaleFactor along 
+   * each dimension
+   * 
+   * @tparam scaleFactor Numbers to scale each dimension by.
+   */
   NearestInterpolationType(const std::vector<double> scaleFactors);
 
   NearestInterpolationType* Clone() const {
@@ -87,7 +100,6 @@ class NearestInterpolationType : public Layer<MatType>
 
  private:
   //! Vector of scale factors to scale different dimensions.
-  //! If the data has multiple dimensions, but scaleFactors has 1 value, it will scale all axes based on this value.
   std::vector<double> scaleFactors;
 }; // class NearestInterpolation
 
