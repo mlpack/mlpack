@@ -60,6 +60,19 @@ class GradBoosting
   GradBoosting();
 
   /**
+   * Constructor in case weak learners aren't defined.
+   *
+   * @param data Input data
+   * @param labels Corresponding labels
+   * @param numModels Number of weak learners
+   * @param numClasses Number of classes
+   */
+  GradBoosting(const MatType& data,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const size_t numModels = 10);
+
+  /**
    * Constructor for a GradBoosting model. Any extra parameters are used as
    * hyperparameters for the weak learner. These should be the last arguments
    * to the weak learner's constructor or `Train()` function (i.e. anything

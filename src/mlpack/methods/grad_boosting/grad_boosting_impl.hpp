@@ -30,6 +30,29 @@ GradBoosting<WeakLearnerType, MatType>::GradBoosting() :
 // Nothing to do.
 }
 
+// In case weak learners aren't defined
+/**
+ * Constructor.
+ *
+ * @param data Input data
+ * @param labels Corresponding labels
+ * @param numModels Number of weak learners
+ * @param numClasses Number of classes
+ */
+template<typename WeakLearnerType, typename MatType>
+GradBoosting<WeakLearnerType, MatType>::
+  GradBoosting(const MatType& data,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const size_t numModels) :
+
+  numClasses(numClasses),
+  numModels(numModels)
+
+{
+  WeakLearnerType other; // Will not be used.
+  (void) TrainInternal<false>(data, labels, numClasses, other);
+}
 
 // In case the user has already initialised the weak learner
 // Weak learner type "WeakLearnerInType" defined by the template
@@ -56,6 +79,7 @@ GradBoosting<WeakLearnerType, MatType>::
 {
   (void) TrainInternal<true>(data, labels, numClasses, other);
 }
+
 
 // In case the user inputs the arguments for the Weak Learner
 /**

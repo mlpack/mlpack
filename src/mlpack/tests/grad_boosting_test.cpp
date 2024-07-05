@@ -209,3 +209,51 @@ TEST_CASE("GBIrisTrainTestSplit", "[GradBoostGeneralTest]")
   REQUIRE(accuracy > 60);
 
 }
+
+/**
+ * Testing the Weak Learner fetching function
+ */
+TEST_CASE("GBWeakLearnerFunction", "[GradBoostUnitTest]")
+{
+  arma::mat db;
+  if (!data::Load("iris_train.csv", db))
+    FAIL("Cannot load test dataset iris_train.csv!");
+  
+  arma::Row<size_t> labels;
+  if (!data::Load("iris_train_labels.csv", labels))
+    FAIL("Cannot load labels for iris iris_train_labels.txt");
+
+  arma::mat testDb;
+  if (!data::Load("iris_test.csv", testDb))
+    FAIL("Cannot load test dataset iris_test.csv!");
+
+  arma::Row<size_t> testLabels;
+  if (!data::Load("iris_test_labels.csv", testLabels))
+    FAIL("Cannot load test dataset iris_test_labels.csv!");
+
+  const size_t numClasses = arma::max(labels.row(0)) + 1;
+  const size_t numModels = 5;
+
+  GradBoosting gb;
+  
+  gb.Train(db, labels, numClasses, numModels);
+
+  arma::Row<size_t> predictions;
+  gb.WeakLearner(0).Classify(testDb, predictions);
+
+  double accuracy = 0;
+  for (size_t i = 0; i < testLabels.n_elem; i++) 
+  {
+    if(testLabels(i) == predictions(i)) 
+    {
+      accuracy++;
+    }
+  }
+
+  accuracy = accuracy / ((double) testLabels.n_elem);
+  accuracy *= 100.0;
+
+  REQUIRE(accuracy > 60);
+
+
+}
