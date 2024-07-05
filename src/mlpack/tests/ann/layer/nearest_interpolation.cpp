@@ -32,17 +32,20 @@ TEST_CASE("NearestInterpolationLayerTest", "[ANNLayerTest]")
 
   double scaleFactor = 2.0f;
 
-  input.zeros(channels, inRowSize * inColSize);
-  output.zeros(channels, inRowSize * scaleFactor * inColSize * scaleFactor);
+  input.zeros(inRowSize * inColSize, channels);
+  output.zeros(inRowSize * scaleFactor * inColSize * scaleFactor, channels);
   unzoomedOutput = input;
   input[0] = 1.0;
   input[1] = 2.0;
   input[2] = 3.0;
   input[3] = 4.0;
 
-  mlpack::NearestInterpolation layer({scaleFactor, scaleFactor});
+  mlpack::NearestInterpolation layer;
 
-  layer.InputDimensions() = { channels, inRowSize, inColSize };
+
+  layer = mlpack::NearestInterpolation({scaleFactor, scaleFactor});
+
+  layer.InputDimensions() = { inRowSize, inColSize, channels };
   layer.ComputeOutputDimensions();
   
   expectedOutput  << 1.0000 << 1.0000 << 2.0000 << 2.0000
@@ -50,7 +53,7 @@ TEST_CASE("NearestInterpolationLayerTest", "[ANNLayerTest]")
 		  << 3.0000 << 3.0000 << 4.0000 << 4.0000
 		  << 3.0000 << 3.0000 << 4.0000 << 4.0000 << arma::endr;
 
-  expectedOutput.reshape(1, 16);
+  expectedOutput.reshape(16, 1);
   layer.Forward(input, output);
   CheckMatrices(output - expectedOutput,
                 arma::zeros(output.n_rows), 1e-4);
@@ -58,7 +61,7 @@ TEST_CASE("NearestInterpolationLayerTest", "[ANNLayerTest]")
   expectedOutput.clear();
   expectedOutput << 4.0000 << 8.0000
                  << 12.0000 << 16.0000 << arma::endr;
-  expectedOutput.reshape(1, 4);
+  expectedOutput.reshape(4, 1);
   layer.Backward(output, output, unzoomedOutput);
   CheckMatrices(unzoomedOutput - expectedOutput,
       arma::zeros(input.n_rows), 1e-4);
@@ -69,17 +72,16 @@ TEST_CASE("NearestInterpolationLayerTest", "[ANNLayerTest]")
 
   input1 << 1 << 2 << 3 << arma::endr
          << 4 << 5 << 6 << arma::endr;
-  input1.reshape(1, 6);
-  output1.zeros(1, 17*23);
-  unzoomedOutput1.zeros(1, 6);
+  input1.reshape(6, 1);
+  output1.zeros(17*23, 1);
+  unzoomedOutput1.zeros(6, 1);
   mlpack::NearestInterpolation layer1({17/2.0f, 23/3.0f});
 
-  layer1.InputDimensions() = { channels, 2, 3 };
+  layer1.InputDimensions() = { 2, 3, channels };
   layer1.ComputeOutputDimensions();
 
   layer1.Forward(input1, output1);
   layer1.Backward(output1, output1, unzoomedOutput1);
-
   REQUIRE(accu(output1) - 1317.00 == Approx(0.0).margin(1e-05));
   REQUIRE(accu(unzoomedOutput1) - 1317.00 ==
           Approx(0.0).margin(1e-05));

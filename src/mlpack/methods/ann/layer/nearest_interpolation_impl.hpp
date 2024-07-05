@@ -26,17 +26,6 @@ NearestInterpolationType<MatType>::NearestInterpolationType():
 
 template<typename MatType>
 NearestInterpolationType<MatType>::
-NearestInterpolationType(const double scaleFactor) :
-  Layer<MatType>()
-{
-  scaleFactors = std::vector<double>(this->inputDimensions.size());
-  for (size_t i = 0; i < scaleFactors.size(); i++) {
-    scaleFactors[i] = scaleFactor;
-  }
-}
-
-template<typename MatType>
-NearestInterpolationType<MatType>::
 NearestInterpolationType(const std::vector<double> scaleFactors) :
   Layer<MatType>(),
   scaleFactors(std::move(scaleFactors))
@@ -92,30 +81,29 @@ template<typename MatType>
 void NearestInterpolationType<MatType>::Forward(
   const MatType& input, MatType& output)
 {
-  const size_t channels = this->inputDimensions[0];
+  const size_t channels = this->inputDimensions[2];
 
-  const size_t outRowSize = this->outputDimensions[1];
-  const size_t outColSize = this->outputDimensions[2];
+  const size_t outRowSize = this->outputDimensions[0];
+  const size_t outColSize = this->outputDimensions[1];
 
-  const size_t inRowSize = this->inputDimensions[1];
-  const size_t inColSize = this->inputDimensions[2];
+  const size_t inRowSize = this->inputDimensions[0];
+  const size_t inColSize = this->inputDimensions[1];
 
   arma::cube inputAsCube;
   arma::cube outputAsCube;
 
-  MakeAlias(inputAsCube, input, channels, inRowSize, inColSize, 0, false);
-  MakeAlias(outputAsCube, output, channels, outRowSize, outColSize, 0, true);
+  MakeAlias(inputAsCube, input, inRowSize, inColSize, channels, 0, false);
+  MakeAlias(outputAsCube, output, outRowSize, outColSize, channels, 0, true);
 
-  for (size_t i = 0; i < channels; ++i)
+  for (size_t i = 0; i < outRowSize; ++i)
   {
-    for (size_t j = 0; j < outRowSize; ++j)
+    size_t rOrigin = std::floor(i * 1.0f / scaleFactors[0]);
+    for (size_t j = 0; j < outColSize; ++j)
     {
-      size_t rOrigin = std::floor(j * 1.0f / scaleFactors[0]);
-      for (size_t k = 0; k < outColSize; ++k)
+      size_t cOrigin = std::floor(j * 1.0f / scaleFactors[1]);
+      for (size_t k = 0; k < channels; ++k)
       {
-        size_t cOrigin = std::floor(k * 1.0f / scaleFactors[1]);
-
-        outputAsCube(i, j, k) = inputAsCube(i, rOrigin, cOrigin);
+        outputAsCube(i, j, k) = inputAsCube(rOrigin, cOrigin, k);
       }
     }
   }
@@ -127,29 +115,29 @@ void NearestInterpolationType<MatType>::Backward(
   const MatType& gradient,
   MatType& output)
 {
-  const size_t channels = this->inputDimensions[0];
+  const size_t channels = this->inputDimensions[2];
 
-  const size_t outRowSize = this->outputDimensions[1];
-  const size_t outColSize = this->outputDimensions[2];
+  const size_t outRowSize = this->outputDimensions[0];
+  const size_t outColSize = this->outputDimensions[1];
 
-  const size_t inRowSize = this->inputDimensions[1];
-  const size_t inColSize = this->inputDimensions[2];
+  const size_t inRowSize = this->inputDimensions[0];
+  const size_t inColSize = this->inputDimensions[1];
 
   arma::cube outputAsCube;
   arma::cube gradientAsCube;
 
-  MakeAlias(outputAsCube, output, channels, inRowSize, inColSize, 0, true);
-  MakeAlias(gradientAsCube, gradient, channels, outRowSize, outColSize, 0, false);
+  MakeAlias(outputAsCube, output, inRowSize, inColSize, channels, 0, true);
+  MakeAlias(gradientAsCube, gradient, outRowSize, outColSize, channels, 0, false);
 
-  for (size_t i = 0; i < channels; ++i)
+  for (size_t i = 0; i < outRowSize; ++i)
   {
-    for (size_t j = 0; j < outRowSize; ++j)
+    size_t rOrigin = std::floor(i * 1.0f / scaleFactors[0]);
+    for (size_t j = 0; j < outColSize; ++j)
     {
-      size_t rOrigin = std::floor(j * 1.0f / scaleFactors[0]);
-      for (size_t k = 0; k < outColSize; ++k)
+      size_t cOrigin = std::floor(j * 1.0f / scaleFactors[1]);
+      for (size_t k = 0; k < channels; ++k)
       {
-        size_t cOrigin = std::floor(k * 1.0f / scaleFactors[1]);
-        outputAsCube(i, rOrigin, cOrigin) += gradientAsCube(i, j, k);
+        outputAsCube(rOrigin, cOrigin, k) += gradientAsCube(i, j, k);
       }
     }
   }
@@ -158,13 +146,13 @@ void NearestInterpolationType<MatType>::Backward(
 template<typename MatType>
 void NearestInterpolationType<MatType>::ComputeOutputDimensions()
 {
-  if (this->inputDimensions.size() - 1 == scaleFactors.size()) {
-    throw std::runtime_error("Scale factors must match.");
+  if (this->inputDimensions.size() - 1 != scaleFactors.size()) {
+    throw std::runtime_error("Scale factors must match number of rows and columns.");
   }
   this->outputDimensions = this->inputDimensions;
-  for (size_t i = 1; i < this->InputDimensions().size(); i++)
+  for (size_t i = 0; i < this->InputDimensions().size()-1; i++)
   {
-    this->outputDimensions[i] = std::round((double)this->outputDimensions[i] * scaleFactors[i-1]);
+    this->outputDimensions[i] = std::round((double)this->outputDimensions[i] * scaleFactors[i]);
   }
 }
 

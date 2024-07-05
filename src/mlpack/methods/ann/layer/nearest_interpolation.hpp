@@ -38,14 +38,7 @@ class NearestInterpolationType : public Layer<MatType>
   /**Create NearestInterpolation Object with the same scaleFactor along 
    * each dimension
    * 
-   * @tparam scaleFactor Number to scale each dimension by.
-   */
-  NearestInterpolationType(const double scaleFactor);
-
-  /**Create NearestInterpolation Object with the same scaleFactor along 
-   * each dimension
-   * 
-   * @tparam scaleFactor Numbers to scale each dimension by.
+   * @param scaleFactor Scale factors to scale each dimension by.
    */
   NearestInterpolationType(const std::vector<double> scaleFactors);
 
