@@ -14,6 +14,7 @@
 
 // In case it hasn't yet been included.
 #include "nearest_interpolation.hpp"
+#include <stdexcept>
 
 namespace mlpack {
 
@@ -27,10 +28,12 @@ NearestInterpolationType<MatType>::NearestInterpolationType():
 template<typename MatType>
 NearestInterpolationType<MatType>::
 NearestInterpolationType(const std::vector<double> scaleFactors) :
-  Layer<MatType>(),
-  scaleFactors(std::move(scaleFactors))
+  Layer<MatType>()
 {
-  // Nothing to do here.
+  if (scaleFactors.size() != 2) {
+    throw std::runtime_error("Scale factors must have 2 dimensions");
+  }  
+  this->scaleFactors = std::move(scaleFactors);
 }
 
 template<typename MatType>
@@ -97,10 +100,10 @@ void NearestInterpolationType<MatType>::Forward(
 
   for (size_t i = 0; i < outRowSize; ++i)
   {
-    size_t rOrigin = std::floor(i * 1.0f / scaleFactors[0]);
+    size_t rOrigin = std::floor(i  / scaleFactors[0]);
     for (size_t j = 0; j < outColSize; ++j)
     {
-      size_t cOrigin = std::floor(j * 1.0f / scaleFactors[1]);
+      size_t cOrigin = std::floor(j / scaleFactors[1]);
       for (size_t k = 0; k < channels; ++k)
       {
         outputAsCube(i, j, k) = inputAsCube(rOrigin, cOrigin, k);
@@ -131,10 +134,10 @@ void NearestInterpolationType<MatType>::Backward(
 
   for (size_t i = 0; i < outRowSize; ++i)
   {
-    size_t rOrigin = std::floor(i * 1.0f / scaleFactors[0]);
+    size_t rOrigin = std::floor(i / scaleFactors[0]);
     for (size_t j = 0; j < outColSize; ++j)
     {
-      size_t cOrigin = std::floor(j * 1.0f / scaleFactors[1]);
+      size_t cOrigin = std::floor(j / scaleFactors[1]);
       for (size_t k = 0; k < channels; ++k)
       {
         outputAsCube(rOrigin, cOrigin, k) += gradientAsCube(i, j, k);
