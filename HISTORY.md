@@ -6,6 +6,7 @@ _????-??-??_
 
   * Distribute STB headers as part of R package (#3724, #3726).
   * Implemented the Find and Fill algorithm into the Dropout Layer and added OpenMP support (#3684).
+  * Added OpenMP support for fast approximation (#3685).
 
 ## mlpack 4.4.0
 

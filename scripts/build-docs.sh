@@ -408,6 +408,7 @@ do
   checklink -qs \
       --follow-file-links \
       --suppress-broken 405 \
+      --suppress-broken 503 \
       --suppress-broken 301 \
       -X "https://eigen.tuxfamily.org/index.php\?title=Main_Page" \
       -X "https://mlpack.slack.com/" "$f" 2>&1 |
