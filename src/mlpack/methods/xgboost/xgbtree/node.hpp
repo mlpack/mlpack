@@ -21,9 +21,9 @@ class Node
 
   Node() 
   {
-    
+
   }
-}
+};
 
 }; // mlpack
 

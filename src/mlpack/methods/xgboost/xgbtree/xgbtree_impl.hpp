@@ -26,7 +26,7 @@ class XGBTree
   {
     
   }
-}
+};
 
 }; // mlpack
 
