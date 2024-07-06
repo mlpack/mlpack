@@ -77,12 +77,15 @@ DropoutType<MatType>::operator=(DropoutType&& other)
 template<typename MatType>
 void DropoutType<MatType>::Forward(const MatType& input, MatType& output)
 {
+  // The dropout mask will not be multiplied in testing mode.
   if (!this->training)
   {
     output = input;
   }
   else
   {
+    // Scale with input / (1 - ratio) and set values to zero with probability
+    // 'ratio'.
     mask.randu(input.n_rows, input.n_cols);
     #pragma omp parallel for collapse(2)
     for (size_t i = 0; i < input.n_rows; ++i)
