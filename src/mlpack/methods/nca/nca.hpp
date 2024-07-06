@@ -15,25 +15,9 @@
 #include <mlpack/core.hpp>
 
 #include "nca_softmax_error_function.hpp"
+#include "first_element_is_arma.hpp"
 
 namespace mlpack {
-
-// This utility template struct detects whether the first element in a
-// parameter pack is an Armadillo type.  It is entirely for the deprecated
-// constructor below and can be removed when that is removed during the
-// release of mlpack 5.0.0.
-template<typename... CallbackTypes>
-struct FirstElementIsArma
-{
-  static constexpr bool value = false;
-};
-
-template<typename T, typename... CallbackTypes>
-struct FirstElementIsArma<T, CallbackTypes...>
-{
-  static constexpr bool value = arma::is_arma_type<
-      typename std::remove_reference<T>::type>::value;
-};
 
 /**
  * An implementation of Neighborhood Components Analysis, both a linear
@@ -78,6 +62,10 @@ class NCA
       const arma::Row<size_t>& labels,
       DistanceType distance = DistanceType());
 
+  /**
+   * Construct the Neighborhood Components Analysis object, optionally with an
+   * instantiated distance metric.
+   */
   NCA(DistanceType distance = DistanceType());
 
   /**
@@ -103,9 +91,27 @@ class NCA
                "dataset as a parameter.")]]
   void LearnDistance(arma::mat& outputMatrix, CallbackTypes&&... callbacks);
 
+  /**
+   * Perform Neighborhood Components Analysis.  The output distance learning
+   * matrix is written into the passed reference.  If LearnDistance() is called
+   * with an outputMatrix which has the correct size (dataset.n_rows x
+   * dataset.n_rows), that matrix will be used as the starting point for
+   * optimization.
+   *
+   * @param dataset Dataset to learn distance metric on.
+   * @param labels Labels for dataset.
+   * @param outputMatrix Covariance matrix of Mahalanobis distance.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   */
   template<typename MatType,
            typename LabelsType,
            typename... CallbackTypes,
+           typename = typename std::enable_if<!IsEnsOptimizer<
+               typename First<CallbackTypes...>::type,
+               SoftmaxErrorFunction<MatType, LabelsType, DistanceType>,
+               MatType
+           >::value>::type,
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
            >::value>::type>
@@ -114,6 +120,20 @@ class NCA
                      MatType& outputMatrix,
                      CallbackTypes&&... callbacks) const;
 
+  /**
+   * Perform Neighborhood Components Analysis.  The output distance learning
+   * matrix is written into the passed reference.  If LearnDistance() is called
+   * with an outputMatrix which has the correct size (dataset.n_rows x
+   * dataset.n_rows), that matrix will be used as the starting point for
+   * optimization.
+   *
+   * @param dataset Dataset to learn distance metric on.
+   * @param labels Labels for dataset.
+   * @param optimizer Instantiated ensmallen optimizer to use for NCA.
+   * @param outputMatrix Covariance matrix of Mahalanobis distance.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   */
   template<typename MatType,
            typename LabelsType,
            typename OptimizerType,

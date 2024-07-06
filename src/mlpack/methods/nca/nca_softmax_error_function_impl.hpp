@@ -55,10 +55,8 @@ SoftmaxErrorFunction<MatType, LabelsType, DistanceType>::Evaluate(
     const MatType& coordinates)
 {
   // Calculate the denominators and numerators, if necessary.
-  std::cout << "call Evaluate()\n";
   Precalculate(coordinates);
 
-  std::cout << "result: " << -accu(p) << "\n";
   return -accu(p); // Sum of p_i for all i.  We negate because our solver
                    // minimizes, not maximizes.
 };
@@ -121,7 +119,6 @@ void SoftmaxErrorFunction<MatType, LabelsType, DistanceType>::Gradient(
     const MatType& coordinates, MatType& gradient)
 {
   // Calculate the denominators and numerators, if necessary.
-  std::cout << "call Gradient()\n";
   Precalculate(coordinates);
 
   // Now, we handle the summation over i:
@@ -274,7 +271,6 @@ void SoftmaxErrorFunction<MatType, LabelsType, DistanceType>::Precalculate(
   // We will do this by keeping track of the denominators for each i as well as
   // the numerators (the sum for all j in class of i).  This will be on the
   // order of O((n * (n + 1)) / 2), which really isn't all that great.
-  std::cout << "precalculating after stretch...\n";
   p.zeros(stretchedDataset.n_cols);
   denominators.zeros(stretchedDataset.n_cols);
   #pragma omp parallel for collapse(2)
@@ -302,7 +298,6 @@ void SoftmaxErrorFunction<MatType, LabelsType, DistanceType>::Precalculate(
       }
     }
   }
-  std::cout << "now cleanup\n";
 
   // Divide p_i by their denominators.
   p /= denominators;

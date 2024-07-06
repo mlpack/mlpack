@@ -8,7 +8,8 @@ classification performance.
 
 Note that `NCA` is a computationally intensive technique (each optimization
 iteration takes time quadratic in the data size!), and may be slow to run even
-for datasets of only moderate size.
+for datasets of only moderate size.  See [`LMNN`](lmnn.md) for another distance
+learning technique that scales better to larger datasets.
 
 #### Simple usage example:
 
@@ -29,7 +30,8 @@ nca.LearnDistance(dataset, labels, distance); // Step 2: learn distance.
 arma::mat transformedData = distance * dataset;
 // Or, you can create a MahalanobisDistance to evaluate points in the
 // transformed dataset space.
-mlpack::MahalanobisDistance d(distance);
+arma::mat q = distance.t() * distance;
+mlpack::MahalanobisDistance d(std::move(q));
 
 std::cout << "Distance between points 0 and 1:" << std::endl;
 std::cout << " - Before NCA: "
@@ -52,7 +54,7 @@ std::cout << " - After NCA:  "
 
 <!-- TODO: link to kNN -->
 
- * [mlpack distance metrics](core.md#metrics)
+ * [mlpack distance metrics](../core.md#distances)
  * [`LMNN`](lmnn.md)
  * [Metric learning on Wikipedia](https://en.wikipedia.org/wiki/Similarity_learning#Metric_learning)
  * [Neighborhood Components Analysis on Wikipedia](https://en.wikipedia.org/wiki/Neighbourhood_components_analysis)
@@ -67,7 +69,8 @@ std::cout << " - After NCA:  "
 
  * `nca = NCA<DistanceType>()`
  * `nca = NCA<DistanceType>(distance)`
-   - Create an `NCA` object using a custom [`DistanceType`](core.md#metrics).
+   - Create an `NCA` object using a custom
+     [`DistanceType`](../core.md#distances).
    - An instantiated `DistanceType` can optionally be passed with the `distance`
      parameter.
    - Using a custom `DistanceType` means that `LearnDistance()` will learn a
@@ -101,20 +104,29 @@ to learn a distance.
      [ensmallen optimizer](https://www.ensmallen.org) and/or
      [ensmallen callbacks](https://www.ensmallen.org/docs.html#callback-documentation)
      to be used for the learning process.
-   - `distance` will be set to size `data.n_rows` x `data.n_rows`.
+   - If `distance` already has size `r` x `data.n_rows` for some `r` less than
+     or equal to `data.n_rows`, it will be used as the starting point for
+     optimization.  Otherwise, the identity matrix with size `data.n_rows` x
+     `data.n_rows` will be used.
+   - When optimization is complete, `distance` will have size `r` x
+     `data.n_rows`, where `r` is less than or equal to `data.n_rows`.
+     * *Note*: If `r < data.n_rows`, then NCA has learned a distance metric that
+       also reduces the dimensionality of the data.  See the
+       [last example](#simple-examples).
 
 To use `distance`, either:
 
  * Compute a new transformed dataset as `distance * data`, or
  * Use an instantiated [`MahalanobisDistance`](../core.md#mahalanobisdistance)
-   with `distance` as the `Q` matrix.
+   with `distance.t() * distance` as the `Q` matrix.
 
 See the [examples section](#simple-examples) for more details.
 
 ***Caveat:*** NCA operates by repeatedly computing expressions of the form
 `exp(-distance.Evaluate(data.col(i), data.col(j)))` (that is, the exponential of
 the negative distance between two points).  When distances are very large, this
-*quantity underflows to 0* and results will not be reasonable.
+***quantity underflows to 0*** and results will not be reasonable.
+
  - This situation can be detected, usually by a result where `distance` is equal
    to the identity matrix.
  - Alternately, if the [`ens::ProgressBar()`
@@ -122,7 +134,7 @@ the negative distance between two points).  When distances are very large, this
    0 often means this situation has occurred.
  - To mitigate the problem, consider scaling data such that the maximum pairwise
    distance is less than 10.  See the [simple examples](#simple-examples) that
-   use the `satellite` dataset.
+   use the `vehicle` dataset.
 
 #### `LearnDistance()` Parameters:
 
@@ -131,6 +143,8 @@ the negative distance between two points).  When distances are very large, this
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. |
 | `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  |
 | `distance` | [`arma::mat`](../matrices.md) | Output matrix to store transformation matrix representing learned distance. |
+| `optimizer` | [any ensmallen optimizer](https://www.ensmallen.org) | Instantiated ensmallen optimizer for [differentiable functions](https://www.ensmallen.org/docs.html#differentiable-functions) or [differentiable separable functions](https://www.ensmallen.org/docs.html#differentiable-separable-functions). | `ens::StandardSGD()` |
+| `callbacks...` | [any set of ensmallen callbacks](https://www.ensmallen.org/docs.html#callback-documentation) | Optional callbacks for the ensmallen optimizer, such as e.g. `ens::ProgressBar()`, `ens::Report()`, or others. | _(N/A)_ |
 
 ***Note***: any matrix type can be used for `data` and `distance`, so long as
 that type implements the Armadillo API.  So, e.g., `arma::fmat` can be used.
@@ -151,7 +165,7 @@ that type implements the Armadillo API.  So, e.g., `arma::fmat` can be used.
 
 Learn a distance metric to improve classification performance on the iris
 dataset, and show improved performance when using
-[`NaiveBayesClassifier`](nbc.md).
+[`NaiveBayesClassifier`](naive_bayes_classifier.md).
 
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
@@ -189,8 +203,8 @@ std::cout << "Naive Bayes Classifier with NCA:    "
 
 ---
 
-Learn a distance metric on the satellite dataset, using 32-bit floating point to
-represent the data and metric.
+Learn a distance metric on the ionosphere dataset, using 32-bit floating point
+to represent the data and metric.
 
 ```c++
 // See https://datasets.mlpack.org/ionosphere.csv.
@@ -203,13 +217,15 @@ arma::Row<size_t> labels =
 dataset.shed_row(dataset.n_rows - 1);
 
 // Create an NCA object and learn distance on float32 data.
-// Pass a progress bar callback, and a configured SGD optimizer that reduces the
-// number of epochs to 3 (so this example runs quickly; more would be required
-// in most real-world situations!).
+// To keep computation time down, we use an instantiated optimizer that will
+// only perform 10 epochs of training.  (In a real application you may want to
+// train for longer!)
 arma::fmat distance;
 mlpack::NCA nca;
 
-nca.LearnDistance(dataset, labels, distance, ens::PrintLoss());
+ens::StandardSGD opt;
+opt.MaxIterations() = 10 * dataset.n_cols;
+nca.LearnDistance(dataset, labels, distance, opt, ens::ProgressBar());
 
 // We want to compute six quantities:
 //
@@ -310,21 +326,18 @@ lbfgs.MaxIterations() = 1000;
 arma::mat distance;
 mlpack::NCA nca;
 
-// Use callbacks that print the loss at each iteration, and then print a final
-// optimization report.
-nca.LearnDistance(dataset, labels, distance, lbfgs, ens::PrintLoss(),
-    ens::Report());
+// Use a callback that prints a final optimization report.
+nca.LearnDistance(dataset, labels, distance, lbfgs, ens::Report());
 ```
 
 ---
 
 <!-- TODO: actually use a kNN classifier here... once we have it implemented! -->
 
-Learn a distance metric on the satellite dataset, but instead of using the
-Euclidean distance as the underlying metric, use the inner-product distance of
-the [`PolynomialKernel`](../core.md#polynomialkernel) with the
-[`IPMetric`](../core.md#ipmetric) class.  The distance metric learning is
-therefore performed in kernel space.
+Learn a distance metric on the vehicle dataset, but instead of using the
+Euclidean distance as the underlying metric, use the Manhattan distance.  This
+means that NCA is optimizing k-NN performance under the Manhattan distance, not
+under the Euclidean distance.
 
 ```c++
 // See https://datasets.mlpack.org/vehicle.csv.
@@ -347,8 +360,10 @@ dataset /= arma::max(arma::max(arma::abs(dataset)));
 // progress bar during optimization.
 mlpack::NCA<mlpack::ManhattanDistance> nca;
 arma::mat distance;
-nca.LearnDistance(dataset, labels, distance, ens::NesterovMomentumSGD(),
-    ens::ProgressBar());
+ens::NesterovMomentumSGD opt(0.01 /* step size */,
+                             32 /* batch size */,
+                             20 * dataset.n_cols /* 20 epochs */);
+nca.LearnDistance(dataset, labels, distance, opt, ens::ProgressBar());
 
 // Now inspect distances between points with the Euclidean distance and with the
 // inner product distance.
@@ -382,4 +397,44 @@ std::cout << "   * Before NCA: " << d3 << std::endl;
 std::cout << "   * After NCA:  " << d4 << std::endl;
 
 // Note that point 3 has been moved further away from point 0 than point 1.
+```
+
+---
+
+Learn a distance metric while also performing dimensionality reduction, reducing
+the dimensionality of the vehicle dataset by 2 dimensions.
+
+```c++
+// See https://datasets.mlpack.org/vehicle.csv.
+arma::mat dataset;
+mlpack::data::Load("vehicle.csv", dataset, true);
+
+// The labels are contained as the last row of the dataset.
+arma::Row<size_t> labels =
+    arma::conv_to<arma::Row<size_t>>::from(dataset.row(dataset.n_rows - 1));
+dataset.shed_row(dataset.n_rows - 1);
+
+// Because typical distances between points in the vehicle dataset are large,
+// we will center the dataset and scale it to have points in the unit ball.
+// (That is, all points will have values in each dimension between -1 and 1.)
+// This means that the maximum pairwise distance is 2.
+dataset.each_col() -= arma::mean(dataset, 1);
+dataset /= arma::max(arma::max(arma::abs(dataset)));
+
+// Use a random initialization for the distance transformation, with the
+// specified output dimensionality.
+arma::mat distance(dataset.n_rows - 2, dataset.n_rows, arma::fill::randu);
+mlpack::NCA nca;
+ens::L_BFGS opt;
+opt.MaxIterations() = 10; // You may want more in a real application.
+nca.LearnDistance(dataset, labels, distance, opt);
+
+// Now transform the dataset.
+arma::mat transformedData = distance * dataset;
+
+std::cout << std::endl << std::endl;
+std::cout << "Original data has size " << dataset.n_rows << " x "
+    << dataset.n_cols << "." << std::endl;
+std::cout << "Transformed data has size " << transformedData.n_rows << " x "
+    << transformedData.n_cols << "." << std::endl;
 ```

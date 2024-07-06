@@ -55,6 +55,7 @@ template<typename DistanceType, typename DeprecatedOptimizerType>
 template<typename MatType,
          typename LabelsType,
          typename... CallbackTypes,
+         typename /* SFINAE check that first callback is not an optimizer */,
          typename /* callback SFINAE check */>
 void NCA<DistanceType, DeprecatedOptimizerType>::LearnDistance(
     const MatType& dataset,
