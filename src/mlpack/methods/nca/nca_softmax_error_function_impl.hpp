@@ -273,7 +273,10 @@ void SoftmaxErrorFunction<MatType, LabelsType, DistanceType>::Precalculate(
   // order of O((n * (n + 1)) / 2), which really isn't all that great.
   p.zeros(stretchedDataset.n_cols);
   denominators.zeros(stretchedDataset.n_cols);
-  #pragma omp parallel for collapse(2)
+
+  // A collapse(2) would be helpful here, but appears to not be supported fully
+  // until OpenMP 5.0.
+  #pragma omp parallel for
   for (size_t i = 0; i < stretchedDataset.n_cols; ++i)
   {
     for (size_t j = (i + 1); j < stretchedDataset.n_cols; ++j)
