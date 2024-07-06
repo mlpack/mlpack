@@ -369,8 +369,8 @@ std::cout << "Probabilities of each class: " << probabilities.t();
 
 See also the following fully-working examples:
 
- - [Rainfall prediction with `RandomForest`](https://github.com/mlpack/examples/blob/master/rainfall_prediction_with_random_forest/rainfall-prediction-with-random-forest-cpp.ipynb)
- - [Forest cover type prediction with `RandomForest`](https://github.com/mlpack/examples/blob/master/rainfall_prediction_with_random_forest/rainfall-prediction-with-random-forest-cpp.ipynb)
+ - [Rainfall prediction with `RandomForest`](https://github.com/mlpack/examples/blob/master/jupyter_notebook/random_forest/rainfall_prediction/rainfall-prediction-cpp.ipynb)
+ - [Forest cover type prediction with `RandomForest`](https://github.com/mlpack/examples/blob/master/jupyter_notebook/random_forest/forest_covertype_prediction/covertype-rf-cpp.ipynb)
 
 ### Advanced Functionality: Template Parameters
 
