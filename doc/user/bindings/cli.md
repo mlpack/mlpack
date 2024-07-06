@@ -1677,9 +1677,9 @@ $ mlpack_linear_svm --input_model_file lsvm_model.bin --test_file test.csv
 $ mlpack_lmnn [--batch_size 50] [--center] [--distance_file <string>]
         [--help] [--info <string>] --input_file <string> [--k 1] [--labels_file
         <string>] [--linear_scan] [--max_iterations 100000] [--normalize]
-        [--optimizer 'amsgrad'] [--passes 50] [--print_accuracy] [--range 1]
-        [--rank 0] [--regularization 0.5] [--seed 0] [--step_size 0.01]
-        [--tolerance 1e-07] [--verbose] [--version] [--centered_data_file
+        [--optimizer 'amsgrad'] [--passes 50] [--print_accuracy] [--rank 0]
+        [--regularization 0.5] [--seed 0] [--step_size 0.01] [--tolerance 1e-07]
+        [--update_interval 1] [--verbose] [--version] [--centered_data_file
         <string>] [--output_file <string>] [--transformed_data_file <string>]
 ```
 
@@ -1706,12 +1706,12 @@ An implementation of Large Margin Nearest Neighbors (LMNN), a distance learning 
 | `--optimizer (-O)` | [`string`](#doc_string) | Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or 'lbfgs'. | `'amsgrad'` |
 | `--passes (-p)` | [`int`](#doc_int) | Maximum number of full passes over dataset for AMSGrad, BB_SGD and SGD. | `50` |
 | `--print_accuracy (-P)` | [`flag`](#doc_flag) | Print accuracies on initial and transformed dataset |  |
-| `--range (-R)` | [`int`](#doc_int) | Number of iterations after which impostors needs to be recalculated | `1` |
 | `--rank (-A)` | [`int`](#doc_int) | Rank of distance matrix to be optimized.  | `0` |
 | `--regularization (-r)` | [`double`](#doc_double) | Regularization for LMNN objective function  | `0.5` |
 | `--seed (-s)` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
 | `--step_size (-a)` | [`double`](#doc_double) | Step size for AMSGrad, BB_SGD and SGD (alpha). | `0.01` |
 | `--tolerance (-t)` | [`double`](#doc_double) | Maximum tolerance for termination of AMSGrad, BB_SGD, SGD or L-BFGS. | `1e-07` |
+| `--update_interval (-R)` | [`int`](#doc_int) | Number of iterations after which impostors need to be recalculated. | `1` |
 | `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
 | `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
 
@@ -1731,7 +1731,7 @@ This program implements Large Margin Nearest Neighbors, a distance learning tech
 
 To work, this algorithm needs labeled data.  It can be given as the last row of the input dataset (specified with `--input_file (-i)`), or alternatively as a separate matrix (specified with `--labels_file (-l)`).  Additionally, a starting point for optimization (specified with `--distance_file (-d)`can be given, having (r x d) dimensionality.  Here r should satisfy 1 <= r <= d, Consequently a Low-Rank matrix will be optimized. Alternatively, Low-Rank distance can be learned by specifying the `--rank (-A)`parameter (A Low-Rank matrix with uniformly distributed values will be used as initial learning point). 
 
-The program also requires number of targets neighbors to work with ( specified with `--k (-k)`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `--regularization (-r)`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `--range (-R)`).
+The program also requires number of targets neighbors to work with ( specified with `--k (-k)`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `--regularization (-r)`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `--update_interval (-R)`).
 
 Output can either be the learned distance matrix (specified with `--output_file (-o)`), or the transformed dataset  (specified with `--transformed_data_file (-D)`), or both. Additionally mean-centered dataset (specified with `--centered_data_file (-c)`) can be accessed given mean-centering (specified with `--center (-C)`) is performed on the dataset. Accuracy on initial dataset and final transformed dataset can be printed by specifying the `--print_accuracy (-P)`parameter. 
 
@@ -1755,10 +1755,10 @@ $ mlpack_lmnn --input_file iris.csv --labels_file iris_labels.csv --k 3
   --optimizer bbsgd --output_file output.csv
 ```
 
-An another program call making use of range & regularization parameter with dataset having labels as last column can be made as: 
+Another program call making use of update interval & regularization parameter with dataset having labels as last column can be made as: 
 
 ```bash
-$ mlpack_lmnn --input_file letter_recognition.csv --k 5 --range 10
+$ mlpack_lmnn --input_file letter_recognition.csv --k 5 --update_interval 10
   --regularization 0.4 --output_file output.csv
 ```
 
