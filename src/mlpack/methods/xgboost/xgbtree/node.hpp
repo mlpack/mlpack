@@ -2,8 +2,7 @@
  * @file methods/xgboost/xgbtree/node.hpp
  * @author Abhimanyu Dayal
  *
- * A generic decision tree learner.  Its behavior can be controlled via template
- * arguments.
+ * XGB tree node.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -13,3 +12,19 @@
 #ifndef MLPACK_METHODS_XGBTREE_NODE_HPP
 #define MLPACK_METHODS_XGBTREE_NODE_HPP
 
+// Defined within the mlpack namespace.
+namespace mlpack {
+
+class Node
+{
+  Node() { /*Nothing to do*/ }
+
+  Node() 
+  {
+    
+  }
+}
+
+}; // mlpack
+
+#endif
