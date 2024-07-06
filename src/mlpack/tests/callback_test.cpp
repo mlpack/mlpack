@@ -151,12 +151,13 @@ TEST_CASE("LMNNWithOptimizerCallback", "[CallbackTest]")
                       " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  LMNN<> lmnn(dataset, labels, 1);
+  LMNN<> lmnn(1);
 
   arma::mat outputMatrix;
   std::stringstream stream;
 
-  lmnn.LearnDistance(outputMatrix, ens::ProgressBar(70, stream));
+  lmnn.LearnDistance(dataset, labels, outputMatrix,
+      ens::ProgressBar(70, stream));
   REQUIRE(stream.str().length() > 0);
 }
 
