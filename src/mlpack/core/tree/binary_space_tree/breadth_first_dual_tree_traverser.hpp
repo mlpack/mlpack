@@ -35,9 +35,11 @@ struct QueueFrame
 template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundDistanceType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
+         template<typename BoundDistanceType,
+                  typename BoundElemType,
+                  typename...> class BoundType,
+         template<typename SplitBoundType,
+                  typename SplitMatType> class SplitType>
 template<typename RuleType>
 class BinarySpaceTree<DistanceType, StatisticType, MatType, BoundType,
                       SplitType>::BreadthFirstDualTreeTraverser

@@ -46,10 +46,11 @@ namespace mlpack {
 template<typename DistanceType,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
-         template<typename BoundDistanceType, typename...> class BoundType =
-            HRectBound,
-         template<typename SplitBoundType, typename SplitMatType>
-            class SplitType = MidpointSplit>
+         template<typename BoundDistanceType,
+                  typename BoundElemType,
+                  typename...> class BoundType = HRectBound,
+         template<typename SplitBoundType,
+                  typename SplitMatType> class SplitType = MidpointSplit>
 class BinarySpaceTree
 {
  public:
@@ -58,7 +59,7 @@ class BinarySpaceTree
   //! The type of element held in MatType.
   typedef typename MatType::elem_type ElemType;
 
-  typedef SplitType<BoundType<DistanceType>, MatType> Split;
+  typedef SplitType<BoundType<DistanceType, ElemType>, MatType> Split;
 
  private:
   //! The left child node.
@@ -74,7 +75,7 @@ class BinarySpaceTree
   //! children).
   size_t count;
   //! The bound object for this node.
-  BoundType<DistanceType> bound;
+  BoundType<DistanceType, ElemType> bound;
   //! Any extra data contained in the node.
   StatisticType stat;
   //! The distance from the centroid of this node to the centroid of the parent.
@@ -210,7 +211,8 @@ class BinarySpaceTree
   BinarySpaceTree(BinarySpaceTree* parent,
                   const size_t begin,
                   const size_t count,
-                  SplitType<BoundType<DistanceType>, MatType>& splitter,
+                  SplitType<BoundType<DistanceType, ElemType>, MatType>&
+                      splitter,
                   const size_t maxLeafSize = 20);
 
   /**
@@ -236,7 +238,8 @@ class BinarySpaceTree
                   const size_t begin,
                   const size_t count,
                   std::vector<size_t>& oldFromNew,
-                  SplitType<BoundType<DistanceType>, MatType>& splitter,
+                  SplitType<BoundType<DistanceType, ElemType>, MatType>&
+                      splitter,
                   const size_t maxLeafSize = 20);
 
   /**
@@ -266,7 +269,8 @@ class BinarySpaceTree
                   const size_t count,
                   std::vector<size_t>& oldFromNew,
                   std::vector<size_t>& newFromOld,
-                  SplitType<BoundType<DistanceType>, MatType>& splitter,
+                  SplitType<BoundType<DistanceType, ElemType>, MatType>&
+                      splitter,
                   const size_t maxLeafSize = 20);
 
   /**
@@ -315,9 +319,9 @@ class BinarySpaceTree
   ~BinarySpaceTree();
 
   //! Return the bound object for this node.
-  const BoundType<DistanceType>& Bound() const { return bound; }
+  const BoundType<DistanceType, ElemType>& Bound() const { return bound; }
   //! Return the bound object for this node.
-  BoundType<DistanceType>& Bound() { return bound; }
+  BoundType<DistanceType, ElemType>& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
@@ -517,8 +521,9 @@ class BinarySpaceTree
    * @param maxLeafSize Maximum number of points held in a leaf.
    * @param splitter Instantiated SplitType object.
    */
-  void SplitNode(const size_t maxLeafSize,
-                 SplitType<BoundType<DistanceType>, MatType>& splitter);
+  void SplitNode(
+      const size_t maxLeafSize,
+      SplitType<BoundType<DistanceType, ElemType>, MatType>& splitter);
 
   /**
    * Splits the current node, assigning its left and right children recursively.
@@ -528,9 +533,10 @@ class BinarySpaceTree
    * @param maxLeafSize Maximum number of points held in a leaf.
    * @param splitter Instantiated SplitType object.
    */
-  void SplitNode(std::vector<size_t>& oldFromNew,
-                 const size_t maxLeafSize,
-                 SplitType<BoundType<DistanceType>, MatType>& splitter);
+  void SplitNode(
+      std::vector<size_t>& oldFromNew,
+      const size_t maxLeafSize,
+      SplitType<BoundType<DistanceType, ElemType>, MatType>& splitter);
 
   /**
    * Update the bound of the current node. This method does not take into
@@ -547,7 +553,7 @@ class BinarySpaceTree
    *
    * @param boundToUpdate The bound to update.
    */
-  void UpdateBound(HollowBallBound<DistanceType>& boundToUpdate);
+  void UpdateBound(HollowBallBound<DistanceType, ElemType>& boundToUpdate);
 
  protected:
   /**
