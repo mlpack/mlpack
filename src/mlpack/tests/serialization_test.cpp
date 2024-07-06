@@ -152,12 +152,12 @@ TEST_CASE("BallBoundTest", "[SerializationTest]")
 
 TEST_CASE("MahalanobisBallBoundTest", "[SerializationTest]")
 {
-  BallBound<MahalanobisDistance<>, arma::vec> b(100);
+  BallBound<MahalanobisDistance<>, double, arma::vec> b(100);
   b.Center().randu();
   b.Radius() = 14.0;
   b.Distance().Q().randu(100, 100);
 
-  BallBound<MahalanobisDistance<>, arma::vec> xmlB, jsonB, binaryB;
+  BallBound<MahalanobisDistance<>, double, arma::vec> xmlB, jsonB, binaryB;
 
   SerializeObjectAll(b, xmlB, jsonB, binaryB);
 

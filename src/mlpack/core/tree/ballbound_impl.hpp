@@ -20,8 +20,8 @@
 namespace mlpack {
 
 //! Empty Constructor.
-template<typename DistanceType, typename VecType>
-BallBound<DistanceType, VecType>::BallBound() :
+template<typename DistanceType, typename ElemType, typename VecType>
+BallBound<DistanceType, ElemType, VecType>::BallBound() :
     radius(std::numeric_limits<ElemType>::lowest()),
     distance(new DistanceType()),
     ownsDistance(true)
@@ -32,8 +32,8 @@ BallBound<DistanceType, VecType>::BallBound() :
  *
  * @param dimension Dimensionality of ball bound.
  */
-template<typename DistanceType, typename VecType>
-BallBound<DistanceType, VecType>::BallBound(const size_t dimension) :
+template<typename DistanceType, typename ElemType, typename VecType>
+BallBound<DistanceType, ElemType, VecType>::BallBound(const size_t dimension) :
     radius(std::numeric_limits<ElemType>::lowest()),
     center(dimension),
     distance(new DistanceType()),
@@ -46,9 +46,9 @@ BallBound<DistanceType, VecType>::BallBound(const size_t dimension) :
  * @param radius Radius of ball bound.
  * @param center Center of ball bound.
  */
-template<typename DistanceType, typename VecType>
-BallBound<DistanceType, VecType>::BallBound(const ElemType radius,
-                                            const VecType& center) :
+template<typename DistanceType, typename ElemType, typename VecType>
+BallBound<DistanceType, ElemType, VecType>::BallBound(const ElemType radius,
+                                                      const VecType& center) :
     radius(radius),
     center(center),
     distance(new DistanceType()),
@@ -56,8 +56,8 @@ BallBound<DistanceType, VecType>::BallBound(const ElemType radius,
 { /* Nothing to do. */ }
 
 //! Copy Constructor. To prevent memory leaks.
-template<typename DistanceType, typename VecType>
-BallBound<DistanceType, VecType>::BallBound(const BallBound& other) :
+template<typename DistanceType, typename ElemType, typename VecType>
+BallBound<DistanceType, ElemType, VecType>::BallBound(const BallBound& other) :
     radius(other.radius),
     center(other.center),
     distance(other.distance),
@@ -65,8 +65,9 @@ BallBound<DistanceType, VecType>::BallBound(const BallBound& other) :
 { /* Nothing to do. */ }
 
 //! For the same reason as the copy constructor: to prevent memory leaks.
-template<typename DistanceType, typename VecType>
-BallBound<DistanceType, VecType>& BallBound<DistanceType, VecType>::operator=(
+template<typename DistanceType, typename ElemType, typename VecType>
+BallBound<DistanceType, ElemType, VecType>&
+BallBound<DistanceType, ElemType, VecType>::operator=(
     const BallBound& other)
 {
   if (this != &other)
@@ -80,8 +81,8 @@ BallBound<DistanceType, VecType>& BallBound<DistanceType, VecType>::operator=(
 }
 
 //! Move constructor.
-template<typename DistanceType, typename VecType>
-BallBound<DistanceType, VecType>::BallBound(BallBound&& other) :
+template<typename DistanceType, typename ElemType, typename VecType>
+BallBound<DistanceType, ElemType, VecType>::BallBound(BallBound&& other) :
     radius(other.radius),
     center(other.center),
     distance(other.distance),
@@ -95,8 +96,9 @@ BallBound<DistanceType, VecType>::BallBound(BallBound&& other) :
 }
 
 //! Move assignment operator.
-template<typename DistanceType, typename VecType>
-BallBound<DistanceType, VecType>& BallBound<DistanceType, VecType>::operator=(
+template<typename DistanceType, typename ElemType, typename VecType>
+BallBound<DistanceType, ElemType, VecType>&
+BallBound<DistanceType, ElemType, VecType>::operator=(
     BallBound&& other)
 {
   if (this != &other)
@@ -115,29 +117,30 @@ BallBound<DistanceType, VecType>& BallBound<DistanceType, VecType>::operator=(
 }
 
 //! Destructor to release allocated memory.
-template<typename DistanceType, typename VecType>
-BallBound<DistanceType, VecType>::~BallBound()
+template<typename DistanceType, typename ElemType, typename VecType>
+BallBound<DistanceType, ElemType, VecType>::~BallBound()
 {
   if (ownsDistance)
     delete distance;
 }
 
 //! Get the range in a certain dimension.
-template<typename DistanceType, typename VecType>
-RangeType<typename BallBound<DistanceType, VecType>::ElemType>
-BallBound<DistanceType, VecType>::operator[](const size_t i) const
+template<typename DistanceType, typename ElemType, typename VecType>
+RangeType<ElemType>
+BallBound<DistanceType, ElemType, VecType>::operator[](const size_t i) const
 {
   if (radius < 0)
-    return Range();
+    return RangeType<ElemType>();
   else
-    return Range(center[i] - radius, center[i] + radius);
+    return RangeType<ElemType>(center[i] - radius, center[i] + radius);
 }
 
 /**
  * Determines if a point is within the bound.
  */
-template<typename DistanceType, typename VecType>
-bool BallBound<DistanceType, VecType>::Contains(const VecType& point) const
+template<typename DistanceType, typename ElemType, typename VecType>
+bool BallBound<DistanceType, ElemType, VecType>::Contains(const VecType& point)
+    const
 {
   if (radius < 0)
     return false;
@@ -148,10 +151,9 @@ bool BallBound<DistanceType, VecType>::Contains(const VecType& point) const
 /**
  * Calculates minimum bound-to-point squared distance.
  */
-template<typename DistanceType, typename VecType>
+template<typename DistanceType, typename ElemType, typename VecType>
 template<typename OtherVecType>
-typename BallBound<DistanceType, VecType>::ElemType
-BallBound<DistanceType, VecType>::MinDistance(
+ElemType BallBound<DistanceType, ElemType, VecType>::MinDistance(
     const OtherVecType& point,
     typename std::enable_if_t<IsVector<OtherVecType>::value>* /* junk */) const
 {
@@ -164,10 +166,9 @@ BallBound<DistanceType, VecType>::MinDistance(
 /**
  * Calculates minimum bound-to-bound squared distance.
  */
-template<typename DistanceType, typename VecType>
-typename BallBound<DistanceType, VecType>::ElemType
-BallBound<DistanceType, VecType>::MinDistance(const BallBound& other)
-    const
+template<typename DistanceType, typename ElemType, typename VecType>
+ElemType BallBound<DistanceType, ElemType, VecType>::MinDistance(
+    const BallBound& other) const
 {
   if (radius < 0)
     return std::numeric_limits<ElemType>::max();
@@ -182,10 +183,9 @@ BallBound<DistanceType, VecType>::MinDistance(const BallBound& other)
 /**
  * Computes maximum distance.
  */
-template<typename DistanceType, typename VecType>
+template<typename DistanceType, typename ElemType, typename VecType>
 template<typename OtherVecType>
-typename BallBound<DistanceType, VecType>::ElemType
-BallBound<DistanceType, VecType>::MaxDistance(
+ElemType BallBound<DistanceType, ElemType, VecType>::MaxDistance(
     const OtherVecType& point,
     typename std::enable_if_t<IsVector<OtherVecType>::value>* /* junk */) const
 {
@@ -198,10 +198,9 @@ BallBound<DistanceType, VecType>::MaxDistance(
 /**
  * Computes maximum distance.
  */
-template<typename DistanceType, typename VecType>
-typename BallBound<DistanceType, VecType>::ElemType
-BallBound<DistanceType, VecType>::MaxDistance(const BallBound& other)
-    const
+template<typename DistanceType, typename ElemType, typename VecType>
+ElemType BallBound<DistanceType, ElemType, VecType>::MaxDistance(
+    const BallBound& other) const
 {
   if (radius < 0)
     return std::numeric_limits<ElemType>::max();
@@ -214,36 +213,36 @@ BallBound<DistanceType, VecType>::MaxDistance(const BallBound& other)
  *
  * Example: bound1.MinDistanceSq(other) for minimum squared distance.
  */
-template<typename DistanceType, typename VecType>
+template<typename DistanceType, typename ElemType, typename VecType>
 template<typename OtherVecType>
-RangeType<typename BallBound<DistanceType, VecType>::ElemType>
-BallBound<DistanceType, VecType>::RangeDistance(
+RangeType<ElemType> BallBound<DistanceType, ElemType, VecType>::RangeDistance(
     const OtherVecType& point,
     typename std::enable_if_t<IsVector<OtherVecType>::value>* /* junk */) const
 {
   if (radius < 0)
-    return Range(std::numeric_limits<ElemType>::max(),
-                       std::numeric_limits<ElemType>::max());
+    return RangeType<ElemType>(std::numeric_limits<ElemType>::max(),
+                               std::numeric_limits<ElemType>::max());
   else
   {
     const ElemType dist = distance->Evaluate(center, point);
-    return Range(std::max(dist - radius, (ElemType) 0.0), dist + radius);
+    return RangeType<ElemType>(std::max(dist - radius, (ElemType) 0.0),
+                               dist + radius);
   }
 }
 
-template<typename DistanceType, typename VecType>
-RangeType<typename BallBound<DistanceType, VecType>::ElemType>
-BallBound<DistanceType, VecType>::RangeDistance(
+template<typename DistanceType, typename ElemType, typename VecType>
+RangeType<ElemType> BallBound<DistanceType, ElemType, VecType>::RangeDistance(
     const BallBound& other) const
 {
   if (radius < 0)
-    return Range(std::numeric_limits<ElemType>::max(),
-                       std::numeric_limits<ElemType>::max());
+    return RangeType<ElemType>(std::numeric_limits<ElemType>::max(),
+                               std::numeric_limits<ElemType>::max());
   else
   {
     const ElemType dist = distance->Evaluate(center, other.center);
     const ElemType sumradius = radius + other.radius;
-    return Range(std::max(dist - sumradius, (ElemType) 0.0), dist + sumradius);
+    return RangeType<ElemType>(std::max(dist - sumradius, (ElemType) 0.0),
+                               dist + sumradius);
   }
 }
 
@@ -253,10 +252,10 @@ BallBound<DistanceType, VecType>::RangeDistance(
  * The difference lies in the way we initialize the ball bound. The way we
  * expand the bound is same.
  */
-template<typename DistanceType, typename VecType>
+template<typename DistanceType, typename ElemType, typename VecType>
 template<typename MatType>
-const BallBound<DistanceType, VecType>&
-BallBound<DistanceType, VecType>::operator|=(const MatType& data)
+const BallBound<DistanceType, ElemType, VecType>&
+BallBound<DistanceType, ElemType, VecType>::operator|=(const MatType& data)
 {
   if (radius < 0)
   {
@@ -284,9 +283,9 @@ BallBound<DistanceType, VecType>::operator|=(const MatType& data)
 }
 
 //! Serialize the BallBound.
-template<typename DistanceType, typename VecType>
+template<typename DistanceType, typename ElemType, typename VecType>
 template<typename Archive>
-void BallBound<DistanceType, VecType>::serialize(
+void BallBound<DistanceType, ElemType, VecType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
