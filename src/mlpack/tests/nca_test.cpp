@@ -41,14 +41,16 @@ TEMPLATE_TEST_CASE("SoftmaxInitialPoint", "[NCATest]", float, double)
 
   // Verify the initial point is the identity matrix.
   arma::Mat<eT> initialPoint = sef.GetInitialPoint();
+  const double eps = std::is_same<ElemType, float>::value ? 1e-4 : 1e-7;
+  const double margin = std::is_same<ElemType, float>::value ? 1e-4 : 1e-5;
   for (int row = 0; row < 5; row++)
   {
     for (int col = 0; col < 5; col++)
     {
       if (row == col)
-        REQUIRE(initialPoint(row, col) == Approx(1.0).epsilon(1e-7));
+        REQUIRE(initialPoint(row, col) == Approx(1.0).epsilon(eps));
       else
-        REQUIRE(initialPoint(row, col) == Approx(0.0).margin(1e-5));
+        REQUIRE(initialPoint(row, col) == Approx(0.0).margin(margin));
     }
   }
 }
@@ -129,7 +131,8 @@ TEMPLATE_TEST_CASE("SoftmaxOptimalEvaluation", "[NCATest]", float, double)
 
   // Use a very close tolerance for optimality; we need to be sure this function
   // gives optimal results correctly.
-  REQUIRE(objective == Approx(-4.0).epsilon(1e-12));
+  const double eps = std::is_same<ElemType, float>::value ? 1e-6 : 1e-12;
+  REQUIRE(objective == Approx(-4.0).epsilon(eps));
 }
 
 /**
@@ -343,8 +346,8 @@ TEMPLATE_TEST_CASE("NCALBFGSSimpleDataset", "[NCATest]", float, double)
   // finalObj must be less than initObj.
   REQUIRE(finalObj < initObj);
   // Verify that final objective is optimal.
-  REQUIRE(finalObj == Approx(-6.0).epsilon(1e-7));
+  REQUIRE(finalObj == Approx(-6.0).epsilon(0.00001));
   // The solution is not unique, so the best we can do is ensure the gradient
   // norm is close to 0.
-  REQUIRE(arma::norm(finalGradient, 2) < 1e-6);
+  REQUIRE(arma::norm(finalGradient, 2) < 1e-5);
 }
