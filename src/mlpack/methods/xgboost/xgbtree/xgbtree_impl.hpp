@@ -14,19 +14,12 @@
 #define MLPACK_METHODS_XGBTREE_HPP
 
 #include "node.hpp"
+#include "xgbtree.hpp"
 
 // Defined within the mlpack namespace.
 namespace mlpack {
 
-class XGBTree
-{
-  XGBTree() { /*Nothing to do*/ }
 
-  XGBTree() 
-  {
-    
-  }
-};
 
 }; // mlpack
 
