@@ -8,6 +8,8 @@ _????-??-??_
 
  * Added OpenMP support for fast approximation (#3685).
 
+ * Implemented the Find and Fill algorithm into the Dropout Layer and added OpenMP support (#3684).
+
  * Update Python bindings to support NumPy 2.x (#3752).
 
 ## mlpack 4.4.0
