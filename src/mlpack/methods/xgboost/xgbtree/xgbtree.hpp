@@ -26,6 +26,8 @@ template<typename FitnessFunction,
          bool NoRecursion>
 class XGBTree
 {
+  public:
+
   /**
    * Construct the decision tree on the given data and labels, where the data
    * can be both numeric and categorical. Setting minimumLeafSize and
@@ -250,6 +252,12 @@ class XGBTree
    * Clean up memory.
    */
   ~XGBTree();
+
+  private: 
+
+  
+
+  
 };
 
 }; // mlpack

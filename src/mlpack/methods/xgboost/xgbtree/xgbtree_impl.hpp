@@ -19,6 +19,29 @@
 // Defined within the mlpack namespace.
 namespace mlpack {
 
+//! Construct and train without weight.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename DimensionSelectionType,
+         bool NoRecursion>
+template<typename MatType, typename LabelsType>
+XGBTree<FitnessFunction,
+             NumericSplitType,
+             CategoricalSplitType,
+             DimensionSelectionType,
+             NoRecursion>::XGBTree(
+    MatType data,
+    const data::DatasetInfo& datasetInfo,
+    LabelsType labels,
+    const size_t numClasses,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType dimensionSelector)
+{
+  
+}
 
 
 }; // mlpack
