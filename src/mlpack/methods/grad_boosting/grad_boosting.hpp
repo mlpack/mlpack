@@ -38,7 +38,6 @@ namespace mlpack {
  * @tparam MatType Data matrix type (i.e. arma::mat or arma::sp_mat).
  */
 
-// 
 template<
   typename WeakLearnerType = DecisionTree<GiniGain,
          BestBinaryNumericSplit,
