@@ -862,9 +862,9 @@ including:
 
  * [`NeighborSearch`](/src/mlpack/methods/neighbor_search/neighbor_search.hpp)
  * [`RangeSearch`](/src/mlpack/methods/range_search/range_search.hpp)
- * [`LMNN`](user/methods/lmnn.md)
+ * [`LMNN`](methods/lmnn.md)
  * [`EMST`](/src/mlpack/methods/emst/emst.hpp)
- * [`NCA`](user/methods/nca.md)
+ * [`NCA`](methods/nca.md)
  * [`RANN`](/src/mlpack/methods/rann/rann.hpp)
  * [`KMeans`](/src/mlpack/methods/kmeans/kmeans.hpp)
 
