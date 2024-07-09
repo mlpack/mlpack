@@ -15,7 +15,7 @@ jobs:
 
     steps:
      - name: Auto-approve pull requests
-       uses: rcurtin/auto-approve@v1.0.0
+       uses: rcurtin/auto-approve@v1.0.1
        with:
          repo-token: ${{ secrets.GITHUB_TOKEN }}
          approval-message:
