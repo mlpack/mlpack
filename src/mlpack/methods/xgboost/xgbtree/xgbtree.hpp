@@ -253,65 +253,6 @@ class XGBTree
    */
   ~XGBTree();
 
-    /**
-   * Corresponding to the public Train() method, this method is designed for
-   * avoiding unnecessary copies during training.  This function is called to
-   * train children.
-   *
-   * @param data Dataset to train on.
-   * @param begin Index of the starting point in the dataset that belongs to
-   *      this node.
-   * @param count Number of points in this node.
-   * @param datasetInfo Type information for each dimension.
-   * @param labels Labels for each training point.
-   * @param numClasses Number of classes in the dataset.
-   * @param minimumLeafSize Minimum number of points in each leaf node.
-   * @param minimumGainSplit Minimum gain for the node to split.
-   * @param maximumDepth Maximum depth for the tree.
-   * @return The final entropy of decision tree.
-   */
-  template<bool UseWeights, typename MatType, typename WeightsType>
-  double Train(MatType& data,
-               const size_t begin,
-               const size_t count,
-               const data::DatasetInfo& datasetInfo,
-               arma::Row<size_t>& labels,
-               const size_t numClasses,
-               WeightsType& weights,
-               const size_t minimumLeafSize,
-               const double minimumGainSplit,
-               const size_t maximumDepth,
-               DimensionSelectionType& dimensionSelector);
-
-  /**
-   * Corresponding to the public Train() method, this method is designed for
-   * avoiding unnecessary copies during training.  This method is called for
-   * training children.
-   *
-   * @param data Dataset to train on.
-   * @param begin Index of the starting point in the dataset that belongs to
-   *      this node.
-   * @param count Number of points in this node.
-   * @param labels Labels for each training point.
-   * @param numClasses Number of classes in the dataset.
-   * @param minimumLeafSize Minimum number of points in each leaf node.
-   * @param minimumGainSplit Minimum gain for the node to split.
-   * @param maximumDepth Maximum depth for the tree.
-   * @return The final entropy of decision tree.
-   */
-  template<bool UseWeights, typename MatType, typename WeightsType>
-  double Train(MatType& data,
-               const size_t begin,
-               const size_t count,
-               arma::Row<size_t>& labels,
-               const size_t numClasses,
-               WeightsType& weights,
-               const size_t minimumLeafSize,
-               const double minimumGainSplit,
-               const size_t maximumDepth,
-               DimensionSelectionType& dimensionSelector);
-
-
   private: 
 
   
