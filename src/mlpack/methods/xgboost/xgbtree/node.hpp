@@ -49,16 +49,16 @@ template<typename FitnessFunction,
          bool NoRecursion>
 template<bool UseWeights, typename MatType, typename WeightsType>
 double Train(MatType& data,
-              const size_t begin,
-              const size_t count,
-              const data::DatasetInfo& datasetInfo,
-              arma::Row<size_t>& labels,
-              const size_t numClasses,
-              WeightsType& weights,
-              const size_t minimumLeafSize,
-              const double minimumGainSplit,
-              const size_t maximumDepth,
-              DimensionSelectionType& dimensionSelector)
+             const size_t begin,
+             const size_t count,
+             const data::DatasetInfo& datasetInfo,
+             arma::Row<size_t>& labels,
+             const size_t numClasses,
+             WeightsType& weights,
+             const size_t minimumLeafSize,
+             const double minimumGainSplit,
+             const size_t maximumDepth,
+             DimensionSelectionType& dimensionSelector)
 {
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
@@ -247,17 +247,16 @@ template<typename FitnessFunction,
          typename DimensionSelectionType,
          bool NoRecursion>
 template<bool UseWeights, typename MatType, typename WeightsType>
-double Train(
-    MatType& data,
-    const size_t begin,
-    const size_t count,
-    arma::Row<size_t>& labels,
-    const size_t numClasses,
-    WeightsType& weights,
-    const size_t minimumLeafSize,
-    const double minimumGainSplit,
-    const size_t maximumDepth,
-    DimensionSelectionType& dimensionSelector)
+double Train(MatType& data,
+             const size_t begin,
+             const size_t count,
+             arma::Row<size_t>& labels,
+             const size_t numClasses,
+             WeightsType& weights,
+             const size_t minimumLeafSize,
+             const double minimumGainSplit,
+             const size_t maximumDepth,
+             DimensionSelectionType& dimensionSelector)
 {
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
