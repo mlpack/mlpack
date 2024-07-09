@@ -310,7 +310,6 @@ class XGBTree
                const double minimumGainSplit,
                const size_t maximumDepth,
                DimensionSelectionType& dimensionSelector);
-};
 
 
   private: 
