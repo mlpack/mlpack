@@ -62,12 +62,14 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
   // Step 1: for all centers, compute between-cluster distances.  For all
   // centers, compute s(c) = 1/2 min d(c, c').
+  #pragma omp parallel for schedule(static)
   for (size_t i = 0; i < centroids.n_cols; ++i)
   {
     for (size_t j = i + 1; j < centroids.n_cols; ++j)
     {
       const double dist = distance.Evaluate(centroids.col(i),
                                             centroids.col(j));
+      #pragma omp atomic
       distanceCalculations++;
       clusterDistances(i, j) = dist;
       clusterDistances(j, i) = dist;
@@ -79,13 +81,16 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   minClusterDistances = 0.5 * min(clusterDistances).t();
 
   // Now loop over all points, and see which ones need to be updated.
+  #pragma omp parallel for schedule(dynamic)
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     // Step 2: identify all points such that u(x) <= s(c(x)).
     if (upperBounds(i) <= minClusterDistances(assignments[i]))
     {
       // No change needed.  This point must still belong to that cluster.
+      #pragma omp atomic
       counts(assignments[i])++;
+      #pragma omp critical
       newCentroids.col(assignments[i]) += arma::vec(dataset.col(i));
       continue;
     }
@@ -114,6 +119,7 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
                                    centroids.col(assignments[i]));
           lowerBounds(assignments[i], i) = dist;
           upperBounds(i) = dist;
+          #pragma omp atomic
           distanceCalculations++;
 
           // Check if we can prune again.
@@ -136,6 +142,7 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
           const double pointDist = distance.Evaluate(dataset.col(i),
                                                      centroids.col(c));
           lowerBounds(c, i) = pointDist;
+          #pragma omp atomic
           distanceCalculations++;
           if (pointDist < dist)
           {
@@ -149,13 +156,17 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     // At this point, we know the new cluster assignment.
     // Step 4: for each center c, let m(c) be the mean of the points assigned to
     // c.
-    newCentroids.col(assignments[i]) += arma::vec(dataset.col(i));
-    counts[assignments[i]]++;
+    #pragma omp critical
+    {
+      newCentroids.col(assignments[i]) += arma::vec(dataset.col(i));
+      counts[assignments[i]]++;
+    }
   }
 
   // Now, normalize and calculate the distance each cluster has moved.
   arma::vec moveDistances(centroids.n_cols);
   double cNorm = 0.0; // Cluster movement for residual.
+  #pragma omp parallel for reduction(+:cNorm) schedule(static)
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
     if (counts[c] > 0)
@@ -163,9 +174,11 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
     moveDistances(c) = distance.Evaluate(newCentroids.col(c), centroids.col(c));
     cNorm += std::pow(moveDistances(c), 2.0);
+    #pragma omp atomic
     distanceCalculations++;
   }
 
+  #pragma omp parallel for schedule(static)
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     // Step 5: for each point x and center c, assign
