@@ -15,6 +15,7 @@
 
 #include <mlpack/core.hpp>
 #include "node.hpp"
+#include "dt_prereq.hpp"
 
 // Defined within the mlpack namespace.
 namespace mlpack {

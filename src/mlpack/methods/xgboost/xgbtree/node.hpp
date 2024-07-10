@@ -12,6 +12,8 @@
 #ifndef MLPACK_METHODS_XGBTREE_NODE_HPP
 #define MLPACK_METHODS_XGBTREE_NODE_HPP
 
+#include "dt_prereq.hpp"
+
 // Defined within the mlpack namespace.
 namespace mlpack {
 
