@@ -256,7 +256,7 @@ class XGBTree
 
   private: 
 
-  
+  Node* root;
 
   
 };
