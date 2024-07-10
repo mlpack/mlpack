@@ -191,7 +191,6 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   return std::sqrt(centroidMovement);
 }
 
-
 } // namespace mlpack
 
 #endif
