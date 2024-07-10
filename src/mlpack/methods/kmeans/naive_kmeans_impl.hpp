@@ -56,7 +56,7 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
       for (size_t j = 0; j < centroids.n_cols; ++j)
       {
-        const double dist = distance.Evaluate(dataset.col(i), 
+        const double dist = distance.Evaluate(dataset.col(i),
             centroids.unsafe_col(j));
         if (dist < minDistance)
         {
