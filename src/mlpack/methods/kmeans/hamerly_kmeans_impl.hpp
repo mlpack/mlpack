@@ -12,7 +12,6 @@
 #ifndef MLPACK_METHODS_KMEANS_HAMERLY_KMEANS_IMPL_HPP
 #define MLPACK_METHODS_KMEANS_HAMERLY_KMEANS_IMPL_HPP
 
-#include <omp.h>
 // In case it hasn't been included yet.
 #include "hamerly_kmeans.hpp"
 
