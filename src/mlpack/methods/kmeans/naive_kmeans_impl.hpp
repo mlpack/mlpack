@@ -16,6 +16,7 @@
 #ifndef MLPACK_METHODS_KMEANS_NAIVE_KMEANS_IMPL_HPP
 #define MLPACK_METHODS_KMEANS_NAIVE_KMEANS_IMPL_HPP
 
+// In case it hasn't been included yet.
 #include "naive_kmeans.hpp"
 
 namespace mlpack {
@@ -42,7 +43,8 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   #pragma omp parallel
   {
     // The current state of the K-means is private for each thread
-    arma::mat localCentroids(centroids.n_rows, centroids.n_cols, arma::fill::zeros);
+    arma::mat localCentroids(centroids.n_rows, centroids.n_cols,
+        arma::fill::zeros);
     arma::Col<size_t> localCounts(centroids.n_cols, arma::fill::zeros);
 
     #pragma omp for schedule(dynamic)
@@ -54,7 +56,8 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
       for (size_t j = 0; j < centroids.n_cols; ++j)
       {
-        const double dist = distance.Evaluate(dataset.col(i), centroids.unsafe_col(j));
+        const double dist = distance.Evaluate(dataset.col(i), 
+            centroids.unsafe_col(j));
         if (dist < minDistance)
         {
           minDistance = dist;
@@ -68,7 +71,6 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
       localCentroids.unsafe_col(closestCluster) += dataset.col(i);
       localCounts(closestCluster)++;
     }
-
     // Combine calculated state from each thread using atomic operations
     #pragma omp critical
     {
@@ -90,7 +92,8 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   #pragma omp parallel for reduction(+:cNorm)
   for (size_t i = 0; i < centroids.n_cols; ++i)
   {
-    cNorm += std::pow(distance.Evaluate(centroids.col(i), newCentroids.col(i)), 2.0);
+    cNorm += std::pow(distance.Evaluate(centroids.col(i), newCentroids.col(i)),
+        2.0);
   }
   distanceCalculations += centroids.n_cols;
 
