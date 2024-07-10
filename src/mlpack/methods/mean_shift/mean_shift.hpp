@@ -41,8 +41,7 @@ namespace mlpack {
  * @tparam MatType The type of matrix the data is stored in.
  */
 template<bool UseKernel = false,
-         typename KernelType = GaussianKernel,
-         typename MatType = arma::mat>
+         typename KernelType = GaussianKernel>
 class MeanShift
 {
  public:
@@ -67,7 +66,9 @@ class MeanShift
    * @param data Dataset for estimation.
    * @param ratio Percentage of dataset to use for nearest neighbor search.
    */
-  double EstimateRadius(const MatType& data, const double ratio = 0.2);
+  template<typename MatType>
+  typename MatType::elem_type EstimateRadius(const MatType& data,
+                                             const double ratio = 0.2);
 
   /**
    * Perform mean shift clustering on the data, returning a list of cluster
@@ -81,9 +82,10 @@ class MeanShift
    * converge regardless of maxIterations.
    * @param useSeeds Set true to use seeds.
    */
+  template<typename MatType, typename LabelsType>
   void Cluster(const MatType& data,
-               arma::Row<size_t>& assignments,
-               arma::mat& centroids,
+               LabelsType& assignments,
+               MatType& centroids,
                bool forceConvergence = true,
                bool useSeeds = true);
 
@@ -116,6 +118,7 @@ class MeanShift
    * @param minFreq Minimum number of points in bin.
    * @param seed Matrix to store generated seeds in.
    */
+  template<typename MatType>
   void GenSeeds(const MatType& data,
                 const double binSize,
                 const int minFreq,
@@ -129,12 +132,12 @@ class MeanShift
    * @param distances Distances to neighbors
    # @param centroid Store calculated centroid
    */
-  template<bool ApplyKernel = UseKernel>
+  template<bool ApplyKernel = UseKernel, typename MatType, typename VecType>
   typename std::enable_if<ApplyKernel, bool>::type
   CalculateCentroid(const MatType& data,
                     const std::vector<size_t>& neighbors,
-                    const std::vector<double>& distances,
-                    arma::colvec& centroid);
+                    const std::vector<typename MatType::elem_type>& distances,
+                    VecType& centroid);
 
   /**
    * Use mean to calculate new centroid given dataset and valid neighbors.
@@ -144,12 +147,12 @@ class MeanShift
    * @param distances Distances to neighbors
    # @param centroid Store calculated centroid
    */
-  template<bool ApplyKernel = UseKernel>
+  template<bool ApplyKernel = UseKernel, typename MatType, typename VecType>
   typename std::enable_if<!ApplyKernel, bool>::type
   CalculateCentroid(const MatType& data,
                     const std::vector<size_t>& neighbors,
-                    const std::vector<double>&, /*unused*/
-                    arma::colvec& centroid);
+                    const std::vector<typename MatType::elem_type>&, /*unused*/
+                    VecType& centroid);
 
   /**
    * If distance of two centroids is less than radius, one will be removed.
