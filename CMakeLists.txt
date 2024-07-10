@@ -23,7 +23,7 @@ option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." 
 # For Armadillo, try to keep the minimum required version less than or equal to
 # what's available on the current Ubuntu LTS or most recent stable RHEL release.
 # See https://github.com/mlpack/mlpack/issues/3033 for some more discussion.
-set(ARMADILLO_VERSION "9.800")
+set(ARMADILLO_VERSION "10.8")
 set(ENSMALLEN_VERSION "2.10.0")
 set(CEREAL_VERSION "1.1.2")
 
