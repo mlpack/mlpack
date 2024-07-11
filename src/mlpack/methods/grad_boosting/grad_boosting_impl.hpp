@@ -26,9 +26,7 @@ template<typename WeakLearnerType, typename MatType>
 GradBoosting<WeakLearnerType, MatType>::GradBoosting() :
     numClasses(0),
     numModels(0)
-{
-// Nothing to do.
-}
+{ /*Nothing to do.*/}
 
 // In case weak learners aren't defined
 /**
@@ -45,10 +43,8 @@ GradBoosting<WeakLearnerType, MatType>::
                const arma::Row<size_t>& labels,
                const size_t numClasses,
                const size_t numModels) :
-
   numClasses(numClasses),
   numModels(numModels)
-
 {
   WeakLearnerType other; // Will not be used.
   (void) TrainInternal<false>(data, labels, numClasses, other);
@@ -72,10 +68,8 @@ GradBoosting<WeakLearnerType, MatType>::
                 const size_t numClasses,
                 const size_t numModels,
                 const WeakLearnerType& other) :
-
   numClasses(numClasses),
   numModels(numModels)
-
 {
   (void) TrainInternal<true>(data, labels, numClasses, other);
 }
@@ -92,15 +86,14 @@ GradBoosting<WeakLearnerType, MatType>::
  * @param other Weak Learner, which has been initialized already.
  */
 template<typename WeakLearnerType, typename MatType>
-
 // Variadic template to the Weak Learner arguments
 template<typename... WeakLearnerArgs>
 GradBoosting<WeakLearnerType, MatType>::
 GradBoosting(const MatType& data,
-              const arma::Row<size_t>& labels,
-              const size_t numClasses,
-              const size_t numModels,
-              WeakLearnerArgs&&... weakLearnerArgs) :
+             const arma::Row<size_t>& labels,
+             const size_t numClasses,
+             const size_t numModels,
+             WeakLearnerArgs&&... weakLearnerArgs) :
   numModels(numModels)
 {
   WeakLearnerType other; // Will not be used.
@@ -163,7 +156,6 @@ void GradBoosting<WeakLearnerType, MatType>::Classify(const VecType& point,
                                                       size_t& prediction,
                                                       arma::Row<ElemType>& probabilities)
 {
-
   prediction = 0;
 
   for (size_t i = 0; i < weakLearners.size(); ++i) 
@@ -171,7 +163,6 @@ void GradBoosting<WeakLearnerType, MatType>::Classify(const VecType& point,
     size_t tempPred = weakLearners[i].Classify(point);
     prediction += tempPred;
   }
-
 }
 
 
@@ -179,7 +170,6 @@ template<typename WeakLearnerType, typename MatType>
 void GradBoosting<WeakLearnerType, MatType>::Classify(const MatType& test,
                                                       arma::Row<size_t>& predictedLabels) 
 {
-
   predictedLabels.clear();
   predictedLabels.resize(test.n_cols);
   arma::Row<ElemType> probabilities;
@@ -198,7 +188,6 @@ void GradBoosting<WeakLearnerType, MatType>::Classify(const MatType& test,
                                                       arma::Row<size_t>& predictedLabels,
                                                       arma::Row<ElemType>& probabilities) 
 {
-
   predictedLabels.clear();
   predictedLabels.resize(test.n_cols);
 
@@ -246,7 +235,6 @@ double ComputeLearningRate(const MatType& predictions,
             bestLoss = currentLoss;
         }
     }
-
     return bestLearningRate;
 }
 
@@ -260,7 +248,6 @@ void GradBoosting<WeakLearnerType, MatType>::TrainInternal(
     const size_t numClasses,
     const WeakLearnerType& wl)
 {
-
   const size_t minimumLeafSize=10;
   const double minimumGainSplit=1e-7;
   const size_t maximumDepth=2;
@@ -295,7 +282,6 @@ void GradBoosting<WeakLearnerType, MatType>::
                 const WeakLearnerType& wl,
                 WeakLearnerArgs&&... weakLearnerArgs) 
 {
-
   // Load the initial weights into a 2-D matrix.
   const ElemType initWeight = 1.0 / ElemType(data.n_cols * numClasses);
   MatType D(numClasses, data.n_cols);
@@ -310,7 +296,6 @@ void GradBoosting<WeakLearnerType, MatType>::
 
   for (size_t model = 0; model < numModels; ++model) 
   {
-
     // Build the weight vectors.
     weights = sum(D);
 
@@ -341,9 +326,7 @@ void GradBoosting<WeakLearnerType, MatType>::
     {
       residue(i) = (size_t)abs((double)residue(i) - (double)(learningRate * predictions(i)));
     }
-
     delete wPtr;
-        
   }
 }
 

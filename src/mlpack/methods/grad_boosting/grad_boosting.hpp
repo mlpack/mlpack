@@ -85,10 +85,10 @@ class GradBoosting
    */
   template<typename... WeakLearnerArgs>
   GradBoosting(const MatType& data,
-                const arma::Row<size_t>& labels,
-                const size_t numClasses,
-                const size_t numModels = 10,
-                WeakLearnerArgs&&... weakLearnerArgs);
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const size_t numModels = 10,
+               WeakLearnerArgs&&... weakLearnerArgs);
 
   /**
    * Constructor takes an already-initialized weak learner; all other
@@ -101,11 +101,11 @@ class GradBoosting
    * @param numModels Number of weak learners.
    * @param other Weak learner that has already been initialized.
    */
-  GradBoosting (const MatType& data,
-                const arma::Row<size_t>& labels,
-                const size_t numClasses,
-                const size_t numModels,
-                const WeakLearnerType& other);
+  GradBoosting(const MatType& data,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const size_t numModels,
+               const WeakLearnerType& other);
 
   //! Get the number of classes this model is trained on.
   size_t NumClasses() const { return numClasses; }
@@ -136,10 +136,10 @@ class GradBoosting
    * @param learner Learner to use for training.
    */
   void Train(const MatType& data,
-              const arma::Row<size_t>& labels,
-              const size_t numClasses,
-              const size_t numModels,
-              const WeakLearnerType learner);
+             const arma::Row<size_t>& labels,
+             const size_t numClasses,
+             const size_t numModels,
+             const WeakLearnerType learner);
 
   /**
    * Train Gradient Boosting on the given dataset, using the given parameters.
@@ -153,9 +153,9 @@ class GradBoosting
    * @param numModels Number of boosting rounds.
    */
   void Train(const MatType& data,
-              const arma::Row<size_t>& labels,
-              const size_t numClasses,
-              const size_t numModels);
+             const arma::Row<size_t>& labels,
+             const size_t numClasses,
+             const size_t numModels);
 
   /**
    * Train Gradient Boosting on the given dataset, using the given parameters.
@@ -174,10 +174,10 @@ class GradBoosting
    */
   template<typename... WeakLearnerArgs>
   void Train(const MatType& data,
-              const arma::Row<size_t>& labels,
-              const size_t numClasses,
-              const size_t numModels,
-              WeakLearnerArgs&&... weakLearnerArgs);
+             const arma::Row<size_t>& labels,
+             const size_t numClasses,
+             const size_t numModels,
+             WeakLearnerArgs&&... weakLearnerArgs);
 
   /**
    * Classify the given test point.
@@ -235,10 +235,10 @@ class GradBoosting
 
   template<bool UseExistingWeakLearner>
   void TrainInternal(const MatType& data,
-                      const arma::Row<size_t>& labels,
-                      const size_t numModels,
-                      const size_t numClasses,
-                      const WeakLearnerType& wl);
+                     const arma::Row<size_t>& labels,
+                     const size_t numModels,
+                     const size_t numClasses,
+                     const WeakLearnerType& wl);
 
   /**
    * Internal utility training function.  `wl` is not used if
@@ -247,11 +247,11 @@ class GradBoosting
    */
   template<bool UseExistingWeakLearner, typename... WeakLearnerArgs>
   void TrainInternal(const MatType& data,
-                      const arma::Row<size_t>& labels,
-                      const size_t numModels,
-                      const size_t numClasses,
-                      const WeakLearnerType& wl,
-                      WeakLearnerArgs&&... weakLearnerArgs);
+                     const arma::Row<size_t>& labels,
+                     const size_t numModels,
+                     const size_t numClasses,
+                     const WeakLearnerType& wl,
+                     WeakLearnerArgs&&... weakLearnerArgs);
 
   //! The number of classes in the model.
   size_t numClasses;
