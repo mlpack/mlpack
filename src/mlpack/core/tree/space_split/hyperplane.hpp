@@ -139,15 +139,15 @@ class HyperplaneBase
 /**
  * AxisOrthogonalHyperplane represents a hyperplane orthogonal to an axis.
  */
-template<typename MetricType>
-using AxisOrthogonalHyperplane = HyperplaneBase<HRectBound<MetricType>,
+template<typename DistanceType>
+using AxisOrthogonalHyperplane = HyperplaneBase<HRectBound<DistanceType>,
     AxisParallelProjVector>;
 
 /**
  * Hyperplane represents a general hyperplane (not necessarily axis-orthogonal).
  */
-template<typename MetricType>
-using Hyperplane = HyperplaneBase<BallBound<MetricType>, ProjVector>;
+template<typename DistanceType>
+using Hyperplane = HyperplaneBase<BallBound<DistanceType>, ProjVector>;
 
 } // namespace mlpack
 

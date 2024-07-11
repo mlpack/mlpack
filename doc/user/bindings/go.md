@@ -10,7 +10,7 @@ Further useful mlpack documentation links are given below.
 
  - [mlpack homepage](https://www.mlpack.org/)
  - [mlpack on Github](https://github.com/mlpack/mlpack)
- - [mlpack main documentation page](https://www.mlpack.org/docs.html)
+ - [mlpack main documentation page](https://www.mlpack.org/doc/index.html)
 
 See also the quickstart guide for Go:
 
@@ -517,7 +517,6 @@ param.MaximumDepth = 0
 param.MinimumGainSplit = 1e-07
 param.MinimumLeafSize = 20
 param.PrintTrainingAccuracy = false
-param.PrintTrainingError = false
 param.Test = mat.NewDense(1, 1, nil)
 param.TestLabels = mat.NewDense(1, 1, nil)
 param.Training = mat.NewDense(1, 1, nil)
@@ -543,7 +542,6 @@ There are two types of input options: required options, which are passed directl
 | `MinimumGainSplit` | [`float64`](#doc_float64) | Minimum gain for node splitting. | `1e-07` |
 | `MinimumLeafSize` | [`int`](#doc_int) | Minimum number of points in a leaf. | `20` |
 | `PrintTrainingAccuracy` | [`bool`](#doc_bool) | Print the training accuracy. | `false` |
-| `PrintTrainingError` | [`bool`](#doc_bool) | Print the training error (deprecated; will be removed in mlpack 4.0.0). | `false` |
 | `Test` | [`matrixWithInfo`](#doc_matrixWithInfo) | Testing dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
 | `TestLabels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Test point labels, if accuracy calculation is desired. | `mat.NewDense(1, 1, nil)` |
 | `Training` | [`matrixWithInfo`](#doc_matrixWithInfo) | Training dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
@@ -567,7 +565,7 @@ Train and evaluate using a decision tree.  Given a dataset containing numeric or
 
 The training set and associated labels are specified with the `Training` and `Labels` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `Labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
 
-When a model is trained, the `OutputModel` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `InputModel` parameter.  The `InputModel` parameter may not be specified when the `Training` parameter is specified.  The `MinimumLeafSize` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `MinimumGainSplit` parameter specifies the minimum gain that is needed for the node to split.  The `MaximumDepth` parameter specifies the maximum depth of the tree.  If `PrintTrainingError` is specified, the training error will be printed.
+When a model is trained, the `OutputModel` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `InputModel` parameter.  The `InputModel` parameter may not be specified when the `Training` parameter is specified.  The `MinimumLeafSize` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `MinimumGainSplit` parameter specifies the minimum gain that is needed for the node to split.  The `MaximumDepth` parameter specifies the maximum depth of the tree.  If `PrintTrainingAccuracy` is specified, the training accuracy will be printed.
 
 Test data may be specified with the `Test` parameter, and if performance numbers are desired for that test set, labels may be specified with the `TestLabels` parameter.  Predictions for each test point may be saved via the `Predictions` output parameter.  Class probabilities for each prediction may be saved with the `Probabilities` output parameter.
 
@@ -1700,7 +1698,7 @@ transformed := mlpack.KernelPca(input, "gaussian", param)
 ### See also
 
  - [Kernel principal component analysis on Wikipedia](https://en.wikipedia.org/wiki/Kernel_principal_component_analysis)
- - [Kernel Principal Component Analysis (pdf)](https://pca.narod.ru/scholkopf_kernel.pdf)
+ - [Nonlinear Component Analysis as a Kernel Eigenvalue Problem](https://www.mlpack.org/papers/kpca.pdf)
  - [KernelPCA class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kernel_pca/kernel_pca.hpp)
 
 ## Kmeans()
@@ -1808,7 +1806,7 @@ final, _ := mlpack.Kmeans(data, 10, param)
  - [Dbscan()](#dbscan)
  - [k-means++](https://en.wikipedia.org/wiki/K-means%2B%2B)
  - [Using the triangle inequality to accelerate k-means (pdf)](https://cdn.aaai.org/ICML/2003/ICML03-022.pdf)
- - [Making k-means even faster (pdf)](https://epubs.siam.org/doi/pdf/10.1137/1.9781611972801.12)
+ - [Making k-means even faster (pdf)](https://www.cse.iitd.ac.in/~rjaiswal/2015/col870/Project/Faster-k-means/Hamerly.pdf)
  - [Accelerating exact k-means algorithms with geometric reasoning (pdf)](http://reports-archive.adm.cs.cmu.edu/anon/anon/usr/ftp/usr0/ftp/2000/CMU-CS-00-105.pdf)
  - [A dual-tree algorithm for fast k-means clustering with large k (pdf)](http://www.ratml.org/pub/pdf/2017dual.pdf)
  - [KMeans class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kmeans/kmeans.hpp)
@@ -2279,7 +2277,7 @@ new_codes, _, _ := mlpack.LocalCoordinateCoding(param)
 
  - [SparseCoding()](#sparse_coding)
  - [Nonlinear learning using local coordinate coding (pdf)](https://papers.nips.cc/paper/3875-nonlinear-learning-using-local-coordinate-coding.pdf)
- - [LocalCoordinateCoding C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/local_coordinate_coding/local_coordinate_coding.hpp)
+ - [LocalCoordinateCoding C++ class documentation](../../user/methods/local_coordinate_coding.md)
 
 ## LogisticRegression()
 {: #logistic_regression }
@@ -2595,8 +2593,7 @@ param.Test = mat.NewDense(1, 1, nil)
 param.Training = mat.NewDense(1, 1, nil)
 param.Verbose = false
 
-output, output_model, output_probs, predictions, probabilities :=
-    mlpack.Nbc(param)
+output_model, predictions, probabilities := mlpack.Nbc(param)
 ```
 
 An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model can be trained and saved, or, a pre-trained model can be used for classification. [Detailed documentation](#nbc_detailed-documentation).
@@ -2622,9 +2619,7 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Output` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | The matrix in which the predicted labels for the test set will be written (deprecated). | 
 | `OutputModel` | [`nbcModel`](#doc_model) | File to save trained Naive Bayes model to. | 
-| `OutputProbs` | [`*mat.Dense`](#doc_a__mat_Dense) | The matrix in which the predicted probability of labels for the test set will be written (deprecated). | 
 | `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | The matrix in which the predicted labels for the test set will be written. | 
 | `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | The matrix in which the predicted probability of labels for the test set will be written. | 
 
@@ -2643,8 +2638,6 @@ The `IncrementalVariance` parameter can be used to force the training to use an 
 
 If classifying a test set is desired, the test set may be specified with the `Test` parameter, and the classifications may be saved with the `Predictions`predictions  parameter.  If saving the trained model is desired, this may be done with the `OutputModel` output parameter.
 
-Note: the `Output` and `OutputProbs` parameters are deprecated and will be removed in mlpack 4.0.0.  Use `Predictions` and `Probabilities` instead.
-
 ### Example
 For example, to train a Naive Bayes classifier on the dataset `data` with labels `labels` and save the model to `nbc_model`, the following command may be used:
 
@@ -2654,7 +2647,7 @@ param := mlpack.NbcOptions()
 param.Training = data
 param.Labels = labels
 
-_, nbc_model, _, _, _ := mlpack.Nbc(param)
+nbc_model, _, _ := mlpack.Nbc(param)
 ```
 
 Then, to use `nbc_model` to predict the classes of the dataset `test_set` and save the predicted classes to `predictions`, the following command may be used:
@@ -2665,7 +2658,7 @@ param := mlpack.NbcOptions()
 param.InputModel = &nbc_model
 param.Test = test_set
 
-predictions, _, _, _, _ := mlpack.Nbc(param)
+_, predictions, _ := mlpack.Nbc(param)
 ```
 
 ### See also
@@ -3140,7 +3133,7 @@ param.Test = mat.NewDense(1, 1, nil)
 param.Training = mat.NewDense(1, 1, nil)
 param.Verbose = false
 
-output, output_model, predictions := mlpack.Perceptron(param)
+output_model, predictions := mlpack.Perceptron(param)
 ```
 
 An implementation of a perceptron---a single level neural network--=for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation).
@@ -3166,7 +3159,6 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Output` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | The matrix in which the predicted labels for the test set will be written. | 
 | `OutputModel` | [`perceptronModel`](#doc_model) | Output for trained perceptron model. | 
 | `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | The matrix in which the predicted labels for the test set will be written. | 
 
@@ -3176,9 +3168,6 @@ Output options are returned via Go's support for multiple return values, in the 
 This program implements a perceptron, which is a single level neural network. The perceptron makes its predictions based on a linear predictor function combining a set of weights with the feature vector.  The perceptron learning rule is able to converge, given enough iterations (specified using the `MaxIterations` parameter), if the data supplied is linearly separable.  The perceptron is parameterized by a matrix of weight vectors that denote the numerical weights of the neural network.
 
 This program allows loading a perceptron from a model (via the `InputModel` parameter) or training a perceptron given training data (via the `Training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (via the `Test` parameter) and the classification results on the test set may be saved with the `Predictions` output parameter.  The perceptron model may be saved with the `OutputModel` output parameter.
-
-Note: the following parameter is deprecated and will be removed in mlpack 4.0.0: `Output`.
-Use `Predictions` instead of `Output`.
 
 ### Example
 The training data given with the `Training` option may have class labels as its last dimension (so, if the training data is in CSV format, labels should be the last column).  Alternately, the `Labels` parameter may be used to specify a separate matrix of labels.
@@ -3191,7 +3180,7 @@ param := mlpack.PerceptronOptions()
 param.Training = training_data
 param.Labels = training_labels
 
-_, perceptron_model, _ := mlpack.Perceptron(param)
+perceptron_model, _ := mlpack.Perceptron(param)
 ```
 
 Then, this model can be re-used for classification on the test data `test_data`.  The example below does precisely that, saving the predicted classes to `predictions`.
@@ -3202,7 +3191,7 @@ param := mlpack.PerceptronOptions()
 param.InputModel = &perceptron_model
 param.Test = test_data
 
-_, _, predictions := mlpack.Perceptron(param)
+_, predictions := mlpack.Perceptron(param)
 ```
 
 Note that all of the options may be specified at once: predictions may be calculated right after training a model, and model training can occur even if an existing perceptron model is passed with the `InputModel` parameter.  However, note that the number of classes and the dimensionality of all data must match.  So you cannot pass a perceptron model trained on 2 classes and then re-train with a 4-class dataset.  Similarly, attempting classification on a 3-dimensional dataset with a perceptron that has been trained on 8 dimensions will cause an error.
@@ -4188,7 +4177,7 @@ param.Training = mat.NewDense(1, 1, nil)
 param.Verbose = false
 param.WeakLearner = "decision_stump"
 
-output, output_model, predictions, probabilities := mlpack.Adaboost(param)
+output_model, predictions, probabilities := mlpack.Adaboost(param)
 ```
 
 An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for classification.  This can be used to train an AdaBoost model on labeled data or use an existing AdaBoost model to predict the classes of new points. [Detailed documentation](#adaboost_detailed-documentation).
@@ -4216,7 +4205,6 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Output` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Predicted labels for the test set. | 
 | `OutputModel` | [`adaBoostModel`](#doc_model) | Output trained AdaBoost model. | 
 | `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Predicted labels for the test set. | 
 | `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Predicted class probabilities for each point in the test set. | 
@@ -4232,9 +4220,6 @@ This program allows training of an AdaBoost model, and then application of that 
 
 Once a model is trained or loaded, it may be used to provide class predictions for a given test dataset.  A test dataset may be specified with the `Test` parameter.  The predicted classes for each point in the test dataset are output to the `Predictions` output parameter.  The AdaBoost model itself is output to the `OutputModel` output parameter.
 
-Note: the following parameter is deprecated and will be removed in mlpack 4.0.0: `Output`.
-Use `Predictions` instead of `Output`.
-
 ### Example
 For example, to run AdaBoost on an input dataset `data` with labels `labels`and perceptrons as the weak learner type, storing the trained model in `model`, one could use the following command: 
 
@@ -4245,7 +4230,7 @@ param.Training = data
 param.Labels = labels
 param.WeakLearner = "perceptron"
 
-_, model, _, _ := mlpack.Adaboost(param)
+model, _, _ := mlpack.Adaboost(param)
 ```
 
 Similarly, an already-trained model in `model` can be used to provide class predictions from test data `test_data` and store the output in `predictions` with the following command: 
@@ -4256,7 +4241,7 @@ param := mlpack.AdaboostOptions()
 param.InputModel = &model
 param.Test = test_data
 
-_, _, predictions, _ := mlpack.Adaboost(param)
+_, predictions, _ := mlpack.Adaboost(param)
 ```
 
 ### See also

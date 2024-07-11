@@ -10,12 +10,11 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #ifndef MLPACK_METHODS_GMM_DIAGONAL_GMM_HPP
 #define MLPACK_METHODS_GMM_DIAGONAL_GMM_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/dists/diagonal_gaussian_distribution.hpp>
+#include <mlpack/core/distributions/diagonal_gaussian_distribution.hpp>
 #include <mlpack/core/math/log_add.hpp>
 
 // This is the default fitting method class.

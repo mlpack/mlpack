@@ -89,10 +89,10 @@ parameters, and trees are no exception.  In order to ease usage of high-level
 mlpack algorithms, each `TreeType` itself must be a template class taking three
 parameters:
 
- - `MetricType` -- the underlying metric that the tree will be built on (see
-[the MetricType policy documentation](metrics.md))
- - `StatisticType` -- holds any auxiliary information that individual
-algorithms may need
+ - `DistanceType` -- the underlying distance metric that the tree will be built
+   on (see [the DistanceType policy documentation](distances.md))
+ - `StatisticType` -- holds any auxiliary information that individual algorithms
+   may need
  - `MatType` -- the type of the matrix used to represent the data
 
 The reason that these three template parameters are necessary is so that each
@@ -101,11 +101,11 @@ simplify the required syntax for instantiating mlpack algorithms.  By using
 template template parameters, a user needs only to write
 
 ```c++
-// The RangeSearch class takes a MetricType and a TreeType template parameter.
+// The RangeSearch class takes a DistanceType and a TreeType template parameter.
 
 // This code instantiates RangeSearch with the ManhattanDistance and a
 // QuadTree.  Note that the QuadTree itself is a template, and takes a
-// MetricType, StatisticType, and MatType, just like the policy requires.
+// DistanceType, StatisticType, and MatType, just like the policy requires.
 
 // This example ignores the constructor parameters, for the sake of simplicity.
 RangeSearch<ManhattanDistance, QuadTree> rs(...);
@@ -124,17 +124,18 @@ RangeSearch<ManhattanDistance,
 Unfortunately, the price to pay for this user convenience is that *every*
 `TreeType` must have three template parameters, and they must be in exactly
 that order.  Fortunately, there is an additional benefit: we are guaranteed that
-the tree is built using the same metric as the method (that is, a user can't
-specify different metric types to the algorithm and to the tree, which they can
-without template template parameters).
+the tree is built using the same distance metric as the method (that is, a user
+can't specify different metric types to the algorithm and to the tree, which
+they can without template template parameters).
 
 There are two important notes about this:
 
- - Not every possible input of `MetricType`, `StatisticType`, and/or `MatType`
+ - Not every possible input of `DistanceType`, `StatisticType`, and/or `MatType`
    necessarily need to be valid or work correctly for each type of tree.  For
-   instance, the `QuadTree` is limited to Euclidean metrics and will not work
-   otherwise.  Either compile-time static checks or detailed documentation can
-   help keep users from using invalid combinations of template arguments.
+   instance, the `QuadTree` is limited to Euclidean distance metrics and will
+   not work otherwise.  Either compile-time static checks or detailed
+   documentation can help keep users from using invalid combinations of template
+   arguments.
 
  - Some types of trees have more template parameters than just these three.  One
    example is the generalized binary space tree, where the bounding shape of
@@ -150,7 +151,7 @@ There are two important notes about this:
 ```c++
 // This is the definition of the BinarySpaceTree class, which has five template
 // parameters.
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
          typename BoundType,
@@ -160,12 +161,12 @@ class BinarySpaceTree;
 // The 'using' keyword gives us a template typedef, so we can define the
 // MeanSplitKDTree template class, which has three parameters and is a valid
 // TreeType policy class.
-template<typename MetricType, typename StatisticType, typename MatType>
-using MeanSplitKDTree = BinarySpaceTree<MetricType,
+template<typename DistanceType, typename StatisticType, typename MatType>
+using MeanSplitKDTree = BinarySpaceTree<DistanceType,
                                         StatisticType,
                                         MatType,
-                                        HRectBound<MetricType>
-                                        MeanSplit<BoundType, MetricType>>;
+                                        HRectBound<DistanceType>
+                                        MeanSplit<BoundType, DistanceType>>;
 ```
 
 Now, the `MeanSplitKDTree` class has only three template parameters and can be
@@ -188,7 +189,7 @@ afterwards.)
 ```c++
 // The three template parameters will be supplied by the user, and are detailed
 // in the previous section.
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType>
 class ExampleTree
@@ -199,12 +200,12 @@ class ExampleTree
   //////////////////////
 
   // This batch constructor does not modify the dataset, and builds the entire
-  // tree using a default-constructed MetricType.
+  // tree using a default-constructed DistanceType.
   ExampleTree(const MatType& data);
 
   // This batch constructor does not modify the dataset, and builds the entire
-  // tree using the given MetricType.
-  ExampleTree(const MatType& data, MetricType& metric);
+  // tree using the given DistanceType.
+  ExampleTree(const MatType& data, DistanceType& distance);
 
   // Initialize the tree from a given cereal archive.  SFINAE (the
   // second argument) is necessary to ensure that the archive is loading, not
@@ -224,8 +225,8 @@ class ExampleTree
   // Get the dataset that the tree is built on.
   const MatType& Dataset();
 
-  // Get the metric that the tree is built with.
-  MetricType& Metric();
+  // Get the distance metric that the tree is built with.
+  DistanceType& Distance();
 
   // Get/modify the StatisticType for this node.
   StatisticType& Stat();
@@ -364,8 +365,8 @@ a few important points about the implications of this API:
    Making this all work requires a protected constructor (part of the API) and
    generally makes it impossible to hold references instead of pointers
    internally, because if a tree is loaded from a file then it must own the
-   dataset it is built on and the metric it uses (this also means that a
-   destructor must exist for freeing these resources).
+   dataset it is built on and the distance metric it uses (this also means that
+   a destructor must exist for freeing these resources).
 
 Now, we can consider each part of the API more rigorously.
 
@@ -378,24 +379,25 @@ This section is divided into five parts, detailing each of the parts of the API
 An earlier section discussed the three different template parameters that are
 required by the `TreeType` policy.
 
-The [MetricType policy](metrics.md) provides one method that will be useful for
-tree building and other operations:
+The [DistanceType policy](distances.md) provides one method that will be useful
+for tree building and other operations:
 
 ```c++
-// This function is required by the MetricType policy.
-// Evaluate the metric between two points (which may be of different types).
+// This function is required by the DistanceType policy.
+// Evaluate the distance metric between two points (which may be of different
+// types).
 template<typename VecTypeA, typename VecTypeB>
 double Evaluate(const VecTypeA& a, const VecTypeB& b);
 ```
 
-Note that this method is not necessarily static, so a `MetricType` object should
-be held internally and its `Evaluate()` method should be called whenever the
-distance between two points is required.  *It is generally a bad idea to
+Note that this method is not necessarily static, so a `DistanceType` object
+should be held internally and its `Evaluate()` method should be called whenever
+the distance between two points is required.  *It is generally a bad idea to
 hardcode any distance calculation in your tree.*  This will make the tree unable
-to generalize to arbitrary metrics.  If your tree must depend on certain
-assumptions holding about the metric (i.e. the metric is a Euclidean metric),
-then make that clear in the documentation of the tree, so users do not try to
-use the tree with an inappropriate metric.
+to generalize to arbitrary distance metrics.  If your tree must depend on
+certain assumptions holding about the distance metric (i.e. the distance metric
+is a Euclidean metric), then make that clear in the documentation of the tree,
+so users do not try to use the tree with an inappropriate distance metric.
 
 The second template parameter, `StatisticType`, is for auxiliary information
 that is required by certain algorithms.  For instance, consider an algorithm
@@ -437,20 +439,20 @@ The first two constructors are variations of the same idea:
 
 ```c++
 // This batch constructor does not modify the dataset, and builds the entire
-// tree using a default-constructed MetricType.
+// tree using a default-constructed DistanceType.
 ExampleTree(const MatType& data);
 
 // This batch constructor does not modify the dataset, and builds the entire
-// tree using the given MetricType.
-ExampleTree(const MatType& data, MetricType& metric);
+// tree using the given DistanceType.
+ExampleTree(const MatType& data, DistanceType& distance);
 ```
 
 All that is required here is that a constructor is available that takes a
-dataset and optionally an instantiated metric.  If no metric is provided, then
-it should be assumed that the `MetricType` class has a default constructor and
-a default-constructed metric should be used.  The constructor *must* return a
-valid, fully-constructed, ready-to-use tree that satisfies the definition
-of *space tree* that was given earlier in the document.
+dataset and optionally an instantiated distance metric.  If no distance metric
+is provided, then it should be assumed that the `DistanceType` class has a
+default constructor and a default-constructed distance metric should be used.
+The constructor *must* return a valid, fully-constructed, ready-to-use tree that
+satisfies the definition of *space tree* that was given earlier in the document.
 
 The third constructor requires the tree to be initializable from a `cereal`
 archive:
@@ -494,9 +496,9 @@ template<typename Archive>
 ExampleTree(MatType&& data);
 ```
 
-(and another overload that takes an instantiated metric), and then the user can
-use `std::move()` to build the tree without copying the data matrix, although
-the data matrix will be modified:
+(and another overload that takes an instantiated distance metric), and then the
+user can use `std::move()` to build the tree without copying the data matrix,
+although the data matrix will be modified:
 
 ```c++
 ExampleTree exTree(std::move(dataset));
@@ -520,13 +522,13 @@ must store a pointer to the dataset (this is not the only option, but it is the
 most obvious option).
 
 ```c++
-// Get the metric that the tree is built with.
-MetricType& Metric();
+// Get the distance metric that the tree is built with.
+DistanceType& Distance();
 ```
 
-Each node must also store an instantiated metric or a pointer to one (note that
-this is required even for metrics that have no state and have a `static`
-`Evaluate()` function).
+Each node must also store an instantiated distance metric or a pointer to one
+(note that this is required even for metrics that have no state and have a
+`static` `Evaluate()` function).
 
 ```c++
 // Get/modify the StatisticType for this node.
@@ -704,7 +706,7 @@ which could be calculated as below:
 double trueMinDist = DBL_MAX;
 for (size_t i = 0; i < node.NumDescendants(); ++i)
 {
-  const double dist = node.Metric().Evaluate(vec,
+  const double dist = node.Distance().Evaluate(vec,
       node.Dataset().col(node.Descendant(i)));
   if (dist < trueMinDist)
     trueMinDist = dist;
@@ -716,16 +718,16 @@ for (size_t i = 0; i < node.NumDescendants(); ++i)
 Often the bounding shape of a node will allow a quick calculation that will make
 a reasonable bound.  For instance, if the node's bounding shape is a ball with
 radius `r` and center `ctr`, the calculation is simply
-`(node.Metric().Evaluate(vec, ctr) - r)`.  Usually a good `MinDistance()` or
+`(node.Distance().Evaluate(vec, ctr) - r)`.  Usually a good `MinDistance()` or
 `MaxDistance()` function will make only one call to the `Evaluate()` function of
-the metric.
+the distance metric.
 
 The `RangeDistance()` function allows a way for both bounds to be calculated at
 once.  It is possible to implement this as a call to `MinDistance()` followed by
-a call to `MaxDistance()`, but this may incur more metric `Evaluate()` calls
-than necessary.  Often calculating both bounds at once can be more efficient and
-can be done with fewer `Evaluate()` calls than calling both `MinDistance()` and
-`MaxDistance()`.
+a call to `MaxDistance()`, but this may incur more distance metric `Evaluate()`
+calls than necessary.  Often calculating both bounds at once can be more
+efficient and can be done with fewer `Evaluate()` calls than calling both
+`MinDistance()` and `MaxDistance()`.
 
 ### Serialization
 
@@ -799,16 +801,16 @@ class TreeTraits
 };
 ```
 
-An example specialization for the `:KDTree` class is given below.  Note that
+An example specialization for the `KDTree` class is given below.  Note that
 `KDTree` is itself a template class (like every class satisfying the `TreeType`
 policy), so we are specializing to a template parameter.
 
 ```c++
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType>
 template<>
-class TreeTraits<KDTree<MetricType, StatisticType, MatType>>
+class TreeTraits<KDTree<DistanceType, StatisticType, MatType>>
 {
  public:
   // The regions represented by the two children of a node may not overlap.

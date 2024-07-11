@@ -18,19 +18,19 @@
 namespace mlpack {
 
 // Just set the internal matrix reference.
-template<typename MetricType, typename OptimizerType>
-NCA<MetricType, OptimizerType>::NCA(const arma::mat& dataset,
+template<typename DistanceType, typename OptimizerType>
+NCA<DistanceType, OptimizerType>::NCA(const arma::mat& dataset,
                                     const arma::Row<size_t>& labels,
-                                    MetricType metric) :
+                                    DistanceType distance) :
     dataset(dataset),
     labels(labels),
-    metric(metric),
-    errorFunction(dataset, labels, metric)
+    distance(distance),
+    errorFunction(dataset, labels, distance)
 { /* Nothing to do. */ }
 
-template<typename MetricType, typename OptimizerType>
+template<typename DistanceType, typename OptimizerType>
 template<typename... CallbackTypes>
-void NCA<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix,
+void NCA<DistanceType, OptimizerType>::LearnDistance(arma::mat& outputMatrix,
     CallbackTypes&&... callbacks)
 {
   // See if we were passed an initialized matrix.

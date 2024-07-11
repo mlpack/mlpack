@@ -14,7 +14,7 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename MatType>
+template<typename DistanceType, typename MatType>
 class HamerlyKMeans
 {
  public:
@@ -22,7 +22,7 @@ class HamerlyKMeans
    * Construct the HamerlyKMeans object, which must store several sets of
    * bounds.
    */
-  HamerlyKMeans(const MatType& dataset, MetricType& metric);
+  HamerlyKMeans(const MatType& dataset, DistanceType& metric);
 
   /**
    * Run a single iteration of Hamerly's algorithm, updating the given centroids
@@ -41,8 +41,8 @@ class HamerlyKMeans
  private:
   //! The dataset.
   const MatType& dataset;
-  //! The instantiated metric.
-  MetricType& metric;
+  //! The instantiated distance metric.
+  DistanceType& distance;
 
   //! Minimum cluster distances from each cluster.
   arma::vec minClusterDistances;

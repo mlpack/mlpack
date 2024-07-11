@@ -30,7 +30,7 @@ class SphericalKernel
   { /* Nothing to do. */ }
 
   // Get the bandwidth.
-  const double Bandwidth() const { return bandwidth; }
+  double Bandwidth() const { return bandwidth; }
   // Modify the bandwidth.
   void Bandwidth(const double bandwidth)
   {

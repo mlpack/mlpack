@@ -17,11 +17,11 @@
 
 namespace mlpack {
 
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType>
 template<typename RuleType>
-class Octree<MetricType, StatisticType, MatType>::DualTreeTraverser
+class Octree<DistanceType, StatisticType, MatType>::DualTreeTraverser
 {
  public:
   /**

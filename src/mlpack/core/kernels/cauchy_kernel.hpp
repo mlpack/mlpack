@@ -13,7 +13,7 @@
 #define MLPACK_CORE_KERNELS_CAUCHY_KERNEL_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 #include <mlpack/core/kernels/kernel_traits.hpp>
 
 namespace mlpack {
@@ -77,7 +77,7 @@ class CauchyKernel
   }
 
   // Get the kernel bandwidth.
-  const double Bandwidth() const { return bandwidth; }
+  double Bandwidth() const { return bandwidth; }
   // Modify the kernel bandwidth.
   void Bandwidth(const double bw) { this->bandwidth = bw; }
 

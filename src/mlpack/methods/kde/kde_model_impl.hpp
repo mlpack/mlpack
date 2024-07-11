@@ -150,7 +150,7 @@ inline KDEModel::~KDEModel()
   delete kdeModel;
 }
 
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeMatType,
                   typename TreeStatType> class TreeType>
 KDEWrapperBase* InitializeModelHelper(const KDEModel::KernelTypes kernelType,
@@ -323,7 +323,7 @@ inline void KDEModel::MCBreakCoefficient(const double newBreakCoef)
 
 //! Train the model (build the tree).
 template<typename KernelType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void KDEWrapper<KernelType, TreeType>::Train(util::Timers& timers,
@@ -336,7 +336,7 @@ void KDEWrapper<KernelType, TreeType>::Train(util::Timers& timers,
 
 //! Perform bichromatic KDE (i.e. KDE with a separate query set).
 template<typename KernelType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void KDEWrapper<KernelType, TreeType>::Evaluate(util::Timers& timers,
@@ -375,7 +375,7 @@ void KDEWrapper<KernelType, TreeType>::Evaluate(util::Timers& timers,
 
 //! Perform monochromatic KDE (i.e. with the reference set as the query set).
 template<typename KernelType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void KDEWrapper<KernelType, TreeType>::Evaluate(util::Timers& timers,
@@ -393,7 +393,7 @@ void KDEWrapper<KernelType, TreeType>::Evaluate(util::Timers& timers,
   timers.Stop("applying_normalizer");
 }
 
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType,
          typename Archive>

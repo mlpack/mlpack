@@ -57,6 +57,7 @@ add_executable(mlpack_test
   decision_tree_test.cpp
   det_test.cpp
   digamma_test.cpp
+  distance_test.cpp
   distribution_test.cpp
   drusilla_select_test.cpp
   emst_test.cpp
@@ -224,13 +225,33 @@ endif()
 
 # This has to be added here so that cotire picks it up (even though it is in
 # individual tests).
-target_compile_definitions(mlpack_test PUBLIC -DMLPACK_ENABLE_ANN_SERIALIZATION)
 if (CMAKE_VERSION VERSION_GREATER "3.16.0" AND USE_PRECOMPILED_HEADERS)
-  target_precompile_headers(mlpack_test PUBLIC
-      "../core.hpp"
-      "../../mlpack.hpp"
-      <ensmallen.hpp>
-      <armadillo>)
+  if (MSVC)
+    # NOTE: this is a workaround for a Github runner issue caused by a bad
+    # update.  See https://github.com/actions/runner-images/issues/10004 for
+    # more details.  It's likely that this workaround doesn't need to be here
+    # for long.
+    target_compile_definitions(mlpack_test PUBLIC
+        -D_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR)
+
+    # MSVC RAM usage is decreased significantly if mlpack.hpp is included as a
+    # precompiled header.  (It is still pretty slow, but this is necessary to
+    # avoid a C1060 on Azure Pipelines.)
+    target_compile_definitions(mlpack_test PUBLIC
+        -DMLPACK_ENABLE_ANN_SERIALIZATION)
+    target_precompile_headers(mlpack_test PUBLIC
+        "../core.hpp"
+        "../../mlpack.hpp"
+        <ensmallen.hpp>
+        <armadillo>)
+  else ()
+    target_precompile_headers(mlpack_test PUBLIC
+        "../prereqs.hpp"
+        "catch.hpp"
+        "test_catch_tools.hpp"
+        "serialization.hpp")
+    set_source_files_properties(main.cpp PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
+  endif ()
 endif ()
 
 # Copy test data into right place.

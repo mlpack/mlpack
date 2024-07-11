@@ -41,7 +41,7 @@ namespace mlpack {
  * }
  * @endcode
  */
-template<typename MetricType = SquaredEuclideanDistance,
+template<typename DistanceType = SquaredEuclideanDistance,
          typename OptimizerType = ens::StandardSGD>
 class NCA
 {
@@ -53,11 +53,11 @@ class NCA
    *
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
-   * @param metric Instantiated metric to use.
+   * @param distance Instantiated distance metric to use.
    */
   NCA(const arma::mat& dataset,
       const arma::Row<size_t>& labels,
-      MetricType metric = MetricType());
+      DistanceType distance = DistanceType());
 
   /**
    * Perform Neighborhood Components Analysis.  The output distance learning
@@ -89,11 +89,11 @@ class NCA
   //! Labels reference.
   const arma::Row<size_t>& labels;
 
-  //! Metric to be used.
-  MetricType metric;
+  //! Distance to be used.
+  DistanceType distance;
 
   //! The function to optimize.
-  SoftmaxErrorFunction<MetricType> errorFunction;
+  SoftmaxErrorFunction<DistanceType> errorFunction;
 
   //! The optimizer to use.
   OptimizerType optimizer;

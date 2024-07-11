@@ -108,7 +108,7 @@ class Perceptron
    *      purposes.
    */
   template<typename WeightsType>
-  mlpack_deprecated /* was previously only used by AdaBoost */
+  [[deprecated("Use other constructors")]]
   Perceptron(const Perceptron& other,
              const MatType& data,
              const arma::Row<size_t>& labels,
