@@ -701,7 +701,7 @@ double DecisionTree<FitnessFunction,
   {
     // Store the information about the feature contributions
     featureFrequency[bestDim]++;
-    featureCover[bestDim] += featureFrequency;
+    featureCover[bestDim] += bestGain;
 
     dimensionType = (size_t) datasetInfo.Type(bestDim);
     splitDimension = bestDim;
@@ -875,7 +875,7 @@ double DecisionTree<FitnessFunction,
   {
     // Store the information about the feature contributions
     featureFrequency[bestDim]++;
-    featureCover[bestDim] += featureFrequency;
+    featureCover[bestDim] += bestGain;
     
     // We know that the split is numeric.
     size_t numChildren =
