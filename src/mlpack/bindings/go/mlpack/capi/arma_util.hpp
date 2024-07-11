@@ -39,9 +39,7 @@ inline typename T::elem_type* GetMemory(T& m)
     arma::access::rw(m.mem_state) = 1;
     // With Armadillo 10 and newer, we must set `n_alloc` to 0 so that
     // Armadillo does not deallocate the memory.
-    #if ARMA_VERSION_MAJOR >= 10
-      arma::access::rw(m.n_alloc) = 0;
-    #endif
+    arma::access::rw(m.n_alloc) = 0;
     return m.memptr();
   }
 }
