@@ -263,9 +263,19 @@ class XGBTree
    */
   bool Prune(double threshold);
 
+  //! Get the Feature frequency information
+  map<size_t, size_t> FeatureFrequency() { return featureFrequency; }
+
+  //! Get the Feature gain information
+  map<size_t, double> FeatureCover() { return featureCover; }
+
   private: 
 
   Node* root;
+  //! Stores the number of times a particular feature was used to split
+  map<size_t, size_t> featureFrequency;
+  //! Stores the net gain provided by a particular feature for splitting
+  map<size_t, double> featureCover;
 
   
 };
