@@ -1,12 +1,12 @@
 /**
- * @file methods/nca/first_element_is_arma.hpp
+ * @file core/util/first_element_is_arma.hpp
  * @author Ryan Curtin
  *
  * Utility struct to detect whether the first element in a parameter pack is an
  * Armadillo type.
  */
-#ifndef MLPACK_METHODS_NCA_FIRST_ELEMENT_IS_ARMA_HPP
-#define MLPACK_METHODS_NCA_FIRST_ELEMENT_IS_ARMA_HPP
+#ifndef MLPACK_CORE_UTIL_FIRST_ELEMENT_IS_ARMA_HPP
+#define MLPACK_CORE_UTIL_FIRST_ELEMENT_IS_ARMA_HPP
 
 #include <mlpack/prereqs.hpp>
 

@@ -15,7 +15,6 @@
 #include <mlpack/core.hpp>
 
 #include "nca_softmax_error_function.hpp"
-#include "first_element_is_arma.hpp"
 
 namespace mlpack {
 

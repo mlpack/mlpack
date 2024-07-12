@@ -14,7 +14,6 @@
 
 #include <mlpack/core.hpp>
 
-#include "../nca/first_element_is_arma.hpp"
 #include "constraints.hpp"
 #include "lmnn_function.hpp"
 
