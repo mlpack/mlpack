@@ -24,13 +24,13 @@ steps:
 
     sudo apt-get install -y --allow-unauthenticated libopenblas-dev g++ xz-utils
 
-    if [ "${binding}" == "python" ]; then
+    if [ "$(binding)" == "python" ]; then
       export PYBIN=$(which python)
       $PYBIN -m pip install --upgrade pip
       $PYBIN -m pip install --upgrade --ignore-installed setuptools cython pandas wheel
     fi
 
-    if [ "a${julia.version}" != "a" ]; then
+    if [ "a$(julia.version)" != "a" ]; then
       wget https://julialang-s3.julialang.org/bin/linux/x64/1.6/julia-1.6.3-linux-x86_64.tar.gz
       sudo tar -C /opt/ -xvpf julia-1.6.3-linux-x86_64.tar.gz
     fi
@@ -70,7 +70,7 @@ steps:
 - script: |
     unset BOOST_ROOT
     mkdir build && cd build
-    if [ "${binding}" == "go" ]; then
+    if [ "$(binding)" == "go" ]; then
       export GOPATH=$PWD/src/mlpack/bindings/go
       export GO111MODULE=off
       go get -u -t gonum.org/v1/gonum/...
