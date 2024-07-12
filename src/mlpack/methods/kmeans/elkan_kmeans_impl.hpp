@@ -26,28 +26,35 @@ ElkanKMeans<DistanceType, MatType>::ElkanKMeans(const MatType& dataset,
   // Nothing to do here.
 }
 
-// Run a single iteration of Elkan's algorithm for Lloyd iterations.
 template<typename DistanceType, typename MatType>
 double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
                                                    arma::mat& newCentroids,
                                                    arma::Col<size_t>& counts)
 {
-  // Clear new centroids.
+  // Clear new centroids and counts.
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
   counts.zeros(centroids.n_cols);
 
-  // At the beginning of the iteration, we must compute the distances between
-  // all centers.  This is O(k^2).
+  // Compute the distances between all centers (O(k^2)).
   clusterDistances.set_size(centroids.n_cols, centroids.n_cols);
-
-  // Self-distances are always 0, but we set them to DBL_MAX to avoid the self
-  // being the closest cluster centroid.
   clusterDistances.diag().fill(DBL_MAX);
 
-  // Initially set r(x) to true.
-  std::vector<bool> mustRecalculate(dataset.n_cols, true);
+  #pragma omp parallel for schedule(dynamic) reduction(+:distanceCalculations)
+  for (size_t i = 0; i < centroids.n_cols; ++i)
+  {
+    for (size_t j = i + 1; j < centroids.n_cols; ++j)
+    {
+      const double dist = distance.Evaluate(centroids.col(i), centroids.col(j));
+      clusterDistances(i, j) = dist;
+      clusterDistances(j, i) = dist;
+      distanceCalculations++;
+    }
+  }
 
-  // If this is the first iteration, we must reset all the bounds.
+  // Find the closest cluster to each other cluster.
+  minClusterDistances = 0.5 * min(clusterDistances).t();
+
+  // Initialize or reset bounds if necessary
   if (lowerBounds.n_rows != centroids.n_cols)
   {
     lowerBounds.set_size(centroids.n_cols, dataset.n_cols);
@@ -59,114 +66,85 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     assignments.fill(0);
   }
 
-  // Step 1: for all centers, compute between-cluster distances.  For all
-  // centers, compute s(c) = 1/2 min d(c, c').
-  for (size_t i = 0; i < centroids.n_cols; ++i)
+  // Determine the number of threads
+  int numThreads;
+  #pragma omp parallel
   {
-    #pragma omp parallel for schedule(static)
-    for (size_t j = i + 1; j < centroids.n_cols; ++j)
-    {
-      const double dist = distance.Evaluate(centroids.col(i),
-                                            centroids.col(j));
-      #pragma omp atomic
-      distanceCalculations++;
-      clusterDistances(i, j) = dist;
-      clusterDistances(j, i) = dist;
-    }
+    #pragma omp single
+    numThreads = omp_get_num_threads();
   }
 
-  // Now find the closest cluster to each other cluster.  We multiply by 0.5 so
-  // that this is equivalent to s(c) for each cluster c.
-  minClusterDistances = 0.5 * min(clusterDistances).t();
+  // Create thread-local storage for newCentroids and counts
+  std::vector<arma::mat> threadNewCentroids(numThreads, arma::mat(centroids.n_rows, centroids.n_cols, arma::fill::zeros));
+  std::vector<arma::Col<size_t>> threadCounts(numThreads, arma::Col<size_t>(centroids.n_cols, arma::fill::zeros));
 
-  // Now loop over all points, and see which ones need to be updated.
-  #pragma omp parallel for schedule(dynamic)
+  // Main loop over all points
+  #pragma omp parallel for schedule(dynamic) reduction(+:distanceCalculations)
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    size_t newAssignment = assignments[i];
-    double minDistance = upperBounds(i);
+    int threadId = omp_get_thread_num();
+    bool mustRecalculate = true;
 
-    // Step 2: identify all points such that u(x) <= s(c(x)).
     if (upperBounds(i) <= minClusterDistances(assignments[i]))
     {
-      // No change needed.  This point must still belong to that cluster.
+      // No change needed. This point must still belong to that cluster.
+      threadCounts[threadId](assignments[i])++;
+      threadNewCentroids[threadId].col(assignments[i]) += arma::vec(dataset.col(i));
       continue;
     }
-    else
+
+    for (size_t c = 0; c < centroids.n_cols; ++c)
     {
-      for (size_t c = 0; c < centroids.n_cols; ++c)
+      if (assignments[i] == c) continue;
+      if (upperBounds(i) <= lowerBounds(c, i)) continue;
+      if (upperBounds(i) <= 0.5 * clusterDistances(assignments[i], c)) continue;
+
+      double dist;
+      if (mustRecalculate)
       {
-        // Step 3: for all remaining points x and centers c such that c != c(x),
-        // u(x) > l(x, c) and u(x) > 0.5 d(c(x), c)...
-        if (assignments[i] == c)
-          continue; // Pruned because this cluster is already the assignment.
+        mustRecalculate = false;
+        dist = distance.Evaluate(dataset.col(i), centroids.col(assignments[i]));
+        lowerBounds(assignments[i], i) = dist;
+        upperBounds(i) = dist;
+        distanceCalculations++;
 
-        if (upperBounds(i) <= lowerBounds(c, i))
-          continue; // Pruned by triangle inequality on lower bound.
+        if (upperBounds(i) <= lowerBounds(c, i)) continue;
+        if (upperBounds(i) <= 0.5 * clusterDistances(assignments[i], c)) continue;
+      }
+      else
+      {
+        dist = upperBounds(i);
+      }
 
-        if (upperBounds(i) <= 0.5 * clusterDistances(assignments[i], c))
-          continue; // Pruned by triangle inequality on cluster distances.
-
-        // Step 3a: if r(x) then compute d(x, c(x)) and assign r(x) = false.
-        // Otherwise, d(x, c(x)) = u(x).
-        double dist;
-        if (mustRecalculate[i])
+      if (dist > lowerBounds(c, i) || dist > 0.5 * clusterDistances(assignments[i], c))
+      {
+        const double pointDist = distance.Evaluate(dataset.col(i), centroids.col(c));
+        lowerBounds(c, i) = pointDist;
+        distanceCalculations++;
+        if (pointDist < dist)
         {
-          mustRecalculate[i] = false;
-          dist = distance.Evaluate(dataset.col(i),
-                                   centroids.col(assignments[i]));
-          lowerBounds(assignments[i], i) = dist;
-          upperBounds(i) = dist;
-          #pragma omp atomic
-          distanceCalculations++;
-
-          // Check if we can prune again.
-          if (upperBounds(i) <= lowerBounds(c, i))
-            continue; // Pruned by triangle inequality on lower bound.
-
-          if (upperBounds(i) <= 0.5 * clusterDistances(assignments[i], c))
-            continue; // Pruned by triangle inequality on cluster distances.
-        }
-        else
-        {
-          dist = upperBounds(i); // This is equivalent to d(x, c(x)).
-        }
-
-        // Step 3b: if d(x, c(x)) > l(x, c) or d(x, c(x)) > 0.5 d(c(x), c)...
-        if (dist > lowerBounds(c, i) ||
-            dist > 0.5 * clusterDistances(assignments[i], c))
-        {
-          // Compute d(x, c).  If d(x, c) < d(x, c(x)) then assign c(x) = c.
-          const double pointDist = distance.Evaluate(dataset.col(i),
-                                                     centroids.col(c));
-          lowerBounds(c, i) = pointDist;
-          #pragma omp atomic
-          distanceCalculations++;
-          if (pointDist < minDistance)
-          {
-            minDistance = pointDist;
-            newAssignment = c;
-          }
+          upperBounds(i) = pointDist;
+          assignments[i] = c;
         }
       }
     }
 
-    // At this point, we know the new cluster assignment.
-    // Step 4: for each center c, let m(c) be the mean of the points assigned to
-    // c.
-    #pragma omp critical
-    {
-      newCentroids.col(newAssignment) += arma::vec(dataset.col(i));
-      counts[newAssignment]++;
-    }
-    
-    assignments[i] = newAssignment;
-    upperBounds(i) = minDistance;
+    threadNewCentroids[threadId].col(assignments[i]) += arma::vec(dataset.col(i));
+    threadCounts[threadId][assignments[i]]++;
   }
 
-  // Now, normalize and calculate the distance each cluster has moved.
+  // Combine thread-local results
+  for (int t = 0; t < numThreads; ++t)
+  {
+    newCentroids += threadNewCentroids[t];
+    counts += threadCounts[t];
+  }
+
+  // Normalize and calculate the distance each cluster has moved.
   arma::vec moveDistances(centroids.n_cols);
-  double cNorm = 0.0; // Cluster movement for residual.
+  double cNorm = 0.0;
+
+  #pragma omp parallel for reduction(+:cNorm,distanceCalculations)
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
     if (counts[c] > 0)
@@ -177,18 +155,13 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     distanceCalculations++;
   }
 
-  #pragma omp parallel for schedule(static)
+  // Update bounds
+  #pragma omp parallel for
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    // Step 5: for each point x and center c, assign
-    //   l(x, c) = max { l(x, c) - d(c, m(c)), 0 }.
-    // But it doesn't actually matter if l(x, c) is positive.
     for (size_t c = 0; c < centroids.n_cols; ++c)
       lowerBounds(c, i) -= moveDistances(c);
 
-    // Step 6: for each point x, assign
-    //   u(x) = u(x) + d(m(c(x)), c(x))
-    //   r(x) = true (we are setting that at the start of every iteration).
     upperBounds(i) += moveDistances(assignments[i]);
   }
 
