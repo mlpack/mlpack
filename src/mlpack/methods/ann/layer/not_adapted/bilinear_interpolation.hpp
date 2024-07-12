@@ -42,6 +42,8 @@ class BilinearInterpolationType : public Layer<InputType, OutputType>
   //! Create the BilinearInterpolationType object.
   BilinearInterpolationType();
 
+  // TODO: use scaleFactors instead of outRowSize and outColSize
+
   /**
    * The constructor for the Bilinear Interpolation.  The input size will be set
    * by the given input when the layer is used.
