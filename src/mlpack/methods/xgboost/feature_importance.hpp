@@ -2,7 +2,7 @@
  * @file methods/xgboost/feature_importance.hpp
  * @author Abhimanyu Dayal
  *
- * Implementation of the featureImportance class in xgboost.
+ * Implementation of the Feature Importance class in xgboost.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -14,12 +14,14 @@
 #ifndef MLPACK_METHODS_XGBOOST_FEATURE_IMPORTANCE_HPP
 #define MLPACK_METHODS_XGBOOST_FEATURE_IMPORTANCE_HPP
 
-#include "xgboost.hpp"
+// #include "xgboost.hpp"
+#include <map>
+#include <queue>
 
 namespace mlpack {
 
 /**
- * After training, xgboost can calculate feature importance to understand 
+ * After training, XGBoost can calculate feature importance to understand 
  * the contribution of each feature in the classification decision.
  * XGBoost provides two main types of feature importance scores:
  * 
@@ -31,6 +33,71 @@ namespace mlpack {
  *   feature to the model. For each feature, it sums the improvement in accuracy 
  *   (reduction in loss) brought by the feature when it is used in tree splits.
  */
+
+class FeatureImportance {
+
+  private:
+
+  map<size_t, size_t> featureFrequency;
+  map<size_t, double> featureCover;
+  vector<size_t> rankByFrequency;
+  vector<size_t> rankByCover;
+
+  public: 
+
+  // Empty class constructor.
+  FeatureImportance() { /*Nothing to do*/ }
+
+  //! Edit the featureFrequency value.
+  void increaseFeatureFrequency(size_t index, size_t incrementValue)
+  {
+    featureFrequency[index] += incrementValue;
+  }
+
+  //! Edit the featureCover value.
+  void increaseFeatureCover(size_t index, double incrementValue)
+  {
+    featureCover[index] += incrementValue;
+  }
+
+  void RankByFrequency()
+  {
+    priority_queue<pair<size_t, size_t>> pq; 
+
+    map<size_t, size_t>::iterator it = featureFrequency.begin(); 
+
+    for(; it != featureFrequency.end(); ++it)
+    {
+      pq.push({-it->second, it->first});
+    }
+
+    while(!pq.empty())
+    {
+      size_t elem = pq.top().second; pq.pop();
+      rankByFrequency.push_back(elem);
+    }
+  }
+
+  void RankByCover()
+  {
+    priority_queue<pair<double, size_t>> pq; 
+
+    map<size_t, double>::iterator it = featureCover.begin(); 
+
+    for(; it != featureCover.end(); ++it)
+    {
+      pq.push({-(it->second), it->first});
+    }
+
+    while(!pq.empty())
+    {
+      size_t elem = pq.top().second; pq.pop();
+      rankByCover.push_back(elem);
+    }
+
+  }
+
+};
 
 }
 
