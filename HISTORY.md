@@ -11,6 +11,8 @@ _????-??-??_
  * Implemented the Find and Fill algorithm into the Dropout Layer and added OpenMP support (#3684).
 
  * Update Python bindings to support NumPy 2.x (#3752).
+ 
+ * Bump minimum Armadillo version to 10.8 (#3760).
 
 ## mlpack 4.4.0
 
