@@ -43,7 +43,6 @@ XGBTree<FitnessFunction,
   
 }
 
-
 //! Prune the tree to reduce complexity.
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,

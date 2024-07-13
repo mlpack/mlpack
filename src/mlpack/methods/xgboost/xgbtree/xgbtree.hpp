@@ -269,6 +269,32 @@ class XGBTree
   //! Get the Feature gain information
   map<size_t, double> FeatureCover() { return featureCover; }
 
+  /**
+   * Build the tree using Node class.
+   *
+   * @param data Dataset to train on.
+   * @param datasetInfo Type information for each dimension of the dataset.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param weights The weight list of given label.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
+  */
+  void Build(MatType data,
+             const data::DatasetInfo& datasetInfo,
+             LabelsType labels,
+             const size_t numClasses,
+             WeightsType weights,
+             const size_t minimumLeafSize = 10,
+             const double minimumGainSplit = 1e-7,
+             const size_t maximumDepth = 0,
+             DimensionSelectionType dimensionSelector = DimensionSelectionType(),
+             const std::enable_if_t<arma::is_arma_type<
+                 typename std::remove_reference<WeightsType>::type>::value>* = 0);
+  
+
   private: 
 
   Node* root;

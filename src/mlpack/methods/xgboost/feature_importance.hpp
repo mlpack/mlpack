@@ -14,9 +14,10 @@
 #ifndef MLPACK_METHODS_XGBOOST_FEATURE_IMPORTANCE_HPP
 #define MLPACK_METHODS_XGBOOST_FEATURE_IMPORTANCE_HPP
 
-// #include "xgboost.hpp"
-#include <map>
-#include <queue>
+#include "xgboost.hpp"
+#include <mlpack/core.hpp>
+
+using namespace std;
 
 namespace mlpack {
 
