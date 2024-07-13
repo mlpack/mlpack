@@ -21,6 +21,10 @@ steps:
     free -h
     df -h
 
+    echo "binding: $binding"
+    echo "CMakeArgs: $CMakeArgs"
+    env
+
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
 
     sudo apt-get install -y --allow-unauthenticated libopenblas-dev g++ xz-utils
@@ -74,6 +78,9 @@ steps:
       export GO111MODULE=off
       go get -u -t gonum.org/v1/gonum/...
     fi
+    echo "binding: $binding"
+    echo "CMakeArgs: $CMakeArgs"
+    env
     cmake $CMakeArgs -DPYTHON_EXECUTABLE=`which python` -DCEREAL_INCLUDE_DIR=/usr/include/ ..
   displayName: 'CMake'
 
