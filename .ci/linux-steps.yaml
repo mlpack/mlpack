@@ -21,20 +21,16 @@ steps:
     free -h
     df -h
 
-    echo "binding: $binding"
-    echo "CMakeArgs: $CMakeArgs"
-    env
-
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
 
     sudo apt-get install -y --allow-unauthenticated libopenblas-dev g++ xz-utils
 
-    if [ "$binding" = "python" ]; then
+    if [ "$BINDING" = "python" ]; then
       python -m pip install --upgrade pip
       python -m pip install --upgrade --ignore-installed setuptools cython pandas wheel
     fi
 
-    if [ "$binding" = "julia" ]; then
+    if [ "$BINDING" = "julia" ]; then
       wget https://julialang-s3.julialang.org/bin/linux/x64/1.10/julia-1.10.4-linux-x86_64.tar.gz
       sudo tar -C /opt/ -xvpf julia-1.10.4-linux-x86_64.tar.gz
     fi
@@ -73,15 +69,12 @@ steps:
 # Configure mlpack (CMake)
 - script: |
     mkdir build && cd build
-    if [ "$binding" = "go" ]; then
+    if [ "$BINDING" = "go" ]; then
       export GOPATH=$PWD/src/mlpack/bindings/go
       export GO111MODULE=off
       go get -u -t gonum.org/v1/gonum/...
     fi
-    echo "binding: $binding"
-    echo "CMakeArgs: $CMakeArgs"
-    env
-    cmake $CMakeArgs -DPYTHON_EXECUTABLE=`which python` -DCEREAL_INCLUDE_DIR=/usr/include/ ..
+    cmake $CMAKEARGS -DPYTHON_EXECUTABLE=`which python` -DCEREAL_INCLUDE_DIR=/usr/include/ ..
   displayName: 'CMake'
 
 # Build mlpack
