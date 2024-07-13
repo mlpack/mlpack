@@ -74,7 +74,7 @@ steps:
       export GO111MODULE=off
       go get -u -t gonum.org/v1/gonum/...
     fi
-    cmake $CMAKE_ARGS -DPYTHON_EXECUTABLE=`which python` -DCEREAL_INCLUDE_DIR=/usr/include/ ..
+    cmake $CMakeArgs -DPYTHON_EXECUTABLE=`which python` -DCEREAL_INCLUDE_DIR=/usr/include/ ..
   displayName: 'CMake'
 
 # Build mlpack
