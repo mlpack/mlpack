@@ -7,7 +7,7 @@ steps:
 # Set python version.
 - task: UsePythonVersion@0
   inputs:
-    versionSpec: '$(python.version)'
+    versionSpec: ${{ python.version }}
 
 # Install Build Dependencies
 - script: |
