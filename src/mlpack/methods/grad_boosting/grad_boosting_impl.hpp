@@ -291,8 +291,13 @@ void GradBoosting<WeakLearnerType, MatType>::
   arma::Row<ElemType> weights(labels.n_cols);
 
   weakLearners.clear();
-  
-  arma::Row<size_t> residue = labels;
+
+  MatType residue(data.n_rows, numClasses, arma::fill::zeros);
+
+  for (size_t i = 0; i < labels.n_cols; ++i) 
+  {
+    residue(i, labels(i)) = 1;
+  }
 
   for (size_t model = 0; model < numModels; ++model) 
   {
@@ -300,6 +305,7 @@ void GradBoosting<WeakLearnerType, MatType>::
     weights = sum(D);
 
     WeakLearnerType* wPtr;
+
 
     if(UseExistingWeakLearner)
     {
@@ -317,14 +323,18 @@ void GradBoosting<WeakLearnerType, MatType>::
     weakLearners.push_back(w);
 
     arma::Row<size_t> predictions(residue.n_cols, arma::fill::zeros);
-    w.Classify(data, predictions);
+    arma::mat& probabilities;
+    w.Classify(data, predictions, probabilities);
 
     // Compute the learning rate for this iteration.
     double learningRate = ComputeLearningRate(predictions, residue);
 
-    for (size_t i = 0; i < labels.n_cols; ++i) 
+    for (size_t i = 0; i < residues.n_rows; ++i) 
     {
-      residue(i) = (size_t)abs((double)residue(i) - (double)(learningRate * predictions(i)));
+      for (size_t j = 0; j < residues.n_cols; ++j)
+      {
+        residue(i, j) = (size_t)abs((double)residue(i, j) - (double)(learningRate * probabilities(i, j)));
+      }
     }
     delete wPtr;
   }
