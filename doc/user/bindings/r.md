@@ -1689,9 +1689,9 @@ R> library(mlpack)
 R> d <- lmnn(batch_size=50, center=FALSE, distance=matrix(numeric(), 0,
         0), input=matrix(numeric(), 0, 0), k=1, labels=matrix(integer(), 0, 0),
         linear_scan=FALSE, max_iterations=100000, normalize=FALSE,
-        optimizer="amsgrad", passes=50, print_accuracy=FALSE, range=1, rank=0,
+        optimizer="amsgrad", passes=50, print_accuracy=FALSE, rank=0,
         regularization=0.5, seed=0, step_size=0.01, tolerance=1e-07,
-        verbose=getOption("mlpack.verbose", FALSE))
+        update_interval=1, verbose=getOption("mlpack.verbose", FALSE))
 R> centered_data <- d$centered_data
 R> output <- d$output
 R> transformed_data <- d$transformed_data
@@ -1718,12 +1718,12 @@ An implementation of Large Margin Nearest Neighbors (LMNN), a distance learning 
 | `optimizer` | [`character`](#doc_character) | Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or 'lbfgs'. | `"amsgrad"` |
 | `passes` | [`integer`](#doc_integer) | Maximum number of full passes over dataset for AMSGrad, BB_SGD and SGD. | `50` |
 | `print_accuracy` | [`logical`](#doc_logical) | Print accuracies on initial and transformed dataset | `FALSE` |
-| `range` | [`integer`](#doc_integer) | Number of iterations after which impostors needs to be recalculated | `1` |
 | `rank` | [`integer`](#doc_integer) | Rank of distance matrix to be optimized.  | `0` |
 | `regularization` | [`numeric`](#doc_numeric) | Regularization for LMNN objective function  | `0.5` |
 | `seed` | [`integer`](#doc_integer) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
 | `step_size` | [`numeric`](#doc_numeric) | Step size for AMSGrad, BB_SGD and SGD (alpha). | `0.01` |
 | `tolerance` | [`numeric`](#doc_numeric) | Maximum tolerance for termination of AMSGrad, BB_SGD, SGD or L-BFGS. | `1e-07` |
+| `update_interval` | [`integer`](#doc_integer) | Number of iterations after which impostors need to be recalculated. | `1` |
 | `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Output options
@@ -1743,7 +1743,7 @@ This program implements Large Margin Nearest Neighbors, a distance learning tech
 
 To work, this algorithm needs labeled data.  It can be given as the last row of the input dataset (specified with `input`), or alternatively as a separate matrix (specified with `labels`).  Additionally, a starting point for optimization (specified with `distance`can be given, having (r x d) dimensionality.  Here r should satisfy 1 <= r <= d, Consequently a Low-Rank matrix will be optimized. Alternatively, Low-Rank distance can be learned by specifying the `rank`parameter (A Low-Rank matrix with uniformly distributed values will be used as initial learning point). 
 
-The program also requires number of targets neighbors to work with ( specified with `k`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `regularization`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `range`).
+The program also requires number of targets neighbors to work with ( specified with `k`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `regularization`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `update_interval`).
 
 Output can either be the learned distance matrix (specified with `output`), or the transformed dataset  (specified with `transformed_data`), or both. Additionally mean-centered dataset (specified with `centered_data`) can be accessed given mean-centering (specified with `center`) is performed on the dataset. Accuracy on initial dataset and final transformed dataset can be printed by specifying the `print_accuracy`parameter. 
 
@@ -1767,10 +1767,10 @@ R> output <- lmnn(input=iris, labels=iris_labels, k=3, optimizer="bbsgd")
 R> output <- output$output
 ```
 
-An another program call making use of range & regularization parameter with dataset having labels as last column can be made as: 
+Another program call making use of update interval & regularization parameter with dataset having labels as last column can be made as: 
 
 ```R
-R> output <- lmnn(input=letter_recognition, k=5, range=10,
+R> output <- lmnn(input=letter_recognition, k=5, update_interval=10,
   regularization=0.4)
 R> output <- output$output
 ```
