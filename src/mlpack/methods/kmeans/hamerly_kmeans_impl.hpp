@@ -108,7 +108,7 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     // This is Hamerly's Point-All-Ctrs() function from the paper.
     // We have to reset the lower bound first.
     lowerBounds(i) = DBL_MAX;
-      for (size_t c = 0; c < centroids.n_cols; ++c)
+    for (size_t c = 0; c < centroids.n_cols; ++c)
     {
       if (c == assignments[i])
         continue;
