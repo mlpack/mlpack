@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/gain_functions/mad_gain.hpp
+ * @file methods/decision_tree/fitness_functions/mad_gain.hpp
  * @author Rishabh Garg
  *
  * The mean absolute deviation gain class, a fitness function for regression

@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/gain_functions/information_gain.hpp
+ * @file methods/decision_tree/fitness_functions/information_gain.hpp
  * @author Ryan Curtin
  *
  * An implementation of information gain, which can be used in place of Gini

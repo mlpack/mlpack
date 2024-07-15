@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/gain_functions/mse_gain.hpp
+ * @file methods/decision_tree/fitness_functions/mse_gain.hpp
  * @author Rishabh Garg
  *
  * The mean squared error gain class, which is a fitness funtion for
