@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/decision_tree/gain_functions/sse_gain.hpp>
+#include <mlpack/methods/xgboost/loss_functions/sse_loss.hpp>
 
 #include "catch.hpp"
 #include "serialization.hpp"
@@ -18,7 +18,7 @@
 using namespace mlpack;
 
 /**
- * Test that the initial prediction is calculated correctly for SSE gain.
+ * Test that the initial prediction is calculated correctly for SSE loss.
  */
 TEST_CASE("SSEInitialPredictionTest", "[XGBTest]")
 {
@@ -26,12 +26,12 @@ TEST_CASE("SSEInitialPredictionTest", "[XGBTest]")
 
   double initPred = 5.5;
 
-  SSEGain Loss;
+  SSELoss Loss;
   REQUIRE(Loss.InitialPrediction(values) == initPred);
 }
 
 /**
- * Test that output leaf value is calculated correctly for SSE gain.
+ * Test that output leaf value is calculated correctly for SSE Loss.
  */
 TEST_CASE("SSELeafValueTest", "[XGBTest]")
 {
@@ -42,14 +42,14 @@ TEST_CASE("SSELeafValueTest", "[XGBTest]")
   // Actual output leaf value.
   double leafValue = -0.075;
 
-  SSEGain Loss;
+  SSELoss Loss;
   (void) Loss.Evaluate<false>(input, weights);
 
   REQUIRE(Loss.OutputLeafValue(input, weights) == leafValue);
 }
 
 /**
- * Test that the gain is computed correctly for SSE gain.
+ * Test that the gain is computed correctly for SSE Loss.
  */
 TEST_CASE("SSEGainTest", "[XGBTest]")
 {
@@ -60,6 +60,6 @@ TEST_CASE("SSEGainTest", "[XGBTest]")
   // Actual gain value.
   double gain = 0.05625;
 
-  SSEGain Loss;
+  SSELoss Loss;
   REQUIRE(Loss.Evaluate<false>(input, weights) == gain);
 }
