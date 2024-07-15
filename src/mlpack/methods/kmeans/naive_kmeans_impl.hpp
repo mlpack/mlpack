@@ -50,66 +50,67 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     centroidNorms(j) = arma::dot(centroids.col(j), centroids.col(j));
   }
 
-  // Block-wise for a better cache utilization
-  const size_t blockSize = 256; 
-  
-  #pragma omp parallel
+  // Determine the number of threads and calculate segment size
+  const size_t numThreads = static_cast<size_t>(std::max(1, omp_get_max_threads()));
+  const size_t minVectorsPerThread = 100; 
+  const size_t effectiveThreads = std::min(numThreads, points / minVectorsPerThread);
+  const size_t nominalSegmentSize = points / effectiveThreads;
+
+  #pragma omp parallel num_threads(effectiveThreads)
   {
     arma::mat localCentroids(dims, clusters, arma::fill::zeros);
     arma::Col<size_t> localCounts(clusters, arma::fill::zeros);
 
-    #pragma omp for schedule(dynamic, 1)
-    for (size_t block = 0; block < points; block += blockSize)
+    const size_t threadId = omp_get_thread_num();
+    const size_t segmentStart = threadId * nominalSegmentSize;
+    const size_t segmentEnd = (threadId == effectiveThreads - 1) ? points : (threadId + 1) * nominalSegmentSize;
+
+    for (size_t i = segmentStart; i < segmentEnd; ++i)
     {
-      const size_t blockEnd = std::min(block + blockSize, points);
+      double minDistance = std::numeric_limits<double>::max();
+      size_t closestCluster = clusters;
+
+      const double* dataPoint = dataset.colptr(i);
+      double dataNorm = 0.0;
       
-      for (size_t i = block; i < blockEnd; ++i)
+      // Compute data point norm
+      #pragma omp simd reduction(+:dataNorm)
+      for (size_t d = 0; d < dims; ++d)
       {
-        double minDistance = std::numeric_limits<double>::max();
-        size_t closestCluster = clusters;
-
-        const double* dataPoint = dataset.colptr(i);
-        double dataNorm = 0.0;
-        
-        // Compute data point norm
-        #pragma omp simd reduction(+:dataNorm)
-        for (size_t d = 0; d < dims; ++d)
-        {
-          dataNorm += dataPoint[d] * dataPoint[d];
-        }
-
-        // Find closest centroid
-        for (size_t j = 0; j < clusters; ++j)
-        {
-          const double* centroid = centroids.colptr(j);
-          double dotProduct = 0.0;
-
-          // Compute dot product
-          #pragma omp simd reduction(+:dotProduct)
-          for (size_t d = 0; d < dims; ++d)
-          {
-            dotProduct += dataPoint[d] * centroid[d];
-          }
-
-          // Use squared Euclidean distance
-          double dist = dataNorm + centroidNorms(j) - 2 * dotProduct;
-
-          if (dist < minDistance)
-          {
-            minDistance = dist;
-            closestCluster = j;
-          }
-        }
-
-        // Update local centroids and counts
-        double* localCentroidCol = localCentroids.colptr(closestCluster);
-        #pragma omp simd
-        for (size_t d = 0; d < dims; ++d)
-        {
-          localCentroidCol[d] += dataPoint[d];
-        }
-        localCounts(closestCluster)++;
+        dataNorm += dataPoint[d] * dataPoint[d];
       }
+
+      // Find closest centroid
+      for (size_t j = 0; j < clusters; ++j)
+      {
+        const double* centroid = centroids.colptr(j);
+        double dotProduct = 0.0;
+
+        // Compute dot product
+        #pragma omp simd reduction(+:dotProduct)
+        for (size_t d = 0; d < dims; ++d)
+        {
+          dotProduct += dataPoint[d] * centroid[d];
+        }
+
+        // Squared Euclidean distance
+        double dist = dataNorm + centroidNorms(j) - 2 * dotProduct;
+
+        if (dist < minDistance)
+        {
+          minDistance = dist;
+          closestCluster = j;
+        }
+      }
+
+      // Update local centroids and counts
+      double* localCentroidCol = localCentroids.colptr(closestCluster);
+      #pragma omp simd
+      for (size_t d = 0; d < dims; ++d)
+      {
+        localCentroidCol[d] += dataPoint[d];
+      }
+      localCounts(closestCluster)++;
     }
 
     // Combine results
