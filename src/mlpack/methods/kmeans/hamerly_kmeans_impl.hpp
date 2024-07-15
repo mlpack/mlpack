@@ -79,7 +79,6 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     // First bound test.
     if (upperBounds(i) <= m)
     {
-      #pragma omp atomic
       ++hamerlyPruned;
       #pragma omp critical
       {
@@ -109,7 +108,7 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     // This is Hamerly's Point-All-Ctrs() function from the paper.
     // We have to reset the lower bound first.
     lowerBounds(i) = DBL_MAX;
-    for (size_t c = 0; c < centroids.n_cols; ++c)
+      for (size_t c = 0; c < centroids.n_cols; ++c)
     {
       if (c == assignments[i])
         continue;
@@ -149,7 +148,7 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   double centroidMovement = 0.0;
 
   #pragma omp parallel for reduction(+:distanceCalculations, centroidMovement) \
-                            reduction(max:furthestMovement, secondFurthestMovement)
+                           reduction(max:furthestMovement, secondFurthestMovement)
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
     if (counts(c) > 0)
@@ -164,9 +163,19 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
     if (movement > furthestMovement)
     {
-      secondFurthestMovement = furthestMovement;
-      furthestMovement = movement;
-      furthestMovingCluster = c;
+      #pragma omp critical
+      {
+        if (movement > furthestMovement)
+        {
+          secondFurthestMovement = furthestMovement;
+          furthestMovement = movement;
+          furthestMovingCluster = c;
+        }
+        else if (movement > secondFurthestMovement)
+        {
+          secondFurthestMovement = movement;
+        }
+      }
     }
     else if (movement > secondFurthestMovement)
     {
