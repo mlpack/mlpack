@@ -146,7 +146,8 @@ size_t GradBoosting<WeakLearnerType, MatType>::Classify(const VecType& point)
 {
   size_t prediction;
   arma::Row<ElemType> probabilities;
-  Classify(point, prediction, probabilities);
+  Classify<arma::colvec>(point, prediction, probabilities);
+
   return prediction;
 }
 
@@ -156,15 +157,28 @@ void GradBoosting<WeakLearnerType, MatType>::Classify(const VecType& point,
                                                       size_t& prediction,
                                                       arma::Row<ElemType>& probabilities)
 {
-  prediction = 0;
+  probabilities.resize(numClasses, arma::fill::zeros);
 
   for (size_t i = 0; i < weakLearners.size(); ++i) 
   {
-    size_t tempPred = weakLearners[i].Classify(point);
-    prediction += tempPred;
-  }
-}
+    size_t p; /*Will not be used*/
 
+    arma::Row<ElemType>& tempProb(numClasses, arma::fill::zeros);
+    weakLearners[i].Classify(point, p, tempProb);
+    probabilities = probabilities + tempProb;
+  }
+
+  // Go through all the probabilities and return the 
+  // variable with highest probability
+  prediction = 0;
+  for (size_t i = 0; i < probabilities.n_cols; i++)
+  {
+    if (probabilities(i) > probabilities(prediction))
+      prediction = i;
+  }
+
+  return prediction;
+}
 
 template<typename WeakLearnerType, typename MatType>
 void GradBoosting<WeakLearnerType, MatType>::Classify(const MatType& test,
@@ -181,7 +195,6 @@ void GradBoosting<WeakLearnerType, MatType>::Classify(const MatType& test,
     predictedLabels(i) = prediction;
   }
 }
-
 
 template<typename WeakLearnerType, typename MatType>
 void GradBoosting<WeakLearnerType, MatType>::Classify(const MatType& test,

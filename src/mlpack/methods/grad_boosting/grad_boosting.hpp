@@ -217,7 +217,6 @@ class GradBoosting
    * @param probabilities Vector in which the probabilities of each classes are
    *      stored
    */
-
   void Classify(const MatType& test,
                 arma::Row<size_t>& predictedLabels,
                 arma::Row<ElemType>& probabilities);
