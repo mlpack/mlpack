@@ -186,46 +186,6 @@ void XGBoost<WeakLearnerType, MatType>::Classify(const MatType& test,
   }
 }
 
-// Define a function to compute the learning rate based on the current model predictions.
-template<typename MatType>
-double ComputeLearningRate(const MatType& predictions,
-                           const arma::Row<size_t>& labels) 
-{
-    // Define the loss function you are using.
-    // For example, mean squared error for regression.
-    // You may need to adjust this based on your problem.
-    double loss = arma::mean(arma::square(predictions - labels));
-
-    // Define a range of learning rates to search over.
-    const double minLearningRate = 0.001;  // Minimum learning rate.
-    const double maxLearningRate = 1.0;    // Maximum learning rate.
-    const size_t numLearningRates = 100;   // Number of learning rates to try.
-
-    // Initialize the best learning rate and the corresponding loss.
-    double bestLearningRate = minLearningRate;
-    double bestLoss = std::numeric_limits<double>::max();
-
-    // Try different learning rates within the specified range.
-    for (size_t i = 0; i < numLearningRates; ++i) 
-    {
-        double learningRate = minLearningRate +
-                              (maxLearningRate - minLearningRate) *
-                              static_cast<double>(i) / static_cast<double>(numLearningRates);
-
-        // Compute the loss with the current learning rate.
-        double currentLoss = arma::mean(arma::square(predictions - labels - learningRate * predictions));
-
-        // Update the best learning rate if the current loss is lower.
-        if (currentLoss < bestLoss) 
-        {
-            bestLearningRate = learningRate;
-            bestLoss = currentLoss;
-        }
-    }
-
-    return bestLearningRate;
-}
-
 template<typename WeakLearnerType, typename MatType>
 template<bool UseExistingWeakLearner, typename... WeakLearnerArgs>
 void XGBoost<WeakLearnerType, MatType>:: 
@@ -282,7 +242,7 @@ void XGBoost<WeakLearnerType, MatType>::
     weakLearners.push_back(w);
 
     // Compute the learning rate for this iteration.
-    double learningRate = ComputeLearningRate(predictions, residue);
+    double learningRate = 0.1;
 
     for (size_t i = 0; i < residues.n_rows; ++i) 
     {
