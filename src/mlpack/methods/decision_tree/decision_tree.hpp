@@ -605,7 +605,7 @@ typedef DecisionTree<InformationGain,
 /**
  * Convenience typedef for XGBoost trees.
  */
-typedef DecisionTree<SSEGain,
+typedef DecisionTree<MSEGain,
                      BestBinaryNumericSplit,
                      AllCategoricalSplit,
                      AllDimensionSelect,
