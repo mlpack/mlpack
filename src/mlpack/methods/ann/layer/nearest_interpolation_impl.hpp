@@ -149,8 +149,8 @@ void NearestInterpolationType<MatType>::Backward(
 template<typename MatType>
 void NearestInterpolationType<MatType>::ComputeOutputDimensions()
 {
-  if (this->inputDimensions.size() - 1 != scaleFactors.size()) {
-    throw std::runtime_error("Scale factors must match number of rows and columns.");
+  if (this->inputDimensions.size() < scaleFactors.size()) {
+    throw std::runtime_error("Insufficient number of input dimensions.");
   }
   this->outputDimensions = this->inputDimensions;
   for (size_t i = 0; i < this->InputDimensions().size()-1; i++)

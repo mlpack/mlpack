@@ -14,6 +14,7 @@ _????-??-??_
  
  * Bump minimum Armadillo version to 10.8 (#3760).
 
+ * Adapt `NearestInterpolation` ANN layer to new Layer Inteface
 ## mlpack 4.4.0
 
 _2024-05-26_
