@@ -282,6 +282,7 @@ class XGBTree
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
   */
+  template<typename MatType, typename LabelsType, typename WeightsType>
   void Build(MatType data,
              const data::DatasetInfo& datasetInfo,
              LabelsType labels,

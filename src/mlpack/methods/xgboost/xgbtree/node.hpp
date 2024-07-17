@@ -26,9 +26,34 @@ class Node
 {
   Node() { /*Nothing to do*/ }
 
-  Node() 
+  Node(MatType data,
+       const data::DatasetInfo& datasetInfo,
+       LabelsType labels,
+       const size_t numClasses,
+       WeightsType weights,
+       const size_t minimumLeafSize = 10,
+       const double minimumGainSplit = 1e-7,
+       const size_t maximumDepth = 0,
+       DimensionSelectionType dimensionSelector = DimensionSelectionType(),
+       const std::enable_if_t<arma::is_arma_type<
+        typename std::remove_reference<WeightsType>::type>::value>* = 0) 
   {
+    using TrueMatType = typename std::decay<MatType>::type;
+    using TrueLabelsType = typename std::decay<LabelsType>::type;
+    using TrueWeightsType = typename std::decay<WeightsType>::type;
 
+    // Copy or move data.
+    TrueMatType tmpData(std::move(data));
+    TrueLabelsType tmpLabels(std::move(labels));
+    TrueWeightsType tmpWeights(std::move(weights));
+
+    // Set the correct dimensionality for the dimension selector.
+    dimensionSelector.Dimensions() = tmpData.n_rows;
+
+    // Pass off work to the weighted Train() method.
+    Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
+        tmpWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
+        dimensionSelector);
   }
 
   //! Train on the given data, assuming all dimensions are numeric.

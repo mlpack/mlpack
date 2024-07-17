@@ -43,6 +43,40 @@ XGBTree<FitnessFunction,
   
 }
 
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename DimensionSelectionType,
+         bool NoRecursion>
+template<typename MatType, typename LabelsType, typename WeightsType>
+void XGBTree<FitnessFunction,
+             NumericSplitType,
+             CategoricalSplitType,
+             DimensionSelectionType,
+             NoRecursion>::Build(MatType data,
+                                 const data::DatasetInfo& datasetInfo,
+                                 LabelsType labels,
+                                 const size_t numClasses,
+                                 WeightsType weights,
+                                 const size_t minimumLeafSize = 10,
+                                 const double minimumGainSplit = 1e-7,
+                                 const size_t maximumDepth = 0,
+                                 DimensionSelectionType dimensionSelector = DimensionSelectionType(),
+                                 const std::enable_if_t<arma::is_arma_type<
+                                    typename std::remove_reference<WeightsType>::type>::value>* = 0)
+{
+  
+  root = new Node(data, 
+                  datasetInfo, 
+                  labels, 
+                  numClasses, 
+                  weights, 
+                  minimumLeafSize, 
+                  minimumGainSplit, 
+                  maximumDepth,
+                  dimensionSelector);
+}
+
 //! Prune the tree to reduce complexity.
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
