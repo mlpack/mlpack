@@ -92,6 +92,19 @@ TEMPLATE_TEST_CASE("MeanShiftSimpleTest", "[MeanShiftTest]", float, double)
     REQUIRE(assignments(i) == thirdClass);
 }
 
+TEMPLATE_TEST_CASE("MeanShiftSimpleCentroidsOnlyTest", "[MeanShiftTest]", float, double)
+{
+  typedef TestType ElemType;
+
+  MeanShift<> meanShift;
+
+  arma::Mat<ElemType> centroids;
+  meanShift.Cluster(GetMeanShiftData<arma::Mat<ElemType>>(), centroids);
+
+  // Just check that the size is right.
+  REQUIRE(centroids.n_cols == 3);
+}
+
 // Generate samples from four Gaussians, and make sure mean shift nearly
 // recovers those four centers.
 TEMPLATE_TEST_CASE("GaussianClustering", "[MeanShiftTest]", float, double)
@@ -124,6 +137,84 @@ TEMPLATE_TEST_CASE("GaussianClustering", "[MeanShiftTest]", float, double)
     arma::Row<size_t> assignments;
     arma::Mat<ElemType> centroids;
     meanShift.Cluster(dataset, assignments, centroids);
+
+    success = (centroids.n_cols == 4);
+    if (!success)
+      continue;
+    success = (centroids.n_rows == 3);
+    if (!success)
+      continue;
+
+    // Check that each centroid is close to only one mean.
+    arma::Col<ElemType> centroidDistances(4);
+    arma::uvec minIndices(4);
+    for (size_t i = 0; i < 4; ++i)
+    {
+      centroidDistances(0) = EuclideanDistance::Evaluate(
+          arma::conv_to<arma::Col<ElemType>>::from(g1.Mean()),
+          centroids.col(i));
+      centroidDistances(1) = EuclideanDistance::Evaluate(
+          arma::conv_to<arma::Col<ElemType>>::from(g2.Mean()),
+          centroids.col(i));
+      centroidDistances(2) = EuclideanDistance::Evaluate(
+          arma::conv_to<arma::Col<ElemType>>::from(g3.Mean()),
+          centroids.col(i));
+      centroidDistances(3) = EuclideanDistance::Evaluate(
+          arma::conv_to<arma::Col<ElemType>>::from(g4.Mean()),
+          centroids.col(i));
+
+      // Are we near a centroid of a Gaussian?
+      const ElemType minVal = centroidDistances.min(minIndices[i]);
+      success = (std::abs(minVal) <= 0.65);
+      if (!success)
+        break;
+    }
+
+    // Ensure each centroid corresponds to a different Gaussian.
+    bool innerSuccess = true;
+    for (size_t i = 0; i < 4; ++i)
+      for (size_t j = i + 1; j < 4; ++j)
+        innerSuccess &= (minIndices[i] != minIndices[j]);
+
+    if (innerSuccess)
+      success = true;
+
+    if (success)
+      break;
+  }
+
+  REQUIRE(success == true);
+}
+
+TEMPLATE_TEST_CASE("GaussianClusteringCentroidsOnly", "[MeanShiftTest]", float, double)
+{
+  typedef TestType ElemType;
+
+  GaussianDistribution g1("0.0 0.0 0.0", arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2("5.0 5.0 5.0", 2 * arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g3("-3.0 3.0 -1.0", arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g4("6.0 -2.0 -2.0", 3 * arma::eye<arma::mat>(3, 3));
+
+  // We may need to run this multiple times, because sometimes it may converge
+  // to the wrong number of clusters.
+  bool success = false;
+  for (size_t trial = 0; trial < 4; ++trial)
+  {
+    arma::Mat<ElemType> dataset(3, 4000);
+    for (size_t i = 0; i < 1000; ++i)
+      dataset.col(i) = arma::conv_to<arma::Col<ElemType>>::from(g1.Random());
+    for (size_t i = 1000; i < 2000; ++i)
+      dataset.col(i) = arma::conv_to<arma::Col<ElemType>>::from(g2.Random());
+    for (size_t i = 2000; i < 3000; ++i)
+      dataset.col(i) = arma::conv_to<arma::Col<ElemType>>::from(g3.Random());
+    for (size_t i = 3000; i < 4000; ++i)
+      dataset.col(i) = arma::conv_to<arma::Col<ElemType>>::from(g4.Random());
+
+    // Now that the dataset is generated, run mean shift.  Pre-set radius.
+    MeanShift<> meanShift(2.9);
+
+    arma::Mat<ElemType> centroids;
+    meanShift.Cluster(dataset, centroids);
 
     success = (centroids.n_cols == 4);
     if (!success)
