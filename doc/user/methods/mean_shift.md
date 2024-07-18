@@ -1,10 +1,10 @@
 ## `MeanShift`
 
 The `MeanShift` class implements mean shift, a clustering technique.  Mean shift
-models the density of the data using a specified kernel function, producing a
-number of clusters that represent the data density.  Mean shift does not require
-the user to guess the number of clusters, and does not make any assumptions on
-the shape of the data.
+models the density of the data using a kernel function (also called Parzen
+window), producing a number of clusters that represent the data density.  Mean
+shift does not require the user to guess the number of clusters, and does not
+make any assumptions on the shape of the data.
 
 mlpack's `MeanShift` class allows control of the kernel function used via
 template parameters.
@@ -65,8 +65,10 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
 ---
 
  * `ms = MeanShift<false>(radius=0, maxIterations=1000)`
-   - Create a `MeanShift` object that will not weight points when recalculating
-     cluster centroids.
+   - Create a `MeanShift` object that will not weight points differently when
+     recalculating cluster centroids.
+   - Centroid recalculation will use all points within a distance of `radius`
+     from the current cluster centroid, uniformly weighted.
 
 ---
 
@@ -81,11 +83,13 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
    - Create a `MeanShift` object that will use the given
      [`KernelType`](../core.md#kernels) for weighting points during cluster
      centroid recalculations.
-   - Any [mlpack kernel](../core.md#kernels) or custom kernel class implementing
+   - [mlpack kernels](../core.md#kernels) or custom kernel classes implementing
      a [`Gradient()` function](#advanced-functionality-template-parameters) can
      be used for the `KernelType` template parameter.
    - If `kernel` is not specified, a default-constructed `KernelType` will be
      used.
+   - A list of usable `KernelType`s supplied with mlpack can be found in the
+     [advanced functionality section](#advanced-functionality-template-parameters).
 
 ---
 
@@ -95,7 +99,7 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
 |----------|----------|-----------------|-------------|
 | `radius` | `double` | Radius around each centroid for weighting during centroid recomputation.  Larger means higher weights for faraway points.  Values less than or equal to 0 mean that the radius will be estimated from data. | `0.0` |
 | `maxIterations` | `size_t` | Maximum number of iterations of the mean shift algorithm to run. | `1000` |
-| `kernel` | [`KernelType`](#advanced-functionality-template-parameters) (default `GaussianKernel`) | Instantiated kernel object to use for density calculations. | `KernelType()` |
+| `kernel` | [`KernelType`](#advanced-functionality-template-parameters) | Instantiated kernel object to use for density calculations. | [`GaussianKernel()`](../core.md#gaussiankernel) |
 
 ***Notes:***
 
@@ -137,8 +141,7 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
 | `centroids` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) matrix that centroids will be stored into. | _(N/A)_ |
 | `assignments` | [`arma::Row<size_t>`](../matrices.md) | Vector to store cluster assignments for each point into. | _(N/A)_ |
 | `forceConvergence` | `bool` | If `true`, forces convergence of every cluster, ignoring `maxIterations`. | `false` |
-| `useSeeds` | `bool` | If `true`, estimates of high-density regions in the
-dataset will be used as initial centroids, instead of the full dataset. | `true`
+| `useSeeds` | `bool` | If `true`, estimates of high-density regions in the dataset will be used as initial centroids, instead of the full dataset. | `true`
 
 ***Notes***:
 
@@ -196,8 +199,8 @@ std::cout << "MeanShift computed " << centroids.n_cols << " clusters."
 double sumDist = 0.0;
 for (size_t i = 0; i < dataset.n_cols; ++i)
 {
-  sumDist += mlpack::EuclideanDistance::Evaluate(dataset.col(i),
-                                                 centroids.col(assignments[i]));
+  sumDist += mlpack::EuclideanDistance::Evaluate(
+      dataset.col(i), centroids.col(assignments[i]));
 }
 const double avgDist = sumDist / (double) dataset.n_cols;
 
