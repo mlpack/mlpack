@@ -44,7 +44,7 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     minClusterDistances.set_size(centroids.n_cols);
   }
 
-  // Reset new centroids.
+  // Reset new centroids and counts.
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
   counts.zeros(centroids.n_cols);
 
@@ -60,17 +60,15 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
       ++distanceCalculations;
 
       // Update bounds, if this intra-cluster distance is smaller.
-      #pragma omp critical
-      {
-        if (dist < minClusterDistances(i))
-          minClusterDistances(i) = dist;
-        if (dist < minClusterDistances(j))
-          minClusterDistances(j) = dist;
-      }
+      #pragma omp atomic
+      minClusterDistances(i) = std::min(minClusterDistances(i), dist);
+      #pragma omp atomic
+      minClusterDistances(j) = std::min(minClusterDistances(j), dist);
     }
   }
 
-  #pragma omp parallel for reduction(+:distanceCalculations, hamerlyPruned)
+  #pragma omp parallel for reduction(+:distanceCalculations, hamerlyPruned) \
+                           reduction(+:newCentroids, counts)
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     const double m = std::max(minClusterDistances(assignments[i]),
@@ -80,11 +78,8 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     if (upperBounds(i) <= m)
     {
       ++hamerlyPruned;
-      #pragma omp critical
-      {
-        newCentroids.col(assignments[i]) += dataset.col(i);
-        ++counts(assignments[i]);
-      }
+      newCentroids.col(assignments[i]) += dataset.col(i);
+      ++counts(assignments[i]);
       continue;
     }
 
@@ -96,11 +91,8 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     // Second bound test.
     if (upperBounds(i) <= m)
     {
-      #pragma omp critical
-      {
-        newCentroids.col(assignments[i]) += dataset.col(i);
-        ++counts(assignments[i]);
-      }
+      newCentroids.col(assignments[i]) += dataset.col(i);
+      ++counts(assignments[i]);
       continue;
     }
 
@@ -132,11 +124,8 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     distanceCalculations += centroids.n_cols - 1;
 
     // Update new centroids.
-    #pragma omp critical
-    {
-      newCentroids.col(assignments[i]) += dataset.col(i);
-      ++counts(assignments[i]);
-    }
+    newCentroids.col(assignments[i]) += dataset.col(i);
+    ++counts(assignments[i]);
   }
 
   // Normalize centroids and calculate cluster movement (contains parts of
@@ -148,7 +137,7 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   double centroidMovement = 0.0;
 
   #pragma omp parallel for reduction(+:distanceCalculations, centroidMovement) \
-                           reduction(max:furthestMovement, secondFurthestMovement)
+                           reduction(max:furthestMovement)
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
     if (counts(c) > 0)
@@ -176,10 +165,6 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
           secondFurthestMovement = movement;
         }
       }
-    }
-    else if (movement > secondFurthestMovement)
-    {
-      secondFurthestMovement = movement;
     }
   }
 
