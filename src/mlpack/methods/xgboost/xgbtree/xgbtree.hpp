@@ -295,6 +295,20 @@ class XGBTree
              const std::enable_if_t<arma::is_arma_type<
                  typename std::remove_reference<WeightsType>::type>::value>* = 0);
   
+  /**
+   * Classify the given point and also return estimates of the probability for
+   * each class in the given vector.
+   *
+   * @param point Point to classify.
+   * @param prediction This will be set to the predicted class of the point.
+   * @param probabilities This will be filled with class probabilities for the
+   *      point.
+   */
+  template<typename VecType>
+  void Classify(const VecType& point,
+                size_t& prediction,
+                arma::vec& probabilities);
+
 
   private: 
 

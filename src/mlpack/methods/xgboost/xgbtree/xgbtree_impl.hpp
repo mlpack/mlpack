@@ -27,18 +27,17 @@ template<typename FitnessFunction,
          bool NoRecursion>
 template<typename MatType, typename LabelsType>
 XGBTree<FitnessFunction,
-             NumericSplitType,
-             CategoricalSplitType,
-             DimensionSelectionType,
-             NoRecursion>::XGBTree(
-    MatType data,
-    const data::DatasetInfo& datasetInfo,
-    LabelsType labels,
-    const size_t numClasses,
-    const size_t minimumLeafSize,
-    const double minimumGainSplit,
-    const size_t maximumDepth,
-    DimensionSelectionType dimensionSelector)
+        NumericSplitType,
+        CategoricalSplitType,
+        DimensionSelectionType,
+        NoRecursion>::XGBTree(MatType data,
+                              const data::DatasetInfo& datasetInfo,
+                              LabelsType labels,
+                              const size_t numClasses,
+                              const size_t minimumLeafSize,
+                              const double minimumGainSplit,
+                              const size_t maximumDepth,
+                              DimensionSelectionType dimensionSelector)
 {
   
 }
@@ -60,12 +59,11 @@ void XGBTree<FitnessFunction,
                                  WeightsType weights,
                                  const size_t minimumLeafSize = 10,
                                  const double minimumGainSplit = 1e-7,
-                                 const size_t maximumDepth = 0,
+                                 const size_t maximumDepth = 2,
                                  DimensionSelectionType dimensionSelector = DimensionSelectionType(),
                                  const std::enable_if_t<arma::is_arma_type<
                                     typename std::remove_reference<WeightsType>::type>::value>* = 0)
 {
-  
   root = new Node(data, 
                   datasetInfo, 
                   labels, 
@@ -77,6 +75,24 @@ void XGBTree<FitnessFunction,
                   dimensionSelector);
 }
 
+//! Return class probabilities for a given point.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename DimensionSelectionType,
+         bool NoRecursion>
+template<typename VecType>
+void XGBTree<FitnessFunction,
+             NumericSplitType,
+             CategoricalSplitType,
+             DimensionSelectionType,
+             NoRecursion>::Classify(const VecType& point,
+                                    size_t& prediction,
+                                    arma::vec& probabilities)
+{
+  root->Classify(point, prediction, probabilities);
+}
+
 //! Prune the tree to reduce complexity.
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
@@ -84,10 +100,10 @@ template<typename FitnessFunction,
          typename DimensionSelectionType,
          bool NoRecursion>
 bool XGBTree<FitnessFunction,
-                  NumericSplitType,
-                  CategoricalSplitType,
-                  DimensionSelectionType,
-                  NoRecursion>::Prune(double threshold)
+              NumericSplitType,
+              CategoricalSplitType,
+              DimensionSelectionType,
+              NoRecursion>::Prune(double threshold)
 {
   size_t numChildren = NumChildren();
 

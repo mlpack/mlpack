@@ -256,6 +256,35 @@ class Node
     return -bestGain;
   }
 
+
+  void Classify(const VecType& point,
+                size_t& prediction,
+                arma::vec& probabilities)
+  {
+    if (children.size() == 0)
+    {
+      prediction = majorityClass;
+      probabilities = classProbabilities;
+      return;
+    }
+
+    children[CalculateDirection(point)]->Classify(point, prediction,
+        probabilities);
+  }
+
+
+  template<typename VecType>
+  size_t CalculateDirection(const VecType& point) const
+  {
+    if ((data::Datatype) dimensionType == data::Datatype::categorical)
+      return CategoricalSplit::CalculateDirection(point[splitDimension],
+          classProbabilities[0], *this);
+    else
+      return NumericSplit::CalculateDirection(point[splitDimension],
+          classProbabilities[0], *this);
+  }
+
+
   private:
 
   //! The vector of children.
