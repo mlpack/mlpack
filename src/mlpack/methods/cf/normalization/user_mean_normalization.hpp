@@ -90,8 +90,7 @@ class UserMeanNormalization
   {
     // Calculate userMean.
     userMean = arma::vec(cleanedData.n_cols);
-    arma::Col<size_t> ratingNum(cleanedData.n_cols,
-        arma::fill::zeros);
+    arma::Col<size_t> ratingNum(cleanedData.n_cols);
     arma::sp_mat::iterator it = cleanedData.begin();
     arma::sp_mat::iterator it_end = cleanedData.end();
     for (; it != it_end; ++it)

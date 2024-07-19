@@ -43,10 +43,8 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   #pragma omp parallel
   {
     // The current state of the K-means is private for each thread
-    arma::mat localCentroids(centroids.n_rows, centroids.n_cols,
-        arma::fill::zeros);
-    arma::Col<size_t> localCounts(centroids.n_cols,
-        arma::fill::zeros);
+    arma::mat localCentroids(centroids.n_rows, centroids.n_cols);
+    arma::Col<size_t> localCounts(centroids.n_cols);
 
     #pragma omp for
     for (size_t i = 0; i < (size_t) dataset.n_cols; ++i)
