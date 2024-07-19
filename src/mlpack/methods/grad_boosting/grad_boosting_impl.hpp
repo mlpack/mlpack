@@ -280,7 +280,6 @@ void GradBoosting<WeakLearnerType, MatType>::
 
     WeakLearnerType* wPtr;
 
-
     if(UseExistingWeakLearner)
     {
       wPtr = new WeakLearnerType(wl, data, residue, numClasses, weights,
