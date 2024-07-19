@@ -46,7 +46,7 @@ double BestBinaryCategoricalSplit<FitnessFunction>::SplitIfBetter(
   {
       // Order the categories of variable vₖ by their proportion in class C₁
       // and map each categorical vₖ to its categorical rank
-      arma::umat categoryCounts(numCategories, 2, arma::fill::zeros);
+      arma::umat categoryCounts(numCategories, 2);
       arma::vec categoryP(numCategories);
       size_t totalCount;
 
@@ -172,8 +172,8 @@ double BestBinaryCategoricalSplit<FitnessFunction>::SplitIfBetter(
   // Order the categories of variable vₖ by increasing mean
   // of the response y. categoryResponse[i, 0] will contain
   // the mean response for category Cᵢ.
-  arma::vec categoryResponse(numCategories, arma::fill::zeros);
-  arma::uvec categoryCounts(numCategories, arma::fill::zeros);
+  arma::vec categoryResponse(numCategories);
+  arma::uvec categoryCounts(numCategories);
 
   for (size_t i = 0; i < n; ++i)
   {

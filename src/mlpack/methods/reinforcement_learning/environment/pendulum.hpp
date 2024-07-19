@@ -39,7 +39,7 @@ class Pendulum
     /**
      * Construct a state instance.
      */
-    State() : theta(0), data(dimension, arma::fill::zeros)
+    State() : theta(0), data(dimension)
     { /* Nothing to do here. */ }
 
     /**
