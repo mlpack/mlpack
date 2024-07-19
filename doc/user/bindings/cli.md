@@ -10,7 +10,7 @@ Further useful mlpack documentation links are given below.
 
  - [mlpack homepage](https://www.mlpack.org/)
  - [mlpack on Github](https://github.com/mlpack/mlpack)
- - [mlpack main documentation page](https://www.mlpack.org/docs.html)
+ - [mlpack main documentation page](https://www.mlpack.org/doc/index.html)
 
 See also the quickstart guide for CLI:
 
@@ -418,10 +418,10 @@ $ mlpack_dbscan --input_file input.csv --epsilon 0.5 --min_size 5
 $ mlpack_decision_tree [--help] [--info <string>] [--input_model_file
         <string>] [--labels_file <string>] [--maximum_depth 0]
         [--minimum_gain_split 1e-07] [--minimum_leaf_size 20]
-        [--print_training_accuracy] [--print_training_error] [--test_file
-        <string>] [--test_labels_file <string>] [--training_file <string>]
-        [--verbose] [--version] [--weights_file <string>] [--output_model_file
-        <string>] [--predictions_file <string>] [--probabilities_file <string>]
+        [--print_training_accuracy] [--test_file <string>] [--test_labels_file
+        <string>] [--training_file <string>] [--verbose] [--version]
+        [--weights_file <string>] [--output_model_file <string>]
+        [--predictions_file <string>] [--probabilities_file <string>]
 ```
 
 An implementation of an ID3-style decision tree for classification, which supports categorical data.  Given labeled data with numeric or categorical features, a decision tree can be trained and saved; or, an existing decision tree can be used for classification on new points. [Detailed documentation](#decision_tree_detailed-documentation).
@@ -441,7 +441,6 @@ An implementation of an ID3-style decision tree for classification, which suppor
 | `--minimum_gain_split (-g)` | [`double`](#doc_double) | Minimum gain for node splitting. | `1e-07` |
 | `--minimum_leaf_size (-n)` | [`int`](#doc_int) | Minimum number of points in a leaf. | `20` |
 | `--print_training_accuracy (-a)` | [`flag`](#doc_flag) | Print the training accuracy. |  |
-| `--print_training_error (-e)` | [`flag`](#doc_flag) | Print the training error (deprecated; will be removed in mlpack 4.0.0). |  |
 | `--test_file (-T)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Testing dataset (may be categorical). | `''` |
 | `--test_labels_file (-L)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Test point labels, if accuracy calculation is desired. | `''` |
 | `--training_file (-t)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Training dataset (may be categorical). | `''` |
@@ -465,7 +464,7 @@ Train and evaluate using a decision tree.  Given a dataset containing numeric or
 
 The training set and associated labels are specified with the `--training_file (-t)` and `--labels_file (-l)` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `--labels_file (-l)` is not specified, the labels are assumed to be the last dimension of the training dataset.
 
-When a model is trained, the `--output_model_file (-M)` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `--input_model_file (-m)` parameter.  The `--input_model_file (-m)` parameter may not be specified when the `--training_file (-t)` parameter is specified.  The `--minimum_leaf_size (-n)` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `--minimum_gain_split (-g)` parameter specifies the minimum gain that is needed for the node to split.  The `--maximum_depth (-D)` parameter specifies the maximum depth of the tree.  If `--print_training_error (-e)` is specified, the training error will be printed.
+When a model is trained, the `--output_model_file (-M)` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `--input_model_file (-m)` parameter.  The `--input_model_file (-m)` parameter may not be specified when the `--training_file (-t)` parameter is specified.  The `--minimum_leaf_size (-n)` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `--minimum_gain_split (-g)` parameter specifies the minimum gain that is needed for the node to split.  The `--maximum_depth (-D)` parameter specifies the maximum depth of the tree.  If `--print_training_accuracy (-a)` is specified, the training accuracy will be printed.
 
 Test data may be specified with the `--test_file (-T)` parameter, and if performance numbers are desired for that test set, labels may be specified with the `--test_labels_file (-L)` parameter.  Predictions for each test point may be saved via the `--predictions_file (-p)` output parameter.  Class probabilities for each prediction may be saved with the `--probabilities_file (-P)` output parameter.
 
@@ -1394,7 +1393,7 @@ $ mlpack_kernel_pca --input_file input.csv --kernel gaussian --output_file
 ### See also
 
  - [Kernel principal component analysis on Wikipedia](https://en.wikipedia.org/wiki/Kernel_principal_component_analysis)
- - [Kernel Principal Component Analysis (pdf)](https://pca.narod.ru/scholkopf_kernel.pdf)
+ - [Nonlinear Component Analysis as a Kernel Eigenvalue Problem](https://www.mlpack.org/papers/kpca.pdf)
  - [KernelPCA class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kernel_pca/kernel_pca.hpp)
 
 ## mlpack_kmeans
@@ -1482,7 +1481,7 @@ $ mlpack_kmeans --input_file data.csv --initial_centroids_file initial.csv
  - [mlpack_dbscan](#dbscan)
  - [k-means++](https://en.wikipedia.org/wiki/K-means%2B%2B)
  - [Using the triangle inequality to accelerate k-means (pdf)](https://cdn.aaai.org/ICML/2003/ICML03-022.pdf)
- - [Making k-means even faster (pdf)](https://epubs.siam.org/doi/pdf/10.1137/1.9781611972801.12)
+ - [Making k-means even faster (pdf)](https://www.cse.iitd.ac.in/~rjaiswal/2015/col870/Project/Faster-k-means/Hamerly.pdf)
  - [Accelerating exact k-means algorithms with geometric reasoning (pdf)](http://reports-archive.adm.cs.cmu.edu/anon/anon/usr/ftp/usr0/ftp/2000/CMU-CS-00-105.pdf)
  - [A dual-tree algorithm for fast k-means clustering with large k (pdf)](http://www.ratml.org/pub/pdf/2017dual.pdf)
  - [KMeans class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kmeans/kmeans.hpp)
@@ -1678,9 +1677,9 @@ $ mlpack_linear_svm --input_model_file lsvm_model.bin --test_file test.csv
 $ mlpack_lmnn [--batch_size 50] [--center] [--distance_file <string>]
         [--help] [--info <string>] --input_file <string> [--k 1] [--labels_file
         <string>] [--linear_scan] [--max_iterations 100000] [--normalize]
-        [--optimizer 'amsgrad'] [--passes 50] [--print_accuracy] [--range 1]
-        [--rank 0] [--regularization 0.5] [--seed 0] [--step_size 0.01]
-        [--tolerance 1e-07] [--verbose] [--version] [--centered_data_file
+        [--optimizer 'amsgrad'] [--passes 50] [--print_accuracy] [--rank 0]
+        [--regularization 0.5] [--seed 0] [--step_size 0.01] [--tolerance 1e-07]
+        [--update_interval 1] [--verbose] [--version] [--centered_data_file
         <string>] [--output_file <string>] [--transformed_data_file <string>]
 ```
 
@@ -1707,12 +1706,12 @@ An implementation of Large Margin Nearest Neighbors (LMNN), a distance learning 
 | `--optimizer (-O)` | [`string`](#doc_string) | Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or 'lbfgs'. | `'amsgrad'` |
 | `--passes (-p)` | [`int`](#doc_int) | Maximum number of full passes over dataset for AMSGrad, BB_SGD and SGD. | `50` |
 | `--print_accuracy (-P)` | [`flag`](#doc_flag) | Print accuracies on initial and transformed dataset |  |
-| `--range (-R)` | [`int`](#doc_int) | Number of iterations after which impostors needs to be recalculated | `1` |
 | `--rank (-A)` | [`int`](#doc_int) | Rank of distance matrix to be optimized.  | `0` |
 | `--regularization (-r)` | [`double`](#doc_double) | Regularization for LMNN objective function  | `0.5` |
 | `--seed (-s)` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
 | `--step_size (-a)` | [`double`](#doc_double) | Step size for AMSGrad, BB_SGD and SGD (alpha). | `0.01` |
 | `--tolerance (-t)` | [`double`](#doc_double) | Maximum tolerance for termination of AMSGrad, BB_SGD, SGD or L-BFGS. | `1e-07` |
+| `--update_interval (-R)` | [`int`](#doc_int) | Number of iterations after which impostors need to be recalculated. | `1` |
 | `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
 | `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
 
@@ -1732,7 +1731,7 @@ This program implements Large Margin Nearest Neighbors, a distance learning tech
 
 To work, this algorithm needs labeled data.  It can be given as the last row of the input dataset (specified with `--input_file (-i)`), or alternatively as a separate matrix (specified with `--labels_file (-l)`).  Additionally, a starting point for optimization (specified with `--distance_file (-d)`can be given, having (r x d) dimensionality.  Here r should satisfy 1 <= r <= d, Consequently a Low-Rank matrix will be optimized. Alternatively, Low-Rank distance can be learned by specifying the `--rank (-A)`parameter (A Low-Rank matrix with uniformly distributed values will be used as initial learning point). 
 
-The program also requires number of targets neighbors to work with ( specified with `--k (-k)`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `--regularization (-r)`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `--range (-R)`).
+The program also requires number of targets neighbors to work with ( specified with `--k (-k)`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `--regularization (-r)`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `--update_interval (-R)`).
 
 Output can either be the learned distance matrix (specified with `--output_file (-o)`), or the transformed dataset  (specified with `--transformed_data_file (-D)`), or both. Additionally mean-centered dataset (specified with `--centered_data_file (-c)`) can be accessed given mean-centering (specified with `--center (-C)`) is performed on the dataset. Accuracy on initial dataset and final transformed dataset can be printed by specifying the `--print_accuracy (-P)`parameter. 
 
@@ -1756,10 +1755,10 @@ $ mlpack_lmnn --input_file iris.csv --labels_file iris_labels.csv --k 3
   --optimizer bbsgd --output_file output.csv
 ```
 
-An another program call making use of range & regularization parameter with dataset having labels as last column can be made as: 
+Another program call making use of update interval & regularization parameter with dataset having labels as last column can be made as: 
 
 ```bash
-$ mlpack_lmnn --input_file letter_recognition.csv --k 5 --range 10
+$ mlpack_lmnn --input_file letter_recognition.csv --k 5 --update_interval 10
   --regularization 0.4 --output_file output.csv
 ```
 
@@ -1798,7 +1797,7 @@ An implementation of Local Coordinate Coding (LCC), a data transformation techni
 | `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
 | `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
 | `--initial_dictionary_file (-i)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Optional initial dictionary. | `''` |
-| `--input_model_file (-m)` | [`LocalCoordinateCoding file`](#doc_model) | Input LCC model. | `''` |
+| `--input_model_file (-m)` | [`LocalCoordinateCoding<> file`](#doc_model) | Input LCC model. | `''` |
 | `--lambda (-l)` | [`double`](#doc_double) | Weighted l1-norm regularization parameter. | `0` |
 | `--max_iterations (-n)` | [`int`](#doc_int) | Maximum number of iterations for LCC (0 indicates no limit). | `0` |
 | `--normalize (-N)` | [`flag`](#doc_flag) | If set, the input data matrix will be normalized before coding. |  |
@@ -1816,7 +1815,7 @@ An implementation of Local Coordinate Coding (LCC), a data transformation techni
 |------------|------------|-------------------|
 | `--codes_file (-c)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Output codes matrix. | 
 | `--dictionary_file (-d)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Output dictionary matrix. | 
-| `--output_model_file (-M)` | [`LocalCoordinateCoding file`](#doc_model) | Output for trained LCC model. | 
+| `--output_model_file (-M)` | [`LocalCoordinateCoding<> file`](#doc_model) | Output for trained LCC model. | 
 
 ### Detailed documentation
 {: #local_coordinate_coding_detailed-documentation }
@@ -1850,7 +1849,7 @@ $ mlpack_local_coordinate_coding --input_model_file lcc_model.bin --test_file
 
  - [mlpack_sparse_coding](#sparse_coding)
  - [Nonlinear learning using local coordinate coding (pdf)](https://papers.nips.cc/paper/3875-nonlinear-learning-using-local-coordinate-coding.pdf)
- - [LocalCoordinateCoding C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/local_coordinate_coding/local_coordinate_coding.hpp)
+ - [LocalCoordinateCoding C++ class documentation](../../user/methods/local_coordinate_coding.md)
 
 ## mlpack_logistic_regression
 {: #logistic_regression }
@@ -2099,8 +2098,7 @@ $ mlpack_mean_shift --input_file data.csv --centroid_file centroids.csv
 $ mlpack_nbc [--help] [--incremental_variance] [--info <string>]
         [--input_model_file <string>] [--labels_file <string>] [--test_file
         <string>] [--training_file <string>] [--verbose] [--version]
-        [--output_file <string>] [--output_model_file <string>]
-        [--output_probs_file <string>] [--predictions_file <string>]
+        [--output_model_file <string>] [--predictions_file <string>]
         [--probabilities_file <string>]
 ```
 
@@ -2128,9 +2126,7 @@ An implementation of the Naive Bayes Classifier, used for classification. Given 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `--output_file (-o)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | The matrix in which the predicted labels for the test set will be written (deprecated). | 
 | `--output_model_file (-M)` | [`NBCModel file`](#doc_model) | File to save trained Naive Bayes model to. | 
-| `--output_probs_file` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | The matrix in which the predicted probability of labels for the test set will be written (deprecated). | 
 | `--predictions_file (-a)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | The matrix in which the predicted labels for the test set will be written. | 
 | `--probabilities_file (-p)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | The matrix in which the predicted probability of labels for the test set will be written. | 
 
@@ -2149,8 +2145,6 @@ The `--incremental_variance (-I)` parameter can be used to force the training to
 
 If classifying a test set is desired, the test set may be specified with the `--test_file (-T)` parameter, and the classifications may be saved with the `--predictions_file (-a)`predictions  parameter.  If saving the trained model is desired, this may be done with the `--output_model_file (-M)` output parameter.
 
-Note: the `--output_file (-o)` and `--output_probs_file` parameters are deprecated and will be removed in mlpack 4.0.0.  Use `--predictions_file (-a)` and `--probabilities_file (-p)` instead.
-
 ### Example
 For example, to train a Naive Bayes classifier on the dataset `'data.csv'` with labels `'labels.csv'` and save the model to `'nbc_model.bin'`, the following command may be used:
 
@@ -2163,7 +2157,7 @@ Then, to use `'nbc_model.bin'` to predict the classes of the dataset `'test_set.
 
 ```bash
 $ mlpack_nbc --input_model_file nbc_model.bin --test_file test_set.csv
-  --output_file predictions.csv
+  --predictions_file predictions.csv
 ```
 
 ### See also
@@ -2543,8 +2537,7 @@ $ mlpack_pca --input_file data.csv --new_dimensionality 5
 $ mlpack_perceptron [--help] [--info <string>] [--input_model_file
         <string>] [--labels_file <string>] [--max_iterations 1000] [--test_file
         <string>] [--training_file <string>] [--verbose] [--version]
-        [--output_file <string>] [--output_model_file <string>]
-        [--predictions_file <string>]
+        [--output_model_file <string>] [--predictions_file <string>]
 ```
 
 An implementation of a perceptron---a single level neural network--=for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation).
@@ -2571,7 +2564,6 @@ An implementation of a perceptron---a single level neural network--=for classifi
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `--output_file (-o)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | The matrix in which the predicted labels for the test set will be written. | 
 | `--output_model_file (-M)` | [`PerceptronModel file`](#doc_model) | Output for trained perceptron model. | 
 | `--predictions_file (-P)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | The matrix in which the predicted labels for the test set will be written. | 
 
@@ -2581,9 +2573,6 @@ An implementation of a perceptron---a single level neural network--=for classifi
 This program implements a perceptron, which is a single level neural network. The perceptron makes its predictions based on a linear predictor function combining a set of weights with the feature vector.  The perceptron learning rule is able to converge, given enough iterations (specified using the `--max_iterations (-n)` parameter), if the data supplied is linearly separable.  The perceptron is parameterized by a matrix of weight vectors that denote the numerical weights of the neural network.
 
 This program allows loading a perceptron from a model (via the `--input_model_file (-m)` parameter) or training a perceptron given training data (via the `--training_file (-t)` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (via the `--test_file (-T)` parameter) and the classification results on the test set may be saved with the `--predictions_file (-P)` output parameter.  The perceptron model may be saved with the `--output_model_file (-M)` output parameter.
-
-Note: the following parameter is deprecated and will be removed in mlpack 4.0.0: `--output_file (-o)`.
-Use `--predictions_file (-P)` instead of `--output_file (-o)`.
 
 ### Example
 The training data given with the `--training_file (-t)` option may have class labels as its last dimension (so, if the training data is in CSV format, labels should be the last column).  Alternately, the `--labels_file (-l)` parameter may be used to specify a separate matrix of labels.
@@ -3303,7 +3292,7 @@ An implementation of Sparse Coding with Dictionary Learning.  Given a dataset, t
 | `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
 | `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
 | `--initial_dictionary_file (-i)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Optional initial dictionary matrix. | `''` |
-| `--input_model_file (-m)` | [`SparseCoding file`](#doc_model) | File containing input sparse coding model. | `''` |
+| `--input_model_file (-m)` | [`SparseCoding<> file`](#doc_model) | File containing input sparse coding model. | `''` |
 | `--lambda1 (-l)` | [`double`](#doc_double) | Sparse coding l1-norm regularization parameter. | `0` |
 | `--lambda2 (-L)` | [`double`](#doc_double) | Sparse coding l2-norm regularization parameter. | `0` |
 | `--max_iterations (-n)` | [`int`](#doc_int) | Maximum number of iterations for sparse coding (0 indicates no limit). | `0` |
@@ -3323,7 +3312,7 @@ An implementation of Sparse Coding with Dictionary Learning.  Given a dataset, t
 |------------|------------|-------------------|
 | `--codes_file (-c)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix to save the output sparse codes of the test matrix (--test_file) to. | 
 | `--dictionary_file (-d)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix to save the output dictionary to. | 
-| `--output_model_file (-M)` | [`SparseCoding file`](#doc_model) | File to save trained sparse coding model to. | 
+| `--output_model_file (-M)` | [`SparseCoding<> file`](#doc_model) | File to save trained sparse coding model to. | 
 
 ### Detailed documentation
 {: #sparse_coding_detailed-documentation }
@@ -3371,9 +3360,8 @@ $ mlpack_sparse_coding --input_model_file model.bin --test_file otherdata.csv
 $ mlpack_adaboost [--help] [--info <string>] [--input_model_file
         <string>] [--iterations 1000] [--labels_file <string>] [--test_file
         <string>] [--tolerance 1e-10] [--training_file <string>] [--verbose]
-        [--version] [--weak_learner 'decision_stump'] [--output_file <string>]
-        [--output_model_file <string>] [--predictions_file <string>]
-        [--probabilities_file <string>]
+        [--version] [--weak_learner 'decision_stump'] [--output_model_file
+        <string>] [--predictions_file <string>] [--probabilities_file <string>]
 ```
 
 An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for classification.  This can be used to train an AdaBoost model on labeled data or use an existing AdaBoost model to predict the classes of new points. [Detailed documentation](#adaboost_detailed-documentation).
@@ -3402,7 +3390,6 @@ An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for classific
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `--output_file (-o)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Predicted labels for the test set. | 
 | `--output_model_file (-M)` | [`AdaBoostModel file`](#doc_model) | Output trained AdaBoost model. | 
 | `--predictions_file (-P)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Predicted labels for the test set. | 
 | `--probabilities_file (-p)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Predicted class probabilities for each point in the test set. | 
@@ -3417,9 +3404,6 @@ For more information about the algorithm, see the paper "Improved Boosting Algor
 This program allows training of an AdaBoost model, and then application of that model to a test dataset.  To train a model, a dataset must be passed with the `--training_file (-t)` option.  Labels can be given with the `--labels_file (-l)` option; if no labels are specified, the labels will be assumed to be the last column of the input dataset.  Alternately, an AdaBoost model may be loaded with the `--input_model_file (-m)` option.
 
 Once a model is trained or loaded, it may be used to provide class predictions for a given test dataset.  A test dataset may be specified with the `--test_file (-T)` parameter.  The predicted classes for each point in the test dataset are output to the `--predictions_file (-P)` output parameter.  The AdaBoost model itself is output to the `--output_model_file (-M)` output parameter.
-
-Note: the following parameter is deprecated and will be removed in mlpack 4.0.0: `--output_file (-o)`.
-Use `--predictions_file (-P)` instead of `--output_file (-o)`.
 
 ### Example
 For example, to run AdaBoost on an input dataset `'data.csv'` with labels `'labels.csv'`and perceptrons as the weak learner type, storing the trained model in `'model.bin'`, one could use the following command: 

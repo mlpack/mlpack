@@ -36,7 +36,7 @@ steps:
     fi
 
     # Install armadillo.
-    curl -k -L https://sourceforge.net/projects/arma/files/armadillo-9.800.6.tar.xz | tar -xvJ && \
+    curl -k -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz | tar -xvJ && \
         cd armadillo* && \
         cmake . && \
         make && \

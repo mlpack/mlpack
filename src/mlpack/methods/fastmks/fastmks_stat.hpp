@@ -61,7 +61,7 @@ class FastMKSStat
       }
       else
       {
-        selfKernel = std::sqrt(node.Metric().Kernel().Evaluate(
+        selfKernel = std::sqrt(node.Distance().Kernel().Evaluate(
             node.Dataset().col(node.Point(0)),
             node.Dataset().col(node.Point(0))));
       }
@@ -72,7 +72,7 @@ class FastMKSStat
       arma::vec center;
       node.Center(center);
 
-      selfKernel = std::sqrt(node.Metric().Kernel().Evaluate(center, center));
+      selfKernel = std::sqrt(node.Distance().Kernel().Evaluate(center, center));
     }
   }
 

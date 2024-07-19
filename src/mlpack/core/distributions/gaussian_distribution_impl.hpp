@@ -1,5 +1,5 @@
 /**
- * @file core/dists/gaussian_distribution_impl.hpp
+ * @file core/distributions/gaussian_distribution_impl.hpp
  * @author Ryan Curtin
  * @author Michael Fox
  *

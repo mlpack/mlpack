@@ -5,10 +5,9 @@
 
 <h5 align="center">
   <a href="https://mlpack.org">Home</a> |
-  <a href="https://www.mlpack.org/docs.html">Documentation</a> |
-  <a href="https://www.mlpack.org/community.html">Community</a> |
+  <a href="https://www.mlpack.org/download.html">Download</a> |
+  <a href="https://www.mlpack.org/doc/index.html">Documentation</a> |
   <a href="https://www.mlpack.org/questions.html">Help</a> |
-  <a href="https://webchat.freenode.net/?channels=mlpack">IRC Chat</a>
 </h5>
 
 <p align="center">
@@ -43,7 +42,7 @@ programs, Python bindings, Julia bindings, Go bindings and R bindings.
    [R](doc/quickstart/r.md), [Julia](doc/quickstart/julia.md),
    [Go](doc/quickstart/go.md)
  - [mlpack homepage](https://www.mlpack.org/)
- - [mlpack documentation](https://www.mlpack.org/docs.html)
+ - [mlpack documentation](https://www.mlpack.org/doc/index.html)
  - [Examples repository](https://github.com/mlpack/examples/)
  - [Tutorials](doc/tutorials/README.md)
  - [Development Site (Github)](https://github.com/mlpack/mlpack/)
@@ -109,7 +108,7 @@ Citations are beneficial for the growth and improvement of mlpack.
 
 **mlpack** requires the following additional dependencies:
  - C++17 compiler
- - [Armadillo](https://arma.sourceforge.net)      &nbsp;&emsp;>= 9.800
+ - [Armadillo](https://arma.sourceforge.net)      &nbsp;&emsp;>= 10.8
  - [ensmallen](https://ensmallen.org)      &emsp;>= 2.10.0
  - [cereal](http://uscilab.github.io/cereal/)         &ensp;&nbsp;&emsp;&emsp;>= 1.1.2
 
@@ -334,7 +333,7 @@ dependencies are installed:
 
  - R >= 4.0
  - Rcpp >= 0.12.12
- - RcppArmadillo >= 0.9.800.0
+ - RcppArmadillo >= 0.10.8.0
  - RcppEnsmallen >= 0.2.10.0
  - roxygen2
  - testthat
@@ -472,7 +471,7 @@ More documentation is available for both users and developers.
  - [mlpack automatic bindings to other languages](doc/developer/bindings.md)
  - [The ElemType policy in mlpack](doc/developer/elemtype.md)
  - [The KernelType policy in mlpack](doc/developer/kernels.md)
- - [The MetricType policy in mlpack](doc/developer/metrics.md)
+ - [The DistanceType policy in mlpack](doc/developer/distances.md)
  - [The TreeType policy in mlpack](doc/developer/trees.md)
 
 To learn about the development goals of mlpack in the short- and medium-term
@@ -482,4 +481,4 @@ If you have problems, find a bug, or need help, you can try visiting
 the [mlpack help](https://www.mlpack.org/questions.html) page, or [mlpack on
 Github](https://github.com/mlpack/mlpack/).  Alternately, mlpack help can be
 found on Matrix at `#mlpack`; see also the
-[community](https://www.mlpack.org/community.html) page.
+[community](https://www.mlpack.org/doc/developer/community.html) page.

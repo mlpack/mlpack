@@ -289,7 +289,7 @@ inline void RSModel::CleanMemory()
   delete rSearch;
 }
 
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RSWrapper<TreeType>::Train(util::Timers& timers,
@@ -304,7 +304,7 @@ void RSWrapper<TreeType>::Train(util::Timers& timers,
     timers.Stop("tree_building");
 }
 
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RSWrapper<TreeType>::Search(util::Timers& timers,
@@ -333,7 +333,7 @@ void RSWrapper<TreeType>::Search(util::Timers& timers,
   }
 }
 
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RSWrapper<TreeType>::Search(util::Timers& timers,
@@ -346,7 +346,7 @@ void RSWrapper<TreeType>::Search(util::Timers& timers,
   timers.Stop("computing_neighbors");
 }
 
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void LeafSizeRSWrapper<TreeType>::Train(util::Timers& timers,
@@ -374,7 +374,7 @@ void LeafSizeRSWrapper<TreeType>::Train(util::Timers& timers,
   }
 }
 
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void LeafSizeRSWrapper<TreeType>::Search(

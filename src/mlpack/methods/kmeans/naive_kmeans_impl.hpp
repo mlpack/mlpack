@@ -21,19 +21,19 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename MatType>
-NaiveKMeans<MetricType, MatType>::NaiveKMeans(const MatType& dataset,
-                                              MetricType& metric) :
+template<typename DistanceType, typename MatType>
+NaiveKMeans<DistanceType, MatType>::NaiveKMeans(const MatType& dataset,
+                                                DistanceType& distance) :
     dataset(dataset),
-    metric(metric),
+    distance(distance),
     distanceCalculations(0)
 { /* Nothing to do. */ }
 
 // Run a single iteration.
-template<typename MetricType, typename MatType>
-double NaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
-                                                 arma::mat& newCentroids,
-                                                 arma::Col<size_t>& counts)
+template<typename DistanceType, typename MatType>
+double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
+                                                   arma::mat& newCentroids,
+                                                   arma::Col<size_t>& counts)
 {
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
   counts.zeros(centroids.n_cols);
@@ -57,11 +57,11 @@ double NaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
 
       for (size_t j = 0; j < centroids.n_cols; ++j)
       {
-        const double distance = metric.Evaluate(dataset.col(i),
+        const double dist = distance.Evaluate(dataset.col(i),
             centroids.unsafe_col(j));
-        if (distance < minDistance)
+        if (dist < minDistance)
         {
-          minDistance = distance;
+          minDistance = dist;
           closestCluster = j;
         }
       }
@@ -91,7 +91,7 @@ double NaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
   double cNorm = 0.0;
   for (size_t i = 0; i < centroids.n_cols; ++i)
   {
-    cNorm += std::pow(metric.Evaluate(centroids.col(i), newCentroids.col(i)),
+    cNorm += std::pow(distance.Evaluate(centroids.col(i), newCentroids.col(i)),
         2.0);
   }
   distanceCalculations += centroids.n_cols;

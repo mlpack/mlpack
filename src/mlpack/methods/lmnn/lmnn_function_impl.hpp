@@ -18,18 +18,19 @@
 
 namespace mlpack {
 
-template<typename MetricType>
-LMNNFunction<MetricType>::LMNNFunction(const arma::mat& datasetIn,
-                                       const arma::Row<size_t>& labelsIn,
-                                       size_t k,
-                                       double regularization,
-                                       size_t range,
-                                       MetricType metric) :
+template<typename MatType, typename LabelsType, typename DistanceType>
+LMNNFunction<MatType, LabelsType, DistanceType>::LMNNFunction(
+    const MatType& datasetIn,
+    const LabelsType& labelsIn,
+    size_t k,
+    double regularization,
+    size_t updateInterval,
+    DistanceType distance) :
     k(k),
-    metric(metric),
+    distance(distance),
     regularization(regularization),
     iteration(0),
-    range(range),
+    updateInterval(updateInterval),
     constraint(datasetIn, labelsIn, k),
     points(datasetIn.n_cols),
     impBounds(false)
@@ -60,7 +61,7 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& datasetIn,
   lastTransformationIndices.zeros();
 
   // Reserve the first element of cache.
-  arma::mat emptyMat;
+  MatType emptyMat;
   oldTransformationMatrices.push_back(emptyMat);
   oldTransformationCounts.push_back(dataset.n_cols);
 
@@ -71,7 +72,7 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& datasetIn,
     // Initialize target neighbors & impostors.
     targetNeighbors.set_size(k, dataset.n_cols);
     impostors.set_size(k, dataset.n_cols);
-    distance.set_size(k, dataset.n_cols);
+    distanceMat.set_size(k, dataset.n_cols);
   }
   else
   {
@@ -81,7 +82,7 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& datasetIn,
     // Initialize target neighbors & impostors.
     targetNeighbors.set_size(k + 1, dataset.n_cols);
     impostors.set_size(k + 1, dataset.n_cols);
-    distance.set_size(k + 1, dataset.n_cols);
+    distanceMat.set_size(k + 1, dataset.n_cols);
   }
 
   constraint.TargetNeighbors(targetNeighbors, dataset, labels, norm);
@@ -92,18 +93,18 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& datasetIn,
 }
 
 //! Shuffle the dataset.
-template<typename MetricType>
-void LMNNFunction<MetricType>::Shuffle()
+template<typename MatType, typename LabelsType, typename DistanceType>
+void LMNNFunction<MatType, LabelsType, DistanceType>::Shuffle()
 {
-  arma::mat newDataset = dataset;
-  arma::Mat<size_t> newLabels = labels;
-  arma::cube newEvalOld = evalOld;
-  arma::vec newlastTransformationIndices = lastTransformationIndices;
-  arma::mat newMaxImpNorm = maxImpNorm;
-  arma::vec newNorm = norm;
+  MatType newDataset = dataset;
+  LabelsType newLabels = labels;
+  CubeType newEvalOld = evalOld;
+  VecType newlastTransformationIndices = lastTransformationIndices;
+  MatType newMaxImpNorm = maxImpNorm;
+  VecType newNorm = norm;
 
   // Generate ordering.
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
+  UVecType ordering = arma::shuffle(arma::linspace<UVecType>(0,
       dataset.n_cols - 1, dataset.n_cols));
 
   ClearAlias(dataset);
@@ -126,11 +127,11 @@ void LMNNFunction<MetricType>::Shuffle()
 }
 
 // Update cache transformation matrices.
-template<typename MetricType>
-inline void LMNNFunction<MetricType>::UpdateCache(
-                                          const arma::mat& transformation,
-                                          const size_t begin,
-                                          const size_t batchSize)
+template<typename MatType, typename LabelsType, typename DistanceType>
+inline void LMNNFunction<MatType, LabelsType, DistanceType>::UpdateCache(
+    const MatType& transformation,
+    const size_t begin,
+    const size_t batchSize)
 {
   // Are there any empty transformation matrices?
   size_t index = oldTransformationMatrices.size();
@@ -162,33 +163,15 @@ inline void LMNNFunction<MetricType>::UpdateCache(
   }
 
   oldTransformationCounts[index] += batchSize;
-
-  #ifdef DEBUG
-    size_t total = 0;
-    for (size_t i = 1; i < oldTransformationCounts.size(); ++i)
-    {
-      std::ostringstream oss;
-      oss << "transformation counts for matrix " << i
-          << " invalid (" << oldTransformationCounts[i] << ")!";
-      Log::Assert(oldTransformationCounts[i] <= dataset.n_cols, oss.str());
-      total += oldTransformationCounts[i];
-    }
-
-    std::ostringstream oss;
-    oss << "total count for transformation matrices invalid (" << total
-        << ", " << "should be " << dataset.n_cols << "!";
-    if (begin + batchSize == dataset.n_cols)
-      Log::Assert(total == dataset.n_cols, oss.str());
-  #endif
 }
 
 // Calculate norm of change in transformation.
-template<typename MetricType>
-inline void LMNNFunction<MetricType>::TransDiff(
-                                std::map<size_t, double>& transformationDiffs,
-                                const arma::mat& transformation,
-                                const size_t begin,
-                                const size_t batchSize)
+template<typename MatType, typename LabelsType, typename DistanceType>
+inline void LMNNFunction<MatType, LabelsType, DistanceType>::TransDiff(
+    std::unordered_map<size_t, ElemType>& transformationDiffs,
+    const MatType& transformation,
+    const size_t begin,
+    const size_t batchSize)
 {
   for (size_t i = begin; i < begin + batchSize; ++i)
   {
@@ -209,22 +192,24 @@ inline void LMNNFunction<MetricType>::TransDiff(
 }
 
 //! Evaluate cost over whole dataset.
-template<typename MetricType>
-double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
+template<typename MatType, typename LabelsType, typename DistanceType>
+typename MatType::elem_type
+LMNNFunction<MatType, LabelsType, DistanceType>::Evaluate(
+    const MatType& transformation)
 {
-  double cost = 0;
+  ElemType cost = 0;
 
-  // Apply metric over dataset.
+  // Apply distance metric over dataset.
   transformedDataset = transformation * dataset;
 
-  double transformationDiff = 0;
+  ElemType transformationDiff = 0;
   if (!transformationOld.is_empty())
   {
     // Calculate norm of change in transformation.
     transformationDiff = arma::norm(transformation - transformationOld);
   }
 
-  if (!transformationOld.is_empty() && iteration++ % range == 0)
+  if (!transformationOld.is_empty() && iteration++ % updateInterval == 0)
   {
     if (impBounds)
     {
@@ -234,27 +219,28 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
       for (size_t i = 0; i < dataset.n_cols; ++i)
       {
         if (transformationDiff * (2 * norm(i) + norm(impostors(k - 1, i)) +
-            norm(impostors(k, i))) > distance(k, i) - distance(k - 1, i))
+            norm(impostors(k, i))) > distanceMat(k, i) - distanceMat(k - 1, i))
         {
           points(numPoints++) = i;
         }
       }
 
       // Re-calculate impostors on transformed dataset.
-      constraint.Impostors(impostors, distance,
+      constraint.Impostors(impostors, distanceMat,
           transformedDataset, labels, norm, points, numPoints);
     }
     else
     {
       // Re-calculate impostors on transformed dataset.
-      constraint.Impostors(impostors, distance, transformedDataset, labels,
+      constraint.Impostors(impostors, distanceMat, transformedDataset, labels,
           norm);
     }
   }
-  else if (iteration++ % range == 0)
+  else if (iteration++ % updateInterval == 0)
   {
     // Re-calculate impostors on transformed dataset.
-    constraint.Impostors(impostors, distance, transformedDataset, labels, norm);
+    constraint.Impostors(impostors, distanceMat, transformedDataset, labels,
+        norm);
   }
 
   for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -262,7 +248,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
     for (size_t j = 0; j < k ; ++j)
     {
       // Calculate cost due to distance between target neighbors & data point.
-      double eval = metric.Evaluate(transformedDataset.col(i),
+      ElemType eval = distance.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(targetNeighbors(j, i)));
       cost += (1 - regularization) * eval;
     }
@@ -275,7 +261,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
       {
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
-        double eval = 0;
+        ElemType eval = 0;
 
         // Bounds for eval.
         if (!transformationOld.is_empty() && evalOld(l, j, i) < -1)
@@ -291,17 +277,17 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
         // Calculate exact eval value.
         if (eval > -1)
         {
-          if (iteration - 1 % range == 0)
+          if (iteration - 1 % updateInterval == 0)
           {
-            eval = metric.Evaluate(transformedDataset.col(i),
+            eval = distance.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
-                 distance(l, i);
+                 distanceMat(l, i);
           }
           else
           {
-            eval = metric.Evaluate(transformedDataset.col(i),
+            eval = distance.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
-                   metric.Evaluate(transformedDataset.col(i),
+                   distance.Evaluate(transformedDataset.col(i),
                        transformedDataset.col(impostors(l, i)));
           }
         }
@@ -337,21 +323,23 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
 }
 
 //! Calculate cost over batches.
-template<typename MetricType>
-double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
-                                          const size_t begin,
-                                          const size_t batchSize)
+template<typename MatType, typename LabelsType, typename DistanceType>
+typename MatType::elem_type
+LMNNFunction<MatType, LabelsType, DistanceType>::Evaluate(
+    const MatType& transformation,
+    const size_t begin,
+    const size_t batchSize)
 {
-  double cost = 0;
+  ElemType cost = 0;
 
   // Calculate norm of change in transformation.
-  std::map<size_t, double> transformationDiffs;
+  std::unordered_map<size_t, ElemType> transformationDiffs;
   TransDiff(transformationDiffs, transformation, begin, batchSize);
 
-  // Apply metric over dataset.
+  // Apply distance metric over dataset.
   transformedDataset = transformation * dataset;
 
-  if (impBounds && iteration++ % range == 0)
+  if (impBounds && iteration++ % updateInterval == 0)
   {
     // Track number of data points to use for impostors calculatiom.
     size_t numPoints = 0;
@@ -362,7 +350,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
       {
         if (transformationDiffs[lastTransformationIndices[i]] *
             (2 * norm(i) + norm(impostors(k - 1, i)) +
-            norm(impostors(k, i))) > distance(k, i) - distance(k - 1, i))
+            norm(impostors(k, i))) > distanceMat(k, i) - distanceMat(k - 1, i))
         {
           points(numPoints++)  = i;
         }
@@ -374,13 +362,13 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
     }
 
     // Re-calculate impostors on transformed dataset.
-    constraint.Impostors(impostors, distance,
+    constraint.Impostors(impostors, distanceMat,
         transformedDataset, labels, norm, points, numPoints);
   }
-  else if (iteration++ % range == 0)
+  else if (iteration++ % updateInterval == 0)
   {
     // Re-calculate impostors on transformed dataset.
-    constraint.Impostors(impostors, distance, transformedDataset, labels,
+    constraint.Impostors(impostors, distanceMat, transformedDataset, labels,
         norm, begin, batchSize);
   }
 
@@ -389,7 +377,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
     for (size_t j = 0; j < k ; ++j)
     {
       // Calculate cost due to distance between target neighbors & data point.
-      double eval = metric.Evaluate(transformedDataset.col(i),
+      ElemType eval = distance.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(targetNeighbors(j, i)));
       cost += (1 - regularization) * eval;
     }
@@ -402,7 +390,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
       {
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
-        double eval = 0;
+        ElemType eval = 0;
 
         // Bounds for eval.
         if (lastTransformationIndices(i) && evalOld(l, j, i) < -1)
@@ -418,17 +406,17 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
         // Calculate exact eval value.
         if (eval > -1)
         {
-          if (iteration - 1 % range == 0)
+          if (iteration - 1 % updateInterval == 0)
           {
-            eval = metric.Evaluate(transformedDataset.col(i),
+            eval = distance.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
-                 distance(l, i);
+                 distanceMat(l, i);
           }
           else
           {
-            eval = metric.Evaluate(transformedDataset.col(i),
+            eval = distance.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
-                   metric.Evaluate(transformedDataset.col(i),
+                   distance.Evaluate(transformedDataset.col(i),
                        transformedDataset.col(impostors(l, i)));
           }
         }
@@ -466,16 +454,16 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
 }
 
 //! Compute gradient over whole dataset.
-template<typename MetricType>
+template<typename MatType, typename LabelsType, typename DistanceType>
 template<typename GradType>
-void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
-                                        GradType& gradient)
+void LMNNFunction<MatType, LabelsType, DistanceType>::Gradient(
+    const MatType& transformation, GradType& gradient)
 {
-  // Apply metric over dataset.
+  // Apply distance metric over dataset.
   transformedDataset = transformation * dataset;
 
-  double transformationDiff = 0;
-  if (!transformationOld.is_empty() && iteration++ % range == 0)
+  ElemType transformationDiff = 0;
+  if (!transformationOld.is_empty() && iteration++ % updateInterval == 0)
   {
     // Calculate norm of change in transformation.
     transformationDiff = arma::norm(transformation - transformationOld);
@@ -488,37 +476,37 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
       for (size_t i = 0; i < dataset.n_cols; ++i)
       {
         if (transformationDiff * (2 * norm(i) + norm(impostors(k - 1, i)) +
-            norm(impostors(k, i))) > distance(k, i) - distance(k - 1, i))
+            norm(impostors(k, i))) > distanceMat(k, i) - distanceMat(k - 1, i))
         {
           points(numPoints++) = i;
         }
       }
 
       // Re-calculate impostors on transformed dataset.
-      constraint.Impostors(impostors, distance,
+      constraint.Impostors(impostors, distanceMat,
           transformedDataset, labels, norm, points, numPoints);
     }
     else
     {
       // Re-calculate impostors on transformed dataset.
-      constraint.Impostors(impostors, distance, transformedDataset, labels,
+      constraint.Impostors(impostors, distanceMat, transformedDataset, labels,
           norm);
     }
   }
-  else if (iteration++ % range == 0)
+  else if (iteration++ % updateInterval == 0)
   {
       // Re-calculate impostors on transformed dataset.
-      constraint.Impostors(impostors, distance, transformedDataset, labels,
+      constraint.Impostors(impostors, distanceMat, transformedDataset, labels,
           norm);
   }
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);
 
   // Calculate gradient due to target neighbors.
-  arma::mat cij = pCij;
+  MatType cij = pCij;
 
   // Calculate gradient due to impostors.
-  arma::mat cil = zeros(dataset.n_rows, dataset.n_rows);
+  MatType cil = zeros<MatType>(dataset.n_rows, dataset.n_rows);
 
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
@@ -529,7 +517,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
       {
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
-        double eval = 0;
+        ElemType eval = 0;
 
         // Bounds for eval.
         if (!transformationOld.is_empty() && evalOld(l, j, i) < -1)
@@ -545,17 +533,17 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
         // Calculate exact eval value.
         if (eval > -1)
         {
-          if (iteration - 1 % range == 0)
+          if (iteration - 1 % updateInterval == 0)
           {
-            eval = metric.Evaluate(transformedDataset.col(i),
+            eval = distance.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
-                 distance(l, i);
+                 distanceMat(l, i);
           }
           else
           {
-            eval = metric.Evaluate(transformedDataset.col(i),
+            eval = distance.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
-                   metric.Evaluate(transformedDataset.col(i),
+                   distance.Evaluate(transformedDataset.col(i),
                        transformedDataset.col(impostors(l, i)));
           }
         }
@@ -580,7 +568,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
         }
 
         // Caculate gradient due to impostors.
-        arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+        VecType diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
         cil += diff * trans(diff);
 
         diff = dataset.col(i) - dataset.col(impostors(l, i));
@@ -597,21 +585,22 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
 }
 
 //! Compute gradient over a batch of data points.
-template<typename MetricType>
+template<typename MatType, typename LabelsType, typename DistanceType>
 template<typename GradType>
-void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
-                                        const size_t begin,
-                                        GradType& gradient,
-                                        const size_t batchSize)
+void LMNNFunction<MatType, LabelsType, DistanceType>::Gradient(
+    const MatType& transformation,
+    const size_t begin,
+    GradType& gradient,
+    const size_t batchSize)
 {
-  // Apply metric over dataset.
+  // Apply distance metric over dataset.
   transformedDataset = transformation * dataset;
 
   // Calculate norm of change in transformation.
-  std::map<size_t, double> transformationDiffs;
+  std::unordered_map<size_t, ElemType> transformationDiffs;
   TransDiff(transformationDiffs, transformation, begin, batchSize);
 
-  if (impBounds && iteration++ % range == 0)
+  if (impBounds && iteration++ % updateInterval == 0)
   {
     // Track number of data points to use for impostors calculatiom.
     size_t numPoints = 0;
@@ -622,7 +611,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
       {
         if (transformationDiffs[lastTransformationIndices[i]] *
             (2 * norm(i) + norm(impostors(k - 1, i)) +
-            norm(impostors(k, i))) > distance(k, i) - distance(k - 1, i))
+            norm(impostors(k, i))) > distanceMat(k, i) - distanceMat(k - 1, i))
         {
           points(numPoints++)  = i;
         }
@@ -634,27 +623,27 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
     }
 
     // Re-calculate impostors on transformed dataset.
-    constraint.Impostors(impostors, distance,
+    constraint.Impostors(impostors, distanceMat,
         transformedDataset, labels, norm, points, numPoints);
   }
-  else if (iteration++ % range == 0)
+  else if (iteration++ % updateInterval == 0)
   {
     // Re-calculate impostors on transformed dataset.
-    constraint.Impostors(impostors, distance, transformedDataset, labels,
+    constraint.Impostors(impostors, distanceMat, transformedDataset, labels,
         norm, begin, batchSize);
   }
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);
 
-  arma::mat cij = zeros(dataset.n_rows, dataset.n_rows);
-  arma::mat cil = zeros(dataset.n_rows, dataset.n_rows);
+  MatType cij = zeros<MatType>(dataset.n_rows, dataset.n_rows);
+  MatType cil = zeros<MatType>(dataset.n_rows, dataset.n_rows);
 
   for (size_t i = begin; i < begin + batchSize; ++i)
   {
     for (size_t j = 0; j < k ; ++j)
     {
       // Calculate gradient due to target neighbors.
-      arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+      VecType diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
       cij += diff * trans(diff);
     }
 
@@ -665,7 +654,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
       {
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
-        double eval = 0;
+        ElemType eval = 0;
 
         // Bounds for eval.
         if (lastTransformationIndices(i) && evalOld(l, j, i) < -1)
@@ -681,17 +670,17 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
         // Calculate exact eval value.
         if (eval > -1)
         {
-          if (iteration - 1 % range == 0)
+          if (iteration - 1 % updateInterval == 0)
           {
-            eval = metric.Evaluate(transformedDataset.col(i),
+            eval = distance.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
-                 distance(l, i);
+                 distanceMat(l, i);
           }
           else
           {
-            eval = metric.Evaluate(transformedDataset.col(i),
+            eval = distance.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
-                   metric.Evaluate(transformedDataset.col(i),
+                   distance.Evaluate(transformedDataset.col(i),
                        transformedDataset.col(impostors(l, i)));
           }
         }
@@ -718,7 +707,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
         }
 
         // Caculate gradient due to impostors.
-        arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+        VecType diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
         cil += diff * trans(diff);
 
         diff = dataset.col(i) - dataset.col(impostors(l, i));
@@ -735,25 +724,26 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
 }
 
 //! Compute cost & gradient over whole dataset.
-template<typename MetricType>
+template<typename MatType, typename LabelsType, typename DistanceType>
 template<typename GradType>
-double LMNNFunction<MetricType>::EvaluateWithGradient(
-                                   const arma::mat& transformation,
-                                   GradType& gradient)
+typename MatType::elem_type
+LMNNFunction<MatType, LabelsType, DistanceType>::EvaluateWithGradient(
+    const MatType& transformation,
+    GradType& gradient)
 {
-  double cost = 0;
+  ElemType cost = 0;
 
-  // Apply metric over dataset.
+  // Apply distance metric over dataset.
   transformedDataset = transformation * dataset;
 
-  double transformationDiff = 0;
+  ElemType transformationDiff = 0;
   if (!transformationOld.is_empty())
   {
     // Calculate norm of change in transformation.
     transformationDiff = arma::norm(transformation - transformationOld);
   }
 
-  if (!transformationOld.is_empty() && iteration++ % range == 0)
+  if (!transformationOld.is_empty() && iteration++ % updateInterval == 0)
   {
     if (impBounds)
     {
@@ -763,44 +753,44 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
       for (size_t i = 0; i < dataset.n_cols; ++i)
       {
         if (transformationDiff * (2 * norm(i) + norm(impostors(k - 1, i)) +
-            norm(impostors(k, i))) > distance(k, i) - distance(k - 1, i))
+            norm(impostors(k, i))) > distanceMat(k, i) - distanceMat(k - 1, i))
         {
           points(numPoints++) = i;
         }
       }
 
       // Re-calculate impostors on transformed dataset.
-      constraint.Impostors(impostors, distance,
+      constraint.Impostors(impostors, distanceMat,
           transformedDataset, labels, norm, points, numPoints);
     }
     else
     {
       // Re-calculate impostors on transformed dataset.
-      constraint.Impostors(impostors, distance, transformedDataset, labels,
+      constraint.Impostors(impostors, distanceMat, transformedDataset, labels,
           norm);
     }
   }
-  else if (iteration++ % range == 0)
+  else if (iteration++ % updateInterval == 0)
   {
       // Re-calculate impostors on transformed dataset.
-      constraint.Impostors(impostors, distance, transformedDataset, labels,
+      constraint.Impostors(impostors, distanceMat, transformedDataset, labels,
           norm);
   }
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);
 
   // Calculate gradient due to target neighbors.
-  arma::mat cij = pCij;
+  MatType cij = pCij;
 
   // Calculate gradient due to impostors.
-  arma::mat cil = zeros(dataset.n_rows, dataset.n_rows);
+  MatType cil = zeros<MatType>(dataset.n_rows, dataset.n_rows);
 
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     for (size_t j = 0; j < k ; ++j)
     {
       // Calculate cost due to distance between target neighbors & data point.
-      double eval = metric.Evaluate(transformedDataset.col(i),
+      ElemType eval = distance.Evaluate(transformedDataset.col(i),
                         transformedDataset.col(targetNeighbors(j, i)));
       cost += (1 - regularization) * eval;
     }
@@ -812,7 +802,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
       {
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
-        double eval = 0;
+        ElemType eval = 0;
 
         // Bounds for eval.
         if (!transformationOld.is_empty() && evalOld(l, j, i) < -1)
@@ -828,17 +818,17 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         // Calculate exact eval value.
         if (eval > -1)
         {
-          if (iteration - 1 % range == 0)
+          if (iteration - 1 % updateInterval == 0)
           {
-            eval = metric.Evaluate(transformedDataset.col(i),
+            eval = distance.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
-                 distance(l, i);
+                 distanceMat(l, i);
           }
           else
           {
-            eval = metric.Evaluate(transformedDataset.col(i),
+            eval = distance.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
-                   metric.Evaluate(transformedDataset.col(i),
+                   distance.Evaluate(transformedDataset.col(i),
                        transformedDataset.col(impostors(l, i)));
           }
         }
@@ -857,7 +847,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         cost += regularization * (1 + eval);
 
         // Caculate gradient due to impostors.
-        arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+        VecType diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
         cil += diff * trans(diff);
 
         diff = dataset.col(i) - dataset.col(impostors(l, i));
@@ -876,24 +866,25 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
 }
 
 //! Compute cost & gradient over a batch of data points.
-template<typename MetricType>
+template<typename MatType, typename LabelsType, typename DistanceType>
 template<typename GradType>
-double LMNNFunction<MetricType>::EvaluateWithGradient(
-                                   const arma::mat& transformation,
-                                   const size_t begin,
-                                   GradType& gradient,
-                                   const size_t batchSize)
+typename MatType::elem_type
+LMNNFunction<MatType, LabelsType, DistanceType>::EvaluateWithGradient(
+    const MatType& transformation,
+    const size_t begin,
+    GradType& gradient,
+    const size_t batchSize)
 {
-  double cost = 0;
+  ElemType cost = 0;
 
   // Calculate norm of change in transformation.
-  std::map<size_t, double> transformationDiffs;
+  std::unordered_map<size_t, ElemType> transformationDiffs;
   TransDiff(transformationDiffs, transformation, begin, batchSize);
 
-  // Apply metric over dataset.
+  // Apply distance metric over dataset.
   transformedDataset = transformation * dataset;
 
-  if (impBounds && iteration++ % range == 0)
+  if (impBounds && iteration++ % updateInterval == 0)
   {
     // Track number of data points to use for impostors calculatiom.
     size_t numPoints = 0;
@@ -904,7 +895,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
       {
         if (transformationDiffs[lastTransformationIndices[i]] *
             (2 * norm(i) + norm(impostors(k - 1, i)) +
-            norm(impostors(k, i))) > distance(k, i) - distance(k - 1, i))
+            norm(impostors(k, i))) > distanceMat(k, i) - distanceMat(k - 1, i))
         {
           points(numPoints++)  = i;
         }
@@ -916,32 +907,32 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
     }
 
     // Re-calculate impostors on transformed dataset.
-    constraint.Impostors(impostors, distance,
+    constraint.Impostors(impostors, distanceMat,
         transformedDataset, labels, norm, points, numPoints);
   }
-  else if (iteration++ % range == 0)
+  else if (iteration++ % updateInterval == 0)
   {
     // Re-calculate impostors on transformed dataset.
-    constraint.Impostors(impostors, distance, transformedDataset, labels,
+    constraint.Impostors(impostors, distanceMat, transformedDataset, labels,
         norm, begin, batchSize);
   }
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);
 
-  arma::mat cij = zeros(dataset.n_rows, dataset.n_rows);
-  arma::mat cil = zeros(dataset.n_rows, dataset.n_rows);
+  MatType cij = zeros<MatType>(dataset.n_rows, dataset.n_rows);
+  MatType cil = zeros<MatType>(dataset.n_rows, dataset.n_rows);
 
   for (size_t i = begin; i < begin + batchSize; ++i)
   {
     for (size_t j = 0; j < k ; ++j)
     {
       // Calculate cost due to distance between target neighbors & data point.
-      double eval = metric.Evaluate(transformedDataset.col(i),
+      ElemType eval = distance.Evaluate(transformedDataset.col(i),
                         transformedDataset.col(targetNeighbors(j, i)));
       cost += (1 - regularization) * eval;
 
       // Calculate gradient due to target neighbors.
-      arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+      VecType diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
       cij += diff * trans(diff);
     }
 
@@ -952,7 +943,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
       {
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
-        double eval = 0;
+        ElemType eval = 0;
 
         // Bounds for eval.
         if (lastTransformationIndices(i) && evalOld(l, j, i) < -1)
@@ -968,17 +959,17 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         // Calculate exact eval value.
         if (eval > -1)
         {
-          if (iteration - 1 % range == 0)
+          if (iteration - 1 % updateInterval == 0)
           {
-            eval = metric.Evaluate(transformedDataset.col(i),
+            eval = distance.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
-                 distance(l, i);
+                 distanceMat(l, i);
           }
           else
           {
-            eval = metric.Evaluate(transformedDataset.col(i),
+            eval = distance.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
-                   metric.Evaluate(transformedDataset.col(i),
+                   distance.Evaluate(transformedDataset.col(i),
                        transformedDataset.col(impostors(l, i)));
           }
         }
@@ -997,7 +988,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         cost += regularization * (1 + eval);
 
         // Caculate gradient due to impostors.
-        arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+        VecType diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
         cil += diff * trans(diff);
 
         diff = dataset.col(i) - dataset.col(impostors(l, i));
@@ -1015,8 +1006,8 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   return cost;
 }
 
-template<typename MetricType>
-inline void LMNNFunction<MetricType>::Precalculate()
+template<typename MatType, typename LabelsType, typename DistanceType>
+inline void LMNNFunction<MatType, LabelsType, DistanceType>::Precalculate()
 {
   pCij.zeros(dataset.n_rows, dataset.n_rows);
 
@@ -1025,7 +1016,7 @@ inline void LMNNFunction<MetricType>::Precalculate()
     for (size_t j = 0; j < k ; ++j)
     {
       // Calculate gradient due to target neighbors.
-      arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+      VecType diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
       pCij += diff * trans(diff);
     }
   }

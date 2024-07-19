@@ -41,7 +41,6 @@ inline LARS<ModelMatType>::LARS(
 { /* Nothing left to do. */ }
 
 template<typename ModelMatType>
-mlpack_deprecated
 inline LARS<ModelMatType>::LARS(
     const bool useCholesky,
     const arma::mat& gramMatrix,
@@ -249,7 +248,6 @@ inline LARS<ModelMatType>& LARS<ModelMatType>::operator=(
 }
 
 template<typename ModelMatType>
-mlpack_deprecated
 inline double LARS<ModelMatType>::Train(const arma::mat& matX,
                                         const arma::rowvec& y,
                                         arma::vec& beta,

@@ -18,26 +18,26 @@
 namespace mlpack {
 
 template<
-    typename MetricType,
+    typename DistanceType,
     typename StatisticType,
     typename MatType,
     typename RootPointPolicy
 >
 template<typename RuleType>
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
 DualTreeTraverser<RuleType>::DualTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0)
 { /* Nothing to do. */ }
 
 template<
-    typename MetricType,
+    typename DistanceType,
     typename StatisticType,
     typename MatType,
     typename RootPointPolicy
 >
 template<typename RuleType>
-void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+void CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
 DualTreeTraverser<RuleType>::Traverse(CoverTree& queryNode,
                                       CoverTree& referenceNode)
 {
@@ -60,13 +60,13 @@ DualTreeTraverser<RuleType>::Traverse(CoverTree& queryNode,
 }
 
 template<
-    typename MetricType,
+    typename DistanceType,
     typename StatisticType,
     typename MatType,
     typename RootPointPolicy
 >
 template<typename RuleType>
-void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+void CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
 DualTreeTraverser<RuleType>::Traverse(
     CoverTree& queryNode,
     std::map<int, std::vector<DualCoverTreeMapEntry>, std::greater<int>>&
@@ -150,13 +150,13 @@ DualTreeTraverser<RuleType>::Traverse(
 }
 
 template<
-    typename MetricType,
+    typename DistanceType,
     typename StatisticType,
     typename MatType,
     typename RootPointPolicy
 >
 template<typename RuleType>
-void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+void CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
 DualTreeTraverser<RuleType>::PruneMap(
     CoverTree& queryNode,
     std::map<int, std::vector<DualCoverTreeMapEntry>, std::greater<int>>&
@@ -271,13 +271,13 @@ DualTreeTraverser<RuleType>::PruneMap(
 }
 
 template<
-    typename MetricType,
+    typename DistanceType,
     typename StatisticType,
     typename MatType,
     typename RootPointPolicy
 >
 template<typename RuleType>
-void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+void CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
 DualTreeTraverser<RuleType>::ReferenceRecursion(
     CoverTree& queryNode,
     std::map<int, std::vector<DualCoverTreeMapEntry>, std::greater<int>>&
