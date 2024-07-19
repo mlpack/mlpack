@@ -81,11 +81,11 @@ namespace mlpack {
   template<typename MatType>
   struct GetFillType
   {
-    const decltype(arma::fill::none) none   = arma::fill::none;
-    const decltype(arma::fill::zeros) zeros = arma::fill::zeros;
-    const decltype(arma::fill::ones) ones   = arma::fill::ones;
-    const decltype(arma::fill::randu) randu = arma::fill::randu;
-    const decltype(arma::fill::randn) randn = arma::fill::randn;
+    inline static constexpr decltype(arma::fill::none) none   = arma::fill::none;
+    inline static constexpr decltype(arma::fill::zeros) zeros = arma::fill::zeros;
+    inline static constexpr decltype(arma::fill::ones) ones   = arma::fill::ones;
+    inline static constexpr decltype(arma::fill::randu) randu = arma::fill::randu;
+    inline static constexpr decltype(arma::fill::randn) randn = arma::fill::randn;
   };
 
 #ifdef MLPACK_HAS_COOT
@@ -94,11 +94,11 @@ namespace mlpack {
            typename = typename std::enable_if<is_coot_type<MatType>::value>::type*>
   struct GetFillType
   {
-    const decltype(coot::fill::none) none   = coot::fill::none;
-    const decltype(coot::fill::zeros) zeros = coot::fill::zeros;
-    const decltype(coot::fill::ones) ones   = coot::fill::ones;
-    const decltype(coot::fill::randu) randu = coot::fill::randu;
-    const decltype(coot::fill::randn) randn = coot::fill::randn;
+    inline static constexpr decltype(coot::fill::none) none   = coot::fill::none;
+    inline static constexpr decltype(coot::fill::zeros) zeros = coot::fill::zeros;
+    inline static constexpr decltype(coot::fill::ones) ones   = coot::fill::ones;
+    inline static constexpr decltype(coot::fill::randu) randu = coot::fill::randu;
+    inline static constexpr decltype(coot::fill::randn) randn = coot::fill::randn;
   };
 #endif
 
