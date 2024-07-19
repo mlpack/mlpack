@@ -293,6 +293,7 @@ void GradBoosting<WeakLearnerType, MatType>::
     }
 
     WeakLearnerType w = *wPtr;
+    delete wPtr;
 
     weakLearners.push_back(w);
 
@@ -307,10 +308,10 @@ void GradBoosting<WeakLearnerType, MatType>::
     {
       for (size_t j = 0; j < residues.n_cols; ++j)
       {
-        residue(i, j) = (size_t)abs((double)residue(i, j) - (double)(learningRate * probabilities(i, j)));
+        residue(i, j) = (size_t)abs((double)residue(i, j) - 
+          (double)(learningRate * probabilities(i, j)));
       }
     }
-    delete wPtr;
   }
 }
 
