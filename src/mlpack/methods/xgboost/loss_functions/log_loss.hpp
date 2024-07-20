@@ -49,8 +49,6 @@ class LogLoss
     return std::log(mean / (1 - mean));
   }
 
-  
-
   private:
   //! The L1 regularization parameter.
   const double alpha;
