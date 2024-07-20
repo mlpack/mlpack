@@ -255,5 +255,51 @@ TEST_CASE("GBWeakLearnerFunction", "[GradBoostUnitTest]")
 
   REQUIRE(accuracy > 0);
 
+}
+
+/**
+ * Check if the model probabilities classification is working correctly.
+ */
+TEST_CASE("GBProbTest", "[GradBoostUnitTest]")
+{
+  arma::mat db;
+  if (!data::Load("iris_train.csv", db))
+    FAIL("Cannot load test dataset iris_train.csv!");
+  
+  arma::Row<size_t> labels;
+  if (!data::Load("iris_train_labels.csv", labels))
+    FAIL("Cannot load labels for iris iris_train_labels.txt");
+
+  arma::mat testDb;
+  if (!data::Load("iris_test.csv", testDb))
+    FAIL("Cannot load test dataset iris_test.csv!");
+
+  arma::Row<size_t> testLabels;
+  if (!data::Load("iris_test_labels.csv", testLabels))
+    FAIL("Cannot load test dataset iris_test_labels.csv!");
+
+  const size_t numClasses = arma::max(labels.row(0)) + 1;
+  const size_t numModels = 5;
+
+  GradBoosting gb;
+  
+  gb.Train(db, labels, numClasses, numModels);
+
+  arma::Row<double> probabilities; 
+  size_t prediction; 
+
+  gb.Classify(testDb(0), prediction, probabilities);
+
+  size_t res = 0;
+  for (size_t i = 0; i < probabilities.n_elem; ++i)
+  {
+    if (probabilities(i) > probabilities(res))
+    {
+      res = i;
+    }
+  }
+
+  REQUIRE(probabilities(res) > 0);
+
 
 }
