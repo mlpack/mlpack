@@ -15,12 +15,12 @@ steps:
     sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
     brew install libomp openblas armadillo cereal ensmallen
 
-    if [ "$(binding)" == "python" ]; then
+    if [ "$BINDING" = "python" ]; then
       pip install --upgrade pip
       pip install cython numpy pandas zipp configparser wheel
     fi
 
-    if [ "a$(julia.version)" != "a" ]; then
+    if [ "$BINDING" = "julia" ]; then
       brew install --cask julia
     fi
 
@@ -29,16 +29,15 @@ steps:
 # Configure mlpack (CMake)
 - script: |
     mkdir build && cd build
-    if [ "$(binding)" == "go" ]; then
+    if [ "$BINDING" = "go" ]; then
       export GOPATH=$PWD/src/mlpack/bindings/go
       export GO111MODULE=off
       go get -u -t gonum.org/v1/gonum/...
     fi
-    if [ "$(binding)" == "python" ]; then
-      export PYPATH=$(which python)
-      cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=$PYPATH ..
+    if [ "$BINDING" = "python" ]; then
+      cmake $CMAKEARGS -DPYTHON_EXECUTABLE=$(which python) ..
     else
-      cmake $(CMakeArgs) ..
+      cmake $CMAKEARGS ..
     fi
   displayName: 'CMake'
 
