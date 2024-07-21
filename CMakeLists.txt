@@ -23,7 +23,7 @@ option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." 
 # For Armadillo, try to keep the minimum required version less than or equal to
 # what's available on the current Ubuntu LTS or most recent stable RHEL release.
 # See https://github.com/mlpack/mlpack/issues/3033 for some more discussion.
-set(ARMADILLO_VERSION "9.800")
+set(ARMADILLO_VERSION "10.8")
 set(ENSMALLEN_VERSION "2.10.0")
 set(CEREAL_VERSION "1.1.2")
 
@@ -249,8 +249,12 @@ if (DEBUG)
 else()
   add_definitions(-DNDEBUG)
   if (NOT MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O3")
+    if (NOT CMAKE_CROSSCOMPILING)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O3")
+    else()
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
+    endif()
   else ()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O3")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /O3")
@@ -283,7 +287,7 @@ endif()
 # Download and compile OpenBLAS if we are cross compiling mlpack for a specific
 # architecture. The function takes the version of OpenBLAS as variable.
 if (CMAKE_CROSSCOMPILING)
-  search_openblas(0.3.13)
+  search_openblas(0.3.26)
 endif()
 
 if (NOT DOWNLOAD_DEPENDENCIES)

@@ -59,8 +59,9 @@ NeighborSearchRules<SortPolicy, DistanceType, TreeType>::NeighborSearchRules(
 }
 
 template<typename SortPolicy, typename DistanceType, typename TreeType>
+template<typename IndexType>
 void NeighborSearchRules<SortPolicy, DistanceType, TreeType>::GetResults(
-    arma::Mat<size_t>& neighbors,
+    arma::Mat<IndexType>& neighbors,
     arma::Mat<ElemType>& distances)
 {
   neighbors.set_size(k, querySet.n_cols);
@@ -71,7 +72,7 @@ void NeighborSearchRules<SortPolicy, DistanceType, TreeType>::GetResults(
     CandidateList& pqueue = candidates[i];
     for (size_t j = 1; j <= k; ++j)
     {
-      neighbors(k - j, i) = pqueue.top().second;
+      neighbors(k - j, i) = (IndexType) pqueue.top().second;
       distances(k - j, i) = pqueue.top().first;
       pqueue.pop();
     }

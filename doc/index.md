@@ -124,6 +124,10 @@ Transform data from one space to another.
  * [`AMF`](user/methods/amf.md): alternating matrix factorization
  * [`LocalCoordinateCoding`](user/methods/local_coordinate_coding.md): local
    coordinate coding with dictionary learning
+ * [`LMNN`](user/methods/lmnn.md): large margin nearest neighbor (distance
+   metric learning)
+ * [`NCA`](user/methods/nca.md): neighborhood components analysis (distance
+   metric learning)
  * [`NMF`](user/methods/nmf.md): non-negative matrix factorization
  * [`PCA`](user/methods/pca.md): principal components analysis
  * [`SparseCoding`](user/methods/sparse_coding.md): sparse coding with

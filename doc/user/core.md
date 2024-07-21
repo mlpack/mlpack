@@ -862,9 +862,9 @@ including:
 
  * [`NeighborSearch`](/src/mlpack/methods/neighbor_search/neighbor_search.hpp)
  * [`RangeSearch`](/src/mlpack/methods/range_search/range_search.hpp)
- * [`LMNN`](/src/mlpack/methods/lmnn/lmnn.hpp)
+ * [`LMNN`](methods/lmnn.md)
  * [`EMST`](/src/mlpack/methods/emst/emst.hpp)
- * [`NCA`](/src/mlpack/methods/nca/nca.hpp)
+ * [`NCA`](methods/nca.md)
  * [`RANN`](/src/mlpack/methods/rann/rann.hpp)
  * [`KMeans`](/src/mlpack/methods/kmeans/kmeans.hpp)
 
@@ -1281,6 +1281,11 @@ std::cout << "Squared Mahalanobis distance on 32-bit floating point data:"
     << std::endl;
 std::cout << " - Points 3 and 5:   " << d1 << "." << std::endl;
 std::cout << " - Points 11 and 31: " << d2 << "." << std::endl;
+
+// Note that an equivalent transformation matrix can be recovered from Q with
+// an upper Cholesky decomposition (Q -> R.t() * R).
+arma::mat recoveredW = arma::chol(md.Q(), "lower");
+// A transformed dataset can be created with `(recoveredW * dataset)`.
 ```
 
 ---

@@ -63,7 +63,10 @@ class NeighborSearchRules
    * @param distances Matrix storing distances of neighbors for each query
    *     point.
    */
-  void GetResults(arma::Mat<size_t>& neighbors, arma::Mat<ElemType>& distances);
+  // TODO: templatize fully to remove requirement of Armadillo matrix
+  template<typename IndexType = size_t>
+  void GetResults(arma::Mat<IndexType>& neighbors,
+                  arma::Mat<ElemType>& distances);
 
   /**
    * Get the distance from the query point to the reference point.

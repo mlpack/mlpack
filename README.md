@@ -108,7 +108,7 @@ Citations are beneficial for the growth and improvement of mlpack.
 
 **mlpack** requires the following additional dependencies:
  - C++17 compiler
- - [Armadillo](https://arma.sourceforge.net)      &nbsp;&emsp;>= 9.800
+ - [Armadillo](https://arma.sourceforge.net)      &nbsp;&emsp;>= 10.8
  - [ensmallen](https://ensmallen.org)      &emsp;>= 2.10.0
  - [cereal](http://uscilab.github.io/cereal/)         &ensp;&nbsp;&emsp;&emsp;>= 1.1.2
 
@@ -333,7 +333,7 @@ dependencies are installed:
 
  - R >= 4.0
  - Rcpp >= 0.12.12
- - RcppArmadillo >= 0.9.800.0
+ - RcppArmadillo >= 0.10.8.0
  - RcppEnsmallen >= 0.2.10.0
  - roxygen2
  - testthat
