@@ -304,7 +304,8 @@ TEST_CASE("GBProbTest", "[GradBoostUnitTest]")
 }
 
 /**
- * Check if the difference between most likely and least like probabilities is at least 0.6.
+ * Check if the difference between most likely and least like probabilities is 
+ * at least 0.6.
  */
 TEST_CASE("GBProbRangeTest", "[GradBoostUnitTest]")
 {
