@@ -70,28 +70,15 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
       double minDistance = std::numeric_limits<double>::max();
       size_t closestCluster = clusters;
 
-      const double* dataPoint = dataset.colptr(i);
-      double dataNorm = 0.0;
-      
-      // Compute data point norm
-      #pragma omp simd reduction(+:dataNorm)
-      for (size_t d = 0; d < dims; ++d)
-      {
-        dataNorm += dataPoint[d] * dataPoint[d];
-      }
+      // Handle both dense and sparse matrices
+      auto dataPoint = dataset.col(i);
+      double dataNorm = arma::dot(dataPoint, dataPoint);
 
       // Find closest centroid
       for (size_t j = 0; j < clusters; ++j)
       {
-        const double* centroid = centroids.colptr(j);
-        double dotProduct = 0.0;
-
-        // Compute dot product
-        #pragma omp simd reduction(+:dotProduct)
-        for (size_t d = 0; d < dims; ++d)
-        {
-          dotProduct += dataPoint[d] * centroid[d];
-        }
+        const arma::vec& centroid = centroids.col(j);
+        double dotProduct = arma::dot(dataPoint, centroid);
 
         // Squared Euclidean distance
         double dist = dataNorm + centroidNorms(j) - 2 * dotProduct;
@@ -104,12 +91,7 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
       }
 
       // Update local centroids and counts
-      double* localCentroidCol = localCentroids.colptr(closestCluster);
-      #pragma omp simd
-      for (size_t d = 0; d < dims; ++d)
-      {
-        localCentroidCol[d] += dataPoint[d];
-      }
+      localCentroids.col(closestCluster) += dataPoint;
       localCounts(closestCluster)++;
     }
 
@@ -122,7 +104,6 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   }
 
   // Normalize the centroids
-  #pragma omp parallel for schedule(static)
   for (size_t j = 0; j < clusters; ++j)
   {
     if (counts(j) > 0)
