@@ -94,7 +94,7 @@ void CheckDuplication(const Row<size_t>& trainLabels,
 TEST_CASE("SplitShuffleDataResultMat", "[SplitDataTest]")
 {
   mat input(2, 10);
-  input = linspace(0, input.n_elem - 1);
+  input = reshape(linspace(0, 19, 20), 2, 10);
 
   const auto value = Split(input, 0.2);
   REQUIRE(std::get<0>(value).n_cols == 8); // Train data.
@@ -107,7 +107,7 @@ TEST_CASE("SplitShuffleDataResultMat", "[SplitDataTest]")
 TEST_CASE("SplitDataResultMat", "[SplitDataTest]")
 {
   mat input(2, 10);
-  input = linspace(0, input.n_elem - 1);
+  input = reshape(linspace(0, 19 ,20), 2, 10);
 
   const auto value = Split(input, 0.2, false);
   REQUIRE(std::get<0>(value).n_cols == 8); // Train data.
@@ -121,7 +121,7 @@ TEST_CASE("SplitDataResultMat", "[SplitDataTest]")
 TEST_CASE("ZeroRatioSplitData", "[SplitDataTest]")
 {
   mat input(2, 10);
-  input = linspace(0, input.n_elem - 1);
+  input = reshape(linspace(0, 19, 20), 2, 10);
 
   const auto value = Split(input, 0, false);
   REQUIRE(std::get<0>(value).n_cols == 10); // Train data.
@@ -135,7 +135,7 @@ TEST_CASE("ZeroRatioSplitData", "[SplitDataTest]")
 TEST_CASE("TotalRatioSplitData", "[SplitDataTest]")
 {
   mat input(2, 10);
-  input = linspace(0, input.n_elem - 1);
+  input = reshape(linspace(0, 19, 20), 2, 10);
 
   const auto value = Split(input, 1, false);
   REQUIRE(std::get<0>(value).n_cols == 0); // Train data.
@@ -189,7 +189,7 @@ TEST_CASE("SplitCheckSize", "[SplitDataTest]")
 TEST_CASE("SplitDataLargerTest", "[SplitDataTest]")
 {
   mat input(10, 497);
-  input = linspace(0, input.n_elem - 1);
+  input = reshape(linspace(0, 4969, 4970), 10, 497);
 
   const auto value = Split(input, 0.3);
   REQUIRE(std::get<0>(value).n_cols == 497 - size_t(0.3 * 497));
