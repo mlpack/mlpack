@@ -285,10 +285,17 @@ TEST_CASE("GBProbTest", "[GradBoostUnitTest]")
   
   gb.Train(db, labels, numClasses, numModels);
 
-  arma::Row<double> probabilities; 
+  arma::vec probabilities; 
   size_t prediction; 
 
-  gb.Classify(testDb(0), prediction, probabilities);
+  arma::Row<double> td(testDb.n_rows); 
+
+  for(size_t i = 0; i < testDb.n_rows; i++)
+  {
+    td(i) = testDb(i, 0);
+  }
+
+  gb.Classify (td, prediction, probabilities);
 
   size_t res = 0;
   for (size_t i = 0; i < probabilities.n_elem; ++i)
@@ -332,10 +339,17 @@ TEST_CASE("GBProbRangeTest", "[GradBoostUnitTest]")
   
   gb.Train(db, labels, numClasses, numModels);
 
-  arma::Row<double> probabilities; 
+  arma::vec probabilities; 
   size_t prediction; 
 
-  gb.Classify(testDb(0), prediction, probabilities);
+  arma::Row<double> td(testDb.n_rows); 
+
+  for(size_t i = 0; i < testDb.n_rows; i++)
+  {
+    td(i) = testDb(i, 0);
+  }
+
+  gb.Classify (td, prediction, probabilities);
 
   double max = 0;
   double min = 0;
