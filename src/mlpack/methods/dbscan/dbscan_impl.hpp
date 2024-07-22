@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_DBSCAN_DBSCAN_IMPL_HPP
 
 #include "dbscan.hpp"
+#include <omp.h>
 
 namespace mlpack {
 
@@ -70,13 +71,31 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
   // Calculate number of points in each cluster.
   arma::Row<size_t> counts;
   counts.zeros(numClusters);
-  for (size_t i = 0; i < data.n_cols; ++i)
+
+  const size_t numThreads = omp_get_max_threads();
+  std::vector<arma::Row<size_t>> localCounts(numThreads, arma::Row<size_t>(numClusters, arma::fill::zeros));
+  std::vector<MatType> localCentroids(numThreads, MatType(data.n_rows, numClusters, arma::fill::zeros));
+
+  #pragma omp parallel
   {
-    if (assignments[i] != SIZE_MAX)
+    const size_t threadId = omp_get_thread_num();
+
+    #pragma omp for nowait
+    for (size_t i = 0; i < data.n_cols; ++i)
     {
-      centroids.col(assignments[i]) += data.col(i);
-      ++counts[assignments[i]];
+      if (assignments[i] != SIZE_MAX)
+      {
+        localCentroids[threadId].col(assignments[i]) += data.col(i);
+        ++localCounts[threadId][assignments[i]];
+      }
     }
+  }
+
+  // Combine results from all threads
+  for (size_t i = 0; i < numThreads; ++i)
+  {
+    centroids += localCentroids[i];
+    counts += localCounts[i];
   }
 
   // We should be guaranteed that the number of clusters is always greater than
@@ -107,14 +126,30 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
 
   // Now set assignments.
   assignments.set_size(data.n_cols);
+  #pragma omp parallel for
   for (size_t i = 0; i < data.n_cols; ++i)
     assignments[i] = uf.Find(i);
 
   // Get a count of all clusters.
   const size_t numClusters = max(assignments) + 1;
   arma::Col<size_t> counts(numClusters, arma::fill::zeros);
-  for (size_t i = 0; i < assignments.n_elem; ++i)
-    counts[assignments[i]]++;
+
+  const size_t numThreads = omp_get_max_threads();
+  std::vector<arma::Col<size_t>> localCounts(numThreads, arma::Col<size_t>(numClusters, arma::fill::zeros));
+
+  #pragma omp parallel
+  {
+    const size_t threadId = omp_get_thread_num();
+
+    #pragma omp for nowait
+    for (size_t i = 0; i < assignments.n_elem; ++i)
+      ++localCounts[threadId][assignments[i]];
+  }
+
+  // Combine results from all threads
+  for (size_t i = 0; i < numThreads; ++i)
+    counts += localCounts[i];
+
 
   // Now assign clusters to new indices.
   size_t currentCluster = 0;
@@ -128,6 +163,7 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
   }
 
   // Now reassign.
+  #pragma omp parallel for
   for (size_t i = 0; i < assignments.n_elem; ++i)
     assignments[i] = newAssignments[assignments[i]];
 
@@ -150,23 +186,10 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
   std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<ElemType>> distances;
 
-  // Note that the strategy here is somewhat different from the original DBSCAN
-  // paper.  The original DBSCAN paper grows each cluster individually to its
-  // fullest extent; here, we use a UnionFind structure to grow each point into
-  // a local cluster (if it has enough points), and we combine with other local
-  // clusters.  The end result is the same.
-  //
-  // Define points as being either core points, or non-core points.  Core points
-  // have more than `minPoints` neighbors.  Non-core points are included into
-  // the first core point cluster that encounters them; if they are not included
-  // by anything, they are labeled as noise.
-  //
-  // We maintain a list of non-core points so that we can handle that logic
-  // correctly.
-
   std::vector<bool> visited(data.n_cols, false);
   std::vector<bool> nonCorePoints(data.n_cols, false);
 
+  #pragma omp parallel for schedule(dynamic) firstprivate(neighbors, distances)
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     if (i % 10000 == 0 && i > 0)
@@ -180,36 +203,24 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
     rangeSearch.Search(data.col(index), RangeType<ElemType>(ElemType(0.0), epsilon),
         neighbors, distances);
 
-    // Union to all neighbors if the point is not noise.
-    //
-    // If the point is noise, we leave its label as undefined (i.e. we do no
-    // unioning).
     if (neighbors[0].size() >= minPoints)
     {
       for (size_t j = 0; j < neighbors[0].size(); ++j)
       {
-        // Union to all neighbors that either do not have a label, or are core
-        // points of other clusters.  (When we union to another core point, we
-        // are merging clusters.)
         if (uf.Find(neighbors[0][j]) == neighbors[0][j])
         {
-          // This unions unlabeled points.
+          #pragma omp critical
           uf.Union(index, neighbors[0][j]);
         }
         else if (!nonCorePoints[neighbors[0][j]] && visited[neighbors[0][j]])
         {
-          // This unions core points of other clusters.  Note that we only union
-          // with other clusters that have already been visited---this is
-          // because we do not know whether unvisited points are core or
-          // non-core points.  (If an unvisited point is a core point, it'll
-          // merge with us later.)
+          #pragma omp critical
           uf.Union(index, neighbors[0][j]);
         }
       }
     }
     else
     {
-      // This is not a core point---it does not have enough neighbors.
       nonCorePoints[index] = true;
     }
   }
@@ -225,7 +236,6 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
     const MatType& data,
     UnionFind& uf)
 {
-  // For each point, find the points in epsilon-neighborhood and their distances.
   std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<ElemType>> distances;
   Log::Info << "Performing range search." << std::endl;
@@ -234,31 +244,22 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
       distances);
   Log::Info << "Range search complete." << std::endl;
 
-  // See the description of the algorithm in `PointwiseCluster()`.  The strategy
-  // is the same here, but we have cached all range search results already.
-  // That means we already have computed whether each point is or is not a core
-  // point, just based on the size of its neighbors; so we don't need an
-  // auxiliary std::vector<bool> for that.
-
-  // Now loop over all points.
+  #pragma omp parallel for schedule(dynamic)
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    // Get the next index.
     const size_t index = pointSelector.Select(i, data);
-    // Monochromatic dual-tree range search does not return the point as its own
-    // neighbor, so we are looking for `minPoints - 1` instead.
     if (neighbors[index].size() >= minPoints - 1)
     {
       for (size_t j = 0; j < neighbors[index].size(); ++j)
       {
         if (uf.Find(neighbors[index][j]) == neighbors[index][j])
         {
-          // This unions unlabeled points.
+          #pragma omp critical
           uf.Union(index, neighbors[index][j]);
         }
         else if (neighbors[neighbors[index][j]].size() >= (minPoints - 1))
         {
-          // This unions core points of other clusters.
+          #pragma omp critical
           uf.Union(index, neighbors[index][j]);
         }
       }
