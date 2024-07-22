@@ -1,71 +1,70 @@
 /**
- * @file methods/decision_tree/information_gain.hpp
+ * @file methods/decision_tree/fitness_functions/gini_gain.hpp
  * @author Ryan Curtin
  *
- * An implementation of information gain, which can be used in place of Gini
- * gain.
+ * The GiniGain class, which is a fitness function (FitnessFunction) for
+ * decision trees.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_DECISION_TREE_INFORMATION_GAIN_HPP
-#define MLPACK_METHODS_DECISION_TREE_INFORMATION_GAIN_HPP
+#ifndef MLPACK_METHODS_DECISION_TREE_GINI_GAIN_HPP
+#define MLPACK_METHODS_DECISION_TREE_GINI_GAIN_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 
 /**
- * The standard information gain criterion, used for calculating gain in
- * decision trees.
+ * The Gini gain, a measure of set purity usable as a fitness function
+ * (FitnessFunction) for decision trees.  This is the exact same thing as the
+ * well-known Gini impurity, but negated---since the decision tree will be
+ * trying to maximize gain (and the Gini impurity would need to be minimized).
  */
-class InformationGain
+class GiniGain
 {
  public:
   /**
-   * Evaluate the information gain given a vector of class weight counts.
+   * Evaluate the Gini impurity given a vector of class weight counts.
    */
   template<bool UseWeights, typename CountType>
   static double EvaluatePtr(const CountType* counts,
                             const size_t countLength,
                             const CountType totalCount)
   {
-    double gain = 0.0;
+    if (totalCount == 0)
+      return 0.0;
 
+    CountType impurity = 0.0;
     for (size_t i = 0; i < countLength; ++i)
-    {
-      const double f = ((double) counts[i] / (double) totalCount);
-      if (f > 0.0)
-        gain += f * std::log2(f);
-    }
+      impurity += counts[i] * (totalCount - counts[i]);
 
-    return gain;
+    return -((double) impurity / ((double) std::pow(totalCount, 2)));
   }
 
   /**
-   * Given a set of labels, calculate the information gain of those labels.
+   * Evaluate the Gini impurity on the given set of labels.  RowType should be
+   * an Armadillo vector that holds size_t objects.
+   *
    * Note that it is possible that due to floating-point representation issues,
    * it is possible that the gain returned can be very slightly greater than 0!
    * Thus, if you are checking for a perfect fit, be sure to use 'gain >= 0.0'
    * not 'gain == 0.0'.
    *
-   * @param labels Labels of the dataset.
+   * @param labels Set of labels to evaluate Gini impurity on.
    * @param numClasses Number of classes in the dataset.
-   * @param weights Weights associated with labels.
+   * @param weights Weight of labels.
    */
-  template<bool UseWeights, typename WeightsType>
-  static double Evaluate(const arma::Row<size_t>& labels,
+  template<bool UseWeights, typename RowType, typename WeightVecType>
+  static double Evaluate(const RowType& labels,
                          const size_t numClasses,
-                         const WeightsType& weights)
+                         const WeightVecType& weights)
   {
-     // Edge case: if there are no elements, the gain is zero.
-     if (labels.n_elem == 0)
-       return 0.0;
-
-    // Calculate the information gain.
-    double gain = 0.0;
+    // Corner case: if there are no elements, the impurity is zero.
+    if (labels.n_elem == 0)
+      return 0.0;
 
     // Count the number of elements in each class.  Use four auxiliary vectors
     // to exploit SIMD instructions if possible.
@@ -77,6 +76,9 @@ class InformationGain
         true);
     arma::vec counts4(countSpace.memptr() + 3 * numClasses, numClasses, false,
         true);
+
+    // Calculate the Gini impurity of the un-split node.
+    double impurity = 0.0;
 
     if (UseWeights)
     {
@@ -139,15 +141,14 @@ class InformationGain
       accWeights[0] += accWeights[1] + accWeights[2] + accWeights[3];
       counts += counts2 + counts3 + counts4;
 
-      // Corner case: return 0 if no weight.
+      // Catch edge case: if there are no weights, the impurity is zero.
       if (accWeights[0] == 0.0)
         return 0.0;
 
       for (size_t i = 0; i < numClasses; ++i)
       {
         const double f = ((double) counts[i] / (double) accWeights[0]);
-        if (f > 0.0)
-          gain += f * std::log2(f);
+        impurity += f * (1.0 - f);
       }
     }
     else
@@ -184,16 +185,15 @@ class InformationGain
       for (size_t i = 0; i < numClasses; ++i)
       {
         const double f = ((double) counts[i] / (double) labels.n_elem);
-        if (f > 0.0)
-          gain += f * std::log2(f);
+        impurity += f * (1.0 - f);
       }
     }
 
-    return gain;
+    return -impurity;
   }
 
   /**
-   * Return the range of the information gain for the given number of classes.
+   * Return the range of the Gini impurity for the given number of classes.
    * (That is, the difference between the maximum possible value and the minimum
    * possible value.)
    *
@@ -201,10 +201,10 @@ class InformationGain
    */
   static double Range(const size_t numClasses)
   {
-    // The best possible case gives an information gain of 0.  The worst
-    // possible case is even distribution, which gives n * (1/n * log2(1/n)) =
-    // log2(1/n) = -log2(n).  So, the range is log2(n).
-    return std::log2(numClasses);
+    // The best possible case is that only one class exists, which gives a Gini
+    // impurity of 0.  The worst possible case is that the classes are evenly
+    // distributed, which gives n * (1/n * (1 - 1/n)) = 1 - 1/n.
+    return 1.0 - (1.0 / double(numClasses));
   }
 };
 
