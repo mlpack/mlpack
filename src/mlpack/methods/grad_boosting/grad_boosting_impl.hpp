@@ -155,15 +155,15 @@ template<typename WeakLearnerType, typename MatType>
 template<typename VecType>
 void GradBoosting<WeakLearnerType, MatType>::Classify(const VecType& point,
                                                       size_t& prediction,
-                                                      arma::Row<ElemType>& probabilities)
+                                                      arma::vec& probabilities)
 {
-  probabilities.resize(numClasses, arma::fill::zeros);
+  probabilities.resize(numClasses);
 
   for (size_t i = 0; i < weakLearners.size(); ++i) 
   {
     size_t p; /*Will not be used*/
 
-    arma::Row<ElemType>& tempProb(numClasses, arma::fill::zeros);
+    arma::vec tempProb(numClasses, arma::fill::zeros);
     weakLearners[i].Classify(point, p, tempProb);
     probabilities = probabilities + tempProb;
   }
@@ -177,7 +177,6 @@ void GradBoosting<WeakLearnerType, MatType>::Classify(const VecType& point,
       prediction = i;
   }
 
-  return prediction;
 }
 
 template<typename WeakLearnerType, typename MatType>
@@ -297,15 +296,15 @@ void GradBoosting<WeakLearnerType, MatType>::
     weakLearners.push_back(w);
 
     arma::Row<size_t> predictions(residue.n_cols, arma::fill::zeros);
-    arma::mat& probabilities;
+    arma::mat probabilities;
     w.Classify(data, predictions, probabilities);
 
     // Compute the learning rate for this iteration.
     double learningRate = 0.1;
 
-    for (size_t i = 0; i < residues.n_rows; ++i) 
+    for (size_t i = 0; i < residue.n_rows; ++i) 
     {
-      for (size_t j = 0; j < residues.n_cols; ++j)
+      for (size_t j = 0; j < residue.n_cols; ++j)
       {
         residue(i, j) = (size_t)abs((double)residue(i, j) - 
           (double)(learningRate * probabilities(i, j)));

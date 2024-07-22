@@ -195,7 +195,7 @@ class GradBoosting
   template<typename VecType>
   void Classify(const VecType& point,
                 size_t& prediction,
-                arma::Row<ElemType>& probabilities);
+                arma::vec& probabilities);
 
   /**
    * Classify the given test points.
