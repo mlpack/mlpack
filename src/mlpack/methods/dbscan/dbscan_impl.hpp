@@ -14,6 +14,8 @@
 
 #include "dbscan.hpp"
 #include <omp.h>
+#include <vector>
+#include <atomic>
 
 namespace mlpack {
 
@@ -69,12 +71,11 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
   centroids.zeros(data.n_rows, numClusters);
 
   // Calculate number of points in each cluster.
-  arma::Row<size_t> counts;
-  counts.zeros(numClusters);
+  arma::Row<size_t> counts(numClusters, arma::fill::zeros);
 
   const size_t numThreads = omp_get_max_threads();
-  std::vector<arma::Row<size_t>> localCounts(numThreads, arma::Row<size_t>(numClusters, arma::fill::zeros));
   std::vector<MatType> localCentroids(numThreads, MatType(data.n_rows, numClusters, arma::fill::zeros));
+  std::vector<arma::Row<size_t>> localCounts(numThreads, arma::Row<size_t>(numClusters, arma::fill::zeros));
 
   #pragma omp parallel
   {
@@ -98,13 +99,15 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     counts += localCounts[i];
   }
 
-  // We should be guaranteed that the number of clusters is always greater than
-  // zero.
+  // Normalize centroids
+  #pragma omp parallel for
   for (size_t i = 0; i < numClusters; ++i)
-    centroids.col(i) /= counts[i];
+    if (counts[i] > 0)
+      centroids.col(i) /= counts[i];
 
   return numClusters;
 }
+
 
 /**
  * Performs DBSCAN clustering on the data, returning the number of clusters and
@@ -131,25 +134,20 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     assignments[i] = uf.Find(i);
 
   // Get a count of all clusters.
-  const size_t numClusters = max(assignments) + 1;
+  const size_t numClusters = arma::max(assignments) + 1;
   arma::Col<size_t> counts(numClusters, arma::fill::zeros);
-
-  const size_t numThreads = omp_get_max_threads();
-  std::vector<arma::Col<size_t>> localCounts(numThreads, arma::Col<size_t>(numClusters, arma::fill::zeros));
 
   #pragma omp parallel
   {
-    const size_t threadId = omp_get_thread_num();
+    arma::Col<size_t> localCounts(numClusters, arma::fill::zeros);
 
     #pragma omp for nowait
     for (size_t i = 0; i < assignments.n_elem; ++i)
-      ++localCounts[threadId][assignments[i]];
+      ++localCounts[assignments[i]];
+
+    #pragma omp critical
+    counts += localCounts;
   }
-
-  // Combine results from all threads
-  for (size_t i = 0; i < numThreads; ++i)
-    counts += localCounts[i];
-
 
   // Now assign clusters to new indices.
   size_t currentCluster = 0;
@@ -183,45 +181,52 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
     const MatType& data,
     UnionFind& uf)
 {
-  std::vector<std::vector<size_t>> neighbors;
-  std::vector<std::vector<ElemType>> distances;
+  std::vector<std::atomic<bool>> visited(data.n_cols);
+  std::vector<std::atomic<bool>> nonCorePoints(data.n_cols);
 
-  std::vector<bool> visited(data.n_cols, false);
-  std::vector<bool> nonCorePoints(data.n_cols, false);
-
-  #pragma omp parallel for schedule(dynamic) firstprivate(neighbors, distances)
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    if (i % 10000 == 0 && i > 0)
-      Log::Info << "DBSCAN clustering on point " << i << "..." << std::endl;
+    visited[i] = false;
+    nonCorePoints[i] = false;
+  }
 
-    // Get the next index.
-    const size_t index = pointSelector.Select(i, data);
-    visited[index] = true;
+  #pragma omp parallel
+  {
+    std::vector<std::vector<size_t>> neighbors;
+    std::vector<std::vector<ElemType>> distances;
 
-    // Do the range search for only this point.
-    rangeSearch.Search(data.col(index), RangeType<ElemType>(ElemType(0.0), epsilon),
-        neighbors, distances);
-
-    if (neighbors[0].size() >= minPoints)
+    #pragma omp for schedule(dynamic)
+    for (size_t i = 0; i < data.n_cols; ++i)
     {
-      for (size_t j = 0; j < neighbors[0].size(); ++j)
+      if (i % 10000 == 0 && i > 0)
+        Log::Info << "DBSCAN clustering on point " << i << "..." << std::endl;
+
+      // Get the next index.
+      const size_t index = pointSelector.Select(i, data);
+      visited[index] = true;
+
+      // Do the range search for only this point.
+      rangeSearch.Search(data.col(index), RangeType<ElemType>(ElemType(0.0), epsilon),
+          neighbors, distances);
+
+      if (neighbors[0].size() >= minPoints)
       {
-        if (uf.Find(neighbors[0][j]) == neighbors[0][j])
+        for (size_t j = 0; j < neighbors[0].size(); ++j)
         {
-          #pragma omp critical
-          uf.Union(index, neighbors[0][j]);
-        }
-        else if (!nonCorePoints[neighbors[0][j]] && visited[neighbors[0][j]])
-        {
-          #pragma omp critical
-          uf.Union(index, neighbors[0][j]);
+          if (uf.Find(neighbors[0][j]) == neighbors[0][j])
+          {
+            uf.Union(index, neighbors[0][j]);
+          }
+          else if (!nonCorePoints[neighbors[0][j]] && visited[neighbors[0][j]])
+          {
+            uf.Union(index, neighbors[0][j]);
+          }
         }
       }
-    }
-    else
-    {
-      nonCorePoints[index] = true;
+      else
+      {
+        nonCorePoints[index] = true;
+      }
     }
   }
 }
@@ -254,12 +259,10 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
       {
         if (uf.Find(neighbors[index][j]) == neighbors[index][j])
         {
-          #pragma omp critical
           uf.Union(index, neighbors[index][j]);
         }
         else if (neighbors[neighbors[index][j]].size() >= (minPoints - 1))
         {
-          #pragma omp critical
           uf.Union(index, neighbors[index][j]);
         }
       }
