@@ -181,7 +181,6 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
     const MatType& data,
     UnionFind& uf)
 {
-  
   // Note that the strategy here is somewhat different from the original DBSCAN
   // paper.  The original DBSCAN paper grows each cluster individually to its
   // fullest extent; here, we use a UnionFind structure to grow each point into
@@ -228,18 +227,28 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
       {
         for (size_t j = 0; j < neighbors[0].size(); ++j)
         {
+          // Union to all neighbors that either do not have a label, or are core
+          // points of other clusters. (When we union to another core point, we
+          // are merging clusters.)
           if (uf.Find(neighbors[0][j]) == neighbors[0][j])
           {
+            // This unions unlabeled points.
             uf.Union(index, neighbors[0][j]);
           }
           else if (!nonCorePoints[neighbors[0][j]] && visited[neighbors[0][j]])
           {
+            // This unions core points of other clusters. Note that we only union
+            // with other clusters that have already been visited---this is
+            // because we do not know whether unvisited points are core or
+            // non-core points. (If an unvisited point is a core point, it'll
+            // merge with us later.)
             uf.Union(index, neighbors[0][j]);
           }
         }
       }
       else
       {
+        // This is not a core point---it does not have enough neighbors.
         nonCorePoints[index] = true;
       }
     }
