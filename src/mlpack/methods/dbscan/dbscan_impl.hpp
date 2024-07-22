@@ -181,6 +181,21 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
     const MatType& data,
     UnionFind& uf)
 {
+  
+  // Note that the strategy here is somewhat different from the original DBSCAN
+  // paper.  The original DBSCAN paper grows each cluster individually to its
+  // fullest extent; here, we use a UnionFind structure to grow each point into
+  // a local cluster (if it has enough points), and we combine with other local
+  // clusters.  The end result is the same.
+  //
+  // Define points as being either core points, or non-core points.  Core points
+  // have more than `minPoints` neighbors.  Non-core points are included into
+  // the first core point cluster that encounters them; if they are not included
+  // by anything, they are labeled as noise.
+  //
+  // We maintain a list of non-core points so that we can handle that logic
+  // correctly.
+
   std::vector<std::atomic<bool>> visited(data.n_cols);
   std::vector<std::atomic<bool>> nonCorePoints(data.n_cols);
 
@@ -249,20 +264,32 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
       distances);
   Log::Info << "Range search complete." << std::endl;
 
+  // See the description of the algorithm in `PointwiseCluster()`.  The strategy
+  // is the same here, but we have cached all range search results already.
+  // That means we already have computed whether each point is or is not a core
+  // point, just based on the size of its neighbors; so we don't need an
+  // auxiliary std::vector<bool> for that.
+
+  // Now loop over all points.
   #pragma omp parallel for schedule(dynamic)
   for (size_t i = 0; i < data.n_cols; ++i)
   {
+    // Get the next index.
     const size_t index = pointSelector.Select(i, data);
+    // Monochromatic dual-tree range search does not return the point as its own
+    // neighbor, so we are looking for `minPoints - 1` instead.
     if (neighbors[index].size() >= minPoints - 1)
     {
       for (size_t j = 0; j < neighbors[index].size(); ++j)
       {
         if (uf.Find(neighbors[index][j]) == neighbors[index][j])
         {
+          // This unions unlabeled points.
           uf.Union(index, neighbors[index][j]);
         }
         else if (neighbors[neighbors[index][j]].size() >= (minPoints - 1))
         {
+          // This unions core points of other clusters.
           uf.Union(index, neighbors[index][j]);
         }
       }
