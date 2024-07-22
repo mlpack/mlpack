@@ -15,6 +15,10 @@
 // In case it hasn't been included yet.
 #include "hamerly_kmeans.hpp"
 
+#ifdef MLPACK_USE_OPENMP
+  #include <omp.h>
+#endif
+
 namespace mlpack {
 
 template<typename DistanceType, typename MatType>
@@ -50,7 +54,9 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
   // Calculate minimum intra-cluster distance for each cluster.
   minClusterDistances.fill(DBL_MAX);
-  #pragma omp parallel for reduction(+:distanceCalculations)
+  #ifdef MLPACK_USE_OPENMP
+    #pragma omp parallel for reduction(+:distanceCalculations)
+  #endif
   for (size_t i = 0; i < centroids.n_cols; ++i)
   {
     for (size_t j = i + 1; j < centroids.n_cols; ++j)
@@ -60,15 +66,19 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
       ++distanceCalculations;
 
       // Update bounds, if this intra-cluster distance is smaller.
-      #pragma omp atomic
-      minClusterDistances(i) = std::min(minClusterDistances(i), dist);
-      #pragma omp atomic
-      minClusterDistances(j) = std::min(minClusterDistances(j), dist);
+      #ifdef MLPACK_USE_OPENMP
+        #pragma omp critical
+      #endif
+      {
+        minClusterDistances(i) = std::min(minClusterDistances(i), dist);
+        minClusterDistances(j) = std::min(minClusterDistances(j), dist);
+      }
     }
   }
 
-  #pragma omp parallel for reduction(+:distanceCalculations, hamerlyPruned) \
-                           reduction(+:newCentroids, counts)
+  #ifdef MLPACK_USE_OPENMP
+    #pragma omp parallel for reduction(+:distanceCalculations, hamerlyPruned)
+  #endif
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     const double m = std::max(minClusterDistances(assignments[i]),
@@ -78,8 +88,13 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     if (upperBounds(i) <= m)
     {
       ++hamerlyPruned;
-      newCentroids.col(assignments[i]) += dataset.col(i);
-      ++counts(assignments[i]);
+      #ifdef MLPACK_USE_OPENMP
+        #pragma omp critical
+      #endif
+      {
+        newCentroids.col(assignments[i]) += dataset.col(i);
+        ++counts(assignments[i]);
+      }
       continue;
     }
 
@@ -91,8 +106,13 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     // Second bound test.
     if (upperBounds(i) <= m)
     {
-      newCentroids.col(assignments[i]) += dataset.col(i);
-      ++counts(assignments[i]);
+      #ifdef MLPACK_USE_OPENMP
+        #pragma omp critical
+      #endif
+      {
+        newCentroids.col(assignments[i]) += dataset.col(i);
+        ++counts(assignments[i]);
+      }
       continue;
     }
 
@@ -100,6 +120,10 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     // This is Hamerly's Point-All-Ctrs() function from the paper.
     // We have to reset the lower bound first.
     lowerBounds(i) = DBL_MAX;
+    size_t newAssignment = assignments[i];
+    double newUpperBound = upperBounds(i);
+    double newLowerBound = DBL_MAX;
+
     for (size_t c = 0; c < centroids.n_cols; ++c)
     {
       if (c == assignments[i])
@@ -107,37 +131,46 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
       const double dist = distance.Evaluate(dataset.col(i), centroids.col(c));
 
-      // Is this a better cluster? At this point, upperBounds[i] = d(i, c(i)).
-      if (dist < upperBounds(i))
+      // Is this a better cluster?
+      if (dist < newUpperBound)
       {
-        // lowerBounds holds the second closest cluster.
-        lowerBounds(i) = upperBounds(i);
-        upperBounds(i) = dist;
-        assignments[i] = c;
+        newLowerBound = newUpperBound;
+        newUpperBound = dist;
+        newAssignment = c;
       }
-      else if (dist < lowerBounds(i))
+      else if (dist < newLowerBound)
       {
-        // This is a closer second-closest cluster.
-        lowerBounds(i) = dist;
+        newLowerBound = dist;
       }
     }
     distanceCalculations += centroids.n_cols - 1;
 
+    // Update bounds and assignment
+    upperBounds(i) = newUpperBound;
+    lowerBounds(i) = newLowerBound;
+    assignments[i] = newAssignment;
+
     // Update new centroids.
-    newCentroids.col(assignments[i]) += dataset.col(i);
-    ++counts(assignments[i]);
+    #ifdef MLPACK_USE_OPENMP
+      #pragma omp critical
+    #endif
+    {
+      newCentroids.col(newAssignment) += dataset.col(i);
+      ++counts(newAssignment);
+    }
   }
 
-  // Normalize centroids and calculate cluster movement (contains parts of
-  // Move-Centers() and Update-Bounds()).
+  // Normalize centroids and calculate cluster movement
   double furthestMovement = 0.0;
   double secondFurthestMovement = 0.0;
   size_t furthestMovingCluster = 0;
   arma::vec centroidMovements(centroids.n_cols);
   double centroidMovement = 0.0;
 
-  #pragma omp parallel for reduction(+:distanceCalculations, centroidMovement) \
-                           reduction(max:furthestMovement)
+  #ifdef MLPACK_USE_OPENMP
+    #pragma omp parallel for reduction(+:distanceCalculations, centroidMovement) \
+                             reduction(max:furthestMovement)
+  #endif
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
     if (counts(c) > 0)
@@ -152,7 +185,9 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
     if (movement > furthestMovement)
     {
-      #pragma omp critical
+      #ifdef MLPACK_USE_OPENMP
+        #pragma omp critical
+      #endif
       {
         if (movement > furthestMovement)
         {
@@ -168,8 +203,10 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     }
   }
 
-  // Now update bounds (lines 3-8 of Update-Bounds()).
-  #pragma omp parallel for
+  // Now update bounds
+  #ifdef MLPACK_USE_OPENMP
+    #pragma omp parallel for
+  #endif
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     upperBounds(i) += centroidMovements(assignments[i]);
