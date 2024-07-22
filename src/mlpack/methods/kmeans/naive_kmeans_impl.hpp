@@ -93,7 +93,7 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
       for (size_t j = 0; j < clusters; ++j)
       {
         const arma::vec& centroid = centroids.col(j);
-        distances(j) = dataNorm + centroidNorms(j) - 2 * arma::dot(dataPoint, centroid);
+        distances(j) = std::max(0.0, dataNorm + centroidNorms(j) - 2 * arma::dot(dataPoint, centroid));
       }
 
       // Find the closest centroid
@@ -112,12 +112,18 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     counts += threadCounts[t];
   }
 
+  const double eps = std::numeric_limits<double>::epsilon();
   // Normalize the centroids
   for (size_t j = 0; j < clusters; ++j)
   {
-    if (counts(j) > 0)
+    if (counts(j) > eps)
     {
       newCentroids.col(j) /= counts(j);
+    }
+    else
+    {
+      // Handle empty or near-empty cluster
+      newCentroids.col(j) = centroids.col(j);
     }
   }
 
