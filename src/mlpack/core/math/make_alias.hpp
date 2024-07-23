@@ -16,89 +16,84 @@
 namespace mlpack {
 
 /**
- * Make an alias of a dense cube.  If strict is true, then the alias cannot be
- * resized or pointed at new memory.
+ * Reconstruct `v` as an alias around the memory `newMem`, with size `numRows` x
+ * `numCols`.
  */
-template<typename ElemType>
-arma::Cube<ElemType> MakeAlias(arma::Cube<ElemType>& input,
-                               const bool strict = true)
+template<typename InVecType, typename OutVecType>
+void MakeAlias(OutVecType& v,
+               const InVecType& oldVec,
+               const size_t numElems,
+               const size_t offset = 0,
+               const bool strict = true,
+               const typename std::enable_if_t<IsVector<OutVecType>::value>* = 0)
 {
-  // Use the advanced constructor.
-  return arma::Cube<ElemType>(input.memptr(), input.n_rows, input.n_cols,
-      input.n_slices, false, strict);
+  // We use placement new to reinitialize the object, since the copy and move
+  // assignment operators in Armadillo will end up copying memory instead of
+  // making an alias.
+  typename InVecType::elem_type* newMem =
+      const_cast<typename InVecType::elem_type*>(oldVec.memptr()) + offset;
+  v.~OutVecType();
+  new (&v) OutVecType(newMem, numElems, false, strict);
 }
 
 /**
- * Make an alias of a dense matrix.  If strict is true, then the alias cannot be
- * resized or pointed at new memory.
+ * Reconstruct `m` as an alias around the memory `newMem`, with size `numRows` x
+ * `numCols`.
  */
-template<typename ElemType>
-arma::Mat<ElemType> MakeAlias(arma::Mat<ElemType>& input,
-                              const bool strict = true)
+template<typename InMatType, typename OutMatType>
+void MakeAlias(OutMatType& m,
+               const InMatType& oldMat,
+               const size_t numRows,
+               const size_t numCols,
+               const size_t offset = 0,
+               const bool strict = true,
+               const typename std::enable_if_t<IsMatrix<OutMatType>::value>* = 0)
 {
-  // Use the advanced constructor.
-  return arma::Mat<ElemType>(input.memptr(), input.n_rows, input.n_cols, false,
-      strict);
+  // We use placement new to reinitialize the object, since the copy and move
+  // assignment operators in Armadillo will end up copying memory instead of
+  // making an alias.
+  typename InMatType::elem_type* newMem =
+      const_cast<typename InMatType::elem_type*>(oldMat.memptr()) + offset;
+  m.~OutMatType();
+  new (&m) OutMatType(newMem, numRows, numCols, false, strict);
 }
 
 /**
- * Make an alias of a dense row.  If strict is true, then the alias cannot be
- * resized or pointed at new memory.
+ * Reconstruct `c` as an alias around the memory` newMem`, with size `numRows` x
+ * `numCols` x `numSlices`.
  */
-template<typename ElemType>
-arma::Row<ElemType> MakeAlias(arma::Row<ElemType>& input,
-                              const bool strict = true)
+template<typename InCubeType, typename OutCubeType>
+void MakeAlias(OutCubeType& c,
+               const InCubeType& oldCube,
+               const size_t numRows,
+               const size_t numCols,
+               const size_t numSlices,
+               const size_t offset = 0,
+               const bool strict = true,
+               const typename std::enable_if_t<IsCube<OutCubeType>::value>* = 0)
 {
-  // Use the advanced constructor.
-  return arma::Row<ElemType>(input.memptr(), input.n_elem, false, strict);
+  // We use placement new to reinitialize the object, since the copy and move
+  // assignment operators in Armadillo will end up copying memory instead of
+  // making an alias.
+  typename InCubeType::elem_type* newMem =
+      const_cast<typename InCubeType::elem_type*>(oldCube.memptr()) + offset;
+  c.~OutCubeType();
+  new (&c) OutCubeType(newMem, numRows, numCols, numSlices, false, strict);
 }
 
 /**
- * Make an alias of a dense column.  If strict is true, then the alias cannot be
- * resized or pointed at new memory.
+ * Make `m` an alias of `in`, using the given size.
  */
-template<typename ElemType>
-arma::Col<ElemType> MakeAlias(arma::Col<ElemType>& input,
-                              const bool strict = true)
+template<typename eT>
+void MakeAlias(arma::SpMat<eT>& m,
+               const arma::SpMat<eT>& in,
+               const size_t /* numRows */,
+               const size_t /* numCols */,
+               const size_t /* offset */,
+               const bool /* strict */)
 {
-  // Use the advanced constructor.
-  return arma::Col<ElemType>(input.memptr(), input.n_elem, false, strict);
-}
-
-/**
- * Make a copy of a sparse matrix (an alias is not possible).  The strict
- * parameter is ignored.
- */
-template<typename ElemType>
-arma::SpMat<ElemType> MakeAlias(const arma::SpMat<ElemType>& input,
-                                const bool /* strict */ = true)
-{
-  // Make a copy...
-  return arma::SpMat<ElemType>(input);
-}
-
-/**
- * Make a copy of a sparse row (an alias is not possible).  The strict
- * parameter is ignored.
- */
-template<typename ElemType>
-arma::SpRow<ElemType> MakeAlias(const arma::SpRow<ElemType>& input,
-                                const bool /* strict */ = true)
-{
-  // Make a copy...
-  return arma::SpRow<ElemType>(input);
-}
-
-/**
- * Make a copy of a sparse column (an alias is not possible).  The strict
- * parameter is ignored.
- */
-template<typename ElemType>
-arma::SpCol<ElemType> MakeAlias(const arma::SpCol<ElemType>& input,
-                                const bool /* strict */ = true)
-{
-  // Make a copy...
-  return arma::SpCol<ElemType>(input);
+  // We can't make aliases of sparse objects, so just copy it.
+  m = in;
 }
 
 /**
@@ -113,15 +108,14 @@ void ClearAlias(arma::Mat<ElemType>& mat)
 }
 
 /**
- * Clear an alias for a sparse matrix.  This does nothing because no sparse
- * matrices can have aliases.
+ * Clear an alias so that no data is overwritten.  This resets the matrix if it
+ * is an alias (and does nothing otherwise).
  */
 template<typename ElemType>
 void ClearAlias(arma::SpMat<ElemType>& /* mat */)
 {
-  // Nothing to do.
+  // We cannot make aliases of sparse matrices, so, nothing to do.
 }
-
 
 } // namespace mlpack
 

@@ -255,9 +255,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
     // Set the size of the parameters vector, if necessary.
     if (!params.Has("labels"))
-      model->Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows);
+      model->Parameters() = zeros<arma::rowvec>(regressors.n_rows);
     else
-      model->Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows + 1);
+      model->Parameters() = zeros<arma::rowvec>(regressors.n_rows + 1);
   }
 
   // Check if the responses are in a separate file.
@@ -343,7 +343,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       arma::Row<size_t> predictions;
       model->Classify(regressors, predictions);
 
-      const size_t correct = arma::accu(predictions == responses);
+      const size_t correct = accu(predictions == responses);
 
       Log::Info << correct << " of " << responses.n_elem << " correct on training"
           << " set (" << (double(correct) / double(responses.n_elem) * 100) << ")."

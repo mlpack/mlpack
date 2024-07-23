@@ -1,5 +1,11 @@
 # Documentation for mlpack
 
+<!--
+This file contains the landing page for mlpack documentation.  Note that if you
+change any section headers, or add any new algorithms, the sidebar in
+sidebar.html will need to be manually modified!
+-->
+
 ## A fast, flexible machine learning library
 
 mlpack is an intuitive, fast, and flexible header-only C++ machine learning
@@ -65,11 +71,17 @@ Classify points as discrete labels (`0`, `1`, `2`, ...).
  * [`AdaBoost`](user/methods/adaboost.md): Adaptive Boosting
  * [`DecisionTree`](user/methods/decision_tree.md): ID3-style decision tree
    classifier
+ * [`HoeffdingTree`](user/methods/hoeffding_tree.md): streaming/incremental
+   decision tree classifier
+ * [`LinearSVM`](user/methods/linear_svm.md): simple linear support vector
+   machine classifier
  * [`LogisticRegression`](user/methods/logistic_regression.md): L2-regularized
    logistic regression (two-class only)
  * [`NaiveBayesClassifier`](user/methods/naive_bayes_classifier.md): simple
    multi-class naive Bayes classifier
  * [`Perceptron`](user/methods/perceptron.md): simple Perceptron classifier
+ * [`RandomForest`](user/methods/random_forest.md): parallelized random forest
+   classifier
  * [`SoftmaxRegression`](user/methods/softmax_regression.md): L2-regularized
    softmax regression (i.e. multi-class logistic regression)
 
@@ -77,6 +89,8 @@ Classify points as discrete labels (`0`, `1`, `2`, ...).
 
 Predict continuous values.
 
+ * [`BayesianLinearRegression`](user/methods/bayesian_linear_regression.md):
+   Bayesian L2-penalized linear regression
  * [`DecisionTreeRegressor`](user/methods/decision_tree_regressor.md): ID3-style
    decision tree regressor
  * [`LARS`](user/methods/lars.md): Least Angle Regression (LARS), L1-regularized
@@ -106,24 +120,37 @@ Prepare data for machine learning algorithms.
 
 Transform data from one space to another.
 
-<!-- TODO: add some -->
+ * [`AMF`](user/methods/amf.md): alternating matrix factorization
+ * [`LocalCoordinateCoding`](user/methods/local_coordinate_coding.md): local
+   coordinate coding with dictionary learning
+ * [`LMNN`](user/methods/lmnn.md): large margin nearest neighbor (distance
+   metric learning)
+ * [`NCA`](user/methods/nca.md): neighborhood components analysis (distance
+   metric learning)
+ * [`NMF`](user/methods/nmf.md): non-negative matrix factorization
+ * [`PCA`](user/methods/pca.md): principal components analysis
+ * [`SparseCoding`](user/methods/sparse_coding.md): sparse coding with
+   dictionary learning
 
 ### Modeling utilities
 
-Cross-validation, hyperparameter tuning, etc.
+Tools for assembling a full data science pipeline.
 
-<!-- TODO: add some -->
+ * [Cross-validation](user/cv.md): k-fold cross-validation tools for any mlpack
+   algorithm
+ * [Hyperparameter tuning](user/hpt.md): generic hyperparameter tuner to find
+   good hyperparameters for any mlpack algorithm
 
 ## Bindings to other languages
 
 mlpack's bindings to other languages have less complete functionality than
 mlpack in C++, but almost all the same algorithms are available.
 
-| ***Python*** | -- | [quickstart](quickstart/python.md) | -- | [reference](https://www.mlpack.org/doc/python_documentation.html) |
-| ***Julia*** | -- | [quickstart](quickstart/julia.md) | -- | [reference](https://www.mlpack.org/doc/julia_documentation.html) |
-| ***R*** | -- | [quickstart](quickstart/r.md) | -- | [reference](https://www.mlpack.org/doc/r_documentation.html)
-| ***Command-line programs*** | -- | [quickstart](quickstart/cli.md) | -- | [reference](https://www.mlpack.org/doc/cli_documentation.html) |
-| ***Go*** | -- | [quickstart](quickstart/go.md) | -- | [reference](https://www.mlpack.org/doc/go_documentation.html) |
+| ***Python*** | -- | [quickstart](quickstart/python.md) | -- | [reference](user/bindings/python.md) |
+| ***Julia*** | -- | [quickstart](quickstart/julia.md) | -- | [reference](user/bindings/julia.md) |
+| ***R*** | -- | [quickstart](quickstart/r.md) | -- | [reference](user/bindings/r.md)
+| ***Command-line programs*** | -- | [quickstart](quickstart/cli.md) | -- | [reference](user/bindings/cli.md) |
+| ***Go*** | -- | [quickstart](quickstart/go.md) | -- | [reference](user/bindings/go.md) |
 
 ## Examples and further documentation
 
@@ -137,11 +164,17 @@ the source code should be consulted.  Each method is fully documented.
 
 ## Developer documentation
 
+The following general documentation can be useful if you are interested in
+contributing to mlpack:
+
+ * [The mlpack community](developer/community.md)
+ * [mlpack and Google Summer of Code](developer/gsoc.md)
+
 Throughout the codebase, mlpack uses some common template parameter policies.
 These are documented below.
 
  * [The `ElemType` policy](developer/elemtype.md): element types for data
- * [The `MetricType` policy](developer/metrics.md): distance metrics
+ * [The `DistanceType` policy](developer/distances.md): distance metrics
  * [The `KernelType` policy](developer/kernels.md): kernel functions
  * [The `TreeType` policy](developer/trees.md): space trees (ball trees,
    KD-trees, etc.)
@@ -154,3 +187,8 @@ for other languages:
    bindings
  * [Automatic bindings](developer/bindings.md): details on mlpack's automatic
    binding generator system.
+
+## Changelog
+
+For a list of changes in each version of mlpack, see the
+[changelog](HISTORY.md).

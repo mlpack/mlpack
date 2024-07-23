@@ -30,19 +30,11 @@ class LaplacianKernel
 {
  public:
   /**
-   * Default constructor; sets bandwidth to 1.0.
-   */
-  LaplacianKernel() : bandwidth(1.0)
-  { }
-
-  /**
-   * Construct the Laplacian kernel with a custom bandwidth.
+   * Construct the Laplacian kernel with the given bandwidth.
    *
    * @param bandwidth The bandwidth of the kernel (@f$\mu@f$).
    */
-  LaplacianKernel(double bandwidth) :
-      bandwidth(bandwidth)
-  { }
+  LaplacianKernel(const double bandwidth = 1.0) : bandwidth(bandwidth) { }
 
   /**
    * Evaluation of the Laplacian kernel.  This could be generalized to use any
@@ -93,7 +85,7 @@ class LaplacianKernel
   //! Get the bandwidth.
   double Bandwidth() const { return bandwidth; }
   //! Modify the bandwidth.
-  double& Bandwidth() { return bandwidth; }
+  void Bandwidth(const double bandwidth) { this->bandwidth = bandwidth; }
 
   //! Serialize the kernel.
   template<typename Archive>

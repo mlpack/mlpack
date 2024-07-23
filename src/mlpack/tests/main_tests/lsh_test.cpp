@@ -134,9 +134,9 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffTablesTest",
 
   // Check that initial outputs and final outputs using two models are
   // different.
-  REQUIRE(arma::accu(neighbors ==
+  REQUIRE(accu(neighbors ==
       params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
-  REQUIRE(arma::accu(distances ==
+  REQUIRE(accu(distances ==
       params.Get<arma::mat>("distances")) < distances.n_elem);
 }
 
@@ -171,9 +171,9 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffProjectionsTest",
 
   // Check that initial outputs and final outputs using two models are
   // different.
-  REQUIRE(arma::accu(neighbors ==
+  REQUIRE(accu(neighbors ==
       params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
-  REQUIRE(arma::accu(distances ==
+  REQUIRE(accu(distances ==
       params.Get<arma::mat>("distances")) < distances.n_elem);
 }
 
@@ -208,9 +208,9 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffHashWidthTest",
 
   // Check that initial outputs and final outputs using two models are
   // different.
-  REQUIRE(arma::accu(neighbors ==
+  REQUIRE(accu(neighbors ==
       params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
-  REQUIRE(arma::accu(distances ==
+  REQUIRE(accu(distances ==
       params.Get<arma::mat>("distances")) < distances.n_elem);
 }
 
@@ -248,9 +248,9 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffNumProbesTest",
 
   // Check that initial outputs and final outputs using two models are
   // different.
-  REQUIRE(arma::accu(neighbors ==
+  REQUIRE(accu(neighbors ==
       params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
-  REQUIRE(arma::accu(distances ==
+  REQUIRE(accu(distances ==
       params.Get<arma::mat>("distances")) < distances.n_elem);
 }
 
@@ -285,9 +285,9 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffSecondHashSizeTest",
 
   // Check that initial outputs and final outputs using two models are
   // different.
-  REQUIRE(arma::accu(neighbors ==
+  REQUIRE(accu(neighbors ==
       params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
-  REQUIRE(arma::accu(distances ==
+  REQUIRE(accu(distances ==
       params.Get<arma::mat>("distances")) < distances.n_elem);
 }
 
@@ -322,9 +322,9 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffBucketSizeTest",
 
   // Check that initial outputs and final outputs using the two models are
   // different.
-  REQUIRE(arma::accu(neighbors ==
+  REQUIRE(accu(neighbors ==
       params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
-  REQUIRE(arma::accu(distances ==
+  REQUIRE(accu(distances ==
       params.Get<arma::mat>("distances")) < distances.n_elem);
 }
 

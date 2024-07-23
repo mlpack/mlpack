@@ -19,34 +19,34 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename TreeType>
-PellegMooreKMeansRules<MetricType, TreeType>::PellegMooreKMeansRules(
+template<typename DistanceType, typename TreeType>
+PellegMooreKMeansRules<DistanceType, TreeType>::PellegMooreKMeansRules(
     const typename TreeType::Mat& dataset,
     const arma::mat& centroids,
     arma::mat& newCentroids,
     arma::Col<size_t>& counts,
-    MetricType& metric) :
+    DistanceType& distance) :
     dataset(dataset),
     centroids(centroids),
     newCentroids(newCentroids),
     counts(counts),
-    metric(metric),
+    distance(distance),
     distanceCalculations(0)
 {
   // Nothing to do.
 }
 
-template<typename MetricType, typename TreeType>
+template<typename DistanceType, typename TreeType>
 inline mlpack_force_inline
-double PellegMooreKMeansRules<MetricType, TreeType>::BaseCase(
+double PellegMooreKMeansRules<DistanceType, TreeType>::BaseCase(
     const size_t /* queryIndex */,
     const size_t /* referenceIndex */)
 {
   return 0.0;
 }
 
-template<typename MetricType, typename TreeType>
-double PellegMooreKMeansRules<MetricType, TreeType>::Score(
+template<typename DistanceType, typename TreeType>
+double PellegMooreKMeansRules<DistanceType, TreeType>::Score(
     const size_t /* queryIndex */,
     TreeType& referenceNode)
 {
@@ -64,7 +64,7 @@ double PellegMooreKMeansRules<MetricType, TreeType>::Score(
   // holds all of the points in the dataset.  Our goal is to determine whether
   // or not this node is dominated by a single cluster.
   const size_t whitelisted = centroids.n_cols -
-      arma::accu(referenceNode.Stat().Blacklist());
+      accu(referenceNode.Stat().Blacklist());
 
   distanceCalculations += whitelisted;
 
@@ -107,9 +107,9 @@ double PellegMooreKMeansRules<MetricType, TreeType>::Score(
         cornerPoint(d) = referenceNode.Bound()[d].Lo();
     }
 
-    const double closestDist = metric.Evaluate(cornerPoint,
+    const double closestDist = distance.Evaluate(cornerPoint,
         centroids.col(closestCluster));
-    const double otherDist = metric.Evaluate(cornerPoint, centroids.col(c));
+    const double otherDist = distance.Evaluate(cornerPoint, centroids.col(c));
 
     distanceCalculations += 3; // One for cornerPoint, then two distances.
 
@@ -145,12 +145,12 @@ double PellegMooreKMeansRules<MetricType, TreeType>::Score(
       ++distanceCalculations;
 
       // The reference index is the index of the data point.
-      const double distance = metric.Evaluate(centroids.col(c),
+      const double dist = distance.Evaluate(centroids.col(c),
           dataset.col(referenceNode.Point(i)));
 
-      if (distance < bestDistance)
+      if (dist < bestDistance)
       {
-        bestDistance = distance;
+        bestDistance = dist;
         bestCluster = c;
       }
     }
@@ -165,8 +165,8 @@ double PellegMooreKMeansRules<MetricType, TreeType>::Score(
   return 0.0;
 }
 
-template<typename MetricType, typename TreeType>
-double PellegMooreKMeansRules<MetricType, TreeType>::Rescore(
+template<typename DistanceType, typename TreeType>
+double PellegMooreKMeansRules<DistanceType, TreeType>::Rescore(
     const size_t /* queryIndex */,
     TreeType& /* referenceNode */,
     const double oldScore)

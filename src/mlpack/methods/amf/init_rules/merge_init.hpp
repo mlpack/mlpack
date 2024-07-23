@@ -45,11 +45,11 @@ class MergeInitialization
    * @param W W matrix, to be initialized to given matrix.
    * @param H H matrix, to be initialized to given matrix.
    */
-  template<typename MatType>
+  template<typename MatType, typename WHMatType>
   inline void Initialize(const MatType& V,
                          const size_t r,
-                         arma::mat& W,
-                         arma::mat& H)
+                         WHMatType& W,
+                         WHMatType& H)
   {
     wInitializationRule.InitializeOne(V, r, W);
     hInitializationRule.InitializeOne(V, r, H, false);

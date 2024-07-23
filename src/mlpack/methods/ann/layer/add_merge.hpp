@@ -12,7 +12,6 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_ADD_MERGE_HPP
 #define MLPACK_METHODS_ANN_LAYER_ADD_MERGE_HPP
 
-#include "../make_alias.hpp"
 #include "multi_layer.hpp"
 
 namespace mlpack {

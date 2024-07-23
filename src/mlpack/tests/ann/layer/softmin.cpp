@@ -39,7 +39,7 @@ TEST_CASE("SimpleSoftminLayerTest", "[ANNLayerTest]")
   			    {0.035311, 0.042794, 0.062526}};
 
   module.Forward(input, output);
-  REQUIRE(arma::accu(arma::abs(actualOutput - output)) ==
+  REQUIRE(accu(arma::abs(actualOutput - output)) ==
              Approx(0.0).margin(1e-4));
 
   // Test the backward function.
@@ -51,7 +51,7 @@ TEST_CASE("SimpleSoftminLayerTest", "[ANNLayerTest]")
                                   {-0.0205, 0, 0},
                                   {-0.0083, 0, 0}};
 
-  REQUIRE(arma::accu(arma::abs(calculatedGradient - g)) ==
+  REQUIRE(accu(arma::abs(calculatedGradient - g)) ==
       Approx(0.0).margin(1e-04));
 
 }

@@ -33,7 +33,7 @@ T& GetRawParam(
         std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   // No mapping is needed, so just cast it directly.
-  return *MLPACK_ANY_CAST<T>(&d.value);
+  return *std::any_cast<T>(&d.value);
 }
 
 /**
@@ -49,7 +49,7 @@ T& GetRawParam(
 {
   // Don't load the matrix.
   typedef std::tuple<T, std::tuple<std::string, size_t, size_t>> TupleType;
-  T& value = std::get<0>(*MLPACK_ANY_CAST<TupleType>(&d.value));
+  T& value = std::get<0>(*std::any_cast<TupleType>(&d.value));
   return value;
 }
 
@@ -64,7 +64,7 @@ T*& GetRawParam(
 {
   // Don't load the model.
   typedef std::tuple<T*, std::string> TupleType;
-  T*& value = std::get<0>(*MLPACK_ANY_CAST<TupleType>(&d.value));
+  T*& value = std::get<0>(*std::any_cast<TupleType>(&d.value));
   return value;
 }
 

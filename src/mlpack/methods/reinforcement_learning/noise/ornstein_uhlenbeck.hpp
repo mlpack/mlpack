@@ -30,7 +30,7 @@ class OUNoise
           double mu = 0.0,
           double theta = 0.15,
           double sigma = 0.2) :
-      mu(mu * arma::ones<arma::colvec>(size)),
+      mu(mu * ones<arma::colvec>(size)),
       theta(theta),
       sigma(sigma)
   {
@@ -54,7 +54,7 @@ class OUNoise
   {
     arma::colvec x = state;
     arma::colvec dx = theta * (mu - x) + 
-        sigma * arma::randn<arma::colvec>(x.n_elem);
+        sigma * randn<arma::colvec>(x.n_elem);
     state = x + dx;
     return state;
   }

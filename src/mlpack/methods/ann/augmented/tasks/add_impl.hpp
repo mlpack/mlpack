@@ -54,7 +54,7 @@ inline void AddTask::Generate(arma::field<arma::mat>& input,
     }
     // Construct sequence of the form
     // (binary number with sizeA bits) + '+' + (binary number with sizeB bits).
-    vecInput(i) = arma::randi<arma::colvec>(
+    vecInput(i) = randi<arma::colvec>(
         sizeA + sizeB + 1, arma::distr_param(0, 1));
     // Insert special value for '+' delimiter.
     vecInput(i).at(sizeA) = 2;
@@ -134,7 +134,7 @@ inline void AddTask::Binarize(const arma::field<arma::vec>& input,
   output = arma::field<arma::mat>(input.n_elem);
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    output.at(i) = arma::zeros(3, input.at(i).n_elem);
+    output.at(i) = zeros(3, input.at(i).n_elem);
     for (size_t j = 0; j < input.at(i).n_elem; ++j)
     {
       size_t val = input.at(i).at(j);

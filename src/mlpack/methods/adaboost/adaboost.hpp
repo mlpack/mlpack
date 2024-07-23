@@ -123,7 +123,7 @@ class AdaBoost
    * @param other Weak learner that has already been initialized.
    */
   template<typename WeakLearnerInType>
-  mlpack_deprecated /* to be removed in mlpack 5.0.0 */
+  [[deprecated("Will be removed in mlpack 5.0.0, use other constructors")]]
   AdaBoost(const MatType& data,
            const arma::Row<size_t>& labels,
            const size_t numClasses,
@@ -180,37 +180,14 @@ class AdaBoost
    * @return The upper bound for training error.
    */
   template<typename WeakLearnerInType>
-  mlpack_deprecated /* to be removed in mlpack 5.0.0 */
+  [[deprecated("Will be removed in mlpack 5.0.0, use other Train() variants")]]
   ElemType Train(
       const MatType& data,
       const arma::Row<size_t>& labels,
       const size_t numClasses,
       const WeakLearnerInType& learner,
-      // Necessary to distinguish from other overloads.
-      const typename std::enable_if<
-          std::is_same<WeakLearnerType, WeakLearnerInType>::value>::type* = 0);
-
-  template<typename WeakLearnerInType>
-  mlpack_deprecated /* to be removed in mlpack 5.0.0 */
-  ElemType Train(
-      const MatType& data,
-      const arma::Row<size_t>& labels,
-      const size_t numClasses,
-      const WeakLearnerInType& learner,
-      const size_t maxIterations,
-      // Necessary to distinguish from other overloads.
-      const typename std::enable_if<
-          std::is_same<WeakLearnerType, WeakLearnerInType>::value>::type* = 0);
-
-  template<typename WeakLearnerInType>
-  mlpack_deprecated /* to be removed in mlpack 5.0.0 */
-  ElemType Train(
-      const MatType& data,
-      const arma::Row<size_t>& labels,
-      const size_t numClasses,
-      const WeakLearnerInType& learner,
-      const size_t maxIterations,
-      const double tolerance,
+      const std::optional<size_t> maxIterations = std::nullopt,
+      const std::optional<double> tolerance = std::nullopt,
       // Necessary to distinguish from other overloads.
       const typename std::enable_if<
           std::is_same<WeakLearnerType, WeakLearnerInType>::value>::type* = 0);
@@ -233,21 +210,12 @@ class AdaBoost
    * @param weakLearnerArgs Hyperparameters to use for each weak learner.
    * @return The upper bound for training error.
    */
-  ElemType Train(const MatType& data,
-                 const arma::Row<size_t>& labels,
-                 const size_t numClasses);
-
-  ElemType Train(const MatType& data,
-                 const arma::Row<size_t>& labels,
-                 const size_t numClasses,
-                 const size_t maxIterations);
-
   template<typename... WeakLearnerArgs>
   ElemType Train(const MatType& data,
                  const arma::Row<size_t>& labels,
                  const size_t numClasses,
-                 const size_t maxIterations,
-                 const double tolerance,
+                 const std::optional<size_t> maxIterations = std::nullopt,
+                 const std::optional<double> tolerance = std::nullopt,
                  WeakLearnerArgs&&... weakLearnerArgs);
 
   /**

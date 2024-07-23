@@ -64,7 +64,9 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
+#if BINDING_TYPE == BINDING_TYPE_CLI
 BINDING_SEE_ALSO("@preprocess_imputer", "#preprocess_imputer");
+#endif
 BINDING_SEE_ALSO("@preprocess_split", "#preprocess_split");
 
 // Define parameters for data.
@@ -200,8 +202,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       feature = data.row(dim);
 
     // f at the front of the variable names means "feature".
-    const double fMax = arma::max(feature);
-    const double fMin = arma::min(feature);
+    const double fMax = max(feature);
+    const double fMin = min(feature);
     const double fMean = arma::mean(feature);
     const double fStd = arma::stddev(feature, population);
 

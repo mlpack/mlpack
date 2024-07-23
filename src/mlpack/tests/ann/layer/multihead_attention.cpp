@@ -53,7 +53,7 @@ TEST_CASE("SimpleMultiheadAttentionTest", "[ANNLayerTest]")
   module.ComputeOutputDimensions();
   arma::mat weights(module.WeightSize(), 1);
   weights.randu();
-  module.SetWeights(weights.memptr());
+  module.SetWeights(weights);
 
   module.AttentionMask() = attnMask;
   module.KeyPaddingMask() = keyPaddingMask;
@@ -101,7 +101,7 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
     module.ComputeOutputDimensions();
     arma::mat weights(module.WeightSize(), 1);
     weights.randu();
-    module.SetWeights(weights.memptr());
+    module.SetWeights(weights);
 
     double error = CustomJacobianTest(module, input);
     REQUIRE(error <= 1e-5);
@@ -125,7 +125,7 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
     module.ComputeOutputDimensions();
     arma::mat weights(module.WeightSize(), 1);
     weights.randu();
-    module.SetWeights(weights.memptr());
+    module.SetWeights(weights);
 
     double error = CustomJacobianTest(module, input);
     REQUIRE(error <= 1e-5);
@@ -150,7 +150,7 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
     module.ComputeOutputDimensions();
     arma::mat weights(module.WeightSize(), 1);
     weights.randu();
-    module.SetWeights(weights.memptr());
+    module.SetWeights(weights);
 
     double error = JacobianTest(module, input);
     REQUIRE(error <= 1e-5);

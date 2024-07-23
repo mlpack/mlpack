@@ -13,7 +13,7 @@
 #define MLPACK_CORE_KERNELS_TRIANGULAR_KERNEL_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 
 namespace mlpack {
 
@@ -87,7 +87,7 @@ class TriangularKernel
   //! Get the bandwidth of the kernel.
   double Bandwidth() const { return bandwidth; }
   //! Modify the bandwidth of the kernel.
-  double& Bandwidth() { return bandwidth; }
+  void Bandwidth(const double bandwidth) { this->bandwidth = bandwidth; }
 
   //! Serialize the kernel.
   template<typename Archive>

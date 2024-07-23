@@ -49,18 +49,18 @@ TEST_CASE("GroupedConvolutionLayerTest", "[ANNLayerTest]")
   layerWeights(5) = -0.7586858273;
   layerWeights(6) = -0.1721059084;
   layerWeights(7) = -0.1972532272;
-  layer.SetWeights(layerWeights.memptr());
+  layer.SetWeights(layerWeights);
   output.set_size(layer.OutputSize(), 3);
 
   layer.Forward(input, output);
 
   // Value calculated using torch.nn.Conv2d().
-  REQUIRE(arma::accu(output) == Approx(-647.6369628906).epsilon(1e-5));
+  REQUIRE(accu(output) == Approx(-647.6369628906).epsilon(1e-5));
 
   arma::mat delta;
   delta.set_size(8, 3);
   layer.Backward(input, output, output, delta);
-  REQUIRE(arma::accu(delta) == Approx(686.7855224609).epsilon(1e-5));
+  REQUIRE(accu(delta) == Approx(686.7855224609).epsilon(1e-5));
 }
 
 /**
@@ -104,7 +104,7 @@ TEST_CASE("GroupedConvolutionEquivalenceTest", "[ANNLayerTest]")
   layerWeights(15) = -0.2283206;
   layerWeights(16) = 0.3204123974;
   layerWeights(17) = 0.2334779799;
-  layer.SetWeights(layerWeights.memptr());
+  layer.SetWeights(layerWeights);
   output.set_size(layer.OutputSize(), 3);
 
   GroupedConvolution layerG(2, 2, 2, 1, 1, 1, 0, 0);
@@ -129,7 +129,7 @@ TEST_CASE("GroupedConvolutionEquivalenceTest", "[ANNLayerTest]")
   layerWeightsG(15) = -0.2283206;
   layerWeightsG(16) = 0.3204123974;
   layerWeightsG(17) = 0.2334779799;
-  layerG.SetWeights(layerWeightsG.memptr());
+  layerG.SetWeights(layerWeightsG);
   outputG.set_size(layerG.OutputSize(), 3);
 
   layer.Forward(input, output);
@@ -137,8 +137,8 @@ TEST_CASE("GroupedConvolutionEquivalenceTest", "[ANNLayerTest]")
 
   // Value calculated using torch.nn.Conv2d().
   CheckMatrices(output, outputG);
-  REQUIRE(arma::accu(output) == Approx(12.6755657196).epsilon(1e-5));
-  REQUIRE(arma::accu(outputG) == Approx(12.6755657196).epsilon(1e-5));
+  REQUIRE(accu(output) == Approx(12.6755657196).epsilon(1e-5));
+  REQUIRE(accu(outputG) == Approx(12.6755657196).epsilon(1e-5));
 
   arma::mat delta, deltaG;
   delta.set_size(8, 3);
@@ -147,8 +147,8 @@ TEST_CASE("GroupedConvolutionEquivalenceTest", "[ANNLayerTest]")
   layerG.Backward(input, outputG, outputG, deltaG);
 
   CheckMatrices(delta, deltaG);
-  REQUIRE(arma::accu(delta) == Approx(-1.9237523079).epsilon(1e-5));
-  REQUIRE(arma::accu(deltaG) == Approx(-1.9237523079).epsilon(1e-5));
+  REQUIRE(accu(delta) == Approx(-1.9237523079).epsilon(1e-5));
+  REQUIRE(accu(deltaG) == Approx(-1.9237523079).epsilon(1e-5));
 }
 
 TEST_CASE("EdgeCaseFailGroupedConvolutionTest", "[ANNLayerTest]")
@@ -212,7 +212,7 @@ TEST_CASE("NonSquareGroupedConvolutionTest", "[ANNLayerTest]")
   module1.InputDimensions() = std::vector<size_t>({ 7, 7 });
   module1.ComputeOutputDimensions();
   arma::mat weights1(module1.WeightSize(), 1);
-  module1.SetWeights(weights1.memptr());
+  module1.SetWeights(weights1);
 
   arma::mat data(49, 10, arma::fill::randu);
   arma::mat forwardResult(module1.OutputSize(), 10, arma::fill::zeros);

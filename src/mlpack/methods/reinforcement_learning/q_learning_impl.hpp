@@ -106,7 +106,7 @@ arma::Col<size_t> QLearning<
 {
   // Take best possible action at a particular instance.
   arma::Col<size_t> bestActions(actionValues.n_cols);
-  arma::rowvec maxActionValues = arma::max(actionValues, 0);
+  arma::rowvec maxActionValues = max(actionValues, 0);
   for (size_t i = 0; i < actionValues.n_cols; ++i)
   {
     bestActions(i) = arma::as_scalar(
@@ -271,7 +271,7 @@ void QLearning<
   arma::mat projDistUpper = nextDist % (u - b);
   arma::mat projDistLower = nextDist % (b - l);
 
-  arma::mat projDist = arma::zeros<arma::mat>(arma::size(nextDist));
+  arma::mat projDist = zeros<arma::mat>(arma::size(nextDist));
   for (size_t batchNo = 0; batchNo < batchSize; batchNo++)
   {
     for (size_t j = 0; j < atomSize; j++)
@@ -282,7 +282,7 @@ void QLearning<
   }
   arma::mat dists;
   learningNetwork.Forward(sampledStates, dists);
-  arma::mat lossGradients = arma::zeros<arma::mat>(arma::size(dists));
+  arma::mat lossGradients = zeros<arma::mat>(arma::size(dists));
   for (size_t i = 0; i < batchSize; ++i)
   {
     lossGradients(sampledActions[i].action * atomSize, i,

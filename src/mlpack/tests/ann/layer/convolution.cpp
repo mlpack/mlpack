@@ -77,7 +77,7 @@ TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
   module1.ComputeOutputDimensions();
   arma::mat weights1(module1.WeightSize(), 1);
   REQUIRE(weights1.n_elem == 10);
-  module1.SetWeights(weights1.memptr());
+  module1.SetWeights(weights1);
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 48, 49);
@@ -85,7 +85,7 @@ TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
   module1.Parameters().zeros();
   module1.Forward(input, output);
 
-  REQUIRE(arma::accu(output) == 0);
+  REQUIRE(accu(output) == 0);
   REQUIRE(output.n_rows == 25);
   REQUIRE(output.n_cols == 1);
 
@@ -100,7 +100,7 @@ TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
   module2.ComputeOutputDimensions();
   arma::mat weights2(module2.WeightSize(), 1);
   REQUIRE(weights2.n_elem == 10);
-  module2.SetWeights(weights2.memptr());
+  module2.SetWeights(weights2);
 
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 48, 49);
@@ -108,7 +108,7 @@ TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
   module2.Parameters().zeros();
   module2.Forward(input, output);
 
-  REQUIRE(arma::accu(output) == 0);
+  REQUIRE(accu(output) == 0);
   REQUIRE(output.n_rows == 49);
   REQUIRE(output.n_cols == 1);
 
@@ -218,7 +218,7 @@ TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
   layer.InputDimensions() = std::vector<size_t>({ 4, 1, 2 });
   layer.ComputeOutputDimensions();
   arma::mat layerWeights(layer.WeightSize(), 1);
-  layer.SetWeights(layerWeights.memptr());
+  layer.SetWeights(layerWeights);
   output.set_size(layer.OutputSize(), 3);
 
   // Set weights to 1.0 and bias to 0.0.
@@ -227,14 +227,14 @@ TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
   layer.Forward(input, output);
 
   // Value calculated using torch.nn.Conv2d().
-  REQUIRE(arma::accu(output) == 4108);
+  REQUIRE(accu(output) == 4108);
 
   // Set bias to one.
   layer.Bias().fill(1.0);
   layer.Forward(input, output);
 
   // Value calculated using torch.nn.Conv2d().
-  REQUIRE(arma::accu(output) == 4156);
+  REQUIRE(accu(output) == 4156);
 }
 
 /**
@@ -250,7 +250,7 @@ TEST_CASE("ConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
   module.InputDimensions() = std::vector<size_t>({ 12, 13, 2 });
   module.ComputeOutputDimensions();
   arma::mat weights(module.WeightSize(), 1);
-  module.SetWeights(weights.memptr());
+  module.SetWeights(weights);
 
   RandomInitialization().Initialize(module.Weight());
   module.Bias().ones();
@@ -290,7 +290,7 @@ TEST_CASE("NoBiasConvolutionLayerTestCase", "[ANNLayerTest]")
   layer.ComputeOutputDimensions();
   REQUIRE(layer.WeightSize() == 8);
   arma::mat layerWeights(layer.WeightSize(), 1);
-  layer.SetWeights(layerWeights.memptr());
+  layer.SetWeights(layerWeights);
   REQUIRE(layer.Bias().n_elem == 0);
   output.set_size(layer.OutputSize(), 3);
 
@@ -300,14 +300,14 @@ TEST_CASE("NoBiasConvolutionLayerTestCase", "[ANNLayerTest]")
   layer.Forward(input, output);
 
   // Value calculated using torch.nn.Conv2d().
-  REQUIRE(arma::accu(output) == 4108);
+  REQUIRE(accu(output) == 4108);
 
   // Set bias to one.
   layer.Bias().fill(1.0);
   layer.Forward(input, output);
 
   // Value calculated using torch.nn.Conv2d().
-  REQUIRE(arma::accu(output) == 4108);
+  REQUIRE(accu(output) == 4108);
 }
 
 /**
@@ -350,18 +350,18 @@ TEST_CASE("AdvancedConvolutionLayerTest", "[ANNLayerTest]")
   layerWeights(15) = -0.2283206;
   layerWeights(16) = 0.3204123974;
   layerWeights(17) = 0.2334779799;
-  layer.SetWeights(layerWeights.memptr());
+  layer.SetWeights(layerWeights);
   output.set_size(layer.OutputSize(), 3);
 
   layer.Forward(input, output);
 
   // Value calculated using torch.nn.Conv2d().
-  REQUIRE(arma::accu(output) == Approx(12.6755657196).epsilon(1e-5));
+  REQUIRE(accu(output) == Approx(12.6755657196).epsilon(1e-5));
 
   arma::mat delta;
   delta.set_size(8, 3);
   layer.Backward(input, output, output, delta);
-  REQUIRE(arma::accu(delta) == Approx(-1.9237523079).epsilon(1e-5));
+  REQUIRE(accu(delta) == Approx(-1.9237523079).epsilon(1e-5));
 }
 
 /**
@@ -428,18 +428,18 @@ TEST_CASE("AdvancedConvolutionLayerWithStrideTest", "[ANNLayerTest]")
   layerWeights(15) = -0.12563613;
   layerWeights(16) = -0.1114468053;
   layerWeights(17) = -0.3029643595;
-  layer.SetWeights(layerWeights.memptr());
+  layer.SetWeights(layerWeights);
   output.set_size(layer.OutputSize(), 3);
 
   layer.Forward(input, output);
 
   // Value calculated using torch.nn.Conv2d().
-  REQUIRE(arma::accu(output) == Approx(364.7379150391).epsilon(1e-5));
+  REQUIRE(accu(output) == Approx(364.7379150391).epsilon(1e-5));
 
   arma::mat delta;
   delta.set_size(32, 3);
   layer.Backward(input, output, output, delta);
-  REQUIRE(arma::accu(delta) == Approx(115.3515701294).epsilon(1e-5));
+  REQUIRE(accu(delta) == Approx(115.3515701294).epsilon(1e-5));
 }
 
 // Make a simple convolutional layer with non-square filters, and make sure the
@@ -451,7 +451,7 @@ TEST_CASE("NonSquareConvolutionTest", "[ANNLayerTest]")
   module1.InputDimensions() = std::vector<size_t>({ 7, 7 });
   module1.ComputeOutputDimensions();
   arma::mat weights1(module1.WeightSize(), 1);
-  module1.SetWeights(weights1.memptr());
+  module1.SetWeights(weights1);
 
   arma::mat data(49, 10, arma::fill::randu);
   arma::mat forwardResult(module1.OutputSize(), 10, arma::fill::zeros);

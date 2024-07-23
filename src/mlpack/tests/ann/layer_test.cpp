@@ -15,9 +15,13 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_ENABLE_ANN_SERIALIZATION
+  #define MLPACK_ENABLE_ANN_SERIALIZATION
+#endif
 
 #include "layer/adaptive_max_pooling.cpp"
 #include "layer/adaptive_mean_pooling.cpp"
+#include "layer/add.cpp"
 #include "layer/add_merge.cpp"
 #include "layer/alpha_dropout.cpp"
 #include "layer/batch_norm.cpp"
@@ -35,6 +39,7 @@
 #include "layer/log_softmax.cpp"
 #include "layer/max_pooling.cpp"
 #include "layer/mean_pooling.cpp"
+#include "layer/nearest_interpolation.cpp"
 #include "layer/padding.cpp"
 #include "layer/parametric_relu.cpp"
 #include "layer/relu6.cpp"

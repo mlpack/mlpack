@@ -18,7 +18,7 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename MatType>
+template<typename DistanceType, typename MatType>
 class MidpointSpaceSplit
 {
  public:

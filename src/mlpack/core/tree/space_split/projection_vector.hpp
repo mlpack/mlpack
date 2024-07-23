@@ -54,9 +54,9 @@ class AxisParallelProjVector
    * @param bound Bound to be projected.
    * @return Range of projected values.
    */
-  template<typename MetricType, typename ElemType>
+  template<typename DistanceType, typename ElemType>
   RangeType<ElemType> Project(
-      const HRectBound<MetricType, ElemType>& bound) const
+      const HRectBound<DistanceType, ElemType>& bound) const
   {
     return bound[dim];
   }
@@ -67,9 +67,9 @@ class AxisParallelProjVector
    * @param bound Bound to be projected.
    * @return Range of projected values.
    */
-  template<typename MetricType, typename VecType>
-  RangeType<typename VecType::elem_type> Project(
-      const BallBound<MetricType, VecType>& bound) const
+  template<typename DistanceType, typename ElemType, typename VecType>
+  RangeType<ElemType> Project(
+      const BallBound<DistanceType, ElemType, VecType>& bound) const
   {
     return bound[dim];
   }
@@ -128,11 +128,10 @@ class ProjVector
    * @param bound Bound to be projected.
    * @return Range of projected values.
    */
-  template<typename MetricType, typename VecType>
-  RangeType<typename VecType::elem_type> Project(
-      const BallBound<MetricType, VecType>& bound) const
+  template<typename DistanceType, typename ElemType, typename VecType>
+  RangeType<ElemType> Project(
+      const BallBound<DistanceType, ElemType, VecType>& bound) const
   {
-    typedef typename VecType::elem_type ElemType;
     const double center = Project(bound.Center());
     const ElemType radius = bound.Radius();
     return RangeType<ElemType>(center - radius, center + radius);

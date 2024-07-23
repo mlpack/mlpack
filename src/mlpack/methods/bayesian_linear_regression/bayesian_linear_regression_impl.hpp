@@ -67,58 +67,22 @@ BayesianLinearRegression<ModelMatType>::Train(
 }
 
 template<typename ModelMatType>
-template<typename MatType, typename ResponsesType, typename, typename, typename>
-inline
-typename BayesianLinearRegression<ModelMatType>::ElemType
-BayesianLinearRegression<ModelMatType>::Train(
-    const MatType& data,
-    const ResponsesType& responses)
-{
-  return Train(data, responses, this->centerData, this->scaleData,
-      this->maxIterations, this->tolerance);
-}
-
-template<typename ModelMatType>
 template<typename MatType, typename ResponsesType, typename, typename>
 inline
 typename BayesianLinearRegression<ModelMatType>::ElemType
 BayesianLinearRegression<ModelMatType>::Train(
     const MatType& data,
     const ResponsesType& responses,
-    const bool centerData)
+    const std::optional<bool> centerData,
+    const std::optional<bool> scaleData,
+    const std::optional<size_t> maxIterations)
 {
-  return Train(data, responses, centerData, this->scaleData,
-      this->maxIterations, this->tolerance);
-}
-
-template<typename ModelMatType>
-template<typename MatType, typename ResponsesType, typename, typename>
-inline
-typename BayesianLinearRegression<ModelMatType>::ElemType
-BayesianLinearRegression<ModelMatType>::Train(
-    const MatType& data,
-    const ResponsesType& responses,
-    const bool centerData,
-    const bool scaleData)
-{
-  return Train(data, responses, centerData, scaleData, this->maxIterations,
-      this->tolerance);
-}
-
-template<typename ModelMatType>
-template<typename MatType, typename ResponsesType, typename, typename>
-inline
-typename BayesianLinearRegression<ModelMatType>::ElemType
-BayesianLinearRegression<ModelMatType>::Train(
-    const MatType& data,
-    const ResponsesType& responses,
-    const bool centerData,
-    const bool scaleData,
-    const size_t maxIterations)
-{
-  return Train(data, responses, centerData, scaleData, maxIterations,
-      this->tolerance);
-}
+  return Train(data, responses,
+       (centerData.has_value()) ? centerData.value() :  this->centerData,
+       (scaleData.has_value()) ?   scaleData.value() :  this->scaleData,
+       (maxIterations.has_value()) ? maxIterations.value() : this->maxIterations,
+       this->tolerance);
+ }
 
 template<typename ModelMatType>
 template<typename MatType, typename ResponsesType, typename, typename>
@@ -221,22 +185,22 @@ inline void BayesianLinearRegression<ModelMatType>::Predict(
   if (!centerData && !scaleData)
   {
     stddev = std::sqrt(Variance() +
-        arma::accu(point % (matCovariance * point)));
-    inner = arma::accu(point % (matCovariance * point));
+        accu(point % (matCovariance * point)));
+    inner = accu(point % (matCovariance * point));
   }
   else if (centerData && !scaleData)
   {
-    inner = arma::accu((point - dataOffset) %
+    inner = accu((point - dataOffset) %
         (matCovariance * (point - dataOffset)));
   }
   else if (!centerData && scaleData)
   {
-    inner = arma::accu((point / dataScale) %
+    inner = accu((point / dataScale) %
         (matCovariance * (point / dataScale)));
   }
   else
   {
-    inner = arma::accu(((point - dataOffset) / dataScale) %
+    inner = accu(((point - dataOffset) / dataScale) %
         (matCovariance * ((point - dataOffset) / dataScale)));
   }
 

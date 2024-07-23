@@ -20,14 +20,20 @@ namespace mlpack {
 
 // Predeclare classes for CosineNodeQueue typedef.
 class CompareCosineNode;
+
+template<typename MatType>
 class CosineTree;
 
 // CosineNodeQueue typedef.
-typedef std::vector<CosineTree*> CosineNodeQueue;
+template<typename MatType = arma::mat>
+using CosineNodeQueue = std::vector<CosineTree<MatType>*>;
 
+template<typename MatType = arma::mat>
 class CosineTree
 {
  public:
+  typedef typename GetDenseColType<MatType>::type VecType;
+
   /**
    * CosineTree constructor for the root node of the tree. It initializes the
    * necessary variables required for splitting of the node, and building the
@@ -36,7 +42,7 @@ class CosineTree
    *
    * @param dataset Matrix for which cosine tree is constructed.
    */
-  CosineTree(const arma::mat& dataset);
+  CosineTree(const MatType& dataset);
 
   /**
    * CosineTree constructor for nodes other than the root node of the tree. It
@@ -63,7 +69,7 @@ class CosineTree
    * @param epsilon Error tolerance fraction for calculated subspace.
    * @param delta Cumulative probability for Monte Carlo error lower bound.
    */
-  CosineTree(const arma::mat& dataset,
+  CosineTree(const MatType& dataset,
              const double epsilon,
              const double delta);
 
@@ -110,10 +116,10 @@ class CosineTree
    * @param newBasisVector Orthonormalized centroid of the node.
    * @param addBasisVector Address to additional basis vector.
    */
-  void ModifiedGramSchmidt(CosineNodeQueue& treeQueue,
-                           arma::vec& centroid,
-                           arma::vec& newBasisVector,
-                           arma::vec* addBasisVector = NULL);
+  void ModifiedGramSchmidt(CosineNodeQueue<MatType>& treeQueue,
+                           VecType& centroid,
+                           VecType& newBasisVector,
+                           VecType* addBasisVector = NULL);
 
   /**
    * Estimates the squared error of the projection of the input node's matrix
@@ -128,16 +134,16 @@ class CosineTree
    * @param addBasisVector2 Address to second additional basis vector.
    */
   double MonteCarloError(CosineTree* node,
-                         CosineNodeQueue& treeQueue,
-                         arma::vec* addBasisVector1 = NULL,
-                         arma::vec* addBasisVector2 = NULL);
+                         CosineNodeQueue<MatType>& treeQueue,
+                         VecType* addBasisVector1 = NULL,
+                         VecType* addBasisVector2 = NULL);
 
   /**
    * Constructs the final basis matrix, after the cosine tree construction.
    *
    * @param treeQueue Priority queue of cosine nodes.
    */
-  void ConstructBasis(CosineNodeQueue& treeQueue);
+  void ConstructBasis(CosineNodeQueue<MatType>& treeQueue);
 
   /**
    * This function splits the cosine node into two children based on the cosines
@@ -153,7 +159,8 @@ class CosineTree
    * randomly generated values in the range [0, 1].
    */
   void ColumnSamplesLS(std::vector<size_t>& sampledIndices,
-                       arma::vec& probabilities, size_t numSamples);
+                       VecType& probabilities,
+                       size_t numSamples);
 
   /**
    * Sample a point from the Length-Squared distribution of the cosine node. The
@@ -175,7 +182,9 @@ class CosineTree
    * @param start Starting index of the distribution interval to search in.
    * @param end Ending index of the distribution interval to search in.
    */
-  size_t BinarySearch(arma::vec& cDistribution, double value, size_t start,
+  size_t BinarySearch(VecType& cDistribution,
+                      double value,
+                      size_t start,
                       size_t end);
 
   /**
@@ -185,7 +194,7 @@ class CosineTree
    *
    * @param cosines Vector to store the cosine values in.
    */
-  void CalculateCosines(arma::vec& cosines);
+  void CalculateCosines(VecType& cosines);
 
   /**
    * Calculate centroid of the columns present in the node. The calculated
@@ -194,10 +203,10 @@ class CosineTree
   void CalculateCentroid();
 
   //! Returns the basis of the constructed subspace.
-  void GetFinalBasis(arma::mat& finalBasis) { finalBasis = basis; }
+  void GetFinalBasis(MatType& finalBasis) { finalBasis = basis; }
 
   //! Get pointer to the dataset matrix.
-  const arma::mat& GetDataset() const { return *dataset; }
+  const MatType& GetDataset() const { return *dataset; }
 
   //! Get the indices of columns in the node.
   std::vector<size_t>& VectorIndices() { return indices; }
@@ -208,13 +217,13 @@ class CosineTree
   double L2Error() const { return l2Error; }
 
   //! Get pointer to the centroid vector.
-  arma::vec& Centroid() { return centroid; }
+  VecType& Centroid() { return centroid; }
 
   //! Set the basis vector of the node.
-  void BasisVector(arma::vec& bVector) { this->basisVector = bVector; }
+  void BasisVector(VecType& bVector) { this->basisVector = bVector; }
 
   //! Get the basis vector of the node.
-  arma::vec& BasisVector() { return basisVector; }
+  VecType& BasisVector() { return basisVector; }
 
   //! Get pointer to the parent node.
   CosineTree* Parent() const { return parent; }
@@ -242,11 +251,11 @@ class CosineTree
 
  private:
   //! Matrix for which cosine tree is constructed.
-  const arma::mat* dataset;
+  const MatType* dataset;
   //! Cumulative probability for Monte Carlo error lower bound.
   double delta;
   //! Subspace basis of the input dataset.
-  arma::mat basis;
+  MatType basis;
   //! Parent of the node.
   CosineTree* parent;
   //! Left child of the node.
@@ -256,11 +265,11 @@ class CosineTree
   //! Indices of columns of input matrix in the node.
   std::vector<size_t> indices;
   //! L2-norm squared of columns in the node.
-  arma::vec l2NormsSquared;
+  VecType l2NormsSquared;
   //! Centroid of columns of input matrix in the node.
-  arma::vec centroid;
+  VecType centroid;
   //! Orthonormalized basis vector of the node.
-  arma::vec basisVector;
+  VecType basisVector;
   //! Index of split point of cosine node.
   size_t splitPointIndex;
   //! Number of columns of input matrix in the node.
@@ -277,7 +286,9 @@ class CompareCosineNode
 {
  public:
   // Comparison function for construction of priority queue.
-  bool operator() (const CosineTree* a, const CosineTree* b) const
+  template<typename MatType>
+  bool operator() (const CosineTree<MatType>* a,
+                   const CosineTree<MatType>* b) const
   {
     return a->L2Error() < b->L2Error();
   }

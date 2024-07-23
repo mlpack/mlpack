@@ -32,7 +32,7 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCDimensionsTest",
                  "[LCCMainTest][BindingTests]")
 {
   arma::mat x;
-  x.load("mnist_first250_training_4s_and_9s.arm");
+  x.load("mnist_first250_training_4s_and_9s.csv");
   int rows = x.n_rows, cols = x.n_cols;
   arma::mat t = x;
   int atoms = 10;
@@ -58,7 +58,7 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCOutputModelTest",
                  "[LCCMainTest][BindingTests]")
 {
   arma::mat x;
-  x.load("mnist_first250_training_4s_and_9s.arm");
+  x.load("mnist_first250_training_4s_and_9s.csv");
   arma::mat t = x;
 
   SetInputParam("training", std::move(x));
@@ -71,8 +71,8 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCOutputModelTest",
   // Get the encoded output and dictionary after training.
   arma::mat initCodes = std::move(params.Get<arma::mat>("codes"));
   arma::mat initDict = std::move(params.Get<arma::mat>("dictionary"));
-  LocalCoordinateCoding* outputModel =
-      std::move(params.Get<LocalCoordinateCoding*>("output_model"));
+  LocalCoordinateCoding<>* outputModel =
+      std::move(params.Get<LocalCoordinateCoding<>*>("output_model"));
 
   ResetSettings();
 
@@ -129,7 +129,7 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCTrainAndTestDataDimTest",
                  "[LCCMainTest][BindingTests]")
 {
   arma::mat x;
-  x.load("mnist_first250_training_4s_and_9s.arm");
+  x.load("mnist_first250_training_4s_and_9s.csv");
   arma::mat t = x;
 
   t.shed_rows(1, 2);
@@ -150,7 +150,7 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCTrainAndInputModelTest",
                  "[LCCMainTest][BindingTests]")
 {
   arma::mat x;
-  x.load("mnist_first250_training_4s_and_9s.arm");
+  x.load("mnist_first250_training_4s_and_9s.csv");
 
   SetInputParam("training", x);
   SetInputParam("atoms", (int) 10);
@@ -158,8 +158,8 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCTrainAndInputModelTest",
 
   RUN_BINDING();
 
-  LocalCoordinateCoding* outputModel =
-      std::move(params.Get<LocalCoordinateCoding*>("output_model"));
+  LocalCoordinateCoding<>* outputModel =
+      std::move(params.Get<LocalCoordinateCoding<>*>("output_model"));
 
   // No need to input training data again.
   SetInputParam("input_model", std::move(outputModel));
@@ -175,7 +175,7 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCTrainedModelDimTest",
                  "[LCCMainTest][BindingTests]")
 {
   arma::mat x;
-  x.load("mnist_first250_training_4s_and_9s.arm");
+  x.load("mnist_first250_training_4s_and_9s.csv");
   arma:: mat t = x;
   t.shed_rows(1, 2);
 
@@ -185,8 +185,8 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCTrainedModelDimTest",
 
   RUN_BINDING();
 
-  LocalCoordinateCoding* outputModel =
-      std::move(params.Get<LocalCoordinateCoding*>("output_model"));
+  LocalCoordinateCoding<>* outputModel =
+      std::move(params.Get<LocalCoordinateCoding<>*>("output_model"));
 
   SetInputParam("input_model", std::move(outputModel));
   SetInputParam("test", std::move(t));

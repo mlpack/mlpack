@@ -49,7 +49,7 @@ class CompleteIncrementalTermination
     tPolicy.Initialize(V);
 
     // Get the number of non-zero entries.
-    incrementalIndex = arma::accu(V != 0);
+    incrementalIndex = accu(V != 0);
     iteration = 0;
   }
 
@@ -59,7 +59,8 @@ class CompleteIncrementalTermination
    *
    * @param V Input matrix to be factorized.
    */
-  void Initialize(const arma::sp_mat& V)
+  template<typename eT>
+  void Initialize(const arma::SpMat<eT>& V)
   {
     tPolicy.Initialize(V);
 
@@ -75,7 +76,8 @@ class CompleteIncrementalTermination
    * @param W Basis matrix of output.
    * @param H Encoding matrix of output.
    */
-  bool IsConverged(arma::mat& W, arma::mat& H)
+  template<typename MatType>
+  bool IsConverged(MatType& W, MatType& H)
   {
     // Increment iteration count.
     iteration++;
@@ -89,7 +91,7 @@ class CompleteIncrementalTermination
   }
 
   //! Get current value of residue
-  const double& Index() const { return tPolicy.Index(); }
+  double Index() const { return tPolicy.Index(); }
 
   //! Get current iteration count
   const size_t& Iteration() const { return iteration; }

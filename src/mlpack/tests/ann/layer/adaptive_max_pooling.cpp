@@ -48,13 +48,13 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   module1.Training() = true;
   module1.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
-  REQUIRE(arma::accu(output) == 28);
+  REQUIRE(accu(output) == 28);
   REQUIRE(output.n_elem == 4);
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   delta.set_size(12, 1);
   module1.Backward(input, output, output, delta);
-  REQUIRE(arma::accu(delta) == 28.0);
+  REQUIRE(accu(delta) == 28.0);
 
   // For Square input.
   input = arma::mat(9, 1);
@@ -73,13 +73,13 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   module2.Training() = true;
   module2.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
-  REQUIRE(arma::accu(output) == 15.0);
+  REQUIRE(accu(output) == 15.0);
   REQUIRE(output.n_elem == 2);
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   delta.set_size(9, 1);
   module2.Backward(input, output, output, delta);
-  REQUIRE(arma::accu(delta) == 15.0);
+  REQUIRE(accu(delta) == 15.0);
 
   // For Square input.
   input = arma::mat(16, 1);
@@ -98,13 +98,13 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   module3.Training() = true;
   module3.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
-  REQUIRE(arma::accu(output) == 30.0);
+  REQUIRE(accu(output) == 30.0);
   REQUIRE(output.n_elem == 9);
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   delta.set_size(16, 1);
   module3.Backward(input, output, output, delta);
-  REQUIRE(arma::accu(delta) == 30.0);
+  REQUIRE(accu(delta) == 30.0);
 
   // For Rectangular input.
   input = arma::mat(20, 1);
@@ -121,11 +121,11 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   module4.Training() = true;
   module4.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
-  REQUIRE(arma::accu(output) == 2);
+  REQUIRE(accu(output) == 2);
   REQUIRE(output.n_elem == 4);
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   delta.set_size(20, 1);
   module4.Backward(input, output, output, delta);
-  REQUIRE(arma::accu(delta) == 2.0);
+  REQUIRE(accu(delta) == 2.0);
 }

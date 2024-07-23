@@ -7,7 +7,7 @@ runtime options that can be used to control the behavior of the tree.
 
 Decision trees are useful for classifying points with _discrete labels_ (i.e.
 `0`, `1`, `2`).  For predicting _continuous values_ (regression), see
-[`DecisionTreeRegressor`](#decision_tree_regressor). <!-- TODO: fix link -->
+[`DecisionTreeRegressor`](decision_tree_regressor.md).
 
 #### Simple usage example:
 
@@ -46,9 +46,9 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 #### See also:
 
- * [`DecisionTreeRegressor`](#decision_tree_regressor) <!-- TODO: fix link! -->
- * [Random forests](#random_forests) <!-- TODO: fix link! -->
- * [mlpack classifiers](#mlpack_classifiers) <!-- TODO: fix link! -->
+ * [`DecisionTreeRegressor`](decision_tree_regressor.md)
+ * [Random forests](random_forest.md)
+ * [mlpack classifiers](../../index.md#classification-algorithms)
  * [Decision tree on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree)
  * [Decision tree learning on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
 
@@ -75,19 +75,12 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 #### Constructor Parameters:
 
-<!-- TODOs for table below:
-    * better link for column-major matrices
-    * better link for working with categorical data in straightforward terms
-    * update matrices.md to include a section on labels and NormalizeLabels()
-    * add a bit about instance weights in matrices.md
- -->
-
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
-| `datasetInfo` | [`data::DatasetInfo`](../../tutorials/datasetmapper.md) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
-| `weights` | [`arma::rowvec`]('../matrices.md') | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
+| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
+| `datasetInfo` | [`data::DatasetInfo`](../load_save.md#loading-categorical-data) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `weights` | [`arma::rowvec`](../matrices.md) | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `minLeafSize` | `size_t` | Minimum number of points in each leaf node. | `10` |
 | `minGainSplit` | `double` | Minimum gain for a node to split. | `1e-7` |
@@ -176,7 +169,7 @@ to make class predictions for new data.
 | _single-point_ | `prediction` | `size_t&` | `size_t` to store class prediction into. |
 | _single-point_ | `probabilitiesVec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into.  Will be set to length `numClasses`. |
 ||||
-| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
+| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md#representing-data-in-mlpack) points for classification. |
 | _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into.  Will be set to length `data.n_cols`. |
 | _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes, number of columns will be equal to `data.n_cols`). |
 
@@ -186,13 +179,11 @@ that is used should be the same type that was used for training.
 
 ### Other Functionality
 
-<!-- TODO: we should point directly to the documentation of those functions -->
-
- * A `DecisionTree` can be serialized with [`data::Save()`](../formats.md) and
-   [`data::Load()`](../formats.md).
+ * A `DecisionTree` can be serialized with
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
  * `tree.NumChildren()` will return a `size_t` indicating the number of children
-   in the node `tree`.
+   in the node `tree`. If there was no split, zero is returned. 
 
  * `tree.Child(i)` will return a `DecisionTree` object representing the `i`th
    child of the node `tree`.
@@ -214,7 +205,7 @@ See also the [simple usage example](#simple-usage-example) for a trivial use of
 
 ---
 
-Train a decision tree on mixed categorical data:
+Train a decision tree on mixed categorical data and save it:
 
 ```c++
 // Load a categorical dataset.
@@ -248,6 +239,9 @@ arma::vec secondProbabilities;
 tree.Classify(testDataset.col(1), secondPrediction, secondProbabilities);
 std::cout << "Class probabilities of second test point: " <<
     secondProbabilities.t();
+
+// Save the tree to `tree.bin`.
+mlpack::data::Save("tree.bin", "tree", tree);
 ```
 
 ---
@@ -276,7 +270,7 @@ else
 
 See also the following fully-working examples:
 
- - [Loan default prediction with `DecisionTree`](https://github.com/mlpack/examples/blob/master/loan_default_prediction_with_decision_tree/loan-default-prediction-with-decision-tree-cpp.ipynb)
+ - [Loan default prediction with `DecisionTree`](https://github.com/mlpack/examples/blob/master/jupyter_notebook/decision_tree/loan_default_prediction/loan-default-prediction-cpp.ipynb)
 
 ### Advanced Functionality: Template Parameters
 
@@ -315,7 +309,7 @@ The `DecisionTree` class also supports several template parameters, which can
 be used for custom behavior during learning.  The full signature of the class is
 as follows:
 
-```c++
+```
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
@@ -331,7 +325,7 @@ DecisionTree<FitnessFunction,
    data dimensions
  * `DimensionSelectionType`: the strategy used for proposing dimensions to
    attempt to split on
- * `NoRecursion`: a boolean indicating whether or not to build a tree or a stump
+ * `NoRecursion`: a boolean indicating whether to build a tree or a stump
    (one level tree)
 
 Below, details are given for the requirements of each of these template types.
@@ -389,8 +383,8 @@ class CustomFitnessFunction
    will select a split randomly between the minimum and maximum values of a
    dimension.  It is very efficient but does not yield splits that maximize
    the gain.  (Used by the `ExtraTrees` variant of
-   [`RandomForest`](#random_forest).) <!-- TODO: fix link! -->
- * A custom class must take a [`FitnessFunction`](#fitness-function) as a
+   [`RandomForest`](random_forest.md).)
+ * A custom class must take a [`FitnessFunction`](#fitnessfunction) as a
    template parameter, implement three functions, and have an internal
    structure `AuxiliarySplitInfo` that is used at classification time:
 
@@ -433,9 +427,10 @@ class CustomNumericSplit
                        arma::vec& splitInfo,
                        AuxiliarySplitInfo& aux);
 
-  // Return the number of children for a given split (stored as the single
-  // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
-  size_t NumChildren(const double& splitInfo,
+  // Return the number of children for a given split. If there was no split, 
+  // return zero. `splitInfo` and `aux` contain the split information, as set 
+  // in `SplitIfBetter`. 
+  size_t NumChildren(const arma::vec& splitInfo,
                      const AuxiliarySplitInfo& aux);
 
   // Given a point with value `point`, and split information `splitInfo` and
@@ -461,11 +456,21 @@ class CustomNumericSplit
 
  * Specifies the strategy to be used during training when splitting a
     categorical feature.
- * The `AllCategoricalSplit` _(default)_ is available for drop-in usage and
-   splits all categories into their own node.
- * A custom class must take a [`FitnessFunction`](#fitness-function) as a
-   template parameter, implement three functions, and have an internal structure
-   `AuxiliarySplitInfo` that is used at classification time:
+ * The `AllCategoricalSplit` _(default)_ and `BestBinaryCategoricalSplit` are~
+   available for drop-in usage.
+   
+ * `AllCategoricalSplit`, the default ID3 split
+   algorithm, splits all categories into their own node. This variant is simple,
+   and has complexity `O(n)`, where `n` is the number of samples.
+   
+ * `BestBinaryCategoricalSplit` is the preferred algorithm of
+   [the CART system](https://www.taylorfrancis.com/books/mono/10.1201/9781315139470/classification-regression-trees-leo-breiman-jerome-friedman-olshen-charles-stone).
+   It will find the the best (entropy-minimizing) binary partition of the
+   categories. This algorithm has complexity `O(n lg n)` in the case of binary
+   outcomes, but is exponential in the number of _categories_ when there are
+   more than two _classes_.~
+   - ***Note***: `BestBinaryCategoricalSplit` should not be chosen when there
+     are multiple classes and many categories.
 
 ```c++
 template<typename FitnessFunction>
@@ -489,7 +494,7 @@ class CustomCategoricalSplit
   // If a new best split is found, then `splitInfo` and `aux` should be
   // populated with the information that will be needed for
   // `CalculateDirection()` to successfully choose the child for a given point.
-  // `splitInfo` should be set to a vector of length 1.  The format of `aux` is
+  // `splitInfo` should be set to a non-empty vector.  The format of `aux` is
   // arbitrary and is detailed more below.
   //
   // If `UseWeights` is false, the vector `weights` should be ignored.
@@ -510,9 +515,10 @@ class CustomCategoricalSplit
       arma::vec& splitInfo,
       AuxiliarySplitInfo& aux);
 
-  // Return the number of children for a given split (stored as the single
-  // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
-  size_t NumChildren(const double& splitInfo,
+  // Return the number of children for a given split. If there was no split,
+  // return zero. `splitInfo` and `aux` contain the split information, as set
+  // in `SplitIfBetter`.
+  size_t NumChildren(const arma::vec& splitInfo,
                      const AuxiliarySplitInfo& aux);
 
   // Given a point with (categorical) value `point`, and split information
@@ -587,6 +593,6 @@ class CustomDimensionSelect
 
  * A `bool` value that indicates whether a decision tree should be
    constructed recursively.
- * If `true` _(default)_, a full decision tree will be built.
- * If `false`, only the root node will be split (producing a decision
+ * If `true`, only the root node will be split (producing a decision
    stump).
+ * If `false` _(default)_, a full decision tree will be built.

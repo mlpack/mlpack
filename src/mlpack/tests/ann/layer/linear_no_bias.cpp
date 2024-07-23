@@ -30,18 +30,18 @@ TEST_CASE("SimpleLinearNoBiasLayerTest", "[ANNLayerTest]")
   arma::mat weights(10 * 10, 1);
   module.InputDimensions() = std::vector<size_t>({ 10 });
   module.ComputeOutputDimensions();
-  module.SetWeights(weights.memptr());
+  module.SetWeights(weights);
 
   module.Parameters().randu();
 
   // Test the Forward function.
   input = arma::zeros(10, 1);
   module.Forward(input, output);
-  REQUIRE(0 == arma::accu(output));
+  REQUIRE(0 == accu(output));
 
   // Test the Backward function.
   module.Backward(input, output, output, delta);
-  REQUIRE(arma::accu(delta) == 0);
+  REQUIRE(accu(delta) == 0);
 }
 
 /**
@@ -61,7 +61,7 @@ TEST_CASE("JacobianLinearNoBiasLayerTest", "[ANNLayerTest]")
     arma::mat weights(inputElements * outputElements, 1);
     module.InputDimensions() = std::vector<size_t>({ inputElements });
     module.ComputeOutputDimensions();
-    module.SetWeights(weights.memptr());
+    module.SetWeights(weights);
 
     module.Parameters().randu();
 

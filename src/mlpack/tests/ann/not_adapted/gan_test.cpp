@@ -46,7 +46,7 @@ TEST_CASE("GANTest", "[GANNetworkTest]")
   double multiplier = 1;
 
   arma::mat trainData(1, 10000);
-  trainData.imbue( [&]() { return arma::as_scalar(RandNormal(4, 0.5));});
+  trainData.imbue( [&]() { return arma::as_scalar(RandNormal(4, std::sqrt(0.5)));});
   trainData = arma::sort(trainData);
 
   // Create the Discriminator network.
@@ -156,7 +156,7 @@ TEST_CASE("GANMNISTTest", "[GANNetworkTest]")
       << " shuffle = " << shuffle << std::endl;
 
   arma::mat trainData;
-  trainData.load("mnist_first250_training_4s_and_9s.arm");
+  trainData.load("mnist_first250_training_4s_and_9s.csv");
   Log::Info << arma::size(trainData) << std::endl;
 
   trainData = trainData.cols(0, datasetMaxCols - 1);
@@ -297,7 +297,7 @@ TEST_CASE("GANMemorySharingTest", "[GANNetworkTest]")
   bool shuffle = true;
 
   arma::mat trainData(1, 10000);
-  trainData.imbue( [&]() { return arma::as_scalar(RandNormal(4, 0.5));});
+  trainData.imbue( [&]() { return arma::as_scalar(RandNormal(4, std::sqrt(0.5)));});
   trainData = arma::sort(trainData);
 
   // Create the Discriminator network.

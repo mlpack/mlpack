@@ -66,11 +66,9 @@ BINDING_EXAMPLE(
     " parameter.");
 
 // See also...
-BINDING_SEE_ALSO("Fast max-kernel search tutorial (fastmks)",
-    "@doc/tutorials/fastmks.md");
 BINDING_SEE_ALSO("k-nearest-neighbor search", "#knn");
 BINDING_SEE_ALSO("Dual-tree Fast Exact Max-Kernel Search (pdf)",
-    "http://mlpack.org/papers/fmks.pdf");
+    "https://mlpack.org/papers/fmks.pdf");
 BINDING_SEE_ALSO("FastMKS class documentation",
     "@src/mlpack/methods/fastmks/fastmks.hpp");
 
@@ -186,7 +184,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     else if (kernelType == "cosine")
     {
       CosineDistance cd;
-      model->KernelType() = FastMKSModel::COSINE_DISTANCE;
+      model->KernelType() = FastMKSModel::COSINE_SIMILARITY;
       model->BuildModel(timers, std::move(referenceData), cd, single, naive,
           base);
     }

@@ -114,8 +114,7 @@ BINDING_SEE_ALSO("k-nearest-neighbor search", "#knn");
 BINDING_SEE_ALSO("Fast approximate furthest neighbors with data-dependent"
     " candidate selection (pdf)", "http://ratml.org/pub/pdf/2016fast.pdf");
 BINDING_SEE_ALSO("Approximate furthest neighbor in high dimensions (pdf)",
-    "https://pdfs.semanticscholar.org/a4b5/7b9cbf37201fb1d9a56c0f4eefad0466"
-    "9c20.pdf");
+    "https://www.rasmuspagh.net/papers/approx-furthest-neighbor-SISAP15.pdf");
 BINDING_SEE_ALSO("QDAFN class documentation",
     "@src/mlpack/methods/approx_kfn/qdafn.hpp");
 BINDING_SEE_ALSO("DrusillaSelect class documentation",
@@ -338,9 +337,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
       const double averageError = sum(exactDistances.row(0) /
           distances.row(0)) / distances.n_cols;
-      const double minError = arma::min(exactDistances.row(0) /
+      const double minError = min(exactDistances.row(0) /
           distances.row(0));
-      const double maxError = arma::max(exactDistances.row(0) /
+      const double maxError = max(exactDistances.row(0) /
           distances.row(0));
 
       Log::Info << "Average error: " << averageError << "." << endl;

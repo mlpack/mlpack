@@ -592,9 +592,9 @@ TEST_CASE("FastMKSModelCosineTest", "[FastMKSTest]")
 
   FastMKS<CosineDistance> f(referenceData, ck);
 
-  FastMKSModel m(FastMKSModel::COSINE_DISTANCE);
-  FastMKSModel mNaive(FastMKSModel::COSINE_DISTANCE);
-  FastMKSModel mSingle(FastMKSModel::COSINE_DISTANCE);
+  FastMKSModel m(FastMKSModel::COSINE_SIMILARITY);
+  FastMKSModel mNaive(FastMKSModel::COSINE_SIMILARITY);
+  FastMKSModel mSingle(FastMKSModel::COSINE_SIMILARITY);
   util::Timers timers;
 
   m.BuildModel(timers, std::move(referenceCopy1), ck, false, false, 2.0);

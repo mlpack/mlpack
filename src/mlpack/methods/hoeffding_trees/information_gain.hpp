@@ -35,7 +35,7 @@ class HoeffdingInformationGain
     arma::vec splitCounts(counts.n_elem);
     for (size_t i = 0; i < counts.n_cols; ++i)
     {
-      splitCounts[i] = arma::accu(counts.col(i));
+      splitCounts[i] = accu(counts.col(i));
       numElem += splitCounts[i];
     }
 

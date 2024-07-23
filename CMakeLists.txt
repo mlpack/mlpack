@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.6)
 project(mlpack C CXX)
 
-include(CMake/cotire.cmake)
 include(CMake/CheckHash.cmake)
 include(CMake/Autodownload.cmake)
 include(CMake/ConfigureCrossCompile.cmake)
@@ -17,13 +16,14 @@ option(BUILD_TESTS "Build tests. (Note: time consuming!)" OFF)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DOWNLOAD_DEPENDENCIES "Automatically download dependencies if not available." OFF)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
+option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." ON)
 
 # Set minimum library versions required by mlpack.
 #
 # For Armadillo, try to keep the minimum required version less than or equal to
 # what's available on the current Ubuntu LTS or most recent stable RHEL release.
 # See https://github.com/mlpack/mlpack/issues/3033 for some more discussion.
-set(ARMADILLO_VERSION "9.800")
+set(ARMADILLO_VERSION "10.8")
 set(ENSMALLEN_VERSION "2.10.0")
 set(CEREAL_VERSION "1.1.2")
 
@@ -106,13 +106,13 @@ option(MATHJAX
 option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
 enable_testing()
 
-# Set required standard to C++14.
-set(CMAKE_CXX_STANDARD 14)
+# Set required standard to C++17.
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Ensure that GCC is new enough, if the compiler is GCC.
-if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5)
-  message(FATAL_ERROR "GCC version (${CMAKE_CXX_COMPILER_VERSION}) is too old! 5.x or newer is required.")
+if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 8)
+  message(FATAL_ERROR "GCC version (${CMAKE_CXX_COMPILER_VERSION}) is too old! 8.x or newer is required.")
 endif ()
 
 # Include modules in the CMake directory.
@@ -164,7 +164,7 @@ endif ()
 # If we are using MSVC, we need /bigobj.
 if (MSVC)
   set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /Zm200 /Zc:__cplusplus")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /Zc:__cplusplus")
 endif ()
 
 # If we are using MINGW, we need sections and big-obj, otherwise we create too
@@ -249,8 +249,12 @@ if (DEBUG)
 else()
   add_definitions(-DNDEBUG)
   if (NOT MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O3")
+    if (NOT CMAKE_CROSSCOMPILING)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O3")
+    else()
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
+    endif()
   else ()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O3")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /O3")
@@ -283,7 +287,7 @@ endif()
 # Download and compile OpenBLAS if we are cross compiling mlpack for a specific
 # architecture. The function takes the version of OpenBLAS as variable.
 if (CMAKE_CROSSCOMPILING)
-  search_openblas(0.3.13)
+  search_openblas(0.3.26)
 endif()
 
 if (NOT DOWNLOAD_DEPENDENCIES)
@@ -312,14 +316,14 @@ if (NOT DOWNLOAD_DEPENDENCIES)
   find_package(StbImage)
 else()
   find_package(StbImage)
-  if (NOT STB_IMAGE_FOUND)
+  if (NOT StbImage_FOUND)
     get_deps(https://mlpack.org/files/stb.tar.gz stb stb.tar.gz)
     set(STB_IMAGE_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
     find_package(StbImage REQUIRED)
   endif()
 endif()
 
-if (STB_IMAGE_FOUND)
+if (StbImage_FOUND)
   set(STB_AVAILABLE "1")
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
 

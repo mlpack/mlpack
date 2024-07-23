@@ -43,7 +43,7 @@ TEST_CASE("SimpleHardTanHTest", "[ANNLayerTest]")
   output.set_size(5,5);
   // Test the Forward function
   module.Forward(input, output);
-  REQUIRE(arma::accu(output - actualOutput) == Approx(0).epsilon(1e-4));
+  REQUIRE(accu(output - actualOutput) == Approx(0).epsilon(1e-4));
   
   arma::mat delta = {{0  , 1.0, 1.0, 1.0, 0.0},
     {0  , 0  , 0  , 0.0, 0.0},
@@ -57,6 +57,6 @@ TEST_CASE("SimpleHardTanHTest", "[ANNLayerTest]")
   
   //Test the Backward function
   module.Backward(input, output, gy, g);
-  REQUIRE(arma::accu(g - delta) == Approx(0).epsilon(1e-4));
+  REQUIRE(accu(g - delta) == Approx(0).epsilon(1e-4));
 }
 

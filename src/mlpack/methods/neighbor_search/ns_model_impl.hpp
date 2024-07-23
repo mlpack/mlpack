@@ -23,7 +23,7 @@ namespace mlpack {
 //! Train the model with the given options.  For NSWrapper, we ignore the
 //! extra parameters.
 template<typename SortPolicy,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType,
          template<typename RuleType> class DualTreeTraversalType,
@@ -48,7 +48,7 @@ void NSWrapper<
 //! Perform bichromatic neighbor search (i.e. search with a separate query
 //! set).  For NSWrapper, we ignore the extra parameters.
 template<typename SortPolicy,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType,
          template<typename RuleType> class DualTreeTraversalType,
@@ -85,7 +85,7 @@ void NSWrapper<
 //! Perform monochromatic neighbor search (i.e. use the reference set as the
 //! query set).
 template<typename SortPolicy,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType,
          template<typename RuleType> class DualTreeTraversalType,
@@ -105,7 +105,7 @@ void NSWrapper<
 //! Train a model with the given parameters.  This overload uses leafSize but
 //! ignores the other parameters.
 template<typename SortPolicy,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType,
          template<typename RuleType> class DualTreeTraversalType,
@@ -138,7 +138,7 @@ void LeafSizeNSWrapper<
 //! Perform bichromatic search (e.g. search with a separate query set).  This
 //! overload uses the leaf size, but ignores the other parameters.
 template<typename SortPolicy,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType,
          template<typename RuleType> class DualTreeTraversalType,
@@ -576,7 +576,7 @@ void NSModel<SortPolicy>::BuildModel(util::Timers& timers,
       // [Q, R] = qr(randn(d, d));
       // Q = Q * diag(sign(diag(R)));
       arma::mat r;
-      if (arma::qr(q, r, arma::randn<arma::mat>(referenceSet.n_rows,
+      if (arma::qr(q, r, randn<arma::mat>(referenceSet.n_rows,
               referenceSet.n_rows)))
       {
         arma::vec rDiag(r.n_rows);

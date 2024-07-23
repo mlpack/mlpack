@@ -145,8 +145,8 @@ TEST_CASE("UnweightedNumericLearningTest", "[RandomForestTest]")
   dt.Classify(testDataset, dtPredictions);
 
   // Calculate the number of correct points.
-  size_t rfCorrect = arma::accu(rfPredictions == testLabels);
-  size_t dtCorrect = arma::accu(dtPredictions == testLabels);
+  size_t rfCorrect = accu(rfPredictions == testLabels);
+  size_t dtCorrect = accu(dtPredictions == testLabels);
 
   REQUIRE(rfCorrect >= dtCorrect * 0.9);
   REQUIRE(rfCorrect >= size_t(0.7 * testDataset.n_cols));
@@ -201,8 +201,8 @@ TEST_CASE("WeightedNumericLearningTest", "[RandomForestTest]")
   dt.Classify(testDataset, dtPredictions);
 
   // Calculate the number of correct points.
-  size_t rfCorrect = arma::accu(rfPredictions == testLabels);
-  size_t dtCorrect = arma::accu(dtPredictions == testLabels);
+  size_t rfCorrect = accu(rfPredictions == testLabels);
+  size_t dtCorrect = accu(dtPredictions == testLabels);
 
   REQUIRE(rfCorrect >= dtCorrect * 0.8);
   REQUIRE(rfCorrect >= size_t(0.7 * testDataset.n_cols));
@@ -238,8 +238,8 @@ TEST_CASE("UnweightedCategoricalLearningTest", "[RandomForestTest]")
   dt.Classify(testData, dtPredictions);
 
   // Calculate the number of correct points.
-  size_t rfCorrect = arma::accu(rfPredictions == testLabels);
-  size_t dtCorrect = arma::accu(dtPredictions == testLabels);
+  size_t rfCorrect = accu(rfPredictions == testLabels);
+  size_t dtCorrect = accu(dtPredictions == testLabels);
 
   REQUIRE(rfCorrect >= dtCorrect - 35);
   REQUIRE(rfCorrect >= size_t(0.7 * testData.n_cols));
@@ -296,8 +296,8 @@ TEST_CASE("WeightedCategoricalLearningTest", "[RandomForestTest]")
   dt.Classify(testData, dtPredictions);
 
   // Calculate the number of correct points.
-  size_t rfCorrect = arma::accu(rfPredictions == testLabels);
-  size_t dtCorrect = arma::accu(dtPredictions == testLabels);
+  size_t rfCorrect = accu(rfPredictions == testLabels);
+  size_t dtCorrect = accu(dtPredictions == testLabels);
 
   REQUIRE(rfCorrect >= dtCorrect - 25);
   REQUIRE(rfCorrect >= size_t(0.7 * testData.n_cols));
@@ -542,7 +542,7 @@ TEST_CASE("WarmStartTreesPredictionsQualityTest", "[RandomForestTest]")
   rf.Classify(trainingData, oldPredictions);
 
   // Calculate the number of correct points.
-  size_t oldCorrect = arma::accu(oldPredictions == trainingLabels);
+  size_t oldCorrect = accu(oldPredictions == trainingLabels);
 
   rf.Train(trainingData, di, trainingLabels, 5, 20 /* 20 trees */, 1, 1e-7, 0,
       true /* warmStart */, MultipleRandomDimensionSelect(4));
@@ -552,7 +552,7 @@ TEST_CASE("WarmStartTreesPredictionsQualityTest", "[RandomForestTest]")
   rf.Classify(trainingData, newPredictions);
 
   // Calculate the number of correct points.
-  size_t newCorrect = arma::accu(newPredictions == trainingLabels);
+  size_t newCorrect = accu(newPredictions == trainingLabels);
 
   REQUIRE(newCorrect >= oldCorrect);
 }
@@ -602,7 +602,7 @@ TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
   et.Classify(testDataset, predictions);
 
   // Calculate the prediction accuracy.
-  double accuracy = arma::accu(predictions == testLabels);
+  double accuracy = accu(predictions == testLabels);
   accuracy /= predictions.n_elem;
 
   REQUIRE(accuracy >= 0.85);

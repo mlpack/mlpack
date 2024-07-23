@@ -8,10 +8,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
-// Note: We don't use BOOST_REQUIRE_CLOSE in the code below because we need
-// to use FPC_WEAK, and it's not at all intuitive how to do that.
-
 #include <mlpack/core.hpp>
 #include <mlpack/methods/sparse_coding.hpp>
 
@@ -22,9 +18,13 @@
 using namespace arma;
 using namespace mlpack;
 
-void SCVerifyCorrectness(vec beta, vec errCorr, double lambda)
+template<typename VecType>
+void SCVerifyCorrectness(const VecType& beta,
+                         const VecType& errCorr,
+                         double lambda)
 {
-  const double tol = 1e-12;
+  const double tol = std::is_same<typename VecType::elem_type, float>::value ?
+      1e-6 : 1e-12;
   size_t nDims = beta.n_elem;
   for (size_t j = 0; j < nDims; ++j)
   {
@@ -47,13 +47,18 @@ void SCVerifyCorrectness(vec beta, vec errCorr, double lambda)
   }
 }
 
-TEST_CASE("SparseCodingTestCodingStepLasso", "[SparseCodingTest]")
+TEMPLATE_TEST_CASE("SparseCodingTestCodingStepLasso", "[SparseCodingTest]",
+    arma::mat, arma::fmat)
 {
+  typedef TestType MatType;
+  typedef arma::Col<typename MatType::elem_type> VecType;
+
   double lambda1 = 0.1;
   uword nAtoms = 25;
 
-  mat X;
-  X.load("mnist_first250_training_4s_and_9s.arm");
+  arma::mat inX; // The .arm file contains an arma::mat.
+  inX.load("mnist_first250_training_4s_and_9s.csv");
+  MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
 
   // Normalize each point since these are images.
@@ -62,72 +67,82 @@ TEST_CASE("SparseCodingTestCodingStepLasso", "[SparseCodingTest]")
     X.col(i) /= norm(X.col(i), 2);
   }
 
-  SparseCoding sc(nAtoms, lambda1);
-  mat Z;
+  SparseCoding<MatType> sc(nAtoms, lambda1);
+  MatType Z;
   DataDependentRandomInitializer::Initialize(X, 25, sc.Dictionary());
   sc.Encode(X, Z);
 
-  mat D = sc.Dictionary();
+  MatType D = sc.Dictionary();
 
   for (uword i = 0; i < nPoints; ++i)
   {
-    vec errCorr = trans(D) * (D * Z.unsafe_col(i) - X.unsafe_col(i));
+    VecType errCorr = trans(D) * (D * Z.unsafe_col(i) - X.unsafe_col(i));
     SCVerifyCorrectness(Z.unsafe_col(i), errCorr, lambda1);
   }
 }
 
-TEST_CASE("SparseCodingTestCodingStepElasticNet", "[SparseCodingTest]")
+TEMPLATE_TEST_CASE("SparseCodingTestCodingStepElasticNet", "[SparseCodingTest]",
+    arma::mat, arma::fmat)
 {
+  typedef TestType MatType;
+  typedef arma::Col<typename MatType::elem_type> VecType;
+
   double lambda1 = 0.1;
   double lambda2 = 0.2;
   uword nAtoms = 25;
 
-  mat X;
-  X.load("mnist_first250_training_4s_and_9s.arm");
+  arma::mat inX; // The .arm file contains an arma::mat.
+  inX.load("mnist_first250_training_4s_and_9s.csv");
+  MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
 
   // Normalize each point since these are images.
   for (uword i = 0; i < nPoints; ++i)
     X.col(i) /= norm(X.col(i), 2);
 
-  SparseCoding sc(nAtoms, lambda1, lambda2);
-  mat Z;
+  SparseCoding<MatType> sc(nAtoms, lambda1, lambda2);
+  MatType Z;
   DataDependentRandomInitializer::Initialize(X, 25, sc.Dictionary());
   sc.Encode(X, Z);
 
-  mat D = sc.Dictionary();
+  MatType D = sc.Dictionary();
 
   for (uword i = 0; i < nPoints; ++i)
   {
-    vec errCorr =
-      (trans(D) * D + lambda2 * eye(nAtoms, nAtoms)) * Z.unsafe_col(i)
-      - trans(D) * X.unsafe_col(i);
+    VecType errCorr =
+        (trans(D) * D + lambda2 * eye<MatType>(nAtoms, nAtoms)) *
+        Z.unsafe_col(i) - trans(D) * X.unsafe_col(i);
 
     SCVerifyCorrectness(Z.unsafe_col(i), errCorr, lambda1);
   }
 }
 
-TEST_CASE("SparseCodingTestDictionaryStep", "[SparseCodingTest]")
+TEMPLATE_TEST_CASE("SparseCodingTestDictionaryStep", "[SparseCodingTest]",
+    arma::mat, arma::fmat)
 {
-  const double tol = 1e-6;
+  typedef TestType MatType;
+
+  const double tol = std::is_same<typename MatType::elem_type, float>::value ?
+      0.01 : 1e-6;
 
   double lambda1 = 0.1;
   uword nAtoms = 25;
 
-  mat X;
-  X.load("mnist_first250_training_4s_and_9s.arm");
+  arma::mat inX; // The .arm file contains an arma::mat.
+  inX.load("mnist_first250_training_4s_and_9s.csv");
+  MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
 
   // Normalize each point since these are images.
   for (uword i = 0; i < nPoints; ++i)
     X.col(i) /= norm(X.col(i), 2);
 
-  SparseCoding sc(nAtoms, lambda1, 0.0, 0, 0.01, tol);
-  mat Z;
+  SparseCoding<MatType> sc(nAtoms, lambda1, 0.0, 0, 0.01, tol);
+  MatType Z;
   DataDependentRandomInitializer::Initialize(X, 25, sc.Dictionary());
   sc.Encode(X, Z);
 
-  mat D = sc.Dictionary();
+  MatType D = sc.Dictionary();
 
   uvec adjacencies = find(Z);
   double normGradient = sc.OptimizeDictionary(X, Z, adjacencies);
@@ -135,25 +150,28 @@ TEST_CASE("SparseCodingTestDictionaryStep", "[SparseCodingTest]")
   REQUIRE(normGradient == Approx(0.0).margin(tol));
 }
 
-TEST_CASE("SerializationTest", "[SparseCodingTest]")
+TEMPLATE_TEST_CASE("SerializationTest", "[SparseCodingTest]", arma::mat,
+    arma::fmat)
 {
-  mat X = randu<mat>(100, 100);
+  typedef TestType MatType;
+
+  MatType X = randu<MatType>(100, 100);
   size_t nAtoms = 25;
 
-  SparseCoding sc(nAtoms, 0.05, 0.1);
+  SparseCoding<MatType> sc(nAtoms, 0.05, 0.1, 10);
   sc.Train(X);
 
-  mat Y = randu<mat>(100, 200);
-  mat codes;
+  MatType Y = randu<MatType>(100, 200);
+  MatType codes;
   sc.Encode(Y, codes);
 
-  SparseCoding scXml(50, 0.01), scJson(nAtoms, 0.05), scBinary(0, 0.0);
+  SparseCoding<MatType> scXml(50, 0.01), scJson(nAtoms, 0.05), scBinary(0, 0.0);
   SerializeObjectAll(sc, scXml, scJson, scBinary);
 
   CheckMatrices(sc.Dictionary(), scXml.Dictionary(), scJson.Dictionary(),
       scBinary.Dictionary());
 
-  mat xmlCodes, jsonCodes, binaryCodes;
+  MatType xmlCodes, jsonCodes, binaryCodes;
   scXml.Encode(Y, xmlCodes);
   scJson.Encode(Y, jsonCodes);
   scBinary.Encode(Y, binaryCodes);
@@ -192,22 +210,27 @@ TEST_CASE("SerializationTest", "[SparseCodingTest]")
 /**
  * Test that SparseCoding::Train() returns finite final objective value.
  */
-TEST_CASE("SparseCodingTrainReturnObjective", "[SparseCodingTest]")
+TEMPLATE_TEST_CASE("SparseCodingTrainReturnObjective", "[SparseCodingTest]",
+    arma::mat, arma::fmat)
 {
-  const double tol = 1e-6;
+  typedef TestType MatType;
+
+  const double tol = std::is_same<typename MatType::elem_type, float>::value ?
+      0.01 : 1e-6;
 
   double lambda1 = 0.1;
   uword nAtoms = 25;
 
-  mat X;
-  X.load("mnist_first250_training_4s_and_9s.arm");
+  arma::mat inX; // The .arm file contains an arma::mat.
+  inX.load("mnist_first250_training_4s_and_9s.csv");
+  MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
 
   // Normalize each point since these are images.
   for (uword i = 0; i < nPoints; ++i)
     X.col(i) /= norm(X.col(i), 2);
 
-  SparseCoding sc(nAtoms, lambda1, 0.0, 0, 0.01, tol);
+  SparseCoding<MatType> sc(nAtoms, lambda1, 0.0, 0, 0.01, tol);
   double objVal = sc.Train(X);
 
   REQUIRE(std::isfinite(objVal) == true);

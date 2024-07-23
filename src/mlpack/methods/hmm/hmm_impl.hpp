@@ -29,17 +29,17 @@ HMM<Distribution>::HMM(const size_t states,
                        const Distribution emissions,
                        const double tolerance) :
     emission(states, /* default distribution */ emissions),
-    transitionProxy(arma::randu<arma::mat>(states, states)),
-    initialProxy(arma::randu<arma::vec>(states) / (double) states),
+    transitionProxy(randu<arma::mat>(states, states)),
+    initialProxy(randu<arma::vec>(states) / (double) states),
     dimensionality(emissions.Dimensionality()),
     tolerance(tolerance),
     recalculateInitial(false),
     recalculateTransition(false)
 {
   // Normalize the transition probabilities and initial state probabilities.
-  initialProxy /= arma::accu(initialProxy);
+  initialProxy /= accu(initialProxy);
   for (size_t i = 0; i < transitionProxy.n_cols; ++i)
-    transitionProxy.col(i) /= arma::accu(transitionProxy.col(i));
+    transitionProxy.col(i) /= accu(transitionProxy.col(i));
 
   logTransition = log(transitionProxy);
   logInitial = log(initialProxy);
@@ -257,9 +257,8 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
         << ")." << std::endl;
   }
 
-  arma::mat initial = arma::zeros(logInitial.n_elem);
-  arma::mat transition = arma::zeros(logTransition.n_rows,
-                                     logTransition.n_cols);
+  arma::mat initial = zeros(logInitial.n_elem);
+  arma::mat transition = zeros(logTransition.n_rows, logTransition.n_cols);
 
   // Estimate the transition and emission matrices directly from the
   // observations.  The emission list holds the time indices for observations

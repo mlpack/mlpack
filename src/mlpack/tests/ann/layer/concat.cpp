@@ -31,14 +31,14 @@ TEST_CASE("SimpleConcatLayerTest", "[ANNLayerTest]")
   moduleA->InputDimensions() = std::vector<size_t>({ 10 });
   moduleA->ComputeOutputDimensions();
   arma::mat weightsA(moduleA->WeightSize(), 1);
-  moduleA->SetWeights((double*) weightsA.memptr());
+  moduleA->SetWeights(weightsA);
   moduleA->Parameters().randu();
 
   Linear* moduleB = new Linear(10);
   moduleB->InputDimensions() = std::vector<size_t>({ 10 });
   moduleB->ComputeOutputDimensions();
   arma::mat weightsB(moduleB->WeightSize(), 1);
-  moduleB->SetWeights((double*) weightsB.memptr());
+  moduleB->SetWeights(weightsB);
   moduleB->Parameters().randu();
 
   Concat module;
@@ -52,20 +52,20 @@ TEST_CASE("SimpleConcatLayerTest", "[ANNLayerTest]")
   output.set_size(module.OutputSize(), 1);
   module.Forward(input, output);
 
-  const double sumModuleA = arma::accu(
+  const double sumModuleA = accu(
       moduleA->Parameters().submat(
       100, 0, moduleA->Parameters().n_elem - 1, 0));
-  const double sumModuleB = arma::accu(
+  const double sumModuleB = accu(
       moduleB->Parameters().submat(
       100, 0, moduleB->Parameters().n_elem - 1, 0));
   REQUIRE(sumModuleA + sumModuleB ==
-      Approx(arma::accu(output.col(0))).epsilon(1e-5));
+      Approx(accu(output.col(0))).epsilon(1e-5));
 
   // Test the Backward function.
   error = arma::zeros(20, 1);
   delta.set_size(input.n_rows, input.n_cols);
   module.Backward(input, output, error, delta);
-  REQUIRE(arma::accu(delta) == 0);
+  REQUIRE(accu(delta) == 0);
 }
 
 /**
@@ -92,13 +92,13 @@ TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
   moduleA->InputDimensions() = std::vector<size_t>({ inputWidth, inputHeight });
   moduleA->ComputeOutputDimensions();
   arma::mat weightsA(moduleA->WeightSize(), 1);
-  moduleA->SetWeights((double*) weightsA.memptr());
+  moduleA->SetWeights(weightsA);
   moduleA->Parameters().randu();
 
   moduleB->InputDimensions() = std::vector<size_t>({ inputWidth, inputHeight });
   moduleB->ComputeOutputDimensions();
   arma::mat weightsB(moduleB->WeightSize(), 1);
-  moduleB->SetWeights((double*) weightsB.memptr());
+  moduleB->SetWeights(weightsB);
   moduleB->Parameters().randu();
 
   // Compute output of each layer.

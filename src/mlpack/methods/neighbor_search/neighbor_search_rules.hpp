@@ -27,10 +27,10 @@ namespace mlpack {
  * policy.
  *
  * @tparam SortPolicy The sort policy for distances.
- * @tparam MetricType The metric to use for computation.
+ * @tparam DistanceType The distance metric to use for computation.
  * @tparam TreeType The tree type to use; must adhere to the TreeType API.
  */
-template<typename SortPolicy, typename MetricType, typename TreeType>
+template<typename SortPolicy, typename DistanceType, typename TreeType>
 class NeighborSearchRules
 {
  public:
@@ -44,7 +44,7 @@ class NeighborSearchRules
    * @param referenceSet Set of reference data.
    * @param querySet Set of query data.
    * @param k Number of neighbors to search for.
-   * @param metric Instantiated metric.
+   * @param distance Instantiated distance metric.
    * @param epsilon Relative approximate error.
    * @param sameSet If true, the query and reference set are taken to be the
    *      same, and a query point will not return itself in the results.
@@ -52,7 +52,7 @@ class NeighborSearchRules
   NeighborSearchRules(const typename TreeType::Mat& referenceSet,
                       const typename TreeType::Mat& querySet,
                       const size_t k,
-                      MetricType& metric,
+                      DistanceType& distance,
                       const double epsilon = 0,
                       const bool sameSet = false);
 
@@ -63,7 +63,10 @@ class NeighborSearchRules
    * @param distances Matrix storing distances of neighbors for each query
    *     point.
    */
-  void GetResults(arma::Mat<size_t>& neighbors, arma::Mat<ElemType>& distances);
+  // TODO: templatize fully to remove requirement of Armadillo matrix
+  template<typename IndexType = size_t>
+  void GetResults(arma::Mat<IndexType>& neighbors,
+                  arma::Mat<ElemType>& distances);
 
   /**
    * Get the distance from the query point to the reference point.
@@ -191,8 +194,8 @@ class NeighborSearchRules
   //! Number of neighbors to search for.
   const size_t k;
 
-  //! The instantiated metric.
-  MetricType& metric;
+  //! The instantiated distance metric.
+  DistanceType& distance;
 
   //! Denotes whether or not the reference and query sets are the same.
   bool sameSet;

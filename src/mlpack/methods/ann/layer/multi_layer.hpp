@@ -12,7 +12,6 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_MULTI_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_MULTI_LAYER_HPP
 
-#include "../make_alias.hpp"
 #include "layer.hpp"
 
 namespace mlpack {
@@ -129,7 +128,7 @@ class MultiLayer : public Layer<MatType>
   /**
    * Set the weights of the layer to use the memory given as `weightsPtr`.
    */
-  virtual void SetWeights(typename MatType::elem_type* weightsPtr);
+  virtual void SetWeights(const MatType& weightsIn);
 
   /**
    * Initialize the weight matrix of the layer.

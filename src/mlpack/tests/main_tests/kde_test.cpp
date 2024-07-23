@@ -38,9 +38,9 @@ TEST_CASE_METHOD(KDETestFixture, "KDEGaussianRTreeResultsMain",
   double relError = 0.05;
 
   GaussianKernel kernel(kernelBandwidth);
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, RTree> kde(
-      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, kdeEstimations);
   // Normalize estimations.
@@ -78,9 +78,9 @@ TEST_CASE_METHOD(KDETestFixture, "KDETriangularBallTreeResultsMain",
   double relError = 0.06;
 
   TriangularKernel kernel(kernelBandwidth);
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<TriangularKernel, EuclideanDistance, arma::mat, BallTree> kde(
-      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, kdeEstimations);
 
@@ -115,9 +115,9 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMonoResultsMain",
   double relError = 0.05;
 
   EpanechnikovKernel kernel(kernelBandwidth);
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<EpanechnikovKernel, EuclideanDistance, arma::mat, StandardCoverTree>
-      kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
   // Perform monochromatic KDE.
   kde.Evaluate(kdeEstimations);
@@ -227,9 +227,9 @@ TEST_CASE_METHOD(KDETestFixture, "KDEGaussianSingleKDTreeResultsMain",
   double relError = 0.06;
 
   GaussianKernel kernel(kernelBandwidth);
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, BallTree> kde(
-      relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, metric);
+      relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, kdeEstimations);
   kdeEstimations /= kernel.Normalizer(reference.n_rows);
@@ -518,6 +518,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainMonteCarloFlag",
 
   // Check whether results are equal.
   differences = arma::abs(estimations1 - estimations2);
-  const double sumDifferences = arma::accu(differences);
+  const double sumDifferences = accu(differences);
   REQUIRE(sumDifferences > 0);
 }

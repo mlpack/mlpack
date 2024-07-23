@@ -9,7 +9,6 @@ steps:
 # Fetch build dependencies
 - powershell: |
     nuget install OpenBLAS -o $(Agent.ToolsDirectory)
-    nuget install unofficial-flayan-cereal -o $(Agent.ToolsDirectory)
     nuget install ensmallen -o $(Agent.ToolsDirectory) -Version 2.17.0
     ## Delete all ensmallen dependencies including armadillo headers, we do not need them here
     Remove-Item $(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\share -Force -Recurse
@@ -18,14 +17,20 @@ steps:
 
   displayName: 'Fetch build dependencies'
 
+# Get cereal
+- bash: |
+    curl -L https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.2.tar.gz -o cereal-1.3.2.tar.gz
+    tar -xvzf cereal-1.3.2.tar.gz
+  displayName: 'Download cereal'
+
 # Configure armadillo
 - bash: |
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
 
-    curl -O -L https://sourceforge.net/projects/arma/files/armadillo-9.800.6.tar.xz -o armadillo-9.800.6.tar.xz
-    tar -xvf armadillo-9.800.6.tar.xz
+    curl -O -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz -o armadillo-10.8.2.tar.xz
+    tar -xvf armadillo-10.8.2.tar.xz
 
-    cd armadillo-9.800.6/ && cmake $(CMakeGenerator) \
+    cd armadillo-10.8.2/ && cmake $(CMakeGenerator) \
     -DBLAS_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
     -DLAPACK_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
     -DCMAKE_PREFIX:FILEPATH=../../armadillo \
@@ -36,7 +41,7 @@ steps:
 # Build armadillo
 - task: MSBuild@1
   inputs:
-    solution: 'armadillo-9.800.6/*.sln'
+    solution: 'armadillo-10.8.2/*.sln'
     msbuildLocationMethod: 'location'
     msbuildVersion: $(MSBuildVersion)
     configuration: 'Release'
@@ -55,9 +60,9 @@ steps:
     $(CMakeArgs) `
     -DBLAS_LIBRARIES:FILEPATH=$(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\libopenblas.dll.a `
     -DLAPACK_LIBRARIES:FILEPATH=$(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\libopenblas.dll.a `
-    -DARMADILLO_INCLUDE_DIR="..\armadillo-9.800.6\tmp\include" `
-    -DARMADILLO_LIBRARY="..\armadillo-9.800.6\Release\armadillo.lib" `
-    -DCEREAL_INCLUDE_DIR=$(Agent.ToolsDirectory)\unofficial-flayan-cereal.1.2.2\build\native\include `
+    -DARMADILLO_INCLUDE_DIR="..\armadillo-10.8.2\tmp\include" `
+    -DARMADILLO_LIBRARY="..\armadillo-10.8.2\Release\armadillo.lib" `
+    -DCEREAL_INCLUDE_DIR="..\cereal-1.3.2\include" `
     -DENSMALLEN_INCLUDE_DIR=$(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\include `
     -DBUILD_JULIA_BINDINGS=OFF `
     -DCMAKE_BUILD_TYPE=Release ..

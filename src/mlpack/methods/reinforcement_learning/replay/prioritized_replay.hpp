@@ -255,7 +255,7 @@ class PrioritizedReplay
   void UpdatePriorities(arma::ucolvec& indices, arma::colvec& priorities)
   {
       arma::colvec alphaPri = alpha * priorities;
-      maxPriority = std::max(maxPriority, arma::max(priorities));
+      maxPriority = std::max(maxPriority, max(priorities));
       idxSum.BatchUpdate(indices, alphaPri);
   }
 

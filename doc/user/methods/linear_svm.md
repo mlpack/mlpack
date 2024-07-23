@@ -42,8 +42,8 @@ std::cout << arma::accu(predictions == 1) << " test points classified as class "
 
 #### See also:
 
- * [mlpack classifiers](#mlpack_classifiers) <!-- TODO: fix link! -->
- * [`GaussianDistribution`](#gaussian_distribution) <!-- TODO: fix link! -->
+ * [mlpack classifiers](../../index.md#classification-algorithms)
+ * [`GaussianDistribution`](../core.md#gaussiandistribution)
  * [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
 
 ### Constructors
@@ -78,15 +78,10 @@ std::cout << arma::accu(predictions == 1) << " test points classified as class "
 
 #### Constructor Parameters:
 
-<!-- TODOs for table below:
-    * better link for column-major matrices
-    * update matrices.md to include a section on labels and NormalizeLabels()
- -->
-
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `dimensionality` | `size_t` | Dimension of input data (if data is not specified).  Should be equal to `data.n_rows`. | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `optimizer` | [any ensmallen optimizer](https://www.ensmallen.org) | Instantiated ensmallen optimizer for [differentiable functions](https://www.ensmallen.org/docs.html#differentiable-functions) or [differentiable separable functions](https://www.ensmallen.org/docs.html#differentiable-separable-functions). | `ens::L_BFGS()` |
@@ -181,10 +176,8 @@ can be used to make class predictions for new data.
 
 ### Other Functionality
 
-<!-- TODO: we should point directly to the documentation of those functions -->
-
  * A `LinearSVM` model can be serialized with
-   [`data::Save()`](../formats.md) and [`data::Load()`](../formats.md).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
  * `svm.Parameters()` will return the parameters of the model as an `arma::mat`
    with either `data.n_rows` rows (if `FitIntercept()` is `false`) or
@@ -338,7 +331,7 @@ std::cout << "Weights for the first dimension are: "
 The `LinearSVM` class has one template parameter that can be used to
 control the element type of the model.  The full signature of the class is:
 
-```c++
+```
 LinearSVM<ModelMatType>
 ```
 

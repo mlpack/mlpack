@@ -14,7 +14,7 @@
 
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include <mlpack/core/kernels/kernel_traits.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/methods/range_search/range_search.hpp>
 
@@ -220,7 +220,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
         || forceConvergence; completedIterations++)
     {
       // Store new centroid in this.
-      arma::colvec newCentroid = arma::zeros<arma::colvec>(pSeeds->n_rows);
+      arma::colvec newCentroid = zeros<arma::colvec>(pSeeds->n_rows);
 
       rangeSearcher.Search(allCentroids.unsafe_col(i), validRadius,
           neighbors, distances);

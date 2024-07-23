@@ -308,7 +308,7 @@ void LSHSearch<SortPolicy, MatType>::Train(MatType referenceSet,
   secondHashBinCounts.transform([effectiveBucketSize](size_t val)
       { return std::min(val, effectiveBucketSize); });
 
-  const size_t numRowsInTable = arma::accu(secondHashBinCounts > 0);
+  const size_t numRowsInTable = accu(secondHashBinCounts > 0);
   bucketContentSize.zeros(numRowsInTable);
   secondHashTable.resize(numRowsInTable);
 
@@ -343,8 +343,8 @@ void LSHSearch<SortPolicy, MatType>::Train(MatType referenceSet,
   } // Loop over tables.
 
   Log::Info << "Final hash table size: " << numRowsInTable << " rows, with a "
-            << "maximum length of " << arma::max(secondHashBinCounts) << ", "
-            << "totaling " << arma::accu(secondHashBinCounts) << " elements."
+            << "maximum length of " << max(secondHashBinCounts) << ", "
+            << "totaling " << accu(secondHashBinCounts) << " elements."
             << std::endl;
 }
 
@@ -554,9 +554,9 @@ void LSHSearch<SortPolicy, MatType>::GetAdditionalProbingBins(
   // Actions vector describes what perturbation (-1/+1) corresponds to a score.
   arma::Col<short int> actions(2 * numProj); // will be [-1 ... 1 ...]
   actions.rows(0, numProj - 1) = // First numProj rows.
-    -1 * arma::ones< arma::Col<short int> > (numProj); // -1s
+    -1 * ones<arma::Col<short int>> (numProj); // -1s
   actions.rows(numProj, (2 * numProj) - 1) = // Last numProj rows.
-    arma::ones< arma::Col<short int> > (numProj); // 1s
+    ones<arma::Col<short int>> (numProj); // 1s
 
 
   // Acting dimension vector shows which coordinate to transform according to

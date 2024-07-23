@@ -48,7 +48,7 @@ class DTree
   //! The actual, underlying type we're working with.
   typedef typename MatType::elem_type  ElemType;
   //! The type of vector we are using.
-  typedef typename MatType::vec_type   VecType;
+  typedef typename GetColType<MatType>::type   VecType;
   //! The statistic type we are holding.
   typedef typename arma::Col<ElemType> StatType;
 
@@ -222,7 +222,7 @@ class DTree
    */
   bool WithinRange(const VecType& query) const;
 
- private:
+ protected: /* these are checked in the tests */
   // The indices in the complete set of points
   // (after all forms of swapping in the original data
   // matrix to align all the points in a node
@@ -331,7 +331,7 @@ class DTree
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
- private:
+ protected: /* these are checked in the tests */
   // Utility methods.
 
   /**

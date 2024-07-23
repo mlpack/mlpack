@@ -873,7 +873,7 @@ TEST_CASE("ClassifyTest", "[LogisticRegressionTest]")
   arma::Row<size_t> predictions;
   lr.Classify(data, predictions);
 
-  REQUIRE((double) arma::accu(predictions == responses) >= 900);
+  REQUIRE((double) accu(predictions == responses) >= 900);
 }
 
 /**

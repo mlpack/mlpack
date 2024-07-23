@@ -21,27 +21,83 @@ namespace mlpack {
  * Takes in a reference to the dataset. Copies the data, initializes
  * all of the member variables and constraint object and generate constraints.
  */
-template<typename MetricType, typename OptimizerType>
-LMNN<MetricType, OptimizerType>::LMNN(const arma::mat& dataset,
-                       const arma::Row<size_t>& labels,
-                       const size_t k,
-                       const MetricType metric) :
-    dataset(dataset),
-    labels(labels),
+template<typename DistanceType, typename DeprecatedOptimizerType>
+LMNN<DistanceType, DeprecatedOptimizerType>::LMNN(
+    const arma::mat& dataset,
+    const arma::Row<size_t>& labels,
+    const size_t k,
+    const DistanceType distance) :
+    dataset(&dataset),
+    labels(&labels),
     k(k),
     regularization(0.5),
-    range(1),
-    metric(metric)
+    updateInterval(1),
+    distance(distance)
 { /* nothing to do */ }
 
-template<typename MetricType, typename OptimizerType>
-template<typename... CallbackTypes>
-void LMNN<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix,
+template<typename DistanceType, typename DeprecatedOptimizerType>
+LMNN<DistanceType, DeprecatedOptimizerType>::LMNN(
+    const size_t k,
+    const double regularization,
+    const size_t updateInterval,
+    const DistanceType distance) :
+    k(k),
+    regularization(regularization),
+    updateInterval(updateInterval),
+    distance(distance)
+{ /* nothing to do */ }
+
+template<typename DistanceType, typename DeprecatedOptimizerType>
+template<typename... CallbackTypes, typename, typename>
+void LMNN<DistanceType, DeprecatedOptimizerType>::LearnDistance(
+    arma::mat& outputMatrix,
     CallbackTypes&&... callbacks)
 {
+  if (!dataset || !labels)
+  {
+    throw std::runtime_error("LMNN::LearnDistance(): cannot call without a "
+        "dataset!");
+  }
+
+  LearnDistance(*dataset, *labels, outputMatrix, optimizer,
+      std::forward<CallbackTypes>(callbacks)...);
+}
+
+template<typename DistanceType, typename DeprecatedOptimizerType>
+template<typename MatType,
+         typename LabelsType,
+         typename... CallbackTypes,
+         typename /* SFINAE check that first callback is not an optimizer */,
+         typename /* callback SFINAE check */>
+void LMNN<DistanceType, DeprecatedOptimizerType>::LearnDistance(
+    const MatType& dataset,
+    const LabelsType& labels,
+    MatType& outputMatrix,
+    CallbackTypes&&... callbacks) const
+{
+  // This should be replaced with ens::StandardSGD when the deprecated members
+  // are removed for mlpack 5.0.0.
+  DeprecatedOptimizerType opt;
+  LearnDistance(dataset, labels, outputMatrix, opt,
+      std::forward<CallbackTypes>(callbacks)...);
+}
+
+template<typename DistanceType, typename DeprecatedOptimizerType>
+template<typename MatType,
+         typename LabelsType,
+         typename OptimizerType,
+         typename... CallbackTypes,
+         typename /* SFINAE check that opt is an ensmallen optimizer */>
+void LMNN<DistanceType, DeprecatedOptimizerType>::LearnDistance(
+    const MatType& dataset,
+    const LabelsType& labels,
+    MatType& outputMatrix,
+    OptimizerType& opt,
+    CallbackTypes&&... callbacks) const
+{
   // LMNN objective function.
-  LMNNFunction<MetricType> objFunction(dataset, labels, k,
-      regularization, range);
+  LMNNFunction<MatType, LabelsType, DistanceType> objFunction(dataset, labels,
+      k, regularization, updateInterval);
 
   // See if we were passed an initialized matrix. outputMatrix (L) must be
   // having r x d dimensionality.
@@ -49,15 +105,23 @@ void LMNN<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix,
       (outputMatrix.n_rows > dataset.n_rows) ||
       !(arma::is_finite(outputMatrix)))
   {
-    Log::Info << "Initial learning point have invalid dimensionality.  "
-        "Identity matrix will be used as initial learning point for "
-         "optimization." << std::endl;
     outputMatrix.eye(dataset.n_rows, dataset.n_rows);
   }
 
-  optimizer.Optimize(objFunction, outputMatrix, callbacks...);
+  opt.Optimize(objFunction, outputMatrix, callbacks...);
 }
 
+// Serialize the LMNN object.
+template<typename DistanceType, typename DeprecatedOptimizerType>
+template<typename Archive>
+void LMNN<DistanceType, DeprecatedOptimizerType>::serialize(
+    Archive& ar, const unsigned int /* version */)
+{
+  ar(CEREAL_NVP(k));
+  ar(CEREAL_NVP(regularization));
+  ar(CEREAL_NVP(updateInterval));
+  ar(CEREAL_NVP(distance));
+}
 
 } // namespace mlpack
 

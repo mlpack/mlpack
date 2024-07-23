@@ -74,10 +74,9 @@ FlexibleReLUType<MatType>::operator=(FlexibleReLUType&& other)
 }
 
 template<typename MatType>
-void FlexibleReLUType<MatType>::SetWeights(
-    typename MatType::elem_type* weightsPtr)
+void FlexibleReLUType<MatType>::SetWeights(const MatType& weights)
 {
-  MakeAlias(alpha, weightsPtr, 1, 1);
+  MakeAlias(alpha, weights, 1, 1);
 }
 
 template<typename MatType>
@@ -119,7 +118,7 @@ void FlexibleReLUType<MatType>::Gradient(
     const MatType& error,
     MatType& gradient)
 {
-  gradient(0) = arma::accu(error) / input.n_cols;
+  gradient(0) = accu(error) / input.n_cols;
 }
 
 template<typename MatType>

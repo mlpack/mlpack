@@ -12,18 +12,12 @@
 #ifndef MLPACK_BASE_HPP
 #define MLPACK_BASE_HPP
 
-// First, check if Armadillo was included before, warning if so.
-#ifdef ARMA_INCLUDES
-#pragma message "Armadillo was included before mlpack; this can sometimes cause\
- problems.  It should only be necessary to include <mlpack/core.hpp> and not \
-<armadillo>."
-#endif
-
 // Defining _USE_MATH_DEFINES should set M_PI.
 #define _USE_MATH_DEFINES
 #include <cmath>
 
 // Next, standard includes.
+#include <any>
 #include <cctype>
 #include <cfloat>
 #include <climits>
@@ -31,7 +25,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <optional>
 #include <stdexcept>
+#include <string_view>
 #include <tuple>
 #include <utility>
 #include <numeric>
@@ -81,30 +77,13 @@
   #endif
 #endif
 
-#if defined(MLPACK_HAVE_CXX17)
-  #include <any>
-  #include <string_view>
-  #define MLPACK_ANY std::any
-  #define MLPACK_ANY_CAST std::any_cast
-  #define MLPACK_STRING_VIEW std::string_view
-#elif defined(_MSC_VER)
-  #error "When using Visual Studio, mlpack should be compiled with /std:c++17 or newer."
-#else
-  // Backport std::any from C+17 to C++11 to replace boost::any.
-  // Use mnmlstc backport implementation only if compiler does not
-  // support C++17.
-  #include <mlpack/core/std_backport/any.hpp>
-  #include <mlpack/core/std_backport/string_view.hpp>
-  #define MLPACK_ANY core::v2::any
-  #define MLPACK_ANY_CAST core::v2::any_cast
-  #define MLPACK_STRING_VIEW core::v2::string_view
+#if !defined(MLPACK_HAVE_CXX17)
+  #error "Need to enable C++17 mode in your compiler"
 #endif
 
-// Now include Armadillo through the special mlpack extensions.
-#include <mlpack/core/arma_extend/arma_extend.hpp>
+// Now include Armadillo and traits that we use for it.
+#include <armadillo>
 #include <mlpack/core/util/arma_traits.hpp>
-// Include local armadillo safe linear algebra functions.
-#include <mlpack/core/math/safe_linalg.hpp>
 
 // On Visual Studio, disable C4519 (default arguments for function templates)
 // since it's by default an error, which doesn't even make any sense because
@@ -119,8 +98,5 @@
   #undef  MLPACK_USE_OPENMP
   #define MLPACK_USE_OPENMP
 #endif
-
-// We need to be able to mark functions deprecated.
-#include <mlpack/core/util/deprecated.hpp>
 
 #endif

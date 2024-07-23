@@ -224,7 +224,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   if (normalize)
   {
     // Find the minimum and maximum values for each dimension.
-    arma::vec ranges = arma::max(data, 1) - arma::min(data, 1);
+    arma::vec ranges = arma::range(data, 1);
     for (size_t d = 0; d < ranges.n_elem; ++d)
       if (ranges[d] == 0.0)
         ranges[d] = 1; // A range of 0 produces NaN later on.
@@ -240,30 +240,31 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   // Now create the NCA object and run the optimization.
   timers.Start("nca_optimization");
+  NCA nca;
   if (optimizerType == "sgd")
   {
-    NCA<LMetric<2> > nca(data, labels);
-    nca.Optimizer().StepSize() = stepSize;
-    nca.Optimizer().MaxIterations() = maxIterations;
-    nca.Optimizer().Tolerance() = tolerance;
-    nca.Optimizer().Shuffle() = shuffle;
-    nca.Optimizer().BatchSize() = batchSize;
+    ens::StandardSGD opt;
+    opt.StepSize() = stepSize;
+    opt.MaxIterations() = maxIterations;
+    opt.Tolerance() = tolerance;
+    opt.Shuffle() = shuffle;
+    opt.BatchSize() = batchSize;
 
-    nca.LearnDistance(distance);
+    nca.LearnDistance(data, labels, distance, opt);
   }
   else if (optimizerType == "lbfgs")
   {
-    NCA<LMetric<2>, ens::L_BFGS> nca(data, labels);
-    nca.Optimizer().NumBasis() = numBasis;
-    nca.Optimizer().MaxIterations() = maxIterations;
-    nca.Optimizer().ArmijoConstant() = armijoConstant;
-    nca.Optimizer().Wolfe() = wolfe;
-    nca.Optimizer().MinGradientNorm() = tolerance;
-    nca.Optimizer().MaxLineSearchTrials() = maxLineSearchTrials;
-    nca.Optimizer().MinStep() = minStep;
-    nca.Optimizer().MaxStep() = maxStep;
+    ens::L_BFGS opt;
+    opt.NumBasis() = numBasis;
+    opt.MaxIterations() = maxIterations;
+    opt.ArmijoConstant() = armijoConstant;
+    opt.Wolfe() = wolfe;
+    opt.MinGradientNorm() = tolerance;
+    opt.MaxLineSearchTrials() = maxLineSearchTrials;
+    opt.MinStep() = minStep;
+    opt.MaxStep() = maxStep;
 
-    nca.LearnDistance(distance);
+    nca.LearnDistance(data, labels, distance, opt);
   }
   timers.Stop("nca_optimization");
 

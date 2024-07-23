@@ -58,7 +58,8 @@ class IncompleteIncrementalTermination
    * @param W Basis matrix of output.
    * @param H Encoding matrix of output.
    */
-  bool IsConverged(arma::mat& W, arma::mat& H)
+  template<typename MatType>
+  bool IsConverged(MatType& W, MatType& H)
   {
     // increment iteration count
     iteration++;
@@ -72,7 +73,7 @@ class IncompleteIncrementalTermination
   }
 
   //! Get current value of residue.
-  const double& Index() const { return tPolicy.Index(); }
+  double Index() const { return tPolicy.Index(); }
 
   //! Get current iteration count.
   const size_t& Iteration() const { return iteration; }

@@ -12,7 +12,7 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 #include <mlpack/methods/lmnn/lmnn_main.cpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
@@ -325,8 +325,8 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNormalizationTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 
@@ -365,11 +365,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffStepSizeTest",
   SetInputParam("linear_scan",  (bool) true);
 
   RUN_BINDING();
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 
@@ -408,8 +408,8 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffToleranceTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 
@@ -450,8 +450,8 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffBatchSizeTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 
@@ -493,8 +493,8 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNumTargetsTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 
@@ -536,13 +536,13 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRegularizationTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 
 /**
- * Ensure that different value of range results in a
+ * Ensure that different value of update interval results in a
  * different output matrix.
  */
 TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRangeTest",
@@ -573,13 +573,13 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRangeTest",
   SetInputParam("input", std::move(inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("linear_scan",  (bool) true);
-  SetInputParam("range", 100);
+  SetInputParam("update_interval", 100);
 
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 
@@ -625,8 +625,8 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffMaxIterationTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 
@@ -668,15 +668,15 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffPassesTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 
 /**
- * Ensure that number of targets, range, batch size must be always positive
- * and regularization, step size, max iterations, rank, passes & tolerance are
- * always non-negative 
+ * Ensure that number of targets, update interval, batch size must be always
+ * positive and regularization, step size, max iterations, rank, passes &
+ * tolerance are always non-negative.
  */
 TEST_CASE_METHOD(LMNNTestFixture, "LMNNBoundsTest",
                 "[LMNNMainTest][BindingTests]")
@@ -701,12 +701,12 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNBoundsTest",
   // Reset settings.
   ResetSettings();
 
-  // Test for range value.
+  // Test for update interval value.
 
   // Input training data.
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
-  SetInputParam("range", (int) 0);
+  SetInputParam("update_interval", (int) 0);
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 

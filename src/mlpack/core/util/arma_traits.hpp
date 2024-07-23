@@ -50,7 +50,7 @@ struct IsCube
 };
 
 // Commenting out the first template per case, because
-// Visual Studio doesn't like this instantiaion pattern (error C2910).
+// Visual Studio doesn't like this instantiation pattern (error C2910).
 // template<>
 template<typename eT>
 struct IsVector<arma::Col<eT> >
@@ -105,35 +105,17 @@ struct IsCube<arma::Cube<eT> >
   const static bool value = true;
 };
 
+template<typename eT>
+struct IsVector<arma::SpSubview_col<eT> >
+{
+  const static bool value = true;
+};
 
-#if ((ARMA_VERSION_MAJOR >= 10) || \
-    ((ARMA_VERSION_MAJOR == 9) && (ARMA_VERSION_MINOR >= 869)))
-
-  // Armadillo 9.869+ has SpSubview_col and SpSubview_row
-
-  template<typename eT>
-  struct IsVector<arma::SpSubview_col<eT> >
-  {
-    const static bool value = true;
-  };
-
-  template<typename eT>
-  struct IsVector<arma::SpSubview_row<eT> >
-  {
-    const static bool value = true;
-  };
-
-#else
-
-  // fallback for older Armadillo versions
-
-  template<typename eT>
-  struct IsVector<arma::SpSubview<eT> >
-  {
-    const static bool value = true;
-  };
-
-#endif
+template<typename eT>
+struct IsVector<arma::SpSubview_row<eT> >
+{
+  const static bool value = true;
+};
 
 // Get the row vector type corresponding to a given MatType.
 
@@ -252,6 +234,51 @@ template<typename eT>
 struct GetSparseMatType<arma::SpMat<eT>>
 {
   typedef arma::SpMat<eT> type;
+};
+
+// Get whether or not the given type is a base matrix type (e.g. not an
+// expression).
+
+template<typename MatType>
+struct IsBaseMatType
+{
+  constexpr static bool value = false;
+};
+
+template<typename eT>
+struct IsBaseMatType<arma::Mat<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename eT>
+struct IsBaseMatType<arma::Col<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename eT>
+struct IsBaseMatType<arma::Row<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename eT>
+struct IsBaseMatType<arma::SpMat<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename eT>
+struct IsBaseMatType<arma::SpCol<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename eT>
+struct IsBaseMatType<arma::SpRow<eT>>
+{
+  constexpr static bool value = true;
 };
 
 #endif

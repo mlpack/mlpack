@@ -64,7 +64,9 @@ BINDING_EXAMPLE(
 // See also...
 BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
 BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
+#if BINDING_TYPE == BINDING_TYPE_CLI
 BINDING_SEE_ALSO("@preprocess_imputer", "#preprocess_imputer");
+#endif
 
 // DEFINE PARAM
 PARAM_VECTOR_IN_REQ(string, "input", "Image filenames which have to "

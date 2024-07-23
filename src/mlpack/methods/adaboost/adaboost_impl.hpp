@@ -91,37 +91,6 @@ AdaBoost<WeakLearnerType, MatType>::AdaBoost(
       weakLearnerArgs...);
 }
 
-// Train AdaBoost with a given weak learner.
-template<typename WeakLearnerType, typename MatType>
-template<typename WeakLearnerInType>
-typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::Train(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    const WeakLearnerInType& other,
-    const typename std::enable_if<
-        std::is_same<WeakLearnerType, WeakLearnerInType>::value>::type*)
-{
-  return TrainInternal<true>(data, labels, numClasses, other);
-}
-
-// Train AdaBoost with a given weak learner, and set the maximum number of
-// iterations.
-template<typename WeakLearnerType, typename MatType>
-template<typename WeakLearnerInType>
-typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::Train(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    const WeakLearnerInType& other,
-    const size_t maxIterations,
-    const typename std::enable_if<
-        std::is_same<WeakLearnerType, WeakLearnerInType>::value>::type*)
-{
-  this->maxIterations = maxIterations;
-  return TrainInternal<true>(data, labels, numClasses, other);
-}
-
 // Train AdaBoost with a given weak learner, and set the maximum number of
 // iterations and tolerance.
 template<typename WeakLearnerType, typename MatType>
@@ -131,40 +100,20 @@ typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::Train(
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const WeakLearnerInType& other,
-    const size_t maxIterations,
-    const double tolerance,
+    const std::optional<size_t> maxIterations,
+    const std::optional<double> tolerance,
     const typename std::enable_if<
         std::is_same<WeakLearnerType, WeakLearnerInType>::value>::type*)
 {
-  this->maxIterations = maxIterations;
-  this->tolerance = tolerance;
+  if (maxIterations.has_value())
+    this->maxIterations = maxIterations.value();
+
+  if (tolerance.has_value())
+    this->tolerance = tolerance.value();
+
   return TrainInternal<true>(data, labels, numClasses, other);
 }
 
-// Train AdaBoost.
-template<typename WeakLearnerType, typename MatType>
-typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::Train(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses)
-{
-  WeakLearnerType other; // Will not be used.
-  return TrainInternal<false>(data, labels, numClasses, other);
-}
-
-// Train AdaBoost, and set the maximum number of iterations.
-template<typename WeakLearnerType, typename MatType>
-typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::Train(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    const size_t maxIterations)
-{
-  this->maxIterations = maxIterations;
-
-  WeakLearnerType other; // Will not be used.
-  return TrainInternal<false>(data, labels, numClasses, other);
-}
 // Train AdaBoost.
 template<typename WeakLearnerType, typename MatType>
 template<typename... WeakLearnerArgs>
@@ -172,12 +121,16 @@ typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const size_t maxIterations,
-    const double tolerance,
+    const std::optional<size_t> maxIterations,
+    const std::optional<double> tolerance,
     WeakLearnerArgs&&... weakLearnerArgs)
 {
-  this->maxIterations = maxIterations;
-  this->tolerance = tolerance;
+  if (maxIterations.has_value())
+    this->maxIterations = maxIterations.value();
+
+  if (tolerance.has_value())
+    this->tolerance = tolerance.value();
+
   WeakLearnerType other; // Will not be used.
   return TrainInternal<false>(data, labels, numClasses, other,
       weakLearnerArgs...);
@@ -211,7 +164,7 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
   }
 
   arma::uword maxIndex = 0;
-  probabilities /= arma::accu(probabilities);
+  probabilities /= accu(probabilities);
   probabilities.max(maxIndex);
   prediction = (size_t) maxIndex;
 }
@@ -250,7 +203,7 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
 
   for (size_t i = 0; i < predictedLabels.n_cols; ++i)
   {
-    probabilities.col(i) /= arma::accu(probabilities.col(i));
+    probabilities.col(i) /= accu(probabilities.col(i));
     probabilities.col(i).max(maxIndex);
     predictedLabels(i) = maxIndex;
   }
@@ -441,9 +394,9 @@ typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::TrainInternal(
     for (size_t j = 0; j < D.n_cols; ++j) // instead of D, ht
     {
       if (predictedLabels(j) == labels(j))
-        rt += arma::accu(D.col(j));
+        rt += accu(D.col(j));
       else
-        rt -= arma::accu(D.col(j));
+        rt -= accu(D.col(j));
     }
 
     if ((i > 0) && (std::abs(rt - crt) < tolerance))

@@ -17,16 +17,16 @@
 
 namespace mlpack {
 
-template<typename MetricType>
-Constraints<MetricType>::Constraints(
-    const arma::mat& /* dataset */,
-    const arma::Row<size_t>& labels,
+template<typename MatType, typename LabelsType, typename DistanceType>
+Constraints<MatType, LabelsType, DistanceType>::Constraints(
+    const MatType& /* dataset */,
+    const LabelsType& labels,
     const size_t k) :
     k(k),
     precalculated(false)
 {
   // Ensure a valid k is passed.
-  size_t minCount = arma::min(arma::histc(labels, arma::unique(labels)));
+  size_t minCount = min(arma::histc(labels, arma::unique(labels)));
 
   if (minCount < k + 1)
   {
@@ -36,11 +36,11 @@ Constraints<MetricType>::Constraints(
   }
 }
 
-template<typename MetricType>
-inline void Constraints<MetricType>::ReorderResults(
-                                            const arma::mat& distances,
-                                            arma::Mat<size_t>& neighbors,
-                                            const arma::vec& norms)
+template<typename MatType, typename LabelsType, typename DistanceType>
+inline void Constraints<MatType, LabelsType, DistanceType>::ReorderResults(
+    const MatType& distances,
+    UMatType& neighbors,
+    const VecType& norms)
 {
   // Shortcut...
   if (neighbors.n_rows == 1)
@@ -64,24 +64,21 @@ inline void Constraints<MetricType>::ReorderResults(
       if (start != end)
       {
         // We must sort these elements by norm.
-        arma::Col<size_t> newNeighbors =
-            neighbors.col(i).subvec(start, end - 1);
-        arma::uvec indices = ConvTo<arma::uvec>::From(newNeighbors);
-
-        arma::uvec order = arma::sort_index(norms.elem(indices));
-        neighbors.col(i).subvec(start, end - 1) =
-            newNeighbors.elem(order);
+        UVecType indices = neighbors.col(i).subvec(start, end - 1);
+        UVecType order = arma::sort_index(norms.elem(indices));
+        neighbors.col(i).subvec(start, end - 1) = indices.elem(order);
       }
     }
   }
 }
 
 // Calculates k similar labeled nearest neighbors.
-template<typename MetricType>
-void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
-                                              const arma::mat& dataset,
-                                              const arma::Row<size_t>& labels,
-                                              const arma::vec& norms)
+template<typename MatType, typename LabelsType, typename DistanceType>
+void Constraints<MatType, LabelsType, DistanceType>::TargetNeighbors(
+    UMatType& outputMatrix,
+    const MatType& dataset,
+    const LabelsType& labels,
+    const VecType& norms)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -89,8 +86,8 @@ void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
   // KNN instance.
   KNN knn;
 
-  arma::Mat<size_t> neighbors;
-  arma::mat distances;
+  UMatType neighbors;
+  MatType distances;
 
   for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
@@ -114,28 +111,29 @@ void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
 
 // Calculates k similar labeled nearest neighbors  on a
 // batch of data points.
-template<typename MetricType>
-void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
-                                              const arma::mat& dataset,
-                                              const arma::Row<size_t>& labels,
-                                              const arma::vec& norms,
-                                              const size_t begin,
-                                              const size_t batchSize)
+template<typename MatType, typename LabelsType, typename DistanceType>
+void Constraints<MatType, LabelsType, DistanceType>::TargetNeighbors(
+    UMatType& outputMatrix,
+    const MatType& dataset,
+    const LabelsType& labels,
+    const VecType& norms,
+    const size_t begin,
+    const size_t batchSize)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
 
-  arma::mat subDataset = dataset.cols(begin, begin + batchSize - 1);
-  arma::Row<size_t> sublabels = labels.cols(begin, begin + batchSize - 1);
+  MatType subDataset = dataset.cols(begin, begin + batchSize - 1);
+  LabelsType sublabels = labels.cols(begin, begin + batchSize - 1);
 
   // KNN instance.
   KNN knn;
 
-  arma::Mat<size_t> neighbors;
-  arma::mat distances;
+  UMatType neighbors;
+  MatType distances;
 
   // Vectors to store indices.
-  arma::uvec subIndexSame;
+  UVecType subIndexSame;
 
   for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
@@ -161,11 +159,12 @@ void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
 }
 
 // Calculates k differently labeled nearest neighbors.
-template<typename MetricType>
-void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
-                                        const arma::mat& dataset,
-                                        const arma::Row<size_t>& labels,
-                                        const arma::vec& norms)
+template<typename MatType, typename LabelsType, typename DistanceType>
+void Constraints<MatType, LabelsType, DistanceType>::Impostors(
+    UMatType& outputMatrix,
+    const MatType& dataset,
+    const LabelsType& labels,
+    const VecType& norms)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -173,8 +172,8 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
   // KNN instance.
   KNN knn;
 
-  arma::Mat<size_t> neighbors;
-  arma::mat distances;
+  UMatType neighbors;
+  MatType distances;
 
   for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
@@ -198,12 +197,13 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
 
 // Calculates k differently labeled nearest neighbors. The function
 // writes back calculated neighbors & distances to passed matrices.
-template<typename MetricType>
-void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
-                                        arma::mat& outputDistance,
-                                        const arma::mat& dataset,
-                                        const arma::Row<size_t>& labels,
-                                        const arma::vec& norms)
+template<typename MatType, typename LabelsType, typename DistanceType>
+void Constraints<MatType, LabelsType, DistanceType>::Impostors(
+    UMatType& outputNeighbors,
+    MatType& outputDistance,
+    const MatType& dataset,
+    const LabelsType& labels,
+    const VecType& norms)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -211,8 +211,8 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   // KNN instance.
   KNN knn;
 
-  arma::Mat<size_t> neighbors;
-  arma::mat distances;
+  UMatType neighbors;
+  MatType distances;
 
   for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
@@ -237,28 +237,29 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
 
 // Calculates k differently labeled nearest neighbors on a
 // batch of data points.
-template<typename MetricType>
-void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
-                                        const arma::mat& dataset,
-                                        const arma::Row<size_t>& labels,
-                                        const arma::vec& norms,
-                                        const size_t begin,
-                                        const size_t batchSize)
+template<typename MatType, typename LabelsType, typename DistanceType>
+void Constraints<MatType, LabelsType, DistanceType>::Impostors(
+    UMatType& outputMatrix,
+    const MatType& dataset,
+    const LabelsType& labels,
+    const VecType& norms,
+    const size_t begin,
+    const size_t batchSize)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
 
-  arma::mat subDataset = dataset.cols(begin, begin + batchSize - 1);
-  arma::Row<size_t> sublabels = labels.cols(begin, begin + batchSize - 1);
+  MatType subDataset = dataset.cols(begin, begin + batchSize - 1);
+  LabelsType sublabels = labels.cols(begin, begin + batchSize - 1);
 
   // KNN instance.
   KNN knn;
 
-  arma::Mat<size_t> neighbors;
-  arma::mat distances;
+  UMatType neighbors;
+  MatType distances;
 
   // Vectors to store indices.
-  arma::uvec subIndexSame;
+  UVecType subIndexSame;
 
   for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
@@ -285,29 +286,30 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
 
 // Calculates k differently labeled nearest neighbors & distances on a
 // batch of data points.
-template<typename MetricType>
-void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
-                                        arma::mat& outputDistance,
-                                        const arma::mat& dataset,
-                                        const arma::Row<size_t>& labels,
-                                        const arma::vec& norms,
-                                        const size_t begin,
-                                        const size_t batchSize)
+template<typename MatType, typename LabelsType, typename DistanceType>
+void Constraints<MatType, LabelsType, DistanceType>::Impostors(
+    UMatType& outputNeighbors,
+    MatType& outputDistance,
+    const MatType& dataset,
+    const LabelsType& labels,
+    const VecType& norms,
+    const size_t begin,
+    const size_t batchSize)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
 
-  arma::mat subDataset = dataset.cols(begin, begin + batchSize - 1);
-  arma::Row<size_t> sublabels = labels.cols(begin, begin + batchSize - 1);
+  MatType subDataset = dataset.cols(begin, begin + batchSize - 1);
+  LabelsType sublabels = labels.cols(begin, begin + batchSize - 1);
 
   // KNN instance.
   KNN knn;
 
-  arma::Mat<size_t> neighbors;
-  arma::mat distances;
+  UMatType neighbors;
+  MatType distances;
 
   // Vectors to store indices.
-  arma::uvec subIndexSame;
+  UVecType subIndexSame;
 
   for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
@@ -335,14 +337,15 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
 
 // Calculates k differently labeled nearest neighbors & distances over some
 // data points.
-template<typename MetricType>
-void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
-                                        arma::mat& outputDistance,
-                                        const arma::mat& dataset,
-                                        const arma::Row<size_t>& labels,
-                                        const arma::vec& norms,
-                                        const arma::uvec& points,
-                                        const size_t numPoints)
+template<typename MatType, typename LabelsType, typename DistanceType>
+void Constraints<MatType, LabelsType, DistanceType>::Impostors(
+    UMatType& outputNeighbors,
+    MatType& outputDistance,
+    const MatType& dataset,
+    const LabelsType& labels,
+    const VecType& norms,
+    const UVecType& points,
+    const size_t numPoints)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -350,11 +353,11 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   // KNN instance.
   KNN knn;
 
-  arma::Mat<size_t> neighbors;
-  arma::mat distances;
+  UMatType neighbors;
+  MatType distances;
 
   // Vectors to store indices.
-  arma::uvec subIndexSame;
+  UVecType subIndexSame;
 
   for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
@@ -384,31 +387,35 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
 
 // Generates {data point, target neighbors, impostors} triplets using
 // TargetNeighbors() and Impostors().
-template<typename MetricType>
-void Constraints<MetricType>::Triplets(arma::Mat<size_t>& outputMatrix,
-                                       const arma::mat& dataset,
-                                       const arma::Row<size_t>& labels,
-                                       const arma::vec& norms)
+template<typename MatType, typename LabelsType, typename DistanceType>
+void Constraints<MatType, LabelsType, DistanceType>::Triplets(
+    UMatType& outputMatrix,
+    const MatType& dataset,
+    const LabelsType& labels,
+    const VecType& norms)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
 
   size_t N = dataset.n_cols;
 
-  arma::Mat<size_t> impostors(k, dataset.n_cols);
+  UMatType impostors(k, dataset.n_cols);
   Impostors(impostors, dataset, labels, norms);
 
-  arma::Mat<size_t> targetNeighbors(k, dataset.n_cols);;
+  UMatType targetNeighbors(k, dataset.n_cols);;
   TargetNeighbors(targetNeighbors, dataset, labels, norms);
 
-  outputMatrix = arma::Mat<size_t>(3, k * k * N , arma::fill::zeros);
+  outputMatrix = UMatType(3, k * k * N , arma::fill::zeros);
 
-  for (size_t i = 0, r = 0; i < N; ++i)
+  #pragma omp parallel for collapse(3)
+  for (size_t i = 0; i < N; ++i)
   {
     for (size_t j = 0; j < k; ++j)
     {
-      for (size_t l = 0; l < k; l++, r++)
+      for (size_t l = 0; l < k; l++)
       {
+        const size_t r = i * (k * k) + j * k + l;
+
         // Generate triplets.
         outputMatrix(0, r) = i;
         outputMatrix(1, r) = targetNeighbors(j, i);
@@ -418,9 +425,9 @@ void Constraints<MetricType>::Triplets(arma::Mat<size_t>& outputMatrix,
   }
 }
 
-template<typename MetricType>
-inline void Constraints<MetricType>::Precalculate(
-                                         const arma::Row<size_t>& labels)
+template<typename MatType, typename LabelsType, typename DistanceType>
+inline void Constraints<MatType, LabelsType, DistanceType>::Precalculate(
+    const LabelsType& labels)
 {
   // Make sure the calculation is necessary.
   if (precalculated)
@@ -431,6 +438,7 @@ inline void Constraints<MetricType>::Precalculate(
   indexSame.resize(uniqueLabels.n_elem);
   indexDiff.resize(uniqueLabels.n_elem);
 
+  #pragma omp parallel for
   for (size_t i = 0; i < uniqueLabels.n_elem; ++i)
   {
     // Store same and diff indices.

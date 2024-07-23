@@ -288,7 +288,7 @@ class DoublePoleCart
   State InitialSample()
   {
     stepsPerformed = 0;
-    return State((arma::randu<arma::vec>(6) - 0.5) / 10.0);
+    return State((randu<arma::vec>(6) - 0.5) / 10.0);
   }
 
   /**

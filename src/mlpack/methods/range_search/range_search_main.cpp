@@ -50,8 +50,8 @@ BINDING_LONG_DESC(
 
 // Example.
 BINDING_EXAMPLE(
-    "For example, the following will calculate the points within the range [2, "
-    "5] of each point in "+ PRINT_DATASET("input") + " and store the"
+    "For example, the following will calculate the points within the range `[2,"
+    " 5]` of each point in "+ PRINT_DATASET("input") + " and store the"
     " distances in" + PRINT_DATASET("distances") + " and the neighbors in "
     + PRINT_DATASET("neighbors") +
     "\n\n" +

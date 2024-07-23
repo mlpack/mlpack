@@ -21,14 +21,17 @@ using namespace arma;
 /**
  * Make sure the SVD Batch lerning is converging.
  */
-TEST_CASE("SVDBatchConvergenceElementTest", "[SVDBatchTest]")
+TEMPLATE_TEST_CASE("SVDBatchConvergenceElementTest", "[SVDBatchTest]", float,
+    double)
 {
-  sp_mat data;
+  typedef TestType eT;
+
+  SpMat<eT> data;
   data.sprandn(100, 100, 0.2);
-  AMF<SimpleToleranceTermination<sp_mat>,
+  AMF<SimpleToleranceTermination<SpMat<eT>, Mat<eT>>,
       AverageInitialization,
-      SVDBatchLearning> amf;
-  mat m1, m2;
+      SVDBatchLearning<Mat<eT>>> amf;
+  Mat<eT> m1, m2;
   amf.Apply(data, 2, m1, m2);
 
   REQUIRE(amf.TerminationPolicy().Iteration() !=
@@ -36,41 +39,44 @@ TEST_CASE("SVDBatchConvergenceElementTest", "[SVDBatchTest]")
 }
 
 //! This is used to ensure we start from the same initial point.
+template<typename MatType>
 class SpecificRandomInitialization
 {
  public:
   SpecificRandomInitialization(const size_t n, const size_t r, const size_t m) :
-      W(arma::randu<arma::mat>(n, r)),
-      H(arma::randu<arma::mat>(r, m)) { }
+      W(arma::randu<MatType>(n, r)),
+      H(arma::randu<MatType>(r, m)) { }
 
-  template<typename MatType>
-  inline void Initialize(const MatType& /* V */,
+  template<typename VMatType>
+  inline void Initialize(const VMatType& /* V */,
                          const size_t /* r */,
-                         arma::mat& W,
-                         arma::mat& H)
+                         MatType& W,
+                         MatType& H)
   {
     W = this->W;
     H = this->H;
   }
 
  private:
-  arma::mat W;
-  arma::mat H;
+  MatType W;
+  MatType H;
 };
 
 /**
  * Make sure the momentum is working okay.
  */
-TEST_CASE("SVDBatchMomentumTest", "[SVDBatchTest]")
+TEMPLATE_TEST_CASE("SVDBatchMomentumTest", "[SVDBatchTest]", float, double)
 {
-  mat dataset;
+  typedef TestType eT;
+
+  Mat<eT> dataset;
   if (!data::Load("GroupLensSmall.csv", dataset))
     FAIL("Cannot load dataset GroupLensSmall.csv!");
 
   // Generate list of locations for batch insert constructor for sparse
   // matrices.
   arma::umat locations(2, dataset.n_cols);
-  arma::vec values(dataset.n_cols);
+  arma::Col<eT> values(dataset.n_cols);
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     // We have to transpose it because items are rows, and users are columns.
@@ -84,22 +90,25 @@ TEST_CASE("SVDBatchMomentumTest", "[SVDBatchTest]")
   const size_t maxItemID = (size_t) max(locations.row(1)) + 1;
 
   // Fill sparse matrix.
-  sp_mat cleanedData = arma::sp_mat(locations, values, maxUserID, maxItemID);
+  SpMat<eT> cleanedData(locations, values, maxUserID, maxItemID);
 
   // Create the initial matrices.
-  SpecificRandomInitialization sri(cleanedData.n_rows, 2, cleanedData.n_cols);
+  SpecificRandomInitialization<Mat<eT>> sri(cleanedData.n_rows, 2,
+      cleanedData.n_cols);
 
-  ValidationRMSETermination<sp_mat> vrt(cleanedData, 500);
-  AMF<ValidationRMSETermination<sp_mat>,
-      SpecificRandomInitialization,
-      SVDBatchLearning> amf1(vrt, sri, SVDBatchLearning(0.0009, 0, 0, 0));
+  ValidationRMSETermination<SpMat<eT>, Mat<eT>> vrt(cleanedData, 500);
+  AMF<ValidationRMSETermination<SpMat<eT>, Mat<eT>>,
+      SpecificRandomInitialization<Mat<eT>>,
+      SVDBatchLearning<Mat<eT>>> amf1(vrt, sri,
+      SVDBatchLearning<Mat<eT>>(0.0009, 0, 0, 0));
 
-  mat m1, m2;
+  Mat<eT> m1, m2;
   const double regularRMSE = amf1.Apply(cleanedData, 2, m1, m2);
 
-  AMF<ValidationRMSETermination<sp_mat>,
-      SpecificRandomInitialization,
-      SVDBatchLearning> amf2(vrt, sri, SVDBatchLearning(0.0009, 0, 0, 0.8));
+  AMF<ValidationRMSETermination<SpMat<eT>, Mat<eT>>,
+      SpecificRandomInitialization<Mat<eT>>,
+      SVDBatchLearning<Mat<eT>>> amf2(vrt, sri,
+      SVDBatchLearning<Mat<eT>>(0.0009, 0, 0, 0.8));
 
   const double momentumRMSE = amf2.Apply(cleanedData, 2, m1, m2);
 
@@ -109,16 +118,19 @@ TEST_CASE("SVDBatchMomentumTest", "[SVDBatchTest]")
 /**
  * Make sure the regularization is working okay.
  */
-TEST_CASE("SVDBatchRegularizationTest", "[SVDBatchTest]")
+TEMPLATE_TEST_CASE("SVDBatchRegularizationTest", "[SVDBatchTest]", float,
+    double)
 {
-  mat dataset;
+  typedef TestType eT;
+
+  Mat<eT> dataset;
   if (!data::Load("GroupLensSmall.csv", dataset))
     FAIL("Cannot load dataset GroupLensSmall.csv!");
 
   // Generate list of locations for batch insert constructor for sparse
   // matrices.
   arma::umat locations(2, dataset.n_cols);
-  arma::vec values(dataset.n_cols);
+  arma::Col<eT> values(dataset.n_cols);
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     // We have to transpose it because items are rows, and users are columns.
@@ -132,22 +144,25 @@ TEST_CASE("SVDBatchRegularizationTest", "[SVDBatchTest]")
   const size_t maxItemID = (size_t) max(locations.row(1)) + 1;
 
   // Fill sparse matrix.
-  sp_mat cleanedData = arma::sp_mat(locations, values, maxUserID, maxItemID);
+  SpMat<eT> cleanedData(locations, values, maxUserID, maxItemID);
 
   // Create the initial matrices.
-  SpecificRandomInitialization sri(cleanedData.n_rows, 2, cleanedData.n_cols);
+  SpecificRandomInitialization<Mat<eT>> sri(cleanedData.n_rows, 2,
+      cleanedData.n_cols);
 
-  ValidationRMSETermination<sp_mat> vrt(cleanedData, 2000);
-  AMF<ValidationRMSETermination<sp_mat>,
-      SpecificRandomInitialization,
-      SVDBatchLearning> amf1(vrt, sri, SVDBatchLearning(0.0009, 0, 0, 0));
+  ValidationRMSETermination<SpMat<eT>, Mat<eT>> vrt(cleanedData, 2000);
+  AMF<ValidationRMSETermination<SpMat<eT>, Mat<eT>>,
+      SpecificRandomInitialization<Mat<eT>>,
+      SVDBatchLearning<Mat<eT>>> amf1(vrt, sri,
+      SVDBatchLearning<Mat<eT>>(0.0009, 0, 0, 0));
 
-  mat m1, m2;
+  Mat<eT> m1, m2;
   double regularRMSE = amf1.Apply(cleanedData, 2, m1, m2);
 
-  AMF<ValidationRMSETermination<sp_mat>,
-      SpecificRandomInitialization,
-      SVDBatchLearning> amf2(vrt, sri, SVDBatchLearning(0.0009, 0.5, 0.5, 0.8));
+  AMF<ValidationRMSETermination<SpMat<eT>, Mat<eT>>,
+      SpecificRandomInitialization<Mat<eT>>,
+      SVDBatchLearning<Mat<eT>>> amf2(vrt, sri,
+      SVDBatchLearning<Mat<eT>>(0.0009, 0.5, 0.5, 0.8));
 
   double momentumRMSE = amf2.Apply(cleanedData, 2, m1, m2);
 
@@ -173,9 +188,10 @@ TEST_CASE("SVDBatchNegativeElementTest", "[SVDBatchTest]")
 
   AMF<SimpleToleranceTermination<mat>,
       RandomAMFInitialization,
-      SVDBatchLearning> amf(SimpleToleranceTermination<mat>(),
-                            RandomAMFInitialization(),
-                            SVDBatchLearning(0.1, 0.001, 0.001, 0));
+      SVDBatchLearning<mat>>
+      amf(SimpleToleranceTermination<mat>(),
+          RandomAMFInitialization(),
+          SVDBatchLearning(0.1, 0.001, 0.001, 0));
   mat m1, m2;
   amf.Apply(test, 3, m1, m2);
 

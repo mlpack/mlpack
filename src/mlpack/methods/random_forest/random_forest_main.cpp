@@ -40,8 +40,8 @@ BINDING_LONG_DESC(
     "\n\n"
     "The training set and associated labels are specified with the " +
     PRINT_PARAM_STRING("training") + " and " + PRINT_PARAM_STRING("labels") +
-    " parameters, respectively.  The labels should be in the range [0, "
-    "num_classes - 1]. Optionally, if " +
+    " parameters, respectively.  The labels should be in the range `[0, "
+    "num_classes - 1]`. Optionally, if " +
     PRINT_PARAM_STRING("labels") + " is not specified, the labels are assumed "
     "to be the last dimension of the training dataset."
     "\n\n"
@@ -99,11 +99,11 @@ BINDING_SEE_ALSO("@decision_tree", "#decision_tree");
 BINDING_SEE_ALSO("@hoeffding_tree", "#hoeffding_tree");
 BINDING_SEE_ALSO("@softmax_regression", "#softmax_regression");
 BINDING_SEE_ALSO("Random forest on Wikipedia",
-        "https://en.wikipedia.org/wiki/Random_forest");
-BINDING_SEE_ALSO("Random forests (pdf)",
-        "https://link.springer.com/content/pdf/10.1023/A:1010933404324.pdf");
+    "https://en.wikipedia.org/wiki/Random_forest");
+BINDING_SEE_ALSO("Random forests (pdf)", "https://www.eecis.udel.edu/~shatkay"
+    "/Course/papers/BreimanRandomForests2001.pdf");
 BINDING_SEE_ALSO("RandomForest C++ class documentation",
-        "@src/mlpack/methods/random_forest/random_forest.cpp");
+    "@src/mlpack/methods/random_forest/random_forest.hpp");
 
 PARAM_MATRIX_IN("training", "Training dataset.", "t");
 PARAM_UROW_IN("labels", "Labels for training dataset.", "l");
@@ -252,7 +252,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     Log::Info << "Training random forest with " << numTrees << " trees..."
         << endl;
 
-    const size_t numClasses = arma::max(labels) + 1;
+    const size_t numClasses = max(labels) + 1;
 
     // Train the model.
     rfModel->rf.Train(data, labels, numClasses, numTrees, minimumLeafSize,
@@ -267,7 +267,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       arma::Row<size_t> predictions;
       rfModel->rf.Classify(data, predictions);
 
-      const size_t correct = arma::accu(predictions == labels);
+      const size_t correct = accu(predictions == labels);
 
       Log::Info << correct << " of " << labels.n_elem << " correct on training"
           << " set (" << (double(correct) / double(labels.n_elem) * 100) << ")."
@@ -292,7 +292,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       arma::Row<size_t> testLabels =
           std::move(params.Get<arma::Row<size_t>>("test_labels"));
 
-      const size_t correct = arma::accu(predictions == testLabels);
+      const size_t correct = accu(predictions == testLabels);
 
       Log::Info << correct << " of " << testLabels.n_elem << " correct on test"
           << " set (" << (double(correct) / double(testLabels.n_elem) * 100)

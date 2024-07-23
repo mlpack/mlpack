@@ -88,7 +88,7 @@ void BilinearInterpolationType<InputType, OutputType>::Forward(
 
       for (size_t k = 0; k < depth * batchSize; ++k)
       {
-        outputAsCube(i, j, k) = arma::accu(inputAsCube.slice(k).submat(
+        outputAsCube(i, j, k) = accu(inputAsCube.slice(k).submat(
             rOrigin, cOrigin, rOrigin + 1, cOrigin + 1) % coeffs);
       }
     }
@@ -148,7 +148,7 @@ void BilinearInterpolationType<InputType, OutputType>::Backward(
 
         for (size_t k = 0; k < depth * batchSize; ++k)
         {
-          outputAsCube(i, j, k) = arma::accu(gradientAsCube.slice(k).submat(
+          outputAsCube(i, j, k) = accu(gradientAsCube.slice(k).submat(
               rOrigin, cOrigin, rOrigin + 1, cOrigin + 1) % coeffs);
         }
       }

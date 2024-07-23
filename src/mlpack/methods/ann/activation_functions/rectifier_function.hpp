@@ -66,7 +66,7 @@ class RectifierFunction
   {
     y.set_size(size(x));
     y.zeros();
-    y = SafeMax(y, x);
+    y = max(y, x);
   }
 
   /**

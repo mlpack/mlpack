@@ -1,19 +1,22 @@
 # mlpack core class documentation
 
 Underlying the implementations of [mlpack's machine learning
-algorithms](index.md#mlpack-algorithm-documentation) are mlpack core support
+algorithms](../index.md#mlpack-algorithm-documentation) are mlpack core support
 classes, each of which are documented on this page.
 
  * [Core math utilities](#core-math-utilities): utility classes for mathematical
    purposes
+ * [Distances](#distances): distance metrics for geometric algorithms
  * [Distributions](#distributions): probability distributions
- * [Metrics](#metrics): distance metrics for geometric algorithms
  * [Kernels](#kernels): Mercer kernels for kernel-based algorithms
 
 ## Core math utilities
 
 mlpack provides a number of additional mathematical utility classes and
 functions on top of Armadillo.
+
+ * [Aliases](#aliases): utilities to create and manage aliases (`MakeAlias()`,
+   `ClearAlias()`, `UnwrapAlias()`).
 
  * [`Range`](#range): simple mathematical range (i.e. `[0, 3]`)
 
@@ -31,9 +34,6 @@ functions on top of Armadillo.
  * [Logarithmic utilities](#logarithmic-utilities): `LogAdd()`, `AccuLog()`,
    `LogSumExp()`, `LogSumExpT()`.
 
-<!-- TODO: do something with MakeAlias(); but it needs to be refactored first
--->
-
  * [`MultiplyCube2Cube()`](#multiplycube2cube): multiply each slice in a cube by each slice in another cube
  * [`MultiplyMat2Cube()`](#multiplymat2cube): multiply a matrix by each slice in a cube
  * [`MultiplyCube2Mat()`](#multiplycube2mat): multiply each slice in a cube by a matrix
@@ -44,6 +44,78 @@ functions on top of Armadillo.
    scalar random number generation functions
  * [`RandomBasis()`](#randombasis): generate a random orthogonal basis
  * [`ShuffleData()`](#shuffledata): shuffle a dataset and associated labels
+
+---
+
+### Aliases
+
+Aliases are matrix, vector, or cube objects that share memory with another
+matrix, vector, or cube.  They are often used internally inside of mlpack to
+avoid copies.
+
+***Important caveats about aliases***:
+
+ - An alias represents the same memory block as the input.  As such, changes to
+   the alias object will also be reflected in the original object.
+
+ - The `MakeAlias()` function is not guaranteed to return an alias; it only
+   returns an alias *if possible*, and makes a copy otherwise.
+
+ - If `mat` goes out of scope or is destructed, then `a` ***becomes invalid***.
+   _You are responsible for ensuring an invalid alias is not used!_
+
+---
+
+ * `MakeAlias(a, vector, rows, cols, offset=0, strict=true)`
+   - Make `a` into an alias of `vector` with the given size.
+   - If `offset` is `0`, then the alias is identical: the first element of
+     `a` is the first element of `vector`. Otherwise, the first element of `a`
+     is the `offset`'th element of `vector`.
+   - If `strict` is `true`, the size of `a` cannot be changed.
+   - `vector` and `a` should have the same vector type (e.g. `arma::vec`,
+     `arma::fvec`).
+   - If an alias cannot be created, the vector will be copied.
+
+ * `MakeAlias(a, mat, rows, cols, offset=0, strict=true)`
+   - Make `a` into an alias of `mat` with the given size.
+   - If `offset` is `0`, then the alias is identical: the first element of
+     `a` is the first element of `mat`. Otherwise, the first element of `a`
+     is the `offset`'th element of `mat`; elements in `mat` are ordered in
+     a [column-major way](matrices.md#representing-data-in-mlpack).
+   - If `strict` is `true`, the size of `a` cannot be changed.
+   - `mat` and `a` should have the same matrix type (e.g. `arma::mat`,
+     `arma::fmat`, `arma::sp_mat`).
+   - If an alias cannot be created, the matrix will be copied.  Sparse types
+     cannot have aliases and will be copied.
+
+ * `MakeAlias(a, cube, rows, cols, slices, offset=0, strict=true)`
+   - Make `a` into an alias of `cube` with the given size.
+   - If `offset` is `0`, then the alias is identical: the first element of
+     `a` is the first element of `cube`. Otherwise, the first element of `a`
+     is the `offset`'th element of `cube`; elements in `cube` are ordered in
+     a [column-major way](matrices.md#representing-data-in-mlpack).
+   - If `strict` is `true`, the size of `a` cannot be changed.
+   - `cube` and `a` should have the same cube type (e.g. `arma::cube`,
+     `arma::fcube`).
+   - If an alias cannot be created, the cube will be copied.
+
+---
+
+ * `ClearAlias(a)`
+   - If `a` is an alias, reset `a` to an empty matrix, without modifying the
+     aliased memory.  `a` is no longer an alias after this call.
+
+---
+
+ * `UnwrapAlias(a, in)`
+   - If `in` is a matrix type (e.g. `arma::mat`), make `a` into an alias of
+     `in`.
+   - If `in` is not a matrix type, but instead, e.g., an Armadillo expression,
+     fill `a` with the results of the evaluated expression `in`.
+   - This can be used in place of, e.g., `a = in`, to avoid a copy when
+     possible.
+   - `a` should be a matrix type that matches the type of the expression or
+     matrix `in`.
 
 ---
 
@@ -130,8 +202,8 @@ mlpack::RangeType<int> r6(3, 4); // [3, 4]
 
 `Range` is used by:
 
- * [`RangeSearch`](range_search.md)
- * [mlpack trees](#trees)
+ * [`RangeSearch`](/src/mlpack/methods/range_search/range_search.hpp)
+ * [mlpack trees](../developer/trees.md) <!-- TODO: link to local trees section -->
 
 ---
 
@@ -362,13 +434,13 @@ The resulting images (before and after using `ColumnsToBlocks`) are shown below.
 *Before*:
 
 <center>
-<img src="img/favicons-matrix.png" alt="four favicons each as a column in a matrix, unintelligible">
+<img src="../img/favicons-matrix.png" alt="four favicons each as a column in a matrix, unintelligible">
 </center>
 
 *After*:
 
 <center>
-<img src="img/favicons-blocks.png" alt="four favicons each as a block in a larger image, much better">
+<img src="../img/favicons-blocks.png" alt="four favicons each as a block in a larger image, much better">
 </center>
 
 ---
@@ -376,7 +448,7 @@ The resulting images (before and after using `ColumnsToBlocks`) are shown below.
 #### See also
 
  * [Loading and saving image data](load_save.md#image-data)
- * [`SparseAutoencoder`](sparse_autoencoder.md)
+ * [`SparseAutoencoder`](/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder.hpp)
 
 ---
 
@@ -392,7 +464,7 @@ The resulting images (before and after using `ColumnsToBlocks`) are shown below.
     - The return type is `double`.
 
  * Both of these functions are used internally by the
-   [`GammaDistribution`](#gammadistribution) class.
+   `GammaDistribution` class. <!-- TODO: document the class! -->
 
 *Example*:
 
@@ -650,10 +722,10 @@ random scalar values.
    the range `[lo, hiExclusive)`.
 
  * `RandNormal()` returns a random `double` normally distributed with mean `0`
-   and variance `1`.
+   and standard deviation `1`.
 
- * `RandNormal(mean, variance)` returns a random `double` normally distributed
-   with mean `mean` and variance `variance`.
+ * `RandNormal(mean, stddev)` returns a random `double` normally distributed
+   with mean `mean` and standard deviation `stddev`.
 
 *Examples*:
 
@@ -779,10 +851,452 @@ std::cout << "with label " << shuffledLabels[0] << " and weight "
 
 ---
 
+## Distances
+
+mlpack includes a number of distance metrics for its distance-based techniques.
+These all implement the [same API](../developer/distances.md), providing one
+`Evaluate()` method, and can be used with a variety of different techniques,
+including:
+
+<!-- TODO: better names for each link -->
+
+ * [`NeighborSearch`](/src/mlpack/methods/neighbor_search/neighbor_search.hpp)
+ * [`RangeSearch`](/src/mlpack/methods/range_search/range_search.hpp)
+ * [`LMNN`](methods/lmnn.md)
+ * [`EMST`](/src/mlpack/methods/emst/emst.hpp)
+ * [`NCA`](methods/nca.md)
+ * [`RANN`](/src/mlpack/methods/rann/rann.hpp)
+ * [`KMeans`](/src/mlpack/methods/kmeans/kmeans.hpp)
+
+Supported metrics:
+
+ * [`LMetric`](#lmetric): generalized L-metric/Lp-metric, including
+   Manhattan/Euclidean/Chebyshev distances
+ * [`IoUDistance`](#ioudistance): intersection-over-union distance
+ * [`IPMetric<KernelType>`](#ipmetrickerneltype): inner product metric (e.g.
+   induced metric over a [Mercer kernel](#kernels))
+ * [`MahalanobisDistance`](#mahalanobisdistance): weighted Euclidean distance
+   with weights specified by a covariance matrix
+ * [Implement a custom metric](../developer/distances.md)
+
+### `LMetric`
+
+The `LMetric` template class implements a [generalized
+L-metric](https://en.wikipedia.org/wiki/Lp_space#Definition)
+(L1-metric, L2-metric, etc.).  The class has two template parameters:
+
+```
+LMetric<Power, TakeRoot>
+```
+
+ * `Power` is an `int` representing the type of the metric; e.g., `2` would
+   represent the L2-metric (Euclidean distance).
+   - `Power` must be `1` or greater.
+   - If `Power` is `INT_MAX`, the metric is the L-infinity distance (Chebyshev
+     distance).
+
+ * `TakeRoot` is a `bool` (default `true`) indicating whether the root of the
+   distance should be taken.
+   - If set to `false`, the metric will no longer satisfy the triangle
+     inequality.
+
+---
+
+Several convenient typedefs are available:
+
+ * `ManhattanDistance` (defined as `LMetric<1>`)
+ * `EuclideanDistance` (defined as `LMetric<2>`)
+ * `SquaredEuclideanDistance` (defined as `LMetric<2, false>`)
+ * `ChebyshevDistance` (defined as `LMetric<INT_MAX>`)
+
+---
+
+The static `Evaluate()` method can be used to compute the distance between two
+vectors.
+
+*Note:* The vectors given to `Evaluate()` can have any type so long as the type
+implements the Armadillo API (e.g. `arma::fvec`, `arma::sp_fvec`, etc.).
+
+---
+
+*Example usage:*
+
+```c++
+// Create two vectors: [0, 1.0, 5.0] and [1.0, 3.0, 5.0].
+arma::vec a("0.0 1.0 5.0");
+arma::vec b("1.0 3.0 5.0");
+
+const double d1 = mlpack::ManhattanDistance::Evaluate(a, b);        // d1 = 3.0
+const double d2 = mlpack::EuclideanDistance::Evaluate(a, b);        // d2 = 2.24
+const double d3 = mlpack::SquaredEuclideanDistance::Evaluate(a, b); // d3 = 5.0
+const double d4 = mlpack::ChebyshevDistance::Evaluate(a, b);        // d4 = 2.0
+const double d5 = mlpack::LMetric<4>::Evaluate(a, b);               // d5 = 2.03
+const double d6 = mlpack::LMetric<3, false>::Evaluate(a, b);        // d6 = 9.0
+
+std::cout << "Manhattan distance:         " << d1 << "." << std::endl;
+std::cout << "Euclidean distance:         " << d2 << "." << std::endl;
+std::cout << "Squared Euclidean distance: " << d3 << "." << std::endl;
+std::cout << "Chebyshev distance:         " << d4 << "." << std::endl;
+std::cout << "L4-distance:                " << d5 << "." << std::endl;
+std::cout << "Cubed L3-distance:          " << d6 << "." << std::endl;
+
+// Compute the distance between two random 10-dimensional vectors in a matrix.
+arma::mat m(10, 100, arma::fill::randu);
+
+const double d7 = mlpack::EuclideanDistance::Evaluate(m.col(0), m.col(7));
+
+std::cout << std::endl;
+std::cout << "Distance between two random vectors: " << d7 << "." << std::endl;
+std::cout << std::endl;
+
+// Compute the distance between two 32-bit precision `float` vectors.
+arma::fvec fa("0.0 1.0 5.0");
+arma::fvec fb("1.0 3.0 5.0");
+
+const double d8 = mlpack::EuclideanDistance::Evaluate(fa, fb); // d8 = 2.236
+
+std::cout << "Euclidean distance (fvec): " << d8 << "." << std::endl;
+```
+
+---
+
+### `IoUDistance`
+
+The `IoUDistance` class implements the intersection-over-union distance metric,
+a measure of the overlap between two bounding boxes related to the
+[Jaccard index](https://en.wikipedia.org/wiki/Jaccard_index).
+
+For two bounding boxes, the `IoUDistance` is computed as
+`1 - (area of intersection / area of union)`.
+If the bounding boxes overlap completely, the distance is 0; if they do not
+overlap at all, the distance is 1.
+
+---
+
+The class has a boolean template parameter `UseCoordinates` that controls how
+bounding boxes are specified.
+
+ * `IoUDistance<>` (or `IoUDistance<false>`) expects bounding boxes to be
+   provided to the `Evaluate()` as four-element vectors of the form
+   `[x0, y0, h, w]`, where:
+    - `(x0, y0)` is the lower left corner of the bounding box,
+    - `h` is the height of the bounding box, and
+    - `w` is the width of the bounding box.
+
+ * `IoUDistance<true>` expects bounding boxes to be provided to the `Evaluate()`
+   as four-element vectors of the form `[x0, y0, x1, y1]`, where:
+    - `(x0, y0)` is the lower left corner of the bounding box, and
+    - `(x1, y1)` is the upper right corner of the bounding box.
+
+---
+
+The static `Evaluate()` method can be used to compute the IoU distance between
+two bounding boxes.
+
+If either input vector does not have four elements, an exception will be thrown.
+
+*Note:* The vectors given to `Evaluate()` can have any type so long as the type
+implements the Armadillo API (e.g. `arma::vec`, `arma::fvec`, etc.).  The use of
+sparse objects is not recommended to represent bounding boxes (as they are in
+general not sparse).
+
+---
+
+*Example usage:*
+
+```c++
+// Create three bounding boxes by representing the lower left and size.
+arma::vec bb1("0.0 0.0 3.0 5.0"); // Lower left at (0, 0), height=3, width=5.
+arma::vec bb2("2.0 2.0 5.0 2.0"); // Lower left at (2, 2), height=5, width=2.
+arma::vec bb3("1.0 1.0 1.5 1.0"); // Lower left at (1, 1), height=1.5, width=1.
+
+// Represent the same three bounding boxes in lower left/upper right form.
+arma::vec bb1Coord("0.0 0.0 5.0 3.0"); // Upper right is (5, 3).
+arma::vec bb2Coord("2.0 2.0 4.0 7.0"); // Upper right is (4, 7).
+arma::vec bb3Coord("1.0 1.0 2.0 2.5"); // Upper right is (2, 2.5).
+
+// Compute the distance between each of the bounding boxes using the
+// height/width representation.
+const double d1 = mlpack::IoUDistance<>::Evaluate(bb1, bb2);
+const double d2 = mlpack::IoUDistance<>::Evaluate(bb2, bb3);
+const double d3 = mlpack::IoUDistance<>::Evaluate(bb1, bb3);
+
+std::cout << "IoUDistance with width/height bounding box representations:"
+    << std::endl;
+std::cout << " - ll=(0, 0), h=3, w=5 and ll=(2, 2), h=5, w=2:   " << d1
+    << "." << std::endl;
+std::cout << " - ll=(0, 0), h=3, w=5 and ll=(1, 1), h=1.5, w=1: " << d3
+    << "." << std::endl;
+std::cout << " - ll=(2, 2), h=5, w=2 and ll=(1, 1), h=1.5, w=1: " << d2
+    << "." << std::endl;
+
+// Now compute the same distances with the other representation.
+const double d1Coord = mlpack::IoUDistance<true>::Evaluate(bb1Coord, bb2Coord);
+const double d2Coord = mlpack::IoUDistance<true>::Evaluate(bb2Coord, bb3Coord);
+const double d3Coord = mlpack::IoUDistance<true>::Evaluate(bb1Coord, bb3Coord);
+
+std::cout << "IoUDistance with two-coordinate bounding box representations:"
+    << std::endl;
+std::cout << "(same bounding boxes as above)" << std::endl;
+std::cout << " - ll=(0, 0), ur=(5, 3) and ll=(2, 2), ur=(4, 7):   " << d1Coord
+    << "." << std::endl;
+std::cout << " - ll=(0, 0), ur=(5, 3) and ll=(1, 1), ur=(2, 2.5): " << d3Coord
+    << "." << std::endl;
+std::cout << " - ll=(2, 2), ur=(4, 7) and ll=(1, 1), ur=(2, 2.5): " << d2Coord
+    << "." << std::endl;
+```
+
+---
+
+### `IPMetric<KernelType>`
+
+The `IPMetric<KernelType>` class implements the distance metric induced by the
+given [`KernelType`](#kernels).  This computes distances in
+[kernel space](https://en.wikipedia.org/wiki/Kernel_method#Mathematics:_the_kernel_trick).
+Using the fact that a kernel `k(x, y)` (represented by `KernelType`) implements
+an inner product in kernel space, the `IPMetric` distance is defined as
+
+```
+d(x, y) = sqrt(k(x, x) + k(y, y) - 2 k(x, y)).
+```
+
+The template parameter `KernelType` can be any of mlpack's [kernels](#kernels),
+or a [custom kernel](#implement-a-custom-kernel).
+
+This metric is used by the [FastMKS](/src/mlpack/methods/fastmks/fastmks.hpp)
+method (fast max-kernel search).
+
+---
+
+#### Constructors and properties
+
+ * `d = IPMetric<KernelType>()`
+   - Construct a new `IPMetric` using a default-constructed `KernelType`.
+   - A default constructor for `KernelType` must be available
+     (e.g. `k = KernelType()`).
+
+ * `d = IPMetric<KernelType>(kernel)`
+   - Construct a new `IPMetric` using the given `kernel` (a `KernelType`
+     object).
+   - `kernel` is not copied; ensure that `kernel` does not go out of scope while
+     `d` is in use.
+
+ * `d = IPMetric<KernelType>(other)`
+   - Copy constructor: create a new `IPMetric` from the given `IPMetric`
+     `other`.
+   - This copies the internally-held `KernelType`.
+
+ * The copy operator (`d = other;`) will also copy the internally-held
+   `KernelType`.
+
+ * The internally-held `KernelType` can be accessed with `d.Kernel()`.
+
+---
+
+#### Distance evaluation
+
+ * `d.Evaluate(x1, x2)`
+   - Evaluate and return the distance in kernel space between two vectors `x1`
+     and `x2`.
+   - `x1` and `x2` should be vector types that implement the Armadillo API (e.g.
+     `arma::vec`, `arma::sp_vec`, etc.).
+   - `x1` and `x2` must be valid inputs to the `Evaluate()` function of the
+     given `KernelType`.
+
+---
+
+*Example usage:*
+
+```c++
+// Create a few random points.
+arma::vec x1(3, arma::fill::randu);
+arma::vec x2(3, arma::fill::randu);
+arma::vec x3(3, arma::fill::randu);
+
+// Create a metric on the Epanechnikov kernel.
+mlpack::EpanechnikovKernel ek(1.5 /* bandwidth */);
+mlpack::IPMetric<mlpack::EpanechnikovKernel> ip1(ek);
+
+// Compute distances in kernel space, and compare with kernel evaluations.
+std::cout << "x1: " << x1.t();
+std::cout << "x2: " << x2.t();
+std::cout << "x3: " << x3.t();
+std::cout << std::endl;
+
+std::cout << "  ek(x1, x2): " << ek.Evaluate(x1, x2) << "." << std::endl;
+std::cout << "  ip(x1, x2): " << ip1.Evaluate(x1, x2) << "." << std::endl;
+std::cout << std::endl;
+
+std::cout << "  ek(x2, x3): " << ek.Evaluate(x2, x3) << "." << std::endl;
+std::cout << "  ip(x2, x3): " << ip1.Evaluate(x2, x3) << "." << std::endl;
+std::cout << std::endl;
+
+std::cout << "  ek(x1, x3): " << ek.Evaluate(x1, x3) << "." << std::endl;
+std::cout << "  ip(x1, x3): " << ip1.Evaluate(x1, x3) << "." << std::endl;
+std::cout << std::endl;
+
+// Change the bandwidth of the kernel.
+ip1.Kernel().Bandwidth(2.0);
+std::cout << "With bandwidth 2.0:" << std::endl;
+std::cout << "  ek(x1, x3): " << ek.Evaluate(x1, x3) << "." << std::endl;
+std::cout << "  ip(x1, x3): " << ip1.Evaluate(x1, x3) << "." << std::endl;
+std::cout << std::endl;
+
+// Now create a metric on the LinearKernel.
+// This one is a bit of a trick!  For the LinearKernel, the induced metric is
+// exactly the Euclidean distance.
+mlpack::IPMetric<mlpack::LinearKernel> ip2;
+
+std::cout << "  Euclidean distance between x1/x2:     "
+    << mlpack::EuclideanDistance::Evaluate(x1, x2) << "." << std::endl;
+std::cout << "  IPMetric<LinearKernel> between x1/x2: "
+    << ip2.Evaluate(x1, x2) << "." << std::endl;
+
+// Compute the kernel space distance between two floating-point vectors.
+arma::fvec fx1(10, arma::fill::randu);
+arma::fvec fx2(10, arma::fill::randu);
+
+std::cout << "IPMetric<EpanechnikovKernel> result between two random "
+    << "10-dimensional 32-bit floating point vectors:" << std::endl;
+std::cout << "  " << ip1.Evaluate(fx1, fx2) << "." << std::endl;
+```
+
+---
+
+### `MahalanobisDistance`
+
+The `MahalanobisDistance` class implements the weighted Euclidean distance known
+as the
+[Mahalanobis distance](https://en.wikipedia.org/wiki/Mahalanobis_distance).
+This distance requires an inverse covariance matrix `Q` that controls the
+weighting of individual dimensions in the distance calculation.  The metric is
+defined as:
+
+```
+d_Q(x, y) = sqrt((x - y)^T Q (x - y))
+```
+
+The class has two template parameters:
+
+```
+MahalanobisDistance<TakeRoot = true, MatType = arma::mat>
+```
+
+ * When `TakeRoot` is manually specified as `false`, the `sqrt()` is omitted.
+   This is slightly faster, but will cause the distance to no longer satisfy the
+   triangle inequality.
+
+ * `MatType` is the matrix type used to represent `Q`, and should be a matrix
+   type satisfying the Armadillo API (e.g.  `arma::mat`, `arma::fmat`).
+
+***Notes:***
+
+ - Many descriptions of the Mahalanobis distance use the term `C^-1` instead of
+   `Q` as used here.  Ensure that the given `Q` matrix is the inverted
+   covariance (you can use, e.g.,
+   [`arma::pinv()`](https://arma.sourceforge.net/docs.html#pinv)).
+
+ - Instead of using `MahalanobisDistance` directly as a distance metric for
+   mlpack machine learning algorithms, it can often be faster to simply multiply
+   the dataset by the equivalent transformation implied by `Q` and then use that
+   modified dataset with the Euclidean distance directly.  See the example usage
+   below.
+
+---
+
+#### Constructors and properties
+
+ * `md = MahalanobisDistance()`
+   - Create a `MahalanobisDistance` object without initializing the inverse
+     covariance `Q`.
+   - Call `Q()` to set the matrix before calling `Evaluate()`.
+
+ * `md = MahalanobisDistance(dimensionality)`
+   - Create a `MahalanobisDistance` where `Q` is the identity matrix of the
+     given `dimensionality`.
+   - This distance metric will be equivalent to the Euclidean distance.
+
+ * `md = MahalanobisDistance(matQ)`
+   - Create a `MahalanobisDistance` with the given `Q` matrix.
+   - `matQ` must be positive definite and symmetric.
+
+ * `md.Q()`
+   - Access or modify the `Q` matrix.
+   - For instance, to set the `Q` matrix, `md.Q() = myCustomQ;` can be used.
+   - The `Q` matrix must be positive definite and symmetric.
+
+---
+
+#### Distance evaluation
+
+ * `md.Evaluate(x1, x2)`
+   - Evaluate and return the Mahalanobis distance between two vectors `x1` and
+     `x2`.
+   - `x1` and `x2` should be vector types with element type equivalent to the
+     element type of `MatType` (e.g. `arma::vec`, `arma::fvec`, etc.).
+
+---
+
+*Example usage:*
+
+```c++
+// Create random 10-dimensional data.
+arma::mat dataset(10, 100, arma::fill::randu);
+
+// Create a positive-definite Q matrix by using a weighting matrix W such that
+// Q = W^T W.
+arma::mat W(10, 10, arma::fill::randu);
+arma::mat Q = W.t() * W;
+
+// Create a MahalanobisDistance object with the given Q.
+mlpack::MahalanobisDistance md(std::move(Q));
+
+std::cout << "Mahalanobis distance between points 3 and 4: "
+    << md.Evaluate(dataset.col(3), dataset.col(4)) << "." << std::endl;
+
+// Now compare the Mahalanobis distance with the Euclidean distance on the
+// dataset transformed with W.  (They are the same!)
+arma::mat transformedDataset = W * dataset;
+std::cout << "Mahalanobis distance between points 2 and 71:           "
+    << md.Evaluate(dataset.col(2), dataset.col(71)) << "." << std::endl;
+std::cout << "Euclidean distance between transformed points 2 and 71: "
+    << mlpack::EuclideanDistance::Evaluate(transformedDataset.col(2),
+                                           transformedDataset.col(71))
+    << "." << std::endl;
+
+// Create a Mahalanobis distance for 32-bit floating point data.
+arma::fmat floatDataset(20, 100, arma::fill::randn);
+
+// Use a random diagonal matrix as Q.
+arma::fmat fQ = arma::diagmat(arma::randu<arma::fvec>(20));
+
+mlpack::MahalanobisDistance<false /* do not take square root */,
+                            arma::fmat> fmd;
+fmd.Q() = std::move(fQ);
+
+const double d1 = fmd.Evaluate(floatDataset.col(3), floatDataset.col(5));
+const double d2 = fmd.Evaluate(floatDataset.col(11), floatDataset.col(31));
+
+std::cout << "Squared Mahalanobis distance on 32-bit floating point data:"
+    << std::endl;
+std::cout << " - Points 3 and 5:   " << d1 << "." << std::endl;
+std::cout << " - Points 11 and 31: " << d2 << "." << std::endl;
+
+// Note that an equivalent transformation matrix can be recovered from Q with
+// an upper Cholesky decomposition (Q -> R.t() * R).
+arma::mat recoveredW = arma::chol(md.Q(), "lower");
+// A transformed dataset can be created with `(recoveredW * dataset)`.
+```
+
+---
+
 ## Distributions
 
+<!-- TODO: link to the completed HMM documentation -->
+
 mlpack has support for a number of different distributions, each supporting the
-same API.  These can be used with, for instance, the [`HMM`](hmm.md) class.
+same API.  These can be used with, for instance, the
+[`HMM`](/src/mlpack/methods/hmm/hmm.hpp) class.
 
  * [`DiscreteDistribution`](#discretedistribution): multidimensional categorical
    distribution (generalized Bernoulli distribution)
@@ -1055,108 +1569,6 @@ std::cout << "Average probability is: " << arma::mean(probabilities) << "."
     << std::endl;
 ```
 
-## Metrics
-
-mlpack includes a number of distance metrics for its distance-based techniques.
-These all implement the [same API](../developer/metrics.md), providing one
-`Evaluate()` method, and can be used with a variety of different techniques,
-including:
-
-<!-- TODO: better names for each link -->
-
- * [`NeighborSearch`](neighbor_search.md)
- * [`RangeSearch`](range_search.md)
- * [`LMNN`](lmnn.md)
- * [`EMST`](emst.md)
- * [`NCA`](nca.md)
- * [`RANN`](rann.md)
- * [`KMeans`](kmeans.md)
-
-Supported metrics:
-
- * [`LMetric`](#lmetric): generalized L-metric/Lp-metric, including
-   Manhattan/Euclidean/Chebyshev distances
- * [Implement a custom metric](../developer/metrics.md)
-
-### `LMetric`
-
-The `LMetric` template class implements a [generalized
-L-metric](https://en.wikipedia.org/wiki/Lp_space#Definition)
-(L1-metric, L2-metric, etc.).  The class has two template parameters:
-
-```c++
-LMetric<Power, TakeRoot>
-```
-
- * `Power` is an `int` representing the type of the metric; e.g., `2` would
-   represent the L2-metric (Euclidean distance).
-   - `Power` must be `1` or greater.
-   - If `Power` is `INT_MAX`, the metric is the L-infinity distance (Chebyshev
-     distance).
-
- * `TakeRoot` is a `bool` (default `true`) indicating whether the root of the
-   distance should be taken.
-   - If set to `false`, the metric will no longer satisfy the triangle
-     inequality.
-
----
-
-Several convenient typedefs are available:
-
- * `ManhattanDistance` (defined as `LMetric<1>`)
- * `EuclideanDistance` (defined as `LMetric<2>`)
- * `SquaredEuclideanDistance` (defined as `LMetric<2, false>`)
- * `ChebyshevDistance` (defined as `LMetric<INT_MAX>`)
-
----
-
-The static `Evaluate()` method can be used to compute the distance between two
-vectors.
-
-*Note:* The vectors given to `Evaluate()` can have any type so long as the type
-implements the Armadillo API (e.g. `arma::fvec`, `arma::sp_fvec`, etc.).
-
----
-
-*Example usage:*
-
-```c++
-// Create two vectors: [0, 1.0, 5.0] and [1.0, 3.0, 5.0].
-arma::vec a("0.0 1.0 5.0");
-arma::vec b("1.0 3.0 5.0");
-
-const double d1 = mlpack::ManhattanDistance::Evaluate(a, b);        // d1 = 3.0
-const double d2 = mlpack::EuclideanDistance::Evaluate(a, b);        // d2 = 2.24
-const double d3 = mlpack::SquaredEuclideanDistance::Evaluate(a, b); // d3 = 5.0
-const double d4 = mlpack::ChebyshevDistance::Evaluate(a, b);        // d4 = 2.0
-const double d5 = mlpack::LMetric<4>::Evaluate(a, b);               // d5 = 2.03
-const double d6 = mlpack::LMetric<3, false>::Evaluate(a, b);        // d6 = 9.0
-
-std::cout << "Manhattan distance:         " << d1 << "." << std::endl;
-std::cout << "Euclidean distance:         " << d2 << "." << std::endl;
-std::cout << "Squared Euclidean distance: " << d3 << "." << std::endl;
-std::cout << "Chebyshev distance:         " << d4 << "." << std::endl;
-std::cout << "L4-distance:                " << d5 << "." << std::endl;
-std::cout << "Cubed L3-distance:          " << d6 << "." << std::endl;
-
-// Compute the distance between two random 10-dimensional vectors in a matrix.
-arma::mat m(10, 100, arma::fill::randu);
-
-const double d7 = mlpack::EuclideanDistance::Evaluate(m.col(0), m.col(7));
-
-std::cout << std::endl;
-std::cout << "Distance between two random vectors: " << d7 << "." << std::endl;
-std::cout << std::endl;
-
-// Compute the distance between two 32-bit precision `float` vectors.
-arma::fvec fa("0.0 1.0 5.0");
-arma::fvec fb("1.0 3.0 5.0");
-
-const double d8 = mlpack::EuclideanDistance::Evaluate(fa, fb); // d8 = 2.236
-
-std::cout << "Euclidean distance (fvec): " << d8 << "." << std::endl;
-```
-
 ## Kernels
 
 mlpack includes a number of Mercer kernels for its kernel-based techniques.
@@ -1164,19 +1576,35 @@ These all implement the [same API](../developer/kernels.md), providing one
 `Evaluate()` method, and can be used with a variety of different techniques,
 including:
 
-<!-- TODO: better names for links below -->
+<!-- TODO: document everything below -->
 
- * [`KDE`](kde.md)
- * [`MeanShift`](mean_shift.md)
- * [`KernelPCA`](kernel_pca.md)
- * [`FastMKS`](fastmks.md)
- * [`NystroemMethod`](nystroem_method.md)
+ * [`KDE`](/src/mlpack/methods/kde/kde.hpp)
+ * [`MeanShift`](/src/mlpack/methods/mean_shift/mean_shift.hpp)
+ * [`KernelPCA`](/src/mlpack/methods/kernel_pca/kernel_pca.hpp)
+ * [`FastMKS`](/src/mlpack/methods/fastmks/fastmks.hpp)
+ * [`NystroemMethod`](/src/mlpack/methods/nystroem_method/nystroem_method.hpp)
 
 Supported kernels:
 
  * [`GaussianKernel`](#gaussiankernel): standard Gaussian/radial basis
    function/RBF kernel
- * [Implement a custom kernel](../developer/kernels.md)
+ * [`CauchyKernel`](#cauchykernel): Cauchy kernel, with longer tails than the
+   standard Gaussian kernel
+ * [`CosineSimilarity`](#cosinesimilarity): dot-product vector similarity
+ * [`EpanechnikovKernel`](#epanechnikovkernel): Epanechnikov kernel (parabolic),
+   with zero tails
+ * [`HyperbolicTangentKernel`](#hyperbolictangentkernel): hyperbolic tangent
+   kernel (not positive definite)
+ * [`LaplacianKernel`](#laplaciankernel): Laplacian kernel/exponential kernel
+ * [`LinearKernel`](#linearkernel): linear (dot-product) kernel
+ * [`PolynomialKernel`](#polynomialkernel): arbitrary-power polynomial kernel
+   with offset
+ * [`PSpectrumStringKernel`](#pspectrumstringkernel): kernel to compute length-p
+   subsequence match counts
+ * [`SphericalKernel`](#sphericalkernel): spherical/uniform/rectangular window
+   kernel
+ * [`TriangularKernel`](#triangularkernel): triangular kernel, with zero tails
+ * [Implement a custom kernel](#implement-a-custom-kernel)
 
 ### `GaussianKernel`
 
@@ -1221,9 +1649,10 @@ where `bw` is the bandwidth parameter of the kernel.
      to the distance between two points, evaluated at `distance`.
 
  * `g.Normalizer(dimensionality)`
-   - Return the [normalizing
-     constant](https://en.wikipedia.org/wiki/Radial_basis_function_kernel) of
-     the Gaussian kernel for points in the given dimensionality as a `double`.
+   - Return the
+     [normalizing constant](https://en.wikipedia.org/wiki/Normalizing_constant)
+     of the Gaussian kernel for points in the given dimensionality as a
+     `double`.
 
 ---
 
@@ -1267,4 +1696,826 @@ arma::fvec fx1("0.5 1.0 1.5");
 arma::fvec fx2("1.5 1.0 0.5");
 const double k5 = g.Evaluate(fx1, fx2);
 const double k6 = g2.Evaluate(fx1, fx2);
+std::cout << "Kernel values between two floating-point vectors: " << k5
+    << " (bw=2.5), " << k6 << " (bw=5.0)." << std::endl;
 ```
+
+### `CauchyKernel`
+
+The `CauchyKernel` class implements the Cauchy kernel, a kernel function with a
+longer tail than the Gaussian kernel, defined as:
+`k(x1, x2) = 1 / (1 + (|| x1 - x2 ||^2 / bw^2))`
+where `bw` is the bandwidth parameter of the kernel.
+
+---
+
+#### Constructors and properties
+
+ * `c = CauchyKernel(bw=1.0)`
+   - Create a `CauchyKernel` with the given bandwidth `bw`.
+
+ * `c.Bandwidth()` returns the bandwidth of the kernel as a `double`.
+   - To set the bandwidth, use `c.Bandwidth(newBandwidth)`.
+
+---
+
+#### Kernel evaluation
+
+ * `c.Evaluate(x1, x2)`
+   - Compute the kernel value between two vectors `x1` and `x2`.
+   - `x1` and `x2` should be vector types that implement the Armadillo API
+     (e.g., `arma::vec`).
+
+---
+
+*Example usage:*
+
+```c++
+// Create a Cauchy kernel with default bandwidth.
+mlpack::CauchyKernel c;
+
+// Create a Cauchy kernel with bandwidth 5.0.
+mlpack::CauchyKernel c2(5.0);
+
+// Evaluate the kernel value between two 3-dimensional points.
+arma::vec x1("0.5 1.0 1.5");
+arma::vec x2("1.5 1.0 0.5");
+const double k1 = c.Evaluate(x1, x2);
+const double k2 = c2.Evaluate(x1, x2);
+std::cout << "Kernel values: " << k1 << " (bw=1.0), " << k2 << " (bw=5.0)."
+    << std::endl;
+
+// Change the bandwidth of the kernel to 2.5.
+c.Bandwidth(2.5);
+const double k3 = c.Evaluate(x1, x2);
+std::cout << "Kernel value with bw=2.5: " << k3 << "." << std::endl;
+
+// Evaluate the kernel value between x1 and all points in a random matrix.
+arma::mat r(3, 100, arma::fill::randu);
+arma::vec kernelValues(100);
+for (size_t i = 0; i < r.n_cols; ++i)
+  kernelValues[i] = c.Evaluate(x1, r.col(i));
+std::cout << "Average kernel value for random points: "
+    << arma::mean(kernelValues) << "." << std::endl;
+
+// Compute the kernel value between two 32-bit floating-point vectors.
+arma::fvec fx1("0.5 1.0 1.5");
+arma::fvec fx2("1.5 1.0 0.5");
+const double k4 = c.Evaluate(fx1, fx2);
+const double k5 = c2.Evaluate(fx1, fx2);
+std::cout << "Kernel values between two floating-point vectors: " << k4
+    << " (bw=2.5), " << k5 << " (bw=5.0)." << std::endl;
+```
+
+### `CosineSimilarity`
+
+The `CosineSimilarity` class implements the dot-product cosine similarity,
+defined as:
+`k(x1, x2) = (x1^T x2) / (|| x1 || * || x2 ||)`.
+The value of the kernel is limited to the range `[-1, 1]`.
+The cosine similarity is often used in text mining tasks.
+
+---
+
+#### Constructor
+
+ * `c = CosineSimilarity()`
+   - Create a `CosineSimilarity` object.
+
+***Note:*** because the `CosineSimilarity` kernel has no parameters, it is not
+necessary to create an object and the `Evaluate()` function (below) can be
+called statically.
+
+---
+
+#### Kernel evaluation
+
+ * `c.Evaluate(x1, x2)`
+   - Compute the kernel value between two vectors `x1` and `x2` with an
+     instantiated `CosineSimilarity` object.
+   - `x1` and `x2` should be vector types that implement the Armadillo API
+     (e.g., `arma::vec`).
+
+ * `CosineDistance::Evaluate(x1, x2)`
+   - Compute the kernel value between two vectors `x1` and `x2` without an
+     instantiated `CosineSimilarity` object (e.g. call `Evaluate()` statically).
+   - `x1` and `x2` should be vector types that implement the Armadillo API
+     (e.g., `arma::vec`).
+
+---
+
+*Example usage:*
+
+```c++
+// Create a cosine similarity kernel.
+mlpack::CosineSimilarity c;
+
+// Evaluate the kernel value between two 3-dimensional points.
+arma::vec x1("0.5 1.0 1.5");
+arma::vec x2("1.5 1.0 0.5");
+const double k1 = c.Evaluate(x1, x2);
+const double k2 = c.Evaluate(x1, x1);
+const double k3 = c.Evaluate(x2, x2);
+std::cout << "Cosine similarity values:" << std::endl;
+std::cout << "  - k(x1, x2): " << k1 << "." << std::endl;
+std::cout << "  - k(x1, x1): " << k2 << "." << std::endl;
+std::cout << "  - k(x2, x2): " << k3 << "." << std::endl;
+
+// Evaluate the kernel value between x1 and all points in a random matrix,
+// using the static Evaluate() function.
+arma::mat r(3, 100, arma::fill::randu);
+arma::vec kernelValues(100);
+for (size_t i = 0; i < r.n_cols; ++i)
+  kernelValues[i] = mlpack::CosineSimilarity::Evaluate(x1, r.col(i));
+std::cout << "Average cosine similarity for random points: "
+    << arma::mean(kernelValues) << "." << std::endl;
+
+// Compute the cosine similarity between two sparse 32-bit floating point
+// vectors.
+arma::sp_fvec x3, x4;
+x3.sprandu(100, 1, 0.2);
+x4.sprandu(100, 1, 0.2);
+const double k4 = mlpack::CosineSimilarity::Evaluate(x3, x4);
+std::cout << "Cosine similarity between two random sparse 32-bit floating "
+    << "point vectors: " << k4 << "." << std::endl;
+```
+
+### `EpanechnikovKernel`
+
+The `EpanechnikovKernel` implements the
+[parabolic or Epanechnikov kernel](https://en.wikipedia.org/wiki/Kernel_(statistics)#Kernel_functions_in_common_use),
+defined as the following function:
+`k(x1, x2) = max(0, (3 / 4) * (1 - (|| x1 - x2 ||_2 / bw)^2))`,
+where `bw` is the bandwidth parameter of the kernel.
+
+The kernel takes the value `0` when `|| x1 - x2 ||_2` (the Euclidean
+distance between `x1` and `x2`) is greater than or equal to `bw`.
+
+---
+
+#### Constructors and properties
+
+ * `e = EpanechnikovKernel(bw=1.0)`
+   - Create an `EpanechnikovKernel` with the given bandwidth `bw`.
+
+ * `e.Bandwidth()` returns the bandwidth of the kernel as a `double`.
+   - To set the bandwidth, use `e.Bandwidth(newBandwidth)`.
+
+---
+
+#### Kernel evaluation
+
+ * `e.Evaluate(x1, x2)`
+   - Compute the kernel value between two vectors `x1` and `x2`.
+   - `x1` and `x2` should be vector types that implement the Armadillo API
+     (e.g., `arma::vec`).
+
+ * `e.Evaluate(distance)`
+   - Compute the kernel value between two vectors, given that the distance
+     between those two vectors (`distance`) is already known.
+   - `distance` should have type `double`.
+
+---
+
+#### Other utilities
+
+ * `e.Gradient(distance)`
+   - Compute the (one-dimensional) gradient of the kernel function with respect
+     to the distance between two points, evaluated at `distance`.
+
+ * `e.Normalizer(dimensionality)`
+   - Return the
+     [normalizing constant](https://en.wikipedia.org/wiki/Normalizing_constant)
+     of the Epanechnikov kernel for points in the given dimensionality as a
+     `double`.
+
+---
+
+*Example usage:*
+
+```c++
+// Create an Epanechnikov kernel with default bandwidth.
+mlpack::EpanechnikovKernel e;
+
+// Create an Epanechnikov kernel with bandwidth 5.0.
+mlpack::EpanechnikovKernel e2(5.0);
+
+// Evaluate the kernel value between two 3-dimensional points.
+arma::vec x1("0.5 1.0 1.5");
+arma::vec x2("1.5 1.0 0.5");
+const double k1 = e.Evaluate(x1, x2);
+const double k2 = e2.Evaluate(x1, x2);
+std::cout << "Kernel values: " << k1 << " (bw=1.0), " << k2 << " (bw=5.0)."
+    << std::endl;
+
+// Evaluate the kernel value when the distance between two points is already
+// computed.
+const double distance = 1.5;
+const double k3 = e.Evaluate(distance);
+
+// Change the bandwidth of the kernel to 2.5.
+e.Bandwidth(2.5);
+const double k4 = e.Evaluate(x1, x2);
+std::cout << "Kernel value with bw=2.5: " << k4 << "." << std::endl;
+
+// Evaluate the kernel value between x1 and all points in a random matrix.
+arma::mat r(3, 100, arma::fill::randu);
+arma::vec kernelValues(100);
+for (size_t i = 0; i < r.n_cols; ++i)
+  kernelValues[i] = e.Evaluate(x1, r.col(i));
+std::cout << "Average kernel value for random points: "
+    << arma::mean(kernelValues) << "." << std::endl;
+
+// Compute the kernel value between two 32-bit floating-point vectors.
+arma::fvec fx1("0.5 1.0 1.5");
+arma::fvec fx2("1.5 1.0 0.5");
+const double k5 = e.Evaluate(fx1, fx2);
+const double k6 = e2.Evaluate(fx1, fx2);
+std::cout << "Kernel values between two floating-point vectors: " << k5
+    << " (bw=2.5), " << k6 << " (bw=5.0)." << std::endl;
+```
+
+### `HyperbolicTangentKernel`
+
+The `HyperbolicTangentKernel` implements the
+[hyperbolic tangent kernel](https://en.wikipedia.org/wiki/Support_vector_machine#Nonlinear_Kernels),
+which is defined by the following equation:
+`f(x1, x2) = tanh(s * (x1^T x2) + t)`
+where `s` is the scale parameter and `t` is the offset parameter.
+
+The hyperbolic tangent kernel is *not a positive definite Mercer kernel* and
+thus does not satisfy the theoretical requirements of many kernel methods.  See
+[this discussion](https://stats.stackexchange.com/questions/199620/on-the-properties-of-hyperbolic-tangent-kernel)
+for more details.  In practice, for many kernel methods, it may still provide
+compelling results despite this theoretical limitation.
+
+---
+
+#### Constructors and properties
+
+ * `h = HyperbolicTangentKernel(s=1.0, t=0.0)`
+   - Create a `HyperbolicTangentKernel` with the given scale factor `s` and the
+     given offset `t`.
+
+ * `h.Scale()` returns the scale factor of the kernel as a `double`.
+   - To set the scale parameter, use `h.Scale(scale)`.
+
+ * `h.Offset()` returns the offset parameter of the kernel as a `double`.
+   - To set the offset parameter, use `h.Offset(offset)`.
+
+---
+
+#### Kernel evaluation
+
+ * `h.Evaluate(x1, x2)`
+   - Compute the kernel value between two vectors `x1` and `x2`.
+   - `x1` and `x2` should be vector types that implement the Armadillo API
+     (e.g., `arma::vec`).
+
+---
+
+*Example usage:*
+
+```c++
+// Create a hyperbolic tangent kernel with default scale and offset.
+mlpack::HyperbolicTangentKernel h;
+
+// Create a hyperbolic tangent kernel with scale 2.0 and offset 1.0.
+mlpack::HyperbolicTangentKernel h2(2.0, 1.0);
+
+// Evaluate the kernel value between two 3-dimensional points.
+arma::vec x1("0.5 1.0 1.5");
+arma::vec x2("1.5 1.0 0.5");
+const double k1 = h.Evaluate(x1, x2);
+const double k2 = h2.Evaluate(x1, x2);
+std::cout << "Kernel values: " << k1 << " (s=1.0, t=0.0), " << k2
+    << " (s=2.0, t=1.0)." << std::endl;
+
+// Change the scale and offset of the kernel.
+h.Scale(2.5);
+h.Offset(-1.0);
+const double k3 = h.Evaluate(x1, x2);
+std::cout << "Kernel value with s=2.5, t=-1.0: " << k3 << "." << std::endl;
+
+// Evaluate the kernel value between x1 and all points in a random matrix.
+arma::mat r(3, 100, arma::fill::randu);
+arma::vec kernelValues(100);
+for (size_t i = 0; i < r.n_cols; ++i)
+  kernelValues[i] = h.Evaluate(x1, r.col(i));
+std::cout << "Average kernel value for random points: "
+    << arma::mean(kernelValues) << "." << std::endl;
+
+// Compute the kernel value between two 32-bit floating-point vectors.
+arma::fvec fx1("0.5 1.0 1.5");
+arma::fvec fx2("1.5 1.0 0.5");
+const double k4 = h.Evaluate(fx1, fx2);
+const double k5 = h2.Evaluate(fx1, fx2);
+std::cout << "Kernel values between two floating-point vectors: " << k4
+    << " (s=2.5, t=-1.0), " << k5 << " (s=2.0, t=1.0)." << std::endl;
+```
+
+### `LaplacianKernel`
+
+The `LaplacianKernel` class implements the Laplacian kernel, also known as the
+exponential kernel, defined by the following equation:
+`k(x1, x2) = exp(-|| x1 - x2 || / bw)`
+where `bw` is the bandwidth parameter.
+
+---
+
+#### Constructors and properties
+
+ * `l = LaplacianKernel(bw=1.0)`
+   - Create a `LaplacianKernel` with the given bandwidth `bw`.
+
+ * `l.Bandwidth()` returns the bandwidth of the kernel as a `double`.
+   - To set the bandwidth, use `l.Bandwidth(newBandwidth)`.
+
+---
+
+#### Kernel evaluation
+
+ * `l.Evaluate(x1, x2)`
+   - Compute the kernel value between two vectors `x1` and `x2`.
+   - `x1` and `x2` should be vector types that implement the Armadillo API
+     (e.g., `arma::vec`).
+
+ * `l.Evaluate(distance)`
+   - Compute the kernel value between two vectors, given that the distance
+     between those two vectors (`distance`) is already known.
+   - `distance` should have type `double`.
+
+---
+
+#### Other utilities
+
+ * `l.Gradient(distance)`
+   - Compute the (one-dimensional) gradient of the kernel function with respect
+     to the distance between two points, evaluated at `distance`.
+
+---
+
+*Example usage:*
+
+```c++
+// Create a Laplacian kernel with default bandwidth.
+mlpack::LaplacianKernel l;
+
+// Create a Laplacian kernel with bandwidth 5.0.
+mlpack::LaplacianKernel l2(5.0);
+
+// Evaluate the kernel value between two 3-dimensional points.
+arma::vec x1("0.5 1.0 1.5");
+arma::vec x2("1.5 1.0 0.5");
+const double k1 = l.Evaluate(x1, x2);
+const double k2 = l2.Evaluate(x1, x2);
+std::cout << "Kernel values: " << k1 << " (bw=1.0), " << k2 << " (bw=5.0)."
+    << std::endl;
+
+// Evaluate the kernel value when the distance between two points is already
+// computed.
+const double distance = 1.5;
+const double k3 = l.Evaluate(distance);
+
+// Change the bandwidth of the kernel to 2.5.
+l.Bandwidth(2.5);
+const double k4 = l.Evaluate(x1, x2);
+std::cout << "Kernel value with bw=2.5: " << k4 << "." << std::endl;
+
+// Evaluate the kernel value between x1 and all points in a random matrix.
+arma::mat r(3, 100, arma::fill::randu);
+arma::vec kernelValues(100);
+for (size_t i = 0; i < r.n_cols; ++i)
+  kernelValues[i] = l.Evaluate(x1, r.col(i));
+std::cout << "Average kernel value for random points: "
+    << arma::mean(kernelValues) << "." << std::endl;
+
+// Compute the kernel value between two 32-bit floating-point vectors.
+arma::fvec fx1("0.5 1.0 1.5");
+arma::fvec fx2("1.5 1.0 0.5");
+const double k5 = l.Evaluate(fx1, fx2);
+const double k6 = l2.Evaluate(fx1, fx2);
+std::cout << "Kernel values between two floating-point vectors: " << k5
+    << " (bw=2.5), " << k6 << " (bw=5.0)." << std::endl;
+```
+
+### `LinearKernel`
+
+The `LinearKernel` class implements the simple linear dot product kernel,
+defined by the following equation:
+`k(x1, x2) = x1^T x2`.
+
+The use of the linear kernel for kernel methods generally results in the
+non-kernelized version of the algorithm; for instance, a kernel support
+vector machine using the linear kernel amounts to a [linear
+SVM](methods/linear_svm.md).
+
+---
+
+#### Constructor
+
+ * `l = LinearKernel()`
+   - Create a `LinearKernel` object.
+
+***Note:*** because the `LinearKernel` kernel has no parameters, it is not
+necessary to create an object and the `Evaluate()` function (below) can be
+called statically.
+
+---
+
+#### Kernel evaluation
+
+ * `l.Evaluate(x1, x2)`
+   - Compute the kernel value between two vectors `x1` and `x2` with an
+     instantiated `LinearKernel` object.
+   - `x1` and `x2` should be vector types that implement the Armadillo API
+     (e.g., `arma::vec`).
+
+ * `LinearKernel::Evaluate(x1, x2)`
+   - Compute the kernel value between two vectors `x1` and `x2` without an
+     instantiated `LinearKernel` object (e.g. call `Evaluate()` statically).
+   - `x1` and `x2` should be vector types that implement the Armadillo API
+     (e.g., `arma::vec`).
+
+---
+
+*Example usage:*
+
+```c++
+// Create a linear kernel.
+mlpack::LinearKernel l;
+
+// Evaluate the kernel value between two 3-dimensional points.
+arma::vec x1("0.5 1.0 1.5");
+arma::vec x2("1.5 1.0 0.5");
+const double k1 = l.Evaluate(x1, x2); // Identical to arma::dot(x1, x2).
+const double k2 = l.Evaluate(x1, x1);
+const double k3 = l.Evaluate(x2, x2);
+std::cout << "Linear kernel values:" << std::endl;
+std::cout << "  - k(x1, x2): " << k1 << "." << std::endl;
+std::cout << "  - k(x1, x1): " << k2 << "." << std::endl;
+std::cout << "  - k(x2, x2): " << k3 << "." << std::endl;
+
+// Evaluate the kernel value between x1 and all points in a random matrix,
+// using the static Evaluate() function.
+arma::mat r(3, 100, arma::fill::randu);
+arma::vec kernelValues(100);
+for (size_t i = 0; i < r.n_cols; ++i)
+  kernelValues[i] = mlpack::LinearKernel::Evaluate(x1, r.col(i));
+std::cout << "Average linear kernel value for random points: "
+    << arma::mean(kernelValues) << "." << std::endl;
+
+// Compute the cosine similarity between two sparse 32-bit floating point
+// vectors.
+arma::sp_fvec x3, x4;
+x3.sprandu(100, 1, 0.2);
+x4.sprandu(100, 1, 0.2);
+const double k4 = mlpack::LinearKernel::Evaluate(x3, x4);
+std::cout << "Linear kernel value between two random sparse 32-bit floating "
+    << "point vectors: " << k4 << "." << std::endl;
+```
+
+### `PolynomialKernel`
+
+The `PolynomialKernel` class implements the standard
+[polynomial kernel](https://en.wikipedia.org/wiki/Polynomial_kernel), which is
+defined by the following equation:
+`k(x1, x2) = (x1^T x2 + t)^d`
+where `d` is the degree of the polynomial and `t` is the offset.
+
+The use of the polynomial kernel has a similar effect to the use of polynomial
+(interaction) features in standard machine learning methods.
+
+---
+
+#### Constructors and properties
+
+ * `p = PolynomialKernel(d=2.0, t=0.0)`
+   - Create a `PolynomialKernel` with the given degree `d` and given offset `t`.
+
+ * `p.Degree()` returns the degree of the kernel as a `double`.
+   - To set the degree, use `p.Degree(newDegree)`.
+
+ * `p.Offset()` returns the offset of the kernel as a `double`.
+   - To set the offset, use `p.Offset(newOffset)`.
+
+---
+
+#### Kernel evaluation
+
+ * `p.Evaluate(x1, x2)`
+   - Compute the kernel value between two vectors `x1` and `x2`.
+   - `x1` and `x2` should be vector types that implement the Armadillo API
+     (e.g., `arma::vec`).
+
+---
+
+*Example usage:*
+
+```c++
+// Create a polynomial kernel with default degree (2) and offset (0).
+mlpack::PolynomialKernel p;
+
+// Create a polynomial kernel with degree 3.0 and offset -1.0.
+mlpack::PolynomialKernel p2(3.0, -1.0);
+
+// Evaluate the kernel value between two 3-dimensional points.
+arma::vec x1("0.5 1.0 1.5");
+arma::vec x2("1.5 1.0 0.5");
+const double k1 = p.Evaluate(x1, x2);
+const double k2 = p2.Evaluate(x1, x2);
+std::cout << "Kernel values: " << k1 << " (bw=1.0), " << k2 << " (bw=5.0)."
+    << std::endl;
+
+// Change the degree of the kernel to 2.5 and the offset to 1.0.
+p.Degree(2.5);
+p.Offset(1.0);
+const double k3 = p.Evaluate(x1, x2);
+std::cout << "Kernel value with d=2.5, t=1.0: " << k3 << "." << std::endl;
+
+// Evaluate the kernel value between x1 and all points in a random matrix.
+arma::mat r(3, 100, arma::fill::randu);
+arma::vec kernelValues(100);
+for (size_t i = 0; i < r.n_cols; ++i)
+  kernelValues[i] = p.Evaluate(x1, r.col(i));
+std::cout << "Average kernel value for random points: "
+    << arma::mean(kernelValues) << "." << std::endl;
+
+// Compute the kernel value between two 32-bit floating-point vectors.
+arma::fvec fx1("0.5 1.0 1.5");
+arma::fvec fx2("1.5 1.0 0.5");
+const double k4 = p.Evaluate(fx1, fx2);
+const double k5 = p2.Evaluate(fx1, fx2);
+std::cout << "Kernel values between two floating-point vectors: " << k4
+    << " (d=2.5, t=1.0), " << k5 << " (d=3.0, t=-1.0)." << std::endl;
+```
+
+### `PSpectrumStringKernel`
+
+The `PSpectrumStringKernel` class implements the length-`p` string spectrum
+kernel, proposed by
+[Leslie, Eskin, and Noble (pdf)](http://psb.stanford.edu/psb-online/proceedings/psb02/leslie.pdf).
+The kernel finds the contiguous subsequence match count between two strings.
+
+Due to mlpack's use of Armadillo, which requires that all matrix data be
+numeric, this class operates by internally storing all strings, and passing in
+numeric vectors such as `[0 1]` that reference string index `1` in dataset index
+`0`.  In turn, this means that the data points given to the
+`PSpectrumStringKernel` are simply IDs and have no geometric meaning.
+
+---
+
+#### Constructors and properties
+
+ * `p = PSpectrumStringKernel(datasets, p)`
+    - Create a `PSpectrumStringKernel` on the given set of string datasets,
+      using the given substring length `p`.
+    - `datasets` should have type `std::vector<std::vector<std::string>>`, and
+      contains a list of datasets, each of which is made up of a list of
+      strings.
+      * Multiple datasets are supported for the case where, e.g., there are
+        multiple files containing different sets of strings.
+    - So, e.g., `datasets[0]` represents the `0`th dataset, and `datasets[0][1]`
+      is the string with index `1` inside the `0`th dataset.
+    - `p` (a `size_t`) is the length of substring to use for the kernel, and
+      must be greater than `0`.
+    - The constructor will build counts of all substrings in the dataset, and
+      for large data may be computationally intensive.
+
+ * `p.P()` returns the substring length `p` of the kernel as a `size_t`.
+    - The value of `p` cannot be changed once the object is constructed.
+
+ * `p.Counts()` returns a `std::vector<std::vector<std::map<std::string, int>>>`
+   that maps a substring to the number of times it appears in the original
+   string.  So, given a substring length of `5`, `p.Counts()[0][1]["hello"]`
+   would be the number of times the substring `hello` appears in the string with
+   index `1` in the dataset with index `0`.
+
+---
+
+#### Kernel evaluation
+
+ * `p.Evaluate(x1, x2)`
+   - Compute the kernel value between two index vectors `x1` and `x2`.
+   - `x1` and `x2` should be vector types that implement the Armadillo API
+     (e.g., `arma::vec`, `arma::uvec`, etc.).
+   - `x1` and `x2` do not contain string data directly, but instead are each
+     length-2 vectors that represent the index of the datasets and strings to be
+     compared in the `datasets` object that was passed to the constructor.
+   - So, e.g., if `x1 = [0, 0]` and `x2 = [1, 1]`, then the first string from
+     the first dataset will be compared with the second string from the second
+     dataset.
+
+---
+
+*Example usage:*
+
+```c++
+// Create two example datasets:
+//      ["hello", "goodbye", "package"],
+//      ["mlpack", "is", "really", "great"]
+std::vector<std::vector<std::string>> datasets;
+datasets.push_back({ "hello", "goodbye", "package" });
+datasets.push_back({ "mlpack", "is", "really", "great" });
+
+// Create a p-spectrum string kernel with a substring length of 2,
+// and another with a substring length of 3.
+mlpack::PSpectrumStringKernel p(datasets, 2);
+mlpack::PSpectrumStringKernel p2(datasets, 3);
+
+// Evaluate the kernel value between "mlpack" and "package".
+arma::uvec x1("1 0"); // "mlpack": dataset 1, string 0.
+arma::uvec x2("0 2"); // "package": dataset 0, string 2.
+const double k1 = p.Evaluate(x1, x2);
+const double k2 = p2.Evaluate(x1, x2);
+std::cout << "Kernel values: " << k1 << " (p=2), " << k2 << " (p=3)."
+    << std::endl;
+```
+
+### `SphericalKernel`
+
+The `SphericalKernel` class implements the simple spherical kernel, also known
+as the uniform kernel, or rectangular window kernel.  The value of the
+`SphericalKernel` is `1` when the Euclidean distance between two points `x1` and
+`x2` is less than the bandwidth `bw`, and `0` otherwise:
+`k(x1, x2) = 1(|| x1 - x2 || <= bw)`.
+
+---
+
+#### Constructors and properties
+
+ * `s = SphericalKernel(bw=1.0)`
+   - Create a `SphericalKernel` with the given bandwidth `bw`.
+
+ * `s.Bandwidth()` returns the bandwidth of the kernel as a `double`.
+   - To set the bandwidth, use `s.Bandwidth(newBandwidth)`.
+
+---
+
+#### Kernel evaluation
+
+ * `s.Evaluate(x1, x2)`
+   - Compute the kernel value between two vectors `x1` and `x2`.
+   - `x1` and `x2` should be vector types that implement the Armadillo API
+     (e.g., `arma::vec`).
+
+ * `s.Evaluate(distance)`
+   - Compute the kernel value between two vectors, given that the distance
+     between those two vectors (`distance`) is already known.
+   - `distance` should have type `double`.
+
+---
+
+#### Other utilities
+
+ * `s.Gradient(distance)`
+   - Compute the (one-dimensional) gradient of the kernel function with respect
+     to the distance between two points, evaluated at `distance`.
+
+ * `s.Normalizer(dimensionality)`
+   - Return the
+     [normalizing constant](https://en.wikipedia.org/wiki/Normalizing_constant)
+     of the spherical kernel for points in the given dimensionality as a
+     `double`.
+
+---
+
+*Example usage:*
+
+```c++
+// Create a spherical kernel with default bandwidth.
+mlpack::SphericalKernel s;
+
+// Create a spherical kernel with bandwidth 5.0.
+mlpack::SphericalKernel s2(5.0);
+
+// Evaluate the kernel value between two 3-dimensional points.
+arma::vec x1("0.5 1.0 2.5");
+arma::vec x2("2.5 1.0 0.5");
+const double k1 = s.Evaluate(x1, x2);
+const double k2 = s2.Evaluate(x1, x2);
+std::cout << "Kernel values: " << k1 << " (bw=1.0), " << k2 << " (bw=5.0)."
+    << std::endl;
+
+// Evaluate the kernel value when the distance between two points is already
+// computed.
+const double distance = 0.9;
+const double k3 = s.Evaluate(distance);
+
+// Change the bandwidth of the kernel to 3.0.
+s.Bandwidth(3.0);
+const double k4 = s.Evaluate(x1, x2);
+std::cout << "Kernel value with bw=3.0: " << k4 << "." << std::endl;
+
+// Evaluate the kernel value between x1 and all points in a random matrix, using
+// a kernel bandwidth of 2.5.
+s.Bandwidth(2.5);
+arma::mat r(3, 100, arma::fill::randu);
+arma::vec kernelValues(100);
+for (size_t i = 0; i < r.n_cols; ++i)
+  kernelValues[i] = s.Evaluate(x1, r.col(i));
+std::cout << "Average kernel value for random points: "
+    << arma::mean(kernelValues) << "." << std::endl;
+
+// Compute the kernel value between two 32-bit floating-point vectors.
+arma::fvec fx1("0.5 1.0 2.5");
+arma::fvec fx2("2.5 1.0 0.5");
+const double k5 = s.Evaluate(fx1, fx2);
+const double k6 = s2.Evaluate(fx1, fx2);
+std::cout << "Kernel values between two floating-point vectors: " << k5
+    << " (bw=2.5), " << k6 << " (bw=5.0)." << std::endl;
+```
+
+### `TriangularKernel`
+
+The `TriangularKernel` class implements the
+[simple triangular kernel](https://en.wikipedia.org/wiki/Kernel_(statistics)#Kernel_functions_in_common_use),
+defined by the following equation:
+`k(x1, x2) = max(0, 1 - || x1 - x2 || / bw)`
+where `bw` is the bandwidth of the kernel.
+
+---
+
+#### Constructors and properties
+
+ * `t = TriangularKernel(bw=1.0)`
+   - Create a `TriangularKernel` with the given bandwidth `bw`.
+
+ * `t.Bandwidth()` returns the bandwidth of the kernel as a `double`.
+   - To set the bandwidth, use `t.Bandwidth(newBandwidth)`.
+
+---
+
+#### Kernel evaluation
+
+ * `t.Evaluate(x1, x2)`
+   - Compute the kernel value between two vectors `x1` and `x2`.
+   - `x1` and `x2` should be vector types that implement the Armadillo API
+     (e.g., `arma::vec`).
+
+ * `t.Evaluate(distance)`
+   - Compute the kernel value between two vectors, given that the distance
+     between those two vectors (`distance`) is already known.
+   - `distance` should have type `double`.
+
+---
+
+#### Other utilities
+
+ * `t.Gradient(distance)`
+   - Compute the (one-dimensional) gradient of the kernel function with respect
+     to the distance between two points, evaluated at `distance`.
+
+---
+
+*Example usage:*
+
+```c++
+// Create a triangular kernel with default bandwidth.
+mlpack::TriangularKernel t;
+
+// Create a triangular kernel with bandwidth 5.0.
+mlpack::TriangularKernel t2(5.0);
+
+// Evaluate the kernel value between two 3-dimensional points.
+arma::vec x1("0.5 1.0 1.5");
+arma::vec x2("1.5 1.0 0.5");
+const double k1 = t.Evaluate(x1, x2);
+const double k2 = t2.Evaluate(x1, x2);
+std::cout << "Kernel values: " << k1 << " (bw=1.0), " << k2 << " (bw=5.0)."
+    << std::endl;
+
+// Evaluate the kernel value when the distance between two points is already
+// computed.
+const double distance = 0.75;
+const double k3 = t.Evaluate(distance);
+
+// Change the bandwidth of the kernel to 2.5.
+t.Bandwidth(2.5);
+const double k4 = t.Evaluate(x1, x2);
+std::cout << "Kernel value with bw=2.5: " << k4 << "." << std::endl;
+
+// Evaluate the kernel value between x1 and all points in a random matrix.
+arma::mat r(3, 100, arma::fill::randu);
+arma::vec kernelValues(100);
+for (size_t i = 0; i < r.n_cols; ++i)
+  kernelValues[i] = t.Evaluate(x1, r.col(i));
+std::cout << "Average kernel value for random points: "
+    << arma::mean(kernelValues) << "." << std::endl;
+
+// Compute the kernel value between two 32-bit floating-point vectors.
+arma::fvec fx1("0.5 1.0 1.5");
+arma::fvec fx2("1.5 1.0 0.5");
+const double k5 = t.Evaluate(fx1, fx2);
+const double k6 = t2.Evaluate(fx1, fx2);
+std::cout << "Kernel values between two floating-point vectors: " << k5
+    << " (bw=2.5), " << k6 << " (bw=5.0)." << std::endl;
+```
+
+### Implement a custom kernel
+
+mlpack supports custom kernels, so long as they implement an appropriate
+`Evaluate()` function.
+
+See [The KernelType Policy in mlpack](../developer/kernels.md) for more
+information.

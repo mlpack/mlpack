@@ -73,10 +73,9 @@ PReLUType<MatType>::operator=(PReLUType&& other)
 }
 
 template<typename MatType>
-void PReLUType<MatType>::SetWeights(
-    typename MatType::elem_type* weightsPtr)
+void PReLUType<MatType>::SetWeights(const MatType& weightsIn)
 {
-  MakeAlias(alpha, weightsPtr, 1, 1);
+  MakeAlias(alpha, weightsIn, 1, 1);
 }
 
 template<typename MatType>
@@ -125,9 +124,9 @@ void PReLUType<MatType>::Gradient(
     const MatType& error,
     MatType& gradient)
 {
-  MatType zeros = arma::zeros<MatType>(input.n_rows, input.n_cols);
+  MatType zerosMat = zeros<MatType>(input.n_rows, input.n_cols);
   gradient.set_size(1, 1);
-  gradient(0) = arma::accu(error % arma::min(zeros, input)) / input.n_cols;
+  gradient(0) = accu(error % min(zerosMat, input)) / input.n_cols;
 }
 
 template<typename MatType>
