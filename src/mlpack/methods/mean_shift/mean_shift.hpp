@@ -138,7 +138,7 @@ class MeanShift
    * @param data The reference data set.
    * @param binSize Width of hypercube bins.
    * @param minFreq Minimum number of points in bin.
-   * @param seed Matrix to store generated seeds in.
+   * @param seeds Matrix to store generated seeds in.
    */
   template<typename MatType, typename CentroidsType>
   void GenSeeds(const MatType& data,
