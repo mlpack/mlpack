@@ -71,7 +71,7 @@ class EpanechnikovKernel
   inline double Normalizer(const size_t dimension);
 
   // Get the bandwidth of the kernel.
-  const double Bandwidth() const { return bandwidth; }
+  double Bandwidth() const { return bandwidth; }
   // Modify the bandwidth of the kernel.
   void Bandwidth(const double bandwidth)
   {

@@ -23,14 +23,16 @@ namespace mlpack {
  * help write tree-independent (but still optimized) tree-based algorithms.  See
  * mlpack/core/tree/tree_traits.hpp for more information.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
-class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
-                                 SplitType>>
+         template<typename BoundDistanceType,
+                  typename BoundElemType,
+                  typename...> class BoundType,
+         template<typename SplitBoundType,
+                  typename SplitMatType> class SplitType>
+class TreeTraits<BinarySpaceTree<
+    DistanceType, StatisticType, MatType, BoundType, SplitType>>
 {
  public:
   /**
@@ -77,12 +79,14 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
  * projection tree. The only difference with general BinarySpaceTree is that the
  * tree can have overlapping children.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType>
-class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
-                                 RPTreeMaxSplit>>
+         template<typename BoundDistanceType,
+                  typename BoundElemType,
+                  typename...> class BoundType>
+class TreeTraits<BinarySpaceTree<
+    DistanceType, StatisticType, MatType, BoundType, RPTreeMaxSplit>>
 {
  public:
   /**
@@ -127,12 +131,14 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
  * projection tree. The only difference with general BinarySpaceTree is that the
  * tree can have overlapping children.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType>
-class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
-                                 RPTreeMeanSplit>>
+         template<typename BoundDistanceType,
+                  typename BoundElemType,
+                  typename...> class BoundType>
+class TreeTraits<BinarySpaceTree<DistanceType, StatisticType, MatType,
+                                 BoundType, RPTreeMeanSplit>>
 {
  public:
   /**
@@ -178,13 +184,13 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
  * overlapping children.
  * See mlpack/core/tree/tree_traits.hpp for more information.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BallBound,
-    SplitType>>
+class TreeTraits<BinarySpaceTree<
+    DistanceType, StatisticType, MatType, BallBound, SplitType>>
 {
  public:
   static const bool HasOverlappingChildren = true;
@@ -202,13 +208,13 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BallBound,
  * The only difference with general BinarySpaceTree is that the tree can have
  * overlapping children.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
-    HollowBallBound, SplitType>>
+class TreeTraits<BinarySpaceTree<
+    DistanceType, StatisticType, MatType, HollowBallBound, SplitType>>
 {
  public:
   static const bool HasOverlappingChildren = true;
@@ -226,13 +232,13 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
  * overlapping children.
  * See mlpack/core/tree/tree_traits.hpp for more information.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, CellBound,
-    SplitType>>
+class TreeTraits<BinarySpaceTree<
+    DistanceType, StatisticType, MatType, CellBound, SplitType>>
 {
  public:
   static const bool HasOverlappingChildren = true;

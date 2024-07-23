@@ -21,30 +21,35 @@
 
 namespace mlpack {
 
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
+         template<typename BoundDistanceType,
+                  typename BoundElemType,
+                  typename...> class BoundType,
+         template<typename SplitBoundType,
+                  typename SplitMatType> class SplitType>
 template<typename RuleType>
-BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+BinarySpaceTree<DistanceType, StatisticType, MatType, BoundType, SplitType>::
 SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0)
 { /* Nothing to do. */ }
 
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
+         template<typename BoundDistanceType,
+                  typename BoundElemType,
+                  typename...> class BoundType,
+         template<typename SplitBoundType,
+                  typename SplitMatType> class SplitType>
 template<typename RuleType>
-void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+void
+BinarySpaceTree<DistanceType, StatisticType, MatType, BoundType, SplitType>::
 SingleTreeTraverser<RuleType>::Traverse(
     const size_t queryIndex,
-    BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
+    BinarySpaceTree<DistanceType, StatisticType, MatType, BoundType, SplitType>&
         referenceNode)
 {
   // If we are a leaf, run the base case as necessary.

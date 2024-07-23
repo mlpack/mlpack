@@ -37,8 +37,8 @@ namespace mlpack {
  *
  * @see @ref trees, RStarTree
  */
-template<typename MetricType, typename StatisticType, typename MatType>
-using RTree = RectangleTree<MetricType,
+template<typename DistanceType, typename StatisticType, typename MatType>
+using RTree = RectangleTree<DistanceType,
                             StatisticType,
                             MatType,
                             RTreeSplit,
@@ -65,8 +65,8 @@ using RTree = RectangleTree<MetricType,
  *
  * @see @ref trees, RTree
  */
-template<typename MetricType, typename StatisticType, typename MatType>
-using RStarTree = RectangleTree<MetricType,
+template<typename DistanceType, typename StatisticType, typename MatType>
+using RStarTree = RectangleTree<DistanceType,
                                 StatisticType,
                                 MatType,
                                 RStarTreeSplit,
@@ -91,8 +91,8 @@ using RStarTree = RectangleTree<MetricType,
  *
  * @see @ref trees, RTree, RStarTree
  */
-template<typename MetricType, typename StatisticType, typename MatType>
-using XTree = RectangleTree<MetricType,
+template<typename DistanceType, typename StatisticType, typename MatType>
+using XTree = RectangleTree<DistanceType,
                             StatisticType,
                             MatType,
                             XTreeSplit,
@@ -126,13 +126,13 @@ template<typename TreeType>
 using DiscreteHilbertRTreeAuxiliaryInformation =
       HilbertRTreeAuxiliaryInformation<TreeType, DiscreteHilbertValue>;
 
-template<typename MetricType, typename StatisticType, typename MatType>
-using HilbertRTree = RectangleTree<MetricType,
-                            StatisticType,
-                            MatType,
-                            HilbertRTreeSplit<2>,
-                            HilbertRTreeDescentHeuristic,
-                            DiscreteHilbertRTreeAuxiliaryInformation>;
+template<typename DistanceType, typename StatisticType, typename MatType>
+using HilbertRTree = RectangleTree<DistanceType,
+                                   StatisticType,
+                                   MatType,
+                                   HilbertRTreeSplit<2>,
+                                   HilbertRTreeDescentHeuristic,
+                                   DiscreteHilbertRTreeAuxiliaryInformation>;
 
 /**
  * The R+ tree, a variant of the R tree that avoids overlapping rectangles.
@@ -157,14 +157,14 @@ using HilbertRTree = RectangleTree<MetricType,
  *
  * @see @ref trees, RTree, RTree, RPlusTree
  */
-template<typename MetricType, typename StatisticType, typename MatType>
-using RPlusTree = RectangleTree<MetricType,
-                            StatisticType,
-                            MatType,
-                            RPlusTreeSplit<RPlusTreeSplitPolicy,
-                                           MinimalCoverageSweep>,
-                            RPlusTreeDescentHeuristic,
-                            NoAuxiliaryInformation>;
+template<typename DistanceType, typename StatisticType, typename MatType>
+using RPlusTree = RectangleTree<DistanceType,
+                                StatisticType,
+                                MatType,
+                                RPlusTreeSplit<RPlusTreeSplitPolicy,
+                                               MinimalCoverageSweep>,
+                                RPlusTreeDescentHeuristic,
+                                NoAuxiliaryInformation>;
 
 /**
  * The R++ tree, a variant of the R+ tree with maximum buonding rectangles.
@@ -186,14 +186,14 @@ using RPlusTree = RectangleTree<MetricType,
  *
  * @see @ref trees, RTree, RTree, RPlusTree, RPlusPlusTree
  */
-template<typename MetricType, typename StatisticType, typename MatType>
-using RPlusPlusTree = RectangleTree<MetricType,
-                            StatisticType,
-                            MatType,
-                            RPlusTreeSplit<RPlusPlusTreeSplitPolicy,
-                                           MinimalSplitsNumberSweep>,
-                            RPlusPlusTreeDescentHeuristic,
-                            RPlusPlusTreeAuxiliaryInformation>;
+template<typename DistanceType, typename StatisticType, typename MatType>
+using RPlusPlusTree = RectangleTree<DistanceType,
+                                    StatisticType,
+                                    MatType,
+                                    RPlusTreeSplit<RPlusPlusTreeSplitPolicy,
+                                                   MinimalSplitsNumberSweep>,
+                                    RPlusPlusTreeDescentHeuristic,
+                                    RPlusPlusTreeAuxiliaryInformation>;
 } // namespace mlpack
 
 #endif

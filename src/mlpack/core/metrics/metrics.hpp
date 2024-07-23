@@ -2,8 +2,10 @@
  * @file core/metrics/metrics.hpp
  * @author Ryan Curtin
  *
- * Include all distance metrics implemented by mlpack.  Note that these are not
- * performance metrics for models---see core/cv/metrics/metrics.hpp instead.
+ * Include all performance metrics and scoring functions implemented by mlpack.
+ * For distance metrics (e.g. distances in metric spaces that satisfy the
+ * triangle inequality and formal definition of distance metric), see
+ * core/distances/ instead.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -15,9 +17,6 @@
 
 #include "bleu.hpp" // Technically this should go somewhere else...
 #include "iou_metric.hpp"
-#include "ip_metric.hpp"
-#include "lmetric.hpp"
-#include "mahalanobis_distance.hpp"
 #include "non_maximal_suppression.hpp"
 
 #endif

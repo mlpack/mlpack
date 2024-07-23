@@ -31,7 +31,7 @@ namespace mlpack {
  *
  * This tree does allow growth, so you can add and delete nodes from it.
  *
- * @tparam MetricType This *must* be EuclideanDistance, but the template
+ * @tparam DistanceType This *must* be EuclideanDistance, but the template
  *     parameter is required to satisfy the TreeType API.
  * @tparam StatisticType Extra data contained in the node.  See statistic.hpp
  *     for the necessary skeleton interface.
@@ -43,7 +43,7 @@ namespace mlpack {
  *    in the node. This information depends on the type of the RectangleTree.
  */
 
-template<typename MetricType = EuclideanDistance,
+template<typename DistanceType = EuclideanDistance,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
          typename SplitType = RTreeSplit,
@@ -52,9 +52,9 @@ template<typename MetricType = EuclideanDistance,
              NoAuxiliaryInformation>
 class RectangleTree
 {
-  // The metric *must* be the euclidean distance.
-  static_assert(std::is_same<MetricType, EuclideanDistance>::value,
-      "RectangleTree: MetricType must be EuclideanDistance.");
+  // The distance metric *must* be the euclidean distance.
+  static_assert(std::is_same<DistanceType, EuclideanDistance>::value,
+      "RectangleTree: DistanceType must be EuclideanDistance.");
 
  public:
   //! So other classes can use TreeType::Mat.
@@ -311,9 +311,9 @@ class RectangleTree
   RectangleTree* FindByBeginCount(size_t begin, size_t count);
 
   //! Return the bound object for this node.
-  const HRectBound<MetricType>& Bound() const { return bound; }
+  const HRectBound<DistanceType>& Bound() const { return bound; }
   //! Modify the bound object for this node.
-  HRectBound<MetricType>& Bound() { return bound; }
+  HRectBound<DistanceType>& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
@@ -360,8 +360,12 @@ class RectangleTree
   //! Modify the dataset which the tree is built on.  Be careful!
   MatType& Dataset() { return const_cast<MatType&>(*dataset); }
 
-  //! Get the metric which the tree uses.
-  MetricType Metric() const { return MetricType(); }
+  //! Get the distance metric which the tree uses.
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  DistanceType Metric() const { return DistanceType(); }
+
+  //! Get the distance metric which the tree uses.
+  DistanceType Distance() const { return DistanceType(); }
 
   //! Get the centroid of the node and store it in the given vector.
   void Center(arma::vec& center) { bound.Center(center); }
@@ -618,7 +622,7 @@ class RectangleTree
    *      shrinking.
    * @return true if the bound needed to be changed, false if it did not.
    */
-  bool ShrinkBoundForBound(const HRectBound<MetricType>& changedBound);
+  bool ShrinkBoundForBound(const HRectBound<DistanceType>& changedBound);
 
   /**
    * Make an exact copy of this node, pointers and everything.

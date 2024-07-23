@@ -360,7 +360,8 @@ class LogisticRegression
    * @param dataset Set of points to classify.
    * @param probabilities Class probabilities for each point (output).
    */
-  mlpack_deprecated /* to be removed in mlpack 5.0.0 */
+  [[deprecated("Will be removed in mlpack 5.0.0; use other Classify() "
+      "variants")]]
   void Classify(const MatType& dataset,
                 MatType& probabilities) const;
 

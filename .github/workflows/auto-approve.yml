@@ -1,0 +1,22 @@
+# Once a PR has been approved by one member of the mlpack organization, a second
+# approving review will automatically be added 24 hours later.  This allows time
+# for other maintainers to take a look.
+name: Auto-approve pull requests
+on:
+  schedule:
+   # Run roughly every four hours.
+   - cron: "15 0,4,8,12,16,20 * * *"
+
+jobs:
+  auto-approve:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+     - name: Auto-approve pull requests
+       uses: rcurtin/actions/auto-approve@v1
+       with:
+         repo-token: ${{ secrets.GITHUB_TOKEN }}
+         approval-message:
+           'Second approval provided automatically after 24 hours. :+1:'

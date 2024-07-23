@@ -17,9 +17,9 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename MatType>
-bool SpaceSplit<MetricType, MatType>::GetProjVector(
-    const HRectBound<MetricType>& bound,
+template<typename DistanceType, typename MatType>
+bool SpaceSplit<DistanceType, MatType>::GetProjVector(
+    const HRectBound<DistanceType>& bound,
     const MatType& data,
     const arma::Col<size_t>& /* points */,
     AxisParallelProjVector& projVector,
@@ -50,25 +50,25 @@ bool SpaceSplit<MetricType, MatType>::GetProjVector(
   return true;
 }
 
-template<typename MetricType, typename MatType>
+template<typename DistanceType, typename MatType>
 template<typename BoundType>
-bool SpaceSplit<MetricType, MatType>::GetProjVector(
+bool SpaceSplit<DistanceType, MatType>::GetProjVector(
     const BoundType& /* bound */,
     const MatType& data,
     const arma::Col<size_t>& points,
     ProjVector& projVector,
     double& midValue)
 {
-  MetricType metric;
+  DistanceType distance;
 
   // Efficiently estimate the farthest pair of points in the given set.
   size_t fst = points[rand() % points.n_elem];
   size_t snd = points[0];
-  double max = metric.Evaluate(data.col(fst), data.col(snd));
+  double max = distance.Evaluate(data.col(fst), data.col(snd));
 
   for (size_t i = 1; i < points.n_elem; ++i)
   {
-    double dist = metric.Evaluate(data.col(fst), data.col(points[i]));
+    double dist = distance.Evaluate(data.col(fst), data.col(points[i]));
     if (dist > max)
     {
       max = dist;
@@ -80,7 +80,7 @@ bool SpaceSplit<MetricType, MatType>::GetProjVector(
 
   for (size_t i = 0; i < points.n_elem; ++i)
   {
-    double dist = metric.Evaluate(data.col(fst), data.col(points[i]));
+    double dist = distance.Evaluate(data.col(fst), data.col(points[i]));
     if (dist > max)
     {
       max = dist;

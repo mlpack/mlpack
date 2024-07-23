@@ -1,0 +1,17 @@
+# Post a message to new contributors that they can get some stickers mailed to
+# them.
+name: 'Stickers for new contributors'
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  sticker_comment:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+        # Forked version of first-interaction that runs only on first merged PR.
+      - uses: rcurtin/actions/stickers@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-message: "Hello there!  Thanks for your contribution.  Congratulations on your first contribution to mlpack!  If you'd like to add your name to the list of contributors in `COPYRIGHT.txt` and you haven't already, please feel free to push a change to this PR---or, if it gets merged before you can, feel free to open another PR.\n\nIn addition, if you'd like some stickers to put on your laptop, we can get them in the mail for you.  Just send an email with your physical mailing address to stickers@mlpack.org, and then one of the mlpack maintainers will put some stickers in an envelope for you.  It may take a few weeks to get them, depending on your location. :+1:"

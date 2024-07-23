@@ -428,9 +428,7 @@ double* GetParamMat(void* params, const char* paramName)
   else
   {
     arma::access::rw(mat.mem_state) = 1;
-    #if ARMA_VERSION_MAJOR >= 10
-      arma::access::rw(mat.n_alloc) = 0;
-    #endif
+    arma::access::rw(mat.n_alloc) = 0;
     return mat.memptr();
   }
 }
@@ -475,9 +473,7 @@ size_t* GetParamUMat(void* params, const char* paramName)
   else
   {
     arma::access::rw(mat.mem_state) = 1;
-    #if ARMA_VERSION_MAJOR >= 10
-      arma::access::rw(mat.n_alloc) = 0;
-    #endif
+    arma::access::rw(mat.n_alloc) = 0;
     return mat.memptr();
   }
 }
@@ -513,9 +509,7 @@ double* GetParamCol(void* params, const char* paramName)
   else
   {
     arma::access::rw(vec.mem_state) = 1;
-    #if ARMA_VERSION_MAJOR >= 10
-      arma::access::rw(vec.n_alloc) = 0;
-    #endif
+    arma::access::rw(vec.n_alloc) = 0;
     return vec.memptr();
   }
 }
@@ -552,9 +546,7 @@ size_t* GetParamUCol(void* params, const char* paramName)
   else
   {
     arma::access::rw(vec.mem_state) = 1;
-    #if ARMA_VERSION_MAJOR >= 10
-      arma::access::rw(vec.n_alloc) = 0;
-    #endif
+    arma::access::rw(vec.n_alloc) = 0;
     return vec.memptr();
   }
 }
@@ -590,9 +582,7 @@ double* GetParamRow(void* params, const char* paramName)
   else
   {
     arma::access::rw(vec.mem_state) = 1;
-    #if ARMA_VERSION_MAJOR >= 10
-      arma::access::rw(vec.n_alloc) = 0;
-    #endif
+    arma::access::rw(vec.n_alloc) = 0;
     return vec.memptr();
   }
 }
@@ -629,9 +619,7 @@ size_t* GetParamURow(void* params, const char* paramName)
   else
   {
     arma::access::rw(vec.mem_state) = 1;
-    #if ARMA_VERSION_MAJOR >= 10
-      arma::access::rw(vec.n_alloc) = 0;
-    #endif
+    arma::access::rw(vec.n_alloc) = 0;
     return vec.memptr();
   }
 }
@@ -707,9 +695,7 @@ double* GetParamMatWithInfoPtr(void* params, const char* paramName)
   else
   {
     arma::access::rw(m.mem_state) = 1;
-    #if ARMA_VERSION_MAJOR >= 10
-      arma::access::rw(m.n_alloc) = 0;
-    #endif
+    arma::access::rw(m.n_alloc) = 0;
     return m.memptr();
   }
 }

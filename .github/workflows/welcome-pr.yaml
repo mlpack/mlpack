@@ -1,0 +1,16 @@
+# Post a message to new contributors that they can get some stickers mailed to
+# them.
+name: 'Welcome message for new contributors'
+on:
+  pull_request:
+    types: [open]
+
+jobs:
+  sticker_comment:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - uses: actions/first-interaction@v1.3.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pr-message: "Thanks for opening your first pull request in this repository!  Someone will review it when they have a chance.  In the mean time, please be sure that you've handled the following things, to make the review process quicker and easier:\n\n - All code should follow the [style guide](https://github.com/mlpack/mlpack/wiki/DesignGuidelines#style-guidelines)\n - Documentation added for any new functionality\n - Tests added for any new functionality\n - Tests that are added follow the [testing guide](https://github.com/mlpack/mlpack/wiki/Testing-Guidelines)\n - Headers and license information added to the top of any new code files\n - HISTORY.md updated if the changes are big or user-facing\n - All CI checks should be passing\n\nThank you again for your contributions!  :+1:"

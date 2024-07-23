@@ -28,7 +28,7 @@ namespace mlpack {
  * this case we consider all clusters at once---so the query point is entirely
  * ignored during in BaseCase() and Score().
  */
-template<typename MetricType, typename TreeType>
+template<typename DistanceType, typename TreeType>
 class PellegMooreKMeansRules
 {
  public:
@@ -40,13 +40,13 @@ class PellegMooreKMeansRules
    * @param newCentroids New centroids after this iteration (output).
    * @param counts Current cluster counts, to be replaced with new cluster
    *      counts.
-   * @param metric Instantiated metric.
+   * @param distance Instantiated distance metric.
    */
   PellegMooreKMeansRules(const typename TreeType::Mat& dataset,
                          const arma::mat& centroids,
                          arma::mat& newCentroids,
                          arma::Col<size_t>& counts,
-                         MetricType& metric);
+                         DistanceType& distance);
 
   /**
    * The BaseCase() function for this single-tree algorithm does nothing.
@@ -93,8 +93,8 @@ class PellegMooreKMeansRules
   arma::mat& newCentroids;
   //! The counts of points in each cluster.
   arma::Col<size_t>& counts;
-  //! Instantiated metric.
-  MetricType& metric;
+  //! Instantiated distance metric.
+  DistanceType& distance;
 
   //! The number of O(d) distance calculations that have been performed.
   size_t distanceCalculations;

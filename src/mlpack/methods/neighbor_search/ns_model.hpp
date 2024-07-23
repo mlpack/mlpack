@@ -87,7 +87,7 @@ class NSWrapperBase
  * NSWrapper is a wrapper class for most NeighborSearch types.
  */
 template<typename SortPolicy,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType,
          template<typename RuleType> class DualTreeTraversalType =
@@ -181,7 +181,7 @@ class NSWrapper : public NSWrapperBase
  * size into account.
  */
 template<typename SortPolicy,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType,
          template<typename RuleType> class DualTreeTraversalType =

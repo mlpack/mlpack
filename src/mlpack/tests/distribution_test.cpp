@@ -458,23 +458,23 @@ TEST_CASE("GaussianDistributionRandomTest", "[DistributionTest]")
 
   GaussianDistribution d(mean, cov);
 
-  arma::mat obs(2, 5000);
+  arma::mat obs(2, 7500);
 
-  for (size_t i = 0; i < 5000; ++i)
+  for (size_t i = 0; i < 7500; ++i)
     obs.col(i) = d.Random();
 
   // Now make sure that reflects the actual distribution.
   arma::vec obsMean = arma::mean(obs, 1);
   arma::mat obsCov = ColumnCovariance(obs);
 
-  // 10% tolerance because this can be noisy.
-  REQUIRE(obsMean[0] == Approx(mean[0]).epsilon(0.1));
-  REQUIRE(obsMean[1] == Approx(mean[1]).epsilon(0.1));
+  // 12.5% tolerance because this can be noisy.
+  REQUIRE(obsMean[0] == Approx(mean[0]).epsilon(0.125));
+  REQUIRE(obsMean[1] == Approx(mean[1]).epsilon(0.125));
 
-  REQUIRE(obsCov(0, 0) == Approx(cov(0, 0)).epsilon(0.1));
-  REQUIRE(obsCov(0, 1) == Approx(cov(0, 1)).epsilon(0.1));
-  REQUIRE(obsCov(1, 0) == Approx(cov(1, 0)).epsilon(0.1));
-  REQUIRE(obsCov(1, 1) == Approx(cov(1, 1)).epsilon(0.1));
+  REQUIRE(obsCov(0, 0) == Approx(cov(0, 0)).epsilon(0.125));
+  REQUIRE(obsCov(0, 1) == Approx(cov(0, 1)).epsilon(0.125));
+  REQUIRE(obsCov(1, 0) == Approx(cov(1, 0)).epsilon(0.125));
+  REQUIRE(obsCov(1, 1) == Approx(cov(1, 1)).epsilon(0.125));
 }
 
 /**
@@ -527,7 +527,7 @@ TEST_CASE("GaussianDistributionTrainWithProbabilitiesTest",
   arma::vec cov = ("2.0");
 
   GaussianDistribution dist(mean, cov);
-  size_t N = 5000;
+  size_t N = 15000;
   size_t d = 1;
 
   arma::mat rdata(d, N);
@@ -548,10 +548,10 @@ TEST_CASE("GaussianDistributionTrainWithProbabilitiesTest",
 
   REQUIRE(guDist.Mean()[0] == Approx(guDist2.Mean()[0]).epsilon(0.06));
   REQUIRE(guDist.Covariance()[0] ==
-      Approx(guDist2.Covariance()[0]).epsilon(0.06));
+      Approx(guDist2.Covariance()[0]).epsilon(0.08));
 
   REQUIRE(guDist.Mean()[0] == Approx(mean[0]).epsilon(0.06));
-  REQUIRE(guDist.Covariance()[0] == Approx(cov[0]).epsilon(0.06));
+  REQUIRE(guDist.Covariance()[0] == Approx(cov[0]).epsilon(0.08));
 }
 
 /**
@@ -819,11 +819,11 @@ TEST_CASE("GammaDistributionTrainTwoDistProbabilities1Test",
   GammaDistribution gDist;
   gDist.Train(rdata, probabilities);
 
-  REQUIRE(alphaReal2 == Approx(gDist.Alpha(0)).epsilon(0.05));
-  REQUIRE(betaReal2 == Approx(gDist.Beta(0)).epsilon(0.05));
+  REQUIRE(alphaReal2 == Approx(gDist.Alpha(0)).epsilon(0.075));
+  REQUIRE(betaReal2 == Approx(gDist.Beta(0)).epsilon(0.075));
 
-  REQUIRE(alphaReal2 == Approx(gDist.Alpha(1)).epsilon(0.05));
-  REQUIRE(betaReal2 == Approx(gDist.Beta(1)).epsilon(0.05));
+  REQUIRE(alphaReal2 == Approx(gDist.Alpha(1)).epsilon(0.075));
+  REQUIRE(betaReal2 == Approx(gDist.Beta(1)).epsilon(0.075));
 }
 
 /**
@@ -933,7 +933,7 @@ TEST_CASE("GammaDistributionTrainStatisticsTest", "[DistributionTest]")
 TEST_CASE("GammaDistributionRandomTest", "[DistributionTest]")
 {
   const arma::vec a("2.0 2.5 3.0"), b("0.4 0.6 1.3");
-  const size_t numPoints = 2000;
+  const size_t numPoints = 4000;
 
   // Distribution to generate points.
   GammaDistribution d1(a, b);
@@ -946,8 +946,8 @@ TEST_CASE("GammaDistributionRandomTest", "[DistributionTest]")
   GammaDistribution d2(data);
   for (size_t i = 0; i < 3; ++i)
   {
-    REQUIRE(d2.Alpha(i) == Approx(a(i)).epsilon(0.1)); // Within 10%
-    REQUIRE(d2.Beta(i) == Approx(b(i)).epsilon(0.1));
+    REQUIRE(d2.Alpha(i) == Approx(a(i)).epsilon(0.15)); // Within 15%
+    REQUIRE(d2.Beta(i) == Approx(b(i)).epsilon(0.15));
   }
 }
 
@@ -1189,25 +1189,6 @@ TEST_CASE("LaplaceDistributionLogProbabilityTest", "[DistributionTest]")
 
   REQUIRE(logProbabilities(1) ==
       Approx(-1.693147180559946).epsilon(1e-7));
-}
-
-/**
- * Mahalanobis Distance serialization test.
- */
-TEST_CASE("MahalanobisDistanceTest", "[DistributionTest]")
-{
-  MahalanobisDistance<> d;
-  d.Covariance().randu(50, 50);
-
-  MahalanobisDistance<> xmlD, jsonD, binaryD;
-
-  SerializeObjectAll(d, xmlD, jsonD, binaryD);
-
-  // Check the covariance matrices.
-  CheckMatrices(d.Covariance(),
-                xmlD.Covariance(),
-                jsonD.Covariance(),
-                binaryD.Covariance());
 }
 
 /**

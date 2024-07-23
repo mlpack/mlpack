@@ -96,8 +96,8 @@ BINDING_EXAMPLE(
 // See also...
 BINDING_SEE_ALSO("Kernel principal component analysis on Wikipedia",
     "https://en.wikipedia.org/wiki/Kernel_principal_component_analysis");
-BINDING_SEE_ALSO("Kernel Principal Component Analysis (pdf)",
-    "https://pca.narod.ru/scholkopf_kernel.pdf");
+BINDING_SEE_ALSO("Nonlinear Component Analysis as a Kernel Eigenvalue "
+    "Problem", "https://www.mlpack.org/papers/kpca.pdf");
 BINDING_SEE_ALSO("KernelPCA class documentation",
     "@src/mlpack/methods/kernel_pca/kernel_pca.hpp");
 

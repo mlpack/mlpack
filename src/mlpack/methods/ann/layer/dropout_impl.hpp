@@ -87,8 +87,15 @@ void DropoutType<MatType>::Forward(const MatType& input, MatType& output)
     // Scale with input / (1 - ratio) and set values to zero with probability
     // 'ratio'.
     mask.randu(input.n_rows, input.n_cols);
-    mask.transform([&](double val) { return (val > ratio); });
-    output = input % mask * scale;
+    #pragma omp parallel for collapse(2)
+    for (size_t i = 0; i < input.n_rows; ++i)
+    {
+      for (size_t j = 0; j < input.n_cols; ++j)
+      {
+        mask(i, j) = (mask(i, j) > this->ratio) ? 1.0 : 0.0;
+      }
+    }
+    output = input % mask * this->scale;
   }
 }
 

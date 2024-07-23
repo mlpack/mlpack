@@ -93,7 +93,7 @@ int main(int argc, char** argv)
     cout << " - [mlpack homepage](https://www.mlpack.org/)" << endl;
     cout << " - [mlpack on Github](https://github.com/mlpack/mlpack)" << endl;
     cout << " - [mlpack main documentation page]"
-        << "(https://www.mlpack.org/docs.html)" << endl;
+        << "(https://www.mlpack.org/doc/index.html)" << endl;
     cout << endl;
     cout << "See also the quickstart guide for "
         << PrintLanguage(BindingInfo::Language()) << ":" << endl;

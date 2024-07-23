@@ -17,9 +17,9 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename StatisticType, typename MatType>
+template<typename DistanceType, typename StatisticType, typename MatType>
 template<typename RuleType>
-Octree<MetricType, StatisticType, MatType>::DualTreeTraverser<RuleType>::
+Octree<DistanceType, StatisticType, MatType>::DualTreeTraverser<RuleType>::
     DualTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0),
@@ -30,9 +30,9 @@ Octree<MetricType, StatisticType, MatType>::DualTreeTraverser<RuleType>::
   // Nothing to do.
 }
 
-template<typename MetricType, typename StatisticType, typename MatType>
+template<typename DistanceType, typename StatisticType, typename MatType>
 template<typename RuleType>
-void Octree<MetricType, StatisticType, MatType>::DualTreeTraverser<RuleType>::
+void Octree<DistanceType, StatisticType, MatType>::DualTreeTraverser<RuleType>::
     Traverse(Octree& queryNode, Octree& referenceNode)
 {
   // Increment the visit counter.

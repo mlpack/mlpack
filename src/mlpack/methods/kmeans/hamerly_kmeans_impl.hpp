@@ -17,20 +17,20 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename MatType>
-HamerlyKMeans<MetricType, MatType>::HamerlyKMeans(const MatType& dataset,
-                                                  MetricType& metric) :
+template<typename DistanceType, typename MatType>
+HamerlyKMeans<DistanceType, MatType>::HamerlyKMeans(const MatType& dataset,
+                                                    DistanceType& distance) :
     dataset(dataset),
-    metric(metric),
+    distance(distance),
     distanceCalculations(0)
 {
   // Nothing to do.
 }
 
-template<typename MetricType, typename MatType>
-double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
-                                                   arma::mat& newCentroids,
-                                                   arma::Col<size_t>& counts)
+template<typename DistanceType, typename MatType>
+double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
+                                                     arma::mat& newCentroids,
+                                                     arma::Col<size_t>& counts)
 {
   size_t hamerlyPruned = 0;
 
@@ -54,8 +54,8 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
   {
     for (size_t j = i + 1; j < centroids.n_cols; ++j)
     {
-      const double dist = metric.Evaluate(centroids.col(i), centroids.col(j)) /
-          2.0;
+      const double dist = distance.Evaluate(centroids.col(i),
+                                            centroids.col(j)) / 2.0;
       ++distanceCalculations;
 
       // Update bounds, if this intra-cluster distance is smaller.
@@ -81,8 +81,8 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
     }
 
     // Tighten upper bound.
-    upperBounds(i) = metric.Evaluate(dataset.col(i),
-                                     centroids.col(assignments[i]));
+    upperBounds(i) = distance.Evaluate(dataset.col(i),
+                                       centroids.col(assignments[i]));
     ++distanceCalculations;
 
     // Second bound test.
@@ -102,7 +102,7 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
       if (c == assignments[i])
         continue;
 
-      const double dist = metric.Evaluate(dataset.col(i), centroids.col(c));
+      const double dist = distance.Evaluate(dataset.col(i), centroids.col(c));
 
       // Is this a better cluster?  At this point, upperBounds[i] = d(i, c(i)).
       if (dist < upperBounds(i))
@@ -138,8 +138,8 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
       newCentroids.col(c) /= counts(c);
 
     // Calculate movement.
-    const double movement = metric.Evaluate(centroids.col(c),
-                                            newCentroids.col(c));
+    const double movement = distance.Evaluate(centroids.col(c),
+                                              newCentroids.col(c));
     centroidMovements(c) = movement;
     centroidMovement += std::pow(movement, 2.0);
     ++distanceCalculations;

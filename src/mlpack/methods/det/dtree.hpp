@@ -48,7 +48,7 @@ class DTree
   //! The actual, underlying type we're working with.
   typedef typename MatType::elem_type  ElemType;
   //! The type of vector we are using.
-  typedef typename MatType::vec_type   VecType;
+  typedef typename GetColType<MatType>::type   VecType;
   //! The statistic type we are holding.
   typedef typename arma::Col<ElemType> StatType;
 

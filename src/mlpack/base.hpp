@@ -12,13 +12,6 @@
 #ifndef MLPACK_BASE_HPP
 #define MLPACK_BASE_HPP
 
-// First, check if Armadillo was included before, warning if so.
-#ifdef ARMA_INCLUDES
-#pragma message "Armadillo was included before mlpack; this can sometimes cause\
- problems.  It should only be necessary to include <mlpack/core.hpp> and not \
-<armadillo>."
-#endif
-
 // Defining _USE_MATH_DEFINES should set M_PI.
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -88,8 +81,8 @@
   #error "Need to enable C++17 mode in your compiler"
 #endif
 
-// Now include Armadillo through the special mlpack extensions.
-#include <mlpack/core/arma_extend/arma_extend.hpp>
+// Now include Armadillo and traits that we use for it.
+#include <armadillo>
 #include <mlpack/core/util/arma_traits.hpp>
 
 // On Visual Studio, disable C4519 (default arguments for function templates)
@@ -105,8 +98,5 @@
   #undef  MLPACK_USE_OPENMP
   #define MLPACK_USE_OPENMP
 #endif
-
-// We need to be able to mark functions deprecated.
-#include <mlpack/core/util/deprecated.hpp>
 
 #endif

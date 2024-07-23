@@ -53,7 +53,7 @@ project. A student should ideally be familiar with
    and [compile-time class traits](https://accu.org/index.php/journals/442).
    Here are some [other useful resources](https://www.codeproject.com/Articles/3743/A-gentle-introduction-to-Template-Metaprogramming)
    for learning template metaprogramming, and some useful
-   [reference books](https://www.amazon.com/gp/product/0201749629?ie=UTF8tag=aristeia.com-20linkCode=as2camp=1789creative=9325creativeASIN=0201749629).
+   [reference books](https://www.aristeia.com/books.html).
    If some of this sounds new to you, don’t feel overwhelmed; it’s not a
    necessity, but it is helpful. You should at least be prepared to learn about
    it!

@@ -108,7 +108,6 @@ template<
     typename MatType
 >
 template<typename WeightsType>
-mlpack_deprecated
 Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     const Perceptron& other,
     const MatType& data,

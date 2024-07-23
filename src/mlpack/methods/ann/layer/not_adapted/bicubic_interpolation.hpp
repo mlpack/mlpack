@@ -40,6 +40,8 @@ class BicubicInterpolation
   //! Create the Bicubic Interpolation object.
   BicubicInterpolation();
 
+  // TODO: use scaleFactors instead of outRowSize and outColSize
+
   /**
    * The constructor for the Bicubic Interpolation.
    *

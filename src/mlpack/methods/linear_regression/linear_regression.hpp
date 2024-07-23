@@ -99,7 +99,7 @@ class LinearRegression
    * @return The least squares error after training.
    */
   template<typename T>
-  mlpack_deprecated /** Will be removed in mlpack 5.0.0. */
+  [[deprecated("Will be removed in mlpack 5.0.0, use other constructors")]]
   double Train(const arma::mat& predictors,
                const arma::rowvec& responses,
                const T intercept,
@@ -123,7 +123,7 @@ class LinearRegression
    * @return The least squares error after training.
    */
   template<typename T>
-  mlpack_deprecated /** Will be removed in mlpack 5.0.0. */
+  [[deprecated("Will be removed in mlpack 5.0.0, use other constructors")]]
   double Train(const arma::mat& predictors,
                const arma::rowvec& responses,
                const arma::rowvec& weights,

@@ -25,7 +25,7 @@ namespace mlpack {
 
 // Forward declaration.
 template<typename SortPolicy,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType,
          template<typename RuleType> class DualTreeTraversalType,
@@ -51,11 +51,11 @@ enum NeighborSearchMode
  * dataset is also used as the query dataset.
  *
  * The template parameters SortPolicy and Metric define the sort function used
- * and the metric (distance function) used.  More information on those classes
- * can be found in the NearestNeighborSort class and the ExampleKernel class.
+ * and the distance metric used.  More information on those classes can be found
+ * in the NearestNeighborSort class and the ExampleKernel class.
  *
  * @tparam SortPolicy The sort policy for distances; see NearestNeighborSort.
- * @tparam MetricType The metric to use for computation.
+ * @tparam DistanceType The distance metric to use for computation.
  * @tparam MatType The type of data matrix.
  * @tparam TreeType The tree type to use; must adhere to the TreeType API.
  * @tparam DualTreeTraversalType The type of dual tree traversal to use
@@ -64,24 +64,24 @@ enum NeighborSearchMode
  *     (defaults to the tree's default traverser).
  */
 template<typename SortPolicy = NearestNeighborSort,
-         typename MetricType = EuclideanDistance,
+         typename DistanceType = EuclideanDistance,
          typename MatType = arma::mat,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType = KDTree,
          template<typename RuleType> class DualTreeTraversalType =
-             TreeType<MetricType,
+             TreeType<DistanceType,
                       NeighborSearchStat<SortPolicy>,
                       MatType>::template DualTreeTraverser,
          template<typename RuleType> class SingleTreeTraversalType =
-             TreeType<MetricType,
+             TreeType<DistanceType,
                       NeighborSearchStat<SortPolicy>,
                       MatType>::template SingleTreeTraverser>
 class NeighborSearch
 {
  public:
   //! Convenience typedef.
-  typedef TreeType<MetricType, NeighborSearchStat<SortPolicy>, MatType> Tree;
+  typedef TreeType<DistanceType, NeighborSearchStat<SortPolicy>, MatType> Tree;
   //! The type of element held in MatType.
   typedef typename MatType::elem_type ElemType;
 
@@ -89,22 +89,22 @@ class NeighborSearch
    * Initialize the NeighborSearch object, passing a reference dataset (this is
    * the dataset which is searched).  Optionally, perform the computation in
    * a different mode.  An initialized distance metric can be given, for cases
-   * where the metric has internal data (i.e. the distance::MahalanobisDistance
+   * where the distance metric has internal data (i.e. the MahalanobisDistance
    * class).
    *
    * This method will move the matrices to internal copies, which are rearranged
-   * during tree-building.  You can avoid creating an extra copy by pre-constructing
-   * the trees, passing std::move(yourReferenceSet).
+   * during tree-building.  You can avoid creating an extra copy by
+   * pre-constructing the trees, passing std::move(yourReferenceSet).
    *
    * @param referenceSet Set of reference points.
    * @param mode Neighbor search mode.
    * @param epsilon Relative approximate error (non-negative).
-   * @param metric An optional instance of the MetricType class.
+   * @param distance An optional instance of the DistanceType class.
    */
   NeighborSearch(MatType referenceSet,
                  const NeighborSearchMode mode = DUAL_TREE_MODE,
                  const double epsilon = 0,
-                 const MetricType metric = MetricType());
+                 const DistanceType distance = DistanceType());
 
   /**
    * Initialize the NeighborSearch object with a copy of the given
@@ -114,9 +114,9 @@ class NeighborSearch
    * instantiated distance metric can be given, for cases where the distance
    * metric holds data.
    *
-   * This method will copy the given tree. When copies must absolutely be avoided,
-   * you can avoid this copy, while taking ownership of the given tree, by passing
-   * std::move(yourReferenceTree)
+   * This method will copy the given tree. When copies must absolutely be
+   * avoided, you can avoid this copy, while taking ownership of the given tree,
+   * by passing std::move(yourReferenceTree)
    *
    * @note
    * Mapping the points of the matrix back to their original indices is not done
@@ -127,12 +127,12 @@ class NeighborSearch
    * @param referenceTree Pre-built tree for reference points.
    * @param mode Neighbor search mode.
    * @param epsilon Relative approximate error (non-negative).
-   * @param metric Instantiated distance metric.
+   * @param distance Instantiated distance metric.
    */
   NeighborSearch(Tree referenceTree,
                  const NeighborSearchMode mode = DUAL_TREE_MODE,
                  const double epsilon = 0,
-                 const MetricType metric = MetricType());
+                 const DistanceType distance = DistanceType());
 
   /**
    * Create a NeighborSearch object without any reference data.  If Search() is
@@ -141,11 +141,11 @@ class NeighborSearch
    *
    * @param mode Neighbor search mode.
    * @param epsilon Relative approximate error (non-negative).
-   * @param metric Instantiated metric.
+   * @param distance Instantiated distance metric.
    */
   NeighborSearch(const NeighborSearchMode mode = DUAL_TREE_MODE,
                  const double epsilon = 0,
-                 const MetricType metric = MetricType());
+                 const DistanceType distance = DistanceType());
 
   /**
    * Construct the NeighborSearch object by copying the given NeighborSearch
@@ -222,9 +222,11 @@ class NeighborSearch
    * @param distances Matrix storing distances of neighbors for each query
    *     point.
    */
+  // TODO: templatize further to remove Armadillo type requirement
+  template<typename IndexType = size_t>
   void Search(const MatType& querySet,
               const size_t k,
-              arma::Mat<size_t>& neighbors,
+              arma::Mat<IndexType>& neighbors,
               arma::Mat<ElemType>& distances);
 
   /**
@@ -247,9 +249,11 @@ class NeighborSearch
    * @param sameSet Denotes whether or not the reference and query sets are the
    *      same.
    */
+  // TODO: templatize further to remove Armadillo type requirement
+  template<typename IndexType = size_t>
   void Search(Tree& queryTree,
               const size_t k,
-              arma::Mat<size_t>& neighbors,
+              arma::Mat<IndexType>& neighbors,
               arma::Mat<ElemType>& distances,
               bool sameSet = false);
 
@@ -267,8 +271,10 @@ class NeighborSearch
    * @param distances Matrix storing distances of neighbors for each query
    *      point.
    */
+  // TODO: templatize further to remove Armadillo type requirement
+  template<typename IndexType = size_t>
   void Search(const size_t k,
-              arma::Mat<size_t>& neighbors,
+              arma::Mat<IndexType>& neighbors,
               arma::Mat<ElemType>& distances);
 
   /**
@@ -300,8 +306,10 @@ class NeighborSearch
    *     query point.
    * @return Recall.
    */
-  static double Recall(arma::Mat<size_t>& foundNeighbors,
-                       arma::Mat<size_t>& realNeighbors);
+  // TODO: templatize further to remove Armadillo type requirement
+  template<typename IndexType = size_t>
+  static double Recall(arma::Mat<IndexType>& foundNeighbors,
+                       arma::Mat<IndexType>& realNeighbors);
 
   //! Return the total number of base case evaluations performed during the last
   //! search.
@@ -345,8 +353,8 @@ class NeighborSearch
   //! Indicates the relative error to be considered in approximate search.
   double epsilon;
 
-  //! Instantiation of metric.
-  MetricType metric;
+  //! Instantiation of distance metric.
+  DistanceType distance;
 
   //! The total number of base cases.
   size_t baseCases;

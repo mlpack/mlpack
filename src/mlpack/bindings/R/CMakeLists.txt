@@ -480,6 +480,24 @@ macro (post_r_setup)
       "" CEREAL_BASE64 "${CEREAL_BASE64}")
   file(WRITE ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/cereal/external/base64.hpp "${CEREAL_BASE64}")
 
+  # Copy STB headers for inclusion in the package, if STB is used.
+  # NOTE: for CRAN, `sprintf` cannot be used; but it is used in
+  # `stb_image_write.h`, so we replace it with `snprintf` below.
+  if (StbImage_FOUND)
+    execute_process(
+      COMMAND ${CMAKE_COMMAND} -E
+        make_directory ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/stb
+    )
+    execute_process(
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${STB_IMAGE_INCLUDE_DIR}/stb_image.h
+            ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/stb/stb_image.h)
+    file(READ "${STB_IMAGE_INCLUDE_DIR}/stb_image_write.h" STB_IMAGE_WRITE_H)
+    string(REGEX REPLACE "sprintf\\(buffer," "snprintf(buffer, 128,"
+        STB_IMAGE_WRITE_H_MOD "${STB_IMAGE_WRITE_H}")
+    file(WRITE "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/stb/stb_image_write.h" "${STB_IMAGE_WRITE_H_MOD}")
+  endif ()
+
   # Then configure 'mlpack.h.in' using ${R_SRC}.
   configure_file(
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack.h.in

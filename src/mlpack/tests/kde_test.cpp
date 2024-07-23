@@ -23,13 +23,13 @@ void BruteForceKDE(const arma::mat& reference,
                    arma::vec& densities,
                    KernelType& kernel)
 {
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   for (size_t i = 0; i < query.n_cols; ++i)
   {
     for (size_t j = 0; j < reference.n_cols; ++j)
     {
-      double distance = metric.Evaluate(query.col(i), reference.col(j));
-      densities(i) += kernel.Evaluate(distance);
+      double dist = distance.Evaluate(query.col(i), reference.col(j));
+      densities(i) += kernel.Evaluate(dist);
     }
   }
   densities /= reference.n_cols;
@@ -137,9 +137,9 @@ TEST_CASE("GaussianKDEBruteForceTest", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, KDTree> kde(
-      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -168,9 +168,9 @@ TEST_CASE("GaussianSingleKDEBruteForceTest", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, KDTree> kde(
-      relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, metric);
+      relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -200,9 +200,9 @@ TEST_CASE("EpanechnikovCoverSingleKDETest", "[KDETest]")
                                     kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<EpanechnikovKernel, EuclideanDistance, arma::mat, StandardCoverTree>
-      kde(relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, metric);
+      kde(relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -232,9 +232,9 @@ TEST_CASE("GaussianCoverSingleKDETest", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, StandardCoverTree>
-      kde(relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, metric);
+      kde(relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -264,9 +264,9 @@ TEST_CASE("EpanechnikovOctreeSingleKDETest", "[KDETest]")
                                     kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<EpanechnikovKernel, EuclideanDistance, arma::mat, Octree> kde(
-      relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, metric);
+      relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -335,9 +335,9 @@ TEST_CASE("OctreeGaussianKDETest", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, Octree> kde(
-      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -366,9 +366,9 @@ TEST_CASE("RTreeGaussianKDETest", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, RTree> kde(
-      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -398,9 +398,9 @@ TEST_CASE("StandardCoverTreeGaussianKDETest", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, StandardCoverTree>
-      kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -430,12 +430,12 @@ TEST_CASE("StandardCoverTreeEpanechnikovKDETest", "[KDETest]")
                                     kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<EpanechnikovKernel,
       EuclideanDistance,
       arma::mat,
       StandardCoverTree>
-      kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -542,14 +542,14 @@ TEST_CASE("BreadthFirstKDETest", "[KDETest]")
                                 kernel);
 
   // Breadth-First KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel,
       EuclideanDistance,
       arma::mat,
       KDTree,
       KDTree<EuclideanDistance, KDEStat, arma::mat>::template
           BreadthFirstDualTreeTraverser>
-      kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -578,9 +578,9 @@ TEST_CASE("OneDimensionalTest", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, KDTree> kde(
-      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -601,10 +601,10 @@ TEST_CASE("EmptyReferenceTest", "[KDETest]")
   const double relError = 0.01;
 
   // KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   GaussianKernel kernel(kernelBandwidth);
   KDE<GaussianKernel, EuclideanDistance, arma::mat, KDTree> kde(
-      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
 
   // When training using the dataset matrix.
   REQUIRE_THROWS_AS(kde.Train(reference), std::invalid_argument);
@@ -631,12 +631,12 @@ TEST_CASE("EvaluationMatchDimensionsTest", "[KDETest]")
   const double relError = 0.01;
 
   // KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   GaussianKernel kernel(kernelBandwidth);
   KDE<GaussianKernel,
       EuclideanDistance,
       arma::mat,
-      KDTree> kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      KDTree> kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
 
   // When evaluating using the query dataset matrix.
@@ -665,12 +665,12 @@ TEST_CASE("EmptyQuerySetTest", "[KDETest]")
   const double relError = 0.01;
 
   // KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   GaussianKernel kernel(kernelBandwidth);
   KDE<GaussianKernel,
       EuclideanDistance,
       arma::mat,
-      KDTree> kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      KDTree> kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
 
   // The query set must be empty.
@@ -896,13 +896,13 @@ TEST_CASE("GaussianSingleKDTreeMonteCarloKDE", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, KDTree> kde(
       relError,
       0.0,
       kernel,
       KDEMode::KDE_SINGLE_TREE_MODE,
-      metric,
+      distance,
       true,
       0.95,
       100,
@@ -946,13 +946,13 @@ TEST_CASE("GaussianSingleCoverTreeMonteCarloKDE", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, StandardCoverTree>
       kde(relError,
           0.0,
           kernel,
           KDEMode::KDE_SINGLE_TREE_MODE,
-          metric,
+          distance,
           true,
           0.95,
           100,
@@ -996,13 +996,13 @@ TEST_CASE("GaussianSingleOctreeMonteCarloKDE", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, Octree> kde(
       relError,
       0.0,
       kernel,
       KDEMode::KDE_SINGLE_TREE_MODE,
-      metric,
+      distance,
       true,
       0.95,
       100,
@@ -1046,13 +1046,13 @@ TEST_CASE("GaussianDualKDTreeMonteCarloKDE", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, KDTree> kde(
       relError,
       0.0,
       kernel,
       KDEMode::KDE_DUAL_TREE_MODE,
-      metric,
+      distance,
       true,
       0.95,
       100,
@@ -1096,13 +1096,13 @@ TEST_CASE("GaussianDualCoverTreeMonteCarloKDE", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, StandardCoverTree>
       kde(relError,
           0.0,
           kernel,
           KDEMode::KDE_DUAL_TREE_MODE,
-          metric,
+          distance,
           true,
           0.95,
           100,
@@ -1146,13 +1146,13 @@ TEST_CASE("GaussianDualOctreeMonteCarloKDE", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, Octree> kde(
       relError,
       0.0,
       kernel,
       KDEMode::KDE_DUAL_TREE_MODE,
-      metric,
+      distance,
       true,
       0.95,
       100,
@@ -1196,7 +1196,7 @@ TEST_CASE("GaussianBreadthDualKDTreeMonteCarloKDE", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel,
       EuclideanDistance,
       arma::mat,
@@ -1207,7 +1207,7 @@ TEST_CASE("GaussianBreadthDualKDTreeMonteCarloKDE", "[KDETest]")
         0.0,
         kernel,
         KDEMode::KDE_DUAL_TREE_MODE,
-        metric,
+        distance,
         true,
         0.95,
         100,

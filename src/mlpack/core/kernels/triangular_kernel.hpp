@@ -13,7 +13,7 @@
 #define MLPACK_CORE_KERNELS_TRIANGULAR_KERNEL_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 
 namespace mlpack {
 

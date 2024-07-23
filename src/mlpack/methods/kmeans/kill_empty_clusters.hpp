@@ -39,19 +39,19 @@ class KillEmptyClusters
    * @param newCentroids Centroids of each cluster (one per column) at the end
    *      of the iteration.
    * @param clusterCounts Number of points in each cluster.
-   * @param * (metric) The Metric to use.
+   * @param * (distance) The distance metric to use.
    * @param * (iteration) Number of iteration.
    *
    * @return Number of points changed (0).
    */
-  template<typename MetricType, typename MatType>
+  template<typename DistanceType, typename MatType>
   static inline mlpack_force_inline void EmptyCluster(
       const MatType& /* data */,
       const size_t emptyCluster,
       const arma::mat& /* oldCentroids */,
       arma::mat& newCentroids,
       arma::Col<size_t>& clusterCounts,
-      MetricType& /* metric */,
+      DistanceType& /* distance */,
       const size_t /* iteration */)
 {
   // Remove the empty cluster.

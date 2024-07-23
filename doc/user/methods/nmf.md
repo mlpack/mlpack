@@ -8,11 +8,8 @@ of a recommender system.
 
 The `NMF` class allows fully configurable behavior via [template
 parameters](#advanced-functionality-template-parameters).  For more general
-matrix factorization strategies, see the
-[`AMF`](/src/mlpack/methods/amf/amf.hpp) (alternating matrix factorization)
-class documentation.
-
-<!-- TODO: clean up AMF link -->
+matrix factorization strategies, see the [`AMF`](amf.md) (alternating matrix
+factorization) class documentation.
 
 #### Simple usage example:
 
@@ -51,12 +48,10 @@ std::cout << "RMSE of reconstructed matrix: "
 
 #### See also:
 
-<!-- TODO: add these links
- * [`AMF`](amf.md): alternating matrix factorization
- * [`CF`](cf.md): collaborative filtering (recommender system)
- * [`SparseCoding`](sparse_coding.md)
--->
+<!-- * [`CF`](cf.md): collaborative filtering (recommender system) -->
 
+ * [`AMF`](amf.md): alternating matrix factorization
+ * [`SparseCoding`](sparse_coding.md)
  * [mlpack transformations](../../index.md#transformations)
  * [Non-negative matrix factorization on Wikipedia](https://en.wikipedia.org/wiki/Non-negative_matrix_factorization)
  * [Learning the parts of objects by non-negative matrix factorization](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=29bae9472203546847ec1352a604566d0f602728) (original NMF paper, pdf)
@@ -185,7 +180,7 @@ std::cout << "RMSE of decomposition: " << rmse << "." << std::endl;
 Compare quality of decompositions of MovieLens with different ranks.
 
 ```c++
-// See https://datasets.mlpack.org/movielens-100k.csv
+// See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
 mlpack::data::Load("movielens-100k.csv", V, true);
 
@@ -224,10 +219,7 @@ NMF<TerminationPolicyType, InitializationRuleType, UpdateRuleType>
    - `NMFMultiplicativeDivergenceUpdate`: update rules that ensure
      Kullback-Leibler divergence is decreasing at each iteration.
    - `NMFALSUpdate`: alternating least-squares projections for `W` and `H`.
-   - For custom update rules, use the more general
-     [`AMF`](/src/mlpack/methods/amf/amf.hpp) class.
-
-<!-- TODO: update link above to Markdown documentation -->
+   - For custom update rules, use the more general [`AMF`](amf.md) class.
 
 ---
 
@@ -359,7 +351,7 @@ class CustomTerminationPolicy
 
  * Specifies the strategy to use to initialize `W` and `H` at the beginning of
    the NMF algorithm.
- * An initialization `InitializationRuleType` can be passed to the following
+ * An initialized `InitializationRuleType` can be passed to the following
    constructor:
    - `nmf = NMF(terminationPolicy, initializationRule)`
  * The following choices are available for drop-in usage:
@@ -401,7 +393,7 @@ class CustomTerminationPolicy
 
 ---
 
-#### ***`RandomInit`***:
+#### ***`RandomAMFInitialization`***:
 
  - Initialize `W` and `H` as uniform random in the range `[0, 1]`.
 

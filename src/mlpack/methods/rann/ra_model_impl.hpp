@@ -238,7 +238,7 @@ inline std::string RAModel::TreeName() const
   }
 }
 
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RAWrapper<TreeType>::Train(util::Timers& timers,
@@ -254,7 +254,7 @@ void RAWrapper<TreeType>::Train(util::Timers& timers,
     timers.Stop("tree_building");
 }
 
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RAWrapper<TreeType>::Search(util::Timers& timers,
@@ -283,7 +283,7 @@ void RAWrapper<TreeType>::Search(util::Timers& timers,
   }
 }
 
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RAWrapper<TreeType>::Search(util::Timers& timers,
@@ -296,7 +296,7 @@ void RAWrapper<TreeType>::Search(util::Timers& timers,
   timers.Stop("computing_neighbors");
 }
 
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void LeafSizeRAWrapper<TreeType>::Train(util::Timers& timers,
@@ -326,7 +326,7 @@ void LeafSizeRAWrapper<TreeType>::Train(util::Timers& timers,
   }
 }
 
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void LeafSizeRAWrapper<TreeType>::Search(util::Timers& timers,

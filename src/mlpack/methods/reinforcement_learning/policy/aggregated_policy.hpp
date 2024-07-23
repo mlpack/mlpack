@@ -15,7 +15,7 @@
 #define MLPACK_METHODS_RL_POLICY_AGGREGATED_POLICY_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/dists/discrete_distribution.hpp>
+#include <mlpack/core/distributions/discrete_distribution.hpp>
 
 namespace mlpack {
 

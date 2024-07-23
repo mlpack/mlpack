@@ -17,21 +17,21 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename TreeType>
-RangeSearchRules<MetricType, TreeType>::RangeSearchRules(
+template<typename DistanceType, typename TreeType>
+RangeSearchRules<DistanceType, TreeType>::RangeSearchRules(
     const MatType& referenceSet,
     const MatType& querySet,
     const RangeType<ElemType>& range,
     std::vector<std::vector<size_t> >& neighbors,
     std::vector<std::vector<ElemType> >& distances,
-    MetricType& metric,
+    DistanceType& distance,
     const bool sameSet) :
     referenceSet(referenceSet),
     querySet(querySet),
     range(range),
     neighbors(neighbors),
     distances(distances),
-    metric(metric),
+    distance(distance),
     sameSet(sameSet),
     lastQueryIndex(querySet.n_cols),
     lastReferenceIndex(referenceSet.n_cols),
@@ -43,10 +43,10 @@ RangeSearchRules<MetricType, TreeType>::RangeSearchRules(
 
 //! The base case.  Evaluate the distance between the two points and add to the
 //! results if necessary.
-template<typename MetricType, typename TreeType>
+template<typename DistanceType, typename TreeType>
 inline mlpack_force_inline
-typename RangeSearchRules<MetricType, TreeType>::ElemType
-RangeSearchRules<MetricType, TreeType>::BaseCase(
+typename RangeSearchRules<DistanceType, TreeType>::ElemType
+RangeSearchRules<DistanceType, TreeType>::BaseCase(
     const size_t queryIndex,
     const size_t referenceIndex)
 {
@@ -58,7 +58,7 @@ RangeSearchRules<MetricType, TreeType>::BaseCase(
   if ((lastQueryIndex == queryIndex) && (lastReferenceIndex == referenceIndex))
     return 0.0; // No value to return... this shouldn't do anything bad.
 
-  const ElemType distance = metric.Evaluate(querySet.unsafe_col(queryIndex),
+  const ElemType d = distance.Evaluate(querySet.unsafe_col(queryIndex),
       referenceSet.unsafe_col(referenceIndex));
   ++baseCases;
 
@@ -66,20 +66,20 @@ RangeSearchRules<MetricType, TreeType>::BaseCase(
   lastQueryIndex = queryIndex;
   lastReferenceIndex = referenceIndex;
 
-  if (range.Contains(distance))
+  if (range.Contains(d))
   {
     neighbors[queryIndex].push_back(referenceIndex);
-    distances[queryIndex].push_back(distance);
+    distances[queryIndex].push_back(d);
   }
 
-  return distance;
+  return d;
 }
 
 //! Single-tree scoring function.
-template<typename MetricType, typename TreeType>
-typename RangeSearchRules<MetricType, TreeType>::ElemType
-RangeSearchRules<MetricType, TreeType>::Score(const size_t queryIndex,
-                                              TreeType& referenceNode)
+template<typename DistanceType, typename TreeType>
+typename RangeSearchRules<DistanceType, TreeType>::ElemType
+RangeSearchRules<DistanceType, TreeType>::Score(const size_t queryIndex,
+                                                TreeType& referenceNode)
 {
   // We must get the minimum and maximum distances and store them in this
   // object.
@@ -137,9 +137,9 @@ RangeSearchRules<MetricType, TreeType>::Score(const size_t queryIndex,
 }
 
 //! Single-tree rescoring function.
-template<typename MetricType, typename TreeType>
-typename RangeSearchRules<MetricType, TreeType>::ElemType
-RangeSearchRules<MetricType, TreeType>::Rescore(
+template<typename DistanceType, typename TreeType>
+typename RangeSearchRules<DistanceType, TreeType>::ElemType
+RangeSearchRules<DistanceType, TreeType>::Rescore(
     const size_t /* queryIndex */,
     TreeType& /* referenceNode */,
     const ElemType oldScore) const
@@ -149,10 +149,10 @@ RangeSearchRules<MetricType, TreeType>::Rescore(
 }
 
 //! Dual-tree scoring function.
-template<typename MetricType, typename TreeType>
-typename RangeSearchRules<MetricType, TreeType>::ElemType
-RangeSearchRules<MetricType, TreeType>::Score(TreeType& queryNode,
-                                              TreeType& referenceNode)
+template<typename DistanceType, typename TreeType>
+typename RangeSearchRules<DistanceType, TreeType>::ElemType
+RangeSearchRules<DistanceType, TreeType>::Score(TreeType& queryNode,
+                                                TreeType& referenceNode)
 {
   RangeType<ElemType> distances;
   if (TreeTraits<TreeType>::FirstPointIsCentroid)
@@ -212,9 +212,9 @@ RangeSearchRules<MetricType, TreeType>::Score(TreeType& queryNode,
 }
 
 //! Dual-tree rescoring function.
-template<typename MetricType, typename TreeType>
-typename RangeSearchRules<MetricType, TreeType>::ElemType
-RangeSearchRules<MetricType, TreeType>::Rescore(
+template<typename DistanceType, typename TreeType>
+typename RangeSearchRules<DistanceType, TreeType>::ElemType
+RangeSearchRules<DistanceType, TreeType>::Rescore(
     TreeType& /* queryNode */,
     TreeType& /* referenceNode */,
     const ElemType oldScore) const
@@ -225,9 +225,9 @@ RangeSearchRules<MetricType, TreeType>::Rescore(
 
 //! Add all the points in the given node to the results for the given query
 //! point.
-template<typename MetricType, typename TreeType>
-void RangeSearchRules<MetricType, TreeType>::AddResult(const size_t queryIndex,
-                                                       TreeType& referenceNode)
+template<typename DistanceType, typename TreeType>
+void RangeSearchRules<DistanceType, TreeType>::AddResult(
+    const size_t queryIndex, TreeType& referenceNode)
 {
   // Some types of trees calculate the base case evaluation before Score() is
   // called, so if the base case has already been calculated, then we must avoid
@@ -255,11 +255,11 @@ void RangeSearchRules<MetricType, TreeType>::AddResult(const size_t queryIndex,
         (queryIndex == referenceNode.Descendant(i)))
       continue;
 
-    const ElemType distance = metric.Evaluate(querySet.unsafe_col(queryIndex),
+    const ElemType d = distance.Evaluate(querySet.unsafe_col(queryIndex),
         referenceNode.Dataset().unsafe_col(referenceNode.Descendant(i)));
 
     neighbors[queryIndex].push_back(referenceNode.Descendant(i));
-    distances[queryIndex].push_back(distance);
+    distances[queryIndex].push_back(d);
   }
 }
 

@@ -143,7 +143,7 @@ class LinearSVM
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
            >::value>::type>
-  mlpack_deprecated /** To be removed in mlpack 5.0.0. **/
+  [[deprecated("Will be removed in mlpack 5.0.0, use other constructors")]]
   LinearSVM(const arma::mat& data,
             const arma::Row<size_t>& labels,
             const size_t numClasses,
@@ -178,7 +178,7 @@ class LinearSVM
                LinearSVMFunction<arma::mat, ModelMatType>,
                ModelMatType
            >::value>::type>
-  mlpack_deprecated /** To be removed in mlpack 5.0.0. **/
+  [[deprecated("Will be removed in mlpack 5.0.0, use other constructors")]]
   LinearSVM(const arma::mat& data,
             const arma::Row<size_t>& labels,
             const size_t numClasses,
@@ -368,7 +368,8 @@ class LinearSVM
    * @param data Matrix of data points to be classified.
    * @param scores Class scores for each point.
    */
-  mlpack_deprecated
+  [[deprecated("Will be removed in mlpack 5.0.0, use other Classify() "
+      "variants")]]
   void Classify(const arma::mat& data,
                 arma::mat& scores) const;
 

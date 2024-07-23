@@ -34,8 +34,8 @@ namespace mlpack {
  *
  * @see @ref trees, CoverTree
  */
-template<typename MetricType, typename StatisticType, typename MatType>
-using StandardCoverTree = CoverTree<MetricType,
+template<typename DistanceType, typename StatisticType, typename MatType>
+using StandardCoverTree = CoverTree<DistanceType,
                                     StatisticType,
                                     MatType,
                                     FirstPointIsRoot>;

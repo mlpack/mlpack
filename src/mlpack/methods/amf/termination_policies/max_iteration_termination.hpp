@@ -57,7 +57,7 @@ class MaxIterationTermination
 
   //! Return something similar to the residue, which in this case is just the
   //! number of iterations left, since we don't have access to anything else.
-  size_t Index()
+  size_t Index() const
   {
     return (iteration > maxIterations) ? 0 : maxIterations - iteration;
   }

@@ -136,7 +136,7 @@ class LARS
    * @param normalizeData If true, normalize all features to have unit variance
    * for training.
    */
-  mlpack_deprecated
+  [[deprecated("Use other constructors")]]
   LARS(const bool useCholesky,
        const arma::mat& gramMatrix,
        const double lambda1 = 0.0,
@@ -262,7 +262,7 @@ class LARS
    *     row-major data can avoid a transpose operation.
    * @return minimum cost error(||y-beta*X||2 is used to calculate error).
    */
-  mlpack_deprecated
+  [[deprecated("Use other constructors")]]
   double Train(const arma::mat& data,
                const arma::rowvec& responses,
                arma::vec& beta,
