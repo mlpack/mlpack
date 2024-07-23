@@ -1,11 +1,6 @@
 {
-	"name": "mlpack C++ Dev Container",
-	"build": {
-		"dockerfile": "Dockerfile",
-		// Update 'VARIANT' to pick a new mlpack base image from
-		// https://hub.docker.com/u/mlpack
-		"args": { "VARIANT": "jenkins-amd64-debian" }
-	},
+	"name": "mlpack Dev Container (C++/Python/R)",
+	"image": "jamesbalamuta/mlpack-codespace:latest",
 	// Configure tool-specific properties.
 	"customizations": {
 		// Configure properties specific to VS Code.
