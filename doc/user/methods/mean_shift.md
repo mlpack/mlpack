@@ -327,8 +327,8 @@ MeanShift<UseKernel, KernelType>
      to the flat kernel, or, setting `UseKernel = false`)*
    - [`TriangularKernel`](../core.md#triangularkernel)
 
-Custom kernels for mean shift can be easily implemented, and must implement only one function
-(`Gradient()`):
+Custom kernels for mean shift can be easily implemented, and must implement only
+one function (`Gradient()`):
 
 ```c++
 class CustomKernel
