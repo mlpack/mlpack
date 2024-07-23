@@ -23,11 +23,12 @@ namespace mlpack {
  * tree-independent (but still optimized) tree-based algorithms.  See
  * mlpack/core/tree/tree_traits.hpp for more information.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
          typename RootPointPolicy>
-class TreeTraits<CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>>
+class TreeTraits<CoverTree<
+    DistanceType, StatisticType, MatType, RootPointPolicy>>
 {
  public:
   /**

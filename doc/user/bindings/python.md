@@ -10,7 +10,7 @@ Further useful mlpack documentation links are given below.
 
  - [mlpack homepage](https://www.mlpack.org/)
  - [mlpack on Github](https://github.com/mlpack/mlpack)
- - [mlpack main documentation page](https://www.mlpack.org/docs.html)
+ - [mlpack main documentation page](https://www.mlpack.org/doc/index.html)
 
 See also the quickstart guide for Python:
 
@@ -1715,8 +1715,8 @@ Then, to use that model to predict classes for the dataset '`'test'`', storing t
         copy_all_inputs=False, distance=np.empty([0, 0]), input_=np.empty([0,
         0]), k=1, labels=np.empty([0], dtype=np.uint64), linear_scan=False,
         max_iterations=100000, normalize=False, optimizer='amsgrad', passes=50,
-        print_accuracy=False, range=1, rank=0, regularization=0.5, seed=0,
-        step_size=0.01, tolerance=1e-07, verbose=False)
+        print_accuracy=False, rank=0, regularization=0.5, seed=0,
+        step_size=0.01, tolerance=1e-07, update_interval=1, verbose=False)
 >>> centered_data = d['centered_data']
 >>> output = d['output']
 >>> transformed_data = d['transformed_data']
@@ -1744,12 +1744,12 @@ An implementation of Large Margin Nearest Neighbors (LMNN), a distance learning 
 | `optimizer` | [`str`](#doc_str) | Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or 'lbfgs'. | `'amsgrad'` |
 | `passes` | [`int`](#doc_int) | Maximum number of full passes over dataset for AMSGrad, BB_SGD and SGD. | `50` |
 | `print_accuracy` | [`bool`](#doc_bool) | Print accuracies on initial and transformed dataset | `False` |
-| `range` | [`int`](#doc_int) | Number of iterations after which impostors needs to be recalculated | `1` |
 | `rank` | [`int`](#doc_int) | Rank of distance matrix to be optimized.  | `0` |
 | `regularization` | [`float`](#doc_float) | Regularization for LMNN objective function  | `0.5` |
 | `seed` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
 | `step_size` | [`float`](#doc_float) | Step size for AMSGrad, BB_SGD and SGD (alpha). | `0.01` |
 | `tolerance` | [`float`](#doc_float) | Maximum tolerance for termination of AMSGrad, BB_SGD, SGD or L-BFGS. | `1e-07` |
+| `update_interval` | [`int`](#doc_int) | Number of iterations after which impostors need to be recalculated. | `1` |
 | `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
 
 ### Output options
@@ -1769,7 +1769,7 @@ This program implements Large Margin Nearest Neighbors, a distance learning tech
 
 To work, this algorithm needs labeled data.  It can be given as the last row of the input dataset (specified with `input_`), or alternatively as a separate matrix (specified with `labels`).  Additionally, a starting point for optimization (specified with `distance`can be given, having (r x d) dimensionality.  Here r should satisfy 1 <= r <= d, Consequently a Low-Rank matrix will be optimized. Alternatively, Low-Rank distance can be learned by specifying the `rank`parameter (A Low-Rank matrix with uniformly distributed values will be used as initial learning point). 
 
-The program also requires number of targets neighbors to work with ( specified with `k`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `regularization`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `range`).
+The program also requires number of targets neighbors to work with ( specified with `k`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `regularization`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `update_interval`).
 
 Output can either be the learned distance matrix (specified with `output`), or the transformed dataset  (specified with `transformed_data`), or both. Additionally mean-centered dataset (specified with `centered_data`) can be accessed given mean-centering (specified with `center`) is performed on the dataset. Accuracy on initial dataset and final transformed dataset can be printed by specifying the `print_accuracy`parameter. 
 
@@ -1793,10 +1793,10 @@ Example - Let's say we want to learn distance on iris dataset with number of tar
 >>> output = output['output']
 ```
 
-An another program call making use of range & regularization parameter with dataset having labels as last column can be made as: 
+Another program call making use of update interval & regularization parameter with dataset having labels as last column can be made as: 
 
 ```python
->>> output = lmnn(input_=letter_recognition, k=5, range=10,
+>>> output = lmnn(input_=letter_recognition, k=5, update_interval=10,
   regularization=0.4)
 >>> output = output['output']
 ```

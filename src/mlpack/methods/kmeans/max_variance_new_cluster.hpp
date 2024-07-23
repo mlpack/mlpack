@@ -40,17 +40,17 @@ class MaxVarianceNewCluster
    * @param newCentroids Centroids of each cluster (one per column) at the end
    *      of the iteration.
    * @param clusterCounts Number of points in each cluster.
-   * @param metric The Metric to use.
+   * @param distance The distance metric to use.
    * @param iteration Number of iteration.
    *
    */
-  template<typename MetricType, typename MatType>
+  template<typename DistanceType, typename MatType>
   void EmptyCluster(const MatType& data,
                     const size_t emptyCluster,
                     const arma::mat& oldCentroids,
                     arma::mat& newCentroids,
                     arma::Col<size_t>& clusterCounts,
-                    MetricType& metric,
+                    DistanceType& distance,
                     const size_t iteration);
 
   //! Serialize the object.
@@ -66,11 +66,11 @@ class MaxVarianceNewCluster
   arma::Row<size_t> assignments;
 
   //! Called when we are on a new iteration.
-  template<typename MetricType, typename MatType>
+  template<typename DistanceType, typename MatType>
   void Precalculate(const MatType& data,
                     const arma::mat& oldCentroids,
                     arma::Col<size_t>& clusterCounts,
-                    MetricType& metric);
+                    DistanceType& distance);
 };
 
 } // namespace mlpack

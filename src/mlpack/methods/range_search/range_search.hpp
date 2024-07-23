@@ -14,14 +14,14 @@
 #define MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include "range_search_stat.hpp"
 
 namespace mlpack {
 
 //! Forward declaration.
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 class LeafSizeRSWrapper;
@@ -32,20 +32,20 @@ class LeafSizeRSWrapper;
  * algorithm; for more details on the actual algorithm, see the RangeSearchRules
  * class.
  *
- * @tparam MetricType Metric to use for range search calculations.
+ * @tparam DistanceType Metric to use for range search calculations.
  * @tparam MatType Type of data to use.
  * @tparam TreeType Type of tree to use; must satisfy the TreeType policy API.
  */
-template<typename MetricType = EuclideanDistance,
+template<typename DistanceType = EuclideanDistance,
          typename MatType = arma::mat,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType = KDTree>
 class RangeSearch
 {
  public:
   //! Convenience typedef.
-  typedef TreeType<MetricType, RangeSearchStat, MatType> Tree;
+  typedef TreeType<DistanceType, RangeSearchStat, MatType> Tree;
    //! The type of Matrix.
   typedef MatType Mat;
   //! The type of element held in MatType.
@@ -54,8 +54,8 @@ class RangeSearch
   /**
    * Initialize the RangeSearch object with a given reference dataset (this is
    * the dataset which is searched).  Optionally, perform the computation in
-   * naive mode or single-tree mode. Additionally, an instantiated metric can be
-   * given, for cases where the distance metric holds data.
+   * naive mode or single-tree mode. Additionally, an instantiated distance
+   * metric can be given, for cases where the distance metric holds data.
    *
    * This method will move the matrices to internal copies, which are
    * rearranged during tree-building.  You can avoid creating an extra copy by
@@ -65,12 +65,12 @@ class RangeSearch
    * @param naive Whether the computation should be done in O(n^2) naive mode.
    * @param singleMode Whether single-tree computation should be used (as
    *      opposed to dual-tree computation).
-   * @param metric Instantiated distance metric.
+   * @param distance Instantiated distance metric.
    */
   RangeSearch(MatType referenceSet,
               const bool naive = false,
               const bool singleMode = false,
-              const MetricType metric = MetricType());
+              const DistanceType distance = DistanceType());
 
   /**
    * Initialize the RangeSearch object with the given pre-constructed reference
@@ -92,11 +92,11 @@ class RangeSearch
    * @param referenceTree Pre-built tree for reference points.
    * @param singleMode Whether single-tree computation should be used (as
    *      opposed to dual-tree computation).
-   * @param metric Instantiated distance metric.
+   * @param distance Instantiated distance metric.
    */
   RangeSearch(Tree* referenceTree,
               const bool singleMode = false,
-              const MetricType metric = MetricType());
+              const DistanceType distance = DistanceType());
 
   /**
    * Initialize the RangeSearch object without any reference data.  If the
@@ -106,11 +106,11 @@ class RangeSearch
    * @param naive Whether to use naive search.
    * @param singleMode Whether single-tree computation should be used (as
    *      opposed to dual-tree computation).
-   * @param metric Instantiated metric.
+   * @param distance Instantiated distance metric.
    */
   RangeSearch(const bool naive = false,
               const bool singleMode = false,
-              const MetricType metric = MetricType());
+              const DistanceType distance = DistanceType());
 
   /**
    * Construct the RangeSearch model as a copy of the given model.  Note that
@@ -314,7 +314,7 @@ class RangeSearch
   bool singleMode;
 
   //! Instantiated distance metric.
-  MetricType metric;
+  DistanceType distance;
 
   //! The total number of base cases during the last search.
   size_t baseCases;

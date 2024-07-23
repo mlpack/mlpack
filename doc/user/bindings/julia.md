@@ -10,7 +10,7 @@ Further useful mlpack documentation links are given below.
 
  - [mlpack homepage](https://www.mlpack.org/)
  - [mlpack on Github](https://github.com/mlpack/mlpack)
- - [mlpack main documentation page](https://www.mlpack.org/docs.html)
+ - [mlpack main documentation page](https://www.mlpack.org/doc/index.html)
 
 See also the quickstart guide for Julia:
 
@@ -1696,9 +1696,9 @@ julia> using mlpack: lmnn
 julia> centered_data, output, transformed_data = lmnn(input;
           batch_size=50, center=false, distance=zeros(0, 0), k=1, labels=Int[],
           linear_scan=false, max_iterations=100000, normalize=false,
-          optimizer="amsgrad", passes=50, print_accuracy=false, range=1, rank=0,
+          optimizer="amsgrad", passes=50, print_accuracy=false, rank=0,
           regularization=0.5, seed=0, step_size=0.01, tolerance=1e-07,
-          verbose=false)
+          update_interval=1, verbose=false)
 ```
 
 An implementation of Large Margin Nearest Neighbors (LMNN), a distance learning technique.  Given a labeled dataset, this learns a transformation of the data that improves k-nearest-neighbor performance; this can be useful as a preprocessing step. [Detailed documentation](#lmnn_detailed-documentation).
@@ -1722,12 +1722,12 @@ An implementation of Large Margin Nearest Neighbors (LMNN), a distance learning 
 | `optimizer` | [`String`](#doc_String) | Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or 'lbfgs'. | `"amsgrad"` |
 | `passes` | [`Int`](#doc_Int) | Maximum number of full passes over dataset for AMSGrad, BB_SGD and SGD. | `50` |
 | `print_accuracy` | [`Bool`](#doc_Bool) | Print accuracies on initial and transformed dataset | `false` |
-| `range` | [`Int`](#doc_Int) | Number of iterations after which impostors needs to be recalculated | `1` |
 | `rank` | [`Int`](#doc_Int) | Rank of distance matrix to be optimized.  | `0` |
 | `regularization` | [`Float64`](#doc_Float64) | Regularization for LMNN objective function  | `0.5` |
 | `seed` | [`Int`](#doc_Int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
 | `step_size` | [`Float64`](#doc_Float64) | Step size for AMSGrad, BB_SGD and SGD (alpha). | `0.01` |
 | `tolerance` | [`Float64`](#doc_Float64) | Maximum tolerance for termination of AMSGrad, BB_SGD, SGD or L-BFGS. | `1e-07` |
+| `update_interval` | [`Int`](#doc_Int) | Number of iterations after which impostors need to be recalculated. | `1` |
 | `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
 
 ### Output options
@@ -1747,7 +1747,7 @@ This program implements Large Margin Nearest Neighbors, a distance learning tech
 
 To work, this algorithm needs labeled data.  It can be given as the last row of the input dataset (specified with `input`), or alternatively as a separate matrix (specified with `labels`).  Additionally, a starting point for optimization (specified with `distance`can be given, having (r x d) dimensionality.  Here r should satisfy 1 <= r <= d, Consequently a Low-Rank matrix will be optimized. Alternatively, Low-Rank distance can be learned by specifying the `rank`parameter (A Low-Rank matrix with uniformly distributed values will be used as initial learning point). 
 
-The program also requires number of targets neighbors to work with ( specified with `k`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `regularization`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `range`).
+The program also requires number of targets neighbors to work with ( specified with `k`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `regularization`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `update_interval`).
 
 Output can either be the learned distance matrix (specified with `output`), or the transformed dataset  (specified with `transformed_data`), or both. Additionally mean-centered dataset (specified with `centered_data`) can be accessed given mean-centering (specified with `center`) is performed on the dataset. Accuracy on initial dataset and final transformed dataset can be printed by specifying the `print_accuracy`parameter. 
 
@@ -1774,13 +1774,13 @@ julia> _, output, _ = lmnn(iris; k=3, labels=iris_labels,
             optimizer="bbsgd")
 ```
 
-An another program call making use of range & regularization parameter with dataset having labels as last column can be made as: 
+Another program call making use of update interval & regularization parameter with dataset having labels as last column can be made as: 
 
 ```julia
 julia> using CSV
 julia> letter_recognition = CSV.read("letter_recognition.csv")
-julia> _, output, _ = lmnn(letter_recognition; k=5, range=10,
-            regularization=0.4)
+julia> _, output, _ = lmnn(letter_recognition; k=5,
+            regularization=0.4, update_interval=10)
 ```
 
 ### See also

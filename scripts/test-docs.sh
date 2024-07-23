@@ -300,6 +300,11 @@ run_code_blocks()
       if ! ./$f_exec 2>&1 >/dev/null;
       then
         echo "  Error running $f_exec!";
+        echo "  ---------------------------------------------------------------------  ";
+        echo "  Contents of $f:";
+        echo "";
+        cat $f;
+        echo "";
         exit 1;
       fi
     else

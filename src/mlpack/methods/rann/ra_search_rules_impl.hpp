@@ -17,12 +17,12 @@
 
 namespace mlpack {
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-RASearchRules<SortPolicy, MetricType, TreeType>::
+template<typename SortPolicy, typename DistanceType, typename TreeType>
+RASearchRules<SortPolicy, DistanceType, TreeType>::
 RASearchRules(const arma::mat& referenceSet,
               const arma::mat& querySet,
               const size_t k,
-              MetricType& metric,
+              DistanceType& distance,
               const double tau,
               const double alpha,
               const bool naive,
@@ -33,7 +33,7 @@ RASearchRules(const arma::mat& referenceSet,
     referenceSet(referenceSet),
     querySet(querySet),
     k(k),
-    metric(metric),
+    distance(distance),
     sampleAtLeaves(sampleAtLeaves),
     firstLeafExact(firstLeafExact),
     singleSampleLimit(singleSampleLimit),
@@ -94,8 +94,8 @@ RASearchRules(const arma::mat& referenceSet,
   }
 }
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-void RASearchRules<SortPolicy, MetricType, TreeType>::GetResults(
+template<typename SortPolicy, typename DistanceType, typename TreeType>
+void RASearchRules<SortPolicy, DistanceType, TreeType>::GetResults(
     arma::Mat<size_t>& neighbors,
     arma::mat& distances)
 {
@@ -114,9 +114,9 @@ void RASearchRules<SortPolicy, MetricType, TreeType>::GetResults(
   }
 };
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
+template<typename SortPolicy, typename DistanceType, typename TreeType>
 inline mlpack_force_inline
-double RASearchRules<SortPolicy, MetricType, TreeType>::BaseCase(
+double RASearchRules<SortPolicy, DistanceType, TreeType>::BaseCase(
     const size_t queryIndex,
     const size_t referenceIndex)
 {
@@ -125,56 +125,56 @@ double RASearchRules<SortPolicy, MetricType, TreeType>::BaseCase(
   if (sameSet && (queryIndex == referenceIndex))
     return 0.0;
 
-  double distance = metric.Evaluate(querySet.unsafe_col(queryIndex),
-                                    referenceSet.unsafe_col(referenceIndex));
+  double d = distance.Evaluate(querySet.unsafe_col(queryIndex),
+                               referenceSet.unsafe_col(referenceIndex));
 
-  InsertNeighbor(queryIndex, referenceIndex, distance);
+  InsertNeighbor(queryIndex, referenceIndex, d);
 
   numSamplesMade[queryIndex]++;
 
   numDistComputations++;
 
-  return distance;
+  return d;
 }
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
+template<typename SortPolicy, typename DistanceType, typename TreeType>
+inline double RASearchRules<SortPolicy, DistanceType, TreeType>::Score(
     const size_t queryIndex,
     TreeType& referenceNode)
 {
   const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
-  const double distance = SortPolicy::BestPointToNodeDistance(queryPoint,
+  const double d = SortPolicy::BestPointToNodeDistance(queryPoint,
       &referenceNode);
   const double bestDistance = candidates[queryIndex].top().first;
 
-  return Score(queryIndex, referenceNode, distance, bestDistance);
+  return Score(queryIndex, referenceNode, d, bestDistance);
 }
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
+template<typename SortPolicy, typename DistanceType, typename TreeType>
+inline double RASearchRules<SortPolicy, DistanceType, TreeType>::Score(
     const size_t queryIndex,
     TreeType& referenceNode,
     const double baseCaseResult)
 {
   const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
-  const double distance = SortPolicy::BestPointToNodeDistance(queryPoint,
+  const double d = SortPolicy::BestPointToNodeDistance(queryPoint,
       &referenceNode, baseCaseResult);
   const double bestDistance = candidates[queryIndex].top().first;
 
-  return Score(queryIndex, referenceNode, distance, bestDistance);
+  return Score(queryIndex, referenceNode, d, bestDistance);
 }
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
+template<typename SortPolicy, typename DistanceType, typename TreeType>
+inline double RASearchRules<SortPolicy, DistanceType, TreeType>::Score(
     const size_t queryIndex,
     TreeType& referenceNode,
-    const double distance,
+    const double dist,
     const double bestDistance)
 {
   // If this is better than the best distance we've seen so far, maybe there
   // will be something down this node.  Also check if enough samples are already
   // made for this query.
-  if (SortPolicy::IsBetter(distance, bestDistance)
+  if (SortPolicy::IsBetter(dist, bestDistance)
       && numSamplesMade[queryIndex] < numSamplesReqd)
   {
     // We cannot prune this node; try approximating it by sampling.
@@ -192,7 +192,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
       if (samplesReqd > singleSampleLimit && !referenceNode.IsLeaf())
       {
         // If too many samples required and not at a leaf, then can't prune.
-        return distance;
+        return dist;
       }
       else
       {
@@ -229,7 +229,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
           else
           {
             // Not allowed to sample from leaves, so cannot prune.
-            return distance;
+            return dist;
           }
         }
       }
@@ -238,7 +238,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
     {
       // Try first to visit the first leaf to boost your accuracy and find
       // (near) duplicates if they exist.
-      return distance;
+      return dist;
     }
   }
   else
@@ -258,8 +258,8 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
   }
 }
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double RASearchRules<SortPolicy, MetricType, TreeType>::
+template<typename SortPolicy, typename DistanceType, typename TreeType>
+inline double RASearchRules<SortPolicy, DistanceType, TreeType>::
 Rescore(const size_t queryIndex,
         TreeType& referenceNode,
         const double oldScore)
@@ -350,16 +350,16 @@ Rescore(const size_t queryIndex,
   }
 } // Rescore(point, node, oldScore)
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
+template<typename SortPolicy, typename DistanceType, typename TreeType>
+inline double RASearchRules<SortPolicy, DistanceType, TreeType>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
   // First try to find the distance bound to check if we can prune by distance.
 
   // Calculate the best node-to-node distance.
-  const double distance = SortPolicy::BestNodeToNodeDistance(&queryNode,
-                                                             &referenceNode);
+  const double dist = SortPolicy::BestNodeToNodeDistance(&queryNode,
+                                                         &referenceNode);
 
   double pointBound = DBL_MAX;
   double childBound = DBL_MAX;
@@ -384,11 +384,11 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
   queryNode.Stat().Bound() = std::min(pointBound, childBound);
   const double bestDistance = queryNode.Stat().Bound();
 
-  return Score(queryNode, referenceNode, distance, bestDistance);
+  return Score(queryNode, referenceNode, dist, bestDistance);
 }
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
+template<typename SortPolicy, typename DistanceType, typename TreeType>
+inline double RASearchRules<SortPolicy, DistanceType, TreeType>::Score(
       TreeType& queryNode,
       TreeType& referenceNode,
       const double baseCaseResult)
@@ -397,7 +397,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
   // by distance.
 
   // Find the best node-to-node distance.
-  const double distance = SortPolicy::BestNodeToNodeDistance(&queryNode,
+  const double dist = SortPolicy::BestNodeToNodeDistance(&queryNode,
       &referenceNode, baseCaseResult);
 
   double pointBound = DBL_MAX;
@@ -423,14 +423,14 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
   queryNode.Stat().Bound() = std::min(pointBound, childBound);
   const double bestDistance = queryNode.Stat().Bound();
 
-  return Score(queryNode, referenceNode, distance, bestDistance);
+  return Score(queryNode, referenceNode, dist, bestDistance);
 }
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
+template<typename SortPolicy, typename DistanceType, typename TreeType>
+inline double RASearchRules<SortPolicy, DistanceType, TreeType>::Score(
     TreeType& queryNode,
     TreeType& referenceNode,
-    const double distance,
+    const double dist,
     const double bestDistance)
 {
   // Update the number of samples made for this node -- propagate up from child
@@ -463,7 +463,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
   // If this is better than the best distance we've seen so far, maybe there
   // will be something down this node.  Also check if enough samples are already
   // made for this 'queryNode'.
-  if (SortPolicy::IsBetter(distance, bestDistance)
+  if (SortPolicy::IsBetter(dist, bestDistance)
       && queryNode.Stat().NumSamplesMade() < numSamplesReqd)
   {
     // We cannot prune this node; try approximating this node by sampling.
@@ -492,7 +492,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
               queryNode.Stat().NumSamplesMade(),
               queryNode.Child(i).Stat().NumSamplesMade());
 
-        return distance;
+        return dist;
       }
       else
       {
@@ -566,7 +566,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
                   queryNode.Stat().NumSamplesMade(),
                   queryNode.Child(i).Stat().NumSamplesMade());
 
-            return distance;
+            return dist;
           }
         }
       }
@@ -581,7 +581,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
             queryNode.Stat().NumSamplesMade(),
             queryNode.Child(i).Stat().NumSamplesMade());
 
-      return distance;
+      return dist;
     }
   }
   else
@@ -604,8 +604,8 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
   }
 }
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double RASearchRules<SortPolicy, MetricType, TreeType>::
+template<typename SortPolicy, typename DistanceType, typename TreeType>
+inline double RASearchRules<SortPolicy, DistanceType, TreeType>::
 Rescore(TreeType& queryNode,
         TreeType& referenceNode,
         const double oldScore)
@@ -796,17 +796,17 @@ Rescore(TreeType& queryNode,
  *
  * @param queryIndex Index of point whose neighbors we are inserting into.
  * @param neighbor Index of reference point which is being inserted.
- * @param distance Distance from query point to reference point.
+ * @param dist Distance from query point to reference point.
  */
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline void RASearchRules<SortPolicy, MetricType, TreeType>::
+template<typename SortPolicy, typename DistanceType, typename TreeType>
+inline void RASearchRules<SortPolicy, DistanceType, TreeType>::
 InsertNeighbor(
     const size_t queryIndex,
     const size_t neighbor,
-    const double distance)
+    const double dist)
 {
   CandidateList& pqueue = candidates[queryIndex];
-  Candidate c = std::make_pair(distance, neighbor);
+  Candidate c = std::make_pair(dist, neighbor);
 
   if (CandidateCmp()(c, pqueue.top()))
   {

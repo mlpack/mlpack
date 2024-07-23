@@ -18,7 +18,7 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename MatType>
+template<typename DistanceType, typename MatType>
 class SpaceSplit
 {
  public:
@@ -35,7 +35,7 @@ class SpaceSplit
    * @return Flag to determine if it is possible.
    */
   static bool GetProjVector(
-      const HRectBound<MetricType>& bound,
+      const HRectBound<DistanceType>& bound,
       const MatType& data,
       const arma::Col<size_t>& points,
       AxisParallelProjVector& projVector,

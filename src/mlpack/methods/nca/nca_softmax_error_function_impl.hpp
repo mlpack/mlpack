@@ -20,12 +20,12 @@
 namespace mlpack {
 
 // Initialize with the given kernel.
-template<typename MetricType>
-SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(
-    const arma::mat& datasetIn,
-    const arma::Row<size_t>& labelsIn,
-    MetricType metric) :
-    metric(metric),
+template<typename MatType, typename LabelsType, typename DistanceType>
+SoftmaxErrorFunction<MatType, LabelsType, DistanceType>::SoftmaxErrorFunction(
+    const MatType& datasetIn,
+    const LabelsType& labelsIn,
+    DistanceType distance) :
+    distance(distance),
     precalculated(false)
 {
   MakeAlias(dataset, datasetIn, datasetIn.n_rows, datasetIn.n_cols, 0, false);
@@ -33,11 +33,11 @@ SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(
 }
 
 //! Shuffle the dataset.
-template<typename MetricType>
-void SoftmaxErrorFunction<MetricType>::Shuffle()
+template<typename MatType, typename LabelsType, typename DistanceType>
+void SoftmaxErrorFunction<MatType, LabelsType, DistanceType>::Shuffle()
 {
-  arma::mat newDataset;
-  arma::Row<size_t> newLabels;
+  MatType newDataset;
+  LabelsType newLabels;
 
   ShuffleData(dataset, labels, newDataset, newLabels);
 
@@ -49,8 +49,10 @@ void SoftmaxErrorFunction<MetricType>::Shuffle()
 }
 
 //! The non-separable implementation, which uses Precalculate() to save time.
-template<typename MetricType>
-double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates)
+template<typename MatType, typename LabelsType, typename DistanceType>
+typename MatType::elem_type
+SoftmaxErrorFunction<MatType, LabelsType, DistanceType>::Evaluate(
+    const MatType& coordinates)
 {
   // Calculate the denominators and numerators, if necessary.
   Precalculate(coordinates);
@@ -61,19 +63,23 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates)
 
 //! The separated objective function, which does not use Precalculate(),
 //! for a given batch size and from an initial index.
-template<typename MetricType>
-double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
-                                                  const size_t begin,
-                                                  const size_t batchSize)
+template<typename MatType, typename LabelsType, typename DistanceType>
+typename MatType::elem_type
+SoftmaxErrorFunction<MatType, LabelsType, DistanceType>::Evaluate(
+    const MatType& coordinates,
+    const size_t begin,
+    const size_t batchSize)
 {
   // Unfortunately each evaluation will take O(N) time because it requires a
   // scan over all points in the dataset.  Our objective is to compute p_i.
-  double denominator = 0;
-  double numerator = 0;
-  double result = 0;
+  ElemType denominator = 0;
+  ElemType numerator = 0;
+  ElemType result = 0;
 
   // It's quicker to do this now than one point at a time later.
   stretchedDataset = coordinates * dataset;
+
+  #pragma omp parallel for reduction(+:result)
   for (size_t i = begin; i < begin + batchSize; ++i)
   {
     for (size_t k = 0; k < dataset.n_cols; ++k)
@@ -83,8 +89,8 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
         continue;
 
       // We want to evaluate exp(-D(A x_i, A x_k)).
-      double eval = std::exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
-                                              stretchedDataset.unsafe_col(k)));
+      ElemType eval = std::exp(-distance.Evaluate(
+          stretchedDataset.unsafe_col(i), stretchedDataset.unsafe_col(k)));
 
       // If they are in the same class, update the numerator.
       if (labels[i] == labels[k])
@@ -108,9 +114,9 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
 }
 
 //! The non-separable implementation, where Precalculate() is used.
-template<typename MetricType>
-void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
-                                                arma::mat& gradient)
+template<typename MatType, typename LabelsType, typename DistanceType>
+void SoftmaxErrorFunction<MatType, LabelsType, DistanceType>::Gradient(
+    const MatType& coordinates, MatType& gradient)
 {
   // Calculate the denominators and numerators, if necessary.
   Precalculate(coordinates);
@@ -127,22 +133,22 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
   //     (((p_i - (1 / p_i)) p_ik) + ((p_k - (1 / p_k)) p_ki)) x_ik x_ik^T
   //   otherwise, add
   //     (p_i p_ik + p_k p_ki) x_ik x_ik^T
-  arma::mat sum;
+  MatType sum;
   sum.zeros(stretchedDataset.n_rows, stretchedDataset.n_rows);
   for (size_t i = 0; i < stretchedDataset.n_cols; ++i)
   {
     for (size_t k = (i + 1); k < stretchedDataset.n_cols; ++k)
     {
       // Calculate p_ik and p_ki first.
-      double eval = std::exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
-                                         stretchedDataset.unsafe_col(k)));
-      double p_ik = 0, p_ki = 0;
+      ElemType eval = std::exp(-distance.Evaluate(
+          stretchedDataset.unsafe_col(i), stretchedDataset.unsafe_col(k)));
+      ElemType p_ik = 0, p_ki = 0;
       p_ik = eval / denominators(i);
       p_ki = eval / denominators(k);
 
       // Subtract x_i from x_k.  We are not using stretched points here.
-      arma::vec x_ik = dataset.col(i) - dataset.col(k);
-      arma::mat secondTerm = (x_ik * trans(x_ik));
+      VecType x_ik = dataset.col(i) - dataset.col(k);
+      MatType secondTerm = (x_ik * trans(x_ik));
 
       if (labels[i] == labels[k])
         sum += ((p[i] - 1) * p_ik + (p[k] - 1) * p_ki) * secondTerm;
@@ -156,19 +162,20 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
 }
 
 //! The separable implementation for a given batch size and an initial index.
-template <typename MetricType>
+template <typename MatType, typename LabelsType, typename DistanceType>
 template <typename GradType>
-void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
-                                                const size_t begin,
-                                                GradType& gradient,
-                                                const size_t batchSize)
+void SoftmaxErrorFunction<MatType, LabelsType, DistanceType>::Gradient(
+    const MatType& coordinates,
+    const size_t begin,
+    GradType& gradient,
+    const size_t batchSize)
 {
   // The gradient involves two matrix terms which are eventually combined into
   // one.
   GradType firstTerm, secondTerm;
   // We will need to calculate p_i before this evaluation is done, so
   // these two variables will hold the information necessary for that.
-  double numerator, denominator;
+  ElemType numerator, denominator;
 
   gradient.zeros(coordinates.n_rows, coordinates.n_rows);
 
@@ -189,8 +196,8 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
         continue;
 
       // Calculate the numerator of p_ik.
-      double eval = std::exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
-                                         stretchedDataset.unsafe_col(k)));
+      ElemType eval = std::exp(-distance.Evaluate(
+          stretchedDataset.unsafe_col(i), stretchedDataset.unsafe_col(k)));
 
       // If the points are in the same class, we must add to the second term of
       // the gradient as well as the numerator of p_i.  We will divide by the
@@ -210,7 +217,7 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
     }
 
     // Calculate p_i.
-    double p = 0;
+    ElemType p = 0;
     if (denominator == 0)
     {
       Log::Warn << "Denominator of p_" << i << " is 0!" << std::endl;
@@ -231,15 +238,16 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
   }
 }
 
-template<typename MetricType>
-const arma::mat SoftmaxErrorFunction<MetricType>::GetInitialPoint() const
+template<typename MatType, typename LabelsType, typename DistanceType>
+const MatType
+SoftmaxErrorFunction<MatType, LabelsType, DistanceType>::GetInitialPoint() const
 {
-  return arma::eye<arma::mat>(dataset.n_rows, dataset.n_rows);
+  return arma::eye<MatType>(dataset.n_rows, dataset.n_rows);
 }
 
-template<typename MetricType>
-void SoftmaxErrorFunction<MetricType>::Precalculate(
-    const arma::mat& coordinates)
+template<typename MatType, typename LabelsType, typename DistanceType>
+void SoftmaxErrorFunction<MatType, LabelsType, DistanceType>::Precalculate(
+    const MatType& coordinates)
 {
   // Ensure it is the right size.
   if (lastCoordinates.n_rows != coordinates.n_rows ||
@@ -265,22 +273,30 @@ void SoftmaxErrorFunction<MetricType>::Precalculate(
   // order of O((n * (n + 1)) / 2), which really isn't all that great.
   p.zeros(stretchedDataset.n_cols);
   denominators.zeros(stretchedDataset.n_cols);
+
+  // A collapse(2) would be helpful here, but appears to not be supported fully
+  // until OpenMP 5.0.
+  #pragma omp parallel for
   for (size_t i = 0; i < stretchedDataset.n_cols; ++i)
   {
     for (size_t j = (i + 1); j < stretchedDataset.n_cols; ++j)
     {
       // Evaluate exp(-d(x_i, x_j)).
-      double eval = std::exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
-                                         stretchedDataset.unsafe_col(j)));
+      ElemType eval = std::exp(-distance.Evaluate(
+          stretchedDataset.unsafe_col(i), stretchedDataset.unsafe_col(j)));
 
       // Add this to the denominators of both p_i and p_j: K(i, j) = K(j, i).
+      #pragma omp atomic
       denominators[i] += eval;
+      #pragma omp atomic
       denominators[j] += eval;
 
       // If i and j are the same class, add to numerator of both.
       if (labels[i] == labels[j])
       {
+        #pragma omp atomic
         p[i] += eval;
+        #pragma omp atomic
         p[j] += eval;
       }
     }
@@ -290,6 +306,7 @@ void SoftmaxErrorFunction<MetricType>::Precalculate(
   p /= denominators;
 
   // Clean up any bad values.
+  #pragma omp parallel for
   for (size_t i = 0; i < stretchedDataset.n_cols; ++i)
   {
     if (denominators[i] == 0.0)
@@ -297,7 +314,7 @@ void SoftmaxErrorFunction<MetricType>::Precalculate(
       Log::Debug << "Denominator of p_{" << i << ", j} is 0." << std::endl;
 
       // Set to usable values.
-      denominators[i] = std::numeric_limits<double>::infinity();
+      denominators[i] = std::numeric_limits<ElemType>::infinity();
       p[i] = 0;
     }
   }
