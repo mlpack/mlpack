@@ -34,21 +34,6 @@ class LogLoss
     // Nothing to do.
   }
 
-  /**
-   * Returns the initial prediction for gradient boosting.
-   */
-  template<typename VecType>
-  typename VecType::elem_type InitialPrediction(const VecType& values)
-  {
-    // Sanity check for empty vector.
-    if (values.n_elem == 0)
-      return 0;
-
-    // Return the log-odds of the mean of the values.
-    double mean = accu(values) / (typename VecType::elem_type) values.n_elem;
-    return std::log(mean / (1 - mean));
-  }
-
   private:
   //! The L1 regularization parameter.
   const double alpha;
