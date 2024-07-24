@@ -358,7 +358,7 @@ TEST_CASE("SplitDataResultField", "[SplitDataTest]")
   mat matB(2, 10);
 
   matA = linspace(0, matA.n_elem - 1);
-  matA = linspace(matA.n_elem, matA.n_elem + matB.n_elem - 1);
+  matB = linspace(matA.n_elem, matA.n_elem + matB.n_elem - 1);
  
   input(0, 0) = matA;
   input(0, 1) = matB;
