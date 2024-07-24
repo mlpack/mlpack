@@ -405,7 +405,7 @@ void Constraints<MatType, LabelsType, DistanceType>::Triplets(
   UMatType targetNeighbors(k, dataset.n_cols);;
   TargetNeighbors(targetNeighbors, dataset, labels, norms);
 
-  outputMatrix = UMatType(3, k * k * N );
+  outputMatrix = UMatType(3, k * k * N);
 
   #pragma omp parallel for collapse(3)
   for (size_t i = 0; i < N; ++i)
