@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/multiple_random_dimension_select.hpp
+ * @file methods/decision_tree/select_functions/multiple_random_dimension_select.hpp
  * @author Ryan Curtin
  *
  * Select a number of random dimensions to pick from.
