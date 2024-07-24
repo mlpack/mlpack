@@ -21,7 +21,7 @@
 // Written in mlpack namespace.
 namespace mlpack {
 
-template<typename WeakLearnerType = XGBTree, typename MatType = arma::mat>
+template<typename MatType = arma::mat>
 class XGBoost
 {
   XGBoost() {/*Nothing to do*/}
@@ -60,7 +60,7 @@ class XGBoost
                 const arma::Row<size_t>& labels,
                 const size_t numClasses,
                 const size_t numModels,
-                const WeakLearnerType& other);
+                const XGBTree& other);
   
   //! Get the number of classes this model is trained on.
   size_t NumClasses() const { return numClasses; }
@@ -69,14 +69,14 @@ class XGBoost
   size_t NumModels() const { return numModels; }
 
   //! Get the given weak learner.
-  const WeakLearnerType& WeakLearner(const size_t i) const { return weakLearners[i]; }
+  const XGBTree& WeakLearner(const size_t i) const { return weakLearners[i]; }
 
   //! Modify the given weak learner (be careful!).
-  WeakLearnerType& WeakLearner(const size_t i) { return weakLearners[i]; }
+  XGBTree& WeakLearner(const size_t i) { return weakLearners[i]; }
 
   /**
    * Train XGBoost on the given dataset. This method takes an initialized
-   * WeakLearnerType; the parameters for this weak learner will be used to train
+   * XGBTree; the parameters for this weak learner will be used to train
    * each of the weak learners during XGBoost training. Note that this will
    * completely overwrite any model that has already been trained with this
    * object.
@@ -94,7 +94,7 @@ class XGBoost
               const arma::Row<size_t>& labels,
               const size_t numClasses,
               const size_t numModels,
-              const WeakLearnerType learner);
+              const XGBTree learner);
 
   /**
    * Train XGBoost on the given dataset, using the given parameters.
@@ -115,7 +115,7 @@ class XGBoost
   /**
    * Train XGBoost on the given dataset, using the given parameters.
    * The last parameters are the hyperparameters to use for the weak learners;
-   * these are all the arguments to `WeakLearnerType::Train()` after `numClasses`
+   * these are all the arguments to `XGBTree::Train()` after `numClasses`
    * and `weights`.
    *
    * Default values are not used for `numModels`; instead, it is used to specify
@@ -192,7 +192,7 @@ class XGBoost
                 const arma::Row<size_t>& labels,
                 const size_t numModels,
                 const size_t numClasses,
-                const WeakLearnerType& wl,
+                const XGBTree& wl,
                 WeakLearnerArgs&&... weakLearnerArgs);
 };
 
