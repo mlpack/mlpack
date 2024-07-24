@@ -248,6 +248,43 @@ reduce compilation time:
 Other strategies exist too, such as precompiled headers, compiler options,
 [`ccache`](https://ccache.dev), and others.
 
+### 3.3. Installing and Linking mlpack on macOS ARM Silicon
+
+To install and use mlpack on macOS ARM Silicon machines, follow these steps:
+
+  1. If Homebrew is not already installed on your machine, you can install it by running the following command in your terminal:
+```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+  2. After installation, you need to add Homebrew to your PATH. Homebrew will give you the necessary commands to add to your shell profile. For example:
+```bash
+   echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/$(whoami)/.zprofile
+   eval "$(/opt/homebrew/bin/brew shellenv)"
+```
+  3. Install armadillo using Homebrew:
+```bash
+   brew install armadillo
+```
+  4. Install mlpack using Homebrew:
+```bash
+   brew install mlpack
+```
+  5. The include and lib files for both mlpack and armadillo will be automatically symlinked to /opt/homebrew. You can verify by running following commands :
+```bash
+    ls -la /opt/homebrew/include | grep mlpack
+    ls -la /opt/homebrew/include | grep armadillo
+    
+    ls -la /opt/homebrew/lib | grep mlpack
+    ls -la /opt/homebrew/lib | grep armadillo
+```
+  6. mlpack depends on Armadillo for performing linear algebra tasks. Armadillo, in turn, uses OpenBLAS and LAPACK as its dependencies. macOS provides OpenBLAS and LAPACK within the Accelerate framework. Therefore, these libraries will not be symlinked to /opt/homebrew. To use the Accelerate framework with Armadillo, you need to compile your code with the Accelerate framework. 
+
+  7. For example, if you want to compile mlpack_code.cpp, use the following command:
+```bash
+    g++ mlpack_code.cpp -o mlpack_code -I/opt/homebrew/include -L/opt/homebrew/lib -DARMA_DONT_USE_WRAPPER -framework Accelerate
+```
+  The above command includes necessary header files from Homebrew's include directory, links against necessary libraries from Homebrew's lib directory, and also uses Accelerate framework's optimized openblas and lapack.
+
 ## 4. Building mlpack bindings to other languages
 
 mlpack is not just a header-only library: it also comes with bindings to a
