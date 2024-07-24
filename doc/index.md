@@ -152,6 +152,17 @@ mlpack in C++, but almost all the same algorithms are available.
 | ***Command-line programs*** | -- | [quickstart](quickstart/cli.md) | -- | [reference](user/bindings/cli.md) |
 | ***Go*** | -- | [quickstart](quickstart/go.md) | -- | [reference](user/bindings/go.md) |
 
+## mlpack on embedded systems
+
+mlpack is well suited for embedded systems due to the fact that it is written
+in C++ and it is header-only with minimal dependencies. In the following, we are
+adding a set of tutorials to allow you to experiment mlpack on various types of
+these systems.
+
+* [cross-compile mlpack binding on armv7](embedded/crosscompile_armv7.md): a well
+  guided tutorial that shows how to cross compile and run k-NN on
+  Raspberry PI 2.
+
 ## Examples and further documentation
 
  * [mlpack examples repository](https://github.com/mlpack/examples/): numerous
