@@ -22,7 +22,8 @@
 #include <mlpack/core.hpp>
 
 // Only using decision trees for now, therefore only including decision tree functionalities.
-#include <mlpack/methods/decision_tree/decision_tree.hpp>
+// #include <mlpack/methods/decision_tree/decision_tree.hpp>
+#include "../decision_tree.hpp"
 
 // Written in mlpack namespace.
 namespace mlpack {
