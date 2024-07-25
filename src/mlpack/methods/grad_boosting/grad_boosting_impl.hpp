@@ -22,8 +22,8 @@
 namespace mlpack {
 
 // Empty constructor.
-template<typename WeakLearnerType, typename MatType>
-GradBoosting<WeakLearnerType, MatType>::GradBoosting() :
+template<typename MatType>
+GradBoosting<MatType>::GradBoosting() :
     numClasses(0),
     numModels(0)
 { /*Nothing to do.*/}
@@ -37,8 +37,8 @@ GradBoosting<WeakLearnerType, MatType>::GradBoosting() :
  * @param numModels Number of weak learners
  * @param numClasses Number of classes
  */
-template<typename WeakLearnerType, typename MatType>
-GradBoosting<WeakLearnerType, MatType>::
+template<typename MatType>
+GradBoosting<MatType>::
   GradBoosting(const MatType& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
@@ -61,8 +61,8 @@ GradBoosting<WeakLearnerType, MatType>::
  * @param numClasses Number of classes
  * @param other Weak Learner, which has been initialized already.
  */
-template<typename WeakLearnerType, typename MatType>
-GradBoosting<WeakLearnerType, MatType>::
+template<typename MatType>
+GradBoosting<MatType>::
   GradBoosting(const MatType& data,
                 const arma::Row<size_t>& labels,
                 const size_t numClasses,
@@ -85,10 +85,10 @@ GradBoosting<WeakLearnerType, MatType>::
  * @param numClasses Number of classes
  * @param other Weak Learner, which has been initialized already.
  */
-template<typename WeakLearnerType, typename MatType>
+template<typename MatType>
 // Variadic template to the Weak Learner arguments
 template<typename... WeakLearnerArgs>
-GradBoosting<WeakLearnerType, MatType>::
+GradBoosting<MatType>::
 GradBoosting(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
@@ -103,8 +103,8 @@ GradBoosting(const MatType& data,
 
 // Train GradBoosting with a given weak learner.
 
-template<typename WeakLearnerType, typename MatType>
-void GradBoosting<WeakLearnerType, MatType>::
+template<typename MatType>
+void GradBoosting<MatType>::
   Train(const MatType& data,
         const arma::Row<size_t>& labels,
         const size_t numClasses,
@@ -114,8 +114,8 @@ void GradBoosting<WeakLearnerType, MatType>::
   return TrainInternal<true>(data, labels, numModels, numClasses, learner);
 }
 
-template<typename WeakLearnerType, typename MatType>
-void GradBoosting<WeakLearnerType, MatType>::
+template<typename MatType>
+void GradBoosting<MatType>::
   Train(const MatType& data,
         const arma::Row<size_t>& labels,
         const size_t numClasses,
@@ -125,9 +125,9 @@ void GradBoosting<WeakLearnerType, MatType>::
   return TrainInternal<false>(data, labels, numModels, numClasses, other);
 }
 
-template<typename WeakLearnerType, typename MatType>
+template<typename MatType>
 template<typename... WeakLearnerArgs>
-void GradBoosting<WeakLearnerType, MatType>::
+void GradBoosting<MatType>::
   Train(const MatType& data,
         const arma::Row<size_t>& labels,
         const size_t numClasses,
@@ -140,9 +140,9 @@ void GradBoosting<WeakLearnerType, MatType>::
 }
 
 // Classify the given test point.
-template<typename WeakLearnerType, typename MatType>
+template<typename MatType>
 template<typename VecType>
-size_t GradBoosting<WeakLearnerType, MatType>::Classify(const VecType& point) 
+size_t GradBoosting<MatType>::Classify(const VecType& point) 
 {
   size_t prediction;
   arma::Row<ElemType> probabilities;
@@ -151,11 +151,11 @@ size_t GradBoosting<WeakLearnerType, MatType>::Classify(const VecType& point)
   return prediction;
 }
 
-template<typename WeakLearnerType, typename MatType>
+template<typename MatType>
 template<typename VecType>
-void GradBoosting<WeakLearnerType, MatType>::Classify(const VecType& point,
-                                                      size_t& prediction,
-                                                      arma::vec& probabilities)
+void GradBoosting<MatType>::Classify(const VecType& point,
+                                      size_t& prediction,
+                                      arma::vec& probabilities)
 {
   probabilities.resize(numClasses);
 
@@ -179,9 +179,9 @@ void GradBoosting<WeakLearnerType, MatType>::Classify(const VecType& point,
 
 }
 
-template<typename WeakLearnerType, typename MatType>
-void GradBoosting<WeakLearnerType, MatType>::Classify(const MatType& test,
-                                                      arma::Row<size_t>& predictedLabels) 
+template<typename MatType>
+void GradBoosting<MatType>::Classify(const MatType& test,
+                                      arma::Row<size_t>& predictedLabels) 
 {
   predictedLabels.clear();
   predictedLabels.resize(test.n_cols);
@@ -195,10 +195,10 @@ void GradBoosting<WeakLearnerType, MatType>::Classify(const MatType& test,
   }
 }
 
-template<typename WeakLearnerType, typename MatType>
-void GradBoosting<WeakLearnerType, MatType>::Classify(const MatType& test,
-                                                      arma::Row<size_t>& predictedLabels,
-                                                      arma::Row<ElemType>& probabilities) 
+template<typename MatType>
+void GradBoosting<MatType>::Classify(const MatType& test,
+                                      arma::Row<size_t>& predictedLabels,
+                                      arma::Row<ElemType>& probabilities) 
 {
   predictedLabels.clear();
   predictedLabels.resize(test.n_cols);
@@ -212,14 +212,13 @@ void GradBoosting<WeakLearnerType, MatType>::Classify(const MatType& test,
 }
 
 // This function uses default arguments
-template<typename WeakLearnerType, typename MatType>
+template<typename MatType>
 template<bool UseExistingWeakLearner>
-void GradBoosting<WeakLearnerType, MatType>::TrainInternal(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const size_t numModels,
-    const size_t numClasses,
-    const WeakLearnerType& wl)
+void GradBoosting<MatType>::TrainInternal(const MatType& data,
+                                          const arma::Row<size_t>& labels,
+                                          const size_t numModels,
+                                          const size_t numClasses,
+                                          const WeakLearnerType& wl)
 {
   const size_t minimumLeafSize=10;
   const double minimumGainSplit=1e-7;
@@ -237,7 +236,7 @@ void GradBoosting<WeakLearnerType, MatType>::TrainInternal(
 
 
 // Template for GradBoosting template as a whole
-template<typename WeakLearnerType, typename MatType>
+template<typename MatType>
 
 // Template for TrainInternal 
 // UseExistingWeakLearner determines whether to define a weak learner anew or 
@@ -247,7 +246,7 @@ template<bool UseExistingWeakLearner, typename... WeakLearnerArgs>
 
 // TrainInternal is a private function within GradBoosting class
 // It has return type ElemType
-void GradBoosting<WeakLearnerType, MatType>:: 
+void GradBoosting<MatType>:: 
   TrainInternal(const MatType& data,
                 const arma::Row<size_t>& labels,
                 const size_t numModels,

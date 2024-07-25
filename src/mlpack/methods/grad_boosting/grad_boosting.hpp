@@ -25,6 +25,13 @@
 // #include <mlpack/methods/decision_tree/decision_tree.hpp>
 #include "../decision_tree.hpp"
 
+// Defined DecisionTree with template as WeakLearnerType to avoid repetition
+typedef DecisionTree<mlpack::GiniGain,
+                    mlpack::BestBinaryNumericSplit,
+                    mlpack::AllCategoricalSplit,
+                    mlpack::AllDimensionSelect,
+                    false> WeakLearnerType;
+
 // Written in mlpack namespace.
 namespace mlpack {
 /**
@@ -37,13 +44,8 @@ namespace mlpack {
  * @tparam MatType Data matrix type (i.e. arma::mat or arma::sp_mat).
  */
 
-template<
-  typename WeakLearnerType = DecisionTree<GiniGain,
-         BestBinaryNumericSplit,
-         AllCategoricalSplit,
-         AllDimensionSelect,
-         false>, 
-  typename MatType = arma::mat>
+
+template<typename MatType = arma::mat>
 class GradBoosting 
 {
  public: 
@@ -263,8 +265,8 @@ class GradBoosting
 
 }
 
-CEREAL_TEMPLATE_CLASS_VERSION((typename WeakLearnerType, typename MatType),
-  (mlpack::GradBoosting<WeakLearnerType, MatType>), (1));
+CEREAL_TEMPLATE_CLASS_VERSION((typename MatType),
+  (mlpack::GradBoosting<MatType>), (1));
 
 // Include implementation.
 #include "grad_boosting_impl.hpp"
