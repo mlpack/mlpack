@@ -103,7 +103,7 @@ TEST_CASE("SameInputOutputTest", "[ScalingTest]")
  */
 TEST_CASE("ZeroMatrixTest", "[ScalingTest]")
 {
-  arma::mat input(2, 4, arma::fill::zeros);
+  arma::mat input(2, 4);
   data::MeanNormalization scale;
   scale.Fit(input);
   scale.Transform(input, temp);

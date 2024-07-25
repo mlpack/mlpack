@@ -50,7 +50,7 @@ TEMPLATE_TEST_CASE("LMNNTargetNeighborsTest", "[LMNNTest]", float, double)
   }
 
   //! Store target neighbors of data points.
-  arma::umat targetNeighbors(1, dataset.n_cols, arma::fill::zeros);
+  arma::umat targetNeighbors(1, dataset.n_cols);
 
   constraint.TargetNeighbors(targetNeighbors, dataset, labels, norm);
 
@@ -85,7 +85,7 @@ TEMPLATE_TEST_CASE("LMNNImpostorsTest", "[LMNNTest]", float, double)
   }
 
   //! Store impostors of data points.
-  arma::umat impostors(1, dataset.n_cols, arma::fill::zeros);
+  arma::umat impostors(1, dataset.n_cols);
 
   constraint.Impostors(impostors, dataset, labels, norm);
 
