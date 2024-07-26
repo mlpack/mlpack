@@ -79,6 +79,23 @@ class NetworkInitialization
         offset += weight;
       }
     }
+    // Intialize the network with the parameter/weight from the network itself.
+    else if (InitTraits<InitializationRuleType>::UseNetwork)
+    {
+      for (size_t i = 0, offset = parameterOffset; i < network.size(); ++i)
+      {
+        const size_t weight = network[i]->WeightSize();
+        arma::Mat<eT> tmp = arma::Mat<eT>(parameters.memptr() + offset,
+            weight, 1, false, false);
+
+        // Overwirte the parameter/weight with the network parameter/weight.
+        if (!tmp.is_empty())
+          tmp = network[i]->Parameters();
+
+        // Increase the parameter/weight offset for the next layer.
+        offset += weight;
+      }
+    }
     else
     {
       initializeRule.Initialize(parameters, parameters.n_elem, 1);
