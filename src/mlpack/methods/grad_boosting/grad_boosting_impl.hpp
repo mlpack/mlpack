@@ -198,7 +198,7 @@ void GradBoosting<MatType>::Classify(const MatType& test,
 template<typename MatType>
 void GradBoosting<MatType>::Classify(const MatType& test,
                                       arma::Row<size_t>& predictedLabels,
-                                      arma::Row<ElemType>& probabilities) 
+                                      arma::Row<ElemType>& probabilities) const 
 {
   predictedLabels.clear();
   predictedLabels.resize(test.n_cols);

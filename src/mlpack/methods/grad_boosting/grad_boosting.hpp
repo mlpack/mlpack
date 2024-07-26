@@ -26,7 +26,7 @@
 #include "../decision_tree.hpp"
 
 // Defined DecisionTree with template as WeakLearnerType to avoid repetition
-typedef DecisionTree<mlpack::GiniGain,
+typedef mlpack::DecisionTree<mlpack::GiniGain,
                     mlpack::BestBinaryNumericSplit,
                     mlpack::AllCategoricalSplit,
                     mlpack::AllDimensionSelect,
@@ -221,7 +221,7 @@ class GradBoosting
    */
   void Classify(const MatType& test,
                 arma::Row<size_t>& predictedLabels,
-                arma::Row<ElemType>& probabilities);
+                arma::Row<ElemType>& probabilities) const;
 
 
   /**
