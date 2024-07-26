@@ -13,6 +13,8 @@
 #define MLPACK_METHODS_ANN_RNN_HPP
 
 #include <mlpack/core.hpp>
+#include <mlpack/methods/ann/quantization/quantization_strategy.hpp>
+#include <mlpack/methods/ann/quantization/simple_quantization.hpp>
 
 #include "ffn.hpp"
 
@@ -340,6 +342,58 @@ class RNN
    */
   void ResetData(arma::Cube<typename MatType::elem_type> predictors,
                  arma::Cube<typename MatType::elem_type> responses);
+  
+   /**
+   * Quantize the network, converting it to use the specified matrix type
+   * and quantization strategy.
+   *
+   * @tparam TargetMatType The desired matrix type for the quantized network.
+   * @tparam QuantizationStrategyType The quantization strategy to use.
+   * @param strategy The quantization strategy object.
+   * @return A new RNN object with quantized weights.
+   */
+  template<
+  typename TargetMatType,
+  typename QuantizationStrategyType = SimpleQuantization<arma::mat, TargetMatType>
+  >
+  RNN<OutputLayerType, InitializationRuleType, TargetMatType> Quantize(
+    const QuantizationStrategyType& strategy = QuantizationStrategyType()) const
+  {
+    RNN<OutputLayerType, InitializationRuleType, TargetMatType> quantizedNetwork;
+
+    // Copy non-weight properties
+    quantizedNetwork.rho = this->rho;
+    quantizedNetwork.single = this->single;
+    quantizedNetwork.inputSize = this->inputSize;
+    quantizedNetwork.outputSize = this->outputSize;
+    quantizedNetwork.reset = this->reset;
+    quantizedNetwork.numFunctions = this->numFunctions;
+    quantizedNetwork.deterministic = this->deterministic;
+
+    // Quantize each layer in the network
+    for (size_t i = 0; i < network.size(); ++i)
+    {
+      quantizedNetwork.network.push_back(
+          QuantizeLayer<TargetMatType>(network[i], strategy));
+    }
+
+    // Quantize the output layer
+    quantizedNetwork.outputLayer = QuantizeLayer<TargetMatType>(outputLayer, strategy);
+
+    // Quantize recurrent layers
+    quantizedNetwork.rnnLayers.clear();
+    for (size_t i = 0; i < rnnLayers.size(); ++i)
+    {
+      quantizedNetwork.rnnLayers.push_back(
+          QuantizeRecurrentLayer<TargetMatType>(rnnLayers[i], strategy));
+    }
+
+    // Rebuild the network parameters
+    quantizedNetwork.networkParameters = TargetMatType();
+    quantizedNetwork.BuildNetworkParameters();
+
+    return quantizedNetwork;
+  }
 
  private:
   // Helper functions.
@@ -375,6 +429,138 @@ class RNN
   //! The matrix of responses to the input data points.  This member is empty,
   //! except during training.
   arma::Cube<typename MatType::elem_type> responses;
+
+    /**
+   * Helper method to quantize a single layer.
+   *
+   * @tparam TargetMatType The desired matrix type for the quantized layer.
+   * @tparam LayerType The type of the layer to be quantized.
+   * @tparam QuantizationStrategyType The quantization strategy type.
+   * @param layer The layer to be quantized.
+   * @param strategy The quantization strategy object.
+   * @return A new layer of the same type but with quantized weights.
+   */
+  template<
+    typename TargetMatType,
+    typename LayerType,
+    typename QuantizationStrategyType
+  >
+  typename LayerType::template Layer<TargetMatType> QuantizeLayer(
+      const LayerType& layer,
+      const QuantizationStrategyType& strategy) const
+  {
+    // Create a new layer of the target type
+    typename LayerType::template Layer<TargetMatType> quantizedLayer(layer);
+
+    // Quantize the weights if the layer has them
+    if (HasWeights<LayerType>::value)
+    {
+      const MatType& weights = layer.Weights();
+      TargetMatType quantizedWeights = strategy.QuantizeWeights(weights);
+      quantizedLayer.SetWeights(std::move(quantizedWeights));
+    }
+
+    // Quantize the bias if the layer has it
+    if (HasBias<LayerType>::value)
+    {
+      const MatType& bias = layer.Bias();
+      TargetMatType quantizedBias = strategy.QuantizeWeights(bias);
+      quantizedLayer.SetBias(std::move(quantizedBias));
+    }
+
+    return quantizedLayer;
+  }
+
+  /**
+   * Helper method to quantize a recurrent layer.
+   *
+   * @tparam TargetMatType The desired matrix type for the quantized layer.
+   * @tparam RecurrentLayerType The type of the recurrent layer to be quantized.
+   * @tparam QuantizationStrategyType The quantization strategy type.
+   * @param layer The recurrent layer to be quantized.
+   * @param strategy The quantization strategy object.
+   * @return A new recurrent layer of the same type but with quantized weights.
+   */
+  template<
+    typename TargetMatType,
+    typename RecurrentLayerType,
+    typename QuantizationStrategyType
+  >
+  typename RecurrentLayerType::template Layer<TargetMatType> QuantizeRecurrentLayer(
+      const RecurrentLayerType& layer,
+      const QuantizationStrategyType& strategy) const
+  {
+    // Create a new recurrent layer of the target type
+    typename RecurrentLayerType::template Layer<TargetMatType> quantizedLayer(layer);
+
+    // Quantize the weights
+    const MatType& weights = layer.Weights();
+    TargetMatType quantizedWeights = strategy.QuantizeWeights(weights);
+    quantizedLayer.SetWeights(std::move(quantizedWeights));
+
+    // Quantize the bias
+    const MatType& bias = layer.Bias();
+    TargetMatType quantizedBias = strategy.QuantizeWeights(bias);
+    quantizedLayer.SetBias(std::move(quantizedBias));
+
+    // Quantize the cell state if it's an LSTM layer
+    if constexpr (HasCellState<RecurrentLayerType>::value)
+    {
+      const MatType& cellState = layer.Cell();
+      TargetMatType quantizedCellState = strategy.QuantizeWeights(cellState);
+      quantizedLayer.SetCell(std::move(quantizedCellState));
+    }
+
+    return quantizedLayer;
+  }
+
+  /**
+   * Type trait to check if a layer has weights.
+   */
+  template<typename LayerType>
+  struct HasWeights
+  {
+    template<typename T>
+    static constexpr auto check(T*) 
+        -> decltype(std::declval<T>().Weights(), std::true_type());
+    
+    template<typename>
+    static constexpr std::false_type check(...);
+
+    static constexpr bool value = decltype(check<LayerType>(nullptr))::value;
+  };
+
+  /**
+   * Type trait to check if a layer has bias.
+   */
+  template<typename LayerType>
+  struct HasBias
+  {
+    template<typename T>
+    static constexpr auto check(T*) 
+        -> decltype(std::declval<T>().Bias(), std::true_type());
+    
+    template<typename>
+    static constexpr std::false_type check(...);
+
+    static constexpr bool value = decltype(check<LayerType>(nullptr))::value;
+  };
+
+  /**
+   * Type trait to check if a recurrent layer has a cell state (e.g., LSTM).
+   */
+  template<typename LayerType>
+  struct HasCellState
+  {
+    template<typename T>
+    static constexpr auto check(T*) 
+        -> decltype(std::declval<T>().Cell(), std::true_type());
+    
+    template<typename>
+    static constexpr std::false_type check(...);
+
+    static constexpr bool value = decltype(check<LayerType>(nullptr))::value;
+  };
 }; // class RNNType
 
 } // namespace mlpack

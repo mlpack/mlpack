@@ -59,6 +59,21 @@ class LinearType : public Layer<MatType>
 
   //! Clone the LinearType object. This handles polymorphism correctly.
   LinearType* Clone() const { return new LinearType(*this); }
+  
+  Layer<MatType>* Clone() const override
+  {
+    return new LinearType(*this);
+  }
+
+  template<typename TargetMatType>
+  Layer<TargetMatType>* Clone() const override
+  {
+    LinearType<TargetMatType, RegularizerType>* clone = 
+        new LinearType<TargetMatType, RegularizerType>(this->outSize, this->regularizer);
+    clone->inSize = this->inSize;
+    clone->outSize = this->outSize;
+    return clone;
+  }
 
   //! Copy the other Linear layer (but not weights).
   LinearType(const LinearType& layer);
@@ -142,6 +157,25 @@ class LinearType : public Layer<MatType>
   //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
+
+  using Layer<MatType>::As;
+
+  template<typename TargetMatType>
+  Layer<TargetMatType>* As() const
+  {
+    // Create a new linear layer of the target type
+    LinearType<TargetMatType, RegularizerType>* newLayer = 
+        new LinearType<TargetMatType, RegularizerType>(this->outSize, this->regularizer);
+    
+    // Copy non-weight parameters
+    newLayer->inSize = this->inSize;
+    newLayer->outSize = this->outSize;
+    
+    // Note: weights will be quantized separately, so no need to copy them here
+    
+    return newLayer;
+  }
+
 
  private:
   //! Locally-stored number of input units.

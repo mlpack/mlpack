@@ -26,6 +26,7 @@
 #include "layer/layer.hpp"
 #include "loss_functions/loss_functions.hpp"
 #include "regularizer/regularizer.hpp"
+#include "quantization/quantize.hpp"
 
 #include "ffn.hpp"
 #include "rnn.hpp"

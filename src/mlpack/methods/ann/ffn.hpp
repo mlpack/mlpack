@@ -18,6 +18,8 @@
 #include "forward_decls.hpp"
 #include "init_rules/init_rules.hpp"
 #include "loss_functions/loss_functions.hpp"
+#include "./quantization/quantization_strategy.hpp"
+#include "./quantization/simple_quantization.hpp"
 
 #include <ensmallen.hpp>
 
@@ -50,7 +52,9 @@ namespace mlpack {
 template<
     typename OutputLayerType = NegativeLogLikelihood,
     typename InitializationRuleType = RandomInitialization,
-    typename MatType = arma::mat>
+    typename MatType = arma::mat, 
+    typename NetworkType = MultiLayer<MatType> 
+>
 class FFN
 {
  public:
@@ -308,6 +312,21 @@ class FFN
                                        const MatType& targets,
                                        MatType& gradients);
 
+  // Updated Network() functions to use NetworkType
+  const NetworkType& Network() const { return network; }
+  NetworkType& Network() { return network; }
+
+  // Method for quantization
+  template<
+      typename TargetType,
+      typename QuantizationStrategyType = QuantizationStrategy<TargetType>
+  >
+  auto Quantize() const
+  {
+    return ann::Quantize<TargetType, FFN, QuantizationStrategyType>(*this);
+  }
+
+
   /**
    * Evaluate the feedforward network with the given predictors and responses.
    * This functions is usually used to monitor progress while training.
@@ -440,6 +459,46 @@ class FFN
    */
   void ResetData(MatType predictors, MatType responses);
 
+
+ /**
+   * Quantize the network, converting it to use the specified matrix type
+   * and quantization strategy.
+   *
+   * @tparam TargetMatType The desired matrix type for the quantized network.
+   * @tparam QuantizationStrategyType The quantization strategy to use.
+   * @param strategy The quantization strategy object.
+   * @return A new FFN object with quantized weights.
+   */
+  template<
+  typename TargetMatType,
+  typename QuantizationStrategyType = SimpleQuantization<arma::mat, TargetMatType>
+  >
+  FFN<OutputLayerType, InitializationRuleType, TargetMatType> Quantize(
+    const QuantizationStrategyType& strategy = QuantizationStrategyType()) const
+  {
+    FFN<OutputLayerType, InitializationRuleType, TargetMatType> quantizedNetwork;
+
+    // Copy non-weight properties
+    quantizedNetwork.inputDimensions = this->inputDimensions;
+    quantizedNetwork.outputDimensions = this->outputDimensions;
+    quantizedNetwork.reset = this->reset;
+    quantizedNetwork.numFunctions = this->numFunctions;
+    quantizedNetwork.deterministic = this->deterministic;
+
+    // Quantize each layer
+    for (size_t i = 0; i < network.size(); ++i)
+    {
+      quantizedNetwork.network.push_back(
+          QuantizeLayer<TargetMatType>(network[i], strategy));
+    }
+
+    // Quantize the output layer
+    quantizedNetwork.outputLayer = QuantizeLayer<TargetMatType>(outputLayer, strategy);
+
+    return quantizedNetwork;
+  }
+
+
  private:
   // Helper functions.
 
@@ -513,7 +572,7 @@ class FFN
   InitializationRuleType initializeRule;
 
   //! All of the network is stored inside this multilayer.
-  MultiLayer<MatType> network;
+  NetworkType network;
 
   /**
    * Matrix of (trainable) parameters.  Each weight here corresponds to a layer,
@@ -557,6 +616,80 @@ class FFN
 
   // RNN will call `CheckNetwork()`, which is private.
   friend class RNN<OutputLayerType, InitializationRuleType, MatType>;
+
+  /**
+   * Helper method to quantize a single layer.
+   *
+   * @tparam TargetMatType The desired matrix type for the quantized layer.
+   * @tparam LayerType The type of the layer to be quantized.
+   * @tparam QuantizationStrategyType The quantization strategy type.
+   * @param layer The layer to be quantized.
+   * @param strategy The quantization strategy object.
+   * @return A new layer of the same type but with quantized weights.
+   */
+  template<
+    typename TargetMatType,
+    typename LayerType,
+    typename QuantizationStrategyType
+  >
+  typename LayerType::template Layer<TargetMatType> QuantizeLayer(
+      const LayerType& layer,
+      const QuantizationStrategyType& strategy) const
+  {
+    // Create a new layer of the target type
+    typename LayerType::template Layer<TargetMatType> quantizedLayer(layer);
+
+    // Quantize the weights if the layer has them
+    if (HasWeights<LayerType>::value)
+    {
+      const MatType& weights = layer.Weights();
+      TargetMatType quantizedWeights = strategy.QuantizeWeights(weights);
+      quantizedLayer.SetWeights(std::move(quantizedWeights));
+    }
+
+    // Quantize the bias if the layer has it
+    if (HasBias<LayerType>::value)
+    {
+      const MatType& bias = layer.Bias();
+      TargetMatType quantizedBias = strategy.QuantizeWeights(bias);
+      quantizedLayer.SetBias(std::move(quantizedBias));
+    }
+
+    return quantizedLayer;
+  }
+
+  /**
+   * Type trait to check if a layer has weights.
+   */
+  template<typename LayerType>
+  struct HasWeights
+  {
+    template<typename T>
+    static constexpr auto check(T*) 
+        -> decltype(std::declval<T>().Weights(), std::true_type());
+    
+    template<typename>
+    static constexpr std::false_type check(...);
+
+    static constexpr bool value = decltype(check<LayerType>(nullptr))::value;
+  };
+
+  /**
+   * Type trait to check if a layer has bias.
+   */
+  template<typename LayerType>
+  struct HasBias
+  {
+    template<typename T>
+    static constexpr auto check(T*) 
+        -> decltype(std::declval<T>().Bias(), std::true_type());
+    
+    template<typename>
+    static constexpr std::false_type check(...);
+
+    static constexpr bool value = decltype(check<LayerType>(nullptr))::value;
+  };
+
 }; // class FFN
 
 } // namespace mlpack
