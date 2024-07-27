@@ -11,6 +11,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/xgboost/loss_functions/sse_loss.hpp>
+#include <mlpack/methods/xgboost.hpp>
 
 #include "catch.hpp"
 #include "serialization.hpp"
@@ -62,4 +63,138 @@ TEST_CASE("SSEGainTest", "[XGBTest]")
 
   SSELoss Loss;
   REQUIRE(Loss.Evaluate<false>(input, weights) == gain);
+}
+
+/**
+ * This test case runs the XGBoost model on the Iris dataset. 
+ * Tests if the model gives a training accuracy > 60, without 
+ * initiating a weak learner. Used default empty constructor.
+*/
+TEST_CASE("XGBIrisTrainMethod1", "[XGBoostGeneralTest]") 
+{
+  arma::mat db;
+  if (!data::Load("iris.csv", db))
+    FAIL("Cannot load test dataset iris.csv!");
+  
+  arma::Row<size_t> labels;
+  if (!data::Load("iris_labels.txt", labels))
+    FAIL("Cannot load labels for iris iris_labels.txt");
+
+  const size_t numClasses = arma::max(labels.row(0)) + 1;
+  const size_t numModels = 5;
+
+  XGBoost xgb;
+
+  xgb.Train(db, labels, numClasses, numModels);
+
+  arma::Row<size_t> predictions;
+  xgb.Classify(db, predictions);
+
+  double accuracy = 0;
+  for (size_t i = 0; i < labels.n_elem; i++) 
+  {
+    if(labels(i) == predictions(i)) 
+    {
+      accuracy++;
+    }
+  }
+
+  accuracy = accuracy / ((double) labels.n_elem);
+  accuracy *= 100.0;
+
+  REQUIRE(accuracy > 60);
+
+}
+
+/**
+ * This test case runs the XGBoost model on the Iris dataset.
+ * Tests if the model gives a training accuracy > 60 given the data and a 
+ * pre-initiated weak learner. Used default empty constructor.
+*/
+TEST_CASE("XGBIrisTrainMethod2", "[XGBoostGeneralTest]") 
+{
+  arma::mat db;
+  if (!data::Load("iris.csv", db))
+    FAIL("Cannot load test dataset iris.csv!");
+  
+  arma::Row<size_t> labels;
+  if (!data::Load("iris_labels.txt", labels))
+    FAIL("Cannot load labels for iris iris_labels.txt");
+
+  const size_t numClasses = arma::max(labels.row(0)) + 1;
+  const size_t numModels = 5;
+  XGBoost xgb;
+
+  xgb.Train(db, labels, numClasses, numModels);
+
+  arma::Row<size_t> predictions;
+  xgb.Classify(db, predictions);
+
+  double accuracy = 0;
+  for (size_t i = 0; i < labels.n_elem; i++) 
+  {
+    if(labels(i) == predictions(i)) 
+    {
+      accuracy++;
+    }
+  }
+
+  accuracy = accuracy / ((double) labels.n_elem);
+  accuracy *= 100.0;
+
+  REQUIRE(accuracy > 60);
+
+}
+
+/**
+ * This test case runs the XGBoost model on the Iris dataset.
+ * Tests if the model gives a training accuracy > 60 given the data and a 
+ * weak learner arguments. Used default empty constructor.
+*/
+TEST_CASE("XGBIrisTrainMethod3", "[XGBoostGeneralTest]") 
+{
+  arma::mat db;
+  if (!data::Load("iris.csv", db))
+    FAIL("Cannot load test dataset iris.csv!");
+  
+  arma::Row<size_t> labels;
+  if (!data::Load("iris_labels.txt", labels))
+    FAIL("Cannot load labels for iris iris_labels.txt");
+
+  const size_t numClasses = arma::max(labels.row(0)) + 1;
+  const size_t numModels = 5;
+
+  const size_t minimumLeafSize=10;
+  const double minimumGainSplit=1e-7;
+  const size_t maximumDepth=2;
+  const AllDimensionSelect dimensionSelector;
+
+  XGBoost xgb;
+
+  xgb.Train(db, 
+            labels, 
+            numClasses, 
+            numModels, 
+            minimumLeafSize,
+            minimumGainSplit,
+            maximumDepth,
+            dimensionSelector);
+
+  arma::Row<size_t> predictions;
+  xgb.Classify(db, predictions);
+
+  double accuracy = 0;
+  for (size_t i = 0; i < labels.n_elem; i++) 
+  {
+    if(labels(i) == predictions(i)) 
+    {
+      accuracy++;
+    }
+  }
+
+  accuracy = accuracy / ((double) labels.n_elem);
+  accuracy *= 100.0;
+
+  REQUIRE(accuracy > 60);
+
 }
