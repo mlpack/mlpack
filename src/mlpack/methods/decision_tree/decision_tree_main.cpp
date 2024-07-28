@@ -198,6 +198,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
       labels = ConvTo<arma::Row<size_t>>::From(
           trainingSet.row(trainingSet.n_rows - 1));
       trainingSet.shed_row(trainingSet.n_rows - 1);
+
+      // Remove last row from dataset info
+      model -> info.RemoveDimension(trainingSet.n_rows - 1);
     }
 
     const size_t numClasses = max(labels) + 1;
