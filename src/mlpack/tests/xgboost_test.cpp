@@ -70,7 +70,7 @@ TEST_CASE("SSEGainTest", "[XGBTest]")
  * Tests if the model gives a training accuracy > 60, without 
  * initiating a weak learner. Used default empty constructor.
 */
-TEST_CASE("XGBIrisTrainMethod1", "[XGBoostGeneralTest]") 
+TEST_CASE("XGBIrisTrainMethod1", "[XGBTest]") 
 {
   arma::mat db;
   if (!data::Load("iris.csv", db))
@@ -111,7 +111,7 @@ TEST_CASE("XGBIrisTrainMethod1", "[XGBoostGeneralTest]")
  * Tests if the model gives a training accuracy > 60 given the data and a 
  * pre-initiated weak learner. Used default empty constructor.
 */
-TEST_CASE("XGBIrisTrainMethod2", "[XGBoostGeneralTest]") 
+TEST_CASE("XGBIrisTrainMethod2", "[XGBTest]") 
 {
   arma::mat db;
   if (!data::Load("iris.csv", db))
@@ -151,7 +151,7 @@ TEST_CASE("XGBIrisTrainMethod2", "[XGBoostGeneralTest]")
  * Tests if the model gives a training accuracy > 60 given the data and a 
  * weak learner arguments. Used default empty constructor.
 */
-TEST_CASE("XGBIrisTrainMethod3", "[XGBoostGeneralTest]") 
+TEST_CASE("XGBIrisTrainMethod3", "[XGBTest]") 
 {
   arma::mat db;
   if (!data::Load("iris.csv", db))
