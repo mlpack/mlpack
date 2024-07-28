@@ -3,7 +3,7 @@
  * @author Abhimanyu Dayal
  *
  * Interface for customisable loss functions. Based on the user's choice, a 
- * specific 
+ * specific loss function is executed.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
