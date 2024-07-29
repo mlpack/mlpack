@@ -34,16 +34,36 @@ class LossFunction
 
   public:
 
-  LossFunction() {/*Nothing to do*/}
+  // Default constructor---No regularization.
+  LossFunction() : alpha(0), lambda(0) { /* Nothing to do. */}
 
-  LossFunction(std::string type) : lossType(type) {/*Nothing to do*/}
+  LossFunction(std::string type) : alpha(0), lambda(0), lossType(type) { /* Nothing to do */ }
 
-  void CalculateLoss()
+  LossFunction(const double alpha, const double lambda, std::string type) : 
+    alpha(alpha), lambda(lambda), lossType(type) { /* Nothing to do */ }
+
+  double CalculateLoss()
   {
+
+    double loss = 0;
     if (lossType == "log_loss")
     {
-      
+      loss = EvaluateLogLoss();
     }
+
+    else if (lossType == "sse_loss")
+    {
+      loss = EvaluateSSELoss();
+    }
+
+    else 
+    {
+      Log::Fatal << "Invalid loss Type." << std::endl;
+    }
+
+    losses.push_back(loss);
+    
+    return loss;
   }
 
   double EvaluateLogLoss()
@@ -51,11 +71,29 @@ class LossFunction
 
   }
 
-
+  double EvaluateLogGradient()
+  {
+    
+  }
 
   double EvaluateSSELoss()
   {
     
+  }
+
+  //! Applies the L1 regularization.
+  double ApplyL1(const double sumGradients)
+  {
+    if (sumGradients > alpha)
+    {
+      return sumGradients - alpha;
+    }
+    else if (sumGradients < - alpha)
+    {
+      return sumGradients + alpha;
+    }
+
+    return 0;
   }
 };
 
