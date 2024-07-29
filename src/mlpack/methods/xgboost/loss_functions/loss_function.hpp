@@ -13,11 +13,51 @@
 
 #include "log_loss.hpp"
 #include "sse_loss.hpp"
+#include <mlpack/core.hpp>
 
 #ifndef MLPACK_METHODS_XGBOOST_LOSS_FUNCTIONS_HPP
 #define MLPACK_METHODS_XGBOOST_LOSS_FUNCTIONS_HPP
 
 namespace mlpack {
+
+class LossFunction
+{
+
+  private:
+
+  std::string lossType; 
+  std::vector<double> losses;
+  //! The L1 regularization parameter.
+  const double alpha;
+  //! The L2 regularization parameter.
+  const double lambda;
+
+  public:
+
+  LossFunction() {/*Nothing to do*/}
+
+  LossFunction(std::string type) : lossType(type) {/*Nothing to do*/}
+
+  void CalculateLoss()
+  {
+    if (lossType == "log_loss")
+    {
+      
+    }
+  }
+
+  double EvaluateLogLoss()
+  {
+
+  }
+
+
+
+  double EvaluateSSELoss()
+  {
+    
+  }
+};
 
 } // namespace mlpack
 
