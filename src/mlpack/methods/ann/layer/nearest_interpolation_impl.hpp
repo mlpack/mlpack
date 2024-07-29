@@ -153,9 +153,10 @@ void NearestInterpolationType<MatType>::ComputeOutputDimensions()
     throw std::runtime_error("Insufficient number of input dimensions.");
   }
   this->outputDimensions = this->inputDimensions;
-  for (size_t i = 0; i < this->InputDimensions().size()-1; i++)
+  for (size_t i = 0; i < this->InputDimensions().size() - 1; i++)
   {
-    this->outputDimensions[i] = std::round((double)this->outputDimensions[i] * scaleFactors[i]);
+    this->outputDimensions[i] = std::round(
+      (double)this->outputDimensions[i] * scaleFactors[i]);
   }
 }
 
