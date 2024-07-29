@@ -52,8 +52,10 @@ class LossFunction
 
   double CalculateLoss()
   {
-
+    // Initiate loss variable to store calculated loss value.
     double loss = 0;
+
+    // Determine which loss function to determine
     if (lossType == "log_loss")
       loss = EvaluateLogLoss();
 
@@ -101,6 +103,11 @@ class LossFunction
   const double alpha;
   //! The L2 regularization parameter.
   const double lambda;
+
+  //! First order gradients.
+  arma::vec gradients;
+  //! Second order gradients (hessians).
+  arma::vec hessians;
 
   //! Applies the L1 regularization.
   double ApplyL1(const double sumGradients)
