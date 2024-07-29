@@ -1,5 +1,5 @@
 /**
- * @file methods/xgboost/loss_functions/loss_functions.hpp
+ * @file methods/xgboost/loss_functions.hpp
  * @author Abhimanyu Dayal
  *
  * Interface for customisable loss functions. Based on the user's choice, a 
@@ -11,8 +11,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include "log_loss.hpp"
-#include "sse_loss.hpp"
 #include <mlpack/core.hpp>
 
 #ifndef MLPACK_METHODS_XGBOOST_LOSS_FUNCTIONS_HPP
