@@ -150,7 +150,11 @@ template<typename MatType>
 void NearestInterpolationType<MatType>::ComputeOutputDimensions()
 {
   if (this->inputDimensions.size() < scaleFactors.size()) {
-    throw std::runtime_error("Insufficient number of input dimensions.");
+    std::ostringstream oss;
+    oss << "NearestInterpolation::ComputeOutputDimensions(): input dimensions "
+        << "must be at least 2 (received input with " << this->inputDimensions.size()
+        << " dimensions)!";
+    throw std::runtime_error(oss.str());
   }
   this->outputDimensions = this->inputDimensions;
   for (size_t i = 0; i < scaleFactors.size(); i++)
