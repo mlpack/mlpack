@@ -81,6 +81,11 @@ class LossFunction
     
   }
 
+  double EvaluateSSEGradient()
+  {
+    
+  }
+
   //! Applies the L1 regularization.
   double ApplyL1(const double sumGradients)
   {
