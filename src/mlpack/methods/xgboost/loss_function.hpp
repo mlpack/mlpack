@@ -50,18 +50,19 @@ class LossFunction
   LossFunction(const double alpha, const double lambda, std::string type) : 
     alpha(alpha), lambda(lambda), lossType(type) { /* Nothing to do */ }
 
-  double CalculateLoss()
+  double CalculateLoss(const arma::mat& input)
   {
     // Initiate loss variable to store calculated loss value.
     double loss = 0;
 
     // Determine which loss function to determine
     if (lossType == "log_loss")
-      loss = EvaluateLogLoss();
+      loss = EvaluateLogLoss(input);
 
     else if (lossType == "sse_loss")
-      loss = EvaluateSSELoss();
+      loss = EvaluateSSELoss(input);
 
+    // Throw an error if loss type isn't specified. 
     else 
       Log::Fatal << "Invalid loss Type." << std::endl;
 
@@ -70,7 +71,7 @@ class LossFunction
     return loss;
   }
 
-  double EvaluateLogLoss()
+  double EvaluateLogLoss(const arma::mat& input)
   {
 
   }
@@ -80,9 +81,31 @@ class LossFunction
     
   }
 
-  double EvaluateSSELoss()
+  /**
+   * Calculate the SSE Loss. 
+   * 
+   * Loss = 1 / 2 * (Observed - Predicted)^2
+   * 
+   * Also has L1 and L2 regularisations using the alpha and lambda values. 
+   *
+   * @param input This is a 2D matrix. The first row stores the true observed
+   *    values and the second row stores the prediction at the current step
+   *    of boosting.
+   */
+  double EvaluateSSELoss(const arma::mat& input)
   {
-    
+    // Calculate gradients and hessians.
+    gradients = (input.row(1) - input.row(0)).t();
+    hessians = arma::vec(input.n_cols, arma::fill::ones);
+
+    // Apply L1 regularization to the sum of gradients.
+    double sumGradients = accu(gradients);
+    double regGradients = ApplyL1(sumGradients);
+
+    // Calculate the loss using the regularized gradients and hessians.
+    double loss = std::pow(regGradients, 2) / (accu(hessians) + lambda);
+
+    return loss;
   }
 
   double EvaluateSSEGradient()
