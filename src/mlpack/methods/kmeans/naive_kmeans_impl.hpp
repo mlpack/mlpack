@@ -41,82 +41,72 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   newCentroids.zeros(dims, clusters);
   counts.zeros(clusters);
 
-  // Pre-compute centroid norms if using Euclidean distance
-  arma::vec centroidNorms;
-  if (std::is_same<DistanceType, EuclideanDistance>::value)
-  {
-    centroidNorms = arma::sum(arma::square(centroids), 0).t();
-  }
+  // Determine the number of threads
+  size_t numThreads = 1;
+  #ifdef MLPACK_USE_OPENMP
+    numThreads = static_cast<size_t>(omp_get_max_threads());
+  #endif
 
-  #pragma omp parallel
+  // Pre-allocate thread-local storage
+  std::vector<arma::mat> threadCentroids(numThreads, arma::mat(dims, clusters));
+  std::vector<arma::Col<size_t>> threadCounts(numThreads, arma::Col<size_t>(clusters));
+
+  double cNorm = 0.0;
+
+  #pragma omp parallel reduction(+:cNorm)
   {
-    // Thread-local storage
-    arma::mat localNewCentroids(dims, clusters, arma::fill::zeros);
-    arma::Col<size_t> localCounts(clusters, arma::fill::zeros);
+    const size_t threadId = 
+    #ifdef MLPACK_USE_OPENMP
+      omp_get_thread_num();
+    #else
+      0;
+    #endif
+
+    arma::mat& localCentroids = threadCentroids[threadId];
+    arma::Col<size_t>& localCounts = threadCounts[threadId];
 
     #pragma omp for schedule(static)
     for (size_t i = 0; i < points; ++i)
     {
       size_t closestCluster = 0;
       double minDistance = std::numeric_limits<double>::max();
-      const auto& point = dataset.col(i);
+      const arma::vec& point = dataset.col(i);
 
-      if (std::is_same<DistanceType, EuclideanDistance>::value)
+      for (size_t j = 0; j < clusters; ++j)
       {
-        // Optimized Euclidean distance calculation
-        const double pointNorm = arma::dot(point, point);
-        for (size_t j = 0; j < clusters; ++j)
+        const double dist = distance.Evaluate(point, centroids.col(j));
+        if (dist < minDistance)
         {
-          const double dist = pointNorm + centroidNorms[j] - 2 * arma::dot(point, centroids.col(j));
-          if (dist < minDistance)
-          {
-            minDistance = dist;
-            closestCluster = j;
-          }
-        }
-      }
-      else
-      {
-        // General distance metric
-        for (size_t j = 0; j < clusters; ++j)
-        {
-          const double dist = distance.Evaluate(point, centroids.col(j));
-          if (dist < minDistance)
-          {
-            minDistance = dist;
-            closestCluster = j;
-          }
+          minDistance = dist;
+          closestCluster = j;
         }
       }
 
-      // Update local centroids and counts
-      localNewCentroids.col(closestCluster) += point;
+      localCentroids.col(closestCluster) += point;
       localCounts[closestCluster]++;
     }
-
-    // Combine results
-    #pragma omp critical
-    {
-      newCentroids += localNewCentroids;
-      counts += localCounts;
-    }
   }
 
-  // Normalize the centroids
-  for (size_t j = 0; j < clusters; ++j)
+  // Combine results
+  for (size_t t = 0; t < numThreads; ++t)
   {
-    if (counts[j] > 0)
-      newCentroids.col(j) /= counts[j];
-    else
-      newCentroids.col(j) = centroids.col(j);
+    newCentroids += threadCentroids[t];
+    counts += threadCounts[t];
   }
 
-  // Calculate cluster distortion
-  double cNorm = 0.0;
+  // Normalize the centroids and calculate distortion
   #pragma omp parallel for reduction(+:cNorm) schedule(static)
   for (size_t j = 0; j < clusters; ++j)
   {
-    cNorm += std::pow(arma::norm(centroids.col(j) - newCentroids.col(j)), 2);
+    if (counts[j] > 0)
+    {
+      newCentroids.col(j) /= counts[j];
+      cNorm += std::pow(distance.Evaluate(centroids.col(j), newCentroids.col(j)), 2.0);
+    }
+    else
+    {
+      newCentroids.col(j) = centroids.col(j);
+    }
   }
 
   distanceCalculations += clusters * points;
