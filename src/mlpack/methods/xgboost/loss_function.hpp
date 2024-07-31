@@ -50,7 +50,7 @@ class LossFunction
   LossFunction(const double alpha, const double lambda, std::string type) : 
     alpha(alpha), lambda(lambda), lossType(type) { /* Nothing to do */ }
 
-  double CalculateLoss(const arma::mat& input)
+  double EvaluateLoss(const arma::mat& input)
   {
     // Initiate loss variable to store calculated loss value.
     double loss = 0;
