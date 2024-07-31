@@ -93,22 +93,6 @@ class GradBoosting
                const double minimumGainSplit, 
                const size_t maximumDepth);
 
-  /**
-   * Constructor takes an already-initialized weak learner; all other
-   * weak learners will learn with the same parameters as the given
-   * weak learner.
-   *
-   * @param data Input data.
-   * @param labels Corresponding labels.
-   * @param numClasses The number of classes.
-   * @param numModels Number of weak learners.
-   * @param other Weak learner that has already been initialized.
-   */
-  GradBoosting(const MatType& data,
-               const arma::Row<size_t>& labels,
-               const size_t numClasses,
-               const size_t numModels,
-               const WeakLearnerType& other);
 
   //! Get the number of classes this model is trained on.
   size_t NumClasses() const { return numClasses; }
@@ -121,28 +105,6 @@ class GradBoosting
 
   //! Modify the given weak learner (be careful!).
   WeakLearnerType& WeakLearner(const size_t i) { return weakLearners[i]; }
-
-  /**
-   * Train GradBoosting on the given dataset. This method takes an initialized
-   * WeakLearnerType; the parameters for this weak learner will be used to train
-   * each of the weak learners during GradBoosting training. Note that this will
-   * completely overwrite any model that has already been trained with this
-   * object.
-   *
-   * Default values are not used for `numModels`; instead, it is used to specify
-   * the number of weak learners (models) to train during gradient boosting.
-   *
-   * @param data Dataset to train on.
-   * @param labels Labels for each point in the dataset.
-   * @param numClasses The number of classes.
-   * @param numModels Number of weak learners (models) to train.
-   * @param learner Learner to use for training.
-   */
-  void Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const size_t numModels,
-             const WeakLearnerType learner);
 
   /**
    * Train Gradient Boosting on the given dataset, using the given parameters.
@@ -227,7 +189,7 @@ class GradBoosting
    */
   void Classify(const MatType& test,
                 arma::Row<size_t>& predictedLabels,
-                arma::Row<ElemType>& probabilities) const;
+                arma::Row<ElemType>& probabilities);
 
 
   /**
@@ -245,7 +207,6 @@ class GradBoosting
                      const arma::Row<size_t>& labels,
                      const size_t numModels,
                      const size_t numClasses,
-                     const WeakLearnerType& wl,
                      const size_t minimumLeafSize=10,
                      const double minimumGainSplit=1e-7,
                      const size_t maximumDepth=2);
