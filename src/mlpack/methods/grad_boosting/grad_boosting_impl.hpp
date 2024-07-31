@@ -187,15 +187,13 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
   const AllDimensionSelect dimensionSelector;
 
   // Initiate learning rate.
-  double learningRate = 0.1;
+  double learningRate = 1;
 
   // Clear the weak learners vector to in case it's preinitialised.
   weakLearners.clear();
 
   // Store residues.
-  MatType residue(data.n_rows, numClasses, arma::fill::zeros);
-  for (size_t i = 0; i < labels.n_cols; ++i) 
-    residue(i, labels(i)) = 1;
+  MatType residue(numClasses, data.n_cols, arma::fill::zeros);
 
   for (size_t model = 0; model < numModels; ++model) 
   {
