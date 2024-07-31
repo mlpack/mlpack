@@ -186,9 +186,6 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
   // Initiate dimensionSelector.
   const AllDimensionSelect dimensionSelector;
 
-  // Initiate weights - not going to use.
-  arma::mat weights;
-
   // Initiate learning rate.
   double learningRate = 0.1;
 
