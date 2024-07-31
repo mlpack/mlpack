@@ -24,8 +24,8 @@ namespace mlpack {
 // Empty constructor.
 template<typename MatType>
 GradBoosting<MatType>::GradBoosting() :
-    numModels(0),
-    numClasses(0)
+    numClasses(0),
+    numModels(0)
 { /*Nothing to do.*/}
 
 // In case weak learners aren't defined
@@ -34,19 +34,19 @@ GradBoosting<MatType>::GradBoosting() :
  *
  * @param data Input data
  * @param labels Corresponding labels
- * @param numModels Number of weak learners
  * @param numClasses Number of classes
+ * @param numModels Number of weak learners
  */
 template<typename MatType>
 GradBoosting<MatType>::
   GradBoosting(const MatType& data,
                const arma::Row<size_t>& labels,
-               const size_t numModels,
-               const size_t numClasses) :
-  numModels(numModels),
-  numClasses(numClasses)
+               const size_t numClasses,
+               const size_t numModels) :
+  numClasses(numClasses),
+  numModels(numModels)
 {
-  TrainInternal(data, labels, numModels, numClasses);
+  TrainInternal(data, labels, numClasses, numModels);
 }
 
 // In case the user inputs the arguments for the Weak Learner
@@ -55,23 +55,23 @@ GradBoosting<MatType>::
  *
  * @param data Input data
  * @param labels Corresponding labels
- * @param numModels Number of weak learners
  * @param numClasses Number of classes
+ * @param numModels Number of weak learners
  * @param other Weak Learner, which has been initialized already.
  */
 template<typename MatType>
 GradBoosting<MatType>::
 GradBoosting(const MatType& data,
              const arma::Row<size_t>& labels,
-             const size_t numModels,
              const size_t numClasses,
+             const size_t numModels,
              const size_t minimumLeafSize, 
              const double minimumGainSplit, 
              const size_t maximumDepth) :
-  numModels(numModels),
-  numClasses(numClasses)
+  numClasses(numClasses),
+  numModels(numModels)
 {
-  TrainInternal(data, labels, numModels, numClasses, 
+  TrainInternal(data, labels, numClasses, numModels, 
                 minimumLeafSize, minimumGainSplit, maximumDepth);
 }
 
@@ -79,23 +79,23 @@ template<typename MatType>
 void GradBoosting<MatType>::
   Train(const MatType& data,
         const arma::Row<size_t>& labels,
-        const size_t numModels,
-        const size_t numClasses)
+        const size_t numClasses,
+        const size_t numModels)
 {
-  return TrainInternal(data, labels, numModels, numClasses);
+  return TrainInternal(data, labels, numClasses, numModels);
 }
 
 template<typename MatType>
 void GradBoosting<MatType>::
   Train(const MatType& data,
         const arma::Row<size_t>& labels,
-        const size_t numModels,
         const size_t numClasses,
+        const size_t numModels,
         const size_t minimumLeafSize, 
         const double minimumGainSplit, 
         const size_t maximumDepth)
 {
-  return TrainInternal(data, labels, numModels, numClasses,
+  return TrainInternal(data, labels, numClasses, numModels,
                        minimumLeafSize, minimumGainSplit, maximumDepth);
 }
 
@@ -176,8 +176,8 @@ void GradBoosting<MatType>::Classify(const MatType& test,
 template<typename MatType>
 void GradBoosting<MatType>::TrainInternal(const MatType& data,
                                           const arma::Row<size_t>& labels,
-                                          const size_t numModels,
                                           const size_t numClasses,
+                                          const size_t numModels,
                                           const size_t minimumLeafSize,
                                           const double minimumGainSplit,
                                           const size_t maximumDepth) 
