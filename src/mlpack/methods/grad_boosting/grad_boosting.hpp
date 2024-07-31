@@ -81,14 +81,17 @@ class GradBoosting
    * @param labels Corresponding labels.
    * @param numClasses The number of classes.
    * @param numModels Number of weak learners.
-   * @param weakLearnerParams... Any hyperparameters for the weak learner.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
    */
-  template<typename... WeakLearnerArgs>
   GradBoosting(const MatType& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
                const size_t numModels = 10,
-               WeakLearnerArgs&&... weakLearnerArgs);
+               const size_t minimumLeafSize, 
+               const double minimumGainSplit, 
+               const size_t maximumDepth);
 
   /**
    * Constructor takes an already-initialized weak learner; all other
@@ -170,14 +173,17 @@ class GradBoosting
    * @param labels Labels for each point in the dataset.
    * @param numClasses The number of classes in the dataset.
    * @param numModels Number of boosting rounds.
-   * @param weakLearnerArgs Hyperparameters to use for each weak learner.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
    */
-  template<typename... WeakLearnerArgs>
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
              const size_t numModels,
-             WeakLearnerArgs&&... weakLearnerArgs);
+             const size_t minimumLeafSize, 
+             const double minimumGainSplit, 
+             const size_t maximumDepth);
 
   /**
    * Classify the given test point.
@@ -232,25 +238,18 @@ class GradBoosting
 
  private:
 
-  template<bool UseExistingWeakLearner>
-  void TrainInternal(const MatType& data,
-                     const arma::Row<size_t>& labels,
-                     const size_t numModels,
-                     const size_t numClasses,
-                     const WeakLearnerType& wl);
-
   /**
    * Internal utility training function.  `wl` is not used if
-   * `UseExistingWeakLearner` is false.  `weakLearnerArgs` are not used if
-   * `UseExistingWeakLearner` is true.
+   * `UseExistingWeakLearner` is false.
    */
-  template<bool UseExistingWeakLearner, typename... WeakLearnerArgs>
   void TrainInternal(const MatType& data,
                      const arma::Row<size_t>& labels,
                      const size_t numModels,
                      const size_t numClasses,
                      const WeakLearnerType& wl,
-                     WeakLearnerArgs&&... weakLearnerArgs);
+                     const size_t minimumLeafSize=10,
+                     const double minimumGainSplit=1e-7,
+                     const size_t maximumDepth=2);
 
   //! The number of classes in the model.
   size_t numClasses;

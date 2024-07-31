@@ -86,19 +86,19 @@ GradBoosting<MatType>::
  * @param other Weak Learner, which has been initialized already.
  */
 template<typename MatType>
-// Variadic template to the Weak Learner arguments
-template<typename... WeakLearnerArgs>
 GradBoosting<MatType>::
 GradBoosting(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
              const size_t numModels,
-             WeakLearnerArgs&&... weakLearnerArgs) :
+             const size_t minimumLeafSize, 
+             const double minimumGainSplit, 
+             const size_t maximumDepth) :
   numModels(numModels)
 {
   WeakLearnerType other; // Will not be used.
-  (void) TrainInternal<false>(data, labels, numClasses, other,
-      weakLearnerArgs...);
+  (void) TrainInternal<false>(data, labels, numClasses, other, 
+  minimumLeafSize, minimumGainSplit, maximumDepth,);
 }
 
 // Train GradBoosting with a given weak learner.
@@ -126,17 +126,18 @@ void GradBoosting<MatType>::
 }
 
 template<typename MatType>
-template<typename... WeakLearnerArgs>
 void GradBoosting<MatType>::
   Train(const MatType& data,
         const arma::Row<size_t>& labels,
         const size_t numClasses,
         const size_t numModels,
-        WeakLearnerArgs&&... weakLearnerArgs)
+        const size_t minimumLeafSize, 
+        const double minimumGainSplit, 
+        const size_t maximumDepth)
 {
   WeakLearnerType other; // Will not be used.
   return TrainInternal<false>(data, labels, numModels, numClasses, other,
-    weakLearnerArgs...);
+    minimumLeafSize, minimumGainSplit, maximumDepth);
 }
 
 // Classify the given test point.
@@ -211,29 +212,6 @@ void GradBoosting<MatType>::Classify(const MatType& test,
   }
 }
 
-// This function uses default arguments
-template<typename MatType>
-template<bool UseExistingWeakLearner>
-void GradBoosting<MatType>::TrainInternal(const MatType& data,
-                                          const arma::Row<size_t>& labels,
-                                          const size_t numModels,
-                                          const size_t numClasses,
-                                          const WeakLearnerType& wl)
-{
-  const size_t minimumLeafSize=10;
-  const double minimumGainSplit=1e-7;
-  const size_t maximumDepth=2;
-  const AllDimensionSelect dimensionSelector;
-
-  // Call the main TrainInternal function with default arguments
-  return TrainInternal<UseExistingWeakLearner>(
-      data, labels, numModels, numClasses, wl,
-      minimumLeafSize,
-      minimumGainSplit,
-      maximumDepth,
-      dimensionSelector);
-}
-
 
 // Template for GradBoosting template as a whole
 template<typename MatType>
@@ -241,8 +219,7 @@ template<typename MatType>
 // Template for TrainInternal 
 // UseExistingWeakLearner determines whether to define a weak learner anew or 
 // use an existing weak learner
-// WeakLearnerArgs are the arguments for the weak learner
-template<bool UseExistingWeakLearner, typename... WeakLearnerArgs>
+template<bool UseExistingWeakLearner>
 
 // TrainInternal is a private function within GradBoosting class
 // It has return type ElemType
@@ -252,42 +229,37 @@ void GradBoosting<MatType>::
                 const size_t numModels,
                 const size_t numClasses,
                 const WeakLearnerType& wl,
-                WeakLearnerArgs&&... weakLearnerArgs) 
+                const size_t minimumLeafSize = 10,
+                const double minimumGainSplit = 1e-7,
+                const size_t maximumDepth = 2) 
 {
-  // Load the initial weights into a 2-D matrix.
-  const ElemType initWeight = 1.0 / ElemType(data.n_cols * numClasses);
-  MatType D(numClasses, data.n_cols);
-  D.fill(initWeight);
 
-  // Weights are stored in this row vector.
-  arma::Row<ElemType> weights(labels.n_cols);
+  // Initiate dimensionSelector.
+  const AllDimensionSelect dimensionSelector;
 
+  // Initiate weights - not going to use.
+  arma::mat weights;
+
+  // Clear the weak learners vector to in case it's preinitialised.
   weakLearners.clear();
 
+  // Store residues.
   MatType residue(data.n_rows, numClasses, arma::fill::zeros);
-
   for (size_t i = 0; i < labels.n_cols; ++i) 
-  {
     residue(i, labels(i)) = 1;
-  }
 
   for (size_t model = 0; model < numModels; ++model) 
   {
-    // Build the weight vectors.
-    weights = sum(D);
 
     WeakLearnerType* wPtr;
 
     if(UseExistingWeakLearner)
-    {
-      wPtr = new WeakLearnerType(wl, data, residue, numClasses, weights,
-        std::forward<WeakLearnerArgs>(weakLearnerArgs)...);
-    }
+      wPtr = new WeakLearnerType(data, labels, numClasses, 
+      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
+
     else 
-    {
-      wPtr = new WeakLearnerType(data, residue, numClasses,
-        std::forward<WeakLearnerArgs>(weakLearnerArgs)...);
-    }
+      wPtr = new WeakLearnerType(data, labels, numClasses, 
+      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
 
     WeakLearnerType w = *wPtr;
     delete wPtr;
