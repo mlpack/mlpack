@@ -239,8 +239,7 @@ class GradBoosting
  private:
 
   /**
-   * Internal utility training function.  `wl` is not used if
-   * `UseExistingWeakLearner` is false.
+   * Internal utility training function.  
    */
   void TrainInternal(const MatType& data,
                      const arma::Row<size_t>& labels,

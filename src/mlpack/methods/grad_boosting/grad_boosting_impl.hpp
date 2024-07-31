@@ -213,16 +213,8 @@ void GradBoosting<MatType>::Classify(const MatType& test,
 }
 
 
-// Template for GradBoosting template as a whole
-template<typename MatType>
-
-// Template for TrainInternal 
-// UseExistingWeakLearner determines whether to define a weak learner anew or 
-// use an existing weak learner
-template<bool UseExistingWeakLearner>
-
 // TrainInternal is a private function within GradBoosting class
-// It has return type ElemType
+template<typename MatType>
 void GradBoosting<MatType>:: 
   TrainInternal(const MatType& data,
                 const arma::Row<size_t>& labels,
@@ -240,6 +232,9 @@ void GradBoosting<MatType>::
   // Initiate weights - not going to use.
   arma::mat weights;
 
+  // Initiate learning rate.
+  double learningRate = 0.1;
+
   // Clear the weak learners vector to in case it's preinitialised.
   weakLearners.clear();
 
@@ -252,14 +247,8 @@ void GradBoosting<MatType>::
   {
 
     WeakLearnerType* wPtr;
-
-    if(UseExistingWeakLearner)
-      wPtr = new WeakLearnerType(data, labels, numClasses, 
-      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
-
-    else 
-      wPtr = new WeakLearnerType(data, labels, numClasses, 
-      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
+    wPtr = new WeakLearnerType(data, labels, numClasses, 
+    minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
 
     WeakLearnerType w = *wPtr;
     delete wPtr;
@@ -269,9 +258,6 @@ void GradBoosting<MatType>::
     arma::Row<size_t> predictions(residue.n_cols, arma::fill::zeros);
     arma::mat probabilities;
     w.Classify(data, predictions, probabilities);
-
-    // Compute the learning rate for this iteration.
-    double learningRate = 0.1;
 
     for (size_t i = 0; i < residue.n_rows; ++i) 
     {
