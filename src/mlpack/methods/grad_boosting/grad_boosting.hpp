@@ -26,11 +26,11 @@
 #include "../decision_tree.hpp"
 
 // Defined DecisionTree with template as WeakLearnerType to avoid repetition
-typedef mlpack::DecisionTree<mlpack::GiniGain,
-                    mlpack::BestBinaryNumericSplit,
-                    mlpack::AllCategoricalSplit,
-                    mlpack::AllDimensionSelect,
-                    false> WeakLearnerType;
+typedef mlpack::DecisionTreeRegressor<mlpack::MSEGain,
+                                      mlpack::BestBinaryNumericSplit,
+                                      mlpack::AllCategoricalSplit,
+                                      mlpack::AllDimensionSelect,
+                                      false> WeakLearnerType;
 
 // Written in mlpack namespace.
 namespace mlpack {
@@ -88,10 +88,10 @@ class GradBoosting
   GradBoosting(const MatType& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
-               const size_t numModels,
-               const size_t minimumLeafSize, 
-               const double minimumGainSplit, 
-               const size_t maximumDepth);
+               const size_t numModels = 10,
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 2);
 
 
   //! Get the number of classes this model is trained on.
@@ -142,10 +142,10 @@ class GradBoosting
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
-             const size_t numModels,
-             const size_t minimumLeafSize, 
-             const double minimumGainSplit, 
-             const size_t maximumDepth);
+             const size_t numModels = 10,
+             const size_t minimumLeafSize = 10,
+             const double minimumGainSplit = 1e-7,
+             const size_t maximumDepth = 2);
 
   /**
    * Classify the given test point.
