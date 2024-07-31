@@ -174,14 +174,13 @@ void GradBoosting<MatType>::Classify(const MatType& test,
 
 // TrainInternal is a private function within GradBoosting class
 template<typename MatType>
-void GradBoosting<MatType>:: 
-  TrainInternal(const MatType& data,
-                const arma::Row<size_t>& labels,
-                const size_t numModels,
-                const size_t numClasses,
-                const size_t minimumLeafSize = 10,
-                const double minimumGainSplit = 1e-7,
-                const size_t maximumDepth = 2) 
+void GradBoosting<MatType>::TrainInternal(const MatType& data,
+                                          const arma::Row<size_t>& labels,
+                                          const size_t numModels,
+                                          const size_t numClasses,
+                                          const size_t minimumLeafSize,
+                                          const double minimumGainSplit,
+                                          const size_t maximumDepth) 
 {
 
   // Initiate dimensionSelector.
