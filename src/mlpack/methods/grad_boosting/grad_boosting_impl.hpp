@@ -201,9 +201,6 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
     residue(i) = (double) labels(i);
   }
 
-  for (size_t i = 0; i < labels.n_cols; ++i) 
-    residue(labels(i), i) = 1.0;
-
   for (size_t model = 0; model < numModels; ++model) 
   {
 
