@@ -195,7 +195,11 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
   weakLearners.clear();
 
   // Store residues.
-  arma::mat residue(numClasses, data.n_cols, arma::fill::zeros);
+  arma::Row<double> residue;
+  for (size_t i = 0; i < labels.n_elem; ++i)
+  {
+    residue(i) = (double) labels(i);
+  }
 
   for (size_t i = 0; i < labels.n_cols; ++i) 
     residue(labels(i), i) = 1.0;
@@ -212,16 +216,14 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
 
     weakLearners.push_back(w);
 
-    arma::Row<size_t> predictions(residue.n_cols, arma::fill::zeros);
-    arma::mat probabilities;
-    w.Classify(data, predictions, probabilities);
+    arma::Row<double> predictions(residue.n_cols, arma::fill::zeros);
+    w.Classify(data, predictions);
 
     for (size_t i = 0; i < residue.n_rows; ++i) 
     {
       for (size_t j = 0; j < residue.n_cols; ++j)
       {
-        residue(i, j) = (size_t)abs((double)residue(i, j) - 
-          (double)(learningRate * probabilities(i, j)));
+        residue(i) = residue(i) - (learningRate * predictions(i));
       }
     }
   }
