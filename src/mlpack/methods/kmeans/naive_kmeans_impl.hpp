@@ -48,8 +48,8 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   #endif
 
   // Pre-allocate thread-local storage
-  std::vector<arma::mat> threadCentroids(numThreads, arma::mat(dims, clusters));
-  std::vector<arma::Col<size_t>> threadCounts(numThreads, arma::Col<size_t>(clusters));
+  std::vector<arma::mat> threadCentroids(numThreads, arma::mat(dims, clusters, arma::fill::zeros));
+  std::vector<arma::Col<size_t>> threadCounts(numThreads, arma::Col<size_t>(clusters, arma::fill::zeros));
 
   double cNorm = 0.0;
 
@@ -70,7 +70,12 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     {
       size_t closestCluster = 0;
       double minDistance = std::numeric_limits<double>::max();
-      const arma::vec& point = dataset.col(i);
+
+      arma::vec point(dims);
+      for (typename MatType::const_col_iterator it = dataset.begin_col(i); it != dataset.end_col(i); ++it)
+      {
+        point(it.row()) = *it;
+      }
 
       for (size_t j = 0; j < clusters; ++j)
       {
