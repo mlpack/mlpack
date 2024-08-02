@@ -118,16 +118,17 @@ void GradBoosting<MatType>::Classify(const VecType& point,
                                       arma::vec& probabilities)
 {
   probabilities.resize(numClasses);
+  prediction = 0;
 
   for (size_t i = 0; i < weakLearners.size(); ++i) 
   {
-    size_t p; /*Will not be used*/
+    size_t p;
 
     arma::vec tempProb(numClasses, arma::fill::zeros);
     weakLearners[i].Classify(point, p, tempProb);
 
-    if(probabilities.is_empty()) probabilities = tempProb;
-    else probabilities = probabilities + tempProb;
+    prediction += p;
+    probability = tempProb;
   }
 
   // Go through all the probabilities and return the 
