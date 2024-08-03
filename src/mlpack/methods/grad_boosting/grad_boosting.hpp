@@ -88,10 +88,10 @@ class GradBoosting
   GradBoosting(const MatType& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
-               const size_t numModels = 10,
-               const size_t minimumLeafSize = 10,
-               const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 2);
+               const size_t numModels,
+               const size_t minimumLeafSize,
+               const double minimumGainSplit,
+               const size_t maximumDepth);
 
   //! Set the number of weak learners explicitly.
   void SetNumModels(const size_t x) {numModels = x;}
@@ -144,10 +144,10 @@ class GradBoosting
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
-             const size_t numModels = 10,
-             const size_t minimumLeafSize = 10,
-             const double minimumGainSplit = 1e-7,
-             const size_t maximumDepth = 2);
+             const size_t numModels,
+             const size_t minimumLeafSize,
+             const double minimumGainSplit,
+             const size_t maximumDepth);
 
   /**
    * Classify the given test point.

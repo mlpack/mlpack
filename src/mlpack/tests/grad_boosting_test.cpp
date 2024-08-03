@@ -65,52 +65,6 @@ TEST_CASE("GBIrisTrainMethod1", "[GradBoostGeneralTest]")
 /**
  * This test case runs the GradBoosting model on the Iris dataset.
  * Tests if the model gives a training accuracy > 60 given the data and a 
- * pre-initiated weak learner. Used default empty constructor.
-*/
-TEST_CASE("GBIrisTrainMethod2", "[GradBoostGeneralTest]") 
-{
-  arma::mat db;
-  if (!data::Load("iris.csv", db))
-    FAIL("Cannot load test dataset iris.csv!");
-  
-  arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
-    FAIL("Cannot load labels for iris iris_labels.txt");
-
-  const size_t numClasses = arma::max(labels.row(0)) + 1;
-  const size_t numModels = 5;
-  mlpack::DecisionTree<GiniGain,
-                        BestBinaryNumericSplit,
-                        AllCategoricalSplit,
-                        AllDimensionSelect,
-                        false> tree;
-
-  GradBoosting gb;
-
-  gb.Train(db, labels, numClasses, numModels, tree);
-
-  arma::Row<size_t> predictions;
-  gb.Classify(db, predictions);
-
-  double accuracy = 0;
-  for (size_t i = 0; i < labels.n_elem; i++) 
-  {
-    if(labels(i) == predictions(i)) 
-    {
-      accuracy++;
-    }
-  }
-
-  accuracy = accuracy / ((double) labels.n_elem);
-  accuracy *= 100.0;
-
-  REQUIRE(accuracy > 60);
-
-}
-
-/**
- * This test case runs the GradBoosting model on the Iris dataset.
- * Tests if the model gives a training accuracy > 60 given the data and a 
  * weak learner arguments. Used default empty constructor.
 */
 TEST_CASE("GBIrisTrainMethod3", "[GradBoostGeneralTest]") 
@@ -139,8 +93,7 @@ TEST_CASE("GBIrisTrainMethod3", "[GradBoostGeneralTest]")
             numModels, 
             minimumLeafSize,
             minimumGainSplit,
-            maximumDepth,
-            dimensionSelector);
+            maximumDepth);
 
   arma::Row<size_t> predictions;
   gb.Classify(db, predictions);
