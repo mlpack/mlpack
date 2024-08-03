@@ -93,6 +93,8 @@ class GradBoosting
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 2);
 
+  //! Set the number of weak learners explicitly.
+  void SetNumModels(const size_t x) {numModels = x;}
 
   //! Get the number of classes this model is trained on.
   size_t NumClasses() const { return numClasses; }

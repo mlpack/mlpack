@@ -82,6 +82,7 @@ void GradBoosting<MatType>::
         const size_t numClasses,
         const size_t numModels)
 {
+  SetNumModels(numModels);
   return TrainInternal(data, labels, numClasses, numModels);
 }
 
@@ -95,6 +96,7 @@ void GradBoosting<MatType>::
         const double minimumGainSplit, 
         const size_t maximumDepth)
 {
+  SetNumModels(numModels);
   return TrainInternal(data, labels, numClasses, numModels,
                        minimumLeafSize, minimumGainSplit, maximumDepth);
 }
@@ -118,7 +120,7 @@ void GradBoosting<MatType>::Classify(const VecType& point,
                                       arma::vec& probabilities)
 {
   probabilities.resize(numClasses);
-  
+
   for (size_t i = 0; i < weakLearners.size(); ++i) 
   {
     size_t p; /*Not going to use.*/
@@ -130,6 +132,8 @@ void GradBoosting<MatType>::Classify(const VecType& point,
     else probabilities = probabilities + tempProb;
 
   }
+
+  probabilities /= (double) numModels;
 
   // Go through all the probabilities and return the 
   // variable with highest probability
