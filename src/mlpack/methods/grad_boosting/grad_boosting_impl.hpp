@@ -118,17 +118,17 @@ void GradBoosting<MatType>::Classify(const VecType& point,
                                       arma::vec& probabilities)
 {
   probabilities.resize(numClasses);
-  prediction = 0;
-
+  
   for (size_t i = 0; i < weakLearners.size(); ++i) 
   {
-    size_t p;
+    size_t p; /*Not going to use.*/
 
     arma::vec tempProb(numClasses, arma::fill::zeros);
     weakLearners[i].Classify(point, p, tempProb);
 
-    prediction += p;
-    probability = tempProb;
+    if(probabilities.is_empty()) probabilities = tempProb;
+    else probabilities = probabilities + tempProb;
+
   }
 
   // Go through all the probabilities and return the 
@@ -196,11 +196,9 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
   weakLearners.clear();
 
   // Store residues.
-  arma::Row<double> residue;
-  for (size_t i = 0; i < labels.n_elem; ++i)
-  {
-    residue(i) = (double) labels(i);
-  }
+  arma::mat residue(numClasses, data.n_cols, arma::fill::zeros);
+  for (size_t i = 0; i < labels.n_cols; ++i) 
+    residue(labels(i), i) = 1.0;
 
   for (size_t model = 0; model < numModels; ++model) 
   {
@@ -214,14 +212,16 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
 
     weakLearners.push_back(w);
 
-    arma::Row<double> predictions(residue.n_cols, arma::fill::zeros);
-    w.Classify(data, predictions);
+    arma::Row<size_t> predictions(residue.n_cols, arma::fill::zeros);
+    arma::mat probabilities;
+    w.Classify(data, predictions, probabilities);
 
     for (size_t i = 0; i < residue.n_rows; ++i) 
     {
       for (size_t j = 0; j < residue.n_cols; ++j)
       {
-        residue(i) = residue(i) - (learningRate * predictions(i));
+        residue(i, j) = (size_t)abs((double)residue(i, j) - 
+          (double)(learningRate * probabilities(i, j)));
       }
     }
   }
