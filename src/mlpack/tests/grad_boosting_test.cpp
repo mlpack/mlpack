@@ -67,7 +67,7 @@ TEST_CASE("GBIrisTrainMethod1", "[GradBoostGeneralTest]")
  * Tests if the model gives a training accuracy > 60 given the data and a 
  * weak learner arguments. Used default empty constructor.
 */
-TEST_CASE("GBIrisTrainMethod3", "[GradBoostGeneralTest]") 
+TEST_CASE("GBIrisTrainMethod2", "[GradBoostGeneralTest]") 
 {
   arma::mat db;
   if (!data::Load("iris.csv", db))
@@ -119,7 +119,7 @@ TEST_CASE("GBIrisTrainMethod3", "[GradBoostGeneralTest]")
  * Tests if the model gives a testing accuracy > 60 given the data.
  * Used default empty constructor.
 */
-TEST_CASE("GBIrisTrainTestSplit", "[GradBoostGeneralTest]") 
+TEST_CASE("GBIrisTestAccuracy", "[GradBoostGeneralTest]") 
 {
   arma::mat db;
   if (!data::Load("iris_train.csv", db))
@@ -319,6 +319,6 @@ TEST_CASE("GBProbRangeTest", "[GradBoostUnitTest]")
     
   }
 
-  REQUIRE((max - min) >= 60);
+  REQUIRE(((max - min) * 100) >= 60);
 
 }
