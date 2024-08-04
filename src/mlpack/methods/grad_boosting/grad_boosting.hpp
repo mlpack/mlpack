@@ -191,7 +191,7 @@ class GradBoosting
    */
   void Classify(const MatType& test,
                 arma::Row<size_t>& predictedLabels,
-                arma::Row<ElemType>& probabilities);
+                arma::vec& probabilities);
 
 
   /**

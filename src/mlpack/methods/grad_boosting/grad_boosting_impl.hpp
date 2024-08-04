@@ -107,7 +107,7 @@ template<typename VecType>
 size_t GradBoosting<MatType>::Classify(const VecType& point) 
 {
   size_t prediction;
-  arma::Row<ElemType> probabilities;
+  arma::vec probabilities;
   Classify<arma::colvec>(point, prediction, probabilities);
 
   return prediction;
@@ -152,7 +152,7 @@ void GradBoosting<MatType>::Classify(const MatType& test,
 {
   predictedLabels.clear();
   predictedLabels.resize(test.n_cols);
-  arma::Row<ElemType> probabilities;
+  arma::vec probabilities;
 
   for (size_t i = 0; i < test.n_cols; ++i) 
   {
@@ -165,7 +165,7 @@ void GradBoosting<MatType>::Classify(const MatType& test,
 template<typename MatType>
 void GradBoosting<MatType>::Classify(const MatType& test,
                                       arma::Row<size_t>& predictedLabels,
-                                      arma::Row<ElemType>& probabilities) 
+                                      arma::vec& probabilities) 
 {
   predictedLabels.clear();
   predictedLabels.resize(test.n_cols);
