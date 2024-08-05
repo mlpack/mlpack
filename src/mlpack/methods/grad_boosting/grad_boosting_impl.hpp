@@ -138,7 +138,7 @@ void GradBoosting<MatType>::Classify(const VecType& point,
   // Go through all the probabilities and return the 
   // variable with highest probability
   prediction = 0;
-  for (size_t i = 0; i < probabilities.n_cols; i++)
+  for (size_t i = 0; i < probabilities.n_rows; i++)
   {
     if (probabilities(i) > probabilities(prediction))
       prediction = i;
