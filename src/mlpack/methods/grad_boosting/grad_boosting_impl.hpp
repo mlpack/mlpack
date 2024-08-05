@@ -152,11 +152,11 @@ void GradBoosting<MatType>::Classify(const MatType& test,
 {
   predictedLabels.clear();
   predictedLabels.resize(test.n_cols);
-
-  arma::mat probabilities(numClasses, test.n_cols, arma::fill::zeros);
-
+  
   for (size_t i = 0; i < test.n_cols; ++i) 
   {
+    arma::vec tempData(test.n_rows); 
+    size_t prediction;
     arma::vec tempProb(numClasses, arma::fill::zeros);
 
     for (size_t j = 0; j < test.n_rows; ++j)
@@ -164,8 +164,7 @@ void GradBoosting<MatType>::Classify(const MatType& test,
       tempData(j) = test(j, i);
     }
 
-    size_t prediction;
-    Classify<arma::colvec>(tempData, prediction, probabilities);
+    Classify<arma::vec>(tempData, prediction, tempProb);
     predictedLabels(i) = prediction;
   }
 
