@@ -217,6 +217,8 @@ class GradBoosting
   size_t numClasses;
   //! The number of weak learners in the model.
   size_t numModels;
+  //! Adjustments vector.
+  arma::vec adjustments;
 
   //! The vector of weak learners.
   std::vector<WeakLearnerType> weakLearners;

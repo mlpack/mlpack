@@ -46,6 +46,7 @@ GradBoosting<MatType>::
   numClasses(numClasses),
   numModels(numModels)
 {
+  adjustments.resize(numModels);
   TrainInternal(data, labels, numClasses, numModels);
 }
 
@@ -71,6 +72,7 @@ GradBoosting(const MatType& data,
   numClasses(numClasses),
   numModels(numModels)
 {
+  adjustments.resize(numModels);
   TrainInternal(data, labels, numClasses, numModels, 
                 minimumLeafSize, minimumGainSplit, maximumDepth);
 }
@@ -82,6 +84,7 @@ void GradBoosting<MatType>::
         const size_t numClasses,
         const size_t numModels)
 {
+  adjustments.resize(numModels);
   SetNumModels(numModels);
   return TrainInternal(data, labels, numClasses, numModels);
 }
@@ -96,6 +99,7 @@ void GradBoosting<MatType>::
         const double minimumGainSplit, 
         const size_t maximumDepth)
 {
+  adjustments.resize(numModels);
   SetNumModels(numModels);
   return TrainInternal(data, labels, numClasses, numModels,
                        minimumLeafSize, minimumGainSplit, maximumDepth);
@@ -120,30 +124,24 @@ void GradBoosting<MatType>::Classify(const VecType& point,
                                       arma::vec& probabilities)
 {
   probabilities.resize(numClasses);
+  int tempPrediction = 0;
 
   for (size_t i = 0; i < weakLearners.size(); ++i) 
   {
-    size_t p; /*Not going to use.*/
+    size_t p;
 
     arma::vec tempProb(numClasses, arma::fill::zeros);
     weakLearners[i].Classify(point, p, tempProb);
 
-    if(probabilities.is_empty()) probabilities = tempProb;
-    else probabilities = probabilities + tempProb;
+    tempPrediction -= adjustments(i);
+    // if(probabilities.is_empty()) probabilities = tempProb;
+    // else probabilities = probabilities + tempProb;
 
+    tempPrediction += p;
   }
 
-  probabilities /= (double) numModels;
-
-  // Go through all the probabilities and return the 
-  // variable with highest probability
-  prediction = 0;
-  for (size_t i = 0; i < probabilities.n_rows; i++)
-  {
-    if (probabilities(i) > probabilities(prediction))
-      prediction = i;
-  }
-
+  // prediction += arma::sum(adjustments);
+  prediction = (size_t) tempPrediction;
 }
 
 template<typename MatType>
@@ -218,41 +216,45 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
   // Initiate dimensionSelector.
   const AllDimensionSelect dimensionSelector;
 
-  // Initiate learning rate.
-  double learningRate = 1;
-
   // Clear the weak learners vector to in case it's preinitialised.
   weakLearners.clear();
 
   // Store residues.
-  arma::mat residue(numClasses, data.n_cols, arma::fill::zeros);
-  for (size_t i = 0; i < labels.n_cols; ++i) 
-    residue(labels(i), i) = 1.0;
+  arma::Row<size_t> residue = labels;
 
   for (size_t model = 0; model < numModels; ++model) 
   {
 
-    WeakLearnerType* wPtr;
-    wPtr = new WeakLearnerType(data, labels, numClasses, 
-    minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
+    arma::Row<size_t> tempResidue = arma::unique(residue);
+    size_t tempNumClasses = tempResidue.n_elem;
 
-    WeakLearnerType w = *wPtr;
-    delete wPtr;
+    WeakLearnerType w(data, residue, tempNumClasses, 
+    minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
 
     weakLearners.push_back(w);
 
-    arma::Row<size_t> predictions(residue.n_cols, arma::fill::zeros);
+    arma::Row<size_t> predictions(residue.n_elem, arma::fill::zeros);
     arma::mat probabilities;
     w.Classify(data, predictions, probabilities);
 
-    for (size_t i = 0; i < residue.n_rows; ++i) 
+    if (model != numModels - 1)
     {
-      for (size_t j = 0; j < residue.n_cols; ++j)
+      int minDifference = 1e9;
+      for (size_t i = 0; i < residue.n_elem; ++i)
       {
-        residue(i, j) = (size_t)abs((double)residue(i, j) - 
-          (double)(learningRate * probabilities(i, j)));
+        int tempDifference = (int) residue(i) - (int) predictions(i);
+        minDifference = std::min(tempDifference, minDifference);
+      }
+
+      adjustments(model) = -minDifference;
+      residue = residue + adjustments(model);
+
+      for (size_t i = 0; i < residue.n_elem; ++i) 
+      {
+        residue(i) = residue(i) - predictions(i);
       }
     }
+
   }
 }
 
