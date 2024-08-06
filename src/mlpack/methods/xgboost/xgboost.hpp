@@ -17,6 +17,7 @@
 
 // Importing base components required to write mlpack methods.
 #include <mlpack/core.hpp>
+#include "xgbtree/xgbtree.hpp"
 
 // Written in mlpack namespace.
 namespace mlpack {

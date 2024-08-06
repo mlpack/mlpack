@@ -16,7 +16,7 @@
 
 // Base definition of the XGBoostModel class.
 #include "xgboost.hpp"
-#include "loss_functions/sse_loss.hpp"
+#include "loss_function.hpp"
 #include <mlpack/core.hpp>
 
 // Defined within the mlpack namespace.
