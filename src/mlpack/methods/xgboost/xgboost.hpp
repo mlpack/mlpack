@@ -21,11 +21,42 @@
 
 // Written in mlpack namespace.
 namespace mlpack {
+/**
+ * The XGBoost class. XGBoost is a boosting algorithm, meaning that it
+ * combines an ensemble of trees to produce a strong learner.
+ * 
+ * XGBoost is generally implemented using Decision Trees, or more specifically 
+ * Decision Stumps i.e. weak learner Decision Trees with low depth.
+ * 
+ * @tparam MatType Data matrix type (i.e. arma::mat or arma::sp_mat).
+ */
+
 
 template<typename MatType = arma::mat>
-class XGBoost
+class XGBoost 
 {
-  XGBoost() {/*Nothing to do*/}
+ public: 
+
+  typedef typename MatType::elem_type ElemType;
+
+  /**
+   * Constructor for creating XGBoost without training. 
+   * Be sure to call Train() before calling Classify()
+   */
+  XGBoost();
+
+  /**
+   * Constructor in case trees aren't defined.
+   *
+   * @param data Input data
+   * @param labels Corresponding labels
+   * @param numClasses Number of classes
+   * @param numModels Number of trees
+   */
+  XGBoost(const MatType& data,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const size_t numModels);
 
   /**
    * Constructor for a XGBoost model. Any extra parameters are used as
@@ -36,72 +67,39 @@ class XGBoost
    * @param data Input data.
    * @param labels Corresponding labels.
    * @param numClasses The number of classes.
-   * @param numModels Number of weak learners.
-   * @param weakLearnerParams... Any hyperparameters for the weak learner.
+   * @param numModels Number of trees.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
    */
-  template<typename... WeakLearnerArgs>
   XGBoost(const MatType& data,
-                const arma::Row<size_t>& labels,
-                const size_t numClasses,
-                const size_t numModels = 10,
-                WeakLearnerArgs&&... weakLearnerArgs);
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const size_t numModels,
+               const size_t minimumLeafSize,
+               const double minimumGainSplit,
+               const size_t maximumDepth);
 
-  /**
-   * Constructor takes an already-initialized weak learner; all other
-   * weak learners will learn with the same parameters as the given
-   * weak learner.
-   *
-   * @param data Input data.
-   * @param labels Corresponding labels.
-   * @param numClasses The number of classes.
-   * @param numModels Number of weak learners.
-   * @param other Weak learner that has already been initialized.
-   */
-  XGBoost (const MatType& data,
-                const arma::Row<size_t>& labels,
-                const size_t numClasses,
-                const size_t numModels,
-                const XGBTree& other);
-  
+  //! Set the number of trees explicitly.
+  void SetNumModels(const size_t x) {numModels = x;}
+
   //! Get the number of classes this model is trained on.
   size_t NumClasses() const { return numClasses; }
 
-  //! Get the number of weak learners .
+  //! Get the number of trees .
   size_t NumModels() const { return numModels; }
 
-  //! Get the given weak learner.
-  const XGBTree& WeakLearner(const size_t i) const { return weakLearners[i]; }
+  //! Get the given tree.
+  const XGBTree& Tree(const size_t i) const { return tree[i]; }
 
-  //! Modify the given weak learner (be careful!).
-  XGBTree& WeakLearner(const size_t i) { return weakLearners[i]; }
-
-  /**
-   * Train XGBoost on the given dataset. This method takes an initialized
-   * XGBTree; the parameters for this weak learner will be used to train
-   * each of the weak learners during XGBoost training. Note that this will
-   * completely overwrite any model that has already been trained with this
-   * object.
-   *
-   * Default values are not used for `numModels`; instead, it is used to specify
-   * the number of weak learners (models) to train.
-   *
-   * @param data Dataset to train on.
-   * @param labels Labels for each point in the dataset.
-   * @param numClasses The number of classes.
-   * @param numModels Number of weak learners (models) to train.
-   * @param learner Learner to use for training.
-   */
-  void Train(const MatType& data,
-              const arma::Row<size_t>& labels,
-              const size_t numClasses,
-              const size_t numModels,
-              const XGBTree learner);
+  //! Modify the given tree (be careful!).
+  XGBTree& Tree(const size_t i) { return tree[i]; }
 
   /**
    * Train XGBoost on the given dataset, using the given parameters.
    *
    * Default values are not used for `numModels`; instead, it is used to specify
-   * the number of weak learners (models) to train.
+   * the number of trees (models) to train.
    *
    * @param data Dataset to train on.
    * @param labels Labels for each point in the dataset.
@@ -109,31 +107,34 @@ class XGBoost
    * @param numModels Number of boosting rounds.
    */
   void Train(const MatType& data,
-              const arma::Row<size_t>& labels,
-              const size_t numClasses,
-              const size_t numModels);
+             const arma::Row<size_t>& labels,
+             const size_t numClasses,
+             const size_t numModels);
 
   /**
    * Train XGBoost on the given dataset, using the given parameters.
-   * The last parameters are the hyperparameters to use for the weak learners;
+   * The last parameters are the hyperparameters to use for the trees;
    * these are all the arguments to `XGBTree::Train()` after `numClasses`
    * and `weights`.
    *
    * Default values are not used for `numModels`; instead, it is used to specify
-   * the number of weak learners (models) to train.
+   * the number of trees (models) to train during XGBoost.
    *
    * @param data Dataset to train on.
    * @param labels Labels for each point in the dataset.
    * @param numClasses The number of classes in the dataset.
    * @param numModels Number of boosting rounds.
-   * @param weakLearnerArgs Hyperparameters to use for each weak learner.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
    */
-  template<typename... WeakLearnerArgs>
   void Train(const MatType& data,
-              const arma::Row<size_t>& labels,
-              const size_t numClasses,
-              const size_t numModels,
-              WeakLearnerArgs&&... weakLearnerArgs);
+             const arma::Row<size_t>& labels,
+             const size_t numClasses,
+             const size_t numModels,
+             const size_t minimumLeafSize,
+             const double minimumGainSplit,
+             const size_t maximumDepth);
 
   /**
    * Classify the given test point.
@@ -144,17 +145,14 @@ class XGBoost
   size_t Classify(const VecType& point);
 
   /**
-   * Classify the given test point and compute class probabilities.
+   * Classify the given test point.
    *
    * @param point Test point.
    * @param prediction Will be filled with the predicted class of `point`.
-   * @param probabilities Vector in which the probabilities of each classes are
-   *      stored
    */
   template<typename VecType>
   void Classify(const VecType& point,
-                size_t& prediction,
-                arma::Row<ElemType>& probabilities);
+                size_t& prediction);
 
   /**
    * Classify the given test points.
@@ -167,40 +165,43 @@ class XGBoost
                 arma::Row<size_t>& predictedLabels);
 
   /**
-   * Classify the given test points.
-   *
-   * @param test Testing data.
-   * @param predictedLabels Vector in which the predicted labels of the test
-   *      set will be stored.
-   * @param probabilities Vector in which the probabilities of each classes are
-   *      stored
-   */
-  void Classify(const MatType& test,
-                arma::Row<size_t>& predictedLabels,
-                arma::Row<ElemType>& probabilities);
-
-  /**
    * Serialize the XGBoost model.
    */
   template<typename Archive>
   void Serialize(Archive& ar, const uint32_t version);
 
+ private:
 
-  private:
-
-  template<bool UseExistingWeakLearner, typename... WeakLearnerArgs>
+  /**
+   * Internal utility training function.  
+   */
   void TrainInternal(const MatType& data,
-                const arma::Row<size_t>& labels,
-                const size_t numModels,
-                const size_t numClasses,
-                const XGBTree& wl,
-                WeakLearnerArgs&&... weakLearnerArgs);
-};
+                     const arma::Row<size_t>& labels,
+                     const size_t numClasses,
+                     const size_t numModels = 10,
+                     const size_t minimumLeafSize = 10,
+                     const double minimumGainSplit = 1e-7,
+                     const size_t maximumDepth = 2);
+
+  //! The number of classes in the model.
+  size_t numClasses;
+  //! The number of trees in the model.
+  size_t numModels;
+  //! Adjustments vector.
+  arma::vec adjustments;
+
+  //! The vector of trees.
+  std::vector<XGBTree> trees;
+  //! The weights corresponding to each weak learner.
+  std::vector<ElemType> alpha;
+}; 
 
 }
 
+CEREAL_TEMPLATE_CLASS_VERSION((typename MatType),
+  (mlpack::XGBoost<MatType>), (1));
+
 // Include implementation.
 #include "xgboost_impl.hpp"
-
 
 #endif

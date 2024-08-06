@@ -27,34 +27,28 @@ template<typename MatType>
 XGBoost<MatType>::XGBoost() :
     numClasses(0),
     numModels(0)
-{
-// Nothing to do.
-}
+{ /*Nothing to do.*/}
 
-// In case the user has already initialised the weak learner
-// Weak learner type "WeakLearnerInType" defined by the template
+// In case trees aren't defined
 /**
  * Constructor.
  *
  * @param data Input data
  * @param labels Corresponding labels
- * @param numModels Number of weak learners
  * @param numClasses Number of classes
- * @param other Weak Learner, which has been initialized already.
+ * @param numModels Number of trees
  */
 template<typename MatType>
 XGBoost<MatType>::
   XGBoost(const MatType& data,
-                const arma::Row<size_t>& labels,
-                const size_t numClasses,
-                const size_t numModels,
-                const XGBTree& other) :
-
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const size_t numModels) :
   numClasses(numClasses),
   numModels(numModels)
-
 {
-  (void) TrainInternal<true>(data, labels, numClasses, other);
+  adjustments.resize(numModels);
+  TrainInternal(data, labels, numClasses, numModels);
 }
 
 // In case the user inputs the arguments for the Weak Learner
@@ -63,38 +57,25 @@ XGBoost<MatType>::
  *
  * @param data Input data
  * @param labels Corresponding labels
- * @param numModels Number of weak learners
  * @param numClasses Number of classes
+ * @param numModels Number of trees
  * @param other Weak Learner, which has been initialized already.
  */
 template<typename MatType>
-
-// Variadic template to the Weak Learner arguments
-template<typename... WeakLearnerArgs>
 XGBoost<MatType>::
 XGBoost(const MatType& data,
-              const arma::Row<size_t>& labels,
-              const size_t numClasses,
-              const size_t numModels,
-              WeakLearnerArgs&&... weakLearnerArgs) :
+             const arma::Row<size_t>& labels,
+             const size_t numClasses,
+             const size_t numModels,
+             const size_t minimumLeafSize, 
+             const double minimumGainSplit, 
+             const size_t maximumDepth) :
+  numClasses(numClasses),
   numModels(numModels)
 {
-  XGBTree other; // Will not be used.
-  (void) TrainInternal<false>(data, labels, numClasses, other,
-      weakLearnerArgs...);
-}
-
-// Train XGBoost with a given weak learner.
-
-template<typename MatType>
-void XGBoost<MatType>::
-  Train(const MatType& data,
-        const arma::Row<size_t>& labels,
-        const size_t numClasses,
-        const size_t numModels,
-        const XGBTree learner)
-{
-  return TrainInternal<true>(data, labels, numModels, numClasses, learner);
+  adjustments.resize(numModels);
+  TrainInternal(data, labels, numClasses, numModels, 
+                minimumLeafSize, minimumGainSplit, maximumDepth);
 }
 
 template<typename MatType>
@@ -104,22 +85,25 @@ void XGBoost<MatType>::
         const size_t numClasses,
         const size_t numModels)
 {
-  XGBTree other; // Will not be used.
-  return TrainInternal<false>(data, labels, numModels, numClasses, other);
+  adjustments.resize(numModels);
+  SetNumModels(numModels);
+  return TrainInternal(data, labels, numClasses, numModels);
 }
 
 template<typename MatType>
-template<typename... WeakLearnerArgs>
 void XGBoost<MatType>::
   Train(const MatType& data,
         const arma::Row<size_t>& labels,
         const size_t numClasses,
         const size_t numModels,
-        WeakLearnerArgs&&... weakLearnerArgs)
+        const size_t minimumLeafSize, 
+        const double minimumGainSplit, 
+        const size_t maximumDepth)
 {
-  XGBTree other; // Will not be used.
-  return TrainInternal<false>(data, labels, numModels, numClasses, other,
-    weakLearnerArgs...);
+  adjustments.resize(numModels);
+  SetNumModels(numModels);
+  return TrainInternal(data, labels, numClasses, numModels,
+                       minimumLeafSize, minimumGainSplit, maximumDepth);
 }
 
 // Classify the given test point.
@@ -128,131 +112,107 @@ template<typename VecType>
 size_t XGBoost<MatType>::Classify(const VecType& point) 
 {
   size_t prediction;
-  arma::Row<ElemType> probabilities;
-  Classify(point, prediction, probabilities);
+  Classify<arma::colvec>(point, prediction);
+
   return prediction;
 }
 
 template<typename MatType>
 template<typename VecType>
 void XGBoost<MatType>::Classify(const VecType& point,
-                                                      size_t& prediction,
-                                                      arma::Row<ElemType>& probabilities)
+                                      size_t& prediction)
 {
+  int tempPrediction = 0;
 
-  prediction = 0;
-
-  for (size_t i = 0; i < weakLearners.size(); ++i) 
+  for (size_t i = 0; i < trees.size(); ++i) 
   {
-    size_t tempPred = weakLearners[i].Classify(point);
-    prediction += tempPred;
+    size_t p;
+
+    arma::vec tempProb(numClasses, arma::fill::zeros); /*Will not use*/
+    trees[i].Classify(point, p, tempProb);
+    tempPrediction -= adjustments(i);
+    tempPrediction += p;
   }
 
+  prediction = (size_t) tempPrediction;
 }
-
 
 template<typename MatType>
 void XGBoost<MatType>::Classify(const MatType& test,
-                                                      arma::Row<size_t>& predictedLabels) 
+                                      arma::Row<size_t>& predictedLabels) 
 {
-
   predictedLabels.clear();
   predictedLabels.resize(test.n_cols);
-  arma::Row<ElemType> probabilities;
-
+  
   for (size_t i = 0; i < test.n_cols; ++i) 
   {
+    arma::vec tempData(test.n_rows); 
     size_t prediction;
-    Classify<arma::colvec>(test.col(i), prediction, probabilities);
+    arma::vec tempProb(numClasses, arma::fill::zeros);
+
+    for (size_t j = 0; j < test.n_rows; ++j)
+      tempData(j) = test(j, i);
+
+    Classify<arma::vec>(tempData, prediction);
     predictedLabels(i) = prediction;
   }
+
 }
 
 
+// TrainInternal is a private function within XGBoost class
 template<typename MatType>
-void XGBoost<MatType>::Classify(const MatType& test,
-                                                      arma::Row<size_t>& predictedLabels,
-                                                      arma::Row<ElemType>& probabilities) 
+void XGBoost<MatType>::TrainInternal(const MatType& data,
+                                          const arma::Row<size_t>& labels,
+                                          const size_t numClasses,
+                                          const size_t numModels,
+                                          const size_t minimumLeafSize,
+                                          const double minimumGainSplit,
+                                          const size_t maximumDepth) 
 {
 
-  predictedLabels.clear();
-  predictedLabels.resize(test.n_cols);
+  // Initiate dimensionSelector.
+  const AllDimensionSelect dimensionSelector;
 
-  for (size_t i = 0; i < test.n_cols; ++i) 
-  {
-    size_t prediction;
-    Classify<arma::colvec>(test.col(i), prediction, probabilities);
-    predictedLabels(i) = prediction;
-  }
-}
+  // Clear the trees vector to in case it's preinitialised.
+  trees.clear();
 
-template<typename MatType>
-template<bool UseExistingWeakLearner, typename... WeakLearnerArgs>
-void XGBoost<MatType>:: 
-  TrainInternal(const MatType& data,
-                const arma::Row<size_t>& labels,
-                const size_t numModels,
-                const size_t numClasses,
-                const XGBTree& wl,
-                WeakLearnerArgs&&... weakLearnerArgs) 
-{
-
-  // Load the initial weights into a 2-D matrix.
-  const ElemType initWeight = 1.0 / ElemType(data.n_cols * numClasses);
-  MatType D(numClasses, data.n_cols);
-  D.fill(initWeight);
-
-  // Weights are stored in this row vector.
-  arma::Row<ElemType> weights(labels.n_cols);
-
-  weakLearners.clear();
-
-  MatType residue(data.n_rows, numClasses, arma::fill::zeros);
-
-  for (size_t i = 0; i < labels.n_cols; ++i) 
-  {
-    residue(i, labels(i)) = 1;
-  }
+  // Store residues.
+  arma::Row<size_t> residue = labels;
 
   for (size_t model = 0; model < numModels; ++model) 
   {
 
-    // Build the weight vectors.
-    weights = sum(D);
+    arma::Row<size_t> tempResidue = arma::unique(residue);
+    size_t tempNumClasses = tempResidue.n_elem;
 
-    XGBTree* wPtr;
+    XGBTree w(data, residue, tempNumClasses, 
+    minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
 
-    if(UseExistingWeakLearner)
+    trees.push_back(w);
+
+    arma::Row<size_t> predictions(residue.n_elem, arma::fill::zeros);
+    arma::mat probabilities; /*Will not use*/
+    w.Classify(data, predictions, probabilities);
+
+    if (model != numModels - 1)
     {
-      wPtr = new XGBTree(wl, data, residue, numClasses, weights,
-        std::forward<WeakLearnerArgs>(weakLearnerArgs)...);
-    }
-    else 
-    {
-      wPtr = new XGBTree(data, residue, numClasses,
-        std::forward<WeakLearnerArgs>(weakLearnerArgs)...);
-    }
-
-    XGBTree w = *wPtr;
-
-    arma::Row<size_t> predictions(residue.n_cols, arma::fill::zeros);
-    w.Classify(data, predictions);
-    w.Prune(pruningThreshold);
-
-    weakLearners.push_back(w);
-
-    // Compute the learning rate for this iteration.
-    double learningRate = 0.1;
-
-    for (size_t i = 0; i < residues.n_rows; ++i) 
-    {
-      for (size_t j = 0; j < residues.n_cols; ++j)
+      int minDifference = 1e9;
+      for (size_t i = 0; i < residue.n_elem; ++i)
       {
-        residue(i, j) = (size_t)abs((double)residue(i, j) - (double)(learningRate * probabilities(i, j)));
+        int tempDifference = (int) residue(i) - (int) predictions(i);
+        minDifference = std::min(tempDifference, minDifference);
+      }
+
+      adjustments(model) = -minDifference;
+      residue = residue + adjustments(model);
+
+      for (size_t i = 0; i < residue.n_elem; ++i) 
+      {
+        residue(i) = residue(i) - predictions(i);
       }
     }
-    delete wPtr;
-        
+
   }
 }
 
