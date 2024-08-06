@@ -111,8 +111,7 @@ template<typename VecType>
 size_t GradBoosting<MatType>::Classify(const VecType& point) 
 {
   size_t prediction;
-  arma::vec probabilities;
-  Classify<arma::colvec>(point, prediction, probabilities);
+  Classify<arma::colvec>(point, prediction);
 
   return prediction;
 }
@@ -120,27 +119,20 @@ size_t GradBoosting<MatType>::Classify(const VecType& point)
 template<typename MatType>
 template<typename VecType>
 void GradBoosting<MatType>::Classify(const VecType& point,
-                                      size_t& prediction,
-                                      arma::vec& probabilities)
+                                      size_t& prediction)
 {
-  probabilities.resize(numClasses);
   int tempPrediction = 0;
 
   for (size_t i = 0; i < weakLearners.size(); ++i) 
   {
     size_t p;
 
-    arma::vec tempProb(numClasses, arma::fill::zeros);
+    arma::vec tempProb(numClasses, arma::fill::zeros); /*Will not use*/
     weakLearners[i].Classify(point, p, tempProb);
-
     tempPrediction -= adjustments(i);
-    // if(probabilities.is_empty()) probabilities = tempProb;
-    // else probabilities = probabilities + tempProb;
-
     tempPrediction += p;
   }
 
-  // prediction += arma::sum(adjustments);
   prediction = (size_t) tempPrediction;
 }
 
@@ -158,45 +150,10 @@ void GradBoosting<MatType>::Classify(const MatType& test,
     arma::vec tempProb(numClasses, arma::fill::zeros);
 
     for (size_t j = 0; j < test.n_rows; ++j)
-    {
       tempData(j) = test(j, i);
-    }
 
-    Classify<arma::vec>(tempData, prediction, tempProb);
+    Classify<arma::vec>(tempData, prediction);
     predictedLabels(i) = prediction;
-  }
-
-}
-
-template<typename MatType>
-void GradBoosting<MatType>::Classify(const MatType& test,
-                                      arma::Row<size_t>& predictedLabels,
-                                      arma::mat& probabilities) 
-{
-  predictedLabels.clear();
-  predictedLabels.resize(test.n_cols);
-  
-  probabilities.clear();
-  probabilities.resize(numClasses, test.n_cols, arma::fill::zeros);
-
-  for (size_t i = 0; i < test.n_cols; ++i) 
-  {
-    arma::vec tempData(test.n_rows); 
-    size_t prediction;
-    arma::vec tempProb(numClasses, arma::fill::zeros);
-
-    for (size_t j = 0; j < test.n_rows; ++j)
-    {
-      tempData(j) = test(j, i);
-    }
-
-    Classify<arma::vec>(tempData, prediction, tempProb);
-    predictedLabels(i) = prediction;
-
-    for (size_t j = 0; j < numClasses; j++)
-    {
-      probabilities(j, i) = tempProb(j);
-    }
   }
 
 }
@@ -234,7 +191,7 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
     weakLearners.push_back(w);
 
     arma::Row<size_t> predictions(residue.n_elem, arma::fill::zeros);
-    arma::mat probabilities;
+    arma::mat probabilities; /*Will not use*/
     w.Classify(data, predictions, probabilities);
 
     if (model != numModels - 1)

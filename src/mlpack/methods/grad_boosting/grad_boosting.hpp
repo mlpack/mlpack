@@ -158,17 +158,14 @@ class GradBoosting
   size_t Classify(const VecType& point);
 
   /**
-   * Classify the given test point and compute class probabilities.
+   * Classify the given test point.
    *
    * @param point Test point.
    * @param prediction Will be filled with the predicted class of `point`.
-   * @param probabilities Vector in which the probabilities of each classes are
-   *      stored
    */
   template<typename VecType>
   void Classify(const VecType& point,
-                size_t& prediction,
-                arma::vec& probabilities);
+                size_t& prediction);
 
   /**
    * Classify the given test points.
@@ -179,20 +176,6 @@ class GradBoosting
    */
   void Classify(const MatType& test,
                 arma::Row<size_t>& predictedLabels);
-
-  /**
-   * Classify the given test points.
-   *
-   * @param test Testing data.
-   * @param predictedLabels Vector in which the predicted labels of the test
-   *      set will be stored.
-   * @param probabilities Vector in which the probabilities of each classes are
-   *      stored
-   */
-  void Classify(const MatType& test,
-                arma::Row<size_t>& predictedLabels,
-                arma::mat& probabilities);
-
 
   /**
    * Serialize the GradBoosting model.
