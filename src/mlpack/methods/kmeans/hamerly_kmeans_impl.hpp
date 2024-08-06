@@ -172,7 +172,7 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   double centroidMovement = 0.0;
 
   #pragma omp parallel for reduction(+:centroidMovement) \
-      reduction(max:furthestMovement) schedule(static)
+      reduction(max:furthestMovement, secondFurthestMovement) schedule(static)
   for (size_t c = 0; c < numClusters; ++c)
   {
     if (counts(c) > 0)
@@ -187,19 +187,13 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
     if (movement > furthestMovement)
     {
-      #pragma omp critical
-      {
-        if (movement > furthestMovement)
-        {
-          secondFurthestMovement = furthestMovement;
-          furthestMovement = movement;
-          furthestMovingCluster = c;
-        }
-        else if (movement > secondFurthestMovement)
-        {
-          secondFurthestMovement = movement;
-        }
-      }
+      secondFurthestMovement = furthestMovement;
+      furthestMovement = movement;
+      furthestMovingCluster = c;
+    }
+    else if (movement > secondFurthestMovement)
+    {
+      secondFurthestMovement = movement;
     }
   }
 
