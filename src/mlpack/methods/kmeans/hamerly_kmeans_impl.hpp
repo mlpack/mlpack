@@ -26,12 +26,12 @@ HamerlyKMeans<DistanceType, MatType>::HamerlyKMeans(const MatType& dataset,
 {
   // Nothing to do.
 }
-
 template<typename DistanceType, typename MatType>
 double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
                                                      arma::mat& newCentroids,
                                                      arma::Col<size_t>& counts)
 {
+  static constexpr double eps = std::numeric_limits<double>::epsilon();
   size_t hamerlyPruned = 0;
 
   // If this is the first iteration, we need to set all the bounds.
@@ -44,105 +44,146 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     minClusterDistances.set_size(centroids.n_cols);
   }
 
-  // Reset new centroids.
+  // Reset new centroids and counts.
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
   counts.zeros(centroids.n_cols);
 
   // Calculate minimum intra-cluster distance for each cluster.
   minClusterDistances.fill(DBL_MAX);
-  for (size_t i = 0; i < centroids.n_cols; ++i)
+  
+  #pragma omp parallel
   {
-    for (size_t j = i + 1; j < centroids.n_cols; ++j)
+    arma::vec localMinClusterDistances(centroids.n_cols, arma::fill::value(DBL_MAX));
+    #pragma omp for reduction(+:distanceCalculations) schedule(dynamic)
+    for (size_t i = 0; i < centroids.n_cols; ++i)
     {
-      const double dist = distance.Evaluate(centroids.col(i),
-                                            centroids.col(j)) / 2.0;
-      ++distanceCalculations;
+      for (size_t j = i + 1; j < centroids.n_cols; ++j)
+      {
+        const double dist = distance.Evaluate(centroids.col(i), centroids.col(j));
+        ++distanceCalculations;
 
-      // Update bounds, if this intra-cluster distance is smaller.
-      if (dist < minClusterDistances(i))
-        minClusterDistances(i) = dist;
-      if (dist < minClusterDistances(j))
-        minClusterDistances(j) = dist;
+        if (dist > eps)
+        {
+          const double halfDist = dist / 2.0;
+          localMinClusterDistances(i) = std::min(localMinClusterDistances(i), halfDist);
+          localMinClusterDistances(j) = std::min(localMinClusterDistances(j), halfDist);
+        }
+      }
+    }
+
+    #pragma omp critical
+    {
+      for (size_t i = 0; i < centroids.n_cols; ++i)
+      {
+        minClusterDistances(i) = std::min(minClusterDistances(i), localMinClusterDistances(i));
+      }
     }
   }
 
-  for (size_t i = 0; i < dataset.n_cols; ++i)
+  const size_t numPoints = dataset.n_cols;
+  const size_t numClusters = centroids.n_cols;
+
+  #pragma omp parallel
   {
-    const double m = std::max(minClusterDistances(assignments[i]),
-                              lowerBounds(i));
+    arma::mat localNewCentroids(centroids.n_rows, centroids.n_cols, arma::fill::zeros);
+    arma::Col<size_t> localCounts(centroids.n_cols, arma::fill::zeros);
+    size_t localHamerlyPruned = 0;
+    size_t localDistanceCalculations = 0;
 
-    // First bound test.
-    if (upperBounds(i) <= m)
+    #pragma omp for schedule(static)
+    for (size_t i = 0; i < numPoints; ++i)
     {
-      ++hamerlyPruned;
-      newCentroids.col(assignments[i]) += dataset.col(i);
-      ++counts(assignments[i]);
-      continue;
-    }
+      const double m = std::max(minClusterDistances(assignments[i]),
+                                lowerBounds(i));
 
-    // Tighten upper bound.
-    upperBounds(i) = distance.Evaluate(dataset.col(i),
-                                       centroids.col(assignments[i]));
-    ++distanceCalculations;
-
-    // Second bound test.
-    if (upperBounds(i) <= m)
-    {
-      newCentroids.col(assignments[i]) += dataset.col(i);
-      ++counts(assignments[i]);
-      continue;
-    }
-
-    // The bounds failed.  So test against all other clusters.
-    // This is Hamerly's Point-All-Ctrs() function from the paper.
-    // We have to reset the lower bound first.
-    lowerBounds(i) = DBL_MAX;
-    for (size_t c = 0; c < centroids.n_cols; ++c)
-    {
-      if (c == assignments[i])
+      // First bound test.
+      if (upperBounds(i) <= m + eps)
+      {
+        ++localHamerlyPruned;
+        localNewCentroids.col(assignments[i]) += dataset.col(i);
+        ++localCounts(assignments[i]);
         continue;
-
-      const double dist = distance.Evaluate(dataset.col(i), centroids.col(c));
-
-      // Is this a better cluster?  At this point, upperBounds[i] = d(i, c(i)).
-      if (dist < upperBounds(i))
-      {
-        // lowerBounds holds the second closest cluster.
-        lowerBounds(i) = upperBounds(i);
-        upperBounds(i) = dist;
-        assignments[i] = c;
       }
-      else if (dist < lowerBounds(i))
+
+      // Tighten upper bound.
+      upperBounds(i) = distance.Evaluate(dataset.col(i),
+                                         centroids.col(assignments[i]));
+      ++localDistanceCalculations;
+
+      // Second bound test.
+      if (upperBounds(i) <= m + eps)
       {
-        // This is a closer second-closest cluster.
-        lowerBounds(i) = dist;
+        localNewCentroids.col(assignments[i]) += dataset.col(i);
+        ++localCounts(assignments[i]);
+        continue;
       }
+
+      // The bounds failed. So test against all other clusters.
+      lowerBounds(i) = DBL_MAX;
+      size_t newAssignment = assignments[i];
+      double newUpperBound = upperBounds(i);
+      double newLowerBound = DBL_MAX;
+
+      for (size_t c = 0; c < numClusters; ++c)
+      {
+        if (c == assignments[i])
+          continue;
+
+        const double dist = distance.Evaluate(dataset.col(i), centroids.col(c));
+
+        // Is this a better cluster?
+        if (dist < newUpperBound)
+        {
+          newLowerBound = newUpperBound;
+          newUpperBound = dist;
+          newAssignment = c;
+        }
+        else if (dist < newLowerBound)
+        {
+          newLowerBound = dist;
+        }
+      }
+      localDistanceCalculations += numClusters - 1;
+
+      // Update bounds and assignment
+      upperBounds(i) = newUpperBound;
+      lowerBounds(i) = newLowerBound;
+      assignments[i] = newAssignment;
+
+      // Update new centroids.
+      localNewCentroids.col(newAssignment) += dataset.col(i);
+      ++localCounts(newAssignment);
     }
-    distanceCalculations += centroids.n_cols - 1;
 
-    // Update new centroids.
-    newCentroids.col(assignments[i]) += dataset.col(i);
-    ++counts(assignments[i]);
+    #pragma omp critical
+    {
+      newCentroids += localNewCentroids;
+      counts += localCounts;
+      hamerlyPruned += localHamerlyPruned;
+      distanceCalculations += localDistanceCalculations;
+    }
   }
 
-  // Normalize centroids and calculate cluster movement (contains parts of
-  // Move-Centers() and Update-Bounds()).
+  // Normalize centroids and calculate cluster movement
   double furthestMovement = 0.0;
   double secondFurthestMovement = 0.0;
   size_t furthestMovingCluster = 0;
-  arma::vec centroidMovements(centroids.n_cols);
+  arma::vec centroidMovements(numClusters);
   double centroidMovement = 0.0;
-  for (size_t c = 0; c < centroids.n_cols; ++c)
+
+  #pragma omp parallel for reduction(+:centroidMovement) \
+      reduction(max:furthestMovement, secondFurthestMovement) schedule(static)
+  for (size_t c = 0; c < numClusters; ++c)
   {
     if (counts(c) > 0)
       newCentroids.col(c) /= counts(c);
+    else
+      newCentroids.col(c) = centroids.col(c);
 
     // Calculate movement.
-    const double movement = distance.Evaluate(centroids.col(c),
-                                              newCentroids.col(c));
+    const double movement = std::sqrt(arma::sum(arma::square(centroids.col(c) - newCentroids.col(c))));
     centroidMovements(c) = movement;
     centroidMovement += std::pow(movement, 2.0);
-    ++distanceCalculations;
 
     if (movement > furthestMovement)
     {
@@ -156,21 +197,31 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     }
   }
 
-  // Now update bounds (lines 3-8 of Update-Bounds()).
-  for (size_t i = 0; i < dataset.n_cols; ++i)
+  // Now update bounds
+  #pragma omp parallel for schedule(static)
+  for (size_t i = 0; i < numPoints; ++i)
   {
-    upperBounds(i) += centroidMovements(assignments[i]);
-    if (assignments[i] == furthestMovingCluster)
-      lowerBounds(i) -= secondFurthestMovement;
+    if (assignments[i] < numClusters)
+    {
+      upperBounds(i) += centroidMovements(assignments[i]);
+      if (assignments[i] == furthestMovingCluster)
+        lowerBounds(i) -= secondFurthestMovement;
+      else
+        lowerBounds(i) -= furthestMovement;
+    }
     else
-      lowerBounds(i) -= furthestMovement;
+    {
+      #pragma omp critical
+      {
+        Log::Warn << "Invalid assignment for point " << i << std::endl;
+      }
+    }
   }
 
   Log::Info << "Hamerly prunes: " << hamerlyPruned << ".\n";
 
   return std::sqrt(centroidMovement);
 }
-
 } // namespace mlpack
 
 #endif
