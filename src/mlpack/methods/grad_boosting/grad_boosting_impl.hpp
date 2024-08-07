@@ -11,8 +11,8 @@
  */
 
 // Include guard - Used to prevent including double copies of the same code
-#ifndef MLPACK_METHODS_GRADBOOSTING_GRADBOOSTING_IMPL_HPP
-#define MLPACK_METHODS_GRADBOOSTING_GRADBOOSTING_IMPL_HPP
+#ifndef MLPACK_METHODS_GRAD_BOOSTING_GRADBOOSTING_IMPL_HPP
+#define MLPACK_METHODS_GRAD_BOOSTING_GRADBOOSTING_IMPL_HPP
 
 // Base definition of the GradBoostingModel class.
 #include "grad_boosting.hpp"
