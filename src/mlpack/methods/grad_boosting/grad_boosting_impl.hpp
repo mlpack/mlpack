@@ -122,12 +122,11 @@ void GradBoosting<MatType>::Classify(const VecType& point,
                                       size_t& prediction)
 {
   int tempPrediction = 0;
+  arma::vec tempProb(numClasses, arma::fill::zeros); /*Will not use*/
 
   for (size_t i = 0; i < weakLearners.size(); ++i) 
   {
     size_t p;
-
-    arma::vec tempProb(numClasses, arma::fill::zeros); /*Will not use*/
     weakLearners[i].Classify(point, p, tempProb);
     tempPrediction -= adjustments(i);
     tempPrediction += p;
@@ -142,12 +141,11 @@ void GradBoosting<MatType>::Classify(const MatType& test,
 {
   predictedLabels.clear();
   predictedLabels.resize(test.n_cols);
-  
+
   for (size_t i = 0; i < test.n_cols; ++i) 
   {
     arma::vec tempData(test.n_rows); 
     size_t prediction;
-    arma::vec tempProb(numClasses, arma::fill::zeros);
 
     for (size_t j = 0; j < test.n_rows; ++j)
       tempData(j) = test(j, i);
@@ -173,6 +171,8 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
 
   // Clear the weak learners vector to in case it's preinitialised.
   weakLearners.clear();
+  
+  arma::mat probabilities; /*Will not use*/
 
   // Store residues.
   arma::Row<size_t> residue = labels;
@@ -188,7 +188,6 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
     weakLearners.push_back(w);
 
     arma::Row<size_t> predictions(residue.n_elem, arma::fill::zeros);
-    arma::mat probabilities; /*Will not use*/
     w.Classify(data, predictions, probabilities);
 
     if (model != numModels - 1)
