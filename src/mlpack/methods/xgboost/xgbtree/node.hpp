@@ -288,7 +288,7 @@ class Node
   private:
 
   //! The vector of children.
-  std::vector<DecisionTree*> children;
+  std::vector<Node*> children;
   //! The dimension this node splits on.
   size_t splitDimension;
 
