@@ -24,9 +24,10 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
 size_t numModels = 10;
+size_t numClasses = 5;
 
 mlpack::GradBoosting gb;               // Step 1: create model.
-gb.Train(dataset, labels, 5, numModels);          // Step 2: train model.
+gb.Train(dataset, labels, numClasses, numModels);          // Step 2: train model.
 arma::Row<size_t> predictions;
 gb.Classify(testDataset, predictions); // Step 3: classify points.
 
@@ -63,13 +64,13 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 ---
 
- * `gb = GradBoosting(data, labels, numClasses, numModels, other)`
-   - Train on numerical-only data, initialise with a pre-initialised weak learner `other`
+ * `gb = GradBoosting(data, labels, numClasses, numModels)`
+   - Train on numerical-only data using default arguments for the weak learners (Decision Trees).
 
 ---
 
- * `gb = GradBoosting(data, labels, numClasses, numModels, weakLearnerArgs)`
-   - Train on numerical-only data, entering the weak learner arguments (may enter as many as required).
+ * `gb = GradBoosting(data, labels, numClasses, numModels, minimumLeafSize, minimumGainSplit, maximumDepth)`
+   - Train on numerical-only data, entering the weak learner arguments `minimumLeafSize`, `minimumGainSplit` and `maximumDepth`.
 
 ---
 
@@ -81,11 +82,10 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels. [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `numModels` | `size_t` | Number of weak learner models to be used. | _(N/A)_ |
-| `other` | `Weak_Learner_Type` | Pre-initiated weak learner. | _(N/A)_ |
-| `WeakLearnerArgs` | `Weak_Learner_Args` | Weak learner arguments. (Enter as many as required.) | _(N/A)_ |
+| `minimumLeafSize` | `size_t` | Minimum leaf size for weak learner decision tree | 10 |
+| `minimumGainSplit` | `double` | Minimum gain split for weak learner decision tree | 1e-7 |
+| `maximumDepth` | `size_t` | Maximum tree depth for weak learner decision tree | 2 |
 
- * Weak Learner type for `other` must match the specified WeakLearnerType during 
- initialising of GradBoosting object.
  * Number of labels in the data must be less than or equal to numClasses.
 
 ***Note:*** different types can be used for `data` (e.g.,
@@ -96,18 +96,13 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 If training is not done as part of the constructor call, it can be done with one
 of the following versions of the `Train()` member function:
 
- * `gb.Train(data, labels, numClasses, other, numModels)`
-   - Train on numerical data using pre-initiated weak learner model.
-
----
-
  * `gb.Train(data, labels, numClasses, numModels)`
-   - Train on numerical data without using pre-initiated weak learner model.
+   - Train on numerical data without using any decision tree arguments.
 
 ---
 
- * `gb.Train(data, labels, numClasses, numModels, weakLearnerArgs)`
-   - Train on numerical data using weak learner model's arguments.
+ * `gb.Train(data, labels, numClasses, numModels, minimumLeafSize, minimumGainSplit, maximumDepth)`
+   - Train on numerical data using weak learner model's arguments `minimumLeafSize`, `minimumGainSplit` and `maximumDepth`.
 
 ---
 
@@ -137,10 +132,10 @@ to make class predictions for new data.
 
 ---
 
- * `gb.Classify(data, predictions)`
+ * `gb.Classify(data, predictedLabels)`
     - ***(Multi-point)***
     - Classify a set of points.
-    - The prediction for data point `i` can be accessed with `predictions[i]`.
+    - The prediction for data point `i` can be accessed with `predictedLabels[i]`.
 
 ---
 
@@ -152,7 +147,7 @@ to make class predictions for new data.
 | _single-point_ | `prediction` | `size_t&` | `size_t` to store class prediction into. |
 ||||
 | _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md#representing-data-in-mlpack) points for classification. |
-| _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into.  Will be set to length `data.n_cols`. |
+| _multi-point_ | `predictedLabels` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into.  Will be set to length `data.n_cols`. |
 
 ***Note:*** different types can be used for `data` and `point` (e.g.
 `arma::fmat`, `arma::sp_mat`, `arma::sp_vec`, etc.).  However, the element type
@@ -168,6 +163,8 @@ that is used should be the same type that was used for training.
 
  * `gb.NumClasses()` returns a `size_t` indicating the number of classes the
    model was trained on.
+
+ * `gb.SetNumModels(size_t x)` set the number of weak learners to `x` explicitly.
 
 For complete functionality, the [source
 code](/src/mlpack/methods/grad_boosting/grad_boosting.hpp) can be consulted.
