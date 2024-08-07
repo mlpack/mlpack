@@ -22,8 +22,7 @@
 #include <mlpack/core.hpp>
 
 // Only using decision trees for now, therefore only including decision tree functionalities.
-// #include <mlpack/methods/decision_tree/decision_tree.hpp>
-#include "../decision_tree.hpp"
+#include <mlpack/methods/decision_tree/decision_tree.hpp>
 
 // Defined DecisionTree with template as WeakLearnerType to avoid repetition
 typedef mlpack::DecisionTree<mlpack::GiniGain,
