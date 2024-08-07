@@ -155,7 +155,6 @@ void GradBoosting<MatType>::Classify(const MatType& test,
     Classify<arma::vec>(tempData, prediction);
     predictedLabels(i) = prediction;
   }
-
 }
 
 
@@ -169,7 +168,6 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
                                           const double minimumGainSplit,
                                           const size_t maximumDepth) 
 {
-
   // Initiate dimensionSelector.
   const AllDimensionSelect dimensionSelector;
 
@@ -181,7 +179,6 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
 
   for (size_t model = 0; model < numModels; ++model) 
   {
-
     arma::Row<size_t> tempResidue = arma::unique(residue);
     size_t tempNumClasses = tempResidue.n_elem;
 

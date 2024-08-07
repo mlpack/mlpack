@@ -15,8 +15,8 @@
  */
 
 // Include guard - Used to prevent including double copies of the same code
-#ifndef MLPACK_METHODS_GRADBOOSTING_GRADBOOSTING_HPP
-#define MLPACK_METHODS_GRADBOOSTING_GRADBOOSTING_HPP
+#ifndef MLPACK_METHODS_GRAD_BOOSTING_GRADBOOSTING_HPP
+#define MLPACK_METHODS_GRAD_BOOSTING_GRADBOOSTING_HPP
 
 // Importing base components required to write mlpack methods.
 #include <mlpack/core.hpp>
