@@ -15,6 +15,7 @@
 
 #include "catch.hpp"
 #include "serialization.hpp"
+#include "mock_categorical_data.hpp"
 
 using namespace mlpack;
 
@@ -22,7 +23,7 @@ using namespace mlpack;
  * Check if the Pruning method is removing nodes if they 
  * don't meet threshold conditions.
  */
-TEST_CASE("PruningBaseTest", "[DecisionTreeTest]")
+TEST_CASE("PruningBaseTest", "[XGBTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
@@ -37,4 +38,26 @@ TEST_CASE("PruningBaseTest", "[DecisionTreeTest]")
   bool flag = d.Prune(10);
 
   REQUIRE(flag == true);
+}
+
+/*
+ * Test that we can pass const data into XGBTree constructors.
+ */
+TEST_CASE("ConstDataTest", "[XGBTreeTest]")
+{
+  arma::mat data;
+  arma::Row<size_t> labels;
+  data::DatasetInfo datasetInfo;
+  MockCategoricalData(data, labels, datasetInfo);
+
+  const arma::mat& constData = data;
+  const arma::Row<size_t>& constLabels = labels;
+  const arma::rowvec constWeights(labels.n_elem, arma::fill::randu);
+  const size_t numClasses = 5;
+
+  XGBTree<> dt(constData, constLabels, numClasses);
+  XGBTree<> dt2(constData, datasetInfo, constLabels, numClasses);
+  XGBTree<> dt3(constData, constLabels, numClasses, constWeights);
+  XGBTree<> dt4(constData, datasetInfo, constLabels, numClasses,
+      constWeights);
 }
