@@ -71,8 +71,21 @@ class LossFunction
     return loss;
   }
 
-  double EvaluateLogLoss(const arma::mat& input)
+  double EvaluateLogLoss(const arma::Row<size_t>& labels, const arma::mat& probabilities)
   {
+    double n = (double) probabilities.n_cols;
+    size_t numClasses = probabilities.n_rows;
+
+    double loss = 0;
+
+    for (size_t i = 0; i < n; ++i)
+    {
+      loss -= std::log(probabilities(labels(i)));
+    }
+
+    loss /= n; 
+
+    return loss;
 
   }
 
