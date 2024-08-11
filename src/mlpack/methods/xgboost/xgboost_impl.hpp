@@ -160,6 +160,21 @@ void XGBoost<MatType>::Classify(const MatType& test,
 }
 
 
+void CalculateProbability(arma::mat& rawScores,
+                          arma::mat& probabilities)
+{
+  for (size_t i = 0; i < rawScores.n_rows; ++i)
+  {
+    double sumExp = 0;
+    for (size_t k = 0; k < rawScores.n_cols; ++k)
+      sumExp += std::exp(rawScores(i, k));
+    
+    for (size_t k = 0; k < rawScores.n_cols; ++k)  
+      probabilities(i, k) = std::exp(rawScores(i, k)) / sumExp;
+  }
+}
+
+
 // TrainInternal is a private function within XGBoost class
 template<typename MatType>
 void XGBoost<MatType>::TrainInternal(const MatType& data,
@@ -177,42 +192,42 @@ void XGBoost<MatType>::TrainInternal(const MatType& data,
   // Clear the trees vector to in case it's preinitialised.
   trees.clear();
 
-  // Store residues.
-  arma::Row<size_t> residue = labels;
+  // Initiate variables.
+  double numClasses = (double) numClasses;
+  double n = (double) labels.n_elems;
+  double learningRate = 1;
+
+  // Initiate matrices for use.
+  arma::mat rawScores(numClasses, n, arma::fill::zeros);
+  arma::mat probabilities(numClasses, n, arma::fill::value(1.0 / n));
+  arma::mat residues(numClasses, n, arma::fill:zeros);
+  arma::mat tempLabels(numClasses, n, arma::fill:zeros);
+
+  // Preparing tempLabels.
+  for (size_t i = 0; i < n; ++i)
+    tempLabels(labels(i), i) = 1.0;
 
   for (size_t model = 0; model < numModels; ++model) 
   {
+    // Residue is first calculated to train the weak learner.
+    residues = tempLabels - probabilities;
 
-    arma::Row<size_t> tempResidue = arma::unique(residue);
-    size_t tempNumClasses = tempResidue.n_elem;
-
-    XGBTree w(data, residue, tempNumClasses, 
+    // The weak learner is trained.
+    XGBTree w(data, residue, numClasses, 
     minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
 
+    // Raw scores are obtained to update probabilities variable.
+    arma::mat tempPredictions(numClasses, n);
+    w.Classify(data, tempPredictions);
+
+    // Raw scores are updated.
+    rawScores = rawScores + learningRate * tempPredictions;
+
+    // Probabilities are calculated.
+    CalculateProbability(rawScores, probabilities);
+
+    // The weak learner is saved.
     trees.push_back(w);
-
-    arma::Row<size_t> predictions(residue.n_elem, arma::fill::zeros);
-    arma::mat probabilities; /*Will not use*/
-    w.Classify(data, predictions, probabilities);
-
-    if (model != numModels - 1)
-    {
-      int minDifference = 1e9;
-      for (size_t i = 0; i < residue.n_elem; ++i)
-      {
-        int tempDifference = (int) residue(i) - (int) predictions(i);
-        minDifference = std::min(tempDifference, minDifference);
-      }
-
-      adjustments(model) = -minDifference;
-      residue = residue + adjustments(model);
-
-      for (size_t i = 0; i < residue.n_elem; ++i) 
-      {
-        residue(i) = residue(i) - predictions(i);
-      }
-    }
-
   }
 }
 
