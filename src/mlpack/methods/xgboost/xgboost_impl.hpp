@@ -112,7 +112,8 @@ template<typename VecType>
 size_t XGBoost<MatType>::Classify(const VecType& point) 
 {
   size_t prediction;
-  Classify<arma::colvec>(point, prediction);
+  arma::vec probabilities; /* Not to be used */
+  Classify<arma::colvec>(point, prediction, probabilities);
 
   return prediction;
 }
@@ -120,41 +121,49 @@ size_t XGBoost<MatType>::Classify(const VecType& point)
 template<typename MatType>
 template<typename VecType>
 void XGBoost<MatType>::Classify(const VecType& point,
-                                      size_t& prediction)
+                                size_t& prediction,
+                                VecType& probabilities)
 {
-  int tempPrediction = 0;
+  arma::rowvec rawScores(numClasses, arma::fill::zeros);
 
   for (size_t i = 0; i < trees.size(); ++i) 
   {
-    size_t p;
-
-    arma::vec tempProb(numClasses, arma::fill::zeros); /*Will not use*/
-    trees[i].Classify(point, p, tempProb);
-    tempPrediction -= adjustments(i);
-    tempPrediction += p;
+    arma::rowvec tempRawScores(numClasses, arma::fill::zeros);
+    tree[i].Classify(point, tempRawScores);
+    rawScores = rawScores + tempRawScores;
   }
+  CalculateProbability(rawScores, probabilities);
 
-  prediction = (size_t) tempPrediction;
+  prediction = 0;
+  for (size_t i = 0; i < numClasses; ++i)
+  {
+    if (probabilities(prediction) < probabilities(i))
+      prediction = i;
+  }
 }
 
 template<typename MatType>
 void XGBoost<MatType>::Classify(const MatType& test,
-                                      arma::Row<size_t>& predictedLabels) 
+                                arma::Row<size_t>& predictedLabels,
+                                MatType& probabilities) 
 {
   predictedLabels.clear();
   predictedLabels.resize(test.n_cols);
   
   for (size_t i = 0; i < test.n_cols; ++i) 
   {
-    arma::vec tempData(test.n_rows); 
     size_t prediction;
+    arma::vec tempData(test.n_rows); 
     arma::vec tempProb(numClasses, arma::fill::zeros);
 
     for (size_t j = 0; j < test.n_rows; ++j)
       tempData(j) = test(j, i);
 
-    Classify<arma::vec>(tempData, prediction);
+    Classify<arma::vec>(tempData, prediction, tempProb);
     predictedLabels(i) = prediction;
+
+    for (size_t j = 0; j < numClasses; ++j)
+      probabilities(i, j) = tempProb(j);
   }
 
 }

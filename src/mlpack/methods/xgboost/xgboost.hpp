@@ -152,7 +152,8 @@ class XGBoost
    */
   template<typename VecType>
   void Classify(const VecType& point,
-                size_t& prediction);
+                size_t& prediction,
+                VecType& probabilities);
 
   /**
    * Classify the given test points.
@@ -162,7 +163,8 @@ class XGBoost
    *      set will be stored.
    */
   void Classify(const MatType& test,
-                arma::Row<size_t>& predictedLabels);
+                arma::Row<size_t>& predictedLabels,
+                MatType& probabilities);
 
   /**
    * Serialize the XGBoost model.
