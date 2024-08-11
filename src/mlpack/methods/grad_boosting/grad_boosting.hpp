@@ -22,10 +22,10 @@
 #include <mlpack/core.hpp>
 
 // Only using decision trees for now, therefore only including decision tree functionalities.
-#include <mlpack/methods/decision_tree/decision_tree.hpp>
+#include <mlpack/methods/decision_tree/decision_tree_regressor.hpp>
 
 // Defined DecisionTree with template as WeakLearnerType to avoid repetition
-typedef mlpack::DecisionTree<mlpack::GiniGain,
+typedef mlpack::DecisionTreeRegressor<mlpack::MSEGain,
                     mlpack::BestBinaryNumericSplit,
                     mlpack::AllCategoricalSplit,
                     mlpack::AllDimensionSelect,
@@ -91,6 +91,9 @@ class GradBoosting
                const size_t minimumLeafSize,
                const double minimumGainSplit,
                const size_t maximumDepth);
+
+  //! Set the number of classes explicitly.
+  void SetNumClasses(const size_t x) {numClasses = x;}
 
   //! Set the number of weak learners explicitly.
   void SetNumModels(const size_t x) {numModels = x;}

@@ -192,7 +192,7 @@ TEST_CASE("GBWeakLearnerFunction", "[GradBoostUnitTest]")
   gb.Train(db, labels, numClasses, numModels);
 
   arma::Row<size_t> predictions;
-  gb.WeakLearner(0).Classify(testDb, predictions);
+  gb.WeakLearner(0).Predict(testDb, predictions);
 
   double accuracy = 0;
   for (size_t i = 0; i < testLabels.n_elem; i++) 

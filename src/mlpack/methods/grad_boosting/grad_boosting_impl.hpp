@@ -46,7 +46,6 @@ GradBoosting<MatType>::
   numClasses(numClasses),
   numModels(numModels)
 {
-  adjustments.resize(numModels);
   TrainInternal(data, labels, numClasses, numModels);
 }
 
@@ -72,7 +71,6 @@ GradBoosting(const MatType& data,
   numClasses(numClasses),
   numModels(numModels)
 {
-  adjustments.resize(numModels);
   TrainInternal(data, labels, numClasses, numModels, 
                 minimumLeafSize, minimumGainSplit, maximumDepth);
 }
@@ -84,7 +82,7 @@ void GradBoosting<MatType>::
         const size_t numClasses,
         const size_t numModels)
 {
-  adjustments.resize(numModels);
+  SetNumClasses(numClasses);
   SetNumModels(numModels);
   return TrainInternal(data, labels, numClasses, numModels);
 }
@@ -99,7 +97,7 @@ void GradBoosting<MatType>::
         const double minimumGainSplit, 
         const size_t maximumDepth)
 {
-  adjustments.resize(numModels);
+  SetNumClasses(numClasses);
   SetNumModels(numModels);
   return TrainInternal(data, labels, numClasses, numModels,
                        minimumLeafSize, minimumGainSplit, maximumDepth);
@@ -121,18 +119,21 @@ template<typename VecType>
 void GradBoosting<MatType>::Classify(const VecType& point,
                                       size_t& prediction)
 {
-  int tempPrediction = 0;
-  arma::vec tempProb(numClasses, arma::fill::zeros); /*Will not use*/
+  double tempPrediction = 0;
 
   for (size_t i = 0; i < weakLearners.size(); ++i) 
   {
-    size_t p;
-    weakLearners[i].Classify(point, p, tempProb);
-    tempPrediction -= adjustments(i);
+    double p = weakLearners[i].Predict(point);
     tempPrediction += p;
   }
 
-  prediction = (size_t) tempPrediction;
+  // using namespace std; cout<<tempPrediction<<endl;
+
+  for (double k = 0; k < numClasses; ++k)
+  {
+    if(std::abs(tempPrediction - k) < std::abs(tempPrediction - prediction)) 
+      prediction = (size_t) k;
+  }
 }
 
 template<typename MatType>
@@ -144,13 +145,8 @@ void GradBoosting<MatType>::Classify(const MatType& test,
 
   for (size_t i = 0; i < test.n_cols; ++i) 
   {
-    arma::vec tempData(test.n_rows); 
     size_t prediction;
-
-    for (size_t j = 0; j < test.n_rows; ++j)
-      tempData(j) = test(j, i);
-
-    Classify<arma::vec>(tempData, prediction);
+    Classify<arma::vec>(test.col(i), prediction);
     predictedLabels(i) = prediction;
   }
 }
@@ -172,41 +168,24 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
   // Clear the weak learners vector to in case it's preinitialised.
   weakLearners.clear();
   
-  arma::mat probabilities; /*Will not use*/
-
   // Store residues.
-  arma::Row<size_t> residue = labels;
+  arma::Row<double> residue(labels.n_cols);
+
+  for (size_t i = 0; i < labels.n_cols; ++i)
+    residue(i) = (double) labels(i);
 
   for (size_t model = 0; model < numModels; ++model) 
   {
-    arma::Row<size_t> tempResidue = arma::unique(residue);
-    size_t tempNumClasses = tempResidue.n_elem;
-
-    WeakLearnerType w(data, residue, tempNumClasses, 
-    minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
+    WeakLearnerType w(data, residue, minimumLeafSize, 
+      minimumGainSplit, maximumDepth);
 
     weakLearners.push_back(w);
 
-    arma::Row<size_t> predictions(residue.n_elem, arma::fill::zeros);
-    w.Classify(data, predictions, probabilities);
+    arma::Row<double> predictions(residue.n_elem, arma::fill::zeros);
+    w.Predict(data, predictions);
 
     if (model != numModels - 1)
-    {
-      int minDifference = 1e9;
-      for (size_t i = 0; i < residue.n_elem; ++i)
-      {
-        int tempDifference = (int) residue(i) - (int) predictions(i);
-        minDifference = std::min(tempDifference, minDifference);
-      }
-
-      adjustments(model) = -minDifference;
-      residue = residue + adjustments(model);
-
-      for (size_t i = 0; i < residue.n_elem; ++i) 
-      {
-        residue(i) = residue(i) - predictions(i);
-      }
-    }
+      residue = residue - predictions;
 
   }
 }
