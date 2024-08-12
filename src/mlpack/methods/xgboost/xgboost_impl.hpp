@@ -204,6 +204,8 @@ void XGBoost<MatType>::TrainInternal(const MatType& data,
   arma::mat residues(numClasses, n, arma::fill:zeros);
   arma::mat tempLabels(numClasses, n, arma::fill:zeros);
 
+  FeatureImportance* featImp = new FeatureImportance();
+
   // Preparing tempLabels.
   for (size_t i = 0; i < n; ++i)
     tempLabels(labels(i), i) = 1.0;
@@ -215,7 +217,7 @@ void XGBoost<MatType>::TrainInternal(const MatType& data,
 
     // The weak learner is trained.
     XGBTree* w = new XGBTree(data, residues, numClasses, 
-    minimumLeafSize, minimumGainSplit, maximumDepth);
+    minimumLeafSize, minimumGainSplit, maximumDepth, featImp);
 
     // Raw scores are obtained to update probabilities variable.
     arma::mat tempPredictions(numClasses, n);

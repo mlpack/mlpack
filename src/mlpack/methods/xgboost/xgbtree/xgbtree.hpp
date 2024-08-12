@@ -16,6 +16,7 @@
 #include <mlpack/core.hpp>
 #include "node.hpp"
 #include "dt_prereq.hpp"
+#include "../feature_importance.hpp"
 
 // Defined within the mlpack namespace.
 namespace mlpack {
@@ -32,12 +33,13 @@ class XGBTree
           const size_t numClasses,
           const size_t minimumLeafSize,
           const double minimumGainSplit,
-          const size_t maximumDepth)
+          const size_t maximumDepth,
+          FeatureImportance* featImp)
   {
     this.numClasses = numClasses;
     nodes.resize(numClasses);
 
-    Train(data, residue, minimumLeafSize, minimumGainSplit, maximumDepth);
+    Train(data, residue, minimumLeafSize, minimumGainSplit, maximumDepth, featImp);
   }
 
   template<typename MatType>
@@ -51,7 +53,7 @@ class XGBTree
     this.numClasses = numClasses;
     nodes.resize(numClasses);
 
-    Train(data, residue, minimumLeafSize, minimumGainSplit, maximumDepth);
+    Train(data, residue, minimumLeafSize, minimumGainSplit, maximumDepth, featImp);
   }
 
   template<typename MatType>
@@ -59,12 +61,13 @@ class XGBTree
              arma::mat& residue,
              const size_t minimumLeafSize,
              const double minimumGainSplit,
-             const size_t maximumDepth)
+             const size_t maximumDepth,
+             FeatureImportance* featImp)
   {
     for (size_t i = 0; i < numClasses; ++i)
     {
       Node* node = new Node(data, residue.col(i), 
-        minimumLeafSize, minimumGainSplit, maximumDepth);
+        minimumLeafSize, minimumGainSplit, maximumDepth, featImp);
       nodes[i] = node;
     }
   }

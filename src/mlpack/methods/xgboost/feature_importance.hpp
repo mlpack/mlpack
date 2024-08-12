@@ -37,14 +37,12 @@ namespace mlpack {
 
 class FeatureImportance {
 
-  private:
-
+  public:
+   
   map<size_t, size_t> featureFrequency;
   map<size_t, double> featureCover;
   vector<size_t> rankByFrequency;
   vector<size_t> rankByCover;
-
-  public: 
 
   // Empty class constructor.
   FeatureImportance() { /*Nothing to do*/ }
@@ -68,13 +66,12 @@ class FeatureImportance {
     map<size_t, size_t>::iterator it = featureFrequency.begin(); 
 
     for(; it != featureFrequency.end(); ++it)
-    {
       pq.push({-it->second, it->first});
-    }
 
     while(!pq.empty())
     {
-      size_t elem = pq.top().second; pq.pop();
+      size_t elem = pq.top().second; 
+      pq.pop();
       rankByFrequency.push_back(elem);
     }
   }
@@ -86,13 +83,12 @@ class FeatureImportance {
     map<size_t, double>::iterator it = featureCover.begin(); 
 
     for(; it != featureCover.end(); ++it)
-    {
       pq.push({-(it->second), it->first});
-    }
 
     while(!pq.empty())
     {
-      size_t elem = pq.top().second; pq.pop();
+      size_t elem = pq.top().second; 
+      pq.pop();
       rankByCover.push_back(elem);
     }
 

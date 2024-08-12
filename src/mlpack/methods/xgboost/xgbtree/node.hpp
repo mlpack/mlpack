@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_XGBTREE_NODE_HPP
 
 #include "dt_prereq.hpp"
+#include "../feature_importance.hpp"
 
 // Defined within the mlpack namespace.
 namespace mlpack {
@@ -77,7 +78,8 @@ class Node :
        arma::rowvec& responses,
        const size_t minimumLeafSize,
        const double minimumGainSplit,
-       const size_t maximumDepth)
+       const size_t maximumDepth,
+       FeatureImportance* featImp)
   {
     arma::rowvec weights; /* Not to use*/
     data::DatasetInfo datasetInfo;
@@ -88,7 +90,7 @@ class Node :
 
     Train(data, 0, data.n_cols, datasetInfo, responses, 
       weights, minimumLeafSize, minimumGainSplit, maximumDepth, 
-      dimensionSelector, msegain);
+      dimensionSelector, msegain, featImp);
 
   }
 
@@ -102,7 +104,8 @@ class Node :
                 const double minimumGainSplit,
                 const size_t maximumDepth,
                 DimensionSelection& dimensionSelector,
-                MSEGain msegain)
+                MSEGain msegain,
+                FeatureImportance* featImp)
   {
     // Clear children if needed.
     for (size_t i = 0; i < children.size(); ++i)
@@ -168,6 +171,11 @@ class Node :
     // Did we split or not?  If so, then split the data and create the children.
     if (bestDim != datasetInfo.Dimensionality())
     {
+      if(featImp != nullptr)
+      {
+        featImp->featureFrequency[bestDim]++;
+        featImp->featureCover[bestDim] += featImp->featureFrequency[bestDim];
+      }
       dimensionType = (size_t) datasetInfo.Type(bestDim);
       splitDimension = bestDim;
 
@@ -225,7 +233,7 @@ class Node :
         double childGain = child->Train(data, currentChildBegin,
             currentCol - currentChildBegin, datasetInfo, responses,
             weights, minimumLeafSize, minimumGainSplit, maximumDepth - 1,
-            dimensionSelector, msegain);
+            dimensionSelector, msegain, featImp);
 
         bestGain += double(childCounts[i]) / double(count) * (-childGain);
         children.push_back(child);
