@@ -104,12 +104,6 @@ class GradBoosting
   //! Get the number of weak learners .
   size_t NumModels() const { return numModels; }
 
-  //! Get the given weak learner.
-  const WeakLearnerType& WeakLearner(const size_t i) const { return weakLearners[i]; }
-
-  //! Modify the given weak learner (be careful!).
-  WeakLearnerType& WeakLearner(const size_t i) { return weakLearners[i]; }
-
   /**
    * Train Gradient Boosting on the given dataset, using the given parameters.
    *
@@ -205,7 +199,7 @@ class GradBoosting
   arma::vec adjustments;
 
   //! The vector of weak learners.
-  std::vector<WeakLearnerType> weakLearners;
+  std::vector<WeakLearnerType*> weakLearners;
   //! The weights corresponding to each weak learner.
   std::vector<ElemType> alpha;
 }; 
