@@ -89,12 +89,6 @@ class XGBoost
   //! Get the number of trees .
   size_t NumModels() const { return numModels; }
 
-  //! Get the given tree.
-  const XGBTree& Tree(const size_t i) const { return tree[i]; }
-
-  //! Modify the given tree (be careful!).
-  XGBTree& Tree(const size_t i) { return tree[i]; }
-
   /**
    * Train XGBoost on the given dataset, using the given parameters.
    *
@@ -189,11 +183,9 @@ class XGBoost
   size_t numClasses;
   //! The number of trees in the model.
   size_t numModels;
-  //! Adjustments vector.
-  arma::vec adjustments;
 
   //! The vector of trees.
-  std::vector<XGBTree> trees;
+  std::vector<XGBTree*> trees;
   //! The weights corresponding to each weak learner.
   std::vector<ElemType> alpha;
 }; 

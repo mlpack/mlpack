@@ -47,7 +47,6 @@ XGBoost<MatType>::
   numClasses(numClasses),
   numModels(numModels)
 {
-  adjustments.resize(numModels);
   TrainInternal(data, labels, numClasses, numModels);
 }
 
@@ -73,7 +72,6 @@ XGBoost(const MatType& data,
   numClasses(numClasses),
   numModels(numModels)
 {
-  adjustments.resize(numModels);
   TrainInternal(data, labels, numClasses, numModels, 
                 minimumLeafSize, minimumGainSplit, maximumDepth);
 }
@@ -85,7 +83,6 @@ void XGBoost<MatType>::
         const size_t numClasses,
         const size_t numModels)
 {
-  adjustments.resize(numModels);
   SetNumModels(numModels);
   return TrainInternal(data, labels, numClasses, numModels);
 }
@@ -100,7 +97,6 @@ void XGBoost<MatType>::
         const double minimumGainSplit, 
         const size_t maximumDepth)
 {
-  adjustments.resize(numModels);
   SetNumModels(numModels);
   return TrainInternal(data, labels, numClasses, numModels,
                        minimumLeafSize, minimumGainSplit, maximumDepth);
@@ -222,12 +218,12 @@ void XGBoost<MatType>::TrainInternal(const MatType& data,
     residues = tempLabels - probabilities;
 
     // The weak learner is trained.
-    XGBTree w(data, residue, numClasses, 
-    minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
+    XGBTree* w = new XGBTree(data, residue, numClasses, 
+    minimumLeafSize, minimumGainSplit, maximumDepth);
 
     // Raw scores are obtained to update probabilities variable.
     arma::mat tempPredictions(numClasses, n);
-    w.Classify(data, tempPredictions);
+    w->Classify(data, tempPredictions);
 
     // Raw scores are updated.
     rawScores = rawScores + learningRate * tempPredictions;
