@@ -38,6 +38,8 @@ class Node :
   size_t dimensionType;
   //! For internal nodes, the split information for the splitter.
   arma::vec splitInfo;
+  //! The best gain on the particular node.
+  double nodeGain;
 
 
   size_t CalculateDirection(const arma::vec& point) const
@@ -70,6 +72,25 @@ class Node :
 
 
   Node() { /*Nothing to do */ }
+
+  Node(arma::mat& data,
+       arma::rowvec& responses,
+       const size_t minimumLeafSize,
+       const double minimumGainSplit,
+       const size_t maximumDepth)
+  {
+    arma::rowvec weights; /* Not to use*/
+    data::DatasetInfo datasetInfo;
+    DimensionSelection dimensionSelector;
+    MSEGain msegain;
+    
+    dimensionSelector.Dimensions() = data.n_rows;
+
+    Train(data, 0, data.n_cols, datasetInfo, responses, 
+      weights, minimumLeafSize, minimumGainSplit, maximumDepth, 
+      dimensionSelector, msegain);
+
+  }
 
   double Train(arma::mat& data,
                 const size_t begin,
@@ -218,10 +239,9 @@ class Node :
           weights);
     }
 
+    nodeGain = bestGain;
     return -bestGain;
   }
-
-
 
   double Predict(const arma::vec& point) const
   {
@@ -232,6 +252,34 @@ class Node :
     }
 
     return children[CalculateDirection(point)]->Predict(point);
+  }
+
+  bool Prune(double threshold)
+  {
+    size_t numChildren = children.size();
+
+    for (size_t i = 0; i < numChildren; ++i)
+    {
+      bool store = children[i]->Prune(threshold);
+      if (store == true)
+      {
+        Node* tempStorage = children[i];
+
+        children.erase(children.begin() + i);
+        numChildren--;
+        i--;
+        
+        delete tempStorage;
+      }
+    }
+
+    bool flag = false;
+    if (nodeGain < threshold)
+    {
+      flag = 1;
+    }
+
+    return flag;
   }
 
 };

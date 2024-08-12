@@ -125,7 +125,7 @@ void XGBoost<MatType>::Classify(const VecType& point,
   for (size_t i = 0; i < trees.size(); ++i) 
   {
     arma::rowvec tempRawScores(numClasses, arma::fill::zeros);
-    tree[i].Classify(point, tempRawScores);
+    tree[i]->Classify(point, tempRawScores);
     rawScores = rawScores + tempRawScores;
   }
   CalculateProbability(rawScores, probabilities);
@@ -149,13 +149,9 @@ void XGBoost<MatType>::Classify(const MatType& test,
   for (size_t i = 0; i < test.n_cols; ++i) 
   {
     size_t prediction;
-    arma::vec tempData(test.n_rows); 
     arma::vec tempProb(numClasses, arma::fill::zeros);
 
-    for (size_t j = 0; j < test.n_rows; ++j)
-      tempData(j) = test(j, i);
-
-    Classify<arma::vec>(tempData, prediction, tempProb);
+    Classify<arma::vec>(test.col(i), prediction, tempProb);
     predictedLabels(i) = prediction;
 
     for (size_t j = 0; j < numClasses; ++j)
@@ -218,7 +214,7 @@ void XGBoost<MatType>::TrainInternal(const MatType& data,
     residues = tempLabels - probabilities;
 
     // The weak learner is trained.
-    XGBTree* w = new XGBTree(data, residue, numClasses, 
+    XGBTree* w = new XGBTree(data, residues, numClasses, 
     minimumLeafSize, minimumGainSplit, maximumDepth);
 
     // Raw scores are obtained to update probabilities variable.
