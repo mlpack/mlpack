@@ -46,7 +46,7 @@ GradBoosting<MatType>::
   numClasses(numClasses),
   numModels(numModels)
 {
-  TrainInternal(data, labels, numClasses, numModels);
+  TrainInternal(data, labels, numModels);
 }
 
 // In case the user inputs the arguments for the Weak Learner
@@ -71,7 +71,7 @@ GradBoosting(const MatType& data,
   numClasses(numClasses),
   numModels(numModels)
 {
-  TrainInternal(data, labels, numClasses, numModels, 
+  TrainInternal(data, labels, numModels, 
                 minimumLeafSize, minimumGainSplit, maximumDepth);
 }
 
@@ -84,7 +84,7 @@ void GradBoosting<MatType>::
 {
   SetNumClasses(numClasses);
   SetNumModels(numModels);
-  return TrainInternal(data, labels, numClasses, numModels);
+  return TrainInternal(data, labels, numModels);
 }
 
 template<typename MatType>
@@ -99,7 +99,7 @@ void GradBoosting<MatType>::
 {
   SetNumClasses(numClasses);
   SetNumModels(numModels);
-  return TrainInternal(data, labels, numClasses, numModels,
+  return TrainInternal(data, labels, numModels,
                        minimumLeafSize, minimumGainSplit, maximumDepth);
 }
 
@@ -156,7 +156,6 @@ void GradBoosting<MatType>::Classify(const MatType& test,
 template<typename MatType>
 void GradBoosting<MatType>::TrainInternal(const MatType& data,
                                           const arma::Row<size_t>& labels,
-                                          const size_t numClasses,
                                           const size_t numModels,
                                           const size_t minimumLeafSize,
                                           const double minimumGainSplit,

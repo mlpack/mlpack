@@ -192,8 +192,7 @@ class GradBoosting
    */
   void TrainInternal(const MatType& data,
                      const arma::Row<size_t>& labels,
-                     const size_t numClasses,
-                     const size_t numModels = 10,
+                     const size_t numModels = 5,
                      const size_t minimumLeafSize = 10,
                      const double minimumGainSplit = 1e-7,
                      const size_t maximumDepth = 2);
