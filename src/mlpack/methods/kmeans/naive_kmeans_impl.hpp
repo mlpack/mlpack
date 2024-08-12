@@ -74,7 +74,13 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
     for (size_t i = segmentStart; i < segmentEnd; ++i)
     {
-      const arma::vec& dataPoint = dataset.col(i);
+      // Use a temporary dense vector for both sparse and dense matrices
+      arma::vec dataPoint;
+      if (std::is_same<MatType, arma::SpMat<typename MatType::elem_type>>::value)
+        dataPoint = arma::vec(arma::conv_to<arma::vec>::from(dataset.col(i)));
+      else
+        dataPoint = dataset.col(i);
+
       double dataNorm = arma::dot(dataPoint, dataPoint);
 
       double minDistance = std::numeric_limits<double>::infinity();
