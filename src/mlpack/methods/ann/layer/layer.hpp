@@ -13,6 +13,8 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_LAYER_HPP
 
+#include "layer_traits.hpp"
+
 namespace mlpack {
 
 /**
@@ -308,6 +310,16 @@ class Layer
 
     // Note that layer weights are serialized by the FFN!
   }
+
+  /**
+   * Convert this layer to use a different matrix type.
+   */
+  template<typename TargetMatType>
+  auto Convert() const -> typename Layer<TargetMatType>::LayerType
+  {
+    return mlpack::ann::LayerTraits<Layer<MatType>>::template Convert<TargetMatType>(*this);
+  }
+
 
  protected:
   /**

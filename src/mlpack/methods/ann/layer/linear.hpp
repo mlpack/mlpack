@@ -27,7 +27,7 @@ namespace mlpack {
  * The linear layer applies a linear transformation to the incoming data
  * (input), i.e. y = Ax + b. The input matrix given in Forward(input, output)
  * must be either a vector or matrix. If the input is a matrix, then each column
- * is assumed to be an input sample of given batch.
+ * is assumed to be an input sample of a given batch.
  *
  * @tparam MatType Matrix representation to accept as input and use for
  *    computation.
@@ -66,6 +66,37 @@ class LinearType : public Layer<MatType>
   //! Take ownership of the members of the other Linear layer (but not weights).
   LinearType(LinearType&& layer);
 
+  /**
+   * New Constructor with input size, output size, and regularizer.
+   *
+   * @param inSize The input dimension.
+   * @param outSize The output dimension.
+   * @param regularizer The regularizer to use, optional (default: no regularizer).
+   */
+  LinearType(const size_t inSize, const size_t outSize, RegularizerType regularizer = RegularizerType())
+      : inSize(inSize), outSize(outSize), regularizer(regularizer)
+  {
+    // Initialize weights and bias here if necessary.
+    weight.set_size(outSize, inSize);
+    bias.set_size(outSize, 1);
+  }
+
+  /**
+   * Templated copy constructor to allow type conversion.
+   */
+  template<typename OtherMatType>
+  LinearType(const LinearType<OtherMatType, RegularizerType>& other)
+    : Layer<MatType>(), // Default initialization of the base class
+      inSize(other.InputSize()),
+      outSize(other.OutputSize()),
+      regularizer(other.Regularizer())
+  {
+    // Convert weights and bias.
+    weight = arma::conv_to<MatType>::from(other.Weight());
+    bias = arma::conv_to<MatType>::from(other.Bias());
+    this->weights = arma::join_vert(arma::vectorise(weight), bias);
+  }
+
   //! Copy the other Linear layer (but not weights).
   LinearType& operator=(const LinearType& layer);
 
@@ -92,7 +123,7 @@ class LinearType : public Layer<MatType>
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards trough f. Using the results from the feed
+   * f(x) by propagating x backwards through f. Using the results from the feed
    * forward pass.
    *
    * To compute the downstream gradient (g) the chain rule is used.
@@ -143,6 +174,13 @@ class LinearType : public Layer<MatType>
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
+  // Accessors for inSize and outSize.
+  size_t InputSize() const { return inSize; }
+  size_t OutputSize() const { return outSize; }
+
+  // Public method to access the regularizer.
+  RegularizerType Regularizer() const { return regularizer; }
+
  private:
   //! Locally-stored number of input units.
   size_t inSize;
@@ -150,7 +188,7 @@ class LinearType : public Layer<MatType>
   //! Locally-stored number of output units.
   size_t outSize;
 
-  //! Locally-stored weight object.  This holds all the weights in a vectorized
+  //! Locally-stored weight object. This holds all the weights in a vectorized
   //! form; i.e., the weight and the bias.
   MatType weights;
 
