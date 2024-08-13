@@ -13,7 +13,7 @@
 #define MLPACK_METHODS_DECISION_TREE_BEST_BINARY_NUMERIC_SPLIT_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/methods/decision_tree/fitness_functions/mse_gain.hpp>
+#include "../fitness_functions/mse_gain.hpp"
 
 #include <mlpack/core/util/sfinae_utility.hpp>
 

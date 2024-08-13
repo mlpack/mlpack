@@ -81,13 +81,18 @@ class XGBTree :
 
   XGBTree() { /*Nothing to do */ }
 
-  XGBTree(arma::mat& data,
-       arma::rowvec& responses,
-       const size_t minimumLeafSize,
-       const double minimumGainSplit,
-       const size_t maximumDepth,
-       FeatureImportance* featImp)
+  XGBTree(const arma::mat& data,
+          const arma::rowvec& responses,
+          const size_t minimumLeafSize,
+          const double minimumGainSplit,
+          const size_t maximumDepth,
+          FeatureImportance* featImp)
   {
+
+    // Copy or move data.
+    arma::mat tmpData(std::move(data));
+    arma::rowvec tmpResponses(std::move(responses));
+
     arma::rowvec weights; /* Not to use*/
     data::DatasetInfo datasetInfo;
     DimensionSelection dimensionSelector;
@@ -95,7 +100,7 @@ class XGBTree :
     
     dimensionSelector.Dimensions() = data.n_rows;
 
-    Train(data, 0, data.n_cols, datasetInfo, responses, 
+    Train(tmpData, 0, data.n_cols, datasetInfo, tmpResponses, 
       weights, minimumLeafSize, minimumGainSplit, maximumDepth, 
       dimensionSelector, msegain, featImp);
 

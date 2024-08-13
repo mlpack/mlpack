@@ -143,12 +143,33 @@ class XGBoost
    *
    * @param point Test point.
    * @param prediction Will be filled with the predicted class of `point`.
+   * @param probabilities Will be filled with the probabilities of each class.
    */
   template<typename VecType>
   void Classify(const VecType& point,
                 size_t& prediction,
                 VecType& probabilities);
+  /**
+   * Classify the given test point.
+   *
+   * @param point Test point.
+   * @param prediction Will be filled with the predicted class of `point`.
+   */
+  template<typename VecType>
+  void Classify(const VecType& point,
+                size_t& prediction);
 
+  /**
+   * Classify the given test points.
+   *
+   * @param test Testing data.
+   * @param predictedLabels Vector in which the predicted labels of the test
+   *      set will be stored.
+   * @param probabilities Will be filled with the probabilities of each class.
+   */
+  void Classify(const MatType& test,
+                arma::Row<size_t>& predictedLabels,
+                MatType& probabilities);
   /**
    * Classify the given test points.
    *
@@ -157,8 +178,7 @@ class XGBoost
    *      set will be stored.
    */
   void Classify(const MatType& test,
-                arma::Row<size_t>& predictedLabels,
-                MatType& probabilities);
+                arma::Row<size_t>& predictedLabels);
 
   /**
    * Serialize the XGBoost model.
@@ -179,21 +199,22 @@ class XGBoost
                      const double minimumGainSplit = 1e-7,
                      const size_t maximumDepth = 2);
 
-  void TrainXGBTree(MatType& data,
-               arma::mat& residue,
-               const size_t minimumLeafSize,
-               const double minimumGainSplit,
-               const size_t maximumDepth,
-               FeatureImportance* featImp);
+  void TrainXGBTree(const MatType& data,
+                    const arma::mat& residue,
+                    const size_t modelNumber,
+                    const size_t minimumLeafSize,
+                    const double minimumGainSplit,
+                    const size_t maximumDepth,
+                    FeatureImportance* featImp);
 
   template<typename VecType>
-  void Classify(VecType& point,
-                arma::rowvec& rawScores,
-                const size_t modelNumber);
+  void ClassifyXGBTree(const VecType& point,
+                       arma::colvec& rawScores,
+                       size_t modelNumber);
 
-  void Classify(MatType& data,
-                arma::mat& rawScores,
-                const size_t modelNumber);
+  void ClassifyXGBTree(const MatType& data,
+                       arma::mat& rawScores,
+                       size_t modelNumber);
 
   //! The number of classes in the model.
   size_t numClasses;
