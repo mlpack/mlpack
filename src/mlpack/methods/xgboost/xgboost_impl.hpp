@@ -29,7 +29,6 @@ XGBoost<MatType>::XGBoost() :
     numModels(0)
 { /*Nothing to do.*/}
 
-// In case trees aren't defined
 /**
  * Constructor.
  *
@@ -109,7 +108,7 @@ size_t XGBoost<MatType>::Classify(const VecType& point)
 {
   size_t prediction;
   arma::vec probabilities; /* Not to be used */
-  Classify<arma::colvec>(point, prediction, probabilities);
+  Classify(point, prediction, probabilities);
 
   return prediction;
 }
@@ -122,10 +121,10 @@ void XGBoost<MatType>::Classify(const VecType& point,
 {
   arma::rowvec rawScores(numClasses, arma::fill::zeros);
 
-  for (size_t i = 0; i < trees.size(); ++i) 
+  for (size_t i = 0; i < numModels; ++i) 
   {
     arma::rowvec tempRawScores(numClasses, arma::fill::zeros);
-    tree[i]->Classify(point, tempRawScores);
+    ClassifyXGBTree(point, tempRawScores, i);
     rawScores = rawScores + tempRawScores;
   }
   CalculateProbability(rawScores, probabilities);
@@ -216,21 +215,59 @@ void XGBoost<MatType>::TrainInternal(const MatType& data,
     residues = tempLabels - probabilities;
 
     // The weak learner is trained.
-    XGBTree* w = new XGBTree(data, residues, numClasses, 
-    minimumLeafSize, minimumGainSplit, maximumDepth, featImp);
+    TrainXGBTree(data, residues, model, minimumLeafSize, 
+      minimumGainSplit, maximumDepth, featImp);
 
     // Raw scores are obtained to update probabilities variable.
     arma::mat tempPredictions(numClasses, n);
-    w->Classify(data, tempPredictions);
+    ClassifyXGBTree(data, tempPredictions, model);
 
     // Raw scores are updated.
     rawScores = rawScores + learningRate * tempPredictions;
 
     // Probabilities are calculated.
     CalculateProbability(rawScores, probabilities);
+  }
 
-    // The weak learner is saved.
-    trees.push_back(w);
+  template<typename MatType>
+  void XGBoost<MatType>::TrainXGBTree(MatType& data,
+                                      arma::mat& residue,
+                                      const size_t modelNumber,
+                                      const size_t minimumLeafSize,
+                                      const double minimumGainSplit,
+                                      const size_t maximumDepth,
+                                      FeatureImportance* featImp)
+  {
+    for (size_t i = 0; i < numClasses; ++i)
+    {
+      XGBTree* node = new XGBTree(data, residue.col(i), 
+        minimumLeafSize, minimumGainSplit, maximumDepth, featImp);
+      trees[modelNumber][i] = node;
+    }
+  }
+
+  template<typename MatType>
+  template<typename VecType>
+  void XGBoost<MatType>::ClassifyXGBTree(VecType& point,
+                                         arma::rowvec& rawScores,
+                                         const size_t modelNumber)
+  {
+    rawScores.clear();
+    rawScores.resize(numClasses);
+
+    for (size_t i = 0; i < numClasses; ++i)
+      rawScores(i) = trees[modelNumber][i]->Predict(point);
+  }
+
+  void XGBoost<MatType>::ClassifyXGBTree(MatType& data,
+                                         arma::mat& rawScores,
+                                         size_t modelNumber)
+  {
+    rawScores.clear();
+    rawScores.resize(numClasses, data.n_cols);
+
+    for (size_t i = 0; i < data.n_cols; ++i)
+      ClassifyXGBTree(data.col(i), rawScores.col(i), modelNumber);
   }
 }
 

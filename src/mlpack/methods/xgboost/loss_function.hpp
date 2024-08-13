@@ -89,11 +89,6 @@ class LossFunction
 
   }
 
-  double EvaluateLogGradient()
-  {
-    
-  }
-
   /**
    * Calculate the SSE Loss. 
    * 
@@ -120,12 +115,6 @@ class LossFunction
 
     return loss;
   }
-
-  double EvaluateSSEGradient()
-  {
-    
-  }
-
 
   private:
 

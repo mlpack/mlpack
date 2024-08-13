@@ -17,7 +17,7 @@
 
 // Importing base components required to write mlpack methods.
 #include <mlpack/core.hpp>
-#include "xgbtree/xgbtree.hpp"
+#include "xgbtree.hpp"
 
 // Written in mlpack namespace.
 namespace mlpack {
@@ -179,13 +179,29 @@ class XGBoost
                      const double minimumGainSplit = 1e-7,
                      const size_t maximumDepth = 2);
 
+  void TrainXGBTree(MatType& data,
+               arma::mat& residue,
+               const size_t minimumLeafSize,
+               const double minimumGainSplit,
+               const size_t maximumDepth,
+               FeatureImportance* featImp);
+
+  template<typename VecType>
+  void Classify(VecType& point,
+                arma::rowvec& rawScores,
+                const size_t modelNumber);
+
+  void Classify(MatType& data,
+                arma::mat& rawScores,
+                const size_t modelNumber);
+
   //! The number of classes in the model.
   size_t numClasses;
   //! The number of trees in the model.
   size_t numModels;
 
   //! The vector of trees.
-  std::vector<XGBTree*> trees;
+  std::vector<vector<XGBTree*>> trees;
   //! The weights corresponding to each weak learner.
   std::vector<ElemType> alpha;
 }; 

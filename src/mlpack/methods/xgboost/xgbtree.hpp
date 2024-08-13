@@ -1,8 +1,9 @@
 /**
- * @file methods/xgboost/xgbtree/node2.hpp
+ * @file methods/xgboost/xgbtree.hpp
  * @author Abhimanyu Dayal
  *
- * XGB tree node.
+ * XGBtree node. Implementation of Decision Tree specifically for XGBoost 
+ * weak learner implementation.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -12,14 +13,20 @@
 #ifndef MLPACK_METHODS_XGBTREE_NODE_HPP
 #define MLPACK_METHODS_XGBTREE_NODE_HPP
 
-#include "dt_prereq.hpp"
-#include "../feature_importance.hpp"
+#include <mlpack/core.hpp>
+#include "feature_importance.hpp"
+
+#include "../decision_tree/fitness_functions/mse_gain.hpp"
+#include "../decision_tree/select_functions/all_dimension_select.hpp"
+#include "../decision_tree/split_functions/best_binary_numeric_split.hpp"
+#include "../decision_tree/split_functions/all_categorical_split.hpp"
+
 
 // Defined within the mlpack namespace.
 namespace mlpack {
 
 
-class Node :
+class XGBTree :
   public BestBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo,
   public AllCategoricalSplit<MSEGain>::AuxiliarySplitInfo
 {
@@ -27,7 +34,7 @@ class Node :
   private: 
 
   //! The vector of children.
-  std::vector<Node*> children;
+  std::vector<XGBTree*> children;
   union
   {
     //! Stores the prediction value, for leaf nodes of the tree.
@@ -72,9 +79,9 @@ class Node :
     CategoricalAuxiliarySplitInfo;
 
 
-  Node() { /*Nothing to do */ }
+  XGBTree() { /*Nothing to do */ }
 
-  Node(arma::mat& data,
+  XGBTree(arma::mat& data,
        arma::rowvec& responses,
        const size_t minimumLeafSize,
        const double minimumGainSplit,
@@ -227,7 +234,7 @@ class Node :
         }
 
         // Now build the child recursively.
-        Node* child = new Node();
+        XGBTree* child = new XGBTree();
 
         // During recursion entropy of child node may change.
         double childGain = child->Train(data, currentChildBegin,
@@ -271,7 +278,7 @@ class Node :
       bool store = children[i]->Prune(threshold);
       if (store == true)
       {
-        Node* tempStorage = children[i];
+        XGBTree* tempStorage = children[i];
 
         children.erase(children.begin() + i);
         numChildren--;
@@ -283,9 +290,7 @@ class Node :
 
     bool flag = false;
     if (nodeGain < threshold)
-    {
       flag = 1;
-    }
 
     return flag;
   }
