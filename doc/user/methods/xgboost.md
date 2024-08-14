@@ -70,7 +70,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 ---
 
- * `gb = XGBoost(data, labels, numClasses, numModels, minimumLeafSize, minimumGainSplit, maximumDepth)`
+ * `xgb = XGBoost(data, labels, numClasses, numModels, minimumLeafSize, minimumGainSplit, maximumDepth)`
    - Train on numerical-only data, entering the weak learner arguments `minimumLeafSize`, `minimumGainSplit` and `maximumDepth`.
 
 ---
@@ -97,12 +97,12 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 If training is not done as part of the constructor call, it can be done with one
 of the following versions of the `Train()` member function:
 
- * `gb.Train(data, labels, numClasses, numModels)`
+ * `xgb.Train(data, labels, numClasses, numModels)`
    - Train on numerical data without using any decision tree arguments.
 
 ---
 
- * `gb.Train(data, labels, numClasses, numModels, minimumLeafSize, minimumGainSplit, maximumDepth)`
+ * `xgb.Train(data, labels, numClasses, numModels, minimumLeafSize, minimumGainSplit, maximumDepth)`
    - Train on numerical data using weak learner model's arguments `minimumLeafSize`, `minimumGainSplit` and `maximumDepth`.
 
 ---
@@ -120,20 +120,20 @@ Types of each argument are the same as in the table for constructors
 Once a `XGBoost` is trained, the `Classify()` member function can be used
 to make class predictions for new data.
 
- * `size_t predictedClass = gb.Classify(point)`
+ * `size_t predictedClass = xgb.Classify(point)`
     - ***(Single-point)***
     - Classify a single point, returning the predicted class.
 
 ---
 
- * `gb.Classify(point, prediction)`
+ * `xgb.Classify(point, prediction)`
     - ***(Single-point)***
     - Classify a single point and compute class probabilities.
     - The predicted class is stored in `prediction`.
 
 ---
 
- * `gb.Classify(data, predictedLabels)`
+ * `xgb.Classify(data, predictedLabels)`
     - ***(Multi-point)***
     - Classify a set of points.
     - The prediction for data point `i` can be accessed with `predictedLabels[i]`.
@@ -159,13 +159,13 @@ that is used should be the same type that was used for training.
  * `WeakLearner(size_t i)` returns a `WeakLearnerType` indicating which weak learner 
     is being used. 
 
- * `gb.NumModels()` returns a `size_t` indicating how many weak learners are being
+ * `xgb.NumModels()` returns a `size_t` indicating how many weak learners are being
     used by the model.
 
- * `gb.NumClasses()` returns a `size_t` indicating the number of classes the
+ * `xgb.NumClasses()` returns a `size_t` indicating the number of classes the
    model was trained on.
 
- * `gb.SetNumModels(size_t x)` set the number of weak learners to `x` explicitly.
+ * `xgb.SetNumModels(size_t x)` set the number of weak learners to `x` explicitly.
 
 For complete functionality, the [source
 code](/src/mlpack/methods/grad_boosting/grad_boosting.hpp) can be consulted.
@@ -192,9 +192,9 @@ arma::Row<size_t> labels;
 mlpack::data::Load("covertype.train.labels.csv", labels, true);
 
 // Create the model object.
-mlpack::XGBoost gb;
+mlpack::XGBoost xgb;
 // Train on the given dataset, specifying number of weak learners at 5.
-gb.Train(dataset, labels, 7 /* classes */, 5 /* number of weak learners */);
+xgb.Train(dataset, labels, 7 /* classes */, 5 /* number of weak learners */);
 
 // Load categorical test data.
 arma::mat testDataset;
@@ -206,8 +206,8 @@ const size_t firstPrediction = gb.Classify(testDataset.col(0));
 std::cout << "Predicted class of first test point is " << firstPrediction << "."
     << std::endl;
 
-// Save the model to `gb.bin`.
-mlpack::data::Save("gb.bin", "gb", gb);
+// Save the model to `xgb.bin`.
+mlpack::data::Save("xgb.bin", "xgb", xgb);
 ```
 
 ---
@@ -215,13 +215,13 @@ mlpack::data::Save("gb.bin", "gb", gb);
 Load a model and print some information about it.
 
 ```c++
-mlpack::XGBoost gb;
-// This call assumes a gb called "gb" has already been saved to `gb.bin`
+mlpack::XGBoost xgb;
+// This call assumes a xgb called "xgb" has already been saved to `xgb.bin`
 // with `data::Save()`.
-mlpack::data::Load("gb.bin", "gb", gb, true);
+mlpack::data::Load("xgb.bin", "xgb", xgb, true);
 
 std::cout << "The number of weak learners being used by the model is "
-<< gb.NumModels() << "." << std::endl;
+<< xgb.NumModels() << "." << std::endl;
 
 ```
 
