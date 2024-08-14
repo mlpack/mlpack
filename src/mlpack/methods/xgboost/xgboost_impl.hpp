@@ -171,8 +171,9 @@ void XGBoost<MatType>::Classify(const MatType& test,
   {
     size_t prediction;
     arma::vec tempProb(numClasses, arma::fill::zeros);
+    arma::vec tempTest = test.col(i);
 
-    Classify(test.col(i), prediction, tempProb);
+    Classify(tempTest, prediction, tempProb);
     predictedLabels(i) = prediction;
 
     probabilities.col(i) = tempProb;
