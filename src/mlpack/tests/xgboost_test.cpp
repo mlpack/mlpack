@@ -1,6 +1,6 @@
 /**
  * @file tests/xgboost_test.cpp
- * @author Rishabh Garg
+ * @author Abhimanyu Dayal
  *
  * Tests for the XGBoost class and related classes.
  *
@@ -11,58 +11,12 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/xgboost.hpp>
+#include <mlpack/methods/xgboost/xgbtree.hpp>
 
 #include "catch.hpp"
 #include "serialization.hpp"
 
 using namespace mlpack;
-
-/**
- * Test that the initial prediction is calculated correctly for SSE loss.
- */
-TEST_CASE("SSEInitialPredictionTest", "[XGBTest]")
-{
-  arma::vec values = {1, 3, 2, 2, 5, 6, 9, 11, 8, 8};
-
-  double initPred = 5.5;
-
-  SSELoss Loss;
-  REQUIRE(Loss.InitialPrediction(values) == initPred);
-}
-
-/**
- * Test that output leaf value is calculated correctly for SSE Loss.
- */
-TEST_CASE("SSELeafValueTest", "[XGBTest]")
-{
-  arma::mat input = { { 1,   3,   2,   2, 5, 6, 9,    11, 8,   8 },
-                      { 0.5, 1, 2.5, 1.5, 5, 8, 8, 10.75, 9, 9.5 } };
-  arma::vec weights; // dummy weights not used.
-
-  // Actual output leaf value.
-  double leafValue = -0.075;
-
-  SSELoss Loss;
-  (void) Loss.Evaluate<false>(input, weights);
-
-  REQUIRE(Loss.OutputLeafValue(input, weights) == leafValue);
-}
-
-/**
- * Test that the gain is computed correctly for SSE Loss.
- */
-TEST_CASE("SSEGainTest", "[XGBTest]")
-{
-  arma::mat input = { { 1,   3,   2,   2, 5, 6, 9,    11, 8,   8 },
-                      { 0.5, 1, 2.5, 1.5, 5, 8, 8, 10.75, 9, 9.5 } };
-  arma::vec weights; // dummy weights not used.
-
-  // Actual gain value.
-  double gain = 0.05625;
-
-  SSELoss Loss;
-  REQUIRE(Loss.Evaluate<false>(input, weights) == gain);
-}
 
 /**
  * This test case runs the XGBoost model on the Iris dataset. 
@@ -251,4 +205,48 @@ TEST_CASE("XGBWeakLearnerFunction", "[XGBoostUnitTest]")
 
   REQUIRE(accuracy > 0);
 
+}
+
+/**
+ * Check if the Pruning method is removing nodes if they 
+ * don't meet threshold conditions.
+ */
+
+TEST_CASE("PruningBaseTest", "[XGBTreeTest]")
+{
+  arma::mat dataset;
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2.csv", dataset))
+    FAIL("Cannot load test dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt!");
+
+  XGBTree d(dataset, labels, 3, 10, 1e-7, 1);
+
+  // Set the threshold high to ensure that it deletes root node.
+  bool flag = d.Prune(10);
+
+  REQUIRE(flag == true);
+}
+
+/*
+ * Test that we can pass const data into XGBTree constructors.
+ */
+TEST_CASE("ConstDataTest", "[XGBTreeTest]")
+{
+  arma::mat data;
+  arma::Row<size_t> labels;
+  data::DatasetInfo datasetInfo;
+  MockCategoricalData(data, labels, datasetInfo);
+
+  const arma::mat& constData = data;
+  const arma::Row<size_t>& constLabels = labels;
+  const arma::rowvec constWeights(labels.n_elem, arma::fill::randu);
+  const size_t numClasses = 5;
+
+  XGBTree<> dt(constData, constLabels, numClasses);
+  XGBTree<> dt2(constData, datasetInfo, constLabels, numClasses);
+  XGBTree<> dt3(constData, constLabels, numClasses, constWeights);
+  XGBTree<> dt4(constData, datasetInfo, constLabels, numClasses,
+      constWeights);
 }
