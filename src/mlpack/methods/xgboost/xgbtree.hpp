@@ -22,6 +22,8 @@
 #include "../decision_tree/split_functions/all_categorical_split.hpp"
 
 
+using namespace std;
+
 // Defined within the mlpack namespace.
 namespace mlpack {
 
@@ -83,6 +85,7 @@ class XGBTree :
 
   XGBTree(const arma::mat& data,
           const arma::rowvec& responses,
+          const data::DatasetInfo& datasetInfo,
           const size_t minimumLeafSize,
           const double minimumGainSplit,
           const size_t maximumDepth,
@@ -93,8 +96,7 @@ class XGBTree :
     arma::mat tmpData(std::move(data));
     arma::rowvec tmpResponses(std::move(responses));
 
-    arma::rowvec weights; /* Not to use*/
-    data::DatasetInfo datasetInfo;
+    arma::rowvec weights; /* Not to use */
     DimensionSelection dimensionSelector;
     MSEGain msegain;
     

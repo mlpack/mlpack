@@ -50,11 +50,13 @@ class XGBoost
    *
    * @param data Input data
    * @param labels Corresponding labels
+   * @param datasetInfo Type information for each dimension of the dataset.
    * @param numClasses Number of classes
    * @param numModels Number of trees
    */
   XGBoost(const MatType& data,
                const arma::Row<size_t>& labels,
+               const data::DatasetInfo& datasetInfo,
                const size_t numClasses,
                const size_t numModels);
 
@@ -66,6 +68,7 @@ class XGBoost
    *
    * @param data Input data.
    * @param labels Corresponding labels.
+   * @param datasetInfo Type information for each dimension of the dataset.
    * @param numClasses The number of classes.
    * @param numModels Number of trees.
    * @param minimumLeafSize Minimum number of points in each leaf node.
@@ -74,6 +77,7 @@ class XGBoost
    */
   XGBoost(const MatType& data,
                const arma::Row<size_t>& labels,
+               const data::DatasetInfo& datasetInfo,
                const size_t numClasses,
                const size_t numModels,
                const size_t minimumLeafSize,
@@ -97,11 +101,13 @@ class XGBoost
    *
    * @param data Dataset to train on.
    * @param labels Labels for each point in the dataset.
+   * @param datasetInfo Type information for each dimension of the dataset.
    * @param numClasses The number of classes in the dataset.
    * @param numModels Number of boosting rounds.
    */
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
+             const data::DatasetInfo& datasetInfo,
              const size_t numClasses,
              const size_t numModels);
 
@@ -116,6 +122,7 @@ class XGBoost
    *
    * @param data Dataset to train on.
    * @param labels Labels for each point in the dataset.
+   * @param datasetInfo Type information for each dimension of the dataset.
    * @param numClasses The number of classes in the dataset.
    * @param numModels Number of boosting rounds.
    * @param minimumLeafSize Minimum number of points in each leaf node.
@@ -124,6 +131,7 @@ class XGBoost
    */
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
+             const data::DatasetInfo& datasetInfo,
              const size_t numClasses,
              const size_t numModels,
              const size_t minimumLeafSize,
@@ -193,6 +201,7 @@ class XGBoost
    */
   void TrainInternal(const MatType& data,
                      const arma::Row<size_t>& labels,
+                     const data::DatasetInfo& datasetInfo,
                      const size_t numClasses,
                      const size_t numModels = 10,
                      const size_t minimumLeafSize = 10,
@@ -201,6 +210,7 @@ class XGBoost
 
   void TrainXGBTree(const MatType& data,
                     const arma::mat& residue,
+                    const data::DatasetInfo& datasetInfo,
                     const size_t modelNumber,
                     const size_t minimumLeafSize,
                     const double minimumGainSplit,

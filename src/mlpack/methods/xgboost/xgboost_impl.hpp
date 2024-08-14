@@ -54,12 +54,13 @@ template<typename MatType>
 XGBoost<MatType>::
   XGBoost(const MatType& data,
                const arma::Row<size_t>& labels,
+               const data::DatasetInfo& datasetInfo,
                const size_t numClasses,
                const size_t numModels) :
   numClasses(numClasses),
   numModels(numModels)
 {
-  TrainInternal(data, labels, numClasses, numModels);
+  TrainInternal(data, labels, datasetInfo, numClasses, numModels);
 }
 
 // In case the user inputs the arguments for the Weak Learner
@@ -76,6 +77,7 @@ template<typename MatType>
 XGBoost<MatType>::
 XGBoost(const MatType& data,
              const arma::Row<size_t>& labels,
+             const data::DatasetInfo& datasetInfo,
              const size_t numClasses,
              const size_t numModels,
              const size_t minimumLeafSize, 
@@ -92,17 +94,19 @@ template<typename MatType>
 void XGBoost<MatType>::
   Train(const MatType& data,
         const arma::Row<size_t>& labels,
+        const data::DatasetInfo& datasetInfo,
         const size_t numClasses,
         const size_t numModels)
 {
   SetNumModels(numModels);
-  return TrainInternal(data, labels, numClasses, numModels);
+  return TrainInternal(data, labels, datasetInfo, numClasses, numModels);
 }
 
 template<typename MatType>
 void XGBoost<MatType>::
   Train(const MatType& data,
         const arma::Row<size_t>& labels,
+        const data::DatasetInfo& datasetInfo,
         const size_t numClasses,
         const size_t numModels,
         const size_t minimumLeafSize, 
@@ -110,7 +114,7 @@ void XGBoost<MatType>::
         const size_t maximumDepth)
 {
   SetNumModels(numModels);
-  return TrainInternal(data, labels, numClasses, numModels,
+  return TrainInternal(data, labels, datasetInfo, numClasses, numModels,
                        minimumLeafSize, minimumGainSplit, maximumDepth);
 }
 
@@ -192,6 +196,7 @@ void XGBoost<MatType>::Classify(const MatType& test,
 template<typename MatType>
 void XGBoost<MatType>::TrainInternal(const MatType& data,
                                      const arma::Row<size_t>& labels,
+                                     const data::DatasetInfo& datasetInfo,
                                      const size_t numClasses,
                                      const size_t numModels,
                                      const size_t minimumLeafSize,
@@ -227,7 +232,7 @@ void XGBoost<MatType>::TrainInternal(const MatType& data,
     residues = tempLabels - probabilities;
 
     // The weak learner is trained.
-    TrainXGBTree(data, residues, model, minimumLeafSize, 
+    TrainXGBTree(data, residues, datasetInfo, model, minimumLeafSize, 
       minimumGainSplit, maximumDepth, featImp);
 
     // Raw scores are obtained to update probabilities variable.
@@ -245,6 +250,7 @@ void XGBoost<MatType>::TrainInternal(const MatType& data,
 template<typename MatType>
 void XGBoost<MatType>::TrainXGBTree(const MatType& data,
                                     const arma::mat& residue,
+                                    const data::DatasetInfo& datasetInfo,
                                     const size_t modelNumber,
                                     const size_t minimumLeafSize,
                                     const double minimumGainSplit,
@@ -253,7 +259,7 @@ void XGBoost<MatType>::TrainXGBTree(const MatType& data,
 {
   for (size_t i = 0; i < numClasses; ++i)
   {
-    XGBTree* node = new XGBTree(data, residue.col(i), 
+    XGBTree* node = new XGBTree(data, residue.col(i), datasetInfo, 
       minimumLeafSize, minimumGainSplit, maximumDepth, featImp);
     trees[modelNumber][i] = node;
   }
