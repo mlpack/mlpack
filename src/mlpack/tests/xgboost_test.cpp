@@ -161,53 +161,6 @@ TEST_CASE("XGBIrisTestAccuracy", "[XGBoostGeneralTest]")
 }
 
 /**
- * Testing the Weak Learner fetching function
- */
-TEST_CASE("XGBWeakLearnerFunction", "[XGBoostUnitTest]")
-{
-  arma::mat db;
-  if (!data::Load("iris_train.csv", db))
-    FAIL("Cannot load test dataset iris_train.csv!");
-  
-  arma::Row<size_t> labels;
-  if (!data::Load("iris_train_labels.csv", labels))
-    FAIL("Cannot load labels for iris iris_train_labels.txt");
-
-  arma::mat testDb;
-  if (!data::Load("iris_test.csv", testDb))
-    FAIL("Cannot load test dataset iris_test.csv!");
-
-  arma::Row<size_t> testLabels;
-  if (!data::Load("iris_test_labels.csv", testLabels))
-    FAIL("Cannot load test dataset iris_test_labels.csv!");
-
-  const size_t numClasses = arma::max(labels.row(0)) + 1;
-  const size_t numModels = 5;
-
-  XGBoost xgb;
-  
-  xgb.Train(db, labels, numClasses, numModels);
-
-  arma::Row<size_t> predictions;
-  xgb.WeakLearner(0).Classify(testDb, predictions);
-
-  double accuracy = 0;
-  for (size_t i = 0; i < testLabels.n_elem; i++) 
-  {
-    if(testLabels(i) == predictions(i)) 
-    {
-      accuracy++;
-    }
-  }
-
-  accuracy = accuracy / ((double) testLabels.n_elem);
-  accuracy *= 100.0;
-
-  REQUIRE(accuracy > 0);
-
-}
-
-/**
  * Check if the Pruning method is removing nodes if they 
  * don't meet threshold conditions.
  */
@@ -244,9 +197,9 @@ TEST_CASE("ConstDataTest", "[XGBTreeTest]")
   const arma::rowvec constWeights(labels.n_elem, arma::fill::randu);
   const size_t numClasses = 5;
 
-  XGBTree<> dt(constData, constLabels, numClasses);
-  XGBTree<> dt2(constData, datasetInfo, constLabels, numClasses);
-  XGBTree<> dt3(constData, constLabels, numClasses, constWeights);
-  XGBTree<> dt4(constData, datasetInfo, constLabels, numClasses,
+  XGBTree xgb(constData, constLabels, numClasses);
+  XGBTree xgb2(constData, datasetInfo, constLabels, numClasses);
+  XGBTree xgb3(constData, constLabels, numClasses, constWeights);
+  XGBTree xgb4(constData, datasetInfo, constLabels, numClasses,
       constWeights);
 }
