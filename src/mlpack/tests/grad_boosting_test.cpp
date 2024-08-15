@@ -83,7 +83,6 @@ TEST_CASE("GBIrisTrainMethod2", "[GradBoostGeneralTest]")
   const size_t minimumLeafSize=10;
   const double minimumGainSplit=1e-7;
   const size_t maximumDepth=2;
-  const AllDimensionSelect dimensionSelector;
 
   GradBoosting gb;
 
@@ -161,4 +160,205 @@ TEST_CASE("GBIrisTestAccuracy", "[GradBoostGeneralTest]")
 
   REQUIRE(accuracy > 60);
 
+}
+
+/**
+ * Check the second constructor.
+*/
+TEST_CASE("GBConstr1", "[GradBoostGeneralTest]") 
+{
+  arma::mat db;
+  if (!data::Load("iris_train.csv", db))
+    FAIL("Cannot load test dataset iris_train.csv!");
+  
+  arma::Row<size_t> labels;
+  if (!data::Load("iris_train_labels.csv", labels))
+    FAIL("Cannot load labels for iris iris_train_labels.txt");
+
+  arma::mat testDb;
+  if (!data::Load("iris_test.csv", testDb))
+    FAIL("Cannot load test dataset iris_test.csv!");
+
+  arma::Row<size_t> testLabels;
+  if (!data::Load("iris_test_labels.csv", testLabels))
+    FAIL("Cannot load test dataset iris_test_labels.csv!");
+
+  const size_t numClasses = arma::max(labels.row(0)) + 1;
+  const size_t numModels = 5;
+
+  GradBoosting gb(db, labels, numClasses, numModels);
+
+  arma::Row<size_t> predictions;
+  gb.Classify(testDb, predictions);
+
+  double accuracy = 0;
+  for (size_t i = 0; i < testLabels.n_elem; i++) 
+  {
+    if(testLabels(i) == predictions(i)) 
+    {
+      accuracy++;
+    }
+  }
+
+  accuracy = accuracy / ((double) testLabels.n_elem);
+  accuracy *= 100.0;
+
+  REQUIRE(accuracy > 60);  
+}
+
+
+/**
+ * Check the third constructor.
+*/
+TEST_CASE("GBConstr2", "[GradBoostGeneralTest]") 
+{
+  arma::mat db;
+  if (!data::Load("iris_train.csv", db))
+    FAIL("Cannot load test dataset iris_train.csv!");
+  
+  arma::Row<size_t> labels;
+  if (!data::Load("iris_train_labels.csv", labels))
+    FAIL("Cannot load labels for iris iris_train_labels.txt");
+
+  arma::mat testDb;
+  if (!data::Load("iris_test.csv", testDb))
+    FAIL("Cannot load test dataset iris_test.csv!");
+
+  arma::Row<size_t> testLabels;
+  if (!data::Load("iris_test_labels.csv", testLabels))
+    FAIL("Cannot load test dataset iris_test_labels.csv!");
+
+  const size_t numClasses = arma::max(labels.row(0)) + 1;
+  const size_t numModels = 5;
+  const size_t minimumLeafSize=10;
+  const double minimumGainSplit=1e-7;
+  const size_t maximumDepth=2;
+
+  GradBoosting gb(db, labels, numClasses, numModels, 
+    minimumLeafSize, minimumGainSplit, maximumDepth);
+
+  arma::Row<size_t> predictions;
+  gb.Classify(testDb, predictions);
+
+  double accuracy = 0;
+  for (size_t i = 0; i < testLabels.n_elem; i++) 
+  {
+    if(testLabels(i) == predictions(i)) 
+    {
+      accuracy++;
+    }
+  }
+
+  accuracy = accuracy / ((double) testLabels.n_elem);
+  accuracy *= 100.0;
+
+  REQUIRE(accuracy > 60);  
+}
+
+
+/**
+ * Check the first classify method.
+*/
+TEST_CASE("GBClassify1", "[GradBoostGeneralTest]") 
+{
+  arma::mat db;
+  if (!data::Load("iris_train.csv", db))
+    FAIL("Cannot load test dataset iris_train.csv!");
+  
+  arma::Row<size_t> labels;
+  if (!data::Load("iris_train_labels.csv", labels))
+    FAIL("Cannot load labels for iris iris_train_labels.txt");
+
+  arma::mat testDb;
+  if (!data::Load("iris_test.csv", testDb))
+    FAIL("Cannot load test dataset iris_test.csv!");
+
+  arma::Row<size_t> testLabels;
+  if (!data::Load("iris_test_labels.csv", testLabels))
+    FAIL("Cannot load test dataset iris_test_labels.csv!");
+
+  const size_t numClasses = arma::max(labels.row(0)) + 1;
+  const size_t numModels = 5;
+
+  GradBoosting gb(db, labels, numClasses, numModels);
+
+  size_t prediction = gb.Classify(testDb.col(0));
+
+  REQUIRE(prediction == testLabels(0));  
+}
+
+/**
+ * Check the second classify method.
+*/
+TEST_CASE("GBClassify2", "[GradBoostGeneralTest]") 
+{
+  arma::mat db;
+  if (!data::Load("iris_train.csv", db))
+    FAIL("Cannot load test dataset iris_train.csv!");
+  
+  arma::Row<size_t> labels;
+  if (!data::Load("iris_train_labels.csv", labels))
+    FAIL("Cannot load labels for iris iris_train_labels.txt");
+
+  arma::mat testDb;
+  if (!data::Load("iris_test.csv", testDb))
+    FAIL("Cannot load test dataset iris_test.csv!");
+
+  arma::Row<size_t> testLabels;
+  if (!data::Load("iris_test_labels.csv", testLabels))
+    FAIL("Cannot load test dataset iris_test_labels.csv!");
+
+  const size_t numClasses = arma::max(labels.row(0)) + 1;
+  const size_t numModels = 5;
+
+  GradBoosting gb(db, labels, numClasses, numModels);
+
+  size_t prediction;
+  gb.Classify(testDb.col(0), prediction);
+
+  REQUIRE(prediction == testLabels(0));  
+}
+
+/**
+ * Check the third classify method.
+*/
+TEST_CASE("GBClassify3", "[GradBoostGeneralTest]") 
+{
+  arma::mat db;
+  if (!data::Load("iris_train.csv", db))
+    FAIL("Cannot load test dataset iris_train.csv!");
+  
+  arma::Row<size_t> labels;
+  if (!data::Load("iris_train_labels.csv", labels))
+    FAIL("Cannot load labels for iris iris_train_labels.txt");
+
+  arma::mat testDb;
+  if (!data::Load("iris_test.csv", testDb))
+    FAIL("Cannot load test dataset iris_test.csv!");
+
+  arma::Row<size_t> testLabels;
+  if (!data::Load("iris_test_labels.csv", testLabels))
+    FAIL("Cannot load test dataset iris_test_labels.csv!");
+
+  const size_t numClasses = arma::max(labels.row(0)) + 1;
+  const size_t numModels = 5;
+
+  GradBoosting gb(db, labels, numClasses, numModels);
+
+  arma::Row<size_t> predictions;
+  gb.Classify(testDb, predictions);
+
+  double accuracy = 0;
+  for (size_t i = 0; i < testLabels.n_elem; i++) 
+  {
+    if(testLabels(i) == predictions(i)) 
+    {
+      accuracy++;
+    }
+  }
+
+  accuracy = accuracy / ((double) testLabels.n_elem);
+  accuracy *= 100.0;
+
+  REQUIRE(accuracy > 90);
 }
