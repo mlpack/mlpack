@@ -303,6 +303,15 @@ arma::mat XGBoost<MatType>::ClassifyXGBTree(const MatType& data,
   return rawScores;
 }
 
+
+template<typename MatType>
+void Prune(const double threshold)
+{
+  for (size_t i = 0; i < numModels; ++i)
+    for (size_t j = 0; j < numClasses; ++j)
+      tree[i][j]->Prune(threshold);
+}
+
 }
 
 #endif

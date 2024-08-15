@@ -91,7 +91,6 @@ class FeatureImportance {
       pq.pop();
       rankByCover.push_back(elem);
     }
-
   }
 
 };

@@ -187,8 +187,8 @@ class XGBTree :
     {
       if(featImp != nullptr)
       {
-        featImp->featureFrequency[bestDim]++;
-        featImp->featureCover[bestDim] += featImp->featureFrequency[bestDim];
+        featImp->increaseFeatureFrequency(bestDim, 1);
+        featImp->increaseFeatureCover(bestDim, bestGain);
       }
       dimensionType = (size_t) datasetInfo.Type(bestDim);
       splitDimension = bestDim;

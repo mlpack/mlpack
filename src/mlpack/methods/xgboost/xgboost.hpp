@@ -181,6 +181,7 @@ class XGBoost
   void Classify(const MatType& test,
                 arma::Row<size_t>& predictedLabels,
                 arma::mat& probabilities);
+
   /**
    * Classify the given test points.
    *
@@ -190,6 +191,12 @@ class XGBoost
    */
   void Classify(const MatType& test,
                 arma::Row<size_t>& predictedLabels);
+
+  /**
+   * Prune the weak learner trees. 
+   * @param threshold The threshold gain value below which a particular node gets removed.
+   */
+  void Prune(const double threshold);
 
   /**
    * Serialize the XGBoost model.
