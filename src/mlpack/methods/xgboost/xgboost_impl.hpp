@@ -258,7 +258,7 @@ void XGBoost<MatType>::TrainXGBTree(const MatType& data,
 {
   for (size_t i = 0; i < numClasses; ++i)
   {
-    XGBTree* node = new XGBTree(data, residue.col(i), datasetInfo, 
+    XGBTree* node = new XGBTree(data, residue.row(i), datasetInfo, 
       minimumLeafSize, minimumGainSplit, maximumDepth, featImp);
     trees[modelNumber][i] = node;
   }
