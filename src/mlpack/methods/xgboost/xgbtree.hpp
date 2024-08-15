@@ -3,7 +3,10 @@
  * @author Abhimanyu Dayal
  *
  * XGBtree node. Implementation of Decision Tree specifically for XGBoost 
- * weak learner implementation.
+ * weak learner implementation. 
+ * 
+ * Slightly tweaked implementation of dt regressor as written in 
+ * decision_tree/decision_tree_regressor.hpp by @author Rishabh Garg
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
