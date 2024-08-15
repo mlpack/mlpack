@@ -86,7 +86,7 @@ XGBoost(const MatType& data,
   numClasses(numClasses),
   numModels(numModels)
 {
-  TrainInternal(data, labels, numModels, datasetInfo,
+  TrainInternal(data, labels, datasetInfo, numModels, 
                 minimumLeafSize, minimumGainSplit, maximumDepth);
 }
 
@@ -126,7 +126,7 @@ template<typename VecType>
 size_t XGBoost<MatType>::Classify(const VecType& point) 
 {
   size_t prediction;
-  arma::vec probabilities; /* Not to be used */
+  arma::rowvec probabilities; /* Not to be used */
   Classify(point, prediction, probabilities);
 
   return prediction;
@@ -160,7 +160,7 @@ template<typename VecType>
 void XGBoost<MatType>::Classify(const VecType& point,
                                 size_t& prediction)
 {
-  VecType probabilities; /* Not to be used */
+  arma::rowvec probabilities; /* Not to be used */
   Classify(point, prediction, probabilities);
 }
 
@@ -305,11 +305,11 @@ arma::mat XGBoost<MatType>::ClassifyXGBTree(const MatType& data,
 
 
 template<typename MatType>
-void Prune(const double threshold)
+void XGBoost<MatType>::Prune(const double threshold)
 {
   for (size_t i = 0; i < numModels; ++i)
     for (size_t j = 0; j < numClasses; ++j)
-      tree[i][j]->Prune(threshold);
+      trees[i][j]->Prune(threshold);
 }
 
 }

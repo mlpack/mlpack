@@ -211,10 +211,6 @@ TEST_CASE("XGBoostTestAccuracy", "[XGBoostGeneralTest]")
 
   const size_t numClasses = arma::max(labels.row(0)) + 1;
   const size_t numModels = 5;
-  const size_t minimumLeafSize = 10;
-  const double minimumGainSplit = 1e-7;
-  const size_t maximumDepth = 2;
-  FeatureImportance* featImp = new FeatureImportance();
 
   XGBoost xgb;
 
