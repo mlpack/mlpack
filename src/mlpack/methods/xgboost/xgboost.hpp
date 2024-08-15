@@ -159,7 +159,7 @@ class XGBoost
   template<typename VecType>
   void Classify(const VecType& point,
                 size_t& prediction,
-                VecType& probabilities);
+                arma::rowvec& probabilities);
   /**
    * Classify the given test point.
    *
@@ -180,7 +180,7 @@ class XGBoost
    */
   void Classify(const MatType& test,
                 arma::Row<size_t>& predictedLabels,
-                MatType& probabilities);
+                arma::mat& probabilities);
   /**
    * Classify the given test points.
    *

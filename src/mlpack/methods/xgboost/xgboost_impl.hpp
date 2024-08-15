@@ -23,7 +23,7 @@ namespace mlpack {
 
 void CalculateProbability(arma::mat& rawScores,
                           arma::mat& probabilities)
-{
+{  
   for (size_t i = 0; i < rawScores.n_rows; ++i)
   {
     double sumExp = 0;
@@ -136,7 +136,7 @@ template<typename MatType>
 template<typename VecType>
 void XGBoost<MatType>::Classify(const VecType& point,
                                 size_t& prediction,
-                                VecType& probabilities)
+                                arma::rowvec& probabilities)
 {
   arma::rowvec rawScores(numClasses, arma::fill::zeros);
 
@@ -167,7 +167,7 @@ void XGBoost<MatType>::Classify(const VecType& point,
 template<typename MatType>
 void XGBoost<MatType>::Classify(const MatType& test,
                                 arma::Row<size_t>& predictedLabels,
-                                MatType& probabilities) 
+                                arma::mat& probabilities) 
 {
   predictedLabels.clear();
   predictedLabels.resize(test.n_cols);
@@ -175,7 +175,7 @@ void XGBoost<MatType>::Classify(const MatType& test,
   for (size_t i = 0; i < test.n_cols; ++i) 
   {
     size_t prediction;
-    arma::vec tempProb(numClasses, arma::fill::zeros);
+    arma::rowvec tempProb(numClasses, arma::fill::zeros);
     arma::vec tempTest = test.col(i);
 
     Classify(tempTest, prediction, tempProb);
@@ -189,8 +189,19 @@ template<typename MatType>
 void XGBoost<MatType>::Classify(const MatType& test,
                                 arma::Row<size_t>& predictedLabels) 
 {
-  MatType probabilities; /* Not to be used */
-  Classify(test, predictedLabels, probabilities);
+  predictedLabels.clear();
+  predictedLabels.resize(test.n_cols);
+
+  arma::rowvec tempProb(numClasses, arma::fill::zeros); /* Not to be used */
+  
+  for (size_t i = 0; i < test.n_cols; ++i) 
+  {
+    size_t prediction;
+    arma::vec tempTest = test.col(i);
+
+    Classify(tempTest, prediction, tempProb);
+    predictedLabels(i) = prediction;
+  }
 }
 
 // TrainInternal is a private function within XGBoost class
