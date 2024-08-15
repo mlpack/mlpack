@@ -84,6 +84,9 @@ class XGBoost
                const double minimumGainSplit,
                const size_t maximumDepth);
 
+  //! Set the number of classes explicitly.
+  void SetNumClasses(const size_t x) {numClasses = x;}
+  
   //! Set the number of trees explicitly.
   void SetNumModels(const size_t x) {numModels = x;}
 
@@ -202,7 +205,6 @@ class XGBoost
   void TrainInternal(const MatType& data,
                      const arma::Row<size_t>& labels,
                      const data::DatasetInfo& datasetInfo,
-                     const size_t numClasses,
                      const size_t numModels = 10,
                      const size_t minimumLeafSize = 10,
                      const double minimumGainSplit = 1e-7,
@@ -218,13 +220,11 @@ class XGBoost
                     FeatureImportance* featImp);
 
   template<typename VecType>
-  void ClassifyXGBTree(const VecType& point,
-                       arma::colvec& rawScores,
-                       size_t modelNumber);
+  arma::rowvec ClassifyXGBTree(const VecType& data,
+                            size_t modelNumber);
 
-  void ClassifyXGBTree(const MatType& data,
-                       arma::mat& rawScores,
-                       size_t modelNumber);
+  arma::mat ClassifyXGBTree(const MatType& data,
+                            size_t modelNumber);
 
   //! The number of classes in the model.
   size_t numClasses;
@@ -233,8 +233,6 @@ class XGBoost
 
   //! The vector of trees.
   std::vector<vector<XGBTree*>> trees;
-  //! The weights corresponding to each weak learner.
-  std::vector<ElemType> alpha;
 }; 
 
 }
