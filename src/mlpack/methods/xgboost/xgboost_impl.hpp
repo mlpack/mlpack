@@ -86,7 +86,7 @@ XGBoost(const MatType& data,
   numClasses(numClasses),
   numModels(numModels)
 {
-  TrainInternal(data, labels, numModels, 
+  TrainInternal(data, labels, numModels, datasetInfo,
                 minimumLeafSize, minimumGainSplit, maximumDepth);
 }
 
