@@ -26,7 +26,8 @@ using namespace mlpack;
 TEST_CASE("XGBIrisTrainMethod1", "[XGBoostGeneralTest]") 
 {
   arma::mat db;
-  if (!data::Load("iris.csv", db))
+  mlpack::data::DatasetInfo info;
+  if (!data::Load("iris.csv", db, info))
     FAIL("Cannot load test dataset iris.csv!");
   
   arma::Row<size_t> labels;
@@ -38,7 +39,7 @@ TEST_CASE("XGBIrisTrainMethod1", "[XGBoostGeneralTest]")
 
   XGBoost xgb;
 
-  xgb.Train(db, labels, numClasses, numModels);
+  xgb.Train(db, labels, info, numClasses, numModels);
 
   arma::Row<size_t> predictions;
   xgb.Classify(db, predictions);
@@ -67,7 +68,8 @@ TEST_CASE("XGBIrisTrainMethod1", "[XGBoostGeneralTest]")
 TEST_CASE("XGBIrisTrainMethod2", "[XGBoostGeneralTest]") 
 {
   arma::mat db;
-  if (!data::Load("iris.csv", db))
+  mlpack::data::DatasetInfo info;
+  if (!data::Load("iris.csv", db, info))
     FAIL("Cannot load test dataset iris.csv!");
   
   arma::Row<size_t> labels;
@@ -84,10 +86,7 @@ TEST_CASE("XGBIrisTrainMethod2", "[XGBoostGeneralTest]")
 
   XGBoost xgb;
 
-  xgb.Train(db, 
-            labels, 
-            numClasses, 
-            numModels, 
+  xgb.Train(db, labels, info,numClasses, numModels, 
             minimumLeafSize,
             minimumGainSplit,
             maximumDepth);
@@ -119,7 +118,8 @@ TEST_CASE("XGBIrisTrainMethod2", "[XGBoostGeneralTest]")
 TEST_CASE("XGBIrisTestAccuracy", "[XGBoostGeneralTest]") 
 {
   arma::mat db;
-  if (!data::Load("iris_train.csv", db))
+  mlpack::data::DatasetInfo info;
+  if (!data::Load("iris_train.csv", db, info))
     FAIL("Cannot load test dataset iris_train.csv!");
   
   arma::Row<size_t> labels;
@@ -139,7 +139,7 @@ TEST_CASE("XGBIrisTestAccuracy", "[XGBoostGeneralTest]")
 
   XGBoost xgb;
 
-  xgb.Train(db, labels, numClasses, numModels);
+  xgb.Train(db, labels, info, numClasses, numModels);
 
   arma::Row<size_t> predictions;
   xgb.Classify(testDb, predictions);
@@ -168,13 +168,19 @@ TEST_CASE("XGBIrisTestAccuracy", "[XGBoostGeneralTest]")
 TEST_CASE("PruningBaseTest", "[XGBTreeTest]")
 {
   arma::mat dataset;
-  arma::Row<size_t> labels;
-  if (!data::Load("vc2.csv", dataset))
+  mlpack::data::DatasetInfo info;
+  if (!data::Load("vc2.csv", dataset, info))
     FAIL("Cannot load test dataset vc2.csv!");
+  
+  arma::rowvec labels;
   if (!data::Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt!");
+  
+  FeatureImportance* featImp = new FeatureImportance();
 
-  XGBTree d(dataset, labels, 3, 10, 1e-7, 1);
+  const arma::mat db = dataset;
+
+  XGBTree d(db, labels, info, 10, 1e-7, 3, featImp);
 
   // Set the threshold high to ensure that it deletes root node.
   bool flag = d.Prune(10);
@@ -182,24 +188,3 @@ TEST_CASE("PruningBaseTest", "[XGBTreeTest]")
   REQUIRE(flag == true);
 }
 
-/*
- * Test that we can pass const data into XGBTree constructors.
- */
-TEST_CASE("ConstDataTest", "[XGBTreeTest]")
-{
-  arma::mat data;
-  arma::Row<size_t> labels;
-  data::DatasetInfo datasetInfo;
-  MockCategoricalData(data, labels, datasetInfo);
-
-  const arma::mat& constData = data;
-  const arma::Row<size_t>& constLabels = labels;
-  const arma::rowvec constWeights(labels.n_elem, arma::fill::randu);
-  const size_t numClasses = 5;
-
-  XGBTree xgb(constData, constLabels, numClasses);
-  XGBTree xgb2(constData, datasetInfo, constLabels, numClasses);
-  XGBTree xgb3(constData, constLabels, numClasses, constWeights);
-  XGBTree xgb4(constData, datasetInfo, constLabels, numClasses,
-      constWeights);
-}
