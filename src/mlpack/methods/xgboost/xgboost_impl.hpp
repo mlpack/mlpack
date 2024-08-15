@@ -139,6 +139,7 @@ void XGBoost<MatType>::Classify(const VecType& point,
                                 arma::rowvec& probabilities)
 {
   arma::rowvec rawScores(numClasses, arma::fill::zeros);
+  probabilities.resize(numClasses);
 
   for (size_t i = 0; i < numModels; ++i) 
   {
@@ -171,6 +172,7 @@ void XGBoost<MatType>::Classify(const MatType& test,
 {
   predictedLabels.clear();
   predictedLabels.resize(test.n_cols);
+  probabilities.resize(numClasses, test.n_cols);
   
   for (size_t i = 0; i < test.n_cols; ++i) 
   {
@@ -181,7 +183,7 @@ void XGBoost<MatType>::Classify(const MatType& test,
     Classify(tempTest, prediction, tempProb);
     predictedLabels(i) = prediction;
 
-    probabilities.col(i) = tempProb;
+    probabilities.col(i) = tempProb.t();
   }
 }
 

@@ -417,11 +417,11 @@ TEST_CASE("XGBoostClassify4", "[XGBoostGeneralTest]")
   xgb.Classify(testDb, predictions, probabilities);
 
   double accuracy = 0;
-  for (size_t i = 0; i < labels.n_elem; i++) 
-    if(labels(i) == predictions(i)) 
+  for (size_t i = 0; i < testLabels.n_elem; i++) 
+    if(testLabels(i) == predictions(i)) 
       accuracy++;
 
-  accuracy = accuracy / ((double) labels.n_elem);
+  accuracy = accuracy / ((double) testLabels.n_elem);
   accuracy *= 100.0;
 
   REQUIRE(accuracy > 90);
@@ -460,11 +460,11 @@ TEST_CASE("XGBoostClassify5", "[XGBoostGeneralTest]")
   xgb.Classify(testDb, predictions);
 
   double accuracy = 0;
-  for (size_t i = 0; i < labels.n_elem; i++) 
-    if(labels(i) == predictions(i)) 
+  for (size_t i = 0; i < testLabels.n_elem; i++) 
+    if(testLabels(i) == predictions(i)) 
       accuracy++;
 
-  accuracy = accuracy / ((double) labels.n_elem);
+  accuracy = accuracy / ((double) testLabels.n_elem);
   accuracy *= 100.0;
 
   REQUIRE(accuracy > 90);
