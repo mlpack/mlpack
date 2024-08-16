@@ -55,10 +55,10 @@ class XGBoost
    * @param numModels Number of trees
    */
   XGBoost(const MatType& data,
-               const arma::Row<size_t>& labels,
-               const data::DatasetInfo& datasetInfo,
-               const size_t numClasses,
-               const size_t numModels);
+          const arma::Row<size_t>& labels,
+          const data::DatasetInfo& datasetInfo,
+          const size_t numClasses,
+          const size_t numModels);
 
   /**
    * Constructor for a XGBoost model. Any extra parameters are used as
@@ -76,13 +76,13 @@ class XGBoost
    * @param maximumDepth Maximum depth for the tree.
    */
   XGBoost(const MatType& data,
-               const arma::Row<size_t>& labels,
-               const data::DatasetInfo& datasetInfo,
-               const size_t numClasses,
-               const size_t numModels,
-               const size_t minimumLeafSize,
-               const double minimumGainSplit,
-               const size_t maximumDepth);
+          const arma::Row<size_t>& labels,
+          const data::DatasetInfo& datasetInfo,
+          const size_t numClasses,
+          const size_t numModels,
+          const size_t minimumLeafSize,
+          const double minimumGainSplit,
+          const size_t maximumDepth);
 
   //! Set the number of classes explicitly.
   void SetNumClasses(const size_t x) {numClasses = x;}

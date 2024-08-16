@@ -53,10 +53,10 @@ XGBoost<MatType>::XGBoost() :
 template<typename MatType>
 XGBoost<MatType>::
   XGBoost(const MatType& data,
-               const arma::Row<size_t>& labels,
-               const data::DatasetInfo& datasetInfo,
-               const size_t numClasses,
-               const size_t numModels) :
+          const arma::Row<size_t>& labels,
+          const data::DatasetInfo& datasetInfo,
+          const size_t numClasses,
+          const size_t numModels) :
   numClasses(numClasses),
   numModels(numModels)
 {
@@ -76,13 +76,13 @@ XGBoost<MatType>::
 template<typename MatType>
 XGBoost<MatType>::
 XGBoost(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const data::DatasetInfo& datasetInfo,
-             const size_t numClasses,
-             const size_t numModels,
-             const size_t minimumLeafSize, 
-             const double minimumGainSplit, 
-             const size_t maximumDepth) :
+        const arma::Row<size_t>& labels,
+        const data::DatasetInfo& datasetInfo,
+        const size_t numClasses,
+        const size_t numModels,
+        const size_t minimumLeafSize, 
+        const double minimumGainSplit, 
+        const size_t maximumDepth) :
   numClasses(numClasses),
   numModels(numModels)
 {

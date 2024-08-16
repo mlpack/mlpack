@@ -48,13 +48,13 @@ class FeatureImportance {
   FeatureImportance() { /*Nothing to do*/ }
 
   //! Edit the featureFrequency value.
-  void increaseFeatureFrequency(size_t index, size_t incrementValue)
+  void IncreaseFeatureFrequency(size_t index, size_t incrementValue)
   {
     featureFrequency[index] += incrementValue;
   }
 
   //! Edit the featureCover value.
-  void increaseFeatureCover(size_t index, double incrementValue)
+  void IncreaseFeatureCover(size_t index, double incrementValue)
   {
     featureCover[index] += incrementValue;
   }

@@ -1,13 +1,11 @@
 /**
  * @file methods/xgboost/xgbtree.hpp
+ * @author Rishabh Garg 
  * @author Abhimanyu Dayal
  *
  * XGBtree node. Implementation of Decision Tree specifically for XGBoost 
  * weak learner implementation. 
  * 
- * Slightly tweaked implementation of dt regressor as written in 
- * decision_tree/decision_tree_regressor.hpp by @author Rishabh Garg
- *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -112,17 +110,17 @@ class XGBTree :
   }
 
   double Train(arma::mat& data,
-                const size_t begin,
-                const size_t count,
-                const data::DatasetInfo& datasetInfo,
-                arma::rowvec& responses,
-                arma::rowvec& weights, /* Not to use */
-                const size_t minimumLeafSize,
-                const double minimumGainSplit,
-                const size_t maximumDepth,
-                DimensionSelection& dimensionSelector,
-                MSEGain msegain,
-                FeatureImportance* featImp)
+               const size_t begin,
+               const size_t count,
+               const data::DatasetInfo& datasetInfo,
+               arma::rowvec& responses,
+               arma::rowvec& weights, /* Not to use */
+               const size_t minimumLeafSize,
+               const double minimumGainSplit,
+               const size_t maximumDepth,
+               DimensionSelection& dimensionSelector,
+               MSEGain msegain,
+               FeatureImportance* featImp)
   {
     // Clear children if needed.
     for (size_t i = 0; i < children.size(); ++i)
@@ -146,28 +144,30 @@ class XGBTree :
         double dimGain = -DBL_MAX;
         if (datasetInfo.Type(i) == data::Datatype::categorical)
         {
-          dimGain = CategoricalSplit::template SplitIfBetter<false>(bestGain,
-              data.cols(begin, begin + count - 1).row(i),
-              datasetInfo.NumMappings(i),
-              responses.cols(begin, begin + count - 1),
-              weights,
-              minimumLeafSize,
-              minimumGainSplit,
-              splitInfo,
-              *this,
-              msegain);
+          dimGain = CategoricalSplit::template 
+            SplitIfBetter<false>(bestGain,
+                                 data.cols(begin, begin + count - 1).row(i),
+                                 datasetInfo.NumMappings(i),
+                                 responses.cols(begin, begin + count - 1),
+                                 weights,
+                                 minimumLeafSize,
+                                 minimumGainSplit,
+                                 splitInfo,
+                                 *this,
+                                 msegain);
         }
         else if (datasetInfo.Type(i) == data::Datatype::numeric)
         {
-          dimGain = NumericSplit::template SplitIfBetter<false>(bestGain,
-              data.cols(begin, begin + count - 1).row(i),
-              responses.cols(begin, begin + count - 1),
-              weights,
-              minimumLeafSize,
-              minimumGainSplit,
-              splitInfo,
-              *this,
-              msegain);
+          dimGain = NumericSplit::template 
+            SplitIfBetter<false>(bestGain,
+                                 data.cols(begin, begin + count - 1).row(i),
+                                 responses.cols(begin, begin + count - 1),
+                                 weights,
+                                 minimumLeafSize,
+                                 minimumGainSplit,
+                                 splitInfo,
+                                 *this,
+                                 msegain);
         }
 
         // If the splitter reported that it did not split, move to the next
@@ -190,8 +190,8 @@ class XGBTree :
     {
       if(featImp != nullptr)
       {
-        featImp->increaseFeatureFrequency(bestDim, 1);
-        featImp->increaseFeatureCover(bestDim, bestGain);
+        featImp->IncreaseFeatureFrequency(bestDim, 1);
+        featImp->IncreaseFeatureCover(bestDim, bestGain);
       }
       dimensionType = (size_t) datasetInfo.Type(bestDim);
       splitDimension = bestDim;
