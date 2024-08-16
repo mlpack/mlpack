@@ -1940,7 +1940,7 @@ std::cout << "Kernel values between two floating-point vectors: " << k5
 ### `HyperbolicTangentKernel`
 
 The `HyperbolicTangentKernel` implements the
-[hyperbolic tangent kernel](https://en.wikipedia.org/wiki/Support_vector_machine#Nonlinear_Kernels),
+[hyperbolic tangent kernel](https://en.wikipedia.org/wiki/Support_vector_machine#Nonlinear_kernels),
 which is defined by the following equation:
 `f(x1, x2) = tanh(s * (x1^T x2) + t)`
 where `s` is the scale parameter and `t` is the offset parameter.
