@@ -257,5 +257,3 @@ std::cout << "The number of weak learners being used by the model is "
 << xgb.NumModels() << "." << std::endl;
 
 ```
-
----
