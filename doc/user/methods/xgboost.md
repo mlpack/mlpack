@@ -15,22 +15,35 @@ previous learner, thereby reducing the error of the overall model.
 #### Simple usage example:
 
 ```c++
-// Train a XGBoost model on random numeric data and predict labels 
-// on test data: All data and labels are uniform random; 10 dimensional data, 
-// 5 classes.
+// Train a XGBoost model on the Iris dataset and predict labels 
+// on test data: 
 // Replace with a data::Load() call or similar for a real application.
 // numModels is a hyperparameter refering to the number of weak learners
-arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
-arma::Row<size_t> labels =
-    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
-arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
-size_t numModels = 10;
-size_t numClasses = 5;
+
+arma::mat db;
+mlpack::data::DatasetInfo info;
+if (!data::Load("iris_train.csv", db, info))
+FAIL("Cannot load test dataset iris_train.csv!");
+
+arma::Row<size_t> labels;
+if (!data::Load("iris_train_labels.csv", labels))
+FAIL("Cannot load labels for iris iris_train_labels.txt");
+
+arma::mat testDb;
+if (!data::Load("iris_test.csv", testDb))
+FAIL("Cannot load test dataset iris_test.csv!");
+
+arma::Row<size_t> testLabels;
+if (!data::Load("iris_test_labels.csv", testLabels))
+FAIL("Cannot load test dataset iris_test_labels.csv!");
+
+const size_t numClasses = arma::max(labels.row(0)) + 1;
+const size_t numModels = 5;
 
 mlpack::XGBoost xgb;               // Step 1: create model.
-xgb.Train(dataset, labels, numClasses, numModels);          // Step 2: train model.
+xgb.Train(db, labels, info, numClasses, numModels);          // Step 2: train model.
 arma::Row<size_t> predictions;
-xgb.Classify(testDataset, predictions); // Step 3: classify points.
+xgb.Classify(testDb, predictions); // Step 3: classify points.
 
 // Print some information about the test predictions.
 std::cout << arma::accu(predictions == 2) << " test points classified as class "
@@ -65,13 +78,13 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 ---
 
- * `xgb = XGBoost(data, labels, numClasses, numModels)`
-   - Train on numerical-only data using default arguments for the weak learners (Decision Trees).
+ * `xgb = XGBoost(data, labels, datasetInfo, numClasses, numModels)`
+   - Train on mixed category data using default arguments for the weak learners (Decision Trees).
 
 ---
 
- * `xgb = XGBoost(data, labels, numClasses, numModels, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on numerical-only data, entering the weak learner arguments `minimumLeafSize`, `minimumGainSplit` and `maximumDepth`.
+ * `xgb = XGBoost(data, labels, datasetInfo, numClasses, numModels, minimumLeafSize, minimumGainSplit, maximumDepth)`
+   - Train on mixed category data, entering the weak learner arguments `minimumLeafSize`, `minimumGainSplit` and `maximumDepth`.
 
 ---
 
@@ -81,6 +94,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
 | `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels. [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `datasetInfo` | [`data::DatasetInfo`](https://github.com/mlpack/mlpack/blob/master/doc/user/load_save.md#loading-categorical-data) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `numModels` | `size_t` | Number of weak learner models to be used. | _(N/A)_ |
 | `minimumLeafSize` | `size_t` | Minimum leaf size for weak learner decision tree | 10 |
@@ -97,13 +111,13 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 If training is not done as part of the constructor call, it can be done with one
 of the following versions of the `Train()` member function:
 
- * `xgb.Train(data, labels, numClasses, numModels)`
-   - Train on numerical data without using any decision tree arguments.
+ * `xgb.Train(data, labels, datasetInfo, numClasses, numModels)`
+   - Train on mixed category data without using any decision tree arguments.
 
 ---
 
- * `xgb.Train(data, labels, numClasses, numModels, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on numerical data using weak learner model's arguments `minimumLeafSize`, `minimumGainSplit` and `maximumDepth`.
+ * `xgb.Train(data, labels, datasetInfo, numClasses, numModels, minimumLeafSize, minimumGainSplit, maximumDepth)`
+   - Train on mixed category data using weak learner model's arguments `minimumLeafSize`, `minimumGainSplit` and `maximumDepth`.
 
 ---
 
@@ -128,8 +142,17 @@ to make class predictions for new data.
 
  * `xgb.Classify(point, prediction)`
     - ***(Single-point)***
+    - Classify a single point.
+    - The predicted class is stored in `prediction`.
+
+---
+
+ * `xgb.Classify(point, prediction, probabilities)`
+    - ***(Single-point)***
     - Classify a single point and compute class probabilities.
     - The predicted class is stored in `prediction`.
+    - Class probabilities are stored in `probabilities`.
+
 
 ---
 
@@ -140,15 +163,26 @@ to make class predictions for new data.
 
 ---
 
+ * `xgb.Classify(data, predictedLabels, probabilities)`
+    - ***(Multi-point)***
+    - Classify a set of points and compute class probabilities.
+    - The prediction for data point `i` can be accessed with `predictedLabels[i]`.
+    - Class probabilities are stored in `probabilities`.
+
+---
+
 #### Classification Parameters:
 
 | **usage** | **name** | **type** | **description** |
 |-----------|----------|----------|-----------------|
 | _single-point_ | `point` | [`arma::vec`](../matrices.md) | Single point for classification. |
 | _single-point_ | `prediction` | `size_t&` | `size_t` to store class prediction into. |
+| _single-point_ | `probabilities` | [`arma::rowvec`](../matrices.md) | Single row to store probabilities, size equal to numClasses |
 ||||
 | _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md#representing-data-in-mlpack) points for classification. |
 | _multi-point_ | `predictedLabels` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into.  Will be set to length `data.n_cols`. |
+| _multi-point_ | `probabilities` | [`arma::mat`](../matrices.md) | Matrice to store probabilities, dimensions equal to numClasses x data.n_cols |
+
 
 ***Note:*** different types can be used for `data` and `point` (e.g.
 `arma::fmat`, `arma::sp_mat`, `arma::sp_vec`, etc.).  However, the element type
@@ -156,19 +190,18 @@ that is used should be the same type that was used for training.
 
 ### Other Functionality
 
- * `WeakLearner(size_t i)` returns a `WeakLearnerType` indicating which weak learner 
-    is being used. 
-
  * `xgb.NumModels()` returns a `size_t` indicating how many weak learners are being
     used by the model.
 
  * `xgb.NumClasses()` returns a `size_t` indicating the number of classes the
    model was trained on.
 
+ * `xgb.SetNumClasses(size_t x)` set the number of classes to `x` explicitly.
+
  * `xgb.SetNumModels(size_t x)` set the number of weak learners to `x` explicitly.
 
 For complete functionality, the [source
-code](/src/mlpack/methods/grad_boosting/grad_boosting.hpp) can be consulted.
+code](/src/mlpack/methods/xgboost/xgboost.hpp) can be consulted.
 Each method is fully documented.
 
 ### Simple Examples
@@ -194,7 +227,7 @@ mlpack::data::Load("covertype.train.labels.csv", labels, true);
 // Create the model object.
 mlpack::XGBoost xgb;
 // Train on the given dataset, specifying number of weak learners at 5.
-xgb.Train(dataset, labels, 7 /* classes */, 5 /* number of weak learners */);
+xgb.Train(dataset, labels, info, 7 /* classes */, 5 /* number of weak learners */);
 
 // Load categorical test data.
 arma::mat testDataset;
@@ -202,7 +235,7 @@ arma::mat testDataset;
 mlpack::data::Load("covertype.test.arff", testDataset, info, true);
 
 // Predict class of first test point.
-const size_t firstPrediction = gb.Classify(testDataset.col(0));
+const size_t firstPrediction = xgb.Classify(testDataset.col(0));
 std::cout << "Predicted class of first test point is " << firstPrediction << "."
     << std::endl;
 
