@@ -66,13 +66,11 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
       threadId = omp_get_thread_num();
     #endif
 
-    const size_t segmentStart = threadId * nominalSegmentSize;
-    const size_t segmentEnd = std::min(segmentStart + nominalSegmentSize, points);
-
     arma::mat& localCentroids = threadCentroids[threadId];
     arma::Col<size_t>& localCounts = threadCounts[threadId];
 
-    for (size_t i = segmentStart; i < segmentEnd; ++i)
+    #pragma omp for
+    for (size_t i = 0; i < points; ++i)
     {
       // Use a temporary dense vector for both sparse and dense matrices
       arma::vec dataPoint;
