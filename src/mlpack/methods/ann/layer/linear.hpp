@@ -174,12 +174,10 @@ class LinearType : public Layer<MatType>
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
-  // Accessors for inSize and outSize.
-  size_t InputSize() const { return inSize; }
-  size_t OutputSize() const { return outSize; }
-
   // Public method to access the regularizer.
-  RegularizerType Regularizer() const { return regularizer; }
+  const RegularizerType& Regularizer() const { return regularizer; }
+  RegularizerType& Regularizer() { return regularizer; }
+
 
  private:
   //! Locally-stored number of input units.
