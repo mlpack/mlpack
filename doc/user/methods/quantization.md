@@ -1,121 +1,226 @@
-# Simplified Guide to Using Quantization in MLPack
+## `Quantization`
 
-Welcome to this comprehensive guide on applying quantization to your neural network models using MLPack. We'll walk you through the process step-by-step, helping you optimize your models for deployment on resource-constrained devices.
+The `Quantization` class implements various quantization techniques for compressing neural network models in mlpack. Quantization reduces the precision of model weights, typically from 32-bit floating-point to lower bit-width representations (e.g., 8-bit integers). This compression can significantly reduce model size and improve inference speed, especially on hardware optimized for lower-precision arithmetic.
 
-## What is Quantization?
+Quantization is particularly useful for deploying models on resource-constrained devices or for scenarios where model size and inference speed are critical.
 
-Quantization is a technique that compresses your model by reducing the precision of its weights. Instead of using 32-bit floating-point numbers, quantization allows you to use 16-bit or 8-bit integers. This significantly reduces the model's size and speeds up execution, often with minimal impact on accuracy.
+#### Simple usage example:
 
-## Getting Started with Quantization in MLPack
+```c++
+// Quantize a pre-trained neural network model to 8-bit precision:
 
-MLPack provides a straightforward way to apply quantization to your models. We'll demonstrate how to use the SimpleQuantization strategy, which is both effective and easy to implement.
+// Load a pre-trained model (replace with your model loading code)
+mlpack::FFN<> model;
+mlpack::data::Load("model.bin", "model", model);
 
-## Applying Quantization: A Step-by-Step Example
+// Create a quantizer with default settings (8-bit quantization)
+mlpack::Quantization quantizer;
 
-Let's walk through a basic example that shows how to apply quantization to a set of weights in your neural network:
+// Apply quantization to the model
+quantizer.Apply(model);
 
-```cpp
-#include <mlpack/core.hpp>
-#include <mlpack/methods/ann/quantization/quantization_strategy.hpp>
-#include <armadillo>
+// Save the quantized model
+mlpack::data::Save("quantized_model.bin", "model", model);
 
-using namespace mlpack;
-using namespace mlpack::ann;
+// Use the quantized model for inference
+arma::mat testData; // Load your test data
+arma::mat predictions;
+model.Predict(testData, predictions);
+```
+<p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
 
-int main()
-{
-  // Define your original floating-point weights
-  arma::mat sourceWeights = {{-1.5, 0.5, 1.0},
-                             {-0.5, 2.0, -2.5}};
+#### Quick links:
 
-  // Create a matrix to hold the quantized weights
-  arma::Mat<short> targetWeights;
+ * [Constructors](#constructors): create `Quantization` objects.
+ * [`Apply()`](#applying-quantization): apply quantization to model or weights.
+ * [Other functionality](#other-functionality) for customizing quantization parameters.
+ * [Examples](#simple-examples) of simple usage and links to detailed example projects.
+ * [Template parameters](#advanced-functionality-template-parameters) for custom behavior.
+ * [Advanced template examples](#advanced-functionality-examples) of use with custom template parameters.
 
-  // Instantiate the SimpleQuantization strategy
-  SimpleQuantization<arma::mat, arma::Mat<short>> quantizer;
+#### See also:
 
-  // Apply quantization to the weights
-  quantizer.QuantizeWeights(sourceWeights, targetWeights);
+ * [`FFN`](ffn.md): feed-forward neural networks
+ * [`CNN`](cnn.md): convolutional neural networks
+ * [mlpack transformations](../../index.md#transformations)
+ * [Quantization on Wikipedia](https://en.wikipedia.org/wiki/Quantization_(signal_processing))
+ * [Quantization for Neural Networks](https://arxiv.org/abs/1712.05877) (comprehensive overview paper, pdf)
 
-  // You can now use targetWeights in place of the original weights
-  std::cout << "Original Weights:\n" << sourceWeights << std::endl;
-  std::cout << "Quantized Weights:\n" << targetWeights << std::endl;
+### Constructors
 
-  return 0;
-}
+Construct a `Quantization` object using one of the constructors below. Defaults and types are detailed in the [Constructor Parameters](#constructor-parameters) section below.
+
+#### Forms:
+
+ * `q = Quantization()`
+   - Initialize quantizer with default settings (8-bit linear quantization).
+
+---
+
+ * `q = Quantization(bits)`
+   - Initialize quantizer with specified bit depth.
+
+---
+
+#### Constructor Parameters:
+
+| **name** | **type** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `bits` | `size_t` | Number of bits to use for quantization. | `8` |
+
+### Applying Quantization
+
+Once a `Quantization` object is created, the `Apply()` member function can be used to quantize models or weight matrices.
+
+ * `q.Apply(model)`
+   - Quantize the weights of the given `model` in-place.
+
+---
+
+ * `q.Apply(weights, quantizedWeights)`
+   - Quantize the given `weights` matrix and store the result in `quantizedWeights`.
+
+---
+
+#### Quantization Parameters:
+
+| **usage** | **name** | **type** | **description** |
+|-----------|----------|----------|-----------------|
+| _model_ | `model` | `FFN<>` or `CNN<>` | Neural network model to be quantized. |
+||||
+| _weights_ | `weights` | [`arma::mat`](../matrices.md) | Weight matrix to be quantized. |
+| _weights_ | `quantizedWeights` | [`arma::mat&`](../matrices.md) | Matrix to store quantized weights. |
+
+### Other Functionality
+
+ * A `Quantization` object can be serialized with [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+
+ * `q.Bits()` will return a `size_t` indicating the number of bits used for quantization.
+
+ * `q.SetBits(bits)` will set the number of bits used for quantization to `bits`.
+
+For complete functionality, the [source code](/src/mlpack/methods/quantization/quantization.hpp) can be consulted. Each method is fully documented.
+
+### Simple Examples
+
+See also the [simple usage example](#simple-usage-example) for a trivial use of `Quantization`.
+
+---
+
+Quantize a model to different bit depths and compare performance:
+
+```c++
+// Load a pre-trained model
+mlpack::FFN<> model;
+mlpack::data::Load("model.bin", "model", model);
+
+// Load test data
+arma::mat testData;
+arma::mat testLabels;
+mlpack::data::Load("test_data.csv", testData, true);
+mlpack::data::Load("test_labels.csv", testLabels, true);
+
+// Evaluate original model
+double originalAccuracy = model.Evaluate(testData, testLabels);
+
+// Quantize to 8-bit
+mlpack::Quantization q8(8);
+mlpack::FFN<> model8 = model;
+q8.Apply(model8);
+double accuracy8 = model8.Evaluate(testData, testLabels);
+
+// Quantize to 4-bit
+mlpack::Quantization q4(4);
+mlpack::FFN<> model4 = model;
+q4.Apply(model4);
+double accuracy4 = model4.Evaluate(testData, testLabels);
+
+std::cout << "Original accuracy: " << originalAccuracy << std::endl;
+std::cout << "8-bit quantized accuracy: " << accuracy8 << std::endl;
+std::cout << "4-bit quantized accuracy: " << accuracy4 << std::endl;
 ```
 
-## Integrating Quantization into a Neural Network
+---
 
-To incorporate quantization into a full neural network, follow these steps:
+### Advanced Functionality: Template Parameters
 
-1. Define your model
-2. Train the model
-3. Quantize the weights
-4. Evaluate the quantized model
+The `Quantization` class supports template parameters for custom behavior. The full signature of the class is as follows:
 
-Here's an example of how to integrate quantization after training a simple Feed Forward Neural Network (FFN):
-
-```cpp
-#include <mlpack.hpp>
-
-using namespace mlpack;
-using namespace mlpack::ann;
-using namespace std;
-
-int main()
-{
-  // Load and preprocess your dataset
-  arma::mat dataset;
-  data::Load("mnist_train.csv", dataset, true);
-
-  // Preprocess the dataset as needed...
-
-  // Define your FFN model
-  FFN<NegativeLogLikelihood, GlorotInitialization> model;
-  model.Add<Linear>(784, 256);
-  model.Add<ReLU>();
-  model.Add<Linear>(256, 128);
-  model.Add<ReLU>();
-  model.Add<Linear>(128, 10);
-  model.Add<LogSoftMax>();
-
-  // Train the model
-  ens::Adam optimizer(0.01, 64, 0.9, 0.999, 1e-8, 10000, 1e-8, true);
-  model.Train(dataset, trainLabels, optimizer);
-
-  // Apply quantization to the trained model
-  SimpleQuantization<arma::mat, arma::Mat<short>> quantizer;
-  arma::Mat<short> quantizedWeights;
-  quantizer.QuantizeWeights(model.Parameters(), quantizedWeights);
-
-  // Replace the model's weights with the quantized weights
-  model.Parameters() = arma::conv_to<arma::mat>::from(quantizedWeights);
-
-  // Evaluate the model on a test dataset
-  arma::mat testDataset;
-  data::Load("mnist_test.csv", testDataset, true);
-
-  arma::mat predictions;
-  model.Predict(testDataset, predictions);
-
-  // Save the quantized model
-  data::Save("quantized_model.bin", "model", model);
-
-  return 0;
-}
+```
+Quantization<QuantizationStrategy = LinearQuantization,
+             ModelType = FFN<>>
 ```
 
-## Running and Testing Your Quantized Model
+ * `QuantizationStrategy`: the strategy used for quantizing weights.
+ * `ModelType`: the type of model to be quantized.
 
-After quantizing your model:
+---
 
-1. **Test Accuracy**: It's important to test the quantized model to ensure it performs well. Even though quantization reduces precision, the impact on accuracy is often minimal.
+#### `QuantizationStrategy`
 
-2. **Deployment**: With reduced size and increased efficiency, your quantized model is ready for deployment, especially in environments with limited computational resources.
+ * Specifies the algorithm used to quantize weights.
+ * The `LinearQuantization` class is available and is the default.
+ * A custom class must implement the following function:
 
-## Conclusion
+```c++
+class CustomQuantizationStrategy
+{
+ public:
+  template<typename MatType>
+  void QuantizeWeights(const MatType& weights, MatType& quantizedWeights)
+  {
+    // CUSTOM STRATEGY 
+  }
+};
+```
 
-Quantization is a tool for optimizing neural networks, especially when you need to deploy models on devices with limited memory or processing power. The examples provided here should help you get started with applying quantization in MLPack. By following these steps, you can efficiently compress your models while maintaining good performance.
+### Advanced Functionality Examples
 
-We hope this guide has been helpful. If you have any questions or need further assistance, don't hesitate to reach out to the MLPack community.
+Use a custom quantization strategy:
+
+```c++
+```c++
+class LogarithmicQuantization
+{
+ public:
+  LogarithmicQuantization(size_t bits = 8) : bits(bits) {}
+
+  template<typename MatType>
+  void QuantizeWeights(const MatType& weights, MatType& quantizedWeights)
+  {
+    // Find the maximum absolute value in the weights
+    double maxAbs = arma::max(arma::abs(weights));
+    
+    // Calculate the scaling factor
+    double scale = std::pow(2, bits - 1) - 1;
+    
+    // Temporary matrix to store transformed values
+    MatType logWeights = arma::sign(weights) % arma::log1p(arma::abs(weights) / maxAbs * std::exp(scale)) / scale;
+    
+    // Quantize to integers
+    quantizedWeights = arma::round(logWeights * scale);
+    
+    // Clip values to ensure they're within the representable range
+    quantizedWeights = arma::clamp(quantizedWeights, -scale, scale);
+  }
+
+  // Method to dequantize (for use during inference)
+  template<typename MatType>
+  void DequantizeWeights(const MatType& quantizedWeights, MatType& dequantizedWeights, double maxAbs)
+  {
+    double scale = std::pow(2, bits - 1) - 1;
+    dequantizedWeights = maxAbs * (arma::exp(arma::abs(quantizedWeights) / scale) - 1) % arma::sign(quantizedWeights);
+  }
+
+ private:
+  size_t bits;
+};
+
+// Create a quantizer with logarithmic quantization
+mlpack::Quantization<LogarithmicQuantization> quantizer;
+
+// Apply to a model
+mlpack::FFN<> model;
+mlpack::data::Load("model.bin", "model", model);
+quantizer.Apply(model);
+```
