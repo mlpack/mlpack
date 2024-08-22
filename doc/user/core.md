@@ -1302,6 +1302,11 @@ same API.  These can be used with, for instance, the
    distribution (generalized Bernoulli distribution)
  * [`GaussianDistribution`](#gaussiandistribution): multidimensional Gaussian
    distribution
+ * [`DiagonalGaussianDistribution`](#diagonalgaussiandistribution):
+   multidimensional Gaussian distribution with diagonal covariance
+ * [`GammaDistribution`](#gammadistribution):
+ * [`LaplaceDistribution`](#laplacedistribution):
+ * [`RegressionDistribution`](#regressiondistribution):
 
 ### `DiscreteDistribution`
 
@@ -1353,6 +1358,9 @@ dimension 1 could be, e.g., `0.4`, and `P(4)` in dimension 2 could be, e.g.,
      sets the probability of observing the value `1` in dimension `0` to `0.7`.
    - *Note:* when setting probabilities manually, be sure that the sum of
      probabilities in a dimension is 1!
+
+ * A `DiscreteDistribution` can be serialized with
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
 ---
 
@@ -1449,7 +1457,9 @@ std::cout << "Average probability: " << arma::mean(probabilities) << "."
 ### `GaussianDistribution`
 
 `GaussianDistribution` is a standard multivariate Gaussian distribution with
-parameterized mean and covariance.
+parameterized mean and covariance.  (For a Gaussian distribution with a diagonal
+covariance, see
+[`DiagonalGaussianDistribution`](#diagonalgaussiandistribution).)
 
 ---
 
@@ -1486,13 +1496,16 @@ parameterized mean and covariance.
  * `g.LogDetCov()` returns a `double` holding the log-determinant of the
    covariance.
 
+ * A `GaussianDistribution` can be serialized with
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+
 ---
 
 #### Compute probabilities of points
 
  * `g.Probability(observation)` returns the probability of the given
    observation as a `double`.
-   - `observation` should be an `arma::vec` of size `d.Dimensionality()`.
+   - `observation` should be an `arma::vec` of size `g.Dimensionality()`.
 
  * `g.Probability(observations, probabilities)` computes the probabilities of
    many observations.
@@ -1512,7 +1525,7 @@ parameterized mean and covariance.
 #### Sample from the distribution
 
  * `g.Random()` returns an `arma::vec` with a random sample from the
-   multidimensional discrete distribution.
+   multidimensional Gaussian distribution.
 
 ---
 
@@ -1521,7 +1534,7 @@ parameterized mean and covariance.
  * `g.Train(observations)`
    - Fit the distribution to the given observations.
    - `observations` should be an `arma::mat` with number of rows equal to
-     `d.Dimensionality()`; `observations.n_cols` is the number of observations.
+     `g.Dimensionality()`; `observations.n_cols` is the number of observations.
 
  * `g.Train(observations, observationProbabilities)`
    - Fit the distribution to the given observations, as above, but also provide
@@ -1529,7 +1542,7 @@ parameterized mean and covariance.
    - `observationProbabilities` should be an `arma::vec` of length
      `observations.n_cols`.
    - `observationProbabilities[i]` should be equal to the probability that
-     `observations.col(i)` is from `d`.
+     `observations.col(i)` is from `g`.
 
 ---
 
@@ -1568,6 +1581,591 @@ g2.Probability(samples, probabilities);
 std::cout << "Average probability is: " << arma::mean(probabilities) << "."
     << std::endl;
 ```
+
+---
+
+### `DiagonalGaussianDistribution`
+
+`DiagonalGaussianDistribution` is a standard multiviate Gaussian distribution
+with parameterized mean and diagonal covariance.  (For a full-covariance
+Gaussian distribution, see [`GaussianDistribution`](#gaussiandistribution).)
+
+---
+
+#### Constructors
+
+ * `d = DiagonalGaussianDistribution(dimensionality)`
+   - Create the distribution with the given dimensionality.
+   - The distribution will have a zero mean and unit diagonal covariance matrix.
+
+ * `d = DiagonalGaussianDistribution(mean, covariance)`
+   - Create the distribution with the given mean and covariance.
+   - `mean` is of type `arma::vec` and should have length equal to the
+     dimensionality of the distribution.
+   - `covariance` is of type `arma::vec`, and should have length equal to the
+     dimensionality of the distribution.  Its elements represent the diagonal of
+     the covariance matrix.
+
+---
+
+#### Access and modify properties of distribution
+
+ * `d.Dimensionality()` returns the dimensionality of the distribution as a
+   `size_t`.
+
+ * `d.Mean()` returns an `arma::vec&` holding the mean of the distribution.
+   This can be modified.
+
+ * `d.Covariance()` returns a `const arma::vec&` holding the covariance of the
+   distribution.  To set a new covariance, use `d.Covariance(newCov)` or
+   `d.Covariance(std::move(newCov))`, where `newCov` is the new diagonal of the
+   covariance matrix.
+
+ * A `DiagonalGaussianDistribution` can be serialized with
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+
+---
+
+#### Compute probabilities of points
+
+ * `d.Probability(observation)` returns the probability of the given observation
+   as a `double`.
+   - `observation` should be an `arma::vec` of size `d.Dimensionality()`.
+
+ * `d.Probability(observations, probabilities)` computes the probabilities of
+   many observations.
+   - `observations` should be an `arma::mat` with number of rows equal to
+     `d.Dimensionality()`; `observations.n_cols` is the number of observations.
+   - `probabilities` will be set to size `observations.n_cols`.
+   - `probabilities[i]` will be set to `d.Probability(observations.col(i))`.
+
+ * `d.LogProbability(observation)` returns the log-probability of the given
+   observation as a `double`.
+
+ * `d.LogProbability(observations, probabilities)` computes the
+   log-probabilities of many observations.
+
+---
+
+#### Sample from the distribution
+
+ * `d.Random()` returns an `arma::vec` with a random sample from the
+   multidimensional diagonal Gaussian distribution.
+
+---
+
+#### Fit the distribution to observations
+
+ * `d.Train(observations)`
+   - Fit the distribution to the given observations.
+   - `observations` should be an `arma::mat` with number of rows equal to
+     `d.Dimensionality()`; `observations.n_cols` is the number of observations.
+
+ * `g.Train(observations, observationProbabilities)`
+   - Fit the distribution to the given observations, as above, but also provide
+     probabilities that each observation is from this distribution.
+   - `observationProbabilities` should be an `arma::vec` of length
+     `observations.n_cols`.
+   - `observationProbabilities[i]` should be equal to the probability that
+     `observations.col(i)` is from `d`.
+
+---
+
+*Example usage:*
+
+```c++
+// Create a diagonal Gaussian distribution in 3 dimensions with zero mean and
+// unit covariance.
+mlpack::DiagonalGaussianDistribution d(3);
+
+// Compute the probability of the point [0, 0.5, 0.25].
+const double p = d.Probability(arma::vec("0 0.5 0.25"));
+
+// Modify the mean in dimension 0.
+d.Mean()[0] = 0.5;
+
+// Set the covariance to a random diagonal.
+arma::vec newCovDiag(3, arma::fill::randu);
+d.Covariance(std::move(newCovDiag)); // Set new covariance.
+
+// Compute the probability of the same point [0, 0.5, 0.25].
+const double p2 = d.Probability(arma::vec("0 0.5 0.25"));
+
+// Create a diagonal Gaussian distribution that is estimated from random samples
+// in 50 dimensions.
+arma::mat samples(50, 10000, arma::fill::randn); // Normally distributed.
+
+mlpack::DiagonalGaussianDistribution d2(50);
+d2.Train(samples);
+
+// Compute the probability of all of the samples.
+arma::vec probabilities;
+d2.Probability(samples, probabilities);
+
+std::cout << "Average probability is: " << arma::mean(probabilities) << "."
+    << std::endl;
+```
+
+---
+
+### `GammaDistribution`
+
+`GammaDistribution` is a multivariate Gamma distribution with two parameters for
+shape (alpha) and inverse scale (beta).  Certain settings of these parameters
+yield the exponential distribution, Chi-squared distribution, and Erlang
+distribution.  This family of distributions is commonly used in Bayesian
+statistics.  See more on
+[Wikipedia](https://en.wikipedia.org/wiki/Gamma_distribution).
+
+---
+
+#### Constructors
+
+ * `g = GammaDistribution(dimensionality)`
+   - Create the distribution with the given dimensionality.
+   - The distribution will have alpha and beta parameters in each dimension set
+     to 0.
+
+ * `g = GammaDistribution(alphas, betas)`
+   - Create the distribution with the given parameters.
+   - `alphas` and `betas` are of type `arma::vec` and should have length equal
+     to the dimensionality of the distribution.
+   - `alphas` should hold the desired shape parameters in each dimension.
+   - `betas` should hold the desired inverse scale parameters in each dimension.
+
+ * `g = GammaDistribution(data, tol=1e-8)`
+   - Create the distribution by fitting to the given `data`.
+   - `tol` specifies the convergence tolerance for the fitting procedure.
+   - Using this constructor is equivalent to calling `g.Train(data, tol)` after
+     initializing a `GammaDistribution`.
+
+---
+
+#### Access and modify properties of distribution
+
+ * `g.Dimensionality()` returns the dimensionality of the distribution.
+
+ * `g.Alpha(i)` returns a `double` representing the shape parameter for
+   dimension `i`.  `g.Alpha(i) = a` will set the `i`'th dimension's shape
+   parameter to `a`.
+
+ * `g.Beta(i)` returns a `double` representing the inverse scale parameter for
+   dimension `i`.  `g.Beta(i) = b` will set the `i`'th dimension's inverse scale
+   parameter to `b`.
+
+ * A `GammaDistribution` can be serialized with
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+
+---
+
+#### Compute probabilities of points
+
+ * `g.Probability(observation)` returns the probability of the given observation
+   as a `double`.
+   - `observation` should be an `arma::vec` of size `g.Dimensionality()`.
+
+ * `g.Probability(observations, probabilities)` computes the probabilities of
+   many observations.
+   - `observations` should be an `arma::mat` with number of rows equal to
+     `g.Dimensionality()`; `observations.n_cols` is the number of observations.
+   - `probabilities` will be set to size `observations.n_cols`.
+   - `probabilities[i]` will be set to `g.Probability(observations.col(i))`.
+
+ * `g.LogProbability(observation)` returns the log-probability of the given
+   observation as a `double`.
+
+ * `g.LogProbability(observations, probabilities)` computes the
+   log-probabilities of many observations.
+
+---
+
+#### Sample points from the distribution
+
+ * `g.Random()` returns an `arma::vec` with a random sample from the
+   Gamma distribution.
+
+---
+
+#### Fit the distribution to observations
+
+ * `g.Train(observations)`
+   - Fit the distribution to the given observations.
+   - `observations` should be an `arma::mat` with number of rows equal to
+     `g.Dimensionality()`; `observations.n_cols` is the number of observations.
+
+ * `g.Train(observations, observationProbabilities)`
+   - Fit the distribution to the given observations, as above, but also provide
+     probabilities that each observation is from this distribution.
+   - `observationProbabilities` should be an `arma::vec` of length
+     `observations.n_cols`.
+   - `observationProbabilities[i]` should be equal to the probability that
+     `observations.col(i)` is from `g`.
+
+ * The algorithm used for fitting the distribution is described in the paper
+   [Estimating a Gamma Distribution](https://research.microsoft.com/~minka/papers/minka-gamma.pdf).
+
+---
+
+*Example usage:*
+
+```c++
+// Create a Gamma distribution in 3 dimensions with ones for the alpha (shape)
+// parameters and random beta (inverse scale) parameters.
+mlpack::GammaDistribution g(arma::ones<arma::vec>(3) /* shape */,
+                            arma::randu<arma::vec>(3) /* scale */);
+
+// Compute the probability and log-probability of the point [0, 0.5, 0.25].
+const double p = g.Probability(arma::vec("0 0.5 0.25"));
+const double lp = g.LogProbability(arma::vec("0 0.5 0.25"));
+
+std::cout << "Probability of [0 0.5 0.25]:     " << p << "." << std::endl;
+std::cout << "Log-probability of [0 0.5 0.25]: " << lp << "." << std::endl;
+
+// Modify the scale and inverse shape parameters in dimension 0.
+g.Alpha(0) = 0.5;
+g.Beta(0) = 3.0;
+
+// Compute the probability of the same point [0, 0.5, 0.25].
+const double p2 = g.Probability(arma::vec("0 0.5 0.25"));
+const double lp2 = g.LogProbability(arma::vec("0 0.5 0.25"));
+
+std::cout << "After parameter changes:" << std::endl;
+std::cout << "Probability of [0 0.5 0.25]:     " << p << "." << std::endl;
+std::cout << "Log-probability of [0 0.5 0.25]: " << lp << "." << std::endl;
+
+// Create a Gamma distribution that is estimated from random samples in 5
+// dimensions.  Note that the samples here are normally distributed---so a Gamma
+// distribution fit will not be a good one!
+arma::mat samples(5, 10, arma::fill::randn);
+
+mlpack::GammaDistribution g2(samples, 1e-3 /* tolerance for fitting */);
+
+// Compute the probability of all of the samples.
+arma::vec probabilities;
+g2.Probability(samples, probabilities);
+
+std::cout << "Average probability is: " << arma::mean(probabilities) << "."
+    << std::endl;
+```
+
+---
+
+### `LaplaceDistribution`
+
+`LaplaceDistribution` is a multivariate Laplace distribution parameterized by a
+mean vector and a single scale value.  The Laplace distribution is sometimes
+also called the *double exponential distribution*.  See more on
+[Wikipedia](https://en.wikipedia.org/wiki/Laplace_distribution).
+
+---
+
+#### Constructors
+
+ * `l = LaplaceDistribution(dimensionality, scale=1.0)`
+   - Create the distribution with the given dimensionality.
+   - The distribution will have mean zero and the given `scale`.
+   - `scale` must be greater than 0.
+
+ * `l = LaplaceDistribution(mean, scale)`
+   - Create the distribution with the given parameters.
+   - `mean` is of type `arma::vec` and should have length equal to the
+     dimensionality of the distribution.
+   - `scale` must be greater than 0.
+
+---
+
+#### Access and modify properties of distribution
+
+ * `l.Dimensionality()` returns the dimensionality of the distribution.
+
+ * `l.Mean()` returns an `arma::vec&` holding the mean of the distribution.
+   This can be modified.
+
+ * `l.Scale()` returns a `double` representing the distribution's scale
+   parameter.  `l.Scale() = s` will set the scale parameter to `s`.
+
+ * A `LaplaceDistribution` can be serialized with
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+
+---
+
+#### Compute probabilities of points
+
+ * `l.Probability(observation)` returns the probability of the given observation
+   as a `double`.
+   - `observation` should be an `arma::vec` of size `l.Dimensionality()`.
+
+ * `l.Probability(observations, probabilities)` computes the probabilities of
+   many observations.
+   - `observations` should be an `arma::mat` with number of rows equal to
+     `l.Dimensionality()`; `observations.n_cols` is the number of observations.
+   - `probabilities` will be set to size `observations.n_cols`.
+   - `probabilities[i]` will be set to `l.Probability(observations.col(i))`.
+
+ * `l.LogProbability(observation)` returns the log-probability of the given
+   observation as a `double`.
+
+ * `l.LogProbability(observations, probabilities)` computes the
+   log-probabilities of many observations.
+
+---
+
+#### Sample points from the distribution
+
+ * `l.Random()` returns an `arma::vec` with a random sample from the
+   Gamma distribution.
+
+---
+
+#### Fit the distribution to observations
+
+ * `l.Train(observations)`
+   - Fit the distribution to the given observations.
+   - `observations` should be an `arma::mat` with number of rows equal to
+     `l.Dimensionality()`; `observations.n_cols` is the number of observations.
+
+ * `l.Train(observations, observationProbabilities)`
+   - Fit the distribution to the given observations, as above, but also provide
+     probabilities that each observation is from this distribution.
+   - `observationProbabilities` should be an `arma::vec` of length
+     `observations.n_cols`.
+   - `observationProbabilities[i]` should be equal to the probability that
+     `observations.col(i)` is from `l`.
+
+---
+
+*Example usage:*
+
+```c++
+// Create a Laplace distribution in 3 dimensions with uniform random mean and
+// scale parameter 1.
+mlpack::LaplaceDistribution l(arma::randu<arma::vec>(3) /* mean */,
+                              1.0 /* scale */);
+
+// Compute the probability and log-probability of the point [0, 0.5, 0.25].
+const double p = l.Probability(arma::vec("0 0.5 0.25"));
+const double lp = l.LogProbability(arma::vec("0 0.5 0.25"));
+
+std::cout << "Probability of [0 0.5 0.25]:     " << p << "." << std::endl;
+std::cout << "Log-probability of [0 0.5 0.25]: " << lp << "." << std::endl;
+
+// Modify the scale, and the mean in dimension 1.
+l.Scale() = 2.0;
+l.Mean()[1] = 1.5;
+
+// Compute the probability of the same point [0, 0.5, 0.25].
+const double p2 = l.Probability(arma::vec("0 0.5 0.25"));
+const double lp2 = l.LogProbability(arma::vec("0 0.5 0.25"));
+
+std::cout << "After parameter changes:" << std::endl;
+std::cout << "Probability of [0 0.5 0.25]:     " << p << "." << std::endl;
+std::cout << "Log-probability of [0 0.5 0.25]: " << lp << "." << std::endl;
+
+// Create a Laplace distribution that is estimated from random samples in 50
+// dimensions.  Note that the samples here are normally distributed---so a Gamma
+// distribution fit will not be a good one!
+arma::mat samples(50, 10000, arma::fill::randn);
+
+mlpack::LaplaceDistribution l2(samples, 1e-6 /* tolerance for fitting */);
+
+// Compute the probability of all of the samples.
+arma::vec probabilities;
+l2.Probability(samples, probabilities);
+
+std::cout << "Average probability is: " << arma::mean(probabilities) << "."
+    << std::endl;
+```
+
+---
+
+### `RegressionDistribution`
+
+The `RegressionDistribution` is a [Gaussian distribution](#gaussiandistribution)
+fitted on the errors of a linear regression model.  Given a point `x` with
+response `y`, the probability of `(y, x)` is computed using a univariate
+Gaussian distribution on the scalar residual `y - y'`, where `y'` is the linear
+regression model's prediction on `x`.
+
+<!-- TODO: fix link! -->
+
+This class is meant to be used with mlpack's
+[HMM](/src/mlpack/methods/hmm/hmm.hpp) class for the task of
+[HMM regression (pdf)](https://conservancy.umn.edu/bitstream/handle/11299/2532/1195.pdf).
+
+---
+
+#### Constructors
+
+ * `r = RegressionDistribution()`
+   - Create an empty `RegressionDistribution`.
+   - The distribution will not provide useful predictions; call `Train()` before
+     doing anything else with the object!
+
+ * `r = RegressionDistribution(predictors, responses)`
+   - Create the `RegressionDistribution` by estimating the parameters with the
+     given labeled regression data `predictors` and `responses`.
+   - `predictors` should be a
+     [column-major](../matrices.md#representing-data-in-mlpack) `arma::mat`
+     representing the data the distribution should be trained on.
+   - `responses` should be an `arma::rowvec` representing the responses for each
+     data point.
+   - The number of elements in `responses` (e.g. `responses.n_elem`) should be
+     the same as the number of columns in `predictors` (e.g.
+     `predictors.n_cols`).
+
+---
+
+#### Access and modify properties of distribution
+
+ * `r.Dimensionality()` returns the dimensionality of the distribution.
+   - ***Note***: this is *not* the same as the number of elements in a vector
+     passed to `Probability()`!
+
+ * `r.Rf()` returns the [`LinearRegression&`](methods/linear_regression.md)
+   model.  This can be modified.
+
+ * `r.Parameters()` returns an `const arma::vec&` representing the parameters of
+   the linear regression model.
+
+ * `r.Err()` returns a [`GaussianDistribution&`](#gaussiandistribution) object
+   representing the univariate distribution trained on the model's residuals.
+   This can be modified.
+
+ * A `RegressionDistribution` can be serialized with
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+
+---
+
+#### Compute probabilities of points
+
+ * `r.Probability(observation)` returns the probability of the given *labeled*
+   observation as a `double`.
+   - `observation` should be an `arma::vec` of size `r.Dimensionality() + 1`,
+     containing both the data point and its scalar response.
+   - The first element of `observation` should be the response; subsequent
+     elements should be the data point.
+
+ * `r.Probability(observations, probabilities)` computes the probabilities of
+   many labeled observations.
+   - `observations` should be an `arma::mat` with number of rows equal to
+     `r.Dimensionality() + 1`; `observations.n_cols` is the number of
+     observations.
+   - The first row of `observations` should correspond to the responses for each
+     data point.
+   - `probabilities` will be set to size `observations.n_cols`.
+   - `probabilities[i]` will be set to `r.Probability(observations.col(i))`.
+
+ * `r.LogProbability(observation)` returns the log-probability of the given
+   labeled observation as a `double`.
+
+ * `r.LogProbability(observations, probabilities)` computes the
+   log-probabilities of many labeled observations.
+
+---
+
+#### Fit the distribution to observations
+
+Training a `RegressionDistribution` on a given set of labeled observations is
+done by first training a [`LinearRegression`](methods/linear_regression.md)
+model on the dataset, and then subsequently training a univariate
+[`GaussianDistribution`](#gaussiandistribution) on the residual error of each
+data point.
+
+In the `Train()` overloads, the `observations` matrix is expected to contain
+both the responses and the data points (predictors).
+
+ * `r.Train(observations)`
+   - Fit the distribution to the given *labeled* observations.
+   - `observations` should be an `arma::mat` with number of rows equal to the
+     dimensionality of the data plus one; `observations.n_cols` is the number of
+     observations.
+   - The first row of `observations` should correspond to the responses of the
+     data; subsequent rows correspond to the data itself.
+
+ * `r.Train(observations, observationProbabilities)`
+   - Fit the distribution to the given *labeled* observations, as above, but
+     also provide probabilities that each observation is from this distribution.
+   - `observationProbabilities` should be an `arma::vec` of length
+     `observations.n_cols`.
+   - `observationProbabilities[i]` should be equal to the probability that the
+     `i`'th observation is from `r`.
+
+***Note***: if the linear regression model is able to exactly fit the
+observations, then the resulting Gaussian distribution will have zero-valued
+standard deviation, and `Probability()` will return `1` for points that are
+perfectly fit and `0` otherwise.
+
+---
+
+*Example usage:*
+
+```c++
+// Create an example dataset that arises from a noisy random linear model:
+//
+//   y = bx + noise
+//
+// Noise is added from a Gaussian distribution with zero mean and unit variance.
+// Data is 10-dimensional, and we will generate 1000 points.
+arma::vec b(10, arma::fill::randu);
+arma::mat x(10, 1000, arma::fill::randu);
+
+arma::vec y = b.t() + arma::randn<arma::vec>(1000);
+
+// Now fit a RegressionDistribution to the data.
+mlpack::RegressionDistribution r(x, y);
+
+// Print information about the distribution.
+std::cout << "RegressionDistribution model parameters:" << std::endl;
+std::cout << " - " << r.Parameters().t();
+std::cout << "True model parameters:" << std::endl;
+std::cout << " - " << b.t();
+std::cout << "Error Gaussian mean is " << r.Err().Mean()[0] << ", with "
+    << "variance " << r.Err().Covariance()[0] << "." << std::endl << std::endl;
+
+// Compute the probability of a point in the training set.  We must assemble the
+// points into a single vector.
+arma::vec p1(11); // p1 will be point 5 from (x, y).
+p1[0] = y[5];
+p1.subvec(1, p1.n_elem - 1) = x.col(5);
+std::cout << "Probability of point 5:      " << r.Probability(p1) << "."
+    << std::endl;
+
+arma::vec p2(11, arma::fill::randu);
+std::cout << "Probability of random point: " << r.Probability(p2) << "."
+    << std::endl;
+
+// Print log-probabilities too.
+std::cout << "Log-probability of point 5:      " << r.LogProbability(p1) << "."
+    << std::endl;
+std::cout << "Log-probability of random point: " << r.LogProbability(p2) << "."
+    << std::endl << std::endl;
+
+// Change the error distribution.
+y = b.t() + (1.5 * arma::randn<arma::vec>(1000));
+
+// Combine x and y to build the observations matrix for Train().
+arma::mat observations(x.n_rows + 1, x.n_cols);
+observations.row(0) = y.t();
+observations.rows(1, observations.n_rows - 1) = x;
+
+// Assign a random probability for each point.
+arma::vec observationProbabilities(observations.n_cols, arma::fill::randu);
+
+// Refit the distribution to the new data.
+r.Train(observations, observationProbabilities);
+
+// Print new error distribution information.
+std::cout << "Updated error Gaussian mean is " << r.Err().Mean()[0] << ", with "
+    << "variance " << r.Err().Covariance()[0] << "." << std::endl << std::endl;
+
+// Compute average probability of points in the dataset.
+arma::vec probabilities;
+r.Probability(observations, probabilities);
+std::cout << "Average probability of points in `observations`: "
+    << arma::mean(probabilities) << "." << std::endl;
+```
+
+---
 
 ## Kernels
 
