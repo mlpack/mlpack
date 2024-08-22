@@ -440,6 +440,23 @@ class FFN
    */
   void ResetData(MatType predictors, MatType responses);
 
+ 
+   /**
+   * Quantize the neural network to use a different matrix type.
+   *
+   * This function creates a new neural network with the same structure
+   * but uses the specified target matrix type for its internal operations.
+   *
+   * @tparam TargetMatType The matrix type to quantize to.
+   * @return A new neural network with the specified target matrix type.
+   */
+  template<typename TargetMatType>
+  FFN<..., TargetMatType> Quantize() const
+  {
+    return ann::Quantize<MatType, TargetMatType>(*this);
+  }
+
+
  private:
   // Helper functions.
 

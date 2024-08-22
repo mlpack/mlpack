@@ -17,10 +17,10 @@ template<typename SourceMatType, typename TargetMatType>
 class QuantizationStrategy
 {
  public:
-  virtual ~QuantizationStrategy() = default; // Modern C++ practice
+  virtual ~QuantizationStrategy() = default;
 
-  virtual void QuantizeWeights(const SourceMatType& sourceWeights,
-                               TargetMatType& targetWeights) = 0;
+  template<typename NetworkType>
+  NetworkType Quantize(const NetworkType& network) = 0;
 };
 
 template<typename SourceMatType, typename TargetMatType>

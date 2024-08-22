@@ -60,9 +60,8 @@ TEST_CASE("QuantizationStrategyInterfaceTest", "[QuantizationTest]")
 
   arma::mat sourceWeights = {{-1.0, 1.0},
                              {0.5, -0.5}};
-  arma::Mat<short> targetWeights;
 
-  quantizer->QuantizeWeights(sourceWeights, targetWeights);
+  FFN<..., arma::imat> quantizedNetwork = quantizer->Quantize(network);
 
   REQUIRE(targetWeights.n_rows == sourceWeights.n_rows);
   REQUIRE(targetWeights.n_cols == sourceWeights.n_cols);
