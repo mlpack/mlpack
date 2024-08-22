@@ -536,17 +536,17 @@ TEST_CASE("GaussianHMMSimpleTest", "[HMMTest]")
   // The transition matrix is simple:
   //  T = [[0.75 0.25]
   //       [0.25 0.75]]
-  GaussianDistribution g1("5.0 5.0", "1.0 0.0; 0.0 1.0");
-  GaussianDistribution g2("-5.0 -5.0", "1.0 0.0; 0.0 1.0");
+  GaussianDistribution<> g1("5.0 5.0", "1.0 0.0; 0.0 1.0");
+  GaussianDistribution<> g2("-5.0 -5.0", "1.0 0.0; 0.0 1.0");
 
   arma::vec initial("1 0"); // Default MATLAB initial states.
   arma::mat transition("0.75 0.25; 0.25 0.75");
 
-  std::vector<GaussianDistribution> emission;
+  std::vector<GaussianDistribution<>> emission;
   emission.push_back(g1);
   emission.push_back(g2);
 
-  HMM<GaussianDistribution> hmm(initial, transition, emission);
+  HMM<GaussianDistribution<>> hmm(initial, transition, emission);
 
   // Now, generate some sequences.
   arma::mat observations(2, 1000);
@@ -595,16 +595,16 @@ TEST_CASE("GaussianHMMTrainTest", "[HMMTest]")
 {
   // Four emission Gaussians and three internal states.  The goal is to estimate
   // the transition matrix correctly, and each distribution correctly.
-  std::vector<GaussianDistribution> emission;
-  emission.push_back(GaussianDistribution("0.0 0.0 0.0", "1.0 0.2 0.2;"
-                                                         "0.2 1.5 0.0;"
-                                                         "0.2 0.0 1.1"));
-  emission.push_back(GaussianDistribution("2.0 1.0 5.0", "0.7 0.3 0.0;"
-                                                         "0.3 2.6 0.0;"
-                                                         "0.0 0.0 1.0"));
-  emission.push_back(GaussianDistribution("5.0 0.0 0.5", "1.0 0.0 0.0;"
-                                                         "0.0 1.0 0.0;"
-                                                         "0.0 0.0 1.0"));
+  std::vector<GaussianDistribution<>> emission;
+  emission.push_back(GaussianDistribution<>("0.0 0.0 0.0", "1.0 0.2 0.2;"
+                                                           "0.2 1.5 0.0;"
+                                                           "0.2 0.0 1.1"));
+  emission.push_back(GaussianDistribution<>("2.0 1.0 5.0", "0.7 0.3 0.0;"
+                                                           "0.3 2.6 0.0;"
+                                                           "0.0 0.0 1.0"));
+  emission.push_back(GaussianDistribution<>("5.0 0.0 0.5", "1.0 0.0 0.0;"
+                                                           "0.0 1.0 0.0;"
+                                                           "0.0 0.0 1.0"));
 
   arma::mat transition("0.3 0.5 0.7;"
                        "0.3 0.4 0.1;"
@@ -644,7 +644,7 @@ TEST_CASE("GaussianHMMTrainTest", "[HMMTest]")
   }
 
   // Now that the data is generated, train the HMM.
-  HMM<GaussianDistribution> hmm(3, GaussianDistribution(3));
+  HMM<GaussianDistribution<>> hmm(3, GaussianDistribution<>(3));
 
   hmm.Train(observations, states);
 
@@ -671,7 +671,7 @@ TEST_CASE("GaussianHMMTrainTest", "[HMMTest]")
   // guess at it ourselves.  I won't use K-Means because we can't afford to add
   // the instability of that to our test.  We'll leave the covariances as the
   // identity.
-  HMM<GaussianDistribution> hmm2(3, GaussianDistribution(3));
+  HMM<GaussianDistribution<>> hmm2(3, GaussianDistribution<>(3));
   hmm2.Emission()[0].Mean() = "0.3 -0.2 0.1"; // Actual: [0 0 0].
   hmm2.Emission()[1].Mean() = "1.0 1.4 3.2";  // Actual: [2 1 5].
   hmm2.Emission()[2].Mean() = "3.1 -0.2 6.1"; // Actual: [5 0 5].
@@ -711,11 +711,11 @@ TEST_CASE("GaussianHMMTrainTest", "[HMMTest]")
 TEST_CASE("GaussianHMMGenerateTest", "[HMMTest]")
 {
   // Our distribution will have three two-dimensional output Gaussians.
-  HMM<GaussianDistribution> hmm(3, GaussianDistribution(2));
+  HMM<GaussianDistribution<>> hmm(3, GaussianDistribution(2));
   hmm.Transition() = arma::mat("0.4 0.6 0.8; 0.2 0.2 0.1; 0.4 0.2 0.1");
-  hmm.Emission()[0] = GaussianDistribution("0.0 0.0", "1.0 0.0; 0.0 1.0");
-  hmm.Emission()[1] = GaussianDistribution("2.0 2.0", "1.0 0.5; 0.5 1.2");
-  hmm.Emission()[2] = GaussianDistribution("-2.0 1.0", "2.0 0.1; 0.1 1.0");
+  hmm.Emission()[0] = GaussianDistribution<>("0.0 0.0", "1.0 0.0; 0.0 1.0");
+  hmm.Emission()[1] = GaussianDistribution<>("2.0 2.0", "1.0 0.5; 0.5 1.2");
+  hmm.Emission()[2] = GaussianDistribution<>("-2.0 1.0", "2.0 0.1; 0.1 1.0");
 
   // Now we will generate a long sequence.
   std::vector<arma::mat> observations(1);
@@ -724,7 +724,7 @@ TEST_CASE("GaussianHMMGenerateTest", "[HMMTest]")
   // Start in state 1 (no reason).
   hmm.Generate(10000, observations[0], states[0], 1);
 
-  HMM<GaussianDistribution> hmm2(3, GaussianDistribution(2));
+  HMM<GaussianDistribution<>> hmm2(3, GaussianDistribution<>(2));
 
   // Now estimate the HMM from the generated sequence.
   hmm2.Train(observations, states);
@@ -749,7 +749,8 @@ TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
 {
   size_t numState = 10;
   size_t obsDimension = 2;
-  HMM<GaussianDistribution> hmm(numState, GaussianDistribution(obsDimension));
+  HMM<GaussianDistribution<>> hmm(numState,
+      GaussianDistribution<>(obsDimension));
 
   arma::vec initial = {1.0000, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   arma::mat transition = {{0.9149, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -791,7 +792,7 @@ TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
 
   for (size_t i = 0; i < numState; ++i)
   {
-    GaussianDistribution& emission = hmm.Emission().at(i);
+    GaussianDistribution<>& emission = hmm.Emission().at(i);
     emission.Mean() = mean.at(i);
     emission.Covariance(cov.at(i));
   }
@@ -1117,24 +1118,24 @@ TEST_CASE("GMMHMMPredictTest", "[HMMTest]")
     gmms[0].Weights() = arma::vec("0.75 0.25");
 
     // N([2.25 3.10], [1.00 0.20; 0.20 0.89])
-    gmms[0].Component(0) = GaussianDistribution("4.25 3.10",
-                                                "1.00 0.20; 0.20 0.89");
+    gmms[0].Component(0) = GaussianDistribution<>("4.25 3.10",
+                                                  "1.00 0.20; 0.20 0.89");
 
     // N([4.10 1.01], [1.00 0.00; 0.00 1.01])
-    gmms[0].Component(1) = GaussianDistribution("7.10 5.01",
-                                                "1.00 0.00; 0.00 1.01");
+    gmms[0].Component(1) = GaussianDistribution<>("7.10 5.01",
+                                                  "1.00 0.00; 0.00 1.01");
 
     gmms[1] = GMM(3, 2);
     gmms[1].Weights() = arma::vec("0.4 0.2 0.4");
 
-    gmms[1].Component(0) = GaussianDistribution("-3.00 -6.12",
-                                                "1.00 0.00; 0.00 1.00");
+    gmms[1].Component(0) = GaussianDistribution<>("-3.00 -6.12",
+                                                  "1.00 0.00; 0.00 1.00");
 
-    gmms[1].Component(1) = GaussianDistribution("-4.25 -7.12",
-                                                "1.50 0.60; 0.60 1.20");
+    gmms[1].Component(1) = GaussianDistribution<>("-4.25 -7.12",
+                                                  "1.50 0.60; 0.60 1.20");
 
-    gmms[1].Component(2) = GaussianDistribution("-6.15 -2.00",
-                                                "1.00 0.80; 0.80 1.00");
+    gmms[1].Component(2) = GaussianDistribution<>("-6.15 -2.00",
+                                                  "1.00 0.80; 0.80 1.00");
 
     // Default MATLAB initial probabilities.
     arma::vec initial("1 0");
@@ -1197,20 +1198,20 @@ TEST_CASE("GMMHMMLabeledTrainingTest", "[HMMTest]")
   gmms[0].Weights() = arma::vec("0.3 0.7");
 
   // N([2.25 3.10], [1.00 0.20; 0.20 0.89])
-  gmms[0].Component(0) = GaussianDistribution("4.25 3.10",
-                                              "1.00 0.20; 0.20 0.89");
+  gmms[0].Component(0) = GaussianDistribution<>("4.25 3.10",
+                                                "1.00 0.20; 0.20 0.89");
 
   // N([4.10 1.01], [1.00 0.00; 0.00 1.01])
-  gmms[0].Component(1) = GaussianDistribution("7.10 5.01",
-                                              "1.00 0.00; 0.00 1.01");
+  gmms[0].Component(1) = GaussianDistribution<>("7.10 5.01",
+                                                "1.00 0.00; 0.00 1.01");
 
   gmms[1].Weights() = arma::vec("0.20 0.80");
 
-  gmms[1].Component(0) = GaussianDistribution("-3.00 -6.12",
-                                              "1.00 0.00; 0.00 1.00");
+  gmms[1].Component(0) = GaussianDistribution<>("-3.00 -6.12",
+                                                "1.00 0.00; 0.00 1.00");
 
-  gmms[1].Component(1) = GaussianDistribution("-4.25 -2.12",
-                                              "1.50 0.60; 0.60 1.20");
+  gmms[1].Component(1) = GaussianDistribution<>("-4.25 -2.12",
+                                                "1.50 0.60; 0.60 1.20");
 
   // Transition matrix.
   arma::mat transMat("0.40 0.60;"
@@ -1376,7 +1377,7 @@ TEST_CASE("GMMHMMLoadSaveTest", "[HMMTest]")
 TEST_CASE("GaussianHMMLoadSaveTest", "[HMMTest]")
 {
   // Create a Gaussian HMM, save it, and load it.
-  HMM<GaussianDistribution> hmm(3, GaussianDistribution(2));
+  HMM<GaussianDistribution<>> hmm(3, GaussianDistribution<>(2));
 
   for (size_t j = 0; j < hmm.Emission().size(); ++j)
   {
@@ -1397,7 +1398,7 @@ TEST_CASE("GaussianHMMLoadSaveTest", "[HMMTest]")
   }
 
   // Load the HMM.
-  HMM<GaussianDistribution> hmm2(3, GaussianDistribution(2));
+  HMM<GaussianDistribution<>> hmm2(3, GaussianDistribution<>(2));
   {
     std::ifstream ifs("test-hmm-save.xml");
     cereal::XMLInputArchive ar(ifs);

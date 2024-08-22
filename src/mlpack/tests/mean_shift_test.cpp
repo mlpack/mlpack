@@ -90,10 +90,10 @@ TEST_CASE("MeanShiftSimpleTest", "[MeanShiftTest]")
 // recovers those four centers.
 TEST_CASE("GaussianClustering", "[MeanShiftTest]")
 {
-  GaussianDistribution g1("0.0 0.0 0.0", arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2("5.0 5.0 5.0", 2 * arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g3("-3.0 3.0 -1.0", arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g4("6.0 -2.0 -2.0", 3 * arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1("0.0 0.0 0.0", arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2("5.0 5.0 5.0", 2 * arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g3("-3.0 3.0 -1.0", arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g4("6.0 -2.0 -2.0", 3 * arma::eye<arma::mat>(3, 3));
 
   // We may need to run this multiple times, because sometimes it may converge
   // to the wrong number of clusters.

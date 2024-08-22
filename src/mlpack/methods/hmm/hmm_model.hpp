@@ -38,7 +38,7 @@ class HMMModel
   //! Not used if type is not DiscreteHMM.
   HMM<DiscreteDistribution>* discreteHMM;
   //! Not used if type is not GaussianHMM.
-  HMM<GaussianDistribution>* gaussianHMM;
+  HMM<GaussianDistribution<>>* gaussianHMM;
   //! Not used if type is not GaussianMixtureModelHMM.
   HMM<GMM>* gmmHMM;
   //! Not used if type is not DiagonalGaussianMixtureModelHMM.
@@ -56,7 +56,7 @@ class HMMModel
     if (type == HMMType::DiscreteHMM)
       discreteHMM = new HMM<DiscreteDistribution>();
     else if (type == HMMType::GaussianHMM)
-      gaussianHMM = new HMM<GaussianDistribution>();
+      gaussianHMM = new HMM<GaussianDistribution<>>();
     else if (type == HMMType::GaussianMixtureModelHMM)
       gmmHMM = new HMM<GMM>();
     else if (type == HMMType::DiagonalGaussianMixtureModelHMM)
@@ -76,7 +76,7 @@ class HMMModel
           new HMM<DiscreteDistribution>(*other.discreteHMM);
     else if (type == HMMType::GaussianHMM)
       gaussianHMM =
-          new HMM<GaussianDistribution>(*other.gaussianHMM);
+          new HMM<GaussianDistribution<>>(*other.gaussianHMM);
     else if (type == HMMType::GaussianMixtureModelHMM)
       gmmHMM = new HMM<GMM>(*other.gmmHMM);
     else if (type == HMMType::DiagonalGaussianMixtureModelHMM)
@@ -120,7 +120,7 @@ class HMMModel
           new HMM<DiscreteDistribution>(*other.discreteHMM);
     else if (type == HMMType::GaussianHMM)
       gaussianHMM =
-          new HMM<GaussianDistribution>(*other.gaussianHMM);
+          new HMM<GaussianDistribution<>>(*other.gaussianHMM);
     else if (type == HMMType::GaussianMixtureModelHMM)
       gmmHMM = new HMM<GMM>(*other.gmmHMM);
     else if (type == HMMType::DiagonalGaussianMixtureModelHMM)
@@ -229,7 +229,7 @@ class HMMModel
    * avoid null pointer dereferences.
    */
   HMM<DiscreteDistribution>* DiscreteHMM() { return discreteHMM; }
-  HMM<GaussianDistribution>* GaussianHMM() { return gaussianHMM; }
+  HMM<GaussianDistribution<>>* GaussianHMM() { return gaussianHMM; }
   HMM<GMM>* GMMHMM() { return gmmHMM; }
   HMM<DiagonalGMM>* DiagGMMHMM() { return diagGMMHMM; }
 };

@@ -56,7 +56,7 @@ Estimate(const arma::mat& observations,
     #endif
   }
   else if (std::is_same<CovarianceConstraintPolicy, DiagonalConstraint>::value
-      && std::is_same<Distribution, GaussianDistribution>::value)
+      && std::is_same<Distribution, GaussianDistribution<>>::value)
   {
     // EMFit::Estimate() using DiagonalConstraint with GaussianDistribution
     // makes use of slower implementation.

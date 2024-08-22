@@ -65,7 +65,8 @@ namespace mlpack {
  * extern arma::Row<size_t> states; // Hidden states for each observation.
  * // Create an untrained HMM with 5 hidden states and default (N(0, 1))
  * // Gaussian distributions with the dimensionality of the dataset.
- * HMM<GaussianDistribution> hmm(5, GaussianDistribution(observations.n_rows));
+ * HMM<GaussianDistribution<>> hmm(5,
+ *     GaussianDistribution<>(observations.n_rows));
  *
  * // Train the HMM (the labels could be omitted to perform unsupervised
  * // training).

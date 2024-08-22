@@ -133,7 +133,7 @@ struct Init
 
   //! Helper function to create Gaussian HMM.
   static void Create(util::Params& /* params */,
-                     HMM<GaussianDistribution>& hmm,
+                     HMM<GaussianDistribution<>>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
                      double tolerance)
@@ -153,8 +153,8 @@ struct Init
     }
 
     // Get the model and initialize it.
-    hmm = HMM<GaussianDistribution>(size_t(states),
-        GaussianDistribution(dimensionality), tolerance);
+    hmm = HMM<GaussianDistribution<>>(size_t(states),
+        GaussianDistribution<>(dimensionality), tolerance);
   }
 
   //! Helper function to create GMM HMM.
@@ -240,7 +240,7 @@ struct Init
 
   //! Helper function for Gaussian emission distributions.
   static void RandomInitialize(util::Params& /* params */,
-                               vector<GaussianDistribution>& e)
+                               vector<GaussianDistribution<>>& e)
   {
     for (size_t i = 0; i < e.size(); ++i)
     {
