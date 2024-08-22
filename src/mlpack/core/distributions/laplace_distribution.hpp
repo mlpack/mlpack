@@ -129,18 +129,8 @@ class LaplaceDistribution
   {
     arma::vec result(mean.n_elem);
     result.randu();
-
-    // Convert from uniform distribution to Laplace distribution.
-    // arma::sign() does not exist in Armadillo < 3.920 so we have to do this
-    // elementwise.
-    for (size_t i = 0; i < result.n_elem; ++i)
-    {
-      if (result[i] < 0.5)
-        result[i] = mean[i] + scale * std::log(1 + 2.0 * (result[i] - 0.5));
-      else
-        result[i] = mean[i] - scale * std::log(1 - 2.0 * (result[i] - 0.5));
-    }
-
+    result = mean + scale *
+        log(1.0 + 2.0 * sign(result - 0.5) * (result - 0.5));
     return result;
   }
 
@@ -149,6 +139,7 @@ class LaplaceDistribution
    *
    * @param observations List of observations.
    */
+  [[deprecated("Will be removed in mlpack 5.0.0; use Train() instead")]]
   void Estimate(const arma::mat& observations);
 
   /**
@@ -156,8 +147,25 @@ class LaplaceDistribution
    * account the probability of each observation actually being from this
    * distribution.
    */
+  [[deprecated("Will be removed in mlpack 5.0.0; use Train() instead")]]
   void Estimate(const arma::mat& observations,
                 const arma::vec& probabilities);
+
+  /**
+   * Estimate the Laplace distribution directly from the given observations.
+   *
+   * @param observations List of observations.
+   */
+  void Train(const arma::mat& observations);
+
+  /**
+   * Estimate the Laplace distribution from the given observations, taking into
+   * account the probability of each observation actually being from this
+   * distribution.
+   */
+  void Train(const arma::mat& observations,
+             const arma::vec& probabilities);
+
 
   //! Return the mean.
   const arma::vec& Mean() const { return mean; }

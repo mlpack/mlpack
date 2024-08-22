@@ -33,7 +33,7 @@ class RegressionDistribution
   //! Regression function for representing conditional mean.
   LinearRegression<> rf;
   //! Error distribution.
-  GaussianDistribution err;
+  GaussianDistribution<> err;
 
  public:
   /**
@@ -52,7 +52,7 @@ class RegressionDistribution
                          const arma::rowvec& responses)
   {
     rf.Train(predictors, responses);
-    err = GaussianDistribution(1);
+    err = GaussianDistribution<>(1);
     arma::mat cov(1, 1);
     cov(0, 0) = rf.ComputeError(predictors, responses);
     err.Covariance(std::move(cov));
@@ -74,9 +74,9 @@ class RegressionDistribution
   LinearRegression<>& Rf() { return rf; }
 
   //! Return error distribution.
-  const GaussianDistribution& Err() const { return err; }
+  const GaussianDistribution<>& Err() const { return err; }
   //! Modify error distribution.
-  GaussianDistribution& Err() { return err; }
+  GaussianDistribution<>& Err() { return err; }
 
   /**
    * Estimate the Gaussian distribution directly from the given observations.
@@ -101,6 +101,15 @@ class RegressionDistribution
   double Probability(const arma::vec& observation) const;
 
   /**
+   * Evaluate probability density function for the given observations.
+   *
+   * @param observations Points to evaluate probability at.
+   * @param probabilities Vector to store computed probabilities in.
+   */
+  void Probability(const arma::mat& observations,
+                   arma::vec& probabilities) const;
+
+  /**
    * Evaluate log probability density function of given observation.
    *
    * @param observation Point to evaluate log probability at.
@@ -108,6 +117,18 @@ class RegressionDistribution
   double LogProbability(const arma::vec& observation) const
   {
     return std::log(Probability(observation));
+  }
+
+  /**
+   * Evaluate log probability density function on the given observations.
+   *
+   * @param observations Points to evaluate log probability at.
+   */
+  void LogProbability(const arma::mat& observations,
+                      arma::vec& probabilities) const
+  {
+    Probability(observations, probabilities);
+    probabilities = arma::log(probabilities);
   }
 
   /**

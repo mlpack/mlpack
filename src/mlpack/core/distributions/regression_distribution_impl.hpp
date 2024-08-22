@@ -56,6 +56,20 @@ inline double RegressionDistribution::Probability(
   return err.Probability(observation(0) - fitted.t());
 }
 
+/**
+ * Evaluate probability density function on the given observations.
+ *
+ * @param observation Points to evaluate probability at.
+ * @param probabilities Vector to store computed probabilities in.
+ */
+inline void RegressionDistribution::Probability(const arma::mat& observations,
+                                                arma::vec& probabilities) const
+{
+  probabilities.set_size(observations.n_cols);
+  for (size_t i = 0; i < observations.n_cols; ++i)
+    probabilities[i] = Probability(observations.unsafe_col(i));
+}
+
 inline void RegressionDistribution::Predict(const arma::mat& points,
                                             arma::rowvec& predictions) const
 {

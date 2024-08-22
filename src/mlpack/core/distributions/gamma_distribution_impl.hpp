@@ -184,6 +184,16 @@ inline void GammaDistribution::Probability(const arma::mat& observations,
   }
 }
 
+// Return the probability of the given observation.
+inline double GammaDistribution::Probability(const arma::vec& x) const
+{
+  double prob = 1.0;
+  for (size_t d = 0; d < Dimensionality(); ++d)
+    prob *= Probability(x[d], d);
+
+  return prob;
+}
+
 // Returns the probability of one observation (x) for one of the Gamma's
 // dimensions.
 inline double GammaDistribution::Probability(double x, size_t dim) const
@@ -220,6 +230,15 @@ inline void GammaDistribution::LogProbability(
       logProbabilities(i) += std::log(numerator * factor / denominators(d));
     }
   }
+}
+
+// Return the log-probability of the given observation.
+inline double GammaDistribution::LogProbability(const arma::vec& x) const
+{
+  double logProb = 0.0;
+  for (size_t d = 0; d < Dimensionality(); ++d)
+    logProb += LogProbability(x[d], d);
+  return logProb;
 }
 
 // Returns the log probability of one observation (x) for one of the Gamma's

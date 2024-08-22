@@ -49,7 +49,30 @@ inline void LaplaceDistribution::Probability(const arma::mat& x,
  *
  * @param observations List of observations.
  */
+[[deprecated("Will be removed in mlpack 5.0.0; use Train() instead")]]
 inline void LaplaceDistribution::Estimate(const arma::mat& observations)
+{
+  Train(observations);
+}
+
+/**
+ * Estimate the Laplace distribution directly from the given observations,
+ * taking into account the probability of each observation actually being from
+ * this distribution.
+ */
+[[deprecated("Will be removed in mlpack 5.0.0; use Train() instead")]]
+inline void LaplaceDistribution::Estimate(const arma::mat& observations,
+                                          const arma::vec& probabilities)
+{
+  Train(observations, probabilities);
+}
+
+/**
+ * Estimate the Laplace distribution directly from the given observations.
+ *
+ * @param observations List of observations.
+ */
+inline void LaplaceDistribution::Train(const arma::mat& observations)
 {
   // The maximum likelihood estimate of the mean is the median of the data for
   // the univariate case.  See the short note "The Double Exponential
@@ -82,8 +105,8 @@ inline void LaplaceDistribution::Estimate(const arma::mat& observations)
  * taking into account the probability of each observation actually being from
  * this distribution.
  */
-inline void LaplaceDistribution::Estimate(const arma::mat& observations,
-                                          const arma::vec& probabilities)
+inline void LaplaceDistribution::Train(const arma::mat& observations,
+                                       const arma::vec& probabilities)
 {
   // I am not completely sure that this change results in a valid maximum
   // likelihood estimator given probabilities of points.

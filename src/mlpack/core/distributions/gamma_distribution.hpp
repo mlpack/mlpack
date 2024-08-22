@@ -147,6 +147,13 @@ class GammaDistribution
                    arma::vec& probabilities) const;
 
   /**
+   * This function returns the probability of the given observation.
+   *
+   * @param x The observation to compute the probability of.
+   */
+  double Probability(const arma::vec& x) const;
+
+  /**
    * This is a shortcut to the Probability(arma::mat&, arma::vec&) function
    * for when we want to evaluate only the probability of one dimension of
    * the gamma.
@@ -176,6 +183,13 @@ class GammaDistribution
    */
   void LogProbability(const arma::mat& observations,
                       arma::vec& logProbabilities) const;
+
+  /**
+   * This function returns the log-probability of the given observation.
+   *
+   * @param x The observation to compute the log-probability of.
+   */
+  double LogProbability(const arma::vec& x) const;
 
   /**
    * This function returns the logarithm of the probability of a single
