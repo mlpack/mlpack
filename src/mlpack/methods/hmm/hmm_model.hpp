@@ -36,7 +36,7 @@ class HMMModel
   //! The type of the HMM.
   HMMType type;
   //! Not used if type is not DiscreteHMM.
-  HMM<DiscreteDistribution>* discreteHMM;
+  HMM<DiscreteDistribution<>>* discreteHMM;
   //! Not used if type is not GaussianHMM.
   HMM<GaussianDistribution<>>* gaussianHMM;
   //! Not used if type is not GaussianMixtureModelHMM.
@@ -54,7 +54,7 @@ class HMMModel
       diagGMMHMM(NULL)
   {
     if (type == HMMType::DiscreteHMM)
-      discreteHMM = new HMM<DiscreteDistribution>();
+      discreteHMM = new HMM<DiscreteDistribution<>>();
     else if (type == HMMType::GaussianHMM)
       gaussianHMM = new HMM<GaussianDistribution<>>();
     else if (type == HMMType::GaussianMixtureModelHMM)
@@ -73,7 +73,7 @@ class HMMModel
   {
     if (type == HMMType::DiscreteHMM)
       discreteHMM =
-          new HMM<DiscreteDistribution>(*other.discreteHMM);
+          new HMM<DiscreteDistribution<>>(*other.discreteHMM);
     else if (type == HMMType::GaussianHMM)
       gaussianHMM =
           new HMM<GaussianDistribution<>>(*other.gaussianHMM);
@@ -92,7 +92,7 @@ class HMMModel
       diagGMMHMM(other.diagGMMHMM)
   {
     other.type = HMMType::DiscreteHMM;
-    other.discreteHMM = new HMM<DiscreteDistribution>();
+    other.discreteHMM = new HMM<DiscreteDistribution<>>();
     other.gaussianHMM = NULL;
     other.gmmHMM = NULL;
     other.diagGMMHMM = NULL;
@@ -117,7 +117,7 @@ class HMMModel
     type = other.type;
     if (type == HMMType::DiscreteHMM)
       discreteHMM =
-          new HMM<DiscreteDistribution>(*other.discreteHMM);
+          new HMM<DiscreteDistribution<>>(*other.discreteHMM);
     else if (type == HMMType::GaussianHMM)
       gaussianHMM =
           new HMM<GaussianDistribution<>>(*other.gaussianHMM);
@@ -141,7 +141,7 @@ class HMMModel
       diagGMMHMM = other.diagGMMHMM;
 
       other.type = HMMType::DiscreteHMM;
-      other.discreteHMM = new HMM<DiscreteDistribution>();
+      other.discreteHMM = new HMM<DiscreteDistribution<>>();
       other.gaussianHMM = nullptr;
       other.gmmHMM = nullptr;
       other.diagGMMHMM = nullptr;
@@ -220,7 +220,7 @@ class HMMModel
    * gaussianHMM  --> NULL
    * gmmHMM       --> NULL
    * diagGMMHMM   --> NULL
-   * discreteHMM  --> HMM<DiscreteDistribution> object
+   * discreteHMM  --> HMM<DiscreteDistribution<>> object
    * and hence, calls to GMMHMM(), DiagGMMHMM() and GaussianHMM() will return
    * NULL. Only the call to DiscreteHMM() will return a non NULL pointer.
    *
@@ -228,7 +228,7 @@ class HMMModel
    * (by calling the Type() accessor) and then perform subsequent actions, to
    * avoid null pointer dereferences.
    */
-  HMM<DiscreteDistribution>* DiscreteHMM() { return discreteHMM; }
+  HMM<DiscreteDistribution<>>* DiscreteHMM() { return discreteHMM; }
   HMM<GaussianDistribution<>>* GaussianHMM() { return gaussianHMM; }
   HMM<GMM>* GMMHMM() { return gmmHMM; }
   HMM<DiagonalGMM>* DiagGMMHMM() { return diagGMMHMM; }

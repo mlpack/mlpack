@@ -464,7 +464,7 @@ The resulting images (before and after using `ColumnsToBlocks`) are shown below.
     - The return type is `double`.
 
  * Both of these functions are used internally by the
-   `GammaDistribution` class. <!-- TODO: document the class! -->
+   [`GammaDistribution`](#gammadistribution) class.
 
 *Example*:
 
@@ -1360,7 +1360,7 @@ dimension 1 could be, e.g., `0.4`, and `P(4)` in dimension 2 could be, e.g.,
      probabilities in a dimension is 1!
 
  * A `DiscreteDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](load_save.md#mlpack-objects).
 
 ---
 
@@ -1413,7 +1413,7 @@ dimension 1 could be, e.g., `0.4`, and `P(4)` in dimension 2 could be, e.g.,
 
 ---
 
-*Example usage:*
+#### Example usage
 
 ```c++
 // Create a single-dimension Bernoulli distribution: P([0]) = 0.3, P([1]) = 0.7.
@@ -1450,6 +1450,91 @@ arma::vec probabilities;
 d2.Probability(observations, probabilities);
 std::cout << "Average probability: " << arma::mean(probabilities) << "."
     << std::endl;
+```
+
+---
+
+#### Using different element types
+
+The `DiscreteDistribution` class takes two template parameters:
+
+```
+DiscreteDistribution<MatType, ObsMatType>
+```
+
+ * `MatType` represents the matrix type used to represent internal parameters
+   (e.g. probabilities of each observation).
+ * `ObsMatType` represents the matrix type used to represent observations.
+
+ * By default:
+   - `MatType` is `arma::mat`, but any dense matrix type matching the Armadillo
+     API that holds floating-point numbers can be used (e.g. `arma::fmat`).
+   - `ObsMatType` is `MatType`, but any matrix type matching the Armadillo API
+     can be used (e.g. `arma::fmat`, `arma::imat`, etc.).
+
+ * When using custom `MatType` and `ObsMatType` parameters, several method
+   signatures will change:
+   - `DiscreteDistributions(probabilities)` will expect `probabilities` to be `
+     `std::vector<VecType>`, where `VecType` is the column vector type
+     associated with `MatType` (e.g. `arma::fvec` for `arma::fmat`).
+
+   - `Probability(observation)` and `LogProbability(observation)` will expect
+     `observation` to be an `ObsVecType`, where `ObsVecType` is the column
+     vector type associated with `ObsMatType`, and will return a probability
+     with type equivalent to the element type of `MatType`.
+
+   - `Probability(observations, probabilities)` and
+     `LogProbability(observations, probabilities)` will expect `observations` to
+     be of type `ObsMatType` and `probabilities` to be of type `VecType`.
+
+   - `Random()` will return an `ObsVecType`.
+
+   - `Train(observations)` and `Train(observations, probabilities)` will expect
+     `observations` to be of type `ObsMatType` and `probabilities` to be of type
+     `VecType`.
+
+   - `Probabilities(dim)` will return a `VecType`.
+
+The code below uses a `DiscreteDistribution` built on 32-bit floating point
+numbers.
+
+```c++
+// Create a distribution with 10 observations in each of 3 dimensions.
+mlpack::DiscreteDistribution<arma::fmat> d(arma::Col<size_t>("10 10 10"));
+
+// Train the distribution on random data.
+arma::fmat observations =
+    arma::randi<arma::fmat>(3, 100, arma::distr_param(0, 9));
+d.Train(observations);
+
+// Compute and print the probability of [8, 6, 7].
+const float p = d.Probability(arma::fvec("8 6 7"));
+std::cout << "Probability of [8, 6, 7]: " << p << "." << std::endl;
+```
+
+The code below uses a `DiscreteDistribution` that internally uses `float` to
+hold probabilities, but accepts `unsigned int`s as observations.
+
+```c++
+// Create a distribution with 10 observations in each of 3 dimensions.
+mlpack::DiscreteDistribution<arma::fmat, arma::umat> d(
+    arma::Col<size_t>("10 10 10"));
+
+// Train the distribution on random data.  Note that the observation type is a
+// matrix of unsigned ints (arma::umat).
+arma::umat observations =
+    arma::randi<arma::umat>(3, 100, arma::distr_param(0, 9));
+d.Train(observations);
+
+// Compute and print the probability of [8, 6, 7].  Note that the input vector
+// is a vector of unsigned ints (arma::uvec), but the returned probability is a
+// float because MatType is set to arma::fmat.
+const float p = d.Probability(arma::uvec("8 6 7"));
+std::cout << "Probability of [8, 6, 7]: " << p << "." << std::endl;
+
+// Print the probability vector for dimension 0.
+std::cout << "Probabilities for observations in dimension 0: "
+    << d.Probabilities(0).t() << std::endl;
 ```
 
 ---
@@ -1497,7 +1582,7 @@ covariance, see
    covariance.
 
  * A `GaussianDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](load_save.md#mlpack-objects).
 
 ---
 
@@ -1546,7 +1631,7 @@ covariance, see
 
 ---
 
-*Example usage:*
+#### Example usage
 
 ```c++
 // Create a Gaussian distribution in 3 dimensions with zero mean and unit
@@ -1580,6 +1665,41 @@ g2.Probability(samples, probabilities);
 
 std::cout << "Average probability is: " << arma::mean(probabilities) << "."
     << std::endl;
+```
+
+---
+
+#### Using different element types
+
+The `GaussianDistribution` class takes one template parameter:
+
+```
+GaussianDistribution<MatType>
+```
+
+ * `MatType` represents the matrix type used to represent observations.
+ * By default, `MatType` is `arma::mat`, but any matrix type matching the
+   Armadillo API can be used (e.g. `arma::fmat`).
+ * When `MatType` is set to anything other than `arma::mat`, all arguments are
+   adapted accordingly:
+   - `arma::mat` arguments will instead be `MatType`.
+   - `arma::vec` arguments will instead be the corresponding column vector type
+     associated with `MatType`.
+   - `double` arguments will instead be the element type of `MatType`.
+
+The code below uses a Gaussian distribution to make predictions with 32-bit
+floating point numbers.
+
+```c++
+// Create a 3-dimensional 32-bit floating point Gaussian distribution with
+// random mean and unit covariance.
+mlpack::GaussianDistribution<arma::fmat> g(3);
+g.Mean().randu();
+
+// Compute the probability of the point [0.2, 0.3, 0.4].
+const float p = g.Probability(arma::fvec("0.2 0.3 0.4"));
+
+std::cout << "Probability of (0.2, 0.3, 0.4): " << p << "." << std::endl;
 ```
 
 ---
@@ -1622,7 +1742,7 @@ Gaussian distribution, see [`GaussianDistribution`](#gaussiandistribution).)
    covariance matrix.
 
  * A `DiagonalGaussianDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](load_save.md#mlpack-objects).
 
 ---
 
@@ -1671,7 +1791,7 @@ Gaussian distribution, see [`GaussianDistribution`](#gaussiandistribution).)
 
 ---
 
-*Example usage:*
+#### Example usage
 
 ```c++
 // Create a diagonal Gaussian distribution in 3 dimensions with zero mean and
@@ -1704,6 +1824,41 @@ d2.Probability(samples, probabilities);
 
 std::cout << "Average probability is: " << arma::mean(probabilities) << "."
     << std::endl;
+```
+
+---
+
+#### Using different element types
+
+The `DiagonalGaussianDistribution` class takes one template parameter:
+
+```
+DiagonalGaussianDistribution<MatType>
+```
+
+ * `MatType` represents the matrix type used to represent observations.
+ * By default, `MatType` is `arma::mat`, but any matrix type matching the
+   Armadillo API can be used (e.g. `arma::fmat`).
+ * When `MatType` is set to anything other than `arma::mat`, all arguments are
+   adapted accordingly:
+   - `arma::mat` arguments will instead be `MatType`.
+   - `arma::vec` arguments will instead be the corresponding column vector type
+     associated with `MatType`.
+   - `double` arguments will instead be the element type of `MatType`.
+
+The code below uses a Gaussian distribution to make predictions with 32-bit
+floating point numbers.
+
+```c++
+// Create a 3-dimensional 32-bit floating point Gaussian distribution with
+// random mean and covariance.
+mlpack::DiagonalGaussianDistribution<arma::fmat> g(
+        arma::randu<arma::fvec>(3), arma::randu<arma::fvec>(3));
+
+// Compute the probability of the point [0.2, 0.3, 0.4].
+const float p = g.Probability(arma::fvec("0.2 0.3 0.4"));
+
+std::cout << "Probability of (0.2, 0.3, 0.4): " << p << "." << std::endl;
 ```
 
 ---
@@ -1754,7 +1909,7 @@ statistics.  See more on
    parameter to `b`.
 
  * A `GammaDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](load_save.md#mlpack-objects).
 
 ---
 
@@ -1802,11 +1957,11 @@ statistics.  See more on
      `observations.col(i)` is from `g`.
 
  * The algorithm used for fitting the distribution is described in the paper
-   [Estimating a Gamma Distribution](https://research.microsoft.com/~minka/papers/minka-gamma.pdf).
+   [Estimating a Gamma Distribution](https://tminka.github.io/papers/minka-gamma.pdf).
 
 ---
 
-*Example usage:*
+#### Example usage
 
 ```c++
 // Create a Gamma distribution in 3 dimensions with ones for the alpha (shape)
@@ -1834,9 +1989,10 @@ std::cout << "Probability of [0 0.5 0.25]:     " << p << "." << std::endl;
 std::cout << "Log-probability of [0 0.5 0.25]: " << lp << "." << std::endl;
 
 // Create a Gamma distribution that is estimated from random samples in 5
-// dimensions.  Note that the samples here are normally distributed---so a Gamma
-// distribution fit will not be a good one!
-arma::mat samples(5, 10, arma::fill::randn);
+// dimensions.  Note that the samples here are uniformly distributed---so a
+// Gamma distribution fit will not be a good one!
+arma::mat samples(5, 1000, arma::fill::randu);
+samples += 2.0; // Shift samples away from zero.
 
 mlpack::GammaDistribution g2(samples, 1e-3 /* tolerance for fitting */);
 
@@ -1846,6 +2002,43 @@ g2.Probability(samples, probabilities);
 
 std::cout << "Average probability is: " << arma::mean(probabilities) << "."
     << std::endl;
+```
+
+---
+
+#### Using different element types
+
+The `GammaDistribution` class takes one template parameter:
+
+```
+GammaDistribution<MatType>
+```
+
+ * `MatType` represents the matrix type used to represent observations.
+ * By default, `MatType` is `arma::mat`, but any matrix type matching the
+   Armadillo API can be used (e.g. `arma::fmat`).
+ * When `MatType` is set to anything other than `arma::mat`, all arguments are
+   adapted accordingly:
+   - `arma::mat` arguments will instead be `MatType`
+   - `arma::vec` arguments will instead be the corresponding column vector type
+     associated with `MatType`
+   - `double` arguments will instead be the element type of `MatType`
+   - If the element type is `float`, the default tolerance (`tol`) for `Train()`
+     is `1e-4`
+
+The code below uses a Gamma distribution to make predictions with 32-bit
+floating point numbers.
+
+```c++
+// Create a 3-dimensional 32-bit floating point Laplace distribution with
+// ones for the shape parameter and random scale parameters.
+mlpack::GammaDistribution<arma::fmat> g(arma::ones<arma::fvec>(3) /* shape */,
+                                        arma::randu<arma::fvec>(3) /* scale */);
+
+// Compute the probability of the point [0.2, 0.3, 0.4].
+const float p = g.Probability(arma::fvec("0.2 0.3 0.4"));
+
+std::cout << "Probability of (0.2, 0.3, 0.4): " << p << "." << std::endl;
 ```
 
 ---
@@ -1885,7 +2078,7 @@ also called the *double exponential distribution*.  See more on
    parameter.  `l.Scale() = s` will set the scale parameter to `s`.
 
  * A `LaplaceDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](load_save.md#mlpack-objects).
 
 ---
 
@@ -1913,7 +2106,7 @@ also called the *double exponential distribution*.  See more on
 #### Sample points from the distribution
 
  * `l.Random()` returns an `arma::vec` with a random sample from the
-   Gamma distribution.
+   Laplace distribution.
 
 ---
 
@@ -1934,7 +2127,7 @@ also called the *double exponential distribution*.  See more on
 
 ---
 
-*Example usage:*
+#### Example usage
 
 ```c++
 // Create a Laplace distribution in 3 dimensions with uniform random mean and
@@ -1966,7 +2159,8 @@ std::cout << "Log-probability of [0 0.5 0.25]: " << lp << "." << std::endl;
 // distribution fit will not be a good one!
 arma::mat samples(50, 10000, arma::fill::randn);
 
-mlpack::LaplaceDistribution l2(samples, 1e-6 /* tolerance for fitting */);
+mlpack::LaplaceDistribution l2;
+l2.Train(samples);
 
 // Compute the probability of all of the samples.
 arma::vec probabilities;
@@ -1974,6 +2168,40 @@ l2.Probability(samples, probabilities);
 
 std::cout << "Average probability is: " << arma::mean(probabilities) << "."
     << std::endl;
+```
+
+---
+
+#### Using different element types
+
+The `LaplaceDistribution` class takes one template parameter:
+
+```
+LaplaceDistribution<MatType>
+```
+
+ * `MatType` represents the matrix type used to represent observations.
+ * By default, `MatType` is `arma::mat`, but any matrix type matching the
+   Armadillo API can be used (e.g. `arma::fmat`).
+ * When `MatType` is set to anything other than `arma::mat`, all arguments are
+   adapted accordingly:
+   - `arma::mat` arguments will instead be `MatType`.
+   - `arma::vec` arguments will instead be the corresponding column vector type
+     associated with `MatType`.
+   - `double` arguments will instead be the element type of `MatType`.
+
+The code below uses a Laplace distribution to make predictions with 32-bit
+floating point numbers.
+
+```c++
+// Create a 3-dimensional 32-bit floating point Laplace distribution with
+// random mean and scale of 2.0.
+mlpack::LaplaceDistribution<arma::fmat> g(arma::randu<arma::fvec>(3), 2.0);
+
+// Compute the probability of the point [0.2, 0.3, 0.4].
+const float p = g.Probability(arma::fvec("0.2 0.3 0.4"));
+
+std::cout << "Probability of (0.2, 0.3, 0.4): " << p << "." << std::endl;
 ```
 
 ---
@@ -2005,7 +2233,7 @@ This class is meant to be used with mlpack's
    - Create the `RegressionDistribution` by estimating the parameters with the
      given labeled regression data `predictors` and `responses`.
    - `predictors` should be a
-     [column-major](../matrices.md#representing-data-in-mlpack) `arma::mat`
+     [column-major](matrices.md#representing-data-in-mlpack) `arma::mat`
      representing the data the distribution should be trained on.
    - `responses` should be an `arma::rowvec` representing the responses for each
      data point.
@@ -2024,15 +2252,17 @@ This class is meant to be used with mlpack's
  * `r.Rf()` returns the [`LinearRegression&`](methods/linear_regression.md)
    model.  This can be modified.
 
- * `r.Parameters()` returns an `const arma::vec&` representing the parameters of
-   the linear regression model.
+ * `r.Parameters()` returns an `const arma::vec&` with length
+   `r.Dimensionality() + 1` representing the parameters of the linear regression
+   model.  The first element is the bias; subsequent elements are the weights
+   for each dimension.
 
  * `r.Err()` returns a [`GaussianDistribution&`](#gaussiandistribution) object
    representing the univariate distribution trained on the model's residuals.
    This can be modified.
 
  * A `RegressionDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](load_save.md#mlpack-objects).
 
 ---
 
@@ -2085,7 +2315,7 @@ both the responses and the data points (predictors).
  * `r.Train(observations, observationProbabilities)`
    - Fit the distribution to the given *labeled* observations, as above, but
      also provide probabilities that each observation is from this distribution.
-   - `observationProbabilities` should be an `arma::vec` of length
+   - `observationProbabilities` should be an `arma::rowvec` of length
      `observations.n_cols`.
    - `observationProbabilities[i]` should be equal to the probability that the
      `i`'th observation is from `r`.
@@ -2097,7 +2327,7 @@ perfectly fit and `0` otherwise.
 
 ---
 
-*Example usage:*
+#### Example usage
 
 ```c++
 // Create an example dataset that arises from a noisy random linear model:
@@ -2109,14 +2339,15 @@ perfectly fit and `0` otherwise.
 arma::vec b(10, arma::fill::randu);
 arma::mat x(10, 1000, arma::fill::randu);
 
-arma::vec y = b.t() + arma::randn<arma::vec>(1000);
+arma::rowvec y = b.t() * x + arma::randn<arma::rowvec>(1000);
 
 // Now fit a RegressionDistribution to the data.
 mlpack::RegressionDistribution r(x, y);
 
 // Print information about the distribution.
 std::cout << "RegressionDistribution model parameters:" << std::endl;
-std::cout << " - " << r.Parameters().t();
+std::cout << " - " << r.Parameters().subvec(1, r.Parameters().n_elem - 1).t();
+std::cout << " - Bias: " << r.Parameters()[0] << "." << std::endl;
 std::cout << "True model parameters:" << std::endl;
 std::cout << " - " << b.t();
 std::cout << "Error Gaussian mean is " << r.Err().Mean()[0] << ", with "
@@ -2141,15 +2372,15 @@ std::cout << "Log-probability of random point: " << r.LogProbability(p2) << "."
     << std::endl << std::endl;
 
 // Change the error distribution.
-y = b.t() + (1.5 * arma::randn<arma::vec>(1000));
+y = b.t() * x + (1.5 * arma::randn<arma::rowvec>(1000));
 
 // Combine x and y to build the observations matrix for Train().
 arma::mat observations(x.n_rows + 1, x.n_cols);
-observations.row(0) = y.t();
+observations.row(0) = y;
 observations.rows(1, observations.n_rows - 1) = x;
 
 // Assign a random probability for each point.
-arma::vec observationProbabilities(observations.n_cols, arma::fill::randu);
+arma::rowvec observationProbabilities(observations.n_cols, arma::fill::randu);
 
 // Refit the distribution to the new data.
 r.Train(observations, observationProbabilities);
@@ -2163,6 +2394,50 @@ arma::vec probabilities;
 r.Probability(observations, probabilities);
 std::cout << "Average probability of points in `observations`: "
     << arma::mean(probabilities) << "." << std::endl;
+```
+
+---
+
+#### Using different element types
+
+The `RegressionDistribution` class takes one template parameter:
+
+```
+RegressionDistribution<MatType>
+```
+
+ * `MatType` represents the matrix type used to represent observations.
+ * By default, `MatType` is `arma::mat`, but any matrix type matching the
+   Armadillo API can be used (e.g. `arma::fmat`).
+ * When `MatType` is set to anything other than `arma::mat`, all arguments are
+   adapted accordingly:
+   - `arma::mat` arguments will instead be `MatType`.
+   - `arma::vec` arguments will instead be the corresponding column vector type
+     associated with `MatType`.
+   - `double` arguments will instead be the element type of `MatType`.
+
+The code below uses a regression distribution trained on 32-bit floating point
+data.
+
+```c++
+// Create an example dataset that arises from a noisy random linear model:
+//
+//   y = bx + noise
+//
+// Noise is added from a Gaussian distribution with zero mean and unit variance.
+// Data is 3-dimensional, and we will generate 1000 points.
+arma::fvec b(3, arma::fill::randu);
+arma::fmat x(3, 1000, arma::fill::randu);
+
+arma::frowvec y = b.t() * x + arma::randn<arma::frowvec>(1000);
+
+// Now fit a RegressionDistribution to the data.
+mlpack::RegressionDistribution<arma::fmat> r(x, y);
+
+// Compute the probability of the point [0.5, 0.2, 0.3, 0.4].
+// (Here 0.5 is the response, and [0.2, 0.3, 0.4] is the point.)
+const float p = r.Probability(arma::fvec("0.5 0.2 0.3 0.4"));
+std::cout << "Probability of (0.5, 0.2, 0.3, 0.4): " << p << "." << std::endl;
 ```
 
 ---
@@ -2536,7 +2811,7 @@ std::cout << "Kernel values between two floating-point vectors: " << k5
 ### `HyperbolicTangentKernel`
 
 The `HyperbolicTangentKernel` implements the
-[hyperbolic tangent kernel](https://en.wikipedia.org/wiki/Support_vector_machine#Nonlinear_Kernels),
+[hyperbolic tangent kernel](https://en.wikipedia.org/wiki/Support_vector_machine#Nonlinear_kernels),
 which is defined by the following equation:
 `f(x1, x2) = tanh(s * (x1^T x2) + t)`
 where `s` is the scale parameter and `t` is the offset parameter.

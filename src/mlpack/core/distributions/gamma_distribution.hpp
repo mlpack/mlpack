@@ -49,9 +49,14 @@ namespace mlpack {
  * }
  * @endcode
  */
+template<typename MatType = arma::mat>
 class GammaDistribution
 {
  public:
+  // Convenience typedefs.
+  typedef typename GetColType<MatType>::type VecType;
+  typedef typename MatType::elem_type ElemType;
+
   /**
    * Construct the Gamma distribution with the given number of dimensions
    * (default 0); each parameter will be initialized to 0.
@@ -68,7 +73,9 @@ class GammaDistribution
    *    It will stop the approximation once the *change* in the value is
    *    smaller than tol.
    */
-  GammaDistribution(const arma::mat& data, const double tol = 1e-8);
+  GammaDistribution(const MatType& data,
+                    const ElemType tol =
+                        std::is_same<ElemType, float>::value ? 1e-4 : 1e-8);
 
   /**
    * Construct the Gamma distribution given two vectors alpha and beta.
@@ -76,7 +83,7 @@ class GammaDistribution
    * @param alpha The vector of alphas, one per dimension.
    * @param beta The vector of betas, one per dimension.
    */
-  GammaDistribution(const arma::vec& alpha, const arma::vec& beta);
+  GammaDistribution(const VecType& alpha, const VecType& beta);
 
   /**
    * Destructor.
@@ -92,7 +99,9 @@ class GammaDistribution
    *    It will stop the approximation once the *change* in the value is
    *    smaller than tol.
    */
-  void Train(const arma::mat& rdata, const double tol = 1e-8);
+  void Train(const MatType& rdata,
+             const ElemType tol =
+                 std::is_same<ElemType, float>::value ? 1e-4 : 1e-8);
 
   /**
    * Fits an alpha and beta parameter according to observation probabilities.
@@ -105,9 +114,10 @@ class GammaDistribution
    *    It will stop the approximation once the *change* in the value is
    *    smaller than tol.
    */
-  void Train(const arma::mat& observations,
-             const arma::vec& probabilities,
-             const double tol = 1e-8);
+  void Train(const MatType& observations,
+             const VecType& probabilities,
+             const ElemType tol =
+                 std::is_same<ElemType, float>::value ? 1e-4 : 1e-8);
 
   /**
    * This function trains (fits distribution parameters) to a dataset with
@@ -122,10 +132,11 @@ class GammaDistribution
    *    It will stop the approximation once the *change* in the value is
    *    smaller than tol.
    */
-  void Train(const arma::vec& logMeanxVec,
-             const arma::vec& meanLogxVec,
-             const arma::vec& meanxVec,
-             const double tol = 1e-8);
+  void Train(const VecType& logMeanxVec,
+             const VecType& meanLogxVec,
+             const VecType& meanxVec,
+             const ElemType tol =
+                 std::is_same<ElemType, float>::value ? 1e-4 : 1e-8);
 
   /**
    * This function returns the probability of a group of observations.
@@ -143,15 +154,15 @@ class GammaDistribution
    * @param probabilities Column vector of probabilities, one per
    *     observation.
    */
-  void Probability(const arma::mat& observations,
-                   arma::vec& probabilities) const;
+  void Probability(const MatType& observations,
+                   VecType& probabilities) const;
 
   /**
    * This function returns the probability of the given observation.
    *
    * @param x The observation to compute the probability of.
    */
-  double Probability(const arma::vec& x) const;
+  ElemType Probability(const VecType& x) const;
 
   /**
    * This is a shortcut to the Probability(arma::mat&, arma::vec&) function
@@ -161,7 +172,7 @@ class GammaDistribution
    * @param x The 1-dimensional observation.
    * @param dim The dimension for which to calculate the probability.
    */
-  double Probability(double x, const size_t dim) const;
+  ElemType Probability(ElemType x, const size_t dim) const;
 
   /**
    * This function returns the logarithm of the probability of a group of
@@ -181,15 +192,15 @@ class GammaDistribution
    * @param logProbabilities Column vector of log probabilities, one per
    *     observation.
    */
-  void LogProbability(const arma::mat& observations,
-                      arma::vec& logProbabilities) const;
+  void LogProbability(const MatType& observations,
+                      VecType& logProbabilities) const;
 
   /**
    * This function returns the log-probability of the given observation.
    *
    * @param x The observation to compute the log-probability of.
    */
-  double LogProbability(const arma::vec& x) const;
+  ElemType LogProbability(const VecType& x) const;
 
   /**
    * This function returns the logarithm of the probability of a single
@@ -198,33 +209,33 @@ class GammaDistribution
    * @param x The 1-dimensional observation.
    * @param dim The dimension for which to calculate the probability.
    */
-  double LogProbability(double x, const size_t dim) const;
+  ElemType LogProbability(ElemType x, const size_t dim) const;
 
   /**
    * This function returns an observation of this distribution.
    */
-  arma::vec Random() const;
+  VecType Random() const;
 
   // Access to Gamma distribution parameters.
 
   //! Get the alpha parameter of the given dimension.
-  double Alpha(const size_t dim) const { return alpha[dim]; }
+  ElemType Alpha(const size_t dim) const { return alpha[dim]; }
   //! Modify the alpha parameter of the given dimension.
-  double& Alpha(const size_t dim) { return alpha[dim]; }
+  ElemType& Alpha(const size_t dim) { return alpha[dim]; }
 
   //! Get the beta parameter of the given dimension.
-  double Beta(const size_t dim) const { return beta[dim]; }
+  ElemType Beta(const size_t dim) const { return beta[dim]; }
   //! Modify the beta parameter of the given dimension.
-  double& Beta(const size_t dim) { return beta[dim]; }
+  ElemType& Beta(const size_t dim) { return beta[dim]; }
 
   //! Get the dimensionality of the distribution.
   size_t Dimensionality() const { return alpha.n_elem; }
 
  private:
   //! Array of fitted alphas.
-  arma::vec alpha;
+  VecType alpha;
   //! Array of fitted betas.
-  arma::vec beta;
+  VecType beta;
 
   /**
    * This is a small function that returns true if the update of alpha is
@@ -237,9 +248,9 @@ class GammaDistribution
    * @param tol Convergence tolerance. Relative measure (see documentation of
    *     GammaDistribution::Train).
    */
-  inline bool Converged(const double aOld,
-                        const double aNew,
-                        const double tol);
+  inline bool Converged(const ElemType aOld,
+                        const ElemType aNew,
+                        const ElemType tol);
 };
 
 } // namespace mlpack

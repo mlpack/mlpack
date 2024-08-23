@@ -80,7 +80,7 @@ namespace mlpack {
  *
  * @tparam Distribution Type of emission distribution for this HMM.
  */
-template<typename Distribution = DiscreteDistribution>
+template<typename Distribution = DiscreteDistribution<>>
 class HMM
 {
  public:

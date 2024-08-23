@@ -27,13 +27,20 @@ namespace mlpack {
  * The hmm observations should have the dependent variable in the first row,
  * with the independent variables in the other rows.
  */
+template<typename MatType = arma::mat>
 class RegressionDistribution
 {
+ public:
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename GetColType<MatType>::type VecType;
+  typedef typename GetRowType<MatType>::type RowType;
+
  private:
   //! Regression function for representing conditional mean.
-  LinearRegression<> rf;
+  LinearRegression<MatType> rf;
   //! Error distribution.
-  GaussianDistribution<> err;
+  GaussianDistribution<MatType> err;
 
  public:
   /**
@@ -48,12 +55,12 @@ class RegressionDistribution
    * @param predictors Matrix of predictors (X).
    * @param responses Vector of responses (y).
    */
-  RegressionDistribution(const arma::mat& predictors,
-                         const arma::rowvec& responses)
+  RegressionDistribution(const MatType& predictors,
+                         const RowType& responses)
   {
     rf.Train(predictors, responses);
-    err = GaussianDistribution<>(1);
-    arma::mat cov(1, 1);
+    err = GaussianDistribution<MatType>(1);
+    MatType cov(1, 1);
     cov(0, 0) = rf.ComputeError(predictors, responses);
     err.Covariance(std::move(cov));
   }
@@ -69,21 +76,21 @@ class RegressionDistribution
   }
 
   //! Return regression function.
-  const LinearRegression<>& Rf() const { return rf; }
+  const LinearRegression<MatType>& Rf() const { return rf; }
   //! Modify regression function.
-  LinearRegression<>& Rf() { return rf; }
+  LinearRegression<MatType>& Rf() { return rf; }
 
   //! Return error distribution.
-  const GaussianDistribution<>& Err() const { return err; }
+  const GaussianDistribution<MatType>& Err() const { return err; }
   //! Modify error distribution.
-  GaussianDistribution<>& Err() { return err; }
+  GaussianDistribution<MatType>& Err() { return err; }
 
   /**
    * Estimate the Gaussian distribution directly from the given observations.
    *
    * @param observations List of observations.
    */
-  void Train(const arma::mat& observations);
+  void Train(const MatType& observations);
 
   /**
    * Estimate parameters using provided observation weights.
@@ -91,14 +98,14 @@ class RegressionDistribution
    * @param observations List of observations.
    * @param weights Probability that given observation is from distribution.
    */
-  void Train(const arma::mat& observations, const arma::rowvec& weights);
+  void Train(const MatType& observations, const RowType& weights);
 
   /**
    * Evaluate probability density function of given observation.
    *
    * @param observation Point to evaluate probability at.
    */
-  double Probability(const arma::vec& observation) const;
+  ElemType Probability(const VecType& observation) const;
 
   /**
    * Evaluate probability density function for the given observations.
@@ -106,15 +113,15 @@ class RegressionDistribution
    * @param observations Points to evaluate probability at.
    * @param probabilities Vector to store computed probabilities in.
    */
-  void Probability(const arma::mat& observations,
-                   arma::vec& probabilities) const;
+  void Probability(const MatType& observations,
+                   VecType& probabilities) const;
 
   /**
    * Evaluate log probability density function of given observation.
    *
    * @param observation Point to evaluate log probability at.
    */
-  double LogProbability(const arma::vec& observation) const
+  ElemType LogProbability(const VecType& observation) const
   {
     return std::log(Probability(observation));
   }
@@ -124,8 +131,8 @@ class RegressionDistribution
    *
    * @param observations Points to evaluate log probability at.
    */
-  void LogProbability(const arma::mat& observations,
-                      arma::vec& probabilities) const
+  void LogProbability(const MatType& observations,
+                      VecType& probabilities) const
   {
     Probability(observations, probabilities);
     probabilities = arma::log(probabilities);
@@ -137,10 +144,10 @@ class RegressionDistribution
    * @param points The data points to calculate with.
    * @param predictions Y, will contain calculated values on completion.
    */
-  void Predict(const arma::mat& points, arma::rowvec& predictions) const;
+  void Predict(const MatType& points, RowType& predictions) const;
 
   //! Return the parameters (the b vector).
-  const arma::vec& Parameters() const { return rf.Parameters(); }
+  const VecType& Parameters() const { return rf.Parameters(); }
 
   //! Return the dimensionality.
   size_t Dimensionality() const { return rf.Parameters().n_elem; }

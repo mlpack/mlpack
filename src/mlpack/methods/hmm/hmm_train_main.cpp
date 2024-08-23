@@ -110,7 +110,7 @@ struct Init
 
   //! Helper function to create discrete HMM.
   static void Create(util::Params& /* params */,
-                     HMM<DiscreteDistribution>& hmm,
+                     HMM<DiscreteDistribution<>>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
                      double tolerance)
@@ -127,8 +127,8 @@ struct Init
       maxEmissions = arma::max(maxEmissions, maxSeqs);
     }
 
-    hmm = HMM<DiscreteDistribution>(size_t(states),
-        DiscreteDistribution(maxEmissions), tolerance);
+    hmm = HMM<DiscreteDistribution<>>(size_t(states),
+        DiscreteDistribution<>(maxEmissions), tolerance);
   }
 
   //! Helper function to create Gaussian HMM.
@@ -229,7 +229,7 @@ struct Init
 
   //! Helper function for discrete emission distributions.
   static void RandomInitialize(util::Params& /* params */,
-                               vector<DiscreteDistribution>& e)
+                               vector<DiscreteDistribution<>>& e)
   {
     for (size_t i = 0; i < e.size(); ++i)
     {

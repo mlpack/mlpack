@@ -851,8 +851,8 @@ TEST_CASE("DiagonalGMMProbabilityComponentTest", "[GMMTest]")
 {
   // Create DiagonalGMM.
   DiagonalGMM gmm(2, 2);
-  gmm.Component(0) = DiagonalGaussianDistribution("0 0", "1 1");
-  gmm.Component(1) = DiagonalGaussianDistribution("2 3", "3 2");
+  gmm.Component(0) = DiagonalGaussianDistribution<>("0 0", "1 1");
+  gmm.Component(1) = DiagonalGaussianDistribution<>("2 3", "3 2");
   gmm.Weights() = "0.2 0.8";
 
   // The values are calculated using mlpack's GMM class.
@@ -923,7 +923,7 @@ TEST_CASE("DiagonalGMMTrainEMOneGaussian", "[GMMTest]")
 TEST_CASE("DiagonalGMMTrainEMOneGaussianWithProbability", "[GMMTest]")
 {
   // Generate a diagonal covariance gaussian distribution.
-  DiagonalGaussianDistribution d("1.0 0.8", "1.0 2.0");
+  DiagonalGaussianDistribution<> d("1.0 0.8", "1.0 2.0");
 
   // Generate 20000 observations, each with random probabilities.
   arma::mat observations(2, 20000);
@@ -961,9 +961,9 @@ TEST_CASE("DiagonalGMMTrainEMMultipleGaussians", "[GMMTest]")
 {
   // We'll have three diagonal covariance Gaussian distributions from this
   // mixture.
-  DiagonalGaussianDistribution d1("0.0 1.0 0.0", "1.0 0.8 1.0;");
-  DiagonalGaussianDistribution d2("2.0 -1.0 5.0", "3.0 1.2 1.3;");
-  DiagonalGaussianDistribution d3("0.0 5.0 -3.0", "2.0 0.3 1.0;");
+  DiagonalGaussianDistribution<> d1("0.0 1.0 0.0", "1.0 0.8 1.0;");
+  DiagonalGaussianDistribution<> d2("2.0 -1.0 5.0", "3.0 1.2 1.3;");
+  DiagonalGaussianDistribution<> d3("0.0 5.0 -3.0", "2.0 0.3 1.0;");
 
   // Now we'll generate points and probabilities.
   arma::mat observations(3, 5000);
@@ -1044,9 +1044,9 @@ TEST_CASE("DiagonalGMMTrainEMMultipleGaussiansWithProbability", "[GMMTest]")
 {
   // We'll have three diagonal covariance Gaussian distributions from this
   // mixture.
-  DiagonalGaussianDistribution d1("1.5 0.8 1.0", "1.0 0.8 1.0;");
-  DiagonalGaussianDistribution d2("8.2 6.3 7.4", "1.0 1.2 1.3;");
-  DiagonalGaussianDistribution d3("-4.5 -5.0 -3.0", "2.0 2.3 1.0;");
+  DiagonalGaussianDistribution<> d1("1.5 0.8 1.0", "1.0 0.8 1.0;");
+  DiagonalGaussianDistribution<> d2("8.2 6.3 7.4", "1.0 1.2 1.3;");
+  DiagonalGaussianDistribution<> d3("-4.5 -5.0 -3.0", "2.0 2.3 1.0;");
 
   // Now we'll generate observations and probabilities.
   arma::mat observations(3, 10000);
@@ -1132,8 +1132,8 @@ TEST_CASE("DiagonalGMMRandomTest", "[GMMTest]")
   DiagonalGMM gmm(2, 2);
   gmm.Weights() = arma::vec("0.40 0.60");
 
-  gmm.Component(0) = DiagonalGaussianDistribution("1.05 2.60", "0.95 1.01");
-  gmm.Component(1) = DiagonalGaussianDistribution("4.30 1.00", "1.05 0.97");
+  gmm.Component(0) = DiagonalGaussianDistribution<>("1.05 2.60", "0.95 1.01");
+  gmm.Component(1) = DiagonalGaussianDistribution<>("4.30 1.00", "1.05 0.97");
 
   // Now generate a bunch of observations.
   arma::mat observations(2, 4000);

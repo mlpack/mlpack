@@ -17,21 +17,25 @@
 
 namespace mlpack {
 
-inline GammaDistribution::GammaDistribution(const size_t dimensionality)
+template<typename MatType>
+inline GammaDistribution<MatType>::GammaDistribution(
+    const size_t dimensionality)
 {
   // Initialize distribution.
   alpha.zeros(dimensionality);
   beta.zeros(dimensionality);
 }
 
-inline GammaDistribution::GammaDistribution(const arma::mat& data,
-                                            const double tol)
+template<typename MatType>
+inline GammaDistribution<MatType>::GammaDistribution(const MatType& data,
+                                                     const ElemType tol)
 {
   Train(data, tol);
 }
 
-inline GammaDistribution::GammaDistribution(const arma::vec& alpha,
-                                            const arma::vec& beta)
+template<typename MatType>
+inline GammaDistribution<MatType>::GammaDistribution(const VecType& alpha,
+                                                     const VecType& beta)
 {
   if (beta.n_elem != alpha.n_elem)
     throw std::runtime_error("Alpha and beta vector dimensions mismatch.");
@@ -41,24 +45,27 @@ inline GammaDistribution::GammaDistribution(const arma::vec& alpha,
 }
 
 // Returns true if computation converged.
-inline bool GammaDistribution::Converged(const double aOld,
-                                         const double aNew,
-                                         const double tol)
+template<typename MatType>
+inline bool GammaDistribution<MatType>::Converged(const ElemType aOld,
+                                                  const ElemType aNew,
+                                                  const ElemType tol)
 {
   return (std::abs(aNew - aOld) / aNew) < tol;
 }
 
 // Fits an alpha and beta parameter to each dimension of the data.
-inline void GammaDistribution::Train(const arma::mat& rdata, const double tol)
+template<typename MatType>
+inline void GammaDistribution<MatType>::Train(const MatType& rdata,
+                                              const ElemType tol)
 {
   // If fittingSet is empty, nothing to do.
   if (arma::size(rdata) == arma::size(arma::mat()))
     return;
 
   // Calculate log(mean(x)) and mean(log(x)) of each dataset row.
-  const arma::vec meanLogxVec = arma::mean(log(rdata), 1);
-  const arma::vec meanxVec = arma::mean(rdata, 1);
-  const arma::vec logMeanxVec = log(meanxVec);
+  const VecType meanLogxVec = arma::mean(log(rdata), 1);
+  const VecType meanxVec = arma::mean(rdata, 1);
+  const VecType logMeanxVec = log(meanxVec);
 
   // Call the statistics-only GammaDistribution::Train() function to fit the
   // parameters. That function does all the work so we're done.
@@ -66,17 +73,18 @@ inline void GammaDistribution::Train(const arma::mat& rdata, const double tol)
 }
 
 // Fits an alpha and beta parameter according to observation probabilities.
-inline void GammaDistribution::Train(const arma::mat& rdata,
-                                     const arma::vec& probabilities,
-                                     const double tol)
+template<typename MatType>
+inline void GammaDistribution<MatType>::Train(const MatType& rdata,
+                                              const VecType& probabilities,
+                                              const ElemType tol)
 {
   // If fittingSet is empty, nothing to do.
   if (arma::size(rdata) == arma::size(arma::mat()))
     return;
 
-  arma::vec meanLogxVec(rdata.n_rows, arma::fill::zeros);
-  arma::vec meanxVec(rdata.n_rows, arma::fill::zeros);
-  arma::vec logMeanxVec(rdata.n_rows, arma::fill::zeros);
+  VecType meanLogxVec(rdata.n_rows, arma::fill::zeros);
+  VecType meanxVec(rdata.n_rows, arma::fill::zeros);
+  VecType logMeanxVec(rdata.n_rows, arma::fill::zeros);
 
   for (size_t i = 0; i < rdata.n_cols; ++i)
   {
@@ -84,7 +92,7 @@ inline void GammaDistribution::Train(const arma::mat& rdata,
     meanxVec += probabilities(i) * rdata.col(i);
   }
 
-  double totProbability = accu(probabilities);
+  ElemType totProbability = accu(probabilities);
 
   meanLogxVec /= totProbability;
   meanxVec /= totProbability;
@@ -96,10 +104,11 @@ inline void GammaDistribution::Train(const arma::mat& rdata,
 }
 
 // Fits an alpha and beta parameter to each dimension of the data.
-inline void GammaDistribution::Train(const arma::vec& logMeanxVec,
-                                     const arma::vec& meanLogxVec,
-                                     const arma::vec& meanxVec,
-                                     const double tol)
+template<typename MatType>
+inline void GammaDistribution<MatType>::Train(const VecType& logMeanxVec,
+                                              const VecType& meanLogxVec,
+                                              const VecType& meanxVec,
+                                              const ElemType tol)
 {
   using std::log;
 
@@ -119,13 +128,13 @@ inline void GammaDistribution::Train(const arma::vec& logMeanxVec,
   for (size_t row = 0; row < ndim; ++row)
   {
     // Statistics for this row.
-    const double meanLogx = meanLogxVec(row);
-    const double meanx = meanxVec(row);
-    const double logMeanx = logMeanxVec(row);
+    const ElemType meanLogx = meanLogxVec(row);
+    const ElemType meanx = meanxVec(row);
+    const ElemType logMeanx = logMeanxVec(row);
 
     // Starting point for Generalized Newton.
-    double aEst = 0.5 / (logMeanx - meanLogx);
-    double aOld;
+    ElemType aEst = 0.5 / (logMeanx - meanLogx);
+    ElemType aOld;
 
     // Newton's method: In each step, make an update to aEst. If value didn't
     // change much (abs(aNew - aEst) / aEst < tol), then stop.
@@ -135,8 +144,8 @@ inline void GammaDistribution::Train(const arma::vec& logMeanxVec,
       aOld = aEst;
 
       // Calculate new value for alpha.
-      double nominator = meanLogx - logMeanx + std::log(aEst) - Digamma(aEst);
-      double denominator = std::pow(aEst, 2) * (1 / aEst - Trigamma(aEst));
+      ElemType nominator = meanLogx - logMeanx + std::log(aEst) - Digamma(aEst);
+      ElemType denominator = std::pow(aEst, 2) * (1 / aEst - Trigamma(aEst));
 
       // Protect against division by 0.
       if (denominator == 0)
@@ -149,7 +158,7 @@ inline void GammaDistribution::Train(const arma::vec& logMeanxVec,
       if (aEst <= 0)
         throw std::logic_error("GammaDistribution::Train(): estimated invalid "
             "negative value for parameter alpha!");
-    } while (!Converged(aEst, aOld, tol));
+    } while (!Converged(aEst, aOld, tol) && !std::isnan(aEst));
 
     alpha(row) = aEst;
     beta(row) = meanx / aEst;
@@ -157,8 +166,10 @@ inline void GammaDistribution::Train(const arma::vec& logMeanxVec,
 }
 
 // Returns the probability of the provided observations.
-inline void GammaDistribution::Probability(const arma::mat& observations,
-                                           arma::vec& probabilities) const
+template<typename MatType>
+inline void GammaDistribution<MatType>::Probability(
+    const MatType& observations,
+    VecType& probabilities) const
 {
   size_t numObs = observations.n_cols;
 
@@ -166,7 +177,7 @@ inline void GammaDistribution::Probability(const arma::mat& observations,
   probabilities.ones(numObs);
 
   // Compute denominator only once for each dimension.
-  arma::vec denominators(alpha.n_elem);
+  VecType denominators(alpha.n_elem);
   for (size_t d = 0; d < alpha.n_elem; ++d)
     denominators(d) = std::tgamma(alpha(d)) * std::pow(beta(d), alpha(d));
 
@@ -176,8 +187,8 @@ inline void GammaDistribution::Probability(const arma::mat& observations,
     for (size_t d = 0; d < observations.n_rows; ++d)
     {
       // Compute probability using Multiplication Law.
-      double factor = std::exp(-observations(d, i) / beta(d));
-      double numerator = std::pow(observations(d, i), alpha(d) - 1);
+      ElemType factor = std::exp(-observations(d, i) / beta(d));
+      ElemType numerator = std::pow(observations(d, i), alpha(d) - 1);
 
       probabilities(i) *= factor * numerator / denominators(d);
     }
@@ -185,9 +196,11 @@ inline void GammaDistribution::Probability(const arma::mat& observations,
 }
 
 // Return the probability of the given observation.
-inline double GammaDistribution::Probability(const arma::vec& x) const
+template<typename MatType>
+inline typename GammaDistribution<MatType>::ElemType
+GammaDistribution<MatType>::Probability(const VecType& x) const
 {
-  double prob = 1.0;
+  ElemType prob = 1.0;
   for (size_t d = 0; d < Dimensionality(); ++d)
     prob *= Probability(x[d], d);
 
@@ -196,16 +209,19 @@ inline double GammaDistribution::Probability(const arma::vec& x) const
 
 // Returns the probability of one observation (x) for one of the Gamma's
 // dimensions.
-inline double GammaDistribution::Probability(double x, size_t dim) const
+template<typename MatType>
+inline typename GammaDistribution<MatType>::ElemType
+GammaDistribution<MatType>::Probability(ElemType x, size_t dim) const
 {
   return std::pow(x, alpha(dim) - 1) * std::exp(-x / beta(dim)) /
       (std::tgamma(alpha(dim)) * std::pow(beta(dim), alpha(dim)));
 }
 
 // Returns the log probability of the provided observations.
-inline void GammaDistribution::LogProbability(
-    const arma::mat& observations,
-    arma::vec& logProbabilities) const
+template<typename MatType>
+inline void GammaDistribution<MatType>::LogProbability(
+    const MatType& observations,
+    VecType& logProbabilities) const
 {
   size_t numObs = observations.n_cols;
 
@@ -213,7 +229,7 @@ inline void GammaDistribution::LogProbability(
   logProbabilities.zeros(numObs);
 
   // Compute denominator only once for each dimension.
-  arma::vec denominators(alpha.n_elem);
+  VecType denominators(alpha.n_elem);
   for (size_t d = 0; d < alpha.n_elem; ++d)
     denominators(d) = std::tgamma(alpha(d)) * std::pow(beta(d), alpha(d));
 
@@ -224,8 +240,8 @@ inline void GammaDistribution::LogProbability(
     {
       // Compute probability using Multiplication Law and Logarithm addition
       // property.
-      double factor = std::exp(-observations(d, i) / beta(d));
-      double numerator = std::pow(observations(d, i), alpha(d) - 1);
+      ElemType factor = std::exp(-observations(d, i) / beta(d));
+      ElemType numerator = std::pow(observations(d, i), alpha(d) - 1);
 
       logProbabilities(i) += std::log(numerator * factor / denominators(d));
     }
@@ -233,9 +249,11 @@ inline void GammaDistribution::LogProbability(
 }
 
 // Return the log-probability of the given observation.
-inline double GammaDistribution::LogProbability(const arma::vec& x) const
+template<typename MatType>
+inline typename GammaDistribution<MatType>::ElemType
+GammaDistribution<MatType>::LogProbability(const VecType& x) const
 {
-  double logProb = 0.0;
+  ElemType logProb = 0.0;
   for (size_t d = 0; d < Dimensionality(); ++d)
     logProb += LogProbability(x[d], d);
   return logProb;
@@ -243,20 +261,24 @@ inline double GammaDistribution::LogProbability(const arma::vec& x) const
 
 // Returns the log probability of one observation (x) for one of the Gamma's
 // dimensions.
-inline double GammaDistribution::LogProbability(double x, size_t dim) const
+template<typename MatType>
+inline typename GammaDistribution<MatType>::ElemType
+GammaDistribution<MatType>::LogProbability(ElemType x, size_t dim) const
 {
   return std::log(std::pow(x, alpha(dim) - 1) * std::exp(-x / beta(dim)) /
       (std::tgamma(alpha(dim)) * std::pow(beta(dim), alpha(dim))));
 }
 
 // Returns a gamma-random d-dimensional vector.
-inline arma::vec GammaDistribution::Random() const
+template<typename MatType>
+inline typename GammaDistribution<MatType>::VecType
+GammaDistribution<MatType>::Random() const
 {
-  arma::vec randVec(alpha.n_elem);
+  VecType randVec(alpha.n_elem);
 
   for (size_t d = 0; d < alpha.n_elem; ++d)
   {
-    std::gamma_distribution<double> dist(alpha(d), beta(d));
+    std::gamma_distribution<ElemType> dist(alpha(d), beta(d));
     // Use the mlpack random object.
     randVec(d) = dist(RandGen());
   }

@@ -47,9 +47,14 @@ namespace mlpack {
  * algebra in the paper above becomes simplified, and the PDF takes roughly
  * the same form as the univariate case.
  */
+template<typename MatType = arma::mat>
 class LaplaceDistribution
 {
  public:
+  // Convenience typedefs.
+  typedef typename GetColType<MatType>::type VecType;
+  typedef typename MatType::elem_type ElemType;
+
   /**
    * Default constructor, which creates a Laplace distribution with zero
    * dimension and zero scale parameter.
@@ -64,7 +69,7 @@ class LaplaceDistribution
    * @param scale Scale of distribution.
    */
   LaplaceDistribution(const size_t dimensionality, const double scale) :
-      mean(arma::zeros<arma::vec>(dimensionality)), scale(scale) { }
+      mean(arma::zeros<VecType>(dimensionality)), scale(scale) { }
 
   /**
    * Construct the Laplace distribution with the given mean and scale
@@ -73,7 +78,7 @@ class LaplaceDistribution
    * @param mean Mean of distribution.
    * @param scale Scale of distribution.
    */
-  LaplaceDistribution(const arma::vec& mean, const double scale) :
+  LaplaceDistribution(const VecType& mean, const double scale) :
       mean(mean), scale(scale) { }
 
   //! Return the dimensionality of this distribution.
@@ -84,7 +89,7 @@ class LaplaceDistribution
    *
    * @param observation Point to evaluate probability at.
    */
-  double Probability(const arma::vec& observation) const
+  ElemType Probability(const VecType& observation) const
   {
     return std::exp(LogProbability(observation));
   }
@@ -95,14 +100,14 @@ class LaplaceDistribution
    * @param x List of observations.
    * @param probabilities Output probabilities for each input observation.
    */
-  void Probability(const arma::mat& x, arma::vec& probabilities) const;
+  void Probability(const MatType& x, VecType& probabilities) const;
 
   /**
    * Return the log probability of the given observation.
    *
    * @param observation Point to evaluate logarithm of probability.
    */
-  double LogProbability(const arma::vec& observation) const;
+  ElemType LogProbability(const VecType& observation) const;
 
   /**
    * Evaluate log probability density function of given observation.
@@ -110,7 +115,7 @@ class LaplaceDistribution
    * @param x List of observations.
    * @param logProbabilities Output probabilities for each input observation.
    */
-  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const
+  void LogProbability(const MatType& x, VecType& logProbabilities) const
   {
     logProbabilities.set_size(x.n_cols);
     for (size_t i = 0; i < x.n_cols; ++i)
@@ -125,9 +130,9 @@ class LaplaceDistribution
    *
    * @return Random observation from this Laplace distribution.
    */
-  arma::vec Random() const
+  VecType Random() const
   {
-    arma::vec result(mean.n_elem);
+    VecType result(mean.n_elem);
     result.randu();
     result = mean + scale *
         log(1.0 + 2.0 * sign(result - 0.5) * (result - 0.5));
@@ -140,7 +145,7 @@ class LaplaceDistribution
    * @param observations List of observations.
    */
   [[deprecated("Will be removed in mlpack 5.0.0; use Train() instead")]]
-  void Estimate(const arma::mat& observations);
+  void Estimate(const MatType& observations);
 
   /**
    * Estimate the Laplace distribution from the given observations, taking into
@@ -148,34 +153,34 @@ class LaplaceDistribution
    * distribution.
    */
   [[deprecated("Will be removed in mlpack 5.0.0; use Train() instead")]]
-  void Estimate(const arma::mat& observations,
-                const arma::vec& probabilities);
+  void Estimate(const MatType& observations,
+                const VecType& probabilities);
 
   /**
    * Estimate the Laplace distribution directly from the given observations.
    *
    * @param observations List of observations.
    */
-  void Train(const arma::mat& observations);
+  void Train(const MatType& observations);
 
   /**
    * Estimate the Laplace distribution from the given observations, taking into
    * account the probability of each observation actually being from this
    * distribution.
    */
-  void Train(const arma::mat& observations,
-             const arma::vec& probabilities);
+  void Train(const MatType& observations,
+             const VecType& probabilities);
 
 
   //! Return the mean.
-  const arma::vec& Mean() const { return mean; }
+  const VecType& Mean() const { return mean; }
   //! Modify the mean.
-  arma::vec& Mean() { return mean; }
+  VecType& Mean() { return mean; }
 
   //! Return the scale parameter.
-  double Scale() const { return scale; }
+  ElemType Scale() const { return scale; }
   //! Modify the scale parameter.
-  double& Scale() { return scale; }
+  ElemType& Scale() { return scale; }
 
   /**
    * Serialize the distribution.
@@ -189,9 +194,9 @@ class LaplaceDistribution
 
  private:
   //! Mean of the distribution.
-  arma::vec mean;
+  VecType mean;
   //! Scale parameter of the distribution.
-  double scale;
+  ElemType scale;
 };
 
 } // namespace mlpack
