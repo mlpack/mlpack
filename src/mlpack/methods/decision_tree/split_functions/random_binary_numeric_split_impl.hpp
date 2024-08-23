@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/random_binary_numeric_split_impl.hpp
+ * @file methods/decision_tree/split_functions/random_binary_numeric_split_impl.hpp
  * @author Rishabh Garg
  *
  * Implementation of strategy that finds the random binary numeric split.

@@ -2519,7 +2519,8 @@ where `bw` is the bandwidth parameter of the kernel.
 
  * `g.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
-     to the distance between two points, evaluated at `distance`.
+     to the distance between two points, evaluated at `distance`.  This is used
+     by [`MeanShift`](methods/mean_shift.md).
 
  * `g.Normalizer(dimensionality)`
    - Return the
@@ -2754,7 +2755,8 @@ distance between `x1` and `x2`) is greater than or equal to `bw`.
 
  * `e.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
-     to the distance between two points, evaluated at `distance`.
+     to the distance between two points, evaluated at `distance`.  This is used
+     by [`MeanShift`](methods/mean_shift.md).
 
  * `e.Normalizer(dimensionality)`
    - Return the
@@ -2924,7 +2926,8 @@ where `bw` is the bandwidth parameter.
 
  * `l.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
-     to the distance between two points, evaluated at `distance`.
+     to the distance between two points, evaluated at `distance`.  This is used
+     by [`MeanShift`](methods/mean_shift.md).
 
 ---
 
@@ -3243,7 +3246,8 @@ as the uniform kernel, or rectangular window kernel.  The value of the
 
  * `s.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
-     to the distance between two points, evaluated at `distance`.
+     to the distance between two points, evaluated at `distance`.  This is used
+     by [`MeanShift`](methods/mean_shift.md).
 
  * `s.Normalizer(dimensionality)`
    - Return the
@@ -3337,7 +3341,8 @@ where `bw` is the bandwidth of the kernel.
 
  * `t.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
-     to the distance between two points, evaluated at `distance`.
+     to the distance between two points, evaluated at `distance`.  This is used
+     by [`MeanShift`](methods/mean_shift.md).
 
 ---
 

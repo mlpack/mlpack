@@ -82,9 +82,9 @@ inline void GammaDistribution<MatType>::Train(const MatType& rdata,
   if (arma::size(rdata) == arma::size(arma::mat()))
     return;
 
-  VecType meanLogxVec(rdata.n_rows, arma::fill::zeros);
-  VecType meanxVec(rdata.n_rows, arma::fill::zeros);
-  VecType logMeanxVec(rdata.n_rows, arma::fill::zeros);
+  VecType meanLogxVec(rdata.n_rows);
+  VecType meanxVec(rdata.n_rows);
+  VecType logMeanxVec(rdata.n_rows);
 
   for (size_t i = 0; i < rdata.n_cols; ++i)
   {

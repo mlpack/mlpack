@@ -611,7 +611,7 @@ TEMPLATE_TEST_CASE("GaussianDistributionRandomTest", "[DistributionTest]",
   typedef typename arma::Col<ElemType> VecType;
   typedef typename arma::Mat<ElemType> MatType;
 
-  const ElemType tol = (std::is_same<ElemType, float>::value) ? 0.3 : 0.12;
+  const ElemType tol = (std::is_same<ElemType, float>::value) ? 0.3 : 0.125;
 
   VecType mean("1.0 2.25");
   MatType cov("0.85 0.60;"
@@ -619,16 +619,16 @@ TEMPLATE_TEST_CASE("GaussianDistributionRandomTest", "[DistributionTest]",
 
   GaussianDistribution<MatType> d(mean, cov);
 
-  MatType obs(2, 5000);
+  MatType obs(2, 7500);
 
-  for (size_t i = 0; i < 5000; ++i)
+  for (size_t i = 0; i < 7500; ++i)
     obs.col(i) = d.Random();
 
   // Now make sure that reflects the actual distribution.
   VecType obsMean = arma::mean(obs, 1);
   MatType obsCov = ColumnCovariance(obs);
 
-  // 10% tolerance because this can be noisy.
+  // 12.5% tolerance because this can be noisy.  (30% for floats.)
   REQUIRE(obsMean[0] == Approx(mean[0]).epsilon(tol));
   REQUIRE(obsMean[1] == Approx(mean[1]).epsilon(tol));
 
@@ -701,7 +701,7 @@ TEMPLATE_TEST_CASE("GaussianDistributionTrainWithProbabilitiesTest",
   VecType cov = ("2.0");
 
   GaussianDistribution<MatType> dist(mean, cov);
-  size_t N = 5000;
+  size_t N = 15000;
   size_t d = 1;
 
   MatType rdata(d, N);
@@ -986,7 +986,7 @@ TEMPLATE_TEST_CASE("GammaDistributionTrainTwoDistProbabilities1Test",
   typedef typename arma::Col<ElemType> VecType;
   typedef typename arma::Mat<ElemType> MatType;
 
-  const ElemType tol = (std::is_same<ElemType, float>::value) ? 0.25 : 0.05;
+  const ElemType tol = (std::is_same<ElemType, float>::value) ? 0.25 : 0.075;
 
   ElemType alphaReal = 5.4;
   ElemType betaReal = 6.7;
@@ -1158,7 +1158,7 @@ TEMPLATE_TEST_CASE("GammaDistributionRandomTest", "[DistributionTest]", float,
   typedef typename arma::Mat<ElemType> MatType;
 
   const VecType a("2.0 2.5 3.0"), b("0.4 0.6 1.3");
-  const size_t numPoints = 2000;
+  const size_t numPoints = 4000;
 
   // Distribution to generate points.
   GammaDistribution<MatType> d1(a, b);

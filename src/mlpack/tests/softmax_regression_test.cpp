@@ -884,7 +884,7 @@ TEST_CASE("SoftmaxRegressionResetTest", "[SoftmaxRegressionTest]")
 {
   // Create random data.
   arma::mat data(50, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000, arma::fill::zeros);
+  arma::Row<size_t> labels(1000);
   labels.subvec(500, 999).fill(1);
 
   // Create two logistic regression models.

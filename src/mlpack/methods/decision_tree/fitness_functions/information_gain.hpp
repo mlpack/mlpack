@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/information_gain.hpp
+ * @file methods/decision_tree/fitness_functions/information_gain.hpp
  * @author Ryan Curtin
  *
  * An implementation of information gain, which can be used in place of Gini
@@ -69,7 +69,7 @@ class InformationGain
 
     // Count the number of elements in each class.  Use four auxiliary vectors
     // to exploit SIMD instructions if possible.
-    arma::vec countSpace(4 * numClasses, arma::fill::zeros);
+    arma::vec countSpace(4 * numClasses);
     arma::vec counts(countSpace.memptr(), numClasses, false, true);
     arma::vec counts2(countSpace.memptr() + numClasses, numClasses, false,
         true);

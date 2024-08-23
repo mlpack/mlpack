@@ -102,7 +102,8 @@ Predict continuous values.
 
 Group points into clusters.
 
-<!-- TODO: add some -->
+ * [`MeanShift`](user/methods/mean_shift.md): clustering with the density-based
+   mean shift algorithm
 
 ### Geometric algorithms
 
