@@ -419,7 +419,7 @@ do
   if [ -s checklink_out ];
   then
     cat checklink_out;
-  #  exit 1;
+    exit 1;
   fi
   rm -f checklink_out;
 done
