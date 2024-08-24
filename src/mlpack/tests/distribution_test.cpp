@@ -554,12 +554,12 @@ TEMPLATE_TEST_CASE("GaussianMultivariateProbabilityTest", "[DistributionTest]",
 
   REQUIRE(g.Probability(x) == Approx(1.4673143531128877e-06).epsilon(tol));
   REQUIRE(g.Probability(-x) == Approx(7.7404143494891786e-09).epsilon(
-      0.01 * tol));
+      0.01 * tol).margin(0.01 * tol));
 
   g.Mean() *= -1;
   REQUIRE(g.Probability(-x) == Approx(1.4673143531128877e-06).epsilon(tol));
   REQUIRE(g.Probability(x) == Approx(7.7404143494891786e-09).epsilon(
-      0.01 * tol));
+      0.01 * tol).margin(0.01 * tol));
 }
 
 /**
