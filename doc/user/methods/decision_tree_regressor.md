@@ -474,7 +474,7 @@ class CustomNumericSplit
    - ***Note***: `BestBinaryCategoricalSplit` should not be chosen when there
      are multiple classes and many categories.
    - ***Note***: for regression tasks,
-     [W. Fisher's proof of correctness](http://www.csiss.org/SPACE/workshops/2004/SAC/files/fisher.pdf)
+     [W. Fisher's proof of correctness](http://www.mlpack.org/files/fisher.pdf)
      only applies to when `FitnessFunction` is `MSEGain`; therefore,
      `BestBinaryCategoricalSplit` requires the use of `MSEGain`.
  * A custom class must take a [`FitnessFunction`](#fitnessfunction) as a
