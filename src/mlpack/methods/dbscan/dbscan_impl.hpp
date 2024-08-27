@@ -68,12 +68,12 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
   centroids.zeros(data.n_rows, numClusters);
 
   // Calculate number of points in each cluster.
-  arma::Row<size_t> counts(numClusters, arma::fill::zeros);
+  arma::Row<size_t> counts(numClusters);
 
   #pragma omp parallel
   {
-    MatType localCentroids(data.n_rows, numClusters, arma::fill::zeros);
-    arma::Row<size_t> localCounts(numClusters, arma::fill::zeros);
+    MatType localCentroids(data.n_rows, numClusters);
+    arma::Row<size_t> localCounts(numClusters);
 
     #pragma omp for nowait
     for (size_t i = 0; i < data.n_cols; ++i)
@@ -94,8 +94,7 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
 
   // Normalize centroids
   for (size_t i = 0; i < numClusters; ++i)
-    if (counts[i] > 0)
-      centroids.col(i) /= counts[i];
+    centroids.col(i) /= counts[i];
 
   return numClusters;
 }
@@ -125,11 +124,11 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
 
   // Get a count of all clusters.
   const size_t numClusters = max(assignments) + 1;
-  arma::Col<size_t> counts(numClusters, arma::fill::zeros);
+  arma::Col<size_t> counts(numClusters);
 
   #pragma omp parallel
   {
-    arma::Col<size_t> localCounts(numClusters, arma::fill::zeros);
+    arma::Col<size_t> localCounts(numClusters);
 
     #pragma omp for nowait
     for (size_t i = 0; i < assignments.n_elem; ++i)
@@ -152,7 +151,6 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
   }
 
   // Now reassign.
-  #pragma omp parallel for
   for (size_t i = 0; i < assignments.n_elem; ++i)
     assignments[i] = newAssignments[assignments[i]];
 
