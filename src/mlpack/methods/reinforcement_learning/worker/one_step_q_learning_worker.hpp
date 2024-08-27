@@ -282,7 +282,7 @@ class OneStepQLearningWorker
     {
       // Initialize the gradient storage.
       arma::mat totalGradients(learningNetwork.Parameters().n_rows,
-          learningNetwork.Parameters().n_cols, arma::fill::zeros);
+          learningNetwork.Parameters().n_cols);
       for (size_t i = 0; i < pending.size(); ++i)
       {
         TransitionType &transition = pending[i];

@@ -49,9 +49,9 @@ class ItemMeanNormalization
   void Normalize(arma::mat& data)
   {
     const size_t itemNum = max(data.row(1)) + 1;
-    itemMean = arma::vec(itemNum, arma::fill::zeros);
+    itemMean = arma::vec(itemNum);
     // Number of ratings for each item.
-    arma::Row<size_t> ratingNum(itemNum, arma::fill::zeros);
+    arma::Row<size_t> ratingNum(itemNum);
 
     // Sum ratings for each item.
     data.each_col([&](arma::vec& datapoint)
@@ -89,8 +89,8 @@ class ItemMeanNormalization
   void Normalize(arma::sp_mat& cleanedData)
   {
     // Calculate itemMean.
-    itemMean = arma::vec(cleanedData.n_rows, arma::fill::zeros);
-    arma::Col<size_t> ratingNum(cleanedData.n_rows, arma::fill::zeros);
+    itemMean = arma::vec(cleanedData.n_rows);
+    arma::Col<size_t> ratingNum(cleanedData.n_rows);
     arma::sp_mat::iterator it = cleanedData.begin();
     arma::sp_mat::iterator it_end = cleanedData.end();
     for (; it != it_end; ++it)

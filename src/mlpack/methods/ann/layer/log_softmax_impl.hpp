@@ -74,13 +74,15 @@ void LogSoftMaxType<MatType>::ForwardImpl(const MatType& input,
                                           const typename std::enable_if_t<
                                               arma::is_arma_type<MatType>::value>*)
 {
-  MatType maxInput = repmat(max(input), input.n_rows, 1);
+  MatType maxInput = repmat(max(input, 0), input.n_rows, 1);
   output = (maxInput - input);
 
-  // Approximation of the base-e exponential function. The acuracy however is
-  // about 0.00001 lower as using exp. Credits go to Leon Bottou.
-  output.transform([](double x)
+  // Approximation of the base-e exponential function. The accuracy, however, is
+  // about 0.00001 lower than using exp. Credits go to Leon Bottou.
+  #pragma omp parallel for
+  for (size_t i = 0; i < output.n_elem; ++i)
   {
+    double x = output(i);
     //! Fast approximation of exp(-x) for x positive.
     static constexpr double A0 = 1.0;
     static constexpr double A1 = 0.125;
@@ -95,13 +97,29 @@ void LogSoftMaxType<MatType>::ForwardImpl(const MatType& input,
       y *= y;
       y *= y;
       y = 1 / y;
-
-      return y;
+      output(i) = y;
     }
+    else
+    {
+      output(i) = 0.0;
+    }
+  }
 
-    return 0.0;
-  });
-  maxInput.each_row() += log(sum(output));
+  #pragma omp parallel for
+  for (size_t col = 0; col < maxInput.n_cols; ++col)
+  {
+    double colSum = 0.0;
+    for (size_t row = 0; row < output.n_rows; ++row)
+    {
+      colSum += output(row, col);
+    }
+    double logSum = std::log(colSum);
+    for (size_t row = 0; row < maxInput.n_rows; ++row)
+    {
+      maxInput(row, col) += logSum;
+    }
+  }
+
   output = input - maxInput;
 }
 

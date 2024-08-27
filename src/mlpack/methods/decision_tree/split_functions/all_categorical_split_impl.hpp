@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/all_categorical_split_impl.hpp
+ * @file methods/decision_tree/split_functions/all_categorical_split_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the AllCategoricalSplit categorical split class.
@@ -32,7 +32,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 {
   // Count the number of elements in each potential child.
   const double epsilon = 1e-7; // Tolerance for floating-point errors.
-  arma::Col<size_t> counts(numCategories, arma::fill::zeros);
+  arma::Col<size_t> counts(numCategories);
 
   // If we are using weighted training, split the weights for each child too.
   arma::vec childWeightSums;
@@ -58,7 +58,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 
   // Calculate the gain of the split.  First we have to calculate the labels
   // that would be assigned to each child.
-  arma::uvec childPositions(numCategories, arma::fill::zeros);
+  arma::uvec childPositions(numCategories);
   std::vector<arma::Row<size_t>> childLabels(numCategories);
   std::vector<arma::Row<double>> childWeights(numCategories);
 
@@ -123,13 +123,13 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
-    double& splitInfo,
+    arma::vec& splitInfo,
     AuxiliarySplitInfo& /* aux */,
     FitnessFunction& fitnessFunction)
 {
   // Count the number of elements in each potential child.
   const double epsilon = 1e-7; // Tolerance for floating-point errors.
-  arma::Col<size_t> counts(numCategories, arma::fill::zeros);
+  arma::Col<size_t> counts(numCategories);
 
   // If we are using weighted training, split the weights for each child too.
   arma::vec childWeightSums;
@@ -155,7 +155,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 
   // Calculate the gain of the split.  First we have to calculate the labels
   // that would be assigned to each child.
-  arma::uvec childPositions(numCategories, arma::fill::zeros);
+  arma::uvec childPositions(numCategories);
   std::vector<arma::rowvec> childResponses(numCategories);
   std::vector<arma::rowvec> childWeights(numCategories);
 
@@ -199,7 +199,8 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
   if (overallGain > bestGain + minimumGainSplit + epsilon)
   {
     // This is better, so store it in splitInfo and return.
-    splitInfo = numCategories;
+    splitInfo.set_size(1);
+    splitInfo[0] = numCategories;
     return overallGain;
   }
 
@@ -209,20 +210,20 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 
 template<typename FitnessFunction>
 size_t AllCategoricalSplit<FitnessFunction>::NumChildren(
-    const double& splitInfo,
+    const arma::vec& splitInfo,
     const AuxiliarySplitInfo& /* aux */)
 {
-  return (size_t) splitInfo;
+  return splitInfo.n_elem == 0 ? 0 : (size_t) splitInfo[0];
 }
 
 template<typename FitnessFunction>
 template<typename ElemType>
 size_t AllCategoricalSplit<FitnessFunction>::CalculateDirection(
     const ElemType& point,
-    const double& /* splitInfo */,
+    const arma::vec& splitInfo,
     const AuxiliarySplitInfo& /* aux */)
 {
-  return (size_t) point;
+  return splitInfo.n_elem == 0 ? SIZE_MAX : (size_t) point;
 }
 
 } // namespace mlpack

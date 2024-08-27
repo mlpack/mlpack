@@ -405,10 +405,14 @@ do
   echo "Checking links in $f...";
 
   # To run checklink we have to strip out some perl stderr warnings...
+  # We also filter out a number of spurious bad error codes that some webservers
+  # seem to give, probably to prevent crawling just like this.
   checklink -qs \
       --follow-file-links \
       --suppress-broken 405 \
+      --suppress-broken 503 \
       --suppress-broken 301 \
+      --suppress-broken 400 \
       -X "https://eigen.tuxfamily.org/index.php\?title=Main_Page" \
       -X "https://mlpack.slack.com/" "$f" 2>&1 |
       grep -v 'Use of uninitialized value' > checklink_out;

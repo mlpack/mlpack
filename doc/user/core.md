@@ -862,9 +862,9 @@ including:
 
  * [`NeighborSearch`](/src/mlpack/methods/neighbor_search/neighbor_search.hpp)
  * [`RangeSearch`](/src/mlpack/methods/range_search/range_search.hpp)
- * [`LMNN`](/src/mlpack/methods/lmnn/lmnn.hpp)
+ * [`LMNN`](methods/lmnn.md)
  * [`EMST`](/src/mlpack/methods/emst/emst.hpp)
- * [`NCA`](/src/mlpack/methods/nca/nca.hpp)
+ * [`NCA`](methods/nca.md)
  * [`RANN`](/src/mlpack/methods/rann/rann.hpp)
  * [`KMeans`](/src/mlpack/methods/kmeans/kmeans.hpp)
 
@@ -1281,6 +1281,11 @@ std::cout << "Squared Mahalanobis distance on 32-bit floating point data:"
     << std::endl;
 std::cout << " - Points 3 and 5:   " << d1 << "." << std::endl;
 std::cout << " - Points 11 and 31: " << d2 << "." << std::endl;
+
+// Note that an equivalent transformation matrix can be recovered from Q with
+// an upper Cholesky decomposition (Q -> R.t() * R).
+arma::mat recoveredW = arma::chol(md.Q(), "lower");
+// A transformed dataset can be created with `(recoveredW * dataset)`.
 ```
 
 ---
@@ -1641,7 +1646,8 @@ where `bw` is the bandwidth parameter of the kernel.
 
  * `g.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
-     to the distance between two points, evaluated at `distance`.
+     to the distance between two points, evaluated at `distance`.  This is used
+     by [`MeanShift`](methods/mean_shift.md).
 
  * `g.Normalizer(dimensionality)`
    - Return the
@@ -1876,7 +1882,8 @@ distance between `x1` and `x2`) is greater than or equal to `bw`.
 
  * `e.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
-     to the distance between two points, evaluated at `distance`.
+     to the distance between two points, evaluated at `distance`.  This is used
+     by [`MeanShift`](methods/mean_shift.md).
 
  * `e.Normalizer(dimensionality)`
    - Return the
@@ -1933,7 +1940,7 @@ std::cout << "Kernel values between two floating-point vectors: " << k5
 ### `HyperbolicTangentKernel`
 
 The `HyperbolicTangentKernel` implements the
-[hyperbolic tangent kernel](https://en.wikipedia.org/wiki/Support_vector_machine#Nonlinear_Kernels),
+[hyperbolic tangent kernel](https://en.wikipedia.org/wiki/Support_vector_machine#Nonlinear_kernels),
 which is defined by the following equation:
 `f(x1, x2) = tanh(s * (x1^T x2) + t)`
 where `s` is the scale parameter and `t` is the offset parameter.
@@ -2046,7 +2053,8 @@ where `bw` is the bandwidth parameter.
 
  * `l.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
-     to the distance between two points, evaluated at `distance`.
+     to the distance between two points, evaluated at `distance`.  This is used
+     by [`MeanShift`](methods/mean_shift.md).
 
 ---
 
@@ -2365,7 +2373,8 @@ as the uniform kernel, or rectangular window kernel.  The value of the
 
  * `s.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
-     to the distance between two points, evaluated at `distance`.
+     to the distance between two points, evaluated at `distance`.  This is used
+     by [`MeanShift`](methods/mean_shift.md).
 
  * `s.Normalizer(dimensionality)`
    - Return the
@@ -2459,7 +2468,8 @@ where `bw` is the bandwidth of the kernel.
 
  * `t.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
-     to the distance between two points, evaluated at `distance`.
+     to the distance between two points, evaluated at `distance`.  This is used
+     by [`MeanShift`](methods/mean_shift.md).
 
 ---
 

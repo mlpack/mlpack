@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/gini_gain.hpp
+ * @file methods/decision_tree/fitness_functions/gini_gain.hpp
  * @author Ryan Curtin
  *
  * The GiniGain class, which is a fitness function (FitnessFunction) for
@@ -68,7 +68,7 @@ class GiniGain
 
     // Count the number of elements in each class.  Use four auxiliary vectors
     // to exploit SIMD instructions if possible.
-    arma::vec countSpace(4 * numClasses, arma::fill::zeros);
+    arma::vec countSpace(4 * numClasses);
     arma::vec counts(countSpace.memptr(), numClasses, false, true);
     arma::vec counts2(countSpace.memptr() + numClasses, numClasses, false,
         true);

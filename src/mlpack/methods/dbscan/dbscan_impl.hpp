@@ -139,6 +139,7 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     counts += localCounts;
   }
 
+
   // Now assign clusters to new indices.
   size_t currentCluster = 0;
   arma::Col<size_t> newAssignments(numClusters);

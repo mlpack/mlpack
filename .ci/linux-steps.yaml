@@ -7,7 +7,8 @@ steps:
 # Set python version
 - task: UsePythonVersion@0
   inputs:
-    versionSpec: '3.7'
+    versionSpec: '$(python.version)'
+  condition: ne(variables['python.version'], '')
 
 # Install build dependencies.
 - script: |
@@ -24,19 +25,18 @@ steps:
 
     sudo apt-get install -y --allow-unauthenticated libopenblas-dev g++ xz-utils
 
-    if [ "$(binding)" == "python" ]; then
-      export PYBIN=$(which python)
-      $PYBIN -m pip install --upgrade pip
-      $PYBIN -m pip install --upgrade --ignore-installed setuptools cython pandas wheel
+    if [ "$BINDING" = "python" ]; then
+      python -m pip install --upgrade pip
+      python -m pip install --upgrade --ignore-installed setuptools cython pandas wheel
     fi
 
-    if [ "a$(julia.version)" != "a" ]; then
-      wget https://julialang-s3.julialang.org/bin/linux/x64/1.6/julia-1.6.3-linux-x86_64.tar.gz
-      sudo tar -C /opt/ -xvpf julia-1.6.3-linux-x86_64.tar.gz
+    if [ "$BINDING" = "julia" ]; then
+      wget https://julialang-s3.julialang.org/bin/linux/x64/1.10/julia-1.10.4-linux-x86_64.tar.gz
+      sudo tar -C /opt/ -xvpf julia-1.10.4-linux-x86_64.tar.gz
     fi
 
     # Install armadillo.
-    curl -k -L https://sourceforge.net/projects/arma/files/armadillo-9.800.6.tar.xz | tar -xvJ && \
+    curl -k -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz | tar -xvJ && \
         cd armadillo* && \
         cmake . && \
         make && \
@@ -68,14 +68,13 @@ steps:
 
 # Configure mlpack (CMake)
 - script: |
-    unset BOOST_ROOT
     mkdir build && cd build
-    if [ "$(binding)" == "go" ]; then
+    if [ "$BINDING" = "go" ]; then
       export GOPATH=$PWD/src/mlpack/bindings/go
       export GO111MODULE=off
       go get -u -t gonum.org/v1/gonum/...
     fi
-    cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=`which python` -DCEREAL_INCLUDE_DIR=/usr/include/ ..
+    cmake $CMAKEARGS -DPYTHON_EXECUTABLE=`which python` -DCEREAL_INCLUDE_DIR=/usr/include/ ..
   displayName: 'CMake'
 
 # Build mlpack

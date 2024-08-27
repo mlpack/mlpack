@@ -162,7 +162,7 @@ class DoublePoleCart
     // Update the number of steps performed.
     stepsPerformed++;
 
-    arma::vec dydx(6, arma::fill::zeros);
+    arma::vec dydx(6);
     dydx[0] = state.Velocity();
     dydx[2] = state.AngularVelocity(1);
     dydx[4] = state.AngularVelocity(2);

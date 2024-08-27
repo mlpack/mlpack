@@ -2069,12 +2069,12 @@ param.Normalize = false
 param.Optimizer = "amsgrad"
 param.Passes = 50
 param.PrintAccuracy = false
-param.Range = 1
 param.Rank = 0
 param.Regularization = 0.5
 param.Seed = 0
 param.StepSize = 0.01
 param.Tolerance = 1e-07
+param.UpdateInterval = 1
 param.Verbose = false
 
 centered_data, output, transformed_data := mlpack.Lmnn(input, param)
@@ -2102,12 +2102,12 @@ There are two types of input options: required options, which are passed directl
 | `Optimizer` | [`string`](#doc_string) | Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or 'lbfgs'. | `"amsgrad"` |
 | `Passes` | [`int`](#doc_int) | Maximum number of full passes over dataset for AMSGrad, BB_SGD and SGD. | `50` |
 | `PrintAccuracy` | [`bool`](#doc_bool) | Print accuracies on initial and transformed dataset | `false` |
-| `Range` | [`int`](#doc_int) | Number of iterations after which impostors needs to be recalculated | `1` |
 | `Rank` | [`int`](#doc_int) | Rank of distance matrix to be optimized.  | `0` |
 | `Regularization` | [`float64`](#doc_float64) | Regularization for LMNN objective function  | `0.5` |
 | `Seed` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
 | `StepSize` | [`float64`](#doc_float64) | Step size for AMSGrad, BB_SGD and SGD (alpha). | `0.01` |
 | `Tolerance` | [`float64`](#doc_float64) | Maximum tolerance for termination of AMSGrad, BB_SGD, SGD or L-BFGS. | `1e-07` |
+| `UpdateInterval` | [`int`](#doc_int) | Number of iterations after which impostors need to be recalculated. | `1` |
 | `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
 
 ### Output options
@@ -2127,7 +2127,7 @@ This program implements Large Margin Nearest Neighbors, a distance learning tech
 
 To work, this algorithm needs labeled data.  It can be given as the last row of the input dataset (specified with `Input`), or alternatively as a separate matrix (specified with `Labels`).  Additionally, a starting point for optimization (specified with `Distance`can be given, having (r x d) dimensionality.  Here r should satisfy 1 <= r <= d, Consequently a Low-Rank matrix will be optimized. Alternatively, Low-Rank distance can be learned by specifying the `Rank`parameter (A Low-Rank matrix with uniformly distributed values will be used as initial learning point). 
 
-The program also requires number of targets neighbors to work with ( specified with `K`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `Regularization`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `Range`).
+The program also requires number of targets neighbors to work with ( specified with `K`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `Regularization`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `UpdateInterval`).
 
 Output can either be the learned distance matrix (specified with `Output`), or the transformed dataset  (specified with `TransformedData`), or both. Additionally mean-centered dataset (specified with `CenteredData`) can be accessed given mean-centering (specified with `Center`) is performed on the dataset. Accuracy on initial dataset and final transformed dataset can be printed by specifying the `PrintAccuracy`parameter. 
 
@@ -2156,13 +2156,13 @@ param.Optimizer = "bbsgd"
 _, output, _ := mlpack.Lmnn(iris, param)
 ```
 
-An another program call making use of range & regularization parameter with dataset having labels as last column can be made as: 
+Another program call making use of update interval & regularization parameter with dataset having labels as last column can be made as: 
 
 ```go
 // Initialize optional parameters for Lmnn().
 param := mlpack.LmnnOptions()
 param.K = 5
-param.Range = 10
+param.UpdateInterval = 10
 param.Regularization = 0.4
 
 _, output, _ := mlpack.Lmnn(letter_recognition, param)

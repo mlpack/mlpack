@@ -26,9 +26,11 @@ namespace mlpack {
 template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundDistanceType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
+         template<typename BoundDistanceType,
+                  typename BoundElemType,
+                  typename...> class BoundType,
+         template<typename SplitBoundType,
+                  typename SplitMatType> class SplitType>
 class TreeTraits<BinarySpaceTree<
     DistanceType, StatisticType, MatType, BoundType, SplitType>>
 {
@@ -80,7 +82,9 @@ class TreeTraits<BinarySpaceTree<
 template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundDistanceType, typename...> class BoundType>
+         template<typename BoundDistanceType,
+                  typename BoundElemType,
+                  typename...> class BoundType>
 class TreeTraits<BinarySpaceTree<
     DistanceType, StatisticType, MatType, BoundType, RPTreeMaxSplit>>
 {
@@ -130,9 +134,11 @@ class TreeTraits<BinarySpaceTree<
 template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundDistanceType, typename...> class BoundType>
-class TreeTraits<BinarySpaceTree<DistanceType, StatisticType, MatType, BoundType,
-                                 RPTreeMeanSplit>>
+         template<typename BoundDistanceType,
+                  typename BoundElemType,
+                  typename...> class BoundType>
+class TreeTraits<BinarySpaceTree<DistanceType, StatisticType, MatType,
+                                 BoundType, RPTreeMeanSplit>>
 {
  public:
   /**

@@ -96,7 +96,7 @@ double SVDPlusPlusFunction<MatType>::Evaluate(const arma::mat& parameters,
 
     // Iterate through each item which the user interacted with to calculate
     // user vector.
-    arma::vec userVec(rank, arma::fill::zeros);
+    arma::vec userVec(rank);
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
@@ -169,7 +169,7 @@ void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
 
     // Iterate through each item which the user interacted with to calculate
     // user vector.
-    arma::vec userVec(rank, arma::fill::zeros);
+    arma::vec userVec(rank);
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
@@ -236,7 +236,7 @@ void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
 
     // Iterate through each item which the user interacted with to calculate
     // user vector.
-    arma::vec userVec(rank, arma::fill::zeros);
+    arma::vec userVec(rank);
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
@@ -343,7 +343,7 @@ double StandardSGD::Optimize(
 
     // Iterate through each item which the user interacted with to calculate
     // user vector.
-    arma::vec userVec(rank, arma::fill::zeros);
+    arma::vec userVec(rank);
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
@@ -479,7 +479,7 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
         const double itemBias = iterate(rank, item);
         // Iterate through each item which the user interacted with to calculate
         // user vector.
-        arma::vec userVec(rank, arma::fill::zeros);
+        arma::vec userVec(rank);
         arma::sp_mat::const_iterator it = implicitData.begin_col(user);
         arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
         size_t implicitCount = 0;
