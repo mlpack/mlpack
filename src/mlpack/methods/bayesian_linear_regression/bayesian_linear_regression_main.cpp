@@ -103,8 +103,7 @@ BINDING_SEE_ALSO("Bayesian Linear Regression, Section 3.3",
     "https://www.microsoft.com/en-us/research/uploads/prod/2006/01/"
     "Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf");
 BINDING_SEE_ALSO("BayesianLinearRegression C++ class documentation",
-    "@src/mlpack/methods/bayesian_linear_regression/"
-    "bayesian_linear_regression.hpp");
+    "@doc/user/methods/bayesian_linear_regression.md");
 
 PARAM_MATRIX_IN("input", "Matrix of covariates (X).", "i");
 

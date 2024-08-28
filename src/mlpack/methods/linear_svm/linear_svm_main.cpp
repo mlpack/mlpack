@@ -107,7 +107,7 @@ BINDING_SEE_ALSO("@logistic_regression", "#logistic_regression");
 BINDING_SEE_ALSO("LinearSVM on Wikipedia",
     "https://en.wikipedia.org/wiki/Support-vector_machine");
 BINDING_SEE_ALSO("LinearSVM C++ class documentation",
-    "@src/mlpack/methods/linear_svm/linear_svm.hpp");
+    "@doc/user/methods/linear_svm.md");
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "
