@@ -1,11 +1,11 @@
 ## `Radical`
 
-The `Radical` class implements the *R*obust, *A*ccurate, *D*irect *I*ndependent
-*C*omponents *A*nalysis (ICA) a*L*gorithm.  ICA can be used to transform a
-matrix `X` into a new matrix `Y` where each of the rows of `Y` are independent
-components.  ICA also recovers a square "mixing matrix" `W`, such that
-`Y = W * X`.  mlpack's implementation of RADICAL supports decomposing different
-matrix types via template parameters.
+The `Radical` class implements RADICAL, the ***R***obust, ***A***ccurate,
+***D***irect ***I***ndependent ***C***omponents ***A***nalysis (ICA)
+a***L***gorithm.  ICA can be used to transform a matrix `X` into a new matrix
+`Y` where each of the rows of `Y` are independent components.  ICA also recovers
+a square "mixing matrix" `W`, such that `Y = W * X`.  mlpack's implementation of
+RADICAL supports decomposing different matrix types via template parameters.
 
 #### Simple usage example:
 
@@ -74,7 +74,7 @@ and `m`, they can each be set or accessed with standalone methods:
  * `r.Angles() = a` will set the number of angles to consider in brute-force
    search to `a`.
  * `r.Sweeps() = s` will set the number of sweeps to `s`.
- * `r.M() = m` will set the value of m to use for Vasicek's m-spacing esetimator
+ * `r.M() = m` will set the value of m to use for Vasicek's m-spacing estimator
    of entropy to `m`.
 
 ---
@@ -89,7 +89,7 @@ and `m`, they can each be set or accessed with standalone methods:
    - `w` will be set to size `x.n_rows` by `x.n_rows`.
    - `y` will be set to the same size as `x`.
    - `x` can be recovered as `w * y`.
-   - `x`, y`, and `w` should be dense floating-point matrix types (e.g.
+   - `x`, `y`, and `w` should be dense floating-point matrix types (e.g.
      `arma::mat`, `arma::fmat`).  Any dense floating-point matrix type
      implementing the Armadillo API can be used.
 
@@ -106,7 +106,8 @@ of the `Radical` class.
 
 ---
 
-Apply RADICAL to the `iris` dataset.
+Apply RADICAL to the `iris` dataset.  Print the reconstruction error and
+magnitude of each dimension of the RADICAL-ized matrix.
 
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
@@ -126,6 +127,22 @@ std::cout << "Size of transformed data: " << independentDataset.n_rows << " x "
 const double reconError =
     arma::norm(independentDataset - unmixingMatrix * dataset, "F");
 std::cout << "Reconstruction error: " << reconError << "." << std::endl;
+
+// Print the magnitude of each dimension before and after RADICAL.
+std::cout << "Dimension magnitudes before RADICAL:" << std::endl;
+for (size_t i = 0; i < dataset.n_rows; ++i)
+{
+  std::cout << " - Dimension " << i << ": " << arma::norm(dataset.row(i)) << "."
+      << std::endl;
+}
+
+std::cout << std::endl;
+std::cout << "Dimension magnitudes after RADICAL:" << std::endl;
+for (size_t i = 0; i < independentDataset.n_rows; ++i)
+{
+  std::cout << " - Dimension " << i << ": "
+      << arma::norm(independentDataset.row(i)) << "." << std::endl;
+}
 ```
 
 ---
