@@ -38,50 +38,64 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
   counts.zeros(centroids.n_cols);
 
-  // Find the closest centroid to each point and update the new centroids.
-  #pragma omp parallel for
-  for (size_t i = 0; i < dataset.n_cols; ++i)
+  const size_t dimensions = centroids.n_rows;
+  const size_t numClusters = centroids.n_cols;
+  const size_t numPoints = dataset.n_cols;
+
+  #pragma omp parallel
   {
-    // Find the closest centroid to this point.
-    double minDistance = std::numeric_limits<double>::max();
-    size_t closestCluster = centroids.n_cols; // Invalid value.
+    // Thread-local storage for partial sums
+    arma::mat threadCentroids(dimensions, numClusters, arma::fill::zeros);
+    arma::Col<size_t> threadCounts(numClusters, arma::fill::zeros);
 
-    for (size_t j = 0; j < centroids.n_cols; ++j)
+    #pragma omp for schedule(static) nowait
+    for (size_t i = 0; i < numPoints; ++i)
     {
-      const double dist = distance.Evaluate(dataset.col(i), centroids.col(j));
+      size_t closestCluster = 0;
+      double minDistance = std::numeric_limits<double>::max();
 
-      if (dist < minDistance)
+      // Find the closest centroid
+      for (size_t j = 0; j < numClusters; ++j)
       {
-        minDistance = dist;
-        closestCluster = j;
+        double dist = distance.Evaluate(dataset.col(i), centroids.col(j));
+        if (dist < minDistance)
+        {
+          minDistance = dist;
+          closestCluster = j;
+        }
       }
+
+      // Update thread-local centroids and counts
+      threadCentroids.col(closestCluster) += dataset.col(i);
+      threadCounts(closestCluster)++;
     }
 
-    // We now know the closest cluster.  Update that cluster's new centroid and
-    // the counts we are keeping.
+    // Reduce thread-local results to shared variables
     #pragma omp critical
     {
-      newCentroids.col(closestCluster) += dataset.col(i);
-      counts[closestCluster]++;
+      newCentroids += threadCentroids;
+      counts += threadCounts;
     }
   }
 
-  // Now normalize the centroid.
-  for (size_t i = 0; i < centroids.n_cols; ++i)
-    if (counts[i] != 0)
-      newCentroids.col(i) /= counts[i];
-
-  distanceCalculations += centroids.n_cols * dataset.n_cols;
-
-  // Calculate cluster distortion for this iteration.
-  double cNorm = 0.0;
-  for (size_t i = 0; i < centroids.n_cols; ++i)
+  // Normalize centroids
+  #pragma omp parallel for schedule(static)
+  for (size_t i = 0; i < numClusters; ++i)
   {
-    const double dist = distance.Evaluate(centroids.col(i), newCentroids.col(i));
-    cNorm += std::pow(dist, 2.0);
+    if (counts(i) > 0)
+      newCentroids.col(i) /= counts(i);
   }
 
-  distanceCalculations += centroids.n_cols;
+  distanceCalculations += numClusters * numPoints;
+
+  // Calculate cluster distortion
+  double cNorm = 0.0;
+  #pragma omp parallel for reduction(+:cNorm) schedule(static)
+  for (size_t i = 0; i < numClusters; ++i)
+  {
+    cNorm += std::pow(distance.Evaluate(centroids.col(i), newCentroids.col(i)), 2.0);
+  }
+  distanceCalculations += numClusters;
 
   return std::sqrt(cNorm);
 }
