@@ -38,26 +38,23 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
   counts.zeros(centroids.n_cols);
 
-  const size_t dimensions = centroids.n_rows;
-  const size_t numClusters = centroids.n_cols;
-  const size_t numPoints = dataset.n_cols;
-
+  // Find the closest centroid to each point and update the new centroids.
   #pragma omp parallel
   {
     // Thread-local storage for partial sums
-    arma::mat threadCentroids(dimensions, numClusters, arma::fill::zeros);
-    arma::Col<size_t> threadCounts(numClusters, arma::fill::zeros);
+    arma::mat threadCentroids(centroids.n_rows, centroids.n_cols, arma::fill::zeros);
+    arma::Col<size_t> threadCounts(centroids.n_cols, arma::fill::zeros);
 
     #pragma omp for schedule(static) nowait
-    for (size_t i = 0; i < numPoints; ++i)
+    for (size_t i = 0; i < dataset.n_cols; ++i)
     {
-      size_t closestCluster = 0;
+      // Find the closest centroid to this point.
       double minDistance = std::numeric_limits<double>::max();
+      size_t closestCluster = centroids.n_cols; // Invalid value.
 
-      // Find the closest centroid
-      for (size_t j = 0; j < numClusters; ++j)
+      for (size_t j = 0; j < centroids.n_cols; ++j)
       {
-        double dist = distance.Evaluate(dataset.col(i), centroids.col(j));
+        const double dist = distance.Evaluate(dataset.col(i), centroids.col(j));
         if (dist < minDistance)
         {
           minDistance = dist;
@@ -78,24 +75,22 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     }
   }
 
-  // Normalize centroids
+  // Now normalize the centroid.
   #pragma omp parallel for schedule(static)
-  for (size_t i = 0; i < numClusters; ++i)
-  {
-    if (counts(i) > 0)
+  for (size_t i = 0; i < centroids.n_cols; ++i)
+    if (counts(i) != 0)
       newCentroids.col(i) /= counts(i);
-  }
 
-  distanceCalculations += numClusters * numPoints;
+  distanceCalculations += centroids.n_cols * dataset.n_cols;
 
-  // Calculate cluster distortion
+  // Calculate cluster distortion for this iteration.
   double cNorm = 0.0;
   #pragma omp parallel for reduction(+:cNorm) schedule(static)
-  for (size_t i = 0; i < numClusters; ++i)
+  for (size_t i = 0; i < centroids.n_cols; ++i)
   {
     cNorm += std::pow(distance.Evaluate(centroids.col(i), newCentroids.col(i)), 2.0);
   }
-  distanceCalculations += numClusters;
+  distanceCalculations += centroids.n_cols;
 
   return std::sqrt(cNorm);
 }
