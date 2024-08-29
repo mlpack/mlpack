@@ -9,6 +9,7 @@ classes, each of which are documented on this page.
  * [Distances](#distances): distance metrics for geometric algorithms
  * [Distributions](#distributions): probability distributions
  * [Kernels](#kernels): Mercer kernels for kernel-based algorithms
+ * [Trees](#trees): space partitioning trees and other geometric tree structures
 
 ## Core math utilities
 
@@ -899,6 +900,8 @@ LMetric<Power, TakeRoot>
    distance should be taken.
    - If set to `false`, the metric will no longer satisfy the triangle
      inequality.
+   - *This could be problematic for some tree-based and distance-based
+     algorithms!*
 
 ---
 
@@ -2524,3 +2527,279 @@ mlpack supports custom kernels, so long as they implement an appropriate
 
 See [The KernelType Policy in mlpack](../developer/kernels.md) for more
 information.
+
+---
+
+## Trees
+
+mlpack includes a number of space partitioning trees and other trees for its
+geometric techniques.  All of mlpack's trees implement
+the [same API](../developer/trees.md), allowing easy plug-and-play usage of
+different trees with different machine learning techniques, including:
+
+<!-- TODO: document these! -->
+
+ * [`NeighborSearch`](/src/mlpack/methods/neighbor_search/neighbor_search.hpp)
+   (for k-nearest-neighbor and k-furthest-neighbor)
+ * [`RangeSearch`](/src/mlpack/methods/range_search/range_search.hpp)
+ * [`KDE`](/src/mlpack/methods/kde/kde.hpp)
+ * [`FastMKS`](/src/mlpack/methods/fastmks/fastmks.hpp)
+ * [`DTB`](/src/mlpack/methods/emst/dtb.hpp) (for computing Euclidean minimum
+   spanning trees)
+ * [`KRANN`](/src/mlpack/methods/rann/rann.hpp)
+
+In general, it is not necessary to create an mlpack tree directly, but instead
+to simply specify the type of tree a particular algorithm should use via a
+template parameter.  However, it is still possible to create and work directly
+with mlpack's tree structures.
+
+The following tree types are provided by mlpack:
+
+ * [`KDTree`](#kdtree)
+
+These tree classes depend on the following utility classes:
+
+ * [`HRectBound`](#hrectbound)
+
+---
+
+### `HRectBound`
+
+The `HRectBound` class represents a hyper-rectangle bound; that is, a
+rectangle-shaped bound in arbitrary dimensions (e.g. a "box").  An `HRectBound`
+can be used to perform a variety of distance-based bounding tasks.
+
+#### Constructors
+
+`HRectBound` allows configurable behavior via its two template parameters:
+
+```
+HRectBound<DistanceType, ElemType>
+```
+
+Different constructor forms can be used to specify different template parameters
+(and thus different bound behavior).
+
+ * `b = HRectBound(dimensionality)`
+   - Construct an `HRectBound` with the given `dimensionality`.
+   - The bound will be empty with an invalid center (e.g., `b` will not contain
+     any points at all).
+   - The bound will use the [Euclidean distance](#lmetric) for distance
+     computation, and will expect data to have elements with type `double`.
+
+ * `b = HRectBound<DistanceType>(dimensionality)`
+   - Construct an `HRectBound` with the given `dimensionality` that will use
+     the given `DistanceType` class to compute distances.
+   - `DistanceType` is required to be an [`LMetric`](#lmetric), as the distance
+     calculation must be decomposable across dimensions.
+   - The bound will expect data to have elements with type `double`.
+
+ * `b = HRectBound<DistanceType, ElemType>(dimensionality)`
+   - Construct an `HRectBound` with the given `dimensionality` that will use
+     the given `DistanceType` class to compute distances, and expect data to
+     have elements with type `ElemType`.
+   - `DistanceType` is required to be an [`LMetric`](#lmetric), as the distance
+     calculation must be decomposable across dimensions.
+   - `ElemType` should generally be `double` or `float`.
+
+***Note***: these constructors provide an empty bound; be sure to
+[grow](#growing-and-shrinking-the-bound) the bound or
+[directly modify the bound](#accessing-and-modifying-properties-of-the-bound)
+before using it!
+
+---
+
+#### Accessing and modifying properties of the bound
+
+The individual bound associated with each dimension of an `HRectBound` can be
+accessed and modified.
+
+ * `b.Clear()` will reset the bound to an empty bound (e.g. containing no
+   points).
+
+ * `b.Dim()` will return a `size_t` indicating the dimensionality of the bound.
+
+ * `b[dim]` will return a [`Range`](#range) object holding the lower and upper
+   bounds of `b` in dimension `dim`.
+
+ * The lower and upper bounds of an `HRectBound` can be directly modified in a
+   few ways:
+   - `b[dim].Lo() = lo` will set the lower bound of `b` in dimension `dim` to
+     `lo` (a `double`, or an `ElemType` if a custom `ElemType` is being used).
+   - `b[dim].Hi() = hi` will set the upper bound of `b` in dimension `dim` to
+     `hi`.
+   - `b[dim] = Range(lo, hi)` will set the bounds for `b` in dimension `dim` to
+     the (inclusive) range `[lo, hi]`.
+   - ***Notes***:
+     * if a bound in a dimension is set such that `hi < lo`, then the bound will
+       contain nothing and have zero volume.
+     * manually modifying bounds in this way will invalidate `MinWidth()`, and
+       if `MinWidth()` is to be used, call `b.RecomputeMinWidth()`.
+
+ * `b.MinWidth()` returns the minimum width of the bound in any dimension as a
+   `double`.  This value is cached and no computation is performed when calling
+   `b.MinWidth()`.  If the bound is empty, `0` is returned.
+
+ * `b.Distance()` returns either a [`EuclideanDistance`](#lmetric) distance
+   metric object, or a `DistanceType` if a custom `DistanceType` has been
+   specified in the constructor.
+
+ * `b.Center(center)` will compute the center of the `HRectBound` (e.g. the
+   vector with elements equal to the midpoint of `b` in each dimension) and
+   store it in the vector `center`.  `center` should be of type `arma::vec`.
+
+ * `b.Volume()` computes the volume of the hyperrectangle specified by `b`.  The
+   volume is returned as a `double`.
+
+ * `b.Diameter()` computes the longest diagonal of the hyperrectangle specified
+   by `b`.
+
+ * An `HRectBound` can be serialized with
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+
+***Note:*** if a custom `ElemType` was specified in the constructor, then:
+ * `b[dim]` will return a `RangeType<ElemType>`;
+ * `b.MinWidth()`, `b.Volume()`, and `b.Diameter()` will return `ElemType`; and
+ * `b.Center(center)` expects `center` to be of type `arma::Col<ElemType>`.
+
+---
+
+#### Growing and shrinking the bound
+
+The `HRectBound` uses the logical `|=` and `&=` operators to perform set
+operations with data points or other bounds.
+
+ * `b |= data` expands `b` to include all of the data points in `data`.  `data`
+   should be a
+   [column-major `arma::mat`](matrices.md#representing-data-in-mlpack).  The
+   expansion operation is minimal, so `b` is not expanded any more than
+   necessary.
+
+ * `b |= bound` expands `b` to fully include `bound`, where `bound` is another
+   `HRectBound`.  The expansion operation is minimal, so `b` is not expanded any
+   more than necessary.
+
+ * `b & bound` returns a new `HRectBound` whose bounding hyper-rectangle is the
+   intersection of the bounding hyperrectangles of `b` and `bound`.  If `b` and
+   `bound` do not intersect, then the returned `HRectBound` will be empty.
+
+ * `b &= bound` is equivalent to `b = (b & bound)`.  (e.g. perform an in-place
+   intersection with `bound`.)
+
+***Note:*** when another bound is passed, it must have the same type as `b`; so,
+if custom `DistanceType` and `ElemType`s were specified, then `bound` must have
+type `HRectBound<DistanceType, ElemType>`.
+
+---
+
+#### Bounding distances to other objects
+
+Once an `HRectBound` has been successfully created and set to the desired
+bounding hyperrectangle, there are a number of functions that can bound the
+distance between a `HRectBound` and other objects.
+
+ * `b.Contains(point)`
+ * `b.Contains(bound)`
+   - Return a `bool` indicating whether or not `b` contains the given `point`
+     (an `arma::vec`) or another `bound` (an `HRectBound`).
+   - When passing another `bound`, `true` will be returned if `bound` even
+     partially overlaps with `b`.
+
+TODO: working here
+
+ * `b.MinDistance(point)`
+ * `b.MinDistance(bound)`
+   - Compute the minimum possible distance between `b` and either a `point` (an
+     `arma::vec`) or another `bound` (an `HRectBound`).
+   - The minimum distance between `b` and another point or bound is the length
+     of the shortest possible line that can connect the other point or bound to
+     `b`.
+   - If `point` or `bound` are contained in `b`, then the returned distance is
+     0.
+
+ * `b.MaxDistance(point)`
+ * `b.MaxDistance(bound)`
+   - Compute the maximum possible distance between `b` and either a `point` (an
+     `arma::vec`) or another `bound` (an `HRectBound`).
+   - The maximum distance between `b` and another point or bound is the length
+     of the longest possible line that can connect the other point or bound to
+     `b`.  This longest possible line is allowed to pass through 
+
+ * `b.RangeDistance(point)`
+ * `b.RangeDistance(bound)`
+
+
+ * `b.Overlap(bound)`
+
+---
+
+#### Example usage
+
+---
+
+### `KDTree`
+
+ * Template parameters:
+   - DistanceType
+   - StatisticType
+   - MatType
+
+ * `KDTree(data, maxLeafSize)`
+ * `KDTree(data, oldFromNew, maxLeafSize)`
+ * `KDTree(data, olkdFromNew, newFromOld, maxLeafSize)`
+ * serialization
+ * construct directly from archive?
+ * `t.Bound()` --> must also document `HRectBound`
+ * `t.Stat()`
+ * `t.IsLeaf()`
+ * `t.Left()`
+ * `t.Right()`
+ * `t.Parent()`
+ * `t.Dataset()`
+ * `t.Distance()`
+ * `t.NumChildren()`
+ * `t.GetNearestChild(vec)`
+ * `t.GetNearestChild(node)`
+ * `t.GetFurthestChild(vec)`
+ * `t.GetFurthestChild(node)`
+ * `t.FurthestPointDistance()`
+ * `t.FurthestDescendantDistance()`
+ * `t.MinimumBoundDistance()`
+ * `t.ParentDistance()`
+ * `t.Child(i)`
+ * `t.NumPoints()`
+ * `t.NumDescendants()`
+ * `t.Descendant(i)`
+ * `t.Point(i)`
+ * `t.MinDistance(node)`
+ * `t.MaxDistance(node)`
+ * `t.RangeDistance(node)`
+ * `t.MinDistance(point)`
+ * `t.MaxDistance(point)`
+ * `t.RangeDistance(point)`
+ * `t.Begin()`
+ * `t.Count()`
+ * `t.Center(center)`
+
+ * Typedefs: (not sure if needed?)
+   - Mat
+   - ElemType
+   - Split
+
+ * Traversers:
+   - single-tree
+     * RuleType
+     * `st.Traverse(queryIndex, refNode)`
+   - dual-tree
+     * RuleType
+     * `dt.Traverse(queryNode, refNode)`
+   - breadth-first dual-tree
+     * RuleType
+     * `dt.Traverse(queryNode, refNode)`
+
+----
+Underlying `BinarySpaceTree`:
+
+ * Template parameters:
+   - BoundType
+   - SplitType

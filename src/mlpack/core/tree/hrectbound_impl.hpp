@@ -160,6 +160,17 @@ inline void HRectBound<DistanceType, ElemType>::Center(
 }
 
 /**
+ * Recompute the minimum width of the bound.
+ */
+template<typename DistanceType, typename ElemType>
+inline void HRectBound<DistanceType, ElemType>::RecomputeMinWidth()
+{
+  minWidth = std::numeric_limits<ElemType>::max();
+  for (size_t i = 0; i < dim; ++i)
+    minWidth = std::min(minWidth, bounds[i].Width());
+}
+
+/**
  * Calculate the volume of the hyperrectangle.
  *
  * @return Volume of the hyperrectangle.
