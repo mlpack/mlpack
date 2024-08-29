@@ -35,6 +35,7 @@ std::cout << "Independent components matrix size: " << y.n_rows << " x "
 
  * [Constructor](#constructor): create `Radical` objects.
  * [`Apply()`](#applying-transformations): apply RADICAL transformation to data.
+ * [Serialization](#serialization) for loading and saving `Radical` objects.
  * [Examples](#simple-examples) of simple usage and links to detailed example
    projects.
 
@@ -96,6 +97,15 @@ and `m`, they can each be set or accessed with standalone methods:
 ***Note***: `Radical.Apply()` scales quadratically in the number of dimensions
 of the data; so, when `x.n_rows` is high, `Radical.Apply()` may take a long
 time!
+
+---
+
+### Serialization
+
+ * A `Radical` object can be serialized with
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   Only the parameters to be used when calling `Apply()` are serialized (e.g.
+   the five constructor parameters.)
 
 ---
 
