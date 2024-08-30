@@ -39,22 +39,24 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   counts.zeros(centroids.n_cols);
 
   // Find the closest centroid to each point and update the new centroids.
+  // Computed in parallel over the complete dataset
   #pragma omp parallel
   {
-    // Thread-local storage for partial sums
-    arma::mat threadCentroids(centroids.n_rows, centroids.n_cols, arma::fill::zeros);
-    arma::Col<size_t> threadCounts(centroids.n_cols, arma::fill::zeros);
+    // The current state of the K-means is private for each thread
+    arma::mat localCentroids(centroids.n_rows, centroids.n_cols);
+    arma::Col<size_t> localCounts(centroids.n_cols);
 
     #pragma omp for schedule(static) nowait
-    for (size_t i = 0; i < dataset.n_cols; ++i)
+    for (size_t i = 0; i < (size_t) dataset.n_cols; ++i)
     {
       // Find the closest centroid to this point.
-      double minDistance = std::numeric_limits<double>::max();
+      double minDistance = std::numeric_limits<double>::infinity();
       size_t closestCluster = centroids.n_cols; // Invalid value.
 
       for (size_t j = 0; j < centroids.n_cols; ++j)
       {
-        const double dist = distance.Evaluate(dataset.col(i), centroids.col(j));
+        const double dist = distance.Evaluate(dataset.col(i), 
+            centroids.col(j));
         if (dist < minDistance)
         {
           minDistance = dist;
@@ -62,16 +64,17 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
         }
       }
 
-      // Update thread-local centroids and counts
-      threadCentroids.col(closestCluster) += dataset.col(i);
-      threadCounts(closestCluster)++;
-    }
+      Log::Assert(closestCluster != centroids.n_cols);
 
-    // Reduce thread-local results to shared variables
+      // We now have the minimum distance centroid index.  Update that centroid.
+      localCentroids.col(closestCluster) += dataset.col(i);
+      localCounts(closestCluster)++;
+    }
+    // Combine calculated state from each thread
     #pragma omp critical
     {
-      newCentroids += threadCentroids;
-      counts += threadCounts;
+      newCentroids += localCentroids;
+      counts += localCounts;
     }
   }
 
@@ -88,7 +91,8 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   #pragma omp parallel for reduction(+:cNorm) schedule(static)
   for (size_t i = 0; i < centroids.n_cols; ++i)
   {
-    cNorm += std::pow(distance.Evaluate(centroids.col(i), newCentroids.col(i)), 2.0);
+    cNorm += std::pow(distance.Evaluate(centroids.col(i), newCentroids.col(i)),
+        2.0);
   }
   distanceCalculations += centroids.n_cols;
 
