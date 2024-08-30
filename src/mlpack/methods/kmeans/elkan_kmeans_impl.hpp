@@ -88,8 +88,10 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   }
 
   // Create thread-local storage for newCentroids and counts
-  std::vector<arma::mat> threadNewCentroids(numThreads, arma::mat(centroids.n_rows, centroids.n_cols, arma::fill::zeros));
-  std::vector<arma::Col<size_t>> threadCounts(numThreads, arma::Col<size_t>(centroids.n_cols, arma::fill::zeros));
+  std::vector<arma::mat> threadNewCentroids(numThreads,
+    arma::mat(centroids.n_rows, centroids.n_cols, arma::fill::zeros));
+  std::vector<arma::Col<size_t>> threadCounts(numThreads,
+    arma::Col<size_t>(centroids.n_cols, arma::fill::zeros));
 
   // Now loop over all points, and see which ones need to be updated.
   #pragma omp parallel for schedule(dynamic) reduction(+:distanceCalculations)
@@ -103,7 +105,8 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     {
       // No change needed.  This point must still belong to that cluster.
       threadCounts[threadId](assignments[i])++;
-      threadNewCentroids[threadId].col(assignments[i]) += arma::vec(dataset.col(i));
+      threadNewCentroids[threadId].col(assignments[i]) += 
+          arma::vec(dataset.col(i));
       continue;
     }
     else
@@ -166,7 +169,8 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     // At this point, we know the new cluster assignment.
     // Step 4: for each center c, let m(c) be the mean of the points assigned to
     // c.
-    threadNewCentroids[threadId].col(assignments[i]) += arma::vec(dataset.col(i));
+    threadNewCentroids[threadId].col(assignments[i]) += 
+      arma::vec(dataset.col(i));
     threadCounts[threadId][assignments[i]]++;
   }
 
