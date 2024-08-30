@@ -83,7 +83,8 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   #pragma omp parallel
   {
     // Create local centroid and count objects
-    arma::mat localNewCentroid(centroids.n_rows, centroids.n_cols, arma::fill::zeros);
+    arma::mat localNewCentroid(centroids.n_rows, centroids.n_cols,
+      arma::fill::zeros);
     arma::Col<size_t> localCounts(centroids.n_cols, arma::fill::zeros);
 
     #pragma omp for schedule(dynamic) reduction(+:distanceCalculations)
@@ -100,8 +101,8 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
       {
         for (size_t c = 0; c < centroids.n_cols; ++c)
         {
-          // Step 3: for all remaining points x and centers c such that c != c(x),
-          // u(x) > l(x, c) and u(x) > 0.5 d(c(x), c)...
+          // Step 3: for all remaining points x and centers c such that
+          // c != c(x), u(x) > l(x, c) and u(x) > 0.5 d(c(x), c)...
           if (assignments[i] == c)
             continue; // Pruned because this cluster is already the assignment.
 
@@ -153,6 +154,8 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
         }
         
         // At this point, we know the new cluster assignment.
+        // Step 4: for each center c, let m(c) be the mean of the points
+        // assigned to c.
         localNewCentroid.col(assignments[i]) += arma::vec(dataset.col(i));
         localCounts[assignments[i]]++;
       }
