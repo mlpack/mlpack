@@ -80,13 +80,26 @@ steps:
     clean: false
   displayName: 'Build mlpack'
 
+# Build documentation.  This involves setting up Ruby so that kramdown is
+# available.
+- task: UseRubyVersion@0
+  inputs:
+    versionSpec: '>= 2.5'
+    addToPath: true
+  displayName: 'Set up Ruby'
+
+- bash: |
+    gem install kramdown
+    ./scripts/build-docs.sh
+  displayName: 'Build mlpack documentation'
+
 # Configure mlpack
 - powershell: |
     # The .dlls are stored in the bin/ directory, and those are the ones we need
     # to run with.
     cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* build\Release\
     cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* build\
-  displayName: 'Configure mlpack'
+  displayName: 'Copy DLLs to run tests'
 
 # Run tests via ctest.
 - bash: |
@@ -122,19 +135,6 @@ steps:
 
 # Build MSI installer.
 - powershell: |
-    # Pull the documentation for the installer.
-    try {
-      $url = "http://ci.mlpack.org/job/mlpack%20-%20doxygen%20build/lastSuccessfulBuild/artifact/build/doc/html/*zip*/html.zip"
-      (new-object net.webclient).DownloadFile($url, 'dist\win-installer\jenkinsdoc.zip')
-    }
-    catch {
-      Write-Output "Unable to download precompiled Doxygen documentation from Jenkins!"
-    }
-    try {
-      (Add-Type -AssemblyName System.IO.Compression.FileSystem);
-      [System.IO.Compression.ZipFile]::ExtractToDirectory('dist\win-installer\jenkinsdoc.zip', 'dist\win-installer\mlpack-win-installer\Sources\doc')
-    }
-    catch{Write-Output "Unable to add doc to installer, skipping!"}
     # Preparing installer staging.
     mkdir dist\win-installer\mlpack-win-installer\Sources\lib
     cp build\Release\*.lib dist\win-installer\mlpack-win-installer\Sources\lib\
@@ -142,11 +142,22 @@ steps:
     cp build\Release\*.dll dist\win-installer\mlpack-win-installer\Sources\
     cp build\Release\*.exe dist\win-installer\mlpack-win-installer\Sources\
     cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll dist\win-installer\mlpack-win-installer\Sources\
-    cp src\mlpack\*.hpp dist\win-installer\mlpack-win-installer\Sources\
-    cp src\mlpack\core dist\win-installer\mlpack-win-installer\Sources\ -recurse
-    cp src\mlpack\methods dist\win-installer\mlpack-win-installer\Sources\ -recurse
+
+    # Copy documentation.
+    mkdir dist\win-installer\mlpack-win-installer\Sources\doc
+    cp doc\build\html dist\win-installer\mlpack-win-installer\Sources\doc -recurse
+
+    # Copy sources.
+    mkdir dist\win-installer\mlpack-win-installer\Sources\include\mlpack
+    cp src\mlpack.hpp dist\win-installer\mlpack-win-installer\Sources\include
+    cp src\mlpack\*.hpp dist\win-installer\mlpack-win-installer\Sources\include\mlpack
+    cp src\mlpack\core dist\win-installer\mlpack-win-installer\Sources\include\mlpack -recurse
+    cp src\mlpack\methods dist\win-installer\mlpack-win-installer\Sources\include\mlpack -recurse
+
+    # Copy examples.
     cp doc\examples dist\win-installer\mlpack-win-installer\Sources\ -recurse
     cp src\mlpack\tests\data\german.csv dist\win-installer\mlpack-win-installer\Sources\examples\sample-ml-app\sample-ml-app\data\
+
     # Check current git version or mlpack version.
     $ver = (Get-Content "src\mlpack\core\util\version.hpp" | where {$_ -like "*MLPACK_VERSION*"});
     $env:MLPACK_VERSION += $ver[0].substring($ver[0].length - 1, 1) + '.';
