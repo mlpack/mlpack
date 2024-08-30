@@ -15,11 +15,8 @@
 // In case it hasn't been included yet.
 #include "elkan_kmeans.hpp"
 
-#ifdef MLPACK_USE_OPENMP
-  #include <omp.h>
-#endif
-
 namespace mlpack {
+
 template<typename DistanceType, typename MatType>
 ElkanKMeans<DistanceType, MatType>::ElkanKMeans(const MatType& dataset,
                                                 DistanceType& distance) :
@@ -30,6 +27,7 @@ ElkanKMeans<DistanceType, MatType>::ElkanKMeans(const MatType& dataset,
   // Nothing to do here.
 }
 
+// Run a single iteration of Elkan's algorithm for Lloyd iterations.
 template<typename DistanceType, typename MatType>
 double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
                                                    arma::mat& newCentroids,
@@ -50,11 +48,21 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   // Initially set r(x) to true.
   std::vector<bool> mustRecalculate(dataset.n_cols, true);
 
+  // If this is the first iteration, we must reset all the bounds.
+  if (lowerBounds.n_rows != centroids.n_cols)
+  {
+    lowerBounds.set_size(centroids.n_cols, dataset.n_cols);
+    assignments.set_size(dataset.n_cols);
+    upperBounds.set_size(dataset.n_cols);
+
+    lowerBounds.fill(0);
+    upperBounds.fill(DBL_MAX);
+    assignments.fill(0);
+  }
+
   // Step 1: for all centers, compute between-cluster distances.  For all
   // centers, compute s(c) = 1/2 min d(c, c').
-  #ifdef MLPACK_USE_OPENMP
-    #pragma omp parallel for schedule(dynamic) reduction(+:distanceCalculations)
-  #endif
+  #pragma omp parallel for schedule(dynamic) reduction(+:distanceCalculations)
   for (size_t i = 0; i < centroids.n_cols; ++i)
   {
     for (size_t j = i + 1; j < centroids.n_cols; ++j)
@@ -71,42 +79,24 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   // that this is equivalent to s(c) for each cluster c.
   minClusterDistances = 0.5 * min(clusterDistances).t();
 
-  // If this is the first iteration, we must reset all the bounds.
-  if (lowerBounds.n_rows != centroids.n_cols)
-  {
-    lowerBounds.set_size(centroids.n_cols, dataset.n_cols);
-    assignments.set_size(dataset.n_cols);
-    upperBounds.set_size(dataset.n_cols);
-
-    lowerBounds.fill(0);
-    upperBounds.fill(DBL_MAX);
-    assignments.fill(0);
-  }
-
   // Determine the number of threads
   int numThreads = 1;
-  #ifdef MLPACK_USE_OPENMP
-    #pragma omp parallel
-    {
-      #pragma omp single
-      numThreads = omp_get_num_threads();
-    }
-  #endif
+  #pragma omp parallel
+  {
+    #pragma omp single
+    numThreads = omp_get_num_threads();
+  }
 
   // Create thread-local storage for newCentroids and counts
   std::vector<arma::mat> threadNewCentroids(numThreads, arma::mat(centroids.n_rows, centroids.n_cols, arma::fill::zeros));
   std::vector<arma::Col<size_t>> threadCounts(numThreads, arma::Col<size_t>(centroids.n_cols, arma::fill::zeros));
 
   // Now loop over all points, and see which ones need to be updated.
-  #ifdef MLPACK_USE_OPENMP
-    #pragma omp parallel for schedule(dynamic) reduction(+:distanceCalculations)
-  #endif
+  #pragma omp parallel for schedule(dynamic) reduction(+:distanceCalculations)
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     int threadId = 0;
-    #ifdef MLPACK_USE_OPENMP
-      threadId = omp_get_thread_num();
-    #endif
+    threadId = omp_get_thread_num();
     
     // Step 2: identify all points such that u(x) <= s(c(x)).
     if (upperBounds(i) <= minClusterDistances(assignments[i]))
@@ -190,9 +180,7 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   // Now, normalize and calculate the distance each cluster has moved.
   arma::vec moveDistances(centroids.n_cols);
   double cNorm = 0.0; // Cluster movement for residual.
-  #ifdef MLPACK_USE_OPENMP
-    #pragma omp parallel for reduction(+:cNorm,distanceCalculations)
-  #endif
+  #pragma omp parallel for reduction(+:cNorm,distanceCalculations)
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
     if (counts[c] > 0)
@@ -203,9 +191,7 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     distanceCalculations++;
   }
 
-  #ifdef MLPACK_USE_OPENMP
-    #pragma omp parallel for
-  #endif
+  #pragma omp parallel for
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     // Step 5: for each point x and center c, assign
