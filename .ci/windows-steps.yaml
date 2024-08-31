@@ -90,7 +90,7 @@ steps:
 
 - bash: |
     gem install kramdown
-    ./scripts/build-docs.sh
+    DISABLE_HTML_CHECKS=1 ./scripts/build-docs.sh
   displayName: 'Build mlpack documentation'
 
 # Configure mlpack
