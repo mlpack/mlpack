@@ -67,7 +67,8 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
   #pragma omp parallel
   {
-    arma::mat threadNewCentroids(centroids.n_rows, centroids.n_cols, arma::fill::zeros);
+    arma::mat threadNewCentroids(centroids.n_rows, centroids.n_cols,
+      arma::fill::zeros);
     arma::Col<size_t> threadCounts(centroids.n_cols, arma::fill::zeros);
     size_t threadHamerlyPruned = 0;
     size_t threadDistanceCalculations = 0;
@@ -111,7 +112,7 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
         const double dist = distance.Evaluate(dataset.col(i), centroids.col(c));
 
-        // Is this a better cluster?  At this point, upperBounds[i] = d(i, c(i)).
+        // Is this a better cluster?  At this point, upperBounds[i] = d(i, c(i))
         if (dist < upperBounds(i))
         {
           // lowerBounds holds the second closest cluster.
@@ -148,7 +149,8 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   size_t furthestMovingCluster = 0;
   arma::vec centroidMovements(centroids.n_cols);
   double centroidMovement = 0.0;
-  #pragma omp parallel for reduction(+:distanceCalculations,centroidMovement) schedule(static)
+  #pragma omp parallel for reduction(+:distanceCalculations,centroidMovement) \
+    schedule(static)
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
     if (counts(c) > 0)
