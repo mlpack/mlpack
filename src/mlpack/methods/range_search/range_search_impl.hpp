@@ -343,6 +343,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
         distance);
 
     // The naive brute-force solution.
+    #pragma omp parallel for
     for (size_t i = 0; i < querySet.n_cols; ++i)
       for (size_t j = 0; j < referenceSet->n_cols; ++j)
         rules.BaseCase(i, j);
@@ -357,6 +358,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
     typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
     // Now have it traverse for each point.
+    #pragma omp parallel for
     for (size_t i = 0; i < querySet.n_cols; ++i)
       traverser.Traverse(i, *referenceTree);
 
@@ -373,7 +375,11 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
         *distancePtr, distance);
     typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
-    traverser.Traverse(*queryTree, *referenceTree);
+    #pragma omp parallel
+    {
+      #pragma omp single
+      traverser.Traverse(*queryTree, *referenceTree);
+    }
 
     baseCases += rules.BaseCases();
     scores += rules.Scores();
@@ -492,7 +498,11 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
   // Create the traverser.
   typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
-  traverser.Traverse(*queryTree, *referenceTree);
+  #pragma omp parallel
+  {
+    #pragma omp single
+    traverser.Traverse(*queryTree, *referenceTree);
+  }
 
   baseCases = rules.BaseCases();
   scores = rules.Scores();
@@ -555,6 +565,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
   if (naive)
   {
     // The naive brute-force solution.
+    #pragma omp parallel for
     for (size_t i = 0; i < referenceSet->n_cols; ++i)
       for (size_t j = 0; j < referenceSet->n_cols; ++j)
         rules.BaseCase(i, j);
@@ -568,6 +579,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
     typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
     // Now have it traverse for each point.
+    #pragma omp parallel for
     for (size_t i = 0; i < referenceSet->n_cols; ++i)
       traverser.Traverse(i, *referenceTree);
 
@@ -579,7 +591,11 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
     // Create the traverser.
     typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
-    traverser.Traverse(*referenceTree, *referenceTree);
+    #pragma omp parallel
+    {
+      #pragma omp single
+      traverser.Traverse(*referenceTree, *referenceTree);
+    }
 
     baseCases = rules.BaseCases();
     scores = rules.Scores();

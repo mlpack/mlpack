@@ -60,6 +60,7 @@ RangeSearchRules<DistanceType, TreeType>::BaseCase(
 
   const ElemType d = distance.Evaluate(querySet.unsafe_col(queryIndex),
       referenceSet.unsafe_col(referenceIndex));
+  #pragma omp atomic
   ++baseCases;
 
   // Update last indices, so we don't accidentally perform a base case twice.
@@ -68,8 +69,11 @@ RangeSearchRules<DistanceType, TreeType>::BaseCase(
 
   if (range.Contains(d))
   {
-    neighbors[queryIndex].push_back(referenceIndex);
-    distances[queryIndex].push_back(d);
+    #pragma omp critical
+    {
+      neighbors[queryIndex].push_back(referenceIndex);
+      distances[queryIndex].push_back(d);
+    }
   }
 
   return d;
@@ -116,6 +120,7 @@ RangeSearchRules<DistanceType, TreeType>::Score(const size_t queryIndex,
   else
   {
     distances = referenceNode.RangeDistance(querySet.unsafe_col(queryIndex));
+    #pragma omp atomic
     ++scores;
   }
 
@@ -188,6 +193,7 @@ RangeSearchRules<DistanceType, TreeType>::Score(TreeType& queryNode,
   {
     // Just perform the calculation.
     distances = referenceNode.RangeDistance(queryNode);
+    #pragma omp atomic
     ++scores;
   }
 
@@ -249,6 +255,7 @@ void RangeSearchRules<DistanceType, TreeType>::AddResult(
   distances[queryIndex].reserve(oldSize + referenceNode.NumDescendants() -
       baseCaseMod);
 
+  #pragma omp parallel for
   for (size_t i = baseCaseMod; i < referenceNode.NumDescendants(); ++i)
   {
     if ((&referenceSet == &querySet) &&
@@ -258,8 +265,11 @@ void RangeSearchRules<DistanceType, TreeType>::AddResult(
     const ElemType d = distance.Evaluate(querySet.unsafe_col(queryIndex),
         referenceNode.Dataset().unsafe_col(referenceNode.Descendant(i)));
 
-    neighbors[queryIndex].push_back(referenceNode.Descendant(i));
-    distances[queryIndex].push_back(d);
+    #pragma omp critical
+    {
+      neighbors[queryIndex].push_back(referenceNode.Descendant(i));
+      distances[queryIndex].push_back(d);
+    }
   }
 }
 

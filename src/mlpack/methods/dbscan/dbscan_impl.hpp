@@ -92,7 +92,8 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     }
   }
 
-  // Normalize centroids
+  // We should be guaranteed that the number of clusters is always greater than
+  // zero.
   for (size_t i = 0; i < numClusters; ++i)
     centroids.col(i) /= counts[i];
 
@@ -212,6 +213,10 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
       rangeSearch.Search(data.col(index), RangeType<ElemType>(ElemType(0.0), epsilon),
           neighbors, distances);
 
+      // Union to all neighbors if the point is not noise.
+      //
+      // If the point is noise, we leave its label as undefined (i.e. we do no
+      // unioning).
       if (neighbors[0].size() >= minPoints)
       {
         for (size_t j = 0; j < neighbors[0].size(); ++j)
@@ -254,6 +259,7 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
     const MatType& data,
     UnionFind& uf)
 {
+  // For each point, find the points in epsilon-neighborhood and their distances.
   std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<ElemType>> distances;
   Log::Info << "Performing range search." << std::endl;
