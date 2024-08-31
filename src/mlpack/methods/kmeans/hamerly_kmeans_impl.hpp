@@ -65,9 +65,6 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     }
   }
 
-  arma::mat localNewCentroids(centroids.n_rows, centroids.n_cols, arma::fill::zeros);
-  arma::Col<size_t> localCounts(centroids.n_cols, arma::fill::zeros);
-
   #pragma omp parallel
   {
     arma::mat threadNewCentroids(centroids.n_rows, centroids.n_cols, arma::fill::zeros);
@@ -103,9 +100,9 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
         continue;
       }
 
-    // The bounds failed.  So test against all other clusters.
-    // This is Hamerly's Point-All-Ctrs() function from the paper.
-    // We have to reset the lower bound first.
+      // The bounds failed.  So test against all other clusters.
+      // This is Hamerly's Point-All-Ctrs() function from the paper.
+      // We have to reset the lower bound first.
       lowerBounds(i) = DBL_MAX;
       for (size_t c = 0; c < centroids.n_cols; ++c)
       {
@@ -114,17 +111,17 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
         const double dist = distance.Evaluate(dataset.col(i), centroids.col(c));
 
-      // Is this a better cluster?  At this point, upperBounds[i] = d(i, c(i)).
+        // Is this a better cluster?  At this point, upperBounds[i] = d(i, c(i)).
         if (dist < upperBounds(i))
         {
-        // lowerBounds holds the second closest cluster.
+          // lowerBounds holds the second closest cluster.
           lowerBounds(i) = upperBounds(i);
           upperBounds(i) = dist;
           assignments[i] = c;
         }
         else if (dist < lowerBounds(i))
         {
-        // This is a closer second-closest cluster.
+          // This is a closer second-closest cluster.
           lowerBounds(i) = dist;
         }
       }
@@ -137,15 +134,12 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
     #pragma omp critical
     {
-      localNewCentroids += threadNewCentroids;
-      localCounts += threadCounts;
+      newCentroids += threadNewCentroids;
+      counts += threadCounts;
       hamerlyPruned += threadHamerlyPruned;
       distanceCalculations += threadDistanceCalculations;
     }
   }
-
-  newCentroids = std::move(localNewCentroids);
-  counts = std::move(localCounts);
 
   // Normalize centroids and calculate cluster movement (contains parts of
   // Move-Centers() and Update-Bounds()).
