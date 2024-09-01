@@ -83,7 +83,7 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
     // Tighten upper bound.
     upperBounds(i) = distance.Evaluate(dataset.col(i),
-                                      centroids.col(assignments[i]));
+                                       centroids.col(assignments[i]));
     ++distanceCalculations;
 
     // Second bound test.
