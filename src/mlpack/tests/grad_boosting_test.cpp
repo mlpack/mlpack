@@ -59,7 +59,6 @@ TEST_CASE("GBIrisTrainMethod1", "[GradBoostGeneralTest]")
   accuracy *= 100.0;
 
   REQUIRE(accuracy > 60);
-
 }
 
 /**
