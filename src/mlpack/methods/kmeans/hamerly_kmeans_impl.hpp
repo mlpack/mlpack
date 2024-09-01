@@ -65,8 +65,6 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     }
   }
 
-  size_t threadDistanceCalculations = 0;
-
   #pragma omp parallel for reduction(+:hamerlyPruned,distanceCalculations) \
       reduction(matAdd:newCentroids) reduction(colAdd:counts) schedule(static)
   for (size_t i = 0; i < dataset.n_cols; ++i)
