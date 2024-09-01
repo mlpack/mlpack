@@ -6,7 +6,7 @@ parameters and several runtime options that can be used to control the
 model.
 
 Gradient Boosting is a very powerful ensemble algorithm used for both 
-classification and regression tasks. It utilises a series of weak learners 
+classification and regression tasks. It utilizes a series of weak learners 
 (eg. Decision Stumps) to arrive closer and closer to a targeted label. Each 
 weak learner is trained on the error of the previous learner, thereby 
 reducing the error of the overall model.
@@ -70,7 +70,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 ---
 
  * `gb = GradBoosting(data, labels, numClasses, numModels, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on numerical-only data, entering the weak learner arguments `minimumLeafSize`, `minimumGainSplit` and `maximumDepth`.
+   - Train on numerical-only data, using the given hyperparameters.
 
 ---
 
@@ -79,10 +79,10 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels. [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `numModels` | `size_t` | Number of weak learner models to be used. | _(N/A)_ |
-| `minimumLeafSize` | `size_t` | Minimum leaf size for weak learner decision tree | 10 |
+| `minimumLeafSize` | `size_t` | Minimum leaf size for weak learner decision tree. | `10` |
 | `minimumGainSplit` | `double` | Minimum gain split for weak learner decision tree | 1e-7 |
 | `maximumDepth` | `size_t` | Maximum tree depth for weak learner decision tree | 2 |
 
@@ -116,7 +116,7 @@ Types of each argument are the same as in the table for constructors
 
 ### Classification
 
-Once a `GradBoosting` is trained, the `Classify()` member function can be used
+Once a `GradBoosting` object is trained, the `Classify()` member function can be used
 to make class predictions for new data.
 
  * `size_t predictedClass = gb.Classify(point)`
@@ -164,7 +164,7 @@ that is used should be the same type that was used for training.
  * `gb.NumClasses()` returns a `size_t` indicating the number of classes the
    model was trained on.
 
- * `gb.SetNumModels(size_t x)` set the number of weak learners to `x` explicitly.
+ * `gb.SetNumModels(size_t x)` sets the number of weak learners to `x` explicitly.
 
 For complete functionality, the [source
 code](/src/mlpack/methods/grad_boosting/grad_boosting.hpp) can be consulted.

@@ -49,7 +49,7 @@ TEST_CASE("GBIrisTrainMethod1", "[GradBoostGeneralTest]")
   double accuracy = 0;
   for (size_t i = 0; i < labels.n_elem; i++) 
   {
-    if(labels(i) == predictions(i)) 
+    if (labels(i) == predictions(i)) 
     {
       accuracy++;
     }
@@ -59,7 +59,6 @@ TEST_CASE("GBIrisTrainMethod1", "[GradBoostGeneralTest]")
   accuracy *= 100.0;
 
   REQUIRE(accuracy > 60);
-
 }
 
 /**
@@ -205,7 +204,6 @@ TEST_CASE("GBConstr1", "[GradBoostGeneralTest]")
 
   REQUIRE(accuracy > 60);  
 }
-
 
 /**
  * Check the third constructor.

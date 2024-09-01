@@ -117,7 +117,7 @@ size_t GradBoosting<MatType>::Classify(const VecType& point)
 template<typename MatType>
 template<typename VecType>
 void GradBoosting<MatType>::Classify(const VecType& point,
-                                      size_t& prediction)
+                                     size_t& prediction)
 {
   double tempPrediction = 0;
 
@@ -131,14 +131,14 @@ void GradBoosting<MatType>::Classify(const VecType& point,
 
   for (double k = 0; k < numClasses; ++k)
   {
-    if(std::abs(tempPrediction - k) < std::abs(tempPrediction - prediction)) 
+    if (std::abs(tempPrediction - k) < std::abs(tempPrediction - prediction)) 
       prediction = (size_t) k;
   }
 }
 
 template<typename MatType>
 void GradBoosting<MatType>::Classify(const MatType& test,
-                                      arma::Row<size_t>& predictedLabels) 
+                                     arma::Row<size_t>& predictedLabels) 
 {
   predictedLabels.clear();
   predictedLabels.resize(test.n_cols);
@@ -192,4 +192,3 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
 }
 
 #endif
-
