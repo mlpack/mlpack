@@ -1,93 +1,96 @@
 /**
  * @file quantization_utils.hpp
- * @author Mark Fischinger 
+ * @author Mark Fischinger
  *
- * Utility functions for quantization in neural networks.
+ * Utility functions and classes for quantization in neural networks.
  */
 #ifndef MLPACK_METHODS_ANN_QUANTIZATION_QUANTIZATION_UTILS_HPP
 #define MLPACK_METHODS_ANN_QUANTIZATION_QUANTIZATION_UTILS_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <limits>
 
 namespace mlpack {
 namespace ann {
 
 /**
- * Perform linear quantization on the input data.
- *
- * @param input The input data to quantize.
- * @param minVal The minimum value of the quantization range.
- * @param maxVal The maximum value of the quantization range.
- * @param numBits The number of bits to use for quantization.
- * @return The quantized data.
+ * Base class for quantization strategies.
  */
-template<typename MatType>
-MatType LinearQuantize(const MatType& input,
-                       const double minVal,
-                       const double maxVal,
-                       const size_t numBits)
+template<typename SourceMatType, typename TargetMatType>
+class QuantizationStrategy
 {
-  // Ensure valid range
-  if (minVal >= maxVal)
+ public:
+  virtual TargetMatType QuantizeWeights(const SourceMatType& weights) = 0;
+  virtual ~QuantizationStrategy() = default;
+};
+
+/**
+ * Linear quantization strategy.
+ */
+class LinearQuantization : public QuantizationStrategy<arma::mat, arma::imat>
+{
+ public:
+  LinearQuantization(size_t numBits = 8) : numBits(numBits) {}
+
+  arma::imat QuantizeWeights(const arma::mat& weights) override
   {
-    throw std::invalid_argument("minVal must be less than maxVal.");
+    double maxAbs = arma::as_scalar(arma::max(arma::abs(weights)));
+    double scale = (std::pow(2, numBits - 1) - 1) / maxAbs;
+    
+    arma::imat quantized = arma::conv_to<arma::imat>::from(
+        arma::clamp(weights * scale, 
+                    -std::pow(2, numBits - 1) + 1, 
+                    std::pow(2, numBits - 1) - 1));
+    
+    return quantized;
   }
 
-  // Calculate the scale factor
-  const double scale = (std::pow(2, numBits) - 1) / (maxVal - minVal);
+ private:
+  size_t numBits;
+};
 
-  // Perform quantization
-  MatType quantized = arma::floor((input - minVal) * scale + 0.5);
+/**
+ * Scaling-based quantization strategy.
+ */
+class ScaleQuantization : public QuantizationStrategy<arma::mat, arma::imat>
+{
+ public:
+  ScaleQuantization(size_t numBits = 8) : numBits(numBits) {}
 
-  // Clamp values to the valid range
-  const double maxQuantizedVal = std::pow(2, numBits) - 1;
-  quantized = arma::clamp(quantized, 0.0, maxQuantizedVal);
+  arma::imat QuantizeWeights(const arma::mat& weights) override
+  {
+    double maxAbs = arma::as_scalar(arma::max(arma::abs(weights)));
+    double scale = maxAbs / (std::pow(2, numBits - 1) - 1);
+    
+    arma::imat quantized = arma::conv_to<arma::imat>::from(
+        arma::clamp(arma::round(weights / scale), 
+                    -std::pow(2, numBits - 1) + 1, 
+                    std::pow(2, numBits - 1) - 1));
+    
+    return quantized;
+  }
 
-  // Scale back to the original range
-  return (quantized / scale) + minVal;
+ private:
+  size_t numBits;
+};
+
+/**
+ * Utility function to dequantize weights.
+ */
+template<typename QuantizedMatType, typename FloatMatType>
+FloatMatType Dequantize(const QuantizedMatType& quantizedWeights, double scale)
+{
+  return arma::conv_to<FloatMatType>::from(quantizedWeights) * scale;
 }
 
 /**
- * Calculate the scaling factor for quantization.
- *
- * @param input The input data to calculate the scaling factor for.
- * @param numBits The number of bits to use for quantization.
- * @return The scaling factor.
+ * Utility function to calculate the scaling factor for quantization.
  */
 template<typename MatType>
 double CalculateScalingFactor(const MatType& input, const size_t numBits)
 {
-  // Prevent division by zero if input is zero
-  const double maxAbs = arma::abs(input).max();
-  if (maxAbs == 0.0)
-  {
-    return 1.0;  // Avoid division by zero, though input is already effectively zero.
-  }
-
-  return maxAbs / (std::pow(2, numBits - 1) - 1);
-}
-
-/**
- * Perform scaling-based quantization on the input data.
- *
- * @param input The input data to quantize.
- * @param numBits The number of bits to use for quantization.
- * @return The quantized data.
- */
-template<typename MatType>
-MatType ScaleQuantize(const MatType& input, const size_t numBits)
-{
-  const double scale = CalculateScalingFactor(input, numBits);
-
-  // Perform quantization
-  MatType quantized = arma::round(input / scale);
-
-  // Clamp values to the valid range
-  const double maxVal = std::pow(2, numBits - 1) - 1;
-  quantized = arma::clamp(quantized, -maxVal, maxVal);
-
-  // Scale back to the original range
-  return quantized * scale;
+  double maxAbs = arma::as_scalar(arma::max(arma::abs(input)));
+  return maxAbs == 0.0 ? 1.0 : maxAbs / (std::pow(2, numBits - 1) - 1);
 }
 
 } // namespace ann
