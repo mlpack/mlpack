@@ -161,9 +161,6 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
                                           const double minimumGainSplit,
                                           const size_t maximumDepth) 
 {
-  // Initiate dimensionSelector.
-  const AllDimensionSelect dimensionSelector;
-
   // Clear the weak learners vector to in case it's preinitialised.
   weakLearners.clear();
   

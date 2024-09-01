@@ -48,6 +48,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 #### See also:
 
+ * [`ADABoost`](adaboost.md)
  * [`DecisionTree`](decision_tree.md)
  * [`DecisionTreeRegressor`](decision_tree_regressor.md)
  * [Random forests](random_forest.md)
@@ -108,10 +109,8 @@ of the following versions of the `Train()` member function:
 Types of each argument are the same as in the table for constructors
 [above](#constructor-parameters).
 
-***Notes***:
-
- * Training is not incremental.  A second call to `Train()` will retrain the
-   model from scratch.
+***Note:***: Training is not incremental.  A second call to `Train()` will retrain the
+model from scratch.
 
 ### Classification
 
