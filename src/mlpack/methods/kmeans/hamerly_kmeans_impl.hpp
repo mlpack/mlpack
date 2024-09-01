@@ -17,14 +17,6 @@
 
 namespace mlpack {
 
-// Custom reduction for arma::mat
-#pragma omp declare reduction(matAdd : arma::mat : omp_out += omp_in) \
-    initializer(omp_priv = arma::mat(omp_orig.n_rows, omp_orig.n_cols).zeros())
-
-// Custom reduction for arma::Col<size_t>
-#pragma omp declare reduction(colAdd : arma::Col<size_t> : omp_out += omp_in) \
-    initializer(omp_priv = arma::Col<size_t>(omp_orig.n_elem).zeros())
-
 template<typename DistanceType, typename MatType>
 HamerlyKMeans<DistanceType, MatType>::HamerlyKMeans(const MatType& dataset,
                                                     DistanceType& distance) :
@@ -75,7 +67,7 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
   size_t threadDistanceCalculations = 0;
 
-  #pragma omp parallel for reduction(+:hamerlyPruned,threadDistanceCalculations) \
+  #pragma omp parallel for reduction(+:hamerlyPruned,distanceCalculations) \
       reduction(matAdd:newCentroids) reduction(colAdd:counts) schedule(static)
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
@@ -93,8 +85,8 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
     // Tighten upper bound.
     upperBounds(i) = distance.Evaluate(dataset.col(i),
-                                       centroids.col(assignments[i]));
-    ++threadDistanceCalculations;
+                                      centroids.col(assignments[i]));
+    ++distanceCalculations;
 
     // Second bound test.
     if (upperBounds(i) <= m)
@@ -129,14 +121,12 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
         lowerBounds(i) = dist;
       }
     }
-    threadDistanceCalculations += centroids.n_cols - 1;
+    distanceCalculations += centroids.n_cols - 1;
 
     // Update new centroids.
     newCentroids.col(assignments[i]) += dataset.col(i);
     ++counts(assignments[i]);
   }
-
-  distanceCalculations += threadDistanceCalculations;
 
   // Normalize centroids and calculate cluster movement (contains parts of
   // Move-Centers() and Update-Bounds()).
