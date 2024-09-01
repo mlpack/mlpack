@@ -190,7 +190,7 @@ mlpack::data::Load("covertype.train.labels.csv", labels, true);
 
 // Create the model object.
 mlpack::GradBoosting gb;
-// Train on the given dataset, specifying number of weak learners at 5.
+// Train on the given dataset, specifying the number of weak learners as 5.
 gb.Train(dataset, labels, 7 /* classes */, 5 /* number of weak learners */);
 
 // Load categorical test data.
