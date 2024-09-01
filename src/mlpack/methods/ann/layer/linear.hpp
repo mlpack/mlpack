@@ -61,7 +61,8 @@ class LinearType : public Layer<MatType>
   LinearType* Clone() const { return new LinearType(*this); }
 
   //! Copy the other Linear layer (but not weights).
-  LinearType(const LinearType& layer);
+  template<typename OtherMatType>
+  LinearType(const LinearType<OtherMatType, RegularizerType>& layer);
 
   //! Take ownership of the members of the other Linear layer (but not weights).
   LinearType(LinearType&& layer);
