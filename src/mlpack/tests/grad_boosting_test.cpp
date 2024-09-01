@@ -37,11 +37,11 @@ TEST_CASE("GBIrisTrainMethod1", "[GradBoostGeneralTest]")
     FAIL("Cannot load labels for iris iris_labels.txt");
 
   const size_t numClasses = arma::max(labels.row(0)) + 1;
-  const size_t numModels = 5;
+  const size_t numWeakLearners = 5;
 
   GradBoosting gb;
 
-  gb.Train(db, labels, numClasses, numModels);
+  gb.Train(db, labels, numClasses, numWeakLearners);
 
   arma::Row<size_t> predictions;
   gb.Classify(db, predictions);
@@ -77,7 +77,7 @@ TEST_CASE("GBIrisTrainMethod2", "[GradBoostGeneralTest]")
     FAIL("Cannot load labels for iris iris_labels.txt");
 
   const size_t numClasses = arma::max(labels.row(0)) + 1;
-  const size_t numModels = 5;
+  const size_t numWeakLearners = 5;
 
   const size_t minimumLeafSize=10;
   const double minimumGainSplit=1e-7;
@@ -88,7 +88,7 @@ TEST_CASE("GBIrisTrainMethod2", "[GradBoostGeneralTest]")
   gb.Train(db, 
             labels, 
             numClasses, 
-            numModels, 
+            numWeakLearners, 
             minimumLeafSize,
             minimumGainSplit,
             maximumDepth);
@@ -136,11 +136,11 @@ TEST_CASE("GBIrisTestAccuracy", "[GradBoostGeneralTest]")
     FAIL("Cannot load test dataset iris_test_labels.csv!");
 
   const size_t numClasses = arma::max(labels.row(0)) + 1;
-  const size_t numModels = 5;
+  const size_t numWeakLearners = 5;
 
   GradBoosting gb;
 
-  gb.Train(db, labels, numClasses, numModels);
+  gb.Train(db, labels, numClasses, numWeakLearners);
 
   arma::Row<size_t> predictions;
   gb.Classify(testDb, predictions);
@@ -183,9 +183,9 @@ TEST_CASE("GBConstr1", "[GradBoostGeneralTest]")
     FAIL("Cannot load test dataset iris_test_labels.csv!");
 
   const size_t numClasses = arma::max(labels.row(0)) + 1;
-  const size_t numModels = 5;
+  const size_t numWeakLearners = 5;
 
-  GradBoosting gb(db, labels, numClasses, numModels);
+  GradBoosting gb(db, labels, numClasses, numWeakLearners);
 
   arma::Row<size_t> predictions;
   gb.Classify(testDb, predictions);
@@ -227,12 +227,12 @@ TEST_CASE("GBConstr2", "[GradBoostGeneralTest]")
     FAIL("Cannot load test dataset iris_test_labels.csv!");
 
   const size_t numClasses = arma::max(labels.row(0)) + 1;
-  const size_t numModels = 5;
+  const size_t numWeakLearners = 5;
   const size_t minimumLeafSize=10;
   const double minimumGainSplit=1e-7;
   const size_t maximumDepth=2;
 
-  GradBoosting gb(db, labels, numClasses, numModels, 
+  GradBoosting gb(db, labels, numClasses, numWeakLearners, 
     minimumLeafSize, minimumGainSplit, maximumDepth);
 
   arma::Row<size_t> predictions;
@@ -276,9 +276,9 @@ TEST_CASE("GBClassify1", "[GradBoostGeneralTest]")
     FAIL("Cannot load test dataset iris_test_labels.csv!");
 
   const size_t numClasses = arma::max(labels.row(0)) + 1;
-  const size_t numModels = 5;
+  const size_t numWeakLearners = 5;
 
-  GradBoosting gb(db, labels, numClasses, numModels);
+  GradBoosting gb(db, labels, numClasses, numWeakLearners);
 
   size_t prediction = gb.Classify(testDb.col(0));
 
@@ -307,9 +307,9 @@ TEST_CASE("GBClassify2", "[GradBoostGeneralTest]")
     FAIL("Cannot load test dataset iris_test_labels.csv!");
 
   const size_t numClasses = arma::max(labels.row(0)) + 1;
-  const size_t numModels = 5;
+  const size_t numWeakLearners = 5;
 
-  GradBoosting gb(db, labels, numClasses, numModels);
+  GradBoosting gb(db, labels, numClasses, numWeakLearners);
 
   size_t prediction;
   gb.Classify(testDb.col(0), prediction);
@@ -339,9 +339,9 @@ TEST_CASE("GBClassify3", "[GradBoostGeneralTest]")
     FAIL("Cannot load test dataset iris_test_labels.csv!");
 
   const size_t numClasses = arma::max(labels.row(0)) + 1;
-  const size_t numModels = 5;
+  const size_t numWeakLearners = 5;
 
-  GradBoosting gb(db, labels, numClasses, numModels);
+  GradBoosting gb(db, labels, numClasses, numWeakLearners);
 
   arma::Row<size_t> predictions;
   gb.Classify(testDb, predictions);

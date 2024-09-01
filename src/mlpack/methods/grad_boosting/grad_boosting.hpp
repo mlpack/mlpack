@@ -63,12 +63,12 @@ class GradBoosting
    * @param data Input data
    * @param labels Corresponding labels
    * @param numClasses Number of classes
-   * @param numModels Number of weak learners
+   * @param numWeakLearners Number of weak learners
    */
   GradBoosting(const MatType& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
-               const size_t numModels);
+               const size_t numWeakLearners);
 
   /**
    * Constructor for a GradBoosting model. Any extra parameters are used as
@@ -79,7 +79,7 @@ class GradBoosting
    * @param data Input data.
    * @param labels Corresponding labels.
    * @param numClasses The number of classes.
-   * @param numModels Number of weak learners.
+   * @param numWeakLearners Number of weak learners.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
@@ -87,7 +87,7 @@ class GradBoosting
   GradBoosting(const MatType& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
-               const size_t numModels,
+               const size_t numWeakLearners,
                const size_t minimumLeafSize,
                const double minimumGainSplit,
                const size_t maximumDepth);
@@ -96,29 +96,29 @@ class GradBoosting
   void SetNumClasses(const size_t x) {numClasses = x;}
 
   //! Set the number of weak learners explicitly.
-  void SetNumModels(const size_t x) {numModels = x;}
+  void SetNumWeakLearners(const size_t x) {numWeakLearners = x;}
 
   //! Get the number of classes this model is trained on.
   size_t NumClasses() const { return numClasses; }
 
   //! Get the number of weak learners .
-  size_t NumModels() const { return numModels; }
+  size_t NumWeakLearners() const { return numWeakLearners; }
 
   /**
    * Train Gradient Boosting on the given dataset, using the given parameters.
    *
-   * Default values are not used for `numModels`; instead, it is used to specify
+   * Default values are not used for `numWeakLearners`; instead, it is used to specify
    * the number of weak learners (models) to train.
    *
    * @param data Dataset to train on.
    * @param labels Labels for each point in the dataset.
    * @param numClasses The number of classes in the dataset.
-   * @param numModels Number of boosting rounds.
+   * @param numWeakLearners Number of boosting rounds.
    */
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
-             const size_t numModels);
+             const size_t numWeakLearners);
 
   /**
    * Train Gradient Boosting on the given dataset, using the given parameters.
@@ -126,13 +126,13 @@ class GradBoosting
    * these are all the arguments to `WeakLearnerType::Train()` after `numClasses`
    * and `weights`.
    *
-   * Default values are not used for `numModels`; instead, it is used to specify
+   * Default values are not used for `numWeakLearners`; instead, it is used to specify
    * the number of weak learners (models) to train during gradient boosting.
    *
    * @param data Dataset to train on.
    * @param labels Labels for each point in the dataset.
    * @param numClasses The number of classes in the dataset.
-   * @param numModels Number of boosting rounds.
+   * @param numWeakLearners Number of boosting rounds.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
@@ -140,7 +140,7 @@ class GradBoosting
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
-             const size_t numModels,
+             const size_t numWeakLearners,
              const size_t minimumLeafSize,
              const double minimumGainSplit,
              const size_t maximumDepth);
@@ -186,7 +186,7 @@ class GradBoosting
    */
   void TrainInternal(const MatType& data,
                      const arma::Row<size_t>& labels,
-                     const size_t numModels = 5,
+                     const size_t numWeakLearners = 5,
                      const size_t minimumLeafSize = 10,
                      const double minimumGainSplit = 1e-7,
                      const size_t maximumDepth = 2);
@@ -194,7 +194,7 @@ class GradBoosting
   //! The number of classes in the model.
   size_t numClasses;
   //! The number of weak learners in the model.
-  size_t numModels;
+  size_t numWeakLearners;
   //! Adjustments vector.
   arma::vec adjustments;
 

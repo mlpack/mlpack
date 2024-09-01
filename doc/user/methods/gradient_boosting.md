@@ -18,16 +18,15 @@ reducing the error of the overall model.
 // on test data: All data and labels are uniform random; 10 dimensional data, 
 // 5 classes.
 // Replace with a data::Load() call or similar for a real application.
-// numModels is a hyperparameter refering to the number of weak learners
 arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
 arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
-size_t numModels = 10;
+size_t numWeakLearners = 10;
 size_t numClasses = 5;
 
 mlpack::GradBoosting gb;               // Step 1: create model.
-gb.Train(dataset, labels, numClasses, numModels);          // Step 2: train model.
+gb.Train(dataset, labels, numClasses, numWeakLearners);          // Step 2: train model.
 arma::Row<size_t> predictions;
 gb.Classify(testDataset, predictions); // Step 3: classify points.
 
@@ -64,12 +63,12 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 ---
 
- * `gb = GradBoosting(data, labels, numClasses, numModels)`
+ * `gb = GradBoosting(data, labels, numClasses, numWeakLearners)`
    - Train on numerical-only data using default arguments for the weak learners (Decision Trees).
 
 ---
 
- * `gb = GradBoosting(data, labels, numClasses, numModels, minimumLeafSize, minimumGainSplit, maximumDepth)`
+ * `gb = GradBoosting(data, labels, numClasses, numWeakLearners, minimumLeafSize, minimumGainSplit, maximumDepth)`
    - Train on numerical-only data, using the given hyperparameters.
 
 ---
@@ -81,7 +80,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
 | `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
-| `numModels` | `size_t` | Number of weak learner models to be used. | _(N/A)_ |
+| `numWeakLearners` | `size_t` | Number of weak learner models to be used. | _(N/A)_ |
 | `minimumLeafSize` | `size_t` | Minimum leaf size for weak learner decision tree. | `10` |
 | `minimumGainSplit` | `double` | Minimum gain split for weak learner decision tree | 1e-7 |
 | `maximumDepth` | `size_t` | Maximum tree depth for weak learner decision tree | 2 |
@@ -96,12 +95,12 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 If training is not done as part of the constructor call, it can be done with one
 of the following versions of the `Train()` member function:
 
- * `gb.Train(data, labels, numClasses, numModels)`
+ * `gb.Train(data, labels, numClasses, numWeakLearners)`
    - Train on numerical data without using any decision tree arguments.
 
 ---
 
- * `gb.Train(data, labels, numClasses, numModels, minimumLeafSize, minimumGainSplit, maximumDepth)`
+ * `gb.Train(data, labels, numClasses, numWeakLearners, minimumLeafSize, minimumGainSplit, maximumDepth)`
    - Train on numerical data using weak learner model's arguments `minimumLeafSize`, `minimumGainSplit` and `maximumDepth`.
 
 ---
@@ -158,13 +157,13 @@ that is used should be the same type that was used for training.
  * `WeakLearner(size_t i)` returns a `WeakLearnerType` indicating which weak learner 
     is being used. 
 
- * `gb.NumModels()` returns a `size_t` indicating how many weak learners are being
+ * `gb.NumWeakLearners()` returns a `size_t` indicating how many weak learners are being
     used by the model.
 
  * `gb.NumClasses()` returns a `size_t` indicating the number of classes the
    model was trained on.
 
- * `gb.SetNumModels(size_t x)` sets the number of weak learners to `x` explicitly.
+ * `gb.SetNumWeakLearners(size_t x)` sets the number of weak learners to `x` explicitly.
 
 For complete functionality, the [source
 code](/src/mlpack/methods/grad_boosting/grad_boosting.hpp) can be consulted.
@@ -220,7 +219,7 @@ mlpack::GradBoosting gb;
 mlpack::data::Load("gb.bin", "gb", gb, true);
 
 std::cout << "The number of weak learners being used by the model is "
-<< gb.NumModels() << "." << std::endl;
+<< gb.NumWeakLearners() << "." << std::endl;
 
 ```
 
