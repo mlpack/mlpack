@@ -14,6 +14,7 @@
 
 // In case it hasn't been included yet.
 #include "ffn.hpp"
+#include "./quantization/quantization_utils.hpp"
 
 namespace mlpack {
 
@@ -687,6 +688,49 @@ void FFN<
   network.InputDimensions() = inputDimensions;
   network.ComputeOutputDimensions();
   inputDimensionsAreSet = true;
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+template<typename TargetMatType, typename QuantizationStrategyType>
+FFN<OutputLayerType, InitializationRuleType, TargetMatType>
+FFN<OutputLayerType, InitializationRuleType, MatType>::Quantize(
+    QuantizationStrategyType quantizationStrategy) const
+{
+  FFN<OutputLayerType, InitializationRuleType, TargetMatType> quantizedNetwork(
+      outputLayer, initializeRule);
+
+  for (const auto& layer : network.Network())
+  {
+    quantizedNetwork.Add(layer->template CloneAs<TargetMatType>());
+  }
+
+  TargetMatType quantizedParameters;
+  quantizedParameters.set_size(parameters.n_rows, parameters.n_cols);
+
+  for (size_t i = 0; i < network.Network().size(); ++i)
+  {
+    const size_t offset = network.Network()[i]->WeightOffset();
+    const size_t numWeights = network.Network()[i]->WeightSize();
+
+    if (numWeights > 0)
+    {
+      TargetMatType quantizedLayerWeights = quantizationStrategy.QuantizeWeights(
+          parameters.submat(offset, 0, offset + numWeights - 1, 0));
+      quantizedParameters.submat(offset, 0, offset + numWeights - 1, 0) =
+          std::move(quantizedLayerWeights);
+    }
+  }
+
+  quantizedNetwork.parameters = std::move(quantizedParameters);
+
+  quantizedNetwork.inputDimensions = inputDimensions;
+  quantizedNetwork.inputDimensionsAreSet = inputDimensionsAreSet;
+
+  quantizedNetwork.SetLayerMemory();
+
+  return quantizedNetwork;
 }
 
 template<typename OutputLayerType,
