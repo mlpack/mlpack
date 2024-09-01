@@ -131,7 +131,7 @@ void GradBoosting<MatType>::Classify(const VecType& point,
 
   for (double k = 0; k < numClasses; ++k)
   {
-    if(std::abs(tempPrediction - k) < std::abs(tempPrediction - prediction)) 
+    if (std::abs(tempPrediction - k) < std::abs(tempPrediction - prediction)) 
       prediction = (size_t) k;
   }
 }
@@ -192,4 +192,3 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
 }
 
 #endif
-
