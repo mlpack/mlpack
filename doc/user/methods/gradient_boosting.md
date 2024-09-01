@@ -86,8 +86,6 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | `minimumGainSplit` | `double` | Minimum gain split for weak learner decision tree | 1e-7 |
 | `maximumDepth` | `size_t` | Maximum tree depth for weak learner decision tree | 2 |
 
- * Number of labels in the data must be less than or equal to numClasses.
-
 ***Note:*** different types can be used for `data` (e.g.,
 `arma::fmat`, `arma::sp_mat`). 
 
