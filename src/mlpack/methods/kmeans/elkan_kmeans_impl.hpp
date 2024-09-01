@@ -90,13 +90,14 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
       // No change needed.  This point must still belong to that cluster.
       counts(assignments[i])++;
       newCentroids.col(assignments[i]) += arma::vec(dataset.col(i));
+      continue;
     }
     else
     {
       for (size_t c = 0; c < centroids.n_cols; ++c)
       {
-        // Step 3: for all remaining points x and centers c such that
-        // c != c(x), u(x) > l(x, c) and u(x) > 0.5 d(c(x), c)...
+        // Step 3: for all remaining points x and centers c such that c != c(x),
+        // u(x) > l(x, c) and u(x) > 0.5 d(c(x), c)...
         if (assignments[i] == c)
           continue; // Pruned because this cluster is already the assignment.
 
