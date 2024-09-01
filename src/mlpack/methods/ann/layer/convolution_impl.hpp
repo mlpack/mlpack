@@ -111,12 +111,17 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
+template<typename OtherMatType>
 ConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::ConvolutionType(const ConvolutionType& other) :
+>::ConvolutionType(
+    const ConvolutionType<ForwardConvolutionRule, 
+                          BackwardConvolutionRule, 
+                          GradientConvolutionRule, 
+                          OtherMatType>& other) :
     Layer<MatType>(other),
     maps(other.maps),
     kernelWidth(other.kernelWidth),
@@ -136,7 +141,9 @@ ConvolutionType<
     apparentWidth(other.apparentWidth),
     apparentHeight(other.apparentHeight)
 {
-  // Nothing to do.
+  weights = arma::conv_to<MatType>::from(other.Parameters());
+  weight = arma::conv_to<typename GetCubeType<MatType>::type>::from(other.Weight());
+  bias = arma::conv_to<MatType>::from(other.Bias());
 }
 
 template<
