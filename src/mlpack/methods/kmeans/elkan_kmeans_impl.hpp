@@ -81,7 +81,7 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
   // Now loop over all points, and see which ones need to be updated.
   #pragma omp parallel for schedule(dynamic) reduction(matAdd: newCentroids) \
-    reduction(colAdd: counts) reduction(+: distanceCalculations)
+      reduction(colAdd: counts) reduction(+: distanceCalculations)
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     // Step 2: identify all points such that u(x) <= s(c(x)).
