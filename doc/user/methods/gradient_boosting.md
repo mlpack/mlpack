@@ -7,7 +7,7 @@ model.
 
 Gradient Boosting is a very powerful ensemble algorithm used for both 
 classification and regression tasks. It utilizes a series of weak learners 
-(eg. Decision Stumps) to arrive closer and closer to a targeted label. Each 
+(eg. [Decision Tree Regressor](decision_tree_regressor.md)) to arrive closer and closer to a targeted label. Each 
 weak learner is trained on the error of the previous learner, thereby 
 reducing the error of the overall model.
 
