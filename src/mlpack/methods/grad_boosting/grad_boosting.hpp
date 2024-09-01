@@ -24,12 +24,6 @@
 // Only using decision trees for now, therefore only including decision tree functionalities.
 #include <mlpack/methods/decision_tree/decision_tree_regressor.hpp>
 
-// Defined DecisionTree with template as WeakLearnerType to avoid repetition
-typedef mlpack::DecisionTreeRegressor<mlpack::MSEGain,
-                    mlpack::BestBinaryNumericSplit,
-                    mlpack::AllCategoricalSplit,
-                    mlpack::AllDimensionSelect,
-                    false> WeakLearnerType;
 
 // Written in mlpack namespace.
 namespace mlpack {
@@ -48,6 +42,14 @@ template<typename MatType = arma::mat>
 class GradBoosting 
 {
  public: 
+
+  // Defined DecisionTree with template as WeakLearnerType to avoid repetition
+  typedef mlpack::DecisionTreeRegressor<mlpack::MSEGain,
+                      mlpack::BestBinaryNumericSplit,
+                      mlpack::AllCategoricalSplit,
+                      mlpack::AllDimensionSelect,
+                      false> WeakLearnerType;
+
 
   typedef typename MatType::elem_type ElemType;
 
