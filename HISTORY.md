@@ -6,6 +6,10 @@ _????-??-??_
 
   * Distribute STB headers as part of R package (#3724, #3726).
 
+  * Improved performance of k-means implementations using OpenMP:
+  - Added OpenMP parallelization to Hamerly k-means (#3761).
+  - Added OpenMP parallelization to Naive k-means (#3762).
+  - Added OpenMP parallelization to Elkan k-means (#3764).
 
 ## mlpack 4.4.0
 
