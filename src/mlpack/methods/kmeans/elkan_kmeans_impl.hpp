@@ -80,92 +80,78 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   minClusterDistances = 0.5 * min(clusterDistances).t();
 
   // Now loop over all points, and see which ones need to be updated.
-  #pragma omp parallel
+  #pragma omp parallel for schedule(dynamic) reduction(matAdd: newCentroids) \
+    reduction(colAdd: counts) reduction(+: distanceCalculations)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    // Create local centroid and count objects
-    arma::mat localNewCentroid(centroids.n_rows, centroids.n_cols,
-      arma::fill::zeros);
-    arma::Col<size_t> localCounts(centroids.n_cols, arma::fill::zeros);
-
-    #pragma omp for schedule(dynamic) reduction(+:distanceCalculations)
-    for (size_t i = 0; i < dataset.n_cols; ++i)
+    // Step 2: identify all points such that u(x) <= s(c(x)).
+    if (upperBounds(i) <= minClusterDistances(assignments[i]))
     {
-      // Step 2: identify all points such that u(x) <= s(c(x)).
-      if (upperBounds(i) <= minClusterDistances(assignments[i]))
+      // No change needed.  This point must still belong to that cluster.
+      counts(assignments[i])++;
+      newCentroids.col(assignments[i]) += arma::vec(dataset.col(i));
+    }
+    else
+    {
+      for (size_t c = 0; c < centroids.n_cols; ++c)
       {
-        // No change needed.  This point must still belong to that cluster.
-        localCounts(assignments[i])++;
-        localNewCentroid.col(assignments[i]) += arma::vec(dataset.col(i));
-      }
-      else
-      {
-        for (size_t c = 0; c < centroids.n_cols; ++c)
-        {
-          // Step 3: for all remaining points x and centers c such that
-          // c != c(x), u(x) > l(x, c) and u(x) > 0.5 d(c(x), c)...
-          if (assignments[i] == c)
-            continue; // Pruned because this cluster is already the assignment.
+        // Step 3: for all remaining points x and centers c such that
+        // c != c(x), u(x) > l(x, c) and u(x) > 0.5 d(c(x), c)...
+        if (assignments[i] == c)
+          continue; // Pruned because this cluster is already the assignment.
 
+        if (upperBounds(i) <= lowerBounds(c, i))
+          continue; // Pruned by triangle inequality on lower bound.
+
+        if (upperBounds(i) <= 0.5 * clusterDistances(assignments[i], c))
+          continue; // Pruned by triangle inequality on cluster distances.
+
+        // Step 3a: if r(x) then compute d(x, c(x)) and assign r(x) = false.
+        // Otherwise, d(x, c(x)) = u(x).
+        double dist;
+        if (mustRecalculate[i])
+        {
+          mustRecalculate[i] = false;
+          dist = distance.Evaluate(dataset.col(i),
+                                   centroids.col(assignments[i]));
+          lowerBounds(assignments[i], i) = dist;
+          upperBounds(i) = dist;
+          distanceCalculations++;
+
+          // Check if we can prune again.
           if (upperBounds(i) <= lowerBounds(c, i))
             continue; // Pruned by triangle inequality on lower bound.
 
           if (upperBounds(i) <= 0.5 * clusterDistances(assignments[i], c))
             continue; // Pruned by triangle inequality on cluster distances.
+        }
+        else
+        {
+          dist = upperBounds(i); // This is equivalent to d(x, c(x)).
+        }
 
-          // Step 3a: if r(x) then compute d(x, c(x)) and assign r(x) = false.
-          // Otherwise, d(x, c(x)) = u(x).
-          double dist;
-          if (mustRecalculate[i])
+        // Step 3b: if d(x, c(x)) > l(x, c) or d(x, c(x)) > 0.5 d(c(x), c)...
+        if (dist > lowerBounds(c, i) ||
+            dist > 0.5 * clusterDistances(assignments[i], c))
+        {
+          // Compute d(x, c).  If d(x, c) < d(x, c(x)) then assign c(x) = c.
+          const double pointDist = distance.Evaluate(dataset.col(i),
+                                                     centroids.col(c));
+          lowerBounds(c, i) = pointDist;
+          distanceCalculations++;
+          if (pointDist < dist)
           {
-            mustRecalculate[i] = false;
-            dist = distance.Evaluate(dataset.col(i),
-                                     centroids.col(assignments[i]));
-            lowerBounds(assignments[i], i) = dist;
-            upperBounds(i) = dist;
-            distanceCalculations++;
-
-            // Check if we can prune again.
-            if (upperBounds(i) <= lowerBounds(c, i))
-              continue; // Pruned by triangle inequality on lower bound.
-
-            if (upperBounds(i) <= 0.5 * clusterDistances(assignments[i], c))
-              continue; // Pruned by triangle inequality on cluster distances.
-          }
-          else
-          {
-            dist = upperBounds(i); // This is equivalent to d(x, c(x)).
-          }
-
-          // Step 3b: if d(x, c(x)) > l(x, c) or d(x, c(x)) > 0.5 d(c(x), c)...
-          if (dist > lowerBounds(c, i) ||
-              dist > 0.5 * clusterDistances(assignments[i], c))
-          {
-            // Compute d(x, c).  If d(x, c) < d(x, c(x)) then assign c(x) = c.
-            const double pointDist = distance.Evaluate(dataset.col(i),
-                                                       centroids.col(c));
-            lowerBounds(c, i) = pointDist;
-            distanceCalculations++;
-            if (pointDist < dist)
-            {
-              upperBounds(i) = pointDist;
-              assignments[i] = c;
-            }
+            upperBounds(i) = pointDist;
+            assignments[i] = c;
           }
         }
-        
-        // At this point, we know the new cluster assignment.
-        // Step 4: for each center c, let m(c) be the mean of the points
-        // assigned to c.
-        localNewCentroid.col(assignments[i]) += arma::vec(dataset.col(i));
-        localCounts[assignments[i]]++;
       }
-    }
-
-    // Update global newCentroids and counts with local results
-    #pragma omp critical
-    {
-      newCentroids += localNewCentroid;
-      counts += localCounts;
+      
+      // At this point, we know the new cluster assignment.
+      // Step 4: for each center c, let m(c) be the mean of the points
+      // assigned to c.
+      newCentroids.col(assignments[i]) += arma::vec(dataset.col(i));
+      counts[assignments[i]]++;
     }
   }
 
