@@ -18,7 +18,7 @@
 #include "forward_decls.hpp"
 #include "init_rules/init_rules.hpp"
 #include "loss_functions/loss_functions.hpp"
-#include "./quantization/quantization_utils.hpp"
+#include "quantization/quantization_utils.hpp"
 
 #include <ensmallen.hpp>
 
@@ -442,7 +442,7 @@ class FFN
   void ResetData(MatType predictors, MatType responses);
 
   template<typename TargetMatType = arma::imat,
-    typename QuantizationStrategyType = LinearQuantization>
+         typename QuantizationStrategyType = mlpack::ann::LinearQuantization>
   FFN<OutputLayerType, InitializationRuleType, TargetMatType> Quantize(
     QuantizationStrategyType quantizationStrategy = QuantizationStrategyType()) const;
 

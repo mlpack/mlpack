@@ -57,16 +57,17 @@ class LinearType : public Layer<MatType>
 
   virtual ~LinearType() { }
 
-  //! Clone the LinearType object. This handles polymorphism correctly.
-  Layer* Clone() const override
+  //! Updated Clone method implementation
+  Layer<MatType>* Clone() const override
   {
-	return new LinearType(*this);
+    return this->CloneAs<MatType>();
   }
 
-  template<typename LayerMatType>
+  //! Implementation for the templated CloneAs function
+  template<typename LayerMatType = MatType>
   Layer<LayerMatType>* CloneAs() const
   {
-	return new LinearType<LayerMatType, RegularizerType>(*this);
+    return new LinearType<LayerMatType, RegularizerType>(*this);
   }
 
   //! Copy the other Linear layer (but not weights).

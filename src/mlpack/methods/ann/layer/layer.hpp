@@ -13,8 +13,6 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_LAYER_HPP
 
-#include "layer_traits.hpp"
-
 namespace mlpack {
 
 /**
@@ -71,8 +69,15 @@ class Layer
       training(layer.training)
   { /* Nothing to do here */ }
 
-  //! Make a copy of the object.
-  virtual Layer* Clone() const = 0;
+  // Non-templated virtual function
+  virtual Layer<MatType>* Clone() const = 0;
+
+  // Templated CloneAs function to handle specific types
+  template<typename TargetMatType = MatType>
+  Layer<TargetMatType>* CloneAs() const
+  {
+    throw std::logic_error("CloneAs() not implemented for this layer type.");
+  }
 
   //! Move constructor.  This is not responsible for moving weights!
   Layer(Layer&& layer) :
@@ -310,16 +315,6 @@ class Layer
 
     // Note that layer weights are serialized by the FFN!
   }
-
-  /**
-   * Convert this layer to use a different matrix type.
-   */
-  template<typename TargetMatType>
-  auto Convert() const -> typename Layer<TargetMatType>::LayerType
-  {
-    return mlpack::ann::LayerTraits<Layer<MatType>>::template Convert<TargetMatType>(*this);
-  }
-
 
  protected:
   /**
