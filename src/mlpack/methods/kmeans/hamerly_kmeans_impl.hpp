@@ -105,7 +105,7 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
       const double dist = distance.Evaluate(dataset.col(i), centroids.col(c));
 
-      // Is this a better cluster?  At this point, upperBounds[i] = d(i, c(i))
+      // Is this a better cluster?  At this point, upperBounds[i] = d(i, c(i)).
       if (dist < upperBounds(i))
       {
         // lowerBounds holds the second closest cluster.
