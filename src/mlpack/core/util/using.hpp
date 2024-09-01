@@ -1,6 +1,8 @@
 /**
  * @file core/util/using.hpp
  * @author Omar Shrit
+ * @author Ryan Curtin
+ * @author Conrad Sanderson
  *
  * This is a set of `using` statements to mitigate any possible risks or
  * conflicts with local functions. The compiler is supposed to proritise the
@@ -73,6 +75,31 @@ namespace mlpack {
   using coot::vectorise;
   using coot::zeros;
 
+#endif
+
+  // By default, assume that we are using an Armadillo object.
+  template<typename MatType>
+  struct GetFillType
+  {
+    static constexpr const decltype(arma::fill::none)& none   = arma::fill::none;
+    static constexpr const decltype(arma::fill::zeros)& zeros = arma::fill::zeros;
+    static constexpr const decltype(arma::fill::ones)& ones   = arma::fill::ones;
+    static constexpr const decltype(arma::fill::randu)& randu = arma::fill::randu;
+    static constexpr const decltype(arma::fill::randn)& randn = arma::fill::randn;
+  };
+
+#ifdef MLPACK_HAS_COOT
+  // If the matrix type is a Bandicoot type, use Bandicoot fill objects instead.
+  template<typename MatType,
+           typename = typename std::enable_if<is_coot_type<MatType>::value>::type*>
+  struct GetFillType
+  {
+    static constexpr const decltype(coot::fill::none)& none   = coot::fill::none;
+    static constexpr const decltype(coot::fill::zeros)& zeros = coot::fill::zeros;
+    static constexpr const decltype(coot::fill::ones)& ones   = coot::fill::ones;
+    static constexpr const decltype(coot::fill::randu)& randu = coot::fill::randu;
+    static constexpr const decltype(coot::fill::randn)& randn = coot::fill::randn;
+  };
 #endif
 
 } // namespace mlpack

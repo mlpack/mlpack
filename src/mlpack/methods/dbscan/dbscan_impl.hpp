@@ -112,7 +112,7 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
 
   // Get a count of all clusters.
   const size_t numClusters = max(assignments) + 1;
-  arma::Col<size_t> counts(numClusters, arma::fill::zeros);
+  arma::Col<size_t> counts(numClusters);
   for (size_t i = 0; i < assignments.n_elem; ++i)
     counts[assignments[i]]++;
 

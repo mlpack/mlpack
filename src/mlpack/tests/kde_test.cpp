@@ -88,8 +88,8 @@ TEST_CASE("KDETreeAsArguments", "[KDETest]")
                       {-2.1,  1.0} };
   arma::inplace_trans(reference);
   arma::inplace_trans(query);
-  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec estimationsResult = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec estimations = arma::vec(query.n_cols);
+  arma::vec estimationsResult = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.8;
 
   // Get brute force results.
@@ -124,8 +124,8 @@ TEST_CASE("GaussianKDEBruteForceTest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 200);
   arma::mat query = arma::randu(2, 60);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.12;
   const double relError = 0.05;
 
@@ -155,8 +155,8 @@ TEST_CASE("GaussianSingleKDEBruteForceTest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 300);
   arma::mat query = arma::randu(2, 100);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.3;
   const double relError = 0.04;
 
@@ -187,8 +187,8 @@ TEST_CASE("EpanechnikovCoverSingleKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 300);
   arma::mat query = arma::randu(2, 100);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 1.1;
   const double relError = 0.08;
 
@@ -219,8 +219,8 @@ TEST_CASE("GaussianCoverSingleKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 300);
   arma::mat query = arma::randu(2, 100);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 1.1;
   const double relError = 0.08;
 
@@ -251,8 +251,8 @@ TEST_CASE("EpanechnikovOctreeSingleKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 300);
   arma::mat query = arma::randu(2, 100);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 1.0;
   const double relError = 0.05;
 
@@ -282,8 +282,8 @@ TEST_CASE("BallTreeGaussianKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 200);
   arma::mat query = arma::randu(2, 60);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.4;
   const double relError = 0.05;
 
@@ -322,8 +322,8 @@ TEST_CASE("OctreeGaussianKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 500);
   arma::mat query = arma::randu(2, 200);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.3;
   const double relError = 0.01;
 
@@ -353,8 +353,8 @@ TEST_CASE("RTreeGaussianKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 500);
   arma::mat query = arma::randu(2, 200);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.3;
   const double relError = 0.01;
 
@@ -385,8 +385,8 @@ TEST_CASE("StandardCoverTreeGaussianKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 500);
   arma::mat query = arma::randu(2, 200);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.3;
   const double relError = 0.01;
 
@@ -417,8 +417,8 @@ TEST_CASE("StandardCoverTreeEpanechnikovKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 500);
   arma::mat query = arma::randu(2, 200);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.3;
   const double relError = 0.01;
 
@@ -451,8 +451,8 @@ TEST_CASE("DuplicatedReferenceSampleKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 30);
   arma::mat query = arma::randu(2, 10);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.4;
   const double relError = 0.05;
 
@@ -494,7 +494,7 @@ TEST_CASE("DuplicatedQuerySampleKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 30);
   arma::mat query = arma::randu(2, 10);
-  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec estimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.4;
   const double relError = 0.05;
 
@@ -529,8 +529,8 @@ TEST_CASE("BreadthFirstKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 200);
   arma::mat query = arma::randu(2, 60);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.8;
   const double relError = 0.01;
 
@@ -565,8 +565,8 @@ TEST_CASE("OneDimensionalTest", "[KDETest]")
 {
   arma::mat reference = arma::randu(1, 200);
   arma::mat query = arma::randu(1, 60);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.7;
   const double relError = 0.01;
 
@@ -596,7 +596,7 @@ TEST_CASE("EmptyReferenceTest", "[KDETest]")
 {
   arma::mat reference;
   arma::mat query = arma::randu(1, 10);
-  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec estimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.7;
   const double relError = 0.01;
 
@@ -626,7 +626,7 @@ TEST_CASE("EvaluationMatchDimensionsTest", "[KDETest]")
 {
   arma::mat reference = arma::randu(3, 10);
   arma::mat query = arma::randu(1, 10);
-  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec estimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.7;
   const double relError = 0.01;
 
@@ -660,7 +660,7 @@ TEST_CASE("EmptyQuerySetTest", "[KDETest]")
   arma::mat reference = arma::randu(1, 10);
   arma::mat query;
   // Set estimations to the wrong size.
-  arma::vec estimations(33, arma::fill::zeros);
+  arma::vec estimations(33);
   const double kernelBandwidth = 0.7;
   const double relError = 0.01;
 
@@ -719,7 +719,7 @@ TEST_CASE("KDESerializationTest", "[KDETest]")
 
   // Get estimations to compare.
   arma::mat query = arma::randu(4, 100);;
-  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec estimations = arma::vec(query.n_cols);
   kde.Evaluate(query, estimations);
 
   // Initialize serialized objects.
@@ -775,9 +775,9 @@ TEST_CASE("KDESerializationTest", "[KDETest]")
   REQUIRE(kdeBinary.MCBreakCoef() == Approx(breakCoef).epsilon(1e-10));
 
   // Test if execution gives the same result.
-  arma::vec xmlEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec textEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec binEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec xmlEstimations = arma::vec(query.n_cols);
+  arma::vec textEstimations = arma::vec(query.n_cols);
+  arma::vec binEstimations = arma::vec(query.n_cols);
 
   kdeXml.Evaluate(query, xmlEstimations);
   kdeText.Evaluate(query, textEstimations);
@@ -883,8 +883,8 @@ TEST_CASE("GaussianSingleKDTreeMonteCarloKDE", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 100);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.35;
   const double relError = 0.05;
 
@@ -933,8 +933,8 @@ TEST_CASE("GaussianSingleCoverTreeMonteCarloKDE", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 100);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.35;
   const double relError = 0.05;
 
@@ -983,8 +983,8 @@ TEST_CASE("GaussianSingleOctreeMonteCarloKDE", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 100);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.55;
   const double relError = 0.02;
 
@@ -1033,8 +1033,8 @@ TEST_CASE("GaussianDualKDTreeMonteCarloKDE", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 200);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.4;
   const double relError = 0.05;
 
@@ -1083,8 +1083,8 @@ TEST_CASE("GaussianDualCoverTreeMonteCarloKDE", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 200);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.5;
   const double relError = 0.025;
 
@@ -1133,8 +1133,8 @@ TEST_CASE("GaussianDualOctreeMonteCarloKDE", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 200);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.7;
   const double relError = 0.03;
 
@@ -1183,8 +1183,8 @@ TEST_CASE("GaussianBreadthDualKDTreeMonteCarloKDE", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 200);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.7;
   const double relError = 0.025;
 

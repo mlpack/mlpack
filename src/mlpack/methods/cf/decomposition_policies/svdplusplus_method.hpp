@@ -96,7 +96,7 @@ class SVDPlusPlusPolicy
   {
     // Iterate through each item which the user interacted with to calculate
     // user vector.
-    arma::vec userVec(h.n_rows, arma::fill::zeros);
+    arma::vec userVec(h.n_rows);
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
@@ -124,7 +124,7 @@ class SVDPlusPlusPolicy
   {
     // Iterate through each item which the user interacted with to calculate
     // user vector.
-    arma::vec userVec(h.n_rows, arma::fill::zeros);
+    arma::vec userVec(h.n_rows);
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;

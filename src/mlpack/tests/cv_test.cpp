@@ -460,7 +460,7 @@ TEST_CASE("FilterNANCVTest", "[CVTest]")
   // Create a dataset with only one positive label, so it will not be in every
   // fold.
   arma::mat data(3, 10, arma::fill::randu);
-  arma::Row<size_t> labels(10, arma::fill::zeros);
+  arma::Row<size_t> labels(10);
   labels[0] = 1;
 
   const size_t numClasses = 2;

@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/all_categorical_split.hpp
+ * @file methods/decision_tree/split_functions/all_categorical_split.hpp
  * @author Ryan Curtin
  *
  * This file defines a tree splitter that split a categorical feature into all
@@ -103,21 +103,23 @@ class AllCategoricalSplit
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       const double minimumGainSplit,
-      double& splitInfo,
+      arma::vec& splitInfo,
       AuxiliarySplitInfo& aux,
       FitnessFunction& fitnessFunction);
 
   /**
-   * Return the number of children in the split.
+   * If a split was found, returns the number of children of the split. 
+   * Otherwise if there was no split, returns zero.
    *
    * @param splitInfo Auxiliary information for the split.
    * @param * (aux) Auxiliary information for the split (Unused).
    */
-  static size_t NumChildren(const double& splitInfo,
+  static size_t NumChildren(const arma::vec& splitInfo,
                             const AuxiliarySplitInfo& /* aux */);
 
   /**
-   * Calculate the direction a point should percolate to.
+   * If a split was found, given a point, calculates the index of the child 
+   * it should go to. Otherwise if there was no split, returns SIZE_MAX.
    *
    * @param point the Point to use.
    * @param splitInfo Auxiliary information for the split.
@@ -126,7 +128,7 @@ class AllCategoricalSplit
   template<typename ElemType>
   static size_t CalculateDirection(
       const ElemType& point,
-      const double& splitInfo,
+      const arma::vec& splitInfo,
       const AuxiliarySplitInfo& /* aux */);
 };
 
