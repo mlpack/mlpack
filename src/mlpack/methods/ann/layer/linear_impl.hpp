@@ -47,7 +47,7 @@ LinearType<MatType, RegularizerType>::LinearType(
     Layer<MatType>(layer),
     inSize(layer.GetInSize()),
     outSize(layer.GetOutSize()),
-    regularizer(layer.GetRegularizer())
+    regularizer(layer.Regularizer())
 {
     weights = arma::conv_to<MatType>::from(layer.Parameters());
     weight = arma::conv_to<MatType>::from(layer.Weight());
