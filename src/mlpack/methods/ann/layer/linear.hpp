@@ -57,17 +57,14 @@ class LinearType : public Layer<MatType>
 
   virtual ~LinearType() { }
 
-  //! Updated Clone method implementation
   Layer<MatType>* Clone() const override
   {
     return this->CloneAs<MatType>();
   }
 
-  //! Implementation for the templated CloneAs function
   template<typename LayerMatType = MatType>
   Layer<LayerMatType>* CloneAs() const
   {
-      // Create a new instance of LinearType with the converted parameters and regularizer.
       auto clonedLayer = new LinearType<LayerMatType, RegularizerType>(
           this->outSize, this->regularizer);
 
@@ -163,14 +160,12 @@ class LinearType : public Layer<MatType>
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
-  // Public method to access the regularizer.
   const RegularizerType& Regularizer() const { return regularizer; }
   RegularizerType& Regularizer() { return regularizer; }
 
-
   size_t GetInSize() const { return inSize; }
+
   size_t GetOutSize() const { return outSize; }
-  const RegularizerType& GetRegularizer() const { return regularizer; }
 
  private:
   //! Locally-stored number of input units.
