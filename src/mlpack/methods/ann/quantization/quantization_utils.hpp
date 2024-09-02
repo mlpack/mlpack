@@ -7,7 +7,7 @@
 #ifndef MLPACK_METHODS_ANN_QUANTIZATION_QUANTIZATION_UTILS_HPP
 #define MLPACK_METHODS_ANN_QUANTIZATION_QUANTIZATION_UTILS_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/base.hpp>
 #include <limits>
 
 namespace mlpack {
