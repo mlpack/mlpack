@@ -701,7 +701,7 @@ FFN<OutputLayerType, InitializationRuleType, MatType>::Quantize(
   FFN<OutputLayerType, InitializationRuleType, TargetMatType> quantizedNetwork(
       outputLayer, initializeRule);
 
-  for (const auto& layer : network.Network())
+  for (const Layer* layer : network.Network())
   {
     quantizedNetwork.Add(layer->template CloneAs<TargetMatType>());
   }
