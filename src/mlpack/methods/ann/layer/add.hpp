@@ -43,7 +43,7 @@ class AddType : public Layer<MatType>
   {
     auto clonedLayer = new AddType<LayerMatType>();
     clonedLayer->outSize = this->outSize;
-    clonedLayer->Parameters() = arma::conv_to<LayerMatType>::from(this->Parameters());
+    clonedLayer->Parameters() = conv_to<LayerMatType>::from(this->Parameters());
     return clonedLayer;
   }
 

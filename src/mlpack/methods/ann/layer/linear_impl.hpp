@@ -49,9 +49,9 @@ LinearType<MatType, RegularizerType>::LinearType(
     outSize(layer.GetOutSize()),
     regularizer(layer.Regularizer())
 {
-    weights = arma::conv_to<MatType>::from(layer.Parameters());
-    weight = arma::conv_to<MatType>::from(layer.Weight());
-    bias = arma::conv_to<MatType>::from(layer.Bias());
+    weights = conv_to<MatType>::from(layer.Parameters());
+    weight = conv_to<MatType>::from(layer.Weight());
+    bias = conv_to<MatType>::from(layer.Bias());
 }
 
 // Move constructor.

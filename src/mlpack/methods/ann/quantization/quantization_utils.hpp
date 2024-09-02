@@ -27,18 +27,18 @@ class QuantizationStrategy
 /**
  * Linear quantization strategy.
  */
-class LinearQuantization : public QuantizationStrategy<arma::mat, arma::imat>
+class LinearQuantization : public QuantizationStrategy<mat, imat>
 {
  public:
   LinearQuantization(size_t numBits = 8) : numBits(numBits) {}
 
-  arma::imat QuantizeWeights(const arma::mat& weights) override
+  imat QuantizeWeights(const mat& weights) override
   {
-    double maxAbs = arma::as_scalar(arma::max(arma::abs(weights)));
+    double maxAbs = as_scalar(max(abs(weights)));
     double scale = (std::pow(2, numBits - 1) - 1) / maxAbs;
     
-    arma::imat quantized = arma::conv_to<arma::imat>::from(
-        arma::clamp(weights * scale, 
+    imat quantized = conv_to<imat>::from(
+        clamp(weights * scale, 
                     -std::pow(2, numBits - 1) + 1, 
                     std::pow(2, numBits - 1) - 1));
     
@@ -52,18 +52,18 @@ class LinearQuantization : public QuantizationStrategy<arma::mat, arma::imat>
 /**
  * Scaling-based quantization strategy.
  */
-class ScaleQuantization : public QuantizationStrategy<arma::mat, arma::imat>
+class ScaleQuantization : public QuantizationStrategy<mat, imat>
 {
  public:
   ScaleQuantization(size_t numBits = 8) : numBits(numBits) {}
 
-  arma::imat QuantizeWeights(const arma::mat& weights) override
+  imat QuantizeWeights(const mat& weights) override
   {
-    double maxAbs = arma::as_scalar(arma::max(arma::abs(weights)));
+    double maxAbs = as_scalar(max(abs(weights)));
     double scale = maxAbs / (std::pow(2, numBits - 1) - 1);
     
-    arma::imat quantized = arma::conv_to<arma::imat>::from(
-        arma::clamp(arma::round(weights / scale), 
+    imat quantized = conv_to<imat>::from(
+        clamp(round(weights / scale), 
                     -std::pow(2, numBits - 1) + 1, 
                     std::pow(2, numBits - 1) - 1));
     
@@ -80,7 +80,7 @@ class ScaleQuantization : public QuantizationStrategy<arma::mat, arma::imat>
 template<typename QuantizedMatType, typename FloatMatType>
 FloatMatType Dequantize(const QuantizedMatType& quantizedWeights, double scale)
 {
-  return arma::conv_to<FloatMatType>::from(quantizedWeights) * scale;
+  return conv_to<FloatMatType>::from(quantizedWeights) * scale;
 }
 
 /**
@@ -89,7 +89,7 @@ FloatMatType Dequantize(const QuantizedMatType& quantizedWeights, double scale)
 template<typename MatType>
 double CalculateScalingFactor(const MatType& input, const size_t numBits)
 {
-  double maxAbs = arma::as_scalar(arma::max(arma::abs(input)));
+  double maxAbs = as_scalar(max(abs(input)));
   return maxAbs == 0.0 ? 1.0 : maxAbs / (std::pow(2, numBits - 1) - 1);
 }
 

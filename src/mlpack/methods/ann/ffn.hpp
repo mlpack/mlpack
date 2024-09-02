@@ -51,7 +51,7 @@ namespace mlpack {
 template<
     typename OutputLayerType = NegativeLogLikelihood,
     typename InitializationRuleType = RandomInitialization,
-    typename MatType = arma::mat>
+    typename MatType = mat>
 class FFN
 {
  public:
@@ -441,7 +441,7 @@ class FFN
    */
   void ResetData(MatType predictors, MatType responses);
 
-  template<typename TargetMatType = arma::imat,
+  template<typename TargetMatType = imat,
          typename QuantizationStrategyType = mlpack::ann::LinearQuantization>
   FFN<OutputLayerType, InitializationRuleType, TargetMatType> Quantize(
     QuantizationStrategyType quantizationStrategy = QuantizationStrategyType()) const;

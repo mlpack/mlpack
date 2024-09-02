@@ -69,9 +69,9 @@ class LinearType : public Layer<MatType>
           this->outSize, this->regularizer);
 
       // Convert and assign weights and bias to the new cloned layer.
-      clonedLayer->Parameters() = arma::conv_to<LayerMatType>::from(this->Parameters());
-      clonedLayer->Weight() = arma::conv_to<LayerMatType>::from(this->Weight());
-      clonedLayer->Bias() = arma::conv_to<LayerMatType>::from(this->Bias());
+      clonedLayer->Parameters() = conv_to<LayerMatType>::from(this->Parameters());
+      clonedLayer->Weight() = conv_to<LayerMatType>::from(this->Weight());
+      clonedLayer->Bias() = conv_to<LayerMatType>::from(this->Bias());
 
       return clonedLayer;
   }

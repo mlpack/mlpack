@@ -141,9 +141,9 @@ ConvolutionType<
     apparentWidth(other.apparentWidth),
     apparentHeight(other.apparentHeight)
 {
-  weights = arma::conv_to<MatType>::from(other.Parameters());
-  weight = arma::conv_to<typename GetCubeType<MatType>::type>::from(other.Weight());
-  bias = arma::conv_to<MatType>::from(other.Bias());
+  weights = conv_to<MatType>::from(other.Parameters());
+  weight = conv_to<typename GetCubeType<MatType>::type>::from(other.Weight());
+  bias = conv_to<MatType>::from(other.Bias());
 }
 
 template<

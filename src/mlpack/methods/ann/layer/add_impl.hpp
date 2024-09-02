@@ -40,7 +40,7 @@ AddType<MatType>::AddType(const AddType<OtherMatType>& other) :
     Layer<MatType>(other),
     outSize(other.outSize)
 {
-  weights = arma::conv_to<MatType>::from(other.Parameters());
+  weights = conv_to<MatType>::from(other.Parameters());
 }
 
 template<typename MatType>
