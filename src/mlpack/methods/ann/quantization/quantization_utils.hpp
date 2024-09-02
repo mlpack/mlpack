@@ -78,7 +78,7 @@ class ScaleQuantization : public QuantizationStrategy<mat, imat>
  * Utility function to dequantize weights.
  */
 template<typename QuantizedMatType, typename FloatMatType>
-FloatMatType Dequantize(const QuantizedMatType& quantizedWeights, double scale)
+FloatMatType Dequantize(const QuantizedMatType& quantizedWeights, float scale)
 {
   return conv_to<FloatMatType>::from(quantizedWeights) * scale;
 }
