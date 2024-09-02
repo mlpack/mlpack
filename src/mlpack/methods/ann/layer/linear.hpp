@@ -59,21 +59,14 @@ class LinearType : public Layer<MatType>
 
   Layer<MatType>* Clone() const override
   {
-    return this->CloneAs<MatType>();
+      return this->CloneAs<TargetMatType>();
   }
 
-  template<typename LayerMatType = MatType>
-  Layer<LayerMatType>* CloneAs() const
+  template<typename TargetMatType = MatType>
+  Layer<TargetMatType>* CloneAs() const
   {
-      auto clonedLayer = new LinearType<LayerMatType, RegularizerType>(
+      return new LinearType<TargetMatType, RegularizerType>(
           this->outSize, this->regularizer);
-
-      // Convert and assign weights and bias to the new cloned layer.
-      clonedLayer->Parameters() = conv_to<LayerMatType>::from(this->Parameters());
-      clonedLayer->Weight() = conv_to<LayerMatType>::from(this->Weight());
-      clonedLayer->Bias() = conv_to<LayerMatType>::from(this->Bias());
-
-      return clonedLayer;
   }
 
   //! Copy the other Linear layer (but not weights).
