@@ -90,7 +90,6 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
       // No change needed.  This point must still belong to that cluster.
       counts(assignments[i])++;
       newCentroids.col(assignments[i]) += arma::vec(dataset.col(i));
-      continue;
     }
     else
     {
