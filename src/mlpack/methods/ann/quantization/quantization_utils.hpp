@@ -8,7 +8,6 @@
 #define MLPACK_METHODS_ANN_QUANTIZATION_QUANTIZATION_UTILS_HPP
 
 #include <mlpack/base.hpp>
-#include <limits>
 
 namespace mlpack {
 namespace ann {
