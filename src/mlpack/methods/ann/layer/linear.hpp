@@ -156,10 +156,6 @@ class LinearType : public Layer<MatType>
   const RegularizerType& Regularizer() const { return regularizer; }
   RegularizerType& Regularizer() { return regularizer; }
 
-  size_t GetInSize() const { return inSize; }
-
-  size_t GetOutSize() const { return outSize; }
-
  private:
   //! Locally-stored number of input units.
   size_t inSize;

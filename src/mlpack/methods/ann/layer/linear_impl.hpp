@@ -45,13 +45,11 @@ template<typename OtherMatType>
 LinearType<MatType, RegularizerType>::LinearType(
     const LinearType<OtherMatType, RegularizerType>& layer) :
     Layer<MatType>(layer),
-    inSize(layer.GetInSize()),
-    outSize(layer.GetOutSize()),
+    inSize(layer.InputDimensions().empty() ? 0 : layer.InputDimensions()[0]),
+    outSize(layer.OutputDimensions().empty() ? 0 : layer.OutputDimensions()[0]),
     regularizer(layer.Regularizer())
 {
-    weights = conv_to<MatType>::from(layer.Parameters());
-    weight = conv_to<MatType>::from(layer.Weight());
-    bias = conv_to<MatType>::from(layer.Bias());
+  // Nothing to do here.
 }
 
 // Move constructor.
