@@ -41,7 +41,6 @@ int main() {
     
     // Add a Linear layer with 5 input units and 3 output units.
     model.Add<Linear>(5, 3); 
-    model.Add<Linear>(3, 1); 
 
     // Initialize model parameters with random values.
     model.Parameters().randu();
