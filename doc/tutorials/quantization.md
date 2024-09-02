@@ -22,14 +22,7 @@ The weights are scaled down before rounding, so it will lead to a different dist
 
 ### Usage Example
 
-```cpp
-#include <iostream>
-#include <mlpack.hpp>
-
-using namespace mlpack;
-using namespace mlpack::ann;
-using namespace arma;
-
+```c++
 int main() {
 
     // Create a simple Feedforward Neural Network (FFN) model.
