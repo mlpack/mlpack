@@ -45,13 +45,13 @@ template<typename OtherMatType>
 LinearType<MatType, RegularizerType>::LinearType(
     const LinearType<OtherMatType, RegularizerType>& layer) :
     Layer<MatType>(layer),
-    inSize(layer.inSize),
-    outSize(layer.outSize),
-    regularizer(layer.regularizer)
+    inSize(layer.GetInSize()),
+    outSize(layer.GetOutSize()),
+    regularizer(layer.GetRegularizer())
 {
-  weights = arma::conv_to<MatType>::from(layer.weights);
-  weight = arma::conv_to<MatType>::from(layer.weight);
-  bias = arma::conv_to<MatType>::from(layer.bias);
+    weights = arma::conv_to<MatType>::from(layer.Parameters());
+    weight = arma::conv_to<MatType>::from(layer.Weight());
+    bias = arma::conv_to<MatType>::from(layer.Bias());
 }
 
 // Move constructor.

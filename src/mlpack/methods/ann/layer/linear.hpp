@@ -67,7 +67,16 @@ class LinearType : public Layer<MatType>
   template<typename LayerMatType = MatType>
   Layer<LayerMatType>* CloneAs() const
   {
-    return new LinearType<LayerMatType, RegularizerType>(*this);
+      // Create a new instance of LinearType with the converted parameters and regularizer.
+      auto clonedLayer = new LinearType<LayerMatType, RegularizerType>(
+          this->outSize, this->regularizer);
+
+      // Convert and assign weights and bias to the new cloned layer.
+      clonedLayer->Parameters() = arma::conv_to<LayerMatType>::from(this->Parameters());
+      clonedLayer->Weight() = arma::conv_to<LayerMatType>::from(this->Weight());
+      clonedLayer->Bias() = arma::conv_to<LayerMatType>::from(this->Bias());
+
+      return clonedLayer;
   }
 
   //! Copy the other Linear layer (but not weights).
@@ -158,6 +167,10 @@ class LinearType : public Layer<MatType>
   const RegularizerType& Regularizer() const { return regularizer; }
   RegularizerType& Regularizer() { return regularizer; }
 
+
+  size_t GetInSize() const { return inSize; }
+  size_t GetOutSize() const { return outSize; }
+  const RegularizerType& GetRegularizer() const { return regularizer; }
 
  private:
   //! Locally-stored number of input units.
