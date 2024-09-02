@@ -35,13 +35,28 @@ class AddType : public Layer<MatType>
   AddType();
 
   //! Clone the AddType object. This handles polymorphism correctly.
-  AddType* Clone() const { return new AddType(*this); }
+  AddType* Clone() const override { return this->CloneAs<MatType>(); }
+
+  // Templated clone function for type conversion.
+  template<typename LayerMatType = MatType>
+  AddType<LayerMatType>* CloneAs() const
+  {
+    auto clonedLayer = new AddType<LayerMatType>();
+    clonedLayer->outSize = this->outSize;
+    clonedLayer->Parameters() = arma::conv_to<LayerMatType>::from(this->Parameters());
+    return clonedLayer;
+  }
 
   // Virtual destructor.
   virtual ~AddType() { }
 
   //! Copy the given AddType layer.
   AddType(const AddType& other);
+
+  //! Templated copy constructor.
+  template<typename OtherMatType>
+  AddType(const AddType<OtherMatType>& other);
+  
   //! Take ownership of the given AddType layer.
   AddType(AddType&& other);
   //! Copy the given AddType layer.
