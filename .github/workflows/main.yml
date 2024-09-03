@@ -125,7 +125,7 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: mlpack_r_tarball
 
