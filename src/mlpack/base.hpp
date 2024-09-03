@@ -84,6 +84,7 @@
 // Now include Armadillo and traits that we use for it.
 #include <armadillo>
 #include <mlpack/core/util/arma_traits.hpp>
+#include <mlpack/core/util/omp_reductions.hpp>
 
 // On Visual Studio, disable C4519 (default arguments for function templates)
 // since it's by default an error, which doesn't even make any sense because
