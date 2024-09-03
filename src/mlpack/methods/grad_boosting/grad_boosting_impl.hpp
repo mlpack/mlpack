@@ -40,13 +40,14 @@ GradBoosting<MatType>::GradBoosting() :
 template<typename MatType>
 GradBoosting<MatType>::
   GradBoosting(const MatType& data,
+               const data::DatasetInfo& datasetInfo,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
                const size_t numWeakLearners) :
   numClasses(numClasses),
   numWeakLearners(numWeakLearners)
 {
-  TrainInternal(data, labels, numWeakLearners);
+  TrainInternal(data, datasetInfo, labels, numWeakLearners);
 }
 
 // In case the user inputs the arguments for the Weak Learner
@@ -62,6 +63,7 @@ GradBoosting<MatType>::
 template<typename MatType>
 GradBoosting<MatType>::
 GradBoosting(const MatType& data,
+             const data::DatasetInfo& datasetInfo,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
              const size_t numWeakLearners,
@@ -71,25 +73,27 @@ GradBoosting(const MatType& data,
   numClasses(numClasses),
   numWeakLearners(numWeakLearners)
 {
-  TrainInternal(data, labels, numWeakLearners, 
+  TrainInternal(data, datasetInfo, labels, numWeakLearners, 
                 minimumLeafSize, minimumGainSplit, maximumDepth);
 }
 
 template<typename MatType>
 void GradBoosting<MatType>::
   Train(const MatType& data,
+        const data::DatasetInfo& datasetInfo,
         const arma::Row<size_t>& labels,
         const size_t numClasses,
         const size_t numWeakLearners)
 {
   SetNumClasses(numClasses);
   SetNumWeakLearners(numWeakLearners);
-  return TrainInternal(data, labels, numWeakLearners);
+  return TrainInternal(data, datasetInfo, labels, numWeakLearners);
 }
 
 template<typename MatType>
 void GradBoosting<MatType>::
   Train(const MatType& data,
+        const data::DatasetInfo& datasetInfo,
         const arma::Row<size_t>& labels,
         const size_t numClasses,
         const size_t numWeakLearners,
@@ -99,7 +103,7 @@ void GradBoosting<MatType>::
 {
   SetNumClasses(numClasses);
   SetNumWeakLearners(numWeakLearners);
-  return TrainInternal(data, labels, numWeakLearners,
+  return TrainInternal(data, datasetInfo, labels, numWeakLearners,
                        minimumLeafSize, minimumGainSplit, maximumDepth);
 }
 
@@ -155,6 +159,7 @@ void GradBoosting<MatType>::Classify(const MatType& test,
 // TrainInternal is a private function within GradBoosting class
 template<typename MatType>
 void GradBoosting<MatType>::TrainInternal(const MatType& data,
+                                          const data::DatasetInfo& datasetInfo,
                                           const arma::Row<size_t>& labels,
                                           const size_t numWeakLearners,
                                           const size_t minimumLeafSize,
@@ -172,7 +177,7 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
 
   for (size_t model = 0; model < numWeakLearners; ++model) 
   {
-    WeakLearnerType* w = new WeakLearnerType(data, residue, minimumLeafSize, 
+    WeakLearnerType* w = new WeakLearnerType(data, datasetInfo, residue, minimumLeafSize, 
       minimumGainSplit, maximumDepth);
 
     weakLearners.push_back(w);

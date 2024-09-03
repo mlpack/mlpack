@@ -64,13 +64,13 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 ---
 
- * `gb = GradBoosting(data, labels, numClasses, numWeakLearners)`
-   - Train on numerical-only data using default arguments for the weak learners (Decision Trees).
+ * `gb = GradBoosting(data, datasetInfo, labels, numClasses, numWeakLearners)`
+   - Train on numerical and/or categorical data using default arguments for the weak learners (Decision Trees).
 
 ---
 
- * `gb = GradBoosting(data, labels, numClasses, numWeakLearners, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on numerical-only data, using the given hyperparameters.
+ * `gb = GradBoosting(data, datasetInfo, labels, numClasses, numWeakLearners, minimumLeafSize, minimumGainSplit, maximumDepth)`
+   - Train on numerical and/or categorical data, using the given hyperparameters.
 
 ---
 
@@ -79,6 +79,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
+| `datasetInfo` | [`data::DatasetInfo`](https://github.com/mlpack/mlpack/blob/master/doc/user/load_save.md#loading-categorical-data) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
 | `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `numWeakLearners` | `size_t` | Number of weak learner models to be used. | _(N/A)_ |
@@ -94,12 +95,12 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 If training is not done as part of the constructor call, it can be done with one
 of the following versions of the `Train()` member function:
 
- * `gb.Train(data, labels, numClasses, numWeakLearners)`
+ * `gb.Train(data, datasetInfo, labels, numClasses, numWeakLearners)`
    - Train on numerical data without using any decision tree arguments.
 
 ---
 
- * `gb.Train(data, labels, numClasses, numWeakLearners, minimumLeafSize, minimumGainSplit, maximumDepth)`
+ * `gb.Train(data, datasetInfo, labels, numClasses, numWeakLearners, minimumLeafSize, minimumGainSplit, maximumDepth)`
    - Train on numerical data using weak learner model's arguments `minimumLeafSize`, `minimumGainSplit` and `maximumDepth`.
 
 ---
@@ -189,12 +190,12 @@ mlpack::data::Load("covertype.train.labels.csv", labels, true);
 // Create the model object.
 mlpack::GradBoosting gb;
 // Train on the given dataset, specifying the number of weak learners as 5.
-gb.Train(dataset, labels, 7 /* classes */, 5 /* number of weak learners */);
+gb.Train(dataset, info, labels, 7 /* classes */, 5 /* number of weak learners */);
 
 // Load categorical test data.
 arma::mat testDataset;
 // See https://datasets.mlpack.org/covertype.test.arff.
-mlpack::data::Load("covertype.test.arff", testDataset, info, true);
+mlpack::data::Load("covertype.test.arff", testDataset, true);
 
 // Predict class of first test point.
 const size_t firstPrediction = gb.Classify(testDataset.col(0));

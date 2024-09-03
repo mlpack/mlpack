@@ -68,6 +68,7 @@ class GradBoosting
    * @param numWeakLearners Number of weak learners
    */
   GradBoosting(const MatType& data,
+               const data::DatasetInfo& datasetInfo,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
                const size_t numWeakLearners);
@@ -87,6 +88,7 @@ class GradBoosting
    * @param maximumDepth Maximum depth for the tree.
    */
   GradBoosting(const MatType& data,
+               const data::DatasetInfo& datasetInfo,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
                const size_t numWeakLearners,
@@ -118,6 +120,7 @@ class GradBoosting
    * @param numWeakLearners Number of boosting rounds.
    */
   void Train(const MatType& data,
+             const data::DatasetInfo& datasetInfo,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
              const size_t numWeakLearners);
@@ -140,6 +143,7 @@ class GradBoosting
    * @param maximumDepth Maximum depth for the tree.
    */
   void Train(const MatType& data,
+             const data::DatasetInfo& datasetInfo,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
              const size_t numWeakLearners,
@@ -187,6 +191,7 @@ class GradBoosting
    * Internal utility training function.  
    */
   void TrainInternal(const MatType& data,
+                     const data::DatasetInfo& datasetInfo,
                      const arma::Row<size_t>& labels,
                      const size_t numWeakLearners = 5,
                      const size_t minimumLeafSize = 10,
