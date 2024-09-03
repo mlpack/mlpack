@@ -7,7 +7,7 @@ model.
 
 Gradient Boosting is a very powerful ensemble algorithm used for both 
 classification and regression tasks. It utilizes a series of weak learners 
-(eg. [Decision Tree Regressor](decision_tree_regressor.md)) to arrive closer and closer to a targeted label. Each 
+(specifically [decision tree regressors](decision_tree_regressor.md)) to arrive closer and closer to a targeted label. Each 
 weak learner is trained on the error of the previous learner, thereby 
 reducing the error of the overall model.
 
@@ -48,7 +48,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 #### See also:
 
- * [`ADABoost`](adaboost.md)
+ * [`AdaBoost`](adaboost.md)
  * [`DecisionTree`](decision_tree.md)
  * [`DecisionTreeRegressor`](decision_tree_regressor.md)
  * [Random forests](random_forest.md)
@@ -152,7 +152,7 @@ that is used should be the same type that was used for training.
 
 ### Other Functionality
 
- * `WeakLearner(size_t i)` returns a `WeakLearnerType` indicating which weak learner 
+ * `WeakLearner(size_t i)` returns a `DecisionTreeRegressor&` indicating which weak learner 
     is being used. 
 
  * `gb.NumWeakLearners()` returns a `size_t` indicating how many weak learners are being

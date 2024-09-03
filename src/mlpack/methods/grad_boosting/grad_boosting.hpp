@@ -42,14 +42,12 @@ template<typename MatType = arma::mat>
 class GradBoosting 
 {
  public: 
-
-  // Defined DecisionTree with template as WeakLearnerType to avoid repetition
+  // Convenience typedef for the type of weak learner we are using.
   typedef mlpack::DecisionTreeRegressor<mlpack::MSEGain,
                       mlpack::BestBinaryNumericSplit,
                       mlpack::AllCategoricalSplit,
                       mlpack::AllDimensionSelect,
                       false> WeakLearnerType;
-
 
   typedef typename MatType::elem_type ElemType;
 
