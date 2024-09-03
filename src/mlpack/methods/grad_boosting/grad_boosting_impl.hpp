@@ -127,11 +127,9 @@ void GradBoosting<MatType>::Classify(const VecType& point,
 
   for (size_t i = 0; i < weakLearners.size(); ++i) 
   {
-    double p = weakLearners[i]->Predict(point);
+    VecType::elem_type p = weakLearners[i]->Predict(point);
     tempPrediction += p;
   }
-
-  // using namespace std; cout<<tempPrediction<<endl;
 
   for (double k = 0; k < numClasses; ++k)
   {
@@ -150,7 +148,7 @@ void GradBoosting<MatType>::Classify(const MatType& test,
   for (size_t i = 0; i < test.n_cols; ++i) 
   {
     size_t prediction;
-    Classify<arma::vec>(test.col(i), prediction);
+    Classify(test.col(i), prediction);
     predictedLabels(i) = prediction;
   }
 }
@@ -182,7 +180,7 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
 
     weakLearners.push_back(w);
 
-    arma::Row<double> predictions(residue.n_elem, arma::fill::zeros);
+    arma::Row<double> predictions(residue.n_elem);
     w->Predict(data, predictions);
 
     if (model != numWeakLearners - 1)

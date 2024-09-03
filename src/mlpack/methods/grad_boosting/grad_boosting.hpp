@@ -181,7 +181,7 @@ class GradBoosting
    * Serialize the GradBoosting model.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const uint32_t version);
+  void serialize(Archive& ar, const uint32_t version);
 
  private:
 
@@ -210,9 +210,6 @@ class GradBoosting
 }; 
 
 }
-
-CEREAL_TEMPLATE_CLASS_VERSION((typename MatType),
-  (mlpack::GradBoosting<MatType>), (1));
 
 // Include implementation.
 #include "grad_boosting_impl.hpp"
