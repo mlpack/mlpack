@@ -69,7 +69,7 @@ class LaplaceDistribution
    * @param scale Scale of distribution.
    */
   LaplaceDistribution(const size_t dimensionality, const double scale) :
-      mean(arma::zeros<VecType>(dimensionality)), scale(scale) { }
+      mean(zeros<VecType>(dimensionality)), scale(scale) { }
 
   /**
    * Construct the Laplace distribution with the given mean and scale
