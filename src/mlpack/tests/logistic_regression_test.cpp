@@ -1099,7 +1099,7 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllConstructorsTest",
 
   // Create random data.
   MatType data(50, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000, arma::fill::zeros);
+  arma::Row<size_t> labels(1000);
   labels.subvec(500, 999).fill(1);
 
   // Empty constructor.
@@ -1162,7 +1162,7 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllTrainTest", "[LogisticRegressionTest]",
 
   // Create random data.
   MatType data(50, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000, arma::fill::zeros);
+  arma::Row<size_t> labels(1000);
   labels.subvec(500, 999).fill(1);
 
   // Construct all objects that we will use, but don't train.
@@ -1236,7 +1236,7 @@ TEST_CASE("LogisticRegressionResetTest", "[LogisticRegressionTest]")
 {
   // Create random data.
   arma::mat data(50, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000, arma::fill::zeros);
+  arma::Row<size_t> labels(1000);
   labels.subvec(500, 999).fill(1);
 
   // Create two logistic regression models.

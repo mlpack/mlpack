@@ -215,7 +215,7 @@ TEST_CASE("NonSquareGroupedConvolutionTest", "[ANNLayerTest]")
   module1.SetWeights(weights1);
 
   arma::mat data(49, 10, arma::fill::randu);
-  arma::mat forwardResult(module1.OutputSize(), 10, arma::fill::zeros);
+  arma::mat forwardResult(module1.OutputSize(), 10);
   REQUIRE_NOTHROW(module1.Forward(data, forwardResult));
   arma::mat backwardResult(49, 10);
   REQUIRE_NOTHROW(module1.Backward(data, forwardResult, forwardResult, backwardResult));

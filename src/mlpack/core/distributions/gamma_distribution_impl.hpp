@@ -74,9 +74,9 @@ inline void GammaDistribution::Train(const arma::mat& rdata,
   if (arma::size(rdata) == arma::size(arma::mat()))
     return;
 
-  arma::vec meanLogxVec(rdata.n_rows, arma::fill::zeros);
-  arma::vec meanxVec(rdata.n_rows, arma::fill::zeros);
-  arma::vec logMeanxVec(rdata.n_rows, arma::fill::zeros);
+  arma::vec meanLogxVec(rdata.n_rows);
+  arma::vec meanxVec(rdata.n_rows);
+  arma::vec logMeanxVec(rdata.n_rows);
 
   for (size_t i = 0; i < rdata.n_cols; ++i)
   {

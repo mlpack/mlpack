@@ -24,9 +24,11 @@ namespace mlpack {
 template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundDistanceType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
+         template<typename BoundDistanceType,
+                  typename BoundElemType,
+                  typename...> class BoundType,
+         template<typename SplitBoundType,
+                  typename SplitMatType> class SplitType>
 template<typename RuleType>
 BinarySpaceTree<DistanceType, StatisticType, MatType, BoundType, SplitType>::
 SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
@@ -37,9 +39,11 @@ SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
 template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundDistanceType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
+         template<typename BoundDistanceType,
+                  typename BoundElemType,
+                  typename...> class BoundType,
+         template<typename SplitBoundType,
+                  typename SplitMatType> class SplitType>
 template<typename RuleType>
 void
 BinarySpaceTree<DistanceType, StatisticType, MatType, BoundType, SplitType>::

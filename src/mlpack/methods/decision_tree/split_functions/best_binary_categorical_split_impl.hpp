@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/all_categorical_split_impl.hpp
+ * @file methods/decision_tree/split_functions/all_categorical_split_impl.hpp
  * @author Nikolay Apanasov (nikolay@apanasov.org)
  *
  * Implementation of the BestBinaryCategoricalSplit categorical split class.
@@ -46,7 +46,7 @@ double BestBinaryCategoricalSplit<FitnessFunction>::SplitIfBetter(
   {
       // Order the categories of variable vₖ by their proportion in class C₁
       // and map each categorical vₖ to its categorical rank
-      arma::umat categoryCounts(numCategories, 2, arma::fill::zeros);
+      arma::umat categoryCounts(numCategories, 2);
       arma::vec categoryP(numCategories);
       size_t totalCount;
 
@@ -172,8 +172,8 @@ double BestBinaryCategoricalSplit<FitnessFunction>::SplitIfBetter(
   // Order the categories of variable vₖ by increasing mean
   // of the response y. categoryResponse[i, 0] will contain
   // the mean response for category Cᵢ.
-  arma::vec categoryResponse(numCategories, arma::fill::zeros);
-  arma::uvec categoryCounts(numCategories, arma::fill::zeros);
+  arma::vec categoryResponse(numCategories);
+  arma::uvec categoryCounts(numCategories);
 
   for (size_t i = 0; i < n; ++i)
   {

@@ -313,7 +313,7 @@ TEST_CASE("VanillaNetworkBatchSizeTest", "[ConvolutionalNetworkTest]")
 
     // Now compute results with a batch size of 1.
     arma::mat singleResults(results.n_rows, results.n_cols);
-    arma::mat singleGradient(gradient.n_rows, gradient.n_cols, arma::fill::zeros);
+    arma::mat singleGradient(gradient.n_rows, gradient.n_cols);
     double singleObj = 0.0;
 
     for (size_t i = 0; i < batchSize; ++i)

@@ -422,6 +422,7 @@ then
         --suppress-broken 405 \
         --suppress-broken 503 \
         --suppress-broken 301 \
+        --suppress-broken 400 \
         -X "https://eigen.tuxfamily.org/index.php\?title=Main_Page" \
         -X "https://mlpack.slack.com/" "$f" 2>&1 |
         grep -v 'Use of uninitialized value' > checklink_out;

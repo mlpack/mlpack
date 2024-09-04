@@ -462,11 +462,9 @@ class CustomNumericSplit
     categorical feature.
  * The `AllCategoricalSplit` _(default)_ and `BestBinaryCategoricalSplit` are~
    available for drop-in usage.
-   
  * `AllCategoricalSplit`, the default ID3 split
    algorithm, splits all categories into their own node. This variant is simple,
    and has complexity `O(n)`, where `n` is the number of samples.
-   
  * `BestBinaryCategoricalSplit` is the preferred algorithm of
    [the CART system](https://www.taylorfrancis.com/books/mono/10.1201/9781315139470/classification-regression-trees-leo-breiman-jerome-friedman-olshen-charles-stone).
    It will find the the best (entropy-minimizing) binary partition of the
@@ -476,10 +474,9 @@ class CustomNumericSplit
    - ***Note***: `BestBinaryCategoricalSplit` should not be chosen when there
      are multiple classes and many categories.
    - ***Note***: for regression tasks,
-     [W. Fisher's proof of correctness](http://www.csiss.org/SPACE/workshops/2004/SAC/files/fisher.pdf)
+     [W. Fisher's proof of correctness](https://www.mlpack.org/papers/fisher.pdf)
      only applies to when `FitnessFunction` is `MSEGain`; therefore,
      `BestBinaryCategoricalSplit` requires the use of `MSEGain`.
-
  * A custom class must take a [`FitnessFunction`](#fitnessfunction) as a
    template parameter, implement three functions, and have an internal
    structure `AuxiliarySplitInfo` that is used at classification time:

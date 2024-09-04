@@ -1875,70 +1875,6 @@ TEST_CASE("LookupLayerParametersTest", "[ANNLayerTest]")
 }
 */
 
-/**
- * Simple test for the NearestInterpolation layer
- *
-TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
-{
-  // Tested output against torch.nn.Upsample(mode="nearest").
-  arma::mat input, output, unzoomedOutput, expectedOutput;
-  size_t inRowSize = 2;
-  size_t inColSize = 2;
-  size_t outRowSize = 5;
-  size_t outColSize = 7;
-  size_t depth = 1;
-  input.zeros(inRowSize * inColSize * depth, 1);
-  input[0] = 1.0;
-  input[1] = 3.0;
-  input[2] = 2.0;
-  input[3] = 4.0;
-  NearestInterpolation<> layer(inRowSize, inColSize, outRowSize,
-                               outColSize, depth);
-
-  expectedOutput << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000
-                 << 2.0000 << 2.0000 << arma::endr
-                 << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000
-                 << 2.0000 << 2.0000 << arma::endr
-                 << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000
-                 << 2.0000 << 2.0000 << arma::endr
-                 << 3.0000 << 3.0000 << 3.0000 << 3.0000 << 4.0000
-                 << 4.0000 << 4.0000 << arma::endr
-                 << 3.0000 << 3.0000 << 3.0000 << 3.0000 << 4.0000
-                 << 4.0000 << 4.0000 << arma::endr;
-  expectedOutput.reshape(35, 1);
-
-  layer.Forward(input, output);
-  CheckMatrices(output - expectedOutput,
-                arma::zeros(output.n_rows), 1e-4);
-
-  expectedOutput.clear();
-  expectedOutput << 12.0000 << 18.0000 << arma::endr
-                 << 24.0000 << 24.0000 << arma::endr;
-  expectedOutput.reshape(4, 1);
-  layer.Backward(output, output, unzoomedOutput);
-  CheckMatrices(unzoomedOutput - expectedOutput,
-      arma::zeros(input.n_rows), 1e-4);
-
-  arma::mat input1, output1, unzoomedOutput1, expectedOutput1;
-  inRowSize = 2;
-  inColSize = 3;
-  outRowSize = 17;
-  outColSize = 23;
-  input1 << 1 << 2 << 3 << arma::endr
-         << 4 << 5 << 6 << arma::endr;
-  input1.reshape(6, 1);
-  NearestInterpolation<> layer1(inRowSize, inColSize, outRowSize,
-                                outColSize, depth);
-
-  layer1.Forward(input1, output1);
-  layer1.Backward(output1, output1, unzoomedOutput1);
-
-  REQUIRE(accu(output1) - 1317.00 == Approx(0.0).margin(1e-05));
-  REQUIRE(accu(unzoomedOutput1) - 1317.00 ==
-          Approx(0.0).margin(1e-05));
-}
-*/
-
 /*
  * Simple test for the BilinearInterpolation layer
  *
@@ -2219,7 +2155,7 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   TransposedConvolution module1(1, 1, 3, 3, 1, 1, 0, 0, 4, 4, 6, 6);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 15, 16);
-  module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module1.Parameters() = arma::mat(9 + 1, 1);
   module1.Parameters()(0) = 1.0;
   module1.Parameters()(8) = 2.0;
   module1.Reset();
@@ -2235,7 +2171,7 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   TransposedConvolution module2(1, 1, 4, 4, 1, 1, 1, 1, 5, 5, 6, 6);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module2.Parameters() = arma::mat(16 + 1, 1, arma::fill::zeros);
+  module2.Parameters() = arma::mat(16 + 1, 1);
   module2.Parameters()(0) = 1.0;
   module2.Parameters()(3) = 1.0;
   module2.Parameters()(6) = 1.0;
@@ -2255,7 +2191,7 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   TransposedConvolution module3(1, 1, 3, 3, 1, 1, 1, 1, 5, 5, 5, 5);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module3.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module3.Parameters() = arma::mat(9 + 1, 1);
   module3.Parameters()(1) = 2.0;
   module3.Parameters()(2) = 4.0;
   module3.Parameters()(3) = 3.0;
@@ -2273,7 +2209,7 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   TransposedConvolution module4(1, 1, 3, 3, 1, 1, 0, 0, 5, 5, 7, 7);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module4.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module4.Parameters() = arma::mat(9 + 1, 1);
   module4.Parameters()(2) = 2.0;
   module4.Parameters()(4) = 4.0;
   module4.Parameters()(6) = 6.0;
@@ -2291,7 +2227,7 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   TransposedConvolution module5(1, 1, 3, 3, 2, 2, 0, 0, 2, 2, 5, 5);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 3, 4);
-  module5.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
+  module5.Parameters() = arma::mat(25 + 1, 1);
   module5.Parameters()(2) = 8.0;
   module5.Parameters()(4) = 6.0;
   module5.Parameters()(6) = 4.0;
@@ -2309,7 +2245,7 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   TransposedConvolution module6(1, 1, 3, 3, 2, 2, 1, 1, 3, 3, 5, 5);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 8, 9);
-  module6.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module6.Parameters() = arma::mat(9 + 1, 1);
   module6.Parameters()(0) = 8.0;
   module6.Parameters()(3) = 6.0;
   module6.Parameters()(6) = 2.0;
@@ -2327,7 +2263,7 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   TransposedConvolution module7(1, 1, 3, 3, 2, 2, 1, 1, 3, 3, 6, 6);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 8, 9);
-  module7.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module7.Parameters() = arma::mat(9 + 1, 1);
   module7.Parameters()(0) = 8.0;
   module7.Parameters()(2) = 6.0;
   module7.Parameters()(4) = 2.0;
@@ -2484,7 +2420,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 //   AtrousConvolution<> module1(1, 1, 3, 3, 1, 1, 0, 0, 7, 7, 2, 2);
 //   // Test the Forward function.
 //   input = arma::linspace<arma::colvec>(0, 48, 49);
-//   module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+//   module1.Parameters() = arma::mat(9 + 1, 1);
 //   module1.Parameters()(0) = 1.0;
 //   module1.Parameters()(8) = 2.0;
 //   module1.Reset();
@@ -2499,7 +2435,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 //   AtrousConvolution<> module2(1, 1, 3, 3, 2, 2, 0, 0, 7, 7, 2, 2);
 //   // Test the forward function.
 //   input = arma::linspace<arma::colvec>(0, 48, 49);
-//   module2.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+//   module2.Parameters() = arma::mat(9 + 1, 1);
 //   module2.Parameters()(0) = 1.0;
 //   module2.Parameters()(3) = 1.0;
 //   module2.Parameters()(6) = 1.0;
@@ -2629,7 +2565,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 
 //   // Test the Forward function.
 //   input = arma::linspace<arma::colvec>(0, 48, 49);
-//   module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+//   module1.Parameters() = arma::mat(9 + 1, 1);
 //   module1.Reset();
 //   module1.Forward(input, output);
 
@@ -2647,7 +2583,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 
 //   // Test the forward function.
 //   input = arma::linspace<arma::colvec>(0, 48, 49);
-//   module2.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+//   module2.Parameters() = arma::mat(9 + 1, 1);
 //   module2.Reset();
 //   module2.Forward(input, output);
 
@@ -3401,7 +3337,7 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
   // Test the forward function.
   // Valid Should give the same result.
   input = arma::linspace<arma::colvec>(0, 15, 16);
-  module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module1.Parameters() = arma::mat(9 + 1, 1);
   module1.Reset();
   module1.Forward(input, output);
   // Value calculated using tensorflow.nn.conv2d_transpose().
@@ -3417,7 +3353,7 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
       2, 2, 5, 5, "VALID");
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 3, 4);
-  module2.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
+  module2.Parameters() = arma::mat(25 + 1, 1);
   module2.Parameters()(2) = 8.0;
   module2.Parameters()(4) = 6.0;
   module2.Parameters()(6) = 4.0;
@@ -3435,7 +3371,7 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
   TransposedConvolution module3(1, 1, 3, 3, 2, 2, 0, 0, 3, 3, 3, 3, "SAME");
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 8, 9);
-  module3.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module3.Parameters() = arma::mat(9 + 1, 1);
   module3.Reset();
   module3.Forward(input, output);
   REQUIRE(accu(output) == 0);
@@ -3452,7 +3388,7 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
     5, 5, 5, 5, "SAME");
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module4.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module4.Parameters() = arma::mat(9 + 1, 1);
   module4.Reset();
   module4.Forward(input, output);
   REQUIRE(accu(output) == 0);
@@ -3466,7 +3402,7 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
   TransposedConvolution module5(1, 1, 3, 3, 2, 2, 0, 0, 2, 2, 2, 2, "SAME");
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 3, 4);
-  module5.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
+  module5.Parameters() = arma::mat(25 + 1, 1);
   module5.Reset();
   module5.Forward(input, output);
   REQUIRE(accu(output) == 0);
@@ -3480,7 +3416,7 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
   TransposedConvolution module6(1, 1, 4, 4, 1, 1, 1, 1, 5, 5, 5, 5, "SAME");
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module6.Parameters() = arma::mat(16 + 1, 1, arma::fill::zeros);
+  module6.Parameters() = arma::mat(16 + 1, 1);
   module6.Reset();
   module6.Forward(input, output);
   REQUIRE(accu(output) == 0);

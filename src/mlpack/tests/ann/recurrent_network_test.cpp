@@ -362,7 +362,7 @@ TEST_CASE("LargeRhoValueRnnTest", "[RecurrentNetworkTest]")
     // Rows: number of dimensions.
     // Cols: number of sequences/points.
     // Slices: number of steps in sequences.
-    MatType result(numLetters, 1, strLen, arma::fill::zeros);
+    MatType result(numLetters, 1, strLen);
     for (size_t i = 0; i < strLen; ++i)
     {
       result.at(static_cast<arma::uword>(line[i]), 0, i) = 1.0;
@@ -375,7 +375,7 @@ TEST_CASE("LargeRhoValueRnnTest", "[RecurrentNetworkTest]")
     const auto strLen = strlen(line);
     // Responses for NegativeLogLikelihood should be
     // non-one-hot-encoded class IDs (from 0 to num_classes - 1).
-    MatType result(1, 1, strLen, arma::fill::zeros);
+    MatType result(1, 1, strLen);
     // The response is the *next* letter in the sequence.
     for (size_t i = 0; i < strLen - 1; ++i)
     {
