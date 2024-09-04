@@ -1304,9 +1304,12 @@ same API.  These can be used with, for instance, the
    distribution
  * [`DiagonalGaussianDistribution`](#diagonalgaussiandistribution):
    multidimensional Gaussian distribution with diagonal covariance
- * [`GammaDistribution`](#gammadistribution):
- * [`LaplaceDistribution`](#laplacedistribution):
- * [`RegressionDistribution`](#regressiondistribution):
+ * [`GammaDistribution`](#gammadistribution): multidimensional Gamma
+   distribution, includes exponential, Chi-squared, and Erlang distributions
+ * [`LaplaceDistribution`](#laplacedistribution): multidimensional Laplace
+   (double exponential) distribution
+ * [`RegressionDistribution`](#regressiondistribution): multidimensional
+   Gaussian distribution on the errors of a linear regression model
 
 ### `DiscreteDistribution`
 
