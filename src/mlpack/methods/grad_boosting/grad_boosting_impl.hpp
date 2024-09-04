@@ -125,9 +125,10 @@ void GradBoosting<MatType>::Classify(const VecType& point,
 {
   double tempPrediction = 0;
 
+  #pragma omp parallel for reduction(+:tempPrediction)
   for (size_t i = 0; i < weakLearners.size(); ++i) 
   {
-    VecType::elem_type p = weakLearners[i]->Predict(point);
+    double p = weakLearners[i]->Predict(point);
     tempPrediction += p;
   }
 
