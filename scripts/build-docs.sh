@@ -23,6 +23,8 @@ template_html_header="${output_dir}/template.html.header";
 template_html_footer="${output_dir}/template.html.footer";
 template_html_sidebar="${output_dir}/template.html.sidebar";
 
+env
+
 if ! command -v kramdown &>/dev/null
 then
   echo "kramdown not installed!  Cannot build documentation.";
