@@ -176,7 +176,8 @@ with the bounds represented as `double`s.
 ---
 
  * To use ranges with different element types (e.g. `float`), use the type
-   `RangeType<float>` or similar.
+   `RangeType<float>` or similar.  Return types of functions will be the
+   specified element type.
 
 ---
 
@@ -2569,6 +2570,10 @@ The `HRectBound` class represents a hyper-rectangle bound; that is, a
 rectangle-shaped bound in arbitrary dimensions (e.g. a "box").  An `HRectBound`
 can be used to perform a variety of distance-based bounding tasks.
 
+`HRectBound` is used directly by the [`KDTree`](#kdtree) class.
+
+---
+
 #### Constructors
 
 `HRectBound` allows configurable behavior via its two template parameters:
@@ -2579,6 +2584,8 @@ HRectBound<DistanceType, ElemType>
 
 Different constructor forms can be used to specify different template parameters
 (and thus different bound behavior).
+
+---
 
  * `b = HRectBound(dimensionality)`
    - Construct an `HRectBound` with the given `dimensionality`.
@@ -2658,6 +2665,7 @@ accessed and modified.
    [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
 ***Note:*** if a custom `ElemType` was specified in the constructor, then:
+
  * `b[dim]` will return a `RangeType<ElemType>`;
  * `b.MinWidth()`, `b.Volume()`, and `b.Diameter()` will return `ElemType`; and
  * `b.Center(center)` expects `center` to be of type `arma::Col<ElemType>`.
@@ -2676,8 +2684,8 @@ operations with data points or other bounds.
    necessary.
 
  * `b |= bound` expands `b` to fully include `bound`, where `bound` is another
-   `HRectBound`.  The expansion operation is minimal, so `b` is not expanded any
-   more than necessary.
+   `HRectBound`.  The expansion/union operation is minimal, so `b` is not
+   expanded any more than necessary.
 
  * `b & bound` returns a new `HRectBound` whose bounding hyper-rectangle is the
    intersection of the bounding hyperrectangles of `b` and `bound`.  If `b` and
@@ -2687,7 +2695,7 @@ operations with data points or other bounds.
    intersection with `bound`.)
 
 ***Note:*** when another bound is passed, it must have the same type as `b`; so,
-if custom `DistanceType` and `ElemType`s were specified, then `bound` must have
+if a custom `DistanceType` and `ElemType` were specified, then `bound` must have
 type `HRectBound<DistanceType, ElemType>`.
 
 ---
@@ -2705,12 +2713,10 @@ distance between a `HRectBound` and other objects.
    - When passing another `bound`, `true` will be returned if `bound` even
      partially overlaps with `b`.
 
-TODO: working here
-
  * `b.MinDistance(point)`
  * `b.MinDistance(bound)`
-   - Compute the minimum possible distance between `b` and either a `point` (an
-     `arma::vec`) or another `bound` (an `HRectBound`).
+   - Return a `double` whose value is the minimum possible distance between `b`
+     and either a `point` (an `arma::vec`) or another `bound` (an `HRectBound`).
    - The minimum distance between `b` and another point or bound is the length
      of the shortest possible line that can connect the other point or bound to
      `b`.
@@ -2719,87 +2725,548 @@ TODO: working here
 
  * `b.MaxDistance(point)`
  * `b.MaxDistance(bound)`
-   - Compute the maximum possible distance between `b` and either a `point` (an
-     `arma::vec`) or another `bound` (an `HRectBound`).
-   - The maximum distance between `b` and another point or bound is the length
-     of the longest possible line that can connect the other point or bound to
-     `b`.  This longest possible line is allowed to pass through 
+   - Return a `double` whose value is the maximum possible distance between `b`
+     and either a `point` (an `arma::vec`) or another `bound` (an `HRectBound`).
+   - The maximum distance between `b` and a given `point` is the furthest
+     possible distance between `point` and any possible point falling within the
+     bounding hyperrectangle of `b`.
+   - The maximum distance between `b` and another `bound` is the furthest
+     possible distance between any possible point falling within the bounding
+     hyperrectangle of `b`, and any possible point falling within the bounding
+     hyperrectangle of `bound`.
+   - Note that this definition means that even if `b.Contains(point)` or
+     `b.Contains(bound)` is `true`, the maximum distance may be greater than
+     `0`.
 
  * `b.RangeDistance(point)`
  * `b.RangeDistance(bound)`
-
+   - Compute the minimum and maximum distance between `b` and `point` or
+     `bound`, returning the result as a [`Range`](#range) object.
+   - This is more efficient than calling `b.MinDistance()` and
+     `b.MaxDistance()`.
 
  * `b.Overlap(bound)`
+   - Returns a `double` whose value is the volume of overlap of `b` and the
+     given `bound`.
+   - This is equivalent to `(b & bound).Volume()` (but more efficient!).
+
+***Note:*** if a custom `DistanceType` and `ElemType` were specified in the
+constructor, then all distances will be computed with respect to the specified
+`DistanceType` and all return values will either be `ElemType` or
+[`RangeType<ElemType>`](#range) (except for `Contains()`, which will still
+return a `bool`).
 
 ---
 
 #### Example usage
 
+```c++
+// Create a bound that is the unit cube in 3 dimensions, by setting the values
+// manually.  The bounding range for all three dimensions is [0.0, 1.0].
+mlpack::HRectBound b(3);
+b[0] = Range(0.0, 1.0);
+b[1].Lo() = 0.0;
+b[1].Hi() = 1.0;
+b[2] = b.dim[1];
+// The minimum width is not correct if we modify bound dimensions manually, so
+// we have to recompute it.
+b.RecomputeMinWidth();
+
+std::cout << "Bounding box created manually:" << std::endl;
+for (size_t i = 0; i < 3; ++i)
+{
+  std::cout << " - Dimension " << i << ": [" << b[i].Lo() << ", " << b[i].Hi()
+      << "]." << std::endl;
+}
+
+// Create a small dataset of 5 points, and then create a bound that contains all
+// of those points.
+arma::mat dataset(3, 5);
+dataset.col(0) = arma::vec("2.0 2.0 2.0");
+dataset.col(1) = arma::vec("2.5 2.5 2.5");
+dataset.col(2) = arma::vec("3.0 2.0 3.0");
+dataset.col(3) = arma::vec("2.0 3.0 2.0");
+dataset.col(4) = arma::vec("3.0 3.0 3.0");
+
+// The bounding box of `dataset` is [2.0, 3.0] in all three dimensions.
+mlpack::HRectBound b2(3);
+b2 |= dataset;
+
+std::cout << "Bounding box created on dataset:" << std::endl;
+for (size_t i = 0; i < 3; ++i)
+{
+  std::cout << " - Dimension " << i << ": [" << b2[i].Lo() << ", " << b2[i].Hi()
+      << "]." << std::endl;
+}
+
+// Create a new bound that is the union of the two bounds.
+mlpack::HRectBound b3 = b;
+b3 |= b2;
+
+std::cout << "Union-ed bounding box:" << std::endl;
+for (size_t i = 0; i < 3; ++i)
+{
+  std::cout << " - Dimension " << i << ": [" << b3[i].Lo() << ", " << b3[i].Hi()
+      << "]." << std::endl;
+}
+
+// Create a new bound that is the intersection of the two bounds (this will be
+// empty!).
+mlpack::HRectBound b4 = (b & b2);
+
+std::cout << "Intersection bounding box:" << std::endl;
+for (size_t i = 0; i < 3; ++i)
+{
+  std::cout << " - Dimension " << i << ": [" << b4[i].Lo() << ", " << b4[i].Hi()
+      << "]." << std::endl;
+}
+
+// Print statistics about the union bound and intersection bound.
+std::cout << "Union-ed bound details:" << std::endl;
+std::cout << " - Dimensionality: " << b3.Dim() << "." << std::endl;
+std::cout << " - Minimum width: " << b3.MinWidth() << "." << std::endl;
+std::cout << " - Diameter: " << b3.Diameter() << "." << std::endl;
+std::cout << " - Volume: " << b3.Volume() << "." << std::endl;
+arma::vec center;
+b3.Center(center);
+std::cout << " - Center: " << center.t();
+std::cout << std::endl;
+
+std::cout << "Intersection bound details:" << std::endl;
+std::cout << " - Dimensionality: " << b4.Dim() << "." << std::endl;
+std::cout << " - Minimum width: " << b4.MinWidth() << "." << std::endl;
+std::cout << " - Diameter: " << b4.Diameter() << "." << std::endl;
+std::cout << " - Volume: " << b4.Volume() << "." << std::endl;
+b4.Center(center);
+std::cout << " - Center: " << center.t();
+std::cout << std::endl;
+
+// Compute the minimum distance between a point inside the unit cube and the
+// unit cube bound.
+const double d1 = b.MinDistance(arma::vec("0.5 0.5 0.5"));
+std::cout << "Minimum distance between unit cube bound and [0.5, 0.5, 0.5]: "
+    << d1 << "." << std::endl;
+
+// Use Contains().  In this case, the 'else' will be taken.
+if (b.Contains(arma::vec("1.5 1.5 1.5")))
+  std::cout << "Unit cube bound contains [1.5, 1.5, 1.5]." << std::endl;
+else
+  std::cout << "Unit cube does not contain [1.5, 1.5, 1.5]." << std::endl;
+std::cout << std::endl;
+
+// Compute the maximum distance between a point inside the unit cube and the
+// unit cube bound.
+const double d2 = b.MaxDistance(arma::vec("0.5 0.5 0.5"));
+std::cout << "Maximum distance between unit cube bound and [0.5, 0.5, 0.5]: "
+    << d2 << "." << std::endl;
+
+// Compute the minimum and maximum distances between the unit cube bound and the
+// bound built on data points.
+const mlpack::Range r = b.RangeDistance(b2);
+std::cout << "Distances between unit cube bound and dataset bound: [" << r.Lo()
+    << ", " << r.Hi() << "]." << std::endl;
+
+// Compute the overlap of various bounds.
+const double o1 = b.Overlap(b2); // This will be 0: the bounds don't overlap.
+const double o2 = b.Overlap(b3); // This will be 1; b3 fully covers b.
+const double o3 = b3.Overlap(b); // This will be between 0 and 1; b does not
+                                 // fully cover b3.
+std::cout << "Overlap of unit cube and data bound: " << o1 << "." << std::endl;
+std::cout << "Overlap of unit cube and union bound: " << o2 << "." << std::endl;
+std::cout << "Overlap of union bound and unit cube: " << o3 << "." << std::endl;
+
+// Create a bound using the Manhattan (L1) distance and compute the minimum and
+// maximum distance to a point.
+mlpack::HRectBound<mlpack::ManhattanDistance> mb;
+mb |= data; // This will set the bound to [2.0, 3.0] in every dimension.
+const mlpack::Range r2 = mb.RangeDistance(arma::vec("1.5 1.5 4.0"));
+std::cout << "Distance between Manhattan distance HRectBound and "
+    << "[1.5, 1.5, 4.0]: [" << r2.Lo() << ", " << r2.Hi() << "]." << std::endl;
+
+// Create a bound using the Chebyshev (L-inf) distance, using 32-bit floating
+// point elements, and compute the minimum and maximum distance to a point.
+mlpack::HRectBound<mlpack::ChebyshevDistance, float> cb;
+cb |= data; // This will set the bound to [2.0, 3.0] in every dimension.
+// Note the use of arma::fvec to represent a point, since ElemType is float.
+const mlpack::Range r3 = cb.RangeDistance(arma::fvec("1.5 1.5 4.0"));
+std::cout << "Distance between Chebyshev distance HRectBound and "
+    << "[1.5, 1.5, 4.0]: [" << r3.Lo() << ", " << r3.Hi() << "]." << std::endl;
+```
+
 ---
 
 ### `KDTree`
 
- * Template parameters:
-   - DistanceType
-   - StatisticType
-   - MatType
+<!-- TODO: link to knn.md once it's done -->
 
- * `KDTree(data, maxLeafSize)`
- * `KDTree(data, oldFromNew, maxLeafSize)`
- * `KDTree(data, olkdFromNew, newFromOld, maxLeafSize)`
- * serialization
- * construct directly from archive?
- * `t.Bound()` --> must also document `HRectBound`
- * `t.Stat()`
- * `t.IsLeaf()`
- * `t.Left()`
- * `t.Right()`
- * `t.Parent()`
- * `t.Dataset()`
- * `t.Distance()`
- * `t.NumChildren()`
- * `t.GetNearestChild(vec)`
- * `t.GetNearestChild(node)`
- * `t.GetFurthestChild(vec)`
- * `t.GetFurthestChild(node)`
- * `t.FurthestPointDistance()`
- * `t.FurthestDescendantDistance()`
- * `t.MinimumBoundDistance()`
- * `t.ParentDistance()`
- * `t.Child(i)`
- * `t.NumPoints()`
- * `t.NumDescendants()`
- * `t.Descendant(i)`
- * `t.Point(i)`
- * `t.MinDistance(node)`
- * `t.MaxDistance(node)`
- * `t.RangeDistance(node)`
- * `t.MinDistance(point)`
- * `t.MaxDistance(point)`
- * `t.RangeDistance(point)`
- * `t.Begin()`
- * `t.Count()`
- * `t.Center(center)`
+The `KDTree` class represents a `k`-dimensional binary space partitioning tree,
+and is a well-known data structure for efficient distance operations (such as
+nearest neighbor search) in low dimensions---typically less than 100.
 
- * Typedefs: (not sure if needed?)
-   - Mat
-   - ElemType
-   - Split
+mlpack's `KDTree` implementation supports three template parameters for
+configurable behavior, and implements all the functionality required by the
+[TreeType API](../developer/trees.md#the-treetype-api), plus some additional
+functionality specific to kd-trees.
 
- * Traversers:
-   - single-tree
-     * RuleType
-     * `st.Traverse(queryIndex, refNode)`
-   - dual-tree
-     * RuleType
-     * `dt.Traverse(queryNode, refNode)`
-   - breadth-first dual-tree
-     * RuleType
-     * `dt.Traverse(queryNode, refNode)`
+#### See also:
 
-----
-Underlying `BinarySpaceTree`:
+<!-- TODO: add links to all distance-based algorithms and other trees? -->
 
- * Template parameters:
-   - BoundType
-   - SplitType
+ * [kd-tree on Wikipedia](https://en.wikipedia.org/wiki/Kd-tree)
+ * [Binary space partitioning on Wikipedia](https://dl.acm.org/doi/pdf/10.1145/361002.361007)
+ * [original kd-tree paper (pdf)](https://dl.acm.org/doi/pdf/10.1145/361002.361007)
+ * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
+
+#### Template parameters
+
+In accordance with the [TreeType
+API](../developer/trees.md#template-parameters-required-by-the-treetype-policy),
+the `KDTree` class takes three template parameters:
+
+```
+KDTree<DistanceType, StatisticType, MatType>
+```
+
+ * `DistanceType`: the [distance metric](#distances) to use for distance
+   computations.  For the `KDTree`, this must be an [`LMetric`](#lmetric).  By
+   default, this is [`EuclideanDistance`](#lmetric).
+ * `StatisticType`: this holds auxiliary information in each tree node.  By
+   default, [`EmptyStatistic`](#emptystatistic) is used, which holds no
+   information.
+ * `MatType`: the type of matrix used to represent points.  Must be a type
+   matching the [Armadillo API](matrices.md).  By default, `arma::mat` is used,
+   but other types such as `arma::fmat` or similar will work just fine.
+
+The `KDTree` class itself is a convenience typedef of the generic
+[`BinarySpaceTree`](/src/mlpack/core/tree/binary_space_tree/binary_space_tree.hpp)
+class, using the [`HRectBound`](#hrectbound) class as the bounding structure,
+and using the
+[`MidpointSplit`](/src/mlpack/core/tree/binary_space_tree/midpoint_split.hpp)
+splitting strategy for construction,
+which splits a node in the dimension of maximum variance on the midpoint of the
+bound's range in that dimension.
+
+#### Constructors
+
+`KDTree`s are efficiently constructed by permuting points in a dataset in a
+quicksort-like algorithm.  However, this means that the ordering of points in
+the tree's dataset (accessed with `node.Dataset()`) after construction may be
+different.
+
+---
+
+ * `node = KDTree(data, maxLeafSize=20)`
+ * `node = KDTree(data, oldFromNew, maxLeafSize=20)`
+ * `node = KDTree(data, oldFromNew, newFromOld, maxLeafSize=20)`
+   - Construct a `KDTree` on the given `data`, using `maxLeafSize` as the
+     maximum number of points held in a leaf.
+   - By default, `data` is copied.  Avoid a copy by using `std::move()` (e.g.
+     `std::move(data)`); when doing this, `data` will be set to an empty matrix.
+   - Optionally, construct mappings from old points to new points.  `oldFromNew`
+     and `newFromOld` will have length `data.n_cols`, and:
+     * `oldFromNew[i]` indicates that point `i` in the tree's dataset was
+       originally point `oldFromNew[i]` in `data`; that is,
+       `node.Dataset().col(i)` is the point `data.col(oldFromNew[i])`.
+     * `newFromOld[i]` indicates that point `i` in `data` is now point
+       `newFromOld[i]` in the tree's dataset; that is,
+       `node.Dataset().col(newFromOld[i])` is the point `data.col(i)`.
+
+---
+
+ * `node = KDTree<DistanceType, StatisticType, MatType>(data, maxLeafSize=20)`
+ * `node = KDTree<DistanceType, StatisticType, MatType>(data, oldFromNew, maxLeafSize=20)`
+ * `node = KDTree<DistanceType, StatisticType, MatType>(data, oldFromNew, newFromOld, maxLeafSize=20)`
+   - Construct a `KDTree` on the given `data`, using custom template parameters
+     to control the behavior of the tree, using `maxLeafSize` as the maximum
+     number of points held in a leaf.
+   - By default, `data` is copied.  Avoid a copy by using `std::move()` (e.g.
+     `std::move(data)`); when doing this, `data` will be set to an empty matrix.
+   - Optionally, construct mappings from old points to new points.  `oldFromNew`
+     and `newFromOld` will have length `data.n_cols`, and:
+     * `oldFromNew[i]` indicates that point `i` in the tree's dataset was
+       originally point `oldFromNew[i]` in `data`; that is,
+       `node.Dataset().col(i)` is the point `data.col(oldFromNew[i])`.
+     * `newFromOld[i]` indicates that point `i` in `data` is now point
+       `newFromOld[i]` in the tree's dataset; that is,
+       `node.Dataset().col(newFromOld[i])` is the point `data.col(i)`.
+
+---
+
+***Notes:***
+
+ - The name `node` is used here for `KDTree` objects instead of `tree`, because
+   each `KDTree` object is a single node in the tree.  The constructor returns
+   the node that is the root of the tree.
+
+ - Inserting individual points or removing individual points from a `KDTree` is
+   not supported, because this generally results in a kd-tree with very loose
+   bounding boxes.  It is better to simply build a new `KDTree` on the modified
+   dataset.  For trees that support individual insertion and deletions, see the
+   `RectangleTree` class and all its variants (e.g. `RTree`, `RStarTree`, etc.).
+
+<!-- TODO: add links to RectangleTree above when it is documented -->
+
+---
+
+##### Constructor parameters:
+
+| **name** | **type** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) matrix to build the tree on.  Pass with `std::move(data)` to avoid copying the matrix. | _(N/A)_ |
+| `maxLeafSize` | `size_t` | Maximum number of points to store in each leaf. | `20` |
+| `oldFromNew` | `std::vector<size_t>` | Mappings from points in `data` to points in `tree.Dataset()`. | _(N/A)_ |
+| `newFromOld` | `std::vector<size_t>` | Mappings from points in `tree.Dataset()` to points in `data`. | _(N/A)_ |
+
+#### Basic tree properties
+
+Once a `KDTree` object is constructed, various properties of the tree can be
+accessed or inspected.  Many of these functions are required by the [TreeType
+API](../developer/trees.md#the-treetype-api).
+
+***Navigating the tree.***
+
+ * `node.NumChildren()` returns the number of children in `node`.  This is
+   either `2` if `node` has children, or `0` if `node` is a leaf.
+
+ * `node.IsLeaf()` returns a `bool` indicating whether or not `node` is a leaf.
+
+ * `node.Child(i)` returns a `KDTree&` that is the `i`th child.  `i` must be `0`
+   or `1`, and this should only be called if `node.NumChildren()` is not `0`
+   (e.g. if `node` is not a leaf).  Note that this returns a valid `KDTree&`
+   that can itself be used just like the root node of the tree!
+   - `node.Left()` and `node.Right()` are convenience functions specific to
+     `KDTree` that will return `KDTree*` (pointers) to the left and right
+     children, respectively, or `NULL` if `node` has no children.
+
+ * `node.Parent()` will return a `KDTree*` that points to the parent of `node`,
+   or `NULL` if `node` is the root of the `KDTree`.
+
+---
+
+***Accessing members of a tree.***
+
+ * `node.Bound()` will return an [`HRectBound&`](#hrectbound) object that
+   represents the hyperrectangle bounding box of `node`.  This is the smallest
+   hyperrectangle that encloses all the descendant points of `node`.
+
+ * `node.Stat()` will return an `EmptyStatistic&` (or a `StatisticType&` if a
+   [custom `StatisticType`](#template-parameters) was specified as a template
+   parameter) holding the statistics of the tree during construction.
+
+ * `node.Distance()` will return a [`EuclideanDistance&`](#lmetric) (or a
+   `DistanceType&` if a [custom `DistanceType`](#template-parameters) was
+   specified as a template parameter).
+   - This function is required by the
+     [TreeType API](../developer/trees.md#the-treetype-api), but given that
+     `KDTree` requires an [`LMetric`](#lmetric) to be used, and `LMetric` only
+     has `static` functions and holds no state, this function is not likely to
+     be useful.
+
+---
+
+***Accessing data held in a tree.***
+
+ * `node.Dataset()` will return a `const arma::mat&` that is the dataset the
+   tree was built on.  Note that this is a permuted version of the `data` matrix
+   passed to the constructor.
+   - If a [custom `MatType`](#template-parameters) is being used, the return
+     type will be `const MatType&` instead of `const arma::mat&`.
+
+ * `node.NumPoints()` returns a `size_t` indicating the number of points held
+   directly in `node`.
+   - If `node` is not a leaf, this will return `0`, as `KDTree` only holds
+     points directly in its leaves.
+   - If `node` is a leaf, then the number of points will be less than or equal
+     to the `maxLeafSize` that was specified when the tree was constructed.
+
+ * `node.Point(i)` returns a `size_t` indicating the index of the `i`'th point
+   in `node.Dataset()`.  `i` must be in the range `[0, node.NumPoints() - 1]`
+   (inclusive), and `node` must be a leaf (as non-leaves do not hold any
+   points).
+   - The `i`'th point in `node` can then be accessed as
+     `node.Dataset().col(node.Point(i))`.
+   - In a `KDTree`, because of the permutation of points done [during
+     construction](#constructors), point indices are contiguous:
+     `node.Point(i + j)` is the same as `node.Point(i) + j` for valid `i` and
+     `j`.
+   - Accessing the actual `i`'th point itself can be done with, e.g.,
+     `node.Dataset().col(node.Point(i))`.
+
+ * `node.NumDescendants()` returns a `size_t` indicating the number of points
+   held in all descendant leaves of `node`.
+   - If `node` is the root of the tree, then `node.NumDescendants()` will be
+     equal to `node.Dataset().n_cols`.
+
+ * `node.Descendant(i)` returns a `size_t` indicating the index of the `i`'th
+   descendant point in `node.Dataset()`.  `i` must be in the range
+   `[0, node.NumDescendants() - 1]` (inclusive).  `node` does not need to be a
+   leaf.
+   - The `i`'th descendant point in `node` can then be accessed as
+     `node.Dataset().col(node.Descendant(i))`.
+   - In a `KDTree`, because of the permutation of points done [during
+     construction](#constructors), point indices are contiguous:
+     `node.Descendant(i + j)` is the same as `node.Descendant(i) + j` for valid
+     `i` and `j`.
+   - Accessing the actual `i`'th descendant itself can be done with, e.g.,
+     `node.Dataset().col(node.Descendant(i))`.
+
+ * `node.Begin()` returns a `size_t` indicating the index of the first
+   descendant point of `node`.  This is equivalent to `node.Descendant(0)`.
+
+ * `node.Count()` returns a `size_t` indicating the number of descendant points    of `node`.  This is equivalent to `node.NumDescendants()`.
+
+---
+
+***Accessing computed bound quantities of a tree.***
+
+The following quantities are cached for each node in a `KDTree`, and so
+accessing them does not require any computation.
+
+ * `node.FurthestPointDistance()` returns a `double` representing the distance
+   between the center of the bounding hyperrectangle of `node` and the furthest
+   point held by `node`.
+   - If `node` is not a leaf, this returns 0 (because `node` does not hold any
+     points).
+   - For leaf nodes, this quantity is the maximum across `i` of
+     `node.Distance().Evaluate(node.Dataset().col(node.Point(i)), center)`,
+     where `center` is computed with `node.Center(center)`, and `i` is in the
+     range `[0, node.NumPoints() - 1]` (inclusive).
+
+ * `node.FurthestDescendantDistance()` returns a `double` representing the
+   distance between the center of the bounding hyperrectange of `node` and the
+   furthest descendant point held by `node`.
+   - This quantity is the maximum across `i` of
+     `node.Distance().Evaluate(node.Dataset().col(node.Descendant(i)), center)`,
+     where `center` is computed with `node.Center(center)`, and `i` is in the
+     range `[0, node.NumDescendants() - 1]` (inclusive).
+
+ * `node.MinimumBoundDistance()` returns a `double` representing minimum
+   possible distance from the center of the node to any edge of the
+   hyperrectangle bound.
+   - This quantity is half the width of the smallest dimension of
+     `node.Bound()`.
+
+ * `node.ParentDistance()` returns a `double` representing the distance between
+   the center of the bounding hyperrectangle of `node` and the center of the
+   bounding hyperrectangle of its parent.
+   - If `node` is the root of the tree, `0` is returned.
+
+***Note:*** if a [custom `MatType`](#template-parameters) was specified when
+constructing the `KDTree`, then the return type of each method is the element
+type of the given `MatType` instead of `double`.  (e.g., if `MatType` is
+`arma::fmat`, then the return type is `float`.)
+
+---
+
+***Other functionality.***
+
+ * `node.Center(center)` computes the center of the bounding hyperrectangle of
+   `node` and stores it in `center`.
+   - `center` should be of type `arma::vec&`.  (If a [custom
+     `MatType`](#template-parameters) was specified when constructing the
+     `KDTree`, the type is instead the column vector type for the given
+     `MatType`; e.g., `arma::fvec&` when `MatType` is `arma::fmat`.)
+   - `center` will be set to have size equivalent to the dimensionality of the
+     dataset held by `node`.
+   - This is equivalent to calling `node.Bound().Center(center)`.
+
+ * A `KDTree` can be serialized with
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+
+---
+
+#### Bounding distances with the tree
+
+The primary use of trees in mlpack is bounding distances to points or other tree
+nodes.  The following functions can be used for these tasks.
+
+ * `node.GetNearestChild(point)`
+ * `node.GetFurthestChild(point)`
+   - Return a `size_t` indicating the index of the child (`0` for left, `1` for
+     right) that is closest to (or furthest from) `point`, with respect
+     to the `MinDistance()` (or `MaxDistance()`) function.
+   - If there is a tie, `0` (the left child) is returned.
+   - If `node` is a leaf, `0` is returned.
+   - `point` should be of type `arma::vec`.  (If a [custom
+     `MatType`](#template-parameters) was specified when constructing the
+     `KDTree`, the type is instead the column vector type for the given
+     `MatType`; e.g., `arma::fvec` when `MatType` is `arma::fmat`.)
+
+ * `node.GetNearestChild(other)`
+ * `node.GetFurthestChild(other)`
+   - Return a `size_t` indicating the index of the child (`0` for left, `1` for
+     right) that is closest to (or furthest from) the `KDTree` node `other`,
+     with respect to the `MinDistance()` (or `MaxDistance()`) function.
+   - If there is a tie, `2` (an invalid index) is returned. ***Note that this
+     behavior differs from the version above that takes a point.***
+   - If `node` is a leaf, `0` is returned.
+
+---
+
+ * `node.MinDistance(point)`
+ * `node.MinDistance(other)`
+   - Return a `double` indicating the minimum possible distance between `node`
+     and `point`, or the `KDTree` node `other`.
+   - This is equivalent to the minimum possible distance between any point
+     contained in the bounding hyperrectangle of `node` and `point`, or between
+     any point contained in the bounding hyperrectangle of `node` and any point
+     contained in the bounding hyperrectangle of `other`.
+   - `point` should be of type `arma::vec`.  (If a [custom
+     `MatType`](#template-parameters) was specified when constructing the
+     `KDTree`, the type is instead the column vector type for the given
+     `MatType`, and the return type is the element type of `MatType`; e.g.,
+     `point` should be `arma::fvec` when `MatType` is `arma::fmat`, and the
+     returned distance is `float`).
+
+ * `node.MaxDistance(point)`
+ * `node.MaxDistance(other)`
+   - Return a `double` indicating the minimum possible distance between `node`
+     and `point`, or the `KDTree` node `other`.
+   - This is equivalent to the minimum possible distance between any point
+     contained in the bounding hyperrectangle of `node` and `point`, or between
+     any point contained in the bounding hyperrectangle of `node` and any point
+     contained in the bounding hyperrectangle of `other`.
+   - `point` should be of type `arma::vec`.  (If a [custom
+     `MatType`](#template-parameters) was specified when constructing the
+     `KDTree`, the type is instead the column vector type for the given
+     `MatType`, and the return type is the element type of `MatType`; e.g.,
+     `point` should be `arma::fvec` when `MatType` is `arma::fmat`, and the
+     returned distance is `float`).
+
+ * `node.RangeDistance(point)`
+ * `node.RangeDistance(other)`
+   - Return a [`Range`](#range) whose lower bound is `node.MinDistance(point)`
+     or `node.MinDistance(other)`, and whose upper bound is
+     `node.MaxDistance(point)` or `node.MaxDistance(other)`.
+   - `point` should be of type `arma::vec`.  (If a [custom
+     `MatType`](#template-parameters) was specified when constructing the
+     `KDTree`, the type is instead the column vector type for the given
+     `MatType`, and the return type is a `RangeType` with element type the same
+     as `MatType`; e.g., `point` should be `arma::fvec` when `MatType` is
+     `arma::fmat`, and the returned type is [`RangeType<float>`](#range)).
+
+---
+
+#### Tree traversals
+
+Like every mlpack tree, the `KDTree` class provides a [single-tree and dual-tree
+traversal](../developer/trees.md#traversals) that can be paired with a
+[`RuleType` class](../developer/trees.md#rules) to implement a single-tree or
+dual-tree algorithm.
+
+ * `KDTree::SingleTreeTraverser`
+   - Implements a depth-first single-tree traverser.
+
+ * `KDTree::DualTreeTraverser`
+   - Implements a dual-depth-first dual-tree traverser.
+
+In addition to those two classes, which are required by the
+[`TreeType` policy](../developer/trees.md), an additional traverser is
+available:
+
+ * `KDTree::BreadthFirstDualTreeTraverser`
+   - Implements a dual-breadth-first dual-tree traverser.
+   - ***Note:*** this traverser is not useful for all tasks; because the
+     `KDTree` only holds points in the leaves, this means that no base cases
+     (e.g. comparisons between points) will be called until *all* pairs of
+     intermediate nodes have been scored!
