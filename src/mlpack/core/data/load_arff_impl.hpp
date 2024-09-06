@@ -211,7 +211,8 @@ void LoadARFF(const std::string& filename,
 
     size_t col = 0;
     std::stringstream token;
-    for (std::vector<std::string>::iterator it = tok.begin(); it != tok.end(); ++it)
+    for (std::vector<std::string>::iterator it = tok.begin(); it != tok.end();
+         ++it)
     {
       // Check that we are not too many columns in.
       if (col >= matrix.n_rows)

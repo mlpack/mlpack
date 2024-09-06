@@ -465,11 +465,11 @@ TEST_CASE("RandomBinaryNumericSplitNoGainTest_", "[DecisionTreeRegressorTest]")
 }
 
 /**
- * Check that the BestBinaryCategoricalSplit will split perfectly 
- * when this is clearly possible. Category C₂ has response 2.0 
+ * Check that the BestBinaryCategoricalSplit will split perfectly
+ * when this is clearly possible. Category C₂ has response 2.0
  * and the rest are zero.
  */
-TEST_CASE("BestBinaryCategoricalSplitRegressionTwoPerfectTest", 
+TEST_CASE("BestBinaryCategoricalSplitRegressionTwoPerfectTest",
     "[DecisionTreeRegressorTest]")
 {
   size_t N = 3131;
@@ -481,33 +481,31 @@ TEST_CASE("BestBinaryCategoricalSplitRegressionTwoPerfectTest",
   arma::vec splitInfo;
   MSEGain gainFn;
 
-  arma::vec data = randi<arma::vec>(N, arma::distr_param(0,K-1));
-  arma::rowvec weights = arma::ones<arma::rowvec>(N); 
+  arma::vec data = randi<arma::vec>(N, arma::distr_param(0, K - 1));
+  arma::rowvec weights = arma::ones<arma::rowvec>(N);
   arma::rowvec response(N);
   for (size_t i = 0; i < N; ++i)
     response[i] = data[i] == 2 ? 2 : 0;
 
-  // Find the best binary split of the data. 
+  // Find the best binary split of the data.
   double bestGain = MSEGain::Evaluate<false>(response, weights);
   double gain = BestBinaryCategoricalSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, data, K, response, weights, minLeaf, 
-      EPSILON, splitInfo, aux, gainFn
-  );
-  double weightedGain = 
+      bestGain, data, K, response, weights, minLeaf,
+      EPSILON, splitInfo, aux, gainFn);
+  double weightedGain =
       BestBinaryCategoricalSplit<MSEGain>::SplitIfBetter<true>(
-          bestGain, data, K, response, weights, minLeaf, 
-          EPSILON, splitInfo, aux, gainFn
-  );
+          bestGain, data, K, response, weights, minLeaf,
+          EPSILON, splitInfo, aux, gainFn);
 
-  // The split into categories [(2), (0, 1, 3, ..., K-1)] would be 
-  // optimal, resulting in two pure children nodes, therefore the gain 
-  // should be zero here. Unity weights means that the gain is the same 
+  // The split into categories [(2), (0, 1, 3, ..., K-1)] would be
+  // optimal, resulting in two pure children nodes, therefore the gain
+  // should be zero here. Unity weights means that the gain is the same
   // with or without weights.
   REQUIRE(gain > bestGain);
   REQUIRE(gain == weightedGain);
   REQUIRE(gain == Approx(0.0).margin(EPSILON));
 
-  // CalculateDirection should now send all of C₂ to the 
+  // CalculateDirection should now send all of C₂ to the
   // one direction and the remaining Cⱼ to the other.
   arma::vec class1Data = arma::ones(N) * 2;
   arma::vec class1Direction(N);
@@ -528,11 +526,11 @@ TEST_CASE("BestBinaryCategoricalSplitRegressionTwoPerfectTest",
 /**
  * Check that no split is made when it doesn't get us anything.
  */
-TEST_CASE("BestBinaryCategoricalSplitRegressionNoGainTest", 
+TEST_CASE("BestBinaryCategoricalSplitRegressionNoGainTest",
     "[DecisionTreeRegressorTest]")
 {
   size_t N = 300;
-  size_t K = 10; 
+  size_t K = 10;
   double EPSILON = 1e-7;
   size_t minLeaf = 10;
 
@@ -555,14 +553,12 @@ TEST_CASE("BestBinaryCategoricalSplitRegressionNoGainTest",
   // Call the method to do the splitting.
   double bestGain = MSEGain::Evaluate<false>(response, weights);
   double gain = BestBinaryCategoricalSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, data, K, response, weights, minLeaf, 
-      EPSILON, splitInfo, aux, gainFn
-  );
-  double weightedGain = 
+      bestGain, data, K, response, weights, minLeaf,
+      EPSILON, splitInfo, aux, gainFn);
+  double weightedGain =
       BestBinaryCategoricalSplit<MSEGain>::SplitIfBetter<true>(
-          bestGain, data, K, response, weights, minLeaf, 
-          EPSILON, splitInfo, aux, gainFn
-  );
+          bestGain, data, K, response, weights, minLeaf,
+          EPSILON, splitInfo, aux, gainFn);
 
   // Make sure that there was no split.
   REQUIRE(gain == DBL_MAX);
@@ -571,13 +567,13 @@ TEST_CASE("BestBinaryCategoricalSplitRegressionNoGainTest",
 }
 
 /**
- * Make sure that BestBinaryCategoricalSplit respects the minimum number 
- * of samples required to split. 
+ * Make sure that BestBinaryCategoricalSplit respects the minimum number
+ * of samples required to split.
  */
-TEST_CASE("BestBinaryCategoricalSplitRegressionMinSamplesTest", 
+TEST_CASE("BestBinaryCategoricalSplitRegressionMinSamplesTest",
     "[DecisionTreeRegressorTest]")
 {
-  size_t K = 4; 
+  size_t K = 4;
   double EPSILON = 1e-7;
   size_t minLeaf = 8;
 
@@ -592,14 +588,12 @@ TEST_CASE("BestBinaryCategoricalSplitRegressionMinSamplesTest",
   // Call the method to do the splitting.
   double bestGain = MSEGain::Evaluate<false>(response, weights);
   double gain = BestBinaryCategoricalSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, data, K, response, weights, minLeaf, 
-      EPSILON, splitInfo, aux, gainFn
-  );
-  double weightedGain = 
+      bestGain, data, K, response, weights, minLeaf,
+      EPSILON, splitInfo, aux, gainFn);
+  double weightedGain =
       BestBinaryCategoricalSplit<MSEGain>::SplitIfBetter<true>(
-          bestGain, data, K, response, weights, minLeaf, 
-          EPSILON, splitInfo, aux, gainFn
-  );
+          bestGain, data, K, response, weights, minLeaf,
+          EPSILON, splitInfo, aux, gainFn);
 
   // Make sure it's not split.
   REQUIRE(gain == DBL_MAX);
@@ -627,7 +621,7 @@ TEST_CASE("BestCategoricalBuildTest_", "[DecisionTreeRegressorTest]")
 
   // Build the tree.
   DecisionTreeRegressor<
-      MSEGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit> 
+      MSEGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit>
           tree(trainingData, di, trainingResponses, minLeaf);
 
   // Now evaluate the quality of predictions.
@@ -661,7 +655,7 @@ TEST_CASE("BestCategoricalWeightedBuildTest_", "[DecisionTreeRegressorTest]")
 
   // Build the tree.
   DecisionTreeRegressor<
-      MSEGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit> 
+      MSEGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit>
           tree(trainingData, di, trainingResponses, weights, minLeaf);
 
   // Now evaluate the quality of predictions.
@@ -678,7 +672,7 @@ TEST_CASE("BestCategoricalWeightedBuildTest_", "[DecisionTreeRegressorTest]")
  * Test that we can build a decision tree on a simple categorical dataset using
  * weights, with low-weight noise added, using the BestBinaryCategoricalSplit.
  */
-TEST_CASE("BestCategoricalNoisyWeightedBuildTest_", 
+TEST_CASE("BestCategoricalNoisyWeightedBuildTest_",
     "[DecisionTreeRegressorTest]")
 {
   arma::mat d;
@@ -718,7 +712,7 @@ TEST_CASE("BestCategoricalNoisyWeightedBuildTest_",
 
   // Build the tree.
   DecisionTreeRegressor<
-      MSEGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit> 
+      MSEGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit>
           tree(fullData, di, fullResponses, weights, minLeaf);
 
   // Now evaluate the quality of predictions.

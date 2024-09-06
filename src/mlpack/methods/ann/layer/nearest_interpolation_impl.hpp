@@ -32,7 +32,7 @@ NearestInterpolationType(const std::vector<double> scaleFactors) :
 {
   if (scaleFactors.size() != 2) {
     throw std::runtime_error("Scale factors must have 2 dimensions");
-  }  
+  }
   this->scaleFactors = std::move(scaleFactors);
 }
 
@@ -42,7 +42,7 @@ NearestInterpolationType(const NearestInterpolationType& other) :
   Layer<MatType>(),
   scaleFactors(other.scaleFactors)
 {
-  // Nothing to do here. 
+  // Nothing to do here.
 }
 
 template<typename MatType>
@@ -57,7 +57,7 @@ NearestInterpolationType(NearestInterpolationType&& other) :
 template<typename MatType>
 NearestInterpolationType<MatType>&
 NearestInterpolationType<MatType>::
-operator=(const NearestInterpolationType& other) 
+operator=(const NearestInterpolationType& other)
 {
   if (&other != this)
   {
@@ -70,7 +70,7 @@ operator=(const NearestInterpolationType& other)
 template<typename MatType>
 NearestInterpolationType<MatType>&
 NearestInterpolationType<MatType>::
-operator=(NearestInterpolationType&& other) 
+operator=(NearestInterpolationType&& other)
 {
   if (&other != this)
   {
@@ -130,7 +130,8 @@ void NearestInterpolationType<MatType>::Backward(
   arma::cube gradientAsCube;
 
   MakeAlias(outputAsCube, output, inRowSize, inColSize, channels, 0, true);
-  MakeAlias(gradientAsCube, gradient, outRowSize, outColSize, channels, 0, false);
+  MakeAlias(gradientAsCube, gradient, outRowSize, outColSize, channels, 0,
+      false);
 
   for (size_t i = 0; i < outRowSize; ++i)
   {
@@ -149,18 +150,19 @@ void NearestInterpolationType<MatType>::Backward(
 template<typename MatType>
 void NearestInterpolationType<MatType>::ComputeOutputDimensions()
 {
-  if (this->inputDimensions.size() < scaleFactors.size()) {
+  if (this->inputDimensions.size() < scaleFactors.size())
+  {
     std::ostringstream oss;
     oss << "NearestInterpolation::ComputeOutputDimensions(): input dimensions "
-        << "must be at least 2 (received input with " << this->inputDimensions.size()
-        << " dimensions)!";
+        << "must be at least 2 (received input with "
+        << this->inputDimensions.size() << " dimensions)!";
     throw std::runtime_error(oss.str());
   }
   this->outputDimensions = this->inputDimensions;
   for (size_t i = 0; i < scaleFactors.size(); i++)
   {
     this->outputDimensions[i] = std::round(
-      (double)this->outputDimensions[i] * scaleFactors[i]);
+      (double) this->outputDimensions[i] * scaleFactors[i]);
   }
 }
 

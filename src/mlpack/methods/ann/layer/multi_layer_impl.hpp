@@ -277,11 +277,11 @@ void MultiLayer<MatType>::CustomInitialize(
     Log::Assert(start + weightSize <= totalWeightSize,
         "FNN::CustomInitialize(): parameter size does not match total layer "
         "weight size!");
-    
+
     MatType WTemp;
     MakeAlias(WTemp, W, weightSize, 1, start);
     network[i]->CustomInitialize(WTemp, weightSize);
-    
+
     start += weightSize;
   }
 

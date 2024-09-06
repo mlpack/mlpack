@@ -58,7 +58,7 @@ TEST_CASE("AddMergeTestCase", "[ANNLayerTest]")
                         { 7.0,  5.0 } };
 
   arma::mat result2 = { { 1.5,  8.5 },
-                        { 3.5,  8.0 }, 
+                        { 3.5,  8.0 },
                         { 5.5, 12.0 } };
 
   arma::mat output1, output2;
@@ -74,8 +74,8 @@ TEST_CASE("AddMergeTestCase", "[ANNLayerTest]")
   CheckMatrices(output2, result2, 1e-1);
 
   arma::mat prevDelta1 = { { 3.6, -0.9 },
-                           { 3.6, -0.9 }, 
-                           { 3.6, -0.9 }, 
+                           { 3.6, -0.9 },
+                           { 3.6, -0.9 },
                            { 3.6, -0.9 } };
 
   arma::mat prevDelta2 = { { 3.6, -0.9 },

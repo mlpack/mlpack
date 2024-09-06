@@ -24,11 +24,11 @@ namespace cli {
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* /* junk */,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type* /* junk */,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* /* junk */,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type*,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
     const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* /* junk */)
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   std::cout << data.name << ": " << *std::any_cast<T>(&data.value)
       << std::endl;
@@ -38,7 +38,7 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type* /* junk */)
+    const typename std::enable_if<util::IsStdVector<T>::value>::type*)
 {
   std::cout << data.name << ": ";
   const T& t = *std::any_cast<T>(&data.value);
@@ -51,7 +51,7 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* /* junk */)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
 {
   typedef std::tuple<T, std::tuple<std::string, size_t, size_t>> TupleType;
   const T& output = std::get<0>(*std::any_cast<TupleType>(&data.value));
@@ -71,8 +71,8 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* /* junk */,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* /* junk */)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type*)
 {
   // The const cast is necessary here because Serialize() can't ever be marked
   // const.  In this case we can assume it though, since we will be saving and

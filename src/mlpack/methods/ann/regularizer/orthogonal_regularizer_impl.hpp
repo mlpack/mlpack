@@ -34,7 +34,8 @@ void OrthogonalRegularizer::Evaluate(const MatType& weight, MatType& gradient)
     {
       if (i == j)
       {
-        double s = arma::as_scalar(sign((weight.row(i) * weight.row(i).t()) - 1));
+        double s = arma::as_scalar(
+            sign((weight.row(i) * weight.row(i).t()) - 1));
         grad.row(i) += 2 * s * weight.row(i);
       }
       else

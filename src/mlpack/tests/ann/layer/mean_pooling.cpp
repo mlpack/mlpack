@@ -75,7 +75,7 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   arma::mat prevDelta2 = { { 3.6, -0.9 },
                            { 3.6, -0.9 },
                            { 3.6, -0.9 } };
-  
+
   arma::mat delta1, delta2;
   delta1.set_size(28, 1);
   delta2.set_size(28, 1);

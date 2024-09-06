@@ -105,7 +105,7 @@ class OrthogonalInitialization
     for (size_t i = 0; i < W.n_slices; ++i)
       Initialize(W.slice(i));
   }
- 
+
   /**
    * Serialize the initialization.
    */

@@ -283,7 +283,7 @@ class Layer
 
   //! Get the number of elements in the output from this layer.  This cannot be
   //! overloaded!  Overload `ComputeOutputDimensions()` instead.
-  virtual size_t OutputSize() final
+  size_t OutputSize() final
   {
     if (!validOutputDimensions)
     {

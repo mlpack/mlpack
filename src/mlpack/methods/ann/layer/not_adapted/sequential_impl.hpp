@@ -139,8 +139,7 @@ Gradient(const InputType& input,
     network[network.size() - i]->Gradient(
         layerOutputs[network.size() - i - 1],
         layerDeltas[network.size() - i + 1],
-        layerGradients[network.size() - i]
-    );
+        layerGradients[network.size() - i]);
   }
 
   network.front()->Gradient(input, layerDeltas[1], layerGradients.front());

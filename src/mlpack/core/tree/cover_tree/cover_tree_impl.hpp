@@ -1137,12 +1137,12 @@ template<
     typename RootPointPolicy
 >
 inline void
-CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
-    arma::Col<size_t>& indices,
-    arma::vec& distances,
-    size_t nearSetSize,
-    size_t& farSetSize,
-    size_t& usedSetSize)
+CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
+    CreateChildren(arma::Col<size_t>& indices,
+                   arma::vec& distances,
+                   size_t nearSetSize,
+                   size_t& farSetSize,
+                   size_t& usedSetSize)
 {
   // Determine the next scale level.  This should be the first level where there
   // are any points in the far set.  So, if we know the maximum distance in the

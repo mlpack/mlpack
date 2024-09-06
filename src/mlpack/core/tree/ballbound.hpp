@@ -219,7 +219,7 @@ template<typename DistanceType, typename VecType>
 struct BoundTraits<BallBound<DistanceType, VecType>>
 {
   //! These bounds are potentially loose in some dimensions.
-  const static bool HasTightBounds = false;
+  static const bool HasTightBounds = false;
 };
 
 } // namespace mlpack

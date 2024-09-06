@@ -213,7 +213,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
     const size_t leafSize = size_t(lsInt);
 
-    rs->BuildModel(timers, std::move(referenceSet), leafSize, naive, singleMode);
+    rs->BuildModel(timers, std::move(referenceSet), leafSize, naive,
+        singleMode);
   }
   else
   {

@@ -120,7 +120,7 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
 {
   if (lambda.has_value())
     this->lambda = lambda.value();
-  
+
   if (intercept.has_value())
     this->intercept = intercept.value();
 

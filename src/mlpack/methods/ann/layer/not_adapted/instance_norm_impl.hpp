@@ -66,8 +66,8 @@ void InstanceNorm<InputDataType, OutputDataType>::Forward(
   // height and width of each image respectively.
   if (input.n_cols != batchSize)
   {
-    Log::Fatal << "Must use the same BatchSize that was used in the constructor."
-        << std::endl;
+    Log::Fatal << "Must use the same BatchSize that was used in the "
+        << "constructor." << std::endl;
   }
 
   if (!reset)
@@ -122,9 +122,9 @@ void InstanceNorm<InputDataType, OutputDataType>::Gradient(
   const size_t shapeA = input.n_rows;
   const size_t shapeB = input.n_cols;
 
-  arma::mat inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(), 
+  arma::mat inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(),
       shapeA * shapeB, 1, false, false);
-  arma::mat errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(), 
+  arma::mat errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(),
       shapeA * shapeB, 1, false, false);
   batchNorm.Gradient(inputTemp, errorTemp, gradient);
 }

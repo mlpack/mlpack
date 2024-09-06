@@ -51,7 +51,7 @@ template<typename RangeSearchType = RangeSearch<>,
 class DBSCAN
 {
  public:
-   //! Easy access to the MatType.
+  //! Easy access to the MatType.
   typedef typename RangeSearchType::Mat MatType;
   //! Easy access to Element Type of the matrix.
   typedef typename RangeSearchType::Mat::elem_type ElemType;

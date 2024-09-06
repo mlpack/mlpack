@@ -62,8 +62,7 @@ inline double Radical::Vasicek(arma::vec& z) const
   return sum;
 }
 
-
-inline double Radical::DoRadical2D(const arma::mat& matX, 
+inline double Radical::DoRadical2D(const arma::mat& matX,
                                    util::Timers& timers)
 {
   timers.Start("radical_copy_and_perturb");

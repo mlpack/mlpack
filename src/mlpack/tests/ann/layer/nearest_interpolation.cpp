@@ -47,11 +47,11 @@ TEST_CASE("NearestInterpolationLayerTest", "[ANNLayerTest]")
 
   layer.InputDimensions() = { inRowSize, inColSize, channels };
   layer.ComputeOutputDimensions();
-  
-  expectedOutput  << 1.0000 << 1.0000 << 2.0000 << 2.0000
-		  << 1.0000 << 1.0000 << 2.0000 << 2.0000
-		  << 3.0000 << 3.0000 << 4.0000 << 4.0000
-		  << 3.0000 << 3.0000 << 4.0000 << 4.0000 << arma::endr;
+
+  expectedOutput << 1.0000 << 1.0000 << 2.0000 << 2.0000
+                 << 1.0000 << 1.0000 << 2.0000 << 2.0000
+                 << 3.0000 << 3.0000 << 4.0000 << 4.0000
+                 << 3.0000 << 3.0000 << 4.0000 << 4.0000 << arma::endr;
 
   expectedOutput.reshape(16, 1);
   layer.Forward(input, output);

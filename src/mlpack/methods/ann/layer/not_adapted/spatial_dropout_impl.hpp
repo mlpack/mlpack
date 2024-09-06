@@ -47,8 +47,8 @@ template<typename InputType, typename OutputType>
 void SpatialDropoutType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  Log::Assert(input.n_rows % size == 0, "Input features must be divisible \
-      by feature maps.");
+  Log::Assert(input.n_rows % size == 0, "Input features must be divisible "
+      "by feature maps.");
 
   if (!reset)
   {

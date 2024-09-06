@@ -309,7 +309,7 @@ inline std::string ProgramCall(util::Params& p, const std::string& programName)
     oss << it->second.name << "=";
 
     std::string value;
-    p.functionMap[it->second.tname]["DefaultParam"]( it->second, NULL,
+    p.functionMap[it->second.tname]["DefaultParam"](it->second, NULL,
         (void*) &value);
     oss << value;
   }

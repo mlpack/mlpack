@@ -39,6 +39,6 @@ struct FirstElementIsArma
       >::type>::value;
 };
 
-}
+} // namespace mlpack
 
 #endif

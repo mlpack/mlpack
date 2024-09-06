@@ -28,7 +28,7 @@ class OrderedSelection
    * @param m Number of points to select.
    * @return Indices of selected points from the dataset.
    */
-  const static arma::Col<size_t> Select(const arma::mat& /* data */,
+  static const arma::Col<size_t> Select(const arma::mat& /* data */,
                                         const size_t m)
   {
     // This generates [0 1 2 3 ... (m - 1)].
