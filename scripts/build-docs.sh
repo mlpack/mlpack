@@ -23,8 +23,6 @@ template_html_header="${output_dir}/template.html.header";
 template_html_footer="${output_dir}/template.html.footer";
 template_html_sidebar="${output_dir}/template.html.sidebar";
 
-env
-
 if ! command -v kramdown &>/dev/null
 then
   echo "kramdown not installed!  Cannot build documentation.";
@@ -32,7 +30,7 @@ then
 fi
 
 # If DISABLE_HTML_CHECKS is set, then we won't use tidy or checklink.
-if [ ! -z ${DISABLE_HTML_CHECKS+x} ];
+if [ -z ${DISABLE_HTML_CHECKS+x} ];
 then
   if ! command -v tidy &>/dev/null
   then
@@ -405,14 +403,14 @@ do
   of="$output_dir/${tmp%.md}.html";
 
   # Check HTML, if we did not disable that.
-  if [ ! -z ${DISABLE_HTML_CHECKS+x} ];
+  if [ -z ${DISABLE_HTML_CHECKS+x} ];
   then
     tidy -qe "$of" || exit 1;
   fi
 done
 
 # Now take a second pass to check all the links, if we need to.
-if [ ! -z ${DISABLE_HTML_CHECKS+x} ];
+if [ -z ${DISABLE_HTML_CHECKS+x} ];
 then
   find "$output_dir" -iname '*.html' -print0 | while read -d $'\0' f
   do
