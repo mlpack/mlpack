@@ -72,8 +72,8 @@ class ValidationRMSETermination
       // pick a random non-zero entry
       do
       {
-        tRow = math::RandInt(n);
-        tCol = math::RandInt(m);
+        tRow = RandInt(n);
+        tCol = RandInt(m);
       } while ((tVal = V(tRow, tCol)) == 0);
 
       // add the entry to the validation set
