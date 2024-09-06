@@ -32,8 +32,9 @@ then
 fi
 
 # If DISABLE_HTML_CHECKS is set, then we won't use tidy or checklink.
-if [ ! -z ${DISABLE_HTML_CHECKS+x} ];
+if [ "a$DISABLE_HTML_CHECKS" != "a" ];
 then
+  echo "disabled html checks"
   if ! command -v tidy &>/dev/null
   then
     echo "tidy not installed!  Cannot build documentation.";
@@ -405,14 +406,14 @@ do
   of="$output_dir/${tmp%.md}.html";
 
   # Check HTML, if we did not disable that.
-  if [ ! -z ${DISABLE_HTML_CHECKS+x} ];
+  if [ "a$DISABLE_HTML_CHECKS" != "a" ];
   then
     tidy -qe "$of" || exit 1;
   fi
 done
 
 # Now take a second pass to check all the links, if we need to.
-if [ ! -z ${DISABLE_HTML_CHECKS+x} ];
+if [ "a$DISABLE_HTML_CHECKS" != "a" ];
 then
   find "$output_dir" -iname '*.html' -print0 | while read -d $'\0' f
   do
