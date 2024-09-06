@@ -361,7 +361,7 @@ double DiagonalGMM::Train(const arma::mat& observations,
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<DiagonalGaussianDistribution> distsTrial( gaussians,
+    std::vector<DiagonalGaussianDistribution> distsTrial(gaussians,
         DiagonalGaussianDistribution(dimensionality));
     arma::vec weightsTrial(gaussians);
 

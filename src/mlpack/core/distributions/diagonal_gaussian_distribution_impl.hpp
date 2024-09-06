@@ -25,7 +25,8 @@ inline DiagonalGaussianDistribution::DiagonalGaussianDistribution(
   Covariance(covariance);
 }
 
-inline void DiagonalGaussianDistribution::Covariance(const arma::vec& covariance)
+inline void DiagonalGaussianDistribution::Covariance(
+    const arma::vec& covariance)
 {
   invCov = 1 / covariance;
   logDetCov = accu(log(covariance));

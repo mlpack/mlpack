@@ -65,7 +65,7 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     }
   }
 
-  #pragma omp parallel for reduction(+:hamerlyPruned,distanceCalculations) \
+  #pragma omp parallel for reduction(+:hamerlyPruned, distanceCalculations) \
       reduction(matAdd:newCentroids) reduction(colAdd:counts) schedule(static)
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
@@ -133,8 +133,8 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   size_t furthestMovingCluster = 0;
   arma::vec centroidMovements(centroids.n_cols);
   double centroidMovement = 0.0;
-  #pragma omp parallel for reduction(+: distanceCalculations, centroidMovement) \
-      schedule(static)
+  #pragma omp parallel for \
+      reduction(+: distanceCalculations, centroidMovement) schedule(static)
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
     if (counts(c) > 0)

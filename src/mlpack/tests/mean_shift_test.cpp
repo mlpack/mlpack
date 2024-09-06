@@ -187,7 +187,8 @@ TEMPLATE_TEST_CASE("GaussianClustering", "[MeanShiftTest]", float, double)
   REQUIRE(success == true);
 }
 
-TEMPLATE_TEST_CASE("GaussianClusteringCentroidsOnly", "[MeanShiftTest]", float, double)
+TEMPLATE_TEST_CASE("GaussianClusteringCentroidsOnly", "[MeanShiftTest]", float,
+    double)
 {
   typedef TestType ElemType;
 
