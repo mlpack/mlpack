@@ -1,7 +1,7 @@
 # Kernels
 
 mlpack includes a number of Mercer kernels for its kernel-based techniques.
-These all implement the [same API](../developer/kernels.md), providing one
+These all implement the [same API](../../developer/kernels.md), providing one
 `Evaluate()` method, and can be used with a variety of different techniques,
 including:
 
@@ -76,7 +76,7 @@ where `bw` is the bandwidth parameter of the kernel.
  * `g.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
      to the distance between two points, evaluated at `distance`.  This is used
-     by [`MeanShift`](methods/mean_shift.md).
+     by [`MeanShift`](../methods/mean_shift.md).
 
  * `g.Normalizer(dimensionality)`
    - Return the
@@ -312,7 +312,7 @@ distance between `x1` and `x2`) is greater than or equal to `bw`.
  * `e.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
      to the distance between two points, evaluated at `distance`.  This is used
-     by [`MeanShift`](methods/mean_shift.md).
+     by [`MeanShift`](../methods/mean_shift.md).
 
  * `e.Normalizer(dimensionality)`
    - Return the
@@ -483,7 +483,7 @@ where `bw` is the bandwidth parameter.
  * `l.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
      to the distance between two points, evaluated at `distance`.  This is used
-     by [`MeanShift`](methods/mean_shift.md).
+     by [`MeanShift`](../methods/mean_shift.md).
 
 ---
 
@@ -540,7 +540,7 @@ defined by the following equation:
 The use of the linear kernel for kernel methods generally results in the
 non-kernelized version of the algorithm; for instance, a kernel support
 vector machine using the linear kernel amounts to a [linear
-SVM](methods/linear_svm.md).
+SVM](../methods/linear_svm.md).
 
 ---
 
@@ -803,7 +803,7 @@ as the uniform kernel, or rectangular window kernel.  The value of the
  * `s.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
      to the distance between two points, evaluated at `distance`.  This is used
-     by [`MeanShift`](methods/mean_shift.md).
+     by [`MeanShift`](../methods/mean_shift.md).
 
  * `s.Normalizer(dimensionality)`
    - Return the
@@ -898,7 +898,7 @@ where `bw` is the bandwidth of the kernel.
  * `t.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
      to the distance between two points, evaluated at `distance`.  This is used
-     by [`MeanShift`](methods/mean_shift.md).
+     by [`MeanShift`](../methods/mean_shift.md).
 
 ---
 
@@ -951,5 +951,5 @@ std::cout << "Kernel values between two floating-point vectors: " << k5
 mlpack supports custom kernels, so long as they implement an appropriate
 `Evaluate()` function.
 
-See [The KernelType Policy in mlpack](../developer/kernels.md) for more
+See [The KernelType Policy in mlpack](../../developer/kernels.md) for more
 information.

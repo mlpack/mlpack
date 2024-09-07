@@ -71,7 +71,7 @@ dimension 1 could be, e.g., `0.4`, and `P(4)` in dimension 2 could be, e.g.,
      probabilities in a dimension is 1!
 
  * A `DiscreteDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
 ---
 
@@ -293,7 +293,7 @@ covariance, see
    covariance.
 
  * A `GaussianDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
 ---
 
@@ -453,7 +453,7 @@ Gaussian distribution, see [`GaussianDistribution`](#gaussiandistribution).)
    covariance matrix.
 
  * A `DiagonalGaussianDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
 ---
 
@@ -620,7 +620,7 @@ statistics.  See more on
    parameter to `b`.
 
  * A `GammaDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
 ---
 
@@ -789,7 +789,7 @@ also called the *double exponential distribution*.  See more on
    parameter.  `l.Scale() = s` will set the scale parameter to `s`.
 
  * A `LaplaceDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
 ---
 
@@ -944,7 +944,7 @@ This class is meant to be used with mlpack's
    - Create the `RegressionDistribution` by estimating the parameters with the
      given labeled regression data `predictors` and `responses`.
    - `predictors` should be a
-     [column-major](matrices.md#representing-data-in-mlpack) `arma::mat`
+     [column-major](../matrices.md#representing-data-in-mlpack) `arma::mat`
      representing the data the distribution should be trained on.
    - `responses` should be an `arma::rowvec` representing the responses for each
      data point.
@@ -960,7 +960,7 @@ This class is meant to be used with mlpack's
    - ***Note***: this is *not* the same as the number of elements in a vector
      passed to `Probability()`!
 
- * `r.Rf()` returns the [`LinearRegression&`](methods/linear_regression.md)
+ * `r.Rf()` returns the [`LinearRegression&`](../methods/linear_regression.md)
    model.  This can be modified.
 
  * `r.Parameters()` returns an `const arma::vec&` with length
@@ -973,7 +973,7 @@ This class is meant to be used with mlpack's
    This can be modified.
 
  * A `RegressionDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
 ---
 
@@ -1007,7 +1007,7 @@ This class is meant to be used with mlpack's
 ### Fit the distribution to observations
 
 Training a `RegressionDistribution` on a given set of labeled observations is
-done by first training a [`LinearRegression`](methods/linear_regression.md)
+done by first training a [`LinearRegression`](../methods/linear_regression.md)
 model on the dataset, and then subsequently training a univariate
 [`GaussianDistribution`](#gaussiandistribution) on the residual error of each
 data point.

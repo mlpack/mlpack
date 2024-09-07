@@ -1,7 +1,7 @@
 # Distances
 
 mlpack includes a number of distance metrics for its distance-based techniques.
-These all implement the [same API](../developer/distances.md), providing one
+These all implement the [same API](../../developer/distances.md), providing one
 `Evaluate()` method, and can be used with a variety of different techniques,
 including:
 
@@ -9,9 +9,9 @@ including:
 
  * [`NeighborSearch`](/src/mlpack/methods/neighbor_search/neighbor_search.hpp)
  * [`RangeSearch`](/src/mlpack/methods/range_search/range_search.hpp)
- * [`LMNN`](methods/lmnn.md)
+ * [`LMNN`](../methods/lmnn.md)
  * [`EMST`](/src/mlpack/methods/emst/emst.hpp)
- * [`NCA`](methods/nca.md)
+ * [`NCA`](../methods/nca.md)
  * [`RANN`](/src/mlpack/methods/rann/rann.hpp)
  * [`KMeans`](/src/mlpack/methods/kmeans/kmeans.hpp)
 
@@ -21,10 +21,10 @@ Supported metrics:
    Manhattan/Euclidean/Chebyshev distances
  * [`IoUDistance`](#ioudistance): intersection-over-union distance
  * [`IPMetric<KernelType>`](#ipmetrickerneltype): inner product metric (e.g.
-   induced metric over a [Mercer kernel](#kernels))
+   induced metric over a [Mercer kernel](kernels.md))
  * [`MahalanobisDistance`](#mahalanobisdistance): weighted Euclidean distance
    with weights specified by a covariance matrix
- * [Implement a custom metric](../developer/distances.md)
+ * [Implement a custom metric](../../developer/distances.md)
 
 ## `LMetric`
 
@@ -198,7 +198,7 @@ std::cout << " - ll=(2, 2), ur=(4, 7) and ll=(1, 1), ur=(2, 2.5): " << d2Coord
 ## `IPMetric<KernelType>`
 
 The `IPMetric<KernelType>` class implements the distance metric induced by the
-given [`KernelType`](#kernels).  This computes distances in
+given [`KernelType`](kernels.md).  This computes distances in
 [kernel space](https://en.wikipedia.org/wiki/Kernel_method#Mathematics:_the_kernel_trick).
 Using the fact that a kernel `k(x, y)` (represented by `KernelType`) implements
 an inner product in kernel space, the `IPMetric` distance is defined as
@@ -207,8 +207,9 @@ an inner product in kernel space, the `IPMetric` distance is defined as
 d(x, y) = sqrt(k(x, x) + k(y, y) - 2 k(x, y)).
 ```
 
-The template parameter `KernelType` can be any of mlpack's [kernels](#kernels),
-or a [custom kernel](#implement-a-custom-kernel).
+The template parameter `KernelType` can be any of mlpack's
+[kernels](kernels.md), or a
+[custom kernel](kernels.md#implement-a-custom-kernel).
 
 This metric is used by the [FastMKS](/src/mlpack/methods/fastmks/fastmks.hpp)
 method (fast max-kernel search).

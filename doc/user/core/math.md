@@ -9,7 +9,7 @@ Armadillo.
  * [`Range`](#range): simple mathematical range (i.e. `[0, 3]`)
 
  * [`ColumnCovariance()`](#columncovariance): compute covariance of
-   [column-major](matrices.md#representing-data-in-mlpack) data
+   [column-major](../matrices.md#representing-data-in-mlpack) data
 
  * [`ColumnsToBlocks`](#columnstoblocks): reshape data points into a block
    matrix for visualization (useful for images)
@@ -69,7 +69,7 @@ avoid copies.
    - If `offset` is `0`, then the alias is identical: the first element of
      `a` is the first element of `mat`. Otherwise, the first element of `a`
      is the `offset`'th element of `mat`; elements in `mat` are ordered in
-     a [column-major way](matrices.md#representing-data-in-mlpack).
+     a [column-major way](../matrices.md#representing-data-in-mlpack).
    - If `strict` is `true`, the size of `a` cannot be changed.
    - `mat` and `a` should have the same matrix type (e.g. `arma::mat`,
      `arma::fmat`, `arma::sp_mat`).
@@ -81,7 +81,7 @@ avoid copies.
    - If `offset` is `0`, then the alias is identical: the first element of
      `a` is the first element of `cube`. Otherwise, the first element of `a`
      is the `offset`'th element of `cube`; elements in `cube` are ordered in
-     a [column-major way](matrices.md#representing-data-in-mlpack).
+     a [column-major way](../matrices.md#representing-data-in-mlpack).
    - If `strict` is `true`, the size of `a` cannot be changed.
    - `cube` and `a` should have the same cube type (e.g. `arma::cube`,
      `arma::fcube`).
@@ -191,14 +191,15 @@ mlpack::RangeType<int> r6(3, 4); // [3, 4]
 `Range` is used by:
 
  * [`RangeSearch`](/src/mlpack/methods/range_search/range_search.hpp)
- * [mlpack trees](../developer/trees.md) <!-- TODO: link to local trees section -->
+ * [mlpack trees](../../developer/trees.md) <!-- TODO: link to local trees section -->
 
 ---
 
 ## `ColumnCovariance()`
 
  * `ColumnCovariance(X, normType=0)`
-   - `X`: a [column-major](matrices.md#representing-data-in-mlpack) data matrix
+   - `X`: a [column-major](../matrices.md#representing-data-in-mlpack) data
+     matrix
    - `normType`: either `0` or `1` (see below)
 
  * Computes the covariance of the data matrix `X`.
@@ -422,20 +423,20 @@ The resulting images (before and after using `ColumnsToBlocks`) are shown below.
 *Before*:
 
 <center>
-<img src="../img/favicons-matrix.png" alt="four favicons each as a column in a matrix, unintelligible">
+<img src="../../img/favicons-matrix.png" alt="four favicons each as a column in a matrix, unintelligible">
 </center>
 
 *After*:
 
 <center>
-<img src="../img/favicons-blocks.png" alt="four favicons each as a block in a larger image, much better">
+<img src="../../img/favicons-blocks.png" alt="four favicons each as a block in a larger image, much better">
 </center>
 
 ---
 
 ### See also
 
- * [Loading and saving image data](load_save.md#image-data)
+ * [Loading and saving image data](../load_save.md#image-data)
  * [`SparseAutoencoder`](/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder.hpp)
 
 ---
@@ -447,12 +448,14 @@ The resulting images (before and after using `ColumnsToBlocks`) are shown below.
     - `x` should have type `double`.
     - The return type is `double`.
 
- * `Trigamma(x)` returns the [trigamma function](https://en.wikipedia.org/wiki/Trigamma_function) at the value `x`.
+ * `Trigamma(x)` returns the
+   [trigamma function](https://en.wikipedia.org/wiki/Trigamma_function) at the
+   value `x`.
     - `x` should have type `double`.
     - The return type is `double`.
 
  * Both of these functions are used internally by the
-   [`GammaDistribution`](#gammadistribution) class.
+   [`GammaDistribution`](distributions.md#gammadistribution) class.
 
 *Example*:
 
@@ -768,7 +771,7 @@ std::cout << "Dot product of basis vectors 2 and 4: "
 
 ## `ShuffleData()`
 
-Shuffle a [column-major](matrices.md#representing-data-in-mlpack) dataset and
+Shuffle a [column-major](../matrices.md#representing-data-in-mlpack) dataset and
 associated labels/responses, optionally with weights.  This preserves the
 connection of each data point to its label (and optionally its weight).
 
