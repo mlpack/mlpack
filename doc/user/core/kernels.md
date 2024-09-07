@@ -35,6 +35,8 @@ Supported kernels:
  * [`TriangularKernel`](#triangularkernel): triangular kernel, with zero tails
  * [Implement a custom kernel](#implement-a-custom-kernel)
 
+---
+
 ## `GaussianKernel`
 
 The `GaussianKernel` class implements the standard [Gaussian
@@ -45,8 +47,6 @@ The Gaussian kernel is defined as:
 `k(x1, x2) = exp(-|| x1 - x2 ||^2 / (2 * bw^2))`
 where `bw` is the bandwidth parameter of the kernel.
 
----
-
 ### Constructors and properties
 
  * `g = GaussianKernel(bw=1.0)`
@@ -54,8 +54,6 @@ where `bw` is the bandwidth parameter of the kernel.
 
  * `g.Bandwidth()` returns the bandwidth of the kernel as a `double`.
    - To set the bandwidth, use `g.Bandwidth(newBandwidth)`.
-
----
 
 ### Kernel evaluation
 
@@ -69,8 +67,6 @@ where `bw` is the bandwidth parameter of the kernel.
      between those two vectors (`distance`) is already known.
    - `distance` should have type `double`.
 
----
-
 ### Other utilities
 
  * `g.Gradient(distance)`
@@ -83,8 +79,6 @@ where `bw` is the bandwidth parameter of the kernel.
      [normalizing constant](https://en.wikipedia.org/wiki/Normalizing_constant)
      of the Gaussian kernel for points in the given dimensionality as a
      `double`.
-
----
 
 ### Example usage
 
@@ -137,8 +131,6 @@ longer tail than the Gaussian kernel, defined as:
 `k(x1, x2) = 1 / (1 + (|| x1 - x2 ||^2 / bw^2))`
 where `bw` is the bandwidth parameter of the kernel.
 
----
-
 ### Constructors and properties
 
  * `c = CauchyKernel(bw=1.0)`
@@ -147,16 +139,12 @@ where `bw` is the bandwidth parameter of the kernel.
  * `c.Bandwidth()` returns the bandwidth of the kernel as a `double`.
    - To set the bandwidth, use `c.Bandwidth(newBandwidth)`.
 
----
-
 ### Kernel evaluation
 
  * `c.Evaluate(x1, x2)`
    - Compute the kernel value between two vectors `x1` and `x2`.
    - `x1` and `x2` should be vector types that implement the Armadillo API
      (e.g., `arma::vec`).
-
----
 
 ### Example usage
 
@@ -205,8 +193,6 @@ defined as:
 The value of the kernel is limited to the range `[-1, 1]`.
 The cosine similarity is often used in text mining tasks.
 
----
-
 ### Constructor
 
  * `c = CosineSimilarity()`
@@ -215,8 +201,6 @@ The cosine similarity is often used in text mining tasks.
 ***Note:*** because the `CosineSimilarity` kernel has no parameters, it is not
 necessary to create an object and the `Evaluate()` function (below) can be
 called statically.
-
----
 
 ### Kernel evaluation
 
@@ -231,8 +215,6 @@ called statically.
      instantiated `CosineSimilarity` object (e.g. call `Evaluate()` statically).
    - `x1` and `x2` should be vector types that implement the Armadillo API
      (e.g., `arma::vec`).
-
----
 
 ### Example usage
 
@@ -281,8 +263,6 @@ where `bw` is the bandwidth parameter of the kernel.
 The kernel takes the value `0` when `|| x1 - x2 ||_2` (the Euclidean
 distance between `x1` and `x2`) is greater than or equal to `bw`.
 
----
-
 ### Constructors and properties
 
  * `e = EpanechnikovKernel(bw=1.0)`
@@ -290,8 +270,6 @@ distance between `x1` and `x2`) is greater than or equal to `bw`.
 
  * `e.Bandwidth()` returns the bandwidth of the kernel as a `double`.
    - To set the bandwidth, use `e.Bandwidth(newBandwidth)`.
-
----
 
 ### Kernel evaluation
 
@@ -305,8 +283,6 @@ distance between `x1` and `x2`) is greater than or equal to `bw`.
      between those two vectors (`distance`) is already known.
    - `distance` should have type `double`.
 
----
-
 ### Other utilities
 
  * `e.Gradient(distance)`
@@ -319,8 +295,6 @@ distance between `x1` and `x2`) is greater than or equal to `bw`.
      [normalizing constant](https://en.wikipedia.org/wiki/Normalizing_constant)
      of the Epanechnikov kernel for points in the given dimensionality as a
      `double`.
-
----
 
 ### Example usage
 
@@ -380,8 +354,6 @@ thus does not satisfy the theoretical requirements of many kernel methods.  See
 for more details.  In practice, for many kernel methods, it may still provide
 compelling results despite this theoretical limitation.
 
----
-
 ### Constructors and properties
 
  * `h = HyperbolicTangentKernel(s=1.0, t=0.0)`
@@ -394,16 +366,12 @@ compelling results despite this theoretical limitation.
  * `h.Offset()` returns the offset parameter of the kernel as a `double`.
    - To set the offset parameter, use `h.Offset(offset)`.
 
----
-
 ### Kernel evaluation
 
  * `h.Evaluate(x1, x2)`
    - Compute the kernel value between two vectors `x1` and `x2`.
    - `x1` and `x2` should be vector types that implement the Armadillo API
      (e.g., `arma::vec`).
-
----
 
 ### Example usage
 
@@ -452,8 +420,6 @@ exponential kernel, defined by the following equation:
 `k(x1, x2) = exp(-|| x1 - x2 || / bw)`
 where `bw` is the bandwidth parameter.
 
----
-
 ### Constructors and properties
 
  * `l = LaplacianKernel(bw=1.0)`
@@ -461,8 +427,6 @@ where `bw` is the bandwidth parameter.
 
  * `l.Bandwidth()` returns the bandwidth of the kernel as a `double`.
    - To set the bandwidth, use `l.Bandwidth(newBandwidth)`.
-
----
 
 ### Kernel evaluation
 
@@ -476,16 +440,12 @@ where `bw` is the bandwidth parameter.
      between those two vectors (`distance`) is already known.
    - `distance` should have type `double`.
 
----
-
 ### Other utilities
 
  * `l.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
      to the distance between two points, evaluated at `distance`.  This is used
      by [`MeanShift`](../methods/mean_shift.md).
-
----
 
 ### Example usage
 
@@ -542,8 +502,6 @@ non-kernelized version of the algorithm; for instance, a kernel support
 vector machine using the linear kernel amounts to a [linear
 SVM](../methods/linear_svm.md).
 
----
-
 ### Constructor
 
  * `l = LinearKernel()`
@@ -552,8 +510,6 @@ SVM](../methods/linear_svm.md).
 ***Note:*** because the `LinearKernel` kernel has no parameters, it is not
 necessary to create an object and the `Evaluate()` function (below) can be
 called statically.
-
----
 
 ### Kernel evaluation
 
@@ -568,8 +524,6 @@ called statically.
      instantiated `LinearKernel` object (e.g. call `Evaluate()` statically).
    - `x1` and `x2` should be vector types that implement the Armadillo API
      (e.g., `arma::vec`).
-
----
 
 ### Example usage
 
@@ -618,8 +572,6 @@ where `d` is the degree of the polynomial and `t` is the offset.
 The use of the polynomial kernel has a similar effect to the use of polynomial
 (interaction) features in standard machine learning methods.
 
----
-
 ### Constructors and properties
 
  * `p = PolynomialKernel(d=2.0, t=0.0)`
@@ -631,16 +583,12 @@ The use of the polynomial kernel has a similar effect to the use of polynomial
  * `p.Offset()` returns the offset of the kernel as a `double`.
    - To set the offset, use `p.Offset(newOffset)`.
 
----
-
 ### Kernel evaluation
 
  * `p.Evaluate(x1, x2)`
    - Compute the kernel value between two vectors `x1` and `x2`.
    - `x1` and `x2` should be vector types that implement the Armadillo API
      (e.g., `arma::vec`).
-
----
 
 ### Example usage
 
@@ -695,8 +643,6 @@ numeric vectors such as `[0 1]` that reference string index `1` in dataset index
 `0`.  In turn, this means that the data points given to the
 `PSpectrumStringKernel` are simply IDs and have no geometric meaning.
 
----
-
 ### Constructors and properties
 
  * `p = PSpectrumStringKernel(datasets, p)`
@@ -723,8 +669,6 @@ numeric vectors such as `[0 1]` that reference string index `1` in dataset index
    would be the number of times the substring `hello` appears in the string with
    index `1` in the dataset with index `0`.
 
----
-
 ### Kernel evaluation
 
  * `p.Evaluate(x1, x2)`
@@ -737,8 +681,6 @@ numeric vectors such as `[0 1]` that reference string index `1` in dataset index
    - So, e.g., if `x1 = [0, 0]` and `x2 = [1, 1]`, then the first string from
      the first dataset will be compared with the second string from the second
      dataset.
-
----
 
 ### Example usage
 
@@ -772,8 +714,6 @@ as the uniform kernel, or rectangular window kernel.  The value of the
 `x2` is less than the bandwidth `bw`, and `0` otherwise:
 `k(x1, x2) = 1(|| x1 - x2 || <= bw)`.
 
----
-
 ### Constructors and properties
 
  * `s = SphericalKernel(bw=1.0)`
@@ -781,8 +721,6 @@ as the uniform kernel, or rectangular window kernel.  The value of the
 
  * `s.Bandwidth()` returns the bandwidth of the kernel as a `double`.
    - To set the bandwidth, use `s.Bandwidth(newBandwidth)`.
-
----
 
 ### Kernel evaluation
 
@@ -796,8 +734,6 @@ as the uniform kernel, or rectangular window kernel.  The value of the
      between those two vectors (`distance`) is already known.
    - `distance` should have type `double`.
 
----
-
 ### Other utilities
 
  * `s.Gradient(distance)`
@@ -810,8 +746,6 @@ as the uniform kernel, or rectangular window kernel.  The value of the
      [normalizing constant](https://en.wikipedia.org/wiki/Normalizing_constant)
      of the spherical kernel for points in the given dimensionality as a
      `double`.
-
----
 
 ### Example usage
 
@@ -867,8 +801,6 @@ defined by the following equation:
 `k(x1, x2) = max(0, 1 - || x1 - x2 || / bw)`
 where `bw` is the bandwidth of the kernel.
 
----
-
 ### Constructors and properties
 
  * `t = TriangularKernel(bw=1.0)`
@@ -876,8 +808,6 @@ where `bw` is the bandwidth of the kernel.
 
  * `t.Bandwidth()` returns the bandwidth of the kernel as a `double`.
    - To set the bandwidth, use `t.Bandwidth(newBandwidth)`.
-
----
 
 ### Kernel evaluation
 
@@ -891,16 +821,12 @@ where `bw` is the bandwidth of the kernel.
      between those two vectors (`distance`) is already known.
    - `distance` should have type `double`.
 
----
-
 ### Other utilities
 
  * `t.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
      to the distance between two points, evaluated at `distance`.  This is used
      by [`MeanShift`](../methods/mean_shift.md).
-
----
 
 ### Example usage
 

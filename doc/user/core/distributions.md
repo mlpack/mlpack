@@ -31,8 +31,6 @@ the vector `[0, 3, 4]`, `P(0)` in dimension 0 could be, e.g., `0.3`, `P(3)` in
 dimension 1 could be, e.g., `0.4`, and `P(4)` in dimension 2 could be, e.g.,
 `0.6`.  Then, `P([0, 3, 4])` would be `0.3 * 0.4 * 0.6 = 0.072`.
 
----
-
 ### Constructors
 
  * `d = DiscreteDistribution(numObservations)`
@@ -55,8 +53,6 @@ dimension 1 could be, e.g., `0.4`, and `P(4)` in dimension 2 could be, e.g.,
    - `probabilities[i]` is a vector such that `probabilities[i][j]` contains the
      probability of `j` in dimension `i`.
 
----
-
 ### Access and modify properties of distribution
 
  * `d.Dimensionality()` returns a `size_t` indicating the number of dimensions
@@ -72,8 +68,6 @@ dimension 1 could be, e.g., `0.4`, and `P(4)` in dimension 2 could be, e.g.,
 
  * A `DiscreteDistribution` can be serialized with
    [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
-
----
 
 ### Compute probabilities of points
 
@@ -96,14 +90,10 @@ dimension 1 could be, e.g., `0.4`, and `P(4)` in dimension 2 could be, e.g.,
  * `d.LogProbability(observations, probabilities)` computes the
    log-probabilities of many observations.
 
----
-
 ### Sample from the distribution
 
  * `d.Random()` returns an `arma::vec` with a random sample from the
    multidimensional discrete distribution.
-
----
 
 ### Fit the distribution to observations
 
@@ -121,8 +111,6 @@ dimension 1 could be, e.g., `0.4`, and `P(4)` in dimension 2 could be, e.g.,
      `observations.n_cols`.
    - `observationProbabilities[i]` should be equal to the probability that
      `observations.col(i)` is from `d`.
-
----
 
 ### Example usage
 
@@ -162,8 +150,6 @@ d2.Probability(observations, probabilities);
 std::cout << "Average probability: " << arma::mean(probabilities) << "."
     << std::endl;
 ```
-
----
 
 ### Using different element types
 
@@ -248,16 +234,12 @@ std::cout << "Probabilities for observations in dimension 0: "
     << d.Probabilities(0).t() << std::endl;
 ```
 
----
-
 ## `GaussianDistribution`
 
 `GaussianDistribution` is a standard multivariate Gaussian distribution with
 parameterized mean and covariance.  (For a Gaussian distribution with a diagonal
 covariance, see
 [`DiagonalGaussianDistribution`](#diagonalgaussiandistribution).)
-
----
 
 ### Constructors
 
@@ -271,8 +253,6 @@ covariance, see
      dimensionality of the distribution.
    - `covariance` is of type `arma::mat`, and should be symmetric and square,
      with rows and columns equal to the dimensionality of the distribution.
-
----
 
 ### Access and modify properties of distribution
 
@@ -295,8 +275,6 @@ covariance, see
  * A `GaussianDistribution` can be serialized with
    [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
----
-
 ### Compute probabilities of points
 
  * `g.Probability(observation)` returns the probability of the given
@@ -316,14 +294,10 @@ covariance, see
  * `g.LogProbability(observations, probabilities)` computes the
    log-probabilities of many observations.
 
----
-
 ### Sample from the distribution
 
  * `g.Random()` returns an `arma::vec` with a random sample from the
    multidimensional Gaussian distribution.
-
----
 
 ### Fit the distribution to observations
 
@@ -339,8 +313,6 @@ covariance, see
      `observations.n_cols`.
    - `observationProbabilities[i]` should be equal to the probability that
      `observations.col(i)` is from `g`.
-
----
 
 ### Example usage
 
@@ -378,8 +350,6 @@ std::cout << "Average probability is: " << arma::mean(probabilities) << "."
     << std::endl;
 ```
 
----
-
 ### Using different element types
 
 The `GaussianDistribution` class takes one template parameter:
@@ -413,15 +383,11 @@ const float p = g.Probability(arma::fvec("0.2 0.3 0.4"));
 std::cout << "Probability of (0.2, 0.3, 0.4): " << p << "." << std::endl;
 ```
 
----
-
 ## `DiagonalGaussianDistribution`
 
 `DiagonalGaussianDistribution` is a standard multiviate Gaussian distribution
 with parameterized mean and diagonal covariance.  (For a full-covariance
 Gaussian distribution, see [`GaussianDistribution`](#gaussiandistribution).)
-
----
 
 ### Constructors
 
@@ -436,8 +402,6 @@ Gaussian distribution, see [`GaussianDistribution`](#gaussiandistribution).)
    - `covariance` is of type `arma::vec`, and should have length equal to the
      dimensionality of the distribution.  Its elements represent the diagonal of
      the covariance matrix.
-
----
 
 ### Access and modify properties of distribution
 
@@ -454,8 +418,6 @@ Gaussian distribution, see [`GaussianDistribution`](#gaussiandistribution).)
 
  * A `DiagonalGaussianDistribution` can be serialized with
    [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
-
----
 
 ### Compute probabilities of points
 
@@ -476,14 +438,10 @@ Gaussian distribution, see [`GaussianDistribution`](#gaussiandistribution).)
  * `d.LogProbability(observations, probabilities)` computes the
    log-probabilities of many observations.
 
----
-
 ### Sample from the distribution
 
  * `d.Random()` returns an `arma::vec` with a random sample from the
    multidimensional diagonal Gaussian distribution.
-
----
 
 ### Fit the distribution to observations
 
@@ -499,8 +457,6 @@ Gaussian distribution, see [`GaussianDistribution`](#gaussiandistribution).)
      `observations.n_cols`.
    - `observationProbabilities[i]` should be equal to the probability that
      `observations.col(i)` is from `d`.
-
----
 
 ### Example usage
 
@@ -537,8 +493,6 @@ std::cout << "Average probability is: " << arma::mean(probabilities) << "."
     << std::endl;
 ```
 
----
-
 ### Using different element types
 
 The `DiagonalGaussianDistribution` class takes one template parameter:
@@ -572,8 +526,6 @@ const float p = g.Probability(arma::fvec("0.2 0.3 0.4"));
 std::cout << "Probability of (0.2, 0.3, 0.4): " << p << "." << std::endl;
 ```
 
----
-
 ## `GammaDistribution`
 
 `GammaDistribution` is a multivariate Gamma distribution with two parameters for
@@ -582,8 +534,6 @@ yield the exponential distribution, Chi-squared distribution, and Erlang
 distribution.  This family of distributions is commonly used in Bayesian
 statistics.  See more on
 [Wikipedia](https://en.wikipedia.org/wiki/Gamma_distribution).
-
----
 
 ### Constructors
 
@@ -605,8 +555,6 @@ statistics.  See more on
    - Using this constructor is equivalent to calling `g.Train(data, tol)` after
      initializing a `GammaDistribution`.
 
----
-
 ### Access and modify properties of distribution
 
  * `g.Dimensionality()` returns the dimensionality of the distribution.
@@ -621,8 +569,6 @@ statistics.  See more on
 
  * A `GammaDistribution` can be serialized with
    [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
-
----
 
 ### Compute probabilities of points
 
@@ -643,14 +589,10 @@ statistics.  See more on
  * `g.LogProbability(observations, probabilities)` computes the
    log-probabilities of many observations.
 
----
-
 ### Sample points from the distribution
 
  * `g.Random()` returns an `arma::vec` with a random sample from the
    Gamma distribution.
-
----
 
 ### Fit the distribution to observations
 
@@ -669,8 +611,6 @@ statistics.  See more on
 
  * The algorithm used for fitting the distribution is described in the paper
    [Estimating a Gamma Distribution](https://tminka.github.io/papers/minka-gamma.pdf).
-
----
 
 ### Example usage
 
@@ -715,8 +655,6 @@ std::cout << "Average probability is: " << arma::mean(probabilities) << "."
     << std::endl;
 ```
 
----
-
 ### Using different element types
 
 The `GammaDistribution` class takes one template parameter:
@@ -752,16 +690,12 @@ const float p = g.Probability(arma::fvec("0.2 0.3 0.4"));
 std::cout << "Probability of (0.2, 0.3, 0.4): " << p << "." << std::endl;
 ```
 
----
-
 ## `LaplaceDistribution`
 
 `LaplaceDistribution` is a multivariate Laplace distribution parameterized by a
 mean vector and a single scale value.  The Laplace distribution is sometimes
 also called the *double exponential distribution*.  See more on
 [Wikipedia](https://en.wikipedia.org/wiki/Laplace_distribution).
-
----
 
 ### Constructors
 
@@ -776,8 +710,6 @@ also called the *double exponential distribution*.  See more on
      dimensionality of the distribution.
    - `scale` must be greater than 0.
 
----
-
 ### Access and modify properties of distribution
 
  * `l.Dimensionality()` returns the dimensionality of the distribution.
@@ -790,8 +722,6 @@ also called the *double exponential distribution*.  See more on
 
  * A `LaplaceDistribution` can be serialized with
    [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
-
----
 
 ### Compute probabilities of points
 
@@ -812,14 +742,10 @@ also called the *double exponential distribution*.  See more on
  * `l.LogProbability(observations, probabilities)` computes the
    log-probabilities of many observations.
 
----
-
 ### Sample points from the distribution
 
  * `l.Random()` returns an `arma::vec` with a random sample from the
    Laplace distribution.
-
----
 
 ### Fit the distribution to observations
 
@@ -835,8 +761,6 @@ also called the *double exponential distribution*.  See more on
      `observations.n_cols`.
    - `observationProbabilities[i]` should be equal to the probability that
      `observations.col(i)` is from `l`.
-
----
 
 ### Example usage
 
@@ -881,8 +805,6 @@ std::cout << "Average probability is: " << arma::mean(probabilities) << "."
     << std::endl;
 ```
 
----
-
 ### Using different element types
 
 The `LaplaceDistribution` class takes one template parameter:
@@ -915,8 +837,6 @@ const float p = g.Probability(arma::fvec("0.2 0.3 0.4"));
 std::cout << "Probability of (0.2, 0.3, 0.4): " << p << "." << std::endl;
 ```
 
----
-
 ## `RegressionDistribution`
 
 The `RegressionDistribution` is a [Gaussian distribution](#gaussiandistribution)
@@ -930,8 +850,6 @@ regression model's prediction on `x`.
 This class is meant to be used with mlpack's
 [HMM](/src/mlpack/methods/hmm/hmm.hpp) class for the task of
 [HMM regression (pdf)](https://conservancy.umn.edu/bitstream/handle/11299/2532/1195.pdf).
-
----
 
 ### Constructors
 
@@ -951,8 +869,6 @@ This class is meant to be used with mlpack's
    - The number of elements in `responses` (e.g. `responses.n_elem`) should be
      the same as the number of columns in `predictors` (e.g.
      `predictors.n_cols`).
-
----
 
 ### Access and modify properties of distribution
 
@@ -974,8 +890,6 @@ This class is meant to be used with mlpack's
 
  * A `RegressionDistribution` can be serialized with
    [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
-
----
 
 ### Compute probabilities of points
 
@@ -1001,8 +915,6 @@ This class is meant to be used with mlpack's
 
  * `r.LogProbability(observations, probabilities)` computes the
    log-probabilities of many labeled observations.
-
----
 
 ### Fit the distribution to observations
 
@@ -1035,8 +947,6 @@ both the responses and the data points (predictors).
 observations, then the resulting Gaussian distribution will have zero-valued
 standard deviation, and `Probability()` will return `1` for points that are
 perfectly fit and `0` otherwise.
-
----
 
 ### Example usage
 
@@ -1106,8 +1016,6 @@ r.Probability(observations, probabilities);
 std::cout << "Average probability of points in `observations`: "
     << arma::mean(probabilities) << "." << std::endl;
 ```
-
----
 
 ### Using different element types
 
