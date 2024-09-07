@@ -145,7 +145,7 @@ steps:
 
     # Copy documentation.
     mkdir dist\win-installer\mlpack-win-installer\Sources\doc
-    cp doc\build\html dist\win-installer\mlpack-win-installer\Sources\doc -recurse
+    cp doc\html dist\win-installer\mlpack-win-installer\Sources\doc -recurse
 
     # Copy sources.
     mkdir dist\win-installer\mlpack-win-installer\Sources\include\mlpack
