@@ -31,21 +31,40 @@ namespace mlpack {
  * probably occur.
  *
  * @note
- * This class, like every other class in mlpack, uses arma::vec to represent
- * observations.  While a discrete distribution only has positive integers
- * (size_t) as observations, these can be converted to doubles (which is what
- * arma::vec holds).  This distribution internally converts those doubles back
- * into size_t before comparisons.
+ * This class by default uses arma::vec to represent observations.  While a
+ * discrete distribution only has positive integers (size_t) as observations,
+ * these can be converted to doubles (which is what arma::vec holds).  This
+ * distribution internally converts those doubles back into size_t before
+ * comparisons.
+ *
+ * DiscreteDistribution has two template parameters that control the internal
+ * probability representation type and the observation type.
+ *
+ *  - `MatType` controls the type used to store probabilities.  The element type
+ *    of `MatType` should be a floating-point type.  All probabilities returned
+ *    have type equivalent to MatType::elem_type.
+ *  - `ObsMatType` controls the type used to represent observations; by default,
+ *    this is the same as `MatType`.  The observations given to Train() or
+ *    Probability() should have type equivalent to `ObsMatType`.  The element
+ *    type of `ObsMatType` does not need to be a floating point type.
  */
+template<typename MatType = arma::mat,
+         typename ObsMatType = MatType>
 class DiscreteDistribution
 {
  public:
+  // Convenience typedefs.
+  typedef typename GetColType<MatType>::type VecType;
+  typedef typename MatType::elem_type ElemType;
+  typedef typename GetColType<ObsMatType>::type ObsVecType;
+  typedef typename ObsMatType::elem_type ObsType;
+
   /**
    * Default constructor, which creates a distribution that has no
    * observations.
    */
   DiscreteDistribution() :
-      probabilities(std::vector<arma::vec>(1)){ /* Nothing to do. */ }
+      probabilities(std::vector<VecType>(1)){ /* Nothing to do. */ }
 
   /**
    * Define the discrete distribution as having numObservations possible
@@ -56,8 +75,8 @@ class DiscreteDistribution
    *    can have.
    */
   DiscreteDistribution(const size_t numObservations) :
-      probabilities(std::vector<arma::vec>(1,
-          arma::ones<arma::vec>(numObservations) / numObservations))
+      probabilities(std::vector<VecType>(1,
+          arma::ones<VecType>(numObservations) / numObservations))
   { /* Nothing to do. */ }
 
   /**
@@ -80,7 +99,7 @@ class DiscreteDistribution
             << "must be greater than 0";
         throw std::invalid_argument(oss.str());
       }
-      probabilities.push_back(arma::ones<arma::vec>(numObs) / numObs);
+      probabilities.push_back(arma::ones<VecType>(numObs) / numObs);
     }
   }
 
@@ -90,17 +109,17 @@ class DiscreteDistribution
    *
    * @param probabilities Probabilities of each possible observation.
    */
-  DiscreteDistribution(const std::vector<arma::vec>& probabilities)
+  DiscreteDistribution(const std::vector<VecType>& probabilities)
   {
     for (size_t i = 0; i < probabilities.size(); ++i)
     {
-      arma::vec temp = probabilities[i];
-      double sum = accu(temp);
+      const VecType& temp = probabilities[i];
+      ElemType sum = accu(temp);
       if (sum > 0)
         this->probabilities.push_back(temp / sum);
       else
       {
-        this->probabilities.push_back(arma::ones<arma::vec>(temp.n_elem)
+        this->probabilities.push_back(arma::ones<VecType>(temp.n_elem)
             / temp.n_elem);
       }
     }
@@ -119,9 +138,9 @@ class DiscreteDistribution
    * @param observation Observation to return the probability of.
    * @return Probability of the given observation.
    */
-  double Probability(const arma::vec& observation) const
+  ElemType Probability(const ObsVecType& observation) const
   {
-    double probability = 1.0;
+    ElemType probability = 1.0;
     // Ensure the observation has the same dimension with the probabilities.
     if (observation.n_elem != probabilities.size())
     {
@@ -134,7 +153,8 @@ class DiscreteDistribution
     {
       // Adding 0.5 helps ensure that we cast the floating point to a size_t
       // correctly.
-      const size_t obs = size_t(observation(dimension) + 0.5);
+      const size_t obs = (std::is_floating_point<ObsType>::value) ?
+          size_t(observation(dimension) + 0.5) : size_t(observation(dimension));
 
       // Ensure that the observation is within the bounds.
       if (obs >= probabilities[dimension].n_elem)
@@ -158,7 +178,7 @@ class DiscreteDistribution
    * @param observation Observation to return the log probability of.
    * @return Log probability of the given observation.
    */
-  double LogProbability(const arma::vec& observation) const
+  ElemType LogProbability(const ObsVecType& observation) const
   {
     // TODO: consider storing log probabilities instead?
     return std::log(Probability(observation));
@@ -171,7 +191,7 @@ class DiscreteDistribution
    * @param x List of observations.
    * @param probabilities Output probabilities for each input observation.
    */
-  void Probability(const arma::mat& x, arma::vec& probabilities) const
+  void Probability(const ObsMatType& x, VecType& probabilities) const
   {
     probabilities.set_size(x.n_cols);
     for (size_t i = 0; i < x.n_cols; ++i)
@@ -186,7 +206,7 @@ class DiscreteDistribution
    * @param logProbabilities Output log-probabilities for each input
    *   observation.
    */
-  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const
+  void LogProbability(const ObsMatType& x, VecType& logProbabilities) const
   {
     logProbabilities.set_size(x.n_cols);
     for (size_t i = 0; i < x.n_cols; ++i)
@@ -200,7 +220,7 @@ class DiscreteDistribution
    *
    * @return Random observation.
    */
-  arma::vec Random() const;
+  ObsVecType Random() const;
 
   /**
    * Estimate the probability distribution directly from the given
@@ -209,7 +229,7 @@ class DiscreteDistribution
    *
    * @param observations List of observations.
    */
-  void Train(const arma::mat& observations);
+  void Train(const ObsMatType& observations);
 
   /**
    * Estimate the probability distribution from the given observations, taking
@@ -220,13 +240,13 @@ class DiscreteDistribution
    * @param probabilities List of probabilities that each observation is
    *     actually from this distribution.
    */
-  void Train(const arma::mat& observations,
-             const arma::vec& probabilities);
+  void Train(const ObsMatType& observations,
+             const VecType& probabilities);
 
   //! Return the vector of probabilities for the given dimension.
-  arma::vec& Probabilities(const size_t dim = 0) { return probabilities[dim]; }
+  VecType& Probabilities(const size_t dim = 0) { return probabilities[dim]; }
   //! Modify the vector of probabilities for the given dimension.
-  const arma::vec& Probabilities(const size_t dim = 0) const
+  const VecType& Probabilities(const size_t dim = 0) const
   { return probabilities[dim]; }
 
   /**
@@ -241,7 +261,7 @@ class DiscreteDistribution
  private:
   //! The probabilities for each dimension; each arma::vec represents the
   //! probabilities for the observations in each dimension.
-  std::vector<arma::vec> probabilities;
+  std::vector<VecType> probabilities;
 };
 
 } // namespace mlpack

@@ -500,7 +500,7 @@ Then, to use that model to classify points in `'test_set'` and print the test er
 
  - [Random forest](#random_forest)
  - [Decision trees on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
- - [Induction of Decision Trees (pdf)](http://www.cs.bc.edu/~alvarez/ML/QuinlanID3Paper.pdf)
+ - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
  - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
 
 ## det()

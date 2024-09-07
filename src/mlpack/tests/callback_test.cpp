@@ -190,8 +190,10 @@ TEST_CASE("SRWithOptimizerCallback", "[CallbackTest]")
   const double lambda = 0.5;
 
   // Generate two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 9.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("4.0 3.0 4.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 9.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("4.0 3.0 4.0"),
+      arma::eye<arma::mat>(3, 3));
 
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);

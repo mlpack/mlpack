@@ -51,7 +51,7 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
 #### See also:
 
  * [mlpack clustering algorithms](../../index.md#clustering-algorithms)
- * [mlpack kernels](../core.md#kernels)
+ * [mlpack kernels](../core/kernels.md)
  * [Mean shift on Wikipedia](https://en.wikipedia.org/wiki/Mean_shift)
  * [Mean Shift, Mode Seeking, and Clustering (pdf)](http://users.isr.ist.utl.pt/~alex/Resources/meanshift.pdf)
 
@@ -59,8 +59,8 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
 
  * `ms = MeanShift(radius=0, maxIterations=1000)`
    - Create a `MeanShift` object that will use the
-     default [`GaussianKernel`](../core.md#gaussiankernel) to weight points for
-     cluster centroid recalculations.
+     default [`GaussianKernel`](../core/kernels.md#gaussiankernel) to weight
+     points for cluster centroid recalculations.
 
 ---
 
@@ -81,9 +81,9 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
 
  * `ms = MeanShift<true, KernelType>(radius, maxIterations, kernel=KernelType())`
    - Create a `MeanShift` object that will use the given
-     [`KernelType`](../core.md#kernels) for weighting points during cluster
+     [`KernelType`](../core/kernels.md) for weighting points during cluster
      centroid recalculations.
-   - [mlpack kernels](../core.md#kernels) or custom kernel classes implementing
+   - [mlpack kernels](../core/kernels.md) or custom kernel classes implementing
      a [`Gradient()` function](#advanced-functionality-template-parameters) can
      be used for the `KernelType` template parameter.
    - If `kernel` is not specified, a default-constructed `KernelType` will be
@@ -99,7 +99,7 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
 |----------|----------|-----------------|-------------|
 | `radius` | `double` | Radius around each centroid for weighting during centroid recomputation.  Larger means higher weights for faraway points.  Values less than or equal to 0 mean that the radius will be estimated from data. | `0.0` |
 | `maxIterations` | `size_t` | Maximum number of iterations of the mean shift algorithm to run. | `1000` |
-| `kernel` | [`KernelType`](#advanced-functionality-template-parameters) | Instantiated kernel object to use for density calculations. | [`GaussianKernel()`](../core.md#gaussiankernel) |
+| `kernel` | [`KernelType`](#advanced-functionality-template-parameters) | Instantiated kernel object to use for density calculations. | [`GaussianKernel()`](../core/kernels.md#gaussiankernel) |
 
 ***Notes:***
 
@@ -317,15 +317,15 @@ MeanShift<UseKernel, KernelType>
 
  * `KernelType` represents the kernel function (or Parzen window) to be used to
    weight points during centroid recomputation.  Although many
-   [mlpack kernels](../core.md#kernels) are available, only those with
+   [mlpack kernels](../core/kernels.md) are available, only those with
    `Gradient()` functions (described below) are supported.  Available kernels
    for drop-in usage include:
-   - [`GaussianKernel`](../core.md#gaussiankernel) *(default)*
-   - [`EpanechnikovKernel`](../core.md#epanechnikovkernel)
-   - [`LaplacianKernel`](../core.md#laplaciankernel)
-   - [`SphericalKernel`](../core.md#sphericalkernel) *(note: this is equivalent
-     to the flat kernel, or, setting `UseKernel = false`)*
-   - [`TriangularKernel`](../core.md#triangularkernel)
+   - [`GaussianKernel`](../core/kernels.md#gaussiankernel) *(default)*
+   - [`EpanechnikovKernel`](../core/kernels.md#epanechnikovkernel)
+   - [`LaplacianKernel`](../core/kernels.md#laplaciankernel)
+   - [`SphericalKernel`](../core/kernels.md#sphericalkernel) *(note: this is
+     equivalent to the flat kernel, or, setting `UseKernel = false`)*
+   - [`TriangularKernel`](../core/kernels.md#triangularkernel)
 
 Custom kernels for mean shift can be easily implemented, and must implement only
 one function (`Gradient()`):
