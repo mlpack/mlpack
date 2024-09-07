@@ -105,14 +105,10 @@ avoid copies.
    - `a` should be a matrix type that matches the type of the expression or
      matrix `in`.
 
----
-
 ## `Range`
 
 The `Range` class represents a simple mathematical range (i.e. `[0, 3]`),
 with the bounds represented as `double`s.
-
----
 
 ### Constructors
 
@@ -125,8 +121,6 @@ with the bounds represented as `double`s.
  * `r = Range(lo, hi)`
    - Construct the range `[lo, hi]`.
 
----
-
 ### Accessing and modifying range properties
 
  * `r.Lo()` and `r.Hi()` return the lower and upper bounds of the range as
@@ -138,8 +132,6 @@ with the bounds represented as `double`s.
    `double`.
 
  * `r.Mid()` returns the midpoint of the range as a `double`.
-
----
 
 ### Working with ranges
 
@@ -164,8 +156,6 @@ with the bounds represented as `double`s.
 
  * To use ranges with different element types (e.g. `float`), use the type
    `RangeType<float>` or similar.
-
----
 
 ### Usage example
 
@@ -192,8 +182,6 @@ mlpack::RangeType<int> r6(3, 4); // [3, 4]
 
  * [`RangeSearch`](/src/mlpack/methods/range_search/range_search.hpp)
  * [mlpack trees](../../developer/trees.md) <!-- TODO: link to local trees section -->
-
----
 
 ## `ColumnCovariance()`
 
@@ -229,8 +217,6 @@ arma::mat cov = mlpack::ColumnCovariance(data);
 cov.print("Covariance of random matrix:");
 ```
 
----
-
 ## `ColumnsToBlocks`
 
 The `ColumnsToBlocks` class provides a way to transform data points (e.g.
@@ -251,8 +237,6 @@ As a simple example, given a matrix with four columns `A`, `B`, `C`, and `D`,
 where `m` is a margin, and where each column may itself be reshaped into a
 block.
 
----
-
 ### Constructors
 
  * `ctb = ColumnsToBlocks(rows, cols)`
@@ -266,8 +250,6 @@ block.
      blocks of shape `rows` by `cols`.
    - Each individual column will also be reshaped into a block of shape
      `blockHeight` by `blockWidth`.
-
----
 
 ### Properties
 
@@ -298,8 +280,6 @@ block.
    - `ctb.BufValue()` will return a `size_t` with the current setting.
    - The default setting is `-1.0`.
 
----
-
 ### Scaling values
 
 `ColumnsToBlocks` also has the capability of linearly scaling values of the
@@ -320,8 +300,6 @@ inputs to a given range.
 ***Note:*** the margin element (`ctb.BufValue()`) is considered during the
 scaling process.
 
----
-
 ### Transforming into block format
 
  * `ctb.Transform(input, output)` will perform the columns-to-blocks
@@ -333,8 +311,6 @@ scaling process.
      will be reshaped into a square, and an exception will be thrown if
      `input.n_rows` is not a perfect square (i.e. if `sqrt(input.n_rows)` is not
      an integer).
-
----
 
 ### Examples
 
@@ -432,14 +408,10 @@ The resulting images (before and after using `ColumnsToBlocks`) are shown below.
 <img src="../../img/favicons-blocks.png" alt="four favicons each as a block in a larger image, much better">
 </center>
 
----
-
 ### See also
 
  * [Loading and saving image data](../load_save.md#image-data)
  * [`SparseAutoencoder`](/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder.hpp)
-
----
 
 ## Distribution utilities
 
@@ -471,8 +443,6 @@ std::cout << "Digamma(1.0):   " << d2 << "." << std::endl;
 std::cout << "Trigamma(0.25): " << t1 << "." << std::endl;
 std::cout << "Trigamma(1.0):  " << t2 << "." << std::endl;
 ```
-
----
 
 ## `RandVector()`
 
@@ -546,8 +516,6 @@ vectors containing logarithms.
    - `eT` represents the element type of `m` and `out` (e.g., `double` if `m` is
      `arma::mat` and `out` is `arma::vec`).
 
----
-
 ## `MultiplyCube2Cube()`
 
  * `z = MultiplyCube2Cube(x, y, transX=false, transY=false)`
@@ -580,8 +548,6 @@ std::cout << "Output size: " << z.n_rows << "x" << z.n_cols << "x" << z.n_slices
     << "." << std::endl;
 ```
 
----
-
 ## `MultiplyMat2Cube()`
 
  * `z = MultiplyMat2Cube(x, y, transX=false, transY=false)`
@@ -612,8 +578,6 @@ std::cout << "Output size: " << z.n_rows << "x" << z.n_cols << "x" << z.n_slices
     << "." << std::endl;
 ```
 
----
-
 ## `MultiplyCube2Mat()`
 
  * `z = MultiplyCube2Mat(x, y, transX=false, transY=false)`
@@ -643,8 +607,6 @@ arma::cube z = mlpack::MultiplyCube2Mat(x, y, true, false);
 std::cout << "Output size: " << z.n_rows << "x" << z.n_cols << "x" << z.n_slices
     << "." << std::endl;
 ```
-
----
 
 ## `Quantile()`
 
@@ -740,8 +702,6 @@ std::cout << "RandNormal():        " << r6 << "." << std::endl;
 std::cout << "RandNormal(2, 3):    " << r7 << "." << std::endl;
 ```
 
----
-
 ## `RandomBasis()`
 
 The `RandomBasis()` function generates a random d-dimensional orthogonal basis.
@@ -766,8 +726,6 @@ std::cout << "Dot product of basis vectors 2 and 4: "
     << arma::dot(basis.col(2), basis.col(4))
     << " (should be zero or very close!)." << std::endl;
 ```
-
----
 
 ## `ShuffleData()`
 

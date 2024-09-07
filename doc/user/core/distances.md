@@ -105,8 +105,6 @@ const double d8 = mlpack::EuclideanDistance::Evaluate(fa, fb); // d8 = 2.236
 std::cout << "Euclidean distance (fvec): " << d8 << "." << std::endl;
 ```
 
----
-
 ## `IoUDistance`
 
 The `IoUDistance` class implements the intersection-over-union distance metric,
@@ -193,8 +191,6 @@ std::cout << " - ll=(2, 2), ur=(4, 7) and ll=(1, 1), ur=(2, 2.5): " << d2Coord
     << "." << std::endl;
 ```
 
----
-
 ## `IPMetric<KernelType>`
 
 The `IPMetric<KernelType>` class implements the distance metric induced by the
@@ -213,8 +209,6 @@ The template parameter `KernelType` can be any of mlpack's
 
 This metric is used by the [FastMKS](/src/mlpack/methods/fastmks/fastmks.hpp)
 method (fast max-kernel search).
-
----
 
 ### Constructors and properties
 
@@ -239,8 +233,6 @@ method (fast max-kernel search).
 
  * The internally-held `KernelType` can be accessed with `d.Kernel()`.
 
----
-
 ### Distance evaluation
 
  * `d.Evaluate(x1, x2)`
@@ -250,8 +242,6 @@ method (fast max-kernel search).
      `arma::vec`, `arma::sp_vec`, etc.).
    - `x1` and `x2` must be valid inputs to the `Evaluate()` function of the
      given `KernelType`.
-
----
 
 ### Example usage
 
@@ -309,8 +299,6 @@ std::cout << "IPMetric<EpanechnikovKernel> result between two random "
 std::cout << "  " << ip1.Evaluate(fx1, fx2) << "." << std::endl;
 ```
 
----
-
 ## `MahalanobisDistance`
 
 The `MahalanobisDistance` class implements the weighted Euclidean distance known
@@ -350,8 +338,6 @@ MahalanobisDistance<TakeRoot = true, MatType = arma::mat>
    modified dataset with the Euclidean distance directly.  See the example usage
    below.
 
----
-
 ### Constructors and properties
 
  * `md = MahalanobisDistance()`
@@ -373,8 +359,6 @@ MahalanobisDistance<TakeRoot = true, MatType = arma::mat>
    - For instance, to set the `Q` matrix, `md.Q() = myCustomQ;` can be used.
    - The `Q` matrix must be positive definite and symmetric.
 
----
-
 ### Distance evaluation
 
  * `md.Evaluate(x1, x2)`
@@ -382,8 +366,6 @@ MahalanobisDistance<TakeRoot = true, MatType = arma::mat>
      `x2`.
    - `x1` and `x2` should be vector types with element type equivalent to the
      element type of `MatType` (e.g. `arma::vec`, `arma::fvec`, etc.).
-
----
 
 ### Example usage
 
