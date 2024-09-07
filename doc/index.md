@@ -42,6 +42,10 @@ The following basic guides are *highly recommended* before using mlpack.
 
  * ***Reference for mlpack core classes***:
    - [Core mlpack documentation](user/core.md)
+     * [Core math utilities](user/core/math.md)
+     * [Distances](user/core/distances.md)
+     * [Distributions](user/core/distributions.md)
+     * [Kernels](user/core/kernels.md)
 
  * ***Using mlpack natively with our extensions in Python, R, CLI, Julia, and Go***:
    - [Links to quickstarts and references](#bindings-to-other-languages)
