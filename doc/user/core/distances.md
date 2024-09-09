@@ -11,7 +11,7 @@ These all implement the [same API](../../developer/distances.md), providing one
    induced metric over a [Mercer kernel](kernels.md))
  * [`MahalanobisDistance`](#mahalanobisdistance): weighted Euclidean distance
    with weights specified by a covariance matrix
- * [Implement a custom metric](../../developer/distances.md)
+ * [Implement a custom distance metric](../../developer/distances.md)
 
 ---
 
