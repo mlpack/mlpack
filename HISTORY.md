@@ -6,6 +6,8 @@ _????-??-??_
 
  * Distribute STB headers as part of R package (#3724, #3726).
 
+ * Added OpenMP parallelization to Hamerly, Naive, and Elkan k-means (#3761, #3762, #3764).
+ 
  * Added OpenMP support for fast approximation (#3685).
 
  * Implemented the Find and Fill algorithm into the Dropout Layer and added OpenMP support (#3684).

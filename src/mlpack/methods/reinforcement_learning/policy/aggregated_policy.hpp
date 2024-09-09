@@ -70,7 +70,7 @@ class AggregatedPolicy
   std::vector<PolicyType> policies;
 
   //! Locally-stored sampler under the given distribution.
-  DiscreteDistribution sampler;
+  DiscreteDistribution<> sampler;
 };
 
 } // namespace mlpack

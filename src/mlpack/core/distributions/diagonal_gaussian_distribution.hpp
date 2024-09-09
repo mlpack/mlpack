@@ -17,20 +17,27 @@
 namespace mlpack {
 
 //! A single multivariate Gaussian distribution with diagonal covariance.
+template<typename MatType = arma::mat>
 class DiagonalGaussianDistribution
 {
+ public:
+  // Convenience typedefs.
+  typedef typename GetColType<MatType>::type VecType;
+  typedef typename MatType::elem_type ElemType;
+
  private:
   //! Mean of the distribution.
-  arma::vec mean;
+  VecType mean;
   //! Diagonal covariance of the distribution.
-  arma::vec covariance;
+  VecType covariance;
   //! Cached inverse of covariance.
-  arma::vec invCov;
+  VecType invCov;
   //! Cached logdet(cov).
-  double logDetCov;
+  ElemType logDetCov;
 
   //! log(2pi)
-  static const constexpr double log2pi = 1.83787706640934533908193770912475883;
+  static const constexpr ElemType log2pi =
+      1.83787706640934533908193770912475883;
 
  public:
   //! Default constructor, which creates a Gaussian with zero dimension.
@@ -43,9 +50,9 @@ class DiagonalGaussianDistribution
    * @param dimension Number of dimensions.
    */
   DiagonalGaussianDistribution(const size_t dimension) :
-      mean(arma::zeros<arma::vec>(dimension)),
-      covariance(arma::ones<arma::vec>(dimension)),
-      invCov(arma::ones<arma::vec>(dimension)),
+      mean(arma::zeros<VecType>(dimension)),
+      covariance(arma::ones<VecType>(dimension)),
+      invCov(arma::ones<VecType>(dimension)),
       logDetCov(0)
   { /* Nothing to do. */ }
 
@@ -56,20 +63,20 @@ class DiagonalGaussianDistribution
    * @param mean Mean of distribution.
    * @param covariance Covariance of distribution.
    */
-  DiagonalGaussianDistribution(const arma::vec& mean,
-                               const arma::vec& covariance);
+  DiagonalGaussianDistribution(const VecType& mean,
+                               const VecType& covariance);
 
   //! Return the dimensionality of this distribution.
   size_t Dimensionality() const { return mean.n_elem; }
 
   //! Return the probability of the given observation.
-  double Probability(const arma::vec& observation) const
+  ElemType Probability(const VecType& observation) const
   {
     return std::exp(LogProbability(observation));
   }
 
   //! Return the log probability of the given observation.
-  double LogProbability(const arma::vec& observation) const;
+  ElemType LogProbability(const VecType& observation) const;
 
   /**
    * Calculate the multivariate Gaussian probability density function for each
@@ -78,9 +85,9 @@ class DiagonalGaussianDistribution
    * @param x Matrix of observations.
    * @param probabilities Output probabilities for each input observation.
    */
-  void Probability(const arma::mat& x, arma::vec& probabilities) const
+  void Probability(const MatType& x, VecType& probabilities) const
   {
-    arma::vec logProbabilities;
+    VecType logProbabilities;
     LogProbability(x, logProbabilities);
     probabilities = exp(logProbabilities);
   }
@@ -92,8 +99,8 @@ class DiagonalGaussianDistribution
    * @param observations Matrix of observations.
    * @param logProbabilities Output log probabilities for each observation.
    */
-  void LogProbability(const arma::mat& observations,
-                      arma::vec& logProbabilities) const;
+  void LogProbability(const MatType& observations,
+                      VecType& logProbabilities) const;
 
   /**
    * Return a randomly generated observation according to the probability
@@ -101,14 +108,14 @@ class DiagonalGaussianDistribution
    *
    * @return Random observation from this Diagonal Gaussian distribution.
    */
-  arma::vec Random() const;
+  VecType Random() const;
 
   /**
    * Estimate the Gaussian distribution directly from the given observations.
    *
    * @param observations Matrix of observations.
    */
-  void Train(const arma::mat& observations);
+  void Train(const MatType& observations);
 
   /**
    * Estimate the Gaussian distribution from the given observations,
@@ -119,23 +126,23 @@ class DiagonalGaussianDistribution
    * @param probabilities List of probability of the each observation being
    * from this distribution.
    */
-  void Train(const arma::mat& observations,
-             const arma::vec& probabilities);
+  void Train(const MatType& observations,
+             const VecType& probabilities);
 
   //! Return the mean.
-  const arma::vec& Mean() const { return mean; }
+  const VecType& Mean() const { return mean; }
 
   //! Return a modifiable copy of the mean.
-  arma::vec& Mean() { return mean; }
+  VecType& Mean() { return mean; }
 
   //! Return the covariance matrix.
-  const arma::vec& Covariance() const { return covariance; }
+  const VecType& Covariance() const { return covariance; }
 
   //! Set the covariance matrix.
-  void Covariance(const arma::vec& covariance);
+  void Covariance(const VecType& covariance);
 
   //! Set the covariance matrix using move assignment.
-  void Covariance(arma::vec&& covariance);
+  void Covariance(VecType&& covariance);
 
   //! Serialize the distribution.
   template<typename Archive>

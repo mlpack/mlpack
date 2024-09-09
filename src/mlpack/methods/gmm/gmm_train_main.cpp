@@ -250,7 +250,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       // Compute the parameters of the model using the EM algorithm.
       timers.Start("em");
       EMFit<KMeansType, PositiveDefiniteConstraint,
-          DiagonalGaussianDistribution> em(maxIterations, tolerance, k);
+          DiagonalGaussianDistribution<>> em(maxIterations, tolerance, k);
 
       likelihood = dgmm.Train(dataPoints, params.Get<int>("trials"), false,
           em);
@@ -307,7 +307,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       // Compute the parameters of the model using the EM algorithm.
       timers.Start("em");
       EMFit<KMeans<>, PositiveDefiniteConstraint,
-          DiagonalGaussianDistribution> em(maxIterations, tolerance,
+          DiagonalGaussianDistribution<>> em(maxIterations, tolerance,
           KMeans<>(kmeansMaxIterations));
 
       likelihood = dgmm.Train(dataPoints, params.Get<int>("trials"), false,
