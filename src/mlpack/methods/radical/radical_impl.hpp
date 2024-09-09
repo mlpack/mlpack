@@ -69,11 +69,11 @@ inline typename VecType::elem_type Radical::Vasicek(
 }
 
 template<typename MatType>
-inline typename MatType::elem_type Radical::DoRadical2D(const MatType& matX,
-                                                        const size_t m,
-                                                        MatType& perturbed,
-                                                        MatType& candidate,
-                                                        util::Timers& timers)
+inline typename MatType::elem_type Radical::Apply2D(const MatType& matX,
+                                                    const size_t m,
+                                                    MatType& perturbed,
+                                                    MatType& candidate,
+                                                    util::Timers& timers)
 {
   typedef typename GetColType<MatType>::type VecType;
   typedef typename MatType::elem_type ElemType;
@@ -185,7 +185,7 @@ inline void Radical::Apply(const MatType& matXT,
         matYSubspace.col(0) = matY.col(i);
         matYSubspace.col(1) = matY.col(j);
 
-        const ElemType thetaOpt = DoRadical2D(matYSubspace, localM, perturbed,
+        const ElemType thetaOpt = Apply2D(matYSubspace, localM, perturbed,
             candidate, timers);
 
         const ElemType cosThetaOpt = cos(thetaOpt);

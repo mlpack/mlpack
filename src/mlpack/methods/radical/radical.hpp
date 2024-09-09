@@ -114,7 +114,7 @@ class Radical
 
   //! Two-dimensional version of RADICAL.
   template<typename MatType>
-  typename MatType::elem_type DoRadical2D(
+  typename MatType::elem_type Apply2D(
       const MatType& matX,
       const size_t m,
       MatType& perturbed, // auxiliary memory
