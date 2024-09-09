@@ -70,8 +70,8 @@ inline void ApproximatelyEqual(HMMModel& h1,
         tolerance);
 
     // Check if emission dists are equal
-    std::vector<DiscreteDistribution> d1 = h1.DiscreteHMM()->Emission();
-    std::vector<DiscreteDistribution> d2 = h2.DiscreteHMM()->Emission();
+    std::vector<DiscreteDistribution<>> d1 = h1.DiscreteHMM()->Emission();
+    std::vector<DiscreteDistribution<>> d2 = h2.DiscreteHMM()->Emission();
 
     REQUIRE(d1.size() == d2.size());
 
@@ -93,8 +93,8 @@ inline void ApproximatelyEqual(HMMModel& h1,
         h2.GaussianHMM()->Initial()*100,
         tolerance);
     // Check if emission dists are equal by comparing the mean and coviariance
-    std::vector<GaussianDistribution> d1 = h1.GaussianHMM()->Emission();
-    std::vector<GaussianDistribution> d2 = h2.GaussianHMM()->Emission();
+    std::vector<GaussianDistribution<>> d1 = h1.GaussianHMM()->Emission();
+    std::vector<GaussianDistribution<>> d2 = h2.GaussianHMM()->Emission();
 
     REQUIRE(d1.size() == d2.size());
 

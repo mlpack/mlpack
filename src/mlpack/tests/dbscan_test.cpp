@@ -83,7 +83,7 @@ TEST_CASE("GaussiansTest", "[DBSCANTest]")
 {
   arma::mat points(3, 300);
 
-  GaussianDistribution g1(3), g2(3), g3(3);
+  GaussianDistribution<> g1(3), g2(3), g3(3);
   g1.Mean() = arma::vec("0.0 0.0 0.0");
   g2.Mean() = arma::vec("6.0 6.0 8.0");
   g3.Mean() = arma::vec("-6.0 1.0 -7.0");
@@ -237,7 +237,7 @@ TEST_CASE("GaussiansSingleModeTest", "[DBSCANTest]")
 {
   arma::mat points(3, 300);
 
-  GaussianDistribution g1(3), g2(3), g3(3);
+  GaussianDistribution<> g1(3), g2(3), g3(3);
   g1.Mean() = arma::vec("0.0 0.0 0.0");
   g2.Mean() = arma::vec("6.0 6.0 8.0");
   g3.Mean() = arma::vec("-6.0 1.0 -7.0");

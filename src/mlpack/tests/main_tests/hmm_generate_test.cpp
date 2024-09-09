@@ -121,15 +121,17 @@ TEST_CASE_METHOD(HMMGenerateTestFixture,
   h->GMMHMM()->Emission().resize(2);
   h->GMMHMM()->Emission()[0] = GMM(2, 2);
   h->GMMHMM()->Emission()[0].Weights() = arma::vec("0.3 0.7");
-  h->GMMHMM()->Emission()[0].Component(0) = GaussianDistribution("4.25 3.10",
+  h->GMMHMM()->Emission()[0].Component(0) = GaussianDistribution<>("4.25 3.10",
       "1.00 0.20; 0.20 0.89");
-  h->GMMHMM()->Emission()[0].Component(1) = GaussianDistribution("7.10 5.01",
+  h->GMMHMM()->Emission()[0].Component(1) = GaussianDistribution<>("7.10 5.01",
       "1.00 0.00; 0.00 1.01");
   h->GMMHMM()->Emission()[1] = GMM(2, 2);
   h->GMMHMM()->Emission()[1].Weights() = arma::vec("0.20 0.80");
-  h->GMMHMM()->Emission()[1].Component(0) = GaussianDistribution("-3.00 -6.12",
+  h->GMMHMM()->Emission()[1].Component(0) = GaussianDistribution<>(
+      "-3.00 -6.12",
       "1.00 0.00; 0.00 1.00");
-  h->GMMHMM()->Emission()[1].Component(1) = GaussianDistribution("-4.25 -2.12",
+  h->GMMHMM()->Emission()[1].Component(1) = GaussianDistribution<>(
+      "-4.25 -2.12",
       "1.50 0.60; 0.60 1.20");
 
   // Now that we have a trained HMM model, we can use it to generate a sequence
@@ -171,15 +173,15 @@ TEST_CASE_METHOD(HMMGenerateTestFixture,
   h->DiagGMMHMM()->Emission().resize(2);
   h->DiagGMMHMM()->Emission()[0] = DiagonalGMM(2, 2);
   h->DiagGMMHMM()->Emission()[0].Weights() = arma::vec("0.2 0.8");
-  h->DiagGMMHMM()->Emission()[0].Component(0) = DiagonalGaussianDistribution(
+  h->DiagGMMHMM()->Emission()[0].Component(0) = DiagonalGaussianDistribution<>(
       "2.75 1.60", "0.50 0.50");
-  h->DiagGMMHMM()->Emission()[0].Component(1) = DiagonalGaussianDistribution(
+  h->DiagGMMHMM()->Emission()[0].Component(1) = DiagonalGaussianDistribution<>(
       "6.15 2.51", "1.00 1.50");
   h->DiagGMMHMM()->Emission()[1] = DiagonalGMM(2, 2);
   h->DiagGMMHMM()->Emission()[1].Weights() = arma::vec("0.4 0.6");
-  h->DiagGMMHMM()->Emission()[1].Component(0) = DiagonalGaussianDistribution(
+  h->DiagGMMHMM()->Emission()[1].Component(0) = DiagonalGaussianDistribution<>(
       "-1.00 -3.42", "0.20 1.00");
-  h->DiagGMMHMM()->Emission()[1].Component(1) = DiagonalGaussianDistribution(
+  h->DiagGMMHMM()->Emission()[1].Component(1) = DiagonalGaussianDistribution<>(
       "-3.10 -5.05", "1.20 0.80");
 
   // Now that we have a trained HMM model, we can use it to generate a sequence

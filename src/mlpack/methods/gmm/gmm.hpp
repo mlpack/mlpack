@@ -39,12 +39,12 @@ namespace mlpack {
  *
  * @code
  * void Estimate(const arma::mat& observations,
- *               std::vector<GaussianDistribution>& dists,
+ *               std::vector<GaussianDistribution<>>& dists,
  *               arma::vec& weights);
  *
  * void Estimate(const arma::mat& observations,
  *               const arma::vec& probabilities,
- *               std::vector<GaussianDistribution>& dists,
+ *               std::vector<GaussianDistribution<>>& dists,
  *               arma::vec& weights);
  * @endcode
  *
@@ -89,7 +89,7 @@ class GMM
   size_t dimensionality;
 
   //! Vector of Gaussians
-  std::vector<GaussianDistribution> dists;
+  std::vector<GaussianDistribution<>> dists;
 
   //! Vector of a priori weights for each Gaussian.
   arma::vec weights;
@@ -124,7 +124,7 @@ class GMM
    * @param dists Distributions of the model.
    * @param weights Weights of the model.
    */
-  GMM(const std::vector<GaussianDistribution> & dists,
+  GMM(const std::vector<GaussianDistribution<>>& dists,
       const arma::vec& weights) :
       gaussians(dists.size()),
       dimensionality((!dists.empty()) ? dists[0].Mean().n_elem : 0),
@@ -147,13 +147,13 @@ class GMM
    *
    * @param i Index of component.
    */
-  const GaussianDistribution& Component(size_t i) const { return dists[i]; }
+  const GaussianDistribution<>& Component(size_t i) const { return dists[i]; }
   /**
    * Return a reference to a component distribution.
    *
    * @param i Index of component.
    */
-  GaussianDistribution& Component(size_t i) { return dists[i]; }
+  GaussianDistribution<>& Component(size_t i) { return dists[i]; }
 
   //! Return a const reference to the a priori weights of each Gaussian.
   const arma::vec& Weights() const { return weights; }
@@ -317,7 +317,7 @@ class GMM
    */
   double LogLikelihood(
       const arma::mat& dataPoints,
-      const std::vector<GaussianDistribution>& distsL,
+      const std::vector<GaussianDistribution<>>& distsL,
       const arma::vec& weights) const;
 };
 

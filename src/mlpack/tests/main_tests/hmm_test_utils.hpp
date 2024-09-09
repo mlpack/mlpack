@@ -36,7 +36,7 @@ struct InitHMMModel
   }
 
   //! Helper function to create discrete HMM.
-  static void Create(HMM<DiscreteDistribution>& hmm,
+  static void Create(HMM<DiscreteDistribution<>>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
                      double tolerance = 1e-05)
@@ -53,11 +53,11 @@ struct InitHMMModel
       maxEmissions = arma::max(maxEmissions, maxSeqs);
     }
 
-    hmm = HMM<DiscreteDistribution>(size_t(states),
-        DiscreteDistribution(maxEmissions), tolerance);
+    hmm = HMM<DiscreteDistribution<>>(size_t(states),
+        DiscreteDistribution<>(maxEmissions), tolerance);
   }
 
-  static void Create(HMM<GaussianDistribution>& hmm,
+  static void Create(HMM<GaussianDistribution<>>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
                      double tolerance = 1e-05)
@@ -77,8 +77,8 @@ struct InitHMMModel
     }
 
     // Get the model and initialize it.
-    hmm = HMM<GaussianDistribution>(size_t(states),
-        GaussianDistribution(dimensionality), tolerance);
+    hmm = HMM<GaussianDistribution<>>(size_t(states),
+        GaussianDistribution<>(dimensionality), tolerance);
   }
 
   static void Create(HMM<GMM>& hmm,
@@ -135,7 +135,7 @@ struct InitHMMModel
   }
 
   //! Helper function for discrete emission distributions.
-  static void RandomInitialize(vector<DiscreteDistribution>& e)
+  static void RandomInitialize(vector<DiscreteDistribution<>>& e)
   {
     for (size_t i = 0; i < e.size(); ++i)
     {
@@ -144,7 +144,7 @@ struct InitHMMModel
     }
   }
 
-  static void RandomInitialize(vector<GaussianDistribution>& e)
+  static void RandomInitialize(vector<GaussianDistribution<>>& e)
   {
     for (size_t i = 0; i < e.size(); ++i)
     {
