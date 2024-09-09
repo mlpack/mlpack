@@ -256,8 +256,8 @@ void PrintDocs(const string& bindingName,
     }
 
     cout << "```" << BindingInfo::Language() << endl;
-    cout << example.substr(0, example.size() - 1) << endl;
     // do not want the last "\n".
+    cout << example.substr(0, example.size() - 1) << endl;
     cout << "```" << endl;
     cout << endl;
 
