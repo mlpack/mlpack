@@ -86,7 +86,7 @@ void PReLUType<MatType>::CustomInitialize(
   if (elements != 1)
   {
     throw std::invalid_argument("PReLUType::CustomInitialize(): wrong "
-        "elements size!"); 
+        "elements size!");
   }
 
   W(0) = userAlpha;

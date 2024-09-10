@@ -37,7 +37,7 @@ class SoftminType : public Layer<MatType>
   //! Clone the SoftminType object. This handles polymorphism correctly.
   SoftminType* Clone() const { return new SoftminType(*this); }
 
-   //! Virtual destructor.
+  //! Virtual destructor.
   virtual ~SoftminType() { }
 
   //! Copy the given SoftminType.

@@ -509,13 +509,15 @@ void ConvolutionType<
   CubeType tempCube;
   MakeAlias(tempCube, temp, apparentWidth, apparentHeight,
       inMaps * higherInDimensions * batchSize);
-  paddingBackward.Backward(input, {} /* unused */, usingPadding ? inputPadded : input, temp);
+  paddingBackward.Backward(input, {} /* unused */,
+      usingPadding ? inputPadded : input, temp);
 
   // We will make an alias for the gradient, but note that this is only for the
   // convolution map weights!  The bias will be handled by direct accesses into
   // `gradient`.
   gradient.zeros();
-  MakeAlias(gradientTemp, gradient, weight.n_rows, weight.n_cols, weight.n_slices);
+  MakeAlias(gradientTemp, gradient, weight.n_rows, weight.n_cols,
+      weight.n_slices);
 
   // See Forward() for our iteration strategy.
   for (size_t offset = 0; offset < higherInDimensions * batchSize; ++offset)

@@ -19,8 +19,8 @@ void PrintWrapperPY(const std::string& category,
                     const std::string& groupName,
                     const std::string& validMethods);
 
-} // namespace mlpack
-} // namespace bindings
 } // namespace python
+} // namespace bindings
+} // namespace mlpack
 
 #endif

@@ -28,9 +28,9 @@ namespace mlpack {
 
 /**
  * Implementation of the Grouped Convolution class.
- * 
+ *
  * For information on convolution, please refer to the convolution layer.
- * 
+ *
  * A Grouped Convolution uses a group of convolutions - multiple kernels per
  * layer - resulting in multiple channel outputs per layer. This leads to wider
  * networks helping a network learn a varied set of low level and high level
@@ -40,19 +40,19 @@ namespace mlpack {
  * used to improve classification accuracy. Specifically by exposing a new
  * dimension through grouped convolutions, cardinality (the size of set of
  * transformations), we can increase accuracy by increasing it.
- * 
+ *
  * The `groups` parameter controls the connections between inputs and outputs.
- * inMaps and outMaps must both be divisible by groups. 
+ * inMaps and outMaps must both be divisible by groups.
  * For example,
  *    At groups=1, all inputs are convolved to all outputs.
- *    At groups=2, the operation becomes equivalent to having two conv layers 
- *      side by side, each seeing half the input channels and producing half 
+ *    At groups=2, the operation becomes equivalent to having two conv layers
+ *      side by side, each seeing half the input channels and producing half
  *      the output channels, and both subsequently concatenated.
- *    At groups= inMaps, each input channel is convolved with its own set of 
+ *    At groups= inMaps, each input channel is convolved with its own set of
  *      filters (of size \frac{\text{out\_channels}}{\text{in\_channels}}).
- * 
+ *
  * For more information, kindly refer to the following paper.
- * 
+ *
  * @code
  * @article{Huang2018,
  *  author = {Gao Huang, Shichen Liu, Laurens van der Maaten, Kilian Q. Weinberger},
@@ -142,8 +142,12 @@ class GroupedConvolutionType : public Layer<MatType>
                          const std::string& paddingType = "none",
                          const bool useBias = true);
 
-  //! Clone the GroupedConvolutionType object. This handles polymorphism correctly.
-  GroupedConvolutionType* Clone() const { return new GroupedConvolutionType(*this); }
+  //! Clone the GroupedConvolutionType object. This handles polymorphism
+  //! correctly.
+  GroupedConvolutionType* Clone() const
+  {
+    return new GroupedConvolutionType(*this);
+  }
 
   //! Copy the given GroupedConvolutionType (but not weights).
   GroupedConvolutionType(const GroupedConvolutionType& layer);

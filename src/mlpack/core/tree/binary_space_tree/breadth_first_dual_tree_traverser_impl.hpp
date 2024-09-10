@@ -101,8 +101,9 @@ template<typename DistanceType,
          template<typename SplitBoundType,
                   typename SplitMatType> class SplitType>
 template<typename RuleType>
-void BinarySpaceTree<DistanceType, StatisticType, MatType, BoundType, SplitType>::
-BreadthFirstDualTreeTraverser<RuleType>::Traverse(
+void BinarySpaceTree<
+    DistanceType, StatisticType, MatType, BoundType, SplitType
+>::BreadthFirstDualTreeTraverser<RuleType>::Traverse(
     BinarySpaceTree<DistanceType, StatisticType, MatType, BoundType, SplitType>&
         queryNode,
     std::priority_queue<QueueFrameType>& referenceQueue)

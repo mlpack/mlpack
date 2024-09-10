@@ -25,7 +25,7 @@ void SetMemState(T& t, int state)
   // If we just "released" the memory, so that the matrix does not own it, with
   // Armadillo 10 we must also ensure that the matrix does not deallocate the
   // memory by specifying `n_alloc = 0`.
-  
+
   const_cast<arma::uword&>(t.n_alloc) = 0;
 }
 

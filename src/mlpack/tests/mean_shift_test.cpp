@@ -92,7 +92,8 @@ TEMPLATE_TEST_CASE("MeanShiftSimpleTest", "[MeanShiftTest]", float, double)
     REQUIRE(assignments(i) == thirdClass);
 }
 
-TEMPLATE_TEST_CASE("MeanShiftSimpleCentroidsOnlyTest", "[MeanShiftTest]", float, double)
+TEMPLATE_TEST_CASE("MeanShiftSimpleCentroidsOnlyTest", "[MeanShiftTest]", float,
+    double)
 {
   typedef TestType ElemType;
 

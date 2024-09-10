@@ -83,7 +83,7 @@ class KathirvalavakumarSubavathiInitialization
   template<typename MatType>
   void Initialize(MatType& W, const size_t rows, const size_t cols)
   {
-    typedef typename GetRowType<MatType>::type RowType; 
+    typedef typename GetRowType<MatType>::type RowType;
     RowType b = s * sqrt(3 / (rows * dataSum));
     const double theta = b.min();
     RandomInitialization randomInit(-theta, theta);
@@ -100,7 +100,7 @@ class KathirvalavakumarSubavathiInitialization
   void Initialize(MatType& W,
       const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
-    typedef typename GetRowType<MatType>::type RowType; 
+    typedef typename GetRowType<MatType>::type RowType;
     RowType b = s * sqrt(3 / (W.n_rows * dataSum));
     const double theta = b.min();
     RandomInitialization randomInit(-theta, theta);
@@ -145,7 +145,7 @@ class KathirvalavakumarSubavathiInitialization
     for (size_t i = 0; i < W.n_slices; ++i)
       Initialize(W.slice(i));
   }
- 
+
   /**
    * Serialize the initialization.
    */

@@ -65,24 +65,24 @@ class ValidationRMSETermination
     // fill validation set matrix with random chosen entries
     for (size_t i = 0; i < numTestPoints; ++i)
     {
-      double t_val;
-      size_t t_row;
-      size_t t_col;
+      double tVal;
+      size_t tRow;
+      size_t tCol;
 
       // pick a random non-zero entry
       do
       {
-        t_row = rand() % n;
-        t_col = rand() % m;
-      } while ((t_val = V(t_row, t_col)) == 0);
+        tRow = RandInt(n);
+        tCol = RandInt(m);
+      } while ((tVal = V(tRow, tCol)) == 0);
 
       // add the entry to the validation set
-      testPoints(i, 0) = t_row;
-      testPoints(i, 1) = t_col;
-      testPoints(i, 2) = t_val;
+      testPoints(i, 0) = tRow;
+      testPoints(i, 1) = tCol;
+      testPoints(i, 2) = tVal;
 
       // nullify the added entry from data matrix (training set)
-      V(t_row, t_col) = 0;
+      V(tRow, tCol) = 0;
     }
   }
 
@@ -122,10 +122,10 @@ class ValidationRMSETermination
       rmse = 0;
       for (size_t i = 0; i < numTestPoints; ++i)
       {
-        size_t t_row = testPoints(i, 0);
-        size_t t_col = testPoints(i, 1);
-        double t_val = testPoints(i, 2);
-        double temp = (t_val - WH(t_row, t_col));
+        size_t tRow = testPoints(i, 0);
+        size_t tCol = testPoints(i, 1);
+        double tVal = testPoints(i, 2);
+        double temp = (tVal - WH(tRow, tCol));
         temp *= temp;
         rmse += temp;
       }
@@ -178,7 +178,10 @@ class ValidationRMSETermination
       }
       return true;
     }
-    else return false;
+    else
+    {
+      return false;
+    }
   }
 
   //! Get current value of residue

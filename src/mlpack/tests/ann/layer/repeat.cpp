@@ -285,7 +285,8 @@ template <> struct GradientBound<arma::fmat>
 /**
  * Numerical gradient test for MultiheadAttention layer.
  */
-TEMPLATE_TEST_CASE("GradientRepeatTest", "[ANNLayerTest]", arma::mat, arma::fmat)
+TEMPLATE_TEST_CASE("GradientRepeatTest", "[ANNLayerTest]", arma::mat,
+    arma::fmat)
 {
   typedef TestType MatType;
   struct GradientFunction
@@ -332,7 +333,8 @@ TEMPLATE_TEST_CASE("GradientRepeatTest", "[ANNLayerTest]", arma::mat, arma::fmat
 
     MatType& Parameters() { return model->Parameters(); }
 
-    FFN<NegativeLogLikelihoodType<MatType>,RandomInitialization,MatType>* model;
+    FFN<NegativeLogLikelihoodType<MatType>, RandomInitialization, MatType>*
+        model;
 
     MatType input, target;
     const std::vector<size_t> inputDimensions;
@@ -343,20 +345,21 @@ TEMPLATE_TEST_CASE("GradientRepeatTest", "[ANNLayerTest]", arma::mat, arma::fmat
     const size_t batchSize;
     size_t count;
   };
+
   GradientFunction fn1({2, 1}, true);
   GradientFunction fn2({2, 1}, false);
   GradientFunction fn3({1, 2}, true);
   GradientFunction fn4({1, 2}, false);
-  GradientFunction fn5( {2, 2}, true);
-  GradientFunction fn6( {2, 2}, false);
-  
+  GradientFunction fn5({2, 2}, true);
+  GradientFunction fn6({2, 2}, false);
+
   double eps = GradientBound<MatType>::eps;
   double bound = GradientBound<MatType>::bound;
 
-  CHECK(CheckGradient<GradientFunction,MatType>(fn1, eps) <= bound);
-  CHECK(CheckGradient<GradientFunction,MatType>(fn2, eps) <= bound);
-  CHECK(CheckGradient<GradientFunction,MatType>(fn3, eps) <= bound);
-  CHECK(CheckGradient<GradientFunction,MatType>(fn4, eps) <= bound);
-  CHECK(CheckGradient<GradientFunction,MatType>(fn5, eps) <= bound);
-  CHECK(CheckGradient<GradientFunction,MatType>(fn6, eps) <= bound);
+  CHECK(CheckGradient<GradientFunction, MatType>(fn1, eps) <= bound);
+  CHECK(CheckGradient<GradientFunction, MatType>(fn2, eps) <= bound);
+  CHECK(CheckGradient<GradientFunction, MatType>(fn3, eps) <= bound);
+  CHECK(CheckGradient<GradientFunction, MatType>(fn4, eps) <= bound);
+  CHECK(CheckGradient<GradientFunction, MatType>(fn5, eps) <= bound);
+  CHECK(CheckGradient<GradientFunction, MatType>(fn6, eps) <= bound);
 }

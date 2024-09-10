@@ -22,12 +22,12 @@ namespace mlpack {
 
 /**
  * Implementation of the AdaptiveMeanPooling layer.
- * 
- * The AdaptiveMeanPooling layer works similarly to MeanPooling layer, but it 
+ *
+ * The AdaptiveMeanPooling layer works similarly to MeanPooling layer, but it
  * adaptively changes the size of the pooling region to minimize the amount of
  * computation. In MeanPooling, we specifies the kernel and stride size whereas
  * in AdaptiveMeanPooling, we specify the output size of the pooling region.
- * 
+ *
  * @tparam MatType Matrix representation to accept as input and use for
  *         computation.
  */
@@ -48,8 +48,8 @@ class AdaptiveMeanPoolingType : public Layer<MatType>
                           const size_t outputHeight);
 
   // Virtual destructor.
-  virtual ~AdaptiveMeanPoolingType() 
-  { 
+  virtual ~AdaptiveMeanPoolingType()
+  {
     // Nothing to do here.
   }
 
@@ -62,11 +62,11 @@ class AdaptiveMeanPoolingType : public Layer<MatType>
   //! Take ownership of the given AdaptiveMeanPoolingType.
   AdaptiveMeanPoolingType& operator=(AdaptiveMeanPoolingType&& other);
 
-  //! Clone the AdaptiveMeanPoolingType object. 
+  //! Clone the AdaptiveMeanPoolingType object.
   //! This handles polymorphism correctly.
-  AdaptiveMeanPoolingType* Clone() const 
-  { 
-    return new AdaptiveMeanPoolingType(*this); 
+  AdaptiveMeanPoolingType* Clone() const
+  {
+    return new AdaptiveMeanPoolingType(*this);
   }
 
   /**
@@ -117,7 +117,7 @@ class AdaptiveMeanPoolingType : public Layer<MatType>
   MeanPoolingType<MatType> poolingLayer;
 
   //! Locally-stored output width. These are user specified outputWidth.
-  //! Actual outputWidth will be equal to this but only after 
+  //! Actual outputWidth will be equal to this but only after
   //! `ComputeOutputDimensions()` is called.
   size_t outputWidth;
 

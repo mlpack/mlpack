@@ -39,7 +39,8 @@ GroupNorm<InputDataType, OutputDataType>::GroupNorm(
 {
   if (size % groupCount != 0)
   {
-    Log::Fatal << "Total input units must be divisible by groupCount!" << std::endl;
+    Log::Fatal << "Total input units must be divisible by groupCount!"
+        << std::endl;
   }
 
   weights.set_size(size + size, 1);

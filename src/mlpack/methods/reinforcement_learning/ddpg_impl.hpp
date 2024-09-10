@@ -31,7 +31,7 @@ DDPG<
   EnvironmentType,
   QNetworkType,
   PolicyNetworkType,
-  NoiseType, 
+  NoiseType,
   UpdaterType,
   ReplayType
 >::DDPG(TrainingConfig& config,
@@ -81,7 +81,7 @@ DDPG<
 
   if (learningQNetwork.Parameters().n_elem != networkSize)
     learningQNetwork.Reset(networkSize);
-  
+
   targetQNetwork.Reset(networkSize);
 
   #if ENS_VERSION_MAJOR == 1
@@ -192,7 +192,7 @@ void DDPG<
       sampledNextStates);
   arma::rowvec Q;
   targetQNetwork.Predict(targetQInput, Q);
-  arma::rowvec nextQ = sampledRewards + config.Discount() 
+  arma::rowvec nextQ = sampledRewards + config.Discount()
       * ((1 - isTerminal) % Q);
 
   arma::mat sampledActionValues(action.size, sampledActions.size());

@@ -53,16 +53,16 @@ TEST_CASE("PendulumWithDDPG", "[PolicyGradientTest]")
     qNetwork.Add(new Linear(1));
 
     // Set up the OUNoise parameters.
-    int size = 1; 
+    int size = 1;
     double mu = 0.0;
-    double theta = 1.0; 
+    double theta = 1.0;
     double sigma = 0.01;
 
     // Create an instance of the OUNoise class.
     OUNoise ouNoise(size, mu, theta, sigma);
 
     // Set up Deep Deterministic Policy Gradient agent.
-    DDPG<Pendulum, decltype(qNetwork), decltype(policyNetwork), 
+    DDPG<Pendulum, decltype(qNetwork), decltype(policyNetwork),
         OUNoise, AdamUpdate>
         agent(config, qNetwork, policyNetwork, ouNoise, replayMethod);
 
@@ -106,15 +106,15 @@ TEST_CASE("PendulumWithGaussianDDPG", "[PolicyGradientTest]")
     qNetwork.Add(new Linear(1));
 
     // Set up the GaussianNoise parameters.
-    int size = 1; 
-    double mu = 0.0; 
+    int size = 1;
+    double mu = 0.0;
     double sigma = 0.01;
 
     // Create an instance of the GaussianNoise class.
     GaussianNoise gaussianNoise(size, mu, sigma);
 
     // Set up Deep Deterministic Policy Gradient agent.
-    DDPG<Pendulum, decltype(qNetwork), decltype(policyNetwork), 
+    DDPG<Pendulum, decltype(qNetwork), decltype(policyNetwork),
         GaussianNoise, AdamUpdate>
         agent(config, qNetwork, policyNetwork, gaussianNoise, replayMethod);
 
@@ -152,7 +152,7 @@ TEST_CASE("DDPGForMultipleActions", "[PolicyGradientTest]")
   // Set up the OUNoise parameters.
   int size = 4;
   double mu = 0.0;
-  double theta = 1.0;  
+  double theta = 1.0;
   double sigma = 0.01;
 
   // Create an instance of the OUNoise class.
@@ -204,8 +204,8 @@ TEST_CASE("OUNoiseTest", "[PolicyGradientTest]")
 TEST_CASE("GaussianNoiseTest", "[PolicyGradientTest]")
 {
   // Set up the GaussianNoise parameters.
-  int size = 5; 
-  double mu = 0.0; 
+  int size = 5;
+  double mu = 0.0;
   double sigma = 0.00001;
 
   // Create an instance of the GaussianNoise class.
@@ -215,7 +215,7 @@ TEST_CASE("GaussianNoiseTest", "[PolicyGradientTest]")
   arma::colvec noise = gaussianNoise.sample();
   REQUIRE((int) noise.n_elem == size);
 
-  // Verify that the noise vector has values drawn from a 
+  // Verify that the noise vector has values drawn from a
   // Gaussian distribution with the specified mean and standard deviation.
   double mean = arma::mean(noise);
   double stdDev = arma::stddev(noise);

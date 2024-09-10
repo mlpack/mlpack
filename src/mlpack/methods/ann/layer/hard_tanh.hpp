@@ -58,7 +58,7 @@ class HardTanHType : public Layer<MatType>
    * @param minValue Range of the linear region minimum value.
    */
   HardTanHType(const double maxValue = 1, const double minValue = -1);
-  
+
   virtual ~HardTanHType() { }
 
   //! Copy the other HardTanH layer

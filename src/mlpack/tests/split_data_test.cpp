@@ -107,7 +107,7 @@ TEST_CASE("SplitShuffleDataResultMat", "[SplitDataTest]")
 TEST_CASE("SplitDataResultMat", "[SplitDataTest]")
 {
   mat input(2, 10);
-  input = reshape(linspace(0, 19 ,20), 2, 10);
+  input = reshape(linspace(0, 19, 20), 2, 10);
 
   const auto value = Split(input, 0.2, false);
   REQUIRE(std::get<0>(value).n_cols == 8); // Train data.
@@ -174,9 +174,11 @@ TEST_CASE("SplitCheckSize", "[SplitDataTest]")
 {
   arma::mat input = randu<arma::mat>(2, 10);
 
-  const Row<size_t> firstLabels = arma::linspace<Row<size_t>> (0, input.n_cols - 1, input.n_cols);
+  const Row<size_t> firstLabels = arma::linspace<Row<size_t>>(0,
+      input.n_cols - 1, input.n_cols);
 
-  const Row<size_t> secondLabels = arma::linspace<Row<size_t>> (0, input.n_cols, input.n_cols + 1);
+  const Row<size_t> secondLabels = arma::linspace<Row<size_t>>(0,
+      input.n_cols, input.n_cols + 1);
 
   REQUIRE_THROWS_AS(Split(input, secondLabels, 0.2), std::invalid_argument);
 
@@ -359,7 +361,7 @@ TEST_CASE("SplitDataResultField", "[SplitDataTest]")
 
   matA = linspace(0, matA.n_elem - 1);
   matB = linspace(matA.n_elem, matA.n_elem + matB.n_elem - 1);
- 
+
   input(0, 0) = matA;
   input(0, 1) = matB;
 

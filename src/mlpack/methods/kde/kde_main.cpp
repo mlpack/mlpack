@@ -246,8 +246,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RequireParamValue<int>(params, "initial_sample_size",
       [](int x){ return x > 0; },
       true, "initial sample size must be greater than 0");
-  RequireParamValue<double>(params, "mc_entry_coef", [](double x){return x >= 1;},
-      true, "Monte Carlo entry coefficient must be greater than or equal to 1");
+  RequireParamValue<double>(params, "mc_entry_coef",
+      [](double x){ return x >= 1; }, true,
+      "Monte Carlo entry coefficient must be greater than or equal to 1");
   RequireParamValue<double>(params, "mc_break_coef",
       [](double x){ return x > 0 && x <= 1; }, true,
       "Monte Carlo break coefficient must be greater than 0 and less than "

@@ -22,7 +22,7 @@
 namespace mlpack {
 
 template<typename MatType>
-BatchNormType<MatType>::BatchNormType() : 
+BatchNormType<MatType>::BatchNormType() :
     Layer<MatType>(),
     minAxis(2),
     maxAxis(2),
@@ -43,7 +43,7 @@ BatchNormType<MatType>::BatchNormType(
     const size_t maxAxis,
     const double eps,
     const bool average,
-    const double momentum) : 
+    const double momentum) :
     Layer<MatType>(),
     minAxis(minAxis),
     maxAxis(maxAxis),
@@ -164,7 +164,7 @@ void BatchNormType<MatType>::CustomInitialize(
 {
   if (elements != 2 * size) {
     throw std::invalid_argument("BatchNormType::CustomInitialize(): wrong "
-        "elements size!"); 
+        "elements size!");
   }
   MatType gammaTemp;
   MatType betaTemp;
@@ -299,7 +299,7 @@ void BatchNormType<MatType>::Backward(
   // Step 4: sum (dl / dxhat * -1 / stdInv) + variance *
   // sum (-2 * (x - mu)) / m.
   MatType normTemp = sum(sum((norm.each_slice() %
-      repmat(-stdInv, inputSize, 1)) + 
+      repmat(-stdInv, inputSize, 1)) +
       (inputMean.each_slice() % repmat(vars, inputSize, 1) * (-2.0) / m),
       2), 0) / m;
   gTemp.each_slice() += repmat(normTemp, inputSize, 1);

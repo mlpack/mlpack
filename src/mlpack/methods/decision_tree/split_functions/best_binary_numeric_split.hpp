@@ -34,7 +34,7 @@ HAS_MEM_FUNC(BinaryGains, HasBinaryGains);
 template<typename T, bool /* UseWeights */>
 struct HasOptimizedBinarySplitForms
 {
-  const static bool value = HasBinaryGains<T,
+  static const bool value = HasBinaryGains<T,
       std::tuple<double, double>(T::*)()>::value;
 };
 

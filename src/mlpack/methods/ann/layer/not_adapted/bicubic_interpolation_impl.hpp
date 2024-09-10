@@ -29,7 +29,7 @@ BicubicInterpolation():
   alpha(-0.75),
   batchSize(0)
 {
- // Nothing to do here.
+  // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -48,16 +48,19 @@ BicubicInterpolation(const size_t inRowSize,
   alpha(alpha),
   batchSize(0)
 {
-
+  // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
-void BicubicInterpolation<InputDataType, OutputDataType>::GetKernalWeight(double delta,
-                                                                          arma::mat& coeffs)
+void BicubicInterpolation<InputDataType, OutputDataType>::GetKernalWeight(
+    double delta,
+    arma::mat& coeffs)
 {
-  coeffs(0) = ((alpha * (delta + 1) - 5 * alpha) * (delta + 1) + 8 * alpha) * (delta + 1) - 4 * alpha;
+  coeffs(0) = ((alpha * (delta + 1) - 5 * alpha) * (delta + 1) + 8 * alpha) *
+      (delta + 1) - 4 * alpha;
   coeffs(1) = ((alpha + 2) * delta - (alpha + 3)) * delta * delta + 1;
-  coeffs(2) = ((alpha + 2) * (1 - delta) - (alpha + 3)) * (1 - delta) * (1 - delta) + 1;
+  coeffs(2) = ((alpha + 2) * (1 - delta) - (alpha + 3)) * (1 - delta) *
+      (1 - delta) + 1;
   coeffs(3) = 1 - coeffs[0] - coeffs[1] - coeffs[2];
 }
 
@@ -90,31 +93,44 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Forward(
   {
     // The input is padded on all sides using replication of the input boundary.
     arma::mat grid = zeros(inRowSize + 4, inColSize + 4);
-    grid(arma::span(2, inRowSize + 1), arma::span(2, inColSize + 1)) = inputAsCube.slice(k);
-    grid(arma::span(2, inRowSize + 1), 0) = grid(arma::span(2, inRowSize + 1), 2);
-    grid(arma::span(2, inRowSize + 1), 1) = grid(arma::span(2, inRowSize + 1), 2);
-    grid(arma::span(2, inRowSize + 1), inColSize + 2) = grid(arma::span(2, inRowSize + 1), inColSize + 1);
-    grid(arma::span(2, inRowSize + 1), inColSize + 3) = grid(arma::span(2, inRowSize + 1), inColSize + 1);
-    grid(0, arma::span(2, inColSize+ 1)) = grid(2, arma::span(2, inColSize + 1));
-    grid(1, arma::span(2, inColSize + 1)) = grid(2, arma::span(2, inColSize + 1));
-    grid(inRowSize + 2, arma::span(2, inColSize + 1)) = grid(inRowSize + 1, arma::span(2, inColSize + 1));
-    grid(inRowSize + 3, arma::span(2, inColSize + 1)) = grid(inRowSize + 1, arma::span(2, inColSize + 1));
+    grid(arma::span(2, inRowSize + 1), arma::span(2, inColSize + 1)) =
+        inputAsCube.slice(k);
+    grid(arma::span(2, inRowSize + 1), 0) =
+        grid(arma::span(2, inRowSize + 1), 2);
+    grid(arma::span(2, inRowSize + 1), 1) =
+        grid(arma::span(2, inRowSize + 1), 2);
+    grid(arma::span(2, inRowSize + 1), inColSize + 2) =
+        grid(arma::span(2, inRowSize + 1), inColSize + 1);
+    grid(arma::span(2, inRowSize + 1), inColSize + 3) =
+        grid(arma::span(2, inRowSize + 1), inColSize + 1);
+    grid(0, arma::span(2, inColSize+ 1)) =
+        grid(2, arma::span(2, inColSize + 1));
+    grid(1, arma::span(2, inColSize + 1)) =
+        grid(2, arma::span(2, inColSize + 1));
+    grid(inRowSize + 2, arma::span(2, inColSize + 1)) =
+        grid(inRowSize + 1, arma::span(2, inColSize + 1));
+    grid(inRowSize + 3, arma::span(2, inColSize + 1)) =
+        grid(inRowSize + 1, arma::span(2, inColSize + 1));
     grid(arma::span(0, 1), arma::span(0, 1)) += grid(2, 2);
-    grid(arma::span(inRowSize + 2, inRowSize + 3), arma::span(inColSize + 2, inColSize + 3)) += grid(inRowSize + 1, inColSize + 1);
-    grid(arma::span(inRowSize + 2, inRowSize + 3), arma::span(0, 1)) += grid(inRowSize + 1, 2);
-    grid(arma::span(0, 1), arma::span(inColSize + 2, inColSize + 3)) += grid(2, inColSize + 1);
+    grid(arma::span(inRowSize + 2, inRowSize + 3),
+         arma::span(inColSize + 2, inColSize + 3)) +=
+        grid(inRowSize + 1, inColSize + 1);
+    grid(arma::span(inRowSize + 2, inRowSize + 3), arma::span(0, 1)) +=
+        grid(inRowSize + 1, 2);
+    grid(arma::span(0, 1), arma::span(inColSize + 2, inColSize + 3)) +=
+        grid(2, inColSize + 1);
 
     for (size_t i = 0; i < outRowSize; ++i)
     {
       double rOrigin = (i + 0.5) * scaleRow;
       for (size_t j = 0; j < outColSize; ++j)
       {
-        arma::mat kernal = arma::mat(4, 4);
+        arma::mat kernel = arma::mat(4, 4);
         double cOrigin = (j + 0.5) * scaleCol;
         // Bottom right corner of the kernel.
         const size_t cEnd = (size_t) std::floor(cOrigin + 1.5) + 2;
         const size_t rEnd = (size_t) std::floor(rOrigin + 1.5) + 2;
-        kernal = grid(arma::span(rEnd - 3, rEnd),
+        kernel = grid(arma::span(rEnd - 3, rEnd),
             arma::span(cEnd - 3, cEnd));
 
         double fc = cOrigin - 0.5;
@@ -128,7 +144,7 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Forward(
         GetKernalWeight(fc, weightC);
 
         arma::mat weightMatrix = weightR * weightC;
-        outputAsCube(i, j, k) = accu(weightMatrix % kernal);
+        outputAsCube(i, j, k) = accu(weightMatrix % kernel);
       }
     }
   }
@@ -189,7 +205,8 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
           GetKernalWeight(fr, weightR);
           GetKernalWeight(fc, weightC);
 
-          temp(arma::span(rEnd - 3, rEnd), arma::span(cEnd - 3, cEnd)) += gradientAsCube(i, j, k) * weightR * weightC;
+          temp(arma::span(rEnd - 3, rEnd), arma::span(cEnd - 3, cEnd)) +=
+              gradientAsCube(i, j, k) * weightR * weightC;
         }
       }
       // Adding the contribution of the corner points to the output matrix.
@@ -201,8 +218,9 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
       temp.col(2) += temp.col(1);
       temp.col(inColSize + 1) += temp.col(inColSize + 2);
       temp.col(inColSize + 1) += temp.col(inColSize + 3);
- 
-      outputAsCube.slice(k) += temp(arma::span(2, inRowSize + 1), arma::span(2, inColSize + 1));
+
+      outputAsCube.slice(k) += temp(arma::span(2, inRowSize + 1),
+                                    arma::span(2, inColSize + 1));
     }
   }
 }

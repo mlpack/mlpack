@@ -22,7 +22,7 @@ inline std::string GetClassName(const std::string& groupName)
   std::stringstream groupNameStream(groupName);
   std::string temp;
 
-  while(std::getline(groupNameStream, temp, '_'))
+  while (std::getline(groupNameStream, temp, '_'))
   {
     temp[0] = std::toupper(temp[0]);
     className += temp;
@@ -51,7 +51,7 @@ inline std::vector<std::string> GetMethods(const std::string& validMethods)
   std::stringstream methodStream(validMethods);
   std::string temp;
 
-  while(std::getline(methodStream, temp, ' '))
+  while (std::getline(methodStream, temp, ' '))
   {
     methods.push_back(temp);
   }
@@ -69,8 +69,8 @@ inline std::string GetMappedName(const std::string& methodName)
   return nameMap[methodName];
 }
 
-} // python.
-} // bindings.
-} // mlpack.
+} // namespace python
+} // namespace bindings
+} // namespace mlpack
 
 #endif
