@@ -19,7 +19,7 @@
 namespace mlpack {
 
 template<typename MatType>
-AddType<MatType>::AddType() : 
+AddType<MatType>::AddType() :
     Layer<MatType>(),
     outSize(0)
 {

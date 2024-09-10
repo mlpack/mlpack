@@ -46,7 +46,7 @@ class AddMergeType : public MultiLayer<MatType>
   //! Virtual destructor: delete all held layers.
   virtual ~AddMergeType()
   {
-    // Nothing to do here. 
+    // Nothing to do here.
   }
 
   //! Create a copy of the AddMergeType (this is safe for polymorphic use).

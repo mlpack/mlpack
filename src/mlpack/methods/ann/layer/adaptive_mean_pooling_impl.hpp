@@ -27,7 +27,7 @@ AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType() :
 template <typename MatType>
 AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType(
     const size_t outputWidth,
-    const size_t outputHeight) : 
+    const size_t outputHeight) :
     Layer<MatType>(),
     poolingLayer(MeanPoolingType<MatType>(1, 1)),
     outputWidth(outputWidth),
@@ -60,7 +60,8 @@ AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType(
 
 template<typename MatType>
 AdaptiveMeanPoolingType<MatType>&
-AdaptiveMeanPoolingType<MatType>::operator=(const AdaptiveMeanPoolingType& other)
+AdaptiveMeanPoolingType<MatType>::operator=(
+    const AdaptiveMeanPoolingType& other)
 {
   if (&other != this)
   {

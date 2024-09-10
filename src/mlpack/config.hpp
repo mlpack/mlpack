@@ -61,7 +61,7 @@
 // non-error messages.
 //
 #if !defined(MLPACK_COUT_STREAM)
- #define MLPACK_COUT_STREAM std::cout
+  #define MLPACK_COUT_STREAM std::cout
 #endif
 
 //
@@ -69,7 +69,7 @@
 // errors.
 //
 #if !defined(MLPACK_CERR_STREAM)
- #define MLPACK_CERR_STREAM std::cerr
+  #define MLPACK_CERR_STREAM std::cerr
 #endif
 
 //

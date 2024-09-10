@@ -60,7 +60,7 @@ class BipolarSigmoidFunction
    */
   static double Deriv(const double /* x */, const double y)
   {
-    return (1.0 - std::pow(y,2 )) / 2.0;
+    return (1.0 - std::pow(y, 2)) / 2.0;
   }
 
   /**
@@ -71,7 +71,9 @@ class BipolarSigmoidFunction
    * @param dy The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType, typename DerivVecType>
-  static void Deriv(const InputVecType& /* x */, const OutputVecType& y, DerivVecType& dy)
+  static void Deriv(const InputVecType& /* x */,
+                    const OutputVecType& y,
+                    DerivVecType& dy)
   {
     dy =  (1.0 - pow(y, 2)) / 2.0;
   }

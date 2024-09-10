@@ -246,7 +246,8 @@ Backward(const MatType& /* input */,
   for (size_t i = 0; i < numHeads * batchSize; ++i)
   {
     // We will perform backpropagation of softmax over each slice of gyTemp.
-    softmax.Backward({} /* unused */, scores.slice(i), gyTemp.slice(i), gyTemp.slice(i));
+    softmax.Backward({} /* unused */, scores.slice(i), gyTemp.slice(i),
+        gyTemp.slice(i));
   }
 
   // Obtain backpropagated error of key.

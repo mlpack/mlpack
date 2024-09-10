@@ -772,8 +772,8 @@ template<typename DistanceType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 template<typename VecType>
-size_t RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
-    AuxiliaryInformationType>::GetNearestChild(
+size_t RectangleTree<DistanceType, StatisticType, MatType, SplitType,
+    DescentType, AuxiliaryInformationType>::GetNearestChild(
     const VecType& point,
     typename std::enable_if_t<IsVector<VecType>::value>*)
 {
@@ -805,8 +805,8 @@ template<typename DistanceType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 template<typename VecType>
-size_t RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
-    AuxiliaryInformationType>::GetFurthestChild(
+size_t RectangleTree<DistanceType, StatisticType, MatType, SplitType,
+    DescentType, AuxiliaryInformationType>::GetFurthestChild(
     const VecType& point,
     typename std::enable_if_t<IsVector<VecType>::value>*)
 {
@@ -837,8 +837,9 @@ template<typename DistanceType,
          typename SplitType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
-size_t RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
-    AuxiliaryInformationType>::GetNearestChild(const RectangleTree& queryNode)
+size_t RectangleTree<DistanceType, StatisticType, MatType, SplitType,
+    DescentType, AuxiliaryInformationType>::GetNearestChild(
+    const RectangleTree& queryNode)
 {
   if (IsLeaf())
     return 0;
@@ -867,8 +868,9 @@ template<typename DistanceType,
          typename SplitType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
-size_t RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
-    AuxiliaryInformationType>::GetFurthestChild(const RectangleTree& queryNode)
+size_t RectangleTree<DistanceType, StatisticType, MatType, SplitType,
+    DescentType, AuxiliaryInformationType>::GetFurthestChild(
+    const RectangleTree& queryNode)
 {
   if (IsLeaf())
     return 0;

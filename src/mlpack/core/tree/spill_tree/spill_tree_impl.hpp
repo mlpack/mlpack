@@ -625,7 +625,8 @@ template<typename DistanceType,
          template<typename HyperplaneDistanceType> class HyperplaneType,
          template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-inline SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>&
+inline
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>&
 SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
     Child(const size_t child) const
 {
@@ -715,7 +716,8 @@ template<typename DistanceType,
          template<typename HyperplaneDistanceType> class HyperplaneType,
          template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-void SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
+void
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
     SplitNode(arma::Col<size_t>& points,
               const size_t maxLeafSize,
               const double tau,
@@ -775,7 +777,8 @@ void SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>:
   left->Center(leftCenter);
   right->Center(rightCenter);
 
-  const ElemType leftParentDistance = DistanceType::Evaluate(center, leftCenter);
+  const ElemType leftParentDistance = DistanceType::Evaluate(center,
+      leftCenter);
   const ElemType rightParentDistance = DistanceType::Evaluate(center,
       rightCenter);
 
@@ -789,7 +792,8 @@ template<typename DistanceType,
          template<typename HyperplaneDistanceType> class HyperplaneType,
          template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
-bool SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
+bool
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
     SplitPoints(const double tau,
                 const double rho,
                 const arma::Col<size_t>& points,
@@ -902,7 +906,8 @@ template<typename DistanceType,
          template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
 template<typename Archive>
-void SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
+void
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
     serialize(Archive& ar, const uint32_t /* version */)
 {
   // If we're loading, and we have children, they need to be deleted.

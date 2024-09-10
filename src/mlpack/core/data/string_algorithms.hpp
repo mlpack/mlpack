@@ -42,7 +42,7 @@ inline void Trim(std::string& str)
     endIndex--;
 
   std::string trimmedStr;
-  
+
   // Using ternary operator is not recommended here.
   // Ternary operator is only useful for simple expressions
   // that don't involve varrying types.
@@ -183,7 +183,7 @@ inline std::vector<std::string> Tokenize(
   return tokens;
 }
 
-}  // namespace data
-}  // namespace mlpack
+} // namespace data
+} // namespace mlpack
 
-#endif 
+#endif

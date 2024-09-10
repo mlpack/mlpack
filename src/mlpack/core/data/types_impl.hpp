@@ -26,7 +26,7 @@ namespace data{
 
 inline arma::file_type ToArmaFileType(const FileType& type)
 {
-  switch(type)
+  switch (type)
   {
     case FileType::FileTypeUnknown:
       return arma::file_type_unknown;

@@ -1691,7 +1691,7 @@ TEST_CASE("HoeffdingTreeResetTests", "[HoeffdingTreeTest]")
   REQUIRE(ht.NumChildren() == 0);
 
   data = arma::randu<arma::mat>(10, 1000);
-  for(size_t i = 750; i < 1000; ++i)
+  for (size_t i = 750; i < 1000; ++i)
     labels[i] = 2;
 
   ht.Train(data, labels);

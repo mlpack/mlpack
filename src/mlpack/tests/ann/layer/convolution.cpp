@@ -457,7 +457,8 @@ TEST_CASE("NonSquareConvolutionTest", "[ANNLayerTest]")
   arma::mat forwardResult(module1.OutputSize(), 10);
   REQUIRE_NOTHROW(module1.Forward(data, forwardResult));
   arma::mat backwardResult(49, 10);
-  REQUIRE_NOTHROW(module1.Backward(data, forwardResult, forwardResult, backwardResult));
+  REQUIRE_NOTHROW(module1.Backward(data, forwardResult, forwardResult,
+      backwardResult));
   arma::mat gradientResult(module1.WeightSize(), 1);
   REQUIRE_NOTHROW(module1.Gradient(data, backwardResult, gradientResult));
 }

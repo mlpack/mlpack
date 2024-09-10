@@ -31,7 +31,8 @@ inline void RandVector(arma::vec& v)
 
   if ((v.n_elem % 2) == 1)
   {
-    v[v.n_elem - 1] = std::sqrt(-2 * std::log(Random())) * cos(2 * M_PI * Random());
+    v[v.n_elem - 1] = std::sqrt(-2 * std::log(Random())) *
+        cos(2 * M_PI * Random());
   }
 
   v /= std::sqrt(dot(v, v));

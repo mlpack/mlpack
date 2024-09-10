@@ -147,7 +147,8 @@ template<typename DistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 RangeSearch<DistanceType, MatType, TreeType>&
-RangeSearch<DistanceType, MatType, TreeType>::operator=(const RangeSearch& other)
+RangeSearch<DistanceType, MatType, TreeType>::operator=(
+    const RangeSearch& other)
 {
   if (this != &other)
   {

@@ -51,8 +51,11 @@ QLearning<
   targetNetwork = learningNetwork;
 
   // Set up q-learning network.
-  if (learningNetwork.Parameters().n_elem != environment.InitialSample().Encode().n_elem)
+  if (learningNetwork.Parameters().n_elem !=
+      environment.InitialSample().Encode().n_elem)
+  {
     learningNetwork.Reset(environment.InitialSample().Encode().n_elem);
+  }
 
   // Initialize the target network with the parameters of learning network.
   targetNetwork.Parameters() = learningNetwork.Parameters();

@@ -54,7 +54,7 @@ TD3<
   environment(std::move(environment)),
   totalSteps(0),
   deterministic(false)
-{ 
+{
   // Set up q-learning and policy networks.
   targetPNetwork = policyNetwork;
   targetQ1Network = learningQ1Network;
@@ -244,8 +244,8 @@ void TD3<
         arma::colvec input = arma::join_vert(singlePi, singleState);
         arma::mat weightLastLayer;
 
-        // Note that we can use an empty matrix for the backwards pass, since the
-        // networks use EmptyLoss.
+        // Note that we can use an empty matrix for the backwards pass, since
+        // the networks use EmptyLoss.
         learningQ1Network.Forward(input, q);
         learningQ1Network.Backward(input, arma::mat("-1"), gradQ);
         weightLastLayer = arma::reshape(learningQ1Network.Parameters().
@@ -265,7 +265,8 @@ void TD3<
     gradient /= sampledStates.n_cols;
 
     #if ENS_VERSION_MAJOR == 1
-    policyUpdater.Update(policyNetwork.Parameters(), config.StepSize(), gradient);
+    policyUpdater.Update(policyNetwork.Parameters(), config.StepSize(),
+        gradient);
     #else
     policyNetworkUpdatePolicy->Update(policyNetwork.Parameters(),
         config.StepSize(), gradient);
