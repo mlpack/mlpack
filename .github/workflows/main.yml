@@ -90,7 +90,7 @@ jobs:
           cd build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
 
       - name: Upload R packages
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.4.0
         with:
           name: mlpack_r_tarball
           path: build/src/mlpack/bindings/R/${{ steps.mlpack_version.outputs.mlpack_r_package }}
@@ -125,7 +125,7 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4.1.8
         with:
           name: mlpack_r_tarball
 

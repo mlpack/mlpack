@@ -58,7 +58,7 @@ inline void CopyTask::Generate(arma::field<arma::mat>& input,
     {
       arma::vec weights(maxLength - 1);
 
-      DiscreteDistribution d(1);
+      DiscreteDistribution<> d(1);
       // We have two binary numbers with exactly two digits (10 and 11).
       // Increasing length by 1 double the number of valid numbers.
       d.Probabilities(0) =
