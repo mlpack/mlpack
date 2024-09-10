@@ -146,7 +146,7 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
           }
         }
       }
-      
+
       // At this point, we know the new cluster assignment.
       // Step 4: for each center c, let m(c) be the mean of the points
       // assigned to c.
@@ -158,7 +158,7 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   // Now, normalize and calculate the distance each cluster has moved.
   arma::vec moveDistances(centroids.n_cols);
   double cNorm = 0.0; // Cluster movement for residual.
-  #pragma omp parallel for reduction(+:cNorm,distanceCalculations)
+  #pragma omp parallel for reduction(+: cNorm, distanceCalculations)
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
     if (counts[c] > 0)
