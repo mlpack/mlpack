@@ -27,8 +27,8 @@ inline const std::vector<std::string> SaveFileTypes()
   return std::vector<std::string>({"jpg", "png", "tga", "bmp", "hdr"});
 }
 
-}
-}
+} // namespace data
+} // namespace mlpack
 
 #ifdef MLPACK_HAS_STB // Compile this only if stb is present.
 

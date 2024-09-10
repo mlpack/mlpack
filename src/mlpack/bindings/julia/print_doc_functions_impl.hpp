@@ -522,7 +522,7 @@ inline std::string ProgramCall(util::Params& p, const std::string& programName)
       result << it->second.name;
       result << "=";
       std::string value;
-      p.functionMap[it->second.tname]["DefaultParam"]( it->second, NULL,
+      p.functionMap[it->second.tname]["DefaultParam"](it->second, NULL,
           (void*) &value);
       result << value;
       ++nonreqInputs;

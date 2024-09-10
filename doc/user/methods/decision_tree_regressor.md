@@ -194,7 +194,8 @@ See also the [simple usage example](#simple-usage-example) for a trivial use of
 
 ---
 
-Train a decision tree regressor on mixed categorical data.
+Train a decision tree regressor on mixed categorical data and save the model to
+disk.
 
 ```c++
 // Load a categorical dataset.
@@ -235,6 +236,9 @@ tree.Predict(testData, testPredictions);
 const double testAverageError = arma::mean(testResponses - testPredictions);
 std::cout << "Average error on test set: " << testAverageError << "."
     << std::endl;
+
+// Save the tree to "tree.bin" with the name "tree".
+mlpack::data::Save("tree.bin", "tree", tree);
 ```
 
 ---
@@ -424,9 +428,10 @@ class CustomNumericSplit
                        AuxiliarySplitInfo& aux,
                        FitnessFunction& function);
 
-  // Return the number of children for a given split (stored as the single
-  // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
-  size_t NumChildren(const double& splitInfo,
+  // Return the number of children for a given split. If there was no split,
+  // return zero. `splitInfo` and `aux` contain the split information, as set
+  // in `SplitIfBetter`.
+  size_t NumChildren(const arma::vec& splitInfo,
                      const AuxiliarySplitInfo& aux);
 
   // Given a point with value `point`, and split information `splitInfo` and
@@ -455,8 +460,23 @@ class CustomNumericSplit
 
  * Specifies the strategy to be used during training when splitting a
     categorical feature.
- * The `AllCategoricalSplit` _(default)_ is available for drop-in usage and
-   splits all categories into their own node.
+ * The `AllCategoricalSplit` _(default)_ and `BestBinaryCategoricalSplit` are~
+   available for drop-in usage.
+ * `AllCategoricalSplit`, the default ID3 split
+   algorithm, splits all categories into their own node. This variant is simple,
+   and has complexity `O(n)`, where `n` is the number of samples.
+ * `BestBinaryCategoricalSplit` is the preferred algorithm of
+   [the CART system](https://www.taylorfrancis.com/books/mono/10.1201/9781315139470/classification-regression-trees-leo-breiman-jerome-friedman-olshen-charles-stone).
+   It will find the the best (entropy-minimizing) binary partition of the
+   categories. This algorithm has complexity `O(n lg n)` in the case of binary
+   outcomes, but is exponential in the number of _categories_ when there are
+   more than two _classes_.
+   - ***Note***: `BestBinaryCategoricalSplit` should not be chosen when there
+     are multiple classes and many categories.
+   - ***Note***: for regression tasks,
+     [W. Fisher's proof of correctness](https://www.mlpack.org/papers/fisher.pdf)
+     only applies to when `FitnessFunction` is `MSEGain`; therefore,
+     `BestBinaryCategoricalSplit` requires the use of `MSEGain`.
  * A custom class must take a [`FitnessFunction`](#fitnessfunction) as a
    template parameter, implement three functions, and have an internal
    structure `AuxiliarySplitInfo` that is used at classification time:
@@ -482,7 +502,7 @@ class CustomCategoricalSplit
   // If a new best split is found, then `splitInfo` and `aux` should be
   // populated with the information that will be needed for
   // `CalculateDirection()` to successfully choose the child for a given point.
-  // `splitInfo` should be set to a vector of length 1.  The format of `aux` is
+  // `splitInfo` should be set to a non-empty vector.  The format of `aux` is
   // arbitrary and is detailed more below.
   //
   // If `UseWeights` is false, the vector `weights` should be ignored.
@@ -503,9 +523,10 @@ class CustomCategoricalSplit
       AuxiliarySplitInfo& aux,
       FitnessFunction& fitnessFunction);
 
-  // Return the number of children for a given split (stored as the single
-  // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
-  size_t NumChildren(const double& splitInfo,
+  // Return the number of children for a given split. If there was no split,
+  // return zero. `splitInfo` and `aux` contain the split information, as set
+  // in `SplitIfBetter`.
+  size_t NumChildren(const arma::vec& splitInfo,
                      const AuxiliarySplitInfo& aux);
 
   // Given a point with (categorical) value `point`, and split information

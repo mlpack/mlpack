@@ -102,7 +102,7 @@ class HardSwishFunction
    * @param y Result of Fn(x).
    * @param dy The resulting derivatives.
    */
-  template <typename InputVecType, typename OutputVecType, typename DerivVecType>
+  template<typename InputVecType, typename OutputVecType, typename DerivVecType>
   static void Deriv(const InputVecType &x,
                     const OutputVecType& y,
                     DerivVecType &dy)

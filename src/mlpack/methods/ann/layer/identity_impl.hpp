@@ -18,7 +18,7 @@
 namespace mlpack {
 
 template<typename MatType>
-IdentityType<MatType>::IdentityType() : 
+IdentityType<MatType>::IdentityType() :
     Layer<MatType>()
 {
   // Nothing to do here.

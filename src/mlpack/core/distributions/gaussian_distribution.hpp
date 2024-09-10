@@ -20,22 +20,29 @@ namespace mlpack {
 /**
  * A single multivariate Gaussian distribution.
  */
+template<typename MatType = arma::mat>
 class GaussianDistribution
 {
+ public:
+  // Convenience typedefs for derived types of MatType.
+  typedef typename GetColType<MatType>::type VecType;
+  typedef typename MatType::elem_type ElemType;
+
  private:
   //! Mean of the distribution.
-  arma::vec mean;
+  VecType mean;
   //! Positive definite covariance of the distribution.
-  arma::mat covariance;
+  MatType covariance;
   //! Lower triangular factor of cov (e.g. cov = LL^T).
-  arma::mat covLower;
+  MatType covLower;
   //! Cached inverse of covariance.
-  arma::mat invCov;
+  MatType invCov;
   //! Cached logdet(cov).
-  double logDetCov;
+  ElemType logDetCov;
 
   //! log(2pi)
-  static const constexpr double log2pi = 1.83787706640934533908193770912475883;
+  static const constexpr ElemType log2pi =
+      1.83787706640934533908193770912475883;
 
  public:
   /**
@@ -48,10 +55,10 @@ class GaussianDistribution
    * the given dimensionality.
    */
   GaussianDistribution(const size_t dimension) :
-      mean(arma::zeros<arma::vec>(dimension)),
-      covariance(arma::eye<arma::mat>(dimension, dimension)),
-      covLower(arma::eye<arma::mat>(dimension, dimension)),
-      invCov(arma::eye<arma::mat>(dimension, dimension)),
+      mean(arma::zeros<VecType>(dimension)),
+      covariance(arma::eye<MatType>(dimension, dimension)),
+      covLower(arma::eye<MatType>(dimension, dimension)),
+      invCov(arma::eye<MatType>(dimension, dimension)),
       logDetCov(0)
   { /* Nothing to do. */ }
 
@@ -60,9 +67,7 @@ class GaussianDistribution
    *
    * covariance is expected to be positive definite.
    */
-  GaussianDistribution(const arma::vec& mean, const arma::mat& covariance);
-
-  // TODO(stephentu): do we want a (arma::vec&&, arma::mat&&) ctor?
+  GaussianDistribution(const VecType& mean, const MatType& covariance);
 
   //! Return the dimensionality of this distribution.
   size_t Dimensionality() const { return mean.n_elem; }
@@ -70,7 +75,7 @@ class GaussianDistribution
   /**
    * Return the probability of the given observation.
    */
-  double Probability(const arma::vec& observation) const
+  ElemType Probability(const VecType& observation) const
   {
     return std::exp(LogProbability(observation));
   }
@@ -78,7 +83,7 @@ class GaussianDistribution
   /**
    * Return the log probability of the given observation.
    */
-  double LogProbability(const arma::vec& observation) const;
+  ElemType LogProbability(const VecType& observation) const;
 
   /**
    * Calculates the multivariate Gaussian probability density function for each
@@ -87,11 +92,11 @@ class GaussianDistribution
    * @param x List of observations.
    * @param probabilities Output probabilities for each input observation.
    */
-  void Probability(const arma::mat& x, arma::vec& probabilities) const
+  void Probability(const MatType& x, VecType& probabilities) const
   {
     // Use LogProbability(), then transform the log-probabilities out of
     // logspace.
-    arma::vec logProbs;
+    VecType logProbs;
     LogProbability(x, logProbs);
     probabilities = exp(logProbs);
   }
@@ -104,10 +109,10 @@ class GaussianDistribution
    * @param logProbabilities Output log probabilities for each input
    *     observation.
    */
-  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const
+  void LogProbability(const MatType& x, VecType& logProbabilities) const
   {
     // Column i of 'diffs' is the difference between x.col(i) and the mean.
-    arma::mat diffs = x;
+    MatType diffs = x;
     diffs.each_col() -= mean;
 
     // Now, we only want to calculate the diagonal elements of (diffs' * cov^-1
@@ -122,50 +127,49 @@ class GaussianDistribution
    *
    * @return Random observation from this Gaussian distribution.
    */
-  arma::vec Random() const;
+  VecType Random() const;
 
   /**
    * Estimate the Gaussian distribution directly from the given observations.
    *
    * @param observations List of observations.
    */
-  void Train(const arma::mat& observations);
+  void Train(const MatType& observations);
 
   /**
    * Estimate the Gaussian distribution from the given observations, taking
    * into account the probability of each observation actually being from this
    * distribution.
    */
-  void Train(const arma::mat& observations,
-             const arma::vec& probabilities);
+  void Train(const MatType& observations,
+             const VecType& probabilities);
 
   /**
    * Return the mean.
    */
-  const arma::vec& Mean() const { return mean; }
+  const VecType& Mean() const { return mean; }
 
   /**
    * Return a modifiable copy of the mean.
    */
-  arma::vec& Mean() { return mean; }
+  VecType& Mean() { return mean; }
 
   /**
    * Return the covariance matrix.
    */
-  const arma::mat& Covariance() const { return covariance; }
+  const MatType& Covariance() const { return covariance; }
 
   /**
    * Set the covariance.
    */
-  void Covariance(const arma::mat& covariance);
-
-  void Covariance(arma::mat&& covariance);
+  void Covariance(const MatType& covariance);
+  void Covariance(MatType&& covariance);
 
   //! Return the invCov.
-  const arma::mat& InvCov() const { return invCov; }
+  const MatType& InvCov() const { return invCov; }
 
   //! Return the logDetCov.
-  double LogDetCov() const { return logDetCov; }
+  ElemType LogDetCov() const { return logDetCov; }
 
   /**
    * Serialize the distribution.

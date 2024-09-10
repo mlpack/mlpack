@@ -96,7 +96,6 @@ class ConcatenateType : public Layer<MatType>
  private:
   //! Matrix to be concatenated to input.
   MatType concat;
-
 }; // class Concatenate
 
 // Standard Concatenate layer.

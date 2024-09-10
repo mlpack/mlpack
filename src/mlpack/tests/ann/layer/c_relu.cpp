@@ -25,9 +25,7 @@ using namespace mlpack;
  */
 TEST_CASE("CReLUFunctionTest", "[ANNLayerTest]")
 {
-  const arma::colvec desiredActivations("0 3 0 6 24 \
-                                         2 0 0 0 0");
-
+  const arma::colvec desiredActivations("0 3 0 6 24 2 0 0 0 0");
   const arma::colvec desiredDerivatives("-1 1 0 1 1");
 
   const arma::colvec activationData("-2.0 3.0 0.0 6.0 24.0");

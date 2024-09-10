@@ -249,7 +249,7 @@ template<typename DistanceType, typename ElemType>
 struct BoundTraits<HollowBallBound<DistanceType, ElemType>>
 {
   //! These bounds are potentially loose in some dimensions.
-  const static bool HasTightBounds = false;
+  static const bool HasTightBounds = false;
 };
 
 } // namespace mlpack

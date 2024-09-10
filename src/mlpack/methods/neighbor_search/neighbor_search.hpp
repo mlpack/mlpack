@@ -222,9 +222,11 @@ class NeighborSearch
    * @param distances Matrix storing distances of neighbors for each query
    *     point.
    */
+  // TODO: templatize further to remove Armadillo type requirement
+  template<typename IndexType = size_t>
   void Search(const MatType& querySet,
               const size_t k,
-              arma::Mat<size_t>& neighbors,
+              arma::Mat<IndexType>& neighbors,
               arma::Mat<ElemType>& distances);
 
   /**
@@ -247,9 +249,11 @@ class NeighborSearch
    * @param sameSet Denotes whether or not the reference and query sets are the
    *      same.
    */
+  // TODO: templatize further to remove Armadillo type requirement
+  template<typename IndexType = size_t>
   void Search(Tree& queryTree,
               const size_t k,
-              arma::Mat<size_t>& neighbors,
+              arma::Mat<IndexType>& neighbors,
               arma::Mat<ElemType>& distances,
               bool sameSet = false);
 
@@ -267,8 +271,10 @@ class NeighborSearch
    * @param distances Matrix storing distances of neighbors for each query
    *      point.
    */
+  // TODO: templatize further to remove Armadillo type requirement
+  template<typename IndexType = size_t>
   void Search(const size_t k,
-              arma::Mat<size_t>& neighbors,
+              arma::Mat<IndexType>& neighbors,
               arma::Mat<ElemType>& distances);
 
   /**
@@ -300,8 +306,10 @@ class NeighborSearch
    *     query point.
    * @return Recall.
    */
-  static double Recall(arma::Mat<size_t>& foundNeighbors,
-                       arma::Mat<size_t>& realNeighbors);
+  // TODO: templatize further to remove Armadillo type requirement
+  template<typename IndexType = size_t>
+  static double Recall(arma::Mat<IndexType>& foundNeighbors,
+                       arma::Mat<IndexType>& realNeighbors);
 
   //! Return the total number of base case evaluations performed during the last
   //! search.

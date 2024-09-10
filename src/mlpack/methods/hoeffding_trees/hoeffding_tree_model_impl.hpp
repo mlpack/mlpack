@@ -248,7 +248,7 @@ inline void HoeffdingTreeModel::Classify(const arma::mat& dataset,
 // Classify the given points.
 inline void HoeffdingTreeModel::Classify(const arma::mat& dataset,
                                          arma::Row<size_t>& predictions,
-                                         arma::rowvec& probabilities) 
+                                         arma::rowvec& probabilities)
     const
 {
   // Call Classify() with the right model.

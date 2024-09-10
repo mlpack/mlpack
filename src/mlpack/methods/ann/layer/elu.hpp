@@ -128,7 +128,7 @@ class ELUType : public Layer<MatType>
   ELUType* Clone() const { return new ELUType(*this); }
 
   // Virtual destructor.
-  virtual ~ELUType() {};
+  virtual ~ELUType() { }
 
   // Copy constructor.
   ELUType(const ELUType& other);

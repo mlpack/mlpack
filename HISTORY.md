@@ -4,8 +4,19 @@
 
 _????-??-??_
 
-  * Distribute STB headers as part of R package (#3724, #3726).
+ * Distribute STB headers as part of R package (#3724, #3726).
 
+ * Added OpenMP parallelization to Hamerly, Naive, and Elkan k-means (#3761, #3762, #3764).
+ 
+ * Added OpenMP support for fast approximation (#3685).
+
+ * Implemented the Find and Fill algorithm into the Dropout Layer and added OpenMP support (#3684).
+
+ * Update Python bindings to support NumPy 2.x (#3752).
+ 
+ * Bump minimum Armadillo version to 10.8 (#3760).
+
+ * Adapt `NearestInterpolation` ANN layer to new Layer Inteface (#3768).
 
 ## mlpack 4.4.0
 

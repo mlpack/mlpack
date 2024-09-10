@@ -243,7 +243,7 @@ CalculateValue(const VecType& pt,
     res(i) ^= t;
 
   // We should rearrange bits in order to compare two Hilbert values faster.
-  arma::Col<HilbertElemType> rearrangedResult(pt.n_rows, arma::fill::zeros);
+  arma::Col<HilbertElemType> rearrangedResult(pt.n_rows);
 
   for (size_t i = 0; i < order; ++i)
     for (size_t j = 0; j < pt.n_rows; ++j)

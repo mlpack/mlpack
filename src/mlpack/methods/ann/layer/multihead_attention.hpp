@@ -183,8 +183,8 @@ class MultiheadAttentionType : public Layer<MatType>
   //! Modify the Key Padding Mask.  Should take values 0 or 1.
   MatType& KeyPaddingMask() { return keyPaddingMask; }
 
-  //! Get whether or not self-attention is used (source key, value, and query all
-  //! come from the same input).
+  //! Get whether or not self-attention is used (source key, value, and query
+  //! all come from the same input).
   bool SelfAttention() const { return selfAttention; }
   //! Modify whether or not self-attention is used (source key, value, and query
   //! all come from the same input).

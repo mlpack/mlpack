@@ -78,11 +78,11 @@ BayesianLinearRegression<ModelMatType>::Train(
     const std::optional<size_t> maxIterations)
 {
   return Train(data, responses,
-       (centerData.has_value()) ? centerData.value() :  this->centerData,
-       (scaleData.has_value()) ?   scaleData.value() :  this->scaleData,
-       (maxIterations.has_value()) ? maxIterations.value() : this->maxIterations,
-       this->tolerance);
- }
+      (centerData.has_value()) ? centerData.value() : this->centerData,
+      (scaleData.has_value()) ? scaleData.value() : this->scaleData,
+      (maxIterations.has_value()) ? maxIterations.value() : this->maxIterations,
+      this->tolerance);
+}
 
 template<typename ModelMatType>
 template<typename MatType, typename ResponsesType, typename, typename>

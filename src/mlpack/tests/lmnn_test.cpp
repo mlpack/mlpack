@@ -30,25 +30,27 @@ using namespace ens;
  * The target neighbors function should be correct.
  * point.
  */
-TEST_CASE("LMNNTargetNeighborsTest", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNTargetNeighborsTest", "[LMNNTest]", float, double)
 {
-  // Useful but simple dataset with six points and two classes.
-  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+  typedef TestType ElemType;
 
-  Constraints<> constraint(dataset, labels, 1);
+  // Useful but simple dataset with six points and two classes.
+  arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                                " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels    = " 0    0    0    1    1    1   ";
+
+  Constraints<arma::Mat<ElemType>, arma::Row<size_t>> constraint(dataset,
+      labels, 1);
 
   // Calculate norm of datapoints.
-  arma::vec norm(dataset.n_cols);
+  arma::Col<ElemType> norm(dataset.n_cols);
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     norm(i) = arma::norm(dataset.col(i));
   }
 
   //! Store target neighbors of data points.
-  arma::Mat<size_t> targetNeighbors =
-      arma::Mat<size_t>(1, dataset.n_cols, arma::fill::zeros);
+  arma::umat targetNeighbors(1, dataset.n_cols);
 
   constraint.TargetNeighbors(targetNeighbors, dataset, labels, norm);
 
@@ -63,25 +65,27 @@ TEST_CASE("LMNNTargetNeighborsTest", "[LMNNTest]")
 /**
  * The impostors function should be correct.
  */
-TEST_CASE("LMNNImpostorsTest", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNImpostorsTest", "[LMNNTest]", float, double)
 {
-  // Useful but simple dataset with six points and two classes.
-  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+  typedef TestType ElemType;
 
-  Constraints<> constraint(dataset, labels, 1);
+  // Useful but simple dataset with six points and two classes.
+  arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                                " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels    = " 0    0    0    1    1    1   ";
+
+  Constraints<arma::Mat<ElemType>, arma::Row<size_t>> constraint(dataset,
+      labels, 1);
 
   // Calculate norm of datapoints.
-  arma::vec norm(dataset.n_cols);
+  arma::Col<ElemType> norm(dataset.n_cols);
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     norm(i) = arma::norm(dataset.col(i));
   }
 
   //! Store impostors of data points.
-  arma::Mat<size_t> impostors =
-      arma::Mat<size_t>(1, dataset.n_cols, arma::fill::zeros);
+  arma::umat impostors(1, dataset.n_cols);
 
   constraint.Impostors(impostors, dataset, labels, norm);
 
@@ -101,300 +105,339 @@ TEST_CASE("LMNNImpostorsTest", "[LMNNTest]")
  * The LMNN function should return the identity matrix as its initial
  * point.
  */
-TEST_CASE("LMNNInitialPointTest", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNInitialPointTest", "[LMNNTest]", float, double)
 {
+  typedef TestType ElemType;
+
   // Cheap fake dataset.
-  arma::mat dataset = arma::randu(5, 5);
+  arma::Mat<ElemType> dataset = arma::randu<arma::Mat<ElemType>>(5, 5);
   arma::Row<size_t> labels = "0 1 1 0 0";
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.5, 1);
+  LMNNFunction<arma::Mat<ElemType>> lmnnfn(dataset, labels, 1, 0.5, 1);
 
   // Verify the initial point is the identity matrix.
-  arma::mat initialPoint = lmnnfn.GetInitialPoint();
+  const double eps = std::is_same<ElemType, float>::value ? 1e-4 : 1e-7;
+  const double margin = std::is_same<ElemType, float>::value ? 1e-4 : 1e-5;
+  arma::Mat<ElemType> initialPoint = lmnnfn.GetInitialPoint();
   for (int row = 0; row < 5; row++)
   {
     for (int col = 0; col < 5; col++)
     {
       if (row == col)
-        REQUIRE(initialPoint(row, col) == Approx(1.0).epsilon(1e-7));
+        REQUIRE(initialPoint(row, col) == Approx(1.0).epsilon(eps));
       else
-        REQUIRE(initialPoint(row, col) == Approx(0.0).margin(1e-5));
+        REQUIRE(initialPoint(row, col) == Approx(0.0).margin(margin));
     }
   }
 }
 
 /***
- * Ensure non-seprable objective function is right.
+ * Ensure non-separable objective function is right.
  */
-TEST_CASE("LMNNInitialEvaluationTest", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNInitialEvaluationTest", "[LMNNTest]", float, double)
 {
+  typedef TestType ElemType;
+
   // Useful but simple dataset with six points and two classes.
-  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+  arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                                " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels    = " 0    0    0    1    1    1   ";
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<arma::Mat<ElemType>> lmnnfn(dataset, labels, 1, 0.6, 1);
 
-  double objective = lmnnfn.Evaluate(arma::eye<arma::mat>(2, 2));
+  ElemType objective = lmnnfn.Evaluate(arma::eye<arma::Mat<ElemType>>(2, 2));
 
   // Result calculated by hand.
-  REQUIRE(objective == Approx(9.456).epsilon(1e-7));
+  const double eps = std::is_same<ElemType, float>::value ? 1e-4 : 1e-7;
+  REQUIRE(objective == Approx(9.456).epsilon(eps));
 }
 
 /**
- * Ensure non-seprable gradient function is right.
+ * Ensure non-separable gradient function is right.
  */
-TEST_CASE("LMNNInitialGradientTest", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNInitialGradientTest", "[LMNNTest]", float, double)
 {
+  typedef TestType ElemType;
+
   // Useful but simple dataset with six points and two classes.
-  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+  arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                                " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels    = " 0    0    0    1    1    1   ";
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<arma::Mat<ElemType>> lmnnfn(dataset, labels, 1, 0.6, 1);
 
-  arma::mat gradient;
-  arma::mat coordinates = arma::eye<arma::mat>(2, 2);
+  arma::Mat<ElemType> gradient;
+  arma::Mat<ElemType> coordinates = arma::eye<arma::Mat<ElemType>>(2, 2);
   lmnnfn.Gradient(coordinates, gradient);
 
   // Result calculated by hand.
-  REQUIRE(gradient(0, 0) == Approx(-0.288).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx(0.0).margin(1e-5));
-  REQUIRE(gradient(0, 1) == Approx(0.0).margin(1e-5));
-  REQUIRE(gradient(1, 1) == Approx(12.0).epsilon(1e-7));
+  const double eps = std::is_same<ElemType, float>::value ? 1e-4 : 1e-7;
+  const double margin = std::is_same<ElemType, float>::value ? 1e-4 : 1e-5;
+  REQUIRE(gradient(0, 0) == Approx(-0.288).epsilon(eps));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 1) == Approx(12.0).epsilon(eps));
 }
 
 /***
- * Ensure non-seprable EvaluateWithGradient function is right.
+ * Ensure non-separable EvaluateWithGradient function is right.
  */
-TEST_CASE("LMNNInitialEvaluateWithGradientTest", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNInitialEvaluateWithGradientTest", "[LMNNTest]", float,
+    double)
 {
+  typedef TestType ElemType;
+
   // Useful but simple dataset with six points and two classes.
-  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+  arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                                " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels    = " 0    0    0    1    1    1   ";
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<arma::Mat<ElemType>> lmnnfn(dataset, labels, 1, 0.6, 1);
 
-  arma::mat gradient;
-  arma::mat coordinates = arma::eye<arma::mat>(2, 2);
-  double objective = lmnnfn.EvaluateWithGradient(coordinates, gradient);
+  arma::Mat<ElemType> gradient;
+  arma::Mat<ElemType> coordinates = arma::eye<arma::Mat<ElemType>>(2, 2);
+  ElemType objective = lmnnfn.EvaluateWithGradient(coordinates, gradient);
+
+  const double eps = std::is_same<ElemType, float>::value ? 1e-4 : 1e-7;
+  const double margin = std::is_same<ElemType, float>::value ? 1e-4 : 1e-5;
 
   // Result calculated by hand.
-  REQUIRE(objective == Approx(9.456).epsilon(1e-7));
+  REQUIRE(objective == Approx(9.456).epsilon(eps));
   // Check Gradient
-  REQUIRE(gradient(0, 0) == Approx(-0.288).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx(0.0).margin(1e-5));
-  REQUIRE(gradient(0, 1) == Approx(0.0).margin(1e-5));
-  REQUIRE(gradient(1, 1) == Approx(12.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.288).epsilon(eps));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 1) == Approx(12.0).epsilon(eps));
 }
 
 /**
  * Ensure the separable objective function is right.
  */
-TEST_CASE("LMNNSeparableObjectiveTest", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNSeparableObjectiveTest", "[LMNNTest]", float, double)
 {
-  // Useful but simple dataset with six points and two classes.
-  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+  typedef TestType ElemType;
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  // Useful but simple dataset with six points and two classes.
+  arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                                " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels    = " 0    0    0    1    1    1   ";
+
+  LMNNFunction<arma::Mat<ElemType>> lmnnfn(dataset, labels, 1, 0.6, 1);
 
   // Result calculated by hand.
-  arma::mat coordinates = arma::eye<arma::mat>(2, 2);
-  REQUIRE(lmnnfn.Evaluate(coordinates, 0, 1) == Approx(1.576).epsilon(1e-7));
-  REQUIRE(lmnnfn.Evaluate(coordinates, 1, 1) == Approx(1.576).epsilon(1e-7));
-  REQUIRE(lmnnfn.Evaluate(coordinates, 2, 1) == Approx(1.576).epsilon(1e-7));
-  REQUIRE(lmnnfn.Evaluate(coordinates, 3, 1) == Approx(1.576).epsilon(1e-7));
-  REQUIRE(lmnnfn.Evaluate(coordinates, 4, 1) == Approx(1.576).epsilon(1e-7));
-  REQUIRE(lmnnfn.Evaluate(coordinates, 5, 1) == Approx(1.576).epsilon(1e-7));
+  const double eps = std::is_same<ElemType, float>::value ? 1e-4 : 1e-7;
+  arma::Mat<ElemType> coordinates = arma::eye<arma::Mat<ElemType>>(2, 2);
+  REQUIRE(lmnnfn.Evaluate(coordinates, 0, 1) == Approx(1.576).epsilon(eps));
+  REQUIRE(lmnnfn.Evaluate(coordinates, 1, 1) == Approx(1.576).epsilon(eps));
+  REQUIRE(lmnnfn.Evaluate(coordinates, 2, 1) == Approx(1.576).epsilon(eps));
+  REQUIRE(lmnnfn.Evaluate(coordinates, 3, 1) == Approx(1.576).epsilon(eps));
+  REQUIRE(lmnnfn.Evaluate(coordinates, 4, 1) == Approx(1.576).epsilon(eps));
+  REQUIRE(lmnnfn.Evaluate(coordinates, 5, 1) == Approx(1.576).epsilon(eps));
 }
 
 /**
  * Ensure the separable gradient is right.
  */
-TEST_CASE("LMNNSeparableGradientTest", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNSeparableGradientTest", "[LMNNTest]", float, double)
 {
+  typedef TestType ElemType;
+
   // Useful but simple dataset with six points and two classes.
-  arma::mat dataset           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+  arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                                " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels    = " 0    0    0    1    1    1   ";
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<arma::Mat<ElemType>> lmnnfn(dataset, labels, 1, 0.6, 1);
 
-  arma::mat coordinates = arma::eye<arma::mat>(2, 2);
-  arma::mat gradient(2, 2);
+  arma::Mat<ElemType> coordinates = arma::eye<arma::Mat<ElemType>>(2, 2);
+  arma::Mat<ElemType> gradient(2, 2);
 
   lmnnfn.Gradient(coordinates, 0, gradient, 1);
 
-  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
+  const double eps = std::is_same<ElemType, float>::value ? 1e-4 : 1e-7;
+  const double margin = std::is_same<ElemType, float>::value ? 1e-4 : 1e-5;
+
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(eps));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(eps));
 
   lmnnfn.Gradient(coordinates, 1, gradient, 1);
 
-  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(eps));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(eps));
 
   lmnnfn.Gradient(coordinates, 2, gradient, 1);
 
-  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(eps));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(eps));
 
   lmnnfn.Gradient(coordinates, 3, gradient, 1);
 
-  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(eps));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(eps));
 
   lmnnfn.Gradient(coordinates, 4, gradient, 1);
 
-  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(eps));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(eps));
 
   lmnnfn.Gradient(coordinates, 5, gradient, 1);
 
-  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(eps));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(eps));
 }
 
 /**
  * Ensure the separable EvaluateWithGradient function is right.
  */
-TEST_CASE("LMNNSeparableEvaluateWithGradientTest", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNSeparableEvaluateWithGradientTest", "[LMNNTest]", float,
+    double)
 {
+  typedef TestType ElemType;
+
   // Useful but simple dataset with six points and two classes.
-  arma::mat dataset           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+  arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                                " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels    = " 0    0    0    1    1    1   ";
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<arma::Mat<ElemType>> lmnnfn(dataset, labels, 1, 0.6, 1);
 
-  arma::mat coordinates = arma::eye<arma::mat>(2, 2);
-  arma::mat gradient(2, 2);
+  arma::Mat<ElemType> coordinates = arma::eye<arma::Mat<ElemType>>(2, 2);
+  arma::Mat<ElemType> gradient(2, 2);
 
-  double objective = lmnnfn.EvaluateWithGradient(coordinates, 0, gradient, 1);
+  ElemType objective = lmnnfn.EvaluateWithGradient(coordinates, 0, gradient, 1);
 
-  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
+  const double eps = std::is_same<ElemType, float>::value ? 1e-4 : 1e-7;
+  const double margin = std::is_same<ElemType, float>::value ? 1e-4 : 1e-5;
 
-  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(objective == Approx(1.576).epsilon(eps));
+
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(eps));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(eps));
 
   objective = lmnnfn.EvaluateWithGradient(coordinates, 1, gradient, 1);
 
-  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
+  REQUIRE(objective == Approx(1.576).epsilon(eps));
 
-  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(eps));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(eps));
 
   objective = lmnnfn.EvaluateWithGradient(coordinates, 2, gradient, 1);
 
-  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
+  REQUIRE(objective == Approx(1.576).epsilon(eps));
 
-  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(eps));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(eps));
 
   objective = lmnnfn.EvaluateWithGradient(coordinates, 3, gradient, 1);
 
-  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
+  REQUIRE(objective == Approx(1.576).epsilon(eps));
 
-  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(eps));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(eps));
 
   objective = lmnnfn.EvaluateWithGradient(coordinates, 4, gradient, 1);
 
-  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
+  REQUIRE(objective == Approx(1.576).epsilon(eps));
 
-  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(eps));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(eps));
 
   objective = lmnnfn.EvaluateWithGradient(coordinates, 5, gradient, 1);
 
-  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
+  REQUIRE(objective == Approx(1.576).epsilon(eps));
 
-  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(eps));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(margin));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(eps));
 }
 
 // Check that final objective value using SGD optimizer is optimal.
-TEST_CASE("LMNNSGDSimpleDatasetTest", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNSGDSimpleDatasetTest", "[LMNNTest]", float, double)
 {
+  typedef TestType ElemType;
+
   // Useful but simple dataset with six points and two classes.
-  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+  arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                                " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels    = " 0    0    0    1    1    1   ";
 
-  LMNN<> lmnn(dataset, labels, 1);
+  LMNN<> lmnn(1);
 
-  arma::mat outputMatrix;
-  lmnn.LearnDistance(outputMatrix);
+  arma::Mat<ElemType> outputMatrix;
+  lmnn.LearnDistance(dataset, labels, outputMatrix);
 
   // Ensure that the objective function is better now.
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<arma::Mat<ElemType>> lmnnfn(dataset, labels, 1, 0.6, 1);
 
-  double initObj = lmnnfn.Evaluate(arma::eye<arma::mat>(2, 2));
-  double finalObj = lmnnfn.Evaluate(outputMatrix);
+  ElemType initObj = lmnnfn.Evaluate(arma::eye<arma::Mat<ElemType>>(2, 2));
+  ElemType finalObj = lmnnfn.Evaluate(outputMatrix);
 
   // finalObj must be less than initObj.
   REQUIRE(finalObj < initObj);
 }
 
 // Check that final objective value using L-BFGS optimizer is optimal.
-TEST_CASE("LMNNLBFGSSimpleDatasetTest", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNLBFGSSimpleDatasetTest", "[LMNNTest]", float, double)
 {
+  typedef TestType ElemType;
+
   // Useful but simple dataset with six points and two classes.
-  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+  arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                                " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels    = " 0    0    0    1    1    1   ";
 
-  LMNN<SquaredEuclideanDistance, L_BFGS> lmnn(dataset, labels, 1);
+  LMNN lmnn(1);
 
-  arma::mat outputMatrix;
-  lmnn.LearnDistance(outputMatrix);
+  arma::Mat<ElemType> outputMatrix;
+  ens::L_BFGS lbfgs;
+  lmnn.LearnDistance(dataset, labels, outputMatrix, lbfgs);
 
   // Ensure that the objective function is better now.
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<arma::Mat<ElemType>> lmnnfn(dataset, labels, 1, 0.6, 1);
 
-  double initObj = lmnnfn.Evaluate(arma::eye<arma::mat>(2, 2));
-  double finalObj = lmnnfn.Evaluate(outputMatrix);
+  ElemType initObj = lmnnfn.Evaluate(arma::eye<arma::Mat<ElemType>>(2, 2));
+  ElemType finalObj = lmnnfn.Evaluate(outputMatrix);
 
   // finalObj must be less than initObj.
   REQUIRE(finalObj < initObj);
 }
 
-double KnnAccuracy(const arma::mat& dataset,
-                   const arma::Row<size_t>& labels,
+template<typename MatType, typename LabelsType>
+double KnnAccuracy(const MatType& dataset,
+                   const LabelsType& labels,
                    const size_t k)
 {
-  arma::Row<size_t> uniqueLabels = arma::unique(labels);
+  typedef typename MatType::elem_type ElemType;
+
+  LabelsType uniqueLabels = arma::unique(labels);
 
   arma::Mat<size_t> neighbors;
-  arma::mat distances;
+  arma::Mat<ElemType> distances;
 
-  KNN knn;
+  NeighborSearch<NearestNeighborSort, EuclideanDistance, MatType> knn;
 
   knn.Train(dataset);
   knn.Search(k, neighbors, distances);
@@ -404,43 +447,44 @@ double KnnAccuracy(const arma::mat& dataset,
 
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    arma::vec Map;
-    Map.zeros(uniqueLabels.n_cols);
+    arma::Col<ElemType> m;
+    m.zeros(uniqueLabels.n_cols);
 
     for (size_t j = 0; j < k; ++j)
-      Map(labels(neighbors(j, i))) +=
-          1 / std::pow(distances(j, i) + 1, 2);
+      m(labels(neighbors(j, i))) += 1 / std::pow(distances(j, i) + 1, 2);
 
-    size_t index = ConvTo<size_t>::From(arma::find(Map
-        == arma::max(Map)));
+    size_t index = ConvTo<size_t>::From(arma::find(m == arma::max(m)));
 
     // Increase count if labels match.
     if (index == labels(i))
         count++;
   }
 
-  // return accuracy.
+  // Return accuracy.
   return ((double) count / dataset.n_cols) * 100;
 }
 
 // Check that final accuracy is greater than initial accuracy on
 // simple dataset.
-TEST_CASE("LMNNAccuracyTest", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNAccuracyTest", "[LMNNTest]", float, double)
 {
+  typedef TestType ElemType;
+
   // Useful but simple dataset with six points and two classes.
-  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+  arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                                " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels    = " 0    0    0    1    1    1   ";
 
   // Taking k = 3 as the case of k = 1 can be easily observed.
   double initAccuracy = KnnAccuracy(dataset, labels, 3);
 
-  LMNN<> lmnn(dataset, labels, 2);
+  LMNN<> lmnn(2);
 
-  arma::mat outputMatrix;
-  lmnn.LearnDistance(outputMatrix);
+  arma::Mat<ElemType> outputMatrix;
+  lmnn.LearnDistance(dataset, labels, outputMatrix);
 
-  double finalAccuracy = KnnAccuracy(outputMatrix * dataset, labels, 3);
+  arma::Mat<ElemType> transformedData = outputMatrix * dataset;
+  double finalAccuracy = KnnAccuracy(transformedData, labels, 3);
 
   // finalObj must be less than initObj.
   REQUIRE(initAccuracy < finalAccuracy);
@@ -452,18 +496,20 @@ TEST_CASE("LMNNAccuracyTest", "[LMNNTest]")
 // Check that accuracy while learning square distance matrix is the same as when
 // we are learning low rank matrix.  I'm ok if this passes only once out of
 // three tries.
-TEST_CASE("LMNNLowRankAccuracyLBFGSTest", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNLowRankAccuracyLBFGSTest", "[LMNNTest]", float, double)
 {
+  typedef TestType ElemType;
+
   bool success = false;
   for (size_t trial = 0; trial < 3; ++trial)
   {
-    arma::mat dataPart1;
+    arma::Mat<ElemType> dataPart1;
     dataPart1.randn(5, 50);
 
     arma::Row<size_t> labelsPart1(50);
     labelsPart1.fill(0);
 
-    arma::mat dataPart2;
+    arma::Mat<ElemType> dataPart2;
     dataPart2.randn(5, 50);
 
     arma::Row<size_t> labelsPart2(50);
@@ -473,26 +519,29 @@ TEST_CASE("LMNNLowRankAccuracyLBFGSTest", "[LMNNTest]")
     arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0, 99, 100));
 
     // Generate datasets.
-    arma::mat dataset = join_rows(dataPart1, dataPart2);
+    arma::Mat<ElemType> dataset = join_rows(dataPart1, dataPart2);
     dataset = dataset.cols(ordering);
 
     // Generate labels.
     arma::Row<size_t> labels = join_rows(labelsPart1, labelsPart2);
     labels = labels.cols(ordering);
 
-    LMNN<SquaredEuclideanDistance, L_BFGS> lmnn(dataset, labels, 1);
+    LMNN<SquaredEuclideanDistance> lmnn(1);
 
     // Learn a square matrix.
-    arma::mat outputMatrix;
-    lmnn.LearnDistance(outputMatrix);
+    arma::Mat<ElemType> outputMatrix;
+    L_BFGS lbfgs;
+    lmnn.LearnDistance(dataset, labels, outputMatrix, lbfgs);
 
-    double acc1 = KnnAccuracy(outputMatrix * dataset, labels, 1);
+    arma::Mat<ElemType> transformedData = outputMatrix * dataset;
+    double acc1 = KnnAccuracy(transformedData, labels, 1);
 
     // Learn a low rank matrix.
-    outputMatrix = arma::randu(4, 5);
-    lmnn.LearnDistance(outputMatrix);
+    outputMatrix = arma::randu<arma::Mat<ElemType>>(4, 5);
+    lmnn.LearnDistance(dataset, labels, outputMatrix, lbfgs);
 
-    double acc2 = KnnAccuracy(outputMatrix * dataset, labels, 1);
+    transformedData = outputMatrix * dataset;
+    double acc2 = KnnAccuracy(transformedData, labels, 1);
 
     // We keep the tolerance very high.  We need to ensure the accuracy drop
     // isn't any more than 10%.
@@ -507,18 +556,20 @@ TEST_CASE("LMNNLowRankAccuracyLBFGSTest", "[LMNNTest]")
 // Check that accuracy while learning square distance matrix is the same as when
 // we are learning low rank matrix.  I'm ok if this passes only once out of
 // three tries.
-TEST_CASE("LMNNLowRankAccuracyTest", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNLowRankAccuracyTest", "[LMNNTest]", float, double)
 {
+  typedef TestType ElemType;
+
   bool success = false;
   for (size_t trial = 0; trial < 3; ++trial)
   {
-    arma::mat dataPart1;
+    arma::Mat<ElemType> dataPart1;
     dataPart1.randn(5, 50);
 
     arma::Row<size_t> labelsPart1(50);
     labelsPart1.fill(0);
 
-    arma::mat dataPart2;
+    arma::Mat<ElemType> dataPart2;
     dataPart2.randn(5, 50);
 
     arma::Row<size_t> labelsPart2(50);
@@ -528,26 +579,28 @@ TEST_CASE("LMNNLowRankAccuracyTest", "[LMNNTest]")
     arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0, 99, 100));
 
     // Generate datasets.
-    arma::mat dataset = join_rows(dataPart1, dataPart2);
+    arma::Mat<ElemType> dataset = join_rows(dataPart1, dataPart2);
     dataset = dataset.cols(ordering);
 
     // Generate labels.
     arma::Row<size_t> labels = join_rows(labelsPart1, labelsPart2);
     labels = labels.cols(ordering);
 
-    LMNN<> lmnn(dataset, labels, 1);
+    LMNN<> lmnn(1);
 
     // Learn a square matrix.
-    arma::mat outputMatrix;
-    lmnn.LearnDistance(outputMatrix);
+    arma::Mat<ElemType> outputMatrix;
+    lmnn.LearnDistance(dataset, labels, outputMatrix);
 
-    double acc1 = KnnAccuracy(outputMatrix * dataset, labels, 1);
+    arma::Mat<ElemType> transformedData = outputMatrix * dataset;
+    double acc1 = KnnAccuracy(transformedData, labels, 1);
 
     // Learn a low rank matrix.
-    outputMatrix = arma::randu(4, 5);
-    lmnn.LearnDistance(outputMatrix);
+    outputMatrix = arma::randu<arma::Mat<ElemType>>(4, 5);
+    lmnn.LearnDistance(dataset, labels, outputMatrix);
 
-    double acc2 = KnnAccuracy(outputMatrix * dataset, labels, 1);
+    transformedData = outputMatrix * dataset;
+    double acc2 = KnnAccuracy(transformedData, labels, 1);
 
     // We keep the tolerance very high.  We need to ensure the accuracy drop
     // isn't any more than 10%.
@@ -621,29 +674,31 @@ TEST_CASE("LMNNLowRankAccuracyBBSGDTest", "[LMNNTest]")
 // Comprehensive gradient tests by Marcus Edel & Ryan Curtin.
 
 // Simple numerical gradient checker.
-template<class FunctionType>
+template<typename FunctionType, typename MatType>
 double CheckGradient(FunctionType& function,
-                     arma::mat& coordinates,
-                     const double eps = 1e-7)
+                     MatType& coordinates,
+                     const typename MatType::elem_type eps = 1e-7)
 {
+  typedef typename MatType::elem_type ElemType;
+
   // Get gradients for the current parameters.
-  arma::mat orgGradient, gradient, estGradient;
+  MatType orgGradient, gradient, estGradient;
   function.Gradient(coordinates, orgGradient);
 
-  estGradient = arma::zeros(orgGradient.n_rows, orgGradient.n_cols);
+  estGradient = arma::zeros<MatType>(orgGradient.n_rows, orgGradient.n_cols);
 
   // Compute numeric approximations to gradient.
   for (size_t i = 0; i < orgGradient.n_elem; ++i)
   {
-    double tmp = coordinates(i);
+    ElemType tmp = coordinates(i);
 
     // Perturb parameter with a positive constant and get costs.
     coordinates(i) += eps;
-    double costPlus = function.Evaluate(coordinates);
+    ElemType costPlus = function.Evaluate(coordinates);
 
     // Perturb parameter with a negative constant and get costs.
     coordinates(i) -= (2 * eps);
-    double costMinus = function.Evaluate(coordinates);
+    ElemType costMinus = function.Evaluate(coordinates);
 
     // Restore the parameter value.
     coordinates(i) = tmp;
@@ -657,74 +712,84 @@ double CheckGradient(FunctionType& function,
       arma::norm(orgGradient + estGradient);
 }
 
-TEST_CASE("LMNNFunctionGradientTest", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNFunctionGradientTest", "[LMNNTest]", float, double)
 {
+  typedef TestType ElemType;
+
   // Useful but simple dataset with six points and two classes.
-  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                                " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<arma::Mat<ElemType>> lmnnfn(dataset, labels, 1, 0.6, 1);
 
   // 10 trials with random positions.
   for (size_t i = 0; i < 10; ++i)
   {
-    arma::mat coordinates(2, 2, arma::fill::randn);
+    arma::Mat<ElemType> coordinates(2, 2, arma::fill::randn);
     CheckGradient(lmnnfn, coordinates);
   }
 }
 
-TEST_CASE("LMNNFunctionGradientTest2", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNFunctionGradientTest2", "[LMNNTest]", float, double)
 {
-  // Useful but simple dataset with six points and two classes.
-  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+  typedef TestType ElemType;
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  // Useful but simple dataset with six points and two classes.
+  arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                                " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels    = " 0    0    0    1    1    1   ";
+
+  LMNNFunction<arma::Mat<ElemType>> lmnnfn(dataset, labels, 1, 0.6, 1);
 
   // 10 trials with random positions.
   for (size_t i = 0; i < 10; ++i)
   {
-    arma::mat coordinates(2, 2, arma::fill::randu);
+    arma::Mat<ElemType> coordinates(2, 2, arma::fill::randu);
     CheckGradient(lmnnfn, coordinates);
   }
 }
 
-TEST_CASE("LMNNFunctionGradientTest3", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNFunctionGradientTest3", "[LMNNTest]", float, double)
 {
-  arma::mat dataset;
+  typedef TestType ElemType;
+
+  arma::Mat<ElemType> dataset;
   arma::Row<size_t> labels;
   if (!data::Load("iris.csv", dataset))
     FAIL("Cannot load dataset iris.csv");
   if (!data::Load("iris_labels.txt", labels))
     FAIL("Cannot load dataset iris_labels.txt");
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<arma::Mat<ElemType>> lmnnfn(dataset, labels, 1, 0.6, 1);
 
   // 10 trials with random positions.
   for (size_t i = 0; i < 10; ++i)
   {
-    arma::mat coordinates(dataset.n_rows, dataset.n_rows, arma::fill::randn);
+    arma::Mat<ElemType> coordinates(dataset.n_rows, dataset.n_rows,
+        arma::fill::randn);
     CheckGradient(lmnnfn, coordinates);
   }
 }
 
-TEST_CASE("LMNNFunctionGradientTest4", "[LMNNTest]")
+TEMPLATE_TEST_CASE("LMNNFunctionGradientTest4", "[LMNNTest]", float, double)
 {
-  arma::mat dataset;
+  typedef TestType ElemType;
+
+  arma::Mat<ElemType> dataset;
   arma::Row<size_t> labels;
   if (!data::Load("iris.csv", dataset))
     FAIL("Cannot load dataset iris.csv");
   if (!data::Load("iris_labels.txt", labels))
     FAIL("Cannot load dataset iris_labels.txt");
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<arma::Mat<ElemType>> lmnnfn(dataset, labels, 1, 0.6, 1);
 
   // 10 trials with random positions.
   for (size_t i = 0; i < 10; ++i)
   {
-    arma::mat coordinates(dataset.n_rows, dataset.n_rows, arma::fill::randu);
+    arma::Mat<ElemType> coordinates(dataset.n_rows, dataset.n_rows,
+        arma::fill::randu);
     CheckGradient(lmnnfn, coordinates);
   }
 }

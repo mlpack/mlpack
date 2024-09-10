@@ -94,8 +94,7 @@ void CheckDuplication(const Row<size_t>& trainLabels,
 TEST_CASE("SplitShuffleDataResultMat", "[SplitDataTest]")
 {
   mat input(2, 10);
-  size_t count = 0; // Counter for unique sequential values.
-  input.imbue([&count] () { return ++count; });
+  input = reshape(linspace(0, 19, 20), 2, 10);
 
   const auto value = Split(input, 0.2);
   REQUIRE(std::get<0>(value).n_cols == 8); // Train data.
@@ -108,8 +107,7 @@ TEST_CASE("SplitShuffleDataResultMat", "[SplitDataTest]")
 TEST_CASE("SplitDataResultMat", "[SplitDataTest]")
 {
   mat input(2, 10);
-  size_t count = 0; // Counter for unique sequential values.
-  input.imbue([&count] () { return ++count; });
+  input = reshape(linspace(0, 19, 20), 2, 10);
 
   const auto value = Split(input, 0.2, false);
   REQUIRE(std::get<0>(value).n_cols == 8); // Train data.
@@ -123,8 +121,7 @@ TEST_CASE("SplitDataResultMat", "[SplitDataTest]")
 TEST_CASE("ZeroRatioSplitData", "[SplitDataTest]")
 {
   mat input(2, 10);
-  size_t count = 0; // Counter for unique sequential values.
-  input.imbue([&count] () { return ++count; });
+  input = reshape(linspace(0, 19, 20), 2, 10);
 
   const auto value = Split(input, 0, false);
   REQUIRE(std::get<0>(value).n_cols == 10); // Train data.
@@ -138,8 +135,7 @@ TEST_CASE("ZeroRatioSplitData", "[SplitDataTest]")
 TEST_CASE("TotalRatioSplitData", "[SplitDataTest]")
 {
   mat input(2, 10);
-  size_t count = 0; // Counter for unique sequential values.
-  input.imbue([&count] () { return ++count; });
+  input = reshape(linspace(0, 19, 20), 2, 10);
 
   const auto value = Split(input, 1, false);
   REQUIRE(std::get<0>(value).n_cols == 0); // Train data.
@@ -178,9 +174,11 @@ TEST_CASE("SplitCheckSize", "[SplitDataTest]")
 {
   arma::mat input = randu<arma::mat>(2, 10);
 
-  const Row<size_t> firstLabels = arma::linspace<Row<size_t>> (0, input.n_cols - 1, input.n_cols);
+  const Row<size_t> firstLabels = arma::linspace<Row<size_t>>(0,
+      input.n_cols - 1, input.n_cols);
 
-  const Row<size_t> secondLabels = arma::linspace<Row<size_t>> (0, input.n_cols, input.n_cols + 1);
+  const Row<size_t> secondLabels = arma::linspace<Row<size_t>>(0,
+      input.n_cols, input.n_cols + 1);
 
   REQUIRE_THROWS_AS(Split(input, secondLabels, 0.2), std::invalid_argument);
 
@@ -192,9 +190,8 @@ TEST_CASE("SplitCheckSize", "[SplitDataTest]")
  */
 TEST_CASE("SplitDataLargerTest", "[SplitDataTest]")
 {
-  size_t count = 0;
   mat input(10, 497);
-  input.imbue([&count] () { return ++count; });
+  input = reshape(linspace(0, 4969, 4970), 10, 497);
 
   const auto value = Split(input, 0.3);
   REQUIRE(std::get<0>(value).n_cols == 497 - size_t(0.3 * 497));
@@ -362,9 +359,8 @@ TEST_CASE("SplitDataResultField", "[SplitDataTest]")
   mat matA(2, 10);
   mat matB(2, 10);
 
-  size_t count = 0; // Counter for unique sequential values.
-  matA.imbue([&count]() { return ++count; });
-  matB.imbue([&count]() { return ++count; });
+  matA = linspace(0, matA.n_elem - 1);
+  matB = linspace(matA.n_elem, matA.n_elem + matB.n_elem - 1);
 
   input(0, 0) = matA;
   input(0, 1) = matB;

@@ -43,7 +43,8 @@ void BilinearInterpolationType<InputType, OutputType>::Forward(
 {
   const size_t batchSize = input.n_cols;
   const size_t depth = this->inputDimensions.size() <= 2 ? 1 :
-      std::accumulate(this->inputDimensions.begin() + 2, this->inputDimensions.end(), 0);
+      std::accumulate(this->inputDimensions.begin() + 2,
+                      this->inputDimensions.end(), 0);
 
   assert(output.n_rows == outRowSize * outColSize * depth);
   assert(output.n_cols == batchSize);
@@ -103,9 +104,11 @@ void BilinearInterpolationType<InputType, OutputType>::Backward(
 {
   const size_t batchSize = output.n_cols;
   const size_t depth = this->inputDimensions.size() <= 2 ? 1 :
-      std::accumulate(this->inputDimensions.begin() + 2, this->inputDimensions.end(), 0);
+      std::accumulate(this->inputDimensions.begin() + 2,
+                      this->inputDimensions.end(), 0);
 
-  assert(output.n_rows == this->inputDimensions[0] * this->inputDimensions[1] * depth);
+  assert(output.n_rows == this->inputDimensions[0] *
+      this->inputDimensions[1] * depth);
 
   assert(outRowSize >= 2);
   assert(outColSize >= 2);
@@ -114,8 +117,8 @@ void BilinearInterpolationType<InputType, OutputType>::Backward(
       ((OutputType&) gradient).memptr(), outRowSize, outColSize, depth *
       batchSize, false, false);
   arma::Cube<typename OutputType::elem_type> outputAsCube(
-      output.memptr(), this->inputDimensions[0], this->inputDimensions[1], depth * batchSize,
-      false, true);
+      output.memptr(), this->inputDimensions[0], this->inputDimensions[1],
+      depth * batchSize, false, true);
 
   if (gradient.n_elem == output.n_elem)
   {

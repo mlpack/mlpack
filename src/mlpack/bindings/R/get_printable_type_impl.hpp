@@ -66,7 +66,7 @@ inline std::string GetPrintableType<std::string>(
         !arma::is_arma_type<std::string>::value>::type*,
     const typename std::enable_if<
         !std::is_same<std::string,
-         std::tuple<data::DatasetInfo,arma::mat>>::value>::type*)
+         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   return "character";
 }

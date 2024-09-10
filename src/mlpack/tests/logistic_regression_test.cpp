@@ -600,8 +600,10 @@ TEST_CASE("LogisticRegressionSGDRegularizationSimpleTest",
 TEST_CASE("LogisticRegressionLBFGSGaussianTest", "[LogisticRegressionTest]")
 {
   // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 1.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("9.0 9.0 9.0"),
+      arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
   arma::Row<size_t> responses(1000);
@@ -647,8 +649,10 @@ TEST_CASE("LogisticRegressionLBFGSGaussianTest", "[LogisticRegressionTest]")
 TEST_CASE("LogisticRegressionSGDGaussianTest", "[LogisticRegressionTest]")
 {
   // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 1.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("9.0 9.0 9.0"),
+      arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
   arma::Row<size_t> responses(1000);
@@ -838,8 +842,10 @@ TEST_CASE("LogisticRegressionSparseSGDTest", "[LogisticRegressionTest]")
 TEST_CASE("ClassifyTest", "[LogisticRegressionTest]")
 {
   // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 1.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("9.0 9.0 9.0"),
+      arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
   arma::Row<size_t> responses(1000);
@@ -884,8 +890,10 @@ TEST_CASE("LogisticRegressionSinglePointClassifyTest",
           "[LogisticRegressionTest]")
 {
   // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 1.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("9.0 9.0 9.0"),
+      arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
   arma::Row<size_t> responses(1000);
@@ -933,8 +941,10 @@ TEST_CASE("LogisticRegressionSinglePointClassifyTest",
 TEST_CASE("ClassifyProbabilitiesTest", "[LogisticRegressionTest]")
 {
   // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 1.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("9.0 9.0 9.0"),
+      arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
   arma::Row<size_t> responses(1000);
@@ -1062,8 +1072,10 @@ TEST_CASE("ConstructionThenTraining", "[LogisticRegressionTest]")
 TEST_CASE("IncrementalTraining", "[LogisticRegressionTest]")
 {
   // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 1.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("9.0 9.0 9.0"),
+      arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
   arma::Row<size_t> responses(1000);
@@ -1099,7 +1111,7 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllConstructorsTest",
 
   // Create random data.
   MatType data(50, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000, arma::fill::zeros);
+  arma::Row<size_t> labels(1000);
   labels.subvec(500, 999).fill(1);
 
   // Empty constructor.
@@ -1162,7 +1174,7 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllTrainTest", "[LogisticRegressionTest]",
 
   // Create random data.
   MatType data(50, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000, arma::fill::zeros);
+  arma::Row<size_t> labels(1000);
   labels.subvec(500, 999).fill(1);
 
   // Construct all objects that we will use, but don't train.
@@ -1236,7 +1248,7 @@ TEST_CASE("LogisticRegressionResetTest", "[LogisticRegressionTest]")
 {
   // Create random data.
   arma::mat data(50, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000, arma::fill::zeros);
+  arma::Row<size_t> labels(1000);
   labels.subvec(500, 999).fill(1);
 
   // Create two logistic regression models.

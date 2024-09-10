@@ -151,12 +151,13 @@ TEST_CASE("LMNNWithOptimizerCallback", "[CallbackTest]")
                       " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  LMNN<> lmnn(dataset, labels, 1);
+  LMNN<> lmnn(1);
 
   arma::mat outputMatrix;
   std::stringstream stream;
 
-  lmnn.LearnDistance(outputMatrix, ens::ProgressBar(70, stream));
+  lmnn.LearnDistance(dataset, labels, outputMatrix,
+      ens::ProgressBar(70, stream));
   REQUIRE(stream.str().length() > 0);
 }
 
@@ -170,12 +171,11 @@ TEST_CASE("NCAWithOptimizerCallback", "[CallbackTest]")
                    " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  NCA<SquaredEuclideanDistance> nca(data, labels);
-
   arma::mat outputMatrix;
   std::stringstream stream;
 
-  nca.LearnDistance(outputMatrix, ens::ProgressBar(70, stream));
+  NCA nca;
+  nca.LearnDistance(data, labels, outputMatrix, ens::ProgressBar(70, stream));
   REQUIRE(stream.str().length() > 0);
 }
 
@@ -190,8 +190,10 @@ TEST_CASE("SRWithOptimizerCallback", "[CallbackTest]")
   const double lambda = 0.5;
 
   // Generate two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 9.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("4.0 3.0 4.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 9.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("4.0 3.0 4.0"),
+      arma::eye<arma::mat>(3, 3));
 
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);

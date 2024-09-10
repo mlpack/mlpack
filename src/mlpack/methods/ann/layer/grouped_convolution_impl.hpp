@@ -283,7 +283,7 @@ void GroupedConvolutionType<
     MatType
 >::SetWeights(const MatType& weightsIn)
 {
-  MakeAlias(weight, weightsIn, kernelWidth, kernelHeight, 
+  MakeAlias(weight, weightsIn, kernelWidth, kernelHeight,
       (maps * inMaps) / groups);
   if (useBias)
   {
@@ -334,8 +334,8 @@ void GroupedConvolutionType<
   size_t inGroupSize = inMaps / groups;
   size_t outGroupSize = maps / groups;
 
-  // We "ignore" dimensions higher than the third---that means that we just 
-  // pass them through and treat them like different input points.
+  // We "ignore" dimensions higher than the third---that means that we just pass
+  // them through and treat them like different input points.
   //
   // If we eventually have a way to do convolutions for a single kernel
   // in-batch, then this strategy may not be the most efficient solution.
@@ -440,7 +440,7 @@ void GroupedConvolutionType<
   }
 
   MatType output(apparentWidth * apparentHeight * inMaps * higherInDimensions,
-      batchSize, arma::fill::zeros);
+      batchSize);
   CubeType outputCube;
   MakeAlias(outputCube, output, apparentWidth, apparentHeight,
       inMaps * higherInDimensions * batchSize);
@@ -536,7 +536,8 @@ void GroupedConvolutionType<
   CubeType tempCube;
   MakeAlias(tempCube, temp, apparentWidth, apparentHeight,
       inMaps * higherInDimensions * batchSize);
-  paddingBackward.Backward(input, {} /* unused */, usingPadding ? inputPadded : input, temp);
+  paddingBackward.Backward(input, {} /* unused */,
+      usingPadding ? inputPadded : input, temp);
 
   // We will make an alias for the gradient, but note that this is only for the
   // convolution map weights!  The bias will be handled by direct accesses into
@@ -579,8 +580,10 @@ void GroupedConvolutionType<
         }
 
         if (useBias)
-          gradient[weight.n_elem + group * outGroupSize + outMap] += 
+        {
+          gradient[weight.n_elem + group * outGroupSize + outMap] +=
               accu(curError);
+        }
       }
     }
   }
@@ -648,7 +651,7 @@ void GroupedConvolutionType<
   }
 
   apparentWidth = (this->outputDimensions[0] - 1) * strideWidth + kernelWidth;
-  apparentHeight = (this->outputDimensions[1] - 1) * strideHeight + 
+  apparentHeight = (this->outputDimensions[1] - 1) * strideHeight +
       kernelHeight;
 
   paddingBackward = PaddingType<MatType>(0, padding.OutputDimensions()[0] -

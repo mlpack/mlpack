@@ -177,8 +177,10 @@ TEST_CASE("SoftmaxRegressionTwoClasses", "[SoftmaxRegressionTest]")
   const double lambda = 0.5;
 
   // Generate two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 9.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("4.0 3.0 4.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 9.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("4.0 3.0 4.0"),
+      arma::eye<arma::mat>(3, 3));
 
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
@@ -225,8 +227,10 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionFitIntercept", "[SoftmaxRegressionTest]",
 
   // Generate a two-Gaussian dataset,
   // which can't be separated without adding the intercept term.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 1.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("9.0 9.0 9.0"),
+      arma::eye<arma::mat>(3, 3));
 
   MatType data(3, 1000);
   arma::Row<size_t> responses(1000);
@@ -269,6 +273,7 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionMultipleClasses",
     "[SoftmaxRegressionTest]", arma::fmat, arma::mat)
 {
   typedef TestType MatType;
+  typedef typename GetColType<TestType>::type VecType;
 
   const size_t points = 5000;
   const size_t inputSize = 5;
@@ -276,40 +281,39 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionMultipleClasses",
   const double lambda = 0.5;
 
   // Generate five-Gaussian dataset.
-  arma::mat identity = arma::eye<arma::mat>(5, 5);
-  GaussianDistribution g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
-  GaussianDistribution g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
-  GaussianDistribution g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
-  GaussianDistribution g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
-  GaussianDistribution g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
+  MatType identity = arma::eye<MatType>(5, 5);
+  GaussianDistribution<MatType> g1(VecType("1.0 9.0 1.0 2.0 2.0"), identity);
+  GaussianDistribution<MatType> g2(VecType("4.0 3.0 4.0 2.0 2.0"), identity);
+  GaussianDistribution<MatType> g3(VecType("3.0 2.0 7.0 0.0 5.0"), identity);
+  GaussianDistribution<MatType> g4(VecType("4.0 1.0 1.0 2.0 7.0"), identity);
+  GaussianDistribution<MatType> g5(VecType("1.0 0.0 1.0 8.0 3.0"), identity);
 
   MatType data(inputSize, points);
   arma::Row<size_t> labels(points);
 
   for (size_t i = 0; i < points / 5; ++i)
   {
-    // TODO: when GaussianDistribution is templatized, remove the conv_to.
-    data.col(i) = ConvTo<MatType>::From(g1.Random());
+    data.col(i) = g1.Random();
     labels(i) = 0;
   }
   for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
-    data.col(i) = ConvTo<MatType>::From(g2.Random());
+    data.col(i) = g2.Random();
     labels(i) = 1;
   }
   for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
-    data.col(i) = ConvTo<MatType>::From(g3.Random());
+    data.col(i) = g3.Random();
     labels(i) = 2;
   }
   for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
-    data.col(i) = ConvTo<MatType>::From(g4.Random());
+    data.col(i) = g4.Random();
     labels(i) = 3;
   }
   for (size_t i = (4 * points) / 5; i < points; ++i)
   {
-    data.col(i) = ConvTo<MatType>::From(g5.Random());
+    data.col(i) = g5.Random();
     labels(i) = 4;
   }
 
@@ -427,11 +431,11 @@ TEST_CASE("SoftmaxRegressionClassifySinglePointTest",
 
   // Generate five-Gaussian dataset.
   arma::mat identity = arma::eye<arma::mat>(5, 5);
-  GaussianDistribution g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
-  GaussianDistribution g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
-  GaussianDistribution g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
-  GaussianDistribution g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
-  GaussianDistribution g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
+  GaussianDistribution<> g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
+  GaussianDistribution<> g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
+  GaussianDistribution<> g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
+  GaussianDistribution<> g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
+  GaussianDistribution<> g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
 
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
@@ -510,11 +514,11 @@ TEST_CASE("SoftmaxRegressionComputeProbabilitiesTest",
 
   // Generate five-Gaussian dataset.
   arma::mat identity = arma::eye<arma::mat>(5, 5);
-  GaussianDistribution g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
-  GaussianDistribution g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
-  GaussianDistribution g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
-  GaussianDistribution g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
-  GaussianDistribution g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
+  GaussianDistribution<> g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
+  GaussianDistribution<> g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
+  GaussianDistribution<> g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
+  GaussianDistribution<> g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
+  GaussianDistribution<> g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
 
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
@@ -610,11 +614,11 @@ TEST_CASE("SoftmaxRegressionComputeProbabilitiesAndLabelsTest",
 
   // Generate five-Gaussian dataset.
   arma::mat identity = arma::eye<arma::mat>(5, 5);
-  GaussianDistribution g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
-  GaussianDistribution g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
-  GaussianDistribution g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
-  GaussianDistribution g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
-  GaussianDistribution g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
+  GaussianDistribution<> g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
+  GaussianDistribution<> g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
+  GaussianDistribution<> g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
+  GaussianDistribution<> g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
+  GaussianDistribution<> g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
 
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
@@ -880,7 +884,7 @@ TEST_CASE("SoftmaxRegressionResetTest", "[SoftmaxRegressionTest]")
 {
   // Create random data.
   arma::mat data(50, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000, arma::fill::zeros);
+  arma::Row<size_t> labels(1000);
   labels.subvec(500, 999).fill(1);
 
   // Create two logistic regression models.

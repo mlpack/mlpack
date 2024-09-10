@@ -23,11 +23,11 @@ namespace cli {
 template<typename T>
 std::string GetPrintableParam(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* /* junk */,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type* /* junk */,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* /* junk */,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type*,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
     const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* /* junk */)
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   std::ostringstream oss;
   oss << std::any_cast<T>(data.value);
@@ -103,8 +103,8 @@ std::string GetPrintableParam(
 template<typename T>
 std::string GetPrintableParam(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* /* junk */,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* /* junk */)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type*)
 {
   // Extract the string from the tuple that's being held.
   typedef std::tuple<T*, typename ParameterType<T>::type> TupleType;

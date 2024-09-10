@@ -62,7 +62,7 @@ TEST_CASE("SVDPlusPlusEvaluate", "[SVDPlusPlusTest]")
 
       // Iterate through each item which the user interacted with to calculate
       // user vector.
-      arma::vec userVec(rank, arma::fill::zeros);
+      arma::vec userVec(rank);
       arma::sp_mat::const_iterator it = implicitData.begin_col(user);
       arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
       size_t implicitCount = 0;
@@ -368,7 +368,7 @@ TEST_CASE("SVDPlusPlusFunctionOptimize", "[SVDPlusPlusTest]")
 
     // Iterate through each item which the user interacted with to calculate
     // user vector.
-    arma::vec userVec(rank, arma::fill::zeros);
+    arma::vec userVec(rank);
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
@@ -406,7 +406,7 @@ TEST_CASE("SVDPlusPlusFunctionOptimize", "[SVDPlusPlusTest]")
 
     // Iterate through each item which the user interacted with to calculate
     // user vector.
-    arma::vec userVec(rank, arma::fill::zeros);
+    arma::vec userVec(rank);
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
@@ -475,7 +475,7 @@ TEST_CASE("SVDPlusPlusFunctionParallelOptimize", "[SVDPlusPlusTest]")
 
     // Iterate through each item which the user interacted with to calculate
     // user vector.
-    arma::vec userVec(rank, arma::fill::zeros);
+    arma::vec userVec(rank);
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
@@ -520,7 +520,7 @@ TEST_CASE("SVDPlusPlusFunctionParallelOptimize", "[SVDPlusPlusTest]")
 
     // Iterate through each item which the user interacted with to calculate
     // user vector.
-    arma::vec userVec(rank, arma::fill::zeros);
+    arma::vec userVec(rank);
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;

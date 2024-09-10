@@ -65,7 +65,7 @@ void PrintParamTable(const string& bindingName,
 
       bool isHyperParam = false;
       size_t foundArma = it->second.cppType.find("arma");
-      if(it->second.input && foundArma == string::npos && !isSerial)
+      if (it->second.input && foundArma == string::npos && !isSerial)
         isHyperParam = true;
       printCondition &= isHyperParam;
     }

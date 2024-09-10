@@ -57,7 +57,7 @@ BINDING_LONG_DESC(
     PRINT_PARAM_STRING("regularization") + "), In addition, this "
     "implementation of LMNN includes a parameter to decide the interval "
     "after which impostors must be re-calculated (specified with " +
-    PRINT_PARAM_STRING("range") + ")."
+    PRINT_PARAM_STRING("update_interval") + ")."
     "\n\n"
     "Output can either be the learned distance matrix (specified with " +
     PRINT_PARAM_STRING("output") +"), or the transformed dataset "
@@ -124,11 +124,11 @@ BINDING_EXAMPLE(
     PRINT_CALL("lmnn", "input", "iris", "labels", "iris_labels", "k", 3,
     "optimizer", "bbsgd", "output", "output") +
     "\n\n"
-    "An another program call making use of range & regularization parameter "
-    "with dataset having labels as last column can be made as: "
+    "Another program call making use of update interval & regularization "
+    "parameter with dataset having labels as last column can be made as: "
     "\n\n" +
     PRINT_CALL("lmnn", "input", "letter_recognition", "k", 5,
-    "range", 10, "regularization", 0.4, "output", "output"));
+    "update_interval", 10, "regularization", 0.4, "output", "output"));
 
 // See also...
 BINDING_SEE_ALSO("@nca", "#nca");
@@ -174,8 +174,8 @@ PARAM_DOUBLE_IN("step_size", "Step size for AMSGrad, BB_SGD and SGD (alpha).",
 PARAM_FLAG("linear_scan", "Don't shuffle the order in which data points are "
     "visited for SGD or mini-batch SGD.", "L");
 PARAM_INT_IN("batch_size", "Batch size for mini-batch SGD.", "b", 50);
-PARAM_INT_IN("range", "Number of iterations after which impostors needs to be "
-    "recalculated", "R", 1);
+PARAM_INT_IN("update_interval", "Number of iterations after which impostors "
+    "need to be recalculated.", "R", 1);
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
@@ -264,10 +264,10 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   RequireParamValue<int>(params, "k", [](int x) { return x > 0; }, true,
       "number of targets must be positive");
-  RequireParamValue<int>(params, "range", [](int x) { return x > 0; }, true,
-      "range must be positive");
-  RequireParamValue<int>(params, "batch_size", [](int x) { return x > 0; }, true,
-      "batch size must be positive");
+  RequireParamValue<int>(params, "update_interval", [](int x) { return x > 0; },
+      true, "update interval must be positive");
+  RequireParamValue<int>(params, "batch_size", [](int x) { return x > 0; },
+      true, "batch size must be positive");
   RequireParamValue<double>(params, "regularization", [](double x)
       { return x >= 0.0; }, true, "regularization value must be non-negative");
   RequireParamValue<double>(params, "step_size", [](double x)
@@ -294,7 +294,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   const bool printAccuracy = params.Has("print_accuracy");
   const bool shuffle = !params.Has("linear_scan");
   const size_t batchSize = (size_t) params.Get<int>("batch_size");
-  const size_t range = (size_t) params.Get<int>("range");
+  const size_t updateInterval = (size_t) params.Get<int>("update_interval");
   const size_t rank = (size_t) params.Get<int>("rank");
 
   // Load data.
@@ -359,56 +359,49 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   // Now create the LMNN object and run the optimization.
   timers.Start("lmnn_optimization");
+  LMNN lmnn(k, regularization, updateInterval);
   if (optimizerType == "amsgrad")
   {
-    LMNN<LMetric<2>> lmnn(data, labels, k);
-    lmnn.Regularization() = regularization;
-    lmnn.Range() = range;
-    lmnn.Optimizer().StepSize() = stepSize;
-    lmnn.Optimizer().MaxIterations() = passes * data.n_cols;
-    lmnn.Optimizer().Tolerance() = tolerance;
-    lmnn.Optimizer().Shuffle() = shuffle;
-    lmnn.Optimizer().BatchSize() = batchSize;
+    ens::AMSGrad opt;
+    opt.StepSize() = stepSize;
+    opt.MaxIterations() = passes * data.n_cols;
+    opt.Tolerance() = tolerance;
+    opt.Shuffle() = shuffle;
+    opt.BatchSize() = batchSize;
 
-    lmnn.LearnDistance(distance);
+    lmnn.LearnDistance(data, labels, distance, opt);
   }
   else if (optimizerType == "bbsgd")
   {
-    LMNN<LMetric<2>, ens::BBS_BB> lmnn(data, labels, k);
-    lmnn.Regularization() = regularization;
-    lmnn.Range() = range;
-    lmnn.Optimizer().StepSize() = stepSize;
-    lmnn.Optimizer().MaxIterations() = passes * data.n_cols;
-    lmnn.Optimizer().Tolerance() = tolerance;
-    lmnn.Optimizer().Shuffle() = shuffle;
-    lmnn.Optimizer().BatchSize() = batchSize;
+    ens::BBS_BB opt;
+    opt.StepSize() = stepSize;
+    opt.MaxIterations() = passes * data.n_cols;
+    opt.Tolerance() = tolerance;
+    opt.Shuffle() = shuffle;
+    opt.BatchSize() = batchSize;
 
-    lmnn.LearnDistance(distance);
+    lmnn.LearnDistance(data, labels, distance, opt);
   }
   else if (optimizerType == "sgd")
   {
     // Using SGD is not recommended as the learning matrix can
     // diverge to inf causing serious memory problems.
-    LMNN<LMetric<2>, ens::StandardSGD> lmnn(data, labels, k);
-    lmnn.Regularization() = regularization;
-    lmnn.Range() = range;
-    lmnn.Optimizer().StepSize() = stepSize;
-    lmnn.Optimizer().MaxIterations() = passes * data.n_cols;
-    lmnn.Optimizer().Tolerance() = tolerance;
-    lmnn.Optimizer().Shuffle() = shuffle;
-    lmnn.Optimizer().BatchSize() = batchSize;
+    ens::StandardSGD opt;
+    opt.StepSize() = stepSize;
+    opt.MaxIterations() = passes * data.n_cols;
+    opt.Tolerance() = tolerance;
+    opt.Shuffle() = shuffle;
+    opt.BatchSize() = batchSize;
 
-    lmnn.LearnDistance(distance);
+    lmnn.LearnDistance(data, labels, distance, opt);
   }
   else if (optimizerType == "lbfgs")
   {
-    LMNN<LMetric<2>, ens::L_BFGS> lmnn(data, labels, k);
-    lmnn.Regularization() = regularization;
-    lmnn.Range() = range;
-    lmnn.Optimizer().MaxIterations() = maxIterations;
-    lmnn.Optimizer().MinGradientNorm() = tolerance;
+    ens::L_BFGS opt;
+    opt.MaxIterations() = maxIterations;
+    opt.MinGradientNorm() = tolerance;
 
-    lmnn.LearnDistance(distance);
+    lmnn.LearnDistance(data, labels, distance, opt);
   }
   timers.Stop("lmnn_optimization");
 

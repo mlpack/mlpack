@@ -147,7 +147,6 @@ class NoisyLinearType : public Layer<MatType>
 
   //! Locally-stored bias-epsilon parameters.
   MatType biasEpsilon;
-
 }; // class NoisyLinearType
 
 // Convenience typedefs.

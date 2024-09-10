@@ -55,10 +55,10 @@ typename MatType::elem_type PoissonNLLLossType<MatType>::Forward(
     loss.elem(arma::find(mask)) += approx.elem(arma::find(mask));
   }
   typename MatType::elem_type lossSum = accu(loss);
-  
+
   if (reduction)
     return lossSum;
-  
+
   return lossSum / loss.n_elem;
 }
 

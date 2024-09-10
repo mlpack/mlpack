@@ -34,106 +34,88 @@
 template<typename VecType>
 struct IsVector
 {
-  const static bool value = false;
+  static const bool value = false;
 };
 
 template<typename MatType>
 struct IsMatrix
 {
-  const static bool value = false;
+  static const bool value = false;
 };
 
 template<typename CubeType>
 struct IsCube
 {
-  const static bool value = false;
+  static const bool value = false;
 };
 
 // Commenting out the first template per case, because
-// Visual Studio doesn't like this instantiaion pattern (error C2910).
+// Visual Studio doesn't like this instantiation pattern (error C2910).
 // template<>
 template<typename eT>
 struct IsVector<arma::Col<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
 // template<>
 template<typename eT>
 struct IsVector<arma::SpCol<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
 // template<>
 template<typename eT>
 struct IsVector<arma::Row<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
 // template<>
 template<typename eT>
 struct IsVector<arma::SpRow<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
 // template<>
 template<typename eT>
 struct IsVector<arma::subview_col<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
 // template<>
 template<typename eT>
 struct IsVector<arma::subview_row<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
 template<typename eT>
 struct IsMatrix<arma::Mat<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
 template<typename eT>
 struct IsCube<arma::Cube<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
+template<typename eT>
+struct IsVector<arma::SpSubview_col<eT> >
+{
+  static const bool value = true;
+};
 
-#if ((ARMA_VERSION_MAJOR >= 10) || \
-    ((ARMA_VERSION_MAJOR == 9) && (ARMA_VERSION_MINOR >= 869)))
-
-  // Armadillo 9.869+ has SpSubview_col and SpSubview_row
-
-  template<typename eT>
-  struct IsVector<arma::SpSubview_col<eT> >
-  {
-    const static bool value = true;
-  };
-
-  template<typename eT>
-  struct IsVector<arma::SpSubview_row<eT> >
-  {
-    const static bool value = true;
-  };
-
-#else
-
-  // fallback for older Armadillo versions
-
-  template<typename eT>
-  struct IsVector<arma::SpSubview<eT> >
-  {
-    const static bool value = true;
-  };
-
-#endif
+template<typename eT>
+struct IsVector<arma::SpSubview_row<eT> >
+{
+  static const bool value = true;
+};
 
 // Get the row vector type corresponding to a given MatType.
 

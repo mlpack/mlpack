@@ -293,7 +293,7 @@ TEST_CASE("PCAScalingTest", "[PCATest]")
   arma::mat cov("1.0 0.9 0.0;"
                 "0.9 1.0 0.0;"
                 "0.0 0.0 12.0");
-  GaussianDistribution g(mean, cov);
+  GaussianDistribution<> g(mean, cov);
 
   for (size_t i = 0; i < 5000; ++i)
     data.col(i) = g.Random();
@@ -346,7 +346,7 @@ TEMPLATE_TEST_CASE("PCASubviewTest", "[PCATest]", ExactSVDPolicy,
   arma::mat cov("1.0 0.9 0.0;"
                 "0.9 1.0 0.0;"
                 "0.0 0.0 12.0");
-  GaussianDistribution g(mean, cov);
+  GaussianDistribution<> g(mean, cov);
 
   for (size_t i = 0; i < 5000; ++i)
     data.col(i) = g.Random();
@@ -393,7 +393,7 @@ TEMPLATE_TEST_CASE("PCAExpressionTest", "[PCATest]", ExactSVDPolicy,
   arma::mat cov("1.0 0.9 0.0;"
                 "0.9 1.0 0.0;"
                 "0.0 0.0 12.0");
-  GaussianDistribution g(mean, cov);
+  GaussianDistribution<> g(mean, cov);
 
   for (size_t i = 0; i < 5000; ++i)
     data.col(i) = g.Random();
@@ -440,7 +440,7 @@ TEMPLATE_TEST_CASE("PCAFloatTest", "[PCATest]", ExactSVDPolicy,
   arma::mat cov("1.0 0.9 0.0;"
                 "0.9 1.0 0.0;"
                 "0.0 0.0 12.0");
-  GaussianDistribution g(mean, cov);
+  GaussianDistribution<> g(mean, cov);
 
   for (size_t i = 0; i < 5000; ++i)
     data.col(i) = arma::conv_to<arma::fvec>::from(g.Random());

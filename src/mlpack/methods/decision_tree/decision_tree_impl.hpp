@@ -705,9 +705,9 @@ double DecisionTree<FitnessFunction,
     // Get the number of children we will have.
     size_t numChildren = 0;
     if (datasetInfo.Type(bestDim) == data::Datatype::categorical)
-      numChildren = CategoricalSplit::NumChildren(classProbabilities[0], *this);
+      numChildren = CategoricalSplit::NumChildren(classProbabilities, *this);
     else
-      numChildren = NumericSplit::NumChildren(classProbabilities[0], *this);
+      numChildren = NumericSplit::NumChildren(classProbabilities, *this);
 
     // Calculate all child assignments.
     arma::Row<size_t> childAssignments(count);
@@ -715,19 +715,19 @@ double DecisionTree<FitnessFunction,
     {
       for (size_t j = begin; j < begin + count; ++j)
         childAssignments[j - begin] = CategoricalSplit::CalculateDirection(
-            data(bestDim, j), classProbabilities[0], *this);
+            data(bestDim, j), classProbabilities, *this);
     }
     else
     {
       for (size_t j = begin; j < begin + count; ++j)
       {
         childAssignments[j - begin] = NumericSplit::CalculateDirection(
-            data(bestDim, j), classProbabilities[0], *this);
+            data(bestDim, j), classProbabilities, *this);
       }
     }
 
     // Figure out counts of children.
-    arma::Row<size_t> childCounts(numChildren, arma::fill::zeros);
+    arma::Row<size_t> childCounts(numChildren);
     for (size_t i = begin; i < begin + count; ++i)
       childCounts[childAssignments[i - begin]]++;
 
@@ -871,7 +871,7 @@ double DecisionTree<FitnessFunction,
   {
     // We know that the split is numeric.
     size_t numChildren =
-        NumericSplit::NumChildren(classProbabilities[0], *this);
+        NumericSplit::NumChildren(classProbabilities, *this);
     splitDimension = bestDim;
     dimensionType = (size_t) data::Datatype::numeric;
 
@@ -881,7 +881,7 @@ double DecisionTree<FitnessFunction,
     for (size_t j = begin; j < begin + count; ++j)
     {
       childAssignments[j - begin] = NumericSplit::CalculateDirection(
-          data(bestDim, j), classProbabilities[0], *this);
+          data(bestDim, j), classProbabilities, *this);
     }
 
     // Calculate counts of children in each node.
@@ -1086,7 +1086,8 @@ void DecisionTree<FitnessFunction,
 
   // Now serialize the rest of the object.
   ar(CEREAL_NVP(splitDimension));
-  // Since dimensionType and majorityClass are a union, we only need to serialize one.
+  // Since dimensionType and majorityClass are a union, we only need to
+  // serialize one.
   ar(CEREAL_NVP(dimensionType));
   ar(CEREAL_NVP(classProbabilities));
 }
@@ -1105,10 +1106,10 @@ size_t DecisionTree<FitnessFunction,
 {
   if ((data::Datatype) dimensionType == data::Datatype::categorical)
     return CategoricalSplit::CalculateDirection(point[splitDimension],
-        classProbabilities[0], *this);
+        classProbabilities, *this);
   else
     return NumericSplit::CalculateDirection(point[splitDimension],
-        classProbabilities[0], *this);
+        classProbabilities, *this);
 }
 
 // Get the number of classes in the tree.

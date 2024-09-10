@@ -85,7 +85,8 @@ Linear3DType<MatType, RegularizerType>::operator=(
 }
 
 template<typename MatType, typename RegularizerType>
-void Linear3DType<MatType, RegularizerType>::SetWeights(const MatType& weightsIn)
+void Linear3DType<MatType, RegularizerType>::SetWeights(
+    const MatType& weightsIn)
 {
   MakeAlias(weights, weightsIn, outSize * this->inputDimensions[0] + outSize,
       1);
@@ -126,8 +127,8 @@ void Linear3DType<MatType, RegularizerType>::Backward(
 
   if (gy.n_rows % outSize != 0)
   {
-    Log::Fatal << "Number of rows in propagated error must be divisible by \
-        outSize." << std::endl;
+    Log::Fatal << "Number of rows in propagated error must be divisible by "
+        << "outSize." << std::endl;
   }
 
   const size_t nPoints = gy.n_rows / outSize;

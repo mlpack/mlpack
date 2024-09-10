@@ -27,12 +27,11 @@ namespace mlpack {
  * @tparam VecType Type of vector (arma::vec or arma::sp_vec or similar).
  */
 template<typename DistanceType = LMetric<2, true>,
-         typename VecType = arma::vec>
+         typename ElemType = double,
+         typename VecType = arma::Col<ElemType>>
 class BallBound
 {
  public:
-  //! The underlying data type.
-  typedef typename VecType::elem_type ElemType;
   //! A public version of the vector type.
   typedef VecType Vec;
 
@@ -220,7 +219,7 @@ template<typename DistanceType, typename VecType>
 struct BoundTraits<BallBound<DistanceType, VecType>>
 {
   //! These bounds are potentially loose in some dimensions.
-  const static bool HasTightBounds = false;
+  static const bool HasTightBounds = false;
 };
 
 } // namespace mlpack

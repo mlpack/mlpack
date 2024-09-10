@@ -62,7 +62,6 @@ namespace data {
 class LoadCSV
 {
  public:
-
   LoadCSV()
   {
     // Nothing to do here.
@@ -138,7 +137,7 @@ class LoadCSV
    * @param delim delimiter character.
    */
   inline void NumericMatSize(std::stringstream& lineStream, size_t& col,
-                             const char delim); 
+                             const char delim);
 
   // Functions for Categorical Parse.
 
@@ -193,7 +192,7 @@ class LoadCSV
    * @param delim the delimiter character.
    */
   inline void CategoricalMatSize(std::stringstream& lineStream, size_t& col,
-                                 const char delim); 
+                                 const char delim);
 
   // Functions common to both numeric & categorical parser.
 
@@ -256,7 +255,6 @@ class LoadCSV
 
 
  private:
-
   /**
   * Check whether or not the file has successfully opened; throw an exception
   * if not.

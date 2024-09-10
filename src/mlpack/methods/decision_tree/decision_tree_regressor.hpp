@@ -15,12 +15,9 @@
 
 #include <mlpack/core.hpp>
 
-#include "mad_gain.hpp"
-#include "mse_gain.hpp"
-#include "best_binary_numeric_split.hpp"
-#include "all_categorical_split.hpp"
-#include "random_binary_numeric_split.hpp"
-#include "all_dimension_select.hpp"
+#include "fitness_functions/fitness_functions.hpp"
+#include "split_functions/split_functions.hpp"
+#include "select_functions/select_functions.hpp"
 
 namespace mlpack {
 
@@ -443,19 +440,17 @@ class DecisionTreeRegressor :
  private:
   //! The vector of children.
   std::vector<DecisionTreeRegressor*> children;
-  //! The dimension this node splits on.
-  size_t splitDimension;
-  //! The type of the dimension that we have split on (only meaningful if this
-  //! is a non-leaf in a trained tree).
-  size_t dimensionType;
-
   union
   {
-    //! Stores the split point for internal nodes of the tree.
-    double splitPoint;
-    //! Stores the prediction value for leaf nodes of the tree.
+    //! Stores the prediction value, for leaf nodes of the tree.
     double prediction;
+    //! The dimension of the split, for internal nodes.
+    size_t splitDimension;
   };
+  //! For internal nodes, the type of the split variable.
+  size_t dimensionType;
+  //! For internal nodes, the split information for the splitter.
+  arma::vec splitInfo;
 
   //! Note that this class will also hold the members of the NumericSplit and
   //! CategoricalSplit AuxiliarySplitInfo classes, since it inherits from them.

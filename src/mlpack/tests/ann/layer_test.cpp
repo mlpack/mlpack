@@ -39,6 +39,7 @@
 #include "layer/log_softmax.cpp"
 #include "layer/max_pooling.cpp"
 #include "layer/mean_pooling.cpp"
+#include "layer/nearest_interpolation.cpp"
 #include "layer/padding.cpp"
 #include "layer/parametric_relu.cpp"
 #include "layer/relu6.cpp"

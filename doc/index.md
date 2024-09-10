@@ -100,11 +100,22 @@ Predict continuous values.
 
 ### Clustering algorithms
 
+***NOTE:*** this documentation is still under construction and so some
+algorithms that mlpack implements are not yet listed here.  For now, see
+[the mlpack/methods directory](https://github.com/mlpack/mlpack/tree/master/src/mlpack/methods)
+for a full list of algorithms.
+
 Group points into clusters.
 
-<!-- TODO: add some -->
+ * [`MeanShift`](user/methods/mean_shift.md): clustering with the density-based
+   mean shift algorithm
 
 ### Geometric algorithms
+
+***NOTE:*** this documentation is still under construction and so no geometric
+algorithms in mlpack are documented yet.  For now, see
+[the mlpack/methods directory](https://github.com/mlpack/mlpack/tree/master/src/mlpack/methods)
+for a full list of algorithms.
 
 Computations based on distance metrics.
 
@@ -112,17 +123,31 @@ Computations based on distance metrics.
 
 ### Preprocessing utilities
 
+***NOTE:*** this documentation is still under construction and so no
+preprocessing utilities in mlpack are documented yet.  For now, see
+[the mlpack/methods/preprocess directory](https://github.com/mlpack/mlpack/tree/master/src/mlpack/methods)
+for a full list of algorithms.
+
 Prepare data for machine learning algorithms.
 
 <!-- TODO: add some -->
 
 ### Transformations
 
+***NOTE:*** this documentation is still under construction and so some
+algorithms that mlpack implements are not yet listed here.  For now, see
+[the mlpack/methods directory](https://github.com/mlpack/mlpack/tree/master/src/mlpack/methods)
+for a full list of algorithms.
+
 Transform data from one space to another.
 
  * [`AMF`](user/methods/amf.md): alternating matrix factorization
  * [`LocalCoordinateCoding`](user/methods/local_coordinate_coding.md): local
    coordinate coding with dictionary learning
+ * [`LMNN`](user/methods/lmnn.md): large margin nearest neighbor (distance
+   metric learning)
+ * [`NCA`](user/methods/nca.md): neighborhood components analysis (distance
+   metric learning)
  * [`NMF`](user/methods/nmf.md): non-negative matrix factorization
  * [`PCA`](user/methods/pca.md): principal components analysis
  * [`SparseCoding`](user/methods/sparse_coding.md): sparse coding with
