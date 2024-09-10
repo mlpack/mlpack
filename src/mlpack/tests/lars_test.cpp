@@ -336,8 +336,8 @@ TEST_CASE("PredictFloatTest", "[LARSTest]")
             continue;
 
           // Now check with single-point Predict(), in two ways: we will pass
-          // different types into Predict() to test templating support.  We allow
-          // a looser tolerance for predictions.
+          // different types into Predict() to test templating support.  We
+          // allow a looser tolerance for predictions.
           for (size_t i = 0; i < X.n_cols; ++i)
             predictions[i] = lars.Predict(X.col(i));
 
@@ -690,7 +690,8 @@ TEST_CASE("LARSFitInterceptTest", "[LARSTest]")
   arma::rowvec centeredResponses = responses - arma::mean(responses);
 
   LARS<> l1(features, responses, true, true, 0.001, 0.001, 1e-16, true, false);
-  LARS<> l2(centeredFeatures, centeredResponses, true, true, 0.001, 0.001, 1e-16, false, false);
+  LARS<> l2(centeredFeatures, centeredResponses, true, true, 0.001, 0.001,
+      1e-16, false, false);
 
   // The weights learned should be the same.
   REQUIRE(l1.Beta().n_elem == l2.Beta().n_elem);

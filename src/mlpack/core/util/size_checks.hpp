@@ -42,9 +42,11 @@ inline void CheckSameSizes(
     const typename std::enable_if<
         !std::is_integral<LabelsType>::value>::type* = 0)
 {
-  const size_t dataPoints = (isDataTranspose == true) ? data.n_rows : data.n_cols;
-  const size_t labelPoints = (isLabelTranspose == true) ? label.n_rows : label.n_cols;
-  
+  const size_t dataPoints = (isDataTranspose == true) ? data.n_rows :
+      data.n_cols;
+  const size_t labelPoints = (isLabelTranspose == true) ? label.n_rows :
+      label.n_cols;
+
   if (dataPoints != labelPoints)
   {
     std::ostringstream oss;

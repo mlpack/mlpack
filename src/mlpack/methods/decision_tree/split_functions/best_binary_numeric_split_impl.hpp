@@ -121,7 +121,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     // Make sure that the value has changed.
     if (data[sortedIndices[index - 1]] == data[sortedIndices[index]])
       continue;
- 
+
     // Calculate the gain for the left and right child.  Only use weights if
     // needed.
     const double leftGain = UseWeights ?

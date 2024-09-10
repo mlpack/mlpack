@@ -130,10 +130,11 @@ class FFTConvolution
    * @param output Output data that contains the results of the convolution.
    */
   template<typename CubeType>
-  static void Convolution(const CubeType& input,
-                          const CubeType& filter,
-                          CubeType& output,
-                          const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
+  static void Convolution(
+      const CubeType& input,
+      const CubeType& filter,
+      CubeType& output,
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     typedef typename GetDenseMatType<CubeType>::type MatType;
     MatType convOutput;

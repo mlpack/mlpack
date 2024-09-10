@@ -130,7 +130,8 @@ inline PrefixedOutStream& PrefixedOutStream::operator<<(
   return *this;
 }
 
-inline PrefixedOutStream& PrefixedOutStream::operator<<(std::ios& (*pf)(std::ios&))
+inline PrefixedOutStream& PrefixedOutStream::operator<<(
+    std::ios& (*pf)(std::ios&))
 {
   BaseLogic<std::ios& (*)(std::ios&)>(pf);
   return *this;

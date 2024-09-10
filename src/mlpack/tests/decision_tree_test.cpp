@@ -567,11 +567,11 @@ TEST_CASE("AllCategoricalSplitNoGainTest", "[DecisionTreeTest]")
 }
 
 /**
- * Check that the BestBinaryCategoricalSplit will split perfectly 
- * (in the binary class setting) when this is clearly possible. 
+ * Check that the BestBinaryCategoricalSplit will split perfectly
+ * (in the binary class setting) when this is clearly possible.
  * Category C₂ is class one and the rest are class zero.
  */
-TEST_CASE("BestBinaryCategoricalSplitBinaryClassTwoPerfectTest", 
+TEST_CASE("BestBinaryCategoricalSplitBinaryClassTwoPerfectTest",
     "[DecisionTreeTest]")
 {
   size_t N = 3131;
@@ -584,32 +584,30 @@ TEST_CASE("BestBinaryCategoricalSplitBinaryClassTwoPerfectTest",
   BestBinaryCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   arma::vec data = randi<arma::vec>(N, arma::distr_param(0, K - 1));
-  arma::rowvec weights = arma::ones<arma::rowvec>(N); 
+  arma::rowvec weights = arma::ones<arma::rowvec>(N);
   arma::Row<size_t> labels(N);
   for (size_t i = 0; i < N; ++i)
     labels[i] = (size_t) data[i] == 2;
 
-  // Find the best binary split of the data. 
+  // Find the best binary split of the data.
   double bestGain = GiniGain::Evaluate<false>(labels, numClasses, weights);
   double gain = BestBinaryCategoricalSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, data, K, labels, numClasses, weights, minLeaf, 
-      EPSILON, splitInfo, aux
-  );
+      bestGain, data, K, labels, numClasses, weights, minLeaf,
+      EPSILON, splitInfo, aux);
   double weightedGain = BestBinaryCategoricalSplit<GiniGain>
       ::SplitIfBetter<true>(
-          bestGain, data, K, labels, numClasses, weights, minLeaf, 
-          EPSILON, splitInfo, aux
-  );
+          bestGain, data, K, labels, numClasses, weights, minLeaf,
+          EPSILON, splitInfo, aux);
 
-  // The split into categories [(2), (0, 1, 3, ..., K-1)] would be 
-  // optimal, resulting in two pure children nodes, therefore the gain 
-  // should be zero here. Unity weights means that the gain is the same 
+  // The split into categories [(2), (0, 1, 3, ..., K-1)] would be
+  // optimal, resulting in two pure children nodes, therefore the gain
+  // should be zero here. Unity weights means that the gain is the same
   // with or without weights.
   REQUIRE(gain > bestGain);
   REQUIRE(gain == weightedGain);
   REQUIRE(gain == Approx(0.0).margin(EPSILON));
 
-  // CalculateDirection should now send all of C₂ to the 
+  // CalculateDirection should now send all of C₂ to the
   // one direction and the remaining Cⱼ to the other.
   arma::vec class1Data = arma::ones(N) * 2;
   arma::vec class1Direction(N);
@@ -627,33 +625,33 @@ TEST_CASE("BestBinaryCategoricalSplitBinaryClassTwoPerfectTest",
   REQUIRE((all(class1Direction == 0) || all(class1Direction == 1)));
 }
 
-/** 
- * Check that the BestBinaryCategoricalSplit will split optimally in the 
- * multi-class setting. We need another test for this case because the 
- * algorithm for multiple classes is fundamentally different. Labels are 
- * created by the identity function over categories, that is a sample with 
- * category Cⱼ has label j. All but four of the samples are category (and label) 
- * zero, therefore BestBinaryCategoricalSplit should choose to partition 
- * category C₀ from all the rest of the Cⱼ. 
+/**
+ * Check that the BestBinaryCategoricalSplit will split optimally in the
+ * multi-class setting. We need another test for this case because the
+ * algorithm for multiple classes is fundamentally different. Labels are
+ * created by the identity function over categories, that is a sample with
+ * category Cⱼ has label j. All but four of the samples are category (and label)
+ * zero, therefore BestBinaryCategoricalSplit should choose to partition
+ * category C₀ from all the rest of the Cⱼ.
  */
 TEST_CASE("BestBinaryCategoricalSplitMultiClassZeroTest", "[DecisionTreeTest]")
 {
   size_t N = 3131;
-  size_t K = 5; 
+  size_t K = 5;
   double EPSILON = 1e-7;
   size_t numClasses = K;
   size_t minLeaf = 10;
 
   arma::vec splitInfo;
   BestBinaryCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
-  size_t index;  
+  size_t index;
 
-  // Initialize data such that it is all category C₀, except for one 
-  // sample from each of the remaining categories. Labels are mapped 
+  // Initialize data such that it is all category C₀, except for one
+  // sample from each of the remaining categories. Labels are mapped
   // by the identity function. Category Cᵢ -> i.
-  arma::vec data = arma::zeros(N); 
+  arma::vec data = arma::zeros(N);
   arma::Row<size_t> labels = arma::zeros<arma::Row<size_t>>(N);
-  arma::rowvec weights = arma::ones<arma::rowvec>(N); 
+  arma::rowvec weights = arma::ones<arma::rowvec>(N);
   for (size_t category = 1; category < K; ++category)
   {
     index = randi(arma::distr_param(0, N - 1));
@@ -664,29 +662,27 @@ TEST_CASE("BestBinaryCategoricalSplitMultiClassZeroTest", "[DecisionTreeTest]")
   // Find the best binary split of the data.
   double bestGain = GiniGain::Evaluate<false>(labels, numClasses, weights);
   double gain = BestBinaryCategoricalSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, data, K, labels, numClasses, weights, minLeaf, 
-      EPSILON, splitInfo, aux
-  );
+      bestGain, data, K, labels, numClasses, weights, minLeaf,
+      EPSILON, splitInfo, aux);
   double weightedGain = BestBinaryCategoricalSplit<GiniGain>
       ::SplitIfBetter<true>(
-          bestGain, data, K, labels, numClasses, weights, minLeaf, 
-          EPSILON, splitInfo, aux
-  );
+          bestGain, data, K, labels, numClasses, weights, minLeaf,
+          EPSILON, splitInfo, aux);
 
-  // The split into categories [(0), (1, 2, ..., K-1)] would be 
+  // The split into categories [(0), (1, 2, ..., K-1)] would be
   // optimal, resulting in one pure child node of many zeros, and
   // one child with K - 1 samples, all of different classes.
-  double expectedGain = -.00095816; 
+  double expectedGain = -.00095816;
 
   REQUIRE(gain > bestGain);
   REQUIRE(gain == weightedGain);
   REQUIRE(gain == Approx(expectedGain).margin(EPSILON));
-  
-  // CalculateDirection should now send all of C₀ to the 
+
+  // CalculateDirection should now send all of C₀ to the
   // one direction and the remaining Cⱼ to the other.
   arma::vec class0Data = arma::zeros(N);
   arma::vec class0Direction(N);
-  arma::vec classjData= randi<arma::vec>(N, arma::distr_param(1, K - 1));
+  arma::vec classjData = randi<arma::vec>(N, arma::distr_param(1, K - 1));
   arma::vec classjDirection(N);
 
   for (size_t i = 0; i < N; ++i)
@@ -707,7 +703,7 @@ TEST_CASE("BestBinaryCategoricalSplitMultiClassZeroTest", "[DecisionTreeTest]")
 TEST_CASE("BestBinaryCategoricalSplitNoGainBinaryTest", "[DecisionTreeTest]")
 {
   size_t N = 300;
-  size_t K = 10; 
+  size_t K = 10;
   double EPSILON = 1e-7;
   size_t numClasses = 2;
   size_t minLeaf = 10;
@@ -733,9 +729,8 @@ TEST_CASE("BestBinaryCategoricalSplitNoGainBinaryTest", "[DecisionTreeTest]")
       splitInfo, aux);
   double weightedGain =
       BestBinaryCategoricalSplit<GiniGain>::SplitIfBetter<true>(
-          bestGain, data, K, labels, numClasses, weights, 
-          minLeaf, EPSILON, splitInfo, aux
-      );
+          bestGain, data, K, labels, numClasses, weights,
+          minLeaf, EPSILON, splitInfo, aux);
 
   // Make sure that there was no split.
   REQUIRE(gain == DBL_MAX);
@@ -750,7 +745,7 @@ TEST_CASE("BestBinaryCategoricalSplitNoGainBinaryTest", "[DecisionTreeTest]")
 TEST_CASE("BestBinaryCategoricalSplitNoGainMultiTest", "[DecisionTreeTest]")
 {
   size_t N = 300;
-  size_t K = 10; 
+  size_t K = 10;
   double EPSILON = 1e-7;
   size_t numClasses = 5;
   size_t minLeaf = 10;
@@ -782,21 +777,21 @@ TEST_CASE("BestBinaryCategoricalSplitNoGainMultiTest", "[DecisionTreeTest]")
       splitInfo, aux);
   double weightedGain =
       BestBinaryCategoricalSplit<GiniGain>::SplitIfBetter<true>(
-          bestGain, data, K, labels, numClasses, weights, minLeaf, 
-          EPSILON, splitInfo, aux
-      );
+          bestGain, data, K, labels, numClasses, weights, minLeaf,
+          EPSILON, splitInfo, aux);
   REQUIRE(gain == DBL_MAX);
   REQUIRE(gain == weightedGain);
   REQUIRE(splitInfo.n_elem == 0);
 }
 
 /**
- * Make sure that BestBinaryCategoricalSplit respects the minimum number 
+ * Make sure that BestBinaryCategoricalSplit respects the minimum number
  * of samples required to split in the binary classification setting.
  */
-TEST_CASE("BestBinaryCategoricalSplitMinSamplesBinaryTest", "[DecisionTreeTest]")
+TEST_CASE("BestBinaryCategoricalSplitMinSamplesBinaryTest",
+    "[DecisionTreeTest]")
 {
-  size_t K = 4; 
+  size_t K = 4;
   double EPSILON = 1e-7;
   size_t numClasses = 2;
   size_t minLeaf = 8;
@@ -821,12 +816,12 @@ TEST_CASE("BestBinaryCategoricalSplitMinSamplesBinaryTest", "[DecisionTreeTest]"
 }
 
 /**
- * Make sure that BestBinaryCategoricalSplit respects the minimum number 
+ * Make sure that BestBinaryCategoricalSplit respects the minimum number
  * of samples required to split in the multi-class setting.
  */
 TEST_CASE("BestBinaryCategoricalSplitMinSamplesMultiTest", "[DecisionTreeTest]")
 {
-  size_t K = 4; 
+  size_t K = 4;
   double EPSILON = 1e-7;
   size_t numClasses = 4;
   size_t minLeaf = 8;
@@ -852,14 +847,14 @@ TEST_CASE("BestBinaryCategoricalSplitMinSamplesMultiTest", "[DecisionTreeTest]")
 
 /**
  * Test that we can build a decision tree on a simple categorical dataset
- * (the mushroom dataset from UCI) using the BestBinaryCategoricalSplit 
+ * (the mushroom dataset from UCI) using the BestBinaryCategoricalSplit
  * in a binary classification setting. This dataset can be found at
  *
  *      https://archive.ics.uci.edu/dataset/73/mushroom
  */
 TEST_CASE("BestCategoricalBuildBinaryTest", "[DecisionTreeTest]")
 {
-  // Load the categorical UCI mushroom dataset and split 
+  // Load the categorical UCI mushroom dataset and split
   // into a training set and test set.
   arma::mat dataset;
   arma::Row<size_t> labels;
@@ -870,19 +865,18 @@ TEST_CASE("BestCategoricalBuildBinaryTest", "[DecisionTreeTest]")
 
   arma::mat trainDataset, testDataset;
   arma::Row<size_t> trainLabels, testLabels;
-  data::Split(dataset, labels, 
+  data::Split(dataset, labels,
       trainDataset, testDataset, trainLabels, testLabels, 0.3);
 
   // Build the DecisionTree with a BestBinaryCategoricalSplit.
   size_t numClasses = 2;
   size_t minLeaf = 10;
-  size_t maxDepth = 4; 
+  size_t maxDepth = 4;
   double minGainSplit = 10e-7;
 
-  DecisionTree<GiniGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit> 
-      tree(trainDataset, dataInfo, trainLabels, numClasses, 
-           minLeaf, minGainSplit, maxDepth
-  );
+  DecisionTree<GiniGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit>
+      tree(trainDataset, dataInfo, trainLabels, numClasses,
+           minLeaf, minGainSplit, maxDepth);
   // Compute the accuracy of the DecisionTree. It should
   // be well over 95%.
   arma::Row<size_t> predictions;
@@ -916,7 +910,7 @@ TEST_CASE("BestCategoricalBuildMultiTest", "[DecisionTreeTest]")
   arma::Row<size_t> testLabels = l.subvec(2000, 3999);
 
   // Build the tree.
-  DecisionTree<GiniGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit> 
+  DecisionTree<GiniGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit>
       tree(trainingData, di, trainingLabels, 5, 10);
 
   // Now evaluate the accuracy of the tree.
@@ -955,7 +949,7 @@ TEST_CASE("BestCategoricalBuildTestWithWeight", "[DecisionTreeTest]")
       trainingLabels.n_elem);
 
   // Build the tree.
-  DecisionTree<GiniGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit> 
+  DecisionTree<GiniGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit>
       tree(trainingData, di, trainingLabels, 5, weights, 10);
 
   // Now evaluate the accuracy of the tree.
@@ -1013,7 +1007,7 @@ TEST_CASE("BestCategoricalBuildTestWithWeightNoisy", "[DecisionTreeTest]")
   arma::Row<size_t> fullLabels = join_rows(trainingLabels, randomLabels);
 
   // Build the tree.
-  DecisionTree<GiniGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit> 
+  DecisionTree<GiniGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit>
       tree(fullData, di, fullLabels, 5, weights, 10);
 
   // Now evaluate the accuracy of the tree.

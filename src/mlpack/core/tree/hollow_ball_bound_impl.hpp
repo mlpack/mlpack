@@ -76,8 +76,9 @@ HollowBallBound<TDistanceType, ElemType>::HollowBallBound(
 
 //! For the same reason as the copy constructor: to prevent memory leaks.
 template<typename TDistanceType, typename ElemType>
-HollowBallBound<TDistanceType, ElemType>& HollowBallBound<TDistanceType, ElemType>::
-operator=(const HollowBallBound& other)
+HollowBallBound<TDistanceType, ElemType>&
+HollowBallBound<TDistanceType, ElemType>::operator=(
+    const HollowBallBound& other)
 {
   if (this != &other)
   {
@@ -114,8 +115,8 @@ HollowBallBound<TDistanceType, ElemType>::HollowBallBound(
 
 //! Move assignment operator.
 template<typename TDistanceType, typename ElemType>
-HollowBallBound<TDistanceType, ElemType>& HollowBallBound<TDistanceType, ElemType>::
-operator=(HollowBallBound&& other)
+HollowBallBound<TDistanceType, ElemType>&
+HollowBallBound<TDistanceType, ElemType>::operator=(HollowBallBound&& other)
 {
   if (this != &other)
   {
@@ -422,7 +423,8 @@ HollowBallBound<TDistanceType, ElemType>::operator|=(const MatType& data)
  */
 template<typename TDistanceType, typename ElemType>
 const HollowBallBound<TDistanceType, ElemType>&
-HollowBallBound<TDistanceType, ElemType>::operator|=(const HollowBallBound& other)
+HollowBallBound<TDistanceType, ElemType>::operator|=(
+    const HollowBallBound& other)
 {
   if (radii.Hi() < 0)
   {

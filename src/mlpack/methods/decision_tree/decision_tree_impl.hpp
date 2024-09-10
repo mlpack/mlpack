@@ -1086,7 +1086,8 @@ void DecisionTree<FitnessFunction,
 
   // Now serialize the rest of the object.
   ar(CEREAL_NVP(splitDimension));
-  // Since dimensionType and majorityClass are a union, we only need to serialize one.
+  // Since dimensionType and majorityClass are a union, we only need to
+  // serialize one.
   ar(CEREAL_NVP(dimensionType));
   ar(CEREAL_NVP(classProbabilities));
 }

@@ -151,11 +151,12 @@ T TrigammaPrec(T x)
                         0.022892987908906897L
                     };
 
-  // For 1 < x <= 2.
-  if (x <= 2)
-    return (offset + EvaluatePolyPrec(P12, x) / EvaluatePolyPrec(Q12, x)) / (x * x);
-  // For 2 < x <= 4.
-  else if (x <= 4)
+  if (x <= 2) // For 1 < x <= 2.
+  {
+    return (offset + EvaluatePolyPrec(P12, x) / EvaluatePolyPrec(Q12, x)) /
+        (x * x);
+  }
+  else if (x <= 4) // For 2 < x <= 4.
   {
     T y = 1 / x;
     return (1 + EvaluatePolyPrec(P24, y) / EvaluatePolyPrec(Q24, y)) / x;

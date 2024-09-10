@@ -112,7 +112,7 @@ template<typename MatType>
 void MeanPoolingType<MatType>::Forward(
     const MatType& input, MatType& output)
 {
-  // Create Alias of input as 2D image as input is 1D vector. 
+  // Create Alias of input as 2D image as input is 1D vector.
   arma::Cube<typename MatType::elem_type> inputTemp(
       const_cast<MatType&>(input).memptr(), this->inputDimensions[0],
       this->inputDimensions[1], input.n_cols * channels, false, false);
@@ -247,41 +247,41 @@ void MeanPoolingType<MatType>::Unpooling(
     const MatType& error,
     MatType& output)
 {
-  // This condition comes by comparing the number of operations involved in the brute
-  // force method and the prefix method. Let the area of error be errorArea and area
-  // of kernal be kernalArea. Total number of operations in brute force method will be
-  // `errorArea * kernalArea` and for each element in error we are doing `kernalArea`
-  // number of operations. Whereas in the prefix method the total number of operations
-  // will be `4 * errorArea + 2 * outputArea`. The term `2 * outputArea` comes from
-  // prefix sums performed (col-wise and row-wise).
-  // We can use this to determine which method to use.
+  // This condition comes by comparing the number of operations involved in the
+  // brute force method and the prefix method. Let the area of error be
+  // errorArea and area of kernal be kernelArea. Total number of operations in
+  // brute force method will be `errorArea * kernelArea` and for each element in
+  // error we are doing `kernelArea` number of operations. Whereas in the prefix
+  // method the total number of operations will be `4 * errorArea + 2 *
+  // outputArea`. The term `2 * outputArea` comes from prefix sums performed
+  // (col-wise and row-wise).  We can use this to determine which method to use.
   const bool condition = (error.n_elem * kernelHeight * kernelWidth) >
       (4 * error.n_elem + 2 * output.n_elem);
 
   if (condition)
   {
-    // If this condition is true then theoritically the prefix sum method of
-    // unpooling is faster. The aim of unpooling is to add
-    // `error(i, j) / kernalArea` to `outputArea(kernal)`. This requires
-    // `outputArea.n_elem` additions. So, total operations required will be
-    // `error.n_elem * outputArea.n_elem` operations.
-    // To improve this method we will use an idea of prefix sums. Let's see
-    // this method in 1-D matrix then we will extend it to 2-D matrix.
-    // Let the input be a 1-D matrix input = `[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]` of size 10
-    // and we want to add `10` to idx = 1 to idx = 5. In brute force method we can run
-    // a loop from idx = 1 to idx = 5 and add `10` to each element. In prefix method
-    // We will add `+10` to idx = 1 and `-10` to idx = (5 + 1). Now the input will look
-    // like `[0, +10, 0, 0, 0, 0, -10, 0, 0, 0]`. After that we can just do prefix
-    // sum `input[i] += input[i - 1]`. Then the input becomes
-    // `[0, +10, +10, +10, +10, +10, 0, 0, 0, 0]`. So the total computation require
-    // by this method is (2 additions + Prefix operations).
-    // Note that if there are `k` such operation of adding a number of some
-    // continuous subarray. Then the brute force method will require
-    // `k * size(subarray)` operations. But the prefix method will require
-    // `2 * k + Prefix` operations, because the Prefix can be performed once at
-    // the end.
-    // Now for 2-D matrix. Lets say we want to add `e` to all elements from
-    // input(x1 : x2, y1 : y2). So the inputArea = (x2 - x1 + 1) * (y2 - y1 + 1).
+    // If this condition is true then theoretically the prefix sum method of
+    // unpooling is faster. The aim of unpooling is to add `error(i, j) /
+    // kernelArea` to `outputArea(kernal)`. This requires `outputArea.n_elem`
+    // additions. So, total operations required will be `error.n_elem *
+    // outputArea.n_elem` operations.  To improve this method we will use an
+    // idea of prefix sums. Let's see this method in 1-D matrix then we will
+    // extend it to 2-D matrix.  Let the input be a 1-D matrix input = `[0, 0,
+    // 0, 0, 0, 0, 0, 0, 0, 0]` of size 10 and we want to add `10` to idx = 1 to
+    // idx = 5. In brute force method we can run a loop from idx = 1 to idx = 5
+    // and add `10` to each element. In prefix method We will add `+10` to idx =
+    // 1 and `-10` to idx = (5 + 1). Now the input will look like `[0, +10, 0,
+    // 0, 0, 0, -10, 0, 0, 0]`. After that we can just do prefix sum `input[i]
+    // += input[i - 1]`. Then the input becomes `[0, +10, +10, +10, +10, +10, 0,
+    // 0, 0, 0]`. So the total computation require by this method is (2
+    // additions + Prefix operations).  Note that if there are `k` such
+    // operation of adding a number of some continuous subarray. Then the brute
+    // force method will require `k * size(subarray)` operations. But the prefix
+    // method will require `2 * k + Prefix` operations, because the Prefix can
+    // be performed once at the end.  Now for 2-D matrix. Lets say we want to
+    // add `e` to all elements from input(x1 : x2, y1 : y2). So the inputArea =
+    // (x2 - x1 + 1) * (y2 - y1 + 1).
+
     // In prefix method the following operations will be performed:
     //    1. Add `+e` to input(x1, y1).
     //    2. Add `-e` to input(x2 + 1, y1).
@@ -290,10 +290,11 @@ void MeanPoolingType<MatType>::Unpooling(
     //    5. Perform Prefix sum over columns i.e input(i, j) += input(i, j - 1)
     //    6. Perform Prefix sum over rows i.e input(i, j) += input(i - 1, j)
     // So lets say if we had `k` number of such operations. The brute force
-    // method will require `kernalArea * k` operations.
+    // method will require `kernelArea * k` operations.
     // The prefix method will require `4 * k + Prefix operation`.
 
-    for (size_t j = 0, colidx = 0; j < output.n_cols; j += strideHeight, ++colidx)
+    for (size_t j = 0, colidx = 0; j < output.n_cols; j += strideHeight,
+         ++colidx)
     {
       size_t colEnd = j + kernelHeight - 1;
       // Check if the kernel along column is out of bounds.
@@ -304,7 +305,9 @@ void MeanPoolingType<MatType>::Unpooling(
           continue;
         colEnd = output.n_cols - 1;
       }
-      for (size_t i = 0, rowidx = 0; i < output.n_rows; i += strideWidth, ++rowidx)
+
+      for (size_t i = 0, rowidx = 0; i < output.n_rows;
+           i += strideWidth, ++rowidx)
       {
         // We have to add error(i, j) to output(span(rowidx, rowEnd),
         // span(colidx, colEnd)).
@@ -329,19 +332,22 @@ void MeanPoolingType<MatType>::Unpooling(
           rowEnd = output.n_rows - 1;
         }
 
-        size_t kernalArea = (rowEnd - i + 1) * (colEnd - j + 1);
-        output(i, j) += error(rowidx, colidx) / kernalArea;
+        size_t kernelArea = (rowEnd - i + 1) * (colEnd - j + 1);
+        output(i, j) += error(rowidx, colidx) / kernelArea;
 
         if (rowEnd + 1 < output.n_rows)
         {
-          output(rowEnd + 1, j) -= error(rowidx, colidx) / kernalArea;
+          output(rowEnd + 1, j) -= error(rowidx, colidx) / kernelArea;
 
           if (colEnd + 1 < output.n_cols)
-            output(rowEnd + 1, colEnd + 1) += error(rowidx, colidx) / kernalArea;
+          {
+            output(rowEnd + 1, colEnd + 1) += error(rowidx, colidx) /
+                kernelArea;
+          }
         }
 
         if (colEnd + 1 < output.n_cols)
-          output(i, colEnd + 1) -= error(rowidx, colidx) / kernalArea;
+          output(i, colEnd + 1) -= error(rowidx, colidx) / kernelArea;
       }
     }
 
@@ -354,7 +360,8 @@ void MeanPoolingType<MatType>::Unpooling(
   else
   {
     arma::Mat<typename MatType::elem_type> unpooledError;
-    for (size_t j = 0, colidx = 0; j < output.n_cols; j += strideHeight, ++colidx)
+    for (size_t j = 0, colidx = 0; j < output.n_cols; j += strideHeight,
+         ++colidx)
     {
       size_t colEnd = j + kernelHeight - 1;
       // Check if the kernel along column is out of bounds.
@@ -365,7 +372,9 @@ void MeanPoolingType<MatType>::Unpooling(
           continue;
         colEnd = output.n_cols - 1;
       }
-      for (size_t i = 0, rowidx = 0; i < output.n_rows; i += strideWidth, ++rowidx)
+
+      for (size_t i = 0, rowidx = 0; i < output.n_rows; i += strideWidth,
+           ++rowidx)
       {
         size_t rowEnd = i + kernelWidth - 1;
         // Check if the kernel along row is out of bounds.
@@ -377,13 +386,15 @@ void MeanPoolingType<MatType>::Unpooling(
           rowEnd = output.n_rows - 1;
         }
 
-        MatType OutputArea = output(arma::span(i, rowEnd), arma::span(j, colEnd));
+        MatType outputArea = output(arma::span(i, rowEnd),
+                                    arma::span(j, colEnd));
 
-        unpooledError = arma::Mat<typename MatType::elem_type>(OutputArea.n_rows, OutputArea.n_cols);
-        unpooledError.fill(error(rowidx, colidx) / OutputArea.n_elem);
+        unpooledError = arma::Mat<typename MatType::elem_type>(
+            outputArea.n_rows, outputArea.n_cols);
+        unpooledError.fill(error(rowidx, colidx) / outputArea.n_elem);
 
-        output(arma::span(i, i + OutputArea.n_rows - 1),
-            arma::span(j, j + OutputArea.n_cols - 1)) += unpooledError;
+        output(arma::span(i, i + outputArea.n_rows - 1),
+               arma::span(j, j + outputArea.n_cols - 1)) += unpooledError;
       }
     }
   }

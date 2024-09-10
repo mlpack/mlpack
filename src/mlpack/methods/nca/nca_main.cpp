@@ -172,7 +172,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   else if (optimizerType == "lbfgs")
   {
     ReportIgnoredParam(params, "step_size", "SGD optimizer is not being used");
-    ReportIgnoredParam(params, "linear_scan", "SGD optimizer is not being used");
+    ReportIgnoredParam(params, "linear_scan", "SGD optimizer is not being "
+        "used");
     ReportIgnoredParam(params, "batch_size", "SGD optimizer is not being used");
   }
 

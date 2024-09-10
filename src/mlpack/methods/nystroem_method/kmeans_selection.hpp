@@ -36,7 +36,7 @@ class KMeansSelection
    * @param m Number of points to select.
    * @return Matrix pointer in which centroids are stored.
    */
-  const static arma::mat* Select(const arma::mat& data, const size_t m)
+  static const arma::mat* Select(const arma::mat& data, const size_t m)
   {
     arma::Row<size_t> assignments;
     arma::mat* centroids = new arma::mat;

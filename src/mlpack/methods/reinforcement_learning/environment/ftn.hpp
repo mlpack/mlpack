@@ -201,61 +201,63 @@ class FruitTreeNavigation
   //! Set the maximum number of steps allowed.
   size_t& MaxSteps() { return maxSteps; }
 
-  //! The reward vector consists of {Protein, Carbs, Fats, Vitamins, Minerals, Water}
-  //! A total of 6 rewards.
+  //! The reward vector consists of {Protein, Carbs, Fats, Vitamins, Minerals,
+  //! Water}. A total of 6 rewards.
   static constexpr size_t rewardSize = 6;
 
  private:
-
-  /*
-   *  A Fruit Tree is a full binary tree. Each node of this tree represents a state.
-   *  Non-leaf nodes yield a null vector R^{6} reward. Leaf nodes have a pre-defined
-   *  set of reward vectors such that they lie on a Convex Convergence Set (CCS).
+  /**
+   * A Fruit Tree is a full binary tree. Each node of this tree represents a
+   * state.  Non-leaf nodes yield a null vector R^{6} reward. Leaf nodes have a
+   * pre-defined set of reward vectors such that they lie on a Convex
+   * Convergence Set (CCS).
    */
   class FruitTree
   {
-    public:
-      FruitTree(const size_t depth) : depth(depth)
+   public:
+    FruitTree(const size_t depth) : depth(depth)
+    {
+      if (std::find(validDepths.begin(), validDepths.end(), depth) ==
+          validDepths.end())
       {
-        if (std::find(validDepths.begin(), validDepths.end(), depth) == validDepths.end())
-        {
-          throw std::logic_error("FruitTree()::FruitTree: Invalid depth value: " + std::to_string(depth) + " provided. "
-                                 "Only depth values of: 5, 6, 7 are allowed.");
-        }
-
-        arma::mat branches = zeros(rewardSize, (size_t) std::pow(2, depth - 1));
-        tree = join_rows(branches, Fruits());
+        throw std::logic_error("FruitTree()::FruitTree: Invalid depth value: " +
+            std::to_string(depth) + " provided. Only depth values of: 5, 6, 7 "
+            "are allowed.");
       }
 
-      // Extract array index from {(row, column)} representation.
-      size_t GetIndex(const State& state) const
-      {
-        return static_cast<size_t>(std::pow(2, state.Row() - 1) + state.Column());
-      }
+      arma::mat branches = zeros(rewardSize, (size_t) std::pow(2, depth - 1));
+      tree = join_rows(branches, Fruits());
+    }
 
-      // Yield reward from the current node.
-      arma::vec GetReward(const State& state) const
-      {
-        return tree.col(GetIndex(state));
-      }
+    // Extract array index from {(row, column)} representation.
+    size_t GetIndex(const State& state) const
+    {
+      return static_cast<size_t>(std::pow(2, state.Row() - 1) + state.Column());
+    }
 
-      //! Retreive the reward vectors of the leaf nodes.
-      arma::mat Fruits() const { return ConvexSetMap.at(depth); }
+    // Yield reward from the current node.
+    arma::vec GetReward(const State& state) const
+    {
+      return tree.col(GetIndex(state));
+    }
 
-      //! Retreive the maximum depth of the FTN tree.
-      size_t Depth() const { return depth; }
-    
-    private:
-      //! Maximum depth of the tree.
-      size_t depth;
+    //! Retreive the reward vectors of the leaf nodes.
+    arma::mat Fruits() const { return ConvexSetMap.at(depth); }
 
-      //! Matrix representation of the internal tree.
-      arma::mat tree;
+    //! Retreive the maximum depth of the FTN tree.
+    size_t Depth() const { return depth; }
 
-      //! Valid depth values for the tree.
-      const std::array<size_t, 3> validDepths {5, 6, 7};
+   private:
+    //! Maximum depth of the tree.
+    size_t depth;
+
+    //! Matrix representation of the internal tree.
+    arma::mat tree;
+
+    //! Valid depth values for the tree.
+    const std::array<size_t, 3> validDepths {5, 6, 7};
   };
-  
+
   //! Locally-stored maximum number of steps.
   size_t maxSteps;
 

@@ -89,11 +89,14 @@ class ElishFunction
       return std::exp(x) - 2 / (1 + std::exp(x)) +
           2 / std::pow(1 + std::exp(x) , 2);
     }
-    else if (x == 0) {
-        return 0.5; // the expression below is indeterminate at 0, even though
-                    // the expression solely in terms of x is defined (= 0.5)
-    } else {
-        return (y / x) * (1 + x - y);
+    else if (x == 0)
+    {
+      return 0.5; // the expression below is indeterminate at 0, even though
+                  // the expression solely in terms of x is defined (= 0.5)
+    }
+    else
+    {
+      return (y / x) * (1 + x - y);
     }
   }
 

@@ -184,7 +184,7 @@ double ActivationJacobianTest(arma::mat& input,
   ActivationFunction::Fn(input, output);
   jacobianA = arma::zeros(input.n_elem, output.n_elem);
 
-  for(size_t i = 0; i < input.n_elem; ++i)
+  for (size_t i = 0; i < input.n_elem; ++i)
   {
     double original = input(i);
     input(i) = original - pertubation;
@@ -201,7 +201,7 @@ double ActivationJacobianTest(arma::mat& input,
   arma::mat deriv = arma::zeros(output.n_rows, output.n_cols);
   jacobianB = arma::zeros(input.n_elem, output.n_elem);
 
-  for(size_t i = 0; i < deriv.n_elem; ++i)
+  for (size_t i = 0; i < deriv.n_elem; ++i)
   {
     deriv.zeros();
     deriv(i) = 1;
