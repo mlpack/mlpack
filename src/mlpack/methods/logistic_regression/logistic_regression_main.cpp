@@ -117,7 +117,7 @@ BINDING_SEE_ALSO("@random_forest", "#random_forest");
 BINDING_SEE_ALSO("Logistic regression on Wikipedia",
     "https://en.wikipedia.org/wiki/Logistic_regression");
 BINDING_SEE_ALSO(":LogisticRegression C++ class documentation",
-    "@src/mlpack/methods/logistic_regression/logistic_regression.hpp");
+    "@doc/user/methods/logistic_regression.md");
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "

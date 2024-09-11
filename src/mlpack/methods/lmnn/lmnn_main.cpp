@@ -137,8 +137,7 @@ BINDING_SEE_ALSO("Large margin nearest neighbor on Wikipedia",
 BINDING_SEE_ALSO("Distance metric learning for large margin nearest neighbor "
     "classification (pdf)", "http://papers.nips.cc/paper/2795-distance-metric-"
     "learning-for-large-margin-nearest-neighbor-classification.pdf");
-BINDING_SEE_ALSO("LMNN C++ class documentation",
-    "@src/mlpack/methods/lmnn/lmnn.hpp");
+BINDING_SEE_ALSO("LMNN C++ class documentation", "@doc/user/methods/lmnn.md");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run LMNN on.", "i");
 PARAM_MATRIX_IN("distance", "Initial distance matrix to be used as "

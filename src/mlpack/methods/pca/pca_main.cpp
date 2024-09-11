@@ -68,7 +68,7 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("Principal component analysis on Wikipedia",
     "https://en.wikipedia.org/wiki/Principal_component_analysis");
 BINDING_SEE_ALSO("PCA C++ class documentation",
-    "@src/mlpack/methods/pca/pca.hpp");
+    "@doc/user/methods/pca.md");
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform PCA on.", "i");

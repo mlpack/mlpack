@@ -154,6 +154,8 @@ Transform data from one space to another.
    metric learning)
  * [`NMF`](user/methods/nmf.md): non-negative matrix factorization
  * [`PCA`](user/methods/pca.md): principal components analysis
+ * [`RADICAL`](user/methods/radical.md): robust, accurate, direct independent
+   components analysis (ICA) algorithm
  * [`SparseCoding`](user/methods/sparse_coding.md): sparse coding with
    dictionary learning
 
