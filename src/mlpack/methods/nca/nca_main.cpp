@@ -98,8 +98,7 @@ BINDING_SEE_ALSO("Neighbourhood components analysis on Wikipedia",
     "https://en.wikipedia.org/wiki/Neighbourhood_components_analysis");
 BINDING_SEE_ALSO("Neighbourhood components analysis (pdf)",
     "http://papers.nips.cc/paper/2566-neighbourhood-components-analysis.pdf");
-BINDING_SEE_ALSO("NCA C++ class documentation",
-    "@src/mlpack/methods/nca/nca.hpp");
+BINDING_SEE_ALSO("NCA C++ class documentation", "@doc/user/methods/nca.md");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run NCA on.", "i");
 PARAM_MATRIX_OUT("output", "Output matrix for learned distance matrix.", "o");
@@ -172,7 +171,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   else if (optimizerType == "lbfgs")
   {
     ReportIgnoredParam(params, "step_size", "SGD optimizer is not being used");
-    ReportIgnoredParam(params, "linear_scan", "SGD optimizer is not being used");
+    ReportIgnoredParam(params, "linear_scan", "SGD optimizer is not being "
+        "used");
     ReportIgnoredParam(params, "batch_size", "SGD optimizer is not being used");
   }
 

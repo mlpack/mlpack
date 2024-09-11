@@ -195,7 +195,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   RequireParamInSet<string>(params, "algorithm", { "NMF", "BatchSVD",
       "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD",
-      "RandSVD", "BiasSVD", "SVDPP", "QSVD", "BKSVD" }, true, "unknown algorithm");
+      "RandSVD", "BiasSVD", "SVDPP", "QSVD", "BKSVD" }, true,
+      "unknown algorithm");
 
   ReportIgnoredParam(params, {{ "iteration_only_termination", true }},
       "min_residue");

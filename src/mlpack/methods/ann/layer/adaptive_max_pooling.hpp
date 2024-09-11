@@ -20,9 +20,9 @@
 namespace mlpack {
 
 /**
- * Implementation of the AdaptiveMaxPooling layer. 
- * 
- * The AdaptiveMaxPooling layer works similarly to MaxPooling layer, but it 
+ * Implementation of the AdaptiveMaxPooling layer.
+ *
+ * The AdaptiveMaxPooling layer works similarly to MaxPooling layer, but it
  * adaptively changes the size of the pooling region to minimize the amount of
  * computation.  In MaxPooling, we specifies the kernel and stride size whereas
  * in AdaptiveMaxPooling, we specify the output size of the pooling region.
@@ -47,8 +47,8 @@ class AdaptiveMaxPoolingType : public Layer<MatType>
                          const size_t outputHeight);
 
   // Virtual destructor.
-  virtual ~AdaptiveMaxPoolingType() 
-  { 
+  virtual ~AdaptiveMaxPoolingType()
+  {
     // Nothing to do here.
   }
 
@@ -61,11 +61,11 @@ class AdaptiveMaxPoolingType : public Layer<MatType>
   //! Take ownership of the given AdaptiveMaxPoolingType.
   AdaptiveMaxPoolingType& operator=(AdaptiveMaxPoolingType&& other);
 
-  //! Clone the AdaptiveMaxPoolingType object. 
+  //! Clone the AdaptiveMaxPoolingType object.
   //! This handles polymorphism correctly.
-  AdaptiveMaxPoolingType* Clone() const 
-  { 
-    return new AdaptiveMaxPoolingType(*this); 
+  AdaptiveMaxPoolingType* Clone() const
+  {
+    return new AdaptiveMaxPoolingType(*this);
   }
 
   /**
@@ -116,7 +116,7 @@ class AdaptiveMaxPoolingType : public Layer<MatType>
   MaxPoolingType<MatType> poolingLayer;
 
   //! Locally-stored output width. These are user specified outputWidth.
-  //! Actual outputWidth will be equal to this but only after 
+  //! Actual outputWidth will be equal to this but only after
   //! `ComputeOutputDimensions()` is called.
   size_t outputWidth;
 

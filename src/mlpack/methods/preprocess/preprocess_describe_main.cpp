@@ -186,11 +186,11 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   timers.Start("statistics");
   // Print the headers.
-  Log::Info << setw(width) << "dim" << setw(width) << "var" << setw(width) << 
-      "mean" << setw(width) << "std" << setw(width) << setw(width) << setw(width) << 
-      "median" << setw(width) << "min" << setw(width) << "max" << setw(width) << 
-      "range" << setw(width) << "skew" << setw(width) << "kurt" << setw(width) << 
-      "SE" << endl;
+  Log::Info << setw(width) << "dim" << setw(width) << "var" << setw(width)
+      << "mean" << setw(width) << "std" << setw(width)
+      << "median" << setw(width) << "min" << setw(width)
+      << "max" << setw(width) << "range" << setw(width)
+      << "skew" << setw(width) << "kurt" << setw(width) << "SE" << endl;
 
   // Lambda function to print out the results.
   auto PrintStatResults = [&](size_t dim, bool rowMajor)
@@ -208,13 +208,13 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     const double fStd = arma::stddev(feature, population);
 
     // Print statistics of the given dimension.
-    Log::Info << setprecision(precision) << setw(width) << dim << 
-        setw(width) << arma::var(feature, population) << 
-        setw(width) << fMean << 
+    Log::Info << setprecision(precision) << setw(width) << dim <<
+        setw(width) << arma::var(feature, population) <<
+        setw(width) << fMean <<
         setw(width) << fStd <<
-        setw(width) << arma::median(feature) << 
-        setw(width) << fMin << 
-        setw(width) << fMax << 
+        setw(width) << arma::median(feature) <<
+        setw(width) << fMin <<
+        setw(width) << fMax <<
         setw(width) << (fMax - fMin) <<
         setw(width) << Skewness(feature, fStd, fMean, population) <<
         setw(width) << Kurtosis(feature, fStd, fMean, population) <<

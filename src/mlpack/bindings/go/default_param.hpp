@@ -48,7 +48,8 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<std::is_same<T, std::string>::value>::type* = 0);
+    const typename std::enable_if<std::is_same<T, std::string>::value
+        >::type* = 0);
 
 /**
  * Return the default value of a matrix option, a tuple option, a

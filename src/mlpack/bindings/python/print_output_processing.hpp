@@ -305,8 +305,9 @@ void PrintOutputProcessing(util::ParamData& d,
   typedef std::tuple<util::Params, std::tuple<size_t, bool>> TupleType;
   TupleType* tuple = (TupleType*) input;
 
-  PrintOutputProcessing<typename std::remove_pointer<T>::type>(std::get<0>(*tuple),
-      d, std::get<0>(std::get<1>(*tuple)), std::get<1>(std::get<1>(*tuple)));
+  PrintOutputProcessing<typename std::remove_pointer<T>::type>(
+      std::get<0>(*tuple), d, std::get<0>(std::get<1>(*tuple)),
+      std::get<1>(std::get<1>(*tuple)));
 }
 
 } // namespace python

@@ -177,8 +177,8 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
     visited[index] = true;
 
     // Do the range search for only this point.
-    rangeSearch.Search(data.col(index), RangeType<ElemType>(ElemType(0.0), epsilon),
-        neighbors, distances);
+    rangeSearch.Search(data.col(index),
+        RangeType<ElemType>(ElemType(0.0), epsilon), neighbors, distances);
 
     // Union to all neighbors if the point is not noise.
     //
@@ -225,7 +225,8 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
     const MatType& data,
     UnionFind& uf)
 {
-  // For each point, find the points in epsilon-neighborhood and their distances.
+  // For each point, find the points in epsilon-neighborhood and their
+  // distances.
   std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<ElemType>> distances;
   Log::Info << "Performing range search." << std::endl;

@@ -92,7 +92,7 @@ BINDING_SEE_ALSO("@random_forest", "#random_forest");
 BINDING_SEE_ALSO("Mining High-Speed Data Streams (pdf)",
     "http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf");
 BINDING_SEE_ALSO("HoeffdingTree class documentation",
-    "@src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp");
+    "@doc/user/methods/hoeffding_tree.md");
 
 PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",
     "t");

@@ -29,10 +29,10 @@ TEST_CASE("SetElement", "[SumTreeTest]")
   sumtree.Set(2, 0.6);
   sumtree.Set(3, 0.4);
 
-  CHECK(sumtree.Sum() == Approx(2.8).epsilon(1e-10));
-  CHECK(sumtree.Sum(0, 1) == Approx(1.0).epsilon(1e-10));
-  CHECK(sumtree.Sum(0, 3) == Approx(2.4).epsilon(1e-10));
-  CHECK(sumtree.Sum(1, 4) == Approx(1.8).epsilon(1e-10));
+  REQUIRE(sumtree.Sum() == Approx(2.8).epsilon(1e-10));
+  REQUIRE(sumtree.Sum(0, 1) == Approx(1.0).epsilon(1e-10));
+  REQUIRE(sumtree.Sum(0, 3) == Approx(2.4).epsilon(1e-10));
+  REQUIRE(sumtree.Sum(1, 4) == Approx(1.8).epsilon(1e-10));
 }
 
 /**
@@ -46,10 +46,10 @@ TEST_CASE("GetElement", "[SumTreeTest]")
   sumtree.Set(2, 0.6);
   sumtree.Set(3, 0.4);
 
-  CHECK(sumtree.Get(0) == Approx(1.0).epsilon(1e-10));
-  CHECK(sumtree.Get(1) == Approx(0.8).epsilon(1e-10));
-  CHECK(sumtree.Get(2) == Approx(0.6).epsilon(1e-10));
-  CHECK(sumtree.Get(3) == Approx(0.4).epsilon(1e-10));
+  REQUIRE(sumtree.Get(0) == Approx(1.0).epsilon(1e-10));
+  REQUIRE(sumtree.Get(1) == Approx(0.8).epsilon(1e-10));
+  REQUIRE(sumtree.Get(2) == Approx(0.6).epsilon(1e-10));
+  REQUIRE(sumtree.Get(3) == Approx(0.4).epsilon(1e-10));
 }
 
 /**
@@ -64,10 +64,10 @@ TEST_CASE("FindPrefixSum", "[SumTreeTest]")
   sumtree.Set(2, 0.6);
   sumtree.Set(3, 0.4);
 
-  CHECK(sumtree.FindPrefixSum(0) <= 0.0);
-  CHECK(sumtree.FindPrefixSum(1) <= 1.0);
-  CHECK(sumtree.FindPrefixSum(2.8) <= 3.0);
-  CHECK(sumtree.FindPrefixSum(3.0) <= 3.0);
+  REQUIRE(sumtree.FindPrefixSum(0) <= 0.0);
+  REQUIRE(sumtree.FindPrefixSum(1) <= 1.0);
+  REQUIRE(sumtree.FindPrefixSum(2.8) <= 3.0);
+  REQUIRE(sumtree.FindPrefixSum(3.0) <= 3.0);
 }
 
 /**
@@ -82,8 +82,8 @@ TEST_CASE("BatchUpdate", "[SumTreeTest]")
 
   sumtree.BatchUpdate(indices, data);
 
-  CHECK(sumtree.FindPrefixSum(0) <= 0);
-  CHECK(sumtree.FindPrefixSum(1) <= 1);
-  CHECK(sumtree.FindPrefixSum(2.8) <= 3);
-  CHECK(sumtree.FindPrefixSum(3.0) <= 3);
+  REQUIRE(sumtree.FindPrefixSum(0) <= 0);
+  REQUIRE(sumtree.FindPrefixSum(1) <= 1);
+  REQUIRE(sumtree.FindPrefixSum(2.8) <= 3);
+  REQUIRE(sumtree.FindPrefixSum(3.0) <= 3);
 }

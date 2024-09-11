@@ -60,12 +60,12 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@kmeans", "#kmeans");
 BINDING_SEE_ALSO("@dbscan", "#dbscan");
 BINDING_SEE_ALSO("Mean shift on Wikipedia",
-        "https://en.wikipedia.org/wiki/Mean_shift");
+    "https://en.wikipedia.org/wiki/Mean_shift");
 BINDING_SEE_ALSO("Mean Shift, Mode Seeking, and Clustering (pdf)",
-        "https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf"
-        "&doi=1c168275c59ba382588350ee1443537f59978183");
+    "https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf"
+    "&doi=1c168275c59ba382588350ee1443537f59978183");
 BINDING_SEE_ALSO("mlpack::mean_shift::MeanShift C++ class documentation",
-        "@src/mlpack/methods/mean_shift/mean_shift.hpp");
+    "@doc/user/methods/mean_shift.md");
 
 // Required options.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform clustering on.", "i");

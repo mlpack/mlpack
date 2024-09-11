@@ -2,7 +2,20 @@
 
 mlpack includes a number of distance metrics for its distance-based techniques.
 These all implement the [same API](../../developer/distances.md), providing one
-`Evaluate()` method, and can be used with a variety of different techniques,
+`Evaluate()` method.  mlpack provides a number of supported distance metrics:
+
+ * [`LMetric`](#lmetric): generalized L-metric/Lp-metric, including
+   Manhattan/Euclidean/Chebyshev distances
+ * [`IoUDistance`](#ioudistance): intersection-over-union distance
+ * [`IPMetric<KernelType>`](#ipmetrickerneltype): inner product metric (e.g.
+   induced metric over a [Mercer kernel](kernels.md))
+ * [`MahalanobisDistance`](#mahalanobisdistance): weighted Euclidean distance
+   with weights specified by a covariance matrix
+ * [Implement a custom distance metric](../../developer/distances.md)
+
+---
+
+These distance metrics can be used with a variety of different techniques,
 including:
 
 <!-- TODO: better names for each link -->
@@ -14,17 +27,6 @@ including:
  * [`NCA`](../methods/nca.md)
  * [`RANN`](/src/mlpack/methods/rann/rann.hpp)
  * [`KMeans`](/src/mlpack/methods/kmeans/kmeans.hpp)
-
-Supported metrics:
-
- * [`LMetric`](#lmetric): generalized L-metric/Lp-metric, including
-   Manhattan/Euclidean/Chebyshev distances
- * [`IoUDistance`](#ioudistance): intersection-over-union distance
- * [`IPMetric<KernelType>`](#ipmetrickerneltype): inner product metric (e.g.
-   induced metric over a [Mercer kernel](kernels.md))
- * [`MahalanobisDistance`](#mahalanobisdistance): weighted Euclidean distance
-   with weights specified by a covariance matrix
- * [Implement a custom metric](../../developer/distances.md)
 
 ## `LMetric`
 

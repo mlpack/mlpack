@@ -38,7 +38,8 @@ AddMergeType<MatType>::AddMergeType(AddMergeType&& other) :
 }
 
 template<typename MatType>
-AddMergeType<MatType>& AddMergeType<MatType>::operator=(const AddMergeType& other)
+AddMergeType<MatType>& AddMergeType<MatType>::operator=(
+    const AddMergeType& other)
 {
   if (this != &other)
   {
@@ -110,7 +111,7 @@ void AddMergeType<MatType>::Backward(
     tempDelta.set_size(arma::size(g));
 
     g.zeros();
-    for (size_t i = 0; i < this->network.size(); i++) 
+    for (size_t i = 0; i < this->network.size(); i++)
     {
       this->network[i]->Backward(input, output, gy, tempDelta);
       g += tempDelta;
@@ -187,7 +188,7 @@ void AddMergeType<MatType>::ComputeOutputDimensions()
     {
       Log::Fatal << "Network size mismatch. (" << networkSize[0] << ", "
           << networkSize[1] << ") != ("
-          << this->network[i]->OutputDimensions()[0] << ", " 
+          << this->network[i]->OutputDimensions()[0] << ", "
           << this->network[i]->OutputDimensions()[1] << ")." << std::endl;
     }
   }

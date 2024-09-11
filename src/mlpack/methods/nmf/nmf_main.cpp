@@ -75,8 +75,8 @@ BINDING_SEE_ALSO("Non-negative matrix factorization on Wikipedia",
 BINDING_SEE_ALSO("Algorithms for non-negative matrix factorization (pdf)",
     "http://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-"
     "factorization.pdf");
-BINDING_SEE_ALSO("AMF C++ class documentation",
-    "@src/mlpack/methods/amf/amf.hpp");
+BINDING_SEE_ALSO("NMF C++ class documentation", "@doc/user/methods/nmf.md");
+BINDING_SEE_ALSO("AMF C++ class documentation", "@doc/user/methods/amf.md");
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform NMF on.", "i");

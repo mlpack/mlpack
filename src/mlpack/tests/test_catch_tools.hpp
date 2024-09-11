@@ -27,9 +27,9 @@ template <typename MatType, typename ElemType = typename MatType::elem_type,
               typename MatType::elem_type>::value>>
 class MatProxy
 {
-public:
+ public:
   explicit MatProxy(const MatType& mat) : mat(mat) { }
-  
+
   const arma::Mat<ElemType> mat;
   arma::uword n_elem() const { return mat.n_elem; }
   arma::uword n_rows() const { return mat.n_rows; }

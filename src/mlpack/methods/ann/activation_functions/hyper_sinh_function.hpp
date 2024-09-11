@@ -74,7 +74,7 @@ class HyperSinhFunction
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
     y.set_size(x.size());
-    for(size_t i = 0; i < x.n_elem; ++i)
+    for (size_t i = 0; i < x.n_elem; ++i)
     {
       if (x(i) > 0)
       {
@@ -109,11 +109,13 @@ class HyperSinhFunction
    * @param dy The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType, typename DerivVecType>
-  static void Deriv(const InputVecType& /* x */, const OutputVecType& y, DerivVecType& dy)
+  static void Deriv(const InputVecType& /* x */,
+                    const OutputVecType& y,
+                    DerivVecType& dy)
   {
     dy.set_size(size(y));
     #pragma omp for
-    for(size_t i = 0; i < y.n_elem; ++i)
+    for (size_t i = 0; i < y.n_elem; ++i)
     {
       if (y(i) > 0)
       {

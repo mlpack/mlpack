@@ -90,7 +90,7 @@ BINDING_SEE_ALSO("Regularization and variable selection via the elastic net",
     "https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf"
     "&doi=46217f372a75dddc2254fdbc6b9418ba3554e453");
 BINDING_SEE_ALSO("SparseCoding C++ class documentation",
-    "@src/mlpack/methods/sparse_coding/sparse_coding.hpp");
+    "@doc/user/methods/sparse_coding.md");
 
 // Train the model.
 PARAM_MATRIX_IN("training", "Matrix of training data (X).", "t");

@@ -97,7 +97,7 @@ BINDING_SEE_ALSO("@adaboost", "#adaboost");
 BINDING_SEE_ALSO("Perceptron on Wikipedia",
     "https://en.wikipedia.org/wiki/Perceptron");
 BINDING_SEE_ALSO("Perceptron C++ class documentation",
-    "@src/mlpack/methods/perceptron/perceptron.hpp");
+    "@doc/user/methods/perceptron.md");
 
 // When we save a model, we must also save the class mappings.  So we use this
 // auxiliary structure to store both the perceptron and the mapping, and we'll

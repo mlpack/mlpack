@@ -2,18 +2,7 @@
 
 mlpack includes a number of Mercer kernels for its kernel-based techniques.
 These all implement the [same API](../../developer/kernels.md), providing one
-`Evaluate()` method, and can be used with a variety of different techniques,
-including:
-
-<!-- TODO: document everything below -->
-
- * [`KDE`](/src/mlpack/methods/kde/kde.hpp)
- * [`MeanShift`](/src/mlpack/methods/mean_shift/mean_shift.hpp)
- * [`KernelPCA`](/src/mlpack/methods/kernel_pca/kernel_pca.hpp)
- * [`FastMKS`](/src/mlpack/methods/fastmks/fastmks.hpp)
- * [`NystroemMethod`](/src/mlpack/methods/nystroem_method/nystroem_method.hpp)
-
-Supported kernels:
+`Evaluate()` method.  mlpack provides a number of supported kernels:
 
  * [`GaussianKernel`](#gaussiankernel): standard Gaussian/radial basis
    function/RBF kernel
@@ -35,7 +24,16 @@ Supported kernels:
  * [`TriangularKernel`](#triangularkernel): triangular kernel, with zero tails
  * [Implement a custom kernel](#implement-a-custom-kernel)
 
----
+These kernels can then be used in a number of machine learning algorithms that
+mlpack provides:
+
+<!-- TODO: document everything below -->
+
+ * [`KDE`](/src/mlpack/methods/kde/kde.hpp)
+ * [`MeanShift`](/src/mlpack/methods/mean_shift/mean_shift.hpp)
+ * [`KernelPCA`](/src/mlpack/methods/kernel_pca/kernel_pca.hpp)
+ * [`FastMKS`](/src/mlpack/methods/fastmks/fastmks.hpp)
+ * [`NystroemMethod`](/src/mlpack/methods/nystroem_method/nystroem_method.hpp)
 
 ## `GaussianKernel`
 

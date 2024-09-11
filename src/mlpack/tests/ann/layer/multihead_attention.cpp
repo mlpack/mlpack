@@ -121,7 +121,8 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
     arma::mat input = join_cols(join_cols(query, key), key);
 
     MultiheadAttention module(tgtSeqLen, nHeads);
-    module.InputDimensions() = std::vector<size_t>({ embedDim, 2 * srcSeqLen + tgtSeqLen });
+    module.InputDimensions() = std::vector<size_t>(
+        { embedDim, 2 * srcSeqLen + tgtSeqLen });
     module.ComputeOutputDimensions();
     arma::mat weights(module.WeightSize(), 1);
     weights.randu();
@@ -146,7 +147,8 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
     arma::mat input = join_cols(join_cols(query, key), value);
 
     MultiheadAttention module(tgtSeqLen, nHeads);
-    module.InputDimensions() = std::vector<size_t>({ embedDim, 2 * srcSeqLen + tgtSeqLen });
+    module.InputDimensions() = std::vector<size_t>(
+        { embedDim, 2 * srcSeqLen + tgtSeqLen });
     module.ComputeOutputDimensions();
     arma::mat weights(module.WeightSize(), 1);
     weights.randu();

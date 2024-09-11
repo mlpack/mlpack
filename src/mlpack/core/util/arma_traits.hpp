@@ -34,19 +34,19 @@
 template<typename VecType>
 struct IsVector
 {
-  const static bool value = false;
+  static const bool value = false;
 };
 
 template<typename MatType>
 struct IsMatrix
 {
-  const static bool value = false;
+  static const bool value = false;
 };
 
 template<typename CubeType>
 struct IsCube
 {
-  const static bool value = false;
+  static const bool value = false;
 };
 
 // Commenting out the first template per case, because
@@ -55,66 +55,66 @@ struct IsCube
 template<typename eT>
 struct IsVector<arma::Col<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
 // template<>
 template<typename eT>
 struct IsVector<arma::SpCol<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
 // template<>
 template<typename eT>
 struct IsVector<arma::Row<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
 // template<>
 template<typename eT>
 struct IsVector<arma::SpRow<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
 // template<>
 template<typename eT>
 struct IsVector<arma::subview_col<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
 // template<>
 template<typename eT>
 struct IsVector<arma::subview_row<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
 template<typename eT>
 struct IsMatrix<arma::Mat<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
 template<typename eT>
 struct IsCube<arma::Cube<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
 template<typename eT>
 struct IsVector<arma::SpSubview_col<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
 template<typename eT>
 struct IsVector<arma::SpSubview_row<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
 // Get the row vector type corresponding to a given MatType.

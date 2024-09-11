@@ -65,8 +65,12 @@ void AsyncLearning<
    * So we need to copy them to local variables.
    */
   NetworkType learningNetwork = std::move(this->learningNetwork);
-  if (learningNetwork.Parameters().n_elem != environment.InitialSample().Encode().n_elem)
+  if (learningNetwork.Parameters().n_elem !=
+      environment.InitialSample().Encode().n_elem)
+  {
     learningNetwork.Reset(environment.InitialSample().Encode().n_elem);
+  }
+
   NetworkType targetNetwork = learningNetwork;
   size_t totalSteps = 0;
   PolicyType policy = this->policy;

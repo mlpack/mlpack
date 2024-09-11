@@ -43,8 +43,8 @@ void IsSerializable(util::ParamData& data,
       IsSerializable<typename std::remove_pointer<T>::type>(data);
 }
 
-} // python
-} // bindings
-} // mlpack
+} // namespace python
+} // namespace bindings
+} // namespace mlpack
 
 #endif

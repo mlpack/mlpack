@@ -256,7 +256,7 @@ template<typename DistanceType, typename ElemType>
 struct BoundTraits<HRectBound<DistanceType, ElemType>>
 {
   //! These bounds are always tight for each dimension.
-  const static bool HasTightBounds = true;
+  static const bool HasTightBounds = true;
 };
 
 } // namespace mlpack

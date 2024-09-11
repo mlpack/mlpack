@@ -38,8 +38,7 @@ std::cout << "The transformed data matrix has size " << dataset.n_rows /* 5 */
 
 #### See also:
 
-<!-- TODO: add link -->
-<!-- * [`RADICAL`](radical.md): independent components analysis -->
+ * [`Radical`](radical.md): independent components analysis
  * [mlpack preprocessing utilities](../../index.md#preprocessing-utilities)
  * [mlpack transformations](../../index.md#transformations)
  * [Principal component analysis on Wikipedia](https://en.wikipedia.org/wiki/Principal_component_analysis)

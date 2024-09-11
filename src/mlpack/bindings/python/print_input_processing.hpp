@@ -128,8 +128,8 @@ void PrintInputProcessing(
           << GetPrintableType<T>(d) << "):" << std::endl;
     }
 
-    std::cout << prefix << "    SetParam[" << GetCythonType<T>(d) << "](p, <const "
-        << "string> '" << d.name << "', ";
+    std::cout << prefix << "    SetParam[" << GetCythonType<T>(d)
+        << "](p, <const string> '" << d.name << "', ";
     if (GetCythonType<T>(d) == "string")
       std::cout << name << ".encode(\"UTF-8\")";
     else if (GetCythonType<T>(d) == "vector[string]")
@@ -417,9 +417,9 @@ void PrintInputProcessing(
   {
     std::cout << prefix << "if " << name << " is not None:" << std::endl;
     std::cout << prefix << "  try:" << std::endl;
-    std::cout << prefix << "    SetParamPtr[" << strippedType << "](p, '" << d.name
-        << "', (<" << strippedType << "Type?> " << name << ").modelptr, "
-        << "p.Has('copy_all_inputs'))" << std::endl;
+    std::cout << prefix << "    SetParamPtr[" << strippedType << "](p, '"
+        << d.name << "', (<" << strippedType << "Type?> " << name
+        << ").modelptr, p.Has('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "  except TypeError as e:" << std::endl;
     std::cout << prefix << "    if type(" << name << ").__name__ == '"
         << strippedType << "Type':" << std::endl;
@@ -434,15 +434,15 @@ void PrintInputProcessing(
   else
   {
     std::cout << prefix << "try:" << std::endl;
-    std::cout << prefix << "  SetParamPtr[" << strippedType << "](p, '" << d.name
-        << "', (<" << strippedType << "Type?> " << name << ").modelptr, "
-        << "p.Has('copy_all_inputs'))" << std::endl;
+    std::cout << prefix << "  SetParamPtr[" << strippedType << "](p, '"
+        << d.name << "', (<" << strippedType << "Type?> " << name
+        << ").modelptr, p.Has('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "except TypeError as e:" << std::endl;
     std::cout << prefix << "  if type(" << name << ").__name__ == '"
         << strippedType << "Type':" << std::endl;
-    std::cout << prefix << "    SetParamPtr[" << strippedType << "](p,'" << d.name
-        << "', (<" << strippedType << "Type> " << name << ").modelptr, "
-        << "p.Has('copy_all_inputs'))" << std::endl;
+    std::cout << prefix << "    SetParamPtr[" << strippedType << "](p,'"
+        << d.name << "', (<" << strippedType << "Type> " << name
+        << ").modelptr, p.Has('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "  else:" << std::endl;
     std::cout << prefix << "    raise e" << std::endl;
     std::cout << prefix << "p.SetPassed(<const string> '" << d.name << "')"
@@ -486,7 +486,8 @@ void PrintInputProcessing(
       << std::endl;
   if (!d.required)
   {
-    std::cout << prefix << "cdef extern from \"numpy/arrayobject.h\":" << std::endl;
+    std::cout << prefix << "cdef extern from \"numpy/arrayobject.h\":"
+        << std::endl;
     std::cout << prefix << "  void* PyArray_DATA(np.ndarray arr)" << std::endl;
     std::cout << prefix << "if " << name << " is not None:" << std::endl;
     std::cout << prefix << "  " << name << "_tuple = to_matrix_with_info("
@@ -509,7 +510,8 @@ void PrintInputProcessing(
   }
   else
   {
-    std::cout << prefix << "cdef extern from \"numpy/arrayobject.h\":" << std::endl;
+    std::cout << prefix << "cdef extern from \"numpy/arrayobject.h\":"
+        << std::endl;
     std::cout << prefix << "  void* PyArray_DATA(np.ndarray arr)" << std::endl;
     std::cout << prefix << name << "_tuple = to_matrix_with_info(" << name
         << ", dtype=np.double, copy=p.Has('copy_all_inputs'))"

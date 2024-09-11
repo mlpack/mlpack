@@ -189,7 +189,8 @@ TEMPLATE_TEST_CASE("SoftmaxSeparableObjective", "[NCATest]", float, double)
 /**
  * Ensure the optimal separable objective function is right.
  */
-TEMPLATE_TEST_CASE("OptimalSoftmaxSeparableObjective", "[NCATest]", float, double)
+TEMPLATE_TEST_CASE("OptimalSoftmaxSeparableObjective", "[NCATest]", float,
+    double)
 {
   typedef TestType eT;
 

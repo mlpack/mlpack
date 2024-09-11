@@ -75,7 +75,7 @@ BINDING_EXAMPLE(
     IMPORT_THIS("adaboost") + "\n" +
     GET_DATASET("X", "https://example.com") + "\n" +
     GET_DATASET("y", "https://example.com") + "\n" +
-    SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test", 
+    SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test",
     "0.2") + "\n" +
     CREATE_OBJECT("model", "adaboost") + "\n" +
     CALL_METHOD("model", "train", "training", "X_train", "labels", "y_train"));
@@ -136,7 +136,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     // Extract the labels as the last dimension of the training data.
     Log::Info << "Using the last dimension of training set as labels."
         << endl;
-    if(trainingData.n_rows < 2)
+    if (trainingData.n_rows < 2)
     {
       Log::Fatal << "Cannot extract labels from last dimension as total "
           << "dimensions are less than 2." << endl;
@@ -147,7 +147,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     trainingData.shed_row(trainingData.n_rows - 1);
   }
 
-  if(labelsIn.n_cols != trainingData.n_cols)
+  if (labelsIn.n_cols != trainingData.n_cols)
   {
     Log::Fatal << "Number of samples in training data is not "
         << "equal to the number of samples in labels." << endl;

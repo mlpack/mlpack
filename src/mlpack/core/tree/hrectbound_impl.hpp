@@ -253,8 +253,8 @@ inline ElemType HRectBound<DistanceType, ElemType>::MinDistance(
  * Calculates minimum bound-to-bound squared distance.
  */
 template<typename DistanceType, typename ElemType>
-ElemType HRectBound<DistanceType, ElemType>::MinDistance(const HRectBound& other)
-    const
+ElemType HRectBound<DistanceType, ElemType>::MinDistance(
+    const HRectBound& other) const
 {
   Log::Assert(dim == other.dim);
 
@@ -452,13 +452,16 @@ HRectBound<DistanceType, ElemType>::RangeDistance(
     else
     {
       return RangeType<ElemType>(
-          (ElemType) std::pow((double) loSum, 1.0 / (double) DistanceType::Power),
+          (ElemType) std::pow((double) loSum,
+              1.0 / (double) DistanceType::Power),
           (ElemType) std::pow((double) hiSum,
               1.0 / (double) DistanceType::Power));
     }
   }
   else
+  {
     return RangeType<ElemType>(loSum, hiSum);
+  }
 }
 
 /**
@@ -529,7 +532,8 @@ HRectBound<DistanceType, ElemType>::RangeDistance(
     else
     {
       return RangeType<ElemType>(
-          (ElemType) std::pow((double) loSum, 1.0 / (double) DistanceType::Power),
+          (ElemType) std::pow((double) loSum,
+              1.0 / (double) DistanceType::Power),
           (ElemType) std::pow((double) hiSum,
               1.0 / (double) DistanceType::Power));
     }

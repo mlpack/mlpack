@@ -160,7 +160,8 @@ void MaxPoolingType<MatType>::Backward(
   #pragma omp parallel for
   for (size_t s = 0; s < (size_t) mappedError.n_slices; s++)
   {
-    UnpoolingOperation(mappedError.slice(s), gTemp.slice(s), poolingIndices.slice(s));
+    UnpoolingOperation(mappedError.slice(s), gTemp.slice(s),
+        poolingIndices.slice(s));
   }
 }
 

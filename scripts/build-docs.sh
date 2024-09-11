@@ -6,6 +6,8 @@
 # test the output and must also be available and on the path.
 # Run this from the root directory of the repository.
 # The output directory can be specified as the first option.
+# If the environment variable DISABLE_HTML_CHECKS is specified, then checks are
+# skipped.
 
 if [ "$#" -gt 1 ]; then
   echo "Usage: $0 [output_dir/]";
@@ -27,16 +29,20 @@ then
   exit 1;
 fi
 
-if ! command -v tidy &>/dev/null
+# If DISABLE_HTML_CHECKS is set, then we won't use tidy or checklink.
+if [ -z ${DISABLE_HTML_CHECKS+x} ];
 then
-  echo "tidy not installed!  Cannot build documentation.";
-  exit 1;
-fi
+  if ! command -v tidy &>/dev/null
+  then
+    echo "tidy not installed!  Cannot build documentation.";
+    exit 1;
+  fi
 
-if ! command -v checklink &>/dev/null
-then
-  echo "checklink not installed!  Cannot build documentation.";
-  exit 1;
+  if ! command -v checklink &>/dev/null
+  then
+    echo "checklink not installed!  Cannot build documentation.";
+    exit 1;
+  fi
 fi
 
 if [ ! -d doc/ ];
@@ -411,33 +417,38 @@ do
   tmp=${f#./doc/}; # Strip leading ./doc/.
   of="$output_dir/${tmp%.md}.html";
 
-  tidy -qe "$of" || exit 1;
-done
-
-# Now take a second pass to check all the links.
-find "$output_dir" -iname '*.html' -print0 | while read -d $'\0' f
-do
-  echo "Checking links in $f...";
-
-  # To run checklink we have to strip out some perl stderr warnings...
-  # We also filter out a number of spurious bad error codes that some webservers
-  # seem to give, probably to prevent crawling just like this.
-  checklink -qs \
-      --follow-file-links \
-      --suppress-broken 405 \
-      --suppress-broken 503 \
-      --suppress-broken 301 \
-      --suppress-broken 400 \
-      -X "https://eigen.tuxfamily.org/index.php\?title=Main_Page" \
-      -X "https://mlpack.slack.com/" "$f" 2>&1 |
-      grep -v 'Use of uninitialized value' > checklink_out;
-  if [ -s checklink_out ];
+  # Check HTML, if we did not disable that.
+  if [ -z ${DISABLE_HTML_CHECKS+x} ];
   then
-    cat checklink_out;
-    exit 1;
+    tidy -qe "$of" || exit 1;
   fi
-  rm -f checklink_out;
 done
+
+# Now take a second pass to check all the links, if we need to.
+if [ -z ${DISABLE_HTML_CHECKS+x} ];
+then
+  find "$output_dir" -iname '*.html' -print0 | while read -d $'\0' f
+  do
+    echo "Checking links in $f...";
+
+    # To run checklink we have to strip out some perl stderr warnings...
+    checklink -qs \
+        --follow-file-links \
+        --suppress-broken 405 \
+        --suppress-broken 503 \
+        --suppress-broken 301 \
+        --suppress-broken 400 \
+        -X "https://eigen.tuxfamily.org/index.php\?title=Main_Page" \
+        -X "https://mlpack.slack.com/" "$f" 2>&1 |
+        grep -v 'Use of uninitialized value' > checklink_out;
+    if [ -s checklink_out ];
+    then
+      cat checklink_out;
+      exit 1;
+    fi
+    rm -f checklink_out;
+  done
+fi
 
 # Remove temporary files.
 if [ "a$del_header" == "a1" ];

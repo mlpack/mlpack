@@ -121,7 +121,6 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GMMRefinedStartPercentageTest",
 
   SetInputParam("percentage", (double) -1.0); // Invalid
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-
 }
 
 // Samplings must be positive.
