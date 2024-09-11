@@ -54,7 +54,7 @@ std::cout << " - After NCA:  "
 
 <!-- TODO: link to kNN -->
 
- * [mlpack distance metrics](../core.md#distances)
+ * [mlpack distance metrics](../core/distances.md)
  * [`LMNN`](lmnn.md)
  * [Metric learning on Wikipedia](https://en.wikipedia.org/wiki/Similarity_learning#Metric_learning)
  * [Neighborhood Components Analysis on Wikipedia](https://en.wikipedia.org/wiki/Neighbourhood_components_analysis)
@@ -70,7 +70,7 @@ std::cout << " - After NCA:  "
  * `nca = NCA<DistanceType>()`
  * `nca = NCA<DistanceType>(distance)`
    - Create an `NCA` object using a custom
-     [`DistanceType`](../core.md#distances).
+     [`DistanceType`](../core/distances.md).
    - An instantiated `DistanceType` can optionally be passed with the `distance`
      parameter.
    - Using a custom `DistanceType` means that `LearnDistance()` will learn a
@@ -78,13 +78,13 @@ std::cout << " - After NCA:  "
      `DistanceType`*.
      * This means any learned distance may not necessarily improve
        classification performance with the
-       [Euclidean distance](../core.md#lmetric).
+       [Euclidean distance](../core/distances.md#lmetric).
      * Instead, classification performance will be improved when the learned
        distance is used with the given `DistanceType` only.
    - Any mlpack `DistanceType` can be used as a drop-in replacement, or a
      [custom `DistanceType`](../../developer/distances.md).
      * A list of mlpack's provided distance metrics can be found
-       [here](../core.md#distances).
+       [here](../core/distances.md).
    - ***Note: be sure that you understand the implications of a custom
      `DistanceType` before using this version.***
 
@@ -117,7 +117,8 @@ to learn a distance.
 To use `distance`, either:
 
  * Compute a new transformed dataset as `distance * data`, or
- * Use an instantiated [`MahalanobisDistance`](../core.md#mahalanobisdistance)
+ * Use an instantiated
+   [`MahalanobisDistance`](../core/distances.md#mahalanobisdistance)
    with `distance.t() * distance` as the `Q` matrix.
 
 See the [examples section](#simple-examples) for more details.
@@ -158,8 +159,8 @@ that type implements the Armadillo API.  So, e.g., `arma::fmat` can be used.
 
  * `nca.Distance()` will return the `DistanceType` being used for learning.
    Unless a custom `DistanceType` was specified in the constructor,
-   this simply returns a [`SquaredEuclideanDistance`](../core.md#lmetric)
-   object.
+   this simply returns a
+   [`SquaredEuclideanDistance`](../core/distances.md#lmetric) object.
 
 ### Simple Examples
 

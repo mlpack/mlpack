@@ -255,7 +255,7 @@ create_page_sidebar_section()
         sed 's/^<h2 id="[^"]*">\(.*\)<\/h2>/\1/'`;
 
     grep '<h3 id=' "$sb_input_file" | sed 's/<h3 id="\([^"]*\)">\(.*\)<\/h3>/<li><a href="#\1">\2<\/a><\/li>/' > "$sb_output_file.side.tmp";
-  elif [[ "$sb_input_file_base" == "core" ]];
+  elif [[ "$sb_input_file_base" == "core" || "$sb_dir_name" == "user/core" ]];
   then
     # The page title on the core class documentation page is encoded as an h1.
     page_title=`grep '<h1 id=' "$sb_input_file" |\
@@ -281,25 +281,40 @@ create_page_sidebar_section()
       anchor_name=`echo "$line"  | awk -F'\t' '{ print $2 }'`;
       anchor_title=`echo "$line" | awk -F'\t' '{ print $3 }'`;
 
-      # For an h2, we have to print a summary block.
+      # For an h2, we have to print a summary block, if the h2 has any children.
+      # (Below is a hacky way to detect that.)
+      h3_lines=`grep -A 1 "$line" "$sb_output_file.side.list.tmp" |\
+                tail -1 |\
+                grep 'h3' |\
+                wc -l`;
+
       # Note that this assumes that *all* h2s have h3 children.  If that's not
       # true, some extra processing will be needed.
-      if [ "$line_type" = "h2" ];
+      if [ "$line_type" = "h2" ]
       then
+        # Close a block if necessary.
         if [ "$in_block" = "1" ];
         then
           # We have to close the previous block.
           echo "</ul></details></li>" >> "$sb_output_file.side.tmp";
+          in_block=0;
         fi
 
-        # Create the new details block.
-        echo "<li><details><summary>" >> "$sb_output_file.side.tmp";
-        echo "<a href=\"#$anchor_name\">" >> "$sb_output_file.side.tmp";
-        echo "$anchor_title" >> "$sb_output_file.side.tmp";
-        echo "</a>" >> "$sb_output_file.side.tmp";
-        echo "</summary>" >> "$sb_output_file.side.tmp";
-        echo "<ul>" >> "$sb_output_file.side.tmp";
-        in_block=1;
+        # Create the new details block, if the h2 has children.
+        if [ "$h3_lines" -gt 0 ];
+        then
+          echo "<li><details><summary>" >> "$sb_output_file.side.tmp";
+          echo "<a href=\"#$anchor_name\">" >> "$sb_output_file.side.tmp";
+          echo "$anchor_title" >> "$sb_output_file.side.tmp";
+          echo "</a>" >> "$sb_output_file.side.tmp";
+          echo "</summary>" >> "$sb_output_file.side.tmp";
+          echo "<ul>" >> "$sb_output_file.side.tmp";
+          in_block=1;
+        else
+          echo "  <li><a href=\"#$anchor_name\">" >> "$sb_output_file.side.tmp";
+          echo "  $anchor_title" >> "$sb_output_file.side.tmp";
+          echo "  </a></li>" >> "$sb_output_file.side.tmp";
+        fi
       else
         echo "  <li><a href=\"#$anchor_name\">" >> "$sb_output_file.side.tmp";
         echo "  $anchor_title" >> "$sb_output_file.side.tmp";
