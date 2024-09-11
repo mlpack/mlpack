@@ -667,7 +667,7 @@ inline ElemType HRectBound<DistanceType, ElemType>::Overlap(
     ElemType lo = std::max(bounds[k].Lo(), bound.bounds[k].Lo());
     ElemType hi = std::min(bounds[k].Hi(), bound.bounds[k].Hi());
 
-    if ( hi <= lo)
+    if (hi <= lo)
       return 0;
 
     volume *= hi - lo;
