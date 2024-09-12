@@ -1473,7 +1473,7 @@ class BoundType
   // BoundType(BoundType&& other) = default;
 
   // Return the minimum and maximum ranges of the bound in the given dimension.
-  RangeType<ElemType> operator[](const size_t dim) const;
+  mlpack::RangeType<ElemType> operator[](const size_t dim) const;
 
   // Return the longest possible distance between two points contained in the
   // bound.  (Examples: for a ball bound, this is just the regular diameter.
@@ -1516,11 +1516,11 @@ class BoundType
   // bound, returning them in a Range object.  `VecType` will be a single column
   // vector with element type that matches `ElemType`.
   template<typename VecType>
-  RangeType<ElemType> RangeDistance(const VecType& point) const;
+  mlpack::RangeType<ElemType> RangeDistance(const VecType& point) const;
 
   // Compute the minimum and maximum distances between this bound and the given
   // other bound, returning them in a Range object.
-  RangeType<ElemType> RangeDistance(const BoundType& other) const;
+  mlpack::RangeType<ElemType> RangeDistance(const BoundType& other) const;
 
   // Compute the center of the bound and store it into the given `center`
   // vector.
@@ -1583,6 +1583,7 @@ class SplitType
   //
   // If the node should not be split, `false` should be returned, and
   // `splitInfo` is ignored.
+  template<typename MatType>
   static bool SplitNode(const BoundType& bound,
                         MatType& data,
                         const size_t begin,
@@ -1605,6 +1606,7 @@ class SplitType
   //       points that will go to the right child;
   //   the value `begin + leftPoints` should be returned.
   //
+  template<typename MatType>
   static size_t PerformSplit(MatType& data,
                              const size_t begin,
                              const size_t count,

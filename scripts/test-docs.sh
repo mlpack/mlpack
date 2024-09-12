@@ -123,7 +123,7 @@ extract_code_blocks()
 
       # Check after the fact: was this file only a class declaration?  If so, we
       # want to put it instead into the next file.
-      has_class1=`grep '^  class' $output_prefix$output_file_display.cpp | wc -l`;
+      has_class1=`grep '^  class\|^  struct' $output_prefix$output_file_display.cpp | wc -l`;
       has_class2=`grep '^  };' $output_prefix$output_file_display.cpp | wc -l`;
       if [[ "$has_class1" != "0" && "$has_class2" != "0" ]];
       then

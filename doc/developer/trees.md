@@ -91,7 +91,7 @@ parameters:
 
  - `DistanceType` -- the underlying distance metric that the tree will be built
    on (see [the DistanceType policy documentation](distances.md) and
-   [pre-implemented distances](../user/core.md#distances))
+   [pre-implemented distances](../user/core/distances.md#distances))
  - `StatisticType` -- holds any auxiliary information that individual algorithms
    may need
  - `MatType` -- the type of the matrix used to represent the data; see
@@ -915,9 +915,9 @@ class DualTreeTraverser
 
 In essence, the `SingleTreeTraverser` and `DualTreeTraverser` classes are
 relatively simple classes that define the order of traversal of each node in the
-tree.  For a simple example, the [`KDTree`](../user/core.md#kdtree) class's
-`SingleTreeTraverser` is a simple depth-first traversal.  Suppose that we have
-the `KDTree` drawn below as ASCII art:
+tree.  For a simple example, the [`KDTree`](../user/core/trees.md#kdtree)
+class's `SingleTreeTraverser` is a simple depth-first traversal.  Suppose that
+we have the `KDTree` drawn below as ASCII art:
 
 ```text
        0
@@ -1180,7 +1180,7 @@ class LessThanOneDistRules
 ```
 
 We can now put this rule set into action, using
-[`KDTree`](../user/core.md#kdtree)s as the tree type.
+[`KDTree`](../user/core/trees.md#kdtree)s as the tree type.
 
 ```c++
 // Create random Gaussian-distributed sets with 50 points in 3 dimensions, and
@@ -1265,7 +1265,7 @@ automatically, and must be done in the `RuleType`'s `BaseCase()`, `Score()`, and
 mlpack contains several ready-to-use implementations of trees that satisfy the
 TreeType policy API:
 
- - [`KDTree`](../user/core.md#kdtree)
+ - [`KDTree`](../user/core/trees.md#kdtree)
  - `MeanSplitKDTree`
  - `BallTree`
  - `MeanSplitBallTree`
