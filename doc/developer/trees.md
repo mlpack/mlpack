@@ -32,7 +32,7 @@ We can rigorously define what a tree is, using the definition of *space tree*
 introduced in the following paper
 ([pdf link](https://www.ratml.org/pub/pdf/2013tree.pdf):
 
-```c++
+```text
 R.R. Curtin, W.B. March, P. Ram, D.V. Anderson, A.G. Gray, and C.L. Isbell Jr.,
 "Tree-independent dual-tree algorithms," in Proceedings of the 30th
 International Conference on Machine Learning (ICML '13), pp. 1435--1443, 2013.
@@ -102,7 +102,7 @@ The reason that these three template parameters are necessary is so that each
 simplify the required syntax for instantiating mlpack algorithms.  By using
 template template parameters, a user needs only to write
 
-```c++
+```
 // The RangeSearch class takes a DistanceType and a TreeType template parameter.
 
 // This code instantiates RangeSearch with the ManhattanDistance and a
@@ -116,7 +116,7 @@ RangeSearch<ManhattanDistance, QuadTree> rs(...);
 as opposed to the far more complicated alternative, where the user must specify
 the values of each template parameter of the tree type:
 
-```c++
+```
 // This is a much worse alternative, where the user must specify the template
 // arguments of their tree.
 RangeSearch<ManhattanDistance,
@@ -142,15 +142,17 @@ There are two important notes about this:
  - Some types of trees have more template parameters than just these three.  One
    example is the generalized binary space tree, where the bounding shape of
    each node is easily made into a fourth template parameter (the
-   `BinarySpaceTree` class calls this the `BoundType` parameter), and the
-   procedure used to split a node is easily made into a fifth template parameter
-   (the `BinarySpaceTree` class calls this the `SplitType` parameter).  However,
-   the syntax of template template parameters *requires* that the class only has
-   the correct number of template parameters---no more, no less.  Fortunately,
-   C++11 allows template typedefs, which can be used to provide partial
-   specialization of template classes:
+   [`BinarySpaceTree`](../user/core/trees.md#binaryspacetree) class calls this
+   the [`BoundType`](../user/core/trees.md#template-parameters-1) parameter),
+   and the procedure used to split a node is easily made into a fifth template
+   parameter (the `BinarySpaceTree` class calls this the
+   [`SplitType`](../user/core/trees.md#template-parameters-1) parameter).
+   However, the syntax of template template parameters *requires* that the class
+   only has the correct number of template parameters---no more, no less.
+   Fortunately, C++11 allows template typedefs, which can be used to provide
+   partial specialization of template classes:
 
-```c++
+```
 // This is the definition of the BinarySpaceTree class, which has five template
 // parameters.
 template<typename DistanceType,
@@ -188,7 +190,7 @@ policy.  Below is the minimal set of functions required with minor documentation
 for each function.  (More extensive documentation and explanation is given
 afterwards.)
 
-```c++
+```
 // The three template parameters will be supplied by the user, and are detailed
 // in the previous section.
 template<typename DistanceType,
@@ -387,7 +389,7 @@ required by the `TreeType` policy.
 The [DistanceType policy](distances.md) provides one method that will be useful
 for tree building and other operations:
 
-```c++
+```
 // This function is required by the DistanceType policy.
 // Evaluate the distance metric between two points (which may be of different
 // types).
@@ -418,7 +420,7 @@ the variance is required.  This also holds true for cached data members.
 Each node should have its own instance of a `StatisticType` class.  The
 `StatisticType` must provide the following constructors:
 
-```c++
+```
 // Default constructor required by the StatisticType policy.
 StatisticType();
 
@@ -446,7 +448,7 @@ some memory management internally and should have one (though not always).
 
 The first two constructors are variations of the same idea:
 
-```c++
+```
 // This batch constructor does not modify the dataset, and builds the entire
 // tree using a default-constructed DistanceType.
 ExampleTree(const MatType& data);
@@ -466,7 +468,7 @@ satisfies the definition of *space tree* that was given earlier in the document.
 The third constructor requires the tree to be initializable from a `cereal`
 archive:
 
-```c++
+```
 // Initialize the tree from a given cereal archive.  SFINAE (the
 // second argument) is necessary to ensure that the archive is loading, not
 // saving.
@@ -483,7 +485,7 @@ reasonable way to represent the data matrix internally in a tree class is not
 with a reference but instead with a pointer.  If this is true, then a destructor
 will be required:
 
-```c++
+```
 // Release any resources held by the tree.
 ~ExampleTree();
 ```
@@ -500,7 +502,7 @@ with the required constructors would necessarily incur a copy of the data
 matrix, because the user will pass a `const MatType&`.  One alternate solution
 is to provide a constructor which takes an rvalue reference to a `MatType`:
 
-```c++
+```
 template<typename Archive>
 ExampleTree(MatType&& data);
 ```
@@ -509,7 +511,7 @@ ExampleTree(MatType&& data);
 user can use `std::move()` to build the tree without copying the data matrix,
 although the data matrix will be modified:
 
-```c++
+```
 ExampleTree exTree(std::move(dataset));
 ```
 
@@ -520,7 +522,7 @@ It is, of course, possible to add even more constructors if desired.
 The basic functionality of a class implementing the `TreeType` API is quite
 straightforward and intuitive.
 
-```c++
+```
 // Get the dataset that the tree is built on.
 const MatType& Dataset();
 ```
@@ -530,7 +532,7 @@ fact that this function is required essentially means that each node in the tree
 must store a pointer to the dataset (this is not the only option, but it is the
 most obvious option).
 
-```c++
+```
 // Get the distance metric that the tree is built with.
 DistanceType& Distance();
 ```
@@ -539,7 +541,7 @@ Each node must also store an instantiated distance metric or a pointer to one
 (note that this is required even for metrics that have no state and have a
 `static` `Evaluate()` function).
 
-```c++
+```
 // Get/modify the StatisticType for this node.
 StatisticType& Stat();
 ```
@@ -547,7 +549,7 @@ StatisticType& Stat();
 As discussed earlier, each node must hold a `StatisticType`; this is accessible
 through the `Stat()` function.
 
-```c++
+```
 // Return the parent of the node, or NULL if this is the root.
 ExampleTree* Parent();
 
@@ -586,7 +588,7 @@ should return 2, not 3.  The ordering in which the descendants are returned can
 be arbitrary; so, `Descendant(0)` can return 6 *or* 7, and `Descendant(1)`
 should return the other index.
 
-```c++
+```
 // Store the center of the bounding region of the node in the given vector.
 void Center(arma::vec& center);
 ```
@@ -607,7 +609,7 @@ more important that each bound can be easily calculated.
 Details on each bounding function that the `TreeType` API requires are given
 below.
 
-```c++
+```
 // Return the distance between the center of this node and the center of
 // its parent.
 double ParentDistance();
@@ -626,7 +628,7 @@ adjusted with `ParentDistance()` to provide a possibly loose but efficient bound
 on what the result of `MinDistance()` (or `MaxDistance()`) would be with the
 child.
 
-```c++
+```
 // Return an upper bound on the furthest possible distance between the
 // center of the node and any point held in the node.
 double FurthestPointDistance();
@@ -648,7 +650,7 @@ It is permissible to simply have `FurthestPointDistance()` return the result of
 depending on the type of tree it may be possible to have
 `FurthestPointDistance()` return a tighter bound.
 
-```c++
+```
 // Return a lower bound on the minimum distance between the center and any
 // edge of the node's bounding shape.
 double MinimumBoundDistance();
@@ -667,7 +669,7 @@ bounding shape is a hyperrectangle (as in a kd-tree or a spill tree), then
 `MinimumBoundDistance()` should return half the side length of the
 hyperrectangle's smallest side.
 
-```c++
+```
 // Return a lower bound on the minimum distance between the given point and
 // the node.
 template<typename VecType>
@@ -710,7 +712,7 @@ Consider the first case, where the object is a vector.  The result of
 `MinDistance()` needs to be less than or equal to the true minimum distance,
 which could be calculated as below:
 
-```c++
+```
 // We assume that we have a vector 'vec', and a tree node 'node'.
 double trueMinDist = DBL_MAX;
 for (size_t i = 0; i < node.NumDescendants(); ++i)
@@ -742,7 +744,7 @@ efficient and can be done with fewer `Evaluate()` calls than calling both
 
 The last functions that the `TreeType` API requires are for serialization.
 
-```c++
+```
 // Serialize the tree (load from the given archive / save to the given
 // archive, depending on its type).
 template<typename Archive>
@@ -786,7 +788,7 @@ Setting these values is achieved by specialization.  The code below shows the
 default `TreeTraits` values (these are the values that will be used if no
 specialization is provided for a given `TreeType`).
 
-```c++
+```
 template<typename TreeType>
 class TreeTraits
 {
@@ -814,7 +816,7 @@ An example specialization for the `KDTree` class is given below.  Note that
 `KDTree` is itself a template class (like every class satisfying the `TreeType`
 policy), so we are specializing to a template parameter.
 
-```c++
+```
 template<typename DistanceType,
          typename StatisticType,
          typename MatType>
@@ -867,7 +869,7 @@ at each step of the traversal; this is detailed in [the next section](#rules).
 The `SingleTreeTraverser` for each tree implements two functions, matching the
 API below:
 
-```c++
+```
 template<typename RuleType>
 class SingleTreeTraverser
 {
@@ -891,7 +893,7 @@ class SingleTreeTraverser
 The `DualTreeTraverser` for each tree also implements two similar functions,
 matching the API below:
 
-```c++
+```
 template<typename RuleType>
 class DualTreeTraverser
 {
@@ -917,7 +919,7 @@ tree.  For a simple example, the [`KDTree`](../user/core.md#kdtree) class's
 `SingleTreeTraverser` is a simple depth-first traversal.  Suppose that we have
 the `KDTree` drawn below as ASCII art:
 
-```
+```text
        0
       / \
      /   \
@@ -933,7 +935,7 @@ the `KDTree` drawn below as ASCII art:
 This `KDTree` has 10 nodes total; for a simple depth-first traversal, we will
 visit nodes in this order:
 
-```
+```text
 0, 1, 3, 4, 7, 8, 2, 5, 9, 10, 6
 ```
 
@@ -941,7 +943,7 @@ Dual-tree traversals are more complicated, as we are visiting combinations of
 nodes from two different trees.  Consider two even simpler `KDTree`s drawn below
 as ASCII art:
 
-```
+```text
   query tree                       reference tree
 
        q0                                 r0
@@ -1000,7 +1002,7 @@ defines the rules of the traversal, telling the traversal when to prune nodes,
 and performing the actual work to be done during the traversal.  Any `RuleType`
 must implement the following class signature:
 
-```c++
+```
 //
 // A RuleType that can be used with a SingleTreeTraverser or DualTreeTraverser.
 // In the example code below, `TreeType` refers to the type fo tree being used.
@@ -1166,8 +1168,8 @@ class LessThanOneDistRules
   // We are not using any traversal info, so define it as an empty class.
   class TraversalInfoType { };
 
+  const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
-  const TraversalInfoType& TraversalInfo() { return traversalInfo; }
 
  private:
   const arma::mat& querySet;
@@ -1180,11 +1182,11 @@ class LessThanOneDistRules
 We can now put this rule set into action, using
 [`KDTree`](../user/core.md#kdtree)s as the tree type.
 
-```
+```c++
 // Create random Gaussian-distributed sets with 50 points in 3 dimensions, and
-// large covariance (so that not many point pairs have distance less than 1).
-arma::mat querySet     = 5.0 * arma::randn<arma::mat>(3, 50);
-arma::mat referenceSet = 5.0 * arma::randn<arma::mat>(3, 50);
+// moderate covariance (so that not many point pairs have distance less than 1).
+arma::mat querySet     = 1.75 * arma::randn<arma::mat>(3, 50);
+arma::mat referenceSet = 1.75 * arma::randn<arma::mat>(3, 50);
 
 // Create KDTrees on the data, using a minimum leaf size of 5.
 //
@@ -1192,24 +1194,24 @@ arma::mat referenceSet = 5.0 * arma::randn<arma::mat>(3, 50);
 // from BaseCase() are not the same as what they would be if we computed
 // distances in a double for-loop on querySet and referenceSet; see the KDTree
 // documentation for more details.)
-mlpack::KDTree queryTree(std::move(querySet), 5);
-mlpack::KDTree referenceTree(std::move(referenceSet), 5);
+mlpack::KDTree<> queryTree(std::move(querySet), 5);
+mlpack::KDTree<> referenceTree(std::move(referenceSet), 5);
 
 // Construct a RuleType.
-LessThanOneDistRules<mlpack::KDTree> rule(queryTree.Dataset(),
-                                          referenceTree.Dataset());
+LessThanOneDistRules<mlpack::KDTree<>> rule(queryTree.Dataset(),
+                                            referenceTree.Dataset());
 
 // Now perform a single-tree traversal for point 0 (this will find all reference
 // points with distance less than 1 to query point 0).
 std::cout << "Single-tree traversal for query point 0:" << std::endl;
-mlpack::KDTree::SingleTreeTraverser st(rule);
+mlpack::KDTree<>::SingleTreeTraverser st(rule);
 st.Traverse(0, referenceTree);
 std::cout << std::endl;
 
 // Now perform a dual-tree traversal (this will find all pairs of points in the
 // query set and reference set with distance less than 1).
 std::cout << "Dual-tree traversal:" << std::endl;
-mlpack::KDTree::DualTreeTraverser dt(rule);
+mlpack::KDTree<>::DualTreeTraverser dt(rule);
 dt.Traverse(queryTree, referenceTree);
 ```
 
@@ -1233,7 +1235,7 @@ parent combination was called.
 So, for instance, consider the following dual-tree recursion order (from the
 example in the [traversals section](#traversals)):
 
-```
+```text
 // Indentation levels indicate the level of recursion.
 (q0, r0),
     (q1, r1),
@@ -1273,6 +1275,7 @@ TreeType policy API:
 
 Often, these are template typedefs of more flexible tree classes:
 
- - `BinarySpaceTree` -- binary trees, such as the KD-tree and ball tree
+ - [`BinarySpaceTree`](../user/core/trees.md#binaryspacetree) -- binary trees,
+   such as the KD-tree and ball tree
  - `RectangleTree` -- the R tree and variants
  - `CoverTree` -- the cover tree and variants
