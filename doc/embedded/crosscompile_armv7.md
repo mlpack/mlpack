@@ -74,7 +74,7 @@ dependencies.  mlpack has three dependencies:
  * [Armadillo](https://arma.sourceforge.net/) for linear algebra and matrix
    manipulation.
 
-Armadillo itself can use several backends.  In this tutorials we will use
+Armadillo itself can use several backends.  In this tutorial we will use
 OpenBLAS since it is optimized on a broad range of different architectures.
 
 To get the dependencies we have two solutions: either we download them manually,
