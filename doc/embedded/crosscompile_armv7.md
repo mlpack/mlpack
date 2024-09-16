@@ -150,7 +150,7 @@ compiled a program specifically built to run on the Raspberry Pi:
 mlpack_knn: ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), statically linked, for GNU/Linux 3.2.0, stripped
 ```
 
-### Copy on the RPi and run!
+### Copy to the RPi and run!
 
 Now, we can use the cross-compiled kNN binary. This command will build all the
 apps for each one of the algorithms and also build the tests for us. Once this
