@@ -19,7 +19,7 @@
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-4.4.0.tar.gz">current stable version (4.4.0)</a>
+    <a href="https://www.mlpack.org/files/mlpack-4.4.1.tar.gz">current stable version (4.4.1)</a>
   </em>
 </p>
 
