@@ -66,7 +66,7 @@ clone the repository:
 git clone git@github.com:mlpack/mlpack.git
 ```
 
-Once we have downloaded the source code, now we need to get mlpack external
+Once we have downloaded the source code, now we need to get mlpack's external
 dependencies.  mlpack has three dependencies:
 
  * [ensmallen](https://www.ensmallen.org/), which provides mathematical solvers and optimizers for training;
