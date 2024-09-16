@@ -1,4 +1,4 @@
-## Run mlpack bindings on Raspberry PI
+## Run mlpack bindings on Raspberry Pi
 
 In this article, we explore how to run mlpack command-line programs on a
 Raspberry Pi 2.  mlpack is a great choice for machine learning tasks on embedded
@@ -18,6 +18,8 @@ of RAM, and given that the Pi 2 has only ARMv7 core clocked at 1 GHz,
 it might take a lot of time for the compilation to finish. As a result it will
 be much easier to cross-compile mlpack on a more powerful development system,
 and then move the compiled code directly to the Raspberry Pi.
+
+### Setup cross-compilation toolchain
 
 The first step is to download a cross compiler toolchain that is going to run on
 an `x86_64` machine (the host) and produce binaries that runs on an ARMv7
@@ -52,10 +54,13 @@ Once we have done that, now the toolchain is ready.  Feel free to explore inside
 the toolchain; you will find the basic set of compilers in addition to a
 `sysroot/` folder that contains headers for standard libraries.
 
+### Download and setup mlpack
+
 Now, we will use this toolchain to compile mlpack. The first thing is to get the
-mlpack sources.  You can either download the archive file of the latest version,
-or clone the repository if you prefer to use the development version.  In this
-case we will clone the repository:
+mlpack sources.  You can either download the archive file of the latest version
+from [here](https://www.mlpack.org/files/mlpack-latest.tar.gz), or clone the
+repository if you prefer to use the development version.  In this case we will
+clone the repository:
 
 ```sh
 git clone git@github.com:mlpack/mlpack.git
@@ -89,6 +94,8 @@ cd mlpack/
 mkdir build
 cd build
 ```
+
+### Compile `mlpack_knn` for the RPi
 
 The next step is to use CMake to configure the build.  In this command we are
 telling CMake to use a specific compiler in
@@ -143,6 +150,8 @@ compiled a program specifically built to run on the Raspberry Pi:
 mlpack_knn: ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), statically linked, for GNU/Linux 3.2.0, stripped
 ```
 
+### Copy on the RPi and run!
+
 Now, we can use the cross-compiled kNN binary. This command will build all the
 apps for each one of the algorithms and also build the tests for us. Once this
 is done we can transfer all of that to the Pi using `scp`, assuming that the Pi
@@ -168,6 +177,7 @@ Then to run kNN on the Pi the following command can be used:
 
 ```sh
 ./mlpack_knn \
+    -v \
     --k=5 \
     --reference_file=covertype.csv \
     --distances_file=distances.csv \
@@ -177,12 +187,59 @@ Then to run kNN on the Pi the following command can be used:
 This might take a couple of minutes and around 350 MB of RAM or more.
 When finished, it will produce two files.  The first one is `distances.csv`,
 which contains the distances between each point in `covertype.csv` and its 5
-nearest neighbors.  The second one is `neighbors.csv`, which contains the indices of the 5 nearest neighbors of every point in `covertype.csv`.
+nearest neighbors.  The second one is `neighbors.csv`, which contains the 
+indices of the 5 nearest neighbors of every point in `covertype.csv`.
+
+If you run `mlpack_knn` in verbose mode you will get the following information
+when the software is running:
+
+```
+[INFO ] Using reference data from Loading 'covertype.csv' as CSV data.  Size is 55 x 581012.
+[INFO ] 'covertype.csv' (581012x55 matrix).
+[INFO ] Building reference tree...
+[INFO ] Tree built.
+[INFO ] Searching for 5 neighbors with dual-tree kd-tree search...
+[INFO ] 31549204 node combinations were scored.
+[INFO ] 43163564 base cases were calculated.
+[INFO ] Search complete.
+[INFO ] Saving CSV data to 'distances.csv'.
+[INFO ] Saving CSV data to 'neighbors.csv'.
+[INFO ]
+[INFO ] Execution parameters:
+[INFO ]   algorithm: dual_tree
+[INFO ]   distances_file: 'distances.csv' (0x0 matrix)
+[INFO ]   epsilon: 0
+[INFO ]   help: 0
+[INFO ]   info:
+[INFO ]   input_model_file:
+[INFO ]   k: 5
+[INFO ]   leaf_size: 20
+[INFO ]   neighbors_file: 'neighbors.csv' (0x0 matrix)
+[INFO ]   output_model_file:
+[INFO ]   query_file: ''
+[INFO ]   random_basis: 0
+[INFO ]   reference_file: 'covertype.csv' (581012x55 matrix)
+[INFO ]   rho: 0.7
+[INFO ]   seed: 0
+[INFO ]   tau: 0
+[INFO ]   tree_type: kd
+[INFO ]   true_distances_file: ''
+[INFO ]   true_neighbors_file: ''
+[INFO ]   verbose: 1
+[INFO ]   version: 0
+[INFO ] Program timers:
+[INFO ]   computing_neighbors: 137.534496s (2 mins, 17.5 secs)
+[INFO ]   loading_data: 36.735195s
+[INFO ]   saving_data: 31.942527s
+[INFO ]   total_time: 196.848276s (3 mins, 16.8 secs)
+[INFO ]   tree_building: 22.569215s
+```
+
 If you run into problems, be sure that there is enough RAM for this dataset;
 if not, you can reduce the size of the dataset (simply by deleting some rows
 from the file) to save some memory.
 
-In the next tutorial we will see how to build cross compilation Makefile to
+In the next tutorial we will see how to build cross-compilation Makefile to
 build one of the examples that we have in the
 [mlpack/examples](https://github.com/mlpack/examples) repository.
 
