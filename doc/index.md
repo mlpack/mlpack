@@ -159,9 +159,7 @@ in C++ and it is header-only with minimal dependencies. In the following, we are
 adding a set of tutorials to allow you to experiment mlpack on various types of
 these systems.
 
-* [cross-compile mlpack binding on armv7](embedded/crosscompile_armv7.md): a well
-  guided tutorial that shows how to cross compile and run k-NN on
-  Raspberry PI 2.
+* [cross-compile and run k-NN on a Raspberry Pi 2 (armv7)](embedded/crosscompile_armv7.md)
 
 ## Examples and further documentation
 
