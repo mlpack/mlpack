@@ -1,8 +1,8 @@
 # mlpack changelog
 
-## mlpack ?.?.?
+## mlpack 4.5.0
 
-_????-??-??_
+_2024-09-17_
 
  * Distribute STB headers as part of R package (#3724, #3726).
 
