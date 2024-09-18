@@ -56,7 +56,7 @@ template<typename DistanceType,
 class BinarySpaceTree;
 ```
 
- * `DistanceType`: the [distance metric](distances.md) to use for distance
+ * `DistanceType`: the [distance metric](../distances.md) to use for distance
    computations.  By default, this is
    [`EuclideanDistance`](../distances.md#lmetric).
 
@@ -66,7 +66,7 @@ class BinarySpaceTree;
    - See the [`StatisticType`](#statistictype) section for more details.
 
  * `MatType`: the type of matrix used to represent points.  Must be a type
-   matching the [Armadillo API](../matrices.md).  By default, `arma::mat` is
+   matching the [Armadillo API](../../matrices.md).  By default, `arma::mat` is
    used, but other types such as `arma::fmat` or similar will work just fine.
 
  * `BoundType`: the class defining the bound for each node.  By default,
@@ -950,7 +950,7 @@ to write a fully custom split:
 
  * [`MidpointSplit`](#midpointsplit): splits on the midpoint of the dimension
    with maximum width
- * [Custom `SplitType`s](#custom-splittype): implement a fully custom
+ * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
 
 *Note:* this section is still under construction---not all split types are
