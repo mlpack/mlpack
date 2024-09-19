@@ -142,11 +142,11 @@ There are two important notes about this:
  - Some types of trees have more template parameters than just these three.  One
    example is the generalized binary space tree, where the bounding shape of
    each node is easily made into a fourth template parameter (the
-   [`BinarySpaceTree`](../user/core/trees.md#binaryspacetree) class calls this
-   the [`BoundType`](../user/core/trees.md#template-parameters-1) parameter),
-   and the procedure used to split a node is easily made into a fifth template
-   parameter (the `BinarySpaceTree` class calls this the
-   [`SplitType`](../user/core/trees.md#template-parameters-1) parameter).
+   [`BinarySpaceTree`](../user/core/trees/binary_space_tree.md) class calls this
+   the [`BoundType`](../user/core/trees/binary_space_tree.md#boundtype)
+   parameter), and the procedure used to split a node is easily made into a
+   fifth template parameter (the `BinarySpaceTree` class calls this the
+   [`SplitType`](../user/core/trees/binary_space_tree.md#splittype) parameter).
    However, the syntax of template template parameters *requires* that the class
    only has the correct number of template parameters---no more, no less.
    Fortunately, C++11 allows template typedefs, which can be used to provide
@@ -915,7 +915,7 @@ class DualTreeTraverser
 
 In essence, the `SingleTreeTraverser` and `DualTreeTraverser` classes are
 relatively simple classes that define the order of traversal of each node in the
-tree.  For a simple example, the [`KDTree`](../user/core/trees.md#kdtree)
+tree.  For a simple example, the [`KDTree`](../user/core/trees/kdtree.md)
 class's `SingleTreeTraverser` is a simple depth-first traversal.  Suppose that
 we have the `KDTree` drawn below as ASCII art:
 
@@ -1180,7 +1180,7 @@ class LessThanOneDistRules
 ```
 
 We can now put this rule set into action, using
-[`KDTree`](../user/core/trees.md#kdtree)s as the tree type.
+[`KDTree`](../user/core/trees/kdtree.md)s as the tree type.
 
 ```c++
 // Create random Gaussian-distributed sets with 50 points in 3 dimensions, and
@@ -1265,7 +1265,7 @@ automatically, and must be done in the `RuleType`'s `BaseCase()`, `Score()`, and
 mlpack contains several ready-to-use implementations of trees that satisfy the
 TreeType policy API:
 
- - [`KDTree`](../user/core/trees.md#kdtree)
+ - [`KDTree`](../user/core/trees/kdtree.md)
  - `MeanSplitKDTree`
  - `BallTree`
  - `MeanSplitBallTree`
@@ -1275,7 +1275,7 @@ TreeType policy API:
 
 Often, these are template typedefs of more flexible tree classes:
 
- - [`BinarySpaceTree`](../user/core/trees.md#binaryspacetree) -- binary trees,
+ - [`BinarySpaceTree`](../user/core/trees/binary_space_tree.md) -- binary trees,
    such as the KD-tree and ball tree
  - `RectangleTree` -- the R tree and variants
  - `CoverTree` -- the cover tree and variants
