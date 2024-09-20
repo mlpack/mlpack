@@ -378,8 +378,8 @@ operator=(const Octree& other)
     delete children[i];
   children.clear();
 
-  begin = other.Begin();
-  count = other.Count();
+  begin = other.begin;
+  count = other.count;
   bound = other.bound;
   dataset = ((other.parent == NULL) ? new MatType(*other.dataset) : NULL);
   parent = NULL;
@@ -442,8 +442,8 @@ operator=(Octree&& other)
   children.clear();
 
   children = std::move(other.children);
-  begin = other.Begin();
-  count = other.Count();
+  begin = other.begin;
+  count = other.count;
   bound = std::move(other.bound);
   dataset = other.dataset;
   parent = other.Parent();
@@ -460,7 +460,6 @@ operator=(Octree&& other)
   other.count = 0;
   other.dataset = new MatType();
   other.parentDistance = 0.0;
-  other.numDescendants = 0;
   other.furthestDescendantDistance = 0.0;
   other.parent = NULL;
 
