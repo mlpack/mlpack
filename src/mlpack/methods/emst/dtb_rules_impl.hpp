@@ -12,6 +12,8 @@
 #ifndef MLPACK_METHODS_EMST_DTB_RULES_IMPL_HPP
 #define MLPACK_METHODS_EMST_DTB_RULES_IMPL_HPP
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 template<typename DistanceType, typename TreeType>

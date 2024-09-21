@@ -16,6 +16,8 @@
 // In case it hasn't yet been included.
 #include "poisson_nll_loss.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 template<typename MatType>

@@ -16,6 +16,8 @@
 // In case it hasn't yet been included.
 #include "log_cosh_loss.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 template<typename MatType>

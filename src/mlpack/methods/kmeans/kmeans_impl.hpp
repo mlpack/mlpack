@@ -13,6 +13,7 @@
 #include "kmeans.hpp"
 
 #include <mlpack/core/distances/lmetric.hpp>
+#include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/sfinae_utility.hpp>
 #include <mlpack/core/util/size_checks.hpp>
 

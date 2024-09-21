@@ -15,6 +15,7 @@
 
 #include "dt_utils.hpp"
 #include <mlpack/core/tree/enumerate_tree.hpp>
+#include <mlpack/core/util/log.hpp>
 
 namespace mlpack {
 
