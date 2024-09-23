@@ -451,7 +451,7 @@ bounding quantities.
 arma::mat dataset;
 mlpack::data::Load("corel-histogram.csv", dataset, true);
 
-// Build kd-tree on the first half and the second half of points.
+// Build kd-trees on the first half and the second half of points.
 mlpack::KDTree<> tree1(dataset.cols(0, dataset.n_cols / 2));
 mlpack::KDTree<> tree2(dataset.cols(dataset.n_cols / 2 + 1,
     dataset.n_cols - 1));
