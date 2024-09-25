@@ -419,6 +419,8 @@ write a custom `BoundType` for use with `BinarySpaceTree`:
 
  * [`HRectBound`](#hrectbound): hyperrectangle bound, encloses the descendant
    points in the smallest possible hyperrectangle
+ * [`BallBound`](#ballbound): ball bound, encloses the descendant points in the
+   ball with the smallest possible radius
  * [Custom `BoundType`s](#custom-boundtypes): implement a fully custom
    `BoundType`
 
@@ -766,6 +768,285 @@ cb |= floatData; // This will set the bound to [2.0, 3.0] in every dimension.
 // Note the use of arma::fvec to represent a point, since ElemType is float.
 const mlpack::RangeType<float> r3 = cb.RangeDistance(arma::fvec("1.5 1.5 4.0"));
 std::cout << "Distance between Chebyshev distance HRectBound and "
+    << "[1.5, 1.5, 4.0]: [" << r3.Lo() << ", " << r3.Hi() << "]." << std::endl;
+```
+
+### `BallBound`
+
+The `BallBound` class represents a ball with a center and a radius.  A
+`BallBound` can be used to perform a variety of distance-based bounding tasks.
+
+`BallBound` is used directly by the [`BallTree`](ball_tree.md) class.
+
+#### Constructors
+
+`BallBound` allows configurable behavior via its three template parameters:
+
+```
+BallBound<DistanceType, ElemType, VecType>
+```
+
+The three template parameters are described below:
+
+ * `DistanceType`: specifies the [distance metric](../distances.md) to use for
+   distance calculations.  Defaults to
+   [`EuclideanDistance`](../distances.md#lmetric).
+
+ * `ElemType`: specifies the element type of the bound.  By default this is
+   `double`, but can also be `float`.  Generally this should be a floating-point
+   type.
+
+ * `VecType`: specifies the vector type to use to store the center of the ball
+   bound.  By default this is `arma::Col<ElemType>`.  The element type of the
+   given `VecType` should be the same as `ElemType`.
+
+---
+
+Different constructor forms can be used to specify different template parameters
+(and thus different bound behavior).
+
+ * `b = BallBound(dimensionality)`
+   - Construct a `BallBound` with the given `dimensionality`.
+   - The bound will be empty with an invalid center (e.g., `b` will not contain
+     any points at all).
+   - The bound will use the [Euclidean distance](../distances.md#lmetric) for
+     distance computation, and will expect data to have elements with type
+     `double`.
+
+ * `b = BallBound<DistanceType, ElemType, VecType>(dimensionality)`
+   - Construct a `BallBound` with the given `dimensionality` that will use
+     the given `DistanceType`, `ElemType`, and `VecType` parameters.
+   - Note that it is not required to specify all three template parameters.
+   - See above for details on the meaning of each template parameter.
+   - The bound will be empty with an invalid center (e.g., `b` will not contain
+     any points at all).
+
+***Note***: these constructors provide an empty bound; be sure to
+[grow](#growing-and-shrinking-the-bound) the bound or
+[directly modify the bound](#accessing-and-modifying-properties-of-the-bound)
+before using it!
+
+---
+
+ * `b = BallBound(radius, center)`
+   - Construct a `BallBound` with the given `radius` and `center`.
+   - `radius` should have type `double`.
+   - `center` should have vector type `arma::vec`.
+
+ * `b = BallBound<DistanceType, ElemType, VecType>(radius, center)`
+   - Construct a `BallBound` with the given `radius` and `center`.
+   - `radius` should have type `ElemType`.
+   - `center` should have type `VecType`.
+   - Note that it is not required to specify all three template parameters.
+   - See above for details on the meaning of each template parameter.
+
+#### Accessing and modifying properties of the bound
+
+The properties of the `BallBound` can be directly accessed and modified.
+
+ * `b.Dim()` will return a `size_t` indicating the dimensionality of the bound.
+
+ * `b.Center()` returns an `arma::vec&` containing the center of the ball bound.
+   Its elements can be directly modified.
+
+ * `b.Radius()` will return a `double` that is the radius of the ball.
+   - `b.Radius() = r` will set the radius of the ball to `r`.
+
+ * `b[dim]` will return a [`Range`](../math.md#range) object representing the
+   extents of the bound in dimension `dim`.
+   - The range is defined as
+     `[b.Center()[dim] - b.Radius(), b.Center()[dim] + b.Radius()]`.
+   - ***Note:*** unlike [`HRectBound`](#hrectbound), it is not possible to set
+     individual bound dimensions with `b[dim]`.  Use `b.Center()` and
+    `b.Radius()` instead.
+
+ * `b.Diameter()` returns the diameter of the ball.  This is always equal to
+   `2 * b.Radius()`.
+
+ * `b.MinWidth()` returns the minimum width of the bound in any dimension as a
+   `double`.  This is always equal to `b.Diameter()`.
+
+ * `b.Distance()` returns either a
+   [`EuclideanDistance`](../distances.md#lmetric) distance metric object, or a
+   `DistanceType` if a custom `DistanceType` has been specified in the
+   constructor.
+
+ * `b.Center(center)` will store the center of the `BallBound` in the vector
+   `center`.  `center` should be of type `arma::vec`.
+
+ * A `BallBound` can be serialized with
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+
+***Note:*** if a custom `ElemType` and/or `VecType` were specified in the
+constructor, then:
+
+ * `b.Radius()`, `b.MinWidth()`, `b.Volume()`, and `b.Diameter()` will return
+   `ElemType`;
+ * `b[dim]` will return a `RangeType<ElemType>`;
+ * `b.Center()` will return a `VecType&`, and
+ * `b.Center(center)` expects `center` to be of type `VecType`.
+
+#### Growing the bound
+
+The `BallBound` uses the logical `|=` to grow the bound to include points or
+other `BallBound`s.
+
+ * `b |= data` expands `b` to include all of the data points in `data`.  `data`
+   should be a
+   [column-major `arma::mat`](../../matrices.md#representing-data-in-mlpack).
+   The expansion operation is minimal, so `b` is not expanded any more than
+   necessary.
+   - The bound is grown using [Jack Ritter's bounding sphere
+     algorithm](https://en.wikipedia.org/wiki/Bounding_sphere#Ritter's_bounding_sphere),
+     which may move the center of the bound as it iteratively adds points to the
+     bound.
+   - If the bound is empty, the center is initialized to the first point of
+     `data`.
+   - If the bound is not empty, then `data` is expected to have dimensionality
+     that matches `b.Dim()`.
+
+#### Bounding distances to other objects
+
+Once a `BallBound` has been successfully created and set to the desired bounding
+ball, there are a number of functions that can bound the distance between a
+`BallBound` and other objects.
+
+ * `b.Contains(point)`
+   - Return a `bool` indicating whether or not `b` contains the given `point`
+     (an `arma::vec`).
+
+ * `b.MinDistance(point)`
+ * `b.MinDistance(bound)`
+   - Return a `double` whose value is the minimum possible distance between `b`
+     and either a `point` (an `arma::vec`) or another `bound` (a `BallBound`).
+   - The minimum distance between `b` and another point is the distance between
+     the point and `b`'s center minus `b`'s radius.
+   - The minimum distance between `b` and another bound is the distance between
+     the centers minus the radii of the bounds.
+   - If `point` is contained in `b`, or if `bound` overlaps `b`, then the
+     returned distance is 0.
+
+ * `b.MaxDistance(point)`
+ * `b.MaxDistance(bound)`
+   - Return a `double` whose value is the maximum possible distance between `b`
+     and either a `point` (an `arma::vec`) or another `bound` (a `BallBound`).
+   - The maximum distance between `b` and a given `point` is the distance
+     between the point and `b`'s center plus `b`'s radius.
+   - The maximum distance between `b` and another bound is the distance between
+     the centers plus the radii of the bounds.
+   - Note that this definition means that even if `b.Contains(point)` is true,
+     or if `b` overlaps `bound`, the maximum distance may be greater than `0`.
+
+ * `b.RangeDistance(point)`
+ * `b.RangeDistance(bound)`
+   - Compute the minimum and maximum distance between `b` and `point` or
+     `bound`, returning the result as a [`Range`](../math.md#range) object.
+   - This is more efficient than calling `b.MinDistance()` and
+     `b.MaxDistance()`.
+
+***Note:*** if a custom `DistanceType`, `ElemType`, or `VecType` were specified
+in the constructor, then:
+
+ * all distances will be computed with respect to the
+   specified `DistanceType`;
+ * all `point` arguments should have type `VecType`; and
+ * all return values will either be `ElemType` or
+   [`RangeType<ElemType>`](../math.md#range) (except for `Contains()`, which
+   will still return a `bool`).
+
+#### Example usage
+
+```c++
+// Create a bound that is the unit ball in 3 dimensions, by setting the center
+// and radius in the constructor.
+mlpack::BallBound b(1.0, arma::zeros<arma::vec>(3));
+
+std::cout << "Bounding ball created manually:" << std::endl;
+std::cout << " - Center: " << b.Center().t();
+std::cout << " - Radius: " << b.Radius() << "." << std::endl;
+for (size_t i = 0; i < 3; ++i)
+{
+  std::cout << " - Dimension " << i << " range: [" << b[i].Lo() << ", "
+      << b[i].Hi() << "]." << std::endl;
+}
+
+// Create a small dataset of 5 points, and then create a bound that contains all
+// of those points.
+arma::mat dataset(3, 5);
+dataset.col(0) = arma::vec("2.0 2.0 2.0");
+dataset.col(1) = arma::vec("2.5 2.5 2.5");
+dataset.col(2) = arma::vec("3.0 2.0 3.0");
+dataset.col(3) = arma::vec("2.0 3.0 2.0");
+dataset.col(4) = arma::vec("3.0 3.0 3.0");
+
+// The bounding ball will be computed using Jack Ritter's algorithm.
+mlpack::BallBound b2(3);
+b2 |= dataset;
+
+std::cout << "Bounding ball created on dataset:" << std::endl;
+std::cout << " - Center: " << b.Center().t();
+std::cout << " - Radius: " << b.Radius() << "." << std::endl;
+for (size_t i = 0; i < 3; ++i)
+{
+  std::cout << " - Dimension " << i << ": [" << b2[i].Lo() << ", " << b2[i].Hi()
+      << "]." << std::endl;
+}
+
+// Compute the minimum distance between a point inside the unit ball and the
+// unit ball bound.
+const double d1 = b.MinDistance(arma::vec("0.5 0.5 0.5"));
+std::cout << "Minimum distance between unit ball bound and [0.5, 0.5, 0.5]: "
+    << d1 << "." << std::endl;
+
+// Use Contains().  In this case, the 'else' will be taken.
+if (b.Contains(arma::vec("1.5 1.5 1.5")))
+  std::cout << "Unit ball bound contains [1.5, 1.5, 1.5]." << std::endl;
+else
+  std::cout << "Unit ball does not contain [1.5, 1.5, 1.5]." << std::endl;
+std::cout << std::endl;
+
+// Compute the maximum distance between a point inside the unit ball and the
+// unit ball bound.
+const double d2 = b.MaxDistance(arma::vec("0.5 0.5 0.5"));
+std::cout << "Maximum distance between unit ball bound and [0.5, 0.5, 0.5]: "
+    << d2 << "." << std::endl;
+
+// Compute the minimum and maximum distances between the unit ball bound and the
+// bound built on data points.
+const mlpack::Range r = b.RangeDistance(b2);
+std::cout << "Distances between unit ball bound and dataset bound: [" << r.Lo()
+    << ", " << r.Hi() << "]." << std::endl;
+
+// Create a random bound with radius between 1 and 2 and random center.
+mlpack::BallBound br(3);
+br.Radius() = 1.0 + Random();
+br.Center() = arma::randu<arma::vec>(3);
+std::cout << "Randomly created bound:" << std::endl;
+std::cout << " - Center: " << br.Center().t();
+std::cout << " - Radius: " << br.Radius() << "." << std::endl;
+for (size_t i = 0; i < 3; ++i)
+{
+  std::cout << " - Dimension " << i << ": [" << br[i].Lo() << ", " << br[i].Hi()
+      << "]." << std::endl;
+}
+
+// Create a bound using the Manhattan (L1) distance and compute the minimum and
+// maximum distance to a point.
+mlpack::BallBound<mlpack::ManhattanDistance> mb(3);
+mb |= dataset; // Expand the bound to include the points in the dataset.
+const mlpack::Range r2 = mb.RangeDistance(arma::vec("1.5 1.5 4.0"));
+std::cout << "Distance between Manhattan distance BallBound and "
+    << "[1.5, 1.5, 4.0]: [" << r2.Lo() << ", " << r2.Hi() << "]." << std::endl;
+
+// Create a bound using the Chebyshev (L-inf) distance, using random 32-bit
+// floating point elements, and compute the minimum and maximum distance to a
+// point.
+arma::fmat floatData(3, 25, arma::fill::randu);
+mlpack::BallBound<mlpack::ChebyshevDistance, float> cb;
+cb |= floatData; // Expand the bound to include the points in the dataset.
+// Note the use of arma::fvec to represent a point, since ElemType is float.
+const mlpack::RangeType<float> r3 = cb.RangeDistance(arma::fvec("1.5 1.5 4.0"));
+std::cout << "Distance between Chebyshev distance BallBound and "
     << "[1.5, 1.5, 4.0]: [" << r3.Lo() << ", " << r3.Hi() << "]." << std::endl;
 ```
 
