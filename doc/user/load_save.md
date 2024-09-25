@@ -14,8 +14,6 @@ saving data and objects are also available.
    - [`data::ImageInfo`](#dataimageinfo)
    - [Loading images](#loading-images)
  * [mlpack objects](#mlpack-objects): load or save any mlpack object
- * [Normalizing labels](#normalizing-labels): convert labels to ranges required
-   by mlpack classifiers
  * [Formats](#formats): supported formats for each load/save variant
 
 ## Numeric data
@@ -83,66 +81,8 @@ Some mlpack techniques support mixed categorical data, e.g., data where some
 dimensions take only categorical values (e.g. `0`, `1`, `2`, etc.).  When using
 mlpack, string data and other non-numerical data must be mapped to categorical
 values and represented as part of an `arma::mat`.  Category information is
-stored in an auxiliary `data::DatasetInfo` object.
-
-### `data::DatasetInfo`
-
-<!-- TODO: also document in core.md? -->
-
-mlpack represents categorical data via the use of the auxiliary
-`data::DatasetInfo` object, which stores information about which dimensions are
-numeric or categorical and allows conversion from the original category values
-to the numeric values used to represent those categories.
-
----
-
-#### Constructors
-
- - `info = data::DatasetInfo()`
-   * Create an empty `data::DatasetInfo` object.
-   * Use this constructor if you intend to populate the `data::DatasetInfo` via
-     a `data::Load()` call.
-
- - `info = data::DatasetInfo(dimensionality)`
-   * Create a `data::DatasetInfo` object with the given dimensionality
-   * All dimensions are assumed to be numeric (not categorical).
-
----
-
-#### Accessing and setting properties
-
- - `info.Type(d)`
-   * Get the type (categorical or numeric) of dimension `d`.
-   * Returns a `data::Datatype`, either `data::Datatype::numeric` or
-     `data::Datatype::categorical`.
-   * Calling `info.Type(d) = t` will set a dimension to type `t`, but this
-     should only be done before `info` is used with `data::Load()` or
-     `data::Save()`.
-
- - `info.NumMappings(d)`
-   * Get the number of categories in dimension `d` as a `size_t`.
-   * Returns `0` if dimension `d` is numeric.
-
- - `info.Dimensionality()`
-   * Return the dimensionality of the object as a `size_t`.
-
----
-
-#### Map to and from numeric values
-
- - `info.MapString<double>(value, d)`
-   * Given `value` (a `std::string`), return the `double` representing the
-     categorical mapping (an integer value) of `value` in dimension `d`.
-   * If a mapping for `value` does not exist in dimension `d`, a new mapping is
-     created, and `info.NumMappings(d)` is increased by one.
-   * If dimension `d` is numeric and `value` cannot be parsed as a numeric
-     value, then dimension `d` is changed to categorical and a new mapping is
-     returned.
-
- - `info.UnmapString(mappedValue, d)`
-   * Given `mappedValue` (a `size_t`), return the `std::string` containing the
-     original category that mapped to the value `mappedValue` in dimension `d`.
-   * If dimension `d` is not categorical, a `std::invalid_argument` is thrown.
+stored in an auxiliary [`data::DatasetInfo`](core/data.md#datadatasetinfo)
+object.
 
 ---
 
@@ -181,7 +121,9 @@ variant.
 
 ---
 
-Example usage to load and manipulate an ARFF file.
+### Examples of loading categorical data
+
+Load and manipulate an ARFF file.
 
 ```c++
 // Load a categorical dataset.
@@ -232,7 +174,7 @@ for (size_t d = 0; d < info.Dimensionality(); ++d)
 
 ---
 
-Example usage to manually create a `data::DatasetInfo` object.
+Manually create a `data::DatasetInfo` object.
 
 ```c++
 // This will manually create the following data matrix (shown as it would appear
@@ -330,45 +272,9 @@ Supported formats for saving are `jpg`, `png`, `tga`, `bmp`, and `hdr`.
 
 When loading images, each image is represented as a flattened single column
 vector in a data matrix; each row of the resulting vector will correspond to a
-single pixel value in a single channel.  An auxiliary `data::ImageInfo` class is
-used to store information about the images.
-
-### `data::ImageInfo`
-
-The `data::ImageInfo` class contains the metadata of the images.
-
----
-
-#### Constructors
-
- - `info = data::ImageInfo()`
-   * Create a `data::ImageInfo` object with no data.
-   * Use this constructor if you intend to populate the `data::ImageInfo` via a
-     `data::Load()` call.
-
- - `info = data::ImageInfo(width, height, channels)`
-   * Create a `data::ImageInfo` object with the given image specifications.
-   * `width` and `height` are specified as pixels.
-
----
-
-#### Accessing and modifying image metadata
-
- - `info.Quality() = q` will set the compression quality (e.g. for saving JPEGs)
-   to `q`.
-   * `q` should take values between `0` and `100`.
-   * The quality value is ignored unless calling `data::Save()` with `info`.
-
- - Calling `info.Channels() = 1` before loading will cause images to be loaded
-   in grayscale.
-
- - Metadata stored in the `data::ImageInfo` can be accessed with the following
-   members:
-   * `info.Width()` returns the image width in pixels.
-   * `info.Height()` returns the image height in pixels.
-   * `info.Channels()` returns the number of color channels in the image.
-   * `info.Quality()` returns the compression quality that will be used to save
-     images (between 0 and 100).
+single pixel value in a single channel.  An auxiliary [`data::ImageInfo`
+class](core/data.md#dataimageinfo) is used to store information about the
+images.
 
 ---
 
@@ -451,7 +357,9 @@ Pixels take values between 0 and 255.
 
 ---
 
-Example of loading and saving a single image:
+### Examples of loading and saving images
+
+Loading and saving a single image:
 
 ```c++
 // See https://www.mlpack.org/static/img/numfocus-logo.png.
@@ -482,7 +390,7 @@ mlpack::data::Save("numfocus-logo-mod.png", matrix, info);
 
 ---
 
-Example of loading and saving multiple images:
+Loading and saving multiple images:
 
 ```c++
 // Load some favicons from websites associated with mlpack.
@@ -586,79 +494,6 @@ mlpack::data::Save("range.json", "range", r2, true);
 ```
 
 ---
-
-## Normalizing labels
-
-mlpack classifiers and other algorithms require labels to be in the range `0` to
-`numClasses - 1`.  A vector of labels with arbitrary (`size_t`) values can be
-normalized to the required range with the `NormalizeLabels()` function.
-
----
-
- * `data::NormalizeLabels(labelsIn, labelsOut, mappings)`
-    - Map vector `labelsIn` into the range `0` to `numClasses - 1`, storing as
-      `labelsOut` (of type `arma::Row<size_t>`).
-      * `numClasses` is automatically detected using the number of unique values
-        in `labelsIn`.
-
-    - The column vector `mappings` will be filled with the reverse mappings to
-      convert back to the old labels; this can be used by `RevertLabels()`.
-
-    - `mappings[i]` contains the original class label for the mapped label `i`.
-
----
-
- * `data::RevertLabels(labelsIn, mappings, labelsOut)`
-    - Unmap normalized labels `labelsIn` using `mappings` into `labelsOut`.
-
-    - Performs the reverse operation of `NormalizeLabels()`; `mappings` should
-      be the same vector output by `NormalizeLabels()`.
-
----
-
-Simple example: convert labels into `0`, `1`, `2`, learn a model, then convert
-predictions back to the original label values.
-
-```c++
-// Create a random dataset with 5 points in 10 dimensions.
-arma::mat dataset(10, 5, arma::fill::randu);
-
-// Manually assemble labels vector: [3, 7, 3, 3, 5]
-arma::Row<size_t> labels = { 3, 7, 3, 3, 5 };
-
-// Note that these labels are not in the range `0` to `2`, and thus cannot be
-// used directly by mlpack classifiers!
-// We will map them to that range using NormalizeLabels().
-arma::Row<size_t> mappedLabels;
-arma::Col<size_t> mappings;
-mlpack::data::NormalizeLabels(labels, mappedLabels, mappings);
-const size_t numClasses = mappedLabels.max() + 1;
-
-// Print the mapped values:
-// [3, 7, 3, 3, 5] maps to [0, 1, 0, 0, 2].
-// The `mappings` vector will be [3, 7, 5].
-std::cout << "Original labels: " << labels;
-std::cout << "Mapped labels:   " << mappedLabels;
-std::cout << "Mappings: " << mappings;
-
-// Learn a model with the mapped labels.
-mlpack::DecisionTree d(dataset, mappedLabels, numClasses, 1 /* leaf size */);
-
-// Make predictions on the training dataset.
-arma::Row<size_t> mappedPredictions;
-d.Classify(dataset, mappedPredictions);
-
-// The predictions use mapped labels (0, 1, 2), which we will need to map back
-// to the original labels using RevertLabels().
-arma::Row<size_t> predictions;
-mlpack::data::RevertLabels(mappedPredictions, mappings, predictions);
-
-// Print the predictions before and after unmapping.
-// The mapped predictions will take values 0, 1, or 2; the predictions will take
-// values 3, 7, or 5 (like the original data).
-std::cout << "Mapped predictions: " << mappedPredictions;
-std::cout << "Predictions:        " << predictions;
-```
 
 ## Formats
 
