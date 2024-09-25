@@ -254,7 +254,8 @@ for basic tree functionality in mlpack.
    descendant point of `node`.
    - This is equivalent to `node.Descendant(0)`.
 
- * `node.Count()` returns a `size_t` indicating the number of descendant points    of `node`.
+ * `node.Count()` returns a `size_t` indicating the number of descendant points
+   of `node`.
    - This is equivalent to `node.NumDescendants()`.
 
 ---
@@ -546,7 +547,7 @@ std::cout << "Saved tree with " << tree.Dataset().n_cols << " points to "
 ---
 
 Load a 32-bit floating point `MeanSplitKDTree` from disk, then traverse it
-manually and find the number of leaf nodes with less than 10 children.
+manually and find the number of leaf nodes with fewer than 10 children.
 
 ```c++
 // This assumes the tree has already been saved to 'tree.bin' (as in the example
@@ -563,7 +564,7 @@ std::cout << "Tree loaded with " << tree.NumDescendants() << " points."
     << std::endl;
 
 // Recurse in a depth-first manner.  Count both the total number of leaves, and
-// the number of leaves with less than 10 points.
+// the number of leaves with fewer than 10 points.
 size_t leafCount = 0;
 size_t totalLeafCount = 0;
 std::stack<TreeType*> stack;
@@ -590,7 +591,7 @@ while (!stack.empty())
 // stack is the better option here.
 
 // Print the results.
-std::cout << leafCount << " out of " << totalLeafCount << " leaves have less "
+std::cout << leafCount << " out of " << totalLeafCount << " leaves have fewer "
   << "than 10 points." << std::endl;
 ```
 
