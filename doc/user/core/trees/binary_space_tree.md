@@ -959,7 +959,7 @@ in the constructor, then:
 ```c++
 // Create a bound that is the unit ball in 3 dimensions, by setting the center
 // and radius in the constructor.
-mlpack::BallBound b(1.0, arma::zeros<arma::vec>(3));
+mlpack::BallBound b(1.0, arma::vec(3, arma::fill::zeros));
 
 std::cout << "Bounding ball created manually:" << std::endl;
 std::cout << " - Center: " << b.Center().t();
@@ -984,8 +984,8 @@ mlpack::BallBound b2(3);
 b2 |= dataset;
 
 std::cout << "Bounding ball created on dataset:" << std::endl;
-std::cout << " - Center: " << b.Center().t();
-std::cout << " - Radius: " << b.Radius() << "." << std::endl;
+std::cout << " - Center: " << b2.Center().t();
+std::cout << " - Radius: " << b2.Radius() << "." << std::endl;
 for (size_t i = 0; i < 3; ++i)
 {
   std::cout << " - Dimension " << i << ": [" << b2[i].Lo() << ", " << b2[i].Hi()
@@ -1019,7 +1019,7 @@ std::cout << "Distances between unit ball bound and dataset bound: [" << r.Lo()
 
 // Create a random bound with radius between 1 and 2 and random center.
 mlpack::BallBound br(3);
-br.Radius() = 1.0 + Random();
+br.Radius() = 1.0 + mlpack::Random();
 br.Center() = arma::randu<arma::vec>(3);
 std::cout << "Randomly created bound:" << std::endl;
 std::cout << " - Center: " << br.Center().t();
