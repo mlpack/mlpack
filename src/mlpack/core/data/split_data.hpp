@@ -300,10 +300,10 @@ void Split(const arma::Mat<T>& input,
  * @param shuffleData If true, the sample order is shuffled; otherwise, each
  *       sample is visited in linear order. (Default true).
  */
-template<typename T>
-void Split(const arma::Mat<T>& input,
-           arma::Mat<T>& trainData,
-           arma::Mat<T>& testData,
+template<typename MatType>
+void Split(const MatType& input,
+           MatType& trainData,
+           MatType& testData,
            const double testRatio,
            const bool shuffleData = true)
 {

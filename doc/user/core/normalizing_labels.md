@@ -58,7 +58,9 @@ const size_t numClasses = mappedLabels.max() + 1;
 // The `mappings` vector will be [3, 7, 5].
 std::cout << "Original labels: " << labels;
 std::cout << "Mapped labels:   " << mappedLabels;
-std::cout << "Mappings: " << mappings;
+std::cout << std::endl;
+std::cout << "Mappings: " << mappings.t();
+std::cout << std::endl << std::endl;
 
 // Learn a model with the mapped labels.
 mlpack::DecisionTree d(dataset, mappedLabels, numClasses, 1 /* leaf size */);

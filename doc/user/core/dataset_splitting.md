@@ -95,23 +95,26 @@ std::cout << "Test data size:     " << testData.n_rows << " x "
 
 ---
 
-Split the labeled mixed categorical `telecom_churn` dataset, using 25% of the
-dataset for the test set.  Use 32-bit floating point matrices.
+Split the mixed categorical `telecom_churn` dataset and associated responses for
+regression, using 25% of the dataset for the test set.  Use 32-bit floating
+point elements to represent both the data and responses.
 
 ```c++
 // See https://datasets.mlpack.org/telecom_churn.arff.
 arma::fmat dataset;
 mlpack::data::DatasetInfo info; // Holds which dimensions are categorical.
-mlpack::data::Load("telecom_churn.arff", dataset, info);
+mlpack::data::Load("telecom_churn.arff", dataset, info, true);
 
-// See https://datasets.mlpack.org/telecom_churn.labels.csv.
-arma::Row<size_t> labels;
-mlpack::data::Load("telecom_churn.labels.csv", labels);
+// See https://datasets.mlpack.org/telecom_churn.responses.csv.
+arma::frowvec labels;
+mlpack::data::Load("telecom_churn.responses.csv", labels, true);
 
 arma::fmat trainData, testData;
-arma::Row<size_t> trainLabels, testLabels;
+arma::frowvec trainLabels, testLabels;
 
 // Split the data, using 25% of the data for the test set.
+// Note that Split() can accept many different types for the data and the
+// labels---here we pass arma::frowvec instead of arma::Row<size_t>.
 mlpack::data::Split(dataset, labels, trainData, testData, trainLabels,
     testLabels, 0.25);
 
@@ -138,7 +141,7 @@ splitting.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat dataset;
-mlpack::data::Load("movielens-100k.csv", dataset);
+mlpack::data::Load("movielens-100k.csv", dataset, true);
 
 arma::sp_mat trainData, testData;
 
@@ -159,7 +162,7 @@ std::cout << "Last point of full dataset:" << std::endl;
 std::cout << dataset.col(dataset.n_cols - 1).t() << std::endl;
 
 std::cout << "Last point of test set:" << std::endl;
-std::cout << testSet.col(testSet.n_cols - 1).t() << std::endl;
+std::cout << testData.col(testData.n_cols - 1).t() << std::endl;
 
 ```
 
@@ -169,13 +172,13 @@ Perform a stratified sampling of the `covertype` dataset, printing the
 percentage of each class in the original dataset and in the split datasets.
 
 ```c++
-// See https://datasets.mlpack.org/covertype.csv.
+// See https://datasets.mlpack.org/covertype.data.csv.
 arma::mat dataset;
-mlpack::data::Load("covertype.csv", dataset);
+mlpack::data::Load("covertype.data.csv", dataset, true);
 
 // See https://datasets.mlpack.org/covertype.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("covertype.labels.csv", labels);
+mlpack::data::Load("covertype.labels.csv", labels, true);
 
 arma::mat trainData, testData;
 arma::Row<size_t> trainLabels, testLabels;
