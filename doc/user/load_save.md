@@ -35,9 +35,9 @@ following functions.
    * If `fatal` is `true`, a `std::runtime_error` will be thrown on failure.
 
    * If `transpose` is `true`, then for plaintext formats (CSV/TSV/ASCII), the
-     matrix will be transposed on save.  (Keep this `true` if you want a
-     column-major matrix to be saved with points as rows and dimensions as
-     columns; that is generally what is desired.)
+     matrix will be transposed on load or save.  (Keep this `true` if you want a
+     column-major matrix to be loaded or saved with points as rows and
+     dimensions as columns; that is generally what is desired.)
 
    * A `bool` is returned indicating whether the operation was successful.
 
