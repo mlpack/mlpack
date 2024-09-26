@@ -4,8 +4,10 @@
 
 _????-??-??_
 
- * Fix compilation with clang 19 (#3799)
+ * Fix compilation with clang 19 (#3799).
 
+ * Deprecate version of `data::Split()` that returns a `std::tuple` for
+   consistency; use other overloads instead (#3803).
 
 ## mlpack 4.5.0
 

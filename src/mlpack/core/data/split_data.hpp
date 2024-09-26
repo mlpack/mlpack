@@ -349,6 +349,7 @@ void Split(const MatType& input,
  */
 template<typename T, typename LabelsType,
          typename = std::enable_if_t<arma::is_arma_type<LabelsType>::value> >
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 std::tuple<arma::Mat<T>, arma::Mat<T>, LabelsType, LabelsType>
 Split(const arma::Mat<T>& input,
       const LabelsType& inputLabel,
@@ -397,6 +398,7 @@ Split(const arma::Mat<T>& input,
  *      and testData (arma::Mat<T>).
  */
 template<typename T>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 std::tuple<arma::Mat<T>, arma::Mat<T>>
 Split(const arma::Mat<T>& input,
       const double testRatio,
@@ -553,6 +555,7 @@ template <class FieldType, typename T,
           class = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 std::tuple<FieldType, FieldType, arma::field<T>, arma::field<T>>
 Split(const FieldType& input,
       const arma::field<T>& inputLabel,
@@ -600,6 +603,7 @@ template <class FieldType,
           class = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 std::tuple<FieldType, FieldType>
 Split(const FieldType& input,
       const double testRatio,
