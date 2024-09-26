@@ -59,15 +59,17 @@ and a test set.
 ***Notes:***
 
  - Any matrix type matching the Armadillo API can be used for `input`,
-   `trainData`, and `testData` (e.g. `arma::fmat`, `arma::sp_mat`, etc.).  All
-   three matrices must have the same type.  In addition,
-   [`arma::field<>`](https://arma.sourceforge.net/docs.html#field) types can be
-   used.
+   `trainData`, and `testData` (e.g. `arma::fmat`, `arma::sp_mat`, etc.).
+    * All three matrices must have the same type.
+    * [`arma::field<>`](https://arma.sourceforge.net/docs.html#field) types can
+      also be used.
 
- - Any dense vector type matching the Armadillo API can be used for `labels`,
-   `trainLabels`, and `testLabels` (e.g. `arma::uvec`,
-   `arma::Col<unsigned short>`, etc.).  All three vectors must have the same
-   type.
+ - Any dense vector or matrix type matching the Armadillo API can be used for
+   `labels`, `trainLabels`, and `testLabels` (e.g. `arma::uvec`,
+   `arma::Col<unsigned short>`, etc.).
+    * All three label parameters must have the same type.
+    * [`arma::field<>`](https://arma.sourceforge.net/docs.html#field) types may
+      also be used, so long as the object type of the `field` is a vector type.
 
 ## Example usage
 
