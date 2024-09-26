@@ -81,8 +81,66 @@ Some mlpack techniques support mixed categorical data, e.g., data where some
 dimensions take only categorical values (e.g. `0`, `1`, `2`, etc.).  When using
 mlpack, string data and other non-numerical data must be mapped to categorical
 values and represented as part of an `arma::mat`.  Category information is
-stored in an auxiliary [`data::DatasetInfo`](core/data.md#datadatasetinfo)
-object.
+stored in an auxiliary `data::DatasetInfo` object.
+
+### `data::DatasetInfo`
+
+<!-- TODO: also document in core.md? -->
+
+mlpack represents categorical data via the use of the auxiliary
+`data::DatasetInfo` object, which stores information about which dimensions are
+numeric or categorical and allows conversion from the original category values
+to the numeric values used to represent those categories.
+
+---
+
+#### Constructors
+
+ - `info = data::DatasetInfo()`
+   * Create an empty `data::DatasetInfo` object.
+   * Use this constructor if you intend to populate the `data::DatasetInfo` via
+     a `data::Load()` call.
+
+ - `info = data::DatasetInfo(dimensionality)`
+   * Create a `data::DatasetInfo` object with the given dimensionality
+   * All dimensions are assumed to be numeric (not categorical).
+
+---
+
+#### Accessing and setting properties
+
+ - `info.Type(d)`
+   * Get the type (categorical or numeric) of dimension `d`.
+   * Returns a `data::Datatype`, either `data::Datatype::numeric` or
+     `data::Datatype::categorical`.
+   * Calling `info.Type(d) = t` will set a dimension to type `t`, but this
+     should only be done before `info` is used with `data::Load()` or
+     `data::Save()`.
+
+ - `info.NumMappings(d)`
+   * Get the number of categories in dimension `d` as a `size_t`.
+   * Returns `0` if dimension `d` is numeric.
+
+ - `info.Dimensionality()`
+   * Return the dimensionality of the object as a `size_t`.
+
+---
+
+#### Map to and from numeric values
+
+ - `info.MapString<double>(value, d)`
+   * Given `value` (a `std::string`), return the `double` representing the
+     categorical mapping (an integer value) of `value` in dimension `d`.
+   * If a mapping for `value` does not exist in dimension `d`, a new mapping is
+     created, and `info.NumMappings(d)` is increased by one.
+   * If dimension `d` is numeric and `value` cannot be parsed as a numeric
+     value, then dimension `d` is changed to categorical and a new mapping is
+     returned.
+
+ - `info.UnmapString(mappedValue, d)`
+   * Given `mappedValue` (a `size_t`), return the `std::string` containing the
+     original category that mapped to the value `mappedValue` in dimension `d`.
+   * If dimension `d` is not categorical, a `std::invalid_argument` is thrown.
 
 ---
 
@@ -121,9 +179,7 @@ variant.
 
 ---
 
-### Examples of loading categorical data
-
-Load and manipulate an ARFF file.
+Example usage to load and manipulate an ARFF file.
 
 ```c++
 // Load a categorical dataset.
@@ -174,7 +230,7 @@ for (size_t d = 0; d < info.Dimensionality(); ++d)
 
 ---
 
-Manually create a `data::DatasetInfo` object.
+Example usage to manually create a `data::DatasetInfo` object.
 
 ```c++
 // This will manually create the following data matrix (shown as it would appear
@@ -272,9 +328,45 @@ Supported formats for saving are `jpg`, `png`, `tga`, `bmp`, and `hdr`.
 
 When loading images, each image is represented as a flattened single column
 vector in a data matrix; each row of the resulting vector will correspond to a
-single pixel value in a single channel.  An auxiliary [`data::ImageInfo`
-class](core/data.md#dataimageinfo) is used to store information about the
-images.
+single pixel value in a single channel.  An auxiliary `data::ImageInfo` class is
+used to store information about the images.
+
+### `data::ImageInfo`
+
+The `data::ImageInfo` class contains the metadata of the images.
+
+---
+
+#### Constructors
+
+ - `info = data::ImageInfo()`
+   * Create a `data::ImageInfo` object with no data.
+   * Use this constructor if you intend to populate the `data::ImageInfo` via a
+     `data::Load()` call.
+
+ - `info = data::ImageInfo(width, height, channels)`
+   * Create a `data::ImageInfo` object with the given image specifications.
+   * `width` and `height` are specified as pixels.
+
+---
+
+#### Accessing and modifying image metadata
+
+ - `info.Quality() = q` will set the compression quality (e.g. for saving JPEGs)
+   to `q`.
+   * `q` should take values between `0` and `100`.
+   * The quality value is ignored unless calling `data::Save()` with `info`.
+
+ - Calling `info.Channels() = 1` before loading will cause images to be loaded
+   in grayscale.
+
+ - Metadata stored in the `data::ImageInfo` can be accessed with the following
+   members:
+   * `info.Width()` returns the image width in pixels.
+   * `info.Height()` returns the image height in pixels.
+   * `info.Channels()` returns the number of color channels in the image.
+   * `info.Quality()` returns the compression quality that will be used to save
+     images (between 0 and 100).
 
 ---
 
@@ -357,9 +449,7 @@ Pixels take values between 0 and 255.
 
 ---
 
-### Examples of loading and saving images
-
-Loading and saving a single image:
+Example of loading and saving a single image:
 
 ```c++
 // See https://www.mlpack.org/static/img/numfocus-logo.png.
@@ -390,7 +480,7 @@ mlpack::data::Save("numfocus-logo-mod.png", matrix, info);
 
 ---
 
-Loading and saving multiple images:
+Example of loading and saving multiple images:
 
 ```c++
 // Load some favicons from websites associated with mlpack.
