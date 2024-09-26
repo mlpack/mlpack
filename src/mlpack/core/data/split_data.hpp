@@ -37,7 +37,7 @@ void SplitHelper(const InputType& input,
   train.set_size(input.n_rows, trainSize);
   test.set_size(input.n_rows, testSize);
 
-  // Shuffling and spliting simultaneously.
+  // Shuffling and splitting simultaneously.
   if (!order.is_empty())
   {
     if (trainSize > 0)
@@ -51,7 +51,7 @@ void SplitHelper(const InputType& input,
         test.col(i - trainSize) = input.col(order(i));
     }
   }
-  // Spliting only.
+  // Splitting only.
   else
   {
     if (trainSize > 0)
@@ -413,6 +413,48 @@ Split(const arma::Mat<T>& input,
 }
 
 /**
+ * Given an input dataset, split into a training set and test set.
+ * Example usage below. This overload places the split dataset into the two
+ * output parameters given (trainData, testData).
+ *
+ * @code
+ * arma::field<arma::mat> input = loadData();
+ * arma::field<arma::mat> trainData;
+ * arma::field<arma::mat> testData;
+ * RandomSeed(100); // Set the seed if you like.
+ *
+ * // Split the dataset into a training and test set, with 30% of the data being
+ * // held out for the test set.
+ * Split(input, trainData, testData, 0.3);
+ * @endcode
+ *
+ * @param input Input dataset to split.
+ * @param trainData Matrix to store training data into.
+ * @param testData Matrix to store test data into.
+ * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
+ * @param shuffleData If true, the sample order is shuffled; otherwise, each
+ *       sample is visited in linear order. (Default true).
+ */
+template<typename T>
+void Split(const arma::field<T>& input,
+           arma::field<T>& trainData,
+           arma::field<T>& testData,
+           const double testRatio,
+           const bool shuffleData = true)
+{
+  if (shuffleData)
+  {
+    arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
+        input.n_cols - 1, input.n_cols));
+    SplitHelper(input, trainData, testData, testRatio, order);
+  }
+  else
+  {
+    SplitHelper(input, trainData, testData, testRatio);
+  }
+}
+
+/**
  * Given an input dataset and labels, split into a training set and test set.
  * Example usage below.  This overload places the split dataset into the four
  * output parameters given (trainData, testData, trainLabel, and testLabel).
@@ -420,7 +462,8 @@ Split(const arma::Mat<T>& input,
  * The input dataset must be of type arma::field. It should have the shape -
  * (n_rows = 1, n_cols = Number of samples, n_slices = 1).
  *
- * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>.
+ * NOTE: Here FieldType could be arma::field<arma::mat> or
+ * arma::field<arma::vec>.
  *
  * @code
  * arma::field<arma::mat> input = loadData();
