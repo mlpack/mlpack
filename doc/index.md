@@ -131,7 +131,7 @@ Prepare data for machine learning algorithms.
 
  * [Normalizing labels](user/core/normalizing_labels.md): map labels to and from
    the range `[0, numClasses - 1]`.
- * [Dataset splitting](user/core/dataset_splitting.md): split a dataset into a
+ * [Dataset splitting](user/core/split.md): split a dataset into a
    training set and a test set.
 
 ***NOTE:*** this documentation is still under construction and so not all
