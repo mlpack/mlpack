@@ -167,7 +167,7 @@ API](../../../developer/trees.md#the-treetype-api).
 
  * `node.IsLeaf()` returns a `bool` indicating whether or not `node` is a leaf.
 
- * `node.Child(i)` returns a `KDTree&` that is the `i`th child.
+ * `node.Child(i)` returns a `BallTree&` that is the `i`th child.
    - `i` must be `0` or `1`.
    - This function should only be called if `node.NumChildren()` is not `0`
      (e.g. if `node` is not a leaf).  Note that this returns a valid `BallTree&`
