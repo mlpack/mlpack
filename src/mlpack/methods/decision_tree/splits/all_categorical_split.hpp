@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/split_functions/all_categorical_split.hpp
+ * @file methods/decision_tree/splits/all_categorical_split.hpp
  * @author Ryan Curtin
  *
  * This file defines a tree splitter that split a categorical feature into all
@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_DECISION_TREE_ALL_CATEGORICAL_SPLIT_HPP
-#define MLPACK_METHODS_DECISION_TREE_ALL_CATEGORICAL_SPLIT_HPP
+#ifndef MLPACK_METHODS_DECISION_TREE_SPLITS_ALL_CATEGORICAL_SPLIT_HPP
+#define MLPACK_METHODS_DECISION_TREE_SPLITS_ALL_CATEGORICAL_SPLIT_HPP
 
 #include <mlpack/prereqs.hpp>
 
