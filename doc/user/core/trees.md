@@ -9,6 +9,7 @@ different trees.  The following tree types are available in mlpack:
  * [`MeanSplitKDTree`](trees/mean_split_kdtree.md)
  * [`MeanSplitBallTree`](trees/mean_split_ball_tree.md)
  * [`BinarySpaceTree`](trees/binary_space_tree.md)
+ * [`BallTree`](trees/ball_tree.md)
 
 *Note:* this documentation is a work in progress.  Not all trees are documented
 yet.

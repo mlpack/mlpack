@@ -443,8 +443,8 @@ std::cout << "Center of kd-tree: " << center.t();
 
 ---
 
-Build two `KDTree`s on subsets of the corel dataset and compute various
-bounding quantities.
+Build two `KDTree`s on subsets of the corel dataset and compute minimum and
+maximum distances between different nodes in the tree.
 
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
@@ -534,7 +534,7 @@ std::cout << "Saved tree with " << tree.Dataset().n_cols << " points to "
 ---
 
 Load a 32-bit floating point `KDTree` from disk, then traverse it manually and
-find the number of leaf nodes with less than 10 children.
+find the number of leaf nodes with fewer than 10 children.
 
 ```c++
 // This assumes the tree has already been saved to 'tree.bin' (as in the example
@@ -551,7 +551,7 @@ std::cout << "Tree loaded with " << tree.NumDescendants() << " points."
     << std::endl;
 
 // Recurse in a depth-first manner.  Count both the total number of leaves, and
-// the number of leaves with less than 10 points.
+// the number of leaves with fewer than 10 points.
 size_t leafCount = 0;
 size_t totalLeafCount = 0;
 std::stack<TreeType*> stack;
@@ -578,7 +578,7 @@ while (!stack.empty())
 // stack is the better option here.
 
 // Print the results.
-std::cout << leafCount << " out of " << totalLeafCount << " leaves have less "
+std::cout << leafCount << " out of " << totalLeafCount << " leaves have fewer "
   << "than 10 points." << std::endl;
 ```
 
