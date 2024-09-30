@@ -7,23 +7,17 @@ partitioning tree where each node contains points within a ball.  This is a
 well-known data structure for efficient distance operations (such as nearest
 neighbor search) in low to moderate dimensions.
 
+In general, a `MeanSplitBallTree` will be a better balanced tree and have fewer
+nodes than a [`BallTree`](ball_tree.md).  However, counterintuitively, a more
+balanced tree can be *worse* for search tasks like nearest neighbor search,
+because unbalanced nodes are more easily pruned away during search.  In general,
+using a `BallTree` for nearest neighbor search is faster, *but this is not true
+for every dataset or task*.
+
 mlpack's `MeanSplitBallTree` implementation supports three template parameters
 for configurable behavior, and implements all the functionality required by the
 [TreeType API](../../../developer/trees.md#the-treetype-api), plus some
 additional functionality specific to ball trees.
-
-<!-- TODO: clean up -->
-The `BallTree` is very similar to mlpack's [`KDTree`](kdtree.md), but the
-`BallTree` may perform better in higher dimensions, as distances calculations
-are slightly simplified; but, nodes may overlap, causing bounding operations to
-be less effective.  `BallTree` also supports distance metrics that are not
-[`LMetric`](../distances.md#lmetric), making it more flexible than `KDTree`.
-
-***Note:*** many online sources claim that ball trees are better/faster than
-kd-trees as the dimensionality increases, or that ball trees are better/faster
-in general than kd-trees.  This is not what has been observed with mlpack's
-implementations, so before deciding on `BallTree`, be sure that you have tested
-with [`KDTree`](kdtree.md) first.
 
  * [Template parameters](#template-parameters)
  * [Constructors](#constructors)
