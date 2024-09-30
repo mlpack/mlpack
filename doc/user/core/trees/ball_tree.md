@@ -449,8 +449,8 @@ std::cout << std::endl;
 
 ---
 
-Build two `BallTree`s on subsets of the corel dataset and compute various
-bounding quantities.
+Build two `BallTree`s on subsets of the corel dataset and compute minimum and
+maximum distances between different nodes in the tree.
 
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
