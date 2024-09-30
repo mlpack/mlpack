@@ -6,6 +6,7 @@ the [same API](../../developer/trees.md), allowing easy plug-and-play usage of
 different trees.  The following tree types are available in mlpack:
 
  * [`KDTree`](trees/kdtree.md)
+ * [`MeanSplitKDTree`](trees/mean_split_kdtree.md)
  * [`BinarySpaceTree`](trees/binary_space_tree.md)
  * [`BallTree`](trees/ball_tree.md)
 

@@ -173,10 +173,11 @@ using MeanSplitKDTree = BinarySpaceTree<DistanceType,
                                         MeanSplit<BoundType, DistanceType>>;
 ```
 
-Now, the `MeanSplitKDTree` class has only three template parameters and can be
-used as a `TreeType` policy class in various mlpack algorithms.  Many types of
-trees in mlpack have more than three template parameters and rely on template
-typedefs to provide simplified `TreeType` interfaces.
+Now, the [`MeanSplitKDTree`](../user/core/trees/mean_split_kdtree.md) class has
+only three template parameters and can be used as a `TreeType` policy class in
+various mlpack algorithms.  Many types of trees in mlpack have more than three
+template parameters and rely on template typedefs to provide simplified
+`TreeType` interfaces.
 
 ## The TreeType API
 
@@ -1266,7 +1267,7 @@ mlpack contains several ready-to-use implementations of trees that satisfy the
 TreeType policy API:
 
  - [`KDTree`](../user/core/trees/kdtree.md)
- - `MeanSplitKDTree`
+ - [`MeanSplitKDTree`](../user/core/trees/mean_split_kdtree.md)
  - [`BallTree`](../user/core/trees/ball_tree.md)
  - `MeanSplitBallTree`
  - `RTree`

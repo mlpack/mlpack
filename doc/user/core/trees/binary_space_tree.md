@@ -8,6 +8,7 @@ be used directly, and instead one of the numerous variants should be used
 instead:
 
  * [`KDTree`](kdtree.md)
+ * [`MeanSplitKDTree`](mean_split_kdtree.md)
 
 ---
 
@@ -32,6 +33,7 @@ may require a template typedef.
 <!-- TODO: add links to all distance-based algorithms and other trees? -->
 
  * [`KDTree`](kdtree.md)
+ * [`MeanSplitKDTree`](mean_split_kdtree.md)
  * [Binary space partitioning on Wikipedia](https://dl.acm.org/doi/pdf/10.1145/361002.361007)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 
@@ -1231,6 +1233,8 @@ to write a fully custom split:
 
  * [`MidpointSplit`](#midpointsplit): splits on the midpoint of the dimension
    with maximum width
+ * [`MeanSplit`](#meansplit): splits on the mean value of the points in the
+   dimension with maximum width
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
 
@@ -1254,6 +1258,30 @@ The splitting strategy for the `MidpointSplit` class is, given a set of points:
 For implementation details, see
 [the source code](/src/mlpack/core/tree/binary_space_tree/midpoint_split_impl.hpp).
 
+### `MeanSplit`
+
+The `MeanSplit` class is a splitting strategy that can be used by
+[`BinarySpaceTree`](#binaryspacetree).  It is the splitting strategy used by the
+[`MeanSplitKDTree`](mean_split_kdtree.md) class.
+
+The splitting strategy for the `MeanSplit` class is, given a set of points:
+
+ * Find the dimension `d` of the points with maximum width.
+ * Compute the mean value `m` of the points in dimension `d`.
+ * Split in dimension `d`.
+ * Points less than `m` will go to the left child.
+ * Points greater than `m` will go to the right child.
+
+In practice, the `MeanSplit` splitting strategy often results in a tree with
+fewer leaf nodes than `MidpointSplit`, because each split is more likely to be
+balanced.  However, counterintuitively, a more balanced tree can be *worse* for
+search tasks like nearest neighbor search, because unbalanced nodes are more
+easily pruned away during search.  In general, using `MidpointSplit` for nearest
+neighbor search is 20-80% faster, *but this is not true for every dataset or
+task*.
+
+For implementation details, see
+[the source code](/src/mlpack/core/tree/binary_space_tree/mean_split_impl.hpp).
 
 ### Custom `SplitType`s
 
