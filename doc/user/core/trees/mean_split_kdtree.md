@@ -456,8 +456,8 @@ std::cout << "Center of kd-tree: " << center.t();
 
 ---
 
-Build two `MeanSplitKDTree`s on subsets of the corel dataset and compute various
-bounding quantities.
+Build two `MeanSplitKDTree`s on subsets of the corel dataset and compute minimum
+and maximum distances between different nodes in the tree.
 
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
