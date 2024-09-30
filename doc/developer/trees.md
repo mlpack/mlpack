@@ -1268,7 +1268,7 @@ TreeType policy API:
  - [`KDTree`](../user/core/trees/kdtree.md)
  - `MeanSplitKDTree`
  - `BallTree`
- - `MeanSplitBallTree`
+ - [`MeanSplitBallTree`](../user/core/trees/mean_split_ball_tree.md)
  - `RTree`
  - `RStarTree`
  - `StandardCoverTree`
