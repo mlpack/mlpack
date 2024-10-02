@@ -1295,6 +1295,8 @@ to write a fully custom split:
    with maximum width
  * [`MeanSplit`](#meansplit): splits on the mean value of the points in the
    dimension with maximum width
+ * [`VantagePointSplit`](#vantagepointsplit): split by selecting a 'vantage
+   point' and then split points into 'near' and 'far' sets
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
 
@@ -1342,6 +1344,50 @@ task*.
 
 For implementation details, see
 [the source code](/src/mlpack/core/tree/binary_space_tree/mean_split_impl.hpp).
+
+### `VantagePointSplit`
+
+The `VantagePointSplit` class is a splitting strategy that can be used by
+[`BinarySpaceTree`](#binaryspacetree).  It is the default strategy for splitting
+[`VPTree`s](vptree.md), and is detailed in [the paper](...).
+Due to the nature of the split, ***`VantagePointSplit` should always be used
+with the [`HollowBallBound`](#hollowballbound)***.
+
+The splitting strategy for the `VantagePointSplit` class is, given a set of
+points:
+
+ * Select a vantage point from a sample of 100 random candidate points (or use
+   the full set if there are fewer than 100 points):
+   - Compute the distances between each candidate point and 100 additional
+     random samples (or the full set if there are fewer than 100 points).
+   - Select the vantage point as the candidate with maximum average distance to
+     the additional random samples.
+ * Compute a boundary distance `mu` that is the median distance between the
+   vantage point and its random samples.
+ * Points with distance less than `mu` from the vantage point will go to the
+   left child.
+ * Points with distance greater than `mu` from the vantage point will go to the
+   right child.
+
+The `VantagePointSplit` class has three template parameters:
+
+```
+VantagePointSplit<BoundType, MatType, MaxNumSamples = 100>
+```
+
+If a custom number of samples `S` is desired, the easiest way to specify is via
+a template typedef:
+
+```
+template<typename BoundType, typename MatType>
+using MyVantagePointSplit = VantagePointSplit<BoundType, MatType, S>;
+```
+
+Then, `MyVantagePointSplit` can be used directly with `BinarySpaceTree` as a
+`SplitType`.
+
+For implementation details, see
+[the source code](/src/mlpack/core/tree/binary_space_tree/vantage_point_split_impl.hpp).
 
 ### Custom `SplitType`s
 
