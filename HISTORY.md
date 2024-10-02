@@ -4,8 +4,9 @@
 
 _????-??-??_
 
- * Fix compilation with clang 19 (#3799)
+ * Fix compilation with clang 19 (#3799).
 
+ * Fix serialization and `MinDistance()` bugs with `HollowBallBound` (#3808).
 
 ## mlpack 4.5.0
 
