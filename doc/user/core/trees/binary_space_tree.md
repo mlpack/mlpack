@@ -413,7 +413,7 @@ class uses a hyperrectangle bound.  An example `HRectBound` is shown below; the
 bound is the smallest rectangle that encloses all of the points.
 
 <center>
-<img src="../../../img/hrectbound.png" width="50%" alt="hyperrectangle bound enclosing points">
+<img src="../../../img/hrectbound.png" width="450" alt="hyperrectangle bound enclosing points">
 </center>
 
 mlpack supplies several drop-in `BoundType` classes, and it is also possible to
@@ -782,10 +782,12 @@ secondary center point and inner radius.  An example `HollowBallBound` is shown
 below in two dimensions; shaded area represents area held within the bound.
 
 <center>
-<img src="../../../img/hollowballbound.png" width="50%" alt="hollow ball bound">
+<img src="../../../img/hollowballbound.png" width="350" alt="hollow ball bound">
 </center>
 
 `HollowBallBound` is used directly by the [`VPTree`](vptree.md) class.
+
+---
 
 #### Constructors
 
@@ -841,6 +843,8 @@ before using it!
    - The bound will use the given `DistanceType` class to compute distances, and
      expect data to have elements with type `ElemType`.
 
+---
+
 #### Accessing and modifying properties of the bound
 
 The individual bounds associated with each dimension of a `HollowBallBound` can
@@ -853,6 +857,7 @@ be accessed and modified.
 
  * `b.HollowCenter()` returns an `arma::vec&` containing the center of the inner
    ball.  Its elements can be directly modified.
+   - It is possible that `b.HollowCenter()` is outside of the outer ball!
 
  * `b.OuterRadius()` will return a `double` that is the radius of the outer
    ball.
@@ -861,6 +866,9 @@ be accessed and modified.
  * `b.InnerRadius()` will return a `double` that is the radius of the inner
    ball.
    - `b.InnerRadius() = r` will set the radius of the inner ball to `r`.
+   - It is possible that `b.InnerRadius() > b.OuterRadius()`, and this implies
+     that the hollow center is outside the outer ball (otherwise the bound is
+     empty).
 
  * `b[dim]` will return a [`Range`](../math.md#range) object representing the
    extents of the bound in dimension `dim`.
@@ -913,9 +921,12 @@ be accessed and modified.
  * `b.Center()` and `b.HollowCenter()` will return `arma::Col<ElemType>&`; and
  * `b.Center(center)` expects `center` to be of type `arma::Col<ElemType>`.
 
+---
+
 #### Growing the bound
 
-The `HollowBallBound` uses the logical `|=` to grow the bound to include points.
+The `HollowBallBound` uses the logical `|=` to grow the bound to include points
+or other bounds.
 
  * `b |= data` expands `b` so the outer ball includes all of the data points in
    `data`, shrinking the inner ball as necessary.  `data` should be a
@@ -931,6 +942,14 @@ The `HollowBallBound` uses the logical `|=` to grow the bound to include points.
    - If the bound is not empty, then `data` is expected to have dimensionality
      that matches `b.Dim()`.
 
+ * `b |= bound` expands `b` to include all of the volume included in `bound`.
+   The center points will not be modified.
+   - The outer ball's radius will be expanded to include the outer balls of both
+     `b` and `bound`.
+   - The inner (hollow) ball's radius will be shrunk to be the intersection of
+     the inner balls of `b` and `bound`.  (This may result in `b.InnerRadius()`
+     being 0.)
+
 ***Notes:***
 
  - The growth operation does not grow the inner (hollow) ball.  Properties
@@ -939,6 +958,8 @@ The `HollowBallBound` uses the logical `|=` to grow the bound to include points.
 
  - If a custom `ElemType` was specified, then any `data` argument should be a
    matrix with that `ElemType` (e.g. `arma::Mat<ElemType>`).
+
+---
 
 #### Bounding distances to other objects
 
@@ -993,6 +1014,8 @@ constructor, then all distances will be computed with respect to the specified
 [`RangeType<ElemType>`](../math.md#range) (except for `Contains()`, which will
 still return a `bool`).
 
+---
+
 #### Example usage
 
 ```c++
@@ -1004,7 +1027,7 @@ mlpack::HollowBallBound b(0.5, 1.0, arma::vec(3));
 std::cout << "Hollow unit ball bound created manually:" << std::endl;
 std::cout << " - Center: " << b.Center().t();
 std::cout << " - Outer radius: " << b.OuterRadius() << "." << std::endl;
-std::cout << " - Hollow center: " << b.HollowCenter.();
+std::cout << " - Hollow center: " << b.HollowCenter().t();
 std::cout << " - Inner radius: " << b.InnerRadius() << "." << std::endl;
 for (size_t i = 0; i < 3; ++i)
 {
@@ -1036,8 +1059,8 @@ std::cout << std::endl;
 // On the other hand, if we initialize a HollowBallBound to a non-empty bound,
 // then `operator|=()` will shrink the hollow ball as necessary.
 //
-// We initialize this ball bound to a "slice" with radii [2.6, 2.7].
-mlpack::HollowBallBound b3(2.6, 2.7, arma::vec(3));
+// We initialize this ball bound to a "slice" with radii [3.6, 3.7].
+mlpack::HollowBallBound b3(3.6, 3.7, arma::vec(3));
 b3 |= dataset;
 std::cout << "Hollow ball bound on points with pre-initialization and "
     << "`operator|=()`:" << std::endl;
@@ -1057,16 +1080,16 @@ b4.HollowCenter() = arma::vec("1.0 1.0 1.0");
 
 // Compute the minimum distance between a point inside the hollow unit ball's
 // outer ball.
-const double d1 = b.MinDistance(arma::vec("0.75 0.75 0.75"));
-std::cout << "Minimum distance between hollow unit ball bound and [0.75, 0.75, "
-    << "0.75]: " << d1 << "." << std::endl;
+const double d1 = b.MinDistance(arma::vec("0.9 0.9 0.9"));
+std::cout << "Minimum distance between hollow unit ball bound and [0.9, 0.9, "
+    << "0.9]: " << d1 << "." << std::endl;
 
 // Compute the minimum distance between a point inside the hollow unit ball's
 // inner ball (so the point is not contained in the bound---it is within the
 // hollow section).
-const double d2 = b.MinDistance(arma::vec("0.25 0.25 0.25"));
-std::cout << "Minimum distance between hollow unit ball bound and [0.25, 0.25, "
-    << "0.25]: " << d2 << "." << std::endl;
+const double d2 = b.MinDistance(arma::vec("0.0 0.0 0.0"));
+std::cout << "Minimum distance between hollow unit ball bound and [0.0, 0.0, "
+    << "0.0]: " << d2 << "." << std::endl;
 std::cout << std::endl;
 
 // Use Contains().  In this case, the 'else' will be taken.
@@ -1083,9 +1106,9 @@ std::cout << std::endl;
 
 // Compute the maximum distance between a point inside the unit ball and the
 // unit hollow ball bound.
-const double d2 = b4.MaxDistance(arma::vec("0.1 0.1 0.1"));
+const double d3 = b4.MaxDistance(arma::vec("0.1 0.1 0.1"));
 std::cout << "Maximum distance between hollow unit ball bound and [0.1, 0.1, "
-    << "0.1]: " << d2 << "." << std::endl;
+    << "0.1]: " << d3 << "." << std::endl;
 
 // Compute the minimum and maximum distances between the hollow unit ball bound
 // and the bound built on data points.
