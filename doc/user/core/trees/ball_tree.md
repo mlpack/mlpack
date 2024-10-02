@@ -430,7 +430,7 @@ mlpack::data::Load("cloud.csv", dataset, true);
 // `mlpack::BallTree tree(...)` will work fine in C++20 or newer).
 mlpack::BallTree<> tree(std::move(dataset));
 
-// Print the bounding box of the root node.
+// Print the bounding ball of the root node.
 std::cout << "Bounding ball of root node:" << std::endl;
 std::cout << " - Center: " << tree.Bound().Center();
 std::cout << " - Radius: " << tree.Bound().Radius();
