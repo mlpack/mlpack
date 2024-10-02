@@ -24,6 +24,10 @@ steps:
       brew install --cask julia
     fi
 
+    if [ "$BINDING" = "go" ]; then
+      brew install go
+    fi
+
   displayName: 'Install Build Dependencies'
 
 # Configure mlpack (CMake)
