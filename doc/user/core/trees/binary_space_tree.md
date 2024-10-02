@@ -778,6 +778,10 @@ std::cout << "Distance between Chebyshev distance HRectBound and "
 The `BallBound` class represents a ball with a center and a radius.  A
 `BallBound` can be used to perform a variety of distance-based bounding tasks.
 
+<center>
+<img src="../../../img/ballbound.png" width="275" alt="ball bound">
+</center>
+
 `BallBound` is used directly by the [`BallTree`](ball_tree.md) class.
 
 #### Constructors
