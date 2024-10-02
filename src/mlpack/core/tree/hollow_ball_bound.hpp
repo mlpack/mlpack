@@ -213,6 +213,16 @@ class HollowBallBound
   const HollowBallBound& operator|=(const MatType& data);
 
   /**
+   * Expand the bound to include the given bound.  The centroid will not be
+   * moved.
+   *
+   * @tparam MatType Type of matrix; could be arma::mat, arma::spmat, or a
+   *     vector.
+   * @tparam data Data points to add.
+   */
+  const HollowBallBound& operator|=(const HollowBallBound& other);
+
+  /**
    * Returns the diameter of the ballbound.
    */
   ElemType Diameter() const { return 2 * radii.Hi(); }
