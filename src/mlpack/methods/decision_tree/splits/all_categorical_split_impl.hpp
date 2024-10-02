@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/split_functions/all_categorical_split_impl.hpp
+ * @file methods/decision_tree/splits/all_categorical_split_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the AllCategoricalSplit categorical split class.
@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_DECISION_TREE_ALL_CATEGORICAL_SPLIT_IMPL_HPP
-#define MLPACK_METHODS_DECISION_TREE_ALL_CATEGORICAL_SPLIT_IMPL_HPP
+#ifndef MLPACK_METHODS_DECISION_TREE_SPLITS_ALL_CATEGORICAL_SPLIT_IMPL_HPP
+#define MLPACK_METHODS_DECISION_TREE_SPLITS_ALL_CATEGORICAL_SPLIT_IMPL_HPP
 
 namespace mlpack {
 
