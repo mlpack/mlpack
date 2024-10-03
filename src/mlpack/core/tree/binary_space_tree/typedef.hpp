@@ -107,7 +107,9 @@ using MeanSplitKDTree = BinarySpaceTree<DistanceType,
  *
  * @see @ref trees, BinarySpaceTree, KDTree, MeanSplitBallTree
  */
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using BallTree = BinarySpaceTree<DistanceType,
                                  StatisticType,
                                  MatType,
