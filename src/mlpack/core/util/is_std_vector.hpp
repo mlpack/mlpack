@@ -20,11 +20,11 @@ namespace util {
 
 //! Metaprogramming structure for vector detection.
 template<typename T>
-struct IsStdVector { const static bool value = false; };
+struct IsStdVector { static const bool value = false; };
 
 //! Metaprogramming structure for vector detection.
 template<typename T, typename A>
-struct IsStdVector<std::vector<T, A>> { const static bool value = true; };
+struct IsStdVector<std::vector<T, A>> { static const bool value = true; };
 
 } // namespace util
 } // namespace mlpack

@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/split_functions/random_binary_numeric_split.hpp
+ * @file methods/decision_tree/splits/random_binary_numeric_split.hpp
  * @author Rishabh Garg
  *
  * A tree splitter that finds a random binary numeric split.
@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_DECISION_TREE_RANDOM_BINARY_NUMERIC_SPLIT_HPP
-#define MLPACK_METHODS_DECISION_TREE_RANDOM_BINARY_NUMERIC_SPLIT_HPP
+#ifndef MLPACK_METHODS_DECISION_TREE_SPLITS_RANDOM_BINARY_NUMERIC_SPLIT_HPP
+#define MLPACK_METHODS_DECISION_TREE_SPLITS_RANDOM_BINARY_NUMERIC_SPLIT_HPP
 
 #include <mlpack/prereqs.hpp>
 

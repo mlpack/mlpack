@@ -3,7 +3,7 @@
  * @author Shubham Agrawal
  *
  * Definition of the Identity class.
- * 
+ *
  * This layer is used mainly in creating complex networks. This will be generally
  * used with AddMerge or Concat layers.
  *
@@ -22,7 +22,7 @@
 namespace mlpack {
 
 /**
- * Implementation of the Identity layer. 
+ * Implementation of the Identity layer.
  *
  * @tparam MatType Matrix representation to accept as input and use for
  *         computation.
@@ -35,8 +35,8 @@ class IdentityType : public Layer<MatType>
   IdentityType();
 
   // Virtual destructor.
-  virtual ~IdentityType() 
-  { 
+  virtual ~IdentityType()
+  {
     // Nothing to do here.
   }
 
@@ -49,11 +49,11 @@ class IdentityType : public Layer<MatType>
   //! Take ownership of the given IdentityType.
   IdentityType& operator=(IdentityType&& other);
 
-  //! Clone the IdentityType object. 
+  //! Clone the IdentityType object.
   //! This handles polymorphism correctly.
-  IdentityType* Clone() const 
-  { 
-    return new IdentityType(*this); 
+  IdentityType* Clone() const
+  {
+    return new IdentityType(*this);
   }
 
   /**

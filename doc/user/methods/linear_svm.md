@@ -43,7 +43,7 @@ std::cout << arma::accu(predictions == 1) << " test points classified as class "
 #### See also:
 
  * [mlpack classifiers](../../index.md#classification-algorithms)
- * [`GaussianDistribution`](../core.md#gaussiandistribution)
+ * [`GaussianDistribution`](../core/distributions.md#gaussiandistribution)
  * [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
 
 ### Constructors

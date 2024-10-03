@@ -73,7 +73,7 @@ class CELUType : public Layer<MatType>
 
 
   // Virtual destructor
-  virtual ~CELUType(){};
+  virtual ~CELUType() { }
 
   //Copy constructor
   CELUType(const CELUType& other);

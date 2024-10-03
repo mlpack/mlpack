@@ -54,7 +54,9 @@ namespace mlpack {
  *
  * @see @ref trees, BinarySpaceTree, MeanSplitKDTree
  */
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using KDTree = BinarySpaceTree<DistanceType,
                                StatisticType,
                                MatType,
@@ -71,7 +73,9 @@ using KDTree = BinarySpaceTree<DistanceType,
  *
  * @see @ref trees, BinarySpaceTree, KDTree
  */
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using MeanSplitKDTree = BinarySpaceTree<DistanceType,
                                         StatisticType,
                                         MatType,

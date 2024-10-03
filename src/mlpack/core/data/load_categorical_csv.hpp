@@ -52,10 +52,10 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
                                         DatasetMapper<MapPolicy>& info)
 {
   // Take a pass through the file.  If the DatasetMapper policy requires it,
-  // we will pass everything as string through MapString().  This might be useful
-  // if, e.g., the MapPolicy needs to find which dimensions are numeric or
-  // categorical.
-  
+  // we will pass everything as string through MapString().  This might be
+  // useful if, e.g., the MapPolicy needs to find which dimensions are numeric
+  // or categorical.
+
   // Reset to the start of the file.
   inFile.clear();
   inFile.seekg(0, std::ios::beg);
@@ -66,7 +66,7 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
   while (inFile.good())
   {
     ++cols;
-    
+
     if (cols == 1)
     {
       // Extract the number of dimensions.
@@ -78,7 +78,7 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
         info.SetDimensionality(rows);
       }
       else if (info.Dimensionality() != rows)
-      { 
+      {
         std::ostringstream oss;
         oss << "data::LoadCSV(): given DatasetInfo has dimensionality "
             << info.Dimensionality() << ", but data has dimensionality "
@@ -133,10 +133,11 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
 }
 
 template<typename T, typename MapPolicy>
-void LoadCSV::InitializeMapper(size_t& rows, size_t& cols, DatasetMapper<MapPolicy>& info)
+void LoadCSV::InitializeMapper(size_t& rows, size_t& cols,
+    DatasetMapper<MapPolicy>& info)
 {
-  // Take a pass through the file.  If the DatasetMapper policy requires it,
-  // we will pass everything as string through MapString().  This might be useful
+  // Take a pass through the file.  If the DatasetMapper policy requires it, we
+  // will pass everything as string through MapString().  This might be useful
   // if, e.g., the MapPolicy needs to find which dimensions are numeric or
   // categorical.
 
@@ -213,11 +214,12 @@ void LoadCSV::InitializeMapper(size_t& rows, size_t& cols, DatasetMapper<MapPoli
         info.template MapFirstPass<T>(std::move(token), rows - 1);
       }
     }
-  } 
+  }
 }
 
 template<typename T, typename PolicyType>
-void LoadCSV::TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& infoSet)
+void LoadCSV::TransposeParse(arma::Mat<T>& inout,
+                             DatasetMapper<PolicyType>& infoSet)
 {
   // Get matrix size.  This also initializes infoSet correctly.
   size_t rows, cols;

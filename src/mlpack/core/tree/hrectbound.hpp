@@ -102,6 +102,9 @@ class HRectBound
   //! Modify the minimum width of the bound.
   ElemType& MinWidth() { return minWidth; }
 
+  //! Recompute the minimum width of the bound.
+  void RecomputeMinWidth();
+
   //! Get the instantiated distance metric associated with the bound.
   [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
   const DistanceType& Metric() const { return distance; }
@@ -253,7 +256,7 @@ template<typename DistanceType, typename ElemType>
 struct BoundTraits<HRectBound<DistanceType, ElemType>>
 {
   //! These bounds are always tight for each dimension.
-  const static bool HasTightBounds = true;
+  static const bool HasTightBounds = true;
 };
 
 } // namespace mlpack

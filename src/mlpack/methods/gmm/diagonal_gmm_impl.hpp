@@ -43,7 +43,7 @@ double DiagonalGMM::Train(const arma::mat& observations,
 
     // If each trial must start from the same initial location,
     // we must save it.
-    std::vector<DiagonalGaussianDistribution> distsOrig;
+    std::vector<DiagonalGaussianDistribution<>> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
@@ -61,8 +61,8 @@ double DiagonalGMM::Train(const arma::mat& observations,
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<DiagonalGaussianDistribution> distsTrial(
-        gaussians, DiagonalGaussianDistribution(dimensionality));
+    std::vector<DiagonalGaussianDistribution<>> distsTrial(
+        gaussians, DiagonalGaussianDistribution<>(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)
@@ -113,7 +113,7 @@ inline DiagonalGMM::DiagonalGMM(
     gaussians(gaussians),
     dimensionality(dimensionality),
     dists(gaussians,
-    DiagonalGaussianDistribution(dimensionality)),
+    DiagonalGaussianDistribution<>(dimensionality)),
     weights(gaussians)
 {
   // Set equal weights. Technically this model is still valid, but only barely.
@@ -287,7 +287,7 @@ inline void DiagonalGMM::Classify(const arma::mat& observations,
  */
 inline double DiagonalGMM::LogLikelihood(
     const arma::mat& observations,
-    const std::vector<DiagonalGaussianDistribution>& dists,
+    const std::vector<DiagonalGaussianDistribution<>>& dists,
     const arma::vec& weights) const
 {
   double logLikelihood = 0;
@@ -342,7 +342,7 @@ double DiagonalGMM::Train(const arma::mat& observations,
       return -DBL_MAX; // It's what they asked for...
 
     // If each trial must start from the same initial location, we must save it.
-    std::vector<DiagonalGaussianDistribution> distsOrig;
+    std::vector<DiagonalGaussianDistribution<>> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
@@ -361,8 +361,8 @@ double DiagonalGMM::Train(const arma::mat& observations,
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<DiagonalGaussianDistribution> distsTrial( gaussians,
-        DiagonalGaussianDistribution(dimensionality));
+    std::vector<DiagonalGaussianDistribution<>> distsTrial(gaussians,
+        DiagonalGaussianDistribution<>(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)

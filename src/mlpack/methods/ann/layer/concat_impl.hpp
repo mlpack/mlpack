@@ -123,7 +123,7 @@ void ConcatType<MatType>::Forward(const MatType& input, MatType& output)
       this->layerOutputs.size());
   for (size_t i = 0; i < this->layerOutputs.size(); ++i)
   {
-    MakeAlias(layerOutputAliases[i], this->layerOutputs[i], rows, 
+    MakeAlias(layerOutputAliases[i], this->layerOutputs[i], rows,
         this->network[i]->OutputDimensions()[axis], slices);
   }
 

@@ -60,7 +60,7 @@ class LogSoftMaxType : public Layer<MatType>
    * @param output Resulting output activation.
    */
   void Forward(const MatType& input, MatType& output);
- 
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -99,7 +99,6 @@ class LogSoftMaxType : public Layer<MatType>
     ar(cereal::base_class<Layer<MatType>>(this));
     // Nothing to do.
   }
-
 }; // class LogSoftmaxType
 
 // Convenience typedefs.

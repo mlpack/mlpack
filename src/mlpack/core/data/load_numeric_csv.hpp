@@ -55,8 +55,7 @@ bool LoadCSV::ConvertToken(eT& val,
   const char* str = token.c_str();
 
   // Checks for +/-INF and NAN
-  // Converts them to their equivalent representation
-  // from numeric_limits. 
+  // Converts them to their equivalent representation from numeric_limits.
   if ((N == 3) || (N == 4))
   {
     const bool neg = (str[0] == '-');

@@ -60,7 +60,7 @@ void QDAFN<MatType>::Train(const MatType& referenceSet,
   // Build tables.  This is done by drawing random points from a Gaussian
   // distribution as the vectors we project onto.  The Gaussian should have zero
   // mean and unit variance.
-  GaussianDistribution gd(referenceSet.n_rows);
+  GaussianDistribution<> gd(referenceSet.n_rows);
   lines.set_size(referenceSet.n_rows, l);
   for (size_t i = 0; i < l; ++i)
     lines.col(i) = gd.Random();
@@ -135,7 +135,7 @@ void QDAFN<MatType>::Search(const MatType& querySet,
       const size_t tableIndex = tableLocations[p.second];
 
       // Calculate distance from query point.
-      const double dist = EuclideanDistance::Evaluate( querySet.col(q),
+      const double dist = EuclideanDistance::Evaluate(querySet.col(q),
           candidateSet[p.second].col(tableIndex));
 
       resultsQueue.push(std::make_pair(dist, sIndices(tableIndex, p.second)));

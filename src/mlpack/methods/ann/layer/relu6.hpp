@@ -36,10 +36,9 @@ template<typename MatType = arma::mat>
 class ReLU6Type : public Layer<MatType>
 {
  public:
-
- /**
-  * Create the ReLU6Type object.
-  */
+  /**
+   * Create the ReLU6Type object.
+   */
   ReLU6Type();
 
   //! Clone the ReLU6Type object. This handles polymorphism correctly.

@@ -189,7 +189,7 @@ typename LinearSVM<ModelMatType>::ElemType LinearSVM<ModelMatType>::Train(
 {
   this->numClasses = numClasses;
   this->lambda = lambda;
-  
+
   if (delta.has_value())
     this->delta = delta.value();
 

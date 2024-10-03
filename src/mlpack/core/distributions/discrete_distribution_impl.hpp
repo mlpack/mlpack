@@ -21,23 +21,25 @@ namespace mlpack {
  * Return a randomly generated observation according to the probability
  * distribution defined by this object.
  */
-inline arma::vec DiscreteDistribution::Random() const
+template<typename MatType, typename ObsMatType>
+inline typename DiscreteDistribution<MatType, ObsMatType>::ObsVecType
+DiscreteDistribution<MatType, ObsMatType>::Random() const
 {
   size_t dimension = probabilities.size();
-  arma::vec result(dimension);
+  ObsVecType result(dimension);
 
   for (size_t d = 0; d < dimension; d++)
   {
     // Generate a random number.
-    double randObs = mlpack::Random();
+    ElemType randObs = (ElemType) mlpack::Random();
 
-    double sumProb = 0;
+    ElemType sumProb = 0;
 
     for (size_t obs = 0; obs < probabilities[d].n_elem; obs++)
     {
       if ((sumProb += probabilities[d][obs]) >= randObs)
       {
-        result[d] = obs;
+        result[d] = ObsType(obs);
         break;
       }
     }
@@ -45,7 +47,7 @@ inline arma::vec DiscreteDistribution::Random() const
     if (sumProb > 1.0)
     {
       // This shouldn't happen.
-      result[d] = probabilities[d].n_elem - 1;
+      result[d] = ObsType(probabilities[d].n_elem - 1);
     }
   }
 
@@ -55,7 +57,9 @@ inline arma::vec DiscreteDistribution::Random() const
 /**
  * Estimate the probability distribution directly from the given observations.
  */
-inline void DiscreteDistribution::Train(const arma::mat& observations)
+template<typename MatType, typename ObsMatType>
+inline void DiscreteDistribution<MatType, ObsMatType>::Train(
+    const ObsMatType& observations)
 {
   // Make sure the observations have same dimension as the probabilities.
   if (observations.n_rows != probabilities.size())
@@ -79,7 +83,8 @@ inline void DiscreteDistribution::Train(const arma::mat& observations)
       // Add the probability of each observation.  The addition of 0.5 to the
       // observation is to turn the default flooring operation of the size_t
       // cast into a rounding observation.
-      const size_t obs = size_t(observations(i, r) + 0.5);
+      const size_t obs = (std::is_floating_point<ObsType>::value) ?
+          size_t(observations(i, r) + 0.5) : size_t(observations(i, r));
 
       // Ensure that the observation is within the bounds.
       if (obs >= probabilities[i].n_elem)
@@ -97,7 +102,7 @@ inline void DiscreteDistribution::Train(const arma::mat& observations)
   // Now normalize the distributions.
   for (size_t i = 0; i < dimensions; ++i)
   {
-    double sum = accu(probabilities[i]);
+    ElemType sum = accu(probabilities[i]);
     if (sum > 0)
       probabilities[i] /= sum;
     else // Force normalization.
@@ -109,8 +114,10 @@ inline void DiscreteDistribution::Train(const arma::mat& observations)
  * Estimate the probability distribution from the given observations when also
  * given probabilities that each observation is from this distribution.
  */
-inline void DiscreteDistribution::Train(const arma::mat& observations,
-                                        const arma::vec& probObs)
+template<typename MatType, typename ObsMatType>
+inline void DiscreteDistribution<MatType, ObsMatType>::Train(
+    const ObsMatType& observations,
+    const VecType& probObs)
 {
   // Make sure the observations have same dimension as the probabilities.
   if (observations.n_rows != probabilities.size())
@@ -134,7 +141,8 @@ inline void DiscreteDistribution::Train(const arma::mat& observations,
       // Add the probability of each observation. The addition of 0.5
       // to the observation is to turn the default flooring operation
       // of the size_t cast into a rounding observation.
-      const size_t obs = size_t(observations(i, r) + 0.5);
+      const size_t obs = (std::is_floating_point<ObsType>::value) ?
+          size_t(observations(i, r) + 0.5) : size_t(observations(i, r));
 
       // Ensure that the observation is within the bounds.
       if (obs >= probabilities[i].n_elem)
@@ -153,7 +161,7 @@ inline void DiscreteDistribution::Train(const arma::mat& observations,
   // Now normalize the distributions.
   for (size_t i = 0; i < dimensions; ++i)
   {
-    double sum = accu(probabilities[i]);
+    ElemType sum = accu(probabilities[i]);
     if (sum > 0)
       probabilities[i] /= sum;
     else // Force normalization.

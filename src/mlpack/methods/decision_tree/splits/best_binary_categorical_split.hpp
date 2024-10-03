@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/best_binary_categorical_split.hpp
+ * @file methods/decision_tree/splits/best_binary_categorical_split.hpp
  * @author Nikolay Apanasov (nikolay@apanasov.org)
  *
  * A tree splitter that finds the best binary categorical split.
@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_DECISION_TREE_BEST_BINARY_CATEGORICAL_SPLIT_HPP
-#define MLPACK_METHODS_DECISION_TREE_BEST_BINARY_CATEGORICAL_SPLIT_HPP
+#ifndef MLPACK_METHODS_DECISION_TREE_SPLITS_BEST_BINARY_CATEGORICAL_SPLIT_HPP
+#define MLPACK_METHODS_DECISION_TREE_SPLITS_BEST_BINARY_CATEGORICAL_SPLIT_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -19,7 +19,7 @@ namespace mlpack {
 /**
  * The BestBinaryCategoricalSplit is a splitting function for decision trees
  * that will exhaustively search a categorical dimension for the best binary
- * split of a variable vₖ. This is a generic splitting strategy and can be 
+ * split of a variable vₖ. This is a generic splitting strategy and can be
  * used for both regression and classification.
  *
  * In the case of binary outcomes, it shown in CART[4.2] by Breiman et al.
@@ -29,13 +29,13 @@ namespace mlpack {
  * simplification. This method will search through all the 2ʲ possible
  * partitions (Gₗ, Gᵣ) of the categories C₀, ..., Cⱼ₋₁, every time assigning
  * samples with vₖ ∈ Gₗ to left tree Tₗ and those with vₖ ∈ Gᵣ to right
- * tree Tᵣ. 
+ * tree Tᵣ.
  *
  * Warning: in the classification setting with multiple outcomes, this
  * algorithm is exponential in the number of categories. Therefore
  * BestBinaryCategoricalSplit should not be chosen when there are multiple
  * classes and many categories.
- * 
+ *
  * @book{CART,
  *   author = {Breiman, L. and Friedman, J. and Olshen, R. and Stone, C.},
  *   year = {1984},
@@ -49,8 +49,8 @@ namespace mlpack {
  *
  * @article{Fisher58,
  *   author = {Fisher, W.},
- *   year = {1958}, 
- *   title = {On Grouping for Maximum Homogeniety}, 
+ *   year = {1958},
+ *   title = {On Grouping for Maximum Homogeniety},
  *   journal = {Journal of the American Statistical Association},
  *   volume = {53},
  *   pages = {789–798}
@@ -61,20 +61,19 @@ namespace mlpack {
 template<typename FitnessFunction>
 class BestBinaryCategoricalSplit
 {
-
-public:
+ public:
   // No extra info needed for split.
   class AuxiliarySplitInfo { };
   // Allow access to the numeric split type.
   typedef BestBinaryNumericSplit<FitnessFunction> NumericSplit;
-  // For calls to the numeric splitter. 
+  // For calls to the numeric splitter.
   typedef typename BestBinaryNumericSplit<FitnessFunction>
       ::AuxiliarySplitInfo NumericAux;
 
   /**
    * Check if we can split a node.  If we can split a node in a way that
    * improves on bestGain, then we return the improved gain.  Otherwise we
-   * return the value DBL_MAX.  
+   * return the value DBL_MAX.
    *
    * This overload is used only for classification.
    *
@@ -92,7 +91,7 @@ public:
    * vector of size J, where J is the number of categories. splitInfo[k]
    * is zero if category k is assigned to the left child, and otherwise
    * it is one if assigned to the right.
-   * @param aux (ignored) 
+   * @param aux (ignored)
    */
   template<bool UseWeights, typename VecType, typename LabelsType,
           typename WeightVecType>
@@ -105,17 +104,17 @@ public:
       const WeightVecType& weights,
       const size_t minLeafSize,
       const double minGainSplit,
-      arma::vec& splitInfo, 
+      arma::vec& splitInfo,
       AuxiliarySplitInfo& aux);
 
-  /** 
+  /**
    * Check if we can split a node.  If we can split a node in a way that
    * improves on bestGain, then we return the improved gain.  Otherwise we
-   * return the value DBL_MAX.  
+   * return the value DBL_MAX.
    *
-   * Overload for regression. As mentioned above, the result of Fisher only 
-   * applies under l₂ loss, and thus this overload is used only for regression 
-   * with MSEGain.  
+   * Overload for regression. As mentioned above, the result of Fisher only
+   * applies under l₂ loss, and thus this overload is used only for regression
+   * with MSEGain.
    *
    * @param bestGain Best gain seen so far (we'll only split if we find gain
    *      better than this).
@@ -152,7 +151,7 @@ public:
 
   /**
    * In the case that a split was found, returns the number of children
-   * of the split. Otherwise if there was no split, returns zero. A binary 
+   * of the split. Otherwise if there was no split, returns zero. A binary
    * split always has two children.
    *
    * @param splitInfo Auxiliary information for the split. A vector
@@ -170,7 +169,7 @@ public:
   /**
    *
    * In the case that a split was found, given a point, calculates
-   * the index of the child it should go to. Otherwise if there was 
+   * the index of the child it should go to. Otherwise if there was
    * no split, returns SIZE_MAX.
    *
    * @param point the Point to use.
@@ -189,7 +188,7 @@ public:
     return splitInfo.n_elem == 0 ? SIZE_MAX : (size_t) splitInfo[point];
   }
 
-private: 
+ private:
   /**
    * Auxiliary for SplitIfBetter in the multi-class setting. Recursively
    * enumerates all partitions (Gₗ, Gᵣ) of categories C₀, ..., Cⱼ₋₁, and
@@ -212,7 +211,7 @@ private:
    *    vector of size J, where J is the number of categories. splitInfo[k]
    *    is zero if category k is assigned to the left child, and otherwise
    *    it is one if assigned to the right.
-   * @param classCounts -- mx2 matrix, where m = numClasses, used to compute 
+   * @param classCounts -- mx2 matrix, where m = numClasses, used to compute
    *    the gain with the FitnessFunction. All zero initially.
    * @param totalLeft, totalRight -- Number of samples assigned
    *    to the left and right subtrees respectively. Initialized to zero.
@@ -239,7 +238,7 @@ private:
    * enumerates all partitions (Gₗ, Gᵣ) of categories C₀, ..., Cⱼ₋₁, and
    * computes the gain for each one, where samples with vₖ ∈ Gₗ are assigned
    * to the left tree Tₗ and those with vₖ ∈ Gᵣ to the right tree Tᵣ.
-   * 
+   *
    * In the case that a better split is found, bestFoundGain is updated with
    * the gain value and splitInfo is updated with the corresponding partition.
    *
@@ -261,7 +260,7 @@ private:
    *    vector of size J, where J is the number of categories. splitInfo[k]
    *    is zero if category k is assigned to the left child, and otherwise
    *    it is one if assigned to the right.
-   * @param classWeightSums -- mx2 matrix, where m = numClasses, used to 
+   * @param classWeightSums -- mx2 matrix, where m = numClasses, used to
    *    compute the gain with the FitnessFunction. All zero initially.
    * @param totalLeftWeight, totalRightWeight -- Weight assigned to the left
    *    and right subtree respectively. Initialized to zero.
@@ -284,7 +283,6 @@ private:
       double totalLeftWeight = 0.0,
       double totalRightWeight = 0.0,
       size_t k = 0);
-
 };
 
 } // namespace mlpack

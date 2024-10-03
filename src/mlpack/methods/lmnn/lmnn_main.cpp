@@ -137,8 +137,7 @@ BINDING_SEE_ALSO("Large margin nearest neighbor on Wikipedia",
 BINDING_SEE_ALSO("Distance metric learning for large margin nearest neighbor "
     "classification (pdf)", "http://papers.nips.cc/paper/2795-distance-metric-"
     "learning-for-large-margin-nearest-neighbor-classification.pdf");
-BINDING_SEE_ALSO("LMNN C++ class documentation",
-    "@src/mlpack/methods/lmnn/lmnn.hpp");
+BINDING_SEE_ALSO("LMNN C++ class documentation", "@doc/user/methods/lmnn.md");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run LMNN on.", "i");
 PARAM_MATRIX_IN("distance", "Initial distance matrix to be used as "
@@ -266,8 +265,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       "number of targets must be positive");
   RequireParamValue<int>(params, "update_interval", [](int x) { return x > 0; },
       true, "update interval must be positive");
-  RequireParamValue<int>(params, "batch_size", [](int x) { return x > 0; }, true,
-      "batch size must be positive");
+  RequireParamValue<int>(params, "batch_size", [](int x) { return x > 0; },
+      true, "batch size must be positive");
   RequireParamValue<double>(params, "regularization", [](double x)
       { return x >= 0.0; }, true, "regularization value must be non-negative");
   RequireParamValue<double>(params, "step_size", [](double x)

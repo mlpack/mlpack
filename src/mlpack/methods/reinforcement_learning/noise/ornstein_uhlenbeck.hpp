@@ -47,14 +47,13 @@ class OUNoise
 
   /**
    * Update the internal state and return it as a noise sample.
-   * 
+   *
    * @return Noise sample.
    */
   arma::colvec sample()
   {
     arma::colvec x = state;
-    arma::colvec dx = theta * (mu - x) + 
-        sigma * randn<arma::colvec>(x.n_elem);
+    arma::colvec dx = theta * (mu - x) + sigma * randn<arma::colvec>(x.n_elem);
     state = x + dx;
     return state;
   }

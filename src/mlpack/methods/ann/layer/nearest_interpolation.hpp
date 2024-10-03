@@ -36,7 +36,13 @@ class NearestInterpolationType : public Layer<MatType>
   NearestInterpolationType();
 
   /**Create NearestInterpolation Object with the same scaleFactor along 
-   * each dimension
+   * each dimension.
+   * NOTE: scaleFactors must be a two element vector, the first element
+   * for scaling the first dimension and the second element for scaling
+   * the second dimension.
+   *
+   * If the input dimensions are n x m x ..., then the output dimensions
+   * will be (n x scaleFactors[0]) x (m x scaleFactors[1]) x ...
    * 
    * @param scaleFactor Scale factors to scale each dimension by.
    */

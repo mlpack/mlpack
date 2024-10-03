@@ -42,6 +42,10 @@ The following basic guides are *highly recommended* before using mlpack.
 
  * ***Reference for mlpack core classes***:
    - [Core mlpack documentation](user/core.md)
+     * [Core math utilities](user/core/math.md)
+     * [Distances](user/core/distances.md)
+     * [Distributions](user/core/distributions.md)
+     * [Kernels](user/core/kernels.md)
 
  * ***Using mlpack natively with our extensions in Python, R, CLI, Julia, and Go***:
    - [Links to quickstarts and references](#bindings-to-other-languages)
@@ -100,6 +104,11 @@ Predict continuous values.
 
 ### Clustering algorithms
 
+***NOTE:*** this documentation is still under construction and so some
+algorithms that mlpack implements are not yet listed here.  For now, see
+[the mlpack/methods directory](https://github.com/mlpack/mlpack/tree/master/src/mlpack/methods)
+for a full list of algorithms.
+
 Group points into clusters.
 
  * [`MeanShift`](user/methods/mean_shift.md): clustering with the density-based
@@ -107,17 +116,32 @@ Group points into clusters.
 
 ### Geometric algorithms
 
+***NOTE:*** this documentation is still under construction and so no geometric
+algorithms in mlpack are documented yet.  For now, see
+[the mlpack/methods directory](https://github.com/mlpack/mlpack/tree/master/src/mlpack/methods)
+for a full list of algorithms.
+
 Computations based on distance metrics.
 
 <!-- TODO: add some -->
 
 ### Preprocessing utilities
 
+***NOTE:*** this documentation is still under construction and so no
+preprocessing utilities in mlpack are documented yet.  For now, see
+[the mlpack/methods/preprocess directory](https://github.com/mlpack/mlpack/tree/master/src/mlpack/methods)
+for a full list of algorithms.
+
 Prepare data for machine learning algorithms.
 
 <!-- TODO: add some -->
 
 ### Transformations
+
+***NOTE:*** this documentation is still under construction and so some
+algorithms that mlpack implements are not yet listed here.  For now, see
+[the mlpack/methods directory](https://github.com/mlpack/mlpack/tree/master/src/mlpack/methods)
+for a full list of algorithms.
 
 Transform data from one space to another.
 
@@ -130,6 +154,8 @@ Transform data from one space to another.
    metric learning)
  * [`NMF`](user/methods/nmf.md): non-negative matrix factorization
  * [`PCA`](user/methods/pca.md): principal components analysis
+ * [`RADICAL`](user/methods/radical.md): robust, accurate, direct independent
+   components analysis (ICA) algorithm
  * [`SparseCoding`](user/methods/sparse_coding.md): sparse coding with
    dictionary learning
 
@@ -152,6 +178,15 @@ mlpack in C++, but almost all the same algorithms are available.
 | ***R*** | -- | [quickstart](quickstart/r.md) | -- | [reference](user/bindings/r.md)
 | ***Command-line programs*** | -- | [quickstart](quickstart/cli.md) | -- | [reference](user/bindings/cli.md) |
 | ***Go*** | -- | [quickstart](quickstart/go.md) | -- | [reference](user/bindings/go.md) |
+
+## mlpack on embedded systems
+
+mlpack is well suited for embedded systems due to the fact that it is written
+in C++ and it is header-only with minimal dependencies. In the following, we are
+adding a set of tutorials to allow you to experiment mlpack on various types of
+these systems.
+
+* [cross-compile and run k-NN on a Raspberry Pi 2 (armv7)](embedded/crosscompile_armv7.md)
 
 ## Examples and further documentation
 

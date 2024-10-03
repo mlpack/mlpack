@@ -32,16 +32,21 @@ inline Radical::Radical(
   // Nothing to do here.
 }
 
-inline void Radical::CopyAndPerturb(arma::mat& xNew,
-                                    const arma::mat& x) const
+template<typename MatType>
+inline void Radical::CopyAndPerturb(MatType& xNew,
+                                    const MatType& x) const
 {
-  xNew = repmat(x, replicates, 1) + noiseStdDev * arma::randn(
+  xNew = repmat(x, replicates, 1) + noiseStdDev * arma::randn<MatType>(
       replicates * x.n_rows, x.n_cols);
 }
 
-
-inline double Radical::Vasicek(arma::vec& z) const
+template<typename VecType>
+inline typename VecType::elem_type Radical::Vasicek(
+    VecType& z,
+    const size_t m) const
 {
+  typedef typename VecType::elem_type ElemType;
+
   z = sort(z);
 
   // Apparently slower.
@@ -52,33 +57,39 @@ inline double Radical::Vasicek(arma::vec& z) const
   */
 
   // Apparently faster.
-  double sum = 0;
+  ElemType sum = 0;
   arma::uword range = z.n_elem - m;
   for (arma::uword i = 0; i < range; ++i)
   {
-    sum += std::log(std::max(z(i + m) - z(i), DBL_MIN));
+    sum += std::log(std::max(z(i + m) - z(i),
+                             std::numeric_limits<ElemType>::min()));
   }
 
   return sum;
 }
 
-
-inline double Radical::DoRadical2D(const arma::mat& matX, 
-                                   util::Timers& timers)
+template<typename MatType>
+inline typename MatType::elem_type Radical::Apply2D(const MatType& matX,
+                                                    const size_t m,
+                                                    MatType& perturbed,
+                                                    MatType& candidate,
+                                                    util::Timers& timers)
 {
+  typedef typename GetColType<MatType>::type VecType;
+  typedef typename MatType::elem_type ElemType;
+
   timers.Start("radical_copy_and_perturb");
   CopyAndPerturb(perturbed, matX);
   timers.Stop("radical_copy_and_perturb");
 
-  arma::mat::fixed<2, 2> matJacobi;
-
-  arma::vec values(angles);
+  typename MatType::template fixed<2, 2> matJacobi;
+  VecType values(angles);
 
   for (size_t i = 0; i < angles; ++i)
   {
-    const double theta = (i / (double) angles) * M_PI / 2.0;
-    const double cosTheta = cos(theta);
-    const double sinTheta = sin(theta);
+    const ElemType theta = (i / (ElemType) angles) * M_PI / 2.0;
+    const ElemType cosTheta = cos(theta);
+    const ElemType sinTheta = sin(theta);
 
     matJacobi(0, 0) = cosTheta;
     matJacobi(1, 0) = -sinTheta;
@@ -86,45 +97,66 @@ inline double Radical::DoRadical2D(const arma::mat& matX,
     matJacobi(1, 1) = cosTheta;
 
     candidate = perturbed * matJacobi;
-    arma::vec candidateY1 = candidate.unsafe_col(0);
-    arma::vec candidateY2 = candidate.unsafe_col(1);
+    VecType candidateY1 = candidate.unsafe_col(0);
+    VecType candidateY2 = candidate.unsafe_col(1);
 
-    values(i) = Vasicek(candidateY1) + Vasicek(candidateY2);
+    values(i) = Vasicek(candidateY1, m) + Vasicek(candidateY2, m);
   }
 
   arma::uword indOpt = 0;
   values.min(indOpt); // we ignore the return value; we don't care about it
-  return (indOpt / (double) angles) * M_PI / 2.0;
+  return (indOpt / (ElemType) angles) * M_PI / 2.0;
 }
 
-
-inline void Radical::DoRadical(const arma::mat& matXT,
-                               arma::mat& matY,
-                               arma::mat& matW,
+template<typename MatType>
+inline void Radical::DoRadical(const MatType& matXT,
+                               MatType& matY,
+                               MatType& matW,
                                util::Timers& timers)
 {
+  Apply(matXT, matY, matW, timers);
+}
+
+template<typename MatType>
+inline void Radical::Apply(const MatType& matXT,
+                           MatType& matY,
+                           MatType& matW,
+                           util::Timers& timers)
+{
+  typedef typename MatType::elem_type ElemType;
+
   // matX is nPoints by nDims (although less intuitive than columns being
   // points, and although this is the transpose of the ICA literature, this
   // choice is for computational efficiency when repeatedly generating
   // two-dimensional coordinate projections for Radical2D).
   timers.Start("radical_transpose_data");
-  arma::mat matX = trans(matXT);
+  MatType matX = trans(matXT);
   timers.Stop("radical_transpose_data");
 
   // If m was not specified, initialize m as recommended in
   // (Learned-Miller and Fisher, 2003).
-  if (m < 1)
-    m = floor(std::sqrt((double) matX.n_rows));
+  size_t localM = m;
+  if (localM < 1)
+    localM = floor(std::sqrt((ElemType) matX.n_rows));
+
+  // If the number of sweeps was not specified, perform one for each dimension.
+  size_t localSweeps = sweeps;
+  if (localSweeps < 1)
+    localSweeps = matX.n_rows - 1;
 
   const size_t nDims = matX.n_cols;
   const size_t nPoints = matX.n_rows;
 
   timers.Start("radical_whiten_data");
-  arma::mat matXWhitened;
-  arma::mat matWhitening;
+  MatType matXWhitened;
+  MatType matWhitening;
   WhitenFeatureMajorMatrix(matX, matY, matWhitening);
   timers.Stop("radical_whiten_data");
   // matY is now the whitened form of matX.
+
+  // These two matrices will be used repeatedly by Radical2D().  We create them
+  // here to avoid repeated allocations.
+  MatType perturbed, candidate;
 
   // In the RADICAL code, they do not copy and perturb initially, although the
   // paper does.  We follow the code as it should match their reported results
@@ -135,11 +167,11 @@ inline void Radical::DoRadical(const arma::mat& matXT,
   timers.Start("radical_do_radical");
   matW = matWhitening;
 
-  arma::mat matYSubspace(nPoints, 2);
+  MatType matYSubspace(nPoints, 2);
 
-  arma::mat matJ = arma::eye(nDims, nDims);
+  MatType matJ = arma::eye<MatType>(nDims, nDims);
 
-  for (size_t sweepNum = 0; sweepNum < sweeps; sweepNum++)
+  for (size_t sweepNum = 0; sweepNum < localSweeps; sweepNum++)
   {
     Log::Info << "RADICAL: sweep " << sweepNum << "." << std::endl;
 
@@ -153,10 +185,11 @@ inline void Radical::DoRadical(const arma::mat& matXT,
         matYSubspace.col(0) = matY.col(i);
         matYSubspace.col(1) = matY.col(j);
 
-        const double thetaOpt = DoRadical2D(matYSubspace, timers);
+        const ElemType thetaOpt = Apply2D(matYSubspace, localM, perturbed,
+            candidate, timers);
 
-        const double cosThetaOpt = cos(thetaOpt);
-        const double sinThetaOpt = sin(thetaOpt);
+        const ElemType cosThetaOpt = cos(thetaOpt);
+        const ElemType sinThetaOpt = sin(thetaOpt);
 
         // Set elements of transformation matrix.
         matJ(i, i) = cosThetaOpt;
@@ -184,12 +217,25 @@ inline void Radical::DoRadical(const arma::mat& matXT,
   timers.Stop("radical_transpose_data");
 }
 
-inline void WhitenFeatureMajorMatrix(const arma::mat& matX,
-                                     arma::mat& matXWhitened,
-                                     arma::mat& matWhitening)
+template<typename Archive>
+void Radical::serialize(Archive& ar, const unsigned int /* version */)
 {
-  arma::mat matU, matV;
-  arma::vec s;
+  ar(CEREAL_NVP(noiseStdDev));
+  ar(CEREAL_NVP(replicates));
+  ar(CEREAL_NVP(angles));
+  ar(CEREAL_NVP(sweeps));
+  ar(CEREAL_NVP(m));
+}
+
+template<typename MatType>
+inline void WhitenFeatureMajorMatrix(const MatType& matX,
+                                     MatType& matXWhitened,
+                                     MatType& matWhitening)
+{
+  typedef typename GetColType<MatType>::type VecType;
+
+  MatType matU, matV;
+  VecType s;
   arma::svd(matU, s, matV, cov(matX));
   matWhitening = matU * diagmat(1 / sqrt(s)) * trans(matV);
   matXWhitened = matX * matWhitening;

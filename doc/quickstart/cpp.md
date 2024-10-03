@@ -24,7 +24,7 @@ sudo apt-get install libmlpack-dev
 and on Fedora or Red Hat:
 
 ```sh
-sudo dnf install mlpack
+sudo dnf install mlpack-devel
 ```
 
 You can also use a Docker image from Dockerhub, 

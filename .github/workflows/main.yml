@@ -64,10 +64,15 @@ jobs:
           sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libensmallen-dev libhdf5-dev libarmadillo-dev libcurl4-openssl-dev
           wget https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.2.tar.gz
           tar -xvzpf v1.3.2.tar.gz
+          #
           # These directives cause warnings on CRAN:
           # https://github.com/USCiLab/cereal/blob/master/include/cereal/external/base64.hpp#L28-L31
           # The command below comments them out.
           sed -i 's|#pragma|// #pragma|' cereal-1.3.2/include/cereal/external/base64.hpp
+          #
+          # Fix cereal compilation on clang 19+; see
+          # https://github.com/USCiLab/cereal/pull/835
+          sed -i 's|::template apply|::apply|' cereal-1.3.2/include/cereal/types/tuple.hpp
 
       - name: Install R-bindings dependencies
         run: |
@@ -90,7 +95,7 @@ jobs:
           cd build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
 
       - name: Upload R packages
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.4.0
         with:
           name: mlpack_r_tarball
           path: build/src/mlpack/bindings/R/${{ steps.mlpack_version.outputs.mlpack_r_package }}
@@ -125,7 +130,7 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4.1.8
         with:
           name: mlpack_r_tarball
 

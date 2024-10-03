@@ -58,7 +58,9 @@ class GroupNorm
    * @param size The number of input units.
    * @param eps The epsilon added to variance to ensure numerical stability.
    */
-  GroupNorm(const size_t groupCount, const size_t size, const double eps = 1e-8);
+  GroupNorm(const size_t groupCount,
+            const size_t size,
+            const double eps = 1e-8);
 
   /**
    * Reset the layer parameters.

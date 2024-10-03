@@ -108,11 +108,11 @@ void GRU<InputType, OutputType>::Forward(
       batchSize - 1) + output2GateModule->OutputParameter();
 
   // Pass the first outSize through inputGate(it).
-  inputGateModule->Forward(output.submat( 0, 0, 1 * outSize - 1, batchSize - 1),
+  inputGateModule->Forward(output.submat(0, 0, 1 * outSize - 1, batchSize - 1),
       inputGateModule->OutputParameter());
 
   // Pass the second through forgetGate.
-  forgetGateModule->Forward(output.submat( 1 * outSize, 0, 2 * outSize - 1,
+  forgetGateModule->Forward(output.submat(1 * outSize, 0, 2 * outSize - 1,
       batchSize - 1), forgetGateModule->OutputParameter());
 
   OutputType modInput = forgetGateModule->OutputParameter() % *prevOutput;

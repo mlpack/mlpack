@@ -28,7 +28,7 @@ class RandomSelection
    * @param m Number of points to select.
    * @return Indices of selected points from the dataset.
    */
-  const static arma::Col<size_t> Select(const arma::mat& data, const size_t m)
+  static const arma::Col<size_t> Select(const arma::mat& data, const size_t m)
   {
     arma::Col<size_t> selectedPoints(m);
     for (size_t i = 0; i < m; ++i)
