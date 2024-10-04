@@ -437,6 +437,8 @@ can be used to perform a variety of distance-based bounding tasks.
 
 `HRectBound` is used directly by the [`KDTree`](kdtree.md) class.
 
+---
+
 #### Constructors
 
 `HRectBound` allows configurable behavior via its two template parameters:
@@ -475,6 +477,8 @@ Different constructor forms can be used to specify different template parameters
 [grow](#growing-and-shrinking-the-bound) the bound or
 [directly modify the bound](#accessing-and-modifying-properties-of-the-bound)
 before using it!
+
+---
 
 #### Accessing and modifying properties of the bound
 
@@ -531,6 +535,8 @@ accessed and modified.
  * `b.MinWidth()`, `b.Volume()`, and `b.Diameter()` will return `ElemType`; and
  * `b.Center(center)` expects `center` to be of type `arma::Col<ElemType>`.
 
+---
+
 #### Growing and shrinking the bound
 
 The `HRectBound` uses the logical `|=` and `&=` operators to perform set
@@ -564,6 +570,8 @@ operations with data points or other bounds.
 
  - Each function expects the other bound or dataset to have dimensionality that
    matches `b`.
+
+---
 
 #### Bounding distances to other objects
 
@@ -620,6 +628,8 @@ constructor, then all distances will be computed with respect to the specified
 `DistanceType` and all return values will either be `ElemType` or
 [`RangeType<ElemType>`](../math.md#range) (except for `Contains()`, which will
 still return a `bool`).
+
+---
 
 #### Example usage
 
@@ -778,7 +788,13 @@ std::cout << "Distance between Chebyshev distance HRectBound and "
 The `BallBound` class represents a ball with a center and a radius.  A
 `BallBound` can be used to perform a variety of distance-based bounding tasks.
 
+<center>
+<img src="../../../img/ballbound.png" width="275" alt="ball bound">
+</center>
+
 `BallBound` is used directly by the [`BallTree`](ball_tree.md) class.
+
+---
 
 #### Constructors
 
@@ -801,6 +817,12 @@ The three template parameters are described below:
  * `VecType`: specifies the vector type to use to store the center of the ball
    bound.  By default this is `arma::Col<ElemType>`.  The element type of the
    given `VecType` should be the same as `ElemType`.
+
+If no template parameters are explicitly specified, then defaults are used:
+
+```
+BallTree<> = BallTree<EuclideanDistance, EmptyStatistic, arma::mat>
+```
 
 ---
 
@@ -841,6 +863,8 @@ before using it!
    - `center` should have type `VecType`.
    - Note that it is not required to specify all three template parameters.
    - See above for details on the meaning of each template parameter.
+
+---
 
 #### Accessing and modifying properties of the bound
 
@@ -888,6 +912,8 @@ constructor, then:
  * `b.Center()` will return a `VecType&`, and
  * `b.Center(center)` expects `center` to be of type `VecType`.
 
+---
+
 #### Growing the bound
 
 The `BallBound` uses the logical `|=` to grow the bound to include points or
@@ -906,6 +932,8 @@ other `BallBound`s.
      `data`.
    - If the bound is not empty, then `data` is expected to have dimensionality
      that matches `b.Dim()`.
+
+---
 
 #### Bounding distances to other objects
 
@@ -955,6 +983,8 @@ in the constructor, then:
  * all return values will either be `ElemType` or
    [`RangeType<ElemType>`](../math.md#range) (except for `Contains()`, which
    will still return a `bool`).
+
+---
 
 #### Example usage
 
@@ -1051,6 +1081,8 @@ const mlpack::RangeType<float> r3 = cb.RangeDistance(arma::fvec("1.5 1.5 4.0"));
 std::cout << "Distance between Chebyshev distance BallBound and "
     << "[1.5, 1.5, 4.0]: [" << r3.Lo() << ", " << r3.Hi() << "]." << std::endl;
 ```
+
+---
 
 ### Custom `BoundType`s
 

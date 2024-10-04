@@ -16,7 +16,7 @@
 #include <mlpack/core.hpp>
 
 #include "fitness_functions/fitness_functions.hpp"
-#include "split_functions/split_functions.hpp"
+#include "splits/splits.hpp"
 #include "select_functions/select_functions.hpp"
 
 namespace mlpack {
