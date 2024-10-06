@@ -138,7 +138,11 @@ class ConvolutionType : public Layer<MatType>
   ConvolutionType* Clone() const { return new ConvolutionType(*this); }
 
   //! Copy the given ConvolutionType (but not weights).
-  ConvolutionType(const ConvolutionType& layer);
+  template<typename OtherMatType>
+  ConvolutionType(const ConvolutionType<ForwardConvolutionRule, 
+                                        BackwardConvolutionRule, 
+                                        GradientConvolutionRule, 
+                                        OtherMatType>& layer);
 
   //! Take ownership of the given ConvolutionType (but not weights).
   ConvolutionType(ConvolutionType&&);

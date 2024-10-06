@@ -27,7 +27,7 @@ namespace mlpack {
  * The linear layer applies a linear transformation to the incoming data
  * (input), i.e. y = Ax + b. The input matrix given in Forward(input, output)
  * must be either a vector or matrix. If the input is a matrix, then each column
- * is assumed to be an input sample of given batch.
+ * is assumed to be an input sample of a given batch.
  *
  * @tparam MatType Matrix representation to accept as input and use for
  *    computation.
@@ -57,11 +57,21 @@ class LinearType : public Layer<MatType>
 
   virtual ~LinearType() { }
 
-  //! Clone the LinearType object. This handles polymorphism correctly.
-  LinearType* Clone() const { return new LinearType(*this); }
+  Layer<MatType>* Clone() const override
+  {
+      return this->CloneAs<TargetMatType>();
+  }
+
+  template<typename TargetMatType = MatType>
+  Layer<TargetMatType>* CloneAs() const
+  {
+      return new LinearType<TargetMatType, RegularizerType>(
+          this->outSize, this->regularizer);
+  }
 
   //! Copy the other Linear layer (but not weights).
-  LinearType(const LinearType& layer);
+  template<typename OtherMatType>
+  LinearType(const LinearType<OtherMatType, RegularizerType>& layer);
 
   //! Take ownership of the members of the other Linear layer (but not weights).
   LinearType(LinearType&& layer);
@@ -92,7 +102,7 @@ class LinearType : public Layer<MatType>
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards trough f. Using the results from the feed
+   * f(x) by propagating x backwards through f. Using the results from the feed
    * forward pass.
    *
    * To compute the downstream gradient (g) the chain rule is used.
@@ -143,6 +153,9 @@ class LinearType : public Layer<MatType>
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
+  const RegularizerType& Regularizer() const { return regularizer; }
+  RegularizerType& Regularizer() { return regularizer; }
+
  private:
   //! Locally-stored number of input units.
   size_t inSize;
@@ -150,7 +163,7 @@ class LinearType : public Layer<MatType>
   //! Locally-stored number of output units.
   size_t outSize;
 
-  //! Locally-stored weight object.  This holds all the weights in a vectorized
+  //! Locally-stored weight object. This holds all the weights in a vectorized
   //! form; i.e., the weight and the bias.
   MatType weights;
 

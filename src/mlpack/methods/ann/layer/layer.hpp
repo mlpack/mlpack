@@ -69,8 +69,15 @@ class Layer
       training(layer.training)
   { /* Nothing to do here */ }
 
-  //! Make a copy of the object.
-  virtual Layer* Clone() const = 0;
+  // Non-templated virtual function
+  virtual Layer<MatType>* Clone() const = 0;
+
+  // Templated CloneAs function to handle specific types
+  template<typename TargetMatType = MatType>
+  Layer<TargetMatType>* CloneAs() const
+  {
+    throw std::logic_error("CloneAs() not implemented for this layer type.");
+  }
 
   //! Move constructor.  This is not responsible for moving weights!
   Layer(Layer&& layer) :

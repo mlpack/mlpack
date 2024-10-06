@@ -41,13 +41,15 @@ LinearType<MatType, RegularizerType>::LinearType(
 
 // Copy constructor.
 template<typename MatType, typename RegularizerType>
-LinearType<MatType, RegularizerType>::LinearType(const LinearType& layer) :
+template<typename OtherMatType>
+LinearType<MatType, RegularizerType>::LinearType(
+    const LinearType<OtherMatType, RegularizerType>& layer) :
     Layer<MatType>(layer),
-    inSize(layer.inSize),
-    outSize(layer.outSize),
-    regularizer(layer.regularizer)
+    inSize(layer.InputDimensions().empty() ? 0 : layer.InputDimensions()[0]),
+    outSize(layer.OutputDimensions().empty() ? 0 : layer.OutputDimensions()[0]),
+    regularizer(layer.Regularizer())
 {
-  // Nothing else to do.
+  // Nothing to do here.
 }
 
 // Move constructor.

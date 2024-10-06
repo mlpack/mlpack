@@ -31,7 +31,16 @@ AddType<MatType>::AddType(const AddType& other) :
     Layer<MatType>(other),
     outSize(other.outSize)
 {
-  // Nothing to do.
+  weights = other.weights
+}
+
+template<typename MatType>
+template<typename OtherMatType>
+AddType<MatType>::AddType(const AddType<OtherMatType>& other) :
+    Layer<MatType>(other),
+    outSize(other.outSize)
+{
+  weights = conv_to<MatType>::from(other.Parameters());
 }
 
 template<typename MatType>

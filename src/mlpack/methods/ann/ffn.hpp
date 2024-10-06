@@ -18,6 +18,7 @@
 #include "forward_decls.hpp"
 #include "init_rules/init_rules.hpp"
 #include "loss_functions/loss_functions.hpp"
+#include "quantization/quantization_utils.hpp"
 
 #include <ensmallen.hpp>
 
@@ -50,7 +51,7 @@ namespace mlpack {
 template<
     typename OutputLayerType = NegativeLogLikelihood,
     typename InitializationRuleType = RandomInitialization,
-    typename MatType = arma::mat>
+    typename MatType = mat>
 class FFN
 {
  public:
@@ -439,6 +440,11 @@ class FFN
    * @param responses Outputs results from input data variables.
    */
   void ResetData(MatType predictors, MatType responses);
+
+  template<typename TargetMatType = imat,
+         typename QuantizationStrategyType = mlpack::ann::LinearQuantization>
+  FFN<OutputLayerType, InitializationRuleType, TargetMatType> Quantize(
+    QuantizationStrategyType quantizationStrategy = QuantizationStrategyType()) const;
 
  private:
   // Helper functions.
