@@ -396,7 +396,8 @@ and then `using mlpack` should work.
 *See also the [Go quickstart](doc/quickstart/go.md).*
 
 To build mlpack's Go bindings, ensure that Go >= 1.11.0 is installed, and that
-the Gonum package is available.  You can use `go get` to install mlpack for Go:
+the Gonum package is available.  You can use `go get` to install mlpack as a
+module in a Go project:
 
 ```sh
 go get -u -d mlpack.org/v1/mlpack
