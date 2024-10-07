@@ -4,8 +4,9 @@
 
 _????-??-??_
 
- * Fix compilation with clang 19 (#3799)
+ * Fix compilation with clang 19 (#3799).
 
+ * Fix LSTM layer copy/move constructors (#3809).
 
 ## mlpack 4.5.0
 
