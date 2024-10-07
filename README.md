@@ -400,10 +400,19 @@ the Gonum package is available.  You can use `go get` to install mlpack as a
 module in a Go project:
 
 ```sh
-go get -u -d mlpack.org/v1/mlpack
-cd ${GOPATH}/src/mlpack.org/v1/mlpack
-make install
+go get -u mlpack.org/v1/mlpack
 ```
+
+The Go bindings themselves will then need to be compiled.  Find the mlpack
+directory under `$GOMODCACHE/mlpack.org/v1/mlpack` and run these commands:
+
+```sh
+make
+sudo make install
+```
+
+Then, `go run my_code.go` will be able to correctly link against mlpack's Go
+bindings and run.
 
 The process of building the Go bindings by hand is a little tedious, so
 following the steps above is recommended.  However, if you wish to build the Go
