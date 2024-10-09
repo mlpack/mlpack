@@ -79,3 +79,10 @@ jobs:
 
   steps:
   - template: windows-steps.yaml
+
+- job: Formatting
+  timeoutInMinutes: 10
+  pool:
+    vmImage: ubuntu-latest
+  steps:
+  - template: formatting.yaml

@@ -1,0 +1,20 @@
+steps:
+# Checkout repository
+- checkout: self
+  clean: true
+  fetchDepth: 1
+
+# Install formatter.
+- script: |
+    sudo apt install clang-format
+  displayName: 'Install Formatter'
+
+# Check formatting of src directory.
+- script: |
+    ./scripts/format_cpp.sh --check --patch format.patch
+  displayName: 'Check Formatting'
+  id: check_formatting
+
+- publish: format.patch
+  artifact: format.patch
+  if: failure() && steps.check_formatting.outcome == 'failure'

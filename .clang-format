@@ -1,0 +1,57 @@
+Language: Cpp
+BasedOnStyle: Google
+AlignAfterOpenBracket: Align
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+BinPackArguments: true
+BinPackParameters: false
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: false
+  AfterStruct: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeWhile: false
+  SplitEmptyFunction: false
+ColumnLimit: 80
+ContinuationIndentWidth: 4
+FixNamespaceComments: false
+IndentWidth: 2
+
+# The settings regarding include directives
+# shall be activated in a dedicated commit
+# as we expect that reordering includes will
+# cause compilation errors, which should not
+# get mixed with pure formatting that does
+# not influence the observable behavior.
+SortIncludes: Never  # CaseSensitive
+IncludeBlocks: Preserve  # Regroup
+IncludeCategories:
+  - Regex:        '^"mlpack/.*"'
+    Priority:     1
+  - Regex:        '^<mlpack/.*>'
+    Priority:     2
+  - Regex:        '^<.*\.h(pp)?>'
+    Priority:     3
+  - Regex:        '^".*"'
+    Priority:     4
+  - Regex:        '^<.*>'
+    Priority:     5
+  - Regex:        '.*'
+    Priority:     6
+IncludeIsMainRegex: '(_test)?$'
+IncludeIsMainSourceRegex: '(_impl\.hpp)$'
+# MainIncludeChar: Any (comes with clang-format-19)
+
+IndentPPDirectives: BeforeHash
+SpaceAfterCStyleCast: true
+SpaceAfterTemplateKeyword: false
+SpacesBeforeTrailingComments: 1
