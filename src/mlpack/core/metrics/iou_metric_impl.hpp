@@ -15,6 +15,8 @@
 // In case it hasn't been included.
 #include "iou_metric.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 template<bool UseCoordinates>

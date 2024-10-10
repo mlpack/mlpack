@@ -15,6 +15,8 @@
 
 #include "mean_split.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 template<typename BoundType, typename MatType>

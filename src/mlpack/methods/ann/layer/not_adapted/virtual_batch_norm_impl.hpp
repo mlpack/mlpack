@@ -16,6 +16,8 @@
 // In case it is not included.
 #include "virtual_batch_norm.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 template<typename InputType, typename OutputType>

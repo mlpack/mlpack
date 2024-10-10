@@ -12,6 +12,7 @@
 #ifndef MLPACK_CORE_TREE_COVER_TREE_DUAL_TREE_TRAVERSER_IMPL_HPP
 #define MLPACK_CORE_TREE_COVER_TREE_DUAL_TREE_TRAVERSER_IMPL_HPP
 
+#include <mlpack/core/util/log.hpp>
 #include <mlpack/prereqs.hpp>
 #include <queue>
 

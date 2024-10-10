@@ -15,6 +15,8 @@
 #include <stack>
 #include <vector>
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 /**

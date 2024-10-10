@@ -71,6 +71,7 @@ add_executable(mlpack_test
   image_load_test.cpp
   imputation_test.cpp
   io_test.cpp
+  kde_model_test.cpp
   kde_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
