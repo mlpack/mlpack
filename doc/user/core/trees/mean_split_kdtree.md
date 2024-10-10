@@ -68,6 +68,12 @@ and using the [`MeanSplit`](binary_space_tree.md#meansplit) splitting strategy
 for construction, which splits a node in the dimension of maximum variance on
 the midpoint of the bound's range in that dimension.
 
+If no template parameters are explicitly specified, then defaults are used:
+
+```
+MeanSplitKDTree<> = MeanSplitKDTree<EuclideanDistance, EmptyStatistic, arma::mat>
+```
+
 ## Constructors
 
 `MeanSplitKDTree`s are efficiently constructed by permuting points in a dataset
