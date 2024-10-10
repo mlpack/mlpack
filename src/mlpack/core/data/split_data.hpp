@@ -37,7 +37,7 @@ void SplitHelper(const InputType& input,
   train.set_size(input.n_rows, trainSize);
   test.set_size(input.n_rows, testSize);
 
-  // Shuffling and spliting simultaneously.
+  // Shuffling and splitting simultaneously.
   if (!order.is_empty())
   {
     if (trainSize > 0)
@@ -51,7 +51,7 @@ void SplitHelper(const InputType& input,
         test.col(i - trainSize) = input.col(order(i));
     }
   }
-  // Spliting only.
+  // Splitting only.
   else
   {
     if (trainSize > 0)
@@ -300,10 +300,10 @@ void Split(const arma::Mat<T>& input,
  * @param shuffleData If true, the sample order is shuffled; otherwise, each
  *       sample is visited in linear order. (Default true).
  */
-template<typename T>
-void Split(const arma::Mat<T>& input,
-           arma::Mat<T>& trainData,
-           arma::Mat<T>& testData,
+template<typename MatType>
+void Split(const MatType& input,
+           MatType& trainData,
+           MatType& testData,
            const double testRatio,
            const bool shuffleData = true)
 {
@@ -349,6 +349,7 @@ void Split(const arma::Mat<T>& input,
  */
 template<typename T, typename LabelsType,
          typename = std::enable_if_t<arma::is_arma_type<LabelsType>::value> >
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 std::tuple<arma::Mat<T>, arma::Mat<T>, LabelsType, LabelsType>
 Split(const arma::Mat<T>& input,
       const LabelsType& inputLabel,
@@ -397,6 +398,7 @@ Split(const arma::Mat<T>& input,
  *      and testData (arma::Mat<T>).
  */
 template<typename T>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 std::tuple<arma::Mat<T>, arma::Mat<T>>
 Split(const arma::Mat<T>& input,
       const double testRatio,
@@ -411,6 +413,48 @@ Split(const arma::Mat<T>& input,
 }
 
 /**
+ * Given an input dataset, split into a training set and test set.
+ * Example usage below. This overload places the split dataset into the two
+ * output parameters given (trainData, testData).
+ *
+ * @code
+ * arma::field<arma::mat> input = loadData();
+ * arma::field<arma::mat> trainData;
+ * arma::field<arma::mat> testData;
+ * RandomSeed(100); // Set the seed if you like.
+ *
+ * // Split the dataset into a training and test set, with 30% of the data being
+ * // held out for the test set.
+ * Split(input, trainData, testData, 0.3);
+ * @endcode
+ *
+ * @param input Input dataset to split.
+ * @param trainData Matrix to store training data into.
+ * @param testData Matrix to store test data into.
+ * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
+ * @param shuffleData If true, the sample order is shuffled; otherwise, each
+ *       sample is visited in linear order. (Default true).
+ */
+template<typename T>
+void Split(const arma::field<T>& input,
+           arma::field<T>& trainData,
+           arma::field<T>& testData,
+           const double testRatio,
+           const bool shuffleData = true)
+{
+  if (shuffleData)
+  {
+    arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
+        input.n_cols - 1, input.n_cols));
+    SplitHelper(input, trainData, testData, testRatio, order);
+  }
+  else
+  {
+    SplitHelper(input, trainData, testData, testRatio);
+  }
+}
+
+/**
  * Given an input dataset and labels, split into a training set and test set.
  * Example usage below.  This overload places the split dataset into the four
  * output parameters given (trainData, testData, trainLabel, and testLabel).
@@ -418,7 +462,8 @@ Split(const arma::Mat<T>& input,
  * The input dataset must be of type arma::field. It should have the shape -
  * (n_rows = 1, n_cols = Number of samples, n_slices = 1).
  *
- * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>.
+ * NOTE: Here FieldType could be arma::field<arma::mat> or
+ * arma::field<arma::vec>.
  *
  * @code
  * arma::field<arma::mat> input = loadData();
@@ -431,7 +476,7 @@ Split(const arma::Mat<T>& input,
  *
  * // Split the dataset into a training and test set, with 30% of the data being
  * // held out for the test set.
- * Split(input, label, trainData, testData, trainLabel, testLabel, 0.3);
+ * Split(input, label, trainData, trainLabel, testData, testLabel, 0.3);
  * @endcode
  *
  * @param input Input dataset to split.
@@ -448,11 +493,78 @@ template <typename FieldType, typename T,
           typename = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
+[[deprecated("Use other field overload with testData before trainLabel; this "
+             "overload will be removed in mlpack 5.0.0.")]]
 void Split(const FieldType& input,
            const arma::field<T>& inputLabel,
            FieldType& trainData,
            arma::field<T>& trainLabel,
            FieldType& testData,
+           arma::field<T>& testLabel,
+           const double testRatio,
+           const bool shuffleData = true)
+{
+  util::CheckSameSizes(input, inputLabel, "data::Split()");
+  if (shuffleData)
+  {
+    arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
+        input.n_cols - 1, input.n_cols));
+    SplitHelper(input, trainData, testData, testRatio, order);
+    SplitHelper(inputLabel, trainLabel, testLabel, testRatio, order);
+  }
+  else
+  {
+    SplitHelper(input, trainData, testData, testRatio);
+    SplitHelper(inputLabel, trainLabel, testLabel, testRatio);
+  }
+}
+
+/**
+ * Given an input dataset and labels, split into a training set and test set.
+ * Example usage below.  This overload places the split dataset into the four
+ * output parameters given (trainData, testData, trainLabel, and testLabel).
+ *
+ * The input dataset must be of type arma::field. It should have the shape -
+ * (n_rows = 1, n_cols = Number of samples, n_slices = 1).
+ *
+ * NOTE: Here FieldType could be arma::field<arma::mat> or
+ * arma::field<arma::vec>.
+ *
+ * @code
+ * arma::field<arma::mat> input = loadData();
+ * arma::field<arma::vec> label = loadLabel();
+ * arma::field<arma::mat> trainData;
+ * arma::field<arma::mat> testData;
+ * arma::field<arma::vec> trainLabel;
+ * arma::field<arma::vec> testLabel;
+ * RandomSeed(100); // Set the seed if you like.
+ *
+ * // Split the dataset into a training and test set, with 30% of the data being
+ * // held out for the test set.
+ * Split(input, label, trainData, trainLabel, testData, testLabel, 0.3);
+ * @endcode
+ *
+ * @param input Input dataset to split.
+ * @param inputLabel Input labels to split.
+ * @param trainData FieldType to store training data into.
+ * @param testData FieldType test data into.
+ * @param trainLabel Field vector to store training labels into.
+ * @param testLabel Field vector to store test labels into.
+ * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
+ * @param shuffleData If true, the sample order is shuffled; otherwise, each
+ *       sample is visited in linear order. (Default true.)
+ */
+template <typename FieldType, typename T,
+          typename = std::enable_if_t<
+              arma::is_Col<typename FieldType::object_type>::value ||
+              arma::is_Mat_only<typename FieldType::object_type>::value>,
+          typename = std::enable_if_t<
+              !std::is_same<FieldType, arma::field<T>>::value>>
+void Split(const FieldType& input,
+           const arma::field<T>& inputLabel,
+           FieldType& trainData,
+           FieldType& testData,
+           arma::field<T>& trainLabel,
            arma::field<T>& testLabel,
            const double testRatio,
            const bool shuffleData = true)
@@ -553,6 +665,7 @@ template <class FieldType, typename T,
           class = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 std::tuple<FieldType, FieldType, arma::field<T>, arma::field<T>>
 Split(const FieldType& input,
       const arma::field<T>& inputLabel,
@@ -600,6 +713,7 @@ template <class FieldType,
           class = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 std::tuple<FieldType, FieldType>
 Split(const FieldType& input,
       const double testRatio,
