@@ -20,6 +20,7 @@ namespace mlpack {
 template<typename MatType>
 LSTMType<MatType>::LSTMType() :
     RecurrentLayer<MatType>(),
+    inSize(0),
     outSize(0)
 {
   // Nothing to do here.
@@ -28,6 +29,7 @@ LSTMType<MatType>::LSTMType() :
 template<typename MatType>
 LSTMType<MatType>::LSTMType(const size_t outSize) :
     RecurrentLayer<MatType>(),
+    inSize(0),
     outSize(outSize)
 {
   // Nothing to do here.
@@ -35,16 +37,21 @@ LSTMType<MatType>::LSTMType(const size_t outSize) :
 
 template<typename MatType>
 LSTMType<MatType>::LSTMType(const LSTMType& layer) :
-    RecurrentLayer<MatType>(layer)
+    RecurrentLayer<MatType>(layer),
+    inSize(layer.inSize),
+    outSize(layer.outSize)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
 LSTMType<MatType>::LSTMType(LSTMType&& layer) :
-    RecurrentLayer<MatType>(std::move(layer))
+    RecurrentLayer<MatType>(std::move(layer)),
+    inSize(layer.inSize),
+    outSize(layer.outSize)
 {
-  // Nothing to do here.
+  layer.inSize = 0;
+  layer.outSize = 0;
 }
 
 template<typename MatType>
@@ -53,6 +60,8 @@ LSTMType<MatType>& LSTMType<MatType>::operator=(const LSTMType& layer)
   if (this != &layer)
   {
     RecurrentLayer<MatType>::operator=(layer);
+    inSize = layer.inSize;
+    outSize = layer.outSize;
   }
 
   return *this;
@@ -64,6 +73,11 @@ LSTMType<MatType>& LSTMType<MatType>::operator=(LSTMType&& layer)
   if (this != &layer)
   {
     RecurrentLayer<MatType>::operator=(std::move(layer));
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+
+    layer.inSize = 0;
+    layer.outSize = 0;
   }
 
   return *this;
