@@ -818,12 +818,6 @@ The three template parameters are described below:
    bound.  By default this is `arma::Col<ElemType>`.  The element type of the
    given `VecType` should be the same as `ElemType`.
 
-If no template parameters are explicitly specified, then defaults are used:
-
-```
-BallTree<> = BallTree<EuclideanDistance, EmptyStatistic, arma::mat>
-```
-
 ---
 
 Different constructor forms can be used to specify different template parameters

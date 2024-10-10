@@ -69,6 +69,12 @@ and using the [`MidpointSplit`](binary_space_tree.md#midpointsplit) splitting
 strategy for construction, which splits a node in the dimension of maximum
 variance on the midpoint of the bound's range in that dimension.
 
+If no template parameters are explicitly specified, then defaults are used:
+
+```
+BallTree<> = BallTree<EuclideanDistance, EmptyStatistic, arma::mat>
+```
+
 ## Constructors
 
 `BallTree`s are efficiently constructed by permuting points in a dataset in a
