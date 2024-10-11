@@ -9,6 +9,8 @@ _????-??-??_
  * Deprecate version of `data::Split()` that returns a `std::tuple` for
    consistency; use other overloads instead (#3803).
 
+ * Fix LSTM layer copy/move constructors (#3809).
+
 ## mlpack 4.5.0
 
 _2024-09-17_
