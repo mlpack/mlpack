@@ -35,7 +35,7 @@ void LARSVerifyCorrectness(const VecType& beta,
   size_t nDims = beta.n_elem;
 
   // floats require a much larger tolerance.
-  const ElemType tol = (std::is_same<ElemType, double>::value) ? 1e-8 : 5e-3;
+  const ElemType tol = (std::is_same_v<ElemType, double>) ? 1e-8 : 5e-3;
 
   for (size_t j = 0; j < nDims; ++j)
   {
@@ -1226,7 +1226,7 @@ TEMPLATE_TEST_CASE("LARSSelectBetaTest", "[LARSTest]", arma::fmat, arma::mat)
   typedef TestType MatType;
   typedef typename MatType::elem_type ElemType;
 
-  const ElemType tol = (std::is_same<ElemType, double>::value) ? 1e-5 : 5e-3;
+  const ElemType tol = (std::is_same_v<ElemType, double>) ? 1e-5 : 5e-3;
 
   // Train a model on a randomly generated problem.  Then, we will iterate
   // through different selected lambda values, ensuring that the error on the
@@ -1244,7 +1244,7 @@ TEMPLATE_TEST_CASE("LARSSelectBetaTest", "[LARSTest]", arma::fmat, arma::mat)
 
   // Now step through numerous different lambda values.
   ElemType lastError = std::numeric_limits<ElemType>::max();
-  const ElemType errorTol = (std::is_same<ElemType, double>::value) ? 1e-8 :
+  const ElemType errorTol = (std::is_same_v<ElemType, double>) ? 1e-8 :
       0.05;
   for (ElemType i = 5.0; i >= -5.0; i -= 0.1)
   {

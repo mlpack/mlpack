@@ -25,8 +25,8 @@ namespace julia {
 template<typename T>
 void PrintModelTypeImport(
     util::ParamData& /* d */,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0)
 {
   // Do nothing.
 }
@@ -37,7 +37,7 @@ void PrintModelTypeImport(
 template<typename T>
 void PrintModelTypeImport(
     util::ParamData& /* d */,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0)
 {
   // Do nothing.
 }
@@ -48,8 +48,8 @@ void PrintModelTypeImport(
 template<typename T>
 void PrintModelTypeImport(
     util::ParamData& d,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   // We need to print, e.g.,
   // import ..<type>
@@ -67,7 +67,7 @@ void PrintModelTypeImport(util::ParamData& d,
                           const void* /* input */,
                           void* /* output */)
 {
-  PrintModelTypeImport<typename std::remove_pointer<T>::type>(d);
+  PrintModelTypeImport<std::remove_pointer_t<T>>(d);
 }
 
 } // namespace julia

@@ -22,8 +22,8 @@ namespace tests {
 template<typename T>
 void* GetAllocatedMemory(
     util::ParamData& /* d */,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0)
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0)
 {
   return NULL;
 }
@@ -31,7 +31,7 @@ void* GetAllocatedMemory(
 template<typename T>
 void* GetAllocatedMemory(
     util::ParamData& d,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0)
 {
   return (*std::any_cast<T>(&d.value)).memptr();
 }
@@ -39,8 +39,8 @@ void* GetAllocatedMemory(
 template<typename T>
 void* GetAllocatedMemory(
     util::ParamData& d,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   // Here we have a model; return its memory location.
   return *std::any_cast<T*>(&d.value);
@@ -52,7 +52,7 @@ void GetAllocatedMemory(util::ParamData& d,
                         void* output)
 {
   *((void**) output) =
-      GetAllocatedMemory<typename std::remove_pointer<T>::type>(d);
+      GetAllocatedMemory<std::remove_pointer_t<T>>(d);
 }
 
 } // namespace tests

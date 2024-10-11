@@ -45,7 +45,7 @@ void PrintDoc(util::ParamData& d,
   std::ostringstream oss;
   oss << " - ";
   oss << util::CamelCase(d.name, Lower) << " (";
-  oss << GetGoType<typename std::remove_pointer<T>::type>(d) << "): "
+  oss << GetGoType<std::remove_pointer_t<T>>(d) << "): "
       << d.desc;
 
   // Print a default, if possible.

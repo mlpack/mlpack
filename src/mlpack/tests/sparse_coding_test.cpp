@@ -23,7 +23,7 @@ void SCVerifyCorrectness(const VecType& beta,
                          const VecType& errCorr,
                          double lambda)
 {
-  const double tol = std::is_same<typename VecType::elem_type, float>::value ?
+  const double tol = std::is_same_v<typename VecType::elem_type, float> ?
       1e-6 : 1e-12;
   size_t nDims = beta.n_elem;
   for (size_t j = 0; j < nDims; ++j)
@@ -122,7 +122,7 @@ TEMPLATE_TEST_CASE("SparseCodingTestDictionaryStep", "[SparseCodingTest]",
 {
   typedef TestType MatType;
 
-  const double tol = std::is_same<typename MatType::elem_type, float>::value ?
+  const double tol = std::is_same_v<typename MatType::elem_type, float> ?
       0.01 : 1e-6;
 
   double lambda1 = 0.1;
@@ -215,7 +215,7 @@ TEMPLATE_TEST_CASE("SparseCodingTrainReturnObjective", "[SparseCodingTest]",
 {
   typedef TestType MatType;
 
-  const double tol = std::is_same<typename MatType::elem_type, float>::value ?
+  const double tol = std::is_same_v<typename MatType::elem_type, float> ?
       0.01 : 1e-6;
 
   double lambda1 = 0.1;

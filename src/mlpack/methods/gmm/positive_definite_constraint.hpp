@@ -35,7 +35,7 @@ class PositiveDefiniteConstraint
   template<typename MatType>
   static void ApplyConstraint(
       MatType& covariance,
-      const typename std::enable_if<!IsVector<MatType>::value>::type*
+      const std::enable_if_t<!IsVector<MatType>::value>*
           /* junk */ = 0)
   {
     typedef typename MatType::elem_type ElemType;
@@ -82,7 +82,7 @@ class PositiveDefiniteConstraint
   template<typename VecType>
   static void ApplyConstraint(
       VecType& diagCovariance,
-      const typename std::enable_if<IsVector<VecType>::value>::type*
+      const std::enable_if_t<IsVector<VecType>::value>*
           /* junk */ = 0)
   {
     typedef typename VecType::elem_type ElemType;

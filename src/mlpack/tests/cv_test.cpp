@@ -299,7 +299,7 @@ void CheckPredictionsType()
 {
   using Extractor = MetaInfoExtractor<Class, PassedMT, PassedPT>;
   using ActualPT = typename Extractor::PredictionsType;
-  static_assert(std::is_same<ExpectedPT, ActualPT>::value,
+  static_assert(std::is_same_v<ExpectedPT, ActualPT>,
       "Should be the same");
 }
 
@@ -350,7 +350,7 @@ void CheckWeightsType()
 {
   using Extractor = MetaInfoExtractor<Class, PassedMT, PassedPT, PassedWT>;
   using ActualWT = typename Extractor::WeightsType;
-  static_assert(std::is_same<ExpectedWT, ActualWT>::value,
+  static_assert(std::is_same_v<ExpectedWT, ActualWT>,
       "Should be the same");
 }
 

@@ -159,7 +159,7 @@ class KDERules
 
   //! Whether the kernel used for the rule is the Gaussian Kernel.
   constexpr static bool kernelIsGaussian =
-      std::is_same<KernelType, GaussianKernel>::value;
+      std::is_same_v<KernelType, GaussianKernel>;
 
   //! Absolute error tolerance available for each reference point.
   const double absErrorTol;
