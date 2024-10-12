@@ -91,3 +91,22 @@ TEST_CASE("WeightedRandomTest", "[RandomTest]")
     }
   }
 }
+
+TEST_CASE("RandCategoricalTest", "[RandomTest]")
+{
+  arma::vec weights = {1.0, 0.0, 0.0, 0.0};
+  size_t out = RandCategorical(weights);
+  REQUIRE(out == 0);
+
+  weights = {0.0, 1.0, 0.0, 0.0};
+  out = RandCategorical(weights);
+  REQUIRE(out == 1);
+
+  weights = {0.0, 0.0, 1.0, 0.0};
+  out = RandCategorical(weights);
+  REQUIRE(out == 2);
+
+  weights = {0.0, 0.0, 0.0, 1.0};
+  out = RandCategorical(weights);
+  REQUIRE(out == 3);
+}
