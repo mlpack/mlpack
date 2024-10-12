@@ -167,6 +167,23 @@ inline double RandNormal(const double mean, const double stddev)
   return stddev * RandNormalDist()(RandGen()) + mean;
 }
 
+/**
+ * Generates random samples from a categorical distribution based 
+ * 
+ * @param weights arma::Col<double> of weights summing to 1.
+*/
+size_t RandCategorical(arma::vec& weights)
+{
+  double x = Random();
+  double sum = 0;
+  for(size_t cat = 0; cat < weights.n_elem; ++cat)
+  {
+    sum += weights[cat];
+    if(x <= sum) return cat;
+  }
+  return weights.n_elem -1;
+}
+
 } // namespace mlpack
 
 #endif // MLPACK_CORE_MATH_RANDOM_HPP
