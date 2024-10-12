@@ -91,14 +91,6 @@ class BCELossType
 // Default typedef for typical `arma::mat` usage.
 typedef BCELossType<arma::mat> BCELoss;
 
-/**
- * Alias of BCELossType.
- */
-typedef BCELossType<arma::mat> CrossEntropyError;
-
-template<typename MatType = arma::mat>
-using CrossEntropyErrorType = BCELossType<MatType>;
-
 } // namespace mlpack
 
 // Include implementation.
