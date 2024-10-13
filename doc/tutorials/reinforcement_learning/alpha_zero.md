@@ -8,7 +8,6 @@ AlphaZero can be applied to any environment with a discrete action space. Howeve
 
 AlphaZero can be applied to any environment with a **discrete action space**. However, since AlphaZero relies on simulating state-action transitions, the number of steps an agent can perform must be unbounded. To achieve this in `mlpack` environments, set the environment's `maxStep` to `0`, which removes the upper bound on the number of transitions.
 
-
 ```c++
 int main() {
   /* Setup the environment */
@@ -56,6 +55,7 @@ Correctly configuring the replay method is essential for AlphaZero in `mlpack`.
 1. AlphaZero is only compatible with `RandomReplay`.
 2. The second template argument must be set to `true` to indicate that action probability vectors, rather than the actions themselves, are stored.
 3. The backpropagate argument must be `true`, as it replaces each move’s reward with the final return of the episode.
+
 ```c++
 mlpack::RandomReplay<mlpack::CartPole, 
   true // saveProba, default is false
@@ -71,6 +71,7 @@ mlpack::RandomReplay<mlpack::CartPole,
 ## Configuration
 
 AlphaZero has a configuration class with several important parameters that need to be set:
+
 ```c++
   /* Set up the AlphaZero configuration */
   mlpack::AlphaZeroConfig config;
@@ -83,10 +84,12 @@ AlphaZero has a configuration class with several important parameters that need 
   config.VMin() = 1.0; // Minimum possible return of the environment
   config.VMax() = 500.0; // Maximum possible return of the environment
 ```
+
 Because AlphaZero scales returns between `VMin` and `VMax`, you must specify the minimum and maximum possible returns for your environment. If the returns are unbounded (as in CartPole), you should define a satisfactory threshold.
 
 ## Training AlphaZero
 After setting up the environment, networks, replay method, and configuration, we can assemble everything easily:
+
 ```c++
   AlphaZero<mlpack::CartPole, decltype(network_v), decltype(network_p), ens::AdamUpdate>
   agent(config, network_v, network_p, replayMethod, environment);
@@ -118,10 +121,12 @@ Now, we define the training loop to allow AlphaZero to learn:
   if (converged)
     std::cout << "Hooray! AlphaZero agent successfully trained" << std::endl;
 ```
+
 AlphaZero has solved problems that scientists had thought impossible. Good look with yours!
 
 ## Full Example
 Below is the complete code for the tutorial:
+
 ```c++
 #include <mlpack.hpp>
 
@@ -180,7 +185,7 @@ int main()
   AlphaZero<mlpack::CartPole, decltype(network_v), decltype(network_p), ens::AdamUpdate>
   agent(config, network_v, network_p, replayMethod, environment);
 
-/* Defining the training loop */
+  /* Defining the training loop */
   arma::running_stat<double> averageReturn;
   size_t episodes = 0;
   bool converged = true;

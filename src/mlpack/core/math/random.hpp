@@ -21,8 +21,7 @@ namespace mlpack {
 // seeds do not cause each thread's RNG to have the exact same output.
 // Therefore, we assign a different offset for each thread, and add this offset
 // whenever we set a seed with RandGen() or RandomSeed().
-inline size_t RandGenSeedOffset()
-{
+inline size_t RandGenSeedOffset() {
   // The use of `seedCounter` ensures that each individual RNG gets its own
   // separate seed.  Otherwise, in OpenMP-enabled loops that use random numbers,
   // it is possible that each individual thread could generate the same sequence
@@ -33,24 +32,21 @@ inline size_t RandGenSeedOffset()
 }
 
 //! Global random object.
-inline std::mt19937& RandGen()
-{
+inline std::mt19937 &RandGen() {
   static thread_local std::mt19937 randGen(std::mt19937::default_seed +
-      RandGenSeedOffset());
+                                           RandGenSeedOffset());
   return randGen;
 }
 
 //! Global uniform distribution.
-inline std::uniform_real_distribution<>& RandUniformDist()
-{
+inline std::uniform_real_distribution<> &RandUniformDist() {
   static thread_local std::uniform_real_distribution<> randUniformDist(0.0,
-      1.0);
+                                                                       1.0);
   return randUniformDist;
 }
 
 //! Global normal distribution.
-inline std::normal_distribution<>& RandNormalDist()
-{
+inline std::normal_distribution<> &RandNormalDist() {
   static thread_local std::normal_distribution<> randNormalDist(0.0, 1.0);
   return randNormalDist;
 }
@@ -62,20 +58,19 @@ inline std::normal_distribution<>& RandNormalDist()
  *
  * @param seed Seed for the random number generator.
  */
-inline void RandomSeed(const size_t seed)
-{
-  #if (!defined(BINDING_TYPE) || BINDING_TYPE != BINDING_TYPE_TEST)
-    RandGen().seed((uint32_t) (seed + RandGenSeedOffset()));
-    #if (BINDING_TYPE == BINDING_TYPE_R)
-      // To suppress Found 'srand', possibly from 'srand' (C).
-      (void) seed;
-    #else
-      srand((unsigned int) seed);
-    #endif
-    arma::arma_rng::set_seed(seed + RandGenSeedOffset());
-  #else
-    (void) seed;
-  #endif
+inline void RandomSeed(const size_t seed) {
+#if (!defined(BINDING_TYPE) || BINDING_TYPE != BINDING_TYPE_TEST)
+  RandGen().seed((uint32_t)(seed + RandGenSeedOffset()));
+#if (BINDING_TYPE == BINDING_TYPE_R)
+  // To suppress Found 'srand', possibly from 'srand' (C).
+  (void)seed;
+#else
+  srand((unsigned int)seed);
+#endif
+  arma::arma_rng::set_seed(seed + RandGenSeedOffset());
+#else
+  (void)seed;
+#endif
 }
 
 /**
@@ -86,18 +81,16 @@ inline void RandomSeed(const size_t seed)
  * Refer to pull request #1306 for discussion on this function.
  */
 #if (BINDING_TYPE == BINDING_TYPE_TEST)
-inline void FixedRandomSeed()
-{
+inline void FixedRandomSeed() {
   static const size_t seed = rand();
-  RandGen().seed((uint32_t) seed + RandGenSeedOffset());
-  srand((unsigned int) seed);
+  RandGen().seed((uint32_t)seed + RandGenSeedOffset());
+  srand((unsigned int)seed);
   arma::arma_rng::set_seed(seed + RandGenSeedOffset());
 }
 
-inline void CustomRandomSeed(const size_t seed)
-{
-  RandGen().seed((uint32_t) seed + RandGenSeedOffset());
-  srand((unsigned int) seed);
+inline void CustomRandomSeed(const size_t seed) {
+  RandGen().seed((uint32_t)seed + RandGenSeedOffset());
+  srand((unsigned int)seed);
   arma::arma_rng::set_seed(seed + RandGenSeedOffset());
 }
 #endif
@@ -105,24 +98,19 @@ inline void CustomRandomSeed(const size_t seed)
 /**
  * Generates a uniform random number between 0 and 1.
  */
-inline double Random()
-{
-  return RandUniformDist()(RandGen());
-}
+inline double Random() { return RandUniformDist()(RandGen()); }
 
 /**
  * Generates a uniform random number in the specified range.
  */
-inline double Random(const double lo, const double hi)
-{
+inline double Random(const double lo, const double hi) {
   return lo + (hi - lo) * RandUniformDist()(RandGen());
 }
 
 /**
  * Generates a 0/1 specified by the input.
  */
-inline double RandBernoulli(const double input)
-{
+inline double RandBernoulli(const double input) {
   if (Random() < input)
     return 1;
   else
@@ -132,28 +120,23 @@ inline double RandBernoulli(const double input)
 /**
  * Generates a uniform random integer.
  */
-inline int RandInt(const int hiExclusive)
-{
-  return (int) std::floor((double) hiExclusive * RandUniformDist()(RandGen()));
+inline int RandInt(const int hiExclusive) {
+  return (int)std::floor((double)hiExclusive * RandUniformDist()(RandGen()));
 }
 
 /**
  * Generates a uniform random integer.
  */
-inline int RandInt(const int lo, const int hiExclusive)
-{
-  return lo + (int) std::floor((double) (hiExclusive - lo)
-                               * RandUniformDist()(RandGen()));
+inline int RandInt(const int lo, const int hiExclusive) {
+  return lo + (int)std::floor((double)(hiExclusive - lo) *
+                              RandUniformDist()(RandGen()));
 }
 
 /**
  * Generates a normally distributed random number with mean 0 and standard
  * deviation of 1.
  */
-inline double RandNormal()
-{
-  return RandNormalDist()(RandGen());
-}
+inline double RandNormal() { return RandNormalDist()(RandGen()); }
 
 /**
  * Generates a normally distributed random number with specified mean and
@@ -162,26 +145,24 @@ inline double RandNormal()
  * @param mean Mean of distribution.
  * @param stddev Standard deviation of distribution.
  */
-inline double RandNormal(const double mean, const double stddev)
-{
+inline double RandNormal(const double mean, const double stddev) {
   return stddev * RandNormalDist()(RandGen()) + mean;
 }
 
 /**
- * Generates random samples from a categorical distribution based 
- * 
+ * Generates random samples from a categorical distribution based
+ *
  * @param weights arma::Col<double> of weights summing to 1.
-*/
-size_t RandCategorical(arma::vec& weights)
-{
+ */
+size_t RandCategorical(arma::vec &weights) {
   double x = Random();
   double sum = 0;
-  for (size_t cat = 0; cat < weights.n_elem; ++cat)
-  {
+  for (size_t cat = 0; cat < weights.n_elem; ++cat) {
     sum += weights[cat];
-    if (x <= sum) return cat;
+    if (x <= sum)
+      return cat;
   }
-  return weights.n_elem -1;
+  return weights.n_elem - 1;
 }
 
 } // namespace mlpack

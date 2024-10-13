@@ -12,8 +12,8 @@
 #ifndef MLPACK_METHODS_RL_REPLAY_RANDOM_REPLAY_HPP
 #define MLPACK_METHODS_RL_REPLAY_RANDOM_REPLAY_HPP
 
-#include <mlpack/prereqs.hpp>
 #include <cassert>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 
@@ -39,10 +39,8 @@ namespace mlpack {
  *
  * @tparam EnvironmentType Desired task.
  */
-template <typename EnvironmentType, bool saveProba=false>
-class RandomReplay
-{
- public:
+template <typename EnvironmentType, bool saveProba = false> class RandomReplay {
+public:
   //! Convenient typedef for action.
   using ActionType = typename EnvironmentType::Action;
 
@@ -52,8 +50,7 @@ class RandomReplay
   //! Convenient typedef for reward
   using RewardType = double;
 
-  struct Transition
-  {
+  struct Transition {
     StateType state;
     ActionType action;
     double reward;
@@ -61,15 +58,9 @@ class RandomReplay
     bool isEnd;
   };
 
-  RandomReplay():
-      batchSize(0),
-      capacity(0),
-      position(0),
-      full(false),
-      nSteps(0),
-      totalReturn(0),
-      episodeSteps(0)
-  { /* Nothing to do here. */ }
+  RandomReplay()
+      : batchSize(0), capacity(0), position(0), full(false), nSteps(0),
+        totalReturn(0), episodeSteps(0) { /* Nothing to do here. */ }
 
   /**
    * Construct an instance of random experience replay class.
@@ -77,28 +68,18 @@ class RandomReplay
    * @param batchSize Number of examples returned at each sample.
    * @param capacity Total memory size in terms of number of examples.
    * @param nSteps Number of steps to look in the future.
-   * @param backpropagate The replay method backpropagates the return at the end of each episode to save the episode return.
+   * @param backpropagate The replay method backpropagates the return at the end
+   * of each episode to save the episode return.
    * @param dimension The dimension of an encoded state.
    */
-  RandomReplay(const size_t batchSize,
-               const size_t capacity,
-               const size_t nSteps = 1,
-               const bool backpropagate = false,
-               const size_t dimension = StateType::dimension) :
-      batchSize(batchSize),
-      capacity(capacity),
-      position(0),
-      full(false),
-      nSteps(nSteps),
-      states(dimension, capacity),
-      actions(capacity),
-      rewards(capacity),
-      nextStates(dimension, capacity),
-      isTerminal(capacity),
-      totalReturn(0),
-      episodeSteps(0),
-      backpropagate(backpropagate)
-  { /* Nothing to do here. */ }
+  RandomReplay(const size_t batchSize, const size_t capacity,
+               const size_t nSteps = 1, const bool backpropagate = false,
+               const size_t dimension = StateType::dimension)
+      : batchSize(batchSize), capacity(capacity), position(0), full(false),
+        nSteps(nSteps), states(dimension, capacity), actions(capacity),
+        rewards(capacity), nextStates(dimension, capacity),
+        isTerminal(capacity), totalReturn(0), episodeSteps(0),
+        backpropagate(backpropagate) { /* Nothing to do here. */ }
 
   /**
    * Store the given experience.
@@ -110,13 +91,8 @@ class RandomReplay
    * @param isEnd Whether next state is terminal state.
    * @param discount The discount parameter.
    */
-  void Store(StateType state,
-             ActionType action,
-             double reward,
-             StateType nextState,
-             bool isEnd,
-             const double& discount)
-  {
+  void Store(StateType state, ActionType action, double reward,
+             StateType nextState, bool isEnd, const double &discount) {
     nStepBuffer.push_back({state, action, reward, nextState, isEnd});
 
     // Single step transition is not ready.
@@ -143,14 +119,12 @@ class RandomReplay
     isTerminal(position) = isEnd;
     totalReturn += reward;
     position++;
-    if (position == capacity)
-    {
+    if (position == capacity) {
       full = true;
       position = 0;
     }
     episodeSteps++;
-    if (isEnd && backpropagate)
-    {
+    if (isEnd && backpropagate) {
       Backward();
       episodeSteps = 0;
       totalReturn = 0.0;
@@ -165,22 +139,17 @@ class RandomReplay
    * @param isEnd Whether next state is terminal state.
    * @param discount The discount parameter.
    */
-  void GetNStepInfo(double& reward,
-                    StateType& nextState,
-                    bool& isEnd,
-                    const double& discount)
-  {
+  void GetNStepInfo(double &reward, StateType &nextState, bool &isEnd,
+                    const double &discount) {
     reward = nStepBuffer.back().reward;
     nextState = nStepBuffer.back().nextState;
     isEnd = nStepBuffer.back().isEnd;
 
     // Should start from the second last transition in buffer.
-    for (int i = nStepBuffer.size() - 2; i >= 0; i--)
-    {
+    for (int i = nStepBuffer.size() - 2; i >= 0; i--) {
       bool iE = nStepBuffer[i].isEnd;
       reward = nStepBuffer[i].reward + discount * reward * (1 - iE);
-      if (iE)
-      {
+      if (iE) {
         nextState = nStepBuffer[i].nextState;
         isEnd = iE;
       }
@@ -197,18 +166,15 @@ class RandomReplay
    * @param isTerminal Indicate whether corresponding next state is terminal
    *        state.
    */
-  void Sample(arma::mat& sampledStates,
-              std::vector<ActionType>& sampledActions,
-              arma::rowvec& sampledRewards,
-              arma::mat& sampledNextStates,
-              arma::irowvec& isTerminal)
-  {
+  void Sample(arma::mat &sampledStates, std::vector<ActionType> &sampledActions,
+              arma::rowvec &sampledRewards, arma::mat &sampledNextStates,
+              arma::irowvec &isTerminal) {
     size_t upperBound = full ? capacity : position;
-    arma::uvec sampledIndices = randi<arma::uvec>(
-        batchSize, arma::distr_param(0, upperBound - 1));
+    arma::uvec sampledIndices =
+        randi<arma::uvec>(batchSize, arma::distr_param(0, upperBound - 1));
 
     sampledStates = states.cols(sampledIndices);
-    for (size_t t = 0; t < sampledIndices.n_rows; t ++)
+    for (size_t t = 0; t < sampledIndices.n_rows; t++)
       sampledActions.push_back(actions[sampledIndices[t]]);
     sampledRewards = rewards.elem(sampledIndices).t();
     sampledNextStates = nextStates.cols(sampledIndices);
@@ -220,10 +186,7 @@ class RandomReplay
    *
    * @return Actual used memory size
    */
-  const size_t& Size()
-  {
-    return full ? capacity : position;
-  }
+  const size_t &Size() { return full ? capacity : position; }
 
   /**
    * Update the priorities of transitions and Update the gradients.
@@ -235,31 +198,28 @@ class RandomReplay
    */
   void Update(arma::mat /* target */,
               std::vector<ActionType> /* sampledActions */,
-              arma::mat /* nextActionValues */,
-              arma::mat& /* gradients */)
-  {
+              arma::mat /* nextActionValues */, arma::mat & /* gradients */) {
     /* Do nothing for random replay. */
   }
 
   //! Get the number of steps for n-step agent.
-  const size_t& NSteps() const { return nSteps; }
+  const size_t &NSteps() const { return nSteps; }
 
   /**
    * Backpropagate the total return
    * Used in AlphaZero, and in MC approaches
-   * 
+   *
    * @param * (totalReturn) The total return over the episode
    * @param * (Steps) On how many steps to backpropagate the total return
    */
-  void Backward()
-  {
-    for (size_t step = 0, i; step < episodeSteps; ++step){
-      i = (position -1 -step + capacity) % capacity;
+  void Backward() {
+    for (size_t step = 0, i; step < episodeSteps; ++step) {
+      i = (position - 1 - step + capacity) % capacity;
       rewards(i) = totalReturn;
     }
   }
 
- private:
+private:
   //! Locally-stored number of examples of each sample.
   size_t batchSize;
 
@@ -303,11 +263,8 @@ class RandomReplay
   arma::irowvec isTerminal;
 };
 
-
-template <typename EnvironmentType>
-class RandomReplay<EnvironmentType, true>
-{
- public:
+template <typename EnvironmentType> class RandomReplay<EnvironmentType, true> {
+public:
   //! Convenient typedef for action.
   using ActionType = typename EnvironmentType::Action;
 
@@ -317,8 +274,7 @@ class RandomReplay<EnvironmentType, true>
   //! Convenient typedef for reward
   using RewardType = double;
 
-  struct Transition
-  {
+  struct Transition {
     StateType state;
     arma::vec probaAction;
     double reward;
@@ -326,13 +282,9 @@ class RandomReplay<EnvironmentType, true>
     bool isEnd;
   };
 
-  RandomReplay():
-      batchSize(0),
-      capacity(0),
-      position(0),
-      full(false),
-      nSteps(0)
-  { /* Nothing to do here. */ }
+  RandomReplay()
+      : batchSize(0), capacity(0), position(0), full(false),
+        nSteps(0) { /* Nothing to do here. */ }
 
   /**
    * Construct an instance of random experience replay class.
@@ -340,28 +292,19 @@ class RandomReplay<EnvironmentType, true>
    * @param batchSize Number of examples returned at each sample.
    * @param capacity Total memory size in terms of number of examples.
    * @param nSteps Number of steps to look in the future.
-   * @param backpropagate The replay method backpropagates the return at the end of each episode to save the episode return.
+   * @param backpropagate The replay method backpropagates the return at the end
+   * of each episode to save the episode return.
    * @param dimension The dimension of an encoded state.
    */
-  RandomReplay(const size_t batchSize,
-               const size_t capacity,
-               const size_t nSteps = 1,
-               const bool backpropagate = false,
-               const size_t dimension = StateType::dimension) :
-      batchSize(batchSize),
-      capacity(capacity),
-      position(0),
-      full(false),
-      nSteps(nSteps),
-      states(dimension, capacity),
-      probaActions(ActionType::size, capacity),
-      rewards(capacity),
-      nextStates(dimension, capacity),
-      isTerminal(capacity),
-      totalReturn(0),
-      episodeSteps(0),
-      backpropagate(backpropagate)
-  { /* Nothing to do here. */ }
+  RandomReplay(const size_t batchSize, const size_t capacity,
+               const size_t nSteps = 1, const bool backpropagate = false,
+               const size_t dimension = StateType::dimension)
+      : batchSize(batchSize), capacity(capacity), position(0), full(false),
+        nSteps(nSteps), states(dimension, capacity),
+        probaActions(ActionType::size, capacity), rewards(capacity),
+        nextStates(dimension, capacity), isTerminal(capacity), totalReturn(0),
+        episodeSteps(0),
+        backpropagate(backpropagate) { /* Nothing to do here. */ }
 
   /**
    * Store the given experience.
@@ -373,13 +316,8 @@ class RandomReplay<EnvironmentType, true>
    * @param isEnd Whether next state is terminal state.
    * @param discount The discount parameter.
    */
-  void Store(StateType state,
-             arma::vec probaAction,
-             double reward,
-             StateType nextState,
-             bool isEnd,
-             const double& discount)
-  {
+  void Store(StateType state, arma::vec probaAction, double reward,
+             StateType nextState, bool isEnd, const double &discount) {
     nStepBuffer.push_back({state, probaAction, reward, nextState, isEnd});
 
     // Single step transition is not ready.
@@ -406,14 +344,12 @@ class RandomReplay<EnvironmentType, true>
     isTerminal(position) = isEnd;
     totalReturn += reward;
     position++;
-    if (position == capacity)
-    {
+    if (position == capacity) {
       full = true;
       position = 0;
     }
     episodeSteps++;
-    if (isEnd && backpropagate)
-    {
+    if (isEnd && backpropagate) {
       Backward();
       episodeSteps = 0;
       totalReturn = 0.0;
@@ -428,22 +364,17 @@ class RandomReplay<EnvironmentType, true>
    * @param isEnd Whether next state is terminal state.
    * @param discount The discount parameter.
    */
-  void GetNStepInfo(double& reward,
-                    StateType& nextState,
-                    bool& isEnd,
-                    const double& discount)
-  {
+  void GetNStepInfo(double &reward, StateType &nextState, bool &isEnd,
+                    const double &discount) {
     reward = nStepBuffer.back().reward;
     nextState = nStepBuffer.back().nextState;
     isEnd = nStepBuffer.back().isEnd;
 
     // Should start from the second last transition in buffer.
-    for (int i = nStepBuffer.size() - 2; i >= 0; i--)
-    {
+    for (int i = nStepBuffer.size() - 2; i >= 0; i--) {
       bool iE = nStepBuffer[i].isEnd;
       reward = nStepBuffer[i].reward + discount * reward * (1 - iE);
-      if (iE)
-      {
+      if (iE) {
         nextState = nStepBuffer[i].nextState;
         isEnd = iE;
       }
@@ -460,15 +391,12 @@ class RandomReplay<EnvironmentType, true>
    * @param isTerminal Indicate whether corresponding next state is terminal
    *        state.
    */
-  void Sample(arma::mat& sampledStates,
-              arma::mat& sampledProbaActions,
-              arma::rowvec& sampledRewards,
-              arma::mat& sampledNextStates,
-              arma::irowvec& isTerminal)
-  {
+  void Sample(arma::mat &sampledStates, arma::mat &sampledProbaActions,
+              arma::rowvec &sampledRewards, arma::mat &sampledNextStates,
+              arma::irowvec &isTerminal) {
     size_t upperBound = full ? capacity : position;
-    arma::uvec sampledIndices = randi<arma::uvec>(
-        batchSize, arma::distr_param(0, upperBound - 1));
+    arma::uvec sampledIndices =
+        randi<arma::uvec>(batchSize, arma::distr_param(0, upperBound - 1));
 
     sampledStates = states.cols(sampledIndices);
     sampledProbaActions = probaActions.cols(sampledIndices);
@@ -482,10 +410,7 @@ class RandomReplay<EnvironmentType, true>
    *
    * @return Actual used memory size
    */
-  const size_t& Size()
-  {
-    return full ? capacity : position;
-  }
+  const size_t &Size() { return full ? capacity : position; }
 
   /**
    * Update the priorities of transitions and Update the gradients.
@@ -495,33 +420,29 @@ class RandomReplay<EnvironmentType, true>
    * @param * (nextActionValues) Agent's next action
    * @param * (gradients) The model's gradients
    */
-  void Update(arma::mat /* target */,
-              arma::mat /* sampledProbaActions */,
-              arma::mat /* nextActionValues */,
-              arma::mat& /* gradients */)
-  {
+  void Update(arma::mat /* target */, arma::mat /* sampledProbaActions */,
+              arma::mat /* nextActionValues */, arma::mat & /* gradients */) {
     /* Do nothing for random replay. */
   }
 
   //! Get the number of steps for n-step agent.
-  const size_t& NSteps() const { return nSteps; }
+  const size_t &NSteps() const { return nSteps; }
 
   /**
    * Backpropagate the total return
    * Used in AlphaZero
-   * 
+   *
    * @param * (totalReturn) The total return over the episode
    * @param * (Steps) On how many steps to backpropagate the total return
    */
-  void Backward()
-  {
-    for (size_t step = 0, i; step < episodeSteps; ++step){
-      i = (position -1 -step + capacity) % capacity;
+  void Backward() {
+    for (size_t step = 0, i; step < episodeSteps; ++step) {
+      i = (position - 1 - step + capacity) % capacity;
       rewards(i) = totalReturn;
     }
   }
 
- private:
+private:
   //! Locally-stored number of examples of each sample.
   size_t batchSize;
 
