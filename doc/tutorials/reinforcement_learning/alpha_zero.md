@@ -10,9 +10,11 @@ AlphaZero can be applied to any environment with a **discrete action space**. Ho
 
 
 ```c++
+int main() {
     // setup the environment
     mlpack::CartPole environment(
         0// maxSteps = 0 removes the limit on the number of transitions
+    );
 ```
 
 ## Networks
@@ -96,7 +98,7 @@ After setting up the environment, networks, replay method, and configuration, we
 ```
 Now, we define the training loop to allow AlphaZero to learn:
 ```c++
-    arma::running_stat<double> averageReturn;
+    
     size_t episodes = 0;
     bool converged = true;
     while (true)
