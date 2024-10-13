@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['1_0',['1',['../md__h_i_s_t_o_r_y.html#autotoc_md66',1,'mlpack 1.0.1'],['../md__h_i_s_t_o_r_y.html#autotoc_md53',1,'mlpack 2.0.1'],['../md__h_i_s_t_o_r_y.html#autotoc_md49',1,'mlpack 2.1.1'],['../md__h_i_s_t_o_r_y.html#autotoc_md47',1,'mlpack 2.2.1'],['../md__h_i_s_t_o_r_y.html#autotoc_md41',1,'mlpack 3.0.1'],['../md__h_i_s_t_o_r_y.html#autotoc_md36',1,'mlpack 3.1.1'],['../md__h_i_s_t_o_r_y.html#autotoc_md34',1,'mlpack 3.2.1'],['../md__h_i_s_t_o_r_y.html#autotoc_md31',1,'mlpack 3.3.1'],['../md__h_i_s_t_o_r_y.html#autotoc_md28',1,'mlpack 3.4.1'],['../md__h_i_s_t_o_r_y.html#autotoc_md25',1,'mlpack 4.0.1'],['../md__h_i_s_t_o_r_y.html#autotoc_md22',1,'mlpack 4.2.1']]],
+  ['1_200_1',['1 0',['../md__h_i_s_t_o_r_y.html#autotoc_md50',1,'mlpack 2.1.0'],['../md__h_i_s_t_o_r_y.html#autotoc_md37',1,'mlpack 3.1.0'],['../md__h_i_s_t_o_r_y.html#autotoc_md24',1,'mlpack 4.1.0']]],
+  ['1_200_200_2',['mlpack 1.0.0',['../md__h_i_s_t_o_r_y.html#autotoc_md67',1,'']]],
+  ['1_200_201_3',['mlpack 1.0.1',['../md__h_i_s_t_o_r_y.html#autotoc_md66',1,'']]],
+  ['1_200_2010_4',['mlpack 1.0.10',['../md__h_i_s_t_o_r_y.html#autotoc_md57',1,'']]],
+  ['1_200_2011_5',['mlpack 1.0.11',['../md__h_i_s_t_o_r_y.html#autotoc_md56',1,'']]],
+  ['1_200_2012_6',['mlpack 1.0.12',['../md__h_i_s_t_o_r_y.html#autotoc_md55',1,'']]],
+  ['1_200_202_7',['mlpack 1.0.2',['../md__h_i_s_t_o_r_y.html#autotoc_md65',1,'']]],
+  ['1_200_203_8',['mlpack 1.0.3',['../md__h_i_s_t_o_r_y.html#autotoc_md64',1,'']]],
+  ['1_200_204_9',['mlpack 1.0.4',['../md__h_i_s_t_o_r_y.html#autotoc_md63',1,'']]],
+  ['1_200_205_10',['mlpack 1.0.5',['../md__h_i_s_t_o_r_y.html#autotoc_md62',1,'']]],
+  ['1_200_206_11',['mlpack 1.0.6',['../md__h_i_s_t_o_r_y.html#autotoc_md61',1,'']]],
+  ['1_200_207_12',['mlpack 1.0.7',['../md__h_i_s_t_o_r_y.html#autotoc_md60',1,'']]],
+  ['1_200_208_13',['mlpack 1.0.8',['../md__h_i_s_t_o_r_y.html#autotoc_md59',1,'']]],
+  ['1_200_209_14',['mlpack 1.0.9',['../md__h_i_s_t_o_r_y.html#autotoc_md58',1,'']]],
+  ['1_201_15',['1 1',['../md__h_i_s_t_o_r_y.html#autotoc_md49',1,'mlpack 2.1.1'],['../md__h_i_s_t_o_r_y.html#autotoc_md36',1,'mlpack 3.1.1']]],
+  ['1_20a_20linking_20with_20autodownloaded_20armadillo_16',['3.1.a. Linking with autodownloaded Armadillo',['../md__r_e_a_d_m_e.html#autotoc_md73',1,'']]],
+  ['1_20additional_20build_20options_17',['3.1. Additional build options',['../md__r_e_a_d_m_e.html#autotoc_md72',1,'']]],
+  ['1_20citation_20details_18',['1. Citation details',['../md__r_e_a_d_m_e.html#autotoc_md69',1,'']]],
+  ['10_19',['mlpack 1.0.10',['../md__h_i_s_t_o_r_y.html#autotoc_md57',1,'']]],
+  ['11_20',['mlpack 1.0.11',['../md__h_i_s_t_o_r_y.html#autotoc_md56',1,'']]],
+  ['12_21',['mlpack 1.0.12',['../md__h_i_s_t_o_r_y.html#autotoc_md55',1,'']]]
+];

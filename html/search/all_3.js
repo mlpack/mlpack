@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['3_0',['3',['../md__h_i_s_t_o_r_y.html#autotoc_md64',1,'mlpack 1.0.3'],['../md__h_i_s_t_o_r_y.html#autotoc_md51',1,'mlpack 2.0.3'],['../md__h_i_s_t_o_r_y.html#autotoc_md45',1,'mlpack 2.2.3'],['../md__h_i_s_t_o_r_y.html#autotoc_md39',1,'mlpack 3.0.3']]],
+  ['3_200_1',['3 0',['../md__h_i_s_t_o_r_y.html#autotoc_md32',1,'mlpack 3.3.0'],['../md__h_i_s_t_o_r_y.html#autotoc_md21',1,'mlpack 4.3.0']]],
+  ['3_200_200_2',['mlpack 3.0.0',['../md__h_i_s_t_o_r_y.html#autotoc_md42',1,'']]],
+  ['3_200_201_3',['mlpack 3.0.1',['../md__h_i_s_t_o_r_y.html#autotoc_md41',1,'']]],
+  ['3_200_202_4',['mlpack 3.0.2',['../md__h_i_s_t_o_r_y.html#autotoc_md40',1,'']]],
+  ['3_200_203_5',['mlpack 3.0.3',['../md__h_i_s_t_o_r_y.html#autotoc_md39',1,'']]],
+  ['3_200_204_6',['mlpack 3.0.4',['../md__h_i_s_t_o_r_y.html#autotoc_md38',1,'']]],
+  ['3_201_7',['mlpack 3.3.1',['../md__h_i_s_t_o_r_y.html#autotoc_md31',1,'']]],
+  ['3_201_200_8',['mlpack 3.1.0',['../md__h_i_s_t_o_r_y.html#autotoc_md37',1,'']]],
+  ['3_201_201_9',['mlpack 3.1.1',['../md__h_i_s_t_o_r_y.html#autotoc_md36',1,'']]],
+  ['3_201_20a_20linking_20with_20autodownloaded_20armadillo_10',['3.1.a. Linking with autodownloaded Armadillo',['../md__r_e_a_d_m_e.html#autotoc_md73',1,'']]],
+  ['3_201_20additional_20build_20options_11',['3.1. Additional build options',['../md__r_e_a_d_m_e.html#autotoc_md72',1,'']]],
+  ['3_202_12',['mlpack 3.3.2',['../md__h_i_s_t_o_r_y.html#autotoc_md30',1,'']]],
+  ['3_202_200_13',['mlpack 3.2.0',['../md__h_i_s_t_o_r_y.html#autotoc_md35',1,'']]],
+  ['3_202_201_14',['mlpack 3.2.1',['../md__h_i_s_t_o_r_y.html#autotoc_md34',1,'']]],
+  ['3_202_202_15',['mlpack 3.2.2',['../md__h_i_s_t_o_r_y.html#autotoc_md33',1,'']]],
+  ['3_202_20reducing_20compile_20time_16',['3.2. Reducing compile time',['../md__r_e_a_d_m_e.html#autotoc_md74',1,'']]],
+  ['3_203_200_17',['mlpack 3.3.0',['../md__h_i_s_t_o_r_y.html#autotoc_md32',1,'']]],
+  ['3_203_201_18',['mlpack 3.3.1',['../md__h_i_s_t_o_r_y.html#autotoc_md31',1,'']]],
+  ['3_203_202_19',['mlpack 3.3.2',['../md__h_i_s_t_o_r_y.html#autotoc_md30',1,'']]],
+  ['3_204_200_20',['mlpack 3.4.0',['../md__h_i_s_t_o_r_y.html#autotoc_md29',1,'']]],
+  ['3_204_201_21',['mlpack 3.4.1',['../md__h_i_s_t_o_r_y.html#autotoc_md28',1,'']]],
+  ['3_204_202_22',['mlpack 3.4.2',['../md__h_i_s_t_o_r_y.html#autotoc_md27',1,'']]],
+  ['3_20installing_20and_20using_20mlpack_20in_20c_23',['3. Installing and using mlpack in C++',['../md__r_e_a_d_m_e.html#autotoc_md71',1,'']]]
+];

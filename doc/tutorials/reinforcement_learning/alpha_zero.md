@@ -10,11 +10,9 @@ AlphaZero can be applied to any environment with a **discrete action space**. Ho
 
 
 ```c++
-int main() {
     // setup the environment
     mlpack::CartPole environment(
         0// maxSteps = 0 removes the limit on the number of transitions
-    );
 ```
 
 ## Networks

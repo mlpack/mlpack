@@ -1,0 +1,711 @@
+\chapter{mlpack changelog}
+\hypertarget{md__h_i_s_t_o_r_y}{}\label{md__h_i_s_t_o_r_y}\index{mlpack changelog@{mlpack changelog}}
+\label{md__h_i_s_t_o_r_y_autotoc_md17}%
+\Hypertarget{md__h_i_s_t_o_r_y_autotoc_md17}%
+\hypertarget{md__h_i_s_t_o_r_y_autotoc_md18}{}\doxysection{\texorpdfstring{mlpack ?.?.?}{mlpack ?.?.?}}\label{md__h_i_s_t_o_r_y_autotoc_md18}
+{\itshape ????-\/??-\/??}
+
+
+\begin{DoxyItemize}
+\item Fix compilation with clang 19 (\#3799).
+\item Deprecate version of {\ttfamily data\+::\+Split()} that returns a {\ttfamily std\+::tuple} for consistency; use other overloads instead (\#3803).
+\item Fix LSTM layer copy/move constructors (\#3809).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md19}{}\doxysection{\texorpdfstring{mlpack 4.\+5.\+0}{mlpack 4.\+5.\+0}}\label{md__h_i_s_t_o_r_y_autotoc_md19}
+{\itshape 2024-\/09-\/17}
+
+
+\begin{DoxyItemize}
+\item Distribute STB headers as part of R package (\#3724, \#3726).
+\item Added Open\+MP parallelization to Hamerly, Naive, and Elkan k-\/means (\#3761, \#3762, \#3764).
+\item Added Open\+MP support for fast approximation (\#3685).
+\item Implemented the Find and Fill algorithm into the Dropout Layer and added Open\+MP support (\#3684).
+\item Update Python bindings to support Num\+Py 2.\+x (\#3752).
+\item Bump minimum Armadillo version to 10.\+8 (\#3760).
+\item Adapt {\ttfamily Nearest\+Interpolation} ANN layer to new Layer Inteface (\#3768).
+\item Add support for arbitrary matrix types to {\ttfamily Radical} and deprecate {\ttfamily Radical\+::\+Do\+Radical()} in favor of {\ttfamily Radical\+::\+Apply()} (\#3787).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md20}{}\doxysection{\texorpdfstring{mlpack 4.\+4.\+0}{mlpack 4.\+4.\+0}}\label{md__h_i_s_t_o_r_y_autotoc_md20}
+{\itshape 2024-\/05-\/26}
+
+
+\begin{DoxyItemize}
+\item Add {\ttfamily print\+\_\+training\+\_\+accuracy} option to Logistic\+Regression bindings (\#3552).
+\item Fix {\ttfamily preprocess\+\_\+split()} call in documentation for {\ttfamily Linear\+Regression} and {\ttfamily Ada\+Boost} Python classes (\#3563).
+\item Added {\ttfamily Repeat} ANN layer type (\#3565).
+\item Remove {\ttfamily round()} implementation for old MSVC compilers (\#3570).
+\item (R) Added inline plugin to the R bindings to allow for other R packages to link to headers (\#3626, h/t @cgiachalis).
+\item (R) Removed extra gcc-\/specific options from {\ttfamily Makevars.\+win} (\#3627, h/t @kalibera).
+\item (R) Changed roxygen package-\/level documentation from using {\ttfamily @doc\+Type package} to {\ttfamily "{}\+\_\+\+PACKAGE"{}}. (\#3636)
+\item Fix floating-\/point accuracy issue for decision trees that sometimes caused crashes (\#3595).
+\item Use templates metaprog to distinguish between a matrix and a cube type (\#3602), (\#3585).
+\item Use {\ttfamily Mat\+Type} instead of {\ttfamily arma\+::\+Mat\texorpdfstring{$<$}{<}eT\texorpdfstring{$>$}{>}}, (\#3567), (\#3607), (\#3608), (\#3609), (\#3568).
+\item Generalize matrix operations for armadillo and bandicoot, (\#3619), (\#3617), (\#3610), (\#3643), (\#3600), (\#3605), (\#3629).
+\item Change {\ttfamily arma\+::conv\+\_\+to} to {\ttfamily Conv\+To} using a local shim for bandicoot support (\#3614).
+\item Fix a bug for the stddev and mean in {\ttfamily Rand\+Normal()} \#(3651).
+\item Allow PCA to take different matrix types (\#3677).
+\item Fix usage of precompiled headers; remove cotire (\#3635).
+\item Fix non-\/working {\ttfamily verbose} option for R bindings (\#3691), and add global {\ttfamily mlpack.\+verbose} option (\#3706).
+\item Fix divide-\/by-\/zero edge case for LARS (\#3701).
+\item Templatize {\ttfamily Sparse\+Coding} and {\ttfamily Local\+Coordinate\+Coding} to allow different matrix types (\#3709, \#3711).
+\item Fix handling of unused atoms in {\ttfamily Local\+Coordinate\+Coding} (\#3711).
+\item Move minimum required C++ version from C++14 to C++17 (\#3704).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md21}{}\doxysection{\texorpdfstring{mlpack 4.\+3.\+0}{mlpack 4.\+3.\+0}}\label{md__h_i_s_t_o_r_y_autotoc_md21}
+{\itshape 2023-\/11-\/27}
+
+
+\begin{DoxyItemize}
+\item Fix include ordering issue for {\ttfamily Linear\+Regression} (\#3541).
+\item Fix L1 regularization in case where weight is zero (\#3545).
+\item Use HTTPS for all auto-\/downloaded dependencies (\#3550).
+\item More robust detection of C++17 mode in the MSVC "{}compiler"{} (\#3555, \#3557).
+\item Fix setting number of classes correctly in {\ttfamily Softmax\+Regression\+::\+Train()} (\#3553).
+\item Adapt {\ttfamily Multihead\+Attention} and {\ttfamily Layer\+Norm} ANN layers to new Layer interface (\#3547).
+\item Fix inconsistent use of the "{}input"{} parameter to the Backward method in ANNs (\#3551).
+\item Allow passing weak learner hyperparameters directly to Ada\+Boost (\#3560).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md22}{}\doxysection{\texorpdfstring{mlpack 4.\+2.\+1}{mlpack 4.\+2.\+1}}\label{md__h_i_s_t_o_r_y_autotoc_md22}
+{\itshape 2023-\/09-\/05}
+
+
+\begin{DoxyItemize}
+\item Reinforcement Learning\+: Gaussian noise (\#3515).
+\item Reinforcement Learning\+: Twin Delayed Deep Deterministic Policy Gradient (\#3512).
+\item Reinforcement Learning\+: Ornstein-\/\+Uhlenbeck noise (\#3499).
+\item Reinforcement Learning\+: Deep Deterministic Policy Gradient (\#3494).
+\item Add {\ttfamily Class\+Probabilities()} member to {\ttfamily Decision\+Tree} so that the internal details of trees can be more easily inspected (\#3511).
+\item Bipolar sigmoid activation function added and invertible functions fixed (\#3506).
+\item Add auto-\/configured {\ttfamily mlpack/config.\+hpp} to contain configuration details of mlpack that are required at compile time. STB detection is now done in this file with the {\ttfamily MLPACK\+\_\+\+HAS\+\_\+\+STB} macro (\#3519).
+\item Fix CRAN package alias for R bindings (\#3543).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md23}{}\doxysection{\texorpdfstring{mlpack 4.\+2.\+0}{mlpack 4.\+2.\+0}}\label{md__h_i_s_t_o_r_y_autotoc_md23}
+{\itshape 2023-\/06-\/14}
+
+
+\begin{DoxyItemize}
+\item Adapt {\ttfamily C\+\_\+\+Re\+LU}, {\ttfamily Re\+LU6}, {\ttfamily Flexible\+Re\+LU} layers for the new neural network API (\#3445).
+\item Fix PRe\+LU, add integration test to it (\#3473).
+\item Fix bug in Log\+Soft\+Max derivative (\#3469).
+\item Add {\ttfamily serialize} method to {\ttfamily Gaussian\+Initialization}, {\ttfamily Lecun\+Normal\+Initialization}, {\ttfamily Kathirvalavakumar\+Subavathi\+Initialization}, {\ttfamily Nguyen\+Widrow\+Initialization}, and {\ttfamily Orthogonal\+Initialization} (\#3483).
+\item Allow categorical features to {\ttfamily preprocess\+\_\+one\+\_\+hot\+\_\+encode} (\#3487).
+\item Install mlpack and cereal headers as part of R package (\#3488).
+\item Add intercept and normalization support to LARS (\#3493).
+\item Allow adding two features simultaneously to LARS models (\#3493).
+\item Adapt FTSwish activation function (\#3485).
+\item Adapt Hyper-\/\+Sinh activation function (\#3491).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md24}{}\doxysection{\texorpdfstring{mlpack 4.\+1.\+0}{mlpack 4.\+1.\+0}}\label{md__h_i_s_t_o_r_y_autotoc_md24}
+{\itshape 2023-\/04-\/26}
+
+
+\begin{DoxyItemize}
+\item Adapt Hard\+TanH layer (\#3454).
+\item Adapt Softmin layer for new neural network API (\#3437).
+\item Adapt PRe\+LU layer for new neural network API (\#3420).
+\item Add CF decomposition methods\+: {\ttfamily QUIC\+\_\+\+SVDPolicy} and {\ttfamily Block\+Krylov\+SVDPolicy} (\#3413, \#3404).
+\item Update outdated code in tutorials (\#3398, \#3401).
+\item Bugfix for non-\/square convolution kernels (\#3376).
+\item Fix a few missing includes in {\ttfamily \texorpdfstring{$<$}{<}mlpack.\+hpp\texorpdfstring{$>$}{>}} (\#3374).
+\item Fix DBSCAN handling of non-\/core points (\#3346).
+\item Avoid deprecation warnings in Armadillo 11.\+4.\+4+ (\#3405).
+\item Issue runtime error when serialization of neural networks is attempted but {\ttfamily MLPACK\+\_\+\+ENABLE\+\_\+\+ANN\+\_\+\+SERIALIZATION} is not defined (\#3451).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md25}{}\doxysection{\texorpdfstring{mlpack 4.\+0.\+1}{mlpack 4.\+0.\+1}}\label{md__h_i_s_t_o_r_y_autotoc_md25}
+{\itshape 2022-\/12-\/23}
+
+
+\begin{DoxyItemize}
+\item Fix mapping of categorical data for Julia bindings (\#3305).
+\item Bugfix\+: catch all exceptions when running bindings from Julia, instead of crashing (\#3304).
+\item Various Python configuration fixes for Windows and OS X (\#3312, \#3313, \#3311, \#3309, \#3308, \#3297, \#3302).
+\item Optimize and strip compiled Python bindings when possible, resulting in significant size minimization (\#3310).
+\item The {\ttfamily /std\+:c++17} and {\ttfamily /\+Zc\+:\+\_\+\+\_\+cplusplus} options are now required when using Visual Studio (\#3318). Documentation and compile-\/time checks added.
+\item Set {\ttfamily BUILD\+\_\+\+TESTS} to {\ttfamily OFF} by default. If you want to build tests, like {\ttfamily mlpack\+\_\+test}, manually set {\ttfamily BUILD\+\_\+\+TESTS} to {\ttfamily ON} in your CMake configuration step (\#3316).
+\item Fix handling of transposed matrix parameters in Python, Julia, R, and Go bindings (\#3327).
+\item Comment out definition of ARMA\+\_\+\+NO DEBUG. This allows various Armadillo run-\/time checks such as non-\/conforming matrices and out-\/of-\/bounds element access. In turn this helps tracking down bugs and incorrect usage (\#3322).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md26}{}\doxysection{\texorpdfstring{mlpack 4.\+0.\+0}{mlpack 4.\+0.\+0}}\label{md__h_i_s_t_o_r_y_autotoc_md26}
+{\itshape 2022-\/10-\/23}
+
+
+\begin{DoxyItemize}
+\item Bump C++ standard requirement to C++14 (\#3233).
+\item Fix {\ttfamily Perceptron} to work with cross-\/validation framework (\#3190).
+\item Migrate from boost tests to Catch2 framework (\#2523), (\#2584).
+\item Bump minimum armadillo version from 8.\+400 to 9.\+800 (\#3043), (\#3048).
+\item Adding a copy constructor in the Convolution layer (\#3067).
+\item Replace {\ttfamily boost\+::spirit} parser by a local efficient implementation (\#2942).
+\item Disable correctly the autodownloader + fix tests stability (\#3076).
+\item Replace {\ttfamily boost\+::any} with {\ttfamily core\+::v2\+::any} or {\ttfamily std\+::any} if available (\#3006).
+\item Remove old non used Boost headers (\#3005).
+\item Replace {\ttfamily boost\+::enable\+\_\+if} with {\ttfamily std\+::enable\+\_\+if} (\#2998).
+\item Replace {\ttfamily boost\+::is\+\_\+same} with {\ttfamily std\+::is\+\_\+same} (\#2993).
+\item Remove invalid option for emsmallen and STB (\#2960).
+\item Check for armadillo dependencies before downloading armadillo (\#2954).
+\item Disable the usage of autodownloader by default (\#2953).
+\item Install dependencies downloaded with the autodownloader (\#2952).
+\item Download older Boost if the compiler is old (\#2940).
+\item Add support for embedded systems (\#2531).
+\item Build mlpack executable statically if the library is statically linked (\#2931).
+\item Fix cover tree loop bug on embedded arm systems (\#2869).
+\item Fix a LAPACK bug in {\ttfamily Find\+Armadillo.\+cmake} (\#2929).
+\item Add an autodownloader to get mlpack dependencies (\#2927).
+\item Remove Coverage files and configurations from CMake\+Lists (\#2866).
+\item Added {\ttfamily Multi Label Soft Margin Loss} loss function for neural networks (\#2345).
+\item Added Decision Tree Regressor (\#2905). It can be used using the class {\ttfamily mlpack\+::tree\+::\+Decision\+Tree\+Regressor}. It is accessible only though C++.
+\item Added dict-\/style inspection of mlpack models in python bindings (\#2868).
+\item Added Extra Trees Algorithm (\#2883). Currently, it can be used using the class {\ttfamily mlpack\+::tree\+::\+Extra\+Trees}, but only through C++.
+\item Add Flatten T Swish activation function ({\ttfamily flatten-\/t-\/swish.\+hpp})
+\item Added warm start feature to Random Forest (\#2881); this feature is accessible from mlpack\textquotesingle{}s bindings to different languages.
+\item Added Pixel Shuffle layer (\#2563).
+\item Add "{}check\+\_\+input\+\_\+matrices"{} option to python bindings that checks for NaN and inf values in all the input matrices (\#2787).
+\item Add Adjusted R squared functionality to R2\+Score\+::\+Evaluate (\#2624).
+\item Disabled all the bindings by default in CMake (\#2782).
+\item Added an implementation to Stratify Data (\#2671).
+\item Add {\ttfamily BUILD\+\_\+\+DOCS} CMake option to control whether Doxygen documentation is built (default ON) (\#2730).
+\item Add Triplet Margin Loss function (\#2762).
+\item Add finalizers to Julia binding model types to fix memory handling (\#2756).
+\item HMM\+: add functions to calculate likelihood for data stream with/without pre-\/calculated emission probability (\#2142).
+\item Replace Boost serialization library with Cereal (\#2458).
+\item Add {\ttfamily PYTHON\+\_\+\+INSTALL\+\_\+\+PREFIX} CMake option to specify installation root for Python bindings (\#2797).
+\item Removed {\ttfamily boost\+::visitor} from model classes for {\ttfamily knn}, {\ttfamily kfn}, {\ttfamily cf}, {\ttfamily range\+\_\+search}, {\ttfamily krann}, and {\ttfamily kde} bindings (\#2803).
+\item Add k-\/means++ initialization strategy (\#2813).
+\item {\ttfamily Negative\+Log\+Likelihood\texorpdfstring{$<$}{<}\texorpdfstring{$>$}{>}} now expects classes in the range {\ttfamily 0} to {\ttfamily num\+Classes -\/ 1} (\#2534).
+\item Add {\ttfamily Lambda1()}, {\ttfamily Lambda2()}, {\ttfamily Use\+Cholesky()}, and {\ttfamily Tolerance()} members to {\ttfamily LARS} so parameters for training can be modified (\#2861).
+\item Remove unused {\ttfamily Elem\+Type} template parameter from {\ttfamily Decision\+Tree} and {\ttfamily Random\+Forest} (\#2874).
+\item Fix Python binding build when the CMake variable {\ttfamily USE\+\_\+\+OPENMP} is set to {\ttfamily OFF} (\#2884).
+\item The {\ttfamily mlpack\+\_\+test} target is no longer built as part of {\ttfamily make all}. Use {\ttfamily make mlpack\+\_\+test} to build the tests.
+\item Fixes to {\ttfamily Hoeffding\+Tree}\+: ensure that training still works when empty constructor is used (\#2964).
+\item Fix Julia model serialization bug (\#2970).
+\item Fix {\ttfamily Load\+CSV()} to use pre-\/populated {\ttfamily Dataset\+Info} objects (\#2980).
+\item Add {\ttfamily probabilities} option to softmax regression binding, to get class probabilities for test points (\#3001).
+\item Fix thread safety issues in mlpack bindings to other languages (\#2995).
+\item Fix double-\/free of model pointers in R bindings (\#3034).
+\item Fix Julia, Python, R, and Go handling of categorical data for {\ttfamily decision\+\_\+tree()} and {\ttfamily hoeffding\+\_\+tree()} (\#2971).
+\item Depend on {\ttfamily pkgbuild} for R bindings (\#3081).
+\item Replaced Numpy deprecated code in Python bindings (\#3126).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md27}{}\doxysection{\texorpdfstring{mlpack 3.\+4.\+2}{mlpack 3.\+4.\+2}}\label{md__h_i_s_t_o_r_y_autotoc_md27}
+{\itshape 2020-\/10-\/26}
+
+
+\begin{DoxyItemize}
+\item Added Mean Absolute Percentage Error.
+\item Added Softmin activation function as layer in ann/layer.
+\item Fix spurious ARMA\+\_\+64\+BIT\+\_\+\+WORD compilation warnings on 32-\/bit systems (\#2665).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md28}{}\doxysection{\texorpdfstring{mlpack 3.\+4.\+1}{mlpack 3.\+4.\+1}}\label{md__h_i_s_t_o_r_y_autotoc_md28}
+{\itshape 2020-\/09-\/07}
+
+
+\begin{DoxyItemize}
+\item Fix incorrect parsing of required matrix/model parameters for command-\/line bindings (\#2600).
+\item Add manual type specification support to {\ttfamily data\+::\+Load()} and {\ttfamily data\+::\+Save()} (\#2084, \#2135, \#2602).
+\item Remove use of internal Armadillo functionality (\#2596, \#2601, \#2602).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md29}{}\doxysection{\texorpdfstring{mlpack 3.\+4.\+0}{mlpack 3.\+4.\+0}}\label{md__h_i_s_t_o_r_y_autotoc_md29}
+{\itshape 2020-\/09-\/01}
+
+
+\begin{DoxyItemize}
+\item Issue warnings when metrics produce Na\+Ns in KFold\+CV (\#2595).
+\item Added bindings for {\itshape R} during Google Summer of Code (\#2556).
+\item Added common striptype function for all bindings (\#2556).
+\item Refactored common utility function of bindings to bindings/util (\#2556).
+\item Renamed Information\+Gain to Hoeffding\+Information\+Gain in methods/hoeffding\+\_\+trees/information\+\_\+gain.\+hpp (\#2556).
+\item Added macro for changing stream of printing and warnings/errors (\#2556).
+\item Added Spatial Dropout layer (\#2564).
+\item Force CMake to show error when it didn\textquotesingle{}t find Python/modules (\#2568).
+\item Refactor {\ttfamily Program\+Info()} to separate out all the different information (\#2558).
+\item Add bindings for one-\/hot encoding (\#2325).
+\item Added Soft Actor-\/\+Critic to RL methods (\#2487).
+\item Added Categorical DQN to q\+\_\+networks (\#2454).
+\item Added N-\/step DQN to q\+\_\+networks (\#2461).
+\item Add Silhoutte Score metric and Pairwise Distances (\#2406).
+\item Add Go bindings for some missed models (\#2460).
+\item Replace boost program\+\_\+options dependency with CLI11 (\#2459).
+\item Additional functionality for the ARFF loader (\#2486); use case sensitive categories (\#2516).
+\item Add {\ttfamily bayesian\+\_\+linear\+\_\+regression} binding for the command-\/line, Python, Julia, and Go. Also called "{}\+Bayesian Ridge"{}, this is equivalent to a version of linear regression where the regularization parameter is automatically tuned (\#2030).
+\item Fix defeatist search for spill tree traversals (\#2566, \#1269).
+\item Fix incremental training of logistic regression models (\#2560).
+\item Change default configuration of {\ttfamily BUILD\+\_\+\+PYTHON\+\_\+\+BINDINGS} to {\ttfamily OFF} (\#2575).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md30}{}\doxysection{\texorpdfstring{mlpack 3.\+3.\+2}{mlpack 3.\+3.\+2}}\label{md__h_i_s_t_o_r_y_autotoc_md30}
+{\itshape 2020-\/06-\/18}
+
+
+\begin{DoxyItemize}
+\item Added Noisy DQN to q\+\_\+networks (\#2446).
+\item Add Go bindings (\#1884).
+\item Added Dueling DQN to q\+\_\+networks, Noisy linear layer to ann/layer and Empty loss to ann/loss\+\_\+functions (\#2414).
+\item Storing and adding accessor method for action in q\+\_\+learning (\#2413).
+\item Added accessor methods for ANN layers (\#2321).
+\item Addition of {\ttfamily Elliot} activation function (\#2268).
+\item Add adaptive max pooling and adaptive mean pooling layers (\#2195).
+\item Add parameter to avoid shuffling of data in preprocess\+\_\+split (\#2293).
+\item Add {\ttfamily Mat\+Type} parameter to {\ttfamily LSHSearch}, allowing sparse matrices to be used for search (\#2395).
+\item Documentation fixes to resolve Doxygen warnings and issues (\#2400).
+\item Add Load and Save of Sparse Matrix (\#2344).
+\item Add Intersection over Union (IoU) metric for bounding boxes (\#2402).
+\item Add Non Maximal Supression (NMS) metric for bounding boxes (\#2410).
+\item Fix {\ttfamily no\+\_\+intercept} and probability computation for linear SVM bindings (\#2419).
+\item Fix incorrect neighbors for {\ttfamily k \texorpdfstring{$>$}{>} 1} searches in {\ttfamily approx\+\_\+kfn} binding, for the {\ttfamily QDAFN} algorithm (\#2448).
+\item Fix serialization of kernels with state for Fast\+MKS (\#2452).
+\item Add {\ttfamily RBF} layer in ann module to make {\ttfamily RBFN} architecture (\#2261).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md31}{}\doxysection{\texorpdfstring{mlpack 3.\+3.\+1}{mlpack 3.\+3.\+1}}\label{md__h_i_s_t_o_r_y_autotoc_md31}
+{\itshape 2020-\/04-\/29}
+
+
+\begin{DoxyItemize}
+\item Minor Julia and Python documentation fixes (\#2373).
+\item Updated terminal state and fixed bugs for Pendulum environment (\#2354, \#2369).
+\item Added {\ttfamily Eli\+SH} activation function (\#2323).
+\item Add L1 Loss function (\#2203).
+\item Pass CMAKE\+\_\+\+CXX\+\_\+\+FLAGS (compilation options) correctly to Python build (\#2367).
+\item Expose ensmallen Callbacks for sparseautoencoder (\#2198).
+\item Bugfix for LARS class causing invalid read (\#2374).
+\item Add serialization support from Julia; use {\ttfamily mlpack.\+serialize()} and {\ttfamily mlpack.\+deserialize()} to save and load from {\ttfamily IOBuffer}s.
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md32}{}\doxysection{\texorpdfstring{mlpack 3.\+3.\+0}{mlpack 3.\+3.\+0}}\label{md__h_i_s_t_o_r_y_autotoc_md32}
+{\itshape 2020-\/04-\/07}
+
+
+\begin{DoxyItemize}
+\item Added {\ttfamily Normal Distribution} to {\ttfamily ann/dists} (\#2382).
+\item Templated return type of {\ttfamily Forward function} of loss functions (\#2339).
+\item Added {\ttfamily R2 Score} regression metric (\#2323).
+\item Added {\ttfamily poisson negative log likelihood} loss function (\#2196).
+\item Added {\ttfamily huber} loss function (\#2199).
+\item Added {\ttfamily mean squared logarithmic error} loss function for neural networks (\#2210).
+\item Added {\ttfamily mean bias loss function} for neural networks (\#2210).
+\item The Decision\+Stump class has been marked deprecated; use the {\ttfamily Decision\+Tree} class with {\ttfamily No\+Recursion=true} or use {\ttfamily ID3\+Decision\+Stump} instead (\#2099).
+\item Added {\ttfamily probabilities\+\_\+file} parameter to get the probabilities matrix of Ada\+Boost classifier (\#2050).
+\item Fix STB header search paths (\#2104).
+\item Add {\ttfamily DISABLE\+\_\+\+DOWNLOADS} CMake configuration option (\#2104).
+\item Add padding layer in Transposed\+Convolution\+Layer (\#2082).
+\item Fix pkgconfig generation on non-\/\+Linux systems (\#2101).
+\item Use log-\/space to represent HMM initial state and transition probabilities (\#2081).
+\item Add functions to access parameters of {\ttfamily Convolution} and {\ttfamily Atrous\+Convolution} layers (\#1985).
+\item Add Compute Error function in lars regression and changing Train function to return computed error (\#2139).
+\item Add Julia bindings (\#1949). Build settings can be controlled with the {\ttfamily BUILD\+\_\+\+JULIA\+\_\+\+BINDINGS=(ON/\+OFF)} and {\ttfamily JULIA\+\_\+\+EXECUTABLE=/path/to/julia} CMake parameters.
+\item CMake fix for finding STB include directory (\#2145).
+\item Add bindings for loading and saving images (\#2019); {\ttfamily mlpack\+\_\+image\+\_\+converter} from the command-\/line, {\ttfamily mlpack.\+image\+\_\+converter()} from Python.
+\item Add normalization support for CF binding (\#2136).
+\item Add Mish activation function (\#2158).
+\item Update {\ttfamily init\+\_\+rules} in AMF to allow users to merge two initialization rules (\#2151).
+\item Add GELU activation function (\#2183).
+\item Better error handling of eigendecompositions and Cholesky decompositions (\#2088, \#1840).
+\item Add Li\+SHT activation function (\#2182).
+\item Add Valid and Same Padding for Transposed Convolution layer (\#2163).
+\item Add CELU activation function (\#2191)
+\item Add Log-\/\+Hyperbolic-\/\+Cosine Loss function (\#2207).
+\item Change neural network types to avoid unnecessary use of rvalue references (\#2259).
+\item Bump minimum Boost version to 1.\+58 (\#2305).
+\item Refactor STB support so {\ttfamily HAS\+\_\+\+STB} macro is not needed when compiling against mlpack (\#2312).
+\item Add Hard Shrink Activation Function (\#2186).
+\item Add Soft Shrink Activation Function (\#2174).
+\item Add Hinge Embedding Loss Function (\#2229).
+\item Add Cosine Embedding Loss Function (\#2209).
+\item Add Margin Ranking Loss Function (\#2264).
+\item Bugfix for incorrect parameter vector sizes in logistic regression and softmax regression (\#2359).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md33}{}\doxysection{\texorpdfstring{mlpack 3.\+2.\+2}{mlpack 3.\+2.\+2}}\label{md__h_i_s_t_o_r_y_autotoc_md33}
+{\itshape 2019-\/11-\/26}
+
+
+\begin{DoxyItemize}
+\item Add {\ttfamily valid} and {\ttfamily same} padding option in {\ttfamily Convolution} and {\ttfamily Atrous Convolution} layer (\#1988).
+\item Add Model() to the FFN class to access individual layers (\#2043).
+\item Update documentation for pip and conda installation packages (\#2044).
+\item Add bindings for linear SVM (\#1935); {\ttfamily mlpack\+\_\+linear\+\_\+svm} from the command-\/line, {\ttfamily linear\+\_\+svm()} from Python.
+\item Add support to return the layer name as {\ttfamily std\+::string} (\#1987).
+\item Speed and memory improvements for the Transposed Convolution layer (\#1493).
+\item Fix Windows Python build configuration (\#1885).
+\item Validate md5 of STB library after download (\#2087).
+\item Add {\ttfamily \+\_\+\+\_\+version\+\_\+\+\_\+} to {\ttfamily \+\_\+\+\_\+init\+\_\+\+\_\+.\+py} (\#2092).
+\item Correctly handle RNN sequences that are shorter than the value of rho (\#2102).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md34}{}\doxysection{\texorpdfstring{mlpack 3.\+2.\+1}{mlpack 3.\+2.\+1}}\label{md__h_i_s_t_o_r_y_autotoc_md34}
+{\itshape 2019-\/10-\/01}
+
+
+\begin{DoxyItemize}
+\item Enforce CMake version check for ensmallen (\#2032).
+\item Fix CMake check for Armadillo version (\#2029).
+\item Better handling of when STB is not installed (\#2033).
+\item Fix Naive Bayes classifier computations in high dimensions (\#2022).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md35}{}\doxysection{\texorpdfstring{mlpack 3.\+2.\+0}{mlpack 3.\+2.\+0}}\label{md__h_i_s_t_o_r_y_autotoc_md35}
+{\itshape 2019-\/09-\/25}
+
+
+\begin{DoxyItemize}
+\item Fix some potential infinity errors in Naive Bayes Classifier (\#2022).
+\item Fix occasionally-\/failing RADICAL test (\#1924).
+\item Fix gcc 9 Open\+MP compilation issue (\#1970).
+\item Added support for loading and saving of images (\#1903).
+\item Add Multiple Pole Balancing Environment (\#1901, \#1951).
+\item Added functionality for scaling of data (\#1876); see the command-\/line binding {\ttfamily mlpack\+\_\+preprocess\+\_\+scale} or Python binding {\ttfamily preprocess\+\_\+scale()}.
+\item Add new parameter {\ttfamily maximum\+\_\+depth} to decision tree and random forest bindings (\#1916).
+\item Fix prediction output of softmax regression when test set accuracy is calculated (\#1922).
+\item Pendulum environment now checks for termination. All RL environments now have an option to terminate after a set number of time steps (no limit by default) (\#1941).
+\item Add support for probabilistic KDE (kernel density estimation) error bounds when using the Gaussian kernel (\#1934).
+\item Fix negative distances for cover tree computation (\#1979).
+\item Fix cover tree building when all pairwise distances are 0 (\#1986).
+\item Improve KDE pruning by reclaiming not used error tolerance (\#1954, \#1984).
+\item Optimizations for sparse matrix accesses in z-\/score normalization for CF (\#1989).
+\item Add {\ttfamily kmeans\+\_\+max\+\_\+iterations} option to GMM training binding {\ttfamily gmm\+\_\+train\+\_\+main}.
+\item Bump minimum Armadillo version to 8.\+400.\+0 due to ensmallen dependency requirement (\#2015).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md36}{}\doxysection{\texorpdfstring{mlpack 3.\+1.\+1}{mlpack 3.\+1.\+1}}\label{md__h_i_s_t_o_r_y_autotoc_md36}
+{\itshape 2019-\/05-\/26}
+
+
+\begin{DoxyItemize}
+\item Fix random forest bug for numerical-\/only data (\#1887).
+\item Significant speedups for random forest (\#1887).
+\item Random forest now has {\ttfamily minimum\+\_\+gain\+\_\+split} and {\ttfamily subspace\+\_\+dim} parameters (\#1887).
+\item Decision tree parameter {\ttfamily print\+\_\+training\+\_\+error} deprecated in favor of {\ttfamily print\+\_\+training\+\_\+accuracy}.
+\item {\ttfamily output} option changed to {\ttfamily predictions} for adaboost and perceptron binding. Old options are now deprecated and will be preserved until mlpack 4.\+0.\+0 (\#1882).
+\item Concatenated Re\+LU layer (\#1843).
+\item Accelerate Normalize\+Labels function using hashing instead of linear search (see {\ttfamily src/mlpack/core/data/normalize\+\_\+labels\+\_\+impl.\+hpp}) (\#1780).
+\item Add {\ttfamily Confusion\+Matrix()} function for checking performance of classifiers (\#1798).
+\item Install ensmallen headers when it is downloaded during build (\#1900).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md37}{}\doxysection{\texorpdfstring{mlpack 3.\+1.\+0}{mlpack 3.\+1.\+0}}\label{md__h_i_s_t_o_r_y_autotoc_md37}
+{\itshape 2019-\/04-\/25}
+
+
+\begin{DoxyItemize}
+\item Add Diagonal\+Gaussian\+Distribution and Diagonal\+GMM classes to speed up the diagonal covariance computation and deprecate Diagonal\+Constraint (\#1666).
+\item Add kernel density estimation (KDE) implementation with bindings to other languages (\#1301).
+\item Where relevant, all models with a {\ttfamily Train()} method now return a {\ttfamily double} value representing the goodness of fit (i.\+e. final objective value, error, etc.) (\#1678).
+\item Add implementation for linear support vector machine (see {\ttfamily src/mlpack/methods/linear\+\_\+svm}).
+\item Change DBSCAN to use Point\+Selection\+Policy and add Ordered\+Point\+Selection (\#1625).
+\item Residual block support (\#1594).
+\item Bidirectional RNN (\#1626).
+\item Dice loss layer (\#1674, \#1714) and hard sigmoid layer (\#1776).
+\item {\ttfamily output} option changed to {\ttfamily predictions} and {\ttfamily output\+\_\+probabilities} to {\ttfamily probabilities} for Naive Bayes binding ({\ttfamily mlpack\+\_\+nbc}/{\ttfamily nbc()}). Old options are now deprecated and will be preserved until mlpack 4.\+0.\+0 (\#1616).
+\item Add support for Diagonal GMMs to HMM code (\#1658, \#1666). This can provide large speedup when a diagonal GMM is acceptable as an emission probability distribution.
+\item Python binding improvements\+: check parameter type (\#1717), avoid copying Pandas dataframes (\#1711), handle Pandas Series objects (\#1700).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md38}{}\doxysection{\texorpdfstring{mlpack 3.\+0.\+4}{mlpack 3.\+0.\+4}}\label{md__h_i_s_t_o_r_y_autotoc_md38}
+{\itshape 2018-\/11-\/13}
+
+
+\begin{DoxyItemize}
+\item Bump minimum CMake version to 3.\+3.\+2.
+\item CMake fixes for Ninja generator by Marc Espie.
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md39}{}\doxysection{\texorpdfstring{mlpack 3.\+0.\+3}{mlpack 3.\+0.\+3}}\label{md__h_i_s_t_o_r_y_autotoc_md39}
+{\itshape 2018-\/07-\/27}
+
+
+\begin{DoxyItemize}
+\item Fix Visual Studio compilation issue (\#1443).
+\item Allow running local\+\_\+coordinate\+\_\+coding binding with no initial\+\_\+dictionary parameter when input\+\_\+model is not specified (\#1457).
+\item Make use of Open\+MP optional via the CMake \textquotesingle{}USE\+\_\+\+OPENMP\textquotesingle{} configuration variable (\#1474).
+\item Accelerate FNN training by 20-\/30\% by avoiding redundant calculations (\#1467).
+\item Fix math\+::\+Random\+Seed() usage in tests (\#1462, \#1440).
+\item Generate better Python setup.\+py with documentation (\#1460).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md40}{}\doxysection{\texorpdfstring{mlpack 3.\+0.\+2}{mlpack 3.\+0.\+2}}\label{md__h_i_s_t_o_r_y_autotoc_md40}
+{\itshape 2018-\/06-\/08}
+
+
+\begin{DoxyItemize}
+\item Documentation generation fixes for Python bindings (\#1421).
+\item Fix build error for man pages if command-\/line bindings are not being built (\#1424).
+\item Add \textquotesingle{}shuffle\textquotesingle{} parameter and Shuffle() method to KFold\+CV (\#1412). This will shuffle the data when the object is constructed, or when Shuffle() is called.
+\item Added neural network layers\+: Atrous\+Convolution (\#1390), Embedding (\#1401), and Layer\+Norm (layer normalization) (\#1389).
+\item Add Pendulum environment for reinforcement learning (\#1388) and update Mountain Car environment (\#1394).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md41}{}\doxysection{\texorpdfstring{mlpack 3.\+0.\+1}{mlpack 3.\+0.\+1}}\label{md__h_i_s_t_o_r_y_autotoc_md41}
+{\itshape 2018-\/05-\/10}
+
+
+\begin{DoxyItemize}
+\item Fix intermittently failing tests (\#1387).
+\item Add big-\/batch SGD (BBSGD) optimizer in src/mlpack/core/optimizers/bigbatch\+\_\+sgd/ (\#1131).
+\item Fix simple compiler warnings (\#1380, \#1373).
+\item Simplify Neighbor\+Search constructor and Train() overloads (\#1378).
+\item Add warning for Open\+MP setting differences (\#1358/\#1382). When mlpack is compiled with Open\+MP but another application is not (or vice versa), a compilation warning will now be issued.
+\item Restructured loss functions in src/mlpack/methods/ann/ (\#1365).
+\item Add environments for reinforcement learning tests (\#1368, \#1370, \#1329).
+\item Allow single outputs for multiple timestep inputs for recurrent neural networks (\#1348).
+\item Add He and Le\+Cun normal initializations for neural networks (\#1342). Neural networks\+: add He and Le\+Cun normal initializations (\#1342), add FRe\+LU and SELU activation functions (\#1346, \#1341), add alpha-\/dropout (\#1349).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md42}{}\doxysection{\texorpdfstring{mlpack 3.\+0.\+0}{mlpack 3.\+0.\+0}}\label{md__h_i_s_t_o_r_y_autotoc_md42}
+{\itshape 2018-\/03-\/30}
+
+
+\begin{DoxyItemize}
+\item Speed and memory improvements for DBSCAN. --single\+\_\+mode can now be used for situations where previously RAM usage was too high.
+\item Bump minimum required version of Armadillo to 6.\+500.\+0.
+\item Add automatically generated Python bindings. These have the same interface as the command-\/line programs.
+\item Add deep learning infrastructure in src/mlpack/methods/ann/.
+\item Add reinforcement learning infrastructure in src/mlpack/methods/reinforcement\+\_\+learning/.
+\item Add optimizers\+: Ada\+Grad, CMAES, CNE, Franke\+Wolfe, Gradient\+Descent, Grid\+Search, IQN, Katyusha, Line\+Search, Parallel\+SGD, SARAH, SCD, SGDR, SMORMS3, SPALe\+RA, SVRG.
+\item Add hyperparameter tuning infrastructure and cross-\/validation infrastructure in src/mlpack/core/cv/ and src/mlpack/core/hpt/.
+\item Fix bug in mean shift.
+\item Add random forests (see src/mlpack/methods/random\+\_\+forest).
+\item Numerous other bugfixes and testing improvements.
+\item Add randomized Krylov SVD and Block Krylov SVD.
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md43}{}\doxysection{\texorpdfstring{mlpack 2.\+2.\+5}{mlpack 2.\+2.\+5}}\label{md__h_i_s_t_o_r_y_autotoc_md43}
+{\itshape 2017-\/08-\/25}
+
+
+\begin{DoxyItemize}
+\item Compilation fix for some systems (\#1082).
+\item Fix PARAM\+\_\+\+INT\+\_\+\+OUT() (\#1100).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md44}{}\doxysection{\texorpdfstring{mlpack 2.\+2.\+4}{mlpack 2.\+2.\+4}}\label{md__h_i_s_t_o_r_y_autotoc_md44}
+{\itshape 2017-\/07-\/18}
+
+
+\begin{DoxyItemize}
+\item Speed and memory improvements for DBSCAN. --single\+\_\+mode can now be used for situations where previously RAM usage was too high.
+\item Fix bug in CF causing incorrect recommendations.
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md45}{}\doxysection{\texorpdfstring{mlpack 2.\+2.\+3}{mlpack 2.\+2.\+3}}\label{md__h_i_s_t_o_r_y_autotoc_md45}
+{\itshape 2017-\/05-\/24}
+
+
+\begin{DoxyItemize}
+\item Bug fix for --predictions\+\_\+file in mlpack\+\_\+decision\+\_\+tree program.
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md46}{}\doxysection{\texorpdfstring{mlpack 2.\+2.\+2}{mlpack 2.\+2.\+2}}\label{md__h_i_s_t_o_r_y_autotoc_md46}
+{\itshape 2017-\/05-\/04}
+
+
+\begin{DoxyItemize}
+\item Install backwards-\/compatibility mlpack\+\_\+allknn and mlpack\+\_\+allkfn programs; note they are deprecated and will be removed in mlpack 3.\+0.\+0 (\#992).
+\item Fix RStar\+Tree bug that surfaced on OS X only (\#964).
+\item Small fixes for Mini\+Batch\+SGD and SGD and tests.
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md47}{}\doxysection{\texorpdfstring{mlpack 2.\+2.\+1}{mlpack 2.\+2.\+1}}\label{md__h_i_s_t_o_r_y_autotoc_md47}
+{\itshape 2017-\/04-\/13}
+
+
+\begin{DoxyItemize}
+\item Compilation fix for mlpack\+\_\+nca and mlpack\+\_\+test on older Armadillo versions (\#984).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md48}{}\doxysection{\texorpdfstring{mlpack 2.\+2.\+0}{mlpack 2.\+2.\+0}}\label{md__h_i_s_t_o_r_y_autotoc_md48}
+{\itshape 2017-\/03-\/21}
+
+
+\begin{DoxyItemize}
+\item Bugfix for mlpack\+\_\+knn program (\#816).
+\item Add decision tree implementation in methods/decision\+\_\+tree/. This is very similar to a C4.\+5 tree learner.
+\item Add DBSCAN implementation in methods/dbscan/.
+\item Add support for multidimensional discrete distributions (\#810, \#830).
+\item Better output for Log\+::\+Debug/\+Log\+::\+Info/\+Log\+::\+Warn/\+Log\+::\+Fatal for Armadillo objects (\#895, \#928).
+\item Refactor categorical CSV loading with boost\+::spirit for faster loading (\#681).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md49}{}\doxysection{\texorpdfstring{mlpack 2.\+1.\+1}{mlpack 2.\+1.\+1}}\label{md__h_i_s_t_o_r_y_autotoc_md49}
+{\itshape 2016-\/12-\/22}
+
+
+\begin{DoxyItemize}
+\item HMMs now use random initialization; this should fix some convergence issues (\#828).
+\item HMMs now initialize emissions according to the distribution of observations (\#833).
+\item Minor fix for formatted output (\#814).
+\item Fix Decision\+Stump to properly work with any input type.
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md50}{}\doxysection{\texorpdfstring{mlpack 2.\+1.\+0}{mlpack 2.\+1.\+0}}\label{md__h_i_s_t_o_r_y_autotoc_md50}
+{\itshape 2016-\/10-\/31}
+
+
+\begin{DoxyItemize}
+\item Fixed Cover\+Tree to properly handle single-\/point datasets.
+\item Fixed a bug in Cosine\+Tree (and thus QUIC-\/\+SVD) that caused split failures for some datasets (\#717).
+\item Added mlpack\+\_\+preprocess\+\_\+describe program, which can be used to print statistics on a given dataset (\#742).
+\item Fix prioritized recursion for k-\/furthest-\/neighbor search (mlpack\+\_\+kfn and the KFN class), leading to orders-\/of-\/magnitude speedups in some cases.
+\item Bump minimum required version of Armadillo to 4.\+200.\+0.
+\item Added simple Gradient Descent optimizer, found in src/mlpack/core/optimizers/gradient\+\_\+descent/ (\#792).
+\item Added approximate furthest neighbor search algorithms QDAFN and Drusilla\+Select in src/mlpack/methods/approx\+\_\+kfn/, with command-\/line program mlpack\+\_\+approx\+\_\+kfn.
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md51}{}\doxysection{\texorpdfstring{mlpack 2.\+0.\+3}{mlpack 2.\+0.\+3}}\label{md__h_i_s_t_o_r_y_autotoc_md51}
+{\itshape 2016-\/07-\/21}
+
+
+\begin{DoxyItemize}
+\item Added multiprobe LSH (\#691). The parameter \textquotesingle{}T\textquotesingle{} to LSHSearch\+::\+Search() can now be used to control the number of extra bins that are probed, as can the -\/T (--num\+\_\+probes) option to mlpack\+\_\+lsh.
+\item Added the Hilbert R tree to src/mlpack/core/tree/rectangle\+\_\+tree/ (\#664). It can be used as the typedef Hilbert\+RTree, and it is now an option in the mlpack\+\_\+knn, mlpack\+\_\+kfn, mlpack\+\_\+range\+\_\+search, and mlpack\+\_\+krann command-\/line programs.
+\item Added the mlpack\+\_\+preprocess\+\_\+split and mlpack\+\_\+preprocess\+\_\+binarize programs, which can be used for preprocessing code (\#650, \#666).
+\item Added Open\+MP support to LSHSearch and mlpack\+\_\+lsh (\#700).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md52}{}\doxysection{\texorpdfstring{mlpack 2.\+0.\+2}{mlpack 2.\+0.\+2}}\label{md__h_i_s_t_o_r_y_autotoc_md52}
+{\itshape 2016-\/06-\/20}
+
+
+\begin{DoxyItemize}
+\item Added the function LSHSearch\+::\+Projections(), which returns an arma\+::cube with each projection table in a slice (\#663). Instead of Projection(i), you should now use Projections().slice(i).
+\item A new constructor has been added to LSHSearch that creates objects using projection tables provided in an arma\+::cube (\#663).
+\item Handle zero-\/variance dimensions in DET (\#515).
+\item Add Mini\+Batch\+SGD optimizer (src/mlpack/core/optimizers/minibatch\+\_\+sgd/) and allow its use in mlpack\+\_\+logistic\+\_\+regression and mlpack\+\_\+nca programs.
+\item Add better backtrace support from Grzegorz Krajewski for Log\+::\+Fatal messages when compiled with debugging and profiling symbols. This requires libbfd and libdl to be present during compilation.
+\item Cosine\+Tree test fix from Mikhail Lozhnikov (\#358).
+\item Fixed HMM initial state estimation (\#600).
+\item Changed versioning macros \+\_\+\+\_\+\+MLPACK\+\_\+\+VERSION\+\_\+\+MAJOR, \+\_\+\+\_\+\+MLPACK\+\_\+\+VERSION\+\_\+\+MINOR, and \+\_\+\+\_\+\+MLPACK\+\_\+\+VERSION\+\_\+\+PATCH to MLPACK\+\_\+\+VERSION\+\_\+\+MAJOR, MLPACK\+\_\+\+VERSION\+\_\+\+MINOR, and MLPACK\+\_\+\+VERSION\+\_\+\+PATCH. The old names will remain in place until mlpack 3.\+0.\+0.
+\item Renamed mlpack\+\_\+allknn, mlpack\+\_\+allkfn, and mlpack\+\_\+allkrann to mlpack\+\_\+knn, mlpack\+\_\+kfn, and mlpack\+\_\+krann. The mlpack\+\_\+allknn, mlpack\+\_\+allkfn, and mlpack\+\_\+allkrann programs will remain as copies until mlpack 3.\+0.\+0.
+\item Add --random\+\_\+initialization option to mlpack\+\_\+hmm\+\_\+train, for use when no labels are provided.
+\item Add --kill\+\_\+empty\+\_\+clusters option to mlpack\+\_\+kmeans and Kill\+Empty\+Clusters policy for the KMeans class (\#595, \#596).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md53}{}\doxysection{\texorpdfstring{mlpack 2.\+0.\+1}{mlpack 2.\+0.\+1}}\label{md__h_i_s_t_o_r_y_autotoc_md53}
+{\itshape 2016-\/02-\/04}
+
+
+\begin{DoxyItemize}
+\item Fix CMake to properly detect when MKL is being used with Armadillo.
+\item Minor parameter handling fixes to mlpack\+\_\+logistic\+\_\+regression (\#504, \#505).
+\item Properly install arma\+\_\+config.\+hpp.
+\item Memory handling fixes for Hoeffding tree code.
+\item Add functions that allow changing training-\/time parameters to Hoeffding\+Tree class.
+\item Fix infinite loop in sparse coding test.
+\item Documentation spelling fixes (\#501).
+\item Properly handle covariances for Gaussians with large condition number (\#496), preventing GMMs from filling with Na\+Ns during training (and also HMMs that use GMMs).
+\item CMake fixes for finding LAPACK and BLAS as Armadillo dependencies when ATLAS is used.
+\item CMake fix for projects using mlpack\textquotesingle{}s CMake configuration from elsewhere (\#512).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md54}{}\doxysection{\texorpdfstring{mlpack 2.\+0.\+0}{mlpack 2.\+0.\+0}}\label{md__h_i_s_t_o_r_y_autotoc_md54}
+{\itshape 2015-\/12-\/24}
+
+
+\begin{DoxyItemize}
+\item Removed overclustering support from k-\/means because it is not well-\/tested, may be buggy, and is (I think) unused. If this was support you were using, open a bug or get in touch with us; it would not be hard for us to reimplement it.
+\item Refactored KMeans to allow different types of Lloyd iterations.
+\item Added implementations of k-\/means\+: Elkan\textquotesingle{}s algorithm, Hamerly\textquotesingle{}s algorithm, Pelleg-\/\+Moore\textquotesingle{}s algorithm, and the DTNN (dual-\/tree nearest neighbor) algorithm.
+\item Significant acceleration of LRSDP via the use of accu(a \% b) instead of trace(a \texorpdfstring{$\ast$}{*} b).
+\item Added Matrix\+Completion class (matrix\+\_\+completion), which performs nuclear norm minimization to fill unknown values of an input matrix.
+\item No more dependence on Boost.\+Random; now we use C++11 STL random support.
+\item Add softmax regression, contributed by Siddharth Agrawal and Qiao\+An Chen.
+\item Changed Neighbor\+Search, Range\+Search, Fast\+MKS, LSH, and RASearch API; these classes now take the query sets in the Search() method, instead of in the constructor.
+\item Use Open\+MP, if available. For now Open\+MP support is only available in the DET training code.
+\item Add support for predicting new test point values to LARS and the command-\/line {\ttfamily lars} program.
+\item Add serialization support for {\ttfamily Perceptron} and {\ttfamily Logistic\+Regression}.
+\item Refactor Softmax\+Regression to predict into an {\ttfamily arma\+::\+Row\texorpdfstring{$<$}{<}size\+\_\+t\texorpdfstring{$>$}{>}} object, and add a {\ttfamily softmax\+\_\+regression} program.
+\item Refactor LSH to allow loading and saving of models.
+\item To\+String() is removed entirely (\#487).
+\item Add {\ttfamily -\/-\/input\+\_\+model\+\_\+file} and {\ttfamily -\/-\/output\+\_\+model\+\_\+file} options to appropriate machine learning algorithms.
+\item Rename all executables to start with an "{}mlpack"{} prefix (\#229).
+\item Add Hoeffding\+Tree and {\ttfamily mlpack\+\_\+hoeffding\+\_\+tree}, an implementation of the streaming decision tree methodology from Domingos and Hulten in 2000.
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md55}{}\doxysection{\texorpdfstring{mlpack 1.\+0.\+12}{mlpack 1.\+0.\+12}}\label{md__h_i_s_t_o_r_y_autotoc_md55}
+{\itshape 2015-\/01-\/07}
+
+
+\begin{DoxyItemize}
+\item Switch to 3-\/clause BSD license (from LGPL).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md56}{}\doxysection{\texorpdfstring{mlpack 1.\+0.\+11}{mlpack 1.\+0.\+11}}\label{md__h_i_s_t_o_r_y_autotoc_md56}
+{\itshape 2014-\/12-\/11}
+
+
+\begin{DoxyItemize}
+\item Proper handling of dimension calculation in PCA.
+\item Load parameter vectors properly for Linear\+Regression models.
+\item Linker fixes for Aug\+Lagrangian specializations under Visual Studio.
+\item Add support for observation weights to Linear\+Regression.
+\item {\ttfamily Mahalanobis\+Distance\texorpdfstring{$<$}{<}\texorpdfstring{$>$}{>}} now takes the root of the distance by default and therefore satisfies the triangle inequality (Take\+Root now defaults to true).
+\item Better handling of optional Armadillo HDF5 dependency.
+\item Fixes for numerous intermittent test failures.
+\item math\+::\+Random\+Seed() now sets the random seed for recent (\texorpdfstring{$>$}{>}=3.\+930) Armadillo versions.
+\item Handle Newton method convergence better for Sparse\+Coding\+::\+Optimize\+Dictionary() and make maximum iterations a parameter.
+\item Known bug\+: Cosine\+Tree construction may fail in some cases on i386 systems (\#358).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md57}{}\doxysection{\texorpdfstring{mlpack 1.\+0.\+10}{mlpack 1.\+0.\+10}}\label{md__h_i_s_t_o_r_y_autotoc_md57}
+{\itshape 2014-\/08-\/29}
+
+
+\begin{DoxyItemize}
+\item Bugfix for Neighbor\+Search regression which caused very slow allknn/allkfn. Speeds are now restored to approximately 1.\+0.\+8 speeds, with significant improvement for the cover tree (\#347).
+\item Detect dependencies correctly when ARMA\+\_\+\+USE\+\_\+\+WRAPPER is not being defined (i.\+e., libarmadillo.\+so does not exist).
+\item Bugfix for compilation under Visual Studio (\#348).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md58}{}\doxysection{\texorpdfstring{mlpack 1.\+0.\+9}{mlpack 1.\+0.\+9}}\label{md__h_i_s_t_o_r_y_autotoc_md58}
+{\itshape 2014-\/07-\/28}
+
+
+\begin{DoxyItemize}
+\item GMM initialization is now safer and provides a working GMM when constructed with only the dimensionality and number of Gaussians (\#301).
+\item Check for division by 0 in Forward-\/\+Backward Algorithm in HMMs (\#301).
+\item Fix Max\+Variance\+New\+Cluster (used when re-\/initializing clusters for k-\/means) (\#301).
+\item Fixed implementation of Viterbi algorithm in HMM\+::\+Predict() (\#303).
+\item Significant speedups for dual-\/tree algorithms using the cover tree (\#235, \#314) including a faster implementation of Fast\+MKS.
+\item Fix for LRSDP optimizer so that it compiles and can be used (\#312).
+\item CF (collaborative filtering) now expects users and items to be zero-\/indexed, not one-\/indexed (\#311).
+\item CF\+::\+Get\+Recommendations() API change\+: now requires the number of recommendations as the first parameter. The number of users in the local neighborhood should be specified with CF\+::\+Num\+Users\+For\+Similarity().
+\item Removed incorrect Periodic\+HRect\+Bound (\#58).
+\item Refactor LRSDP into LRSDP class and standalone function to be optimized (\#305).
+\item Fix for centering in kernel PCA (\#337).
+\item Added simulated annealing (SA) optimizer, contributed by Zhihao Lou.
+\item HMMs now support initial state probabilities; these can be set in the constructor, trained, or set manually with HMM\+::\+Initial() (\#302).
+\item Added Nyström method for kernel matrix approximation by Marcus Edel.
+\item Kernel PCA now supports using Nyström method for approximation.
+\item Ball trees now work with dual-\/tree algorithms, via the Ball\+Bound$<$$>$ bound structure (\#307); fixed by Yash Vadalia.
+\item The NMF class is now AMF$<$$>$, and supports far more types of factorizations, by Sumedh Ghaisas.
+\item A QUIC-\/\+SVD implementation has returned, written by Siddharth Agrawal and based on older code from Mudit Gupta.
+\item Added perceptron and decision stump by Udit Saxena (these are weak learners for an eventual Ada\+Boost class).
+\item Sparse autoencoder added by Siddharth Agrawal.
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md59}{}\doxysection{\texorpdfstring{mlpack 1.\+0.\+8}{mlpack 1.\+0.\+8}}\label{md__h_i_s_t_o_r_y_autotoc_md59}
+{\itshape 2014-\/01-\/06}
+
+
+\begin{DoxyItemize}
+\item Memory leak in Neighbor\+Search index-\/mapping code fixed (\#298).
+\item GMMs can be trained using the existing model as a starting point by specifying an additional boolean parameter to GMM\+::\+Estimate() (\#296).
+\item Logistic regression implementation added in methods/logistic\+\_\+regression (see also \#293).
+\item L-\/\+BFGS optimizer now returns its function via Function().
+\item Version information is now obtainable via mlpack\+::util\+::\+Get\+Version() or the \+\_\+\+\_\+\+MLPACK\+\_\+\+VERSION\+\_\+\+MAJOR, \+\_\+\+\_\+\+MLPACK\+\_\+\+VERSION\+\_\+\+MINOR, and \+\_\+\+\_\+\+MLPACK\+\_\+\+VERSION\+\_\+\+PATCH macros (\#297).
+\item Fix typos in allkfn and allkrann output.
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md60}{}\doxysection{\texorpdfstring{mlpack 1.\+0.\+7}{mlpack 1.\+0.\+7}}\label{md__h_i_s_t_o_r_y_autotoc_md60}
+{\itshape 2013-\/10-\/04}
+
+
+\begin{DoxyItemize}
+\item Cover tree support for range search (range\+\_\+search), rank-\/approximate nearest neighbors (allkrann), minimum spanning tree calculation (emst), and Fast\+MKS (fastmks).
+\item Dual-\/tree Fast\+MKS implementation added and tested.
+\item Added collaborative filtering package (cf) that can provide recommendations when given users and items.
+\item Fix for correctness of Kernel PCA (kernel\+\_\+pca) (\#270).
+\item Speedups for PCA and Kernel PCA (\#198).
+\item Fix for correctness of Neighborhood Components Analysis (NCA) (\#279).
+\item Minor speedups for dual-\/tree algorithms.
+\item Fix for Naive Bayes Classifier (nbc) (\#269).
+\item Added a ridge regression option to Linear\+Regression (linear\+\_\+regression) (\#286).
+\item Gaussian Mixture Models (gmm\+::\+GMM$<$$>$) now support arbitrary covariance matrix constraints (\#283).
+\item MVU (mvu) removed because it is known to not work (\#183).
+\item Minor updates and fixes for kernels (in mlpack\+::kernel).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md61}{}\doxysection{\texorpdfstring{mlpack 1.\+0.\+6}{mlpack 1.\+0.\+6}}\label{md__h_i_s_t_o_r_y_autotoc_md61}
+{\itshape 2013-\/06-\/13}
+
+
+\begin{DoxyItemize}
+\item Minor bugfix so that Fast\+MKS gets built.
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md62}{}\doxysection{\texorpdfstring{mlpack 1.\+0.\+5}{mlpack 1.\+0.\+5}}\label{md__h_i_s_t_o_r_y_autotoc_md62}
+{\itshape 2013-\/05-\/01}
+
+
+\begin{DoxyItemize}
+\item Speedups of cover tree traversers (\#235).
+\item Addition of rank-\/approximate nearest neighbors (RANN), found in src/mlpack/methods/rann/.
+\item Addition of fast exact max-\/kernel search (Fast\+MKS), found in src/mlpack/methods/fastmks/.
+\item Fix for EM covariance estimation; this should improve GMM training time.
+\item More parameters for GMM estimation.
+\item Force GMM and Gaussian\+Distribution covariance matrices to be positive definite, so that training converges much more often.
+\item Add parameter for the tolerance of the Baum-\/\+Welch algorithm for HMM training.
+\item Fix for compilation with clang compiler.
+\item Fix for k-\/furthest-\/neighbor-\/search.
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md63}{}\doxysection{\texorpdfstring{mlpack 1.\+0.\+4}{mlpack 1.\+0.\+4}}\label{md__h_i_s_t_o_r_y_autotoc_md63}
+{\itshape 2013-\/02-\/08}
+
+
+\begin{DoxyItemize}
+\item Force minimum Armadillo version to 2.\+4.\+2.
+\item Better output of class types to streams; a class with a To\+String() method implemented can be sent to a stream with operator\texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<}.
+\item Change return type of GMM\+::\+Estimate() to double (\#257).
+\item Style fixes for k-\/means and RADICAL.
+\item Handle size\+\_\+t support correctly with Armadillo 3.\+6.\+2 (\#258).
+\item Add locality-\/sensitive hashing (LSH), found in src/mlpack/methods/lsh/.
+\item Better tests for SGD (stochastic gradient descent) and NCA (neighborhood components analysis).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md64}{}\doxysection{\texorpdfstring{mlpack 1.\+0.\+3}{mlpack 1.\+0.\+3}}\label{md__h_i_s_t_o_r_y_autotoc_md64}
+{\itshape 2012-\/09-\/16}
+
+
+\begin{DoxyItemize}
+\item Remove internal sparse matrix support because Armadillo 3.\+4.\+0 now includes it. When using Armadillo versions older than 3.\+4.\+0, sparse matrix support is not available.
+\item NCA (neighborhood components analysis) now support an arbitrary optimizer (\#245), including stochastic gradient descent (\#249).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md65}{}\doxysection{\texorpdfstring{mlpack 1.\+0.\+2}{mlpack 1.\+0.\+2}}\label{md__h_i_s_t_o_r_y_autotoc_md65}
+{\itshape 2012-\/08-\/15}
+
+
+\begin{DoxyItemize}
+\item Added density estimation trees, found in src/mlpack/methods/det/.
+\item Added non-\/negative matrix factorization, found in src/mlpack/methods/nmf/.
+\item Added experimental cover tree implementation, found in src/mlpack/core/tree/cover\+\_\+tree/ (\#157).
+\item Better reporting of boost\+::program\+\_\+options errors (\#225).
+\item Fix for timers on Windows (\#212, \#211).
+\item Fix for allknn and allkfn output (\#204).
+\item Sparse coding dictionary initialization is now a template parameter (\#220).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md66}{}\doxysection{\texorpdfstring{mlpack 1.\+0.\+1}{mlpack 1.\+0.\+1}}\label{md__h_i_s_t_o_r_y_autotoc_md66}
+{\itshape 2012-\/03-\/03}
+
+
+\begin{DoxyItemize}
+\item Added kernel principal components analysis (kernel PCA), found in src/mlpack/methods/kernel\+\_\+pca/ (\#74).
+\item Fix for Lovasz-\/\+Theta Aug\+Lagrangian tests (\#182).
+\item Fixes for allknn output (\#185, \#186).
+\item Added range search executable (\#192).
+\item Adapted citations in documentation to Bib\+TeX; no citations in -\/h output (\#195).
+\item Stop use of \textquotesingle{}const char\texorpdfstring{$\ast$}{*}\textquotesingle{} and prefer \textquotesingle{}std\+::string\textquotesingle{} (\#176).
+\item Support seeds for random numbers (\#177).
+\end{DoxyItemize}\hypertarget{md__h_i_s_t_o_r_y_autotoc_md67}{}\doxysection{\texorpdfstring{mlpack 1.\+0.\+0}{mlpack 1.\+0.\+0}}\label{md__h_i_s_t_o_r_y_autotoc_md67}
+{\itshape 2011-\/12-\/17}
+
+
+\begin{DoxyItemize}
+\item Initial release. See any resolved tickets numbered less than \#196 or execute this query\+: \href{http://www.mlpack.org/trac/query?status=closed&milestone=mlpack+1.0.0}{\texttt{ http\+://www.\+mlpack.\+org/trac/query?status=closed\&milestone=mlpack+1.\+0.\+0}} 
+\end{DoxyItemize}

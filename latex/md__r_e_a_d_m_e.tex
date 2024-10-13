@@ -1,0 +1,186 @@
+\chapter{README}
+\hypertarget{md__r_e_a_d_m_e}{}\label{md__r_e_a_d_m_e}\index{README@{README}}
+\doxysubsection*{\href{https://mlpack.org}{\texttt{ }} ~\newline
+a fast, header-\/only machine learning library~\newline
+ }
+
+\doxysubsubsubsubsection*{\href{https://mlpack.org}{\texttt{ Home}} \texorpdfstring{$\vert$}{|} \href{https://www.mlpack.org/download.html}{\texttt{ Download}} \texorpdfstring{$\vert$}{|} \href{https://www.mlpack.org/doc/index.html}{\texttt{ Documentation}} \texorpdfstring{$\vert$}{|} \href{https://www.mlpack.org/questions.html}{\texttt{ Help}} \texorpdfstring{$\vert$}{|} }
+
+
+
+\href{https://dev.azure.com/mlpack/mlpack/_build?definitionId=1}{\texttt{ }} \href{https://opensource.org/license/BSD-3-Clause}{\texttt{ }} \href{https://numfocus.org/donate-to-mlpack}{\texttt{ }} 
+
+
+
+{\itshape  Download\+: \href{https://www.mlpack.org/files/mlpack-4.5.0.tar.gz}{\texttt{ current stable version (4.\+5.\+0)}} } 
+
+{\bfseries{mlpack}} is an intuitive, fast, and flexible header-\/only C++ machine learning library with bindings to other languages. It is meant to be a machine learning analog to LAPACK, and aims to implement a wide array of machine learning methods and functions as a "{}swiss army knife"{} for machine learning researchers.
+
+mlpack\textquotesingle{}s lightweight C++ implementation makes it ideal for deployment, and it can also be used for interactive prototyping via C++ notebooks (these can be seen in action on mlpack\textquotesingle{}s \href{https://www.mlpack.org/}{\texttt{ homepage}}).
+
+In addition to its powerful C++ interface, mlpack also provides command-\/line programs, Python bindings, Julia bindings, Go bindings and R bindings.
+
+{\itshape {\bfseries{Quick links\+:}}}
+
+
+\begin{DoxyItemize}
+\item Quickstart guides\+: C++, CLI, Python, R, Julia, Go
+\item \href{https://www.mlpack.org/}{\texttt{ mlpack homepage}}
+\item \href{https://www.mlpack.org/doc/index.html}{\texttt{ mlpack documentation}}
+\item \href{https://github.com/mlpack/examples/}{\texttt{ Examples repository}}
+\item Tutorials
+\item \href{https://github.com/mlpack/mlpack/}{\texttt{ Development Site (Github)}}
+\end{DoxyItemize}
+
+mlpack uses an \doxysectlink{md__g_o_v_e_r_n_a_n_c_e}{open governance model}{0} and is fiscally sponsored by \href{https://numfocus.org/}{\texttt{ Num\+FOCUS}}. Consider making a \href{https://numfocus.org/donate-to-mlpack}{\texttt{ tax-\/deductible donation}} to help the project pay for developer time, professional services, travel, workshops, and a variety of other needs.
+
+ \href{https://numfocus.org/}{\texttt{  }}  ~\newline
+\hypertarget{md__r_e_a_d_m_e_autotoc_md68}{}\doxysubsection{\texorpdfstring{0. Contents}{0. Contents}}\label{md__r_e_a_d_m_e_autotoc_md68}
+
+\begin{DoxyEnumerate}
+\item Citation details
+\item Dependencies
+\item Installing and using mlpack in C++
+\item Building mlpack bindings to other languages
+\begin{DoxyEnumerate}
+\item Command-\/line programs
+\item Python bindings
+\item R bindings
+\item Julia bindings
+\item Go bindings
+\end{DoxyEnumerate}
+\item Building mlpack\textquotesingle{}s test suite
+\item Further resources
+\end{DoxyEnumerate}\hypertarget{md__r_e_a_d_m_e_autotoc_md69}{}\doxysubsection{\texorpdfstring{1. Citation details}{1. Citation details}}\label{md__r_e_a_d_m_e_autotoc_md69}
+If you use mlpack in your research or software, please cite mlpack using the citation below (given in Bib\+TeX format)\+: \begin{DoxyVerb}@article{mlpack2023,
+    title     = {mlpack 4: a fast, header-only C++ machine learning library},
+    author    = {Ryan R. Curtin and Marcus Edel and Omar Shrit and 
+                 Shubham Agrawal and Suryoday Basak and James J. Balamuta and 
+                 Ryan Birmingham and Kartik Dutt and Dirk Eddelbuettel and 
+                 Rishabh Garg and Shikhar Jaiswal and Aakash Kaushik and 
+                 Sangyeon Kim and Anjishnu Mukherjee and Nanubala Gnana Sai and 
+                 Nippun Sharma and Yashwant Singh Parihar and Roshan Swain and 
+                 Conrad Sanderson},
+    journal   = {Journal of Open Source Software},
+    volume    = {8},
+    number    = {82},
+    pages     = {5026},
+    year      = {2023},
+    doi       = {10.21105/joss.05026},
+    url       = {https://doi.org/10.21105/joss.05026}
+}
+\end{DoxyVerb}
+
+
+Citations are beneficial for the growth and improvement of mlpack.\hypertarget{md__r_e_a_d_m_e_autotoc_md70}{}\doxysubsection{\texorpdfstring{2. Dependencies}{2. Dependencies}}\label{md__r_e_a_d_m_e_autotoc_md70}
+{\bfseries{mlpack}} requires the following additional dependencies\+:
+\begin{DoxyItemize}
+\item C++17 compiler
+\item \href{https://arma.sourceforge.net}{\texttt{ Armadillo}} ~\quad{}\texorpdfstring{$>$}{>}= 10.\+8
+\item \href{https://ensmallen.org}{\texttt{ ensmallen}} \quad{}\texorpdfstring{$>$}{>}= 2.\+10.\+0
+\item \href{http://uscilab.github.io/cereal/}{\texttt{ cereal}} \enskip{}~\quad{}\quad{}\texorpdfstring{$>$}{>}= 1.\+1.\+2
+\end{DoxyItemize}
+
+If the STB library headers are available, image loading support will be available.
+
+If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.\hypertarget{md__r_e_a_d_m_e_autotoc_md71}{}\doxysubsection{\texorpdfstring{3. Installing and using mlpack in C++}{3. Installing and using mlpack in C++}}\label{md__r_e_a_d_m_e_autotoc_md71}
+{\itshape See also the C++ quickstart.}
+
+Since mlpack is a header-\/only library, installing just the headers for use in a C++ application is trivial.
+
+From the root of the sources, configure and install in the standard CMake way\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{mkdir\ build\ \&\&\ cd\ build/}
+\DoxyCodeLine{cmake\ ..}
+\DoxyCodeLine{sudo\ make\ install}
+
+\end{DoxyCode}
+
+
+If the {\ttfamily cmake ..} command fails due to unavailable dependencies, consider either using the {\ttfamily -\/DDOWNLOAD\+\_\+\+DEPENDENCIES=ON} option as detailed in the following subsection, or ensure that mlpack\textquotesingle{}s dependencies are installed, e.\+g. using the system package manager. For example, on Debian and Ubuntu, all relevant dependencies can be installed with {\ttfamily sudo apt-\/get install libarmadillo-\/dev libensmallen-\/dev libcereal-\/dev libstb-\/dev g++ cmake}.
+
+Alternatively, since CMake v3.\+14.\+0 the {\ttfamily cmake} command can create the build folder itself, and so the above commands can be rewritten as follows\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cmake\ -\/S\ .\ -\/B\ build}
+\DoxyCodeLine{sudo\ cmake\ -\/-\/build\ build\ -\/-\/target\ install}
+
+\end{DoxyCode}
+
+
+During configuration, CMake adjusts the file {\ttfamily mlpack/config.\+hpp} using the details of the local system. This file can be modified by hand as necessary before or after installation.\hypertarget{md__r_e_a_d_m_e_autotoc_md72}{}\doxysubsubsection{\texorpdfstring{3.\+1. Additional build options}{3.\+1. Additional build options}}\label{md__r_e_a_d_m_e_autotoc_md72}
+You can add a few arguments to the {\ttfamily cmake} command to control the behavior of the configuration and build process. Simply add these to the {\ttfamily cmake} command. Some options are given below\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily -\/DDOWNLOAD\+\_\+\+DEPENDENCIES=ON} will automatically download mlpack\textquotesingle{}s dependencies (ensmallen, Armadillo, and cereal). Installing Armadillo this way is not recommended and it is better to use your system package manager when possible (see below).
+\item {\ttfamily -\/DCMAKE\+\_\+\+INSTALL\+\_\+\+PREFIX=/install/root/} will set the root of the install directory to {\ttfamily /install/root} when {\ttfamily make install} is run.
+\item {\ttfamily -\/DDEBUG=ON} will enable debugging symbols in any compiled bindings or tests.
+\end{DoxyItemize}
+
+There are also options to enable building bindings to each language that mlpack supports; those are detailed in the following sections.
+
+Once headers are installed with {\ttfamily make install}, using mlpack in an application consists only of including it. So, your program should include mlpack\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ ++}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ <mlpack.hpp>}}
+
+\end{DoxyCode}
+
+
+and when you link, be sure to link against Armadillo. If your example program is {\ttfamily my\+\_\+program.\+cpp}, your compiler is GCC, and you would like to compile with Open\+MP support (recommended) and optimizations, compile like this\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{g++\ -\/O3\ -\/std=c++17\ -\/o\ my\_program\ my\_program.cpp\ -\/larmadillo\ -\/fopenmp}
+
+\end{DoxyCode}
+
+
+Note that if you want to serialize (save or load) neural networks, you should add {\ttfamily \#define MLPACK\+\_\+\+ENABLE\+\_\+\+ANN\+\_\+\+SERIALIZATION} before including {\ttfamily \texorpdfstring{$<$}{<}mlpack.\+hpp\texorpdfstring{$>$}{>}}. If you don\textquotesingle{}t define {\ttfamily MLPACK\+\_\+\+ENABLE\+\_\+\+ANN\+\_\+\+SERIALIZATION} and your code serializes a neural network, a compilation error will occur.
+
+See the C++ quickstart and the \href{https://github.com/mlpack/examples}{\texttt{ examples}} repository for some examples of mlpack applications in C++, with corresponding {\ttfamily Makefile}s.\hypertarget{md__r_e_a_d_m_e_autotoc_md73}{}\doxysubsubsubsection{\texorpdfstring{3.\+1.\+a. Linking with autodownloaded Armadillo}{3.\+1.\+a. Linking with autodownloaded Armadillo}}\label{md__r_e_a_d_m_e_autotoc_md73}
+When the autodownloader is used to download Armadillo ({\ttfamily -\/DDOWNLOAD\+\_\+\+DEPENDENCIES=ON}), the Armadillo runtime library is not built and Armadillo must be used in header-\/only mode. The autodownloader also does not download dependencies of Armadillo such as Open\+BLAS. For this reason, it is recommended to instead install Armadillo using your system package manager, which will also install the dependencies of Armadillo. For example, on Ubuntu and Debian systems, Armadillo can be installed with
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{sudo\ apt-\/get\ install\ libarmadillo-\/dev}
+
+\end{DoxyCode}
+
+
+and other package managers such as {\ttfamily dnf} and {\ttfamily brew} and {\ttfamily pacman} also have Armadillo packages available.
+
+If the autodownloader is used to provide Armadillo, mlpack programs cannot be linked with {\ttfamily -\/larmadillo}. Instead, you must link directly with the dependencies of Armadillo. For example, on a system that has Open\+BLAS available, compilation can be done like this\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{g++\ -\/O3\ -\/std=c++17\ -\/o\ my\_program\ my\_program.cpp\ -\/lopenblas\ -\/fopenmp}
+
+\end{DoxyCode}
+
+
+See \href{https://arma.sourceforge.net/faq.html\#linking}{\texttt{ the Armadillo documentation}} for more information on linking Armadillo programs.\hypertarget{md__r_e_a_d_m_e_autotoc_md74}{}\doxysubsubsection{\texorpdfstring{3.\+2. Reducing compile time}{3.\+2. Reducing compile time}}\label{md__r_e_a_d_m_e_autotoc_md74}
+mlpack is a template-\/heavy library, and if care is not used, compilation time of a project can be increased greatly. Fortunately, there are a number of ways to reduce compilation time\+:
+
+
+\begin{DoxyItemize}
+\item Include individual headers, like {\ttfamily \texorpdfstring{$<$}{<}mlpack/methods/decision\+\_\+tree.\+hpp\texorpdfstring{$>$}{>}}, if you are only using one component, instead of {\ttfamily \texorpdfstring{$<$}{<}mlpack.\+hpp\texorpdfstring{$>$}{>}}. This reduces the amount of work the compiler has to do.
+\item Only use the {\ttfamily MLPACK\+\_\+\+ENABLE\+\_\+\+ANN\+\_\+\+SERIALIZATION} definition if you are serializing neural networks in your code. When this define is enabled, compilation time will increase significantly, as the compiler must generate code for every possible type of layer. (The large amount of extra compilation overhead is why this is not enabled by default.)
+\item If you are using mlpack in multiple .cpp files, consider using \href{https://isocpp.org/wiki/faq/cpp11-language-templates}{\texttt{ {\ttfamily extern templates}}} so that the compiler only instantiates each template once; add an explicit template instantiation for each mlpack template type you want to use in a .cpp file, and then use {\ttfamily extern} definitions elsewhere to let the compiler know it exists in a different file.
+\end{DoxyItemize}
+
+Other strategies exist too, such as precompiled headers, compiler options, \href{https://ccache.dev}{\texttt{ {\ttfamily ccache}}}, and others.\hypertarget{md__r_e_a_d_m_e_autotoc_md75}{}\doxysubsection{\texorpdfstring{4. Building mlpack bindings to other languages}{4. Building mlpack bindings to other languages}}\label{md__r_e_a_d_m_e_autotoc_md75}
+mlpack is not just a header-\/only library\+: it also comes with bindings to a number of other languages, this allows flexible use of mlpack\textquotesingle{}s efficient implementations from languages that aren\textquotesingle{}t C++.
+
+In general, you should {\itshape not} need to build these by hand---they should be provided by either your system package manager or your language\textquotesingle{}s package manager.
+
+Building the bindings for a particular language is done by calling {\ttfamily cmake} with different options; each example below shows how to configure an individual set of bindings, but it is of course possible to combine the options and build bindings for many languages at once.\hypertarget{md__r_e_a_d_m_e_autotoc_md76}{}\doxysubsubsection{\texorpdfstring{4.\+i. Command-\/line programs}{4.\+i. Command-\/line programs}}\label{md__r_e_a_d_m_e_autotoc_md76}
+{\itshape See also the command-\/line quickstart.}
+
+The command-\/line programs have no extra dependencies. The set of programs that will be compiled is detailed and documented on the command-\/line programdocumentation page"{}.  \+From the root of the mlpack sources, run the following commands to build and install the command-\/line bindings\+:  @icode\{sh\}  mkdir build \&\& cd build/ cmake -\/\+DBUILD\+\_\+\+CLI\+\_\+\+PROGRAMS=\+ON ../ make sudo make install @endicode   \+You can use $<$tt$>$make -\/j\textbackslash{}$<$\+N\textbackslash{}$>$$<$/tt$>$, where $<$tt$>$\+N$<$/tt$>$ is the number of cores on your machine, to build in parallel; e.\+g., $<$tt$>$make -\/j4$<$/tt$>$ will use 4 cores to build.  @subsubsection autotoc\+\_\+md77 4.\+ii. Python bindings  $<$em$>$\+See also the @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/quickstart/python.md"{} "{}Python quickstart"{}.$<$/em$>$  mlpack\textquotesingle{}s Python bindings are available on $<$a href="{}\href{https://pypi.org/project/mlpack/}{\texttt{ https\+://pypi.\+org/project/mlpack/}}"{} $>$\+Py\+PI$<$/a$>$ and $<$a href="{}\href{https://anaconda.org/conda-forge/mlpack}{\texttt{ https\+://anaconda.\+org/conda-\/forge/mlpack}}"{} $>$conda-\/forge$<$/a$>$, and can be installed with either $<$tt$>$pip install mlpack$<$/tt$>$ or $<$tt$>$conda install -\/c conda-\/forge mlpack$<$/tt$>$. \+These sources are recommended, as building the Python bindings by hand can be complex.  \+With that in mind, if you would still like to manually build the mlpack Python bindings, first make sure that the following Python packages are installed\+:   -\/ setuptools  -\/ wheel  -\/ cython $>$= 0.\+24  -\/ numpy  -\/ pandas $>$= 0.\+15.\+0  \+Now, from the root of the mlpack sources, run the following commands to build and install the Python bindings\+:  @icode\{sh\}  mkdir build \&\& cd build/ cmake -\/\+DBUILD\+\_\+\+PYTHON\+\_\+\+BINDINGS=\+ON ../ make sudo make install @endicode   \+You can use $<$tt$>$make -\/j\textbackslash{}$<$\+N\textbackslash{}$>$$<$/tt$>$, where $<$tt$>$\+N$<$/tt$>$ is the number of cores on your machine, to build in parallel; e.\+g., $<$tt$>$make -\/j4$<$/tt$>$ will use 4 cores to build.  You can also specify a custom Python interpreter with the CMake option $<$tt$>$-\/\+DPYTHON\+\_\+\+EXECUTABLE=/path/to/python$<$/tt$>$.  @subsubsection autotoc\+\_\+md78 4.\+iii. R bindings  $<$em$>$\+See also the @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/quickstart/r.md"{} "{}R quickstart"{}.$<$/em$>$  mlpack\textquotesingle{}s R bindings are available as the R package $<$a href="{}\href{https://cran.r-project.org/web/packages/mlpack/index.html}{\texttt{ https\+://cran.\+r-\/project.\+org/web/packages/mlpack/index.\+html}}"{} $>$mlpack$<$/a$>$ on CRAN. \+You can install the package by running `install.\+packages(\textquotesingle{}mlpack')\`{}, and this is the recommended way of getting mlpack in R.  \+If you still wish to build the R bindings by hand, first make sure the following dependencies are installed\+:   -\/ R $>$= 4.\+0  -\/ Rcpp $>$= 0.\+12.\+12  -\/ Rcpp\+Armadillo $>$= 0.\+10.\+8.\+0  -\/ Rcpp\+Ensmallen $>$= 0.\+2.\+10.\+0  -\/ roxygen2  -\/ testthat  -\/ pkgbuild  \+These can be installed with $<$tt$>$install.\+packages()$<$/tt$>$ inside of your R environment. \+Once the dependencies are available, you can configure mlpack and build the R bindings by running the following commands from the root of the mlpack sources\+:  @icode\{sh\}  mkdir build \&\& cd build/ cmake -\/\+DBUILD\+\_\+\+R\+\_\+\+BINDINGS=\+ON ../ make sudo make install @endicode   \+You may need to specify the location of the R program in the $<$tt$>$cmake$<$/tt$>$ command with the option $<$tt$>$-\/\+DR\+\_\+\+EXECUTABLE=/path/to/\+R$<$/tt$>$.  \+Once the build is complete, a tarball can be found under the build directory in $<$tt$>$src/mlpack/bindings/\+R/$<$/tt$>$, and then that can be installed into your R environment with a command like `install.\+packages(mlpack\+\_\+3.\+4.\+3.\+tar.\+gz, repos=\+NULL, type=\textquotesingle{}source')\`{}.  @subsubsection autotoc\+\_\+md79 4.\+iv. Julia bindings  $<$em$>$\+See also the @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/quickstart/julia.md"{} "{}Julia quickstart"{}.$<$/em$>$  mlpack\textquotesingle{}s Julia bindings are available by installing the $<$a href="{}\href{https://github.com/mlpack/mlpack.jl}{\texttt{ https\+://github.\+com/mlpack/mlpack.\+jl}}"{} $>$mlpack.\+jl$<$/a$>$ package using $<$tt$>$\+Pkg.\+add("{}mlpack.\+jl"{})$<$/tt$>$.  The process of building, packaging, and distributing mlpack\textquotesingle{}s Julia bindings is very nontrivial, so it is recommended to simply use the version available in $<$tt$>$\+Pkg$<$/tt$>$, but if you want to build the bindings by hand anyway, you can configure and build them by running the following commands from the root of the mlpack sources\+:  @icode\{sh\}  mkdir build \&\& cd build/ cmake -\/\+DBUILD\+\_\+\+JULIA\+\_\+\+BINDINGS=\+ON ../ make @endicode   \+If CMake cannot find your Julia installation, you can add $<$tt$>$-\/\+DJULIA\+\_\+\+EXECUTABLE=/path/to/julia$<$/tt$>$ to the CMake configuration step.  \+Note that the $<$tt$>$make install$<$/tt$>$ step is not done above, since the Julia binding build system was not meant to be installed directly.  Instead, to use handbuilt bindings (for instance, to test them), one option is to start Julia with $<$tt$>$\+JULIA\+\_\+\+PROJECT$<$/tt$>$ set as an environment variable\+:  @icode\{sh\}  cd build/src/mlpack/bindings/julia/mlpack/ \+JULIA\+\_\+\+PROJECT=\$\+PWD julia @endicode   and then $<$tt$>$using mlpack$<$/tt$>$ should work.  @subsubsection autotoc\+\_\+md80 4.\+v. Go bindings  $<$em$>$\+See also the @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/quickstart/go.md"{} "{}Go quickstart"{}.$<$/em$>$  \+To build mlpack\textquotesingle{}s Go bindings, ensure that Go $>$= 1.\+11.\+0 is installed, and that the Gonum package is available.  You can use $<$tt$>$go get$<$/tt$>$ to install mlpack for Go\+:  @icode\{sh\}  go get -\/u -\/d mlpack.\+org/v1/mlpack cd \$\{\+GOPATH\}/src/mlpack.\+org/v1/mlpack make install @endicode   \+The process of building the Go bindings by hand is a little tedious, so following the steps above is recommended.  However, if you wish to build the Go bindings by hand anyway, you can do this by running the following commands from the root of the mlpack sources\+:  @icode\{sh\}  mkdir build \&\& cd build/ cmake -\/\+DBUILD\+\_\+\+GO\+\_\+\+BINDINGS=\+ON ../ make sudo make install @endicode   @subsection autotoc\+\_\+md81 5. Building mlpack\textquotesingle{}s test suite  mlpack contains an extensive test suite that exercises every part of the codebase.  It is easy to build and run the tests with CMake and CTest, as below\+:  @icode\{sh\}  mkdir build \&\& cd build/ cmake -\/\+DBUILD\+\_\+\+TESTS=\+ON ../ make ctest . @endicode   \+If you want to test the bindings, too, you will have to adapt the CMake configuration command to turn on the language bindings that you want to test---see the previous sections for details.  @subsection autotoc\+\_\+md82 6. Further Resources  \+More documentation is available for both users and developers.  $<$em$>$$<$strong$>$\+User documentation$<$/strong$>$$<$/em$>$\+:   -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/user/matrices.md"{} "{}Matrices in mlpack"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/user/load\+\_\+save.md"{} "{}Loading and saving mlpack objects"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/user/cv.md"{} "{}Cross-\/\+Validation"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/user/hpt.md"{} "{}Hyper-\/parameter Tuning"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/user/build\+\_\+windows.md"{} "{}Building mlpack from source on Windows"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/user/sample\+\_\+ml\+\_\+app.md"{} "{}Sample C++ ML App for Windows"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/user/core.md"{} "{}mlpack core library documentation"{}  -\/ $<$a href="{}\href{https://github.com/mlpack/examples/}{\texttt{ https\+://github.\+com/mlpack/examples/}}"{} $>$\+Examples repository$<$/a$>$  $<$em$>$$<$strong$>$\+Tutorials\+:$<$/strong$>$$<$/em$>$   -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/tutorials/amf.md"{} "{}Alternating Matrix Factorization (AMF)"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/tutorials/ann.md"{} "{}Artificial Neural Networks (ANN)"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/tutorials/approx\+\_\+kfn.md"{} "{}Approximate k-\/\+Furthest Neighbor Search ({\ttfamily approx\+\_\+kfn})"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/tutorials/cf.md"{} "{}Collaborative Filtering (CF)"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/tutorials/datasetmapper.md"{} "{}Dataset\+Mapper"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/tutorials/det.md"{} "{}Density Estimation Trees (DET)"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/tutorials/emst.md"{} "{}Euclidean Minimum Spanning Trees (EMST)"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/tutorials/fastmks.md"{} "{}Fast Max-\/\+Kernel Search (Fast\+MKS)"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/tutorials/image.md"{} "{}Image Utilities"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/tutorials/kmeans.md"{} "{}k-\/\+Means Clustering"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/tutorials/linear\+\_\+regression.md"{} "{}Linear Regression"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/tutorials/neighbor\+\_\+search.md"{} "{}Neighbor Search (k-\/\+Nearest-\/\+Neighbors)"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/tutorials/range\+\_\+search.md"{} "{}Range Search"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/tutorials/reinforcement\+\_\+learning.md"{} "{}Reinforcement Learning"{}  $<$em$>$$<$strong$>$\+Developer documentation$<$/strong$>$$<$/em$>$\+:   -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/developer/iodoc.md"{} "{}Writing an mlpack binding"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/developer/timer.md"{} "{}mlpack Timers"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/developer/bindings.md"{} "{}mlpack automatic bindings to other languages"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/developer/elemtype.md"{} "{}The Elem\+Type policy in mlpack"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/developer/kernels.md"{} "{}The Kernel\+Type policy in mlpack"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/developer/distances.md"{} "{}The Distance\+Type policy in mlpack"{}  -\/ @ref "{}/\+Users/duboisantoine/projects/mlpack\+\_\+mcts/prepare\+\_\+pullrequest/mlpack/doc/developer/trees.md"{} "{}The Tree\+Type policy in mlpack"{}  \+To learn about the development goals of mlpack in the short-\/ and medium-\/term future, see the $<$a href="{}\href{https://www.mlpack.org/papers/vision.pdf}{\texttt{ https\+://www.\+mlpack.\+org/papers/vision.\+pdf}}"{} $>$vision document$<$/a$>$.  \+If you have problems, find a bug, or need help, you can try visiting the $<$a href="{}\href{https://www.mlpack.org/questions.html}{\texttt{ https\+://www.\+mlpack.\+org/questions.\+html}}"{} $>$mlpack help$<$/a$>$ page, or $<$a href="{}\href{https://github.com/mlpack/mlpack/}{\texttt{ https\+://github.\+com/mlpack/mlpack/}}"{}  $>$mlpack on Github$<$/a$>$.  Alternately, mlpack help can be found on Matrix at $<$tt$>$\textbackslash{}\#mlpack$<$/tt$>$; see also the $<$a href="{}\href{https://www.mlpack.org/doc/developer/community.html}{\texttt{ https\+://www.\+mlpack.\+org/doc/developer/community.\+html}}"{} \texorpdfstring{$>$}{>}community page. 
