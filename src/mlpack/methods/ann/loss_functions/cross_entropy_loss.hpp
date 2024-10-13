@@ -87,3 +87,4 @@ typedef CrossEntropyLossType<arma::mat> CrossEntropyLoss;
 #include "cross_entropy_loss_impl.hpp"
 
 #endif
+

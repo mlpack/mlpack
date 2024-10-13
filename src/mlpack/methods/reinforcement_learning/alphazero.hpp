@@ -24,10 +24,10 @@
 namespace mlpack {
 class AlphaZeroConfig: public TrainingConfig
 {
-public:
-  AlphaZeroConfig(): TrainingConfig(), 
-      selfplaySteps(0),
-      explorationUcb(1.41421356237) // sqrt(2) 
+ public:
+  AlphaZeroConfig(): TrainingConfig(),
+    selfplaySteps(0),
+    explorationUcb(1.41421356237) // square-root of two
   {
     // nothing to do here
   }
@@ -41,28 +41,28 @@ public:
     double stepSize,
     double vMin,
     double vMax,
-    double explorationUcb
-    ) : TrainingConfig(
-      numWorkers,
-      updateInterval,
-      100,
-      stepLimit,
-      explorationSteps,
-      stepSize,
-      0.99,
-      40,
-      false,
-      false,
-      false,
-      51,
-      vMin,
-      vMax,
-      0.005
-    ), 
+    double explorationUcb)
+    : TrainingConfig(
+    numWorkers,
+    updateInterval,
+    100,
+    stepLimit,
+    explorationSteps,
+    stepSize,
+    0.99,
+    40,
+    false,
+    false,
+    false,
+    51,
+    vMin,
+    vMax,
+    0.005
+    ),
     selfplaySteps(selfplaySteps), explorationUcb(explorationUcb)
-    {
-      // nothing to do here
-    }
+  {
+    // nothing to do here
+  }
 
   //! Get the number of selfplay steps.
   size_t SelfplaySteps() const { return selfplaySteps; }
@@ -74,7 +74,7 @@ public:
   //! Modify the rho value for sac.
   double& ExplorationUCB() { return explorationUcb; }
 
-private:
+ private:
   /**
    * Locally-stored selfplay steps before playing an episode step.
    * The agent udates the values and visit counts of state-action nodes 
@@ -144,13 +144,13 @@ class AlphaZero
    * @param environment Reinforcement learning task.
    */
   AlphaZero(AlphaZeroConfig& config,
-      ValueNetworkType& valueNetwork,
-      PolicyNetworkType& policyNetwork,
-      ReplayType& replayMethod,
-      EnvironmentType environment,
-      UpdaterType valueNetworkUpdater = UpdaterType(),
-      UpdaterType policyNetworkUpdater = UpdaterType()
-  );
+            ValueNetworkType& valueNetwork,
+            PolicyNetworkType& policyNetwork,
+            ReplayType& replayMethod,
+            EnvironmentType environment,
+            UpdaterType valueNetworkUpdater = UpdaterType(),
+            UpdaterType policyNetworkUpdater = UpdaterType());
+
   /**
     * Clean memory.
     */
@@ -192,7 +192,7 @@ class AlphaZero
 
 
  private:
- struct Node
+  struct Node
   {
     Node** child;
     Node* parent;
@@ -202,10 +202,10 @@ class AlphaZero
     size_t N;
     bool isFullyExpanded;
     Node(StateType state,
-    double proba = 1.0,
-    Node* parent = nullptr
-    ): state(state), proba(proba), parent(parent), 
-      child(nullptr),
+         double proba = 1.0,
+         Node* parent = nullptr)
+      : state(state), proba(proba),
+      parent(parent), child(nullptr),
       W(0.0), N(0), isFullyExpanded(false)
     {
       /* Defining the array of children as a vector
@@ -213,19 +213,19 @@ class AlphaZero
       */
     }
     ~Node(){
-      if(child == nullptr) return;
+      if (child == nullptr) return;
 
-      for(size_t a=0; a<ActionType::size; ++a){
-        if(child[a] != nullptr){
+      for (size_t a = 0; a<ActionType::size; ++a){
+        if (child[a] != nullptr){
           delete child[a];
           child[a] = nullptr;
-        } 
+        }
       }
       delete[] child;
-    };
+    }
     void DetachParent(){
-      for(size_t a=0; a<ActionType::size; ++a){
-        if( (parent->child[a] != nullptr) and (parent->child[a] != this)){
+      for (size_t a = 0; a<ActionType::size; ++a){
+        if ( (parent->child[a] != nullptr) && (parent->child[a] != this) ){
           delete parent->child[a];
           parent->child[a] = nullptr;
         }
@@ -233,16 +233,18 @@ class AlphaZero
       delete[] parent->child;
       parent = nullptr;
     }
-    void AddChild(const size_t a, const StateType childState, const double proba)
+    void AddChild(const size_t a, 
+                  const StateType childState, 
+                  const double proba)
     {
-      if(child == nullptr) child = new Node*[ActionType::size]; // Is it a good idea to allocate the memory it here?
+      if (child == nullptr) child = new Node*[ActionType::size];
       child[a] = new Node(childState, proba, this);
     }
     void VerifyFullyExpanded()
     {
       isFullyExpanded = true;
-      for(size_t i=0; i < ActionType::size; ++i){
-        if ( child[i] == nullptr ){
+      for (size_t i = 0; i < ActionType::size; ++i){
+        if (child[i] == nullptr){
           isFullyExpanded = false;
           return;
         }
@@ -262,10 +264,10 @@ class AlphaZero
         double max_ucb = PUCBscore(parent->child[0]);
         size_t arg_max = 0;
         double score;
-        for(size_t a = 1; a < ActionType::size; ++a)
+        for (size_t a = 1; a < ActionType::size; ++a)
         {
             score = PUCBscore(parent->child[a]);
-            if( max_ucb < score){
+            if (max_ucb < score){
                 max_ucb = score;
                 arg_max = a;
             }
@@ -280,11 +282,12 @@ class AlphaZero
     arma::vec nnLogProba;
     policyNetwork.Predict(parent->state.Encode(), nnLogProba);
 
-    for(size_t a = 0; a < ActionType::size; ++a)
+    for (size_t a = 0; a < ActionType::size; ++a)
     {
-      if( (parent->child != nullptr) and (parent->child[a] != nullptr) ) continue; // pass if the child has already been added to the node
+      // pass if the child has already been added to the node
+      if ( (parent->child != nullptr) && (parent->child[a] != nullptr) ) continue;
 
-      if(nnLogProba[a] > maxLogProba){
+      if (nnLogProba[a] > maxLogProba){
         maxLogProba = nnLogProba[a];
         argMax = a;
       }
@@ -305,27 +308,27 @@ class AlphaZero
     return arma::as_scalar(nn_v);
   }
   void Explore(Node* node)
-  { 
-    // Selection
-    while(node->isFullyExpanded)
+  {
+    /* Selection */
+    while (node->isFullyExpanded)
     {
       node = BestPUCBchild(node);
     }
-    // expansion
-    if( !environment.IsTerminal(node->state) )
+    /* Expansion */
+    if (!environment.IsTerminal(node->state))
     {
-        node = Expand(node);
+      node = Expand(node);
     }
-
-    // rollout
+    /* Rollout */
     double v = Rollout(node);
-
-    // Backpropagation
+    /* Backpropagation */
     node->N++;
     node->W += v;
     node = node->parent;
-    node -> VerifyFullyExpanded(); // check if the last node of the selection phase is now fully expanded
-    while(node != nullptr)
+    /* check if the last node of the selection phase 
+       is now fully expanded */ 
+    node -> VerifyFullyExpanded();
+    while (node != nullptr)
     {
         node->N++;
         node->W += v;
@@ -335,13 +338,13 @@ class AlphaZero
   void Next(Node* &node, ActionType &nextAction, arma::vec &probaNextAction)
   {
     size_t sum = 0;
-    for(size_t i = 0, N; i < ActionType::size; ++i){
+    for (size_t i = 0, N; i < ActionType::size; ++i){
         N = node->child[i]->N;
-        sum += N; 
+        sum += N;
         probaAction[i] = double(N);
     }
     double inv_sum = 1.0 / double(sum);
-    for(size_t i = 0; i < ActionType::size; ++i){
+    for (size_t i = 0; i < ActionType::size; ++i){
         probaAction[i] *= inv_sum;
     }
     
@@ -387,7 +390,6 @@ class AlphaZero
       policyNetworkUpdatePolicy;
   #endif
 
-
   //! Locally-stored reinforcement learning task.
   EnvironmentType environment;
 
@@ -419,4 +421,5 @@ class AlphaZero
 
 // Include implementation
 #include "alphazero_impl.hpp"
+
 #endif

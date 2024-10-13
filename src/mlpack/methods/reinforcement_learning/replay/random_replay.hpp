@@ -253,7 +253,7 @@ class RandomReplay
    */
   void Backward()
   {
-    for(size_t step=0,  i; step < episodeSteps; ++step){ // good, continue from here. Write Backward inside the buffer
+    for (size_t step = 0, i; step < episodeSteps; ++step){
       i = (position -1 -step + capacity) % capacity;
       rewards(i) = totalReturn;
     }
@@ -515,7 +515,7 @@ class RandomReplay<EnvironmentType, true>
    */
   void Backward()
   {
-    for(size_t step=0,  i; step < episodeSteps; ++step){
+    for (size_t step = 0, i; step < episodeSteps; ++step){
       i = (position -1 -step + capacity) % capacity;
       rewards(i) = totalReturn;
     }

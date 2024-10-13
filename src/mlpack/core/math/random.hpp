@@ -176,10 +176,10 @@ size_t RandCategorical(arma::vec& weights)
 {
   double x = Random();
   double sum = 0;
-  for(size_t cat = 0; cat < weights.n_elem; ++cat)
+  for (size_t cat = 0; cat < weights.n_elem; ++cat)
   {
     sum += weights[cat];
-    if(x <= sum) return cat;
+    if (x <= sum) return cat;
   }
   return weights.n_elem -1;
 }
