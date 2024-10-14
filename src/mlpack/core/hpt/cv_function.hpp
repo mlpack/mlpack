@@ -130,7 +130,7 @@ class CVFunction
   template<size_t BoundArgIndex,
            size_t ParamIndex,
            typename... Args,
-           typename = 
+           typename =
                std::enable_if_t<(BoundArgIndex + ParamIndex < TotalArgs)>>
   inline double Evaluate(const arma::mat& parameters, const Args&... args);
 
@@ -140,7 +140,7 @@ class CVFunction
   template<size_t BoundArgIndex,
            size_t ParamIndex,
            typename... Args,
-           typename = 
+           typename =
                std::enable_if_t<BoundArgIndex + ParamIndex == TotalArgs>,
            typename = void>
   inline double Evaluate(const arma::mat& parameters, const Args&... args);
