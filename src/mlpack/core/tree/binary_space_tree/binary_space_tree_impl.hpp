@@ -19,6 +19,30 @@
 
 namespace mlpack {
 
+// Default constructor.
+template<typename DistanceType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundDistanceType,
+                  typename BoundElemType,
+                  typename...> class BoundType,
+         template<typename SplitBoundType,
+                  typename SplitMatType> class SplitType>
+BinarySpaceTree<DistanceType, StatisticType, MatType, BoundType, SplitType>::
+    BinarySpaceTree() :
+    left(NULL),
+    right(NULL),
+    parent(NULL),
+    begin(0),
+    count(0),
+    stat(*this),
+    parentDistance(0),
+    furthestDescendantDistance(0),
+    dataset(NULL)
+{
+  // Nothing to do.
+}
+
 // Each of these overloads is kept as a separate function to keep the overhead
 // from the two std::vectors out, if possible.
 template<typename DistanceType,
@@ -1099,30 +1123,6 @@ UpdateBound(HollowBallBound<DistanceType, ElemType>& boundToUpdate)
 
   if (count > 0)
     boundToUpdate |= dataset->cols(begin, begin + count - 1);
-}
-
-// Default constructor (private), for cereal.
-template<typename DistanceType,
-         typename StatisticType,
-         typename MatType,
-         template<typename BoundDistanceType,
-                  typename BoundElemType,
-                  typename...> class BoundType,
-         template<typename SplitBoundType,
-                  typename SplitMatType> class SplitType>
-BinarySpaceTree<DistanceType, StatisticType, MatType, BoundType, SplitType>::
-    BinarySpaceTree() :
-    left(NULL),
-    right(NULL),
-    parent(NULL),
-    begin(0),
-    count(0),
-    stat(*this),
-    parentDistance(0),
-    furthestDescendantDistance(0),
-    dataset(NULL)
-{
-  // Nothing to do.
 }
 
 /**

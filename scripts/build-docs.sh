@@ -255,7 +255,7 @@ create_page_sidebar_section()
         sed 's/^<h2 id="[^"]*">\(.*\)<\/h2>/\1/'`;
 
     grep '<h3 id=' "$sb_input_file" | sed 's/<h3 id="\([^"]*\)">\(.*\)<\/h3>/<li><a href="#\1">\2<\/a><\/li>/' > "$sb_output_file.side.tmp";
-  elif [[ "$sb_input_file_base" == "core" || "$sb_dir_name" == "user/core" ]];
+  elif [[ "$sb_input_file_base" == "core" || "$sb_dir_name" == "user/core" || "$sb_dir_name" == "user/core/trees" ]];
   then
     # The page title on the core class documentation page is encoded as an h1.
     page_title=`grep '<h1 id=' "$sb_input_file" |\

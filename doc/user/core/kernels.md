@@ -24,8 +24,6 @@ These all implement the [same API](../../developer/kernels.md), providing one
  * [`TriangularKernel`](#triangularkernel): triangular kernel, with zero tails
  * [Implement a custom kernel](#implement-a-custom-kernel)
 
----
-
 These kernels can then be used in a number of machine learning algorithms that
 mlpack provides:
 

@@ -177,11 +177,6 @@ class BallBound
   RangeType<ElemType> RangeDistance(const BallBound& other) const;
 
   /**
-   * Expand the bound to include the given node.
-   */
-  const BallBound& operator|=(const BallBound& other);
-
-  /**
    * Expand the bound to include the given point.  The centroid is recalculated
    * to be the center of all of the given points.
    *
