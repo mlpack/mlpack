@@ -1679,7 +1679,8 @@ For implementation details, see
 
 The `VantagePointSplit` class is a splitting strategy that can be used by
 [`BinarySpaceTree`](#binaryspacetree).  It is the default strategy for splitting
-[`VPTree`s](vptree.md), and is detailed in [the paper](...).
+[`VPTree`s](vptree.md), and is detailed in
+[the paper](https://www.mlpack.org/paper/uhlmann91.pdf).
 Due to the nature of the split, ***`VantagePointSplit` should always be used
 with the [`HollowBallBound`](#hollowballbound)***.
 
