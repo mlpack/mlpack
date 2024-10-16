@@ -540,7 +540,7 @@ std::cout << "Saved tree with " << tree.Dataset().n_cols << " points to "
 ---
 
 Load a 32-bit floating point `KDTree` from disk, then traverse it manually and
-find the number of leaf nodes with fewer than 10 children.
+find the number of leaf nodes with fewer than 10 points.
 
 ```c++
 // This assumes the tree has already been saved to 'tree.bin' (as in the example

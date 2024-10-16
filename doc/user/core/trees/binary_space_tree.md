@@ -1261,6 +1261,11 @@ to write a fully custom split:
    with maximum width
  * [`MeanSplit`](#meansplit): splits on the mean value of the points in the
    dimension with maximum width
+ * [`RPTreeMeanSplit`](#rptreemeansplit): projects points onto a random vector,
+   splitting on the median value of the projections, or in some cases on the
+   distance from the mean value
+ * [`RPTreeMaxSplit`](#rptreemaxsplit): projects points onto a random vector,
+   splitting on a random offset of the median of projected points
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
 
@@ -1296,7 +1301,7 @@ The splitting strategy for the `MeanSplit` class is, given a set of points:
  * Compute the mean value `m` of the points in dimension `d`.
  * Split in dimension `d`.
  * Points less than `m` will go to the left child.
- * Points greater than `m` will go to the right child.
+ * Points greater than or equal to `m` will go to the right child.
 
 In practice, the `MeanSplit` splitting strategy often results in a tree with
 fewer leaf nodes than `MidpointSplit`, because each split is more likely to be
@@ -1308,6 +1313,67 @@ task*.
 
 For implementation details, see
 [the source code](/src/mlpack/core/tree/binary_space_tree/mean_split_impl.hpp).
+
+### `RPTreeMeanSplit`
+
+The `RPTreeMeanSplit` class is a splitting strategy that can be used by
+[`BinarySpaceTree`](#binaryspacetree).  It is the splitting strategy used by the
+[`RPTree`](rp_tree.md) class, and uses a random projection to split points.  The
+general idea is described in the paper by
+[Dasgupta and Freund](https://www.cs.cornell.edu/~abrahao/tdg/papers/p537.pdf),
+as the `RPTree-Mean` version of the `ChooseRule()` function.
+
+The splitting strategy for the `RPTreeMeanSplit` class is, given a set of
+points:
+
+ * Draw a random vector `z`.
+ * Sample up to 100 points and compute `d`, the average pairwise distance
+   between the points.
+ * If `10 * d` is less than or equal to the squared diameter of the bounding box
+   of the points:
+   - Project all points onto the vector `z`, and compute the median `v` of the
+     projected values.
+   - Points with projected value less than `v` will go to the left child.
+   - Points with projected value greater than or equal to `v` will go to the
+     right child.
+ * Otherwise:
+   - Compute the mean `s` of all points.
+   - Points with distance from `s` less than the median distance from `s`
+     will go to the left child.
+   - Points with distance from `s` greater than or equal to the median distance
+     from `s` will go to the right child.
+
+The implementation strategy differs slightly from the `RPTree-Mean` version in
+the paper: instead of computing the true average pairwise distance between all
+points, a sample of 100 points is used.
+
+For implementation details, see
+[the source code](/src/mlpack/core/tree/binary_space_tree/rp_tree_mean_split_impl.hpp).
+
+### `RPTreeMaxSplit`
+
+The `RPTreeMaxSplit` class is a splitting strategy that can be used by
+[`BinarySpaceTree`](#binaryspacetree).  It is the splitting strategy used by the
+[`MaxRPTree`](max_rp_tree.md) class, and uses a random projection to split
+points.  The general idea is described in the paper by
+[Dasgupta and Freund](https://www.cs.cornell.edu/~abrahao/tdg/papers/p537.pdf),
+as the `RPTree-Max` version of the `ChooseRule()` function.
+
+The splitting strategy for the `RPTreeMaxSplit` class is, given a set of points,
+
+ * Draw a random vector `z`.
+ * Sample up to 100 points (call this sample `S`).
+ * Compute `v`, the median value of projections of points in `S` onto `z`.
+ * Points with projection onto `z` less than `v` will go to the left child.
+ * Points with projection onto `z` greater than or equal to `v` will go to the
+   right child.
+
+The implementation strategy differs slightly from the `RPTree-Max` version in
+the paper: instead of computing the median on all points, a sample of 100 points
+is used.
+
+For implementation details, see
+[the source code](/src/mlpack/core/tree/binary_space_tree/rp_tree_max_split_impl.hpp).
 
 ### Custom `SplitType`s
 
@@ -1529,7 +1595,7 @@ std::cout << "Saved tree with " << tree.Dataset().n_cols << " points to "
 ---
 
 Load a 32-bit floating point `BinarySpaceTree` from disk, then traverse it
-manually and find the number of leaf nodes with less than 10 children.
+manually and find the number of leaf nodes with less than 10 points.
 
 ```c++
 // This assumes the tree has already been saved to 'tree.bin' (as in the example
