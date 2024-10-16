@@ -79,7 +79,7 @@ std::cout << arma::accu(predictions == 0) << " test points classified as class "
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, either [`0` or `1`](../load_save.md#normalizing-labels).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, either [`0` or `1`](../core/normalizing_labels.md).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `initialPoint` | `arma::rowvec` | Initial model weights to start optimization from.  Should have length `data.n_rows + 1`.  The first element is the bias.  If not specified, a zero vector will be used. | zero vector |
 | `optimizer` | [any ensmallen optimizer](https://www.ensmallen.org) | Instantiated ensmallen optimizer for [differentiable functions](https://www.ensmallen.org/docs.html#differentiable-functions) or [differentiable separable functions](https://www.ensmallen.org/docs.html#differentiable-separable-functions). | `ens::L_BFGS()` |
 | `lambda` | `double` | L2 regularization penalty parameter.  Must be nonnegative. | `0.0` |

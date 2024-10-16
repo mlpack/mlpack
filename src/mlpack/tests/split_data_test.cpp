@@ -96,11 +96,12 @@ TEST_CASE("SplitShuffleDataResultMat", "[SplitDataTest]")
   mat input(2, 10);
   input = reshape(linspace(0, 19, 20), 2, 10);
 
-  const auto value = Split(input, 0.2);
-  REQUIRE(std::get<0>(value).n_cols == 8); // Train data.
-  REQUIRE(std::get<1>(value).n_cols == 2); // Test data.
+  mat trainData, testData;
+  Split(input, trainData, testData, 0.2);
+  REQUIRE(trainData.n_cols == 8);
+  REQUIRE(testData.n_cols == 2);
 
-  mat concat = join_rows(std::get<0>(value), std::get<1>(value));
+  mat concat = join_rows(trainData, testData);
   CheckMatEqual(input, concat);
 }
 
@@ -109,11 +110,12 @@ TEST_CASE("SplitDataResultMat", "[SplitDataTest]")
   mat input(2, 10);
   input = reshape(linspace(0, 19, 20), 2, 10);
 
-  const auto value = Split(input, 0.2, false);
-  REQUIRE(std::get<0>(value).n_cols == 8); // Train data.
-  REQUIRE(std::get<1>(value).n_cols == 2); // Test data.
+  mat trainData, testData;
+  Split(input, trainData, testData, 0.2, false);
+  REQUIRE(trainData.n_cols == 8); // Train data.
+  REQUIRE(testData.n_cols == 2); // Test data.
 
-  mat concat = join_rows(std::get<0>(value), std::get<1>(value));
+  mat concat = join_rows(trainData, testData);
   // Order matters here.
   CheckMatrices(input, concat);
 }
@@ -123,11 +125,12 @@ TEST_CASE("ZeroRatioSplitData", "[SplitDataTest]")
   mat input(2, 10);
   input = reshape(linspace(0, 19, 20), 2, 10);
 
-  const auto value = Split(input, 0, false);
-  REQUIRE(std::get<0>(value).n_cols == 10); // Train data.
-  REQUIRE(std::get<1>(value).n_cols == 0); // Test data.
+  mat trainData, testData;
+  Split(input, trainData, testData, 0, false);
+  REQUIRE(trainData.n_cols == 10); // Train data.
+  REQUIRE(testData.n_cols == 0); // Test data.
 
-  mat concat = join_rows(std::get<0>(value), std::get<1>(value));
+  mat concat = join_rows(trainData, testData);
   // Order matters here.
   CheckMatrices(input, concat);
 }
@@ -137,11 +140,12 @@ TEST_CASE("TotalRatioSplitData", "[SplitDataTest]")
   mat input(2, 10);
   input = reshape(linspace(0, 19, 20), 2, 10);
 
-  const auto value = Split(input, 1, false);
-  REQUIRE(std::get<0>(value).n_cols == 0); // Train data.
-  REQUIRE(std::get<1>(value).n_cols == 10); // Test data.
+  mat trainData, testData;
+  Split(input, trainData, testData, 1, false);
+  REQUIRE(trainData.n_cols == 0); // Train data.
+  REQUIRE(testData.n_cols == 10); // Test data.
 
-  mat concat = join_rows(std::get<0>(value), std::get<1>(value));
+  mat concat = join_rows(trainData, testData);
   // Order matters here.
   CheckMatrices(input, concat);
 }
@@ -156,23 +160,25 @@ TEST_CASE("SplitLabeledDataResultMat", "[SplitDataTest]")
   const Row<size_t> labels = arma::linspace<Row<size_t>>(0, input.n_cols - 1,
       input.n_cols);
 
-  const auto value = Split(input, labels, 0.2);
-  REQUIRE(std::get<0>(value).n_cols == 8);
-  REQUIRE(std::get<1>(value).n_cols == 2);
-  REQUIRE(std::get<2>(value).n_cols == 8);
-  REQUIRE(std::get<3>(value).n_cols == 2);
+  mat trainData, testData;
+  Row<size_t> trainLabels, testLabels;
+  Split(input, labels, trainData, testData, trainLabels, testLabels, 0.2);
+  REQUIRE(trainData.n_cols == 8);
+  REQUIRE(testData.n_cols == 2);
+  REQUIRE(trainLabels.n_cols == 8);
+  REQUIRE(testLabels.n_cols == 2);
 
-  CompareData(input, std::get<0>(value), std::get<2>(value));
-  CompareData(input, std::get<1>(value), std::get<3>(value));
+  CompareData(input, trainData, trainLabels);
+  CompareData(input, testData, testLabels);
 
   // The last thing to check is that we aren't duplicating any points in the
   // train or test labels.
-  CheckDuplication(std::get<2>(value), std::get<3>(value));
+  CheckDuplication(trainLabels, testLabels);
 }
 
 TEST_CASE("SplitCheckSize", "[SplitDataTest]")
 {
-  arma::mat input = randu<arma::mat>(2, 10);
+  mat input = randu<mat>(2, 10);
 
   const Row<size_t> firstLabels = arma::linspace<Row<size_t>>(0,
       input.n_cols - 1, input.n_cols);
@@ -180,9 +186,14 @@ TEST_CASE("SplitCheckSize", "[SplitDataTest]")
   const Row<size_t> secondLabels = arma::linspace<Row<size_t>>(0,
       input.n_cols, input.n_cols + 1);
 
-  REQUIRE_THROWS_AS(Split(input, secondLabels, 0.2), std::invalid_argument);
+  mat trainData, testData;
+  Row<size_t> trainLabels, testLabels;
 
-  REQUIRE_NOTHROW(Split(input, firstLabels, 0.2));
+  REQUIRE_THROWS_AS(Split(input, secondLabels, trainData, testData, trainLabels,
+      testLabels, 0.2), std::invalid_argument);
+
+  REQUIRE_NOTHROW(Split(input, firstLabels, trainData, testData, trainLabels,
+      testLabels, 0.2));
 }
 
 /**
@@ -193,11 +204,12 @@ TEST_CASE("SplitDataLargerTest", "[SplitDataTest]")
   mat input(10, 497);
   input = reshape(linspace(0, 4969, 4970), 10, 497);
 
-  const auto value = Split(input, 0.3);
-  REQUIRE(std::get<0>(value).n_cols == 497 - size_t(0.3 * 497));
-  REQUIRE(std::get<1>(value).n_cols == size_t(0.3 * 497));
+  mat trainData, testData;
+  Split(input, trainData, testData, 0.3);
+  REQUIRE(trainData.n_cols == 497 - size_t(0.3 * 497));
+  REQUIRE(testData.n_cols == size_t(0.3 * 497));
 
-  mat concat = join_rows(std::get<0>(value), std::get<1>(value));
+  mat concat = join_rows(trainData, testData);
   CheckMatEqual(input, concat);
 }
 
@@ -210,16 +222,18 @@ TEST_CASE("SplitLabeledDataLargerTest", "[SplitDataTest]")
   const Row<size_t> labels = arma::linspace<Row<size_t>>(0, input.n_cols - 1,
       input.n_cols);
 
-  const auto value = Split(input, labels, 0.3);
-  REQUIRE(std::get<0>(value).n_cols == 497 - size_t(0.3 * 497));
-  REQUIRE(std::get<1>(value).n_cols == size_t(0.3 * 497));
-  REQUIRE(std::get<2>(value).n_cols == 497 - size_t(0.3 * 497));
-  REQUIRE(std::get<3>(value).n_cols == size_t(0.3 * 497));
+  mat trainData, testData;
+  Row<size_t> trainLabels, testLabels;
+  Split(input, labels, trainData, testData, trainLabels, testLabels, 0.3);
+  REQUIRE(trainData.n_cols == 497 - size_t(0.3 * 497));
+  REQUIRE(testData.n_cols == size_t(0.3 * 497));
+  REQUIRE(trainLabels.n_cols == 497 - size_t(0.3 * 497));
+  REQUIRE(testLabels.n_cols == size_t(0.3 * 497));
 
-  CompareData(input, std::get<0>(value), std::get<2>(value));
-  CompareData(input, std::get<1>(value), std::get<3>(value));
+  CompareData(input, trainData, trainLabels);
+  CompareData(input, testData, testLabels);
 
-  CheckDuplication(std::get<2>(value), std::get<3>(value));
+  CheckDuplication(trainLabels, testLabels);
 }
 
 /**
@@ -234,11 +248,14 @@ TEST_CASE("ZeroRatioStratifiedSplitData", "[SplitDataTest]")
   const Row<size_t> labels = { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
   const double testRatio = 0;
 
-  const auto value = Split(input, labels, testRatio, false, true);
-  REQUIRE(std::get<0>(value).n_cols == 15);
-  REQUIRE(std::get<1>(value).n_cols == 0);
-  REQUIRE(std::get<2>(value).n_cols == 15);
-  REQUIRE(std::get<3>(value).n_cols == 0);
+  mat trainData, testData;
+  Row<size_t> trainLabels, testLabels;
+  StratifiedSplit(input, labels, trainData, testData, trainLabels, testLabels,
+      testRatio, false);
+  REQUIRE(trainData.n_cols == 15);
+  REQUIRE(testData.n_cols == 0);
+  REQUIRE(trainLabels.n_cols == 15);
+  REQUIRE(testLabels.n_cols == 0);
 }
 
 /**
@@ -253,11 +270,15 @@ TEST_CASE("TotalRatioStratifiedSplitData", "[SplitDataTest]")
   const Row<size_t> labels = { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
   const double testRatio = 1;
 
-  const auto value = Split(input, labels, testRatio, false, true);
-  REQUIRE(std::get<0>(value).n_cols == 0);
-  REQUIRE(std::get<1>(value).n_cols == 15);
-  REQUIRE(std::get<2>(value).n_cols == 0);
-  REQUIRE(std::get<3>(value).n_cols == 15);
+  mat trainData, testData;
+  Row<size_t> trainLabels, testLabels;
+
+  StratifiedSplit(input, labels, trainData, testData, trainLabels, testLabels,
+      testRatio, false);
+  REQUIRE(trainData.n_cols == 0);
+  REQUIRE(testData.n_cols == 15);
+  REQUIRE(trainLabels.n_cols == 0);
+  REQUIRE(testLabels.n_cols == 15);
 }
 
 /**
@@ -274,16 +295,20 @@ TEST_CASE("StratifiedSplitDataResultTest", "[SplitDataTest]")
                                2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
   const double testRatio = 0.25;
 
-  const auto value = Split(input, labels, testRatio, true, true);
-  REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 0)).n_rows == 3);
-  REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 1)).n_rows == 6);
-  REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 2)).n_rows == 9);
+  mat trainData, testData;
+  Row<size_t> trainLabels, testLabels;
 
-  REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 0)).n_rows == 1);
-  REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 1)).n_rows == 2);
-  REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 2)).n_rows == 3);
+  StratifiedSplit(input, labels, trainData, testData, trainLabels, testLabels,
+      testRatio, true);
+  REQUIRE(static_cast<uvec>(find(trainLabels == 0)).n_rows == 3);
+  REQUIRE(static_cast<uvec>(find(trainLabels == 1)).n_rows == 6);
+  REQUIRE(static_cast<uvec>(find(trainLabels == 2)).n_rows == 9);
 
-  mat concat = join_rows(std::get<0>(value), std::get<1>(value));
+  REQUIRE(static_cast<uvec>(find(testLabels == 0)).n_rows == 1);
+  REQUIRE(static_cast<uvec>(find(testLabels == 1)).n_rows == 2);
+  REQUIRE(static_cast<uvec>(find(testLabels == 2)).n_rows == 3);
+
+  mat concat = join_rows(trainData, testData);
   CheckMatEqual(input, concat);
 }
 
@@ -317,18 +342,21 @@ TEST_CASE("StratifiedSplitLargerDataResultTest", "[SplitDataTest]")
   labels = join_rows(labels, threeLabel);
   const double testRatio = 0.3;
 
-  const auto value = Split(input, labels, testRatio, false, true);
-  REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 0)).n_rows == 180);
-  REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 1)).n_rows == 90);
-  REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 2)).n_rows == 45);
-  REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 3)).n_rows == 23);
+  mat trainData, testData;
+  Row<size_t> trainLabels, testLabels;
+  StratifiedSplit(input, labels, trainData, testData, trainLabels, testLabels,
+      testRatio, false);
+  REQUIRE(static_cast<uvec>(find(trainLabels == 0)).n_rows == 180);
+  REQUIRE(static_cast<uvec>(find(trainLabels == 1)).n_rows == 90);
+  REQUIRE(static_cast<uvec>(find(trainLabels == 2)).n_rows == 45);
+  REQUIRE(static_cast<uvec>(find(trainLabels == 3)).n_rows == 23);
 
-  REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 0)).n_rows == 76);
-  REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 1)).n_rows == 38);
-  REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 2)).n_rows == 19);
-  REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 3)).n_rows == 9);
+  REQUIRE(static_cast<uvec>(find(testLabels == 0)).n_rows == 76);
+  REQUIRE(static_cast<uvec>(find(testLabels == 1)).n_rows == 38);
+  REQUIRE(static_cast<uvec>(find(testLabels == 2)).n_rows == 19);
+  REQUIRE(static_cast<uvec>(find(testLabels == 3)).n_rows == 9);
 
-  mat concat = join_rows(std::get<0>(value), std::get<1>(value));
+  mat concat = join_rows(trainData, testData);
   CheckMatEqual(input, concat);
 }
 
@@ -345,8 +373,10 @@ TEST_CASE("StratifiedSplitRunTimeErrorTest", "[SplitDataTest]")
 
   const double testRatio = 0.3;
 
-  REQUIRE_THROWS_AS(Split(input, labels, testRatio, false, true),
-      std::runtime_error);
+  mat trainData, testData, trainLabels, testLabels;
+
+  REQUIRE_THROWS_AS(StratifiedSplit(input, labels, trainData, testData,
+      trainLabels, testLabels, testRatio, false), std::runtime_error);
 }
 
 /*
@@ -365,11 +395,13 @@ TEST_CASE("SplitDataResultField", "[SplitDataTest]")
   input(0, 0) = matA;
   input(0, 1) = matB;
 
-  const auto value = Split(input, 0.5, false);
-  REQUIRE(std::get<0>(value).n_cols == 1); // Train data.
-  REQUIRE(std::get<1>(value).n_cols == 1); // Test data.
+  field<mat> trainData, testData;
 
-  field<mat> concat = {std::get<0>(value)(0), std::get<1>(value)(0)};
+  Split(input, trainData, testData, 0.5, false);
+  REQUIRE(trainData.n_cols == 1); // Train data.
+  REQUIRE(testData.n_cols == 1); // Test data.
+
+  field<mat> concat = {trainData(0), testData(0)};
   // Order matters here.
   CheckFields(input, concat);
 }
@@ -382,14 +414,17 @@ TEST_CASE("SplitMatrixLabeledData", "[SplitDataTest]")
   const mat input(2, 10, fill::randu);
   const mat labels(2, 10, fill::randu);
 
-  const auto value = Split(input, labels, 0.2, false);
-  REQUIRE(std::get<0>(value).n_cols == 8);
-  REQUIRE(std::get<1>(value).n_cols == 2);
-  REQUIRE(std::get<2>(value).n_cols == 8);
-  REQUIRE(std::get<3>(value).n_cols == 2);
+  mat trainData, testData, trainLabels, testLabels;
 
-  mat inputConcat = join_rows(std::get<0>(value), std::get<1>(value));
-  mat labelsConcat = join_rows(std::get<2>(value), std::get<3>(value));
+  Split(input, labels, trainData, testData, trainLabels, testLabels, 0.2,
+      false);
+  REQUIRE(trainData.n_cols == 8);
+  REQUIRE(testData.n_cols == 2);
+  REQUIRE(trainLabels.n_cols == 8);
+  REQUIRE(testLabels.n_cols == 2);
+
+  mat inputConcat = join_rows(trainData, testData);
+  mat labelsConcat = join_rows(trainLabels, testLabels);
 
   // Order matters here.
   CheckMatrices(input, inputConcat);
@@ -416,14 +451,17 @@ TEST_CASE("SplitLabeledDataResultField", "[SplitDataTest]")
   label(0, 0) = vecA;
   label(0, 1) = vecB;
 
-  const auto value = Split(input, label, 0.5, false);
-  REQUIRE(std::get<0>(value).n_cols == 1); // Train data.
-  REQUIRE(std::get<1>(value).n_cols == 1); // Test data.
-  REQUIRE(std::get<2>(value).n_cols == 1); // Train label.
-  REQUIRE(std::get<3>(value).n_cols == 1); // Test label.
+  field<mat> trainData, testData;
+  field<vec> trainLabels, testLabels;
 
-  field<mat> inputConcat = {std::get<0>(value)(0), std::get<1>(value)(0)};
-  field<vec> labelConcat = {std::get<2>(value)(0), std::get<3>(value)(0)};
+  Split(input, label, trainData, testData, trainLabels, testLabels, 0.5, false);
+  REQUIRE(trainData.n_cols == 1);   // Train data.
+  REQUIRE(testData.n_cols == 1);    // Test data.
+  REQUIRE(trainLabels.n_cols == 1); // Train label.
+  REQUIRE(testLabels.n_cols == 1);  // Test label.
+
+  field<mat> inputConcat = {trainData(0), testData(0)};
+  field<vec> labelConcat = {trainLabels(0), testLabels(0)};
 
   // Order matters here.
   CheckFields(input, inputConcat);

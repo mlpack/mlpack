@@ -156,40 +156,47 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     arma::Row<size_t> labelsRow = labels.row(0);
 
     timers.Start("splitting_data");
-    const auto value =
-        data::Split(data, labelsRow, testRatio, !shuffleData, stratifyData);
+    arma::mat trainData, testData;
+    arma::Row<size_t> trainLabels, testLabels;
+    if (stratifyData)
+    {
+      data::StratifiedSplit(data, labelsRow, trainData, testData, trainLabels,
+          testLabels, testRatio, !shuffleData);
+    }
+    else
+    {
+      data::Split(data, labelsRow, trainData, testData, trainLabels, testLabels,
+          testRatio, !shuffleData);
+    }
     timers.Stop("splitting_data");
 
-    Log::Info << "Training data contains "
-        << get<0>(value).n_cols << " points." << endl;
-    Log::Info << "Test data contains "
-        << get<1>(value).n_cols << " points." << endl;
+    Log::Info << "Training data contains " << trainData.n_cols << " points."
+        << endl;
+    Log::Info << "Test data contains " << testData.n_cols << " points." << endl;
 
     if (params.Has("training"))
-      params.Get<arma::mat>("training") = std::move(get<0>(value));
+      params.Get<arma::mat>("training") = std::move(trainData);
     if (params.Has("test"))
-      params.Get<arma::mat>("test") = std::move(get<1>(value));
+      params.Get<arma::mat>("test") = std::move(testData);
     if (params.Has("training_labels"))
-      params.Get<arma::Mat<size_t>>("training_labels") =
-          std::move(get<2>(value));
+      params.Get<arma::Mat<size_t>>("training_labels") = std::move(trainLabels);
     if (params.Has("test_labels"))
-      params.Get<arma::Mat<size_t>>("test_labels") =
-          std::move(get<3>(value));
+      params.Get<arma::Mat<size_t>>("test_labels") = std::move(testLabels);
   }
   else // We have no labels, so just split the dataset.
   {
     timers.Start("splitting_data");
-    const auto value = data::Split(data, testRatio, !shuffleData);
+    arma::mat trainData, testData;
+    data::Split(data, trainData, testData, testRatio, !shuffleData);
     timers.Stop("splitting_data");
 
-    Log::Info << "Training data contains " << get<0>(value).n_cols << " points."
+    Log::Info << "Training data contains " << trainData.n_cols << " points."
         << endl;
-    Log::Info << "Test data contains " << get<1>(value).n_cols << " points."
-        << endl;
+    Log::Info << "Test data contains " << testData.n_cols << " points." << endl;
 
     if (params.Has("training"))
-      params.Get<arma::mat>("training") = std::move(get<0>(value));
+      params.Get<arma::mat>("training") = std::move(trainData);
     if (params.Has("test"))
-      params.Get<arma::mat>("test") = std::move(get<1>(value));
+      params.Get<arma::mat>("test") = std::move(testData);
   }
 }

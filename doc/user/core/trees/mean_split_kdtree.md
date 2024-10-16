@@ -68,6 +68,12 @@ and using the [`MeanSplit`](binary_space_tree.md#meansplit) splitting strategy
 for construction, which splits a node in the dimension of maximum variance on
 the midpoint of the bound's range in that dimension.
 
+If no template parameters are explicitly specified, then defaults are used:
+
+```
+MeanSplitKDTree<> = MeanSplitKDTree<EuclideanDistance, EmptyStatistic, arma::mat>
+```
+
 ## Constructors
 
 `MeanSplitKDTree`s are efficiently constructed by permuting points in a dataset
@@ -456,8 +462,8 @@ std::cout << "Center of kd-tree: " << center.t();
 
 ---
 
-Build two `MeanSplitKDTree`s on subsets of the corel dataset and compute various
-bounding quantities.
+Build two `MeanSplitKDTree`s on subsets of the corel dataset and compute minimum
+and maximum distances between different nodes in the tree.
 
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.

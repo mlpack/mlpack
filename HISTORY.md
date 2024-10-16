@@ -6,6 +6,13 @@ _????-??-??_
 
  * Fix compilation with clang 19 (#3799).
 
+ * Deprecate version of `data::Split()` that returns a `std::tuple` for
+   consistency; use other overloads instead (#3803).
+
+ * Fix LSTM layer copy/move constructors (#3809).
+
+ * Fix compilation if only including `mlpack/methods/kde/kde_model.hpp` (#3800).
+
  * Fix serialization and `MinDistance()` bugs with `HollowBallBound` (#3808).
 
 ## mlpack 4.5.0
