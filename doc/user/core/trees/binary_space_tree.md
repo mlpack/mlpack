@@ -842,8 +842,8 @@ Different constructor forms can be used to specify different template parameters
      any points at all).
 
 ***Note***: these constructors provide an empty bound; be sure to
-[grow](#growing-and-shrinking-the-bound) the bound or
-[directly modify the bound](#accessing-and-modifying-properties-of-the-bound)
+[grow](#growing-the-bound) the bound or
+[directly modify the bound](#accessing-and-modifying-properties-of-the-bound-1)
 before using it!
 
 ---
@@ -1122,7 +1122,7 @@ Different constructor forms can be used to specify different template parameters
    - `ElemType` should generally be `double` or `float`.
 
 ***Note***: these constructors provide an empty bound; be sure to
-[grow](#growing-and-shrinking-the-bound-2) the bound or
+[grow](#growing-the-bound-1) the bound or
 [directly modify the bound](#accessing-and-modifying-properties-of-the-bound-2)
 before using it!
 
@@ -1205,7 +1205,7 @@ be accessed and modified.
    `DistanceType` if a custom `DistanceType` has been specified in the
    constructor.
 
- * `b.Center(center)` will compute the center of the `HRectBound` (e.g. the
+ * `b.Center(center)` will compute the center of the `HollowBallBound` (e.g. the
    vector with elements equal to the midpoint of `b` in each dimension) and
    store it in the vector `center`.  `center` should be of type `arma::vec`.
 
