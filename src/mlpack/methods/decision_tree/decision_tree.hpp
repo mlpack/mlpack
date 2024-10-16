@@ -130,7 +130,7 @@ class DecisionTree :
       const size_t maximumDepth = 0,
       DimensionSelectionType dimensionSelector = DimensionSelectionType(),
       const std::enable_if_t<arma::is_arma_type<
-          typename std::remove_reference<WeightsType>::type>::value>* = 0);
+          std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Construct the decision tree on the given data and labels with weights,
@@ -161,7 +161,7 @@ class DecisionTree :
       const size_t maximumDepth = 0,
       DimensionSelectionType dimensionSelector = DimensionSelectionType(),
       const std::enable_if_t<arma::is_arma_type<
-          typename std::remove_reference<WeightsType>::type>::value>* = 0);
+          std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Using the hyperparameters of another decision tree, train on the given data
@@ -193,7 +193,7 @@ class DecisionTree :
       const size_t minimumLeafSize = 10,
       const double minimumGainSplit = 1e-7,
       const std::enable_if_t<arma::is_arma_type<
-          typename std::remove_reference<WeightsType>::type>::value>* = 0);
+          std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Take ownership of another decision tree and train on the given data and
@@ -225,7 +225,7 @@ class DecisionTree :
       const size_t maximumDepth = 0,
       DimensionSelectionType dimensionSelector = DimensionSelectionType(),
       const std::enable_if_t<arma::is_arma_type<
-          typename std::remove_reference<WeightsType>::type>::value>* = 0);
+          std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Construct a decision tree without training it.  It will be a leaf node with
@@ -359,8 +359,8 @@ class DecisionTree :
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
-               const std::enable_if_t<arma::is_arma_type<typename
-                   std::remove_reference<WeightsType>::type>::value>* = 0);
+               const std::enable_if_t<arma::is_arma_type<
+                   std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Train the decision tree on the given weighted data, assuming that all
@@ -391,8 +391,8 @@ class DecisionTree :
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
-               const std::enable_if_t<arma::is_arma_type<typename
-                   std::remove_reference<WeightsType>::type>::value>* = 0);
+               const std::enable_if_t<arma::is_arma_type<
+                   std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Classify the given point, using the entire tree.  The predicted label is

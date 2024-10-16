@@ -29,34 +29,34 @@ template<typename T>
 void PrintOutputProcessing(
     util::ParamData& d,
     const std::string& /* functionName */,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<!data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   std::string type;
-  if (std::is_same<T, bool>::value)
+  if (std::is_same_v<T, bool>)
     type = "Bool";
-  else if (std::is_same<T, int>::value)
+  else if (std::is_same_v<T, int>)
     type = "Int";
-  else if (std::is_same<T, double>::value)
+  else if (std::is_same_v<T, double>)
     type = "Double";
-  else if (std::is_same<T, std::string>::value)
+  else if (std::is_same_v<T, std::string>)
     type = "String";
-  else if (std::is_same<T, std::vector<std::string>>::value)
+  else if (std::is_same_v<T, std::vector<std::string>>)
     type = "VectorStr";
-  else if (std::is_same<T, std::vector<int>>::value)
+  else if (std::is_same_v<T, std::vector<int>>)
     type = "VectorInt";
   else
     type = "Unknown";
 
   // Strings need a little special handling.
-  if (std::is_same<T, std::string>::value)
+  if (std::is_same_v<T, std::string>)
     std::cout << "Base.unsafe_string(";
 
   std::cout << "GetParam" << type << "(p, \"" << d.name << "\")";
 
-  if (std::is_same<T, std::string>::value)
+  if (std::is_same_v<T, std::string>)
     std::cout << ")";
 }
 
@@ -67,11 +67,11 @@ template<typename T>
 void PrintOutputProcessing(
     util::ParamData& d,
     const std::string& /* functionName */,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
-  std::string uChar = (std::is_same<typename T::elem_type, size_t>::value) ?
+  std::string uChar = (std::is_same_v<typename T::elem_type, size_t>) ?
       "U" : "";
   std::string matTypeSuffix = "";
   std::string extra = "";
@@ -100,10 +100,10 @@ template<typename T>
 void PrintOutputProcessing(
     util::ParamData& d,
     const std::string& functionName,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type*,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   std::string type = util::StripType(d.cppType);
   std::cout << functionName << "_internal.GetParam"
@@ -117,8 +117,8 @@ template<typename T>
 void PrintOutputProcessing(
     util::ParamData& d,
     const std::string& /* functionName */,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   std::cout << "GetParamMatWithInfo(p, \"" << d.name << "\", juliaOwnedMemory)";
 }

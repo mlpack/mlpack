@@ -24,11 +24,11 @@ namespace cli {
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<!util::IsStdVector<T>::value>*,
+    const std::enable_if_t<!data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   std::cout << data.name << ": " << *std::any_cast<T>(&data.value)
       << std::endl;
@@ -38,7 +38,7 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type*)
+    const std::enable_if_t<util::IsStdVector<T>::value>*)
 {
   std::cout << data.name << ": ";
   const T& t = *std::any_cast<T>(&data.value);
@@ -51,7 +51,7 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
+    const std::enable_if_t<arma::is_arma_type<T>::value>*)
 {
   typedef std::tuple<T, std::tuple<std::string, size_t, size_t>> TupleType;
   const T& output = std::get<0>(*std::any_cast<TupleType>(&data.value));
@@ -71,8 +71,8 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type*)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<data::HasSerialize<T>::value>*)
 {
   // The const cast is necessary here because Serialize() can't ever be marked
   // const.  In this case we can assume it though, since we will be saving and
@@ -91,8 +91,8 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* /* junk */)
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* /* junk */)
 {
   // Output the matrix with the mappings.
   typedef std::tuple<T, std::tuple<std::string, size_t, size_t>> TupleType;

@@ -27,10 +27,10 @@ namespace go {
 template<typename T>
 void PrintDefnOutput(
     util::ParamData& d,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   std::cout << GetGoType<T>(d);
 }
@@ -41,7 +41,7 @@ void PrintDefnOutput(
 template<typename T>
 void PrintDefnOutput(
     util::ParamData& d,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0)
 {
   // *mat.Dense
   std::cout << "*" << GetGoType<T>(d);
@@ -53,8 +53,8 @@ void PrintDefnOutput(
 template<typename T>
 void PrintDefnOutput(
     util::ParamData& d,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   // *mat.Dense
   std::cout << "*" << GetGoType<T>(d);
@@ -66,8 +66,8 @@ void PrintDefnOutput(
 template<typename T>
 void PrintDefnOutput(
     util::ParamData& d,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   // Get the type names we need to use.
   std::string goStrippedType, strippedType, printedType, defaultsType;
@@ -94,7 +94,7 @@ void PrintDefnOutput(util::ParamData& d,
                      const void* /* input */,
                      void* /* output */)
 {
-  PrintDefnOutput<typename std::remove_pointer<T>::type>(d);
+  PrintDefnOutput<std::remove_pointer_t<T>>(d);
 }
 
 } // namespace go

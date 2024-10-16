@@ -131,7 +131,7 @@ void MeanShift<UseKernel, KernelType>::GenSeeds(const MatType& data,
 // Calculate new centroid with given kernel.
 template<bool UseKernel, typename KernelType>
 template<bool ApplyKernel, typename MatType, typename VecType>
-typename std::enable_if<ApplyKernel, bool>::type
+std::enable_if_t<ApplyKernel, bool>
 MeanShift<UseKernel, KernelType>::CalculateCentroid(
     const MatType& data,
     const std::vector<size_t>& neighbors,
@@ -163,7 +163,7 @@ MeanShift<UseKernel, KernelType>::CalculateCentroid(
 // Calculate new centroid by mean.
 template<bool UseKernel, typename KernelType>
 template<bool ApplyKernel, typename MatType, typename VecType>
-typename std::enable_if<!ApplyKernel, bool>::type
+std::enable_if_t<!ApplyKernel, bool>
 MeanShift<UseKernel, KernelType>::CalculateCentroid(
     const MatType& data,
     const std::vector<size_t>& neighbors,

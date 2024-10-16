@@ -24,30 +24,30 @@ namespace cli {
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<!util::IsStdVector<T>::value>*,
+    const std::enable_if_t<!data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   // A flag type.
-  if (std::is_same<T, bool>::value)
+  if (std::is_same_v<T, bool>)
   {
     return "A boolean flag option.  If not specified, it is false; if "
         "specified, it is true.";
   }
   // An integer.
-  else if (std::is_same<T, int>::value)
+  else if (std::is_same_v<T, int>)
   {
     return "An integer (i.e., \"1\").";
   }
   // A floating point value.
-  else if (std::is_same<T, double>::value)
+  else if (std::is_same_v<T, double>)
   {
     return "A floating-point number (i.e., \"0.5\").";
   }
   // A string.
-  else if (std::is_same<T, std::string>::value)
+  else if (std::is_same_v<T, std::string>)
   {
     return "A character string (i.e., \"hello\").";
   }
@@ -64,13 +64,13 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& data,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type*)
+    const std::enable_if_t<util::IsStdVector<T>::value>*)
 {
-  if (std::is_same<T, std::vector<int>>::value)
+  if (std::is_same_v<T, std::vector<int>>)
   {
     return "A vector of integers, separated by commas (i.e., \"1,2,3\").";
   }
-  else if (std::is_same<T, std::vector<std::string>>::value)
+  else if (std::is_same_v<T, std::vector<std::string>>)
   {
     return "A vector of strings, separated by commas (i.e., "
         "\"hello\",\"goodbye\").";
@@ -87,9 +87,9 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& data,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
+    const std::enable_if_t<arma::is_arma_type<T>::value>*)
 {
-  if (std::is_same<T, arma::mat>::value)
+  if (std::is_same_v<T, arma::mat>)
   {
     return "A data matrix filename.  The file can be CSV (.csv), TSV (.csv), "
         "ASCII (space-separated values, .txt), Armadillo ASCII (.txt), PGM "
@@ -102,7 +102,7 @@ std::string PrintTypeDoc(
         "is found, the first row will be loaded as a data point.  All values of"
         " the matrix will be loaded as double-precision floating point data.";
   }
-  else if (std::is_same<T, arma::Mat<size_t>>::value)
+  else if (std::is_same_v<T, arma::Mat<size_t>>)
   {
     return "A data matrix filename, where the matrix holds only non-negative "
         "integer values.  This type is often used for labels or indices.  The "
@@ -117,15 +117,15 @@ std::string PrintTypeDoc(
         " loaded as a data point.  All values of the matrix will be loaded as "
         "unsigned integers.";
   }
-  else if (std::is_same<T, arma::rowvec>::value ||
-           std::is_same<T, arma::vec>::value)
+  else if (std::is_same_v<T, arma::rowvec> ||
+           std::is_same_v<T, arma::vec>)
   {
     return "A one-dimensional vector filename.  This file can take the same "
         "formats as the data matrix filenames; however, it must either contain "
         "one row and many columns, or one column and many rows.";
   }
-  else if (std::is_same<T, arma::Row<size_t>>::value ||
-           std::is_same<T, arma::Col<size_t>>::value)
+  else if (std::is_same_v<T, arma::Row<size_t>> ||
+           std::is_same_v<T, arma::Col<size_t>>)
   {
     return "A one-dimensional vector filename, where the matrix holds only non-"
         "negative integer values.  This type is typically used for labels or "
@@ -145,8 +145,8 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   return "A filename for a data matrix that can contain categorical "
       "(non-numeric) data.  If the file contains only numeric data, then the "
@@ -165,8 +165,8 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type*)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<data::HasSerialize<T>::value>*)
 {
   return "A filename containing an mlpack model.  These can have one of three "
       "formats: binary (.bin), text (.txt), and XML (.xml).  The XML format "

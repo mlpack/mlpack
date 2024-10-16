@@ -51,7 +51,7 @@ struct DeduceHyperParameterTypes<T, Args...>
    * A type function to deduce the result hyper-parameter type for ArgumentType.
    */
   template<typename ArgumentType,
-           bool IsArithmetic = std::is_arithmetic<ArgumentType>::value>
+           bool IsArithmetic = std::is_arithmetic_v<ArgumentType>>
   struct ResultHPType;
 
   template<typename ArithmeticType>

@@ -222,7 +222,7 @@ class ExampleTree
   template<typename Archive>
   ExampleTree(
       Archive& ar,
-      const typename std::enable_if_c<typename Archive::is_loading>::type* = 0);
+      const std::enable_if_t<typename Archive::is_loading>* = 0);
 
   // Release any resources held by the tree.
   ~ExampleTree();
@@ -476,7 +476,7 @@ archive:
 template<typename Archive>
 ExampleTree(
     Archive& ar,
-    const typename std::enable_if_c<typename Archive::is_loading>::type* = 0);
+    const std::enable_if_t<typename Archive::is_loading>* = 0);
 ```
 
 This has implications on how the tree must be stored.  In this case, the dataset

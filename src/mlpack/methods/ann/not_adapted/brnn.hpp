@@ -89,9 +89,9 @@ class BRNN
    * @param samples Number of datapoints in the dataset.
    */
   template<typename OptimizerType>
-  typename std::enable_if<
+  std::enable_if_t<
       HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
-      ::value, void>::type
+      ::value, void>
   WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
 
   /**
@@ -103,9 +103,9 @@ class BRNN
    * @param samples Number of datapoints in the dataset.
    */
   template<typename OptimizerType>
-  typename std::enable_if<
+  std::enable_if_t<
       !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
-      ::value, void>::type
+      ::value, void>
   WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
 
   /**

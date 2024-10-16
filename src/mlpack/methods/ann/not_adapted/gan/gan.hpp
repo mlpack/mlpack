@@ -134,8 +134,8 @@ class GAN
    * @param batchSize Variable to store the present number of inputs.
    */
   template<typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
-                          std::is_same<Policy, DCGAN>::value, double>::type
+  std::enable_if_t<std::is_same_v<Policy, StandardGAN> ||
+                          std::is_same_v<Policy, DCGAN>, double>
   Evaluate(const arma::mat& parameters,
            const size_t i,
            const size_t batchSize);
@@ -149,8 +149,8 @@ class GAN
    * @param batchSize Variable to store the present number of inputs.
    */
   template<typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, WGAN>::value,
-                          double>::type
+  std::enable_if_t<std::is_same_v<Policy, WGAN>,
+                          double>
   Evaluate(const arma::mat& parameters,
            const size_t i,
            const size_t batchSize);
@@ -164,8 +164,8 @@ class GAN
    * @param batchSize Variable to store the present number of inputs.
    */
   template<typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, WGANGP>::value,
-                          double>::type
+  std::enable_if_t<std::is_same_v<Policy, WGANGP>,
+                          double>
   Evaluate(const arma::mat& parameters,
            const size_t i,
            const size_t batchSize);
@@ -181,8 +181,8 @@ class GAN
    * @param batchSize Variable to store the present number of inputs.
    */
   template<typename GradType, typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
-                          std::is_same<Policy, DCGAN>::value, double>::type
+  std::enable_if_t<std::is_same_v<Policy, StandardGAN> ||
+                          std::is_same_v<Policy, DCGAN>, double>
   EvaluateWithGradient(const arma::mat& parameters,
                        const size_t i,
                        GradType& gradient,
@@ -199,8 +199,8 @@ class GAN
    * @param batchSize Variable to store the present number of inputs.
    */
   template<typename GradType, typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, WGAN>::value,
-                          double>::type
+  std::enable_if_t<std::is_same_v<Policy, WGAN>,
+                          double>
   EvaluateWithGradient(const arma::mat& parameters,
                        const size_t i,
                        GradType& gradient,
@@ -217,8 +217,8 @@ class GAN
    * @param batchSize Variable to store the present number of inputs.
    */
   template<typename GradType, typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, WGANGP>::value,
-                          double>::type
+  std::enable_if_t<std::is_same_v<Policy, WGANGP>,
+                          double>
   EvaluateWithGradient(const arma::mat& parameters,
                        const size_t i,
                        GradType& gradient,
@@ -235,8 +235,8 @@ class GAN
    * @param batchSize Variable to store the present number of inputs.
    */
   template<typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
-                          std::is_same<Policy, DCGAN>::value, void>::type
+  std::enable_if_t<std::is_same_v<Policy, StandardGAN> ||
+                          std::is_same_v<Policy, DCGAN>, void>
   Gradient(const arma::mat& parameters,
            const size_t i,
            arma::mat& gradient,
@@ -253,7 +253,7 @@ class GAN
    * @param batchSize Variable to store the present number of inputs.
    */
   template<typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, WGAN>::value, void>::type
+  std::enable_if_t<std::is_same_v<Policy, WGAN>, void>
   Gradient(const arma::mat& parameters,
            const size_t i,
            arma::mat& gradient,
@@ -270,8 +270,8 @@ class GAN
    * @param batchSize Variable to store the present number of inputs.
    */
   template<typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, WGANGP>::value,
-                          void>::type
+  std::enable_if_t<std::is_same_v<Policy, WGANGP>,
+                          void>
   Gradient(const arma::mat& parameters,
            const size_t i,
            arma::mat& gradient,

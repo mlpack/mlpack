@@ -25,8 +25,8 @@ namespace r {
 template<typename T>
 void PrintSerializeUtil(
     util::ParamData& /* d */,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0)
 {
   // Do Nothing.
 }
@@ -37,7 +37,7 @@ void PrintSerializeUtil(
 template<typename T>
 void PrintSerializeUtil(
     util::ParamData& /* d */,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0)
 {
   // Do Nothing.
 }
@@ -48,8 +48,8 @@ void PrintSerializeUtil(
 template<typename T>
 void PrintSerializeUtil(
     util::ParamData& d,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   /**
    * This gives us code like:
@@ -76,7 +76,7 @@ void PrintSerializeUtil(util::ParamData& d,
                         const void* /*input*/,
                         void* /* output */)
 {
-  PrintSerializeUtil<typename std::remove_pointer<T>::type>(d);
+  PrintSerializeUtil<std::remove_pointer_t<T>>(d);
 }
 
 } // namespace r

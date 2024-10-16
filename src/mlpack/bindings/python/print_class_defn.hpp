@@ -25,8 +25,8 @@ namespace python {
 template<typename T>
 void PrintClassDefn(
     util::ParamData& /* d */,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0)
 {
   // Do nothing.
 }
@@ -37,7 +37,7 @@ void PrintClassDefn(
 template<typename T>
 void PrintClassDefn(
     util::ParamData& /* d */,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0)
 {
   // Do nothing.
 }
@@ -48,8 +48,8 @@ void PrintClassDefn(
 template<typename T>
 void PrintClassDefn(
     util::ParamData& d,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   // First, we have to parse the type.  If we have something like, e.g.,
   // 'LogisticRegression<>', we must convert this to 'LogisticRegression[].'
@@ -153,7 +153,7 @@ void PrintClassDefn(util::ParamData& d,
                     const void* /* input */,
                     void* /* output */)
 {
-  PrintClassDefn<typename std::remove_pointer<T>::type>(d);
+  PrintClassDefn<std::remove_pointer_t<T>>(d);
 }
 
 } // namespace python

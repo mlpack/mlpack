@@ -217,11 +217,11 @@ struct SelectMethodForm<MLAlgorithm, HasMethodForm, HMFs...>
     template<typename Form, typename... RemainingForms>
     struct Implementation<Form, RemainingForms...>
     {
-      using Type = typename std::conditional<
+      using Type = std::conditional_t<
           HasMethodForm<MLAlgorithm, Form::template Type,
               Form::MinNumberOfAdditionalArgs>::value,
           Form,
-          typename Implementation<RemainingForms...>::Type>::type;
+          typename Implementation<RemainingForms...>::Type>;
     };
 
    public:
@@ -305,9 +305,9 @@ class MetaInfoExtractor
 
   /* An indication whether a method form is selected */
   template<typename... MFs /* MethodForms */>
-  using Selects = typename std::conditional<
-      std::is_same<typename Select<MFs...>::Type, NotFoundMethodForm>::value,
-      std::false_type, std::true_type>::type;
+  using Selects = std::conditional_t<
+      std::is_same_v<typename Select<MFs...>::Type, NotFoundMethodForm>,
+      std::false_type, std::true_type>;
 
  public:
   /**
@@ -328,12 +328,12 @@ class MetaInfoExtractor
    * An indication whether PredictionsType has been identified (i.e. MLAlgorithm
    * is supported by MetaInfoExtractor).
    */
-  static const bool IsSupported = !std::is_same<PredictionsType, void*>::value;
+  static const bool IsSupported = !std::is_same_v<PredictionsType, void*>;
 
   /**
    * An indication whether MLAlgorithm supports weighted learning.
    */
-  static const bool SupportsWeights = !std::is_same<WeightsType, void*>::value;
+  static const bool SupportsWeights = !std::is_same_v<WeightsType, void*>;
 
   /**
    * An indication whether MLAlgorithm takes a data::DatasetInfo parameter.

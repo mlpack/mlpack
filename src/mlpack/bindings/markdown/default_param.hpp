@@ -38,27 +38,27 @@ void DefaultParam(util::ParamData& data,
   if (BindingInfo::Language() == "cli")
   {
     *((std::string*) output) =
-        cli::DefaultParamImpl<typename std::remove_pointer<T>::type>(data);
+        cli::DefaultParamImpl<std::remove_pointer_t<T>>(data);
   }
   else if (BindingInfo::Language() == "python")
   {
     *((std::string*) output) =
-        python::DefaultParamImpl<typename std::remove_pointer<T>::type>(data);
+        python::DefaultParamImpl<std::remove_pointer_t<T>>(data);
   }
   else if (BindingInfo::Language() == "julia")
   {
     *((std::string*) output) =
-        julia::DefaultParamImpl<typename std::remove_pointer<T>::type>(data);
+        julia::DefaultParamImpl<std::remove_pointer_t<T>>(data);
   }
   else if (BindingInfo::Language() == "go")
   {
     *((std::string*) output) =
-        go::DefaultParamImpl<typename std::remove_pointer<T>::type>(data);
+        go::DefaultParamImpl<std::remove_pointer_t<T>>(data);
   }
   else if (BindingInfo::Language() == "r")
   {
     *((std::string*) output) =
-        r::DefaultParamImpl<typename std::remove_pointer<T>::type>(data);
+        r::DefaultParamImpl<std::remove_pointer_t<T>>(data);
   }
   else
   {

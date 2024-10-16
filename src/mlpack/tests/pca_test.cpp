@@ -361,7 +361,7 @@ TEMPLATE_TEST_CASE("PCASubviewTest", "[PCATest]", ExactSVDPolicy,
   p.Apply(data.cols(0, 1999), transData3, eigval2, eigvec);
 
   // Only check for deterministic policies.
-  if (std::is_same<DecompositionPolicy, ExactSVDPolicy>::value)
+  if (std::is_same_v<DecompositionPolicy, ExactSVDPolicy>)
   {
     arma::mat trueTransData, trueEigvec;
     arma::vec trueEigval;
@@ -408,7 +408,7 @@ TEMPLATE_TEST_CASE("PCAExpressionTest", "[PCATest]", ExactSVDPolicy,
   p.Apply(2 * data + 1, transData3, eigval2, eigvec);
 
   // Only check for deterministic policies.
-  if (std::is_same<DecompositionPolicy, ExactSVDPolicy>::value)
+  if (std::is_same_v<DecompositionPolicy, ExactSVDPolicy>)
   {
     arma::mat trueTransData, trueEigvec;
     arma::vec trueEigval;
@@ -456,7 +456,7 @@ TEMPLATE_TEST_CASE("PCAFloatTest", "[PCATest]", ExactSVDPolicy,
 
   // Verify the PCA results based on the eigenvalues.  We don't check for
   // QUIC-SVD, since that method has a lot of noise.
-  if (!std::is_same<DecompositionPolicy, QUICSVDPolicy>::value)
+  if (!std::is_same_v<DecompositionPolicy, QUICSVDPolicy>)
   {
     for (size_t i = 0; i < eigVal.n_elem; ++i)
     {

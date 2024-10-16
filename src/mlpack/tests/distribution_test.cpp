@@ -454,7 +454,7 @@ TEMPLATE_TEST_CASE("GaussianUnivariateProbabilityTest", "[DistributionTest]",
   typedef typename arma::Col<ElemType> VecType;
   typedef typename arma::Mat<ElemType> MatType;
 
-  const ElemType tol = (std::is_same<ElemType, float>::value) ? 1e-4 : 1e-7;
+  const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-4 : 1e-7;
 
   GaussianDistribution<MatType> g(VecType("0.0"), MatType("1.0"));
 
@@ -500,7 +500,7 @@ TEMPLATE_TEST_CASE("GaussianMultivariateProbabilityTest", "[DistributionTest]",
   typedef typename arma::Col<ElemType> VecType;
   typedef typename arma::Mat<ElemType> MatType;
 
-  const ElemType tol = (std::is_same<ElemType, float>::value) ? 1e-4 : 1e-7;
+  const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-4 : 1e-7;
 
   // Simple case.
   VecType mean = "0 0";
@@ -611,7 +611,7 @@ TEMPLATE_TEST_CASE("GaussianDistributionRandomTest", "[DistributionTest]",
   typedef typename arma::Col<ElemType> VecType;
   typedef typename arma::Mat<ElemType> MatType;
 
-  const ElemType tol = (std::is_same<ElemType, float>::value) ? 0.3 : 0.125;
+  const ElemType tol = (std::is_same_v<ElemType, float>) ? 0.3 : 0.125;
 
   VecType mean("1.0 2.25");
   MatType cov("0.85 0.60;"
@@ -648,7 +648,7 @@ TEMPLATE_TEST_CASE("GaussianDistributionTrainTest", "[DistributionTest]", float,
   typedef typename arma::Col<ElemType> VecType;
   typedef typename arma::Mat<ElemType> MatType;
 
-  const ElemType tol = (std::is_same<ElemType, float>::value) ? 1e-3 : 1e-5;
+  const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-3 : 1e-5;
 
   VecType mean("1.0 3.0 0.0 2.5");
   MatType cov("3.0 0.0 1.0 4.0;"
@@ -695,7 +695,7 @@ TEMPLATE_TEST_CASE("GaussianDistributionTrainWithProbabilitiesTest",
   typedef typename arma::Col<ElemType> VecType;
   typedef typename arma::Mat<ElemType> MatType;
 
-  const ElemType tol = (std::is_same<ElemType, float>::value) ? 0.25 : 0.1;
+  const ElemType tol = (std::is_same_v<ElemType, float>) ? 0.25 : 0.1;
 
   VecType mean = ("5.0");
   VecType cov = ("2.0");
@@ -739,8 +739,8 @@ TEMPLATE_TEST_CASE("GaussianDistributionWithProbabilties1Test",
   typedef typename arma::Col<ElemType> VecType;
   typedef typename arma::Mat<ElemType> MatType;
 
-  const ElemType tol1 = (std::is_same<ElemType, float>::value) ? 1e-10 : 1e-17;
-  const ElemType tol2 = (std::is_same<ElemType, float>::value) ? 1e-2 : 1e-4;
+  const ElemType tol1 = (std::is_same_v<ElemType, float>) ? 1e-10 : 1e-17;
+  const ElemType tol2 = (std::is_same_v<ElemType, float>) ? 1e-2 : 1e-4;
 
   VecType mean = ("5.0");
   VecType cov  = ("4.0");
@@ -891,7 +891,7 @@ TEMPLATE_TEST_CASE("GammaDistributionTrainWithProbabilitiesTest",
   typedef typename arma::Col<ElemType> VecType;
   typedef typename arma::Mat<ElemType> MatType;
 
-  const ElemType tol = (std::is_same<ElemType, float>::value) ? 0.03 : 0.015;
+  const ElemType tol = (std::is_same_v<ElemType, float>) ? 0.03 : 0.015;
 
   ElemType alphaReal = 5.4;
   ElemType betaReal = 6.7;
@@ -986,7 +986,7 @@ TEMPLATE_TEST_CASE("GammaDistributionTrainTwoDistProbabilities1Test",
   typedef typename arma::Col<ElemType> VecType;
   typedef typename arma::Mat<ElemType> MatType;
 
-  const ElemType tol = (std::is_same<ElemType, float>::value) ? 0.25 : 0.075;
+  const ElemType tol = (std::is_same_v<ElemType, float>) ? 0.25 : 0.075;
 
   ElemType alphaReal = 5.4;
   ElemType betaReal = 6.7;
@@ -1275,7 +1275,7 @@ TEMPLATE_TEST_CASE("DiscreteDistributionTest", "[DistributionTest]",
   typedef typename arma::Col<ObsElemType> ObsVecType;
   typedef typename arma::Mat<ObsElemType> ObsMatType;
 
-  const ElemType tol = (std::is_same<ElemType, float>::value) ? 1e-4 : 1e-8;
+  const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-4 : 1e-8;
 
   // I assume that I am properly saving vectors, so, this should be
   // straightforward.
@@ -1600,7 +1600,7 @@ TEMPLATE_TEST_CASE("DiagonalGaussianUnivariateProbabilityTest",
   typedef typename arma::Col<ElemType> VecType;
   typedef typename arma::Mat<ElemType> MatType;
 
-  const ElemType tol = (std::is_same<ElemType, float>::value) ? 1e-4 : 1e-7;
+  const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-4 : 1e-7;
 
   DiagonalGaussianDistribution<MatType> d(VecType("0.0"), VecType("1.0"));
 
@@ -1640,7 +1640,7 @@ TEMPLATE_TEST_CASE("DiagonalGaussianMultivariateProbabilityTest",
   typedef typename arma::Col<ElemType> VecType;
   typedef typename arma::Mat<ElemType> MatType;
 
-  const ElemType tol = (std::is_same<ElemType, float>::value) ? 1e-4 : 1e-7;
+  const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-4 : 1e-7;
 
   VecType mean("0 0");
   VecType cov("2 2");
@@ -1706,7 +1706,7 @@ TEMPLATE_TEST_CASE("DiagonalGaussianDistributionRandomTest",
   typedef typename arma::Col<ElemType> VecType;
   typedef typename arma::Mat<ElemType> MatType;
 
-  const ElemType tol = (std::is_same<ElemType, float>::value) ? 0.2 : 0.1;
+  const ElemType tol = (std::is_same_v<ElemType, float>) ? 0.2 : 0.1;
 
   VecType mean("2.5 1.25");
   VecType cov("0.50 0.25");
@@ -1739,7 +1739,7 @@ TEMPLATE_TEST_CASE("DiagonalGaussianDistributionTrainTest",
   typedef typename arma::Col<ElemType> VecType;
   typedef typename arma::Mat<ElemType> MatType;
 
-  const ElemType tol = (std::is_same<ElemType, float>::value) ? 1e-3 : 1e-5;
+  const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-3 : 1e-5;
 
   VecType mean("2.5 1.5 8.2 3.1");
   VecType cov("1.2 3.1 8.3 4.3");
@@ -1778,7 +1778,7 @@ TEMPLATE_TEST_CASE("DiagonalGaussianUnbiasedEstimatorTest",
   typedef typename arma::Col<ElemType> VecType;
   typedef typename arma::Mat<ElemType> MatType;
 
-  const ElemType tol = (std::is_same<ElemType, float>::value) ? 1e-4 : 1e-7;
+  const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-4 : 1e-7;
 
   // Generate the observations.
   MatType observations("3 5 2 7;"
@@ -1816,7 +1816,7 @@ TEMPLATE_TEST_CASE("DiagonalGaussianWeightedParametersReductionTest",
   typedef typename arma::Col<ElemType> VecType;
   typedef typename arma::Mat<ElemType> MatType;
 
-  const ElemType tol = (std::is_same<ElemType, float>::value) ? 1e-4 : 1e-7;
+  const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-4 : 1e-7;
 
   VecType mean("2.5 1.5 8.2 3.1");
   VecType cov("1.2 3.1 8.3 4.3");

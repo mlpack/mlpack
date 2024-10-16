@@ -289,7 +289,7 @@ class SimpleCV
    */
   template<typename... MLAlgorithmArgs,
            bool Enabled = !Base::MIE::SupportsWeights,
-           typename = typename std::enable_if<Enabled>::type>
+           typename = std::enable_if_t<Enabled>>
   double TrainAndEvaluate(const MLAlgorithmArgs&... args);
 
   /**
@@ -297,7 +297,7 @@ class SimpleCV
    */
   template<typename... MLAlgorithmArgs,
            bool Enabled = Base::MIE::SupportsWeights,
-           typename = typename std::enable_if<Enabled>::type,
+           typename = std::enable_if_t<Enabled>,
            typename = void>
   double TrainAndEvaluate(const MLAlgorithmArgs&... args);
 };

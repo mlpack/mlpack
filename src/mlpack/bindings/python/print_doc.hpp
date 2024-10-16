@@ -42,7 +42,7 @@ void PrintDoc(util::ParamData& d,
   oss << " - ";
   oss << GetValidName(d.name);
   oss << " (";
-  oss << GetPrintableType<typename std::remove_pointer<T>::type>(d) << "): "
+  oss << GetPrintableType<std::remove_pointer_t<T>>(d) << "): "
       << d.desc;
 
   // Print a default, if possible.

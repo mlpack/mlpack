@@ -130,8 +130,8 @@ void HyperParameterTuner<MLAlgorithm,
     data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
     FixedArgs... fixedArgs)
 {
-  using PreFixedArgT = typename std::remove_reference<
-      typename std::tuple_element<I, ArgsTuple>::type>::type;
+  using PreFixedArgT = std::remove_reference_t<
+      std::tuple_element_t<I, ArgsTuple>>;
   using FixedArgT = FixedArg<typename PreFixedArgT::Type, I>;
 
   InitAndOptimize<I + 1>(args, bestParams, datasetInfo, fixedArgs...,

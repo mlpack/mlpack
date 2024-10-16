@@ -155,7 +155,7 @@ class MeanShift
    # @param centroid Store calculated centroid
    */
   template<bool ApplyKernel = UseKernel, typename MatType, typename VecType>
-  typename std::enable_if<ApplyKernel, bool>::type
+  std::enable_if_t<ApplyKernel, bool>
   CalculateCentroid(const MatType& data,
                     const std::vector<size_t>& neighbors,
                     const std::vector<typename MatType::elem_type>& distances,
@@ -170,7 +170,7 @@ class MeanShift
    # @param centroid Store calculated centroid
    */
   template<bool ApplyKernel = UseKernel, typename MatType, typename VecType>
-  typename std::enable_if<!ApplyKernel, bool>::type
+  std::enable_if_t<!ApplyKernel, bool>
   CalculateCentroid(const MatType& data,
                     const std::vector<size_t>& neighbors,
                     const std::vector<typename MatType::elem_type>&, /*unused*/
