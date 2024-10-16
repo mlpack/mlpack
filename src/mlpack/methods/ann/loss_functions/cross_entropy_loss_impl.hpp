@@ -41,7 +41,7 @@ typename MatType::elem_type CrossEntropyLossType<MatType>::Forward(
 
 template<typename MatType>
 void CrossEntropyLossType<MatType>::Backward(
-    const MatType& prediction,
+    const MatType& ,
     const MatType& target,
     MatType& loss)
 {

@@ -154,7 +154,7 @@ inline double RandNormal(const double mean, const double stddev) {
  *
  * @param weights arma::Col<double> of weights summing to 1.
  */
-size_t RandCategorical(arma::vec &weights) {
+inline size_t RandCategorical(arma::vec &weights) {
   double x = Random();
   double sum = 0;
   for (size_t cat = 0; cat < weights.n_elem; ++cat) {

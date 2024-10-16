@@ -110,3 +110,4 @@ TEST_CASE("RandCategoricalTest", "[RandomTest]")
   out = RandCategorical(weights);
   REQUIRE(out == 3);
 }
+
