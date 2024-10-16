@@ -15,6 +15,8 @@
 
 #include "ra_util.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 inline size_t RAUtil::MinimumSamplesReqd(const size_t n,

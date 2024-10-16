@@ -18,6 +18,8 @@
 #include <queue>
 #include <string>
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 // Build the statistics, bottom-up.
