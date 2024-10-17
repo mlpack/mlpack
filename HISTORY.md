@@ -11,6 +11,8 @@ _????-??-??_
 
  * Fix LSTM layer copy/move constructors (#3809).
 
+ * Fix compilation if only including `mlpack/methods/kde/kde_model.hpp` (#3800).
+
 ## mlpack 4.5.0
 
 _2024-09-17_

@@ -24,7 +24,7 @@ using namespace mlpack;
  */
 TEST_CASE("NearestInterpolationLayerTest", "[ANNLayerTest]")
 {
-  arma::mat input, output, unzoomedOutput, expectedOutput;
+  arma::mat input, output, unzoomedOutput;
 
   size_t inColSize = 2;
   size_t inRowSize = 2;
@@ -48,30 +48,28 @@ TEST_CASE("NearestInterpolationLayerTest", "[ANNLayerTest]")
   layer.InputDimensions() = { inRowSize, inColSize, channels };
   layer.ComputeOutputDimensions();
 
-  expectedOutput << 1.0000 << 1.0000 << 2.0000 << 2.0000
-                 << 1.0000 << 1.0000 << 2.0000 << 2.0000
-                 << 3.0000 << 3.0000 << 4.0000 << 4.0000
-                 << 3.0000 << 3.0000 << 4.0000 << 4.0000 << arma::endr;
+  arma::mat expectedOutput{1.0, 1.0, 2.0, 2.0,
+                           1.0, 1.0, 2.0, 2.0,
+                           3.0, 3.0, 4.0, 4.0,
+                           3.0, 3.0, 4.0, 4.0};
 
   expectedOutput.reshape(16, 1);
   layer.Forward(input, output);
   CheckMatrices(output - expectedOutput,
                 arma::zeros(output.n_rows), 1e-4);
 
-  expectedOutput.clear();
-  expectedOutput << 4.0000 << 8.0000
-                 << 12.0000 << 16.0000 << arma::endr;
+  expectedOutput = arma::mat{4.0, 8.0, 12.0, 16.0};
   expectedOutput.reshape(4, 1);
   layer.Backward(output, output, unzoomedOutput);
   CheckMatrices(unzoomedOutput - expectedOutput,
       arma::zeros(input.n_rows), 1e-4);
 
-  arma::mat input1, output1, unzoomedOutput1, expectedOutput1;
+  arma::mat output1, unzoomedOutput1, expectedOutput1;
   inRowSize = 2;
   inColSize = 3;
 
-  input1 << 1 << 2 << 3 << arma::endr
-         << 4 << 5 << 6 << arma::endr;
+  arma::mat input1 {{1.0, 2.0, 3.0},
+                    {4.0, 5.0, 6.0}};
   input1.reshape(6, 1);
   output1.zeros(17*23, 1);
   unzoomedOutput1.zeros(6, 1);
