@@ -127,14 +127,17 @@ Computations based on distance metrics.
 
 ### Preprocessing utilities
 
-***NOTE:*** this documentation is still under construction and so no
-preprocessing utilities in mlpack are documented yet.  For now, see
-[the mlpack/methods/preprocess directory](https://github.com/mlpack/mlpack/tree/master/src/mlpack/methods)
-for a full list of algorithms.
-
 Prepare data for machine learning algorithms.
 
-<!-- TODO: add some -->
+ * [Normalizing labels](user/core/normalizing_labels.md): map labels to and from
+   the range `[0, numClasses - 1]`.
+ * [Dataset splitting](user/core/split.md): split a dataset into a
+   training set and a test set.
+
+***NOTE:*** this documentation is still under construction and so not all
+preprocessing utilities in mlpack are documented yet.  See also
+[the mlpack/methods/preprocess directory](https://github.com/mlpack/mlpack/tree/master/src/mlpack/methods)
+for a full list of algorithms.
 
 ### Transformations
 

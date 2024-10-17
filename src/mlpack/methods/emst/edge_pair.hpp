@@ -14,6 +14,7 @@
 #ifndef MLPACK_METHODS_EMST_EDGE_PAIR_HPP
 #define MLPACK_METHODS_EMST_EDGE_PAIR_HPP
 
+#include <mlpack/core/util/log.hpp>
 #include <mlpack/prereqs.hpp>
 
 #include "union_find.hpp"

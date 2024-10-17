@@ -16,6 +16,8 @@
 // In case it hasn't yet been included.
 #include "vr_class_reward.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 template<typename MatType>

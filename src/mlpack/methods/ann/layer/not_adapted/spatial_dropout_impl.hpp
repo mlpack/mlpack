@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "spatial_dropout.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 template<typename InputType, typename OutputType>
