@@ -1261,3 +1261,29 @@ TEST_CASE("JacobianNegativeLogLikelihoodLayerTest", "[LossFunctionsTest]")
     REQUIRE(error <= 1e-5);
   }
 }
+
+/**
+ * Cross Entropy loss test
+ */
+TEST_CASE("CrossEntropyLossTest", "[LossFunctionTest]")
+{
+  arma::mat prediction, target, output;
+  double loss, expectedLoss;
+  CrossEntropyLoss module;
+
+  // Test for sum reduction
+  prediction = arma::log(arma::mat("0.5 0.5 0.25 0.75 0.25 0.75"));
+  target = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5");
+  expectedLoss = -1.0 * (-0.6931471805599453 -0.8369882167858358 -0.8369882167858358);
+  prediction.reshape(2, 3);
+  target.reshape(2, 3);
+
+  loss = module.Forward(prediction, target);
+
+  REQUIRE(loss == Approx(expectedLoss).epsilon(1e-5));
+  
+  arma::mat gradient;
+  module.Backward(prediction, target, gradient);
+  REQUIRE( (gradient + target).max() <= 1e-5 );
+}
+

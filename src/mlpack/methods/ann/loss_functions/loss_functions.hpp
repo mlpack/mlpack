@@ -15,6 +15,7 @@
 
 #include "binary_cross_entropy_loss.hpp"
 #include "cosine_embedding_loss.hpp"
+#include "cross_entropy_loss.hpp"
 #include "dice_loss.hpp"
 #include "earth_mover_distance.hpp"
 #include "empty_loss.hpp"
