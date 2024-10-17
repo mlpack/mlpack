@@ -24,16 +24,15 @@ steps:
       brew install --cask julia
     fi
 
+    if [ "$BINDING" = "go" ]; then
+      brew install go
+    fi
+
   displayName: 'Install Build Dependencies'
 
 # Configure mlpack (CMake)
 - script: |
     mkdir build && cd build
-    if [ "$BINDING" = "go" ]; then
-      export GOPATH=$PWD/src/mlpack/bindings/go
-      export GO111MODULE=off
-      go get -u -t gonum.org/v1/gonum/...
-    fi
     if [ "$BINDING" = "python" ]; then
       cmake $CMAKEARGS -DPYTHON_EXECUTABLE=$(which python) ..
     else

@@ -40,20 +40,17 @@ endif ()
 
 if (BUILD_GO_BINDINGS)
 
+  # Gonum will automatically be installed by Go's module support during build.
   find_package(Go 1.11.0)
   if (NOT GO_FOUND)
     set(GO_NOT_FOUND_MSG "${GO_NOT_FOUND_MSG}\n    - Go")
-  endif ()
-  find_package(Gonum)
-  if (NOT GONUM_FOUND)
-    set(GO_NOT_FOUND_MSG "${GO_NOT_FOUND_MSG}\n    - Gonum")
   endif ()
 
   ## We need to check here if Golang is even available.  Although actually
   ## technically, I'm not sure if we even need to know!  For the tests though we
   ## do.  So it's probably a good idea to check.
   if (FORCE_BUILD_GO_BINDINGS)
-    if (NOT GO_FOUND OR NOT GONUM_FOUND)
+    if (NOT GO_FOUND)
       unset(BUILD_GO_BINDINGS CACHE)
       set(BUILD_GO_SHLIB OFF)
       message(FATAL_ERROR "\nCould not Build Go Bindings; the following modules are not available: ${GO_NOT_FOUND_MSG}")
