@@ -301,4 +301,6 @@ CEREAL_TEMPLATE_CLASS_VERSION((typename WeakLearnerType, typename MatType),
 // Include implementation.
 #include "adaboost_impl.hpp"
 
+#include "adaboost_regressor.hpp"
+
 #endif
