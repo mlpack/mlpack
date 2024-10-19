@@ -83,8 +83,7 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     const size_t numClasses,
     const WeightsType& instanceWeights,
     const size_t maxIterations,
-    const std::enable_if_t<
-        arma::is_arma_type<WeightsType>::value>*) :
+    const std::enable_if_t<arma::is_arma_type<WeightsType>::value>*) :
     maxIterations(maxIterations)
 {
   // Start training.
@@ -114,8 +113,7 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const WeightsType& instanceWeights,
-    const std::enable_if_t<
-        arma::is_arma_type<WeightsType>::value>*) :
+    const std::enable_if_t<arma::is_arma_type<WeightsType>::value>*) :
     maxIterations(other.maxIterations)
 {
   TrainInternal<true>(data, labels, numClasses, instanceWeights);

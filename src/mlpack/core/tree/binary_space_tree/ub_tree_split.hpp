@@ -32,7 +32,7 @@ class UBTreeSplit
   typedef std::conditional_t<
       sizeof(typename MatType::elem_type) * CHAR_BIT <= 32,
       uint32_t,
-      uint64_t>AddressElemType;
+      uint64_t> AddressElemType;
 
   //! An information about the partition.
   struct SplitInfo

@@ -96,9 +96,8 @@ class SoftmaxRegression
            typename = std::enable_if_t<IsEnsOptimizer<
                OptimizerType, SoftmaxRegressionFunction<MatType>, DenseMatType
            >::value>,
-           typename = std::enable_if_t<IsEnsCallbackTypes<
-               CallbackTypes...
-           >::value>>
+           typename = std::enable_if_t<
+               IsEnsCallbackTypes<CallbackTypes...>::value>>
   SoftmaxRegression(const MatType& data,
                     const arma::Row<size_t>& labels,
                     const size_t numClasses,
@@ -128,9 +127,8 @@ class SoftmaxRegression
            typename = std::enable_if_t<IsEnsOptimizer<
                OptimizerType, SoftmaxRegressionFunction<MatType>, DenseMatType
            >::value>,
-           typename = std::enable_if_t<IsEnsCallbackTypes<
-               CallbackTypes...
-           >::value>>
+           typename = std::enable_if_t<
+               IsEnsCallbackTypes<CallbackTypes...>::value>>
   SoftmaxRegression(const MatType& data,
                     const arma::Row<size_t>& labels,
                     const size_t numClasses,
@@ -161,12 +159,9 @@ class SoftmaxRegression
            typename = std::enable_if_t<IsEnsOptimizer<
                OptimizerType, SoftmaxRegressionFunction<MatType>, DenseMatType
            >::value>,
+           typename = std::enable_if_t<std::is_class_v<FirstCallbackType>>,
            typename = std::enable_if_t<
-              std::is_class_v<FirstCallbackType>
-           >,
-           typename = std::enable_if_t<IsEnsCallbackTypes<
-               CallbackTypes...
-           >::value>>
+               IsEnsCallbackTypes<CallbackTypes...>::value>>
   [[deprecated("Will be removed in mlpack 5.0.0, use other Train() variants")]]
   double Train(const MatType& data,
                const arma::Row<size_t>& labels,
@@ -194,9 +189,8 @@ class SoftmaxRegression
            typename = std::enable_if_t<IsEnsOptimizer<
                OptimizerType, SoftmaxRegressionFunction<MatType>, DenseMatType
            >::value>,
-           typename = std::enable_if_t<IsEnsCallbackTypes<
-               CallbackTypes...
-           >::value>>
+           typename = std::enable_if_t<
+               IsEnsCallbackTypes<CallbackTypes...>::value>>
   ElemType Train(const MatType& data,
                  const arma::Row<size_t>& labels,
                  const size_t numClasses,
@@ -224,9 +218,8 @@ class SoftmaxRegression
            typename = std::enable_if_t<IsEnsOptimizer<
                OptimizerType, SoftmaxRegressionFunction<MatType>, DenseMatType
            >::value>,
-           typename = std::enable_if_t<IsEnsCallbackTypes<
-               CallbackTypes...
-           >::value>>
+           typename = std::enable_if_t<
+               IsEnsCallbackTypes<CallbackTypes...>::value>>
   ElemType Train(const MatType& data,
                  const arma::Row<size_t>& labels,
                  const size_t numClasses,

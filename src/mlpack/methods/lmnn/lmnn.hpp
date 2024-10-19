@@ -101,8 +101,7 @@ class LMNN
                CallbackTypes...
            >::value>,
            typename = std::enable_if_t<
-               !FirstElementIsArma<CallbackTypes...>::value
-           >>
+               !FirstElementIsArma<CallbackTypes...>::value>>
   [[deprecated("Will be removed in mlpack 5.0.0.  Use the version that takes a "
                "dataset as a parameter.")]]
   void LearnDistance(arma::mat& outputMatrix, CallbackTypes&&... callbacks);

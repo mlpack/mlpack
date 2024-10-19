@@ -39,8 +39,7 @@ inline void CheckSameSizes(
     const std::string& addInfo = "labels",
     const bool& isDataTranspose = false,
     const bool& isLabelTranspose = false,
-    const std::enable_if_t<
-        !std::is_integral_v<LabelsType>>* = 0)
+    const std::enable_if_t<!std::is_integral_v<LabelsType>>* = 0)
 {
   const size_t dataPoints = (isDataTranspose == true) ? data.n_rows :
       data.n_cols;

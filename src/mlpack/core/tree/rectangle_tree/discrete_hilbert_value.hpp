@@ -32,7 +32,7 @@ class DiscreteHilbertValue
   //! uint32_t or uint64_t.
   typedef std::conditional_t<sizeof(TreeElemType) * CHAR_BIT <= 32,
                                     uint32_t,
-                                    uint64_t>HilbertElemType;
+                                    uint64_t> HilbertElemType;
 
   //! Default constructor.
   DiscreteHilbertValue();

@@ -193,8 +193,7 @@ void PrintMethodInit(util::ParamData& d,
                      const void* input,
                      void* /* output */)
 {
-  PrintMethodInit<std::remove_pointer_t<T>>(d,
-      *((size_t*) input));
+  PrintMethodInit<std::remove_pointer_t<T>>(d, *((size_t*) input));
 }
 
 } // namespace go

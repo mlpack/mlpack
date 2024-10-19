@@ -48,8 +48,7 @@ class FFTConvolution
    * @param output Output data that contains the results of the convolution.
    */
   template<typename MatType, typename Border = BorderMode>
-  static std::enable_if_t<
-      std::is_same_v<Border, ValidConvolution>, void>
+  static std::enable_if_t<std::is_same_v<Border, ValidConvolution>, void>
   Convolution(const MatType& input,
               const MatType& filter,
               MatType& output,
@@ -83,8 +82,7 @@ class FFTConvolution
    * @param output Output data that contains the results of the convolution.
    */
   template<typename MatType, typename Border = BorderMode>
-  static std::enable_if_t<
-      std::is_same_v<Border, FullConvolution>, void>
+  static std::enable_if_t<std::is_same_v<Border, FullConvolution>, void>
   Convolution(const MatType& input,
               const MatType& filter,
               MatType& output,

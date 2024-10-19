@@ -51,8 +51,7 @@ void GetAllocatedMemory(util::ParamData& d,
                         const void* /* input */,
                         void* output)
 {
-  *((void**) output) =
-      GetAllocatedMemory<std::remove_pointer_t<T>>(d);
+  *((void**) output) = GetAllocatedMemory<std::remove_pointer_t<T>>(d);
 }
 
 } // namespace tests

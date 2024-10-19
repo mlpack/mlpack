@@ -64,12 +64,9 @@ inline std::string GetType<double>(
 template<>
 inline std::string GetType<std::string>(
     util::ParamData& /* d */,
-    const std::enable_if_t<
-        !util::IsStdVector<std::string>::value>*,
-    const std::enable_if_t<
-        !data::HasSerialize<std::string>::value>*,
-    const std::enable_if_t<
-        !arma::is_arma_type<std::string>::value>*)
+    const std::enable_if_t<!util::IsStdVector<std::string>::value>*,
+    const std::enable_if_t<!data::HasSerialize<std::string>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<std::string>::value>*)
 {
   return "String";
 }
@@ -144,8 +141,7 @@ void GetType(util::ParamData& d,
              const void* /* input */,
              void* output)
 {
-  *((std::string*) output) =
-      GetType<std::remove_pointer_t<T>>(d);
+  *((std::string*) output) = GetType<std::remove_pointer_t<T>>(d);
 }
 
 } // namespace go

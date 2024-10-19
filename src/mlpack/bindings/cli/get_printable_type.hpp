@@ -71,8 +71,7 @@ void GetPrintableType(util::ParamData& data,
                        const void* /* input */,
                        void* output)
 {
-  *((std::string*) output) =
-      GetPrintableType<std::remove_pointer_t<T>>(data);
+  *((std::string*) output) = GetPrintableType<std::remove_pointer_t<T>>(data);
 }
 
 } // namespace cli

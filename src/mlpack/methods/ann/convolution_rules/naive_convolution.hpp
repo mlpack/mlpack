@@ -49,8 +49,7 @@ class NaiveConvolution
    */
   template<typename InMatType, typename FilMatType, typename OutMatType,
       typename Border = BorderMode>
-  static std::enable_if_t<
-      std::is_same_v<Border, ValidConvolution>, void>
+  static std::enable_if_t<std::is_same_v<Border, ValidConvolution>, void>
   Convolution(const InMatType& input,
               const FilMatType& filter,
               OutMatType& output,
@@ -110,8 +109,7 @@ class NaiveConvolution
    */
   template<typename InMatType, typename FilMatType, typename OutMatType,
       typename Border = BorderMode>
-  static std::enable_if_t<
-      std::is_same_v<Border, FullConvolution>, void>
+  static std::enable_if_t<std::is_same_v<Border, FullConvolution>, void>
   Convolution(const InMatType& input,
               const FilMatType& filter,
               OutMatType& output,

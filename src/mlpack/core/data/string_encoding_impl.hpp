@@ -71,8 +71,8 @@ void StringEncoding<EncodingPolicyType, DictionaryType>::CreateMap(
 
   static_assert(
       std::is_same_v<std::remove_reference_t<decltype(token)>,
-                   std::remove_reference_t<typename DictionaryType::
-                      TokenType>>,
+                     std::remove_reference_t<typename DictionaryType::
+                        TokenType>>,
       "The dictionary token type doesn't match the return value type "
       "of the tokenizer.");
 
@@ -117,8 +117,8 @@ EncodeHelper(const std::vector<std::string>& input,
 
     static_assert(
         std::is_same_v<std::remove_reference_t<decltype(token)>,
-                     std::remove_reference_t<typename DictionaryType::
-                        TokenType>>,
+                       std::remove_reference_t<typename DictionaryType::
+                          TokenType>>,
         "The dictionary token type doesn't match the return value type "
         "of the tokenizer.");
 
@@ -177,8 +177,8 @@ EncodeHelper(const std::vector<std::string>& input,
 
     static_assert(
         std::is_same_v<std::remove_reference_t<decltype(token)>,
-                     std::remove_reference_t<typename DictionaryType::
-                        TokenType>>,
+                       std::remove_reference_t<typename DictionaryType::
+                          TokenType>>,
         "The dictionary token type doesn't match the return value type "
         "of the tokenizer.");
 

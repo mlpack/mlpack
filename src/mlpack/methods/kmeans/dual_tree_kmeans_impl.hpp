@@ -27,8 +27,7 @@ template<typename TreeType, typename MatType>
 TreeType* BuildForcedLeafSizeTree(
     MatType&& dataset,
     std::vector<size_t>& oldFromNew,
-    const std::enable_if_t<
-        TreeTraits<TreeType>::RearrangesDataset>* = 0)
+    const std::enable_if_t<TreeTraits<TreeType>::RearrangesDataset>* = 0)
 {
   // This is a hack.  I know this will be BinarySpaceTree, so force a leaf size
   // of one.
@@ -40,8 +39,7 @@ template<typename TreeType, typename MatType>
 TreeType* BuildForcedLeafSizeTree(
     MatType&& dataset,
     const std::vector<size_t>& /* oldFromNew */,
-    const std::enable_if_t<
-        !TreeTraits<TreeType>::RearrangesDataset>* = 0)
+    const std::enable_if_t<!TreeTraits<TreeType>::RearrangesDataset>* = 0)
 {
   return new TreeType(std::forward<MatType>(dataset));
 }

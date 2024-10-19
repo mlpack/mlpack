@@ -73,8 +73,7 @@ void PrintOutputProcessing(util::ParamData& d,
                            void* /* output */)
 {
   // Call out to the right overload.
-  PrintOutputProcessing<std::remove_pointer_t<T>>(d,
-      *((std::string*) input));
+  PrintOutputProcessing<std::remove_pointer_t<T>>(d, *((std::string*) input));
 }
 
 } // namespace julia

@@ -81,11 +81,9 @@ class NCA
    */
   template<typename... CallbackTypes,
            typename = std::enable_if_t<IsEnsCallbackTypes<
-               CallbackTypes...
-           >::value>,
+               CallbackTypes...>::value>,
            typename = std::enable_if_t<
-               !FirstElementIsArma<CallbackTypes...>::value
-           >>
+               !FirstElementIsArma<CallbackTypes...>::value>>
   [[deprecated("Will be removed in mlpack 5.0.0.  Use the version that takes a "
                "dataset as a parameter.")]]
   void LearnDistance(arma::mat& outputMatrix, CallbackTypes&&... callbacks);
@@ -111,9 +109,8 @@ class NCA
                SoftmaxErrorFunction<MatType, LabelsType, DistanceType>,
                MatType
            >::value>,
-           typename = std::enable_if_t<IsEnsCallbackTypes<
-               CallbackTypes...
-           >::value>>
+           typename = std::enable_if_t<
+               IsEnsCallbackTypes<CallbackTypes...>::value>>
   void LearnDistance(const MatType& dataset,
                      const LabelsType& labels,
                      MatType& outputMatrix,

@@ -131,8 +131,7 @@ class AdaBoost
            const size_t maxIterations = 100,
            const ElemType tolerance = 1e-6,
            const std::enable_if_t<
-              std::is_same_v<WeakLearnerType, WeakLearnerInType>
-           >* = 0);
+              std::is_same_v<WeakLearnerType, WeakLearnerInType>>* = 0);
 
   //! Get the maximum number of weak learners allowed in the model.
   size_t MaxIterations() const { return maxIterations; }

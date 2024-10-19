@@ -43,8 +43,7 @@ void PrintInputParam(util::ParamData& d,
     }
     else
     {
-      std::cout << "Union{"
-          << GetJuliaType<std::remove_pointer_t<T>>(d)
+      std::cout << "Union{" << GetJuliaType<std::remove_pointer_t<T>>(d)
           << ", Missing} = missing";
     }
   }

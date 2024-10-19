@@ -201,8 +201,7 @@ class HyperParameterTuner
   //! A short alias for the full type of the cross-validation.
   using CVType = std::conditional_t<Metric::NeedsMinimization,
       CV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
-      CV<MLAlgorithm, Negated<Metric>, MatType, PredictionsType,
-          WeightsType>>;
+      CV<MLAlgorithm, Negated<Metric>, MatType, PredictionsType, WeightsType>>;
 
 
   //! The cross-validation object for assessing sets of hyper-parameters.

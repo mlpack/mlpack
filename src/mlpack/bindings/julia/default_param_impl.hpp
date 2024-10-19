@@ -27,8 +27,7 @@ std::string DefaultParamImpl(
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
     const std::enable_if_t<!util::IsStdVector<T>::value>*,
     const std::enable_if_t<!data::HasSerialize<T>::value>*,
-    const std::enable_if_t<!std::is_same_v<T,
-        std::string>>*,
+    const std::enable_if_t<!std::is_same_v<T, std::string>>*,
     const std::enable_if_t<!std::is_same_v<T,
         std::tuple<mlpack::data::DatasetInfo, arma::mat>>>*)
 {
@@ -106,11 +105,10 @@ std::string DefaultParamImpl(
     const std::enable_if_t<
         arma::is_arma_type<T>::value ||
         std::is_same_v<T, std::tuple<mlpack::data::DatasetInfo,
-                                   arma::mat>>>* /* junk */)
+                                     arma::mat>>>* /* junk */)
 {
   // Get the filename and return it, or return an empty string.
-  if (std::is_same_v<T, arma::rowvec> ||
-      std::is_same_v<T, arma::vec>)
+  if (std::is_same_v<T, arma::rowvec> || std::is_same_v<T, arma::vec>)
   {
     return "Float64[]";
   }

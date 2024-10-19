@@ -73,12 +73,9 @@ inline std::string GetGoType<double>(
 template<>
 inline std::string GetGoType<std::string>(
     util::ParamData& /* d */,
-    const std::enable_if_t<
-        !util::IsStdVector<std::string>::value>*,
-    const std::enable_if_t<
-        !data::HasSerialize<std::string>::value>*,
-    const std::enable_if_t<
-        !arma::is_arma_type<std::string>::value>*,
+    const std::enable_if_t<!util::IsStdVector<std::string>::value>*,
+    const std::enable_if_t<!data::HasSerialize<std::string>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<std::string>::value>*,
     const std::enable_if_t<!std::is_same_v<std::string,
         std::tuple<data::DatasetInfo, arma::mat>>>*)
 {

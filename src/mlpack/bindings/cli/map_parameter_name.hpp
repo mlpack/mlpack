@@ -45,8 +45,7 @@ std::string MapParameterName(
     const std::string& identifier,
     const std::enable_if_t<
         arma::is_arma_type<T>::value ||
-        std::is_same_v<T, std::tuple<mlpack::data::DatasetInfo,
-                                   arma::mat>> ||
+        std::is_same_v<T, std::tuple<mlpack::data::DatasetInfo, arma::mat>> ||
         data::HasSerialize<T>::value>* /* junk */ = 0)
 {
   return identifier + "_file";

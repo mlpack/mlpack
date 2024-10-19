@@ -58,8 +58,7 @@ template<typename T>
 void SetParam(
     util::ParamData& d,
     const std::any& value,
-    const std::enable_if_t<arma::is_arma_type<T>::value ||
-                                  std::is_same_v<T,
+    const std::enable_if_t<arma::is_arma_type<T>::value || std::is_same_v<T,
         std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   // We're setting the string filename.

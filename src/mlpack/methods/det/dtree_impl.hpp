@@ -29,8 +29,7 @@ void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
                    const size_t end,
                    const size_t minLeafSize)
 {
-  static_assert(
-    std::is_same_v<typename MatType::elem_type, ElemType> == true,
+  static_assert(std::is_same_v<typename MatType::elem_type, ElemType>,
     "The ElemType does not correspond to the matrix's element type.");
 
   typedef std::pair<ElemType, size_t> SplitItem;

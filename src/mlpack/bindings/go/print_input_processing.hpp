@@ -340,8 +340,7 @@ void PrintInputProcessing(util::ParamData& d,
                           const void* input,
                           void* /* output */)
 {
-  PrintInputProcessing<std::remove_pointer_t<T>>(d,
-      *((size_t*) input));
+  PrintInputProcessing<std::remove_pointer_t<T>>(d, *((size_t*) input));
 }
 
 } // namespace go

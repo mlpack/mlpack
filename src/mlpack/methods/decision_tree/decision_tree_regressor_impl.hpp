@@ -165,9 +165,8 @@ DecisionTreeRegressor<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
     const std::enable_if_t<
-        arma::is_arma_type<
-        std::remove_reference_t<
-        WeightsType>>::value>*) : splitInfo()
+        arma::is_arma_type<std::remove_reference_t<WeightsType>>::value>*)
+    : splitInfo()
 {
   using TrueMatType = std::decay_t<MatType>;
   using TrueResponsesType = std::decay_t<ResponsesType>;
@@ -246,11 +245,10 @@ DecisionTreeRegressor<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
     const std::enable_if_t<arma::is_arma_type<
-        std::remove_reference_t<
-        WeightsType>>::value>*):
-        splitInfo(std::move(other.splitInfo)),
-        NumericAuxiliarySplitInfo(other),
-        CategoricalAuxiliarySplitInfo(other)   // other info does need to copy
+        std::remove_reference_t<WeightsType>>::value>*)
+    : splitInfo(std::move(other.splitInfo)),
+      NumericAuxiliarySplitInfo(other),
+      CategoricalAuxiliarySplitInfo(other)   // other info does need to copy
 {
   using TrueMatType = std::decay_t<MatType>;
   using TrueResponsesType = std::decay_t<ResponsesType>;
@@ -521,9 +519,7 @@ double DecisionTreeRegressor<FitnessFunction,
     DimensionSelectionType dimensionSelector,
     FitnessFunction fitnessFunction,
     const std::enable_if_t<
-        arma::is_arma_type<
-        std::remove_reference_t<
-        WeightsType>>::value>*)
+        arma::is_arma_type<std::remove_reference_t<WeightsType>>::value>*)
 {
   // Sanity check on data.
   util::CheckSameSizes(data, responses, "DecisionTreeRegressor::Train()");
@@ -567,9 +563,7 @@ double DecisionTreeRegressor<FitnessFunction,
     DimensionSelectionType dimensionSelector,
     FitnessFunction fitnessFunction,
     const std::enable_if_t<
-        arma::is_arma_type<
-        std::remove_reference_t<
-        WeightsType>>::value>*)
+        arma::is_arma_type<std::remove_reference_t<WeightsType>>::value>*)
 {
   // Sanity check on data.
   util::CheckSameSizes(data, responses, "DecisionTreeRegressor::Train()");

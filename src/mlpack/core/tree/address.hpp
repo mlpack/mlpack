@@ -58,7 +58,7 @@ void PointToAddress(AddressType& address, const VecType& point)
   // Check that the arguments are compatible.
   typedef std::conditional_t<sizeof(VecElemType) * CHAR_BIT <= 32,
                                     uint32_t,
-                                    uint64_t>AddressElemType;
+                                    uint64_t> AddressElemType;
 
   static_assert(std::is_same_v<typename AddressType::elem_type,
       AddressElemType> == true, "The vector element type does not "
@@ -154,7 +154,7 @@ void AddressToPoint(VecType& point, const AddressType& address)
   // Check that the arguments are compatible.
   typedef std::conditional_t<sizeof(VecElemType) * CHAR_BIT <= 32,
                                     uint32_t,
-                                    uint64_t>AddressElemType;
+                                    uint64_t> AddressElemType;
 
   static_assert(std::is_same_v<typename AddressType::elem_type,
       AddressElemType> == true, "The vector element type does not "

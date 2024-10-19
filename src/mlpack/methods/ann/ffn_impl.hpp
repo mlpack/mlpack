@@ -695,8 +695,7 @@ template<typename OutputLayerType,
          typename MatType>
 template<typename OptimizerType>
 std::enable_if_t<
-    ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void
->
+    ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void>
 FFN<
     OutputLayerType,
     InitializationRuleType,
@@ -719,8 +718,7 @@ template<typename OutputLayerType,
          typename MatType>
 template<typename OptimizerType>
 std::enable_if_t<
-    !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void
->
+    !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void>
 FFN<
     OutputLayerType,
     InitializationRuleType,

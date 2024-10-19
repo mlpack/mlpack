@@ -92,8 +92,7 @@ class CLIOption
 
     // Apply default value.
     if (std::is_same_v<std::remove_pointer_t<N>,
-                     typename ParameterType<
-                         std::remove_pointer_t<N>>::type>)
+                       typename ParameterType<std::remove_pointer_t<N>>::type>)
     {
       data.value = defaultValue;
     }

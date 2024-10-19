@@ -44,8 +44,7 @@ class LinearRegression
   template<typename MatType,
            typename ResponsesType,
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   LinearRegression(const MatType& predictors,
                    const ResponsesType& responses,
                    const double lambda = 0,
@@ -64,11 +63,9 @@ class LinearRegression
            typename ResponsesType,
            typename WeightsType,
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >,
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>,
            typename = std::enable_if_t<
-               std::is_same_v<typename WeightsType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename WeightsType::elem_type, ElemType>>>
   LinearRegression(const MatType& predictors,
                    const ResponsesType& responses,
                    const WeightsType& weights,
@@ -103,8 +100,7 @@ class LinearRegression
   double Train(const arma::mat& predictors,
                const arma::rowvec& responses,
                const T intercept,
-               const std::enable_if_t<std::is_same_v<T, bool>
-                   >* = 0);
+               const std::enable_if_t<std::is_same_v<T, bool>>* = 0);
 
   /**
    * Train the LinearRegression model on the given data and instance weights.
@@ -129,8 +125,7 @@ class LinearRegression
                const arma::rowvec& responses,
                const arma::rowvec& weights,
                const T intercept,
-               const std::enable_if_t<std::is_same_v<T, bool>
-                   >* = 0);
+               const std::enable_if_t<std::is_same_v<T, bool>>* = 0);
 
   /**
    * Train the LinearRegression model.  This is a dummy overload so that
@@ -158,8 +153,7 @@ class LinearRegression
            typename ResponsesType,
            typename = void, /* so MetaInfoExtractor does not get confused */
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   ElemType Train(const MatType& predictors,
                  const ResponsesType& responses,
                  const std::optional<double> lambda = std::nullopt,
@@ -193,11 +187,9 @@ class LinearRegression
            typename ResponsesType,
            typename WeightsType,
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >,
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>,
            typename = std::enable_if_t<
-               std::is_same_v<typename WeightsType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename WeightsType::elem_type, ElemType>>>
   ElemType Train(const MatType& predictors,
                  const ResponsesType& responses,
                  const WeightsType& weights,

@@ -135,7 +135,7 @@ class GAN
    */
   template<typename Policy = PolicyType>
   std::enable_if_t<std::is_same_v<Policy, StandardGAN> ||
-                          std::is_same_v<Policy, DCGAN>, double>
+                   std::is_same_v<Policy, DCGAN>, double>
   Evaluate(const arma::mat& parameters,
            const size_t i,
            const size_t batchSize);
@@ -149,8 +149,7 @@ class GAN
    * @param batchSize Variable to store the present number of inputs.
    */
   template<typename Policy = PolicyType>
-  std::enable_if_t<std::is_same_v<Policy, WGAN>,
-                          double>
+  std::enable_if_t<std::is_same_v<Policy, WGAN>, double>
   Evaluate(const arma::mat& parameters,
            const size_t i,
            const size_t batchSize);
@@ -164,8 +163,7 @@ class GAN
    * @param batchSize Variable to store the present number of inputs.
    */
   template<typename Policy = PolicyType>
-  std::enable_if_t<std::is_same_v<Policy, WGANGP>,
-                          double>
+  std::enable_if_t<std::is_same_v<Policy, WGANGP>, double>
   Evaluate(const arma::mat& parameters,
            const size_t i,
            const size_t batchSize);
@@ -182,7 +180,7 @@ class GAN
    */
   template<typename GradType, typename Policy = PolicyType>
   std::enable_if_t<std::is_same_v<Policy, StandardGAN> ||
-                          std::is_same_v<Policy, DCGAN>, double>
+                   std::is_same_v<Policy, DCGAN>, double>
   EvaluateWithGradient(const arma::mat& parameters,
                        const size_t i,
                        GradType& gradient,
@@ -199,8 +197,7 @@ class GAN
    * @param batchSize Variable to store the present number of inputs.
    */
   template<typename GradType, typename Policy = PolicyType>
-  std::enable_if_t<std::is_same_v<Policy, WGAN>,
-                          double>
+  std::enable_if_t<std::is_same_v<Policy, WGAN>, double>
   EvaluateWithGradient(const arma::mat& parameters,
                        const size_t i,
                        GradType& gradient,
@@ -217,8 +214,7 @@ class GAN
    * @param batchSize Variable to store the present number of inputs.
    */
   template<typename GradType, typename Policy = PolicyType>
-  std::enable_if_t<std::is_same_v<Policy, WGANGP>,
-                          double>
+  std::enable_if_t<std::is_same_v<Policy, WGANGP>, double>
   EvaluateWithGradient(const arma::mat& parameters,
                        const size_t i,
                        GradType& gradient,
@@ -236,7 +232,7 @@ class GAN
    */
   template<typename Policy = PolicyType>
   std::enable_if_t<std::is_same_v<Policy, StandardGAN> ||
-                          std::is_same_v<Policy, DCGAN>, void>
+                   std::is_same_v<Policy, DCGAN>, void>
   Gradient(const arma::mat& parameters,
            const size_t i,
            arma::mat& gradient,
@@ -270,8 +266,7 @@ class GAN
    * @param batchSize Variable to store the present number of inputs.
    */
   template<typename Policy = PolicyType>
-  std::enable_if_t<std::is_same_v<Policy, WGANGP>,
-                          void>
+  std::enable_if_t<std::is_same_v<Policy, WGANGP>, void>
   Gradient(const arma::mat& parameters,
            const size_t i,
            arma::mat& gradient,

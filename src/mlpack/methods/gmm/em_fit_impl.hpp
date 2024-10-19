@@ -298,8 +298,8 @@ InitialClustering(const arma::mat& observations,
   std::vector<arma::vec> means(dists.size());
 
   // Conditional covariance instantiation.
-  std::vector<typename std::conditional<isDiagGaussDist,
-      arma::vec, arma::mat>::type> covs(dists.size());
+  std::vector<std::conditional_t<isDiagGaussDist, arma::vec, arma::mat>>
+      covs(dists.size());
 
   // Now calculate the means, covariances, and weights.
   weights.zeros();

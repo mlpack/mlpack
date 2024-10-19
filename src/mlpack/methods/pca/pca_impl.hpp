@@ -48,7 +48,7 @@ void PCA<DecompositionPolicy>::Apply(const MatType& data,
   static_assert(IsBaseMatType<VecType>::value,
       "PCA::Apply(): eigVal must be a vector type!");
   static_assert(std::is_same_v<typename MatType::elem_type,
-                             typename OutMatType::elem_type>,
+                               typename OutMatType::elem_type>,
       "PCA::Apply(): data and transformedData must have the same element "
       "types!");
 
@@ -82,7 +82,7 @@ void PCA<DecompositionPolicy>::Apply(const MatType& data,
   static_assert(IsBaseMatType<VecType>::value,
       "PCA::Apply(): eigVal must be a vector type!");
   static_assert(std::is_same_v<typename MatType::elem_type,
-                             typename OutMatType::elem_type>,
+                               typename OutMatType::elem_type>,
       "PCA::Apply(): data and transformedData must have the same element "
       "types!");
 
@@ -105,7 +105,7 @@ void PCA<DecompositionPolicy>::Apply(const MatType& data,
   static_assert(IsBaseMatType<OutMatType>::value,
       "PCA::Apply(): transformedData must be a matrix type!");
   static_assert(std::is_same_v<typename MatType::elem_type,
-                             typename OutMatType::elem_type>,
+                               typename OutMatType::elem_type>,
       "PCA::Apply(): data and transformedData must have the same element "
       "types!");
 

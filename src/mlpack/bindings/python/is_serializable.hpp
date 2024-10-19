@@ -39,8 +39,7 @@ void IsSerializable(util::ParamData& data,
                     const void* /* input */,
                     void* output)
 {
-  *((bool*) output) =
-      IsSerializable<std::remove_pointer_t<T>>(data);
+  *((bool*) output) = IsSerializable<std::remove_pointer_t<T>>(data);
 }
 
 } // namespace python

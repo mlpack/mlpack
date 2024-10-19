@@ -130,8 +130,7 @@ class RBM
    * @param input The visible layer neurons.
    */
   template<typename Policy = PolicyType, typename InputType = DataType>
-  std::enable_if_t<std::is_same_v<Policy, SpikeSlabRBM>,
-      double>
+  std::enable_if_t<std::is_same_v<Policy, SpikeSlabRBM>, double>
   FreeEnergy(const arma::Mat<ElemType>& input);
 
   /**

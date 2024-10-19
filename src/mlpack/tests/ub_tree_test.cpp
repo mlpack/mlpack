@@ -19,9 +19,9 @@ using namespace mlpack;
 TEST_CASE("AddressTest", "[UBTreeTest]")
 {
   typedef double ElemType;
-  typedef typename std::conditional<sizeof(ElemType) * CHAR_BIT <= 32,
+  typedef std::conditional_t<sizeof(ElemType) * CHAR_BIT <= 32,
                                     uint32_t,
-                                    uint64_t>::type AddressElemType;
+                                    uint64_t> AddressElemType;
   arma::Mat<ElemType> dataset(8, 1000);
 
   dataset.randu();
@@ -46,7 +46,7 @@ void CheckSplit(const TreeType& tree)
   typedef typename TreeType::ElemType ElemType;
   typedef std::conditional_t<sizeof(ElemType) * CHAR_BIT <= 32,
                                     uint32_t,
-                                    uint64_t>AddressElemType;
+                                    uint64_t> AddressElemType;
 
   if (tree.IsLeaf())
     return;

@@ -27,8 +27,7 @@ std::string DefaultParamImpl(
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
     const std::enable_if_t<!util::IsStdVector<T>::value>*,
     const std::enable_if_t<!data::HasSerialize<T>::value>*,
-    const std::enable_if_t<!std::is_same_v<T,
-        std::string>>*,
+    const std::enable_if_t<!std::is_same_v<T, std::string>>*,
     const std::enable_if_t<!std::is_same_v<T,
         std::tuple<mlpack::data::DatasetInfo, arma::mat>>>*)
 {
@@ -104,7 +103,7 @@ std::string DefaultParamImpl(
     const std::enable_if_t<
         arma::is_arma_type<T>::value ||
         std::is_same_v<T, std::tuple<mlpack::data::DatasetInfo,
-                                   arma::mat>>>* /* junk */)
+                                     arma::mat>>>* /* junk */)
 {
   // The filename will always be empty.
   return "''";

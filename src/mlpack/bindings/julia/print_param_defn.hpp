@@ -171,8 +171,7 @@ void PrintParamDefn(util::ParamData& d,
                     const void* input,
                     void* /* output */)
 {
-  PrintParamDefn<std::remove_pointer_t<T>>(d,
-      *(std::string*) input);
+  PrintParamDefn<std::remove_pointer_t<T>>(d, *(std::string*) input);
 }
 
 } // namespace julia

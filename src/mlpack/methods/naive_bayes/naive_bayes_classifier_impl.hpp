@@ -274,7 +274,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
   static_assert(std::is_same_v<ElemType,
-                             typename ProbabilitiesVecType::elem_type>,
+                               typename ProbabilitiesVecType::elem_type>,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
@@ -349,7 +349,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
   static_assert(std::is_same_v<ElemType,
-                             typename ProbabilitiesMatType::elem_type>,
+                               typename ProbabilitiesMatType::elem_type>,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 

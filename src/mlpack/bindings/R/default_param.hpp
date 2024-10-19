@@ -48,8 +48,7 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const std::enable_if_t<std::is_same_v<T, std::string>
-        >* = 0);
+    const std::enable_if_t<std::is_same_v<T, std::string>>* = 0);
 
 /**
  * Return the default value of a matrix option, a tuple option, a
@@ -62,7 +61,7 @@ std::string DefaultParamImpl(
     const std::enable_if_t<
         arma::is_arma_type<T>::value ||
         std::is_same_v<T, std::tuple<mlpack::data::DatasetInfo,
-                                   arma::mat>>>* /* junk */ = 0);
+                                     arma::mat>>>* /* junk */ = 0);
 
 /**
  * Return the default value of a model option (this returns the default

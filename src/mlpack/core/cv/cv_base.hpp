@@ -206,8 +206,7 @@ class CVBase
    */
   template<bool ConstructableWithoutDatasetInfo,
            typename... MLAlgorithmArgs,
-           typename =
-               std::enable_if_t<ConstructableWithoutDatasetInfo>>
+           typename = std::enable_if_t<ConstructableWithoutDatasetInfo>>
   MLAlgorithm TrainModel(const MatType& xs,
                          const PredictionsType& ys,
                          const MLAlgorithmArgs&... args);
@@ -218,8 +217,7 @@ class CVBase
    */
   template<bool ConstructableWithoutDatasetInfo,
            typename... MLAlgorithmArgs,
-           typename =
-               std::enable_if_t<!ConstructableWithoutDatasetInfo>,
+           typename = std::enable_if_t<!ConstructableWithoutDatasetInfo>,
            typename = void>
   MLAlgorithm TrainModel(const MatType& xs,
                          const PredictionsType& ys,

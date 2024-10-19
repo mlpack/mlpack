@@ -117,7 +117,7 @@ std::string DefaultParamImpl(
     const std::enable_if_t<
         arma::is_arma_type<T>::value ||
         std::is_same_v<T, std::tuple<mlpack::data::DatasetInfo,
-                                   arma::mat>>>* /* junk */)
+                                     arma::mat>>>* /* junk */)
 {
   // Get the filename and return it, or return an empty string.
   if (std::is_same_v<T, arma::rowvec> ||

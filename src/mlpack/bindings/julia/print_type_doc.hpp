@@ -73,8 +73,7 @@ void PrintTypeDoc(util::ParamData& data,
                   const void* /* input */,
                   void* output)
 {
-  *((std::string*) output) =
-      PrintTypeDoc<std::remove_pointer_t<T>>(data);
+  *((std::string*) output) = PrintTypeDoc<std::remove_pointer_t<T>>(data);
 }
 
 } // namespace julia

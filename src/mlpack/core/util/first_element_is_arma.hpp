@@ -39,9 +39,7 @@ template<typename... CallbackTypes>
 struct FirstElementIsArma
 {
   static constexpr bool value = arma::is_arma_type<
-      std::remove_reference_t<
-          typename First<CallbackTypes...>::type
-      >>::value;
+      std::remove_reference_t<typename First<CallbackTypes...>::type>>::value;
 };
 
 } // namespace mlpack

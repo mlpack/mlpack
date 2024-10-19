@@ -299,8 +299,7 @@ void CheckPredictionsType()
 {
   using Extractor = MetaInfoExtractor<Class, PassedMT, PassedPT>;
   using ActualPT = typename Extractor::PredictionsType;
-  static_assert(std::is_same_v<ExpectedPT, ActualPT>,
-      "Should be the same");
+  static_assert(std::is_same_v<ExpectedPT, ActualPT>, "Should be the same");
 }
 
 /**

@@ -171,8 +171,7 @@ void PrintMethodConfig(util::ParamData& d,
                        const void* input,
                        void* /* output */)
 {
-  PrintMethodConfig<std::remove_pointer_t<T>>(d,
-      *((size_t*) input));
+  PrintMethodConfig<std::remove_pointer_t<T>>(d, *((size_t*) input));
 }
 
 } // namespace go

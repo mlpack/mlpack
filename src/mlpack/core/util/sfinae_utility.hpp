@@ -155,8 +155,7 @@ struct NAME                                                                    \
     using no = char[2];                                                        \
                                                                                \
     template<typename T, typename ResultType>                                  \
-    using EnableIfVoid =                                                       \
-        std::enable_if_t<std::is_void_v<T>, ResultType>;     \
+    using EnableIfVoid = std::enable_if_t<std::is_void_v<T>, ResultType>;      \
                                                                                \
     template<typename C>                                                       \
     static EnableIfVoid<decltype(MFD<C, MF, N>()(&C::METHOD)), yes&> chk(int); \
@@ -169,13 +168,13 @@ struct NAME                                                                    \
   template<size_t N>                                                           \
   struct WithGreaterOrEqualNumberOfAdditionalArgs                              \
   {                                                                            \
-    using type = typename std::conditional<                                    \
+    using type = std::conditional_t<                                           \
         WithNAdditionalArgs<N>::value,                                         \
         std::true_type,                                                        \
-        typename std::conditional<                                             \
+        std::conditional_t<                                                    \
             N < MAXN,                                                          \
             WithGreaterOrEqualNumberOfAdditionalArgs<N + 1>,                   \
-            std::false_type>::type>::type;                                     \
+            std::false_type>>;                                                 \
     static const bool value = type::value;                                     \
   };                                                                           \
                                                                                \

@@ -487,8 +487,7 @@ class FFN
    */
   template<typename OptimizerType>
   std::enable_if_t<
-      ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void
-  >
+      ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void>
   WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
 
   /**
@@ -501,8 +500,7 @@ class FFN
    */
   template<typename OptimizerType>
   std::enable_if_t<
-      !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void
-  >
+      !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void>
   WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
 
   //! Instantiated output layer used to evaluate the network.

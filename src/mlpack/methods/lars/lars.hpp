@@ -166,8 +166,7 @@ class LARS
   template<typename MatType,
            typename ResponsesType,
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   LARS(const MatType& data,
        const ResponsesType& responses,
        bool colMajor = true,
@@ -205,8 +204,7 @@ class LARS
   template<typename MatType,
            typename ResponsesType,
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   LARS(const MatType& data,
        const ResponsesType& responses,
        const bool colMajor,
@@ -297,11 +295,9 @@ class LARS
            typename ResponsesType,
            typename = void, /* so MetaInfoExtractor does not get confused */
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >,
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>,
            typename = std::enable_if_t<
-               !std::is_same_v<ResponsesType, arma::rowvec>
-           >>
+               !std::is_same_v<ResponsesType, arma::rowvec>>>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
                  const bool colMajor = true);
@@ -310,8 +306,7 @@ class LARS
            typename ResponsesType,
            typename = void, /* so MetaInfoExtractor does not get confused */
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
                  const bool colMajor,
@@ -321,8 +316,7 @@ class LARS
            typename ResponsesType,
            typename = void, /* so MetaInfoExtractor does not get confused */
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
                  const bool colMajor,
@@ -333,8 +327,7 @@ class LARS
            typename ResponsesType,
            typename = void, /* so MetaInfoExtractor does not get confused */
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
                  const bool colMajor,
@@ -346,8 +339,7 @@ class LARS
            typename ResponsesType,
            typename = void, /* so MetaInfoExtractor does not get confused */
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
                  const bool colMajor,
@@ -360,8 +352,7 @@ class LARS
            typename ResponsesType,
            typename = void, /* so MetaInfoExtractor does not get confused */
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
                  const bool colMajor,
@@ -375,8 +366,7 @@ class LARS
            typename ResponsesType,
            typename = void, /* so MetaInfoExtractor does not get confused */
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
                  const bool colMajor,
@@ -408,8 +398,7 @@ class LARS
            typename ResponsesType,
            typename = void, /* so MetaInfoExtractor does not get confused */
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
                  const bool colMajor,
@@ -420,8 +409,7 @@ class LARS
            typename ResponsesType,
            typename = void, /* so MetaInfoExtractor does not get confused */
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
                  const bool colMajor,
@@ -433,8 +421,7 @@ class LARS
            typename ResponsesType,
            typename = void, /* so MetaInfoExtractor does not get confused */
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
                  const bool colMajor,
@@ -447,8 +434,7 @@ class LARS
            typename ResponsesType,
            typename = void, /* so MetaInfoExtractor does not get confused */
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
                  const bool colMajor,
@@ -462,8 +448,7 @@ class LARS
            typename ResponsesType,
            typename = void, /* so MetaInfoExtractor does not get confused */
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
                  const bool colMajor,
@@ -478,8 +463,7 @@ class LARS
            typename ResponsesType,
            typename = void, /* so MetaInfoExtractor does not get confused */
            typename = std::enable_if_t<
-               std::is_same_v<typename ResponsesType::elem_type, ElemType>
-           >>
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
                  const bool colMajor,

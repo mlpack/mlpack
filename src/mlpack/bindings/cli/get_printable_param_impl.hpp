@@ -38,8 +38,7 @@ std::string GetPrintableParam(
 template<typename T>
 std::string GetPrintableParam(
     util::ParamData& data,
-    const std::enable_if_t<util::IsStdVector<T>::value>*
-        /* junk */)
+    const std::enable_if_t<util::IsStdVector<T>::value>* /* junk */)
 {
   const T& t = std::any_cast<T>(data.value);
 
@@ -74,8 +73,7 @@ std::string GetMatrixSize(
 template<typename T>
 std::string GetPrintableParam(
     util::ParamData& data,
-    const std::enable_if_t<arma::is_arma_type<T>::value ||
-                                  std::is_same_v<T,
+    const std::enable_if_t<arma::is_arma_type<T>::value || std::is_same_v<T,
         std::tuple<data::DatasetInfo, arma::mat>>>* /* junk */)
 {
   // Extract the string from the tuple that's being held.

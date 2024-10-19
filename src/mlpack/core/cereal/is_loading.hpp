@@ -38,16 +38,14 @@ struct is_cereal_archive
 
 template<typename Archive>
 bool is_loading(
-    const std::enable_if_t<
-        is_cereal_archive<Archive>::value, Archive>* = 0)
+    const std::enable_if_t<is_cereal_archive<Archive>::value, Archive>* = 0)
 {
   return true;
 }
 
 template<typename Archive>
 bool is_loading(
-    const std::enable_if_t<
-      !is_cereal_archive<Archive>::value, Archive>* = 0)
+    const std::enable_if_t<!is_cereal_archive<Archive>::value, Archive>* = 0)
 {
   return false;
 }

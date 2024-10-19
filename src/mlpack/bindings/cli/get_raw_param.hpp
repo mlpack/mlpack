@@ -45,7 +45,7 @@ T& GetRawParam(
     const std::enable_if_t<
         arma::is_arma_type<T>::value ||
         std::is_same_v<T, std::tuple<mlpack::data::DatasetInfo,
-                                   arma::mat>>>* = 0)
+                                     arma::mat>>>* = 0)
 {
   // Don't load the matrix.
   typedef std::tuple<T, std::tuple<std::string, size_t, size_t>> TupleType;

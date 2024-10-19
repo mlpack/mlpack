@@ -55,7 +55,7 @@ template <typename MatTypeA, typename MatTypeB,
     typename = std::enable_if_t<arma::is_arma_type<MatTypeA>::value
         && arma::is_arma_type<MatTypeB>::value
         && std::is_same_v<typename MatTypeA::elem_type,
-                        typename MatTypeB::elem_type>
+                          typename MatTypeB::elem_type>
         && !std::is_integral_v<typename MatTypeA::elem_type>>>
 inline void CheckMatrices(const MatTypeA& _a,
                           const MatTypeB& _b,
@@ -137,7 +137,7 @@ template <typename CubeTypeA, typename CubeTypeB,
     typename = std::enable_if_t<arma::is_arma_cube_type<CubeTypeA>::value
         && arma::is_arma_cube_type<CubeTypeB>::value
         && std::is_same_v<typename CubeTypeA::elem_type,
-                        typename CubeTypeB::elem_type>
+                          typename CubeTypeB::elem_type>
         && !std::is_integral_v<typename CubeTypeA::elem_type>>,
     typename = void>
 inline void CheckMatrices(const CubeTypeA& _a,
