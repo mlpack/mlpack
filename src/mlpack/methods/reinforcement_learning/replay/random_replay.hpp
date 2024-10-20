@@ -173,9 +173,12 @@ template <
      * @param isTerminal Indicate whether corresponding next state is terminal
      *        state.
      */
-    void Sample(arma::mat &sampledStates, std::vector<ActionType> &sampledActions,
-                arma::rowvec &sampledRewards, arma::mat &sampledNextStates,
-                arma::irowvec &isTerminal) {
+    void Sample(arma::mat &sampledStates,
+                std::vector<ActionType> &sampledActions,
+                arma::rowvec &sampledRewards,
+                arma::mat &sampledNextStates,
+                arma::irowvec &isTerminal)
+    {
       size_t upperBound = full ? capacity : position;
       arma::uvec sampledIndices =
           randi<arma::uvec>(batchSize, arma::distr_param(0, upperBound - 1));
@@ -408,9 +411,12 @@ template <
      * @param isTerminal Indicate whether corresponding next state is terminal
      *        state.
      */
-    void Sample(arma::mat &sampledStates, arma::mat &sampledProbaActions,
-                arma::rowvec &sampledRewards, arma::mat &sampledNextStates,
-                arma::irowvec &isTerminal) {
+    void Sample(arma::mat &sampledStates,
+                arma::mat &sampledProbaActions,
+                arma::rowvec &sampledRewards,
+                arma::mat &sampledNextStates,
+                arma::irowvec &isTerminal)
+    {
       size_t upperBound = full ? capacity : position;
       arma::uvec sampledIndices =
           randi<arma::uvec>(batchSize, arma::distr_param(0, upperBound - 1));
