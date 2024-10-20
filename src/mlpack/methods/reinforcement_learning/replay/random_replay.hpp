@@ -62,10 +62,10 @@ template <
       bool isEnd;
     };
 
-    RandomReplay() : batchSize(0), capacity(0), position(0), 
+    RandomReplay() : batchSize(0), capacity(0), position(0),
           full(false), nSteps(0),
-          totalReturn(0), episodeSteps(0) 
-    { 
+          totalReturn(0), episodeSteps(0)
+    {
       /* Nothing to do here. */
     }
 
@@ -273,7 +273,7 @@ template <
 
 template <
   typename EnvironmentType
-> class RandomReplay<EnvironmentType, true> 
+> class RandomReplay<EnvironmentType, true>
 {
   public:
     //! Convenient typedef for action.
@@ -293,7 +293,7 @@ template <
       bool isEnd;
     };
 
-    RandomReplay() : 
+    RandomReplay() :
       batchSize(0), capacity(0),
       position(0), full(false),
       nSteps(0)
@@ -332,7 +332,7 @@ template <
      * @param discount The discount parameter.
      */
     void Store(StateType state, arma::vec probaAction, double reward,
-               StateType nextState, bool isEnd, const double &discount) 
+               StateType nextState, bool isEnd, const double &discount)
     {
       nStepBuffer.push_back({state, probaAction, reward, nextState, isEnd});
 
@@ -381,7 +381,7 @@ template <
      * @param discount The discount parameter.
      */
     void GetNStepInfo(double &reward, StateType &nextState, bool &isEnd,
-                      const double &discount) 
+                      const double &discount)
     {
       reward = nStepBuffer.back().reward;
       nextState = nStepBuffer.back().nextState;
