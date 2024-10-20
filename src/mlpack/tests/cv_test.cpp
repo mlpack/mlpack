@@ -349,8 +349,7 @@ void CheckWeightsType()
 {
   using Extractor = MetaInfoExtractor<Class, PassedMT, PassedPT, PassedWT>;
   using ActualWT = typename Extractor::WeightsType;
-  static_assert(std::is_same_v<ExpectedWT, ActualWT>,
-      "Should be the same");
+  static_assert(std::is_same_v<ExpectedWT, ActualWT>, "Should be the same");
 }
 
 /**
