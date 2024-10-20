@@ -25,7 +25,7 @@ TEST_CASE("CartPoleWithAlphaZero", "[AlphaZeroTest]")
   /* Setup the environment */
   CartPole environment(
     0 // maxSteps = 0 removes the limit on the number of transitions
-  )  
+  );
   /* Set up the value network */
   FFN<EmptyLoss, GaussianInitialization> network_v(EmptyLoss(),
             GaussianInitialization(0, 0.1)
@@ -49,14 +49,14 @@ TEST_CASE("CartPoleWithAlphaZero", "[AlphaZeroTest]")
   network_p.Add<LogSoftMax>(); // Ensures stability and efficiency in computations
 
   // Set up the replay method
-    RandomReplay<CartPole, 
+  RandomReplay<CartPole, 
     true // saveProba, default is false
-    > replayMethod(
-        128, // batch size
-        10000, // capacity
-        1, // nSteps (should remain 1 for AlphaZero)
-        true // backpropagate to replace move rewards with final returns
-    );
+  > replayMethod(
+      128, // batch size
+      10000, // capacity
+      1, // nSteps (should remain 1 for AlphaZero)
+      true // backpropagate to replace move rewards with final returns
+  );
     
   /* Set up the AlphaZero configuration */
   AlphaZeroConfig config;

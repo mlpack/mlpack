@@ -1274,16 +1274,19 @@ TEST_CASE("CrossEntropyLossTest", "[LossFunctionTest]")
   // Test for sum reduction
   prediction = arma::log(arma::mat("0.5 0.5 0.25 0.75 0.25 0.75"));
   target = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5");
-  expectedLoss = -1.0 * (-0.6931471805599453 -0.8369882167858358 -0.8369882167858358);
+  expectedLoss = -1.0 * (
+    -0.6931471805599453
+    -0.8369882167858358 
+    -0.8369882167858358
+  );
   prediction.reshape(2, 3);
   target.reshape(2, 3);
 
   loss = module.Forward(prediction, target);
 
-  REQUIRE(loss == Approx(expectedLoss).epsilon(1e-5));
-  
+  REQUIRE(loss == Approx(expectedLoss).epsilon(1e-5)); 
   arma::mat gradient;
   module.Backward(prediction, target, gradient);
-  REQUIRE( (gradient + target).max() <= 1e-5 );
+  REQUIRE((gradient + target).max() <= 1e-5);
 }
 

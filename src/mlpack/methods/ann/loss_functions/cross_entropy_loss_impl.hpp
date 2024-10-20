@@ -31,7 +31,7 @@ typename MatType::elem_type CrossEntropyLossType<MatType>::Forward(
 {
   typedef typename MatType::elem_type ElemType;
 
-  ElemType lossSum = -1.0 * arma::accu(target % prediction); 
+  ElemType lossSum = -1.0 * arma::accu(target % prediction);
 
   if (reduction)
     return lossSum;
