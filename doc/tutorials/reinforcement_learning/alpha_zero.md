@@ -9,11 +9,9 @@ AlphaZero can be applied to any environment with a discrete action space. Howeve
 AlphaZero can be applied to any environment with a **discrete action space**. However, since AlphaZero relies on simulating state-action transitions, the number of steps an agent can perform must be unbounded. To achieve this in `mlpack` environments, set the environment's `maxStep` to `0`, which removes the upper bound on the number of transitions.
 
 ```c++
-int main() {
   /* Setup the environment */
-  mlpack::CartPole environment(
-     0 // maxSteps = 0 removes the limit on the number of transitions
-  );
+  CartPole environment(
+     0); // maxSteps = 0 removes the limit on the number of transitions
 ```
 
 ## Networks
@@ -27,24 +25,26 @@ The returns are scaled between `-1` and `1`, so the value network's output must 
 
 ```c++
   /* Set up the value network */
-  mlpack::FFN<mlpack::EmptyLoss, mlpack::GaussianInitialization> network_v(mlpack::EmptyLoss(),
-            mlpack::GaussianInitialization(0, 0.1));
-  network_v.Add<mlpack::Linear>(64);
-  network_v.Add<mlpack::ReLU>();
-  network_v.Add<mlpack::Linear>(64);
-  network_v.Add<mlpack::ReLU>();
-  network_v.Add<mlpack::Linear>(1);
-  network_v.Add<mlpack::TanH>(); // Ensures output is between -1 and 1
+  FFN<EmptyLoss, GaussianInitialization> network_v(
+    EmptyLoss(),
+    GaussianInitialization(0, 0.1));
+  network_v.Add<Linear>(64);
+  network_v.Add<ReLU>();
+  network_v.Add<Linear>(64);
+  network_v.Add<ReLU>();
+  network_v.Add<Linear>(1);
+  network_v.Add<TanH>(); // Ensures output is between -1 and 1
 
   /* Set up the policy network */
-  mlpack::FFN<mlpack::EmptyLoss, mlpack::GaussianInitialization> network_p(mlpack::EmptyLoss(),
-            mlpack::GaussianInitialization(0, 0.1));
-  network_p.Add<mlpack::Linear>(64);
-  network_p.Add<mlpack::ReLU>();
-  network_p.Add<mlpack::Linear>(64);
-  network_p.Add<mlpack::ReLU>();
-  network_p.Add<mlpack::Linear>(2); // Action space dimension for CartPole is 2
-  network_p.Add<mlpack::LogSoftMax>(); // Ensures stability and efficiency in computations
+  FFN<EmptyLoss, GaussianInitialization> network_p(
+    EmptyLoss(),
+    GaussianInitialization(0, 0.1));
+  network_p.Add<Linear>(64);
+  network_p.Add<ReLU>();
+  network_p.Add<Linear>(64);
+  network_p.Add<ReLU>();
+  network_p.Add<Linear>(2); // Action space dimension for CartPole is 2
+  network_p.Add<LogSoftMax>(); // Ensures stability and efficiency in computations
 ```
 
 ## Replay Method
@@ -57,8 +57,9 @@ Correctly configuring the replay method is essential for AlphaZero in `mlpack`.
 3. The backpropagate argument must be `true`, as it replaces each move’s reward with the final return of the episode.
 
 ```c++
-mlpack::RandomReplay<mlpack::CartPole, 
-  true // saveProba, default is false
+  RandomReplay<
+    CartPole, 
+    true // saveProba, default is false
   > 
   replayMethod(
     128, // batch size
@@ -74,7 +75,7 @@ AlphaZero has a configuration class with several important parameters that need 
 
 ```c++
   /* Set up the AlphaZero configuration */
-  mlpack::AlphaZeroConfig config;
+  AlphaZeroConfig config;
   config.StepSize() = 0.01; // Learning rate for the value and policy networks
   config.ExplorationSteps() = 5; // Episodes before the first network update
   config.StepLimit() = 200; // Maximum number of episodes for training
@@ -91,7 +92,7 @@ Because AlphaZero scales returns between `VMin` and `VMax`, you must specify the
 After setting up the environment, networks, replay method, and configuration, we can assemble everything easily:
 
 ```c++
-  AlphaZero<mlpack::CartPole, decltype(network_v), decltype(network_p), ens::AdamUpdate>
+  AlphaZero<CartPole, decltype(network_v), decltype(network_p), ens::AdamUpdate>
   agent(config, network_v, network_p, replayMethod, environment);
 ```
 
@@ -130,39 +131,45 @@ Below is the complete code for the tutorial:
 ```c++
 #include <mlpack.hpp>
 
+
+using namespace mlpack;
+using namespace ens;
+
 int main()
 {
-  mlpack::RandomSeed(time(NULL));
+  RandomSeed(time(NULL));
 
   /* Setup the environment */
-  mlpack::CartPole environment(
+  CartPole environment(
     0 // maxSteps = 0 removes the limit on the number of transitions
   )  
   /* Set up the value network */
-  mlpack::FFN<mlpack::EmptyLoss, mlpack::GaussianInitialization> network_v(mlpack::EmptyLoss(),
-            mlpack::GaussianInitialization(0, 0.1)
+  FFN<EmptyLoss, GaussianInitialization> network_v(
+    EmptyLoss(),
+    GaussianInitialization(0, 0.1)
   );
-  network_v.Add<mlpack::Linear>(64);
-  network_v.Add<mlpack::ReLU>();
-  network_v.Add<mlpack::Linear>(64);
-  network_v.Add<mlpack::ReLU>();
-  network_v.Add<mlpack::Linear>(1);
-  network_v.Add<mlpack::TanH>(); // Ensures output is between -1 and 1
+  network_v.Add<Linear>(64);
+  network_v.Add<ReLU>();
+  network_v.Add<Linear>(64);
+  network_v.Add<ReLU>();
+  network_v.Add<Linear>(1);
+  network_v.Add<TanH>(); // Ensures output is between -1 and 1
 
   /* Set up the policy network */
-  mlpack::FFN<mlpack::EmptyLoss, mlpack::GaussianInitialization> network_p(mlpack::EmptyLoss(),
-            mlpack::GaussianInitialization(0, 0.1)
+  FFN<EmptyLoss, GaussianInitialization> network_p(EmptyLoss(),
+            GaussianInitialization(0, 0.1)
   );
-  network_p.Add<mlpack::Linear>(64);
-  network_p.Add<mlpack::ReLU>();
-  network_p.Add<mlpack::Linear>(64);
-  network_p.Add<mlpack::ReLU>();
-  network_p.Add<mlpack::Linear>(2); // Action space dimension for CartPole is 2
-  network_p.Add<mlpack::LogSoftMax>(); // Ensures stability and efficiency in computations
+  network_p.Add<Linear>(64);
+  network_p.Add<ReLU>();
+  network_p.Add<Linear>(64);
+  network_p.Add<ReLU>();
+  network_p.Add<Linear>(2); // Action space dimension for CartPole is 2
+  network_p.Add<LogSoftMax>(); // Ensures stability and efficiency in computations
 
   // Set up the replay method
-    mlpack::RandomReplay<mlpack::CartPole, 
-    true // saveProba, default is false
+    RandomReplay<
+      CartPole, 
+      true // saveProba, default is false
     > replayMethod(
         128, // batch size
         10000, // capacity
@@ -171,7 +178,7 @@ int main()
     );
     
   /* Set up the AlphaZero configuration */
-  mlpack::AlphaZeroConfig config;
+  AlphaZeroConfig config;
   config.StepSize() = 0.01; // Learning rate for the value and policy networks
   config.ExplorationSteps() = 5; // Episodes before the first network update
   config.StepLimit() = 200; // Maximum number of episodes for training
@@ -182,7 +189,7 @@ int main()
   config.VMax() = 500.0; // Maximum possible return of the environment
 
   /* Declare AlphaZero */
-  AlphaZero<mlpack::CartPole, decltype(network_v), decltype(network_p), ens::AdamUpdate>
+  AlphaZero<CartPole, decltype(network_v), decltype(network_p), ens::AdamUpdate>
   agent(config, network_v, network_p, replayMethod, environment);
 
   /* Defining the training loop */
@@ -212,3 +219,4 @@ int main()
   return 0;
 }
 ```
+
