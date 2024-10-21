@@ -165,8 +165,8 @@ DecisionTreeRegressor<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
     const std::enable_if_t<
-        arma::is_arma_type<std::remove_reference_t<WeightsType>>::value>*)
-    : splitInfo()
+        arma::is_arma_type<std::remove_reference_t<WeightsType>>::value>*) :
+    splitInfo()
 {
   using TrueMatType = std::decay_t<MatType>;
   using TrueResponsesType = std::decay_t<ResponsesType>;
@@ -205,10 +205,10 @@ DecisionTreeRegressor<FitnessFunction,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     const std::enable_if_t<arma::is_arma_type<
-        std::remove_reference_t<WeightsType>>::value>*):
-        splitInfo(std::move(other.splitInfo)),
-        NumericAuxiliarySplitInfo(other),
-        CategoricalAuxiliarySplitInfo(other)
+        std::remove_reference_t<WeightsType>>::value>*) :
+    splitInfo(std::move(other.splitInfo)),
+    NumericAuxiliarySplitInfo(other),
+    CategoricalAuxiliarySplitInfo(other)
 {
   using TrueMatType = std::decay_t<MatType>;
   using TrueResponsesType = std::decay_t<ResponsesType>;
@@ -245,10 +245,10 @@ DecisionTreeRegressor<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
     const std::enable_if_t<arma::is_arma_type<
-        std::remove_reference_t<WeightsType>>::value>*)
-    : splitInfo(std::move(other.splitInfo)),
-      NumericAuxiliarySplitInfo(other),
-      CategoricalAuxiliarySplitInfo(other)   // other info does need to copy
+        std::remove_reference_t<WeightsType>>::value>*) :
+    splitInfo(std::move(other.splitInfo)),
+    NumericAuxiliarySplitInfo(other),
+    CategoricalAuxiliarySplitInfo(other)   // other info does need to copy
 {
   using TrueMatType = std::decay_t<MatType>;
   using TrueResponsesType = std::decay_t<ResponsesType>;

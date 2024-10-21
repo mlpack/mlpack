@@ -202,7 +202,7 @@ struct NAME                                                                   \
   template <typename Q = T>                                                   \
   static                                                                      \
   std::enable_if_t<std::is_member_function_pointer_v<decltype(&Q::FUNC)>, int>\
-  f(int) { return 1;}                                                         \
+  f(int) { return 1; }                                                        \
                                                                               \
   template <typename Q = T>                                                   \
   static char f(char) { return 0; }                                           \
