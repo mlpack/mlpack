@@ -18,11 +18,11 @@
 namespace mlpack {
 
 template<typename BoundType, typename MatType>
-bool RPTreeMeanSplit<BoundType, MatType>::SplitNode(const BoundType&  bound,
-                                                  MatType& data,
-                                                  const size_t begin,
-                                                  const size_t count,
-                                                  SplitInfo& splitInfo)
+bool RPTreeMeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
+                                                    MatType& data,
+                                                    const size_t begin,
+                                                    const size_t count,
+                                                    SplitInfo& splitInfo)
 {
   const size_t maxNumSamples = 100;
   const size_t numSamples = std::min(maxNumSamples, count);
