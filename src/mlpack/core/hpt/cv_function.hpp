@@ -130,8 +130,8 @@ class CVFunction
   template<size_t BoundArgIndex,
            size_t ParamIndex,
            typename... Args,
-           typename = typename
-               std::enable_if<(BoundArgIndex + ParamIndex < TotalArgs)>::type>
+           typename =
+               std::enable_if_t<(BoundArgIndex + ParamIndex < TotalArgs)>>
   inline double Evaluate(const arma::mat& parameters, const Args&... args);
 
   /**
@@ -140,8 +140,8 @@ class CVFunction
   template<size_t BoundArgIndex,
            size_t ParamIndex,
            typename... Args,
-           typename = typename
-               std::enable_if<BoundArgIndex + ParamIndex == TotalArgs>::type,
+           typename =
+               std::enable_if_t<BoundArgIndex + ParamIndex == TotalArgs>,
            typename = void>
   inline double Evaluate(const arma::mat& parameters, const Args&... args);
 
@@ -151,8 +151,8 @@ class CVFunction
   template<size_t BoundArgIndex,
            size_t ParamIndex,
            typename... Args,
-           typename = typename std::enable_if<
-               UseBoundArg<BoundArgIndex, ParamIndex>::value>::type>
+           typename = std::enable_if_t<
+               UseBoundArg<BoundArgIndex, ParamIndex>::value>>
   inline double PutNextArg(const arma::mat& parameters, const Args&... args);
 
   /**
@@ -162,8 +162,8 @@ class CVFunction
   template<size_t BoundArgIndex,
            size_t ParamIndex,
            typename... Args,
-           typename = typename std::enable_if<
-               !UseBoundArg<BoundArgIndex, ParamIndex>::value>::type,
+           typename = std::enable_if_t<
+               !UseBoundArg<BoundArgIndex, ParamIndex>::value>,
            typename = void>
   inline double PutNextArg(const arma::mat& parameters, const Args&... args);
 };

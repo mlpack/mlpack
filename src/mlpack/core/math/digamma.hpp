@@ -27,7 +27,7 @@ namespace mlpack {
  * @param x Input for which digamma will be calculated.
  */
 template<std::size_t N, typename T>
-typename std::enable_if<N == 8, T>::type
+std::enable_if_t<N == 8, T>
 EvaluatePolyLarge(const T(&a)[N], const T& x)
 {
   T x2 = x * x;
@@ -60,7 +60,7 @@ EvaluatePolyLarge(const T(&a)[N], const T& x)
  * @param x Input for which digamma will be calculated.
  */
 template<std::size_t N, typename T>
-typename std::enable_if<N == 7, T>::type
+std::enable_if_t<N == 7, T>
 EvaluatePoly12(const T(&a)[N], const T& x)
 {
   T x2 = x * x;
@@ -91,7 +91,7 @@ EvaluatePoly12(const T(&a)[N], const T& x)
  * @param x Input for which digamma will be calculated.
  */
 template<std::size_t N, typename T>
-typename std::enable_if<N == 6, T>::type
+std::enable_if_t<N == 6, T>
 EvaluatePoly12(const T(&a)[N], const T& x)
 {
   T x2 = x * x;

@@ -27,10 +27,10 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& /* functionName */,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<!data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   // "type" is a reserved keyword or function.
   const std::string juliaName = (d.name == "type") ? "type_" : d.name;
@@ -66,9 +66,9 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& /* functionName */,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   // "type" is a reserved keyword or function.
   const std::string juliaName = (d.name == "type") ? "type_" : d.name;
@@ -83,7 +83,7 @@ void PrintInputProcessing(
 
   // For an Armadillo type, we have to call a different overload for columns and
   // rows than for regular matrices.
-  std::string uChar = (std::is_same<typename T::elem_type, size_t>::value) ?
+  std::string uChar = (std::is_same_v<typename T::elem_type, size_t>) ?
       "U" : "";
   std::string indent(extraIndent + 2, ' ');
   std::string matTypeModifier = "";
@@ -125,10 +125,10 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& functionName,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type*,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   // "type" is a reserved keyword or function.
   const std::string juliaName = (d.name == "type") ? "type_" : d.name;
@@ -151,12 +151,12 @@ void PrintInputProcessing(
   std::string indent(extraIndent + 2, ' ');
   std::string type = util::StripType(d.cppType);
   std::cout << indent << "push!(modelPtrs, convert("
-      << GetJuliaType<typename std::remove_pointer<T>::type>(d) << ", "
-      << juliaName << ").ptr)" << std::endl;
+      << GetJuliaType<std::remove_pointer_t<T>>(d) << ", " << juliaName
+      << ").ptr)" << std::endl;
   std::cout << indent << functionName << "_internal.SetParam" << type
       << "(p, \"" << d.name << "\", convert("
-      << GetJuliaType<typename std::remove_pointer<T>::type>(d) << ", "
-      << juliaName << "))" << std::endl;
+      << GetJuliaType<std::remove_pointer_t<T>>(d) << ", " << juliaName
+      << "))" << std::endl;
 
   if (!d.required)
   {
@@ -172,8 +172,8 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& /* functionName */,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   // "type" is a reserved keyword or function.
   const std::string juliaName = (d.name == "type") ? "type_" : d.name;

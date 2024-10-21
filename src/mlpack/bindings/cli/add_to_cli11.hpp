@@ -33,15 +33,12 @@ template<typename T>
 void AddToCLI11(const std::string& cliName,
                 util::ParamData& param,
                 CLI::App& app,
-                const typename std::enable_if<!std::is_same<T,
-                    bool>::value>::type* = 0,
-                const typename std::enable_if<!
-                    arma::is_arma_type<T>::value>::type* = 0,
-                const typename std::enable_if<!
-                    data::HasSerialize<T>::value>::type* = 0,
-                const typename std::enable_if<std::is_same<T,
+                const std::enable_if_t<!std::is_same_v<T, bool>>* = 0,
+                const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+                const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+                const std::enable_if_t<std::is_same_v<T,
                     std::tuple<mlpack::data::DatasetInfo,
-                    arma::mat>>::value>::type* = 0)
+                               arma::mat>>>* = 0)
 {
   app.add_option_function<std::string>(cliName.c_str(),
       [&param](const std::string& value)
@@ -65,15 +62,12 @@ template<typename T>
 void AddToCLI11(const std::string& cliName,
                 util::ParamData& param,
                 CLI::App& app,
-                const typename std::enable_if<!std::is_same<T,
-                    bool>::value>::type* = 0,
-                const typename std::enable_if<!
-                    arma::is_arma_type<T>::value>::type* = 0,
-                const typename std::enable_if<
-                    data::HasSerialize<T>::value>::type* = 0,
-                const typename std::enable_if<!std::is_same<T,
+                const std::enable_if_t<!std::is_same_v<T, bool>>* = 0,
+                const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+                const std::enable_if_t<data::HasSerialize<T>::value>* = 0,
+                const std::enable_if_t<!std::is_same_v<T,
                     std::tuple<mlpack::data::DatasetInfo,
-                    arma::mat>>::value>::type* = 0)
+                               arma::mat>>>* = 0)
 {
   app.add_option_function<std::string>(cliName.c_str(),
       [&param](const std::string& value)
@@ -97,13 +91,11 @@ template<typename T>
 void AddToCLI11(const std::string& cliName,
                 util::ParamData& param,
                 CLI::App& app,
-                const typename std::enable_if<!
-                    std::is_same<T, bool>::value>::type* = 0,
-                const typename std::enable_if<
-                    arma::is_arma_type<T>::value>::type* = 0,
-                const typename std::enable_if<!std::is_same<T,
+                const std::enable_if_t<!std::is_same_v<T, bool>>* = 0,
+                const std::enable_if_t<arma::is_arma_type<T>::value>* = 0,
+                const std::enable_if_t<!std::is_same_v<T,
                   std::tuple<mlpack::data::DatasetInfo,
-                    arma::mat>>::value>::type* = 0)
+                             arma::mat>>>* = 0)
 {
   app.add_option_function<std::string>(cliName.c_str(),
       [&param](const std::string& value)
@@ -127,15 +119,12 @@ template<typename T>
 void AddToCLI11(const std::string& cliName,
                 util::ParamData& param,
                 CLI::App& app,
-                const typename std::enable_if<!
-                    std::is_same<T, bool>::value>::type* = 0,
-                const typename std::enable_if<!
-                    arma::is_arma_type<T>::value>::type* = 0,
-                const typename std::enable_if<!
-                    data::HasSerialize<T>::value>::type* = 0,
-                const typename std::enable_if<!std::is_same<T,
+                const std::enable_if_t<!std::is_same_v<T, bool>>* = 0,
+                const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+                const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+                const std::enable_if_t<!std::is_same_v<T,
                     std::tuple<mlpack::data::DatasetInfo,
-                    arma::mat>>::value>::type* = 0)
+                               arma::mat>>>* = 0)
 {
   app.add_option_function<T>(cliName.c_str(),
       [&param](const T& value)
@@ -157,15 +146,12 @@ template<typename T>
 void AddToCLI11(const std::string& cliName,
                 util::ParamData& param,
                 CLI::App& app,
-                const typename std::enable_if<
-                    std::is_same<T, bool>::value>::type* = 0,
-                const typename std::enable_if<!
-                    arma::is_arma_type<T>::value>::type* = 0,
-                const typename std::enable_if<!
-                    data::HasSerialize<T>::value>::type* = 0,
-                const typename std::enable_if<!std::is_same<T,
+                const std::enable_if_t<std::is_same_v<T, bool>>* = 0,
+                const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+                const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+                const std::enable_if_t<!std::is_same_v<T,
                     std::tuple<mlpack::data::DatasetInfo,
-                    arma::mat>>::value>::type* = 0)
+                               arma::mat>>>* = 0)
 {
   app.add_flag_function(cliName.c_str(),
       [&param](const T& value)
@@ -194,14 +180,14 @@ void AddToCLI11(util::ParamData& param,
 
   // Generate the name to be given to CLI11.
   const std::string mappedName =
-      MapParameterName<typename std::remove_pointer<T>::type>(param.name);
+      MapParameterName<std::remove_pointer_t<T>>(param.name);
   std::string cliName = (param.alias != '\0') ?
       "-" + std::string(1, param.alias) + ",--" + mappedName :
       "--" + mappedName;
 
   // Note that we have to add the option as type equal to the mapped type, not
   // the true type of the option.
-  AddToCLI11<typename std::remove_pointer<T>::type>(
+  AddToCLI11<std::remove_pointer_t<T>>(
       cliName, param, *app);
 }
 

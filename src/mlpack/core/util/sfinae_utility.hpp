@@ -155,8 +155,7 @@ struct NAME                                                                    \
     using no = char[2];                                                        \
                                                                                \
     template<typename T, typename ResultType>                                  \
-    using EnableIfVoid =                                                       \
-        typename std::enable_if<std::is_void<T>::value, ResultType>::type;     \
+    using EnableIfVoid = std::enable_if_t<std::is_void_v<T>, ResultType>;      \
                                                                                \
     template<typename C>                                                       \
     static EnableIfVoid<decltype(MFD<C, MF, N>()(&C::METHOD)), yes&> chk(int); \
@@ -169,13 +168,13 @@ struct NAME                                                                    \
   template<size_t N>                                                           \
   struct WithGreaterOrEqualNumberOfAdditionalArgs                              \
   {                                                                            \
-    using type = typename std::conditional<                                    \
+    using type = std::conditional_t<                                           \
         WithNAdditionalArgs<N>::value,                                         \
         std::true_type,                                                        \
-        typename std::conditional<                                             \
+        std::conditional_t<                                                    \
             N < MAXN,                                                          \
             WithGreaterOrEqualNumberOfAdditionalArgs<N + 1>,                   \
-            std::false_type>::type>::type;                                     \
+            std::false_type>>;                                                 \
     static const bool value = type::value;                                     \
   };                                                                           \
                                                                                \
@@ -196,20 +195,19 @@ struct NAME                                                                    \
  * function in the given class name.
  * This can also be used in conjunction with std::enable_if.
  */
-#define HAS_ANY_METHOD_FORM(FUNC, NAME)                                      \
-template <typename T>                                                        \
-struct NAME                                                                  \
-{                                                                            \
-  template <typename Q = T>                                                  \
-  static typename                                                            \
-  std::enable_if<std::is_member_function_pointer<decltype(&Q::FUNC)>::value, \
-                 int>::type                                                  \
-  f(int) { return 1;}                                                      \
-                                                                             \
-  template <typename Q = T>                                                  \
-  static char f(char) { return 0; }                                        \
-                                                                             \
-  static const bool value = sizeof(f<T>(0)) != sizeof(char);                 \
+#define HAS_ANY_METHOD_FORM(FUNC, NAME)                                       \
+template <typename T>                                                         \
+struct NAME                                                                   \
+{                                                                             \
+  template <typename Q = T>                                                   \
+  static                                                                      \
+  std::enable_if_t<std::is_member_function_pointer_v<decltype(&Q::FUNC)>, int>\
+  f(int) { return 1; }                                                        \
+                                                                              \
+  template <typename Q = T>                                                   \
+  static char f(char) { return 0; }                                           \
+                                                                              \
+  static const bool value = sizeof(f<T>(0)) != sizeof(char);                  \
 };
 /*
  * A macro that can be used for passing arguments containing commas to other

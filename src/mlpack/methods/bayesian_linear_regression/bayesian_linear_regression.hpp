@@ -139,9 +139,8 @@ class BayesianLinearRegression
    */
   template<typename MatType,
            typename ResponsesType,
-           typename = typename std::enable_if<
-               std::is_same<typename ResponsesType::elem_type, ElemType>::value
-           >::type>
+           typename = std::enable_if_t<
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   BayesianLinearRegression(const MatType& data,
                            const ResponsesType& responses,
                            const bool centerData = true,
@@ -175,9 +174,8 @@ class BayesianLinearRegression
   template<typename MatType,
            typename ResponsesType,
            typename = void, /* so MetaInfoExtractor does not get confused */
-           typename = typename std::enable_if<
-               std::is_same<typename ResponsesType::elem_type, ElemType>::value
-           >::type>
+           typename = std::enable_if_t<
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
                  const std::optional<bool> centerData = std::nullopt,
@@ -187,9 +185,8 @@ class BayesianLinearRegression
   template<typename MatType,
            typename ResponsesType,
            typename = void, /* so MetaInfoExtractor does not get confused */
-           typename = typename std::enable_if<
-               std::is_same<typename ResponsesType::elem_type, ElemType>::value
-           >::type>
+           typename = std::enable_if_t<
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
                  const bool centerData,
@@ -231,9 +228,8 @@ class BayesianLinearRegression
    */
   template<typename MatType,
            typename ResponsesType,
-           typename = typename std::enable_if<
-               std::is_same<typename ResponsesType::elem_type, ElemType>::value
-           >::type>
+           typename = std::enable_if_t<
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   void Predict(const MatType& points,
                ResponsesType& predictions) const;
 
@@ -249,9 +245,8 @@ class BayesianLinearRegression
    */
   template<typename MatType,
            typename ResponsesType,
-           typename = typename std::enable_if<
-               std::is_same<typename ResponsesType::elem_type, ElemType>::value
-           >::type>
+           typename = std::enable_if_t<
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   void Predict(const MatType& points,
                ResponsesType& predictions,
                ResponsesType& std) const;
@@ -266,9 +261,8 @@ class BayesianLinearRegression
    **/
   template<typename MatType,
            typename ResponsesType,
-           typename = typename std::enable_if<
-               std::is_same<typename ResponsesType::elem_type, ElemType>::value
-           >::type>
+           typename = std::enable_if_t<
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   ElemType RMSE(const MatType& data,
                 const ResponsesType& responses) const;
 

@@ -25,11 +25,11 @@ namespace python {
 template<typename T>
 std::string GetPrintableParam(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   std::ostringstream oss;
   oss << std::any_cast<T>(data.value);
@@ -42,7 +42,7 @@ std::string GetPrintableParam(
 template<typename T>
 std::string GetPrintableParam(
     util::ParamData& data,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0)
+    const std::enable_if_t<util::IsStdVector<T>::value>* = 0)
 {
   const T& t = std::any_cast<T>(data.value);
 
@@ -58,7 +58,7 @@ std::string GetPrintableParam(
 template<typename T>
 std::string GetPrintableParam(
     util::ParamData& data,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0)
 {
   // Get the matrix.
   const T& matrix = std::any_cast<T>(data.value);
@@ -74,8 +74,8 @@ std::string GetPrintableParam(
 template<typename T>
 std::string GetPrintableParam(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   std::ostringstream oss;
   oss << data.cppType << " model at " << std::any_cast<T*>(data.value);
@@ -88,8 +88,8 @@ std::string GetPrintableParam(
 template<typename T>
 std::string GetPrintableParam(
     util::ParamData& data,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   // Get the matrix.
   const T& tuple = std::any_cast<T>(data.value);
@@ -115,8 +115,7 @@ void GetPrintableParam(util::ParamData& data,
                        const void* /* input */,
                        void* output)
 {
-  *((std::string*) output) =
-      GetPrintableParam<typename std::remove_pointer<T>::type>(data);
+  *((std::string*) output) = GetPrintableParam<std::remove_pointer_t<T>>(data);
 }
 
 } // namespace python

@@ -29,15 +29,15 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   const std::string prefix(indent, ' ');
 
   std::string def = "nil";
-  if (std::is_same<T, bool>::value)
+  if (std::is_same_v<T, bool>)
     def = "false";
 
   // Capitalize the first letter of parameter name so it is
@@ -131,7 +131,7 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -206,8 +206,8 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -268,8 +268,8 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   // First, get the correct classparamName if needed.
   std::string goStrippedType, strippedType, printedType, defaultsType;
@@ -340,8 +340,7 @@ void PrintInputProcessing(util::ParamData& d,
                           const void* input,
                           void* /* output */)
 {
-  PrintInputProcessing<typename std::remove_pointer<T>::type>(d,
-      *((size_t*) input));
+  PrintInputProcessing<std::remove_pointer_t<T>>(d, *((size_t*) input));
 }
 
 } // namespace go

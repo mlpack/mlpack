@@ -37,27 +37,27 @@ void GetPrintableType(util::ParamData& data,
   if (BindingInfo::Language() == "cli")
   {
     *((std::string*) output) =
-        cli::GetPrintableType<typename std::remove_pointer<T>::type>(data);
+        cli::GetPrintableType<std::remove_pointer_t<T>>(data);
   }
   else if (BindingInfo::Language() == "python")
   {
     *((std::string*) output) =
-        python::GetPrintableType<typename std::remove_pointer<T>::type>(data);
+        python::GetPrintableType<std::remove_pointer_t<T>>(data);
   }
   else if (BindingInfo::Language() == "julia")
   {
     *((std::string*) output) =
-        julia::GetPrintableType<typename std::remove_pointer<T>::type>(data);
+        julia::GetPrintableType<std::remove_pointer_t<T>>(data);
   }
   else if (BindingInfo::Language() == "go")
   {
     *((std::string*) output) =
-        go::GetPrintableType<typename std::remove_pointer<T>::type>(data);
+        go::GetPrintableType<std::remove_pointer_t<T>>(data);
   }
   else if (BindingInfo::Language() == "r")
   {
     *((std::string*) output) =
-        r::GetPrintableType<typename std::remove_pointer<T>::type>(data);
+        r::GetPrintableType<std::remove_pointer_t<T>>(data);
   }
   else
   {

@@ -23,86 +23,82 @@ namespace go {
 template<typename T>
 inline std::string GetPrintableType(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
+    const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
 
 template<>
 inline std::string GetPrintableType<int>(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<int>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<int>::value>::type*,
-    const typename std::enable_if<!arma::is_arma_type<int>::value>::type*,
-    const typename std::enable_if<!std::is_same<int,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*);
+    const std::enable_if_t<!util::IsStdVector<int>::value>*,
+    const std::enable_if_t<!data::HasSerialize<int>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<int>::value>*,
+    const std::enable_if_t<!std::is_same_v<int,
+        std::tuple<data::DatasetInfo, arma::mat>>>*);
 
 template<>
 inline std::string GetPrintableType<double>(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<double>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<double>::value>::type*,
-    const typename std::enable_if<!arma::is_arma_type<double>::value>::type*,
-    const typename std::enable_if<!std::is_same<double,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*);
+    const std::enable_if_t<!util::IsStdVector<double>::value>*,
+    const std::enable_if_t<!data::HasSerialize<double>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<double>::value>*,
+    const std::enable_if_t<!std::is_same_v<double,
+        std::tuple<data::DatasetInfo, arma::mat>>>*);
 
 template<>
 inline std::string GetPrintableType<std::string>(
     util::ParamData& /* d */,
-    const typename std::enable_if<
-        !util::IsStdVector<std::string>::value>::type*,
-    const typename std::enable_if<
-        !data::HasSerialize<std::string>::value>::type*,
-    const typename std::enable_if<
-        !arma::is_arma_type<std::string>::value>::type*,
-    const typename std::enable_if<!std::is_same<std::string,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*);
+    const std::enable_if_t<!util::IsStdVector<std::string>::value>*,
+    const std::enable_if_t<!data::HasSerialize<std::string>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<std::string>::value>*,
+    const std::enable_if_t<!std::is_same_v<std::string,
+        std::tuple<data::DatasetInfo, arma::mat>>>*);
 
 template<>
 inline std::string GetPrintableType<bool>(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<bool>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<bool>::value>::type*,
-    const typename std::enable_if<!arma::is_arma_type<bool>::value>::type*,
-    const typename std::enable_if<!std::is_same<bool,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*);
+    const std::enable_if_t<!util::IsStdVector<bool>::value>*,
+    const std::enable_if_t<!data::HasSerialize<bool>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<bool>::value>*,
+    const std::enable_if_t<!std::is_same_v<bool,
+        std::tuple<data::DatasetInfo, arma::mat>>>*);
 
 template<typename T>
 inline std::string GetPrintableType(
     util::ParamData& d,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
+    const std::enable_if_t<util::IsStdVector<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
 
 template<typename T>
 inline std::string GetPrintableType(
     util::ParamData& /* d */,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
 
 template<typename T>
 inline std::string GetPrintableType(
     util::ParamData& /* d */,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
 
 template<typename T>
 inline std::string GetPrintableType(
     util::ParamData& d,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
 
 template<typename T>
 void GetPrintableType(util::ParamData& d,
                       const void* /* input */,
                       void* output)
 {
-  *((std::string*) output) =
-      GetPrintableType<typename std::remove_pointer<T>::type>(d);
+  *((std::string*) output) = GetPrintableType<std::remove_pointer_t<T>>(d);
 }
 
 } // namespace go

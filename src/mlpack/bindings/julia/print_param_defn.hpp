@@ -26,8 +26,8 @@ template<typename T>
 void PrintParamDefn(
     util::ParamData& /* d */,
     const std::string& /* programName */,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0)
 {
   // Do nothing.
 }
@@ -39,7 +39,7 @@ template<typename T>
 void PrintParamDefn(
     util::ParamData& /* d */,
     const std::string& /* programName */,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0)
 {
   // Do nothing.
 }
@@ -51,8 +51,8 @@ template<typename T>
 void PrintParamDefn(
     util::ParamData& d,
     const std::string& programName,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   // We need to print something of the form below:
   //
@@ -171,8 +171,7 @@ void PrintParamDefn(util::ParamData& d,
                     const void* input,
                     void* /* output */)
 {
-  PrintParamDefn<typename std::remove_pointer<T>::type>(d,
-      *(std::string*) input);
+  PrintParamDefn<std::remove_pointer_t<T>>(d, *(std::string*) input);
 }
 
 } // namespace julia

@@ -24,10 +24,10 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& functionName,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
 
 /**
  * Print the input processing for an Armadillo type.
@@ -36,9 +36,9 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& functionName,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
 
 /**
  * Print the input processing for a serializable type.
@@ -47,10 +47,10 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& functionName,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
 
 /**
  * Print the input processing (basically calling params.Get<>()) for a
@@ -60,8 +60,8 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& functionName,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
 
 /**
  * Print the input processing (basically calling params.Get<>()) for a type.
@@ -72,8 +72,7 @@ void PrintInputProcessing(util::ParamData& d,
                           void* /* output */)
 {
   // Call out to the right overload.
-  PrintInputProcessing<typename std::remove_pointer<T>::type>(d,
-      *((std::string*) input));
+  PrintInputProcessing<std::remove_pointer_t<T>>(d, *((std::string*) input));
 }
 
 } // namespace julia

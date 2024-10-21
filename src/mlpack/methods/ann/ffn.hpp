@@ -486,9 +486,8 @@ class FFN
    * @param samples Number of datapoints in the dataset.
    */
   template<typename OptimizerType>
-  typename std::enable_if<
-      ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void
-  >::type
+  std::enable_if_t<
+      ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void>
   WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
 
   /**
@@ -500,9 +499,8 @@ class FFN
    * @param samples Number of datapoints in the dataset.
    */
   template<typename OptimizerType>
-  typename std::enable_if<
-      !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void
-  >::type
+  std::enable_if_t<
+      !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void>
   WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
 
   //! Instantiated output layer used to evaluate the network.

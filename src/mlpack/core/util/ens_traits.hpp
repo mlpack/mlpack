@@ -45,7 +45,7 @@ struct IsEnsOptimizer
       OptimizerType,
       FunctionType,
       MatType,
-      std::is_class<OptimizerType>::value
+      std::is_class_v<OptimizerType>
   >::value;
 };
 
@@ -55,8 +55,7 @@ struct IsEnsOptimizerInternal<OptimizerType, FunctionType, MatType, true>
 {
   // If OptimizerType is a reference type, then forming the types below will
   // fail.  So we need to strip the reference (and the const for good measure).
-  typedef typename std::remove_cv<
-      typename std::remove_reference<OptimizerType>::type>::type
+  typedef std::remove_cv_t<std::remove_reference_t<OptimizerType>>
       SafeOptimizerType;
 
   using OptimizeElemReturnForm =
@@ -85,9 +84,8 @@ template<typename CallbackType, typename... CallbackTypes>
 struct IsEnsCallbackTypes<CallbackType, CallbackTypes...>
 {
   constexpr static bool value =
-      std::is_class<typename std::remove_cv<
-          typename std::remove_reference<CallbackType>::type
-      >::type>::value && IsEnsCallbackTypes<CallbackTypes...>::value;
+      std::is_class_v<std::remove_cv_t<std::remove_reference_t<CallbackType>>>
+      && IsEnsCallbackTypes<CallbackTypes...>::value;
 };
 
 template<>

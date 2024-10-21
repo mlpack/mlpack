@@ -153,7 +153,7 @@ class DiscreteDistribution
     {
       // Adding 0.5 helps ensure that we cast the floating point to a size_t
       // correctly.
-      const size_t obs = (std::is_floating_point<ObsType>::value) ?
+      const size_t obs = (std::is_floating_point_v<ObsType>) ?
           size_t(observation(dimension) + 0.5) : size_t(observation(dimension));
 
       // Ensure that the observation is within the bounds.

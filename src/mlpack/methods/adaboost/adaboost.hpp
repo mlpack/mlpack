@@ -130,9 +130,8 @@ class AdaBoost
            const WeakLearnerInType& other,
            const size_t maxIterations = 100,
            const ElemType tolerance = 1e-6,
-           const typename std::enable_if<
-              std::is_same<WeakLearnerType, WeakLearnerInType>::value
-           >::type* = 0);
+           const std::enable_if_t<
+              std::is_same_v<WeakLearnerType, WeakLearnerInType>>* = 0);
 
   //! Get the maximum number of weak learners allowed in the model.
   size_t MaxIterations() const { return maxIterations; }
@@ -189,8 +188,8 @@ class AdaBoost
       const std::optional<size_t> maxIterations = std::nullopt,
       const std::optional<double> tolerance = std::nullopt,
       // Necessary to distinguish from other overloads.
-      const typename std::enable_if<
-          std::is_same<WeakLearnerType, WeakLearnerInType>::value>::type* = 0);
+      const std::enable_if_t<
+          std::is_same_v<WeakLearnerType, WeakLearnerInType>>* = 0);
 
   /**
    * Train AdaBoost on the given dataset, using the given parameters.  The last

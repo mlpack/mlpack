@@ -26,22 +26,22 @@ namespace cli {
  */
 template<typename T>
 std::string StringTypeParamImpl(
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0);
+    const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0);
 
 /**
  * Return a string containing the type of the parameter, for vector options.
  */
 template<typename T>
 std::string StringTypeParamImpl(
-    const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0);
+    const std::enable_if_t<util::IsStdVector<T>::value>* = 0);
 
 /**
  * Return a string containing the type of the parameter,
  */
 template<typename T>
 std::string StringTypeParamImpl(
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0);
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0);
 
 /**
  * Return a string containing the type of a parameter.  This overload is used if

@@ -111,7 +111,7 @@ DecisionTree(MatType&& data,
              WeightsType&& weights,
              const size_t minimumLeafSize = 10,
              const std::enable_if_t<arma::is_arma_type<
-                 typename std::remove_reference<WeightsType>::type>::value>*
+                 std::remove_reference_t<WeightsType>>::value>*
                   = 0);
 ```
 

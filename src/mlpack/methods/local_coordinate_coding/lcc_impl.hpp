@@ -145,7 +145,7 @@ inline void LocalCoordinateCoding<MatType>::Encode(const MatType& data,
 
     bool useCholesky = false;
     // Normalization and fitting and intercept are disabled.
-    const double tol = std::is_same<typename MatType::elem_type, float>::value ?
+    const double tol = std::is_same_v<typename MatType::elem_type, float> ?
         1e-8 : 1e-16;
     LARS<MatType> lars(useCholesky, 0.5 * lambda, 0, tol, false, false);
 

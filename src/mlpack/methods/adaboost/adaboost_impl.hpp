@@ -57,8 +57,8 @@ AdaBoost<WeakLearnerType, MatType>::AdaBoost(
     const WeakLearnerInType& other,
     const size_t maxIterations,
     const typename MatType::elem_type tol,
-    const typename std::enable_if<
-        std::is_same<WeakLearnerType, WeakLearnerInType>::value>::type*) :
+    const std::enable_if_t<
+        std::is_same_v<WeakLearnerType, WeakLearnerInType>>*) :
     maxIterations(maxIterations),
     tolerance(tol)
 {
@@ -102,8 +102,8 @@ typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::Train(
     const WeakLearnerInType& other,
     const std::optional<size_t> maxIterations,
     const std::optional<double> tolerance,
-    const typename std::enable_if<
-        std::is_same<WeakLearnerType, WeakLearnerInType>::value>::type*)
+    const std::enable_if_t<
+        std::is_same_v<WeakLearnerType, WeakLearnerInType>>*)
 {
   if (maxIterations.has_value())
     this->maxIterations = maxIterations.value();
@@ -229,7 +229,7 @@ void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
 
     // In earlier versions, `alpha` was a vector of doubles---but it might not
     // be now.
-    if (std::is_same<ElemType, double>::value)
+    if (std::is_same_v<ElemType, double>)
     {
       ar(CEREAL_NVP(alpha)); // The easy case.
     }

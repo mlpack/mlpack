@@ -26,19 +26,19 @@ namespace julia {
 template<typename T>
 std::string GetPrintableType(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<!util::IsStdVector<T>::value>*,
+    const std::enable_if_t<!data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
-  if (std::is_same<T, bool>::value)
+  if (std::is_same_v<T, bool>)
     return "Bool";
-  else if (std::is_same<T, int>::value)
+  else if (std::is_same_v<T, int>)
     return "Int";
-  else if (std::is_same<T, double>::value)
+  else if (std::is_same_v<T, double>)
     return "Float64";
-  else if (std::is_same<T, std::string>::value)
+  else if (std::is_same_v<T, std::string>)
     return "String";
   else
     throw std::invalid_argument("unknown parameter type " + data.cppType);
@@ -50,11 +50,11 @@ std::string GetPrintableType(
 template<typename T>
 std::string GetPrintableType(
     util::ParamData& data,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type*)
+    const std::enable_if_t<util::IsStdVector<T>::value>*)
 {
-  if (std::is_same<T, std::vector<int>>::value)
+  if (std::is_same_v<T, std::vector<int>>)
     return "Array{Int, 1}";
-  else if (std::is_same<T, std::vector<std::string>>::value)
+  else if (std::is_same_v<T, std::vector<std::string>>)
     return "Array{String, 1}";
   else
     throw std::invalid_argument("unknown vector type " + data.cppType);
@@ -66,19 +66,19 @@ std::string GetPrintableType(
 template<typename T>
 std::string GetPrintableType(
     util::ParamData& data,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
+    const std::enable_if_t<arma::is_arma_type<T>::value>*)
 {
-  if (std::is_same<T, arma::mat>::value)
+  if (std::is_same_v<T, arma::mat>)
     return "Float64 matrix-like";
-  else if (std::is_same<T, arma::Mat<size_t>>::value)
+  else if (std::is_same_v<T, arma::Mat<size_t>>)
     return "Int matrix-like";
-  else if (std::is_same<T, arma::rowvec>::value)
+  else if (std::is_same_v<T, arma::rowvec>)
     return "Float64 vector-like";
-  else if (std::is_same<T, arma::Row<size_t>>::value)
+  else if (std::is_same_v<T, arma::Row<size_t>>)
     return "Int vector-like";
-  else if (std::is_same<T, arma::vec>::value)
+  else if (std::is_same_v<T, arma::vec>)
     return "Float64 vector-like";
-  else if (std::is_same<T, arma::Col<size_t>>::value)
+  else if (std::is_same_v<T, arma::Col<size_t>>)
     return "Int vector-like";
   else
     throw std::invalid_argument("unknown Armadillo type " + data.cppType);
@@ -90,8 +90,8 @@ std::string GetPrintableType(
 template<typename T>
 std::string GetPrintableType(
     util::ParamData& /* data */,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   return "Tuple{Array{Bool, 1}, Array{Float64, 2}}";
 }
@@ -102,8 +102,8 @@ std::string GetPrintableType(
 template<typename T>
 std::string GetPrintableType(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type*)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<data::HasSerialize<T>::value>*)
 {
   std::string type = util::StripType(data.cppType);
   if (type == "mlpackModel")
