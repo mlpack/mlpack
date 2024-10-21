@@ -96,8 +96,8 @@ std::string GetPrintableParam(
   const arma::mat& matrix = std::get<1>(tuple);
 
   std::ostringstream oss;
-  oss << matrix.n_rows << "x" << matrix.n_cols << " matrix with dimension type "
-      << "information";
+  oss << matrix.n_rows << "x" << matrix.n_cols
+      << " matrix with dimension type information";
   return oss.str();
 }
 
