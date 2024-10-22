@@ -198,7 +198,9 @@ template<typename BoundType,
          typename MatType = arma::mat>
 using VPTreeSplit = VantagePointSplit<BoundType, MatType, 100>;
 
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using VPTree = BinarySpaceTree<DistanceType,
                                StatisticType,
                                MatType,

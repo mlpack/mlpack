@@ -89,7 +89,6 @@ SelectVantagePoint(const DistanceType& distance, const MatType& data,
       mu = arma::median(distances);
     }
   }
-  assert(bestSpread > 0);
 }
 
 } // namespace mlpack
