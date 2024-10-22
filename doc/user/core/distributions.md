@@ -849,7 +849,7 @@ regression model's prediction on `x`.
 
 This class is meant to be used with mlpack's
 [HMM](/src/mlpack/methods/hmm/hmm.hpp) class for the task of
-[HMM regression (pdf)](https://conservancy.umn.edu/bitstream/handle/11299/2532/1195.pdf).
+[HMM regression (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=93a56eb64e77ac83404fddfd0036e95a742fcee6).
 
 ### Constructors
 
