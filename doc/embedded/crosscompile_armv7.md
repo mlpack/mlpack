@@ -115,7 +115,7 @@ cmake \
     -DBOARD_NAME="RPI2" \
     -DCMAKE_CROSSCOMPILE=ON \
     -DCMAKE_TOOLCHAIN_FILE=../board/crosscompile-toolchain.cmake \
-    -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2023.08-1/bin/arm-buildroot-linux-gnueabihf- \
+    -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf- \
     -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot \
     ../
 ```
