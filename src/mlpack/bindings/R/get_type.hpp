@@ -24,11 +24,11 @@ namespace r {
 template<typename T>
 inline std::string GetType(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   return "unknown";
 }
@@ -36,11 +36,11 @@ inline std::string GetType(
 template<>
 inline std::string GetType<int>(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<int>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<int>::value>::type*,
-    const typename std::enable_if<!arma::is_arma_type<int>::value>::type*,
-    const typename std::enable_if<!std::is_same<int,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!util::IsStdVector<int>::value>*,
+    const std::enable_if_t<!data::HasSerialize<int>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<int>::value>*,
+    const std::enable_if_t<!std::is_same_v<int,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   return "Int";
 }
@@ -48,11 +48,11 @@ inline std::string GetType<int>(
 template<>
 inline std::string GetType<float>(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<float>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<float>::value>::type*,
-    const typename std::enable_if<!arma::is_arma_type<float>::value>::type*,
-    const typename std::enable_if<!std::is_same<float,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!util::IsStdVector<float>::value>*,
+    const std::enable_if_t<!data::HasSerialize<float>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<float>::value>*,
+    const std::enable_if_t<!std::is_same_v<float,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   return "Float";
 }
@@ -60,11 +60,11 @@ inline std::string GetType<float>(
 template<>
 inline std::string GetType<double>(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<double>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<double>::value>::type*,
-    const typename std::enable_if<!arma::is_arma_type<double>::value>::type*,
-    const typename std::enable_if<!std::is_same<double,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!util::IsStdVector<double>::value>*,
+    const std::enable_if_t<!data::HasSerialize<double>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<double>::value>*,
+    const std::enable_if_t<!std::is_same_v<double,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   return "Double";
 }
@@ -72,14 +72,11 @@ inline std::string GetType<double>(
 template<>
 inline std::string GetType<std::string>(
     util::ParamData& /* d */,
-    const typename std::enable_if<
-        !util::IsStdVector<std::string>::value>::type*,
-    const typename std::enable_if<
-        !data::HasSerialize<std::string>::value>::type*,
-    const typename std::enable_if<
-        !arma::is_arma_type<std::string>::value>::type*,
-    const typename std::enable_if<!std::is_same<std::string,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!util::IsStdVector<std::string>::value>*,
+    const std::enable_if_t<!data::HasSerialize<std::string>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<std::string>::value>*,
+    const std::enable_if_t<!std::is_same_v<std::string,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   return "String";
 }
@@ -87,11 +84,11 @@ inline std::string GetType<std::string>(
 template<>
 inline std::string GetType<bool>(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<bool>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<bool>::value>::type*,
-    const typename std::enable_if<!arma::is_arma_type<bool>::value>::type*,
-    const typename std::enable_if<!std::is_same<bool,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!util::IsStdVector<bool>::value>*,
+    const std::enable_if_t<!data::HasSerialize<bool>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<bool>::value>*,
+    const std::enable_if_t<!std::is_same_v<bool,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   return "Bool";
 }
@@ -99,9 +96,9 @@ inline std::string GetType<bool>(
 template<typename T>
 inline std::string GetType(
     util::ParamData& d,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<util::IsStdVector<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   return "Vec" + GetType<typename T::value_type>(d);
 }
@@ -109,12 +106,12 @@ inline std::string GetType(
 template<typename T>
 inline std::string GetType(
     util::ParamData& /* d */,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   std::string type = "";
-  if (std::is_same<typename T::elem_type, double>::value)
+  if (std::is_same_v<typename T::elem_type, double>)
   {
     if (T::is_row)
       type = "Row";
@@ -123,7 +120,7 @@ inline std::string GetType(
     else
       type = "Mat";
   }
-  else if (std::is_same<typename T::elem_type, size_t>::value)
+  else if (std::is_same_v<typename T::elem_type, size_t>)
   {
     if (T::is_row)
       type = "URow";
@@ -139,8 +136,8 @@ inline std::string GetType(
 template<typename T>
 inline std::string GetType(
     util::ParamData& /* d */,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   return "MatWithInfo";
 }
@@ -148,8 +145,8 @@ inline std::string GetType(
 template<typename T>
 inline std::string GetType(
     util::ParamData& d,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   return d.cppType;
 }
@@ -170,7 +167,7 @@ void GetType(util::ParamData& d,
              void* output)
 {
   *((std::string*) output) =
-      GetType<typename std::remove_pointer<T>::type>(d);
+      GetType<std::remove_pointer_t<T>>(d);
 }
 
 } // namespace r

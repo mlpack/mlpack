@@ -24,7 +24,7 @@ namespace data {
 template<typename eT>
 inline eT SafeNegInf(
     const bool neg,
-    const typename std::enable_if<std::is_unsigned<eT>::value>::type* = 0)
+    const std::enable_if_t<std::is_unsigned_v<eT>>* = 0)
 {
   // For an unsigned type, we cannot return negative infinity, so instead return
   // 0.
@@ -34,7 +34,7 @@ inline eT SafeNegInf(
 template<typename eT>
 inline eT SafeNegInf(
     const bool neg,
-    const typename std::enable_if<!std::is_unsigned<eT>::value>::type* = 0)
+    const std::enable_if_t<!std::is_unsigned_v<eT>>* = 0)
 {
   return neg ? -(std::numeric_limits<eT>::infinity()) :
       std::numeric_limits<eT>::infinity();
@@ -88,13 +88,13 @@ bool LoadCSV::ConvertToken(eT& val,
   // Convert the token into correct type.
   // If we have a eT as unsigned int,
   // it will convert all negative numbers to 0.
-  if (std::is_floating_point<eT>::value)
+  if (std::is_floating_point_v<eT>)
   {
     val = eT(std::strtod(str, &endptr));
   }
-  else if (std::is_integral<eT>::value)
+  else if (std::is_integral_v<eT>)
   {
-    if (std::is_signed<eT>::value)
+    if (std::is_signed_v<eT>)
       val = eT(std::strtoll(str, &endptr, 10));
     else
     {

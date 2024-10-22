@@ -108,9 +108,9 @@ class BestBinaryNumericSplit
    */
   template<bool UseWeights, typename VecType, typename ResponsesType,
            typename WeightVecType>
-  static typename std::enable_if<
+  static std::enable_if_t<
       !HasOptimizedBinarySplitForms<FitnessFunction, UseWeights>::value,
-      double>::type
+      double>
   SplitIfBetter(
       const double bestGain,
       const VecType& data,
@@ -145,9 +145,9 @@ class BestBinaryNumericSplit
    */
   template<bool UseWeights, typename VecType, typename ResponsesType,
           typename WeightVecType>
-  static typename std::enable_if<
+  static std::enable_if_t<
       HasOptimizedBinarySplitForms<FitnessFunction, UseWeights>::value,
-      double>::type
+      double>
   SplitIfBetter(
       const double bestGain,
       const VecType& data,

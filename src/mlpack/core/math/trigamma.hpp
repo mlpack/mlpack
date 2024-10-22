@@ -30,7 +30,7 @@ namespace mlpack {
  * @param x Input for which we have to calculate trigamma.
  */
 template<std::size_t N, typename T>
-typename std::enable_if<N == 6, T>::type
+std::enable_if_t<N == 6, T>
 EvaluatePolyPrec(const T(&a)[N], const T& x)
 {
   T x2 = x * x;
@@ -60,7 +60,7 @@ EvaluatePolyPrec(const T(&a)[N], const T& x)
  * @param x Input for which we have to calculate trigamma.
  */
 template<std::size_t N, typename T>
-typename std::enable_if<N == 7, T>::type
+std::enable_if_t<N == 7, T>
 EvaluatePolyPrec(const T(&a)[N], const T& x)
 {
   T x2 = x * x;

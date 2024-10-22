@@ -44,7 +44,7 @@ Estimate(const arma::mat& observations,
          arma::vec& weights,
          const bool useInitialModel)
 {
-  if (std::is_same<Distribution, DiagonalGaussianDistribution<>>::value)
+  if (std::is_same_v<Distribution, DiagonalGaussianDistribution<>>)
   {
     #ifdef _WIN32
       Log::Warn << "Cannot use arma::gmm_diag on Visual Studio due to OpenMP"
@@ -55,8 +55,8 @@ Estimate(const arma::mat& observations,
       return;
     #endif
   }
-  else if (std::is_same<CovarianceConstraintPolicy, DiagonalConstraint>::value
-      && std::is_same<Distribution, GaussianDistribution<>>::value)
+  else if (std::is_same_v<CovarianceConstraintPolicy, DiagonalConstraint>
+      && std::is_same_v<Distribution, GaussianDistribution<>>)
   {
     // EMFit::Estimate() using DiagonalConstraint with GaussianDistribution
     // makes use of slower implementation.
@@ -129,7 +129,7 @@ Estimate(const arma::mat& observations,
 
       // If the distribution is DiagonalGaussianDistribution, calculate the
       // covariance only with diagonal components.
-      if (std::is_same<Distribution, DiagonalGaussianDistribution<>>::value)
+      if (std::is_same_v<Distribution, DiagonalGaussianDistribution<>>)
       {
         arma::vec covariance = sum((tmp % tmp) %
             (ones<arma::vec>(observations.n_rows) *
@@ -240,7 +240,7 @@ Estimate(const arma::mat& observations,
 
       // If the distribution is DiagonalGaussianDistribution, calculate the
       // covariance only with diagonal components.
-      if (std::is_same<Distribution, DiagonalGaussianDistribution<>>::value)
+      if (std::is_same_v<Distribution, DiagonalGaussianDistribution<>>)
       {
         arma::vec cov = sum((tmp % tmp) %
             (ones<arma::vec>(observations.n_rows) *
@@ -292,14 +292,14 @@ InitialClustering(const arma::mat& observations,
   // Check if the type of Distribution is DiagonalGaussianDistribution.  If so,
   // we can get faster performance by using diagonal elements when calculating
   // the covariance.
-  const bool isDiagGaussDist = std::is_same<Distribution,
-      DiagonalGaussianDistribution<>>::value;
+  const bool isDiagGaussDist = std::is_same_v<Distribution,
+      DiagonalGaussianDistribution<>>;
 
   std::vector<arma::vec> means(dists.size());
 
   // Conditional covariance instantiation.
-  std::vector<typename std::conditional<isDiagGaussDist,
-      arma::vec, arma::mat>::type> covs(dists.size());
+  std::vector<std::conditional_t<isDiagGaussDist, arma::vec, arma::mat>>
+      covs(dists.size());
 
   // Now calculate the means, covariances, and weights.
   weights.zeros();
@@ -437,7 +437,7 @@ ArmadilloGMMWrapper(const arma::mat& observations,
   // Armadillo's implementation.  If mlpack ever changes k-means defaults to use
   // something that is reliably quicker than the Lloyd iteration k-means update,
   // then this code maybe should be revisited.
-  if (!std::is_same<InitialClusteringType, KMeans<>>::value || useInitialModel)
+  if (!std::is_same_v<InitialClusteringType, KMeans<>> || useInitialModel)
   {
     // Use clusterer to get initial values.
     if (!useInitialModel)

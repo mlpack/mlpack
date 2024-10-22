@@ -53,7 +53,7 @@ template<typename DistanceType = EuclideanDistance,
 class RectangleTree
 {
   // The distance metric *must* be the euclidean distance.
-  static_assert(std::is_same<DistanceType, EuclideanDistance>::value,
+  static_assert(std::is_same_v<DistanceType, EuclideanDistance>,
       "RectangleTree: DistanceType must be EuclideanDistance.");
 
  public:

@@ -82,7 +82,7 @@ void PrintDoc(util::ParamData& d,
     }
   }
 
-  oss << " (" << GetRType<typename std::remove_pointer<T>::type>(d) << ").";
+  oss << " (" << GetRType<std::remove_pointer_t<T>>(d) << ").";
 
   if (out)
     oss << "}";

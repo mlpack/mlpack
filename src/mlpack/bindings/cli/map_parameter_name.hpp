@@ -27,10 +27,10 @@ namespace cli {
 template<typename T>
 std::string MapParameterName(
     const std::string& identifier,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>* = 0)
 {
   return identifier;
 }
@@ -43,11 +43,10 @@ std::string MapParameterName(
 template<typename T>
 std::string MapParameterName(
     const std::string& identifier,
-    const typename std::enable_if<
+    const std::enable_if_t<
         arma::is_arma_type<T>::value ||
-        std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
-                                   arma::mat>>::value ||
-        data::HasSerialize<T>::value>::type* /* junk */ = 0)
+        std::is_same_v<T, std::tuple<mlpack::data::DatasetInfo, arma::mat>> ||
+        data::HasSerialize<T>::value>* /* junk */ = 0)
 {
   return identifier + "_file";
 }
@@ -67,7 +66,7 @@ void MapParameterName(util::ParamData& d,
   // Store the mapped name in the output pointer, which is actually a string
   // pointer.
   *((std::string*) output) =
-      MapParameterName<typename std::remove_pointer<T>::type>(d.name);
+      MapParameterName<std::remove_pointer_t<T>>(d.name);
 }
 
 } // namespace cli

@@ -92,7 +92,7 @@ struct GetFillType
 // If the matrix type is a Bandicoot type, use Bandicoot fill objects instead.
 template<
     typename MatType,
-    typename = typename std::enable_if<is_coot_type<MatType>::value>::type*>
+    typename = std::enable_if_t<is_coot_type<MatType>::value>*>
 struct GetFillType
 {
   static constexpr const decltype(coot::fill::none)& none   = coot::fill::none;
