@@ -32,7 +32,7 @@ additional functionality specific to vantage point trees.
  * [Vantage point tree on Wikipedia](https://en.wikipedia.org/wiki/Vantage-point_tree)
  * [`BinarySpaceTree`](binary_space_tree.md)
  * [Binary space partitioning on Wikipedia](https://dl.acm.org/doi/pdf/10.1145/361002.361007)
- * [Data structures and algorithms for nearest neighbor search in general metric spaces (pdf)](https://scholar.archive.org/work/og2s6vjmcngfbkmesu3dbsazpq/access/wayback/https://dl.acm.org/doi/pdf/10.5555/313559.313789)
+ * [Data structures and algorithms for nearest neighbor search in general metric spaces (pdf)](https://dl.acm.org/doi/pdf/10.5555/313559.313789)
  * [Satisfying General Proximity/Similarity Queries with Metric Trees (pdf)](https://www.mlpack.org/papers/uhlmann91.pdf)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 
