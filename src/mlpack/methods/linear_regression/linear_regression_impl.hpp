@@ -51,7 +51,7 @@ inline double LinearRegression<ModelMatType>::Train(
     const arma::mat& predictors,
     const arma::rowvec& responses,
     const T intercept,
-    const typename std::enable_if<std::is_same<T, bool>::value>::type*)
+    const std::enable_if_t<std::is_same_v<T, bool>>*)
 {
   return Train(predictors, responses, arma::rowvec(), this->lambda, intercept);
 }
@@ -63,7 +63,7 @@ inline double LinearRegression<ModelMatType>::Train(
     const arma::rowvec& responses,
     const arma::rowvec& weights,
     const T intercept,
-    const typename std::enable_if<std::is_same<T, bool>::value>::type*)
+    const std::enable_if_t<std::is_same_v<T, bool>>*)
 {
   return Train(predictors, responses, weights, this->lambda, intercept);
 }

@@ -58,7 +58,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
+std::enable_if_t<std::is_same_v<Policy, BinaryRBM>, void>
 RBM<InitializationRuleType, DataType, PolicyType>::Reset()
 {
   size_t shape = (visibleSize * hiddenSize) + visibleSize + hiddenSize;
@@ -108,7 +108,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, double>::type
+std::enable_if_t<std::is_same_v<Policy, BinaryRBM>, double>
 RBM<InitializationRuleType, DataType, PolicyType>::FreeEnergy(
     const arma::Mat<ElemType>& input)
 {
@@ -124,7 +124,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
+std::enable_if_t<std::is_same_v<Policy, BinaryRBM>, void>
 RBM<InitializationRuleType, DataType, PolicyType>::Phase(
     const InputType& input,
     DataType& gradient)
@@ -161,7 +161,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
+std::enable_if_t<std::is_same_v<Policy, BinaryRBM>, void>
 RBM<InitializationRuleType, DataType, PolicyType>::SampleHidden(
     const arma::Mat<ElemType>& input,
     arma::Mat<ElemType>& output)
@@ -180,7 +180,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
+std::enable_if_t<std::is_same_v<Policy, BinaryRBM>, void>
 RBM<InitializationRuleType, DataType, PolicyType>::SampleVisible(
     arma::Mat<ElemType>& input,
     arma::Mat<ElemType>& output)
@@ -199,7 +199,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
+std::enable_if_t<std::is_same_v<Policy, BinaryRBM>, void>
 RBM<InitializationRuleType, DataType, PolicyType>::VisibleMean(
     InputType& input,
     DataType& output)
@@ -215,7 +215,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
+std::enable_if_t<std::is_same_v<Policy, BinaryRBM>, void>
 RBM<InitializationRuleType, DataType, PolicyType>::HiddenMean(
     const InputType& input,
     DataType& output)

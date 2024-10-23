@@ -116,8 +116,8 @@ TEMPLATE_TEST_CASE("LMNNInitialPointTest", "[LMNNTest]", float, double)
   LMNNFunction<arma::Mat<ElemType>> lmnnfn(dataset, labels, 1, 0.5, 1);
 
   // Verify the initial point is the identity matrix.
-  const double eps = std::is_same<ElemType, float>::value ? 1e-4 : 1e-7;
-  const double margin = std::is_same<ElemType, float>::value ? 1e-4 : 1e-5;
+  const double eps = std::is_same_v<ElemType, float> ? 1e-4 : 1e-7;
+  const double margin = std::is_same_v<ElemType, float> ? 1e-4 : 1e-5;
   arma::Mat<ElemType> initialPoint = lmnnfn.GetInitialPoint();
   for (int row = 0; row < 5; row++)
   {
@@ -148,7 +148,7 @@ TEMPLATE_TEST_CASE("LMNNInitialEvaluationTest", "[LMNNTest]", float, double)
   ElemType objective = lmnnfn.Evaluate(arma::eye<arma::Mat<ElemType>>(2, 2));
 
   // Result calculated by hand.
-  const double eps = std::is_same<ElemType, float>::value ? 1e-4 : 1e-7;
+  const double eps = std::is_same_v<ElemType, float> ? 1e-4 : 1e-7;
   REQUIRE(objective == Approx(9.456).epsilon(eps));
 }
 
@@ -171,8 +171,8 @@ TEMPLATE_TEST_CASE("LMNNInitialGradientTest", "[LMNNTest]", float, double)
   lmnnfn.Gradient(coordinates, gradient);
 
   // Result calculated by hand.
-  const double eps = std::is_same<ElemType, float>::value ? 1e-4 : 1e-7;
-  const double margin = std::is_same<ElemType, float>::value ? 1e-4 : 1e-5;
+  const double eps = std::is_same_v<ElemType, float> ? 1e-4 : 1e-7;
+  const double margin = std::is_same_v<ElemType, float> ? 1e-4 : 1e-5;
   REQUIRE(gradient(0, 0) == Approx(-0.288).epsilon(eps));
   REQUIRE(gradient(1, 0) == Approx(0.0).margin(margin));
   REQUIRE(gradient(0, 1) == Approx(0.0).margin(margin));
@@ -198,8 +198,8 @@ TEMPLATE_TEST_CASE("LMNNInitialEvaluateWithGradientTest", "[LMNNTest]", float,
   arma::Mat<ElemType> coordinates = arma::eye<arma::Mat<ElemType>>(2, 2);
   ElemType objective = lmnnfn.EvaluateWithGradient(coordinates, gradient);
 
-  const double eps = std::is_same<ElemType, float>::value ? 1e-4 : 1e-7;
-  const double margin = std::is_same<ElemType, float>::value ? 1e-4 : 1e-5;
+  const double eps = std::is_same_v<ElemType, float> ? 1e-4 : 1e-7;
+  const double margin = std::is_same_v<ElemType, float> ? 1e-4 : 1e-5;
 
   // Result calculated by hand.
   REQUIRE(objective == Approx(9.456).epsilon(eps));
@@ -225,7 +225,7 @@ TEMPLATE_TEST_CASE("LMNNSeparableObjectiveTest", "[LMNNTest]", float, double)
   LMNNFunction<arma::Mat<ElemType>> lmnnfn(dataset, labels, 1, 0.6, 1);
 
   // Result calculated by hand.
-  const double eps = std::is_same<ElemType, float>::value ? 1e-4 : 1e-7;
+  const double eps = std::is_same_v<ElemType, float> ? 1e-4 : 1e-7;
   arma::Mat<ElemType> coordinates = arma::eye<arma::Mat<ElemType>>(2, 2);
   REQUIRE(lmnnfn.Evaluate(coordinates, 0, 1) == Approx(1.576).epsilon(eps));
   REQUIRE(lmnnfn.Evaluate(coordinates, 1, 1) == Approx(1.576).epsilon(eps));
@@ -254,8 +254,8 @@ TEMPLATE_TEST_CASE("LMNNSeparableGradientTest", "[LMNNTest]", float, double)
 
   lmnnfn.Gradient(coordinates, 0, gradient, 1);
 
-  const double eps = std::is_same<ElemType, float>::value ? 1e-4 : 1e-7;
-  const double margin = std::is_same<ElemType, float>::value ? 1e-4 : 1e-5;
+  const double eps = std::is_same_v<ElemType, float> ? 1e-4 : 1e-7;
+  const double margin = std::is_same_v<ElemType, float> ? 1e-4 : 1e-5;
 
   REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(eps));
   REQUIRE(gradient(0, 1) == Approx(0.0).margin(margin));
@@ -318,8 +318,8 @@ TEMPLATE_TEST_CASE("LMNNSeparableEvaluateWithGradientTest", "[LMNNTest]", float,
 
   ElemType objective = lmnnfn.EvaluateWithGradient(coordinates, 0, gradient, 1);
 
-  const double eps = std::is_same<ElemType, float>::value ? 1e-4 : 1e-7;
-  const double margin = std::is_same<ElemType, float>::value ? 1e-4 : 1e-5;
+  const double eps = std::is_same_v<ElemType, float> ? 1e-4 : 1e-7;
+  const double margin = std::is_same_v<ElemType, float> ? 1e-4 : 1e-5;
 
   REQUIRE(objective == Approx(1.576).epsilon(eps));
 

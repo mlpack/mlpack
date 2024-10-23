@@ -97,12 +97,11 @@ class LMNN
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    */
   template<typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
+           typename = std::enable_if_t<IsEnsCallbackTypes<
                CallbackTypes...
-           >::value>::type,
-           typename = typename std::enable_if<
-               !FirstElementIsArma<CallbackTypes...>::value
-           >::type>
+           >::value>,
+           typename = std::enable_if_t<
+               !FirstElementIsArma<CallbackTypes...>::value>>
   [[deprecated("Will be removed in mlpack 5.0.0.  Use the version that takes a "
                "dataset as a parameter.")]]
   void LearnDistance(arma::mat& outputMatrix, CallbackTypes&&... callbacks);
@@ -122,14 +121,14 @@ class LMNN
   template<typename MatType,
            typename LabelsType,
            typename... CallbackTypes,
-           typename = typename std::enable_if<!IsEnsOptimizer<
+           typename = std::enable_if_t<!IsEnsOptimizer<
                typename First<CallbackTypes...>::type,
                LMNNFunction<MatType, LabelsType, DistanceType>,
                MatType
-           >::value>::type,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
+           >::value>,
+           typename = std::enable_if_t<IsEnsCallbackTypes<
                CallbackTypes...
-           >::value>::type>
+           >::value>>
   void LearnDistance(const MatType& dataset,
                      const LabelsType& labels,
                      MatType& outputMatrix,
@@ -152,11 +151,11 @@ class LMNN
            typename LabelsType,
            typename OptimizerType,
            typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsOptimizer<
+           typename = std::enable_if_t<IsEnsOptimizer<
                OptimizerType,
                LMNNFunction<MatType, LabelsType, DistanceType>,
                MatType
-           >::value>::type>
+           >::value>>
   void LearnDistance(const MatType& dataset,
                      const LabelsType& labels,
                      MatType& outputMatrix,

@@ -37,8 +37,8 @@ DecisionTree<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector)
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -74,8 +74,8 @@ DecisionTree<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector)
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -112,11 +112,11 @@ DecisionTree<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
     const std::enable_if_t<arma::is_arma_type<
-        typename std::remove_reference<WeightsType>::type>::value>*)
+        std::remove_reference_t<WeightsType>>::value>*)
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -153,11 +153,11 @@ DecisionTree<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
     const std::enable_if_t<arma::is_arma_type<
-        typename std::remove_reference<WeightsType>::type>::value>*)
+        std::remove_reference_t<WeightsType>>::value>*)
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -193,13 +193,13 @@ DecisionTree<FitnessFunction,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     const std::enable_if_t<arma::is_arma_type<
-        typename std::remove_reference<WeightsType>::type>::value>*):
+        std::remove_reference_t<WeightsType>>::value>*):
         NumericAuxiliarySplitInfo(other),
         CategoricalAuxiliarySplitInfo(other)
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -233,14 +233,13 @@ DecisionTree<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
     const std::enable_if_t<arma::is_arma_type<
-        typename std::remove_reference<
-        WeightsType>::type>::value>*):
+        std::remove_reference_t<WeightsType>>::value>*):
         NumericAuxiliarySplitInfo(other),
         CategoricalAuxiliarySplitInfo(other)  // other info does need to copy
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -458,8 +457,8 @@ double DecisionTree<FitnessFunction,
   // Sanity check on data.
   util::CheckSameSizes(data, labels, "DecisionTree::Train()");
 
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -498,8 +497,8 @@ double DecisionTree<FitnessFunction,
   // Sanity check on data.
   util::CheckSameSizes(data, labels, "DecisionTree::Train()");
 
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -537,16 +536,14 @@ double DecisionTree<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
     const std::enable_if_t<
-        arma::is_arma_type<
-        typename std::remove_reference<
-        WeightsType>::type>::value>*)
+        arma::is_arma_type<std::remove_reference_t<WeightsType>>::value>*)
 {
   // Sanity check on data.
   util::CheckSameSizes(data, labels, "DecisionTree::Train()");
 
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -583,16 +580,14 @@ double DecisionTree<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
     const std::enable_if_t<
-        arma::is_arma_type<
-        typename std::remove_reference<
-        WeightsType>::type>::value>*)
+        arma::is_arma_type<std::remove_reference_t<WeightsType>>::value>*)
 {
   // Sanity check on data.
   util::CheckSameSizes(data, labels, "DecisionTree::Train()");
 
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));

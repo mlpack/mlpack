@@ -23,11 +23,11 @@ namespace cli {
 template<typename T>
 std::string GetPrintableType(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
 
 /**
  * Return a string representing the command-line type of a vector.
@@ -35,7 +35,7 @@ std::string GetPrintableType(
 template<typename T>
 std::string GetPrintableType(
     util::ParamData& data,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0);
+    const std::enable_if_t<util::IsStdVector<T>::value>* = 0);
 
 /**
  * Return a string representing the command-line type of a matrix option.
@@ -43,7 +43,7 @@ std::string GetPrintableType(
 template<typename T>
 std::string GetPrintableType(
     util::ParamData& data,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0);
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0);
 
 /**
  * Return a string representing the command-line type of a matrix tuple option.
@@ -51,8 +51,8 @@ std::string GetPrintableType(
 template<typename T>
 std::string GetPrintableType(
     util::ParamData& data,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
 
 /**
  * Return a string representing the command-line type of a model.
@@ -60,8 +60,8 @@ std::string GetPrintableType(
 template<typename T>
 std::string GetPrintableType(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0);
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0);
 
 /**
  * Print the command-line type of an option into a string.
@@ -71,8 +71,7 @@ void GetPrintableType(util::ParamData& data,
                        const void* /* input */,
                        void* output)
 {
-  *((std::string*) output) =
-      GetPrintableType<typename std::remove_pointer<T>::type>(data);
+  *((std::string*) output) = GetPrintableType<std::remove_pointer_t<T>>(data);
 }
 
 } // namespace cli

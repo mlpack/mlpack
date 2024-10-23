@@ -52,7 +52,7 @@ struct HasSerialize
   template<typename U, typename V, typename W> struct check;
   template<typename U> static yes& chk( // This matches classes.
       check<U,
-            typename std::enable_if_t<std::is_class<U>::value>*,
+            typename std::enable_if_t<std::is_class_v<U>>*,
             typename std::enable_if_t<HasSerializeFunction<U>::value>*>*);
   template<typename  > static no&  chk(...); // This matches non-classes.
 

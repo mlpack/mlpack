@@ -24,16 +24,15 @@ namespace cli {
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
-    const typename std::enable_if<!std::is_same<T,
-        std::string>::value>::type*,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<!util::IsStdVector<T>::value>*,
+    const std::enable_if_t<!data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!std::is_same_v<T, std::string>>*,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>*)
 {
   std::ostringstream oss;
-  if (!std::is_same<T, bool>::value)
+  if (!std::is_same_v<T, bool>)
     oss << std::any_cast<T>(data.value);
 
   return oss.str();
@@ -45,13 +44,13 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type*)
+    const std::enable_if_t<util::IsStdVector<T>::value>*)
 {
   // Print each element in an array delimited by square brackets.
   std::ostringstream oss;
   const T& vector = std::any_cast<T>(data.value);
   oss << "[";
-  if (std::is_same<T, std::vector<std::string>>::value)
+  if (std::is_same_v<T, std::vector<std::string>>)
   {
     if (vector.size() > 0)
     {
@@ -89,7 +88,7 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<std::is_same<T, std::string>::value>::type*)
+    const std::enable_if_t<std::is_same_v<T, std::string>>*)
 {
   const std::string& s = *std::any_cast<std::string>(&data.value);
   return "'" + s + "'";
@@ -101,10 +100,10 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& /* data */,
-    const typename std::enable_if<
+    const std::enable_if_t<
         arma::is_arma_type<T>::value ||
-        std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
-                                   arma::mat>>::value>::type* /* junk */)
+        std::is_same_v<T, std::tuple<mlpack::data::DatasetInfo,
+                                     arma::mat>>>* /* junk */)
 {
   // The filename will always be empty.
   return "''";
@@ -116,8 +115,8 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& /* data */,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type*)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<data::HasSerialize<T>::value>*)
 {
   return "''";
 }

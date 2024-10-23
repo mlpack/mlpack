@@ -316,8 +316,8 @@ RangeType<ElemType> HollowBallBound<TDistanceType, ElemType>::RangeDistance(
     typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
   if (radii.Hi() < 0)
-    return Range(std::numeric_limits<ElemType>::max(),
-                       std::numeric_limits<ElemType>::max());
+    return RangeType<ElemType>(std::numeric_limits<ElemType>::max(),
+                               std::numeric_limits<ElemType>::max());
   else
   {
     RangeType<ElemType> range;
@@ -461,7 +461,7 @@ void HollowBallBound<TDistanceType, ElemType>::serialize(
   ar(CEREAL_NVP(radii));
   ar(CEREAL_NVP(center));
   ar(CEREAL_NVP(hollowCenter));
-  ar(CEREAL_POINTER(distance));
+
   if (cereal::is_loading<Archive>())
   {
     // If we're loading, delete the local distance since we'll have a new one.
@@ -470,6 +470,8 @@ void HollowBallBound<TDistanceType, ElemType>::serialize(
 
     ownsDistance = true;
   }
+
+  ar(CEREAL_POINTER(distance));
 }
 
 } // namespace mlpack

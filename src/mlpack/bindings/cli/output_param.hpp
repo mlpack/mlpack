@@ -26,11 +26,11 @@ namespace cli {
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
 
 /**
  * Output a vector option (print to stdout).
@@ -38,7 +38,7 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0);
+    const std::enable_if_t<util::IsStdVector<T>::value>* = 0);
 
 /**
  * Output a matrix option (this saves it to the given file).
@@ -46,7 +46,7 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0);
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0);
 
 /**
  * Output a serializable class option (this saves it to the given file).
@@ -54,8 +54,8 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0);
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0);
 
 /**
  * Output a mapped dataset.
@@ -63,8 +63,8 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
 
 /**
  * Output an option.  This is the function that will be called by the IO
@@ -75,7 +75,7 @@ void OutputParam(util::ParamData& data,
                  const void* /* input */,
                  void* /* output */)
 {
-  OutputParamImpl<typename std::remove_pointer<T>::type>(data);
+  OutputParamImpl<std::remove_pointer_t<T>>(data);
 }
 
 } // namespace cli

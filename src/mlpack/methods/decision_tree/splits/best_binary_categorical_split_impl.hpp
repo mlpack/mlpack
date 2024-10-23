@@ -157,7 +157,7 @@ double BestBinaryCategoricalSplit<FitnessFunction>::SplitIfBetter(
     AuxiliarySplitInfo& aux,
     FitnessFunction& fitnessFunction)
 {
-  static_assert(std::is_same<FitnessFunction, MSEGain>::value,
+  static_assert(std::is_same_v<FitnessFunction, MSEGain>,
       "BestBinaryCategoricalSplit: regression FitnessFunction must be "
       "MSEGain.");
   const size_t n = data.n_elem;

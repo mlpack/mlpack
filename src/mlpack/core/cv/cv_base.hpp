@@ -126,7 +126,7 @@ class CVBase
    */
   template<typename... MLAlgorithmArgs,
            bool Enabled = !MIE::TakesNumClasses,
-           typename = typename std::enable_if<Enabled>::type>
+           typename = std::enable_if_t<Enabled>>
   MLAlgorithm TrainModel(const MatType& xs,
                          const PredictionsType& ys,
                          const MLAlgorithmArgs&... args);
@@ -137,7 +137,7 @@ class CVBase
    */
   template<typename... MLAlgorithmArgs,
            bool Enabled = MIE::TakesNumClasses & !MIE::TakesDatasetInfo,
-           typename = typename std::enable_if<Enabled>::type,
+           typename = std::enable_if_t<Enabled>,
            typename = void>
   MLAlgorithm TrainModel(const MatType& xs,
                          const PredictionsType& ys,
@@ -149,7 +149,7 @@ class CVBase
    */
   template<typename... MLAlgorithmArgs,
            bool Enabled = MIE::TakesNumClasses & MIE::TakesDatasetInfo,
-           typename = typename std::enable_if<Enabled>::type,
+           typename = std::enable_if_t<Enabled>,
            typename = void,
            typename = void>
   MLAlgorithm TrainModel(const MatType& xs,
@@ -162,7 +162,7 @@ class CVBase
    */
   template<typename... MLAlgorithmArgs,
            bool Enabled = !MIE::TakesNumClasses,
-           typename = typename std::enable_if<Enabled>::type>
+           typename = std::enable_if_t<Enabled>>
   MLAlgorithm TrainModel(const MatType& xs,
                          const PredictionsType& ys,
                          const WeightsType& weights,
@@ -174,7 +174,7 @@ class CVBase
    */
   template<typename... MLAlgorithmArgs,
            bool Enabled = MIE::TakesNumClasses & !MIE::TakesDatasetInfo,
-           typename = typename std::enable_if<Enabled>::type,
+           typename = std::enable_if_t<Enabled>,
            typename = void>
   MLAlgorithm TrainModel(const MatType& xs,
                          const PredictionsType& ys,
@@ -187,7 +187,7 @@ class CVBase
    */
   template<typename... MLAlgorithmArgs,
            bool Enabled = MIE::TakesNumClasses & MIE::TakesDatasetInfo,
-           typename = typename std::enable_if<Enabled>::type,
+           typename = std::enable_if_t<Enabled>,
            typename = void,
            typename = void>
   MLAlgorithm TrainModel(const MatType& xs,
@@ -206,8 +206,7 @@ class CVBase
    */
   template<bool ConstructableWithoutDatasetInfo,
            typename... MLAlgorithmArgs,
-           typename =
-               typename std::enable_if<ConstructableWithoutDatasetInfo>::type>
+           typename = std::enable_if_t<ConstructableWithoutDatasetInfo>>
   MLAlgorithm TrainModel(const MatType& xs,
                          const PredictionsType& ys,
                          const MLAlgorithmArgs&... args);
@@ -218,8 +217,7 @@ class CVBase
    */
   template<bool ConstructableWithoutDatasetInfo,
            typename... MLAlgorithmArgs,
-           typename =
-               typename std::enable_if<!ConstructableWithoutDatasetInfo>::type,
+           typename = std::enable_if_t<!ConstructableWithoutDatasetInfo>,
            typename = void>
   MLAlgorithm TrainModel(const MatType& xs,
                          const PredictionsType& ys,

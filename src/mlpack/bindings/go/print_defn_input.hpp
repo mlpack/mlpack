@@ -28,10 +28,10 @@ namespace go {
 template<typename T>
 void PrintDefnInput(
     util::ParamData& d,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   if (d.required)
   {
@@ -46,7 +46,7 @@ void PrintDefnInput(
 template<typename T>
 void PrintDefnInput(
     util::ParamData& d,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0)
 {
   // param_name *mat.Dense
   if (d.required)
@@ -62,8 +62,8 @@ void PrintDefnInput(
 template<typename T>
 void PrintDefnInput(
     util::ParamData& d,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   // param_name *DataWithInfo
   if (d.required)
@@ -79,8 +79,8 @@ void PrintDefnInput(
 template<typename T>
 void PrintDefnInput(
     util::ParamData& d,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   // Get the type names we need to use.
   std::string goStrippedType, strippedType, printedType, defaultsType;
@@ -113,7 +113,7 @@ void PrintDefnInput(util::ParamData& d,
                     const void* /* input */,
                     void* /* output */)
 {
-  PrintDefnInput<typename std::remove_pointer<T>::type>(d);
+  PrintDefnInput<std::remove_pointer_t<T>>(d);
 }
 
 } // namespace go
