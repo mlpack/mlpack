@@ -1474,8 +1474,12 @@ In a `CellBound`, each point is mapped to an ordered "address" that indicates
 its position in the bound using
 [Z-ordering](https://en.wikipedia.org/wiki/Z-order_curve) (also called Morton
 ordering).  The mathematical details of this mapping are described in
-[the UB-tree paper](https://mediatum.ub.tum.de/doc/1094370/document.pdf),
-although mlpack uses a slightly modified implementation.
+[the UB-tree paper](https://mediatum.ub.tum.de/doc/1094370/document.pdf);
+although mlpack uses a slightly modified implementation, the general idea is the
+same.
+
+The following two functions can be used to convert to and from linearized
+addresses:
 
  * `PointToAddress(addr, point)`
    - Compute and store the address of the point `point` to `addr`.
@@ -1499,7 +1503,6 @@ although mlpack uses a slightly modified implementation.
 
 ```
 CellBound<DistanceType, ElemType>
->>>>>>> origin/master
 ```
 
 Different constructor forms can be used to specify different template parameters
@@ -1529,9 +1532,7 @@ Different constructor forms can be used to specify different template parameters
    - `ElemType` should generally be `double` or `float`.
 
 ***Note***: these constructors provide an empty bound; be sure to
-[grow](#growing-the-bound-1) the bound or
-[directly modify the bound](#accessing-and-modifying-properties-of-the-bound-3)
-before using it!
+[grow](#growing-the-bound-2) the bound before using it!
 
 ---
 
@@ -1539,7 +1540,7 @@ before using it!
 
 The individual bounds associated with each dimension of a `CellBound` can be
 accessed, but should not be directly modified---see [growing the
-bound](#growing-the-bound-1) for ways to grow a `CellBound`.
+bound](#growing-the-bound-2) for ways to grow a `CellBound`.
 
  * `b.Clear()` will reset the bound to an empty bound (e.g. containing no
    points).
@@ -1965,13 +1966,10 @@ to write a fully custom split:
    with maximum width
  * [`MeanSplit`](#meansplit): splits on the mean value of the points in the
    dimension with maximum width
-<<<<<<< HEAD
- * [`UBTreeSplit`](#ubtreesplit): splits a [`CellBound`](#cellbound) into two
-   balanced children
-=======
  * [`VantagePointSplit`](#vantagepointsplit): split by selecting a 'vantage
    point' and then split points into 'near' and 'far' sets
->>>>>>> origin/master
+ * [`UBTreeSplit`](#ubtreesplit): splits a [`CellBound`](#cellbound) into two
+   balanced children
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
 
@@ -2020,24 +2018,6 @@ task*.
 For implementation details, see
 [the source code](/src/mlpack/core/tree/binary_space_tree/mean_split_impl.hpp).
 
-<<<<<<< HEAD
-### `UBTreeSplit`
-
-The `UBTreeSplit` class is a splitting strategy that can be used by
-[`BinarySpaceTree`](#binaryspacetree).  It is the splitting strategy used by
-the[`UBTree`](ub_tree.md) class (the [universal
-B-tree](https://mediatum.ub.tum.de/doc/1094370/document.pdf)),
-and it requires that the [`BoundType`](#boundtype) being used is
-[`CellBound`](#cellbound).
-
-The splitting strategy for the `UBTreeSplit` class is simple: with each point
-mapped to its corresponding linearized [address](#addressing-in-a-cellbound),
-those points with address less than the median address go to the left child;
-other points go to the right child.
-
-For implementation details, see
-[the source code](/src/mlpack/core/tree/binary_space_tree/ub_tree_split_impl.hpp).
-=======
 ### `VantagePointSplit`
 
 The `VantagePointSplit` class is a splitting strategy that can be used by
@@ -2082,7 +2062,23 @@ Then, `MyVantagePointSplit` can be used directly with `BinarySpaceTree` as a
 
 For implementation details, see
 [the source code](/src/mlpack/core/tree/binary_space_tree/vantage_point_split_impl.hpp).
->>>>>>> origin/master
+
+### `UBTreeSplit`
+
+The `UBTreeSplit` class is a splitting strategy that can be used by
+[`BinarySpaceTree`](#binaryspacetree).  It is the splitting strategy used by
+the[`UBTree`](ub_tree.md) class (the [universal
+B-tree](https://mediatum.ub.tum.de/doc/1094370/document.pdf)),
+and it requires that the [`BoundType`](#boundtype) being used is
+[`CellBound`](#cellbound).
+
+The splitting strategy for the `UBTreeSplit` class is simple: with each point
+mapped to its corresponding linearized [address](#addressing-in-a-cellbound),
+those points with address less than the median address go to the left child;
+other points go to the right child.
+
+For implementation details, see
+[the source code](/src/mlpack/core/tree/binary_space_tree/ub_tree_split_impl.hpp).
 
 ### Custom `SplitType`s
 
