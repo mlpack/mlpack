@@ -17,7 +17,7 @@ namespace mlpack {
 template<typename T>
 class RangeType;
 
-typedef RangeType<double> Range;
+using Range = RangeType<double>;
 
 /**
  * Simple real-valued range.  It contains an upper and lower bound.

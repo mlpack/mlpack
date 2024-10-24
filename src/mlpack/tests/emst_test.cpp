@@ -41,7 +41,7 @@ TEST_CASE("EMSTExhaustiveSyntheticTest", "[EMSTTest]")
   arma::mat results;
 
   // Build the tree by hand to get a leaf size of 1.
-  typedef KDTree<EuclideanDistance, DTBStat, arma::mat> TreeType;
+  using TreeType = KDTree<EuclideanDistance, DTBStat, arma::mat>;
   std::vector<size_t> oldFromNew;
   std::vector<size_t> newFromOld;
   TreeType tree(data, oldFromNew, newFromOld, 1);

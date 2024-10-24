@@ -77,7 +77,7 @@ std::string GetPrintableParam(
         std::tuple<data::DatasetInfo, arma::mat>>>* /* junk */)
 {
   // Extract the string from the tuple that's being held.
-  typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
+  using TupleType = std::tuple<T, typename ParameterType<T>::type>;
   const TupleType* tuple = std::any_cast<TupleType>(&data.value);
 
   std::ostringstream oss;
@@ -105,7 +105,7 @@ std::string GetPrintableParam(
     const std::enable_if_t<data::HasSerialize<T>::value>*)
 {
   // Extract the string from the tuple that's being held.
-  typedef std::tuple<T*, typename ParameterType<T>::type> TupleType;
+  using TupleType = std::tuple<T*, typename ParameterType<T>::type>;
   const TupleType* tuple = std::any_cast<TupleType>(&data.value);
 
   std::ostringstream oss;

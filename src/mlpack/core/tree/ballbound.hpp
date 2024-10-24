@@ -33,7 +33,7 @@ class BallBound
 {
  public:
   //! A public version of the vector type.
-  typedef VecType Vec;
+  using Vec = VecType;
 
  private:
   //! The radius of the ball bound.

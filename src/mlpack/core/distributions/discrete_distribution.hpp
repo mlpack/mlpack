@@ -54,10 +54,10 @@ class DiscreteDistribution
 {
  public:
   // Convenience typedefs.
-  typedef typename GetColType<MatType>::type VecType;
-  typedef typename MatType::elem_type ElemType;
-  typedef typename GetColType<ObsMatType>::type ObsVecType;
-  typedef typename ObsMatType::elem_type ObsType;
+  using VecType = typename GetColType<MatType>::type;
+  using ElemType = typename MatType::elem_type;
+  using ObsVecType = typename GetColType<ObsMatType>::type;
+  using ObsType = typename ObsMatType::elem_type;
 
   /**
    * Default constructor, which creates a distribution that has no

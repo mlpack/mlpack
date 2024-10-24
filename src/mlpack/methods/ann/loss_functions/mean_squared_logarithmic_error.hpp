@@ -78,7 +78,8 @@ class MeanSquaredLogarithmicErrorType
 }; // class MeanSquaredLogarithmicErrorType
 
 // Default typedef for typical `arma::mat` usage.
-typedef MeanSquaredLogarithmicErrorType<arma::mat> MeanSquaredLogarithmicError;
+using MeanSquaredLogarithmicError =
+    MeanSquaredLogarithmicErrorType<arma::mat>;
 
 } // namespace mlpack
 

@@ -939,7 +939,7 @@ DecisionTreeRegressor<FitnessFunction,
     return prediction;
   }
 
-  typedef typename VecType::elem_type ElemType;
+  using ElemType = typename VecType::elem_type;
   return (ElemType) children[CalculateDirection(point)]->Predict(point);
 }
 
@@ -958,7 +958,7 @@ void DecisionTreeRegressor<FitnessFunction,
 >::Predict(const MatType& data,
            PredVecType& predictions) const
 {
-  typedef typename PredVecType::elem_type ElemType;
+  using ElemType = typename PredVecType::elem_type;
 
   predictions.set_size(data.n_cols);
   // If the tree's root is leaf.

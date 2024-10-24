@@ -45,11 +45,11 @@ class RangeSearch
 {
  public:
   //! Convenience typedef.
-  typedef TreeType<DistanceType, RangeSearchStat, MatType> Tree;
+  using Tree = TreeType<DistanceType, RangeSearchStat, MatType>;
   //! The type of Matrix.
-  typedef MatType Mat;
+  using Mat = MatType;
   //! The type of element held in MatType.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   /**
    * Initialize the RangeSearch object with a given reference dataset (this is

@@ -443,7 +443,7 @@ TEST_CASE("NBCResetTest", "[NBCTest]")
  */
 TEMPLATE_TEST_CASE("NBCIncrementalTest", "[NBCTest]", arma::fmat, arma::mat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   const char* trainFilename = "trainSet.csv";
 
@@ -478,7 +478,7 @@ TEMPLATE_TEST_CASE("NBCIncrementalTest", "[NBCTest]", arma::fmat, arma::mat)
  */
 TEMPLATE_TEST_CASE("NBCModelMatTypeTest", "[NBCTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   NaiveBayesClassifier<arma::Mat<ElemType>> nbc;
 

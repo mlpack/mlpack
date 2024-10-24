@@ -275,7 +275,7 @@ class BatchNormType : public Layer<MatType>
 // Convenience typedefs.
 
 // Standard Adaptive max pooling layer.
-typedef BatchNormType<arma::mat> BatchNorm;
+using BatchNorm = BatchNormType<arma::mat>;
 
 } // namespace mlpack
 

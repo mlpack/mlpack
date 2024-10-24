@@ -411,7 +411,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   neighborPtr->set_size(k, querySet.n_cols);
   distancePtr->set_size(k, querySet.n_cols);
 
-  typedef NeighborSearchRules<SortPolicy, DistanceType, Tree> RuleType;
+  using RuleType = NeighborSearchRules<SortPolicy, DistanceType, Tree>;
 
   switch (searchMode)
   {
@@ -610,7 +610,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   distances.set_size(k, querySet.n_cols);
 
   // Create the helper object for the traversal.
-  typedef NeighborSearchRules<SortPolicy, DistanceType, Tree> RuleType;
+  using RuleType = NeighborSearchRules<SortPolicy, DistanceType, Tree>;
   RuleType rules(*referenceSet, querySet, k, distance, epsilon, sameSet);
 
   // Create the traverser.
@@ -693,7 +693,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   distancePtr->set_size(k, referenceSet->n_cols);
 
   // Create the helper object for the traversal.
-  typedef NeighborSearchRules<SortPolicy, DistanceType, Tree> RuleType;
+  using RuleType = NeighborSearchRules<SortPolicy, DistanceType, Tree>;
   RuleType rules(*referenceSet, *referenceSet, k, distance, epsilon,
       true /* don't return the same point as nearest neighbor */);
 

@@ -59,7 +59,7 @@ inline arma::Mat<std::complex<T>> ColumnCovariance(
     Log::Fatal << "ColumnCovariance(): normType must be 0 or 1" << std::endl;
   }
 
-  typedef typename std::complex<T> eT;
+  using eT = std::complex<T>;
 
   arma::Mat<eT> out;
 

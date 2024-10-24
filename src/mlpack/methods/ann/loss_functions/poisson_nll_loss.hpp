@@ -136,7 +136,7 @@ class PoissonNLLLossType
 }; // class PoissonNLLLossType
 
 // Default typedef for typical `arma::mat` usage.
-typedef PoissonNLLLossType<arma::mat> PoissonNLLLoss;
+using PoissonNLLLoss = PoissonNLLLossType<arma::mat>;
 
 } // namespace mlpack
 

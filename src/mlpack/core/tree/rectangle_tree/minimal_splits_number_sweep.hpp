@@ -34,7 +34,7 @@ class MinimalSplitsNumberSweep
   template<typename>
   struct SweepCost
   {
-    typedef size_t type;
+    using type = size_t;
   };
 
   /**

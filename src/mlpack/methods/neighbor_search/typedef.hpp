@@ -28,13 +28,13 @@ namespace mlpack {
  * The KNN class is the k-nearest-neighbors method.  It returns L2 distances
  * (Euclidean distances) for each of the k nearest neighbors.
  */
-typedef NeighborSearch<NearestNeighborSort, EuclideanDistance> KNN;
+using KNN = NeighborSearch<NearestNeighborSort, EuclideanDistance>;
 
 /**
  * The KFN class is the k-furthest-neighbors method.  It returns L2 distances
  * (Euclidean distances) for each of the k furthest neighbors.
  */
-typedef NeighborSearch<FurthestNeighborSort, EuclideanDistance> KFN;
+using KFN = NeighborSearch<FurthestNeighborSort, EuclideanDistance>;
 
 /**
  * The DefeatistKNN class is the k-nearest-neighbors method considering
@@ -63,7 +63,7 @@ using DefeatistKNN = NeighborSearch<
  * search on SPTree.  It returns L2 distances (Euclidean distances) for each of
  * the k nearest neighbors found.
  */
-typedef DefeatistKNN<SPTree> SpillKNN;
+using SpillKNN = DefeatistKNN<SPTree>;
 
 } // namespace mlpack
 

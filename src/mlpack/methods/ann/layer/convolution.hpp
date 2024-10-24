@@ -73,7 +73,7 @@ template <
 class ConvolutionType : public Layer<MatType>
 {
  public:
-  typedef typename GetCubeType<MatType>::type CubeType;
+  using CubeType = typename GetCubeType<MatType>::type;
 
   //! Create the ConvolutionType object.
   ConvolutionType();
@@ -397,12 +397,10 @@ class ConvolutionType : public Layer<MatType>
 }; // class Convolution
 
 // Standard Convolution layer.
-typedef ConvolutionType<
-    NaiveConvolution<ValidConvolution>,
-    NaiveConvolution<FullConvolution>,
-    NaiveConvolution<ValidConvolution>,
-    arma::mat
-> Convolution;
+using Convolution = ConvolutionType<NaiveConvolution<ValidConvolution>,
+                                    NaiveConvolution<FullConvolution>,
+                                    NaiveConvolution<ValidConvolution>,
+                                    arma::mat>;
 
 } // namespace mlpack
 

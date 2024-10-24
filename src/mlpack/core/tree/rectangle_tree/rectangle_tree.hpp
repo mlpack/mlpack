@@ -58,11 +58,11 @@ class RectangleTree
 
  public:
   //! So other classes can use TreeType::Mat.
-  typedef MatType Mat;
+  using Mat = MatType;
   //! The element type held by the matrix type.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
   //! The auxiliary information type held by the tree.
-  typedef AuxiliaryInformationType<RectangleTree> AuxiliaryInformation;
+  using AuxiliaryInformation = AuxiliaryInformationType<RectangleTree>;
  private:
   //! The max number of child nodes a non-leaf node can have.
   size_t maxNumChildren;
