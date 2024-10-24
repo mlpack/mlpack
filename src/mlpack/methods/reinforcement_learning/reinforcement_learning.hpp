@@ -20,6 +20,7 @@
 #include "noise/noise.hpp"
 
 #include "training_config.hpp"
+#include "alphazero.hpp"
 #include "async_learning.hpp"
 #include "q_learning.hpp"
 #include "ddpg.hpp"
