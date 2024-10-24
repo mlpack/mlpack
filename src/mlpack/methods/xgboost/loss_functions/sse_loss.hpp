@@ -2,7 +2,7 @@
  * @file methods/xgboost/loss_functions/sse_loss.hpp
  * @author Rishabh Garg
  *
- * The sum of squared error loss class, which is a loss funtion for gradient
+ * The sum of squared error loss class, which is a loss function for gradient
  * xgboost based decision trees.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -114,6 +114,12 @@ class SSELoss
     }
 
     return 0;
+  }
+
+  //! Applies the L2 regularization.
+  double ApplyL2(const double sumGradients)
+  {
+    return sumGradients / (1 + lambda);
   }
 };
 
