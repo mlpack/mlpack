@@ -145,7 +145,7 @@ class PReLUType : public Layer<MatType>
 // Convenience typedefs.
 
 // Standard PReLU layer.
-typedef PReLUType<arma::mat> PReLU;
+using PReLU = PReLUType<arma::mat>;
 
 } // namespace mlpack
 

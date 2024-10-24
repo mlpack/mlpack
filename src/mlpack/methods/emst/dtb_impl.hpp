@@ -98,7 +98,7 @@ void DualTreeBoruvka<DistanceType, MatType, TreeType>::ComputeMST(
 {
   totalDist = 0; // Reset distance.
 
-  typedef DTBRules<DistanceType, Tree> RuleType;
+  using RuleType = DTBRules<DistanceType, Tree>;
   RuleType rules(data, connections, neighborsDistances, neighborsInComponent,
                  neighborsOutComponent, distance);
   while (edges.size() < (data.n_cols - 1))

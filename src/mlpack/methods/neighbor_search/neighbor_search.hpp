@@ -81,9 +81,9 @@ class NeighborSearch
 {
  public:
   //! Convenience typedef.
-  typedef TreeType<DistanceType, NeighborSearchStat<SortPolicy>, MatType> Tree;
+  using Tree = TreeType<DistanceType, NeighborSearchStat<SortPolicy>, MatType>;
   //! The type of element held in MatType.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   /**
    * Initialize the NeighborSearch object, passing a reference dataset (this is

@@ -171,7 +171,7 @@ class MeanPoolingType : public Layer<MatType>
 }; // class MeanPoolingType
 
 // Standard MeanPooling layer.
-typedef MeanPoolingType<arma::mat> MeanPooling;
+using MeanPooling = MeanPoolingType<arma::mat>;
 
 } // namespace mlpack
 

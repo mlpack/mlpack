@@ -32,9 +32,9 @@ class RegressionDistribution
 {
  public:
   // Convenience typedefs.
-  typedef typename MatType::elem_type ElemType;
-  typedef typename GetColType<MatType>::type VecType;
-  typedef typename GetRowType<MatType>::type RowType;
+  using ElemType = typename MatType::elem_type;
+  using VecType = typename GetColType<MatType>::type;
+  using RowType = typename GetRowType<MatType>::type;
 
  private:
   //! Regression function for representing conditional mean.

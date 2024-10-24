@@ -33,7 +33,7 @@ class MinimalCoverageSweep
   template<typename TreeType>
   struct SweepCost
   {
-    typedef typename TreeType::ElemType type;
+    using type = typename TreeType::ElemType;
   };
 
   /**

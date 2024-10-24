@@ -160,7 +160,7 @@ class FlexibleReLUType : public Layer<MatType>
 // Convenience typedefs.
 
 // Standard flexible ReLU layer.
-typedef FlexibleReLUType<arma::mat> FlexibleReLU;
+using FlexibleReLU = FlexibleReLUType<arma::mat>;
 
 } // namespace mlpack
 

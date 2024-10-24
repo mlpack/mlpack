@@ -58,7 +58,7 @@ MatType GetMeanShiftData()
  */
 TEMPLATE_TEST_CASE("MeanShiftSimpleTest", "[MeanShiftTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   MeanShift<> meanShift;
 
@@ -95,7 +95,7 @@ TEMPLATE_TEST_CASE("MeanShiftSimpleTest", "[MeanShiftTest]", float, double)
 TEMPLATE_TEST_CASE("MeanShiftSimpleCentroidsOnlyTest", "[MeanShiftTest]", float,
     double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   MeanShift<> meanShift;
 
@@ -110,8 +110,8 @@ TEMPLATE_TEST_CASE("MeanShiftSimpleCentroidsOnlyTest", "[MeanShiftTest]", float,
 // recovers those four centers.
 TEMPLATE_TEST_CASE("GaussianClustering", "[MeanShiftTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using MatType = arma::Mat<ElemType>;
 
   GaussianDistribution<MatType> g1("0.0 0.0 0.0", arma::eye<MatType>(3, 3));
   GaussianDistribution<MatType> g2("5.0 5.0 5.0", 2 * arma::eye<MatType>(3, 3));
@@ -188,8 +188,8 @@ TEMPLATE_TEST_CASE("GaussianClustering", "[MeanShiftTest]", float, double)
 TEMPLATE_TEST_CASE("GaussianClusteringCentroidsOnly", "[MeanShiftTest]", float,
     double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using MatType = arma::Mat<ElemType>;
 
   GaussianDistribution<MatType> g1("0.0 0.0 0.0", arma::eye<MatType>(3, 3));
   GaussianDistribution<MatType> g2("5.0 5.0 5.0", 2 * arma::eye<MatType>(3, 3));

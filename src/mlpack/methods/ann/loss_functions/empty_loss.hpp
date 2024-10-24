@@ -61,7 +61,7 @@ class EmptyLossType
 }; // class EmptyLossType
 
 // Default typedef for typical `arma::mat` usage.
-typedef EmptyLossType<arma::mat> EmptyLoss;
+using EmptyLoss = EmptyLossType<arma::mat>;
 
 } // namespace mlpack
 

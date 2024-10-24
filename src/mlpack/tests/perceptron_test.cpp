@@ -221,7 +221,7 @@ TEST_CASE("TwoPoints", "[PerceptronTest]")
 TEMPLATE_TEST_CASE("NonLinearlySeparableDataset", "[PerceptronTest]", float,
     double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   Mat<eT> trainData;
   trainData = { { 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8 },

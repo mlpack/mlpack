@@ -72,8 +72,8 @@ SingleTreeTraverser<RuleType>::Traverse(
 {
   // This is a non-recursive implementation (which should be faster than a
   // recursive implementation).
-  typedef CoverTreeMapEntry<DistanceType, StatisticType, MatType,
-      RootPointPolicy> MapEntryType;
+  using MapEntryType = CoverTreeMapEntry<DistanceType, StatisticType, MatType,
+      RootPointPolicy>;
 
   // We will use this map as a priority queue.  Each key represents the scale,
   // and then the vector is all the nodes in that scale which need to be

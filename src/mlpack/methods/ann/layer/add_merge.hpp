@@ -95,7 +95,7 @@ class AddMergeType : public MultiLayer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 };
 
-typedef AddMergeType<arma::mat> AddMerge;
+using AddMerge = AddMergeType<arma::mat>;
 
 } // namespace mlpack
 

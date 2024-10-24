@@ -21,14 +21,14 @@ namespace mlpack {
 template<typename... CallbackTypes>
 struct First
 {
-  typedef void type;
+  using type = void;
 };
 
 // This matches whenever CallbackTypes has one or more elements.
 template<typename T, typename... CallbackTypes>
 struct First<T, CallbackTypes...>
 {
-  typedef T type;
+  using type = T;
 };
 
 // This utility template struct detects whether the first element in a

@@ -32,9 +32,9 @@ class VantagePointSplit
 {
  public:
   //! The matrix element type.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
   //! The bounding shape type.
-  typedef typename BoundType::DistanceType DistanceType;
+  using DistanceType = typename BoundType::DistanceType;
   //! A struct that contains an information about the split.
   struct SplitInfo
   {

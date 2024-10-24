@@ -78,7 +78,7 @@ class EarthMoverDistanceType
 }; // class EarthMoverDistanceType
 
 // Default typedef for typical `arma::mat` usage.
-typedef EarthMoverDistanceType<arma::mat> EarthMoverDistance;
+using EarthMoverDistance = EarthMoverDistanceType<arma::mat>;
 
 } // namespace mlpack
 

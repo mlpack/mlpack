@@ -24,9 +24,9 @@ using namespace mlpack;
 TEMPLATE_TEST_CASE("LinearRegressionTestCase", "[LinearRegressionTest]",
     arma::fmat, arma::mat)
 {
-  typedef TestType MatType;
-  typedef arma::Row<typename MatType::elem_type> RowType;
-  typedef arma::Col<typename MatType::elem_type> ColType;
+  using MatType = TestType;
+  using RowType = arma::Row<typename MatType::elem_type>;
+  using ColType = arma::Col<typename MatType::elem_type>;
 
   // Predictors and points are 10x3 matrices.
   MatType predictors(3, 10);
@@ -77,8 +77,8 @@ TEMPLATE_TEST_CASE("LinearRegressionTestCase", "[LinearRegressionTest]",
 TEMPLATE_TEST_CASE("ComputeErrorTest", "[LinearRegressionTest]", arma::fmat,
     arma::mat)
 {
-  typedef TestType MatType;
-  typedef arma::Row<typename MatType::elem_type> RowType;
+  using MatType = TestType;
+  using RowType = arma::Row<typename MatType::elem_type>;
 
   MatType predictors;
   predictors = { {  0, 1, 2, 4, 8, 16 },
@@ -281,8 +281,8 @@ TEST_CASE("LinearRegressionTrainReturnObjective", "[LinearRegressionTest]")
 TEMPLATE_TEST_CASE("LinearRegressionAllTrainVersionsTest",
     "[LinearRegressionTest]", arma::fmat, arma::mat)
 {
-  typedef TestType MatType;
-  typedef arma::Row<typename MatType::elem_type> RowType;
+  using MatType = TestType;
+  using RowType = arma::Row<typename MatType::elem_type>;
 
   // The data doesn't really matter for this test; mostly we want to make sure
   // that all the Train() variants work properly.
@@ -341,8 +341,8 @@ TEMPLATE_TEST_CASE("LinearRegressionAllTrainVersionsTest",
 TEMPLATE_TEST_CASE("LinearRegressionSinglePointPredictTest",
     "[LinearRegressionTest]", arma::fmat, arma::mat)
 {
-  typedef TestType MatType;
-  typedef arma::Row<typename MatType::elem_type> RowType;
+  using MatType = TestType;
+  using RowType = arma::Row<typename MatType::elem_type>;
 
   MatType predictors;
   predictors = { {  0, 1, 2, 4, 8, 16 },

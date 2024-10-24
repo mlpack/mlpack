@@ -43,8 +43,8 @@ class RandomForest
 {
  public:
   //! Allow access to the underlying decision tree type.
-  typedef DecisionTree<FitnessFunction, NumericSplitType, CategoricalSplitType,
-      DimensionSelectionType> DecisionTreeType;
+  using DecisionTreeType = DecisionTree<FitnessFunction, NumericSplitType,
+      CategoricalSplitType, DimensionSelectionType>;
 
   /**
    * Construct the random forest without any training or specifying the number

@@ -211,7 +211,7 @@ TEST_CASE("EqualtoRidge", "[BayesianLinearRegressionTest]")
 TEMPLATE_TEST_CASE("BayesianLinearRegressionConstructorVariantTest",
     "[BayesianLinearRegressionTest]", arma::mat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   MatType matX;
   arma::Row<typename MatType::elem_type> y;
@@ -278,7 +278,7 @@ TEMPLATE_TEST_CASE("BayesianLinearRegressionConstructorVariantTest",
 TEMPLATE_TEST_CASE("BayesianLinearRegressionTrainVariantTest",
     "[BayesianLinearRegressionTest]", arma::mat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   MatType matX;
   arma::Row<typename MatType::elem_type> y;

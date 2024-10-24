@@ -176,7 +176,7 @@ class LayerNormType : public Layer<MatType>
 }; // class LayerNormType
 
 // Standard LayerNorm type
-typedef LayerNormType<arma::mat> LayerNorm;
+using LayerNorm = LayerNormType<arma::mat>;
 
 } // namespace mlpack
 

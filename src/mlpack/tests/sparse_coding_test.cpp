@@ -50,8 +50,8 @@ void SCVerifyCorrectness(const VecType& beta,
 TEMPLATE_TEST_CASE("SparseCodingTestCodingStepLasso", "[SparseCodingTest]",
     arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
-  typedef arma::Col<typename MatType::elem_type> VecType;
+  using MatType = TestType;
+  using VecType = arma::Col<typename MatType::elem_type>;
 
   double lambda1 = 0.1;
   uword nAtoms = 25;
@@ -84,8 +84,8 @@ TEMPLATE_TEST_CASE("SparseCodingTestCodingStepLasso", "[SparseCodingTest]",
 TEMPLATE_TEST_CASE("SparseCodingTestCodingStepElasticNet", "[SparseCodingTest]",
     arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
-  typedef arma::Col<typename MatType::elem_type> VecType;
+  using MatType = TestType;
+  using VecType = arma::Col<typename MatType::elem_type>;
 
   double lambda1 = 0.1;
   double lambda2 = 0.2;
@@ -120,7 +120,7 @@ TEMPLATE_TEST_CASE("SparseCodingTestCodingStepElasticNet", "[SparseCodingTest]",
 TEMPLATE_TEST_CASE("SparseCodingTestDictionaryStep", "[SparseCodingTest]",
     arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   const double tol = std::is_same_v<typename MatType::elem_type, float> ?
       0.01 : 1e-6;
@@ -153,7 +153,7 @@ TEMPLATE_TEST_CASE("SparseCodingTestDictionaryStep", "[SparseCodingTest]",
 TEMPLATE_TEST_CASE("SerializationTest", "[SparseCodingTest]", arma::mat,
     arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   MatType X = randu<MatType>(100, 100);
   size_t nAtoms = 25;
@@ -213,7 +213,7 @@ TEMPLATE_TEST_CASE("SerializationTest", "[SparseCodingTest]", arma::mat,
 TEMPLATE_TEST_CASE("SparseCodingTrainReturnObjective", "[SparseCodingTest]",
     arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   const double tol = std::is_same_v<typename MatType::elem_type, float> ?
       0.01 : 1e-6;

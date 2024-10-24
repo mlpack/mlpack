@@ -198,10 +198,10 @@ class ELUType : public Layer<MatType>
 // Convenience typedefs.
 
 // ELU layer.
-typedef ELUType<arma::mat> ELU;
+using ELU = ELUType<arma::mat>;
 
 // SELU layer.
-typedef ELUType<arma::mat> SELU;
+using SELU = ELUType<arma::mat>;
 
 } // namespace mlpack
 

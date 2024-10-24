@@ -299,7 +299,7 @@ TEST_CASE("BinarySpaceTreeTest", "[SerializationTest]")
 {
   arma::mat data;
   data.randu(3, 100);
-  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = KDTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   TreeType tree(data);
 
   TreeType* xmlTree;
@@ -319,7 +319,7 @@ TEST_CASE("BinarySpaceTreeOverwriteTest", "[SerializationTest]")
 {
   arma::mat data;
   data.randu(3, 100);
-  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = KDTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   TreeType tree(data);
 
   arma::mat otherData;
@@ -337,8 +337,8 @@ TEST_CASE("CoverTreeTest", "[SerializationTest]")
 {
   arma::mat data;
   data.randu(3, 100);
-  typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>
-      TreeType;
+  using TreeType =
+      StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   TreeType tree(data);
 
   TreeType* xmlTree;
@@ -392,8 +392,8 @@ TEST_CASE("CoverTreeOverwriteTest", "[SerializationTest]")
 {
   arma::mat data;
   data.randu(3, 100);
-  typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>
-      TreeType;
+  using TreeType =
+      StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   TreeType tree(data);
 
   arma::mat otherData;
@@ -445,7 +445,7 @@ TEST_CASE("RectangleTreeTest", "[SerializationTest]")
 {
   arma::mat data;
   data.randu(3, 1000);
-  typedef RTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = RTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   TreeType tree(data);
 
   TreeType* xmlTree;
@@ -500,7 +500,7 @@ TEST_CASE("RectangleTreeOverwriteTest", "[SerializationTest]")
 {
   arma::mat data;
   data.randu(3, 1000);
-  typedef RTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = RTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   TreeType tree(data);
 
   arma::mat otherData;
@@ -648,7 +648,7 @@ TEST_CASE("SoftmaxRegressionTest", "[SerializationTest]")
 
 TEST_CASE("DETTest", "[SerializationTest]")
 {
-  typedef DTree<arma::mat> DTreeX;
+  using DTreeX = DTree<arma::mat>;
 
   // Create a density estimation tree on a random dataset.
   arma::mat dataset = arma::randu<arma::mat>(25, 5000);

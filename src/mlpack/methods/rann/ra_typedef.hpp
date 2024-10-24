@@ -32,7 +32,7 @@ namespace mlpack {
  * while the search can be performed multiple times with different approximation
  * levels.
  */
-typedef RASearch<> KRANN;
+using KRANN = RASearch<>;
 
 /**
  * The KRAFN class is the k-rank-approximate-farthest-neighbors method.  It
@@ -43,7 +43,7 @@ typedef RASearch<> KRANN;
  * while the search can be performed multiple times with different approximation
  * levels.
  */
-typedef RASearch<FurthestNeighborSort> KRAFN;
+using KRAFN = RASearch<FurthestNeighborSort>;
 
 } // namespace mlpack
 

@@ -22,7 +22,7 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
                                                        const size_t point)
 {
   // Convenience typedef.
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
 
   ElemType minScore = std::numeric_limits<ElemType>::max();
   int bestIndex = 0;
@@ -66,7 +66,7 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(
     const TreeType* insertedNode)
 {
   // Convenience typedef.
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
 
   ElemType minScore = std::numeric_limits<ElemType>::max();
   int bestIndex = 0;

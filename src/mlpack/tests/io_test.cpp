@@ -1084,7 +1084,7 @@ TEST_CASE("MatrixAndDatasetInfoTest", "[IOTest]")
   f.close();
 
   // Add options.
-  typedef tuple<DatasetInfo, arma::mat> TupleType;
+  using TupleType = tuple<DatasetInfo, arma::mat>;
   #define BINDING_NAME MatrixAndDatasetInfoTest
   PARAM_MATRIX_AND_INFO_IN("dataset", "Test dataset", "d");
   #undef BINDING_NAME

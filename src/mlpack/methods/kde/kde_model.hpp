@@ -212,7 +212,7 @@ class KDEWrapper : public KDEWrapperBase
   }
 
  protected:
-  typedef KDE<KernelType, EuclideanDistance, arma::mat, TreeType> KDEType;
+  using KDEType = KDE<KernelType, EuclideanDistance, arma::mat, TreeType>;
 
   //! The instantiated KDE object that we are wrapping.
   KDEType kde;

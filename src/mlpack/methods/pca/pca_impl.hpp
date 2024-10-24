@@ -111,7 +111,7 @@ void PCA<DecompositionPolicy>::Apply(const MatType& data,
 
   // It's possible a user didn't pass in a matrix but instead an expression, but
   // we need a type that we can store.
-  typedef typename GetDenseColType<MatType>::type BaseColType;
+  using BaseColType = typename GetDenseColType<MatType>::type;
 
   OutMatType eigvec;
   BaseColType eigVal;
@@ -152,8 +152,8 @@ double PCA<DecompositionPolicy>::Apply(const MatType& data,
     throw std::invalid_argument(oss.str());
   }
 
-  typedef typename GetDenseMatType<MatType>::type BaseMatType;
-  typedef typename GetDenseColType<MatType>::type BaseColType;
+  using BaseMatType = typename GetDenseMatType<MatType>::type;
+  using BaseColType = typename GetDenseColType<MatType>::type;
 
   BaseMatType eigvec;
   BaseColType eigVal;
@@ -231,8 +231,8 @@ double PCA<DecompositionPolicy>::Apply(const MatType& data,
     throw std::invalid_argument(oss.str());
   }
 
-  typedef typename GetDenseMatType<MatType>::type BaseMatType;
-  typedef typename GetDenseColType<MatType>::type BaseColType;
+  using BaseMatType = typename GetDenseMatType<MatType>::type;
+  using BaseColType = typename GetDenseColType<MatType>::type;
 
   BaseMatType eigvec;
   BaseColType eigVal;

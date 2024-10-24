@@ -35,7 +35,7 @@ class Perceptron
 {
  public:
   //! The element type used in the Perceptron.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   /**
    * Constructor: create the perceptron with the given number of classes and

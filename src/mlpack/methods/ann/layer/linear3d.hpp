@@ -150,7 +150,7 @@ class Linear3DType : public Layer<MatType>
 }; // class Linear
 
 // Standard Linear3D layer.
-typedef Linear3DType<arma::mat, NoRegularizer> Linear3D;
+using Linear3D = Linear3DType<arma::mat, NoRegularizer>;
 
 } // namespace mlpack
 

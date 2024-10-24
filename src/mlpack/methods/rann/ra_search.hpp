@@ -74,7 +74,7 @@ class RASearch
 {
  public:
   //! Convenience typedef.
-  typedef TreeType<DistanceType, RAQueryStat<SortPolicy>, MatType> Tree;
+  using Tree = TreeType<DistanceType, RAQueryStat<SortPolicy>, MatType>;
 
   /**
    * Initialize the RASearch object, passing both a reference dataset (this is

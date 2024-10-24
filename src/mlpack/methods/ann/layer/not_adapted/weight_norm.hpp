@@ -170,7 +170,7 @@ class WeightNormType : public Layer<InputType, OutputType>
 }; // class WeightNormType.
 
 // Standard WeightNorm layer.
-typedef WeightNormType<arma::mat, arma::mat> WeightNorm;
+using WeightNorm = WeightNormType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

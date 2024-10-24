@@ -22,7 +22,7 @@ namespace data {
 inline void CheckCategoricalParam(util::Params& params,
                                   const std::string& paramName)
 {
-  typedef typename std::tuple<DatasetInfo, arma::mat> TupleType;
+  using TupleType = std::tuple<DatasetInfo, arma::mat>;
   arma::mat& matrix = std::get<1>(params.Get<TupleType>(paramName));
 
   // This comes from Params::CheckInputMatrix().

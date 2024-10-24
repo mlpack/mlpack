@@ -104,7 +104,7 @@ class LogSoftMaxType : public Layer<MatType>
 // Convenience typedefs.
 
 // Standard Linear layer using no regularization.
-typedef LogSoftMaxType<arma::mat> LogSoftMax;
+using LogSoftMax = LogSoftMaxType<arma::mat>;
 
 } // namespace mlpack
 

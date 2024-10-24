@@ -108,7 +108,7 @@ TEST_CASE("LMetricZerosTest", "[DistanceTest]")
  */
 TEMPLATE_TEST_CASE("MDUnsetCovarianceTest", "[DistanceTest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   MahalanobisDistance<false, arma::Mat<eT>> md;
   md.Q() = arma::eye<arma::Mat<eT>>(4, 4);
@@ -125,7 +125,7 @@ TEMPLATE_TEST_CASE("MDUnsetCovarianceTest", "[DistanceTest]", float, double)
  */
 TEMPLATE_TEST_CASE("MDRootUnsetCovarianceTest", "[DistanceTest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   MahalanobisDistance<true, arma::Mat<eT>> md;
   md.Q() = arma::eye<arma::Mat<eT>>(4, 4);
@@ -142,7 +142,7 @@ TEMPLATE_TEST_CASE("MDRootUnsetCovarianceTest", "[DistanceTest]", float, double)
  */
 TEMPLATE_TEST_CASE("MDEyeCovarianceTest", "[DistanceTest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   MahalanobisDistance<false, arma::Mat<eT>> md(4);
   arma::Col<eT> a = "1.0 2.0 2.0 3.0";
@@ -158,7 +158,7 @@ TEMPLATE_TEST_CASE("MDEyeCovarianceTest", "[DistanceTest]", float, double)
  */
 TEMPLATE_TEST_CASE("MDRootEyeCovarianceTest", "[DistanceTest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   MahalanobisDistance<true, arma::Mat<eT>> md(4);
   arma::Col<eT> a = "1.0 2.0 2.5 5.0";
@@ -173,7 +173,7 @@ TEMPLATE_TEST_CASE("MDRootEyeCovarianceTest", "[DistanceTest]", float, double)
  */
 TEMPLATE_TEST_CASE("MDDiagonalCovarianceTest", "[DistanceTest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   arma::Mat<eT> q = arma::eye<arma::Mat<eT>>(5, 5);
   q(0, 0) = 2.0;
@@ -195,7 +195,7 @@ TEMPLATE_TEST_CASE("MDDiagonalCovarianceTest", "[DistanceTest]", float, double)
  */
 TEMPLATE_TEST_CASE("MDFullCovarianceTest", "[DistanceTest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   arma::Mat<eT> q = "1.0 2.0 3.0 4.0;"
                     "0.5 0.6 0.7 0.1;"

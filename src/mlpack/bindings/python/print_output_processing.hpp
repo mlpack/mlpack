@@ -302,7 +302,7 @@ void PrintOutputProcessing(util::ParamData& d,
                            const void* input,
                            void* /* output */)
 {
-  typedef std::tuple<util::Params, std::tuple<size_t, bool>> TupleType;
+  using TupleType = std::tuple<util::Params, std::tuple<size_t, bool>>;
   TupleType* tuple = (TupleType*) input;
 
   PrintOutputProcessing<std::remove_pointer_t<T>>(

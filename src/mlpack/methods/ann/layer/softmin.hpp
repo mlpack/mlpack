@@ -81,7 +81,7 @@ class SoftminType : public Layer<MatType>
 // Convenience typedefs.
 
 // Standard Softmin layer using no regularization.
-typedef SoftminType<arma::mat> Softmin;
+using Softmin = SoftminType<arma::mat>;
 
 
 } // namespace mlpack

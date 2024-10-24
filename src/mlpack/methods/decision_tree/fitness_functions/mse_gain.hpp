@@ -151,8 +151,8 @@ class MSEGain
                             const WeightVecType& weights,
                             const size_t minimum)
   {
-    typedef typename ResponsesType::elem_type RType;
-    typedef typename WeightVecType::elem_type WType;
+    using RType = typename ResponsesType::elem_type;
+    using WType = typename WeightVecType::elem_type;
 
     // Initializing data members to cache statistics.
     leftMean = 0.0;
@@ -230,8 +230,8 @@ class MSEGain
                   const WeightVecType& weights,
                   const size_t index)
   {
-    typedef typename ResponsesType::elem_type RType;
-    typedef typename WeightVecType::elem_type WType;
+    using RType = typename ResponsesType::elem_type;
+    using WType = typename WeightVecType::elem_type;
 
     if (UseWeights)
     {

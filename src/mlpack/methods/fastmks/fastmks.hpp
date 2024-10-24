@@ -61,7 +61,7 @@ class FastMKS
 {
  public:
   //! Convenience typedef.
-  typedef TreeType<IPMetric<KernelType>, FastMKSStat, MatType> Tree;
+  using Tree = TreeType<IPMetric<KernelType>, FastMKSStat, MatType>;
 
   /**
    * Create the FastMKS object with an empty reference set and default kernel.
@@ -332,7 +332,7 @@ class FastMKS
   IPMetric<KernelType> distance;
 
   //! Candidate represents a possible candidate point (value, index).
-  typedef std::pair<double, size_t> Candidate;
+  using Candidate = std::pair<double, size_t>;
 
   //! Compare two candidates based on the value.
   struct CandidateCmp {
@@ -343,8 +343,8 @@ class FastMKS
   };
 
   //! Use a priority queue to represent the list of candidate points.
-  typedef std::priority_queue<Candidate, std::vector<Candidate>,
-      CandidateCmp> CandidateList;
+  using CandidateList = std::priority_queue<Candidate, std::vector<Candidate>,
+      CandidateCmp>;
 };
 
 } // namespace mlpack

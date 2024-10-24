@@ -49,7 +49,7 @@ double PellegMooreKMeans<DistanceType, MatType>::Iterate(
   counts.zeros(centroids.n_cols);
 
   // Create rules object.
-  typedef PellegMooreKMeansRules<DistanceType, TreeType> RulesType;
+  using RulesType = PellegMooreKMeansRules<DistanceType, TreeType>;
   RulesType rules(dataset, centroids, newCentroids, counts, distance);
 
   // Use single-tree traverser.

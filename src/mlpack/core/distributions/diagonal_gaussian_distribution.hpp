@@ -22,8 +22,8 @@ class DiagonalGaussianDistribution
 {
  public:
   // Convenience typedefs.
-  typedef typename GetColType<MatType>::type VecType;
-  typedef typename MatType::elem_type ElemType;
+  using VecType = typename GetColType<MatType>::type;
+  using ElemType = typename MatType::elem_type;
 
  private:
   //! Mean of the distribution.

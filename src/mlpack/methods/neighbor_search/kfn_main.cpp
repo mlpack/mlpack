@@ -26,7 +26,7 @@ using namespace mlpack;
 using namespace mlpack::util;
 
 // Convenience typedef.
-typedef NSModel<FurthestNS> KFNModel;
+using KFNModel = NSModel<FurthestNS>;
 
 // Program Name.
 BINDING_USER_NAME("k-Furthest-Neighbors Search");

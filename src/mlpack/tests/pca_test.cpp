@@ -337,7 +337,7 @@ TEST_CASE("PCAScalingTest", "[PCATest]")
 TEMPLATE_TEST_CASE("PCASubviewTest", "[PCATest]", ExactSVDPolicy,
     RandomizedSVDPCAPolicy, RandomizedBlockKrylovSVDPolicy, QUICSVDPolicy)
 {
-  typedef TestType DecompositionPolicy;
+  using DecompositionPolicy = TestType;
 
   // Generate an artifical dataset in 10 dimensions.
   arma::mat data(3, 5000);
@@ -384,7 +384,7 @@ TEMPLATE_TEST_CASE("PCASubviewTest", "[PCATest]", ExactSVDPolicy,
 TEMPLATE_TEST_CASE("PCAExpressionTest", "[PCATest]", ExactSVDPolicy,
     RandomizedSVDPCAPolicy, RandomizedBlockKrylovSVDPolicy, QUICSVDPolicy)
 {
-  typedef TestType DecompositionPolicy;
+  using DecompositionPolicy = TestType;
 
   // Generate an artifical dataset in 10 dimensions.
   arma::mat data(3, 5000);
@@ -431,7 +431,7 @@ TEMPLATE_TEST_CASE("PCAExpressionTest", "[PCATest]", ExactSVDPolicy,
 TEMPLATE_TEST_CASE("PCAFloatTest", "[PCATest]", ExactSVDPolicy,
     RandomizedSVDPCAPolicy, RandomizedBlockKrylovSVDPolicy, QUICSVDPolicy)
 {
-  typedef TestType DecompositionPolicy;
+  using DecompositionPolicy = TestType;
 
   // Generate an artifical dataset in 10 dimensions.
   arma::fmat data(3, 5000);
@@ -475,8 +475,8 @@ TEMPLATE_TEST_CASE("PCAFloatTest", "[PCATest]", ExactSVDPolicy,
  */
 TEMPLATE_TEST_CASE("PCASparseToDenseTest", "[PCATest]", float, double)
 {
-  typedef arma::Mat<TestType> MatType;
-  typedef arma::SpMat<TestType> SpMatType;
+  using MatType = arma::Mat<TestType>;
+  using SpMatType = arma::SpMat<TestType>;
 
   SpMatType dataset;
   dataset.sprandu(1000, 50000, 0.01);

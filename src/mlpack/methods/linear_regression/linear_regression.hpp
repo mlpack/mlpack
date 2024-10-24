@@ -30,8 +30,8 @@ template<typename ModelMatType = arma::mat>
 class LinearRegression
 {
  public:
-  typedef typename GetColType<ModelMatType>::type ModelColType;
-  typedef typename ModelMatType::elem_type ElemType;
+  using ModelColType = typename GetColType<ModelMatType>::type;
+  using ElemType = typename ModelMatType::elem_type;
 
   /**
    * Creates the model.

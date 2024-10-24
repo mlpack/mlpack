@@ -1107,7 +1107,7 @@ TEST_CASE("IncrementalTraining", "[LogisticRegressionTest]")
 TEMPLATE_TEST_CASE("LogisticRegressionAllConstructorsTest",
     "[LogisticRegressionTest]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Create random data.
   MatType data(50, 1000, arma::fill::randu);
@@ -1170,7 +1170,7 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllConstructorsTest",
 TEMPLATE_TEST_CASE("LogisticRegressionAllTrainTest", "[LogisticRegressionTest]",
     arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Create random data.
   MatType data(50, 1000, arma::fill::randu);

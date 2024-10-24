@@ -53,7 +53,7 @@ void OutputParamImpl(
     util::ParamData& data,
     const std::enable_if_t<arma::is_arma_type<T>::value>*)
 {
-  typedef std::tuple<T, std::tuple<std::string, size_t, size_t>> TupleType;
+  using TupleType = std::tuple<T, std::tuple<std::string, size_t, size_t>>;
   const T& output = std::get<0>(*std::any_cast<TupleType>(&data.value));
   const std::string& filename =
       std::get<0>(std::get<1>(*std::any_cast<TupleType>(&data.value)));
@@ -77,7 +77,7 @@ void OutputParamImpl(
   // The const cast is necessary here because Serialize() can't ever be marked
   // const.  In this case we can assume it though, since we will be saving and
   // not loading.
-  typedef std::tuple<T*, std::string> TupleType;
+  using TupleType =  std::tuple<T*, std::string>;
   T*& output = const_cast<T*&>(std::get<0>(*std::any_cast<TupleType>(
       &data.value)));
   const std::string& filename =
@@ -95,7 +95,7 @@ void OutputParamImpl(
         std::tuple<data::DatasetInfo, arma::mat>>>* /* junk */)
 {
   // Output the matrix with the mappings.
-  typedef std::tuple<T, std::tuple<std::string, size_t, size_t>> TupleType;
+  using TupleType = std::tuple<T, std::tuple<std::string, size_t, size_t>>;
   const T& tuple = std::get<0>(*std::any_cast<TupleType>(&data.value));
   const std::string& filename =
       std::get<0>(std::get<1>(*std::any_cast<TupleType>(&data.value)));

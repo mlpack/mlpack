@@ -89,7 +89,7 @@ class IdentityType : public Layer<MatType>
 
 // Convenience typedefs.
 
-typedef IdentityType<arma::mat> Identity;
+using Identity = IdentityType<arma::mat>;
 
 } // namespace mlpack
 

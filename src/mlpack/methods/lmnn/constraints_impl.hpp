@@ -402,7 +402,7 @@ void Constraints<MatType, LabelsType, DistanceType>::Triplets(
   UMatType impostors(k, dataset.n_cols);
   Impostors(impostors, dataset, labels, norms);
 
-  UMatType targetNeighbors(k, dataset.n_cols);;
+  UMatType targetNeighbors(k, dataset.n_cols);
   TargetNeighbors(targetNeighbors, dataset, labels, norms);
 
   outputMatrix = UMatType(3, k * k * N);

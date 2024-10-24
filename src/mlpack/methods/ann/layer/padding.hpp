@@ -127,7 +127,7 @@ class PaddingType : public Layer<MatType>
 }; // class PaddingType
 
 // Standard Padding layer.
-typedef PaddingType<arma::mat> Padding;
+using Padding = PaddingType<arma::mat>;
 
 } // namespace mlpack
 

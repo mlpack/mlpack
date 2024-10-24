@@ -55,11 +55,11 @@ class BinarySpaceTree
 {
  public:
   //! So other classes can use TreeType::Mat.
-  typedef MatType Mat;
+  using Mat = MatType;
   //! The type of element held in MatType.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
-  typedef SplitType<BoundType<DistanceType, ElemType>, MatType> Split;
+  using Split = SplitType<BoundType<DistanceType, ElemType>, MatType>;
 
  private:
   //! The left child node.

@@ -112,7 +112,7 @@ class MissingPolicy
           maps[dimension].first.count(string) == 0)
       {
         // This string does not exist yet.
-        typedef std::pair<std::string, MappedType> PairType;
+        using PairType = std::pair<std::string, MappedType>;
         maps[dimension].first.insert(PairType(string, value));
 
         // Insert right mapping too.

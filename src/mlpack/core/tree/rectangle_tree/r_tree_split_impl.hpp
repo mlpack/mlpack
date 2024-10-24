@@ -195,7 +195,7 @@ template<typename TreeType>
 void RTreeSplit::GetBoundSeeds(const TreeType *tree, int& iRet, int& jRet)
 {
   // Convenience typedef.
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
 
   ElemType worstPairScore = -1.0;
   for (size_t i = 0; i < tree->NumChildren(); ++i)
@@ -230,7 +230,7 @@ void RTreeSplit::AssignPointDestNode(TreeType* oldTree,
                                      const int intJ)
 {
   // Convenience typedef.
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
 
   size_t end = oldTree->Count();
 
@@ -366,7 +366,7 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
                                     const int intJ)
 {
   // Convenience typedef.
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
 
   size_t end = oldTree->NumChildren();
   assert(end > 1); // If this isn't true, the tree is really weird.

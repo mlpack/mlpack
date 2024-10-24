@@ -65,10 +65,10 @@ class BestBinaryCategoricalSplit
   // No extra info needed for split.
   class AuxiliarySplitInfo { };
   // Allow access to the numeric split type.
-  typedef BestBinaryNumericSplit<FitnessFunction> NumericSplit;
+  using NumericSplit = BestBinaryNumericSplit<FitnessFunction>;
   // For calls to the numeric splitter.
-  typedef typename BestBinaryNumericSplit<FitnessFunction>
-      ::AuxiliarySplitInfo NumericAux;
+  using NumericAux =
+      typename BestBinaryNumericSplit<FitnessFunction>::AuxiliarySplitInfo;
 
   /**
    * Check if we can split a node.  If we can split a node in a way that

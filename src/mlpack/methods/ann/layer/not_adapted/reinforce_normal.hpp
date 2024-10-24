@@ -95,7 +95,7 @@ class ReinforceNormalType : public Layer<InputType, OutputType>
 }; // class ReinforceNormalType.
 
 // Standard ReinforceNormal layer.
-typedef ReinforceNormalType<arma::mat, arma::mat> ReinforceNormal;
+using ReinforceNormal = ReinforceNormalType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

@@ -308,7 +308,7 @@ class MaxPoolingType : public Layer<MatType>
 }; // class MaxPoolingType
 
 // Standard MaxPooling layer.
-typedef MaxPoolingType<arma::mat> MaxPooling;
+using MaxPooling = MaxPoolingType<arma::mat>;
 
 } // namespace mlpack
 

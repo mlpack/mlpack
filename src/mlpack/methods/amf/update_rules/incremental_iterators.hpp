@@ -49,7 +49,7 @@ void IncrementVIter(const MatType& V,
                     size_t& currentUserIndex,
                     size_t& currentItemIndex)
 {
-  typedef typename MatType::elem_type eT;
+  using eT = typename MatType::elem_type;
 
   // For dense matrices, 0s may be represented, so increment until we find the
   // next nonzero value.

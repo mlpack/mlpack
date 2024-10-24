@@ -42,7 +42,7 @@ void DeleteAllocatedMemoryImpl(
     const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   // Delete the allocated memory (hopefully we actually own it).
-  typedef std::tuple<T*, std::string> TupleType;
+  using TupleType =  std::tuple<T*, std::string>;
   delete std::get<0>(*std::any_cast<TupleType>(&d.value));
 }
 

@@ -88,7 +88,7 @@ class JoinType : public Layer<InputType, OutputType>
 }; // class JoinType
 
 //Standard Join layer.
-typedef JoinType<arma::mat, arma::mat> Join;
+using Join = JoinType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

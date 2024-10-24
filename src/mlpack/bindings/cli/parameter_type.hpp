@@ -23,14 +23,14 @@ namespace cli {
 template<bool HasSerialize, typename T>
 struct ParameterTypeDeducer
 {
-  typedef T type;
+  using type = T;
 };
 
 // If we have a serialize() function, then the type is a string.
 template<typename T>
 struct ParameterTypeDeducer<true, T>
 {
-  typedef std::string type;
+  using type = std::string;
 };
 
 /**
@@ -41,8 +41,8 @@ struct ParameterTypeDeducer<true, T>
 template<typename T>
 struct ParameterType
 {
-  typedef typename ParameterTypeDeducer<data::HasSerialize<T>::value, T>::type
-      type;
+  using type =
+      typename ParameterTypeDeducer<data::HasSerialize<T>::value, T>::type;
 };
 
 /**
@@ -53,7 +53,7 @@ struct ParameterType
 template<typename eT>
 struct ParameterType<arma::Col<eT>>
 {
-  typedef std::tuple<std::string, size_t, size_t> type;
+  using type = std::tuple<std::string, size_t, size_t>;
 };
 
 /**
@@ -65,7 +65,7 @@ struct ParameterType<arma::Col<eT>>
 template<typename eT>
 struct ParameterType<arma::Row<eT>>
 {
-  typedef std::tuple<std::string, size_t, size_t> type;
+  using type = std::tuple<std::string, size_t, size_t>;
 };
 
 /**
@@ -76,7 +76,7 @@ struct ParameterType<arma::Row<eT>>
 template<typename eT>
 struct ParameterType<arma::Mat<eT>>
 {
-  typedef std::tuple<std::string, size_t, size_t> type;
+  using type = std::tuple<std::string, size_t, size_t>;
 };
 
 /**
@@ -86,7 +86,7 @@ template<typename eT, typename PolicyType>
 struct ParameterType<std::tuple<mlpack::data::DatasetMapper<PolicyType,
                          std::string>, arma::Mat<eT>>>
 {
-  typedef std::tuple<std::string, size_t, size_t> type;
+  using type = std::tuple<std::string, size_t, size_t>;
 };
 
 } // namespace cli

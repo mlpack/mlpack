@@ -24,9 +24,9 @@ class RPlusPlusTreeAuxiliaryInformation
 {
  public:
   //! The element type held by the tree.
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
   //! The bound type held by the auxiliary information.
-  typedef HRectBound<EuclideanDistance, ElemType> BoundType;
+  using BoundType = HRectBound<EuclideanDistance, ElemType>;
 
   //! Construct the auxiliary information object.
   RPlusPlusTreeAuxiliaryInformation();

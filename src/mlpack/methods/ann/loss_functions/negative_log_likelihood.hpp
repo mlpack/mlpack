@@ -85,7 +85,7 @@ class NegativeLogLikelihoodType
 }; // class NegativeLogLikelihoodType
 
 // Default typedef for typical `arma::mat` usage.
-typedef NegativeLogLikelihoodType<arma::mat> NegativeLogLikelihood;
+using NegativeLogLikelihood = NegativeLogLikelihoodType<arma::mat>;
 
 } // namespace mlpack
 

@@ -413,7 +413,7 @@ Evaluate(MatType querySet, arma::vec& estimations)
     }
 
     // Evaluate.
-    typedef KDERules<DistanceType, KernelType, Tree> RuleType;
+    using RuleType = KDERules<DistanceType, KernelType, Tree>;
     RuleType rules = RuleType(referenceTree->Dataset(),
                               querySet,
                               estimations,
@@ -506,7 +506,7 @@ Evaluate(Tree* queryTree,
   }
 
   // Evaluate.
-  typedef KDERules<DistanceType, KernelType, Tree> RuleType;
+  using RuleType = KDERules<DistanceType, KernelType, Tree>;
   RuleType rules = RuleType(referenceTree->Dataset(),
                             queryTree->Dataset(),
                             estimations,
@@ -570,7 +570,7 @@ Evaluate(arma::vec& estimations)
   }
 
   // Evaluate.
-  typedef KDERules<DistanceType, KernelType, Tree> RuleType;
+  using RuleType = KDERules<DistanceType, KernelType, Tree>;
   RuleType rules = RuleType(referenceTree->Dataset(),
                             referenceTree->Dataset(),
                             estimations,

@@ -55,8 +55,8 @@ struct IsEnsOptimizerInternal<OptimizerType, FunctionType, MatType, true>
 {
   // If OptimizerType is a reference type, then forming the types below will
   // fail.  So we need to strip the reference (and the const for good measure).
-  typedef std::remove_cv_t<std::remove_reference_t<OptimizerType>>
-      SafeOptimizerType;
+  using SafeOptimizerType =
+      std::remove_cv_t<std::remove_reference_t<OptimizerType>>;
 
   using OptimizeElemReturnForm =
       typename MatType::elem_type(SafeOptimizerType::*)(FunctionType&,

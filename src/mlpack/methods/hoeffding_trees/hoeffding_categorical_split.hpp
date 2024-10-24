@@ -44,7 +44,7 @@ class HoeffdingCategoricalSplit
 {
  public:
   //! The type of split information required by the HoeffdingCategoricalSplit.
-  typedef CategoricalSplitInfo SplitInfo;
+  using SplitInfo = CategoricalSplitInfo;
 
   /**
    * Create the HoeffdingCategoricalSplit given a number of categories for this

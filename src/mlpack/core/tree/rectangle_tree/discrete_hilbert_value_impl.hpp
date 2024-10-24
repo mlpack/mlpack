@@ -152,7 +152,7 @@ DiscreteHilbertValue<TreeElemType>::
 CalculateValue(const VecType& pt,
                typename std::enable_if_t<IsVector<VecType>::value>*)
 {
-  typedef typename VecType::elem_type VecElemType;
+  using VecElemType = typename VecType::elem_type;
   arma::Col<HilbertElemType> res(pt.n_rows);
   // Calculate the number of bits for the exponent.
   const int numExpBits = std::ceil(std::log2(

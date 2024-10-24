@@ -54,11 +54,11 @@ namespace mlpack {
 template<typename AddressType, typename VecType>
 void PointToAddress(AddressType& address, const VecType& point)
 {
-  typedef typename VecType::elem_type VecElemType;
+  using VecElemType = typename VecType::elem_type;
   // Check that the arguments are compatible.
-  typedef std::conditional_t<sizeof(VecElemType) * CHAR_BIT <= 32,
-                                    uint32_t,
-                                    uint64_t> AddressElemType;
+  using AddressElemType =
+      std::conditional_t<sizeof(VecElemType) * CHAR_BIT <= 32,
+                         uint32_t, uint64_t>;
 
   static_assert(std::is_same_v<typename AddressType::elem_type,
       AddressElemType> == true, "The vector element type does not "
@@ -150,11 +150,11 @@ void PointToAddress(AddressType& address, const VecType& point)
 template<typename AddressType, typename VecType>
 void AddressToPoint(VecType& point, const AddressType& address)
 {
-  typedef typename VecType::elem_type VecElemType;
+  using VecElemType = typename VecType::elem_type;
   // Check that the arguments are compatible.
-  typedef std::conditional_t<sizeof(VecElemType) * CHAR_BIT <= 32,
-                                    uint32_t,
-                                    uint64_t> AddressElemType;
+  using AddressElemType =
+      std::conditional_t<sizeof(VecElemType) * CHAR_BIT <= 32,
+                         uint32_t, uint64_t>;
 
   static_assert(std::is_same_v<typename AddressType::elem_type,
       AddressElemType> == true, "The vector element type does not "

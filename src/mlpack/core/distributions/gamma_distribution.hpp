@@ -54,8 +54,8 @@ class GammaDistribution
 {
  public:
   // Convenience typedefs.
-  typedef typename GetColType<MatType>::type VecType;
-  typedef typename MatType::elem_type ElemType;
+  using VecType = typename GetColType<MatType>::type;
+  using ElemType = typename MatType::elem_type;
 
   /**
    * Construct the Gamma distribution with the given number of dimensions

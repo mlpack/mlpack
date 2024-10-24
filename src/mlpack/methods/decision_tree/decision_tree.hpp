@@ -39,11 +39,11 @@ class DecisionTree :
 {
  public:
   //! Allow access to the numeric split type.
-  typedef NumericSplitType<FitnessFunction> NumericSplit;
+  using NumericSplit = NumericSplitType<FitnessFunction>;
   //! Allow access to the categorical split type.
-  typedef CategoricalSplitType<FitnessFunction> CategoricalSplit;
+  using CategoricalSplit = CategoricalSplitType<FitnessFunction>;
   //! Allow access to the dimension selection type.
-  typedef DimensionSelectionType DimensionSelection;
+  using DimensionSelection = DimensionSelectionType;
 
   /**
    * Construct the decision tree on the given data and labels, where the data
@@ -507,10 +507,9 @@ class DecisionTree :
   //! Note that this class will also hold the members of the NumericSplit and
   //! CategoricalSplit AuxiliarySplitInfo classes, since it inherits from them.
   //! We'll define some convenience typedefs here.
-  typedef typename NumericSplit::AuxiliarySplitInfo
-      NumericAuxiliarySplitInfo;
-  typedef typename CategoricalSplit::AuxiliarySplitInfo
-      CategoricalAuxiliarySplitInfo;
+  using NumericAuxiliarySplitInfo = typename NumericSplit::AuxiliarySplitInfo;
+  using CategoricalAuxiliarySplitInfo =
+      typename CategoricalSplit::AuxiliarySplitInfo;
 
   /**
    * Calculate the class probabilities of the given labels.
@@ -596,11 +595,11 @@ using DecisionStump = DecisionTree<FitnessFunction,
  * Convenience typedef for ID3 decision stumps (single level decision trees made
  * with the ID3 algorithm).
  */
-typedef DecisionTree<InformationGain,
-                     BestBinaryNumericSplit,
-                     AllCategoricalSplit,
-                     AllDimensionSelect,
-                     true> ID3DecisionStump;
+using ID3DecisionStump = DecisionTree<InformationGain,
+                                      BestBinaryNumericSplit,
+                                      AllCategoricalSplit,
+                                      AllDimensionSelect,
+                                      true>;
 } // namespace mlpack
 
 // Include implementation.

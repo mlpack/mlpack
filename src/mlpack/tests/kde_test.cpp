@@ -100,7 +100,7 @@ TEST_CASE("KDETreeAsArguments", "[KDETest]")
                                 kernel);
 
   // Get dual-tree results.
-  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
+  using Tree = KDTree<EuclideanDistance, KDEStat, arma::mat>;
   std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
@@ -295,7 +295,7 @@ TEST_CASE("BallTreeGaussianKDETest", "[KDETest]")
                                 kernel);
 
   // BallTree KDE.
-  typedef BallTree<EuclideanDistance, KDEStat, arma::mat> Tree;
+  using Tree = BallTree<EuclideanDistance, KDEStat, arma::mat>;
   std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
@@ -467,7 +467,7 @@ TEST_CASE("DuplicatedReferenceSampleKDETest", "[KDETest]")
                                 kernel);
 
   // Dual-tree KDE.
-  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
+  using Tree = KDTree<EuclideanDistance, KDEStat, arma::mat>;
   std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
@@ -502,7 +502,7 @@ TEST_CASE("DuplicatedQuerySampleKDETest", "[KDETest]")
   query.col(2) = query.col(3);
 
   // Dual-tree KDE.
-  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
+  using Tree = KDTree<EuclideanDistance, KDEStat, arma::mat>;
   std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
@@ -611,7 +611,7 @@ TEST_CASE("EmptyReferenceTest", "[KDETest]")
 
   // When training using a tree.
   std::vector<size_t> oldFromNewReferences;
-  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
+  using Tree = KDTree<EuclideanDistance, KDEStat, arma::mat>;
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
   REQUIRE_THROWS_AS(
       kde.Train(referenceTree, &oldFromNewReferences), std::invalid_argument);
@@ -644,7 +644,7 @@ TEST_CASE("EvaluationMatchDimensionsTest", "[KDETest]")
                     std::invalid_argument);
 
   // When evaluating using a query tree.
-  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
+  using Tree = KDTree<EuclideanDistance, KDEStat, arma::mat>;
   std::vector<size_t> oldFromNewQueries;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 3);
   REQUIRE_THROWS_AS(kde.Evaluate(queryTree, oldFromNewQueries, estimations),
@@ -679,7 +679,7 @@ TEST_CASE("EmptyQuerySetTest", "[KDETest]")
   REQUIRE_NOTHROW(kde.Evaluate(query, estimations));
 
   // When evaluating using a query tree.
-  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
+  using Tree = KDTree<EuclideanDistance, KDEStat, arma::mat>;
   std::vector<size_t> oldFromNewQueries;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 3);
   REQUIRE_NOTHROW(
@@ -718,7 +718,7 @@ TEST_CASE("KDESerializationTest", "[KDETest]")
   kde.Train(reference);
 
   // Get estimations to compare.
-  arma::mat query = arma::randu(4, 100);;
+  arma::mat query = arma::randu(4, 100);
   arma::vec estimations = arma::vec(query.n_cols);
   kde.Evaluate(query, estimations);
 
@@ -802,7 +802,7 @@ TEST_CASE("CopyConstructor", "[KDETest]")
   const double kernelBandwidth = 1.5;
   const double relError = 0.05;
 
-  typedef KDE<GaussianKernel, EuclideanDistance, arma::mat> KDEType;
+  using KDEType = KDE<GaussianKernel, EuclideanDistance, arma::mat>;
 
   // KDE.
   KDEType kde(relError, 0, GaussianKernel(kernelBandwidth));
@@ -838,8 +838,7 @@ TEST_CASE("MoveConstructor", "[KDETest]")
   const double kernelBandwidth = 1.2;
   const double relError = 0.05;
 
-  typedef KDE<EpanechnikovKernel, EuclideanDistance, arma::mat>
-      KDEType;
+  using KDEType = KDE<EpanechnikovKernel, EuclideanDistance, arma::mat>;
 
   // KDE.
   KDEType kde(relError, 0, EpanechnikovKernel(kernelBandwidth));

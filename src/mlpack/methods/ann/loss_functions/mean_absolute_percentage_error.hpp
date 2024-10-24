@@ -78,7 +78,7 @@ class MeanAbsolutePercentageErrorType
 }; // class MeanAbsolutePercentageErrorType
 
 // Default typedef for typical `arma::mat` usage.
-typedef MeanAbsolutePercentageErrorType<arma::mat> MeanAbsolutePercentageError;
+using MeanAbsolutePercentageError = MeanAbsolutePercentageErrorType<arma::mat>;
 
 } // namespace mlpack
 

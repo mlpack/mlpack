@@ -307,7 +307,7 @@ TEST_CASE("NonNegNMFALSTest", "[NMFTest]")
  */
 TEMPLATE_TEST_CASE("NoInitializationTest", "[NMFTest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   arma::Mat<eT> W, H;
   W.randu(100, 5);

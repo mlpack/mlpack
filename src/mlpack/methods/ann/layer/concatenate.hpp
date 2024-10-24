@@ -99,7 +99,7 @@ class ConcatenateType : public Layer<MatType>
 }; // class Concatenate
 
 // Standard Concatenate layer.
-typedef ConcatenateType<arma::mat> Concatenate;
+using Concatenate = ConcatenateType<arma::mat>;
 
 } // namespace mlpack
 

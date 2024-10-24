@@ -37,17 +37,17 @@ class HoeffdingTreeModel
   };
 
   //! Convenience typedef for GINI_HOEFFDING tree type.
-  typedef HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit,
-      HoeffdingCategoricalSplit> GiniHoeffdingTreeType;
+  using GiniHoeffdingTreeType = HoeffdingTree<GiniImpurity,
+      HoeffdingDoubleNumericSplit, HoeffdingCategoricalSplit>;
   //! Convenience typedef for GINI_BINARY tree type.
-  typedef HoeffdingTree<GiniImpurity, BinaryDoubleNumericSplit,
-      HoeffdingCategoricalSplit> GiniBinaryTreeType;
+  using GiniBinaryTreeType = HoeffdingTree<GiniImpurity,
+      BinaryDoubleNumericSplit, HoeffdingCategoricalSplit>;
   //! Convenience typedef for INFO_HOEFFDING tree type.
-  typedef HoeffdingTree<HoeffdingInformationGain, HoeffdingDoubleNumericSplit,
-      HoeffdingCategoricalSplit> InfoHoeffdingTreeType;
+  using InfoHoeffdingTreeType = HoeffdingTree<HoeffdingInformationGain,
+      HoeffdingDoubleNumericSplit, HoeffdingCategoricalSplit>;
   //! Convenience typedef for INFO_BINARY tree type.
-  typedef HoeffdingTree<HoeffdingInformationGain, BinaryDoubleNumericSplit,
-      HoeffdingCategoricalSplit> InfoBinaryTreeType;
+  using InfoBinaryTreeType = HoeffdingTree<HoeffdingInformationGain,
+      BinaryDoubleNumericSplit, HoeffdingCategoricalSplit>;
 
   /**
    * Construct the Hoeffding tree model, but don't initialize any tree.

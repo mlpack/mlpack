@@ -152,7 +152,7 @@ class DropConnectType : public Layer<MatType>
 // Convenience typedefs.
 
 // Standard DropConnect layer.
-typedef DropConnectType<arma::mat> DropConnect;
+using DropConnect = DropConnectType<arma::mat>;
 
 }  // namespace mlpack
 

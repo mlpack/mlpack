@@ -78,7 +78,7 @@ class MeanSquaredErrorType
 }; // class MeanSquaredErrorType
 
 // Default typedef for typical `arma::mat` usage.
-typedef MeanSquaredErrorType<arma::mat> MeanSquaredError;
+using MeanSquaredError = MeanSquaredErrorType<arma::mat>;
 
 } // namespace mlpack
 

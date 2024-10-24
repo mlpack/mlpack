@@ -30,7 +30,7 @@ typename MatType::elem_type CosineEmbeddingLossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   const size_t cols = prediction.n_cols;
   const size_t batchSize = prediction.n_elem / cols;
@@ -67,7 +67,7 @@ void CosineEmbeddingLossType<MatType>::Backward(
     const MatType& target,
     MatType& loss)
 {
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   const size_t cols = prediction.n_cols;
   const size_t batchSize = prediction.n_elem / cols;

@@ -170,8 +170,8 @@ TEST_CASE("DualTreeSearch", "[KRANNTest]")
   size_t expectedRankErrorUB = 10;
 
   // Build query tree by hand.
-  typedef KDTree<EuclideanDistance, RAQueryStat<NearestNeighborSort>,
-      arma::mat> TreeType;
+  using TreeType = KDTree<EuclideanDistance, RAQueryStat<NearestNeighborSort>,
+      arma::mat>;
   std::vector<size_t> oldFromNewQueries;
   TreeType queryTree(queryData, oldFromNewQueries);
 
@@ -286,8 +286,8 @@ TEST_CASE("SingleCoverTreeTest", "[KRANNTest]")
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  typedef RASearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      StandardCoverTree> RACoverTreeSearch;
+  using RACoverTreeSearch = RASearch<NearestNeighborSort, EuclideanDistance,
+       arma::mat, StandardCoverTree>;
 
   RACoverTreeSearch tssRann(refData, false, true, 1.0, 0.95, false, false, 5);
 
@@ -350,10 +350,10 @@ TEST_CASE("DualCoverTreeTest", "[KRANNTest]")
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  typedef StandardCoverTree<EuclideanDistance, RAQueryStat<NearestNeighborSort>,
-      arma::mat> TreeType;
-  typedef RASearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      StandardCoverTree> RACoverTreeSearch;
+  using TreeType = StandardCoverTree<EuclideanDistance,
+      RAQueryStat<NearestNeighborSort>, arma::mat>;
+  using RACoverTreeSearch = RASearch<NearestNeighborSort, EuclideanDistance,
+      arma::mat, StandardCoverTree>;
 
   TreeType refTree(refData);
   TreeType queryTree(queryData);
@@ -421,10 +421,10 @@ TEST_CASE("SingleBallTreeTest", "[KRANNTest]")
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  typedef BinarySpaceTree<BallBound<>, RAQueryStat<NearestNeighborSort> >
-      TreeType;
-  typedef RASearch<NearestNeighborSort, EuclideanDistance, TreeType>
-      RABallTreeSearch;
+  using TreeType = BinarySpaceTree<BallBound<>,
+      RAQueryStat<NearestNeighborSort>>;
+  using RABallTreeSearch = RASearch<NearestNeighborSort, EuclideanDistance,
+      TreeType>;
 
   RABallTreeSearch tssRann(refData, queryData, false, true);
 
@@ -484,10 +484,10 @@ TEST_CASE("DualBallTreeTest", "[KRANNTest]")
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  typedef BinarySpaceTree<BallBound<>, RAQueryStat<NearestNeighborSort> >
-    TreeType;
-  typedef RASearch<NearestNeighborSort, EuclideanDistance, TreeType>
-      RABallTreeSearch;
+  using TreeType = BinarySpaceTree<BallBound<>,
+      RAQueryStat<NearestNeighborSort>>;
+  using RABallTreeSearch = RASearch<NearestNeighborSort, EuclideanDistance,
+      TreeType>;
 
   TreeType refTree(refData);
   TreeType queryTree(queryData);

@@ -56,7 +56,7 @@ class SVDConvolution
       MatType& output,
       const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
-    typedef typename GetColType<MatType>::type ColType;
+    using ColType = typename GetColType<MatType>::type;
     // Use the naive convolution in case the filter isn't two dimensional or the
     // filter is bigger than the input.
     if (filter.n_rows > input.n_rows || filter.n_cols > input.n_cols ||
@@ -122,7 +122,7 @@ class SVDConvolution
       CubeType& output,
       const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
-    typedef typename GetDenseMatType<CubeType>::type MatType;
+    using MatType = typename GetDenseMatType<CubeType>::type;
     MatType convOutput;
     SVDConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
         convOutput);

@@ -228,7 +228,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     const int samplings = params.Get<int>("samplings");
     const double percentage = params.Get<double>("percentage");
 
-    typedef KMeans<SquaredEuclideanDistance, RefinedStart> KMeansType;
+    using KMeansType = KMeans<SquaredEuclideanDistance, RefinedStart>;
 
     KMeansType k(kmeansMaxIterations, SquaredEuclideanDistance(),
         RefinedStart(samplings, percentage));

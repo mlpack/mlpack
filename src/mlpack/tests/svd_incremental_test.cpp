@@ -25,7 +25,7 @@ using namespace arma;
 TEMPLATE_TEST_CASE("SVDIncompleteIncrementalConvergenceTest",
     "[SVDIncrementalTest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   SpMat<eT> data;
   data.sprandn(100, 100, 0.2);
@@ -53,7 +53,7 @@ TEMPLATE_TEST_CASE("SVDIncompleteIncrementalConvergenceTest",
 TEMPLATE_TEST_CASE("SVDCompleteIncrementalConvergenceTest",
     "[SVDIncrementalTest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   SpMat<eT> data;
   data.sprandn(100, 100, 0.2);
@@ -101,7 +101,7 @@ class SpecificRandomInitialization
 TEMPLATE_TEST_CASE("SVDIncompleteIncrementalRegularizationTest",
     "[SVDIncrementalTest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   Mat<eT> dataset;
   if (!data::Load("GroupLensSmall.csv", dataset))

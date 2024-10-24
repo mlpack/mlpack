@@ -58,7 +58,7 @@ class KernelTraits<CosineSimilarity>
 };
 
 // This name is deprecated and can be removed in mlpack 5.0.0.
-typedef CosineSimilarity CosineDistance;
+using CosineDistance = CosineSimilarity;
 
 } // namespace mlpack
 

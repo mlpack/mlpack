@@ -18,9 +18,9 @@ using namespace std;
 
 TEMPLATE_TEST_CASE("Radical_Test_Radical3D", "[RadicalTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   MatType matX;
   if (!data::Load("data_3d_mixed.txt", matX))

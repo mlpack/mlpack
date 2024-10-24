@@ -170,8 +170,8 @@ class DatasetMapper
   std::vector<Datatype> types;
 
   // Forward mapping type.
-  using ForwardMapType = typename std::unordered_map<InputType, typename
-      PolicyType::MappedType>;
+  using ForwardMapType = std::unordered_map<InputType,
+      typename PolicyType::MappedType>;
 
   // Reverse mapping type.  Multiple inputs may map to a single output, hence
   // the need for std::vector.

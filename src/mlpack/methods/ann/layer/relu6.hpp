@@ -93,7 +93,7 @@ class ReLU6Type : public Layer<MatType>
 // Convenience typedefs.
 
 // Standard ReLU6 layer.
-typedef ReLU6Type<arma::mat> ReLU6;
+using ReLU6 = ReLU6Type<arma::mat>;
 
 } // namespace mlpack
 

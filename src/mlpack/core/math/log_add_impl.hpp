@@ -65,7 +65,7 @@ typename T::elem_type AccuLog(const T& x)
   if (maxVal == -std::numeric_limits<typename T::elem_type>::infinity())
     return maxVal;
 
-  return maxVal + std::log(sum(exp(x - maxVal)));;
+  return maxVal + std::log(sum(exp(x - maxVal)));
 }
 
 /**

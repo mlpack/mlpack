@@ -232,7 +232,7 @@ void TransposedConvolutionType<
     {
       inputPaddedTemp = arma::Cube<typename InputType::elem_type>(
           inputExpandedTemp.memptr(), inputExpandedTemp.n_rows,
-          inputExpandedTemp.n_cols, inputExpandedTemp.n_slices, false, false);;
+          inputExpandedTemp.n_cols, inputExpandedTemp.n_slices, false, false);
     }
   }
   else if (paddingForward.PadWLeft() != 0 ||

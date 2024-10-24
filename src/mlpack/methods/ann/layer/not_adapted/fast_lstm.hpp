@@ -68,8 +68,8 @@ class FastLSTMType : public Layer<InputType, OutputType>
 {
  public:
   // Convenience typedefs.
-  typedef typename InputType::elem_type InputET;
-  typedef typename OutputType::elem_type OutputET;
+  using InputET = typename InputType::elem_type;
+  using OutputET = typename OutputType::elem_type;
 
   //! Create the FastLSTMType object.
   FastLSTMType();
@@ -305,7 +305,7 @@ class FastLSTMType : public Layer<InputType, OutputType>
 }; // class FastLSTMType.
 
 // Standard FastLSTM layer.
-typedef FastLSTMType<arma::mat, arma::mat> FastLSTM;
+using FastLSTM = FastLSTMType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

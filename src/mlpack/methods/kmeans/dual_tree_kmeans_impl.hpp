@@ -143,7 +143,7 @@ double DualTreeKMeans<DistanceType, MatType, TreeType>::Iterate(
 
   // We won't use the KNN class here because we have our own set of rules.
   lastIterationCentroids = centroids;
-  typedef DualTreeKMeansRules<DistanceType, Tree> RuleType;
+  using RuleType = DualTreeKMeansRules<DistanceType, Tree>;
   RuleType rules(nns.ReferenceTree().Dataset(), dataset, assignments,
       upperBounds, lowerBounds, distance, prunedPoints, oldFromNewCentroids,
       visited);

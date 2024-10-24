@@ -101,7 +101,7 @@ class CReLUType : public Layer<MatType>
 // Convenience typedefs.
 
 // Standard CReLU layer.
-typedef CReLUType<arma::mat> CReLU;
+using CReLU = CReLUType<arma::mat>;
 
 } // namespace mlpack
 

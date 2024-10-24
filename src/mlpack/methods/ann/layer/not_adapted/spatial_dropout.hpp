@@ -126,7 +126,7 @@ class SpatialDropoutType : public Layer<InputType, OutputType>
 // Convenience typedefs.
 
 // Standard SpatialDropout layer.
-typedef SpatialDropoutType<arma::mat, arma::mat> SpatialDropout;
+using SpatialDropout = SpatialDropoutType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

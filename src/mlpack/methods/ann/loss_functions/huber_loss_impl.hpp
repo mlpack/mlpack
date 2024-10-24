@@ -32,7 +32,7 @@ typename MatType::elem_type HuberLossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
   ElemType lossSum = 0;
   for (size_t i = 0; i < prediction.n_elem; ++i)
   {
@@ -53,7 +53,7 @@ void HuberLossType<MatType>::Backward(
     const MatType& target,
     MatType& loss)
 {
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   loss.set_size(size(prediction));
   for (size_t i = 0; i < loss.n_elem; ++i)

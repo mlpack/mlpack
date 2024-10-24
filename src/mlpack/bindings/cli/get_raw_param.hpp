@@ -48,7 +48,7 @@ T& GetRawParam(
                                      arma::mat>>>* = 0)
 {
   // Don't load the matrix.
-  typedef std::tuple<T, std::tuple<std::string, size_t, size_t>> TupleType;
+  using TupleType = std::tuple<T, std::tuple<std::string, size_t, size_t>>;
   T& value = std::get<0>(*std::any_cast<TupleType>(&d.value));
   return value;
 }
@@ -63,7 +63,7 @@ T*& GetRawParam(
     const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   // Don't load the model.
-  typedef std::tuple<T*, std::string> TupleType;
+  using TupleType =  std::tuple<T*, std::string>;
   T*& value = std::get<0>(*std::any_cast<TupleType>(&d.value));
   return value;
 }

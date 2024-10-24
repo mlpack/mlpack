@@ -93,7 +93,7 @@ class MultiplyConstantType : public Layer<InputType, OutputType>
 // Convenience typedefs.
 
 // Standard MultiplyConstant layer.
-typedef MultiplyConstantType<arma::mat, arma::mat> MultiplyConstant;
+using MultiplyConstant = MultiplyConstantType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

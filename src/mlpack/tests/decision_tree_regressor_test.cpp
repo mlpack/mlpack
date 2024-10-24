@@ -1194,7 +1194,7 @@ TEST_CASE("CategoricalMADGainWeightedBuildTest", "[DecisionTreeRegressorTest]")
 TEMPLATE_TEST_CASE("SimpleGeneralizationTest_",
     "[DecisionTreeRegressorTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   // Allow three trials.
   bool success = false;

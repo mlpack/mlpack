@@ -91,7 +91,7 @@ class MarginRankingLossType
 }; // class MarginRankingLossType
 
 // Default typedef for typical `arma::mat` usage.
-typedef MarginRankingLossType<arma::mat> MarginRankingLoss;
+using MarginRankingLoss = MarginRankingLossType<arma::mat>;
 
 } // namespace mlpack
 

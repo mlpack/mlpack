@@ -152,7 +152,7 @@ class NoisyLinearType : public Layer<MatType>
 // Convenience typedefs.
 
 // Standard noisy linear layer.
-typedef NoisyLinearType<arma::mat> NoisyLinear;
+using NoisyLinear = NoisyLinearType<arma::mat>;
 
 } // namespace mlpack
 

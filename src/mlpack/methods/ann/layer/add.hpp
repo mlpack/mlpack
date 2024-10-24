@@ -111,7 +111,7 @@ class AddType : public Layer<MatType>
 }; // class Add
 
 // Standard Add layer.
-typedef AddType<arma::mat> Add;
+using Add = AddType<arma::mat>;
 
 } // namespace mlpack
 

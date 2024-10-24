@@ -277,8 +277,8 @@ class IO
   std::map<std::string, std::map<std::string, util::ParamData>> parameters;
   //! Map of functions.  Note that this is not specific to a binding, so we only
   //! have one.
-  typedef std::map<std::string, std::map<std::string,
-      void (*)(util::ParamData&, const void*, void*)>> FunctionMapType;
+  using FunctionMapType = std::map<std::string, std::map<std::string,
+      void (*)(util::ParamData&, const void*, void*)>>;
   FunctionMapType functionMap;
 
   //! Ensure only one thread can modify the docs map at a time.

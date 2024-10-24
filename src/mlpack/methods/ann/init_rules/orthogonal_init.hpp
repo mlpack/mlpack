@@ -42,7 +42,7 @@ class OrthogonalInitialization
   void Initialize(MatType& W, const size_t rows, const size_t cols)
   {
     MatType V;
-    typedef typename GetColType<MatType>::type ColType;
+    using ColType = typename GetColType<MatType>::type;
     ColType s;
 
     svd_econ(W, s, V, randu<MatType>(rows, cols));
@@ -60,7 +60,7 @@ class OrthogonalInitialization
       const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
     MatType V;
-    typedef typename GetColType<MatType>::type ColType;
+    using ColType = typename GetColType<MatType>::type;
     ColType s;
 
     svd_econ(W, s, V, randu<MatType>(W.n_rows, W.n_cols));

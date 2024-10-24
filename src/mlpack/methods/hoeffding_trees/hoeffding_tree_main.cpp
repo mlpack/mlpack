@@ -133,7 +133,7 @@ PARAM_INT_IN("observations_before_binning", "If the 'domingos' split strategy "
     "performed.", "o", 100);
 
 // Convenience typedef.
-typedef tuple<DatasetInfo, arma::mat> TupleType;
+using TupleType = tuple<DatasetInfo, arma::mat>;
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {

@@ -32,7 +32,7 @@ using namespace ens;
  */
 TEMPLATE_TEST_CASE("LMNNTargetNeighborsTest", "[LMNNTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -67,7 +67,7 @@ TEMPLATE_TEST_CASE("LMNNTargetNeighborsTest", "[LMNNTest]", float, double)
  */
 TEMPLATE_TEST_CASE("LMNNImpostorsTest", "[LMNNTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -107,7 +107,7 @@ TEMPLATE_TEST_CASE("LMNNImpostorsTest", "[LMNNTest]", float, double)
  */
 TEMPLATE_TEST_CASE("LMNNInitialPointTest", "[LMNNTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   // Cheap fake dataset.
   arma::Mat<ElemType> dataset = arma::randu<arma::Mat<ElemType>>(5, 5);
@@ -136,7 +136,7 @@ TEMPLATE_TEST_CASE("LMNNInitialPointTest", "[LMNNTest]", float, double)
  */
 TEMPLATE_TEST_CASE("LMNNInitialEvaluationTest", "[LMNNTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -157,7 +157,7 @@ TEMPLATE_TEST_CASE("LMNNInitialEvaluationTest", "[LMNNTest]", float, double)
  */
 TEMPLATE_TEST_CASE("LMNNInitialGradientTest", "[LMNNTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -185,7 +185,7 @@ TEMPLATE_TEST_CASE("LMNNInitialGradientTest", "[LMNNTest]", float, double)
 TEMPLATE_TEST_CASE("LMNNInitialEvaluateWithGradientTest", "[LMNNTest]", float,
     double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -215,7 +215,7 @@ TEMPLATE_TEST_CASE("LMNNInitialEvaluateWithGradientTest", "[LMNNTest]", float,
  */
 TEMPLATE_TEST_CASE("LMNNSeparableObjectiveTest", "[LMNNTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -240,7 +240,7 @@ TEMPLATE_TEST_CASE("LMNNSeparableObjectiveTest", "[LMNNTest]", float, double)
  */
 TEMPLATE_TEST_CASE("LMNNSeparableGradientTest", "[LMNNTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -304,7 +304,7 @@ TEMPLATE_TEST_CASE("LMNNSeparableGradientTest", "[LMNNTest]", float, double)
 TEMPLATE_TEST_CASE("LMNNSeparableEvaluateWithGradientTest", "[LMNNTest]", float,
     double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -377,7 +377,7 @@ TEMPLATE_TEST_CASE("LMNNSeparableEvaluateWithGradientTest", "[LMNNTest]", float,
 // Check that final objective value using SGD optimizer is optimal.
 TEMPLATE_TEST_CASE("LMNNSGDSimpleDatasetTest", "[LMNNTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -402,7 +402,7 @@ TEMPLATE_TEST_CASE("LMNNSGDSimpleDatasetTest", "[LMNNTest]", float, double)
 // Check that final objective value using L-BFGS optimizer is optimal.
 TEMPLATE_TEST_CASE("LMNNLBFGSSimpleDatasetTest", "[LMNNTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -430,7 +430,7 @@ double KnnAccuracy(const MatType& dataset,
                    const LabelsType& labels,
                    const size_t k)
 {
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   LabelsType uniqueLabels = arma::unique(labels);
 
@@ -468,7 +468,7 @@ double KnnAccuracy(const MatType& dataset,
 // simple dataset.
 TEMPLATE_TEST_CASE("LMNNAccuracyTest", "[LMNNTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -498,7 +498,7 @@ TEMPLATE_TEST_CASE("LMNNAccuracyTest", "[LMNNTest]", float, double)
 // three tries.
 TEMPLATE_TEST_CASE("LMNNLowRankAccuracyLBFGSTest", "[LMNNTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   bool success = false;
   for (size_t trial = 0; trial < 3; ++trial)
@@ -558,7 +558,7 @@ TEMPLATE_TEST_CASE("LMNNLowRankAccuracyLBFGSTest", "[LMNNTest]", float, double)
 // three tries.
 TEMPLATE_TEST_CASE("LMNNLowRankAccuracyTest", "[LMNNTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   bool success = false;
   for (size_t trial = 0; trial < 3; ++trial)
@@ -679,7 +679,7 @@ double CheckGradient(FunctionType& function,
                      MatType& coordinates,
                      const typename MatType::elem_type eps = 1e-7)
 {
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   // Get gradients for the current parameters.
   MatType orgGradient, gradient, estGradient;
@@ -714,7 +714,7 @@ double CheckGradient(FunctionType& function,
 
 TEMPLATE_TEST_CASE("LMNNFunctionGradientTest", "[LMNNTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -733,7 +733,7 @@ TEMPLATE_TEST_CASE("LMNNFunctionGradientTest", "[LMNNTest]", float, double)
 
 TEMPLATE_TEST_CASE("LMNNFunctionGradientTest2", "[LMNNTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<ElemType> dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -752,7 +752,7 @@ TEMPLATE_TEST_CASE("LMNNFunctionGradientTest2", "[LMNNTest]", float, double)
 
 TEMPLATE_TEST_CASE("LMNNFunctionGradientTest3", "[LMNNTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   arma::Mat<ElemType> dataset;
   arma::Row<size_t> labels;
@@ -774,7 +774,7 @@ TEMPLATE_TEST_CASE("LMNNFunctionGradientTest3", "[LMNNTest]", float, double)
 
 TEMPLATE_TEST_CASE("LMNNFunctionGradientTest4", "[LMNNTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   arma::Mat<ElemType> dataset;
   arma::Row<size_t> labels;

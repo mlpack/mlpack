@@ -129,9 +129,9 @@ class AMF
   UpdateRuleType update;
 }; // class AMF
 
-typedef AMF<SimpleResidueTermination,
-            RandomAcolInitialization<>,
-            NMFALSUpdate> NMFALSFactorizer;
+using NMFALSFactorizer = AMF<SimpleResidueTermination,
+                             RandomAcolInitialization<>,
+                             NMFALSUpdate>;
 
 //! Convenience typedefs.
 

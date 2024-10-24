@@ -135,10 +135,10 @@ class SequentialType : public MultiLayer<InputType, OutputType>
 }; // class SequentialType
 
 // Standard Sequential layer.
-typedef SequentialType<arma::mat, arma::mat, false> Sequential;
+using Sequential = SequentialType<arma::mat, arma::mat, false>;
 
 // Standard Residual layer.
-typedef SequentialType<arma::mat, arma::mat, true> Residual;
+using Residual = SequentialType<arma::mat, arma::mat, true>;
 
 } // namespace mlpack
 

@@ -73,11 +73,11 @@ class SpillTree
 {
  public:
   //! So other classes can use TreeType::Mat.
-  typedef MatType Mat;
+  using Mat = MatType;
   //! The type of element held in MatType.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
   //! The bound type.
-  typedef typename HyperplaneType<DistanceType>::BoundType BoundType;
+  using BoundType = typename HyperplaneType<DistanceType>::BoundType;
 
  private:
   //! The left child node.

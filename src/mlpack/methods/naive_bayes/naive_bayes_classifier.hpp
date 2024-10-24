@@ -58,7 +58,7 @@ class NaiveBayesClassifier
 {
  public:
   // Convenience typedef.
-  typedef typename ModelMatType::elem_type ElemType;
+  using ElemType = typename ModelMatType::elem_type;
 
   /**
    * Initializes the classifier as per the input and then trains it by

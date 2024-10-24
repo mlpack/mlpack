@@ -38,7 +38,7 @@ class RBM
 {
  public:
   using NetworkType = RBM<InitializationRuleType, DataType, PolicyType>;
-  typedef typename DataType::elem_type ElemType;
+  using ElemType = typename DataType::elem_type;
 
   /**
    * Initialize all the parameters of the network using initializeRule.

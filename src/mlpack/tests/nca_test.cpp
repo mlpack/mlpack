@@ -28,7 +28,7 @@ using namespace ens;
  */
 TEMPLATE_TEST_CASE("SoftmaxInitialPoint", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Cheap fake dataset.
   arma::Mat<eT> data;
@@ -61,7 +61,7 @@ TEMPLATE_TEST_CASE("SoftmaxInitialPoint", "[NCATest]", float, double)
  */
 TEMPLATE_TEST_CASE("SoftmaxInitialEvaluation", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -85,7 +85,7 @@ TEMPLATE_TEST_CASE("SoftmaxInitialEvaluation", "[NCATest]", float, double)
  */
 TEMPLATE_TEST_CASE("SoftmaxInitialGradient", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -117,7 +117,7 @@ TEMPLATE_TEST_CASE("SoftmaxInitialGradient", "[NCATest]", float, double)
  */
 TEMPLATE_TEST_CASE("SoftmaxOptimalEvaluation", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Simple optimal dataset.
   arma::Mat<eT> data       = " 500  500 -500 -500;"
@@ -140,7 +140,7 @@ TEMPLATE_TEST_CASE("SoftmaxOptimalEvaluation", "[NCATest]", float, double)
  */
 TEMPLATE_TEST_CASE("SoftmaxOptimalGradient", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Simple optimal dataset.
   arma::Mat<eT> data       = " 500  500 -500 -500;"
@@ -164,7 +164,7 @@ TEMPLATE_TEST_CASE("SoftmaxOptimalGradient", "[NCATest]", float, double)
  */
 TEMPLATE_TEST_CASE("SoftmaxSeparableObjective", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -192,7 +192,7 @@ TEMPLATE_TEST_CASE("SoftmaxSeparableObjective", "[NCATest]", float, double)
 TEMPLATE_TEST_CASE("OptimalSoftmaxSeparableObjective", "[NCATest]", float,
     double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Simple optimal dataset.
   arma::Mat<eT> data       = " 500  500 -500 -500;"
@@ -217,7 +217,7 @@ TEMPLATE_TEST_CASE("OptimalSoftmaxSeparableObjective", "[NCATest]", float,
  */
 TEMPLATE_TEST_CASE("SoftmaxSeparableGradient", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -283,7 +283,7 @@ TEMPLATE_TEST_CASE("SoftmaxSeparableGradient", "[NCATest]", float, double)
  */
 TEMPLATE_TEST_CASE("NCASGDSimpleDataset", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -321,7 +321,7 @@ TEMPLATE_TEST_CASE("NCASGDSimpleDataset", "[NCATest]", float, double)
 
 TEMPLATE_TEST_CASE("NCALBFGSSimpleDataset", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"

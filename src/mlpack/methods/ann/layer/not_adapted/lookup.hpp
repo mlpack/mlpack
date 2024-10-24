@@ -128,8 +128,8 @@ class LookupType : public Layer<InputType, OutputType>
 // Alias for using as embedding layer.
 // template<typename MatType = arma::mat>
 // using Embedding = Lookup<MatType, MatType>;
-typedef LookupType<arma::mat, arma::mat> Lookup;
-typedef LookupType<arma::mat, arma::mat> Embedding;
+using Lookup = LookupType<arma::mat, arma::mat>;
+using Embedding = LookupType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

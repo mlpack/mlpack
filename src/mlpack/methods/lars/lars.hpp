@@ -86,9 +86,9 @@ template<typename ModelMatType = arma::mat>
 class LARS
 {
  public:
-  typedef typename GetColType<ModelMatType>::type ModelColType;
-  typedef typename GetDenseMatType<ModelMatType>::type DenseMatType;
-  typedef typename ModelMatType::elem_type ElemType;
+  using ModelColType = typename GetColType<ModelMatType>::type;
+  using DenseMatType = typename GetDenseMatType<ModelMatType>::type;
+  using ElemType = typename ModelMatType::elem_type;
 
   /**
    * Set the parameters to LARS.  Both lambda1 and lambda2 default to 0.
