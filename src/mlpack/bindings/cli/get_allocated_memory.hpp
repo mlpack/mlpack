@@ -44,7 +44,7 @@ void* GetAllocatedMemory(
 {
   // Here we have a model, which is a tuple, and we need the address of the
   // memory.
-  using TupleType =  std::tuple<T*, std::string>;
+  using TupleType = std::tuple<T*, std::string>;
   return std::get<0>(*std::any_cast<TupleType>(&d.value));
 }
 

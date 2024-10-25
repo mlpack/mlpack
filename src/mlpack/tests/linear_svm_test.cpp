@@ -575,7 +575,7 @@ TEST_CASE("LinearSVMLBFGSTwoClasses", "[LinearSVMTest]")
     for (size_t i = 0; i < points / 2; ++i)
     {
       data.col(i) = g1.Random();
-      labels(i) =  0;
+      labels(i) = 0;
     }
     for (size_t i = points / 2; i < points; ++i)
     {
@@ -844,7 +844,7 @@ TEST_CASE("LinearSVMParallelSGDTwoClasses", "[LinearSVMTest]")
     for (size_t i = 0; i < points / 2; ++i)
     {
       data.col(i) = g1.Random();
-      labels(i) =  0;
+      labels(i) = 0;
     }
     for (size_t i = points / 2; i < points; ++i)
     {

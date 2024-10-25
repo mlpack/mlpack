@@ -121,7 +121,7 @@ BayesianLinearRegression<ModelMatType>::Train(
 
   // Initialize the hyperparameters and begin with an infinitely broad prior.
   alpha = ((ElemType) 1e-6);
-  beta =  ((ElemType) 1 / (var(t, 1) * 0.1));
+  beta = ((ElemType) 1 / (var(t, 1) * 0.1));
 
   unsigned short i = 0;
   ElemType crit = ((ElemType) 1.0);

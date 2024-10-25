@@ -165,7 +165,7 @@ class XTreeAuxiliaryInformation
    * The X tree requires that the tree records it's "split history".  To make
    * this easy, we use the following structure.
    */
-  using SplitHistoryStruct = struct SplitHistoryStruct
+  struct SplitHistoryStruct
   {
     int lastDimension;
     std::vector<bool> history;

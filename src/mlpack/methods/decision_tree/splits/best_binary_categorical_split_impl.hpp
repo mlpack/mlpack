@@ -180,7 +180,7 @@ double BestBinaryCategoricalSplit<FitnessFunction>::SplitIfBetter(
   }
   for (size_t i = 0; i < numCategories; ++i)
   {
-    categoryResponse[i] =  categoryCounts[i] == 0 ? 0 :
+    categoryResponse[i] = categoryCounts[i] == 0 ? 0 :
         categoryResponse[i] / categoryCounts[i];
   }
 

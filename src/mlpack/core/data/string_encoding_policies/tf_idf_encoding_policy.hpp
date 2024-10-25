@@ -158,7 +158,7 @@ class TfIdfEncodingPolicy
         InverseDocumentFrequency<typename MatType::elem_type>(
             output.n_cols, numContainingStrings[value]);
 
-    output(value - 1, line) =  tf * idf;
+    output(value - 1, line) = tf * idf;
   }
 
   /**
@@ -188,7 +188,7 @@ class TfIdfEncodingPolicy
     const ElemType idf = InverseDocumentFrequency<ElemType>(
         output.size(), numContainingStrings[value]);
 
-    output[line][value - 1] =  tf * idf;
+    output[line][value - 1] = tf * idf;
   }
 
   /*

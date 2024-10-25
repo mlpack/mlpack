@@ -115,7 +115,7 @@ T*& GetParam(
 {
   // If the model is an input model, we have to load it from file.  'value'
   // contains the filename.
-  using TupleType =  std::tuple<T*, std::string>;
+  using TupleType = std::tuple<T*, std::string>;
   TupleType* tuple = std::any_cast<TupleType>(&d.value);
   const std::string& value = std::get<1>(*tuple);
   if (d.input && !d.loaded)

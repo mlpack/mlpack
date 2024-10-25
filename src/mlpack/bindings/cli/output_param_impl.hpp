@@ -77,7 +77,7 @@ void OutputParamImpl(
   // The const cast is necessary here because Serialize() can't ever be marked
   // const.  In this case we can assume it though, since we will be saving and
   // not loading.
-  using TupleType =  std::tuple<T*, std::string>;
+  using TupleType = std::tuple<T*, std::string>;
   T*& output = const_cast<T*&>(std::get<0>(*std::any_cast<TupleType>(
       &data.value)));
   const std::string& filename =
