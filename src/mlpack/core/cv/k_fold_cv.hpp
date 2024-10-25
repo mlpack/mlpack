@@ -189,7 +189,7 @@ class KFoldCV
    * the model type.
    */
   template<bool Enabled = !Base::MIE::SupportsWeights,
-           typename = typename std::enable_if<Enabled>::type>
+           typename = std::enable_if_t<Enabled>>
   void Shuffle();
 
   /**
@@ -197,7 +197,7 @@ class KFoldCV
    * model type.
    */
   template<bool Enabled = Base::MIE::SupportsWeights,
-           typename = typename std::enable_if<Enabled>::type,
+           typename = std::enable_if_t<Enabled>,
            typename = void>
   void Shuffle();
 
@@ -257,7 +257,7 @@ class KFoldCV
    */
   template<typename... MLAlgorithmArgs,
            bool Enabled = !Base::MIE::SupportsWeights,
-           typename = typename std::enable_if<Enabled>::type>
+           typename = std::enable_if_t<Enabled>>
   double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);
 
   /**
@@ -265,7 +265,7 @@ class KFoldCV
    */
   template<typename... MLAlgorithmArgs,
            bool Enabled = Base::MIE::SupportsWeights,
-           typename = typename std::enable_if<Enabled>::type,
+           typename = std::enable_if_t<Enabled>,
            typename = void>
   double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);
 

@@ -23,9 +23,9 @@ namespace python {
 template<typename T>
 inline std::string GetCythonType(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0)
+    const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0)
 {
   return "unknown";
 }
@@ -33,9 +33,9 @@ inline std::string GetCythonType(
 template<>
 inline std::string GetCythonType<int>(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<int>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<int>::value>::type*,
-    const typename std::enable_if<!arma::is_arma_type<int>::value>::type*)
+    const std::enable_if_t<!util::IsStdVector<int>::value>*,
+    const std::enable_if_t<!data::HasSerialize<int>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<int>::value>*)
 {
   return "int";
 }
@@ -43,9 +43,9 @@ inline std::string GetCythonType<int>(
 template<>
 inline std::string GetCythonType<double>(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<double>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<double>::value>::type*,
-    const typename std::enable_if<!arma::is_arma_type<double>::value>::type*)
+    const std::enable_if_t<!util::IsStdVector<double>::value>*,
+    const std::enable_if_t<!data::HasSerialize<double>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<double>::value>*)
 {
   return "double";
 }
@@ -53,12 +53,9 @@ inline std::string GetCythonType<double>(
 template<>
 inline std::string GetCythonType<std::string>(
     util::ParamData& /* d */,
-    const typename std::enable_if<
-        !util::IsStdVector<std::string>::value>::type*,
-    const typename std::enable_if<
-        !data::HasSerialize<std::string>::value>::type*,
-    const typename std::enable_if<
-        !arma::is_arma_type<std::string>::value>::type*)
+    const std::enable_if_t<!util::IsStdVector<std::string>::value>*,
+    const std::enable_if_t<!data::HasSerialize<std::string>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<std::string>::value>*)
 {
   return "string";
 }
@@ -66,9 +63,9 @@ inline std::string GetCythonType<std::string>(
 template<>
 inline std::string GetCythonType<size_t>(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<size_t>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<size_t>::value>::type*,
-    const typename std::enable_if<!arma::is_arma_type<size_t>::value>::type*)
+    const std::enable_if_t<!util::IsStdVector<size_t>::value>*,
+    const std::enable_if_t<!data::HasSerialize<size_t>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<size_t>::value>*)
 {
   return "size_t";
 }
@@ -76,9 +73,9 @@ inline std::string GetCythonType<size_t>(
 template<>
 inline std::string GetCythonType<bool>(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<bool>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<bool>::value>::type*,
-    const typename std::enable_if<!arma::is_arma_type<bool>::value>::type*)
+    const std::enable_if_t<!util::IsStdVector<bool>::value>*,
+    const std::enable_if_t<!data::HasSerialize<bool>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<bool>::value>*)
 {
   return "cbool";
 }
@@ -86,7 +83,7 @@ inline std::string GetCythonType<bool>(
 template<typename T>
 inline std::string GetCythonType(
     util::ParamData& d,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0)
+    const std::enable_if_t<util::IsStdVector<T>::value>* = 0)
 {
   return "vector[" + GetCythonType<typename T::value_type>(d) + "]";
 }
@@ -94,7 +91,7 @@ inline std::string GetCythonType(
 template<typename T>
 inline std::string GetCythonType(
     util::ParamData& d,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0)
 {
   std::string type = "Mat";
   if (T::is_row)
@@ -108,8 +105,8 @@ inline std::string GetCythonType(
 template<typename T>
 inline std::string GetCythonType(
     util::ParamData& d,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   return d.cppType + "*";
 }

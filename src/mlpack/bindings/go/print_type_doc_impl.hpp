@@ -24,29 +24,29 @@ namespace go {
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<!util::IsStdVector<T>::value>*,
+    const std::enable_if_t<!data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   // A flag type.
-  if (std::is_same<T, bool>::value)
+  if (std::is_same_v<T, bool>)
   {
     return "A boolean flag option (`true` or `false`).";
   }
   // An integer.
-  else if (std::is_same<T, int>::value)
+  else if (std::is_same_v<T, int>)
   {
     return "An integer (i.e., `1`).";
   }
   // A floating point value.
-  else if (std::is_same<T, double>::value)
+  else if (std::is_same_v<T, double>)
   {
     return "A floating-point number (i.e., `0.5`).";
   }
   // A string.
-  else if (std::is_same<T, std::string>::value)
+  else if (std::is_same_v<T, std::string>)
   {
     return "A character string (i.e., `\"hello\"`).";
   }
@@ -63,13 +63,13 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& data,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type*)
+    const std::enable_if_t<util::IsStdVector<T>::value>*)
 {
-  if (std::is_same<T, std::vector<int>>::value)
+  if (std::is_same_v<T, std::vector<int>>)
   {
     return "An array of integers; i.e., `[]int{0, 1, 2}`.";
   }
-  else if (std::is_same<T, std::vector<std::string>>::value)
+  else if (std::is_same_v<T, std::vector<std::string>>)
   {
     return "An array of strings; i.e., `[]string{\"hello\", \"goodbye\"}`.";
   }
@@ -85,7 +85,7 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
+    const std::enable_if_t<arma::is_arma_type<T>::value>*)
 {
   if (T::is_col || T::is_row)
   {
@@ -105,8 +105,8 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   return "A Tuple(matrixWithInfo) containing `float64` data (Data) along with a"
      " boolean array (Categoricals) indicating which dimensions are categorical"
@@ -122,8 +122,8 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type*)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<data::HasSerialize<T>::value>*)
 {
   return "An mlpack model pointer.  This type holds a pointer to C++ memory "
       "containing the mlpack model.  Note that this means the mlpack model "

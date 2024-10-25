@@ -26,8 +26,8 @@ template<typename T>
 void ImportDecl(
     util::ParamData& d,
     const size_t indent,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   // First, we have to parse the type.  If we have something like, e.g.,
   // 'LogisticRegression<>', we must convert this to 'LogisticRegression[T=*].'
@@ -53,8 +53,8 @@ template<typename T>
 void ImportDecl(
     util::ParamData& /* d */,
     const size_t /* indent */,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0)
 {
   // Print nothing.
 }
@@ -66,7 +66,7 @@ template<typename T>
 void ImportDecl(
     util::ParamData& /* d */,
     const size_t /* indent */,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0)
 {
   // Print nothing.
 }
@@ -84,7 +84,7 @@ void ImportDecl(util::ParamData& d,
                 const void* indent,
                 void* /* output */)
 {
-  ImportDecl<typename std::remove_pointer<T>::type>(d, *((size_t*) indent));
+  ImportDecl<std::remove_pointer_t<T>>(d, *((size_t*) indent));
 }
 
 } // namespace python

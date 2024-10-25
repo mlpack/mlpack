@@ -13,6 +13,8 @@ _????-??-??_
 
  * Fix compilation if only including `mlpack/methods/kde/kde_model.hpp` (#3800).
 
+ * Fix serialization and `MinDistance()` bugs with `HollowBallBound` (#3808).
+
 ## mlpack 4.5.0
 
 _2024-09-17_

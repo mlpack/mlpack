@@ -25,11 +25,11 @@ namespace go {
 template<typename T>
 inline std::string GetGoType(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   return "unknown";
 }
@@ -37,11 +37,11 @@ inline std::string GetGoType(
 template<>
 inline std::string GetGoType<int>(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<int>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<int>::value>::type*,
-    const typename std::enable_if<!arma::is_arma_type<int>::value>::type*,
-    const typename std::enable_if<!std::is_same<int,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!util::IsStdVector<int>::value>*,
+    const std::enable_if_t<!data::HasSerialize<int>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<int>::value>*,
+    const std::enable_if_t<!std::is_same_v<int,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   return "int";
 }
@@ -49,11 +49,11 @@ inline std::string GetGoType<int>(
 template<>
 inline std::string GetGoType<float>(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<float>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<float>::value>::type*,
-    const typename std::enable_if<!arma::is_arma_type<float>::value>::type*,
-    const typename std::enable_if<!std::is_same<float,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!util::IsStdVector<float>::value>*,
+    const std::enable_if_t<!data::HasSerialize<float>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<float>::value>*,
+    const std::enable_if_t<!std::is_same_v<float,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   return "float32";
 }
@@ -61,11 +61,11 @@ inline std::string GetGoType<float>(
 template<>
 inline std::string GetGoType<double>(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<double>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<double>::value>::type*,
-    const typename std::enable_if<!arma::is_arma_type<double>::value>::type*,
-    const typename std::enable_if<!std::is_same<double,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!util::IsStdVector<double>::value>*,
+    const std::enable_if_t<!data::HasSerialize<double>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<double>::value>*,
+    const std::enable_if_t<!std::is_same_v<double,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   return "float64";
 }
@@ -73,14 +73,11 @@ inline std::string GetGoType<double>(
 template<>
 inline std::string GetGoType<std::string>(
     util::ParamData& /* d */,
-    const typename std::enable_if<
-        !util::IsStdVector<std::string>::value>::type*,
-    const typename std::enable_if<
-        !data::HasSerialize<std::string>::value>::type*,
-    const typename std::enable_if<
-        !arma::is_arma_type<std::string>::value>::type*,
-    const typename std::enable_if<!std::is_same<std::string,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!util::IsStdVector<std::string>::value>*,
+    const std::enable_if_t<!data::HasSerialize<std::string>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<std::string>::value>*,
+    const std::enable_if_t<!std::is_same_v<std::string,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   return "string";
 }
@@ -88,11 +85,11 @@ inline std::string GetGoType<std::string>(
 template<>
 inline std::string GetGoType<bool>(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<bool>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<bool>::value>::type*,
-    const typename std::enable_if<!arma::is_arma_type<bool>::value>::type*,
-    const typename std::enable_if<!std::is_same<bool,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!util::IsStdVector<bool>::value>*,
+    const std::enable_if_t<!data::HasSerialize<bool>::value>*,
+    const std::enable_if_t<!arma::is_arma_type<bool>::value>*,
+    const std::enable_if_t<!std::is_same_v<bool,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   return "bool";
 }
@@ -100,7 +97,7 @@ inline std::string GetGoType<bool>(
 template<typename T>
 inline std::string GetGoType(
     util::ParamData& d,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0)
+    const std::enable_if_t<util::IsStdVector<T>::value>* = 0)
 {
   return "[]" + GetGoType<typename T::value_type>(d);
 }
@@ -108,9 +105,9 @@ inline std::string GetGoType(
 template<typename T>
 inline std::string GetGoType(
     util::ParamData& /* d */,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0,
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0)
 {
   return "mat.Dense";
 }
@@ -118,8 +115,8 @@ inline std::string GetGoType(
 template<typename T>
 inline std::string GetGoType(
     util::ParamData& /* d */,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   return "matrixWithInfo";
 }
@@ -127,8 +124,8 @@ inline std::string GetGoType(
 template<typename T>
 inline std::string GetGoType(
     util::ParamData& d,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   std::string goStrippedType, strippedType, printedType, defaultsType;
   StripType(d.cppType, goStrippedType, strippedType, printedType, defaultsType);

@@ -43,9 +43,9 @@ class KernelNormalizer
       KernelType& /* kernel */,
       const size_t /* dimension */,
       arma::vec& /* estimations */,
-      const typename std::enable_if<
-          !HasNormalizer<KernelType, double(KernelType::*)(size_t)>::value>::
-          type* = 0)
+      const std::enable_if_t<
+          !HasNormalizer<KernelType, double(KernelType::*)(size_t)>::value>*
+          = 0)
   { return; }
 
   //! Normalize kernels that have normalizer.
@@ -54,9 +54,9 @@ class KernelNormalizer
       KernelType& kernel,
       const size_t dimension,
       arma::vec& estimations,
-      const typename std::enable_if<
-          HasNormalizer<KernelType, double(KernelType::*)(size_t)>::value>::
-          type* = 0)
+      const std::enable_if_t<
+          HasNormalizer<KernelType, double(KernelType::*)(size_t)>::value>*
+          = 0)
   {
     estimations /= kernel.Normalizer(dimension);
   }
