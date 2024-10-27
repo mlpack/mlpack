@@ -1,37 +1,38 @@
+
 /**
- * @file methods/ann/loss_functions/cross_entropy_error.hpp
- * @author Konstantin Sidorov
+ * @file methods/ann/loss_functions/cross_entropy.hpp
+ * @author Antoine Dubois
  *
- * Definition of the binary-cross-entropy performance function.
- *
+ * Definition of the cross-entropy performance function between
+ * p and q. 
+ * !The target q must be passed as log-q to the Forward
+ * and backward methods.
+ * 
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_ERROR_HPP
-#define MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_ERROR_HPP
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_LOSS_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_LOSS_HPP
 
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 
 /**
- * The binary-cross-entropy performance function measures the Binary Cross
- * Entropy between the target and the output.
+ * The cross-entropy performance function measures the Cross
+ * Entropy between the target and the log-output.
  *
  * @tparam MatType Matrix representation to accept as input and use for
  *    computation.
  */
 template<typename MatType = arma::mat>
-class BCELossType
+class CrossEntropyLossType
 {
  public:
   /**
-   * Create the BinaryCrossEntropyLoss object.
-   *
-   * @param eps The minimum value used for computing logarithms
-   *            and denominators in a numerically stable way.
+   * Create the CrossEntropyLoss object.
    *
    * @param reduction Specifies the reduction to apply to the output. If false,
    *                  'mean' reduction is used, where sum of the output will be
@@ -39,34 +40,27 @@ class BCELossType
    *                  'sum' reduction is used and the output will be summed. It
    *                  is set to true by default.
    */
-  BCELossType(const double eps = 1e-10, const bool reduction = true);
+  CrossEntropyLossType(const bool reduction = true);
 
   /**
-   * Computes the cross-entropy function.
+   * Computes the cross-entropy function. sum (p log(q))
    *
-   * @param prediction Predictions used for evaluating the specified loss
-   *     function.
-   * @param target The target vector.
+   * @param logPrediction The logarithm of the predictions of the target
+   * @param target The target probability distribution: p
    */
-  typename MatType::elem_type Forward(const MatType& prediction,
+  typename MatType::elem_type Forward(const MatType& logPrediction,
                                       const MatType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
    *
-   * @param prediction Predictions used for evaluating the specified loss
-   *     function.
-   * @param target The target vector.
+   * @param logPrediction The logarithm of the predictions of the target
+   * @param target p the target distribution.
    * @param loss The calculated error.
    */
-  void Backward(const MatType& prediction,
+  void Backward(const MatType& logPrediction,
                 const MatType& target,
                 MatType& loss);
-
-  //! Get the epsilon.
-  double Eps() const { return eps; }
-  //! Modify the epsilon.
-  double& Eps() { return eps; }
 
   //! Get the reduction type, represented as boolean
   //! (false 'mean' reduction, true 'sum' reduction).
@@ -81,20 +75,17 @@ class BCELossType
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! The minimum value used for computing logarithms and denominators
-  double eps;
-
   //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
-}; // class BCELossType
+}; // class CrossEntropyLossType
 
 // Default typedef for typical `arma::mat` usage.
-typedef BCELossType<arma::mat> BCELoss;
+typedef CrossEntropyLossType<arma::mat> CrossEntropyLoss;
 
 } // namespace mlpack
 
 // Include implementation.
-#include "binary_cross_entropy_loss_impl.hpp"
+#include "cross_entropy_loss_impl.hpp"
 
 #endif
 
