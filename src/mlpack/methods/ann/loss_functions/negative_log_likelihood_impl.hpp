@@ -31,7 +31,7 @@ double NegativeLogLikelihoodType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
   ElemType lossSum = 0;
   for (size_t i = 0; i < prediction.n_cols; ++i)
   {

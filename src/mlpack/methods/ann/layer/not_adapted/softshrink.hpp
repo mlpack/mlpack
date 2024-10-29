@@ -101,7 +101,7 @@ class SoftShrinkType : public Layer<InputType, OutputType>
 // Convenience typedefs.
 
 // Standard SoftShrink layer.
-typedef SoftShrinkType<arma::mat, arma::mat> SoftShrink;
+using SoftShrink = SoftShrinkType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

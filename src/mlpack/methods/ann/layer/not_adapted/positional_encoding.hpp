@@ -111,7 +111,7 @@ class PositionalEncodingType : public Layer<InputType, OutputType>
 }; // class PositionalEncodingTest
 
 // Standard PositionalEncoding layer.
-typedef PositionalEncodingType<arma::mat, arma::mat> PositionalEncoding;
+using PositionalEncoding = PositionalEncodingType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

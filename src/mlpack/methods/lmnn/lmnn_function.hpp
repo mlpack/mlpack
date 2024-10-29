@@ -47,15 +47,15 @@ template<typename MatType = arma::mat,
 class LMNNFunction
 {
   // Convenience typedef for element type of data.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
   // Convenience typedef for column vector of data.
-  typedef typename GetColType<MatType>::type VecType;
+  using VecType = typename GetColType<MatType>::type;
   // Convenience typedef for cube of data.
-  typedef typename GetCubeType<MatType>::type CubeType;
+  using CubeType = typename GetCubeType<MatType>::type;
   // Convenience typedef for dense matrix of indices.
-  typedef typename GetUDenseMatType<MatType>::type UMatType;
+  using UMatType = typename GetUDenseMatType<MatType>::type;
   // Convenience typedef for dense vector of indices.
-  typedef typename GetColType<UMatType>::type UVecType;
+  using UVecType = typename GetColType<UMatType>::type;
 
  public:
   /**

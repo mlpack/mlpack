@@ -77,7 +77,7 @@ template <
 class GroupedConvolutionType : public Layer<MatType>
 {
  public:
-  typedef typename GetCubeType<MatType>::type CubeType;
+  using CubeType = typename GetCubeType<MatType>::type;
 
   //! Create the GroupedConvolutionType object.
   GroupedConvolutionType();
@@ -417,12 +417,11 @@ class GroupedConvolutionType : public Layer<MatType>
 }; // class Convolution
 
 // Standard Convolution layer.
-typedef GroupedConvolutionType<
+using GroupedConvolution = GroupedConvolutionType<
     NaiveConvolution<ValidConvolution>,
     NaiveConvolution<FullConvolution>,
     NaiveConvolution<ValidConvolution>,
-    arma::mat
-> GroupedConvolution;
+    arma::mat>;
 
 } // namespace mlpack
 

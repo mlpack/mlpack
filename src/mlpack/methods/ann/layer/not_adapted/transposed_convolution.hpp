@@ -455,13 +455,12 @@ class TransposedConvolutionType : public Layer<InputType, OutputType>
 }; // class TransposedConvolutionType
 
 // Standard TransposedConvolution
-typedef TransposedConvolutionType<
-  NaiveConvolution<ValidConvolution>,
-  NaiveConvolution<ValidConvolution>,
-  NaiveConvolution<ValidConvolution>,
-  arma::mat,
-  arma::mat
-> TransposedConvolution;
+using TransposedConvolution = TransposedConvolutionType<
+    NaiveConvolution<ValidConvolution>,
+    NaiveConvolution<ValidConvolution>,
+    NaiveConvolution<ValidConvolution>,
+    arma::mat,
+    arma::mat>;
 
 } // namespace mlpack
 

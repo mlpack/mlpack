@@ -39,8 +39,8 @@ TEST_CASE("KFNExhaustiveSyntheticTest", "[KFNTest]")
   data[9] = 0.90;
   data[10] = 1.00;
 
-  typedef BinarySpaceTree<EuclideanDistance,
-      NeighborSearchStat<FurthestNeighborSort>, arma::mat> TreeType;
+  using TreeType = BinarySpaceTree<EuclideanDistance,
+      NeighborSearchStat<FurthestNeighborSort>, arma::mat>;
 
   // We will loop through three times, one for each method of performing the
   // calculation.  We'll always use 10 neighbors, so set that parameter.
@@ -470,8 +470,8 @@ TEST_CASE("KFNDualCoverTreeTest", "[KFNTest]")
   arma::mat kdDistances;
   tree.Search(dataset, 5, kdNeighbors, kdDistances);
 
-  typedef CoverTree<LMetric<2, true>, NeighborSearchStat<FurthestNeighborSort>,
-      arma::mat, FirstPointIsRoot> TreeType;
+  using TreeType = CoverTree<LMetric<2, true>,
+      NeighborSearchStat<FurthestNeighborSort>, arma::mat, FirstPointIsRoot>;
 
   TreeType referenceTree(dataset);
 
@@ -500,8 +500,8 @@ TEST_CASE("KFNSingleBallTreeTest", "[KFNTest]")
   arma::mat data;
   data.randu(75, 1000); // 75 dimensional, 1000 points.
 
-  typedef BallTree<EuclideanDistance, NeighborSearchStat<FurthestNeighborSort>,
-      arma::mat> TreeType;
+  using TreeType = BallTree<EuclideanDistance,
+      NeighborSearchStat<FurthestNeighborSort>, arma::mat>;
   TreeType tree(data);
 
   KFN naive(tree.Dataset(), NAIVE_MODE);

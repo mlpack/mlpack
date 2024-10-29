@@ -120,7 +120,7 @@ class DropoutType : public Layer<MatType>
 // Convenience typedefs.
 
 // Standard Dropout layer.
-typedef DropoutType<arma::mat> Dropout;
+using Dropout = DropoutType<arma::mat>;
 
 } // namespace mlpack
 

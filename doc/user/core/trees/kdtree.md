@@ -547,9 +547,9 @@ find the number of leaf nodes with fewer than 10 children.
 // above).
 
 // This convenient typedef saves us a long type name!
-typedef mlpack::KDTree<mlpack::EuclideanDistance,
-                       mlpack::EmptyStatistic,
-                       arma::fmat> TreeType;
+using TreeType = mlpack::KDTree<mlpack::EuclideanDistance,
+                                mlpack::EmptyStatistic,
+                                arma::fmat>;
 
 TreeType tree;
 mlpack::data::Load("tree.bin", "tree", tree);

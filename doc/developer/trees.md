@@ -202,7 +202,7 @@ class ExampleTree
  public:
   // This is the element type held by the matrix.
   // It will generally either be `double`, or `float`.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   //////////////////////
   //// Constructors ////

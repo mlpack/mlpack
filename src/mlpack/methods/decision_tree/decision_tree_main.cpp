@@ -151,7 +151,7 @@ PARAM_MODEL_OUT(DecisionTreeModel, "output_model", "Output for trained decision"
     " tree.", "M");
 
 // Convenience typedef.
-typedef tuple<DatasetInfo, arma::mat> TupleType;
+using TupleType = tuple<DatasetInfo, arma::mat>;
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {

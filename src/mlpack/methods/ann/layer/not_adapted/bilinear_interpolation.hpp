@@ -116,7 +116,7 @@ class BilinearInterpolationType : public Layer<InputType, OutputType>
 }; // class BilinearInterpolation
 
 // Standard BilinearInterpolation layer.
-typedef BilinearInterpolationType<arma::mat, arma::mat> BilinearInterpolation;
+using BilinearInterpolation = BilinearInterpolationType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

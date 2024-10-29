@@ -130,7 +130,7 @@ class AdaptiveMeanPoolingType : public Layer<MatType>
 // Convenience typedefs.
 
 // Standard Adaptive mean pooling layer.
-typedef AdaptiveMeanPoolingType<arma::mat> AdaptiveMeanPooling;
+using AdaptiveMeanPooling = AdaptiveMeanPoolingType<arma::mat>;
 
 } // namespace mlpack
 

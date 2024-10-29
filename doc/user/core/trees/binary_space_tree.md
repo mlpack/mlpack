@@ -1850,11 +1850,11 @@ arma::mat dataset;
 mlpack::data::Load("corel-histogram.csv", dataset, true);
 
 // Convenience typedef for the tree type.
-typedef mlpack::BinarySpaceTree<mlpack::EuclideanDistance,
-                                mlpack::EmptyStatistic,
-                                arma::mat,
-                                mlpack::HRectBound,
-                                mlpack::MidpointSplit> TreeType;
+using TreeType = mlpack::BinarySpaceTree<mlpack::EuclideanDistance,
+                                         mlpack::EmptyStatistic,
+                                         arma::mat,
+                                         mlpack::HRectBound,
+                                         mlpack::MidpointSplit>;
 
 // Build trees on the first half and the second half of points.
 TreeType tree1(dataset.cols(0, dataset.n_cols / 2));
@@ -1947,11 +1947,11 @@ manually and find the number of leaf nodes with less than 10 children.
 // above).
 
 // This convenient typedef saves us a long type name!
-typedef mlpack::BinarySpaceTree<mlpack::EuclideanDistance,
-                                mlpack::EmptyStatistic,
-                                arma::fmat,
-                                mlpack::HRectBound,
-                                mlpack::MidpointSplit> TreeType;
+using TreeType = mlpack::BinarySpaceTree<mlpack::EuclideanDistance,
+                                         mlpack::EmptyStatistic,
+                                         arma::fmat,
+                                         mlpack::HRectBound,
+                                         mlpack::MidpointSplit>;
 
 TreeType tree;
 mlpack::data::Load("tree.bin", "tree", tree);

@@ -66,7 +66,7 @@ class IoUDistance
   static typename VecTypeA::elem_type Evaluate(const VecTypeA& a,
                                                const VecTypeB& b)
   {
-    typedef typename VecTypeA::elem_type ElemType;
+    using ElemType = typename VecTypeA::elem_type;
 
     return (ElemType) (1.0 - IoU<UseCoordinates>::Evaluate(a, b));
   }

@@ -52,8 +52,8 @@ class LaplaceDistribution
 {
  public:
   // Convenience typedefs.
-  typedef typename GetColType<MatType>::type VecType;
-  typedef typename MatType::elem_type ElemType;
+  using VecType = typename GetColType<MatType>::type;
+  using ElemType = typename MatType::elem_type;
 
   /**
    * Default constructor, which creates a Laplace distribution with zero

@@ -160,8 +160,8 @@ void LoadARFF(const std::string& filename,
   }
 
   // Make sure all strings are mapped, if we have any.
-  typedef std::map<size_t, std::vector<std::string>>::const_iterator
-      IteratorType;
+  using IteratorType =
+      std::map<size_t, std::vector<std::string>>::const_iterator;
   for (IteratorType it = categoryStrings.begin(); it != categoryStrings.end();
       ++it)
   {

@@ -125,7 +125,7 @@ class MultiplyMergeType : public MultiLayer<InputType, OutputType>
 }; // class MultiplyMergeType
 
 // Standard MultiplyMerge layer.
-typedef MultiplyMergeType<arma::mat, arma::mat> MultiplyMerge;
+using MultiplyMerge = MultiplyMergeType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

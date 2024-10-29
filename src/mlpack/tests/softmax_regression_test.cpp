@@ -207,7 +207,7 @@ TEST_CASE("SoftmaxRegressionTwoClasses", "[SoftmaxRegressionTest]")
   for (size_t i = 0; i < points / 2; ++i)
   {
     data.col(i) = g1.Random();
-    labels(i) =  0;
+    labels(i) = 0;
   }
   for (size_t i = points / 2; i < points; ++i)
   {
@@ -223,7 +223,7 @@ TEST_CASE("SoftmaxRegressionTwoClasses", "[SoftmaxRegressionTest]")
 TEMPLATE_TEST_CASE("SoftmaxRegressionFitIntercept", "[SoftmaxRegressionTest]",
     arma::fmat, arma::mat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Generate a two-Gaussian dataset,
   // which can't be separated without adding the intercept term.
@@ -272,8 +272,8 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionFitIntercept", "[SoftmaxRegressionTest]",
 TEMPLATE_TEST_CASE("SoftmaxRegressionMultipleClasses",
     "[SoftmaxRegressionTest]", arma::fmat, arma::mat)
 {
-  typedef TestType MatType;
-  typedef typename GetColType<TestType>::type VecType;
+  using MatType = TestType;
+  using VecType = typename GetColType<TestType>::type;
 
   const size_t points = 5000;
   const size_t inputSize = 5;
@@ -729,7 +729,7 @@ TEST_CASE("SoftmaxImmediateTrainTest", "[SoftmaxRegressionTest]")
 TEMPLATE_TEST_CASE("SoftmaxRegressionConstructorVariantTest",
     "[SoftmaxRegressionTest]", arma::fmat, arma::mat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Create random data.
   MatType data(50, 1000, arma::fill::randu);
@@ -809,7 +809,7 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionConstructorVariantTest",
 TEMPLATE_TEST_CASE("SoftmaxRegressionTrainVariantTest",
     "[SoftmaxRegressionTest]", arma::fmat, arma::mat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Create random data.
   MatType data(50, 1000, arma::fill::randu);

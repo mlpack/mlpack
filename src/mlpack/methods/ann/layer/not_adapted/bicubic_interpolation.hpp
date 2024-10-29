@@ -145,7 +145,7 @@ class BicubicInterpolation
 
  private:
   //! Element Type of the input.
-  typedef typename OutputDataType::elem_type ElemType;
+  using ElemType = typename OutputDataType::elem_type;
 
   //! Locally stored row size of the input.
   size_t inRowSize;

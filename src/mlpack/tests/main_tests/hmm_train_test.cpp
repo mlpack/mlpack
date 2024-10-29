@@ -58,7 +58,7 @@ inline void ApproximatelyEqual(HMMModel& h1,
 {
   REQUIRE(h1.Type() == h2.Type());
   HMMType  hmmType = h1.Type();
-  if (hmmType ==  DiscreteHMM)
+  if (hmmType == DiscreteHMM)
   {
     CheckMatrices(
         h1.DiscreteHMM()->Transition()*100,
