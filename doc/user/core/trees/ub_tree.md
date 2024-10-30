@@ -31,7 +31,7 @@ additional functionality specific to UB-trees.
  * [UB-tree on Wikipedia](https://en.wikipedia.org/wiki/UB-tree)
  * [Z-ordering on Wikipedia](https://en.wikipedia.org/wiki/Z-order_curve)
  * [`BinarySpaceTree`](binary_space_tree.md)
- * [The Universal B-tree for multidimensional indexing (pdf)](https://mediatum.ub.tum.de/doc/1094370/document.pdf)
+ * [The Universal B-tree for multidimensional indexing (pdf)](https://www.mlpack.org/papers/bayer96.pdf)
  * [Binary space partitioning on Wikipedia](https://dl.acm.org/doi/pdf/10.1145/361002.361007)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 

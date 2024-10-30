@@ -1474,7 +1474,7 @@ In a `CellBound`, each point is mapped to an ordered "address" that indicates
 its position in the bound using
 [Z-ordering](https://en.wikipedia.org/wiki/Z-order_curve) (also called Morton
 ordering).  The mathematical details of this mapping are described in
-[the UB-tree paper](https://mediatum.ub.tum.de/doc/1094370/document.pdf);
+[the UB-tree paper](https://www.mlpack.org/papers/bayer96.pdf);
 although mlpack uses a slightly modified implementation, the general idea is the
 same.
 
@@ -2068,7 +2068,7 @@ For implementation details, see
 The `UBTreeSplit` class is a splitting strategy that can be used by
 [`BinarySpaceTree`](#binaryspacetree).  It is the splitting strategy used by
 the[`UBTree`](ub_tree.md) class (the [universal
-B-tree](https://mediatum.ub.tum.de/doc/1094370/document.pdf)),
+B-tree](https://www.mlpack.org/papers/bayer96.pdf)),
 and it requires that the [`BoundType`](#boundtype) being used is
 [`CellBound`](#cellbound).
 
