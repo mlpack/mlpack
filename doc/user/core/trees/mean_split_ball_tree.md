@@ -187,7 +187,7 @@ can be accessed or inspected.  Many of these functions are required by the
 
 ### Accessing members of a tree
 
- * `node.Bound()` will return an
+ * `node.Bound()` will return a
    [`BallBound&`](binary_space_tree.md#ballbound) object that represents the
    bounding ball of `node`.  This may not be the smallest possible bounding ball
    that encloses all the descendant points of `node`, but it is a reasonably
