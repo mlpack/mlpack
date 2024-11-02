@@ -15,31 +15,17 @@
 
 #include "image_info.hpp"
 
-#ifdef MLPACK_HAS_STB
-
 // The definition of STB_IMAGE_IMPLEMENTATION means that the implementation will
 // be included here directly.
+#ifndef STB_IMAGE_STATIC
 #define STB_IMAGE_STATIC
-#define STB_IMAGE_IMPLEMENTATION
-
-#if defined __has_include
-  #if __has_include("stb_image.h")
-    #include "stb_image.h"
-  #elif __has_include("stb/stb_image.h")
-    #include "stb/stb_image.h"
-  #else
-    #undef MLPACK_HAS_STB
-    #pragma message("Warning: STB disabled; stb_image.h header not found")
-  #endif
-#else
-  #ifdef MLPACK_HAS_STB_DIR
-    #include "stb/stb_image.h"
-  #else
-    #include "stb_image.h"
-  #endif
 #endif
 
-#endif // MLPACK_HAS_STB
+#ifndef STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#endif
+
+#include "stb_image.h"
 
 namespace mlpack {
 namespace data {
