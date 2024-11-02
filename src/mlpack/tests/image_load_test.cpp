@@ -19,8 +19,6 @@ using namespace mlpack;
 using namespace mlpack::data;
 using namespace std;
 
-#ifdef MLPACK_HAS_STB // Compile this only if stb is present.
-
 /**
  * Test if an image with an unsupported extension throws an expected
  * exception.
@@ -152,4 +150,3 @@ TEST_CASE("ImageInfoSerialization", "[ImageLoadTest]")
   REQUIRE(info.Quality() == binaryInfo.Quality());
 }
 
-#endif // MLPACK_HAS_STB.
