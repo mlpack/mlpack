@@ -418,9 +418,9 @@ arma::Row<size_t> labels =
 
 // Train in the constructor, using floating-point data.
 // The weak learner type is now a floating-point Perceptron.
-typedef mlpack::Perceptron<mlpack::SimpleWeightUpdate,
-                           mlpack::ZeroInitialization,
-                           arma::fmat> PerceptronType;
+using PerceptronType = mlpack::Perceptron<mlpack::SimpleWeightUpdate,
+                                          mlpack::ZeroInitialization,
+                                          arma::fmat>;
 mlpack::AdaBoost<PerceptronType, arma::fmat> ab(dataset, labels, 5);
 
 // Create test data (500 points).

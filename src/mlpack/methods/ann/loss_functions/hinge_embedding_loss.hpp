@@ -81,7 +81,7 @@ class HingeEmbeddingLossType
 }; // class HingeEmbeddingLossType
 
 // Default typedef for typical `arma::mat` usage.
-typedef HingeEmbeddingLossType<arma::mat> HingeEmbeddingLoss;
+using HingeEmbeddingLoss = HingeEmbeddingLossType<arma::mat>;
 
 } // namespace mlpack
 

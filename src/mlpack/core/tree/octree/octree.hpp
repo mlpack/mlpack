@@ -25,9 +25,9 @@ class Octree
 {
  public:
   //! So other classes can use TreeType::Mat.
-  typedef MatType Mat;
+  using Mat = MatType;
   //! The type of element held in MatType.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   //! A single-tree traverser; see single_tree_traverser.hpp.
   template<typename RuleType>

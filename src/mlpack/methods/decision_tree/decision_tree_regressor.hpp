@@ -39,11 +39,11 @@ class DecisionTreeRegressor :
 {
  public:
   //! Allow access to the numeric split type.
-  typedef NumericSplitType<FitnessFunction> NumericSplit;
+  using NumericSplit = NumericSplitType<FitnessFunction>;
   //! Allow access to the categorical split type.
-  typedef CategoricalSplitType<FitnessFunction> CategoricalSplit;
+  using CategoricalSplit = CategoricalSplitType<FitnessFunction>;
   //! Allow access to the dimension selection type.
-  typedef DimensionSelectionType DimensionSelection;
+  using DimensionSelection = DimensionSelectionType;
 
   /**
    * Construct a decision tree without training it.  It will be a leaf node.
@@ -455,10 +455,9 @@ class DecisionTreeRegressor :
   //! Note that this class will also hold the members of the NumericSplit and
   //! CategoricalSplit AuxiliarySplitInfo classes, since it inherits from them.
   //! We'll define some convenience typedefs here.
-  typedef typename NumericSplit::AuxiliarySplitInfo
-      NumericAuxiliarySplitInfo;
-  typedef typename CategoricalSplit::AuxiliarySplitInfo
-      CategoricalAuxiliarySplitInfo;
+  using NumericAuxiliarySplitInfo = typename NumericSplit::AuxiliarySplitInfo;
+  using CategoricalAuxiliarySplitInfo =
+      typename CategoricalSplit::AuxiliarySplitInfo;
 
   /**
    * Corresponding to the public Train() method, this method is designed for

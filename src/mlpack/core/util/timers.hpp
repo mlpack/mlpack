@@ -27,9 +27,9 @@
   // uint64_t isn't defined on every windows.
   #if !defined(HAVE_UINT64_T)
     #if SIZEOF_UNSIGNED_LONG == 8
-      typedef unsigned long uint64_t;
+      using uint64_t = unsigned long;
     #else
-      typedef unsigned long long uint64_t;
+      using uint64_t = unsigned long long;
     #endif // SIZEOF_UNSIGNED_LONG
   #endif // HAVE_UINT64_T
 #endif

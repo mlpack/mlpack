@@ -94,8 +94,8 @@ void MeanShift<UseKernel, KernelType>::GenSeeds(const MatType& data,
                                                 const int minFreq,
                                                 CentroidsType& seeds)
 {
-  typedef typename GetColType<MatType>::type VecType;
-  typedef typename GetColType<CentroidsType>::type CentroidVecType;
+  using VecType = typename GetColType<MatType>::type;
+  using CentroidVecType = typename GetColType<CentroidsType>::type;
   std::map<VecType, int, less<VecType> > allSeeds;
   for (size_t i = 0; i < data.n_cols; ++i)
   {
@@ -138,7 +138,7 @@ MeanShift<UseKernel, KernelType>::CalculateCentroid(
     const std::vector<typename MatType::elem_type>& distances,
     VecType& centroid)
 {
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   ElemType sumWeight = 0;
   for (size_t i = 0; i < neighbors.size(); ++i)
@@ -189,8 +189,8 @@ inline void MeanShift<UseKernel, KernelType>::Cluster(
     bool useSeeds)
 {
   // Convenience typedefs.
-  typedef typename MatType::elem_type ElemType;
-  typedef typename GetColType<MatType>::type VecType;
+  using ElemType = typename MatType::elem_type;
+  using VecType = typename GetColType<MatType>::type;
 
   if (radius <= 0)
   {

@@ -221,8 +221,8 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     AuxiliarySplitInfo& /* aux */,
     FitnessFunction& fitnessFunction)
 {
-  typedef typename ResponsesType::elem_type RType;
-  typedef typename WeightVecType::elem_type WType;
+  using RType = typename ResponsesType::elem_type;
+  using WType = typename WeightVecType::elem_type;
 
   // First sanity check: if we don't have enough points, we can't split.
   if (data.n_elem < (minimumLeafSize * 2))
@@ -377,8 +377,8 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     AuxiliarySplitInfo& /* aux */,
     FitnessFunction& fitnessFunction)
 {
-  typedef typename ResponsesType::elem_type RType;
-  typedef typename WeightVecType::elem_type WType;
+  using RType = typename ResponsesType::elem_type;
+  using WType = typename WeightVecType::elem_type;
 
   // First sanity check: if we don't have enough points, we can't split.
   if (data.n_elem < (minimumLeafSize * 2))

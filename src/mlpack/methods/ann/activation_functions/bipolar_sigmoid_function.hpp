@@ -75,7 +75,7 @@ class BipolarSigmoidFunction
                     const OutputVecType& y,
                     DerivVecType& dy)
   {
-    dy =  (1.0 - pow(y, 2)) / 2.0;
+    dy = (1.0 - pow(y, 2)) / 2.0;
   }
 }; // class BipolarSigmoidFunction
 

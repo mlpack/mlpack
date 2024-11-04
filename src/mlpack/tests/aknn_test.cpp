@@ -292,8 +292,8 @@ TEST_CASE("AKNNSparseKNNKDTreeTest", "[AKNNTest]")
   arma::mat denseQuery(queryDataset);
   arma::mat denseReference(referenceDataset);
 
-  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::sp_mat,
-      KDTree> SparseKNN;
+  using SparseKNN = NeighborSearch<NearestNeighborSort, EuclideanDistance,
+      arma::sp_mat, KDTree>;
 
   SparseKNN aknn(referenceDataset, DUAL_TREE_MODE, 0.05);
   arma::mat distancesSparse;
@@ -316,7 +316,7 @@ TEST_CASE("AKNNSparseKNNKDTreeTest", "[AKNNTest]")
  */
 TEST_CASE("AKNNModelTest", "[AKNNTest]")
 {
-  typedef NSModel<NearestNeighborSort> KNNModel;
+  using KNNModel = NSModel<NearestNeighborSort>;
   util::Timers timers;
 
   arma::mat queryData = arma::randu<arma::mat>(10, 50);
@@ -404,7 +404,7 @@ TEST_CASE("AKNNModelTest", "[AKNNTest]")
  */
 TEST_CASE("AKNNModelMonochromaticTest", "[AKNNTest]")
 {
-  typedef NSModel<NearestNeighborSort> KNNModel;
+  using KNNModel = NSModel<NearestNeighborSort>;
   util::Timers timers;
 
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);

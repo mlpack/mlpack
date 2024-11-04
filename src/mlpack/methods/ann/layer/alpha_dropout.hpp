@@ -147,7 +147,7 @@ class AlphaDropoutType : public Layer<MatType>
   double b;
 }; // class AlphaDropoutType
 
-typedef AlphaDropoutType<arma::mat> AlphaDropout;
+using AlphaDropout = AlphaDropoutType<arma::mat>;
 
 } // namespace mlpack
 

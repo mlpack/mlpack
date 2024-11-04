@@ -47,9 +47,9 @@ class SoftmaxErrorFunction
 {
  public:
   // Convenience typedef for element type of data.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
   // Convenience typedef for column vector of data.
-  typedef typename GetColType<MatType>::type VecType;
+  using VecType = typename GetColType<MatType>::type;
 
   /**
    * Initialize with the given kernel; useful when the kernel has some state to

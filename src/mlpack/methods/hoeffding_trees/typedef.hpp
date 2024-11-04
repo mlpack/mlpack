@@ -17,7 +17,7 @@
 
 namespace mlpack {
 
-typedef StreamingDecisionTree<HoeffdingTree<>> HoeffdingTreeType;
+using HoeffdingTreeType = StreamingDecisionTree<HoeffdingTree<>>;
 
 } // namespace mlpack
 

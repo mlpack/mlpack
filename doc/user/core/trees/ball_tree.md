@@ -189,7 +189,7 @@ API](../../../developer/trees.md#the-treetype-api).
 
 ### Accessing members of a tree
 
- * `node.Bound()` will return an
+ * `node.Bound()` will return a
    [`BallBound&`](binary_space_tree.md#ballbound) object that represents the
    bounding ball of `node`.  This may not be the smallest possible bounding ball
    that encloses all the descendant points of `node`, but it is a reasonably
@@ -553,9 +553,9 @@ find the number of leaf nodes with fewer than 10 points.
 // above).
 
 // This convenient typedef saves us a long type name!
-typedef mlpack::BallTree<mlpack::EuclideanDistance,
-                         mlpack::EmptyStatistic,
-                         arma::fmat> TreeType;
+using TreeType = mlpack::BallTree<mlpack::EuclideanDistance,
+                                  mlpack::EmptyStatistic,
+                                  arma::fmat>;
 
 TreeType tree;
 mlpack::data::Load("tree.bin", "tree", tree);

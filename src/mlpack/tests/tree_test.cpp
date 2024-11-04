@@ -1130,7 +1130,7 @@ TEST_CASE("FurthestPointDistanceTest", "[TreeTest]")
   arma::mat dataset;
   dataset.randu(5, 100);
 
-  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = KDTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   TreeType tree(dataset);
 
   // Now, check each node.
@@ -1176,7 +1176,7 @@ TEST_CASE("ParentDistanceTest", "[TreeTest]")
   arma::mat dataset;
   dataset.randu(5, 500);
 
-  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = KDTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   TreeType tree(dataset);
 
   // The root's parent distance should be 0 (although maybe it doesn't actually
@@ -1222,7 +1222,7 @@ TEST_CASE("ParentDistanceTestWithMapping", "[TreeTest]")
   dataset.randu(5, 500);
   std::vector<size_t> oldFromNew;
 
-  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = KDTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   TreeType tree(dataset, oldFromNew);
 
   // The root's parent distance should be 0 (although maybe it doesn't actually
@@ -1286,7 +1286,7 @@ void GenerateVectorOfTree(TreeType* node,
  */
 TEST_CASE("KdTreeTest", "[TreeTest]")
 {
-  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = KDTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 
   size_t maxRuns = 10; // Ten total tests.
   size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
@@ -1355,7 +1355,7 @@ TEST_CASE("KdTreeTest", "[TreeTest]")
 
 TEST_CASE("MaxRPTreeTest", "[TreeTest]")
 {
-  typedef MaxRPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = MaxRPTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 
   size_t maxRuns = 10; // Ten total tests.
   size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
@@ -1398,7 +1398,7 @@ TEST_CASE("MaxRPTreeTest", "[TreeTest]")
 template<typename TreeType>
 bool CheckHyperplaneSplit(const TreeType& tree)
 {
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
 
   const typename TreeType::Mat& dataset = tree.Dataset();
   arma::Mat<typename TreeType::ElemType> mat(dataset.n_rows + 1,
@@ -1487,7 +1487,7 @@ void CheckMaxRPTreeSplit(const TreeType& tree)
 
 TEST_CASE("MaxRPTreeSplitTest", "[TreeTest]")
 {
-  typedef MaxRPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = MaxRPTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   arma::mat dataset;
   dataset.randu(8, 1000);
   TreeType root(dataset);
@@ -1497,7 +1497,7 @@ TEST_CASE("MaxRPTreeSplitTest", "[TreeTest]")
 
 TEST_CASE("RPTreeTest", "[TreeTest]")
 {
-  typedef RPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = RPTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 
   size_t maxRuns = 10; // Ten total tests.
   size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
@@ -1540,7 +1540,7 @@ TEST_CASE("RPTreeTest", "[TreeTest]")
 template<typename TreeType, typename DistanceType>
 void CheckRPTreeSplit(const TreeType& tree)
 {
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
   if (tree.IsLeaf())
     return;
 
@@ -1575,7 +1575,7 @@ void CheckRPTreeSplit(const TreeType& tree)
 
 TEST_CASE("RPTreeSplitTest", "[TreeTest]")
 {
-  typedef RPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = RPTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   arma::mat dataset;
   dataset.randu(8, 1000);
   TreeType root(dataset);
@@ -1611,7 +1611,7 @@ bool CheckPointBounds(TreeType& node)
  */
 TEST_CASE("BallTreeTest", "[TreeTest]")
 {
-  typedef BallTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = BallTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 
   size_t maxRuns = 10; // Ten total tests.
   size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
@@ -1690,8 +1690,8 @@ void GenerateVectorOfTree(TreeType* node,
  */
 TEST_CASE("ExhaustiveSparseKDTreeTest", "[TreeTest]")
 {
-  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::SpMat<double>>
-      TreeType;
+  using TreeType =
+      KDTree<EuclideanDistance, EmptyStatistic, arma::SpMat<double>>;
 
   size_t maxRuns = 2; // Two total tests.
   size_t pointIncrements = 200; // Range is from 200 points to 400.
@@ -1859,8 +1859,8 @@ TEST_CASE("SimpleCoverTreeConstructionTest", "[TreeTest]")
                                          "2.0 1.0;"));
 
   // The root point will be the first point, (0, 0).
-  typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>
-      TreeType;
+  using TreeType = StandardCoverTree<EuclideanDistance, EmptyStatistic,
+      arma::mat>;
   TreeType tree(data); // Expansion constant of 2.0.
 
   // The furthest point from the root will be (-5, -5), with a distance of
@@ -1897,8 +1897,8 @@ TEST_CASE("CoverTreeConstructionTest", "[TreeTest]")
   // 50-dimensional, 1000 point.
   dataset.randu(50, 1000);
 
-  typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>
-      TreeType;
+  using TreeType =
+      StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   TreeType tree(dataset);
 
   // Ensure each leaf is only created once.
@@ -1929,8 +1929,8 @@ TEST_CASE("SparseCoverTreeConstructionTest", "[TreeTest]")
   // 50-dimensional, 1000 point.
   dataset.sprandu(50, 1000, 0.3);
 
-  typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::sp_mat>
-      TreeType;
+  using TreeType =
+      StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::sp_mat>;
   TreeType tree(dataset);
 
   // Ensure each leaf is only created once.
@@ -1960,8 +1960,8 @@ TEST_CASE("CoverTreeManualConstructorTest", "[TreeTest]")
   arma::mat dataset;
   dataset.zeros(10, 10);
 
-  typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>
-      TreeType;
+  using TreeType =
+      StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   TreeType node(dataset, 1.3, 3, 2, NULL, 1.5, 2.75);
 
   REQUIRE(&node.Dataset() == &dataset);
@@ -1982,8 +1982,8 @@ TEST_CASE("CoverTreeAlternateMetricTest", "[TreeTest]")
   // 5-dimensional, 300-point dataset.
   dataset.randu(5, 300);
 
-  typedef StandardCoverTree<ManhattanDistance, EmptyStatistic, arma::mat>
-      TreeType;
+  using TreeType =
+      StandardCoverTree<ManhattanDistance, EmptyStatistic, arma::mat>;
   TreeType tree(dataset);
 
   // Ensure each leaf is only created once.
@@ -2012,8 +2012,8 @@ TEST_CASE("CoverTreeCopyConstructor", "[TreeTest]")
 {
   arma::mat dataset;
   dataset.randu(10, 10); // dataset is irrelevant.
-  typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>
-      TreeType;
+  using TreeType =
+      StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   TreeType c(dataset, 1.3, 0, 5, NULL, 1.45, 5.2); // Random parameters.
   c.Children().push_back(new TreeType(dataset, 1.3, 1, 4, &c, 1.3, 2.45));
   c.Children().push_back(new TreeType(dataset, 1.5, 2, 3, &c, 1.2, 5.67));
@@ -2070,8 +2070,8 @@ TEST_CASE("CoverTreeCopyConstructor", "[TreeTest]")
 TEST_CASE("CoverTreeMoveDatasetTest", "[TreeTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(3, 1000);
-  typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>
-      TreeType;
+  using TreeType =
+      StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 
   TreeType t(std::move(dataset));
 
@@ -2094,7 +2094,7 @@ TEST_CASE("CoverTreeMoveDatasetTest", "[TreeTest]")
 TEST_CASE("BinarySpaceTreeCopyConstructor", "[TreeTest]")
 {
   arma::mat data("1");
-  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = KDTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   TreeType b(data);
   b.Begin() = 10;
   b.Count() = 50;
