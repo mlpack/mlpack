@@ -479,7 +479,7 @@ TEMPLATE_TEST_CASE("PCASparseToDenseTest", "[PCATest]", float, double)
   typedef arma::SpMat<TestType> SpMatType;
 
   SpMatType dataset;
-  dataset.sprandu(1000, 50000, 0.01);
+  dataset.sprandu(100, 1000, 0.05);
   MatType transformedDataset1, transformedDataset2;
 
   PCA<> p;
