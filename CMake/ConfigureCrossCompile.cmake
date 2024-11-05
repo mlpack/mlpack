@@ -8,7 +8,7 @@
 # `flags-config.cmake`).
 
 if (CMAKE_CROSSCOMPILING)
-  include(CMake/flags-config.cmake)
+  include(CMake/crosscompile-arch-config.cmake)
   if (NOT CMAKE_SYSROOT AND (NOT TOOLCHAIN_PREFIX))
     message(FATAL_ERROR "Neither CMAKE_SYSROOT nor TOOLCHAIN_PREFIX are set; please set both of them and try again.")
   elseif(NOT CMAKE_SYSROOT)
