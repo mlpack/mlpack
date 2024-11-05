@@ -30,9 +30,14 @@ identify two parameters to configure mlpack with CMake:
   
 For more detailed information on these options see [this tutorial](crosscompile_armv7.md).
 
-Here is the generic CMake command, please check the table to modify it
-accoding to each architecture and the version of your compiler set, also
-do not forget to change `/path/to/bootlin/toolchain` by the real path:
+You can use the table below with your desired architecture to find links to
+appropriate Bootlin toolchains, plus the `TOOLCHAIN_PREFIX` and `CMAKE_SYSROOT`
+options you can use with those toolchains.  If you have provided your own
+toolchain, you will need to adapt the options accordingly.
+
+Once you have found the correct `TOOLCHAIN_PREFIX` and `CMAKE_SYSROOT` options,
+adapt the CMake command below.  ***Don't forget to change
+`/path/to/bootlin/toolchain/` to the correct path on your system!***
 
 ```sh
 cmake \
