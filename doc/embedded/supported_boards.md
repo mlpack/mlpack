@@ -72,7 +72,7 @@ cmake \
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | NORTHWOOD | [compiler set](https://toolchains.bootlin.com/releases_x86-64.html)       | [Sysroot and toolchain prefix](#NORTHWOOD)   |[Check this page](https://en.wikipedia.org/wiki/Pentium_4)              |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| COPPERMINE |  [compiler set](https://toolchains.bootlin.com/releases_x86-i686.html)   | [Sysroot and toolchain prefix](#COPPERMINE) |[Check this page](https://en.wikipedia.org/wiki/Pentium_III)             |
+| COPPERMINE | [compiler set](https://toolchains.bootlin.com/releases_x86-i686.html)   | [Sysroot and toolchain prefix](#COPPERMINE) |[Check this page](https://en.wikipedia.org/wiki/Pentium_III)             |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 
