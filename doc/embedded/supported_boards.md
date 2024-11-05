@@ -20,12 +20,15 @@ then you will probably be able to compile directly on the device. However, if
 this is not the case, then you will need to follow these instructions for
 cross-compilation.
 
-Setting up the cross compilation toolchain is basically easy. We usually use
-bootlin [toolchains](https://toolchains.bootlin.com/) but this is not
-obligatory. If you have a specific architecture, then you need you need to
-identify two parameters that you need fill them in the first one is the
-`TOOLCHAIN_PREFIX` and the second one is the `DCMAKE_SYSROOT`. For more
-detailed example please check this [tutorial](crosscompile_armv7.md)
+Setting up the cross compilation toolchain is generally easy, especially when
+using [bootlin toolchains](https://toolchains.bootlin.com/); but other
+toolchains work too.  Once you have the toolchain set up, then you need to
+identify two parameters to configure mlpack with CMake:
+
+  * `TOOLCHAIN_PREFIX`: this specifies the prefix to use when calling compilers and other tools inside the toolchain
+  * `CMAKE_SYSROOT`: this specifies the system root for the cross-compilation environment; in the Bootlin toolchains, this is the `sysroot/` directory
+  
+For more detailed information on these options see [this tutorial](crosscompile_armv7.md).
 
 Here is the generic CMake command, please check the table to modify it
 accoding to each architecture and the version of your compiler set, also
