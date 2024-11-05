@@ -53,82 +53,119 @@ cmake \
 |-----------------------------------------------------------------------------
 | Architecture\_NAME | link to crosscompiler | CMake command | Example board |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ARM11    | [compiler set](https://toolchains.bootlin.com/releases_armv6-eabihf.html) | [Sysroot and toolchain prefix](#ARM11) | [Check this page](https://en.wikipedia.org/wiki/ARM11) |
+| ARM11    | [compiler set](https://toolchains.bootlin.com/releases_armv6-eabihf.html) | [Sysroot and toolchain prefix](#ARM11) | [ARM11 on Wikipedia](https://en.wikipedia.org/wiki/ARM11) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA7 | [compiler set](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#CORTEXA7) | [Check this page](https://en.wikipedia.org/wiki/ARM_Cortex-A7) |
+| CORTEXA7 | [compiler set](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#CORTEXA7) | [Cortex A7 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A7) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA8 | [compiler set](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#CORTEXA8) | [Check this page](https://en.wikipedia.org/wiki/ARM_Cortex-A8) |
+| CORTEXA8 | [compiler set](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#CORTEXA8) | [Cortex A8 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A8) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA9  | [compiler set](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#CORTEXA9) |[Check this page](https://en.wikipedia.org/wiki/ARM_Cortex-A9) |
+| CORTEXA9  | [compiler set](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#CORTEXA9) |[Cortex A9 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A9) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA15 | [compiler set](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#CORTEXA15) | [Check this page](https://en.wikipedia.org/wiki/ARM_Cortex-A15)  |
+| CORTEXA15 | [compiler set](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#CORTEXA15) | [Cortex A15 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A15)  |
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA53 | [compiler set](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#CORTEXA53) | [Check this page](https://en.wikipedia.org/wiki/ARM_Cortex-A53)  |
+| CORTEXA53 | [compiler set](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#CORTEXA53) | [Cortex A53 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A53)  |
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA72 | [compiler set](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#CORTEXA72) | [Check this page](https://en.wikipedia.org/wiki/ARM_Cortex-A72)  |
+| CORTEXA72 | [compiler set](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#CORTEXA72) | [Cortex A72 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A72)  |
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA76 | [compiler set](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#CORTEXA76) | [Check this page](https://en.wikipedia.org/wiki/ARM_Cortex-A76)  |
+| CORTEXA76 | [compiler set](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#CORTEXA76) | [Cortex A76 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A76)  |
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| C906      | [compiler set](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#C906) | [Check this page](https://riscv.org/news/2020/11/xuantie-c906-based-allwinner-risc-v-processor-to-power-12-linux-sbcs/attachment/allwinner-xuantie-c906-risc-v-processor/) |
+| C906      | [compiler set](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#C906) | [C906 on riscv](https://riscv.org/news/2020/11/xuantie-c906-based-allwinner-risc-v-processor-to-power-12-linux-sbcs/attachment/allwinner-xuantie-c906-risc-v-processor/) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| x280      | [compiler set](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#x280) | [Check this page](https://www.sifive.cn/api/document-file?uid=x280-datasheet) |
+| x280      | [compiler set](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#x280) | [x280 on SiFive](https://www.sifive.cn/api/document-file?uid=x280-datasheet) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| KATAMI    | [compiler set](https://toolchains.bootlin.com/releases_x86-i686.html)     | [Sysroot and toolchain prefix](#KATAMI) |[Check this page](https://en.wikipedia.org/wiki/Pentium_III)                 |
+| KATAMI    | [compiler set](https://toolchains.bootlin.com/releases_x86-i686.html)     | [Sysroot and toolchain prefix](#KATAMI) |[Pentium 3 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_III)          |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| NORTHWOOD | [compiler set](https://toolchains.bootlin.com/releases_x86-64.html)       | [Sysroot and toolchain prefix](#NORTHWOOD)   |[Check this page](https://en.wikipedia.org/wiki/Pentium_4)              |
+| NORTHWOOD | [compiler set](https://toolchains.bootlin.com/releases_x86-64.html)       | [Sysroot and toolchain prefix](#NORTHWOOD)   |[Pentium 4 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_4)       |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| COPPERMINE | [compiler set](https://toolchains.bootlin.com/releases_x86-i686.html)   | [Sysroot and toolchain prefix](#COPPERMINE) |[Check this page](https://en.wikipedia.org/wiki/Pentium_III)             |
+| COPPERMINE | [compiler set](https://toolchains.bootlin.com/releases_x86-i686.html)   | [Sysroot and toolchain prefix](#COPPERMINE) |[Pentium 3 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_III)       |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 
 ### ARM11
 
-`-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv6-eabihf--glibc--stable-2024.05-1/bin/arm-buildroot-linux-gnueabihf- -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv6-eabihf--glibc--stable-2024.05-1/arm-buildroot-linux-gnueabihf/sysroot`
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv6-eabihf--glibc--stable-2024.05-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv6-eabihf--glibc--stable-2024.05-1/arm-buildroot-linux-gnueabihf/sysroot
+```
 
 ### CORTEXA7 
 
-`-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf- -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot` 
+```-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
+```
 
 ### CORTEXA8 
 
-`-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf- -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot`
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
+```
 
 ### CORTEXA9  
 
-`-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf- -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot`
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
+```
 
 ### CORTEXA15 
 
-`-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf- -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot`
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
+```
 
 ### CORTEXA53 
 
-`-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf- -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot`
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
+```
 
 ### CORTEXA72
 
-`-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf- -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot`
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
+```
 
 ### CORTEXA76
 
-`-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf- -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot`
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
+```
 
 ### C906
 
-`-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf- -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot`
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
+```
 
 ### x280 
 
-`-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf- -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot`
+```-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
+```
 
 ### KATAMI    
 
-`-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf- -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot`
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
+```
 
 ### NORTHWOOD
 
-`-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/x86-64--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf- -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/x86-64--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot`
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/x86-64--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/x86-64--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
+```
 
 ### COPPERMINE
 
-`-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf- -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot`
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
+```
