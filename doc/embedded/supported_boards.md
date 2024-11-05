@@ -1,4 +1,4 @@
-## List of supported architectures:
+## Setting up an mlpack cross-compilation environment
 
 The following table contains a list of different architectures that you can
 compile or cross compile mlpack to, this page assumes that you have a
