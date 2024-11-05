@@ -14,11 +14,11 @@ your architecture is not part of the board please refer to the closest
 architecture with similar word size, or adapt the parameters and feel free to
 open a pull request.
 
-If your device has a fully functional package manager such as debian, and you
-have enough RAM on your embedded device (e.g., RAM > 4GB), then you will
-probably be able to compile directly on the device. However, if these are not
-available then you will need to follow these instruction to do cross
-compilation.
+If your device has a fully functional package manager such as apt (for Debian
+systems), and you have enough RAM on your embedded device (e.g., RAM > 4GB),
+then you will probably be able to compile directly on the device. However, if
+this is not the case, then you will need to follow these instructions for
+cross-compilation.
 
 Setting up the cross compilation toolchain is basically easy. We usually use
 bootlin [toolchains](https://toolchains.bootlin.com/) but this is not
