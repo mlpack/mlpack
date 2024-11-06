@@ -386,8 +386,9 @@ IPMetric<PolynomialKernel> metric(pk);
 // the custom base of 1.5 (default is 1.3).  We have to be sure to use the right
 // type here -- FastMKS needs the FastMKSStat object as the tree's
 // StatisticType.
-typedef CoverTree<IPMetric<PolynomialKernel>, FirstPointIsRoot, FastMKSStat>
-    TreeType; // Convenience typedef.
+// Convenience typedef.
+using TreeType =
+    CoverTree<IPMetric<PolynomialKernel>, FirstPointIsRoot, FastMKSStat>;
 TreeType* tree = new TreeType(data, metric, 1.5);
 
 // Now initialize FastMKS with that statistic.  We don't need to specify the
@@ -455,7 +456,7 @@ extern arma::mat data;
 
 // The custom tree type.  We'll assume that the first template parameter is the
 // statistic type.
-typedef CustomTree<FastMKSStat> TreeType;
+using TreeType = CustomTree<FastMKSStat>;
 
 // The FastMKS constructor will create the tree.
 FastMKS<LinearKernel, arma::mat, TreeType> f(data);

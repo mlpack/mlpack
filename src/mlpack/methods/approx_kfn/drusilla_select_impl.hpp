@@ -119,7 +119,7 @@ void DrusillaSelect<MatType>::Train(
     }
 
     // Find the top m elements using a priority queue.
-    typedef std::pair<double, size_t> Candidate;
+    using Candidate = std::pair<double, size_t>;
     struct CandidateCmp
     {
       bool operator()(const Candidate& c1, const Candidate& c2)

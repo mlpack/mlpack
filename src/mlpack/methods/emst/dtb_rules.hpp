@@ -81,7 +81,7 @@ class DTBRules
                  TreeType& referenceNode,
                  const double oldScore) const;
 
-  typedef typename mlpack::TraversalInfo<TreeType> TraversalInfoType;
+  using TraversalInfoType = mlpack::TraversalInfo<TreeType>;
 
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }

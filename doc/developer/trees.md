@@ -202,7 +202,7 @@ class ExampleTree
  public:
   // This is the element type held by the matrix.
   // It will generally either be `double`, or `float`.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   //////////////////////
   //// Constructors ////
@@ -1270,6 +1270,8 @@ TreeType policy API:
  - [`MeanSplitKDTree`](../user/core/trees/mean_split_kdtree.md)
  - [`BallTree`](../user/core/trees/ball_tree.md)
  - [`MeanSplitBallTree`](../user/core/trees/mean_split_ball_tree.md)
+ - [`RPTree`](../user/core/trees/rp_tree.md)
+ - [`MaxRPTree`](../user/core/trees/max_rp_tree.md)
  - [`UBTree`](../user/core/trees/ub_tree.md)
  - `RTree`
  - `RStarTree`

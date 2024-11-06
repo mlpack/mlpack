@@ -58,12 +58,12 @@ class LRegularizer
 /**
  * The L1 Regularizer.
  */
-typedef LRegularizer<1> L1Regularizer;
+using L1Regularizer = LRegularizer<1>;
 
 /**
  * The L2 Regularizer.
  */
-typedef LRegularizer<2> L2Regularizer;
+using L2Regularizer = LRegularizer<2>;
 
 } // namespace mlpack
 

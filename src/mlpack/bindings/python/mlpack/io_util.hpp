@@ -89,8 +89,8 @@ inline void SetParamWithInfo(util::Params& params,
                              T& matrix,
                              const bool* dims)
 {
-  typedef typename std::tuple<data::DatasetInfo, T> TupleType;
-  typedef typename T::elem_type eT;
+  using TupleType = std::tuple<data::DatasetInfo, T>;
+  using eT = typename T::elem_type;
 
   // The true type of the parameter is std::tuple<T, DatasetInfo>.
   const size_t dimensions = matrix.n_rows;
@@ -149,7 +149,7 @@ T& GetParamWithInfo(util::Params& params,
                     const std::string& paramName)
 {
   // T will be the Armadillo type.
-  typedef std::tuple<data::DatasetInfo, T> TupleType;
+  using TupleType = std::tuple<data::DatasetInfo, T>;
   return std::get<1>(params.Get<TupleType>(paramName));
 }
 

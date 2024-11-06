@@ -34,7 +34,7 @@ void PrintJL(const string& bindingName,
   const BindingDetails& doc = p.Doc();
 
   map<string, ParamData>& parameters = p.Parameters();
-  typedef map<string, ParamData>::iterator ParamIter;
+  using ParamIter = map<string, ParamData>::iterator;
 
   // First, let's get a list of input and output options.  We'll take two passes
   // so that the required input options are the first in the list.

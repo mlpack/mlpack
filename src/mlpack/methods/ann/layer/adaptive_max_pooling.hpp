@@ -129,7 +129,7 @@ class AdaptiveMaxPoolingType : public Layer<MatType>
 // Convenience typedefs.
 
 // Standard Adaptive max pooling layer.
-typedef AdaptiveMaxPoolingType<arma::mat> AdaptiveMaxPooling;
+using AdaptiveMaxPooling = AdaptiveMaxPoolingType<arma::mat>;
 
 } // namespace mlpack
 

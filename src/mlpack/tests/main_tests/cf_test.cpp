@@ -352,7 +352,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFMaxIterationsTest",
   FixedRandomSeed();
   RUN_BINDING();
 
-  outputModel =  params.Get<CFModel*>("output_model");
+  outputModel = params.Get<CFModel*>("output_model");
   // By default, the main program use NMFPolicy.
   CFType<NMFPolicy, NoNormalization>& cf =
       dynamic_cast<CFWrapper<NMFPolicy,

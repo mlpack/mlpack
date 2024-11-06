@@ -659,8 +659,9 @@ mlpack::RandomAcolInitialization<5> initW;
 mlpack::RandomAMFInitialization initH;
 
 // Combine the two initializations so we can pass it to the AMF class.
-typedef mlpack::MergeInitialization<mlpack::RandomAcolInitialization<5>,
-                                    mlpack::RandomAMFInitialization> InitType;
+using InitType =
+    mlpack::MergeInitialization<mlpack::RandomAcolInitialization<5>,
+                                mlpack::RandomAMFInitialization>;
 InitType init(initW, initH);
 
 // Create an AMF object with the custom initialization.

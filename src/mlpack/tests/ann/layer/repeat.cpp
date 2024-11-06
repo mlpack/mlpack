@@ -24,7 +24,7 @@ using namespace mlpack;
  */
 TEMPLATE_TEST_CASE("RepeatTestCaseI0", "[ANNLayerTest]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Input will be 4 x 3.
   MatType input(4, 3, arma::fill::randn);
@@ -66,7 +66,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseI0", "[ANNLayerTest]", arma::mat, arma::fmat)
  */
 TEMPLATE_TEST_CASE("RepeatTestCaseI1", "[ANNLayerTest]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Input will be 4 x 3.
   MatType input(4, 3, arma::fill::randn);
@@ -108,7 +108,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseI1", "[ANNLayerTest]", arma::mat, arma::fmat)
  */
 TEMPLATE_TEST_CASE("RepeatTestCaseI2", "[ANNLayerTest]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Input will be 4 x 3.
   MatType input(4, 3, arma::fill::randn);
@@ -156,7 +156,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseI2", "[ANNLayerTest]", arma::mat, arma::fmat)
  */
 TEMPLATE_TEST_CASE("RepeatTestCaseB1", "[ANNLayerTest]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Input will be 4 x 3.
   MatType input(4, 3, arma::fill::randn);
@@ -195,7 +195,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseB1", "[ANNLayerTest]", arma::mat, arma::fmat)
  */
 TEMPLATE_TEST_CASE("RepeatTestCaseB2", "[ANNLayerTest]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Input will be 4 x 3.
   MatType input(4, 3, arma::fill::randn);
@@ -234,7 +234,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseB2", "[ANNLayerTest]", arma::mat, arma::fmat)
  */
 TEMPLATE_TEST_CASE("RepeatTestCaseB3", "[ANNLayerTest]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Input will be 4 x 3.
   MatType input(4, 3, arma::fill::randn);
@@ -288,7 +288,7 @@ template <> struct GradientBound<arma::fmat>
 TEMPLATE_TEST_CASE("GradientRepeatTest", "[ANNLayerTest]", arma::mat,
     arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
   struct GradientFunction
   {
     GradientFunction(std::vector<size_t> multiples, bool interleave) :

@@ -80,7 +80,7 @@ template<typename WeakLearnerType = Perceptron<>,
 class AdaBoost
 {
  public:
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   /**
    * Create the AdaBoost object without training.  Be sure to call Train()

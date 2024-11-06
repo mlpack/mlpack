@@ -33,7 +33,7 @@ class HollowBallBound
 {
  public:
   //! A public version of the metric type.
-  typedef TDistanceType DistanceType;
+  using DistanceType = TDistanceType;
 
  private:
   //! The inner and the outer radii of the bound.

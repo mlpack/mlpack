@@ -273,7 +273,7 @@ class LSTMType : public RecurrentLayer<MatType>
 // Convenience typedefs.
 
 // Standard LSTM layer.
-typedef LSTMType<arma::mat> LSTM;
+using LSTM = LSTMType<arma::mat>;
 
 } // namespace mlpack
 

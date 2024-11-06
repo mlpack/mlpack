@@ -224,7 +224,7 @@ TEST_CASE("NMSMetricTest", "[MetricTest]")
  */
 TEST_CASE("BLEUScoreTest", "[MetricTest]")
 {
-  typedef typename std::vector<std::string> WordVector;
+  using WordVector = std::vector<std::string>;
   std::vector<std::vector<WordVector>> referenceCorpus
       = {{{"this", "is", "my", "house"},
           {"this", "is", "my", "car"},

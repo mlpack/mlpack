@@ -30,9 +30,9 @@ class HyperplaneBase
 {
  public:
   //! Useful typedef for the bound type.
-  typedef BoundT BoundType;
+  using BoundType = BoundT;
   //! Useful typedef for the projection vector type.
-  typedef ProjVectorT ProjVectorType;
+  using ProjVectorType = ProjVectorT;
 
  private:
   //! Projection vector.

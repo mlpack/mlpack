@@ -121,7 +121,7 @@ class RBFType : public Layer<MatType>
   MatType distances;
 }; // class RBFType
 
-typedef RBFType<arma::mat> RBF;
+using RBF = RBFType<arma::mat>;
 
 } // namespace mlpack
 

@@ -98,7 +98,7 @@ template<typename MatType, typename RegularizerType>
 void Linear3DType<MatType, RegularizerType>::Forward(
     const MatType& input, MatType& output)
 {
-  typedef typename arma::Cube<typename MatType::elem_type> CubeType;
+  using CubeType = arma::Cube<typename MatType::elem_type>;
 
   const size_t nPoints = input.n_rows / this->inputDimensions[0];
   const size_t batchSize = input.n_cols;
@@ -123,7 +123,7 @@ void Linear3DType<MatType, RegularizerType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  typedef typename arma::Cube<typename MatType::elem_type> CubeType;
+  using CubeType = arma::Cube<typename MatType::elem_type>;
 
   if (gy.n_rows % outSize != 0)
   {
@@ -151,7 +151,7 @@ void Linear3DType<MatType, RegularizerType>::Gradient(
     const MatType& error,
     MatType& gradient)
 {
-  typedef typename arma::Cube<typename MatType::elem_type> CubeType;
+  using CubeType = arma::Cube<typename MatType::elem_type>;
 
   if (error.n_rows % outSize != 0)
     Log::Fatal << "Propagated error matrix has invalid dimension!" << std::endl;

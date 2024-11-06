@@ -56,7 +56,7 @@ void InPlaceCopyInternal(
             = 0)
 {
   // Make the output filename the same as the input filename.
-  typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
+  using TupleType = std::tuple<T, typename ParameterType<T>::type>;
   TupleType& tuple = *std::any_cast<TupleType>(&d.value);
   std::string& value = std::get<0>(std::get<1>(tuple));
 
@@ -78,7 +78,7 @@ void InPlaceCopyInternal(
     const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   // Make the output filename the same as the input filename.
-  typedef std::tuple<T*, typename ParameterType<T>::type> TupleType;
+  using TupleType = std::tuple<T*, typename ParameterType<T>::type>;
   TupleType& tuple = *std::any_cast<TupleType>(&d.value);
   std::string& value = std::get<1>(tuple);
 

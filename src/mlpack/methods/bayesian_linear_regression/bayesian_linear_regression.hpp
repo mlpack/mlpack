@@ -99,9 +99,9 @@ template<typename ModelMatType = arma::mat>
 class BayesianLinearRegression
 {
  public:
-  typedef typename ModelMatType::elem_type ElemType;
-  typedef typename GetDenseColType<ModelMatType>::type DenseVecType;
-  typedef typename GetDenseRowType<ModelMatType>::type DenseRowType;
+  using ElemType = typename ModelMatType::elem_type;
+  using DenseVecType = typename GetDenseColType<ModelMatType>::type;
+  using DenseRowType = typename GetDenseRowType<ModelMatType>::type;
 
   /**
    * Set the parameters of Bayesian Ridge regression object. The regularization

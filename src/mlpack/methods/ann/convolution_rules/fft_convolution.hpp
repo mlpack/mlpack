@@ -134,7 +134,7 @@ class FFTConvolution
       CubeType& output,
       const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
-    typedef typename GetDenseMatType<CubeType>::type MatType;
+    using MatType = typename GetDenseMatType<CubeType>::type;
     MatType convOutput;
     FFTConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
         convOutput);

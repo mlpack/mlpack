@@ -37,9 +37,9 @@ template<typename MatType = arma::mat>
 class LogisticRegression
 {
  public:
-  typedef typename MatType::elem_type ElemType;
-  typedef typename GetDenseRowType<MatType>::type RowType;
-  typedef typename GetDenseColType<MatType>::type ColType;
+  using ElemType = typename MatType::elem_type;
+  using RowType = typename GetDenseRowType<MatType>::type;
+  using ColType = typename GetDenseColType<MatType>::type;
 
   /**
    * Construct the LogisticRegression class without performing any training.

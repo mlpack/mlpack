@@ -28,8 +28,8 @@ class Params
 {
  public:
   // Convenience typedef for function maps.
-  typedef std::map<std::string, std::map<std::string,
-      void (*)(ParamData&, const void*, void*)>> FunctionMapType;
+  using FunctionMapType = std::map<std::string, std::map<std::string,
+      void (*)(ParamData&, const void*, void*)>>;
 
   /**
    * Create a new Params class.  In general this should only be called via

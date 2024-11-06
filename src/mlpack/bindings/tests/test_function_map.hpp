@@ -26,8 +26,8 @@ class TestFunctionMap
 {
  public:
   // Convenience typedef.
-  typedef std::map<std::string, std::map<std::string,
-      void (*)(util::ParamData&, const void*, void*)>> FunctionMapType;
+  using FunctionMapType = std::map<std::string, std::map<std::string,
+      void (*)(util::ParamData&, const void*, void*)>>;
 
   //! Get the instantiated TestFunctionMap object.
   static TestFunctionMap& GetSingleton();

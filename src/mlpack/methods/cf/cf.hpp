@@ -272,7 +272,7 @@ class CFType
   NormalizationType normalization;
 
   //! Candidate represents a possible recommendation (value, item).
-  typedef std::pair<double, size_t> Candidate;
+  using Candidate = std::pair<double, size_t>;
 
   //! Compare two candidates based on the value.
   struct CandidateCmp {
@@ -283,7 +283,7 @@ class CFType
   };
 }; // class CFType
 
-typedef CFType<> CF;
+using CF = CFType<>;
 
 } // namespace mlpack
 

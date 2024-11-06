@@ -79,9 +79,9 @@ template<typename ModelMatType = arma::mat>
 class LinearSVM
 {
  public:
-  typedef typename ModelMatType::elem_type ElemType;
-  typedef typename GetDenseMatType<ModelMatType>::type DenseMatType;
-  typedef typename GetDenseColType<ModelMatType>::type DenseColType;
+  using ElemType = typename ModelMatType::elem_type;
+  using DenseMatType = typename GetDenseMatType<ModelMatType>::type;
+  using DenseColType = typename GetDenseColType<ModelMatType>::type;
 
   /**
    * Initialize the Linear SVM without performing training.  Default
