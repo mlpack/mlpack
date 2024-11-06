@@ -1,4 +1,4 @@
-<svg width="280" height="1400" viewBox="0 0 280 1400" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="280" height="1440" viewBox="0 0 280 1440" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <style>
     g.elem rect { fill: #aaa; stroke: black; stroke-width: 1.5; }
     g.elem:hover rect { fill: #ccc; }
@@ -67,194 +67,196 @@
     </a>
   </g>
 
-  <line x1="20" y1="340" x2="260" y2="340" style="stroke:black;stroke-dasharray:4;stroke-width:4" />
+  <line x1="20" y1="350" x2="260" y2="350" style="stroke:black;stroke-dasharray:4;stroke-width:4" />
 
-  <text x="140" y="365" text-anchor="middle" style="font-weight:bold;font-size:125%">The Data Science Pipeline</text>
-  <text x="140" y="385" text-anchor="middle" style="font-weight:bold;font-size:125%">with mlpack</text>
+  <text x="140" y="375" text-anchor="middle" style="font-weight:bold;font-size:125%">The Data Science Pipeline</text>
+  <text x="140" y="395" text-anchor="middle" style="font-weight:bold;font-size:125%">with mlpack</text>
+
+  <line x1="20" y1="405" x2="260" y2="405" style="stroke:black;stroke-dasharray:4;stroke-width:4" />
 
   <!-- The pipeline -->
   <g class="pipeline">
     <g class="pipeline_elem">
-      <rect x="10" y="400" rx="20" ry="20" width="260" height="100" />
-      <text x="140" y="420" text-anchor="middle" class="header">Data loading and I/O</text>
-        
+      <rect x="10" y="430" rx="20" ry="20" width="260" height="100" />
+      <text x="140" y="450" text-anchor="middle" class="header">Data loading and I/O</text>
+
       <a xlink:href="user/load_save.html#numeric-data">
-        <text x="140" y="445" text-anchor="middle">Numeric data</text>
+        <text x="140" y="475" text-anchor="middle">Numeric data</text>
       </a>
       <a xlink:href="user/load_save.html#mixed-categorical-data">
-        <text x="140" y="460" text-anchor="middle">Mixed categorical data</text>
+        <text x="140" y="490" text-anchor="middle">Mixed categorical data</text>
       </a>
       <a xlink:href="user/load_save.html#image-data">
-        <text x="140" y="475" text-anchor="middle">Image data</text>
+        <text x="140" y="505" text-anchor="middle">Image data</text>
       </a>
       <a xlink:href="user/load_save.html#mlpack-objects">
-        <text x="140" y="490" text-anchor="middle">mlpack models and objects</text>
+        <text x="140" y="520" text-anchor="middle">mlpack models and objects</text>
       </a>
     </g>
 
-    <line x1="140" y1="500" x2="140" y2="530" />
-    <line x1="140" y1="530" x2="130" y2="520" />
-    <line x1="140" y1="530" x2="150" y2="520" />
+    <line x1="140" y1="530" x2="140" y2="560" />
+    <line x1="140" y1="560" x2="130" y2="550" />
+    <line x1="140" y1="560" x2="150" y2="550" />
 
     <g class="pipeline_elem">
-      <rect x="10" y="530" rx="20" ry="20" width="260" height="100" />
-      <text x="140" y="550" text-anchor="middle" class="header">Preprocessing / feature extraction</text>
+      <rect x="10" y="560" rx="20" ry="20" width="260" height="100" />
+      <text x="140" y="580" text-anchor="middle" class="header">Preprocessing / feature extraction</text>
 
       <a xlink:href="user/core/normalizing_labels.html">
-        <text x="140" y="585" text-anchor="middle">Normalizing labels</text>
+        <text x="140" y="615" text-anchor="middle">Normalizing labels</text>
       </a>
       <a xlink:href="user/core/split.html">
-        <text x="140" y="600" text-anchor="middle">Dataset splitting</text>
+        <text x="140" y="630" text-anchor="middle">Dataset splitting</text>
       </a>
     </g>
 
-    <line x1="140" y1="630" x2="140" y2="660" />
-    <line x1="140" y1="660" x2="130" y2="650" />
-    <line x1="140" y1="660" x2="150" y2="650" />
+    <line x1="140" y1="660" x2="140" y2="690" />
+    <line x1="140" y1="690" x2="130" y2="680" />
+    <line x1="140" y1="690" x2="150" y2="680" />
 
     <g class="pipeline_elem">
       <a xlink:href="#transformations">
-        <rect x="10" y="650" rx="20" ry="20" width="260" height="100" />
-        <text x="140" y="670" text-anchor="middle" class="header">Transformations</text>
+        <rect x="10" y="690" rx="20" ry="20" width="260" height="100" />
+        <text x="140" y="710" text-anchor="middle" class="header">Transformations</text>
       </a>
 
       <a xlink:href="user/methods/amf.html">
-        <text x="50" y="700" text-anchor="middle">AMF</text>
+        <text x="50" y="740" text-anchor="middle">AMF</text>
       </a>
       <a xlink:href="user/methods/local_coordinate_coding.html">
-        <text x="170" y="700" text-anchor="middle">LocalCoordinateCoding</text>
+        <text x="170" y="740" text-anchor="middle">LocalCoordinateCoding</text>
       </a>
       <a xlink:href="user/methods/lmnn.html">
-        <text x="50" y="715" text-anchor="middle">LMNN</text>
+        <text x="50" y="755" text-anchor="middle">LMNN</text>
       </a>
       <a xlink:href="user/methods/nca.html">
-        <text x="120" y="715" text-anchor="middle">NCA</text>
+        <text x="120" y="755" text-anchor="middle">NCA</text>
       </a>
       <a xlink:href="user/methods/nmf.html">
-        <text x="210" y="715" text-anchor="middle">NMF</text>
+        <text x="210" y="755" text-anchor="middle">NMF</text>
       </a>
       <a xlink:href="user/methods/pca.html">
-        <text x="50" y="730" text-anchor="middle">PCA</text>
+        <text x="50" y="770" text-anchor="middle">PCA</text>
       </a>
       <a xlink:href="user/methods/radical.html">
-        <text x="120" y="730" text-anchor="middle">RADICAL</text>
+        <text x="120" y="770" text-anchor="middle">RADICAL</text>
       </a>
       <a xlink:href="user/methods/sparse_coding.html">
-        <text x="210" y="730" text-anchor="middle">SparseCoding</text>
+        <text x="210" y="770" text-anchor="middle">SparseCoding</text>
       </a>
     </g>
 
-    <line x1="140" y1="750" x2="140" y2="780" />
-    <line x1="140" y1="780" x2="130" y2="770" />
-    <line x1="140" y1="780" x2="150" y2="770" />
+    <line x1="140" y1="790" x2="140" y2="820" />
+    <line x1="140" y1="820" x2="130" y2="810" />
+    <line x1="140" y1="820" x2="150" y2="810" />
 
     <g class="pipeline_elem">
       <a xlink:href="#classification-algorithms">
-        <rect x="10" y="780" rx="20" ry="20" width="260" height="100" />
-        <text x="140" y="800" text-anchor="middle" class="header">Modeling</text>
+        <rect x="10" y="820" rx="20" ry="20" width="260" height="100" />
+        <text x="140" y="840" text-anchor="middle" class="header">Modeling</text>
       </a>
 
       <a xlink:href="#classification-algorithms">
-        <text x="140" y="825" text-anchor="middle">Classification</text>
+        <text x="140" y="865" text-anchor="middle">Classification</text>
       </a>
       <a xlink:href="#regression-algorithms">
-        <text x="140" y="840" text-anchor="middle">Regression</text>
+        <text x="140" y="880" text-anchor="middle">Regression</text>
       </a>
       <a xlink:href="#clustering-algorithms">
-        <text x="140" y="855" text-anchor="middle">Clustering</text>
+        <text x="140" y="895" text-anchor="middle">Clustering</text>
       </a>
       <a xlink:href="#geometric-algorithms">
-        <text x="140" y="870" text-anchor="middle">Geometric algorithms</text>
+        <text x="140" y="910" text-anchor="middle">Geometric algorithms</text>
       </a>
     </g>
 
-    <line x1="140" y1="880" x2="140" y2="910" />
-    <line x1="140" y1="910" x2="130" y2="900" />
-    <line x1="140" y1="910" x2="150" y2="900" />
+    <line x1="140" y1="920" x2="140" y2="950" />
+    <line x1="140" y1="950" x2="130" y2="940" />
+    <line x1="140" y1="950" x2="150" y2="940" />
 
     <g class="pipeline_elem">
-      <rect x="10" y="910" rx="20" ry="20" width="260" height="100" />
-      <text x="140" y="930" text-anchor="middle" class="header">Evaluation</text>
+      <rect x="10" y="950" rx="20" ry="20" width="260" height="100" />
+      <text x="140" y="970" text-anchor="middle" class="header">Evaluation</text>
       <!-- TODO: metrics? -->
       <a xlink:href="user/cv.html">
-        <text x="140" y="965" text-anchor="middle">Cross-validation</text>
+        <text x="140" y="1005" text-anchor="middle">Cross-validation</text>
       </a>
       <a xlink:href="user/hpt.html">
-        <text x="140" y="980" text-anchor="middle">Hyperparameter tuning</text>
+        <text x="140" y="1020" text-anchor="middle">Hyperparameter tuning</text>
       </a>
     </g>
 
-    <line x1="140" y1="1010" x2="140" y2="1040" />
-    <line x1="140" y1="1040" x2="130" y2="1030" />
-    <line x1="140" y1="1040" x2="150" y2="1030" />
+    <line x1="140" y1="1050" x2="140" y2="1080" />
+    <line x1="140" y1="1080" x2="130" y2="1070" />
+    <line x1="140" y1="1080" x2="150" y2="1070" />
 
     <g class="pipeline_elem">
-      <rect x="10" y="1040" rx="20" ry="20" width="260" height="100" />
-      <text x="140" y="1060" text-anchor="middle" class="header">Deployment</text>
+      <rect x="10" y="1080" rx="20" ry="20" width="260" height="100" />
+      <text x="140" y="1100" text-anchor="middle" class="header">Deployment</text>
 
-      <text x="140" y="1090" text-anchor="middle">Compile an mlpack program</text>
-      <text x="140" y="1105" text-anchor="middle">Deploy to a Docker container</text>
+      <text x="140" y="1130" text-anchor="middle">Compile an mlpack program</text>
+      <text x="140" y="1145" text-anchor="middle">Deploy to a Docker container</text>
       <a xlink:href="embedded/crosscompile_armv7.html">
-        <text x="140" y="1120" text-anchor="middle">Cross-compile to a Raspberry
+        <text x="140" y="1160" text-anchor="middle">Cross-compile to a Raspberry
 Pi    </text>
       </a>
     </g>
   </g>
 
-  <line x1="20" y1="1160" x2="260" y2="1160" style="stroke:black;stroke-dasharray:4;stroke-width:4;" />
+  <line x1="20" y1="1200" x2="260" y2="1200" style="stroke:black;stroke-dasharray:4;stroke-width:4;" />
 
   <!-- final pieces -->
   <g class="bottom">
     <g class="elem">
-      <rect x="10" y="1180" rx="20" ry="20" width="260" height="100" />
-      <text x="140" y="1200" text-anchor="middle" class="header">Bindings</text>
+      <rect x="10" y="1220" rx="20" ry="20" width="260" height="100" />
+      <text x="140" y="1240" text-anchor="middle" class="header">Bindings</text>
 
       <a xlink:href="bindings/python.html">
-        <image x="45" y="1213" width="15" height="15" href="python.svg" />
-        <text x="90" y="1225" text-anchor="middle">Python</text>
+        <image x="45" y="1253" width="15" height="15" href="python.svg" />
+        <text x="90" y="1265" text-anchor="middle">Python</text>
       </a>
       <a xlink:href="bindings/julia.html">
-        <image x="215" y="1213" width="15" height="15" href="julia.svg" />
-        <text x="190" y="1225" text-anchor="middle">Julia</text>
+        <image x="215" y="1253" width="15" height="15" href="julia.svg" />
+        <text x="190" y="1265" text-anchor="middle">Julia</text>
       </a>
       <a xlink:href="bindings/cli.html">
-        <image x="45" y="1228" width="15" height="15" href="terminal.svg" />
-        <text x="90" y="1240" text-anchor="middle">CLI</text>
+        <image x="45" y="1268" width="15" height="15" href="terminal.svg" />
+        <text x="90" y="1280" text-anchor="middle">CLI</text>
       </a>
       <a xlink:href="bindings/r.html">
-        <image x="215" y="1228" width="15" height="15" href="r.svg" />
-        <text x="190" y="1240" text-anchor="middle">R</text>
+        <image x="215" y="1268" width="15" height="15" href="r.svg" />
+        <text x="190" y="1280" text-anchor="middle">R</text>
       </a>
       <a xlink:href="bindings/go.html">
-        <image x="45" y="1243" width="15" height="15" href="gopher.svg" />
-        <text x="90" y="1255" text-anchor="middle">Go</text>
+        <image x="45" y="1283" width="15" height="15" href="gopher.svg" />
+        <text x="90" y="1295" text-anchor="middle">Go</text>
       </a>
     </g>
 
     <g class="elem">
-      <rect x="10" y="1290" rx="20" ry="20" width="260" height="100" />
-      <text x="140" y="1310" text-anchor="middle" class="header">Developer documentation</text>
+      <rect x="10" y="1330" rx="20" ry="20" width="260" height="100" />
+      <text x="140" y="1350" text-anchor="middle" class="header">Developer documentation</text>
 
       <a xlink:href="developer/community.html">
-        <text x="80" y="1335" text-anchor="middle">Community</text>
+        <text x="80" y="1375" text-anchor="middle">Community</text>
       </a>
       <a xlink:href="developer/gsoc.html">
-        <text x="200" y="1335" text-anchor="middle">GSoC</text>
+        <text x="200" y="1375" text-anchor="middle">GSoC</text>
       </a>
       <a xlink:href="developer/ci.html">
-        <text x="80" y="1350" text-anchor="middle">CI/CD</text>
+        <text x="80" y="1390" text-anchor="middle">CI/CD</text>
       </a>
       <a xlink:href="developer/timer.html">
-        <text x="200" y="1350" text-anchor="middle">Timing</text>
+        <text x="200" y="1390" text-anchor="middle">Timing</text>
       </a>
       <a xlink:href="developer/bindings.html">
-        <text x="80" y="1365" text-anchor="middle">Binding system</text>
+        <text x="80" y="1405" text-anchor="middle">Binding system</text>
       </a>
       <a xlink:href="developer/iodoc.html">
-        <text x="200" y="1365" text-anchor="middle">Writing a binding</text>
+        <text x="200" y="1405" text-anchor="middle">Writing a binding</text>
       </a>
       <a xlink:href="developer/template_policies.html">
-        <text x="140" y="1380" text-anchor="middle">Template policies</text>
+        <text x="140" y="1420" text-anchor="middle">Template policies</text>
       </a>
     </g>
   </g>
