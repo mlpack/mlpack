@@ -39,7 +39,7 @@ cmake \
     -DBUILD_TESTS=ON \
     -DBOARD_NAME=(Check the following table) \
     -DCMAKE_CROSSCOMPILING=ON \
-    -DCMAKE_TOOLCHAIN_FILE=../board/crosscompile-toolchain.cmake \
+    -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake \
     -DTOOLCHAIN_PREFIX=(Check the following table) \
     -DCMAKE_SYSROOT=(Check the following table) \
     ../
