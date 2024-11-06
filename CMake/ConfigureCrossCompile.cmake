@@ -5,10 +5,10 @@
 # available on your system in order to find the BLAS library.  If OpenBLAS will
 # be compiled, the OPENBLAS_TARGET variable must be set.  This can be done
 # by, e.g., setting BOARD_NAME (which will set OPENBLAS_TARGET in
-# `board/flags-config.cmake`).
+# `flags-config.cmake`).
 
 if (CMAKE_CROSSCOMPILING)
-  include(board/flags-config.cmake)
+  include(CMake/crosscompile-arch-config.cmake)
   if (NOT CMAKE_SYSROOT AND (NOT TOOLCHAIN_PREFIX))
     message(FATAL_ERROR "Neither CMAKE_SYSROOT nor TOOLCHAIN_PREFIX are set; please set both of them and try again.")
   elseif(NOT CMAKE_SYSROOT)
