@@ -1,7 +1,7 @@
 ## Setting up an mlpack cross-compilation environment
 
 The following table contains a list of different architectures that you can
-compile or cross compile mlpack to, this page assumes that you have a
+compile or cross compile mlpack to.  This page assumes that you have a
 functional operating system (e.g., Linux, MacOS, Windows) with compatible
 ABI on both the host and the target. In addition, your objective is to create
 an embedded ABI (eabi). For now, this guide does not support none-eabi or
