@@ -10,7 +10,7 @@
 #               Serialize, else Deserialize.
 #
 function(append_serialization SERIALIZATION_FILE PROGRAM_MAIN_FILE SERIALIZE)
-  include("${CMAKE_SOURCE_DIR}/CMake/StripType.cmake")
+  include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/StripType.cmake")
   strip_type("${PROGRAM_MAIN_FILE}")
 
   list(LENGTH MODEL_TYPES NUM_MODEL_TYPES)

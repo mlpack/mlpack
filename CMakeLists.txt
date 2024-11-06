@@ -304,6 +304,9 @@ else()
     endif()
     get_deps(https://files.mlpack.org/armadillo-12.6.5.tar.gz armadillo armadillo-12.6.5.tar.gz)
     set(ARMADILLO_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+    if (NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+      set(ARMADILLO_INCLUDE_DIR ${GENERIC_INCLUDE_DIR} PARENT_SCOPE)
+    endif()
     find_package(Armadillo REQUIRED)
   endif()
 endif()
@@ -319,6 +322,9 @@ else()
   if (NOT StbImage_FOUND)
     get_deps(https://mlpack.org/files/stb.tar.gz stb stb.tar.gz)
     set(STB_IMAGE_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+    if (NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+      set(STB_IMAGE_INCLUDE_DIR ${GENERIC_INCLUDE_DIR} PARENT_SCOPE)
+    endif()
     find_package(StbImage REQUIRED)
   endif()
 endif()
@@ -328,7 +334,7 @@ if (StbImage_FOUND)
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
 
   # Make sure that we can link STB in multiple translation units.
-  include(CMake/TestStaticSTB.cmake)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/CMake/TestStaticSTB.cmake)
   if (NOT CMAKE_HAS_WORKING_STATIC_STB)
     message(FATAL_ERROR "STB implementations's static mode cannot link across "
         "multiple translation units!  Try upgrading your STB implementation, "
@@ -345,6 +351,9 @@ else()
   if (NOT ENSMALLEN_FOUND)
     get_deps(https://www.ensmallen.org/files/ensmallen-latest.tar.gz ensmallen ensmallen-latest.tar.gz)
     set(ENSMALLEN_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+    if (NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+      set(ENSMALLEN_INCLUDE_DIR ${GENERIC_INCLUDE_DIR} PARENT_SCOPE)
+    endif()
     find_package(Ensmallen REQUIRED)
   endif()
 endif()
@@ -358,6 +367,9 @@ else()
   if (NOT CEREAL_FOUND)
     get_deps(https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.0.tar.gz cereal cereal-1.3.0.tar.gz)
     set(CEREAL_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+    if (NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+      set(CEREAL_INCLUDE_DIR ${GENERIC_INCLUDE_DIR} PARENT_SCOPE)
+    endif()
     find_package(cereal REQUIRED)
   endif()
 endif()
@@ -393,9 +405,9 @@ include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/src/)
 
 # On Windows, things end up under Debug/ or Release/.
 if (WIN32)
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
   # Copy all necessary DLLs for runtime to the build directory.
   # This is a little hackish, but I can't figure out clear ways to make CMake
@@ -403,22 +415,22 @@ if (WIN32)
   # runtime path right always, so this is the best I know how to do for now.
   foreach(dir ${DLL_COPY_DIRS})
     file(GLOB dir_dll_list "${dir}/*.dll")
-    file(COPY ${dir_dll_list} DESTINATION ${CMAKE_BINARY_DIR}/Release/)
-    file(COPY ${dir_dll_list} DESTINATION ${CMAKE_BINARY_DIR}/Debug/)
+    file(COPY ${dir_dll_list} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release/)
+    file(COPY ${dir_dll_list} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug/)
   endforeach ()
 
   foreach(file ${DLL_COPY_LIBS})
-    file(COPY ${file} DESTINATION ${CMAKE_BINARY_DIR}/Release/)
-    file(COPY ${file} DESTINATION ${CMAKE_BINARY_DIR}/Debug/)
+    file(COPY ${file} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release/)
+    file(COPY ${file} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug/)
   endforeach()
 else ()
   # If not on Windows, put them under more standard UNIX-like places.  This is
   # necessary, otherwise they would all end up in
-  # ${CMAKE_BINARY_DIR}/src/mlpack/methods/... or somewhere else random like
+  # ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/methods/... or somewhere else random like
   # that.
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
-  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib/)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin/)
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib/)
 endif ()
 
 # Determine whether or not this is a git repository, so that we can set the
@@ -462,20 +474,20 @@ if (BUILD_CLI_EXECUTABLES AND UNIX)
     add_custom_target(man ALL
         ${CMAKE_CURRENT_SOURCE_DIR}/CMake/allexec2man.sh
             ${CMAKE_CURRENT_SOURCE_DIR}/CMake/exec2man.sh
-            ${CMAKE_BINARY_DIR}/share/man
+            ${CMAKE_CURRENT_BINARY_DIR}/share/man
         WORKING_DIRECTORY
-          ${CMAKE_BINARY_DIR}/bin
+          ${CMAKE_CURRENT_BINARY_DIR}/bin
         COMMENT "Generating man pages from built executables."
     )
 
     # Set the rules to install the documentation.
-    install(DIRECTORY "${CMAKE_BINARY_DIR}/share/man/"
+    install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/share/man/"
         DESTINATION "${CMAKE_INSTALL_MANDIR}")
   endif ()
 endif ()
 
 # Modify config.hpp as necessary.
-file(READ ${CMAKE_SOURCE_DIR}/src/mlpack/config.hpp CONFIG_CONTENTS)
+file(READ ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/config.hpp CONFIG_CONTENTS)
 if (BFD_DL_AVAILABLE)
   string(REGEX REPLACE "// #define MLPACK_HAS_BFD_DL\n"
       "#define MLPACK_HAS_BFD_DL\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
@@ -492,13 +504,21 @@ if (USING_GIT)
   string(REGEX REPLACE "// #define MLPACK_GIT_VERSION\n"
       "#define MLPACK_GIT_VERSION\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif ()
-file(WRITE ${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp "${CONFIG_CONTENTS}")
-include_directories(${CMAKE_BINARY_DIR}/include/)
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/include/mlpack/config-local.hpp "${CONFIG_CONTENTS}")
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/)
 add_definitions(-DMLPACK_CUSTOM_CONFIG_FILE=mlpack/config-local.hpp)
+if (NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  # todo(bpapaspyros): this is not very nice but gets the job done 
+  file(COPY ${CMAKE_CURRENT_BINARY_DIR}/include/mlpack/config-local.hpp 
+       DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/include/mlpack/)
+endif()
 
 # Finally, add any cross-compilation support libraries (they may need to come
 # last).  If we are not cross-compiling, no changes will happen here.
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${CROSS_COMPILE_SUPPORT_LIBRARIES})
+if (NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} PARENT_SCOPE)
+endif()
 
 # Recurse into the rest of the project.
 add_subdirectory(src/mlpack)
@@ -569,13 +589,24 @@ if (PKG_CONFIG_FOUND)
   set(MLPACK_VERSION_STRING "@MLPACK_VERSION_STRING@")
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/CMake/mlpack.pc.in
-    ${CMAKE_BINARY_DIR}/CMake/mlpack.pc.in.partial @ONLY)
+    ${CMAKE_CURRENT_BINARY_DIR}/CMake/mlpack.pc.in.partial @ONLY)
 
-  add_custom_target(pkgconfig ALL
-      ${CMAKE_COMMAND}
-          -D MLPACK_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
-          -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GeneratePkgConfig.cmake"
-      COMMENT "Generating mlpack.pc (pkg-config) file.")
+  if (NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    set(PKGCONFIG_OUTPUT_DIR "${CMAKE_BINARY_DIR}/lib/pkgconfig")
+    file(MAKE_DIRECTORY "${PKGCONFIG_OUTPUT_DIR}")
+    add_custom_target(pkgconfig ALL
+        ${CMAKE_COMMAND}
+            -D MLPACK_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+            -D PKGCONFIG_OUTPUT_DIR="${PKGCONFIG_OUTPUT_DIR}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GeneratePkgConfig.cmake"
+        COMMENT "Generating mlpack.pc (pkg-config) file.")
+   else()
+     add_custom_target(pkgconfig ALL
+     ${CMAKE_COMMAND}
+         -D MLPACK_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+         -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GeneratePkgConfig.cmake"
+     COMMENT "Generating mlpack.pc (pkg-config) file.")
+   endif()
 
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc"
       DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")

@@ -11,7 +11,7 @@
 #  ENSMALLEN_VERSION_NAME - name of the version (ex: "Antipodean Antileech")
 
 file(GLOB ENSMALLEN_SEARCH_PATHS
-    ${CMAKE_BINARY_DIR}/deps/ensmallen-[0-9]*.[0-9]*.[0-9]*)
+    ${CMAKE_CURRENT_BINARY_DIR}/deps/ensmallen-[0-9]*.[0-9]*.[0-9]*)
 find_path(ENSMALLEN_INCLUDE_DIR
   NAMES ensmallen.hpp
   PATHS ${ENSMALLEN_SEARCH_PATHS}/include)

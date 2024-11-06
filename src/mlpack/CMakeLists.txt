@@ -10,7 +10,7 @@ else ()
   # Add convenience target to tell the user they need BUILD_TESTS if they try to
   # build mlpack_test.
   add_custom_target(mlpack_test
-      ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/CMake/TestError.cmake)
+      ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/CMake/TestError.cmake)
 endif ()
 
 # At install time, we simply install the src/ directory to include/ (though we
@@ -26,7 +26,7 @@ install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/namespace_compat.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/prereqs.hpp"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/mlpack/")
-install(FILES "${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp"
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/include/mlpack/config-local.hpp"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/mlpack"
     RENAME "config.hpp")
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/core" DESTINATION

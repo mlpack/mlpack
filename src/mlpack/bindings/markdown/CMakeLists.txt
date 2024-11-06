@@ -46,12 +46,12 @@ set(SOURCES
 add_custom_target(markdown_copy)
 add_custom_command(TARGET markdown_copy PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory
-        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/)
+        ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/markdown/)
 foreach(file ${SOURCES})
   add_custom_command(TARGET markdown_copy PRE_BUILD
       COMMAND ${CMAKE_COMMAND} ARGS -E copy
           ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-          ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/)
+          ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/markdown/)
 endforeach()
 
 # Create the add_markdown_docs() macro.  It's meant to be used as
@@ -122,8 +122,8 @@ macro (add_markdown_docs directory name languages wrappers)
       "${INCLUDE_MAIN_FILES}\n#include <${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp>")
 
   # Do the actual file configuration.
-  set(BINDING_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown)
-  set(BINDING_BINARY_DIR ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown)
+  set(BINDING_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/bindings/markdown)
+  set(BINDING_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/markdown)
 
   configure_file(${BINDING_SOURCE_DIR}/generate_markdown.binding.hpp.in
       ${BINDING_BINARY_DIR}/generate_markdown.${name}.hpp)
@@ -134,8 +134,8 @@ macro (add_markdown_docs directory name languages wrappers)
   # files to be compiled for the 'generate_markdown' target.  We also need to
   # add information about this binding to a set of variables we have to track.
   set (MARKDOWN_SRCS ${MARKDOWN_SRCS}
-      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.${name}.hpp
-      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.${name}.cpp)
+      ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.${name}.hpp
+      ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.${name}.cpp)
   set (MARKDOWN_SRCS ${MARKDOWN_SRCS} PARENT_SCOPE)
   set (MARKDOWN_NAMES ${MARKDOWN_NAMES} ${name})
   set (MARKDOWN_NAMES ${MARKDOWN_NAMES} PARENT_SCOPE)
@@ -196,8 +196,8 @@ function (post_markdown_setup)
     set (MARKDOWN_CALL_CODE "${MARKDOWN_CALL_CODE}\n  Print${name}Docs();")
   endforeach ()
 
-  set(BINDING_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown)
-  set(BINDING_BINARY_DIR ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown)
+  set(BINDING_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/bindings/markdown)
+  set(BINDING_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/markdown)
 
   configure_file(${BINDING_SOURCE_DIR}/generate_markdown.cpp.in
       ${BINDING_BINARY_DIR}/generate_markdown.cpp)
@@ -231,7 +231,7 @@ function (post_markdown_setup)
 
   add_custom_target(markdown_setup ALL
       ${CMAKE_COMMAND} -E make_directory
-          ${CMAKE_BINARY_DIR}/doc/
+          ${CMAKE_CURRENT_BINARY_DIR}/doc/
       DEPENDS generate_markdown
       COMMENT "Setting up environment for Markdown documentation build...")
   add_custom_target(markdown DEPENDS markdown_setup)
@@ -241,14 +241,14 @@ function (post_markdown_setup)
             -DPROGRAM=${BINDING_BINARY_DIR}/generate_markdown
             -DPROGRAM_OPT1="${lang}"
             -DPROGRAM_OPT2="docs"
-            -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/doc/${lang}.md
-            -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake
+            -DOUTPUT_FILE=${CMAKE_CURRENT_BINARY_DIR}/doc/${lang}.md
+            -P ${CMAKE_CURRENT_SOURCE_DIR}/CMake/RunProgram.cmake
         COMMAND ${CMAKE_COMMAND}
             -DPROGRAM=${BINDING_BINARY_DIR}/generate_markdown
             -DPROGRAM_OPT1="${lang}"
             -DPROGRAM_OPT2="sidebar"
-            -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/doc/${lang}.sidebar.html
-            -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake
+            -DOUTPUT_FILE=${CMAKE_CURRENT_BINARY_DIR}/doc/${lang}.sidebar.html
+            -P ${CMAKE_CURRENT_SOURCE_DIR}/CMake/RunProgram.cmake
         COMMENT "Building Markdown documentation for ${lang}..."
         DEPENDS markdown_setup)
     add_dependencies(markdown markdown_${lang})
