@@ -55,6 +55,18 @@ The following basic guides are *highly recommended* before using mlpack.
 Documentation for each machine learning algorithm that mlpack implements is
 detailed in the sections below.
 
+<!-- NOTE: If you are updating the pipeline image, make sure to update *both*
+           the wide and narrow versions.  Yes, it is tedious, but we are limited
+           by what HTML allows us. -->
+<object data="img/pipeline-wide.svg" type="image/svg+xml" id="pipeline-wide">
+    (Your browser does not support inline SVG objects.  Browse the mlpack
+     pipeline using the navigation sidebar instead.)
+</object>
+<object data="img/pipeline-narrow.svg" type="image/svg+xml" id="pipeline-narrow">
+    (Your browser does not support inline SVG objects.  Browse the mlpack
+     pipeline using the navigation sidebar instead.)
+</object>
+
  * [Classification algorithms](#classification-algorithms): classify points as
    discrete labels (`0`, `1`, `2`, ...).
  * [Regression algorithms](#regression-algorithms): predict continuous values.

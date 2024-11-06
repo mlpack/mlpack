@@ -1120,10 +1120,16 @@ div#sidebar details[open] details[open] summary::after {
   content: " [-]";
 }
 
+object#pipeline-wide { display: block; }
+object#pipeline-narrow { display: none; }
+
 @media screen and (max-width: 1140px) {
   div#sidebar {
     display: none;
   }
+
+  object#pipeline-wide { display: none; }
+  object#pipeline-narrow { display: block; }
 }
 
 @media screen and (max-width: 1320px) and (min-width: 1140px) {
@@ -1134,6 +1140,9 @@ div#sidebar details[open] details[open] summary::after {
   div#sidebar {
     max-width: 200px;
   }
+
+  object#pipeline-wide { display: block; }
+  object#pipeline-narrow { display: none; }
 }
 
 div#data-formats-div li {
