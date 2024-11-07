@@ -16,17 +16,20 @@
   <!-- Prerequisites -->
   <g class="elem">
     <rect x="10" y="10" rx="20" ry="20" width="260" height="100" />
-    <text x="140" y="30" text-anchor="middle" class="header">Prerequisites</text>
+    <a xlink:href="../user/prerequisites.html" target="_top">
+      <text x="140" y="30" text-anchor="middle" class="header">Prerequisites</text>
+    </a>
 
-    <!-- TODO: add link/page -->
-    <text x="140" y="55" text-anchor="middle">Installing mlpack</text>
-    <a xlink:href="embedded/supported_boards.html">
+    <a xlink:href="../user/install.html" target="_top">
+      <text x="140" y="55" text-anchor="middle">Installing mlpack</text>
+    </a>
+    <a xlink:href="../embedded/supported_boards.html" target="_top">
       <text x="140" y="70" text-anchor="middle">Cross-compilation setup</text>
     </a>
-    <a xlink:href="quickstart/cpp.html">
+    <a xlink:href="quickstart/cpp.html" target="_top">
       <text x="140" y="85" text-anchor="middle">Quickstart</text>
     </a>
-    <a xlink:href="user/matrices.html">
+    <a xlink:href="user/matrices.html" target="_top">
       <text x="140" y="100" text-anchor="middle">Matrices and data</text>
     </a>
   </g>
@@ -34,19 +37,19 @@
   <!-- Tutorials and Examples -->
   <g class="elem">
     <rect x="10" y="120" rx="20" ry="20" width="260" height="100" />
-    <a xlink:href="#classification-algorithms">
+    <a xlink:href="../user/tutorials.html" target="_top">
       <text x="140" y="140" text-anchor="middle" class="header">Tutorials and Examples</text>
     </a>
 
-    <a xlink:href="https://github.com/mlpack/examples">
+    <a xlink:href="https://github.com/mlpack/examples" target="_top">
       <image x="30" y="162" width="14" height="14" href="github.svg" />
       <text x="140" y="174" text-anchor="middle">mlpack examples repository</text>
     </a>
-    <a xlink:href="https://youtube.com/@mlpack/videos">
+    <a xlink:href="https://youtube.com/@mlpack/videos" target="_top">
       <image x="30" y="180" width="15" height="15" href="youtube.svg" />
       <text x="140" y="192" text-anchor="middle">mlpack Youtube channel</text>
     </a>
-    <a xlink:href="https://github.com/mlpack/models">
+    <a xlink:href="https://github.com/mlpack/models" target="_top">
       <image x="30" y="198" width="14" height="14" href="github.svg" />
       <text x="140" y="210" text-anchor="middle">mlpack models repository</text>
     </a>
@@ -54,7 +57,7 @@
 
   <!-- Utility classes -->
   <g class="elem">
-    <a xlink:href="#classification-algorithms">
+    <a xlink:href="../user/core.html" target="_top">
       <rect x="10" y="230" rx="20" ry="20" width="260" height="100" />
       <text x="140" y="250" text-anchor="middle" class="header">Utility Classes</text>
 
@@ -76,20 +79,24 @@
 
   <!-- The pipeline -->
   <g class="pipeline">
+
+    <!-- Data loading and I/O -->
     <g class="pipeline_elem">
       <rect x="10" y="430" rx="20" ry="20" width="260" height="100" />
-      <text x="140" y="450" text-anchor="middle" class="header">Data loading and I/O</text>
+      <a xlink:href="user/load_save.html" target="_top">
+        <text x="140" y="450" text-anchor="middle" class="header">Data loading and I/O</text>
+      </a>
 
-      <a xlink:href="user/load_save.html#numeric-data">
+      <a xlink:href="user/load_save.html#numeric-data" target="_top">
         <text x="140" y="475" text-anchor="middle">Numeric data</text>
       </a>
-      <a xlink:href="user/load_save.html#mixed-categorical-data">
+      <a xlink:href="user/load_save.html#mixed-categorical-data" target="_top">
         <text x="140" y="490" text-anchor="middle">Mixed categorical data</text>
       </a>
-      <a xlink:href="user/load_save.html#image-data">
+      <a xlink:href="user/load_save.html#image-data" target="_top">
         <text x="140" y="505" text-anchor="middle">Image data</text>
       </a>
-      <a xlink:href="user/load_save.html#mlpack-objects">
+      <a xlink:href="user/load_save.html#mlpack-objects" target="_top">
         <text x="140" y="520" text-anchor="middle">mlpack models and objects</text>
       </a>
     </g>
@@ -98,9 +105,12 @@
     <line x1="140" y1="560" x2="130" y2="550" />
     <line x1="140" y1="560" x2="150" y2="550" />
 
+    <!-- Preprocessing / feature extraction -->
     <g class="pipeline_elem">
       <rect x="10" y="560" rx="20" ry="20" width="260" height="100" />
-      <text x="140" y="580" text-anchor="middle" class="header">Preprocessing / feature extraction</text>
+      <a xlink:href="user/preprocessing.html" target="_top">
+        <text x="140" y="580" text-anchor="middle" class="header">Preprocessing / feature extraction</text>
+      </a>
 
       <a xlink:href="user/core/normalizing_labels.html">
         <text x="140" y="615" text-anchor="middle">Normalizing labels</text>
