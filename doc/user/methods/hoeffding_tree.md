@@ -100,7 +100,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
 | `datasetInfo` | [`data::DatasetInfo`](../load_save.md#loading-categorical-data) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../core/normalizing_labels.md) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `dimensionality` | `size_t` | When using on numeric-only data, this specifies the number of dimensions in the data. | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `batchTraining` | `bool` | If `true`, a batch training algorithm is used, instead of the usual incremental algorithm.  This is generally more efficient for larger datasets. | `true` |

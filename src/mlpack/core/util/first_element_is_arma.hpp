@@ -21,14 +21,14 @@ namespace mlpack {
 template<typename... CallbackTypes>
 struct First
 {
-  typedef void type;
+  using type = void;
 };
 
 // This matches whenever CallbackTypes has one or more elements.
 template<typename T, typename... CallbackTypes>
 struct First<T, CallbackTypes...>
 {
-  typedef T type;
+  using type = T;
 };
 
 // This utility template struct detects whether the first element in a
@@ -39,9 +39,7 @@ template<typename... CallbackTypes>
 struct FirstElementIsArma
 {
   static constexpr bool value = arma::is_arma_type<
-      typename std::remove_reference<
-          typename First<CallbackTypes...>::type
-      >::type>::value;
+      std::remove_reference_t<typename First<CallbackTypes...>::type>>::value;
 };
 
 } // namespace mlpack

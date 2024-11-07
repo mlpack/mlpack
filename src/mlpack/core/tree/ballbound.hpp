@@ -33,7 +33,7 @@ class BallBound
 {
  public:
   //! A public version of the vector type.
-  typedef VecType Vec;
+  using Vec = VecType;
 
  private:
   //! The radius of the ball bound.
@@ -175,11 +175,6 @@ class BallBound
    *     requested.
    */
   RangeType<ElemType> RangeDistance(const BallBound& other) const;
-
-  /**
-   * Expand the bound to include the given node.
-   */
-  const BallBound& operator|=(const BallBound& other);
 
   /**
    * Expand the bound to include the given point.  The centroid is recalculated

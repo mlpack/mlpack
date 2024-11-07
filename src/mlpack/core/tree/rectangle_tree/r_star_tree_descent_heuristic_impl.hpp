@@ -23,7 +23,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
     const size_t point)
 {
   // Convenience typedef.
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
 
   bool tiedOne = false;
   std::vector<ElemType> originalScores(node->NumChildren());
@@ -164,7 +164,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
     const TreeType* insertedNode)
 {
   // Convenience typedef.
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
 
   std::vector<ElemType> scores(node->NumChildren());
   std::vector<ElemType> vols(node->NumChildren());

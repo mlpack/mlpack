@@ -44,7 +44,7 @@ TEST_CASE("DefaultsTraitsTest", "[TreeTraitsTest]")
 // Test the binary space tree traits.
 TEST_CASE("BinarySpaceTreeTraitsTest", "[TreeTraitsTest]")
 {
-  typedef BinarySpaceTree<LMetric<2, false>> TreeType;
+  using TreeType = BinarySpaceTree<LMetric<2, false>>;
 
   // Children are non-overlapping.
   bool b = TreeTraits<TreeType>::HasOverlappingChildren;

@@ -52,8 +52,8 @@ DecisionTreeRegressor<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector) : splitInfo()
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueResponsesType = typename std::decay<ResponsesType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueResponsesType = std::decay_t<ResponsesType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -88,8 +88,8 @@ DecisionTreeRegressor<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector) : splitInfo()
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueResponsesType = typename std::decay<ResponsesType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueResponsesType = std::decay_t<ResponsesType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -125,12 +125,12 @@ DecisionTreeRegressor<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
     const std::enable_if_t<arma::is_arma_type<
-        typename std::remove_reference<WeightsType>::type>::value>*)
+        std::remove_reference_t<WeightsType>>::value>*)
     : splitInfo()
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueResponsesType = typename std::decay<ResponsesType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueResponsesType = std::decay_t<ResponsesType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   TrueMatType tmpData(std::move(data));
   TrueResponsesType tmpResponses(std::move(responses));
@@ -165,13 +165,12 @@ DecisionTreeRegressor<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
     const std::enable_if_t<
-        arma::is_arma_type<
-        typename std::remove_reference<
-        WeightsType>::type>::value>*) : splitInfo()
+        arma::is_arma_type<std::remove_reference_t<WeightsType>>::value>*) :
+    splitInfo()
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueResponsesType = typename std::decay<ResponsesType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueResponsesType = std::decay_t<ResponsesType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -206,14 +205,14 @@ DecisionTreeRegressor<FitnessFunction,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     const std::enable_if_t<arma::is_arma_type<
-        typename std::remove_reference<WeightsType>::type>::value>*):
-        splitInfo(std::move(other.splitInfo)),
-        NumericAuxiliarySplitInfo(other),
-        CategoricalAuxiliarySplitInfo(other)
+        std::remove_reference_t<WeightsType>>::value>*) :
+    splitInfo(std::move(other.splitInfo)),
+    NumericAuxiliarySplitInfo(other),
+    CategoricalAuxiliarySplitInfo(other)
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueResponsesType = typename std::decay<ResponsesType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueResponsesType = std::decay_t<ResponsesType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -246,15 +245,14 @@ DecisionTreeRegressor<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
     const std::enable_if_t<arma::is_arma_type<
-        typename std::remove_reference<
-        WeightsType>::type>::value>*):
-        splitInfo(std::move(other.splitInfo)),
-        NumericAuxiliarySplitInfo(other),
-        CategoricalAuxiliarySplitInfo(other)   // other info does need to copy
+        std::remove_reference_t<WeightsType>>::value>*) :
+    splitInfo(std::move(other.splitInfo)),
+    NumericAuxiliarySplitInfo(other),
+    CategoricalAuxiliarySplitInfo(other)   // other info does need to copy
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueResponsesType = typename std::decay<ResponsesType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueResponsesType = std::decay_t<ResponsesType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -442,8 +440,8 @@ double DecisionTreeRegressor<FitnessFunction,
   // Sanity check on data.
   util::CheckSameSizes(data, responses, "DecisionTreeRegressor::Train()");
 
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueResponsesType = typename std::decay<ResponsesType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueResponsesType = std::decay_t<ResponsesType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -482,8 +480,8 @@ double DecisionTreeRegressor<FitnessFunction,
   // Sanity check on data.
   util::CheckSameSizes(data, responses, "DecisionTreeRegressor::Train()");
 
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueResponsesType = typename std::decay<ResponsesType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueResponsesType = std::decay_t<ResponsesType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -521,16 +519,14 @@ double DecisionTreeRegressor<FitnessFunction,
     DimensionSelectionType dimensionSelector,
     FitnessFunction fitnessFunction,
     const std::enable_if_t<
-        arma::is_arma_type<
-        typename std::remove_reference<
-        WeightsType>::type>::value>*)
+        arma::is_arma_type<std::remove_reference_t<WeightsType>>::value>*)
 {
   // Sanity check on data.
   util::CheckSameSizes(data, responses, "DecisionTreeRegressor::Train()");
 
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueResponsesType = typename std::decay<ResponsesType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueResponsesType = std::decay_t<ResponsesType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -567,16 +563,14 @@ double DecisionTreeRegressor<FitnessFunction,
     DimensionSelectionType dimensionSelector,
     FitnessFunction fitnessFunction,
     const std::enable_if_t<
-        arma::is_arma_type<
-        typename std::remove_reference<
-        WeightsType>::type>::value>*)
+        arma::is_arma_type<std::remove_reference_t<WeightsType>>::value>*)
 {
   // Sanity check on data.
   util::CheckSameSizes(data, responses, "DecisionTreeRegressor::Train()");
 
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueResponsesType = typename std::decay<ResponsesType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueResponsesType = std::decay_t<ResponsesType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -945,7 +939,7 @@ DecisionTreeRegressor<FitnessFunction,
     return prediction;
   }
 
-  typedef typename VecType::elem_type ElemType;
+  using ElemType = typename VecType::elem_type;
   return (ElemType) children[CalculateDirection(point)]->Predict(point);
 }
 
@@ -964,7 +958,7 @@ void DecisionTreeRegressor<FitnessFunction,
 >::Predict(const MatType& data,
            PredVecType& predictions) const
 {
-  typedef typename PredVecType::elem_type ElemType;
+  using ElemType = typename PredVecType::elem_type;
 
   predictions.set_size(data.n_cols);
   // If the tree's root is leaf.

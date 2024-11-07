@@ -145,7 +145,7 @@ class RSWrapper : public RSWrapperBase
   }
 
  protected:
-  typedef RangeSearch<EuclideanDistance, arma::mat, TreeType> RSType;
+  using RSType = RangeSearch<EuclideanDistance, arma::mat, TreeType>;
 
   //! The instantiated RangeSearch object that we are wrapping.
   RSType rs;

@@ -91,7 +91,7 @@ class HuberLossType
 }; // class HuberLossType
 
 // Default typedef for typical `arma::mat` usage.
-typedef HuberLossType<arma::mat> HuberLoss;
+using HuberLoss = HuberLossType<arma::mat>;
 
 } // namespace mlpack
 

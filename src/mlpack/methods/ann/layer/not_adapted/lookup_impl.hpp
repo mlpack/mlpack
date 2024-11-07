@@ -67,7 +67,7 @@ void LookupType<InputType, OutputType>::Gradient(
     const OutputType& error,
     OutputType& gradient)
 {
-  typedef typename arma::Cube<typename OutputType::elem_type> CubeType;
+  using CubeType = arma::Cube<typename OutputType::elem_type>;
   const size_t seqLength = input.n_rows;
   const size_t batchSize = input.n_cols;
 

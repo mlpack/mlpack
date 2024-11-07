@@ -34,7 +34,7 @@ void GenerateNoisySines(arma::cube& data,
                         const size_t sequences,
                         const double noise = 0.3)
 {
-  arma::colvec x =  arma::linspace<arma::colvec>(0, points - 1, points) /
+  arma::colvec x = arma::linspace<arma::colvec>(0, points - 1, points) /
       points * 20.0;
   arma::colvec y1 = arma::sin(x + randu() * 3.0);
   arma::colvec y2 = arma::sin(x / 2.0 + randu() * 3.0);

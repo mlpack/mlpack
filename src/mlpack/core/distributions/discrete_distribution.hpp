@@ -54,10 +54,10 @@ class DiscreteDistribution
 {
  public:
   // Convenience typedefs.
-  typedef typename GetColType<MatType>::type VecType;
-  typedef typename MatType::elem_type ElemType;
-  typedef typename GetColType<ObsMatType>::type ObsVecType;
-  typedef typename ObsMatType::elem_type ObsType;
+  using VecType = typename GetColType<MatType>::type;
+  using ElemType = typename MatType::elem_type;
+  using ObsVecType = typename GetColType<ObsMatType>::type;
+  using ObsType = typename ObsMatType::elem_type;
 
   /**
    * Default constructor, which creates a distribution that has no
@@ -153,7 +153,7 @@ class DiscreteDistribution
     {
       // Adding 0.5 helps ensure that we cast the floating point to a size_t
       // correctly.
-      const size_t obs = (std::is_floating_point<ObsType>::value) ?
+      const size_t obs = (std::is_floating_point_v<ObsType>) ?
           size_t(observation(dimension) + 0.5) : size_t(observation(dimension));
 
       // Ensure that the observation is within the bounds.

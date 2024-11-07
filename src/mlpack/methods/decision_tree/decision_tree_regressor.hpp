@@ -39,11 +39,11 @@ class DecisionTreeRegressor :
 {
  public:
   //! Allow access to the numeric split type.
-  typedef NumericSplitType<FitnessFunction> NumericSplit;
+  using NumericSplit = NumericSplitType<FitnessFunction>;
   //! Allow access to the categorical split type.
-  typedef CategoricalSplitType<FitnessFunction> CategoricalSplit;
+  using CategoricalSplit = CategoricalSplitType<FitnessFunction>;
   //! Allow access to the dimension selection type.
-  typedef DimensionSelectionType DimensionSelection;
+  using DimensionSelection = DimensionSelectionType;
 
   /**
    * Construct a decision tree without training it.  It will be a leaf node.
@@ -129,7 +129,7 @@ class DecisionTreeRegressor :
       const size_t maximumDepth = 0,
       DimensionSelectionType dimensionSelector = DimensionSelectionType(),
       const std::enable_if_t<arma::is_arma_type<
-          typename std::remove_reference<WeightsType>::type>::value>* = 0);
+          std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Construct the decision tree on the given data and responses with weights,
@@ -158,7 +158,7 @@ class DecisionTreeRegressor :
       const size_t maximumDepth = 0,
       DimensionSelectionType dimensionSelector = DimensionSelectionType(),
       const std::enable_if_t<arma::is_arma_type<
-          typename std::remove_reference<WeightsType>::type>::value>* = 0);
+          std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Take ownership of another decision tree and train on the given data and
@@ -188,7 +188,7 @@ class DecisionTreeRegressor :
       const size_t minimumLeafSize = 10,
       const double minimumGainSplit = 1e-7,
       const std::enable_if_t<arma::is_arma_type<
-          typename std::remove_reference<WeightsType>::type>::value>* = 0);
+          std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Take ownership of another decision tree and train on the given data and
@@ -218,7 +218,7 @@ class DecisionTreeRegressor :
       const size_t maximumDepth = 0,
       DimensionSelectionType dimensionSelector = DimensionSelectionType(),
       const std::enable_if_t<arma::is_arma_type<
-          typename std::remove_reference<WeightsType>::type>::value>* = 0);
+          std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Copy another tree.  This may use a lot of memory---be sure that it's what
@@ -347,8 +347,8 @@ class DecisionTreeRegressor :
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
                FitnessFunction fitnessFunction = FitnessFunction(),
-               const std::enable_if_t<arma::is_arma_type<typename
-                   std::remove_reference<WeightsType>::type>::value>* = 0);
+               const std::enable_if_t<arma::is_arma_type<
+                   std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Train the decision tree on the given weighted data, assuming that all
@@ -380,8 +380,8 @@ class DecisionTreeRegressor :
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
                FitnessFunction fitnessFunction = FitnessFunction(),
-               const std::enable_if_t<arma::is_arma_type<typename
-                   std::remove_reference<WeightsType>::type>::value>* = 0);
+               const std::enable_if_t<arma::is_arma_type<
+                   std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Make prediction for the given point, using the entire tree.  The predicted
@@ -455,10 +455,9 @@ class DecisionTreeRegressor :
   //! Note that this class will also hold the members of the NumericSplit and
   //! CategoricalSplit AuxiliarySplitInfo classes, since it inherits from them.
   //! We'll define some convenience typedefs here.
-  typedef typename NumericSplit::AuxiliarySplitInfo
-      NumericAuxiliarySplitInfo;
-  typedef typename CategoricalSplit::AuxiliarySplitInfo
-      CategoricalAuxiliarySplitInfo;
+  using NumericAuxiliarySplitInfo = typename NumericSplit::AuxiliarySplitInfo;
+  using CategoricalAuxiliarySplitInfo =
+      typename CategoricalSplit::AuxiliarySplitInfo;
 
   /**
    * Corresponding to the public Train() method, this method is designed for

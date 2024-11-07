@@ -25,8 +25,8 @@ inline void WeightedSum(const VecType& values,
                         double& accWeights,
                         double& weightedMean)
 {
-  typedef typename VecType::elem_type VType;
-  typedef typename WeightVecType::elem_type WType;
+  using VType = typename VecType::elem_type;
+  using WType = typename WeightVecType::elem_type;
 
   WType totalWeights[4] = { 0.0, 0.0, 0.0, 0.0 };
   VType weightedSum[4] = { 0.0, 0.0, 0.0, 0.0 };

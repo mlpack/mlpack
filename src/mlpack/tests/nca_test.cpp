@@ -28,7 +28,7 @@ using namespace ens;
  */
 TEMPLATE_TEST_CASE("SoftmaxInitialPoint", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Cheap fake dataset.
   arma::Mat<eT> data;
@@ -41,8 +41,8 @@ TEMPLATE_TEST_CASE("SoftmaxInitialPoint", "[NCATest]", float, double)
 
   // Verify the initial point is the identity matrix.
   arma::Mat<eT> initialPoint = sef.GetInitialPoint();
-  const double eps = std::is_same<eT, float>::value ? 1e-4 : 1e-7;
-  const double margin = std::is_same<eT, float>::value ? 1e-4 : 1e-5;
+  const double eps = std::is_same_v<eT, float> ? 1e-4 : 1e-7;
+  const double margin = std::is_same_v<eT, float> ? 1e-4 : 1e-5;
   for (int row = 0; row < 5; row++)
   {
     for (int col = 0; col < 5; col++)
@@ -61,7 +61,7 @@ TEMPLATE_TEST_CASE("SoftmaxInitialPoint", "[NCATest]", float, double)
  */
 TEMPLATE_TEST_CASE("SoftmaxInitialEvaluation", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -85,7 +85,7 @@ TEMPLATE_TEST_CASE("SoftmaxInitialEvaluation", "[NCATest]", float, double)
  */
 TEMPLATE_TEST_CASE("SoftmaxInitialGradient", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -117,7 +117,7 @@ TEMPLATE_TEST_CASE("SoftmaxInitialGradient", "[NCATest]", float, double)
  */
 TEMPLATE_TEST_CASE("SoftmaxOptimalEvaluation", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Simple optimal dataset.
   arma::Mat<eT> data       = " 500  500 -500 -500;"
@@ -131,7 +131,7 @@ TEMPLATE_TEST_CASE("SoftmaxOptimalEvaluation", "[NCATest]", float, double)
 
   // Use a very close tolerance for optimality; we need to be sure this function
   // gives optimal results correctly.
-  const double eps = std::is_same<eT, float>::value ? 1e-6 : 1e-12;
+  const double eps = std::is_same_v<eT, float> ? 1e-6 : 1e-12;
   REQUIRE(objective == Approx(-4.0).epsilon(eps));
 }
 
@@ -140,7 +140,7 @@ TEMPLATE_TEST_CASE("SoftmaxOptimalEvaluation", "[NCATest]", float, double)
  */
 TEMPLATE_TEST_CASE("SoftmaxOptimalGradient", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Simple optimal dataset.
   arma::Mat<eT> data       = " 500  500 -500 -500;"
@@ -164,7 +164,7 @@ TEMPLATE_TEST_CASE("SoftmaxOptimalGradient", "[NCATest]", float, double)
  */
 TEMPLATE_TEST_CASE("SoftmaxSeparableObjective", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -192,7 +192,7 @@ TEMPLATE_TEST_CASE("SoftmaxSeparableObjective", "[NCATest]", float, double)
 TEMPLATE_TEST_CASE("OptimalSoftmaxSeparableObjective", "[NCATest]", float,
     double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Simple optimal dataset.
   arma::Mat<eT> data       = " 500  500 -500 -500;"
@@ -217,7 +217,7 @@ TEMPLATE_TEST_CASE("OptimalSoftmaxSeparableObjective", "[NCATest]", float,
  */
 TEMPLATE_TEST_CASE("SoftmaxSeparableGradient", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -283,7 +283,7 @@ TEMPLATE_TEST_CASE("SoftmaxSeparableGradient", "[NCATest]", float, double)
  */
 TEMPLATE_TEST_CASE("NCASGDSimpleDataset", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -321,7 +321,7 @@ TEMPLATE_TEST_CASE("NCASGDSimpleDataset", "[NCATest]", float, double)
 
 TEMPLATE_TEST_CASE("NCALBFGSSimpleDataset", "[NCATest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // Useful but simple dataset with six points and two classes.
   arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"

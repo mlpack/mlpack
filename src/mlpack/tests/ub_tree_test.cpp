@@ -18,10 +18,9 @@ using namespace mlpack;
 
 TEST_CASE("AddressTest", "[UBTreeTest]")
 {
-  typedef double ElemType;
-  typedef typename std::conditional<sizeof(ElemType) * CHAR_BIT <= 32,
-                                    uint32_t,
-                                    uint64_t>::type AddressElemType;
+  using ElemType = double;
+  using AddressElemType = std::conditional_t<sizeof(ElemType) * CHAR_BIT <= 32,
+                                             uint32_t, uint64_t>;
   arma::Mat<ElemType> dataset(8, 1000);
 
   dataset.randu();
@@ -43,10 +42,9 @@ TEST_CASE("AddressTest", "[UBTreeTest]")
 template<typename TreeType>
 void CheckSplit(const TreeType& tree)
 {
-  typedef typename TreeType::ElemType ElemType;
-  typedef typename std::conditional<sizeof(ElemType) * CHAR_BIT <= 32,
-                                    uint32_t,
-                                    uint64_t>::type AddressElemType;
+  using ElemType = typename TreeType::ElemType;
+  using AddressElemType = std::conditional_t<sizeof(ElemType) * CHAR_BIT <= 32,
+                                             uint32_t, uint64_t>;
 
   if (tree.IsLeaf())
     return;
@@ -86,7 +84,7 @@ void CheckSplit(const TreeType& tree)
 
 TEST_CASE("UBTreeSplitTest", "[UBTreeTest]")
 {
-  typedef UBTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = UBTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   arma::mat dataset(8, 1000);
 
   dataset.randu();
@@ -98,7 +96,7 @@ TEST_CASE("UBTreeSplitTest", "[UBTreeTest]")
 template<typename TreeType>
 void CheckBound(const TreeType& tree)
 {
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
   for (size_t i = 0; i < tree.NumDescendants(); ++i)
   {
     arma::Col<ElemType> point = tree.Dataset().col(tree.Descendant(i));
@@ -139,7 +137,7 @@ void CheckBound(const TreeType& tree)
 
 TEST_CASE("UBTreeBoundTest", "[UBTreeTest]")
 {
-  typedef UBTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = UBTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   arma::mat dataset(8, 1000);
 
   dataset.randu();
@@ -152,7 +150,7 @@ TEST_CASE("UBTreeBoundTest", "[UBTreeTest]")
 template<typename TreeType, typename DistanceType>
 void CheckDistance(TreeType& tree, TreeType* node = NULL)
 {
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
   if (node == NULL)
   {
     node = &tree;
@@ -239,7 +237,7 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
 
 TEST_CASE("UBTreeDistanceTest", "[UBTreeTest]")
 {
-  typedef UBTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = UBTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   arma::mat dataset(8, 200);
 
   dataset.randu();
@@ -251,7 +249,7 @@ TEST_CASE("UBTreeDistanceTest", "[UBTreeTest]")
 
 TEST_CASE("UBTreeTest", "[UBTreeTest]")
 {
-  typedef UBTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = UBTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 
   size_t maxRuns = 10; // Ten total tests.
   size_t pointIncrements = 1000; // Range is from 2000 points to 11000.

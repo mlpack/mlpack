@@ -58,6 +58,12 @@ and using the [`MidpointSplit`](binary_space_tree.md#midpointsplit) splitting
 strategy for construction, which splits a node in the dimension of maximum
 variance on the midpoint of the bound's range in that dimension.
 
+If no template parameters are explicitly specified, then defaults are used:
+
+```
+KDTree<> = KDTree<EuclideanDistance, EmptyStatistic, arma::mat>
+```
+
 ## Constructors
 
 `KDTree`s are efficiently constructed by permuting points in a dataset in a
@@ -443,8 +449,8 @@ std::cout << "Center of kd-tree: " << center.t();
 
 ---
 
-Build two `KDTree`s on subsets of the corel dataset and compute various
-bounding quantities.
+Build two `KDTree`s on subsets of the corel dataset and compute minimum and
+maximum distances between different nodes in the tree.
 
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
@@ -534,16 +540,16 @@ std::cout << "Saved tree with " << tree.Dataset().n_cols << " points to "
 ---
 
 Load a 32-bit floating point `KDTree` from disk, then traverse it manually and
-find the number of leaf nodes with less than 10 children.
+find the number of leaf nodes with fewer than 10 points.
 
 ```c++
 // This assumes the tree has already been saved to 'tree.bin' (as in the example
 // above).
 
 // This convenient typedef saves us a long type name!
-typedef mlpack::KDTree<mlpack::EuclideanDistance,
-                       mlpack::EmptyStatistic,
-                       arma::fmat> TreeType;
+using TreeType = mlpack::KDTree<mlpack::EuclideanDistance,
+                                mlpack::EmptyStatistic,
+                                arma::fmat>;
 
 TreeType tree;
 mlpack::data::Load("tree.bin", "tree", tree);
@@ -551,7 +557,7 @@ std::cout << "Tree loaded with " << tree.NumDescendants() << " points."
     << std::endl;
 
 // Recurse in a depth-first manner.  Count both the total number of leaves, and
-// the number of leaves with less than 10 points.
+// the number of leaves with fewer than 10 points.
 size_t leafCount = 0;
 size_t totalLeafCount = 0;
 std::stack<TreeType*> stack;
@@ -578,7 +584,7 @@ while (!stack.empty())
 // stack is the better option here.
 
 // Print the results.
-std::cout << leafCount << " out of " << totalLeafCount << " leaves have less "
+std::cout << leafCount << " out of " << totalLeafCount << " leaves have fewer "
   << "than 10 points." << std::endl;
 ```
 

@@ -83,7 +83,7 @@ inline void DiscreteDistribution<MatType, ObsMatType>::Train(
       // Add the probability of each observation.  The addition of 0.5 to the
       // observation is to turn the default flooring operation of the size_t
       // cast into a rounding observation.
-      const size_t obs = (std::is_floating_point<ObsType>::value) ?
+      const size_t obs = (std::is_floating_point_v<ObsType>) ?
           size_t(observations(i, r) + 0.5) : size_t(observations(i, r));
 
       // Ensure that the observation is within the bounds.
@@ -141,7 +141,7 @@ inline void DiscreteDistribution<MatType, ObsMatType>::Train(
       // Add the probability of each observation. The addition of 0.5
       // to the observation is to turn the default flooring operation
       // of the size_t cast into a rounding observation.
-      const size_t obs = (std::is_floating_point<ObsType>::value) ?
+      const size_t obs = (std::is_floating_point_v<ObsType>) ?
           size_t(observations(i, r) + 0.5) : size_t(observations(i, r));
 
       // Ensure that the observation is within the bounds.

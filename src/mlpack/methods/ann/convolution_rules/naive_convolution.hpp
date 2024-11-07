@@ -49,8 +49,7 @@ class NaiveConvolution
    */
   template<typename InMatType, typename FilMatType, typename OutMatType,
       typename Border = BorderMode>
-  static typename std::enable_if<
-      std::is_same<Border, ValidConvolution>::value, void>::type
+  static std::enable_if_t<std::is_same_v<Border, ValidConvolution>, void>
   Convolution(const InMatType& input,
               const FilMatType& filter,
               OutMatType& output,
@@ -61,7 +60,7 @@ class NaiveConvolution
               const bool appending = false,
               const typename std::enable_if_t<IsMatrix<InMatType>::value>* = 0)
   {
-    typedef typename InMatType::elem_type eT;
+    using eT = typename InMatType::elem_type;
     // Compute the output size.  The filterRows and filterCols computation must
     // take into account the fact that dilation only adds rows or columns
     // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
@@ -110,8 +109,7 @@ class NaiveConvolution
    */
   template<typename InMatType, typename FilMatType, typename OutMatType,
       typename Border = BorderMode>
-  static typename std::enable_if<
-      std::is_same<Border, FullConvolution>::value, void>::type
+  static std::enable_if_t<std::is_same_v<Border, FullConvolution>, void>
   Convolution(const InMatType& input,
               const FilMatType& filter,
               OutMatType& output,
@@ -165,7 +163,7 @@ class NaiveConvolution
       const bool appending = false,
       const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
-    typedef typename GetDenseMatType<CubeType>::type MatType;
+    using MatType = typename GetDenseMatType<CubeType>::type;
     MatType convOutput;
     NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
         convOutput, dW, dH, dilationW, dilationH, appending);

@@ -103,7 +103,7 @@ class ConstantType : public Layer<InputType, OutputType>
 // Convenience typedefs.
 
 // Standard HardShrink layer.
-typedef ConstantType<arma::mat, arma::mat> Constant;
+using Constant = ConstantType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

@@ -43,7 +43,7 @@ void PrintGo(util::Params& params,
              const std::string& bindingName)
 {
   std::map<std::string, util::ParamData>& parameters = params.Parameters();
-  typedef std::map<std::string, util::ParamData>::iterator ParamIter;
+  using ParamIter = std::map<std::string, util::ParamData>::iterator;
 
   // Split into input and output parameters.  Take two passes on the input
   // parameters, so that we get the required ones first.

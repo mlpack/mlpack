@@ -23,8 +23,8 @@
 
 // Simple wrapper class to prevent copies of Armadillo matrices.
 template <typename MatType, typename ElemType = typename MatType::elem_type,
-          typename = std::enable_if_t<std::is_same<ElemType,
-              typename MatType::elem_type>::value>>
+          typename = std::enable_if_t<std::is_same_v<ElemType,
+              typename MatType::elem_type>>>
 class MatProxy
 {
  public:
@@ -54,9 +54,9 @@ class MatProxy<arma::Mat<ElemType>, ElemType>
 template <typename MatTypeA, typename MatTypeB,
     typename = std::enable_if_t<arma::is_arma_type<MatTypeA>::value
         && arma::is_arma_type<MatTypeB>::value
-        && std::is_same<typename MatTypeA::elem_type,
-                        typename MatTypeB::elem_type>::value
-        && !std::is_integral<typename MatTypeA::elem_type>::value>>
+        && std::is_same_v<typename MatTypeA::elem_type,
+                          typename MatTypeB::elem_type>
+        && !std::is_integral_v<typename MatTypeA::elem_type>>>
 inline void CheckMatrices(const MatTypeA& _a,
                           const MatTypeB& _b,
                           double tolerance = 1e-5)
@@ -103,8 +103,8 @@ inline void CheckFields(const FieldType& a,
 
 // Simple wrapper class to prevent copies of Armadillo cubes.
 template <typename CubeType, typename ElemType = typename CubeType::elem_type,
-    typename = std::enable_if_t<std::is_same<ElemType,
-        typename CubeType::elem_type>::value>>
+    typename = std::enable_if_t<std::is_same_v<ElemType,
+        typename CubeType::elem_type>>>
 class CubeProxy
 {
  public:
@@ -136,9 +136,9 @@ class CubeProxy<arma::Cube<ElemType>, ElemType>
 template <typename CubeTypeA, typename CubeTypeB,
     typename = std::enable_if_t<arma::is_arma_cube_type<CubeTypeA>::value
         && arma::is_arma_cube_type<CubeTypeB>::value
-        && std::is_same<typename CubeTypeA::elem_type,
-                        typename CubeTypeB::elem_type>::value
-        && !std::is_integral<typename CubeTypeA::elem_type>::value>,
+        && std::is_same_v<typename CubeTypeA::elem_type,
+                          typename CubeTypeB::elem_type>
+        && !std::is_integral_v<typename CubeTypeA::elem_type>>,
     typename = void>
 inline void CheckMatrices(const CubeTypeA& _a,
                           const CubeTypeB& _b,

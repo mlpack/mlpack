@@ -202,7 +202,7 @@ class ExampleTree
  public:
   // This is the element type held by the matrix.
   // It will generally either be `double`, or `float`.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   //////////////////////
   //// Constructors ////
@@ -222,7 +222,7 @@ class ExampleTree
   template<typename Archive>
   ExampleTree(
       Archive& ar,
-      const typename std::enable_if_c<typename Archive::is_loading>::type* = 0);
+      const std::enable_if_t<typename Archive::is_loading>* = 0);
 
   // Release any resources held by the tree.
   ~ExampleTree();
@@ -476,7 +476,7 @@ archive:
 template<typename Archive>
 ExampleTree(
     Archive& ar,
-    const typename std::enable_if_c<typename Archive::is_loading>::type* = 0);
+    const std::enable_if_t<typename Archive::is_loading>* = 0);
 ```
 
 This has implications on how the tree must be stored.  In this case, the dataset
@@ -1268,8 +1268,11 @@ TreeType policy API:
 
  - [`KDTree`](../user/core/trees/kdtree.md)
  - [`MeanSplitKDTree`](../user/core/trees/mean_split_kdtree.md)
- - `BallTree`
- - `MeanSplitBallTree`
+ - [`BallTree`](../user/core/trees/ball_tree.md)
+ - [`MeanSplitBallTree`](../user/core/trees/mean_split_ball_tree.md)
+ - [`RPTree`](../user/core/trees/rp_tree.md)
+ - [`MaxRPTree`](../user/core/trees/max_rp_tree.md)
+ - [`UBTree`](../user/core/trees/ub_tree.md)
  - `RTree`
  - `RStarTree`
  - `StandardCoverTree`

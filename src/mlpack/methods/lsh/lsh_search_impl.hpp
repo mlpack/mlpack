@@ -647,8 +647,7 @@ void LSHSearch<SortPolicy, MatType>::GetAdditionalProbingBins(
   std::priority_queue<
     std::pair<double, size_t>,        // contents: pairs of (score, index)
     std::vector<                      // container: vector of pairs
-      std::pair<double, size_t>
-      >,
+      std::pair<double, size_t>>,
     std::greater< std::pair<double, size_t> > // comparator of pairs
   > minHeap; // our minheap
 
@@ -835,7 +834,7 @@ void LSHSearch<SortPolicy, MatType>::ReturnIndicesFromTable(
     {
       for (size_t p = 0; p < T + 1; ++p)
       {
-        const size_t hashInd =  hashMat(p, i); // Find the query's bucket.
+        const size_t hashInd = hashMat(p, i); // Find the query's bucket.
         const size_t tableRow = bucketRowInHashTable[hashInd];
 
         if (tableRow < secondHashSize)

@@ -53,7 +53,7 @@ class HoeffdingNumericSplit
 {
  public:
   //! The splitting information type required by the HoeffdingNumericSplit.
-  typedef NumericSplitInfo<ObservationType> SplitInfo;
+  using SplitInfo = NumericSplitInfo<ObservationType>;
 
   /**
    * Create the HoeffdingNumericSplit class, and specify some basic parameters

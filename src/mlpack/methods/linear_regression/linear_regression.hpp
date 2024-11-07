@@ -30,8 +30,8 @@ template<typename ModelMatType = arma::mat>
 class LinearRegression
 {
  public:
-  typedef typename GetColType<ModelMatType>::type ModelColType;
-  typedef typename ModelMatType::elem_type ElemType;
+  using ModelColType = typename GetColType<ModelMatType>::type;
+  using ElemType = typename ModelMatType::elem_type;
 
   /**
    * Creates the model.
@@ -43,9 +43,8 @@ class LinearRegression
    */
   template<typename MatType,
            typename ResponsesType,
-           typename = typename std::enable_if<
-               std::is_same<typename ResponsesType::elem_type, ElemType>::value
-           >::type>
+           typename = std::enable_if_t<
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   LinearRegression(const MatType& predictors,
                    const ResponsesType& responses,
                    const double lambda = 0,
@@ -63,12 +62,10 @@ class LinearRegression
   template<typename MatType,
            typename ResponsesType,
            typename WeightsType,
-           typename = typename std::enable_if<
-               std::is_same<typename ResponsesType::elem_type, ElemType>::value
-           >::type,
-           typename = typename std::enable_if<
-               std::is_same<typename WeightsType::elem_type, ElemType>::value
-           >::type>
+           typename = std::enable_if_t<
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>,
+           typename = std::enable_if_t<
+               std::is_same_v<typename WeightsType::elem_type, ElemType>>>
   LinearRegression(const MatType& predictors,
                    const ResponsesType& responses,
                    const WeightsType& weights,
@@ -103,8 +100,7 @@ class LinearRegression
   double Train(const arma::mat& predictors,
                const arma::rowvec& responses,
                const T intercept,
-               const typename std::enable_if<std::is_same<T, bool>::value
-                   >::type* = 0);
+               const std::enable_if_t<std::is_same_v<T, bool>>* = 0);
 
   /**
    * Train the LinearRegression model on the given data and instance weights.
@@ -129,8 +125,7 @@ class LinearRegression
                const arma::rowvec& responses,
                const arma::rowvec& weights,
                const T intercept,
-               const typename std::enable_if<std::is_same<T, bool>::value
-                   >::type* = 0);
+               const std::enable_if_t<std::is_same_v<T, bool>>* = 0);
 
   /**
    * Train the LinearRegression model.  This is a dummy overload so that
@@ -157,9 +152,8 @@ class LinearRegression
   template<typename MatType,
            typename ResponsesType,
            typename = void, /* so MetaInfoExtractor does not get confused */
-           typename = typename std::enable_if<
-               std::is_same<typename ResponsesType::elem_type, ElemType>::value
-           >::type>
+           typename = std::enable_if_t<
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>>
   ElemType Train(const MatType& predictors,
                  const ResponsesType& responses,
                  const std::optional<double> lambda = std::nullopt,
@@ -192,12 +186,10 @@ class LinearRegression
   template<typename MatType,
            typename ResponsesType,
            typename WeightsType,
-           typename = typename std::enable_if<
-               std::is_same<typename ResponsesType::elem_type, ElemType>::value
-           >::type,
-           typename = typename std::enable_if<
-               std::is_same<typename WeightsType::elem_type, ElemType>::value
-           >::type>
+           typename = std::enable_if_t<
+               std::is_same_v<typename ResponsesType::elem_type, ElemType>>,
+           typename = std::enable_if_t<
+               std::is_same_v<typename WeightsType::elem_type, ElemType>>>
   ElemType Train(const MatType& predictors,
                  const ResponsesType& responses,
                  const WeightsType& weights,

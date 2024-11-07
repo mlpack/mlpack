@@ -107,7 +107,9 @@ using MeanSplitKDTree = BinarySpaceTree<DistanceType,
  *
  * @see @ref trees, BinarySpaceTree, KDTree, MeanSplitBallTree
  */
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using BallTree = BinarySpaceTree<DistanceType,
                                  StatisticType,
                                  MatType,
@@ -136,7 +138,9 @@ using BallTree = BinarySpaceTree<DistanceType,
  *
  * @see @ref trees, BinarySpaceTree, BallTree, MeanSplitKDTree
  */
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using MeanSplitBallTree = BinarySpaceTree<DistanceType,
                                           StatisticType,
                                           MatType,
@@ -194,7 +198,9 @@ template<typename BoundType,
          typename MatType = arma::mat>
 using VPTreeSplit = VantagePointSplit<BoundType, MatType, 100>;
 
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using VPTree = BinarySpaceTree<DistanceType,
                                StatisticType,
                                MatType,
@@ -226,8 +232,9 @@ using VPTree = BinarySpaceTree<DistanceType,
  *
  * @see @ref trees, BinarySpaceTree, BallTree, MeanSplitKDTree
  */
-
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using MaxRPTree = BinarySpaceTree<DistanceType,
                                   StatisticType,
                                   MatType,
@@ -261,7 +268,9 @@ using MaxRPTree = BinarySpaceTree<DistanceType,
  *
  * @see @ref trees, BinarySpaceTree, BallTree, MeanSplitKDTree
  */
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using RPTree = BinarySpaceTree<DistanceType,
                                StatisticType,
                                MatType,
@@ -296,7 +305,9 @@ using RPTree = BinarySpaceTree<DistanceType,
  *
  * @see @ref trees, BinarySpaceTree, BallTree, MeanSplitKDTree
  */
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using UBTree = BinarySpaceTree<DistanceType,
                                StatisticType,
                                MatType,

@@ -16,6 +16,8 @@
 #ifndef MLPACK_CORE_TREE_PERFORM_SPLIT_HPP
 #define MLPACK_CORE_TREE_PERFORM_SPLIT_HPP
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 /**

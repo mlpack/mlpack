@@ -28,7 +28,7 @@ size_t RStarTreeSplit::ReinsertPoints(TreeType* tree,
                                       std::vector<bool>& relevels)
 {
   // Convenience typedef.
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
 
   // Check if we need to reinsert.
   if (relevels[tree->TreeDepth() - 1])
@@ -83,8 +83,8 @@ void RStarTreeSplit::PickLeafSplit(TreeType* tree,
                                    size_t& bestIndex)
 {
   // Convenience typedef.
-  typedef typename TreeType::ElemType ElemType;
-  typedef HRectBound<EuclideanDistance, ElemType> BoundType;
+  using ElemType = typename TreeType::ElemType;
+  using BoundType = HRectBound<EuclideanDistance, ElemType>;
 
   bestAxis = 0;
   bestIndex = 0;
@@ -176,7 +176,7 @@ template<typename TreeType>
 void RStarTreeSplit::SplitLeafNode(TreeType *tree, std::vector<bool>& relevels)
 {
   // Convenience typedef.
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
 
   // If there's no need to split, don't.
   if (tree->Count() <= tree->MaxLeafSize())
@@ -272,8 +272,8 @@ bool RStarTreeSplit::SplitNonLeafNode(
     std::vector<bool>& relevels)
 {
   // Convenience typedef.
-  typedef typename TreeType::ElemType ElemType;
-  typedef HRectBound<EuclideanDistance, ElemType> BoundType;
+  using ElemType = typename TreeType::ElemType;
+  using BoundType = HRectBound<EuclideanDistance, ElemType>;
 
   // Reinsertion isn't done for non-leaf nodes; the paper doesn't seem to make
   // it clear how to reinsert an entire node without reinserting each of the

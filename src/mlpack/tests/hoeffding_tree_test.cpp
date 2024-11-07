@@ -548,8 +548,8 @@ TEST_CASE("HoeffdingTreeSimpleDatasetTest", "[HoeffdingTreeTest]")
 
   // Now train two streaming decision trees; one on the whole dataset, and one
   // on streaming data.
-  typedef HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
-      HoeffdingCategoricalSplit> TreeType;
+  using TreeType = HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
+      HoeffdingCategoricalSplit>;
   TreeType batchTree(dataset, info, labels, 3, false);
   TreeType streamTree(info, 3);
   for (size_t i = 0; i < 9000; ++i)
@@ -594,7 +594,7 @@ TEST_CASE("NumDescendantsTest1", "[HoeffdingTreeTest]")
   }
 
   // Now train streaming decision tree;
-  typedef HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit> TreeType;
+  using TreeType = HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit>;
   TreeType streamTree(info, 3);
   for (size_t i = 0; i < 500; ++i)
     streamTree.Train(dataset.col(i), labels[i]);
@@ -643,8 +643,8 @@ TEST_CASE("NumDescendantsTest2", "[HoeffdingTreeTest]")
 
   // Now train the streaming decision tree.  This should split because splitting
   // on dimension 2 gives a perfect split.
-  typedef HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
-      HoeffdingCategoricalSplit> TreeType;
+  using TreeType = HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
+      HoeffdingCategoricalSplit>;
   TreeType batchTree(dataset, info, labels, 3, false);
 
   REQUIRE(batchTree.NumDescendants() == 3);
@@ -836,7 +836,7 @@ TEST_CASE("NumericHoeffdingTreeTest", "[HoeffdingTreeTest]")
 
   // Now train two streaming decision trees; one on the whole dataset, and one
   // on streaming data.
-  typedef HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit> TreeType;
+  using TreeType = HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit>;
   TreeType batchTree(dataset, info, labels, 3, false);
   TreeType streamTree(info, 3);
   for (size_t i = 0; i < 9000; ++i)
@@ -905,7 +905,7 @@ TEST_CASE("BinaryNumericHoeffdingTreeTest", "[HoeffdingTreeTest]")
 
   // Now train two streaming decision trees; one on the whole dataset, and one
   // on streaming data.
-  typedef HoeffdingTree<GiniImpurity, BinaryDoubleNumericSplit> TreeType;
+  using TreeType = HoeffdingTree<GiniImpurity, BinaryDoubleNumericSplit>;
   TreeType batchTree(dataset, info, labels, 3, false);
   TreeType streamTree(info, 3);
   for (size_t i = 0; i < 9000; ++i)

@@ -113,8 +113,8 @@ cross-compilation toolchain.
 cmake \
     -DBUILD_TESTS=ON \
     -DBOARD_NAME="RPI2" \
-    -DCMAKE_CROSSCOMPILE=ON \
-    -DCMAKE_TOOLCHAIN_FILE=../board/crosscompile-toolchain.cmake \
+    -DCMAKE_CROSSCOMPILING=ON \
+    -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake \
     -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf- \
     -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot \
     ../

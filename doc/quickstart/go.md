@@ -9,13 +9,21 @@ This quickstart guide is also available for [C++](cpp.md), [Python](python.md),
 ## Installing mlpack
 
 Installing the mlpack bindings for Go is somewhat time-consuming as the library
-must be built; you can run the following code:
+must be built; you can run the following to add mlpack as a dependency inside of
+a Go module:
 
 ```sh
 go get -u -d mlpack.org/v1/mlpack
-cd ${GOPATH}/src/mlpack.org/v1/mlpack
-make install
 ```
+
+The Go bindings themselves will then need to be compiled.  Find the mlpack
+directory under `$GOMODCACHE/mlpack.org/v1/mlpack` and run these commands:
+
+```sh
+make
+sudo make install
+```
+
 Building the Go bindings from scratch is a little more in-depth, though.  For
 information on that, follow the instructions in the
 [main README](../../README.md).

@@ -47,7 +47,7 @@ class BinaryNumericSplit
 {
  public:
   //! The splitting information required by the BinaryNumericSplit.
-  typedef BinaryNumericSplitInfo<ObservationType> SplitInfo;
+  using SplitInfo = BinaryNumericSplitInfo<ObservationType>;
 
   /**
    * Create the BinaryNumericSplit object with the given number of classes.

@@ -80,12 +80,10 @@ class NCA
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    */
   template<typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
-               CallbackTypes...
-           >::value>::type,
-           typename = typename std::enable_if<
-               !FirstElementIsArma<CallbackTypes...>::value
-           >::type>
+           typename = std::enable_if_t<IsEnsCallbackTypes<
+               CallbackTypes...>::value>,
+           typename = std::enable_if_t<
+               !FirstElementIsArma<CallbackTypes...>::value>>
   [[deprecated("Will be removed in mlpack 5.0.0.  Use the version that takes a "
                "dataset as a parameter.")]]
   void LearnDistance(arma::mat& outputMatrix, CallbackTypes&&... callbacks);
@@ -106,14 +104,13 @@ class NCA
   template<typename MatType,
            typename LabelsType,
            typename... CallbackTypes,
-           typename = typename std::enable_if<!IsEnsOptimizer<
+           typename = std::enable_if_t<!IsEnsOptimizer<
                typename First<CallbackTypes...>::type,
                SoftmaxErrorFunction<MatType, LabelsType, DistanceType>,
                MatType
-           >::value>::type,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
-               CallbackTypes...
-           >::value>::type>
+           >::value>,
+           typename = std::enable_if_t<
+               IsEnsCallbackTypes<CallbackTypes...>::value>>
   void LearnDistance(const MatType& dataset,
                      const LabelsType& labels,
                      MatType& outputMatrix,
@@ -137,11 +134,11 @@ class NCA
            typename LabelsType,
            typename OptimizerType,
            typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsOptimizer<
+           typename = std::enable_if_t<IsEnsOptimizer<
                OptimizerType,
                SoftmaxErrorFunction<MatType, LabelsType, DistanceType>,
                MatType
-           >::value>::type>
+           >::value>>
   void LearnDistance(const MatType& dataset,
                      const LabelsType& labels,
                      MatType& outputMatrix,

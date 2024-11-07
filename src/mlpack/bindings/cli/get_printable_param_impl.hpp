@@ -23,11 +23,11 @@ namespace cli {
 template<typename T>
 std::string GetPrintableParam(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<!util::IsStdVector<T>::value>*,
+    const std::enable_if_t<!data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>*)
 {
   std::ostringstream oss;
   oss << std::any_cast<T>(data.value);
@@ -38,8 +38,7 @@ std::string GetPrintableParam(
 template<typename T>
 std::string GetPrintableParam(
     util::ParamData& data,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type*
-        /* junk */)
+    const std::enable_if_t<util::IsStdVector<T>::value>* /* junk */)
 {
   const T& t = std::any_cast<T>(data.value);
 
@@ -53,7 +52,7 @@ std::string GetPrintableParam(
 template<typename T>
 std::string GetMatrixSize(
     T& matrix,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0)
 {
   std::ostringstream oss;
   oss << matrix.n_rows << "x" << matrix.n_cols << " matrix";
@@ -64,8 +63,8 @@ std::string GetMatrixSize(
 template<typename T>
 std::string GetMatrixSize(
     T& matrixAndInfo,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   return GetMatrixSize(std::get<1>(matrixAndInfo));
 }
@@ -74,12 +73,11 @@ std::string GetMatrixSize(
 template<typename T>
 std::string GetPrintableParam(
     util::ParamData& data,
-    const typename std::enable_if<arma::is_arma_type<T>::value ||
-                                  std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* /* junk */)
+    const std::enable_if_t<arma::is_arma_type<T>::value || std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* /* junk */)
 {
   // Extract the string from the tuple that's being held.
-  typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
+  using TupleType = std::tuple<T, typename ParameterType<T>::type>;
   const TupleType* tuple = std::any_cast<TupleType>(&data.value);
 
   std::ostringstream oss;
@@ -103,11 +101,11 @@ std::string GetPrintableParam(
 template<typename T>
 std::string GetPrintableParam(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type*)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>*,
+    const std::enable_if_t<data::HasSerialize<T>::value>*)
 {
   // Extract the string from the tuple that's being held.
-  typedef std::tuple<T*, typename ParameterType<T>::type> TupleType;
+  using TupleType = std::tuple<T*, typename ParameterType<T>::type>;
   const TupleType* tuple = std::any_cast<TupleType>(&data.value);
 
   std::ostringstream oss;

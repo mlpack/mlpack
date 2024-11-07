@@ -27,8 +27,7 @@ template<typename TreeType, typename MatType>
 TreeType* BuildForcedLeafSizeTree(
     MatType&& dataset,
     std::vector<size_t>& oldFromNew,
-    const typename std::enable_if<
-        TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+    const std::enable_if_t<TreeTraits<TreeType>::RearrangesDataset>* = 0)
 {
   // This is a hack.  I know this will be BinarySpaceTree, so force a leaf size
   // of one.
@@ -40,8 +39,7 @@ template<typename TreeType, typename MatType>
 TreeType* BuildForcedLeafSizeTree(
     MatType&& dataset,
     const std::vector<size_t>& /* oldFromNew */,
-    const typename std::enable_if<
-        !TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+    const std::enable_if_t<!TreeTraits<TreeType>::RearrangesDataset>* = 0)
 {
   return new TreeType(std::forward<MatType>(dataset));
 }
@@ -145,7 +143,7 @@ double DualTreeKMeans<DistanceType, MatType, TreeType>::Iterate(
 
   // We won't use the KNN class here because we have our own set of rules.
   lastIterationCentroids = centroids;
-  typedef DualTreeKMeansRules<DistanceType, Tree> RuleType;
+  using RuleType = DualTreeKMeansRules<DistanceType, Tree>;
   RuleType rules(nns.ReferenceTree().Dataset(), dataset, assignments,
       upperBounds, lowerBounds, distance, prunedPoints, oldFromNewCentroids,
       visited);

@@ -94,8 +94,8 @@ void MeanShift<UseKernel, KernelType>::GenSeeds(const MatType& data,
                                                 const int minFreq,
                                                 CentroidsType& seeds)
 {
-  typedef typename GetColType<MatType>::type VecType;
-  typedef typename GetColType<CentroidsType>::type CentroidVecType;
+  using VecType = typename GetColType<MatType>::type;
+  using CentroidVecType = typename GetColType<CentroidsType>::type;
   std::map<VecType, int, less<VecType> > allSeeds;
   for (size_t i = 0; i < data.n_cols; ++i)
   {
@@ -131,14 +131,14 @@ void MeanShift<UseKernel, KernelType>::GenSeeds(const MatType& data,
 // Calculate new centroid with given kernel.
 template<bool UseKernel, typename KernelType>
 template<bool ApplyKernel, typename MatType, typename VecType>
-typename std::enable_if<ApplyKernel, bool>::type
+std::enable_if_t<ApplyKernel, bool>
 MeanShift<UseKernel, KernelType>::CalculateCentroid(
     const MatType& data,
     const std::vector<size_t>& neighbors,
     const std::vector<typename MatType::elem_type>& distances,
     VecType& centroid)
 {
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   ElemType sumWeight = 0;
   for (size_t i = 0; i < neighbors.size(); ++i)
@@ -163,7 +163,7 @@ MeanShift<UseKernel, KernelType>::CalculateCentroid(
 // Calculate new centroid by mean.
 template<bool UseKernel, typename KernelType>
 template<bool ApplyKernel, typename MatType, typename VecType>
-typename std::enable_if<!ApplyKernel, bool>::type
+std::enable_if_t<!ApplyKernel, bool>
 MeanShift<UseKernel, KernelType>::CalculateCentroid(
     const MatType& data,
     const std::vector<size_t>& neighbors,
@@ -189,8 +189,8 @@ inline void MeanShift<UseKernel, KernelType>::Cluster(
     bool useSeeds)
 {
   // Convenience typedefs.
-  typedef typename MatType::elem_type ElemType;
-  typedef typename GetColType<MatType>::type VecType;
+  using ElemType = typename MatType::elem_type;
+  using VecType = typename GetColType<MatType>::type;
 
   if (radius <= 0)
   {

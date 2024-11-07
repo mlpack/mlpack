@@ -1,14 +1,14 @@
-## This file handles cross-compilation configurations for aarch64,
-## known as arm64. The objective of this file is to find and assign
-## cross-compiler and the entire toolchain.
+## This file handles cross-compilation configurations for any architecture.
+## The objective of this file is to find and assign cross-compiler and the
+## entire toolchain.
 ##
 ## This configuration works best with the buildroot toolchain.  When using this
 ## file, be sure to set the TOOLCHAIN_PREFIX and CMAKE_SYSROOT variables,
 ## preferably via the CMake configuration command (e.g. `-DCMAKE_SYSROOT=<...>`).
 ##
-## Currently, we recommend using buildroot toolchain for
-## cross-compilation. Here is the link to download the toolchains:
-## https://toolchains.bootlin.com/
+## You can use any toochain to produce the cross compiled binaries. However,
+## we recommend using buildroot toolchain for cross-compilation. Here is the
+## link to download the toolchains: https://toolchains.bootlin.com/
 
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSROOT)

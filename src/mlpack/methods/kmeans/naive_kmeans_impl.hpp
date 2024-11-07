@@ -19,6 +19,8 @@
 // In case it hasn't been included yet.
 #include "naive_kmeans.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 template<typename DistanceType, typename MatType>

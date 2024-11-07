@@ -71,7 +71,7 @@ TEST_CASE("ExhaustiveSyntheticTest", "[RangeSearchTest]")
   data[9] = 0.90;
   data[10] = 1.00;
 
-  typedef KDTree<EuclideanDistance, RangeSearchStat, arma::mat> TreeType;
+  using TreeType = KDTree<EuclideanDistance, RangeSearchStat, arma::mat>;
 
   // We will loop through three times, one for each method of performing the
   // calculation.
@@ -1126,7 +1126,7 @@ TEST_CASE("RangeSearchTrainTest", "[RangeSearchTest]")
 TEST_CASE("TrainTreeTest", "[RangeSearchTest]")
 {
   // Avoid mappings by using the cover tree.
-  typedef RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree> RSType;
+  using RSType = RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>;
   RSType empty;
 
   arma::mat dataset = arma::randu<arma::mat>(5, 100);

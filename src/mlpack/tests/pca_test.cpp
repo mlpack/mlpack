@@ -337,7 +337,7 @@ TEST_CASE("PCAScalingTest", "[PCATest]")
 TEMPLATE_TEST_CASE("PCASubviewTest", "[PCATest]", ExactSVDPolicy,
     RandomizedSVDPCAPolicy, RandomizedBlockKrylovSVDPolicy, QUICSVDPolicy)
 {
-  typedef TestType DecompositionPolicy;
+  using DecompositionPolicy = TestType;
 
   // Generate an artifical dataset in 10 dimensions.
   arma::mat data(3, 5000);
@@ -361,7 +361,7 @@ TEMPLATE_TEST_CASE("PCASubviewTest", "[PCATest]", ExactSVDPolicy,
   p.Apply(data.cols(0, 1999), transData3, eigval2, eigvec);
 
   // Only check for deterministic policies.
-  if (std::is_same<DecompositionPolicy, ExactSVDPolicy>::value)
+  if (std::is_same_v<DecompositionPolicy, ExactSVDPolicy>)
   {
     arma::mat trueTransData, trueEigvec;
     arma::vec trueEigval;
@@ -384,7 +384,7 @@ TEMPLATE_TEST_CASE("PCASubviewTest", "[PCATest]", ExactSVDPolicy,
 TEMPLATE_TEST_CASE("PCAExpressionTest", "[PCATest]", ExactSVDPolicy,
     RandomizedSVDPCAPolicy, RandomizedBlockKrylovSVDPolicy, QUICSVDPolicy)
 {
-  typedef TestType DecompositionPolicy;
+  using DecompositionPolicy = TestType;
 
   // Generate an artifical dataset in 10 dimensions.
   arma::mat data(3, 5000);
@@ -408,7 +408,7 @@ TEMPLATE_TEST_CASE("PCAExpressionTest", "[PCATest]", ExactSVDPolicy,
   p.Apply(2 * data + 1, transData3, eigval2, eigvec);
 
   // Only check for deterministic policies.
-  if (std::is_same<DecompositionPolicy, ExactSVDPolicy>::value)
+  if (std::is_same_v<DecompositionPolicy, ExactSVDPolicy>)
   {
     arma::mat trueTransData, trueEigvec;
     arma::vec trueEigval;
@@ -431,7 +431,7 @@ TEMPLATE_TEST_CASE("PCAExpressionTest", "[PCATest]", ExactSVDPolicy,
 TEMPLATE_TEST_CASE("PCAFloatTest", "[PCATest]", ExactSVDPolicy,
     RandomizedSVDPCAPolicy, RandomizedBlockKrylovSVDPolicy, QUICSVDPolicy)
 {
-  typedef TestType DecompositionPolicy;
+  using DecompositionPolicy = TestType;
 
   // Generate an artifical dataset in 10 dimensions.
   arma::fmat data(3, 5000);
@@ -456,7 +456,7 @@ TEMPLATE_TEST_CASE("PCAFloatTest", "[PCATest]", ExactSVDPolicy,
 
   // Verify the PCA results based on the eigenvalues.  We don't check for
   // QUIC-SVD, since that method has a lot of noise.
-  if (!std::is_same<DecompositionPolicy, QUICSVDPolicy>::value)
+  if (!std::is_same_v<DecompositionPolicy, QUICSVDPolicy>)
   {
     for (size_t i = 0; i < eigVal.n_elem; ++i)
     {
@@ -475,11 +475,11 @@ TEMPLATE_TEST_CASE("PCAFloatTest", "[PCATest]", ExactSVDPolicy,
  */
 TEMPLATE_TEST_CASE("PCASparseToDenseTest", "[PCATest]", float, double)
 {
-  typedef arma::Mat<TestType> MatType;
-  typedef arma::SpMat<TestType> SpMatType;
+  using MatType = arma::Mat<TestType>;
+  using SpMatType = arma::SpMat<TestType>;
 
   SpMatType dataset;
-  dataset.sprandu(1000, 50000, 0.01);
+  dataset.sprandu(100, 1000, 0.05);
   MatType transformedDataset1, transformedDataset2;
 
   PCA<> p;

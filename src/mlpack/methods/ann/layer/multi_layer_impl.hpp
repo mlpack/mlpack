@@ -15,6 +15,8 @@
 
 #include "multi_layer.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 template<typename MatType>

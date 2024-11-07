@@ -16,6 +16,8 @@
 // In case it has not been included yet.
 #include "hrectbound.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 /**

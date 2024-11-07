@@ -35,7 +35,7 @@ void LARSVerifyCorrectness(const VecType& beta,
   size_t nDims = beta.n_elem;
 
   // floats require a much larger tolerance.
-  const ElemType tol = (std::is_same<ElemType, double>::value) ? 1e-8 : 5e-3;
+  const ElemType tol = (std::is_same_v<ElemType, double>) ? 1e-8 : 5e-3;
 
   for (size_t j = 0; j < nDims; ++j)
   {
@@ -62,7 +62,7 @@ template<typename MatType>
 void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky,
                bool fitIntercept, bool normalizeData)
 {
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   MatType X;
   arma::Row<ElemType> y;
@@ -610,8 +610,8 @@ TEST_CASE("LARSTrainReturnCorrelation", "[LARSTest]")
  */
 TEMPLATE_TEST_CASE("LARSTestComputeError", "[LARSTest]", arma::fmat, arma::mat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type ElemType;
+  using MatType = TestType;
+  using ElemType = typename MatType::elem_type;
 
   MatType X;
   MatType Y;
@@ -943,8 +943,8 @@ TEST_CASE("LARSTestKKT", "[LARSTest]")
 TEMPLATE_TEST_CASE("LARSConstructorVariantTest", "[LARSTest]", arma::fmat,
     arma::mat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type ElemType;
+  using MatType = TestType;
+  using ElemType = typename MatType::elem_type;
 
   // The results of the training are not all that important here; the more
   // important thing is just that all the overloads compile properly.  We do
@@ -1090,8 +1090,8 @@ TEMPLATE_TEST_CASE("LARSConstructorVariantTest", "[LARSTest]", arma::fmat,
 // Check that all variants of Train() appear to work.
 TEMPLATE_TEST_CASE("LARSTrainVariantTest", "[LARSTest]", arma::fmat, arma::mat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type ElemType;
+  using MatType = TestType;
+  using ElemType = typename MatType::elem_type;
 
   // The results of the training are not all that important here; the more
   // important thing is just that all the overloads compile properly.  We do
@@ -1223,10 +1223,10 @@ TEMPLATE_TEST_CASE("LARSTrainVariantTest", "[LARSTest]", arma::fmat, arma::mat)
 // Ensure that SelectBeta() works correctly.
 TEMPLATE_TEST_CASE("LARSSelectBetaTest", "[LARSTest]", arma::fmat, arma::mat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type ElemType;
+  using MatType = TestType;
+  using ElemType = typename MatType::elem_type;
 
-  const ElemType tol = (std::is_same<ElemType, double>::value) ? 1e-5 : 5e-3;
+  const ElemType tol = (std::is_same_v<ElemType, double>) ? 1e-5 : 5e-3;
 
   // Train a model on a randomly generated problem.  Then, we will iterate
   // through different selected lambda values, ensuring that the error on the
@@ -1244,8 +1244,7 @@ TEMPLATE_TEST_CASE("LARSSelectBetaTest", "[LARSTest]", arma::fmat, arma::mat)
 
   // Now step through numerous different lambda values.
   ElemType lastError = std::numeric_limits<ElemType>::max();
-  const ElemType errorTol = (std::is_same<ElemType, double>::value) ? 1e-8 :
-      0.05;
+  const ElemType errorTol = (std::is_same_v<ElemType, double>) ? 1e-8 : 0.05;
   for (ElemType i = 5.0; i >= -5.0; i -= 0.1)
   {
     const ElemType selLambda1 = std::pow(10.0, (ElemType) i);
@@ -1300,7 +1299,7 @@ TEST_CASE("LARSSelectBetaInvalidLambda1Test", "[LARSTest]")
 // Test that we can train a sparse model on dense data.
 TEMPLATE_TEST_CASE("LARSSparseModelDenseData", "[LARSTest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   // 1k-dimensional data.
   arma::Mat<eT> data(1000, 500, arma::fill::randu);

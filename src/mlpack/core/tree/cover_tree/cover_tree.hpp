@@ -99,9 +99,9 @@ class CoverTree
 {
  public:
   //! So that other classes can access the matrix type.
-  typedef MatType Mat;
+  using Mat = MatType;
   //! The type held by the matrix type.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   /**
    * Create the cover tree with the given dataset and given base.

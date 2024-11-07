@@ -48,8 +48,7 @@ class FFTConvolution
    * @param output Output data that contains the results of the convolution.
    */
   template<typename MatType, typename Border = BorderMode>
-  static typename std::enable_if<
-      std::is_same<Border, ValidConvolution>::value, void>::type
+  static std::enable_if_t<std::is_same_v<Border, ValidConvolution>, void>
   Convolution(const MatType& input,
               const MatType& filter,
               MatType& output,
@@ -83,8 +82,7 @@ class FFTConvolution
    * @param output Output data that contains the results of the convolution.
    */
   template<typename MatType, typename Border = BorderMode>
-  static typename std::enable_if<
-      std::is_same<Border, FullConvolution>::value, void>::type
+  static std::enable_if_t<std::is_same_v<Border, FullConvolution>, void>
   Convolution(const MatType& input,
               const MatType& filter,
               MatType& output,
@@ -136,7 +134,7 @@ class FFTConvolution
       CubeType& output,
       const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
-    typedef typename GetDenseMatType<CubeType>::type MatType;
+    using MatType = typename GetDenseMatType<CubeType>::type;
     MatType convOutput;
     FFTConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
         convOutput);

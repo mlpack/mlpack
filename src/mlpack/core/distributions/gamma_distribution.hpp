@@ -54,8 +54,8 @@ class GammaDistribution
 {
  public:
   // Convenience typedefs.
-  typedef typename GetColType<MatType>::type VecType;
-  typedef typename MatType::elem_type ElemType;
+  using VecType = typename GetColType<MatType>::type;
+  using ElemType = typename MatType::elem_type;
 
   /**
    * Construct the Gamma distribution with the given number of dimensions
@@ -75,7 +75,7 @@ class GammaDistribution
    */
   GammaDistribution(const MatType& data,
                     const ElemType tol =
-                        std::is_same<ElemType, float>::value ? 1e-4 : 1e-8);
+                        std::is_same_v<ElemType, float> ? 1e-4 : 1e-8);
 
   /**
    * Construct the Gamma distribution given two vectors alpha and beta.
@@ -101,7 +101,7 @@ class GammaDistribution
    */
   void Train(const MatType& rdata,
              const ElemType tol =
-                 std::is_same<ElemType, float>::value ? 1e-4 : 1e-8);
+                 std::is_same_v<ElemType, float> ? 1e-4 : 1e-8);
 
   /**
    * Fits an alpha and beta parameter according to observation probabilities.
@@ -117,7 +117,7 @@ class GammaDistribution
   void Train(const MatType& observations,
              const VecType& probabilities,
              const ElemType tol =
-                 std::is_same<ElemType, float>::value ? 1e-4 : 1e-8);
+                 std::is_same_v<ElemType, float> ? 1e-4 : 1e-8);
 
   /**
    * This function trains (fits distribution parameters) to a dataset with
@@ -136,7 +136,7 @@ class GammaDistribution
              const VecType& meanLogxVec,
              const VecType& meanxVec,
              const ElemType tol =
-                 std::is_same<ElemType, float>::value ? 1e-4 : 1e-8);
+                 std::is_same_v<ElemType, float> ? 1e-4 : 1e-8);
 
   /**
    * This function returns the probability of a group of observations.

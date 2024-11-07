@@ -25,7 +25,7 @@ template<typename TreeType>
 void RPlusTreeSplit<SplitPolicyType, SweepType>::
 SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
 
   if (tree->Count() == 1)
   {
@@ -122,7 +122,7 @@ template<typename TreeType>
 bool RPlusTreeSplit<SplitPolicyType, SweepType>::
 SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
   // an address of another node.
@@ -333,9 +333,8 @@ PartitionNode(const TreeType* node, size_t& minCutAxis,
     return false; // No partition required.
 
   // Define the type of the sweep cost.
-  typedef typename
-      SweepType<SplitPolicyType>::template SweepCost<TreeType>::type
-      SweepCostType;
+  using SweepCostType = typename
+      SweepType<SplitPolicyType>::template SweepCost<TreeType>::type;
 
   SweepCostType minCost = std::numeric_limits<SweepCostType>::max();
   minCutAxis = node->Bound().Dim();

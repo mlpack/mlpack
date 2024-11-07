@@ -26,7 +26,7 @@ using namespace mlpack;
 using namespace mlpack::util;
 
 // Convenience typedef.
-typedef NSModel<NearestNeighborSort> KNNModel;
+using KNNModel = NSModel<NearestNeighborSort>;
 
 // Program Name.
 BINDING_USER_NAME("k-Nearest-Neighbors Search");

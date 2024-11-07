@@ -413,7 +413,7 @@ Evaluate(MatType querySet, arma::vec& estimations)
     }
 
     // Evaluate.
-    typedef KDERules<DistanceType, KernelType, Tree> RuleType;
+    using RuleType = KDERules<DistanceType, KernelType, Tree>;
     RuleType rules = RuleType(referenceTree->Dataset(),
                               querySet,
                               estimations,
@@ -498,7 +498,7 @@ Evaluate(Tree* queryTree,
   }
 
   // Clean accumulated alpha if Monte Carlo estimations are available.
-  if (monteCarlo && std::is_same<KernelType, GaussianKernel>::value)
+  if (monteCarlo && std::is_same_v<KernelType, GaussianKernel>)
   {
     KDECleanRules<Tree> cleanRules;
     SingleTreeTraversalType<KDECleanRules<Tree>> cleanTraverser(cleanRules);
@@ -506,7 +506,7 @@ Evaluate(Tree* queryTree,
   }
 
   // Evaluate.
-  typedef KDERules<DistanceType, KernelType, Tree> RuleType;
+  using RuleType = KDERules<DistanceType, KernelType, Tree>;
   RuleType rules = RuleType(referenceTree->Dataset(),
                             queryTree->Dataset(),
                             estimations,
@@ -562,7 +562,7 @@ Evaluate(arma::vec& estimations)
   estimations.fill(arma::fill::zeros);
 
   // Clean accumulated alpha if Monte Carlo estimations are available.
-  if (monteCarlo && std::is_same<KernelType, GaussianKernel>::value)
+  if (monteCarlo && std::is_same_v<KernelType, GaussianKernel>)
   {
     KDECleanRules<Tree> cleanRules;
     SingleTreeTraversalType<KDECleanRules<Tree>> cleanTraverser(cleanRules);
@@ -570,7 +570,7 @@ Evaluate(arma::vec& estimations)
   }
 
   // Evaluate.
-  typedef KDERules<DistanceType, KernelType, Tree> RuleType;
+  using RuleType = KDERules<DistanceType, KernelType, Tree>;
   RuleType rules = RuleType(referenceTree->Dataset(),
                             referenceTree->Dataset(),
                             estimations,

@@ -87,7 +87,7 @@ template<typename DecompositionPolicy, typename NormalizationPolicy>
 class CFWrapper : public CFWrapperBase
 {
  protected:
-  typedef CFType<DecompositionPolicy, NormalizationPolicy> CFModelType;
+  using CFModelType = CFType<DecompositionPolicy, NormalizationPolicy>;
 
  public:
   //! Create the CFWrapper object, using default parameters to initialize the

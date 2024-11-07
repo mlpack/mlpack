@@ -21,8 +21,7 @@ template<typename TreeType, typename MatType>
 TreeType* BuildTree(
     MatType&& dataset,
     std::vector<size_t>& oldFromNew,
-    const typename std::enable_if<
-        TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+    const std::enable_if_t<TreeTraits<TreeType>::RearrangesDataset>* = 0)
 {
   return new TreeType(std::forward<MatType>(dataset), oldFromNew);
 }
@@ -32,8 +31,7 @@ template<typename TreeType, typename MatType>
 TreeType* BuildTree(
     MatType&& dataset,
     const std::vector<size_t>& /* oldFromNew */,
-    const typename std::enable_if<
-        !TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+    const std::enable_if_t<!TreeTraits<TreeType>::RearrangesDataset>* = 0)
 {
   return new TreeType(std::forward<MatType>(dataset));
 }

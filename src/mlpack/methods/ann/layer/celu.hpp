@@ -131,7 +131,7 @@ class CELUType : public Layer<MatType>
 // Convenience typedefs.
 
 // Standard CELU layer.
-typedef CELUType<arma::mat> CELU;
+using CELU = CELUType<arma::mat>;
 
 } // namespace mlpack
 

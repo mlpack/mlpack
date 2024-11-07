@@ -476,7 +476,7 @@ double FastMKSRules<KernelType, TreeType>::CalculateBound(TreeType& queryNode)
     // where p_j^*(p_q) is the j'th kernel candidate for query point p_q and
     // k_j^*(p_q) is K(p_q, p_j^*(p_q)).
     double worstPointCandidateKernel = DBL_MAX;
-    typedef std::vector<Candidate>::const_iterator iter;
+    using iter = std::vector<Candidate>::const_iterator;
     for (iter it = candidatesPoints.begin(); it != candidatesPoints.end(); ++it)
     {
       const double candidateKernel = it->first - queryDescendantDistance *

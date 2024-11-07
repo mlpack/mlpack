@@ -53,16 +53,16 @@ template<typename DistanceType = EuclideanDistance,
 class RectangleTree
 {
   // The distance metric *must* be the euclidean distance.
-  static_assert(std::is_same<DistanceType, EuclideanDistance>::value,
+  static_assert(std::is_same_v<DistanceType, EuclideanDistance>,
       "RectangleTree: DistanceType must be EuclideanDistance.");
 
  public:
   //! So other classes can use TreeType::Mat.
-  typedef MatType Mat;
+  using Mat = MatType;
   //! The element type held by the matrix type.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
   //! The auxiliary information type held by the tree.
-  typedef AuxiliaryInformationType<RectangleTree> AuxiliaryInformation;
+  using AuxiliaryInformation = AuxiliaryInformationType<RectangleTree>;
  private:
   //! The max number of child nodes a non-leaf node can have.
   size_t maxNumChildren;
