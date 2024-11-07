@@ -22,6 +22,7 @@
 
     <a xlink:href="../user/install.html" target="_top">
       <text x="140" y="55" text-anchor="middle">Installing mlpack</text>
+    </a>
     <a xlink:href="../embedded/supported_boards.html" target="_top">
       <text x="140" y="70" text-anchor="middle">Cross-compilation setup</text>
     </a>
@@ -101,9 +102,12 @@
     <line x1="298" y1="220" x2="288" y2="210" />
     <line x1="298" y1="220" x2="288" y2="230" />
 
+    <!-- Preprocessing / feature extraction -->
     <g class="pipeline_elem">
       <rect x="300" y="170" rx="20" ry="20" width="260" height="100" />
-      <text x="430" y="190" text-anchor="middle" class="header">Preprocessing / feature extraction</text>
+      <a xlink:href="user/preprocessing.html" target="_top">
+        <text x="430" y="190" text-anchor="middle" class="header">Preprocessing / feature extraction</text>
+      </a>
 
       <a xlink:href="user/core/normalizing_labels.html">
         <text x="430" y="215" text-anchor="middle">Normalizing labels</text>
