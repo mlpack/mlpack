@@ -20,15 +20,18 @@ when the sidebar is built for each page.
     </summary>
 
     <ul>
-      <!-- General "getting started" documentation -->
+      <!-- The "Prerequisites" section stays expanded at the top level. -->
+      <li>
+        <a href="LINKROOTuser/install.html">Installing mlpack</a>
+      </li>
+      <li>
+        <a href="LINKROOTembedded/supported_boards.html">Cross-compilation setup</a>
+      </li>
       <li>
         <a href="LINKROOTquickstart/cpp.html">Quickstart</a>
       </li>
       <li>
         <a href="LINKROOTuser/matrices.html">Matrices and data</a>
-      </li>
-      <li>
-        <a href="LINKROOTuser/load_save.html">Loading and saving</a>
       </li>
       <li class="bottom-space">
         <a href="LINKROOTcitation.html">Citation</a>
@@ -38,14 +41,40 @@ when the sidebar is built for each page.
       <li>
         <details>
           <summary>
+            <a href="LINKROOTtutorials.html">
+              Tutorials and Examples
+            </a>
+          </summary>
+          <ul>
+            <li>
+              <a href="https://github.com/mlpack/examples/">
+                mlpack examples repository
+              </a>
+            </li>
+            <li>
+              <a href="https://youtube.com/@mlpack">
+                mlpack Youtube channel
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/mlpack/models/">
+                mlpack models repository
+              </a>
+            </li>
+          </ul>
+        </details>
+      </li>
+      <li>
+        <details>
+          <summary>
             <a href="LINKROOTuser/core.html">
-              Core functionality
+              Utility classes
             </a>
           </summary>
           <ul>
             <li>
               <a href="LINKROOTuser/core/math.html">
-                Core math utilities
+                Math
               </a>
             </li>
             <li>
@@ -63,62 +92,93 @@ when the sidebar is built for each page.
                 Kernels
               </a>
             </li>
+            <li>
+              <details>
+                <summary>
+                  <a href="LINKROOT/user/core/trees.html">
+                    Trees
+                  </a>
+                </summary>
+                <ul>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/kdtree.html">
+                      <code>KDTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/mean_split_kdtree.html">
+                      <code>MeanSplitKDTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/ball_tree.html">
+                      <code>BallTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/mean_split_ball_tree.html">
+                      <code>MeanSplitBallTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/vptree.html">
+                      <code>VPTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/rp_tree.html">
+                      <code>RPTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/max_rp_tree.html">
+                      <code>MaxRPTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/ub_tree.html">
+                      <code>UBTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/binary_space_tree.html">
+                      <code>BinarySpaceTree</code>
+                    </a>
+                  </li>
+                </ul>
+              </details>
+            </li>
           </ul>
         </details>
       </li>
 
-      <!-- Trees -->
+      <!-- Data loading and I/O -->
       <li>
         <details>
           <summary>
-            <a href="LINKROOTuser/core/trees.html">
-              Trees
+            <a href="LINKROOTuser/load_save.html">
+              Data loading and I/O
             </a>
           </summary>
           <ul>
             <li>
-              <a href="LINKROOTuser/core/trees/kdtree.html">
-                <code>KDTree</code>
+              <a href="LINKROOTuser/load_save.html#numeric-data">
+                Numeric data
               </a>
             </li>
             <li>
-              <a href="LINKROOTuser/core/trees/mean_split_kdtree.html">
-                <code>MeanSplitKDTree</code>
+              <a href="LINKROOTuser/load_save.html#mixed-categorical-data">
+                Mixed categorical data
               </a>
             </li>
             <li>
-              <a href="LINKROOTuser/core/trees/ball_tree.html">
-                <code>BallTree</code>
+              <a href="LINKROOTuser/load_save.html#image-data">
+                Image data
               </a>
             </li>
             <li>
-              <a href="LINKROOTuser/core/trees/mean_split_ball_tree.html">
-                <code>MeanSplitBallTree</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/core/trees/vptree.html">
-                <code>VPTree</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/core/trees/rp_tree.html">
-                <code>RPTree</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/core/trees/max_rp_tree.html">
-                <code>MaxRPTree</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/core/trees/ub_tree.html">
-                <code>UBTree</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/core/trees/binary_space_tree.html">
-                <code>BinarySpaceTree</code>
+              <a href="LINKROOTuser/load_save.html#mlpack-objects">
+                mlpack models and objects
               </a>
             </li>
           </ul>
