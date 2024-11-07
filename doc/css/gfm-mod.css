@@ -1120,6 +1120,14 @@ div#sidebar details[open] details[open] summary::after {
   content: " [-]";
 }
 
+div#sidebar details[open] details[open] details summary::after {
+  content: " [+]";
+}
+
+div#sidebar details[open] details[open] details[open] summary::after {
+  content: " [-]";
+}
+
 object#pipeline-wide { display: block; }
 object#pipeline-narrow { display: none; }
 
