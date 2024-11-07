@@ -1,3 +1,6 @@
+<object data="../img/pipeline-top-1.svg" type="image/svg+xml" id="pipeline-top">
+</object>
+
 # Loading and saving in mlpack
 
 mlpack provides the `data::Load()` and `data::Save()` functions to load and save
