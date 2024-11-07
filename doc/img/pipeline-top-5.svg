@@ -18,7 +18,7 @@
 
   <!-- Data loading and I/O (active) -->
   <g class="elem">
-    <a xlink:href="user/load_save.html" target="_top">
+    <a xlink:href="../user/load_save.html" target="_top">
       <rect x="25" y="20" rx="10" ry="10" width="120" height="40" />
       <text x="85" y="37" text-anchor="middle">Data loading</text>
       <text x="85" y="52" text-anchor="middle">and I/O</text>
@@ -30,7 +30,7 @@
   <line x1="164" y1="40" x2="159" y2="45" />
 
   <g class="elem">
-    <a xlink:href="user/preprocessing.html" target="_top">
+    <a xlink:href="../user/preprocessing.html" target="_top">
       <rect x="165" y="20" rx="10" ry="10" width="120" height="40" />
       <text x="225" y="37" text-anchor="middle">Preprocessing /</text>
       <text x="225" y="52" text-anchor="middle">feature extraction</text>
@@ -42,7 +42,7 @@
   <line x1="304" y1="40" x2="299" y2="45" />
 
   <g class="elem">
-    <a xlink:href="user/transformations.html" target="_top">
+    <a xlink:href="../user/transformations.html" target="_top">
       <rect x="305" y="20" rx="10" ry="10" width="120" height="40" />
       <text x="365" y="44" text-anchor="middle">Transformations</text>
     </a>
@@ -53,7 +53,7 @@
   <line x1="444" y1="40" x2="439" y2="45" />
 
   <g class="elem">
-    <a xlink:href="user/modeling.html" target="_top">
+    <a xlink:href="../user/modeling.html" target="_top">
       <rect x="445" y="20" rx="10" ry="10" width="120" height="40" />
       <text x="505" y="44" text-anchor="middle">Modeling</text>
     </a>
@@ -73,7 +73,7 @@
   <line x1="724" y1="40" x2="719" y2="45" />
 
   <g class="elem">
-    <a xlink:href="user/deployment.html" target="_top">
+    <a xlink:href="../user/deployment.html" target="_top">
       <rect x="725" y="20" rx="10" ry="10" width="120" height="40" />
       <text x="785" y="44" text-anchor="middle">Deployment</text>
     </a>
