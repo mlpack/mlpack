@@ -48,31 +48,31 @@ cmake \
 |-----------------------------------------------------------------------------
 | Architecture\_NAME | link to crosscompiler | CMake command | Example applications |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ARM11    | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv6-eabihf.html) | [Sysroot and toolchain prefix](#ARM11) | [ARM11 on Wikipedia](https://en.wikipedia.org/wiki/ARM11) |
+| ARM11    | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv6-eabihf.html) | [Sysroot and toolchain prefix](#arm11) | [ARM11 on Wikipedia](https://en.wikipedia.org/wiki/ARM11) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA7 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#CORTEXA7) | [Cortex A7 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A7) |
+| CORTEXA7 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#cortexa7) | [Cortex A7 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A7) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA8 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#CORTEXA8) | [Cortex A8 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A8) |
+| CORTEXA8 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#cortexa8) | [Cortex A8 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A8) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | CORTEXA9  | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#CORTEXA9) |[Cortex A9 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A9) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA15 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#CORTEXA15) | [Cortex A15 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A15)  |
+| CORTEXA15 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#cortexa15) | [Cortex A15 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A15)  |
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA53 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#CORTEXA53) | [Cortex A53 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A53)  |
+| CORTEXA53 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#cortexa53) | [Cortex A53 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A53)  |
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA72 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#CORTEXA72) | [Cortex A72 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A72)  |
+| CORTEXA72 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#cortexa72) | [Cortex A72 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A72)  |
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA76 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#CORTEXA76) | [Cortex A76 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A76)  |
+| CORTEXA76 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#cortexa76) | [Cortex A76 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A76)  |
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| C906      | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#C906) | [C906 on riscv](https://riscv.org/news/2020/11/xuantie-c906-based-allwinner-risc-v-processor-to-power-12-linux-sbcs/attachment/allwinner-xuantie-c906-risc-v-processor/) |
+| C906      | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#c906) | [C906 on riscv](https://riscv.org/news/2020/11/xuantie-c906-based-allwinner-risc-v-processor-to-power-12-linux-sbcs/attachment/allwinner-xuantie-c906-risc-v-processor/) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | x280      | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#x280) | [x280 on SiFive](https://www.sifive.cn/api/document-file?uid=x280-datasheet) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| KATAMI    | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-i686.html)     | [Sysroot and toolchain prefix](#KATAMI) |[Pentium 3 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_III)          |
+| KATAMI    | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-i686.html)     | [Sysroot and toolchain prefix](#katami) |[Pentium 3 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_III)          |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| NORTHWOOD | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-64.html)       | [Sysroot and toolchain prefix](#NORTHWOOD)   |[Pentium 4 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_4)       |
+| NORTHWOOD | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-64.html)       | [Sysroot and toolchain prefix](#northwood)   |[Pentium 4 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_4)       |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| COPPERMINE | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-i686.html)   | [Sysroot and toolchain prefix](#COPPERMINE) |[Pentium 3 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_III)       |
+| COPPERMINE | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-i686.html)   | [Sysroot and toolchain prefix](#coppermine) |[Pentium 3 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_III)       |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 If you didn't see your architecture in the table above, use the closest
@@ -89,7 +89,8 @@ the new architecture added to this table.
 
 ### CORTEXA7 
 
-```-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
 -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
 ```
 
