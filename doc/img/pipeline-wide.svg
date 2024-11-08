@@ -45,7 +45,7 @@
       <image x="320" y="49" width="14" height="14" href="github.svg" />
       <text x="430" y="61" text-anchor="middle">mlpack examples repository</text>
     </a>
-    <a xlink:href="https://youtube.com/@mlpack/videos" target="_top">
+    <a xlink:href="https://www.youtube.com/@mlpack/videos" target="_top">
       <image x="320" y="66" width="15" height="15" href="youtube.svg" />
       <text x="430" y="77" text-anchor="middle">mlpack Youtube channel</text>
     </a>
