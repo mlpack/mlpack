@@ -326,7 +326,7 @@ TEST_CASE("GBClassify3", "[GradBoostGeneralTest]")
 {
   arma::mat db;
   mlpack::data::DatasetInfo info;
-  if (!data::Load("iris_train.csv", db))
+  if (!data::Load("iris_train.csv", db, info))
     FAIL("Cannot load test dataset iris_train.csv!");
   
   arma::Row<size_t> labels;
