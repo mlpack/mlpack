@@ -67,8 +67,8 @@ GradBoosting(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
              const size_t numWeakLearners,
-             const size_t minimumLeafSize, 
-             const double minimumGainSplit, 
+             const size_t minimumLeafSize,
+             const double minimumGainSplit,
              const size_t maximumDepth) :
   numClasses(numClasses),
   numWeakLearners(numWeakLearners)
@@ -97,8 +97,8 @@ void GradBoosting<MatType>::
         const arma::Row<size_t>& labels,
         const size_t numClasses,
         const size_t numWeakLearners,
-        const size_t minimumLeafSize, 
-        const double minimumGainSplit, 
+        const size_t minimumLeafSize,
+        const double minimumGainSplit,
         const size_t maximumDepth)
 {
   SetNumClasses(numClasses);
@@ -110,7 +110,7 @@ void GradBoosting<MatType>::
 // Classify the given test point.
 template<typename MatType>
 template<typename VecType>
-size_t GradBoosting<MatType>::Classify(const VecType& point) 
+size_t GradBoosting<MatType>::Classify(const VecType& point)
 {
   size_t prediction;
   Classify<arma::colvec>(point, prediction);
@@ -126,7 +126,7 @@ void GradBoosting<MatType>::Classify(const VecType& point,
   double tempPrediction = 0;
 
   #pragma omp parallel for reduction(+:tempPrediction)
-  for (size_t i = 0; i < weakLearners.size(); ++i) 
+  for (size_t i = 0; i < weakLearners.size(); ++i)
   {
     double p = weakLearners[i]->Predict(point);
     tempPrediction += p;
@@ -134,19 +134,19 @@ void GradBoosting<MatType>::Classify(const VecType& point,
 
   for (double k = 0; k < numClasses; ++k)
   {
-    if (std::abs(tempPrediction - k) < std::abs(tempPrediction - prediction)) 
+    if (std::abs(tempPrediction - k) < std::abs(tempPrediction - prediction))
       prediction = (size_t) k;
   }
 }
 
 template<typename MatType>
 void GradBoosting<MatType>::Classify(const MatType& test,
-                                     arma::Row<size_t>& predictedLabels) 
+                                     arma::Row<size_t>& predictedLabels)
 {
   predictedLabels.clear();
   predictedLabels.resize(test.n_cols);
 
-  for (size_t i = 0; i < test.n_cols; ++i) 
+  for (size_t i = 0; i < test.n_cols; ++i)
   {
     size_t prediction;
     Classify(test.col(i), prediction);
@@ -163,7 +163,7 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
                                           const size_t numWeakLearners,
                                           const size_t minimumLeafSize,
                                           const double minimumGainSplit,
-                                          const size_t maximumDepth) 
+                                          const size_t maximumDepth)
 {
   // Clear the weak learners vector to in case it's preinitialised.
   weakLearners.clear();
@@ -174,10 +174,14 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
   for (size_t i = 0; i < labels.n_cols; ++i)
     residue(i) = (double) labels(i);
 
-  for (size_t model = 0; model < numWeakLearners; ++model) 
+  for (size_t model = 0; model < numWeakLearners; ++model)
   {
-    WeakLearnerType* w = new WeakLearnerType(data, datasetInfo, residue, minimumLeafSize, 
-      minimumGainSplit, maximumDepth);
+    WeakLearnerType* w = new WeakLearnerType(data,
+                                             datasetInfo,
+                                             residue,
+                                             minimumLeafSize,
+                                             minimumGainSplit,
+                                             maximumDepth);
 
     weakLearners.push_back(w);
 
@@ -186,10 +190,9 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
 
     if (model != numWeakLearners - 1)
       residue = residue - predictions;
-
   }
 }
 
-}
+} // namespace mlpack
 
 #endif

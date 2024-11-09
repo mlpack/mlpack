@@ -26,7 +26,7 @@ using namespace data;
  * Tests if the model gives a training accuracy > 60, without 
  * initiating a weak learner. Used default empty constructor.
 */
-TEST_CASE("GBIrisTrainMethod1", "[GradBoostGeneralTest]") 
+TEST_CASE("GBIrisTrainMethod1", "[GradBoostGeneralTest]")
 {
   arma::mat db;
   mlpack::data::DatasetInfo info;
@@ -48,9 +48,9 @@ TEST_CASE("GBIrisTrainMethod1", "[GradBoostGeneralTest]")
   gb.Classify(db, predictions);
 
   double accuracy = 0;
-  for (size_t i = 0; i < labels.n_elem; i++) 
+  for (size_t i = 0; i < labels.n_elem; i++)
   {
-    if (labels(i) == predictions(i)) 
+    if (labels(i) == predictions(i))
     {
       accuracy++;
     }
@@ -67,7 +67,7 @@ TEST_CASE("GBIrisTrainMethod1", "[GradBoostGeneralTest]")
  * Tests if the model gives a training accuracy > 60 given the data and a 
  * weak learner arguments. Used default empty constructor.
 */
-TEST_CASE("GBIrisTrainMethod2", "[GradBoostGeneralTest]") 
+TEST_CASE("GBIrisTrainMethod2", "[GradBoostGeneralTest]")
 {
   arma::mat db;
   mlpack::data::DatasetInfo info;
@@ -94,9 +94,9 @@ TEST_CASE("GBIrisTrainMethod2", "[GradBoostGeneralTest]")
   gb.Classify(db, predictions);
 
   double accuracy = 0;
-  for (size_t i = 0; i < labels.n_elem; i++) 
+  for (size_t i = 0; i < labels.n_elem; i++)
   {
-    if(labels(i) == predictions(i)) 
+    if (labels(i) == predictions(i))
     {
       accuracy++;
     }
@@ -106,7 +106,6 @@ TEST_CASE("GBIrisTrainMethod2", "[GradBoostGeneralTest]")
   accuracy *= 100.0;
 
   REQUIRE(accuracy > 60);
-
 }
 
 /**
@@ -114,7 +113,7 @@ TEST_CASE("GBIrisTrainMethod2", "[GradBoostGeneralTest]")
  * Tests if the model gives a testing accuracy > 60 given the data.
  * Used default empty constructor.
 */
-TEST_CASE("GBIrisTestAccuracy", "[GradBoostGeneralTest]") 
+TEST_CASE("GBIrisTestAccuracy", "[GradBoostGeneralTest]")
 {
   arma::mat db;
   mlpack::data::DatasetInfo info;
@@ -144,9 +143,9 @@ TEST_CASE("GBIrisTestAccuracy", "[GradBoostGeneralTest]")
   gb.Classify(testDb, predictions);
 
   double accuracy = 0;
-  for (size_t i = 0; i < testLabels.n_elem; i++) 
+  for (size_t i = 0; i < testLabels.n_elem; i++)
   {
-    if(testLabels(i) == predictions(i)) 
+    if (testLabels(i) == predictions(i))
     {
       accuracy++;
     }
@@ -156,13 +155,12 @@ TEST_CASE("GBIrisTestAccuracy", "[GradBoostGeneralTest]")
   accuracy *= 100.0;
 
   REQUIRE(accuracy > 60);
-
 }
 
 /**
  * Check the second constructor.
 */
-TEST_CASE("GBConstr1", "[GradBoostGeneralTest]") 
+TEST_CASE("GBConstr1", "[GradBoostGeneralTest]")
 {
   arma::mat db;
   mlpack::data::DatasetInfo info;
@@ -190,9 +188,9 @@ TEST_CASE("GBConstr1", "[GradBoostGeneralTest]")
   gb.Classify(testDb, predictions);
 
   double accuracy = 0;
-  for (size_t i = 0; i < testLabels.n_elem; i++) 
+  for (size_t i = 0; i < testLabels.n_elem; i++)
   {
-    if(testLabels(i) == predictions(i)) 
+    if (testLabels(i) == predictions(i))
     {
       accuracy++;
     }
@@ -201,13 +199,13 @@ TEST_CASE("GBConstr1", "[GradBoostGeneralTest]")
   accuracy = accuracy / ((double) testLabels.n_elem);
   accuracy *= 100.0;
 
-  REQUIRE(accuracy > 60);  
+  REQUIRE(accuracy > 60);
 }
 
 /**
  * Check the third constructor.
 */
-TEST_CASE("GBConstr2", "[GradBoostGeneralTest]") 
+TEST_CASE("GBConstr2", "[GradBoostGeneralTest]")
 {
   arma::mat db;
   mlpack::data::DatasetInfo info;
@@ -239,9 +237,9 @@ TEST_CASE("GBConstr2", "[GradBoostGeneralTest]")
   gb.Classify(testDb, predictions);
 
   double accuracy = 0;
-  for (size_t i = 0; i < testLabels.n_elem; i++) 
+  for (size_t i = 0; i < testLabels.n_elem; i++)
   {
-    if(testLabels(i) == predictions(i)) 
+    if (testLabels(i) == predictions(i))
     {
       accuracy++;
     }
@@ -250,14 +248,14 @@ TEST_CASE("GBConstr2", "[GradBoostGeneralTest]")
   accuracy = accuracy / ((double) testLabels.n_elem);
   accuracy *= 100.0;
 
-  REQUIRE(accuracy > 60);  
+  REQUIRE(accuracy > 60);
 }
 
 
 /**
  * Check the first classify method.
 */
-TEST_CASE("GBClassify1", "[GradBoostGeneralTest]") 
+TEST_CASE("GBClassify1", "[GradBoostGeneralTest]")
 {
   arma::mat db;
   mlpack::data::DatasetInfo info;
@@ -283,13 +281,13 @@ TEST_CASE("GBClassify1", "[GradBoostGeneralTest]")
 
   size_t prediction = gb.Classify(testDb.col(0));
 
-  REQUIRE(prediction == testLabels(0));  
+  REQUIRE(prediction == testLabels(0));
 }
 
 /**
  * Check the second classify method.
 */
-TEST_CASE("GBClassify2", "[GradBoostGeneralTest]") 
+TEST_CASE("GBClassify2", "[GradBoostGeneralTest]")
 {
   arma::mat db;
   mlpack::data::DatasetInfo info;
@@ -316,13 +314,13 @@ TEST_CASE("GBClassify2", "[GradBoostGeneralTest]")
   size_t prediction;
   gb.Classify(testDb.col(0), prediction);
 
-  REQUIRE(prediction == testLabels(0));  
+  REQUIRE(prediction == testLabels(0));
 }
 
 /**
  * Check the third classify method.
 */
-TEST_CASE("GBClassify3", "[GradBoostGeneralTest]") 
+TEST_CASE("GBClassify3", "[GradBoostGeneralTest]")
 {
   arma::mat db;
   mlpack::data::DatasetInfo info;
@@ -350,9 +348,9 @@ TEST_CASE("GBClassify3", "[GradBoostGeneralTest]")
   gb.Classify(testDb, predictions);
 
   double accuracy = 0;
-  for (size_t i = 0; i < testLabels.n_elem; i++) 
+  for (size_t i = 0; i < testLabels.n_elem; i++)
   {
-    if(testLabels(i) == predictions(i)) 
+    if (testLabels(i) == predictions(i))
     {
       accuracy++;
     }

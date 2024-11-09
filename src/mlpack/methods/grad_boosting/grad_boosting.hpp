@@ -21,7 +21,8 @@
 // Importing base components required to write mlpack methods.
 #include <mlpack/core.hpp>
 
-// Only using decision trees for now, therefore only including decision tree functionalities.
+// Only using decision trees for now, therefore only including 
+// decision tree functionalities.
 #include <mlpack/methods/decision_tree/decision_tree_regressor.hpp>
 
 
@@ -39,9 +40,9 @@ namespace mlpack {
 
 
 template<typename MatType = arma::mat>
-class GradBoosting 
+class GradBoosting
 {
- public: 
+ public:
   // Convenience typedef for the type of weak learner we are using.
   typedef mlpack::DecisionTreeRegressor<mlpack::MSEGain,
                       mlpack::BestBinaryNumericSplit,
@@ -207,9 +208,9 @@ class GradBoosting
   std::vector<WeakLearnerType*> weakLearners;
   //! The weights corresponding to each weak learner.
   std::vector<ElemType> alpha;
-}; 
+};
 
-}
+} // namespace mlpack
 
 // Include implementation.
 #include "grad_boosting_impl.hpp"
