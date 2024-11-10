@@ -73,7 +73,7 @@ GradBoosting(const MatType& data,
   numClasses(numClasses),
   numWeakLearners(numWeakLearners)
 {
-  TrainInternal(data, datasetInfo, labels, numWeakLearners, 
+  TrainInternal(data, datasetInfo, labels, numWeakLearners,
                 minimumLeafSize, minimumGainSplit, maximumDepth);
 }
 
@@ -166,8 +166,7 @@ void GradBoosting<MatType>::TrainInternal(const MatType& data,
                                           const size_t maximumDepth)
 {
   // Clear the weak learners vector to in case it's preinitialised.
-  weakLearners.clear();
-  
+  weakLearners.clear();  
   // Store residues.
   arma::Row<double> residue(labels.n_cols);
 
