@@ -53,7 +53,7 @@ ElemType BLEU<ElemType, PrecisionType>::Evaluate(
 {
   // WordVector is a string container type.
   // Also, TranslationCorpusType is an array of such containers.
-  typedef typename TranslationCorpusType::value_type WordVector;
+  using WordVector = typename TranslationCorpusType::value_type;
 
   // matchesByOrder: It catches how many times sequence of a particular order
   // is encountered in both reference corpus and translation corpus.

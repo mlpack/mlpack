@@ -115,8 +115,8 @@ template<typename MatType = arma::mat>
 class SparseCoding
 {
  public:
-  typedef typename GetColType<MatType>::type ColType;
-  typedef typename GetRowType<MatType>::type RowType;
+  using ColType = typename GetColType<MatType>::type;
+  using RowType = typename GetRowType<MatType>::type;
 
   /**
    * Set the parameters to SparseCoding.  lambda2 defaults to 0.  This

@@ -80,7 +80,7 @@ class MeanBiasErrorType
 }; // class MeanBiasErrorType
 
 // Default typedef for typical `arma::mat` usage.
-typedef MeanBiasErrorType<arma::mat> MeanBiasError;
+using MeanBiasError = MeanBiasErrorType<arma::mat>;
 
 } // namespace mlpack
 

@@ -78,7 +78,7 @@ class KDERules
                  TreeType& referenceNode,
                  const double oldScore) const;
 
-  typedef typename mlpack::TraversalInfo<TreeType> TraversalInfoType;
+  using TraversalInfoType = mlpack::TraversalInfo<TreeType>;
 
   //! Get traversal information.
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
@@ -210,7 +210,7 @@ class KDECleanRules
                  TreeType& /* referenceNode*/ ,
                  const double oldScore) const { return oldScore; }
 
-  typedef typename mlpack::TraversalInfo<TreeType> TraversalInfoType;
+  using TraversalInfoType = mlpack::TraversalInfo<TreeType>;
 
   //! Get traversal information.
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }

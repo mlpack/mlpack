@@ -407,7 +407,7 @@ class GlimpseType : public Layer<InputType, OutputType>
 }; // class GlimpseType
 
 // Standard Glimpse layer.
-typedef GlimpseType<arma::mat, arma::mat> Glimpse;
+using Glimpse = GlimpseType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

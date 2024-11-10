@@ -73,7 +73,7 @@ template <typename MatType, typename RegularizerType>
 void MultiheadAttentionType<MatType, RegularizerType>::
 Forward(const MatType& input, MatType& output)
 {
-  typedef typename arma::Cube<typename MatType::elem_type> CubeType;
+  using CubeType = arma::Cube<typename MatType::elem_type>;
 
   if (input.n_rows != embedDim *
       (selfAttention ? srcSeqLen : (tgtSeqLen + 2 * srcSeqLen)))
@@ -187,7 +187,7 @@ Backward(const MatType& /* input */,
          const MatType& gy,
          MatType& g)
 {
-  typedef typename arma::Cube<typename MatType::elem_type> CubeType;
+  using CubeType = arma::Cube<typename MatType::elem_type>;
 
   if (gy.n_rows != tgtSeqLen * embedDim)
   {
@@ -306,7 +306,7 @@ Gradient(const MatType& input,
          const MatType& error,
          MatType& gradient)
 {
-  typedef typename arma::Cube<typename MatType::elem_type> CubeType;
+  using CubeType = arma::Cube<typename MatType::elem_type>;
 
   if (input.n_rows != embedDim * (selfAttention ? srcSeqLen :
       (tgtSeqLen + 2 * srcSeqLen)))

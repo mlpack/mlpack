@@ -82,7 +82,7 @@ class SoftmaxType : public Layer<MatType>
 }; // class SoftmaxType
 
 // Convenience typedef.
-typedef SoftmaxType<arma::mat> Softmax;
+using Softmax = SoftmaxType<arma::mat>;
 
 } // namespace mlpack
 

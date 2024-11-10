@@ -33,7 +33,7 @@ TEST_CASE_METHOD(BRTestFixture,
   int n = 50, m = 4;
   arma::mat matX = arma::randu<arma::mat>(m, n);
   arma::rowvec omega = arma::randu<arma::rowvec>(m);
-  arma::rowvec y =  omega * matX;
+  arma::rowvec y = omega * matX;
 
   SetInputParam("input", std::move(matX));
   SetInputParam("responses", std::move(y));
@@ -59,7 +59,7 @@ TEST_CASE_METHOD(BRTestFixture,
   arma::mat matX = arma::randu<arma::mat>(m, n);
   arma::mat matXtest = arma::randu<arma::mat>(m, 2 * n);
   const arma::rowvec omega = arma::randu<arma::rowvec>(m);
-  arma::rowvec y =  omega * matX;
+  arma::rowvec y = omega * matX;
 
   BayesianLinearRegression<> model;
   model.Train(matX, y);
@@ -99,7 +99,7 @@ TEST_CASE_METHOD(BRTestFixture,
   arma::mat matX = arma::randu<arma::mat>(m, n);
   arma::mat matXtest = arma::randu<arma::mat>(m, 2 * n);
   const arma::rowvec omega = arma::randu<arma::rowvec>(m);
-  arma::rowvec y =  omega * matX;
+  arma::rowvec y = omega * matX;
 
   BayesianLinearRegression<> model;
   model.Train(matX, y);

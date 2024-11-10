@@ -228,7 +228,7 @@ class ConcatType : public MultiLayer<MatType>
 }; // class ConcatType.
 
 // Standard Concat layer.
-typedef ConcatType<arma::mat> Concat;
+using Concat = ConcatType<arma::mat>;
 
 } // namespace mlpack
 

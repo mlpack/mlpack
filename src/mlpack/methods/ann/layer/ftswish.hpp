@@ -108,7 +108,7 @@ class FTSwishType : public Layer<MatType>
 }; // class FTSwishType
 
 // Convenience typedefs.
-typedef FTSwishType<arma::mat> FTSwish;
+using FTSwish = FTSwishType<arma::mat>;
 
 } // namespace mlpack
 

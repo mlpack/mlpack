@@ -104,7 +104,7 @@ void RPlusPlusTreeAuxiliaryInformation<TreeType>::SplitAuxiliaryInfo(
     const size_t axis,
     const typename TreeType::ElemType cut)
 {
-  typedef HRectBound<EuclideanDistance, ElemType> Bound;
+  using Bound = HRectBound<EuclideanDistance, ElemType>;
   Bound& treeOneBound = treeOne->AuxiliaryInfo().OuterBound();
   Bound& treeTwoBound = treeTwo->AuxiliaryInfo().OuterBound();
 

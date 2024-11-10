@@ -50,8 +50,8 @@ class BinarySpaceTree<DistanceType, StatisticType, MatType, BoundType,
    */
   BreadthFirstDualTreeTraverser(RuleType& rule);
 
-  typedef QueueFrame<BinarySpaceTree, typename RuleType::TraversalInfoType>
-      QueueFrameType;
+  using QueueFrameType =
+      QueueFrame<BinarySpaceTree, typename RuleType::TraversalInfoType>;
 
   /**
    * Traverse the two trees.  This does not reset the number of prunes.

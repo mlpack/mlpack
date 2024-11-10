@@ -105,7 +105,7 @@ class LeakyReLUType : public Layer<MatType>
 // Convenience typedefs.
 
 // Standard LeakyReLU layer.
-typedef LeakyReLUType<arma::mat> LeakyReLU;
+using LeakyReLU = LeakyReLUType<arma::mat>;
 
 
 } // namespace mlpack

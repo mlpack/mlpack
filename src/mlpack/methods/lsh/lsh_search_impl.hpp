@@ -834,7 +834,7 @@ void LSHSearch<SortPolicy, MatType>::ReturnIndicesFromTable(
     {
       for (size_t p = 0; p < T + 1; ++p)
       {
-        const size_t hashInd =  hashMat(p, i); // Find the query's bucket.
+        const size_t hashInd = hashMat(p, i); // Find the query's bucket.
         const size_t tableRow = bucketRowInHashTable[hashInd];
 
         if (tableRow < secondHashSize)

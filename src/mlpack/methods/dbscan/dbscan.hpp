@@ -52,9 +52,9 @@ class DBSCAN
 {
  public:
   //! Easy access to the MatType.
-  typedef typename RangeSearchType::Mat MatType;
+  using MatType = typename RangeSearchType::Mat;
   //! Easy access to Element Type of the matrix.
-  typedef typename RangeSearchType::Mat::elem_type ElemType;
+  using ElemType = typename RangeSearchType::Mat::elem_type;
   /**
    * Construct the DBSCAN object with the given parameters.  The batchMode
    * parameter should be set to false in the case where RAM issues will be
