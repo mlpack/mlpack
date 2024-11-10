@@ -21,7 +21,7 @@
 // Importing base components required to write mlpack methods.
 #include <mlpack/core.hpp>
 
-// Only using decision trees for now, therefore only including 
+// Only using decision trees for now, therefore only including
 // decision tree functionalities.
 #include <mlpack/methods/decision_tree/decision_tree_regressor.hpp>
 
@@ -185,7 +185,6 @@ class GradBoosting
   void serialize(Archive& ar, const uint32_t version);
 
  private:
-
   /**
    * Internal utility training function.  
    */
