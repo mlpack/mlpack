@@ -607,3 +607,117 @@ TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
 
   REQUIRE(accuracy >= 0.85);
 }
+
+/**
+ * Test ComputeAverageUniqueness.
+ */
+TEST_CASE("ComputeAverageUniquenessTest", "[RandomForestTest]")
+{
+  using SBS = SequentialBootstrap<true>;
+
+  arma::mat indM(3 /* rows */, 6 /* cols */, arma::fill::zeros);
+
+  indM(0, 0) = indM(0, 1) = indM(0, 2) = 1.0;
+  indM(1, 2) = indM(1, 3) = 1.0;
+  indM(2, 4) = indM(2, 5) = 1.0;
+
+  const arma::vec avg(SBS::ComputeAverageUniqueness(indM));
+
+  REQUIRE(avg(0) == 5.0 / 6.0);
+  REQUIRE(avg(1) == 0.75);
+  REQUIRE(avg(2) == 1.0);
+}
+
+/**
+ * Test ComputeNextDrawProbabilities.
+ */
+TEST_CASE("ComputeNextDrawProbabilitiesTest", "[RandomForestTest]")
+{
+  using SBS = SequentialBootstrap<true>;
+
+  const arma::uvec phi1(1, arma::fill::value(1));
+  arma::mat indM(3 /* rows */, 6 /* cols */, arma::fill::zeros);
+
+  indM(0, 0) = indM(0, 1) = indM(0, 2) = 1.0;
+  indM(1, 2) = indM(1, 3) = 1.0;
+  indM(2, 4) = indM(2, 5) = 1.0;
+
+  const arma::vec delta2(SBS::ComputeNextDrawProbabilities(phi1, indM));
+
+  REQUIRE(delta2(0) == 5.0 / 14.0);
+  REQUIRE(delta2(1) == 3.0 / 14.0);
+  REQUIRE(delta2(2) == 6.0 / 14.0);
+}
+
+struct Generator {
+  using result_type = int;
+
+  static int min()
+  {
+    return 0;
+  }
+
+  static int max()
+  {
+    return 2;
+  }
+
+  int operator()() const
+  {
+    static int random(0);
+    int rand(random);
+
+    random = 1;
+    return rand;
+  }
+};
+
+/**
+ * Test ComputeSamples.
+ */
+TEST_CASE("ComputeSamplesTest", "[RandomForestTest]")
+{
+  using SBS = SequentialBootstrap<true, Generator>;
+
+  arma::mat indM(3 /* rows */, 6 /* cols */, arma::fill::zeros);
+
+  indM(0, 0) = indM(0, 1) = indM(0, 2) = 1.0;
+  indM(1, 2) = indM(1, 3) = 1.0;
+  indM(2, 4) = indM(2, 5) = 1.0;
+
+  SBS bootstrap(indM, Generator());
+  const arma::uvec phi(bootstrap.ComputeSamples());
+
+  REQUIRE(phi(0) < 3);
+  REQUIRE(phi(1) < 3);
+  REQUIRE(phi(2) < 3);
+}
+
+/**
+ * Test SequentialBootstrap.
+ */
+TEST_CASE("SequentialBootstrapTest", "[RandomForestTest]")
+{
+  using SBS = SequentialBootstrap<true, Generator>;
+
+  const arma::mat ds(10 /* rows */, 3 /* cols */, arma::fill::randu);
+  const arma::Row<size_t> labels{ 1, 0, 0 };
+  const arma::vec weights(3, arma::fill::ones);
+  arma::mat indM(3 /* rows */, 6 /* cols */, arma::fill::zeros);
+
+  indM(0, 0) = indM(0, 1) = indM(0, 2) = 1.0;
+  indM(1, 2) = indM(1, 3) = 1.0;
+  indM(2, 4) = indM(2, 5) = 1.0;
+
+  SBS bootstrap(indM, Generator());
+  arma::mat bsDataset;
+  arma::Row<size_t> bsLabels;
+  arma::vec bsWeights;
+
+  bootstrap.Bootstrap(ds, labels, weights, bsDataset, bsLabels, bsWeights);
+
+  REQUIRE(ds.n_rows == bsDataset.n_rows);
+  REQUIRE(ds.n_cols == bsDataset.n_cols);
+  REQUIRE(labels.n_cols == bsLabels.n_cols);
+  REQUIRE(weights.n_rows == bsWeights.n_rows);
+}

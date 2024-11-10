@@ -70,14 +70,14 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 
 ---
 
- * `rf = RandomForest(data, labels, numClasses,          numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0)`
- * `rf = RandomForest(data, labels, numClasses, weights, numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0)`
+ * `rf = RandomForest(data, labels, numClasses,          numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, dimSelector={}, bootstrap={})`
+ * `rf = RandomForest(data, labels, numClasses, weights, numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, dimSelector={}, bootstrap={})`
    - Train on numerical-only data (optionally with instance weights).
 
 ---
 
- * `rf = RandomForest(data, info, labels, numClasses,          numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0)`
- * `rf = RandomForest(data, info, labels, numClasses, weights, numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0)`
+ * `rf = RandomForest(data, info, labels, numClasses,          numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, dimSelector={}, bootstrap={})`
+ * `rf = RandomForest(data, info, labels, numClasses, weights, numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, dimSelector={}, bootstrap={})`
    - Train on mixed categorical data (optionally with instance weights).
 
 ---
@@ -96,6 +96,8 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 | `minLeafSize` | `size_t` | Minimum number of points in each leaf node of each decision tree. | `1` |
 | `minGainSplit` | `double` | Minimum gain for a node to split in each decision tree. | `1e-7` |
 | `maxDepth` | `size_t` | Maximum depth for each decision tree. (0 means no limit.) | `0` |
+| `dimSelector` | `DimensionSelectionType` | | `DimensionSelectionType()` |
+| `bootstrap` | `BootstrapType` | Bootstrap strategy. | `BootstrapType()` |    
 | `warmStart` | `bool` | (Only available in `Train()`.)  If true, training adds `numTrees` trees to the random forest.  If `false`, an entirely new random forest will be created. | `false` |
 
  * If OpenMP is enabled<!-- TODO: link! -->, one thread will be used to train
@@ -120,8 +122,8 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 If training is not done as part of the constructor call, it can be done with one
 of the following versions of the `Train()` member function:
 
- * `rf.Train(data, labels, numClasses,          numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false)`
- * `rf.Train(data, labels, numClasses, weights, numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false)`
+ * `rf.Train(data, labels, numClasses,          numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false, dimSelector={}, bootstrap={})`
+ * `rf.Train(data, labels, numClasses, weights, numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false, dimSelector={}, bootstrap={})`
    - Train on numerical-only data (optionally with instance weights).
    - Returns a `double` with the average gain of each tree in the random forest.
      By default, this is the Gini gain, unless a different
@@ -130,8 +132,8 @@ of the following versions of the `Train()` member function:
 
 ---
 
- * `rf.Train(data, info, labels, numClasses,          numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false)`
- * `rf.Train(data, info, labels, numClasses, weights, numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false)`
+ * `rf.Train(data, info, labels, numClasses,          numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false, dimSelector={}, bootstrap={})`
+ * `rf.Train(data, info, labels, numClasses, weights, numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false, dimSelector={}, bootstrap={})`
    - Train on mixed categorical data (optionally with instance weights).
 
 ---
@@ -438,7 +440,8 @@ RandomForest<FitnessFunction,
              DimensionSelectionType,
              NumericSplitType,
              CategoricalSplitType,
-             UseBootstrap>
+             UseBootstrap,
+             BootstrapType>
 ```
 
  * `FitnessFunction`: the measure of goodness to use when deciding on tree
@@ -450,7 +453,9 @@ RandomForest<FitnessFunction,
  * `CategoricalSplitType`: the strategy used for finding splits on categorical
    data dimensions
  * `UseBootstrap`: a boolean indicating whether or not to use a bootstrap sample
-   when training each tree in the forest
+   when training each tree in the forest. This argument will be removed in future
+   versions as it is superseded by the BootstrapType strategy.
+ * `BootstrapType`: the strategy used to bootstrap the samples per tree.
 
 Note that the first four of these template parameters are exactly the same as
 the template parameters for the
@@ -712,3 +717,23 @@ class CustomCategoricalSplit
    dataset will be used to train each decision tree.
  * If `false` _(default for the `ExtraTrees` [variant](#fully-custom-behavior))_, the full
    dataset will be used to train each decision tree.
+ * This parameter will be removed in future versions. A value of `false` will then be
+   equivalent to `BootstrapType` `IdentityBootstrap` and a value of `true` will be
+   equivalent to `DefaultBootstrap`.
+
+#### `BootstrapType`
+
+Classes compatible with the `BootstrapType` concept support a single bool class template argument `UseWeights` to specify
+whether classes `Bootstrap()` method should bootstrap the weights or not.
+
+The concept requires a method with the following signature:
+
+`void Bootstrap(dataset, labels, weights, bootstrapDataset, bootstrapLabels, bootstrapWeights);`
+
+The library provides three implementations for the `BootstrapType` concept.
+
+| **name** | **description** |
+|----------|-----------------|
+| `IdentityBootstrap` | This implementation is a no-op. It just copies the input `dataset`, `labels`, and `weights` to the output `bootstrapDataset`, `bootstrapLabels`, and `bootstrapWeihts` |
+| `DefaultBootstrap` | This implementation of a bootstrap is a random sampling with replacement. |
+| `SequentialBootstrap` | This implementation of a bootstrap is a random sampling with replacement as presented in: M. López de Prado (2018): "Advances in Financial Machine Learning", pp. 63-65 |

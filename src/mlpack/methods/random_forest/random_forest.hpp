@@ -38,7 +38,8 @@ template<typename FitnessFunction = GiniGain,
          typename DimensionSelectionType = MultipleRandomDimensionSelect,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
-         bool UseBootstrap = true>
+         bool UseBootstrap = true,
+         template<bool> class BootstrapType = DefaultBootstrap>
 class RandomForest
 {
  public:
@@ -67,6 +68,7 @@ class RandomForest
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param bootstrap Instantiated bootstrap policy.
    */
   template<typename MatType>
   RandomForest(const MatType& dataset,
@@ -77,7 +79,8 @@ class RandomForest
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               BootstrapType<false> bootstrap = BootstrapType<false>());
 
   /**
    * Create a random forest, training on the given labeled training data with
@@ -96,6 +99,7 @@ class RandomForest
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param bootstrap Instantiated bootstrap policy.
    */
   template<typename MatType>
   RandomForest(const MatType& dataset,
@@ -107,7 +111,8 @@ class RandomForest
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               BootstrapType<false> bootstrap = BootstrapType<false>());
 
   /**
    * Create a random forest, training on the given weighted labeled training
@@ -123,6 +128,7 @@ class RandomForest
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param bootstrap Instantiated bootstrap policy.
    */
   template<typename MatType>
   RandomForest(const MatType& dataset,
@@ -134,7 +140,8 @@ class RandomForest
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               BootstrapType<true> bootstrap = BootstrapType<true>());
 
   /**
    * Create a random forest, training on the given weighted labeled training
@@ -154,6 +161,7 @@ class RandomForest
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param bootstrap Instantiated bootstrap policy.
    */
   template<typename MatType>
   RandomForest(const MatType& dataset,
@@ -166,7 +174,8 @@ class RandomForest
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               BootstrapType<true> bootstrap = BootstrapType<true>());
 
   /**
    * Train the random forest on the given labeled training data with the given
@@ -185,6 +194,7 @@ class RandomForest
    * @param warmStart When set to `true`, it adds `numTrees` new trees to the
    *     existing random forest otherwise a new forest is trained from scratch.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param bootstrap Instantiated bootstrap policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
@@ -197,7 +207,8 @@ class RandomForest
                const size_t maximumDepth = 0,
                const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               BootstrapType<false> bootstrap = BootstrapType<false>());
 
   /**
    * Train the random forest on the given labeled training data with the given
@@ -219,6 +230,7 @@ class RandomForest
    * @param warmStart When set to `true`, it adds `numTrees` new trees to the
    *     existing random forest else a new forest is trained from scratch.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param bootstrap Instantiated bootstrap policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
@@ -232,7 +244,8 @@ class RandomForest
                const size_t maximumDepth = 0,
                const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               BootstrapType<false> bootstrap = BootstrapType<false>());
 
   /**
    * Train the random forest on the given weighted labeled training data with
@@ -252,6 +265,7 @@ class RandomForest
    * @param warmStart When set to `true`, it adds `numTrees` new trees to the
    *     existing random forest else a new forest is trained from scratch.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param bootstrap Instantiated bootstrap policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
@@ -265,7 +279,8 @@ class RandomForest
                const size_t maximumDepth = 0,
                const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               BootstrapType<false> bootstrap = BootstrapType<false>());
 
   /**
    * Train the random forest on the given weighted labeled training data with
@@ -287,6 +302,7 @@ class RandomForest
    * @param warmStart When set to `true`, it adds `numTrees` new trees to the
    *     existing random forest else a new forest is trained from scratch.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param bootstrap Instantiated bootstrap policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
@@ -301,7 +317,8 @@ class RandomForest
                const size_t maximumDepth = 0,
                const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               BootstrapType<true> bootstrap = BootstrapType<true>());
 
   /**
    * Predict the class of the given point.  If the random forest has not been
@@ -383,6 +400,7 @@ class RandomForest
    * @param dimensionSelector Instantiated dimension selection policy.
    * @param warmStart When set to `true`, it fits new trees and add them to the
    *     previous forest else a new forest is trained from scratch.
+   * @param bootstrap Instantiated bootstrap policy.
    * @tparam UseWeights Whether or not to use the weights parameter.
    * @tparam UseDatasetInfo Whether or not to use the datasetInfo parameter.
    * @tparam MatType The type of data matrix (i.e. arma::mat).
@@ -399,6 +417,7 @@ class RandomForest
                const double minimumGainSplit,
                const size_t maximumDepth,
                DimensionSelectionType& dimensionSelector,
+               BootstrapType<UseWeights>& bootstrap,
                const bool warmStart = false);
 
   //! The trees in the forest.
@@ -438,7 +457,8 @@ using ExtraTrees = RandomForest<FitnessFunction,
                                 DimensionSelectionType,
                                 RandomBinaryNumericSplit,
                                 CategoricalSplitType,
-                                false>;
+                                false,
+                                IdentityBootstrap>;
 
 } // namespace mlpack
 
