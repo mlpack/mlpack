@@ -32,7 +32,7 @@ TEST_CASE("GBIrisTrainMethod1", "[GradBoostGeneralTest]")
   mlpack::data::DatasetInfo info;
   if (!data::Load("iris.csv", db, info))
     FAIL("Cannot load test dataset iris.csv!");
-  
+
   arma::Row<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
     FAIL("Cannot load labels for iris iris_labels.txt");
@@ -73,7 +73,7 @@ TEST_CASE("GBIrisTrainMethod2", "[GradBoostGeneralTest]")
   mlpack::data::DatasetInfo info;
   if (!data::Load("iris.csv", db, info))
     FAIL("Cannot load test dataset iris.csv!");
-  
+
   arma::Row<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
     FAIL("Cannot load labels for iris iris_labels.txt");
@@ -81,13 +81,13 @@ TEST_CASE("GBIrisTrainMethod2", "[GradBoostGeneralTest]")
   const size_t numClasses = arma::max(labels.row(0)) + 1;
   const size_t numWeakLearners = 5;
 
-  const size_t minimumLeafSize=10;
-  const double minimumGainSplit=1e-7;
-  const size_t maximumDepth=2;
+  const size_t minimumLeafSize = 10;
+  const double minimumGainSplit = 1e-7;
+  const size_t maximumDepth = 2;
 
   GradBoosting gb;
 
-  gb.Train(db, info, labels, numClasses, numWeakLearners, 
+  gb.Train(db, info, labels, numClasses, numWeakLearners,
             minimumLeafSize, minimumGainSplit, maximumDepth);
 
   arma::Row<size_t> predictions;
@@ -119,7 +119,7 @@ TEST_CASE("GBIrisTestAccuracy", "[GradBoostGeneralTest]")
   mlpack::data::DatasetInfo info;
   if (!data::Load("iris_train.csv", db, info))
     FAIL("Cannot load test dataset iris_train.csv!");
-  
+
   arma::Row<size_t> labels;
   if (!data::Load("iris_train_labels.csv", labels))
     FAIL("Cannot load labels for iris iris_train_labels.txt");
@@ -166,7 +166,7 @@ TEST_CASE("GBConstr1", "[GradBoostGeneralTest]")
   mlpack::data::DatasetInfo info;
   if (!data::Load("iris_train.csv", db, info))
     FAIL("Cannot load test dataset iris_train.csv!");
-  
+
   arma::Row<size_t> labels;
   if (!data::Load("iris_train_labels.csv", labels))
     FAIL("Cannot load labels for iris iris_train_labels.txt");
@@ -211,7 +211,7 @@ TEST_CASE("GBConstr2", "[GradBoostGeneralTest]")
   mlpack::data::DatasetInfo info;
   if (!data::Load("iris_train.csv", db, info))
     FAIL("Cannot load test dataset iris_train.csv!");
-  
+
   arma::Row<size_t> labels;
   if (!data::Load("iris_train_labels.csv", labels))
     FAIL("Cannot load labels for iris iris_train_labels.txt");
@@ -230,7 +230,7 @@ TEST_CASE("GBConstr2", "[GradBoostGeneralTest]")
   const double minimumGainSplit = 1e-7;
   const size_t maximumDepth = 2;
 
-  GradBoosting gb(db, info, labels, numClasses, numWeakLearners, 
+  GradBoosting gb(db, info, labels, numClasses, numWeakLearners,
     minimumLeafSize, minimumGainSplit, maximumDepth);
 
   arma::Row<size_t> predictions;
@@ -261,7 +261,7 @@ TEST_CASE("GBClassify1", "[GradBoostGeneralTest]")
   mlpack::data::DatasetInfo info;
   if (!data::Load("iris_train.csv", db, info))
     FAIL("Cannot load test dataset iris_train.csv!");
-  
+
   arma::Row<size_t> labels;
   if (!data::Load("iris_train_labels.csv", labels))
     FAIL("Cannot load labels for iris iris_train_labels.txt");
@@ -293,7 +293,7 @@ TEST_CASE("GBClassify2", "[GradBoostGeneralTest]")
   mlpack::data::DatasetInfo info;
   if (!data::Load("iris_train.csv", db, info))
     FAIL("Cannot load test dataset iris_train.csv!");
-  
+
   arma::Row<size_t> labels;
   if (!data::Load("iris_train_labels.csv", labels))
     FAIL("Cannot load labels for iris iris_train_labels.txt");
@@ -326,7 +326,7 @@ TEST_CASE("GBClassify3", "[GradBoostGeneralTest]")
   mlpack::data::DatasetInfo info;
   if (!data::Load("iris_train.csv", db, info))
     FAIL("Cannot load test dataset iris_train.csv!");
-  
+
   arma::Row<size_t> labels;
   if (!data::Load("iris_train_labels.csv", labels))
     FAIL("Cannot load labels for iris iris_train_labels.txt");
