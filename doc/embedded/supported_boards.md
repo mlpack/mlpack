@@ -54,7 +54,7 @@ cmake \
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | CORTEXA8 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#cortexa8) | [Cortex A8 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A8) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA9  | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#CORTEXA9) |[Cortex A9 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A9) |
+| CORTEXA9  | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#cortexa9) |[Cortex A9 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A9) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | CORTEXA15 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#cortexa15) | [Cortex A15 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A15)  |
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
