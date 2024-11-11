@@ -31,7 +31,7 @@ template<typename SplitPolicyType,
 class RPlusTreeSplit
 {
  public:
-  typedef SplitPolicyType SplitPolicy;
+  using SplitPolicy = SplitPolicyType;
   /**
    * Split a leaf node using the "default" algorithm.  If necessary, this split
    * will propagate upwards through the tree.

@@ -265,7 +265,7 @@ class MultiheadAttentionType : public Layer<MatType>
 
  private:
   //! Element Type of the output.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   //! Target sequence length.
   size_t tgtSeqLen;
@@ -343,7 +343,7 @@ class MultiheadAttentionType : public Layer<MatType>
 }; // class MultiheadAttention
 
 // Standard MultiheadAttention layer using no regularization.
-typedef MultiheadAttentionType<arma::mat, NoRegularizer> MultiheadAttention;
+using MultiheadAttention = MultiheadAttentionType<arma::mat, NoRegularizer>;
 
 } // namespace mlpack
 

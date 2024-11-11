@@ -35,7 +35,7 @@ void PrintR(util::Params& params,
   const util::BindingDetails& doc = params.Doc();
 
   map<string, util::ParamData>& parameters = params.Parameters();
-  typedef map<string, util::ParamData>::iterator ParamIter;
+  using ParamIter = map<string, util::ParamData>::iterator;
 
   // First, let's get a list of input and output options.  We'll take two passes
   // so that the required input options are the first in the list.

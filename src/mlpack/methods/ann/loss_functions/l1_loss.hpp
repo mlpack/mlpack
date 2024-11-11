@@ -79,7 +79,7 @@ class L1LossType
 }; // class L1LossType
 
 // Default typedef for typical `arma::mat` usage.
-typedef L1LossType<arma::mat> L1Loss;
+using L1Loss = L1LossType<arma::mat>;
 
 } // namespace mlpack
 

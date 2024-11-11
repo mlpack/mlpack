@@ -310,9 +310,9 @@ TEST_CASE_METHOD(
  *
  * The vc2 dataset labels file contains 40 0s, 100 1s, and 67 2s.
  * Considering a test ratio of 0.3,
- * Number of 0s in the test set lables =  12 ( floor(40 * 0.3) = floor(12) ).
- * Number of 1s in the test set labels =  30 ( floor(100 * 0.3) = floor(30) ).
- * Number of 2s in the test set labels =  20 ( floor(67 * 0.3) = floor(20.1) ).
+ * Number of 0s in the test set lables = 12 ( floor(40 * 0.3) = floor(12) ).
+ * Number of 1s in the test set labels = 30 ( floor(100 * 0.3) = floor(30) ).
+ * Number of 2s in the test set labels = 20 ( floor(67 * 0.3) = floor(20.1) ).
  * Total points in the test set = 62 ( 12 + 30 + 20 ).
  */
 TEST_CASE_METHOD(

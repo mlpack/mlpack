@@ -553,16 +553,16 @@ std::cout << "Saved tree with " << tree.Dataset().n_cols << " points to "
 ---
 
 Load a 32-bit floating point `MeanSplitKDTree` from disk, then traverse it
-manually and find the number of leaf nodes with fewer than 10 children.
+manually and find the number of leaf nodes with fewer than 10 points.
 
 ```c++
 // This assumes the tree has already been saved to 'tree.bin' (as in the example
 // above).
 
 // This convenient typedef saves us a long type name!
-typedef mlpack::MeanSplitKDTree<mlpack::EuclideanDistance,
-                                mlpack::EmptyStatistic,
-                                arma::fmat> TreeType;
+using TreeType = mlpack::MeanSplitKDTree<mlpack::EuclideanDistance,
+                                         mlpack::EmptyStatistic,
+                                         arma::fmat>;
 
 TreeType tree;
 mlpack::data::Load("tree.bin", "tree", tree);

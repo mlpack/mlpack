@@ -127,7 +127,7 @@ class HardTanHType : public Layer<MatType>
 // Convenience typedefs.
 
 // Standard HardTanH layer.
-typedef HardTanHType<arma::mat> HardTanH;
+using HardTanH = HardTanHType<arma::mat>;
 
 } // namespace mlpack
 

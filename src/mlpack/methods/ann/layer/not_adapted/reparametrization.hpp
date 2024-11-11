@@ -190,7 +190,7 @@ class ReparametrizationType : public Layer<InputType, OutputType>
 }; // class ReparametrizationType
 
 // Standard Reparametrization layer.
-typedef ReparametrizationType<arma::mat, arma::mat> Reparametrization;
+using Reparametrization = ReparametrizationType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

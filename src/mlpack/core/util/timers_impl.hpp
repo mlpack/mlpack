@@ -110,7 +110,7 @@ inline std::string Timers::Print(const std::chrono::microseconds& totalDuration)
 
   // Also output convenient day/hr/min/sec.
   // The following line is a custom duration for a day.
-  typedef std::chrono::duration<int, std::ratio<60 * 60 * 24, 1>> days;
+  using days = std::chrono::duration<int, std::ratio<60 * 60 * 24, 1>>;
   days d = std::chrono::duration_cast<days>(totalDuration);
   std::chrono::hours h = std::chrono::duration_cast<std::chrono::hours>(
       totalDuration % days(1));

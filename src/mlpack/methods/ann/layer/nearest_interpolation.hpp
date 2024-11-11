@@ -102,7 +102,7 @@ class NearestInterpolationType : public Layer<MatType>
   std::vector<double> scaleFactors;
 }; // class NearestInterpolation
 
-typedef NearestInterpolationType<arma::mat> NearestInterpolation;
+using NearestInterpolation = NearestInterpolationType<arma::mat>;
 
 } // namespace mlpack
 

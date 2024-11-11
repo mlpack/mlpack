@@ -111,7 +111,7 @@ TEST_CASE("GetParamLoadedMatTest", "[CLIOptionTest]")
   // Create value.
   string filename = "hello.csv";
   arma::mat m(5, 5, arma::fill::ones);
-  typedef std::tuple<string, size_t, size_t> TupleType;
+  using TupleType = std::tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
   tuple<arma::mat, TupleType> tuple = make_tuple(m, testTuple);
   d.value = tuple;
@@ -137,7 +137,7 @@ TEST_CASE("GetParamUnloadedMatTest", "[CLIOptionTest]")
   arma::mat test(5, 5, arma::fill::ones);
   data::Save("test.csv", test);
   arma::mat m;
-  typedef tuple<string, size_t, size_t> TupleType;
+  using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
   tuple<arma::mat, TupleType> tuple = make_tuple(m, testTuple);
   d.value = tuple;
@@ -165,7 +165,7 @@ TEST_CASE("GetParamUmatTest", "[CLIOptionTest]")
   // Create value.
   string filename = "hello.csv";
   arma::Mat<size_t> m(5, 5, arma::fill::ones);
-  typedef tuple<string, size_t, size_t> TupleType;
+  using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
   tuple<arma::Mat<size_t>, TupleType> tuple = make_tuple(m, testTuple);
   d.value = tuple;
@@ -192,7 +192,7 @@ TEST_CASE("GetParamUnloadedUmatTest", "[CLIOptionTest]")
   arma::Mat<size_t> test(5, 5, arma::fill::ones);
   data::Save("test.csv", test);
   arma::Mat<size_t> m;
-  typedef tuple<string, size_t, size_t> TupleType;
+  using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
   tuple<arma::Mat<size_t>, TupleType> tuple = make_tuple(m, testTuple);
   d.value = tuple;
@@ -236,7 +236,7 @@ TEST_CASE("GetParamDatasetInfoMatTest", "[CLIOptionTest]")
   data::DatasetInfo dd;
   arma::mat m;
 
-  typedef tuple<string, size_t, size_t> TupleType;
+  using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
   tuple<data::DatasetInfo, arma::mat> tuple1 = make_tuple(dd, m);
   tuple<decltype(tuple1), TupleType> tuple2 = make_tuple(tuple1, testTuple);
@@ -313,7 +313,7 @@ TEST_CASE("RawParamMatTest", "[CLIOptionTest]")
   // Create value.
   string filename = "hello.csv";
   arma::mat m(5, 5, arma::fill::ones);
-  typedef tuple<string, size_t, size_t> TupleType;
+  using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
   tuple<arma::mat, TupleType> tuple = make_tuple(m, testTuple);
   d.value = tuple;
@@ -363,7 +363,7 @@ TEST_CASE("GetRawParamDatasetInfoTest", "[CLIOptionTest]")
   // Create tuples.
   data::DatasetInfo dd(3);
   arma::mat m(3, 3, arma::fill::randu);
-  typedef tuple<string, size_t, size_t> TupleType;
+  using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
   tuple<data::DatasetInfo, arma::mat> tuple1 = make_tuple(dd, m);
   tuple<decltype(tuple1), TupleType> tuple2 = make_tuple(tuple1, testTuple);
@@ -392,7 +392,7 @@ TEST_CASE("OutputParamMatTest", "[CLIOptionTest]")
   // Create value.
   string filename = "test.csv";
   arma::mat m(3, 3, arma::fill::randu);
-  typedef tuple<string, size_t, size_t> TupleType;
+  using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
   tuple<arma::mat, TupleType> t = make_tuple(m, testTuple);
 
@@ -420,7 +420,7 @@ TEST_CASE("OutputParamUmatTest", "[CLIOptionTest]")
   // Create value.
   string filename = "test.csv";
   arma::Mat<size_t> m(3, 3, arma::fill::randu);
-  typedef tuple<string, size_t, size_t> TupleType;
+  using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
   tuple<arma::Mat<size_t>, TupleType> t = make_tuple(m, testTuple);
 
@@ -513,7 +513,7 @@ TEST_CASE("SetParamMatrixTest", "[CLIOptionTest]")
   // Create initial value.
   string filename = "hello.csv";
   arma::mat m(5, 5, arma::fill::randu);
-  typedef tuple<string, size_t, size_t> TupleType;
+  using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
   d.value = make_tuple(m, testTuple);
 
@@ -565,7 +565,7 @@ TEST_CASE("SetParamDatasetInfoMatTest", "[CLIOptionTest]")
   string filename = "test.csv";
   arma::mat m(3, 3, arma::fill::randu);
   DatasetInfo di(3);
-  typedef tuple<string, size_t, size_t> TupleType;
+  using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
   tuple<DatasetInfo, arma::mat> t1 = make_tuple(di, m);
   tuple<tuple<DatasetInfo, arma::mat>, TupleType> t2 = make_tuple(t1,
@@ -608,7 +608,7 @@ TEST_CASE("GetAllocatedMemoryNonModelTest", "[CLIOptionTest]")
   // Also test with a matrix type.
   arma::mat test(10, 10, arma::fill::ones);
   string filename = "test.csv";
-  typedef tuple<string, size_t, size_t> TupleType;
+  using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
   tuple<arma::mat, TupleType> t = make_tuple(test, testTuple);
   d.value = t;
@@ -656,7 +656,7 @@ TEST_CASE("DeleteAllocatedMemoryNonModelTest", "[CLIOptionTest]")
 
   arma::mat test(10, 10, arma::fill::ones);
   string filename = "test.csv";
-  typedef tuple<string, size_t, size_t> TupleType;
+  using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
   tuple<arma::mat, TupleType> t = make_tuple(test, testTuple);
   d.value = t;

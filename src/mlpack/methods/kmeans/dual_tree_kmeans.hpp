@@ -41,7 +41,7 @@ class DualTreeKMeans
 {
  public:
   //! Convenience typedef.
-  typedef TreeType<DistanceType, DualTreeKMeansStatistic, MatType> Tree;
+  using Tree = TreeType<DistanceType, DualTreeKMeansStatistic, MatType>;
 
   template<typename TreeDistanceType,
            typename IgnoredStatType,

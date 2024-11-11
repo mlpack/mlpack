@@ -136,7 +136,7 @@ class LinearNoBiasType : public Layer<MatType>
 // Convenience typedefs.
 
 // Standard Linear without bias layer using no regularization.
-typedef LinearNoBiasType<arma::mat, NoRegularizer> LinearNoBias;
+using LinearNoBias = LinearNoBiasType<arma::mat, NoRegularizer>;
 
 } // namespace mlpack
 

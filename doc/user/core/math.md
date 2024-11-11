@@ -447,7 +447,10 @@ std::cout << "Trigamma(1.0):  " << t2 << "." << std::endl;
 ## `RandVector()`
 
  * `RandVector(v)` generates a random vector on the unit sphere (i.e. with an
-   L2-norm of 1) and stores it in `v` (an `arma::vec`).
+   L2-norm of 1) and stores it in the vector `v`.
+
+ * `v` should be a dense floating-point Armadillo vector (e.g. `arma::vec` or
+   `arma::fvec`).
 
  * The [Box-Muller transform](https://en.wikipedia.org/wiki/Box-Muller_transform)
    is used to generate the vector.

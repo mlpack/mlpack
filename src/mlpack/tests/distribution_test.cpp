@@ -36,10 +36,10 @@ TEMPLATE_TEST_CASE("DiscreteDistributionConstructorTest", "[DistributionTest]",
     (std::pair<float, size_t>),
     (std::pair<float, unsigned short>))
 {
-  typedef typename TestType::first_type ElemType;
-  typedef typename TestType::second_type ObsElemType;
-  typedef typename arma::Mat<ElemType> MatType;
-  typedef typename arma::Mat<ObsElemType> ObsMatType;
+  using ElemType = typename TestType::first_type;
+  using ObsElemType = typename TestType::second_type;
+  using MatType = arma::Mat<ElemType>;
+  using ObsMatType = arma::Mat<ObsElemType>;
 
   DiscreteDistribution<MatType, ObsMatType> d(5);
 
@@ -61,10 +61,10 @@ TEMPLATE_TEST_CASE("DiscreteDistributionProbabilityTest", "[DistributionTest]",
     (std::pair<float, size_t>),
     (std::pair<float, unsigned short>))
 {
-  typedef typename TestType::first_type ElemType;
-  typedef typename TestType::second_type ObsElemType;
-  typedef typename arma::Mat<ElemType> MatType;
-  typedef typename arma::Mat<ObsElemType> ObsMatType;
+  using ElemType = typename TestType::first_type;
+  using ObsElemType = typename TestType::second_type;
+  using MatType = arma::Mat<ElemType>;
+  using ObsMatType = arma::Mat<ObsElemType>;
 
   DiscreteDistribution<MatType, ObsMatType> d(5);
 
@@ -87,11 +87,11 @@ TEMPLATE_TEST_CASE("DiscreteDistributionRandomTest", "[DistributionTest]",
     (std::pair<float, size_t>),
     (std::pair<float, unsigned short>))
 {
-  typedef typename TestType::first_type ElemType;
-  typedef typename TestType::second_type ObsElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
-  typedef typename arma::Mat<ObsElemType> ObsMatType;
+  using ElemType = typename TestType::first_type;
+  using ObsElemType = typename TestType::second_type;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
+  using ObsMatType = arma::Mat<ObsElemType>;
 
   DiscreteDistribution<MatType, ObsMatType> d(arma::Col<size_t>("3"));
 
@@ -123,10 +123,10 @@ TEMPLATE_TEST_CASE("DiscreteDistributionTrainTest", "[DistributionTest]",
     (std::pair<float, size_t>),
     (std::pair<float, unsigned short>))
 {
-  typedef typename TestType::first_type ElemType;
-  typedef typename TestType::second_type ObsElemType;
-  typedef typename arma::Mat<ElemType> MatType;
-  typedef typename arma::Mat<ObsElemType> ObsMatType;
+  using ElemType = typename TestType::first_type;
+  using ObsElemType = typename TestType::second_type;
+  using MatType = arma::Mat<ElemType>;
+  using ObsMatType = arma::Mat<ObsElemType>;
 
   DiscreteDistribution<MatType, ObsMatType> d(4);
 
@@ -150,11 +150,11 @@ TEMPLATE_TEST_CASE("DiscreteDistributionTrainProbTest", "[DistributionTest]",
     (std::pair<float, size_t>),
     (std::pair<float, unsigned short>))
 {
-  typedef typename TestType::first_type ElemType;
-  typedef typename TestType::second_type ObsElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
-  typedef typename arma::Mat<ObsElemType> ObsMatType;
+  using ElemType = typename TestType::first_type;
+  using ObsElemType = typename TestType::second_type;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
+  using ObsMatType = arma::Mat<ObsElemType>;
 
   DiscreteDistribution<MatType, ObsMatType> d(3);
 
@@ -179,10 +179,10 @@ TEMPLATE_TEST_CASE("MultiDiscreteDistributionTrainProbTest",
     (std::pair<float, size_t>),
     (std::pair<float, unsigned short>))
 {
-  typedef typename TestType::first_type ElemType;
-  typedef typename TestType::second_type ObsElemType;
-  typedef typename arma::Mat<ElemType> MatType;
-  typedef typename arma::Mat<ObsElemType> ObsMatType;
+  using ElemType = typename TestType::first_type;
+  using ObsElemType = typename TestType::second_type;
+  using MatType = arma::Mat<ElemType>;
+  using ObsMatType = arma::Mat<ObsElemType>;
 
   DiscreteDistribution<MatType, ObsMatType> d("10 10 10");
 
@@ -208,10 +208,10 @@ TEMPLATE_TEST_CASE("MultiDiscreteDistributionConstructorTest",
     (std::pair<float, size_t>),
     (std::pair<float, unsigned short>))
 {
-  typedef typename TestType::first_type ElemType;
-  typedef typename TestType::second_type ObsElemType;
-  typedef typename arma::Mat<ElemType> MatType;
-  typedef typename arma::Mat<ObsElemType> ObsMatType;
+  using ElemType = typename TestType::first_type;
+  using ObsElemType = typename TestType::second_type;
+  using MatType = arma::Mat<ElemType>;
+  using ObsMatType = arma::Mat<ObsElemType>;
 
   DiscreteDistribution<MatType, ObsMatType> d("4 4 4 4");
 
@@ -231,11 +231,11 @@ TEMPLATE_TEST_CASE("MultiDiscreteDistributionTrainTest", "[DistributionTest]",
     (std::pair<float, size_t>),
     (std::pair<float, unsigned short>))
 {
-  typedef typename TestType::first_type ElemType;
-  typedef typename TestType::second_type ObsElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
-  typedef typename arma::Mat<ObsElemType> ObsMatType;
+  using ElemType = typename TestType::first_type;
+  using ObsElemType = typename TestType::second_type;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
+  using ObsMatType = arma::Mat<ObsElemType>;
 
   std::vector<VecType> pro;
   pro.push_back(VecType("0.1, 0.3, 0.6"));
@@ -261,11 +261,11 @@ TEMPLATE_TEST_CASE("MultiDiscreteDistributionTrainProTest",
     (std::pair<float, size_t>),
     (std::pair<float, unsigned short>))
 {
-  typedef typename TestType::first_type ElemType;
-  typedef typename TestType::second_type ObsElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
-  typedef typename arma::Mat<ObsElemType> ObsMatType;
+  using ElemType = typename TestType::first_type;
+  using ObsElemType = typename TestType::second_type;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
+  using ObsMatType = arma::Mat<ObsElemType>;
 
   DiscreteDistribution<MatType, ObsMatType> d("5 5 5");
 
@@ -293,11 +293,11 @@ TEMPLATE_TEST_CASE("DiscreteLogProbabilityTest", "[DistributionTest]",
     (std::pair<float, size_t>),
     (std::pair<float, unsigned short>))
 {
-  typedef typename TestType::first_type ElemType;
-  typedef typename TestType::second_type ObsElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
-  typedef typename arma::Mat<ObsElemType> ObsMatType;
+  using ElemType = typename TestType::first_type;
+  using ObsElemType = typename TestType::second_type;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
+  using ObsMatType = arma::Mat<ObsElemType>;
 
   // Same case as before.
   DiscreteDistribution<MatType, ObsMatType> d("5 5");
@@ -326,11 +326,11 @@ TEMPLATE_TEST_CASE("DiscreteProbabilityTest", "[DistributionTest]",
     (std::pair<float, size_t>),
     (std::pair<float, unsigned short>))
 {
-  typedef typename TestType::first_type ElemType;
-  typedef typename TestType::second_type ObsElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
-  typedef typename arma::Mat<ObsElemType> ObsMatType;
+  using ElemType = typename TestType::first_type;
+  using ObsElemType = typename TestType::second_type;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
+  using ObsMatType = arma::Mat<ObsElemType>;
 
   // Same case as before.
   DiscreteDistribution<MatType, ObsMatType> d("5 5");
@@ -358,7 +358,7 @@ TEMPLATE_TEST_CASE("DiscreteProbabilityTest", "[DistributionTest]",
 TEMPLATE_TEST_CASE("GaussianDistributionEmptyConstructor", "[DistributionTest]",
     float, double)
 {
-  typedef typename arma::Mat<TestType> MatType;
+  using MatType = arma::Mat<TestType>;
 
   GaussianDistribution<MatType> d;
 
@@ -373,7 +373,7 @@ TEMPLATE_TEST_CASE("GaussianDistributionEmptyConstructor", "[DistributionTest]",
 TEMPLATE_TEST_CASE("GaussianDistributionDimensionalityConstructor",
                    "[DistributionTest]", float, double)
 {
-  typedef typename arma::Mat<TestType> MatType;
+  using MatType = arma::Mat<TestType>;
 
   GaussianDistribution<MatType> d(4);
 
@@ -389,9 +389,9 @@ TEMPLATE_TEST_CASE("GaussianDistributionDimensionalityConstructor",
 TEMPLATE_TEST_CASE("GaussianDistributionDistributionConstructor",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   VecType mean(3);
   MatType covariance(3, 3);
@@ -417,9 +417,9 @@ TEMPLATE_TEST_CASE("GaussianDistributionDistributionConstructor",
 TEMPLATE_TEST_CASE("GaussianDistributionProbabilityTest", "[DistributionTest]",
     float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   VecType mean("5 6 3 3 2");
   MatType cov("6 1 1 1 2;"
@@ -450,9 +450,9 @@ TEMPLATE_TEST_CASE("GaussianDistributionProbabilityTest", "[DistributionTest]",
 TEMPLATE_TEST_CASE("GaussianUnivariateProbabilityTest", "[DistributionTest]",
     float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-4 : 1e-7;
 
@@ -496,9 +496,9 @@ TEMPLATE_TEST_CASE("GaussianUnivariateProbabilityTest", "[DistributionTest]",
 TEMPLATE_TEST_CASE("GaussianMultivariateProbabilityTest", "[DistributionTest]",
     float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-4 : 1e-7;
 
@@ -569,9 +569,9 @@ TEMPLATE_TEST_CASE("GaussianMultivariateProbabilityTest", "[DistributionTest]",
 TEMPLATE_TEST_CASE("GaussianMultipointMultivariateProbabilityTest",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   // Same case as before.
   VecType mean = "5 6 3 3 2";
@@ -607,9 +607,9 @@ TEMPLATE_TEST_CASE("GaussianMultipointMultivariateProbabilityTest",
 TEMPLATE_TEST_CASE("GaussianDistributionRandomTest", "[DistributionTest]",
     float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   const ElemType tol = (std::is_same_v<ElemType, float>) ? 0.3 : 0.125;
 
@@ -644,9 +644,9 @@ TEMPLATE_TEST_CASE("GaussianDistributionRandomTest", "[DistributionTest]",
 TEMPLATE_TEST_CASE("GaussianDistributionTrainTest", "[DistributionTest]", float,
     double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-3 : 1e-5;
 
@@ -691,9 +691,9 @@ TEMPLATE_TEST_CASE("GaussianDistributionTrainTest", "[DistributionTest]", float,
 TEMPLATE_TEST_CASE("GaussianDistributionTrainWithProbabilitiesTest",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   const ElemType tol = (std::is_same_v<ElemType, float>) ? 0.25 : 0.1;
 
@@ -735,9 +735,9 @@ TEMPLATE_TEST_CASE("GaussianDistributionTrainWithProbabilitiesTest",
 TEMPLATE_TEST_CASE("GaussianDistributionWithProbabilties1Test",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   const ElemType tol1 = (std::is_same_v<ElemType, float>) ? 1e-10 : 1e-17;
   const ElemType tol2 = (std::is_same_v<ElemType, float>) ? 1e-2 : 1e-4;
@@ -779,9 +779,9 @@ TEMPLATE_TEST_CASE("GaussianDistributionWithProbabilties1Test",
 TEMPLATE_TEST_CASE("GaussianDistributionTrainWithTwoDistProbabilitiesTest",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   VecType mean1 = ("5.0");
   VecType cov1 = ("4.0");
@@ -836,8 +836,8 @@ TEMPLATE_TEST_CASE("GaussianDistributionTrainWithTwoDistProbabilitiesTest",
 TEMPLATE_TEST_CASE("GammaDistributionTrainTest", "[DistributionTest]", float,
     double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using MatType = arma::Mat<ElemType>;
 
   // Create a gamma distribution random generator.
   ElemType alphaReal = 5.3;
@@ -887,9 +887,9 @@ TEMPLATE_TEST_CASE("GammaDistributionTrainTest", "[DistributionTest]", float,
 TEMPLATE_TEST_CASE("GammaDistributionTrainWithProbabilitiesTest",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   const ElemType tol = (std::is_same_v<ElemType, float>) ? 0.03 : 0.015;
 
@@ -938,9 +938,9 @@ TEMPLATE_TEST_CASE("GammaDistributionTrainWithProbabilitiesTest",
 TEMPLATE_TEST_CASE("GammaDistributionTrainAllProbabilities1Test",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   ElemType alphaReal = 5.4;
   ElemType betaReal = 6.7;
@@ -982,9 +982,9 @@ TEMPLATE_TEST_CASE("GammaDistributionTrainAllProbabilities1Test",
 TEMPLATE_TEST_CASE("GammaDistributionTrainTwoDistProbabilities1Test",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   const ElemType tol = (std::is_same_v<ElemType, float>) ? 0.25 : 0.075;
 
@@ -1042,8 +1042,8 @@ TEMPLATE_TEST_CASE("GammaDistributionTrainTwoDistProbabilities1Test",
 TEMPLATE_TEST_CASE("GammaDistributionFittingTest", "[DistributionTest]", float,
     double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using MatType = arma::Mat<ElemType>;
 
   // Offset from the actual alpha/beta. 10% is quite a relaxed tolerance since
   // the random points we generate are few (for test speed) and might be fitted
@@ -1103,8 +1103,8 @@ TEMPLATE_TEST_CASE("GammaDistributionFittingTest", "[DistributionTest]", float,
 TEMPLATE_TEST_CASE("GammaDistributionTrainConstructorTest",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using MatType = arma::Mat<ElemType>;
 
   const MatType data = arma::randu<MatType>(10, 500);
 
@@ -1126,9 +1126,9 @@ TEMPLATE_TEST_CASE("GammaDistributionTrainConstructorTest",
 TEMPLATE_TEST_CASE("GammaDistributionTrainStatisticsTest", "[DistributionTest]",
     float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   const MatType data = arma::randu<MatType>(1, 500);
 
@@ -1153,9 +1153,9 @@ TEMPLATE_TEST_CASE("GammaDistributionTrainStatisticsTest", "[DistributionTest]",
 TEMPLATE_TEST_CASE("GammaDistributionRandomTest", "[DistributionTest]", float,
     double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   const VecType a("2.0 2.5 3.0"), b("0.4 0.6 1.3");
   const size_t numPoints = 4000;
@@ -1179,9 +1179,9 @@ TEMPLATE_TEST_CASE("GammaDistributionRandomTest", "[DistributionTest]", float,
 TEMPLATE_TEST_CASE("GammaDistributionProbabilityTest", "[DistributionTest]",
     float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   // Train two 1-dimensional distributions.
   const VecType a1("2.0"), b1("0.9"), a2("3.1"), b2("1.4");
@@ -1220,9 +1220,9 @@ TEMPLATE_TEST_CASE("GammaDistributionProbabilityTest", "[DistributionTest]",
 TEMPLATE_TEST_CASE("GammaDistributionLogProbabilityTest", "[DistributionTest]",
     float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   // Train two 1-dimensional distributions.
   const VecType a1("2.0"), b1("0.9"), a2("3.1"), b2("1.4");
@@ -1268,12 +1268,12 @@ TEMPLATE_TEST_CASE("DiscreteDistributionTest", "[DistributionTest]",
     (std::pair<float, size_t>),
     (std::pair<float, unsigned short>))
 {
-  typedef typename TestType::first_type ElemType;
-  typedef typename TestType::second_type ObsElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
-  typedef typename arma::Col<ObsElemType> ObsVecType;
-  typedef typename arma::Mat<ObsElemType> ObsMatType;
+  using ElemType = typename TestType::first_type;
+  using ObsElemType = typename TestType::second_type;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
+  using ObsVecType = arma::Col<ObsElemType>;
+  using ObsMatType = arma::Mat<ObsElemType>;
 
   const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-4 : 1e-8;
 
@@ -1373,9 +1373,9 @@ TEST_CASE("GaussianDistributionTest", "[DistributionTest]")
 TEMPLATE_TEST_CASE("LaplaceDistributionTest", "[DistributionTest]", float,
     double)
 {
-  typedef TestType ElemType;
-  typedef arma::Col<ElemType> VecType;
-  typedef arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   VecType mean(20);
   mean.randu();
@@ -1398,9 +1398,9 @@ TEMPLATE_TEST_CASE("LaplaceDistributionTest", "[DistributionTest]", float,
 TEMPLATE_TEST_CASE("LaplaceDistributionProbabilityTest", "[DistributionTest]",
     float, double)
 {
-  typedef TestType ElemType;
-  typedef arma::Col<ElemType> VecType;
-  typedef arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   LaplaceDistribution<MatType> l(VecType("0.0"), 1.0);
 
@@ -1428,9 +1428,9 @@ TEMPLATE_TEST_CASE("LaplaceDistributionProbabilityTest", "[DistributionTest]",
 TEMPLATE_TEST_CASE("LaplaceDistributionLogProbabilityTest",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef arma::Col<ElemType> VecType;
-  typedef arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   LaplaceDistribution<MatType> l(VecType("0.0"), 1.0);
 
@@ -1513,7 +1513,7 @@ TEST_CASE("RegressionDistributionTest", "[DistributionTest]")
 TEMPLATE_TEST_CASE("DiagonalGaussianDistributionEmptyConstructor",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   DiagonalGaussianDistribution<arma::Mat<ElemType>> d;
 
@@ -1528,7 +1528,7 @@ TEMPLATE_TEST_CASE("DiagonalGaussianDistributionEmptyConstructor",
 TEMPLATE_TEST_CASE("DiagonalGaussianDistributionDimensionalityConstructor",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
+  using ElemType = TestType;
 
   DiagonalGaussianDistribution<arma::Mat<ElemType>> d(4);
 
@@ -1543,9 +1543,9 @@ TEMPLATE_TEST_CASE("DiagonalGaussianDistributionDimensionalityConstructor",
 TEMPLATE_TEST_CASE("DiagonalGaussianDistributionConstructor",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   VecType mean = arma::randu<VecType>(3);
   VecType covariance = arma::randu<VecType>(3);
@@ -1567,9 +1567,9 @@ TEMPLATE_TEST_CASE("DiagonalGaussianDistributionConstructor",
 TEMPLATE_TEST_CASE("DiagonalGaussianDistributionProbabilityTest",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   VecType mean("2 5 3 4 1");
   VecType cov("3 1 5 3 2");
@@ -1596,9 +1596,9 @@ TEMPLATE_TEST_CASE("DiagonalGaussianDistributionProbabilityTest",
 TEMPLATE_TEST_CASE("DiagonalGaussianUnivariateProbabilityTest",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-4 : 1e-7;
 
@@ -1636,9 +1636,9 @@ TEMPLATE_TEST_CASE("DiagonalGaussianUnivariateProbabilityTest",
 TEMPLATE_TEST_CASE("DiagonalGaussianMultivariateProbabilityTest",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-4 : 1e-7;
 
@@ -1671,9 +1671,9 @@ TEMPLATE_TEST_CASE("DiagonalGaussianMultivariateProbabilityTest",
 TEMPLATE_TEST_CASE("DiagonalGaussianMultipointMultivariateProbabilityTest",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   VecType mean = "2 5 3 7 2";
   VecType cov("9 2 1 4 8");
@@ -1702,9 +1702,9 @@ TEMPLATE_TEST_CASE("DiagonalGaussianMultipointMultivariateProbabilityTest",
 TEMPLATE_TEST_CASE("DiagonalGaussianDistributionRandomTest",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   const ElemType tol = (std::is_same_v<ElemType, float>) ? 0.2 : 0.1;
 
@@ -1735,9 +1735,9 @@ TEMPLATE_TEST_CASE("DiagonalGaussianDistributionRandomTest",
 TEMPLATE_TEST_CASE("DiagonalGaussianDistributionTrainTest",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-3 : 1e-5;
 
@@ -1774,9 +1774,9 @@ TEMPLATE_TEST_CASE("DiagonalGaussianDistributionTrainTest",
 TEMPLATE_TEST_CASE("DiagonalGaussianUnbiasedEstimatorTest",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-4 : 1e-7;
 
@@ -1812,9 +1812,9 @@ TEMPLATE_TEST_CASE("DiagonalGaussianUnbiasedEstimatorTest",
 TEMPLATE_TEST_CASE("DiagonalGaussianWeightedParametersReductionTest",
     "[DistributionTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Col<ElemType> VecType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using VecType = arma::Col<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   const ElemType tol = (std::is_same_v<ElemType, float>) ? 1e-4 : 1e-7;
 

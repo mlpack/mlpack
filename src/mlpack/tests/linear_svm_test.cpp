@@ -575,7 +575,7 @@ TEST_CASE("LinearSVMLBFGSTwoClasses", "[LinearSVMTest]")
     for (size_t i = 0; i < points / 2; ++i)
     {
       data.col(i) = g1.Random();
-      labels(i) =  0;
+      labels(i) = 0;
     }
     for (size_t i = points / 2; i < points; ++i)
     {
@@ -844,7 +844,7 @@ TEST_CASE("LinearSVMParallelSGDTwoClasses", "[LinearSVMTest]")
     for (size_t i = 0; i < points / 2; ++i)
     {
       data.col(i) = g1.Random();
-      labels(i) =  0;
+      labels(i) = 0;
     }
     for (size_t i = points / 2; i < points; ++i)
     {
@@ -875,9 +875,9 @@ TEST_CASE("LinearSVMParallelSGDTwoClasses", "[LinearSVMTest]")
  */
 TEMPLATE_TEST_CASE("LinearSVMSparseLBFGSTest", "[LinearSVMTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::SpMat<ElemType> SparseMatType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using SparseMatType = arma::SpMat<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   // Create a random dataset.
   SparseMatType dataset;
@@ -908,9 +908,9 @@ TEMPLATE_TEST_CASE("LinearSVMSparseLBFGSTest", "[LinearSVMTest]", float, double)
 TEMPLATE_TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest]", float,
     double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Mat<ElemType> MatType;
-  typedef typename arma::Col<ElemType> VecType;
+  using ElemType = TestType;
+  using MatType = arma::Mat<ElemType>;
+  using VecType = arma::Col<ElemType>;
 
   const size_t points = 1000;
   const size_t inputSize = 5;
@@ -1015,9 +1015,9 @@ TEMPLATE_TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest]", float,
 TEMPLATE_TEST_CASE("LinearSVMClassifySinglePointTest", "[LinearSVMTest]", float,
     double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Mat<ElemType> MatType;
-  typedef typename arma::Col<ElemType> VecType;
+  using ElemType = TestType;
+  using MatType = arma::Mat<ElemType>;
+  using VecType = arma::Col<ElemType>;
 
   const size_t points = 500;
   const size_t inputSize = 5;
@@ -1229,7 +1229,7 @@ TEST_CASE("LinearSVMCallbackTest", "[LinearSVMTest]")
 TEMPLATE_TEST_CASE("LinearSVMConstructorVariantTest", "[LinearSVMTest]",
     arma::fmat, arma::mat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Create some random data.  The results here do not matter all that much;
   // this is more of a test that all constructor variants successfully compile
@@ -1327,7 +1327,7 @@ TEMPLATE_TEST_CASE("LinearSVMConstructorVariantTest", "[LinearSVMTest]",
 TEMPLATE_TEST_CASE("LinearSVMTrainVariantTest", "[LinearSVMTest]", arma::fmat,
     arma::mat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Create some random data.  The results here do not matter all that much;
   // this is more of a test that all constructor variants successfully compile

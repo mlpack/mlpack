@@ -80,7 +80,7 @@ class DualTreeBoruvka
 {
  public:
   //! Convenience typedef.
-  typedef TreeType<DistanceType, DTBStat, MatType> Tree;
+  using Tree = TreeType<DistanceType, DTBStat, MatType>;
 
  private:
   //! Permutations of points during tree building.

@@ -59,7 +59,7 @@ template<bool TakeRoot = true, typename MatType = arma::mat>
 class MahalanobisDistance
 {
  public:
-  typedef typename GetColType<MatType>::type VecType;
+  using VecType = typename GetColType<MatType>::type;
 
   /**
    * Initialize the Mahalanobis distance with the empty matrix as Q.

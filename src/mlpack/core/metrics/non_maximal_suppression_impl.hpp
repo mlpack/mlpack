@@ -83,7 +83,7 @@ void NMS<UseCoordinates>::Evaluate(
         sortedIndices);
 
     BoundingBoxesType x1 = boundingBoxes.submat(arma::uvec(1).fill(0),
-        sortedIndices);;
+        sortedIndices);
 
     BoundingBoxesType y2 = boundingBoxes.submat(arma::uvec(1).fill(3),
         sortedIndices);

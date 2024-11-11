@@ -213,7 +213,7 @@ The `KNN` class is, specifically, a typedef of the more extensible
 distance.
 
 ```c++
-typedef NeighborSearch<NearestNeighborSort, EuclideanDistance> KNN;
+using KNN = NeighborSearch<NearestNeighborSort, EuclideanDistance>;
 ```
 
 Using the `KNN` class is particularly simple; first, the object must be
