@@ -61,12 +61,12 @@ public:
                  LabelsType& bootstrapLabels,
                  WeightsType& bootstrapWeights)
   {
-    ::Bootstrap<UseWeights>(dataset,
-                            labels,
-                            weights,
-                            bootstrapDataset,
-                            bootstrapLabels,
-                            bootstrapWeights);
+    mlpack::Bootstrap<UseWeights>(dataset,
+                                  labels,
+                                  weights,
+                                  bootstrapDataset,
+                                  bootstrapLabels,
+                                  bootstrapWeights);
   }
 };
 
