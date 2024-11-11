@@ -46,7 +46,7 @@ cmake \
 ```
 
 |-----------------------------------------------------------------------------
-| Architecture\_NAME | link to crosscompiler | CMake command | Example applications |
+| BOARD\_NAME | link to crosscompiler | CMake command | Example applications |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | ARM11    | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv6-eabihf.html) | [Sysroot and toolchain prefix](#arm11) | [ARM11 on Wikipedia](https://en.wikipedia.org/wiki/ARM11) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
