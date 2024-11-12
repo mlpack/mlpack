@@ -49,8 +49,9 @@ void Bootstrap(const MatType& dataset,
  * Default bootstrap strategy that uses the ::Bootstrap() function. 
  */
 template<bool UseWeights>
-class DefaultBootstrap {
-public:
+class DefaultBootstrap
+{
+ public:
   template<typename MatType,
            typename LabelsType,
            typename WeightsType>
@@ -74,8 +75,9 @@ public:
  * No-op bootstrap strategy that just copies the input to the output.
  */
 template<bool UseWeights>
-class IdentityBootstrap {
-public:
+class IdentityBootstrap
+{
+ public:
   template<typename MatType,
            typename LabelsType,
            typename WeightsType>
@@ -97,8 +99,9 @@ public:
  * Sequential bootstrap.
  */
 template<bool UseWeights, typename G = std::mt19937>
-class SequentialBootstrap {
-public:
+class SequentialBootstrap
+{
+ public:
   explicit SequentialBootstrap(const arma::mat& indicatorMatrix,
                                const G& generator = G(std::random_device()())) :
     SequentialBootstrap(indicatorMatrix, indicatorMatrix.n_rows, generator)
@@ -129,7 +132,7 @@ public:
       throw std::invalid_argument("SequentialBootstrap::Bootstrap(): "
           "labels and indicatorMatrix n_rows differ!");
 
-    // observations are stored as columns and dimensions 
+    // observations are stored as columns and dimensions
     // (number of features) as rows.
 
     const arma::uvec phi(ComputeSamples());
@@ -156,7 +159,8 @@ public:
 
   static arma::vec ComputeAverageUniqueness(const arma::mat& indicatorMatrix)
   {
-    arma::rowvec concurrency(arma::sum(indicatorMatrix, 0)); // sum of each column
+    // sum of each column
+    arma::rowvec concurrency(arma::sum(indicatorMatrix, 0));
     auto uniqueness(
       indicatorMatrix.each_row()
       / concurrency.clamp(1.0,
@@ -167,7 +171,7 @@ public:
   }
 
   static arma::vec ComputeNextDrawProbabilities(const arma::uvec& phi,
-                                                const arma::mat& indicatorMatrix)
+                                             const arma::mat& indicatorMatrix)
   {
     arma::vec avg(indicatorMatrix.n_rows);
     arma::uvec rows(phi);
@@ -181,7 +185,7 @@ public:
     return avg / arma::sum(avg);
   }
 
-private:
+ private:
   const arma::mat indicatorMatrix;
   const arma::uvec colIndices;
   const arma::uword sampleCount;
