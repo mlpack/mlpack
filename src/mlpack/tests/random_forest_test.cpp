@@ -650,22 +650,22 @@ TEST_CASE("ComputeNextDrawProbabilitiesTest", "[RandomForestTest]")
 }
 
 struct Generator {
-  using result_type = int;
+  using result_type = unsigned;
 
-  constexpr static int min()
+  constexpr static result_type min()
   {
     return 0;
   }
 
-  constexpr static int max()
+  constexpr static result_type max()
   {
     return 2;
   }
 
-  int operator()() const
+  result_type operator()() const
   {
-    static int random(0);
-    int rand(random);
+    static result_type random(0);
+    result_type rand(random);
 
     random = 1;
     return rand;
