@@ -1071,7 +1071,7 @@ div#sidebar ul {
   border-top: 2px solid #ccc;
   padding: 0.5em;
   list-style-type: none;
-  padding-left: 0.5em;
+  padding-right: 0em;
   margin-bottom: 0px;
 }
 

@@ -47,11 +47,11 @@
     </a>
     <a xlink:href="https://www.youtube.com/@mlpack/videos" target="_top">
       <image x="320" y="66" width="15" height="15" href="youtube.svg" />
-      <text x="430" y="77" text-anchor="middle">mlpack Youtube channel</text>
+      <text x="430" y="79" text-anchor="middle">mlpack Youtube channel</text>
     </a>
     <a xlink:href="https://github.com/mlpack/models" target="_top">
-      <image x="320" y="83" width="14" height="14" href="github.svg" />
-      <text x="430" y="95" text-anchor="middle">mlpack models repository</text>
+      <image x="320" y="85" width="14" height="14" href="github.svg" />
+      <text x="430" y="97" text-anchor="middle">mlpack models repository</text>
     </a>
   </g>
 
