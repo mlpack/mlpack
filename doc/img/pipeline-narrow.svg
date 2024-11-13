@@ -161,21 +161,21 @@
     <line x1="140" y1="820" x2="150" y2="810" />
 
     <g class="pipeline_elem">
-      <a xlink:href="../user/modeling.md" target="_top">
+      <a xlink:href="../user/modeling.html" target="_top">
         <rect x="10" y="820" rx="20" ry="20" width="260" height="100" />
         <text x="140" y="840" text-anchor="middle" class="header">Modeling</text>
       </a>
 
-      <a xlink:href="../user/modeling.md#classification" target="_top">
+      <a xlink:href="../user/modeling.html#classification" target="_top">
         <text x="140" y="865" text-anchor="middle">Classification</text>
       </a>
-      <a xlink:href="../user/modeling.md#regression" target="_top">
+      <a xlink:href="../user/modeling.html#regression" target="_top">
         <text x="140" y="880" text-anchor="middle">Regression</text>
       </a>
-      <a xlink:href="../user/modeling.md#clustering" target="_top">
+      <a xlink:href="../user/modeling.html#clustering" target="_top">
         <text x="140" y="895" text-anchor="middle">Clustering</text>
       </a>
-      <a xlink:href="../user/modeling.md#geometric-algorithms" target="_top">
+      <a xlink:href="../user/modeling.html#geometric-algorithms" target="_top">
         <text x="140" y="910" text-anchor="middle">Geometric algorithms</text>
       </a>
     </g>
