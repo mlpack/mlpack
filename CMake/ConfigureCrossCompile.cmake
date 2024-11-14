@@ -27,6 +27,7 @@ if (CMAKE_CROSSCOMPILING)
     if (NOT COMPILE_SUCCESS)
       message(FATAL_ERROR "The C++ cross-compiler at ${CMAKE_CXX_COMPILER} is "
         "not able to compile a trivial test program.  Check the CXXFLAGS!")
+    endif ()
   else ()
     check_cxx_source_compiles("int main() { return 0; }" COMPILE_SUCCESS
         OUTPUT_VARIABLE COMPILE_OUTPUT)
