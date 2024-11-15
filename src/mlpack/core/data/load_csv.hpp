@@ -99,21 +99,6 @@ class LoadCSV
   // Functions for Numeric Parser
 
   /**
-  * Returns a bool value showing whether data was loaded successfully or not.
-  *
-  * Parses a csv file and loads the data into the given matrix. In the first pass,
-  * the function will determine the number of cols and rows in the given file.
-  * Once the rows and cols are fixed we initialize the matrix with zeros. In 
-  * the second pass, the function converts each value to required datatype
-  * and sets it equal to val. 
-  *
-  * @param x Matrix in which data will be loaded.
-  * @param f File stream to access the data file.
-  */
-  template<typename eT>
-  bool LoadNumericCSV(arma::Mat<eT>& x, std::fstream& f);
-
-  /**
   * Converts the given string token to assigned datatype and assigns
   * this value to the given address. The address here will be a
   * matrix location eg. matrix(row, col).

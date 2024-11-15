@@ -120,60 +120,6 @@ bool LoadCSV::ConvertToken(eT& val,
   return true;
 }
 
-template<typename eT>
-bool LoadCSV::LoadNumericCSV(arma::Mat<eT>& x, std::fstream& f)
-{
-  bool loadOkay = f.good();
-  f.clear();
-  std::pair<size_t, size_t> mat_size = GetMatrixSize<true>(f);
-  x.zeros(mat_size.first, mat_size.second);
-  size_t row = 0;
-
-  std::string lineString;
-  std::stringstream lineStream;
-  std::string token;
-
-  while (f.good())
-  {
-    // Parse the file line by line.
-    std::getline(f, lineString);
-
-    if (lineString.size() == 0)
-      break;
-
-    lineStream.clear();
-    lineStream.str(lineString);
-
-    size_t col = 0;
-
-    while (lineStream.good())
-    {
-      // Parse each line.
-      std::getline(lineStream, token, ',');
-
-      // This will handle loading of both dense and sparse.
-      // Initialize tmp_val of type eT with value 0.
-      eT tmpVal = eT(0);
-
-      if (ConvertToken<eT>(tmpVal, token))
-      {
-        x.at(row, col) = tmpVal;
-        ++col;
-      }
-      else
-      {
-        // Printing failed token and it's location.
-        Log::Warn << "Failed to convert token " << token << ", at row " << row
-            << ", column " << col << " of matrix!";
-
-        return false;
-      }
-    }
-    ++row;
-  }
-  return loadOkay;
-}
-
 inline void LoadCSV::NumericMatSize(std::stringstream& lineStream,
                                     size_t& col,
                                     const char delim)

@@ -164,7 +164,12 @@ bool Load(const std::string& filename,
   if (loadType != FileType::HDF5Binary)
   {
     if (loadType == FileType::CSVASCII)
-      success = loader.LoadNumericCSV(matrix, stream);
+    {
+      arma::field<std::string> headers;
+      success = matrix.load(arma::csv_name(filename, headers, arma::csv_opts::trans),
+          arma::csv_ascii);
+      transpose = false;
+    }
     else
       success = matrix.load(stream, ToArmaFileType(loadType));
   }
