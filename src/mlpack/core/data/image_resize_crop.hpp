@@ -19,53 +19,102 @@ namespace mlpack {
 namespace data {
 
 
-void resize(const unsigned char* image_data, int s_width, int s_height,
-    unsigned char*& frame_buffer_out, int d_width, int d_height, int num_channel)
+/**
+ * Image resize/crop interfaces.
+ */
+
+/**
+ * Resize the images matrix.
+ *
+ * @param images The input matrix that contains the images to be resized.
+ * @param info Contains relevant input images information.
+ * @param resizedImages The output matrix the contains the resized images.
+ * @param newWidth The new requested width for the resized images.
+ * @param newHeight The new requested height for the resized images.
+ */
+template<typename eT>
+void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
+    arma::Mat resizedImages, const size_t newWidth, const size_t newHeight)
 {
-  stbir_resize_uint8(image_data, s_width, s_height, 0,
-                     frame_buffer_out, d_width, d_height, 0, num_channel);
+  if (images.n_rows != resizedImages and images.n_cols != resizedImages.n_cols)
+  {
+    std::ostringstream oss;
+    oss << "ResizeImage(): the resizedImage matrix need to have identical"
+      " dimensions to the images matrix" << std::endl;
+  }
+
+  for (size_t i = 0; i < images.n_cols; ++i)
+  {
+    stbir_resize_uint8(image.colptr(i), info.Width(), info.Height(), 0,
+                       resizedImages.colptr(i), newWidth, newHeight, 0,
+                       info.Channels());
+  }
 }
 
+/**
+ * This function resizes and crop the images in order to keep the aspect ratio
+ * and allows to keep the area of interest of the image. Assuming that the
+ * area of interest is usually in the center.
+ *
+ * Most of images have not equal dimensions, in this function we identify which
+ * one has the largest ratio between these dimensions, and crop the difference
+ * between these two dimensions and then resize the image to the requested one.
+ *
+ * This is required to keep high usable resolution, since most 
+ * object detection / classification models require equal and low dimensions.
+ * If this is not necessary you can use the resize function only.
+ * 
+ * @param images The input matrix that contains the images to be resized.
+ * @param info Contains relevant input images information.
+ * @param resizedImages The output matrix the contains the resized images.
+ * @param newWidth The new requested width for the resized images.
+ * @param newHeight The new requested height for the resized images.
+ */
 
-void resize_and_crop(const unsigned char* image_data, int s_width, int s_height,
+
+void (const unsigned char* image_data, int s_width, int s_height,
     unsigned char*& frame_buffer_out, int d_width, int d_height, int num_channel)
+
+template<typename eT>
+void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
+    arma::Mat resizedImages, const size_t newWidth, const size_t newHeight)
 {
-  float ratio_w = static_cast<float>(d_width)  / static_cast<float>(s_width);
-  float ratio_h = static_cast<float>(d_height) / static_cast<float>(s_height);
+  float ratioW = static_cast<float>(newWidth)  /
+    static_cast<float>(info.Width());
+  float ratioH = static_cast<float>(newHeight) /
+    static_cast<float>(info.Height());
 
-  float largest_ratio = ratio_w > ratio_h ? ratio_w : ratio_h;
+  float largestRatio = ratioW > ratioH ? ratioW : ratioH;
   //std::cout << "largest_ratio: "<< largest_ratio << std::endl;
-  int new_width = static_cast<int>(largest_ratio * s_width);
-  int new_height = static_cast<int>(largest_ratio * s_height);
+  int tempWidth = static_cast<int>(largestRatio * info.Width());
+  int tempHeight = static_cast<int>(largestRatio * info.Height());
 
-  //std::cout << "new width: "<< new_width << std::endl;
-  //std::cout << "new_height: "<< new_height << std::endl;
-  unsigned char* buffer_out = 
-    (unsigned char*)malloc(new_width * new_height * num_channel * sizeof (unsigned char));
-  stbir_resize_uint8(image_data, s_width, s_height, 0,
-                     buffer_out, new_width, new_height, 0, num_channel);
-
-  int n_cols_crop = new_width > new_height ? (new_width - new_height) : 0;
-  int n_rows_crop = new_height > new_width ? (new_height - new_width) : 0;
+  arma::Mat<eT> tempMat(size(images));
+  ResizeImage(images, info, tempMat, tempWidth, tempHeight);
+ 
+  int nColsCrop = tempWidth > tempHeight ? (tempWidth - tempHeight) : 0;
+  int nRowsCrop = tempHeight > tempWidth ? (tempHeight - tempWidth) : 0;
 
   //std::cout << "num cols to crop" << n_cols_crop << std::endl;
   //std::cout << "num rows to crop" << n_rows_crop << std::endl;
 
-  if (n_rows_crop != 0)
+  if (nRowsCrop != 0)
   {
-    int crop_up_down_equally = (n_rows_crop / 2) * num_channel * new_width;
-    arma::Col<unsigned char> matrix(buffer_out, new_height * num_channel * new_width, true, true);
-    arma::Col<unsigned char> vec = matrix.subvec(crop_up_down_equally,
-        matrix.n_rows - crop_up_down_equally - 1);
-    stbir_resize_uint8(vec.memptr(), d_width, d_height, 0,
-                       frame_buffer_out, d_width, d_height, 0, num_channel);
-
-    //memcpy(frame_buffer_out, vec.memptr(), d_height * d_width * num_channel);
+    int CropUpDownEqually = (nRowsCrop / 2) * info.Channel() * tempWidth; 
+    for (size_t i = 0; i < tempMat.n_cols; ++i)
+    {
+      // Make vec as a vec of images. resize it before the loop
+      arma::Col<eT> vec = tempMat.col(i).subvec(CropUpDownEqually,
+        temMat.n_rows - CropUpDownEqually - 1);
+    }
+    ResizeImage(vec, /* info object but with vec information */, resizedImages, newWidth, newHeight);
   }
-  else if (n_cols_crop !=0)
+  else if (nColsCrop !=0)
   {
     arma::Cube<unsigned char> cube(new_height, new_width, num_channel);
     size_t k = 0;
+    // It seems that using OpenMP is causing problems in the image, where
+    // pixels are not copying in the order that it should be.
     //#pragma omp parallel for collapse(3)
     for (size_t r = 0; r < cube.n_rows; ++r)
     {
@@ -100,7 +149,7 @@ void resize_and_crop(const unsigned char* image_data, int s_width, int s_height,
     //cube.brief_print();
     //stbir_resize_uint8(vec.memptr(), cube.n_cols, cube.n_rows, 0,
                        //frame_buffer_out, d_width, d_height, 0, num_channel);
-    memcpy(frame_buffer_out, vec.memptr(), d_height * d_width * num_channel);
+   // memcpy(frame_buffer_out, vec.memptr(), d_height * d_width * num_channel);
     //std::cout << "show the memory" << std::endl; 
   }
   else
@@ -108,10 +157,7 @@ void resize_and_crop(const unsigned char* image_data, int s_width, int s_height,
     //std::cout << "should not assign here" << std::endl;
     memcpy(frame_buffer_out, buffer_out, d_height * d_width * num_channel);
   }
-  free(buffer_out);
 }
-
-
 
 } // namespace data
 } // namespace mlpack
