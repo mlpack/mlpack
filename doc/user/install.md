@@ -12,7 +12,7 @@ do with the library.
    [dependencies](#dependencies) of mlpack).
 
  * If you are on Windows, see the
-   [Building mlpack from source on Windows page](user/build_windows.md).
+   [Building mlpack from source on Windows page](build_windows.md).
 
  * If you intend to cross-compile, see the
    [cross-compilation setup page](../embedded/supported_boards.md).
@@ -178,7 +178,7 @@ The following options can be used when configuring mlpack.
 
 | ***Option*** | ***Description*** | ***Default*** |
 |--------------|-------------------|---------------|
-| *General configuration* |||
+| ***General configuration*** |||
 | `-DDOWNLOAD_DEPENDENCIES=ON` | Download all dependencies that are not found on the system. | `OFF` |
 | `-DDEBUG=ON` | Compile with debugging symbols. | `OFF` |
 | `-DPROFILE=ON` | Compile with profiling symbols. | `OFF` |
@@ -189,16 +189,15 @@ The following options can be used when configuring mlpack.
 | `-DUSE_PRECOMPILED_HEADERS=OFF` | Disable precompiled headers during build. |
 `OFF` |
 |--------------|-------------------|---------------|
-| *Dependency locations* |||
+| ***Dependency locations*** |||
 | `-DARMADILLO_INCLUDE_DIR=/path/to/arma/include/` | Path containing `armadillo` header file. ||
-| `-DARMADILLO_LIBRARY=/path/to/libarmadillo.so` | Path of compiled Armadillo
-library (if using the Armadillo wrapper library). ||
+| `-DARMADILLO_LIBRARY=/path/to/libarmadillo.so` | Path of compiled Armadillo library (if using the Armadillo wrapper library). ||
 | `-DARMADILLO_LIBRARIES=/path/to/lib1.so;/path/to/lib2.so` | List of libraries to link against for Armadillo (if not using the Armadillo wrapper library). ||
 | `-DCEREAL_INCLUDE_DIR=/path/to/cereal/include/` | Path containing cereal headers. ||
 | `-DENSMALLEN_INCLUDE_DIR=/path/to/ens/include/` | Path containing `ensmallen.hpp`. ||
 | `-DSTB_INCLUDE_DIR=/path/to/stb/include/` | Path containing `stb.h` and `stb_image.h`. ||
 |--------------|-------------------|---------------|
-| *Bindings* |||
+| ***Bindings*** |||
 | `-DBUILD_CLI_EXECUTABLES=ON` | Enable building command-line programs. | `OFF` |
 | `-DBUILD_PYTHON_BINDINGS=ON` | Enable building Python bindings. | `OFF` |
 | `-DPYTHON_EXECUTABLE=/path/to/python` | Location of Python program to use. ||

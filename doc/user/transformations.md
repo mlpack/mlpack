@@ -11,14 +11,14 @@ new space.
 *Note: this section is under construction and not all functionality is
 documented yet.*
 
-### Matrix decompositions
+## Matrix decompositions
 
 Decompose a matrix into two or more components.
 
  * [AMF](methods/amf.md): alternating matrix factorization
  * [NMF](methods/nmf.md): non-negative matrix factorization
 
-### Linear transformations
+## Linear transformations
 
 Linearly map a matrix onto a new basis, optionally performing dimensionality
 reduction.
@@ -26,14 +26,14 @@ reduction.
  * [PCA](methods/pca.md): principal components analysis
  * [RADICAL](methods/radical.md): an independent components analysis technique
 
-### Metric learning techniques
+## Metric learning techniques
 
 Learn a [distance metric](core/distances.md) based on a data matrix.
 
  * [LMNN](methods/lmnn.md): large margin nearest neighbor
  * [NCA](methods/nca.md): neighborhood components analysis
 
-### Coding techniques
+## Coding techniques
 
 Encode data points in a matrix as a combination of points in a dictionary.
 

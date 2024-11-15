@@ -185,13 +185,16 @@
     <line x1="140" y1="950" x2="150" y2="940" />
 
     <g class="pipeline_elem">
-      <rect x="10" y="950" rx="20" ry="20" width="260" height="100" />
-      <text x="140" y="970" text-anchor="middle" class="header">Evaluation</text>
+      <a xlink:href="../user/evaluation.html" target="_top">
+        <rect x="10" y="950" rx="20" ry="20" width="260" height="100" />
+        <text x="140" y="970" text-anchor="middle" class="header">Evaluation</text>
+      </a>
+
       <!-- TODO: metrics? -->
-      <a xlink:href="../user/cv.html">
+      <a xlink:href="../user/cv.html" target="_top">
         <text x="140" y="1005" text-anchor="middle">Cross-validation</text>
       </a>
-      <a xlink:href="../user/hpt.html">
+      <a xlink:href="../user/hpt.html" target="_top">
         <text x="140" y="1020" text-anchor="middle">Hyperparameter tuning</text>
       </a>
     </g>
@@ -201,14 +204,21 @@
     <line x1="140" y1="1080" x2="150" y2="1070" />
 
     <g class="pipeline_elem">
-      <rect x="10" y="1080" rx="20" ry="20" width="260" height="100" />
-      <text x="140" y="1100" text-anchor="middle" class="header">Deployment</text>
+      <a xlink:href="../user/deployment.html" target="_top">
+        <rect x="10" y="1080" rx="20" ry="20" width="260" height="100" />
+        <text x="140" y="1100" text-anchor="middle" class="header">Deployment</text>
+      </a>
 
-      <text x="140" y="1130" text-anchor="middle">Compile an mlpack program</text>
+      <a xlink:href="../user/compile.html" target="_top">
+        <text x="140" y="1130" text-anchor="middle">Compile an mlpack program</text>
+      </a>
       <text x="140" y="1145" text-anchor="middle">Deploy to a Docker container</text>
-      <a xlink:href="../embedded/crosscompile_armv7.html">
+      <a xlink:href="../embedded/crosscompile_armv7.html" target="_top">
         <text x="140" y="1160" text-anchor="middle">Cross-compile to a Raspberry
 Pi    </text>
+      <a xlink:href="../user/deploy_windows.html" target="_top">
+        <text x="140" y="1175" text-anchor="middle">Deploy mlpack on Windows</text>
+      </a>
       </a>
     </g>
   </g>
@@ -218,26 +228,28 @@ Pi    </text>
   <!-- final pieces -->
   <g class="bottom">
     <g class="elem">
-      <rect x="10" y="1220" rx="20" ry="20" width="260" height="100" />
-      <text x="140" y="1240" text-anchor="middle" class="header">Bindings</text>
+      <a xlink:href="../user/bindings.html" target="_top">
+        <rect x="10" y="1220" rx="20" ry="20" width="260" height="100" />
+        <text x="140" y="1240" text-anchor="middle" class="header">Bindings</text>
+      </a>
 
-      <a xlink:href="../bindings/python.html">
+      <a xlink:href="../bindings/python.html" target="_top">
         <image x="45" y="1253" width="15" height="15" href="python.svg" />
         <text x="90" y="1265" text-anchor="middle">Python</text>
       </a>
-      <a xlink:href="../bindings/julia.html">
+      <a xlink:href="../bindings/julia.html" target="_top">
         <image x="215" y="1253" width="15" height="15" href="julia.svg" />
         <text x="190" y="1265" text-anchor="middle">Julia</text>
       </a>
-      <a xlink:href="../bindings/cli.html">
+      <a xlink:href="../bindings/cli.html" target="_top">
         <image x="45" y="1268" width="15" height="15" href="terminal.svg" />
         <text x="90" y="1280" text-anchor="middle">CLI</text>
       </a>
-      <a xlink:href="../bindings/r.html">
+      <a xlink:href="../bindings/r.html" target="_top">
         <image x="215" y="1268" width="15" height="15" href="r.svg" />
         <text x="190" y="1280" text-anchor="middle">R</text>
       </a>
-      <a xlink:href="../bindings/go.html">
+      <a xlink:href="../bindings/go.html" target="_top">
         <image x="45" y="1283" width="15" height="15" href="gopher.svg" />
         <text x="90" y="1295" text-anchor="middle">Go</text>
       </a>

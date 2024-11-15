@@ -9,7 +9,7 @@ for modeling.
 *Note: this section is under construction and not all functionality is
 documented yet.*
 
-### Classification
+## Classification
 
 Classify points as discrete labels (`0`, `1`, `2`, ...).
 
@@ -30,7 +30,7 @@ Classify points as discrete labels (`0`, `1`, `2`, ...).
  * [`SoftmaxRegression`](methods/softmax_regression.md): L2-regularized
    softmax regression (i.e. multi-class logistic regression)
 
-### Regression
+## Regression
 
 Predict continuous values.
 
@@ -43,7 +43,7 @@ Predict continuous values.
  * [`LinearRegression`](methods/linear_regression.md): L2-regularized linear
    regression (ridge regression)
 
-### Clustering
+## Clustering
 
 ***NOTE:*** this documentation is still under construction and so some
 algorithms that mlpack implements are not yet listed here.  For now, see
@@ -55,7 +55,7 @@ Group points into clusters.
  * [`MeanShift`](methods/mean_shift.md): clustering with the density-based mean
    shift algorithm
 
-### Geometric algorithms
+## Geometric algorithms
 
 ***NOTE:*** this documentation is still under construction and so no geometric
 algorithms in mlpack are documented yet.  For now, see
