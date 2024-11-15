@@ -166,15 +166,22 @@ bool Load(const std::string& filename,
     if (loadType == FileType::CSVASCII)
     {
       arma::field<std::string> headers;
-      success = matrix.load(arma::csv_name(filename, headers, arma::csv_opts::trans),
-          arma::csv_ascii);
-      transpose = false;
+      if (transpose)
+        success = matrix.load(arma::csv_name(filename, headers,
+              arma::csv_opts::trans), arma::csv_ascii);
+      else
+        success = matrix.load(arma::csv_name(filename, headers),
+            arma::csv_ascii);
     }
     else
       success = matrix.load(stream, ToArmaFileType(loadType));
   }
   else
     success = matrix.load(filename, ToArmaFileType(loadType));
+
+  // Now transpose the matrix, if necessary.
+  if (transpose && loadType != FileType::CSVASCII)
+    success = inplace_transpose(matrix, fatal);
 
   if (!success)
   {
@@ -188,14 +195,7 @@ bool Load(const std::string& filename,
     return false;
   }
   else
-    Log::Info << "Size is " << (transpose ? matrix.n_cols : matrix.n_rows)
-        << " x " << (transpose ? matrix.n_rows : matrix.n_cols) << ".\n";
-
-  // Now transpose the matrix, if necessary.
-  if (transpose)
-  {
-    success = inplace_transpose(matrix, fatal);
-  }
+    Log::Info << "Size is " << matrix.n_rows << " x " << matrix.n_cols << ".\n";
 
   Timer::Stop("loading_data");
 
