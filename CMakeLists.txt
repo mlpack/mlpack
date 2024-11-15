@@ -287,7 +287,7 @@ endif()
 # Download and compile OpenBLAS if we are cross compiling mlpack for a specific
 # architecture. The function takes the version of OpenBLAS as variable.
 if (CMAKE_CROSSCOMPILING)
-  search_openblas(0.3.26)
+  search_openblas(0.3.28)
 endif()
 
 if (NOT DOWNLOAD_DEPENDENCIES)
