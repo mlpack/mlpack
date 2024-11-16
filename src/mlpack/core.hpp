@@ -45,6 +45,10 @@
 #include <mlpack/core/data/data.hpp>
 #include <mlpack/core/math/math.hpp>
 
+#ifdef MLPACK_STB
+  #include <mlpack/core/stb/stb.hpp>
+#endif
+
 // mlpack::backtrace only for linux
 #ifdef MLPACK_HAS_BFD_DL
   #include <mlpack/core/util/backtrace.hpp>
