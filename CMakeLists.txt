@@ -17,6 +17,7 @@ option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DOWNLOAD_DEPENDENCIES "Automatically download dependencies if not available." OFF)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." ON)
+option(DONT_USE_MLPACK_STB "Use local STB instead of the internal mlpack's STB," OFF)
 
 # Set minimum library versions required by mlpack.
 #
@@ -311,31 +312,9 @@ endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
-# Find stb_image.h and stb_image_write.h.
-if (NOT DOWNLOAD_DEPENDENCIES)
-  find_package(StbImage)
-else()
-  find_package(StbImage)
-  if (NOT StbImage_FOUND)
-    get_deps(https://mlpack.org/files/stb.tar.gz stb stb.tar.gz)
-    set(STB_IMAGE_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
-    find_package(StbImage REQUIRED)
-  endif()
+if (DONT_USE_MLPACK_STB)
+  find_package(StbImage REQUIRED)
 endif()
-
-#if (StbImage_FOUND)
-  #set(STB_AVAILABLE "1")
-  #set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
-
-  ## Make sure that we can link STB in multiple translation units.
-  #include(CMake/TestStaticSTB.cmake)
-  #if (NOT CMAKE_HAS_WORKING_STATIC_STB)
-    #message(FATAL_ERROR "STB implementations's static mode cannot link across "
-        #"multiple translation units!  Try upgrading your STB implementation, "
-        #"or using the auto-downloader (set DOWNLOAD_DEPENDENCIES=ON in the "
-        #"CMake configuration command.")
-  #endif ()
-#endif()
 
 # Find ensmallen.
 if (NOT DOWNLOAD_DEPENDENCIES)
@@ -480,14 +459,7 @@ if (BFD_DL_AVAILABLE)
   string(REGEX REPLACE "// #define MLPACK_HAS_BFD_DL\n"
       "#define MLPACK_HAS_BFD_DL\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif ()
-#if (STB_AVAILABLE)
-  #string(REGEX REPLACE "// #define MLPACK_HAS_STB\n"
-      #"#define MLPACK_HAS_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
-  #if (NOT STB_INCLUDE_NEEDS_STB_SUFFIX)
-    #string(REGEX REPLACE "// #define MLPACK_HAS_NO_STB_DIR\n"
-        #"#define MLPACK_HAS_NO_STB_DIR\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
-  #endif ()
-#endif ()
+
 if (USING_GIT)
   string(REGEX REPLACE "// #define MLPACK_GIT_VERSION\n"
       "#define MLPACK_GIT_VERSION\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
