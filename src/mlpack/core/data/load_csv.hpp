@@ -148,19 +148,18 @@ class LoadCSV
    * @param col the number of columns in lineStream.
    * @param delim the delimiter character.
    */
-  inline void CategoricalMatSize(std::stringstream& lineStream, size_t& col,
-                                 const char delim);
+  inline void CategoricalMatColSize(std::stringstream& lineStream, size_t& col,
+                                    const char delim);
 
   // Functions common to both numeric & categorical parser.
   /**
-   * Get the size of the matrix. Based on isNumeric the function can be used
-   * for both numeric_parse and categorical_parse.
+   * Get the size of Categorical matrix.
    *
    * @param f fstream stream to open the data file.
    * @param delim char delimiter charecter.
    */
-  inline std::pair<size_t, size_t> GetMatrixSize(std::fstream& f,
-                                                 const char delim = ',')
+  inline std::pair<size_t, size_t> CategoricalMatrixSize(std::fstream& f,
+      const char delim = ',')
   {
     bool loadOkay = f.good();
 
@@ -185,7 +184,7 @@ class LoadCSV
       size_t lineNCols = 0;
 
       // Get number of columns based on the type of data.
-      CategoricalMatSize(lineStream, lineNCols, delim);
+      CategoricalMatColSize(lineStream, lineNCols, delim);
 
       // If there are different number of columns in each
       // row, then the highest number of cols will be
@@ -200,9 +199,9 @@ class LoadCSV
     f.clear();
     f.seekg(pos1);
 
-    std::pair<size_t, size_t> mat_size(fnRows, fnCols);
+    std::pair<size_t, size_t> matSize(fnRows, fnCols);
 
-    return mat_size;
+    return matSize;
   }
 
 
