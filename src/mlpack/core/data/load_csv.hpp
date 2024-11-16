@@ -152,7 +152,6 @@ class LoadCSV
                                  const char delim);
 
   // Functions common to both numeric & categorical parser.
-
   /**
    * Get the size of the matrix. Based on isNumeric the function can be used
    * for both numeric_parse and categorical_parse.
@@ -160,7 +159,6 @@ class LoadCSV
    * @param f fstream stream to open the data file.
    * @param delim char delimiter charecter.
    */
-  template<bool isNumeric>
   inline std::pair<size_t, size_t> GetMatrixSize(std::fstream& f,
                                                  const char delim = ',')
   {
@@ -187,10 +185,7 @@ class LoadCSV
       size_t lineNCols = 0;
 
       // Get number of columns based on the type of data.
-      if (isNumeric)
-        NumericMatSize(lineStream, lineNCols, delim);
-      else
-        CategoricalMatSize(lineStream, lineNCols, delim);
+      CategoricalMatSize(lineStream, lineNCols, delim);
 
       // If there are different number of columns in each
       // row, then the highest number of cols will be

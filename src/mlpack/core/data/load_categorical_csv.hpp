@@ -70,7 +70,7 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
     if (cols == 1)
     {
       // Extract the number of dimensions.
-      std::pair<size_t, size_t> dimen = GetMatrixSize<false>(inFile, delim);
+      std::pair<size_t, size_t> dimen = GetMatrixSize(inFile, delim);
       rows = dimen.second;
 
       if (info.Dimensionality() == 0)
@@ -179,7 +179,7 @@ void LoadCSV::InitializeMapper(size_t& rows, size_t& cols,
     if (rows == 1)
     {
       // Extract the number of columns.
-      std::pair<size_t, size_t> dimen = GetMatrixSize<false>(inFile, delim);
+      std::pair<size_t, size_t> dimen = GetMatrixSize(inFile, delim);
       cols = dimen.second;
     }
 
