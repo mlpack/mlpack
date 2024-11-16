@@ -96,34 +96,6 @@ class LoadCSV
     CheckOpen();
   }
 
-  // Functions for Numeric Parser
-
-  /**
-  * Converts the given string token to assigned datatype and assigns
-  * this value to the given address. The address here will be a
-  * matrix location eg. matrix(row, col).
-  * 
-  * Token is always read as a string, if the given token is +/-INF or NAN
-  * it converts them to infinity and NAN using numeric_limits.
-  *
-  * @param val Token's value will be assigned to this address.
-  * @param token Value which should be assigned.
-  */
-  template<typename eT>
-  bool ConvertToken(eT& val, const std::string& token);
-
-  /**
-   * Calculate the number of columns in each row
-   * and assign the value to the col. This function
-   * will work only for numeric data.
-   *
-   * @param lineStream a single row of data.
-   * @param col number of columns in lineStream.
-   * @param delim delimiter character.
-   */
-  inline void NumericMatSize(std::stringstream& lineStream, size_t& col,
-                             const char delim);
-
   // Functions for Categorical Parse.
 
   /**
@@ -293,7 +265,6 @@ class LoadCSV
 } // namespace data
 } // namespace mlpack
 
-#include "load_numeric_csv.hpp"
 #include "load_categorical_csv.hpp"
 
 #endif
