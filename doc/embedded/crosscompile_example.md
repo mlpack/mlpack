@@ -1,40 +1,45 @@
 ## Crosscompile mlpack example on an embedded hardware
 
-In this article, we explore, how to crosscompile and run an mlpack example code
-on an embedded hardware such as Raspberry Pi 2. In our previous documentations,
-we have explored how to run mlpack bindings such as kNN command line program on
-a Raspberry PI. Please refer to that article first and follow the first
-part on how to Setup cross-compilation toolchain, and then continue with this
-article.
+In this article, we explore how to crosscompile and run an mlpack example code
+on an embedded hardware. In our previous
+[documentations](crosscompile_armv7.cmake), we have explored how to run mlpack
+bindings such as kNN command line program on a Raspberry PI 2. Please refer to that
+article first and follow the first part on how to setup cross-compilation toolchain,
+and then continue with this article. Or refer to this
+[table](supported_boards.md) for a quick start guide.
 
-mlpack has an example repository that demonstrates a set of examples showing how
-to use the library source code on different dataset and usecases including
-embedded deployment. This tutorial basically explain our necessary CMake configurations
+### Cloning mlpack example respository
+
+mlpack has an [example repository](https://github.com/mlpack/examples) that
+demonstrates a set of examples showing how to use the library source code
+on different dataset and usecases including embedded deployment. This
+tutorial basically explains our necessary CMake configurations
 that are required to integrate with your local CMake to download mlpack
 dependencies and cross compile the entire software.
 
 If you have not used mlpack example repsoitory, I highly recommend to clone
-this repository from this link to follow this tutorial:
+this repository from the following link:
 
 ```sh
 git clone git@github.com:mlpack/examples.git
 ```
 
-You can explore this repository and see the available example, we are
-interested in the `embedded/` directory. In this directory we are providing
-a CMake template project and Random Forest example to use it on embedded
-hardware. In this tutorial we are exploring the RandomForest example by first
-analysing the CMakeLists.txt
+You can explore this repository and see the available examples. However, in this
+tutorial, we are interested in the `embedded/` directory. In this directory we are providing
+a CMake template project and a RandomForest example to use it on embedded
+hardware. For now, we are exploring the RandomForest example by 
+analysing the CMakeLists.txt.
 
+### Analysing CMakeLists.txt
 
 In this part of code we are defining the project name and including two CMake
-configurations files. The first one is the Autodowload function that is going
+configurations files. The first one is the `Autodowload.cmake` function that is going
 to pull the dependencies from respective locations that we are going to define.
 
-The second configuration file is 
-
-Then we are setting the C++ standard to use and define settings for `OpenMP` and
-`std::thread`
+The second configuration file is `ConfigureCrossCompile.cmake`. This will allow
+to include all the necessary configurations to allow using a cross compiler
+toolchain.  Then we are setting the C++ standard to use and define settings
+for `OpenMP` and `std::thread`
 
 ```c++
 cmake_minimum_required(VERSION 3.6)
@@ -57,15 +62,19 @@ if (CMAKE_COMPILER_IS_GNUCC)
 endif()
 ```
 
-Once we have included the configs and defined the started, then we need to pull
-the dependencies from their locations, in the following we have added the link
+#### Downloading dependencies
+
+Once we have included the configs and defined the C++ standard, then we need to
+download these dependencies. In the following, we have added the link
 for each one of them, but feel free to adapt the link to different versions or
 locations.
 
-Once `get_deps` has pulled each one of them, the next step would be to append the
-include directories for these libraries to the `MLPACK_INCLUDE_DIRS` list
-variable. In the case of Armadillo, it could be set in header-only mode or a
-linkable library thus these two variable exist.
+Once `get_deps` has downloaded and extracted each one of them, the next step
+would be to append the include directories for these libraries to the
+`MLPACK_INCLUDE_DIRS` list variable. In the case of Armadillo, it could be set
+in header-only mode or a linkable library thus these two variable exist in this
+specific case. However, the `MLPACK_LIBRARIES` variable is not necessary if you
+have defined armadillo in header-only mode.
 
 ```c++
 search_openblas(0.3.26)
@@ -93,10 +102,20 @@ set(CEREAL_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
 ```
 
-The last part of our CMake file consists of merging all of the above parts
-together. Fist we are going to find the OpenMP package if the user defined the
-variable above. and then we are going to start including the directories or our
-program. In 
+#### Setting up include directories and source files
+
+The last part of our CMake file consists of merging all of the above components
+together. First we are going to find the OpenMP package if the user defined the
+variable above, then we will start including the directories of our
+program. You will need to do the same for your software if you are trying to
+integrate this example into an existing development, this should be done by
+defining an include variable using `set` directive or add them directly in
+`target_include_directories`.
+Regarding the source code, a similar process by either adding then to
+`add_executables` or by appending the source files to `SOURCES_FILES` variable. 
+
+Finally do not forget to add any external library that you need to link against
+in `target_link_libraries`.
 
 ```c++
 # Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
@@ -134,24 +153,42 @@ target_sources(RandomForest PRIVATE ${SOURCE_FILES})
 
 target_include_directories(RandomForest PRIVATE
   ${MLPACK_INCLUDE_DIRS}
-  /meta/mlpack/src/
+  /path/to/mlpack/src/
+  /path/to/your/own/include
 )
 
-## Do not forget to add the libraries that you are linking to in here.
+## Do not forget to add libraries that you are linking against in here.
 
 target_link_libraries(RandomForest PRIVATE -static
   ${MLPACK_LIBRARIES}
 )
 ```
 
+#### Optimization and crosscompilation
+
 If you are interested in adding specific compiler flags to optimize operations
-on your hardware. Please feel free to look at mlpack CMake/flags you can either
-integrate the variable by copy and paste them directly to this CMake file or you can
-include ` ` as we have above but in this case you need to specify the
-`BOARD_NAME` variable.
+on your hardware. Please feel free to look at mlpack
+`CMake/crosscompile-arch-flags.cmake` you can either integrate the variable by
+copy and paste them directly to this CMake file or you can
+copy the entire `crosscompile-arch-config.cmake` file from `mlpack/CMake` and included
+it close to `Autodownload.cmake` at start of this tutorial but in this case you need
+to specify the `BOARD_NAME` variable as we did in the this [tutorial](crosscompile_armv7.md).
 
 Once you have added all the source files and the headers for your applications,
-you can create your own build directory and build the software using `cmake
-../`, and then `make`.
+you can create your own build directory and build the software using `cmake`,
+and then `make`. Your cmake command should be similar to the following:
 
+```sh
+cmake \
+    -DBUILD_TESTS=ON \
+    -DBOARD_NAME=(Check below) \
+    -DCMAKE_CROSSCOMPILING=ON \
+    -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake \
+    -DTOOLCHAIN_PREFIX=(Check below) \
+    -DCMAKE_SYSROOT=(Check below) \
+```
+
+In order to fill the `TOOLCHAIN_PREFIX` or the `CMAKE_SYSROOT`, or if
+you are interested in a different compiler toolchain please refer to the
+following [table](supported_boards.md).
 
