@@ -12,17 +12,9 @@
 #ifndef MLPACK_CORE_DATA_SAVE_IMAGE_HPP
 #define MLPACK_CORE_DATA_SAVE_IMAGE_HPP
 
+#include <mlpack/core/stb/stb.hpp>
+
 #include "image_info.hpp"
-
-#ifndef STB_IMAGE_WRITE_STATIC
-#define STB_IMAGE_WRITE_STATIC
-#endif
-
-#ifndef STB_IMAGE_WRITE_IMPLMENETATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#endif
-
-#include "stb_image_write.h"
 
 namespace mlpack {
 namespace data {

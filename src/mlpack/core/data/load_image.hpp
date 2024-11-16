@@ -13,19 +13,9 @@
 #ifndef MLPACK_CORE_DATA_LOAD_IMAGE_HPP
 #define MLPACK_CORE_DATA_LOAD_IMAGE_HPP
 
+#include <mlpack/core/stb/stb.hpp>
+
 #include "image_info.hpp"
-
-// The definition of STB_IMAGE_IMPLEMENTATION means that the implementation will
-// be included here directly.
-#ifndef STB_IMAGE_STATIC
-#define STB_IMAGE_STATIC
-#endif
-
-#ifndef STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#endif
-
-#include "stb_image.h"
 
 namespace mlpack {
 namespace data {
