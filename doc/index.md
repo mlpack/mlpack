@@ -190,6 +190,8 @@ adding a set of tutorials to allow you to experiment mlpack on various types of
 these systems.
 
 * [cross-compile and run k-NN on a Raspberry Pi 2 (armv7)](embedded/crosscompile_armv7.md)
+* [Setting up an mlpack cross-compilation environment](embedded/supported_boards.md)
+* [cross-compile an mlpack example for an embedded hardware ](embedded/crosscompile_example.md)
 
 ## Examples and further documentation
 

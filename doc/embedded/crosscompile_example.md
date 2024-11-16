@@ -1,4 +1,4 @@
-## Crosscompile mlpack example on an embedded hardware
+## Crosscompile mlpack example for an embedded hardware
 
 In this article, we explore how to crosscompile and run an mlpack example code
 on an embedded hardware. In our previous
