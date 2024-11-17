@@ -32,7 +32,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
-mlpack also contains some usage of the source code of STB library,
+mlpack also contains some usage of the source code of the STB library,
 which is providing support for image loading, saving and resizing. STB is
 dual-licensed under the MIT license and the public domain. This code can be
 found in src/mlpack/core/stb/ for more details about licensing and usage.
