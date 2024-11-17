@@ -12,9 +12,9 @@ information, see [this page](gsoc.md).
 
 All mlpack development is done on [GitHub](https://github.com/mlpack/mlpack).
 Commits and issue comments can be tracked via the
-[mlpack-git](https://freelists.org/list/mlpack-git) list (graciously hosted by
-[FreeLists](https://freelists.org).  Communication is generally either via
-issues on GitHub, or via chat:
+[mlpack-git](https://www.freelists.org/list/mlpack-git) list (graciously hosted
+by [FreeLists](https://www.freelists.org).  Communication is generally either
+via issues on GitHub, or via chat:
 
 ## Real-time chat
 
