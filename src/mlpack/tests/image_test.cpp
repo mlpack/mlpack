@@ -156,13 +156,11 @@ TEST_CASE("ImageInfoSerialization", "[ImageLoadTest]")
 TEST_CASE("ImageResizeTest", "[ImageTest]")
 {
   arma::Mat<unsigned char> images;
-  data::ImageInfo info(5, 5, 3, 90);
-  std::vector<std::string> files = {"test_image.png", "test_image.png"};
+  data::ImageInfo info;
+  std::vector<std::string> files = {"umbrella.jpg"};
   REQUIRE(data::Load(files, images, info, false) == true);
-  
+ 
   arma::Mat<unsigned char> resizedImages;
   ResizeImages(images, info, resizedImages, 720, 720);
-
-
 
 }
