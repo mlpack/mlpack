@@ -50,7 +50,7 @@
 #endif
 
 //
-// STB is part of mlpack now, if the user does not want to use the integrated
+// STB is part of mlpack. If the user does not want to use the integrated
 // version of STB then please define MLPACK_NO_STB in your CMake file.
 //
 #define MLPACK_STB
