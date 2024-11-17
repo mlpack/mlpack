@@ -17,7 +17,7 @@ option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DOWNLOAD_DEPENDENCIES "Automatically download dependencies if not available." OFF)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." ON)
-option(DONT_USE_MLPACK_STB "Use local STB instead of the internal mlpack's STB," OFF)
+option(DONT_USE_MLPACK_STB "Use local STB instead of mlpack's bundled STB." OFF)
 
 # Set minimum library versions required by mlpack.
 #
