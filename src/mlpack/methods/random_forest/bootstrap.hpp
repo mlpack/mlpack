@@ -16,7 +16,7 @@
 namespace mlpack {
 
 /**
- * Default bootstrap strategy that uses the ::Bootstrap() function. 
+ * Given a dataset, create another dataset via bootstrap sampling, with labels.
  */
 class DefaultBootstrap
 {

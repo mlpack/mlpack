@@ -122,8 +122,8 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 If training is not done as part of the constructor call, it can be done with one
 of the following versions of the `Train()` member function:
 
- * `rf.Train(data, labels, numClasses,          numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false, dimSelector={}, bootstrap={})`
- * `rf.Train(data, labels, numClasses, weights, numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false, dimSelector={}, bootstrap={})`
+ * `rf.Train(data, labels, numClasses,          numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false)`
+ * `rf.Train(data, labels, numClasses, weights, numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false)`
    - Train on numerical-only data (optionally with instance weights).
    - Returns a `double` with the average gain of each tree in the random forest.
      By default, this is the Gini gain, unless a different
@@ -132,8 +132,8 @@ of the following versions of the `Train()` member function:
 
 ---
 
- * `rf.Train(data, info, labels, numClasses,          numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false, dimSelector={}, bootstrap={})`
- * `rf.Train(data, info, labels, numClasses, weights, numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false, dimSelector={}, bootstrap={})`
+ * `rf.Train(data, info, labels, numClasses,          numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false)`
+ * `rf.Train(data, info, labels, numClasses, weights, numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false)`
    - Train on mixed categorical data (optionally with instance weights).
 
 ---
