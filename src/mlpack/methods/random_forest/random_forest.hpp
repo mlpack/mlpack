@@ -33,13 +33,16 @@ namespace mlpack {
  *   publisher={Springer}
  * }
  * @endcode
+ * 
+ * @tparam UseBootstrap This template parameter will be removed in
+ *                      mlpack 5.0.0
  */
 template<typename FitnessFunction = GiniGain,
          typename DimensionSelectionType = MultipleRandomDimensionSelect,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
          bool UseBootstrap = true,
-         template<bool> class BootstrapType = DefaultBootstrap>
+         typename BootstrapType = DefaultBootstrap>
 class RandomForest
 {
  public:
@@ -80,7 +83,7 @@ class RandomForest
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
-               BootstrapType<false> bootstrap = BootstrapType<false>());
+               BootstrapType bootstrap = BootstrapType());
 
   /**
    * Create a random forest, training on the given labeled training data with
@@ -112,7 +115,7 @@ class RandomForest
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
-               BootstrapType<false> bootstrap = BootstrapType<false>());
+               BootstrapType bootstrap = BootstrapType());
 
   /**
    * Create a random forest, training on the given weighted labeled training
@@ -141,7 +144,7 @@ class RandomForest
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
-               BootstrapType<true> bootstrap = BootstrapType<true>());
+               BootstrapType bootstrap = BootstrapType());
 
   /**
    * Create a random forest, training on the given weighted labeled training
@@ -175,7 +178,7 @@ class RandomForest
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
-               BootstrapType<true> bootstrap = BootstrapType<true>());
+               BootstrapType bootstrap = BootstrapType());
 
   /**
    * Train the random forest on the given labeled training data with the given
@@ -208,7 +211,7 @@ class RandomForest
                const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
-               BootstrapType<false> bootstrap = BootstrapType<false>());
+               BootstrapType bootstrap = BootstrapType());
 
   /**
    * Train the random forest on the given labeled training data with the given
@@ -245,7 +248,7 @@ class RandomForest
                const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
-               BootstrapType<false> bootstrap = BootstrapType<false>());
+               BootstrapType bootstrap = BootstrapType());
 
   /**
    * Train the random forest on the given weighted labeled training data with
@@ -280,7 +283,7 @@ class RandomForest
                const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
-               BootstrapType<false> bootstrap = BootstrapType<false>());
+               BootstrapType bootstrap = BootstrapType());
 
   /**
    * Train the random forest on the given weighted labeled training data with
@@ -318,7 +321,7 @@ class RandomForest
                const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
-               BootstrapType<true> bootstrap = BootstrapType<true>());
+               BootstrapType bootstrap = BootstrapType());
 
   /**
    * Predict the class of the given point.  If the random forest has not been
@@ -383,6 +386,11 @@ class RandomForest
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
+   static_assert(UseBootstrap ||
+     std::is_same_v<BootstrapType, IdentityBootstrap>,
+     "UseBootstrap will be removed in mlpack 5.0.0, "
+     "use IdentityBootstrap instead.");
+
   /**
    * Perform the training of the decision tree.  The template bool parameters
    * control whether or not the datasetInfo or weights arguments should be
@@ -417,7 +425,7 @@ class RandomForest
                const double minimumGainSplit,
                const size_t maximumDepth,
                DimensionSelectionType& dimensionSelector,
-               BootstrapType<UseWeights>& bootstrap,
+               BootstrapType& bootstrap,
                const bool warmStart = false);
 
   //! The trees in the forest.

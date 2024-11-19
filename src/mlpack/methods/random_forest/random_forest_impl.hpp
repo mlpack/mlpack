@@ -23,7 +23,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    template<bool> class BootstrapType
+    typename BootstrapType
 >
 RandomForest<
     FitnessFunction,
@@ -44,7 +44,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    template<bool> class BootstrapType
+    typename BootstrapType
 >
 template<typename MatType>
 RandomForest<
@@ -62,7 +62,7 @@ RandomForest<
                 const double minimumGainSplit,
                 const size_t maximumDepth,
                 DimensionSelectionType dimensionSelector,
-                BootstrapType<false> bootstrap) :
+                BootstrapType bootstrap) :
     avgGain(0.0)
 {
   // Pass off work to the Train() method.
@@ -79,7 +79,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    template<bool> class BootstrapType
+    typename BootstrapType
 >
 template<typename MatType>
 RandomForest<
@@ -98,7 +98,7 @@ RandomForest<
                 const double minimumGainSplit,
                 const size_t maximumDepth,
                 DimensionSelectionType dimensionSelector,
-                BootstrapType<false> bootstrap):
+                BootstrapType bootstrap):
                     avgGain(0.0)
 {
   // Pass off work to the Train() method.
@@ -114,7 +114,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    template<bool> class BootstrapType
+    typename BootstrapType
 >
 template<typename MatType>
 RandomForest<
@@ -133,7 +133,7 @@ RandomForest<
                 const double minimumGainSplit,
                 const size_t maximumDepth,
                 DimensionSelectionType dimensionSelector,
-                BootstrapType<true> bootstrap) :
+                BootstrapType bootstrap) :
     avgGain(0.0)
 {
   // Pass off work to the Train() method.
@@ -149,7 +149,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    template<bool> class BootstrapType
+    typename BootstrapType
 >
 template<typename MatType>
 RandomForest<
@@ -169,7 +169,7 @@ RandomForest<
                 const double minimumGainSplit,
                 const size_t maximumDepth,
                 DimensionSelectionType dimensionSelector,
-                BootstrapType<true> bootstrap) :
+                BootstrapType bootstrap) :
     avgGain(0.0)
 {
   // Pass off work to the Train() method.
@@ -184,7 +184,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    template<bool> class BootstrapType
+    typename BootstrapType
 >
 template<typename MatType>
 double RandomForest<
@@ -203,7 +203,7 @@ double RandomForest<
          const size_t maximumDepth,
          const bool warmStart,
          DimensionSelectionType dimensionSelector,
-         BootstrapType<false> bootstrap)
+         BootstrapType bootstrap)
 {
   // Pass off to Train().
   data::DatasetInfo datasetInfo; // Ignored by Train().
@@ -219,7 +219,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    template<bool> class BootstrapType
+    typename BootstrapType
 >
 template<typename MatType>
 double RandomForest<
@@ -239,7 +239,7 @@ double RandomForest<
          const size_t maximumDepth,
          const bool warmStart,
          DimensionSelectionType dimensionSelector,
-         BootstrapType<false> bootstrap)
+         BootstrapType bootstrap)
 {
   // Pass off to Train().
   arma::rowvec weights; // Ignored by Train().
@@ -254,7 +254,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    template<bool> class BootstrapType
+    typename BootstrapType
 >
 template<typename MatType>
 double RandomForest<
@@ -274,11 +274,11 @@ double RandomForest<
          const size_t maximumDepth,
          const bool warmStart,
          DimensionSelectionType dimensionSelector,
-         BootstrapType<false> bootstrap)
+         BootstrapType bootstrap)
 {
   // Pass off to Train().
   data::DatasetInfo datasetInfo; // Ignored by Train().
-  return Train<false, false>(dataset, datasetInfo, labels, numClasses, weights,
+  return Train<true, false>(dataset, datasetInfo, labels, numClasses, weights,
       numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
       dimensionSelector, bootstrap, warmStart);
 }
@@ -289,7 +289,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    template<bool> class BootstrapType
+    typename BootstrapType
 >
 template<typename MatType>
 double RandomForest<
@@ -310,7 +310,7 @@ double RandomForest<
          const size_t maximumDepth,
          const bool warmStart,
          DimensionSelectionType dimensionSelector,
-         BootstrapType<true> bootstrap)
+         BootstrapType bootstrap)
 {
   // Pass off to Train().
   return Train<true, true>(dataset, datasetInfo, labels, numClasses, weights,
@@ -324,7 +324,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    template<bool> class BootstrapType
+    typename BootstrapType
 >
 template<typename VecType>
 size_t RandomForest<
@@ -350,7 +350,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    template<bool> class BootstrapType
+    typename BootstrapType
 >
 template<typename VecType>
 void RandomForest<
@@ -399,7 +399,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    template<bool> class BootstrapType
+    typename BootstrapType
 >
 template<typename MatType>
 void RandomForest<
@@ -436,7 +436,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    template<bool> class BootstrapType
+    typename BootstrapType
 >
 template<typename MatType>
 void RandomForest<
@@ -476,7 +476,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    template<bool> class BootstrapType
+    typename BootstrapType
 >
 template<typename Archive>
 void RandomForest<
@@ -510,7 +510,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    template<bool> class BootstrapType
+    typename BootstrapType
 >
 template<bool UseWeights, bool UseDatasetInfo, typename MatType>
 double RandomForest<
@@ -530,7 +530,7 @@ double RandomForest<
          const double minimumGainSplit,
          const size_t maximumDepth,
          DimensionSelectionType& dimensionSelector,
-         BootstrapType<UseWeights>& bootstrap,
+         BootstrapType& bootstrap,
          const bool warmStart)
 {
   // Reset the forest if we are not doing a warm-start.
@@ -567,7 +567,7 @@ double RandomForest<
     MatType bootstrapDataset;
     arma::Row<size_t> bootstrapLabels;
     arma::rowvec bootstrapWeights;
-    bootstrap.Bootstrap(dataset, labels, weights, bootstrapDataset,
+    bootstrap.Bootstrap<UseWeights>(dataset, labels, weights, bootstrapDataset,
         bootstrapLabels, bootstrapWeights);
 
     if (UseWeights)

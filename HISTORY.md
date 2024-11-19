@@ -15,6 +15,9 @@ _????-??-??_
 
  * Fix serialization and `MinDistance()` bugs with `HollowBallBound` (#3808).
 
+ * Added bootstrap strategies for RandomForest: IdentityBootstrap,
+   DefaultBootstrap, and SequentialBootstrap. (#3829)
+
 ## mlpack 4.5.0
 
 _2024-09-17_

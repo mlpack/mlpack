@@ -37,8 +37,8 @@ TEST_CASE("BootstrapNoWeightsTest", "[RandomForestTest]")
     arma::Row<size_t> bootstrapLabels;
     arma::rowvec bootstrapWeights;
 
-    Bootstrap<false>(dataset, labels, weights, bootstrapDataset,
-        bootstrapLabels, bootstrapWeights);
+    DefaultBootstrap().Bootstrap<false>(dataset, labels, weights,
+        bootstrapDataset, bootstrapLabels, bootstrapWeights);
 
     REQUIRE(bootstrapDataset.n_cols == 1000);
     REQUIRE(bootstrapDataset.n_rows == 1);
@@ -72,8 +72,8 @@ TEST_CASE("BootstrapWeightsTest", "[RandomForestTest]")
     arma::Row<size_t> bootstrapLabels;
     arma::rowvec bootstrapWeights;
 
-    Bootstrap<true>(dataset, labels, weights, bootstrapDataset,
-        bootstrapLabels, bootstrapWeights);
+    DefaultBootstrap().Bootstrap<true>(dataset, labels, weights,
+        bootstrapDataset, bootstrapLabels, bootstrapWeights);
 
     REQUIRE(bootstrapDataset.n_cols == 1000);
     REQUIRE(bootstrapDataset.n_rows == 1);
@@ -610,18 +610,24 @@ TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
 
 /**
  * Test ComputeAverageUniqueness.
+ * 
+ * Average uniqueness is defined as average over the lifetime of an event
+ * of how many other events are active at every point in time.
  */
 TEST_CASE("ComputeAverageUniquenessTest", "[RandomForestTest]")
 {
-  using SBS = SequentialBootstrap<true>;
-
   arma::mat indM(3 /* rows */, 6 /* cols */, arma::fill::zeros);
 
+  // indM = [1 1 1 0 0 0
+  //         0 0 1 1 0 0
+  //         0 0 0 0 1 1]
+  // The last event is fully isolated.
+  // The first two events overlap in the third column.
   indM(0, 0) = indM(0, 1) = indM(0, 2) = 1.0;
   indM(1, 2) = indM(1, 3) = 1.0;
   indM(2, 4) = indM(2, 5) = 1.0;
 
-  const arma::vec avg(SBS::ComputeAverageUniqueness(indM));
+  const arma::vec avg(SequentialBootstrap<>::ComputeAverageUniqueness(indM));
 
   REQUIRE(avg(0) == 5.0 / 6.0);
   REQUIRE(avg(1) == 0.75);
@@ -633,61 +639,42 @@ TEST_CASE("ComputeAverageUniquenessTest", "[RandomForestTest]")
  */
 TEST_CASE("ComputeNextDrawProbabilitiesTest", "[RandomForestTest]")
 {
-  using SBS = SequentialBootstrap<true>;
-
-  const arma::uvec phi1(1, arma::fill::value(1));
+  const std::vector<arma::u64> phi1(1u, 1u);
   arma::mat indM(3 /* rows */, 6 /* cols */, arma::fill::zeros);
 
   indM(0, 0) = indM(0, 1) = indM(0, 2) = 1.0;
   indM(1, 2) = indM(1, 3) = 1.0;
   indM(2, 4) = indM(2, 5) = 1.0;
 
-  const arma::vec delta2(SBS::ComputeNextDrawProbabilities(phi1, indM));
+  // Compute the probabilities that observations 0, 1, 2 are drawn after
+  // observation 1 has already been drawn.
+  const arma::vec delta2(
+    SequentialBootstrap<>::ComputeNextDrawProbabilities(phi1, indM));
 
   REQUIRE(delta2(0) == 5.0 / 14.0);
+  // Should have the lowest probability as it has already been drawn.
   REQUIRE(delta2(1) == 3.0 / 14.0);
+  // Should have the highest probability as this event does not overlap
+  // with others.
   REQUIRE(delta2(2) == 6.0 / 14.0);
 }
-
-struct Generator {
-  using result_type = unsigned;
-
-  constexpr static result_type min()
-  {
-    return 0;
-  }
-
-  constexpr static result_type max()
-  {
-    return 2;
-  }
-
-  result_type operator()() const
-  {
-    static result_type random(0);
-    result_type rand(random);
-
-    random = 1;
-    return rand;
-  }
-};
 
 /**
  * Test ComputeSamples.
  */
 TEST_CASE("ComputeSamplesTest", "[RandomForestTest]")
 {
-  using SBS = SequentialBootstrap<true, Generator>;
-
   arma::mat indM(3 /* rows */, 6 /* cols */, arma::fill::zeros);
 
   indM(0, 0) = indM(0, 1) = indM(0, 2) = 1.0;
   indM(1, 2) = indM(1, 3) = 1.0;
   indM(2, 4) = indM(2, 5) = 1.0;
 
-  SBS bootstrap(indM, Generator());
+  SequentialBootstrap bootstrap(indM);
   const arma::uvec phi(bootstrap.ComputeSamples());
 
+  // Can only check that the next draw does not yield indices
+  // outside of the range of observations.
   REQUIRE(phi(0) < 3);
   REQUIRE(phi(1) < 3);
   REQUIRE(phi(2) < 3);
@@ -698,8 +685,6 @@ TEST_CASE("ComputeSamplesTest", "[RandomForestTest]")
  */
 TEST_CASE("SequentialBootstrapTest", "[RandomForestTest]")
 {
-  using SBS = SequentialBootstrap<true, Generator>;
-
   const arma::mat ds(10 /* rows */, 3 /* cols */, arma::fill::randu);
   const arma::Row<size_t> labels{ 1, 0, 0 };
   const arma::vec weights(3, arma::fill::ones);
@@ -709,13 +694,14 @@ TEST_CASE("SequentialBootstrapTest", "[RandomForestTest]")
   indM(1, 2) = indM(1, 3) = 1.0;
   indM(2, 4) = indM(2, 5) = 1.0;
 
-  SBS bootstrap(indM, Generator());
+  SequentialBootstrap bootstrap(indM);
   arma::mat bsDataset;
   arma::Row<size_t> bsLabels;
   arma::vec bsWeights;
 
-  bootstrap.Bootstrap(ds, labels, weights, bsDataset, bsLabels, bsWeights);
+  bootstrap.Bootstrap<true>(ds, labels, weights, bsDataset, bsLabels, bsWeights);
 
+  // Check that dimensions are the same.
   REQUIRE(ds.n_rows == bsDataset.n_rows);
   REQUIRE(ds.n_cols == bsDataset.n_cols);
   REQUIRE(labels.n_cols == bsLabels.n_cols);

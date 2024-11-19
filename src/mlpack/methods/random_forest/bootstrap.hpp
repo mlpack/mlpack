@@ -13,46 +13,16 @@
 #ifndef MLPACK_METHODS_RANDOM_FOREST_BOOTSTRAP_HPP
 #define MLPACK_METHODS_RANDOM_FOREST_BOOTSTRAP_HPP
 
-#include <random>
-
 namespace mlpack {
-
-/**
- * Given a dataset, create another dataset via bootstrap sampling, with labels.
- */
-template<bool UseWeights,
-         typename MatType,
-         typename LabelsType,
-         typename WeightsType>
-void Bootstrap(const MatType& dataset,
-               const LabelsType& labels,
-               const WeightsType& weights,
-               MatType& bootstrapDataset,
-               LabelsType& bootstrapLabels,
-               WeightsType& bootstrapWeights)
-{
-  bootstrapDataset.set_size(dataset.n_rows, dataset.n_cols);
-  bootstrapLabels.set_size(labels.n_elem);
-  if (UseWeights)
-    bootstrapWeights.set_size(weights.n_elem);
-
-  // Random sampling with replacement.
-  arma::uvec indices = randi<arma::uvec>(dataset.n_cols,
-      arma::distr_param(0, dataset.n_cols - 1));
-  bootstrapDataset = dataset.cols(indices);
-  bootstrapLabels = labels.cols(indices);
-  if (UseWeights)
-    bootstrapWeights = weights.cols(indices);
-}
 
 /**
  * Default bootstrap strategy that uses the ::Bootstrap() function. 
  */
-template<bool UseWeights>
 class DefaultBootstrap
 {
  public:
-  template<typename MatType,
+  template<bool UseWeights,
+           typename MatType,
            typename LabelsType,
            typename WeightsType>
   void Bootstrap(const MatType& dataset,
@@ -62,23 +32,29 @@ class DefaultBootstrap
                  LabelsType& bootstrapLabels,
                  WeightsType& bootstrapWeights)
   {
-    mlpack::Bootstrap<UseWeights>(dataset,
-                                  labels,
-                                  weights,
-                                  bootstrapDataset,
-                                  bootstrapLabels,
-                                  bootstrapWeights);
+    bootstrapDataset.set_size(dataset.n_rows, dataset.n_cols);
+    bootstrapLabels.set_size(labels.n_elem);
+    if (UseWeights)
+      bootstrapWeights.set_size(weights.n_elem);
+
+    // Random sampling with replacement.
+    arma::uvec indices = randi<arma::uvec>(dataset.n_cols,
+      arma::distr_param(0, dataset.n_cols - 1));
+    bootstrapDataset = dataset.cols(indices);
+    bootstrapLabels = labels.cols(indices);
+    if (UseWeights)
+      bootstrapWeights = weights.cols(indices);
   }
 };
 
 /**
  * No-op bootstrap strategy that just copies the input to the output.
  */
-template<bool UseWeights>
 class IdentityBootstrap
 {
  public:
-  template<typename MatType,
+  template<bool UseWeights,
+           typename MatType,
            typename LabelsType,
            typename WeightsType>
   void Bootstrap(const MatType& dataset,
@@ -88,37 +64,35 @@ class IdentityBootstrap
                  LabelsType& bootstrapLabels,
                  WeightsType& bootstrapWeights)
   {
-    bootstrapDataset = dataset;
-    bootstrapLabels = labels;
+    MakeAlias(bootstrapDataset, dataset, dataset.n_rows, dataset.n_cols);
+    MakeAlias(bootstrapLabels, labels, labels.n_elem);
     if (UseWeights)
-      bootstrapWeights = weights;
+      MakeAlias(bootstrapWeights, weights, weights.n_elem);
   }
 };
 
 /**
  * Sequential bootstrap.
  */
-template<bool UseWeights, typename G = std::mt19937>
+template<typename MatType = arma::mat>
 class SequentialBootstrap
 {
  public:
-  explicit SequentialBootstrap(const arma::mat& indicatorMatrix,
-                               const G& generator = G(std::random_device()())) :
-    SequentialBootstrap(indicatorMatrix, indicatorMatrix.n_rows, generator)
+  explicit SequentialBootstrap(const MatType& indicatorMatrix) :
+    SequentialBootstrap(indicatorMatrix, indicatorMatrix.n_rows)
   {
   }
 
-  explicit SequentialBootstrap(const arma::mat& indicatorMatrix,
-                               arma::uword sampleCount,
-                               const G& generator = G(std::random_device()())):
+  SequentialBootstrap(const MatType& indicatorMatrix,
+                      arma::uword sampleCount):
     indicatorMatrix(indicatorMatrix),
     colIndices(arma::linspace<arma::uvec>(0, indicatorMatrix.n_cols - 1)),
-    sampleCount(sampleCount),
-    generator(generator)
+    sampleCount(sampleCount)
   {
   }
 
-  template<typename MatType,
+  template<bool UseWeights,
+           typename MatType,
            typename LabelsType,
            typename WeightsType>
   void Bootstrap(const MatType& dataset,
@@ -143,38 +117,67 @@ class SequentialBootstrap
       bootstrapWeights = weights.rows(phi);
   }
 
+  /**
+   * Compute the samples of the next draw.
+   * 
+   * @return A list of indices referring to the observations that should
+   *         be sampled.
+   */
   arma::uvec ComputeSamples() const
   {
-    arma::uvec phi;
+    std::vector<arma::u64> phi;
 
-    while (phi.size() < sampleCount) {
-      const auto prob(ComputeNextDrawProbabilities(phi, indicatorMatrix));
-      std::discrete_distribution dist(prob.begin(), prob.end());
+    phi.reserve(sampleCount);
+    while (phi.size() < sampleCount)
+    {
+      const arma::vec prob(ComputeNextDrawProbabilities(phi,
+                                                        indicatorMatrix));
+      DiscreteDistribution d =
+          DiscreteDistribution(std::vector<arma::vec>(1u, prob));
 
-      phi = arma::join_cols(phi, arma::uvec{ colIndices[dist(generator)] });
+      phi.push_back(colIndices[d.Random()[0]]);
     }
 
-    return phi;
+    return arma::conv_to<arma::uvec>::from(phi);
   }
-
-  static arma::vec ComputeAverageUniqueness(const arma::mat& indicatorMatrix)
+  
+  /**
+   * Compute the average uniqueness of each event at any sampling time point.
+   * The average uniqueness is a measure for how isolated an event is during
+   * its lifetime from other events.
+   *
+   * @param[in] indicatorMatrix Is a sparse matrix with ones where an event is
+   *                            active and zeros else. Each row is a event,
+   *                            each column is a time point.
+   * @return The average uniqueness of the events in @p indicatorMatrix.
+   */
+  static arma::vec ComputeAverageUniqueness(
+      const MatType& indicatorMatrix)
   {
     // sum of each column
     arma::rowvec concurrency(arma::sum(indicatorMatrix, 0));
-    auto uniqueness(
-      indicatorMatrix.each_row()
-      / concurrency.clamp(1.0,
-        std::numeric_limits<arma::rowvec::elem_type>::max()));
-    const auto n(arma::sum(indicatorMatrix, 1)); // sum of each row
 
-    return arma::sum(uniqueness, 1) / n; // mean of each row
+    return (arma::sum(indicatorMatrix.each_row()
+      / concurrency.clamp(1.0,
+        std::numeric_limits<arma::rowvec::elem_type>::max()), 1) /
+          arma::sum(indicatorMatrix, 1)); // mean of each row.
   }
 
-  static arma::vec ComputeNextDrawProbabilities(const arma::uvec& phi,
-                                             const arma::mat& indicatorMatrix)
+  /**
+   * Compute probabilities of the next draw for each observation.
+   * 
+   * @param[in] phi List of previously drawn observations.
+   * @param[in] indicatorMatrix See
+   *                            SequentialBootstrap::ComputeAverageUniqueness.
+   * @return The probabilities for each observation to be drawn in the next
+   *         iteration.
+   */
+  static arma::vec ComputeNextDrawProbabilities(
+      const std::vector<arma::u64>& phi,
+      const arma::mat& indicatorMatrix)
   {
     arma::vec avg(indicatorMatrix.n_rows);
-    arma::uvec rows(phi);
+    arma::uvec rows(arma::conv_to<arma::uvec>::from(phi));
 
     rows.insert_rows(rows.n_rows, 1);
     for (arma::uword i(0); i < avg.size(); ++i) {
@@ -186,10 +189,9 @@ class SequentialBootstrap
   }
 
  private:
-  const arma::mat indicatorMatrix;
+  const MatType indicatorMatrix;
   const arma::uvec colIndices;
   const arma::uword sampleCount;
-  G generator;
 };
 
 } // namespace mlpack
