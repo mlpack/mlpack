@@ -699,7 +699,8 @@ TEST_CASE("SequentialBootstrapTest", "[RandomForestTest]")
   arma::Row<size_t> bsLabels;
   arma::vec bsWeights;
 
-  bootstrap.Bootstrap<true>(ds, labels, weights, bsDataset, bsLabels, bsWeights);
+  bootstrap.Bootstrap<true>(ds, labels, weights, bsDataset,
+      bsLabels, bsWeights);
 
   // Check that dimensions are the same.
   REQUIRE(ds.n_rows == bsDataset.n_rows);

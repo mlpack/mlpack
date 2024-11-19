@@ -386,7 +386,7 @@ class RandomForest
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-   static_assert(UseBootstrap ||
+  static_assert(UseBootstrap ||
      std::is_same_v<BootstrapType, IdentityBootstrap>,
      "UseBootstrap will be removed in mlpack 5.0.0, "
      "use IdentityBootstrap instead.");
