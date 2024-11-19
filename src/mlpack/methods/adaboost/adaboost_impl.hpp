@@ -204,7 +204,7 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
   for (size_t i = 0; i < predictedLabels.n_cols; ++i)
   {
     probabilities.col(i) /= accu(probabilities.col(i));
-    probabilities.col(i).max(maxIndex);
+    maxIndex = probabilities.col(i).index_max();
     predictedLabels(i) = maxIndex;
   }
 }

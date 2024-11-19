@@ -528,13 +528,14 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
     for (size_t j = 0; j < logTransition.n_rows; j++)
     {
       arma::vec prob = logStateProb.col(t - 1) + logTransition.row(j).t();
-      logStateProb(j, t) = prob.max(index) + logProbs(t, j);
+      index = prob.index_max();
+      logStateProb(j, t) = index + logProbs(t, j);
       stateSeqBack(j, t) = index;
     }
   }
 
   // Backtrack to find the most probable state sequence.
-  logStateProb.unsafe_col(dataSeq.n_cols - 1).max(index);
+  index = logStateProb.unsafe_col(dataSeq.n_cols - 1).index_max();
   stateSeq[dataSeq.n_cols - 1] = index;
   for (size_t t = 2; t <= dataSeq.n_cols; t++)
   {

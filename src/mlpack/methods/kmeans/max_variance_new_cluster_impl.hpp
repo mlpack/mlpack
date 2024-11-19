@@ -35,8 +35,7 @@ void MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   this->iteration = iteration;
 
   // Now find the cluster with maximum variance.
-  arma::uword maxVarCluster = 0;
-  variances.max(maxVarCluster);
+  arma::uword maxVarCluster = variances.index_max();
 
   // If the cluster with maximum variance has variance of 0, then we can't
   // continue.  All the points are the same.
