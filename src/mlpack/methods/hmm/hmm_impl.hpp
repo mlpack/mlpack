@@ -529,7 +529,7 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
     {
       arma::vec prob = logStateProb.col(t - 1) + logTransition.row(j).t();
       index = prob.index_max();
-      logStateProb(j, t) = index + logProbs(t, j);
+      logStateProb(j, t) = prob[index] + logProbs(t, j);
       stateSeqBack(j, t) = index;
     }
   }
