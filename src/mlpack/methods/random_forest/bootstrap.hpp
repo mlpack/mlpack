@@ -78,7 +78,7 @@ template<typename MatType = arma::mat>
 class SequentialBootstrap
 {
  public:
-  explicit SequentialBootstrap(const MatType& indicatorMatrix) :
+  SequentialBootstrap(const MatType& indicatorMatrix) :
     SequentialBootstrap(indicatorMatrix, indicatorMatrix.n_rows)
   {
   }
