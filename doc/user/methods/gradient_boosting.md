@@ -1,15 +1,15 @@
 ## `GradBoosting`
 
-The `GradBoosting` class implements a Gradient Boosting model that supports
+The `GradBoosting` class implements a gradient boosting model that supports
 numerical and categorical features. The class offers several template 
 parameters and several runtime options that can be used to control the 
 model.
 
-Gradient Boosting is a very powerful ensemble algorithm used for both 
-classification and regression tasks. It utilizes a series of weak learners 
-(specifically [decision tree regressors](decision_tree_regressor.md)) to arrive closer and closer to a targeted label. Each 
-weak learner is trained on the error of the previous learner, thereby 
-reducing the error of the overall model.
+Gradient boosting is a powerful ensemble algorithm used for both 
+classification and regression tasks. It uses a series of weak learners 
+(specifically [decision tree regressors](decision_tree_regressor.md)), each
+trained on the error of the previous learner.  This allows the ensemble to
+produce accurate predictions.
 
 #### Simple usage example:
 
@@ -25,10 +25,10 @@ arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
 size_t numWeakLearners = 10;
 size_t numClasses = 5;
 
-mlpack::GradBoosting gb;               // Step 1: create model.
-gb.Train(dataset, labels, numClasses, numWeakLearners);          // Step 2: train model.
+mlpack::GradBoosting gb;                                // Step 1: create model.
+gb.Train(dataset, labels, numClasses, numWeakLearners); // Step 2: train model.
 arma::Row<size_t> predictions;
-gb.Classify(testDataset, predictions); // Step 3: classify points.
+gb.Classify(testDataset, predictions);                  // Step 3: classify points.
 
 // Print some information about the test predictions.
 std::cout << arma::accu(predictions == 2) << " test points classified as class "
@@ -65,7 +65,8 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 ---
 
  * `gb = GradBoosting(data, datasetInfo, labels, numClasses, numWeakLearners)`
-   - Train on numerical and/or categorical data using default arguments for the weak learners (Decision Trees).
+   - Train on numerical and/or categorical data using default arguments for the
+     weak learners ([`DecisionTreeRegressor`s](decision_tree_regressor.md)).
 
 ---
 
@@ -84,8 +85,8 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `numWeakLearners` | `size_t` | Number of weak learner models to be used. | _(N/A)_ |
 | `minimumLeafSize` | `size_t` | Minimum leaf size for weak learner decision tree. | `10` |
-| `minimumGainSplit` | `double` | Minimum gain split for weak learner decision tree | 1e-7 |
-| `maximumDepth` | `size_t` | Maximum tree depth for weak learner decision tree | 2 |
+| `minimumGainSplit` | `double` | Minimum gain split for weak learner decision tree | `1e-7` |
+| `maximumDepth` | `size_t` | Maximum tree depth for weak learner decision tree | `2` |
 
 ***Note:*** different types can be used for `data` (e.g.,
 `arma::fmat`, `arma::sp_mat`). 
@@ -101,7 +102,7 @@ of the following versions of the `Train()` member function:
 ---
 
  * `gb.Train(data, datasetInfo, labels, numClasses, numWeakLearners, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on numerical data using weak learner model's arguments `minimumLeafSize`, `minimumGainSplit` and `maximumDepth`.
+   - Train on mixed categorical data using the `minimumLeafSize`, `minimumGainSplit`, and `maximumDepth` options to control the behavior of the weak learners ([`DecisionTreeRegressor`s](decision_tree_regressor.md)).
 
 ---
 
@@ -152,7 +153,7 @@ that is used should be the same type that was used for training.
 
 ### Other Functionality
 
- * `WeakLearner(size_t i)` returns a `DecisionTreeRegressor&` indicating which weak learner 
+ * `WeakLearner(size_t i)` returns a [`DecisionTreeRegressor&`](decision_tree_regressor.md) indicating which weak learner 
     is being used. 
 
  * `gb.NumWeakLearners()` returns a `size_t` indicating how many weak learners are being
@@ -217,7 +218,7 @@ mlpack::GradBoosting gb;
 mlpack::data::Load("gb.bin", "gb", gb, true);
 
 std::cout << "The number of weak learners being used by the model is "
-<< gb.NumWeakLearners() << "." << std::endl;
+    << gb.NumWeakLearners() << "." << std::endl;
 
 ```
 

@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_GRADBOOSTING_HPP
-#define MLPACK_GRADBOOSTING_HPP
+#ifndef MLPACK_GRAD_BOOSTING_HPP
+#define MLPACK_GRAD_BOOSTING_HPP
 
 #include "grad_boosting/grad_boosting.hpp"
 
