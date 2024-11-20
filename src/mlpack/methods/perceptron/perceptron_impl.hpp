@@ -322,7 +322,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
   for (size_t i = 0; i < test.n_cols; ++i)
   {
     tempLabelMat = weights.t() * test.col(i) + biases;
-    maxIndex = tempLabelMat.index_max();
+    tempLabelMat.max(maxIndex);
     predictedLabels(i) = maxIndex;
   }
 }
