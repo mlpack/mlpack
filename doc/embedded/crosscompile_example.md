@@ -41,7 +41,7 @@ to include all the necessary configurations to allow using a cross compiler
 toolchain.  Then we are setting the C++ standard to use and define settings
 for `OpenMP` and `std::thread`
 
-```c++
+```cmake
 cmake_minimum_required(VERSION 3.6)
 project(RandomForest)
 
