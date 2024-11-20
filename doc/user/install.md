@@ -115,7 +115,7 @@ If you are configuring mlpack with CMake (as in the code snippets in the
 previous section), you can use the auto-downloader to obtain mlpack's
 dependencies with the `-DDOWNLOAD_DEPENDENCIES=ON` option (detailed in the
 [CMake options section](#cmake-options).  The autodownloader is especially
-useful for [cross-compilation](embedded/supported_boards.md), as it
+useful for [cross-compilation](../embedded/supported_boards.md), as it
 automatically downloads and compiles OpenBLAS for the target architecture.
 
 ## Install bindings via language package managers
@@ -123,11 +123,11 @@ automatically downloads and compiles OpenBLAS for the target architecture.
 If you wish to use mlpack's bindings to other languages, see the quickstarts for
 each language for more information on installation:
 
- * [Python](quickstart/python.md)
- * [Command-line](quickstart/cli.md)
- * [Julia](quickstart/julia.md)
- * [R](quickstart/R.md)
- * [Go](quickstart/go.md)
+ * [Python](../quickstart/python.md)
+ * [Command-line](../quickstart/cli.md)
+ * [Julia](../quickstart/julia.md)
+ * [R](../quickstart/R.md)
+ * [Go](../quickstart/go.md)
 
 ## Compile bindings manually
 

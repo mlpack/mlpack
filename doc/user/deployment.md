@@ -13,13 +13,16 @@ The pages below provide guidance for how to deploy mlpack to a variety of
 relatively simple environments.
 
  * [***Compile an mlpack program***](compile.md): compile a standalone C++ program
-   that uses mlpack
+   that uses mlpack.
 
- * [***Deploy to a Docker container***](docker.md): build a Docker container
-   with an mlpack application inside
+ * [***Deploy to a Docker container***](deploy_docker.md): build a Docker container
+   with an mlpack application inside.
 
  * [***Cross-compile to a Raspberry Pi***](../embedded/crosscompile_armv7.md):
    cross-compile an mlpack C++ application to an embedded or low-resource
    device.
    - See also the
      [cross-compilation setup page](../embedded/supported_boards.md).
+
+ * [***Deploying mlpack on Windows***](deploy_windows.md): build a Windows
+   application that uses mlpack.

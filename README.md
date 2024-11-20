@@ -143,7 +143,7 @@ neural network, a compilation error will occur.
 
 See also:
 
- * the [test program compilation section](user/install.md#compiling-a-test-program)
+ * the [test program compilation section](doc/user/install.md#compiling-a-test-program)
    of the installation documentation,
  * the [C++ quickstart](doc/quickstart/cpp.md), and
  * the [examples repository](https://github.com/mlpack/examples) repository for
@@ -183,7 +183,7 @@ See the [installation instruction section](doc/user/install.md#build-tests).
 
 More documentation is available for both users and developers.
 
- * [Documentation homepage](http://www.mlpack.org/doc/index.html)
+ * [Documentation homepage](https://www.mlpack.org/doc/index.html)
 
 To learn about the development goals of mlpack in the short- and medium-term
 future, see the [vision document](https://www.mlpack.org/papers/vision.pdf).
