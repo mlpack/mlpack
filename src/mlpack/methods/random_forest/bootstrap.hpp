@@ -140,7 +140,7 @@ class SequentialBootstrap
 
     return arma::conv_to<arma::uvec>::from(phi);
   }
- 
+
   /**
    * Compute the average uniqueness of each event at any sampling time point.
    * The average uniqueness is a measure for how isolated an event is during
