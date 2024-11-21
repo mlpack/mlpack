@@ -152,7 +152,7 @@ class SequentialBootstrap
    * @return The average uniqueness of the events in @p indicatorMatrix.
    */
   static arma::vec ComputeAverageUniqueness(
-      const MatType& indicatorMatrix)
+      const IndMatType& indicatorMatrix)
   {
     // sum of each column
     arma::rowvec concurrency(arma::sum(indicatorMatrix, 0));
@@ -174,7 +174,7 @@ class SequentialBootstrap
    */
   static arma::vec ComputeNextDrawProbabilities(
       const std::vector<arma::u64>& phi,
-      const arma::mat& indicatorMatrix)
+      const IndMatType& indicatorMatrix)
   {
     arma::vec avg(indicatorMatrix.n_rows);
     arma::uvec rows(arma::conv_to<arma::uvec>::from(phi));
