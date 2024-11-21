@@ -74,16 +74,16 @@ class IdentityBootstrap
 /**
  * Sequential bootstrap.
  */
-template<typename MatType = arma::mat>
+template<typename IndMatType = arma::mat>
 class SequentialBootstrap
 {
  public:
-  SequentialBootstrap(const MatType& indicatorMatrix) :
+  SequentialBootstrap(const IndMatType& indicatorMatrix) :
     SequentialBootstrap(indicatorMatrix, indicatorMatrix.n_rows)
   {
   }
 
-  SequentialBootstrap(const MatType& indicatorMatrix,
+  SequentialBootstrap(const IndMatType& indicatorMatrix,
                       arma::uword sampleCount):
     indicatorMatrix(indicatorMatrix),
     colIndices(arma::linspace<arma::uvec>(0, indicatorMatrix.n_cols - 1)),
@@ -189,7 +189,7 @@ class SequentialBootstrap
   }
 
  private:
-  const MatType indicatorMatrix;
+  const IndMatType indicatorMatrix;
   const arma::uvec colIndices;
   const arma::uword sampleCount;
 };
