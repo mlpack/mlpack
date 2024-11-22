@@ -424,9 +424,9 @@ class RandomForest
                const size_t minimumLeafSize,
                const double minimumGainSplit,
                const size_t maximumDepth,
+               const bool warmStart,
                DimensionSelectionType& dimensionSelector,
-               BootstrapType& bootstrap,
-               const bool warmStart = false);
+               BootstrapType& bootstrap);
 
   //! The trees in the forest.
   std::vector<DecisionTreeType> trees;

@@ -69,8 +69,8 @@ RandomForest<
   data::DatasetInfo info; // Ignored.
   arma::rowvec weights; // Fake weights, not used.
   Train<false, false>(dataset, info, labels, numClasses, weights, numTrees,
-      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector,
-      bootstrap, false);
+      minimumLeafSize, minimumGainSplit, maximumDepth, false,
+      dimensionSelector, bootstrap);
 }
 
 template<
@@ -104,8 +104,8 @@ RandomForest<
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
   Train<false, true>(dataset, datasetInfo, labels, numClasses, weights,
-      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector, bootstrap, false);
+      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, false,
+      dimensionSelector, bootstrap);
 }
 
 template<
@@ -139,8 +139,8 @@ RandomForest<
   // Pass off work to the Train() method.
   data::DatasetInfo info; // Ignored by Train().
   Train<true, false>(dataset, info, labels, numClasses, weights, numTrees,
-      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector,
-      bootstrap, false);
+      minimumLeafSize, minimumGainSplit, maximumDepth, false,
+      dimensionSelector, bootstrap);
 }
 
 template<
@@ -174,8 +174,8 @@ RandomForest<
 {
   // Pass off work to the Train() method.
   Train<true, true>(dataset, datasetInfo, labels, numClasses, weights,
-      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector, bootstrap, false);
+      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, false,
+      dimensionSelector, bootstrap);
 }
 
 template<
@@ -208,9 +208,10 @@ double RandomForest<
   // Pass off to Train().
   data::DatasetInfo datasetInfo; // Ignored by Train().
   arma::rowvec weights; // Ignored by Train().
-  return Train<false, false>(dataset, datasetInfo, labels, numClasses, weights,
-      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector, bootstrap, warmStart);
+  return
+    Train<false, false>(dataset, datasetInfo, labels, numClasses, weights,
+      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, warmStart,
+      dimensionSelector, bootstrap);
 }
 
 template<
@@ -243,9 +244,10 @@ double RandomForest<
 {
   // Pass off to Train().
   arma::rowvec weights; // Ignored by Train().
-  return Train<false, true>(dataset, datasetInfo, labels, numClasses, weights,
-      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector, bootstrap, warmStart);
+  return
+    Train<false, true>(dataset, datasetInfo, labels, numClasses, weights,
+      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, warmStart,
+      dimensionSelector, bootstrap);
 }
 
 template<
@@ -278,9 +280,10 @@ double RandomForest<
 {
   // Pass off to Train().
   data::DatasetInfo datasetInfo; // Ignored by Train().
-  return Train<true, false>(dataset, datasetInfo, labels, numClasses, weights,
-      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector, bootstrap, warmStart);
+  return
+    Train<true, false>(dataset, datasetInfo, labels, numClasses, weights,
+      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, warmStart,
+      dimensionSelector, bootstrap);
 }
 
 template<
@@ -313,9 +316,10 @@ double RandomForest<
          BootstrapType bootstrap)
 {
   // Pass off to Train().
-  return Train<true, true>(dataset, datasetInfo, labels, numClasses, weights,
-      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector, bootstrap, warmStart);
+  return
+    Train<true, true>(dataset, datasetInfo, labels, numClasses, weights,
+      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, warmStart,
+      dimensionSelector, bootstrap);
 }
 
 template<
@@ -529,9 +533,9 @@ double RandomForest<
          const size_t minimumLeafSize,
          const double minimumGainSplit,
          const size_t maximumDepth,
+         const bool warmStart,
          DimensionSelectionType& dimensionSelector,
-         BootstrapType& bootstrap,
-         const bool warmStart)
+         BootstrapType& bootstrap)
 {
   // Reset the forest if we are not doing a warm-start.
   if (!warmStart)
