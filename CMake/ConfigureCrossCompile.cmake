@@ -16,6 +16,27 @@ if (CMAKE_CROSSCOMPILING)
   elseif(NOT TOOLCHAIN_PREFIX)
     message(FATAL_ERROR "Cannot configure: TOOLCHAIN_PREFIX must be set when performing cross-compiling!")
   endif()
+
+  # Now make sure that we can still compile a simple test program.
+  # (This ensures we didn't add any bad CXXFLAGS.)
+  # Note that OUTPUT_VARIABLE is only available in newer versions of CMake!
+  # CMake 3.23 (silently) introduced the variable.
+  include(CheckCXXSourceCompiles)
+  if (CMAKE_VERSION VERSION_LESS "3.22.0")
+    check_cxx_source_compiles("int main() { return 0; }" COMPILE_SUCCESS)
+    if (NOT COMPILE_SUCCESS)
+      message(FATAL_ERROR "The C++ cross-compiler at ${CMAKE_CXX_COMPILER} is "
+        "not able to compile a trivial test program.  Check the CXXFLAGS!")
+    endif ()
+  else ()
+    check_cxx_source_compiles("int main() { return 0; }" COMPILE_SUCCESS
+        OUTPUT_VARIABLE COMPILE_OUTPUT)
+    if (NOT COMPILE_SUCCESS)
+      message(FATAL_ERROR "The C++ cross-compiler at ${CMAKE_CXX_COMPILER} is "
+        "not able to compile a trivial test program.  Compiler output:\n\n"
+        "${COMPILE_OUTPUT}")
+    endif ()
+  endif ()
 endif()
 
 macro(search_openblas version)
