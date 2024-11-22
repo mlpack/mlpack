@@ -243,8 +243,8 @@ void Perceptron<
       // Multiply for each variable and check whether the current weight vector
       // correctly classifies this.
       tempLabelMat = weights.t() * data.col(j) + biases;
-
-      tempLabelMat.max(maxIndexRow, maxIndexCol);
+      
+      maxIndexRow = arma::ind2sub(arma::size(tempLabelMat), tempLabelMat.index_max())(0);
 
       // Check whether prediction is correct.
       if (maxIndexRow != labels(0, j))
@@ -289,7 +289,7 @@ size_t Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
   arma::uword maxIndex = 0;
 
   tempLabelVec = weights.t() * point + biases;
-  tempLabelVec.max(maxIndex);
+  maxIndex = tempLabelVec.index_max();
 
   return size_t(maxIndex);
 }
@@ -322,7 +322,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
   for (size_t i = 0; i < test.n_cols; ++i)
   {
     tempLabelMat = weights.t() * test.col(i) + biases;
-    tempLabelMat.max(maxIndex);
+    maxIndex = tempLabelMat.index_max();
     predictedLabels(i) = maxIndex;
   }
 }
