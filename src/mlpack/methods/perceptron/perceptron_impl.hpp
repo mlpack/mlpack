@@ -243,8 +243,9 @@ void Perceptron<
       // Multiply for each variable and check whether the current weight vector
       // correctly classifies this.
       tempLabelMat = weights.t() * data.col(j) + biases;
-      
-      maxIndexRow = arma::ind2sub(arma::size(tempLabelMat), tempLabelMat.index_max())(0);
+
+      maxIndexRow = arma::ind2sub(arma::size(tempLabelMat),
+          tempLabelMat.index_max())(0);
 
       // Check whether prediction is correct.
       if (maxIndexRow != labels(0, j))
