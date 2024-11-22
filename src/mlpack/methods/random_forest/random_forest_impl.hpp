@@ -571,7 +571,7 @@ double RandomForest<
     MatType bootstrapDataset;
     arma::Row<size_t> bootstrapLabels;
     arma::rowvec bootstrapWeights;
-    bootstrap.Bootstrap<UseWeights>(dataset, labels, weights, bootstrapDataset,
+    bootstrap.template Bootstrap<UseWeights>(dataset, labels, weights, bootstrapDataset,
         bootstrapLabels, bootstrapWeights);
 
     if (UseWeights)
