@@ -225,7 +225,7 @@ void Perceptron<
   size_t j, i = 0;
   bool converged = false;
   size_t tempLabel;
-  arma::uword maxIndexRow = 0, maxIndexCol = 0;
+  arma::uword maxIndexRow = 0;
   arma::Mat<ElemType> tempLabelMat;
 
   LearnPolicy LP;
