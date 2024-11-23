@@ -258,8 +258,7 @@ size_t NaiveBayesClassifier<ModelMatType>::Classify(const VecType& point) const
   ModelMatType logLikelihoods;
   LogLikelihood(point, logLikelihoods);
 
-  arma::uword maxIndex = 0;
-  logLikelihoods.max(maxIndex);
+  arma::uword maxIndex = logLikelihoods.index_max();
   return maxIndex;
 }
 
