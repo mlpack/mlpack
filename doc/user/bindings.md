@@ -15,7 +15,7 @@ to get the most out of mlpack, C++ is likely the better route to go.
 </center>
 
  - [CLI quickstart](../quickstart/cli.md)
- - [CLI API reference](../bindings/cli.md)
+ - [CLI API reference](bindings/cli.md)
 
 ## Python
 
@@ -24,7 +24,7 @@ to get the most out of mlpack, C++ is likely the better route to go.
 </center>
 
  - [Python quickstart](../quickstart/python.md)
- - [Python API reference](../bindings/python.md)
+ - [Python API reference](bindings/python.md)
 
 ## Julia
 
@@ -33,7 +33,7 @@ to get the most out of mlpack, C++ is likely the better route to go.
 </center>
 
  - [Julia quickstart](../quickstart/julia.md)
- - [Julia API reference](../bindings/julia.md)
+ - [Julia API reference](bindings/julia.md)
 
 ## R
 
@@ -42,7 +42,7 @@ to get the most out of mlpack, C++ is likely the better route to go.
 </center>
 
  - [R quickstart](../quickstart/r.md)
- - [R API reference](../bindings/r.md)
+ - [R API reference](bindings/r.md)
 
 ## Go
 
@@ -51,4 +51,4 @@ to get the most out of mlpack, C++ is likely the better route to go.
 </center>
 
  - [Go quickstart](../quickstart/go.md)
- - [Go API reference](../bindings/go.md)
+ - [Go API reference](bindings/go.md)
