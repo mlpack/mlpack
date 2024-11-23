@@ -15,6 +15,9 @@ _????-??-??_
 
  * Fix serialization and `MinDistance()` bugs with `HollowBallBound` (#3808).
 
+ * Fix command-line duplicate output bug when loading matrices for some bindings
+   (#3838).
+
 ## mlpack 4.5.0
 
 _2024-09-17_
