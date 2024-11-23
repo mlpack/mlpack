@@ -11,9 +11,9 @@ any machine learning [transformations](transformations.md) or
 *Note: this section is under construction and not all functionality is
 documented yet.*
 
- * [Normalizing labels](user/normalizing_labels.md): convert labels to/from an
+ * [Normalizing labels](normalizing_labels.md): convert labels to/from an
    arbitrary range to `[0, numClasses - 1]`, which is the range that mlpack
    classifiers require.
 
- * [Dataset splitting](user/split.md): split a dataset into a training and test
+ * [Dataset splitting](split.md): split a dataset into a training and test
    set, optionally including labels.

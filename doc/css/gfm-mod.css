@@ -21,8 +21,8 @@ body {
 div#content {
   padding-top: 10px;
   padding-bottom: 10px;
-  padding: 30px;
-  max-width: 920px;
+  padding: 10px;
+  max-width: 880px;
   margin: auto;
 }
 
@@ -1060,9 +1060,9 @@ div#sidebar {
   float: left;
   position: fixed;
   top: 55px;
-  min-width: calc(50% - 460px);
+  min-width: calc(50% - 450px);
   font-size: 90%;
-  max-width: calc(50% - 460px);
+  max-width: calc(50% - 450px);
   overflow-y: scroll;
   bottom: 0;
 }
