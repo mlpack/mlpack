@@ -13,6 +13,7 @@ steps:
 - script: |
     set -e
     sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+    brew reinstall pkg-config
     brew install libomp openblas armadillo cereal ensmallen
 
     if [ "$BINDING" = "python" ]; then
