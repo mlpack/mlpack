@@ -126,7 +126,7 @@ each language for more information on installation:
  * [Python](../quickstart/python.md)
  * [Command-line](../quickstart/cli.md)
  * [Julia](../quickstart/julia.md)
- * [R](../quickstart/R.md)
+ * [R](../quickstart/r.md)
  * [Go](../quickstart/go.md)
 
 ## Compile bindings manually

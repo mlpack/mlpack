@@ -9,7 +9,7 @@ Before using mlpack in an application, it must be installed on the system.
 
 Once mlpack is set up, you should start with the following resources:
 
- * [Quickstart](quickstart/cpp.md): guide to get simple mlpack programs running
+ * [Quickstart](../quickstart/cpp.md): guide to get simple mlpack programs running
    in C++.
 
  * [Matrices and data](matrices.md): details about how data is expected to

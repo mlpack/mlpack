@@ -15,9 +15,6 @@ relatively simple environments.
  * [***Compile an mlpack program***](compile.md): compile a standalone C++ program
    that uses mlpack.
 
- * [***Deploy to a Docker container***](deploy_docker.md): build a Docker container
-   with an mlpack application inside.
-
  * [***Cross-compile to a Raspberry Pi***](../embedded/crosscompile_armv7.md):
    cross-compile an mlpack C++ application to an embedded or low-resource
    device.

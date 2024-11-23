@@ -4,7 +4,6 @@ Once an mlpack application has been developed, it is easy to compile it into a
 standalone program.  On this page, compilation is performed via the command-line
 on a standard Linux or OS X system; if this is not your environment, see also:
 
- * [Deploy to a Docker container](deploy_docker.md)
  * [Cross-compile to a Raspberry Pi 2](../embedded/crosscompile_armv7.md)
  * [Deploy mlpack on Windows](deploy_windows.md)
 

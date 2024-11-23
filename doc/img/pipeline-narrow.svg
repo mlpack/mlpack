@@ -212,12 +212,14 @@
       <a xlink:href="../user/compile.html" target="_top">
         <text x="140" y="1130" text-anchor="middle">Compile an mlpack program</text>
       </a>
+      <!--
       <text x="140" y="1145" text-anchor="middle">Deploy to a Docker container</text>
+      -->
       <a xlink:href="../embedded/crosscompile_armv7.html" target="_top">
-        <text x="140" y="1160" text-anchor="middle">Cross-compile to a Raspberry
+        <text x="140" y="1145" text-anchor="middle">Cross-compile to a Raspberry
 Pi    </text>
       <a xlink:href="../user/deploy_windows.html" target="_top">
-        <text x="140" y="1175" text-anchor="middle">Deploy mlpack on Windows</text>
+        <text x="140" y="1160" text-anchor="middle">Deploy mlpack on Windows</text>
       </a>
       </a>
     </g>
@@ -256,28 +258,30 @@ Pi    </text>
     </g>
 
     <g class="elem">
-      <rect x="10" y="1330" rx="20" ry="20" width="260" height="100" />
-      <text x="140" y="1350" text-anchor="middle" class="header">Developer documentation</text>
+      <a xlink:href="../developer/developers.html" target="_top">
+        <rect x="10" y="1330" rx="20" ry="20" width="260" height="100" />
+        <text x="140" y="1350" text-anchor="middle" class="header">Developer documentation</text>
+      </a>
 
-      <a xlink:href="../developer/community.html">
+      <a xlink:href="../developer/community.html" target="_top">
         <text x="80" y="1375" text-anchor="middle">Community</text>
       </a>
-      <a xlink:href="../developer/gsoc.html">
+      <a xlink:href="../developer/gsoc.html" target="_top">
         <text x="200" y="1375" text-anchor="middle">GSoC</text>
       </a>
-      <a xlink:href="../developer/ci.html">
+      <a xlink:href="../developer/ci.html" target="_top">
         <text x="80" y="1390" text-anchor="middle">CI/CD</text>
       </a>
-      <a xlink:href="../developer/timer.html">
+      <a xlink:href="../developer/timer.html" target="_top">
         <text x="200" y="1390" text-anchor="middle">Timing</text>
       </a>
-      <a xlink:href="../developer/bindings.html">
+      <a xlink:href="../developer/bindings.html" target="_top">
         <text x="80" y="1405" text-anchor="middle">Binding system</text>
       </a>
-      <a xlink:href="../developer/iodoc.html">
+      <a xlink:href="../developer/iodoc.html" target="_top">
         <text x="200" y="1405" text-anchor="middle">Writing a binding</text>
       </a>
-      <a xlink:href="../developer/template_policies.html">
+      <a xlink:href="../developer/template_policies.html" target="_top">
         <text x="140" y="1420" text-anchor="middle">Template policies</text>
       </a>
     </g>
