@@ -12,9 +12,9 @@ information, see [this page](gsoc.md).
 
 All mlpack development is done on [GitHub](https://github.com/mlpack/mlpack).
 Commits and issue comments can be tracked via the
-[mlpack-git](https://freelists.org/list/mlpack-git) list (graciously hosted by
-[FreeLists](https://freelists.org).  Communication is generally either via
-issues on GitHub, or via chat:
+[mlpack-git](https://www.freelists.org/list/mlpack-git) list (graciously hosted
+by [FreeLists](https://www.freelists.org).  Communication is generally either
+via issues on GitHub, or via chat:
 
 ## Real-time chat
 
@@ -54,9 +54,8 @@ contains many examples you can build and play around with.
 
 Once you have an idea of what's included in mlpack and how a user might use it,
 then a good next step would be to set up a development environment.  Once you
-have that set up, you can
-[build mlpack from source](../README.md#3-installing-and-using-mlpack-in-c),
-and explore the codebase to see how it's organized.
+have that set up, you can [build mlpack from source](../user/install.md), and
+explore the codebase to see how it's organized.
 
 Try making small changes to the code, or adding new tests to the test suite, and
 then rebuild to see how your changes work.

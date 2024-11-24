@@ -6,7 +6,7 @@
 Once a model is trained, mlpack contains a number of utilities for testing the
 model.
 
- * [Cross-validation](user/cv.md): k-fold cross-validation tools for any mlpack
+ * [Cross-validation](cv.md): k-fold cross-validation tools for any mlpack
    algorithm
- * [Hyperparameter tuning](user/hpt.md): generic hyperparameter tuner to find
+ * [Hyperparameter tuning](hpt.md): generic hyperparameter tuner to find
    good hyperparameters for any mlpack algorithm

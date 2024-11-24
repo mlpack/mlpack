@@ -110,7 +110,7 @@ The [style checker job](http://ci.mlpack.org/job/pull-requests%20mlpack%20style%
    Jenkins job.
 
  * See also the
-   [style guidelines for mlpack](https://github.com/mlpack/mlpack/wiki/DesignGuidelines#style-guidelines).
+   [style guidelines for mlpack](https://github.com/mlpack/mlpack/wiki/DesignGuidelines).
 
 ## Cross-compilation checks
 
@@ -140,7 +140,7 @@ Configuration can be found in the
 Many physical systems are involved with testing mlpack and are hooked up to
 Jenkins.
 
-Link: [***Jenkins (`ci.mlpack.org`)***](https://ci.mlpack.org)
+Link: [***Jenkins (`ci.mlpack.org`)***](http://ci.mlpack.org)
 
  * The 'specialized' build system.
 

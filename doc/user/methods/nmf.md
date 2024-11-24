@@ -52,7 +52,7 @@ std::cout << "RMSE of reconstructed matrix: "
 
  * [`AMF`](amf.md): alternating matrix factorization
  * [`SparseCoding`](sparse_coding.md)
- * [mlpack transformations](../../transformations.md)
+ * [mlpack transformations](../transformations.md)
  * [Non-negative matrix factorization on Wikipedia](https://en.wikipedia.org/wiki/Non-negative_matrix_factorization)
  * [Learning the parts of objects by non-negative matrix factorization](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=29bae9472203546847ec1352a604566d0f602728) (original NMF paper, pdf)
 
