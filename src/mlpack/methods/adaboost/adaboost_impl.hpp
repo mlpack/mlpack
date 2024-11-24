@@ -165,7 +165,7 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
 
   arma::uword maxIndex = 0;
   probabilities /= accu(probabilities);
-  probabilities.max(maxIndex);
+  maxIndex = probabilities.index_max();
   prediction = (size_t) maxIndex;
 }
 
