@@ -13,6 +13,8 @@ steps:
 - script: |
     set -e
     sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+    // 2024/11/25: Temporary workaround for pkg-config failing to install with
+    // homebrew.  If it's mid-2025, the workaround can probably be removed.
     brew uninstall pkg-config@0.29.2
     brew install pkg-config
     brew install libomp openblas armadillo cereal ensmallen
