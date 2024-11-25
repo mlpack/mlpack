@@ -336,9 +336,10 @@ do
         "cv.md"
         "timer.md"
         "bindings.md"
-        "elemtype.md"
         "iodoc.md"
-        "metrics.md"
+        "distances.md"
+        "elemtype.md"
+        "kernels.md"
         "trees.md"
         # The tutorials are old and are likely to be replaced, so let's not test
         # them.
