@@ -332,7 +332,7 @@ class CustomTerminationPolicy
   // Note that W and H may have different types than V (i.e. V may be sparse,
   // and W and H must be dense.)
   template<typename WHMatType>
-  bool IsConverged(const MatType& H, const MatType& W);
+  bool IsConverged(const WHMatType& H, const WHMatType& W);
 
   // Return the value that should be returned for the `nmf.Apply()` function
   // when convergence has been reached.  This is called at the end of
