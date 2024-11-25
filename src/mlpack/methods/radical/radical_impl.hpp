@@ -103,8 +103,7 @@ inline typename MatType::elem_type Radical::Apply2D(const MatType& matX,
     values(i) = Vasicek(candidateY1, m) + Vasicek(candidateY2, m);
   }
 
-  arma::uword indOpt = 0;
-  values.min(indOpt); // we ignore the return value; we don't care about it
+  arma::uword indOpt = values.index_min();
   return (indOpt / (ElemType) angles) * M_PI / 2.0;
 }
 
