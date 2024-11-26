@@ -332,6 +332,7 @@ do
     declare -a files_to_skip=(
         # These files have small incomplete snippets that can't compile into
         # standalone programs.
+        "deploy_windows.md"
         "hpt.md"
         "cv.md"
         "timer.md"
