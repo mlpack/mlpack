@@ -314,7 +314,7 @@ class CustomDecompositionPolicy
   //      etc.).
   //  * `VecType` is the corresponding vector type to `MatType` (e.g., a
   //      `MatType` of `arma::mat` would mean a `VecType` of `arma::vec`, etc.).
-  template<typename MatType, typename MatType, typename VecType>
+  template<typename InMatType, typename MatType, typename VecType>
   static void Apply(const InMatType& data,
                     const MatType& centeredData,
                     MatType& transformedData,
