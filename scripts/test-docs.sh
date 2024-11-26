@@ -173,6 +173,7 @@ extract_code_blocks()
     echo "  $line" >> $output_prefix$output_file_display.body.cpp;
   done < $input_file.tmp;
 
+  rm -f $output_prefix*.defn.cpp; # Remove any unused definitions.
   rm -f $input_file.tmp;
 }
 
