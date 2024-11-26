@@ -163,7 +163,8 @@ TEMPLATE_TEST_CASE("GaussianClustering", "[MeanShiftTest]", float, double)
           centroids.col(i));
 
       // Are we near a centroid of a Gaussian?
-      const ElemType minVal = centroidDistances.min(minIndices[i]);
+      minIndices[i] = centroidDistances.index_min();
+      const ElemType minVal = centroidDistances(minIndices[i]);
       success = (std::abs(minVal) <= 0.65);
       if (!success)
         break;
@@ -240,7 +241,8 @@ TEMPLATE_TEST_CASE("GaussianClusteringCentroidsOnly", "[MeanShiftTest]", float,
           centroids.col(i));
 
       // Are we near a centroid of a Gaussian?
-      const ElemType minVal = centroidDistances.min(minIndices[i]);
+      minIndices[i] = centroidDistances.index_min();
+      const ElemType minVal = centroidDistances(minIndices[i]);
       success = (std::abs(minVal) <= 0.65);
       if (!success)
         break;
