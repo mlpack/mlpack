@@ -258,8 +258,7 @@ size_t NaiveBayesClassifier<ModelMatType>::Classify(const VecType& point) const
   ModelMatType logLikelihoods;
   LogLikelihood(point, logLikelihoods);
 
-  arma::uword maxIndex = 0;
-  logLikelihoods.max(maxIndex);
+  arma::uword maxIndex = logLikelihoods.index_max();
   return maxIndex;
 }
 
@@ -301,8 +300,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
       maxValue;
   probabilities = exp(logLikelihoods - logProbX); // log(exp(value)) == value.
 
-  arma::uword maxIndex = 0;
-  logLikelihoods.max(maxIndex);
+  arma::uword maxIndex = logLikelihoods.index_max();
   prediction = (size_t) maxIndex;
 }
 
@@ -332,8 +330,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
 
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    arma::uword maxIndex = 0;
-    logLikelihoods.unsafe_col(i).max(maxIndex);
+    arma::uword maxIndex = logLikelihoods.unsafe_col(i).index_max();
     predictions[i] = maxIndex;
   }
 }
@@ -384,8 +381,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
   // Now calculate maximum probabilities for each point.
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    arma::uword maxIndex = 0;
-    logLikelihoods.unsafe_col(i).max(maxIndex);
+    arma::uword maxIndex = logLikelihoods.unsafe_col(i).index_max();
     predictions[i] = maxIndex;
   }
 }
