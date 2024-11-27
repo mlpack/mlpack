@@ -343,6 +343,8 @@ do
         "elemtype.md"
         "kernels.md"
         "trees.md"
+        # Skip the quickstart, since it depends on some specific data.
+        "cpp.md"
         # The tutorials are old and are likely to be replaced, so let's not test
         # them.
         "amf.md"
