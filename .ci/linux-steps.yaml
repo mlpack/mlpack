@@ -23,7 +23,7 @@ steps:
 
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
 
-    sudo apt-get install -y --allow-unauthenticated libopenblas-dev g++ xz-utils
+    sudo apt-get install -y --allow-unauthenticated libopenblas-dev g++ xz-utils ccache
 
     if [ "$BINDING" = "python" ]; then
       python -m pip install --upgrade pip

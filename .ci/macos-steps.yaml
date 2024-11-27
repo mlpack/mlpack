@@ -13,7 +13,7 @@ steps:
 - script: |
     set -e
     sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
-    brew install libomp openblas armadillo cereal ensmallen
+    brew install libomp openblas armadillo cereal ensmallen ccache
 
     if [ "$BINDING" = "python" ]; then
       pip install --upgrade pip
