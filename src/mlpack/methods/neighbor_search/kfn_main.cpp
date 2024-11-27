@@ -235,7 +235,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     kfn->RandomBasis() = randomBasis;
     kfn->LeafSize() = size_t(lsInt);
 
-    arma::mat& referenceSet = std::move(params.Get<arma::mat>("reference"));
+    arma::mat& referenceSet = params.Get<arma::mat>("reference");
 
     Log::Info << "Using reference data from "
         << params.GetPrintable<arma::mat>("reference") << "." << endl;
