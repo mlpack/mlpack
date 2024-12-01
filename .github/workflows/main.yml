@@ -41,6 +41,27 @@ jobs:
       # Setup R actions
       - uses: r-lib/actions/setup-r@v2
 
+      # Get and set up ccache
+      - name: Get CCache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          # can also be eg ${{ matrix.os }} but just ubuntu-latest here
+          key: ${{ runner.os }}
+          # this is the default but 'sccache' can be selected here
+          variant: ccache
+
+      - name: Prepare R for Ccache 
+        run: |
+          mkdir -p ~/.R
+          cp -vax .github/etc/R_Makevars_${{ runner.os }} ~/.R/Makevars
+          
+      - name: Configure Ccache for R
+        run: |
+          ccache --set-config "sloppiness=include_file_ctime"
+          ccache --set-config "hash_dir=false" 
+          ccache --show-config
+          ccache --zero-stats
+
       - name: Query dependencies
         run: |
           cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
@@ -88,7 +109,7 @@ jobs:
 
       - name: Build
         run: |
-          cd build && make
+          cd build && VERBOSE=1 make -j4
 
       - name: Run tests via ctest
         run: |
