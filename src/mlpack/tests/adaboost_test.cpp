@@ -644,7 +644,7 @@ TEMPLATE_TEST_CASE("ClassifyTest_VERTEBRALCOL", "[AdaBoostTest]", mat, fmat)
   for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
   {
     pRow = probabilities.unsafe_col(i);
-    pRow.max(maxIndex);
+    maxIndex = pRow.index_max();
     REQUIRE(predictedLabels1(i) == maxIndex);
     REQUIRE(accu(probabilities.col(i)) == Approx(1));
   }
@@ -714,7 +714,7 @@ TEMPLATE_TEST_CASE("ClassifyTest_NONLINSEP", "[AdaBoostTest]", mat, fmat)
   for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
   {
     pRow = probabilities.unsafe_col(i);
-    pRow.max(maxIndex);
+    maxIndex = pRow.index_max();
     REQUIRE(predictedLabels1(i) == maxIndex);
     REQUIRE(accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
   }
@@ -787,7 +787,7 @@ TEMPLATE_TEST_CASE("ClassifyTest_IRIS", "[AdaBoostTest]", mat, fmat)
   for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
   {
     pRow = probabilities.unsafe_col(i);
-    pRow.max(maxIndex);
+    maxIndex = pRow.index_max();
     REQUIRE(predictedLabels1(i) == maxIndex);
     REQUIRE(accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
   }
