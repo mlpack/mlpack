@@ -1,8 +1,8 @@
 # mlpack changelog
 
-## mlpack ?.?.?
+## mlpack 4.5.1
 
-_????-??-??_
+_2024-12-02_
 
  * Fix compilation with clang 19 (#3799).
 
