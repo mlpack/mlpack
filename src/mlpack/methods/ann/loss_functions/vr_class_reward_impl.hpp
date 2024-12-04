@@ -49,7 +49,7 @@ typename MatType::elem_type VRClassRewardType<MatType>::Forward(
 
   for (size_t i = 0; i < input.n_cols - 1; ++i)
   {
-    input.unsafe_col(i).max(index);
+    index = input.unsafe_col(i).index_max();
     reward = (index == target(i)) * scale;
   }
 

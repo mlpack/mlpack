@@ -356,8 +356,7 @@ void RandomForest<
 
   // Find maximum element after renormalizing probabilities.
   probabilities /= trees.size();
-  arma::uword maxIndex = 0;
-  probabilities.max(maxIndex);
+  arma::uword maxIndex = probabilities.index_max();
 
   // Set prediction.
   prediction = (size_t) maxIndex;
