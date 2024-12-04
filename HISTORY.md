@@ -4,6 +4,11 @@
 
 _????-??-??_
 
+
+## mlpack 4.5.1
+
+_2024-12-02_
+
  * Fix compilation with clang 19 (#3799).
 
  * Deprecate version of `data::Split()` that returns a `std::tuple` for
