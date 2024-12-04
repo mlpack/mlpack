@@ -1161,10 +1161,6 @@ a.textlink {
   color: #333;
 }
 
-ul#binding_sidebar {
-  background: #eee;
-}
-
 @media screen and (max-width: 980px) {
   object#pipeline-wide { display: none; }
   object#pipeline-narrow { display: block; width: 100%; max-width: 400px; margin: auto; }
