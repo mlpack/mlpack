@@ -21,15 +21,15 @@ and library files into C:\mlpack\.
  * ensmallen: https://ensmallen.org/files/ensmallen-2.19.0.tar.gz
    Download the .tar.gz, and extract it into C:\mlpack\ensmallen-2.19.0\
 
-Now, install mlpack into C:\mlpack\mlpack-4.5.0\.  If you downloaded the mlpack
+Now, install mlpack into C:\mlpack\mlpack-4.5.1\.  If you downloaded the mlpack
 source, you can either use the Windows build guide (see
 doc/user/build_windows.md) to build and install, or, since mlpack is
-header-only, copy the src/ directory to C:\mlpack\mlpack-4.5.0\ and rename it
-"include" (so there will now be a directory C:\mlpack\mlpack-4.5.0\include\,
+header-only, copy the src/ directory to C:\mlpack\mlpack-4.5.1\ and rename it
+"include" (so there will now be a directory C:\mlpack\mlpack-4.5.1\include\,
 which contains only base.hpp and the mlpack/ subdirectory).
 
 Alternately, if you downloaded the Windows MSI installer, you can install to
-C:\mlpack\mlpack-4.5.0\.
+C:\mlpack\mlpack-4.5.1\.
 
 Once all of that setup is done, the example should compile as-is.
 
