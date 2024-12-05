@@ -1,12 +1,9 @@
 ## Crosscompile mlpack example for an embedded hardware
 
-In this article, we explore how to crosscompile and run an mlpack example code
-on an embedded hardware. In our previous
-[documentations](crosscompile_armv7.cmake), we have explored how to run mlpack
-bindings such as kNN command line program on a Raspberry PI 2. Please refer to that
-article first and follow the first part on how to setup cross-compilation toolchain,
-and then continue with this article. Or refer to this
-[table](supported_boards.md) for a quick start guide.
+In this article, we explore how to add mlpack to a CMake project that cross-compiles code to embedded hardware.  See also these related other guides, which may be useful to read before this one:
+
+ * [Run mlpack bindings on a Raspberry Pi](crosscompile_armv7.md)
+ * [Set up cross-compilation toolchain for mlpack](supported_boards.md)
 
 ### Cloning mlpack example respository
 
