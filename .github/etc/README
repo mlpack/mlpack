@@ -1,2 +1,0 @@
-
-This is used by both Azure and GHA and they use different values for macOS, hence two entries.

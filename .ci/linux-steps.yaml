@@ -35,20 +35,9 @@ steps:
       sudo tar -C /opt/ -xvpf julia-1.10.4-linux-x86_64.tar.gz
     fi
 
-    if [ "$BINDING" = "R" ]; then
-      # R needs to be told about ccache as it is not invoked directly by cmake
-      #
-      # ccache also needs two configuration settings due to where/how it constructs directories
-      #
-      # Note that every developer who would like to take advantage for ccache
-      # for R builds has to run this as well locally (once as it persists locally)
-      mkdir -p ~/.R
-      cp ${Build.SourcesDirectory}/.github/etc/R_Makevars_${Agent.OS} ~/.R/Makevars
-      ccache --set-config "sloppiness=include_file_ctime"
-      ccache --set-config "hash_dir=false" 
-      ccache --show-config
-      ccache --zero-stats
-    fi  
+    ## Show the ccache config settings, and zero the statistics counter
+    ccache --show-config
+    ccache --zero-stats
       
     # Install armadillo.
     curl -k -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz | tar -xvJ && \
