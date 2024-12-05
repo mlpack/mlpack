@@ -23,7 +23,7 @@ git clone git@github.com:mlpack/examples.git
 Next, let's look at the `CMakeLists.txt` (e.g. the CMake configuration) in the
 `embedded/crosscompile_random_forest/` directory.
 
-### Analysing CMakeLists.txt
+### `CMakeLists.txt`
 
 The first part of the code, printed below or [available here](https://github.com/mlpack/examples/blob/master/embedded/crosscompile_random_forest/CMakeLists.txt),
 defines the project name and includes two useful CMake configuration files:
