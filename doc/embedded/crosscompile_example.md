@@ -8,11 +8,11 @@ In this article, we explore how to add mlpack to a CMake project that cross-comp
 ### Cloning mlpack example respository
 
 mlpack has an [example repository](https://github.com/mlpack/examples) that
-demonstrates a set of examples showing how to use the library source code
-on different dataset and usecases including embedded deployment. This
-tutorial basically explains our necessary CMake configurations
-that are required to integrate with your local CMake to download mlpack
-dependencies and cross compile the entire software.
+shows a number of applications and use cases for mlpack, including embedded
+deployment.  In this tutorial, we are interested in the `embedded/` directory,
+which provides a CMake project template that compiles a random forest
+application to embedded hardware.  This project template can be adapted to a new
+project, or its pieces can be incorporated into an existing CMake project.
 
 The first step is to clone the examples repository:
 
