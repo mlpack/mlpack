@@ -84,7 +84,7 @@ steps:
 - script: cd build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
   displayName: 'Run tests via ctest'
 
-# Ccache stats (two verbosity levels supported
+# Ccache stats (two verbosity levels supported)
 - script: ccache --show-stats --verbose --verbose
   displayName: 'Show ccache stats'
   
