@@ -17,8 +17,7 @@ tutorial basically explains our necessary CMake configurations
 that are required to integrate with your local CMake to download mlpack
 dependencies and cross compile the entire software.
 
-If you have not used mlpack example repsoitory, I highly recommend to clone
-this repository from the following link:
+The first step is to clone the examples repository:
 
 ```sh
 git clone git@github.com:mlpack/examples.git
