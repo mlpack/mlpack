@@ -57,10 +57,8 @@ endif()
 
 #### Downloading dependencies
 
-Once we have included the configs and defined the C++ standard, then we need to
-download these dependencies. In the following, we have added the link
-for each one of them, but feel free to adapt the link to different versions or
-locations.
+The next steps are to use the functionality of the autodownloader to actually
+download mlpack's dependencies.
 
 Once `get_deps` has downloaded and extracted each one of them, the next step
 would be to append the include directories for these libraries to the
