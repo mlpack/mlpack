@@ -1,69 +1,73 @@
-# Alternating Matrix Factorization tutorial
+# Alternating Matrix Factorization Tutorial
 
-Alternating matrix factorization decomposes a matrix `V` in the form `V ~ WH`
-where `W` is called the basis matrix and `H` is called the encoding matrix. `V`
-is taken to be of size `n x m` and the obtained `W` is `n x r` and `H` is `r x
-m`. The size `r` is called the *rank* of the factorization. Factorization is
-done by alternately calculating `W` and `H` respectively while holding the other
-matrix constant.
+Alternating Matrix Factorization (AMF) decomposes a matrix `V` into the product `V ≈ WH`, where:
+
+- `W` is the **basis matrix** of size `n × r`.
+- `H` is the **encoding matrix** of size `r × m`.
+
+Here, `V` is an `n × m` matrix, and `r` is the **rank** of the factorization. The factorization process alternates between calculating `W` and `H`, keeping the other matrix constant during each step.
 
 mlpack provides a simple C++ interface to perform Alternating Matrix
 Factorization.
 
-## The `AMF` class
+## The `AMF` Class
 
-The `AMF` class is templatized with 3 parameters; the first contains the policy
-used to determine when the algorithm has converged; the second contains the
-initialization rule for the `W` and `H` matrix; the last contains the update
-rule to be used during each iteration. This templatization allows the user to
-try various update rules, initialization rules, and termination policies
-(including ones not supplied with mlpack) for factorization.
+The `AMF` class is templated with three parameters:
+
+1. **Termination Policy**: Determines when the algorithm has converged.
+2. **Initialization Rule**: Specifies how the `W` and `H` matrices are initialized.
+3. **Update Rule**: Defines the update mechanism used during each iteration.
+
+This templated design allows users to experiment with various update rules, initialization strategies, and termination criteria, including custom policies not provided by mlpack.
+
+### Method Overview
 
 The class provides the following method that performs factorization
 
-```c++
-template<typename MatType> double Apply(const MatType& V,
-                                        const size_t r,
-                                        arma::mat& W,
-                                        arma::mat& H);
+```cpp
+template<typename MatType>
+double Apply(const MatType& V,
+            const size_t r,
+            arma::mat& W,
+            arma::mat& H);
 ```
 
-## Using different termination policies
+- **Parameters**:
+  - `V`: The input matrix to factorize.
+  - `r`: The rank of the factorization.
+  - `W`: Output basis matrix.
+  - `H`: Output encoding matrix.
+
+- **Returns**: The residue obtained by comparing `W * H` with the original matrix `V`.
+
+## Using Different Termination Policies
 
 The `AMF` implementation comes with different termination policies to support
 many implemented algorithms. Every termination policy implements the following
 method which returns the status of convergence.
 
-```c++
-bool IsConverged(arma::mat& W, arma::mat& H)
+```cpp
+bool IsConverged(const arma::mat& W, const arma::mat& H);
 ```
 
-Below is a list of all the termination policies that mlpack contains.
+### Available Termination Policies
 
- - `SimpleResidueTermination`
- - `SimpleToleranceTermination`
- - `ValidationRMSETermination`
+- **`SimpleResidueTermination`**
+- **`SimpleToleranceTermination`**
+- **`ValidationRMSETermination`**
 
-In `SimpleResidueTermination`, the termination decision depends on two factors,
-value of residue and number of iteration. If the current value of residue drops
-below the threshold or the number of iterations goes beyond the threshold,
-positive termination signal is passed to AMF.
+#### `SimpleResidueTermination`
+Termination is based on two factors:
+- The residue value drops below a predefined threshold.
+- The number of iterations exceeds a specified limit.
 
-In `SimpleToleranceTermination`, termination criterion is met when the increase
-in residue value drops below the given tolerance. To accommodate spikes, certain
-number of successive residue drops are accepted. Secondary termination criterion
-terminates algorithm when iteration count goes beyond the threshold.
+If either condition is met, the algorithm terminates.
 
-`ValidationRMSETermination` divides the data into 2 sets, training set and
-validation set. Entries of the validation set are nullifed in the input matrix.
-Termination criterion is met when increase in validation set RMSe value drops
-below the given tolerance. To accommodate spikes certain number of successive
-validation RMSE drops are accepted. This upper imit on successive drops can be
-adjusted with `reverseStepCount`. A secondary termination criterion terminates
-the algorithm when the iteration count goes above the threshold. Though this
-termination policy is better measure of convergence than the above 2 termination
-policies, it may cause a decrease in performance since it is computationally
-expensive.
+#### `SimpleToleranceTermination`
+The algorithm terminates when the increase in residue falls below a given tolerance. To handle occasional spikes, a certain number of successive residue decreases are tolerated. Additionally, the algorithm will terminate if the iteration count surpasses the threshold.
+
+#### `ValidationRMSETermination`
+`ValidationRMSETermination` divides the data into two sets: training and validation. Entries of the validation set are nullified in the input matrix. The termination criterion is met when the increase in the validation set RMSE value drops below a given tolerance. To accommodate spikes, a certain number of successive validation RMSE drops are accepted. This upper limit on successive drops can be adjusted with the `reverseStepCount` parameter. A secondary termination criterion terminates the algorithm when the iteration count exceeds the threshold. Although this termination policy provides a better measure of convergence than the other two policies, it may decrease performance due to its computational expense.
 
 On the other hand, `CompleteIncrementalTermination` and
 `IncompleteIncrementalTermination` are just wrapper classes for other
@@ -71,22 +75,18 @@ termination policies. These policies are used when AMF is applied with
 `SVDCompleteIncrementalLearning` and `SVDIncompleteIncrementalLearning`,
 respectively.
 
-## Using different initialization policies
+## Using Different Initialization Policies
 
-mlpack currently has 2 initialization policies implemented for AMF:
+mlpack currently supports two initialization policies for AMF:
 
- - `RandomInitialization`
- - `RandomAcolInitialization`
+- **`RandomInitialization`**: Initializes matrices `W` and `H` with a random uniform distribution.
+- **`RandomAcolInitialization`**: Initializes the `W` matrix by averaging `p` randomly chosen columns of `V`. Here, `p` is a template parameter.
 
-`RandomInitialization` initializes matrices `W` and `H` with random uniform
-distribution while `RandomAcolInitialization` initializes the `W` matrix by
-averaging p randomly chosen columns of `V`.  In the case of
-`RandomAcolInitialization`, `p` is a template parameter.
+### Custom Initialization Policies
 
-To implement their own initialization policy, users need to define the following
-function in their class.
+To implement a custom initialization policy, users must define the following static method within their class:
 
-```c++
+```cpp
 template<typename MatType>
 inline static void Initialize(const MatType& V,
                               const size_t r,
@@ -94,30 +94,37 @@ inline static void Initialize(const MatType& V,
                               arma::mat& H)
 ```
 
-## Using different update rules
+This method should handle the initialization of `W` and `H` based on the provided matrix `V` and rank `r`.
+
+## Using Different Update Rules
 
 mlpack implements the following update rules for the AMF class:
 
- - `NMFALSUpdate`
- - `NMFMultiplicativeDistanceUpdate`
- - `NMFMultiplicativeDivergenceUpdate`
- - `SVDBatchLearning`
- - `SVDIncompleteIncrementalLearning`
- - `SVDCompleteIncrementalLearning`
+- **Non-Negative Matrix Factorization (NMF) Updates**:
+  - `NMFALSUpdate`
+  - `NMFMultiplicativeDistanceUpdate`
+  - `NMFMultiplicativeDivergenceUpdate`
 
-Non-Negative Matrix factorization can be achieved with `NMFALSUpdate`,
-`NMFMultiplicativeDivergenceUpdate` or `NMFMultiplicativeDivergenceUpdate`.
-`NMFALSUpdate` implements a simple Alternating Least Squares optimization while
-the other rules implement algorithms given in the paper 'Algorithms for
-Non-negative Matrix Factorization'.
+- **Singular Value Decomposition (SVD) Updates**:
+  - `SVDBatchLearning`
+  - `SVDIncompleteIncrementalLearning`
+  - `SVDCompleteIncrementalLearning`
 
-The remaining update rules perform the singular value decomposition of the
-matrix `V`.  This SVD factorization is optimized for use by mlpack's
-collaborative filtering code (see the [collaborative filtering
-tutorial](cf.md)). This use of SVD factorizers for collaborative filtering is
-described in the paper 'A Guide to Singular Value Decomposition for
-Collaborative Filtering' by Chih-Chao Ma. For further details about the
-algorithms refer to the respective class documentation.
+### Non-Negative Matrix Factorization (NMF)
+
+NMF can be achieved using the following update rules:
+
+- **`NMFALSUpdate`**: Implements a simple Alternating Least Squares optimization.
+- **`NMFMultiplicativeDistanceUpdate`**: Utilizes a multiplicative update rule based on distance measures.
+- **`NMFMultiplicativeDivergenceUpdate`**: Employs a multiplicative update rule based on divergence measures.
+
+These update rules are based on algorithms described in the paper [Algorithms for Non-negative Matrix Factorization](https://proceedings.neurips.cc/paper_files/paper/2000/file/f9d1152547c0bde01830b7e8bd60024c-Paper.pdf).
+
+### Singular Value Decomposition (SVD)
+
+The remaining update rules perform Singular Value Decomposition (SVD) of the matrix `V`. These SVD factorizations are optimized for mlpack's collaborative filtering functionalities, as detailed in the [Collaborative Filtering Tutorial](https://github.com/mlpack/mlpack/wiki/CollaborativeFiltering).
+
+For more detailed algorithmic explanations, refer to the respective class documentation.
 
 ## Using Non-Negative Matrix Factorization with `AMF`
 
@@ -125,7 +132,7 @@ The use of `AMF` for Non-Negative Matrix factorization is simple. The AMF module
 defines `NMFALSFactorizer` which can be used directly without knowing the
 internal structure of `AMF`. For example:
 
-```c++
+```cpp
 #include <mlpack.hpp>
 
 using namespace std;
@@ -134,34 +141,46 @@ using namespace mlpack;
 
 int main()
 {
-  NMFALSFactorizer nmf;
-  mat W, H;
+  // Create a random 100x100 matrix with uniform distribution.
   mat V = randu<mat>(100, 100);
+
+  // Desired rank for factorization.
   size_t r = 10;
+
+  // Matrices to store the factorization results.
+  mat W, H;
+
+  // Instantiate the NMF ALS factorizer.
+  NMFALSFactorizer nmf;
+
+  // Perform factorization and retrieve the residue.
   double residue = nmf.Apply(V, r, W, H);
+
+  // Output the residue.
+  cout << "Residue: " << residue << endl;
+
+  return 0;
 }
 ```
 
-`NMFALSFactorizer` uses `SimpleResidueTermination`, which is most preferred with
-Non-Negative Matrix factorizers.  The initialization of `W` and `H` in
-`NMFALSFactorizer` is random. The `Apply()` function returns the residue
-obtained by comparing the constructed matrix `W * H` with the original matrix
-`V`.
+**Notes**:
+- `NMFALSFactorizer` uses `SimpleResidueTermination` by default, which is well-suited for NMF tasks.
+- The initialization of `W` and `H` is random.
+- The `Apply()` function returns the residue, which measures the difference between `W * H` and the original matrix `V`.
 
 ## Using Singular Value Decomposition with `AMF`
 
 mlpack has the following SVD factorizers implemented for AMF:
 
- - `SVDBatchFactorizer`
- - `SVDIncompleteIncrementalFactorizer`
- - `SVDCompleteIncrementalFactorizer`
+- **`SVDBatchFactorizer`**
+- **`SVDIncompleteIncrementalFactorizer`**
+- **`SVDCompleteIncrementalFactorizer`**
 
-Each of these factorizers takes a template parameter `MatType`, which specifies
-the type of the matrix `V` (dense or sparse---these have types `arma::mat` and
-`arma::sp_mat`, respectively).  When the matrix to be factorized is relatively
-sparse, specifying `MatType = arma::sp_mat` can provide a runtime boost.
+Each factorizer accepts a template parameter `MatType`, specifying the type of the input matrix `V` (either dense `arma::mat` or sparse `arma::sp_mat`). For sparse matrices, using `arma::sp_mat` can significantly enhance runtime performance.
 
-```c++
+### Example
+
+```cpp
 #include <mlpack.hpp>
 
 using namespace std;
@@ -170,16 +189,43 @@ using namespace mlpack;
 
 int main()
 {
-  sp_mat V = sprandu<sp_mat>(100,100,0.1);
+  // Create a random 100x100 sparse matrix with 10% non-zero entries.
+  sp_mat V = sprandu<sp_mat>(100, 100, 0.1);
+
+  // Desired rank for factorization.
   size_t r = 10;
+
+  // Matrices to store the factorization results.
   mat W, H;
 
+  // Instantiate the SVD Batch Factorizer for sparse matrices.
   SVDBatchFactorizer<sp_mat> svd;
+
+  // Perform factorization and retrieve the residue.
   double residue = svd.Apply(V, r, W, H);
+
+  // Output the residue.
+  cout << "Residue: " << residue << endl;
+
+  return 0;
 }
 ```
 
-## Further documentation
+**Notes**:
+- Choose the appropriate factorizer based on your specific use case and data characteristics.
+- For collaborative filtering applications, refer to the [Collaborative Filtering Tutorial](https://github.com/mlpack/mlpack/wiki/CollaborativeFiltering) for optimized usage.
 
-For further documentation on the `AMF` class, consult the `AMF`
-source code comments.
+## Further Documentation
+
+For more in-depth information about the `AMF` class and its components, please refer to the [AMF Source Code Documentation](https://mlpack.org/doc/mlpack-<version>/classmlpack_1_1amf_1_1AMF.html).
+
+# Additional Resources
+
+- [mlpack Official Documentation](https://www.mlpack.org/doc/index.html)
+- [Collaborative Filtering Tutorial](https://github.com/mlpack/mlpack/wiki/CollaborativeFiltering)
+
+# Conclusion
+
+This tutorial introduced mlpack's `AMF` class for Alternating Matrix Factorization. By leveraging various termination policies, initialization methods, and update rules, you can customize the factorization process for applications like Non-Negative Matrix Factorization and Singular Value Decomposition.
+
+For more details, visit the [mlpack documentation](https://www.mlpack.org/doc/index.html) or join the community forums.
