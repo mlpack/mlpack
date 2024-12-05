@@ -32,14 +32,14 @@ analysing the CMakeLists.txt.
 
 ### Analysing CMakeLists.txt
 
-In this part of code we are defining the project name and including two CMake
-configurations files. The first one is the `Autodowload.cmake` function that is going
-to pull the dependencies from respective locations that we are going to define.
+The first part of the code, printed below or [available here](https://github.com/mlpack/examples/blob/master/embedded/crosscompile_random_forest/CMakeLists.txt),
+defines the project name and includes two useful CMake configuration files:
 
-The second configuration file is `ConfigureCrossCompile.cmake`. This will allow
-to include all the necessary configurations to allow using a cross compiler
-toolchain.  Then we are setting the C++ standard to use and define settings
-for `OpenMP` and `std::thread`
+ * `Autodownload.cmake`: downloads mlpack's dependencies from defined locations
+ * `ConfigureCrossCompile.cmake`: set up CMake configuration for cross-compilation
+ 
+The next steps set the required C++ standard to C++17 (which is the minimum required
+version for mlpack), and enable OpenMP for parallelism.
 
 ```cmake
 cmake_minimum_required(VERSION 3.6)
