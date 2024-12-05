@@ -20,11 +20,8 @@ The first step is to clone the examples repository:
 git clone git@github.com:mlpack/examples.git
 ```
 
-You can explore this repository and see the available examples. However, in this
-tutorial, we are interested in the `embedded/` directory. In this directory we are providing
-a CMake template project and a RandomForest example to use it on embedded
-hardware. For now, we are exploring the RandomForest example by 
-analysing the CMakeLists.txt.
+Next, let's look at the `CMakeLists.txt` (e.g. the CMake configuration) in the
+`embedded/crosscompile_random_forest/` directory.
 
 ### Analysing CMakeLists.txt
 
