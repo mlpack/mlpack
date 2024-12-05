@@ -76,8 +76,8 @@ steps:
     cmake $CMAKEARGS -DPYTHON_EXECUTABLE=`which python` -DCEREAL_INCLUDE_DIR=/usr/include/ ..
   displayName: 'CMake'
 
-# Build mlpack (TODO: maybe remove VERBOSE=1)
-- script: cd build && VERBOSE=1 make -j2 
+# Build mlpack
+- script: cd build && make -j2 
   displayName: 'Build'
 
 # Run tests via ctest.
