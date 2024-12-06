@@ -36,6 +36,7 @@
 #include "layer/identity.cpp"
 #include "layer/linear3d.cpp"
 #include "layer/linear_no_bias.cpp"
+#include "layer/linear_recurrent.cpp"
 #include "layer/log_softmax.cpp"
 #include "layer/max_pooling.cpp"
 #include "layer/mean_pooling.cpp"
