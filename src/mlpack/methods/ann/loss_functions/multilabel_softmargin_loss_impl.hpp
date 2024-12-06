@@ -71,7 +71,7 @@ template<typename MatType>
 template<typename Archive>
 void MultiLabelSoftMarginLossType<MatType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   ar(CEREAL_NVP(classWeights));
   ar(CEREAL_NVP(reduction));
