@@ -145,7 +145,7 @@ TEST_CASE("MaxPoolingTest", "[ConvolutionalNetworkTest]")
 /**
  * Train the vanilla network on a larger dataset.
  */
-TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest]")
+TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest][long_run_time]")
 {
   arma::mat X;
   X.load("mnist_first250_training_4s_and_9s.csv");
@@ -244,7 +244,7 @@ TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest]")
   REQUIRE(success == true);
 }
 
-TEST_CASE("VanillaNetworkBatchSizeTest", "[ConvolutionalNetworkTest]")
+TEST_CASE("VanillaNetworkBatchSizeTest", "[ConvolutionalNetworkTest][long_run_time]")
 {
   FFN<NegativeLogLikelihood, RandomInitialization> model;
 
@@ -344,7 +344,7 @@ TEST_CASE("VanillaNetworkBatchSizeTest", "[ConvolutionalNetworkTest]")
 /**
  * Train the vanilla network on a larger dataset.
  */
-TEST_CASE("CheckCopyVanillaNetworkTest", "[ConvolutionalNetworkTest]")
+TEST_CASE("CheckCopyVanillaNetworkTest", "[ConvolutionalNetworkTest][long_run_time]")
 {
   arma::mat X;
   X.load("mnist_first250_training_4s_and_9s.csv");
