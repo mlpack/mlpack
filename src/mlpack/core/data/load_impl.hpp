@@ -58,34 +58,26 @@ void TransposeTokens(std::vector<std::vector<std::string>> const &input,
 
 } // namespace details
 
-template <typename MatType>
-bool inline inplace_transpose(MatType& X, bool fatal)
-{
-  try
-  {
-    X = trans(X);
-    return true;
-  }
-  catch (const std::exception& e)
-  {
-    if (fatal)
-      Log::Fatal << "\nTranspose Operation Failed.\n"
-          "Exception: " << e.what() << std::endl;
-    else
-      Log::Warn << "\nTranspose Operation Failed.\n"
-          "Exception: " << e.what() << std::endl;
-
-    return false;
-  }
-}
-
-template<typename eT>
+  template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           const bool fatal,
           const bool transpose,
           const FileType inputLoadType)
 {
+  LoadOptions& opts;
+  opts.Fatal() = fatal;
+  opts.Transpose() = transpose;
+  opts.FileType() = inputLoadType;
+
+  Load(filename, matrix, opts);
+}
+
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          LoadOptions& opts)
+ {
   Timer::Start("loading_data");
 
   // Catch nonexistent files by opening the stream ourselves.
@@ -108,7 +100,7 @@ bool Load(const std::string& filename,
     return false;
   }
 
-  FileType loadType = inputLoadType;
+  FileType loadType = opts.FileType();
   std::string stringType;
   if (inputLoadType == FileType::AutoDetect)
   {
@@ -166,8 +158,8 @@ bool Load(const std::string& filename,
     if (loadType == FileType::CSVASCII)
     {
       arma::field<std::string> headers;
-      if (transpose)
-        success = matrix.load(arma::csv_name(filename, headers,
+      if (opts.Transpose() && opts.HasHeaders())
+        success = matrix.load(arma::csv_name(filename, opts.Headers(),
               arma::csv_opts::trans), arma::csv_ascii);
       else
         success = matrix.load(arma::csv_name(filename, headers),
@@ -179,9 +171,8 @@ bool Load(const std::string& filename,
   else
     success = matrix.load(filename, ToArmaFileType(loadType));
 
-  // Now transpose the matrix, if necessary.
-  if (transpose && loadType != FileType::CSVASCII)
-    success = inplace_transpose(matrix, fatal);
+  if (opts.Transpose() && loadType != FileType::CSVASCII)
+    inplace_trans(matrix);
 
   if (!success)
   {
@@ -263,7 +254,7 @@ bool Load(const std::string& filename,
       // We transpose by default.  So, un-transpose if necessary...
       if (!transpose)
       {
-        return inplace_transpose(matrix, fatal);
+        inplace_trans(matrix);
       }
     }
     catch (std::exception& e)
@@ -291,8 +282,7 @@ bool Load(const std::string& filename,
     return false;
   }
 
-  Log::Info << "Size is " << (transpose ? matrix.n_cols : matrix.n_rows)
-      << " x " << (transpose ? matrix.n_rows : matrix.n_cols) << ".\n";
+  Log::Info << "Size is " << matrix.n_rows << " x " << matrix.n_cols << ".\n";
 
   Timer::Stop("loading_data");
 
@@ -307,6 +297,20 @@ bool Load(const std::string& filename,
           const bool transpose,
           const FileType inputLoadType)
 {
+  LoadOptions opts;
+  opts.Fatal() = fatal;
+  opts.Transpose() = transpose;
+  opts.FileType() = inputLoadType;
+
+  Load(filename, matrix, opts);
+}
+
+template <typename eT>
+bool Load(const std::string& filename,
+          arma::SpMat<eT>& matrix,
+          LoadOptions& opts)
+{
+
   Timer::Start("loading_data");
 
   // Get the extension.
@@ -410,6 +414,11 @@ bool Load(const std::string& filename,
   {
     success = matrix.load(stream, ToArmaFileType(loadType));
   }
+  
+  if (opts.transpose())
+  {
+    inplace_trans(matrix);
+  }
 
   if (!success)
   {
@@ -424,14 +433,7 @@ bool Load(const std::string& filename,
   }
   else
   {
-    Log::Info << "Size is " << (transpose ? matrix.n_cols : matrix.n_rows)
-        << " x " << (transpose ? matrix.n_rows : matrix.n_cols) << ".\n";
-  }
-
-  // Now transpose the matrix, if necessary.
-  if (transpose)
-  {
-    success = inplace_transpose(matrix, fatal);
+    Log::Info << "Size is " << matrix.n_rows << " x " << matrix.n_cols << ".\n";
   }
 
   Timer::Stop("loading_data");

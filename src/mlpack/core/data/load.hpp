@@ -29,6 +29,69 @@ namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
 
 /**
+ * All possible load options grouped under one struct.
+ * This will allow us to have consistent API over the next mlpack versions. If
+ * new load options might be necessary, then they should be added in the
+ * following.
+ * The supported options are the following:
+ *  - fatal : true if fatal error should be reported.
+ *  - hasHeaders : true if the dataset file has headers we need to recover
+ *  - transpose: true by default, Transpose armadillo matrix to column major
+ *  - arma::csv_opts: possible csv options provided by armadillo
+ *  - arma::field<std::string> headers: contains the header of the dataset file
+ *  - FileType format: Detect automaticaly the file type, csv, txt, hdf5.
+ */
+class LoadOptions
+{
+ public:
+  /**
+    *
+    */
+  LoadOptions()
+  {
+    // Do nothing.
+  }
+
+  //! Get the error it it is fatal or not.
+  const bool& Fatal() { return fatal; }
+
+  //! Modify the error to be fatal.
+  bool& Fatal() { return fatal; }
+
+  //! Get if the dataset hasHeaders or not.
+  const bool& HasHeaders() { return hasHeaders; }
+
+  //! Modify the dataset if it hasHeaders.
+  bool& HasHeaders() { return hasHeaders; }
+
+  //! Get if the matrix is transposed or not.
+  const bool& Transpose() { return transpose; }
+
+  //! Transpose the matrix if necessary.
+  bool& Transpose() { return transpose; }
+  
+  //! Get the headers.
+  const arma::field<std::string>& Headers() { return headers; }
+
+  //! Modify the headers.
+  arma::field<std::string>& Headers() { return headers; }
+
+  //! Get the FileType.
+  const FileType& FileType() { return format; }
+
+  //! Modify the FileType.
+  FileType& FileType() { return format; }
+
+ private:
+
+  bool fatal;
+  bool hasHeaders;
+  bool transpose;
+  arma::field<std::string> headers;
+  FileType format;
+};
+
+/**
  * Loads a matrix from file, guessing the filetype from the extension.  This
  * will transpose the matrix at load time (unless the transpose parameter is set
  * to false).
@@ -70,11 +133,28 @@ namespace data /** Functions to load and save matrices and models. */ {
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           const bool fatal = false,
           const bool transpose = true,
           const FileType inputLoadType = FileType::AutoDetect);
+
+/**
+ * This function is only an overload, and does exactly the same thing as the
+ * above function.
+ * The previous Load is deprecated and will be removed in mlpack 5.0.
+ * Once this is the case, we will only have the following function signature.
+
+ * @param filename Name of file to load.
+ * @param matrix Matrix to load contents of file into.
+ * @param opts LoadOptions to be passed to the function
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          LoadOptions& opts);
 
 /**
  * Loads a sparse matrix from file, using arma::coord_ascii format.  This
@@ -107,11 +187,28 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::SpMat<eT>& matrix,
           const bool fatal = false,
           const bool transpose = true,
           const FileType inputLoadType = FileType::AutoDetect);
+
+/**
+ * This function is only an overload, and does exactly the same thing as the
+ * above function.
+ * The previous Load is deprecated and will be removed in mlpack 5.0.
+ * Once this is the case, we will only have the following function signature.
+ *
+ * @param filename Name of file to load.
+ * @param matrix Matrix to load contents of file into.
+ * @param opts LoadOptions to be passed to the function
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::SpMat<eT>& matrix,
+          LoadOptions& opts);
 
 /**
  * Load a column vector from a file, guessing the filetype from the extension.
