@@ -106,22 +106,113 @@ bool DetectFile(const std::fstream& stream,
   return true;
 }
 
+/**
+ * Similar functionality that exists in Pandas to handle NaN values.
+ * The following functions define a backward fill policy to take the last value
+ * in a column before a NaN, and replace all the following NaN with the last
+ * value in Backward manner
+ *
+ * @param matrix The dataset provided as armadillo matrix
+ */
+template<typename eT>
+inline
+void FillBackward(arma::Mat<eT>& matrix)
+{
+  eT lastValue = std::numeric_limits<eT>::signaling_NaN();
+  for (size_t j = 0; j < matrix.n_cols; ++j)
+  {
+    size_t i = (matrix.n_rows - 1);
+    for (i > -1; --i;)
+    {
+      if (std::isnan(matrix.at(i, j)))
+      {
+        matrix.at(i, j) = lastValue;
+      }
+      else
+      {
+        lastValue = matrix.at(i, j);
+      }
+    }
+  }
+}
+
+/**
+ * Similar functionality that exists in Pandas to handle NaN values.
+ * The following functions define a forward fill policy to take the last value
+ * in a column before a NaN, and replace all the following NaN with the last
+ * value in Forward manner
+ *
+ * @param matrix The dataset provided as armadillo matrix
+ */
+template<typename eT>
+inline
+void FillForward(arma::Mat<eT>& matrix)
+{
+  double lastValue = std::numeric_limits<double>::signaling_NaN();
+  for (size_t j = 0; j < matrix.n_cols; ++j)
+  {
+    for (size_t i = 0; i < matrix.n_rows; ++i)
+    {
+      if (std::isnan(matrix.at(i, j)))
+      {
+        matrix.at(i, j) = lastValue;
+      }
+      else
+      {
+        lastValue = matrix.at(i, j);
+      }
+    }
+  }
+}
+
 inline
 bool LoadCSVASCII(const std::string& filename,
                   arma::Mat<eT>& matrix,
-                  LoadOptions& opts)
+                  const LoadOptions& opts)
 {
-  if (opts.Transpose() && opts.HasHeaders())
+  if (opts.Transpose() && opts.HasHeaders() &&
+      !opts.SemiColon() && !opts.MissingToNan())
+
     success = matrix.load(arma::csv_name(filename, opts.Headers(),
           arma::csv_opts::trans), arma::csv_ascii);
-  else if (opts.Transpose() && !opts.HasHeaders())
+  
+  else if (opts.Transpose() && !opts.HasHeaders() && 
+          !opts.SemiColon() && !opts.MissingToNan())
+ 
     success = matrix.load(arma::csv_name(filename, arma::csv_opts::trans),
         arma::csv_ascii);
-  else if (!opts.Transpose() && opts.HasHeaders())
+  
+  else if (!opts.Transpose() && opts.HasHeaders() && 
+          !opts.SemiColon() && !opts.MissingToNan())
+
     success = matrix.load(arma::csv_name(filename, opts.Headers()),
         arma::csv_ascii);
-  else if ()
+  
+  else if (!opts.Transpose() && opts.HasHeaders() && 
+          !opts.SemiColon() && !opts.MissingToNan())
 
+  else if (!opts.Transpose() && opts.HasHeaders() && 
+          !opts.SemiColon() && !opts.MissingToNan())
+
+  else if (!opts.Transpose() && opts.HasHeaders() && 
+          !opts.SemiColon() && !opts.MissingToNan())
+
+  else if (!opts.Transpose() && opts.HasHeaders() && 
+          !opts.SemiColon() && !opts.MissingToNan())
+
+  else if (!opts.Transpose() && opts.HasHeaders() && 
+          !opts.SemiColon() && !opts.MissingToNan())
+
+  else if (!opts.Transpose() && opts.HasHeaders() && 
+          !opts.SemiColon() && !opts.MissingToNan())
+
+  // Detect if NANs exist and replace according to the policy 
+  if (opts.FillForward())
+    FillForward();
+  else if (opts.FillBackward())
+    FillBackward();
+
+  return success;
 }
 
 inline

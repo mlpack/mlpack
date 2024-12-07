@@ -82,6 +82,18 @@ class LoadOptions
   //! Modify the separator type in the matrix.
   bool& MissingToNan() { return missingToNan; }
 
+  //! Get the FillForward policy if we have nan..
+  const bool& FillForward() { return fillForward; }
+
+  //! Modify the FiLlForward policy if we have nan
+  bool& FillForward() { return fillForward; }
+
+  //! Get the FillBackward policy if we have nan..
+  const bool& FillBackward() { return fillBackward; }
+
+  //! Modify the FiLlBackward policy if we have nan
+  bool& FillBackward() { return fillBackward; }
+
   //! Get the headers.
   const arma::field<std::string>& Headers() { return headers; }
 
@@ -101,6 +113,8 @@ class LoadOptions
   bool transpose;
   bool semicolon;
   bool missingToNaN;
+  bool fillForward;
+  bool fillBackward;
   arma::field<std::string> headers;
   FileType format;
 };
