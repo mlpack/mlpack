@@ -80,25 +80,36 @@ bool FileExist(std::fstream& stream)
   return true;
 }
 
-template<typename eT>
-bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
-          const bool fatal,
-          const bool transpose,
-          const FileType inputLoadType)
+inline
+bool DetectFile(const std::fstream& stream,
+                FileType& loadType
+                const LoadOptions& opts);
 {
-  LoadOptions& opts;
-  opts.Fatal() = fatal;
-  opts.Transpose() = transpose;
-  opts.FileType() = inputLoadType;
+  if (opts.FileType() == FileType::AutoDetect)
+  {
+    // Attempt to auto-detect the type from the given file.
+    loadType = AutoDetect(stream, filename);
+    // Provide error if we don't know the type.
+    if (loadType == FileType::FileTypeUnknown)
+    {
+      Timer::Stop("loading_data");
+      if (opts.Fatal())
+        Log::Fatal << "Unable to detect type of '" << filename << "'; "
+            << "incorrect extension?" << std::endl;
+      else
+        Log::Warn << "Unable to detect type of '" << filename << "'; load "
+            << "failed. Incorrect extension?" << std::endl;
 
-  Load(filename, matrix, opts);
+      return false;
+    }
+  }
+  return true;
 }
 
-
-inline bool LoadCSVASCII(const std::string& filename,
-                        arma::Mat<eT>& matrix,
-                        LoadOptions& opts)
+inline
+bool LoadCSVASCII(const std::string& filename,
+                  arma::Mat<eT>& matrix,
+                  LoadOptions& opts)
 {
   if (opts.Transpose() && opts.HasHeaders())
     success = matrix.load(arma::csv_name(filename, opts.Headers(),
@@ -113,9 +124,10 @@ inline bool LoadCSVASCII(const std::string& filename,
 
 }
 
-inline bool LoadHDF5(const std::string& filename,
-                     arma::Mat<eT>& matrix,
-                     LoadOptions& opts)
+inline
+bool LoadHDF5(const std::string& filename,
+              arma::Mat<eT>& matrix,
+              LoadOptions& opts)
 {
 #ifndef ARMA_USE_HDF5
     // Ensure that HDF5 is supported.
@@ -138,6 +150,21 @@ inline bool LoadHDF5(const std::string& filename,
 template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
+          const bool fatal,
+          const bool transpose,
+          const FileType inputLoadType)
+{
+  LoadOptions& opts;
+  opts.Fatal() = fatal;
+  opts.Transpose() = transpose;
+  opts.FileType() = inputLoadType;
+
+  Load(filename, matrix, opts);
+}
+
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
           LoadOptions& opts)
  {
   Timer::Start("loading_data");
@@ -151,26 +178,7 @@ bool Load(const std::string& filename,
 
   FileType loadType = opts.FileType();
 
-  if (opts.FileType() == FileType::AutoDetect)
-  {
-    // Attempt to auto-detect the type from the given file.
-    loadType = AutoDetect(stream, filename);
-    // Provide error if we don't know the type.
-    if (loadType == FileType::FileTypeUnknown)
-    {
-      Timer::Stop("loading_data");
-      if (opts.Fatal())
-        Log::Fatal << "Unable to detect type of '" << filename << "'; "
-            << "incorrect extension?" << std::endl;
-      else
-        Log::Warn << "Unable to detect type of '" << filename << "'; load "
-            << "failed. Incorrect extension?" << std::endl;
-
-      return false;
-    }
-  }
-
-  success = DetectFileType(opts);
+  success = DetectFileType(stream, loadType, opts);
   if (!success)
     return false;
 
@@ -192,7 +200,7 @@ bool Load(const std::string& filename,
   else
   {
     if (loadType == FileType::RawBinary)
-    Log::Warn << "Loading '" << filename << "' as " << stringType << "; "
+      Log::Warn << "Loading '" << filename << "' as " << stringType << "; " 
         << "but this may not be the actual filetype!" << std::endl;
 
     success = matrix.load(stream, ToArmaFileType(loadType));
@@ -330,44 +338,29 @@ bool Load(const std::string& filename,
   Timer::Start("loading_data");
   bool success;
   std::fstream stream;
+  FileType loadType = opts.FileType();
+  
   success = FileExist(stream);
   if (!success)
     return false;
+  
+  success = DetectFileType(stream, loadType, opts);
+  if (!success)
+    return false;
 
-  FileType loadType = inputLoadType;
-  std::string stringType;
-  if (inputLoadType == FileType::AutoDetect)
+  // There is still a small amount of differentiation that needs to be done:
+  // if we got a text type, it could be a coordinate list.  We will make an
+  // educated guess based on the shape of the input.
+  if (loadType == FileType::RawASCII)
   {
-    // Attempt to auto-detect the type from the given file.
-    loadType = AutoDetect(stream, filename);
-    // Provide an error if we don't know the type, or if the type can't be used
-    // to load sparse matrices.
-    if (loadType == FileType::FileTypeUnknown)
+    // Get the number of columns in the file.  If it is the right shape, we
+    // will assume it is sparse.
+    const size_t cols = CountCols(stream);
+    if (cols == 3)
     {
-      if (fatal)
-        Log::Fatal << "Unable to detect type of '" << filename << "'; "
-            << "incorrect extension?" << std::endl;
-      else
-        Log::Warn << "Unable to detect type of '" << filename << "'; load "
-            << "failed. Incorrect extension?" << std::endl;
-
-      return false;
-    }
-
-    // There is still a small amount of differentiation that needs to be done:
-    // if we got a text type, it could be a coordinate list.  We will make an
-    // educated guess based on the shape of the input.
-    if (loadType == FileType::RawASCII)
-    {
-      // Get the number of columns in the file.  If it is the right shape, we
-      // will assume it is sparse.
-      const size_t cols = CountCols(stream);
-      if (cols == 3)
-      {
-        // We have the right number of columns, so assume the type is a
-        // coordinate list.
-        loadType = FileType::CoordASCII;
-      }
+      // We have the right number of columns, so assume the type is a
+      // coordinate list.
+      loadType = FileType::CoordASCII;
     }
   }
 
@@ -377,7 +370,7 @@ bool Load(const std::string& filename,
       (loadType == FileType::ArmaASCII) ||
       (loadType == FileType::RawBinary))
   {
-    if (fatal)
+    if (opts.Fatal())
       Log::Fatal << "Cannot load '" << filename << "' with type "
           << GetStringType(loadType) << " into a sparse matrix; format is "
           << "only supported for dense matrices." << std::endl;
@@ -388,10 +381,7 @@ bool Load(const std::string& filename,
 
     return false;
   }
-
-  bool success;
-
-  if (loadType == FileType::CSVASCII)
+  else if (loadType == FileType::CSVASCII)
   {
     // Armadillo sparse matrices can't load CSVs, so we have to load a separate
     // matrix to do that.  If the CSV has three columns, we assume it's a
