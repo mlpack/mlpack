@@ -58,7 +58,29 @@ void TransposeTokens(std::vector<std::vector<std::string>> const &input,
 
 } // namespace details
 
-  template<typename eT>
+inline
+bool FileExist(std::fstream& stream)
+{
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+  stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
+#else
+  stream.open(filename.c_str(), std::fstream::in);
+#endif
+  if (!stream.is_open())
+  {
+    Timer::Stop("loading_data");
+    if (fatal)
+      Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
+    else
+      Log::Warn << "Cannot open file '" << filename << "'; load failed."
+          << std::endl;
+
+    return false;
+  }
+  return true;
+}
+
+template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           const bool fatal,
@@ -95,7 +117,22 @@ inline bool LoadHDF5(const std::string& filename,
                      arma::Mat<eT>& matrix,
                      LoadOptions& opts)
 {
+#ifndef ARMA_USE_HDF5
+    // Ensure that HDF5 is supported.
+    Timer::Stop("loading_data");
+    if (opts.Fatal())
+      Log::Fatal << "Attempted to load '" << filename << "' as HDF5 data, but "
+          << "Armadillo was compiled without HDF5 support.  Load failed."
+          << std::endl;
+    else
+      Log::Warn << "Attempted to load '" << filename << "' as HDF5 data, but "
+          << "Armadillo was compiled without HDF5 support.  Load failed."
+          << std::endl;
 
+    return false;
+#endif
+    
+    //success = matrix.load(filename, ToArmaFileType(loadType));
 }
 
 template<typename eT>
@@ -104,33 +141,17 @@ bool Load(const std::string& filename,
           LoadOptions& opts)
  {
   Timer::Start("loading_data");
-
-  // Catch nonexistent files by opening the stream ourselves.
-  std::fstream stream;
-
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-  stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
-#else
-  stream.open(filename.c_str(), std::fstream::in);
-#endif
-  if (!stream.is_open())
-  {
-    Timer::Stop("loading_data");
-    if (fatal)
-      Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
-    else
-      Log::Warn << "Cannot open file '" << filename << "'; load failed."
-          << std::endl;
-
-    return false;
-  }
-
   bool success;
+  std::fstream stream;
   std::string stringType;
-  FileType loadType = opts.FileType();
-  stringType = GetStringType(loadType);
+ 
+  success = FileExist(stream);
+  if (!success)
+    return false;
 
-  if (inputLoadType == FileType::AutoDetect)
+  FileType loadType = opts.FileType();
+
+  if (opts.FileType() == FileType::AutoDetect)
   {
     // Attempt to auto-detect the type from the given file.
     loadType = AutoDetect(stream, filename);
@@ -149,52 +170,35 @@ bool Load(const std::string& filename,
     }
   }
 
-#ifndef ARMA_USE_HDF5
-  if (inputLoadType == FileType::HDF5Binary)
-  {
-    // Ensure that HDF5 is supported.
-    Timer::Stop("loading_data");
-    if (opts.Fatal())
-      Log::Fatal << "Attempted to load '" << filename << "' as HDF5 data, but "
-          << "Armadillo was compiled without HDF5 support.  Load failed."
-          << std::endl;
-    else
-      Log::Warn << "Attempted to load '" << filename << "' as HDF5 data, but "
-          << "Armadillo was compiled without HDF5 support.  Load failed."
-          << std::endl;
-
+  success = DetectFileType(opts);
+  if (!success)
     return false;
-  }
-#endif
 
-  // Try to load the file; but if it's raw_binary, it could be a problem.
-  if (loadType == FileType::RawBinary)
-    Log::Warn << "Loading '" << filename << "' as " << stringType << "; "
-        << "but this may not be the actual filetype!" << std::endl;
-  else
+  stringType = GetStringType(loadType);
+
+  if (loadType != FileType::RawBinary)
     Log::Info << "Loading '" << filename << "' as " << stringType << ".  "
         << std::flush;
 
   // We can't use the stream if the type is HDF5.
   if (loadType == FileType::HDF5Binary)
   {
-
-    // to use the filename, but with options
-    success = matrix.load(filename, ToArmaFileType(loadType));
-
+    success = LoadHDSF5(filename, matrix, opts);
   }
   else if (loadType == FileType::CSVASCII)
   {
-
+    success = LoadCSVASCII(filename, matrix, opts);
   }
   else
   {
+    if (loadType == FileType::RawBinary)
+    Log::Warn << "Loading '" << filename << "' as " << stringType << "; "
+        << "but this may not be the actual filetype!" << std::endl;
+
     success = matrix.load(stream, ToArmaFileType(loadType));
-
+    if (opts.Transpose())
+      inplace_trans(matrix);
   }
-
-  if (opts.Transpose() && loadType != FileType::CSVASCII)
-    inplace_trans(matrix);
 
   if (!success)
   {
@@ -227,24 +231,14 @@ bool Load(const std::string& filename,
   // Get the extension and load as necessary.
   Timer::Start("loading_data");
 
+  bool sucess;
+  std::fstream stream;
+  success = FileExist(stream);
+  if (!success)
+    return false;
+
   // Get the extension.
   std::string extension = Extension(filename);
-
-  // Catch nonexistent files by opening the stream ourselves.
-  std::fstream stream;
-  stream.open(filename.c_str(), std::fstream::in);
-
-  if (!stream.is_open())
-  {
-    Timer::Stop("loading_data");
-    if (fatal)
-      Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
-    else
-      Log::Warn << "Cannot open file '" << filename << "'; load failed."
-          << std::endl;
-
-    return false;
-  }
 
   if (extension == "csv" || extension == "tsv" || extension == "txt")
   {
@@ -334,28 +328,11 @@ bool Load(const std::string& filename,
 {
 
   Timer::Start("loading_data");
-
-  // Get the extension.
-  std::string extension = Extension(filename);
-
-  // Catch nonexistent files by opening the stream ourselves.
+  bool success;
   std::fstream stream;
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-  stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
-#else
-  stream.open(filename.c_str(), std::fstream::in);
-#endif
-  if (!stream.is_open())
-  {
-    Timer::Stop("loading_data");
-    if (fatal)
-      Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
-    else
-      Log::Warn << "Cannot open file '" << filename << "'; load failed."
-          << std::endl;
-
+  success = FileExist(stream);
+  if (!success)
     return false;
-  }
 
   FileType loadType = inputLoadType;
   std::string stringType;
