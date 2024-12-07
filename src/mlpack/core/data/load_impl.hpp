@@ -73,6 +73,31 @@ bool Load(const std::string& filename,
   Load(filename, matrix, opts);
 }
 
+
+inline bool LoadCSVASCII(const std::string& filename,
+                        arma::Mat<eT>& matrix,
+                        LoadOptions& opts)
+{
+  if (opts.Transpose() && opts.HasHeaders())
+    success = matrix.load(arma::csv_name(filename, opts.Headers(),
+          arma::csv_opts::trans), arma::csv_ascii);
+  else if (opts.Transpose() && !opts.HasHeaders())
+    success = matrix.load(arma::csv_name(filename, arma::csv_opts::trans),
+        arma::csv_ascii);
+  else if (!opts.Transpose() && opts.HasHeaders())
+    success = matrix.load(arma::csv_name(filename, opts.Headers()),
+        arma::csv_ascii);
+  else if ()
+
+}
+
+inline bool LoadHDF5(const std::string& filename,
+                     arma::Mat<eT>& matrix,
+                     LoadOptions& opts)
+{
+
+}
+
 template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
@@ -100,8 +125,11 @@ bool Load(const std::string& filename,
     return false;
   }
 
-  FileType loadType = opts.FileType();
+  bool success;
   std::string stringType;
+  FileType loadType = opts.FileType();
+  stringType = GetStringType(loadType);
+
   if (inputLoadType == FileType::AutoDetect)
   {
     // Attempt to auto-detect the type from the given file.
@@ -110,7 +138,7 @@ bool Load(const std::string& filename,
     if (loadType == FileType::FileTypeUnknown)
     {
       Timer::Stop("loading_data");
-      if (fatal)
+      if (opts.Fatal())
         Log::Fatal << "Unable to detect type of '" << filename << "'; "
             << "incorrect extension?" << std::endl;
       else
@@ -121,14 +149,12 @@ bool Load(const std::string& filename,
     }
   }
 
-  stringType = GetStringType(loadType);
-
 #ifndef ARMA_USE_HDF5
   if (inputLoadType == FileType::HDF5Binary)
   {
     // Ensure that HDF5 is supported.
     Timer::Stop("loading_data");
-    if (fatal)
+    if (opts.Fatal())
       Log::Fatal << "Attempted to load '" << filename << "' as HDF5 data, but "
           << "Armadillo was compiled without HDF5 support.  Load failed."
           << std::endl;
@@ -150,26 +176,22 @@ bool Load(const std::string& filename,
         << std::flush;
 
   // We can't use the stream if the type is HDF5.
-  bool success;
-  LoadCSV loader;
-
-  if (loadType != FileType::HDF5Binary)
+  if (loadType == FileType::HDF5Binary)
   {
-    if (loadType == FileType::CSVASCII)
-    {
-      arma::field<std::string> headers;
-      if (opts.Transpose() && opts.HasHeaders())
-        success = matrix.load(arma::csv_name(filename, opts.Headers(),
-              arma::csv_opts::trans), arma::csv_ascii);
-      else
-        success = matrix.load(arma::csv_name(filename, headers),
-            arma::csv_ascii);
-    }
-    else
-      success = matrix.load(stream, ToArmaFileType(loadType));
+
+    // to use the filename, but with options
+    success = matrix.load(filename, ToArmaFileType(loadType));
+
+  }
+  else if (loadType == FileType::CSVASCII)
+  {
+
   }
   else
-    success = matrix.load(filename, ToArmaFileType(loadType));
+  {
+    success = matrix.load(stream, ToArmaFileType(loadType));
+
+  }
 
   if (opts.Transpose() && loadType != FileType::CSVASCII)
     inplace_trans(matrix);
@@ -178,7 +200,7 @@ bool Load(const std::string& filename,
   {
     Log::Info << std::endl;
     Timer::Stop("loading_data");
-    if (fatal)
+    if (opts.Fatal())
       Log::Fatal << "Loading from '" << filename << "' failed." << std::endl;
     else
       Log::Warn << "Loading from '" << filename << "' failed." << std::endl;

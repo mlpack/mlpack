@@ -69,7 +69,19 @@ class LoadOptions
 
   //! Transpose the matrix if necessary.
   bool& Transpose() { return transpose; }
-  
+ 
+  //! Get if the separator is a semicolon in the matrix.
+  const bool& Semicolon() { return semiColon; }
+
+  //! Modify the separator type in the matrix.
+  bool& SemiColon() { return semiColon; }
+ 
+  //! Get if the separator is a semicolon in the matrix.
+  const bool& MissingToNan() { return missingToNan; }
+
+  //! Modify the separator type in the matrix.
+  bool& MissingToNan() { return missingToNan; }
+
   //! Get the headers.
   const arma::field<std::string>& Headers() { return headers; }
 
@@ -87,6 +99,8 @@ class LoadOptions
   bool fatal;
   bool hasHeaders;
   bool transpose;
+  bool semicolon;
+  bool missingToNaN;
   arma::field<std::string> headers;
   FileType format;
 };
