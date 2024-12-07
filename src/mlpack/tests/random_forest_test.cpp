@@ -37,8 +37,8 @@ TEST_CASE("BootstrapNoWeightsTest", "[RandomForestTest]")
     arma::Row<size_t> bootstrapLabels;
     arma::rowvec bootstrapWeights;
 
-    Bootstrap<false>(dataset, labels, weights, bootstrapDataset,
-        bootstrapLabels, bootstrapWeights);
+    DefaultBootstrap().Bootstrap<false>(dataset, labels, weights,
+        bootstrapDataset, bootstrapLabels, bootstrapWeights);
 
     REQUIRE(bootstrapDataset.n_cols == 1000);
     REQUIRE(bootstrapDataset.n_rows == 1);
@@ -72,8 +72,8 @@ TEST_CASE("BootstrapWeightsTest", "[RandomForestTest]")
     arma::Row<size_t> bootstrapLabels;
     arma::rowvec bootstrapWeights;
 
-    Bootstrap<true>(dataset, labels, weights, bootstrapDataset,
-        bootstrapLabels, bootstrapWeights);
+    DefaultBootstrap().Bootstrap<true>(dataset, labels, weights,
+        bootstrapDataset, bootstrapLabels, bootstrapWeights);
 
     REQUIRE(bootstrapDataset.n_cols == 1000);
     REQUIRE(bootstrapDataset.n_rows == 1);
@@ -606,4 +606,105 @@ TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
   accuracy /= predictions.n_elem;
 
   REQUIRE(accuracy >= 0.85);
+}
+
+/**
+ * Test ComputeAverageUniqueness.
+ * 
+ * Average uniqueness is defined as average over the lifetime of an event
+ * of how many other events are active at every point in time.
+ */
+TEST_CASE("ComputeAverageUniquenessTest", "[RandomForestTest]")
+{
+  arma::mat indM(3 /* rows */, 6 /* cols */, arma::fill::zeros);
+
+  // indM = [1 1 1 0 0 0
+  //         0 0 1 1 0 0
+  //         0 0 0 0 1 1]
+  // The last event is fully isolated.
+  // The first two events overlap in the third column.
+  indM(0, 0) = indM(0, 1) = indM(0, 2) = 1.0;
+  indM(1, 2) = indM(1, 3) = 1.0;
+  indM(2, 4) = indM(2, 5) = 1.0;
+
+  const arma::vec avg(SequentialBootstrap<>::ComputeAverageUniqueness(indM));
+
+  REQUIRE(avg(0) == 5.0 / 6.0);
+  REQUIRE(avg(1) == 0.75);
+  REQUIRE(avg(2) == 1.0);
+}
+
+/**
+ * Test ComputeNextDrawProbabilities.
+ */
+TEST_CASE("ComputeNextDrawProbabilitiesTest", "[RandomForestTest]")
+{
+  const std::vector<arma::u64> phi1(1u, 1u);
+  arma::mat indM(3 /* rows */, 6 /* cols */, arma::fill::zeros);
+
+  indM(0, 0) = indM(0, 1) = indM(0, 2) = 1.0;
+  indM(1, 2) = indM(1, 3) = 1.0;
+  indM(2, 4) = indM(2, 5) = 1.0;
+
+  // Compute the probabilities that observations 0, 1, 2 are drawn after
+  // observation 1 has already been drawn.
+  const arma::vec delta2(
+    SequentialBootstrap<>::ComputeNextDrawProbabilities(phi1, indM));
+
+  REQUIRE(delta2(0) == 5.0 / 14.0);
+  // Should have the lowest probability as it has already been drawn.
+  REQUIRE(delta2(1) == 3.0 / 14.0);
+  // Should have the highest probability as this event does not overlap
+  // with others.
+  REQUIRE(delta2(2) == 6.0 / 14.0);
+}
+
+/**
+ * Test ComputeSamples.
+ */
+TEST_CASE("ComputeSamplesTest", "[RandomForestTest]")
+{
+  arma::mat indM(3 /* rows */, 6 /* cols */, arma::fill::zeros);
+
+  indM(0, 0) = indM(0, 1) = indM(0, 2) = 1.0;
+  indM(1, 2) = indM(1, 3) = 1.0;
+  indM(2, 4) = indM(2, 5) = 1.0;
+
+  SequentialBootstrap bootstrap(indM);
+  const arma::uvec phi(bootstrap.ComputeSamples());
+
+  // Can only check that the next draw does not yield indices
+  // outside of the range of observations.
+  REQUIRE(phi(0) < 3);
+  REQUIRE(phi(1) < 3);
+  REQUIRE(phi(2) < 3);
+}
+
+/**
+ * Test SequentialBootstrap.
+ */
+TEST_CASE("SequentialBootstrapTest", "[RandomForestTest]")
+{
+  const arma::mat ds(10 /* rows */, 3 /* cols */, arma::fill::randu);
+  const arma::Row<size_t> labels{ 1, 0, 0 };
+  const arma::vec weights(3, arma::fill::ones);
+  arma::mat indM(3 /* rows */, 6 /* cols */, arma::fill::zeros);
+
+  indM(0, 0) = indM(0, 1) = indM(0, 2) = 1.0;
+  indM(1, 2) = indM(1, 3) = 1.0;
+  indM(2, 4) = indM(2, 5) = 1.0;
+
+  SequentialBootstrap bootstrap(indM);
+  arma::mat bsDataset;
+  arma::Row<size_t> bsLabels;
+  arma::vec bsWeights;
+
+  bootstrap.Bootstrap<true>(ds, labels, weights, bsDataset,
+      bsLabels, bsWeights);
+
+  // Check that dimensions are the same.
+  REQUIRE(ds.n_rows == bsDataset.n_rows);
+  REQUIRE(ds.n_cols == bsDataset.n_cols);
+  REQUIRE(labels.n_cols == bsLabels.n_cols);
+  REQUIRE(weights.n_rows == bsWeights.n_rows);
 }

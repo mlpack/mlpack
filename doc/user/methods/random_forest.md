@@ -96,6 +96,8 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 | `minLeafSize` | `size_t` | Minimum number of points in each leaf node of each decision tree. | `1` |
 | `minGainSplit` | `double` | Minimum gain for a node to split in each decision tree. | `1e-7` |
 | `maxDepth` | `size_t` | Maximum depth for each decision tree. (0 means no limit.) | `0` |
+| `dimSelector` | `DimensionSelectionType` | | `DimensionSelectionType()` |
+| `bootstrap` | `BootstrapType` | Bootstrap strategy. | `BootstrapType()` |    
 | `warmStart` | `bool` | (Only available in `Train()`.)  If true, training adds `numTrees` trees to the random forest.  If `false`, an entirely new random forest will be created. | `false` |
 
  * If OpenMP is enabled<!-- TODO: link! -->, one thread will be used to train
@@ -438,7 +440,8 @@ RandomForest<FitnessFunction,
              DimensionSelectionType,
              NumericSplitType,
              CategoricalSplitType,
-             UseBootstrap>
+             UseBootstrap,
+             BootstrapType>
 ```
 
  * `FitnessFunction`: the measure of goodness to use when deciding on tree
@@ -450,7 +453,9 @@ RandomForest<FitnessFunction,
  * `CategoricalSplitType`: the strategy used for finding splits on categorical
    data dimensions
  * `UseBootstrap`: a boolean indicating whether or not to use a bootstrap sample
-   when training each tree in the forest
+   when training each tree in the forest. This argument will be removed in mlpack
+   5.0.0 as it is superseded by the BootstrapType strategy.
+ * `BootstrapType`: the strategy used to bootstrap the samples per tree.
 
 Note that the first four of these template parameters are exactly the same as
 the template parameters for the
@@ -712,3 +717,41 @@ class CustomCategoricalSplit
    dataset will be used to train each decision tree.
  * If `false` _(default for the `ExtraTrees` [variant](#fully-custom-behavior))_, the full
    dataset will be used to train each decision tree.
+ * This parameter will be removed in mlpack 5.0.0. A value of `false` will then be
+   equivalent to `BootstrapType` `IdentityBootstrap` and a value of `true` will be
+   equivalent to `DefaultBootstrap`.
+
+#### `BootstrapType`
+
+ * Specifies the strategy used for bootstrapping data for each .
+ * Three implementations for `BootstrapType` are available for drop-in usage:
+   - `DefaultBootstrap` *(default)*: bootstrap via random sampling with replacement.
+   - `IdentityBootstrap`: no bootstrapping.  Simply copies the input `dataset`, `labels`, and `weights` for each tree's data.
+   - `SequentialBootstrap`: bootstrapping via random sampling with replacement such that samples with informational overlap 
+     behave more IID as presented in: M. López de Prado (2018): "Advances in Financial Machine Learning", pp. 63-65.
+ * A custom `BootstrapType` class must take a `bool` template parameter `UseWeights` and implement one function:
+```c++
+class CustomBootstrapType
+{
+  /**
+   * Compute a bootstrap dataset based on the original dataset.
+   * If `UseWeights` is `false`, then `weights` and `bootstrapWeights` can be
+   * ignored.
+   *
+   * When the function is complete, `bootstrapDataset` and `bootstrapLabels`
+   * should contain a bootstrapped dataset.  If `UseWeights` is `true`, then
+   * `bootstrapWeights` should contain the corresponding instance weights for
+   * the bootstrapped dataset.
+   */
+  template<bool UseWeights,
+           typename MatType,
+           typename LabelsType,
+           typename WeightsType>
+  void Bootstrap(const MatType& dataset,
+                 const LabelsType& labels,
+                 const WeightsType& weights,
+                 MatType& bootstrapDataset,
+                 LabelsType& bootstrapLabels,
+                 WeightsType& bootstrapWeights)
+};
+```

@@ -22,14 +22,16 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
-    bool UseBootstrap
+    bool UseBootstrap,
+    typename BootstrapType
 >
 RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
-    UseBootstrap
+    UseBootstrap,
+    BootstrapType
 >::RandomForest() :
     avgGain(0.0)
 {
@@ -41,7 +43,8 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
-    bool UseBootstrap
+    bool UseBootstrap,
+    typename BootstrapType
 >
 template<typename MatType>
 RandomForest<
@@ -49,7 +52,8 @@ RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
-    UseBootstrap
+    UseBootstrap,
+    BootstrapType
 >::RandomForest(const MatType& dataset,
                 const arma::Row<size_t>& labels,
                 const size_t numClasses,
@@ -57,15 +61,16 @@ RandomForest<
                 const size_t minimumLeafSize,
                 const double minimumGainSplit,
                 const size_t maximumDepth,
-                DimensionSelectionType dimensionSelector) :
+                DimensionSelectionType dimensionSelector,
+                BootstrapType bootstrap) :
     avgGain(0.0)
 {
   // Pass off work to the Train() method.
   data::DatasetInfo info; // Ignored.
   arma::rowvec weights; // Fake weights, not used.
   Train<false, false>(dataset, info, labels, numClasses, weights, numTrees,
-      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector,
-      false);
+      minimumLeafSize, minimumGainSplit, maximumDepth, false,
+      dimensionSelector, bootstrap);
 }
 
 template<
@@ -73,7 +78,8 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
-    bool UseBootstrap
+    bool UseBootstrap,
+    typename BootstrapType
 >
 template<typename MatType>
 RandomForest<
@@ -81,7 +87,8 @@ RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
-    UseBootstrap
+    UseBootstrap,
+    BootstrapType
 >::RandomForest(const MatType& dataset,
                 const data::DatasetInfo& datasetInfo,
                 const arma::Row<size_t>& labels,
@@ -90,14 +97,15 @@ RandomForest<
                 const size_t minimumLeafSize,
                 const double minimumGainSplit,
                 const size_t maximumDepth,
-                DimensionSelectionType dimensionSelector):
+                DimensionSelectionType dimensionSelector,
+                BootstrapType bootstrap):
                     avgGain(0.0)
 {
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
   Train<false, true>(dataset, datasetInfo, labels, numClasses, weights,
-      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector, false);
+      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, false,
+      dimensionSelector, bootstrap);
 }
 
 template<
@@ -105,7 +113,8 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
-    bool UseBootstrap
+    bool UseBootstrap,
+    typename BootstrapType
 >
 template<typename MatType>
 RandomForest<
@@ -113,7 +122,8 @@ RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
-    UseBootstrap
+    UseBootstrap,
+    BootstrapType
 >::RandomForest(const MatType& dataset,
                 const arma::Row<size_t>& labels,
                 const size_t numClasses,
@@ -122,14 +132,15 @@ RandomForest<
                 const size_t minimumLeafSize,
                 const double minimumGainSplit,
                 const size_t maximumDepth,
-                DimensionSelectionType dimensionSelector) :
+                DimensionSelectionType dimensionSelector,
+                BootstrapType bootstrap) :
     avgGain(0.0)
 {
   // Pass off work to the Train() method.
   data::DatasetInfo info; // Ignored by Train().
   Train<true, false>(dataset, info, labels, numClasses, weights, numTrees,
-      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector,
-      false);
+      minimumLeafSize, minimumGainSplit, maximumDepth, false,
+      dimensionSelector, bootstrap);
 }
 
 template<
@@ -137,7 +148,8 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
-    bool UseBootstrap
+    bool UseBootstrap,
+    typename BootstrapType
 >
 template<typename MatType>
 RandomForest<
@@ -145,7 +157,8 @@ RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
-    UseBootstrap
+    UseBootstrap,
+    BootstrapType
 >::RandomForest(const MatType& dataset,
                 const data::DatasetInfo& datasetInfo,
                 const arma::Row<size_t>& labels,
@@ -155,13 +168,14 @@ RandomForest<
                 const size_t minimumLeafSize,
                 const double minimumGainSplit,
                 const size_t maximumDepth,
-                DimensionSelectionType dimensionSelector) :
+                DimensionSelectionType dimensionSelector,
+                BootstrapType bootstrap) :
     avgGain(0.0)
 {
   // Pass off work to the Train() method.
   Train<true, true>(dataset, datasetInfo, labels, numClasses, weights,
-      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector, false);
+      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, false,
+      dimensionSelector, bootstrap);
 }
 
 template<
@@ -169,7 +183,8 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
-    bool UseBootstrap
+    bool UseBootstrap,
+    typename BootstrapType
 >
 template<typename MatType>
 double RandomForest<
@@ -177,7 +192,8 @@ double RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
-    UseBootstrap
+    UseBootstrap,
+    BootstrapType
 >::Train(const MatType& dataset,
          const arma::Row<size_t>& labels,
          const size_t numClasses,
@@ -186,14 +202,16 @@ double RandomForest<
          const double minimumGainSplit,
          const size_t maximumDepth,
          const bool warmStart,
-         DimensionSelectionType dimensionSelector)
+         DimensionSelectionType dimensionSelector,
+         BootstrapType bootstrap)
 {
   // Pass off to Train().
   data::DatasetInfo datasetInfo; // Ignored by Train().
   arma::rowvec weights; // Ignored by Train().
-  return Train<false, false>(dataset, datasetInfo, labels, numClasses, weights,
-      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector, warmStart);
+  return
+    Train<false, false>(dataset, datasetInfo, labels, numClasses, weights,
+      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, warmStart,
+      dimensionSelector, bootstrap);
 }
 
 template<
@@ -201,7 +219,8 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
-    bool UseBootstrap
+    bool UseBootstrap,
+    typename BootstrapType
 >
 template<typename MatType>
 double RandomForest<
@@ -209,7 +228,8 @@ double RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
-    UseBootstrap
+    UseBootstrap,
+    BootstrapType
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
          const arma::Row<size_t>& labels,
@@ -219,13 +239,15 @@ double RandomForest<
          const double minimumGainSplit,
          const size_t maximumDepth,
          const bool warmStart,
-         DimensionSelectionType dimensionSelector)
+         DimensionSelectionType dimensionSelector,
+         BootstrapType bootstrap)
 {
   // Pass off to Train().
   arma::rowvec weights; // Ignored by Train().
-  return Train<false, true>(dataset, datasetInfo, labels, numClasses, weights,
-      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector, warmStart);
+  return
+    Train<false, true>(dataset, datasetInfo, labels, numClasses, weights,
+      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, warmStart,
+      dimensionSelector, bootstrap);
 }
 
 template<
@@ -233,7 +255,8 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
-    bool UseBootstrap
+    bool UseBootstrap,
+    typename BootstrapType
 >
 template<typename MatType>
 double RandomForest<
@@ -241,7 +264,8 @@ double RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
-    UseBootstrap
+    UseBootstrap,
+    BootstrapType
 >::Train(const MatType& dataset,
          const arma::Row<size_t>& labels,
          const size_t numClasses,
@@ -251,13 +275,15 @@ double RandomForest<
          const double minimumGainSplit,
          const size_t maximumDepth,
          const bool warmStart,
-         DimensionSelectionType dimensionSelector)
+         DimensionSelectionType dimensionSelector,
+         BootstrapType bootstrap)
 {
   // Pass off to Train().
   data::DatasetInfo datasetInfo; // Ignored by Train().
-  return Train<false, false>(dataset, datasetInfo, labels, numClasses, weights,
-      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector, warmStart);
+  return
+    Train<true, false>(dataset, datasetInfo, labels, numClasses, weights,
+      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, warmStart,
+      dimensionSelector, bootstrap);
 }
 
 template<
@@ -265,7 +291,8 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
-    bool UseBootstrap
+    bool UseBootstrap,
+    typename BootstrapType
 >
 template<typename MatType>
 double RandomForest<
@@ -273,7 +300,8 @@ double RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
-    UseBootstrap
+    UseBootstrap,
+    BootstrapType
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
          const arma::Row<size_t>& labels,
@@ -284,12 +312,14 @@ double RandomForest<
          const double minimumGainSplit,
          const size_t maximumDepth,
          const bool warmStart,
-         DimensionSelectionType dimensionSelector)
+         DimensionSelectionType dimensionSelector,
+         BootstrapType bootstrap)
 {
   // Pass off to Train().
-  return Train<true, true>(dataset, datasetInfo, labels, numClasses, weights,
-      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector, warmStart);
+  return
+    Train<true, true>(dataset, datasetInfo, labels, numClasses, weights,
+      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, warmStart,
+      dimensionSelector, bootstrap);
 }
 
 template<
@@ -297,7 +327,8 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
-    bool UseBootstrap
+    bool UseBootstrap,
+    typename BootstrapType
 >
 template<typename VecType>
 size_t RandomForest<
@@ -305,7 +336,8 @@ size_t RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
-    UseBootstrap
+    UseBootstrap,
+    BootstrapType
 >::Classify(const VecType& point) const
 {
   // Pass off to another Classify() overload.
@@ -321,7 +353,8 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
-    bool UseBootstrap
+    bool UseBootstrap,
+    typename BootstrapType
 >
 template<typename VecType>
 void RandomForest<
@@ -329,7 +362,8 @@ void RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
-    UseBootstrap
+    UseBootstrap,
+    BootstrapType
 >::Classify(const VecType& point,
             size_t& prediction,
             arma::vec& probabilities) const
@@ -367,7 +401,8 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
-    bool UseBootstrap
+    bool UseBootstrap,
+    typename BootstrapType
 >
 template<typename MatType>
 void RandomForest<
@@ -375,7 +410,8 @@ void RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
-    UseBootstrap
+    UseBootstrap,
+    BootstrapType
 >::Classify(const MatType& data,
             arma::Row<size_t>& predictions) const
 {
@@ -402,7 +438,8 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
-    bool UseBootstrap
+    bool UseBootstrap,
+    typename BootstrapType
 >
 template<typename MatType>
 void RandomForest<
@@ -410,7 +447,8 @@ void RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
-    UseBootstrap
+    UseBootstrap,
+    BootstrapType
 >::Classify(const MatType& data,
             arma::Row<size_t>& predictions,
             arma::mat& probabilities) const
@@ -440,7 +478,8 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
-    bool UseBootstrap
+    bool UseBootstrap,
+    typename BootstrapType
 >
 template<typename Archive>
 void RandomForest<
@@ -448,7 +487,8 @@ void RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
-    UseBootstrap
+    UseBootstrap,
+    BootstrapType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
   size_t numTrees;
@@ -472,7 +512,8 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
-    bool UseBootstrap
+    bool UseBootstrap,
+    typename BootstrapType
 >
 template<bool UseWeights, bool UseDatasetInfo, typename MatType>
 double RandomForest<
@@ -480,7 +521,8 @@ double RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
-    UseBootstrap
+    UseBootstrap,
+    BootstrapType
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
          const arma::Row<size_t>& labels,
@@ -490,8 +532,9 @@ double RandomForest<
          const size_t minimumLeafSize,
          const double minimumGainSplit,
          const size_t maximumDepth,
+         const bool warmStart,
          DimensionSelectionType& dimensionSelector,
-         const bool warmStart)
+         BootstrapType& bootstrap)
 {
   // Reset the forest if we are not doing a warm-start.
   if (!warmStart)
@@ -527,55 +570,40 @@ double RandomForest<
     MatType bootstrapDataset;
     arma::Row<size_t> bootstrapLabels;
     arma::rowvec bootstrapWeights;
-    if (UseBootstrap)
-    {
-      Bootstrap<UseWeights>(dataset, labels, weights, bootstrapDataset,
-          bootstrapLabels, bootstrapWeights);
-    }
+    bootstrap.template Bootstrap<UseWeights>(dataset, labels, weights,
+        bootstrapDataset, bootstrapLabels, bootstrapWeights);
 
     if (UseWeights)
     {
       if (UseDatasetInfo)
       {
-        totalGain += UseBootstrap ?
+        totalGain +=
             trees[oldNumTrees + i].Train(bootstrapDataset, datasetInfo,
                 bootstrapLabels, numClasses, bootstrapWeights, minimumLeafSize,
-                minimumGainSplit, maximumDepth, dimensionSelector) :
-            trees[oldNumTrees + i].Train(dataset, datasetInfo, labels,
-                numClasses, weights, minimumLeafSize, minimumGainSplit,
-                maximumDepth, dimensionSelector);
+                minimumGainSplit, maximumDepth, dimensionSelector);
       }
       else
       {
-        totalGain += UseBootstrap ?
+        totalGain +=
             trees[oldNumTrees + i].Train(bootstrapDataset, bootstrapLabels,
                 numClasses, bootstrapWeights, minimumLeafSize,
-                minimumGainSplit, maximumDepth, dimensionSelector) :
-            trees[oldNumTrees + i].Train(dataset, labels, numClasses,
-                weights, minimumLeafSize, minimumGainSplit, maximumDepth,
-                dimensionSelector);
+                minimumGainSplit, maximumDepth, dimensionSelector);
       }
     }
     else
     {
       if (UseDatasetInfo)
       {
-        totalGain += UseBootstrap ?
+        totalGain +=
             trees[oldNumTrees + i].Train(bootstrapDataset, datasetInfo,
                 bootstrapLabels, numClasses, minimumLeafSize, minimumGainSplit,
-                maximumDepth, dimensionSelector) :
-            trees[oldNumTrees + i].Train(dataset, datasetInfo, labels,
-                numClasses, minimumLeafSize, minimumGainSplit, maximumDepth,
-                dimensionSelector);
+                maximumDepth, dimensionSelector);
       }
       else
       {
-        totalGain += UseBootstrap ?
+        totalGain +=
             trees[oldNumTrees + i].Train(bootstrapDataset, bootstrapLabels,
                 numClasses, minimumLeafSize, minimumGainSplit, maximumDepth,
-                dimensionSelector) :
-            trees[oldNumTrees + i].Train(dataset, labels, numClasses,
-                minimumLeafSize, minimumGainSplit, maximumDepth,
                 dimensionSelector);
       }
     }
