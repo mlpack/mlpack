@@ -111,6 +111,19 @@ jobs:
         run: |
           cd build && make -j4
 
+      - name: Upload test binary
+        uses: actions/upload-artifact@v4.4.0
+        with:
+          name: mlpack_test_binary
+          path: build/bin/mlpack_test
+
+      - name: Upload R packages
+        uses: actions/upload-artifact@v4.4.0
+        with:
+          name: mlpack_r_tarball
+          path: build/src/mlpack/bindings/R/${{ steps.mlpack_version.outputs.mlpack_r_package }}
+
+
   ctest:
     needs: jobR
     runs-on: ubuntu-latest
@@ -126,23 +139,16 @@ jobs:
           - { test: "LargeRhoValueRnnTest", name: "large rho value rnn test" }
 
     steps:
+      - uses: actions/download-artifact@v4.1.8
+        with:
+          name: mlpack_test_binary
+
       - name: Run ${{ matrix.config.name }}
         run: |
           cd build && bin/mlpack_test -d ${{matrix.config.test }}
 
-  Upload:
-    needs: ctest
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Upload R packages
-        uses: actions/upload-artifact@v4.4.0
-        with:
-          name: mlpack_r_tarball
-          path: build/src/mlpack/bindings/R/${{ steps.mlpack_version.outputs.mlpack_r_package }}
-
   R-CMD-check:
-    needs: Upload
+    needs: ctest
     runs-on: ${{ matrix.config.os }}
 
     name: ${{ matrix.config.name }}
