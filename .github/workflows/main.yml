@@ -20,16 +20,6 @@ jobs:
     if: ${{ github.repository == 'mlpack/mlpack' }}
     runs-on: ubuntu-latest
 
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - { test: "~[long_run_time]", name: "main tests" }
-          - { test: "VanillaNetworkTest", name: "vanilla network test" }
-          - { test: "VanillaNetworkBatchSizeTest", name: "vanilla network batch size test" }
-          - { test: "CheckCopyVanillaNetworkTest", name: "check copy vanilla network test" }
-          - { test: "LargeRhoValueRnnTest", name: "large rho value rnn test" }
-
     outputs:
       r_bindings: ${{ steps.mlpack_version.outputs.mlpack_r_package }}
 
@@ -121,10 +111,30 @@ jobs:
         run: |
           cd build && make -j4
 
+  ctest:
+    needs: jobR
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { test: "~[long_run_time]", name: "main tests" }
+          - { test: "VanillaNetworkTest", name: "vanilla network test" }
+          - { test: "VanillaNetworkBatchSizeTest", name: "vanilla network batch size test" }
+          - { test: "CheckCopyVanillaNetworkTest", name: "check copy vanilla network test" }
+          - { test: "LargeRhoValueRnnTest", name: "large rho value rnn test" }
+
+    steps:
       - name: Run ${{ matrix.config.name }}
         run: |
-          cd build && CTEST_OUTPUT_ON_FAILURE=1 bin/mlpack_test ${{matrix.config.test }}
+          cd build && bin/mlpack_test -d ${{matrix.config.test }}
 
+  Upload:
+    needs: ctest
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Upload R packages
         uses: actions/upload-artifact@v4.4.0
         with:
@@ -132,7 +142,7 @@ jobs:
           path: build/src/mlpack/bindings/R/${{ steps.mlpack_version.outputs.mlpack_r_package }}
 
   R-CMD-check:
-    needs: jobR
+    needs: Upload
     runs-on: ${{ matrix.config.os }}
 
     name: ${{ matrix.config.name }}
