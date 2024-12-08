@@ -244,7 +244,8 @@ TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest][long_run_time]")
   REQUIRE(success == true);
 }
 
-TEST_CASE("VanillaNetworkBatchSizeTest", "[ConvolutionalNetworkTest][long_run_time]")
+TEST_CASE("VanillaNetworkBatchSizeTest",
+          "[ConvolutionalNetworkTest][long_run_time]")
 {
   FFN<NegativeLogLikelihood, RandomInitialization> model;
 
@@ -344,7 +345,8 @@ TEST_CASE("VanillaNetworkBatchSizeTest", "[ConvolutionalNetworkTest][long_run_ti
 /**
  * Train the vanilla network on a larger dataset.
  */
-TEST_CASE("CheckCopyVanillaNetworkTest", "[ConvolutionalNetworkTest][long_run_time]")
+TEST_CASE("CheckCopyVanillaNetworkTest",
+          "[ConvolutionalNetworkTest][long_run_time]")
 {
   arma::mat X;
   X.load("mnist_first250_training_4s_and_9s.csv");

@@ -20,6 +20,16 @@ jobs:
     if: ${{ github.repository == 'mlpack/mlpack' }}
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { test: "~[long_run_time]", name: "main tests" }
+          - { test: "VanillaNetworkTest", name: "vanilla network test" }
+          - { test: "VanillaNetworkBatchSizeTest", name: "vanilla network batch size test" }
+          - { test: "CheckCopyVanillaNetworkTest", name: "check copy vanilla network test" }
+          - { test: "LargeRhoValueRnnTest", name: "large rho value rnn test" }
+
     outputs:
       r_bindings: ${{ steps.mlpack_version.outputs.mlpack_r_package }}
 
@@ -50,15 +60,15 @@ jobs:
           # this is the default but 'sccache' can be selected here
           variant: ccache
 
-      - name: Prepare R for Ccache 
+      - name: Prepare R for Ccache
         run: |
           mkdir -p ~/.R
           cp -vax .github/etc/R_Makevars_${{ runner.os }} ~/.R/Makevars
-          
+
       - name: Configure Ccache for R
         run: |
           ccache --set-config "sloppiness=include_file_ctime"
-          ccache --set-config "hash_dir=false" 
+          ccache --set-config "hash_dir=false"
           ccache --show-config
           ccache --zero-stats
 
@@ -111,9 +121,9 @@ jobs:
         run: |
           cd build && make -j4
 
-      - name: Run tests via ctest
+      - name: Run ${{ matrix.config.name }}
         run: |
-          cd build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
+          cd build && CTEST_OUTPUT_ON_FAILURE=1 bin/mlpack_test ${{matrix.config.test }}
 
       - name: Upload R packages
         uses: actions/upload-artifact@v4.4.0
