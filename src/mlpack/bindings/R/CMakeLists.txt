@@ -24,7 +24,7 @@ if (BUILD_R_BINDINGS)
   set(RcppEnsmallen_Version "0.${ENSMALLEN_VERSION}")
 
   # Import find_r_module.
-  include(${CMAKE_SOURCE_DIR}/CMake/FindRModule.cmake)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/CMake/FindRModule.cmake)
   find_package(R 4.0)
   if (NOT R_FOUND)
     set(R_NOT_FOUND_MSG "${R_NOT_FOUND_MSG}\n    - R")
@@ -73,7 +73,7 @@ if (BUILD_R_BINDINGS)
   add_custom_target(R ALL)
 
   # Now configure DESCRIPTION.
-  file(READ "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/version.hpp"
+  file(READ "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/version.hpp"
       VERSION_HPP_CONTENTS)
   string(REGEX REPLACE ".*#define MLPACK_VERSION_MAJOR ([0-9]+).*" "\\1"
       MLPACK_VERSION_MAJOR "${VERSION_HPP_CONTENTS}")
@@ -93,7 +93,7 @@ if (BUILD_R_BINDINGS)
 
   # We need to generate an Authors@R list using every single contributor in
   # COPYRIGHT.txt.  That takes a little bit of processing.
-  file(READ "${CMAKE_SOURCE_DIR}/COPYRIGHT.txt" COPYRIGHT_TXT_CONTENTS)
+  file(READ "${CMAKE_CURRENT_SOURCE_DIR}/COPYRIGHT.txt" COPYRIGHT_TXT_CONTENTS)
   string(REGEX MATCHALL "  Copyright [0-9-]*, ([^\n]*)\n" CONTRIBUTORS_LIST
       "${COPYRIGHT_TXT_CONTENTS}")
 
@@ -178,7 +178,7 @@ if (BUILD_R_BINDINGS)
   string(REGEX REPLACE ",$" "" AUTHORS_R_OUT "${AUTHORS_R}")
   set(AUTHORS_R "${AUTHORS_R_OUT})")
 
-  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/mlpack/DESCRIPTION.in
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/bindings/R/mlpack/DESCRIPTION.in
                  ${CMAKE_CURRENT_BINARY_DIR}/mlpack/DESCRIPTION
                  @ONLY)
 
@@ -345,40 +345,40 @@ if (BUILD_R_BINDINGS)
 
   # 1. Generate ${name}.cpp.
   add_custom_command(OUTPUT
-      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp
+      ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp
       COMMAND ${CMAKE_COMMAND}
-          -DMODEL_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/model.txt
+          -DMODEL_FILE=${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/model.txt
           -DPROGRAM_NAME=${name}
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp
-          -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
-          -DR_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/r_method.cpp.in
-          -DR_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp
-          -P ${CMAKE_SOURCE_DIR}/CMake/R/ConfigureRCPP.cmake
-      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/r_method.cpp.in
-              ${CMAKE_SOURCE_DIR}/CMake/R/ConfigureRCPP.cmake)
+          -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+          -DR_CPP_IN=${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/bindings/R/r_method.cpp.in
+          -DR_CPP_OUT=${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp
+          -P ${CMAKE_CURRENT_SOURCE_DIR}/CMake/R/ConfigureRCPP.cmake
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/bindings/R/r_method.cpp.in
+              ${CMAKE_CURRENT_SOURCE_DIR}/CMake/R/ConfigureRCPP.cmake)
 
   # 2. Generate ${name}.R.
-  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/build/generate_r_${name}.cpp
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/build/generate_r_${name}.cpp
       COMMAND ${CMAKE_COMMAND}
           -DNAME=${name}
-          -DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/generate_R.cpp.in
-          -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/build/generate_r_${name}.cpp
+          -DGENERATE_CPP_IN=${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/bindings/R/generate_R.cpp.in
+          -DGENERATE_CPP_OUT=${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/build/generate_r_${name}.cpp
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp
-          -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
-      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/generate_R.cpp.in
-              ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
-              ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp)
+          -P ${CMAKE_CURRENT_SOURCE_DIR}/CMake/ConfigureFile.cmake
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/bindings/R/generate_R.cpp.in
+              ${CMAKE_CURRENT_SOURCE_DIR}/CMake/ConfigureFile.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp)
 
   add_executable(generate_r_${name}
-      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/build/generate_r_${name}.cpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/print_R.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/print_R.cpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/get_type.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/R_option.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/print_input_param.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/print_input_processing.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/print_serialize_util.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/print_output_processing.hpp)
+      ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/build/generate_r_${name}.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/bindings/R/print_R.hpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/bindings/R/print_R.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/bindings/R/get_type.hpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/bindings/R/R_option.hpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/bindings/R/print_input_param.hpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/bindings/R/print_input_processing.hpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/bindings/R/print_serialize_util.hpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/bindings/R/print_output_processing.hpp)
   if (BUILD_SHARED_LIBS)
     target_link_libraries(generate_r_${name} ${MLPACK_LIBRARIES})
   else ()
@@ -386,12 +386,12 @@ if (BUILD_R_BINDINGS)
   endif ()
   set_target_properties(generate_r_${name} PROPERTIES
       COMPILE_FLAGS "-DBINDING_TYPE=BINDING_TYPE_R"
-      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/build/bin/")
+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/build/bin/")
   add_custom_command(TARGET generate_r_${name} POST_BUILD
       COMMAND ${CMAKE_COMMAND}
-          -DGENERATE_BINDING_PROGRAM=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/build/bin/generate_r_${name}
-          -DBINDING_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/${name}.R
-          -P ${CMAKE_SOURCE_DIR}/CMake/GenerateBinding.cmake)
+          -DGENERATE_BINDING_PROGRAM=${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/build/bin/generate_r_${name}
+          -DBINDING_OUTPUT_FILE=${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/${name}.R
+          -P ${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateBinding.cmake)
   add_dependencies(generate_r_${name} r_copy)
   add_dependencies(r_build generate_r_${name})
 endif()
@@ -418,7 +418,7 @@ macro (post_r_setup)
   # First we have to create that directory though.
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E
-      make_directory ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack
+      make_directory ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack
   )
 
   # Then copy each of the header and source files over to that directory.
@@ -432,15 +432,15 @@ macro (post_r_setup)
     execute_process(
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${mlpack_sources}
-        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack
+        ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack
     )
   endforeach()
 
   # Copy configured config.hpp.
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E copy
-      "${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/config.hpp")
+      "${CMAKE_CURRENT_BINARY_DIR}/include/mlpack/config-local.hpp"
+      "${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/config.hpp")
 
   foreach(r_src_file ${R_SRC_FILES})
     if ("${r_src_file}" MATCHES "methods/" OR
@@ -449,7 +449,7 @@ macro (post_r_setup)
       execute_process(
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
           ${CMAKE_CURRENT_SOURCE_DIR}/${r_src_file}
-          ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/${r_src_file}
+          ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/${r_src_file}
       )
 
       # Collect path of all source files and append to ${R_SRC}.
@@ -466,19 +466,19 @@ macro (post_r_setup)
     execute_process(
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${CEREAL_INCLUDE_DIR}/${rcereal_src_file}
-        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/${rcereal_src_file}
+        ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/${rcereal_src_file}
     )
   endforeach()
 
   # Resolve gcc Warnings.
-  file(READ ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/cereal/external/base64.hpp CEREAL_BASE64)
+  file(READ ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/cereal/external/base64.hpp CEREAL_BASE64)
   string(REGEX REPLACE
       "\n#ifdef __GNUC__\n#pragma GCC diagnostic push\n#pragma GCC diagnostic ignored \"-Wconversion\"\n#endif\n"
       "" CEREAL_BASE64 "${CEREAL_BASE64}")
   string(REGEX REPLACE
       "#ifdef __GNUC__\n#pragma GCC diagnostic pop\n#endif"
       "" CEREAL_BASE64 "${CEREAL_BASE64}")
-  file(WRITE ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/cereal/external/base64.hpp "${CEREAL_BASE64}")
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/cereal/external/base64.hpp "${CEREAL_BASE64}")
 
   # Copy STB headers for inclusion in the package, if STB is used.
   # NOTE: for CRAN, `sprintf` cannot be used; but it is used in
@@ -486,26 +486,26 @@ macro (post_r_setup)
   if (StbImage_FOUND)
     execute_process(
       COMMAND ${CMAKE_COMMAND} -E
-        make_directory ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/stb
+        make_directory ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/stb
     )
     execute_process(
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${STB_IMAGE_INCLUDE_DIR}/stb_image.h
-            ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/stb/stb_image.h)
+            ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/stb/stb_image.h)
     file(READ "${STB_IMAGE_INCLUDE_DIR}/stb_image_write.h" STB_IMAGE_WRITE_H)
     string(REGEX REPLACE "sprintf\\(buffer," "snprintf(buffer, 128,"
         STB_IMAGE_WRITE_H_MOD "${STB_IMAGE_WRITE_H}")
-    file(WRITE "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/stb/stb_image_write.h" "${STB_IMAGE_WRITE_H_MOD}")
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/stb/stb_image_write.h" "${STB_IMAGE_WRITE_H_MOD}")
   endif ()
 
   # Then configure 'mlpack.h.in' using ${R_SRC}.
   configure_file(
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack.h.in
-      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack.h.in
+      ${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack.h
       @ONLY)
 
   file(WRITE
-       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/serialization.R"
+       "${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/serialization.R"
       "#' Serialize/Unserialize an mlpack model.\n"
       "#'\n"
       "#' @param model Input model pointer.\n"
@@ -516,18 +516,18 @@ macro (post_r_setup)
       "  model_serialization_function <-\n"
       "    switch(attributes(model)$type,\n")
 
-  include("${CMAKE_SOURCE_DIR}/CMake/R/AppendSerialization.cmake")
+  include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/R/AppendSerialization.cmake")
   # Read list content.
   get_property(MODELS GLOBAL PROPERTY R_MODELS)
   foreach (models IN LISTS MODELS)
     append_serialization(
-        "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/serialization.R"
+        "${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/serialization.R"
          ${models}
          TRUE)
   endforeach()
 
   file(APPEND
-       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/serialization.R"
+       "${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/serialization.R"
        "      stop(\"Requested model type is not currently supported.\")\n    )\n\n"
        "  # Read in model\n"
        "  con <- file(as.character(filename), \"wb\")\n"
@@ -543,13 +543,13 @@ macro (post_r_setup)
        "    switch(attributes(model)$type,\n")
   foreach (models IN LISTS MODELS)
     append_serialization(
-        "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/serialization.R"
+        "${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/serialization.R"
          ${models}
          FALSE)
   endforeach()
 
   file(APPEND
-       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/serialization.R"
+       "${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/serialization.R"
        "      stop(\"Requested model type is not currently supported.\")\n    )\n\n"
        "  model_ptr <- model_unserialization_function(model)\n"
        "  close(con)\n"

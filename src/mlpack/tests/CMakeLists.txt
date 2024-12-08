@@ -272,6 +272,6 @@ add_custom_command(TARGET mlpack_test
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
 )
 
-add_test(NAME "catch_test" COMMAND mlpack_test WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+add_test(NAME "catch_test" COMMAND mlpack_test WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 set_tests_properties("catch_test" PROPERTIES TIMEOUT 0)
