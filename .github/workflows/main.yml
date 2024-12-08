@@ -144,7 +144,10 @@ jobs:
           name: mlpack_test_binary
 
       - name: Run ${{ matrix.config.name }}
-        run: ./mlpack_test -d ${{matrix.config.test }}
+        run: |
+          ls -lR
+          chmod 0755 mlpack_test
+          ./mlpack_test -d ${{matrix.config.test }}
 
   R-CMD-check:
     needs: ctest
