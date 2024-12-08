@@ -40,6 +40,8 @@ jobs:
 
       # Setup R actions
       - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
 
       # Get and set up ccache
       - name: Get CCache
@@ -50,15 +52,15 @@ jobs:
           # this is the default but 'sccache' can be selected here
           variant: ccache
 
-      - name: Prepare R for Ccache 
+      - name: Prepare R for Ccache
         run: |
           mkdir -p ~/.R
           cp -vax .github/etc/R_Makevars_${{ runner.os }} ~/.R/Makevars
-          
+
       - name: Configure Ccache for R
         run: |
           ccache --set-config "sloppiness=include_file_ctime"
-          ccache --set-config "hash_dir=false" 
+          ccache --set-config "hash_dir=false"
           ccache --show-config
           ccache --zero-stats
 
@@ -67,13 +69,13 @@ jobs:
           cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
           Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
 
-      - name: Cache R packages
-        if: runner.os != 'Windows' && runner.os != 'macOS'
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-r-release-${{ hashFiles('depends.Rds') }}
-          restore-keys: ${{ runner.os }}-r-release-
+      #- name: Cache R packages
+      #  if: runner.os != 'Windows' && runner.os != 'macOS'
+      #  uses: actions/cache@v3
+      #  with:
+      #    path: ${{ env.R_LIBS_USER }}
+      #    key: ${{ runner.os }}-r-release-${{ hashFiles('depends.Rds') }}
+      #    restore-keys: ${{ runner.os }}-r-release-
 
       - name: Install Build Dependencies
         run: |
@@ -82,7 +84,7 @@ jobs:
           # split the rapidjson dependency into a separate package.  We will
           # bundle the cereal sources with the R package, so we want them to
           # be exactly the upstream sources (with rapidjson included).
-          sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libensmallen-dev libhdf5-dev libarmadillo-dev libcurl4-openssl-dev
+          sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev libensmallen-dev libhdf5-dev libarmadillo-dev libcurl4-openssl-dev
           wget https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.2.tar.gz
           tar -xvzpf v1.3.2.tar.gz
           #
@@ -111,18 +113,48 @@ jobs:
         run: |
           cd build && make -j4
 
-      - name: Run tests via ctest
-        run: |
-          cd build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
+      - name: Upload test binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlpack_test_binary
+          path: build/bin/mlpack_test
 
       - name: Upload R packages
-        uses: actions/upload-artifact@v4.4.0
+        uses: actions/upload-artifact@v4
         with:
           name: mlpack_r_tarball
           path: build/src/mlpack/bindings/R/${{ steps.mlpack_version.outputs.mlpack_r_package }}
 
-  R-CMD-check:
+
+  ctest:
     needs: jobR
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { test: "~[long_run_time]", name: "main tests" }
+          - { test: "VanillaNetworkTest", name: "vanilla network test" }
+          - { test: "VanillaNetworkBatchSizeTest", name: "vanilla network batch size test" }
+          - { test: "CheckCopyVanillaNetworkTest", name: "check copy vanilla network test" }
+          - { test: "LargeRhoValueRnnTest", name: "large rho value rnn test" }
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: mlpack_test_binary
+
+      - name: Install run-time dependencies
+        run: sudo apt install --yes --allow-unauthenticated libopenblas-dev liblapack-dev libarmadillo-dev
+
+      - name: Run ${{ matrix.config.name }}
+        run: |
+          chmod 0755 mlpack_test
+          ./mlpack_test --abort --durations yes ${{matrix.config.test }}
+
+  R-CMD-check:
+    needs: ctest
     runs-on: ${{ matrix.config.os }}
 
     name: ${{ matrix.config.name }}
@@ -151,7 +183,7 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/download-artifact@v4.1.8
+      - uses: actions/download-artifact@v4
         with:
           name: mlpack_r_tarball
 
@@ -194,7 +226,7 @@ jobs:
 
       - name: Upload check results
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-results
           path: |
