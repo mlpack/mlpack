@@ -47,9 +47,27 @@ class LoadOptions
   /**
     *
     */
-  LoadOptions()
+  LoadOptions() :
+    Fatal(fatal),
+    HasHeaders(hasHeaders),
+    Transpose(transpose),
+    SemiColon(semiColon),
+    MissingToNan(missingToNan),
+    Headers(headers),
+    FileType(format)
   {
-    // Do nothing.
+    // We can not have these two policies to be set to true at the same time.
+    // Therefore, a simple sanity check is added in here and reverse assignment.
+    if (fillForward)
+    {
+      fillForward = true;
+      fillBackward = false;
+    }
+    else if (fillBackward)
+    {
+      fillForward = false;
+      fillBackward = true;
+    }
   }
 
   //! Get the error it it is fatal or not.
@@ -71,7 +89,7 @@ class LoadOptions
   bool& Transpose() { return transpose; }
  
   //! Get if the separator is a semicolon in the matrix.
-  const bool& Semicolon() { return semiColon; }
+  const bool& SemiColon() { return semiColon; }
 
   //! Modify the separator type in the matrix.
   bool& SemiColon() { return semiColon; }
