@@ -44,7 +44,7 @@ std::cout << "Average density of encoded test data: "
 
  * [`SparseCoding`](sparse_coding.md)
  * [`LARS`](lars.md) (used internally by `LocalCoordinateCoding`)
- * [mlpack transformations](../../index.md#transformations)
+ * [mlpack transformations](../transformations.md)
  * [Sparse dictionary learning on Wikipedia](https://en.wikipedia.org/wiki/Sparse_dictionary_learning)
  * [Nonlinear learning using local coordinate coding (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/2afe4567e1bf64d32a5527244d104cea-Paper.pdf)
 

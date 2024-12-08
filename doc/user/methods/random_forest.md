@@ -56,7 +56,7 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 
  * [`DecisionTree`](decision_tree.md)
  * [`DecisionTreeRegressor`](decision_tree_regressor.md)
- * [mlpack classifiers](../../index.md#classification-algorithms)
+ * [mlpack classifiers](../modeling.md#classification)
  * [Random forest on Wikipedia](https://en.wikipedia.org/wiki/Random_forest)
  * [Decision tree on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree)
  * [Leo Breiman's Random Forests page](https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm)

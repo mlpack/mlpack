@@ -53,7 +53,7 @@ std::cout << arma::accu(predictions == 1) << " test points classified as class "
  * [`NaiveBayesClassifier`](naive_bayes_classifier.md), another simple classifier
  * [`AdaBoost`](adaboost.md)
  * [`FFN`](/src/mlpack/methods/ann/ffn.hpp)
- * [mlpack classifiers](../../index.md#classification-algorithms)
+ * [mlpack classifiers](../modeling.md#classification)
  * [Perceptron on Wikipedia](https://en.wikipedia.org/wiki/Perceptron)
 
 ### Constructors

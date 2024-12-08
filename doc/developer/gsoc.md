@@ -35,12 +35,11 @@ project. A student should ideally be familiar with
 
  - *using the development toolchain on your computer*: you should be able to
    download and compile mlpack, make changes to the code, and recompile with the
-   new changes. There is a
-   [section in the README](../README.md#3-installing-and-using-mlpack-in-c)
-   for how to build mlpack and would be a great place to get started. If you’re
-   on Windows, then the [Windows build guide](../user/build_windows.md) could be
-   very useful. See also the [Community page](community.md) for more information
-   on getting started.
+   new changes. There is a [guide](../user/install.md) for how to build mlpack
+   and that would be a great place to get started. If you’re on Windows, then
+   the [Windows build guide](../user/build_windows.md) could be very useful. See
+   also the [Community page](community.md) for more information on getting
+   started.
 
  - *at least intermediate C++ knowledge*: mlpack uses lots of different C++
    paradigms including template metaprogramming, C++ features like rvalue

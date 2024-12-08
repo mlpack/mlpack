@@ -21,8 +21,8 @@ body {
 div#content {
   padding-top: 10px;
   padding-bottom: 10px;
-  padding: 30px;
-  max-width: 920px;
+  padding: 10px;
+  max-width: 880px;
   margin: auto;
 }
 
@@ -1060,9 +1060,9 @@ div#sidebar {
   float: left;
   position: fixed;
   top: 55px;
-  min-width: calc(50% - 460px);
+  min-width: calc(50% - 450px);
   font-size: 90%;
-  max-width: calc(50% - 460px);
+  max-width: calc(50% - 450px);
   overflow-y: scroll;
   bottom: 0;
 }
@@ -1071,7 +1071,7 @@ div#sidebar ul {
   border-top: 2px solid #ccc;
   padding: 0.5em;
   list-style-type: none;
-  padding-left: 0.5em;
+  padding-right: 0em;
   margin-bottom: 0px;
 }
 
@@ -1120,6 +1120,17 @@ div#sidebar details[open] details[open] summary::after {
   content: " [-]";
 }
 
+div#sidebar details[open] details[open] details summary::after {
+  content: " [+]";
+}
+
+div#sidebar details[open] details[open] details[open] summary::after {
+  content: " [-]";
+}
+
+object#pipeline-wide { display: block; }
+object#pipeline-narrow { display: none; }
+
 @media screen and (max-width: 1140px) {
   div#sidebar {
     display: none;
@@ -1150,6 +1161,7 @@ a.textlink {
   color: #333;
 }
 
-ul#binding_sidebar {
-  background: #eee;
+@media screen and (max-width: 980px) {
+  object#pipeline-wide { display: none; }
+  object#pipeline-narrow { display: block; width: 100%; max-width: 400px; margin: auto; }
 }

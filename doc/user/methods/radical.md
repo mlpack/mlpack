@@ -42,8 +42,8 @@ std::cout << "Independent components matrix size: " << y.n_rows << " x "
 #### See also:
 
  * [`PCA`](pca.md): principal components analysis
- * [mlpack preprocessing utilities](../../index.md#preprocessing-utilities)
- * [mlpack transformations](../../index.md#transformations)
+ * [mlpack preprocessing utilities](../preprocessing.md)
+ * [mlpack transformations](../transformations.md)
  * [ICA Using Spacings Estimates of Entropy (pdf)](https://www.jmlr.org/papers/volume4/learned-miller03a/learned-miller03a.pdf)
  * [Independent components analysis on Wikipedia](https://en.wikipedia.org/wiki/Independent_component_analysis)
 

@@ -26,8 +26,9 @@ Python bindings pre-installed:
 docker run -it mlpack/mlpack /bin/bash
 ```
 
-Otherwise, you can build the Python bindings from scratch using the
-documentation in the [main README](../../README.md).
+Building the Python bindings from scratch is a little more in-depth, though.
+For information on that, follow the instructions in the
+[installation guide](../user/install.md#compile-bindings-manually).
 
 ## Simple mlpack quickstart example
 
