@@ -25,6 +25,9 @@ namespace util {
  */
 inline std::string CamelCase(std::string s, bool lower)
 {
+  // Check for empty string.
+  if (s.empty())
+    return s;
   if (!lower)
     s[0] = std::toupper(s[0]);
   else
@@ -33,14 +36,18 @@ inline std::string CamelCase(std::string s, bool lower)
   size_t resInd = 0;
   for (size_t i = 0; i < n; i++)
   {
-    // Check for spaces in the sentence.
+    // Check for underscores in the string.
     if (s[i] == '_')
     {
+      // Skip consecutive underscores.
+      while (i + 1 < n && s[i + 1] == '_')
+        i++;
       // Conversion into upper case.
-      s[i + 1] = toupper(s[i + 1]);
+      if (i + 1 < n)
+        s[i + 1] = std::toupper(s[i + 1]);
       continue;
     }
-    // If not space, copy character.
+    // If not underscore, copy character.
     else
       s[resInd++] = s[i];
   }
