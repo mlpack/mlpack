@@ -199,15 +199,15 @@ jobs:
           use-public-rspm: true
 
       - name: Query dependencies
-        run: Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE), 'depends.Rds')"
+        run: Rscript -e "install.packages('remotes')"
 
-      - name: Cache R packages
-        if: runner.os != 'Windows' && runner.os != 'macOS'
-        uses: actions/cache@v1
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('depends.Rds') }}
-          restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-
+      #- name: Cache R packages
+      #  if: runner.os != 'Windows' && runner.os != 'macOS'
+      #  uses: actions/cache@v1
+      #  with:
+      #    path: ${{ env.R_LIBS_USER }}
+      #    key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('depends.Rds') }}
+      #    restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-
 
       - name: Install check dependencies
         if: runner.os != 'Windows' && runner.os != 'macOS'

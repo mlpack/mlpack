@@ -244,8 +244,7 @@ TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest][long_run_time]")
   REQUIRE(success == true);
 }
 
-TEST_CASE("VanillaNetworkBatchSizeTest",
-          "[ConvolutionalNetworkTest][long_run_time]")
+TEST_CASE("VanillaNetworkBatchSizeTest", "[ConvolutionalNetworkTest]")
 {
   FFN<NegativeLogLikelihood, RandomInitialization> model;
 

@@ -339,7 +339,7 @@ TEST_CASE("MultiTimestepTest", "[RecurrentNetworkTest]")
 /**
  * Test that RNN::Train() does not give an error for large rho.
  */
-TEST_CASE("LargeRhoValueRnnTest", "[RecurrentNetworkTest][long_run_time]")
+TEST_CASE("LargeRhoValueRnnTest", "[RecurrentNetworkTest]")
 {
   // Setting rho value greater than sequence length which is 17.
   const size_t rho = 100;
