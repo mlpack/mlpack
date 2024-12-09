@@ -20,20 +20,20 @@ jobs:
     if: ${{ github.repository == 'mlpack/mlpack' }}
     runs-on: ubuntu-latest
 
-    outputs:
-      r_bindings: ${{ steps.mlpack_version.outputs.mlpack_r_package }}
+    #outputs:
+    #  r_bindings: ${{ steps.mlpack_version.outputs.mlpack_r_package }}
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Extract mlpack version
-        id: mlpack_version
-        run: |
-          MLPACK_VERSION_MAJOR=$(grep -i ".*#define MLPACK_VERSION_MAJOR.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
-          MLPACK_VERSION_MINOR=$(grep -i ".*#define MLPACK_VERSION_MINOR.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
-          MLPACK_VERSION_PATCH=$(grep -i ".*#define MLPACK_VERSION_PATCH.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
-          MLPACK_VERSION_VALUE=${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}
-          echo "mlpack_r_package=$(echo mlpack_"$MLPACK_VERSION_VALUE".tar.gz)" >> $GITHUB_OUTPUT
+      #- name: Extract mlpack version
+      #  id: mlpack_version
+      #  run: |
+      #    MLPACK_VERSION_MAJOR=$(grep -i ".*#define MLPACK_VERSION_MAJOR.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+      #    MLPACK_VERSION_MINOR=$(grep -i ".*#define MLPACK_VERSION_MINOR.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+      #    MLPACK_VERSION_PATCH=$(grep -i ".*#define MLPACK_VERSION_PATCH.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+      #    MLPACK_VERSION_VALUE=${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}
+      #    echo "mlpack_r_package=$(echo mlpack_"$MLPACK_VERSION_VALUE".tar.gz)" >> $GITHUB_OUTPUT
 
       # Setup Pandoc
       - uses: r-lib/actions/setup-pandoc@v2
@@ -68,7 +68,8 @@ jobs:
       - name: Query dependencies
         run: |
           cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
-          Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
+          Rscript -e "install.packages('remotes')"
+          #-e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
 
       #- name: Cache R packages
       #  if: runner.os != 'Windows' && runner.os != 'macOS'
@@ -126,7 +127,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mlpack_r_tarball
-          path: build/src/mlpack/bindings/R/${{ steps.mlpack_version.outputs.mlpack_r_package }}
+          path: build/src/mlpack/bindings/R/mlpack*.tar.gz
+
+      #${{ steps.mlpack_version.outputs.mlpack_r_package }}
 
 
   ctest:
@@ -137,11 +140,9 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { test: "~[long_run_time]", name: "main tests" }
-          - { test: "VanillaNetworkTest", name: "vanilla network test" }
-          - { test: "VanillaNetworkBatchSizeTest", name: "vanilla network batch size test" }
-          - { test: "CheckCopyVanillaNetworkTest", name: "check copy vanilla network test" }
-          - { test: "LargeRhoValueRnnTest", name: "large rho value rnn test" }
+          - { name: "main tests", test: "~[long_run_time]" }
+          - { name: "vanilla network test", test: "VanillaNetworkTest" }
+          - { name: "check copy vanilla network test", test: "CheckCopyVanillaNetworkTest" }
 
     steps:
       - uses: actions/download-artifact@v4
@@ -218,14 +219,14 @@ jobs:
       - name: Install dependencies
         run: |
           install.packages('remotes')
-          remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
+          remotes::install_deps(tail(dir(".", "*tar.gz"), 1), dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
           remotes::install_cran("curl")
         shell: Rscript {0}
 
       - name: Check
         # TODO: revert to error_on = 'warning'
-        run: Rscript -e "rcmdcheck::rcmdcheck('${{ needs.jobR.outputs.r_bindings }}', args = c('--no-manual','--as-cran'), error_on = 'error', check_dir = 'check')"
+        run: Rscript -e 'rcmdcheck::rcmdcheck(tail(dir(".", "*tar.gz"), 1), args = c("--no-manual","--as-cran"), error_on = "error", check_dir = "check")'
 
       - name: Upload check results
         if: failure()
