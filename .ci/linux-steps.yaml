@@ -23,7 +23,8 @@ steps:
 
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
 
-    sudo apt-get install -y --allow-unauthenticated libopenblas-dev g++ xz-utils ccache
+    sudo apt-get install --yes --allow-unauthenticated \
+    	libopenblas-dev libstb-dev libcereal-dev xz-utils ccache
 
     if [ "$BINDING" = "python" ]; then
       python -m pip install --upgrade pip
@@ -38,7 +39,7 @@ steps:
     ## Show the ccache config settings, and zero the statistics counter
     ccache --show-config
     ccache --zero-stats
-      
+
     # Install armadillo.
     curl -k -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz | tar -xvJ && \
         cd armadillo* && \
@@ -52,20 +53,6 @@ steps:
         tar -xvzpf ensmallen-latest.tar.gz # Unpack into ensmallen-*/.
         cd ensmallen-*/ && \
         sudo cp -vr include/* /usr/include/ && \
-        cd ..
-
-    # Install STB.
-    wget https://mlpack.org/files/stb.tar.gz
-        tar -xvzpf stb.tar.gz # Unpack into stb/.
-        cd stb &&\
-        sudo cp -vr include/* /usr/include/ && \
-        cd ..
-
-    # Install cereal.
-    wget https://github.com/USCiLab/cereal/archive/v1.3.0.tar.gz
-        tar -xvzpf v1.3.0.tar.gz # Unpack into cereal-1.3.0/.
-        cd cereal-1.3.0 && \
-        sudo cp -vr include/cereal /usr/include/ && \
         cd ..
 
   displayName: 'Install Build Dependencies'
@@ -87,7 +74,7 @@ steps:
 # Ccache stats (two verbosity levels supported)
 - script: ccache --show-stats --verbose --verbose
   displayName: 'Show ccache stats'
-  
+
 # Publish test results to Azure Pipelines
 - task: PublishTestResults@2
   inputs:
