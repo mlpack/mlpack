@@ -161,9 +161,7 @@ jobs:
       - name: Run ${{ matrix.config.name }}
         run: |
           chmod 0755 bin/mlpack_test
-          mkdir build
-          mv bin build
-          CTEST_OUTPUT_ON_FAILURE=1 ctest .
+          bin/mlpack_test --abort --durations yes
           #bin/mlpack_test --abort --durations yes ${{matrix.config.test }}
 
 
