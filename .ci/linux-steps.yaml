@@ -1,3 +1,8 @@
+# Set variables to aide openblas in its pthread variant
+variables:
+  OMP_NUM_THREADS: 2
+  OMP_THREAD_LIMIT: 2
+
 steps:
 # Checkout repository
 - checkout: self
@@ -38,7 +43,7 @@ steps:
     ## Show the ccache config settings, and zero the statistics counter
     ccache --show-config
     ccache --zero-stats
-      
+
     # Install armadillo.
     curl -k -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz | tar -xvJ && \
         cd armadillo* && \
@@ -87,7 +92,7 @@ steps:
 # Ccache stats (two verbosity levels supported)
 - script: ccache --show-stats --verbose --verbose
   displayName: 'Show ccache stats'
-  
+
 # Publish test results to Azure Pipelines
 - task: PublishTestResults@2
   inputs:
