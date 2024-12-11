@@ -395,13 +395,17 @@ typename MatType::elem_type RNN<
       std::min(bpttSteps, size_t(predictors.n_slices)));
 
   ResetMemoryState(effectiveBPTTSteps, batchSize);
+
+  // This will store the outputs of the network at each time step.  Note that we
+  // only need to store `effectiveBPTTSteps` of output.  We will treat `outputs`
+  // as a circular buffer.
   arma::Cube<typename MatType::elem_type> outputs(
       network.network.OutputSize(), batchSize, effectiveBPTTSteps);
 
   MatType stepData, outputData, responseData;
 
   // Initialize gradient.
-  gradient.set_size(network.Parameters().n_rows, network.Parameters().n_cols);
+  gradient.zeros(network.Parameters().n_rows, network.Parameters().n_cols);
 
   // Add loss (this is not dependent on time steps, and should only be added
   // once).  This is, e.g., regularizer loss, and other additive losses not
@@ -422,9 +426,8 @@ typename MatType::elem_type RNN<
     network.network.Forward(stepData, outputData);
 
     const size_t responseStep = (single) ? 0 : t;
-    MakeAlias(responseData, responses.slice(responseStep),
-        responses.n_rows, batchSize,
-        begin * responses.slice(responseStep).n_rows);
+    MakeAlias(responseData, responses.slice(responseStep), responses.n_rows,
+        batchSize, begin * responses.slice(responseStep).n_rows);
 
     // If we are not in single mode, then we do not need to update the loss.
     if (!single)
@@ -444,7 +447,8 @@ typename MatType::elem_type RNN<
     // Make an alias of the step's data for the forward pass.
     MakeAlias(stepData, predictors.slice(t), predictors.n_rows, batchSize,
         begin * predictors.slice(t).n_rows);
-    MakeAlias(outputData, outputs.slice(t), outputs.n_rows, outputs.n_cols);
+    MakeAlias(outputData, outputs.slice(t % effectiveBPTTSteps), outputs.n_rows,
+        outputs.n_cols);
     network.network.Forward(stepData, outputData);
 
     // Determine what the response should be.  If we are in single mode but not
@@ -471,11 +475,12 @@ typename MatType::elem_type RNN<
         // Otherwise, use the backward pass on the output layer to compute the
         // error.
         const size_t responseStep = (single) ? 0 : t - step;
-        MakeAlias(responseData, responses.slice(responseStep),
-            responses.n_rows, batchSize,
-            begin * responses.slice(responseStep).n_rows);
-        MakeAlias(outputData, outputs.slice(t - step), outputs.n_rows,
-            outputs.n_cols);
+        MakeAlias(stepData, predictors.slice(responseStep), predictors.n_rows,
+            batchSize, begin * predictors.slice(responseStep).n_rows);
+        MakeAlias(responseData, responses.slice(responseStep), responses.n_rows,
+            batchSize, begin * responses.slice(responseStep).n_rows);
+        MakeAlias(outputData, outputs.slice((t - step) % effectiveBPTTSteps),
+            outputs.n_rows, outputs.n_cols);
 
         // We only need to do this on the first time step of BPTT.
         loss += network.outputLayer.Forward(outputData, responseData);
