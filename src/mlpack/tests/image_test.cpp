@@ -19,8 +19,6 @@ using namespace mlpack;
 using namespace mlpack::data;
 using namespace std;
 
-#ifdef MLPACK_HAS_STB // Compile this only if stb is present.
-
 /**
  * Test if an image with an unsupported extension throws an expected
  * exception.
@@ -30,7 +28,7 @@ TEST_CASE("LoadInvalidExtensionFile", "[ImageLoadTest]")
   arma::Mat<unsigned char> matrix;
   data::ImageInfo info;
 
-  REQUIRE_THROWS_AS(data::Load("invalidExtendion.p4ng", matrix, info,
+  REQUIRE_THROWS_AS(data::Load("invalidExtension.p4ng", matrix, info,
       true),  std::runtime_error);
 }
 
@@ -152,4 +150,17 @@ TEST_CASE("ImageInfoSerialization", "[ImageLoadTest]")
   REQUIRE(info.Quality() == binaryInfo.Quality());
 }
 
-#endif // MLPACK_HAS_STB.
+/**
+ * Test resize the image if this is done correctly.
+ */
+TEST_CASE("ImageResizeTest", "[ImageTest]")
+{
+  arma::Mat<unsigned char> images;
+  data::ImageInfo info;
+  std::vector<std::string> files = {"umbrella.jpg"};
+  REQUIRE(data::Load(files, images, info, false) == true);
+ 
+  arma::Mat<unsigned char> resizedImages;
+  ResizeImages(images, info, resizedImages, 720, 720);
+
+}
