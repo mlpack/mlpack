@@ -142,13 +142,13 @@ jobs:
       OMP_NUM_THREADS: 2
       OMP_THREAD_LIMIT: 4
 
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - { name: "main tests", test: "~[long_run_time]" }
-          - { name: "vanilla network test", test: "VanillaNetworkTest" }
-          - { name: "check copy vanilla network test", test: "CheckCopyVanillaNetworkTest" }
+    #strategy:
+    #  fail-fast: false
+    #  matrix:
+    #    config:
+    #      - { name: "main tests", test: "~[long_run_time]" }
+    #      - { name: "vanilla network test", test: "VanillaNetworkTest" }
+    #      - { name: "check copy vanilla network test", test: "CheckCopyVanillaNetworkTest" }
 
     steps:
       - uses: actions/download-artifact@v4
@@ -161,7 +161,8 @@ jobs:
       - name: Run ${{ matrix.config.name }}
         run: |
           chmod 0755 bin/mlpack_test
-          bin/mlpack_test --abort --durations yes ${{matrix.config.test }}
+          CTEST_OUTPUT_ON_FAILURE=1 ctest .
+          #bin/mlpack_test --abort --durations yes ${{matrix.config.test }}
 
 
   R-CMD-check:
