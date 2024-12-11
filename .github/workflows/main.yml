@@ -10,9 +10,15 @@ on:
       - main
   release:
     types: [published, created, edited]
+
 permissions:
   contents: read
+
 name: mlpack.mlpack
+
+env:
+  OMP_NUM_THREADS: 2
+  OMP_THREAD_LIMIT: 4
 
 jobs:
   jobR:
