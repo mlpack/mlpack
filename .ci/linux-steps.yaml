@@ -1,3 +1,8 @@
+# Set variables to aide openblas in its pthread variant
+variables:
+  OMP_NUM_THREADS: 2
+  OMP_THREAD_LIMIT: 2
+
 steps:
 # Checkout repository
 - checkout: self

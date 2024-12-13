@@ -10,8 +10,10 @@ on:
       - main
   release:
     types: [published, created, edited]
+
 permissions:
   contents: read
+
 name: mlpack.mlpack
 
 jobs:
@@ -20,26 +22,28 @@ jobs:
     if: ${{ github.repository == 'mlpack/mlpack' }}
     runs-on: ubuntu-latest
 
-    outputs:
-      r_bindings: ${{ steps.mlpack_version.outputs.mlpack_r_package }}
+    #outputs:
+    #  r_bindings: ${{ steps.mlpack_version.outputs.mlpack_r_package }}
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Extract mlpack version
-        id: mlpack_version
-        run: |
-          MLPACK_VERSION_MAJOR=$(grep -i ".*#define MLPACK_VERSION_MAJOR.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
-          MLPACK_VERSION_MINOR=$(grep -i ".*#define MLPACK_VERSION_MINOR.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
-          MLPACK_VERSION_PATCH=$(grep -i ".*#define MLPACK_VERSION_PATCH.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
-          MLPACK_VERSION_VALUE=${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}
-          echo "mlpack_r_package=$(echo mlpack_"$MLPACK_VERSION_VALUE".tar.gz)" >> $GITHUB_OUTPUT
+      #- name: Extract mlpack version
+      #  id: mlpack_version
+      #  run: |
+      #    MLPACK_VERSION_MAJOR=$(grep -i ".*#define MLPACK_VERSION_MAJOR.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+      #    MLPACK_VERSION_MINOR=$(grep -i ".*#define MLPACK_VERSION_MINOR.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+      #    MLPACK_VERSION_PATCH=$(grep -i ".*#define MLPACK_VERSION_PATCH.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+      #    MLPACK_VERSION_VALUE=${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}
+      #    echo "mlpack_r_package=$(echo mlpack_"$MLPACK_VERSION_VALUE".tar.gz)" >> $GITHUB_OUTPUT
 
       # Setup Pandoc
       - uses: r-lib/actions/setup-pandoc@v2
 
       # Setup R actions
       - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
 
       # Get and set up ccache
       - name: Get CCache
@@ -50,30 +54,32 @@ jobs:
           # this is the default but 'sccache' can be selected here
           variant: ccache
 
-      - name: Prepare R for Ccache 
+      - name: Prepare R for Ccache
         run: |
           mkdir -p ~/.R
           cp -vax .github/etc/R_Makevars_${{ runner.os }} ~/.R/Makevars
-          
+
       - name: Configure Ccache for R
         run: |
           ccache --set-config "sloppiness=include_file_ctime"
-          ccache --set-config "hash_dir=false" 
+          ccache --set-config "hash_dir=false"
+          ccache --set-config "max_size=2500.0M"
           ccache --show-config
           ccache --zero-stats
 
       - name: Query dependencies
         run: |
           cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
-          Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
+          Rscript -e "install.packages('remotes')"
+          #-e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
 
-      - name: Cache R packages
-        if: runner.os != 'Windows' && runner.os != 'macOS'
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-r-release-${{ hashFiles('depends.Rds') }}
-          restore-keys: ${{ runner.os }}-r-release-
+      #- name: Cache R packages
+      #  if: runner.os != 'Windows' && runner.os != 'macOS'
+      #  uses: actions/cache@v3
+      #  with:
+      #    path: ${{ env.R_LIBS_USER }}
+      #    key: ${{ runner.os }}-r-release-${{ hashFiles('depends.Rds') }}
+      #    restore-keys: ${{ runner.os }}-r-release-
 
       - name: Install Build Dependencies
         run: |
@@ -82,7 +88,7 @@ jobs:
           # split the rapidjson dependency into a separate package.  We will
           # bundle the cereal sources with the R package, so we want them to
           # be exactly the upstream sources (with rapidjson included).
-          sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libensmallen-dev libhdf5-dev libarmadillo-dev libcurl4-openssl-dev
+          sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev libensmallen-dev libhdf5-dev libarmadillo-dev libcurl4-openssl-dev
           wget https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.2.tar.gz
           tar -xvzpf v1.3.2.tar.gz
           #
@@ -111,18 +117,56 @@ jobs:
         run: |
           cd build && make -j4
 
-      - name: Run tests via ctest
-        run: |
-          cd build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
+      - name: Upload test binary and data
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlpack_test_binary
+          path: |
+            build/bin/mlpack_test
+            build/*
 
       - name: Upload R packages
-        uses: actions/upload-artifact@v4.4.0
+        uses: actions/upload-artifact@v4
         with:
           name: mlpack_r_tarball
-          path: build/src/mlpack/bindings/R/${{ steps.mlpack_version.outputs.mlpack_r_package }}
+          path: build/src/mlpack/bindings/R/mlpack*.tar.gz
+
+      #${{ steps.mlpack_version.outputs.mlpack_r_package }}
+
+
+  ctest:
+    needs: jobR
+    runs-on: ubuntu-latest
+
+    env:
+      OMP_NUM_THREADS: 2
+      OMP_THREAD_LIMIT: 4
+
+    #strategy:
+    #  fail-fast: false
+    #  matrix:
+    #    config:
+    #      - { name: "main tests", test: "~[long_run_time]" }
+    #      - { name: "vanilla network test", test: "VanillaNetworkTest" }
+    #      - { name: "check copy vanilla network test", test: "CheckCopyVanillaNetworkTest" }
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: mlpack_test_binary
+
+      - name: Install run-time dependencies
+        run: sudo apt install --yes --allow-unauthenticated libopenblas-dev liblapack-dev libarmadillo-dev libgomp1
+
+      - name: Run ${{ matrix.config.name }}
+        run: |
+          chmod 0755 bin/mlpack_test
+          bin/mlpack_test --abort --durations yes
+          #bin/mlpack_test --abort --durations yes ${{matrix.config.test }}
+
 
   R-CMD-check:
-    needs: jobR
+    needs: ctest
     runs-on: ${{ matrix.config.os }}
 
     name: ${{ matrix.config.name }}
@@ -151,7 +195,7 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/download-artifact@v4.1.8
+      - uses: actions/download-artifact@v4
         with:
           name: mlpack_r_tarball
 
@@ -164,15 +208,15 @@ jobs:
           use-public-rspm: true
 
       - name: Query dependencies
-        run: Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE), 'depends.Rds')"
+        run: Rscript -e "install.packages('remotes')"
 
-      - name: Cache R packages
-        if: runner.os != 'Windows' && runner.os != 'macOS'
-        uses: actions/cache@v1
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('depends.Rds') }}
-          restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-
+      #- name: Cache R packages
+      #  if: runner.os != 'Windows' && runner.os != 'macOS'
+      #  uses: actions/cache@v1
+      #  with:
+      #    path: ${{ env.R_LIBS_USER }}
+      #    key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('depends.Rds') }}
+      #    restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-
 
       - name: Install check dependencies
         if: runner.os != 'Windows' && runner.os != 'macOS'
@@ -183,18 +227,18 @@ jobs:
       - name: Install dependencies
         run: |
           install.packages('remotes')
-          remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
+          remotes::install_deps(tail(dir(".", "*tar.gz"), 1), dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
           remotes::install_cran("curl")
         shell: Rscript {0}
 
       - name: Check
         # TODO: revert to error_on = 'warning'
-        run: Rscript -e "rcmdcheck::rcmdcheck('${{ needs.jobR.outputs.r_bindings }}', args = c('--no-manual','--as-cran'), error_on = 'error', check_dir = 'check')"
+        run: Rscript -e 'rcmdcheck::rcmdcheck(tail(dir(".", "*tar.gz"), 1), args = c("--no-manual","--as-cran"), error_on = "error", check_dir = "check")'
 
       - name: Upload check results
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-results
           path: |
