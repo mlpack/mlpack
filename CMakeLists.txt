@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.6)
 project(mlpack C CXX)
 
 #Replace all CMAKE_SOURCE_DIR and CMAKE_BINARY_DIR with MLPACK_ prefix.
-set(MLPACK_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(MLPACK_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+set(MLPACK_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE STRING "Source path of mlpack")
+set(MLPACK_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR} CACHE STRING "Binary path of mlpack")
 
 include(CMake/CheckHash.cmake)
 include(CMake/Autodownload.cmake)
@@ -403,9 +403,9 @@ include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/src/)
 
 # On Windows, things end up under Debug/ or Release/.
 if (WIN32)
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${MLPACK_BINARY_DIR})
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${MLPACK_BINARY_DIR})
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${MLPACK_BINARY_DIR})
 
   # Copy all necessary DLLs for runtime to the build directory.
   # This is a little hackish, but I can't figure out clear ways to make CMake
@@ -413,22 +413,22 @@ if (WIN32)
   # runtime path right always, so this is the best I know how to do for now.
   foreach(dir ${DLL_COPY_DIRS})
     file(GLOB dir_dll_list "${dir}/*.dll")
-    file(COPY ${dir_dll_list} DESTINATION ${CMAKE_BINARY_DIR}/Release/)
-    file(COPY ${dir_dll_list} DESTINATION ${CMAKE_BINARY_DIR}/Debug/)
+    file(COPY ${dir_dll_list} DESTINATION ${MLPACK_BINARY_DIR}/Release/)
+    file(COPY ${dir_dll_list} DESTINATION ${MLPACK_BINARY_DIR}/Debug/)
   endforeach ()
 
   foreach(file ${DLL_COPY_LIBS})
-    file(COPY ${file} DESTINATION ${CMAKE_BINARY_DIR}/Release/)
-    file(COPY ${file} DESTINATION ${CMAKE_BINARY_DIR}/Debug/)
+    file(COPY ${file} DESTINATION ${MLPACK_BINARY_DIR}/Release/)
+    file(COPY ${file} DESTINATION ${MLPACK_BINARY_DIR}/Debug/)
   endforeach()
 else ()
   # If not on Windows, put them under more standard UNIX-like places.  This is
   # necessary, otherwise they would all end up in
-  # ${CMAKE_BINARY_DIR}/src/mlpack/methods/... or somewhere else random like
+  # ${MLPACK_BINARY_DIR}/src/mlpack/methods/... or somewhere else random like
   # that.
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
-  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${MLPACK_BINARY_DIR}/lib/)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${MLPACK_BINARY_DIR}/bin/)
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${MLPACK_BINARY_DIR}/lib/)
 endif ()
 
 # Determine whether or not this is a git repository, so that we can set the
@@ -472,20 +472,20 @@ if (BUILD_CLI_EXECUTABLES AND UNIX)
     add_custom_target(man ALL
         ${CMAKE_CURRENT_SOURCE_DIR}/CMake/allexec2man.sh
             ${CMAKE_CURRENT_SOURCE_DIR}/CMake/exec2man.sh
-            ${CMAKE_BINARY_DIR}/share/man
+            ${MLPACK_BINARY_DIR}/share/man
         WORKING_DIRECTORY
-          ${CMAKE_BINARY_DIR}/bin
+          ${MLPACK_BINARY_DIR}/bin
         COMMENT "Generating man pages from built executables."
     )
 
     # Set the rules to install the documentation.
-    install(DIRECTORY "${CMAKE_BINARY_DIR}/share/man/"
+    install(DIRECTORY "${MLPACK_BINARY_DIR}/share/man/"
         DESTINATION "${CMAKE_INSTALL_MANDIR}")
   endif ()
 endif ()
 
 # Modify config.hpp as necessary.
-file(READ ${CMAKE_SOURCE_DIR}/src/mlpack/config.hpp CONFIG_CONTENTS)
+file(READ ${MLPACK_SOURCE_DIR}/src/mlpack/config.hpp CONFIG_CONTENTS)
 if (BFD_DL_AVAILABLE)
   string(REGEX REPLACE "// #define MLPACK_HAS_BFD_DL\n"
       "#define MLPACK_HAS_BFD_DL\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
@@ -502,8 +502,8 @@ if (USING_GIT)
   string(REGEX REPLACE "// #define MLPACK_GIT_VERSION\n"
       "#define MLPACK_GIT_VERSION\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif ()
-file(WRITE ${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp "${CONFIG_CONTENTS}")
-include_directories(${CMAKE_BINARY_DIR}/include/)
+file(WRITE ${MLPACK_BINARY_DIR}/include/mlpack/config-local.hpp "${CONFIG_CONTENTS}")
+include_directories(${MLPACK_BINARY_DIR}/include/)
 add_definitions(-DMLPACK_CUSTOM_CONFIG_FILE=mlpack/config-local.hpp)
 
 # Finally, add any cross-compilation support libraries (they may need to come
@@ -579,11 +579,11 @@ if (PKG_CONFIG_FOUND)
   set(MLPACK_VERSION_STRING "@MLPACK_VERSION_STRING@")
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/CMake/mlpack.pc.in
-    ${CMAKE_BINARY_DIR}/CMake/mlpack.pc.in.partial @ONLY)
+    ${MLPACK_BINARY_DIR}/CMake/mlpack.pc.in.partial @ONLY)
 
   add_custom_target(pkgconfig ALL
       ${CMAKE_COMMAND}
-          -D CMAKE_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
+          -D MLPACK_SOURCE_DIR="${MLPACK_SOURCE_DIR}"
           -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GeneratePkgConfig.cmake"
       COMMENT "Generating mlpack.pc (pkg-config) file.")
 
