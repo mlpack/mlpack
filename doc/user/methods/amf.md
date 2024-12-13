@@ -68,7 +68,7 @@ std::cout << "RMSE of reconstructed matrix: "
 
  * [`NMF`](nmf.md): non-negative matrix factorization (a version of `AMF`)
  * [`SparseCoding`](sparse_coding.md)
- * [mlpack transformations](../../index.md#transformations)
+ * [mlpack transformations](../transformations.md)
  * [Matrix factorization on Wikipedia](https://en.wikipedia.org/wiki/Matrix_factorization_(recommender_systems))
 
 ### Template parameter overview

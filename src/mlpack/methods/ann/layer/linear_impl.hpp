@@ -36,7 +36,7 @@ LinearType<MatType, RegularizerType>::LinearType(
     outSize(outSize),
     regularizer(regularizer)
 {
-  weights.set_size(WeightSize(), 1);
+  // Nothing to do here.
 }
 
 // Copy constructor.
@@ -58,7 +58,9 @@ LinearType<MatType, RegularizerType>::LinearType(LinearType&& layer) :
     outSize(std::move(layer.outSize)),
     regularizer(std::move(layer.regularizer))
 {
-  // Nothing else to do.
+  // Reset parameters of other layer.
+  layer.inSize = 0;
+  layer.outSize = 0;
 }
 
 template<typename MatType, typename RegularizerType>
@@ -87,6 +89,10 @@ LinearType<MatType, RegularizerType>::operator=(
     inSize = std::move(layer.inSize);
     outSize = std::move(layer.outSize);
     regularizer = std::move(layer.regularizer);
+
+    // Reset parameters of other layer.
+    layer.inSize = 0;
+    layer.outSize = 0;
   }
 
   return *this;

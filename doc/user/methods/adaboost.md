@@ -49,7 +49,7 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 
 #### See also:
 
- * [mlpack classifiers](../../index.md#classification-algorithms)
+ * [mlpack classifiers](../modeling.md#classification)
  * [`Perceptron`](perceptron.md)
  * [`DecisionTree`](decision_tree.md)
  * [AdaBoost on Wikipedia](https://en.wikipedia.org/wiki/AdaBoost)

@@ -47,7 +47,7 @@ std::cout << arma::accu(predictions == 0) << " test points classified as class "
 #### See also:
 
  * [`SoftmaxRegression`](softmax_regression.md)
- * [mlpack classifiers](../../index.md#classification-algorithms)
+ * [mlpack classifiers](../modeling.md#classification)
  * [Logistic regression on Wikipedia](https://en.wikipedia.org/wiki/Logistic_regression)
 
 ### Constructors

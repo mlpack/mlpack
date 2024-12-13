@@ -1,12 +1,12 @@
-# Sample C++ ML App for Windows
+# Deploying mlpack on Windows
 
 *by German Lancioni*
 
 This tutorial will help you create a sample machine learning app using
-mlpack/C++. Although this app does not cover all the mlpack capabilities, it
-will walkthrough several APIs to understand how everything connects. This
-Windows sample app is created using Visual Studio, but you can easily adapt it
-to a different platform by following the provided source code.
+mlpack/C++ on Windows.  The tutorial will walk through several APIs to
+understand how everything connects. This Windows sample app is created using
+Visual Studio, but you can easily adapt it to a different platform by following
+the provided source code.
 
 *Note*: before starting, make sure you have built mlpack for Windows following
 this [Windows guide](build_windows.md).

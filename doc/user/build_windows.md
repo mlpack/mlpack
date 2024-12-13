@@ -155,8 +155,8 @@ manually download ensmallen from http://ensmallen.org/ and extract it to
   `C:\mlpack\mlpack\build\Debug` (or `C:\mlpack\mlpack\build\Release` if you
   changed to Release mode)
 
-You are ready to create your first application; take a look at the
-[Sample C++ ML App](sample_ml_app.md).
+You are ready to create your first application; take a look at
+[Deploying mlpack on Windows](deploy_windows.md).
 
 ## Building mlpack with Visual Studio's CMake integration
 

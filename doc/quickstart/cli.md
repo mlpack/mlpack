@@ -32,8 +32,9 @@ docker run -it mlpack/mlpack /bin/bash
 This Docker image has mlpack's command-line bindings already built and
 installed.
 
-If you prefer to build mlpack from scratch, see the
-[main README](../../README.md).
+If you prefer to build the command-line programs from scratch, follow the
+instructions in the
+[installation guide](../user/install.md#compile-bindings-manually).
 
 ## Simple quickstart example
 
