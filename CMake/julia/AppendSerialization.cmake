@@ -9,7 +9,7 @@
 #  * SERIALIZATION_FILE: file to append types to
 #
 function(append_serialization SERIALIZATION_FILE PROGRAM_NAME PROGRAM_MAIN_FILE)
-  include("${CMAKE_SOURCE_DIR}/CMake/StripType.cmake")
+  include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/StripType.cmake")
   strip_type("${PROGRAM_MAIN_FILE}")
 
   # Now, generate the definitions of the functions we need.

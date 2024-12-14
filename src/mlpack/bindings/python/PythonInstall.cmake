@@ -7,18 +7,18 @@ if (DEFINED ENV{DESTDIR})
           --prefix=${PYTHON_INSTALL_PREFIX}
           --root=$ENV{DESTDIR}
           --no-index --no-deps --no-build-isolation -f ./ .
-      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/"
+      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/python/"
       RESULT_VARIABLE setup_res)
 elseif (WIN32)
   execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip install
           --no-index --no-deps --no-build-isolation -f ./ .
-      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/"
+      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/python/"
       RESULT_VARIABLE setup_res)
 else ()
   execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip install
           --prefix=${PYTHON_INSTALL_PREFIX}
           --no-index --no-deps --no-build-isolation -f ./ .
-      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/"
+      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/src/mlpack/bindings/python/"
       RESULT_VARIABLE setup_res)
 endif ()
 
