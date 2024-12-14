@@ -164,16 +164,35 @@ class LoadOptions
   ImageInfo& ImageInfos() { return imgInfo; }
 
   //! Get if we are loading an image.
-  const Image& Image() const { return image; }
+  const bool& Image() const { return image; }
 
   //! Modify if we are loading an image.
-  Image& Image() { return image; }
+  bool& Image() { return image; }
 
   //! Get the FileType.
-  const DatasetMapper& Mapper() const { return mapper; }
+  const DatasetInfo& Mapper() const { return mapper; }
 
   //! Modify the DatasetMapper.
-  DatasetMapper& Mapper() { return mapper; }
+  DatasetInfo & Mapper() { return mapper; }
+
+  /**
+   * Given a file type, return a logical name corresponding to that file type.
+   */
+  inline std::string FileTypeToString()
+  {
+    switch (format)
+    {
+      case FileType::CSVASCII:    return "CSV data";
+      case FileType::RawASCII:    return "raw ASCII formatted data";
+      case FileType::RawBinary:   return "raw binary formatted data";
+      case FileType::ArmaASCII:   return "Armadillo ASCII formatted data";
+      case FileType::ArmaBinary:  return "Armadillo binary formatted data";
+      case FileType::PGMBinary:   return "PGM data";
+      case FileType::HDF5Binary:  return "HDF5 data";
+      case FileType::CoordASCII:  return "ASCII formatted sparse coordinate data";
+      default:                    return "";
+    }
+  }
 
  private:
 
@@ -189,7 +208,7 @@ class LoadOptions
   arma::field<std::string> headers;
   FileType format;
   ImageInfo imgInfo;
-  DatasetMapper mapper;
+  DatasetInfo mapper;
 };
 
 inline

@@ -21,13 +21,6 @@ namespace mlpack {
 namespace data {
 
 /**
- * Given a file type, return a logical name corresponding to that file type.
- *
- * @param type Type to get the logical name of.
- */
-inline std::string GetStringType(const FileType& type);
-
-/**
  * Given an istream, attempt to guess the file type.  This is taken originally
  * from Armadillo's function guess_file_type_internal(), but we avoid using
  * internal Armadillo functionality.
