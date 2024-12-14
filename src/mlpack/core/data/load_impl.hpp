@@ -59,7 +59,7 @@ void TransposeTokens(std::vector<std::vector<std::string>> const &input,
 } // namespace details
 
 inline
-bool FileExist(std::fstream& stream)
+bool FileExist(std::fstream& stream, const LoadOptions& opts)
 {
 #ifdef  _WIN32 // Always open in binary mode on Windows.
   stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
@@ -69,7 +69,7 @@ bool FileExist(std::fstream& stream)
   if (!stream.is_open())
   {
     Timer::Stop("loading_data");
-    if (fatal)
+    if (opts.Fatal())
       Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
     else
       Log::Warn << "Cannot open file '" << filename << "'; load failed."
@@ -170,6 +170,7 @@ bool LoadCSVASCII(const std::string& filename,
                   arma::Mat<eT>& matrix,
                   const LoadOptions& opts)
 {
+  bool success;
   if (opts.Transpose() && opts.HasHeaders() &&
       !opts.SemiColon() && !opts.MissingToNan())
 
@@ -291,6 +292,23 @@ bool LoadHDF5(const std::string& filename,
     //success = matrix.load(filename, ToArmaFileType(loadType));
 }
 
+
+template<typename MatType>
+bool Load(const std::string& filename,
+          MatType& matrix,
+          LoadOptions& opts)
+{
+  using eT = typename MatType::elem_type;
+  if constexpr (std::is_same_v<MatType, arma::SpMat<eT>>)
+  {
+    Load(filename, matrix, opts);
+  }
+  else
+  {
+    Load(filename, matrix, opts);
+  }
+}
+
 template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
@@ -298,7 +316,7 @@ bool Load(const std::string& filename,
           const bool transpose,
           const FileType inputLoadType)
 {
-  LoadOptions& opts;
+  LoadOptions opts;
   opts.Fatal() = fatal;
   opts.Transpose() = transpose;
   opts.FileType() = inputLoadType;
@@ -316,7 +334,7 @@ bool Load(const std::string& filename,
   std::fstream stream;
   std::string stringType;
  
-  success = FileExist(stream);
+  success = FileExist(stream, opts);
   if (!success)
     return false;
 
@@ -372,90 +390,6 @@ bool Load(const std::string& filename,
   return success;
 }
 
-// Load with mappings.  Unfortunately we have to implement this ourselves.
-template<typename eT, typename PolicyType>
-bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
-          DatasetMapper<PolicyType>& info,
-          const bool fatal,
-          const bool transpose)
-{
-  // Get the extension and load as necessary.
-  Timer::Start("loading_data");
-
-  bool sucess;
-  std::fstream stream;
-  success = FileExist(stream);
-  if (!success)
-    return false;
-
-  // Get the extension.
-  std::string extension = Extension(filename);
-
-  if (extension == "csv" || extension == "tsv" || extension == "txt")
-  {
-    Log::Info << "Loading '" << filename << "' as CSV dataset.  " << std::flush;
-    try
-    {
-      LoadCSV loader(filename);
-      loader.LoadCategoricalCSV(matrix, info, transpose);
-    }
-    catch (std::exception& e)
-    {
-      Timer::Stop("loading_data");
-      if (fatal)
-        Log::Fatal << e.what() << std::endl;
-      else
-        Log::Warn << e.what() << std::endl;
-
-      return false;
-    }
-  }
-  else if (extension == "arff")
-  {
-    Log::Info << "Loading '" << filename << "' as ARFF dataset.  "
-        << std::flush;
-    try
-    {
-      LoadARFF(filename, matrix, info);
-
-      // We transpose by default.  So, un-transpose if necessary...
-      if (!transpose)
-      {
-        inplace_trans(matrix);
-      }
-    }
-    catch (std::exception& e)
-    {
-      Timer::Stop("loading_data");
-      if (fatal)
-        Log::Fatal << e.what() << std::endl;
-      else
-        Log::Warn << e.what() << std::endl;
-
-      return false;
-    }
-  }
-  else
-  {
-    // The type is unknown.
-    Timer::Stop("loading_data");
-    if (fatal)
-      Log::Fatal << "Unable to detect type of '" << filename << "'; "
-          << "incorrect extension?" << std::endl;
-    else
-      Log::Warn << "Unable to detect type of '" << filename << "'; load failed."
-          << " Incorrect extension?" << std::endl;
-
-    return false;
-  }
-
-  Log::Info << "Size is " << matrix.n_rows << " x " << matrix.n_cols << ".\n";
-
-  Timer::Stop("loading_data");
-
-  return true;
-}
 
 // For loading data into sparse matrix
 template <typename eT>
@@ -548,7 +482,7 @@ bool Load(const std::string& filename,
     success = matrix.load(stream, ToArmaFileType(loadType));
   }
   
-  if (opts.transpose())
+  if (opts.Transpose())
   {
     inplace_trans(matrix);
   }
@@ -573,6 +507,105 @@ bool Load(const std::string& filename,
 
   // Finally, return the success indicator.
   return success;
+}
+
+// Load with mappings.  Unfortunately we have to implement this ourselves.
+template<typename eT, typename PolicyType>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          DatasetMapper<PolicyType>& info,
+          const bool fatal,
+          const bool transpose)
+
+{
+  LoadOptions opts;
+  opts.Fatal() = fatal;
+  opts.Transpose() = transpose;
+  opts.Mapper() = info;
+
+  Load(filename, matrix, opts);
+}
+
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          LoadOptions& opts)
+{
+  // Get the extension and load as necessary.
+  Timer::Start("loading_data");
+
+  bool success;
+  std::fstream stream;
+  success = FileExist(stream, opts);
+  if (!success)
+    return false;
+
+  // Get the extension.
+  std::string extension = Extension(filename);
+
+  if (extension == "csv" || extension == "tsv" || extension == "txt")
+  {
+    Log::Info << "Loading '" << filename << "' as CSV dataset.  " << std::flush;
+    try
+    {
+      LoadCSV loader(filename);
+      loader.LoadCategoricalCSV(matrix, info, opts.Transpose());
+    }
+    catch (std::exception& e)
+    {
+      Timer::Stop("loading_data");
+      if (opts.Fatal())
+        Log::Fatal << e.what() << std::endl;
+      else
+        Log::Warn << e.what() << std::endl;
+
+      return false;
+    }
+  }
+  else if (extension == "arff")
+  {
+    Log::Info << "Loading '" << filename << "' as ARFF dataset.  "
+        << std::flush;
+    try
+    {
+      LoadARFF(filename, matrix, info);
+
+      // We transpose by default.  So, un-transpose if necessary...
+      if (!opts.Transpose())
+      {
+        inplace_trans(matrix);
+      }
+    }
+    catch (std::exception& e)
+    {
+      Timer::Stop("loading_data");
+      if (opts.Fatal())
+        Log::Fatal << e.what() << std::endl;
+      else
+        Log::Warn << e.what() << std::endl;
+
+      return false;
+    }
+  }
+  else
+  {
+    // The type is unknown.
+    Timer::Stop("loading_data");
+    if (opts.Fatal())
+      Log::Fatal << "Unable to detect type of '" << filename << "'; "
+          << "incorrect extension?" << std::endl;
+    else
+      Log::Warn << "Unable to detect type of '" << filename << "'; load failed."
+          << " Incorrect extension?" << std::endl;
+
+    return false;
+  }
+
+  Log::Info << "Size is " << matrix.n_rows << " x " << matrix.n_cols << ".\n";
+
+  Timer::Stop("loading_data");
+
+  return true;
 }
 
 } // namespace data

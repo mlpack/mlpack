@@ -48,13 +48,14 @@ class LoadOptions
     *
     */
   LoadOptions() :
-    Fatal(fatal),
-    HasHeaders(hasHeaders),
-    Transpose(transpose),
-    SemiColon(semiColon),
-    MissingToNan(missingToNan),
-    Headers(headers),
-    FileType(format)
+    fatal(fatal),
+    hasHeaders(hasHeaders),
+    transpose(transpose),
+    semiColon(semiColon),
+    missingToNan(missingToNan),
+    headers(headers),
+    fileType(format),
+    categorical(categorical)
   {
     // We can not have these two policies to be set to true at the same time.
     // Therefore, a simple sanity check is added in here and reverse assignment.
@@ -71,31 +72,31 @@ class LoadOptions
   }
 
   //! Get the error it it is fatal or not.
-  const bool& Fatal() { return fatal; }
+  const bool& Fatal() const { return fatal; }
 
   //! Modify the error to be fatal.
   bool& Fatal() { return fatal; }
 
   //! Get if the dataset hasHeaders or not.
-  const bool& HasHeaders() { return hasHeaders; }
+  const bool& HasHeaders() const { return hasHeaders; }
 
   //! Modify the dataset if it hasHeaders.
   bool& HasHeaders() { return hasHeaders; }
 
   //! Get if the matrix is transposed or not.
-  const bool& Transpose() { return transpose; }
+  const bool& Transpose() const { return transpose; }
 
   //! Transpose the matrix if necessary.
   bool& Transpose() { return transpose; }
  
   //! Get if the separator is a semicolon in the matrix.
-  const bool& SemiColon() { return semiColon; }
+  const bool& SemiColon() const { return semiColon; }
 
   //! Modify the separator type in the matrix.
   bool& SemiColon() { return semiColon; }
  
   //! Get if the separator is a semicolon in the matrix.
-  const bool& MissingToNan() { return missingToNan; }
+  const bool& MissingToNan() const { return missingToNan; }
 
   //! Modify the separator type in the matrix.
   bool& MissingToNan() { return missingToNan; }
@@ -113,16 +114,34 @@ class LoadOptions
   bool& FillBackward() { return fillBackward; }
 
   //! Get the headers.
-  const arma::field<std::string>& Headers() { return headers; }
+  const arma::field<std::string>& Headers() const { return headers; }
 
   //! Modify the headers.
   arma::field<std::string>& Headers() { return headers; }
 
   //! Get the FileType.
-  const FileType& FileType() { return format; }
+  const FileType& FileType() const { return format; }
 
   //! Modify the FileType.
   FileType& FileType() { return format; }
+
+  //! Get if the categorical data exists.
+  const bool& Categorical() const { return categorical; }
+
+  //! Modify if we have categorical data in the dataset.
+  bool& Categorical() { return categorical; }
+
+   //! Get the FileType.
+  const ImageInfo& ImageInfo() const { return imgInfo; }
+
+  //! Modify the ImageInfo.
+  ImageInfo& ImageInfo() { return imgInfo; }
+
+  //! Get the FileType.
+  const DatasetMapper& DatasetMapper() const { return ImgInfo; }
+
+  //! Modify the DatasetMapper.
+  DatasetMapper& DatasetMapper() { return ImgInfo; }
 
  private:
 
@@ -133,8 +152,10 @@ class LoadOptions
   bool missingToNaN;
   bool fillForward;
   bool fillBackward;
+  bool categorical;
   arma::field<std::string> headers;
   FileType format;
+  ImageInfo imgInfo;
 };
 
 /**
@@ -357,6 +378,7 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT, typename PolicyType>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           DatasetMapper<PolicyType>& info,
