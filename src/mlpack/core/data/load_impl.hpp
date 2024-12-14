@@ -293,23 +293,8 @@ bool LoadHDF5(const std::string& filename,
     //success = matrix.load(filename, ToArmaFileType(loadType));
 }
 
-
-template<typename MatType>
-bool Load(const std::string& filename,
-          MatType& matrix,
-          LoadOptions& opts)
-{
-  using eT = typename MatType::elem_type;
-  if constexpr (std::is_same_v<MatType, arma::SpMat<eT>>)
-  {
-    Load(filename, matrix, opts);
-  }
-  else
-  {
-    Load(filename, matrix, opts);
-  }
-}
-
+// The following functions are kept for backward compatibility,
+// Please remove them when we release mlpack 5.
 template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
@@ -325,11 +310,46 @@ bool Load(const std::string& filename,
   Load(filename, matrix, opts);
 }
 
-template<typename eT>
+// For loading data into sparse matrix
+template <typename eT>
+bool Load(const std::string& filename,
+          arma::SpMat<eT>& matrix,
+          const bool fatal,
+          const bool transpose,
+          const FileType inputLoadType)
+{
+  LoadOptions opts;
+  opts.Fatal() = fatal;
+  opts.Transpose() = transpose;
+  opts.FileFormat() = inputLoadType;
+
+  Load(filename, matrix, opts);
+}
+
+// Load with mappings.  Unfortunately we have to implement this ourselves.
+template<typename eT, typename PolicyType>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
+          DatasetMapper<PolicyType>& info,
+          const bool fatal,
+          const bool transpose)
+{
+  LoadOptions opts;
+  opts.Fatal() = fatal;
+  opts.Transpose() = transpose;
+  opts.Mapper() = info;
+
+  Load(filename, matrix, opts);
+}
+
+// This is the function that the user is supposed to call.
+// Other functions of this class should be labelled as private.
+template<typename MatType>
+bool Load(const std::string& filename,
+          MatType& matrix,
           LoadOptions& opts)
- {
+{
+  using eT = typename MatType::elem_type;
   Timer::Start("loading_data");
   bool success;
   std::fstream stream;
@@ -347,6 +367,51 @@ bool Load(const std::string& filename,
 
   stringType = GetStringType(loadType);
 
+  if constexpr (std::is_same_v<MatType, arma::SpMat<eT>>)
+  {
+    success = LoadSparse(filename, stream, matrix, opts);
+  }
+  else if constexpr (opts.Categorical())
+  {
+    success = LoadCategorical(filename, stream, matrix, opts);
+  }
+  else if constexpr (opts.Image())
+  {
+
+  }
+  else 
+  {
+    success = LoadDense(filename, matrix, opts);
+  }
+
+  if (!success)
+  {
+    Log::Info << std::endl;
+    Timer::Stop("loading_data");
+    if (opts.Fatal())
+      Log::Fatal << "Loading from '" << filename << "' failed." << std::endl;
+    else
+      Log::Warn << "Loading from '" << filename << "' failed." << std::endl;
+
+    return false;
+  }
+  else
+    Log::Info << "Size is " << matrix.n_rows << " x " << matrix.n_cols << ".\n";
+
+  Timer::Stop("loading_data");
+
+  // Finally, return the success indicator.
+  return success;
+}
+
+template<typename eT>
+bool LoadDense(const std::string& filename,
+               const std::fstream& stream,
+               arma::Mat<eT>& matrix,
+               LoadOptions& opts)
+{
+  bool success;
+  FileType loadType = opts.FileFormat();
   if (loadType != FileType::RawBinary)
     Log::Info << "Loading '" << filename << "' as " << stringType << ".  "
         << std::flush;
@@ -370,63 +435,18 @@ bool Load(const std::string& filename,
     if (opts.Transpose())
       inplace_trans(matrix);
   }
-
-  if (!success)
-  {
-    Log::Info << std::endl;
-    Timer::Stop("loading_data");
-    if (opts.Fatal())
-      Log::Fatal << "Loading from '" << filename << "' failed." << std::endl;
-    else
-      Log::Warn << "Loading from '" << filename << "' failed." << std::endl;
-
-    return false;
-  }
-  else
-    Log::Info << "Size is " << matrix.n_rows << " x " << matrix.n_cols << ".\n";
-
-  Timer::Stop("loading_data");
-
-  // Finally, return the success indicator.
-  return success;
-}
-
-
-// For loading data into sparse matrix
-template <typename eT>
-bool Load(const std::string& filename,
-          arma::SpMat<eT>& matrix,
-          const bool fatal,
-          const bool transpose,
-          const FileType inputLoadType)
-{
-  LoadOptions opts;
-  opts.Fatal() = fatal;
-  opts.Transpose() = transpose;
-  opts.FileFormat() = inputLoadType;
-
-  Load(filename, matrix, opts);
+ return success;
 }
 
 template <typename eT>
-bool Load(const std::string& filename,
-          arma::SpMat<eT>& matrix,
-          LoadOptions& opts)
+bool LoadSparse(const std::string& filename,
+                const std::fstream& stream,
+                arma::SpMat<eT>& matrix,
+                LoadOptions& opts)
 {
-
   Timer::Start("loading_data");
   bool success;
-  std::fstream stream;
   FileType loadType = opts.FileFormat();
-  
-  success = FileExist(filename, stream, opts);
-  if (!success)
-    return false;
-  
-  success = DetectFileType(stream, loadType, opts);
-  if (!success)
-    return false;
-
   // There is still a small amount of differentiation that needs to be done:
   // if we got a text type, it could be a coordinate list.  We will make an
   // educated guess based on the shape of the input.
@@ -487,44 +507,7 @@ bool Load(const std::string& filename,
   {
     inplace_trans(matrix);
   }
-
-  if (!success)
-  {
-    Log::Info << std::endl;
-    Timer::Stop("loading_data");
-    if (opts.Fatal())
-      Log::Fatal << "Loading from '" << filename << "' failed." << std::endl;
-    else
-      Log::Warn << "Loading from '" << filename << "' failed." << std::endl;
-
-    return false;
-  }
-  else
-  {
-    Log::Info << "Size is " << matrix.n_rows << " x " << matrix.n_cols << ".\n";
-  }
-
-  Timer::Stop("loading_data");
-
-  // Finally, return the success indicator.
   return success;
-}
-
-// Load with mappings.  Unfortunately we have to implement this ourselves.
-template<typename eT, typename PolicyType>
-bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
-          DatasetMapper<PolicyType>& info,
-          const bool fatal,
-          const bool transpose)
-
-{
-  LoadOptions opts;
-  opts.Fatal() = fatal;
-  opts.Transpose() = transpose;
-  opts.Mapper() = info;
-
-  Load(filename, matrix, opts);
 }
 
 template<typename eT>

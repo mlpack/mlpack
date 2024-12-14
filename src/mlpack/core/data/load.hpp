@@ -136,6 +136,12 @@ class LoadOptions
 
   //! Modify the ImageInfo.
   ImageInfo& ImageInfo() { return imgInfo; }
+  
+  //! Get if we are loading an image.
+  const Image& Image() const { return image; }
+
+  //! Modify if we are loading an image.
+  Image& Image() { return image; }
 
   //! Get the FileType.
   const DatasetMapper& Mapper() const { return mapper; }
@@ -153,6 +159,7 @@ class LoadOptions
   bool fillForward;
   bool fillBackward;
   bool categorical;
+  bool image;
   arma::field<std::string> headers;
   FileType format;
   ImageInfo imgInfo;
