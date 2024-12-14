@@ -81,20 +81,12 @@ class LoadOptions
     missingToNan(missingToNan),
     headers(headers),
     format(format),
-    categorical(categorical)
+    categorical(categorical),
+    Image(image),
+    imgInfo(imgInfo),
+    mapper(mapper)
   {
-    // We can not have these two policies to be set to true at the same time.
-    // Therefore, a simple sanity check is added in here and reverse assignment.
-    if (fillForward)
-    {
-      fillForward = true;
-      fillBackward = false;
-    }
-    else if (fillBackward)
-    {
-      fillForward = false;
-      fillBackward = true;
-    }
+    // Do nothing.
   }
 
   //! Get the error it it is fatal or not.
@@ -126,18 +118,6 @@ class LoadOptions
 
   //! Modify the separator type in the matrix.
   bool& MissingToNan() { return missingToNan; }
-
-  //! Get the FillForward policy if we have nan..
-  const bool& FillForward() { return fillForward; }
-
-  //! Modify the FiLlForward policy if we have nan
-  bool& FillForward() { return fillForward; }
-
-  //! Get the FillBackward policy if we have nan..
-  const bool& FillBackward() { return fillBackward; }
-
-  //! Modify the FiLlBackward policy if we have nan
-  bool& FillBackward() { return fillBackward; }
 
   //! Get the headers.
   const arma::field<std::string>& Headers() const { return headers; }

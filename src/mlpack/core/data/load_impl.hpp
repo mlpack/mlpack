@@ -28,64 +28,6 @@
 namespace mlpack {
 namespace data {
 
-/**
- * Similar functionality that exists in Pandas to handle NaN values.
- * The following functions define a backward fill policy to take the last value
- * in a column before a NaN, and replace all the following NaN with the last
- * value in Backward manner
- *
- * @param matrix The dataset provided as armadillo matrix
- */
-template<typename eT>
-inline
-void FillBackward(arma::Mat<eT>& matrix)
-{
-  eT lastValue = std::numeric_limits<eT>::signaling_NaN();
-  for (size_t j = 0; j < matrix.n_cols; ++j)
-  {
-    size_t i = (matrix.n_rows - 1);
-    for (i > -1; --i;)
-    {
-      if (std::isnan(matrix.at(i, j)))
-      {
-        matrix.at(i, j) = lastValue;
-      }
-      else
-      {
-        lastValue = matrix.at(i, j);
-      }
-    }
-  }
-}
-
-/**
- * Similar functionality that exists in Pandas to handle NaN values.
- * The following functions define a forward fill policy to take the last value
- * in a column before a NaN, and replace all the following NaN with the last
- * value in Forward manner
- *
- * @param matrix The dataset provided as armadillo matrix
- */
-template<typename eT>
-void FillForward(arma::Mat<eT>& matrix)
-{
-  double lastValue = std::numeric_limits<double>::signaling_NaN();
-  for (size_t j = 0; j < matrix.n_cols; ++j)
-  {
-    for (size_t i = 0; i < matrix.n_rows; ++i)
-    {
-      if (std::isnan(matrix.at(i, j)))
-      {
-        matrix.at(i, j) = lastValue;
-      }
-      else
-      {
-        lastValue = matrix.at(i, j);
-      }
-    }
-  }
-}
-
 template<typename eT>
 bool LoadCSVASCII(const std::string& filename,
                   arma::Mat<eT>& matrix,
@@ -177,23 +119,13 @@ bool LoadCSVASCII(const std::string& filename,
     success = matrix.load(arma::csv_name(filename, arma::csv_opts::strict +
           arma::csv_opts::semicolon), arma::csv_ascii);
 
-  // Detect if NANs exist and replace according to the policy.
-  // For now this function require transpose. As we can not be sure,
-  // if the user always asked for tranpose. While I think that we need to have
-  // the function on a transposed situation and then change it back
-  if (opts.FillForward())
-
-    FillForward();
-  else if (opts.FillBackward())
-    FillBackward();
-
   return success;
 }
 
 template<typename eT>
 bool LoadHDF5(const std::string& filename,
               arma::Mat<eT>& matrix,
-              LoadOptions& opts)
+              const LoadOptions& opts)
 {
 #ifndef ARMA_USE_HDF5
   // Ensure that HDF5 is supported.
@@ -364,7 +296,7 @@ bool LoadDense(const std::string& filename,
 
 template <typename eT>
 bool LoadSparse(const std::string& filename,
-                const std::fstream& stream,
+                std::fstream& stream,
                 arma::SpMat<eT>& matrix,
                 LoadOptions& opts)
 {
