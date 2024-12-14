@@ -1,6 +1,7 @@
 /**
  * @file core/data/load_impl.hpp
  * @author Ryan Curtin
+ * @author Omar Shrit
  * @author Gopi Tatiraju
  *
  * Implementation of templatized load() function defined in load.hpp.
@@ -21,92 +22,9 @@
 
 #include "extension.hpp"
 #include "detect_file_type.hpp"
+#include "load_utilities.hpp"
 #include "string_algorithms.hpp"
 
-namespace mlpack {
-namespace data {
-
-namespace details{
-
-template<typename Tokenizer>
-std::vector<std::string> ToTokens(Tokenizer& lineTok)
-{
-  std::vector<std::string> tokens;
-  std::transform(std::begin(lineTok), std::end(lineTok),
-                 std::back_inserter(tokens),
-                 [&tokens](std::string const &str)
-  {
-    std::string trimmedToken(str);
-    Trim(trimmedToken);
-    return std::move(trimmedToken);
-  });
-
-  return tokens;
-}
-
-inline
-void TransposeTokens(std::vector<std::vector<std::string>> const &input,
-                     std::vector<std::string>& output,
-                     size_t index)
-{
-  output.clear();
-  for (size_t i = 0; i != input.size(); ++i)
-  {
-    output.emplace_back(input[i][index]);
-  }
-}
-
-} // namespace details
-
-inline
-bool FileExist(const std::string& filename,
-               std::fstream& stream,
-               const LoadOptions& opts)
-{
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-  stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
-#else
-  stream.open(filename.c_str(), std::fstream::in);
-#endif
-  if (!stream.is_open())
-  {
-    Timer::Stop("loading_data");
-    if (opts.Fatal())
-      Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
-    else
-      Log::Warn << "Cannot open file '" << filename << "'; load failed."
-          << std::endl;
-
-    return false;
-  }
-  return true;
-}
-
-inline
-bool DetectFileType(const std::fstream& stream,
-                    FileType& loadType,
-                    const LoadOptions& opts);
-{
-  if (opts.FileFormat() == FileType::AutoDetect)
-  {
-    // Attempt to auto-detect the type from the given file.
-    loadType = AutoDetect(stream, filename);
-    // Provide error if we don't know the type.
-    if (loadType == FileType::FileTypeUnknown)
-    {
-      Timer::Stop("loading_data");
-      if (opts.Fatal())
-        Log::Fatal << "Unable to detect type of '" << filename << "'; "
-            << "incorrect extension?" << std::endl;
-      else
-        Log::Warn << "Unable to detect type of '" << filename << "'; load "
-            << "failed. Incorrect extension?" << std::endl;
-
-      return false;
-    }
-  }
-  return true;
-}
 
 /**
  * Similar functionality that exists in Pandas to handle NaN values.
@@ -511,9 +429,9 @@ bool LoadSparse(const std::string& filename,
 }
 
 template<typename eT>
-bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
-          LoadOptions& opts)
+bool LoadCategorical(const std::string& filename,
+                     arma::Mat<eT>& matrix,
+                     LoadOptions& opts)
 {
   // Get the extension and load as necessary.
   Timer::Start("loading_data");
