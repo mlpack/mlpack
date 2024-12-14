@@ -54,7 +54,7 @@ class LoadOptions
     semiColon(semiColon),
     missingToNan(missingToNan),
     headers(headers),
-    fileType(format),
+    format(format),
     categorical(categorical)
   {
     // We can not have these two policies to be set to true at the same time.
@@ -120,10 +120,10 @@ class LoadOptions
   arma::field<std::string>& Headers() { return headers; }
 
   //! Get the FileType.
-  const FileType& FileType() const { return format; }
+  const FileType& FileFormat() const { return format; }
 
   //! Modify the FileType.
-  FileType& FileType() { return format; }
+  FileType& FileFormat() { return format; }
 
   //! Get if the categorical data exists.
   const bool& Categorical() const { return categorical; }
@@ -138,24 +138,25 @@ class LoadOptions
   ImageInfo& ImageInfo() { return imgInfo; }
 
   //! Get the FileType.
-  const DatasetMapper& DatasetMapper() const { return ImgInfo; }
+  const DatasetMapper& Mapper() const { return mapper; }
 
   //! Modify the DatasetMapper.
-  DatasetMapper& DatasetMapper() { return ImgInfo; }
+  DatasetMapper& Mapper() { return mapper; }
 
  private:
 
   bool fatal;
   bool hasHeaders;
   bool transpose;
-  bool semicolon;
-  bool missingToNaN;
+  bool semiColon;
+  bool missingToNan;
   bool fillForward;
   bool fillBackward;
   bool categorical;
   arma::field<std::string> headers;
   FileType format;
   ImageInfo imgInfo;
+  DatasetMapper mapper;
 };
 
 /**

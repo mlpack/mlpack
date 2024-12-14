@@ -59,7 +59,9 @@ void TransposeTokens(std::vector<std::vector<std::string>> const &input,
 } // namespace details
 
 inline
-bool FileExist(std::fstream& stream, const LoadOptions& opts)
+bool FileExist(const std::string& filename,
+               std::fstream& stream,
+               const LoadOptions& opts)
 {
 #ifdef  _WIN32 // Always open in binary mode on Windows.
   stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
@@ -81,11 +83,11 @@ bool FileExist(std::fstream& stream, const LoadOptions& opts)
 }
 
 inline
-bool DetectFile(const std::fstream& stream,
-                FileType& loadType
-                const LoadOptions& opts);
+bool DetectFileType(const std::fstream& stream,
+                    FileType& loadType,
+                    const LoadOptions& opts);
 {
-  if (opts.FileType() == FileType::AutoDetect)
+  if (opts.FileFormat() == FileType::AutoDetect)
   {
     // Attempt to auto-detect the type from the given file.
     loadType = AutoDetect(stream, filename);
@@ -145,7 +147,6 @@ void FillBackward(arma::Mat<eT>& matrix)
  * @param matrix The dataset provided as armadillo matrix
  */
 template<typename eT>
-inline
 void FillForward(arma::Mat<eT>& matrix)
 {
   double lastValue = std::numeric_limits<double>::signaling_NaN();
@@ -165,7 +166,7 @@ void FillForward(arma::Mat<eT>& matrix)
   }
 }
 
-inline
+template<typename eT>
 bool LoadCSVASCII(const std::string& filename,
                   arma::Mat<eT>& matrix,
                   const LoadOptions& opts)
@@ -269,7 +270,7 @@ bool LoadCSVASCII(const std::string& filename,
   return success;
 }
 
-inline
+template<typename eT>
 bool LoadHDF5(const std::string& filename,
               arma::Mat<eT>& matrix,
               LoadOptions& opts)
@@ -319,7 +320,7 @@ bool Load(const std::string& filename,
   LoadOptions opts;
   opts.Fatal() = fatal;
   opts.Transpose() = transpose;
-  opts.FileType() = inputLoadType;
+  opts.FileFormat() = inputLoadType;
 
   Load(filename, matrix, opts);
 }
@@ -334,11 +335,11 @@ bool Load(const std::string& filename,
   std::fstream stream;
   std::string stringType;
  
-  success = FileExist(stream, opts);
+  success = FileExist(filename, stream, opts);
   if (!success)
     return false;
 
-  FileType loadType = opts.FileType();
+  FileType loadType = opts.FileFormat();
 
   success = DetectFileType(stream, loadType, opts);
   if (!success)
@@ -353,7 +354,7 @@ bool Load(const std::string& filename,
   // We can't use the stream if the type is HDF5.
   if (loadType == FileType::HDF5Binary)
   {
-    success = LoadHDSF5(filename, matrix, opts);
+    success = LoadHDF5(filename, matrix, opts);
   }
   else if (loadType == FileType::CSVASCII)
   {
@@ -402,7 +403,7 @@ bool Load(const std::string& filename,
   LoadOptions opts;
   opts.Fatal() = fatal;
   opts.Transpose() = transpose;
-  opts.FileType() = inputLoadType;
+  opts.FileFormat() = inputLoadType;
 
   Load(filename, matrix, opts);
 }
@@ -416,9 +417,9 @@ bool Load(const std::string& filename,
   Timer::Start("loading_data");
   bool success;
   std::fstream stream;
-  FileType loadType = opts.FileType();
+  FileType loadType = opts.FileFormat();
   
-  success = FileExist(stream);
+  success = FileExist(filename, stream, opts);
   if (!success)
     return false;
   
@@ -491,7 +492,7 @@ bool Load(const std::string& filename,
   {
     Log::Info << std::endl;
     Timer::Stop("loading_data");
-    if (fatal)
+    if (opts.Fatal())
       Log::Fatal << "Loading from '" << filename << "' failed." << std::endl;
     else
       Log::Warn << "Loading from '" << filename << "' failed." << std::endl;
@@ -536,7 +537,7 @@ bool Load(const std::string& filename,
 
   bool success;
   std::fstream stream;
-  success = FileExist(stream, opts);
+  success = FileExist(filename, stream, opts);
   if (!success)
     return false;
 
