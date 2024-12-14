@@ -21,10 +21,12 @@
 #include <exception>
 
 #include "extension.hpp"
-#include "detect_file_type.hpp"
 #include "load_utilities.hpp"
 #include "string_algorithms.hpp"
 
+
+namespace mlpack {
+namespace data {
 
 /**
  * Similar functionality that exists in Pandas to handle NaN values.
@@ -194,21 +196,21 @@ bool LoadHDF5(const std::string& filename,
               LoadOptions& opts)
 {
 #ifndef ARMA_USE_HDF5
-    // Ensure that HDF5 is supported.
-    Timer::Stop("loading_data");
-    if (opts.Fatal())
-      Log::Fatal << "Attempted to load '" << filename << "' as HDF5 data, but "
-          << "Armadillo was compiled without HDF5 support.  Load failed."
-          << std::endl;
-    else
-      Log::Warn << "Attempted to load '" << filename << "' as HDF5 data, but "
-          << "Armadillo was compiled without HDF5 support.  Load failed."
-          << std::endl;
+  // Ensure that HDF5 is supported.
+  Timer::Stop("loading_data");
+  if (opts.Fatal())
+    Log::Fatal << "Attempted to load '" << filename << "' as HDF5 data, but "
+        << "Armadillo was compiled without HDF5 support.  Load failed."
+        << std::endl;
+  else
+    Log::Warn << "Attempted to load '" << filename << "' as HDF5 data, but "
+        << "Armadillo was compiled without HDF5 support.  Load failed."
+        << std::endl;
 
-    return false;
+  return false;
 #endif
-    
-    //success = matrix.load(filename, ToArmaFileType(loadType));
+
+  success = matrix.load(filename, ToArmaFileType(loadType));
 }
 
 // The following functions are kept for backward compatibility,
