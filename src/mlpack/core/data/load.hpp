@@ -87,9 +87,9 @@ bool Load(const std::string& filename,
  * @param opts LoadOptions to be passed to the function
  * @return Boolean value indicating success or failure of load.
  */
-template<typename eT>
+template<typename MatType>
 bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
+          MatType& matrix,
           LoadOptions& opts);
 
 /**
@@ -129,22 +129,6 @@ bool Load(const std::string& filename,
           const bool fatal = false,
           const bool transpose = true,
           const FileType inputLoadType = FileType::AutoDetect);
-
-/**
- * This function is only an overload, and does exactly the same thing as the
- * above function.
- * The previous Load is deprecated and will be removed in mlpack 5.0.
- * Once this is the case, we will only have the following function signature.
- *
- * @param filename Name of file to load.
- * @param matrix Matrix to load contents of file into.
- * @param opts LoadOptions to be passed to the function
- * @return Boolean value indicating success or failure of load.
- */
-template<typename eT>
-bool Load(const std::string& filename,
-          arma::SpMat<eT>& matrix,
-          LoadOptions& opts);
 
 /**
  * Load a column vector from a file, guessing the filetype from the extension.
