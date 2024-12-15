@@ -21,7 +21,7 @@ namespace mlpack {
 namespace data {
 
 template<typename eT, typename PolicyType>
-void LoadARFF(const std::string& filename,
+bool LoadARFF(const std::string& filename,
               arma::Mat<eT>& matrix,
               DatasetMapper<PolicyType>& info)
 {
@@ -128,14 +128,18 @@ void LoadARFF(const std::string& filename,
       }
       else
       {
-        throw std::runtime_error("unknown ARFF annotation '" + (*tok.begin()) +
-            "'");
+        Log::Fatal << "unknown ARFF annotation '" + (*tok.begin()) + "'"
+            << std::endl;
+        return false;
       }
     }
   }
 
   if (ifs.eof())
-    throw std::runtime_error("no @data section found");
+  {
+    Log::Fatal << "no @data section found" << std::endl;
+    return false;
+  }
 
   // Reset the DatasetInfo object, if needed.
   if (info.Dimensionality() == 0)
@@ -144,11 +148,10 @@ void LoadARFF(const std::string& filename,
   }
   else if (info.Dimensionality() != dimensionality)
   {
-    std::ostringstream oss;
-    oss << "data::LoadARFF(): given DatasetInfo has dimensionality "
+    Log::Fatal << "data::LoadARFF(): given DatasetInfo has dimensionality "
         << info.Dimensionality() << ", but data has dimensionality "
-        << dimensionality;
-    throw std::invalid_argument(oss.str());
+        << dimensionality << std::endl;
+    return false;
   }
 
   for (size_t i = 0; i < types.size(); ++i)
@@ -198,13 +201,16 @@ void LoadARFF(const std::string& filename,
     // Each line of the @data section must be a CSV (except sparse data, which
     // we will handle later).  So now we can tokenize the
     // CSV and parse it.  The '?' representing a missing value is not allowed,
-    // so if that occurs we throw an exception.  We also throw an exception if
+    // so if that occurs we return a fatal.  This only happens if
     // any piece of data does not match its type (categorical or numeric).
 
     // If the first character is {, it is sparse data, and we can just say this
     // is not handled for now...
     if (line[0] == '{')
-      throw std::runtime_error("cannot yet parse sparse ARFF data");
+    {
+      Log::Fatal << "cannot yet parse sparse ARFF data" << std::endl;
+      return false;
+    }
 
     // Tokenize the line.
     std::vector<std::string> tok = Tokenize(line, ',', '"');
@@ -217,9 +223,9 @@ void LoadARFF(const std::string& filename,
       // Check that we are not too many columns in.
       if (col >= matrix.n_rows)
       {
-        std::stringstream error;
-        error << "Too many columns in line " << (headerLines + row) << ".";
-        throw std::runtime_error(error.str());
+        Log::Fatal << "Too many columns in line " << (headerLines + row)
+            << "." << std::endl;
+        return false;
       }
 
       // What should this token be?
@@ -236,14 +242,15 @@ void LoadARFF(const std::string& filename,
         if (categoryStrings.count(col) > 0 &&
             currentNumMappings < info.NumMappings(col))
         {
-          std::stringstream error;
-          error << "Parse error at line " << (headerLines + row) << " token "
+          Log::Fatal << "Parse error at line " << (headerLines + row) << " token "
               << col << ": category \"" << token << "\" not in the set of known"
-              << " categories for this dimension (";
+              << " categories for this dimension (" << std::endl;
           for (size_t i = 0; i < categoryStrings.at(col).size() - 1; ++i)
-            error << "\"" << categoryStrings.at(col)[i] << "\", ";
-          error << "\"" << categoryStrings.at(col).back() << "\").";
-          throw std::runtime_error(error.str());
+            Log::Fatal << "\"" << categoryStrings.at(col)[i] << "\", "
+                << std::endl;
+          Log::Fatal << "\"" << categoryStrings.at(col).back() << "\")."
+              << std::endl;
+          return false;
         }
 
         // We load transposed.
@@ -265,16 +272,16 @@ void LoadARFF(const std::string& filename,
           {
             // Okay, it's not NaN or inf.  If it's '?', we issue a specific
             // error, otherwise we issue a general error.
-            std::stringstream error;
             std::string tokenStr = token.str();
             Trim(tokenStr);
             if (tokenStr == "?")
-              error << "Missing values ('?') not supported, ";
+              Log::Fatal << "Missing values ('?') not supported, " 
+                  << std::endl;
             else
-              error << "Parse error ";
-            error << "at line " << (headerLines + row) << " token " << col
-                << ": \"" << tokenStr << "\".";
-            throw std::runtime_error(error.str());
+              Log::Fatal << "Parse error " << "at line " <<
+                  (headerLines + row) << " token " << col << ": \"" 
+                  << tokenStr << "\"." << std::endl;
+            return false;
           }
         }
 
