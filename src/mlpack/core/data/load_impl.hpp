@@ -262,7 +262,7 @@ bool Load(const std::string& filename,
 
 template<typename eT>
 bool LoadDense(const std::string& filename,
-               const std::fstream stream,
+               std::fstream& stream,
                arma::Mat<eT>& matrix,
                LoadOptions& opts)
 {

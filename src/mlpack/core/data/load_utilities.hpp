@@ -175,7 +175,7 @@ class LoadOptions
    */
   const std::string FileTypeToString() const
   {
-    switch (format)
+    switch (fileFormat)
     {
       case FileType::CSVASCII:    return "CSV data";
       case FileType::RawASCII:    return "raw ASCII formatted data";
