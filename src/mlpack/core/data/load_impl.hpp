@@ -373,49 +373,34 @@ bool LoadCategorical(const std::string& filename,
 
   // Get the extension.
   std::string extension = Extension(filename);
+  bool success = false;
 
   if (extension == "csv" || extension == "tsv" || extension == "txt")
   {
     Log::Info << "Loading '" << filename << "' as CSV dataset.  " << std::flush;
-    try
+    LoadCSV loader(filename);
+    // would be smarter to pass DataOptions directly in here,
+    // @rcurtin what do you think ? should I refactor?
+    success = loader.LoadCategoricalCSV(matrix, opts.Mapper(), opts.Transpose());
+    if (!success)
     {
-      LoadCSV loader(filename);
-      loader.LoadCategoricalCSV(matrix, opts.Mapper(), opts.Transpose());
-    }
-    catch (std::exception& e)
-    {
-      Timer::Stop("loading_data");
-      if (opts.Fatal())
-        Log::Fatal << e.what() << std::endl;
-      else
-        Log::Warn << e.what() << std::endl;
-
       return false;
+      Timer::Stop("loading_data");
     }
   }
   else if (extension == "arff")
   {
     Log::Info << "Loading '" << filename << "' as ARFF dataset.  "
         << std::flush;
-    try
+    success = LoadARFF(filename, matrix, opts.Mapper());
+    if (!success)
     {
-      LoadARFF(filename, matrix, opts.Mapper());
-
-      // We transpose by default.  So, un-transpose if necessary...
-      if (!opts.Transpose())
-      {
-        inplace_trans(matrix);
-      }
-    }
-    catch (std::exception& e)
-    {
-      Timer::Stop("loading_data");
-      if (opts.Fatal())
-        Log::Fatal << e.what() << std::endl;
-      else
-        Log::Warn << e.what() << std::endl;
-
       return false;
+      Timer::Stop("loading_data");
+    }
+    if (!opts.Transpose())
+    {
+      inplace_trans(matrix);
     }
   }
   else

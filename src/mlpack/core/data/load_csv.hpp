@@ -100,14 +100,14 @@ class LoadCSV
 
   /**
   * Load the file into the given matrix with the given DatasetMapper object.
-  * Throws exceptions on errors.
   *
   * @param inout Matrix to load into.
   * @param infoSet DatasetMapper to use while loading.
   * @param transpose If true, the matrix should be transposed on loading(default).
+  * @return false on errors.
   */
   template<typename eT, typename PolicyType>
-  void LoadCategoricalCSV(arma::Mat<eT> &inout,
+  bool LoadCategoricalCSV(arma::Mat<eT> &inout,
                           DatasetMapper<PolicyType> &infoSet,
                           const bool transpose = true);
 
@@ -120,9 +120,10 @@ class LoadCSV
   * @param rows Variable to be filled with the number of rows.
   * @param cols Variable to be filled with the number of columns.
   * @param info DatasetMapper object to use for first pass.
+  * @return false on errors.
   */
   template<typename T, typename MapPolicy>
-  void InitializeMapper(size_t& rows, size_t& cols,
+  bool InitializeMapper(size_t& rows, size_t& cols,
                         DatasetMapper<MapPolicy>& info);
 
   /**
@@ -134,9 +135,10 @@ class LoadCSV
   * @param rows Variable to be filled with the number of rows.
   * @param cols Variable to be filled with the number of columns.
   * @param info DatasetMapper object to use for first pass.
+  * @return false on errors.
   */
   template<typename T, typename MapPolicy>
-  void InitializeTransposeMapper(size_t& rows, size_t& cols,
+  bool InitializeTransposeMapper(size_t& rows, size_t& cols,
                                  DatasetMapper<MapPolicy>& info);
 
   /**
@@ -209,16 +211,17 @@ class LoadCSV
   /**
   * Check whether or not the file has successfully opened; throw an exception
   * if not.
+  * @return false on errors.
   */
-  inline void CheckOpen()
+  inline bool CheckOpen()
   {
     // Check if the file is opening.
     if (!inFile.is_open())
     {
       std::ostringstream oss;
-      oss << "Cannot open file '" << filename << "'. " << std::endl;
-      // Throw an exception if the file is not opening.
-      throw std::runtime_error(oss.str());
+      Log::Fatal << "Cannot open file '" << filename 
+          << "'. File is already open" << std::endl;
+      return false;
     }
 
     // Clear format flag.
@@ -232,9 +235,10 @@ class LoadCSV
   *
   * @param input Matrix to load into.
   * @param infoSet DatasetMapper object to load with.
+  * @return false on errors.
   */
   template<typename T, typename PolicyType>
-  void NonTransposeParse(arma::Mat<T>& inout,
+  bool NonTransposeParse(arma::Mat<T>& inout,
                          DatasetMapper<PolicyType>& infoSet);
 
   /**
@@ -242,9 +246,10 @@ class LoadCSV
   *
   * @param input Matrix to load into.
   * @param infoSet DatasetMapper to load with.
+  * @return false on errors.
   */
   template<typename T, typename PolicyType>
-  void TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& infoSet);
+  bool TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& infoSet);
 
   //! Extension (type) of file.
   std::string extension;
