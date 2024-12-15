@@ -56,38 +56,51 @@ void TransposeTokens(std::vector<std::vector<std::string>> const &input,
 } // namespace details
 
 /**
- * All possible load options grouped under one struct.
+ * All possible DataOptions grouped under one class.
  * This will allow us to have consistent API over the next mlpack versions. If
- * new load options might be necessary, then they should be added in the
+ * new data options might be necessary, then they should be added in the
  * following.
- * The supported options are the following:
- *  - fatal : true if fatal error should be reported.
- *  - hasHeaders : true if the dataset file has headers we need to recover
- *  - transpose: true by default, Transpose armadillo matrix to column major
- *  - arma::csv_opts: possible csv options provided by armadillo
- *  - arma::field<std::string> headers: contains the header of the dataset file
- *  - FileType format: Detect automaticaly the file type, csv, txt, hdf5.
  */
 class LoadOptions
 {
  public:
   /**
-    *
-    */
-  LoadOptions() :
+   * DataOptions constructor that takes the followint parameters.
+   *  - fatal : true if fatal error should be reported.
+   *  - hasHeaders : true if the dataset file has headers we need to recover
+   *  - transpose: true by default, Transpose armadillo matrix to column major
+   *  - semiColon: If the dataset separator is a semicolon instead of commas.
+   *  - missingToNan: replace missing values to NaN.
+   *  - categorical: if the dataset contains categorical values.
+   *  - image: true if we are trying to load an image.
+   *  - fileFormat: Detect automaticaly the file type, csv, txt, hdf5.
+   *  - objectName: Model / object name that is going to be serialized
+   *  - imgInfo: Information about the image if we already have them.
+   *  - dataFormat: the data serialization format: xml, bin, json
+   */
+  LoadOptions(
+      bool fatal = true,
+      bool hasHeaders = false,
+      bool transpose = true,
+      bool semiColon = false,
+      bool missingToNan = false,
+      bool categorical = false,
+      bool image = false,
+      bool model = false,
+      FileType fileFormat = FileType::AutoDetect,
+      format dataFormat = format::binary,
+      std::string objectName = "") :
     fatal(fatal),
     hasHeaders(hasHeaders),
     transpose(transpose),
     semiColon(semiColon),
     missingToNan(missingToNan),
-    headers(headers),
-    fileFormat(fileFormat),
     categorical(categorical),
     image(image),
-    objectName(objectName),
-    imgInfo(imgInfo),
+    model(model),
+    fileFormat(fileFormat),
     dataFormat(dataFormat),
-    mapper(mapper)
+    objectName(objectName)
   {
     // Do nothing.
   }
@@ -122,6 +135,24 @@ class LoadOptions
   //! Modify the separator type in the matrix.
   bool& MissingToNan() { return missingToNan; }
 
+  //! Get if the categorical data exists.
+  const bool& Categorical() const { return categorical; }
+
+  //! Modify if we have categorical data in the dataset.
+  bool& Categorical() { return categorical; }
+
+  //! Get if we are loading an image.
+  const bool& Image() const { return image; }
+
+  //! Modify if we are loading an image.
+  bool& Image() { return image; }
+
+  //! Get if we are loading an model.
+  const bool& Model() const { return model; }
+
+  //! Modify if we are loading an model.
+  bool& Model() { return model; }
+
   //! Get the headers.
   const arma::field<std::string>& Headers() const { return headers; }
 
@@ -140,23 +171,11 @@ class LoadOptions
   //! Modify the FileType.
   format& DataFormat() { return dataFormat; }
 
-  //! Get if the categorical data exists.
-  const bool& Categorical() const { return categorical; }
-
-  //! Modify if we have categorical data in the dataset.
-  bool& Categorical() { return categorical; }
-
-   //! Get the FileType.
+  //! Get the FileType.
   const ImageInfo& ImageInfos() const { return imgInfo; }
 
   //! Modify the ImageInfo.
   ImageInfo& ImageInfos() { return imgInfo; }
-
-  //! Get if we are loading an image.
-  const bool& Image() const { return image; }
-
-  //! Modify if we are loading an image.
-  bool& Image() { return image; }
 
   //! Get the FileType.
   const DatasetInfo& Mapper() const { return mapper; }
@@ -198,10 +217,11 @@ class LoadOptions
   bool missingToNan;
   bool categorical;
   bool image;
-  std::string objectName;
-  arma::field<std::string> headers;
+  bool model;
   FileType fileFormat;
   format dataFormat;
+  std::string objectName;
+  arma::field<std::string> headers;
   ImageInfo imgInfo;
   DatasetInfo mapper;
 };

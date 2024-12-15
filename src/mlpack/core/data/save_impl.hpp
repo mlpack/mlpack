@@ -97,6 +97,7 @@ bool Save(const std::string& filename,
   LoadOptions opts;
   opts.Fatal() = fatal;
   opts.Transpose() = transpose;
+  opts.FileFormat() = inputSaveType;
 
   return Save(filename, matrix, opts);
 }

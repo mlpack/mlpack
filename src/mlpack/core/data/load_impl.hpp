@@ -33,7 +33,7 @@ bool LoadCSVASCII(const std::string& filename,
                   arma::Mat<eT>& matrix,
                   const LoadOptions& opts)
 {
-  bool success;
+  bool success = false;
   if (opts.Transpose() && opts.HasHeaders() &&
       !opts.SemiColon() && !opts.MissingToNan())
 
@@ -229,7 +229,7 @@ bool Load(const std::string& filename,
   }
   else if (opts.Categorical())
   {
-    success = LoadCategorical(filename, stream, matrix, opts);
+    success = LoadCategorical(filename, matrix, opts);
   }
   else if (opts.Image())
   {
@@ -365,13 +365,11 @@ bool LoadSparse(const std::string& filename,
 
 template<typename eT>
 bool LoadCategorical(const std::string& filename,
-                     const std::fstream& stream,
                      arma::Mat<eT>& matrix,
                      LoadOptions& opts)
 {
   // Get the extension and load as necessary.
   Timer::Start("loading_data");
-  bool success;
 
   // Get the extension.
   std::string extension = Extension(filename);
