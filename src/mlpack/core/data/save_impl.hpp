@@ -20,7 +20,14 @@
 namespace mlpack {
 namespace data {
 
+/*
+ * btw, the following two functions are not documented anywhere
+ * If they are not exposed to the public API then I can delete them
+ * If yes, then they are deprecated.
+ * @rcurtin please comment:
+ */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Save(const std::string& filename,
           const arma::Col<eT>& vec,
           const bool fatal,
@@ -31,6 +38,7 @@ bool Save(const std::string& filename,
 }
 
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Save(const std::string& filename,
           const arma::Row<eT>& rowvec,
           const bool fatal,
@@ -48,15 +56,17 @@ bool Save(const std::string& filename,
   using eT = typename MatType::elem_type;
   if constexpr (std::is_same_v<MatType, arma::SpMat<eT>>)
   {
-    success = Save(filename, stream, matrix, opts);
+    success = Save(filename, matrix, opts);
   }
   else if constexpr (std::is_same_v<MatType, arma::Col<eT>>)
   {
-    success = Save(filename, vec, fatal, false, inputSaveType);
+    opts.Transpose() = false;
+    success = Save(filename, matrix, opts);
   }
   else if constexpr (std::is_same_v<MatType, arma::Row<eT>>)
   {
-    success = Save(filename, rowvec, fatal, true, inputSaveType);
+    opts.Transpose() = true;
+    success = Save(filename, matrix, opts);
   }
 
   return success;
@@ -102,14 +112,14 @@ bool Save(const std::string& filename,
   LoadOptions opts;
   opts.ObjectName() = name;
   opts.Fatal() = fatal;
-  opts.FileFormat() = f;
+  opts.DataFormat() = f;
 
-  return Save(filename, t, opts);
+  return SaveModel(filename, t, opts);
 }
 
 template<typename eT>
 bool Save(const std::string& filename,
-          const arma::Mat<eT>& matrix,
+          arma::Mat<eT>& matrix,
           LoadOptions& opts)
 {
   Timer::Start("saving_data");
@@ -118,7 +128,7 @@ bool Save(const std::string& filename,
   {
     // Detect the file type using only the extension.
     opts.FileFormat() = DetectFromExtension(filename);
-    if (opts.FileFormat == FileType::FileTypeUnknown)
+    if (opts.FileFormat() == FileType::FileTypeUnknown)
     {
       if (opts.Fatal())
         Log::Fatal << "Could not detect type of file '" << filename << "' for "
@@ -158,7 +168,7 @@ bool Save(const std::string& filename,
   // Transpose the matrix.
   if (opts.Transpose())
   {
-     in_trans(matrix);
+     inplace_trans(matrix);
   }
 
   bool success;
@@ -177,7 +187,7 @@ bool Save(const std::string& filename,
   if (!success)
   {
     Timer::Stop("saving_data");
-    if (opts.fatal())
+    if (opts.Fatal())
       Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
     else
       Log::Warn << "Save to '" << filename << "' failed." << std::endl;
@@ -195,7 +205,7 @@ bool Save(const std::string& filename,
 // Save a Sparse Matrix
 template<typename eT>
 bool Save(const std::string& filename,
-          const arma::SpMat<eT>& matrix,
+          arma::SpMat<eT>& matrix,
           LoadOptions& opts)
 {
 
@@ -261,7 +271,7 @@ bool Save(const std::string& filename,
   if (unknownType)
   {
     Timer::Stop("saving_data");
-    if (fatal)
+    if (opts.Fatal())
       Log::Fatal << "Unable to determine format to save to from filename '"
           << filename << "'.  Save failed." << std::endl;
     else
@@ -275,15 +285,13 @@ bool Save(const std::string& filename,
   Log::Info << "Saving " << stringType << " to '" << filename << "'."
       << std::endl;
 
-  arma::SpMat<eT> tmp = matrix;
-
   // Transpose the matrix.
   if (opts.Transpose())
   {
-    tmp = trans(matrix);
+    inplace_trans(matrix);
   }
 
-  const bool success = tmp.save(stream, ToArmaFileType(saveType));
+  const bool success = matrix.save(stream, ToArmaFileType(saveType));
   if (!success)
   {
     Timer::Stop("saving_data");
@@ -303,20 +311,20 @@ bool Save(const std::string& filename,
 
 //! Save a model to file.
 template<typename Object>
-bool Save(const std::string& filename,
-          Object& objectToSerialize,
-          LoadOptions opts)
+bool SaveModel(const std::string& filename,
+               Object& objectToSerialize,
+               LoadOptions opts)
 {
-  if (opts.FileFormat() == format::autodetect)
+  if (opts.DataFormat() == format::autodetect)
   {
     std::string extension = Extension(filename);
 
     if (extension == "xml")
-      opts.FileFormat() = format::xml;
+      opts.DataFormat() = format::xml;
     else if (extension == "bin")
-      opts.FileFormat() = format::binary;
+      opts.DataFormat() = format::binary;
     else if (extension == "json")
-      opts.FileFormat() = format::json;
+      opts.DataFormat() = format::json;
     else
     {
       if (opts.Fatal())
@@ -346,27 +354,27 @@ bool Save(const std::string& filename,
   {
     if (opts.Fatal())
       Log::Fatal << "Unable to open file '" << filename << "' to save object '"
-          << name << "'." << std::endl;
+          << opts.ObjectName() << "'." << std::endl;
     else
       Log::Warn << "Unable to open file '" << filename << "' to save object '"
-          << name << "'." << std::endl;
+          << opts.ObjectName() << "'." << std::endl;
 
     return false;
   }
 
   try
   {
-    if (opts.FileFormat() == format::xml)
+    if (opts.DataFormat() == format::xml)
     {
       cereal::XMLOutputArchive ar(ofs);
       ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
     }
-    else if (opts.FileFormat() == format::json)
+    else if (opts.DataFormat() == format::json)
     {
       cereal::JSONOutputArchive ar(ofs);
       ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
     }
-    else if (opts.FileFormat() == format::binary)
+    else if (opts.DataFormat() == format::binary)
     {
       cereal::BinaryOutputArchive ar(ofs);
       ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
@@ -375,7 +383,7 @@ bool Save(const std::string& filename,
   }
   catch (cereal::Exception& e)
   {
-    if (fatal)
+    if (opts.Fatal())
       Log::Fatal << e.what() << std::endl;
     else
       Log::Warn << e.what() << std::endl;

@@ -142,7 +142,7 @@ bool LoadHDF5(const std::string& filename,
   return false;
 #endif
   
-  return matrix.load(filename, ToArmaFileType(opts.FileTypeToString()));
+  return matrix.load(filename, ToArmaFileType(opts.FileFormat()));
 }
 
 // The following functions are kept for backward compatibility,
@@ -213,7 +213,7 @@ bool Load(const std::string& filename,
 
   FileType loadType = opts.FileFormat();
 
-  success = DetectFileType(stream, loadType, opts);
+  success = DetectFileType(filename, stream, loadType, opts);
   if (!success)
     return false;
 
@@ -237,7 +237,7 @@ bool Load(const std::string& filename,
   }
   else 
   {
-    success = LoadDense(filename, matrix, opts);
+    success = LoadDense(filename, stream, matrix, opts);
   }
 
   if (!success)
@@ -262,7 +262,7 @@ bool Load(const std::string& filename,
 
 template<typename eT>
 bool LoadDense(const std::string& filename,
-               const std::fstream& stream,
+               const std::fstream stream,
                arma::Mat<eT>& matrix,
                LoadOptions& opts)
 {
@@ -365,6 +365,7 @@ bool LoadSparse(const std::string& filename,
 
 template<typename eT>
 bool LoadCategorical(const std::string& filename,
+                     const std::fstream& stream,
                      arma::Mat<eT>& matrix,
                      LoadOptions& opts)
 {

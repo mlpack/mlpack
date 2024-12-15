@@ -19,6 +19,7 @@
 
 #include "dataset_mapper.hpp"
 #include "detect_file_type.hpp"
+#include "format.hpp"
 
 namespace mlpack {
 namespace data {
@@ -80,10 +81,12 @@ class LoadOptions
     semiColon(semiColon),
     missingToNan(missingToNan),
     headers(headers),
-    format(format),
+    fileFormat(fileFormat),
     categorical(categorical),
-    Image(image),
+    image(image),
+    objectName(objectName),
     imgInfo(imgInfo),
+    dataFormat(dataFormat),
     mapper(mapper)
   {
     // Do nothing.
@@ -126,10 +129,16 @@ class LoadOptions
   arma::field<std::string>& Headers() { return headers; }
 
   //! Get the FileType.
-  const FileType& FileFormat() const { return format; }
+  const FileType& FileFormat() const { return fileFormat; }
 
   //! Modify the FileType.
-  FileType& FileFormat() { return format; }
+  FileType& FileFormat() { return fileFormat; }
+
+  //! Get the FileType.
+  const format& DataFormat() const { return dataFormat; }
+
+  //! Modify the FileType.
+  format& DataFormat() { return dataFormat; }
 
   //! Get if the categorical data exists.
   const bool& Categorical() const { return categorical; }
@@ -155,10 +164,16 @@ class LoadOptions
   //! Modify the DatasetMapper.
   DatasetInfo & Mapper() { return mapper; }
 
+  //! Get if we are loading an image.
+  const std::string& ObjectName() const { return objectName; }
+
+  //! Modify if we are loading an image.
+  std::string& ObjectName() { return objectName; }
+
   /**
    * Given a file type, return a logical name corresponding to that file type.
    */
-  inline std::string FileTypeToString()
+  const std::string FileTypeToString() const
   {
     switch (format)
     {
@@ -181,12 +196,12 @@ class LoadOptions
   bool transpose;
   bool semiColon;
   bool missingToNan;
-  bool fillForward;
-  bool fillBackward;
   bool categorical;
   bool image;
+  std::string objectName;
   arma::field<std::string> headers;
-  FileType format;
+  FileType fileFormat;
+  format dataFormat;
   ImageInfo imgInfo;
   DatasetInfo mapper;
 };
@@ -216,9 +231,10 @@ bool FileExist(const std::string& filename,
 }
 
 inline
-bool DetectFileType(const std::fstream& stream,
+bool DetectFileType(const std::string& filename,
+                    std::fstream& stream,
                     FileType& loadType,
-                    const LoadOptions& opts);
+                    const LoadOptions& opts)
 {
   if (opts.FileFormat() == FileType::AutoDetect)
   {
