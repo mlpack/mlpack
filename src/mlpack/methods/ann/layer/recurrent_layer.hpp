@@ -37,6 +37,7 @@ namespace mlpack {
  * - `Forward()` should set the recurrent state for the current time step if
  *   `AtFinalStep()` is `false`; this can be done via a call to
  *   `GetRecurrentState(CurrentStep())`.
+ *   - It is okay to set the recurrent state even if `AtFinalStep()` is `true`.
  *
  * - `Backward()` should use `GetRecurrentState(PreviousStep())` to refer to the
  *   recurrent input.  If `AtFinalStep()` is false,

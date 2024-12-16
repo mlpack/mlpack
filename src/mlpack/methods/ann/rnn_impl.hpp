@@ -496,7 +496,7 @@ typename MatType::elem_type RNN<
         // require some amount of refactoring.
         MatType networkDelta;
         GradType currentGradient(gradient.n_rows, gradient.n_cols,
-            GetFillType<MatType>::none);
+            GetFillType<MatType>::zeros);
         network.network.Backward(stepData, outputData, error, networkDelta);
         network.network.Gradient(stepData, error, currentGradient);
 

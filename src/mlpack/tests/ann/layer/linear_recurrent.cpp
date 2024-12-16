@@ -95,19 +95,27 @@ TEST_CASE("GradientLinearRecurrentLayerTest", "[ANNLayerTest]")
   struct GradientFunction
   {
     GradientFunction() :
-        inSize(4),
-        outSize(1),
-        batchSize(4)
+        inSize(15),
+        outSize(5),
+        batchSize(32)
     {
-      input = arma::randu(inSize, batchSize, 1);
-      target = arma::zeros(outSize, batchSize, 1);
+      input = arma::randu(inSize, batchSize, 4);
+      target = arma::zeros(outSize, batchSize, 4);
       target(0, 0, 0) = 1;
       target(0, 3, 0) = 1;
+      target(0, 5, 0) = 1;
+      target(0, 0, 1) = 7;
+      target(0, 3, 1) = 5;
+      target(0, 5, 1) = 3;
+      target(0, 1, 2) = 7;
+      target(0, 4, 2) = 5;
+      target(0, 2, 3) = 7;
+      target(0, 4, 3) = 5;
 
-      model = RNN<MeanSquaredError, RandomInitialization>();
+      model = RNN<MeanSquaredError, RandomInitialization>(4);
       model.ResetData(input, target);
       model.Add<LinearRecurrent>(outSize);
-      model.InputDimensions() = std::vector<size_t>{ 4 };
+      model.InputDimensions() = std::vector<size_t>{ 15 };
     }
 
     double Gradient(arma::mat& gradient)
