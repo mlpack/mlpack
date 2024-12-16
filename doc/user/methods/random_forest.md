@@ -111,6 +111,10 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
    and so if a smaller-sized model is desired, this value should be increased
    (at the potential cost of accuracy).
  * `minGainSplit` can also be increased if a smaller-sized model is desired.
+ * `bootstrap` can be any of `DefaultBootstrap`, `IdentityBootstrap`,
+   `SequentialBootstrap`, or any customer bootstrapping algorithm as defined
+   by [BootstrapType](#bootstraptype). Note that `SequentialBootstrap` does
+   not have a default constructor.
 
 ***Note:*** different types can be used for `data` and `weights` (e.g.,
 `arma::fmat`, `arma::sp_mat`).  However, the element type of `data` and
@@ -365,6 +369,37 @@ rf.Classify(testPoint, prediction, probabilities);
 std::cout << "Test point predicted to be class " << prediction << "."
     << std::endl;
 std::cout << "Probabilities of each class: " << probabilities.t();
+```
+
+---
+
+Train a `RandomForest` with the `SequentialBootstrap` strategy.
+
+```c++
+// 1000 random points in 10 dimensions.
+arma::mat dataset(10, 1000, arma::fill::randu);
+// Random labels for each point, totaling 5 classes.
+arma::Row<size_t> labels =
+    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
+
+arma::umat intervals(2, labels.n_cols);
+for (arma::uword i(0); i < labels.n_cols; ++i) {
+  // Create intervals of random length.
+  intervals(0, i) = i;
+  intervals(1, i) = std::max(1000, i + std::rand());
+}
+
+SequentialBootstrap bootstrap(intervals);
+
+// Create and train the random forest.
+mlpack::RandomForest<GiniGain,
+                     MultipleRandomDimensionSelect,
+                     BestBinaryNumericSplit,
+                     AllCategoricalSplit,
+                     true,
+                     SequentialBootstrap> rf(
+                        dataset, labels, 5, 20, 1, 1e-7, 0, DimensionSelectionType(),
+                        bootstrap);
 ```
 
 ---
@@ -752,6 +787,6 @@ class CustomBootstrapType
                  const WeightsType& weights,
                  MatType& bootstrapDataset,
                  LabelsType& bootstrapLabels,
-                 WeightsType& bootstrapWeights)
+                 WeightsType& bootstrapWeights);
 };
 ```

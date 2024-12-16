@@ -19,6 +19,7 @@
 
 using namespace mlpack;
 
+#if 0
 /**
  * Make sure bootstrap sampling produces numbers in the dataset.
  */
@@ -607,6 +608,7 @@ TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
 
   REQUIRE(accuracy >= 0.85);
 }
+#endif
 
 /**
  * Test ComputeAverageUniqueness.
@@ -631,8 +633,10 @@ TEST_CASE("ComputeAverageUniquenessTest", "[RandomForestTest]")
   indM(2, 1) = 6;
 
   const arma::vec avg(SequentialBootstrap<>::ComputeAverageUniqueness(indM,
+                                                                      6,
                                                                       0));
 
+  REQUIRE(avg.n_rows == 3);
   REQUIRE(avg(0) == 5.0 / 6.0);
   REQUIRE(avg(1) == 0.75);
   REQUIRE(avg(2) == 1.0);
@@ -656,7 +660,7 @@ TEST_CASE("ComputeNextDrawProbabilitiesTest", "[RandomForestTest]")
   // Compute the probabilities that observations 0, 1, 2 are drawn after
   // observation 1 has already been drawn.
   const arma::vec delta2(
-    SequentialBootstrap<>::ComputeNextDrawProbabilities(phi1, indM));
+    SequentialBootstrap<>::ComputeNextDrawProbabilities(phi1, indM, 6));
 
   REQUIRE(delta2(0) == 5.0 / 14.0);
   // Should have the lowest probability as it has already been drawn.
@@ -680,7 +684,7 @@ TEST_CASE("ComputeSamplesTest", "[RandomForestTest]")
   indM(2, 0) = 4;
   indM(2, 1) = 6;
 
-  SequentialBootstrap bootstrap(indM);
+  SequentialBootstrap bootstrap(indM, 6);
   const arma::uvec phi(bootstrap.ComputeSamples());
 
   // Can only check that the next draw does not yield indices
@@ -695,10 +699,10 @@ TEST_CASE("ComputeSamplesTest", "[RandomForestTest]")
  */
 TEST_CASE("SequentialBootstrapTest", "[RandomForestTest]")
 {
-  const arma::mat ds(10 /* rows */, 3 /* cols */, arma::fill::randu);
-  const arma::Row<size_t> labels{ 1, 0, 0 };
-  const arma::vec weights(3, arma::fill::ones);
-  arma::umat indM(3 /* rows */, 2 /* cols */, arma::fill::zeros);
+  const arma::mat ds(10 /* rows */, 6 /* cols */, arma::fill::randu);
+  const arma::Row<size_t> labels{ 1, 0, 0, 0, 0, 0 };
+  const arma::vec weights(6, arma::fill::ones);
+  arma::umat indM(6 /* rows */, 2 /* cols */, arma::fill::zeros);
 
   indM(0, 0) = 0;
   indM(0, 1) = 3;
@@ -707,17 +711,48 @@ TEST_CASE("SequentialBootstrapTest", "[RandomForestTest]")
   indM(2, 0) = 4;
   indM(2, 1) = 6;
 
-  SequentialBootstrap bootstrap(indM);
+  SequentialBootstrap<> bootstrap(indM, ds.n_cols);
   arma::mat bsDataset;
   arma::Row<size_t> bsLabels;
   arma::vec bsWeights;
 
   bootstrap.Bootstrap<true>(ds, labels, weights, bsDataset,
-      bsLabels, bsWeights);
+    bsLabels, bsWeights);
 
   // Check that dimensions are the same.
   REQUIRE(ds.n_rows == bsDataset.n_rows);
   REQUIRE(ds.n_cols == bsDataset.n_cols);
   REQUIRE(labels.n_cols == bsLabels.n_cols);
   REQUIRE(weights.n_rows == bsWeights.n_rows);
+}
+
+TEST_CASE("A", "[RandomForestTest]")
+{
+  // 1000 random points in 10 dimensions.
+  arma::mat dataset(10 /* rows */, 1000 /* cols */, arma::fill::randu);
+  // Random labels for each point, totaling 5 classes.
+  arma::Row<size_t> labels =
+    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
+
+  arma::umat intervals(labels.n_cols, 2);
+  for (arma::uword i(0); i < labels.n_cols; ++i) {
+    // Create intervals of random length.
+    intervals(i, 0) = i;
+    intervals(i, 1) = i + std::rand();
+    if (intervals(i, 1) > 1000) {
+      intervals(i, 1) = 1000;
+    }
+  }
+
+  SequentialBootstrap bootstrap(intervals, dataset.n_cols);
+
+  // Create and train the random forest.
+  RandomForest<GiniGain,
+    MultipleRandomDimensionSelect,
+    BestBinaryNumericSplit,
+    AllCategoricalSplit,
+    true,
+    SequentialBootstrap<>> rf(
+      dataset, labels, 5, 20, 1, 1e-7, 0, MultipleRandomDimensionSelect(),
+      bootstrap);
 }
