@@ -377,29 +377,33 @@ Train a `RandomForest` with the `SequentialBootstrap` strategy.
 
 ```c++
 // 1000 random points in 10 dimensions.
-arma::mat dataset(10, 1000, arma::fill::randu);
+arma::mat dataset(10 /* rows */, 1000 /* cols */, arma::fill::randu);
 // Random labels for each point, totaling 5 classes.
 arma::Row<size_t> labels =
-    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
+arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 
-arma::umat intervals(2, labels.n_cols);
+arma::umat intervals(labels.n_cols, 2);
 for (arma::uword i(0); i < labels.n_cols; ++i) {
   // Create intervals of random length.
-  intervals(0, i) = i;
-  intervals(1, i) = std::max(1000, i + std::rand());
+  intervals(i, 0) = i;
+  intervals(i, 1) = i + std::rand();
+  if (intervals(i, 1) > 1000) {
+    intervals(i, 1) = 1000;
+  }
 }
 
-SequentialBootstrap bootstrap(intervals);
+SequentialBootstrap bootstrap(intervals, dataset.n_cols);
 
 // Create and train the random forest.
-mlpack::RandomForest<GiniGain,
-                     MultipleRandomDimensionSelect,
-                     BestBinaryNumericSplit,
-                     AllCategoricalSplit,
-                     true,
-                     SequentialBootstrap> rf(
-                        dataset, labels, 5, 20, 1, 1e-7, 0, DimensionSelectionType(),
-                        bootstrap);
+RandomForest<GiniGain,
+             MultipleRandomDimensionSelect,
+             BestBinaryNumericSplit,
+             AllCategoricalSplit,
+             true,
+             SequentialBootstrap<>> rf(
+               dataset, labels, 5, 20, 1, 1e-7, 0,
+               MultipleRandomDimensionSelect(),
+               bootstrap);
 ```
 
 ---
