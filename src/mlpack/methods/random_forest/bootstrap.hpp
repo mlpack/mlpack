@@ -79,7 +79,7 @@ class IdentityBootstrap
 template<typename IndMatType = arma::umat>
 class SequentialBootstrap
 {
-public:
+ public:
   /**
    * Constructor.
    *
@@ -217,7 +217,7 @@ public:
     return avg / arma::sum(avg);
   }
 
-private:
+ private:
   const IndMatType intervals;
   const arma::uword sampleCount;
   const arma::uvec colIndices;
