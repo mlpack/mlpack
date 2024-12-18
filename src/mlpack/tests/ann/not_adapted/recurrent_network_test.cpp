@@ -29,15 +29,6 @@ using namespace ens;
  * Train the specified networks on the Derek D. Monner's distracted sequence
  * recall task.
  */
-/* TEST_CASE("LSTMDistractedSequenceRecallTest", "[RecurrentNetworkTest]") */
-/* { */
-/*   DistractedSequenceRecallTestNetwork<LSTM<> >(4, 8); */
-/* } */
-
-/**
- * Train the specified networks on the Derek D. Monner's distracted sequence
- * recall task.
- */
 /* TEST_CASE("FastLSTMDistractedSequenceRecallTest", "[RecurrentNetworkTest]") */
 /* { */
 /*   DistractedSequenceRecallTestNetwork<FastLSTM<> >(4, 8); */

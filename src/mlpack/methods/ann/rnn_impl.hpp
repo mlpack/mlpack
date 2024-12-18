@@ -228,11 +228,12 @@ void RNN<
     // Since we aren't doing a backward pass, we don't actually need to store
     // the state for each time step---we can fit it all in one buffer.
     ResetMemoryState(1, effectiveBatchSize);
-    SetCurrentStep(0, (predictors.n_slices <= 1));
 
     // Iterate over all time steps.
     for (size_t t = 0; t < predictors.n_slices; ++t)
     {
+      SetCurrentStep(t, (t == predictors.n_slices - 1));
+
       // Create aliases for the input and output.
       MakeAlias(inputAlias, predictors.slice(t), predictors.n_rows,
           effectiveBatchSize, i * predictors.slice(t).n_rows);
@@ -330,7 +331,6 @@ typename MatType::elem_type RNN<
   // are not computing the gradient, we can be "clever" and use only one memory
   // cell---we don't need to know about the past.
   ResetMemoryState(1, batchSize);
-  SetCurrentStep(0, (predictors.n_slices <= 1));
   MatType output(network.network.OutputSize(), batchSize);
 
   typename MatType::elem_type loss = 0.0;
@@ -339,6 +339,7 @@ typename MatType::elem_type RNN<
   {
     // Manually reset the data of the network to be an alias of the current time
     // step.
+    SetCurrentStep(t, (t == predictors.n_slices - 1));
     MakeAlias(network.predictors, predictors.slice(t), predictors.n_rows,
         batchSize, begin * predictors.slice(t).n_rows);
     const size_t responseStep = (single) ? 0 : t;
@@ -413,34 +414,9 @@ typename MatType::elem_type RNN<
   loss += network.network.Loss();
 
   // For backpropagation through time, we must backpropagate for every
-  // subsequence of length `bpttSteps`.  However, we cannot backpropagate until
-  // we have taken at least `bpttSteps`.  So, take that many forward steps.
-  for (size_t t = 0; t < effectiveBPTTSteps - 1; ++t)
-  {
-    SetCurrentStep(t, (t == (predictors.n_slices - 1)));
-
-    // Make an alias of the step's data.
-    MakeAlias(stepData, predictors.slice(t), predictors.n_rows, batchSize,
-        begin * predictors.slice(t).n_rows);
-    MakeAlias(outputData, outputs.slice(t), outputs.n_rows, outputs.n_cols);
-    network.network.Forward(stepData, outputData);
-
-    const size_t responseStep = (single) ? 0 : t;
-    MakeAlias(responseData, responses.slice(responseStep), responses.n_rows,
-        batchSize, begin * responses.slice(responseStep).n_rows);
-
-    // If we are not in single mode, then we do not need to update the loss.
-    if (!single)
-    {
-      MakeAlias(responseData, responses.slice(t), responses.n_rows, batchSize,
-          begin * responses.n_rows);
-      loss += network.outputLayer.Forward(outputData, responseData);
-    }
-  }
-
-  // Now that we have reached the right number of time steps, we can do
-  // backpropagation through time.
-  for (size_t t = effectiveBPTTSteps - 1; t < predictors.n_slices; ++t)
+  // subsequence of length `bpttSteps`.  Before we've taken `bpttSteps` though,
+  // we will be backpropagating shorter sequences.
+  for (size_t t = 0; t < predictors.n_slices; ++t)
   {
     SetCurrentStep(t, (t == (predictors.n_slices - 1)));
 
@@ -461,7 +437,7 @@ typename MatType::elem_type RNN<
     // Now backpropagate through time, starting with the current time step and
     // moving backwards.
     MatType error;
-    for (size_t step = 0; step < effectiveBPTTSteps; ++step)
+    for (size_t step = 0; step < std::min(t + 1, effectiveBPTTSteps); ++step)
     {
       SetCurrentStep(t - step, (step == 0));
 

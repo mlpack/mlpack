@@ -90,7 +90,7 @@ class RNN
   //! Get the network model.
   const std::vector<Layer<MatType>*>& Network() const
   {
-    return network.Network().Network();
+    return network.Network();
   }
 
   /**
@@ -102,7 +102,7 @@ class RNN
    */
   std::vector<Layer<MatType>*>& Network()
   {
-    return network.Network().Network();
+    return network.Network();
   }
 
   /**

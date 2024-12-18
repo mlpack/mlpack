@@ -84,61 +84,6 @@ void GenerateSines(arma::cube& data,
   }
 }
 
-/*
- * This sample is a simplified version of Derek D. Monner's Distracted Sequence
- * Recall task, which involves 10 symbols:
- *
- * Targets: must be recognized and remembered by the network.
- * Distractors: never need to be remembered.
- * Prompts: direct the network to give an answer.
- *
- * A single trial consists of a temporal sequence of 10 input symbols. The first
- * 8 consist of 2 randomly chosen target symbols and 6 randomly chosen
- * distractor symbols in an random order. The remaining two symbols are two
- * prompts, which direct the network to produce the first and second target in
- * the sequence, in order.
- *
- * For more information, see the following paper.
- *
- * @code
- * @misc{Monner2012,
- *   author = {Monner, Derek and Reggia, James A},
- *   title = {A generalized LSTM-like training algorithm for second-order
- *   recurrent neural networks},
- *   year = {2012}
- * }
- * @endcode
- *
- * @param input The generated input sequence.
- * @param input The generated output sequence.
- */
-void GenerateDistractedSequence(arma::mat& input, arma::mat& output)
-{
-  input = arma::zeros<arma::mat>(10, 10);
-  output = arma::zeros<arma::mat>(3, 10);
-
-  arma::uvec index = arma::shuffle(arma::linspace<arma::uvec>(0, 7, 8));
-
-  // Set the target in the input sequence and the corresponding targets in the
-  // output sequence by following the correct order.
-  for (size_t i = 0; i < 2; ++i)
-  {
-    size_t idx = rand() % 2;
-    input(idx, index(i)) = 1;
-    output(idx, index(i) > index(i == 0) ? 9 : 8) = 1;
-  }
-
-  for (size_t i = 2; i < 8; ++i)
-    input(2 + rand() % 6, index(i)) = 1;
-
-  // Set the prompts which direct the network to give an answer.
-  input(8, 8) = 1;
-  input(9, 9) = 1;
-
-  input.reshape(input.n_elem, 1);
-  output.reshape(output.n_elem, 1);
-}
-
 /**
  * Create a simple recurrent neural network for the noisy sines task, and
  * require that it produces the exact same network for a few batch sizes.
@@ -208,8 +153,90 @@ TEST_CASE("LinearRecurrentBatchSizeTest", "[RecurrentNetworkTest]")
  */
 TEST_CASE("LSTMBatchSizeTest", "[RecurrentNetworkTest]")
 {
-  // TODO: revert to LSTM
-  BatchSizeTest<Linear>();
+  BatchSizeTest<LSTM>();
+}
+
+/**
+ * Generate a super simple impulse whose response is a step function at the same
+ * time step.  The impulse occurs at a random time in each dimension.
+ *
+ * Predicting this sequence is a super easy task for a recurrent network, but
+ * not possible without a recurrent connection.
+ */
+void GenerateImpulseStepData(arma::cube& data,
+                             arma::cube& responses,
+                             const size_t dimensions,
+                             const size_t numSequences,
+                             const size_t seqLen)
+{
+  data.zeros(dimensions, numSequences, seqLen);
+  responses.zeros(dimensions, numSequences, seqLen);
+
+  for (size_t i = 0; i < numSequences; ++i)
+  {
+    for (size_t j = 0; j < dimensions; ++j)
+    {
+      const size_t impulseStep = RandInt(0, seqLen - 1);
+
+      data(j, i, impulseStep) = 1.0;
+      responses.subcube(j, i, impulseStep, j, i, seqLen - 1).fill(1.0);
+    }
+  }
+}
+
+/**
+ * Test that the recurrent layer is always able to learn to hold the output at 1
+ * when the input impulse happens.
+ */
+template<typename RecurrentLayerType>
+double ImpulseStepDataTest(const size_t dimensions, const size_t rho)
+{
+  arma::cube data, responses;
+
+  GenerateImpulseStepData(data, responses, dimensions, 1000, 50);
+
+  arma::cube trainData = data.cols(0, 699);
+  arma::cube trainResponses = responses.cols(0, 699);
+  arma::cube testData = data.cols(700, 999);
+  arma::cube testResponses = responses.cols(700, 999);
+
+  RNN<MeanSquaredError, ConstInitialization> net(rho);
+  net.Add<RecurrentLayerType>(dimensions);
+
+  const size_t numEpochs = 50;
+  RMSProp opt(0.003, 32, 0.9, 1e-08, 700 * numEpochs, 1e-5);
+
+  net.Train(trainData, trainResponses, opt, ens::ProgressBar());
+  net.Parameters().print("network parameters");
+
+  arma::cube testPreds;
+  net.Predict(testData, testPreds);
+
+  arma::rowvec testData1 = vectorise(testData.col(0)).t();
+  arma::rowvec testPred1 = vectorise(testPreds.col(0)).t();
+  arma::rowvec testResp1 = vectorise(testResponses.col(0)).t();
+
+  testData1.print("testData1");
+  testPred1.print("testPred1");
+  testResp1.print("testResp1");
+
+  // Compute the MSE of the test data.
+  const double error = std::sqrt(sum(square(
+      vectorise(testPreds) - vectorise(testResponses)))) / testPreds.n_elem;
+
+  return error;
+}
+
+TEST_CASE("RNNImpulseStepLinearRecurrentTest", "[RecurrentNetworkTest]")
+{
+  const double err = ImpulseStepDataTest<LinearRecurrent>(1, 5);
+  REQUIRE(err <= 0.001);
+}
+
+TEST_CASE("RNNImpulseStepLSTMTest", "[RecurrentNetworkTest]")
+{
+  const double err = ImpulseStepDataTest<LSTM>(1, 5);
+  REQUIRE(err <= 0.001);
 }
 
 /**
@@ -220,8 +247,8 @@ TEST_CASE("LSTMBatchSizeTest", "[RecurrentNetworkTest]")
  *    step).
  * @param numSequences Number of sequences to generate.
  * @param seqLen Length of each sequence (time steps).
- * @param gain The gain on the amplitude
- * @param freq The frequency of the sine wave
+ * @param gain The maximum gain on the amplitude
+ * @param freq The maximum frequency of the sine wave
  * @param noisePercent The percent noise to induce
  * @param numCycles How many full size wave cycles required. All the data
  *        points will be fit into these cycles.
@@ -231,22 +258,19 @@ void GenerateNoisySinRNN(arma::cube& data,
                          const size_t numSequences,
                          const size_t seqLen,
                          const double gain = 1.0,
-                         const int freq = 10,
-                         const int noisePercent = 20,
-                         const double numCycles = 6.0)
+                         const double freq = 0.05,
+                         const double noisePercent = 5)
 {
-  const double interval = numCycles / freq / seqLen;
-
   data.set_size(1, numSequences, seqLen + 1);
 
   for (size_t i = 0; i < numSequences; ++i)
   {
     // Create the time steps with a random offset.
-    arma::vec t = 100.0 * Random() * arma::linspace<arma::vec>(0, seqLen,
+    arma::vec t = 100.0 * Random() + arma::linspace<arma::vec>(0, seqLen,
         seqLen + 1);
 
-    data.tube(0, i) = arma::sin(2 * M_PI * freq * interval * t) +
-        noisePercent * gain / 100.0 * arma::randu<arma::vec>(seqLen + 1);
+    data.tube(0, i) = gain * (arma::sin(2 * M_PI * freq * t)); //+
+         //noisePercent / 100.0 * arma::randu<arma::vec>(seqLen + 1));
   }
 
   // Make the responses as a time-shifted version of the data.
@@ -276,6 +300,11 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 10)
   arma::cube data, responses;
   GenerateNoisySinRNN(data, responses, 500, rho + 10);
 
+  arma::colvec dataV = vectorise(data.col(0));
+  arma::colvec respV = vectorise(responses.col(0));
+  std::cout << "data: " << dataV.rows(0, 10).t();
+  std::cout << "resp: " << respV.rows(0, 10).t();
+
   // Break into training and test sets. Simply split along columns.
   size_t trainCols = data.n_cols * 0.8; // Take 20% out for testing.
   size_t testCols = data.n_cols - trainCols;
@@ -284,11 +313,11 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 10)
   arma::cube testResponses = responses.subcube(0, responses.n_cols - testCols,
       0, responses.n_rows - 1, responses.n_cols - 1, responses.n_slices - 1);
 
-  RMSProp opt(1e-4, 16, 0.9, 1e-08, trainCols * numEpochs, 1e-5);
+  RMSProp opt(0.001, 500, 0.9, 1e-08, trainCols * numEpochs, 1e-5);
 
   net.Train(data.subcube(0, 0, 0, data.n_rows - 1, trainCols - 1,
       data.n_slices - 1), responses.subcube(0, 0, 0, responses.n_rows - 1,
-      trainCols - 1, responses.n_slices - 1), opt);
+      trainCols - 1, responses.n_slices - 1), opt, ens::ProgressBar());
 
   // Well now it should be trained. Do the test here.
   arma::cube prediction;
@@ -296,8 +325,13 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 10)
 
   // The prediction must really follow the test data. So convert both the test
   // data and the pediction to vectors and compare the two.
-  arma::colvec testVector = vectorise(testData);
-  arma::colvec predVector = vectorise(prediction);
+  arma::colvec testVector = vectorise(testData.col(0));
+  arma::colvec predVector = vectorise(prediction.col(0));
+  arma::colvec testResp = vectorise(testResponses.col(0));
+
+  std::cout << "testVector: " << testVector.rows(0, 10).t();
+  std::cout << "predVector: " << predVector.rows(0, 10).t();
+  std::cout << "testResp:   " << testResp.rows(0, 10).t();
 
   // Adjust the vectors for comparison, as the prediction is one step ahead.
   testVector = testVector.rows(1, testVector.n_rows - 1);
@@ -313,15 +347,19 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 10)
  */
 TEST_CASE("RNNSineLinearRecurrentTest", "[RecurrentNetworkTest]")
 {
+  const double err2 = RNNSineTest<Linear>(5, 15, 20);
+  std::cout << "err2: " << err2 << "\n";
   const double err = RNNSineTest<LinearRecurrent>(5, 15, 20);
+  std::cout << "err: " << err << "\n";
   REQUIRE(err <= 0.05);
 }
 
-//TEST_CASE("RNNSineLSTMTest", "[RecurrentNetworkTest]")
-//{
-//  const double err = RNNSineTest<LSTM>(4, 10, 20);
-//  REQUIRE(err <= 0.25);
-//}
+TEST_CASE("RNNSineLSTMTest", "[RecurrentNetworkTest]")
+{
+  const double err = RNNSineTest<LSTM>(4, 10, 20);
+  std::cout << "err: " << err << "\n";
+  REQUIRE(err <= 0.25);
+}
 
 /**
  * Test that RNN::Train() does not give an error for large rho.
@@ -412,4 +450,188 @@ TEST_CASE("RNNFFNTest", "[RecurrentNetworkTest]")
 
   // Now, the weights should be the same!
   CheckMatrices(ffn.Parameters(), rnn.Parameters());
+}
+
+/*
+ * This sample is a simplified version of Derek D. Monner's Distracted Sequence
+ * Recall task, which involves 10 symbols:
+ *
+ * Targets: must be recognized and remembered by the network.
+ * Distractors: never need to be remembered.
+ * Prompts: direct the network to give an answer.
+ *
+ * A single trial consists of a temporal sequence of 10 input symbols. The first
+ * 8 consist of 2 randomly chosen target symbols and 6 randomly chosen
+ * distractor symbols in an random order. The remaining two symbols are two
+ * prompts, which direct the network to produce the first and second target in
+ * the sequence, in order.
+ *
+ * For more information, see the following paper.
+ *
+ * @code
+ * @misc{Monner2012,
+ *   author = {Monner, Derek and Reggia, James A},
+ *   title = {A generalized LSTM-like training algorithm for second-order
+ *   recurrent neural networks},
+ *   year = {2012}
+ * }
+ * @endcode
+ *
+ * @param input The generated input sequence.
+ * @param output The generated output sequence.
+ * @param numSequences The number of sequences to generate.
+ */
+void GenerateDistractedSequence(arma::cube& input,
+                                arma::cube& output,
+                                const size_t numSequences)
+{
+  input.zeros(10, numSequences, 10);
+  output.zeros(2, numSequences, 10);
+
+  for (size_t i = 0; i < numSequences; ++i)
+  {
+    arma::uvec index = arma::shuffle(arma::linspace<arma::uvec>(0, 7, 8));
+
+    // Set the target in the input sequence and the corresponding targets in the
+    // output sequence by following the correct order.
+    const size_t idx = RandInt(0, 2);
+    input(idx, i, index(0)) = 1;
+    // The response for this index comes first if index(j) comes before the
+    // other target index.
+    output(idx, i, (index(0) > index(1)) ? 9 : 8) = 1;
+
+    const size_t idx2 = (idx + 1) % 2;
+    input(idx2, i, index(1)) = 1;
+    output(idx2, i, (index(1) > index(0)) ? 9 : 8) = 1;
+
+    for (size_t j = 2; j < 8; ++j)
+      input(2 + RandInt(0, 6), i, index(j)) = 1;
+
+    // Set the prompts which direct the network to give an answer.
+    input(8, i, 8) = 1;
+    input(9, i, 9) = 1;
+  }
+}
+
+// This custom ensmallen callback that computes the number of sequences
+// that are predicted correctly.  If that goes above a threshold, we terminate
+// early.
+class DistractedSequenceTestSetCallback
+{
+ public:
+  DistractedSequenceTestSetCallback(const arma::cube& testInput,
+                                    const arma::cube& testLabels) :
+      testInput(testInput), testLabels(testLabels), error(1.0) { }
+
+  // This is called at the end of each epoch of training.
+  template<typename OptimizerType, typename FunctionType, typename MatType>
+  bool EndEpoch(OptimizerType& /* opt */,
+                FunctionType& network,
+                const MatType& /* coordinates */,
+                const size_t epoch,
+                const double objective)
+  {
+    // Don't bother checking accuracy before 50 epochs.
+    if (epoch < 50)
+      return false;
+
+    // Compute the predictions on the test set.
+    arma::cube testPreds;
+    network.Predict(testInput, testPreds);
+
+    // Binarize the output to 0/1.
+    for (size_t j = 0; j < testPreds.n_slices; ++j)
+      data::Binarize(testPreds.slice(j), testPreds.slice(j), 0.5);
+
+    // Count the number of columns where we got one or more time slice
+    // predictions incorrect.
+    //
+    // The expression is a little complicated, but the inner max(sum(...))
+    // returns 1 if a sequence was wrong and 0 if a sequence was correct.
+    const double numIncorrect = accu(max(max(testLabels != testPreds, 0), 2));
+    error = std::min(error, numIncorrect / testLabels.n_cols);
+
+    std::cout << "Epoch " << epoch << ": error " << error << "; objective "
+        << objective << ".\n";
+    if (error <= 0.15)
+    {
+      // Terminate the optimization early.
+      return true;
+    }
+
+    // Continue the optimization.
+    return false;
+  }
+
+  // Get the last computed error.
+  double Error() const { return error; }
+
+ private:
+  const arma::cube& testInput;
+  const arma::cube& testLabels;
+  double error;
+};
+
+/**
+ * Train the specified network and the construct distracted sequence recall
+ * dataset.
+ */
+template<typename RecurrentLayerType>
+void DistractedSequenceRecallTestNetwork(
+    const size_t cellSize, const size_t hiddenSize)
+{
+  arma::cube trainInput, trainLabels, testInput, testLabels;
+  const size_t trainDistractedSequenceCount = 1000;
+  const size_t testDistractedSequenceCount = 1000;
+
+  // Generate the training and test data.
+  GenerateDistractedSequence(trainInput, trainLabels,
+      trainDistractedSequenceCount);
+  GenerateDistractedSequence(testInput, testLabels,
+      testDistractedSequenceCount);
+
+  // Construct a simple network with 10 input units, a recurrent layer, a hidden
+  // layer, then a sigmoid for the output (so all outputs are between 0 and 1).
+  const size_t outputSize = 2;
+  const size_t rho = 10;
+
+  // Initialize weights in [-0.1, 0.1) as suggested in the paper.
+  RNN<MeanSquaredError> model(rho, false, MeanSquaredError(),
+      RandomInitialization(-0.1, 0.1));
+  model.Add<LinearNoBias>(cellSize);
+  model.Add<RecurrentLayerType>(hiddenSize);
+  model.Add<LinearNoBias>(outputSize);
+  model.Add<Sigmoid>();
+
+  // Make a forward pass to initialize the weights.  Then we will set the biases
+  // to 0.
+  arma::cube tmp;
+  model.Predict(trainInput, tmp);
+  //(dynamic_cast<LSTM*>(model.Network()[1]))->InputGateBias().zeros();
+  //(dynamic_cast<LSTM*>(model.Network()[1]))->OutputGateBias().zeros();
+  //(dynamic_cast<LSTM*>(model.Network()[1]))->ForgetGateBias().zeros();
+  //(dynamic_cast<LSTM*>(model.Network()[1]))->BlockInputBias().zeros();
+
+  // Allow up to 250 epochs for training.  In the paper, the standard LSTM took
+  // on average 80k iterations (so 80 epochs, since we have 1k training
+  // sequences) before the network reached 95% accuracy.
+  StandardSGD opt(0.015, 16, 250 * trainInput.n_cols, 1e-8);
+
+  // This callback will terminate training early when accuracy reaches 90%.  At
+  // least 50 epochs of training are required.
+  DistractedSequenceTestSetCallback cb(testInput, testLabels);
+  model.Train(trainInput, trainLabels, opt, cb);
+  std::cout << "Parameter size: " << model.Parameters().n_elem << "\n";
+
+  // We only require 85% accuracy.
+  REQUIRE(cb.Error() <= 0.15);
+}
+
+/**
+ * Train the specified networks on the Derek D. Monner's distracted sequence
+ * recall task.
+ */
+TEST_CASE("LSTMDistractedSequenceRecallTest", "[RecurrentNetworkTest]")
+{
+  DistractedSequenceRecallTestNetwork<LSTM>(10, 8);
 }
