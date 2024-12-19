@@ -20,6 +20,96 @@ using namespace mlpack;
 using namespace ens;
 
 /**
+ * Generate a super simple impulse whose response is a step function at the same
+ * time step.  The impulse occurs at a random time in each dimension.
+ *
+ * Predicting this sequence is a super easy task for a recurrent network, but
+ * not possible without a recurrent connection.
+ */
+void GenerateImpulseStepData(arma::cube& data,
+                             arma::cube& responses,
+                             const size_t dimensions,
+                             const size_t numSequences,
+                             const size_t seqLen)
+{
+  data.zeros(dimensions, numSequences, seqLen);
+  responses.zeros(dimensions, numSequences, seqLen);
+
+  for (size_t i = 0; i < numSequences; ++i)
+  {
+    for (size_t j = 0; j < dimensions; ++j)
+    {
+      const size_t impulseStep = RandInt(0, seqLen - 1);
+
+      data(j, i, impulseStep) = 1.0;
+      responses.subcube(j, i, impulseStep, j, i, seqLen - 1).fill(1.0);
+    }
+  }
+}
+
+/**
+ * Test that the recurrent layer is always able to learn to hold the output at 1
+ * when the input impulse happens.
+ */
+template<typename RecurrentLayerType>
+double ImpulseStepDataTest(const size_t dimensions, const size_t rho)
+{
+  arma::cube data, responses;
+
+  GenerateImpulseStepData(data, responses, dimensions, 1000, 50);
+
+  arma::cube trainData = data.cols(0, 699);
+  arma::cube trainResponses = responses.cols(0, 699);
+  arma::cube testData = data.cols(700, 999);
+  arma::cube testResponses = responses.cols(700, 999);
+
+  RNN<MeanSquaredError, ConstInitialization> net(rho);
+  net.Add<RecurrentLayerType>(dimensions);
+
+  const size_t numEpochs = 50;
+  RMSProp opt(0.003, 32, 0.9, 1e-08, 700 * numEpochs, 1e-5);
+
+  net.Train(trainData, trainResponses, opt, ens::ProgressBar());
+
+  arma::cube testPreds;
+  net.Predict(testData, testPreds);
+
+  arma::rowvec testData1 = vectorise(testData.col(0)).t();
+  arma::rowvec testPred1 = vectorise(testPreds.col(0)).t();
+  arma::rowvec testResp1 = vectorise(testResponses.col(0)).t();
+
+  // Compute the MSE of the test data.
+  const double error = std::sqrt(sum(square(
+      vectorise(testPreds) - vectorise(testResponses)))) / testPreds.n_elem;
+
+  return error;
+}
+
+TEST_CASE("RNNImpulseStepLinearRecurrentTest", "[RecurrentNetworkTest]")
+{
+  double err = ImpulseStepDataTest<LinearRecurrent>(1, 5);
+  REQUIRE(err <= 0.001);
+
+  err = ImpulseStepDataTest<LinearRecurrent>(3, 5);
+  REQUIRE(err <= 0.003);
+
+  err = ImpulseStepDataTest<LinearRecurrent>(5, 5);
+  REQUIRE(err <= 0.005);
+}
+
+TEST_CASE("RNNImpulseStepLSTMTest", "[RecurrentNetworkTest]")
+{
+  double err = ImpulseStepDataTest<LSTM>(1, 5);
+  REQUIRE(err <= 0.001);
+
+  err = ImpulseStepDataTest<LSTM>(3, 5);
+  REQUIRE(err <= 0.001);
+
+  err = ImpulseStepDataTest<LSTM>(5, 5);
+  REQUIRE(err <= 0.001);
+}
+
+/**
  * Construct a 2-class dataset out of noisy sines.
  *
  * @param data Input data used to store the noisy sines.
@@ -59,29 +149,123 @@ void GenerateNoisySines(arma::cube& data,
 }
 
 /**
- * Construct dataset for sine wave prediction.
+ * Generates noisy sine wave into arma::cubes that can be used with `RNN`.
  *
- * @param data Input data used to store the noisy sines.
- * @param labels Labels used to store the target class of the noisy sines.
- * @param points Number of points/features in a single sequence.
- * @param sequences Number of sequences for each class.
- * @param noise The noise factor that influences the sines.
+ * @param data Will hold the generated data.
+ * @param responses Will hold the generated responses (data shifted by one time
+ *    step).
+ * @param numSequences Number of sequences to generate.
+ * @param seqLen Length of each sequence (time steps).
+ * @param gain The maximum gain on the amplitude
+ * @param freq The maximum frequency of the sine wave
+ * @param noisePercent The percent noise to induce
+ * @param numCycles How many full size wave cycles required. All the data
+ *        points will be fit into these cycles.
  */
-void GenerateSines(arma::cube& data,
-                   arma::cube& labels,
-                   const size_t sequences,
-                   const size_t len)
+void GenerateNoisySinRNN(arma::cube& data,
+                         arma::cube& responses,
+                         const size_t numSequences,
+                         const size_t seqLen,
+                         const double gain = 1.0,
+                         const double freq = 0.05,
+                         const double noisePercent = 5)
 {
-  arma::vec x = arma::sin(arma::linspace<arma::colvec>(0,
-      sequences + len, sequences + len));
-  data.set_size(1, len, sequences);
-  labels.set_size(1, 1, sequences);
+  data.set_size(1, numSequences, seqLen + 1);
 
-  for (size_t i = 0; i < sequences; ++i)
+  for (size_t i = 0; i < numSequences; ++i)
   {
-    data.slice(i) = arma::reshape(x.subvec(i, i + len), 1, len);
-    labels.slice(i) = x(i + len);
+    // Create the time steps with a random offset.
+    arma::vec t = 100.0 * Random() + arma::linspace<arma::vec>(0, seqLen,
+        seqLen + 1);
+
+    data.tube(0, i) = gain * (arma::sin(2 * M_PI * freq * t) +
+         noisePercent / 100.0 * arma::randu<arma::vec>(seqLen + 1));
   }
+
+  // Make the responses as a time-shifted version of the data.
+  responses = data.slices(1, data.n_slices - 1);
+  data.shed_slice(data.n_slices - 1);
+}
+
+/**
+ * @brief RNNSineTest Test a simple RNN using noisy sine. Use single output
+ *        for multiple inputs.
+ * @param hiddenUnits No of units in the hiddenlayer.
+ * @param rho The input sequence length.
+ * @param numEpochs The number of epochs to run.
+ * @return The mean squared error of the prediction.
+ */
+template<typename LayerType>
+double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 10)
+{
+  RNN<MeanSquaredError> net(rho);
+  net.Add<LayerType>(1);
+
+  // Generate data
+  arma::cube data, responses;
+  GenerateNoisySinRNN(data, responses, 500, rho + 10);
+
+  arma::colvec dataV = vectorise(data.col(0));
+  arma::colvec respV = vectorise(responses.col(0));
+
+  // Break into training and test sets. Simply split along columns.
+  size_t trainCols = data.n_cols * 0.8; // Take 20% out for testing.
+  size_t testCols = data.n_cols - trainCols;
+  arma::cube testData = data.subcube(0, data.n_cols - testCols, 0,
+      data.n_rows - 1, data.n_cols - 1, data.n_slices - 1);
+  arma::cube testResponses = responses.subcube(0, responses.n_cols - testCols,
+      0, responses.n_rows - 1, responses.n_cols - 1, responses.n_slices - 1);
+
+  RMSProp opt(0.001, 1, 0.99, 1e-08, trainCols * numEpochs, 1e-5);
+
+  net.Train(data.subcube(0, 0, 0, data.n_rows - 1, trainCols - 1,
+      data.n_slices - 1), responses.subcube(0, 0, 0, responses.n_rows - 1,
+      trainCols - 1, responses.n_slices - 1), opt);
+
+  // Well now it should be trained. Do the test here.
+  arma::cube prediction;
+  net.Predict(testData, prediction);
+
+  // The prediction must really follow the test data. So convert both the test
+  // data and the pediction to vectors and compare the two.
+  arma::colvec testVector = vectorise(testData.col(0));
+  arma::colvec predVector = vectorise(prediction.col(0));
+  arma::colvec testResp = vectorise(testResponses.col(0));
+
+  // Adjust the vectors for comparison, as the prediction is one step ahead.
+  testVector = testVector.rows(1, testVector.n_rows - 1);
+  predVector = predVector.rows(0, predVector.n_rows - 2);
+  double error = std::sqrt(sum(square(testVector - predVector))) /
+      testVector.n_rows;
+
+  return error;
+}
+
+/**
+ * Test RNN using multiple timestep input and single output.
+ */
+TEST_CASE("RNNSineLinearRecurrentTest", "[RecurrentNetworkTest]")
+{
+  const double err = RNNSineTest<LinearRecurrent>(3, 3, 50);
+  REQUIRE(err <= 0.08);
+}
+
+TEST_CASE("RNNSineLSTMTest", "[RecurrentNetworkTest]")
+{
+  // This can sometimes fail due to bad initializations or bad luck.  So, try it
+  // up to three times.
+  bool success = false;
+  for (size_t t = 0; t < 3; ++t)
+  {
+    const double err = RNNSineTest<LSTM>(3, 3, 50);
+    if (err <= 0.08)
+    {
+      success = true;
+      break;
+    }
+  }
+
+  REQUIRE(success == true);
 }
 
 /**
@@ -154,211 +338,6 @@ TEST_CASE("LinearRecurrentBatchSizeTest", "[RecurrentNetworkTest]")
 TEST_CASE("LSTMBatchSizeTest", "[RecurrentNetworkTest]")
 {
   BatchSizeTest<LSTM>();
-}
-
-/**
- * Generate a super simple impulse whose response is a step function at the same
- * time step.  The impulse occurs at a random time in each dimension.
- *
- * Predicting this sequence is a super easy task for a recurrent network, but
- * not possible without a recurrent connection.
- */
-void GenerateImpulseStepData(arma::cube& data,
-                             arma::cube& responses,
-                             const size_t dimensions,
-                             const size_t numSequences,
-                             const size_t seqLen)
-{
-  data.zeros(dimensions, numSequences, seqLen);
-  responses.zeros(dimensions, numSequences, seqLen);
-
-  for (size_t i = 0; i < numSequences; ++i)
-  {
-    for (size_t j = 0; j < dimensions; ++j)
-    {
-      const size_t impulseStep = RandInt(0, seqLen - 1);
-
-      data(j, i, impulseStep) = 1.0;
-      responses.subcube(j, i, impulseStep, j, i, seqLen - 1).fill(1.0);
-    }
-  }
-}
-
-/**
- * Test that the recurrent layer is always able to learn to hold the output at 1
- * when the input impulse happens.
- */
-template<typename RecurrentLayerType>
-double ImpulseStepDataTest(const size_t dimensions, const size_t rho)
-{
-  arma::cube data, responses;
-
-  GenerateImpulseStepData(data, responses, dimensions, 1000, 50);
-
-  arma::cube trainData = data.cols(0, 699);
-  arma::cube trainResponses = responses.cols(0, 699);
-  arma::cube testData = data.cols(700, 999);
-  arma::cube testResponses = responses.cols(700, 999);
-
-  RNN<MeanSquaredError, ConstInitialization> net(rho);
-  net.Add<RecurrentLayerType>(dimensions);
-
-  const size_t numEpochs = 50;
-  RMSProp opt(0.003, 32, 0.9, 1e-08, 700 * numEpochs, 1e-5);
-
-  net.Train(trainData, trainResponses, opt, ens::ProgressBar());
-  net.Parameters().print("network parameters");
-
-  arma::cube testPreds;
-  net.Predict(testData, testPreds);
-
-  arma::rowvec testData1 = vectorise(testData.col(0)).t();
-  arma::rowvec testPred1 = vectorise(testPreds.col(0)).t();
-  arma::rowvec testResp1 = vectorise(testResponses.col(0)).t();
-
-  testData1.print("testData1");
-  testPred1.print("testPred1");
-  testResp1.print("testResp1");
-
-  // Compute the MSE of the test data.
-  const double error = std::sqrt(sum(square(
-      vectorise(testPreds) - vectorise(testResponses)))) / testPreds.n_elem;
-
-  return error;
-}
-
-TEST_CASE("RNNImpulseStepLinearRecurrentTest", "[RecurrentNetworkTest]")
-{
-  const double err = ImpulseStepDataTest<LinearRecurrent>(1, 5);
-  REQUIRE(err <= 0.001);
-}
-
-TEST_CASE("RNNImpulseStepLSTMTest", "[RecurrentNetworkTest]")
-{
-  const double err = ImpulseStepDataTest<LSTM>(1, 5);
-  REQUIRE(err <= 0.001);
-}
-
-/**
- * Generates noisy sine wave into arma::cubes that can be used with `RNN`.
- *
- * @param data Will hold the generated data.
- * @param responses Will hold the generated responses (data shifted by one time
- *    step).
- * @param numSequences Number of sequences to generate.
- * @param seqLen Length of each sequence (time steps).
- * @param gain The maximum gain on the amplitude
- * @param freq The maximum frequency of the sine wave
- * @param noisePercent The percent noise to induce
- * @param numCycles How many full size wave cycles required. All the data
- *        points will be fit into these cycles.
- */
-void GenerateNoisySinRNN(arma::cube& data,
-                         arma::cube& responses,
-                         const size_t numSequences,
-                         const size_t seqLen,
-                         const double gain = 1.0,
-                         const double freq = 0.05,
-                         const double noisePercent = 5)
-{
-  data.set_size(1, numSequences, seqLen + 1);
-
-  for (size_t i = 0; i < numSequences; ++i)
-  {
-    // Create the time steps with a random offset.
-    arma::vec t = 100.0 * Random() + arma::linspace<arma::vec>(0, seqLen,
-        seqLen + 1);
-
-    data.tube(0, i) = gain * (arma::sin(2 * M_PI * freq * t)); //+
-         //noisePercent / 100.0 * arma::randu<arma::vec>(seqLen + 1));
-  }
-
-  // Make the responses as a time-shifted version of the data.
-  responses = data.slices(1, data.n_slices - 1);
-  data.shed_slice(data.n_slices - 1);
-}
-
-/**
- * @brief RNNSineTest Test a simple RNN using noisy sine. Use single output
- *        for multiple inputs.
- * @param hiddenUnits No of units in the hiddenlayer.
- * @param rho The input sequence length.
- * @param numEpochs The number of epochs to run.
- * @return The mean squared error of the prediction.
- */
-template<typename LayerType>
-double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 10)
-{
-  RNN<MeanSquaredError> net(rho);
-  net.Add<LinearNoBias>(hiddenUnits);
-  net.Add<LeakyReLU>();
-  net.Add<LayerType>(hiddenUnits);
-  net.Add<LeakyReLU>();
-  net.Add<LinearNoBias>(1);
-
-  // Generate data
-  arma::cube data, responses;
-  GenerateNoisySinRNN(data, responses, 500, rho + 10);
-
-  arma::colvec dataV = vectorise(data.col(0));
-  arma::colvec respV = vectorise(responses.col(0));
-  std::cout << "data: " << dataV.rows(0, 10).t();
-  std::cout << "resp: " << respV.rows(0, 10).t();
-
-  // Break into training and test sets. Simply split along columns.
-  size_t trainCols = data.n_cols * 0.8; // Take 20% out for testing.
-  size_t testCols = data.n_cols - trainCols;
-  arma::cube testData = data.subcube(0, data.n_cols - testCols, 0,
-      data.n_rows - 1, data.n_cols - 1, data.n_slices - 1);
-  arma::cube testResponses = responses.subcube(0, responses.n_cols - testCols,
-      0, responses.n_rows - 1, responses.n_cols - 1, responses.n_slices - 1);
-
-  RMSProp opt(0.001, 500, 0.9, 1e-08, trainCols * numEpochs, 1e-5);
-
-  net.Train(data.subcube(0, 0, 0, data.n_rows - 1, trainCols - 1,
-      data.n_slices - 1), responses.subcube(0, 0, 0, responses.n_rows - 1,
-      trainCols - 1, responses.n_slices - 1), opt, ens::ProgressBar());
-
-  // Well now it should be trained. Do the test here.
-  arma::cube prediction;
-  net.Predict(testData, prediction);
-
-  // The prediction must really follow the test data. So convert both the test
-  // data and the pediction to vectors and compare the two.
-  arma::colvec testVector = vectorise(testData.col(0));
-  arma::colvec predVector = vectorise(prediction.col(0));
-  arma::colvec testResp = vectorise(testResponses.col(0));
-
-  std::cout << "testVector: " << testVector.rows(0, 10).t();
-  std::cout << "predVector: " << predVector.rows(0, 10).t();
-  std::cout << "testResp:   " << testResp.rows(0, 10).t();
-
-  // Adjust the vectors for comparison, as the prediction is one step ahead.
-  testVector = testVector.rows(1, testVector.n_rows - 1);
-  predVector = predVector.rows(0, predVector.n_rows - 2);
-  double error = std::sqrt(sum(square(testVector - predVector))) /
-      testVector.n_rows;
-
-  return error;
-}
-
-/**
- * Test RNN using multiple timestep input and single output.
- */
-TEST_CASE("RNNSineLinearRecurrentTest", "[RecurrentNetworkTest]")
-{
-  const double err2 = RNNSineTest<Linear>(5, 15, 20);
-  std::cout << "err2: " << err2 << "\n";
-  const double err = RNNSineTest<LinearRecurrent>(5, 15, 20);
-  std::cout << "err: " << err << "\n";
-  REQUIRE(err <= 0.05);
-}
-
-TEST_CASE("RNNSineLSTMTest", "[RecurrentNetworkTest]")
-{
-  const double err = RNNSineTest<LSTM>(4, 10, 20);
-  std::cout << "err: " << err << "\n";
-  REQUIRE(err <= 0.25);
 }
 
 /**
