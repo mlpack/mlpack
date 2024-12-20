@@ -1,0 +1,290 @@
+<svg width="860" height="582" viewBox="0 0 860 582" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <style>
+    g.elem rect { fill: #aaa; stroke: black; stroke-width: 1.5; }
+    g.elem:hover rect { fill: #ccc; }
+    g.pipeline_elem rect { fill: #ddd; stroke: black; stroke-width: 1.5; }
+    g.pipeline_elem:hover rect { fill: #fff; }
+    line { stroke: black; stroke-width: 1.5; }
+    a text { fill: #0366b6; }
+    a text:hover { text-decoration: underline; }
+    text.header { font-weight: bold; }
+    a text.header { fill: #031676; }
+    text { font-family: Helvetica, arial, sans-serif; font-size: 14px;
+           fill: #333; }
+  </style>
+
+  <!-- Prerequisites -->
+  <g class="elem">
+    <rect x="10" y="10" rx="20" ry="20" width="260" height="100" />
+    <a xlink:href="../user/prerequisites.html" target="_top">
+      <text x="140" y="30" text-anchor="middle" class="header">Prerequisites</text>
+    </a>
+
+    <a xlink:href="../user/install.html" target="_top">
+      <text x="140" y="55" text-anchor="middle">Installing mlpack</text>
+    </a>
+    <a xlink:href="../embedded/supported_boards.html" target="_top">
+      <text x="140" y="70" text-anchor="middle">Cross-compilation setup</text>
+    </a>
+    <a xlink:href="../quickstart/cpp.html" target="_top">
+      <text x="140" y="85" text-anchor="middle">Quickstart</text>
+    </a>
+    <a xlink:href="../user/matrices.html" target="_top">
+      <text x="140" y="100" text-anchor="middle">Matrices and data</text>
+    </a>
+  </g>
+
+  <!-- Tutorials and Examples -->
+  <g class="elem">
+    <rect x="300" y="10" rx="20" ry="20" width="260" height="100" />
+    <a xlink:href="../user/tutorials.html" target="_top">
+      <text x="430" y="30" text-anchor="middle" class="header">Tutorials and Examples</text>
+    </a>
+
+    <a xlink:href="https://github.com/mlpack/examples" target="_top">
+      <image x="320" y="49" width="14" height="14" href="github.svg" />
+      <text x="430" y="61" text-anchor="middle">mlpack examples repository</text>
+    </a>
+    <a xlink:href="https://www.youtube.com/@mlpack/videos" target="_top">
+      <image x="320" y="66" width="15" height="15" href="youtube.svg" />
+      <text x="430" y="79" text-anchor="middle">mlpack Youtube channel</text>
+    </a>
+    <a xlink:href="https://github.com/mlpack/models" target="_top">
+      <image x="320" y="85" width="14" height="14" href="github.svg" />
+      <text x="430" y="97" text-anchor="middle">mlpack models repository</text>
+    </a>
+  </g>
+
+  <!-- Utility classes -->
+  <g class="elem">
+    <a xlink:href="../user/core.html" target="_top">
+      <rect x="590" y="10" rx="20" ry="20" width="260" height="100" />
+      <text x="720" y="30" text-anchor="middle" class="header">Utility Classes</text>
+
+      <text x="660" y="62" text-anchor="middle">Math</text>
+      <text x="780" y="62" text-anchor="middle">Distances</text>
+      <text x="660" y="80" text-anchor="middle">Distributions</text>
+      <text x="780" y="80" text-anchor="middle">Kernels</text>
+      <!-- TODO: add metrics -->
+      <text x="720" y="98" text-anchor="middle">Trees</text>
+    </a>
+  </g>
+
+  <line x1="30" y1="130" x2="830" y2="130" style="stroke:black;stroke-dasharray:4;stroke-width:4" />
+
+  <text x="430" y="155" text-anchor="middle" style="font-weight:bold;font-size:125%">The Data Science Pipeline with mlpack</text>
+
+  <!-- The pipeline -->
+  <g class="pipeline">
+
+    <!-- Data loading and I/O -->
+    <g class="pipeline_elem">
+      <rect x="10" y="170" rx="20" ry="20" width="260" height="100" />
+      <a xlink:href="../user/load_save.html" target="_top">
+        <text x="140" y="190" text-anchor="middle" class="header">Data loading and I/O</text>
+      </a>
+
+      <a xlink:href="../user/load_save.html#numeric-data" target="_top">
+        <text x="140" y="215" text-anchor="middle">Numeric data</text>
+      </a>
+      <a xlink:href="../user/load_save.html#mixed-categorical-data" target="_top">
+        <text x="140" y="230" text-anchor="middle">Mixed categorical data</text>
+      </a>
+      <a xlink:href="../user/load_save.html#image-data" target="_top">
+        <text x="140" y="245" text-anchor="middle">Image data</text>
+      </a>
+      <a xlink:href="../user/load_save.html#mlpack-objects" target="_top">
+        <text x="140" y="260" text-anchor="middle">mlpack models and objects</text>
+      </a>
+    </g>
+
+    <line x1="270" y1="220" x2="300" y2="220" />
+    <line x1="298" y1="220" x2="288" y2="210" />
+    <line x1="298" y1="220" x2="288" y2="230" />
+
+    <!-- Preprocessing / feature extraction -->
+    <g class="pipeline_elem">
+      <rect x="300" y="170" rx="20" ry="20" width="260" height="100" />
+      <a xlink:href="../user/preprocessing.html" target="_top">
+        <text x="430" y="190" text-anchor="middle" class="header">Preprocessing / feature extraction</text>
+      </a>
+
+      <a xlink:href="../user/core/normalizing_labels.html" target="_top">
+        <text x="430" y="215" text-anchor="middle">Normalizing labels</text>
+      </a>
+      <a xlink:href="../user/core/split.html" target="_top">
+        <text x="430" y="230" text-anchor="middle">Dataset splitting</text>
+      </a>
+    </g>
+
+    <line x1="560" y1="220" x2="590" y2="220" />
+    <line x1="588" y1="220" x2="578" y2="210" />
+    <line x1="588" y1="220" x2="578" y2="230" />
+
+    <g class="pipeline_elem">
+      <a xlink:href="../user/transformations.html" target="_top">
+        <rect x="590" y="170" rx="20" ry="20" width="260" height="100" />
+        <text x="720" y="190" text-anchor="middle" class="header">Transformations</text>
+      </a>
+
+      <a xlink:href="../user/methods/amf.html" target="_top">
+        <text x="630" y="215" text-anchor="middle">AMF</text>
+      </a>
+      <a xlink:href="../user/methods/local_coordinate_coding.html" target="_top">
+        <text x="750" y="215" text-anchor="middle">LocalCoordinateCoding</text>
+      </a>
+      <a xlink:href="../user/methods/lmnn.html" target="_top">
+        <text x="630" y="230" text-anchor="middle">LMNN</text>
+      </a>
+      <a xlink:href="../user/methods/nca.html" target="_top">
+        <text x="700" y="230" text-anchor="middle">NCA</text>
+      </a>
+      <a xlink:href="../user/methods/nmf.html" target="_top">
+        <text x="790" y="230" text-anchor="middle">NMF</text>
+      </a>
+      <a xlink:href="../user/methods/pca.html" target="_top">
+        <text x="630" y="245" text-anchor="middle">PCA</text>
+      </a>
+      <a xlink:href="../user/methods/radical.html" target="_top">
+        <text x="700" y="245" text-anchor="middle">RADICAL</text>
+      </a>
+      <a xlink:href="../user/methods/sparse_coding.html" target="_top">
+        <text x="790" y="245" text-anchor="middle">SparseCoding</text>
+      </a>
+    </g>
+
+    <line x1="720" y1="270" x2="720" y2="295" />
+    <line x1="720" y1="295" x2="140" y2="295" />
+    <line x1="140" y1="295" x2="140" y2="320" />
+    <line x1="140" y1="318" x2="130" y2="308" />
+    <line x1="140" y1="318" x2="150" y2="308" />
+
+    <g class="pipeline_elem">
+      <a xlink:href="../user/modeling.html" target="_top">
+        <rect x="10" y="320" rx="20" ry="20" width="260" height="100" />
+        <text x="140" y="340" text-anchor="middle" class="header">Modeling</text>
+      </a>
+
+      <a xlink:href="../user/modeling.html#classification" target="_top">
+        <text x="140" y="365" text-anchor="middle">Classification</text>
+      </a>
+      <a xlink:href="../user/modeling.html#regression" target="_top">
+        <text x="140" y="380" text-anchor="middle">Regression</text>
+      </a>
+      <a xlink:href="../user/modeling.html#clustering" target="_top">
+        <text x="140" y="395" text-anchor="middle">Clustering</text>
+      </a>
+      <a xlink:href="../user/modeling.html#geometric-algorithms" target="_top">
+        <text x="140" y="410" text-anchor="middle">Geometric algorithms</text>
+      </a>
+    </g>
+
+    <line x1="270" y1="370" x2="300" y2="370" />
+    <line x1="298" y1="370" x2="288" y2="360" />
+    <line x1="298" y1="370" x2="288" y2="380" />
+
+    <g class="pipeline_elem">
+      <a xlink:href="../user/evaluation.html" target="_top">
+        <rect x="300" y="320" rx="20" ry="20" width="260" height="100" />
+        <text x="430" y="340" text-anchor="middle" class="header">Evaluation</text>
+      </a>
+
+      <!-- TODO: metrics? -->
+      <a xlink:href="../user/cv.html" target="_top">
+        <text x="430" y="365" text-anchor="middle">Cross-validation</text>
+      </a>
+      <a xlink:href="../user/hpt.html" target="_top">
+        <text x="430" y="380" text-anchor="middle">Hyperparameter tuning</text>
+      </a>
+    </g>
+
+    <line x1="560" y1="370" x2="590" y2="370" />
+    <line x1="588" y1="370" x2="578" y2="360" />
+    <line x1="588" y1="370" x2="578" y2="380" />
+
+    <g class="pipeline_elem">
+      <a xlink:href="../user/deployment.html" target="_top">
+        <rect x="590" y="320" rx="20" ry="20" width="260" height="100" />
+        <text x="720" y="340" text-anchor="middle" class="header">Deployment</text>
+      </a>
+
+      <a xlink:href="../user/compile.html" target="_top">
+        <text x="720" y="365" text-anchor="middle">Compile an mlpack program</text>
+      </a>
+      <!--
+      <a xlink:href="../user/deploy_docker.html" target="_top">
+        <text x="720" y="380" text-anchor="middle">Deploy to a Docker container</text>
+      </a>
+      -->
+      <a xlink:href="../embedded/crosscompile_armv7.html" target="_top">
+        <text x="720" y="380" text-anchor="middle">Cross-compile to a Raspberry
+Pi</text>
+      </a>
+      <a xlink:href="../user/deploy_windows.html" target="_top">
+        <text x="720" y="395" text-anchor="middle">Deploy mlpack on Windows</text>
+      </a>
+    </g>
+  </g>
+
+  <line x1="30" y1="450" x2="830" y2="450" style="stroke:black;stroke-dasharray:4;stroke-width:4;" />
+
+  <!-- final pieces -->
+  <g class="bottom">
+    <g class="elem">
+      <a xlink:href="../user/bindings.html" target="_top">
+        <rect x="155" y="480" rx="20" ry="20" width="260" height="100" />
+        <text x="285" y="500" text-anchor="middle" class="header">Bindings</text>
+      </a>
+
+      <a xlink:href="../bindings/python.html" target="_top">
+        <image x="190" y="513" width="15" height="15" href="python.svg" />
+        <text x="235" y="525" text-anchor="middle">Python</text>
+      </a>
+      <a xlink:href="../bindings/julia.html" target="_top">
+        <image x="360" y="513" width="15" height="15" href="julia.svg" />
+        <text x="335" y="525" text-anchor="middle">Julia</text>
+      </a>
+      <a xlink:href="../bindings/cli.html" target="_top">
+        <image x="190" y="528" width="15" height="15" href="terminal.svg" />
+        <text x="235" y="540" text-anchor="middle">CLI</text>
+      </a>
+      <a xlink:href="../bindings/r.html" target="_top">
+        <image x="360" y="528" width="15" height="15" href="r.svg" />
+        <text x="335" y="540" text-anchor="middle">R</text>
+      </a>
+      <a xlink:href="../bindings/go.html" target="_top">
+        <image x="190" y="543" width="15" height="15" href="gopher.svg" />
+        <text x="235" y="555" text-anchor="middle">Go</text>
+      </a>
+    </g>
+
+    <g class="elem">
+      <a xlink:href="../developer/developers.html" target="_top">
+        <rect x="445" y="480" rx="20" ry="20" width="260" height="100" />
+        <text x="575" y="500" text-anchor="middle" class="header">Developer documentation</text>
+      </a>
+
+      <a xlink:href="../developer/community.html" target="_top">
+        <text x="515" y="525" text-anchor="middle">Community</text>
+      </a>
+      <a xlink:href="../developer/gsoc.html" target="_top">
+        <text x="635" y="525" text-anchor="middle">GSoC</text>
+      </a>
+      <a xlink:href="../developer/ci.html" target="_top">
+        <text x="515" y="540" text-anchor="middle">CI/CD</text>
+      </a>
+      <a xlink:href="../developer/timer.html" target="_top">
+        <text x="635" y="540" text-anchor="middle">Timing</text>
+      </a>
+      <a xlink:href="../developer/bindings.html" target="_top">
+        <text x="515" y="555" text-anchor="middle">Binding system</text>
+      </a>
+      <a xlink:href="../developer/iodoc.html" target="_top">
+        <text x="635" y="555" text-anchor="middle">Writing a binding</text>
+      </a>
+      <a xlink:href="../developer/template_policies.html" target="_top">
+        <text x="575" y="570" text-anchor="middle">Template policies</text>
+      </a>
+    </g>
+  </g>
+</svg>
