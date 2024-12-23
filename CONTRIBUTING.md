@@ -6,9 +6,9 @@ improvements to the library, add new features that are useful to you and others,
 or have found a bug that you know how to fix, please submit a pull request!
 
 If you would like to learn more about how to get started contributing, see the
-[Community](http://www.mlpack.org/community.html) page, and if you are
+[Community](https://www.mlpack.org/doc/developer/community.html) page, and if you are
 interested in participating in Google Summer of Code, see
-[mlpack and Google Summer of Code](http://www.mlpack.org/gsoc.html).
+[mlpack and Google Summer of Code](http://www.mlpack.org/doc/developer/gsoc.html).
 
 ## Pull request process
 
