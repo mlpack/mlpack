@@ -267,6 +267,8 @@ template<typename Archive>
 void LinearRecurrentType<MatType, RegularizerType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<RecurrentLayer<MatType>>(this));
+
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
   ar(CEREAL_NVP(regularizer));
