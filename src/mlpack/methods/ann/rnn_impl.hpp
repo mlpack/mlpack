@@ -217,7 +217,7 @@ void RNN<
   network.CheckNetwork("RNN::Predict()", predictors.n_rows, true, false);
 
   results.set_size(network.network.OutputSize(), predictors.n_cols,
-      predictors.n_slices);
+      single ? 1 : predictors.n_slices);
 
   MatType inputAlias, outputAlias;
   for (size_t i = 0; i < predictors.n_cols; i += batchSize)
@@ -227,18 +227,19 @@ void RNN<
 
     // Since we aren't doing a backward pass, we don't actually need to store
     // the state for each time step---we can fit it all in one buffer.
-    ResetMemoryState(1, effectiveBatchSize);
+    ResetMemoryState(0, effectiveBatchSize);
 
     // Iterate over all time steps.
     for (size_t t = 0; t < predictors.n_slices; ++t)
     {
       SetCurrentStep(t, (t == predictors.n_slices - 1));
 
-      // Create aliases for the input and output.
+      // Create aliases for the input and output.  If we are in single mode, we
+      // always output into the same slice.
       MakeAlias(inputAlias, predictors.slice(t), predictors.n_rows,
-          effectiveBatchSize, i * predictors.slice(t).n_rows);
-      MakeAlias(outputAlias, results.slice(t), results.n_rows,
-          effectiveBatchSize, i * results.slice(t).n_rows);
+          effectiveBatchSize, i * predictors.n_rows);
+      MakeAlias(outputAlias, results.slice(single ? 0 : t), results.n_rows,
+          effectiveBatchSize, i * results.n_rows);
 
       network.Forward(inputAlias, outputAlias);
     }
@@ -282,8 +283,7 @@ void RNN<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::serialize(
-    Archive& ar, const uint32_t /* version */)
+>::serialize(Archive& ar, const uint32_t /* version */)
 {
   #ifndef MLPACK_ENABLE_ANN_SERIALIZATION
     // Note: if you define MLPACK_IGNORE_ANN_SERIALIZATION_WARNING, you had
@@ -295,6 +295,8 @@ void RNN<
           "MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See the \"Additional "
           "build options\" section of the README for more information.");
     #endif
+
+    (void) ar;
   #else
     ar(CEREAL_NVP(bpttSteps));
     ar(CEREAL_NVP(single));
@@ -441,18 +443,23 @@ typename MatType::elem_type RNN<
     {
       SetCurrentStep(t - step, (step == 0));
 
-      if (single && step > 0)
+      if (step > 0)
       {
-        // If we are in single mode, past the first step, the error is zero.
+        // Past the first step, the error is zero; only recurrent terms matter.
         error.zeros();
+
+        MakeAlias(stepData, predictors.slice(t - step), predictors.n_rows,
+            batchSize, begin * predictors.slice(t - step).n_rows);
+        MakeAlias(outputData, outputs.slice((t - step) % effectiveBPTTSteps),
+            outputs.n_rows, outputs.n_cols);
       }
       else
       {
         // Otherwise, use the backward pass on the output layer to compute the
         // error.
         const size_t responseStep = (single) ? 0 : t - step;
-        MakeAlias(stepData, predictors.slice(responseStep), predictors.n_rows,
-            batchSize, begin * predictors.slice(responseStep).n_rows);
+        MakeAlias(stepData, predictors.slice(t - step), predictors.n_rows,
+            batchSize, begin * predictors.slice(t - step).n_rows);
         MakeAlias(responseData, responses.slice(responseStep), responses.n_rows,
             batchSize, begin * responses.slice(responseStep).n_rows);
         MakeAlias(outputData, outputs.slice((t - step) % effectiveBPTTSteps),
@@ -463,21 +470,21 @@ typename MatType::elem_type RNN<
 
         // Compute the output error.
         network.outputLayer.Backward(outputData, responseData, error);
-
-        // Now backpropagate that error through the network, and compute the
-        // gradient.
-        //
-        // TODO: note that we could avoid the copy of currentGradient by having
-        // each layer *add* its gradient to `gradient`.  However that would
-        // require some amount of refactoring.
-        MatType networkDelta;
-        GradType currentGradient(gradient.n_rows, gradient.n_cols,
-            GetFillType<MatType>::zeros);
-        network.network.Backward(stepData, outputData, error, networkDelta);
-        network.network.Gradient(stepData, error, currentGradient);
-
-        gradient += currentGradient;
       }
+
+      // Now backpropagate that error through the network, and compute the
+      // gradient.
+      //
+      // TODO: note that we could avoid the copy of currentGradient by having
+      // each layer *add* its gradient to `gradient`.  However that would
+      // require some amount of refactoring.
+      MatType networkDelta;
+      GradType currentGradient(gradient.n_rows, gradient.n_cols,
+          GetFillType<MatType>::zeros);
+      network.network.Backward(stepData, outputData, error, networkDelta);
+      network.network.Gradient(stepData, error, currentGradient);
+
+      gradient += currentGradient;
     }
   }
 

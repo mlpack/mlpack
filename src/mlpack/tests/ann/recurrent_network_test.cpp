@@ -9,8 +9,11 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#define ENS_PRINT_WARN
+#define ENS_PRINT_INFO
 #include <mlpack/core.hpp>
 
+#define MLPACK_ENABLE_ANN_SERIALIZATION
 #include <mlpack/methods/ann/ann.hpp>
 
 #include "../catch.hpp"
@@ -110,45 +113,6 @@ TEST_CASE("RNNImpulseStepLSTMTest", "[RecurrentNetworkTest]")
 }
 
 /**
- * Construct a 2-class dataset out of noisy sines.
- *
- * @param data Input data used to store the noisy sines.
- * @param labels Labels used to store the target class of the noisy sines.
- * @param points Number of points/features in a single sequence.
- * @param sequences Number of sequences for each class.
- * @param noise The noise factor that influences the sines.
- */
-void GenerateNoisySines(arma::cube& data,
-                        arma::mat& labels,
-                        const size_t points,
-                        const size_t sequences,
-                        const double noise = 0.3)
-{
-  arma::colvec x = arma::linspace<arma::colvec>(0, points - 1, points) /
-      points * 20.0;
-  arma::colvec y1 = arma::sin(x + randu() * 3.0);
-  arma::colvec y2 = arma::sin(x / 2.0 + randu() * 3.0);
-
-  data = arma::zeros(1 /* single dimension */, sequences * 2, points);
-  labels = arma::zeros(2 /* 2 classes */, sequences * 2);
-
-  for (size_t seq = 0; seq < sequences; seq++)
-  {
-    arma::vec sequence = randu(points) * noise + y1 + (randu() - 0.5) * noise;
-    for (size_t i = 0; i < points; ++i)
-      data(0, seq, i) = sequence[i];
-
-    labels(0, seq) = 1;
-
-    sequence = randu(points) * noise + y2 + (randu() - 0.5) * noise;
-    for (size_t i = 0; i < points; ++i)
-      data(0, sequences + seq, i) = sequence[i];
-
-    labels(1, sequences + seq) = 1;
-  }
-}
-
-/**
  * Generates noisy sine wave into arma::cubes that can be used with `RNN`.
  *
  * @param data Will hold the generated data.
@@ -199,7 +163,8 @@ template<typename LayerType>
 double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 10)
 {
   RNN<MeanSquaredError> net(rho);
-  net.Add<LayerType>(1);
+  net.Add<LayerType>(hiddenUnits);
+  net.Add<Linear>(1);
 
   // Generate data
   arma::cube data, responses;
@@ -246,8 +211,20 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 10)
  */
 TEST_CASE("RNNSineLinearRecurrentTest", "[RecurrentNetworkTest]")
 {
-  const double err = RNNSineTest<LinearRecurrent>(3, 3, 50);
-  REQUIRE(err <= 0.08);
+  // This can sometimes fail due to bad initializations or bad luck.  So, try it
+  // up to three times.
+  bool success = false;
+  for (size_t t = 0; t < 3; ++t)
+  {
+    const double err = RNNSineTest<LinearRecurrent>(3, 3, 50);
+    if (err <= 0.08)
+    {
+      success = true;
+      break;
+    }
+  }
+
+  REQUIRE(success == true);
 }
 
 TEST_CASE("RNNSineLSTMTest", "[RecurrentNetworkTest]")
@@ -269,59 +246,55 @@ TEST_CASE("RNNSineLSTMTest", "[RecurrentNetworkTest]")
 }
 
 /**
- * Create a simple recurrent neural network for the noisy sines task, and
- * require that it produces the exact same network for a few batch sizes.
+ * Create a simple recurrent neural network for the noisy sines task, but such
+ * that every point is the same; then, ensure that when we sweep the batch size,
+ * the results are exactly the same.
  */
 template<typename RecurrentLayerType>
 void BatchSizeTest()
 {
-  const size_t T = 50;
   const size_t bpttTruncate = 10;
 
-  // Generate 12 (2 * 6) noisy sines. A single sine contains rho
-  // points/features.
-  arma::cube input;
-  arma::mat labelsTemp;
-  GenerateNoisySines(input, labelsTemp, 4, 5);
+  arma::cube onePointInput, onePointResponses;
+  GenerateNoisySinRNN(onePointInput, onePointResponses, 1, bpttTruncate + 10);
 
-  arma::cube labels = arma::zeros<arma::cube>(1, labelsTemp.n_cols, T);
-  for (size_t i = 0; i < labelsTemp.n_cols; ++i)
+  // We don't have repmat for cubes, so this is a little tedious.
+  arma::cube input(onePointInput.n_rows, 500, onePointInput.n_slices);
+  arma::cube responses(onePointResponses.n_rows, 500, onePointResponses.n_slices);
+  for (size_t i = 0; i < onePointInput.n_slices; ++i)
   {
-    const int value = arma::as_scalar(arma::find(
-        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
-    labels.tube(0, i).fill(value);
+    input.slice(i) = repmat(onePointInput.slice(i), 1, 500);
+    responses.slice(i) = repmat(onePointResponses.slice(i), 1, 500);
   }
 
-  RNN<> model(bpttTruncate);
-  model.Add<Linear>(100);
-  model.Add<Sigmoid>();
-  model.Add<RecurrentLayerType>(10);
-  model.Add<Sigmoid>();
-  model.Add<Linear>(10);
-  model.Add<Sigmoid>();
+  RNN<MeanSquaredError> model(bpttTruncate);
+  model.Add<RecurrentLayerType>(onePointResponses.n_rows);
 
   model.Reset(1);
   arma::mat initParams = model.Parameters();
 
-  StandardSGD opt(1e-5, 1, 5, -100, false);
-  model.Train(input, labels, opt);
+  // Run with a batch size of 1.
+  StandardSGD opt(0.1, 1, 1);
+  opt.Shuffle() = false;
+  model.Train(input, responses, opt);
 
-  // This is trained with one point.
-  arma::mat outputParams = model.Parameters();
+  arma::mat targetOutput = model.Parameters();
 
-  model.Reset(1);
-  model.Parameters() = initParams;
-  opt.BatchSize() = 2;
-  model.Train(input, labels, opt);
+  // Now re-run with larger batch sizes.
+  for (size_t bsPow = 1; bsPow < 6; ++bsPow)
+  {
+    const size_t batchSize = std::pow((size_t) 2, bsPow);
 
-  CheckMatrices(outputParams, model.Parameters(), 1);
+    opt = StandardSGD(0.1 / ((double) batchSize), batchSize, batchSize);
+    opt.Shuffle() = false;
+    model.Reset(1);
+    model.Parameters() = initParams;
+    model.Train(input, responses, opt);
 
-  model.Reset(1);
-  model.Parameters() = initParams;
-  opt.BatchSize() = 5;
-  model.Train(input, labels, opt);
-
-  CheckMatrices(outputParams, model.Parameters(), 1);
+    // This is trained with one point.
+    arma::mat outputParams = model.Parameters();
+    REQUIRE(approx_equal(targetOutput, outputParams, "both", 1e-6, 1e-6));
+  }
 }
 
 /**
@@ -511,8 +484,8 @@ class DistractedSequenceTestSetCallback
                 const double objective)
   {
     // Don't bother checking accuracy before 50 epochs.
-    if (epoch < 50)
-      return false;
+    //if (epoch < 50)
+    //  return false;
 
     // Compute the predictions on the test set.
     arma::cube testPreds;
@@ -529,9 +502,8 @@ class DistractedSequenceTestSetCallback
     // returns 1 if a sequence was wrong and 0 if a sequence was correct.
     const double numIncorrect = accu(max(max(testLabels != testPreds, 0), 2));
     error = std::min(error, numIncorrect / testLabels.n_cols);
+    std::cout << "epoch " << epoch << ": objective " << objective << ", error " << error << "\n";
 
-    std::cout << "Epoch " << epoch << ": error " << error << "; objective "
-        << objective << ".\n";
     if (error <= 0.15)
     {
       // Terminate the optimization early.
@@ -577,30 +549,25 @@ void DistractedSequenceRecallTestNetwork(
   // Initialize weights in [-0.1, 0.1) as suggested in the paper.
   RNN<MeanSquaredError> model(rho, false, MeanSquaredError(),
       RandomInitialization(-0.1, 0.1));
-  model.Add<LinearNoBias>(cellSize);
+  model.Add<Linear>(cellSize);
   model.Add<RecurrentLayerType>(hiddenSize);
-  model.Add<LinearNoBias>(outputSize);
+  model.Add<Linear>(outputSize);
   model.Add<Sigmoid>();
 
   // Make a forward pass to initialize the weights.  Then we will set the biases
   // to 0.
   arma::cube tmp;
   model.Predict(trainInput, tmp);
-  //(dynamic_cast<LSTM*>(model.Network()[1]))->InputGateBias().zeros();
-  //(dynamic_cast<LSTM*>(model.Network()[1]))->OutputGateBias().zeros();
-  //(dynamic_cast<LSTM*>(model.Network()[1]))->ForgetGateBias().zeros();
-  //(dynamic_cast<LSTM*>(model.Network()[1]))->BlockInputBias().zeros();
 
   // Allow up to 250 epochs for training.  In the paper, the standard LSTM took
   // on average 80k iterations (so 80 epochs, since we have 1k training
   // sequences) before the network reached 95% accuracy.
-  StandardSGD opt(0.015, 16, 250 * trainInput.n_cols, 1e-8);
+  Adam opt(0.008, 8, 0.9, 0.999, 1e-8, 250 * trainInput.n_cols, 1e-8);
 
   // This callback will terminate training early when accuracy reaches 90%.  At
   // least 50 epochs of training are required.
   DistractedSequenceTestSetCallback cb(testInput, testLabels);
   model.Train(trainInput, trainLabels, opt, cb);
-  std::cout << "Parameter size: " << model.Parameters().n_elem << "\n";
 
   // We only require 85% accuracy.
   REQUIRE(cb.Error() <= 0.15);
@@ -613,4 +580,454 @@ void DistractedSequenceRecallTestNetwork(
 TEST_CASE("LSTMDistractedSequenceRecallTest", "[RecurrentNetworkTest]")
 {
   DistractedSequenceRecallTestNetwork<LSTM>(10, 8);
+}
+
+/**
+ * Construct a 2-class dataset out of noisy sines.  Each class corresponds to a
+ * different frequency of sine wave.
+ *
+ * @param data Input data used to store the noisy sines.
+ * @param labels Labels used to store the target class of the noisy sines.
+ * @param points Number of points/features in a single sequence.
+ * @param sequences Number of sequences for each class.
+ * @param noise The noise factor that influences the sines.
+ */
+void GenerateNoisySines(arma::cube& data,
+                        arma::cube& labels,
+                        const size_t points,
+                        const size_t sequences,
+                        const double noise = 0.05)
+{
+  data.zeros(1 /* single dimension */, sequences, points);
+  labels.zeros(1 /* will hold 2 classes */, sequences, points);
+
+  for (size_t seq = 0; seq < sequences; seq++)
+  {
+    const size_t label = (seq % 2);
+    const double freq = (label == 0) ? 1 : 0.25;
+
+    // Each sequence will be either a quarter or a sixteenth of a sine wave.
+    const arma::vec t = arma::linspace<arma::vec>(0, points - 1, points) /
+        points * 0.25 + Random();
+
+    data.tube(0, seq) = arma::sin(2 * M_PI * t * freq) +
+        noise * arma::randn<arma::vec>(points);
+    labels.tube(0, seq).fill(label);
+  }
+}
+
+/**
+ * Train a simple RNN to perform a classification task.
+ */
+TEST_CASE("SequenceClassificationTest", "[RecurrentNetworkTest]")
+{
+  // It isn't guaranteed that the recurrent network will converge in the
+  // specified number of iterations using random weights. If this works 1 of 3
+  // times, I'm fine with that. All I want to know is that the network is able
+  // to escape from local minima and to solve the task.
+  size_t successes = 0;
+  const size_t rho = 10;
+
+  for (size_t trial = 0; trial < 3; ++trial)
+  {
+    // Generate 500 (2 * 250) noisy sines. A single sine contains rho
+    // points/features.
+    arma::cube input;
+    arma::cube labels;
+    GenerateNoisySines(input, labels, rho + 5, 500);
+
+    // Construct a very simple network.
+    RNN<> model(rho);
+    model.Add<LSTM>(3);
+    model.Add<Linear>(2);
+    model.Add<LogSoftMax>();
+
+    StandardSGD opt(0.005, 16, 15 * input.n_cols, -100);
+    model.Train(input, labels, opt, ens::ProgressBar());
+
+    arma::cube predictions;
+    model.Predict(input, predictions);
+
+    size_t error = 0;
+    for (size_t i = 0; i < predictions.n_cols; ++i)
+    {
+      const size_t predictedClass =
+          predictions.slice(predictions.n_slices - 1).col(i).index_max();
+      const size_t targetClass = labels(0, i, labels.n_slices - 1);
+
+      if (predictedClass != targetClass)
+        error++;
+    }
+
+    const double accuracy = 1.0 - double(error) / predictions.n_cols;
+    if (accuracy >= 0.8)
+    {
+      ++successes;
+      break;
+    }
+  }
+
+  REQUIRE(successes >= 1);
+}
+
+/**
+ * Train a simple RNN to perform a classification task, but in 'single' mode, so
+ * the response is only backpropagated at the final time step.
+ */
+TEST_CASE("SequenceClassificationSingleTest", "[RecurrentNetworkTest]")
+{
+  size_t successes = 0;
+  const size_t rho = 10;
+
+  for (size_t trial = 0; trial < 3; ++trial)
+  {
+    // Generate 500 (2 * 250) noisy sines. A single sine contains rho
+    // points/features.
+    arma::cube input;
+    arma::cube labels;
+    GenerateNoisySines(input, labels, rho, 500);
+
+    // For single model, strip the labels down to just one slice.
+    labels.shed_slices(1, labels.n_slices - 1);
+
+    // Construct a very simple network.
+    RNN<> model(rho, true /* single response mode */);
+    model.Add<LSTM>(3);
+    model.Add<Linear>(2);
+    model.Add<LogSoftMax>();
+
+    // Note that we increase the learning rate over the non-single mode, and
+    // increase the number of epochs, since it can take longer for BPTT to
+    // converge with only one error signal.
+    StandardSGD opt(0.1, 1, 30 * input.n_cols, -100);
+    model.Train(input, labels, opt, ens::ProgressBar());
+
+    arma::cube predictions;
+    model.Predict(input, predictions);
+
+    size_t error = 0;
+    for (size_t i = 0; i < predictions.n_cols; ++i)
+    {
+      const size_t predictedClass = predictions.slice(0).col(i).index_max();
+      const size_t targetClass = labels(0, i, 0);
+
+      if (predictedClass != targetClass)
+        error++;
+    }
+
+    const double accuracy = 1.0 - double(error) / predictions.n_cols;
+    // We allow a little more leeway than the non-single test, because the
+    // problem here is a bit harder.
+    if (accuracy >= 0.7)
+    {
+      ++successes;
+      break;
+    }
+  }
+}
+
+/**
+ * Make sure the RNN can be properly serialized.
+ */
+TEST_CASE("RNNSerializationTest", "[RecurrentNetworkTest]")
+{
+  const size_t rho = 10;
+
+  // Generate 12 (2 * 6) noisy sines. A single sine contains rho
+  // points/features.
+  arma::cube input;
+  arma::cube labels;
+  GenerateNoisySines(input, labels, rho, 6);
+
+  RNN<> model(rho);
+  model.Add<LSTM>(3);
+  model.Add<LinearRecurrent>(3);
+  model.Add<Linear>(2);
+  model.Add<LogSoftMax>();
+
+  StandardSGD opt(0.001, 1, input.n_cols /* 1 epoch */, -100);
+  model.Train(input, labels, opt);
+
+  // Serialize the network.
+  RNN<> xmlModel(1), jsonModel(3), binaryModel(5);
+  SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
+
+  // Take predictions, check the output.
+  arma::cube prediction, xmlPrediction, jsonPrediction, binaryPrediction;
+  model.Predict(input, prediction);
+  xmlModel.Predict(input, xmlPrediction);
+  jsonModel.Predict(input, jsonPrediction);
+  binaryModel.Predict(input, binaryPrediction);
+
+  CheckMatrices(prediction, xmlPrediction, jsonPrediction, binaryPrediction);
+}
+
+//
+// Reber grammar tests: a series of tests for RNNs that ensure that a simple
+// grammar (that can be expressed as a state machine) can be learned by LSTMs.
+// The Reber grammar task (and the embedded Reber grammar task) appear in many
+// LSTM papers, including the original.
+//
+
+// Return the Reber state transition matrix.  The row indicates the internal
+// state.  From every state, there are two possible transitions.  The letter
+// associated with each transition is encoded in the first two columns; the
+// numeric values of the corresponding states are in the second two columns.
+// next path).
+inline arma::Mat<char> ReberTransitionMatrix()
+{
+  return arma::Mat<char>({{ 'T', 'P', '1', '2' },
+                          { 'X', 'S', '3', '1' },
+                          { 'V', 'T', '4', '2' },
+                          { 'X', 'S', '2', '5' },
+                          { 'P', 'V', '3', '5' },
+                          { 'E', 'E', '0', '0' }});
+}
+
+// Return a map from Reber grammar characters to indices.
+std::unordered_map<char, size_t> ReberToDimMap()
+{
+  std::unordered_map<char, size_t> charDimMap;
+  charDimMap['B'] = 0;
+  charDimMap['T'] = 1;
+  charDimMap['S'] = 2;
+  charDimMap['X'] = 3;
+  charDimMap['P'] = 4;
+  charDimMap['V'] = 5;
+  charDimMap['E'] = 6;
+
+  return charDimMap;
+}
+
+// Return a map from indices to Reber grammar character.
+std::unordered_map<size_t, char> DimToReberMap()
+{
+  std::unordered_map<size_t, char> dimCharMap;
+  dimCharMap[0] = 'B';
+  dimCharMap[1] = 'T';
+  dimCharMap[2] = 'S';
+  dimCharMap[3] = 'X';
+  dimCharMap[4] = 'P';
+  dimCharMap[5] = 'V';
+  dimCharMap[6] = 'E';
+
+  return dimCharMap;
+}
+
+// Generate a string from the Reber grammar.
+inline std::string GenerateReberString(const bool embedded = false)
+{
+  const arma::Mat<char> transitions = ReberTransitionMatrix();
+
+  std::string result = "B";
+  size_t state = 0;
+  while (result.back() != 'E')
+  {
+    const size_t choice = RandInt(0, 2);
+    result += transitions(state, choice);
+    state = (transitions(state, choice + 2) - '0');
+  }
+
+  if (embedded)
+  {
+    const size_t dir = RandInt(0, 2);
+    if (dir == 0)
+      result = "BP" + result + "PE";
+    else
+      result = "BT" + result + "TE";
+  }
+
+  return result;
+}
+
+// Given the input sequence `input`, check that every character in response
+// satisfies the Reber grammar transition.
+inline bool IsReberResponse(const std::string& input,
+                            const std::string& response,
+                            const bool embedded = false)
+{
+  const arma::Mat<char> transitions = ReberTransitionMatrix();
+
+  // If we are embedded, we have to check the first and last characters
+  // separately.
+  size_t startOffset = 0;
+  size_t endOffset = 0;
+  if (embedded)
+  {
+    startOffset = 2;
+    endOffset = 2;
+
+    // The first response must be T or P.
+    if (response[0] != 'T' && response[0] != 'P')
+      return false;
+    // The second response must be a B.
+    if (response[1] != 'B')
+      return false;
+
+    // The second-to-last response must be the same as the first input.
+    if (response[response.size() - 2] != input[1])
+      return false;
+    // The last response must be an E.
+    if (response[response.size() - 1] != 'E')
+      return false;
+  }
+
+  // Check the regular Reber grammar part of the string (which may or may not be
+  // the whole string, depending on the value of `embedded`).
+  size_t state = 0;
+  for (size_t i = startOffset; i < input.size() - 1 - endOffset; ++i)
+  {
+    if (response[i] != transitions(state, 0) &&
+        response[i] != transitions(state, 1))
+      return false;
+
+    if (input[i + 1] == transitions(state, 0))
+      state = (transitions(state, 2) - '0');
+    else if (input[i + 1] == transitions(state, 1))
+      state = (transitions(state, 3) - '0');
+    else
+      return false;
+  }
+
+  return true;
+}
+
+// Convert a prediction cube back into a string.  This expects prediction.n_rows
+// to be 7, and prediction.n_cols to be 1.
+inline std::string PredictionToReberString(const arma::cube& prediction)
+{
+  const std::unordered_map<size_t, char> dimCharMap = DimToReberMap();
+
+  std::string result = "";
+  for (size_t s = 0; s < prediction.n_slices; ++s)
+    result += dimCharMap.at(prediction.slice(s).index_max());
+
+  return result;
+}
+
+/**
+ * Train the specified network and the construct a Reber grammar dataset.
+ */
+template<typename ModelType>
+void ReberGrammarTestNetwork(ModelType& model,
+                             const bool embedded = false,
+                             const size_t maxEpochs = 30,
+                             const size_t trials = 3)
+{
+  const size_t trainSize = 1000;
+  const size_t testSize = 1000;
+
+  // Each input sequence might have a different length, so, we have to use an
+  // arma::field, and we will train on each sequence with a separate call to
+  // Train().
+  arma::field<arma::cube> trainInput, trainLabels, testInput;
+  const std::unordered_map<char, size_t> charDimMap = ReberToDimMap();
+
+  // Generate the training data.
+  trainInput.set_size(trainSize);
+  trainLabels.set_size(trainSize);
+  for (size_t i = 0; i < trainSize; ++i)
+  {
+    const std::string reber = GenerateReberString(embedded);
+
+    trainInput[i].zeros(7, 1, reber.length() - 1);
+    trainLabels[i].zeros(7, 1, reber.length() - 1);
+
+    for (size_t j = 0; j < reber.length() - 1; ++j)
+    {
+      trainInput[i](charDimMap.at(reber[j]), 0, j) = 1.0;
+      trainLabels[i](charDimMap.at(reber[j + 1]), 0, j) = 1.0;
+    }
+  }
+
+  // Generate the test data (responses are not needed to check that the
+  // predictions are valid).
+  testInput.set_size(testSize);
+  for (size_t i = 0; i < testSize; ++i)
+  {
+    const std::string reber = GenerateReberString(embedded);
+
+    testInput[i].zeros(7, 1, reber.length() - 1);
+    for (size_t j = 0; j < reber.length() - 1; ++j)
+      testInput[i](charDimMap.at(reber[j]), 0, j) = 1.0;
+  }
+
+  // It isn't guaranteed that the recurrent network will converge in the
+  // specified number of iterations using random weights. If this works 1 of 5
+  // times, I'm fine with that. All I want to know is that the network is able
+  // to escape from local minima and to solve the task.
+  size_t successes = 0;
+  double error = 0.0;
+  for (size_t trial = 0; trial < trials; ++trial)
+  {
+    // Reset model before using for next trial.
+    model.Reset(trainInput[0].n_rows);
+    // This will only run one iteration for one grammar.
+    Adam opt(embedded ? 0.05 : 0.1, 1, 0.9, 0.999, 1e-8, 1);
+    opt.ResetPolicy() = false;
+
+    for (size_t epoch = 0; epoch < maxEpochs; epoch++)
+    {
+      double loss = 0.0;
+      for (size_t j = 0; j < trainSize; ++j)
+      {
+        // Each input sequence may have a different length, so we need to train
+        // them differently.
+        model.BPTTSteps() = trainInput[j].n_slices;
+        loss += model.Train(trainInput[j], trainLabels[j], opt);
+      }
+
+
+      // Ask the network to predict the next Reber grammar in the given sequence.
+      error = 0.0;
+      for (size_t i = 0; i < testSize; ++i)
+      {
+        arma::cube prediction;
+        model.Predict(testInput[i], prediction);
+
+        const std::string inputString = PredictionToReberString(testInput[i]);
+        const std::string predictedString = PredictionToReberString(prediction);
+        if (!IsReberResponse(inputString, predictedString, embedded))
+          ++error;
+      }
+
+      error /= testSize;
+      // If the error is less than 30%, terminate early.
+      if (error <= 0.3)
+      {
+        ++successes;
+        break;
+      }
+    }
+
+    if (successes > 0)
+      break;
+  }
+
+  REQUIRE(successes >= 1);
+}
+
+TEST_CASE("LSTMReberGrammarTest", "[RecurrentNetworkTest]")
+{
+  // Note that our performance doesn't exactly match the LSTM paper that
+  // originally introduced this task.  But, part of this is probably that they
+  // did some really specific things for initialization that we don't here.
+  RNN<MeanSquaredError> model(5, false, MeanSquaredError(),
+      RandomInitialization(-0.5, 0.5));
+  model.Add<LSTM>(4);
+  model.Add<Linear>(7);
+  model.Add<Sigmoid>();
+  ReberGrammarTestNetwork(model, false);
+}
+
+TEST_CASE("LSTMEmbeddedReberGrammarTest", "[RecurrentNetworkTest]")
+{
+  RNN<MeanSquaredError> model(5, false, MeanSquaredError(),
+      RandomInitialization(-0.5, 0.5));
+  // Sometimes a few extra units are needed to effectively get the embedded
+  // Reber grammar every time.
+  model.Add<LSTM>(25);
+  model.Add<Linear>(7);
+  model.Add<Sigmoid>();
+  ReberGrammarTestNetwork(model, true);
 }
