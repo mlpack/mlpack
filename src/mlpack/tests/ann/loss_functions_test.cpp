@@ -254,9 +254,9 @@ TEST_CASE("SimpleMeanSquaredErrorTest", "[LossFunctionsTest]")
   // Test the Backward function.
   module.Backward(input, target, output);
   // We subtract a zero vector, so according to the used backward formula:
-  // output = 2 * (input - target) / target.n_cols,
+  // output = 2 * (input - target) / target.n_rows,
   // output * nofColumns / 2 should be equal to input.
-  CheckMatrices(input, output * output.n_cols / 2);
+  CheckMatrices(input, output * output.n_rows / 2);
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
 
