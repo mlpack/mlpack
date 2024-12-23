@@ -274,6 +274,6 @@ void LinearRecurrentType<MatType, RegularizerType>::serialize(
   ar(CEREAL_NVP(regularizer));
 }
 
-}
+} // namespace mlpack
 
 #endif

@@ -91,7 +91,7 @@ class RecurrentLayer : public Layer<MatType>
    * Get the number of recurrent elements that need to be stored for a time
    * step.  A child recurrent class should override this.
    */
-  virtual size_t RecurrentSize() const { return 0; };
+  virtual size_t RecurrentSize() const { return 0; }
 
   /**
    * Get the stored recurrent state at the given time step `t`.  If `t` is

@@ -294,7 +294,6 @@ class LSTMType : public RecurrentLayer<MatType>
   // Calling this function will set up workspace memory for the backward pass,
   // if necessary.
   void SetBackwardWorkspace(const size_t batchSize);
-
 }; // class LSTMType
 
 // Convenience typedefs.

@@ -260,7 +260,8 @@ void BatchSizeTest()
 
   // We don't have repmat for cubes, so this is a little tedious.
   arma::cube input(onePointInput.n_rows, 500, onePointInput.n_slices);
-  arma::cube responses(onePointResponses.n_rows, 500, onePointResponses.n_slices);
+  arma::cube responses(onePointResponses.n_rows, 500,
+      onePointResponses.n_slices);
   for (size_t i = 0; i < onePointInput.n_slices; ++i)
   {
     input.slice(i) = repmat(onePointInput.slice(i), 1, 500);
@@ -976,7 +977,8 @@ void ReberGrammarTestNetwork(ModelType& model,
       }
 
 
-      // Ask the network to predict the next Reber grammar in the given sequence.
+      // Ask the network to predict the next Reber grammar in the given
+      // sequence.
       error = 0.0;
       for (size_t i = 0; i < testSize; ++i)
       {

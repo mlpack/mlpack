@@ -176,14 +176,14 @@ TEST_CASE("TrivialLinearRecurrentLayerRecurrentTest", "[ANNLayerTest]")
   // Pass zeros through; we expect zero outputs.
   l.Forward(input, output);
 
-  REQUIRE( all(all(output == 0.0)) );
+  REQUIRE(all(all(output == 0.0)));
 
   // Now pass ones through.
   l.CurrentStep(1);
   input.ones();
   l.Forward(input, output);
 
-  REQUIRE( all(all(output == 1.0)) );
+  REQUIRE(all(all(output == 1.0)));
 
   // Now take ten steps where we pass nothing through, but expect the same
   // output each time.
@@ -193,7 +193,7 @@ TEST_CASE("TrivialLinearRecurrentLayerRecurrentTest", "[ANNLayerTest]")
     l.CurrentStep(t);
     l.Forward(input, output);
 
-    REQUIRE( all(all(output == 1.0)) );
+    REQUIRE(all(all(output == 1.0)));
   }
 }
 
