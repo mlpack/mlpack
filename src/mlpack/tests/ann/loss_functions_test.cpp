@@ -200,7 +200,7 @@ TEST_CASE("SimpleMeanSquaredLogarithmicErrorTest", "[LossFunctionsTest]")
 {
   arma::mat input, target, output, expectedOutput;
   double loss;
-  MeanSquaredLogarithmicError module;
+  MeanSquaredLogarithmicError module(true);
 
   // Test for sum reduction.
   input = arma::mat("-0.0494 1.1958 1.0486 -0.2121 1.6028 0.0737 -0.7091 "
@@ -242,7 +242,7 @@ TEST_CASE("SimpleMeanSquaredLogarithmicErrorTest", "[LossFunctionsTest]")
 TEST_CASE("SimpleMeanSquaredErrorTest", "[LossFunctionsTest]")
 {
   arma::mat input, output, target;
-  MeanSquaredError module(false);
+  MeanSquaredError module;
 
   // Test the Forward function on a user generated input and compare it against
   // the manually calculated result.

@@ -72,7 +72,7 @@ double ImpulseStepDataTest(const size_t dimensions, const size_t rho)
   const size_t numEpochs = 50;
   RMSProp opt(0.003, 32, 0.9, 1e-08, 700 * numEpochs, 1e-5);
 
-  net.Train(trainData, trainResponses, opt, ens::ProgressBar());
+  net.Train(trainData, trainResponses, opt);
 
   arma::cube testPreds;
   net.Predict(testData, testPreds);
@@ -481,11 +481,11 @@ class DistractedSequenceTestSetCallback
                 FunctionType& network,
                 const MatType& /* coordinates */,
                 const size_t epoch,
-                const double objective)
+                const double /* objective */)
   {
-    // Don't bother checking accuracy before 50 epochs.
-    //if (epoch < 50)
-    //  return false;
+    // Don't bother checking accuracy before 5 epochs.
+    if (epoch < 5)
+      return false;
 
     // Compute the predictions on the test set.
     arma::cube testPreds;
@@ -502,8 +502,6 @@ class DistractedSequenceTestSetCallback
     // returns 1 if a sequence was wrong and 0 if a sequence was correct.
     const double numIncorrect = accu(max(max(testLabels != testPreds, 0), 2));
     error = std::min(error, numIncorrect / testLabels.n_cols);
-    std::cout << "epoch " << epoch << ": objective " << objective << ", error " << error << "\n";
-
     if (error <= 0.15)
     {
       // Terminate the optimization early.
@@ -643,7 +641,7 @@ TEST_CASE("SequenceClassificationTest", "[RecurrentNetworkTest]")
     model.Add<LogSoftMax>();
 
     StandardSGD opt(0.005, 16, 15 * input.n_cols, -100);
-    model.Train(input, labels, opt, ens::ProgressBar());
+    model.Train(input, labels, opt);
 
     arma::cube predictions;
     model.Predict(input, predictions);
@@ -700,7 +698,7 @@ TEST_CASE("SequenceClassificationSingleTest", "[RecurrentNetworkTest]")
     // increase the number of epochs, since it can take longer for BPTT to
     // converge with only one error signal.
     StandardSGD opt(0.1, 1, 30 * input.n_cols, -100);
-    model.Train(input, labels, opt, ens::ProgressBar());
+    model.Train(input, labels, opt);
 
     arma::cube predictions;
     model.Predict(input, predictions);
