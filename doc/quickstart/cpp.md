@@ -37,12 +37,19 @@ docker run -it mlpack/mlpack /bin/bash
 If you prefer to build mlpack from scratch, see the
 [main README](../../README.md).
 
-**Note for Ubuntu LTS Users**: The libmlpack-dev version in the Ubuntu LTS 
+***Note for Ubuntu LTS Users***: The libmlpack-dev version in the Ubuntu LTS
 repositories may not always be the latest. This can lead to issues, such as
-missing header files (e.g., `mlpack.hpp` missing in versions prior to 4.0).
-To ensure compatibility with the latest mlpack features and examples,
-we recommend building mlpack from source, as explained in the
-[main README](../../README.md).
+missing header files (e.g., `mlpack.hpp` missing in versions prior to 4.0).  To
+ensure compatibility with the latest mlpack features and examples, we recommend
+building mlpack from source, as explained in the [main README](../../README.md).
+
+***Warning:*** on Linux systems, older versions of OpenBLAS (0.3.26 and older)
+can over-use the number of cores on your system, causing slow execution of
+mlpack programs, especially mlpack's test suite.  To prevent this, set
+`OMP_NUM_THREADS` as detailed [in the test build
+guide](../user/install.md#build-tests), or install the `libopenblas-openmp`
+package on Ubuntu or Debian, or `openblas-openmp` package on Fedora.  Ubuntu
+24.04, Debian bookworm, and Fedora 41 and older are all affected by this issue.
 
 ## Installing mlpack from vcpkg
 

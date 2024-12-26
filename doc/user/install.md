@@ -60,6 +60,14 @@ If you plan to write mlpack programs, make sure you have a C++ compiler that
 supports C++17 available (this may not be automatically installed by the package
 manager).
 
+***Warning:*** on Linux systems, older versions of OpenBLAS (0.3.26 and older)
+can over-use the number of cores on your system, causing slow execution of
+mlpack programs, especially mlpack's test suite.  To prevent this, set
+`OMP_NUM_THREADS` as detailed [below](#build-tests), or install the
+`libopenblas-openmp` package on Ubuntu or Debian, or `openblas-openmp` package
+on Fedora.  Ubuntu 24.04, Debian bookworm, and Fedora 41 and older are all
+affected by this issue.
+
 ## Install from source
 
 If you only intend to use mlpack in a C++ program, it is not necessary to
@@ -232,6 +240,24 @@ The `mlpack_test` program uses the [Catch2](https://github.com/catchorg/Catch2)
 library for unit testing; this supports many options---you can see them with
 `mlpack_test -h`.
 
+***Warning:*** on Linux systems, older versions of OpenBLAS (0.3.26 and older)
+can over-use the number of cores on your system, causing slow execution of
+mlpack programs, especially mlpack's test suite.  To prevent this, set
+`OMP_NUM_THREADS` to half the number of cores on your system; so, for a system
+with 8 cores, run
+
+```sh
+OMP_NUM_THREADS=4 bin/mlpack_test
+```
+
+This workaround should be applied to any mlpack program where:
+
+ * Compilation with OpenMP is enabled (e.g. `-fopenmp` is used),
+ * Armadillo is using OpenBLAS,
+ * OpenBLAS is version 0.3.26 or older, and
+ * OpenBLAS is compiled against pthreads (the default on Ubuntu, Debian, and
+   Fedora).
+
 ## Compiling a test program
 
 Once mlpack is installed and available on the system, it is easy to compile a
@@ -274,6 +300,9 @@ prefer different compilation options.
 ```sh
 g++ -O3 -std=c++17 -o my_program my_program.cpp -lopenblas -fopenmp
 ```
+
+ - See also the warning on OpenBLAS versions and too many threads in [the
+   previous section](#build-tests).
 
 See [the Armadillo documentation](https://arma.sourceforge.net/faq.html#linking)
 for more information on linking Armadillo programs.
