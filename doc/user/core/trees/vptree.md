@@ -266,7 +266,7 @@ accessing them does not require any computation.
    distance between the center of the hollow bounding ball of `node` and the
    furthest descendant point held by `node`.
 
- * `node.MinimumBoundDistance()` returns a `double` representing minimum
+ * `node.MinimumBoundDistance()` returns a `double` representing the minimum
    possible distance from the center of the node to any edge of the
    hollow ball bound.
    - This quantity is equivalent to `node.Bound().OuterRadius()`.
