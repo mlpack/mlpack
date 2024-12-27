@@ -116,7 +116,7 @@ dataset.
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../../matrices.md) | [Column-major](../../matrices.md#representing-data-in-mlpack) matrix to build the tree on.  Optionally pass with `std::move(data)` to transfer ownership to the tree. | _(N/A)_ |
-| `distance` | [`DistanceType`]() | Instantiated distance metric (optional). | `EuclideanDistance()` |
+| `distance` | [`DistanceType`](#template-parameters) | Instantiated distance metric (optional). | `EuclideanDistance()` |
 | `base` | `double` | Shrinkage factor of each level of the cover tree.  Must be greater than 1. | `2.0` |
 
 ***Notes:***
