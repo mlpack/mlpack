@@ -143,8 +143,9 @@ neural network, a compilation error will occur.
 
 ***Warning:*** older versions of OpenBLAS (0.3.26 and older) compiled to use
 pthreads may use too many threads for computation, causing significant slowdown.
-See the [test build guide](doc/user/install.md#build-tests) for more details and
-simple workarounds.
+OpenBLAS versions compiled with OpenMP do not suffer from this issue.  See the
+[test build guide](doc/user/install.md#build-tests) for more details and simple
+workarounds.
 
 See also:
 
