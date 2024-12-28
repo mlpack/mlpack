@@ -60,9 +60,7 @@ steps:
   displayName: 'Build'
 
 # Run tests via ctest.
-# The OMP_NUM_THREADS is to prevent thrashing on older versions of OpenBLAS
-# (0.3.26 and older) where OpenMP and pthreads aren't playing together well.
-- script: cd build && OMP_NUM_THREADS=1 CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
+- script: cd build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
   displayName: 'Run tests via ctest'
 
 # Ccache stats (two verbosity levels supported
