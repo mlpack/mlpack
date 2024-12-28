@@ -514,7 +514,7 @@ while (!stack.empty())
   TreeType* node = stack.top();
   stack.pop();
 
-  if (node->NumPoints() > 100)
+  if (node->NumDescendants() > 100)
     ++moreThan100Count;
 
   if (node->IsLeaf())
