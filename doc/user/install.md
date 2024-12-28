@@ -60,13 +60,13 @@ If you plan to write mlpack programs, make sure you have a C++ compiler that
 supports C++17 available (this may not be automatically installed by the package
 manager).
 
-***Warning:*** on Linux systems, older versions of OpenBLAS (0.3.26 and older)
-can over-use the number of cores on your system, causing slow execution of
-mlpack programs, especially mlpack's test suite.  To prevent this, set
-`OMP_NUM_THREADS` as detailed [below](#build-tests), or install the
-`libopenblas-openmp` package on Ubuntu or Debian, or `openblas-openmp` package
-on Fedora.  Ubuntu 24.04, Debian bookworm, and Fedora 41 and older are all
-affected by this issue.
+***Warning:*** on Ubuntu and Debian systems, older versions of OpenBLAS (0.3.26
+and older) can over-use the number of cores on your system, causing slow
+execution of mlpack programs, especially mlpack's test suite.  To prevent this,
+set `OMP_NUM_THREADS` as detailed [in the test build
+guide](../user/install.md#build-tests), or install the `libopenblas-openmp-dev`
+package on Ubuntu or Debian and remove `libopenblas-pthread-dev`.  Ubuntu 24.04,
+Debian bookworm, and older are all affected by this issue.
 
 ## Install from source
 
@@ -241,10 +241,11 @@ library for unit testing; this supports many options---you can see them with
 `mlpack_test -h`.
 
 ***Warning:*** on Linux systems, older versions of OpenBLAS (0.3.26 and older)
-can over-use the number of cores on your system, causing slow execution of
-mlpack programs, especially mlpack's test suite.  To prevent this, set
-`OMP_NUM_THREADS` to half the number of cores on your system; so, for a system
-with 8 cores, run
+compiled to use pthreads can over-use the number of cores on your system,
+causing slow execution of mlpack programs, especially mlpack's test suite.
+OpenBLAS versions compiled with OpenMP do not suffer from this issue.  To work
+around this problem, set `OMP_NUM_THREADS` to half the number of cores on your
+system; so, for a system with 8 cores, run
 
 ```sh
 OMP_NUM_THREADS=4 bin/mlpack_test
