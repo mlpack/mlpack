@@ -41,7 +41,7 @@ steps:
       ccache --set-config "hash_dir=false" 
       ccache --show-config
       ccache --zero-stats
-    fi  
+    fi
 
   displayName: 'Install Build Dependencies'
 

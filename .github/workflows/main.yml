@@ -54,7 +54,7 @@ jobs:
         run: |
           mkdir -p ~/.R
           cp -vax .github/etc/R_Makevars_${{ runner.os }} ~/.R/Makevars
-          
+
       - name: Configure Ccache for R
         run: |
           ccache --set-config "sloppiness=include_file_ctime"
@@ -113,7 +113,10 @@ jobs:
 
       - name: Run tests via ctest
         run: |
-          cd build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
+          # The OMP_NUM_THREADS is to prevent thrashing on older versions of
+          # OpenBLAS (0.3.26 and older) where OpenMP and pthreads aren't playing
+          # together well.
+          cd build && OMP_NUM_THREADS=2 CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
 
       - name: Upload R packages
         uses: actions/upload-artifact@v4.4.0

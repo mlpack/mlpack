@@ -141,6 +141,12 @@ add `#define MLPACK_ENABLE_ANN_SERIALIZATION` before including `<mlpack.hpp>`.
 If you don't define `MLPACK_ENABLE_ANN_SERIALIZATION` and your code serializes a
 neural network, a compilation error will occur.
 
+***Warning:*** older versions of OpenBLAS (0.3.26 and older) compiled to use
+pthreads may use too many threads for computation, causing significant slowdown.
+OpenBLAS versions compiled with OpenMP do not suffer from this issue.  See the
+[test build guide](doc/user/install.md#build-tests) for more details and simple
+workarounds.
+
 See also:
 
  * the [test program compilation section](doc/user/install.md#compiling-a-test-program)
