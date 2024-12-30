@@ -385,6 +385,8 @@ void FFN<
           "MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See the \"Additional "
           "build options\" section of the README for more information.");
     #endif
+
+    (void) ar;
   #else
     // Serialize the output layer and initialization rule.
     ar(CEREAL_NVP(outputLayer));

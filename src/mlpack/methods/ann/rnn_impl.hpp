@@ -217,7 +217,7 @@ void RNN<
   network.CheckNetwork("RNN::Predict()", predictors.n_rows, true, false);
 
   results.set_size(network.network.OutputSize(), predictors.n_cols,
-      predictors.n_slices);
+      single ? 1 : predictors.n_slices);
 
   MatType inputAlias, outputAlias;
   for (size_t i = 0; i < predictors.n_cols; i += batchSize)
@@ -227,22 +227,19 @@ void RNN<
 
     // Since we aren't doing a backward pass, we don't actually need to store
     // the state for each time step---we can fit it all in one buffer.
-    ResetMemoryState(1, effectiveBatchSize);
-    SetPreviousStep(size_t(-1));
-    SetCurrentStep(size_t(0));
+    ResetMemoryState(0, effectiveBatchSize);
 
     // Iterate over all time steps.
     for (size_t t = 0; t < predictors.n_slices; ++t)
     {
-      // If it is after the first step, we have a previous state.
-      if (t == 1)
-        SetPreviousStep(size_t(0));
+      SetCurrentStep(t, (t == predictors.n_slices - 1));
 
-      // Create aliases for the input and output.
+      // Create aliases for the input and output.  If we are in single mode, we
+      // always output into the same slice.
       MakeAlias(inputAlias, predictors.slice(t), predictors.n_rows,
-          effectiveBatchSize, i * predictors.slice(t).n_rows);
-      MakeAlias(outputAlias, results.slice(t), results.n_rows,
-          effectiveBatchSize, i * results.slice(t).n_rows);
+          effectiveBatchSize, i * predictors.n_rows);
+      MakeAlias(outputAlias, results.slice(single ? 0 : t), results.n_rows,
+          effectiveBatchSize, i * results.n_rows);
 
       network.Forward(inputAlias, outputAlias);
     }
@@ -286,8 +283,7 @@ void RNN<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::serialize(
-    Archive& ar, const uint32_t /* version */)
+>::serialize(Archive& ar, const uint32_t /* version */)
 {
   #ifndef MLPACK_ENABLE_ANN_SERIALIZATION
     // Note: if you define MLPACK_IGNORE_ANN_SERIALIZATION_WARNING, you had
@@ -299,6 +295,8 @@ void RNN<
           "MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See the \"Additional "
           "build options\" section of the README for more information.");
     #endif
+
+    (void) ar;
   #else
     ar(CEREAL_NVP(bpttSteps));
     ar(CEREAL_NVP(single));
@@ -335,19 +333,15 @@ typename MatType::elem_type RNN<
   // are not computing the gradient, we can be "clever" and use only one memory
   // cell---we don't need to know about the past.
   ResetMemoryState(1, batchSize);
-  SetCurrentStep(0);
-  SetPreviousStep(size_t(-1));
   MatType output(network.network.OutputSize(), batchSize);
 
   typename MatType::elem_type loss = 0.0;
   MatType stepData, responseData;
   for (size_t t = 0; t < predictors.n_slices; ++t)
   {
-    if (t == 1)
-      SetPreviousStep(0);
-
     // Manually reset the data of the network to be an alias of the current time
     // step.
+    SetCurrentStep(t, (t == predictors.n_slices - 1));
     MakeAlias(network.predictors, predictors.slice(t), predictors.n_rows,
         batchSize, begin * predictors.slice(t).n_rows);
     const size_t responseStep = (single) ? 0 : t;
@@ -404,107 +398,94 @@ typename MatType::elem_type RNN<
       std::min(bpttSteps, size_t(predictors.n_slices)));
 
   ResetMemoryState(effectiveBPTTSteps, batchSize);
-  SetPreviousStep(size_t(-1));
+
+  // This will store the outputs of the network at each time step.  Note that we
+  // only need to store `effectiveBPTTSteps` of output.  We will treat `outputs`
+  // as a circular buffer.
   arma::Cube<typename MatType::elem_type> outputs(
       network.network.OutputSize(), batchSize, effectiveBPTTSteps);
 
-  // If `bpttSteps` is less than the number of time steps in the data, then for
-  // the first few steps, we won't actually need to hold onto any historical
-  // information, since BPTT will never go back that far.
-  const size_t extraSteps = (predictors.n_slices - effectiveBPTTSteps + 1);
   MatType stepData, outputData, responseData;
-  for (size_t t = 0; t < std::min(size_t(predictors.n_slices), extraSteps); ++t)
-  {
-    SetCurrentStep(0);
 
-    // Make an alias of the step's data.
-    MakeAlias(stepData, predictors.slice(t), predictors.n_rows, batchSize,
-        begin * predictors.slice(t).n_rows);
-    MakeAlias(outputData, outputs.slice(t), outputs.n_rows, outputs.n_cols);
-    network.network.Forward(stepData, outputData);
-
-    const size_t responseStep = (single) ? 0 : t;
-    MakeAlias(responseData, responses.slice(responseStep),
-        responses.n_rows, batchSize,
-        begin * responses.slice(responseStep).n_rows);
-
-    loss += network.outputLayer.Forward(outputData, responseData);
-
-    SetPreviousStep(0);
-  }
-
-  // Next, we reach the time steps that will be used for BPTT, for which we must
-  // preserve step data.
-  for (size_t t = extraSteps; t < predictors.n_slices; ++t)
-  {
-    SetCurrentStep(t - extraSteps + 1);
-
-    // Wrap a matrix around our data to avoid a copy.
-    MakeAlias(stepData, predictors.slice(t), predictors.n_rows, batchSize,
-        begin * predictors.slice(t).n_rows);
-    MakeAlias(outputData, outputs.slice(t), outputs.n_rows, outputs.n_cols);
-    network.network.Forward(stepData, outputData);
-
-    const size_t responseStep = (single) ? 0 : t;
-    MakeAlias(responseData, responses.slice(responseStep),
-        responses.n_rows, batchSize,
-        begin * responses.slice(responseStep).n_rows);
-
-    loss += network.outputLayer.Forward(outputData, responseData);
-
-    SetPreviousStep(t - extraSteps + 1);
-  }
+  // Initialize gradient.
+  gradient.zeros(network.Parameters().n_rows, network.Parameters().n_cols);
 
   // Add loss (this is not dependent on time steps, and should only be added
-  // once).
+  // once).  This is, e.g., regularizer loss, and other additive losses not
+  // having to do with the output layer.
   loss += network.network.Loss();
 
-  // Initialize current/working gradient.
-  gradient.zeros(network.Parameters().n_rows, network.Parameters().n_cols);
-  GradType currentGradient;
-  currentGradient.zeros(network.Parameters().n_rows,
-      network.Parameters().n_cols);
-
-  SetPreviousStep(size_t(-1));
-  const size_t minStep = predictors.n_slices - effectiveBPTTSteps + 1;
-  for (size_t t = predictors.n_slices; t >= minStep; --t)
+  // For backpropagation through time, we must backpropagate for every
+  // subsequence of length `bpttSteps`.  Before we've taken `bpttSteps` though,
+  // we will be backpropagating shorter sequences.
+  for (size_t t = 0; t < predictors.n_slices; ++t)
   {
-    SetCurrentStep(t - 1);
+    SetCurrentStep(t, (t == (predictors.n_slices - 1)));
 
-    currentGradient.zeros();
-    MatType error(outputs.n_rows, outputs.n_cols);
-
-    // Set up the response by backpropagating through the output layer.  Note
-    // that if we are in 'single' mode, we don't care what the network outputs
-    // until the input sequence is done, so there is no error for any timestep
-    // other than the first one.
-    if (single && (t - 1) < responses.n_slices - 1)
-    {
-      error.zeros();
-    }
-    else
-    {
-      MakeAlias(outputData, outputs.slice(t - 1), outputs.n_rows,
-          outputs.n_cols);
-      const size_t respStep = (single) ? 0 : t - 1;
-      MakeAlias(responseData, responses.slice(respStep), responses.n_rows,
-          batchSize, begin * responses.slice(respStep).n_rows);
-      network.outputLayer.Backward(outputData, responseData, error);
-    }
-
-    // Now pass that error backwards through the network.
-    MakeAlias(stepData, predictors.slice(t - 1), predictors.n_rows, batchSize,
-        begin * predictors.slice(t - 1).n_rows);
-    MakeAlias(outputData, outputs.slice(t - 1), outputs.n_rows,
+    // Make an alias of the step's data for the forward pass.
+    MakeAlias(stepData, predictors.slice(t), predictors.n_rows, batchSize,
+        begin * predictors.slice(t).n_rows);
+    MakeAlias(outputData, outputs.slice(t % effectiveBPTTSteps), outputs.n_rows,
         outputs.n_cols);
+    network.network.Forward(stepData, outputData);
 
-    MatType networkDelta;
-    network.network.Backward(stepData, outputData, error, networkDelta);
+    // Determine what the response should be.  If we are in single mode but not
+    // at the end of the sequence, we don't do a backwards pass.
+    if (single && t != responses.n_slices - 1)
+    {
+      continue;
+    }
 
-    network.network.Gradient(stepData, error, currentGradient);
-    gradient += currentGradient;
+    // Now backpropagate through time, starting with the current time step and
+    // moving backwards.
+    MatType error;
+    for (size_t step = 0; step < std::min(t + 1, effectiveBPTTSteps); ++step)
+    {
+      SetCurrentStep(t - step, (step == 0));
 
-    SetPreviousStep(t - 1);
+      if (step > 0)
+      {
+        // Past the first step, the error is zero; only recurrent terms matter.
+        error.zeros();
+
+        MakeAlias(stepData, predictors.slice(t - step), predictors.n_rows,
+            batchSize, begin * predictors.slice(t - step).n_rows);
+        MakeAlias(outputData, outputs.slice((t - step) % effectiveBPTTSteps),
+            outputs.n_rows, outputs.n_cols);
+      }
+      else
+      {
+        // Otherwise, use the backward pass on the output layer to compute the
+        // error.
+        const size_t responseStep = (single) ? 0 : t - step;
+        MakeAlias(stepData, predictors.slice(t - step), predictors.n_rows,
+            batchSize, begin * predictors.slice(t - step).n_rows);
+        MakeAlias(responseData, responses.slice(responseStep), responses.n_rows,
+            batchSize, begin * responses.slice(responseStep).n_rows);
+        MakeAlias(outputData, outputs.slice((t - step) % effectiveBPTTSteps),
+            outputs.n_rows, outputs.n_cols);
+
+        // We only need to do this on the first time step of BPTT.
+        loss += network.outputLayer.Forward(outputData, responseData);
+
+        // Compute the output error.
+        network.outputLayer.Backward(outputData, responseData, error);
+      }
+
+      // Now backpropagate that error through the network, and compute the
+      // gradient.
+      //
+      // TODO: note that we could avoid the copy of currentGradient by having
+      // each layer *add* its gradient to `gradient`.  However that would
+      // require some amount of refactoring.
+      MatType networkDelta;
+      GradType currentGradient(gradient.n_rows, gradient.n_cols,
+          GetFillType<MatType>::zeros);
+      network.network.Backward(stepData, outputData, error, networkDelta);
+      network.network.Gradient(stepData, error, currentGradient);
+
+      gradient += currentGradient;
+    }
   }
 
   return loss;
@@ -591,38 +572,16 @@ void RNN<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::SetPreviousStep(const size_t step)
+>::SetCurrentStep(const size_t step, const bool end)
 {
   // Iterate over all layers and set the memory size.
   for (Layer<MatType>* l : network.Network())
   {
-    // We can only call SetPreviousStep() on RecurrentLayers.
+    // We can only call CurrentStep() on RecurrentLayers.
     RecurrentLayer<MatType>* r =
         dynamic_cast<RecurrentLayer<MatType>*>(l);
     if (r != nullptr)
-      r->PreviousStep() = step;
-  }
-}
-
-template<
-    typename OutputLayerType,
-    typename InitializationRuleType,
-    typename MatType
->
-void RNN<
-    OutputLayerType,
-    InitializationRuleType,
-    MatType
->::SetCurrentStep(const size_t step)
-{
-  // Iterate over all layers and set the memory size.
-  for (Layer<MatType>* l : network.Network())
-  {
-    // We can only call SetPreviousStep() on RecurrentLayers.
-    RecurrentLayer<MatType>* r =
-        dynamic_cast<RecurrentLayer<MatType>*>(l);
-    if (r != nullptr)
-      r->CurrentStep() = step;
+      r->CurrentStep(step, end);
   }
 }
 

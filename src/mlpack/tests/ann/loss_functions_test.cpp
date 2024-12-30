@@ -200,7 +200,7 @@ TEST_CASE("SimpleMeanSquaredLogarithmicErrorTest", "[LossFunctionsTest]")
 {
   arma::mat input, target, output, expectedOutput;
   double loss;
-  MeanSquaredLogarithmicError module;
+  MeanSquaredLogarithmicError module(true);
 
   // Test for sum reduction.
   input = arma::mat("-0.0494 1.1958 1.0486 -0.2121 1.6028 0.0737 -0.7091 "
@@ -242,7 +242,7 @@ TEST_CASE("SimpleMeanSquaredLogarithmicErrorTest", "[LossFunctionsTest]")
 TEST_CASE("SimpleMeanSquaredErrorTest", "[LossFunctionsTest]")
 {
   arma::mat input, output, target;
-  MeanSquaredError module(false);
+  MeanSquaredError module;
 
   // Test the Forward function on a user generated input and compare it against
   // the manually calculated result.
@@ -254,9 +254,9 @@ TEST_CASE("SimpleMeanSquaredErrorTest", "[LossFunctionsTest]")
   // Test the Backward function.
   module.Backward(input, target, output);
   // We subtract a zero vector, so according to the used backward formula:
-  // output = 2 * (input - target) / target.n_cols,
+  // output = 2 * (input - target) / target.n_rows,
   // output * nofColumns / 2 should be equal to input.
-  CheckMatrices(input, output * output.n_cols / 2);
+  CheckMatrices(input, output * output.n_rows / 2);
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
 
