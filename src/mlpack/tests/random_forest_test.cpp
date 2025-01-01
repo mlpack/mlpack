@@ -19,7 +19,6 @@
 
 using namespace mlpack;
 
-#if 0
 /**
  * Make sure bootstrap sampling produces numbers in the dataset.
  */
@@ -608,7 +607,6 @@ TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
 
   REQUIRE(accuracy >= 0.85);
 }
-#endif
 
 /**
  * Test ComputeAverageUniqueness.
@@ -626,11 +624,11 @@ TEST_CASE("ComputeAverageUniquenessTest", "[RandomForestTest]")
   // The last event is fully isolated.
   // The first two events overlap in the third column.
   indM(0, 0) = 0;
-  indM(0, 1) = 3;
+  indM(0, 1) = 2;
   indM(1, 0) = 2;
-  indM(1, 1) = 4;
+  indM(1, 1) = 3;
   indM(2, 0) = 4;
-  indM(2, 1) = 6;
+  indM(2, 1) = 5;
 
   const arma::vec avg(SequentialBootstrap<>::ComputeAverageUniqueness(indM,
                                                                       6,
@@ -647,15 +645,15 @@ TEST_CASE("ComputeAverageUniquenessTest", "[RandomForestTest]")
  */
 TEST_CASE("ComputeNextDrawProbabilitiesTest", "[RandomForestTest]")
 {
-  const std::vector<arma::u64> phi1(1u, 1u);
+  const arma::uvec phi1(1u, arma::fill::ones);
   arma::umat indM(3 /* rows */, 2 /* cols */, arma::fill::zeros);
 
   indM(0, 0) = 0;
-  indM(0, 1) = 3;
+  indM(0, 1) = 2;
   indM(1, 0) = 2;
-  indM(1, 1) = 4;
+  indM(1, 1) = 3;
   indM(2, 0) = 4;
-  indM(2, 1) = 6;
+  indM(2, 1) = 5;
 
   // Compute the probabilities that observations 0, 1, 2 are drawn after
   // observation 1 has already been drawn.
@@ -678,11 +676,11 @@ TEST_CASE("ComputeSamplesTest", "[RandomForestTest]")
   arma::umat indM(3 /* rows */, 2 /* cols */, arma::fill::zeros);
 
   indM(0, 0) = 0;
-  indM(0, 1) = 3;
+  indM(0, 1) = 2;
   indM(1, 0) = 2;
-  indM(1, 1) = 4;
+  indM(1, 1) = 3;
   indM(2, 0) = 4;
-  indM(2, 1) = 6;
+  indM(2, 1) = 5;
 
   SequentialBootstrap bootstrap(indM);
   const arma::uvec phi(bootstrap.ComputeSamples(6));
@@ -705,11 +703,11 @@ TEST_CASE("SequentialBootstrapTest", "[RandomForestTest]")
   arma::umat indM(6 /* rows */, 2 /* cols */, arma::fill::zeros);
 
   indM(0, 0) = 0;
-  indM(0, 1) = 3;
+  indM(0, 1) = 2;
   indM(1, 0) = 2;
-  indM(1, 1) = 4;
+  indM(1, 1) = 3;
   indM(2, 0) = 4;
-  indM(2, 1) = 6;
+  indM(2, 1) = 5;
 
   SequentialBootstrap<> bootstrap(indM);
   arma::mat bsDataset;

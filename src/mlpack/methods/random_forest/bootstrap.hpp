@@ -185,12 +185,12 @@ class SequentialBootstrap
    *         iteration.
    */
   static arma::vec ComputeNextDrawProbabilities(
-    const std::vector<arma::u64>& phi,
+    const arma::uvec& phi,
     const IndMatType& intervals,
     arma::uword colIndicesCount)
   {
     arma::vec avg(intervals.n_rows);
-    arma::uvec rows(arma::conv_to<arma::uvec>::from(phi));
+    arma::uvec rows(phi);
 
     rows.insert_rows(rows.n_rows, 1);
     for (arma::uword i(0); i < avg.size(); ++i) {
