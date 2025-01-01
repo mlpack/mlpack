@@ -766,8 +766,14 @@ class CustomCategoricalSplit
  * Three implementations for `BootstrapType` are available for drop-in usage:
    - `DefaultBootstrap` *(default)*: bootstrap via random sampling with replacement.
    - `IdentityBootstrap`: no bootstrapping.  Simply copies the input `dataset`, `labels`, and `weights` for each tree's data.
-   - `SequentialBootstrap`: bootstrapping via random sampling with replacement such that samples with informational overlap 
-     behave more IID as presented in: M. López de Prado (2018): "Advances in Financial Machine Learning", pp. 63-65.
+   - `SequentialBootstrap`: bootstrapping from overlapping sequences such that samples with informational overlap behave more I.I.D.
+     * Useful when data consists of multiple overlapping events (or individual sequences).
+     * `b = SequentialBootstrap(intervals)` will create a `SequentialBootstrap` object, where:
+       - `intervals` is of type `arma::umat`, with 2 rows and `m` columns, where `m` is the number of events.
+       - Each column in `intervals` represents the start and end columns (inclusive) of each event.
+       - So, e.g., if the 10th event is 5 points long, starting at index 6, then column `9` of `intervals` should be `6, 10`.
+     * A `SequentialBootstrap` must be passed as the `bootstrap` option to the [advanced constructor](#fully-custom-behavior).
+     * For more information, see: M. López de Prado (2018): "Advances in Financial Machine Learning", pp. 63-65.
  * A custom `BootstrapType` class must take a `bool` template parameter `UseWeights` and implement one function:
 ```c++
 class CustomBootstrapType
