@@ -684,8 +684,8 @@ TEST_CASE("ComputeSamplesTest", "[RandomForestTest]")
   indM(2, 0) = 4;
   indM(2, 1) = 6;
 
-  SequentialBootstrap bootstrap(indM, 6);
-  const arma::uvec phi(bootstrap.ComputeSamples());
+  SequentialBootstrap bootstrap(indM);
+  const arma::uvec phi(bootstrap.ComputeSamples(6));
 
   // Can only check that the next draw does not yield indices
   // outside of the range of observations.
@@ -711,7 +711,7 @@ TEST_CASE("SequentialBootstrapTest", "[RandomForestTest]")
   indM(2, 0) = 4;
   indM(2, 1) = 6;
 
-  SequentialBootstrap<> bootstrap(indM, ds.n_cols);
+  SequentialBootstrap<> bootstrap(indM);
   arma::mat bsDataset;
   arma::Row<size_t> bsLabels;
   arma::vec bsWeights;

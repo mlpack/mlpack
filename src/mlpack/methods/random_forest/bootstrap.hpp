@@ -84,15 +84,9 @@ class SequentialBootstrap
    * Constructor.
    *
    * @param[in] intervals See ComputeAverageUniqueness().
-   * @param[in] colIndicesCount Number of data points in the dataset.
    */
-  SequentialBootstrap(const IndMatType& intervals,
-    arma::uword colIndicesCount) :
-    intervals(intervals),
-    sampleCount(colIndicesCount),
-    colIndices(arma::linspace<arma::uvec>(0,
-      colIndicesCount - 1,
-      colIndicesCount))
+  SequentialBootstrap(const IndMatType& intervals) :
+    intervals(intervals)
   {
     if (intervals.n_cols != 2)
       throw std::invalid_argument(
@@ -117,13 +111,7 @@ class SequentialBootstrap
 
     // observations are stored as columns and dimensions
     // (number of features) as rows.
-    if (colIndices.n_rows != dataset.n_cols) {
-      throw std::invalid_argument("SequentialBootstrap::Bootstrap(): "
-        "constructed with colIndicesCount different from "
-        "dataset.n_cols!");
-    }
-
-    const arma::uvec phi(ComputeSamples());
+    const arma::uvec phi(ComputeSamples(dataset.n_cols));
 
     bootstrapDataset = dataset.cols(phi);
     bootstrapLabels = labels.cols(phi);
@@ -133,26 +121,24 @@ class SequentialBootstrap
 
   /**
    * Compute the samples of the next draw.
+   * 
+   * @param[in] colIndicesCount Number of data points in the dataset.
    *
    * @return A list of indices referring to the observations that should
    *         be sampled.
    */
-  arma::uvec ComputeSamples() const
+  arma::uvec ComputeSamples(arma::uword colIndicesCount) const
   {
-    std::vector<arma::u64> phi;
+    DiscreteDistribution d;
+    arma::uvec           phi(colIndicesCount);
 
-    phi.reserve(sampleCount);
-    while (phi.size() < sampleCount)
-    {
-      const arma::vec prob(ComputeNextDrawProbabilities(phi,
-        intervals, colIndices.n_elem));
-      DiscreteDistribution d(
-        DiscreteDistribution(std::vector<arma::vec>(1u, prob)));
-
-      phi.push_back(colIndices[d.Random()[0]]);
+    for (arma::uword i(0); i < colIndicesCount; ++i) {
+      d.Probabilities() =
+          ComputeNextDrawProbabilities(phi, intervals, colIndicesCount);
+      phi(i) = d.Random()[0];
     }
 
-    return arma::conv_to<arma::uvec>::from(phi);
+    return phi;
   }
 
   /**
@@ -161,7 +147,7 @@ class SequentialBootstrap
    * its lifetime from other events.
    *
    * @param[in] intervals Is a `2 x m` matrix, where each column has the start
-   *                      sample and one past the end sample of an interval.
+   *                      sample and the end sample of an interval.
    * @param[in] from Start row to calculate the average uniqueness from.
    * @return The average uniqueness of the events in @p indicatorMatrix.
    */
@@ -174,17 +160,17 @@ class SequentialBootstrap
 
     for (arma::uword i(0); i < concurrency.n_cols; ++i) {
       for (arma::uword j(0); j < intervals.n_rows; ++j) {
-        concurrency(i) += intervals(j, 0) <= i && i < intervals(j, 1) ? 1 : 0;
+        concurrency(i) += intervals(j, 0) <= i && i <= intervals(j, 1) ? 1 : 0;
       }
     }
 
     arma::vec avg(intervals.n_rows - from, arma::fill::zeros);
 
     for (arma::uword i(from); i < intervals.n_rows; ++i) {
-      for (arma::uword j(intervals(i, 0)); j < intervals(i, 1); ++j) {
+      for (arma::uword j(intervals(i, 0)); j <= intervals(i, 1); ++j) {
         avg(i - from) += 1.0 / concurrency(j);
       }
-      avg(i - from) /= intervals(i, 1) - intervals(i, 0);
+      avg(i - from) /= intervals(i, 1) - intervals(i, 0) + 1;
     }
 
     return avg;
@@ -219,8 +205,6 @@ class SequentialBootstrap
 
  private:
   const IndMatType intervals;
-  const arma::uword sampleCount;
-  const arma::uvec colIndices;
 };
 
 } // namespace mlpack

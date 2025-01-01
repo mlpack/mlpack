@@ -749,6 +749,10 @@ class CustomCategoricalSplit
 
 #### `UseBootstrap`
 
+**This parameter will be removed in mlpack 5.0.0.** A value of `false` will then be
+equivalent to `BootstrapType` `IdentityBootstrap` and a value of `true` will be
+equivalent to `DefaultBootstrap`.
+
  * A `bool` value that indicates whether or not a bootstrap sample of the
    dataset should be used for the training of each individual decision tree in
    the random forest.
@@ -756,13 +760,10 @@ class CustomCategoricalSplit
    dataset will be used to train each decision tree.
  * If `false` _(default for the `ExtraTrees` [variant](#fully-custom-behavior))_, the full
    dataset will be used to train each decision tree.
- * This parameter will be removed in mlpack 5.0.0. A value of `false` will then be
-   equivalent to `BootstrapType` `IdentityBootstrap` and a value of `true` will be
-   equivalent to `DefaultBootstrap`.
 
 #### `BootstrapType`
 
- * Specifies the strategy used for bootstrapping data for each .
+ * Specifies the strategy used for bootstrapping data for each tree in the random forest.
  * Three implementations for `BootstrapType` are available for drop-in usage:
    - `DefaultBootstrap` *(default)*: bootstrap via random sampling with replacement.
    - `IdentityBootstrap`: no bootstrapping.  Simply copies the input `dataset`, `labels`, and `weights` for each tree's data.
