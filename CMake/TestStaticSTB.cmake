@@ -21,11 +21,11 @@ if(NOT DEFINED CMAKE_HAS_WORKING_STATIC_STB)
   endif ()
 
   try_compile(CMAKE_HAS_WORKING_STATIC_STB
-      ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/
+      ${MLPACK_BINARY_DIR}/CMakeFiles/CMakeTmp/
       SOURCES
-        ${CMAKE_SOURCE_DIR}/CMake/stb/main.cpp
-        ${CMAKE_SOURCE_DIR}/CMake/stb/a.cpp
-        ${CMAKE_SOURCE_DIR}/CMake/stb/b.cpp
+        ${MLPACK_SOURCE_DIR}/CMake/stb/main.cpp
+        ${MLPACK_SOURCE_DIR}/CMake/stb/a.cpp
+        ${MLPACK_SOURCE_DIR}/CMake/stb/b.cpp
       CMAKE_FLAGS "-DINCLUDE_DIRECTORIES=${STB_IMAGE_INCLUDE_DIR}"
       COMPILE_DEFINITIONS "${TEST_CXX_DEFS}"
       OUTPUT_VARIABLE out)
@@ -34,7 +34,7 @@ if(NOT DEFINED CMAKE_HAS_WORKING_STATIC_STB)
         "correctly... success")
     set(CMAKE_HAS_WORKING_STATIC_STB 1 CACHE INTERNAL
         "Does STB static implementation mode link correctly")
-    file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
+    file(APPEND ${MLPACK_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
         "Determining if STB's static implementation can link correctly passed "
         "with the following output:\n${out}\n\n")
   else ()
@@ -42,7 +42,7 @@ if(NOT DEFINED CMAKE_HAS_WORKING_STATIC_STB)
         "correctly... fail")
     set(CMAKE_HAS_WORKING_STATIC_STB 0 CACHE INTERNAL
         "Does STB static implementation mode link correctly")
-    file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
+    file(APPEND ${MLPACK_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
         "Determining if STB's static implementation can link correctly failed "
         "with the following output:\n${out}\n\n")
   endif ()
