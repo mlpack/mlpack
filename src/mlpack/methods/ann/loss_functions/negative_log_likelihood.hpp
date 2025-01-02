@@ -38,7 +38,7 @@ class NegativeLogLikelihoodType
    *                  'sum' reduction is used and the output will be summed. It
    *                  is set to true by default.
    */
-  NegativeLogLikelihoodType(const bool reduction = true);
+  NegativeLogLikelihoodType(const bool reduction = false);
 
   /**
    * Computes the Negative log likelihood.

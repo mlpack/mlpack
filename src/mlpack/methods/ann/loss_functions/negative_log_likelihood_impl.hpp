@@ -63,7 +63,7 @@ void NegativeLogLikelihoodType<MatType>::Backward(
   }
 
   if (!reduction)
-    loss = loss / target.n_elem;
+    loss = loss / target.n_rows /* ignore batch size */;
 }
 
 template<typename MatType>
