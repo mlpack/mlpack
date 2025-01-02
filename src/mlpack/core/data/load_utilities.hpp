@@ -281,22 +281,22 @@ class AutodetectOptions : public LoadOptions
   inline AutodetectOptions() : LoadOptions() { this->DataFormat() = format::autodetect; }
 };
 
-class JsonOptions : public LoadOptions
+class JsonDataOptions : public LoadOptions
 {
  public:
-  inline JsonOptions() : LoadOptions() { this->DataFormat() = format::json; }
+  inline JsonDataOptions() : LoadOptions() { this->DataFormat() = format::json; }
 };
 
-class XmlOptions : public LoadOptions
+class XmlDataOptions : public LoadOptions
 {
  public:
-  inline XmlOptions() : LoadOptions() { this->DataFormat() = format::xml; }
+  inline XmlDataOptions() : LoadOptions() { this->DataFormat() = format::xml; }
 };
 
-class BinaryOptions : public LoadOptions
+class BinaryDataOptions : public LoadOptions
 {
  public:
-  inline BinaryOptions() : LoadOptions() { this->DataFormat() = format::binary; }
+  inline BinaryDataOptions() : LoadOptions() { this->DataFormat() = format::binary; }
 };
 
 //! File serialization options 

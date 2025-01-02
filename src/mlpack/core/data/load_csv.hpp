@@ -226,6 +226,7 @@ class LoadCSV
 
     // Clear format flag.
     inFile.unsetf(std::ios::skipws);
+    return true;
   }
 
   // Functions for Categorical Parse.

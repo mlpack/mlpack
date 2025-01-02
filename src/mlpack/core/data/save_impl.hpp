@@ -52,7 +52,7 @@ bool Save(const std::string& filename,
           const MatType& matrix,
           LoadOptions& opts)
 {
-  bool success;
+  bool success = false;
   using eT = typename MatType::elem_type;
   if constexpr (std::is_same_v<MatType, arma::SpMat<eT>>)
   {
