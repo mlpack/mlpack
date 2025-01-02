@@ -235,10 +235,10 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     kfn->RandomBasis() = randomBasis;
     kfn->LeafSize() = size_t(lsInt);
 
+    arma::mat& referenceSet = params.Get<arma::mat>("reference");
+
     Log::Info << "Using reference data from "
         << params.GetPrintable<arma::mat>("reference") << "." << endl;
-
-    arma::mat referenceSet = std::move(params.Get<arma::mat>("reference"));
 
     kfn->BuildModel(timers, std::move(referenceSet), searchMode, epsilon);
   }
@@ -271,6 +271,12 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     arma::mat queryData;
     if (params.Has("query"))
     {
+      // Workaround: this avoids printing load information twice for the CLI
+      // bindings, where GetPrintable() will trigger a call to data::Load(),
+      // which prints loading information in the middle of the Log::Info
+      // message.
+      (void) params.Get<arma::mat>("query");
+
       Log::Info << "Using query data from "
           << params.GetPrintable<arma::mat>("query") << "." << endl;
       queryData = std::move(params.Get<arma::mat>("query"));

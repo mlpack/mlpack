@@ -87,7 +87,7 @@ the target.
 In this tutorial we use the autodownloader since it automates the entire
 process, including the cross-compilation of OpenBLAS.  The first step is to
 create a build directory, just like the
-[regular build process](../../README.md#3-installing-and-using-mlpack-in-c):
+[regular build process](../user/install.md#install-from-source):
 
 ```sh
 cd mlpack/

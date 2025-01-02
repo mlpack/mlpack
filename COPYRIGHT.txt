@@ -83,7 +83,7 @@ Copyright:
   Copyright 2017, Samikshya Chand <samikshya289@gmail.com>
   Copyright 2017, N Rajiv Vaidyanathan <rajivvaidyanathan4@gmail.com>
   Copyright 2017, Kartik Nighania <kartiknighania@gmail.com>
-  Copyright 2017-2023, Dirk Eddelbuettel <edd@debian.org>
+  Copyright 2017-2024, Dirk Eddelbuettel <edd@debian.org>
   Copyright 2017-2018, Eugene Freyman <evg.freyman@gmail.com>
   Copyright 2017-2019, Manish Kumar <manish887kr@gmail.com>
   Copyright 2017-2018, Haritha Sreedharan Nair <haritha1313@gmail.com>
@@ -151,7 +151,7 @@ Copyright:
   Copyright 2021, Roshan Nrusing Swain <swainroshan001@gmail.com>
   Copyright 2021, Suvarsha Chennareddy <suvarshachennareddy@gmail.com>
   Copyright 2021, Shubham Agrawal <shubham.agra1206@gmail.com>
-  Copyright 2020-2022, James Joseph Balamuta <balamut2@illinois.edu>
+  Copyright 2020-2024, James Balamuta <james.balamuta@gmail.com>
   Copyright 2022, Sri Madhan M <srimadhan11@gmail.com>
   Copyright 2022, Zhuojin Liu <zhuojinliu.cs@gmail.com>
   Copyright 2022, Richèl Bilderbeek <richel@richelbilderbeek.nl>

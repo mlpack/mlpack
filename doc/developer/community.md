@@ -18,7 +18,7 @@ via issues on GitHub, or via chat:
 
 ## Real-time chat
 
- * #mlpack:matrix.org on [Matrix](https://www.matrix.org/)
+ * `#mlpack:matrix.org` on [Matrix](https://www.matrix.org/)
  * [mlpack Slack workspace](https://mlpack.slack.com/)
    - You will need to request an invite from the
      [auto-inviter](http://slack-inviter.mlpack.org:4000).
@@ -27,11 +27,10 @@ via issues on GitHub, or via chat:
 
 ## Video meetup
 
-On the first and third Friday of every month, at ***1700 UTC*** on Fridays, we
-have *casual video meetups* with no particular agenda.  Feel free to join up!
-We often talk about code changes that we are working on, issues that people are
-having with mlpack, general design direction, and whatever else might be on our
-mind.
+On the first Monday of every month, at ***1530 UTC***, we have *casual video
+meetups* with no particular agenda.  Feel free to join up!  We often talk about
+code changes that we are working on, issues that people are having with mlpack,
+general design direction, and whatever else might be on our mind.
 
 We use [this Zoom room](https://zoom.us/j/3820896170).  For security, we use a
 password for the meeting to keep malicious bots out.  The password is simple:
@@ -55,9 +54,8 @@ contains many examples you can build and play around with.
 
 Once you have an idea of what's included in mlpack and how a user might use it,
 then a good next step would be to set up a development environment.  Once you
-have that set up, you can
-[build mlpack from source](../README.md#3-installing-and-using-mlpack-in-c),
-and explore the codebase to see how it's organized.
+have that set up, you can [build mlpack from source](../user/install.md), and
+explore the codebase to see how it's organized.
 
 Try making small changes to the code, or adding new tests to the test suite, and
 then rebuild to see how your changes work.
