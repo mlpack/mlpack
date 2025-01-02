@@ -19,6 +19,7 @@ namespace data {
 //! Define the formats we can read through cereal.
 enum format
 {
+  unknown,
   autodetect,
   json,
   xml,

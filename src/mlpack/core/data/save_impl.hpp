@@ -50,7 +50,7 @@ bool Save(const std::string& filename,
 template<typename MatType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          LoadOptions& opts)
+          DataOptions& opts)
 {
   bool success = false;
   using eT = typename MatType::elem_type;
@@ -79,7 +79,7 @@ bool Save(const std::string& filename,
           const bool fatal,
           bool transpose)
 {
-  LoadOptions opts;
+  DataOptions opts;
   opts.Fatal() = fatal;
   opts.Transpose() = transpose;
 
@@ -94,7 +94,7 @@ bool Save(const std::string& filename,
           bool transpose,
           FileType inputSaveType)
 {
-  LoadOptions opts;
+  DataOptions opts;
   opts.Fatal() = fatal;
   opts.Transpose() = transpose;
   opts.FileFormat() = inputSaveType;
@@ -110,7 +110,7 @@ bool Save(const std::string& filename,
           const bool fatal,
           format f)
 {
-  LoadOptions opts;
+  DataOptions opts;
   opts.ObjectName() = name;
   opts.Fatal() = fatal;
   opts.DataFormat() = f;
@@ -121,7 +121,7 @@ bool Save(const std::string& filename,
 template<typename eT>
 bool Save(const std::string& filename,
           arma::Mat<eT>& matrix,
-          LoadOptions& opts)
+          DataOptions& opts)
 {
   Timer::Start("saving_data");
 
@@ -207,7 +207,7 @@ bool Save(const std::string& filename,
 template<typename eT>
 bool Save(const std::string& filename,
           arma::SpMat<eT>& matrix,
-          LoadOptions& opts)
+          DataOptions& opts)
 {
 
   Timer::Start("saving_data");
@@ -314,7 +314,7 @@ bool Save(const std::string& filename,
 template<typename Object>
 bool SaveModel(const std::string& filename,
                Object& objectToSerialize,
-               LoadOptions opts)
+               DataOptions opts)
 {
   if (opts.DataFormat() == format::autodetect)
   {

@@ -31,7 +31,7 @@ namespace data {
 template<typename eT>
 bool LoadCSVASCII(const std::string& filename,
                   arma::Mat<eT>& matrix,
-                  const LoadOptions& opts)
+                  const DataOptions& opts)
 {
   bool success = false;
   if (opts.Transpose() && opts.HasHeaders() &&
@@ -125,7 +125,7 @@ bool LoadCSVASCII(const std::string& filename,
 template<typename eT>
 bool LoadHDF5(const std::string& filename,
               arma::Mat<eT>& matrix,
-              const LoadOptions& opts)
+              const DataOptions& opts)
 {
 #ifndef ARMA_USE_HDF5
   // Ensure that HDF5 is supported.
@@ -154,7 +154,7 @@ bool Load(const std::string& filename,
           const bool transpose,
           const FileType inputLoadType)
 {
-  LoadOptions opts;
+  DataOptions opts;
   opts.Fatal() = fatal;
   opts.Transpose() = transpose;
   opts.FileFormat() = inputLoadType;
@@ -170,7 +170,7 @@ bool Load(const std::string& filename,
           const bool transpose,
           const FileType inputLoadType)
 {
-  LoadOptions opts;
+  DataOptions opts;
   opts.Fatal() = fatal;
   opts.Transpose() = transpose;
   opts.FileFormat() = inputLoadType;
@@ -186,7 +186,7 @@ bool Load(const std::string& filename,
           const bool fatal,
           const bool transpose)
 {
-  LoadOptions opts;
+  DataOptions opts;
   opts.Fatal() = fatal;
   opts.Transpose() = transpose;
   opts.Mapper() = info;
@@ -199,7 +199,7 @@ bool Load(const std::string& filename,
 template<typename MatType>
 bool Load(const std::string& filename,
           MatType& matrix,
-          LoadOptions& opts)
+          DataOptions& opts)
 {
   using eT = typename MatType::elem_type;
   Timer::Start("loading_data");
@@ -264,7 +264,7 @@ template<typename eT>
 bool LoadDense(const std::string& filename,
                std::fstream& stream,
                arma::Mat<eT>& matrix,
-               LoadOptions& opts)
+               DataOptions& opts)
 {
   bool success;
   if (opts.FileFormat() != FileType::RawBinary)
@@ -298,7 +298,7 @@ template <typename eT>
 bool LoadSparse(const std::string& filename,
                 std::fstream& stream,
                 arma::SpMat<eT>& matrix,
-                LoadOptions& opts)
+                DataOptions& opts)
 {
   bool success;
   // There is still a small amount of differentiation that needs to be done:
@@ -366,7 +366,7 @@ bool LoadSparse(const std::string& filename,
 template<typename eT>
 bool LoadCategorical(const std::string& filename,
                      arma::Mat<eT>& matrix,
-                     LoadOptions& opts)
+                     DataOptions& opts)
 {
   // Get the extension and load as necessary.
   Timer::Start("loading_data");

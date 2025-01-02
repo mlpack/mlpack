@@ -57,11 +57,10 @@ void TransposeTokens(std::vector<std::vector<std::string>> const &input,
 
 /**
  * All possible DataOptions grouped under one class.
- * This will allow us to have consistent API over the next mlpack versions. If
- * new data options might be necessary, then they should be added in the
- * following.
+ * This will allow us to have consistent data API for mlpack. If new data
+ * options might be necessary, then they should be added in the following.
  */
-class LoadOptions
+class DataOptions
 {
  public:
   /**
@@ -78,10 +77,10 @@ class LoadOptions
    *  - imgInfo: Information about the image if we already have them.
    *  - dataFormat: the data serialization format: xml, bin, json
    */
-  LoadOptions(
-      bool fatal = true,
+  DataOptions(
+      bool fatal = false,
       bool hasHeaders = false,
-      bool transpose = true,
+      bool transpose = false,
       bool semiColon = false,
       bool missingToNan = false,
       bool categorical = false,
@@ -226,138 +225,184 @@ class LoadOptions
   DatasetInfo mapper;
 };
 
-class FatalOptions: public LoadOptions
+DataOptions operator|(const DataOptions& a, const DataOptions& b)
+{
+  DataOptions output;
+  output.Fatal() = a.Fatal() | b.Fatal();
+  output.Transpose() = a.Transpose() | b.Transpose();
+  output.SemiColon() = a.SemiColon() | b.SemiColon();
+  output.MissingToNan() = a.MissingToNan() | b.MissingToNan();
+  output.Categorical() = a.Categorical() | b.Categorical();
+  output.Image() = a.Image() | b.Image();
+  output.Model() = a.Model() | b.Model();
+
+  if (a.FileFormat() == FileType::FileTypeUnknown)
+  {
+    output.FileFormat() = b.FileFormat();
+    return output;
+  }
+  else if (b.FileFormat() == FileType::FileTypeUnknown)
+  {
+    output.FileFormat() = a.FileFormat();
+    return output;
+  }
+
+  if (a.FileFormat() != b.FileFormat())
+    throw std::runtime_error("File formats don't match!");
+  else
+    output.FileFormat() = a.FileFormat();
+
+  if (a.DataFormat() == format::unknown)
+  {
+    output.DataFormat() = b.DataFormat();
+    return output;
+  }
+  else if (b.DataFormat() == format::unknown)
+  {
+    output.DataFormat() = a.DataFormat();
+    return output;
+  }
+
+  if (a.DataFormat() != b.DataFormat())
+    throw std::runtime_error("Serialization formats don't match!");
+  else
+    output.DataFormat() = a.DataFormat();
+
+  return output;
+}
+
+class FatalOptions: public DataOptions
 {
  public:
-  inline FatalOptions() : LoadOptions() { this->Fatal() = true; }
+  inline FatalOptions() : DataOptions() { this->Fatal() = true; }
 };
 
-class HasHeadersOptions : public LoadOptions
+class HasHeadersOptions : public DataOptions
 {
  public:
-  inline HasHeadersOptions() : LoadOptions() { this->HasHeaders() = true; }
+  inline HasHeadersOptions() : DataOptions() { this->HasHeaders() = true; }
 };
 
-class TransposeOptions : public LoadOptions
+class TransposeOptions : public DataOptions
 {
  public:
-  inline TransposeOptions() : LoadOptions() { this->Transpose() = true; }
+  inline TransposeOptions() : DataOptions() { this->Transpose() = true; }
 };
 
-class SemiColonOptions : public LoadOptions
+class SemiColonOptions : public DataOptions
 {
  public:
-  inline SemiColonOptions() : LoadOptions() { this->SemiColon() = true; }
+  inline SemiColonOptions() : DataOptions() { this->SemiColon() = true; }
 };
 
-class MissingToNanOptions : public LoadOptions
+class MissingToNanOptions : public DataOptions
 {
  public:
-  inline MissingToNanOptions() : LoadOptions() { this->MissingToNan() = true; }
+  inline MissingToNanOptions() : DataOptions() { this->MissingToNan() = true; }
 };
 
-class CategoricalOptions : public LoadOptions
+class CategoricalOptions : public DataOptions
 {
  public:
-  inline CategoricalOptions() : LoadOptions() { this->Categorical() = true; }
+  inline CategoricalOptions() : DataOptions() { this->Categorical() = true; }
 };
 
-class ImageOptions : public LoadOptions
+class ImageOptions : public DataOptions
 {
  public:
-  inline ImageOptions() : LoadOptions() { this->Image() = true; }
+  inline ImageOptions() : DataOptions() { this->Image() = true; }
 };
 
-class ModelOptions : public LoadOptions
+class ModelOptions : public DataOptions
 {
  public:
-  inline ModelOptions() : LoadOptions() { this->Model() = true; }
+  inline ModelOptions() : DataOptions() { this->Model() = true; }
 };
 
 //! Data serialization options 
-class AutodetectOptions : public LoadOptions
+class AutodetectOptions : public DataOptions
 {
  public:
-  inline AutodetectOptions() : LoadOptions() { this->DataFormat() = format::autodetect; }
+  inline AutodetectOptions() : DataOptions() { this->DataFormat() = format::autodetect; }
 };
 
-class JsonDataOptions : public LoadOptions
+class JsonDataOptions : public DataOptions
 {
  public:
-  inline JsonDataOptions() : LoadOptions() { this->DataFormat() = format::json; }
+  inline JsonDataOptions() : DataOptions() { this->DataFormat() = format::json; }
 };
 
-class XmlDataOptions : public LoadOptions
+class XmlDataOptions : public DataOptions
 {
  public:
-  inline XmlDataOptions() : LoadOptions() { this->DataFormat() = format::xml; }
+  inline XmlDataOptions() : DataOptions() { this->DataFormat() = format::xml; }
 };
 
-class BinaryDataOptions : public LoadOptions
+class BinaryDataOptions : public DataOptions
 {
  public:
-  inline BinaryDataOptions() : LoadOptions() { this->DataFormat() = format::binary; }
+  inline BinaryDataOptions() : DataOptions() { this->DataFormat() = format::binary; }
 };
 
 //! File serialization options 
-class FileAutoDetectOptions : public LoadOptions
+class FileAutoDetectOptions : public DataOptions
 {
  public:
-  inline FileAutoDetectOptions() : LoadOptions() { this->FileFormat() = FileType::AutoDetect; }
+  inline FileAutoDetectOptions() : DataOptions() { this->FileFormat() = FileType::AutoDetect; }
 };
 
-class CSVOptions : public LoadOptions
+class CSVOptions : public DataOptions
 {
  public:
-   inline CSVOptions() : LoadOptions() { this->FileFormat() = FileType::CSVASCII; }
+   inline CSVOptions() : DataOptions() { this->FileFormat() = FileType::CSVASCII; }
 };
 
-class PGMOptions : public LoadOptions
+class PGMOptions : public DataOptions
 {
  public:
-   inline PGMOptions() : LoadOptions() { this->FileFormat() = FileType::PGMBinary; }
+   inline PGMOptions() : DataOptions() { this->FileFormat() = FileType::PGMBinary; }
 };
 
-class PPMOptions : public LoadOptions
+class PPMOptions : public DataOptions
 {
  public:
-   inline PPMOptions() : LoadOptions() { this->FileFormat() = FileType::PPMBinary; }
+   inline PPMOptions() : DataOptions() { this->FileFormat() = FileType::PPMBinary; }
 };
 
-class HDF5Options : public LoadOptions
+class HDF5Options : public DataOptions
 {
  public:
-   inline HDF5Options() : LoadOptions() { this->FileFormat() = FileType::HDF5Binary; }
+   inline HDF5Options() : DataOptions() { this->FileFormat() = FileType::HDF5Binary; }
 };
 
-class ArmaASCIIOptions : public LoadOptions
+class ArmaASCIIOptions : public DataOptions
 {
  public:
-   inline ArmaASCIIOptions() : LoadOptions() { this->FileFormat() = FileType::ArmaASCII; }
+   inline ArmaASCIIOptions() : DataOptions() { this->FileFormat() = FileType::ArmaASCII; }
 };
 
-class ArmaBinOptions : public LoadOptions
+class ArmaBinOptions : public DataOptions
 {
  public:
-   inline ArmaBinOptions() : LoadOptions() { this->FileFormat() = FileType::ArmaBinary; }
+   inline ArmaBinOptions() : DataOptions() { this->FileFormat() = FileType::ArmaBinary; }
 };
 
-class RawASCIIOptions : public LoadOptions
+class RawASCIIOptions : public DataOptions
 {
  public:
-   inline RawASCIIOptions() : LoadOptions() { this->FileFormat() = FileType::RawASCII; }
+   inline RawASCIIOptions() : DataOptions() { this->FileFormat() = FileType::RawASCII; }
 };
 
-class RawBinOptions : public LoadOptions
+class RawBinOptions : public DataOptions
 {
  public:
-   inline RawBinOptions() : LoadOptions() { this->FileFormat() = FileType::RawBinary; }
+   inline RawBinOptions() : DataOptions() { this->FileFormat() = FileType::RawBinary; }
 };
 
-class CoordASCIIOptions : public LoadOptions
+class CoordASCIIOptions : public DataOptions
 {
  public:
-   inline CoordASCIIOptions() : LoadOptions() { this->FileFormat() = FileType::CoordASCII; }
+   inline CoordASCIIOptions() : DataOptions() { this->FileFormat() = FileType::CoordASCII; }
 };
 
 //! Boolean options
@@ -391,7 +436,7 @@ static const BinaryDataOptions    BIN_SER;
 inline
 bool FileExist(const std::string& filename,
                std::fstream& stream,
-               const LoadOptions& opts)
+               const DataOptions& opts)
 {
 #ifdef  _WIN32 // Always open in binary mode on Windows.
   stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
@@ -416,7 +461,7 @@ inline
 bool DetectFileType(const std::string& filename,
                     std::fstream& stream,
                     FileType& loadType,
-                    const LoadOptions& opts)
+                    const DataOptions& opts)
 {
   if (opts.FileFormat() == FileType::AutoDetect)
   {

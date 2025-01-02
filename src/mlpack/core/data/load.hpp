@@ -84,13 +84,13 @@ bool Load(const std::string& filename,
 
  * @param filename Name of file to load.
  * @param matrix Matrix to load contents of file into.
- * @param opts LoadOptions to be passed to the function
+ * @param opts DataOptions to be passed to the function
  * @return Boolean value indicating success or failure of load.
  */
 template<typename MatType>
 bool Load(const std::string& filename,
           MatType& matrix,
-          LoadOptions& opts);
+          DataOptions& opts);
 
 /**
  * Loads a sparse matrix from file, using arma::coord_ascii format.  This

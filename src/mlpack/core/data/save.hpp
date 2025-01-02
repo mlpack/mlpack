@@ -77,13 +77,13 @@ bool Save(const std::string& filename,
 
  * @param filename Name of file to load.
  * @param matrix Matrix to load contents of file into.
- * @param opts LoadOptions to be passed to the function
+ * @param opts DataOptions to be passed to the function
  * @return Boolean value indicating success or failure of Save.
  */
 template<typename MatType>
 bool Save(const std::string& filename,
           MatType& matrix,
-          LoadOptions& opts);
+          DataOptions& opts);
 
 /**
  * Saves a sparse matrix to file, guessing the filetype from the
