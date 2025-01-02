@@ -226,6 +226,168 @@ class LoadOptions
   DatasetInfo mapper;
 };
 
+class FatalOptions: public LoadOptions
+{
+ public:
+  inline FatalOptions() : LoadOptions() { this->Fatal() = true; }
+};
+
+class HasHeadersOptions : public LoadOptions
+{
+ public:
+  inline HasHeadersOptions() : LoadOptions() { this->HasHeaders() = true; }
+};
+
+class TransposeOptions : public LoadOptions
+{
+ public:
+  inline TransposeOptions() : LoadOptions() { this->Transpose() = true; }
+};
+
+class SemiColonOptions : public LoadOptions
+{
+ public:
+  inline SemiColonOptions() : LoadOptions() { this->SemiColon() = true; }
+};
+
+class MissingToNanOptions : public LoadOptions
+{
+ public:
+  inline MissingToNanOptions() : LoadOptions() { this->MissingToNan() = true; }
+};
+
+class CategoricalOptions : public LoadOptions
+{
+ public:
+  inline CategoricalOptions() : LoadOptions() { this->Categorical() = true; }
+};
+
+class ImageOptions : public LoadOptions
+{
+ public:
+  inline ImageOptions() : LoadOptions() { this->Image() = true; }
+};
+
+class ModelOptions : public LoadOptions
+{
+ public:
+  inline ModelOptions() : LoadOptions() { this->Model() = true; }
+};
+
+//! Data serialization options 
+class AutodetectOptions : public LoadOptions
+{
+ public:
+  inline AutodetectOptions() : LoadOptions() { this->DataFormat() = format::autodetect; }
+};
+
+class JsonOptions : public LoadOptions
+{
+ public:
+  inline JsonOptions() : LoadOptions() { this->DataFormat() = format::json; }
+};
+
+class XmlOptions : public LoadOptions
+{
+ public:
+  inline XmlOptions() : LoadOptions() { this->DataFormat() = format::xml; }
+};
+
+class BinaryOptions : public LoadOptions
+{
+ public:
+  inline BinaryOptions() : LoadOptions() { this->DataFormat() = format::binary; }
+};
+
+//! File serialization options 
+class FileAutoDetectOptions : public LoadOptions
+{
+ public:
+  inline FileAutoDetectOptions() : LoadOptions() { this->FileFormat() = FileType::AutoDetect; }
+};
+
+class CSVOptions : public LoadOptions
+{
+ public:
+   inline CSVOptions() : LoadOptions() { this->FileFormat() = FileType::CSVASCII; }
+};
+
+class PGMOptions : public LoadOptions
+{
+ public:
+   inline PGMOptions() : LoadOptions() { this->FileFormat() = FileType::PGMBinary; }
+};
+
+class PPMOptions : public LoadOptions
+{
+ public:
+   inline PPMOptions() : LoadOptions() { this->FileFormat() = FileType::PPMBinary; }
+};
+
+class HDF5Options : public LoadOptions
+{
+ public:
+   inline HDF5Options() : LoadOptions() { this->FileFormat() = FileType::HDF5Binary; }
+};
+
+class ArmaASCIIOptions : public LoadOptions
+{
+ public:
+   inline ArmaASCIIOptions() : LoadOptions() { this->FileFormat() = FileType::ArmaASCII; }
+};
+
+class ArmaBinOptions : public LoadOptions
+{
+ public:
+   inline ArmaBinOptions() : LoadOptions() { this->FileFormat() = FileType::ArmaBinary; }
+};
+
+class RawASCIIOptions : public LoadOptions
+{
+ public:
+   inline RawASCIIOptions() : LoadOptions() { this->FileFormat() = FileType::RawASCII; }
+};
+
+class RawBinOptions : public LoadOptions
+{
+ public:
+   inline RawBinOptions() : LoadOptions() { this->FileFormat() = FileType::RawBinary; }
+};
+
+class CoordASCIIOptions : public LoadOptions
+{
+ public:
+   inline CoordASCIIOptions() : LoadOptions() { this->FileFormat() = FileType::CoordASCII; }
+};
+
+//! Boolean options
+static const FatalOptions         Fatal;
+static const HasHeadersOptions    HasHeaders;
+static const TransposeOptions     Transpose;
+static const SemiColonOptions     SemiColon;
+static const MissingToNanOptions  MissingToNan;
+static const CategoricalOptions   Categorical;
+static const ImageOptions         Image;
+static const ModelOptions         Model;
+
+//! File options
+static const CSVOptions            CSV; 
+static const PGMOptions            PGM_BIN;
+static const PPMOptions            PPM_BIN;
+static const HDF5Options           HDF5_BIN;
+static const ArmaASCIIOptions      ARMA_ASCII;
+static const ArmaBinOptions        ARMA_BIN;
+static const RawASCIIOptions       RAW_ASCII;
+static const RawBinOptions         BIN_ASCII;
+static const CoordASCIIOptions     COORD_ASCII;
+static const FileAutoDetectOptions AutoDetect_File;
+
+//! Data serialization options 
+static const AutodetectOptions    AutoDetect_SER;
+static const JsonDataOptions      JSON_SER;
+static const XmlDataOptions       XML_SER;
+static const BinaryDataOptions    BIN_SER;
+
 inline
 bool FileExist(const std::string& filename,
                std::fstream& stream,
