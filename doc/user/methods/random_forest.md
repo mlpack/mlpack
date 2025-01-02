@@ -96,6 +96,8 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 | `minLeafSize` | `size_t` | Minimum number of points in each leaf node of each decision tree. | `1` |
 | `minGainSplit` | `double` | Minimum gain for a node to split in each decision tree. | `1e-7` |
 | `maxDepth` | `size_t` | Maximum depth for each decision tree. (0 means no limit.) | `0` |
+| `dimSelector` | `DimensionSelectionType` | | `DimensionSelectionType()` |
+| `bootstrap` | `BootstrapType` | Bootstrap strategy. | `BootstrapType()` |    
 | `warmStart` | `bool` | (Only available in `Train()`.)  If true, training adds `numTrees` trees to the random forest.  If `false`, an entirely new random forest will be created. | `false` |
 
  * If OpenMP is enabled<!-- TODO: link! -->, one thread will be used to train
@@ -109,6 +111,10 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
    and so if a smaller-sized model is desired, this value should be increased
    (at the potential cost of accuracy).
  * `minGainSplit` can also be increased if a smaller-sized model is desired.
+ * `bootstrap` can be any of `DefaultBootstrap`, `IdentityBootstrap`,
+   `SequentialBootstrap`, or any customer bootstrapping algorithm as defined
+   by [BootstrapType](#bootstraptype). Note that `SequentialBootstrap` does
+   not have a default constructor.
 
 ***Note:*** different types can be used for `data` and `weights` (e.g.,
 `arma::fmat`, `arma::sp_mat`).  However, the element type of `data` and
@@ -367,6 +373,41 @@ std::cout << "Probabilities of each class: " << probabilities.t();
 
 ---
 
+Train a `RandomForest` with the `SequentialBootstrap` strategy.
+
+```c++
+// 1000 random points in 10 dimensions.
+arma::mat dataset(10 /* rows */, 1000 /* cols */, arma::fill::randu);
+// Random labels for each point, totaling 5 classes.
+arma::Row<size_t> labels =
+arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
+
+arma::umat intervals(labels.n_cols, 2);
+for (arma::uword i(0); i < labels.n_cols; ++i) {
+  // Create intervals of random length.
+  intervals(i, 0) = i;
+  intervals(i, 1) = i + std::rand();
+  if (intervals(i, 1) > 1000) {
+    intervals(i, 1) = 1000;
+  }
+}
+
+SequentialBootstrap bootstrap(intervals, dataset.n_cols);
+
+// Create and train the random forest.
+RandomForest<GiniGain,
+             MultipleRandomDimensionSelect,
+             BestBinaryNumericSplit,
+             AllCategoricalSplit,
+             true,
+             SequentialBootstrap<>> rf(
+               dataset, labels, 5, 20, 1, 1e-7, 0,
+               MultipleRandomDimensionSelect(),
+               bootstrap);
+```
+
+---
+
 See also the following fully-working examples:
 
  - [Rainfall prediction with `RandomForest`](https://github.com/mlpack/examples/blob/master/jupyter_notebook/random_forest/rainfall_prediction/rainfall-prediction-cpp.ipynb)
@@ -438,7 +479,8 @@ RandomForest<FitnessFunction,
              DimensionSelectionType,
              NumericSplitType,
              CategoricalSplitType,
-             UseBootstrap>
+             UseBootstrap,
+             BootstrapType>
 ```
 
  * `FitnessFunction`: the measure of goodness to use when deciding on tree
@@ -450,7 +492,9 @@ RandomForest<FitnessFunction,
  * `CategoricalSplitType`: the strategy used for finding splits on categorical
    data dimensions
  * `UseBootstrap`: a boolean indicating whether or not to use a bootstrap sample
-   when training each tree in the forest
+   when training each tree in the forest. This argument will be removed in mlpack
+   5.0.0 as it is superseded by the BootstrapType strategy.
+ * `BootstrapType`: the strategy used to bootstrap the samples per tree.
 
 Note that the first four of these template parameters are exactly the same as
 the template parameters for the
@@ -705,6 +749,10 @@ class CustomCategoricalSplit
 
 #### `UseBootstrap`
 
+**This parameter will be removed in mlpack 5.0.0.** A value of `false` will then be
+equivalent to `BootstrapType` `IdentityBootstrap` and a value of `true` will be
+equivalent to `DefaultBootstrap`.
+
  * A `bool` value that indicates whether or not a bootstrap sample of the
    dataset should be used for the training of each individual decision tree in
    the random forest.
@@ -712,3 +760,44 @@ class CustomCategoricalSplit
    dataset will be used to train each decision tree.
  * If `false` _(default for the `ExtraTrees` [variant](#fully-custom-behavior))_, the full
    dataset will be used to train each decision tree.
+
+#### `BootstrapType`
+
+ * Specifies the strategy used for bootstrapping data for each tree in the random forest.
+ * Three implementations for `BootstrapType` are available for drop-in usage:
+   - `DefaultBootstrap` *(default)*: bootstrap via random sampling with replacement.
+   - `IdentityBootstrap`: no bootstrapping.  Simply copies the input `dataset`, `labels`, and `weights` for each tree's data.
+   - `SequentialBootstrap`: bootstrapping from overlapping sequences such that samples with informational overlap behave more I.I.D.
+     * Useful when data consists of multiple overlapping events (or individual sequences).
+     * `b = SequentialBootstrap(intervals)` will create a `SequentialBootstrap` object, where:
+       - `intervals` is of type `arma::umat`, with 2 rows and `m` columns, where `m` is the number of events.
+       - Each column in `intervals` represents the start and end columns (inclusive) of each event.
+       - So, e.g., if the 10th event is 5 points long, starting at index 6, then column `9` of `intervals` should be `6, 10`.
+     * A `SequentialBootstrap` must be passed as the `bootstrap` option to the [advanced constructor](#fully-custom-behavior).
+     * For more information, see: M. López de Prado (2018): "Advances in Financial Machine Learning", pp. 63-65.
+ * A custom `BootstrapType` class must take a `bool` template parameter `UseWeights` and implement one function:
+```c++
+class CustomBootstrapType
+{
+  /**
+   * Compute a bootstrap dataset based on the original dataset.
+   * If `UseWeights` is `false`, then `weights` and `bootstrapWeights` can be
+   * ignored.
+   *
+   * When the function is complete, `bootstrapDataset` and `bootstrapLabels`
+   * should contain a bootstrapped dataset.  If `UseWeights` is `true`, then
+   * `bootstrapWeights` should contain the corresponding instance weights for
+   * the bootstrapped dataset.
+   */
+  template<bool UseWeights,
+           typename MatType,
+           typename LabelsType,
+           typename WeightsType>
+  void Bootstrap(const MatType& dataset,
+                 const LabelsType& labels,
+                 const WeightsType& weights,
+                 MatType& bootstrapDataset,
+                 LabelsType& bootstrapLabels,
+                 WeightsType& bootstrapWeights);
+};
+```
