@@ -38,5 +38,6 @@
 #include "split_data.hpp"
 #include "string_algorithms.hpp"
 #include "types.hpp"
+#include "load_utilities.hpp"
 
 #endif
