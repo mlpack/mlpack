@@ -225,7 +225,7 @@ class DataOptions
   DatasetInfo mapper;
 };
 
-DataOptions operator|(const DataOptions& a, const DataOptions& b)
+inline DataOptions operator|(const DataOptions& a, const DataOptions& b)
 {
   DataOptions output;
   output.Fatal() = a.Fatal() | b.Fatal();

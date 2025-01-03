@@ -189,7 +189,10 @@ bool Load(const std::string& filename,
   DataOptions opts;
   opts.Fatal() = fatal;
   opts.Transpose() = transpose;
-  opts.Mapper() = info;
+  // @rcurtin just commenting this one as we need to find a solution for the
+  // template parameter of the DatasetMapper. Assigning the following variable
+  // will simply fails as `info` is different type from opts.Mapper()
+  //opts.Mapper() = info;
 
   return Load(filename, matrix, opts);
 }
@@ -358,7 +361,12 @@ bool LoadSparse(const std::string& filename,
   }
   
   if (opts.Transpose())
-    inplace_trans(matrix);
+  {
+    // It seems that there is no direct way to use inplace_trans() on 
+    // sparse matrices. Therefore, we need the temporary SpMat
+    arma::SpMat<eT> tmp = matrix.t();
+    matrix = tmp;
+  }
 
   return success;
 }
