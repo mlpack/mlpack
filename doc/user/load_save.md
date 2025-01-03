@@ -3,9 +3,12 @@
 mlpack provides the `data::Load()` and `data::Save()` functions to load and save
 [Armadillo matrices](matrices.md) (e.g. numeric and categorical datasets) and
 any mlpack object via the [cereal](https://uscilab.github.io/cereal/)
-serialization toolkit.  A number of other utilities related to loading and
-saving data and objects are also available.
+serialization toolkit.  Both functions are customizable using the DataOptions
+class that acts as a utility class to allow to fix the settings relevant to
+each specific case (e.g., transpose matrix, csv matrix, or image data). These
+options are documented in the following table
 
+ * [Data Options](#data-option)
  * [Numeric data](#numeric-data)
  * [Mixed categorical data](#mixed-categorical-data)
    - [`data::DatasetInfo`](#datadatasetinfo)
@@ -15,6 +18,162 @@ saving data and objects are also available.
    - [Loading images](#loading-images)
  * [mlpack objects](#mlpack-objects): load or save any mlpack object
  * [Formats](#formats): supported formats for each load/save variant
+
+
+## Data Options
+`data::Load()` and `data::Save()` have an identical API in mlpack whether we
+are trying to load an image or a csv file. However, we need to specify the
+relevant settings in the `data::DataOptions` class. In the following table we
+document all possible options that can be used within this class. These
+settings need to be set before calling the `data::Load / data::Save` functions
+or within the function itself by using the bitwise OR `|` operator.
+
+|------------------------------------------------------------------------------
+| Options as a Bitwise | Option as a function name | Type  | Comment       |
+|-------------------------------------------------------------------------------------------------------
+| `Fatal`  | `.Fatal()` | bool | If set `true`, then a  `std::runtime_error` will be thrown on failure. |
+|------------------------------------------------------------------------------------------------------
+| `HasHeaders` | `.HasHeaders()` | bool | Set `true`, if the CSV file has a header, the header can  |
+|              |                 |      | be accessible using `Headers()` function                  |
+|---------------------------------------------------------------------------------------------------------
+| `Transpose` | `.Transpose()`| bool | If set `true` for plaintext formats (CSV/TSV/ASCII), then matrix  |
+|             |               |      | will be transposed on load or save. (Keep this `true` if you want |
+|             |               |      | a column-major matrix to be loaded or saved with points as rows and |
+|             |               |      | dimensions as columns; that is generally what is desired.) |
+|--------------------------------------------------------------------------------------------------------
+| `SemiColon` | `.SemiColon()`| bool | Set `true` for plaintext formats (CSV/TSV/ASCII) if the separator |
+|             |               |      |  is a semicolon instead of a comma                                |
+|---------------------------------------------------------------------------------------------------------
+| `MissingToNan` | `.MissingToNan()`| bool | Set `true`, if there is missing data elements and you want  |
+|                |                  |      | them to be replaced with NaN                                |
+|---------------------------------------------------------------------------------------------------------
+| `Categorical` | `.Categorical()` | bool | Set `true`, if the dataset contains categorical data.        |
+|---------------------------------------------------------------------------------------------------------
+| `Image` | `.Image()` | bool | Set `true`, if we are trying to Load / Save images instead of text formats. |
+|------------------------------------------------------------------------------------------------------------
+| `Model` | `.Model()`| bool | Set `true`, if we are trying to Load / Save an mlpack object                 |
+|         |           |      | (e.g., neural network model)                                                 |
+|-----------------------------------------------------------------------------------------------------------|
+
+
+## Options related to File Formats for (Load / Save)
+
+By default, load/save format is ***autodetected***, but can be manually
+specified with the `format` parameter using one of the options below:
+
+
+|--------------------------------------------------------------------------|
+| Options as a Bitwise | Option as a function name | Type  | Comment       |
+|-----------------------------------------------------------------------------------------------------------|
+| `CSV` | `.FileFormat() = FileType::CSVASCII` | enum | (autodetect extensions `.csv`, `.tsv`): CSV format  |
+|       |                                      |      | with no header.  If loading a sparse matrix and the |
+|       |                                      |      | CSV has three columns, the data is interpreted as a |
+|       |                                      |      | [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
+|-------------------------------------------------------------------------------------------------------------|
+| `PGM_BIN` | `.FileFormat() = FileType::PGMBinary` | enum | (autodetect extension `.pgm`): PGM image format. |
+|------------------------------------------------------------------------------------------------------------|
+| `PPM_BIN` | `.FileFormat() = FileType::PPMBinary` | enum | (autodetect extension `.ppm`):PPM image format. |
+|------------------------------------------------------------------------------------------------------------|
+| `HDF5_BIN` | `.FileFormat() = FileType::HDF5Binary` | enum | (autodetect extensions `.h5`, `.hdf5`, `.hdf`,
+|            |                                        |       |  `.he5`): [HDF5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format) |
+|            |                                        |       |   binary format; only available if Armadillo is configured with |
+|            |                                        |       | [HDF5 support](https://arma.sourceforge.net/docs.html#config_hpp). |
+|--------------------------------------------------------------------------------------------------------------|
+| `ARMA_ASCII` | `.FileFormat() = FileType::ArmaASCII` | enum | (autodetect extension `.txt`): space-separated |
+|              |                                       |      | values as saved by Armadillo with the          |
+|              |                                       |      | [`arma_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat) |
+|              |                                       |      | format. |
+|--------------------------------------------------------------------------------------------------------------|
+| `ARMA_BIN` | `.FileFormat() = FileType::ArmaBinary` | enum |  (autodetect extension `.bin`): Armadillo's     |
+|            |                                        |      |  efficient binary matrix format                 |
+|            |                                        |      |  ([`arma_binary`](https://arma.sourceforge.net/docs.html#save_load_mat)). |
+|--------------------------------------------------------------------------------------------------------------|
+| `RAW_ASCII` | `.FileFormat() = FileType::RawASCII` | enum | (autodetect extensions `.csv`, `.txt`):          |
+|             |                                      |      | space-separated values or tab-separated values (TSV) |
+|             |                                      |      | with no header.                                  |
+|--------------------------------------------------------------------------------------------------------------------|
+| `BIN_ASCII` | `.FileFormat() = FileType::RawBinary` | enum | (autodetect extension `.bin`): packed binary data     | 
+|             |                                       |      | with no header and no size information; data will be  |
+|             |                                       |      | loaded as a single column vector _(not recommended)_. |
+|--------------------------------------------------------------------------------------------------------------------|
+| `COORD_ASCII` | `.FileFormat() = FileType::` | enum | (autodetect extensions `.txt`, `.tsv`; must be loading a sparse |
+|               |                              |      | matrix type): coordinate list format for sparse data (see       |
+|               |                              |      | [`coord_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat)). |
+|------------------------------------------------------------------------------------------------------------|
+| `AutoDetect_File` | `.FileFormat() = FileType::AutoDetect` | enum | auto-detects the format as one of the  |
+|                   |                                        |      | formats above using the extension of the |
+|                   |                                        |      | filename and inspecting the file contents.|
+|----------------------------------------------------------------------------------------------------------------|
+
+***Notes:***
+
+   - ASCII formats (`CSVASCII`, `RawASCII`, `ArmaASCII`) are human-readable but
+     large; to reduce dataset size, consider a binary format such as
+      `ArmaBinary` or `HDF5Binary`.
+   - Sparse data (`arma::sp_mat`, `arma::sp_fmat`, etc.) should be saved in a
+     binary format (`ArmaBinary` or `HDF5Binary`) or as a coordinate list
+     (`CoordASCII`).
+
+#### [mlpack objects](#mlpack-objects)
+
+By default, load/save format for mlpack objects is autodetected. However, you
+need to specify the `Model()` to `true` to allow correct parsing of the object. 
+Also if auto detected is not used, it is possible to manually specified with the `format`
+parameter using one of the options below:
+
+|--------------------------------------------------------------------------|
+| Options as a Bitwise | Option as a function name | Type  | Comment       |
+|------------------------------------------------------------------------------------------------------------|
+| `AutoDetect_SER` | `.DataFormat() = format::autodetect` | enum | (default): auto-detects the format as one of the |
+|                  |                                      |      | formats below using the extension of the filename |
+|-------------------------------------------------------------------------------------|
+| `JSON_SER` | `.DataFormat() = format::json` | enum | (autodetect extension `.json`) |
+|-------------------------------------------------------------------------------------|
+| `XML_SER` | `.DataFormat() = format::xml` | enum | (autodetect extension `.xml`)    |
+|-------------------------------------------------------------------------------------|
+| `BIN_SER` | `.DataFormat() = format::binary` | enum | (autodetect extension `.bin`) |
+|-------------------------------------------------------------------------------------|
+
+***Notes:***
+
+ - `format::json` (`.json`) and `format::xml` (`.xml`) produce human-readable
+   files, but they may be quite large.
+ - `format::binary` (`.bin`) is recommended for the sake of size; objects in
+   binary format may be an order of magnitude or more smaller than JSON!
+
+---
+## Auto detected options for Files Format (No need to specify anything).
+
+#### [Mixed categorical data](#mixed-categorical-data)
+
+The format of mixed categorical data is detected automatically based on the
+file extension and inspecting the file contents:
+
+ - `.csv`, `.txt`, or `.tsv` indicates CSV/TSV/ASCII format
+ - `.arff` indicates [ARFF](https://ml.cms.waikato.ac.nz/weka/arff.html)
+
+---
+
+#### [Image data](#image-data)
+
+The format of images are detected automatically based on the file extension.
+
+ - The following formats are supported for loading: `.jpg`, `.jpeg`, `.png`,
+   `.tga`, `.bmp`, `.psd`, `.gif`, `.hdr`, `.pic`, `.pnm`
+
+ - The following formats are supported for saving: `.jpg`, `.png`, `.tga`,
+   `.bmp`, `.hdr`
+
+---
+
+Finally we have the non-option functions:
+
+- `.Headers()` : Call this function to recover the headers of the CSV file,
+  note `.HasHeaders()` need to be setup first to `true`. The functions return an
+  `arma::field<std::string>`
+- `Mapper()` : Set the policy on how to Load / Save Categorical data.
+- `ObjectName()` : Set or Get the name of the model you are trying to Save or
+  Load.
 
 ## Numeric data
 
@@ -582,104 +741,3 @@ mlpack::data::Save("range.json", "range", r2, true);
 //     }
 // }
 ```
-
----
-
-## Formats
-
-mlpack's `data::Load()` and `data::Save()` functions support a variety of
-different formats in different contexts.
-
----
-
-#### [Numeric data](#numeric-data)
-
-By default, load/save format is ***autodetected***, but can be manually
-specified with the `format` parameter using one of the options below:
-
- - `FileType::AutoDetect` (default): auto-detects the format as one of the
-   formats below using the extension of the filename and inspecting the file
-   contents.
-
- - `FileType::CSVASCII` (autodetect extensions `.csv`, `.tsv`): CSV format
-   with no header.  If loading a sparse matrix and the CSV has three columns,
-   the data is interpreted as a
-   [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat).
-
- - `FileType::RawASCII` (autodetect extensions `.csv`, `.txt`):
-   space-separated values or tab-separated values (TSV) with no header.
-
- - `FileType::ArmaASCII` (autodetect extension `.txt`): space-separated
-   values as saved by Armadillo with the
-   [`arma_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat)
-   format.
-
- - `FileType::CoordASCII` (autodetect extensions `.txt`, `.tsv`; must be
-   loading a sparse matrix type): coordinate list format for sparse data (see
-   [`coord_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat)).
-
- - `FileType::ArmaBinary` (autodetect extension `.bin`): Armadillo's
-   efficient binary matrix format
-   ([`arma_binary`](https://arma.sourceforge.net/docs.html#save_load_mat)).
-
- - `FileType::HDF5Binary` (autodetect extensions `.h5`, `.hdf5`, `.hdf`,
-  `.he5`): [HDF5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format)
-   binary format; only available if Armadillo is configured with
-   [HDF5 support](https://arma.sourceforge.net/docs.html#config_hpp).
-
- - `FileType::RawBinary` (autodetect extension `.bin`): packed binary data
-   with no header and no size information; data will be loaded as a single
-   column vector _(not recommended)_.
-
- - `FileType::PGMBinary` (autodetect extension `.pgm`): PGM image format
-
-***Notes:***
-
-   - ASCII formats (`CSVASCII`, `RawASCII`, `ArmaASCII`) are human-readable but
-     large; to reduce dataset size, consider a binary format such as
-      `ArmaBinary` or `HDF5Binary`.
-   - Sparse data (`arma::sp_mat`, `arma::sp_fmat`, etc.) should be saved in a
-     binary format (`ArmaBinary` or `HDF5Binary`) or as a coordinate list
-     (`CoordASCII`).
-
----
-
-#### [Mixed categorical data](#mixed-categorical-data)
-
-The format of mixed categorical data is detected automatically based on the
-file extension and inspecting the file contents:
-
- - `.csv`, `.txt`, or `.tsv` indicates CSV/TSV/ASCII format
- - `.arff` indicates [ARFF](https://ml.cms.waikato.ac.nz/weka/arff.html)
-
----
-
-#### [Image data](#image-data)
-
-The format of images are detected automatically based on the file extension.
-
- - The following formats are supported for loading: `.jpg`, `.jpeg`, `.png`,
-   `.tga`, `.bmp`, `.psd`, `.gif`, `.hdr`, `.pic`, `.pnm`
-
- - The following formats are supported for saving: `.jpg`, `.png`, `.tga`,
-   `.bmp`, `.hdr`
-
----
-
-#### [mlpack objects](#mlpack-objects)
-
-By default, load/save format for mlpack objects is autodetected, but can be
-manually specified with the `format` parameter using one of the options below:
-
- - `format::autodetect` (default): auto-detects the format as one of the
-    formats below using the extension of the filename
- - `format::json` (autodetect extension `.json`)
- - `format::xml` (autodetect extension `.xml`)
- - `format::binary` (autodetect extension `.bin`)
-
-***Notes:***
-
- - `format::json` (`.json`) and `format::xml` (`.xml`) produce human-readable
-   files, but they may be quite large.
- - `format::binary` (`.bin`) is recommended for the sake of size; objects in
-   binary format may be an order of magnitude or more smaller than JSON!
