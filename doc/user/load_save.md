@@ -180,8 +180,8 @@ Finally we have the non-option functions:
 Numeric data or general numeric matrices can be loaded or saved with the
 following functions.
 
- - `data::Load(filename, matrix, fatal=false, transpose=true, format=FileType::AutoDetect)`
- - `data::Save(filename, matrix, fatal=false, transpose=true, format=FileType::AutoDetect)`
+ - `data::Load(filename, matrix, options)`
+ - `data::Save(filename, matrix, options)`
    * `filename` is a `std::string` with a path to the file to be loaded.
 
    * By default the format is auto-detected based on the file extension, but can
@@ -191,12 +191,9 @@ following functions.
      similar (e.g., a reference to an Armadillo object that data will be loaded
      into or saved from).
 
-   * If `fatal` is `true`, a `std::runtime_error` will be thrown on failure.
-
-   * If `transpose` is `true`, then for plaintext formats (CSV/TSV/ASCII), the
-     matrix will be transposed on load or save.  (Keep this `true` if you want a
-     column-major matrix to be loaded or saved with points as rows and
-     dimensions as columns; that is generally what is desired.)
+   * `options` is a `DataOptions&` object that defines what and how the Load /
+     Save function will behave on specific file, and allows us to define the
+     file type. A list of possible options are described below.
 
    * A `bool` is returned indicating whether the operation was successful.
 
@@ -207,11 +204,15 @@ Example usage:
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-mlpack::data::Load("satellite.train.csv", dataset, true);
+DataOptions options;
+options.Fatal() = True;
+options.Transpose() = True;
+
+mlpack::data::Load("satellite.train.csv", dataset, options);
 
 // See https://datasets.mlpack.org/satellite.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("satellite.train.labels.csv", labels, true);
+mlpack::data::Load("satellite.train.labels.csv", labels, options);
 
 // Print information about the data.
 std::cout << "The data in 'satellite.train.csv' has: " << std::endl;
@@ -228,8 +229,8 @@ dataset += 2;
 dataset.shed_col(dataset.n_cols - 1);
 labels.shed_col(labels.n_cols - 1);
 
-mlpack::data::Save("satellite.train.mod.csv", dataset);
-mlpack::data::Save("satellite.train.labels.mod.csv", labels);
+mlpack::data::Save("satellite.train.mod.csv", dataset, options);
+mlpack::data::Save("satellite.train.labels.mod.csv", labels, options);
 ```
 
 ---
