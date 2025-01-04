@@ -1,8 +1,8 @@
-# mlpack core class documentation
+# Utility classes
 
 Underlying the implementations of [mlpack's machine learning
-algorithms](../index.md#mlpack-algorithm-documentation) are mlpack core support
-classes, each of which are documented in the pages below:
+algorithms](../index.md) are mlpack core support classes, each of which are
+documented in the pages below:
 
  * [Core math utilities](core/math.md): utility classes for mathematical
    purposes

@@ -261,7 +261,7 @@ void SoftmaxRegression<MatType>::Reset()
 template<typename MatType>
 template<typename Archive>
 void SoftmaxRegression<MatType>::serialize(Archive& ar,
-                                           const unsigned int version)
+                                           const uint32_t version)
 {
   if (cereal::is_loading<Archive>() && version == 0)
   {

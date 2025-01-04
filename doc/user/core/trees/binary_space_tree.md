@@ -295,7 +295,7 @@ accessing them does not require any computation.  In the documentation below,
    distance between the center of the bound of `node` and the furthest
    descendant point held by `node`.
 
- * `node.MinimumBoundDistance()` returns an `ElemType` representing minimum
+ * `node.MinimumBoundDistance()` returns an `ElemType` representing the minimum
    possible distance from the center of the node to any edge of its bound.
 
  * `node.ParentDistance()` returns an `ElemType` representing the distance
@@ -1873,13 +1873,13 @@ class BoundType
 ```
 
 Behavior of some aspects of the `BinarySpaceTree` depend on the traits of a
-particular bound.  Optionally, you may define a `BoundTraits` specialization for
-your bound type, of the following form:
+particular bound.  Optionally, you may define an `mlpack::BoundTraits`
+specialization for your bound type, of the following form:
 
 ```c++
 // Replace `BoundType` below with the name of the custom class.
 template<typename DistanceType, typename ElemType>
-struct BoundTraits<BoundType<DistanceType, ElemType>>
+struct mlpack::BoundTraits<BoundType<DistanceType, ElemType>>
 {
   //! If true, then the bounds for each dimension are tight.  If false, then the
   //! bounds for each dimension may be looser than the range of all points held

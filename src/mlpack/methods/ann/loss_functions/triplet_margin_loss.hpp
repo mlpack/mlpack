@@ -81,7 +81,7 @@ class TripletMarginLossType
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! The margin value used in calculating Triplet Margin Loss.

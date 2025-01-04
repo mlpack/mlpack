@@ -50,7 +50,7 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
 
 #### See also:
 
- * [mlpack clustering algorithms](../../index.md#clustering-algorithms)
+ * [mlpack clustering algorithms](../modeling.md#clustering)
  * [mlpack kernels](../core/kernels.md)
  * [Mean shift on Wikipedia](https://en.wikipedia.org/wiki/Mean_shift)
  * [Mean Shift, Mode Seeking, and Clustering (pdf)](http://users.isr.ist.utl.pt/~alex/Resources/meanshift.pdf)

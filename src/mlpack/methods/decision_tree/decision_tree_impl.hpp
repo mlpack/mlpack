@@ -1159,8 +1159,7 @@ void DecisionTree<FitnessFunction,
 
   // Now normalize into probabilities.
   classProbabilities /= UseWeights ? sumWeights : labels.n_elem;
-  arma::uword maxIndex = 0;
-  classProbabilities.max(maxIndex);
+  arma::uword maxIndex = classProbabilities.index_max();
   majorityClass = (size_t) maxIndex;
 }
 

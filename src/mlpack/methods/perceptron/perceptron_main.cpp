@@ -282,9 +282,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // Now, the training procedure is complete.  Do we have any test data?
   if (params.Has("test"))
   {
+    mat& testData = params.Get<arma::mat>("test");
     Log::Info << "Classifying dataset '"
         << params.GetPrintable<arma::mat>("test") << "'." << endl;
-    mat testData = std::move(params.Get<arma::mat>("test"));
 
     if (testData.n_rows != p->P().Weights().n_rows)
     {
