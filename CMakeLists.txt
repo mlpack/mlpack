@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.11)
 project(mlpack C CXX)
 
 include(CMake/CheckHash.cmake)
@@ -7,8 +7,6 @@ include(CMake/ConfigureCrossCompile.cmake)
 include(CMake/CheckAtomic.cmake)
 
 # First, define all the compilation options.
-# We default to debugging mode for developers.
-option(DEBUG "Compile with debugging information." OFF)
 option(PROFILE "Compile with profiling information." OFF)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
@@ -229,11 +227,11 @@ endif()
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 set (BFD_DL_AVAILABLE "NO")
-if (DEBUG)
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   if (NOT MSVC)
     add_definitions(-DDEBUG)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -O0")
+    set(CMAKE_CXX_FLAGS_DEBUG_INIT "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
+    set(CMAKE_C_FLAGS_DEBUG_INIT "${CMAKE_C_FLAGS} -std=c99 -g -O0")
   endif()
 
   # mlpack uses it's own mlpack::backtrace class based on Binary File Descriptor
@@ -242,7 +240,7 @@ if (DEBUG)
     find_package(Bfd)
     find_package(LibDL)
     if (LIBBFD_FOUND AND LIBDL_FOUND)
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -rdynamic")
+      set(CMAKE_CXX_FLAGS_DEBUG_INIT "${CMAKE_CXX_FLAGS} -rdynamic")
       set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${LIBBFD_INCLUDE_DIRS}
           ${LIBDL_INCLUDE_DIRS})
       set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${LIBBFD_LIBRARIES}
@@ -252,18 +250,18 @@ if (DEBUG)
       message(WARNING "No libBFD and/or libDL has been found!")
     endif()
   endif()
-else()
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
   add_definitions(-DNDEBUG)
   if (NOT MSVC)
     if (NOT CMAKE_CROSSCOMPILING)
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O3")
+      set(CMAKE_CXX_FLAGS_RELEASE_INIT "${CMAKE_CXX_FLAGS} -O3")
+      set(CMAKE_C_FLAGS_RELEASE_INIT "${CMAKE_C_FLAGS} -std=c99 -O3")
     else()
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
+      set(CMAKE_C_FLAGS_RELEASE_INIT "${CMAKE_C_FLAGS} -std=c99")
     endif()
   else ()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O3")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /O3")
+    set(CMAKE_CXX_FLAGS_RELEASE_INIT "${CMAKE_CXX_FLAGS} /O3")
+    set(CMAKE_C_FLAGS_RELEASE_INIT "${CMAKE_C_FLAGS} /O3")
   endif ()
 endif()
 
