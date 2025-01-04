@@ -16,13 +16,13 @@
 
 #include <mlpack/prereqs.hpp>
 
+#ifndef STB_IMAGE_STATIC
+#define STB_IMAGE_STATIC
+#endif
+
 #ifndef STB_IMAGE_RESIZE_IMPLEMENTATION
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "stb_image_resize.h"
-#endif
-
-#ifndef STB_IMAGE_STATIC
-#define STB_IMAGE_STATIC
 #endif
 
 #ifndef STB_IMAGE_IMPLEMENTATION

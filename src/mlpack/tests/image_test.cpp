@@ -152,15 +152,46 @@ TEST_CASE("ImageInfoSerialization", "[ImageLoadTest]")
 
 /**
  * Test resize the image if this is done correctly.
+ * For now we are not testing if the resize process is correct. We asssume
+ * that this is done on STB side. However, it would be really nice to have
+ * a KNN or other methods that test the similarity between the pixels and
+ * give a score above a threshold. 
  */
 TEST_CASE("ImageResizeTest", "[ImageTest]")
 {
-  arma::Mat<unsigned char> images;
-  data::ImageInfo info;
-  std::vector<std::string> files = {"umbrella.jpg"};
-  REQUIRE(data::Load(files, images, info, false) == true);
- 
+  arma::Mat<unsigned char> image, image2;
   arma::Mat<unsigned char> resizedImages;
-  ResizeImages(images, info, resizedImages, 720, 720);
+  data::ImageInfo info, resizedInfo;
+  std::string file = "umbrella.jpg";
+  std::string resized = "_resized.jpg";
 
+  REQUIRE(data::Load(file, image, info, false) == true);
+
+  ResizeImage(image, info, resizedImages, 720, 720);
+  
+  // Save the image. check if this is passes.
+  REQUIRE(data::Save(file + resized, image, info, false) == true);
+
+  // try to load it again, 
+  REQUIRE(data::Load(file + resized, image2, resizedInfo, false) == true);
+
+  // Check if the loaded one has the resized dimension.
+  REQUIRE(info.Width() == resizedInfo.Width());
+  REQUIRE(info.Height() == resizedInfo.Height());
 }
+
+//TEST_CASE("ImagesResizeTest", "[ImageTest]")
+//{
+  //arma::Mat<unsigned char> images;
+  //data::ImageInfo info;
+  //std::vector<std::string> files = {"umbrella.jpg"};
+  //REQUIRE(data::Load(files, images, info, false) == true);
+
+  //arma::Mat<unsigned char> resizedImages;
+  //ResizeImages(images, info, resizedImages, 720, 720);
+
+  //// Save the image. check if this is passes.
+  //// try to load it again, 
+  //// Check if the loaded one has the resized dimension
+//}
+
