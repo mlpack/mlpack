@@ -43,7 +43,7 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 
 #### See also:
 
- * [mlpack regression techniques](../../index.md#regression-algorithms)
+ * [mlpack regression techniques](../modeling.md#regression)
  * [`LinearRegression`](linear_regression.md)
  * [`LARS`](lars.md)
  * [Bayesian linear regression on Wikipedia](https://en.wikipedia.org/wiki/Bayesian_linear_regression)

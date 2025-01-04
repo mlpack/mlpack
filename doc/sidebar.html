@@ -20,15 +20,18 @@ when the sidebar is built for each page.
     </summary>
 
     <ul>
-      <!-- General "getting started" documentation -->
+      <!-- The "Prerequisites" section stays expanded at the top level. -->
       <li>
         <a href="LINKROOTquickstart/cpp.html">Quickstart</a>
       </li>
       <li>
-        <a href="LINKROOTuser/matrices.html">Matrices and data</a>
+        <a href="LINKROOTuser/install.html">Installing mlpack</a>
       </li>
       <li>
-        <a href="LINKROOTuser/load_save.html">Loading and saving</a>
+        <a href="LINKROOTembedded/supported_boards.html">Cross-compilation setup</a>
+      </li>
+      <li>
+        <a href="LINKROOTuser/matrices.html">Data representation in mlpack</a>
       </li>
       <li class="bottom-space">
         <a href="LINKROOTcitation.html">Citation</a>
@@ -38,14 +41,40 @@ when the sidebar is built for each page.
       <li>
         <details>
           <summary>
+            <a href="LINKROOTuser/tutorials.html">
+              Tutorials and Examples
+            </a>
+          </summary>
+          <ul>
+            <li>
+              <a href="https://github.com/mlpack/examples/">
+                mlpack examples repository
+              </a>
+            </li>
+            <li>
+              <a href="https://www.youtube.com/@mlpack">
+                mlpack Youtube channel
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/mlpack/models/">
+                mlpack models repository
+              </a>
+            </li>
+          </ul>
+        </details>
+      </li>
+      <li class="bottom-space">
+        <details>
+          <summary>
             <a href="LINKROOTuser/core.html">
-              Core functionality
+              Utility classes
             </a>
           </summary>
           <ul>
             <li>
               <a href="LINKROOTuser/core/math.html">
-                Core math utilities
+                Math
               </a>
             </li>
             <li>
@@ -63,190 +92,110 @@ when the sidebar is built for each page.
                 Kernels
               </a>
             </li>
+            <li>
+              <details>
+                <summary>
+                  <a href="LINKROOTuser/core/trees.html">
+                    Trees
+                  </a>
+                </summary>
+                <ul>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/kdtree.html">
+                      <code>KDTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/mean_split_kdtree.html">
+                      <code>MeanSplitKDTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/ball_tree.html">
+                      <code>BallTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/mean_split_ball_tree.html">
+                      <code>MeanSplitBallTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/vptree.html">
+                      <code>VPTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/rp_tree.html">
+                      <code>RPTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/max_rp_tree.html">
+                      <code>MaxRPTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/ub_tree.html">
+                      <code>UBTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/binary_space_tree.html">
+                      <code>BinarySpaceTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/core/trees/cover_tree.html">
+                      <code>CoverTree</code>
+                    </a>
+                  </li>
+                </ul>
+              </details>
+            </li>
           </ul>
         </details>
       </li>
 
-      <!-- Trees -->
+      <!-- Data loading and I/O -->
       <li>
         <details>
           <summary>
-            <a href="LINKROOTuser/core/trees.html">
-              Trees
+            <a href="LINKROOTuser/load_save.html">
+              Data loading and I/O
             </a>
           </summary>
           <ul>
             <li>
-              <a href="LINKROOTuser/core/trees/kdtree.html">
-                <code>KDTree</code>
+              <a href="LINKROOTuser/load_save.html#numeric-data">
+                Numeric data
               </a>
             </li>
             <li>
-              <a href="LINKROOTuser/core/trees/mean_split_kdtree.html">
-                <code>MeanSplitKDTree</code>
+              <a href="LINKROOTuser/load_save.html#mixed-categorical-data">
+                Mixed categorical data
               </a>
             </li>
             <li>
-              <a href="LINKROOTuser/core/trees/ball_tree.html">
-                <code>BallTree</code>
+              <a href="LINKROOTuser/load_save.html#image-data">
+                Image data
               </a>
             </li>
             <li>
-              <a href="LINKROOTuser/core/trees/mean_split_ball_tree.html">
-                <code>MeanSplitBallTree</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/core/trees/vptree.html">
-                <code>VPTree</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/core/trees/rp_tree.html">
-                <code>RPTree</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/core/trees/max_rp_tree.html">
-                <code>MaxRPTree</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/core/trees/ub_tree.html">
-                <code>UBTree</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/core/trees/binary_space_tree.html">
-                <code>BinarySpaceTree</code>
+              <a href="LINKROOTuser/load_save.html#mlpack-objects">
+                mlpack models and objects
               </a>
             </li>
           </ul>
         </details>
       </li>
 
-      <!-- Classification algorithms -->
+      <!-- Preprocessing / feature extraction -->
       <li>
         <details>
           <summary>
-            <a href="LINKROOTindex.html#classification-algorithms">
-              Classification
-            </a>
-          </summary>
-          <ul>
-            <li>
-              <a href="LINKROOTuser/methods/adaboost.html">
-                <code>AdaBoost</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/methods/decision_tree.html">
-                <code>DecisionTree</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/methods/hoeffding_tree.html">
-                <code>HoeffdingTree</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/methods/linear_svm.html">
-                <code>LinearSVM</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/methods/logistic_regression.html">
-                <code>LogisticRegression</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/methods/naive_bayes_classifier.html">
-                <code>NaiveBayesClassifier</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/methods/perceptron.html">
-                <code>Perceptron</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/methods/random_forest.html">
-                <code>RandomForest</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/methods/softmax_regression.html">
-                <code>SoftmaxRegression</code>
-              </a>
-            </li>
-          </ul>
-        </details>
-      </li>
-
-      <!-- Regression algorithms -->
-      <li>
-        <details>
-          <summary>
-            <a href="LINKROOTindex.html#regression-algorithms">
-              Regression
-            </a>
-          </summary>
-          <ul>
-            <li>
-              <a href="LINKROOTuser/methods/bayesian_linear_regression.html">
-                <code>BayesianLinearRegression</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/methods/decision_tree_regressor.html">
-                <code>DecisionTreeRegressor</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/methods/lars.html">
-                <code>LARS</code>
-              </a>
-            </li>
-            <li>
-              <a href="LINKROOTuser/methods/linear_regression.html">
-                <code>LinearRegression</code>
-              </a>
-            </li>
-          </ul>
-        </details>
-      </li>
-
-      <!-- Clustering algorithms -->
-      <li>
-        <details>
-          <summary>
-            <a href="LINKROOTindex.html#clustering-algorithms">
-              Clustering
-            </a>
-          </summary>
-          <ul>
-            <li>
-              <a href="LINKROOTuser/methods/mean_shift.html">
-                <code>MeanShift</code>
-              </a>
-            </li>
-          </ul>
-        </details>
-      </li>
-
-      <!-- Geometric algorithms -->
-      <li>
-        <a href="LINKROOTindex.html#geometric-algorithms">
-          Geometry
-        </a>
-      </li>
-
-      <!-- Preprocessing utilities -->
-      <li>
-        <details>
-          <summary>
-            <a href="LINKROOTindex.html#preprocessing-utilities">
-              Preprocessing
+            <a href="LINKROOTuser/preprocessing.html">
+              Preprocessing/feature extraction
             </a>
           </summary>
           <ul>
@@ -268,7 +217,7 @@ when the sidebar is built for each page.
       <li>
         <details>
           <summary>
-            <a href="LINKROOTindex.html#transformations">
+            <a href="LINKROOTuser/transformations.html">
               Transformations
             </a>
           </summary>
@@ -317,12 +266,133 @@ when the sidebar is built for each page.
         </details>
       </li>
 
-      <!-- Modeling utilities -->
-      <li class="bottom-space">
+      <!-- Classification algorithms -->
+      <li>
         <details>
           <summary>
-            <a href="LINKROOTindex.html#modeling-utilities">
+            <a href="LINKROOTuser/modeling.html">
               Modeling
+            </a>
+          </summary>
+          <ul>
+            <li>
+              <details>
+                <summary>
+                  <a href="LINKROOTuser/modeling.html#classification">
+                    Classification
+                  </a>
+                </summary>
+                <ul>
+                  <li>
+                    <a href="LINKROOTuser/methods/adaboost.html">
+                      <code>AdaBoost</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/methods/decision_tree.html">
+                      <code>DecisionTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/methods/hoeffding_tree.html">
+                      <code>HoeffdingTree</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/methods/linear_svm.html">
+                      <code>LinearSVM</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/methods/logistic_regression.html">
+                      <code>LogisticRegression</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/methods/naive_bayes_classifier.html">
+                      <code>NaiveBayesClassifier</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/methods/perceptron.html">
+                      <code>Perceptron</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/methods/random_forest.html">
+                      <code>RandomForest</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/methods/softmax_regression.html">
+                      <code>SoftmaxRegression</code>
+                    </a>
+                  </li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary>
+                  <a href="LINKROOTuser/modeling.html#regression">
+                    Regression
+                  </a>
+                </summary>
+                <ul>
+                  <li>
+                    <a href="LINKROOTuser/methods/bayesian_linear_regression.html">
+                      <code>BayesianLinearRegression</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/methods/decision_tree_regressor.html">
+                      <code>DecisionTreeRegressor</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/methods/lars.html">
+                      <code>LARS</code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTuser/methods/linear_regression.html">
+                      <code>LinearRegression</code>
+                    </a>
+                  </li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary>
+                  <a href="LINKROOTuser/modeling.html#clustering">
+                    Clustering
+                  </a>
+                </summary>
+                <ul>
+                  <li>
+                    <a href="LINKROOTuser/methods/mean_shift.html">
+                      <code>MeanShift</code>
+                    </a>
+                  </li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <a href="LINKROOTuser/modeling.html#geometric-algorithms">
+                Geometric algorithms
+              </a>
+            </li>
+          </ul>
+        </details>
+      </li>
+
+      <!-- Evaluation -->
+      <li>
+        <details>
+          <summary>
+            <a href="LINKROOTuser/evaluation.html">
+              Evaluation
             </a>
           </summary>
           <ul>
@@ -339,39 +409,106 @@ when the sidebar is built for each page.
           </ul>
         </details>
       </li>
-      
+
+      <!-- Deployment -->
       <li>
         <details>
           <summary>
-            <a href="LINKROOTindex.html#mlpack-on-embedded-systems">
-              Embedded Applications
+            <a href="LINKROOTuser/deployment.html">
+              Deployment
             </a>
           </summary>
           <ul>
             <li>
-              <a href="LINKROOTembedded/crosscompile_armv7.html">
-                cross-compile and run k-NN on a Raspberry Pi 2 (armv7)
+              <a href="LINKROOTuser/compile.html">
+                Compilation
               </a>
             </li>
             <li>
-              <a href="LINKROOTembedded/supported_boards.html">
-                Setting up an mlpack cross-compilation environment
+              <a href="LINKROOTembedded/crosscompile_armv7.html">
+                Cross-compile to RPi2
+              </a>
+            </li>
+            <li>
+              <a href="LINKROOTuser/deploy_windows.html">
+                Deploying mlpack on Windows
               </a>
             </li>
           </ul>
-        </details>  
+        </details>
       </li>
 
       <li>
-        <a href="LINKROOTindex.html#examples-and-further-documentation">
-          Examples
-        </a>
-      </li>
-
-      <li>
-        <a href="LINKROOTindex.html#developer-documentation">
-          Developers
-        </a>
+        <details>
+          <summary>
+            <a href="LINKROOTdeveloper/developers.html">
+              Developers
+            </a>
+          </summary>
+          <ul>
+            <li>
+              <a href="LINKROOTdeveloper/community.html">
+                Community
+              </a>
+            </li>
+            <li>
+              <a href="LINKROOTdeveloper/gsoc.html">
+                GSoC
+              </a>
+            </li>
+            <li>
+              <a href="LINKROOTdeveloper/ci.html">
+                CI/CD
+              </a>
+            </li>
+            <li>
+              <a href="LINKROOTdeveloper/timer.html">
+                Timers
+              </a>
+            </li>
+            <li>
+              <a href="LINKROOTdeveloper/bindings.html">
+                Binding system
+              </a>
+            </li>
+            <li>
+              <a href="LINKROOTdeveloper/iodoc.html">
+                Writing a binding
+              </a>
+            </li>
+            <li>
+              <details>
+                <summary>
+                  <a href="LINKROOTdeveloper/policies.html">
+                    Template policies
+                  </a>
+                </summary>
+                <ul>
+                  <li>
+                    <a href="LINKROOTdeveloper/elemtype.html">
+                      ElemType
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTdeveloper/distances.html">
+                      DistanceType
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTdeveloper/kernels.html">
+                      KernelType
+                    </a>
+                  </li>
+                  <li>
+                    <a href="LINKROOTdeveloper/trees.html">
+                      TreeType
+                    </a>
+                  </li>
+                </ul>
+              </details>
+            </li>
+          </ul>
+        </details>
       </li>
     </ul>
   </details>
@@ -382,7 +519,7 @@ when the sidebar is built for each page.
   <li>
   <details> <!-- default closed for non-binding pages -->
     <summary>
-      <a href="LINKROOTindex.html#bindings-to-other-languages" class="textlink"><b>Binding API</b></a>
+      <a href="LINKROOTuser/bindings.html" class="textlink"><b>Binding API</b></a>
     </summary>
 
     <ul>

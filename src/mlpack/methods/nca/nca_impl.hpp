@@ -98,7 +98,7 @@ void NCA<DistanceType, DeprecatedOptimizerType>::LearnDistance(
 template<typename DistanceType, typename DeprecatedOptimizerType>
 template<typename Archive>
 void NCA<DistanceType, DeprecatedOptimizerType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(distance));
 }

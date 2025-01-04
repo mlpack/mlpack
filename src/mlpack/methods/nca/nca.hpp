@@ -167,7 +167,7 @@ class NCA
   DistanceType& Distance() { return distance; }
 
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Dataset pointer (will be removed in mlpack 5.0.0).

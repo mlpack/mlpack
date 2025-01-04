@@ -163,9 +163,8 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
     probabilities(prediction) += alpha[i];
   }
 
-  arma::uword maxIndex = 0;
   probabilities /= accu(probabilities);
-  probabilities.max(maxIndex);
+  arma::uword maxIndex = probabilities.index_max();
   prediction = (size_t) maxIndex;
 }
 
@@ -204,7 +203,7 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
   for (size_t i = 0; i < predictedLabels.n_cols; ++i)
   {
     probabilities.col(i) /= accu(probabilities.col(i));
-    probabilities.col(i).max(maxIndex);
+    maxIndex = probabilities.col(i).index_max();
     predictedLabels(i) = maxIndex;
   }
 }
@@ -335,7 +334,6 @@ typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::TrainInternal(
   wl.clear();
   alpha.clear();
 
-  this->tolerance = tolerance;
   this->numClasses = numClasses;
 
   // crt is the cumulative rt value for terminating the optimization when rt is

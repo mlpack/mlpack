@@ -27,6 +27,12 @@ set(ARMADILLO_VERSION "10.8")
 set(ENSMALLEN_VERSION "2.10.0")
 set(CEREAL_VERSION "1.1.2")
 
+# Consider using ccache
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+endif()
+
 # If BUILD_SHARED_LIBS is OFF then the mlpack library will be built statically.
 # In addition, all mlpack CLI bindings will be linked statically as well.
 if (WIN32)
@@ -147,8 +153,8 @@ if (CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -ftemplate-depth=1000")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 
-  # To remove unused functions warnings.
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-function")
+  # To remove unused functions warnings as well as missing-field-inits (from STB)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-function -Wno-missing-field-initializers")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-function")
 endif()
 
@@ -287,7 +293,7 @@ endif()
 # Download and compile OpenBLAS if we are cross compiling mlpack for a specific
 # architecture. The function takes the version of OpenBLAS as variable.
 if (CMAKE_CROSSCOMPILING)
-  search_openblas(0.3.26)
+  search_openblas(0.3.28)
 endif()
 
 if (NOT DOWNLOAD_DEPENDENCIES)

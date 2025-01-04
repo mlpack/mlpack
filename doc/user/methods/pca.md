@@ -39,8 +39,8 @@ std::cout << "The transformed data matrix has size " << dataset.n_rows /* 5 */
 #### See also:
 
  * [`Radical`](radical.md): independent components analysis
- * [mlpack preprocessing utilities](../../index.md#preprocessing-utilities)
- * [mlpack transformations](../../index.md#transformations)
+ * [mlpack preprocessing utilities](../preprocessing.md)
+ * [mlpack transformations](../transformations.md)
  * [Principal component analysis on Wikipedia](https://en.wikipedia.org/wiki/Principal_component_analysis)
 
 ### Constructors
@@ -314,7 +314,7 @@ class CustomDecompositionPolicy
   //      etc.).
   //  * `VecType` is the corresponding vector type to `MatType` (e.g., a
   //      `MatType` of `arma::mat` would mean a `VecType` of `arma::vec`, etc.).
-  template<typename MatType, typename MatType, typename VecType>
+  template<typename InMatType, typename MatType, typename VecType>
   static void Apply(const InMatType& data,
                     const MatType& centeredData,
                     MatType& transformedData,

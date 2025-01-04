@@ -1,0 +1,5 @@
+CC=ccache clang
+CXX=ccache clang++
+CXX17=ccache clang++ -Wno-deprecated-declarations
+#CXX17=ccache clang++
+SHLIB_CXXLD=ccache clang++

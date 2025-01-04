@@ -1,4 +1,7 @@
-# Loading and saving in mlpack
+<object data="../img/pipeline-top-1.svg" type="image/svg+xml" id="pipeline-top">
+</object>
+
+# Data loading and I/O
 
 mlpack provides the `data::Load()` and `data::Save()` functions to load and save
 [Armadillo matrices](matrices.md) (e.g. numeric and categorical datasets) and
