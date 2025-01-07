@@ -104,6 +104,13 @@ class CoverTree
   using ElemType = typename MatType::elem_type;
 
   /**
+   * A default constructor.  This returns an empty tree, which is not useful.
+   * In general this is only used for serialization or right before copying from
+   * a different object.
+   */
+  CoverTree();
+
+  /**
    * Create the cover tree with the given dataset and given base.
    * The dataset will not be modified during the building procedure (unlike
    * BinarySpaceTree).
@@ -437,6 +444,15 @@ class CoverTree
   //! Get the instantiated distance metric.
   DistanceType& Distance() const { return *distance; }
 
+  /**
+   * Serialize the tree.
+   */
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */);
+
+  size_t DistanceComps() const { return distanceComps; }
+  size_t& DistanceComps() { return distanceComps; }
+
  private:
   //! Reference to the matrix which this tree is built on.
   const MatType* dataset;
@@ -552,28 +568,6 @@ class CoverTree
    * any implicit nodes that have been created.
    */
   void RemoveNewImplicitNodes();
-
- protected:
-  /**
-   * A default constructor.  This is meant to only be used with
-   * cereal, which is allowed with the friend declaration below.
-   * This does not return a valid tree!  This method must be protected, so that
-   * the serialization shim can work with the default constructor.
-   */
-  CoverTree();
-
-  //! Friend access is given for the default constructor.
-  friend class cereal::access;
-
- public:
-  /**
-   * Serialize the tree.
-   */
-  template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */);
-
-  size_t DistanceComps() const { return distanceComps; }
-  size_t& DistanceComps() { return distanceComps; }
 
  private:
   size_t distanceComps;

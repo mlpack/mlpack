@@ -295,7 +295,7 @@ accessing them does not require any computation.  In the documentation below,
    distance between the center of the bound of `node` and the furthest
    descendant point held by `node`.
 
- * `node.MinimumBoundDistance()` returns an `ElemType` representing minimum
+ * `node.MinimumBoundDistance()` returns an `ElemType` representing the minimum
    possible distance from the center of the node to any edge of its bound.
 
  * `node.ParentDistance()` returns an `ElemType` representing the distance
