@@ -4,6 +4,13 @@
 
 _????-??-??_
 
+ * Fix command-line duplicate output bug when loading matrices for some bindings
+   (#3838).
+
+## mlpack 4.5.1
+
+_2024-12-02_
+
  * Fix compilation with clang 19 (#3799).
 
  * Deprecate version of `data::Split()` that returns a `std::tuple` for

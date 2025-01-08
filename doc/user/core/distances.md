@@ -31,7 +31,7 @@ including:
 ## `LMetric`
 
 The `LMetric` template class implements a [generalized
-L-metric](https://en.wikipedia.org/wiki/Lp_space#Definition)
+L-metric](https://en.wikipedia.org/wiki/Lp_space#Preliminaries)
 (L1-metric, L2-metric, etc.).  The class has two template parameters:
 
 ```

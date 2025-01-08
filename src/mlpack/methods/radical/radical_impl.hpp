@@ -217,7 +217,7 @@ inline void Radical::Apply(const MatType& matXT,
 }
 
 template<typename Archive>
-void Radical::serialize(Archive& ar, const unsigned int /* version */)
+void Radical::serialize(Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(noiseStdDev));
   ar(CEREAL_NVP(replicates));
