@@ -55,7 +55,7 @@ program (before including mlpack or Armadillo!).
 | `-DMLPACK_CERR_STREAM=std::cerr` | `#define MLPACK_CERR_STREAM std::cerr` | Set the default error stream.  (Defaults to `std::cerr`.) |
 | `-DMLPACK_PRINT_INFO` | `#define MLPACK_PRINT_INFO` | Print information messages (`[INFO ]`) during program execution. |
 | `-DMLPACK_PRINT_WARN` | `#define MLPACK_PRINT_WARN` | Print warning messages (`[WARN ]`) during program execution. |
-| `-DMLPACK_NO_STD_MUTEX` | `define MLPACK_NO_STD_MUTX` | Disable mutex inside mlpack if you have one core, or no support for mutex. |
+| `-DMLPACK_NO_STD_MUTEX` | `#define MLPACK_NO_STD_MUTEX` | Disable mutexes inside mlpack; use this if your system has no support for `std::mutex` and has only one core.  You may also need to define `ARMA_DO_NOT_USE_STD_MUTEX` for Armadillo. |
 | `-DMLPACK_SUPPRESS_FATAL` | `#define MLPACK_PRINT_FATAL` | Do not print `[FATAL]` messages during program execution. |
 | `-DENS_PRINT_INFO` | `#define ENS_PRINT_INFO` | Print informational messages from [ensmallen](https://www.ensmallen.org/) optimizers. |
 | `-DENS_PRINT_WARN` | `#define ENS_PRINT_WARN` | Print warning messages from [ensmallen](https://ensmallen.org/) optimizers. |
