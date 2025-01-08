@@ -43,7 +43,7 @@ std::cout << "Average density of encoded test data: "
 
  * [`LocalCoordinateCoding`](local_coordinate_coding.md)
  * [`LARS`](lars.md) (used internally by `SparseCoding`)
- * [mlpack transformations](../../index.md#transformations)
+ * [mlpack transformations](../transformations.md)
  * [Sparse dictionary learning on Wikipedia](https://en.wikipedia.org/wiki/Sparse_dictionary_learning)
  * [Efficient sparse coding algorithms (pdf)](https://proceedings.neurips.cc/paper/2006/file/2d71b2ae158c7c5912cc0bbde2bb9d95-Paper.pdf)
 

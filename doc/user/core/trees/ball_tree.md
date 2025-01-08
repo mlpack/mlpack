@@ -283,14 +283,13 @@ accessing them does not require any computation.
    descendant point held by `node`.
    - This will be less than or equal to `node.Radius()`.
 
- * `node.MinimumBoundDistance()` returns a `double` representing minimum
-   possible distance from the center of the node to any edge of the
-   hyperrectangle bound.
+ * `node.MinimumBoundDistance()` returns a `double` representing the minimum
+   possible distance from the center of the node to the edge of the ball bound.
    - This is equivalent to `node.Bound().Radius()`.
 
  * `node.ParentDistance()` returns a `double` representing the distance between
-   the center of the bounding hyperrectangle of `node` and the center of the
-   bounding hyperrectangle of its parent.
+   the center of the bounding ball of `node` and the center of the bounding ball
+   of its parent.
    - If `node` is the root of the tree, `0` is returned.
 
 ***Notes:***
@@ -354,9 +353,9 @@ nodes.  The following functions can be used for these tasks.
    - Return a `double` indicating the minimum possible distance between `node`
      and `point`, or the `BallTree` node `other`.
    - This is equivalent to the minimum possible distance between any point
-     contained in the bounding hyperrectangle of `node` and `point`, or between
-     any point contained in the bounding hyperrectangle of `node` and any point
-     contained in the bounding hyperrectangle of `other`.
+     contained in the bounding ball of `node` and `point`, or between any point
+     contained in the bounding ball of `node` and any point contained in the
+     bounding ball of `other`.
    - `point` should be of type `arma::vec`.  (If a [custom
      `MatType`](#template-parameters) was specified when constructing the
      `BallTree`, the type is instead the column vector type for the given
@@ -369,9 +368,9 @@ nodes.  The following functions can be used for these tasks.
    - Return a `double` indicating the maximum possible distance between `node`
      and `point`, or the `BallTree` node `other`.
    - This is equivalent to the maximum possible distance between any point
-     contained in the bounding hyperrectangle of `node` and `point`, or between
-     any point contained in the bounding hyperrectangle of `node` and any point
-     contained in the bounding hyperrectangle of `other`.
+     contained in the bounding ball of `node` and `point`, or between any point
+     contained in the bounding ball of `node` and any point contained in the
+     bounding ball of `other`.
    - `point` should be of type `arma::vec`.  (If a [custom
      `MatType`](#template-parameters) was specified when constructing the
      `BallTree`, the type is instead the column vector type for the given

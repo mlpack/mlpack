@@ -280,7 +280,7 @@ accessing them does not require any computation.
    distance between the center of the bounding hyperrectangle of `node` and the
    furthest descendant point held by `node`.
 
- * `node.MinimumBoundDistance()` returns a `double` representing minimum
+ * `node.MinimumBoundDistance()` returns a `double` representing the minimum
    possible distance from the center of the node to any edge of the
    hyperrectangle bound.
    - This quantity is half the width of the smallest dimension of

@@ -43,7 +43,7 @@ internal design.
    library](https://joss.theoj.org/papers/10.21105/joss.00726) (2018)
 
  * [mlpack open-source machine learning library and
-   community](http://kurg.org/pub/pdf/2018mlossmlpack.pdf) (2018)
+   community](https://openreview.net/pdf?id=rJxx0Y6NhX) (2018)
 
  * [Designing and building the mlpack open-source machine learning
    library](https://arxiv.org/abs/1708.05279) (2017)
