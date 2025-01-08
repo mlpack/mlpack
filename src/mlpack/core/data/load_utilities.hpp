@@ -66,8 +66,8 @@ class DataOptions
   /**
    * DataOptions constructor that takes the followint parameters.
    *  - fatal : true if fatal error should be reported.
-   *  - hasHeaders : true if the dataset file has headers we need to recover
-   *  - transpose: true by default, Transpose armadillo matrix to column major
+   *  - hasHeaders : false if the dataset file has headers we need to recover
+   *  - noTranspose: false by default, Transpose armadillo matrix to column major
    *  - semiColon: If the dataset separator is a semicolon instead of commas.
    *  - missingToNan: replace missing values to NaN.
    *  - categorical: if the dataset contains categorical values.
@@ -80,7 +80,7 @@ class DataOptions
   DataOptions(
       bool fatal = false,
       bool hasHeaders = false,
-      bool transpose = false,
+      bool noTranspose = false,
       bool semiColon = false,
       bool missingToNan = false,
       bool categorical = false,
@@ -91,7 +91,7 @@ class DataOptions
       std::string objectName = "") :
     fatal(fatal),
     hasHeaders(hasHeaders),
-    transpose(transpose),
+    noTranspose(noTranspose),
     semiColon(semiColon),
     missingToNan(missingToNan),
     categorical(categorical),
@@ -117,10 +117,10 @@ class DataOptions
   bool& HasHeaders() { return hasHeaders; }
 
   //! Get if the matrix is transposed or not.
-  const bool& Transpose() const { return transpose; }
+  const bool& NoTranspose() const { return noTranspose; }
 
   //! Transpose the matrix if necessary.
-  bool& Transpose() { return transpose; }
+  bool& NoTranspose() { return noTranspose; }
 
   //! Get if the separator is a semicolon in the matrix.
   const bool& SemiColon() const { return semiColon; }
@@ -211,7 +211,7 @@ class DataOptions
 
   bool fatal;
   bool hasHeaders;
-  bool transpose;
+  bool noTranspose;
   bool semiColon;
   bool missingToNan;
   bool categorical;
@@ -229,7 +229,7 @@ inline DataOptions operator|(const DataOptions& a, const DataOptions& b)
 {
   DataOptions output;
   output.Fatal() = a.Fatal() | b.Fatal();
-  output.Transpose() = a.Transpose() | b.Transpose();
+  output.NoTranspose() = a.NoTranspose() | b.NoTranspose();
   output.SemiColon() = a.SemiColon() | b.SemiColon();
   output.MissingToNan() = a.MissingToNan() | b.MissingToNan();
   output.Categorical() = a.Categorical() | b.Categorical();
@@ -283,10 +283,10 @@ class HasHeadersOptions : public DataOptions
   inline HasHeadersOptions() : DataOptions() { this->HasHeaders() = true; }
 };
 
-class TransposeOptions : public DataOptions
+class NoTransposeOptions : public DataOptions
 {
  public:
-  inline TransposeOptions() : DataOptions() { this->Transpose() = true; }
+  inline NoTransposeOptions() : DataOptions() { this->NoTranspose() = true; }
 };
 
 class SemiColonOptions : public DataOptions
@@ -408,7 +408,7 @@ class CoordASCIIOptions : public DataOptions
 //! Boolean options
 static const FatalOptions         Fatal;
 static const HasHeadersOptions    HasHeaders;
-static const TransposeOptions     Transpose;
+static const NoTransposeOptions   NoTranspose;
 static const SemiColonOptions     SemiColon;
 static const MissingToNanOptions  MissingToNan;
 static const CategoricalOptions   Categorical;

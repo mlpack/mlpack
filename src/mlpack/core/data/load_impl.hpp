@@ -34,86 +34,86 @@ bool LoadCSVASCII(const std::string& filename,
                   const DataOptions& opts)
 {
   bool success = false;
-  if (opts.Transpose() && opts.HasHeaders() &&
+  if (!opts.NoTranspose() && opts.HasHeaders() &&
       !opts.SemiColon() && !opts.MissingToNan())
 
     success = matrix.load(arma::csv_name(filename, opts.Headers(),
           arma::csv_opts::trans), arma::csv_ascii);
   
-  else if (opts.Transpose() && !opts.HasHeaders() &&
+  else if (!opts.NoTranspose() && !opts.HasHeaders() &&
            !opts.SemiColon() && !opts.MissingToNan())
  
     success = matrix.load(arma::csv_name(filename, arma::csv_opts::trans),
         arma::csv_ascii);
   
-  else if (!opts.Transpose() && opts.HasHeaders() &&
+  else if (opts.NoTranspose() && opts.HasHeaders() &&
            !opts.SemiColon() && !opts.MissingToNan())
 
     success = matrix.load(arma::csv_name(filename, opts.Headers()),
         arma::csv_ascii);
   
-  else if (!opts.Transpose() && !opts.HasHeaders() &&
+  else if (opts.NoTranspose() && !opts.HasHeaders() &&
            opts.SemiColon() && !opts.MissingToNan())
 
     success = matrix.load(arma::csv_name(filename, arma::csv_opts::semicolon),
         arma::csv_ascii);
 
-  else if (!opts.Transpose() && !opts.HasHeaders() &&
+  else if (opts.NoTranspose() && !opts.HasHeaders() &&
            !opts.SemiColon() && opts.MissingToNan())
 
     success = matrix.load(arma::csv_name(filename, arma::csv_opts::strict),
         arma::csv_ascii);
 
-  else if (opts.Transpose() && opts.HasHeaders() &&
+  else if (!opts.NoTranspose() && opts.HasHeaders() &&
            opts.SemiColon() && !opts.MissingToNan())
 
     success = matrix.load(arma::csv_name(filename, opts.Headers(),
           arma::csv_opts::semicolon + arma::csv_opts::trans), arma::csv_ascii);
 
-  else if (opts.Transpose() && opts.HasHeaders() &&
+  else if (!opts.NoTranspose() && opts.HasHeaders() &&
            opts.SemiColon() && opts.MissingToNan())
 
     success = matrix.load(arma::csv_name(filename, opts.Headers(),
           arma::csv_opts::semicolon + arma::csv_opts::trans +
           arma::csv_opts::strict), arma::csv_ascii);
 
-  else if (opts.Transpose() && !opts.HasHeaders() &&
+  else if (!opts.NoTranspose() && !opts.HasHeaders() &&
            !opts.SemiColon() && opts.MissingToNan())
 
     success = matrix.load(arma::csv_name(filename,
           arma::csv_opts::trans + arma::csv_opts::strict), arma::csv_ascii);
 
-  else if (opts.Transpose() && !opts.HasHeaders() &&
+  else if (!opts.NoTranspose() && !opts.HasHeaders() &&
            opts.SemiColon() && !opts.MissingToNan())
 
     success = matrix.load(arma::csv_name(filename,
           arma::csv_opts::trans + arma::csv_opts::semicolon), arma::csv_ascii);
 
-  else if (!opts.Transpose() && opts.HasHeaders() &&
-            opts.SemiColon() && !opts.MissingToNan())
+  else if (opts.NoTranspose() && opts.HasHeaders() &&
+           opts.SemiColon() && !opts.MissingToNan())
 
     success = matrix.load(arma::csv_name(filename, opts.Headers(),
           arma::csv_opts::semicolon), arma::csv_ascii);
 
-  else if (!opts.Transpose() && opts.HasHeaders() &&
+  else if (opts.NoTranspose() && opts.HasHeaders() &&
            !opts.SemiColon() && opts.MissingToNan())
 
     success = matrix.load(arma::csv_name(filename, opts.Headers(),
           arma::csv_opts::strict), arma::csv_ascii);
 
-  else if (!opts.Transpose() && opts.HasHeaders() &&
+  else if (opts.NoTranspose() && opts.HasHeaders() &&
             opts.SemiColon() && opts.MissingToNan())
 
     success = matrix.load(arma::csv_name(filename, opts.Headers(),
         arma::csv_opts::strict + arma::csv_opts::semicolon), arma::csv_ascii);
 
-  else if (opts.Transpose() && !opts.HasHeaders() &&
+  else if (!opts.NoTranspose() && !opts.HasHeaders() &&
            opts.SemiColon() && opts.MissingToNan())
 
     success = matrix.load(arma::csv_name(filename, arma::csv_opts::strict +
           arma::csv_opts::trans + arma::csv_opts::semicolon), arma::csv_ascii);
 
-  else if (!opts.Transpose() && !opts.HasHeaders() &&
+  else if (opts.NoTranspose() && !opts.HasHeaders() &&
            opts.SemiColon() && opts.MissingToNan())
 
     success = matrix.load(arma::csv_name(filename, arma::csv_opts::strict +
@@ -156,7 +156,7 @@ bool Load(const std::string& filename,
 {
   DataOptions opts;
   opts.Fatal() = fatal;
-  opts.Transpose() = transpose;
+  opts.NoTranspose() = !transpose;
   opts.FileFormat() = inputLoadType;
 
   return Load(filename, matrix, opts);
@@ -172,7 +172,7 @@ bool Load(const std::string& filename,
 {
   DataOptions opts;
   opts.Fatal() = fatal;
-  opts.Transpose() = transpose;
+  opts.NoTranspose() = !transpose;
   opts.FileFormat() = inputLoadType;
 
   return Load(filename, matrix, opts);
@@ -188,7 +188,7 @@ bool Load(const std::string& filename,
 {
   DataOptions opts;
   opts.Fatal() = fatal;
-  opts.Transpose() = transpose;
+  opts.NoTranspose() = !transpose;
   // @rcurtin just commenting this one as we need to find a solution for the
   // template parameter of the DatasetMapper. Assigning the following variable
   // will simply fails as `info` is different type from opts.Mapper()
@@ -291,7 +291,7 @@ bool LoadDense(const std::string& filename,
         << "but this may not be the actual filetype!" << std::endl;
 
     success = matrix.load(stream, ToArmaFileType(opts.FileFormat()));
-    if (opts.Transpose())
+    if (!opts.NoTranspose())
       inplace_trans(matrix);
   }
  return success;
@@ -360,7 +360,7 @@ bool LoadSparse(const std::string& filename,
     success = matrix.load(stream, ToArmaFileType(opts.FileFormat()));
   }
   
-  if (opts.Transpose())
+  if (!opts.NoTranspose())
   {
     // It seems that there is no direct way to use inplace_trans() on 
     // sparse matrices. Therefore, we need the temporary SpMat
@@ -389,7 +389,7 @@ bool LoadCategorical(const std::string& filename,
     LoadCSV loader(filename);
     // would be smarter to pass DataOptions directly in here,
     // @rcurtin what do you think ? should I refactor?
-    success = loader.LoadCategoricalCSV(matrix, opts.Mapper(), opts.Transpose());
+    success = loader.LoadCategoricalCSV(matrix, opts.Mapper(), !opts.NoTranspose());
     if (!success)
     {
       return false;
@@ -406,7 +406,7 @@ bool LoadCategorical(const std::string& filename,
       return false;
       Timer::Stop("loading_data");
     }
-    if (!opts.Transpose())
+    if (!opts.NoTranspose())
     {
       inplace_trans(matrix);
     }

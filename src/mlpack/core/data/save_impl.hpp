@@ -60,12 +60,12 @@ bool Save(const std::string& filename,
   }
   else if constexpr (std::is_same_v<MatType, arma::Col<eT>>)
   {
-    opts.Transpose() = false;
+    opts.NoTranspose() = true;
     success = Save(filename, matrix, opts);
   }
   else if constexpr (std::is_same_v<MatType, arma::Row<eT>>)
   {
-    opts.Transpose() = true;
+    opts.NoTranspose() = false;
     success = Save(filename, matrix, opts);
   }
 
@@ -81,7 +81,7 @@ bool Save(const std::string& filename,
 {
   DataOptions opts;
   opts.Fatal() = fatal;
-  opts.Transpose() = transpose;
+  opts.NoTranspose() = !transpose;
 
   return Save(filename, matrix, opts);
 }
@@ -96,7 +96,7 @@ bool Save(const std::string& filename,
 {
   DataOptions opts;
   opts.Fatal() = fatal;
-  opts.Transpose() = transpose;
+  opts.NoTranspose() = !transpose;
   opts.FileFormat() = inputSaveType;
 
   return Save(filename, matrix, opts);
@@ -167,7 +167,7 @@ bool Save(const std::string& filename,
       << "'." << std::endl;
 
   // Transpose the matrix.
-  if (opts.Transpose())
+  if (!opts.NoTranspose())
   {
      inplace_trans(matrix);
   }
@@ -287,7 +287,7 @@ bool Save(const std::string& filename,
       << std::endl;
 
   // Transpose the matrix.
-  if (opts.Transpose())
+  if (!opts.NoTranspose())
   {
     inplace_trans(matrix);
   }
