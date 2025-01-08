@@ -7,6 +7,7 @@ include(CMake/ConfigureCrossCompile.cmake)
 include(CMake/CheckAtomic.cmake)
 
 # First, define all the compilation options.
+option(DEBUG "Compile with debugging information." OFF)
 option(PROFILE "Compile with profiling information." OFF)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
@@ -227,7 +228,7 @@ endif()
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 set (BFD_DL_AVAILABLE "NO")
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" OR DEBUG)
   if (NOT MSVC)
     add_definitions(-DDEBUG)
     set(CMAKE_CXX_FLAGS_DEBUG_INIT "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
