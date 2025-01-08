@@ -188,7 +188,7 @@ class RNN
   typename MatType::elem_type Train(
       arma::Cube<typename MatType::elem_type> predictors,
       arma::Cube<typename MatType::elem_type> responses,
-      arma::uvec sequenceLengths,
+      arma::urowvec sequenceLengths,
       OptimizerType& optimizer,
       CallbackTypes&&... callbacks);
 
@@ -196,6 +196,10 @@ class RNN
    * Train the recurrent network on the given input data, given that each input
    * sequence may have a different length.  By default, the RMSProp optimization
    * algorithm is used, but others can be specified (such as ens::SGD).
+   *
+   * When passing sequences with different lengths, the batch size of the
+   * optimizer must be set to 1; if it is not, an exception will be thrown
+   * during training.
    *
    * This will use the existing model parameters as a starting point for the
    * optimization. If this is not what you want, then you should access the
@@ -220,7 +224,7 @@ class RNN
   typename MatType::elem_type Train(
       arma::Cube<typename MatType::elem_type> predictors,
       arma::Cube<typename MatType::elem_type> responses,
-      arma::uvec sequenceLengths,
+      arma::urowvec sequenceLengths,
       CallbackTypes&&... callbacks);
 
   /**
@@ -235,10 +239,24 @@ class RNN
   void Predict(const arma::Cube<typename MatType::elem_type>& predictors,
                arma::Cube<typename MatType::elem_type>& results,
                const size_t batchSize = 128);
+
+  /**
+   * Predict the responses to a given set of predictors, given that each
+   * sequence can have a different length. The responses will reflect the output
+   * of the given output layer as returned by the output layer function.
+   *
+   * Slices of column `i` of `results` at time indexes greater than
+   * `sequenceLengths[i]` should not be considered valid predictions.
+   *
+   * The batch size is limited to 1 when predicting on sequences of different
+   * lengths.
+   *
+   * @param predictors Input predictors.
+   * @param results Matrix to put output predictions of responses into.
+   */
   void Predict(const arma::Cube<typename MatType::elem_type>& predictors,
                arma::Cube<typename MatType::elem_type>& results,
-               const arma::uvec& sequenceLengths,
-               const size_t batchSize = 128);
+               const arma::urowvec& sequenceLengths);
 
   // Return the nujmber of weights in the model.
   size_t WeightSize() { return network.WeightSize(); }
@@ -398,6 +416,19 @@ class RNN
    */
   void Shuffle();
 
+  /**
+   * Prepare the network for the given data.
+   * This function won't actually trigger training process.
+   *
+   * @param predictors Input data variables.
+   * @param responses Outputs results from input data variables.
+   * @param sequenceLengths (Optional) sequence length for each predictor
+   *     sequence.
+   */
+  void ResetData(arma::Cube<typename MatType::elem_type> predictors,
+                 arma::Cube<typename MatType::elem_type> responses,
+                 arma::urowvec sequenceLengths = arma::urowvec());
+
  private:
   // Helper functions.
 
@@ -407,10 +438,6 @@ class RNN
    * with a batch size of `batchSize`.
    */
   void ResetMemoryState(const size_t memorySize, const size_t batchSize);
-
-  void ResetData(arma::Cube<typename MatType::elem_type> predictors,
-                 arma::Cube<typename MatType::elem_type> responses,
-                 arma::uvec sequenceLengths);
 
   //! Set the current step index of all recurrent layers to `step`.
   void SetCurrentStep(const size_t step, const bool end);
@@ -437,7 +464,7 @@ class RNN
 
   // The length of each input sequence.  If this is empty, then every sequence
   // is assuemd to have the same length (`predictors.n_slices`).
-  arma::uvec sequenceLengths;
+  arma::urowvec sequenceLengths;
 }; // class RNNType
 
 } // namespace mlpack

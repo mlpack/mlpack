@@ -161,7 +161,7 @@ typename MatType::elem_type RNN<
     OptimizerType& optimizer,
     CallbackTypes&&... callbacks)
 {
-  ResetData(std::move(predictors), std::move(responses), arma::uvec());
+  ResetData(std::move(predictors), std::move(responses), arma::urowvec());
 
   network.WarnMessageMaxIterations(optimizer, this->predictors.n_cols);
 
@@ -212,7 +212,7 @@ typename MatType::elem_type RNN<
 >::Train(
     arma::Cube<typename MatType::elem_type> predictors,
     arma::Cube<typename MatType::elem_type> responses,
-    arma::uvec sequenceLengths,
+    arma::urowvec sequenceLengths,
     OptimizerType& optimizer,
     CallbackTypes&&... callbacks)
 {
@@ -248,7 +248,7 @@ typename MatType::elem_type RNN<
 >::Train(
     arma::Cube<typename MatType::elem_type> predictors,
     arma::Cube<typename MatType::elem_type> responses,
-    arma::uvec sequenceLengths,
+    arma::urowvec sequenceLengths,
     CallbackTypes&&... callbacks)
 {
   OptimizerType optimizer;
@@ -315,27 +315,20 @@ void RNN<
 >::Predict(
     const arma::Cube<typename MatType::elem_type>& predictors,
     arma::Cube<typename MatType::elem_type>& results,
-    const arma::uvec& sequenceLengths,
-    const size_t batchSize)
+    const arma::urowvec& sequenceLengths)
 {
   // Ensure that the network is configured correctly.
   network.CheckNetwork("RNN::Predict()", predictors.n_rows, true, false);
-
-  if (batchSize != 1)
-    throw std::invalid_argument("Batch size must be 1 for ragged sequences!");
 
   results.set_size(network.network.OutputSize(), predictors.n_cols,
       single ? 1 : predictors.n_slices);
 
   MatType inputAlias, outputAlias;
-  for (size_t i = 0; i < predictors.n_cols; i += batchSize)
+  for (size_t i = 0; i < predictors.n_cols; i++)
   {
-    const size_t effectiveBatchSize = std::min(batchSize,
-        size_t(predictors.n_cols) - i);
-
     // Since we aren't doing a backward pass, we don't actually need to store
     // the state for each time step---we can fit it all in one buffer.
-    ResetMemoryState(0, effectiveBatchSize);
+    ResetMemoryState(0, 1);
 
     // Iterate over all time steps.
     const size_t steps = sequenceLengths[i];
@@ -345,10 +338,10 @@ void RNN<
 
       // Create aliases for the input and output.  If we are in single mode, we
       // always output into the same slice.
-      MakeAlias(inputAlias, predictors.slice(t), predictors.n_rows,
-          effectiveBatchSize, i * predictors.n_rows);
-      MakeAlias(outputAlias, results.slice(single ? 0 : t), results.n_rows,
-          effectiveBatchSize, i * results.n_rows);
+      MakeAlias(inputAlias, predictors.slice(t), predictors.n_rows, 1,
+          i * predictors.n_rows);
+      MakeAlias(outputAlias, results.slice(single ? 0 : t), results.n_rows, 1,
+          i * results.n_rows);
 
       network.Forward(inputAlias, outputAlias);
     }
@@ -656,7 +649,7 @@ void RNN<
 >::ResetData(
     arma::Cube<typename MatType::elem_type> predictors,
     arma::Cube<typename MatType::elem_type> responses,
-    arma::uvec sequenceLengths)
+    arma::urowvec sequenceLengths)
 {
   this->predictors = std::move(predictors);
   this->responses = std::move(responses);
