@@ -25,7 +25,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--gc-sections")
 # BOARD_NAME is deprecated and will be removed in mlpack 5.
 # please use ARCH_NAME instead.
 set(BOARD_NAME "" CACHE STRING "Specify Board name to optimize for.")
-set(ARCH_NAME "" CACHE STRING "Specify Board name to optimize for.")
+set(ARCH_NAME "" CACHE STRING "Name of embedded architecture to optimize for.")
 
 if (BOARD_NAME)
   set(ARCH_NAME "${BOARD_NAME}")
