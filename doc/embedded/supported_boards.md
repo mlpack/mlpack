@@ -6,7 +6,7 @@ functional operating system (e.g., Linux, MacOS, Windows) with compatible
 ABI on both the host and the target. In addition, your objective is to create
 an embedded ABI (eabi). For now, this guide does not support none-eabi or
 bare-metal C/C++. The following table refers only to possible values of 
-`BOARD_NAME` CMake flag that needs to be specified before the compilation
+`ARCH_NAME` CMake flag that needs to be specified before the compilation
 process starts.
 
 If your device has a fully functional package manager such as apt (for Debian
@@ -37,7 +37,7 @@ adapt the CMake command below.  ***Don't forget to change
 ```sh
 cmake \
     -DBUILD_TESTS=ON \
-    -DBOARD_NAME=(Check the following table) \
+    -DARCH_NAME=(Check the following table) \
     -DCMAKE_CROSSCOMPILING=ON \
     -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake \
     -DTOOLCHAIN_PREFIX=(Check the following table) \
@@ -46,7 +46,7 @@ cmake \
 ```
 
 |-----------------------------------------------------------------------------
-| `BOARD_NAME` | link to crosscompiler | CMake command | Example applications |
+| `ARCH_NAME` | link to crosscompiler | CMake command | Example applications |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | ARM11    | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv6-eabihf.html) | [Sysroot and toolchain prefix](#arm11) | [ARM11 on Wikipedia](https://en.wikipedia.org/wiki/ARM11) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
