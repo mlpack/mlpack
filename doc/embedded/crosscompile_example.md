@@ -1,47 +1,45 @@
 ## Crosscompile mlpack example for an embedded hardware
 
-In this article, we explore how to crosscompile and run an mlpack example code
-on an embedded hardware. In our previous
-[documentations](crosscompile_armv7.cmake), we have explored how to run mlpack
-bindings such as kNN command line program on a Raspberry PI 2. Please refer to that
-article first and follow the first part on how to setup cross-compilation toolchain,
-and then continue with this article. Or refer to this
-[table](supported_boards.md) for a quick start guide.
+In this article, we explore how to add mlpack to a CMake project that cross-compiles
+code to embedded hardware.  See also these related other guides, which may be useful
+to read before this one:
+ * [Run mlpack bindings on a Raspberry Pi](crosscompile_armv7.md)
+ * [Set up cross-compilation toolchain for mlpack](supported_boards.md)
+
 
 ### Cloning mlpack example respository
 
 mlpack has an [example repository](https://github.com/mlpack/examples) that
-demonstrates a set of examples showing how to use the library source code
-on different dataset and usecases including embedded deployment. This
-tutorial basically explains our necessary CMake configurations
-that are required to integrate with your local CMake to download mlpack
-dependencies and cross compile the entire software.
 
-If you have not used mlpack example repsoitory, I highly recommend to clone
-this repository from the following link:
+shows a number of applications and use cases for mlpack, including embedded
+deployment.  In this tutorial, we are interested in the `embedded/` directory,
+which provides a CMake project template that compiles a random forest
+application to embedded hardware.  This project template can be adapted to a new
+project, or its pieces can be incorporated into an existing CMake project.
+
+The first step is to clone the examples repository:
 
 ```sh
 git clone git@github.com:mlpack/examples.git
 ```
 
-You can explore this repository and see the available examples. However, in this
-tutorial, we are interested in the `embedded/` directory. In this directory we are providing
-a CMake template project and a RandomForest example to use it on embedded
-hardware. For now, we are exploring the RandomForest example by 
-analysing the CMakeLists.txt.
+Next, let's look at the `CMakeLists.txt` (e.g. the CMake configuration) in the
+`embedded/crosscompile_random_forest/` directory.
 
-### Analysing CMakeLists.txt
+### `CMakeLists.txt`
 
-In this part of code we are defining the project name and including two CMake
-configurations files. The first one is the `Autodowload.cmake` function that is going
-to pull the dependencies from respective locations that we are going to define.
+The first part of the code, printed below or
+[available here](https://github.com/mlpack/examples/blob/master/embedded/crosscompile_random_forest/CMakeLists.txt),
+defines the project name and includes two useful CMake configuration files:
+ * `Autodownload.cmake`: downloads mlpack's dependencies from defined locations
+ * `ConfigureCrossCompile.cmake`: set up CMake configuration for cross-compilation
+ 
+The next steps set the required C++ standard to C++17 (which is the minimum required
+version for mlpack), and enable OpenMP for parallelism.
 
-The second configuration file is `ConfigureCrossCompile.cmake`. This will allow
-to include all the necessary configurations to allow using a cross compiler
-toolchain.  Then we are setting the C++ standard to use and define settings
-for `OpenMP` and `std::thread`
 
-```c++
+
+```cmake
 cmake_minimum_required(VERSION 3.6)
 project(RandomForest)
 
@@ -64,21 +62,28 @@ endif()
 
 #### Downloading dependencies
 
-Once we have included the configs and defined the C++ standard, then we need to
-download these dependencies. In the following, we have added the link
-for each one of them, but feel free to adapt the link to different versions or
-locations.
+The next steps are to use the functionality of the autodownloader to actually
+download mlpack's dependencies.
 
-Once `get_deps` has downloaded and extracted each one of them, the next step
-would be to append the include directories for these libraries to the
-`MLPACK_INCLUDE_DIRS` list variable. In the case of Armadillo, it could be set
-in header-only mode or a linkable library thus these two variable exist in this
+Call `get_deps` to download and extract each one of them, then
+each include directories for these libraries to the `MLPACK_INCLUDE_DIRS`
+list variable.
+
+In the specific case of Armadillo, there are two modes,
+header-only mode or a linkable library. Therefore, these two variable exist in this
 specific case. However, the `MLPACK_LIBRARIES` variable is not necessary if you
 have defined armadillo in header-only mode.
 
-```c++
-search_openblas(0.3.26)
+```cmake
 
+find_package(mlpack PATH ${CMAKE_BINARY_DIR})
+if (NOT MLPACK_FOUND)
+    get_deps(https://github.com/mlpack/mlpack/archive/refs/tags/4.5.1.tar.gz)
+    set(MLPACK_INCLUDE_DIRS ${GENERIC_INCLUDE_DIR})
+    find_package(mlpack REQUIRED)
+endif()
+
+search_openblas(0.3.26)
 get_deps(https://files.mlpack.org/armadillo-12.6.5.tar.gz armadillo armadillo-12.6.5.tar.gz)
 set(ARMADILLO_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
 find_package(Armadillo REQUIRED)
@@ -117,7 +122,7 @@ Regarding the source code, a similar process by either adding then to
 Finally do not forget to add any external library that you need to link against
 in `target_link_libraries`.
 
-```c++
+```cmake
 # Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
 # to compile with OpenMP are returned and added.  Note that MSVC does not
 # support a new-enough version of OpenMP to be useful.
@@ -153,7 +158,6 @@ target_sources(RandomForest PRIVATE ${SOURCE_FILES})
 
 target_include_directories(RandomForest PRIVATE
   ${MLPACK_INCLUDE_DIRS}
-  /path/to/mlpack/src/
   /path/to/your/own/include
 )
 
@@ -172,7 +176,7 @@ on your hardware. Please feel free to look at mlpack
 copy and paste them directly to this CMake file or you can
 copy the entire `crosscompile-arch-config.cmake` file from `mlpack/CMake` and included
 it close to `Autodownload.cmake` at start of this tutorial but in this case you need
-to specify the `BOARD_NAME` variable as we did in the this [tutorial](crosscompile_armv7.md).
+to specify the `ARCH_NAME` variable as we did in the this [tutorial](crosscompile_armv7.md).
 
 Once you have added all the source files and the headers for your applications,
 you can create your own build directory and build the software using `cmake`,
@@ -181,7 +185,7 @@ and then `make`. Your cmake command should be similar to the following:
 ```sh
 cmake \
     -DBUILD_TESTS=ON \
-    -DBOARD_NAME=(Check below) \
+    -ARCH_NAME=(Check below) \
     -DCMAKE_CROSSCOMPILING=ON \
     -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake \
     -DTOOLCHAIN_PREFIX=(Check below) \
