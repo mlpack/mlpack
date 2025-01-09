@@ -1056,10 +1056,10 @@ TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest]")
     if (lengths[c] == 60)
       continue;
 
-    data.subcube(0, c, lengths[c], data.n_rows - 1, c, data.n_slices - 1).randu();
+    data.subcube(0, c, lengths[c],
+                 data.n_rows - 1, c, data.n_slices - 1).randu();
     responses.subcube(0, c, lengths[c],
                       responses.n_rows - 1, c, responses.n_slices - 1).randu();
-
   }
 
   // Build a network and train it.
