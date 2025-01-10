@@ -14,6 +14,8 @@
 #ifndef MLPACK_CORE_STB_STB_HPP
 #define MLPACK_CORE_STB_STB_HPP
 
+#if defined(MLPACK_STB) && !defined(MLPACK_USE_SYSTEM_STB)
+
 #include <mlpack/prereqs.hpp>
 
 #ifndef STB_IMAGE_STATIC
@@ -36,5 +38,7 @@
 #include "stb_image_resize.h"
 #include "stb_image.h"
 #include "stb_image_write.h"
+
+#endif
 
 #endif

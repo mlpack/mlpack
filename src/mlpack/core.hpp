@@ -35,10 +35,7 @@
 #include <mlpack/prereqs.hpp>
 
 // Now the core mlpack classes.
-#ifdef MLPACK_STB
-  #include <mlpack/core/stb/stb.hpp>
-#endif
-
+#include <mlpack/core/stb/stb.hpp>
 #include <mlpack/core/util/arma_traits.hpp>
 #include <mlpack/core/util/ens_traits.hpp>
 #include <mlpack/core/util/first_element_is_arma.hpp>

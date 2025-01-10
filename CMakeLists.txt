@@ -17,7 +17,8 @@ option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DOWNLOAD_DEPENDENCIES "Automatically download dependencies if not available." OFF)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." ON)
-option(DONT_USE_MLPACK_STB "Use system STB instead of version bundled with mlpack." OFF)
+option(MLPACK_USE_SYSTEM_STB "Use system STB instead of version bundled with mlpack." OFF)
+option(MLPACK_DISABLE_STB "Do not compile mlpack with STB." OFF)
 
 # Set minimum library versions required by mlpack.
 #
@@ -27,6 +28,12 @@ option(DONT_USE_MLPACK_STB "Use system STB instead of version bundled with mlpac
 set(ARMADILLO_VERSION "10.8")
 set(ENSMALLEN_VERSION "2.10.0")
 set(CEREAL_VERSION "1.1.2")
+
+if (MLPACK_DISABLE_STB)
+  add_definitions(-DMLPACK_DISABLE_STB)
+  message("the def should be declared and stb disable")
+  set(MLPACK_USE_SYSTEM_STB OFF)
+endif()
 
 # Consider using ccache
 find_program(CCACHE_PROGRAM ccache)
@@ -318,9 +325,26 @@ endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
-if (DONT_USE_MLPACK_STB)
+if (MLPACK_USE_SYSTEM_STB)
   find_package(StbImage REQUIRED)
 endif()
+if (StbImage_FOUND)
+  set(STB_AVAILABLE "1")
+  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
+
+  # Make sure that we can link STB in multiple translation units.
+  include(CMake/TestStaticSTB.cmake)
+  if (NOT CMAKE_HAS_WORKING_STATIC_STB)
+    message(FATAL_ERROR "STB implementations's static mode cannot link across "
+        "multiple translation units!  Try upgrading your STB implementation, "
+        "or using the auto-downloader (set DOWNLOAD_DEPENDENCIES=ON in the "
+        "CMake configuration command.")
+  endif()
+endif()
+
+if (STB_AVAILABLE)
+  add_definitions(-DMLPACK_USE_SYSTEM_STB)
+endif ()
 
 # Find ensmallen.
 if (NOT DOWNLOAD_DEPENDENCIES)
