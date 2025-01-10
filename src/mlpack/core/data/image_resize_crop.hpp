@@ -19,6 +19,8 @@
 namespace mlpack {
 namespace data {
 
+#ifndef MLPACK_DISABLE_STB
+
 /**
  * Image resize/crop interfaces.
  */
@@ -89,6 +91,8 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
   info.Width() = newWidth;
   info.Height() = newHeight;
 }
+
+#endif
 
 } // namespace data
 } // namespace mlpack

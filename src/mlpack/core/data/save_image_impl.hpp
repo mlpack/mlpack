@@ -19,6 +19,8 @@
 namespace mlpack {
 namespace data {
 
+#ifndef MLPACK_DISABLE_STB
+
 /**
  * Save the given image to the given filename.
  *
@@ -164,24 +166,26 @@ inline bool SaveImage(const std::string& filename,
   return status;
 }
 
-//inline bool SaveImage(const std::string& [> filename <],
-                      //arma::Mat<unsigned char>& [> image <],
-                      //ImageInfo& [> info <],
-                      //const bool fatal)
-//{
-  //if (fatal)
-  //{
-    //Log::Fatal << "Save(): mlpack was not compiled with STB support, so images "
-        //<< "cannot be saved!" << std::endl;
-  //}
-  //else
-  //{
-    //Log::Warn << "Save(): mlpack was not compiled with STB support, so images "
-        //<< "cannot be saved!" << std::endl;
-  //}
+#endif
 
-  //return false;
-//}
+inline bool SaveImage(const std::string& /* filename */,
+                      arma::Mat<unsigned char>& /* image */,
+                      ImageInfo& /* info */,
+                      const bool fatal)
+{
+  if (fatal)
+  {
+    Log::Fatal << "Save(): mlpack was not compiled with STB support, so images "
+        << "cannot be saved!" << std::endl;
+  }
+  else
+  {
+    Log::Warn << "Save(): mlpack was not compiled with STB support, so images "
+        << "cannot be saved!" << std::endl;
+  }
+
+  return false;
+}
 
 } // namespace data
 } // namespace mlpack
