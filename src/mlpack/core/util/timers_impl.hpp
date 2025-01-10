@@ -74,15 +74,19 @@ namespace util {
 // Reset a Timers object.
 inline void Timers::Reset()
 {
+#ifndef MLPACK_NO_STD_MUTEX
   std::lock_guard<std::mutex> lock(timersMutex);
+#endif
   timers.clear();
   timerStartTime.clear();
 }
 
 inline std::map<std::string, std::chrono::microseconds> Timers::GetAllTimers()
 {
+#ifndef MLPACK_NO_STD_MUTEX
   // Make a copy of the timer.
   std::lock_guard<std::mutex> lock(timersMutex);
+#endif
   return timers;
 }
 
@@ -91,7 +95,9 @@ inline std::chrono::microseconds Timers::Get(const std::string& timerName)
   if (!enabled)
     return std::chrono::microseconds(0);
 
+#ifndef MLPACK_NO_STD_MUTEX
   std::lock_guard<std::mutex> lock(timersMutex);
+#endif
   return timers[timerName];
 }
 
@@ -166,7 +172,9 @@ inline void Timers::StopAllTimers()
 {
   // Terminate the program timers.  Don't use StopTimer() since that modifies
   // the map and would invalidate our iterators.
+#ifndef MLPACK_NO_STD_MUTEX
   std::lock_guard<std::mutex> lock(timersMutex);
+#endif
 
   std::chrono::high_resolution_clock::time_point currTime =
       std::chrono::high_resolution_clock::now();
@@ -191,7 +199,9 @@ inline void Timers::Start(const std::string& timerName,
   if (!enabled)
     return;
 
+#ifndef MLPACK_NO_STD_MUTEX
   std::lock_guard<std::mutex> lock(timersMutex);
+#endif
 
   if ((timerStartTime.count(threadId) > 0) &&
       (timerStartTime[threadId].count(timerName)))
@@ -221,7 +231,9 @@ inline void Timers::Stop(const std::string& timerName,
   if (!enabled)
     return;
 
+#ifndef MLPACK_NO_STD_MUTEX
   std::lock_guard<std::mutex> lock(timersMutex);
+#endif
 
   if ((timerStartTime.count(threadId) == 0) ||
       (timerStartTime[threadId].count(timerName) == 0))
