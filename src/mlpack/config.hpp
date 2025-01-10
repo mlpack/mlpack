@@ -72,6 +72,15 @@
   #define MLPACK_CERR_STREAM std::cerr
 #endif
 
+
+//
+// MLPACK_NO_STD_MUTEX is used to disable mutex usage inside mlpack. Assuming
+// the system has one core only.
+//
+#ifdef MLPACK_NO_STD_MUTEX
+  #define ARMA_DO_NOT_USE_STD_MUTEX
+#endif
+
 //
 // Perform autodetection of STB if possible.
 //
