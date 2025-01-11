@@ -101,9 +101,6 @@ option(BUILD_R_BINDINGS "Build R bindings." OFF)
 # Build Markdown bindings for documentation.  This is used as part of website
 # generation.
 option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)
-
-option(MATHJAX
-    "Use MathJax for HTML Doxygen output (disabled by default)." OFF)
 option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
 enable_testing()
 
