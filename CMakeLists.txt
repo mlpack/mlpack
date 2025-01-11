@@ -278,7 +278,9 @@ else()
 endif()
 
 if (DOWNLOAD_DEPENDENCIES)
-  autodownload()
+  # Of course we can add a compile option in here that the user can set with
+  # option from comand line
+  autodownload(ON)
 endif()
 
 # Create a 'distclean' target in case the user is using an in-source build for

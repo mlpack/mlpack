@@ -31,7 +31,6 @@ endmacro()
 #   CEREAL_INCLUDE_DIR - include directory for cereal
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
-#   MATHJAX_ROOT - root of MathJax installation
 macro(find_dependencies)
   # 1. Let us find Armadillo
   find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
@@ -53,21 +52,30 @@ macro(find_dependencies)
   find_package(cereal "${CEREAL_VERSION}" REQUIRED)
   if (CEREAL_FOUND)
     set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
-  endif
+  endif()
   
   # 5. Find openMP if we are using it
   find_OpenMP()
 endmacro()
 
 
-macro(autodownload)
-
+macro(autodownload compile)
+  set(version 0.3.28)
   # @rcurtin would be interesting do we only download and compile openblas like others? 
-  # just throw the error message ? 
+  # just throw the error message ?
   find_package(BLAS PATHS ${CMAKE_BINARY_DIR})
-  if (NOT BLAS_FOUND OR (NOT BLAS_LIBRARIES)) 
-    message(FATAL_ERROR "Please download and compile OpenBLAS, or BLAS in the
-    build directory and then call CMake again.")
+  if (NOT BLAS_FOUND OR (NOT BLAS_LIBRARIES))
+    get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v${version}/OpenBLAS-${version}.tar.gz OpenBLAS OpenBLAS-${version}.tar.gz)
+    if (NOT compile)
+      message(WARNING "OpenBLAS is downloaded but not compiled. Please compile
+      OpenBLAS before compiling mlpack")
+    else()
+      execute_process(COMMAND make NO_SHARED=1 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version})
+      file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/libopenblas.a")
+      set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
+      set(LAPACK_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
+      set(BLAS_FOUND ON)
+    endif()
   endif()
 
   find_package(Armadillo "${ARMADILLO_VERSION}" PATHS ${CMAKE_BINARY_DIR})
@@ -120,5 +128,5 @@ macro(crosscompile)
   # 1. Pull openblas and crossocompile it
   search_openblas(0.3.28)
   # 2. Call autodownload, DONE
-  autodownload()
+  autodownload(ON)
 endmacro()
