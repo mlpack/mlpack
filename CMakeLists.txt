@@ -5,7 +5,7 @@ include(CMake/CheckHash.cmake)
 include(CMake/Autodownload.cmake)
 include(CMake/ConfigureCrossCompile.cmake)
 include(CMake/CheckAtomic.cmake)
-
+include(CMake/Dependencies.cmake)
 # First, define all the compilation options.
 # We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information." OFF)
@@ -47,11 +47,6 @@ elseif(CMAKE_CROSSCOMPILING)
 else()
   option(BUILD_SHARED_LIBS
       "Compile shared objects for tests and bindings (if OFF, static libraries and binaries are compiled)." ON)
-endif()
-
-# Enable auto-download if we are cross compiling.
-if (CMAKE_CROSSCOMPILING)
-  set(DOWNLOAD_DEPENDENCIES ON)
 endif()
 
 # Support preference of static libs by adjusting CMAKE_FIND_LIBRARY_SUFFIXES.
@@ -279,116 +274,15 @@ if (ARMA_EXTRA_DEBUG)
   add_definitions(-DARMA_EXTRA_DEBUG)
 endif()
 
-# Now, find the libraries we need to compile against.  Several variables can be
-# set to manually specify the directory in which each of these libraries
-# resides.
-#   ARMADILLO_LIBRARY - location of libarmadillo.so / armadillo.lib
-#   ARMADILLO_INCLUDE_DIR - directory containing <armadillo>
-#   ARMADILLO_INCLUDE_DIRS - directories necessary for Armadillo includes
-#   CEREAL_INCLUDE_DIR - include directory for cereal
-#   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
-#   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
-#   MATHJAX_ROOT - root of MathJax installation
-
-# Download and compile OpenBLAS if we are cross compiling mlpack for a specific
-# architecture. The function takes the version of OpenBLAS as variable.
 if (CMAKE_CROSSCOMPILING)
-  search_openblas(0.3.28)
-endif()
-
-if (NOT DOWNLOAD_DEPENDENCIES)
-  find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
+  crosscompile()
 else()
-  find_package(Armadillo "${ARMADILLO_VERSION}")
-  if (NOT ARMADILLO_FOUND)
-    if (NOT CMAKE_CROSSCOMPILING)
-      find_package(BLAS QUIET)
-      find_package(LAPACK QUIET)
-      if (NOT BLAS_FOUND AND NOT LAPACK_FOUND)
-        message(FATAL_ERROR "Can not find BLAS or LAPACK!  These are required for Armadillo.  Please install one of them---or install Armadillo---before installing mlpack.")
-      endif()
-    endif()
-    get_deps(https://files.mlpack.org/armadillo-12.6.5.tar.gz armadillo armadillo-12.6.5.tar.gz)
-    set(ARMADILLO_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
-    find_package(Armadillo REQUIRED)
-  endif()
-endif()
-# Include directories for the previous dependencies.
-set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
-set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
-
-# Find stb_image.h and stb_image_write.h.
-if (NOT DOWNLOAD_DEPENDENCIES)
-  find_package(StbImage)
-else()
-  find_package(StbImage)
-  if (NOT StbImage_FOUND)
-    get_deps(https://mlpack.org/files/stb.tar.gz stb stb.tar.gz)
-    set(STB_IMAGE_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
-    find_package(StbImage REQUIRED)
-  endif()
+  find_dependencies()
 endif()
 
-if (StbImage_FOUND)
-  set(STB_AVAILABLE "1")
-  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
-
-  # Make sure that we can link STB in multiple translation units.
-  include(CMake/TestStaticSTB.cmake)
-  if (NOT CMAKE_HAS_WORKING_STATIC_STB)
-    message(FATAL_ERROR "STB implementations's static mode cannot link across "
-        "multiple translation units!  Try upgrading your STB implementation, "
-        "or using the auto-downloader (set DOWNLOAD_DEPENDENCIES=ON in the "
-        "CMake configuration command.")
-  endif ()
+if (DOWNLOAD_DEPENDENCIES)
+  autodownload()
 endif()
-
-# Find ensmallen.
-if (NOT DOWNLOAD_DEPENDENCIES)
-  find_package(Ensmallen "${ENSMALLEN_VERSION}" REQUIRED)
-else()
-  find_package(Ensmallen "${ENSMALLEN_VERSION}")
-  if (NOT ENSMALLEN_FOUND)
-    get_deps(https://www.ensmallen.org/files/ensmallen-latest.tar.gz ensmallen ensmallen-latest.tar.gz)
-    set(ENSMALLEN_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
-    find_package(Ensmallen REQUIRED)
-  endif()
-endif()
-set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
-
-# Find cereal.
-if (NOT DOWNLOAD_DEPENDENCIES)
-  find_package(cereal "${CEREAL_VERSION}" REQUIRED)
-else()
-  find_package(cereal "${CEREAL_VERSION}")
-  if (NOT CEREAL_FOUND)
-    get_deps(https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.0.tar.gz cereal cereal-1.3.0.tar.gz)
-    set(CEREAL_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
-    find_package(cereal REQUIRED)
-  endif()
-endif()
-set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
-
-# Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
-# to compile with OpenMP are returned and added.  Note that MSVC does not
-# support a new-enough version of OpenMP to be useful.
-if (USE_OPENMP)
-  find_package(OpenMP)
-endif ()
-
-if (OpenMP_FOUND AND OpenMP_CXX_VERSION VERSION_GREATER_EQUAL 3.0.0)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OpenMP_CXX_LIBRARIES})
-else ()
-  # Disable warnings for all the unknown OpenMP pragmas.
-  if (NOT MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
-  else ()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4068")
-  endif ()
-  set(OpenMP_CXX_FLAGS "")
-endif ()
 
 # Create a 'distclean' target in case the user is using an in-source build for
 # some reason.
