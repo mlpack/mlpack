@@ -3,7 +3,7 @@
  * @author Shashank Shekhar
  *
  * This file is an implementation of Pendulum task:
- * https://www.gymlibrary.ml/environments/classic_control/pendulum/
+ * https://www.gymlibrary.dev/environments/classic_control/pendulum/
  *
  * TODO: provide an option to use dynamics directly from OpenAI gym.
  *
