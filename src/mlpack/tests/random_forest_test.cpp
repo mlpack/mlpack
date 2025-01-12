@@ -616,7 +616,7 @@ TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
  */
 TEST_CASE("ComputeAverageUniquenessTest", "[RandomForestTest]")
 {
-  arma::umat indM(3 /* rows */, 2 /* cols */, arma::fill::zeros);
+  arma::umat indM(2 /* rows */, 3 /* cols */, arma::fill::zeros);
 
   // indM = [1 1 1 0 0 0
   //         0 0 1 1 0 0
@@ -624,11 +624,11 @@ TEST_CASE("ComputeAverageUniquenessTest", "[RandomForestTest]")
   // The last event is fully isolated.
   // The first two events overlap in the third column.
   indM(0, 0) = 0;
-  indM(0, 1) = 2;
   indM(1, 0) = 2;
+  indM(0, 1) = 2;
   indM(1, 1) = 3;
-  indM(2, 0) = 4;
-  indM(2, 1) = 5;
+  indM(0, 2) = 4;
+  indM(1, 2) = 5;
 
   const arma::vec avg(SequentialBootstrap<>::ComputeAverageUniqueness(indM,
     arma::linspace<arma::uvec>(0, 2, 3)));
@@ -644,20 +644,22 @@ TEST_CASE("ComputeAverageUniquenessTest", "[RandomForestTest]")
  */
 TEST_CASE("ComputeNextDrawProbabilitiesTest", "[RandomForestTest]")
 {
-  const std::vector<arma::uword> phi1(1u, 1u);
-  arma::umat indM(3 /* rows */, 2 /* cols */, arma::fill::zeros);
+  arma::uvec phi1(2);
+  arma::umat indM(2 /* rows */, 3 /* cols */, arma::fill::zeros);
+
+  phi1[0] = 1u;
 
   indM(0, 0) = 0;
-  indM(0, 1) = 2;
   indM(1, 0) = 2;
+  indM(0, 1) = 2;
   indM(1, 1) = 3;
-  indM(2, 0) = 4;
-  indM(2, 1) = 5;
+  indM(0, 2) = 4;
+  indM(1, 2) = 5;
 
   // Compute the probabilities that observations 0, 1, 2 are drawn after
   // observation 1 has already been drawn.
   const arma::vec delta2(
-    SequentialBootstrap<>::ComputeNextDrawProbabilities(phi1, indM));
+    SequentialBootstrap<>::ComputeNextDrawProbabilities(phi1, 1, indM));
 
   REQUIRE(delta2(0) == 5.0 / 14.0);
   // Should have the lowest probability as it has already been drawn.
@@ -672,23 +674,25 @@ TEST_CASE("ComputeNextDrawProbabilitiesTest", "[RandomForestTest]")
  */
 TEST_CASE("ComputeSamplesTest", "[RandomForestTest]")
 {
-  arma::umat indM(3 /* rows */, 2 /* cols */, arma::fill::zeros);
+  arma::umat indM(2 /* rows */, 6 /* cols */, arma::fill::zeros);
 
   indM(0, 0) = 0;
-  indM(0, 1) = 2;
   indM(1, 0) = 2;
+  indM(0, 1) = 2;
   indM(1, 1) = 3;
-  indM(2, 0) = 4;
-  indM(2, 1) = 5;
+  indM(0, 2) = 4;
+  indM(1, 2) = 5;
+
+  indM(1, 3) = indM(1, 4) = indM(1, 5) = 5;
 
   SequentialBootstrap bootstrap(indM);
   const arma::uvec phi(bootstrap.ComputeSamples(6));
 
   // Can only check that the next draw does not yield indices
   // outside of the range of observations.
-  REQUIRE(phi(0) < 3);
-  REQUIRE(phi(1) < 3);
-  REQUIRE(phi(2) < 3);
+  REQUIRE(phi(0) < 6);
+  REQUIRE(phi(1) < 6);
+  REQUIRE(phi(2) < 6);
 }
 
 /**
@@ -699,14 +703,16 @@ TEST_CASE("SequentialBootstrapTest", "[RandomForestTest]")
   const arma::mat ds(10 /* rows */, 6 /* cols */, arma::fill::randu);
   const arma::Row<size_t> labels{ 1, 0, 0, 0, 0, 0 };
   const arma::vec weights(6, arma::fill::ones);
-  arma::umat indM(6 /* rows */, 2 /* cols */, arma::fill::zeros);
+  arma::umat indM(2 /* rows */, 6 /* cols */, arma::fill::zeros);
 
   indM(0, 0) = 0;
-  indM(0, 1) = 2;
   indM(1, 0) = 2;
+  indM(0, 1) = 2;
   indM(1, 1) = 3;
-  indM(2, 0) = 4;
-  indM(2, 1) = 5;
+  indM(0, 2) = 4;
+  indM(1, 2) = 5;
+
+  indM(1, 3) = indM(1, 4) = indM(1, 5) = 5;
 
   SequentialBootstrap<> bootstrap(indM);
   arma::mat bsDataset;
