@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>Default</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\mlpack\armadillo-11.4.1\include;C:\mlpack\mlpack-4.5.0\include\;C:\mlpack\cereal-1.3.2\include;C:\mlpack\ensmallen-2.19.0\include\%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\mlpack\armadillo-11.4.1\include;C:\mlpack\mlpack-4.5.1\include\;C:\mlpack\cereal-1.3.2\include;C:\mlpack\ensmallen-2.19.0\include\%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <OpenMPSupport>false</OpenMPSupport>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
