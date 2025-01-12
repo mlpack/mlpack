@@ -3,7 +3,7 @@
  * @author Shangtong Zhang
  *
  * This file is an implementation of Mountain Car task:
- * https://www.gymlibrary.ml/environments/classic_control/mountain_car
+ * https://www.gymlibrary.dev/environments/classic_control/mountain_car
  *
  * TODO: provide an option to use dynamics directly from OpenAI gym.
  *
