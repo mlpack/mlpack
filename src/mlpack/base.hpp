@@ -93,11 +93,13 @@
   #pragma warning(disable : 4519)
 #endif
 
-// This can be removed when Visual Studio supports an OpenMP version with
-// unsigned loop variables.
+// OpenMP usage must be version 3.0 or newer, if it is being used.
 #if (defined(_OPENMP) && (_OPENMP >= 201107))
-  #undef  MLPACK_USE_OPENMP
-  #define MLPACK_USE_OPENMP
+  #ifdef _MSC_VER
+    #error "mlpack requires OpenMP 3.0 or newer; compile without /OPENMP on Visual Studio or switch to a compiler that supports OpenMP 3.0"
+  #else
+    #error "mlpack requires OpenMP 3.0 or newer; disable OpenMP with your compiler"
+  #endif
 #endif
 
 #endif
