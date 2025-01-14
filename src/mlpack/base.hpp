@@ -95,6 +95,9 @@
 
 // OpenMP usage must be version 3.0 or newer, if it is being used.
 #if (defined(_OPENMP) && (_OPENMP >= 201107))
+  #undef MLPACK_USE_OPENMP
+  #define MLPACK_USE_OPENMP
+#elif defined(_OPENMP)
   #ifdef _MSC_VER
     #error "mlpack requires OpenMP 3.0 or newer; compile without /OPENMP"
   #else
