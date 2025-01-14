@@ -112,7 +112,7 @@ cross-compilation toolchain.
 ```sh
 cmake \
     -DBUILD_TESTS=ON \
-    -DBOARD_NAME="RPI2" \
+    -DARCH_NAME="RPI2" \
     -DCMAKE_CROSSCOMPILING=ON \
     -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake \
     -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf- \

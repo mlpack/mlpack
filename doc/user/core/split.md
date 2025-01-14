@@ -4,7 +4,7 @@ mlpack provides a simple functions for splitting a dataset into a training set
 and a test set.
 
  * [`data::Split()`](#datasplitdata): split a dataset into a training set
-   and test set, optionally with labels.
+   and test set, optionally with labels and weights.
 
  * [`data::StratifiedSplit()`](#datastratifiedsplit): perform a stratified
    split, ensuring that the training and test set have the same ratios of each
@@ -14,18 +14,19 @@ and a test set.
 
 ## `data::SplitData()`
 
- * `data::Split(input, inputLabels, trainData, testData, trainLabels,
-   testLabels, testRatio, shuffleData=true)`
-   - Perform a standard train/test split with labels, with a factor of
-     `testRatio` of the dataset stored in the test set.
-   - If `shuffleData` is `false`, the first points in the dataset will be used
-     for the training set, and the last points will be used for the test set.
-
  * `data::Split(input, trainData, testData, testRatio, shuffleData=true)`
-   - Perform a standard train/test split without labels, with a factor of
-     `testRatio` of the dataset stored in the test set.
+ * `data::Split(input, inputLabels, trainData, testData, trainLabels, testLabels, testRatio, shuffleData=true)`
+ * `data::Split(input, inputLabels, inputWeights, trainData, testData, trainLabels, testLabels, trainWeights, testWeights, testRatio, shuffleData=true)`
+   - Perform a standard train/test split, with a factor of `testRatio` of the
+     data stored in the test set.
    - If `shuffleData` is `false`, the first points in the dataset will be used
      for the training set, and the last points for the test set.
+   - `inputLabels` can be specified if there are also labels that should be
+     split; `inputLabels.n_cols` should be equal to `input.n_cols`.
+   - `inputWeights` can be specified if there are also instance weights that
+     should be split; `inputWeights.n_cols` should be equal to `input.n_cols`.
+
+See more details on each parameter in the [Parameters](#parameters) section.
 
 ---
 
@@ -41,6 +42,8 @@ and a test set.
    - If `shuffleData` is `false`, the first points in the dataset for each class
      will be used for the training set, and the last points for the test set.
 
+See more details on each parameter in the [Parameters](#parameters) section.
+
 ---
 
 ## Parameters
@@ -49,27 +52,43 @@ and a test set.
 |----------|----------|-----------------|-------------|
 | `input` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) data matrix. | _(N/A)_ |
 | `inputLabels` | [`arma::Row<size_t>`](../matrices.md) | Labels for data matrix.  Should have length `data.n_cols`. | _(N/A)_ |
+| `inputWeights` | [`arma::rowvec`](../matrices.md) | Weights for data matrix. Should have length `data.n_cols`. | _(N/A)_ |
 | `trainData` | [`arma::mat&`](../matrices.md) | Matrix to store training points in.  Will be set to size `data.n_rows` x `((1.0 - testRatio) * data.n_cols)`. | _(N/A)_ |
 | `testData` | [`arma::mat&`](../matrices.md) | Matrix to store test points in. Will be set to size `data.n_rows` x `testRatio * data.n_cols`. | _(N/A)_ |
 | `trainLabels` | [`arma::Row<size_t>&`](../matrices.md) | Vector to store training labels in.  Will be set to length `trainData.n_cols`. | _(N/A)_ |
 | `testLabels` | [`arma::Row<size_t>&`](../matrices.md) | Vector to store test labels in.  Will be set to length `testData.n_cols`. | _(N/A)_ |
+| `trainWeights` | [`arma::rowvec&`](../matrices.md) | Vector to store training weights in.  Will be set to length `trainData.n_cols`. | _(N/A)_ |
+| `testWeights` | [`arma::rowvec&`](../matrices.md) | Vector to store test weights in.  Will be set to length `testData.n_cols`. | _(N/A)_ |
 | `testRatio` | `double` | Fraction of columns in `input` to use for test set. Typically between 0.1 and 0.25. | _(N/A)_ |
 | `shuffleData` | `bool` | If `true`, then training and test sets are sampled randomly from `input`. | `true` |
 
 ***Notes:***
 
- - Any matrix type matching the Armadillo API can be used for `input`,
-   `trainData`, and `testData` (e.g. `arma::fmat`, `arma::sp_mat`, etc.).
+ - Any matrix or cube type matching the Armadillo API can be used for `input`,
+   `trainData`, and `testData` (e.g. `arma::fmat`, `arma::sp_mat`, `arma::cube`,
+   etc.).
     * All three matrices must have the same type.
     * [`arma::field<>`](https://arma.sourceforge.net/docs.html#field) types can
       also be used.
 
- - Any dense vector or matrix type matching the Armadillo API can be used for
-   `labels`, `trainLabels`, and `testLabels` (e.g. `arma::uvec`,
-   `arma::Col<unsigned short>`, etc.).
+ - Any row vector, matrix, or cube type matching the Armadillo API can be used
+   for `labels`, `trainLabels`, and `testLabels` (e.g. `arma::urowvec`,
+   `arma::Row<unsigned short>`, `arma::cube`, etc.).
     * All three label parameters must have the same type.
     * [`arma::field<>`](https://arma.sourceforge.net/docs.html#field) types may
-      also be used, so long as the object type of the `field` is a vector type.
+      also be used, so long as the given `field` has the same number of columns
+      as `input`.
+
+ - Any row vector, matrix, or cube type matching the Armadillo API can be used
+   for `weights`, trainWeights`, and `testWeights` (e.g. `arma::frowvec`,
+   `arma::fmat`, `arma::cube`, etc.).
+    * All three weight parameters must have the same type.
+    * [`arma::field<>`](https://arma.sourceforge.net/docs.html#field) types may
+      also be used, so long as the given `field` has the same number of columns
+      as `input`.
+
+ - Splitting is done on *columns*; so, if vector types are given, they should be
+   row vectors (e.g. `arma::rowvec`, `arma::Row<size_t>`, etc.).
 
 ## Example usage
 
