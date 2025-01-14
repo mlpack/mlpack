@@ -99,9 +99,9 @@
   #define MLPACK_USE_OPENMP
 #elif defined(_OPENMP)
   #ifdef _MSC_VER
-    #error "mlpack requires OpenMP 3.0 or newer; compile without /OPENMP"
+    #error "mlpack requires OpenMP 3.0+; compile without /OPENMP"
   #else
-    #error "mlpack requires OpenMP 3.0 or newer; disable OpenMP with your compiler"
+    #error "mlpack requires OpenMP 3.0+; disable OpenMP with your compiler"
   #endif
 #endif
 
