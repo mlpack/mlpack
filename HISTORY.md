@@ -24,6 +24,10 @@ _2024-12-02_
 
  * Fix serialization and `MinDistance()` bugs with `HollowBallBound` (#3808).
 
+ * Add `LinearRecurrent` layer and revamp `LSTM` layer (#3859).
+
+ * Fix BPTT issues in `RNN` (#3859).
+
 ## mlpack 4.5.0
 
 _2024-09-17_
