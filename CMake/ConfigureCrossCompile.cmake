@@ -4,7 +4,7 @@
 # This file will compile OpenBLAS if it is downloaded and it is not
 # available on your system in order to find the BLAS library.  If OpenBLAS will
 # be compiled, the OPENBLAS_TARGET variable must be set.  This can be done
-# by, e.g., setting BOARD_NAME (which will set OPENBLAS_TARGET in
+# by, e.g., setting ARCH_NAME (which will set OPENBLAS_TARGET in
 # `flags-config.cmake`).
 
 if (CMAKE_CROSSCOMPILING)
