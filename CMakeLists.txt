@@ -28,11 +28,12 @@ set(CEREAL_VERSION "1.1.2")
 
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
-endif ()
+endif()
 
 if (PROFILE)
   message(WARNING "The PROFILE option is deprecated and will be removed in mlpack 5.0.0; specify -DCMAKE_CXX_FLAG=\"-pg\" instead!")
-endif
+endif()
+
 # Consider using ccache
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
