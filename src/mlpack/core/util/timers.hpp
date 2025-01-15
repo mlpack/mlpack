@@ -19,7 +19,9 @@
 #include <iomanip>
 #include <list>
 #include <map>
+#ifndef MLPACK_NO_STD_MUTEX
 #include <mutex>
+#endif
 #include <string>
 #include <thread> // std::thread is used for thread safety.
 
@@ -169,8 +171,10 @@ class Timers
  private:
   //! A map of all the timers that are being tracked.
   std::map<std::string, std::chrono::microseconds> timers;
+#ifndef MLPACK_NO_STD_MUTEX
   //! A mutex for modifying the timers.
   std::mutex timersMutex;
+#endif
   //! A map for the starting values of the timers.
   std::map<std::thread::id, std::map<std::string,
       std::chrono::high_resolution_clock::time_point>> timerStartTime;

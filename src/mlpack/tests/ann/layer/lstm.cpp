@@ -2,6 +2,7 @@
  * @file lstm.cpp
  * @author Marcus Edel
  * @author Praveen Ch
+ * @author Ryan Curtin
  *
  * Tests the ann layer modules.
  *

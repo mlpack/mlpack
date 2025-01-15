@@ -3,7 +3,7 @@
  * @author Shangtong Zhang
  *
  * This file is an implementation of Cart Pole task:
- * https://www.gymlibrary.ml/environments/classic_control/cart_pole
+ * https://www.gymlibrary.dev/environments/classic_control/cart_pole
  *
  * TODO: provide an option to use dynamics directly from OpenAI gym.
  *
