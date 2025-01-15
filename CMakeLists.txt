@@ -31,7 +31,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 
 if (PROFILE)
-  message(WARNING "The PROFILE option is deprecated and will be removed in mlpack 5.0.0; specify -DCMAKE_CXX_FLAG=\"-pg\" instead!")
+  message(WARNING "The PROFILE option is deprecated and will be removed in mlpack 5.0.0; specify -DCMAKE_CXX_FLAGS=\"-pg\" instead!")
 endif()
 
 # Consider using ccache

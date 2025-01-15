@@ -6,6 +6,7 @@ _????-??-??_
 
  * Fix command-line duplicate output bug when loading matrices for some bindings
    (#3838).
+ * Use `CMAKE_BUILD_TYPE` to specify build type instead of DEBUG and PROFILE options (#3865).
 
 ## mlpack 4.5.1
 
