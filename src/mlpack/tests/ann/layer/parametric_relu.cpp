@@ -106,7 +106,7 @@ TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
   arma::mat data;
   data::Load("boston_housing_price.csv", data, true /* fatal */);
   arma::mat labels;
-  data::Load("boston_housing_price_responses.csv", labels, /* fatal */);
+  data::Load("boston_housing_price_responses.csv", labels, true /* fatal */);
 
   arma::mat trainData, testData, trainLabels, testLabels;
   data::Split(data, labels, trainData, testData, trainLabels, testLabels, 0.2);
