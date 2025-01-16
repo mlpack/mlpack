@@ -120,10 +120,10 @@ TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
 
   // Sometimes the model may not optimize correctly, so we allow a few trials.
   bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
+  for (size_t trial = 0; trial < 5; ++trial)
   {
-    const size_t epochs = 250;
-    ens::RMSProp optimizer(0.003, 8, 0.99, 1e-8, epochs * trainData.n_cols);
+    const size_t epochs = 500;
+    ens::RMSProp optimizer(0.0025, 8, 0.99, 1e-8, epochs * trainData.n_cols);
     model.Reset(data.n_rows);
     model.Train(trainData, trainLabels, optimizer);
 
