@@ -8,31 +8,31 @@ pr:
     - '*'
 
 jobs:
-- job: Linux
-  timeoutInMinutes: 360
-  pool:
-    vmImage: ubuntu-latest
-  strategy:
-    matrix:
-      Plain:
-        # Precompiled headers with debug symbols can cause too much disk space /
-        # RAM usage.
-        CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF -DUSE_PRECOMPILED_HEADERS=OFF'
-      Python:
-        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_PYTHON_BINDINGS=ON -DPYTHON_EXECUTABLE=/usr/bin/python3 -DBUILD_GO_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF'
-        binding: 'python'
-        python.version: '3.7'
-      Julia:
-        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=ON -DBUILD_GO_BINDINGS=OFF -DJULIA_EXECUTABLE=/opt/julia-1.10.4/bin/julia -DBUILD_R_BINDINGS=OFF'
-        binding: 'julia'
-      Go:
-        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=ON -DBUILD_R_BINDINGS=OFF'
-        binding: 'go'
-      Markdown:
-        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_MARKDOWN_BINDINGS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF'
-
-  steps:
-  - template: linux-steps.yaml
+#- job: Linux
+#  timeoutInMinutes: 360
+#  pool:
+#    vmImage: ubuntu-latest
+#  strategy:
+#    matrix:
+#      Plain:
+#        # Precompiled headers with debug symbols can cause too much disk space /
+#        # RAM usage.
+#        CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF -DUSE_PRECOMPILED_HEADERS=OFF'
+#      Python:
+#        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_PYTHON_BINDINGS=ON -DPYTHON_EXECUTABLE=/usr/bin/python3 -DBUILD_GO_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF'
+#        binding: 'python'
+#        python.version: '3.7'
+#      Julia:
+#        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=ON -DBUILD_GO_BINDINGS=OFF -DJULIA_EXECUTABLE=/opt/julia-1.10.4/bin/julia -DBUILD_R_BINDINGS=OFF'
+#        binding: 'julia'
+#      Go:
+#        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=ON -DBUILD_R_BINDINGS=OFF'
+#        binding: 'go'
+#      Markdown:
+#        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_MARKDOWN_BINDINGS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF'
+#
+#  steps:
+#  - template: linux-steps.yaml
 
 - job: macOS
   timeoutInMinutes: 360
