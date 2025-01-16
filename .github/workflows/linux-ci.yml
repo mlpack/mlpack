@@ -29,7 +29,7 @@ jobs:
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON'
           },
           {
-            name: 'Python'
+            name: 'Python',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON -DPYTHON_EXECUTABLE=/usr/bin/python3'
           },
           {
@@ -41,7 +41,7 @@ jobs:
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_GO_BINDINGS=ON'
           },
           {
-            name: 'Markdown'
+            name: 'Markdown',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_MARKDOWN_BINDINGS=ON'
           }
         ]
