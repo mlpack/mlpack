@@ -110,7 +110,7 @@ jobs:
         run: cd build && make -j4
 
       - name: Run tests
-        run: cd build && OMP_NUM_THREADS=4 CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test . --output-junit ctest_output.xml
+        run: cd build && OMP_NUM_THREADS=4 CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test --output-junit ctest_output.xml . && pwd && ls -lh
 
       - name: Test summary
         uses: test-summary/action@v2
