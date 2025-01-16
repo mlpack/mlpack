@@ -19,32 +19,33 @@ jobs:
     strategy:
       matrix:
         # The R bindings are tested via r-bindings.yaml.
-        config: [
-          {
-            name: 'Debug',
-            cmakeVars: '-DCMAKE_BUILD_TYPE=Debug -DUSE_PRECOMPILED_HEADERS=OFF'
-          },
-          {
-            name: 'CLI',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON',
-          },
-          {
-            name: 'Python'
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON -DPYTHON_EXECUTABLE=/usr/bin/python3'
-          },
-          {
-            name: 'Julia',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_JULIA_BINDINGS=ON -DJULIA_EXECUTABLE=/opt/julia-1.10.4/bin/julia'
-          },
-          {
-            name: 'Go',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_GO_BINDINGS=ON'
-          },
-          {
-            name: 'Markdown'
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_MARKDOWN_BINDINGS=ON'
-          }
-        ]
+        config: [ 'debug', 'cli', 'python', 'julia', 'go', 'markdown' ]
+        #config: [
+        #  {
+        #    name: 'Debug',
+        #    cmakeVars: '-DCMAKE_BUILD_TYPE=Debug -DUSE_PRECOMPILED_HEADERS=OFF'
+        #  },
+        #  {
+        #    name: 'CLI',
+        #    cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON',
+        #  },
+        #  {
+        #    name: 'Python'
+        #    cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON -DPYTHON_EXECUTABLE=/usr/bin/python3'
+        #  },
+        #  {
+        #    name: 'Julia',
+        #    cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_JULIA_BINDINGS=ON -DJULIA_EXECUTABLE=/opt/julia-1.10.4/bin/julia'
+        #  },
+        #  {
+        #    name: 'Go',
+        #    cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_GO_BINDINGS=ON'
+        #  },
+        #  {
+        #    name: 'Markdown'
+        #    cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_MARKDOWN_BINDINGS=ON'
+        #  }
+        #]
 
     name: 'Linux build: {{ matrix.config.name }}'
     if: ${{ github.repository == 'mlpack/mlpack' }}
