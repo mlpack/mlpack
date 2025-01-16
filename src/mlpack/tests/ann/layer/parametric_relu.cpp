@@ -20,9 +20,9 @@
 using namespace mlpack;
 
 /**
- * PReLU FORWARD Test.
+ * PReLU forward pass test.
  */
-TEST_CASE("PReLUFORWARDTest", "[ANNLayerTest]")
+TEST_CASE("PReLUForwardTest", "[ANNLayerTest]")
 {
   arma::mat input = {{0.5, 1.2, 3.1},
                     {-2.2, -1.5, 0.8},
@@ -43,9 +43,9 @@ TEST_CASE("PReLUFORWARDTest", "[ANNLayerTest]")
 }
 
 /**
- * PReLU BACKWARD Test.
+ * PReLU backward pass Test.
  */
-TEST_CASE("PReLUBACKWARDTest", "[ANNLayerTest]")
+TEST_CASE("PReLUBackwardTest", "[ANNLayerTest]")
 {
   arma::mat input = {{0.5, 1.2, 3.1},
                     {-2.2, -1.5, 0.8},
@@ -73,9 +73,9 @@ TEST_CASE("PReLUBACKWARDTest", "[ANNLayerTest]")
 }
 
 /**
- * PReLU GRADIENT Test.
+ * PReLU gradient pass test.
  */
-TEST_CASE("PReLUGRADIENTTest", "[ANNLayerTest]")
+TEST_CASE("PReLUGradientTest", "[ANNLayerTest]")
 {
   arma::mat input = {{0.5, 1.2, 3.1},
                     {-2.2, -1.5, 0.8},
@@ -104,9 +104,9 @@ double ComputeMSRE(arma::mat input, arma::mat target)
 TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
 {
   arma::mat data;
-  data::Load("boston_housing_price.csv", data);
+  data::Load("boston_housing_price.csv", data, true /* fatal */);
   arma::mat labels;
-  data::Load("boston_housing_price_responses.csv", labels);
+  data::Load("boston_housing_price_responses.csv", labels, /* fatal */);
 
   arma::mat trainData, testData, trainLabels, testLabels;
   data::Split(data, labels, trainData, testData, trainLabels, testLabels, 0.2);
@@ -132,8 +132,10 @@ TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
     double msreTrain = ComputeMSRE(predictions, trainLabels);
     model.Predict(testData, predictions);
     double msreTest = ComputeMSRE(predictions, testLabels);
+    std::cout << "msreTrain: " << msreTrain << ", msreTest: " << msreTest << "\n";
 
     double relativeMSRE = std::abs((msreTest - msreTrain) / msreTrain);
+    std::cout << "relative MSRE: " << relativeMSRE << "\n";
     if (relativeMSRE <= 0.35)
     {
       success = true;
