@@ -23,7 +23,7 @@ jobs:
         config: [
           {
             name: 'Debug',
-            cmakeVars: '-DCMAKE_BUILD_TYPE=Debug -DUSE_PRECOMPILED_HEADERS=OFF'
+            cmakeVars: '-DCMAKE_BUILD_TYPE=Debug -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_CLI_EXECUTABLES=OFF'
           },
           {
             name: 'CLI',
