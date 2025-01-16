@@ -75,9 +75,7 @@ class RectangleTree
   //! The parent node (NULL if this is the root of the tree).
   RectangleTree* parent;
   //! The index of the first point in the dataset contained in this node (and
-  //! its children).  THIS IS ALWAYS 0 AT THE MOMENT.  IT EXISTS MERELY IN CASE
-  //! I THINK OF A WAY TO CHANGE THAT.  IN OTHER WORDS, IT WILL PROBABLY BE
-  //! REMOVED.
+  //! its children).
   size_t begin;
   //! The number of points in the dataset contained in this node (and its
   //! children).
@@ -311,9 +309,9 @@ class RectangleTree
   RectangleTree* FindByBeginCount(size_t begin, size_t count);
 
   //! Return the bound object for this node.
-  const HRectBound<DistanceType>& Bound() const { return bound; }
+  const HRectBound<DistanceType, ElemType>& Bound() const { return bound; }
   //! Modify the bound object for this node.
-  HRectBound<DistanceType>& Bound() { return bound; }
+  HRectBound<DistanceType, ElemType>& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
@@ -541,16 +539,6 @@ class RectangleTree
    * this.
    */
   size_t TreeDepth() const;
-
-  //! Return the index of the beginning point of this subset.
-  size_t Begin() const { return begin; }
-  //! Modify the index of the beginning point of this subset.
-  size_t& Begin() { return begin; }
-
-  //! Return the number of points in this subset.
-  size_t Count() const { return count; }
-  //! Modify the number of points in this subset.
-  size_t& Count() { return count; }
 
  private:
   /**

@@ -9,6 +9,12 @@ instead:
 
  * [`KDTree`](kdtree.md)
  * [`MeanSplitKDTree`](mean_split_kdtree.md)
+ * [`BallTree`](ball_tree.md)
+ * [`MeanSplitBallTree`](mean_split_ball_tree.md)
+ * [`VPTree`](vptree.md)
+ * [`RPTree`](rp_tree.md)
+ * [`MaxRPTree`](max_rp_tree.md)
+ * [`UBTree`](ubtree.md)
 
 ---
 
@@ -161,8 +167,8 @@ different.
    `BinarySpaceTree` is not supported, because this generally results in a tree
    with very loose bounding boxes.  It is better to simply build a new
    `BinarySpaceTree` on the modified dataset.  For trees that support individual
-   insertion and deletions, see the `RectangleTree` class and all its variants
-   (e.g. `RTree`, `RStarTree`, etc.).
+   insertion and deletions, see the [`RectangleTree`](rectangle_tree.md) class
+   and all its variants (e.g. [`RTree`](r_tree.md), `RStarTree`, etc.).
 
  - See also the
    [developer documentation on tree constructors](../../../developer/trees.md#constructors-and-destructors).
@@ -429,9 +435,6 @@ write a custom `BoundType` for use with `BinarySpaceTree`:
    hyperrectangle
  * [Custom `BoundType`s](#custom-boundtypes): implement a fully custom
    `BoundType`
-
-*Note:* this section is still under construction---not all bound types are
-documented yet.
 
 ### `HRectBound`
 
@@ -1978,9 +1981,6 @@ to write a fully custom split:
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
 
-*Note:* this section is still under construction---not all split types are
-documented yet.
-
 ### `MidpointSplit`
 
 The `MidpointSplit` class is a splitting strategy that can be used by
@@ -2412,7 +2412,7 @@ while (!stack.empty())
 // stack is the better option here.
 
 // Print the results.
-std::cout << leafCount << " out of " << totalLeafCount << " leaves have less "
+std::cout << leafCount << " out of " << totalLeafCount << " leaves have fewer "
   << "than 10 points." << std::endl;
 ```
 

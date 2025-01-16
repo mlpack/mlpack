@@ -785,7 +785,7 @@ size_t RectangleTree<DistanceType, StatisticType, MatType, SplitType,
   for (size_t i = 0; i < NumChildren(); ++i)
   {
     ElemType distance = Child(i).MinDistance(point);
-    if (distance <= bestDistance)
+    if (distance < bestDistance)
     {
       bestDistance = distance;
       bestIndex = i;
@@ -818,7 +818,7 @@ size_t RectangleTree<DistanceType, StatisticType, MatType, SplitType,
   for (size_t i = 0; i < NumChildren(); ++i)
   {
     ElemType distance = Child(i).MaxDistance(point);
-    if (distance >= bestDistance)
+    if (distance > bestDistance)
     {
       bestDistance = distance;
       bestIndex = i;
@@ -849,7 +849,7 @@ size_t RectangleTree<DistanceType, StatisticType, MatType, SplitType,
   for (size_t i = 0; i < NumChildren(); ++i)
   {
     ElemType distance = Child(i).MinDistance(queryNode);
-    if (distance <= bestDistance)
+    if (distance < bestDistance)
     {
       bestDistance = distance;
       bestIndex = i;
@@ -880,7 +880,7 @@ size_t RectangleTree<DistanceType, StatisticType, MatType, SplitType,
   for (size_t i = 0; i < NumChildren(); ++i)
   {
     ElemType distance = Child(i).MaxDistance(queryNode);
-    if (distance >= bestDistance)
+    if (distance > bestDistance)
     {
       bestDistance = distance;
       bestIndex = i;
