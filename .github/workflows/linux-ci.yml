@@ -17,6 +17,7 @@ name: mlpack.mlpack
 jobs:
   build_and_test_matrix:
     strategy:
+      fail-fast: false # Run all configurations even if one fails.
       matrix:
         # The R bindings are tested via r-bindings.yaml.
         config: [
@@ -46,7 +47,7 @@ jobs:
           }
         ]
 
-    name: 'Linux build: {{ matrix.config.name }}'
+    name: 'Linux build: ${{ matrix.config.name }}'
     if: ${{ github.repository == 'mlpack/mlpack' }}
     runs-on: ubuntu-latest
 
