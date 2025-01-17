@@ -675,8 +675,9 @@ then
   fi
 
   # Clean up unnecessary files.
-  #rm -f "$output_dir/link_errors.csv" "$output_dir/all_links.csv"
-  #rm -f links.csv links_failed.csv;
+  rm -f "$output_dir/link_errors.csv" "$output_dir/all_links.csv" \
+      "$output_dir/linkcheckerrc.in" "$output_dir/linkcheckerrc";
+  rm -f links.csv links_failed.csv;
 else
   exitcode=0;
 fi
