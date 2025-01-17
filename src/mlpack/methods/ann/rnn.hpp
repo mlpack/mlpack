@@ -90,7 +90,7 @@ class RNN
   //! Get the network model.
   const std::vector<Layer<MatType>*>& Network() const
   {
-    return network.Network().Network();
+    return network.Network();
   }
 
   /**
@@ -102,7 +102,7 @@ class RNN
    */
   std::vector<Layer<MatType>*>& Network()
   {
-    return network.Network().Network();
+    return network.Network();
   }
 
   /**
@@ -351,10 +351,8 @@ class RNN
    */
   void ResetMemoryState(const size_t memorySize, const size_t batchSize);
 
-  //! Set the previous step index of all recurrent layers to `step`.
-  void SetPreviousStep(const size_t step);
   //! Set the current step index of all recurrent layers to `step`.
-  void SetCurrentStep(const size_t step);
+  void SetCurrentStep(const size_t step, const bool end);
 
   //! Number of timesteps to consider for backpropagation through time (BPTT).
   size_t bpttSteps;

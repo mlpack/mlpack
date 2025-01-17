@@ -269,8 +269,10 @@ class IO
   static util::Timers& GetTimers();
 
  private:
+#ifndef MLPACK_NO_STD_MUTEX
   //! Ensure only one thread can call Add() at a time to modify the map.
   std::mutex mapMutex;
+#endif
   //! Map from alias values to names, for each binding name.
   std::map<std::string, std::map<char, std::string>> aliases;
   //! Map of parameters, for each binding name.
@@ -281,8 +283,10 @@ class IO
       void (*)(util::ParamData&, const void*, void*)>>;
   FunctionMapType functionMap;
 
+#ifndef MLPACK_NO_STD_MUTEX
   //! Ensure only one thread can modify the docs map at a time.
   std::mutex docMutex;
+#endif
   //! Map of binding details.
   std::map<std::string, util::BindingDetails> docs;
 

@@ -6,6 +6,9 @@ _????-??-??_
 
  * Fix command-line duplicate output bug when loading matrices for some bindings
    (#3838).
+ * Use `CMAKE_BUILD_TYPE` to specify build type instead of DEBUG and PROFILE options (#3865).
+
+ * Add `MLPACK_NO_STD_MUTEX` to allow disabling `std::mutex` (#3868).
 
 ## mlpack 4.5.1
 
@@ -21,6 +24,10 @@ _2024-12-02_
  * Fix compilation if only including `mlpack/methods/kde/kde_model.hpp` (#3800).
 
  * Fix serialization and `MinDistance()` bugs with `HollowBallBound` (#3808).
+
+ * Add `LinearRecurrent` layer and revamp `LSTM` layer (#3859).
+
+ * Fix BPTT issues in `RNN` (#3859).
 
 ## mlpack 4.5.0
 
