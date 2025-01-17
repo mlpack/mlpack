@@ -462,11 +462,19 @@ then
         grep -v 'Use of uninitialized value' > checklink_out;
     if [ -s checklink_out ];
     then
-      cat checklink_out;
-      exit 1;
+      # Store up all failures to print them at once.
+      cat checklink_out >> overall_checklink_out;
     fi
     rm -f checklink_out;
   done
+
+  # Check to see if there were any failures, all at once.
+  if [ -f overall_checklink_out ];
+  then
+    cat overall_checklink_out;
+    rm -f overall_checklink_out;
+    exit 1;
+  fi
 
   # Check to see if there were any failures, all at once.
 fi
