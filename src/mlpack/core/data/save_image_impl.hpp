@@ -166,7 +166,7 @@ inline bool SaveImage(const std::string& filename,
   return status;
 }
 
-#endif
+#else
 
 inline bool SaveImage(const std::string& /* filename */,
                       arma::Mat<unsigned char>& /* image */,
@@ -186,6 +186,8 @@ inline bool SaveImage(const std::string& /* filename */,
 
   return false;
 }
+
+#endif
 
 } // namespace data
 } // namespace mlpack

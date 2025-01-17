@@ -167,7 +167,7 @@ inline bool LoadImage(const std::string& filename,
   return true;
 }
 
-#endif
+#else
 
 inline bool LoadImage(const std::string& /* filename */,
                       arma::Mat<unsigned char>& /* matrix */,
@@ -186,8 +186,9 @@ inline bool LoadImage(const std::string& /* filename */,
   }
 
   return false;
- }
+}
 
+#endif
 } // namespace data
 } // namespace mlpack
 
