@@ -111,7 +111,11 @@ jobs:
 
       # Run the tests manually so that we can get JUnit output.
       - name: Run mlpack_test
-        run: cd build && OMP_NUM_THREADS=4 bin/mlpack_test -r junit > mlpack_test.junit.xml
+        run: |
+          cd build
+          OMP_NUM_THREADS=4 bin/mlpack_test -r junit > mlpack_test.junit.xml
+          # Remove version numbers and other non-xml from the output.
+          sed -i '/<?xml/,$!d' mlpack_test.junit.xml
 
       - name: Test summary
         uses: test-summary/action@v2
