@@ -109,11 +109,12 @@ jobs:
       - name: Build mlpack
         run: cd build && make -j4
 
-      - name: Run tests
-        run: cd build && OMP_NUM_THREADS=4 CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test --output-junit ctest_output.xml .
+      # Run the tests manually so that we can get JUnit output.
+      - name: Run mlpack_test
+        run: cd build && OMP_NUM_THREADS=4 bin/mlpack_test -r junit > mlpack_test.junit.xml
 
       - name: Test summary
         uses: test-summary/action@v2
         with:
-          paths: "build/ctest_output.xml"
+          paths: "build/mlpack_test.junit.xml"
         if: always()
