@@ -22,43 +22,6 @@ macro(find_OpenMP)
   endif ()
 endmacro()
 
-# This function find the libraries we need to compile against or include.
-# Several variables can be set to manually specify the directory in which
-# each of these libraries resides:
-#   ARMADILLO_LIBRARY - location of libarmadillo.so / armadillo.lib
-#   ARMADILLO_INCLUDE_DIR - directory containing <armadillo>
-#   ARMADILLO_INCLUDE_DIRS - directories necessary for Armadillo includes
-#   CEREAL_INCLUDE_DIR - include directory for cereal
-#   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
-#   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
-macro(find_dependencies)
-  # 1. Let us find Armadillo
-  find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
-  if (ARMADILLO_FOUND)
-    # Include directories for the previous dependencies.
-    set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
-    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
-  endif()
-
-  # 2. Will Find STB when we merge the stb PR
-
-  # 3. Let us find Ensmallen 
-  find_package(Ensmallen "${ENSMALLEN_VERSION}" REQUIRED)
-  if (ENSMALLEN_FOUND)
-    set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
-  endif()
-
-  # 4. Let us find Cereal
-  find_package(cereal "${CEREAL_VERSION}" REQUIRED)
-  if (CEREAL_FOUND)
-    set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
-  endif()
-  
-  # 5. Find openMP if we are using it
-  find_OpenMP()
-endmacro()
-
-
 macro(autodownload compile)
   set(version 0.3.28)
   # @rcurtin would be interesting do we only download and compile openblas like others? 
