@@ -159,21 +159,20 @@ TEST_CASE("ImageInfoSerialization", "[ImageLoadTest]")
  */
 TEST_CASE("ImageResizeTest", "[ImageTest]")
 {
-  arma::Mat<unsigned char> image, image2;
-  arma::Mat<unsigned char> resizedImages;
+  arma::Mat<unsigned char> image;
   data::ImageInfo info, resizedInfo;
   std::string file = "umbrella.jpg";
   std::string resized = "_resized.jpg";
 
   REQUIRE(data::Load(file, image, info, false) == true);
 
-  ResizeImage(image, info, resizedImages, 720, 720);
+  Resize(image, info, 720, 720);
   
   // Save the image. check if this is passes.
   REQUIRE(data::Save(file + resized, image, info, false) == true);
 
   // try to load it again, 
-  REQUIRE(data::Load(file + resized, image2, resizedInfo, false) == true);
+  REQUIRE(data::Load(file + resized, image, resizedInfo, false) == true);
 
   // Check if the loaded one has the resized dimension.
   REQUIRE(info.Width() == resizedInfo.Width());
