@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.11)
 project(mlpack C CXX)
 
 include(CMake/CheckHash.cmake)
@@ -274,7 +274,7 @@ endif()
 if (CMAKE_CROSSCOMPILING)
   crosscompile()
 else()
-  find_dependencies()
+  find_package(mlpack REQUIRED)
 endif()
 
 if (DOWNLOAD_DEPENDENCIES)
