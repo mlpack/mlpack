@@ -76,9 +76,9 @@ inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
  */
 template<typename eT>
 inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
-    arma::Mat<eT> resizedImages, const size_t newWidth, const size_t newHeight)
+    const size_t newWidth, const size_t newHeight)
 {
-  if (images.n_cols != resizedImages.n_cols)
+  if (images.n_rows != (info.Width() * info.Height()))
   {
     std::ostringstream oss;
     oss << "ResizeImage(): the resizedImage matrix need to have identical"
@@ -87,15 +87,16 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
   }
 
   arma::Mat<unsigned char> tempSrc(size(images), arma::fill::zeros);
-  arma::Mat<unsigned char> tempDest(size(resizedImages), arma::fill::zeros);
+  arma::Mat<unsigned char> tempDest(size(images), arma::fill::zeros);
 
+  tempSrc = arma::conv_to<eT>::from(image);
   for (size_t i = 0; i < images.n_cols; ++i)
   {
     stbir_resize_uint8(tempSrc.colptr(i), info.Width(), info.Height(), 0,
                        tempDest.colptr(i), newWidth, newHeight, 0,
                        info.Channels());
   }
-  resizedImages = arma::conv_to<eT>::from(tempDest);
+  images = arma::conv_to<eT>::from(tempDest);
   info.Width() = newWidth;
   info.Height() = newHeight;
 }
