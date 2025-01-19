@@ -28,31 +28,39 @@ namespace data {
 /**
  * Resize one single image matrix.
  *
+ * This function should be used if the image is loaded as an armadillo matrix
+ * and the number of cols equal to the Width and the number of rows equal
+ * the Height of the image, or the total number of image pixels is equal to the
+ * number of element in an armadillo matrix.
+ *
  * @param image The input matrix that contains the image to be resized.
  * @param info Contains relevant input images information.
- * @param resizedImage The output matrix the contains the resized image.
  * @param newWidth The new requested width for the resized image.
  * @param newHeight The new requested height for the resized image.
  */
 template<typename eT>
-inline void ResizeImage(arma::Mat<eT>& image, data::ImageInfo& info,
-    arma::Mat<eT> resizedImage, const size_t newWidth, const size_t newHeight)
+inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
+    const size_t newWidth, const size_t newHeight)
 {
-  if (image.n_cols > 1 or resizedImage.n_cols > 1)
+  if (image.n_elem != (info.Width() * info.Height()))
   {
     std::ostringstream oss;
-    oss << "ResizeImage(): only applicable on one image. For several images"
-      " please use ResizeImages()" << std::endl;
+    oss << "Dimensions mismatch. Resize(): only applicable on one image."
+      " Please check if the image is loaded correctly into the matrix."
+      << std::endl;
     Log::Fatal << oss.str();
   }
 
+  // This is required since STB only accept unsigned chars.
   arma::Mat<unsigned char> tempSrc(size(image), arma::fill::zeros);
-  arma::Mat<unsigned char> tempDest(size(resizedImage), arma::fill::zeros);
+  arma::Mat<unsigned char> tempDest(size(image), arma::fill::zeros);
 
-  stbir_resize_uint8(tempSrc.colptr(0), info.Width(), info.Height(), 0,
-                     tempDest.colptr(0), newWidth, newHeight, 0,
+  tempSrc = arma::conv_to<eT>::from(image);
+
+  stbir_resize_uint8(image.memptr(), info.Width(), info.Height(), 0,
+                     tempDest.memptr(), newWidth, newHeight, 0,
                      info.Channels());
-  resizedImage = arma::conv_to<eT>::from(tempDest);
+  image = arma::conv_to<eT>::from(tempDest);
   info.Width() = newWidth;
   info.Height() = newHeight;
 }
@@ -90,6 +98,37 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
   resizedImages = arma::conv_to<eT>::from(tempDest);
   info.Width() = newWidth;
   info.Height() = newHeight;
+}
+
+#else
+
+/**
+ * The following are a set of dummy empty functions that do not do anything,
+ * but only provide API compatibility in the case of NOT compiling mlpack with
+ * STB.
+ *
+ * STB is by default part of mlpack, and these functions can only be executed
+ * if the user specify MLPACK_DISABLE_STB.
+ *
+ * @param image The input matrix that contains the image to be resized.
+ * @param info Contains relevant input images information.
+ * @param newWidth The new requested width for the resized image.
+ * @param newHeight The new requested height for the resized image.
+ */
+template<typename eT>
+inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
+    const size_t newWidth, const size_t newHeight)
+{
+  Log::Fatal << "Resize(): mlpack was not compiled with STB support, so images"
+      << " cannot be Resized!" << std::endl;
+}
+
+template<typename eT>
+inline void ResizeImages(arma::Mat<eT>& image, data::ImageInfo& info,
+    const size_t newWidth, const size_t newHeight)
+{
+  Log::Fatal << "ResizeImages(): mlpack was not compiled with STB support,"
+      << " so images cannot be Resized!" << std::endl;
 }
 
 #endif
