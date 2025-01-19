@@ -124,7 +124,7 @@ inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
 }
 
 template<typename eT>
-inline void ResizeImages(arma::Mat<eT>& image, data::ImageInfo& info,
+inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
     const size_t newWidth, const size_t newHeight)
 {
   Log::Fatal << "ResizeImages(): mlpack was not compiled with STB support,"
