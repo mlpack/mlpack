@@ -115,7 +115,7 @@ jobs:
           cd build
           OMP_NUM_THREADS=4 bin/mlpack_test -r junit | tee mlpack_test.junit.xml
           # Filter 'debug' output because it makes the junit too large.
-          grep -v '^\[DEBUG\]' mlpack_test.junit.xml > mlpack_test.junit.filtered.xml
+          grep -v '\[DEBUG\]' mlpack_test.junit.xml > mlpack_test.junit.filtered.xml
           mv mlpack_test.junit.filtered.xml mlpack_test.junit.xml
           # Remove version numbers and other non-xml from the output.
           sed -i '/<?xml/,$!d' mlpack_test.junit.xml
