@@ -191,17 +191,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         "([0-9]+)(\\.([0-9]+).*)*" "\\3"
         MACOSX_MINOR_VERSION
         "${MACOSX_VERSION_RAW}")
-
-     # OSX Lion (10.7) and OS X Mountain Lion (10.8) doesn't automatically
-     # select the right stdlib.
-    if (${MACOSX_MAJOR_VERSION} LESS 11 AND ${MACOSX_MINOR_VERSION} LESS 9)
-      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
-      set(CMAKE_SHARED_LINKER_FLAGS
-          "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
-      set(CMAKE_MODULE_LINKER_FLAGS
-          "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++")
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-     endif()
   endif()
 
   # Link everything with -lm.
