@@ -89,7 +89,7 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
   arma::Mat<unsigned char> tempSrc(size(images), arma::fill::zeros);
   arma::Mat<unsigned char> tempDest(size(images), arma::fill::zeros);
 
-  tempSrc = arma::conv_to<eT>::from(image);
+  tempSrc = arma::conv_to<eT>::from(images);
   for (size_t i = 0; i < images.n_cols; ++i)
   {
     stbir_resize_uint8(tempSrc.colptr(i), info.Width(), info.Height(), 0,

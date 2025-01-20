@@ -22,6 +22,14 @@
   #define STB_IMAGE_STATIC
 #endif
 
+#ifndef STB_IMAGE_WRITE_STATIC
+  #define STB_IMAGE_WRITE_STATIC
+#endif
+
+#ifndef STB_IMAGE_RESIZE_STATIC
+  #define STB_IMAGE_RESIZE_STATIC
+#endif
+
 #ifndef STB_IMAGE_IMPLEMENTATION
   #define STB_IMAGE_IMPLEMENTATION
 #endif
@@ -73,6 +81,14 @@
 
 #ifndef STB_IMAGE_STATIC
   #define STB_IMAGE_STATIC
+#endif
+
+#ifndef STB_IMAGE_WRITE_STATIC
+  #define STB_IMAGE_WRITE_STATIC
+#endif
+
+#ifndef STB_IMAGE_RESIZE_STATIC
+  #define STB_IMAGE_RESIZE_STATIC
 #endif
 
 #ifndef STB_IMAGE_IMPLEMENTATION
