@@ -121,7 +121,14 @@ jobs:
           sed -i '/<?xml/,$!d' mlpack_test.junit.xml
 
       - name: Test summary
+        id: test_summary
         uses: test-summary/action@v2
         with:
           paths: "build/mlpack_test.junit.xml"
         if: always()
+
+      - name: Mark build failed if needed
+        if: ${{ steps.test_summary.outputs.failed > 0 }}
+        uses: actions/github-script@v3
+        with:
+          script: core.setFailed('{{ steps.test_summary.outputs.failed }} of {{ steps.test_summary.outputs.total }} tests failed')
