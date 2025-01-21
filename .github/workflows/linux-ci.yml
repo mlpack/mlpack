@@ -120,15 +120,23 @@ jobs:
           # Remove version numbers and other non-xml from the output.
           sed -i '/<?xml/,$!d' mlpack_test.junit.xml
 
+      # Run binding tests for each binding type.
+      - name: Run Python binding tests
+        if: ${{ matrix.config.name == 'Python' }}
+        run: |
+          # Run manually instead of through CTest so we can get XML output.
+          cd build/src/mlpack/bindings/python/
+          python3 -m pytest tests/ --junit-xml="python_bindings.junit.xml"
+
       - name: Test summary
         id: test_summary
         uses: test-summary/action@v2
         with:
-          paths: "build/mlpack_test.junit.xml"
+          paths: "build/*.junit.xml"
         if: always()
 
       - name: Mark build failed if needed
         if: ${{ steps.test_summary.outputs.failed > 0 }}
         uses: actions/github-script@v3
         with:
-          script: core.setFailed('{{ steps.test_summary.outputs.failed }} of {{ steps.test_summary.outputs.total }} tests failed')
+          script: core.setFailed('${{ steps.test_summary.outputs.failed }} of ${{ steps.test_summary.outputs.total }} tests failed')
