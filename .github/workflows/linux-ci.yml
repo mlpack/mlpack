@@ -133,6 +133,7 @@ jobs:
         uses: test-summary/action@v2
         with:
           paths: "build/*.junit.xml"
+          show: "fail, skip"
         if: always()
 
       - name: Mark build failed if needed
