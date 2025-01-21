@@ -632,7 +632,8 @@ then
         --file-output=sql/ascii/links_failed.sql \
         --no-status \
         --verbose \
-        --config="$output_dir/linkcheckerrc" `cat links_to_check.txt | tr '\n' ' '`;
+        --config="$output_dir/linkcheckerrc" \
+        `cat links_to_check.txt | tr '\n' ' '`;
 
     cat create.sql | sqlite3 tmp.db;
     cat links_failed.sql |\
@@ -680,6 +681,48 @@ then
                 warning IS NOT NULL OR
                 julianday(datetime()) - julianday(resulttime) >= validdays;" |\
         sqlite3 "${LINK_CACHE_FILE}";
+  fi
+
+  # Pick all the links that are within a week of timing out and run them again,
+  # to see if we can "refresh" them.  This is intended to handle situations
+  # where flaky URLs may not always work, but they will be tried a handful of
+  # times over the week before their last run expires.  The hope is that one of
+  # those runs in the last week before they expire will succeed, preventing a
+  # documentation job from failing due to a bad link.
+  echo "SELECT DISTINCT urlname FROM linksdb
+        WHERE valid = 1 AND
+            urlname LIKE 'http%' AND
+            validdays -
+                (julianday(datetime()) - julianday(resulttime)) <= 7 AND
+            (result LIKE '200%' OR
+             result = 'filtered' OR
+             result = 'syntax OK');" |\
+      sqlite3 "$output_dir/all_links.db" > links_to_check.txt;
+  num_links=`cat links_to_check.txt | wc -l`;
+  if [ $num_links -gt 0 ];
+  then
+    echo "Checking $num_links links before their cache entry expires...";
+    linkchecker --check-extern \
+        --recursion-level=0 \
+        --threads=1 \
+        --file-output=sql/ascii/links_output.sql \
+        --output=failures \
+        --no-status \
+        --verbose \
+        --config="$output_dir/linkcheckerrc" \
+        `cat links_to_check.txt | tr '\n' ' '` |\
+        awk -F"', '" '{ print $2; }' |\
+        sed 's/'"'"')"$//' |\
+        sed 's/^/Warning: /' |\
+        sed 's/$/ failed, but cache entry not yet expired./';
+
+    cat links_output.sql |\
+        sed 's/modified) values (/modified,resulttime,validdays) values (/' |\
+        sed "s/);$/, current_timestamp, random() % 10 + 25);/" |\
+        sqlite3 "$output_dir/all_links.db";
+    # Filter out any bad links.
+    echo "DELETE FROM all_links WHERE valid = 0;" |\
+        sqlite3 "$output_dir/all_links.db";
   fi
 
   # Clean up unnecessary files.
