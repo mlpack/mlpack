@@ -137,17 +137,19 @@ jobs:
           go install github.com/jstemmer/go-junit-report/v2@latest
           ROOTDIR=`pwd`;
           cd build/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/
-          go test -v $ROOTDIR/src/mlpack/bindings/go/tests/go_binding_test.go 2>&1 | go-junit-report -set-exit-code > $ROOTDIR/build/go_bindings.junit.xml;
+          go test -v $ROOTDIR/src/mlpack/bindings/go/tests/go_binding_test.go 2>&1 |\
+              $HOME/go/bin/go-junit-report -set-exit-code > $ROOTDIR/build/go_bindings.junit.xml;
 
       - name: Run Julia binding tests
-        if: ${{ matrix.config.name == 'R' }}
+        if: ${{ matrix.config.name == 'Julia' }}
         run: |
           # Run manually instead of through CTest so we can get XML output.
           # We use the TestReports.jl package for getting output in the right
           # format.
           ROOTDIR=`pwd`;
           cd build/src/mlpack/bindings/julia/
-          JULIA_PROJECT=$PWD /opt/julia-1.10.4/bin/julia -e "using Pkg; Pkg.add(\"TestReports\"); using TestReports; TestReports.test(\"mlpack\")"
+          JULIA_PROJECT=$PWD /opt/julia-1.10.4/bin/julia -e \
+              "using Pkg; Pkg.add(\"TestReports\"); using TestReports; TestReports.test(\"mlpack\")"
           mv testlog.xml $ROOTDIR/build/julia_bindings.junit.xml
 
       - name: Test summary
