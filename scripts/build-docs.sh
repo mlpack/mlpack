@@ -653,7 +653,7 @@ then
         sqlite3 "$output_dir/all_links.db";
 
     total_links_failed=`cat links_failed.txt links_warned.txt | wc -l`;
-    if [ $total_links_failed > 0 ];
+    if [ $total_links_failed -gt 0 ];
     then
       echo "The following links have failed:";
 
