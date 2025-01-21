@@ -125,8 +125,30 @@ jobs:
         if: ${{ matrix.config.name == 'Python' }}
         run: |
           # Run manually instead of through CTest so we can get XML output.
+          ROOTDIR=`pwd`;
           cd build/src/mlpack/bindings/python/
-          python3 -m pytest tests/ --junit-xml="python_bindings.junit.xml"
+          python3 -m pytest tests/ --junit-xml="$ROOTDIR/build/python_bindings.junit.xml"
+
+      - name: Run Go binding tests
+        if: ${{ matrix.config.name == 'Go' }}
+        run: |
+          # Run manually instead of through CTest so we can get XML output (via
+          # an extra tool).
+          go install github.com/jstemmer/go-junit-report/v2@latest
+          ROOTDIR=`pwd`;
+          cd build/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/
+          go test -v $ROOTDIR/src/mlpack/bindings/go/tests/go_binding_test.go 2>&1 | go-junit-report -set-exit-code > $ROOTDIR/build/go_bindings.junit.xml;
+
+      - name: Run Julia binding tests
+        if: ${{ matrix.config.name == 'R' }}
+        run: |
+          # Run manually instead of through CTest so we can get XML output.
+          # We use the TestReports.jl package for getting output in the right
+          # format.
+          ROOTDIR=`pwd`;
+          cd build/src/mlpack/bindings/julia/
+          JULIA_PROJECT=$PWD /opt/julia-1.10.4/bin/julia -e "using Pkg; Pkg.add(\"TestReports\"); using TestReports; TestReports.test(\"mlpack\")"
+          mv testlog.xml $ROOTDIR/build/julia_bindings.junit.xml
 
       - name: Test summary
         id: test_summary
