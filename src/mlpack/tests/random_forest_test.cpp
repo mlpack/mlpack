@@ -630,8 +630,16 @@ TEST_CASE("ComputeAverageUniquenessTest", "[RandomForestTest]")
   indM(0, 2) = 4;
   indM(1, 2) = 5;
 
+  arma::vec concurrency(6);
+  concurrency[0] = 1;
+  concurrency[1] = 1;
+  concurrency[2] = 2;
+  concurrency[3] = 1;
+  concurrency[4] = 1;
+  concurrency[5] = 1;
+
   const arma::vec avg(SequentialBootstrap<>::ComputeAverageUniqueness(indM,
-    arma::linspace<arma::uvec>(0, 2, 3)));
+    arma::linspace<arma::uvec>(0, 2, 3), concurrency));
 
   REQUIRE(avg.n_rows == 3);
   REQUIRE(avg(0) == 5.0 / 6.0);
@@ -656,10 +664,18 @@ TEST_CASE("ComputeNextDrawProbabilitiesTest", "[RandomForestTest]")
   indM(0, 2) = 4;
   indM(1, 2) = 5;
 
+  arma::vec concurrency(6);
+  concurrency[0] = 0;
+  concurrency[1] = 0;
+  concurrency[2] = 1;
+  concurrency[3] = 1;
+  concurrency[4] = 0;
+  concurrency[5] = 0;
+
   // Compute the probabilities that observations 0, 1, 2 are drawn after
   // observation 1 has already been drawn.
-  const arma::vec delta2(
-    SequentialBootstrap<>::ComputeNextDrawProbabilities(phi1, 1, indM));
+  const arma::vec delta2(SequentialBootstrap<>::ComputeNextDrawProbabilities(
+    phi1, 1, concurrency, indM));
 
   REQUIRE(delta2(0) == 5.0 / 14.0);
   // Should have the lowest probability as it has already been drawn.

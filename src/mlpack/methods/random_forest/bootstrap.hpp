@@ -73,6 +73,15 @@ class IdentityBootstrap
 
 /**
  * Sequential bootstrap.
+ * 
+ * This sequential bootstrap is suitable for time-series that are not
+ * independent and identically distributed (IID). The bootstrap will
+ * generate variations of the data that are more IID. In order to do
+ * that it takes an indicator matrix that is a measure for how
+ * much informational overlap exists between each data point in the
+ * data set. Then it will randomly draw from the dataset with
+ * replacement but reducing the likelihood to draw data points that
+ * have high informational overlap with already drawn samples.
  *
  * @tparam IndMatType Indicator matrix type.
  */
@@ -94,6 +103,121 @@ class SequentialBootstrap
         "intervals must be a 2 x m matrix!");
   }
 
+  /**
+   * Compute the average uniqueness of each event at any sampling time point.
+   * The average uniqueness is a measure for how isolated an event is during
+   * its lifetime from other events.
+   *
+   * @param[in] intervals Is a `2 x m` matrix, where each of the m columns has
+   *                      the start sample and the end sample of an interval.
+   *                      This matrix is a space-efficient form of the
+   *                      indicator matrix.
+   * @param[in] indices Indices of the average uniqueness that is returned.
+   *                    This parameter is used for optimization purposes so
+   *                    that in the unit tests the average uniqueness for
+   *                    all events can be accessed while in the production
+   *                    code only a single element is accessed.
+   * @return The average uniqueness of the events in @p intervals.
+   */
+  static arma::vec ComputeAverageUniqueness(
+    const IndMatType& intervals,
+    const arma::uvec& indices,
+    const arma::vec&  concurrency)
+  {
+    arma::vec       avg(indices.n_rows, arma::fill::zeros);
+    const arma::vec invConcurrency(
+      arma::vec(concurrency.n_rows, arma::fill::ones) / concurrency);
+
+    // In production code this loop is only entered once because
+    // then indices.n_rows == 1.
+    for (arma::uword i(0); i < indices.n_rows; ++i) {
+      const arma::uword start(intervals(0, indices[i]));
+      const arma::uword end(intervals(1, indices[i]));
+
+      avg[i] = arma::accu(invConcurrency.rows(start, end)) /
+        (end - start + 1);
+    }
+
+    return avg;
+  }
+
+  /**
+   * Compute probabilities of the next draw for each observation.
+   *
+   * @param[in] phi List of previously drawn observations.
+   * @param[in] phiSize Number of elements in use in @p phi. To
+   *                    avoid reallocations, @p phi has been
+   *                    overallocated already.
+   * @param[in] concurrency Concurrency of the samples selected
+   *                        by @p phi so far.
+   * @param[in] intervals See ComputeAverageUniqueness().
+   * @return The probabilities for each observation to be drawn in the next
+   *         iteration.
+   */
+  static arma::vec ComputeNextDrawProbabilities(
+    arma::uvec&       phi,
+    arma::uword       phiSize,
+    arma::vec&        concurrency,
+    const IndMatType& intervals)
+  {
+    // phi may have less rows than intervals has columns as
+    // phi is grown in multiple steps.
+    assert(phi.n_rows <= intervals.n_cols && phiSize < phi.n_rows);
+
+    // Only in the test code we want to compute the full vector
+    // of average uniqueness. Here, we are always only interested
+    // in the average uniqueness of the latest value that is 
+    // added to phi.
+    const arma::uvec indices(1u, arma::fill::value(phiSize));
+    arma::vec        avg(intervals.n_cols);
+
+    for (arma::uword i(0); i < avg.size(); ++i) {
+      // Temporarily assume another concurrency for the current i.
+      concurrency.subvec(intervals(0, i), intervals(1, i)) += 1.0;
+
+      phi[phiSize] = i;
+      avg[i] = ComputeAverageUniqueness(
+        intervals.cols(phi.rows(0, phiSize)),
+        indices,
+        concurrency).back();
+
+      concurrency.subvec(intervals(0, i), intervals(1, i)) -= 1.0;
+    }
+
+    return avg / arma::sum(avg);
+  }
+
+  /**
+   * Compute the samples of the next draw.
+   *
+   * @param[in] colCount Number of data points in the dataset and
+   *                     the number of samples to draw respectively.
+   *
+   * @return A list of indices referring to the observations that should
+   *         be sampled.
+   */
+  arma::uvec ComputeSamples(arma::uword colCount) const
+  {
+    // Randomly sample columns from the intervals matrix.
+    DiscreteDistribution d(intervals.n_cols);
+    arma::uvec           phi(colCount);
+    arma::vec            concurrency(intervals.max() + 1, arma::fill::zeros);
+
+    for (arma::uword i(0); i < colCount; ++i) {
+      d.Probabilities() =
+        ComputeNextDrawProbabilities(phi, i, concurrency, intervals);
+      assert(d.Probabilities().size() == intervals.n_cols);
+
+      const arma::vec sample(d.Random());
+
+      assert(sample.size() == 1);
+      phi[i] = sample[0];
+      concurrency.subvec(intervals(0, phi[i]), intervals(1, phi[i])) += 1.0;
+    }
+
+    return phi;
+  }
+
   template<bool UseWeights,
     typename MatType,
     typename LabelsType,
@@ -111,102 +235,12 @@ class SequentialBootstrap
 
     // observations are stored as columns and dimensions
     // (number of features) as rows.
-    const arma::uvec phi(arma::conv_to<arma::uvec>::from(
-      ComputeSamples(dataset.n_cols)));
+    const arma::uvec phi(ComputeSamples(dataset.n_cols));
 
     bootstrapDataset = dataset.cols(phi);
     bootstrapLabels = labels.cols(phi);
     if (UseWeights)
       bootstrapWeights = weights.rows(phi);
-  }
-
-  /**
-   * Compute the samples of the next draw.
-   *
-   * @param[in] colCount Number of data points in the dataset.
-   *
-   * @return A list of indices referring to the observations that should
-   *         be sampled.
-   */
-  arma::uvec ComputeSamples(arma::uword colCount) const
-  {
-    DiscreteDistribution     d;
-    arma::uvec               phi(colCount);
-
-    for (arma::uword i(0); i < colCount; ++i) {
-      d.Probabilities() = ComputeNextDrawProbabilities(phi, i, intervals);
-      phi[i] = d.Random()[0];
-    }
-
-    return phi;
-  }
-
-  /**
-   * Compute the average uniqueness of each event at any sampling time point.
-   * The average uniqueness is a measure for how isolated an event is during
-   * its lifetime from other events.
-   *
-   * @param[in] intervals Is a `2 x m` matrix, where each of the m columns has
-   *                      the start sample and the end sample of an interval.
-   * @param[in] indices Indices of the average uniqueness that is returned.
-   *                    This parameter is used for optimization purposes so
-   *                    that in the unit tests the average uniqueness for
-   *                    all events can be accessed while in the production
-   *                    code only a single element is accessed.
-   * @return The average uniqueness of the events in @p intervals.
-   */
-  static arma::vec ComputeAverageUniqueness(
-    const IndMatType& intervals,
-    arma::uvec        indices)
-  {
-    arma::vec avg(indices.n_rows, arma::fill::zeros);
-    arma::vec concurrency(intervals.max() + 1, arma::fill::zeros);
-
-    for (arma::uword i(0); i < intervals.n_cols; ++i) {
-      concurrency.subvec(intervals(0, i), intervals(1, i)) += 1.0;
-    }
-
-    const arma::vec invConcurrency(
-      arma::vec(concurrency.n_rows, arma::fill::ones) / concurrency);
-
-    // In production code this loop is only entered once.
-    for (arma::uword i(0); i < indices.n_rows; ++i) {
-      const arma::uword start(intervals(0, indices[i]));
-      const arma::uword end(intervals(1, indices[i]));
-
-      avg[i] = arma::accu(invConcurrency.rows(start, end)) /
-        (end - start + 1);
-    }
-
-    return avg;
-  }
-
-  /**
-   * Compute probabilities of the next draw for each observation.
-   *
-   * @param[in] phi List of previously drawn observations.
-   * @param[in] phiSize Number of elements in use in @p phi.
-   * @param[in] intervals See ComputeAverageUniqueness().
-   * @return The probabilities for each observation to be drawn in the next
-   *         iteration.
-   */
-  static arma::vec ComputeNextDrawProbabilities(
-    arma::uvec& phi,
-    arma::uword       phiSize,
-    const IndMatType& intervals)
-  {
-    assert(phi.n_rows <= intervals.n_cols && phiSize < phi.n_rows);
-
-    arma::vec avg(intervals.n_cols);
-
-    for (arma::uword i(0); i < avg.size(); ++i) {
-      phi[phiSize] = i;
-      avg[i] = ComputeAverageUniqueness(
-        intervals.cols(phi.rows(0, phiSize)),
-        arma::uvec(1u, arma::fill::value(phiSize))).back();
-    }
-
-    return avg / arma::sum(avg);
   }
 
  private:
