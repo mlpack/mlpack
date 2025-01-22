@@ -152,16 +152,19 @@ jobs:
               "using Pkg; Pkg.add(\"TestReports\"); using TestReports; TestReports.test(\"mlpack\")"
           mv testlog.xml $ROOTDIR/build/julia_bindings.junit.xml
 
-      - name: Test summary
-        id: test_summary
+      # There are two test summary blocks; one marks the build as failed and
+      # prints the failing test output.
+      - name: Parse test output for build summary
         uses: test-summary/action@v2
         if: success() || failure()
         with:
           paths: "build/*.junit.xml"
-          output: test-summary.md
+          show: "fail, skip"
 
-      - name: Print failed tests
+      - name: Parse test output
+        uses: test-summary/action@v2
         if: success() || failure()
-        run: |
-          echo "::set-output name=contents::$(cat test-summary.md)"
-          exit 1; # Always fail for now??
+        with:
+          paths: "build/*.junit.xml"
+          show: "fail, skip"
+          output: -
