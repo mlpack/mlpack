@@ -153,7 +153,7 @@ jobs:
           mv testlog.xml $ROOTDIR/build/julia_bindings.junit.xml
 
       - name: Parse test output for build summary
-        uses: rcurtin/test-summary-action@v1
+        uses: rcurtin/test-summary-action@dist
         if: success() || failure()
         with:
           paths: "build/*.junit.xml"
