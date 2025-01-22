@@ -108,20 +108,20 @@ TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
   arma::mat labels;
   data::Load("boston_housing_price_responses.csv", labels, true /* fatal */);
 
-  arma::mat trainData, testData, trainLabels, testLabels;
-  data::Split(data, labels, trainData, testData, trainLabels, testLabels, 0.2);
-
-  FFN<L1Loss> model;
-  model.Add<Linear>(10);
-  model.Add<PReLU>(0.01);
-  model.Add<Linear>(3);
-  model.Add<PReLU>(0.01);
-  model.Add<Linear>(1);
-
   // Sometimes the model may not optimize correctly, so we allow a few trials.
   bool success = false;
   for (size_t trial = 0; trial < 5; ++trial)
   {
+    arma::mat trainData, testData, trainLabels, testLabels;
+    data::Split(data, labels, trainData, testData, trainLabels, testLabels, 0.2);
+
+    FFN<L1Loss> model;
+    model.Add<Linear>(10);
+    model.Add<PReLU>(0.01);
+    model.Add<Linear>(3);
+    model.Add<PReLU>(0.01);
+    model.Add<Linear>(1);
+
     const size_t epochs = 500;
     ens::RMSProp optimizer(0.0025, 8, 0.99, 1e-8, epochs * trainData.n_cols);
     model.Reset(data.n_rows);
