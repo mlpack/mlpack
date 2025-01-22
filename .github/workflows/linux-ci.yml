@@ -167,4 +167,4 @@ jobs:
         with:
           paths: "build/*.junit.xml"
           show: "fail, skip"
-          output: -
+          output: '-'
