@@ -159,38 +159,53 @@ TEST_CASE("ImageInfoSerialization", "[ImageLoadTest]")
  */
 TEST_CASE("ImageResizeTest", "[ImageTest]")
 {
-  arma::Mat<unsigned char> image;
+  arma::Mat<unsigned char> image, images;
   data::ImageInfo info, resizedInfo;
-  std::string file = "umbrella.jpg";
-  std::string resized = "_resized.jpg";
+  std::vector<std::string> files =
+      {"sheep_1.jpg", "sheep_2.jpg","sheep_3.jpg", "sheep_4.jpg",
+       "sheep_5.jpg", "sheep_6.jpg"};
+  std::vector<std::string> re_sheeps =
+      {"re_sheep_1.jpg", "re_sheep_2.jpg","re_sheep_3.jpg", "re_sheep_4.jpg",
+       "re_sheep_5.jpg", "re_sheep_6.jpg"};
 
-  REQUIRE(data::Load(file, image, info, false) == true);
+  // Load and Resize each one of them individually, because they do not have
+  // the same sizes, and then the resized images, will be used in the next
+  // test.
+  for (size_t i = 0; i < files.size(); i++)
+  {
+    REQUIRE(data::Load(files.at(i), image, info, false) == true);
+    Resize(image, info, 320, 320);
+    REQUIRE(data::Save(re_sheeps.at(i), image, info, false) == true);
+  }
 
-  Resize(image, info, 720, 720);
-  
-  // Save the image. check if this is passes.
-  REQUIRE(data::Save(file + resized, image, info, false) == true);
+  // Since they are all resized, this should passes
+  REQUIRE(data::Load(re_sheeps, images, resizedInfo, false) == true);
 
-  // try to load it again, 
-  REQUIRE(data::Load(file + resized, image, resizedInfo, false) == true);
-
-  // Check if the loaded one has the resized dimension.
   REQUIRE(info.Width() == resizedInfo.Width());
   REQUIRE(info.Height() == resizedInfo.Height());
 }
 
-//TEST_CASE("ImagesResizeTest", "[ImageTest]")
-//{
-  //arma::Mat<unsigned char> images;
-  //data::ImageInfo info;
-  //std::vector<std::string> files = {"umbrella.jpg"};
-  //REQUIRE(data::Load(files, images, info, false) == true);
+TEST_CASE("ImagesResizeTest", "[ImageTest]")
+{
+  arma::Mat<unsigned char> images;
+  data::ImageInfo info, resizedInfo;
+  std::vector<std::string> re_sheeps =
+      {"re_sheep_1.jpg", "re_sheep_2.jpg","re_sheep_3.jpg", "re_sheep_4.jpg",
+       "re_sheep_5.jpg", "re_sheep_6.jpg"};
 
-  //arma::Mat<unsigned char> resizedImages;
-  //ResizeImages(images, info, resizedImages, 720, 720);
+  std::vector<std::string> sm_sheeps =
+      {"sm_sheep_1.jpg", "sm_sheep_2.jpg","sm_sheep_3.jpg", "sm_sheep_4.jpg",
+       "sm_sheep_5.jpg", "sm_sheep_6.jpg"};
 
-  //// Save the image. check if this is passes.
-  //// try to load it again, 
-  //// Check if the loaded one has the resized dimension
-//}
+  REQUIRE(data::Load(re_sheeps, images, info, false) == true);
+
+  ResizeImages(images, info, 160, 160);
+
+  REQUIRE(data::Save(sm_sheeps, images, info, false) == true);
+
+  REQUIRE(data::Load(sm_sheeps, images, resizedInfo, false) == true);
+
+  REQUIRE(info.Width() == resizedInfo.Width());
+  REQUIRE(info.Height() == resizedInfo.Height());
+}
 
