@@ -137,8 +137,8 @@ The dataset is not permuted during the construction process.
 ---
 
  * `node = RectangleTree(dimensionality)`
-   - Construct an empty `BinarySpaceTree` with no children, no points, and
-     default template parameters.
+   - Construct an empty `RectangleTree` with no children, no points, and default
+     template parameters.
    - Use `node.Insert()` to insert points into the tree.  All points must have
      dimensionality `dimensionality`.
 
@@ -273,8 +273,8 @@ for basic tree functionality in mlpack.
 
 ### Accessing data held in a tree
 
- * `node.Dataset()` will return a `const MatType&` that is the dataset the
-   tree was built on.
+ * `node.Dataset()` will return a `const MatType&` that is an internally-held
+   representation of the dataset the tree was built on.
 
  * `node.NumPoints()` returns a `size_t` indicating the number of points held
    directly in `node`.
@@ -430,9 +430,9 @@ single-tree or dual-tree algorithm.
 
 ## `StatisticType`
 
-Each node in a `BinarySpaceTree` holds an instance of the `StatisticType`
-class.  This class can be used to store additional bounding information or other
-cached quantities that a `BinarySpaceTree` does not already compute.
+Each node in a `RectangleTree` holds an instance of the `StatisticType` class.
+This class can be used to store additional bounding information or other cached
+quantities that a `RectangleTree` does not already compute.
 
 mlpack provides a few existing `StatisticType` classes, and a custom
 `StatisticType` can also be easily implemented:
@@ -456,7 +456,7 @@ The class ***does not hold any members and provides no functionality***.
 ### Custom `StatisticType`s
 
 A custom `StatisticType` is trivial to implement.  Only a default constructor
-and a constructor taking a `BinarySpaceTree` is necessary.
+and a constructor taking a `RectangleTree` is necessary.
 
 ```
 class CustomStatistic
@@ -466,8 +466,8 @@ class CustomStatistic
   CustomStatistic();
 
   // Construct a CustomStatistic for the given fully-constructed
-  // `BinarySpaceTree` node.  Here we have templatized the tree type to make it
-  // easy to handle any type of `BinarySpaceTree`.
+  // `RectangleTree` node.  Here we have templatized the tree type to make it
+  // easy to handle any type of `RectangleTree`.
   template<typename TreeType>
   StatisticType(TreeType& node);
 
@@ -740,7 +740,7 @@ for (size_t i = 0; i < tree.NumChildren(); ++i)
 }
 std::cout << std::endl;
 
-// Compute the center of the BinarySpaceTree.
+// Compute the center of the RectangleTree.
 arma::vec center;
 tree.Center(center);
 std::cout << "Center of tree: " << center.t();
