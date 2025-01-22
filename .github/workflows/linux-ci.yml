@@ -152,19 +152,11 @@ jobs:
               "using Pkg; Pkg.add(\"TestReports\"); using TestReports; TestReports.test(\"mlpack\")"
           mv testlog.xml $ROOTDIR/build/julia_bindings.junit.xml
 
-      # There are two test summary blocks; one marks the build as failed and
-      # prints the failing test output.
       - name: Parse test output for build summary
-        uses: test-summary/action@v2
+        uses: rcurtin/test-summary-action@v1
         if: success() || failure()
         with:
           paths: "build/*.junit.xml"
           show: "fail, skip"
-
-      - name: Parse test output
-        uses: test-summary/action@v2
-        if: success() || failure()
-        with:
-          paths: "build/*.junit.xml"
-          show: "fail, skip"
-          output: '-'
+          fail_job: true
+          print_output: true
