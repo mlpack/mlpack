@@ -147,7 +147,7 @@ jobs:
           # We use the TestReports.jl package for getting output in the right
           # format.
           ROOTDIR=`pwd`;
-          cd build/src/mlpack/bindings/julia/
+          cd build/src/mlpack/bindings/julia/mlpack/
           JULIA_PROJECT=$PWD /opt/julia-1.10.4/bin/julia -e \
               "using Pkg; Pkg.add(\"TestReports\"); using TestReports; TestReports.test(\"mlpack\")"
           mv testlog.xml $ROOTDIR/build/julia_bindings.junit.xml
