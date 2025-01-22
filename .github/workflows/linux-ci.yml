@@ -152,16 +152,10 @@ jobs:
               "using Pkg; Pkg.add(\"TestReports\"); using TestReports; TestReports.test(\"mlpack\")"
           mv testlog.xml $ROOTDIR/build/julia_bindings.junit.xml
 
-      - name: Test summary
-        id: test_summary
-        uses: test-summary/action@v2
+      - name: Publish test reports
+        id: test_reports
+        uses: mikepenz/action-junit-report@v5
+        if: success() || failure()
         with:
-          paths: "build/*.junit.xml"
-          show: "fail, skip"
-        if: always()
-
-      - name: Mark build failed if needed
-        if: ${{ steps.test_summary.outputs.failed > 0 }}
-        uses: actions/github-script@v3
-        with:
-          script: core.setFailed('${{ steps.test_summary.outputs.failed }} of ${{ steps.test_summary.outputs.total }} tests failed')
+          report_paths: "build/*.junit.xml"
+          fail_on_failure: true
