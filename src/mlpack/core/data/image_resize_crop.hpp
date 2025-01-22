@@ -16,6 +16,8 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/stb/stb.hpp>
 
+#include "image_info.hpp"
+
 namespace mlpack {
 namespace data {
 
@@ -42,7 +44,7 @@ template<typename eT>
 inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
     const size_t newWidth, const size_t newHeight)
 {
-  if (image.n_elem != (info.Width() * info.Height()))
+  if (image.n_elem != (info.Width() * info.Height() * info.Channels()))
   {
     std::ostringstream oss;
     oss << "Dimensions mismatch. Resize(): only applicable on one image."
@@ -52,17 +54,26 @@ inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
   }
 
   // This is required since STB only accept unsigned chars.
-  arma::Mat<unsigned char> tempSrc(size(image), arma::fill::zeros);
-  arma::Mat<unsigned char> tempDest(size(image), arma::fill::zeros);
+  // set the new matrix size for copy
+  size_t newDimension = newWidth * newHeight * info.Channels();
+  arma::Mat<unsigned char> tempDest(newDimension, 1);
 
-  tempSrc = arma::conv_to<eT>::from(image);
+  // Allocate buffer to STB
+  unsigned char* buffer =
+      (unsigned char*)malloc(newDimension * sizeof(unsigned char));
 
-  stbir_resize_uint8(image.memptr(), info.Width(), info.Height(), 0,
-                     tempDest.memptr(), newWidth, newHeight, 0,
+  arma::Mat<unsigned char> tempSrc =
+      arma::conv_to<arma::Mat<unsigned char>>::from(image);
+
+  stbir_resize_uint8(tempSrc.memptr(), info.Width(), info.Height(), 0,
+                     buffer, newWidth, newHeight, 0,
                      info.Channels());
-  image = arma::conv_to<eT>::from(tempDest);
+  memcpy(tempDest.memptr(), buffer, sizeof(unsigned char) * newDimension);
+  image = arma::conv_to<arma::Mat<eT>>::from(tempDest);
+
   info.Width() = newWidth;
   info.Height() = newHeight;
+  free(buffer);
 }
 
 /**
@@ -78,7 +89,7 @@ template<typename eT>
 inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
     const size_t newWidth, const size_t newHeight)
 {
-  if (images.n_rows != (info.Width() * info.Height()))
+  if (images.n_rows != (info.Width() * info.Height() * info.Channels()))
   {
     std::ostringstream oss;
     oss << "ResizeImage(): the resizedImage matrix need to have identical"
@@ -86,17 +97,26 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
     Log::Fatal << oss.str();
   }
 
-  arma::Mat<unsigned char> tempSrc(size(images), arma::fill::zeros);
-  arma::Mat<unsigned char> tempDest(size(images), arma::fill::zeros);
+  size_t newDimension = newWidth * newHeight * info.Channels();
+  arma::Mat<unsigned char> tempDest(newDimension, images.n_cols);
 
-  tempSrc = arma::conv_to<eT>::from(images);
   for (size_t i = 0; i < images.n_cols; ++i)
   {
-    stbir_resize_uint8(tempSrc.colptr(i), info.Width(), info.Height(), 0,
-                       tempDest.colptr(i), newWidth, newHeight, 0,
+    // Allocate buffer to STB
+    unsigned char* buffer =
+        (unsigned char*)malloc(newDimension * sizeof(unsigned char));
+
+    arma::Mat<unsigned char> tempSrc =
+        arma::conv_to<arma::Mat<unsigned char>>::from(images.col(i));
+
+    stbir_resize_uint8(tempSrc.memptr(), info.Width(), info.Height(), 0,
+                       buffer, newWidth, newHeight, 0,
                        info.Channels());
+
+    memcpy(tempDest.memptr(), buffer, sizeof(unsigned char) * newDimension);
+    images.col(i) = arma::conv_to<arma::Mat<eT>>::from(tempDest);
+    free(buffer);
   }
-  images = arma::conv_to<eT>::from(tempDest);
   info.Width() = newWidth;
   info.Height() = newHeight;
 }
