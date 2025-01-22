@@ -733,10 +733,11 @@ std::cout << "Number of children of root: " << tree.NumChildren()
 // children.
 std::cout << "Descendant points of root:        "
     << tree.NumDescendants() << "." << std::endl;
-std::cout << "Descendant points of left child:  "
-    << tree.Left()->NumDescendants() << "." << std::endl;
-std::cout << "Descendant points of right child: "
-    << tree.Right()->NumDescendants() << "." << std::endl;
+for (size_t i = 0; i < tree.NumChildren(); ++i)
+{
+  std::cout << "Descendant points of child " << i << ":  "
+      << tree.Child(i).NumDescendants() << "." << std::endl;
+}
 std::cout << std::endl;
 
 // Compute the center of the BinarySpaceTree.
@@ -796,7 +797,7 @@ if (!tree1.IsLeaf() && !tree1.Child(0).IsLeaf())
 
     // Which child of node2 is closer to node1?
     const size_t closestIndex = node2.GetNearestChild(node1);
-    std::cout << "Child " << closerIndex << " is closest to node1."
+    std::cout << "Child " << closestIndex << " is closest to node1."
         << std::endl;
 
     // And which child of node1 is further from node2?
@@ -898,7 +899,7 @@ mlpack::data::Load("corel-histogram.csv", dataset, true);
 // This convenient typedef saves us a long type name!
 using TreeType = mlpack::RectangleTree<mlpack::EuclideanDistance,
                                        mlpack::EmptyStatistic,
-                                       arma::fmat,
+                                       arma::mat,
                                        mlpack::RTreeSplit,
                                        mlpack::RTreeDescentHeuristic,
                                        mlpack::NoAuxiliaryInformation>;
@@ -923,13 +924,13 @@ std::cout << "After inserting all the points, the root node has "
     << t.NumChildren() << " child nodes." << std::endl;
 
 // Remove three random points.
-t.Delete(math::RandInt(0, t.NumDescendants());
+t.Delete(mlpack::math::RandInt(0, t.NumDescendants()));
 std::cout << "After removing 1 point, the root node has " << t.NumDescendants()
     << " descendant points." << std::endl;
-t.Delete(math::RandInt(0, t.NumDescendants());
+t.Delete(mlpack::math::RandInt(0, t.NumDescendants()));
 std::cout << "After removing 2 points, the root node has " << t.NumDescendants()
     << " descendant points." << std::endl;
-t.Delete(math::RandInt(0, t.NumDescendants());
+t.Delete(mlpack::math::RandInt(0, t.NumDescendants()));
 std::cout << "After removing 3 points, the root node has " << t.NumDescendants()
     << " descendant points." << std::endl;
 ```

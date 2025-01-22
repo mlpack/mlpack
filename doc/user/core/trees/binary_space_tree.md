@@ -554,10 +554,12 @@ operations with data points or other bounds.
    [column-major `arma::mat`](../../matrices.md#representing-data-in-mlpack).
    The expansion operation is minimal, so `b` is not expanded any more than
    necessary.
+   - If the dimensionality of `b` is `0`, it is set to `data.n_rows`.
 
  * `b |= bound` expands `b` to fully include `bound`, where `bound` is another
    `HRectBound`.  The expansion/union operation is minimal, so `b` is not
    expanded any more than necessary.
+   - If the dimensionality of `b` is `0`, it is set to `bound.Dim()`.
 
  * `b & bound` returns a new `HRectBound` whose bounding hyper-rectangle is the
    intersection of the bounding hyperrectangles of `b` and `bound`.  If `b` and
