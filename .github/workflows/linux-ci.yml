@@ -163,5 +163,5 @@ jobs:
       - name: Print failed tests
         if: success() || failure()
         run: |
-          cat test-summary.md;
+          echo "::set-output name=contents::$(cat test-summary.md)"
           exit 1; # Always fail for now??
