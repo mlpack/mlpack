@@ -88,7 +88,7 @@ inline void RandomSeed(const size_t seed)
 #if (BINDING_TYPE == BINDING_TYPE_TEST)
 inline void FixedRandomSeed()
 {
-  static const size_t seed = rand();
+  static const size_t seed = rand_r();
   RandGen().seed((uint32_t) seed + RandGenSeedOffset());
   srand((unsigned int) seed);
   arma::arma_rng::set_seed(seed + RandGenSeedOffset());

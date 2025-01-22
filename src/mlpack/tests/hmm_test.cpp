@@ -1050,7 +1050,7 @@ TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
   {
     double loglikelihood;
     arma::vec forwardLogProb;
-    for (size_t t = 0; t<obs.n_cols; ++t)
+    for (size_t t = 0; t < obs.n_cols; ++t)
     {
       loglikelihood = hmm.LogLikelihood(obs.col(t), loglikelihood,
                                         forwardLogProb);
@@ -1065,7 +1065,7 @@ TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
   {
     double loglikelihood = 0;
     arma::vec forwardLogProb;
-    for (size_t t = 0; t<obs.n_cols; ++t)
+    for (size_t t = 0; t < obs.n_cols; ++t)
     {
       double logScale = hmm.LogScaleFactor(obs.col(t), forwardLogProb);
       loglikelihood += logScale;
