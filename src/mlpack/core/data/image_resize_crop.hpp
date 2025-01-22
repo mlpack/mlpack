@@ -66,8 +66,8 @@ inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
       arma::conv_to<arma::Mat<unsigned char>>::from(image);
 
   stbir_resize_uint8(tempSrc.memptr(), info.Width(), info.Height(), 0,
-                     buffer, newWidth, newHeight, 0,
-                     info.Channels());
+                     buffer, newWidth, newHeight, 0, info.Channels());
+
   memcpy(tempDest.memptr(), buffer, sizeof(unsigned char) * newDimension);
   image = arma::conv_to<arma::Mat<eT>>::from(tempDest);
 
@@ -98,10 +98,12 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
   }
 
   size_t newDimension = newWidth * newHeight * info.Channels();
+
   arma::Mat<unsigned char> tempDest(newDimension, images.n_cols);
 
   for (size_t i = 0; i < images.n_cols; ++i)
   {
+    arma::Mat<unsigned char> tempBuf(newDimension, 1);
     // Allocate buffer to STB
     unsigned char* buffer =
         (unsigned char*)malloc(newDimension * sizeof(unsigned char));
@@ -110,13 +112,13 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
         arma::conv_to<arma::Mat<unsigned char>>::from(images.col(i));
 
     stbir_resize_uint8(tempSrc.memptr(), info.Width(), info.Height(), 0,
-                       buffer, newWidth, newHeight, 0,
-                       info.Channels());
+                       buffer, newWidth, newHeight, 0, info.Channels());
 
-    memcpy(tempDest.memptr(), buffer, sizeof(unsigned char) * newDimension);
-    images.col(i) = arma::conv_to<arma::Mat<eT>>::from(tempDest);
+    memcpy(tempBuf.memptr(), buffer, sizeof(unsigned char) * newDimension);
+    tempDest.col(i) = arma::conv_to<arma::Mat<eT>>::from(tempBuf);
     free(buffer);
   }
+  images = tempDest;
   info.Width() = newWidth;
   info.Height() = newHeight;
 }
