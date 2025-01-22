@@ -159,3 +159,4 @@ jobs:
         with:
           report_paths: "build/*.junit.xml"
           fail_on_failure: true
+          annotate_only: true # No need to create "Checks" for tests.
