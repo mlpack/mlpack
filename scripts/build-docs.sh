@@ -554,6 +554,7 @@ then
                  result = 'filtered' OR
                  result = 'syntax OK');" | sqlite3 "$output_dir/all_links.db" |\
         sed 's/^/  /' |\
+        sed 's/?/\\?/g' |\
         sed 's/$/$/' >> "$output_dir/linkcheckerrc";
 
     # Run linkchecker, and make things a little bit prettier if there are
@@ -681,6 +682,14 @@ then
                 warning IS NOT NULL OR
                 julianday(datetime()) - julianday(resulttime) >= validdays;" |\
         sqlite3 "${LINK_CACHE_FILE}";
+
+    # Keep only the most recent entry for a given urlname, to keep the size of
+    # the cache as small as possible.
+    echo "CREATE TABLE tmp_linksdb AS SELECT * FROM linksdb
+          GROUP BY urlname HAVING MAX(resulttime) ORDER BY urlname;" |\
+        sqlite3 "${LINK_CACHE_FILE}";
+    echo "DROP TABLE linksdb;" | sqlite3 "${LINK_CACHE_FILE}";
+    echo "ALTER TABLE tmp_linksdb RENAME TO linksdb;" | sqlite3 "${LINK_CACHE_FILE}";
   fi
 
   # Pick all the links that are within a week of timing out and run them again,
