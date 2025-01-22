@@ -6,6 +6,8 @@ _????-??-??_
 
  * Fix command-line duplicate output bug when loading matrices for some bindings
    (#3838).
+ 
+ * Add `MLPACK_NO_STD_MUTEX` to allow disabling `std::mutex` (#3868).
 
 ## mlpack 4.5.1
 
