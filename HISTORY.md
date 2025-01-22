@@ -9,6 +9,9 @@ _????-??-??_
  
  * Add `MLPACK_NO_STD_MUTEX` to allow disabling `std::mutex` (#3868).
 
+ * Added bootstrap strategies for RandomForest: IdentityBootstrap,
+   DefaultBootstrap, and SequentialBootstrap. (#3829)
+
 ## mlpack 4.5.1
 
 _2024-12-02_
@@ -23,9 +26,6 @@ _2024-12-02_
  * Fix compilation if only including `mlpack/methods/kde/kde_model.hpp` (#3800).
 
  * Fix serialization and `MinDistance()` bugs with `HollowBallBound` (#3808).
-
- * Added bootstrap strategies for RandomForest: IdentityBootstrap,
-   DefaultBootstrap, and SequentialBootstrap. (#3829)
 
 ## mlpack 4.5.0
 
