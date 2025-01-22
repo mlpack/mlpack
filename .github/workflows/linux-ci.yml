@@ -152,11 +152,16 @@ jobs:
               "using Pkg; Pkg.add(\"TestReports\"); using TestReports; TestReports.test(\"mlpack\")"
           mv testlog.xml $ROOTDIR/build/julia_bindings.junit.xml
 
-      - name: Publish test reports
-        id: test_reports
-        uses: mikepenz/action-junit-report@v5
+      - name: Test summary
+        id: test_summary
+        uses: test-summary/action@v2
         if: success() || failure()
         with:
-          report_paths: "build/*.junit.xml"
-          fail_on_failure: true
-          annotate_only: true # No need to create "Checks" for tests.
+          paths: "build/*.junit.xml"
+          output: test-summary.md
+
+      - name: Print failed tests
+        if: success() || failure()
+        run: |
+          cat test-summary.md;
+          exit 1; # Always fail for now??
