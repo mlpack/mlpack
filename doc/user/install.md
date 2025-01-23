@@ -194,6 +194,7 @@ The following options can be used when configuring mlpack.
 | `-DBUILD_TESTS=ON` | Build `mlpack_test`. | `OFF` |
 | `-DUSE_OPENMP=ON` | Use OpenMP for parallelization. | `ON` |
 | `-DUSE_PRECOMPILED_HEADERS=OFF` | Disable precompiled headers during build. | `OFF` |
+| `-DMLPACK_USE_SYSTEM_STB=OFF` | Disable system's STB and use mlpack bundled version. | `OFF` |
 |--------------|-------------------|---------------|
 | ***Dependency locations*** |||
 | `-DARMADILLO_INCLUDE_DIR=/path/to/arma/include/` | Path containing `armadillo` header file. ||

@@ -30,7 +30,6 @@ set(CEREAL_VERSION "1.1.2")
 
 if (MLPACK_DISABLE_STB)
   add_definitions(-DMLPACK_DISABLE_STB)
-  message("the def should be declared and stb disable")
   set(MLPACK_USE_SYSTEM_STB OFF)
 endif()
 
