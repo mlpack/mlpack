@@ -16,8 +16,6 @@
 
 #if defined(MLPACK_USE_SYSTEM_STB)
 
-#include <mlpack/prereqs.hpp>
-
 #ifndef STB_IMAGE_STATIC
   #define STB_IMAGE_STATIC
 #endif
@@ -43,9 +41,9 @@
 #endif
 
 #if defined __has_include
-  #if __has_include("stb_image.h")
+  #if __has_include(<stb_image.h>)
     #include <stb_image.h>
-  #elif __has_include("stb/stb_image.h")
+  #elif __has_include(<stb/stb_image.h>)
     #include <stb/stb_image.h>
   #else
     #define MLPACK_DISABLE_STB
@@ -54,9 +52,9 @@
 #endif
 
 #if defined __has_include
-  #if __has_include("stb_image_write.h")
+  #if __has_include(<stb_image_write.h>)
     #include <stb_image_write.h>
-  #elif __has_include("stb/stb_image_write.h")
+  #elif __has_include(<stb/stb_image_write.h>)
     #include <stb/stb_image_write.h>
   #else
     #define MLPACK_DISABLE_STB
@@ -65,9 +63,9 @@
 #endif
 
 #if defined __has_include
-  #if __has_include("stb_image_resize.h")
+  #if __has_include(<stb_image_resize.h>)
     #include <stb_image_resize.h>
-  #elif __has_include("stb/stb_image_resize.h")
+  #elif __has_include(<stb/stb_image_resize.h>)
     #include <stb/stb_image_resize.h>
   #else
     #define MLPACK_DISABLE_STB
