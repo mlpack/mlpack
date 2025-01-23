@@ -19,6 +19,8 @@ using namespace mlpack;
 using namespace mlpack::data;
 using namespace std;
 
+#ifndef MLPACK_DISABLE_STB
+
 /**
  * Test if an image with an unsupported extension throws an expected
  * exception.
@@ -157,16 +159,19 @@ TEST_CASE("ImageInfoSerialization", "[ImageLoadTest]")
  * a KNN or other methods that test the similarity between the pixels and
  * give a score above a threshold. 
  */
-TEST_CASE("ImageResizeTest", "[ImageTest]")
+TEST_CASE("ImagesResizeTest", "[ImageTest]")
 {
   arma::Mat<unsigned char> image, images;
-  data::ImageInfo info, resizedInfo;
+  data::ImageInfo info, resizedInfo, resizedInfo2;
   std::vector<std::string> files =
       {"sheep_1.jpg", "sheep_2.jpg","sheep_3.jpg", "sheep_4.jpg",
        "sheep_5.jpg", "sheep_6.jpg"};
   std::vector<std::string> re_sheeps =
       {"re_sheep_1.jpg", "re_sheep_2.jpg","re_sheep_3.jpg", "re_sheep_4.jpg",
        "re_sheep_5.jpg", "re_sheep_6.jpg"};
+  std::vector<std::string> sm_sheeps =
+      {"sm_sheep_1.jpg", "sm_sheep_2.jpg","sm_sheep_3.jpg", "sm_sheep_4.jpg",
+       "sm_sheep_5.jpg", "sm_sheep_6.jpg"};
 
   // Load and Resize each one of them individually, because they do not have
   // the same sizes, and then the resized images, will be used in the next
@@ -183,19 +188,6 @@ TEST_CASE("ImageResizeTest", "[ImageTest]")
 
   REQUIRE(info.Width() == resizedInfo.Width());
   REQUIRE(info.Height() == resizedInfo.Height());
-}
-
-TEST_CASE("ImagesResizeTest", "[ImageTest]")
-{
-  arma::Mat<unsigned char> images;
-  data::ImageInfo info, resizedInfo;
-  std::vector<std::string> re_sheeps =
-      {"re_sheep_1.jpg", "re_sheep_2.jpg","re_sheep_3.jpg", "re_sheep_4.jpg",
-       "re_sheep_5.jpg", "re_sheep_6.jpg"};
-
-  std::vector<std::string> sm_sheeps =
-      {"sm_sheep_1.jpg", "sm_sheep_2.jpg","sm_sheep_3.jpg", "sm_sheep_4.jpg",
-       "sm_sheep_5.jpg", "sm_sheep_6.jpg"};
 
   REQUIRE(data::Load(re_sheeps, images, info, false) == true);
 
@@ -203,9 +195,17 @@ TEST_CASE("ImagesResizeTest", "[ImageTest]")
 
   REQUIRE(data::Save(sm_sheeps, images, info, false) == true);
 
-  REQUIRE(data::Load(sm_sheeps, images, resizedInfo, false) == true);
+  REQUIRE(data::Load(sm_sheeps, images, resizedInfo2, false) == true);
 
-  REQUIRE(info.Width() == resizedInfo.Width());
-  REQUIRE(info.Height() == resizedInfo.Height());
+  REQUIRE(info.Width() == resizedInfo2.Width());
+  REQUIRE(info.Height() == resizedInfo2.Height());
+
+  // cleanup generated images.
+  for (size_t i = 0; i < re_sheeps.size(); ++i)
+  {
+    remove(re_sheeps.at(i).c_str());
+    remove(sm_sheeps.at(i).c_str());
+  }
 }
 
+#endif
