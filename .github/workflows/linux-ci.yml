@@ -152,7 +152,7 @@ jobs:
               "using Pkg; Pkg.add(\"TestReports\"); using TestReports; TestReports.test(\"mlpack\")"
           mv testlog.xml $ROOTDIR/build/julia_bindings.junit.xml
 
-      - name: Parse test output for build summary
+      - name: Parse test output
         uses: rcurtin/test-summary-action@dist
         if: success() || failure()
         with:
@@ -160,3 +160,6 @@ jobs:
           show: "fail, skip"
           fail_job: true
           print_output: true
+
+      - name: Print ccache stats
+        run: ccache -s
