@@ -67,15 +67,15 @@
 #endif
 
 #if defined __has_include
-  #if __has_include(<stb_image_resize.h>)
+  #if __has_include(<stb_image_resize2.h>)
     #include <stb_image_resize2.h>
-  #elif __has_include(<stb/stb_image_resize.h>)
+  #elif __has_include(<stb/stb_image_resize2.h>)
     #include <stb/stb_image_resize2.h>
   #else
     #ifndef MLPACK_DISABLE_STB
       #define MLPACK_DISABLE_STB
     #endif
-    #pragma message("Warning: STB disabled; stb_image_resize.h header not found")
+    #pragma message("Warning: STB disabled; stb_image_resize2.h header not found")
   #endif
 #endif
 
