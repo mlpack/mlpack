@@ -163,3 +163,4 @@ jobs:
 
       - name: Print ccache stats
         run: ccache -s
+        if: always()
