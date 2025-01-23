@@ -58,20 +58,20 @@ inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
   size_t newDimension = newWidth * newHeight * info.Channels();
   arma::Mat<unsigned char> tempDest(newDimension, 1);
 
-  // Allocate buffer to STB
-  unsigned char* buffer =
-      (unsigned char*)malloc(newDimension * sizeof(unsigned char));
-
   if constexpr (std::is_same<eT, unsigned char>::value)
   {
     stbir_resize_uint8(image.memptr(), info.Width(), info.Height(), 0,
-                       tempDest.memptr(), newWidth, newHeight, 0, info.Channels());  
+                       tempDest.memptr(), newWidth, newHeight, 0,
+                       info.Channels());
+
     image = std::move(tempDest);
   }
   else if constexpr (std::is_same<eT, float>::value)
   {
+    arma::fmat tempDestFloat(newDimension, 1);
     stbir_resize_float(image.memptr(), info.Width(), info.Height(), 0,
-                       tempDest.memptr(), newWidth, newHeight, 0, info.Channels());  
+                       tempDestFloat.memptr(), newWidth, newHeight, 0,
+                       info.Channels());
     image = std::move(tempDest);
   }
   else
@@ -80,15 +80,14 @@ inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
         arma::conv_to<arma::Mat<unsigned char>>::from(image);
 
     stbir_resize_uint8(tempSrc.memptr(), info.Width(), info.Height(), 0,
-                       buffer, newWidth, newHeight, 0, info.Channels());
+                       tempDest.memptr(), newWidth, newHeight, 0,
+                       info.Channels());
 
-    memcpy(tempDest.memptr(), buffer, sizeof(unsigned char) * newDimension);
     image = arma::conv_to<arma::Mat<eT>>::from(tempDest);
   }
 
   info.Width() = newWidth;
   info.Height() = newHeight;
-  free(buffer);
 }
 
 /**
