@@ -23,11 +23,11 @@ jobs:
         config: [
           {
             name: 'Debug',
-            cmakeVars: '-DCMAKE_BUILD_TYPE=Debug -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_CLI_EXECUTABLES=OFF'
+            cmakeVars: '-DCMAKE_BUILD_TYPE=Debug -DBUILD_CLI_EXECUTABLES=OFF'
           },
           {
             name: 'CLI',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON -DUSE_PRECOMPILED_HEADERS=OFF'
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON'
           },
           {
             name: 'Python',
@@ -60,6 +60,8 @@ jobs:
         with:
           key: ${{ runner.os }}
           variant: ccache
+          max-size: 5G
+          job-summary: true
 
       # Set up the build environment.
       - name: Set up Python
@@ -95,16 +97,15 @@ jobs:
               sudo cp -vr include/* /usr/include/ && \
               cd ..
 
-      - name: Clear ccache and show config
-        run: |
-          # Show the ccache config settings, and zero the statistics counter
-          ccache --show-config
-          ccache --zero-stats
-
+      # Because mlpack's precompiled headers basically include everything
+      # (mlpack.hpp, core.hpp, etc.), changes to a single file will invalidate
+      # the ccache entry---so it is better to leave it turned off, so that
+      # ccache entries will be at a more granular level and are more likely to
+      # be reused across runs.
       - name: Configure mlpack with CMake
         run: |
           mkdir build && cd build
-          cmake ${{ matrix.config.cmakeVars }} -DBUILD_TESTS=ON ../
+          cmake ${{ matrix.config.cmakeVars }} -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON ../
 
       - name: Build mlpack
         run: cd build && make -j4
@@ -160,7 +161,3 @@ jobs:
           show: "fail, skip"
           fail_job: true
           print_output: true
-
-      - name: Print ccache stats
-        run: ccache -s
-        if: always()
