@@ -46,7 +46,9 @@
   #elif __has_include(<stb/stb_image.h>)
     #include <stb/stb_image.h>
   #else
-    #define MLPACK_DISABLE_STB
+    #ifndef MLPACK_DISABLE_STB
+      #define MLPACK_DISABLE_STB
+    #endif
     #pragma message("Warning: STB disabled; stb_image.h header not found")
   #endif
 #endif
@@ -57,7 +59,9 @@
   #elif __has_include(<stb/stb_image_write.h>)
     #include <stb/stb_image_write.h>
   #else
-    #define MLPACK_DISABLE_STB
+    #ifndef MLPACK_DISABLE_STB
+      #define MLPACK_DISABLE_STB
+    #endif
     #pragma message("Warning: STB disabled; stb_image_write.h header not found")
   #endif
 #endif
@@ -68,7 +72,9 @@
   #elif __has_include(<stb/stb_image_resize.h>)
     #include <stb/stb_image_resize.h>
   #else
-    #define MLPACK_DISABLE_STB
+    #ifndef MLPACK_DISABLE_STB
+      #define MLPACK_DISABLE_STB
+    #endif
     #pragma message("Warning: STB disabled; stb_image_resize.h header not found")
   #endif
 #endif

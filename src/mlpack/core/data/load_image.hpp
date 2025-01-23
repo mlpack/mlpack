@@ -13,7 +13,7 @@
 #ifndef MLPACK_CORE_DATA_LOAD_IMAGE_HPP
 #define MLPACK_CORE_DATA_LOAD_IMAGE_HPP
 
-#include <mlpack/core/stb/stb.hpp>
+#include <mlpack/core/bundled_stb/stb.hpp>
 
 #include "image_info.hpp"
 

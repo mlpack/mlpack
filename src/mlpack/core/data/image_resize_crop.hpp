@@ -14,7 +14,7 @@
 #define MLPACK_CORE_DATA_IMAGE_RESIZE_CROP_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/stb/stb.hpp>
+#include <mlpack/core/bundled_stb/stb.hpp>
 
 #include "image_info.hpp"
 
@@ -62,14 +62,29 @@ inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
   unsigned char* buffer =
       (unsigned char*)malloc(newDimension * sizeof(unsigned char));
 
-  arma::Mat<unsigned char> tempSrc =
-      arma::conv_to<arma::Mat<unsigned char>>::from(image);
+  if constexpr (std::is_same<eT, unsigned char>::value)
+  {
+    stbir_resize_uint8(image.memptr(), info.Width(), info.Height(), 0,
+                       tempDest.memptr(), newWidth, newHeight, 0, info.Channels());  
+    image = std::move(tempDest);
+  }
+  else if constexpr (std::is_same<eT, float>::value)
+  {
+    stbir_resize_float(image.memptr(), info.Width(), info.Height(), 0,
+                       tempDest.memptr(), newWidth, newHeight, 0, info.Channels());  
+    image = std::move(tempDest);
+  }
+  else
+  {
+    arma::Mat<unsigned char> tempSrc =
+        arma::conv_to<arma::Mat<unsigned char>>::from(image);
 
-  stbir_resize_uint8(tempSrc.memptr(), info.Width(), info.Height(), 0,
-                     buffer, newWidth, newHeight, 0, info.Channels());
+    stbir_resize_uint8(tempSrc.memptr(), info.Width(), info.Height(), 0,
+                       buffer, newWidth, newHeight, 0, info.Channels());
 
-  memcpy(tempDest.memptr(), buffer, sizeof(unsigned char) * newDimension);
-  image = arma::conv_to<arma::Mat<eT>>::from(tempDest);
+    memcpy(tempDest.memptr(), buffer, sizeof(unsigned char) * newDimension);
+    image = arma::conv_to<arma::Mat<eT>>::from(tempDest);
+  }
 
   info.Width() = newWidth;
   info.Height() = newHeight;
@@ -143,7 +158,7 @@ inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
     const size_t newWidth, const size_t newHeight)
 {
   Log::Fatal << "Resize(): mlpack was not compiled with STB support, so images"
-      << " cannot be Resized!" << std::endl;
+      << " cannot be resized!" << std::endl;
 }
 
 template<typename eT>
@@ -151,7 +166,7 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
     const size_t newWidth, const size_t newHeight)
 {
   Log::Fatal << "ResizeImages(): mlpack was not compiled with STB support,"
-      << " so images cannot be Resized!" << std::endl;
+      << " so images cannot be resized!" << std::endl;
 }
 
 #endif
