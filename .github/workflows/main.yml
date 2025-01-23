@@ -50,7 +50,7 @@ jobs:
           # this is the default but 'sccache' can be selected here
           variant: ccache
 
-      - name: Prepare R for Ccache 
+      - name: Prepare R for Ccache
         run: |
           mkdir -p ~/.R
           cp -vax .github/etc/R_Makevars_${{ runner.os }} ~/.R/Makevars
@@ -58,7 +58,7 @@ jobs:
       - name: Configure Ccache for R
         run: |
           ccache --set-config "sloppiness=include_file_ctime"
-          ccache --set-config "hash_dir=false" 
+          ccache --set-config "hash_dir=false"
           ccache --show-config
           ccache --zero-stats
 
@@ -98,9 +98,13 @@ jobs:
       - name: Install R-bindings dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
-          remotes::install_cran("roxygen2")
-          remotes::install_cran("pkgbuild")
+          remotes::install_cran(c("roxygen2","pkgbuild"))
         shell: Rscript {0}
+
+      - name: Install R-bindings system dependencies
+        run: |
+          # We use R package 'stringi' which has a run-time depdency libicy$SO
+          sudo apt install -y libicu-dev
 
       - name: CMake
         run: |
