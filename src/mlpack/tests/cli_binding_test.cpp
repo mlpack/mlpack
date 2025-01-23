@@ -49,7 +49,11 @@ void AddCLIMapFunctions(util::Params& p)
 TEST_CASE("FailTest", "[CLIOptionTest]")
 {
   std::cout << "stdout\n";
+  std::cout << "stdout2\n";
+  std::cout << "stdout3\n";
   std::cerr << "stderr\n";
+  std::cerr << "stderr2\n";
+  std::cout << "stdout4\n";
   REQUIRE(false);
 }
 
