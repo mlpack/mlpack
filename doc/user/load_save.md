@@ -523,6 +523,42 @@ outImages.push_back("bandicoot-favicon-inv.jpeg");
 mlpack::data::Save(outImages, matrix, info);
 ```
 
+### Resize Image
+
+It is possible to resize images in mlpack with the following functions
+
+ - `Resize(image, info, newWidth, newHeight)`
+   * `image` an armadillo matrix contains one column representing the image as
+   a flattened vector.
+
+   * `info` will be populated with information from the image in `image`.
+
+   * `newWidth` the new width of the resized image.
+
+   * `newHeight` the new height of the resized image.
+
+   * This function does not return but it modifies the info object and image
+     matrix.
+
+---
+
+- `ResizeImages(images, info, newWidth, newHeight)`
+   * `images` an armadillo matrix contains a set of images, each one is
+     represeted in one column representing the image as a flattened vector.
+
+   * `info` will be populated with information from the image in `image`.
+
+   * `newWidth` the new width of the resized image.
+
+   * `newHeight` the new height of the resized image.
+
+   * This function does not return but it modifies the info object and images
+     matrix.
+
+   * This function expects all the images at the start to have identical
+     dimensions. If the images have different dimension, please use
+     `Resize` and loop over all of them using a `for` loop.
+
 ## mlpack objects
 
 All mlpack objects can be saved with `data::Save()` and loaded with
