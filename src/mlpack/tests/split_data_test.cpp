@@ -891,9 +891,6 @@ TEST_CASE("SplitMatDataShuffleWithLabelsAndWeights", "[SplitDataTest]")
     REQUIRE(found[c]);
 
   // Make sure we can find each column of the labels.
-  labels.print("labels");
-  trainLabels.print("trainLabels");
-  testLabels.print("testLabels");
   found.flip();
   for (size_t i = 0; i < trainLabels.n_elem; ++i)
   {
