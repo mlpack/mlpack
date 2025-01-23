@@ -27,7 +27,7 @@ jobs:
           },
           {
             name: 'CLI',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON'
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON -DUSE_PRECOMPILED_HEADERS=OFF'
           },
           {
             name: 'Python',
