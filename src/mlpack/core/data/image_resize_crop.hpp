@@ -52,7 +52,16 @@ inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
       << std::endl;
     Log::Fatal << oss.str();
   }
-
+  stbir_pixel_layout channels;
+  if (info.Channels() == 1)
+  {
+    channels = STBIR_1CHANNEL;
+  }
+  else if (info.Channels() == 3)
+  {
+    channels = STBIR_RGB;
+  }
+    
   // This is required since STB only accept unsigned chars.
   // set the new matrix size for copy
   size_t newDimension = newWidth * newHeight * info.Channels();
@@ -60,18 +69,18 @@ inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
 
   if constexpr (std::is_same<eT, unsigned char>::value)
   {
-    stbir_resize_uint8(image.memptr(), info.Width(), info.Height(), 0,
+    stbir_resize_uint8_linear(image.memptr(), info.Width(), info.Height(), 0,
                        tempDest.memptr(), newWidth, newHeight, 0,
-                       info.Channels());
+                       channels);
 
     image = std::move(tempDest);
   }
   else if constexpr (std::is_same<eT, float>::value)
   {
     arma::fmat tempDestFloat(newDimension, 1);
-    stbir_resize_float(image.memptr(), info.Width(), info.Height(), 0,
+    stbir_resize_float_linear(image.memptr(), info.Width(), info.Height(), 0,
                        tempDestFloat.memptr(), newWidth, newHeight, 0,
-                       info.Channels());
+                       channels);
     image = std::move(tempDest);
   }
   else
@@ -79,9 +88,9 @@ inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
     arma::Mat<unsigned char> tempSrc =
         arma::conv_to<arma::Mat<unsigned char>>::from(image);
 
-    stbir_resize_uint8(tempSrc.memptr(), info.Width(), info.Height(), 0,
+    stbir_resize_uint8_linear(tempSrc.memptr(), info.Width(), info.Height(), 0,
                        tempDest.memptr(), newWidth, newHeight, 0,
-                       info.Channels());
+                       channels);
 
     image = arma::conv_to<arma::Mat<eT>>::from(tempDest);
   }
@@ -110,6 +119,15 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
       " dimensions to the image matrix" << std::endl;
     Log::Fatal << oss.str();
   }
+  stbir_pixel_layout channels;
+  if (info.Channels() == 1)
+  {
+    channels = STBIR_1CHANNEL;
+  }
+  else if (info.Channels() == 3)
+  {
+    channels = STBIR_RGB;
+  }
 
   size_t newDimension = newWidth * newHeight * info.Channels();
 
@@ -125,8 +143,8 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
     arma::Mat<unsigned char> tempSrc =
         arma::conv_to<arma::Mat<unsigned char>>::from(images.col(i));
 
-    stbir_resize_uint8(tempSrc.memptr(), info.Width(), info.Height(), 0,
-                       buffer, newWidth, newHeight, 0, info.Channels());
+    stbir_resize_uint8_linear(tempSrc.memptr(), info.Width(), info.Height(), 0,
+                       buffer, newWidth, newHeight, 0, channels);
 
     memcpy(tempBuf.memptr(), buffer, sizeof(unsigned char) * newDimension);
     tempDest.col(i) = arma::conv_to<arma::Mat<eT>>::from(tempBuf);

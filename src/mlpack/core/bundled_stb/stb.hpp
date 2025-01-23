@@ -68,9 +68,9 @@
 
 #if defined __has_include
   #if __has_include(<stb_image_resize.h>)
-    #include <stb_image_resize.h>
+    #include <stb_image_resize2.h>
   #elif __has_include(<stb/stb_image_resize.h>)
-    #include <stb/stb_image_resize.h>
+    #include <stb/stb_image_resize2.h>
   #else
     #ifndef MLPACK_DISABLE_STB
       #define MLPACK_DISABLE_STB
@@ -110,7 +110,7 @@
 // Now include STB headers
 #include "stb_image.h"
 #include "stb_image_write.h"
-#include "stb_image_resize.h"
+#include "stb_image_resize2.h"
 
 #endif
 
