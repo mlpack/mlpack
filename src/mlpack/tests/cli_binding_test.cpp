@@ -46,17 +46,6 @@ void AddCLIMapFunctions(util::Params& p)
   p.functionMap[TYPENAME(N)]["InPlaceCopy"] = &cli::InPlaceCopy<N>;
 }
 
-TEST_CASE("FailTest", "[CLIOptionTest]")
-{
-  std::cout << "stdout\n";
-  std::cout << "stdout2\n";
-  std::cout << "stdout3\n";
-  std::cerr << "stderr\n";
-  std::cerr << "stderr2\n";
-  std::cout << "stdout4\n";
-  REQUIRE(false);
-}
-
 /**
  * Ensure that we can construct a CLIOption object, and that it will add itself
  * to the CLI instance.
