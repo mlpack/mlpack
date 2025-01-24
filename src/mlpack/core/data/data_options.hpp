@@ -249,9 +249,19 @@ struct FatalOptions: public DataOptions
   inline FatalOptions() : DataOptions() { this->Fatal() = true; }
 };
 
+struct NoFatalOptions: public DataOptions
+{
+  inline NoFatalOptions() : DataOptions() { this->Fatal() = false; }
+};
+
 struct HasHeadersOptions : public DataOptions
 {
   inline HasHeadersOptions() : DataOptions() { this->HasHeaders() = true; }
+};
+
+struct TransposeOptions : public DataOptions
+{
+  inline TransposeOptions() : DataOptions() { this->NoTranspose() = false; }
 };
 
 struct NoTransposeOptions : public DataOptions
@@ -405,7 +415,9 @@ struct CoordASCIIOptions : public DataOptions
 
 //! Boolean options
 static const DataOptionsTypes::FatalOptions         Fatal;
+static const DataOptionsTypes::NoFatalOptions       NoFatal;
 static const DataOptionsTypes::HasHeadersOptions    HasHeaders;
+static const DataOptionsTypes::TransposeOptions     Transpose;
 static const DataOptionsTypes::NoTransposeOptions   NoTranspose;
 static const DataOptionsTypes::SemiColonOptions     SemiColon;
 static const DataOptionsTypes::MissingToNanOptions  MissingToNan;

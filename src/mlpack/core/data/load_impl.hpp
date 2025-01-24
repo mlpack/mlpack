@@ -46,6 +46,11 @@ bool LoadCSVASCII(const std::string& filename,
     success = matrix.load(arma::csv_name(filename, arma::csv_opts::trans),
         arma::csv_ascii);
   
+  else if (opts.NoTranspose() && !opts.HasHeaders() &&
+           !opts.SemiColon() && !opts.MissingToNan())
+
+    success = matrix.load(filename, arma::csv_ascii);
+
   else if (opts.NoTranspose() && opts.HasHeaders() &&
            !opts.SemiColon() && !opts.MissingToNan())
 
@@ -197,6 +202,17 @@ bool Load(const std::string& filename,
   return Load(filename, matrix, opts);
 }
 
+template<typename MatType>
+bool Load(const std::string& filename,
+          MatType& matrix,
+          const DataOptions& opts)
+{
+  // Copy the options since passing a const into a modifiable function can
+  // result in a segmentation fault.
+  // We do not copy back to preserve the const property of the function.
+  DataOptions copyOpts = opts;
+  return Load(filename, matrix, copyOpts);
+}
 // This is the function that the user is supposed to call.
 // Other functions of this class should be labelled as private.
 template<typename MatType>
@@ -233,10 +249,6 @@ bool Load(const std::string& filename,
   else if (opts.Categorical())
   {
     success = LoadCategorical(filename, matrix, opts);
-  }
-  else if (opts.Image())
-  {
-
   }
   else 
   {
