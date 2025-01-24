@@ -67,6 +67,18 @@
   #undef MLPACK_STB
 #endif
 
+#if !defined(MLPACK_USE_SYSTEM_STB)
+  // #define MLPACK_USE_SYSTEM_STB
+#endif
+
+//
+// This is necessary if we would like to overwrite the default packaging
+// condition.
+//
+#if defined(MLPACK_DONT_USE_SYSTEM_STB) && defined(MLPACK_USE_SYSTEM_STB)
+  #undef MLPACK_USE_SYSTEM_STB
+#endif
+
 #ifdef MLPACK_DISABLE_BFD_DL
   #undef MLPACK_HAS_BFD_DL
 #endif
