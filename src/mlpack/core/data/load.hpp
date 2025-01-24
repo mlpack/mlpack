@@ -17,6 +17,7 @@
 #include <mlpack/prereqs.hpp>
 #include <string>
 
+#include "data_options.hpp"
 #include "format.hpp"
 #include "image_info.hpp"
 #include "load_csv.hpp"

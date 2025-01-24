@@ -14,15 +14,16 @@
 #ifndef MLPACK_CORE_DATA_DATA_OPTIONS_HPP
 #define MLPACK_CORE_DATA_DATA_OPTIONS_HPP
 
-namespace mlpack {
-namespace data {
-
 #include <mlpack/prereqs.hpp>
 #include <string>
 
 #include "dataset_mapper.hpp"
 #include "detect_file_type.hpp"
 #include "format.hpp"
+#include "image_info.hpp"
+
+namespace mlpack {
+namespace data {
 
 /**
  * All possible DataOptions grouped under one class.
@@ -245,42 +246,45 @@ namespace DataOptionsTypes
 
 struct FatalOptions: public DataOptions
 {
-  inline FatalOptions() : DataOptions() { fatal(true); }
+  inline FatalOptions() : DataOptions() { this->Fatal() = true; }
 };
 
 struct HasHeadersOptions : public DataOptions
 {
-  inline HasHeadersOptions() : DataOptions() { hasHeaders(true); }
+  inline HasHeadersOptions() : DataOptions() { this->HasHeaders() = true; }
 };
 
 struct NoTransposeOptions : public DataOptions
 {
-  inline NoTransposeOptions() : DataOptions() { noTranspose(true); }
+  inline NoTransposeOptions() : DataOptions() { this->NoTranspose() = true; }
 };
 
 struct SemiColonOptions : public DataOptions
 {
-  inline SemiColonOptions() : DataOptions() { semiColon(true); }
+  inline SemiColonOptions() : DataOptions() { this->SemiColon() = true; }
 };
 
 struct MissingToNanOptions : public DataOptions
 {
-  inline MissingToNanOptions() : DataOptions() { missingToNan(true); }
+  inline MissingToNanOptions() : DataOptions()
+  {
+    this->MissingToNan() = true;
+  }
 };
 
 struct CategoricalOptions : public DataOptions
 {
-  inline CategoricalOptions() : DataOptions() { categorical(true); }
+  inline CategoricalOptions() : DataOptions() { this->Categorical() = true; }
 };
 
 struct ImageOptions : public DataOptions
 {
-  inline ImageOptions() : DataOptions() { image(true); }
+  inline ImageOptions() : DataOptions() { this->Image() = true; }
 };
 
 struct ModelOptions : public DataOptions
 {
-  inline ModelOptions() : DataOptions() { model(true); }
+  inline ModelOptions() : DataOptions() { this->Model() = true; }
 };
 
 //! Data serialization options 
