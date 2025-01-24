@@ -113,7 +113,7 @@ specified with the `format` parameter using one of the options below:
    - ASCII formats (`CSVASCII`, `RawASCII`, `ArmaASCII`) are human-readable but
      large; to reduce dataset size, consider a binary format such as
       `ArmaBinary` or `HDF5Binary`.
-   - Sparse data (`arma::sp_mat`, `arma::sp_fmat`, etc.) should be saved in a
+   - Sparse data (`arma::sp_mat`, `arma::sp_fmat`, etc.) must be saved in a
      binary format (`ArmaBinary` or `HDF5Binary`) or as a coordinate list
      (`CoordASCII`).
 

@@ -240,145 +240,192 @@ inline DataOptions operator|(const DataOptions& a, const DataOptions& b)
   return output;
 }
 
+namespace DataOptionsTypes
+{
+
 struct FatalOptions: public DataOptions
 {
-  inline FatalOptions() : DataOptions() { this->Fatal() = true; }
+  inline FatalOptions() : DataOptions() { fatal(true); }
 };
 
 struct HasHeadersOptions : public DataOptions
 {
-  inline HasHeadersOptions() : DataOptions() { this->HasHeaders() = true; }
+  inline HasHeadersOptions() : DataOptions() { hasHeaders(true); }
 };
 
 struct NoTransposeOptions : public DataOptions
 {
-  inline NoTransposeOptions() : DataOptions() { this->NoTranspose() = true; }
+  inline NoTransposeOptions() : DataOptions() { noTranspose(true); }
 };
 
 struct SemiColonOptions : public DataOptions
 {
-  inline SemiColonOptions() : DataOptions() { this->SemiColon() = true; }
+  inline SemiColonOptions() : DataOptions() { semiColon(true); }
 };
 
 struct MissingToNanOptions : public DataOptions
 {
-  inline MissingToNanOptions() : DataOptions() { this->MissingToNan() = true; }
+  inline MissingToNanOptions() : DataOptions() { missingToNan(true); }
 };
 
 struct CategoricalOptions : public DataOptions
 {
-  inline CategoricalOptions() : DataOptions() { this->Categorical() = true; }
+  inline CategoricalOptions() : DataOptions() { categorical(true); }
 };
 
 struct ImageOptions : public DataOptions
 {
-  inline ImageOptions() : DataOptions() { this->Image() = true; }
+  inline ImageOptions() : DataOptions() { image(true); }
 };
 
 struct ModelOptions : public DataOptions
 {
-  inline ModelOptions() : DataOptions() { this->Model() = true; }
+  inline ModelOptions() : DataOptions() { model(true); }
 };
 
 //! Data serialization options 
 struct AutodetectOptions : public DataOptions
 {
-  inline AutodetectOptions() : DataOptions() { this->DataFormat() = format::autodetect; }
+  inline AutodetectOptions() : DataOptions()
+  {
+    this->DataFormat() = format::autodetect;
+  }
 };
 
 struct JsonDataOptions : public DataOptions
 {
-  inline JsonDataOptions() : DataOptions() { this->DataFormat() = format::json; }
+  inline JsonDataOptions() : DataOptions()
+  {
+    this->DataFormat() = format::json;
+  }
 };
 
 struct XmlDataOptions : public DataOptions
 {
-  inline XmlDataOptions() : DataOptions() { this->DataFormat() = format::xml; }
+  inline XmlDataOptions() : DataOptions()
+  {
+    this->DataFormat() = format::xml;
+  }
 };
 
 struct BinaryDataOptions : public DataOptions
 {
-  inline BinaryDataOptions() : DataOptions() { this->DataFormat() = format::binary; }
+  inline BinaryDataOptions() : DataOptions()
+  {
+    this->DataFormat() = format::binary;
+  }
 };
 
 //! File serialization options 
 struct FileAutoDetectOptions : public DataOptions
 {
-  inline FileAutoDetectOptions() : DataOptions() { this->FileFormat() = FileType::AutoDetect; }
+  inline FileAutoDetectOptions() : DataOptions()
+  {
+    this->FileFormat() = FileType::AutoDetect;
+  }
 };
 
 struct CSVOptions : public DataOptions
 {
-  inline CSVOptions() : DataOptions() { this->FileFormat() = FileType::CSVASCII; }
+  inline CSVOptions() : DataOptions()
+  {
+    this->FileFormat() = FileType::CSVASCII;
+  }
 };
 
 struct PGMOptions : public DataOptions
 {
-  inline PGMOptions() : DataOptions() { this->FileFormat() = FileType::PGMBinary; }
+  inline PGMOptions() : DataOptions()
+  {
+    this->FileFormat() = FileType::PGMBinary;
+  }
 };
 
 struct PPMOptions : public DataOptions
 {
-  inline PPMOptions() : DataOptions() { this->FileFormat() = FileType::PPMBinary; }
+  inline PPMOptions() : DataOptions()
+  {
+    this->FileFormat() = FileType::PPMBinary;
+  }
 };
 
 struct HDF5Options : public DataOptions
 {
-  inline HDF5Options() : DataOptions() { this->FileFormat() = FileType::HDF5Binary; }
+  inline HDF5Options() : DataOptions()
+  {
+    this->FileFormat() = FileType::HDF5Binary;
+  }
 };
 
 struct ArmaASCIIOptions : public DataOptions
 {
-  inline ArmaASCIIOptions() : DataOptions() { this->FileFormat() = FileType::ArmaASCII; }
+  inline ArmaASCIIOptions() : DataOptions()
+  {
+    this->FileFormat() = FileType::ArmaASCII;
+  }
 };
 
 struct ArmaBinOptions : public DataOptions
 {
-  inline ArmaBinOptions() : DataOptions() { this->FileFormat() = FileType::ArmaBinary; }
+  inline ArmaBinOptions() : DataOptions()
+  {
+    this->FileFormat() = FileType::ArmaBinary;
+  }
 };
 
 struct RawASCIIOptions : public DataOptions
 {
-  inline RawASCIIOptions() : DataOptions() { this->FileFormat() = FileType::RawASCII; }
+  inline RawASCIIOptions() : DataOptions()
+  {
+    this->FileFormat() = FileType::RawASCII;
+  }
 };
 
 struct RawBinOptions : public DataOptions
 {
-  inline RawBinOptions() : DataOptions() { this->FileFormat() = FileType::RawBinary; }
+  inline RawBinOptions() : DataOptions()
+  {
+    this->FileFormat() = FileType::RawBinary;
+  }
 };
 
 struct CoordASCIIOptions : public DataOptions
 {
-  inline CoordASCIIOptions() : DataOptions() { this->FileFormat() = FileType::CoordASCII; }
+  inline CoordASCIIOptions() : DataOptions()
+  {
+    this->FileFormat() = FileType::CoordASCII;
+  }
 };
 
+} // namespace DataOptionsTypes
+
 //! Boolean options
-static const FatalOptions         Fatal;
-static const HasHeadersOptions    HasHeaders;
-static const NoTransposeOptions   NoTranspose;
-static const SemiColonOptions     SemiColon;
-static const MissingToNanOptions  MissingToNan;
-static const CategoricalOptions   Categorical;
-static const ImageOptions         Image;
-static const ModelOptions         Model;
+static const DataOptionsTypes::FatalOptions         Fatal;
+static const DataOptionsTypes::HasHeadersOptions    HasHeaders;
+static const DataOptionsTypes::NoTransposeOptions   NoTranspose;
+static const DataOptionsTypes::SemiColonOptions     SemiColon;
+static const DataOptionsTypes::MissingToNanOptions  MissingToNan;
+static const DataOptionsTypes::CategoricalOptions   Categorical;
+static const DataOptionsTypes::ImageOptions         Image;
+static const DataOptionsTypes::ModelOptions         Model;
 
 //! File options
-static const CSVOptions            CSV; 
-static const PGMOptions            PGM_BIN;
-static const PPMOptions            PPM_BIN;
-static const HDF5Options           HDF5_BIN;
-static const ArmaASCIIOptions      ARMA_ASCII;
-static const ArmaBinOptions        ARMA_BIN;
-static const RawASCIIOptions       RAW_ASCII;
-static const RawBinOptions         BIN_ASCII;
-static const CoordASCIIOptions     COORD_ASCII;
-static const FileAutoDetectOptions AutoDetect_File;
+static const DataOptionsTypes::CSVOptions            CSV;
+static const DataOptionsTypes::PGMOptions            PGM_BIN;
+static const DataOptionsTypes::PPMOptions            PPM_BIN;
+static const DataOptionsTypes::HDF5Options           HDF5_BIN;
+static const DataOptionsTypes::ArmaASCIIOptions      ARMA_ASCII;
+static const DataOptionsTypes::ArmaBinOptions        ARMA_BIN;
+static const DataOptionsTypes::RawASCIIOptions       RAW_ASCII;
+static const DataOptionsTypes::RawBinOptions         BIN_ASCII;
+static const DataOptionsTypes::CoordASCIIOptions     COORD_ASCII;
+static const DataOptionsTypes::FileAutoDetectOptions AutoDetect_File;
 
 //! Data serialization options 
-static const AutodetectOptions    AutoDetect_SER;
-static const JsonDataOptions      JSON_SER;
-static const XmlDataOptions       XML_SER;
-static const BinaryDataOptions    BIN_SER;
+static const DataOptionsTypes::AutodetectOptions    AutoDetect_SER;
+static const DataOptionsTypes::JsonDataOptions      JSON_SER;
+static const DataOptionsTypes::XmlDataOptions       XML_SER;
+static const DataOptionsTypes::BinaryDataOptions    BIN_SER;
 
 
 } // namespace data
