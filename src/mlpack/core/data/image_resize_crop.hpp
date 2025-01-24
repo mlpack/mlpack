@@ -119,40 +119,11 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
       " dimensions to the image matrix" << std::endl;
     Log::Fatal << oss.str();
   }
-  stbir_pixel_layout channels;
-  if (info.Channels() == 1)
-  {
-    channels = STBIR_1CHANNEL;
-  }
-  else if (info.Channels() == 3)
-  {
-    channels = STBIR_RGB;
-  }
-
-  size_t newDimension = newWidth * newHeight * info.Channels();
-
-  arma::Mat<unsigned char> tempDest(newDimension, images.n_cols);
 
   for (size_t i = 0; i < images.n_cols; ++i)
   {
-    arma::Mat<unsigned char> tempBuf(newDimension, 1);
-    // Allocate buffer to STB
-    unsigned char* buffer =
-        (unsigned char*)malloc(newDimension * sizeof(unsigned char));
-
-    arma::Mat<unsigned char> tempSrc =
-        arma::conv_to<arma::Mat<unsigned char>>::from(images.col(i));
-
-    stbir_resize_uint8_linear(tempSrc.memptr(), info.Width(), info.Height(), 0,
-                       buffer, newWidth, newHeight, 0, channels);
-
-    memcpy(tempBuf.memptr(), buffer, sizeof(unsigned char) * newDimension);
-    tempDest.col(i) = arma::conv_to<arma::Mat<eT>>::from(tempBuf);
-    free(buffer);
+    Resize(images.col(i), info, newWidth, newHeight);
   }
-  images = tempDest;
-  info.Width() = newWidth;
-  info.Height() = newHeight;
 }
 
 #else
