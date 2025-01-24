@@ -30,6 +30,7 @@
 #include "check_categorical_param.hpp"
 #include "confusion_matrix.hpp"
 #include "dataset_mapper.hpp"
+#include "data_options.hpp"
 #include "image_info.hpp"
 #include "imputer.hpp"
 #include "is_naninf.hpp"
