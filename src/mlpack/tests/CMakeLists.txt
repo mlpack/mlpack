@@ -269,6 +269,7 @@ add_custom_command(TARGET mlpack_test
   COMMAND ${CMAKE_COMMAND} -E tar xjf digits_test.tar.bz2
   COMMAND ${CMAKE_COMMAND} -E tar xjf digits_train_label.tar.bz2
   COMMAND ${CMAKE_COMMAND} -E tar xjf digits_test_label.tar.bz2
+  COMMAND ${CMAKE_COMMAND} -E tar xjf sheep.tar.bz2
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
 )
 
