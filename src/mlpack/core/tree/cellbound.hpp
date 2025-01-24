@@ -76,8 +76,8 @@ class CellBound
  public:
   //! Depending on the precision of the tree element type, we may need to use
   //! uint32_t or uint64_t.
-  using AddressElemType = std::conditional_t<sizeof(ElemType) * CHAR_BIT <= 32,
-                                             uint32_t, uint64_t>;
+  using AddressElemType = std::conditional_t<
+      (sizeof(ElemType) * CHAR_BIT <= 32), uint32_t, uint64_t>;
 
   /**
    * Empty constructor; creates a bound of dimensionality 0.
