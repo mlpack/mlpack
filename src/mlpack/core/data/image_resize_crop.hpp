@@ -27,31 +27,13 @@ namespace data {
  * Image resize/crop interfaces.
  */
 
-/**
- * Resize one single image matrix.
- *
- * This function should be used if the image is loaded as an armadillo matrix
- * and the number of cols equal to the Width and the number of rows equal
- * the Height of the image, or the total number of image pixels is equal to the
- * number of element in an armadillo matrix.
- *
- * @param image The input matrix that contains the image to be resized.
- * @param info Contains relevant input images information.
- * @param newWidth The new requested width for the resized image.
- * @param newHeight The new requested height for the resized image.
- */
-template<typename eT>
-inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
+namespace resize {
+
+template<typename MatType>
+inline void InternalResize(MatType& image, const data::ImageInfo& info,
     const size_t newWidth, const size_t newHeight)
 {
-  if (image.n_elem != (info.Width() * info.Height() * info.Channels()))
-  {
-    std::ostringstream oss;
-    oss << "Dimensions mismatch. Resize(): only applicable on one image."
-      " Please check if the image is loaded correctly into the matrix."
-      << std::endl;
-    Log::Fatal << oss.str();
-  }
+  using eT = typename MatType::elem_type;
   stbir_pixel_layout channels;
   if (info.Channels() == 1)
   {
@@ -94,6 +76,37 @@ inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
 
     image = arma::conv_to<arma::Mat<eT>>::from(tempDest);
   }
+}
+
+} // namespace resize.
+
+/**
+ * Resize one single image matrix.
+ *
+ * This function should be used if the image is loaded as an armadillo matrix
+ * and the number of cols equal to the Width and the number of rows equal
+ * the Height of the image, or the total number of image pixels is equal to the
+ * number of element in an armadillo matrix.
+ *
+ * @param image The input matrix that contains the image to be resized.
+ * @param info Contains relevant input images information.
+ * @param newWidth The new requested width for the resized image.
+ * @param newHeight The new requested height for the resized image.
+ */
+template<typename eT>
+inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
+    const size_t newWidth, const size_t newHeight)
+{
+  if (image.n_rows != (info.Width() * info.Height() * info.Channels()))
+  {
+    std::ostringstream oss;
+    oss << "Dimensions mismatch. Resize(): only applicable on one image."
+      " Please check if the image is loaded correctly into the matrix."
+      << std::endl;
+    Log::Fatal << oss.str();
+  }
+
+  resize::InternalResize(image, info, newWidth, newHeight);
 
   info.Width() = newWidth;
   info.Height() = newHeight;
@@ -119,11 +132,17 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
       " dimensions to the image matrix" << std::endl;
     Log::Fatal << oss.str();
   }
-
+  size_t newDimension = newWidth * newHeight * info.Channels();
+  arma::Mat<eT> resizedImages (newDimension, images.n_cols);
   for (size_t i = 0; i < images.n_cols; ++i)
   {
-    Resize(images.col(i), info, newWidth, newHeight);
+    arma::Col<eT> tempImage = std::move(images.col(i));
+    resize::InternalResize(tempImage, info, newWidth, newHeight);
+    resizedImages.col(i) = std::move(tempImage);
   }
+  images = std::move(resizedImages);
+  info.Width() = newWidth;
+  info.Height() = newHeight;
 }
 
 #else
