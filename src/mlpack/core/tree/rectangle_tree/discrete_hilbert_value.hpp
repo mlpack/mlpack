@@ -30,9 +30,8 @@ class DiscreteHilbertValue
  public:
   //! Depending on the precision of the tree element type, we may need to use
   //! uint32_t or uint64_t.
-  using HilbertElemType =
-      std::conditional_t<sizeof(TreeElemType) * CHAR_BIT <= 32,
-                         uint32_t, uint64_t>;
+  using HilbertElemType = std::conditional_t<
+      (sizeof(TreeElemType) * CHAR_BIT <= 32), uint32_t, uint64_t>;
 
   //! Default constructor.
   DiscreteHilbertValue();

@@ -106,8 +106,8 @@ The [style checker job](http://ci.mlpack.org/job/pull-requests%20mlpack%20style%
 
  * The [`lint.sh` script](https://github.com/mlpack/jenkins-conf/blob/master/linter/lint.sh) to check for C++ style issues.
 
- * If your job failed this check, look at the "Style-Check Warnings" tab in the
-   Jenkins job.
+ * If your job failed this check, look at the "Test Result" tab in the Jenkins
+   job.  Style issues for each file will be displayed in an expandable block.
 
  * See also the
    [style guidelines for mlpack](https://github.com/mlpack/mlpack/wiki/DesignGuidelines).
