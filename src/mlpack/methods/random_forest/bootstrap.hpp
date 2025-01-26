@@ -166,7 +166,7 @@ class SequentialBootstrap
 
     // Only in the test code we want to compute the full vector
     // of average uniqueness. Here, we are always only interested
-    // in the average uniqueness of the latest value that is 
+    // in the average uniqueness of the latest value that is
     // added to phi.
     const arma::uvec indices(1u, arma::fill::value(phiSize));
     arma::vec        avg(intervals.n_cols);
