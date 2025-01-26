@@ -43,7 +43,7 @@ inline void InternalResize(MatType& image, const data::ImageInfo& info,
   {
     channels = STBIR_RGB;
   }
-    
+
   // This is required since STB only accept unsigned chars.
   // set the new matrix size for copy
   size_t newDimension = newWidth * newHeight * info.Channels();
