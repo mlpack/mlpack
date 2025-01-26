@@ -63,7 +63,12 @@ T& GetParam(
     if (arma::is_Row<T>::value || arma::is_Col<T>::value)
       data::Load(value, matrix, data::Fatal | data::Transpose);
     else
-      data::Load(value, matrix, true, !d.noTranspose);
+    {
+      data::DataOptions opts;
+      opts.Fatal() = true;
+      opts.noTranspose() = !d.noTranspose;
+      data::Load(value, matrix, opts);
+    }
     n_rows = matrix.n_rows;
     n_cols = matrix.n_cols;
     d.loaded = true;
@@ -92,8 +97,12 @@ T& GetParam(
   size_t& n_rows = std::get<1>(std::get<1>(*tuple));
   size_t& n_cols = std::get<2>(std::get<1>(*tuple));
   if (d.input && !d.loaded)
-  {
-    data::Load(value, std::get<1>(t), std::get<0>(t), true, !d.noTranspose);
+  {     
+    data::DataOptions opts;
+    opts.Fatal() = true;
+    opts.noTranspose() = !d.noTranspose;
+
+    data::Load(value, std::get<1>(t), std::get<0>(t), true);
     n_rows = std::get<1>(t).n_rows;
     n_cols = std::get<1>(t).n_cols;
     d.loaded = true;
@@ -120,8 +129,11 @@ T*& GetParam(
   const std::string& value = std::get<1>(*tuple);
   if (d.input && !d.loaded)
   {
+    data::DataOptions opts;
+    opts.Fatal() = true;
+    opts.Model() = true;
     T* model = new T();
-    data::Load(value, "model", *model, true);
+    data::Load(value, *model, opts);
     d.loaded = true;
     std::get<0>(*tuple) = model;
   }
