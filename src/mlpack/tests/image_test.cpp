@@ -164,13 +164,13 @@ TEST_CASE("ImagesResizeTest", "[ImageTest]")
   arma::Mat<unsigned char> image, images;
   data::ImageInfo info, resizedInfo, resizedInfo2;
   std::vector<std::string> files =
-      {"sheep_1.jpg", "sheep_2.jpg","sheep_3.jpg", "sheep_4.jpg",
+      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
        "sheep_5.jpg", "sheep_6.jpg"};
   std::vector<std::string> re_sheeps =
-      {"re_sheep_1.jpg", "re_sheep_2.jpg","re_sheep_3.jpg", "re_sheep_4.jpg",
+      {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
        "re_sheep_5.jpg", "re_sheep_6.jpg"};
   std::vector<std::string> sm_sheeps =
-      {"sm_sheep_1.jpg", "sm_sheep_2.jpg","sm_sheep_3.jpg", "sm_sheep_4.jpg",
+      {"sm_sheep_1.jpg", "sm_sheep_2.jpg", "sm_sheep_3.jpg", "sm_sheep_4.jpg",
        "sm_sheep_5.jpg", "sm_sheep_6.jpg"};
 
   // Load and Resize each one of them individually, because they do not have
