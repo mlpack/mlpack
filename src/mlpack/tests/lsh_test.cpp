@@ -113,9 +113,9 @@ TEST_CASE("NumTablesTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  if (!data::Load(trainSet, rdata))
+  if (!data::Load(trainSet, rdata, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset");
-  if (!data::Load(testSet, qdata))
+  if (!data::Load(testSet, qdata, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset");
 
   // Run classic knn on reference data.
@@ -187,9 +187,9 @@ TEST_CASE("HashWidthTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  if (!data::Load(trainSet, rdata))
+  if (!data::Load(trainSet, rdata, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset");
-  if (!data::Load(testSet, qdata))
+  if (!data::Load(testSet, qdata, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset");
 
   // Run classic knn on reference data.
@@ -249,9 +249,9 @@ TEST_CASE("NumProjTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  if (!data::Load(trainSet, rdata))
+  if (!data::Load(trainSet, rdata, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset");
-  if (!data::Load(testSet, qdata))
+  if (!data::Load(testSet, qdata, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset");
 
   // Run classic knn on reference data.
@@ -311,9 +311,9 @@ TEST_CASE("RecallTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  if (!data::Load(trainSet, rdata))
+  if (!data::Load(trainSet, rdata, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset");
-  if (!data::Load(testSet, qdata))
+  if (!data::Load(testSet, qdata, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset");
 
   // Run classic knn on reference data.
@@ -508,9 +508,9 @@ TEST_CASE("MultiprobeTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  if (!data::Load(trainSet, rdata))
+  if (!data::Load(trainSet, rdata, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset");
-  if (!data::Load(testSet, qdata))
+  if (!data::Load(testSet, qdata, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset");
 
   // Add a slight amount of noise to the dataset, so that we don't end up with
@@ -783,9 +783,9 @@ TEST_CASE("ParallelBichromatic", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  if (!data::Load(trainSet, rdata))
+  if (!data::Load(trainSet, rdata, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset");
-  if (!data::Load(testSet, qdata))
+  if (!data::Load(testSet, qdata, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset");
 
   // Where to store neighbors and distances
@@ -824,7 +824,7 @@ TEST_CASE("ParallelMonochromatic", "[LSHTest]")
   // Read iris training data as reference and query set.
   const string trainSet = "iris_train.csv";
   arma::mat rdata;
-  if (!data::Load(trainSet, rdata))
+  if (!data::Load(trainSet, rdata, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset");
 
   // Where to store neighbors and distances
@@ -942,9 +942,9 @@ TEST_CASE("SparseLSHTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  if (!data::Load(trainSet, rdata))
+  if (!data::Load(trainSet, rdata, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset");
-  if (!data::Load(testSet, qdata))
+  if (!data::Load(testSet, qdata, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset");
 
   // Run on dense data.

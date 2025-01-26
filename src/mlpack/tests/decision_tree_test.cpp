@@ -861,7 +861,7 @@ TEST_CASE("BestCategoricalBuildBinaryTest", "[DecisionTreeTest]")
   data::DatasetInfo dataInfo;
 
   data::Load("mushroom.data.csv", dataset, dataInfo);
-  data::Load("mushroom.labels.csv", labels, true);
+  data::Load("mushroom.labels.csv", labels, data::Fatal | data::Transpose);
 
   arma::mat trainDataset, testDataset;
   arma::Row<size_t> trainLabels, testLabels;
@@ -1198,11 +1198,13 @@ TEST_CASE("ClassProbabilityTest", "[DecisionTreeTest]")
 TEST_CASE("SimpleGeneralizationTest", "[DecisionTreeTest]")
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -1214,11 +1216,13 @@ TEST_CASE("SimpleGeneralizationTest", "[DecisionTreeTest]")
 
   // Load testing data.
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!data::Load("vc2_test.csv", testData, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load test dataset vc2_test.csv!");
 
   arma::Mat<size_t> trueTestLabels;
-  if (!data::Load("vc2_test_labels.txt", trueTestLabels))
+  if (!data::Load("vc2_test_labels.txt", trueTestLabels, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load labels for vc2_test_labels.txt");
 
   // Get the predicted test labels.
@@ -1258,11 +1262,13 @@ TEST_CASE("SimpleGeneralizationTest", "[DecisionTreeTest]")
 TEST_CASE("SimpleGeneralizationFMatTest", "[DecisionTreeTest]")
 {
   arma::fmat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -1274,11 +1280,13 @@ TEST_CASE("SimpleGeneralizationFMatTest", "[DecisionTreeTest]")
 
   // Load testing data.
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!data::Load("vc2_test.csv", testData, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load test dataset vc2_test.csv!");
 
   arma::Mat<size_t> trueTestLabels;
-  if (!data::Load("vc2_test_labels.txt", trueTestLabels))
+  if (!data::Load("vc2_test_labels.txt", trueTestLabels, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load labels for vc2_test_labels.txt");
 
   // Get the predicted test labels.
@@ -1393,9 +1401,11 @@ TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  if (!data::Load("vc2.csv", dataset))
+  if (!data::Load("vc2.csv", dataset, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load test dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt!");
 
   // Add some noise.
@@ -1421,9 +1431,11 @@ TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
   // Now we can check that we get good performance on the VC2 test set.
   arma::mat testData;
   arma::Row<size_t> testLabels;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!data::Load("vc2_test.csv", testData, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load test dataset vc2_test.csv!");
-  if (!data::Load("vc2_test_labels.txt", testLabels))
+  if (!data::Load("vc2_test_labels.txt", testLabels, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load labels for vc2_test_labels.txt!");
 
   arma::Row<size_t> predictions;
@@ -1506,9 +1518,11 @@ TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  if (!data::Load("vc2.csv", dataset))
+  if (!data::Load("vc2.csv", dataset, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load test dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt!");
 
   // Add some noise.
@@ -1534,9 +1548,11 @@ TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
   // Now we can check that we get good performance on the VC2 test set.
   arma::mat testData;
   arma::Row<size_t> testLabels;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!data::Load("vc2_test.csv", testData, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load test dataset vc2_test.csv!");
-  if (!data::Load("vc2_test_labels.txt", testLabels))
+  if (!data::Load("vc2_test_labels.txt", testLabels, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load labels for vc2_test_labels.txt!");
 
   arma::Row<size_t> predictions;
@@ -1696,9 +1712,11 @@ TEST_CASE("NumClassesTest", "[DecisionTreeTest]")
   // Load a dataset to train with.
   arma::mat dataset;
   arma::Row<size_t> labels;
-  if (!data::Load("vc2.csv", dataset))
+  if (!data::Load("vc2.csv", dataset, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load test dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt!");
 
   DecisionTree<> dt(dataset, labels, 3);
@@ -1828,9 +1846,11 @@ TEST_CASE("DifferentMaximumDepthTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  if (!data::Load("vc2.csv", dataset))
+  if (!data::Load("vc2.csv", dataset, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load test dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt!");
 
   DecisionTree<> d(dataset, labels, 3, 10, 1e-7, 1);

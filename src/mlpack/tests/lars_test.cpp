@@ -151,9 +151,9 @@ TEST_CASE("CholeskySingularityTest", "[LARSTest]")
   arma::mat X;
   arma::mat Y;
 
-  if (!data::Load("lars_dependent_x.csv", X))
+  if (!data::Load("lars_dependent_x.csv", X, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset lars_dependent_x.csv");
-  if (!data::Load("lars_dependent_y.csv", Y))
+  if (!data::Load("lars_dependent_y.csv", Y, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset lars_dependent_y.csv");
 
   arma::rowvec y = Y.row(0);
@@ -178,9 +178,9 @@ TEST_CASE("NoCholeskySingularityTest", "[LARSTest]")
   arma::mat X;
   arma::mat Y;
 
-  if (!data::Load("lars_dependent_x.csv", X))
+  if (!data::Load("lars_dependent_x.csv", X, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset lars_dependent_x.csv");
-  if (!data::Load("lars_dependent_y.csv", Y))
+  if (!data::Load("lars_dependent_y.csv", Y, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset lars_dependent_y.csv");
 
   arma::rowvec y = Y.row(0);
@@ -569,9 +569,9 @@ TEST_CASE("LARSTrainReturnCorrelation", "[LARSTest]")
   arma::mat X;
   arma::mat Y;
 
-  if (!data::Load("lars_dependent_x.csv", X))
+  if (!data::Load("lars_dependent_x.csv", X, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset lars_dependent_x.csv");
-  if (!data::Load("lars_dependent_y.csv", Y))
+  if (!data::Load("lars_dependent_y.csv", Y, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset lars_dependent_y.csv");
 
   arma::rowvec y = Y.row(0);
@@ -616,9 +616,9 @@ TEMPLATE_TEST_CASE("LARSTestComputeError", "[LARSTest]", arma::fmat, arma::mat)
   MatType X;
   MatType Y;
 
-  if (!data::Load("lars_dependent_x.csv", X))
+  if (!data::Load("lars_dependent_x.csv", X, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset lars_dependent_x.csv");
-  if (!data::Load("lars_dependent_y.csv", Y))
+  if (!data::Load("lars_dependent_y.csv", Y, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset lars_dependent_y.csv");
 
   arma::Row<ElemType> y = Y.row(0);
@@ -643,9 +643,10 @@ TEST_CASE("LARSCopyConstructorTest", "[LARSTest]")
   arma::rowvec targets;
 
   // Load training input and predictions for testing.
-  if (!data::Load("lars_dependent_x.csv", features))
+  if (!data::Load("lars_dependent_x.csv", features, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load dataset lars_dependent_x.csv");
-  if (!data::Load("lars_dependent_y.csv", Y))
+  if (!data::Load("lars_dependent_y.csv", Y, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset lars_dependent_y.csv");
   targets = Y.row(0);
 

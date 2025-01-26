@@ -35,7 +35,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNExplicitImplicitLabelsTest",
 {
   // Dataset containing labels as last column.
   arma::mat inputData;
-  if (!data::Load("iris_train.csv", inputData))
+  if (!data::Load("iris_train.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris.csv!");
 
   SetInputParam("input", inputData);
@@ -57,11 +57,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNExplicitImplicitLabelsTest",
 
   // Now check that when labels are explicitely given, the last column
   // of input is not treated as labels.
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!data::Load("iris_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris_labels.txt!");
 
   SetInputParam("input", inputData);
@@ -88,11 +88,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNOptimizerTest",
                 "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!data::Load("iris_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris_labels.txt!");
 
   // Input random data points.
@@ -163,11 +163,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNValidDistanceTest",
                 "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!data::Load("iris_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris_labels.txt!");
 
   // Initial learning point.
@@ -200,11 +200,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNValidDistanceTest2",
                 "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!data::Load("iris_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris_labels.txt!");
 
   // Initial learning point (square matrix).
@@ -237,11 +237,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNInvalidDistanceTest",
                 "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!data::Load("iris_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris_labels.txt!");
 
   // Initial learning point.
@@ -294,11 +294,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNormalizationTest",
                 "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!data::Load("iris_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters and set normalize to true.
@@ -337,11 +337,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffStepSizeTest",
                 "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!data::Load("iris_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters with a small step_size.
@@ -380,11 +380,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffToleranceTest",
                 "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!data::Load("iris_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters with a small tolerance.
@@ -420,11 +420,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffBatchSizeTest",
                 "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!data::Load("iris_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters with a small batch_size.
@@ -463,11 +463,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNumTargetsTest",
                 "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!data::Load("iris_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters.
@@ -506,11 +506,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRegularizationTest",
                 "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!data::Load("iris_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters.
@@ -549,11 +549,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRangeTest",
                 "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!data::Load("iris_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters.
@@ -591,11 +591,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffMaxIterationTest",
                 "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!data::Load("iris_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters with a small max_iterations.
@@ -638,11 +638,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffPassesTest",
                 "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!data::Load("iris_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters with a small passes.
@@ -682,11 +682,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNBoundsTest",
                 "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!data::Load("iris_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load iris_labels.txt!");
 
   // Test for number of targets value.

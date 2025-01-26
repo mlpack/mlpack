@@ -31,7 +31,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFRankBoundTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
 
   // Rank should not be negative.
   SetInputParam("rank", int(-1));
@@ -47,7 +47,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFMinResidueBoundTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
 
   // min_residue should not be negative.
   SetInputParam("min_residue", double(-1));
@@ -63,7 +63,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFMaxIterationsBoundTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
 
   // max_iterations should not be negative.
   SetInputParam("max_iterations", int(-1));
@@ -79,7 +79,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFRecommendationsBoundTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
 
   // recommendations should not be zero.
   SetInputParam("recommendations", int(0));
@@ -102,7 +102,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFNeighborhoodBoundTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
   const size_t userNum = max(dataset.row(0)) + 1;
 
   // neighborhood should not be zero.
@@ -131,7 +131,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFAlgorithmBoundTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
 
   // algorithm should be valid.
   SetInputParam("algorithm", std::string("invalid_algorithm"));
@@ -151,7 +151,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFModelReuseTest",
       "BiasSVD", "SVDPP" };
 
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
 
   for (std::string& algorithm : algorithms)
   {
@@ -191,7 +191,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFAllUserRecommendationsTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
   const size_t userNum = max(dataset.row(0)) + 1;
 
   SetInputParam("training", std::move(dataset));
@@ -212,7 +212,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFRankTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
   size_t rank = 7;
 
   SetInputParam("training", std::move(dataset));
@@ -237,7 +237,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFMinResidueTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
   const CFModel* outputModel;
 
   // Set a larger min_residue.
@@ -289,7 +289,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFIterationOnlyTerminationTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
   const CFModel* outputModel;
 
   // Set iteration_only_termination.
@@ -340,7 +340,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFMaxIterationsTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
   const CFModel* outputModel;
 
   // Set a larger max_iterations.
@@ -390,7 +390,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFNeighborhoodTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
 
   const int querySize = 7;
   Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
@@ -432,7 +432,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFInterpolationAlgorithmBoundTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
 
   const int querySize = 7;
   Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
@@ -452,7 +452,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFInterpolationTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
 
   const int querySize = 7;
   Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
@@ -517,7 +517,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFNeighborSearchAlgorithmBoundTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
 
   const int querySize = 7;
   Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
@@ -537,7 +537,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFNeighborSearchTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
 
   const int querySize = 7;
   Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
@@ -625,7 +625,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFNormalizationTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
 
   const int querySize = 7;
   Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
