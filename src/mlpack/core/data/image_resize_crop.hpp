@@ -132,8 +132,10 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
       " dimensions to the image matrix" << std::endl;
     Log::Fatal << oss.str();
   }
+
   size_t newDimension = newWidth * newHeight * info.Channels();
-  arma::Mat<eT> resizedImages (newDimension, images.n_cols);
+  arma::Mat<eT> resizedImages(newDimension, images.n_cols);
+
   for (size_t i = 0; i < images.n_cols; ++i)
   {
     arma::Col<eT> tempImage = std::move(images.col(i));
