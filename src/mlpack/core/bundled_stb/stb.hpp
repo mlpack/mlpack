@@ -49,7 +49,7 @@
     #ifndef MLPACK_DISABLE_STB
       #define MLPACK_DISABLE_STB
     #endif
-    #pragma message("Warning: STB disabled; stb_image.h header not found")
+    #pragma message("Warning: STB disabled; stb_image.h not found")
   #endif
 #endif
 
@@ -62,7 +62,7 @@
     #ifndef MLPACK_DISABLE_STB
       #define MLPACK_DISABLE_STB
     #endif
-    #pragma message("Warning: STB disabled; stb_image_write.h header not found")
+    #pragma message("Warning: STB disabled; stb_image_write.h not found")
   #endif
 #endif
 
@@ -75,7 +75,7 @@
     #ifndef MLPACK_DISABLE_STB
       #define MLPACK_DISABLE_STB
     #endif
-    #pragma message("Warning: STB disabled; stb_image_resize2.h header not found")
+    #pragma message("Warning: STB disabled; stb_image_resize2.h not found")
   #endif
 #endif
 
