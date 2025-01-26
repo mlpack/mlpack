@@ -61,7 +61,7 @@ T& GetParam(
   {
     // Call correct data::Load() function.
     if (arma::is_Row<T>::value || arma::is_Col<T>::value)
-      data::Load(value, matrix, true);
+      data::Load(value, matrix, data::Fatal | data::Transpose);
     else
       data::Load(value, matrix, true, !d.noTranspose);
     n_rows = matrix.n_rows;
