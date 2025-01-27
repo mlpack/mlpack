@@ -14,7 +14,7 @@
 #define MLPACK_CORE_DATA_IMAGE_RESIZE_CROP_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/bundled_stb/stb.hpp>
+#include <mlpack/core/stb/stb.hpp>
 
 #include "image_info.hpp"
 
@@ -61,7 +61,7 @@ inline void InternalResize(MatType& image, const data::ImageInfo& info,
     arma::fmat tempDestFloat(newDimension, 1);
     stbir_resize_float_linear(image.memptr(), info.Width(), info.Height(), 0,
         tempDestFloat.memptr(), newWidth, newHeight, 0, channels);
-    image = std::move(tempDest);
+    image = std::move(tempDestFloat);
   }
   else
   {
