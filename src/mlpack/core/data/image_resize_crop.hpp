@@ -52,8 +52,7 @@ inline void InternalResize(MatType& image, const data::ImageInfo& info,
   if constexpr (std::is_same<eT, unsigned char>::value)
   {
     stbir_resize_uint8_linear(image.memptr(), info.Width(), info.Height(), 0,
-                       tempDest.memptr(), newWidth, newHeight, 0,
-                       channels);
+        tempDest.memptr(), newWidth, newHeight, 0, channels);
 
     image = std::move(tempDest);
   }
