@@ -60,7 +60,7 @@
 
 //
 // STB is part of mlpack. If the user does not want to use the integrated
-// version of STB then please define MLPACK_DISABLE_STB in your CMake file.
+// version of STB then please define MLPACK_DISABLE_STB in your build.
 //
 #define MLPACK_STB
 #if defined(MLPACK_DISABLE_STB) || defined(MLPACK_USE_SYSTEM_STB)
@@ -69,6 +69,10 @@
 
 #if !defined(MLPACK_USE_SYSTEM_STB)
   // #define MLPACK_USE_SYSTEM_STB
+#endif
+
+#if !defined(MLPACK_DISABLE_STB)
+  // #define MLPACK_DISABLE_STB
 #endif
 
 //

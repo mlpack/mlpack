@@ -24,7 +24,6 @@
 #include "load_csv.hpp"
 #include "load_arff.hpp"
 #include "load_image.hpp"
-#include "image_resize_crop.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {

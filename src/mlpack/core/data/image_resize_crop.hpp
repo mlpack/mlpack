@@ -47,10 +47,10 @@ inline void InternalResize(MatType& image, const data::ImageInfo& info,
   // This is required since STB only accept unsigned chars.
   // set the new matrix size for copy
   size_t newDimension = newWidth * newHeight * info.Channels();
-  arma::Mat<unsigned char> tempDest(newDimension, 1);
 
   if constexpr (std::is_same<eT, unsigned char>::value)
   {
+    arma::Mat<unsigned char> tempDest(newDimension, 1);
     stbir_resize_uint8_linear(image.memptr(), info.Width(), info.Height(), 0,
         tempDest.memptr(), newWidth, newHeight, 0, channels);
 
@@ -67,6 +67,8 @@ inline void InternalResize(MatType& image, const data::ImageInfo& info,
   {
     arma::Mat<unsigned char> tempSrc =
         arma::conv_to<arma::Mat<unsigned char>>::from(image);
+
+    arma::Mat<unsigned char> tempDest(newDimension, 1);
 
     stbir_resize_uint8_linear(tempSrc.memptr(), info.Width(), info.Height(), 0,
         tempDest.memptr(), newWidth, newHeight, 0, channels);
