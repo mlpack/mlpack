@@ -528,17 +528,12 @@ mlpack::data::Save(outImages, matrix, info);
 It is possible to resize images in mlpack with the following functions:
 
  - `Resize(image, info, newWidth, newHeight)`
-   * `image` an armadillo matrix contains one column representing the image as
-   a flattened vector.
-
-   * `info` will be populated with information from the image in `image`.
-
-   * `newWidth` the new width of the resized image.
-
-   * `newHeight` the new height of the resized image.
-
-   * This function does not return but it modifies the info object and image
-     matrix.
+   * Resize the image `image` to have width `newWidth` and height `newHeight`.
+   * `image` should be an `arma::mat&` or similar matrix type with a single column representing the image to resize.
+   * `info` should be a [`data::ImageInfo&`](#imageinfo) with the current size and parameters of `image`.
+   * An exception will be thrown if the parameters of `info` do not match `image`.
+   * `image` and `info` will be modified in-place.
+   * ***NOTE:*** if the element type of the matrix is not `unsigned char` or `float` (e.g. if `image` is not `arma::Mat<unsigned char>` or `arma::fmat`), the matrix will be temporarily converted during resizing; therefore, using `unsigned char` or `float` as the element type is the most efficient.
 
 ---
 
