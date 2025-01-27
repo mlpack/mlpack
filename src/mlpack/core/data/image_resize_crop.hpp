@@ -61,8 +61,7 @@ inline void InternalResize(MatType& image, const data::ImageInfo& info,
   {
     arma::fmat tempDestFloat(newDimension, 1);
     stbir_resize_float_linear(image.memptr(), info.Width(), info.Height(), 0,
-                       tempDestFloat.memptr(), newWidth, newHeight, 0,
-                       channels);
+        tempDestFloat.memptr(), newWidth, newHeight, 0, channels);
     image = std::move(tempDest);
   }
   else
