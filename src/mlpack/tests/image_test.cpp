@@ -189,13 +189,13 @@ TEST_CASE("ImagesResizeTest", "[ImageTest]")
   REQUIRE(info.Width() == resizedInfo.Width());
   REQUIRE(info.Height() == resizedInfo.Height());
 
-  REQUIRE(data::Load(re_sheeps, images, info, false) == true);
+  REQUIRE(data::Load(reSheeps, images, info, false) == true);
 
   ResizeImages(images, info, 160, 160);
 
-  REQUIRE(data::Save(sm_sheeps, images, info, false) == true);
+  REQUIRE(data::Save(smSheeps, images, info, false) == true);
 
-  REQUIRE(data::Load(sm_sheeps, images, resizedInfo2, false) == true);
+  REQUIRE(data::Load(smSheeps, images, resizedInfo2, false) == true);
 
   REQUIRE(info.Width() == resizedInfo2.Width());
   REQUIRE(info.Height() == resizedInfo2.Height());
