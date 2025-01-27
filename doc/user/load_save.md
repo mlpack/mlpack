@@ -525,7 +525,7 @@ mlpack::data::Save(outImages, matrix, info);
 
 ### Resize Image
 
-It is possible to resize images in mlpack with the following functions
+It is possible to resize images in mlpack with the following functions:
 
  - `Resize(image, info, newWidth, newHeight)`
    * `image` an armadillo matrix contains one column representing the image as
