@@ -1,0 +1,24 @@
+# This action sets up any language-specific environment for any of mlpack's
+# bindings.
+name: "Set up binding environments"
+description: "Install build and runtime dependencies for mlpack's bindings to other languages."
+inputs:
+  lang:
+    required: true
+    description: "The language to set up bindings for."
+
+runs:
+  using: "composite"
+  steps:
+  - name: "Set up Python"
+    if: ${{ lang == 'Python' }}
+    run: |
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade --ignore-installed setuptools cython \
+            pandas wheel pytest
+
+  - name: "Set up Julia"
+    if: ${{ lang == 'Julia' }}
+    run: |
+        wget https://julialang-s3.julialang.org/bin/linux/x64/1.10/julia-1.10.4-linux-x86_64.tar.gz
+        sudo tar -C /opt/ -xvpf julia-1.10.4-linux-x86_64.tar.gz
