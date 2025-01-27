@@ -166,10 +166,10 @@ TEST_CASE("ImagesResizeTest", "[ImageTest]")
   std::vector<std::string> files =
       {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
        "sheep_5.jpg", "sheep_6.jpg"};
-  std::vector<std::string> re_sheeps =
+  std::vector<std::string> reSheeps =
       {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
        "re_sheep_5.jpg", "re_sheep_6.jpg"};
-  std::vector<std::string> sm_sheeps =
+  std::vector<std::string> smSheeps =
       {"sm_sheep_1.jpg", "sm_sheep_2.jpg", "sm_sheep_3.jpg", "sm_sheep_4.jpg",
        "sm_sheep_5.jpg", "sm_sheep_6.jpg"};
 
