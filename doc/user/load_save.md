@@ -340,6 +340,50 @@ The `data::ImageInfo` class contains the metadata of the images.
 
 ---
 
+Example usage of the Resize and ResizeImages function on a set of images:
+
+```c++
+arma::Mat<unsigned char> image, images;
+data::ImageInfo info;
+
+// The images are located in our test/data directory. However, any image could
+// be used instead.
+std::vector<std::string> files =
+    {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
+     "sheep_5.jpg", "sheep_6.jpg"};
+
+// The resized images will be saved locally. We are declaring the vector that
+// contains the names of the resized images.
+std::vector<std::string> reSheeps =
+    {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
+     "re_sheep_5.jpg", "re_sheep_6.jpg"};
+
+// Load and Resize each one of them individually, because they do not have
+// the same dimensions. The `info` will contain the dimension for each one.
+for (size_t i = 0; i < files.size(); i++)
+{
+  data::Load(files.at(i), image, info, false);
+  Resize(image, info, 320, 320);
+  data::Save(reSheeps.at(i), image, info, false);
+}
+
+// Now all images have the same dimension, It would be possible to load all of
+// them into one matrix
+
+data::Load(reSheeps, images, resizedInfo, false);
+
+// Now let us resize all these images at once, to specific dimensions.
+ResizeImages(images, info, 160, 160);
+
+// The resized images will be saved locally. We are declaring the vector that
+// contains the names of the resized images.
+std::vector<std::string> smSheeps =
+    {"sm_sheep_1.jpg", "sm_sheep_2.jpg", "sm_sheep_3.jpg", "sm_sheep_4.jpg",
+     "sm_sheep_5.jpg", "sm_sheep_6.jpg"};
+
+data::Save(smSheeps, images, info, false);
+```
+
 #### Constructors
 
  - `info = data::ImageInfo()`
