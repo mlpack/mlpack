@@ -187,15 +187,13 @@ The following options can be used when configuring mlpack.
 | ***Option*** | ***Description*** | ***Default*** |
 |--------------|-------------------|---------------|
 | ***General configuration*** |||
+| `-DCMAKE_BUILD_TYPE="build type"` | Specify the build configuration: `"Debug"`, `"Release"`, `"RelWithDebInfo"`, `"MinSizeRel"`.  See the [CMake documentation](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html#variable:CMAKE_BUILD_TYPE). | `"Release"`|
 | `-DDOWNLOAD_DEPENDENCIES=ON` | Download all dependencies that are not found on the system. | `OFF` |
-| `-DDEBUG=ON` | Compile with debugging symbols. | `OFF` |
-| `-DPROFILE=ON` | Compile with profiling symbols. | `OFF` |
 | `-DARMA_EXTRA_DEBUG=ON` | Emit extra Armadillo debugging output (warning: *very* verbose). | `OFF` |
 | `-DTEST_VERBOSE=ON` | Emit verbose output when running tests. | `OFF` |
 | `-DBUILD_TESTS=ON` | Build `mlpack_test`. | `OFF` |
 | `-DUSE_OPENMP=ON` | Use OpenMP for parallelization. | `ON` |
-| `-DUSE_PRECOMPILED_HEADERS=OFF` | Disable precompiled headers during build. |
-`OFF` |
+| `-DUSE_PRECOMPILED_HEADERS=OFF` | Disable precompiled headers during build. | `OFF` |
 |--------------|-------------------|---------------|
 | ***Dependency locations*** |||
 | `-DARMADILLO_INCLUDE_DIR=/path/to/arma/include/` | Path containing `armadillo` header file. ||
