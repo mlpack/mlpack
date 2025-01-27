@@ -184,7 +184,7 @@ TEST_CASE("ImagesResizeTest", "[ImageTest]")
   }
 
   // Since they are all resized, this should passes
-  REQUIRE(data::Load(re_sheeps, images, resizedInfo, false) == true);
+  REQUIRE(data::Load(reSheeps, images, resizedInfo, false) == true);
 
   REQUIRE(info.Width() == resizedInfo.Width());
   REQUIRE(info.Height() == resizedInfo.Height());
