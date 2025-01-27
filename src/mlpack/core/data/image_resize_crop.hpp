@@ -70,8 +70,7 @@ inline void InternalResize(MatType& image, const data::ImageInfo& info,
         arma::conv_to<arma::Mat<unsigned char>>::from(image);
 
     stbir_resize_uint8_linear(tempSrc.memptr(), info.Width(), info.Height(), 0,
-                       tempDest.memptr(), newWidth, newHeight, 0,
-                       channels);
+        tempDest.memptr(), newWidth, newHeight, 0, channels);
 
     image = arma::conv_to<arma::Mat<eT>>::from(tempDest);
   }
