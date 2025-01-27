@@ -208,10 +208,7 @@ class SequentialBootstrap
         ComputeNextDrawProbabilities(phi, i, concurrency, intervals);
       assert(d.Probabilities().size() == intervals.n_cols);
 
-      const arma::vec sample(d.Random());
-
-      assert(sample.size() == 1);
-      phi[i] = sample[0];
+      phi[i] = d.Random()[0];
       concurrency.subvec(intervals(0, phi[i]), intervals(1, phi[i])) += 1.0;
     }
 
