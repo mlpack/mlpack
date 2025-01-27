@@ -523,7 +523,7 @@ outImages.push_back("bandicoot-favicon-inv.jpeg");
 mlpack::data::Save(outImages, matrix, info);
 ```
 
-### Resize Image
+### Resize images
 
 It is possible to resize images in mlpack with the following functions:
 
