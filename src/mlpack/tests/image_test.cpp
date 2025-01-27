@@ -201,10 +201,10 @@ TEST_CASE("ImagesResizeTest", "[ImageTest]")
   REQUIRE(info.Height() == resizedInfo2.Height());
 
   // cleanup generated images.
-  for (size_t i = 0; i < re_sheeps.size(); ++i)
+  for (size_t i = 0; i < reSheeps.size(); ++i)
   {
-    remove(re_sheeps.at(i).c_str());
-    remove(sm_sheeps.at(i).c_str());
+    remove(reSheeps.at(i).c_str());
+    remove(smSheeps.at(i).c_str());
   }
 }
 
