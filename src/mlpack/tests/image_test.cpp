@@ -180,7 +180,7 @@ TEST_CASE("ImagesResizeTest", "[ImageTest]")
   {
     REQUIRE(data::Load(files.at(i), image, info, false) == true);
     Resize(image, info, 320, 320);
-    REQUIRE(data::Save(re_sheeps.at(i), image, info, false) == true);
+    REQUIRE(data::Save(reSheeps.at(i), image, info, false) == true);
   }
 
   // Since they are all resized, this should passes
