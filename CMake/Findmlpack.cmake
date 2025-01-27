@@ -4,8 +4,23 @@
 # This module will look for mlpack dependencies and then look for mlpack itself
 # if it is here or not.
 # 
-# We are basically inlining the previous ensmallen and Cereal into this file.
+# We are basically inlining the previous Armadillo, Ensmallen and
+# Cereal into this file.
 #
+# This module sets the following variables:
+#  MLPACK_FOUND - set to true if the library is found
+#  MLPACK_VERSION_MAJOR - major version number
+#  MLPACK_VERSION_MINOR - minor version number
+#  MLPACK_VERSION_PATCH - patch version number
+#  MLPACK_VERSION_STRING - version number as a string (ex: "1.0.4")
+#  MLPACK_INCLUDE_DIRS - list of required include directories
+#  MLPACK_LIBRARIES - list of required libraries
+
+set(MLPACK_DISABLE_OPENMP OFF)
+
+if (USE_OPENMP)
+  set(MLPACK_DISABLE_OPENMP ON)
+endif()
 
 # 1. Let us find Armadillo
 find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
@@ -14,10 +29,7 @@ if (ARMADILLO_FOUND)
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 else ()
-  message(FATAL_ERROR
-    "Armadillo library is not found, please make sure to install Armadillo,"
-    " or use the autodownloader. mlpack can not be installed without Armadillo"
-  )
+  message(FATAL_ERROR "Armadillo not found, (required dependency of mlpack).")
 endif()
 
 # Findcereal.cmake
@@ -77,9 +89,7 @@ file(GLOB MLPACK_SEARCH_PATHS
 if (CEREAL_FOUND)
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
 else()
-  message(FATAL_ERROR
-    "Cereal library is not found, please make sure to install cereal, or use"
-    " the autodownloader. mlpack can not be installed without cereal")
+  message(FATAL_ERROR "Cereal not found, (required dependency of mlpack).")
 endif()
 
 # - Find Ensmallen
@@ -139,9 +149,7 @@ mark_as_advanced(ENSMALLEN_INCLUDE_DIR)
 if (ENSMALLEN_FOUND)
     set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 else()
-  message(FATAL_ERROR 
-    "Ensmallen library is not found, please make sure to install ensmallen,"
-    " or use the autodownloader. mlpack can not be installed without cereal")
+  message(FATAL_ERROR "Ensmallen not found, (required dependency of mlpack).")
 endif()
 
 if (USE_OPENMP)
@@ -161,14 +169,6 @@ else ()
   endif ()
   set(OpenMP_CXX_FLAGS "")
 endif ()
-
-# This module sets the following variable:
-#  MLPACK_FOUND - set to true if the library is found
-#  MLPACK_INCLUDE_DIR - list of required include directories
-#  MLPACK_VERSION_MAJOR - major version number
-#  MLPACK_VERSION_MINOR - minor version number
-#  MLPACK_VERSION_PATCH - patch version number
-#  MLPACK_VERSION_STRING - version number as a string (ex: "1.0.4")
 
 # This will be executed if mlpack is installed already.
 find_path(MLPACK_INCLUDE_DIR
@@ -218,3 +218,6 @@ find_package_handle_standard_args(mlpack
 mark_as_advanced(MLPACK_INCLUDE_DIR)
 
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${MLPACK_INCLUDE_DIR}")
+
+mark_as_advanced(MLPACK_INCLUDE_DIRS)
+mark_as_advanced(MLPACK_LIBRARIES)
