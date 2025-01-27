@@ -16,8 +16,8 @@ option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DOWNLOAD_DEPENDENCIES "Automatically download dependencies if not available." OFF)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." ON)
-option(MLPACK_USE_SYSTEM_STB "Use system STB instead of version bundled with mlpack." OFF)
-option(MLPACK_DISABLE_STB "Do not compile mlpack with STB." OFF)
+option(USE_SYSTEM_STB "Use system STB instead of version bundled with mlpack." OFF)
+option(DISABLE_STB "Do not compile mlpack with STB." OFF)
 
 # Set minimum library versions required by mlpack.
 #
@@ -28,9 +28,9 @@ set(ARMADILLO_VERSION "10.8")
 set(ENSMALLEN_VERSION "2.10.0")
 set(CEREAL_VERSION "1.1.2")
 
-if (MLPACK_DISABLE_STB)
+if (DISABLE_STB)
   add_definitions(-DMLPACK_DISABLE_STB)
-  set(MLPACK_USE_SYSTEM_STB OFF)
+  set(USE_SYSTEM_STB OFF)
 endif()
 
 if (NOT CMAKE_BUILD_TYPE)
@@ -321,11 +321,12 @@ endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
-if (MLPACK_USE_SYSTEM_STB)
+if (USE_SYSTEM_STB)
   find_package(StbImage REQUIRED)
 endif()
 if (StbImage_FOUND)
   set(STB_AVAILABLE "1")
+  add_definitions(-DMLPACK_USE_SYSTEM_STB)
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
 
   # Make sure that we can link STB in multiple translation units.
@@ -337,10 +338,6 @@ if (StbImage_FOUND)
         "CMake configuration command.")
   endif()
 endif()
-
-if (STB_AVAILABLE)
-  add_definitions(-DMLPACK_USE_SYSTEM_STB)
-endif ()
 
 # Find ensmallen.
 if (NOT DOWNLOAD_DEPENDENCIES)
@@ -491,9 +488,14 @@ if (USING_GIT)
       "#define MLPACK_GIT_VERSION\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif ()
 
-if (MLPACK_USE_SYSTEM_STB)
+if (USE_SYSTEM_STB)
   string(REGEX REPLACE "// #define MLPACK_USE_SYSTEM_STB\n"
       "#define MLPACK_USE_SYSTEM_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
+if (DISABLE_STB)
+  string(REGEX REPLACE "// #define MLPACK_DISABLE_STB\n"
+    "#define MLPACK_DISABLE_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif()
 
 file(WRITE ${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp "${CONFIG_CONTENTS}")
