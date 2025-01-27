@@ -27,8 +27,12 @@ KFoldCV<MLAlgorithm,
                               const MatType& xs,
                               const PredictionsType& ys,
                               const bool shuffle) :
-    KFoldCV(Base(), k, xs, ys, shuffle)
-{ /* Nothing left to do. */ }
+    KFoldCVBase(k, xs, ys)
+{
+  // Do we need to shuffle the dataset?
+  if (shuffle)
+    Shuffle();
+}
 
 template<typename MLAlgorithm,
          typename Metric,
@@ -44,8 +48,12 @@ KFoldCV<MLAlgorithm,
                               const PredictionsType& ys,
                               const size_t numClasses,
                               const bool shuffle) :
-    KFoldCV(Base(numClasses), k, xs, ys, shuffle)
-{ /* Nothing left to do. */ }
+    KFoldCVBase(k, xs, ys, numClasses)
+{
+  // Do we need to shuffle the dataset?
+  if (shuffle)
+    Shuffle();
+}
 
 template<typename MLAlgorithm,
          typename Metric,
@@ -62,8 +70,12 @@ KFoldCV<MLAlgorithm,
                               const PredictionsType& ys,
                               const size_t numClasses,
                               const bool shuffle) :
-    KFoldCV(Base(datasetInfo, numClasses), k, xs, ys, shuffle)
-{ /* Nothing left to do. */ }
+    KFoldCVBase(k, xs, datasetInfo, ys, numClasses)
+{
+  // Do we need to shuffle the dataset?
+  if (shuffle)
+    Shuffle();
+}
 
 template<typename MLAlgorithm,
          typename Metric,
@@ -79,8 +91,12 @@ KFoldCV<MLAlgorithm,
                               const PredictionsType& ys,
                               const WeightsType& weights,
                               const bool shuffle) :
-    KFoldCV(Base(), k, xs, ys, weights, shuffle)
-{ /* Nothing left to do. */ }
+    KFoldCVBase(k, xs, ys, weights)
+{ 
+  // Do we need to shuffle the dataset?
+  if (shuffle)
+    Shuffle();
+}
 
 template<typename MLAlgorithm,
          typename Metric,
@@ -97,8 +113,12 @@ KFoldCV<MLAlgorithm,
                               const size_t numClasses,
                               const WeightsType& weights,
                               const bool shuffle) :
-    KFoldCV(Base(numClasses), k, xs, ys, weights, shuffle)
-{ /* Nothing left to do. */ }
+    KFoldCVBase(k, xs, ys, numClasses, weights)
+{
+  // Do we need to shuffle the dataset?
+  if (shuffle)
+    Shuffle();
+}
 
 template<typename MLAlgorithm,
          typename Metric,
@@ -116,191 +136,11 @@ KFoldCV<MLAlgorithm,
                               const size_t numClasses,
                               const WeightsType& weights,
                               const bool shuffle) :
-    KFoldCV(Base(datasetInfo, numClasses), k, xs, ys, weights, shuffle)
-{ /* Nothing left to do. */ }
-
-template<typename MLAlgorithm,
-         typename Metric,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-KFoldCV<MLAlgorithm,
-        Metric,
-        MatType,
-        PredictionsType,
-        WeightsType>::KFoldCV(Base&& base,
-                              const size_t k,
-                              const MatType& xs,
-                              const PredictionsType& ys,
-                              const bool shuffle) :
-    base(std::move(base)),
-    k(k)
-{
-  if (k < 2)
-    throw std::invalid_argument("KFoldCV: k should not be less than 2");
-
-  Base::AssertDataConsistency(xs, ys);
-
-  InitKFoldCVMat(xs, this->xs);
-  InitKFoldCVMat(ys, this->ys);
-
+    KFoldCVBase(k, xs, datasetInfo, ys, numClasses, weights)
+{ 
   // Do we need to shuffle the dataset?
   if (shuffle)
     Shuffle();
-}
-
-template<typename MLAlgorithm,
-         typename Metric,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-KFoldCV<MLAlgorithm,
-        Metric,
-        MatType,
-        PredictionsType,
-        WeightsType>::KFoldCV(Base&& base,
-                              const size_t k,
-                              const MatType& xs,
-                              const PredictionsType& ys,
-                              const WeightsType& weights,
-                              const bool shuffle) :
-    base(std::move(base)),
-    k(k)
-{
-  Base::AssertWeightsConsistency(xs, weights);
-
-  InitKFoldCVMat(xs, this->xs);
-  InitKFoldCVMat(ys, this->ys);
-  InitKFoldCVMat(weights, this->weights);
-
-  // Do we need to shuffle the dataset?
-  if (shuffle)
-    Shuffle();
-}
-
-template<typename MLAlgorithm,
-         typename Metric,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-template<typename... MLAlgorithmArgs>
-double KFoldCV<MLAlgorithm,
-               Metric,
-               MatType,
-               PredictionsType,
-               WeightsType>::Evaluate(const MLAlgorithmArgs&... args)
-{
-  return TrainAndEvaluate(args...);
-}
-
-template<typename MLAlgorithm,
-         typename Metric,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-MLAlgorithm& KFoldCV<MLAlgorithm,
-                     Metric,
-                     MatType,
-                     PredictionsType,
-                     WeightsType>::Model()
-{
-  if (modelPtr == nullptr)
-    throw std::logic_error(
-        "KFoldCV::Model(): attempted to access an uninitialized model");
-
-  return *modelPtr;
-}
-
-template<typename MLAlgorithm,
-         typename Metric,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-template<typename DataType>
-void KFoldCV<MLAlgorithm,
-             Metric,
-             MatType,
-             PredictionsType,
-             WeightsType>::InitKFoldCVMat(const DataType& source,
-                                          DataType& destination)
-{
-  binSize = source.n_cols / k;
-  lastBinSize = source.n_cols - ((k - 1) * binSize);
-
-  destination = (k == 2) ? source : join_rows(source,
-      source.cols(0, source.n_cols - lastBinSize - 1));
-}
-
-template<typename MLAlgorithm,
-         typename Metric,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-template<typename... MLAlgorithmArgs, bool Enabled, typename>
-double KFoldCV<MLAlgorithm,
-                Metric,
-                MatType,
-                PredictionsType,
-                WeightsType>::TrainAndEvaluate(const MLAlgorithmArgs&... args)
-{
-  arma::vec evaluations(k);
-
-  size_t numInvalidScores = 0;
-  for (size_t i = 0; i < k; ++i)
-  {
-    MLAlgorithm&& model  = base.Train(GetTrainingSubset(xs, i),
-        GetTrainingSubset(ys, i), args...);
-    evaluations(i) = Metric::Evaluate(model, GetValidationSubset(xs, i),
-        GetValidationSubset(ys, i));
-    if (std::isnan(evaluations(i)) || std::isinf(evaluations(i)))
-    {
-      ++numInvalidScores;
-      Log::Warn << "KFoldCV::TrainAndEvaluate(): fold " << i << " returned "
-          << "a score of " << evaluations(i) << "; ignoring when computing "
-          << "the average score." << std::endl;
-    }
-    if (i == k - 1)
-      modelPtr.reset(new MLAlgorithm(std::move(model)));
-  }
-
-  if (numInvalidScores == k)
-  {
-    Log::Warn << "KFoldCV::TrainAndEvaluate(): all folds returned invalid "
-        << "scores!  Returning 0.0 as overall score." << std::endl;
-    return 0.0;
-  }
-
-  return arma::mean(evaluations.elem(arma::find_finite(evaluations)));
-}
-
-template<typename MLAlgorithm,
-         typename Metric,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-template<typename... MLAlgorithmArgs, bool Enabled, typename, typename>
-double KFoldCV<MLAlgorithm,
-                Metric,
-                MatType,
-                PredictionsType,
-                WeightsType>::TrainAndEvaluate(const MLAlgorithmArgs&... args)
-{
-  arma::vec evaluations(k);
-
-  for (size_t i = 0; i < k; ++i)
-  {
-    MLAlgorithm&& model = (weights.n_elem > 0) ?
-        base.Train(GetTrainingSubset(xs, i), GetTrainingSubset(ys, i),
-            GetTrainingSubset(weights, i), args...) :
-        base.Train(GetTrainingSubset(xs, i), GetTrainingSubset(ys, i),
-            args...);
-    evaluations(i) = Metric::Evaluate(model, GetValidationSubset(xs, i),
-        GetValidationSubset(ys, i));
-    if (i == k - 1)
-      modelPtr.reset(new MLAlgorithm(std::move(model)));
-  }
-
-  return arma::mean(evaluations);
 }
 
 template<typename MLAlgorithm,

@@ -17,5 +17,6 @@
 #include "cv_base.hpp"
 #include "simple_cv.hpp"
 #include "k_fold_cv.hpp"
+#include "purged_k_fold_cv.hpp"
 
 #endif
