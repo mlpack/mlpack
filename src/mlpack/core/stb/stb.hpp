@@ -108,9 +108,9 @@
 #endif
 
 // Now include STB headers
-#include "stb_image.h"
-#include "stb_image_write.h"
-#include "stb_image_resize2.h"
+#include "bundled/stb_image.h"
+#include "bundled/stb_image_write.h"
+#include "bundled/stb_image_resize2.h"
 
 #endif
 
