@@ -17,8 +17,8 @@ runs:
       if: inputs.lang == 'Python'
       shell: bash
       run: |
-          python -m pip install --upgrade pip
-          python -m pip install --upgrade --ignore-installed setuptools cython \
+          python3 -m pip install --upgrade pip
+          python3 -m pip install --upgrade --ignore-installed setuptools cython \
               pandas wheel pytest
 
     #
@@ -56,10 +56,12 @@ runs:
 
     # This appears to be needed to work around this issue:
     # https://github.com/gagolews/stringi/issues/486
-    - name: "Manually install stringi"
+    - name: "Work around stringi libicu issue"
       if: inputs.lang == 'R'
       shell: bash
-      run: Rscript -e "remove.packages('stringi'); options(configure.args='--disable-pkg-config'); install.packages('stringi')"
+      run: |
+          wget http://mirrors.kernel.org/ubuntu/pool/main/i/icu/libicu70_70.1-2_amd64.deb
+          dpkg -i libicu70_70.1-2_amd64.deb
 
     - name: "Query R dependencies"
       if: inputs.lang == 'R'
