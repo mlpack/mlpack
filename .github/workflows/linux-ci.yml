@@ -19,49 +19,49 @@ jobs:
     strategy:
       fail-fast: false # Run all configurations even if one fails.
       matrix:
-        config:
-          build_type: [
-            {
-              name: 'Debug',
-              cmakeVars: '-DCMAKE_BUILD_TYPE=Debug -DBUILD_CLI_EXECUTABLES=OFF'
-            },
-            {
-              name: 'CLI',
-              cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON'
-            },
-            {
-              name: 'Python',
-              cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON -DPYTHON_EXECUTABLE=/usr/bin/python3'
-            },
-            {
-              name: 'Julia',
-              cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_JULIA_BINDINGS=ON -DJULIA_EXECUTABLE=/opt/julia-1.10.4/bin/julia'
-            },
-            {
-              name: 'R',
-              cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_R_BINDINGS=ON -DCEREAL_INCLUDE_DIR=../cereal-1.3.2/include/'
-            },
-            {
-              name: 'Go',
-              cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_GO_BINDINGS=ON'
-            },
-            {
-              name: 'Markdown',
-              cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_MARKDOWN_BINDINGS=ON'
-            }
-          ],
-          os: [
-            {
-              runner: ubuntu-latest,
-              name: 'Linux'
-            },
-            {
-              runner: macOS-latest,
-              name: 'macOS'
-            }
-          ]
+        # The R bindings are tested via r-bindings.yaml.
+        config: [
+          {
+            name: 'Debug',
+            cmakeVars: '-DCMAKE_BUILD_TYPE=Debug -DBUILD_CLI_EXECUTABLES=OFF'
+          },
+          {
+            name: 'CLI',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON'
+          },
+          {
+            name: 'Python',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON -DPYTHON_EXECUTABLE=/usr/bin/python3'
+          },
+          {
+            name: 'Julia',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_JULIA_BINDINGS=ON -DJULIA_EXECUTABLE=/opt/julia-1.10.4/bin/julia'
+          },
+          {
+            name: 'R',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_R_BINDINGS=ON -DCEREAL_INCLUDE_DIR=../cereal-1.3.2/include/'
+          },
+          {
+            name: 'Go',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_GO_BINDINGS=ON'
+          },
+          {
+            name: 'Markdown',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_MARKDOWN_BINDINGS=ON'
+          }
+        ],
+        os: [
+          {
+            runner: ubuntu-latest,
+            name: 'Linux'
+          },
+          {
+            runner: macOS-latest,
+            name: 'macOS'
+          }
+        ]
 
-    name: '${{ matrix.config.os.name }} build: ${{ matrix.config.build_type.name }}'
+    name: 'Linux build: ${{ matrix.config.name }}'
     if: ${{ github.repository == 'mlpack/mlpack' }}
     runs-on: ${{ matrix.os.runner }}
 
@@ -80,7 +80,7 @@ jobs:
       - name: Set up binding dependencies
         uses: ./.github/actions/binding_setup
         with:
-          lang: ${{ matrix.config.build_type.name }}
+          lang: ${{ matrix.config.name }}
 
       # Install build dependencies.
       - name: Install build dependencies (Linux)
@@ -118,7 +118,7 @@ jobs:
       - name: Configure mlpack with CMake
         run: |
           mkdir build && cd build
-          cmake ${{ matrix.config.build_type.cmakeVars }} -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON ../
+          cmake ${{ matrix.config.cmakeVars }} -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON ../
 
       - name: Build mlpack
         run: cd build && make -j4
@@ -137,7 +137,7 @@ jobs:
       - name: Run binding tests
         uses: ./.github/actions/binding_run_tests
         with:
-          lang: ${{ matrix.config.build_type.name }}
+          lang: ${{ matrix.config.name }}
 
       - name: Parse test output
         uses: rcurtin/test-summary-action@dist
