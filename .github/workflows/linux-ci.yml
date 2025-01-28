@@ -39,7 +39,7 @@ jobs:
           },
           {
             name: 'R',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_R_BINDINGS=ON'
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_R_BINDINGS=ON -DCEREAL_INCLUDE_DIR=../cereal-1.3.2/include/'
           },
           {
             name: 'Go',
@@ -47,7 +47,7 @@ jobs:
           },
           {
             name: 'Markdown',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_MARKDOWN_BINDINGS=ON -DCEREAL_INCLUDE_DIR=../cereal-1.3.2/include/'
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_MARKDOWN_BINDINGS=ON'
           }
         ]
 
