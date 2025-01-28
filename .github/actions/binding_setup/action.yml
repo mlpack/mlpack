@@ -48,6 +48,13 @@ runs:
           ccache --set-config "hash_dir=false"
           ccache --zero-stats
 
+    # This appears to be needed to work around this issue:
+    # https://github.com/gagolews/stringi/issues/486
+    - name: "Manually install stringi"
+      if: inputs.lang == 'R'
+      shell: bash
+      run: Rscript -e "options(configure.args='--disable-pkg-config'); renv::install('stringi')"
+
     - name: "Query R dependencies"
       if: inputs.lang == 'R'
       shell: bash
