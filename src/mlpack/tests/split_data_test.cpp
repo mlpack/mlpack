@@ -467,3 +467,484 @@ TEST_CASE("SplitLabeledDataResultField", "[SplitDataTest]")
   CheckFields(input, inputConcat);
   CheckFields(label, labelConcat);
 }
+
+/**
+ * Split arma::cube data without labels.
+ */
+TEST_CASE("SplitCubeData", "[SplitDataTest]")
+{
+  cube input(10, 30, 5, fill::randu);
+
+  cube trainInput, testInput;
+
+  Split(input, trainInput, testInput, 0.1, false);
+
+  REQUIRE(trainInput.n_rows == 10);
+  REQUIRE(trainInput.n_cols == 27);
+  REQUIRE(trainInput.n_slices == 5);
+  REQUIRE(approx_equal(trainInput, input.cols(0, 26), "both", 1e-5, 1e-5));
+
+  REQUIRE(testInput.n_rows == 10);
+  REQUIRE(testInput.n_cols == 3);
+  REQUIRE(testInput.n_slices == 5);
+  REQUIRE(approx_equal(testInput, input.cols(27, 29), "both", 1e-5, 1e-5));
+}
+
+/**
+ * Split arma::cube data without labels, and shuffle it.
+ */
+TEST_CASE("SplitCubeDataShuffle", "[SplitDataTest]")
+{
+  cube input(10, 30, 5, fill::randu);
+
+  cube trainInput, testInput;
+
+  Split(input, trainInput, testInput, 0.1, true);
+
+  REQUIRE(trainInput.n_rows == 10);
+  REQUIRE(trainInput.n_cols == 27);
+  REQUIRE(trainInput.n_slices == 5);
+
+  REQUIRE(testInput.n_rows == 10);
+  REQUIRE(testInput.n_cols == 3);
+  REQUIRE(testInput.n_slices == 5);
+
+  // Make sure we can find each column of the data.
+  std::vector<bool> found(30, false);
+  for (size_t i = 0; i < trainInput.n_cols; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (approx_equal(trainInput.col(i), input.col(c), "both", 1e-5, 1e-5))
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t i = 0; i < testInput.n_cols; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (approx_equal(testInput.col(i), input.col(c), "both", 1e-5, 1e-5))
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t c = 0; c < 30; ++c)
+    REQUIRE(found[c]);
+}
+
+/**
+ * Split arma::cube data with labels but without shuffling.
+ */
+TEST_CASE("SplitCubeDataWithLabels", "[SplitDataTest]")
+{
+  // These have the same shape that might be used for RNNs.
+  cube input(10, 30, 5, fill::randu);
+  cube labels(1, 30, 5, fill::randu);
+
+  cube trainInput, trainLabels, testInput, testLabels;
+
+  Split(input, labels, trainInput, testInput, trainLabels, testLabels, 0.1,
+      false);
+
+  REQUIRE(trainInput.n_rows == 10);
+  REQUIRE(trainInput.n_cols == 27);
+  REQUIRE(trainInput.n_slices == 5);
+  REQUIRE(approx_equal(trainInput, input.cols(0, 26), "both", 1e-5, 1e-5));
+
+  REQUIRE(trainLabels.n_rows == 1);
+  REQUIRE(trainLabels.n_cols == 27);
+  REQUIRE(trainLabels.n_slices == 5);
+  REQUIRE(approx_equal(trainLabels, labels.cols(0, 26), "both", 1e-5, 1e-5));
+
+  REQUIRE(testInput.n_rows == 10);
+  REQUIRE(testInput.n_cols == 3);
+  REQUIRE(testInput.n_slices == 5);
+  REQUIRE(approx_equal(testInput, input.cols(27, 29), "both", 1e-5, 1e-5));
+
+  REQUIRE(testLabels.n_rows == 1);
+  REQUIRE(testLabels.n_cols == 3);
+  REQUIRE(testLabels.n_slices == 5);
+  REQUIRE(approx_equal(testLabels, labels.cols(27, 29), "both", 1e-5, 1e-5));
+}
+
+/**
+ * Split arma::cube data with labels and with shuffling.
+ */
+TEST_CASE("SplitCubeDataShuffleWithLabels", "[SplitDataTest]")
+{
+  // These have the same shape that might be used for RNNs.
+  cube input(10, 30, 5, fill::randu);
+  cube labels(1, 30, 5, fill::randu);
+
+  cube trainInput, trainLabels, testInput, testLabels;
+
+  Split(input, labels, trainInput, testInput, trainLabels, testLabels, 0.1,
+      false);
+
+  REQUIRE(trainInput.n_rows == 10);
+  REQUIRE(trainInput.n_cols == 27);
+  REQUIRE(trainInput.n_slices == 5);
+
+  REQUIRE(trainLabels.n_rows == 1);
+  REQUIRE(trainLabels.n_cols == 27);
+  REQUIRE(trainLabels.n_slices == 5);
+
+  REQUIRE(testInput.n_rows == 10);
+  REQUIRE(testInput.n_cols == 3);
+  REQUIRE(testInput.n_slices == 5);
+
+  REQUIRE(testLabels.n_rows == 1);
+  REQUIRE(testLabels.n_cols == 3);
+  REQUIRE(testLabels.n_slices == 5);
+
+  // Make sure we can find each column of the data.
+  std::vector<bool> found(30, false);
+  for (size_t i = 0; i < trainInput.n_cols; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (approx_equal(trainInput.col(i), input.col(c), "both", 1e-5, 1e-5))
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t i = 0; i < testInput.n_cols; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (approx_equal(testInput.col(i), input.col(c), "both", 1e-5, 1e-5))
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t c = 0; c < 30; ++c)
+    REQUIRE(found[c]);
+
+  // Make sure we can find each column of the labels.
+  found.flip();
+  for (size_t i = 0; i < trainLabels.n_cols; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (approx_equal(trainLabels.col(i), labels.col(c), "both", 1e-5, 1e-5))
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t i = 0; i < testLabels.n_cols; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (approx_equal(testLabels.col(i), labels.col(c), "both", 1e-5, 1e-5))
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t c = 0; c < 30; ++c)
+    REQUIRE(found[c]);
+}
+
+/**
+ * Split arma::cube data with labels and weights, but without shuffling.
+ */
+TEST_CASE("SplitCubeDataWithLabelsAndWeights", "[SplitDataTest]")
+{
+  // These have the same shape that might be used for RNNs.
+  cube input(10, 30, 5, fill::randu);
+  cube labels(1, 30, 5, fill::randu);
+  // Just for fun, set the weights to have a different type.
+  frowvec weights(30, fill::randu);
+
+  cube trainInput, trainLabels, testInput, testLabels;
+  frowvec trainWeights, testWeights;
+
+  Split(input, labels, weights, trainInput, testInput, trainLabels, testLabels,
+      trainWeights, testWeights, 0.1, false);
+
+  REQUIRE(trainInput.n_rows == 10);
+  REQUIRE(trainInput.n_cols == 27);
+  REQUIRE(trainInput.n_slices == 5);
+  REQUIRE(approx_equal(trainInput, input.cols(0, 26), "both", 1e-5, 1e-5));
+
+  REQUIRE(trainLabels.n_rows == 1);
+  REQUIRE(trainLabels.n_cols == 27);
+  REQUIRE(trainLabels.n_slices == 5);
+  REQUIRE(approx_equal(trainLabels, labels.cols(0, 26), "both", 1e-5, 1e-5));
+
+  REQUIRE(trainWeights.n_elem == 27);
+  REQUIRE(approx_equal(trainWeights, weights.subvec(0, 26), "both", 1e-5,
+      1e-5));
+
+  REQUIRE(testInput.n_rows == 10);
+  REQUIRE(testInput.n_cols == 3);
+  REQUIRE(testInput.n_slices == 5);
+  REQUIRE(approx_equal(testInput, input.cols(27, 29), "both", 1e-5, 1e-5));
+
+  REQUIRE(testLabels.n_rows == 1);
+  REQUIRE(testLabels.n_cols == 3);
+  REQUIRE(testLabels.n_slices == 5);
+  REQUIRE(approx_equal(testLabels, labels.cols(27, 29), "both", 1e-5, 1e-5));
+
+  REQUIRE(testWeights.n_elem == 3);
+  REQUIRE(approx_equal(testWeights, weights.subvec(27, 29), "both", 1e-5,
+      1e-5));
+}
+
+/**
+ * Split arma::cube data with labels and weights, and also shuffle it while
+ * splitting.
+ */
+TEST_CASE("SplitCubeDataShuffleWithLabelsAndWeights", "[SplitDataTest]")
+{
+  // These have the same shape that might be used for RNNs.
+  cube input(10, 30, 5, fill::randu);
+  cube labels(1, 30, 5, fill::randu);
+  // Just for fun, set the weights to have a different type.
+  frowvec weights(30, fill::randu);
+
+  cube trainInput, trainLabels, testInput, testLabels;
+  frowvec trainWeights, testWeights;
+
+  Split(input, labels, weights, trainInput, testInput, trainLabels, testLabels,
+      trainWeights, testWeights, 0.1, true);
+
+  REQUIRE(trainInput.n_rows == 10);
+  REQUIRE(trainInput.n_cols == 27);
+  REQUIRE(trainInput.n_slices == 5);
+
+  REQUIRE(trainLabels.n_rows == 1);
+  REQUIRE(trainLabels.n_cols == 27);
+  REQUIRE(trainLabels.n_slices == 5);
+
+  REQUIRE(trainWeights.n_elem == 27);
+
+  REQUIRE(testInput.n_rows == 10);
+  REQUIRE(testInput.n_cols == 3);
+  REQUIRE(testInput.n_slices == 5);
+
+  REQUIRE(testLabels.n_rows == 1);
+  REQUIRE(testLabels.n_cols == 3);
+  REQUIRE(testLabels.n_slices == 5);
+
+  REQUIRE(testWeights.n_elem == 3);
+
+  // Make sure we can find each column of the data.
+  std::vector<bool> found(30, false);
+  for (size_t i = 0; i < trainInput.n_cols; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (approx_equal(trainInput.col(i), input.col(c), "both", 1e-5, 1e-5))
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t i = 0; i < testInput.n_cols; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (approx_equal(testInput.col(i), input.col(c), "both", 1e-5, 1e-5))
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t c = 0; c < 30; ++c)
+    REQUIRE(found[c]);
+
+  // Make sure we can find each column of the labels.
+  found.flip();
+  for (size_t i = 0; i < trainLabels.n_cols; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (approx_equal(trainLabels.col(i), labels.col(c), "both", 1e-5, 1e-5))
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t i = 0; i < testLabels.n_cols; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (approx_equal(testLabels.col(i), labels.col(c), "both", 1e-5, 1e-5))
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t c = 0; c < 30; ++c)
+    REQUIRE(found[c]);
+
+  // Make sure we can find each weight.
+  found.flip();
+  for (size_t i = 0; i < trainWeights.n_elem; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (trainWeights[i] == weights[c])
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t i = 0; i < testWeights.n_elem; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (testWeights[i] == weights[c])
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t c = 0; c < 30; ++c)
+    REQUIRE(found[c]);
+}
+
+/**
+ * Test that we can split regular matrix data with labels and weights.
+ */
+TEST_CASE("SplitMatDataShuffleWithLabelsAndWeights", "[SplitDataTest]")
+{
+  mat input(10, 30, fill::randu);
+  Row<size_t> labels = randi<Row<size_t>>(30, distr_param(0, 100000));
+  frowvec weights(30, fill::randu);
+
+  mat trainInput, testInput;
+  Row<size_t> trainLabels, testLabels;
+  frowvec trainWeights, testWeights;
+
+  Split(input, labels, weights, trainInput, testInput, trainLabels, testLabels,
+      trainWeights, testWeights, 0.1, true);
+
+  REQUIRE(trainInput.n_rows == 10);
+  REQUIRE(trainInput.n_cols == 27);
+  REQUIRE(trainLabels.n_elem == 27);
+  REQUIRE(trainWeights.n_elem == 27);
+
+  REQUIRE(testInput.n_rows == 10);
+  REQUIRE(testInput.n_cols == 3);
+  REQUIRE(testLabels.n_elem == 3);
+  REQUIRE(testWeights.n_elem == 3);
+
+  // Make sure we can find each column of the data.
+  std::vector<bool> found(30, false);
+  for (size_t i = 0; i < trainInput.n_cols; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (approx_equal(trainInput.col(i), input.col(c), "both", 1e-5, 1e-5))
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t i = 0; i < testInput.n_cols; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (approx_equal(testInput.col(i), input.col(c), "both", 1e-5, 1e-5))
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t c = 0; c < 30; ++c)
+    REQUIRE(found[c]);
+
+  // Make sure we can find each column of the labels.
+  found.flip();
+  for (size_t i = 0; i < trainLabels.n_elem; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (trainLabels[i] == labels[c])
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t i = 0; i < testLabels.n_elem; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (testLabels[i] == labels[c])
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t c = 0; c < 30; ++c)
+    REQUIRE(found[c]);
+
+  // Make sure we can find each weight.
+  found.flip();
+  for (size_t i = 0; i < trainWeights.n_elem; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (trainWeights[i] == weights[c])
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t i = 0; i < testWeights.n_elem; ++i)
+  {
+    for (size_t c = 0; c < 30; ++c)
+    {
+      if (testWeights[i] == weights[c])
+      {
+        REQUIRE(found[c] == false);
+        found[c] = true;
+      }
+    }
+  }
+
+  for (size_t c = 0; c < 30; ++c)
+    REQUIRE(found[c]);
+}
