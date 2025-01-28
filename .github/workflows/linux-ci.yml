@@ -35,7 +35,7 @@ jobs:
           },
           {
             name: 'Julia',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_JULIA_BINDINGS=ON -DJULIA_EXECUTABLE=/opt/julia-1.10.4/bin/julia'
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_JULIA_BINDINGS=ON'
           },
           {
             name: 'R',
@@ -118,7 +118,7 @@ jobs:
       - name: Configure mlpack with CMake
         run: |
           mkdir build && cd build
-          cmake ${{ matrix.config.cmakeVars }} -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON ../
+          cmake ${{ matrix.config.cmakeVars }} $CMAKE_BINDING_ARGS -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON ../
 
       - name: Build mlpack
         run: cd build && make -j4

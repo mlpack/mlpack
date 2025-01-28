@@ -30,6 +30,7 @@ runs:
       run: |
           wget https://julialang-s3.julialang.org/bin/linux/x64/1.10/julia-1.10.4-linux-x86_64.tar.gz
           sudo tar -C /opt/ -xvpf julia-1.10.4-linux-x86_64.tar.gz
+          echo "CMAKE_BINDING_ARGS=/opt/julia-1.10.4/bin/julia" >> $GITHUB_ENV
 
     - name: "Set up Julia on macOS"
       if: inputs.lang == 'Julia' && runner.os == 'macOS'
