@@ -10,30 +10,72 @@ inputs:
 runs:
   using: "composite"
   steps:
-  - name: "Run Python binding tests"
-    if: ${{ inputs.lang == 'Python' }}
-    shell: bash
-    run: |
-        # Run manually instead of through CTest so we can get XML output.
-        ROOTDIR=`pwd`;
-        cd build/src/mlpack/bindings/python/
-        python3 -m pytest tests/ --junit-xml="$ROOTDIR/build/python_bindings.junit.xml"
+    #
+    # Python bindings.
+    #
+    - name: "Run Python binding tests"
+      if: inputs.lang == 'Python'
+      shell: bash
+      run: |
+          # Run manually instead of through CTest so we can get XML output.
+          ROOTDIR=`pwd`;
+          cd build/src/mlpack/bindings/python/
+          python3 -m pytest tests/ --junit-xml="$ROOTDIR/build/python_bindings.junit.xml"
 
-  - name: "Run Julia binding tests"
-    if: ${{ inputs.lang == 'Julia' }}
-    shell: bash
-    run: |
-        # Run manually instead of through CTest so we can get XML output.
-        # We use the TestReports.jl package for getting output in the right
-        # format.
-        ROOTDIR=`pwd`;
-        cd build/src/mlpack/bindings/julia/mlpack/
-        JULIA_PROJECT=$PWD /opt/julia-1.10.4/bin/julia -e \
-            "using Pkg; Pkg.add(\"TestReports\"); using TestReports; TestReports.test(\"mlpack\")"
-        mv testlog.xml $ROOTDIR/build/julia_bindings.junit.xml
+    #
+    # Julia bindings.
+    #
+    - name: "Run Julia binding tests"
+      if: inputs.lang == 'Julia'
+      shell: bash
+      run: |
+          # Run manually instead of through CTest so we can get XML output.
+          # We use the TestReports.jl package for getting output in the right
+          # format.
+          ROOTDIR=`pwd`;
+          cd build/src/mlpack/bindings/julia/mlpack/
+          JULIA_PROJECT=$PWD /opt/julia-1.10.4/bin/julia -e \
+              "using Pkg; Pkg.add(\"TestReports\"); using TestReports; TestReports.test(\"mlpack\")"
+          mv testlog.xml $ROOTDIR/build/julia_bindings.junit.xml
 
+    #
+    # R bindings.
+    #
+    - name: "Run R binding tests"
+      if: inputs.lang == 'R'
+      run: |
+          cd build/src/mlpack/bindings/R/mlpack/
+          Rscript -e "library(pkgload); load_all('.'); library(testthat); options(testthat.junit.output_file='r_bindings.junit.xml'); test_dir('tests/')"
+          mv r_bindings.junit.xml $ROOTDIR/build/r_bindings.junit.xml
+
+    - name: "Upload R package artifact"
+      if: inputs.lang == 'R'
+      uses: actions/upload-artifact@v4.4.0
+      with:
+        name: mlpack_r_tarball
+        path: build/src/mlpack/bindings/R/mlpack_*.tar.gz
+
+    - name: "Install R CMD check dependencies"
+      if: inputs.lang == 'R'
+      shell: Rscript {0}
+      run: |
+            install.packages('remotes')
+            remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
+            remotes::install_cran("rcmdcheck")
+            remotes::install_cran("curl")
+
+    - name: "Run R CMD check"
+      if: inputs.lang == 'R'
+      # TODO: revert to error_on = 'warning'
+      run: Rscript -e "rcmdcheck::rcmdcheck(' ', args = c('--no-manual', '--as-cran'), error_on = 'error', check_dir = 'check')"
+
+    # TODO: upload check results on failure
+
+    #
+    # Go bindings.
+    #
   - name: "Run Go binding tests"
-    if: ${{ inputs.lang == 'Go' }}
+    if: inputs.lang == 'Go'
     shell: bash
     run: |
         # Run manually instead of through CTest so we can get XML output (via
