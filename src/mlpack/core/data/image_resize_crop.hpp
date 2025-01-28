@@ -27,13 +27,56 @@ namespace data {
  * Image resize/crop interfaces.
  */
 
-namespace resize {
-
-template<typename MatType>
-inline void InternalResize(MatType& image, const data::ImageInfo& info,
+/**
+ * Resize one single image matrix or a set of images.
+ *
+ * This function should be used if the image is loaded as an armadillo matrix
+ * and the number of cols equal to the Width and the number of rows equal
+ * the Height of the image, or the total number of image pixels is equal to the
+ * number of element in an armadillo matrix.
+ *
+ * The same applies if a set of images is loaded, but all of them need to have
+ * identical dimension when loaded to this matrix.
+ *
+ * @param image The input matrix that contains the image to be resized.
+ * @param info Contains relevant input images information.
+ * @param newWidth The new requested width for the resized image.
+ * @param newHeight The new requested height for the resized image.
+ */
+template<typename eT>
+inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
     const size_t newWidth, const size_t newHeight)
 {
-  using eT = typename MatType::elem_type;
+  // First check if we are resizing one image or a group of images, the check
+  // is going to be different depending on the dimension.
+  // If the user would like to resize a set of images of different dimensions,
+  // then they need to consider passing them image by image. Otherwise, as
+  // assume that all images have identical dimension and need to be resized.
+  if (images.n_cols == 1)
+  {
+    if (images.n_elem != (info.Width() * info.Height() * info.Channels()))
+    {
+      std::ostringstream oss;
+      oss << "Dimensions mismatch. ResizeImages(): the number of pixels is"
+        " not equal to the dimension provided by Info."
+        << std::endl;
+      Log::Fatal << oss.str();
+    }
+  }
+  else
+  {
+   if (images.n_rows != (info.Width() * info.Height() * info.Channels()))
+    {
+      std::ostringstream oss;
+      oss << "Dimensions mismatch. ResizeImages(): In the case of several"
+        " images, please check if all the images have the same dimensions"
+        " already, if not, load each image in one column and recall this"
+        " function."
+        << std::endl;
+      Log::Fatal << oss.str();
+    }
+  }
+
   stbir_pixel_layout channels;
   if (info.Channels() == 1)
   {
@@ -47,100 +90,46 @@ inline void InternalResize(MatType& image, const data::ImageInfo& info,
   // This is required since STB only accept unsigned chars.
   // set the new matrix size for copy
   size_t newDimension = newWidth * newHeight * info.Channels();
+  arma::Mat<float> resizedFloatImages;
+  arma::Mat<unsigned char> resizedImages;
 
-  if constexpr (std::is_same<eT, unsigned char>::value)
-  {
-    arma::Mat<unsigned char> tempDest(newDimension, 1);
-    stbir_resize_uint8_linear(image.memptr(), info.Width(), info.Height(), 0,
-        tempDest.memptr(), newWidth, newHeight, 0, channels);
-
-    image = std::move(tempDest);
-  }
-  else if constexpr (std::is_same<eT, float>::value)
-  {
-    arma::fmat tempDestFloat(newDimension, 1);
-    stbir_resize_float_linear(image.memptr(), info.Width(), info.Height(), 0,
-        tempDestFloat.memptr(), newWidth, newHeight, 0, channels);
-    image = std::move(tempDestFloat);
-  }
+  // This is not optimal, but I do not want to allocate memory for nothing.
+  if (std::is_same<eT, float>::value)
+      resizedFloatImages.set_size(newDimension, images.n_cols);
   else
-  {
-    arma::Mat<unsigned char> tempSrc =
-        arma::conv_to<arma::Mat<unsigned char>>::from(image);
-
-    arma::Mat<unsigned char> tempDest(newDimension, 1);
-
-    stbir_resize_uint8_linear(tempSrc.memptr(), info.Width(), info.Height(), 0,
-        tempDest.memptr(), newWidth, newHeight, 0, channels);
-
-    image = arma::conv_to<arma::Mat<eT>>::from(tempDest);
-  }
-}
-
-} // namespace resize.
-
-/**
- * Resize one single image matrix.
- *
- * This function should be used if the image is loaded as an armadillo matrix
- * and the number of cols equal to the Width and the number of rows equal
- * the Height of the image, or the total number of image pixels is equal to the
- * number of element in an armadillo matrix.
- *
- * @param image The input matrix that contains the image to be resized.
- * @param info Contains relevant input images information.
- * @param newWidth The new requested width for the resized image.
- * @param newHeight The new requested height for the resized image.
- */
-template<typename eT>
-inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
-    const size_t newWidth, const size_t newHeight)
-{
-  if (image.n_rows != (info.Width() * info.Height() * info.Channels()))
-  {
-    std::ostringstream oss;
-    oss << "Dimensions mismatch. Resize(): only applicable on one image."
-      " Please check if the image is loaded correctly into the matrix."
-      << std::endl;
-    Log::Fatal << oss.str();
-  }
-
-  resize::InternalResize(image, info, newWidth, newHeight);
-
-  info.Width() = newWidth;
-  info.Height() = newHeight;
-}
-
-/**
- * Resize the images matrix.
- *
- * @param images The input matrix that contains the images to be resized.
- * @param info Contains relevant input images information.
- * @param resizedImages The output matrix the contains the resized images.
- * @param newWidth The new requested width for the resized images.
- * @param newHeight The new requested height for the resized images.
- */
-template<typename eT>
-inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
-    const size_t newWidth, const size_t newHeight)
-{
-  if (images.n_rows != (info.Width() * info.Height() * info.Channels()))
-  {
-    std::ostringstream oss;
-    oss << "ResizeImage(): the resizedImage matrix need to have identical"
-      " dimensions to the image matrix" << std::endl;
-    Log::Fatal << oss.str();
-  }
-
-  size_t newDimension = newWidth * newHeight * info.Channels();
-  arma::Mat<eT> resizedImages(newDimension, images.n_cols);
+      resizedImages.set_size(newDimension, images.n_cols);
 
   for (size_t i = 0; i < images.n_cols; ++i)
   {
-    arma::Col<eT> tempImage = std::move(images.col(i));
-    resize::InternalResize(tempImage, info, newWidth, newHeight);
-    resizedImages.col(i) = std::move(tempImage);
+    if constexpr (std::is_same<eT, unsigned char>::value)
+    {
+      arma::Mat<unsigned char> tempDest(newDimension, 1);
+      stbir_resize_uint8_linear(images.colptr(i), info.Width(), info.Height(), 0,
+          tempDest.memptr(), newWidth, newHeight, 0, channels);
+
+      resizedImages.col(i) = std::move(tempDest);
+    }
+    else if constexpr (std::is_same<eT, float>::value)
+    {
+      arma::fmat tempDestFloat(newDimension, 1);
+      stbir_resize_float_linear(images.colptr(i), info.Width(), info.Height(), 0,
+          tempDestFloat.memptr(), newWidth, newHeight, 0, channels);
+      resizedFloatImages.col(i) = std::move(tempDestFloat);
+    }
+    else
+    {
+      arma::Mat<unsigned char> tempSrc =
+          arma::conv_to<arma::Mat<unsigned char>>::from(images);
+
+      arma::Mat<unsigned char> tempDest(newDimension, 1);
+
+      stbir_resize_uint8_linear(tempSrc.colptr(i), info.Width(), info.Height(), 0,
+          tempDest.memptr(), newWidth, newHeight, 0, channels);
+
+      resizedImages.col(i) = arma::conv_to<arma::Mat<eT>>::from(tempDest);
+    }
   }
+
   images = std::move(resizedImages);
   info.Width() = newWidth;
   info.Height() = newHeight;
