@@ -49,11 +49,21 @@ jobs:
             name: 'Markdown',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_MARKDOWN_BINDINGS=ON'
           }
+        ],
+        os: [
+          {
+            runner: ubuntu-latest,
+            name: 'Linux'
+          },
+          {
+            runner: macOS-latest,
+            name: 'macOS'
+          }
         ]
 
     name: 'Linux build: ${{ matrix.config.name }}'
     if: ${{ github.repository == 'mlpack/mlpack' }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os.runner }}
 
     steps:
       - uses: actions/checkout@v3
@@ -73,7 +83,8 @@ jobs:
           lang: ${{ matrix.config.name }}
 
       # Install build dependencies.
-      - name: Install build dependencies
+      - name: Install build dependencies (Linux)
+        if: matrix.os.name == 'Linux'
         run: |
           git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
           sudo apt-get update
@@ -92,6 +103,12 @@ jobs:
               cd ensmallen-*/ && \
               sudo cp -vr include/* /usr/include/ && \
               cd ..
+
+      - name: Install build dependencies (macOS)
+        if: matrix.os.name == 'macOS'
+        run: |
+          sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+          brew install libomp openblas armadillo cereal ensmallen ccache
 
       # Because mlpack's precompiled headers basically include everything
       # (mlpack.hpp, core.hpp, etc.), changes to a single file will invalidate

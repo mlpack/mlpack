@@ -24,12 +24,17 @@ runs:
     #
     # Julia bindings.
     #
-    - name: "Set up Julia"
-      if: inputs.lang == 'Julia'
+    - name: "Set up Julia on Linux"
+      if: inputs.lang == 'Julia' && runner.os == 'Linux'
       shell: bash
       run: |
           wget https://julialang-s3.julialang.org/bin/linux/x64/1.10/julia-1.10.4-linux-x86_64.tar.gz
           sudo tar -C /opt/ -xvpf julia-1.10.4-linux-x86_64.tar.gz
+
+    - name: "Set up Julia on macOS"
+      if: inputs.lang == 'Julia' && runner.os == 'macOS'
+      shell: bash
+      run: brew install --cask julia
 
     #
     # R bindings.
@@ -53,7 +58,7 @@ runs:
     - name: "Manually install stringi"
       if: inputs.lang == 'R'
       shell: bash
-      run: Rscript -e "options(configure.args='--disable-pkg-config'); renv::install('stringi')"
+      run: Rscript -e "options(configure.args='--disable-pkg-config'); install.packages('stringi')"
 
     - name: "Query R dependencies"
       if: inputs.lang == 'R'
@@ -97,3 +102,11 @@ runs:
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("roxygen2")
           remotes::install_cran("pkgbuild")
+
+    #
+    # Go bindings.
+    #
+    - name: "Set up Go on macOS"
+      if: inputs.lang == 'Go' && runner.os == 'macOS'
+      shell: bash
+      run: brew install go
