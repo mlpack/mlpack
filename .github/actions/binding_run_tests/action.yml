@@ -43,6 +43,7 @@ runs:
     #
     - name: "Run R binding tests"
       if: inputs.lang == 'R'
+      shell: bash
       run: |
           cd build/src/mlpack/bindings/R/mlpack/
           Rscript -e "library(pkgload); load_all('.'); library(testthat); options(testthat.junit.output_file='r_bindings.junit.xml'); test_dir('tests/')"
@@ -59,13 +60,14 @@ runs:
       if: inputs.lang == 'R'
       shell: Rscript {0}
       run: |
-            install.packages('remotes')
-            remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
-            remotes::install_cran("rcmdcheck")
-            remotes::install_cran("curl")
+          install.packages('remotes')
+          remotes::install_deps('mlpack_4.5.2.tar.gz', dependencies = TRUE)
+          remotes::install_cran("rcmdcheck")
+          remotes::install_cran("curl")
 
     - name: "Run R CMD check"
       if: inputs.lang == 'R'
+      shell: bash
       # TODO: revert to error_on = 'warning'
       run: Rscript -e "rcmdcheck::rcmdcheck(' ', args = c('--no-manual', '--as-cran'), error_on = 'error', check_dir = 'check')"
 
@@ -74,14 +76,14 @@ runs:
     #
     # Go bindings.
     #
-  - name: "Run Go binding tests"
-    if: inputs.lang == 'Go'
-    shell: bash
-    run: |
-        # Run manually instead of through CTest so we can get XML output (via
-        # an extra tool).
-        go install github.com/jstemmer/go-junit-report/v2@latest
-        ROOTDIR=`pwd`;
-        cd build/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/
-        go test -v $ROOTDIR/src/mlpack/bindings/go/tests/go_binding_test.go 2>&1 |\
-            $HOME/go/bin/go-junit-report -set-exit-code > $ROOTDIR/build/go_bindings.junit.xml;
+    - name: "Run Go binding tests"
+      if: inputs.lang == 'Go'
+      shell: bash
+      run: |
+          # Run manually instead of through CTest so we can get XML output (via
+          # an extra tool).
+          go install github.com/jstemmer/go-junit-report/v2@latest
+          ROOTDIR=`pwd`;
+          cd build/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/
+          go test -v $ROOTDIR/src/mlpack/bindings/go/tests/go_binding_test.go 2>&1 |\
+              $HOME/go/bin/go-junit-report -set-exit-code > $ROOTDIR/build/go_bindings.junit.xml;
