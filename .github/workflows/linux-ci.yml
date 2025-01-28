@@ -65,7 +65,6 @@ jobs:
           key: ${{ runner.os }}
           variant: ccache
           max-size: 5G
-          job-summary: true
 
       # Set up the build environment for any bindings, if needed.
       - name: Set up binding dependencies
