@@ -49,7 +49,7 @@ jobs:
             name: 'Markdown',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_MARKDOWN_BINDINGS=ON'
           }
-        ],
+        ]
         os: [
           {
             runner: ubuntu-latest,
