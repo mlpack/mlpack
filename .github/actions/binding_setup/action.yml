@@ -58,7 +58,7 @@ runs:
     - name: "Manually install stringi"
       if: inputs.lang == 'R'
       shell: bash
-      run: Rscript -e "options(configure.args='--disable-pkg-config'); install.packages('stringi')"
+      run: Rscript -e "remove.packages('stringi'); options(configure.args='--disable-pkg-config'); install.packages('stringi')"
 
     - name: "Query R dependencies"
       if: inputs.lang == 'R'

@@ -61,7 +61,7 @@ jobs:
           }
         ]
 
-    name: 'Linux build: ${{ matrix.config.name }}'
+    name: '${{ matrix.os.name }} build: ${{ matrix.config.name }}'
     if: ${{ github.repository == 'mlpack/mlpack' }}
     runs-on: ${{ matrix.os.runner }}
 
