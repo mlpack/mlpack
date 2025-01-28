@@ -177,7 +177,7 @@ TEST_CASE("ImagesResizeTest", "[ImageTest]")
   for (size_t i = 0; i < files.size(); i++)
   {
     REQUIRE(data::Load(files.at(i), image, info, false) == true);
-    Resize(image, info, 320, 320);
+    ResizeImages(image, info, 320, 320);
     REQUIRE(data::Save(reSheeps.at(i), image, info, false) == true);
   }
 

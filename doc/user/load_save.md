@@ -340,50 +340,6 @@ The `data::ImageInfo` class contains the metadata of the images.
 
 ---
 
-Example usage of the Resize and ResizeImages function on a set of images:
-
-```c++
-arma::Mat<unsigned char> image, images;
-data::ImageInfo info;
-
-// The images are located in our test/data directory. However, any image could
-// be used instead.
-std::vector<std::string> files =
-    {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
-     "sheep_5.jpg", "sheep_6.jpg"};
-
-// The resized images will be saved locally. We are declaring the vector that
-// contains the names of the resized images.
-std::vector<std::string> reSheeps =
-    {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
-     "re_sheep_5.jpg", "re_sheep_6.jpg"};
-
-// Load and Resize each one of them individually, because they do not have
-// the same dimensions. The `info` will contain the dimension for each one.
-for (size_t i = 0; i < files.size(); i++)
-{
-  data::Load(files.at(i), image, info, false);
-  Resize(image, info, 320, 320);
-  data::Save(reSheeps.at(i), image, info, false);
-}
-
-// Now all images have the same dimension, It would be possible to load all of
-// them into one matrix
-
-data::Load(reSheeps, images, resizedInfo, false);
-
-// Now let us resize all these images at once, to specific dimensions.
-ResizeImages(images, info, 160, 160);
-
-// The resized images will be saved locally. We are declaring the vector that
-// contains the names of the resized images.
-std::vector<std::string> smSheeps =
-    {"sm_sheep_1.jpg", "sm_sheep_2.jpg", "sm_sheep_3.jpg", "sm_sheep_4.jpg",
-     "sm_sheep_5.jpg", "sm_sheep_6.jpg"};
-
-data::Save(smSheeps, images, info, false);
-```
-
 #### Constructors
 
  - `info = data::ImageInfo()`
@@ -569,17 +525,7 @@ mlpack::data::Save(outImages, matrix, info);
 
 ### Resize images
 
-It is possible to resize images in mlpack with the following functions:
-
- - `Resize(image, info, newWidth, newHeight)`
-   * Resize the image `image` to have width `newWidth` and height `newHeight`.
-   * `image` should be an `arma::mat&` or similar matrix type with a single column representing the image to resize.
-   * `info` should be a [`data::ImageInfo&`](#imageinfo) with the current size and parameters of `image`.
-   * An exception will be thrown if the parameters of `info` do not match `image`.
-   * `image` and `info` will be modified in-place.
-   * ***NOTE:*** if the element type of the matrix is not `unsigned char` or `float` (e.g. if `image` is not `arma::Mat<unsigned char>` or `arma::fmat`), the matrix will be temporarily converted during resizing; therefore, using `unsigned char` or `float` as the element type is the most efficient.
-
----
+It is possible to resize images in mlpack with the following function:
 
 - `ResizeImages(images, info, newWidth, newHeight)`
    * `images` an armadillo matrix contains a set of images, each one is
@@ -594,9 +540,59 @@ It is possible to resize images in mlpack with the following functions:
    * This function does not return but it modifies the info object and images
      matrix.
 
+   * ***NOTE:*** if the element type of the matrix is not `unsigned char` or
+   `float` (e.g. if `image` is not `arma::Mat<unsigned char>` or `arma::fmat`),
+   the matrix will be temporarily converted during resizing; therefore, using
+   `unsigned char` or `float` as the element type is the most efficient.
+
    * This function expects all the images at the start to have identical
-     dimensions. If the images have different dimension, please use
-     `Resize` and loop over all of them using a `for` loop.
+     dimensions. If the images have different dimension, please assign each
+     image to one armadillo column and loop over all of them using a `for`
+     loop.
+    
+Example usage of the ResizeImages function on a set of images:
+
+```c++
+arma::Mat<unsigned char> image, images;
+data::ImageInfo info;
+
+// The images are located in our test/data directory. However, any image could
+// be used instead.
+std::vector<std::string> files =
+    {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
+     "sheep_5.jpg", "sheep_6.jpg"};
+
+// The resized images will be saved locally. We are declaring the vector that
+// contains the names of the resized images.
+std::vector<std::string> reSheeps =
+    {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
+     "re_sheep_5.jpg", "re_sheep_6.jpg"};
+
+// Load and Resize each one of them individually, because they do not have
+// the same dimensions. The `info` will contain the dimension for each one.
+for (size_t i = 0; i < files.size(); i++)
+{
+  data::Load(files.at(i), image, info, false);
+  ResizeImages(image, info, 320, 320);
+  data::Save(reSheeps.at(i), image, info, false);
+}
+
+// Now all images have the same dimension, It would be possible to load all of
+// them into one matrix
+
+data::Load(reSheeps, images, resizedInfo, false);
+
+// Now let us resize all these images at once, to specific dimensions.
+ResizeImages(images, info, 160, 160);
+
+// The resized images will be saved locally. We are declaring the vector that
+// contains the names of the resized images.
+std::vector<std::string> smSheeps =
+    {"sm_sheep_1.jpg", "sm_sheep_2.jpg", "sm_sheep_3.jpg", "sm_sheep_4.jpg",
+     "sm_sheep_5.jpg", "sm_sheep_6.jpg"};
+
+data::Save(smSheeps, images, info, false);
+```
 
 ## mlpack objects
 
