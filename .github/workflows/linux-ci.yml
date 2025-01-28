@@ -38,12 +38,16 @@ jobs:
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_JULIA_BINDINGS=ON -DJULIA_EXECUTABLE=/opt/julia-1.10.4/bin/julia'
           },
           {
+            name: 'R',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_R_BINDINGS=ON'
+          },
+          {
             name: 'Go',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_GO_BINDINGS=ON'
           },
           {
             name: 'Markdown',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_MARKDOWN_BINDINGS=ON'
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_MARKDOWN_BINDINGS=ON -DCEREAL_INCLUDE_DIR=../cereal-1.3.2/include/'
           }
         ]
 
