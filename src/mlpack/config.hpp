@@ -59,20 +59,11 @@
 #endif
 
 //
-// STB is part of mlpack. If the user does not want to use the integrated
-// version of STB then please define MLPACK_DISABLE_STB in your build.
+// MLPACK_USE_SYSTEM_STB is used to enable usage of locally instaled STB.
 //
 #define MLPACK_STB
-#if defined(MLPACK_DISABLE_STB) || defined(MLPACK_USE_SYSTEM_STB)
-  #undef MLPACK_STB
-#endif
-
 #if !defined(MLPACK_USE_SYSTEM_STB)
   // #define MLPACK_USE_SYSTEM_STB
-#endif
-
-#if !defined(MLPACK_DISABLE_STB)
-  // #define MLPACK_DISABLE_STB
 #endif
 
 //

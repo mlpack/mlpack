@@ -21,8 +21,6 @@
 namespace mlpack {
 namespace data {
 
-#ifndef MLPACK_DISABLE_STB
-
 /**
  * Image resize/crop interfaces.
  */
@@ -134,39 +132,6 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
   info.Width() = newWidth;
   info.Height() = newHeight;
 }
-
-#else
-
-/**
- * The following are a set of dummy empty functions that do not do anything,
- * but only provide API compatibility in the case of NOT compiling mlpack with
- * STB.
- *
- * STB is by default part of mlpack, and these functions can only be executed
- * if the user specify MLPACK_DISABLE_STB.
- *
- * @param image The input matrix that contains the image to be resized.
- * @param info Contains relevant input images information.
- * @param newWidth The new requested width for the resized image.
- * @param newHeight The new requested height for the resized image.
- */
-template<typename eT>
-inline void Resize(arma::Mat<eT>& image, data::ImageInfo& info,
-    const size_t newWidth, const size_t newHeight)
-{
-  Log::Fatal << "Resize(): mlpack was not compiled with STB support, so images"
-      << " cannot be resized!" << std::endl;
-}
-
-template<typename eT>
-inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
-    const size_t newWidth, const size_t newHeight)
-{
-  Log::Fatal << "ResizeImages(): mlpack was not compiled with STB support,"
-      << " so images cannot be resized!" << std::endl;
-}
-
-#endif
 
 } // namespace data
 } // namespace mlpack

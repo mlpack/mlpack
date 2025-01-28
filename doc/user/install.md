@@ -195,7 +195,6 @@ The following options can be used when configuring mlpack.
 | `-DUSE_OPENMP=ON` | Use OpenMP for parallelization. | `ON` |
 | `-DUSE_PRECOMPILED_HEADERS=OFF` | Disable precompiled headers during build. | `OFF` |
 | `-DUSE_SYSTEM_STB=OFF` | Use version of STB bundled with mlpack. if decided otherwise please be sure to have `stb_image.h`, `stb_image_write.h`, and `stb_image_resize2.h` on the system. | `OFF` |
-| `-DDISABLE_STB=OFF` | Disable completely image support when using this option | `OFF` |
 |--------------|-------------------|---------------|
 | ***Dependency locations*** |||
 | `-DARMADILLO_INCLUDE_DIR=/path/to/arma/include/` | Path containing `armadillo` header file. ||

@@ -46,10 +46,8 @@
   #elif __has_include(<stb/stb_image.h>)
     #include <stb/stb_image.h>
   #else
-    #ifndef MLPACK_DISABLE_STB
-      #define MLPACK_DISABLE_STB
-    #endif
-    #pragma message("Warning: STB disabled; stb_image.h not found")
+    #pragma message("Warning: System's STB not found; including bundled STB")
+    #include "bundled/stb_image.h"
   #endif
 #endif
 
@@ -59,10 +57,8 @@
   #elif __has_include(<stb/stb_image_write.h>)
     #include <stb/stb_image_write.h>
   #else
-    #ifndef MLPACK_DISABLE_STB
-      #define MLPACK_DISABLE_STB
-    #endif
-    #pragma message("Warning: STB disabled; stb_image_write.h not found")
+    #pragma message("Warning: System's STB not found; including bundled STB")
+    #include "bundled/stb_image_write.h"
   #endif
 #endif
 
@@ -72,10 +68,8 @@
   #elif __has_include(<stb/stb_image_resize2.h>)
     #include <stb/stb_image_resize2.h>
   #else
-    #ifndef MLPACK_DISABLE_STB
-      #define MLPACK_DISABLE_STB
-    #endif
-    #pragma message("Warning: STB disabled; stb_image_resize2.h not found")
+    #pragma message("Warning: System's STB not found; including bundled STB")
+    #include "bundled/stb_image_resize2.h"
   #endif
 #endif
 

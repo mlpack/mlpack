@@ -17,7 +17,6 @@ option(DOWNLOAD_DEPENDENCIES "Automatically download dependencies if not availab
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." ON)
 option(USE_SYSTEM_STB "Use system STB instead of version bundled with mlpack." OFF)
-option(DISABLE_STB "Do not compile mlpack with STB." OFF)
 
 # Set minimum library versions required by mlpack.
 #
@@ -27,11 +26,6 @@ option(DISABLE_STB "Do not compile mlpack with STB." OFF)
 set(ARMADILLO_VERSION "10.8")
 set(ENSMALLEN_VERSION "2.10.0")
 set(CEREAL_VERSION "1.1.2")
-
-if (DISABLE_STB)
-  add_definitions(-DMLPACK_DISABLE_STB)
-  set(USE_SYSTEM_STB OFF)
-endif()
 
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
@@ -491,11 +485,6 @@ endif ()
 if (USE_SYSTEM_STB)
   string(REGEX REPLACE "// #define MLPACK_USE_SYSTEM_STB\n"
       "#define MLPACK_USE_SYSTEM_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
-endif()
-
-if (DISABLE_STB)
-  string(REGEX REPLACE "// #define MLPACK_DISABLE_STB\n"
-    "#define MLPACK_DISABLE_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif()
 
 file(WRITE ${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp "${CONFIG_CONTENTS}")

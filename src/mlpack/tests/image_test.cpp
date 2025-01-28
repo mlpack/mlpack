@@ -19,8 +19,6 @@ using namespace mlpack;
 using namespace mlpack::data;
 using namespace std;
 
-#ifndef MLPACK_DISABLE_STB
-
 /**
  * Test if an image with an unsupported extension throws an expected
  * exception.
@@ -207,5 +205,3 @@ TEST_CASE("ImagesResizeTest", "[ImageTest]")
     remove(smSheeps.at(i).c_str());
   }
 }
-
-#endif

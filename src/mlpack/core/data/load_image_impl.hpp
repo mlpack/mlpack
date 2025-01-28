@@ -19,8 +19,6 @@
 namespace mlpack {
 namespace data {
 
-#ifndef MLPACK_DISABLE_STB
-
 // Image loading API.
 template<typename eT>
 bool Load(const std::string& filename,
@@ -167,28 +165,6 @@ inline bool LoadImage(const std::string& filename,
   return true;
 }
 
-#else
-
-inline bool LoadImage(const std::string& /* filename */,
-                      arma::Mat<unsigned char>& /* matrix */,
-                      ImageInfo& /* info */,
-                      const bool fatal)
-{
-  if (fatal)
-  {
-    Log::Fatal << "Load(): mlpack was not compiled with STB support, so images "
-        << "cannot be loaded!" << std::endl;
-  }
-  else
-  {
-    Log::Warn << "Load(): mlpack was not compiled with STB support, so images "
-        << "cannot be loaded!" << std::endl;
-  }
-
-  return false;
-}
-
-#endif
 } // namespace data
 } // namespace mlpack
 

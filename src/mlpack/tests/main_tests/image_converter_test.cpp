@@ -22,8 +22,6 @@
 
 using namespace mlpack;
 
-#ifndef MLPACK_DISABLE_STB
-
 BINDING_TEST_FIXTURE(ImageConverterTestFixture);
 
 TEST_CASE_METHOD(ImageConverterTestFixture, "LoadImageTest",
@@ -164,5 +162,3 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "EmptyInputTest",
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
-
-#endif
