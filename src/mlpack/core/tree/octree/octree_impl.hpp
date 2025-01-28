@@ -33,10 +33,10 @@ Octree<DistanceType, StatisticType, MatType>::Octree(const MatType& dataset,
   {
     // Calculate empirical center of data.
     bound |= *this->dataset;
-    arma::vec center;
+    arma::Col<ElemType> center;
     bound.Center(center);
 
-    double maxWidth = 0.0;
+    ElemType maxWidth = 0.0;
     for (size_t i = 0; i < bound.Dim(); ++i)
       if (bound[i].Hi() - bound[i].Lo() > maxWidth)
         maxWidth = bound[i].Hi() - bound[i].Lo();
@@ -75,10 +75,10 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
   {
     // Calculate empirical center of data.
     bound |= *this->dataset;
-    arma::vec center;
+    arma::Col<ElemType> center;
     bound.Center(center);
 
-    double maxWidth = 0.0;
+    ElemType maxWidth = 0.0;
     for (size_t i = 0; i < bound.Dim(); ++i)
       if (bound[i].Hi() - bound[i].Lo() > maxWidth)
         maxWidth = bound[i].Hi() - bound[i].Lo();
@@ -118,10 +118,10 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
   {
     // Calculate empirical center of data.
     bound |= *this->dataset;
-    arma::vec center;
+    arma::Col<ElemType> center;
     bound.Center(center);
 
-    double maxWidth = 0.0;
+    ElemType maxWidth = 0.0;
     for (size_t i = 0; i < bound.Dim(); ++i)
       if (bound[i].Hi() - bound[i].Lo() > maxWidth)
         maxWidth = bound[i].Hi() - bound[i].Lo();
@@ -159,10 +159,10 @@ Octree<DistanceType, StatisticType, MatType>::Octree(MatType&& dataset,
   {
     // Calculate empirical center of data.
     bound |= *this->dataset;
-    arma::vec center;
+    arma::Col<ElemType> center;
     bound.Center(center);
 
-    double maxWidth = 0.0;
+    ElemType maxWidth = 0.0;
     for (size_t i = 0; i < bound.Dim(); ++i)
       if (bound[i].Hi() - bound[i].Lo() > maxWidth)
         maxWidth = bound[i].Hi() - bound[i].Lo();
@@ -201,10 +201,10 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
   {
     // Calculate empirical center of data.
     bound |= *this->dataset;
-    arma::vec center;
+    arma::Col<ElemType> center;
     bound.Center(center);
 
-    double maxWidth = 0.0;
+    ElemType maxWidth = 0.0;
     for (size_t i = 0; i < bound.Dim(); ++i)
       if (bound[i].Hi() - bound[i].Lo() > maxWidth)
         maxWidth = bound[i].Hi() - bound[i].Lo();
@@ -244,10 +244,10 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
   {
     // Calculate empirical center of data.
     bound |= *this->dataset;
-    arma::vec center;
+    arma::Col<ElemType> center;
     bound.Center(center);
 
-    double maxWidth = 0.0;
+    ElemType maxWidth = 0.0;
     for (size_t i = 0; i < bound.Dim(); ++i)
       if (bound[i].Hi() - bound[i].Lo() > maxWidth)
         maxWidth = bound[i].Hi() - bound[i].Lo();
@@ -276,8 +276,8 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
     Octree* parent,
     const size_t begin,
     const size_t count,
-    const arma::vec& center,
-    const double width,
+    const arma::Col<ElemType>& center,
+    const ElemType width,
     const size_t maxLeafSize) :
     begin(begin),
     count(count),
@@ -293,7 +293,7 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
 
   // Calculate the distance from the empirical center of this node to the
   // empirical center of the parent.
-  arma::vec trueCenter, parentCenter;
+  arma::Col<ElemType> trueCenter, parentCenter;
   bound.Center(trueCenter);
   parent->Bound().Center(parentCenter);
   parentDistance = distance.Evaluate(trueCenter, parentCenter);
@@ -311,8 +311,8 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
     const size_t begin,
     const size_t count,
     std::vector<size_t>& oldFromNew,
-    const arma::vec& center,
-    const double width,
+    const arma::Col<ElemType>& center,
+    const ElemType width,
     const size_t maxLeafSize) :
     begin(begin),
     count(count),
@@ -328,7 +328,7 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
 
   // Calculate the distance from the empirical center of this node to the
   // empirical center of the parent.
-  arma::vec trueCenter, parentCenter;
+  arma::Col<ElemType> trueCenter, parentCenter;
   bound.Center(trueCenter);
   parent->Bound().Center(parentCenter);
   parentDistance = distance.Evaluate(trueCenter, parentCenter);
@@ -521,7 +521,7 @@ size_t Octree<DistanceType, StatisticType, MatType>::GetNearestChild(
   size_t bestIndex = NumChildren();
   for (size_t i = 0; i < NumChildren(); ++i)
   {
-    const double dist = children[i]->MinDistance(point);
+    const ElemType dist = children[i]->MinDistance(point);
     if (dist < bestDistance)
     {
       bestDistance = dist;
@@ -544,7 +544,7 @@ size_t Octree<DistanceType, StatisticType, MatType>::GetFurthestChild(
   size_t bestIndex = NumChildren();
   for (size_t i = 0; i < NumChildren(); ++i)
   {
-    const double dist = children[i]->MaxDistance(point);
+    const ElemType dist = children[i]->MaxDistance(point);
     if (dist > bestDistance)
     {
       bestDistance = dist;
@@ -565,7 +565,7 @@ size_t Octree<DistanceType, StatisticType, MatType>::GetNearestChild(
   size_t bestIndex = NumChildren();
   for (size_t i = 0; i < NumChildren(); ++i)
   {
-    const double dist = children[i]->MinDistance(queryNode);
+    const ElemType dist = children[i]->MinDistance(queryNode);
     if (dist < bestDistance)
     {
       bestDistance = dist;
@@ -586,7 +586,7 @@ size_t Octree<DistanceType, StatisticType, MatType>::GetFurthestChild(
   size_t bestIndex = NumChildren();
   for (size_t i = 0; i < NumChildren(); ++i)
   {
-    const double dist = children[i]->MaxDistance(queryNode);
+    const ElemType dist = children[i]->MaxDistance(queryNode);
     if (dist > bestDistance)
     {
       bestDistance = dist;
@@ -771,8 +771,8 @@ void Octree<DistanceType, StatisticType, MatType>::serialize(
 //! Split the node.
 template<typename DistanceType, typename StatisticType, typename MatType>
 void Octree<DistanceType, StatisticType, MatType>::SplitNode(
-    const arma::vec& center,
-    const double width,
+    const arma::Col<ElemType>& center,
+    const ElemType width,
     const size_t maxLeafSize)
 {
   // No need to split if we have fewer than the maximum number of points in this
@@ -845,8 +845,8 @@ void Octree<DistanceType, StatisticType, MatType>::SplitNode(
   }
 
   // Now that the dataset is reordered, we can create the children.
-  arma::vec childCenter(center.n_elem);
-  const double childWidth = width / 2.0;
+  arma::Col<ElemType> childCenter(center.n_elem);
+  const ElemType childWidth = width / 2.0;
   for (size_t i = 0; i < childBegins.n_elem - 1; ++i)
   {
     // If the child has no points, don't create it.
@@ -872,8 +872,8 @@ void Octree<DistanceType, StatisticType, MatType>::SplitNode(
 //! Split the node, and store mappings.
 template<typename DistanceType, typename StatisticType, typename MatType>
 void Octree<DistanceType, StatisticType, MatType>::SplitNode(
-    const arma::vec& center,
-    const double width,
+    const arma::Col<ElemType>& center,
+    const ElemType width,
     std::vector<size_t>& oldFromNew,
     const size_t maxLeafSize)
 {
@@ -947,8 +947,8 @@ void Octree<DistanceType, StatisticType, MatType>::SplitNode(
   }
 
   // Now that the dataset is reordered, we can create the children.
-  arma::vec childCenter(center.n_elem);
-  const double childWidth = width / 2.0;
+  arma::Col<ElemType> childCenter(center.n_elem);
+  const ElemType childWidth = width / 2.0;
   for (size_t i = 0; i < childBegins.n_elem - 1; ++i)
   {
     // If the child has no points, don't create it.
