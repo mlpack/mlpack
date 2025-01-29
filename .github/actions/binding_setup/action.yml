@@ -13,13 +13,21 @@ runs:
     #
     # Python bindings.
     #
-    - name: "Set up Python"
-      if: inputs.lang == 'Python'
+    - name: "Set up Python (Linux)"
+      if: inputs.lang == 'Python' && runner.os == 'Linux'
       shell: bash
       run: |
           python3 -m pip install --upgrade pip
           python3 -m pip install --upgrade --ignore-installed setuptools cython \
               pandas wheel pytest
+          echo "CMAKE_BINDING_ARGS=-DPYTHON_EXECUTABLE=`which python3`" >> $GITHUB_ENV
+
+    - name: "Set up Python (macOS)"
+      if: inputs.lang == 'Python' && runner.os == 'macOS'
+      shell: bash
+      run: |
+          pip install --upgrade pip
+          pip install setuptools cython pandas installed zipp configparser wheel pytest
           echo "CMAKE_BINDING_ARGS=-DPYTHON_EXECUTABLE=`which python3`" >> $GITHUB_ENV
 
     #
@@ -62,7 +70,7 @@ runs:
     # This appears to be needed to work around this issue:
     # https://github.com/gagolews/stringi/issues/486
     - name: "Work around stringi libicu issue"
-      if: inputs.lang == 'R'
+      if: inputs.lang == 'R' && runner.os == 'Linux'
       shell: bash
       run: |
           wget http://mirrors.kernel.org/ubuntu/pool/main/i/icu/libicu70_70.1-2_amd64.deb

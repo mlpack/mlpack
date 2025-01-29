@@ -31,7 +31,7 @@ jobs:
           },
           {
             name: 'Python',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON -DPYTHON_EXECUTABLE=python3'
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON'
           },
           {
             name: 'Julia',
