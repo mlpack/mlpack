@@ -55,14 +55,14 @@ runs:
       uses: actions/upload-artifact@v4.4.0
       with:
         name: mlpack_r_tarball
-        path: build/src/mlpack/bindings/R/mlpack_*.tar.gz
+        path: build/src/mlpack/bindings/R/${{ env.MLPACK_R_PACKAGE }}
 
     - name: "Install R CMD check dependencies"
       if: inputs.lang == 'R'
       shell: Rscript {0}
       run: |
           install.packages('remotes')
-          remotes::install_deps('mlpack_4.5.2.tar.gz', dependencies = TRUE)
+          remotes::install_deps('${{ env.MLPACK_R_PACKAGE }}', dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
           remotes::install_cran("curl")
 

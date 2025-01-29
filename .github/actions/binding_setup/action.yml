@@ -53,6 +53,16 @@ runs:
     #
     # R bindings.
     #
+    - name: Extract mlpack version for R bindings
+      if: inputs.lang == 'R'
+      shell: bash
+      run: |
+        MLPACK_VERSION_MAJOR=$(grep -i ".*#define MLPACK_VERSION_MAJOR.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+        MLPACK_VERSION_MINOR=$(grep -i ".*#define MLPACK_VERSION_MINOR.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+        MLPACK_VERSION_PATCH=$(grep -i ".*#define MLPACK_VERSION_PATCH.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+        MLPACK_VERSION_VALUE=${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}
+        echo "MLPACK_R_PACKAGE=$(echo mlpack_"$MLPACK_VERSION_VALUE".tar.gz)" >> $GITHUB_ENV
+
     - uses: r-lib/actions/setup-pandoc@v2
       if: inputs.lang == 'R'
 
