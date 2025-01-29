@@ -63,7 +63,7 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
   }
   else
   {
-   if (images.n_rows != (info.Width() * info.Height() * info.Channels()))
+    if (images.n_rows != (info.Width() * info.Height() * info.Channels()))
     {
       std::ostringstream oss;
       oss << "Dimensions mismatch. ResizeImages(): In the case of several"
