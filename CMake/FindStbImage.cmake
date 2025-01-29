@@ -26,7 +26,7 @@ if(STB_IMAGE_INCLUDE_DIR_1)
   set(STB_INCLUDE_NEEDS_STB_SUFFIX "NO")
 else ()
   find_path(STB_IMAGE_INCLUDE_DIR_2
-        NAMES stb_image.h stb_image_write.h stb_image_resize.h
+        NAMES stb_image.h stb_image_write.h stb_image_resize2.h
         PATHS ${STB_IMAGE_SEARCH_PATHS} ${STB_IMAGE_INCLUDE_DIR}
         PATH_SUFFIXES stb/)
 
