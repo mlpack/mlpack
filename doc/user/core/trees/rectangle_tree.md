@@ -3,7 +3,7 @@
 The `RectangleTree` class represents a generic multidimensional space
 partitioning tree.  It is heavily templatized to control splitting behavior and
 other behaviors, and is the actual class underlying trees such as the
-[`RTree`](rtree.md).  In general, the `RectangleTree` class is not meant to
+[`RTree`](r_tree.md).  In general, the `RectangleTree` class is not meant to
 be used directly, and instead one of the numerous variants should be used
 instead:
 
@@ -192,10 +192,8 @@ The dataset is not permuted during the construction process.
 | `maxNumChildren` | `size_t` | Maximum number of children allowed in each non-leaf node. | `5` |
 | `minNumChildren` | `size_t` | Minimum number of children in each non-leaf node. | `2` |
 | `dimensionality` | `size_t` | Dimensionality of points to be held in the tree. | _(N/A)_ |
-|----------|----------|-----------------|-------------|
-| `x` | [`arma::vec`](../../matrices.md) | Column vector: point to insert into
-tree.  Should have type matching the column vector type associated with
-`MatType`, and must have `node.Dataset().n_rows` elements. | _(N/A)_ |
+| | | |
+| `x` | [`arma::vec`](../../matrices.md) | Column vector: point to insert into tree.  Should have type matching the column vector type associated with `MatType`, and must have `node.Dataset().n_rows` elements. | _(N/A)_ |
 | `i` | `size_t` | Index of point in `node.Dataset()` to delete from `node`. | _(N/A)_ |
 
 ## Basic tree properties
@@ -226,9 +224,9 @@ can be accessed or inspected.  Many of these functions are required by the
 
 ### Accessing members of a tree
 
- * `node.Bound()` will return an [`HRectBound<DistanceType,
-   ElemType>&`](binary_space_tree.md#hrectbound) object that represents the
-   hyperrectangle bounding box of `node`.
+ * `node.Bound()` will return an
+   [`HRectBound<DistanceType, ElemType>&`](binary_space_tree.md#hrectbound)
+   object that represents the hyperrectangle bounding box of `node`.
    - `ElemType` is the element type of `MatType`; so, if default template
      parameters are used, `ElemType` is `double`.
    - `bound` is a hyperrectangle that encloses all the descendant points of
