@@ -152,10 +152,6 @@ TEST_CASE("ImageInfoSerialization", "[ImageLoadTest]")
 
 /**
  * Test resize the image if this is done correctly.
- * For now we are not testing if the resize process is correct. We asssume
- * that this is done on STB side. However, it would be really nice to have
- * a KNN or other methods that test the similarity between the pixels and
- * give a score above a threshold. 
  */
 TEST_CASE("ImagesResizeTest", "[ImageTest]")
 {
@@ -205,3 +201,30 @@ TEST_CASE("ImagesResizeTest", "[ImageTest]")
     remove(smSheeps.at(i).c_str());
   }
 }
+
+/**
+ * Test if we resize to the same original dimension we will get the same pixels
+ * and no modification to the image
+ */
+TEST_CASE("IdenticalResizeTest", "[ImageTest]")
+{
+  arma::Mat<unsigned char> image;
+  std::vector<std::string> files =
+      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
+       "sheep_5.jpg", "sheep_6.jpg"};
+
+  for (size_t i = 0; i < files.size(); i++)
+  {
+    arma::Mat<unsigned char> originalImage = image;
+    REQUIRE(data::Load(files.at(i), image, info, false) == true);
+    ResizeImages(image, info, info.Width(), info.Height());
+    for (size_t i = 0; i < originalImage.n_rows; ++i)
+    {
+      for (size_t j = 0; j < originalImage.n_cols; ++j)
+      {
+        REQUIRE(originalImage.at(i, j) == image.at(i, j));
+      }
+    }
+  }
+}
+
