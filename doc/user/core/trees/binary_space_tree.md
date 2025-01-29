@@ -14,7 +14,7 @@ instead:
  * [`VPTree`](vptree.md)
  * [`RPTree`](rp_tree.md)
  * [`MaxRPTree`](max_rp_tree.md)
- * [`UBTree`](ubtree.md)
+ * [`UBTree`](ub_tree.md)
 
 ---
 

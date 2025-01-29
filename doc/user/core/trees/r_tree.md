@@ -47,9 +47,10 @@ RTree<DistanceType, StatisticType, MatType>
    be thrown if any other `DistanceType` is specified.
 
  * `StatisticType`: this holds auxiliary information in each tree node.  By
-   default, [`EmptyStatistic`](#emptystatistic) is used, which holds no
-   information.
-   - See the [`StatisticType`](#statistictype) section for more details.
+   default, [`EmptyStatistic`](rectangle_tree.md#emptystatistic) is used, which
+   holds no information.
+   - See the [`StatisticType`](rectangle_tree.md#statistictype) section for more
+     details.
 
  * `MatType`: the type of matrix used to represent points.  Must be a type
    matching the [Armadillo API](../../matrices.md).  By default, `arma::mat` is
@@ -60,7 +61,7 @@ The `RTree` class itself is a convenience typedef of the generic
 [`RTreeSplit`](rectangle_tree.md#rtreesplit) class as the split strategy, the
 [`RTreeDescentHeuristic`](rectangle_tree.md#rtreedescentheuristic) class as the
 descent strategy, and
-[`NoAuxiliaryInformation`](rectangle_tree.md#noauxiliaryinformation) as the
+[`NoAuxiliaryInformation`](rectangle_tree.md#auxiliaryinformationtype) as the
 auxiliary information type.
 
 If no template parameters are explicitly specified, then defaults are used:
@@ -150,10 +151,8 @@ The dataset is not permuted during the construction process.
 | `maxNumChildren` | `size_t` | Maximum number of children allowed in each non-leaf node. | `5` |
 | `minNumChildren` | `size_t` | Minimum number of children in each non-leaf node. | `2` |
 | `dimensionality` | `size_t` | Dimensionality of points to be held in the tree. | _(N/A)_ |
-|----------|----------|-----------------|-------------|
-| `x` | [`arma::vec`](../../matrices.md) | Column vector: point to insert into
-tree.  Should have type matching the column vector type associated with
-`MatType`, and must have `node.Dataset().n_rows` elements. | _(N/A)_ |
+| | | |
+| `x` | [`arma::vec`](../../matrices.md) | Column vector: point to insert into tree.  Should have type matching the column vector type associated with `MatType`, and must have `node.Dataset().n_rows` elements. | _(N/A)_ |
 | `i` | `size_t` | Index of point in `node.Dataset()` to delete from `node`. | _(N/A)_ |
 
 ## Basic tree properties
@@ -177,15 +176,15 @@ API](../../../developer/trees.md#the-treetype-api).
      that can itself be used just like the root node of the tree!
 
  * `node.Parent()` will return an `RTree*` that points to the parent of `node`,
-   or `NULL` if `node` is the root of the `RectangleTree`.
+   or `NULL` if `node` is the root of the `RTree`.
 
 ---
 
 ### Accessing members of a tree
 
- * `node.Bound()` will return an [`HRectBound<DistanceType,
-   ElemType>&`](binary_space_tree.md#hrectbound) object that represents the
-   hyperrectangle bounding box of `node`.
+ * `node.Bound()` will return an
+   [`HRectBound<DistanceType, ElemType>&`](binary_space_tree.md#hrectbound)
+   object that represents the hyperrectangle bounding box of `node`.
    - `ElemType` is the element type of `MatType`; so, if default template
      parameters are used, `ElemType` is `double`.
    - `bound` is a hyperrectangle that encloses all the descendant points of
@@ -232,8 +231,8 @@ for basic tree functionality in mlpack.
 
  * `node.NumPoints()` returns a `size_t` indicating the number of points held
    directly in `node`.
-   - If `node` is not a leaf, this will return `0`, as `RectangleTree` only
-     holds points directly in its leaves.
+   - If `node` is not a leaf, this will return `0`, as `RTree` only holds points
+     directly in its leaves.
    - If `node` is a leaf, then this will return values between
      `node.MinLeafSize()` and `node.MaxLeafSize()` (inclusive).
    - If the tree has fewer than `node.MinLeafSize()` points total, then
