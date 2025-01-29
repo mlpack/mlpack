@@ -101,10 +101,14 @@ jobs:
           remotes::install_cran(c("roxygen2","pkgbuild"))
         shell: Rscript {0}
 
-      - name: Install R-bindings system dependencies
+      # This appears to be needed to work around this issue:
+      # https://github.com/gagolews/stringi/issues/486
+      - name: "Work around stringi libicu issue"
+        if: inputs.lang == 'R' && runner.os == 'Linux'
+        shell: bash
         run: |
-          # We use R package 'stringi' which has a run-time depdency libicy$SO
-          sudo apt install -y libicu-dev
+            wget http://mirrors.kernel.org/ubuntu/pool/main/i/icu/libicu70_70.1-2_amd64.deb
+            sudo dpkg -i libicu70_70.1-2_amd64.deb
 
       - name: CMake
         run: |
