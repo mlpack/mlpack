@@ -14,8 +14,6 @@
 #ifndef MLPACK_CORE_STB_STB_HPP
 #define MLPACK_CORE_STB_STB_HPP
 
-#if defined(MLPACK_USE_SYSTEM_STB)
-
 #ifndef STB_IMAGE_STATIC
   #define STB_IMAGE_STATIC
 #endif
@@ -40,13 +38,15 @@
   #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #endif
 
+#if defined(MLPACK_USE_SYSTEM_STB)
+
 #if defined __has_include
   #if __has_include(<stb_image.h>)
     #include <stb_image.h>
   #elif __has_include(<stb/stb_image.h>)
     #include <stb/stb_image.h>
   #else
-    #pragma message("Warning: System's STB not found; including bundled STB")
+    #pragma warning("System's STB not found; including bundled STB")
     #include "bundled/stb_image.h"
   #endif
 #endif
@@ -57,7 +57,7 @@
   #elif __has_include(<stb/stb_image_write.h>)
     #include <stb/stb_image_write.h>
   #else
-    #pragma message("Warning: System's STB not found; including bundled STB")
+    #pragma warning("System's STB not found; including bundled STB")
     #include "bundled/stb_image_write.h"
   #endif
 #endif
@@ -68,38 +68,12 @@
   #elif __has_include(<stb/stb_image_resize2.h>)
     #include <stb/stb_image_resize2.h>
   #else
-    #pragma message("Warning: System's STB not found; including bundled STB")
+    #pragma warning("System's STB not found; including bundled STB")
     #include "bundled/stb_image_resize2.h"
   #endif
 #endif
 
-#elif defined(MLPACK_STB)
-
-#include <mlpack/prereqs.hpp>
-
-#ifndef STB_IMAGE_STATIC
-  #define STB_IMAGE_STATIC
-#endif
-
-#ifndef STB_IMAGE_WRITE_STATIC
-  #define STB_IMAGE_WRITE_STATIC
-#endif
-
-#ifndef STB_IMAGE_RESIZE_STATIC
-  #define STB_IMAGE_RESIZE_STATIC
-#endif
-
-#ifndef STB_IMAGE_IMPLEMENTATION
-  #define STB_IMAGE_IMPLEMENTATION
-#endif
-
-#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
-  #define STB_IMAGE_WRITE_IMPLEMENTATION
-#endif
-
-#ifndef STB_IMAGE_RESIZE_IMPLEMENTATION
-  #define STB_IMAGE_RESIZE_IMPLEMENTATION
-#endif
+#else
 
 // Now include STB headers
 #include "bundled/stb_image.h"

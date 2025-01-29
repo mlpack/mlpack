@@ -54,24 +54,20 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
   {
     if (images.n_elem != (info.Width() * info.Height() * info.Channels()))
     {
-      std::ostringstream oss;
-      oss << "ResizeImages(): dimensions mismatch: the number of pixels is"
+      Log::Fatal << "ResizeImages(): dimensions mismatch: the number of pixels is"
         " not equal to the dimension provided by the given ImageInfo."
         << std::endl;
-      Log::Fatal << oss.str();
     }
   }
   else
   {
     if (images.n_rows != (info.Width() * info.Height() * info.Channels()))
     {
-      std::ostringstream oss;
-      oss << "Dimensions mismatch. ResizeImages(): In the case of several"
-        " images, please check if all the images have the same dimensions"
-        " already, if not, load each image in one column and recall this"
-        " function."
+      Log::Fatal << "ResizeImages(): dimension mismatch: in the case of"
+          " several images, please check if all the images have the same"
+        " dimension already, if not, load each image in one column and"
+        " recall this function."
         << std::endl;
-      Log::Fatal << oss.str();
     }
   }
 

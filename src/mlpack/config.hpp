@@ -61,7 +61,6 @@
 //
 // MLPACK_USE_SYSTEM_STB is used to enable usage of locally instaled STB.
 //
-#define MLPACK_STB
 #if !defined(MLPACK_USE_SYSTEM_STB)
   // #define MLPACK_USE_SYSTEM_STB
 #endif
