@@ -539,10 +539,11 @@ It is possible to resize images in mlpack with the following function:
 
    * This function returns `void` and modifies `info` and `images`.
 
-   * ***NOTE:*** if the element type of the matrix is not `unsigned char` or
-   `float` (e.g. if `image` is not `arma::Mat<unsigned char>` or `arma::fmat`),
-   the matrix will be temporarily converted during resizing; therefore, using
-   `unsigned char` or `float` as the element type is the most efficient.
+   * ***NOTE:*** if the element type of `images` is not `unsigned char` or
+     `float` (e.g. if `image` is not `arma::Mat<unsigned char>` or
+     `arma::fmat`), the matrix will be temporarily converted during resizing;
+     therefore, using `unsigned char` or `float` as the element type is the most
+     efficient.
 
    * This function expects all the images at the start to have identical
      dimensions. If the images have different dimension, please assign each
