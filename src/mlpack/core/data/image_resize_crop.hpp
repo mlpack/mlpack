@@ -56,7 +56,7 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
     {
       std::ostringstream oss;
       oss << "ResizeImages(): dimensions mismatch: the number of pixels is"
-        " not equal to the dimension provided by Info."
+        " not equal to the dimension provided by the given ImageInfo."
         << std::endl;
       Log::Fatal << oss.str();
     }
