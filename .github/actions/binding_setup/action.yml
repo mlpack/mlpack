@@ -20,6 +20,7 @@ runs:
           python3 -m pip install --upgrade pip
           python3 -m pip install --upgrade --ignore-installed setuptools cython \
               pandas wheel pytest
+          echo "CMAKE_BINDING_ARGS=-DPYTHON_EXECUTABLE=`which python3`" >> $GITHUB_ENV
 
     #
     # Julia bindings.
@@ -30,12 +31,16 @@ runs:
       run: |
           wget https://julialang-s3.julialang.org/bin/linux/x64/1.10/julia-1.10.4-linux-x86_64.tar.gz
           sudo tar -C /opt/ -xvpf julia-1.10.4-linux-x86_64.tar.gz
-          echo "CMAKE_BINDING_ARGS=/opt/julia-1.10.4/bin/julia" >> $GITHUB_ENV
+          echo "CMAKE_BINDING_ARGS=-DJULIA_EXECUTABLE=/opt/julia-1.10.4/bin/julia" >> $GITHUB_ENV
+          echo "JULIA_EXECUTABLE=/opt/julia-1.10.4/bin/julia" >> $GITHUB_ENV
 
     - name: "Set up Julia on macOS"
       if: inputs.lang == 'Julia' && runner.os == 'macOS'
       shell: bash
-      run: brew install --cask julia
+      run: |
+          brew install --cask julia
+          echo "CMAKE_BINDING_ARGS=-DJULIA_EXECUTABLE=/opt/homebrew/bin/julia" >> $GITHUB_ENV
+          echo "JULIA_EXECUTABLE=/opt/homebrew/bin/julia" >> $GITHUB_ENV
 
     #
     # R bindings.

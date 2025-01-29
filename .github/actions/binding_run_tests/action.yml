@@ -34,7 +34,7 @@ runs:
           # format.
           ROOTDIR=`pwd`;
           cd build/src/mlpack/bindings/julia/mlpack/
-          JULIA_PROJECT=$PWD /opt/julia-1.10.4/bin/julia -e \
+          JULIA_PROJECT=$PWD $JULIA_EXECUTABLE -e \
               "using Pkg; Pkg.add(\"TestReports\"); using TestReports; TestReports.test(\"mlpack\")"
           mv testlog.xml $ROOTDIR/build/julia_bindings.junit.xml
 
