@@ -61,7 +61,7 @@ runs:
       shell: bash
       run: |
           wget http://mirrors.kernel.org/ubuntu/pool/main/i/icu/libicu70_70.1-2_amd64.deb
-          dpkg -i libicu70_70.1-2_amd64.deb
+          sudo dpkg -i libicu70_70.1-2_amd64.deb
 
     - name: "Query R dependencies"
       if: inputs.lang == 'R'
