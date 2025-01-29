@@ -93,9 +93,9 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
 
   // This is not optimal, but I do not want to allocate memory for nothing.
   if (std::is_same<eT, float>::value)
-      resizedFloatImages.set_size(newDimension, images.n_cols);
+    resizedFloatImages.set_size(newDimension, images.n_cols);
   else
-      resizedImages.set_size(newDimension, images.n_cols);
+    resizedImages.set_size(newDimension, images.n_cols);
 
   for (size_t i = 0; i < images.n_cols; ++i)
   {
