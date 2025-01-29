@@ -105,11 +105,13 @@ runs:
           # These directives cause warnings on CRAN:
           # https://github.com/USCiLab/cereal/blob/master/include/cereal/external/base64.hpp#L28-L31
           # The command below comments them out.
-          sed -i 's|#pragma|// #pragma|' cereal-1.3.2/include/cereal/external/base64.hpp
+          sed 's|#pragma|// #pragma|' cereal-1.3.2/include/cereal/external/base64.hpp cereal-1.3.2/include/cereal/external/base64.hpp.tmp
+          mv cereal-1.3.2/include/cereal/external/base64.hpp.tmp cereal-1.3.2/include/cereal/external/base64.hpp
           #
           # Fix cereal compilation on clang 19+; see
           # https://github.com/USCiLab/cereal/pull/835
-          sed -i 's|::template apply|::apply|' cereal-1.3.2/include/cereal/types/tuple.hpp
+          sed 's|::template apply|::apply|' cereal-1.3.2/include/cereal/types/tuple.hpp cereal-1.3.2/include/cereal/types/tuple.hpp.tmp
+          mv cereal-1.3.2/include/cereal/types/tuple.hpp.tmp cereal-1.3.2/include/cereal/types/tuple.hpp
 
     - name: Install R-bindings dependencies
       if: inputs.lang == 'R'
