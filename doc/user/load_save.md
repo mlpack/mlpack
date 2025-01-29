@@ -545,10 +545,9 @@ It is possible to resize images in mlpack with the following function:
      therefore, using `unsigned char` or `float` as the element type is the most
      efficient.
 
-   * This function expects all the images at the start to have identical
-     dimensions. If the images have different dimension, please assign each
-     image to one armadillo column and loop over all of them using a `for`
-     loop.
+   * This function expects all the images to have identical
+     dimensions. If this is not the case, iteratively call `ResizeImages()` with
+     a single image/column in `images`.
     
 Example usage of the `ResizeImages()` function on a set of images:
 
