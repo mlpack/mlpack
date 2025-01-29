@@ -550,7 +550,7 @@ It is possible to resize images in mlpack with the following function:
      image to one armadillo column and loop over all of them using a `for`
      loop.
     
-Example usage of the ResizeImages function on a set of images:
+Example usage of the `ResizeImages()` function on a set of images:
 
 ```c++
 arma::Mat<unsigned char> image, images;
