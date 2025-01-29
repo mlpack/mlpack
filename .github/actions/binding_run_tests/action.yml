@@ -45,9 +45,9 @@ runs:
       if: inputs.lang == 'R'
       shell: bash
       run: |
+          ROOTDIR=`pwd`;
           cd build/src/mlpack/bindings/R/mlpack/
           Rscript -e "library(pkgload); load_all('.'); library(testthat); options(testthat.output_file='r_bindings.junit.xml'); test_file('tests/testthat/test-R_binding.R', reporter = 'junit')"
-          find ./ -iname '*.xml'
           mv tests/testthat/r_bindings.junit.xml $ROOTDIR/build/r_bindings.junit.xml
 
     - name: "Upload R package artifact"
