@@ -537,8 +537,7 @@ It is possible to resize images in mlpack with the following function:
 
    * `newHeight` the new height of the resized image.
 
-   * This function does not return but it modifies the info object and images
-     matrix.
+   * This function returns `void` and modifies `info` and `images`.
 
    * ***NOTE:*** if the element type of the matrix is not `unsigned char` or
    `float` (e.g. if `image` is not `arma::Mat<unsigned char>` or `arma::fmat`),
