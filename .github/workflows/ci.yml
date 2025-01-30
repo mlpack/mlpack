@@ -1,3 +1,7 @@
+# ci.yml: defines all the CI jobs run on Linux and OS X for each commit and pull
+# request commit.  Windows is different enough that it has a different
+# script---see ci-windows.yml.
+
 on:
   workflow_dispatch:
   push:
