@@ -209,14 +209,15 @@ TEST_CASE("ImagesResizeTest", "[ImageTest]")
 TEST_CASE("IdenticalResizeTest", "[ImageTest]")
 {
   arma::Mat<unsigned char> image;
+  data::ImageInfo info;
   std::vector<std::string> files =
       {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
        "sheep_5.jpg", "sheep_6.jpg"};
 
   for (size_t i = 0; i < files.size(); i++)
   {
-    arma::Mat<unsigned char> originalImage = image;
     REQUIRE(data::Load(files.at(i), image, info, false) == true);
+    arma::Mat<unsigned char> originalImage = image;
     ResizeImages(image, info, info.Width(), info.Height());
     for (size_t i = 0; i < originalImage.n_rows; ++i)
     {
