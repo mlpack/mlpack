@@ -57,6 +57,11 @@ runs:
         name: mlpack_r_tarball
         path: build/src/mlpack/bindings/R/${{ env.MLPACK_R_PACKAGE }}
 
+    - name: "Install system dependencies for R CMD check"
+      if: inputs.lang == 'R' && runner.os == 'Linux'
+      shell: bash
+      run: sudo apt-get install libcurl4-openssl-dev
+
     - name: "Install R CMD check dependencies"
       if: inputs.lang == 'R'
       shell: Rscript {0}
@@ -70,7 +75,7 @@ runs:
       if: inputs.lang == 'R'
       shell: bash
       # TODO: revert to error_on = 'warning'
-      run: Rscript -e "rcmdcheck::rcmdcheck(' ', args = c('--no-manual', '--as-cran'), error_on = 'error', check_dir = 'check')"
+      run: Rscript -e "rcmdcheck::rcmdcheck('build/src/mlpack/bindings/R/${{ env.MLPACK_R_PACKAGE }}', args = c('--no-manual', '--as-cran'), error_on = 'error', check_dir = 'check')"
 
     # TODO: upload check results on failure
 
