@@ -51,7 +51,7 @@ runs:
           mv tests/testthat/r_bindings.junit.xml $ROOTDIR/build/r_bindings.junit.xml
 
     - name: "Upload R package artifact"
-      if: inputs.lang == 'R'
+      if: inputs.lang == 'R' && runner.os == 'Linux' # Only upload one tarball.
       uses: actions/upload-artifact@v4.4.0
       with:
         name: mlpack_r_tarball
@@ -62,7 +62,7 @@ runs:
       shell: Rscript {0}
       run: |
           install.packages('remotes')
-          remotes::install_deps('${{ env.MLPACK_R_PACKAGE }}', dependencies = TRUE)
+          remotes::install_deps('build/src/mlpack/bindings/R/${{ env.MLPACK_R_PACKAGE }}', dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
           remotes::install_cran("curl")
 
