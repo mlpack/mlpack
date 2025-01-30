@@ -221,7 +221,7 @@ download_http_artifacts()
       sed 's/^.*\(http[^ ]*\).*$/\1/' |\
       sort |\
       uniq |\
-      grep 'csv\|arff\|bin\|png' |\
+      grep 'csv\|arff\|bin\|png\|jpg' |\
       sed 's/\.$//'`;
   cd $output_dir;
   for a in $artifacts;
@@ -234,6 +234,18 @@ download_http_artifacts()
       then
         echo "Error downloading $a!";
         exit 1;
+      fi
+
+      if [[ $a == *.gz ]];
+      then
+        echo "Unpacking $a...";
+        tar -xzpf $a;
+      fi
+
+      if [[ $a == *.bz2 ]];
+      then
+        echo "Unpacking $a...";
+        tar -xjpf $a;
       fi
     fi
   done

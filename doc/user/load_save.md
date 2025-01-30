@@ -554,6 +554,7 @@ Example usage of the `ResizeImages()` function on a set of images with
 different dimensions:
 
 ```c++
+// See https://datasets.mlpack.org/sheeps.tar.bz2
 arma::Mat<unsigned char> image;
 mlpack::data::ImageInfo info;
 
@@ -586,6 +587,7 @@ same dimensions.
 // All images have the same dimension, It would be possible to load all of
 // them into one matrix
 
+// See https://datasets.mlpack.org/sheeps.tar.bz2
 arma::Mat<unsigned char> images;
 mlpack::data::ImageInfo info;
 
