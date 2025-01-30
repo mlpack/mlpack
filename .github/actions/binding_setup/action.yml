@@ -26,8 +26,8 @@ runs:
       if: inputs.lang == 'Python' && runner.os == 'macOS'
       shell: bash
       run: |
-          /opt/homebrew/bin/python3 -m pip install --user --upgrade pip
-          /opt/homebrew/bin/python3 -m pip install --user setuptools cython pandas zipp configparser wheel pytest
+          /opt/homebrew/bin/python3 -m pip install --break-system-packages --upgrade pip
+          /opt/homebrew/bin/python3 -m pip install --break-system-packages setuptools cython pandas zipp configparser wheel pytest
           echo "CMAKE_BINDING_ARGS=-DPYTHON_EXECUTABLE=/opt/homebrew/bin/python3" >> $GITHUB_ENV
 
     #
