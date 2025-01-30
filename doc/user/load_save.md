@@ -550,11 +550,12 @@ It is possible to resize images in mlpack with the following function:
      dimensions. If this is not the case, iteratively call `ResizeImages()` with
      a single image/column in `images`.
     
-Example usage of the `ResizeImages()` function on a set of images:
+Example usage of the `ResizeImages()` function on a set of images with
+different dimensions:
 
 ```c++
-arma::Mat<unsigned char> image, images;
-data::ImageInfo info;
+arma::Mat<unsigned char> image;
+mlpack::data::ImageInfo info;
 
 // The images are located in our test/data directory. However, any image could
 // be used instead.
@@ -572,18 +573,30 @@ std::vector<std::string> reSheeps =
 // the same dimensions. The `info` will contain the dimension for each one.
 for (size_t i = 0; i < files.size(); i++)
 {
-  data::Load(files.at(i), image, info, false);
-  ResizeImages(image, info, 320, 320);
-  data::Save(reSheeps.at(i), image, info, false);
+  mlpack::data::Load(files.at(i), image, info, false);
+  mlpack::data::ResizeImages(image, info, 320, 320);
+  mlpack::data::Save(reSheeps.at(i), image, info, false);
 }
+```
 
-// Now all images have the same dimension, It would be possible to load all of
+Example usage of `ResizeImages()` function on a set of images that have the
+same dimensions.
+
+```c++
+// All images have the same dimension, It would be possible to load all of
 // them into one matrix
 
-data::Load(reSheeps, images, resizedInfo, false);
+arma::Mat<unsigned char> images;
+mlpack::data::ImageInfo info;
+
+std::vector<std::string> reSheeps =
+    {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
+     "re_sheep_5.jpg", "re_sheep_6.jpg"};
+
+mlpack::data::Load(reSheeps, images, info, false);
 
 // Now let us resize all these images at once, to specific dimensions.
-ResizeImages(images, info, 160, 160);
+mlpack::data::ResizeImages(images, info, 160, 160);
 
 // The resized images will be saved locally. We are declaring the vector that
 // contains the names of the resized images.
@@ -591,7 +604,7 @@ std::vector<std::string> smSheeps =
     {"sm_sheep_1.jpg", "sm_sheep_2.jpg", "sm_sheep_3.jpg", "sm_sheep_4.jpg",
      "sm_sheep_5.jpg", "sm_sheep_6.jpg"};
 
-data::Save(smSheeps, images, info, false);
+mlpack::data::Save(smSheeps, images, info, false);
 ```
 
 ## mlpack objects
