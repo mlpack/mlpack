@@ -93,3 +93,4 @@ runs:
           cd build/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/
           go test -v $ROOTDIR/src/mlpack/bindings/go/tests/go_binding_test.go 2>&1 |\
               $HOME/go/bin/go-junit-report -set-exit-code > $ROOTDIR/build/go_bindings.junit.xml;
+          cat $ROOTDIR/build/go_bindings.junit.xml;
