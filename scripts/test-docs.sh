@@ -221,7 +221,7 @@ download_http_artifacts()
       sed 's/^.*\(http[^ ]*\).*$/\1/' |\
       sort |\
       uniq |\
-      grep 'csv\|arff\|bin\|png\|jpg' |\
+      grep 'csv\|arff\|bin\|png\|jpg\|bz2\|gz' |\
       sed 's/\.$//'`;
   cd $output_dir;
   for a in $artifacts;
@@ -238,14 +238,16 @@ download_http_artifacts()
 
       if [[ $a == *.gz ]];
       then
+        wget $a;
         echo "Unpacking $a...";
-        tar -xzpf $a;
+        tar -xzpf *.gz;
       fi
 
       if [[ $a == *.bz2 ]];
       then
+        wget $a;
         echo "Unpacking $a...";
-        tar -xjpf $a;
+        tar -xjpf *.bz2;
       fi
     fi
   done
