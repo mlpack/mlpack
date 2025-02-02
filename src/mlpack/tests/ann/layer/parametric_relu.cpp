@@ -104,9 +104,11 @@ double ComputeMSRE(arma::mat input, arma::mat target)
 TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
 {
   arma::mat data;
-  data::Load("boston_housing_price.csv", data);
+  data::Load("boston_housing_price.csv",
+      data, data::NoFatal | data::Transpose);
   arma::mat labels;
-  data::Load("boston_housing_price_responses.csv", labels);
+  data::Load("boston_housing_price_responses.csv", labels,
+      data::NoFatal | data::Transpose);
 
   arma::mat trainData, testData, trainLabels, testLabels;
   data::Split(data, labels, trainData, testData, trainLabels, testLabels, 0.2);
