@@ -25,7 +25,8 @@ namespace data {
  * @param str the string to be trimmed.
  * @param func function to determine the characters which should be trimmed.
  */
-inline void TrimIf(std::string &str, std::function<bool(char)> func) {
+inline void TrimIf(std::string &str, std::function<bool(char)> func)
+{
   const auto leftmostCharToKeep =
       std::find_if_not(str.begin(), str.end(), func);
   str.erase(str.begin(), leftmostCharToKeep);
@@ -42,7 +43,8 @@ inline void TrimIf(std::string &str, std::function<bool(char)> func) {
  *
  * @param str the string to be trimmed.
  */
-inline void Trim(std::string &str) {
+inline void Trim(std::string &str)
+{
   TrimIf(str, [](char c) { return std::isspace(c); });
 }
 
