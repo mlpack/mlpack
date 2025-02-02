@@ -25,9 +25,14 @@ namespace data {
  * @param str the string to be trimmed.
  * @param func function to determine the characters which should be trimmed.
  */
-template <typename Func> void TrimIf(std::string &str, Func &&func) {
-  str.erase(str.begin(), std::find_if_not(str.begin(), str.end(), func));
-  str.erase(std::find_if_not(str.rbegin(), str.rend(), func).base(), str.end());
+inline void TrimIf(std::string &str, std::function<bool(char)> func) {
+  const auto leftmostCharToKeep =
+      std::find_if_not(str.begin(), str.end(), func);
+  str.erase(str.begin(), leftmostCharToKeep);
+
+  const auto leftmostTrailingCharToRemove =
+      std::find_if_not(str.rbegin(), str.rend(), func).base();
+  str.erase(leftmostTrailingCharToRemove, str.end());
 }
 
 /**
