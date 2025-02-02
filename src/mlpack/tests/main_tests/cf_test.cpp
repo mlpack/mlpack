@@ -602,7 +602,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFNormalizationBoundTest",
                 "[CFMainTest][BindingTests]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset, data::NoFatal | data::Transpose);
 
   const int querySize = 7;
   Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);

@@ -25,7 +25,8 @@ TEST_CASE("AKFNApproxVsExact1", "[AKFNTest]")
 {
   arma::mat dataset;
 
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!data::Load("test_data_3_1000.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KFN exact(dataset);
@@ -78,7 +79,8 @@ TEST_CASE("AKFNApproxVsExact2", "[AKFNTest]")
 {
   arma::mat dataset;
 
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!data::Load("test_data_3_1000.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KFN exact(dataset);
@@ -105,7 +107,8 @@ TEST_CASE("AKFNSingleTreeVsExact", "[AKFNTest]")
 {
   arma::mat dataset;
 
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!data::Load("test_data_3_1000.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KFN exact(dataset);
@@ -161,7 +164,8 @@ TEST_CASE("AKFNSingleCoverTreeTest", "[AKFNTest]")
 TEST_CASE("AKFNDualCoverTreeTest", "[AKFNTest]")
 {
   arma::mat dataset;
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!data::Load("test_data_3_1000.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KFN exact(dataset);
@@ -219,7 +223,8 @@ TEST_CASE("AKFNSingleBallTreeTest", "[AKFNTest]")
 TEST_CASE("AKFNDualBallTreeTest", "[AKFNTest]")
 {
   arma::mat dataset;
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!data::Load("test_data_3_1000.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KFN exact(dataset);

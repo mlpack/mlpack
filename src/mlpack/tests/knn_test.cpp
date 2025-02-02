@@ -654,7 +654,8 @@ TEST_CASE("KNNDualTreeVsNaive", "[KNNTest]")
   arma::mat dataset;
 
   // Hard-coded filename: bad?
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!data::Load("test_data_3_1000.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN knn(dataset);
@@ -688,7 +689,8 @@ TEST_CASE("KNNDualTreeVsNaive2", "[KNNTest]")
 
   // Hard-coded filename: bad?
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!data::Load("test_data_3_1000.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN knn(dataset);
@@ -723,7 +725,8 @@ TEST_CASE("KNNSingleTreeVsNaive", "[KNNTest]")
 
   // Hard-coded filename: bad?
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!data::Load("test_data_3_1000.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN knn(dataset, SINGLE_TREE_MODE);
@@ -760,7 +763,8 @@ TEST_CASE("KNNSingleTreeVsNaiveF32", "[KNNTest]")
 
   // Hard-coded filename: bad?
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!data::Load("test_data_3_1000.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   NeighborSearch<NearestNeighborSort,
@@ -827,7 +831,8 @@ TEST_CASE("KNNSingleCoverTreeTest", "[KNNTest]")
 TEST_CASE("KNNDualCoverTreeTest", "[KNNTest]")
 {
   arma::mat dataset;
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!data::Load("test_data_3_1000.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv");
 
   KNN tree(dataset);
@@ -899,7 +904,8 @@ TEST_CASE("KNNSingleBallTreeTest", "[KNNTest]")
 TEST_CASE("KNNDualBallTreeTest", "[KNNTest]")
 {
   arma::mat dataset;
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!data::Load("test_data_3_1000.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv");
 
   KNN tree(dataset);

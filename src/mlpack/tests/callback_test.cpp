@@ -28,7 +28,7 @@ TEST_CASE("FFNCallbackTest", "[CallbackTest]")
   arma::mat data;
   arma::mat labels;
 
-  if (!data::Load("lab1.csv", data))
+  if (!data::Load("lab1.csv", data, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset lab1.csv!");
   if (!data::Load("lab3.csv", labels))
     FAIL("Cannot load test dataset lab3.csv!");
@@ -54,9 +54,9 @@ TEST_CASE("FFNWithOptimizerCallbackTest", "[CallbackTest]")
   arma::mat data;
   arma::mat labels;
 
-  if (!data::Load("lab1.csv", data))
+  if (!data::Load("lab1.csv", data, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset lab1.csv!");
-  if (!data::Load("lab3.csv", labels))
+  if (!data::Load("lab3.csv", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset lab3.csv!");
 
   FFN<MeanSquaredError, RandomInitialization> model;

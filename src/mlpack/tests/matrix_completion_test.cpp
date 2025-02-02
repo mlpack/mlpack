@@ -33,9 +33,11 @@ TEST_CASE("UniformMatrixCompletionSDP", "[MatrixCompletionTest]")
   arma::mat Xorig, values;
   arma::umat indices;
 
-  if (!data::Load("completion_X.csv", Xorig, false, false))
+  if (!data::Load("completion_X.csv", Xorig,
+        data::NoFatal | data::NoTranspose))
     FAIL("Cannot load dataset completion_X.csv");
-  if (!data::Load("completion_indices.csv", indices, false, false))
+  if (!data::Load("completion_indices.csv", indices,
+        data::NoFatal | data::NoTranspose))
     FAIL("Cannot load dataset completion_indices.csv");
 
   values.set_size(indices.n_cols);

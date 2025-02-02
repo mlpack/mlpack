@@ -24,7 +24,8 @@ TEST_CASE("QUICSVDReconstructionError", "[QUICSVDTest]")
 {
   // Load the dataset.
   arma::mat dataset;
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!data::Load("test_data_3_1000.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset test_data_3_1000.csv");
 
   // The QUIC-SVD procedure can fail---the Monte Carlo error calculation is
