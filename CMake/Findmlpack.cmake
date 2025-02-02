@@ -18,12 +18,13 @@
 
 set(MLPACK_DISABLE_OPENMP OFF)
 
-if (USE_OPENMP)
+if (NOT USE_OPENMP)
   set(MLPACK_DISABLE_OPENMP ON)
 endif()
 
 # 1. Let us find Armadillo
 find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
+message(${ARMADILLO_LIBRARIES})
 if (ARMADILLO_FOUND)
   # Include directories for the previous dependencies.
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
@@ -152,7 +153,7 @@ else()
   message(FATAL_ERROR "Ensmallen not found, (required dependency of mlpack).")
 endif()
 
-if (USE_OPENMP)
+if (NOT MLPACK_DISABLE_OPENMP)
   find_package(OpenMP)
 endif ()
 

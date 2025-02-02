@@ -24,8 +24,7 @@ endmacro()
 
 macro(autodownload compile)
   set(version 0.3.28)
-  # @rcurtin would be interesting do we only download and compile openblas like others? 
-  # just throw the error message ?
+
   find_package(BLAS PATHS ${CMAKE_BINARY_DIR})
   if (NOT BLAS_FOUND OR (NOT BLAS_LIBRARIES))
     get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v${version}/OpenBLAS-${version}.tar.gz OpenBLAS OpenBLAS-${version}.tar.gz)
