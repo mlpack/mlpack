@@ -469,7 +469,8 @@ TEST_CASE("DualTreeVsNaive1", "[RangeSearchTest]")
   arma::mat dataForTree;
 
   // Hard-coded filename: bad!
-  if (!data::Load("test_data_3_1000.csv", dataForTree))
+  if (!data::Load("test_data_3_1000.csv", dataForTree,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with.
@@ -519,7 +520,8 @@ TEST_CASE("DualTreeVsNaive2", "[RangeSearchTest]")
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", dataForTree))
+  if (!data::Load("test_data_3_1000.csv", dataForTree,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with.
@@ -568,7 +570,8 @@ TEST_CASE("SingleTreeVsNaive", "[RangeSearchTest]")
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", dataForTree))
+  if (!data::Load("test_data_3_1000.csv", dataForTree,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with (may not be necessary with no ALIAS_MATRIX?).

@@ -25,7 +25,8 @@ using namespace std;
 TEST_CASE("NoExtensionLoad", "[LoadSaveTest]")
 {
   arma::mat out;
-  REQUIRE(data::Load("noextension", out) == false);
+  REQUIRE(data::Load("noextension", out,
+        data::NoFatal | data::Transpose) == false);
 }
 
 /**
@@ -43,7 +44,8 @@ TEST_CASE("NoExtensionSave", "[LoadSaveTest]")
 TEST_CASE("NotExistLoad", "[LoadSaveTest]")
 {
   arma::mat out;
-  REQUIRE(data::Load("nonexistentfile_______________.csv", out) == false);
+  REQUIRE(data::Load("nonexistentfile_______________.csv", out,
+        data::NoFatal | data::Transpose) == false);
 }
 
 /**
@@ -61,7 +63,8 @@ TEST_CASE("WrongExtensionWrongLoad", "[LoadSaveTest]")
   REQUIRE(testTrans.save("test_file.csv", arma::arma_binary) == true);
 
   // Now reload through our interface.
-  REQUIRE(data::Load("test_file.csv", test) == false);
+  REQUIRE(data::Load("test_file.csv", test,
+        data::NoFatal | data::Transpose) == false);
 
   // Remove the file.
   remove("test_file.csv");
@@ -83,8 +86,8 @@ TEST_CASE("WrongExtensionCorrectLoad", "[LoadSaveTest]")
 
   // Now reload through our interface.
   REQUIRE(
-      data::Load("test_file.csv", test, false, true, FileType::ArmaBinary)
-      == true);
+      data::Load("test_file.csv", test,
+          data::NoFatal | data::Transpose | data::ARMA_BIN) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -110,7 +113,8 @@ TEST_CASE("LoadCSVTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.csv", test) == true);
+  REQUIRE(data::Load("test_file.csv", test,
+        data::NoFatal | data::Transpose) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -274,7 +278,8 @@ TEST_CASE("LoadTSVTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.csv", test) == true);
+  REQUIRE(data::Load("test_file.csv", test,
+        data::NoFatal | data::Transpose) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -300,7 +305,8 @@ TEST_CASE("LoadTSVExtensionTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.tsv", test) == true);
+  REQUIRE(data::Load("test_file.tsv", test,
+        data::NoFatal | data::Transpose) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);

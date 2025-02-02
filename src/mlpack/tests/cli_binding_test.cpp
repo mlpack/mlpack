@@ -405,7 +405,7 @@ TEST_CASE("OutputParamMatTest", "[CLIOptionTest]")
       (void*) NULL);
 
   arma::mat m2;
-  REQUIRE(data::Load("test.csv", m2));
+  REQUIRE(data::Load("test.csv", m2, data::NoFatal | data::Transpose));
 
   CheckMatrices(m, m2);
 
@@ -433,7 +433,7 @@ TEST_CASE("OutputParamUmatTest", "[CLIOptionTest]")
       (void*) NULL);
 
   arma::Mat<size_t> m2;
-  REQUIRE(data::Load("test.csv", m2));
+  REQUIRE(data::Load("test.csv", m2, data::NoFatal | data::Transpose));
 
   CheckMatrices(m, m2);
 
