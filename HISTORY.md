@@ -10,6 +10,8 @@ _????-??-??_
 
  * Add `MLPACK_NO_STD_MUTEX` to allow disabling `std::mutex` (#3868).
 
+ * Unify the `Load` & `Save` interface using `DataOptions` (#3831).
+
 ## mlpack 4.5.1
 
 _2024-12-02_
