@@ -34,7 +34,8 @@ TEST_CASE_METHOD(
 {
   // Load synthetic dataset.
   arma::mat inputData;
-  data::Load("preprocess_imputer_test.csv", inputData);
+  data::Load("preprocess_imputer_test.csv", inputData,
+      data::NoFatal | data::Transpose);
 
   arma::mat outputData;
 
@@ -53,7 +54,8 @@ TEST_CASE_METHOD(
   RUN_BINDING();
 
   // Now check that the output has desired dimensions.
-  data::Load(params.Get<std::string>("output_file"), outputData);
+  data::Load(params.Get<std::string>("output_file"), outputData,
+      data::NoFatal | data::Transpose);
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 
@@ -70,7 +72,8 @@ TEST_CASE_METHOD(
   RUN_BINDING();
 
   // Now check that the output has desired dimensions.
-  data::Load(params.Get<std::string>("output_file"), outputData);
+  data::Load(params.Get<std::string>("output_file"), outputData,
+      data::NoFatal | data::Transpose);
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 
@@ -88,7 +91,8 @@ TEST_CASE_METHOD(
   RUN_BINDING();
 
   // Now check that the output has desired dimensions.
-  data::Load(params.Get<std::string>("output_file"), outputData);
+  data::Load(params.Get<std::string>("output_file"), outputData,
+      data::NoFatal | data::Transpose);
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 }
@@ -102,7 +106,8 @@ TEST_CASE_METHOD(
 {
   // Load synthetic dataset.
   arma::mat inputData;
-  data::Load("preprocess_imputer_test.csv", inputData);
+  data::Load("preprocess_imputer_test.csv", inputData,
+      data::NoFatal | data::Transpose);
 
   // Store size of input dataset.
   size_t inputSize  = inputData.n_cols;
@@ -130,7 +135,8 @@ TEST_CASE_METHOD(
 
   // Now check that the output has desired dimensions.
   arma::mat outputData;
-  data::Load(params.Get<std::string>("output_file"), outputData);
+  data::Load(params.Get<std::string>("output_file"), outputData,
+      data::NoFatal | data::Transpose);
   REQUIRE(outputData.n_cols + countNaN == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 }
@@ -144,7 +150,8 @@ TEST_CASE_METHOD(
 {
   // Load synthetic dataset.
   arma::mat inputData;
-  data::Load("preprocess_imputer_test.csv", inputData);
+  data::Load("preprocess_imputer_test.csv", inputData,
+      data::NoFatal | data::Transpose);
 
   // Input custom data points and labels.
   SetInputParam("input_file", (std::string) "preprocess_imputer_test.csv");

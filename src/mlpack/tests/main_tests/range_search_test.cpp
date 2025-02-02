@@ -54,7 +54,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchInputModelNoQuery",
   string distanceFile = "distances.csv";
   string neighborsFile = "neighbors.csv";
 
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("reference", std::move(inputData));
@@ -93,7 +93,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchDifferentTree",
   string distanceFile = "distances.csv";
   string neighborsFile = "neighbors.csv";
   string wrongTreeType = "RST";
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("reference", std::move(inputData));
@@ -120,9 +120,9 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchBothReferenceAndModel",
   string distanceFile = "distances.csv";
   string neighborsFile = "neighbors.csv";
 
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Unable to load dataset iris.csv!");
-  if (!data::Load("iris_test.csv", queryData))
+  if (!data::Load("iris_test.csv", queryData, data::NoFatal | data::Transpose))
     FAIL("Unable to load dataset iris_test.csv!");
 
   SetInputParam("reference", std::move(inputData));
@@ -251,9 +251,9 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "ModelCheck",
   vector<vector<size_t>> neighbors, neighborsTemp;
   vector<vector<double>> distances, distancetemp;
 
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Unable to load dataset iris.csv!");
-  if (!data::Load("iris_test.csv", queryData))
+  if (!data::Load("iris_test.csv", queryData, data::NoFatal | data::Transpose))
     FAIL("Unable to load dataset iris_test.csv!");
 
   SetInputParam("reference", std::move(inputData));
@@ -300,7 +300,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "LeafValueTesting",
                  "[RangeSearchMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Unable to load dataset iris.csv!");
 
   string distanceFile = "distances.csv";
@@ -375,9 +375,9 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "TreeTypeTesting",
                           "hilbert-r", "r-plus", "r-plus-plus", "vp", "rp",
                           "max-rp", "ub", "oct"};
 
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Unable to load dataset iris.csv!");
-  if (!data::Load("iris_test.csv", queryData))
+  if (!data::Load("iris_test.csv", queryData, data::NoFatal | data::Transpose))
     FAIL("Unable to load dataset iris_test.csv!");
 
   // Define base parameters with the kd-tree.
@@ -397,9 +397,10 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "TreeTypeTesting",
 
   for (size_t i = 1; i < trees.size(); ++i)
   {
-    if (!data::Load("iris.csv", inputData))
+    if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
       FAIL("Unable to load dataset iris.csv!");
-    if (!data::Load("iris_test.csv", queryData))
+    if (!data::Load("iris_test.csv", queryData,
+          data::NoFatal | data::Transpose))
       FAIL("Unable to load dataset iris_test.csv!");
 
     SetInputParam("min", minVal);
@@ -442,9 +443,9 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RandomBasisTesting",
   double minVal = 0, maxVal = 3;
 
   arma::mat queryData, inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Unable to load dataset iris.csv!");
-  if (!data::Load("iris_test.csv", queryData))
+  if (!data::Load("iris_test.csv", queryData, data::NoFatal | data::Transpose))
     FAIL("Unable to load dataset iris_test.csv!");
 
   SetInputParam("min", minVal);
@@ -489,9 +490,9 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "NaiveModeTest",
   vector<vector<size_t>> neighbors, neighborsTemp;
   vector<vector<double>> distances, distancestemp;
 
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Unable to load dataset iris.csv!");
-  if (!data::Load("iris_test.csv", queryData))
+  if (!data::Load("iris_test.csv", queryData, data::NoFatal | data::Transpose))
     FAIL("Unable to load dataset iris_test.csv!");
 
   SetInputParam("min", minVal);
@@ -544,9 +545,9 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "SingleModeTest",
   vector<vector<size_t>> neighbors, neighborsTemp;
   vector<vector<double>> distances, distancestemp;
 
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Unable to load dataset iris.csv!");
-  if (!data::Load("iris_test.csv", queryData))
+  if (!data::Load("iris_test.csv", queryData, data::NoFatal | data::Transpose))
     FAIL("Unable to load dataset iris_test.csv!");
 
   SetInputParam("min", minVal);

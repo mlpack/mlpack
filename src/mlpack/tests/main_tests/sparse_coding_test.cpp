@@ -30,11 +30,11 @@ BINDING_TEST_FIXTURE(SparseCodingTestFixture);
 void LoadData(arma::mat& inputData, arma::mat& testData)
 {
   // Load train dataset.
-  if (!data::Load("iris_train.csv", inputData))
+  if (!data::Load("iris_train.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset iris_train.csv!");
 
   // Load test dataset.
-  if (!data::Load("iris_test.csv", testData))
+  if (!data::Load("iris_test.csv", testData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_test.csv!");
 }
 
@@ -141,7 +141,7 @@ TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingBoundsTest",
                  "[SparseCodingMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris_train.csv", inputData))
+  if (!data::Load("iris_train.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset iris_train.csv!");
 
   // Test for L1 value.
@@ -213,7 +213,7 @@ TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingReqAtomsTest",
                  "[SparseCodingMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris_train.csv", inputData))
+  if (!data::Load("iris_train.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset iris_train.csv!");
 
   // Input training data.
