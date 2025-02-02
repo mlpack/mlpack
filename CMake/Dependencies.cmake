@@ -51,12 +51,12 @@ macro(autodownload compile)
     endif()
     get_deps(https://files.mlpack.org/armadillo-12.6.5.tar.gz armadillo armadillo-12.6.5.tar.gz)
     set(ARMADILLO_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
-    find_package(Armadillo REQUIRED)
-    if (ARMADILLO_FOUND)
-      # Include directories for the previous dependencies.
-      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
-      set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
+    if (NOT CMAKE_CROSSCOMPILING)
+      find_package(Armadillo REQUIRED)
     endif()
+    # Include directories for the previous dependencies.
+    set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
+    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
   endif()
 
   ## Keep STB out of this until we merge the stb PR

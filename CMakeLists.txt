@@ -268,6 +268,7 @@ if (DOWNLOAD_DEPENDENCIES)
   autodownload(ON)
 endif()
 
+message(${MLPACK_LIBRARIES})
 # Create a 'distclean' target in case the user is using an in-source build for
 # some reason.
 include(CMake/TargetDistclean.cmake OPTIONAL)
