@@ -27,11 +27,11 @@ namespace data {
  */
 inline void TrimIf(std::string &str, std::function<bool(char)> func)
 {
-  const auto leftmostCharToKeep =
+  const std::string::iterator leftmostCharToKeep =
       std::find_if_not(str.begin(), str.end(), func);
   str.erase(str.begin(), leftmostCharToKeep);
 
-  const auto leftmostTrailingCharToRemove =
+  const std::string::iterator leftmostTrailingCharToRemove =
       std::find_if_not(str.rbegin(), str.rend(), func).base();
   str.erase(leftmostTrailingCharToRemove, str.end());
 }
