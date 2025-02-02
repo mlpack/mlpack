@@ -129,11 +129,8 @@ T*& GetParam(
   const std::string& value = std::get<1>(*tuple);
   if (d.input && !d.loaded)
   {
-    data::DataOptions opts;
-    opts.Fatal() = true;
-    opts.Model() = true;
     T* model = new T();
-    data::Load(value, *model, opts);
+    data::Load(value, "model", *model, true);
     d.loaded = true;
     std::get<0>(*tuple) = model;
   }
