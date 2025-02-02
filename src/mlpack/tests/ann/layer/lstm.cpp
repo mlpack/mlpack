@@ -93,10 +93,10 @@ void CheckRNNCopyFunction(ModelType* network1,
   network1->Predict(trainData, predictions1);
 
   RNN<> network2 = *network1;
-  // Deallocate all of network1's memory, so we can check that network2 does not
-  // use any of that memory.
   delete network1;
 
+  // Deallocating all of network1's memory, so that network2 does not use any
+  // of that memory.
   network2.Predict(trainData, predictions2);
   CheckMatrices(predictions1, predictions2);
 }
@@ -116,10 +116,10 @@ void CheckRNNMoveFunction(ModelType* network1,
   network1->Predict(trainData, predictions1);
 
   RNN<> network2(std::move(*network1));
-  // Deallocate all of network1's memory, so we can check that network2 does not
-  // use any of that memory.
   delete network1;
 
+  // Deallocating all of network1's memory, so that network2 does not use any
+  // of that memory.
   network2.Predict(trainData, predictions2);
   CheckMatrices(predictions1, predictions2);
 }
