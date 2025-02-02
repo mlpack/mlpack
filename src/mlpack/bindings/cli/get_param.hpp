@@ -66,7 +66,7 @@ T& GetParam(
     {
       data::DataOptions opts;
       opts.Fatal() = true;
-      opts.noTranspose() = !d.noTranspose;
+      opts.NoTranspose() = d.noTranspose;
       data::Load(value, matrix, opts);
     }
     n_rows = matrix.n_rows;
@@ -100,7 +100,7 @@ T& GetParam(
   {     
     data::DataOptions opts;
     opts.Fatal() = true;
-    opts.noTranspose() = !d.noTranspose;
+    opts.NoTranspose() = d.noTranspose;
 
     data::Load(value, std::get<1>(t), std::get<0>(t), true);
     n_rows = std::get<1>(t).n_rows;
