@@ -31,7 +31,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNoTrainingData",
                  "[LinearSVMMainTest][BindingTests]")
 {
   arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
+  if (!data::Load("iris_labels.txt", trainLabels, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("labels", std::move(trainLabels));
@@ -47,11 +47,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMOutputDimensionTest",
                  "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
+  if (!data::Load("iris.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
+  if (!data::Load("iris_labels.txt", trainLabels, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_labels.txt!");
 
   arma::mat testData;
@@ -83,11 +83,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMCheckLabelsSizeTest",
                  "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
+  if (!data::Load("iris.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
-  if (!data::Load("vc2_labels.txt", trainLabels))
+  if (!data::Load("vc2_labels.txt", trainLabels, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset vc2_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
@@ -149,11 +149,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMModelReuseTest",
                  "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
+  if (!data::Load("iris.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
+  if (!data::Load("iris_labels.txt", trainLabels, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_labels.txt!");
 
   arma::mat testData;
@@ -202,7 +202,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMCheckDimOfTestData",
   // Dimensionality of trainingSet is trainData.n_rows - 1 because labels are
   // not provided.
   arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
+  if (!data::Load("iris.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::mat testData;
@@ -225,7 +225,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMCheckDimOfTestData2",
   // Dimensionality of trainingSet is trainData.n_rows - 1 because labels are
   // not provided.
   arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
+  if (!data::Load("iris.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::mat testData;
@@ -258,11 +258,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeMaxIterationTest",
                  "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
+  if (!data::Load("iris.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
+  if (!data::Load("iris_labels.txt", trainLabels, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
@@ -280,11 +280,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeLambdaTest",
                  "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
+  if (!data::Load("iris.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
+  if (!data::Load("iris_labels.txt", trainLabels, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
@@ -303,11 +303,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture,
                  "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
+  if (!data::Load("iris.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
+  if (!data::Load("iris_labels.txt", trainLabels, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
@@ -325,11 +325,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeToleranceTest",
                  "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
+  if (!data::Load("iris.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
+  if (!data::Load("iris_labels.txt", trainLabels, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
@@ -347,11 +347,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeDeltaTest",
                  "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
+  if (!data::Load("iris.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
+  if (!data::Load("iris_labels.txt", trainLabels, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
@@ -369,11 +369,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeEpochsTest",
                  "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
+  if (!data::Load("iris.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
+  if (!data::Load("iris_labels.txt", trainLabels, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
@@ -413,11 +413,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMOptimizerTest",
                  "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
+  if (!data::Load("iris.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
+  if (!data::Load("iris_labels.txt", trainLabels, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
@@ -434,11 +434,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffMaxIterationsTest",
                  "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
+  if (!data::Load("iris.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
+  if (!data::Load("iris_labels.txt", trainLabels, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", trainData);
@@ -480,11 +480,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffLambdaTest",
                  "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
+  if (!data::Load("iris.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
+  if (!data::Load("iris_labels.txt", trainLabels, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", trainData);
@@ -526,11 +526,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffDeltaTest",
                  "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
+  if (!data::Load("iris.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
+  if (!data::Load("iris_labels.txt", trainLabels, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", trainData);
@@ -572,11 +572,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffInterceptTest",
                  "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
+  if (!data::Load("iris.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
+  if (!data::Load("iris_labels.txt", trainLabels, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", trainData);
@@ -673,11 +673,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeStepSizeTest",
                  "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
+  if (!data::Load("iris.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
+  if (!data::Load("iris_labels.txt", trainLabels, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", std::move(trainData));

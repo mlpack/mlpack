@@ -30,7 +30,7 @@ TEST_CASE_METHOD(KmTestFixture, "NonNegativeClustersTest",
                  "[KmeansMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Unable to load train dataset vc2.csv!");
 
   SetInputParam("input", std::move(inputData));
@@ -67,7 +67,7 @@ TEST_CASE_METHOD(KmTestFixture, "RefinedStartPercentageTest",
   int c = 2;
   double P = 2.0;
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Unable to load train dataset vc2.csv!");
 
   SetInputParam("input", std::move(inputData));
@@ -88,7 +88,7 @@ TEST_CASE_METHOD(KmTestFixture, "NonNegativePercentageTest",
   int c = 2;
   double P = -1.0;
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Unable to load train dataset vc2.csv!");
 
   SetInputParam("input", std::move(inputData));
@@ -108,7 +108,7 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringSizeCheck",
 {
   int c = 2;
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Unable to load train dataset vc2.csv!");
 
   size_t col = inputData.n_cols;
@@ -134,7 +134,7 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringSizeCheckLabelOnly",
   int c = 2;
 
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Unable to load train dataset vc2.csv!");
   size_t col = inputData.n_cols;
   size_t row = inputData.n_rows;
@@ -162,7 +162,8 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringEmptyClustersCheck",
   int iterations = 100;
 
   arma::mat inputData;
-  if (!data::Load("test_data_3_1000.csv", inputData))
+  if (!data::Load("test_data_3_1000.csv", inputData,
+        data::NoFatal | data::Transpose))
     FAIL("Unable to load train dataset test_data_3_1000.csv!");
   arma::mat initCentroid = arma::randu<arma::mat>(inputData.n_rows, c);
 
@@ -228,7 +229,7 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringResultSizeCheck",
   int c = 2;
 
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Unable to load train dataset vc2.csv!");
 
   size_t row = inputData.n_rows;
@@ -254,7 +255,7 @@ TEST_CASE_METHOD(KmTestFixture, "KmClustersNotDefined",
                  "[KmeansMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Unable to load train dataset vc2.csv!");
 
   SetInputParam("input", std::move(inputData));
