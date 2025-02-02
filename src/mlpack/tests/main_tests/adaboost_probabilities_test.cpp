@@ -34,15 +34,15 @@ TEST_CASE_METHOD(AdaBoostPredictProbaTestFixture,
                  "[AdaBoostPredictProbaMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("vc2.csv", trainData))
+  if (!data::Load("vc2.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Unable to load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!data::Load("vc2_test.csv", testData, data::NoFatal | data::Transpose))
     FAIL("Unable to load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
@@ -74,15 +74,15 @@ TEST_CASE_METHOD(AdaBoostPredictProbaTestFixture,
                  "[AdaBoostPredictProbaMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("vc2.csv", trainData))
+  if (!data::Load("vc2.csv", trainData, data::NoFatal | data::Transpose))
     FAIL("Unable to load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!data::Load("vc2_test.csv", testData, data::NoFatal | data::Transpose))
     FAIL("Unable to load test dataset vc2.csv!");
 
   // reducing the number of features in test data.

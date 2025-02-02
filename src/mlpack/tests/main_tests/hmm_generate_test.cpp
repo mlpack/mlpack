@@ -34,7 +34,7 @@ TEST_CASE_METHOD(HMMGenerateTestFixture,
 {
   // Load data to train a discrete HMM model with.
   arma::mat inp;
-  data::Load("obs1.csv", inp);
+  data::Load("obs1.csv", inp, data::NoFatal | data::Transpose);
   std::vector<arma::mat> trainSeq = {inp};
 
   // Initialize and train a discrete HMM model.
@@ -74,7 +74,7 @@ TEST_CASE_METHOD(HMMGenerateTestFixture,
 {
   // Load data to train a gaussian HMM model with.
   arma::mat inp;
-  data::Load("obs1.csv", inp);
+  data::Load("obs1.csv", inp, data::NoFatal | data::Transpose);
   std::vector<arma::mat> trainSeq = {inp};
 
   // Initialize and train a gaussian HMM model.
@@ -216,7 +216,7 @@ TEST_CASE_METHOD(HMMGenerateTestFixture,
 {
   // Load data to train a Gaussian Mixture Model HMM model with.
   arma::mat inp;
-  data::Load("obs1.csv", inp);
+  data::Load("obs1.csv", inp, data::NoFatal | data::Transpose);
   std::vector<arma::mat> trainSeq = {inp};
 
   // Initialize and train a HMM model.
@@ -240,7 +240,7 @@ TEST_CASE_METHOD(HMMGenerateTestFixture,
 {
   // Load data to train a Gaussian Mixture Model HMM model with.
   arma::mat inp;
-  data::Load("obs1.csv", inp);
+  data::Load("obs1.csv", inp, data::NoFatal | data::Transpose);
   std::vector<arma::mat> trainSeq = {inp};
 
   // Initialize and train a HMM model.

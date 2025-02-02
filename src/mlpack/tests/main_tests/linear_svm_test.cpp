@@ -55,7 +55,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMOutputDimensionTest",
     FAIL("Cannot load test dataset iris_labels.txt!");
 
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
+  if (!data::Load("iris_test.csv", testData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_test.csv!");
 
   size_t testSize = testData.n_cols;
@@ -157,7 +157,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMModelReuseTest",
     FAIL("Cannot load test dataset iris_labels.txt!");
 
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
+  if (!data::Load("iris_test.csv", testData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_test.csv!");
 
   SetInputParam("training", std::move(trainData));
@@ -206,7 +206,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMCheckDimOfTestData",
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
+  if (!data::Load("iris_test.csv", testData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_test.csv!");
 
   SetInputParam("training", std::move(trainData));
@@ -229,7 +229,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMCheckDimOfTestData2",
     FAIL("Cannot load test dataset iris.csv!");
 
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
+  if (!data::Load("iris_test.csv", testData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset iris_test.csv!");
 
   SetInputParam("training", std::move(trainData));
