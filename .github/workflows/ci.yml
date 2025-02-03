@@ -76,7 +76,7 @@ jobs:
       - name: Get ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
-          key: ${{ runner.os }}-${{ runner.config.name }}
+          key: ${{ runner.os }}-${{ matrix.config.name }}
           variant: ccache
           max-size: 1G
 
