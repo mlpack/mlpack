@@ -54,20 +54,19 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
   {
     if (images.n_elem != (info.Width() * info.Height() * info.Channels()))
     {
-      Log::Fatal << "ResizeImages(): dimensions mismatch: the number of pixels is"
-        " not equal to the dimension provided by the given ImageInfo."
-        << std::endl;
+      Log::Fatal << "ResizeImages(): dimensions mismatch: the number of pixels "
+          << "is not equal to the dimension provided by the given ImageInfo."
+          << std::endl;
     }
   }
   else
   {
     if (images.n_rows != (info.Width() * info.Height() * info.Channels()))
     {
-      Log::Fatal << "ResizeImages(): dimension mismatch: in the case of"
-          " several images, please check if all the images have the same"
-        " dimension already, if not, load each image in one column and"
-        " recall this function."
-        << std::endl;
+      Log::Fatal << "ResizeImages(): dimension mismatch: in the case of "
+          << "several images, please check that all the images have the same "
+          << "dimensions; if not, load each image in one column and call this "
+          << "function iteratively." << std::endl;
     }
   }
 
@@ -98,16 +97,16 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
     if constexpr (std::is_same<eT, unsigned char>::value)
     {
       arma::Mat<unsigned char> tempDest(newDimension, 1);
-      stbir_resize_uint8_linear(images.colptr(i), info.Width(), info.Height(), 0,
-          tempDest.memptr(), newWidth, newHeight, 0, channels);
+      stbir_resize_uint8_linear(images.colptr(i), info.Width(), info.Height(),
+          0, tempDest.memptr(), newWidth, newHeight, 0, channels);
 
       resizedImages.col(i) = std::move(tempDest);
     }
     else if constexpr (std::is_same<eT, float>::value)
     {
       arma::fmat tempDestFloat(newDimension, 1);
-      stbir_resize_float_linear(images.colptr(i), info.Width(), info.Height(), 0,
-          tempDestFloat.memptr(), newWidth, newHeight, 0, channels);
+      stbir_resize_float_linear(images.colptr(i), info.Width(), info.Height(),
+          0, tempDestFloat.memptr(), newWidth, newHeight, 0, channels);
       resizedFloatImages.col(i) = std::move(tempDestFloat);
     }
     else
@@ -117,8 +116,8 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
 
       arma::Mat<unsigned char> tempDest(newDimension, 1);
 
-      stbir_resize_uint8_linear(tempSrc.colptr(i), info.Width(), info.Height(), 0,
-          tempDest.memptr(), newWidth, newHeight, 0, channels);
+      stbir_resize_uint8_linear(tempSrc.colptr(i), info.Width(), info.Height(),
+          0, tempDest.memptr(), newWidth, newHeight, 0, channels);
 
       resizedImages.col(i) = arma::conv_to<arma::Mat<eT>>::from(tempDest);
     }
