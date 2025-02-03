@@ -76,9 +76,9 @@ jobs:
       - name: Get ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
-          key: ${{ runner.os }}
+          key: ${{ runner.os }}-${{ runner.config.name }}
           variant: ccache
-          max-size: 5G
+          max-size: 1G
 
       # Set up the build environment for any bindings, if needed.
       - name: Set up binding dependencies
