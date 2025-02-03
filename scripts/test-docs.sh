@@ -238,14 +238,12 @@ download_http_artifacts()
 
       if [[ $a == *.gz ]];
       then
-        wget $a;
         echo "Unpacking $a...";
         tar -xzpf *.gz;
       fi
 
       if [[ $a == *.bz2 ]];
       then
-        wget $a;
         echo "Unpacking $a...";
         tar -xjpf *.bz2;
       fi
