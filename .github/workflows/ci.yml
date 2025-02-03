@@ -23,11 +23,11 @@ jobs:
     strategy:
       fail-fast: false # Run all configurations even if one fails.
       matrix:
-        # The R bindings are tested via r-bindings.yaml.
         config: [
           {
             name: 'Debug',
-            cmakeVars: '-DCMAKE_BUILD_TYPE=Debug -DBUILD_CLI_EXECUTABLES=OFF'
+            # Disable [DEBUG] output from the tests because it's WAY too verbose.
+            cmakeVars: '-DCMAKE_BUILD_TYPE=Debug -DBUILD_CLI_EXECUTABLES=OFF -DCMAKE_CXX_FLAGS="-DMLPACK_NO_PRINT_DEBUG"'
           },
           {
             name: 'CLI',
@@ -131,9 +131,7 @@ jobs:
       - name: Run mlpack_test
         run: |
           cd build
-          # Filter 'debug' output from the junit file because it makes the junit
-          # too large, but still print it to stderr of this job step.
-          OMP_NUM_THREADS=4 bin/mlpack_test -r junit | tee /dev/stderr | grep -v '\[DEBUG\]' > mlpack_test.junit.xml
+          OMP_NUM_THREADS=4 bin/mlpack_test -r junit | tee /dev/stderr > mlpack_test.junit.xml
           # Remove version numbers and other non-xml from the output.
           cat mlpack_test.junit.xml | sed '/<?xml/,$!d' > mlpack_test.junit.xml.tmp
           mv mlpack_test.junit.xml.tmp mlpack_test.junit.xml
