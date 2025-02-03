@@ -147,7 +147,7 @@ TEST_CASE("LoadSparseTSVTest", "[LoadSaveTest]")
   arma::sp_mat test;
 
   REQUIRE(data::Load(
-      "test_sparse_file.tsv", test, true, false) == true);
+      "test_sparse_file.tsv", test, data::Fatal | data::NoTranspose) == true);
 
   REQUIRE(test.n_rows == 8);
   REQUIRE(test.n_cols == 9);
