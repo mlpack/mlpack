@@ -96,34 +96,34 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
   {
     if constexpr (std::is_same<eT, unsigned char>::value)
     {
-      arma::Mat<unsigned char> tempDest(newDimension, 1);
       stbir_resize_uint8_linear(images.colptr(i), info.Width(), info.Height(),
-          0, tempDest.memptr(), newWidth, newHeight, 0, channels);
-
-      resizedImages.col(i) = std::move(tempDest);
+          0, resizedImages.colptr(i), newWidth, newHeight, 0, channels);
     }
     else if constexpr (std::is_same<eT, float>::value)
     {
-      arma::fmat tempDestFloat(newDimension, 1);
       stbir_resize_float_linear(images.colptr(i), info.Width(), info.Height(),
-          0, tempDestFloat.memptr(), newWidth, newHeight, 0, channels);
-      resizedFloatImages.col(i) = std::move(tempDestFloat);
+          0, resizedFloatImages.colptr(i), newWidth, newHeight, 0, channels);
     }
     else
     {
       arma::Mat<unsigned char> tempSrc =
           arma::conv_to<arma::Mat<unsigned char>>::from(images);
 
-      arma::Mat<unsigned char> tempDest(newDimension, 1);
-
       stbir_resize_uint8_linear(tempSrc.colptr(i), info.Width(), info.Height(),
-          0, tempDest.memptr(), newWidth, newHeight, 0, channels);
-
-      resizedImages.col(i) = arma::conv_to<arma::Mat<eT>>::from(tempDest);
+          0, resizedImages.colptr(i), newWidth, newHeight, 0, channels);
     }
   }
 
-  images = std::move(resizedImages);
+  if (std::is_same<eT, float>::value)
+  {
+    // The conv_to is needed here so that this code compiles even when this
+    // branch isn't taken.
+    images = arma::conv_to<arma::Mat<eT>>::from(std::move(resizedFloatImages));
+  }
+  else
+  {
+    images = arma::conv_to<arma::Mat<eT>>::from(std::move(resizedImages));
+  }
   info.Width() = newWidth;
   info.Height() = newHeight;
 }

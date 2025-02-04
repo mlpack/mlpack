@@ -151,11 +151,15 @@ TEST_CASE("ImageInfoSerialization", "[ImageLoadTest]")
 }
 
 /**
- * Test resize the image if this is done correctly.
+ * Test resize the image if this is done correctly.  Try it with a few different
+ * types.
  */
-TEST_CASE("ImagesResizeTest", "[ImageTest]")
+TEMPLATE_TEST_CASE("ImagesResizeTest", "[ImageTest]", unsigned char, size_t,
+    float, double)
 {
-  arma::Mat<unsigned char> image, images;
+  typedef TestType eT;
+
+  arma::Mat<eT> image, images;
   data::ImageInfo info, resizedInfo, resizedInfo2;
   std::vector<std::string> files =
       {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
@@ -204,11 +208,14 @@ TEST_CASE("ImagesResizeTest", "[ImageTest]")
 
 /**
  * Test if we resize to the same original dimension we will get the same pixels
- * and no modification to the image
+ * and no modification to the image.  Try it with a few different types.
  */
-TEST_CASE("IdenticalResizeTest", "[ImageTest]")
+TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", unsigned char, size_t,
+    float, double)
 {
-  arma::Mat<unsigned char> image;
+  typedef TestType eT;
+
+  arma::Mat<eT> image;
   data::ImageInfo info;
   std::vector<std::string> files =
       {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
@@ -217,7 +224,7 @@ TEST_CASE("IdenticalResizeTest", "[ImageTest]")
   for (size_t i = 0; i < files.size(); i++)
   {
     REQUIRE(data::Load(files.at(i), image, info, false) == true);
-    arma::Mat<unsigned char> originalImage = image;
+    arma::Mat<eT> originalImage = image;
     ResizeImages(image, info, info.Width(), info.Height());
     for (size_t i = 0; i < originalImage.n_rows; ++i)
     {
