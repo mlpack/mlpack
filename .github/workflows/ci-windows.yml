@@ -55,7 +55,7 @@ jobs:
         shell: bash
         run: |
           cd deps/
-          curl -O https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz -o armadillo-10.8.2.tar.xz
+          curl -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz -o armadillo-10.8.2.tar.xz
           tar -xvf armadillo-10.8.2.tar.xz
           cd armadillo-10.8.2/
           cmake -G "Visual Studio 17 2022" \
