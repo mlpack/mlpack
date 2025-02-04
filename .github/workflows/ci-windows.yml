@@ -75,6 +75,7 @@ jobs:
       # ccache entries will be at a more granular level and are more likely to
       # be reused across runs.
       - name: Configure mlpack with CMake
+        shell: bash
         run: |
           mkdir build && cd build
           cmake -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON \
