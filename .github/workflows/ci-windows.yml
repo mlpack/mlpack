@@ -64,8 +64,8 @@ jobs:
             -DBUILD_SHARED_LIBS=OFF .
           cmake --build . --config Release
           ls Release/
-          echo "x64"
-          ls x64/
+          echo "x64 Release ls"
+          ls x64/Release/
           # Now download and unpack cereal.
           cd ../
           curl -L https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.2.tar.gz -o cereal-1.3.2.tar.gz
