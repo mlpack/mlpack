@@ -331,6 +331,10 @@ if (StbImage_FOUND)
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
 
   # Make sure that we can link STB in multiple translation units.
+  # The test uses the STB_IMAGE_INCLUDE_DIR_TEST variable, and runs from a
+  # different directory, so we have to get the absolute location.
+  get_filename_component(ABSOLUTE_PATH ${STB_IMAGE_INCLUDE_DIR}
+      STB_IMAGE_INCLUDE_DIR_TEST)
   include(CMake/TestStaticSTB.cmake)
   if (NOT CMAKE_HAS_WORKING_STATIC_STB)
     message(FATAL_ERROR "STB implementations's static mode cannot link across "
