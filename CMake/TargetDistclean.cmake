@@ -11,7 +11,7 @@ if (UNIX)
   # since it's unix-specific we will use bash
   add_custom_target (distclean @echo cleaning ${FASTLIB_SOURCE_DIR} for source distribution)
 
-  add_custom_command(TARGET distclean
+  add_custom_command(TARGET distclean POST_BUILD
     COMMAND make ARGS clean
     COMMAND find ARGS ${FASTLIB_SOURCE_DIR} -iname CMakeCache.txt -delete
     COMMAND find ARGS ${FASTLIB_SOURCE_DIR} -iname cmake_install.cmake -delete
