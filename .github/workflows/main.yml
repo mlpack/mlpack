@@ -50,7 +50,7 @@ jobs:
           # this is the default but 'sccache' can be selected here
           variant: ccache
 
-      - name: Prepare R for Ccache 
+      - name: Prepare R for Ccache
         run: |
           mkdir -p ~/.R
           cp -vax .github/etc/R_Makevars_${{ runner.os }} ~/.R/Makevars
@@ -58,7 +58,7 @@ jobs:
       - name: Configure Ccache for R
         run: |
           ccache --set-config "sloppiness=include_file_ctime"
-          ccache --set-config "hash_dir=false" 
+          ccache --set-config "hash_dir=false"
           ccache --show-config
           ccache --zero-stats
 
@@ -98,9 +98,17 @@ jobs:
       - name: Install R-bindings dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
-          remotes::install_cran("roxygen2")
-          remotes::install_cran("pkgbuild")
+          remotes::install_cran(c("roxygen2","pkgbuild"))
         shell: Rscript {0}
+
+      # This appears to be needed to work around this issue:
+      # https://github.com/gagolews/stringi/issues/486
+      - name: "Work around stringi libicu issue"
+        if: inputs.lang == 'R' && runner.os == 'Linux'
+        shell: bash
+        run: |
+            wget http://mirrors.kernel.org/ubuntu/pool/main/i/icu/libicu70_70.1-2_amd64.deb
+            sudo dpkg -i libicu70_70.1-2_amd64.deb
 
       - name: CMake
         run: |

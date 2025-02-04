@@ -9,7 +9,8 @@ This will convert all the Markdown documentation in `doc/` into HTML in
 process but also can be run manually.
 
 The `kramdown` parser with the `parser-gfm` and `rouge` extensions installed is
-necessary, as are the `tidy` and `checklink` HTML checking packages.
+necessary, as are the `tidy`, `checklink`, and `linkchecker` HTML checking
+packages.
 
 ```sh
 scripts/build-docs.sh

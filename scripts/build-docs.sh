@@ -1,13 +1,21 @@
 #!/usr/bin/env bash
 #
 # Convert all the Markdown files in doc/ to HTML.
-# This requires `kramdown` to be available on the path.
-# `tidy` and `checklink` (from Debian's w3c-linkchecker package) are used to
-# test the output and must also be available and on the path.
+#
+# This requires `kramdown` to be available on the path.  `tidy` and
+# `linkchecker` (the Python package) and `checklink` (from w3c-linkchecker on
+# Debian) are used to test the output and must also be available and on the
+# path.  `sqlite3` must also be available.
+#
 # Run this from the root directory of the repository.
+#
 # The output directory can be specified as the first option.
+#
 # If the environment variable DISABLE_HTML_CHECKS is specified, then checks are
 # skipped.
+#
+# If the environment variable LINK_CACHE_FILE is specified, then that file is
+# used as a cache of already-valid links that will not be checked.
 
 if [ "$#" -gt 1 ]; then
   echo "Usage: $0 [output_dir/]";
@@ -34,13 +42,25 @@ if [ -z ${DISABLE_HTML_CHECKS+x} ];
 then
   if ! command -v tidy &>/dev/null
   then
-    echo "tidy not installed!  Cannot build documentation.";
+    echo "tidy not installed!  Cannot check documentation.";
     exit 1;
   fi
 
   if ! command -v checklink &>/dev/null
   then
-    echo "checklink not installed!  Cannot build documentation.";
+    echo "checklink not installed!  Cannot check documentation.";
+    exit 1;
+  fi
+
+  if ! command -v linkchecker &>/dev/null
+  then
+    echo "linkchecker not installed!  Cannot check documentation.";
+    exit 1;
+  fi
+
+  if ! command -v sqlite3 &> /dev/null
+  then
+    echo "sqlite3 not installed!  Cannot check documentation.";
     exit 1;
   fi
 fi
@@ -424,12 +444,12 @@ do
   fi
 done
 
-# Now take a second pass to check all the links, if we need to.
+# Now take a second pass to check all local links.
 if [ -z ${DISABLE_HTML_CHECKS+x} ];
 then
   find "$output_dir" -iname '*.html' -print0 | while read -d $'\0' f
   do
-    echo "Checking links in $f...";
+    echo "Checking local links and anchors in $f...";
 
     # To run checklink we have to strip out some perl stderr warnings...
     checklink -qs \
@@ -438,19 +458,292 @@ then
         --suppress-broken 503 \
         --suppress-broken 301 \
         --suppress-broken 400 \
-        -X "https://eigen.tuxfamily.org/index.php\?title=Main_Page" \
-        -X "https://mlpack.slack.com/" "$f" 2>&1 |
+        -X "^http.*$" "$f" 2>&1 |
         grep -v 'Use of uninitialized value' > checklink_out;
     if [ -s checklink_out ];
     then
-      cat checklink_out;
-      exit 1;
+      # Store up all failures to print them at once.
+      cat checklink_out >> overall_checklink_out;
     fi
     rm -f checklink_out;
   done
+
+  # Check to see if there were any failures, all at once.
+  if [ -f overall_checklink_out ];
+  then
+    cat overall_checklink_out;
+    rm -f overall_checklink_out;
+    exit 1;
+  fi
+
+  # Check to see if there were any failures, all at once.
+fi
+
+# Utility script to create linkchecker result SQL table, with a bit of extra
+# information.
+cat > create.sql << EOF
+create table linksdb (
+    urlname        varchar(256) not null,
+    parentname     varchar(256),
+    baseref        varchar(256),
+    valid          int,
+    result         varchar(256),
+    warning        varchar(512),
+    info           varchar(512),
+    url            varchar(256),
+    line           int,
+    col            int,
+    name           varchar(256),
+    checktime      int,
+    dltime         int,
+    size           int,
+    cached         int,
+    level          int not null,
+    modified       int,
+    resulttime     timestamp,
+    validdays      int
+);
+EOF
+
+# Finally, take a third pass to check external links.
+if [ -z ${DISABLE_HTML_CHECKS+x} ];
+then
+  # Create a basic config file for linkchecker.  We will append domains to ignore
+  # to this as we go.
+  echo "[checking]" > "$output_dir/linkcheckerrc.in";
+  echo "maxrequestspersecond=2" >> "$output_dir/linkcheckerrc.in";
+  echo "" >> "$output_dir/linkcheckerrc.in";
+  echo "[filtering]" >> "$output_dir/linkcheckerrc.in";
+  echo "ignore=" >> "$output_dir/linkcheckerrc.in";
+  echo "  ^(?!http).*$" >> "$output_dir/linkcheckerrc.in";
+  # Github issues/pull requests redirect to each other and we link to so many of
+  # them it's not worth checking them.
+  echo "  ^https://github.com/mlpack/mlpack/issues/[0-9]*$" >> "$output_dir/linkcheckerrc.in";
+  echo "  ^https://github.com/mlpack/mlpack/issues[?]q.*$" >> "$output_dir/linkcheckerrc.in";
+  echo "  ^https://github.com/mlpack/mlpack/pulls[?]q.*$" >> "$output_dir/linkcheckerrc.in";
+
+  # Initialize our cache or take the current version of it.
+  if [ ! -z ${LINK_CACHE_FILE+x} ];
+  then
+    if [ -f ${LINK_CACHE_FILE} ];
+    then
+      cp "$LINK_CACHE_FILE" "$output_dir/all_links.db";
+    else
+      rm -f "$output_dir/all_links.db";
+      cat create.sql | sqlite3 "$output_dir/all_links.db";
+    fi
+  else
+    rm -f "$output_dir/all_links.db";
+    cat create.sql | sqlite3 "$output_dir/all_links.db";
+  fi
+
+  find "$output_dir" -iname '*.html' -print0 | while read -d $'\0' f
+  do
+    echo "Checking external links in $f...";
+
+    # Generate our config file for this file by appending all valid files that
+    # we have already seen.  Note that we have to append $ to all the ignore
+    # patterns so that we don't accidentally match anchors that haven't been
+    # checked yet.
+    cp "$output_dir/linkcheckerrc.in" "$output_dir/linkcheckerrc";
+    echo "SELECT DISTINCT urlname FROM linksdb
+          WHERE valid = 1 AND
+                urlname LIKE 'http%' AND
+                julianday(datetime()) - julianday(resulttime) < validdays AND
+                (result LIKE '200%' OR
+                 result = 'filtered' OR
+                 result = 'syntax OK');" | sqlite3 "$output_dir/all_links.db" |\
+        sed 's/^/  /' |\
+        sed 's/?/\\?/g' |\
+        sed 's/$/$/' >> "$output_dir/linkcheckerrc";
+
+    # Run linkchecker, and make things a little bit prettier if there are
+    # failures.
+    rm -f links.sql;
+    linkchecker --check-extern \
+        --recursion-level=1 \
+        --threads=4 \
+        --verbose \
+        --no-status \
+        --output=failures \
+        --file-output=sql/ascii/links.sql \
+        --config="$output_dir/linkcheckerrc" \
+        $f |\
+        awk -F"', '" '{ print $2; }' |\
+        sed 's/'"'"')"$//' |\
+        sed 's/^/Failed: /' |\
+        sed 's/$/; will try again at the end of the run./';
+
+    # Print the number of links we checked and the number we filtered.
+    total_links=`cat links.sql | grep -v '^--' | grep 'http' | wc -l`;
+    filtered_links=`grep 'filtered' links.sql | grep -v '^--' | grep 'http' |\
+        wc -l`;
+    echo "  $filtered_links of $total_links external links were cached.";
+
+    # Insert results into the database.  We have to insert the timestamp and the
+    # number of days the result is valid for.  For that, we use a random number
+    # of days, because we don't want *all* of our results to expire on the same
+    # CI run and have it take forever.
+    cat links.sql |\
+        sed 's/modified) values (/modified,resulttime,validdays) values (/' |\
+        sed "s/);$/, current_timestamp, random() % 10 + 25);/" |\
+        sqlite3 "$output_dir/all_links.db";
+
+    # Print any warnings too, because we will try them again later.
+    cat create.sql | sqlite3 tmp.db;
+    cat links.sql |\
+        sed 's/modified) values (/modified,resulttime,validdays) values (/' |\
+        sed "s/);$/, current_timestamp, random() % 10 + 25);/" |\
+        sqlite3 tmp.db;
+    echo "SELECT DISTINCT urlname, warning FROM linksdb
+          WHERE valid = 1 AND
+                warning IS NOT NULL AND
+                (result NOT LIKE '200%' AND
+                 warning NOT LIKE '%307 Temporary Redirect%' AND
+                 result <> 'filtered' AND
+                 result <> 'syntax OK');" |\
+        sqlite3 tmp.db |\
+        awk -F'|' '{ print "Warning: "$1": "$2"; will try again at the end of the run."; }';
+    rm -f tmp.db;
+  done
+
+  # Second chance on errors and warnings: filter out any spurious failures.
+  echo "SELECT DISTINCT urlname FROM linksdb
+        WHERE valid = 0 OR
+              (warning IS NOT NULL AND
+               warning NOT LIKE '%307 Temporary Redirect%') OR
+              (result NOT LIKE '200%' AND
+               result <> 'filtered' AND
+               result <> 'syntax OK');" | sqlite3 "$output_dir/all_links.db" >\
+      links_to_check.txt;
+  num_links=`cat links_to_check.txt | wc -l`;
+  if [ $num_links -gt 0 ];
+  then
+    echo "Second check for the following URLs that failed the first time:";
+    cat links_to_check.txt | sed 's/^/  /';
+
+    # Slow down the process to try and fix any links that got rate limited.
+    cat "$output_dir/linkcheckerrc.in" |\
+        sed 's/maxrequestspersecond=.*$/maxrequestspersecond=1/' >\
+        "$output_dir/linkcheckerrc";
+
+    linkchecker --check-extern \
+        --recursion-level=0 \
+        --threads=1 \
+        --file-output=sql/ascii/links_failed.sql \
+        --no-status \
+        --verbose \
+        --config="$output_dir/linkcheckerrc" \
+        `cat links_to_check.txt | tr '\n' ' '`;
+
+    cat create.sql | sqlite3 tmp.db;
+    cat links_failed.sql |\
+        sed 's/modified) values (/modified,resulttime,validdays) values (/' |\
+        sed "s/);$/, current_timestamp, random() % 10 + 25);/" |\
+        sqlite3 tmp.db;
+    echo "SELECT DISTINCT urlname, result FROM linksdb
+          WHERE valid = 0" | sqlite3 tmp.db |\
+        awk -F'|' '{ print "  "$1": "$2; }' > links_failed.txt;
+    echo "SELECT DISTINCT urlname, warning FROM linksdb
+          WHERE valid = 1 AND warning IS NOT NULL" | sqlite3 tmp.db |\
+        awk -F'|' '{ print "  "$1": "$2; }' > links_warned.txt;
+
+    # Also add the second pass results to the global cache.
+    cat links_failed.sql |\
+        sed 's/modified) values (/modified,resulttime,validdays) values (/' |\
+        sed "s/);$/, current_timestamp, random() % 10 + 25);/" |\
+        sqlite3 "$output_dir/all_links.db";
+
+    total_links_failed=`cat links_failed.txt links_warned.txt | wc -l`;
+    if [ $total_links_failed -gt 0 ];
+    then
+      echo "The following links have failed:";
+
+      cat links_failed.txt links_warned.txt;
+      rm -f links_failed.sql tmp.db links_failed.txt links_warned.txt;
+      exitcode=1;
+    else
+      exitcode=0;
+    fi
+
+    rm -f tmp.db links_failed.sql;
+  else
+    exitcode=0;
+  fi
+
+  rm -f links_to_check.txt;
+
+  # Add to the global cache.
+  if [ ! -z ${LINK_CACHE_FILE+x} ];
+  then
+    mv "$output_dir/all_links.db" "${LINK_CACHE_FILE}";
+    echo "DELETE FROM linksdb
+          WHERE valid = 0 OR
+                warning IS NOT NULL OR
+                julianday(datetime()) - julianday(resulttime) >= validdays;" |\
+        sqlite3 "${LINK_CACHE_FILE}";
+
+    # Keep only the most recent entry for a given urlname, to keep the size of
+    # the cache as small as possible.
+    echo "CREATE TABLE tmp_linksdb AS SELECT * FROM linksdb
+          GROUP BY urlname HAVING MAX(resulttime) ORDER BY urlname;" |\
+        sqlite3 "${LINK_CACHE_FILE}";
+    echo "DROP TABLE linksdb;" | sqlite3 "${LINK_CACHE_FILE}";
+    echo "ALTER TABLE tmp_linksdb RENAME TO linksdb;" | sqlite3 "${LINK_CACHE_FILE}";
+  fi
+
+  # Pick all the links that are within a week of timing out and run them again,
+  # to see if we can "refresh" them.  This is intended to handle situations
+  # where flaky URLs may not always work, but they will be tried a handful of
+  # times over the week before their last run expires.  The hope is that one of
+  # those runs in the last week before they expire will succeed, preventing a
+  # documentation job from failing due to a bad link.
+  echo "SELECT DISTINCT urlname FROM linksdb
+        WHERE valid = 1 AND
+            urlname LIKE 'http%' AND
+            validdays -
+                (julianday(datetime()) - julianday(resulttime)) <= 7 AND
+            (result LIKE '200%' OR
+             result = 'filtered' OR
+             result = 'syntax OK');" |\
+      sqlite3 "$output_dir/all_links.db" > links_to_check.txt;
+  num_links=`cat links_to_check.txt | wc -l`;
+  if [ $num_links -gt 0 ];
+  then
+    echo "Checking $num_links links before their cache entry expires...";
+    linkchecker --check-extern \
+        --recursion-level=0 \
+        --threads=1 \
+        --file-output=sql/ascii/links_output.sql \
+        --output=failures \
+        --no-status \
+        --verbose \
+        --config="$output_dir/linkcheckerrc" \
+        `cat links_to_check.txt | tr '\n' ' '` |\
+        awk -F"', '" '{ print $2; }' |\
+        sed 's/'"'"')"$//' |\
+        sed 's/^/Warning: /' |\
+        sed 's/$/ failed, but cache entry not yet expired./';
+
+    cat links_output.sql |\
+        sed 's/modified) values (/modified,resulttime,validdays) values (/' |\
+        sed "s/);$/, current_timestamp, random() % 10 + 25);/" |\
+        sqlite3 "$output_dir/all_links.db";
+    # Filter out any bad links.
+    echo "DELETE FROM all_links WHERE valid = 0;" |\
+        sqlite3 "$output_dir/all_links.db";
+  fi
+
+  # Clean up unnecessary files.
+  rm -f "$output_dir/link_errors.csv" "$output_dir/all_links.csv" \
+      "$output_dir/linkcheckerrc.in" "$output_dir/linkcheckerrc";
+  rm -f links.csv links_failed.csv;
+else
+  exitcode=0;
 fi
 
 # Remove temporary files.
+rm -f create.sql;
 if [ "a$del_header" == "a1" ];
 then
   rm -f "$template_html_header";
@@ -460,3 +753,5 @@ if [ "a$del_footer" == "a1" ];
 then
   rm -f "$template_html_footer";
 fi
+
+exit $exitcode;
