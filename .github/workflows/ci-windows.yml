@@ -43,11 +43,28 @@ jobs:
         shell: powershell
         run: |
           nuget install OpenBLAS -o deps
+          nuget install cereal -o deps
           nuget install ensmallen -o deps -Version 2.17.0
-          ## Delete all ensmallen dependencies including armadillo headers, we do not need them here
+          # Delete all ensmallen dependencies including armadillo headers, we do not need them here.
           Remove-Item deps\ensmallen.2.17.0\installed\x64-linux\share -Force -Recurse
           Remove-Item deps\ensmallen.2.17.0\installed\x64-linux\include\armadillo_bits -Force -Recurse
           Remove-Item deps\ensmallen.2.17.0\installed\x64-linux\include\armadillo -Force
+          ls deps/
+
+      # Install the oldest supported version of Armadillo.
+      - name: Install oldest supported Armadillo
+        shell: bash
+        run: |
+          cd deps/
+          curl -O -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz -o armadillo-10.8.2.tar.xz
+          tar -xvf armadillo-10.8.2.tar.xz
+          cd armadillo-10.8.2/
+          cmake -G "Visual Studio 17 2022" \
+            -DBLAS_LIBRARY:FILEPATH=../OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+            -DLAPACK_LIBRARY:FILEPATH=../OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DCMAKE_BUILD_TYPE=Release .
+          make
 
       # Because mlpack's precompiled headers basically include everything
       # (mlpack.hpp, core.hpp, etc.), changes to a single file will invalidate
@@ -57,7 +74,12 @@ jobs:
       - name: Configure mlpack with CMake
         run: |
           mkdir build && cd build
-          cmake -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON ../
+          cmake -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON \
+              -DARMADILLO_INCLUDE_DIR=../deps/armadillo-10.8.2/tmp/include/ \
+              -DARMADILLO_LIBRARY=../deps/armadillo-10.8.2/armadillo.lib \
+              -DENSMALLEN_INCLUDE_DIR=../deps/ensmallen.2.17.0/include/ \
+              -DCEREAL_INCLUDE_DIR=../deps/cereal/include/ \
+              ../
 
       - name: Build mlpack
         run: cd build && make -j4
