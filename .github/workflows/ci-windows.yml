@@ -42,12 +42,12 @@ jobs:
       - name: Install build dependencies (Windows)
         shell: powershell
         run: |
-          nuget install OpenBLAS -o $(Agent.ToolsDirectory)
-          nuget install ensmallen -o $(Agent.ToolsDirectory) -Version 2.17.0
+          nuget install OpenBLAS -o deps
+          nuget install ensmallen -o deps -Version 2.17.0
           ## Delete all ensmallen dependencies including armadillo headers, we do not need them here
-          Remove-Item $(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\share -Force -Recurse
-          Remove-Item $(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\include\armadillo_bits -Force -Recurse
-          Remove-Item $(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\include\armadillo -Force
+          Remove-Item deps\ensmallen.2.17.0\installed\x64-linux\share -Force -Recurse
+          Remove-Item deps\ensmallen.2.17.0\installed\x64-linux\include\armadillo_bits -Force -Recurse
+          Remove-Item deps\ensmallen.2.17.0\installed\x64-linux\include\armadillo -Force
 
       # Because mlpack's precompiled headers basically include everything
       # (mlpack.hpp, core.hpp, etc.), changes to a single file will invalidate
