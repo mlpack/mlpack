@@ -51,8 +51,8 @@ jobs:
           Remove-Item deps\ensmallen.2.17.0\installed\x64-linux\include\armadillo -Force
           ls deps/
 
-      # Install the oldest supported version of Armadillo.
-      - name: Install oldest supported Armadillo
+      # Install the oldest supported version of Armadillo and install cereal.
+      - name: Install some dependencies manually
         shell: bash
         run: |
           cd deps/
@@ -62,9 +62,12 @@ jobs:
           cmake -G "Visual Studio 17 2022" \
             -DBLAS_LIBRARY:FILEPATH=../OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
             -DLAPACK_LIBRARY:FILEPATH=../OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
-            -DBUILD_SHARED_LIBS=OFF \
-            -DCMAKE_BUILD_TYPE=Release .
-          make
+            -DBUILD_SHARED_LIBS=OFF .
+          cmake --build . --config Release
+          # Now download and unpack cereal.
+          cd ../
+          curl -L https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.2.tar.gz -o cereal-1.3.2.tar.gz
+          tar -xvzf cereal-1.3.2.tar.gz
 
       # Because mlpack's precompiled headers basically include everything
       # (mlpack.hpp, core.hpp, etc.), changes to a single file will invalidate
@@ -78,11 +81,11 @@ jobs:
               -DARMADILLO_INCLUDE_DIR=../deps/armadillo-10.8.2/tmp/include/ \
               -DARMADILLO_LIBRARY=../deps/armadillo-10.8.2/armadillo.lib \
               -DENSMALLEN_INCLUDE_DIR=../deps/ensmallen.2.17.0/include/ \
-              -DCEREAL_INCLUDE_DIR=../deps/cereal/include/ \
+              -DCEREAL_INCLUDE_DIR=../deps/cereal-1.3.2/include/ \
               ../
 
       - name: Build mlpack
-        run: cd build && make -j4
+        run: cd build && cmake --build . --config Release
 
       # Run the tests manually so that we can get JUnit output.
       - name: Run mlpack_test
