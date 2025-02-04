@@ -70,9 +70,8 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@knn", "#knn");
 BINDING_SEE_ALSO("@lsh", "#lsh");
 BINDING_SEE_ALSO("Rank-approximate nearest neighbor search: Retaining meaning"
-    " and speed in high dimensions (pdf)", "https://papers.nips.cc/paper/3864-"
-    "rank-approximate-nearest-neighbor-search-retaining-meaning-and-speed-in-"
-    "high-dimensions.pdf");
+    " and speed in high dimensions (pdf)", "https://proceedings.neurips.cc/"
+    "paper_files/paper/2009/file/ddb30680a691d157187ee1cf9e896d03-Paper.pdf");
 BINDING_SEE_ALSO("RASearch C++ class documentation",
     "@src/mlpack/methods/rann/ra_search.hpp");
 
