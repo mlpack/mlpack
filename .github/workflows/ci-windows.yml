@@ -58,7 +58,6 @@ jobs:
           curl -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz -o armadillo-10.8.2.tar.xz
           tar -xvf armadillo-10.8.2.tar.xz
           cd armadillo-10.8.2/
-          cmake --version
           cmake -G "Visual Studio 17 2022" \
             -DBLAS_LIBRARY:FILEPATH=../OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
             -DLAPACK_LIBRARY:FILEPATH=../OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
@@ -68,6 +67,7 @@ jobs:
           cp tmp/include/armadillo_bits/config.hpp tmp/include/armadillo_bits/config.hpp.tmp
           cat tmp/include/armadillo_bits/config.hpp.tmp | sed 's|#define ARMA_USE_WRAPPER|// #define ARMA_USE_WRAPPER|' \
               > tmp/include/armadillo_bits/config.hpp
+          cat tmp/include/armadillo_bits/config.hpp
           # Now download and unpack cereal.
           cd ../
           curl -L https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.2.tar.gz -o cereal-1.3.2.tar.gz
