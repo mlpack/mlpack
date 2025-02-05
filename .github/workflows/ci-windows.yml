@@ -85,10 +85,10 @@ jobs:
         shell: bash
         run: |
           mkdir build && cd build
-          #    -DBLAS_LIBRARIES="../OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" \
-          #    -DLAPACK_LIBRARIES="../OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" \
           cmake -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON \
               -DARMADILLO_INCLUDE_DIR=../deps/armadillo-10.8.2/tmp/include/ \
+              -DBLAS_LIBRARIES="../OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" \
+              -DLAPACK_LIBRARIES="../OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" \
               -DENSMALLEN_INCLUDE_DIR=../deps/ensmallen.2.17.0/installed/x64-linux/include/ \
               -DCEREAL_INCLUDE_DIR=../deps/cereal-1.3.2/include/ \
               -DSTB_IMAGE_INCLUDE_DIR=../deps/stb/include/ \
