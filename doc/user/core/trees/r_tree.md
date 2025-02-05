@@ -47,9 +47,10 @@ RTree<DistanceType, StatisticType, MatType>
    be thrown if any other `DistanceType` is specified.
 
  * `StatisticType`: this holds auxiliary information in each tree node.  By
-   default, [`EmptyStatistic`](#emptystatistic) is used, which holds no
-   information.
-   - See the [`StatisticType`](#statistictype) section for more details.
+   default, [`EmptyStatistic`](rectangle_tree.md#emptystatistic) is used, which
+   holds no information.
+   - See the [`StatisticType`](rectangle_tree.md#statistictype) section for more
+     details.
 
  * `MatType`: the type of matrix used to represent points.  Must be a type
    matching the [Armadillo API](../../matrices.md).  By default, `arma::mat` is
