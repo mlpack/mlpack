@@ -313,6 +313,7 @@ endif()
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
+message(STATUS "Armadillo libraries: ${ARMADILLO_LIBRARIES}")
 
 # Find stb_image.h and stb_image_write.h.
 if (NOT DOWNLOAD_DEPENDENCIES)

@@ -31,7 +31,6 @@ This module sets the following variables:
   ARMADILLO_VERSION_NAME - name of the version (ex: "Antipodean Antileech")
 #]=======================================================================]
 
-message(STATUS "local find armadillo script is being used")
 find_path(ARMADILLO_INCLUDE_DIR
   NAMES armadillo
   PATHS "$ENV{ProgramFiles}/Armadillo/include"
@@ -81,7 +80,6 @@ endif()
 
 # Link to support libraries in either case on MSVC.
 if(NOT _ARMA_USE_WRAPPER OR MSVC)
-  message(STATUS "must link against support libraries")
   if(_ARMA_USE_LAPACK)
     if(APPLE)
       # Use -framework Accelerate to link against the Accelerate framework on
@@ -113,7 +111,6 @@ if(NOT _ARMA_USE_WRAPPER OR MSVC)
     endif ()
 
     if(LAPACK_FOUND)
-      message(STATUS "lapack found: ${LAPACK_LIBRARIES}")
       set(_ARMA_SUPPORT_LIBRARIES "${_ARMA_SUPPORT_LIBRARIES}" "${LAPACK_LIBRARIES}")
     endif()
   endif()
@@ -135,7 +132,6 @@ if(NOT _ARMA_USE_WRAPPER OR MSVC)
       # Avoid doubly linking (not that it makes much difference other than a
       # nicer command-line).
       if (NOT BLAS_LIBRARIES EQUAL LAPACK_LIBRARIES)
-        message(STATUS "blash found: ${BLAS_LIBRARIES}")
         set(_ARMA_SUPPORT_LIBRARIES "${_ARMA_SUPPORT_LIBRARIES}" "${BLAS_LIBRARIES}")
       endif ()
     endif()
