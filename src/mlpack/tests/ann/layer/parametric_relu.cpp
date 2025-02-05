@@ -113,7 +113,8 @@ TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
   for (size_t trial = 0; trial < 5; ++trial)
   {
     arma::mat trainData, testData, trainLabels, testLabels;
-    data::Split(data, labels, trainData, testData, trainLabels, testLabels, 0.2);
+    data::Split(data, labels, trainData, testData, trainLabels, testLabels,
+        0.2);
 
     FFN<L1Loss> model;
     model.Add<Linear>(10);
@@ -132,10 +133,8 @@ TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
     double msreTrain = ComputeMSRE(predictions, trainLabels);
     model.Predict(testData, predictions);
     double msreTest = ComputeMSRE(predictions, testLabels);
-    std::cout << "msreTrain: " << msreTrain << ", msreTest: " << msreTest << "\n";
 
     double relativeMSRE = std::abs((msreTest - msreTrain) / msreTrain);
-    std::cout << "relative MSRE: " << relativeMSRE << "\n";
     if (relativeMSRE <= 0.35)
     {
       success = true;
