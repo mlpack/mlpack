@@ -127,8 +127,8 @@ different.
    not supported, because this generally results in a vantage point tree with
    very loose bounding balls.  It is better to simply build a new `VPTree` on
    the modified dataset.  For trees that support individual insertion and
-   deletions, see the `RectangleTree` class and all its variants (e.g. `RTree`,
-   `RStarTree`, etc.).
+   deletions, see the [`RectangleTree`](rectangle_tree.md) class and all its
+   variants (e.g. [`RTree`](r_tree.md), `RStarTree`, etc.).
 
  - See also the
    [developer documentation on tree constructors](../../../developer/trees.md#constructors-and-destructors).
@@ -375,7 +375,7 @@ nodes.  The following functions can be used for these tasks.
      `arma::fmat`, and the returned type is
      [`RangeType<float>`](../math.md#range)).
 
-### Tree traversals
+## Tree traversals
 
 Like every mlpack tree, the `VPTree` class provides a [single-tree and dual-tree
 traversal](../../../developer/trees.md#traversals) that can be paired with a
@@ -595,7 +595,7 @@ while (!stack.empty())
 // stack is the better option here.
 
 // Print the results.
-std::cout << leafCount << " out of " << totalLeafCount << " leaves have less "
+std::cout << leafCount << " out of " << totalLeafCount << " leaves have fewer "
   << "than 10 points." << std::endl;
 ```
 

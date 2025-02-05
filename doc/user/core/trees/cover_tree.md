@@ -343,7 +343,7 @@ nodes.  The following functions can be used for these tasks.
      `arma::fmat`, and the returned type is
      [`RangeType<float>`](../math.md#range)).
 
-### Tree traversals
+## Tree traversals
 
 Like every mlpack tree, the `CoverTree` class provides a [single-tree and
 dual-tree traversal](../../../developer/trees.md#traversals) that can be paired
