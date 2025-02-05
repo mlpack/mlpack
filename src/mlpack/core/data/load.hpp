@@ -158,7 +158,9 @@ bool Load(const std::string& filename,
  * @param fatal If an error should be reported as fatal (default false).
  * @return Boolean value indicating success or failure of load.
  */
+
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::Col<eT>& vec,
           const bool fatal = false);
@@ -191,6 +193,7 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::Row<eT>& rowvec,
           const bool fatal = false);

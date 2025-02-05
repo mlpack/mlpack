@@ -183,6 +183,28 @@ bool Load(const std::string& filename,
   return Load(filename, matrix, opts);
 }
 
+// For loading data into a column vector
+template <typename eT>
+bool Load(const std::string& filename,
+          arma::Col<eT>& vec,
+          const bool fatal)
+{
+  DataOptions opts;
+  opts.Fatal() = fatal;
+  return Load(filename, vec, opts);
+}
+
+// For loading data into a raw vector
+template <typename eT>
+bool Load(const std::string& filename,
+          arma::Row<eT>& rowvec,
+          const bool fatal)
+{
+  DataOptions opts;
+  opts.Fatal() = fatal;
+  return Load(filename, rowvec, opts);
+}
+
 // Load with mappings.  Unfortunately we have to implement this ourselves.
 template<typename eT, typename PolicyType>
 bool Load(const std::string& filename,
@@ -250,7 +272,16 @@ bool Load(const std::string& filename,
   {
     success = LoadCategorical(filename, matrix, opts);
   }
-  else 
+  else if constexpr (MatType::is_col)
+  {
+    std::cout << MatType::is_col << std::endl;
+    success = LoadCol(filename, matrix, opts);
+  }
+  else if constexpr (MatType::is_row)
+  {
+    success = LoadRow(filename, matrix, opts);
+  }
+  else if constexpr (std::is_same_v<MatType, arma::Mat<eT>>) 
   {
     success = LoadDense(filename, stream, matrix, opts);
   }

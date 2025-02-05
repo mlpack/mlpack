@@ -21,13 +21,14 @@ namespace data {
 
 // Load column vector.
 template<typename eT>
-bool Load(const std::string& filename,
-          arma::Col<eT>& vec,
-          const bool fatal)
+bool LoadCol(const std::string& filename,
+             arma::Col<eT>& vec,
+             DataOptions& opts)
 {
   // First load into auxiliary matrix.
   arma::Mat<eT> tmp;
-  bool success = Load(filename, tmp, fatal, false);
+  opts.NoTranspose() = true; // false Transpose
+  bool success = Load(filename, tmp, opts);
   if (!success)
   {
     vec.clear();
@@ -40,7 +41,7 @@ bool Load(const std::string& filename,
     if (tmp.n_rows > 1)
     {
       // Problem: invalid size!
-      if (fatal)
+      if (opts.Fatal())
       {
         Log::Fatal << "Matrix in file '" << filename << "' is not a vector, but"
             << " instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!"
@@ -85,12 +86,13 @@ bool Load(const std::string& filename,
 
 // Load row vector.
 template<typename eT>
-bool Load(const std::string& filename,
-          arma::Row<eT>& rowvec,
-          const bool fatal)
+bool LoadRow(const std::string& filename,
+             arma::Row<eT>& rowvec,
+             DataOptions& opts)
 {
   arma::Mat<eT> tmp;
-  bool success = Load(filename, tmp, fatal, false);
+  opts.NoTranspose() = true; // false Transpose
+  bool success = Load(filename, tmp, opts);
   if (!success)
   {
     rowvec.clear();
@@ -102,7 +104,7 @@ bool Load(const std::string& filename,
     if (tmp.n_cols > 1)
     {
       // Problem: invalid size!
-      if (fatal)
+      if (opts.Fatal())
       {
         Log::Fatal << "Matrix in file '" << filename << "' is not a vector, but"
             << " instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!"
