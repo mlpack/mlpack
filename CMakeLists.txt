@@ -18,15 +18,6 @@ option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." ON)
 option(USE_SYSTEM_STB "Use system STB instead of version bundled with mlpack." OFF)
 
-# Set minimum library versions required by mlpack.
-#
-# For Armadillo, try to keep the minimum required version less than or equal to
-# what's available on the current Ubuntu LTS or most recent stable RHEL release.
-# See https://github.com/mlpack/mlpack/issues/3033 for some more discussion.
-set(ARMADILLO_VERSION "10.8")
-set(ENSMALLEN_VERSION "2.10.0")
-set(CEREAL_VERSION "1.1.2")
-
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
@@ -111,10 +102,6 @@ option(BUILD_R_BINDINGS "Build R bindings." OFF)
 option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)
 option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
 enable_testing()
-
-# Set required standard to C++17.
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Ensure that GCC is new enough, if the compiler is GCC.
 if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 8)
@@ -208,13 +195,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   endif ()
 endif()
 
-# If we're using gcc, then we need to link against pthreads to use std::thread,
-# which we do in the tests.
-if (CMAKE_COMPILER_IS_GNUCC)
-  find_package(Threads)
-  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
-endif()
-
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 set (BFD_DL_AVAILABLE "NO")
 if (DEBUG)
@@ -258,15 +238,11 @@ if (ARMA_EXTRA_DEBUG)
 endif()
 
 if (CMAKE_CROSSCOMPILING)
-  crosscompile()
+  fetch_mlpack_and_crosscompile()
+elseif(DOWNLOAD_DEPENDENCIES)
+  fetch_mlpack(ON)
 else()
   find_package(mlpack REQUIRED)
-endif()
-
-if (DOWNLOAD_DEPENDENCIES)
-  # Of course we can add a compile option in here that the user can set with
-  # option from comand line
-  autodownload(ON)
 endif()
 
 message(${MLPACK_LIBRARIES})
