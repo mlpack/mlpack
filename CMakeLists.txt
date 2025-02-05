@@ -16,6 +16,7 @@ option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DOWNLOAD_DEPENDENCIES "Automatically download dependencies if not available." OFF)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." ON)
+option(USE_SYSTEM_STB "Use system STB instead of version bundled with mlpack." OFF)
 
 # Set minimum library versions required by mlpack.
 #
@@ -365,18 +366,17 @@ if (BFD_DL_AVAILABLE)
   string(REGEX REPLACE "// #define MLPACK_HAS_BFD_DL\n"
       "#define MLPACK_HAS_BFD_DL\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif ()
-if (STB_AVAILABLE)
-  string(REGEX REPLACE "// #define MLPACK_HAS_STB\n"
-      "#define MLPACK_HAS_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
-  if (NOT STB_INCLUDE_NEEDS_STB_SUFFIX)
-    string(REGEX REPLACE "// #define MLPACK_HAS_NO_STB_DIR\n"
-        "#define MLPACK_HAS_NO_STB_DIR\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
-  endif ()
-endif ()
+
 if (USING_GIT)
   string(REGEX REPLACE "// #define MLPACK_GIT_VERSION\n"
       "#define MLPACK_GIT_VERSION\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif ()
+
+if (USE_SYSTEM_STB)
+  string(REGEX REPLACE "// #define MLPACK_USE_SYSTEM_STB\n"
+      "#define MLPACK_USE_SYSTEM_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
 file(WRITE ${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp "${CONFIG_CONTENTS}")
 include_directories(${CMAKE_BINARY_DIR}/include/)
 add_definitions(-DMLPACK_CUSTOM_CONFIG_FILE=mlpack/config-local.hpp)
