@@ -1,6 +1,6 @@
-# ci.yml: defines all the CI jobs run on Linux and OS X for each commit and pull
-# request commit.  Windows is different enough that it has a different
-# script---see ci-windows.yml.
+# ci.yml: defines all the CI jobs run for each commit and pull request.  For
+# Linux and macOS, we run a matrix job that tests all the bindings.  For
+# Windows, we just run one build (see the later part of the file).
 
 on:
   workflow_dispatch:
@@ -19,7 +19,10 @@ permissions:
 name: mlpack.mlpack
 
 jobs:
-  build_and_test_matrix:
+  ###
+  ### Linux and macOS test matrix for all binding types.
+  ###
+  ci_matrix:
     strategy:
       fail-fast: false # Run all configurations even if one fails.
       matrix:
@@ -144,6 +147,110 @@ jobs:
         uses: ./.github/actions/binding_run_tests
         with:
           lang: ${{ matrix.config.name }}
+
+      - name: Parse test output
+        uses: rcurtin/test-summary-action@dist
+        if: success() || failure()
+        with:
+          paths: "build/*.junit.xml"
+          show: "fail, skip"
+          fail_job: true
+          print_output: true
+
+  ###
+  ### Windows CI testing.
+  ###
+
+  ci_windows:
+    name: 'Windows build: VS2022'
+    if: ${{ github.repository == 'mlpack/mlpack' }}
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v3
+
+      # Set up ccache.
+      - name: Get ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ runner.os }}
+          variant: ccache
+          max-size: 5G
+
+      # Set up Visual Studio.
+      - name: Set up Visual Studio
+        uses: microsoft/setup-msbuild@v2
+
+      # Install build dependencies.
+      - name: Install build dependencies (Windows)
+        shell: powershell
+        run: |
+          nuget install OpenBLAS -o deps
+          nuget install ensmallen -o deps -Version 2.17.0
+          # Delete all ensmallen dependencies including armadillo headers, we do not need them here.
+          Remove-Item deps\ensmallen.2.17.0\installed\x64-linux\share -Force -Recurse
+          Remove-Item deps\ensmallen.2.17.0\installed\x64-linux\include\armadillo_bits -Force -Recurse
+          Remove-Item deps\ensmallen.2.17.0\installed\x64-linux\include\armadillo -Force
+          ls deps/
+
+      # Install the oldest supported version of Armadillo and install cereal.
+      - name: Install some dependencies manually
+        shell: bash
+        run: |
+          cd deps/
+          curl -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz -o armadillo-10.8.2.tar.xz
+          tar -xvf armadillo-10.8.2.tar.xz
+          cd armadillo-10.8.2/
+          cmake -G "Visual Studio 17 2022" \
+            -DBLAS_LIBRARY:FILEPATH=../OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+            -DLAPACK_LIBRARY:FILEPATH=../OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+            -DBUILD_SHARED_LIBS=OFF .
+          # Disable the wrapper because transitive linking doesn't work on
+          # Windows anyway.
+          cp tmp/include/armadillo_bits/config.hpp tmp/include/armadillo_bits/config.hpp.tmp
+          cat tmp/include/armadillo_bits/config.hpp.tmp | sed 's|#define ARMA_USE_WRAPPER|// #define ARMA_USE_WRAPPER|' \
+              > tmp/include/armadillo_bits/config.hpp
+          cat tmp/include/armadillo_bits/config.hpp
+          # Now download and unpack cereal.
+          cd ../
+          curl -L https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.2.tar.gz -o cereal-1.3.2.tar.gz
+          tar -xvzf cereal-1.3.2.tar.gz
+          # Download and unpack STB.
+          curl -O https://www.mlpack.org/files/stb.tar.gz
+          tar -xvzf stb.tar.gz
+
+      # Because mlpack's precompiled headers basically include everything
+      # (mlpack.hpp, core.hpp, etc.), changes to a single file will invalidate
+      # the ccache entry---so it is better to leave it turned off, so that
+      # ccache entries will be at a more granular level and are more likely to
+      # be reused across runs.
+      - name: Configure mlpack with CMake
+        shell: bash
+        run: |
+          mkdir build && cd build
+          cmake -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON \
+              -DARMADILLO_INCLUDE_DIR=../deps/armadillo-10.8.2/tmp/include/ \
+              -DBLAS_LIBRARIES="../OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" \
+              -DLAPACK_LIBRARIES="../OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" \
+              -DENSMALLEN_INCLUDE_DIR=../deps/ensmallen.2.17.0/installed/x64-linux/include/ \
+              -DCEREAL_INCLUDE_DIR=../deps/cereal-1.3.2/include/ \
+              -DSTB_IMAGE_INCLUDE_DIR=../deps/stb/include/ \
+              -DCMAKE_HAS_WORKING_STATIC_STB=1 \
+              ../
+
+      - name: Build mlpack
+        run: cd build && cmake --build . --config Release
+
+      # Run the tests manually so that we can get JUnit output.
+      - name: Run mlpack_test
+        run: |
+          cd build
+          # Filter 'debug' output from the junit file because it makes the junit
+          # too large, but still print it to stderr of this job step.
+          OMP_NUM_THREADS=4 bin/mlpack_test -r junit | tee /dev/stderr | grep -v '\[DEBUG\]' > mlpack_test.junit.xml
+          # Remove version numbers and other non-xml from the output.
+          cat mlpack_test.junit.xml | sed '/<?xml/,$!d' > mlpack_test.junit.xml.tmp
+          mv mlpack_test.junit.xml.tmp mlpack_test.junit.xml
 
       - name: Parse test output
         uses: rcurtin/test-summary-action@dist
