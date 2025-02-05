@@ -603,10 +603,10 @@ class RectangleTree
  public:
   /**
    * Condense the bounding rectangles for this node based on the removal of the
-   * point specified by the arma::vec&.  This recurses up the tree.  If a node
+   * point specified by the VecType&.  This recurses up the tree.  If a node
    * goes below the minimum fill, this function will fix the tree.
    *
-   * @param point The arma::vec& of the point that was removed to require this
+   * @param point The VecType& of the point that was removed to require this
    *      condesation of the tree.
    * @param usePoint True if we use the optimized version of the algorithm that
    *      is possible when we now what point was deleted.  False otherwise (eg.
@@ -614,18 +614,20 @@ class RectangleTree
    * @param relevels The levels that have been reinserted to on this top level
    *      insertion.
    */
-  void CondenseTree(const arma::vec& point,
+  template<typename VecType>
+  void CondenseTree(const VecType& point,
                     std::vector<bool>& relevels,
                     const bool usePoint);
 
   /**
    * Shrink the bound object of this node for the removal of a point.
    *
-   * @param point The arma::vec& of the point that was removed to require this
+   * @param point The VecType& of the point that was removed to require this
    *      shrinking.
    * @return true if the bound needed to be changed, false if it did not.
    */
-  bool ShrinkBoundForPoint(const arma::vec& point);
+  template<typename VecType>
+  bool ShrinkBoundForPoint(const VecType& point);
 
   /**
    * Shrink the bound object of this node for the removal of a child node.
@@ -634,7 +636,8 @@ class RectangleTree
    *      shrinking.
    * @return true if the bound needed to be changed, false if it did not.
    */
-  bool ShrinkBoundForBound(const HRectBound<DistanceType>& changedBound);
+  bool ShrinkBoundForBound(
+      const HRectBound<DistanceType, ElemType>& changedBound);
 
   /**
    * Make an exact copy of this node, pointers and everything.
