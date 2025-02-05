@@ -190,9 +190,10 @@ compile_code_blocks()
   for f in $input_dir/*.cpp;
   do
     echo "  Compiling $f...";
-    of=${f%.cpp};
+    of=${f/.cpp/.o};
+    lf=${f%.cpp};
 
-    if ! $CXX -std=c++17 -Isrc/ $CXXFLAGS -o $of $f $LDFLAGS -larmadillo 2>$of.tmp;
+    if ! $CXX -std=c++17 -Isrc/ $CXXFLAGS -c -o $of $f 2>$of.tmp;
     then
       echo "Compilation of the following program failed:";
       echo "";
@@ -203,9 +204,26 @@ compile_code_blocks()
       echo "";
       echo "For full error output run either:";
       echo " - less $of.tmp";
-      echo " - $CXX -std=c++17 -Isrc/ $CXXFLAGS -o $of $f $LDFLAGS -larmadillo";
+      echo " - $CXX -std=c++17 -Isrc/ $CXXFLAGS -c -o $of $f";
       echo "";
-      echo "Did you set \$CXX, \$CXXFLAGS, and \$LDFLAGS correctly?"
+      echo "Did you set \$CXX and \$CXXFLAGS correctly?"
+      exit 1;
+    fi
+
+    if ! $CXX -o $lf $of $LDFLAGS -larmadillo 2>$lf.tmp;
+    then
+      echo "Linking of the following program failed:"
+      echo "";
+      cat $f;
+      echo "";
+      echo "First ten lines of error output:";
+      head $lf.tmp;
+      echo "";
+      echo "For full error output run either:";
+      echo " - less $lf.tmp";
+      echo " - $CXX -o $lf $of $LDFLAGS -larmadillo";
+      echo "";
+      echo "Did you set \$CXX and \$LDFLAGS correctly?"
       exit 1;
     fi
   done

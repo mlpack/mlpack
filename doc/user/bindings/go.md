@@ -1591,7 +1591,7 @@ _, out_data := mlpack.Kde(param)
  - [Knn()](#knn)
  - [Kernel density estimation on Wikipedia](https://en.wikipedia.org/wiki/Kernel_density_estimation)
  - [Tree-Independent Dual-Tree Algorithms](https://arxiv.org/pdf/1304.4327)
- - [Fast High-dimensional Kernel Summations Using the Monte Carlo Multipole Method](http://papers.nips.cc/paper/3539-fast-high-dimensional-kernel-summations-using-the-monte-carlo-multipole-method.pdf)
+ - [Fast High-dimensional Kernel Summations Using the Monte Carlo Multipole Method](https://proceedings.neurips.cc/paper_files/paper/2008/file/39059724f73a9969845dfe4146c5660e-Paper.pdf)
  - [KDE C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kde/kde.hpp)
 
 ## KernelPca()
@@ -2172,7 +2172,7 @@ _, output, _ := mlpack.Lmnn(letter_recognition, param)
 
  - [Nca()](#nca)
  - [Large margin nearest neighbor on Wikipedia](https://en.wikipedia.org/wiki/Large_margin_nearest_neighbor)
- - [Distance metric learning for large margin nearest neighbor classification (pdf)](http://papers.nips.cc/paper/2795-distance-metric-learning-for-large-margin-nearest-neighbor-classification.pdf)
+ - [Distance metric learning for large margin nearest neighbor classification (pdf)](https://proceedings.neurips.cc/paper_files/paper/2005/file/a7f592cef8b130a6967a90617db5681b-Paper.pdf)
  - [LMNN C++ class documentation](../../user/methods/lmnn.md)
 
 ## LocalCoordinateCoding()
@@ -2276,7 +2276,7 @@ new_codes, _, _ := mlpack.LocalCoordinateCoding(param)
 ### See also
 
  - [SparseCoding()](#sparse_coding)
- - [Nonlinear learning using local coordinate coding (pdf)](https://papers.nips.cc/paper/3875-nonlinear-learning-using-local-coordinate-coding.pdf)
+ - [Nonlinear learning using local coordinate coding (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/2afe4567e1bf64d32a5527244d104cea-Paper.pdf)
  - [LocalCoordinateCoding C++ class documentation](../../user/methods/local_coordinate_coding.md)
 
 ## LogisticRegression()
@@ -2757,7 +2757,7 @@ By default, the SGD optimizer is used.
 
  - [Lmnn()](#lmnn)
  - [Neighbourhood components analysis on Wikipedia](https://en.wikipedia.org/wiki/Neighbourhood_components_analysis)
- - [Neighbourhood components analysis (pdf)](http://papers.nips.cc/paper/2566-neighbourhood-components-analysis.pdf)
+ - [Neighbourhood components analysis (pdf)](https://proceedings.neurips.cc/paper_files/paper/2004/file/42fe880812925e520249e808937738d2-Paper.pdf)
  - [NCA C++ class documentation](../../user/methods/nca.md)
 
 ## Knn()
@@ -3035,7 +3035,7 @@ H, W := mlpack.Nmf(V, 10, param)
 
  - [Cf()](#cf)
  - [Non-negative matrix factorization on Wikipedia](https://en.wikipedia.org/wiki/Non-negative_matrix_factorization)
- - [Algorithms for non-negative matrix factorization (pdf)](http://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-factorization.pdf)
+ - [Algorithms for non-negative matrix factorization (pdf)](https://proceedings.neurips.cc/paper_files/paper/2000/file/f9d1152547c0bde01830b7e8bd60024c-Paper.pdf)
  - [NMF C++ class documentation](../../user/methods/nmf.md)
  - [AMF C++ class documentation](../../user/methods/amf.md)
 
@@ -3942,7 +3942,7 @@ The output matrices are organized such that row i and column j in the neighbors 
 
  - [Knn()](#knn)
  - [Lsh()](#lsh)
- - [Rank-approximate nearest neighbor search: Retaining meaning and speed in high dimensions (pdf)](https://papers.nips.cc/paper/3864-rank-approximate-nearest-neighbor-search-retaining-meaning-and-speed-in-high-dimensions.pdf)
+ - [Rank-approximate nearest neighbor search: Retaining meaning and speed in high dimensions (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/ddb30680a691d157187ee1cf9e896d03-Paper.pdf)
  - [RASearch C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/rann/ra_search.hpp)
 
 ## SoftmaxRegression()
@@ -4151,7 +4151,7 @@ codes, _, _ := mlpack.SparseCoding(param)
 
  - [LocalCoordinateCoding()](#local_coordinate_coding)
  - [Sparse dictionary learning on Wikipedia](https://en.wikipedia.org/wiki/Sparse_dictionary_learning)
- - [Efficient sparse coding algorithms (pdf)](http://papers.nips.cc/paper/2979-efficient-sparse-coding-algorithms.pdf)
+ - [Efficient sparse coding algorithms (pdf)](https://proceedings.neurips.cc/paper_files/paper/2006/file/2d71b2ae158c7c5912cc0bbde2bb9d95-Paper.pdf)
  - [Regularization and variable selection via the elastic net](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=46217f372a75dddc2254fdbc6b9418ba3554e453)
  - [SparseCoding C++ class documentation](../../user/methods/sparse_coding.md)
 
