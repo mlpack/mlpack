@@ -31,6 +31,7 @@ This module sets the following variables:
   ARMADILLO_VERSION_NAME - name of the version (ex: "Antipodean Antileech")
 #]=======================================================================]
 
+message(STATUS "local find armadillo script is being used")
 find_path(ARMADILLO_INCLUDE_DIR
   NAMES armadillo
   PATHS "$ENV{ProgramFiles}/Armadillo/include"
