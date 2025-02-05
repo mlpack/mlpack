@@ -325,6 +325,8 @@ test_that("TestVerbose", {
 
 # Test that we get no output when verbose output is disabled.
 test_that("TestNotVerbose", {
+  # Make sure that global verbosity is turned off.
+  options(mlpack.verbose = FALSE)
   expect_silent(test_r_binding(4.0, 12, "hello",
                                build_model=TRUE))
 })

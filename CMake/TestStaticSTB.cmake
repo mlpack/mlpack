@@ -32,6 +32,9 @@ if(NOT DEFINED CMAKE_HAS_WORKING_STATIC_STB)
   if (CMAKE_HAS_WORKING_STATIC_STB)
     message(STATUS "Check that STB static implementation mode links "
         "correctly... success")
+    message(STATUS
+        "Determining if STB's static implementation can link correctly passed "
+        "with the following output:\n${out}\n\n")
     set(CMAKE_HAS_WORKING_STATIC_STB 1 CACHE INTERNAL
         "Does STB static implementation mode link correctly")
     file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
@@ -40,6 +43,9 @@ if(NOT DEFINED CMAKE_HAS_WORKING_STATIC_STB)
   else ()
     message(STATUS "Check that STB static implementation mode links "
         "correctly... fail")
+    message(STATUS
+        "Determining if STB's static implementation can link correctly failed "
+        "with the following output:\n${out}\n\n")
     set(CMAKE_HAS_WORKING_STATIC_STB 0 CACHE INTERNAL
         "Does STB static implementation mode link correctly")
     file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log

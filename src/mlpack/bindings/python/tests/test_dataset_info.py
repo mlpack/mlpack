@@ -306,15 +306,5 @@ class TestToMatrixWithInfo(unittest.TestCase):
     self.assertTrue(m[1] != m[2])
     self.assertTrue(m[0] != m[2])
 
-def test_suite():
-    """
-    Run all tests.
-    """
-    loader = unittest.TestLoader()
-    suite = unittest.TestSuite()
-    suite.addTest(loader.loadTestsFromTestCase(TestToMatrix))
-    suite.addTest(loader.loadTestsFromTestCase(TestToMatrixWithInfo))
-    return suite
-
 if __name__ == '__main__':
     unittest.main()

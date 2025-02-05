@@ -841,7 +841,7 @@ TEST_CASE("SplitCubeDataShuffleWithLabelsAndWeights", "[SplitDataTest]")
 TEST_CASE("SplitMatDataShuffleWithLabelsAndWeights", "[SplitDataTest]")
 {
   mat input(10, 30, fill::randu);
-  Row<size_t> labels = randi<Row<size_t>>(30, distr_param(0, 100000));
+  Row<size_t> labels = linspace<Row<size_t>>(10, 39, 30);
   frowvec weights(30, fill::randu);
 
   mat trainInput, testInput;

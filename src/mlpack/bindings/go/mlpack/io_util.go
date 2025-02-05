@@ -1,7 +1,7 @@
 package mlpack
 
 /*
-#cgo CFLAGS: -I. -I/capi -g -Wall
+#cgo CFLAGS: -I. -I/capi
 #cgo LDFLAGS: -L${SRCDIR} -Wl,-rpath,${SRCDIR} -lmlpack_go_util
 #include <capi/io_util.h>
 */
