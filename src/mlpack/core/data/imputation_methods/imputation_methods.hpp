@@ -14,6 +14,7 @@
 
 #include "mean_imputation.hpp"
 #include "median_imputation.hpp"
+#include "mode_imputation.hpp"
 #include "listwise_deletion.hpp"
 #include "custom_imputation.hpp"
 
