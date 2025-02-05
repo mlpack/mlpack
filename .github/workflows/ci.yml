@@ -248,7 +248,7 @@ jobs:
           cd build
           # Filter 'debug' output from the junit file because it makes the junit
           # too large, but still print it to stderr of this job step.
-          OMP_NUM_THREADS=4 Release/bin/mlpack_test -r junit > mlpack_test.junit.xml
+          OMP_NUM_THREADS=4 Release/mlpack_test -r junit > mlpack_test.junit.xml
           # Remove version numbers and other non-xml from the output.
           cat mlpack_test.junit.xml | sed '/<?xml/,$!d' > mlpack_test.junit.xml.tmp
           mv mlpack_test.junit.xml.tmp mlpack_test.junit.xml
