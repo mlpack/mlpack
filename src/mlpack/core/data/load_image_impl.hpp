@@ -90,8 +90,6 @@ bool Load(const std::vector<std::string>& files,
   return true;
 }
 
-#ifdef MLPACK_HAS_STB
-
 inline bool LoadImage(const std::string& filename,
                       arma::Mat<unsigned char>& matrix,
                       ImageInfo& info,
@@ -166,29 +164,6 @@ inline bool LoadImage(const std::string& filename,
   stbi_image_free(image);
   return true;
 }
-
-#else // MLPACK_HAS_STB
-
-inline bool LoadImage(const std::string& /* filename */,
-                      arma::Mat<unsigned char>& /* matrix */,
-                      ImageInfo& /* info */,
-                      const bool fatal)
-{
-  if (fatal)
-  {
-    Log::Fatal << "Load(): mlpack was not compiled with STB support, so images "
-        << "cannot be loaded!" << std::endl;
-  }
-  else
-  {
-    Log::Warn << "Load(): mlpack was not compiled with STB support, so images "
-        << "cannot be loaded!" << std::endl;
-  }
-
-  return false;
-}
-
-#endif
 
 } // namespace data
 } // namespace mlpack
