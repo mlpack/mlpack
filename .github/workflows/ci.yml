@@ -234,7 +234,7 @@ jobs:
               -DLAPACK_LIBRARIES='${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
               -DENSMALLEN_INCLUDE_DIR=../deps/ensmallen.2.17.0/installed/x64-linux/include/ \
               -DCEREAL_INCLUDE_DIR=../deps/cereal-1.3.2/include/ \
-              -DSTB_IMAGE_INCLUDE_DIR=../deps/stb/include/ \
+              -DSTB_IMAGE_INCLUDE_DIR='${{ github.workspace }}'/deps/stb/include/ \
               -DCMAKE_HAS_WORKING_STATIC_STB=1 \
               ../
 
@@ -243,6 +243,7 @@ jobs:
 
       # Run the tests manually so that we can get JUnit output.
       - name: Run mlpack_test
+        shell: bash
         run: |
           cd build
           # Filter 'debug' output from the junit file because it makes the junit
