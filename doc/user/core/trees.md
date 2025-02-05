@@ -20,6 +20,7 @@ different trees.  The following tree types are available in mlpack:
  * [`UBTree`](trees/ub_tree.md)
  * [`CoverTree`](trees/cover_tree.md)
  * [`Octree`](trees/octree.md)
+ * [`XTree`](trees/x_tree.md)
 
 *Note:* this documentation is a work in progress.  Not all trees are documented
 yet.
