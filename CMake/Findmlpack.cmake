@@ -17,10 +17,7 @@
 #  MLPACK_LIBRARIES - list of required libraries
 
 
-
 ## What needs to be done in this PR:
-# 1. Create a macro / function to each one of them
-# 2. Call each one of them at the end of this file
 # 3. If found make it set a list of one that are not found
 # 4. Use the list in the case we need to call the autodownloader
 # 5. Simplyfy the Autodownloader call and make it only one with for loop if
@@ -394,10 +391,8 @@ macro(find_stb)
 
 endmacro()
 
-macro(find_OpenMP)
-  if (USE_OPENMP)
-    find_package(OpenMP)
-  endif ()
+macro(find_Openmp)
+  find_package(OpenMP)
 
   if (OpenMP_FOUND AND OpenMP_CXX_VERSION VERSION_GREATER_EQUAL 3.0.0)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
@@ -595,6 +590,24 @@ if (CEREAL_FOUND)
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
 else()
   message(FATAL_ERROR "Cereal not found, (required dependency of mlpack).")
+endif()
+
+if (USE_SYSTEM_STB)
+  find_stb()
+endif()
+if (StbImage_FOUND)
+  set(STB_AVAILABLE "1")
+  add_definitions(-DMLPACK_USE_SYSTEM_STB)
+  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
+
+  # Make sure that we can link STB in multiple translation units.
+  include(CMake/TestStaticSTB.cmake)
+  if (NOT CMAKE_HAS_WORKING_STATIC_STB)
+    message(FATAL_ERROR "STB implementations's static mode cannot link across "
+        "multiple translation units!  Try upgrading your STB implementation, "
+        "or using the auto-downloader (set DOWNLOAD_DEPENDENCIES=ON in the "
+        "CMake configuration command.")
+  endif()
 endif()
 
 find_mlpack()
