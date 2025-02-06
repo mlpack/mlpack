@@ -175,7 +175,7 @@ API](../../../developer/trees.md#the-treetype-api).
  * `node.Child(i)` returns an `XTree&` that is the `i`th child.
    - `i` must be less than `node.NumChildren()`.
    - This function should only be called if `node.NumChildren()` is not `0`
-     (e.g. if `node` is not a leaf).  Note that this returns a valid `RTree&`
+     (e.g. if `node` is not a leaf).  Note that this returns a valid `XTree&`
      that can itself be used just like the root node of the tree!
 
  * `node.Parent()` will return an `XTree*` that points to the parent of `node`,
