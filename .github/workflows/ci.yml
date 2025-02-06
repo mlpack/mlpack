@@ -244,11 +244,11 @@ jobs:
         shell: bash
         run: |
           cd build/
-          Release/mlpack_test
+          ./Release/mlpack_test
           #OMP_NUM_THREADS=4 Release/mlpack_test -r junit > mlpack_test.junit.xml
           # Remove version numbers and other non-xml from the output.
-          cat mlpack_test.junit.xml | sed '/<?xml/,$!d' > mlpack_test.junit.xml.tmp
-          mv mlpack_test.junit.xml.tmp mlpack_test.junit.xml
+          #cat mlpack_test.junit.xml | sed '/<?xml/,$!d' > mlpack_test.junit.xml.tmp
+          #mv mlpack_test.junit.xml.tmp mlpack_test.junit.xml
 
       - name: Parse test output
         uses: rcurtin/test-summary-action@dist
