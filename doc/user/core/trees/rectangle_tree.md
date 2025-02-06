@@ -494,7 +494,8 @@ mlpack provides several drop-in choices for `SplitType`, and it is also possible
 to write a fully custom split:
 
  * [`RTreeSplit`](#rtreesplit): splits according to a simple binary heuristic
- * [`HilbertRTreeSplit`](#hilbertrtreesplit): ...
+ * [`HilbertRTreeSplit<>`](#hilbertrtreesplit): use deferred splitting and
+   Z-ordering values of points to decide the split
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
 
@@ -518,9 +519,37 @@ strategy works as follows:
 For implementation details, see
 [the source code](/src/mlpack/core/tree/rectangle_tree/r_tree_split_impl.hpp).
 
-### `HilbertRTreeSplit`
+### `HilbertRTreeSplit<>`
 
- ...
+The `HilbertRTreeSplit<>` class is an implementation of the
+[`HilbertRTree`](hilbert_r_tree.md) splitting strategy.  This strategy, proposed
+in [the original paper (pdf)](https://www.vldb.org/conf/1994/P500.PDF), has two
+main differences from the standard [`RTreeSplit`](#rtreesplit) strategy:
+
+ * The idea of space-filling curves is used to order points for insertion.
+ * Instead of one node splitting into two, the `HilbertRTreeSplit<>` class
+   defers splitting, and re-splits a group of two nodes into three nodes.
+   - *Note*: this behavior is configurable, see below.
+
+When inserting a point, one cooperating sibling node is found.  If both the node
+and its cooperating sibling are full, then all points in the two nodes as well
+as the point being inserted are ordered by Z-ordering value (also known as
+Morton ordering), and split evenly into three nodes.
+
+***Notes:***
+
+ - `HilbertRTreeSplit<>` has one template parameter, which controls the number
+   of sibling nodes to split.  This is why the class must be specified as
+   `HilbertRTreeSplit<>` and not `HilbertRTreeSplit`.
+
+ - By default, `HilbertRTreeSplit<>` splits two sibling nodes into three new
+   nodes; but this is configurable: `HilbertRTreeSplit<N>` will split `N`
+   sibling nodes into `N + 1` new nodes.
+
+ - The concept of splitting based on Z-ordering is also used in the
+   [`UBTreeSplit`](binary_space_tree.md#ubtreesplit) strategy for the
+   [`UBTree`](ub_tree.md), a variant of the
+   [`BinarySpaceTree`](binary_space_tree.md) class.
 
 ### Custom `SplitType`s
 
@@ -563,8 +592,10 @@ mlpack provides several drop-in choices for `DescentType`, and it is also
 possible to write a fully custom split:
 
  * [`RTreeDescentHeuristic`](#rtreedescentheuristic): selects the closest child,
-   which is the child whose volume will increase the least
- * [`HilbertRTreeDescentHeuristic`](#hilbertrtreedescentheuristic): ...
+   which is the child whose volume will increase the least.
+ * [`HilbertRTreeDescentHeuristic`](#hilbertrtreedescentheuristic): select the
+   first child with minimum Z-order value greater than the point or node to be
+   inserted.
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
 
@@ -578,12 +609,19 @@ The `RTreeDescentHeuristic` is the default descent strategy for the
 simple: the child node whose volume will increase the least is chosen as the
 child to insert a point or other node into.
 
-For implementation details, see [the source
-code](/src/mlpack/core/tree/rectangle_tree/r_tree_descent_heuristic.hpp).
+For implementation details, see
+[the source code](/src/mlpack/core/tree/rectangle_tree/r_tree_descent_heuristic.hpp).
 
 ### `HilbertRTreeDescentHeuristic`
 
-...
+The `HilbertRTreeDescentHeuristic` is the descent strategy used by the
+[`HilbertRTree`](hilbert_r_tree.md).  The strategy depends on the concept of
+Z-ordering (or Morton ordering): the child node whose minimum Z-ordering value
+is closest to but greater than the Z-ordering value of the point to be inserted
+is chosen.
+
+For implementation details, see
+[the source code](/src/mlpack/core/tree/rectangle_tree/hilbert_r_tree_descent_heuristic_impl.hpp).
 
 ### Custom `DescentType`s
 
@@ -627,7 +665,13 @@ Different variants of `RectangleTree`s may use other predefined types for their
 
 ### `DiscreteHilbertRTreeAuxiliaryInformation`
 
-...
+The `DiscreteHilbertRTreeAuxiliaryInformation` class is used by the
+[`HilbertRTree`](hilbert_r_tree.md).  It stores the largest Z-ordering value of
+any descendant point of a node.  (This can be accessed with the `HilbertValue()`
+method.)
+
+For more details, see
+[the source code](/src/mlpack/core/tree/rectangle_tree/hilbert_r_tree_auxiliary_information_impl.hpp).
 
 ### Custom `AuxiliaryInformationType`s
 
