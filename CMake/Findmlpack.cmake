@@ -42,31 +42,6 @@
 # CMakeLists to here, since they will be required to be set by the user at
 # somepoint.
 
-# Set minimum library versions required by mlpack.
-#
-# For Armadillo, try to keep the minimum required version less than or equal to
-# what's available on the current Ubuntu LTS or most recent stable RHEL release.
-# See https://github.com/mlpack/mlpack/issues/3033 for some more discussion.
-set(ARMADILLO_VERSION "10.8")
-set(ENSMALLEN_VERSION "2.10.0")
-set(CEREAL_VERSION "1.1.2")
-
-# Set required standard to C++17.
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-set(MLPACK_DISABLE_OPENMP OFF)
-
-if (NOT USE_OPENMP)
-  set(MLPACK_DISABLE_OPENMP ON)
-endif()
-
-# If we're using gcc, then we need to link against pthreads to use std::thread,
-# which we do in the tests.
-if (CMAKE_COMPILER_IS_GNUCC)
-  find_package(Threads)
-  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
-endif()
 
 ## This function auto-downloads mlpack dependencies.
 ## You need to pass the LINK to download from, the name of
@@ -114,7 +89,8 @@ macro(get_deps LINK DEPS_NAME PACKAGE)
     install(DIRECTORY "${GENERIC_INCLUDE_DIR}/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
   else ()
     message(FATAL_ERROR
-            "Problem unpacking ${DEPS_NAME}! Expected only one directory ${DEPS_NAME};. Try to remove the directory ${CMAKE_BINARY_DIR}/deps and reconfigure.")
+            "Problem unpacking ${DEPS_NAME}! Expected only one directory "
+            "${DEPS_NAME};. Try to remove the directory ${CMAKE_BINARY_DIR}/deps and reconfigure.")
   endif ()
 endmacro()
 
@@ -242,13 +218,6 @@ macro(find_Armadillo)
     endforeach()
   endif()
 
-  if (ARMADILLO_FOUND)
-    set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})
-    set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY} ${_ARMA_SUPPORT_LIBRARIES})
-  else()
-    message(FATAL_ERROR "Armadillo not found, (required dependency of mlpack).")
-  endif ()
-
   # Clean up internal variables
   unset(_ARMA_REQUIRED_VARS)
   unset(_ARMA_SUPPORT_LIBRARIES)
@@ -264,66 +233,61 @@ macro(find_Armadillo)
 
 endmacro()
 
-
 # Findcereal.cmake
-find_path(CEREAL_INCLUDE_DIR
-  NAMES cereal
-  PATHS "$ENV{ProgramFiles}/cereal/include"
-  )
+macro(find_cereal)
+  find_path(CEREAL_INCLUDE_DIR
+    NAMES cereal
+    PATHS "$ENV{ProgramFiles}/cereal/include"
+    )
 
-if (CEREAL_INCLUDE_DIR)
-  # ------------------------------------------------------------------------
-  #  Extract version information from <CEREAL>
-  # ------------------------------------------------------------------------
-  set(CEREAL_FOUND YES)
-  set(CEREAL_VERSION_MAJOR 0)
-  set(CEREAL_VERSION_MINOR 0)
-  set(CEREAL_VERSION_PATCH 0)
-
-  if (EXISTS "${CEREAL_INCLUDE_DIR}/cereal/version.hpp")
-
-    # Read and parse cereal version header file for version number
-    file(READ "${CEREAL_INCLUDE_DIR}/cereal/version.hpp"
-        _CEREAL_HEADER_CONTENTS)
-    string(REGEX REPLACE ".*#define CEREAL_VERSION_MAJOR ([0-9]+).*" "\\1"
-        CEREAL_VERSION_MAJOR "${_CEREAL_HEADER_CONTENTS}")
-    string(REGEX REPLACE ".*#define CEREAL_VERSION_MINOR ([0-9]+).*" "\\1"
-        CEREAL_VERSION_MINOR "${_CEREAL_HEADER_CONTENTS}")
-    string(REGEX REPLACE ".*#define CEREAL_VERSION_PATCH ([0-9]+).*" "\\1"
-        CEREAL_VERSION_PATCH "${_CEREAL_HEADER_CONTENTS}")
-
-  elseif (EXISTS "${CEREAL_INCLUDE_DIR}/cereal/details/polymorphic_impl_fwd.hpp")
-
-    set(CEREAL_VERSION_MAJOR 1)
-    set(CEREAL_VERSION_MINOR 2)
+  if (CEREAL_INCLUDE_DIR)
+    # ------------------------------------------------------------------------
+    #  Extract version information from <CEREAL>
+    # ------------------------------------------------------------------------
+    set(CEREAL_FOUND YES)
+    set(CEREAL_VERSION_MAJOR 0)
+    set(CEREAL_VERSION_MINOR 0)
     set(CEREAL_VERSION_PATCH 0)
-  elseif (EXISTS "${CEREAL_INCLUDE_DIR}/cereal/types/valarray.hpp")
+
+    if (EXISTS "${CEREAL_INCLUDE_DIR}/cereal/version.hpp")
+
+      # Read and parse cereal version header file for version number
+      file(READ "${CEREAL_INCLUDE_DIR}/cereal/version.hpp"
+          _CEREAL_HEADER_CONTENTS)
+      string(REGEX REPLACE ".*#define CEREAL_VERSION_MAJOR ([0-9]+).*" "\\1"
+          CEREAL_VERSION_MAJOR "${_CEREAL_HEADER_CONTENTS}")
+      string(REGEX REPLACE ".*#define CEREAL_VERSION_MINOR ([0-9]+).*" "\\1"
+          CEREAL_VERSION_MINOR "${_CEREAL_HEADER_CONTENTS}")
+      string(REGEX REPLACE ".*#define CEREAL_VERSION_PATCH ([0-9]+).*" "\\1"
+          CEREAL_VERSION_PATCH "${_CEREAL_HEADER_CONTENTS}")
+
+    elseif (EXISTS "${CEREAL_INCLUDE_DIR}/cereal/details/polymorphic_impl_fwd.hpp")
+
+      set(CEREAL_VERSION_MAJOR 1)
+      set(CEREAL_VERSION_MINOR 2)
+      set(CEREAL_VERSION_PATCH 0)
+    elseif (EXISTS "${CEREAL_INCLUDE_DIR}/cereal/types/valarray.hpp")
+
+      set(CEREAL_VERSION_MAJOR 1)
+      set(CEREAL_VERSION_MINOR 1)
+      set(CEREAL_VERSION_PATCH 2)
+    elseif (EXISTS "${CEREAL_INCLUDE_DIR}/cereal/cereal.hpp")
 
     set(CEREAL_VERSION_MAJOR 1)
     set(CEREAL_VERSION_MINOR 1)
-    set(CEREAL_VERSION_PATCH 2)
-  elseif (EXISTS "${CEREAL_INCLUDE_DIR}/cereal/cereal.hpp")
+    set(CEREAL_VERSION_PATCH 1)
+  else()
 
-  set(CEREAL_VERSION_MAJOR 1)
-  set(CEREAL_VERSION_MINOR 1)
-  set(CEREAL_VERSION_PATCH 1)
-else()
+    set(CEREAL_FOUND NO)
+    endif()
+    set(CEREAL_VERSION_STRING "${CEREAL_VERSION_MAJOR}.${CEREAL_VERSION_MINOR}.${CEREAL_VERSION_PATCH}")
+  endif ()
 
-  set(CEREAL_FOUND NO)
-  endif()
-  set(CEREAL_VERSION_STRING "${CEREAL_VERSION_MAJOR}.${CEREAL_VERSION_MINOR}.${CEREAL_VERSION_PATCH}")
-endif ()
+  mark_as_advanced(CEREAL_INCLUDE_DIR)
 
-mark_as_advanced(CEREAL_INCLUDE_DIR)
-
-file(GLOB MLPACK_SEARCH_PATHS
-    ${CMAKE_BINARY_DIR}/deps/mlpack-[0-9]*.[0-9]*.[0-9]*)
-
-if (CEREAL_FOUND)
-  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
-else()
-  message(FATAL_ERROR "Cereal not found, (required dependency of mlpack).")
-endif()
+  file(GLOB MLPACK_SEARCH_PATHS
+      ${CMAKE_BINARY_DIR}/deps/mlpack-[0-9]*.[0-9]*.[0-9]*)
+endmacro()
 
 # - Find Ensmallen
 # Find the Ensmallen C++ library
@@ -336,8 +300,7 @@ endif()
 #  ENSMALLEN_VERSION_PATCH - patch version number
 #  ENSMALLEN_VERSION_STRING - version number as a string (ex: "1.0.4")
 #  ENSMALLEN_VERSION_NAME - name of the version (ex: "Antipodean Antileech")
-
-macro(find_Ensmallen)
+macro(find_ensmallen)
   file(GLOB ENSMALLEN_SEARCH_PATHS
       ${CMAKE_BINARY_DIR}/deps/ensmallen-[0-9]*.[0-9]*.[0-9]*)
   find_path(ENSMALLEN_INCLUDE_DIR
@@ -379,10 +342,7 @@ macro(find_Ensmallen)
   endif ()
 
   mark_as_advanced(ENSMALLEN_INCLUDE_DIR)
-
 endmacro()
-
-
 
 # - Find STB_IMAGE
 # Find the STB_IMAGE C++ library
@@ -393,8 +353,7 @@ endmacro()
 #  STB_INCLUDE_NEEDS_STB_SUFFIX - whether or not the include files are under an
 #     stb/ directory; if "YES", then includes must be done as, e.g.,
 #     stb/stb_image.h.
-macro(find_STB)
-
+macro(find_stb)
   file(GLOB STB_IMAGE_SEARCH_PATHS
       ${CMAKE_BINARY_DIR}/deps/
       ${CMAKE_BINARY_DIR}/deps/stb)
@@ -435,26 +394,27 @@ macro(find_STB)
 
 endmacro()
 
-
-## Find OpenMP
-if (NOT MLPACK_DISABLE_OPENMP)
-  find_package(OpenMP)
-endif ()
-
-if (OpenMP_FOUND AND OpenMP_CXX_VERSION VERSION_GREATER_EQUAL 3.0.0)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OpenMP_CXX_LIBRARIES})
-else ()
-  # Disable warnings for all the unknown OpenMP pragmas.
-  if (NOT MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
-  else ()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4068")
+macro(find_OpenMP)
+  if (USE_OPENMP)
+    find_package(OpenMP)
   endif ()
-  set(OpenMP_CXX_FLAGS "")
-endif ()
 
+  if (OpenMP_FOUND AND OpenMP_CXX_VERSION VERSION_GREATER_EQUAL 3.0.0)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OpenMP_CXX_LIBRARIES})
+  else ()
+    # Disable warnings for all the unknown OpenMP pragmas.
+    if (NOT MSVC)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
+    else ()
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4068")
+    endif ()
+    set(OpenMP_CXX_FLAGS "")
+  endif ()
+endmacro()
+
+macro(find_mlpack)
 # This will be executed if mlpack is installed already.
 find_path(MLPACK_INCLUDE_DIR
   NAMES mlpack.hpp
@@ -501,20 +461,145 @@ find_package_handle_standard_args(mlpack
   VERSION_VAR MLPACK_VERSION_STRING)
 
 mark_as_advanced(MLPACK_INCLUDE_DIR)
-
-set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${MLPACK_INCLUDE_DIR}")
-
 mark_as_advanced(MLPACK_INCLUDE_DIRS)
 mark_as_advanced(MLPACK_LIBRARIES)
 
+endmacro()
 
+macro(fetch_mlpack compile)
+  set(version 0.3.28)
+
+  find_package(BLAS PATHS ${CMAKE_BINARY_DIR})
+  if (NOT BLAS_FOUND OR (NOT BLAS_LIBRARIES))
+    get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v${version}/OpenBLAS-${version}.tar.gz OpenBLAS OpenBLAS-${version}.tar.gz)
+    if (NOT compile)
+      message(WARNING "OpenBLAS is downloaded but not compiled. Please compile
+      OpenBLAS before compiling mlpack")
+    else()
+      execute_process(COMMAND make NO_SHARED=1 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version})
+      file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/libopenblas.a")
+      set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
+      set(LAPACK_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
+      set(BLAS_FOUND ON)
+    endif()
+  endif()
+
+  find_package(Armadillo "${ARMADILLO_VERSION}" PATHS ${CMAKE_BINARY_DIR})
+  if (NOT ARMADILLO_FOUND)
+    if (NOT CMAKE_CROSSCOMPILING)
+      find_package(BLAS QUIET)
+      find_package(LAPACK QUIET)
+      if (NOT BLAS_FOUND AND NOT LAPACK_FOUND)
+        message(FATAL_ERROR "Can not find BLAS or LAPACK!  These are required for Armadillo.  Please install one of them---or install Armadillo---before installing mlpack.")
+      endif()
+    endif()
+    get_deps(https://files.mlpack.org/armadillo-12.6.5.tar.gz armadillo armadillo-12.6.5.tar.gz)
+    set(ARMADILLO_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+    if (NOT CMAKE_CROSSCOMPILING)
+      find_package(Armadillo REQUIRED)
+    endif()
+    # Include directories for the previous dependencies.
+    set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
+    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
+  endif()
+
+  ## Keep STB out of this until we merge the stb PR
+
+  find_package(Ensmallen "${ENSMALLEN_VERSION}" PATHS ${CMAKE_BINARY_DIR})
+  if (NOT ENSMALLEN_FOUND)
+    get_deps(https://www.ensmallen.org/files/ensmallen-latest.tar.gz ensmallen ensmallen-latest.tar.gz)
+    set(ENSMALLEN_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+    find_package(Ensmallen REQUIRED)
+    if (ENSMALLEN_FOUND)
+      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
+    endif()
+  endif()
+
+  find_package(cereal "${CEREAL_VERSION}" PATHS ${CMAKE_BINARY_DIR})
+  if (NOT CEREAL_FOUND)
+    get_deps(https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.0.tar.gz cereal cereal-1.3.0.tar.gz)
+    set(CEREAL_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+    find_package(cereal REQUIRED)
+    if (CEREAL_FOUND)
+      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
+    endif()
+  endif()
+
+  find_openmp() 
+endmacro()
+
+# Download and compile OpenBLAS if we are cross compiling mlpack for a specific
+# architecture. The function takes the version of OpenBLAS as variable.
+macro(fetch_mlpack_and_crosscompile)
+  # 1. Pull openblas and crossocompile it
+  search_openblas(0.3.28)
+  # 2. Call autodownload, DONE
+  fetch_mlpack(ON)
+endmacro()
+
+##
+# main script function calls start here.
+# 1. We first check the standard and minimum requirement.
+# 2. Second look for mlpack dependencies.
+# 3. If not, download dependencies.
+# 4. Throw an error if something is not found
+#
+
+# Set minimum library versions required by mlpack.
+#
+# For Armadillo, try to keep the minimum required version less than or equal to
+# what's available on the current Ubuntu LTS or most recent stable RHEL release.
+# See https://github.com/mlpack/mlpack/issues/3033 for some more discussion.
+set(ARMADILLO_VERSION "10.8")
+set(ENSMALLEN_VERSION "2.10.0")
+set(CEREAL_VERSION "1.1.2")
+
+# Set required standard to C++17.
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(MLPACK_DISABLE_OPENMP OFF)
+
+if (NOT USE_OPENMP)
+  set(MLPACK_DISABLE_OPENMP ON)
+endif()
+
+# If we're using gcc, then we need to link against pthreads to use std::thread,
+# which we do in the tests.
+if (CMAKE_COMPILER_IS_GNUCC)
+  find_package(Threads)
+  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+endif()
+
+if (NOT MLPACK_DISABLE_OPENMP)
+  find_openmp()
+endif ()
+
+find_armadillo()
+if (ARMADILLO_FOUND)
+  set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})
+  set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY} ${_ARMA_SUPPORT_LIBRARIES})
+else()
+  message(FATAL_ERROR "Armadillo not found, (required dependency of mlpack).")
+endif ()
+
+find_ensmallen()
 if (ENSMALLEN_FOUND)
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 else()
   message(FATAL_ERROR "Ensmallen not found, (required dependency of mlpack).")
 endif()
 
+find_cereal()
+if (CEREAL_FOUND)
+  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
+else()
+  message(FATAL_ERROR "Cereal not found, (required dependency of mlpack).")
+endif()
 
-
-
-
+find_mlpack()
+if (MLPACK_FOUND)
+  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${MLPACK_INCLUDE_DIR}")
+else()
+  message(FATAL_ERROR "mlpack not found, (required dependency of itself).")
+endif()
