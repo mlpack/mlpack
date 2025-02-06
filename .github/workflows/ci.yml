@@ -243,10 +243,10 @@ jobs:
       - name: Run mlpack_test
         run: |
           cd build/
-          ls -force
-          echo "now ls release"
-          ls -force Release/
-          ./Release/mlpack_test
+          ./Release/mlpack_test.exe -r junit > mlpack_test.junit.xml
+          # Remove version numbers and other non-xml from the output.
+          cat mlpack_test.junit.xml | sed '/<?xml/,$!d' > mlpack_test.junit.xml.tmp
+          mv mlpack_test.junit.xml.tmp mlpack_test.junit.xml
 
       - name: Parse test output
         uses: rcurtin/test-summary-action@dist
