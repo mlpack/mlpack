@@ -626,6 +626,11 @@ class DescentType
 The `AuxiliaryInformationType` template parameter holds any auxiliary
 information required by the `SplitType` or `DescentType` strategies.  By
 default, the `NoAuxiliaryInformation` class is used, which holds nothing.
+Different variants of `RectangleTree`s may use other predefined types for their
+`AuxiliaryInformationType`s:
+
+ * [`XTreeAuxiliaryInformation`](#xtreeauxiliaryinformation): used for the
+   [`XTree`](x_tree.md).
 
 ### `XTreeAuxiliaryInformation`
 
