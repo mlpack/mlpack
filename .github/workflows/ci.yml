@@ -246,6 +246,7 @@ jobs:
           ./Release/mlpack_test.exe -r junit > mlpack_test.junit.xml
           # Remove version numbers and other non-xml from the output.
           cat mlpack_test.junit.xml | sed '/<?xml/,$!d' > mlpack_test.junit.xml.tmp
+          rm mlpack_test.junit.xml
           mv mlpack_test.junit.xml.tmp mlpack_test.junit.xml
 
       - name: Parse test output
