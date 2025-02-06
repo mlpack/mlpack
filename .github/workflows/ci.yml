@@ -243,9 +243,9 @@ jobs:
       - name: Run mlpack_test
         run: |
           cd build/
-          ls -l
+          ls -force
           echo "now ls release"
-          ls -l Release/
+          ls -force Release/
           ./Release/mlpack_test
 
       - name: Parse test output
