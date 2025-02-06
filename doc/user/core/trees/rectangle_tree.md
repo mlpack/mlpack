@@ -8,6 +8,7 @@ be used directly, and instead one of the numerous variants should be used
 instead:
 
  * [`RTree`](r_tree.md)
+ * [`HilbertRTree`](hilbert_r_tree.md)
 
 The `RectangleTree` and its variants are capable of inserting points and
 deleting them.  This is different from [`BinarySpaceTree`](binary_space_tree.md)
@@ -493,6 +494,7 @@ mlpack provides several drop-in choices for `SplitType`, and it is also possible
 to write a fully custom split:
 
  * [`RTreeSplit`](#rtreesplit): splits according to a simple binary heuristic
+ * [`HilbertRTreeSplit`](#hilbertrtreesplit): ...
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
 
@@ -515,6 +517,10 @@ strategy works as follows:
 
 For implementation details, see
 [the source code](/src/mlpack/core/tree/rectangle_tree/r_tree_split_impl.hpp).
+
+### `HilbertRTreeSplit`
+
+ ...
 
 ### Custom `SplitType`s
 
@@ -558,6 +564,7 @@ possible to write a fully custom split:
 
  * [`RTreeDescentHeuristic`](#rtreedescentheuristic): selects the closest child,
    which is the child whose volume will increase the least
+ * [`HilbertRTreeDescentHeuristic`](#hilbertrtreedescentheuristic): ...
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
 
@@ -573,6 +580,10 @@ child to insert a point or other node into.
 
 For implementation details, see [the source
 code](/src/mlpack/core/tree/rectangle_tree/r_tree_descent_heuristic.hpp).
+
+### `HilbertRTreeDescentHeuristic`
+
+...
 
 ### Custom `DescentType`s
 
@@ -608,6 +619,15 @@ class DescentType
 The `AuxiliaryInformationType` template parameter holds any auxiliary
 information required by the `SplitType` or `DescentType` strategies.  By
 default, the `NoAuxiliaryInformation` class is used, which holds nothing.
+Different variants of `RectangleTree`s may use other predefined types for their
+`AuxiliaryInformationType`s:
+
+ * [`DiscreteHilbertRTreeAuxiliaryInformation`](#discretehilbertrtreeauxiliaryinformation):
+   used for the [`HilbertRTree`](hilbert_r_tree.md).
+
+### `DiscreteHilbertRTreeAuxiliaryInformation`
+
+...
 
 ### Custom `AuxiliaryInformationType`s
 
