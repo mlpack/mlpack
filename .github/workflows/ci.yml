@@ -241,13 +241,18 @@ jobs:
 
       # Run the tests manually so that we can get JUnit output.
       - name: Run mlpack_test
+        shell: bash
         run: |
           cd build/
+          ls -l ./Release/
           ./Release/mlpack_test.exe -r junit > mlpack_test.junit.xml
+          echo "ran the test!"
+          ls -lh
           # Remove version numbers and other non-xml from the output.
           cat mlpack_test.junit.xml | sed '/<?xml/,$!d' > mlpack_test.junit.xml.tmp
           rm mlpack_test.junit.xml
           mv mlpack_test.junit.xml.tmp mlpack_test.junit.xml
+          ls -lh
 
       - name: Parse test output
         uses: rcurtin/test-summary-action@dist
