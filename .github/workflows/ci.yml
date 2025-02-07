@@ -247,15 +247,11 @@ jobs:
           # we need to run with.
           cp -v '${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/bin/x64/* build/Release
           cd build/
-          ls -l ./Release/
-          ./Release/mlpack_test.exe
-          echo "ran the test!"
-          ls -lh
+          ./Release/mlpack_test.exe -r junit > mlpack_test.junit.xml
           # Remove version numbers and other non-xml from the output.
           cat mlpack_test.junit.xml | sed '/<?xml/,$!d' > mlpack_test.junit.xml.tmp
           rm mlpack_test.junit.xml
           mv mlpack_test.junit.xml.tmp mlpack_test.junit.xml
-          ls -lh
 
       - name: Parse test output
         uses: rcurtin/test-summary-action@dist
