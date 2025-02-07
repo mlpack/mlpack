@@ -16,6 +16,7 @@ option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DOWNLOAD_DEPENDENCIES "Automatically download dependencies if not available." OFF)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." ON)
+option(USE_SYSTEM_STB "Use system STB instead of version bundled with mlpack." OFF)
 
 # Set minimum library versions required by mlpack.
 #
@@ -315,20 +316,12 @@ set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 message(STATUS "Armadillo libraries: ${ARMADILLO_LIBRARIES}")
 
-# Find stb_image.h and stb_image_write.h.
-if (NOT DOWNLOAD_DEPENDENCIES)
-  find_package(StbImage)
-else()
-  find_package(StbImage)
-  if (NOT StbImage_FOUND)
-    get_deps(https://mlpack.org/files/stb.tar.gz stb stb.tar.gz)
-    set(STB_IMAGE_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
-    find_package(StbImage REQUIRED)
-  endif()
+if (USE_SYSTEM_STB)
+  find_package(StbImage REQUIRED)
 endif()
-
 if (StbImage_FOUND)
   set(STB_AVAILABLE "1")
+  add_definitions(-DMLPACK_USE_SYSTEM_STB)
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
 
   # Make sure that we can link STB in multiple translation units.
@@ -338,7 +331,7 @@ if (StbImage_FOUND)
         "multiple translation units!  Try upgrading your STB implementation, "
         "or using the auto-downloader (set DOWNLOAD_DEPENDENCIES=ON in the "
         "CMake configuration command.")
-  endif ()
+  endif()
 endif()
 
 # Find ensmallen.
@@ -484,18 +477,17 @@ if (BFD_DL_AVAILABLE)
   string(REGEX REPLACE "// #define MLPACK_HAS_BFD_DL\n"
       "#define MLPACK_HAS_BFD_DL\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif ()
-if (STB_AVAILABLE)
-  string(REGEX REPLACE "// #define MLPACK_HAS_STB\n"
-      "#define MLPACK_HAS_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
-  if (NOT STB_INCLUDE_NEEDS_STB_SUFFIX)
-    string(REGEX REPLACE "// #define MLPACK_HAS_NO_STB_DIR\n"
-        "#define MLPACK_HAS_NO_STB_DIR\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
-  endif ()
-endif ()
+
 if (USING_GIT)
   string(REGEX REPLACE "// #define MLPACK_GIT_VERSION\n"
       "#define MLPACK_GIT_VERSION\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif ()
+
+if (USE_SYSTEM_STB)
+  string(REGEX REPLACE "// #define MLPACK_USE_SYSTEM_STB\n"
+      "#define MLPACK_USE_SYSTEM_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
 file(WRITE ${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp "${CONFIG_CONTENTS}")
 include_directories(${CMAKE_BINARY_DIR}/include/)
 add_definitions(-DMLPACK_CUSTOM_CONFIG_FILE=mlpack/config-local.hpp)

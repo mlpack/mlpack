@@ -63,11 +63,14 @@ runs:
         MLPACK_VERSION_VALUE=${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}
         echo "MLPACK_R_PACKAGE=$(echo mlpack_"$MLPACK_VERSION_VALUE".tar.gz)" >> $GITHUB_ENV
 
-    - uses: r-lib/actions/setup-pandoc@v2
+    - name: "Setup pandoc for R"
       if: inputs.lang == 'R'
+      uses: r-lib/actions/setup-pandoc@v2
 
-    - uses: r-lib/actions/setup-r@v2
+    # Setup r2u (linux)
+    - name: Setup r2u
       if: inputs.lang == 'R'
+      uses: eddelbuettel/github-actions/r2u-setup@master
 
     - name: "Configure ccache for R"
       if: inputs.lang == 'R'
@@ -77,29 +80,13 @@ runs:
           ccache --set-config "hash_dir=false"
           ccache --zero-stats
 
-    # This appears to be needed to work around this issue:
-    # https://github.com/gagolews/stringi/issues/486
-    - name: "Work around stringi libicu issue"
-      if: inputs.lang == 'R' && runner.os == 'Linux'
-      shell: bash
-      run: |
-          wget http://mirrors.kernel.org/ubuntu/pool/main/i/icu/libicu70_70.1-2_amd64.deb
-          sudo dpkg -i libicu70_70.1-2_amd64.deb
-
     - name: "Query R dependencies"
       if: inputs.lang == 'R'
       shell: bash
       run: |
           cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
-          Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
-
-    - name: Cache R packages
-      if: inputs.lang == 'R' && runner.os != 'Windows' && runner.os != 'macOS'
-      uses: actions/cache@v4
-      with:
-        path: ${{ env.R_LIBS_USER }}
-        key: ${{ runner.os }}-r-release-${{ hashFiles('depends.Rds') }}
-        restore-keys: ${{ runner.os }}-r-release-
+          Rscript -e 'install.packages(c("remotes", "roxygen2", "pkgbuild"))'
+          Rscript -e 'remotes::install_deps(".", dependencies=TRUE)'
 
     - name: Install cereal manually for R
       if: inputs.lang == 'R'
@@ -122,14 +109,6 @@ runs:
           # https://github.com/USCiLab/cereal/pull/835
           sed 's|::template apply|::apply|' cereal-1.3.2/include/cereal/types/tuple.hpp > cereal-1.3.2/include/cereal/types/tuple.hpp.tmp
           mv cereal-1.3.2/include/cereal/types/tuple.hpp.tmp cereal-1.3.2/include/cereal/types/tuple.hpp
-
-    - name: Install R-bindings dependencies
-      if: inputs.lang == 'R'
-      shell: Rscript {0}
-      run: |
-          remotes::install_deps(dependencies = TRUE)
-          remotes::install_cran("roxygen2")
-          remotes::install_cran("pkgbuild")
 
     #
     # Go bindings.

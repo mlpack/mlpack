@@ -66,10 +66,8 @@ runs:
       if: inputs.lang == 'R'
       shell: Rscript {0}
       run: |
-          install.packages('remotes')
+          install.packages(c('remotes', 'rcmdcheck', 'curl'))
           remotes::install_deps('build/src/mlpack/bindings/R/${{ env.MLPACK_R_PACKAGE }}', dependencies = TRUE)
-          remotes::install_cran("rcmdcheck")
-          remotes::install_cran("curl")
 
     - name: "Run R CMD check"
       if: inputs.lang == 'R'
