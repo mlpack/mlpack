@@ -677,12 +677,12 @@ TEST_CASE("ComputeNextDrawProbabilitiesTest", "[RandomForestTest]")
   const arma::vec delta2(SequentialBootstrap<>::ComputeNextDrawProbabilities(
     phi1, 1, concurrency, indM));
 
-  REQUIRE(delta2(0) == 5.0 / 14.0);
+  REQUIRE(delta2(0) == Approx(5.0 / 14.0));
   // Should have the lowest probability as it has already been drawn.
-  REQUIRE(delta2(1) == 3.0 / 14.0);
+  REQUIRE(delta2(1) == Approx(3.0 / 14.0));
   // Should have the highest probability as this event does not overlap
   // with others.
-  REQUIRE(delta2(2) == 6.0 / 14.0);
+  REQUIRE(delta2(2) == Approx(6.0 / 14.0));
 }
 
 /**
