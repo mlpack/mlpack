@@ -245,7 +245,7 @@ jobs:
         run: |
           cd build/
           ls -l ./Release/
-          ./Release/mlpack_test.exe -r junit > mlpack_test.junit.xml
+          ./Release/mlpack_test.exe
           echo "ran the test!"
           ls -lh
           # Remove version numbers and other non-xml from the output.
