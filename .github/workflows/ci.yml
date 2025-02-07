@@ -243,6 +243,9 @@ jobs:
       - name: Run mlpack_test
         shell: bash
         run: |
+          # The .dlls are stored in the bin/ directory, and those are the ones
+          # we need to run with.
+          cp -v '${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/bin/x64/* build/Release
           cd build/
           ls -l ./Release/
           ./Release/mlpack_test.exe
