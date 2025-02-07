@@ -642,9 +642,9 @@ TEST_CASE("ComputeAverageUniquenessTest", "[RandomForestTest]")
     arma::linspace<arma::uvec>(0, 2, 3), concurrency));
 
   REQUIRE(avg.n_rows == 3);
-  REQUIRE(avg(0) == 5.0 / 6.0);
-  REQUIRE(avg(1) == 0.75);
-  REQUIRE(avg(2) == 1.0);
+  REQUIRE(avg(0) == Approx(5.0 / 6.0));
+  REQUIRE(avg(1) == Approx(0.75));
+  REQUIRE(avg(2) == Approx(1.0));
 }
 
 /**
