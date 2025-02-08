@@ -4,6 +4,7 @@ project(mlpack C CXX)
 include(CMake/CheckHash.cmake)
 include(CMake/ConfigureCrossCompile.cmake)
 include(CMake/CheckAtomic.cmake)
+include(CMake/Findmlpack.cmake)
 # First, define all the compilation options.
 option(DEBUG "Compile with debugging information." OFF)
 option(PROFILE "Compile with profiling information." OFF)

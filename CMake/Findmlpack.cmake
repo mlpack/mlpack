@@ -48,7 +48,7 @@
 # For Armadillo, try to keep the minimum required version less than or equal to
 # what's available on the current Ubuntu LTS or most recent stable RHEL release.
 # See https://github.com/mlpack/mlpack/issues/3033 for some more discussion.
-set(ARMADILLO_VERSION "10.8")
+set(ARMADILLO_VERSION "10.8.2")
 set(ENSMALLEN_VERSION "2.10.0")
 set(CEREAL_VERSION "1.1.2")
 
@@ -477,7 +477,8 @@ macro(fetch_mlpack compile)
     endif()
   endif()
 
-  find_package(Armadillo "${ARMADILLO_VERSION}" PATHS ${CMAKE_BINARY_DIR})
+  find_armadillo()
+  #find_package(Armadillo "${ARMADILLO_VERSION}" PATHS ${CMAKE_BINARY_DIR})
   if (NOT ARMADILLO_FOUND)
     if (NOT CMAKE_CROSSCOMPILING)
       find_package(BLAS QUIET)
@@ -486,31 +487,31 @@ macro(fetch_mlpack compile)
         message(FATAL_ERROR "Can not find BLAS or LAPACK!  These are required for Armadillo.  Please install one of them---or install Armadillo---before installing mlpack.")
       endif()
     endif()
-    get_deps(https://files.mlpack.org/armadillo-12.6.5.tar.gz armadillo armadillo-12.6.5.tar.gz)
+    get_deps(https://files.mlpack.org/armadillo-${ARMADILLO_VERSION}.tar.gz armadillo armadillo-${ARMADILLO_VERSION}.tar.gz)
     set(ARMADILLO_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
     if (NOT CMAKE_CROSSCOMPILING)
-      find_package(Armadillo REQUIRED)
+      find_armadillo()#(Armadillo REQUIRED)
     endif()
     # Include directories for the previous dependencies.
     set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
     set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
   endif()
 
-  ## Keep STB out of this until we merge the stb PR
-
-  find_package(Ensmallen "${ENSMALLEN_VERSION}" PATHS ${CMAKE_BINARY_DIR})
+  #find_package(Ensmallen "${ENSMALLEN_VERSION}" PATHS ${CMAKE_BINARY_DIR})
+  find_ensmallen()
   if (NOT ENSMALLEN_FOUND)
     get_deps(https://www.ensmallen.org/files/ensmallen-latest.tar.gz ensmallen ensmallen-latest.tar.gz)
     set(ENSMALLEN_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
-    find_package(Ensmallen REQUIRED)
+    find_ensmallen()
     if (ENSMALLEN_FOUND)
       set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
     endif()
   endif()
 
-  find_package(cereal "${CEREAL_VERSION}" PATHS ${CMAKE_BINARY_DIR})
+  #find_package(cereal "${CEREAL_VERSION}" PATHS ${CMAKE_BINARY_DIR})
+  find_cereal()
   if (NOT CEREAL_FOUND)
-    get_deps(https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.0.tar.gz cereal cereal-1.3.0.tar.gz)
+    get_deps(https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.2.tar.gz cereal cereal-1.3.2.tar.gz)
     set(CEREAL_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
     find_package(cereal REQUIRED)
     if (CEREAL_FOUND)
@@ -518,7 +519,18 @@ macro(fetch_mlpack compile)
     endif()
   endif()
 
+  find_mlpack()
+  if (NOT MLPACK_FOUND)
+    get_deps(https://www.mlpack.org/files/mlpack-latest.tar.gz mlpack mlpack-latest.tar.gz)
+    set(MLPACK_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+    find_mlpack()
+    if (MLPACK_FOUND)
+      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${MLPACK_INCLUDE_DIR})
+    endif()
+  endif()
+
   find_openmp() 
+
 endmacro()
 
 # Download and compile OpenBLAS if we are cross compiling mlpack for a specific
