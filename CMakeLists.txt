@@ -241,7 +241,7 @@ if (CMAKE_CROSSCOMPILING)
 elseif(DOWNLOAD_DEPENDENCIES)
   fetch_mlpack(ON)
 else()
-  find_package(mlpack REQUIRED)
+  find_mlpack()
 endif()
 
 message(${MLPACK_LIBRARIES})
