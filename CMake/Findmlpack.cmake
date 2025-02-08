@@ -116,43 +116,18 @@ macro(get_deps LINK DEPS_NAME PACKAGE)
   endif ()
 endmacro()
 
-#[=======================================================================[.rst:
-
-The following code is ported from FindArmdillo from CMake 4.0
-contains @rcurtin fixes regarding Windows trasitive linking.
--------------
-FindArmadillo
--------------
-
-Find the Armadillo C++ library.
-Armadillo is a library for linear algebra & scientific computing.
-
-.. versionadded:: 3.18
-  Support for linking wrapped libraries directly (``ARMA_DONT_USE_WRAPPER``).
-
-Using Armadillo:
-
-.. code-block:: cmake
-
-  find_package(Armadillo REQUIRED)
-  include_directories(${ARMADILLO_INCLUDE_DIRS})
-  add_executable(foo foo.cc)
-  target_link_libraries(foo ${ARMADILLO_LIBRARIES})
-
-This module sets the following variables:
-
-::
-
-  ARMADILLO_FOUND - set to true if the library is found
-  ARMADILLO_INCLUDE_DIRS - list of required include directories
-  ARMADILLO_LIBRARIES - list of libraries to be linked
-  ARMADILLO_VERSION_MAJOR - major version number
-  ARMADILLO_VERSION_MINOR - minor version number
-  ARMADILLO_VERSION_PATCH - patch version number
-  ARMADILLO_VERSION_STRING - version number as a string (ex: "1.0.4")
-  ARMADILLO_VERSION_NAME - name of the version (ex: "Antipodean Antileech")
-#]=======================================================================]
-
+#=======================================================================
+# This module sets the following variables:
+#
+#  ARMADILLO_FOUND - set to true if the library is found
+#  ARMADILLO_INCLUDE_DIRS - list of required include directories
+#  ARMADILLO_LIBRARIES - list of libraries to be linked
+#  ARMADILLO_VERSION_MAJOR - major version number
+#  ARMADILLO_VERSION_MINOR - minor version number
+#  ARMADILLO_VERSION_PATCH - patch version number
+#  ARMADILLO_VERSION_STRING - version number as a string (ex: "1.0.4")
+#  ARMADILLO_VERSION_NAME - name of the version (ex: "Antipodean Antileech")
+#=======================================================================
 macro(find_armadillo)
   cmake_policy(PUSH)
   cmake_policy(SET CMP0159 NEW) # file(STRINGS) with REGEX updates CMAKE_MATCH_<n>
@@ -162,8 +137,7 @@ macro(find_armadillo)
     PATHS "$ENV{ProgramFiles}/Armadillo/include"
     )
   mark_as_advanced(ARMADILLO_INCLUDE_DIR)
-
-  if(ARMADILLO_INCLUDE_DIR)
+  if (ARMADILLO_INCLUDE_DIR)
     # ------------------------------------------------------------------------
     #  Extract version information from <armadillo>
     # ------------------------------------------------------------------------
@@ -176,7 +150,7 @@ macro(find_armadillo)
     set(ARMADILLO_VERSION_PATCH 0)
     set(ARMADILLO_VERSION_NAME "EARLY RELEASE")
 
-    if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/arma_version.hpp")
+    if (EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/arma_version.hpp")
 
       # Read and parse armdillo version header file for version number
       file(STRINGS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/arma_version.hpp" _ARMA_HEADER_CONTENTS REGEX "#define ARMA_VERSION_[A-Z]+ ")
@@ -186,13 +160,13 @@ macro(find_armadillo)
 
       # WARNING: The number of spaces before the version name is not one.
       string(REGEX REPLACE ".*#define ARMA_VERSION_NAME\ +\"([0-9a-zA-Z\ _-]+)\".*" "\\1" ARMADILLO_VERSION_NAME "${_ARMA_HEADER_CONTENTS}")
-
+      set(ARMADILLO_FOUND YES)
     endif()
 
     set(ARMADILLO_VERSION_STRING "${ARMADILLO_VERSION_MAJOR}.${ARMADILLO_VERSION_MINOR}.${ARMADILLO_VERSION_PATCH}")
-  endif ()
+  endif()
 
-  if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
+  if (EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
     file(STRINGS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp" _ARMA_CONFIG_CONTENTS REGEX "^#define ARMA_USE_[A-Z]+")
     string(REGEX MATCH "ARMA_USE_WRAPPER" _ARMA_USE_WRAPPER "${_ARMA_CONFIG_CONTENTS}")
     string(REGEX MATCH "ARMA_USE_LAPACK" _ARMA_USE_LAPACK "${_ARMA_CONFIG_CONTENTS}")
@@ -252,7 +226,6 @@ macro(find_armadillo)
   unset(_ARMA_HEADER_CONTENTS)
 
   cmake_policy(POP)
-
 endmacro()
 
 # Findcereal.cmake
