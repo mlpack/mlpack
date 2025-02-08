@@ -137,7 +137,6 @@ macro(find_armadillo)
     find_path(ARMADILLO_INCLUDE_DIR
       NAMES armadillo
       PATHS "${CURRENT_PATH}/deps/Armadillo/include"
-      NO_CACHE
       NO_DEFAULT_PATH)
   else()
     find_path(ARMADILLO_INCLUDE_DIR
@@ -221,7 +220,10 @@ macro(find_armadillo)
       endif()
     endforeach()
   endif()
-
+  if (ARMADILLO_FOUND)
+    set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})
+    set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY} ${_ARMA_SUPPORT_LIBRARIES})
+  endif()
   # Clean up internal variables
   unset(_ARMA_REQUIRED_VARS)
   unset(_ARMA_SUPPORT_LIBRARIES)
@@ -244,7 +246,6 @@ macro(find_cereal)
     find_path(CEREAL_INCLUDE_DIR
       NAMES cereal
       PATHS "${CURRENT_PATH}/deps/cereal/include"
-      NO_CACHE
       NO_DEFAULT_PATH)
   else()
     find_path(CEREAL_INCLUDE_DIR
@@ -319,7 +320,6 @@ macro(find_ensmallen)
     find_path(ENSMALLEN_INCLUDE_DIR
       NAMES ensmallen.hpp
       PATHS "${CURRENT_PATH}/deps/ensmallen/include"
-      NO_CACHE
       NO_DEFAULT_PATH)
   else()
     file(GLOB ENSMALLEN_SEARCH_PATHS
@@ -416,7 +416,7 @@ macro(find_stb)
 
 endmacro()
 
-macro(find_Openmp)
+macro(find_openmp)
   find_package(OpenMP)
 
   if (OpenMP_FOUND AND OpenMP_CXX_VERSION VERSION_GREATER_EQUAL 3.0.0)
@@ -441,7 +441,6 @@ macro(mlpack)
     find_path(MLPACK_INCLUDE_DIR
       NAMES mlpack.hpp
       PATHS "${CURRENT_PATH}/deps/mlpack/src/include" "${CMAKE_CURRENT_SOURCE_DIR}/src/"
-      NO_CACHE
       NO_DEFAULT_PATH)
   else()
     # This will be executed if mlpack is installed already.
@@ -498,7 +497,6 @@ endmacro()
 
 macro(fetch_mlpack compile)
   set(version 0.3.28)
-  message("Executed fetch mlpack")
   find_package(BLAS PATHS ${CMAKE_BINARY_DIR})
   if (NOT BLAS_FOUND OR (NOT BLAS_LIBRARIES))
     get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v${version}/OpenBLAS-${version}.tar.gz OpenBLAS OpenBLAS-${version}.tar.gz)
@@ -570,7 +568,6 @@ endmacro()
 # Download and compile OpenBLAS if we are cross compiling mlpack for a specific
 # architecture. The function takes the version of OpenBLAS as variable.
 macro(fetch_mlpack_and_crosscompile)
-  message("fetch mlpack and crosscompile")
   # 1. Pull openblas and crossocompile it
   search_openblas(0.3.28)
   # 2. Call autodownload, DONE
@@ -583,7 +580,6 @@ endmacro()
 ##===================================================
 
 macro(find_mlpack)
-  message("executed get mlpack in here")
   # If we're using gcc, then we need to link against pthreads to use std::thread,
   # which we do in the tests.
   if (CMAKE_COMPILER_IS_GNUCC)
@@ -597,8 +593,8 @@ macro(find_mlpack)
 
   find_armadillo()
   if (ARMADILLO_FOUND)
-    set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})
-    set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY} ${_ARMA_SUPPORT_LIBRARIES})
+    set(MLPACK_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIRS})
+    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
   else()
     message(FATAL_ERROR "Armadillo not found, (required dependency of mlpack).")
   endif ()
