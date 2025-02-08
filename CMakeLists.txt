@@ -2,10 +2,8 @@ cmake_minimum_required(VERSION 3.11)
 project(mlpack C CXX)
 
 include(CMake/CheckHash.cmake)
-include(CMake/Autodownload.cmake)
 include(CMake/ConfigureCrossCompile.cmake)
 include(CMake/CheckAtomic.cmake)
-include(CMake/Dependencies.cmake)
 # First, define all the compilation options.
 option(DEBUG "Compile with debugging information." OFF)
 option(PROFILE "Compile with profiling information." OFF)
