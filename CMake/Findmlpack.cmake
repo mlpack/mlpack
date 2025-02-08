@@ -39,16 +39,41 @@
 # CMakeLists to here, since they will be required to be set by the user at
 # somepoint.
 
+##===================================================
+##  MLPACK DEPEDENCIES SETTINGS. 
+##===================================================
 
-## This function auto-downloads mlpack dependencies.
-## You need to pass the LINK to download from, the name of
-## the dependency, and the name of the compressed package such as
-## armadillo.tar.gz
-## At each download, this module sets a GENERIC_INCLUDE_DIR path,
-## which means that you need to set the main path for the include
-## directories for each package.
-## Note that, the package should be compressed only as .tar.gz
+# Set minimum library versions required by mlpack.
+#
+# For Armadillo, try to keep the minimum required version less than or equal to
+# what's available on the current Ubuntu LTS or most recent stable RHEL release.
+# See https://github.com/mlpack/mlpack/issues/3033 for some more discussion.
+set(ARMADILLO_VERSION "10.8")
+set(ENSMALLEN_VERSION "2.10.0")
+set(CEREAL_VERSION "1.1.2")
 
+# Set required standard to C++17.
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(MLPACK_DISABLE_OPENMP OFF)
+
+if (NOT USE_OPENMP)
+  set(MLPACK_DISABLE_OPENMP ON)
+endif()
+
+##===================================================
+##  MLPACK AUTODOWNLOADER DEPEDENCIES FUNCTIONS
+##===================================================
+
+# This function auto-downloads mlpack dependencies.
+# You need to pass the LINK to download from, the name of
+# the dependency, and the name of the compressed package such as
+# armadillo.tar.gz
+# At each download, this module sets a GENERIC_INCLUDE_DIR path,
+# which means that you need to set the main path for the include
+# directories for each package.
+# Note that, the package should be compressed only as .tar.gz
 macro(get_deps LINK DEPS_NAME PACKAGE)
   if (NOT EXISTS "${CMAKE_BINARY_DIR}/deps/${PACKAGE}")
     file(DOWNLOAD ${LINK}
@@ -128,7 +153,7 @@ This module sets the following variables:
   ARMADILLO_VERSION_NAME - name of the version (ex: "Antipodean Antileech")
 #]=======================================================================]
 
-macro(find_Armadillo)
+macro(find_armadillo)
   cmake_policy(PUSH)
   cmake_policy(SET CMP0159 NEW) # file(STRINGS) with REGEX updates CMAKE_MATCH_<n>
 
@@ -532,32 +557,10 @@ macro(fetch_mlpack_and_crosscompile)
   fetch_mlpack(ON)
 endmacro()
 
-##
-# main script function calls start here.
-# 1. We first check the standard and minimum requirement.
-# 2. Second look for mlpack dependencies.
-# 3. If not, download dependencies.
-# 4. Throw an error if something is not found
-#
 
-# Set minimum library versions required by mlpack.
-#
-# For Armadillo, try to keep the minimum required version less than or equal to
-# what's available on the current Ubuntu LTS or most recent stable RHEL release.
-# See https://github.com/mlpack/mlpack/issues/3033 for some more discussion.
-set(ARMADILLO_VERSION "10.8")
-set(ENSMALLEN_VERSION "2.10.0")
-set(CEREAL_VERSION "1.1.2")
-
-# Set required standard to C++17.
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-set(MLPACK_DISABLE_OPENMP OFF)
-
-if (NOT USE_OPENMP)
-  set(MLPACK_DISABLE_OPENMP ON)
-endif()
+##===================================================
+##  MLPACK MAIN FUNCTIONS CALL. 
+##===================================================
 
 # If we're using gcc, then we need to link against pthreads to use std::thread,
 # which we do in the tests.
