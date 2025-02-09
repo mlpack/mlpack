@@ -12,6 +12,8 @@ _????-??-??_
 
  * Unify the `Load` & `Save` interface using `DataOptions` (#3831).
 
+ * Bundle STB with mlpack and add `ResizeImages()` functionality (#3823).
+
 ## mlpack 4.5.1
 
 _2024-12-02_

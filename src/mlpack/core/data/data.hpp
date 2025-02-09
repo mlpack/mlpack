@@ -32,6 +32,7 @@
 #include "dataset_mapper.hpp"
 #include "data_options.hpp"
 #include "image_info.hpp"
+#include "image_resize_crop.hpp"
 #include "imputer.hpp"
 #include "is_naninf.hpp"
 #include "normalize_labels.hpp"
