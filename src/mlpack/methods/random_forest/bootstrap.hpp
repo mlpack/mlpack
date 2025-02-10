@@ -95,12 +95,12 @@ class SequentialBootstrap
    * @param[in] intervals See ComputeAverageUniqueness().
    */
   SequentialBootstrap(const IndMatType& intervals) :
-    intervals(intervals)
+      intervals(intervals)
   {
     if (intervals.n_rows != 2)
       throw std::invalid_argument(
-        "SequentialBootstrap::SequentialBootstrap(): "
-        "intervals must be a 2 x m matrix!");
+          "SequentialBootstrap::SequentialBootstrap(): "
+          "intervals must be a 2 x m matrix!");
   }
 
   /**
@@ -119,26 +119,16 @@ class SequentialBootstrap
    *                    code only a single element is accessed.
    * @return The average uniqueness of the events in @p intervals.
    */
-  static arma::vec ComputeAverageUniqueness(
-    const IndMatType& intervals,
-    const arma::uvec& indices,
-    const arma::vec&  concurrency)
+  static arma::vec::elem_type ComputeAverageUniqueness(
+      const IndMatType& intervals,
+      const arma::uword index,
+      const arma::vec&  concurrency,
+      const arma::vec&  invConcurrency)
   {
-    arma::vec       avg(indices.n_rows, arma::fill::zeros);
-    const arma::vec invConcurrency(
-      arma::vec(concurrency.n_rows, arma::fill::ones) / concurrency);
+    const arma::uword start(intervals(0, index));
+    const arma::uword end(intervals(1, index));
 
-    // In production code this loop is only entered once because
-    // then indices.n_rows == 1.
-    for (arma::uword i(0); i < indices.n_rows; ++i) {
-      const arma::uword start(intervals(0, indices[i]));
-      const arma::uword end(intervals(1, indices[i]));
-
-      avg[i] = arma::accu(invConcurrency.rows(start, end)) /
-        (end - start + 1);
-    }
-
-    return avg;
+    return arma::accu(invConcurrency.rows(start, end)) / (end - start + 1);
   }
 
   /**
@@ -155,33 +145,35 @@ class SequentialBootstrap
    *         iteration.
    */
   static arma::vec ComputeNextDrawProbabilities(
-    arma::uvec&       phi,
-    arma::uword       phiSize,
-    arma::vec&        concurrency,
-    const IndMatType& intervals)
+      arma::uvec&       phi,
+      arma::uword       phiSize,
+      arma::vec&        concurrency,
+	  arma::vec&        invConcurrency,
+      const IndMatType& intervals)
   {
     // phi may have less rows than intervals has columns as
     // phi is grown in multiple steps.
     assert(phi.n_rows <= intervals.n_cols && phiSize < phi.n_rows);
 
-    // Only in the test code we want to compute the full vector
-    // of average uniqueness. Here, we are always only interested
-    // in the average uniqueness of the latest value that is
-    // added to phi.
-    const arma::uvec indices(1u, arma::fill::value(phiSize));
-    arma::vec        avg(intervals.n_cols);
+    arma::vec avg(intervals.n_cols);
 
-    for (arma::uword i(0); i < avg.size(); ++i) {
+    for (arma::uword i(0); i < avg.size(); ++i)
+    {
       // Temporarily assume another concurrency for the current i.
       concurrency.subvec(intervals(0, i), intervals(1, i)) += 1.0;
+      invConcurrency.subvec(intervals(0, i), intervals(1, i)) =
+          1.0 / concurrency.subvec(intervals(0, i), intervals(1, i));
 
       phi[phiSize] = i;
       avg[i] = ComputeAverageUniqueness(
-        intervals.cols(phi.rows(0, phiSize)),
-        indices,
-        concurrency).back();
+          intervals.cols(phi.rows(0, phiSize)),
+          phiSize,
+          concurrency,
+          invConcurrency);
 
       concurrency.subvec(intervals(0, i), intervals(1, i)) -= 1.0;
+      invConcurrency.subvec(intervals(0, i), intervals(1, i)) =
+          1.0 / concurrency.subvec(intervals(0, i), intervals(1, i));
     }
 
     return avg / arma::sum(avg);
@@ -202,33 +194,39 @@ class SequentialBootstrap
     DiscreteDistribution d(intervals.n_cols);
     arma::uvec           phi(colCount);
     arma::vec            concurrency(intervals.max() + 1, arma::fill::zeros);
+    arma::vec            invConcurrency(intervals.max() + 1, arma::fill::ones);
 
-    for (arma::uword i(0); i < colCount; ++i) {
-      d.Probabilities() =
-        ComputeNextDrawProbabilities(phi, i, concurrency, intervals);
+    for (arma::uword i(0); i < colCount; ++i)
+    {
+      d.Probabilities() = ComputeNextDrawProbabilities(
+          phi, i, concurrency, invConcurrency, intervals);
       assert(d.Probabilities().size() == intervals.n_cols);
 
       phi[i] = d.Random()[0];
       concurrency.subvec(intervals(0, phi[i]), intervals(1, phi[i])) += 1.0;
+      invConcurrency.subvec(intervals(0, phi[i]), intervals(1, phi[i])) =
+          1.0 / concurrency.subvec(intervals(0, phi[i]), intervals(1, phi[i]));
     }
 
     return phi;
   }
 
-  template<bool UseWeights,
-    typename MatType,
-    typename LabelsType,
-    typename WeightsType>
-  void Bootstrap(const MatType& dataset,
-    const LabelsType& labels,
-    const WeightsType& weights,
-    MatType& bootstrapDataset,
-    LabelsType& bootstrapLabels,
-    WeightsType& bootstrapWeights)
+  template<
+      bool UseWeights,
+      typename MatType,
+      typename LabelsType,
+      typename WeightsType>
+  void Bootstrap(
+      const MatType&     dataset,
+      const LabelsType&  labels,
+      const WeightsType& weights,
+      MatType&           bootstrapDataset,
+      LabelsType&        bootstrapLabels,
+      WeightsType&       bootstrapWeights)
   {
     if (labels.n_cols != intervals.n_cols)
       throw std::invalid_argument("SequentialBootstrap::Bootstrap(): "
-        "labels n_cols and intervals n_cols differ!");
+          "labels n_cols and intervals n_cols differ!");
 
     // observations are stored as columns and dimensions
     // (number of features) as rows.
