@@ -148,7 +148,7 @@ class SequentialBootstrap
       arma::uvec&       phi,
       arma::uword       phiSize,
       arma::vec&        concurrency,
-	  arma::vec&        invConcurrency,
+      arma::vec&        invConcurrency,
       const IndMatType& intervals)
   {
     // phi may have less rows than intervals has columns as
