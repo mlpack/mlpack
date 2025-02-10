@@ -26,4 +26,4 @@ mlpack's techniques fall into a handful of categories:
 
 For more documentation on each individual function that mlpack provides, see the
 [Python binding
-documentation](https://www.mlpack.org/doc/stable/python_documentation.html).
+documentation](https://www.mlpack.org/doc/user/bindings/python.html).

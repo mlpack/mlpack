@@ -403,7 +403,8 @@ macro (post_r_setup)
   # Collect all header and source files in the library.
   file(GLOB_RECURSE R_SRC_HPP_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" *.hpp)
   file(GLOB_RECURSE R_SRC_CPP_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" *.cpp)
-  set(R_SRC_FILES ${R_SRC_HPP_FILES} ${R_SRC_CPP_FILES})
+  file(GLOB_RECURSE R_SRC_H_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" *.h)
+  set(R_SRC_FILES ${R_SRC_HPP_FILES} ${R_SRC_CPP_FILES} ${R_SRC_H_FILES})
 
   # In case of R_Bindings we are copying all of these header to
   # <package>/src/cereal/ because the currently-packaged version

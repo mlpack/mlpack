@@ -49,7 +49,7 @@ project. A student should ideally be familiar with
    mlpack codebase. Some examples of patterns that are often used inside of
    mlpack are SFINAE ([example in mlpack, see std::enable_if usages](https://github.com/mlpack/mlpack/blob/565cfd3aad22deec0656b86e801052593a937723/src/mlpack/methods/mean_shift/mean_shift.hpp)),
    [policy-based design](https://www.drdobbs.com/policy-based-design-in-the-real-world/184401861),
-   and [compile-time class traits](https://accu.org/index.php/journals/442).
+   and [compile-time class traits](https://accu.org/xaraya/journals/442.html).
    Here are some [other useful resources](https://en.wikipedia.org/wiki/Template_metaprogramming)
    for learning template metaprogramming, and some useful
    [reference books](https://www.aristeia.com/books.html).
