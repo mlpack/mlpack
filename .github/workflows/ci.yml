@@ -49,7 +49,7 @@ jobs:
           {
             runner: ubuntu-latest,
             os: 'Linux',
-            name: 'Linux (Python)',
+            name: 'Python',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON'
           },
           {
