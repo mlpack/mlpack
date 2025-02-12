@@ -441,7 +441,7 @@ TEST_CASE("CoverTreeOverwriteTest", "[SerializationTest]")
   }
 }
 
-TEST_CASE("RectangleTreeTest", "[SerializationTest]")
+TEST_CASE("RectangleTreeSerializationTest", "[SerializationTest]")
 {
   arma::mat data;
   data.randu(3, 1000);
