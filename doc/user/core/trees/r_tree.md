@@ -397,7 +397,7 @@ mlpack::data::Load("cloud.csv", dataset, true);
 // The std::move() means that `dataset` will be empty after this call, and no
 // data will be copied during tree building.
 //
-// Note that the '<>' isn't necessary if C++20 is being used (e.g.
+// Note that the '<>' is not necessary if C++20 is being used (e.g.
 // `mlpack::RTree tree(...)` will work fine in C++20 or newer).
 mlpack::RTree<> tree(std::move(dataset));
 
