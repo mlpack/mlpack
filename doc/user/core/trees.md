@@ -6,7 +6,7 @@ where each column in the matrix is a point in the tree.  Trees are organized
 such that "nearby" points (with respect to a given distance metric) are
 generally grouped in the same node or branch of the tree.
 
-All of mlpack's trees implement
+All trees in mlpack implement
 the [same API](../../developer/trees.md), allowing easy plug-and-play usage of
 different trees.  The following tree types are available in mlpack:
 

@@ -3,7 +3,7 @@
 The `RTree` class implements the R tree, a well-known multidimensional space
 partitioning tree that can insert and remove points dynamically.
 
-mlpack's `RTree` implementation supports three template parameters for
+The `RTree` implementation in mlpack supports three template parameters for
 configurable behavior, and implements all the functionality required by the
 [TreeType API](../../../developer/trees.md#the-treetype-api), plus some
 additional functionality specific to R trees.
