@@ -39,8 +39,11 @@ pipeline
         '''
       }
     }
+  }
 
-    post('Process results')
+  post
+  {
+    always
     {
       junit '**/reports/cpplint.junit.xml'
     }
