@@ -1,0 +1,69 @@
+// The style checker build will check the style of all the code in the
+// repository.
+pipeline
+{
+  // Run inside of the custom Docker image for style checking.
+  agent
+  {
+    docker
+    {
+      image 'mlpack/jenkins-mlpack-docbuild:latest'
+      alwaysPull true
+    }
+  }
+
+  stages
+  {
+    // First we have to check out the jenkins-conf repository, which contains
+    // the scripts that we will use for checking the style.
+    stage('Build documentation and check links')
+    {
+      steps
+      {
+        script
+        {
+          # Print the size of the link cache.
+          if [ ! -f cache/link_cache.db ];
+          then
+            echo "Link cache does not exist!";
+            mkdir -p cache/;
+          else
+            echo "Link cache current size:";
+            ls -lh cache/link_cache.db;
+          fi
+
+          # Skip the check if the documentation build script doesn't exist.
+          if [ ! -f scripts/build-docs.sh ];
+          then
+            exit 0;
+          fi
+
+          # This will fail if there are any issues converting the Markdown to
+          # kramdown, or if there is a linting or link-checking failure.
+          LINK_CACHE_FILE=cache/link_cache.db ./scripts/build-docs.sh;
+          build_doc_out=$?;
+          if [ $build_doc_out -ne 0 ];
+          then
+            echo "build-docs.sh failed!";
+            exit 1;
+          fi
+        }
+      }
+    }
+
+    // Now we can run those scripts.
+    stage('Publish HTML documentation')
+    {
+      steps
+      {
+        publishHTML([
+          allowMissing: false,
+          alwaysLinkToLastBuild: false,
+          keepAll: true,
+          reportDir: 'doc/html/',
+          reportFiles: 'index.html',
+          reportName: 'Build documentation'])
+      }
+    }
+  }
+}
