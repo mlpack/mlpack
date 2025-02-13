@@ -1,3 +1,5 @@
+utils = load '../utils/utils.groovy'
+
 // The documentation link checker build will build the Markdown documentation in
 // doc/, and ensures that all of the links contained in the documentation are
 // valid.
@@ -24,6 +26,10 @@ pipeline
     {
       steps
       {
+        utils.setBuildStatus("Documentation Link Check (pipeline)",
+                             "Building...",
+                             "PENDING");
+
         sh '''
           # Print the size of the link cache.
           if [ ! -f cache/link_cache.db ];
@@ -67,6 +73,23 @@ pipeline
           reportFiles: 'index.html',
           reportName: 'Build documentation'])
       }
+    }
+  }
+
+  post
+  {
+    success
+    {
+      utils.setBuildStatus("Documentation Link Check (pipeline)",
+                           "Build finished.",
+                           "SUCCESS");
+    }
+
+    failure
+    {
+      utils.setBuildStatus("Documentation Link Check (pipeline)",
+                           "Documentation build failure or problem.",
+                           "FAILURE");
     }
   }
 }

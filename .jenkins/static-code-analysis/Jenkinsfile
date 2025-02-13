@@ -1,12 +1,4 @@
-void setBuildStatus(String message, String state) {
-  step([
-      $class: "GitHubCommitStatusSetter",
-      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/mlpack/mlpack"],
-      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
-      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
-      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
-  ]);
-}
+utils = load '../utils/utils.groovy'
 
 // The static code analysis build will analyze the mlpack codebase for any known
 // C++ issues.
@@ -20,20 +12,16 @@ pipeline
 
   stages
   {
-    stage('Mark job as pending')
-    {
-      steps
-      {
-        setBuildStatus("Building...", "PENDING");
-      }
-    }
-
     // First we have to check out the jenkins-conf repository, which contains
     // the scripts that we will use for checking the style.
     stage('Check out jenkins-conf repository')
     {
       steps
       {
+        utils.setBuildStatus("Static Code Analysis (pipeline)",
+                             "Building...",
+                             "PENDING");
+
         sh '''
           git clone https://github.com/mlpack/jenkins-conf
         '''
@@ -90,12 +78,16 @@ pipeline
 
     success
     {
-      setBuildStatus("Build succeeded", "SUCCESS");
+      utils.setBuildStatus("Static Code Analysis (pipeline)",
+                           "Build finished.",
+                           "SUCCESS");
     }
 
     failure
     {
-      setBuildStatus("Build failed", "FAILURE");
+      utils.setBuildStatus("Static Code Analysis (pipeline)",
+                           "Static code analysis failure.",
+                           "FAILURE");
     }
   }
 }
