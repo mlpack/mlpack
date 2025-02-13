@@ -19,25 +19,29 @@ Also you can see the [list of CI infrastructure](#list-of-ci-infrastructure).
 
 ## Basic compilation and test jobs
 
-Basic compilation and testing is done on Azure Pipelines.
-We use Azure Pipelines primarily because of the large number of resources that
+Basic compilation and testing is done on Github Actions.
+We use Github Actions primarily because of the large number of resources that
 an mlpack build takes; our own [internal resources](#list-of-ci-infrastructure)
 are thus preserved for more specific usage.
 
-Link: [***mlpack on Azure Pipelines***](https://dev.azure.com/mlpack/mlpack/_build/)
+Link: [***mlpack on Github Actions***](https://github.com/mlpack/mlpack/actions)
 
- * Builds and tests mlpack for Linux, OS X, and Windows.
+ * Builds and tests mlpack for Linux, macOS, and Windows.
 
- * Also builds and tests bindings on Linux and OS X.
+ * Also builds and tests all bindings on Linux, and Python bindings on macOS.
+
+ * Builds the R tarball that can be submitted to CRAN and publishes it as an
+   artifact.
 
  * Configurations for these jobs can be found in the mlpack repository under the
-   `.ci/` directory.
+   `.github/` directory.
+   - The main file for the build pipeline is `.github/workflows/ci.yml`.
 
  * *These jobs are most of what's shown in the jobs in a PR.*
 
-***If your build is failing on Azure Pipelines:***
+***If your build is failing on Github Actions:***
 
- * Take a look at the build log to identify the issue.
+ * Take a look at the build summary and build logs to identify the issue.
 
  * If the failure is during `mlpack_test`, look through the test output to find
    where the actual failed test is.
@@ -49,22 +53,20 @@ Link: [***mlpack on Azure Pipelines***](https://dev.azure.com/mlpack/mlpack/_bui
    - If the test seems like a random failure, try different random seeds:
      `bin/mlpack_test --rng-seed=X NameOfTest`.
 
-## R build
+## Binding tests
 
-The R build uses Github Actions (not for any particular reason).
+Inside of `.github/workflows/ci.yml`, the bindings are configured and built
+(depending on the parameters of the matrix build) using a local Github action.
+Similarly, the binding tests are also run using a local Github action.
 
-Link: [***mlpack R build actions***](https://github.com/mlpack/mlpack/actions/workflows/main.yml)
+ * `.github/actions/binding_setup/main.yml` defines the steps required to set up
+   the environment for building each type of binding.  Sometimes the steps are
+   specific to an OS (e.g. Linux/macOS/Windows).
 
- * Job configuration is found in `.github/workflows/main.yml`
-
- * The job produces 1 artifact, which is the tarball that can be uploaded to
-   [CRAN](https://cran.r-project.org/).
-
- * When this job fails, it is usually because of:
-   - An intermittent problem downloading dependencies or setting up the
-     environment.
-   - A test failure which can probably be more easily debugged or reproduced via
-     the main [Azure Pipelines build jobs](#basic-compilation-and-test-jobs).
+ * `.github/actions/binding_run_tests/main.yml` defines the steps to run tests
+   for each binding type.  Note that because we want output as junit XML so we
+   can parse it, sometimes we have to do strange things for some languages, and
+   we can't use CTest directly.
 
 ## Documentation build and test
 

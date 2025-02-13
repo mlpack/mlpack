@@ -41,20 +41,8 @@ jobs:
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON'
           },
           {
-            runner: macOS-latest,
-            os: 'macOS',
-            name: 'CLI',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON'
-          },
-          {
             runner: ubuntu-latest,
             os: 'Linux',
-            name: 'Python',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON'
-          },
-          {
-            runner: macOS-latest,
-            os: 'macOS',
             name: 'Python',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON'
           },
@@ -81,6 +69,18 @@ jobs:
             os: 'Linux',
             name: 'Markdown',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_MARKDOWN_BINDINGS=ON'
+          },
+          {
+            runner: macOS-latest,
+            os: 'macOS',
+            name: 'CLI',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON'
+          },
+          {
+            runner: macOS-latest,
+            os: 'macOS',
+            name: 'Python',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON'
           }
         ]
 
