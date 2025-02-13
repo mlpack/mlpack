@@ -63,7 +63,14 @@ pipeline
   {
     always
     {
+      // Process the test results.
       junit '**/reports/cpplint.junit.xml'
+
+      // Clean the workspace.
+      cleanWs(cleanWhenNotBuilt: false,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true)
     }
 
     success
