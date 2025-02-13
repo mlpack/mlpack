@@ -9,7 +9,6 @@ complex project, there are occasionally spurious failures or other unrelated
 problems.
 
  * [Basic compilation and test jobs](#basic-compilation-and-test-jobs)
- * [R build](#r-build)
  * [Documentation build and test](#documentation-build-and-test)
  * [Style checks](#style-checks)
  * [Cross-compilation checks](#cross-compilation-checks)
