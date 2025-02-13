@@ -1,0 +1,101 @@
+void setBuildStatus(String message, String state) {
+  step([
+      $class: "GitHubCommitStatusSetter",
+      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/mlpack/mlpack"],
+      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
+      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+  ]);
+}
+
+// The static code analysis build will analyze the mlpack codebase for any known
+// C++ issues.
+pipeline
+{
+  // Run inside of the custom Docker image for style checking.
+  agent
+  {
+    docker { image 'mlpack/jenkins-mlpack-static-code-analysis:latest' }
+  }
+
+  stages
+  {
+    stage('Mark job as pending')
+    {
+      steps
+      {
+        setBuildStatus("Building...", "PENDING");
+      }
+    }
+
+    // First we have to check out the jenkins-conf repository, which contains
+    // the scripts that we will use for checking the style.
+    stage('Check out jenkins-conf repository')
+    {
+      steps
+      {
+        sh '''
+          git clone https://github.com/mlpack/jenkins-conf
+        '''
+      }
+    }
+
+    // Now we can run those scripts.
+    stage('Run static code analysis tools')
+    {
+      steps
+      {
+        sh '''
+          mkdir build
+          cd build
+          git clone https://github.com/mlpack/ensmallen.git
+          cmake \
+              -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+              -DBUILD_TESTS=ON
+              -DENSMALLEN_INCLUDE_DIR=ensmallen/include/ \
+              ..
+          cd ../
+
+          # Run infer.
+          infer run --compilation-database build/compile_commands.json
+        '''
+      }
+    }
+
+    stage('Process results')
+    {
+      steps
+      {
+        sh'''
+          mkdir -p reports/;
+          mv jenkins-conf/static-code-analysis/* .
+          python3 infer-parse.py
+
+          mv reports/infer-report.xml reports/reports.xml
+          python3 report-filter.py -r reports/reports.xml
+
+          mv reports/reports.xml reports/reports-none-filter.xml
+          mv reports/reports.xmln reports/reports.xml
+        '''
+      }
+    }
+  }
+
+  post
+  {
+    always
+    {
+      junit '**/reports/reports.xml'
+    }
+
+    success
+    {
+      setBuildStatus("Build succeeded", "SUCCESS");
+    }
+
+    failure
+    {
+      setBuildStatus("Build failed", "FAILURE");
+    }
+  }
+}
