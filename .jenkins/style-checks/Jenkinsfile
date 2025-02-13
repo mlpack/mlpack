@@ -16,10 +16,9 @@ pipeline
     {
       steps
       {
-        script
-        {
+        sh '''
           git clone https://github.com/mlpack/jenkins-conf
-        }
+        '''
       }
     }
 
@@ -28,8 +27,7 @@ pipeline
     {
       steps
       {
-        script
-        {
+        sh '''
           apt-get update
           apt-get install -y python3 python3-venv
 
@@ -41,7 +39,7 @@ pipeline
 
           # Print the results.
           cat reports/cpplint.junit.xml
-        }
+        '''
       }
     }
   }
