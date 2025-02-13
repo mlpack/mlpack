@@ -24,8 +24,7 @@ pipeline
     {
       steps
       {
-        script
-        {
+        sh '''
           # Print the size of the link cache.
           if [ ! -f cache/link_cache.db ];
           then
@@ -51,7 +50,7 @@ pipeline
             echo "build-docs.sh failed!";
             exit 1;
           fi
-        }
+        '''
       }
     }
 
