@@ -4,7 +4,8 @@ project(mlpack C CXX)
 include(CMake/CheckHash.cmake)
 include(CMake/ConfigureCrossCompile.cmake)
 include(CMake/CheckAtomic.cmake)
-include(CMake/Findmlpack.cmake)
+include(CMake/mlpack.cmake)
+
 # First, define all the compilation options.
 option(DEBUG "Compile with debugging information." OFF)
 option(PROFILE "Compile with profiling information." OFF)
@@ -244,10 +245,16 @@ else()
   find_mlpack()
 endif()
 
-message(${MLPACK_LIBRARIES})
-# Create a 'distclean' target in case the user is using an in-source build for
-# some reason.
-include(CMake/TargetDistclean.cmake OPTIONAL)
+if (USE_SYSTEM_STB)
+  # Make sure that we can link STB in multiple translation units.
+  include(CMake/TestStaticSTB.cmake)
+  if (NOT CMAKE_HAS_WORKING_STATIC_STB)
+    message(FATAL_ERROR "STB implementations's static mode cannot link across "
+        "multiple translation units!  Try upgrading your STB implementation, "
+        "or using the auto-downloader (set DOWNLOAD_DEPENDENCIES=ON in the "
+        "CMake configuration command.")
+  endif()
+endif()
 
 include_directories(BEFORE ${MLPACK_INCLUDE_DIRS})
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/src/)

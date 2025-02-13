@@ -51,6 +51,7 @@
 set(ARMADILLO_VERSION "10.8.2")
 set(ENSMALLEN_VERSION "2.10.0")
 set(CEREAL_VERSION "1.1.2")
+set(OPENBLAS_VERSION "0.3.29")
 
 # Set required standard to C++17.
 set(CMAKE_CXX_STANDARD 17)
@@ -68,8 +69,9 @@ endif()
 
 # This function auto-downloads mlpack dependencies.
 # You need to pass the LINK to download from, the name of
-# the dependency, and the name of the compressed package such as
-# armadillo.tar.gz
+# the dependency, and the filename to store the downloaded package to such
+# as armadillo.tar.gz and they are downloaded into 
+# ${CMAKE_BINARY_DIR}/deps/${PACKAGE}
 # At each download, this module sets a GENERIC_INCLUDE_DIR path,
 # which means that you need to set the main path for the include
 # directories for each package.
@@ -117,7 +119,7 @@ macro(get_deps LINK DEPS_NAME PACKAGE)
 endmacro()
 
 #=======================================================================
-# This module sets the following variables:
+# This macro sets the following variables:
 #
 #  ARMADILLO_FOUND - set to true if the library is found
 #  ARMADILLO_INCLUDE_DIRS - list of required include directories
@@ -143,7 +145,6 @@ macro(find_armadillo)
       NAMES armadillo
       PATHS "$ENV{ProgramFiles}/Armadillo/include")
   endif()
-  mark_as_advanced(ARMADILLO_INCLUDE_DIR)
   if (ARMADILLO_INCLUDE_DIR)
     # ------------------------------------------------------------------------
     #  Extract version information from <armadillo>
@@ -195,7 +196,6 @@ macro(find_armadillo)
         "$ENV{ProgramFiles}/Armadillo/lib64"
         "$ENV{ProgramFiles}/Armadillo"
       )
-    mark_as_advanced(ARMADILLO_LIBRARY)
     set(_ARMA_REQUIRED_VARS ARMADILLO_LIBRARY)
   else()
     set(ARMADILLO_LIBRARY "")
@@ -296,10 +296,6 @@ macro(find_cereal)
     set(CEREAL_VERSION_STRING "${CEREAL_VERSION_MAJOR}.${CEREAL_VERSION_MINOR}.${CEREAL_VERSION_PATCH}")
   endif ()
 
-  mark_as_advanced(CEREAL_INCLUDE_DIR)
-
-  file(GLOB MLPACK_SEARCH_PATHS
-      ${CMAKE_BINARY_DIR}/deps/mlpack-[0-9]*.[0-9]*.[0-9]*)
 endmacro()
 
 # - Find Ensmallen
@@ -343,7 +339,7 @@ macro(find_ensmallen)
 
       set(ENSMALLEN_FOUND YES)
 
-      # Read and parse armdillo version header file for version number
+      # Read and parse Ensmallen version header file for version number
       file(READ "${ENSMALLEN_INCLUDE_DIR}/ensmallen_bits/ens_version.hpp"
           _ensmallen_HEADER_CONTENTS)
       string(REGEX REPLACE ".*#define ENS_VERSION_MAJOR ([0-9]+).*" "\\1"
@@ -362,8 +358,6 @@ macro(find_ensmallen)
 
     set(ENSMALLEN_VERSION_STRING "${ENSMALLEN_VERSION_MAJOR}.${ENSMALLEN_VERSION_MINOR}.${ENSMALLEN_VERSION_PATCH}")
   endif ()
-
-  mark_as_advanced(ENSMALLEN_INCLUDE_DIR)
 endmacro()
 
 # - Find STB_IMAGE
@@ -411,9 +405,6 @@ macro(find_stb)
     endif ()
   endif ()
 
-  # Checks 'REQUIRED'.
-  mark_as_advanced(STB_IMAGE_INCLUDE_DIR)
-
 endmacro()
 
 macro(find_openmp)
@@ -434,7 +425,7 @@ macro(find_openmp)
   endif ()
 endmacro()
 
-macro(mlpack)
+macro(find_mlpack_internal)
 
   set(CURRENT_PATH ${ARGN})
   if (CURRENT_PATH)
@@ -443,6 +434,9 @@ macro(mlpack)
       PATHS "${CURRENT_PATH}/deps/mlpack/src/include" "${CMAKE_CURRENT_SOURCE_DIR}/src/"
       NO_DEFAULT_PATH)
   else()
+    file(GLOB MLPACK_SEARCH_PATHS
+      ${CMAKE_BINARY_DIR}/deps/mlpack-[0-9]*.[0-9]*.[0-9]*)
+
     # This will be executed if mlpack is installed already.
     find_path(MLPACK_INCLUDE_DIR
       NAMES mlpack.hpp
@@ -469,7 +463,7 @@ macro(mlpack)
 
       set(MLPACK_FOUND YES)
 
-      # Read and parse armdillo version header file for version number
+      # Read and parse mlpack version header file for version number
       file(READ "${MLPACK_INCLUDE_DIR}/mlpack/core/util/version.hpp"
           _mlpack_HEADER_CONTENTS)
       string(REGEX REPLACE ".*#define MLPACK_VERSION_MAJOR ([0-9]+).*" "\\1"
@@ -489,17 +483,13 @@ macro(mlpack)
     REQUIRED_VARS MLPACK_INCLUDE_DIR
     VERSION_VAR MLPACK_VERSION_STRING)
 
-  mark_as_advanced(MLPACK_INCLUDE_DIR)
-  mark_as_advanced(MLPACK_INCLUDE_DIRS)
-  mark_as_advanced(MLPACK_LIBRARIES)
-
 endmacro()
 
 macro(fetch_mlpack compile)
-  set(version 0.3.28)
   find_package(BLAS PATHS ${CMAKE_BINARY_DIR})
   if (NOT BLAS_FOUND OR (NOT BLAS_LIBRARIES))
-    get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v${version}/OpenBLAS-${version}.tar.gz OpenBLAS OpenBLAS-${version}.tar.gz)
+    get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v${OPENBLAS_VERSION}/OpenBLAS-${OPENBLAS_VERSION}.tar.gz
+      OpenBLAS OpenBLAS-${OPENBLAS_VERSION}.tar.gz)
     if (NOT compile)
       message(WARNING "OpenBLAS is downloaded but not compiled. Please compile
       OpenBLAS before compiling mlpack")
@@ -569,7 +559,7 @@ endmacro()
 # architecture. The function takes the version of OpenBLAS as variable.
 macro(fetch_mlpack_and_crosscompile)
   # 1. Pull openblas and crossocompile it
-  search_openblas(0.3.28)
+  search_openblas(${OPENBLAS_VERSION})
   # 2. Call autodownload, DONE
   fetch_mlpack(ON)
 endmacro()
@@ -620,22 +610,17 @@ macro(find_mlpack)
     set(STB_AVAILABLE "1")
     add_definitions(-DMLPACK_USE_SYSTEM_STB)
     set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
-
-    # Make sure that we can link STB in multiple translation units.
-    include(CMake/TestStaticSTB.cmake)
-    if (NOT CMAKE_HAS_WORKING_STATIC_STB)
-      message(FATAL_ERROR "STB implementations's static mode cannot link across "
-          "multiple translation units!  Try upgrading your STB implementation, "
-          "or using the auto-downloader (set DOWNLOAD_DEPENDENCIES=ON in the "
-          "CMake configuration command.")
-    endif()
   endif()
 
-  mlpack()
+  find_mlpack_internal()
   if (MLPACK_FOUND)
     set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${MLPACK_INCLUDE_DIR}")
   else()
-    message(FATAL_ERROR "mlpack not found, (required dependency of itself).")
+    message(FATAL_ERROR "mlpack not found!")
   endif()
+
+  mark_as_advanced(MLPACK_INCLUDE_DIR)
+  mark_as_advanced(MLPACK_INCLUDE_DIRS)
+  mark_as_advanced(MLPACK_LIBRARIES)
 
 endmacro()
