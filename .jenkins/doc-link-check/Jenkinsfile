@@ -1,5 +1,9 @@
-// The style checker build will check the style of all the code in the
-// repository.
+// The documentation link checker build will build the Markdown documentation in
+// doc/, and ensures that all of the links contained in the documentation are
+// valid.
+//
+// Note that a cache is maintained on Jenkins to avoid checking the same links
+// over and over again.
 pipeline
 {
   // Run inside of the custom Docker image for style checking.
