@@ -57,11 +57,6 @@ runs:
         name: mlpack_r_tarball
         path: build/src/mlpack/bindings/R/${{ env.MLPACK_R_PACKAGE }}
 
-    - name: "Install system dependencies for R CMD check"
-      if: inputs.lang == 'R' && runner.os == 'Linux'
-      shell: bash
-      run: sudo apt-get install libcurl4-openssl-dev
-
     - name: "Install R CMD check dependencies"
       if: inputs.lang == 'R'
       shell: Rscript {0}
