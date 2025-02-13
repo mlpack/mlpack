@@ -5,23 +5,11 @@ pipeline
   // Run inside of the custom Docker image for style checking.
   agent
   {
-    docker { image 'ubuntu:22.04' }
+    docker { image 'mlpack/jenkins-mlpack-style-checks:latest' }
   }
 
   stages
   {
-    // Get tools that we need.
-    stage('Set up environment')
-    {
-      steps
-      {
-        sh '''
-          sudo apt-get update
-          sudo apt-get install -y python3 python3-venv git
-        '''
-      }
-    }
-
     // First we have to check out the jenkins-conf repository, which contains
     // the scripts that we will use for checking the style.
     stage('Check out jenkins-conf repository')
