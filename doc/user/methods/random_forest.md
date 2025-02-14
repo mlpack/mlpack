@@ -772,7 +772,7 @@ equivalent to `DefaultBootstrap`.
      * `b = SequentialBootstrap(intervals)` will create a `SequentialBootstrap` object, where:
        - `intervals` is of type `arma::umat`, with 2 rows and `n` columns, where `n` is the number of events to be sampled from.
        - Each column in `intervals` represents the start and end columns (inclusive) of each event.
-       - So, e.g., if the 10th event is 5 points long, starting at index 6, then column `9` of `intervals` should be `6, 10`.
+       - So, e.g., if the 10th event is 5 points long, starting at index 6, then column `9` of `intervals` should be `[6, 10]`.
      * A `SequentialBootstrap` must be passed as the `bootstrap` option to the [advanced constructor](#fully-custom-behavior).
      * For more information, see: M. López de Prado (2018): "Advances in Financial Machine Learning", pp. 63-65.
  * A custom `BootstrapType` class must take a `bool` template parameter `UseWeights` and implement one function:
