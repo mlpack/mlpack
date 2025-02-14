@@ -1,5 +1,3 @@
-utils = load '../utils.groovy'
-
 // The style checker build will check the style of all the code in the
 // repository.
 pipeline
@@ -20,6 +18,7 @@ pipeline
       {
         script
         {
+          utils = load '../utils.groovy'
           utils.setBuildStatus("Style Checks (pipeline)",
                                "Building...",
                                "PENDING");
