@@ -775,6 +775,12 @@ value of `true` will be equivalent to `DefaultBootstrap`.
        - So, e.g., if the 10th event is 5 points long, starting at index 6, then column `9` of `intervals` should be `[6, 10]`.
      * A `SequentialBootstrap` must be passed as the `bootstrap` option to the [advanced constructor](#fully-custom-behavior).
      * For more information, see: M. López de Prado (2018): "Advances in Financial Machine Learning", pp. 63-65.
+
+ * When using a `BootstrapType` that requires an instantiated object (such as `SequentialBootstrap`), the following advanced constructor forms can be used for `RandomForest`:
+ 
+   - `RandomForest(... , bootstrap)`
+   - `RandomForest(..., bootstrap)`
+
  * A custom `BootstrapType` class must take a `bool` template parameter `UseWeights` and implement one function:
 ```c++
 class CustomBootstrapType
