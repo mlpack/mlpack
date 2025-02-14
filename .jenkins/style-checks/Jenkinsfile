@@ -18,20 +18,8 @@ pipeline
       {
         script
         {
-//          load '.jenkins/utils.groovy'
-// A simple utility to set the build status on Github for a commit.
-void setBuildStatus(String context, String message, String state) {
-  step([
-      $class: "GitHubCommitStatusSetter",
-      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/mlpack/mlpack"],
-      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: context ],
-      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
-      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
-  ]);
-}
-          setBuildStatus("Style Checks (pipeline)",
-                         "Building...",
-                         "PENDING");
+          setGitHubPullRequestStatus("Style Checks (pipeline)", "Building...",
+              "PENDING");
         }
 
         sh '''
@@ -77,9 +65,8 @@ void setBuildStatus(String context, String message, String state) {
     {
       script
       {
-        setBuildStatus("Style Checks (pipeline)",
-                       "Build finished.",
-                       "SUCCESS");
+        setGitHubPullRequestStatus("Style Checks (pipeline)", "Build finished.",
+            "SUCCESS");
       }
     }
 
@@ -87,9 +74,8 @@ void setBuildStatus(String context, String message, String state) {
     {
       script
       {
-        setBuildStatus("Style Checks (pipeline)",
-                       "Style check failure.",
-                       "FAILURE");
+        setGitHubPullRequestStatus("Style Checks (pipeline)",
+            "Style check failure.", "FAILURE");
       }
     }
   }
