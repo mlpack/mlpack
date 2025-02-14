@@ -1,5 +1,3 @@
-utils = load '../utils/utils.groovy'
-
 // The static code analysis build will analyze the mlpack codebase for any known
 // C++ issues.
 pipeline
@@ -18,9 +16,12 @@ pipeline
     {
       steps
       {
-        utils.setBuildStatus("Static Code Analysis (pipeline)",
-                             "Building...",
-                             "PENDING");
+        script
+        {
+          u = load '.jenkins/utils.groovy'
+          u.setBuildStatus("Static Code Analysis (pipeline)", "Building...",
+              "PENDING");
+        }
 
         sh '''
           git clone https://github.com/mlpack/jenkins-conf
@@ -78,16 +79,20 @@ pipeline
 
     success
     {
-      utils.setBuildStatus("Static Code Analysis (pipeline)",
-                           "Build finished.",
-                           "SUCCESS");
+      script
+      {
+        u.setBuildStatus("Static Code Analysis (pipeline)", "Build finished.",
+            "SUCCESS");
+      }
     }
 
     failure
     {
-      utils.setBuildStatus("Static Code Analysis (pipeline)",
-                           "Static code analysis failure.",
-                           "FAILURE");
+      script
+      {
+        u.setBuildStatus("Static Code Analysis (pipeline)",
+            "Static code analysis failure.", "FAILURE");
+      }
     }
   }
 }
