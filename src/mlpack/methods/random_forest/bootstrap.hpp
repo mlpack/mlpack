@@ -119,7 +119,7 @@ class SequentialBootstrap
    *                    code only a single element is accessed.
    * @return The average uniqueness of the events in @p intervals.
    */
-  static arma::vec::elem_type ComputeAverageUniqueness(
+  static double ComputeAverageUniqueness(
       const IndMatType& intervals,
       const arma::uword index,
       const arma::vec&  invConcurrency)
