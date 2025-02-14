@@ -1,5 +1,3 @@
-utils = load '../utils/utils.groovy'
-
 // The documentation link checker build will build the Markdown documentation in
 // doc/, and ensures that all of the links contained in the documentation are
 // valid.
@@ -26,9 +24,9 @@ pipeline
     {
       steps
       {
-        utils.setBuildStatus("Documentation Link Check (pipeline)",
-                             "Building...",
-                             "PENDING");
+        u = load '.jenkins/utils.groovy'
+        u.setBuildStatus("Documentation Link Check (pipeline)", "Building...",
+            "PENDING");
 
         sh '''
           # Print the size of the link cache.
@@ -80,16 +78,14 @@ pipeline
   {
     success
     {
-      utils.setBuildStatus("Documentation Link Check (pipeline)",
-                           "Build finished.",
-                           "SUCCESS");
+      u.setBuildStatus("Documentation Link Check (pipeline)", "Build finished.",
+          "SUCCESS");
     }
 
     failure
     {
-      utils.setBuildStatus("Documentation Link Check (pipeline)",
-                           "Documentation build failure or problem.",
-                           "FAILURE");
+      u.setBuildStatus("Documentation Link Check (pipeline)",
+          "Documentation build failure or problem.", "FAILURE");
     }
   }
 }

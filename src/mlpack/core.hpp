@@ -11,8 +11,6 @@
 #ifndef MLPACK_CORE_HPP
 #define MLPACK_CORE_HPP
 
-// This line is too long this line is too long this line is too long this line is too long
-
 /**
  * mlpack is an intuitive, fast, and flexible C++ machine learning library with
  * bindings to other languages.  It is meant to be a machine learning analog to

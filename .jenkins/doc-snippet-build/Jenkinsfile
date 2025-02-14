@@ -1,5 +1,3 @@
-utils = load '../utils/utils.groovy'
-
 // The documentation snippet build will extract all C++ code snippets from the
 // Markdown documentation in doc/ and ensure that it compiles and runs without
 // error.
@@ -23,9 +21,9 @@ pipeline
     {
       steps
       {
-        utils.setBuildStatus("Documentation Snippet Build (pipeline)",
-                             "Building...",
-                             "PENDING");
+        u = load '.jenkins/utils.groovy'
+        u.setBuildStatus("Documentation Snippet Build (pipeline)",
+            "Building...", "PENDING");
 
         sh'''
           export CCACHE_DIR=cache/ccache/;
@@ -47,16 +45,14 @@ pipeline
   {
     success
     {
-      utils.setBuildStatus("Documentation Snippet Build (pipeline)",
-                           "Build finished.",
-                           "SUCCESS");
+      u.setBuildStatus("Documentation Snippet Build (pipeline)",
+          "Build finished.", "SUCCESS");
     }
 
     failure
     {
-      utils.setBuildStatus("Documentation Snippet Build (pipeline)",
-                           "Snippet build or run failure.",
-                           "FAILURE");
+      u.setBuildStatus("Documentation Snippet Build (pipeline)",
+          "Snippet build or run failure.", "FAILURE");
     }
   }
 }
