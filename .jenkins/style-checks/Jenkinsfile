@@ -1,4 +1,4 @@
-utils = load '../utils/utils.groovy'
+utils = load '../utils.groovy'
 
 // The style checker build will check the style of all the code in the
 // repository.
