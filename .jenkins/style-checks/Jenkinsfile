@@ -18,10 +18,10 @@ pipeline
       {
         script
         {
-          utils = load '../utils.groovy'
-          utils.setBuildStatus("Style Checks (pipeline)",
-                               "Building...",
-                               "PENDING");
+          load '../utils.groovy'
+          setBuildStatus("Style Checks (pipeline)",
+                         "Building...",
+                         "PENDING");
         }
 
         sh '''
@@ -67,9 +67,9 @@ pipeline
     {
       script
       {
-        utils.setBuildStatus("Style Checks (pipeline)",
-                             "Build finished.",
-                             "SUCCESS");
+        setBuildStatus("Style Checks (pipeline)",
+                       "Build finished.",
+                       "SUCCESS");
       }
     }
 
@@ -77,9 +77,9 @@ pipeline
     {
       script
       {
-        utils.setBuildStatus("Style Checks (pipeline)",
-                             "Style check failure.",
-                             "FAILURE");
+        setBuildStatus("Style Checks (pipeline)",
+                       "Style check failure.",
+                       "FAILURE");
       }
     }
   }
