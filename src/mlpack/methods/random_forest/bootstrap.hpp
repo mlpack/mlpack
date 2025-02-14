@@ -230,7 +230,7 @@ class SequentialBootstrap
 
     // observations are stored as columns and dimensions
     // (number of features) as rows.
-    const arma::uvec phi(ComputeSamples(dataset.n_cols));
+    const arma::uvec phi = ComputeSamples(dataset.n_cols);
 
     bootstrapDataset = dataset.cols(phi);
     bootstrapLabels = labels.cols(phi);
