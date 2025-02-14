@@ -18,7 +18,7 @@ pipeline
       {
         script
         {
-          load '../utils.groovy'
+          load '.jenkins/utils.groovy'
           setBuildStatus("Style Checks (pipeline)",
                          "Building...",
                          "PENDING");
