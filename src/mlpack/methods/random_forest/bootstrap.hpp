@@ -122,7 +122,6 @@ class SequentialBootstrap
   static arma::vec::elem_type ComputeAverageUniqueness(
       const IndMatType& intervals,
       const arma::uword index,
-      const arma::vec&  concurrency,
       const arma::vec&  invConcurrency)
   {
     const arma::uword start(intervals(0, index));
