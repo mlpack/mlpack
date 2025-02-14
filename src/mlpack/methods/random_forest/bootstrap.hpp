@@ -100,7 +100,7 @@ class SequentialBootstrap
     if (intervals.n_rows != 2)
       throw std::invalid_argument(
           "SequentialBootstrap::SequentialBootstrap(): "
-          "intervals must be a 2 x m matrix!");
+          "intervals must be a 2 x n matrix!");
   }
 
   /**
