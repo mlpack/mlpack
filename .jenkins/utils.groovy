@@ -1,5 +1,5 @@
 // A simple utility to set the build status on Github for a commit.
-void setBuildStatus(String context, String message, String state) {
+def setBuildStatus(String context, String message, String state) {
   step([
       $class: "GitHubCommitStatusSetter",
       reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/mlpack/mlpack"],

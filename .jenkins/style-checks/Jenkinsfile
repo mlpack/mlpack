@@ -1,3 +1,13 @@
+def setBuildStatus(String context, String message, String state) {
+  step([
+      $class: "GitHubCommitStatusSetter",
+      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/mlpack/mlpack"],
+      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: context ],
+      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+  ]);
+}
+
 // The style checker build will check the style of all the code in the
 // repository.
 pipeline
@@ -18,8 +28,7 @@ pipeline
       {
         script
         {
-          setGitHubPullRequestStatus("Style Checks (pipeline)", "Building...",
-              "PENDING");
+          setBuildStatus("Style Checks (pipeline)", "Building...", "PENDING");
         }
 
         sh '''
@@ -65,8 +74,7 @@ pipeline
     {
       script
       {
-        setGitHubPullRequestStatus("Style Checks (pipeline)", "Build finished.",
-            "SUCCESS");
+        setBuildStatus("Style Checks (pipeline)", "Build finished.", "SUCCESS");
       }
     }
 
@@ -74,8 +82,8 @@ pipeline
     {
       script
       {
-        setGitHubPullRequestStatus("Style Checks (pipeline)",
-            "Style check failure.", "FAILURE");
+        setBuildStatus("Style Checks (pipeline)", "Style check failure.",
+            "FAILURE");
       }
     }
   }
