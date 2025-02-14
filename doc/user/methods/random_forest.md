@@ -749,9 +749,9 @@ class CustomCategoricalSplit
 
 #### `UseBootstrap`
 
-**This parameter will be removed in mlpack 5.0.0.** A value of `false` will then be
-equivalent to `BootstrapType` `IdentityBootstrap` and a value of `true` will be
-equivalent to `DefaultBootstrap`.
+***Note:*** this parameter will be removed in mlpack 5.0.0. A value of `false`
+will then be equivalent to setting `BootstrapType` to `IdentityBootstrap`, and a
+value of `true` will be equivalent to `DefaultBootstrap`.
 
  * A `bool` value that indicates whether or not a bootstrap sample of the
    dataset should be used for the training of each individual decision tree in
