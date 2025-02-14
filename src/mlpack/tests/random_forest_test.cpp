@@ -642,11 +642,11 @@ TEST_CASE("ComputeAverageUniquenessTest", "[RandomForestTest]")
   arma::vec       avg(3);
 
   avg[0] = SequentialBootstrap<>::ComputeAverageUniqueness(
-      indM, 0, concurrency, invConcurrency);
+      indM(0, 0), indM(1, 0), invConcurrency);
   avg[1] = SequentialBootstrap<>::ComputeAverageUniqueness(
-      indM, 1, concurrency, invConcurrency);
+      indM(0, 1), indM(1, 1), invConcurrency);
   avg[2] = SequentialBootstrap<>::ComputeAverageUniqueness(
-      indM, 2, concurrency, invConcurrency);
+      indM(0, 2), indM(1, 2), invConcurrency);
 
   REQUIRE(avg(0) == Approx(5.0 / 6.0));
   REQUIRE(avg(1) == Approx(0.75));
@@ -675,11 +675,12 @@ TEST_CASE("ComputeNextDrawProbabilitiesTest", "[RandomForestTest]")
   concurrency[3] = 1;
 
   arma::vec invConcurrency(concurrency.n_rows, arma::fill::ones);
+  arma::vec delta2(3);
 
   // Compute the probabilities that observations 0, 1, 2 are drawn after
   // observation 1 has already been drawn.
-  const arma::vec delta2(SequentialBootstrap<>::ComputeNextDrawProbabilities(
-      phi1, 1, concurrency, invConcurrency, indM));
+  SequentialBootstrap<>::ComputeNextDrawProbabilities(
+      phi1, 1, concurrency, invConcurrency, indM, delta2);
 
   REQUIRE(delta2(0) == Approx(5.0 / 14.0));
   // Should have the lowest probability as it has already been drawn.
@@ -722,7 +723,7 @@ TEST_CASE("SequentialBootstrapTest", "[RandomForestTest]")
 {
   const arma::mat ds(10 /* rows */, 6 /* cols */, arma::fill::randu);
   const arma::Row<size_t> labels{ 1, 0, 0, 0, 0, 0 };
-  const arma::vec weights(6, arma::fill::ones);
+  const arma::rowvec weights(6, arma::fill::ones);
   arma::umat indM(2 /* rows */, 6 /* cols */, arma::fill::zeros);
 
   indM(0, 0) = 0;
@@ -737,7 +738,7 @@ TEST_CASE("SequentialBootstrapTest", "[RandomForestTest]")
   SequentialBootstrap<> bootstrap(indM);
   arma::mat bsDataset;
   arma::Row<size_t> bsLabels;
-  arma::vec bsWeights;
+  arma::rowvec bsWeights;
 
   bootstrap.Bootstrap<true>(
       ds, labels, weights, bsDataset, bsLabels, bsWeights);
@@ -746,5 +747,44 @@ TEST_CASE("SequentialBootstrapTest", "[RandomForestTest]")
   REQUIRE(ds.n_rows == bsDataset.n_rows);
   REQUIRE(ds.n_cols == bsDataset.n_cols);
   REQUIRE(labels.n_cols == bsLabels.n_cols);
-  REQUIRE(weights.n_rows == bsWeights.n_rows);
+  REQUIRE(weights.n_cols == bsWeights.n_cols);
+}
+
+TEST_CASE("RandomForestWithSequentialBootstrapTest", "[RandomForestTest]")
+{
+  const arma::mat ds(10 /* rows */, 6 /* cols */, arma::fill::randu);
+  const arma::Row<size_t> labels{ 1, 0, 0, 0, 0, 0 };
+  const arma::rowvec weights(6, arma::fill::ones);
+  arma::umat indM(2 /* rows */, 6 /* cols */, arma::fill::zeros);
+
+  indM(0, 0) = 0;
+  indM(1, 0) = 2;
+  indM(0, 1) = 2;
+  indM(1, 1) = 3;
+  indM(0, 2) = 4;
+  indM(1, 2) = 5;
+
+  indM(1, 3) = indM(1, 4) = indM(1, 5) = 5;
+
+  SequentialBootstrap<> bootstrap(indM);
+
+  using RF = RandomForest<
+      mlpack::GiniGain,
+      mlpack::MultipleRandomDimensionSelect,
+      mlpack::BestBinaryNumericSplit,
+      mlpack::AllCategoricalSplit,
+      true,
+      mlpack::SequentialBootstrap<>>;
+  
+  RF rf(
+      ds,
+      labels,
+      2,
+      weights,
+      20,
+      1,
+      1e-7,
+      0,
+      mlpack::MultipleRandomDimensionSelect(),
+      bootstrap);
 }
