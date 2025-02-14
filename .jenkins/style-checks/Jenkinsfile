@@ -61,6 +61,15 @@ pipeline
               notFailBuild: true)
     }
 
+    // Mark unstable builds as failed.
+    unstable
+    {
+      script
+      {
+        error "Style check failure."
+      }
+    }
+
     success
     {
       script
