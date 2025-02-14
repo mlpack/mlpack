@@ -18,9 +18,12 @@ pipeline
     {
       steps
       {
-        utils.setBuildStatus("Style Checks (pipeline)",
-                             "Building...",
-                             "PENDING");
+        script
+        {
+          utils.setBuildStatus("Style Checks (pipeline)",
+                               "Building...",
+                               "PENDING");
+        }
 
         sh '''
           git clone https://github.com/mlpack/jenkins-conf
@@ -63,16 +66,22 @@ pipeline
 
     success
     {
-      utils.setBuildStatus("Style Checks (pipeline)",
-                           "Build finished.",
-                           "SUCCESS");
+      script
+      {
+        utils.setBuildStatus("Style Checks (pipeline)",
+                             "Build finished.",
+                             "SUCCESS");
+      }
     }
 
     failure
     {
-      utils.setBuildStatus("Style Checks (pipeline)",
-                           "Style check failure.",
-                           "FAILURE");
+      script
+      {
+        utils.setBuildStatus("Style Checks (pipeline)",
+                             "Style check failure.",
+                             "FAILURE");
+      }
     }
   }
 }
