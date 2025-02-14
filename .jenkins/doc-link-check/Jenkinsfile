@@ -24,9 +24,12 @@ pipeline
     {
       steps
       {
-        u = load '.jenkins/utils.groovy'
-        u.setBuildStatus("Documentation Link Check (pipeline)", "Building...",
-            "PENDING");
+        script
+        {
+          u = load '.jenkins/utils.groovy'
+          u.setBuildStatus("Documentation Link Check (pipeline)", "Building...",
+              "PENDING");
+        }
 
         sh '''
           # Print the size of the link cache.
@@ -78,14 +81,20 @@ pipeline
   {
     success
     {
-      u.setBuildStatus("Documentation Link Check (pipeline)", "Build finished.",
-          "SUCCESS");
+      script
+      {
+        u.setBuildStatus("Documentation Link Check (pipeline)",
+            "Build finished.", "SUCCESS");
+      }
     }
 
     failure
     {
-      u.setBuildStatus("Documentation Link Check (pipeline)",
-          "Documentation build failure or problem.", "FAILURE");
+      script
+      {
+        u.setBuildStatus("Documentation Link Check (pipeline)",
+            "Documentation build failure or problem.", "FAILURE");
+      }
     }
   }
 }

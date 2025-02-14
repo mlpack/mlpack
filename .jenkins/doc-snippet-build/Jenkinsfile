@@ -21,9 +21,12 @@ pipeline
     {
       steps
       {
-        u = load '.jenkins/utils.groovy'
-        u.setBuildStatus("Documentation Snippet Build (pipeline)",
-            "Building...", "PENDING");
+        script
+        {
+          u = load '.jenkins/utils.groovy'
+          u.setBuildStatus("Documentation Snippet Build (pipeline)",
+              "Building...", "PENDING");
+        }
 
         sh'''
           export CCACHE_DIR=cache/ccache/;
@@ -45,14 +48,20 @@ pipeline
   {
     success
     {
-      u.setBuildStatus("Documentation Snippet Build (pipeline)",
-          "Build finished.", "SUCCESS");
+      script
+      {
+        u.setBuildStatus("Documentation Snippet Build (pipeline)",
+            "Build finished.", "SUCCESS");
+      }
     }
 
     failure
     {
-      u.setBuildStatus("Documentation Snippet Build (pipeline)",
-          "Snippet build or run failure.", "FAILURE");
+      script
+      {
+        u.setBuildStatus("Documentation Snippet Build (pipeline)",
+            "Snippet build or run failure.", "FAILURE");
+      }
     }
   }
 }
