@@ -1,0 +1,126 @@
+# This action sets up any language-specific environment for any of mlpack's
+# bindings.
+name: "Set up binding environments"
+description: "Install build and runtime dependencies for mlpack's bindings to other languages."
+inputs:
+  lang:
+    required: true
+    description: "The language to set up bindings for."
+
+runs:
+  using: "composite"
+  steps:
+    #
+    # Python bindings.
+    #
+    - name: "Set up Python (Linux)"
+      if: inputs.lang == 'Python' && runner.os == 'Linux'
+      shell: bash
+      run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install --upgrade --ignore-installed setuptools cython \
+              pandas wheel pytest
+          echo "CMAKE_BINDING_ARGS=-DPYTHON_EXECUTABLE=`which python3`" >> $GITHUB_ENV
+
+    - name: "Set up Python (macOS)"
+      if: inputs.lang == 'Python' && runner.os == 'macOS'
+      shell: bash
+      run: |
+          /opt/homebrew/bin/python3 -m pip install --break-system-packages --upgrade pip
+          /opt/homebrew/bin/python3 -m pip install --break-system-packages setuptools cython pandas zipp configparser wheel pytest
+          echo "CMAKE_BINDING_ARGS=-DPYTHON_EXECUTABLE=/opt/homebrew/bin/python3" >> $GITHUB_ENV
+
+    #
+    # Julia bindings.
+    #
+    - name: "Set up Julia on Linux"
+      if: inputs.lang == 'Julia' && runner.os == 'Linux'
+      shell: bash
+      run: |
+          wget https://julialang-s3.julialang.org/bin/linux/x64/1.10/julia-1.10.4-linux-x86_64.tar.gz
+          sudo tar -C /opt/ -xvpf julia-1.10.4-linux-x86_64.tar.gz
+          echo "CMAKE_BINDING_ARGS=-DJULIA_EXECUTABLE=/opt/julia-1.10.4/bin/julia" >> $GITHUB_ENV
+          echo "JULIA_EXECUTABLE=/opt/julia-1.10.4/bin/julia" >> $GITHUB_ENV
+
+    - name: "Set up Julia on macOS"
+      if: inputs.lang == 'Julia' && runner.os == 'macOS'
+      shell: bash
+      run: |
+          brew install --cask julia
+          echo "CMAKE_BINDING_ARGS=-DJULIA_EXECUTABLE=/opt/homebrew/bin/julia" >> $GITHUB_ENV
+          echo "JULIA_EXECUTABLE=/opt/homebrew/bin/julia" >> $GITHUB_ENV
+
+    #
+    # R bindings.
+    #
+    - name: Extract mlpack version for R bindings
+      if: inputs.lang == 'R'
+      shell: bash
+      run: |
+        MLPACK_VERSION_MAJOR=$(grep -i ".*#define MLPACK_VERSION_MAJOR.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+        MLPACK_VERSION_MINOR=$(grep -i ".*#define MLPACK_VERSION_MINOR.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+        MLPACK_VERSION_PATCH=$(grep -i ".*#define MLPACK_VERSION_PATCH.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+        MLPACK_VERSION_VALUE=${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}
+        echo "MLPACK_R_PACKAGE=$(echo mlpack_"$MLPACK_VERSION_VALUE".tar.gz)" >> $GITHUB_ENV
+
+    - name: "Setup pandoc for R"
+      if: inputs.lang == 'R'
+      uses: r-lib/actions/setup-pandoc@v2
+
+    # Setup r2u (linux)
+    - name: Setup r2u
+      if: inputs.lang == 'R' && runner.os == 'Linux'
+      uses: eddelbuettel/github-actions/r2u-setup@master
+
+    - name: Setup p3m.dev (macOS / Windows)
+      uses: r-lib/actions/setup-r@v2
+      if: inputs.lang == 'R' && (runner.os == 'Windows' || runner.os == 'macOS')
+      with:
+        r-version: "release"
+        use-public-rspm: true
+
+    - name: "Configure ccache for R"
+      if: inputs.lang == 'R'
+      shell: bash
+      run: |
+          ccache --set-config "sloppiness=include_file_ctime"
+          ccache --set-config "hash_dir=false"
+          ccache --zero-stats
+
+    - name: "Query R dependencies"
+      if: inputs.lang == 'R'
+      shell: bash
+      run: |
+          cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
+          Rscript -e 'install.packages(c("remotes", "roxygen2", "pkgbuild"))'
+          Rscript -e 'remotes::install_deps(".", dependencies=TRUE)'
+
+    - name: Install cereal manually for R
+      if: inputs.lang == 'R'
+      shell: bash
+      run: |
+          # We don't install cereal via apt, because the Debian packagers
+          # split the rapidjson dependency into a separate package.  We will
+          # bundle the cereal sources with the R package, so we want them to
+          # be exactly the upstream sources (with rapidjson included).
+          wget https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.2.tar.gz
+          tar -xvzpf v1.3.2.tar.gz
+          #
+          # These directives cause warnings on CRAN:
+          # https://github.com/USCiLab/cereal/blob/master/include/cereal/external/base64.hpp#L28-L31
+          # The command below comments them out.
+          sed 's|#pragma|// #pragma|' cereal-1.3.2/include/cereal/external/base64.hpp > cereal-1.3.2/include/cereal/external/base64.hpp.tmp
+          mv cereal-1.3.2/include/cereal/external/base64.hpp.tmp cereal-1.3.2/include/cereal/external/base64.hpp
+          #
+          # Fix cereal compilation on clang 19+; see
+          # https://github.com/USCiLab/cereal/pull/835
+          sed 's|::template apply|::apply|' cereal-1.3.2/include/cereal/types/tuple.hpp > cereal-1.3.2/include/cereal/types/tuple.hpp.tmp
+          mv cereal-1.3.2/include/cereal/types/tuple.hpp.tmp cereal-1.3.2/include/cereal/types/tuple.hpp
+
+    #
+    # Go bindings.
+    #
+    - name: "Set up Go on macOS"
+      if: inputs.lang == 'Go' && runner.os == 'macOS'
+      shell: bash
+      run: brew install go
