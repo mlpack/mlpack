@@ -10,7 +10,8 @@ classification and regression tasks. It utilizes a series of weak learners
 (specifically [decision tree regressors](decision_tree_regressor.md)) to arrive 
 closer and closer to a targeted label. Each 
 weak learner is trained on the error of the previous learner, thereby 
-reducing the error of the overall model.
+reducing the error of the overall model. `GradBoosting` is useful for classifying points with _discrete labels_ (i.e. `0`,
+`1`, `2`).
 
 #### Simple usage example:
 
@@ -88,7 +89,9 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | `minimumLeafSize` | `size_t` | Minimum leaf size for weak learner decision tree. | `10` |
 | `minimumGainSplit` | `double` | Minimum gain split for weak learner decision tree | `1e-7` |
 | `maximumDepth` | `size_t` | Maximum tree depth for weak learner decision tree | `2` |
+ * Smaller values of `numWeakLearners` and `maximumDepth` will result in smaller `GradientBoosting` models, but the model may underfit the data.
 
+  * Smaller values of `minimumLeafSize` and `minimumGainSplit` will improve the performance of the `GradientBoosting` model, but at the cost of training time and model size.
 
 ### Training
 
