@@ -182,8 +182,8 @@ class SequentialBootstrap
    * @param[in] colCount Number of data points in the dataset and
    *                     the number of samples to draw respectively.
    *
-   * @return A list of indices referring to the observations that should
-   *         be sampled.
+   * @return A list of indices referring to the observations that
+   *         should be sampled.
    */
   arma::uvec ComputeSamples(arma::uword colCount) const
   {
