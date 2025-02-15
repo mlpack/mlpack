@@ -3,7 +3,7 @@ can redistribute the library and/or modify it under the terms of the 3-clause
 BSD license.  The text of the 3-clause BSD license is contained below.
 
 ----
-Copyright (c) 2007-2023, mlpack contributors (see COPYRIGHT.txt)
+Copyright (c) 2007-2025, mlpack contributors (see COPYRIGHT.txt)
 All rights reserved.
 
 Redistribution and use of mlpack in source and binary forms, with or without
@@ -32,7 +32,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
-mlpack also contains some usage of the source code of MNMLSTC Core library,
-which is a backport of C++17 features to C++11. MNMLSTC is licensed under the
-Apache 2.0 License. This code can be found in src/mlpack/core/std_backport/ and
-more details about licensing can be found there.
+mlpack also contains some usage of the source code of the STB library,
+which is providing support for image loading, saving and resizing. STB is
+dual-licensed under the MIT license and the public domain. This code can be
+found in src/mlpack/core/stb/ for more details about licensing and usage.

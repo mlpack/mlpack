@@ -1,7 +1,12 @@
 # Trees
 
 mlpack includes a number of space partitioning trees and other trees for its
-geometric techniques.  All of mlpack's trees implement
+geometric techniques.  These trees are built on [data matrices](../matrices.md)
+where each column in the matrix is a point in the tree.  Trees are organized
+such that "nearby" points (with respect to a given distance metric) are
+generally grouped in the same node or branch of the tree.
+
+All trees in mlpack implement
 the [same API](../../developer/trees.md), allowing easy plug-and-play usage of
 different trees.  The following tree types are available in mlpack:
 
@@ -14,6 +19,7 @@ different trees.  The following tree types are available in mlpack:
  * [`BinarySpaceTree`](trees/binary_space_tree.md)
  * [`UBTree`](trees/ub_tree.md)
  * [`CoverTree`](trees/cover_tree.md)
+ * [`Octree`](trees/octree.md)
 
 *Note:* this documentation is a work in progress.  Not all trees are documented
 yet.

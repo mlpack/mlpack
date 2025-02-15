@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.11)
 project(mlpack C CXX)
 
 include(CMake/CheckHash.cmake)
@@ -7,7 +7,6 @@ include(CMake/ConfigureCrossCompile.cmake)
 include(CMake/CheckAtomic.cmake)
 
 # First, define all the compilation options.
-# We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information." OFF)
 option(PROFILE "Compile with profiling information." OFF)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
@@ -17,6 +16,7 @@ option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DOWNLOAD_DEPENDENCIES "Automatically download dependencies if not available." OFF)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." ON)
+option(USE_SYSTEM_STB "Use system STB instead of version bundled with mlpack." OFF)
 
 # Set minimum library versions required by mlpack.
 #
@@ -26,6 +26,14 @@ option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." 
 set(ARMADILLO_VERSION "10.8")
 set(ENSMALLEN_VERSION "2.10.0")
 set(CEREAL_VERSION "1.1.2")
+
+if (NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release")
+endif()
+
+if (PROFILE)
+  message(WARNING "The PROFILE option is deprecated and will be removed in mlpack 5.0.0; specify -DCMAKE_CXX_FLAGS=\"-pg\" instead!")
+endif()
 
 # Consider using ccache
 find_program(CCACHE_PROGRAM ccache)
@@ -230,10 +238,13 @@ endif()
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 set (BFD_DL_AVAILABLE "NO")
 if (DEBUG)
+  message(WARNING "The DEBUG option is deprecated and will be removed in mlpack 5.0.0; specify CMAKE_BUILD_TYPE as \"Debug\" instead!")
+endif ()
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" OR DEBUG)
   if (NOT MSVC)
     add_definitions(-DDEBUG)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -O0")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftemplate-backtrace-limit=0")
   endif()
 
   # mlpack uses it's own mlpack::backtrace class based on Binary File Descriptor
@@ -252,19 +263,6 @@ if (DEBUG)
       message(WARNING "No libBFD and/or libDL has been found!")
     endif()
   endif()
-else()
-  add_definitions(-DNDEBUG)
-  if (NOT MSVC)
-    if (NOT CMAKE_CROSSCOMPILING)
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O3")
-    else()
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
-    endif()
-  else ()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O3")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /O3")
-  endif ()
 endif()
 
 # Profiling CFLAGS.  Turn profiling information on.
@@ -316,21 +314,14 @@ endif()
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
+message(STATUS "Armadillo libraries: ${ARMADILLO_LIBRARIES}")
 
-# Find stb_image.h and stb_image_write.h.
-if (NOT DOWNLOAD_DEPENDENCIES)
-  find_package(StbImage)
-else()
-  find_package(StbImage)
-  if (NOT StbImage_FOUND)
-    get_deps(https://mlpack.org/files/stb.tar.gz stb stb.tar.gz)
-    set(STB_IMAGE_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
-    find_package(StbImage REQUIRED)
-  endif()
+if (USE_SYSTEM_STB)
+  find_package(StbImage REQUIRED)
 endif()
-
 if (StbImage_FOUND)
   set(STB_AVAILABLE "1")
+  add_definitions(-DMLPACK_USE_SYSTEM_STB)
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
 
   # Make sure that we can link STB in multiple translation units.
@@ -340,7 +331,7 @@ if (StbImage_FOUND)
         "multiple translation units!  Try upgrading your STB implementation, "
         "or using the auto-downloader (set DOWNLOAD_DEPENDENCIES=ON in the "
         "CMake configuration command.")
-  endif ()
+  endif()
 endif()
 
 # Find ensmallen.
@@ -486,18 +477,17 @@ if (BFD_DL_AVAILABLE)
   string(REGEX REPLACE "// #define MLPACK_HAS_BFD_DL\n"
       "#define MLPACK_HAS_BFD_DL\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif ()
-if (STB_AVAILABLE)
-  string(REGEX REPLACE "// #define MLPACK_HAS_STB\n"
-      "#define MLPACK_HAS_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
-  if (NOT STB_INCLUDE_NEEDS_STB_SUFFIX)
-    string(REGEX REPLACE "// #define MLPACK_HAS_NO_STB_DIR\n"
-        "#define MLPACK_HAS_NO_STB_DIR\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
-  endif ()
-endif ()
+
 if (USING_GIT)
   string(REGEX REPLACE "// #define MLPACK_GIT_VERSION\n"
       "#define MLPACK_GIT_VERSION\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif ()
+
+if (USE_SYSTEM_STB)
+  string(REGEX REPLACE "// #define MLPACK_USE_SYSTEM_STB\n"
+      "#define MLPACK_USE_SYSTEM_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
 file(WRITE ${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp "${CONFIG_CONTENTS}")
 include_directories(${CMAKE_BINARY_DIR}/include/)
 add_definitions(-DMLPACK_CUSTOM_CONFIG_FILE=mlpack/config-local.hpp)

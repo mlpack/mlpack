@@ -1,9 +1,15 @@
 # The TreeType policy in mlpack
 
 Trees are an important data structure in mlpack and are used in a number of the
-machine learning algorithms that mlpack implements.  Often, the use of trees can
-allow significant acceleration of an algorithm; this is generally done by
-pruning away large parts of the tree during computation.
+machine learning algorithms that mlpack implements.  Trees in mlpack are
+hierarchical structures that organize data points: "nearby" points (with respect
+to a distance metric) are generally grouped in the same node or branch of a
+tree.
+
+For certain machine learning algorithms, this hierarchical organization of data
+points into trees can allow significant computational acceleration.  This
+speedup is typically achieved by pruning away large parts of the tree during
+computation.
 
 Most mlpack algorithms that use trees are not tied to a specific tree but
 instead allow the user to choose a tree via the `TreeType` template parameter.
