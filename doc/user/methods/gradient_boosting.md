@@ -87,8 +87,8 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `numWeakLearners` | `size_t` | Number of weak learner models to be used. | 5 |
 | `minimumLeafSize` | `size_t` | Minimum leaf size for weak learner decision tree. | `10` |
-| `minimumGainSplit` | `double` | Minimum gain split for weak learner decision tree | `1e-7` |
-| `maximumDepth` | `size_t` | Maximum tree depth for weak learner decision tree | `2` |
+| `minimumGainSplit` | `double` | Minimum gain split for weak learner decision tree. | `1e-7` |
+| `maximumDepth` | `size_t` | Maximum tree depth for weak learner decision tree. | `2` |
  * Smaller values of `numWeakLearners` and `maximumDepth` will result in smaller `GradientBoosting` models, but the model may underfit the data.
 
   * Smaller values of `minimumLeafSize` and `minimumGainSplit` will improve the performance of the `GradientBoosting` model, but at the cost of training time and model size.
@@ -178,8 +178,8 @@ See also the [simple usage example](#simple-usage-example) for a trivial use of
 
 ---
 
-Train a gradient boosting model on mixed categorical data, passing 
-arguments into the Train function:
+Train a gradient boosting model on mixed categorical data with the
+`Train()` function:
 
 ```c++
 // Load a categorical dataset.
@@ -206,13 +206,12 @@ mlpack::data::Load("covertype.test.arff", testDataset, true);
 const size_t firstPrediction = gb.Classify(testDataset.col(0));
 std::cout << "Predicted class of first test point is " << firstPrediction << "."
     << std::endl;
-
 ```
 
 ---
 
-Train a gradient boosting model on mixed categorical data, passing 
-arguments into the Constructor function:
+Train a gradient boosting model on mixed categorical data using
+the constructor.
 
 ```c++
 // Load a categorical dataset.
@@ -238,7 +237,6 @@ mlpack::data::Load("covertype.test.arff", testDataset, true);
 const size_t firstPrediction = gb.Classify(testDataset.col(0));
 std::cout << "Predicted class of first test point is " << firstPrediction << "."
     << std::endl;
-
 ```
 
 ---
