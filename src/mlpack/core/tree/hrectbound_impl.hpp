@@ -552,6 +552,13 @@ template<typename MatType>
 inline HRectBound<DistanceType, ElemType>&
 HRectBound<DistanceType, ElemType>::operator|=(const MatType& data)
 {
+  if (dim == 0)
+  {
+    delete[] bounds;
+    dim = data.n_rows;
+    bounds = new RangeType<ElemType>[dim];
+  }
+
   Log::Assert(data.n_rows == dim);
 
   arma::Col<ElemType> mins(min(data, 1));
@@ -576,7 +583,14 @@ template<typename DistanceType, typename ElemType>
 inline HRectBound<DistanceType, ElemType>&
 HRectBound<DistanceType, ElemType>::operator|=(const HRectBound& other)
 {
-  assert(other.dim == dim);
+  if (dim == 0)
+  {
+    delete[] bounds;
+    dim = other.dim;
+    bounds = new RangeType<ElemType>[dim];
+  }
+
+  Log::Assert(other.dim == dim);
 
   minWidth = std::numeric_limits<ElemType>::max();
   for (size_t i = 0; i < dim; ++i)
