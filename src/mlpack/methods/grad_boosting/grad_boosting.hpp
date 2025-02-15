@@ -14,20 +14,17 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-// Include guard - Used to prevent including double copies of the same code
-#ifndef MLPACK_METHODS_GRAD_BOOSTING_GRADBOOSTING_HPP
-#define MLPACK_METHODS_GRAD_BOOSTING_GRADBOOSTING_HPP
+#ifndef MLPACK_METHODS_GRAD_BOOSTING_GRAD_BOOSTING_HPP
+#define MLPACK_METHODS_GRAD_BOOSTING_GRAD_BOOSTING_HPP
 
-// Importing base components required to write mlpack methods.
 #include <mlpack/core.hpp>
 
 // Only using decision trees for now, therefore only including
 // decision tree functionalities.
 #include <mlpack/methods/decision_tree/decision_tree_regressor.hpp>
 
-
-// Written in mlpack namespace.
 namespace mlpack {
+
 /**
  * The Gradient Boosting class. Gradient Boosting is a boosting algorithm, meaning that it
  * combines an ensemble of weak learners to produce a strong learner.
@@ -37,8 +34,6 @@ namespace mlpack {
  * 
  * @tparam MatType Data matrix type (i.e. arma::mat or arma::sp_mat).
  */
-
-
 template<typename MatType = arma::mat>
 class GradBoosting
 {

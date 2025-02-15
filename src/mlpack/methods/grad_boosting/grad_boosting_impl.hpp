@@ -10,15 +10,11 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-// Include guard - Used to prevent including double copies of the same code
-#ifndef MLPACK_METHODS_GRAD_BOOSTING_GRADBOOSTING_IMPL_HPP
-#define MLPACK_METHODS_GRAD_BOOSTING_GRADBOOSTING_IMPL_HPP
+#ifndef MLPACK_METHODS_GRAD_BOOSTING_GRAD_BOOSTING_IMPL_HPP
+#define MLPACK_METHODS_GRAD_BOOSTING_GRAD_BOOSTING_IMPL_HPP
 
-// Base definition of the GradBoostingModel class.
 #include "grad_boosting.hpp"
-#include <mlpack/core.hpp>
 
-// Defined within the mlpack namespace.
 namespace mlpack {
 
 // Empty constructor.
@@ -155,7 +151,6 @@ void GradBoosting<MatType>::Classify(const MatType& test,
 }
 
 
-// TrainInternal is a private function within GradBoosting class
 template<typename MatType>
 void GradBoosting<MatType>::TrainInternal(const MatType& data,
                                           const data::DatasetInfo& datasetInfo,
