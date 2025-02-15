@@ -10,8 +10,8 @@ classification and regression tasks. It utilizes a series of weak learners
 (specifically [decision tree regressors](decision_tree_regressor.md)) to arrive 
 closer and closer to a targeted label. Each 
 weak learner is trained on the error of the previous learner, thereby 
-reducing the error of the overall model. `GradBoosting` is useful for classifying points with _discrete labels_ (i.e. `0`,
-`1`, `2`).
+reducing the error of the overall model. `GradBoosting` is useful for 
+classifying points with _discrete labels_ (i.e. `0`, `1`, `2`).
 
 #### Simple usage example:
 
