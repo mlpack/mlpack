@@ -171,6 +171,22 @@ For complete functionality, the [source
 code](/src/mlpack/methods/grad_boosting/grad_boosting.hpp) can be consulted.
 Each method is fully documented.
 
+The `GradBoosting` class has one template parameter that can be used to
+control the element type of the model.  The full signature of the class is:
+
+```
+GradBoosting<MatType>
+```
+
+`MatType` specifies the type of matrix used for training data and internal
+representation of model parameters.
+
+ * Any matrix type that implements the Armadillo API can be used.
+
+ * `Train()` and `Classify()` functions themselves are templatized and can allow
+   any matrix type that has the same element type.  So, for instance, a
+   `GradBoosting<arma::mat>` can accept an `arma::sp_mat` for training.
+
 ### Simple Examples
 
 See also the [simple usage example](#simple-usage-example) for a trivial use of
