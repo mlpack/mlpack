@@ -165,7 +165,7 @@ class SequentialBootstrap
       phi[phiSize] = i;
       avg[i] = ComputeAverageUniqueness(
           intervals(0, phi[phiSize]),
-		  intervals(1, phi[phiSize]),
+          intervals(1, phi[phiSize]),
           invConcurrency);
 
       concurrency.subvec(intervals(0, i), intervals(1, i)) -= 1.0;

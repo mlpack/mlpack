@@ -775,7 +775,7 @@ TEST_CASE("RandomForestWithSequentialBootstrapTest", "[RandomForestTest]")
       mlpack::AllCategoricalSplit,
       true,
       mlpack::SequentialBootstrap<>>;
-  
+
   RF rf(
       ds,
       labels,
