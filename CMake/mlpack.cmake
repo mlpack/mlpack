@@ -2,10 +2,108 @@
 # Find the mlpack C++ library
 #
 # author Omar Shrit
+
+##===================================================
+##  FUNCTIONS DOCUMENTATIONS
+##===================================================
 #
-# This module will look for mlpack dependencies and then look for mlpack itself
+# get_deps
+#-------------------
 #
-# This module can also fetch mlpack dependencies from online repositories.
+# This macro allows to download dependenices from the link that is provided to
+# them. You need to pass the LINK to download from, the name of
+# the dependency, and the filename to store the downloaded package to such
+# as armadillo.tar.gz and they are downloaded into 
+# ${CMAKE_BINARY_DIR}/deps/${PACKAGE}
+# At each download, this module sets a GENERIC_INCLUDE_DIR path,
+# which means that you need to set the main path for the include
+# directories for each package.
+# Note that, the package should be compressed only as .tar.gz
+#
+#
+# find_armadillo
+#------------------
+#
+# This macro finds armadillo library, and sets the necessary paths to each
+# one of the parameters. If the library is not found this macro will set 
+# ARMADILLO_FOUND to false.
+#
+# This macro sets the following variables:
+#  ARMADILLO_FOUND - set to true if the library is found
+#  ARMADILLO_INCLUDE_DIRS - list of required include directories
+#  ARMADILLO_LIBRARIES - list of libraries to be linked
+#  ARMADILLO_VERSION_MAJOR - major version number
+#  ARMADILLO_VERSION_MINOR - minor version number
+#  ARMADILLO_VERSION_PATCH - patch version number
+#  ARMADILLO_VERSION_STRING - version number as a string (ex: "1.0.4")
+#  ARMADILLO_VERSION_NAME - name of the version (ex: "Antipodean Antileech")
+#
+#
+# find_ensmallen
+#------------------
+#
+# This macro finds ensmallen library and sets the necessary paths to each
+# one of the parameters. If the library is not found this function will set 
+# ENSMALLEN_FOUND to false.
+#
+# This module sets the following variables:
+#  ENSMALLEN_FOUND - set to true if the library is found
+#  ENSMALLEN_INCLUDE_DIR - list of required include directories
+#  ENSMALLEN_VERSION_MAJOR - major version number
+#  ENSMALLEN_VERSION_MINOR - minor version number
+#  ENSMALLEN_VERSION_PATCH - patch version number
+#  ENSMALLEN_VERSION_STRING - version number as a string (ex: "1.0.4")
+#  ENSMALLEN_VERSION_NAME - name of the version (ex: "Antipodean Antileech")
+#
+#
+# find_cereal
+#------------------
+#
+# This macro finds cereal library and sets the necessary paths to each
+# one of the parameters. If the library is not found this macro will set 
+# CEREAL_FOUND to false.
+
+# This module sets the following variables:
+#  CEREAL_FOUND - set to true if the library is found
+#  CEREAL_INCLUDE_DIR - list of required include directories
+#  CEREAL_VERSION_MAJOR - major version number
+#  CEREAL_VERSION_MINOR - minor version number
+#  CEREAL_VERSION_PATCH - patch version number
+#  CEREAL_VERSION_STRING - version number as a string (ex: "1.0.4")
+#
+#
+# find stb
+#------------------
+#
+# This macro finds STB library and sets the necessary paths to each
+# one of the parameters. If the library is not found this macro will set 
+# STB_FOUND to false.
+# 
+# - Find STB_IMAGE
+#
+# This module sets the following variables:
+#  STB_IMAGE_FOUND - set to true if the library is found
+#  STB_IMAGE_INCLUDE_DIR - list of required include directories
+#  STB_INCLUDE_NEEDS_STB_SUFFIX - whether or not the include files are under an
+#     stb/ directory; if "YES", then includes must be done as, e.g.,
+#     stb/stb_image.h.
+#
+#
+# find_openmp
+#-----------------------
+#
+# This macro finds if OpenMP library is installed and supported by the
+# compiler. if the library found then it sets the following parameters:
+#  
+# OpenMP_FOUND - set to true if the library is found
+# 
+#
+# find_mlpack_internal
+#-----------------------
+#
+# This macro finds the mlpack library and sets the necessary paths to each one
+# of the parameters. If the library is not found this macro will set
+# MLPACK_FOUND to false.
 #
 # This module sets the following variables:
 #  MLPACK_FOUND - set to true if the library is found
@@ -13,32 +111,38 @@
 #  MLPACK_VERSION_MINOR - minor version number
 #  MLPACK_VERSION_PATCH - patch version number
 #  MLPACK_VERSION_STRING - version number as a string (ex: "1.0.4")
-#  MLPACK_INCLUDE_DIRS - list of required include directories
-#  MLPACK_LIBRARIES - list of required libraries
-
-
-## What needs to be done in this PR:
-# 3. If found make it set a list of one that are not found
-# 4. Use the list in the case we need to call the autodownloader
-# 5. Simplyfy the Autodownloader call and make it only one with for loop if
-# necessary, or even better, make all the link recorded already inside the
-# autodownload function and then iterate over the current ones.
-# This will simplfy the autodownloader cmake file
-# STB locally and no need to search for it in the case of autdownload.
-# Be sure to have Autdownload in the same file, maybe even move autodownload
-# into this one.
-# Add another function fetch_mlpack() from source code using autdownloader
-# this should happen inside this file, the user does not need to call
-# autdownload or anyting else
-# A simple comment above this function call should be enough
-# another function can be called fetch_mlpack_and_crosscompile()
-# move minimum version to this file since it is not required anyware else.
-
-# The purpose of this file is to allow the user to use CMake to find mlpack in
-# any usecase. Therefore, some of the parameters are moved from inside
-# CMakeLists to here, since they will be required to be set by the user at
-# somepoint.
-
+#  MLPACK_INCLUDE_DIR - list of mlpack include directories
+#
+# fetch_mlpack
+#-----------------------
+#
+# This function downloads the mlpack library and its dependencies by calling
+# the get_deps function. This will allow to download each one of the libraries
+# and set the parameter for each one of them corectly.
+#
+# fetch_mlpack accepts one parameter which is COMPILE_OPENBLAS. This will allow
+# the user to compile OpenBLAS after downloading it since it is the only
+# library that requires compilation in our toolchain, all other libraries are
+# header only. 
+#
+# fetch_mlpack will download mlpack library as well, so it can be used directly
+# in cmake if the user would like to download the latest version or not use the
+# one already exist on the system.
+#
+#
+# find_mlpack 
+#----------------------
+#
+# This macro finds mlpack libraries and it dependencies. This is the function
+# that should be called by the user, and it will call all the other dependency
+# functions. This function will set MLPACK_FOUD to false if the library is not
+# found locally through find_mlpack_internal
+#
+# This macro will set the following variables:
+# 
+# MLPACK_INCLUDE_DIRS - list of all include directories
+# MLPACK_LIBRARIES - list of all libraries to link against.
+#
 ##===================================================
 ##  MLPACK DEPEDENCIES SETTINGS. 
 ##===================================================
@@ -68,14 +172,6 @@ endif()
 ##===================================================
 
 # This function auto-downloads mlpack dependencies.
-# You need to pass the LINK to download from, the name of
-# the dependency, and the filename to store the downloaded package to such
-# as armadillo.tar.gz and they are downloaded into 
-# ${CMAKE_BINARY_DIR}/deps/${PACKAGE}
-# At each download, this module sets a GENERIC_INCLUDE_DIR path,
-# which means that you need to set the main path for the include
-# directories for each package.
-# Note that, the package should be compressed only as .tar.gz
 macro(get_deps LINK DEPS_NAME PACKAGE)
   if (NOT EXISTS "${CMAKE_BINARY_DIR}/deps/${PACKAGE}")
     file(DOWNLOAD ${LINK}
@@ -103,9 +199,7 @@ macro(get_deps LINK DEPS_NAME PACKAGE)
   # list(FILTER) is not available on 3.5 or older, but try to keep
   # configuring without filtering the list anyway 
   # (it works only if the file is present as .tar.gz).
-  if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
-    list(FILTER DIRECTORIES EXCLUDE REGEX ".*\.tar\.gz")
-  endif ()
+  list(FILTER DIRECTORIES EXCLUDE REGEX ".*\.tar\.gz")
   list(LENGTH DIRECTORIES DIRECTORIES_LEN)
   if (DIRECTORIES_LEN GREATER 0)
     list(GET DIRECTORIES 0 DEPENDENCY_DIR)
@@ -118,18 +212,6 @@ macro(get_deps LINK DEPS_NAME PACKAGE)
   endif ()
 endmacro()
 
-#=======================================================================
-# This macro sets the following variables:
-#
-#  ARMADILLO_FOUND - set to true if the library is found
-#  ARMADILLO_INCLUDE_DIRS - list of required include directories
-#  ARMADILLO_LIBRARIES - list of libraries to be linked
-#  ARMADILLO_VERSION_MAJOR - major version number
-#  ARMADILLO_VERSION_MINOR - minor version number
-#  ARMADILLO_VERSION_PATCH - patch version number
-#  ARMADILLO_VERSION_STRING - version number as a string (ex: "1.0.4")
-#  ARMADILLO_VERSION_NAME - name of the version (ex: "Antipodean Antileech")
-#=======================================================================
 macro(find_armadillo)
   cmake_policy(PUSH)
   cmake_policy(SET CMP0159 NEW) # file(STRINGS) with REGEX updates CMAKE_MATCH_<n>
@@ -298,17 +380,6 @@ macro(find_cereal)
 
 endmacro()
 
-# - Find Ensmallen
-# Find the Ensmallen C++ library
-#
-# This module sets the following variables:
-#  ENSMALLEN_FOUND - set to true if the library is found
-#  ENSMALLEN_INCLUDE_DIR - list of required include directories
-#  ENSMALLEN_VERSION_MAJOR - major version number
-#  ENSMALLEN_VERSION_MINOR - minor version number
-#  ENSMALLEN_VERSION_PATCH - patch version number
-#  ENSMALLEN_VERSION_STRING - version number as a string (ex: "1.0.4")
-#  ENSMALLEN_VERSION_NAME - name of the version (ex: "Antipodean Antileech")
 macro(find_ensmallen)
 
   set(CURRENT_PATH ${ARGN})
@@ -360,15 +431,6 @@ macro(find_ensmallen)
   endif ()
 endmacro()
 
-# - Find STB_IMAGE
-# Find the STB_IMAGE C++ library
-#
-# This module sets the following variables:
-#  STB_IMAGE_FOUND - set to true if the library is found
-#  STB_IMAGE_INCLUDE_DIR - list of required include directories
-#  STB_INCLUDE_NEEDS_STB_SUFFIX - whether or not the include files are under an
-#     stb/ directory; if "YES", then includes must be done as, e.g.,
-#     stb/stb_image.h.
 macro(find_stb)
   file(GLOB STB_IMAGE_SEARCH_PATHS
       ${CMAKE_BINARY_DIR}/deps/
