@@ -113,7 +113,7 @@ set(CYTHON_SOURCES
 )
 
 set(TEST_SOURCES
-  tests/dataset_info_test.py
+  tests/test_dataset_info.py
   tests/test_python_binding.py
 )
 
@@ -366,11 +366,8 @@ endmacro ()
 if (BUILD_PYTHON_BINDINGS)
   if (BUILD_TESTS)
     add_test(NAME python_bindings_test
-        COMMAND ${PYTHON_EXECUTABLE}
-            ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py test
+        COMMAND ${PYTHON_EXECUTABLE} -m pytest tests/
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
-    set_tests_properties(python_bindings_test
-        PROPERTIES ENVIRONMENT "NO_BUILD=1;LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}:${CMAKE_BINARY_DIR}/lib/")
   endif ()
 endif ()
 
