@@ -607,7 +607,7 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
     endif()
   endif()
 
-  mlpack(${CMAKE_BINARY_DIR})
+  find_mlpack_internal(${CMAKE_BINARY_DIR})
   if (NOT MLPACK_FOUND)
     get_deps(https://www.mlpack.org/files/mlpack-latest.tar.gz mlpack mlpack-latest.tar.gz)
     set(MLPACK_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
