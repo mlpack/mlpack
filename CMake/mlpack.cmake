@@ -547,12 +547,19 @@ macro(find_mlpack_internal)
 
 endmacro()
 
-macro(fetch_mlpack compile)
+macro(fetch_mlpack COMPILE_OPENBLAS)
+
+  if (CMAKE_CROSSCOMPILING)
+    search_openblas(${OPENBLAS_VERSION})
+    # Set to cross compile openblas if the user forgot to do so.
+    set(COMPILE_OPENBLAS ON)
+  endif()
+
   find_package(BLAS PATHS ${CMAKE_BINARY_DIR})
   if (NOT BLAS_FOUND OR (NOT BLAS_LIBRARIES))
     get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v${OPENBLAS_VERSION}/OpenBLAS-${OPENBLAS_VERSION}.tar.gz
       OpenBLAS OpenBLAS-${OPENBLAS_VERSION}.tar.gz)
-    if (NOT compile)
+    if (NOT COMPILE_OPENBLAS)
       message(WARNING "OpenBLAS is downloaded but not compiled. Please compile
       OpenBLAS before compiling mlpack")
     else()
@@ -569,9 +576,6 @@ macro(fetch_mlpack compile)
     if (NOT CMAKE_CROSSCOMPILING)
       find_package(BLAS QUIET)
       find_package(LAPACK QUIET)
-      if (NOT BLAS_FOUND AND NOT LAPACK_FOUND)
-        message(FATAL_ERROR "Can not find BLAS or LAPACK!  These are required for Armadillo.  Please install one of them---or install Armadillo---before installing mlpack.")
-      endif()
     endif()
     get_deps(https://files.mlpack.org/armadillo-${ARMADILLO_VERSION}.tar.gz armadillo armadillo-${ARMADILLO_VERSION}.tar.gz)
     set(ARMADILLO_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
@@ -616,16 +620,6 @@ macro(fetch_mlpack compile)
   find_openmp() 
 
 endmacro()
-
-# Download and compile OpenBLAS if we are cross compiling mlpack for a specific
-# architecture. The function takes the version of OpenBLAS as variable.
-macro(fetch_mlpack_and_crosscompile)
-  # 1. Pull openblas and crossocompile it
-  search_openblas(${OPENBLAS_VERSION})
-  # 2. Call autodownload, DONE
-  fetch_mlpack(ON)
-endmacro()
-
 
 ##===================================================
 ##  MLPACK MAIN FUNCTIONS CALL. 
