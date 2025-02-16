@@ -221,6 +221,54 @@ TEST_CASE("MedianImputationTest", "[ImputationTest]")
 }
 
 /**
+ * Make sure ModeImputation method replaces data 0 to mode value of each
+ * dimensions.
+ */
+TEST_CASE("ModeImputationTest", "[ImputationTest]")
+{
+  arma::mat columnWiseInput("3.0 0.0 2.0 0.0;"
+		                        "5.0 6.0 0.0 5.0;"
+		                        "9.0 6.0 4.0 8.0;");
+  arma::mat rowWiseInput(columnWiseInput);
+  double mappedValue = 0.0;
+
+  ModeImputation<double> imputer;
+
+  // column wise
+  imputer.Impute(columnWiseInput, mappedValue, 1, true); 
+    
+  REQUIRE(columnWiseInput(0, 0) == Approx(3.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(0, 2) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(0, 3) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 0) == Approx(5.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 1) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 2) == Approx(5.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 3) == Approx(5.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 0) == Approx(9.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 1) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 2) == Approx(4.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 3) == Approx(8.0).epsilon(1e-7));
+
+  // row wise
+  imputer.Impute(rowWiseInput, mappedValue, 1, false);
+
+  REQUIRE(rowWiseInput(0, 0) == Approx(3.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(0, 1) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(0, 2) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(0, 3) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 0) == Approx(5.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 1) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 2) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 3) == Approx(5.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(2, 0) == Approx(9.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(2, 1) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(2, 2) == Approx(4.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(2, 3) == Approx(8.0).epsilon(1e-7));
+     
+}
+
+/**
  * Make sure ListwiseDeletion method deletes the whole column (if column wise)
  * or the row (if row wise) containing value of 0.
  */
