@@ -20,13 +20,13 @@ namespace mlpack {
 namespace data {
 
 // Load column vector.
-template<typename eT>
+template<typename MatType>
 bool LoadCol(const std::string& filename,
-             arma::Col<eT>& vec,
+             MatType& vec,
              DataOptions& opts)
 {
   // First load into auxiliary matrix.
-  arma::Mat<eT> tmp;
+  MatType tmp;
   opts.NoTranspose() = true; // false Transpose
   bool success = Load(filename, tmp, opts);
   if (!success)
@@ -71,7 +71,7 @@ bool LoadCol(const std::string& filename,
        * Now we can call the move operator, but it has to be the move operator
        * for Mat, not for Col.  This will avoid copying the data.
        */
-      *((arma::Mat<eT>*) &vec) = std::move(tmp);
+      *((MatType*) &vec) = std::move(tmp);
       return true;
     }
   }
@@ -79,18 +79,18 @@ bool LoadCol(const std::string& filename,
   {
     // It's loaded as a column vector.  We can call the move constructor
     // directly.
-    *((arma::Mat<eT>*) &vec) = std::move(tmp);
+    *((MatType*) &vec) = std::move(tmp);
     return true;
   }
 }
 
 // Load row vector.
-template<typename eT>
+template<typename MatType>
 bool LoadRow(const std::string& filename,
-             arma::Row<eT>& rowvec,
+             MatType& rowvec,
              DataOptions& opts)
 {
-  arma::Mat<eT> tmp;
+  MatType tmp;
   opts.NoTranspose() = true; // false Transpose
   bool success = Load(filename, tmp, opts);
   if (!success)
@@ -134,14 +134,14 @@ bool LoadRow(const std::string& filename,
        * Now we can call the move operator, but it has to be the move operator
        * for Mat, not for Col.  This will avoid copying the data.
        */
-      *((arma::Mat<eT>*) &rowvec) = std::move(tmp);
+      *((MatType*) &rowvec) = std::move(tmp);
       return true;
     }
   }
   else
   {
     // It's loaded as a row vector.  We can call the move constructor directly.
-    *((arma::Mat<eT>*) &rowvec) = std::move(tmp);
+    *((MatType*) &rowvec) = std::move(tmp);
     return true;
   }
 }
