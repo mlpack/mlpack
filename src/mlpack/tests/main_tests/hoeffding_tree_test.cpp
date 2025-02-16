@@ -37,7 +37,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingTreeOutputDimensionTest",
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
@@ -78,7 +78,8 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("braziltourism_labels.txt", labels))
+  if (!data::Load("braziltourism_labels.txt", labels,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   arma::mat testData;
@@ -118,7 +119,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingTreeLabelLessTest",
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
@@ -195,7 +196,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelReuseTest",
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
@@ -261,7 +262,8 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelCategoricalReuseTest",
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("braziltourism_labels.txt", labels))
+  if (!data::Load("braziltourism_labels.txt", labels,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   arma::mat testData;
@@ -328,7 +330,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMinSamplesTest",
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
@@ -356,7 +358,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMinSamplesTest",
   if (!data::Load("vc2.csv", inputData, info))
     FAIL("Cannot load train dataset vc2.csv!");
 
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   if (!data::Load("vc2_test.csv", testData, info))
@@ -392,7 +394,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMaxSamplesTest",
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
@@ -420,7 +422,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMaxSamplesTest",
   if (!data::Load("vc2.csv", inputData, info))
     FAIL("Cannot load train dataset vc2.csv!");
 
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   if (!data::Load("vc2_test.csv", testData, info))
@@ -456,7 +458,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingConfidenceTest",
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
@@ -484,7 +486,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingConfidenceTest",
   if (!data::Load("vc2.csv", inputData, info))
     FAIL("Cannot load train dataset vc2.csv!");
 
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   if (!data::Load("vc2_test.csv", testData, info))
@@ -519,7 +521,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingPassesTest",
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
@@ -547,7 +549,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingPassesTest",
   if (!data::Load("vc2.csv", inputData, info))
     FAIL("Cannot load train dataset vc2.csv!");
 
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   if (!data::Load("vc2_test.csv", testData, info))
@@ -583,7 +585,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
@@ -623,7 +625,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
@@ -653,7 +655,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
   if (!data::Load("vc2.csv", inputData, info))
     FAIL("Cannot load train dataset vc2.csv!");
 
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   if (!data::Load("vc2_test.csv", testData, info))
@@ -692,7 +694,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingBinningTest",
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;

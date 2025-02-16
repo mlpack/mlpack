@@ -37,7 +37,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeOutputDimensionTest",
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -83,7 +83,8 @@ TEST_CASE_METHOD(DecisionTreeTestFixture,
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("braziltourism_labels.txt", labels))
+  if (!data::Load("braziltourism_labels.txt",
+        labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -127,7 +128,8 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeMinimumLeafSizeTest",
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("braziltourism_labels.txt", labels))
+  if (!data::Load("braziltourism_labels.txt", labels,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -156,7 +158,8 @@ TEST_CASE_METHOD(DecisionTreeTestFixture,
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("braziltourism_labels.txt", labels))
+  if (!data::Load("braziltourism_labels.txt", labels,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -184,7 +187,8 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionMinimumGainSplitTest",
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("braziltourism_labels.txt", labels))
+  if (!data::Load("braziltourism_labels.txt", labels,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -212,7 +216,8 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionRegularisationTest",
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("braziltourism_labels.txt", labels))
+  if (!data::Load("braziltourism_labels.txt", labels,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -269,7 +274,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelReuseTest",
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -331,7 +336,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeTrainingVerTest",
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -367,7 +372,8 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelCategoricalReuseTest",
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("braziltourism_labels.txt", labels))
+  if (!data::Load("braziltourism_labels.txt", labels,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -432,7 +438,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeMaximumDepthTest",
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Initialize an all-ones weight matrix.

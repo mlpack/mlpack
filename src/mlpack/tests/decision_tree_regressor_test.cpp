@@ -967,9 +967,9 @@ TEST_CASE("NumericalBuildTest", "[DecisionTreeRegressorTest]")
   arma::mat X;
   arma::rowvec Y;
 
-  if (!data::Load("lars_dependent_x.csv", X))
+  if (!data::Load("lars_dependent_x.csv", X, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset lars_dependent_x.csv");
-  if (!data::Load("lars_dependent_y.csv", Y))
+  if (!data::Load("lars_dependent_y.csv", Y, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset lars_dependent_y.csv");
 
   arma::mat XTrain, XTest;
