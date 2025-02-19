@@ -52,11 +52,8 @@ pipeline
     always
     {
       // Process the test results.
-      try {
-        junit '**/reports/cpplint.junit.xml'
-      } catch (Exception e) {
-        echo 'junit exception: ' + e.toString()
-      }
+      junit(allowEmptyResults: true,
+            testResults: '**/reports/cpplint.junit.xml')
 
       // Clean the workspace.
       cleanWs(cleanWhenNotBuilt: false,
