@@ -104,7 +104,8 @@ TEMPLATE_TEST_CASE("SVDIncompleteIncrementalRegularizationTest",
   using eT = TestType;
 
   Mat<eT> dataset;
-  if (!data::Load("GroupLensSmall.csv", dataset))
+  if (!data::Load("GroupLensSmall.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset GroupLensSmall.csv");
 
   // Generate list of locations for batch insert constructor for sparse

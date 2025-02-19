@@ -20,14 +20,15 @@ namespace mlpack {
 namespace data {
 
 // Load column vector.
-template<typename eT>
-bool Load(const std::string& filename,
-          arma::Col<eT>& vec,
-          const bool fatal)
+template<typename MatType>
+bool LoadCol(const std::string& filename,
+             MatType& vec,
+             DataOptions& opts)
 {
   // First load into auxiliary matrix.
-  arma::Mat<eT> tmp;
-  bool success = Load(filename, tmp, fatal, false);
+  MatType tmp;
+  opts.NoTranspose() = true; // false Transpose
+  bool success = Load(filename, tmp, opts);
   if (!success)
   {
     vec.clear();
@@ -40,7 +41,7 @@ bool Load(const std::string& filename,
     if (tmp.n_rows > 1)
     {
       // Problem: invalid size!
-      if (fatal)
+      if (opts.Fatal())
       {
         Log::Fatal << "Matrix in file '" << filename << "' is not a vector, but"
             << " instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!"
@@ -70,7 +71,7 @@ bool Load(const std::string& filename,
        * Now we can call the move operator, but it has to be the move operator
        * for Mat, not for Col.  This will avoid copying the data.
        */
-      *((arma::Mat<eT>*) &vec) = std::move(tmp);
+      *((MatType*) &vec) = std::move(tmp);
       return true;
     }
   }
@@ -78,19 +79,20 @@ bool Load(const std::string& filename,
   {
     // It's loaded as a column vector.  We can call the move constructor
     // directly.
-    *((arma::Mat<eT>*) &vec) = std::move(tmp);
+    *((MatType*) &vec) = std::move(tmp);
     return true;
   }
 }
 
 // Load row vector.
-template<typename eT>
-bool Load(const std::string& filename,
-          arma::Row<eT>& rowvec,
-          const bool fatal)
+template<typename MatType>
+bool LoadRow(const std::string& filename,
+             MatType& rowvec,
+             DataOptions& opts)
 {
-  arma::Mat<eT> tmp;
-  bool success = Load(filename, tmp, fatal, false);
+  MatType tmp;
+  opts.NoTranspose() = true; // false Transpose
+  bool success = Load(filename, tmp, opts);
   if (!success)
   {
     rowvec.clear();
@@ -102,7 +104,7 @@ bool Load(const std::string& filename,
     if (tmp.n_cols > 1)
     {
       // Problem: invalid size!
-      if (fatal)
+      if (opts.Fatal())
       {
         Log::Fatal << "Matrix in file '" << filename << "' is not a vector, but"
             << " instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!"
@@ -132,14 +134,14 @@ bool Load(const std::string& filename,
        * Now we can call the move operator, but it has to be the move operator
        * for Mat, not for Col.  This will avoid copying the data.
        */
-      *((arma::Mat<eT>*) &rowvec) = std::move(tmp);
+      *((MatType*) &rowvec) = std::move(tmp);
       return true;
     }
   }
   else
   {
     // It's loaded as a row vector.  We can call the move constructor directly.
-    *((arma::Mat<eT>*) &rowvec) = std::move(tmp);
+    *((MatType*) &rowvec) = std::move(tmp);
     return true;
   }
 }

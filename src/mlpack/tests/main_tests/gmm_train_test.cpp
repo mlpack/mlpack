@@ -195,7 +195,8 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainNoiseTest",
                  "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("data_3d_mixed.txt", inputData))
+  if (!data::Load("data_3d_mixed.txt", inputData, 
+        data::NoFatal | data::Transpose))
     FAIL("Unable to load train dataset data_3d_mixed.txt!");
 
   FixedRandomSeed();
@@ -384,7 +385,8 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainPercentageTest",
                  "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("data_3d_mixed.txt", inputData))
+  if (!data::Load("data_3d_mixed.txt", inputData,
+        data::NoFatal | data::Transpose))
     FAIL("Unable to load train dataset data_3d_mixed.txt!");
 
   SetInputParam("input", inputData);
@@ -425,7 +427,8 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainSamplingsTest",
                  "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("data_3d_mixed.txt", inputData))
+  if (!data::Load("data_3d_mixed.txt", inputData,
+        data::NoFatal | data::Transpose))
     FAIL("Unable to load train dataset data_3d_mixed.txt!");
 
   SetInputParam("input", inputData);
@@ -466,7 +469,8 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainToleranceTest",
                  "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("data_3d_mixed.txt", inputData))
+  if (!data::Load("data_3d_mixed.txt", inputData,
+        data::NoFatal | data::Transpose))
     FAIL("Unable to load train dataset data_3d_mixed.txt!");
 
   SetInputParam("input", inputData);
