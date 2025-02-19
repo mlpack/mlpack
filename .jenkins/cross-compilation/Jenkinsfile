@@ -65,24 +65,24 @@ pipeline
               {
                 reuseNode true
                 image 'mlpack/mlpack-cross-compile-' + env.arch + ':latest'
+                args '-u 1000:1000'
               }
             }
             steps
             {
-              sh 'echo test'
-//              sh '''
-//                mkdir build/
-//                cd build/
-//                cmake \
-//                    -DBUILD_TESTS=ON \
-//                    -DBOARD_NAME=${arch} \
-//                    -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
-//                    -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
-//                    ../
-//                make mlpack_test;
-//
-//                # TODO: actually copy it and run it...
-//              '''
+              sh '''
+                mkdir build/
+                cd build/
+                cmake \
+                    -DBUILD_TESTS=ON \
+                    -DBOARD_NAME=${arch} \
+                    -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
+                    -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
+                    ../
+                make mlpack_test;
+
+                # TODO: actually copy it and run it...
+              '''
             }
           }
         }
