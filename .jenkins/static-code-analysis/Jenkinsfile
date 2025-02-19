@@ -74,7 +74,11 @@ pipeline
   {
     always
     {
-      junit '**/reports/reports.xml'
+      try {
+        junit '**/reports/reports.xml'
+      } catch (Exception e) {
+        echo 'junit exception: ' + e.toString()
+      }
 
       // Clean the workspace.
       cleanWs(cleanWhenNotBuilt: true,
