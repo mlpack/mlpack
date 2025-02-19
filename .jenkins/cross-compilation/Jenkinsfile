@@ -77,8 +77,7 @@ pipeline
                     -DBUILD_TESTS=ON \
                     -DARCH_NAME=${arch} \
                     -DCMAKE_CROSSCOMPILING=ON \
-                    -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake
-\
+                    -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake \
                     -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
                     -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
                     -DDOWNLOAD_DEPENDENCIES=ON \
