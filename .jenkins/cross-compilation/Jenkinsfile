@@ -63,8 +63,9 @@ pipeline
             {
               docker
               {
-                reuseNode true
                 image 'mlpack/mlpack-cross-compile-' + env.arch + ':latest'
+                alwaysPull true
+                reuseNode true
               }
             }
             steps
