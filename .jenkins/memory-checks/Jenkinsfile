@@ -96,7 +96,7 @@ pipeline
       junit '**/reports/tests/*.xml'
 
       // Clean the workspace.
-      cleanWs(cleanWhenNotBuilt: false,
+      cleanWs(cleanWhenNotBuilt: true,
               deleteDirs: true,
               disableDeferredWipeout: true,
               notFailBuild: true)
