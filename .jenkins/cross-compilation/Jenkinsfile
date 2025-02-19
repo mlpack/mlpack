@@ -78,6 +78,7 @@ pipeline
                     -DBOARD_NAME=${arch} \
                     -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
                     -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
+                    -DDOWNLOAD_DEPENDENCIES=ON \
                     ../
                 make mlpack_test;
 
