@@ -35,6 +35,7 @@ pipeline
 
           ccache -p;
           pwd;
+          ls ../;
           ccache --zero-stats;
           ./scripts/test-docs.sh doc/;
           # Print ccache statistics.
