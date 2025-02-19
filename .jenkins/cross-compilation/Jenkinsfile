@@ -52,6 +52,7 @@ pipeline
                 env.hostname = components[0]
                 env.device = components[1]
                 env.arch = components[2]
+                env.arch_upper = components[2].toUpperCase()
               }
             }
           }
@@ -75,7 +76,7 @@ pipeline
                 cd build/
                 cmake \
                     -DBUILD_TESTS=ON \
-                    -DARCH_NAME=${arch} \
+                    -DARCH_NAME=${arch_upper} \
                     -DCMAKE_CROSSCOMPILING=ON \
                     -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake \
                     -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
