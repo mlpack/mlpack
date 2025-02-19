@@ -9,20 +9,20 @@ pipeline
     label 'cross-compile'
   }
 
-  matrix
-  {
-    axes
-    {
-      axis
-      {
-        name 'target'
-        values 'couscous;rpi5;cortexa76'
-      }
-    }
-  }
-
   stages
   {
+    matrix
+    {
+      axes
+      {
+        axis
+        {
+          name 'target'
+          values 'couscous;rpi5;cortexa76'
+        }
+      }
+    }
+
     // Extract the hostname, the device, and the architecture.
     stage('Extract parameters from build matrix')
     {
