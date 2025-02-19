@@ -5,7 +5,11 @@ pipeline
   // Run inside of the custom Docker image for style checking.
   agent
   {
-    docker { image 'mlpack/jenkins-amd64-debian:latest' }
+    docker
+    {
+      image 'mlpack/jenkins-amd64-debian:latest'
+      alwaysPull true
+    }
   }
 
   stages
