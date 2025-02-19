@@ -59,25 +59,30 @@ pipeline
           // Cross-compile mlpack tests.
           stage('Cross-compile mlpack')
           {
-            // Use the correct Docker container for cross-compilation.
-            docker.image('mlpack/mlpack-cross-compile-' + env.arch + ':latest').inside
+            agent
             {
-              steps
+              docker
               {
-                sh '''
-                  mkdir build/
-                  cd build/
-                  cmake \
-                      -DBUILD_TESTS=ON \
-                      -DBOARD_NAME=${arch} \
-                      -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
-                      -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
-                      ../
-                  make mlpack_test;
-
-                  # TODO: actually copy it and run it...
-                '''
+                reuseNode true
+                image 'mlpack/mlpack-cross-compile-' + env.arch + ':latest'
               }
+            }
+            steps
+            {
+              sh 'echo test'
+//              sh '''
+//                mkdir build/
+//                cd build/
+//                cmake \
+//                    -DBUILD_TESTS=ON \
+//                    -DBOARD_NAME=${arch} \
+//                    -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
+//                    -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
+//                    ../
+//                make mlpack_test;
+//
+//                # TODO: actually copy it and run it...
+//              '''
             }
           }
         }
