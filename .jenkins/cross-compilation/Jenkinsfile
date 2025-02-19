@@ -75,7 +75,10 @@ pipeline
                 cd build/
                 cmake \
                     -DBUILD_TESTS=ON \
-                    -DBOARD_NAME=${arch} \
+                    -DARCH_NAME=${arch} \
+                    -DCMAKE_CROSSCOMPILING=ON \
+                    -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake
+\
                     -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
                     -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
                     -DDOWNLOAD_DEPENDENCIES=ON \
