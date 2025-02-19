@@ -1,17 +1,21 @@
-# `RTree`
+# `RStarTree`
 
-The `RTree` class implements the R tree, a well-known multidimensional space
-partitioning tree that can insert and remove points dynamically.
+The `RStarTree` class implements the R\*-tree, a multidimensional
+space partitioning tree that can insert and remove points dynamically.  The
+R\*-tree is an improvement over the [`RTree`](r_tree.md): its growth procedure
+is more complex and thus slightly more expensive, but results in trees where
+internal nodes have less overlap, which means better performance for search and
+lookup tasks.
 
-The `RTree` implementation in mlpack supports three template parameters for
+mlpack's `RStarTree` implementation supports three template parameters for
 configurable behavior, and implements all the functionality required by the
 [TreeType API](../../../developer/trees.md#the-treetype-api), plus some
 additional functionality specific to R trees.
 
-The R tree is generally less efficient for machine learning tasks than other
+The R\*-tree is generally less efficient for machine learning tasks than other
 trees such as the [`KDTree`](kdtree.md) or [`Octree`](octree.md), but those
 trees do not support dynamic insertion or deletion of points.  If insert/delete
-functionality is required, then the R tree or other variants of
+functionality is required, then the R-\*-tree or other variants of
 [`RectangleTree`](rectangle_tree.md) should be chosen instead.
 
  * [Template parameters](#template-parameters)
@@ -26,8 +30,9 @@ functionality is required, then the R tree or other variants of
 <!-- TODO: add links to all distance-based algorithms and other trees? -->
 
  * [`RectangleTree`](rectangle_tree.md)
- * [R-Tree on Wikipedia](https://en.wikipedia.org/wiki/R-tree)
- * [R-Trees: A Dynamic Index Structure for Spatial Searching (pdf)](http://www-db.deis.unibo.it/courses/SI-LS/papers/Gut84.pdf)
+ * [`RTree`](r_tree.md)
+ * [R\*-Tree on Wikipedia](https://en.wikipedia.org/wiki/R*-tree)
+ * [The R\*-tree: An Efficient And Robust Access Method for Points and Rectangles (pdf)](https://dl.acm.org/doi/pdf/10.1145/93597.98741)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 
 ## Template parameters
@@ -35,10 +40,10 @@ functionality is required, then the R tree or other variants of
 In accordance with the [TreeType
 API](../../../developer/trees.md#template-parameters-required-by-the-treetype-policy)
 (see also [this more detailed section](../../../developer/trees.md#template-parameters)),
-the `RTree` class takes three template parameters:
+the `RStarTree` class takes three template parameters:
 
 ```
-RTree<DistanceType, StatisticType, MatType>
+RStarTree<DistanceType, StatisticType, MatType>
 ```
 
  * `DistanceType`: the [distance metric](../distances.md) to use for distance
@@ -56,50 +61,51 @@ RTree<DistanceType, StatisticType, MatType>
    matching the [Armadillo API](../../matrices.md).  By default, `arma::mat` is
    used, but other types such as `arma::fmat` or similar will work just fine.
 
-The `RTree` class itself is a convenience typedef of the generic
+The `RStarTree` class itself is a convenience typedef of the generic
 [`RectangleTree`](rectangle_tree.md) class, using the
-[`RTreeSplit`](rectangle_tree.md#rtreesplit) class as the split strategy, the
-[`RTreeDescentHeuristic`](rectangle_tree.md#rtreedescentheuristic) class as the
-descent strategy, and
+[`RStarTreeSplit`](rectangle_tree.md#rtreesplit) class as the split strategy,
+the [`RStarTreeDescentHeuristic`](rectangle_tree.md#rtreedescentheuristic) class
+as the descent strategy, and
 [`NoAuxiliaryInformation`](rectangle_tree.md#auxiliaryinformationtype) as the
 auxiliary information type.
 
 If no template parameters are explicitly specified, then defaults are used:
 
 ```
-RTree<> = RTree<EuclideanDistance, EmptyStatistic, arma::mat>
+RStarTree<> = RStarTree<EuclideanDistance, EmptyStatistic, arma::mat>
 ```
 
 ## Constructors
 
-`RTree`s are constructed by inserting points in a dataset sequentially.
+`RStarTree`s are constructed by inserting points in a dataset sequentially.
 The dataset is not permuted during the construction process.
 
 ---
 
- * `node = RTree(data)`
- * `node = RTree(data, maxLeafSize=20, minLeafSize=8)`
- * `node = RTree(data, maxLeafSize=20, minLeafSize=8, maxNumChildren=5, minNumChildren=2)`
-   - Construct an `RTree` on the given `data` with the given construction
+ * `node = RStarTree(data)`
+ * `node = RStarTree(data, maxLeafSize=20, minLeafSize=8)`
+ * `node = RStarTree(data, maxLeafSize=20, minLeafSize=8, maxNumChildren=5, minNumChildren=2)`
+   - Construct an `RStarTree` on the given `data` with the given construction
      parameters.
    - By default, `data` is copied.  Avoid a copy by using `std::move()` (e.g.
      `std::move(data)`); when doing this, `data` will be set to an empty matrix.
 
 ---
 
- * `node = RTree<DistanceType, StatisticType, MatType>(data)`
- * `node = RTree<DistanceType, StatisticType, MatType>(data, maxLeafSize=20, minLeafSize=8)`
- * `node = RTree<DistanceType, StatisticType, MatType>(data, maxLeafSize=20, minLeafSize=8, maxNumChildren=5, minNumChildren=2)`
-   - Construct an `RTree` on the given `data`, using custom template parameters
-     to control the behavior of the tree and the given construction parameters.
+ * `node = RStarTree<DistanceType, StatisticType, MatType>(data)`
+ * `node = RStarTree<DistanceType, StatisticType, MatType>(data, maxLeafSize=20, minLeafSize=8)`
+ * `node = RStarTree<DistanceType, StatisticType, MatType>(data, maxLeafSize=20, minLeafSize=8, maxNumChildren=5, minNumChildren=2)`
+   - Construct an `RStarTree` on the given `data`, using custom template
+     parameters to control the behavior of the tree and the given construction
+     parameters.
    - By default, `data` is copied.  Avoid a copy by using `std::move()` (e.g.
      `std::move(data)`); when doing this, `data` will be set to an empty matrix.
 
 ---
 
- * `node = RTree(dimensionality)`
-   - Construct an empty `RTree` with no children, no points, and
-     default template parameters.
+ * `node = RStarTree(dimensionality)`
+   - Construct an empty `RStarTree` with no children, no points, and default
+     template parameters.
    - Use `node.Insert()` to insert points into the tree.  All points must have
      dimensionality `dimensionality`.
 
@@ -132,9 +138,9 @@ The dataset is not permuted during the construction process.
 
 ***Notes:***
 
- - The name `node` is used here for `RTree` objects instead of `tree`, because
-   each `RTree` object is a single node in the tree.  The constructor returns
-   the node that is the root of the tree.
+ - The name `node` is used here for `RStarTree` objects instead of `tree`,
+   because each `RStarTree` object is a single node in the tree.  The
+   constructor returns the node that is the root of the tree.
 
  - See also the
    [developer documentation on tree constructors](../../../developer/trees.md#constructors-and-destructors).
@@ -157,7 +163,7 @@ The dataset is not permuted during the construction process.
 
 ## Basic tree properties
 
-Once an `RTree` object is constructed, various properties of the tree can be
+Once an `RStarTree` object is constructed, various properties of the tree can be
 accessed or inspected.  Many of these functions are required by the [TreeType
 API](../../../developer/trees.md#the-treetype-api).
 
@@ -169,22 +175,22 @@ API](../../../developer/trees.md#the-treetype-api).
 
  * `node.IsLeaf()` returns a `bool` indicating whether or not `node` is a leaf.
 
- * `node.Child(i)` returns an `RTree&` that is the `i`th child.
+ * `node.Child(i)` returns an `RStarTree&` that is the `i`th child.
    - `i` must be less than `node.NumChildren()`.
    - This function should only be called if `node.NumChildren()` is not `0`
-     (e.g. if `node` is not a leaf).  Note that this returns a valid `RTree&`
-     that can itself be used just like the root node of the tree!
+     (e.g. if `node` is not a leaf).  Note that this returns a valid
+     `RStarTree&` that can itself be used just like the root node of the tree!
 
- * `node.Parent()` will return an `RTree*` that points to the parent of `node`,
-   or `NULL` if `node` is the root of the `RTree`.
+ * `node.Parent()` will return an `RStarTree*` that points to the parent of
+   `node`, or `NULL` if `node` is the root of the `RStarTree`.
 
 ---
 
 ### Accessing members of a tree
 
- * `node.Bound()` will return an
-   [`HRectBound<DistanceType, ElemType>&`](binary_space_tree.md#hrectbound)
-   object that represents the hyperrectangle bounding box of `node`.
+ * `node.Bound()` will return an [`HRectBound<DistanceType,
+   ElemType>&`](binary_space_tree.md#hrectbound) object that represents the
+   hyperrectangle bounding box of `node`.
    - `ElemType` is the element type of `MatType`; so, if default template
      parameters are used, `ElemType` is `double`.
    - `bound` is a hyperrectangle that encloses all the descendant points of
@@ -231,8 +237,8 @@ for basic tree functionality in mlpack.
 
  * `node.NumPoints()` returns a `size_t` indicating the number of points held
    directly in `node`.
-   - If `node` is not a leaf, this will return `0`, as `RTree` only holds points
-     directly in its leaves.
+   - If `node` is not a leaf, this will return `0`, as `RStarTree` only holds
+     points directly in its leaves.
    - If `node` is a leaf, then this will return values between
      `node.MinLeafSize()` and `node.MaxLeafSize()` (inclusive).
    - If the tree has fewer than `node.MinLeafSize()` points total, then
@@ -246,7 +252,7 @@ for basic tree functionality in mlpack.
      `node.Dataset().col(node.Point(i))`.
    - Accessing the actual `i`'th point itself can be done with, e.g.,
      `node.Dataset().col(node.Point(i))`.
-   - Point indices are not necessarily contiguous for `RTree`s; that is,
+   - Point indices are not necessarily contiguous for `RStarTree`s; that is,
      `node.Point(i) + 1` is not necessarily `node.Point(i + 1)`.
 
  * `node.NumDescendants()` returns a `size_t` indicating the number of points
@@ -270,10 +276,10 @@ for basic tree functionality in mlpack.
 
 ### Accessing computed bound quantities of a tree
 
-The following quantities are cached for each node in a `RTree`, and so accessing
-them does not require any computation.  In the documentation below, `ElemType`
-is the element type of the given `MatType`; e.g., if `MatType` is `arma::mat`,
-then `ElemType` is `double`.
+The following quantities are cached for each node in a `RStarTree`, and so
+accessing them does not require any computation.  In the documentation below,
+`ElemType` is the element type of the given `MatType`; e.g., if `MatType` is
+`arma::mat`, then `ElemType` is `double`.
 
  * `node.FurthestPointDistance()` returns an `ElemType` representing the
    distance between the center of the bound of `node` and the furthest point
@@ -309,7 +315,7 @@ on bound quantities for trees.
      dataset held by `node`.
    - This is equivalent to calling `node.Bound().Center(center)`.
 
- * An `RTree` can be serialized with
+ * An `RStarTree` can be serialized with
    [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
 
 ## Bounding distances with the tree
@@ -330,7 +336,7 @@ nodes.  The following functions can be used for these tasks.
  * `node.GetNearestChild(other)`
  * `node.GetFurthestChild(other)`
    - Return a `size_t` indicating the index of the child that is closest to (or
-     furthest from) the `RTree` node `other`, with respect to the
+     furthest from) the `RStarTree` node `other`, with respect to the
      `MinDistance()` (or `MaxDistance()`) function.
    - If there is a tie, the node with the lowest index is returned.
    - If `node` is a leaf, `0` is returned.
@@ -340,7 +346,7 @@ nodes.  The following functions can be used for these tasks.
  * `node.MinDistance(point)`
  * `node.MinDistance(other)`
    - Return a `double` indicating the minimum possible distance between `node`
-     and `point`, or the `RTree` node `other`.
+     and `point`, or the `RStarTree` node `other`.
    - This is equivalent to the minimum possible distance between any point
      contained in the bounding hyperrectangle of `node` and `point`, or between
      any point contained in the bounding hyperrectangle of `node` and any point
@@ -351,7 +357,7 @@ nodes.  The following functions can be used for these tasks.
  * `node.MaxDistance(point)`
  * `node.MaxDistance(other)`
    - Return a `double` indicating the maximum possible distance between `node`
-     and `point`, or the `RTree` node `other`.
+     and `point`, or the `RStarTree` node `other`.
    - This is equivalent to the maximum possible distance between any point
      contained in the bounding hyperrectangle of `node` and `point`, or between
      any point contained in the bounding hyperrectangle of `node` and any point
@@ -370,20 +376,20 @@ nodes.  The following functions can be used for these tasks.
 
 ## Tree traversals
 
-Like every mlpack tree, the `RTree` class provides a [single-tree and
+Like every mlpack tree, the `RStarTree` class provides a [single-tree and
 dual-tree traversal](../../../developer/trees.md#traversals) that can be paired
 with a [`RuleType` class](../../../developer/trees.md#rules) to implement a
 single-tree or dual-tree algorithm.
 
- * `RTree::SingleTreeTraverser`
+ * `RStarTree::SingleTreeTraverser`
    - Implements a depth-first single-tree traverser.
 
- * `RTree::DualTreeTraverser`
+ * `RStarTree::DualTreeTraverser`
    - Implements a dual-depth-first dual-tree traverser.
 
 ## Example usage
 
-Build an `RTree` on the `cloud` dataset and print basic statistics about the
+Build an `RStarTree` on the `cloud` dataset and print basic statistics about the
 tree.
 
 ```c++
@@ -391,15 +397,15 @@ tree.
 arma::mat dataset;
 mlpack::data::Load("cloud.csv", dataset, true);
 
-// Build the R tree with a leaf size of 10.  (This means that leaf nodes
+// Build the rectangle tree with a leaf size of 10.  (This means that leaf nodes
 // cannot contain more than 10 points.)
 //
 // The std::move() means that `dataset` will be empty after this call, and no
 // data will be copied during tree building.
 //
-// Note that the '<>' is not necessary if C++20 is being used (e.g.
-// `mlpack::RTree tree(...)` will work fine in C++20 or newer).
-mlpack::RTree<> tree(std::move(dataset));
+// Note that the '<>' isn't necessary if C++20 is being used (e.g.
+// `mlpack::RStarTree tree(...)` will work fine in C++20 or newer).
+mlpack::RStarTree<> tree(std::move(dataset));
 
 // Print the bounding box of the root node.
 std::cout << "Bounding box of root node:" << std::endl;
@@ -426,7 +432,7 @@ for (size_t i = 0; i < tree.NumChildren(); ++i)
 }
 std::cout << std::endl;
 
-// Compute the center of the RTree.
+// Compute the center of the RStarTree.
 arma::vec center;
 tree.Center(center);
 std::cout << "Center of tree: " << center.t();
@@ -434,7 +440,7 @@ std::cout << "Center of tree: " << center.t();
 
 ---
 
-Build two `RTree`s on subsets of the corel dataset and compute minimum and
+Build two `RStarTree`s on subsets of the corel dataset and compute minimum and
 maximum distances between different nodes in the tree.
 
 ```c++
@@ -443,8 +449,9 @@ arma::mat dataset;
 mlpack::data::Load("corel-histogram.csv", dataset, true);
 
 // Build trees on the first half and the second half of points.
-mlpack::RTree<> tree1(dataset.cols(0, dataset.n_cols / 2));
-mlpack::RTree<> tree2(dataset.cols(dataset.n_cols / 2 + 1, dataset.n_cols - 1));
+mlpack::RStarTree<> tree1(dataset.cols(0, dataset.n_cols / 2));
+mlpack::RStarTree<> tree2(dataset.cols(dataset.n_cols / 2 + 1,
+                                       dataset.n_cols - 1));
 
 // Compute the maximum distance between the trees.
 std::cout << "Maximum distance between tree root nodes: "
@@ -453,12 +460,12 @@ std::cout << "Maximum distance between tree root nodes: "
 // Get the leftmost grandchild of the first tree's root---if it exists.
 if (!tree1.IsLeaf() && !tree1.Child(0).IsLeaf())
 {
-  mlpack::RTree<>& node1 = tree1.Child(0).Child(0);
+  mlpack::RStarTree<>& node1 = tree1.Child(0).Child(0);
 
   // Get the leftmost grandchild of the second tree's root---if it exists.
   if (!tree2.IsLeaf() && !tree2.Child(0).IsLeaf())
   {
-    mlpack::RTree<>& node2 = tree2.Child(0).Child(0);
+    mlpack::RStarTree<>& node2 = tree2.Child(0).Child(0);
 
     // Print the minimum and maximum distance between the nodes.
     mlpack::Range dists = node1.RangeDistance(node2);
@@ -488,19 +495,19 @@ if (!tree1.IsLeaf() && !tree1.Child(0).IsLeaf())
 
 ---
 
-Build an `RTree` on 32-bit floating point data and save it to disk.
+Build an `RStarTree` on 32-bit floating point data and save it to disk.
 
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::fmat dataset;
 mlpack::data::Load("corel-histogram.csv", dataset);
 
-// Build the RTree using 32-bit floating point data as the matrix type.  We will
-// still use the default EmptyStatistic and EuclideanDistance parameters.  A
-// leaf size of 100 is used here.
-mlpack::RTree<mlpack::EuclideanDistance,
-              mlpack::EmptyStatistic,
-              arma::fmat> tree(std::move(dataset), 100);
+// Build the RStarTree using 32-bit floating point data as the matrix type.  We
+// will still use the default EmptyStatistic and EuclideanDistance parameters.
+// A leaf size of 100 is used here.
+mlpack::RStarTree<mlpack::EuclideanDistance,
+                  mlpack::EmptyStatistic,
+                  arma::fmat> tree(std::move(dataset), 100);
 
 // Save the tree to disk with the name 'tree'.
 mlpack::data::Save("tree.bin", "tree", tree);
@@ -511,17 +518,17 @@ std::cout << "Saved tree with " << tree.Dataset().n_cols << " points to "
 
 ---
 
-Load a 32-bit floating point `RTree` from disk, then traverse it manually and
-find the number of leaf nodes with less than 10 points.
+Load a 32-bit floating point `RStarTree` from disk, then traverse it manually
+and find the number of leaf nodes with less than 10 points.
 
 ```c++
 // This assumes the tree has already been saved to 'tree.bin' (as in the example
 // above).
 
 // This convenient typedef saves us a long type name!
-using TreeType = mlpack::RTree<mlpack::EuclideanDistance,
-                               mlpack::EmptyStatistic,
-                               arma::fmat>;
+using TreeType = mlpack::RStarTree<mlpack::EuclideanDistance,
+                                   mlpack::EmptyStatistic,
+                                   arma::fmat>;
 
 TreeType tree;
 mlpack::data::Load("tree.bin", "tree", tree);
@@ -559,8 +566,8 @@ std::cout << leafCount << " out of " << totalLeafCount << " leaves have fewer "
 
 ---
 
-Build an `RTree` by iteratively inserting points from the corel dataset, print
-some information, and then remove a few randomly chosen points.
+Build an `RStarTree` by iteratively inserting points from the corel dataset,
+print some information, and then remove a few randomly chosen points.
 
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
@@ -568,7 +575,7 @@ arma::mat dataset;
 mlpack::data::Load("corel-histogram.csv", dataset, true);
 
 // Create an empty tree of the right dimensionality.
-mlpack::RTree<> t(dataset.n_rows);
+mlpack::RStarTree<> t(dataset.n_rows);
 
 // Insert points one by one for the first half of the dataset.
 for (size_t i = 0; i < dataset.n_cols / 2; ++i)

@@ -770,7 +770,7 @@ bool RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
         tree->numDescendants -= node->numDescendants;
         tree = tree->Parent();
       }
-      CondenseTree(arma::vec(), relevels, false);
+      CondenseTree(arma::Col<ElemType>(), relevels, false);
       return true;
     }
 
@@ -1121,9 +1121,10 @@ template<typename DistanceType,
          typename SplitType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
+template<typename VecType>
 void RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
                    AuxiliaryInformationType>::
-    CondenseTree(const arma::vec& point,
+    CondenseTree(const VecType& point,
                  std::vector<bool>& relevels,
                  const bool usePoint)
 {
@@ -1305,9 +1306,10 @@ template<typename DistanceType,
          typename SplitType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
+template<typename VecType>
 bool RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
                    AuxiliaryInformationType>::
-    ShrinkBoundForPoint(const arma::vec& point)
+    ShrinkBoundForPoint(const VecType& point)
 {
   bool shrunk = false;
   if (IsLeaf())
@@ -1405,7 +1407,7 @@ template<typename DistanceType,
          template<typename> class AuxiliaryInformationType>
 bool RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
                    AuxiliaryInformationType>::
-    ShrinkBoundForBound(const HRectBound<DistanceType>& /* b */)
+    ShrinkBoundForBound(const HRectBound<DistanceType, ElemType>& /* b */)
 {
   // Using the sum is safe since none of the dimensions can increase.
   ElemType sum = 0;

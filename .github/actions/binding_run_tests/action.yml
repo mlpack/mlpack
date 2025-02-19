@@ -1,0 +1,100 @@
+# This action sets up any language-specific environment for any of mlpack's
+# bindings.
+name: "Run binding tests"
+description: "Run tests for mlpack's bindings to other languages and gather results in junit format."
+inputs:
+  lang:
+    required: true
+    description: "The language to run binding tests for."
+
+runs:
+  using: "composite"
+  steps:
+    #
+    # Python bindings.
+    #
+    - name: "Run Python binding tests"
+      if: inputs.lang == 'Python'
+      shell: bash
+      run: |
+          # Run manually instead of through CTest so we can get XML output.
+          ROOTDIR=`pwd`;
+          cd build/src/mlpack/bindings/python/
+          python3 -m pytest tests/ --junit-xml="$ROOTDIR/build/python_bindings.junit.xml"
+
+    #
+    # Julia bindings.
+    #
+    - name: "Run Julia binding tests"
+      if: inputs.lang == 'Julia'
+      shell: bash
+      run: |
+          # Run manually instead of through CTest so we can get XML output.
+          # We use the TestReports.jl package for getting output in the right
+          # format.
+          ROOTDIR=`pwd`;
+          cd build/src/mlpack/bindings/julia/mlpack/
+          JULIA_PROJECT=$PWD $JULIA_EXECUTABLE -e \
+              "using Pkg; Pkg.add(\"TestReports\"); using TestReports; TestReports.test(\"mlpack\")"
+          mv testlog.xml $ROOTDIR/build/julia_bindings.junit.xml
+
+    #
+    # R bindings.
+    #
+    - name: "Run R binding tests"
+      if: inputs.lang == 'R'
+      shell: bash
+      run: |
+          ROOTDIR=`pwd`;
+          cd build/src/mlpack/bindings/R/mlpack/
+          Rscript -e "library(pkgload); load_all('.'); library(testthat); options(testthat.output_file='r_bindings.junit.xml'); test_file('tests/testthat/test-R_binding.R', reporter = 'junit')"
+          mv tests/testthat/r_bindings.junit.xml $ROOTDIR/build/r_bindings.junit.xml
+
+    - name: "Upload R package artifact"
+      if: inputs.lang == 'R' && runner.os == 'Linux' # Only upload one tarball.
+      uses: actions/upload-artifact@v4.4.0
+      with:
+        name: mlpack_r_tarball
+        path: build/src/mlpack/bindings/R/${{ env.MLPACK_R_PACKAGE }}
+
+    - name: "Install R CMD check dependencies"
+      if: inputs.lang == 'R'
+      shell: Rscript {0}
+      run: |
+          install.packages(c('remotes', 'rcmdcheck', 'curl'))
+          remotes::install_deps('build/src/mlpack/bindings/R/${{ env.MLPACK_R_PACKAGE }}', dependencies = TRUE)
+
+    - name: "Run R CMD check"
+      if: inputs.lang == 'R'
+      shell: bash
+      # TODO: revert to error_on = 'warning'
+      run: Rscript -e "rcmdcheck::rcmdcheck('build/src/mlpack/bindings/R/${{ env.MLPACK_R_PACKAGE }}', args = c('--no-manual', '--as-cran'), error_on = 'error', check_dir = 'check')"
+
+    # TODO: upload check results on failure
+
+    #
+    # Go bindings.
+    #
+    - name: "Run Go binding tests (Linux)"
+      if: inputs.lang == 'Go' && runner.os == 'Linux'
+      shell: bash
+      run: |
+          # Run manually instead of through CTest so we can get XML output (via
+          # an extra tool).
+          go install github.com/jstemmer/go-junit-report/v2@latest
+          ROOTDIR=`pwd`;
+          cd build/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/
+          go test -v $ROOTDIR/src/mlpack/bindings/go/tests/go_binding_test.go 2>&1 |\
+              $HOME/go/bin/go-junit-report | tee $ROOTDIR/build/go_bindings.junit.xml;
+
+    - name: "Run Go binding tests (macOS)"
+      if: inputs.lang == 'Go' && runner.os == 'macOS'
+      shell: bash
+      run: |
+          # Run manually instead of through CTest so we can get XML output (via
+          # an extra tool).
+          go install github.com/jstemmer/go-junit-report/v2@latest
+          ROOTDIR=`pwd`;
+          cd build/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/
+          CGO_LDFLAGS="-Wl,-no_warn_duplicate_libraries" go test -v $ROOTDIR/src/mlpack/bindings/go/tests/go_binding_test.go 2>&1 |\
+              $HOME/go/bin/go-junit-report | tee $ROOTDIR/build/go_bindings.junit.xml;
