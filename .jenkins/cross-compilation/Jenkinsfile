@@ -65,7 +65,6 @@ pipeline
               {
                 reuseNode true
                 image 'mlpack/mlpack-cross-compile-' + env.arch + ':latest'
-                args '-u 1000:1000'
               }
             }
             steps
