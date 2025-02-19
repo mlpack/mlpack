@@ -19,8 +19,8 @@ pipeline
         script
         {
           u = load '.jenkins/utils.groovy'
-          u.setBuildStatus("Cross-compile to " + device + " (pipeline)",
-              "Building...", "PENDING");
+          u.setBuildStatus("Cross-compilation tests (pipeline)", "Building...",
+              "PENDING");
         }
       }
     }
@@ -47,11 +47,11 @@ pipeline
             {
               script
               {
-                def components = inputString.split(';')
+                def components = env.target.split(';')
 
-                def hostname = components[0]
-                def device = components[1]
-                def arch = components[2]
+                env.hostname = components[0]
+                env.device = components[1]
+                env.arch = components[2]
               }
             }
           }
@@ -64,7 +64,7 @@ pipeline
             {
               docker
               {
-                image 'mlpack/mlpack-cross-compile-' + arch + ':latest'
+                image 'mlpack/mlpack-cross-compile-' + env.arch + ':latest'
                 alwaysPull true
                 reuseNode true // Run on the existing cross-compile host.
               }
@@ -77,7 +77,7 @@ pipeline
                 cd build/
                 cmake \
                     -DBUILD_TESTS=ON \
-                    -DBOARD_NAME=${arch} \
+                    -DBOARD_NAME=${env.arch} \
                     -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
                     -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
                     ../
@@ -98,7 +98,7 @@ pipeline
     {
       script
       {
-        u.setBuildStatus("Cross-compile to " + device + " (pipeline)",
+        u.setBuildStatus("Cross-compilation tests (pipeline)",
             "Build finished.", "SUCCESS");
       }
     }
@@ -107,7 +107,7 @@ pipeline
     {
       script
       {
-        u.setBuildStatus("Cross-compile to " + device + " (pipeline)",
+        u.setBuildStatus("Cross-compilation tests (pipeline)",
             "Cross-compilation build failed.", "FAILURE");
       }
     }
