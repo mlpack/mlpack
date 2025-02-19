@@ -6,7 +6,7 @@ pipeline
   agent
   {
     // Only use a node that has access to the target hosts.
-    label { 'cross-compile' }
+    label 'cross-compile'
   }
 
   matrix
@@ -57,7 +57,7 @@ pipeline
         {
           image 'mlpack/mlpack-cross-compile-' + arch + ':latest'
           alwaysPull true
-          ruseNode true // Run on the existing cross-compile host.
+          reuseNode true // Run on the existing cross-compile host.
         }
       }
 
