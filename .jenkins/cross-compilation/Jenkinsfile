@@ -9,71 +9,81 @@ pipeline
     label 'cross-compile'
   }
 
-  matrix
+  stage('Set build as pending')
   {
-    axes
+    steps
     {
-      axis
+      // Set the build status...
+      script
       {
-        name 'target'
-        values 'couscous;rpi5;cortexa76'
+        u = load '.jenkins/utils.groovy'
+        u.setBuildStatus("Cross-compile to " + device + " (pipeline)",
+            "Building...", "PENDING");
       }
     }
-    stages
+  }
+
+  stage('Cross-compile mlpack to different targets')
+  {
+    matrix
     {
-      // Extract the hostname, the device, and the architecture.
-      stage('Extract parameters from build matrix')
+      axes
       {
-        steps
+        axis
         {
-          script
-          {
-            def components = inputString.split(';')
-
-            def hostname = components[0]
-            def device = components[1]
-            def arch = components[2]
-          }
-
-          // Set the build status...
-          script
-          {
-            u = load '.jenkins/utils.groovy'
-            u.setBuildStatus("Cross-compile to " + device + " (pipeline)",
-                "Building...", "PENDING");
-          }
+          name 'target'
+          values 'couscous;rpi5;cortexa76'
         }
       }
 
-      // Cross-compile mlpack tests.
-      stage('Cross-compile mlpack')
+      stages
       {
-        // Use the correct Docker container for cross-compilation.
-        agent
+        // Extract the hostname, the device, and the architecture.
+        stage('Extract parameters from build matrix')
         {
-          docker
+          steps
           {
-            image 'mlpack/mlpack-cross-compile-' + arch + ':latest'
-            alwaysPull true
-            reuseNode true // Run on the existing cross-compile host.
+            script
+            {
+              def components = inputString.split(';')
+
+              def hostname = components[0]
+              def device = components[1]
+              def arch = components[2]
+            }
           }
         }
 
-        steps
+        // Cross-compile mlpack tests.
+        stage('Cross-compile mlpack')
         {
-          sh '''
-            mkdir build/
-            cd build/
-            cmake \
-                -DBUILD_TESTS=ON \
-                -DBOARD_NAME=${arch} \
-                -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
-                -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
-                ../
-            make mlpack_test;
+          // Use the correct Docker container for cross-compilation.
+          agent
+          {
+            docker
+            {
+              image 'mlpack/mlpack-cross-compile-' + arch + ':latest'
+              alwaysPull true
+              reuseNode true // Run on the existing cross-compile host.
+            }
+          }
 
-            # TODO: actually copy it and run it...
-          '''
+          steps
+          {
+            sh '''
+              mkdir build/
+              cd build/
+              cmake \
+                  -DBUILD_TESTS=ON \
+                  -DBOARD_NAME=${arch} \
+                  -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
+                  -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
+                  ../
+              make mlpack_test;
+
+              # TODO: actually copy it and run it...
+            '''
+          }
         }
       }
     }
