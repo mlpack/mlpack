@@ -1,0 +1,117 @@
+// The static code analysis build will analyze the mlpack codebase for any known
+// C++ issues.
+pipeline
+{
+  // Run inside of the custom Docker image for style checking.
+  agent
+  {
+    docker { image 'mlpack/jenkins-amd64-debian:latest' }
+  }
+
+  stages
+  {
+    // First we have to check out the jenkins-conf repository, which contains
+    // the scripts that we will use for checking the style.
+    stage('Check out jenkins-conf repository')
+    {
+      steps
+      {
+        script
+        {
+          u = load '.jenkins/utils.groovy'
+          u.setBuildStatus("Memory Checks (pipeline)", "Building...",
+              "PENDING");
+        }
+
+        sh '''
+          git clone https://github.com/mlpack/jenkins-conf
+        '''
+      }
+    }
+
+    // First build mlpack_test.
+    stage('Build mlpack')
+    {
+      steps
+      {
+        sh '''
+          mkdir build
+          cd build
+          cmake -DDEBUG=ON -DBUILD_TESTS=ON -DDOWNLOAD_DEPENDENCIES=ON ..
+          make mlpack_test
+          cd ..
+        '''
+      }
+    }
+
+    // Now run the memory checks.
+    stage('Run memory checks')
+    {
+      steps
+      {
+        // First get the number of the PR, as we will need to do that to see
+        // what files have changed.
+        script
+        {
+          if (env.BRANCH_NAME.startsWith('PR-'))
+          {
+            def prNum = env.BRANCH_NAME.replace(/^PR-/, '')
+          }
+        }
+
+        sh'''
+          # Move memory tests to the current directory.
+          cp jenkins-conf/test-support/memory/* .
+
+          # Get information about the current PR.
+          echo "PR number: ${prNum}";
+          curl -o files.txt https://api.github.com/repos/mlpack/mlpack/pulls/${prNum}/files
+          grep -o 'filename.*' files.txt |\
+              sed -e 's/^filename": "//' -e 's/",//' |\
+              uniq |\
+              awk '/.cpp/ || /.hpp/' > filenames.txt;
+
+          # Debug print modified files, we try to run the memory check for those
+          # files only.
+          cat filenames.txt;
+
+          # Run memory checks.
+          OMP_NUM_THREADS=1 ./run-mlpack-valgrind-tests.sh ||\
+              mkdir -p temp/test;
+
+          # Debug print tests to run.
+          cat testbins.txt;
+
+          # Cat the output...
+          ls -lh reports/tests/
+        '''
+      }
+    }
+  }
+
+  post
+  {
+    always
+    {
+      junit '**/reports/tests/*.xml'
+    }
+
+    success
+    {
+      script
+      {
+        u.setBuildStatus("Memory Checks (pipeline)", "Build finished.",
+            "SUCCESS");
+      }
+    }
+
+    failure
+    {
+      script
+      {
+        u.setBuildStatus("Memory checks (pipeline)",
+            "Memory check failure with valgrind.", "FAILURE");
+      }
+    }
+  }
+}

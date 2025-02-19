@@ -40,7 +40,7 @@ pipeline
           git clone https://github.com/mlpack/ensmallen.git
           cmake \
               -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
-              -DBUILD_TESTS=ON
+              -DBUILD_TESTS=ON \
               -DENSMALLEN_INCLUDE_DIR=ensmallen/include/ \
               ..
           cd ../
