@@ -21,6 +21,12 @@ pipeline
           u = load '.jenkins/utils.groovy'
           u.setBuildStatus("Cross-compilation tests (pipeline)", "Building...",
               "PENDING");
+
+          // Clean the workspace.
+          cleanWs(cleanWhenNotBuilt: true,
+                  deleteDirs: true,
+                  disableDeferredWipeout: true,
+                  notFailBuild: true)
         }
 
         // Create a directory for our resulting reports.
@@ -115,12 +121,6 @@ pipeline
     always
     {
       junit '**/reports/mlpack_test.*.junit.xml'
-
-      // Clean the workspace.
-      cleanWs(cleanWhenNotBuilt: true,
-              deleteDirs: true,
-              disableDeferredWipeout: true,
-              notFailBuild: true)
     }
 
     success
