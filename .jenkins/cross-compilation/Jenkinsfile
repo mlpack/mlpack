@@ -61,7 +61,7 @@ pipeline
           }
 
           // Cross-compile mlpack tests.
-          stage('Cross-compilation tests: ' + env.hostname)
+          stage('Cross-compilation tests')
           {
             agent
             {
