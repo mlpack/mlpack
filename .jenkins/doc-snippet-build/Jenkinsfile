@@ -10,6 +10,7 @@ pipeline
     {
       image 'mlpack/jenkins-mlpack-docbuild:latest'
       alwaysPull true
+      args '-v /home/jenkins/ccache:/opt/ccache'
     }
   }
 
@@ -27,15 +28,14 @@ pipeline
         }
 
         sh'''
-          export CCACHE_DIR=cache/ccache/;
+          export CCACHE_DIR=/opt/ccache/;
           export CXX="ccache g++";
           export CXXFLAGS="-I./src/ -I/usr/include/eigen3/";
           export LDFLAGS="-fopenmp";
           export OMP_NUM_THREADS=1;
 
           ccache -p;
-          pwd;
-          ls ../;
+          ls -l /opt/ccache/
           ccache --zero-stats;
           ./scripts/test-docs.sh doc/;
           # Print ccache statistics.
@@ -53,8 +53,7 @@ pipeline
       cleanWs(cleanWhenNotBuilt: true,
               deleteDirs: true,
               disableDeferredWipeout: true,
-              notFailBuild: true,
-              patterns: [[pattern: 'cache/ccache/', type: 'EXCLUDE']])
+              notFailBuild: true)
     }
 
     success
