@@ -22,6 +22,9 @@ pipeline
           u.setBuildStatus("Cross-compilation tests (pipeline)", "Building...",
               "PENDING");
         }
+
+        // Create a directory for our resulting reports.
+        sh'mkdir -p reports/'
       }
     }
 
@@ -58,7 +61,7 @@ pipeline
           }
 
           // Cross-compile mlpack tests.
-          stage('Cross-compile mlpack')
+          stage('Cross-compilation tests: ' + env.hostname)
           {
             agent
             {
@@ -84,9 +87,20 @@ pipeline
                     -DDOWNLOAD_DEPENDENCIES=ON \
                     ../
                 make mlpack_test;
-
-                # TODO: actually copy it and run it...
               '''
+
+              withCredentials([sshUserPrivateKey(
+                  credentialsId: 'mlpack-jenkins-cross-compile-rsa-key',
+                  keyFileVariable: 'KEY_FILE')])
+              {
+                eval $(ssh-agent -s)
+                ssh-add ${KEY_FILE}
+                scp mlpack_test jenkins@${hostname}:
+                ssh jenkins@${hostname} -t ./mlpack_test -r junit >\
+                    ../reports/mlpack_test.${hostname}.junit.xml
+                # Clean up afterwards.
+                ssh jenkins@${hostname} -t rm -f mlpack_test
+              }
             }
           }
         }
@@ -98,6 +112,8 @@ pipeline
   {
     always
     {
+      junit '**/reports/mlpack_test.*.junit.xml'
+
       // Clean the workspace.
       cleanWs(cleanWhenNotBuilt: true,
               deleteDirs: true,
