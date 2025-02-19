@@ -50,7 +50,7 @@ pipeline
           cd ../
 
           # Run infer.
-          infer run --compilation-database build/compile_commands.json
+          infer run --compilation-database build/compile_commands.json -j 1
         '''
       }
     }
