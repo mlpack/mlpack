@@ -56,11 +56,11 @@ pipeline
             }
           }
 
-          // Use the correct Docker container for cross-compilation.
-          docker.image('mlpack/mlpack-cross-compile-' + env.arch + ':latest').inside
+          // Cross-compile mlpack tests.
+          stage('Cross-compile mlpack')
           {
-            // Cross-compile mlpack tests.
-            stage('Cross-compile mlpack')
+            // Use the correct Docker container for cross-compilation.
+            docker.image('mlpack/mlpack-cross-compile-' + env.arch + ':latest').inside
             {
               steps
               {
