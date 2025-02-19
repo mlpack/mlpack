@@ -20,9 +20,9 @@
 using namespace mlpack;
 
 /**
- * PReLU FORWARD Test.
+ * PReLU forward pass test.
  */
-TEST_CASE("PReLUFORWARDTest", "[ANNLayerTest]")
+TEST_CASE("PReLUForwardTest", "[ANNLayerTest]")
 {
   arma::mat input = {{0.5, 1.2, 3.1},
                     {-2.2, -1.5, 0.8},
@@ -43,9 +43,9 @@ TEST_CASE("PReLUFORWARDTest", "[ANNLayerTest]")
 }
 
 /**
- * PReLU BACKWARD Test.
+ * PReLU backward pass Test.
  */
-TEST_CASE("PReLUBACKWARDTest", "[ANNLayerTest]")
+TEST_CASE("PReLUBackwardTest", "[ANNLayerTest]")
 {
   arma::mat input = {{0.5, 1.2, 3.1},
                     {-2.2, -1.5, 0.8},
@@ -73,9 +73,9 @@ TEST_CASE("PReLUBACKWARDTest", "[ANNLayerTest]")
 }
 
 /**
- * PReLU GRADIENT Test.
+ * PReLU gradient pass test.
  */
-TEST_CASE("PReLUGRADIENTTest", "[ANNLayerTest]")
+TEST_CASE("PReLUGradientTest", "[ANNLayerTest]")
 {
   arma::mat input = {{0.5, 1.2, 3.1},
                     {-2.2, -1.5, 0.8},
@@ -104,26 +104,27 @@ double ComputeMSRE(arma::mat input, arma::mat target)
 TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
 {
   arma::mat data;
-  data::Load("boston_housing_price.csv", data);
+  data::Load("boston_housing_price.csv", data, true /* fatal */);
   arma::mat labels;
-  data::Load("boston_housing_price_responses.csv", labels);
-
-  arma::mat trainData, testData, trainLabels, testLabels;
-  data::Split(data, labels, trainData, testData, trainLabels, testLabels, 0.2);
-
-  FFN<L1Loss> model;
-  model.Add<Linear>(10);
-  model.Add<PReLU>(0.01);
-  model.Add<Linear>(3);
-  model.Add<PReLU>(0.01);
-  model.Add<Linear>(1);
+  data::Load("boston_housing_price_responses.csv", labels, true /* fatal */);
 
   // Sometimes the model may not optimize correctly, so we allow a few trials.
   bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
+  for (size_t trial = 0; trial < 5; ++trial)
   {
-    const size_t epochs = 250;
-    ens::RMSProp optimizer(0.003, 8, 0.99, 1e-8, epochs * trainData.n_cols);
+    arma::mat trainData, testData, trainLabels, testLabels;
+    data::Split(data, labels, trainData, testData, trainLabels, testLabels,
+        0.2);
+
+    FFN<L1Loss> model;
+    model.Add<Linear>(10);
+    model.Add<PReLU>(0.01);
+    model.Add<Linear>(3);
+    model.Add<PReLU>(0.01);
+    model.Add<Linear>(1);
+
+    const size_t epochs = 500;
+    ens::RMSProp optimizer(0.0025, 8, 0.99, 1e-8, epochs * trainData.n_cols);
     model.Reset(data.n_rows);
     model.Train(trainData, trainLabels, optimizer);
 

@@ -9,6 +9,7 @@ instead:
 
  * [`RTree`](r_tree.md)
  * [`RStarTree`](r_star_tree.md)
+ * [`XTree`](x_tree.md)
 
 The `RectangleTree` and its variants are capable of inserting points and
 deleting them.  This is different from [`BinarySpaceTree`](binary_space_tree.md)
@@ -497,6 +498,8 @@ to write a fully custom split:
  * [`RStarTreeSplit`](#rstartreesplit): finds the best possible binary split
    that minimizes the volume of the two children and maximizes the margin
    between them
+ * [`XTreeSplit`](#xtreesplit): an improved splitting strategy that minimizes
+   overlap of sibling nodes
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
 
@@ -543,6 +546,21 @@ tree, which in turn improves the quality of the tree for search and other tasks.
 
 For implementation details, see
 [the source code](/src/mlpack/core/tree/rectangle_tree/r_star_tree_split_impl.hpp).
+
+### `XTreeSplit`
+
+The `XTreeSplit` class implements the improved splitting strategy for the
+[`XTree`](x_tree.md) as described in the
+[X-tree paper (pdf)](http://www.vldb.org/conf/1996/P028.PDF).  This strategy is
+an improved version of the standard [`RTreeSplit`](#rtreesplit), where the
+overlap of sibling nodes is minimized.
+
+When overlap cannot be prevented, `XTreeSplit` will instead create
+"super-nodes" with more children than typically allowed.  The split is then
+deferred until a later time when overlap can be more effectively avoided.
+
+For implementation details, see
+[the source code](/src/mlpack/core/tree/rectangle_tree/x_tree_split_impl.hpp).
 
 ### Custom `SplitType`s
 
@@ -659,6 +677,22 @@ class DescentType
 The `AuxiliaryInformationType` template parameter holds any auxiliary
 information required by the `SplitType` or `DescentType` strategies.  By
 default, the `NoAuxiliaryInformation` class is used, which holds nothing.
+Different variants of `RectangleTree`s may use other predefined types for their
+`AuxiliaryInformationType`s:
+
+ * [`XTreeAuxiliaryInformation`](#xtreeauxiliaryinformation): used for the
+   [`XTree`](x_tree.md).
+
+### `XTreeAuxiliaryInformation`
+
+The `XTreeAuxiliaryInformation` class is the auxiliary information type used by
+the [`XTree`](x_tree.md) class, and is meant to be used with the
+[`XTreeSplit`](#xtreesplit) splitting strategy.  It holds information required
+to construct super-nodes (a concept specific to X-trees), where splitting is
+being deferred.
+
+For implementation details, see [the source
+code](/src/mlpack/core/tree/rectangle_tree/x_tree_auxiliary_information.hpp).
 
 ### Custom `AuxiliaryInformationType`s
 
