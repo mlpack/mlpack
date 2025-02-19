@@ -15,8 +15,6 @@ pipeline
 
   stages
   {
-    // First we have to check out the jenkins-conf repository, which contains
-    // the scripts that we will use for checking the style.
     stage('Extract and build documentation snippets')
     {
       steps
@@ -35,6 +33,8 @@ pipeline
           export LDFLAGS="-fopenmp";
           export OMP_NUM_THREADS=1;
 
+          ccache -p;
+          pwd;
           ccache --zero-stats;
           ./scripts/test-docs.sh doc/;
           # Print ccache statistics.
@@ -46,6 +46,16 @@ pipeline
 
   post
   {
+    always
+    {
+      // Clean the workspace, but preserve ccache.
+      cleanWs(cleanWhenNotBuilt: true,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true,
+              patterns: [[pattern: 'cache/ccache/', type: 'EXCLUDE']])
+    }
+
     success
     {
       script
