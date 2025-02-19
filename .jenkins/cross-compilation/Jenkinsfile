@@ -77,7 +77,7 @@ pipeline
                 cd build/
                 cmake \
                     -DBUILD_TESTS=ON \
-                    -DBOARD_NAME=${env.arch} \
+                    -DBOARD_NAME=${arch} \
                     -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
                     -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
                     ../
