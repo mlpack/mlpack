@@ -93,13 +93,15 @@ pipeline
                   credentialsId: 'mlpack-jenkins-cross-compile-rsa-key',
                   keyFileVariable: 'KEY_FILE')])
               {
-                eval $(ssh-agent -s)
-                ssh-add ${KEY_FILE}
-                scp mlpack_test jenkins@${hostname}:
-                ssh jenkins@${hostname} -t ./mlpack_test -r junit >\
-                    ../reports/mlpack_test.${hostname}.junit.xml
-                # Clean up afterwards.
-                ssh jenkins@${hostname} -t rm -f mlpack_test
+                sh'''
+                  eval $(ssh-agent -s)
+                  ssh-add ${KEY_FILE}
+                  scp mlpack_test jenkins@${hostname}:
+                  ssh jenkins@${hostname} -t ./mlpack_test -r junit >\
+                      ../reports/mlpack_test.${hostname}.junit.xml
+                  # Clean up afterwards.
+                  ssh jenkins@${hostname} -t rm -f mlpack_test
+                '''
               }
             }
           }
