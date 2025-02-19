@@ -1,0 +1,103 @@
+// The cross-compilation job tests mlpack on a set of low-resource devices.
+// First, the cross-compilation host compiles mlpack tests for each
+// architecture, and then copies them to the destination host and runs them.
+pipeline
+{
+  agent
+  {
+    // Only use a node that has access to the target hosts.
+    label { 'cross-compile' }
+  }
+
+  matrix
+  {
+    axes
+    {
+      axis
+      {
+        name 'target'
+        values 'couscous;rpi5;cortexa76'
+      }
+    }
+  }
+
+  stages
+  {
+    // Extract the hostname, the device, and the architecture.
+    stage('Extract parameters from build matrix')
+    {
+      steps
+      {
+        script
+        {
+          def components = inputString.split(';')
+
+          def hostname = components[0]
+          def device = components[1]
+          def arch = components[2]
+        }
+
+        // Set the build status...
+        script
+        {
+          u = load '.jenkins/utils.groovy'
+          u.setBuildStatus("Cross-compile to " + device + " (pipeline)",
+              "Building...", "PENDING");
+        }
+      }
+    }
+
+    // Cross-compile mlpack tests.
+    stage('Cross-compile mlpack')
+    {
+      // Use the correct Docker container for cross-compilation.
+      agent
+      {
+        docker
+        {
+          image 'mlpack/mlpack-cross-compile-' + arch + ':latest'
+          alwaysPull true
+          ruseNode true // Run on the existing cross-compile host.
+        }
+      }
+
+      steps
+      {
+        sh '''
+          mkdir build/
+          cd build/
+          cmake \
+              -DBUILD_TESTS=ON \
+              -DBOARD_NAME=${arch} \
+              -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
+              -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
+              ../
+          make mlpack_test;
+
+          # TODO: actually copy it and run it...
+        '''
+      }
+    }
+  }
+
+  post
+  {
+    success
+    {
+      script
+      {
+        u.setBuildStatus("Cross-compile to " + device + " (pipeline)",
+            "Build finished.", "SUCCESS");
+      }
+    }
+
+    failure
+    {
+      script
+      {
+        u.setBuildStatus("Cross-compile to " + device + " (pipeline)",
+            "Cross-compilation build failed.", "FAILURE");
+      }
+    }
+  }
+}
