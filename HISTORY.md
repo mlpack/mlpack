@@ -12,6 +12,9 @@ _????-??-??_
 
  * Bundle STB with mlpack and add `ResizeImages()` functionality (#3823).
 
+ * Added bootstrap strategies for RandomForest: IdentityBootstrap,
+   DefaultBootstrap, and SequentialBootstrap. (#3829)
+
 ## mlpack 4.5.1
 
 _2024-12-02_
