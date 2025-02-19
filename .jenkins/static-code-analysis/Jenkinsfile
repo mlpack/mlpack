@@ -75,6 +75,12 @@ pipeline
     always
     {
       junit '**/reports/reports.xml'
+
+      // Clean the workspace.
+      cleanWs(cleanWhenNotBuilt: false,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true)
     }
 
     success
