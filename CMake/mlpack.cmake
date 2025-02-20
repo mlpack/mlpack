@@ -133,10 +133,22 @@
 # find_mlpack 
 #----------------------
 #
-# This macro finds mlpack libraries and it dependencies. This is the function
-# that should be called by the user, and it will call all the other dependency
-# functions. This function will set MLPACK_FOUD to false if the library is not
-# found locally through find_mlpack_internal
+# This macro finds mlpack libraries and it dependencies. Call this function to
+# find mlpack and its dependencies (Armadillo, ensmallen, cereal, and any 
+# Armadillo dependencies).
+#
+# This function will not automatically download any missing dependencies, and
+# will instead throw errors if dependencies are not found.  For a version that
+# automatically downloads dependencies, see `fetch_mlpack()`.
+#
+# Configuration options:
+#
+#   MLPACK_DISABLE_OPENMP: if set, parallelism via OpenMP will be disabled.
+#   MLPACK_USE_SYSTEM_STB: if set, STB will be searched for on the system, 
+#       instead of using the version bundled with mlpack.
+#
+# If mlpack is successfully found, the `MLPACK_FOUND` variable will be set to
+# `TRUE`; otherwise, it will be set to `FALSE`.
 #
 # This macro will set the following variables:
 # 
