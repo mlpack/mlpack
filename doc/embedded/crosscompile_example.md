@@ -87,11 +87,10 @@ set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${CROSS_COMPILE_SUPPORT_LIBRARIES})
 add_executable(RandomForest main.cpp ${SOURCES_FILES})
 target_sources(RandomForest PRIVATE ${SOURCE_FILES})
 
-## Do not forget to add the include variables in here.
-
+# If needed, add any additional include directories here.
 target_include_directories(RandomForest PRIVATE
   ${MLPACK_INCLUDE_DIRS}
-  /path/to/your/own/include
+  # Add more include directories here...
 )
 
 # If your application needs to link against more than just mlpack's
