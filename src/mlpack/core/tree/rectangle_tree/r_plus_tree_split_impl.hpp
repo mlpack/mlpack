@@ -39,7 +39,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
       if (node->NumChildren() == node->MaxNumChildren() + 1)
       {
         // Split the overflowed node.
-        RPlusTreeSplit::SplitNonLeafNode(node, relevels);
+        RPlusTreeSplitType::SplitNonLeafNode(node, relevels);
         return;
       }
       node = node->Parent();
@@ -65,7 +65,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     tree->children[(tree->NumChildren())++] = copy;
     assert(tree->NumChildren() == 1);
 
-    RPlusTreeSplit::SplitLeafNode(copy, relevels);
+    RPlusTreeSplitType::SplitLeafNode(copy, relevels);
     return;
   }
 
@@ -111,7 +111,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 
   // Propagate the split upward if necessary.
   if (parent->NumChildren() == parent->MaxNumChildren() + 1)
-    RPlusTreeSplit::SplitNonLeafNode(parent, relevels);
+    RPlusTreeSplitType::SplitNonLeafNode(parent, relevels);
 
   tree->SoftDelete();
 }
@@ -136,7 +136,7 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
     tree->NullifyData();
     tree->children[(tree->NumChildren())++] = copy;
 
-    RPlusTreeSplit::SplitNonLeafNode(copy, relevels);
+    RPlusTreeSplitType::SplitNonLeafNode(copy, relevels);
     return true;
   }
   size_t cutAxis = tree->Bound().Dim();
@@ -183,7 +183,7 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
 
   // Propagate the split upward if necessary.
   if (parent->NumChildren() == parent->MaxNumChildren() + 1)
-    RPlusTreeSplit::SplitNonLeafNode(parent, relevels);
+    RPlusTreeSplitType::SplitNonLeafNode(parent, relevels);
 
   return false;
 }
