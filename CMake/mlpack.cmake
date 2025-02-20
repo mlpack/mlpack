@@ -200,7 +200,7 @@ if (NOT USE_OPENMP)
 endif()
 
 ##===================================================
-##  MLPACK AUTODOWNLOADER DEPEDENCIES FUNCTIONS
+##  MLPACK AUTODOWNLOADER DEPENDENCIES FUNCTIONS
 ##===================================================
 
 # This function auto-downloads mlpack dependencies.
