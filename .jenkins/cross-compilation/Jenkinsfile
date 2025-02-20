@@ -98,7 +98,9 @@ pipeline
                 sh'''
                   eval $(ssh-agent -s)
                   echo ${PASSPHRASE} | SSH_ASKPASS=/bin/cat setsid -w ssh-add ${KEY_FILE}
-                  scp bin/mlpack_test jenkins@${hostname}:
+                  pwd
+                  ls
+                  scp build/bin/mlpack_test jenkins@${hostname}:
                   ssh jenkins@${hostname} -t ./mlpack_test -r junit >\
                       ../reports/mlpack_test.${hostname}.junit.xml
                   # Clean up afterwards.
