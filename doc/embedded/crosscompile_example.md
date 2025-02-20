@@ -103,7 +103,7 @@ target_link_libraries(RandomForest PRIVATE -static
 )
 ```
 
-#### Optimization and crosscompilation
+#### Optimization and cross-compilation
 
 If you are interested in adding specific compiler flags to optimize operations
 on your hardware. Please feel free to look at mlpack
