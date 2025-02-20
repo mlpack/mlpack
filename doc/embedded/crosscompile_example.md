@@ -94,10 +94,11 @@ target_include_directories(RandomForest PRIVATE
   /path/to/your/own/include
 )
 
-## Do not forget to add libraries that you are linking against in here.
-
+# If your application needs to link against more than just mlpack's
+# dependencies, be sure to list them here.
 target_link_libraries(RandomForest PRIVATE -static
   ${MLPACK_LIBRARIES}
+  # List additional dependencies to link against here.
 )
 ```
 
