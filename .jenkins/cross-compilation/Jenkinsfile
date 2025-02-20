@@ -102,8 +102,9 @@ pipeline
                   # Don't check the host keys, because they won't be saved in
                   # this container anyway.
                   scp -o StrictHostKeyChecking=no build/bin/mlpack_test jenkins@${hostname}:
+                  mkdir -p reports;
                   ssh -o StrictHostKeyChecking=no jenkins@${hostname} -t ./mlpack_test -r junit >\
-                      ../reports/mlpack_test.${hostname}.junit.xml
+                      reports/mlpack_test.${hostname}.junit.xml
                   # Clean up afterwards.
                   ssh -o StrictHostKeyChecking=no jenkins@${hostname} -t rm -f mlpack_test
                 '''
