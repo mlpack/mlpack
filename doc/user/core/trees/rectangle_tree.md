@@ -502,8 +502,10 @@ to write a fully custom split:
    between them
  * [`XTreeSplit`](#xtreesplit): an improved splitting strategy that minimizes
    overlap of sibling nodes
- * [`RPlusTreeSplit`](#rplustreesplit): generic splitting policy that can be
-   used for the R+ tree split and the R++ tree split
+ * [`RPlusTreeSplit`](#rplustreesplit): split by partitioning two nodes along
+   the dimension that minimizes overall node volume
+ * [`RPlusPlusTreeSplit`](#rplusplustreesplit): split using maximum bounding
+   rectangles to ensure zero overlap between sibling nodes
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
 
@@ -571,7 +573,7 @@ For implementation details, see
 The `RPlusTreeSplit` class implements the splitting policy of the
 [R+-tree](r_plus_tree.md).  The strategy splits nodes (leaves and non-leaves) by
 partitioning along the dimension that results in the two children with minimum
-volume.
+volume, similar to the [kd-tree](kdtree.md).
 
 For implementation details, see
 [the source code](/src/mlpack/core/tree/rectangle_tree/r_plus_tree_split_impl.hpp).
@@ -640,8 +642,10 @@ possible to write a fully custom split:
    which is the child whose volume will increase the least
  * [`RStarTreeDescentHeuristic`](#rstartreedescentheuristic): selects a child
    such that overlap is minimized and volume increase is minimized
- * [`RPlusTreeDescentHeuristic`](#rplustreedescentheuristic): TODO
- * [`RPlusPlusTreeDescentHeuristic`](#rplusplustreedescentheuristic): TODO
+ * [`RPlusTreeDescentHeuristic`](#rplustreedescentheuristic): selects a child
+   that does not cause overlap; if not possible, creates a new child
+ * [`RPlusPlusTreeDescentHeuristic`](#rplusplustreedescentheuristic): selects
+   the child whose maximum bounding box contains the point
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
 

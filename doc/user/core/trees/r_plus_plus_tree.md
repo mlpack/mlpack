@@ -10,7 +10,7 @@ to grow without causing overlap with sibling nodes.  This is in addition to the
 The `RPlusPlusTree` implementation in mlpack supports three template parameters
 for configurable behavior, and implements all the functionality required by the
 [TreeType API](../../../developer/trees.md#the-treetype-api), plus some
-additional functionality specific to R trees.
+additional functionality specific to R++-trees.
 
 The R++-tree is generally less efficient for machine learning tasks than other
 trees such as the [`KDTree`](kdtree.md) or [`Octree`](octree.md), but those
@@ -47,7 +47,7 @@ RPlusPlusTree<DistanceType, StatisticType, MatType>
 ```
 
  * `DistanceType`: the [distance metric](../distances.md) to use for distance
-   computations.  `RTree` requires that this is
+   computations.  `RPlusPlusTree` requires that this is
    [`EuclideanDistance`](../distances.md#lmetric), and a compilation error will
    be thrown if any other `DistanceType` is specified.
 
@@ -73,7 +73,7 @@ as the auxiliary information type.
 If no template parameters are explicitly specified, then defaults are used:
 
 ```
-RPlusPlusTree<> = RTree<EuclideanDistance, EmptyStatistic, arma::mat>
+RPlusPlusTree<> = RPlusPlusTree<EuclideanDistance, EmptyStatistic, arma::mat>
 ```
 
 ## Constructors
@@ -179,8 +179,9 @@ can be accessed or inspected.  Many of these functions are required by the
  * `node.Child(i)` returns an `RPlusPlusTree&` that is the `i`th child.
    - `i` must be less than `node.NumChildren()`.
    - This function should only be called if `node.NumChildren()` is not `0`
-     (e.g. if `node` is not a leaf).  Note that this returns a valid `RTree&`
-     that can itself be used just like the root node of the tree!
+     (e.g. if `node` is not a leaf).  Note that this returns a valid
+     `RPlusPlusTree&` that can itself be used just like the root node of the
+     tree!
 
  * `node.Parent()` will return an `RPlusPlusTree*` that points to the parent of
    `node`, or `NULL` if `node` is the root of the `RPlusPlusTree`.
@@ -247,8 +248,8 @@ for basic tree functionality in mlpack.
 
  * `node.NumPoints()` returns a `size_t` indicating the number of points held
    directly in `node`.
-   - If `node` is not a leaf, this will return `0`, as `RTree` only holds points
-     directly in its leaves.
+   - If `node` is not a leaf, this will return `0`, as `RPlusPlusTree` only
+     holds points directly in its leaves.
    - If `node` is a leaf, then this will return values between
      `node.MinLeafSize()` and `node.MaxLeafSize()` (inclusive).
    - If the tree has fewer than `node.MinLeafSize()` points total, then

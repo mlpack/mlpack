@@ -7,7 +7,7 @@ clever splitting strategy inspired by the [kd-tree](kdtree.md).
 The `RPlusTree` implementation in mlpack supports three template parameters for
 configurable behavior, and implements all the functionality required by the
 [TreeType API](../../../developer/trees.md#the-treetype-api), plus some
-additional functionality specific to R trees.
+additional functionality specific to R+-trees.
 
 The R+-tree is generally less efficient for machine learning tasks than other
 trees such as the [`KDTree`](kdtree.md) or [`Octree`](octree.md), but those
@@ -43,7 +43,7 @@ RPlusTree<DistanceType, StatisticType, MatType>
 ```
 
  * `DistanceType`: the [distance metric](../distances.md) to use for distance
-   computations.  `RTree` requires that this is
+   computations.  `RPlusTree` requires that this is
    [`EuclideanDistance`](../distances.md#lmetric), and a compilation error will
    be thrown if any other `DistanceType` is specified.
 
@@ -69,7 +69,7 @@ auxiliary information type.
 If no template parameters are explicitly specified, then defaults are used:
 
 ```
-RPlusTree<> = RTree<EuclideanDistance, EmptyStatistic, arma::mat>
+RPlusTree<> = RPlusTree<EuclideanDistance, EmptyStatistic, arma::mat>
 ```
 
 ## Constructors
@@ -175,8 +175,8 @@ API](../../../developer/trees.md#the-treetype-api).
  * `node.Child(i)` returns an `RPlusTree&` that is the `i`th child.
    - `i` must be less than `node.NumChildren()`.
    - This function should only be called if `node.NumChildren()` is not `0`
-     (e.g. if `node` is not a leaf).  Note that this returns a valid `RTree&`
-     that can itself be used just like the root node of the tree!
+     (e.g. if `node` is not a leaf).  Note that this returns a valid
+     `RPlusTree&` that can itself be used just like the root node of the tree!
 
  * `node.Parent()` will return an `RPlusTree*` that points to the parent of
    `node`, or `NULL` if `node` is the root of the `RPlusTree`.
@@ -234,8 +234,8 @@ for basic tree functionality in mlpack.
 
  * `node.NumPoints()` returns a `size_t` indicating the number of points held
    directly in `node`.
-   - If `node` is not a leaf, this will return `0`, as `RTree` only holds points
-     directly in its leaves.
+   - If `node` is not a leaf, this will return `0`, as `RPlusTree` only holds
+     points directly in its leaves.
    - If `node` is a leaf, then this will return values between
      `node.MinLeafSize()` and `node.MaxLeafSize()` (inclusive).
    - If the tree has fewer than `node.MinLeafSize()` points total, then
@@ -249,7 +249,7 @@ for basic tree functionality in mlpack.
      `node.Dataset().col(node.Point(i))`.
    - Accessing the actual `i`'th point itself can be done with, e.g.,
      `node.Dataset().col(node.Point(i))`.
-   - Point indices are not necessarily contiguous for `RTree`s; that is,
+   - Point indices are not necessarily contiguous for `RPlusTree`s; that is,
      `node.Point(i) + 1` is not necessarily `node.Point(i + 1)`.
 
  * `node.NumDescendants()` returns a `size_t` indicating the number of points
@@ -373,7 +373,7 @@ nodes.  The following functions can be used for these tasks.
 
 ## Tree traversals
 
-Like every mlpack tree, the `RTree` class provides a [single-tree and
+Like every mlpack tree, the `RPlusTree` class provides a [single-tree and
 dual-tree traversal](../../../developer/trees.md#traversals) that can be paired
 with a [`RuleType` class](../../../developer/trees.md#rules) to implement a
 single-tree or dual-tree algorithm.
@@ -429,7 +429,7 @@ for (size_t i = 0; i < tree.NumChildren(); ++i)
 }
 std::cout << std::endl;
 
-// Compute the center of the RTree.
+// Compute the center of the RPlusTree.
 arma::vec center;
 tree.Center(center);
 std::cout << "Center of tree: " << center.t();
