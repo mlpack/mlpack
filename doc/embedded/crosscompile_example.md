@@ -63,7 +63,7 @@ The last part of our `CMakeFiles.txt` consists of merging all of the components 
 together. First we are going to find the OpenMP package if the user defined the
 variable above, then we will start including the directories of our
 program. You will need to do the same for your software if you are trying to
-integrate this example into an existing development, this should be done by
+integrate this example into an existing codebase; this should be done by
 defining an include variable using `set` directive or add them directly in
 `target_include_directories`.
 Regarding the source code, a similar process by either adding then to
