@@ -116,18 +116,36 @@
 # fetch_mlpack
 #-----------------------
 #
-# This function downloads the mlpack library and its dependencies by calling
-# the get_deps function. This will allow to download each one of the libraries
-# and set the parameter for each one of them corectly.
+# This macro downloads the mlpack library and its dependencies.  Call this 
+# function to find mlpack and its dependencies (Armadillo, ensmallen, cereal) on
+# a system where mlpack or those dependencies may not be available.
 #
-# fetch_mlpack accepts one parameter which is COMPILE_OPENBLAS. This will allow
-# the user to compile OpenBLAS after downloading it since it is the only
-# library that requires compilation in our toolchain, all other libraries are
-# header only. 
+# fetch_mlpack() accepts one parameter, `COMPILE_OPENBLAS`.  When this is set to
+# `TRUE`, then OpenBLAS will be downloaded and compiled as a dependency of 
+# Armadillo.  If `COMPILE_OPENBLAS` is set to `FALSE`, then it is expected that
+# OpenBLAS or a BLAS/LAPACK library is already available on the system.  When 
+# CMAKE_CROSSCOMPILING is set, then OpenBLAS is always compiled for the target 
+# architecture.
 #
-# fetch_mlpack will download mlpack library as well, so it can be used directly
-# in cmake if the user would like to download the latest version or not use the
-# one already exist on the system.
+# Other dependencies of mlpack do not need compilation, as they are all
+# header-only.
+#
+# If mlpack is not found on the system, `fetch_mlpack()` will download the
+# latest stable version of mlpack.
+#
+# Configuration options:
+#
+#   MLPACK_DISABLE_OPENMP: if set, parallelism via OpenMP will be disabled.
+#   MLPACK_USE_SYSTEM_STB: if set, STB will be searched for on the system, 
+#       instead of using the version bundled with mlpack.
+#
+# After all libraries are downloaded and set up, the macro will set the 
+# following variables:
+#
+# MLPACK_INCLUDE_DIRS: list of all include directories for mlpack and its
+#                      dependencies (Armadillo, cereal, ensmallen)
+# MLPACK_LIBRARIES: list of all dependency libraries to link against (typically
+#                   just OpenBLAS)
 #
 #
 # find_mlpack 
