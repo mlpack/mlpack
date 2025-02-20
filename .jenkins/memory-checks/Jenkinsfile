@@ -79,6 +79,8 @@ pipeline
           # Debug print modified files, we try to run the memory check for those
           # files only.
           cat filenames.txt;
+          echo "what's in it";
+          cat filenames.txt;
 
           # Run memory checks.
           OMP_NUM_THREADS=1 ./run-mlpack-valgrind-tests.sh ||\
