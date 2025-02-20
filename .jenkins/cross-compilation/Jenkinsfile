@@ -98,13 +98,14 @@ pipeline
                 sh'''
                   eval $(ssh-agent -s)
                   echo ${PASSPHRASE} | SSH_ASKPASS=/bin/cat setsid -w ssh-add ${KEY_FILE}
-                  pwd
-                  ls
-                  scp build/bin/mlpack_test jenkins@${hostname}:
-                  ssh jenkins@${hostname} -t ./mlpack_test -r junit >\
+
+                  # Don't check the host keys, because they won't be saved in
+                  # this container anyway.
+                  scp -o StrictHostKeyChecking=no build/bin/mlpack_test jenkins@${hostname}:
+                  ssh -o StrictHostKeyChecking=no jenkins@${hostname} -t ./mlpack_test -r junit >\
                       ../reports/mlpack_test.${hostname}.junit.xml
                   # Clean up afterwards.
-                  ssh jenkins@${hostname} -t rm -f mlpack_test
+                  ssh -o StrictHostKeyChecking=no jenkins@${hostname} -t rm -f mlpack_test
                 '''
               }
             }
