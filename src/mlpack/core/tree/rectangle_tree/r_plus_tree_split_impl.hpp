@@ -22,7 +22,7 @@ namespace mlpack {
 template<typename SplitPolicyType,
          template<typename> class SweepType>
 template<typename TreeType>
-void RPlusTreeSplit<SplitPolicyType, SweepType>::
+void RPlusTreeSplitType<SplitPolicyType, SweepType>::
 SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
   using ElemType = typename TreeType::ElemType;
@@ -119,7 +119,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 template<typename SplitPolicyType,
          template<typename> class SweepType>
 template<typename TreeType>
-bool RPlusTreeSplit<SplitPolicyType, SweepType>::
+bool RPlusTreeSplitType<SplitPolicyType, SweepType>::
 SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
   using ElemType = typename TreeType::ElemType;
@@ -191,7 +191,8 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
 template<typename SplitPolicyType,
          template<typename> class SweepType>
 template<typename TreeType>
-void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitLeafNodeAlongPartition(
+void RPlusTreeSplitType<SplitPolicyType, SweepType>::
+SplitLeafNodeAlongPartition(
     TreeType* tree,
     TreeType* treeOne,
     TreeType* treeTwo,
@@ -242,7 +243,8 @@ void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitLeafNodeAlongPartition(
 template<typename SplitPolicyType,
          template<typename> class SweepType>
 template<typename TreeType>
-void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitNonLeafNodeAlongPartition(
+void RPlusTreeSplitType<SplitPolicyType, SweepType>::
+SplitNonLeafNodeAlongPartition(
     TreeType* tree,
     TreeType* treeOne,
     TreeType* treeTwo,
@@ -306,7 +308,7 @@ void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitNonLeafNodeAlongPartition(
 template<typename SplitPolicyType,
          template<typename> class SweepType>
 template<typename TreeType>
-void RPlusTreeSplit<SplitPolicyType, SweepType>::
+void RPlusTreeSplitType<SplitPolicyType, SweepType>::
 AddFakeNodes(const TreeType* tree, TreeType* emptyTree)
 {
   size_t numDescendantNodes = tree->TreeDepth() - 1;
@@ -324,7 +326,7 @@ AddFakeNodes(const TreeType* tree, TreeType* emptyTree)
 template<typename SplitPolicyType,
          template<typename> class SweepType>
 template<typename TreeType>
-bool RPlusTreeSplit<SplitPolicyType, SweepType>::
+bool RPlusTreeSplitType<SplitPolicyType, SweepType>::
 PartitionNode(const TreeType* node, size_t& minCutAxis,
     typename TreeType::ElemType& minCut)
 {
@@ -364,7 +366,7 @@ PartitionNode(const TreeType* node, size_t& minCutAxis,
 template<typename SplitPolicyType,
          template<typename> class SweepType>
 template<typename TreeType>
-void RPlusTreeSplit<SplitPolicyType, SweepType>::
+void RPlusTreeSplitType<SplitPolicyType, SweepType>::
 InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();

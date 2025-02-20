@@ -691,7 +691,7 @@ into, the following heuristic is used:
    child.
  * If neither of the conditions above are true, insert the point into a new
    child node.  This child node will likely be rebalanced or modified later by
-   [`RPlusTreeSplit<>`](#rplustreesplit).
+   [`RPlusTreeSplit`](#rplustreesplit).
 
 ### `RPlusPlusTreeDescentHeuristic`
 
