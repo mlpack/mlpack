@@ -8,8 +8,6 @@
 # 3-clause BSD license along with mlpack.  If not, see
 # http://www.opensource.org/licenses/BSD-3-Clause for more information.
 
-using Pkg
-Pkg.activate(".")
 using Test
 using mlpack: test_julia_binding, GaussianKernel, serialize_bin, deserialize_bin
 using Serialization
