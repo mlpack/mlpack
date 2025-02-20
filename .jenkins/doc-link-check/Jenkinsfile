@@ -67,27 +67,21 @@ pipeline
         '''
       }
     }
-
-    // Now we can run those scripts.
-    stage('Publish HTML documentation')
-    {
-      steps
-      {
-        publishHTML([
-          allowMissing: false,
-          alwaysLinkToLastBuild: false,
-          keepAll: true,
-          reportDir: 'doc/html/',
-          reportFiles: 'index.html',
-          reportName: 'Build documentation'])
-      }
-    }
   }
 
   post
   {
     always
     {
+      // Publish the generated HTML.
+      publishHTML([
+        allowMissing: false,
+        alwaysLinkToLastBuild: false,
+        keepAll: true,
+        reportDir: 'doc/html/',
+        reportFiles: 'index.html',
+        reportName: 'Build documentation'])
+
       // Clean the workspace.
       cleanWs(cleanWhenNotBuilt: true,
               deleteDirs: true,
