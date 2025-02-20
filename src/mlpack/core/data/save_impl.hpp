@@ -68,6 +68,10 @@ bool Save(const std::string& filename,
     opts.NoTranspose() = false;
     success = Save(filename, matrix, opts);
   }
+  else
+  {
+    success = Save(filename, matrix, opts);
+  }
 
   return success;
 }
@@ -118,9 +122,21 @@ bool Save(const std::string& filename,
   return SaveModel(filename, t, opts);
 }
 
-template<typename eT>
+template<typename MatType>
 bool Save(const std::string& filename,
-          arma::Mat<eT>& matrix,
+          MatType& matrix,
+          const DataOptions& opts)
+{
+  // Copy the options since passing a const into a modifiable function can
+  // result in a segmentation fault.
+  // We do not copy back to preserve the const property of the function.
+  DataOptions copyOpts = opts;
+  return Save(filename, matrix, copyOpts);
+}
+
+template<typename MatType>
+bool Save(const std::string& filename,
+          MatType& matrix,
           DataOptions& opts)
 {
   Timer::Start("saving_data");

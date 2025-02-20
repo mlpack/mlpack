@@ -17,17 +17,16 @@
 namespace mlpack{
 namespace data{
 
-template<typename eT, typename PolicyType>
-bool LoadCSV::LoadCategoricalCSV(arma::Mat<eT> &inout,
-                                 DatasetMapper<PolicyType> &infoSet,
-                                 const bool transpose)
+template<typename MatType>
+bool LoadCSV::LoadCategoricalCSV(MatType& matrix,
+                                 DataOptions& opts)
 {
   CheckOpen();
 
-  if (transpose)
-    return TransposeParse(inout, infoSet);
+  if (!opts.NoTranspose())
+    return TransposeParse(matrix, opts.Mapper());
   else
-    return NonTransposeParse(inout, infoSet);
+    return NonTransposeParse(matrix, opts.Mapper());
 }
 
 inline void LoadCSV::CategoricalMatColSize(

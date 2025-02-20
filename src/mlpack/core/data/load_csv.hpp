@@ -106,10 +106,9 @@ class LoadCSV
   * @param transpose If true, the matrix should be transposed on loading(default).
   * @return false on errors.
   */
-  template<typename eT, typename PolicyType>
-  bool LoadCategoricalCSV(arma::Mat<eT> &inout,
-                          DatasetMapper<PolicyType> &infoSet,
-                          const bool transpose = true);
+  template<typename MatType>
+  bool LoadCategoricalCSV(MatType& matrix,
+                          DataOptions& opts);
 
   /**
   * Peek at the file to determine the number of rows and columns in the matrix,

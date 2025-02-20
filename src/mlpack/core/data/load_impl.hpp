@@ -268,13 +268,12 @@ bool Load(const std::string& filename,
   {
     success = LoadSparse(filename, stream, matrix, opts);
   }
-  else if (opts.Categorical())
+  else if (opts.Categorical() || (opts.FileFormat() == FileType::ArffASCII))
   {
     success = LoadCategorical(filename, matrix, opts);
   }
   else if constexpr (MatType::is_col)
   {
-    std::cout << MatType::is_col << std::endl;
     success = LoadCol(filename, matrix, opts);
   }
   else if constexpr (MatType::is_row)
@@ -424,19 +423,18 @@ bool LoadCategorical(const std::string& filename,
 
   // Get the extension.
   std::string extension = Extension(filename);
+  std::cout << extension << std::endl;
   bool success = false;
 
   if (extension == "csv" || extension == "tsv" || extension == "txt")
   {
     Log::Info << "Loading '" << filename << "' as CSV dataset.  " << std::flush;
     LoadCSV loader(filename);
-    // would be smarter to pass DataOptions directly in here,
-    // @rcurtin what do you think ? should I refactor?
-    success = loader.LoadCategoricalCSV(matrix, opts.Mapper(), !opts.NoTranspose());
+    success = loader.LoadCategoricalCSV(matrix, opts);
     if (!success)
     {
-      return false;
       Timer::Stop("loading_data");
+      return false;
     }
   }
   else if (extension == "arff")
@@ -446,8 +444,8 @@ bool LoadCategorical(const std::string& filename,
     success = LoadARFF(filename, matrix, opts.Mapper());
     if (!success)
     {
-      return false;
       Timer::Stop("loading_data");
+      return false;
     }
     if (!opts.NoTranspose())
     {
@@ -460,7 +458,7 @@ bool LoadCategorical(const std::string& filename,
     Timer::Stop("loading_data");
     if (opts.Fatal())
       Log::Fatal << "Unable to detect type of '" << filename << "'; "
-          << "incorrect extension?" << std::endl;
+          << "Incorrect extension?" << std::endl;
     else
       Log::Warn << "Unable to detect type of '" << filename << "'; load failed."
           << " Incorrect extension?" << std::endl;

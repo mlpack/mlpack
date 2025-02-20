@@ -271,6 +271,11 @@ inline FileType AutoDetect(std::fstream& stream, const std::string& filename)
   {
     detectedLoadType = FileType::HDF5Binary;
   }
+  else if (extension == "arff")
+  {
+    return FileType::ArffASCII;
+  }
+
   else // Unknown extension...
   {
     detectedLoadType = FileType::FileTypeUnknown;
@@ -309,6 +314,10 @@ inline FileType DetectFromExtension(const std::string& filename)
            extension == "he5")
   {
     return FileType::HDF5Binary;
+  }
+  else if (extension == "arff")
+  {
+    return FileType::ArffASCII;
   }
   else
   {
