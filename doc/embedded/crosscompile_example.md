@@ -3,6 +3,7 @@
 In this article, we explore how to add mlpack to a CMake project that cross-compiles
 code to embedded hardware.  See also these related other guides, which may be useful
 to read before this one:
+
  * [Run mlpack bindings on a Raspberry Pi](crosscompile_armv7.md)
  * [Set up cross-compilation toolchain for mlpack](supported_boards.md)
 
