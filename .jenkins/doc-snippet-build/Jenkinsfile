@@ -49,7 +49,7 @@ pipeline
   {
     always
     {
-      // Clean the workspace, but preserve ccache.
+      // Clean the workspace.
       cleanWs(cleanWhenNotBuilt: true,
               deleteDirs: true,
               disableDeferredWipeout: true,

@@ -7,12 +7,15 @@
 pipeline
 {
   // Run inside of the custom Docker image for style checking.
+  // Every docker agent has a 'link_cache/' directory in its Jenkins workspace
+  // for this job.
   agent
   {
     docker
     {
       image 'mlpack/jenkins-mlpack-docbuild:latest'
       alwaysPull true
+      args '-v /home/jenkins/link_cache/:/opt/link_cache/'
     }
   }
 
@@ -32,14 +35,18 @@ pipeline
         }
 
         sh '''
+          # Set $HOME because the Docker container may be running with a
+          # different uid.  Note that the container has /workspace/ as the
+          # working directory; we'll just reuse that as $HOME.
+          export HOME=/workspace/
+
           # Print the size of the link cache.
-          if [ ! -f cache/link_cache.db ];
+          if [ ! -f /opt/link_cache/link_cache.db ];
           then
             echo "Link cache does not exist!";
-            mkdir -p cache/;
           else
             echo "Link cache current size:";
-            ls -lh cache/link_cache.db;
+            ls -lh /opt/link_cache/link_cache.db;
           fi
 
           # Skip the check if the documentation build script doesn't exist.
@@ -50,7 +57,7 @@ pipeline
 
           # This will fail if there are any issues converting the Markdown to
           # kramdown, or if there is a linting or link-checking failure.
-          LINK_CACHE_FILE=cache/link_cache.db ./scripts/build-docs.sh;
+          LINK_CACHE_FILE=/opt/link_cache/link_cache.db ./scripts/build-docs.sh;
           build_doc_out=$?;
           if [ $build_doc_out -ne 0 ];
           then
@@ -79,6 +86,15 @@ pipeline
 
   post
   {
+    always
+    {
+      // Clean the workspace.
+      cleanWs(cleanWhenNotBuilt: true,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true)
+    }
+
     success
     {
       script
