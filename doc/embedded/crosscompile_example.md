@@ -38,7 +38,7 @@ defines the project name and includes two useful CMake configuration files:
 
 Then we need to call `fetch_mlpack()` will download mlpack including all dependencies,
 cross-compile OpenBLAS and set up all the necessary parameters to find these dependencies.
-Most of mlpack dependencies are header-only with the exception of Openblas,
+Most of mlpack's dependencies are header-only with the exception of OpenBLAS;
 thus this is expected to be a quick step.
 
 `fetch_mlpack()` will detect if cross compilation is necessary or not depending
