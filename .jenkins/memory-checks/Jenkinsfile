@@ -71,10 +71,7 @@ pipeline
           # Get information about the current PR.
           echo "PR number: ${PR_NUM}";
           curl -o files.txt https://api.github.com/repos/mlpack/mlpack/pulls/${PR_NUM}/files
-          grep -o 'filename.*' files.txt |\
-              sed -e 's/^filename": "//' -e 's/",//' |\
-              uniq |\
-              awk '/.cpp/ || /.hpp/' > filenames.txt;
+          grep -o 'filename.*' files.txt | sed -e 's/^filename": "//' -e 's/",//' | uniq | awk '/.cpp/ || /.hpp/' > filenames.txt;
 
           # Debug print modified files, we try to run the memory check for those
           # files only.
