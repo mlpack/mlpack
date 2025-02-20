@@ -59,7 +59,7 @@ pipeline
         {
           if (env.BRANCH_NAME.startsWith('PR-'))
           {
-            def prNum = env.BRANCH_NAME.replace(/^PR-/, '')
+            env.PR_NUM = env.BRANCH_NAME.replace(/^PR-/, '')
           }
         }
 
@@ -68,7 +68,7 @@ pipeline
           cp jenkins-conf/memory/* .
 
           # Get information about the current PR.
-          echo "PR number: ${prNum}";
+          echo "PR number: ${PR_NUM}";
           curl -o files.txt https://api.github.com/repos/mlpack/mlpack/pulls/${prNum}/files
           grep -o 'filename.*' files.txt |\
               sed -e 's/^filename": "//' -e 's/",//' |\
