@@ -127,7 +127,9 @@ cmake \
     -DCMAKE_SYSROOT=(Check below) \
 ```
 
-In order to fill the `TOOLCHAIN_PREFIX` or the `CMAKE_SYSROOT`, or if
-you are interested in a different compiler toolchain please refer to the
-following [table](supported_boards.md).
+In order to fill the `TOOLCHAIN_PREFIX` or the `CMAKE_SYSROOT`, use
+[this table](supported_boards.md).
+
+If your preferred architecture is missing, or if the table needs an update,
+please submit a PR to the repository and help us keep it up to date!
 
