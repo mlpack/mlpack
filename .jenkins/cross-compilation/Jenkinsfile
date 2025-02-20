@@ -92,11 +92,12 @@ pipeline
 
               withCredentials([sshUserPrivateKey(
                   credentialsId: 'mlpack-jenkins-cross-compile-rsa-key',
-                  keyFileVariable: 'KEY_FILE')])
+                  keyFileVariable: 'KEY_FILE',
+                  passphraseVariable: 'PASSPHRASE')])
               {
                 sh'''
                   eval $(ssh-agent -s)
-                  ssh-add ${KEY_FILE}
+                  echo ${PASSPHRASE} | SSH_ASKPASS=/bin/cat setsid -w ssh-add ${KEY_FILE}
                   scp mlpack_test jenkins@${hostname}:
                   ssh jenkins@${hostname} -t ./mlpack_test -r junit >\
                       ../reports/mlpack_test.${hostname}.junit.xml
