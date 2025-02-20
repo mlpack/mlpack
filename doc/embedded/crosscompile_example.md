@@ -106,12 +106,9 @@ target_link_libraries(RandomForest PRIVATE -static
 #### Optimization and cross-compilation
 
 If you are interested in adding specific compiler flags to optimize operations
-on your hardware. Please feel free to look at mlpack
-`CMake/crosscompile-arch-flags.cmake` you can either integrate the variable by
-copy and paste them directly to this CMake file or you can
-copy the entire `crosscompile-arch-config.cmake` file from `mlpack/CMake` and included
-it close to `Autodownload.cmake` at start of this tutorial but in this case you need
-to specify the `ARCH_NAME` variable as we did in the this [tutorial](crosscompile_armv7.md).
+on your hardware, you can either set `CMAKE_CXX_FLAGS` manually, or look at the
+copy of `CMake/crosscompile-arch-flags.cmake` in your project, find the
+appropriate `ARCH_NAME` section, and add the new compilation flags to that file.
 
 Once you have added all the source files and the headers for your applications,
 you can create your own build directory and build the software using `cmake`,
