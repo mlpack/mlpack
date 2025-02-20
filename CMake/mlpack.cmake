@@ -152,8 +152,10 @@
 #
 # This macro will set the following variables:
 # 
-# MLPACK_INCLUDE_DIRS - list of all include directories
-# MLPACK_LIBRARIES - list of all libraries to link against.
+# MLPACK_INCLUDE_DIRS: list of all include directories for mlpack and its
+#                      dependencies (Armadillo, cereal, ensmallen)
+# MLPACK_LIBRARIES: list of all dependency libraries to link against (typically
+#                   just OpenBLAS)
 #
 ##===================================================
 ##  MLPACK DEPEDENCIES SETTINGS. 
