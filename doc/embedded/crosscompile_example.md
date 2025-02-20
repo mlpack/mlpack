@@ -54,6 +54,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 include(CMake/Autodownload.cmake)
 include(CMake/ConfigureCrossCompile.cmake)
 
+// Download all of mlpack's dependencies and cross-compile OpenBLAS.
 fetch_mlpack()
 
 ```
