@@ -60,8 +60,12 @@ T& GetParam(
   if (d.input && !d.loaded)
   {
     // Call correct data::Load() function.
+    data::DataOptions opts;
+    opts.Fatal() = false;
     if (arma::is_Row<T>::value || arma::is_Col<T>::value)
+    {
       data::Load(value, matrix, data::Fatal | data::Transpose);
+    }
     else
     {
       data::DataOptions opts;

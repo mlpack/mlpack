@@ -354,7 +354,8 @@ TEST_CASE("SaveCSVTest", "[LoadSaveTest]")
                    "3 7;"
                    "4 8;";
 
-  REQUIRE(data::Save("test_file.csv", test) == true);
+  data::DataOptions opts;
+  REQUIRE(data::Save("test_file.csv", test, data::Fatal | data::Transpose) == true);
 
   // Load it in and make sure it is the same.
   arma::mat test2;
@@ -579,7 +580,13 @@ TEST_CASE("LoadQuotedStringInCSVTest", "[LoadSaveTest]")
 
   arma::mat test;
   data::DatasetInfo info;
-  REQUIRE(data::Load("test_file.csv", test, info, false, true) == true);
+  data::DataOptions opts;
+  opts.Fatal() = false;
+  opts.NoTranspose() = false; // Transpose = true;
+  opts.Categorical() = true;
+  opts.Mapper() = info;
+
+  REQUIRE(data::Load("test_file.csv", test, opts) == true);
 
   REQUIRE(test.n_rows == 3);
   REQUIRE(test.n_cols == 5);
@@ -621,7 +628,13 @@ TEST_CASE("LoadQuotedStringInTXTTest", "[LoadSaveTest]")
 
   arma::mat test;
   data::DatasetInfo info;
-  REQUIRE(data::Load("test_file.txt", test, info, false, true) == true);
+  data::DataOptions opts;
+  opts.Fatal() = false;
+  opts.NoTranspose() = false; // Transpose = true;
+  opts.Categorical() = true;
+  opts.Mapper() = info;
+
+  REQUIRE(data::Load("test_file.txt", test, opts) == true);
 
   REQUIRE(test.n_rows == 3);
   REQUIRE(test.n_cols == 2);
@@ -669,7 +682,13 @@ TEST_CASE("LoadQuotedStringInTSVTest", "[LoadSaveTest]")
 
   arma::mat test;
   data::DatasetInfo info;
-  REQUIRE(data::Load("test_file.tsv", test, info, false, true) == true);
+  data::DataOptions opts;
+  opts.Fatal() = false;
+  opts.NoTranspose() = false; // Transpose = true;
+  opts.Categorical() = true;
+  opts.Mapper() = info;
+
+  REQUIRE(data::Load("test_file.tsv", test, opts) == true);
 
   REQUIRE(test.n_rows == 3);
   REQUIRE(test.n_cols == 5);
@@ -778,7 +797,7 @@ TEST_CASE("LoadRowVecTransposedCSVTest", "[LoadSaveTest]")
 TEST_CASE("LoadTransposedTSVTest", "[LoadSaveTest]")
 {
   fstream f;
-  f.open("test_file.csv", fstream::out);
+  f.open("test_file.tsv", fstream::out);
 
   f << "1\t2\t3\t4" << endl;
   f << "5\t6\t7\t8" << endl;
@@ -786,7 +805,8 @@ TEST_CASE("LoadTransposedTSVTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.csv", test, false, true) == true);
+  REQUIRE(data::Load("test_file.tsv", test,
+        data::NoFalse | data::Transpose) == true);
 
   REQUIRE(test.n_cols == 2);
   REQUIRE(test.n_rows == 4);
@@ -795,7 +815,7 @@ TEST_CASE("LoadTransposedTSVTest", "[LoadSaveTest]")
     REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
-  remove("test_file.csv");
+  remove("test_file.tsv");
 }
 
 /**
@@ -812,7 +832,8 @@ TEST_CASE("LoadTransposedTSVExtensionTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.tsv", test, false, true) == true);
+  REQUIRE(data::Load("test_file.tsv", test,
+        data::NoFalse | data::Transpose) == true);
 
   REQUIRE(test.n_cols == 2);
   REQUIRE(test.n_rows == 4);
@@ -838,7 +859,8 @@ TEST_CASE("LoadNonTransposedCSVTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.csv", test, false, false) == true);
+  REQUIRE(data::Load("test_file.csv", test,
+        data::NoFatal | data::NoTranspose) == true);
 
   REQUIRE(test.n_cols == 4);
   REQUIRE(test.n_rows == 2);
@@ -860,11 +882,13 @@ TEST_CASE("SaveNonTransposedCSVTest", "[LoadSaveTest]")
                    "5 6;"
                    "7 8;";
 
-  REQUIRE(data::Save("test_file.csv", test, false, false) == true);
+  REQUIRE(data::Save("test_file.csv", test,
+        data::NoFatal | data::NoTranspose) == true);
 
   // Load it in and make sure it is in the same.
   arma::mat test2;
-  REQUIRE(data::Load("test_file.csv", test2, false, false) == true);
+  REQUIRE(data::Load("test_file.csv", test2,
+        data::NoFatal | data::NoTranspose) == true);
 
   REQUIRE(test2.n_rows == 4);
   REQUIRE(test2.n_cols == 2);

@@ -390,7 +390,7 @@ TEST_CASE("OutputParamMatTest", "[CLIOptionTest]")
   util::ParamData d;
 
   // Create value.
-  string filename = "test.csv";
+  string filename = "test_tmp.csv";
   arma::mat m(3, 3, arma::fill::randu);
   using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
@@ -405,8 +405,7 @@ TEST_CASE("OutputParamMatTest", "[CLIOptionTest]")
       (void*) NULL);
 
   arma::mat m2;
-  REQUIRE(data::Load("test.csv", m2, data::NoFatal | data::Transpose));
-
+  REQUIRE(data::Load("test_tmp.csv", m2, data::NoFatal | data::Transpose));
   CheckMatrices(m, m2);
 
   remove("test.csv");
