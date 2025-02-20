@@ -59,7 +59,7 @@ fetch_mlpack()
 
 #### Setting up include directories and source files
 
-The last part of our CMake file consists of merging all of the above components
+The last part of our `CMakeFiles.txt` consists of merging all of the components above
 together. First we are going to find the OpenMP package if the user defined the
 variable above, then we will start including the directories of our
 program. You will need to do the same for your software if you are trying to
