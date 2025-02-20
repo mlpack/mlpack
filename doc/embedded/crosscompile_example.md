@@ -55,7 +55,6 @@ include(CMake/ConfigureCrossCompile.cmake)
 
 // Download all of mlpack's dependencies and cross-compile OpenBLAS.
 fetch_mlpack()
-
 ```
 
 #### Setting up include directories and source files
