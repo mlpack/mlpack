@@ -28,9 +28,9 @@
 namespace mlpack {
 namespace data {
 
-template<typename eT>
+template<typename MatType>
 bool LoadCSVASCII(const std::string& filename,
-                  arma::Mat<eT>& matrix,
+                  MatType& matrix,
                   const DataOptions& opts)
 {
   bool success = false;
@@ -247,7 +247,6 @@ bool Load(const std::string& filename,
   bool success;
   std::fstream stream;
   std::string stringType;
- 
   success = FileExist(filename, stream, opts);
   if (!success)
     return false;
@@ -274,11 +273,11 @@ bool Load(const std::string& filename,
   }
   else if constexpr (MatType::is_col)
   {
-    success = LoadCol(filename, matrix, opts);
+    success = LoadCol(filename, stream, matrix, opts);
   }
   else if constexpr (MatType::is_row)
   {
-    success = LoadRow(filename, matrix, opts);
+    success = LoadRow(filename, stream, matrix, opts);
   }
   else if constexpr (std::is_same_v<MatType, arma::Mat<eT>>) 
   {
@@ -305,10 +304,10 @@ bool Load(const std::string& filename,
   return success;
 }
 
-template<typename eT>
+template<typename MatType>
 bool LoadDense(const std::string& filename,
                std::fstream& stream,
-               arma::Mat<eT>& matrix,
+               MatType& matrix,
                DataOptions& opts)
 {
   bool success;
@@ -423,7 +422,6 @@ bool LoadCategorical(const std::string& filename,
 
   // Get the extension.
   std::string extension = Extension(filename);
-  std::cout << extension << std::endl;
   bool success = false;
 
   if (extension == "csv" || extension == "tsv" || extension == "txt")

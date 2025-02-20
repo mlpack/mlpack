@@ -20,15 +20,16 @@ namespace mlpack {
 namespace data {
 
 // Load column vector.
-template<typename MatType>
+template<typename eT>
 bool LoadCol(const std::string& filename,
-             MatType& vec,
+             std::fstream& stream,
+             arma::Col<eT>& vec,
              DataOptions& opts)
 {
   // First load into auxiliary matrix.
-  MatType tmp;
+  arma::Mat<eT> tmp;
   opts.NoTranspose() = true; // false Transpose
-  bool success = Load(filename, tmp, opts);
+  bool success = LoadDense(filename, stream, tmp, opts);
   if (!success)
   {
     vec.clear();
@@ -71,7 +72,7 @@ bool LoadCol(const std::string& filename,
        * Now we can call the move operator, but it has to be the move operator
        * for Mat, not for Col.  This will avoid copying the data.
        */
-      *((MatType*) &vec) = std::move(tmp);
+      *((arma::Mat<eT>*) &vec) = std::move(tmp);
       return true;
     }
   }
@@ -79,20 +80,21 @@ bool LoadCol(const std::string& filename,
   {
     // It's loaded as a column vector.  We can call the move constructor
     // directly.
-    *((MatType*) &vec) = std::move(tmp);
+    *((arma::Mat<eT>*) &vec) = std::move(tmp);
     return true;
   }
 }
 
 // Load row vector.
-template<typename MatType>
+template<typename eT>
 bool LoadRow(const std::string& filename,
-             MatType& rowvec,
+             std::fstream& stream,
+             arma::Row<eT>& rowvec,
              DataOptions& opts)
 {
-  MatType tmp;
+  arma::Mat<eT> tmp;
   opts.NoTranspose() = true; // false Transpose
-  bool success = Load(filename, tmp, opts);
+  bool success = LoadDense(filename, stream, tmp, opts);
   if (!success)
   {
     rowvec.clear();
@@ -134,14 +136,14 @@ bool LoadRow(const std::string& filename,
        * Now we can call the move operator, but it has to be the move operator
        * for Mat, not for Col.  This will avoid copying the data.
        */
-      *((MatType*) &rowvec) = std::move(tmp);
+      *((arma::Mat<eT>*) &rowvec) = std::move(tmp);
       return true;
     }
   }
   else
   {
     // It's loaded as a row vector.  We can call the move constructor directly.
-    *((MatType*) &rowvec) = std::move(tmp);
+    *((arma::Mat<eT>*) &rowvec) = std::move(tmp);
     return true;
   }
 }
