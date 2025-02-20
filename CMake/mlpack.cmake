@@ -176,7 +176,7 @@
 #                   just OpenBLAS)
 #
 ##===================================================
-##  MLPACK DEPEDENCIES SETTINGS. 
+##  MLPACK DEPENDENCIES SETTINGS. 
 ##===================================================
 
 # Set minimum library versions required by mlpack.
