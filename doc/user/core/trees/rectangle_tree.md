@@ -502,7 +502,7 @@ to write a fully custom split:
    between them
  * [`XTreeSplit`](#xtreesplit): an improved splitting strategy that minimizes
    overlap of sibling nodes
- * [`RPlusTreeSplit<>`](#rplustreesplit): generic splitting policy that can be
+ * [`RPlusTreeSplit`](#rplustreesplit): generic splitting policy that can be
    used for the R+ tree split and the R++ tree split
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
@@ -566,35 +566,33 @@ deferred until a later time when overlap can be more effectively avoided.
 For implementation details, see
 [the source code](/src/mlpack/core/tree/rectangle_tree/x_tree_split_impl.hpp).
 
-### `RPlusTreeSplit<>`
+### `RPlusTreeSplit`
 
-The `RPlusTreeSplit` class is a templatized class that can be used to produce
-both the [R+-tree](r_plus_tree.md) split and the [R++-tree](r_plus_plus_tree.md)
-split strategies, by using either of the following types:
+The `RPlusTreeSplit` class implements the splitting policy of the
+[R+-tree](r_plus_tree.md).  The strategy splits nodes (leaves and non-leaves) by
+partitioning along the dimension that results in the two children with minimum
+volume.
 
- * `RPlusTreeSplit<RPlusTreeSplitPolicy, MinimalCoverageSweep>` is used to
-   produce the [`RPlusTree`](r_plus_tree.md).
-   - Splits nodes (leaves and non-leaves) by partitioning along the dimension
-     that results in the two children with minimum volume.
+For implementation details, see
+[the source code](/src/mlpack/core/tree/rectangle_tree/r_plus_tree_split_impl.hpp).
+Note that `RPlusTreeSplit` is a template typedef of the general
+`RPlusTreeSplitType<>` class.
 
- * `RPlusTreeSplit<RPlusPlusTreeSplitPolicy, MinimalSplitsNumberSweep>` is used
-   to produce the [`RPlusPlusTree`](r_plus_plus_tree.md).
-   - If this is used, then
-     `RPlusPlusTreeAuxiliaryInformation`](#rplusplustreeauxiliaryinformation)
-     must be used as the
-     [`AuxiliaryInformationType`](#auxiliaryinformationtype).
-   - Splits leaf nodes along an arbitrarily-chosen dimension.
-   - Splits non-leaf nodes along the dimension that minimizes the number of
-     descendant nodes that also must be split along that dimension.
+### `RPlusPlusTreeSplit`
 
-For more details, including the requirements for custom template parameters, see
-the source code:
+The `RPlusPlusTreeSplit` class implements the splitting policy of the
+[R++-tree](r_plus_plus_tree.md).  This class can only be used in a tree that
+uses [`RPlusPlusTreeAuxiliaryInformation`](#rplusplustreeauxiliaryinformation)
+as the [`AuxiliaryInformationType`](#auxiliaryinformationtype).
 
- * [`r_plus_tree_split_impl.hpp`](/src/mlpack/core/tree/rectangle_tree/r_plus_tree_split_impl.hpp)
- * [`r_plus_tree_split_policy.hpp`](/src/mlpack/core/tree/rectangle_tree/r_plus_tree_split_policy.hpp)
- * [`r_plus_plus_tree_split_policy.hpp`](/src/mlpack/core/tree/rectangle_tree/r_plus_plus_tree_split_policy.hpp)
- * [`minimal_coverage_sweep_impl.hpp`](/src/mlpack/core/tree/rectangle_tree/minimal_coverage_sweep_impl.hpp)
- * [`minimal_splits_number_sweep_impl.hpp`](/src/mlpack/core/tree/rectangle_tree/minimal_splits_number_sweep_impl.hpp)
+The splitting strategy splits leaf nodes along an arbitrarily-chosen dimension,
+and splits non-leaf nodes along the dimension that minimizes the number of
+descendant nodes that also must be split along that dimension.
+
+For implementation details, see
+[the source code](/src/mlpack/core/tree/rectangle_tree/r_plus_tree_split_impl.hpp).
+Note that `RPlusPlusTreeSplit` is a template typedef of the general
+`RPlusTreeSplitType<>` class.
 
 ### Custom `SplitType`s
 
@@ -697,7 +695,14 @@ into, the following heuristic is used:
 
 ### `RPlusPlusTreeDescentHeuristic`
 
-TODO
+The `RPlusPlusTreeDescentHeuristic` is the descent strategy used by the
+[`RPlusPlusTree`](r_plus_plus_tree.md).  The strategy chooses the child whose
+outer bound (held by
+[`RPlusPlusTreeAuxiliaryInformation`](#rplusplustreeauxiliaryinformation))
+contains the point to be inserted.
+
+For implementation details, see [the source
+code](/src/mlpack/core/tree/rectangle_tree/r_plus_plus_tree_descent_heuristic.hpp).
 
 ### Custom `DescentType`s
 
@@ -738,6 +743,8 @@ Different variants of `RectangleTree`s may use other predefined types for their
 
  * [`XTreeAuxiliaryInformation`](#xtreeauxiliaryinformation): used for the
    [`XTree`](x_tree.md).
+ * [`RPlusPlusTreeAuxiliaryInformation`](#rplusplustreeauxiliaryinformation):
+   used for the [`RPlusPlusTree`](r_plus_plus_tree.md).
 
 ### `XTreeAuxiliaryInformation`
 
@@ -752,7 +759,23 @@ code](/src/mlpack/core/tree/rectangle_tree/x_tree_auxiliary_information.hpp).
 
 ### `RPlusPlusTreeAuxiliaryInformation`
 
-TODO
+The `RPlusPlusTreeAuxiliaryInformation` class is used by the
+[`RPlusPlusTree`](r_plus_plus_tree.md) to store information required for tree
+building.  In addition to the regular
+[`HRectBound`](binary_space_tree.md#hrectbound) that is used to maintain the
+minimum bounding rectangle of each node, each R++-tree node also maintains an
+'outer bound' that represents the *maximum* bounding rectangle.  This maximum
+bounding rectangle is used for splitting, instead of the minimum bounding
+rectangle; this helps prevent overlap in nodes.
+
+For an object `auxInfo`, the function `auxInfo.OuterBound()` will return an
+[`HRectBound&`](binary_space_tree.md#hrectbound).  If the tree was built with a
+[non-standard `MatType`](#template-parameters), then the type returned will be
+`HRectBound<EuclideanDistance, ElemType>`, where `ElemType` is the element type
+of the given `MatType`.
+
+For implementation details, see [the source
+code](/src/mlpack/core/tree/rectangle_tree/r_plus_plus_tree_auxiliary_information.hpp).
 
 ### Custom `AuxiliaryInformationType`s
 
