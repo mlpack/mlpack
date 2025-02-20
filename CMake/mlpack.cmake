@@ -4,7 +4,7 @@
 # author Omar Shrit
 
 ##===================================================
-##  FUNCTIONS DOCUMENTATIONS
+##  FUNCTION DOCUMENTATION
 ##===================================================
 #
 # get_deps
