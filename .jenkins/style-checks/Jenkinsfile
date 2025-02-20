@@ -1,0 +1,95 @@
+// The style checker build will check the style of all the code in the
+// repository.
+pipeline
+{
+  // Run inside of the custom Docker image for style checking.
+  agent
+  {
+    docker
+    {
+      image 'mlpack/jenkins-mlpack-style-checks:latest'
+      alwaysPull true
+    }
+  }
+
+  stages
+  {
+    // First we have to check out the jenkins-conf repository, which contains
+    // the scripts that we will use for checking the style.
+    stage('Check out jenkins-conf repository')
+    {
+      steps
+      {
+        script
+        {
+          u = load '.jenkins/utils.groovy'
+          u.setBuildStatus("Style Checks (pipeline)", "Building...", "PENDING");
+        }
+
+        sh '''
+          git clone https://github.com/mlpack/jenkins-conf
+        '''
+      }
+    }
+
+    // Now we can run those scripts.
+    stage('Check code style')
+    {
+      steps
+      {
+        sh '''
+          mkdir -p reports
+          ./jenkins-conf/linter/lint.sh \
+              --root . \
+              --reports reports/cpplint.junit.xml \
+              --dir ./src/mlpack
+
+          # Print the results.
+          cat reports/cpplint.junit.xml
+        '''
+      }
+    }
+  }
+
+  post
+  {
+    always
+    {
+      // Process the test results.
+      junit(allowEmptyResults: true,
+            testResults: '**/reports/cpplint.junit.xml')
+
+      // Clean the workspace.
+      cleanWs(cleanWhenNotBuilt: false,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true)
+    }
+
+    // Mark unstable builds as failed.
+    unstable
+    {
+      script
+      {
+        error "Style check failure."
+      }
+    }
+
+    success
+    {
+      script
+      {
+        u.setBuildStatus("Style Checks (pipeline)", "Build finished.", "SUCCESS");
+      }
+    }
+
+    failure
+    {
+      script
+      {
+        u.setBuildStatus("Style Checks (pipeline)", "Style check failure.",
+            "FAILURE");
+      }
+    }
+  }
+}
