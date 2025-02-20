@@ -65,7 +65,7 @@ pipeline
 
         sh'''
           # Move memory tests to the current directory.
-          cp jenkins-conf/test-support/memory/* .
+          cp jenkins-conf/memory/* .
 
           # Get information about the current PR.
           echo "PR number: ${prNum}";
