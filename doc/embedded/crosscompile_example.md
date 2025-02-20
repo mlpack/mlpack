@@ -10,7 +10,6 @@ to read before this one:
 ### Cloning mlpack example respository
 
 mlpack has an [example repository](https://github.com/mlpack/examples) that
-
 shows a number of applications and use cases for mlpack, including embedded
 deployment.  In this tutorial, we are interested in the `embedded/` directory,
 which provides a CMake project template that compiles a random forest
