@@ -72,7 +72,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   size_t cutAxis = tree->Bound().Dim();
   ElemType cut = std::numeric_limits<ElemType>::lowest();
 
-  // Try to find a partiotion of the node.
+  // Try to find a partition of the node.
   if (!PartitionNode(tree, cutAxis, cut))
     return;
 
@@ -142,7 +142,7 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
   size_t cutAxis = tree->Bound().Dim();
   ElemType cut = std::numeric_limits<ElemType>::lowest();
 
-  // Try to find a partiotion of the node.
+  // Try to find a partition of the node.
   if ( !PartitionNode(tree, cutAxis, cut))
     return false;
 

@@ -8,6 +8,8 @@ be used directly, and instead one of the numerous variants should be used
 instead:
 
  * [`RTree`](r_tree.md)
+ * [`RPlusTree`](r_plus_tree.md)
+ * [`RPlusPlusTree`](r_plus_plus_tree.md)
 
 The `RectangleTree` and its variants are capable of inserting points and
 deleting them.  This is different from [`BinarySpaceTree`](binary_space_tree.md)
@@ -493,6 +495,8 @@ mlpack provides several drop-in choices for `SplitType`, and it is also possible
 to write a fully custom split:
 
  * [`RTreeSplit`](#rtreesplit): splits according to a simple binary heuristic
+ * [`RPlusTreeSplit<>`](#rplustreesplit): generic splitting policy that can be
+   used for the R+ tree split and the R++ tree split
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
 
@@ -515,6 +519,36 @@ strategy works as follows:
 
 For implementation details, see
 [the source code](/src/mlpack/core/tree/rectangle_tree/r_tree_split_impl.hpp).
+
+### `RPlusTreeSplit<>`
+
+The `RPlusTreeSplit` class is a templatized class that can be used to produce
+both the [R+-tree](r_plus_tree.md) split and the [R++-tree](r_plus_plus_tree.md)
+split strategies, by using either of the following types:
+
+ * `RPlusTreeSplit<RPlusTreeSplitPolicy, MinimalCoverageSweep>` is used to
+   produce the [`RPlusTree`](r_plus_tree.md).
+   - Splits nodes (leaves and non-leaves) by partitioning along the dimension
+     that results in the two children with minimum volume.
+
+ * `RPlusTreeSplit<RPlusPlusTreeSplitPolicy, MinimalSplitsNumberSweep>` is used
+   to produce the [`RPlusPlusTree`](r_plus_plus_tree.md).
+   - If this is used, then
+     `RPlusPlusTreeAuxiliaryInformation`](#rplusplustreeauxiliaryinformation)
+     must be used as the
+     [`AuxiliaryInformationType`](#auxiliaryinformationtype).
+   - Splits leaf nodes along an arbitrarily-chosen dimension.
+   - Splits non-leaf nodes along the dimension that minimizes the number of
+     descendant nodes that also must be split along that dimension.
+
+For more details, including the requirements for custom template parameters, see
+the source code:
+
+ * [`r_plus_tree_split_impl.hpp`](/src/mlpack/core/tree/rectangle_tree/r_plus_tree_split_impl.hpp)
+ * [`r_plus_tree_split_policy.hpp`](/src/mlpack/core/tree/rectangle_tree/r_plus_tree_split_policy.hpp)
+ * [`r_plus_plus_tree_split_policy.hpp`](/src/mlpack/core/tree/rectangle_tree/r_plus_plus_tree_split_policy.hpp)
+ * [`minimal_coverage_sweep_impl.hpp`](/src/mlpack/core/tree/rectangle_tree/minimal_coverage_sweep_impl.hpp)
+ * [`minimal_splits_number_sweep_impl.hpp`](/src/mlpack/core/tree/rectangle_tree/minimal_splits_number_sweep_impl.hpp)
 
 ### Custom `SplitType`s
 
@@ -558,6 +592,8 @@ possible to write a fully custom split:
 
  * [`RTreeDescentHeuristic`](#rtreedescentheuristic): selects the closest child,
    which is the child whose volume will increase the least
+ * [`RPlusTreeDescentHeuristic`](#rplustreedescentheuristic): TODO
+ * [`RPlusPlusTreeDescentHeuristic`](#rplusplustreedescentheuristic): TODO
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
 
@@ -573,6 +609,26 @@ child to insert a point or other node into.
 
 For implementation details, see [the source
 code](/src/mlpack/core/tree/rectangle_tree/r_tree_descent_heuristic.hpp).
+
+### `RPlusTreeDescentHeuristic`
+
+The `RPlusTreeDescentHeuristic` is the descent strategy used by the
+[`RPlusTree`](r_plus_tree.md).  When determining which node to insert a point
+into, the following heuristic is used:
+
+ * If the point to be inserted already falls within the bounding hyperrectangle
+   of a child, select that child.
+ * If the point to be inserted does not fall within the bounding
+   hyperrectangle of any child, but a child's volume can be expanded to
+   encompass the point *without* causing any children to overlap, select that
+   child.
+ * If neither of the conditions above are true, insert the point into a new
+   child node.  This child node will likely be rebalanced or modified later by
+   [`RPlusTreeSplit<>`](#rplustreesplit).
+
+### `RPlusPlusTreeDescentHeuristic`
+
+TODO
 
 ### Custom `DescentType`s
 
@@ -608,6 +664,10 @@ class DescentType
 The `AuxiliaryInformationType` template parameter holds any auxiliary
 information required by the `SplitType` or `DescentType` strategies.  By
 default, the `NoAuxiliaryInformation` class is used, which holds nothing.
+
+### `RPlusPlusTreeAuxiliaryInformation`
+
+TODO
 
 ### Custom `AuxiliaryInformationType`s
 
