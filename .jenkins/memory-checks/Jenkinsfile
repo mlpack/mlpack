@@ -59,7 +59,8 @@ pipeline
         {
           if (env.BRANCH_NAME.startsWith('PR-'))
           {
-            env.PR_NUM = env.BRANCH_NAME.replace(/^PR-/, '')
+            // Strip 'PR-' from the front.
+            env.PR_NUM = env.BRANCH_NAME.substring(3)
           }
         }
 
@@ -69,7 +70,7 @@ pipeline
 
           # Get information about the current PR.
           echo "PR number: ${PR_NUM}";
-          curl -o files.txt https://api.github.com/repos/mlpack/mlpack/pulls/${prNum}/files
+          curl -o files.txt https://api.github.com/repos/mlpack/mlpack/pulls/${PR_NUM}/files
           grep -o 'filename.*' files.txt |\
               sed -e 's/^filename": "//' -e 's/",//' |\
               uniq |\
