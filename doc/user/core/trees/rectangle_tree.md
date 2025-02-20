@@ -8,6 +8,8 @@ be used directly, and instead one of the numerous variants should be used
 instead:
 
  * [`RTree`](r_tree.md)
+ * [`RStarTree`](r_star_tree.md)
+ * [`XTree`](x_tree.md)
 
 The `RectangleTree` and its variants are capable of inserting points and
 deleting them.  This is different from [`BinarySpaceTree`](binary_space_tree.md)
@@ -88,7 +90,7 @@ class RectangleTree;
    - See the [`DescentType`](#descenttype) section for more details.
 
  * `AuxiliaryInformationType`: holds information specific to the variant of the
-   `RectangleTree`.  By default, [`NoAuxiliaryInformation`] is used.
+   `RectangleTree`.  By default, `NoAuxiliaryInformation` is used.
 
 Note that the TreeType API requires trees to have only three template
 parameters.  In order to use a `RectangleTree` with its six template parameters
@@ -493,6 +495,11 @@ mlpack provides several drop-in choices for `SplitType`, and it is also possible
 to write a fully custom split:
 
  * [`RTreeSplit`](#rtreesplit): splits according to a simple binary heuristic
+ * [`RStarTreeSplit`](#rstartreesplit): finds the best possible binary split
+   that minimizes the volume of the two children and maximizes the margin
+   between them
+ * [`XTreeSplit`](#xtreesplit): an improved splitting strategy that minimizes
+   overlap of sibling nodes
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
 
@@ -516,6 +523,45 @@ strategy works as follows:
 For implementation details, see
 [the source code](/src/mlpack/core/tree/rectangle_tree/r_tree_split_impl.hpp).
 
+### `RStarTreeSplit`
+
+The `RStarTreeSplit` class implements the improved R\*-tree splitting strategy
+and can be used with the [`RectangleTree`](#rectangletree) class.  This is the
+splitting strategy used for the [`RStarTree`](r_star_tree.md) class, and is the
+strategy proposed in the
+[R\*-tree paper (pdf)](https://dl.acm.org/doi/pdf/10.1145/93597.98741).  The
+strategy computes, for each possible binary split in each dimension,
+
+ * The combined volume of the two child nodes,
+ * The size of the margin between the two child nodes, and
+ * The size of the overlap between the two child nodes.
+
+The split that minimizes the combined volume and maximizes the overlap is
+chosen.
+
+In addition, the `RStarTreeSplit` will sometimes perform *forced reinsertion*,
+where points are removed from a node during the splitting process and reinserted
+into the tree.  This can help decrease the overlap between adjacent nodes in the
+tree, which in turn improves the quality of the tree for search and other tasks.
+
+For implementation details, see
+[the source code](/src/mlpack/core/tree/rectangle_tree/r_star_tree_split_impl.hpp).
+
+### `XTreeSplit`
+
+The `XTreeSplit` class implements the improved splitting strategy for the
+[`XTree`](x_tree.md) as described in the
+[X-tree paper (pdf)](http://www.vldb.org/conf/1996/P028.PDF).  This strategy is
+an improved version of the standard [`RTreeSplit`](#rtreesplit), where the
+overlap of sibling nodes is minimized.
+
+When overlap cannot be prevented, `XTreeSplit` will instead create
+"super-nodes" with more children than typically allowed.  The split is then
+deferred until a later time when overlap can be more effectively avoided.
+
+For implementation details, see
+[the source code](/src/mlpack/core/tree/rectangle_tree/x_tree_split_impl.hpp).
+
 ### Custom `SplitType`s
 
 Custom split strategies for a `RectangleTree` can be implemented via the
@@ -531,16 +577,18 @@ class SplitType
   // Given the leaf node `tree`, split into multiple nodes.  `TreeType` will be
   // the relevant `RectangleTree` type.  `tree` should be modified directly.
   //
-  // `relevels` is an auxiliary array used by some splitting strategies to
-  // indicate whether a node needs to be reinserted into the tree.
+  // `relevels` is an auxiliary array used by some splitting strategies, such as
+  // the `RStarTreeSplit`, to indicate whether a node needs to be reinserted
+  // into the tree.
   template<typename TreeType>
   static void SplitLeafNode(TreeType* tree, std::vector<bool>& relevels);
 
   // Given the non-leaf node `tree`, split into multiple nodes.  `TreeType` will
   // be the relevant `RectangleTree` type.  `tree` should be modified directly.
   //
-  // `relevels` is an auxiliary array used by some splitting strategies to
-  // indicate whether a node needs to be reinserted into the tree.
+  // `relevels` is an auxiliary array used by some splitting strategies, such as
+  // the `RStarTreeSplit`, to indicate whether a node needs to be reinserted
+  // into the tree.
   template<typename TreeType>
   static void SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels);
 };
@@ -558,6 +606,8 @@ possible to write a fully custom split:
 
  * [`RTreeDescentHeuristic`](#rtreedescentheuristic): selects the closest child,
    which is the child whose volume will increase the least
+ * [`RStarTreeDescentHeuristic`](#rstartreedescentheuristic): selects a child
+   such that overlap is minimized and volume increase is minimized
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
    `SplitType` class
 
@@ -573,6 +623,25 @@ child to insert a point or other node into.
 
 For implementation details, see [the source
 code](/src/mlpack/core/tree/rectangle_tree/r_tree_descent_heuristic.hpp).
+
+### `RStarTreeDescentHeuristic`
+
+The `RStarTreeDescentHeuristic` is a descent strategy for the
+[`RectangleTree`](#rectangletree) and is used by the
+[`RStarTree`](r_star_tree.md).  The heuristic will always prefer to insert a
+point or node into a child node whose hyperrectangle bound already contains the
+point or node to be inserted.
+
+When inserting a point or node into a node whose children are leaves, the
+strategy will choose to insert into the child where the overall overlap of
+children's volumes after insertion is minimized.
+
+When inserting a point or node into a node whose children are not leaves, the
+strategy will choose to insert into the child whose volume is the smallest after
+insertion.
+
+For implementation details, see [the source
+code](/src/mlpack/core/tree/rectangle_tree/r_star_tree_descent_heuristic.hpp).
 
 ### Custom `DescentType`s
 
@@ -608,6 +677,22 @@ class DescentType
 The `AuxiliaryInformationType` template parameter holds any auxiliary
 information required by the `SplitType` or `DescentType` strategies.  By
 default, the `NoAuxiliaryInformation` class is used, which holds nothing.
+Different variants of `RectangleTree`s may use other predefined types for their
+`AuxiliaryInformationType`s:
+
+ * [`XTreeAuxiliaryInformation`](#xtreeauxiliaryinformation): used for the
+   [`XTree`](x_tree.md).
+
+### `XTreeAuxiliaryInformation`
+
+The `XTreeAuxiliaryInformation` class is the auxiliary information type used by
+the [`XTree`](x_tree.md) class, and is meant to be used with the
+[`XTreeSplit`](#xtreesplit) splitting strategy.  It holds information required
+to construct super-nodes (a concept specific to X-trees), where splitting is
+being deferred.
+
+For implementation details, see [the source
+code](/src/mlpack/core/tree/rectangle_tree/x_tree_auxiliary_information.hpp).
 
 ### Custom `AuxiliaryInformationType`s
 
