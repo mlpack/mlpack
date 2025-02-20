@@ -39,7 +39,7 @@ defines the project name and includes two useful CMake configuration files:
    architecture (optional).
 
 Then we need to call `fetch_mlpack()` will download mlpack including all dependencies,
-cross-compile openblas and set up all the necessary parameters to find these dependencies.
+cross-compile OpenBLAS and set up all the necessary parameters to find these dependencies.
 Most of mlpack dependencies are header-only with the exception of Openblas,
 thus this is expected to be a quick step.
 
