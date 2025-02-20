@@ -12,6 +12,9 @@ _????-??-??_
 
  * Bundle STB with mlpack and add `ResizeImages()` functionality (#3823).
 
+ * Fix conversion of empty Armadillo objects to numpy in Python bindings
+   (#3896).
+
 ## mlpack 4.5.1
 
 _2024-12-02_

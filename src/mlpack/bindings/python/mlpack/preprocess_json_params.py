@@ -95,7 +95,7 @@ def np_to_arma(obj):
         n_rows, n_cols = obj[key].shape
 
         dic = OrderedDict()
-        
+
         dic["n_rows"] = str(n_cols) # implicit transpose
         dic["n_cols"] = str(n_rows) # implicit transpose
 
@@ -127,14 +127,18 @@ def arma_to_np(obj):
   if isinstance(obj, OrderedDict):
     for key in obj.keys():
       if isinstance(obj[key], OrderedDict):
-        # if "vec_state" is present in dictionary, then
-        # it must be armadillo vector. 
+        # if "vec_state" is present in dictionary, then it must be an Armadillo
+        # vector.
         if "vec_state" in obj[key].keys():
           n_rows = int(obj[key]["n_rows"])
           n_cols = int(obj[key]["n_cols"])
-          # implicit transpose
-          obj[key] = np.array(obj[key]["elem"])\
-              .reshape(n_cols, n_rows).astype(type(obj[key]["elem"][0]))
+
+          # Perform an implicit transpose, if there are any elements.
+          if n_rows > 0 and n_cols > 0:
+            obj[key] = np.array(obj[key]["elem"]).reshape(n_cols,
+                n_rows).astype(type(obj[key]["elem"][0]))
+          else:
+            obj[key] = np.zeros((n_rows, n_cols))
         else:
           arma_to_np(obj[key])
       else:
