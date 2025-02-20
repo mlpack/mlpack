@@ -7,7 +7,6 @@ to read before this one:
  * [Run mlpack bindings on a Raspberry Pi](crosscompile_armv7.md)
  * [Set up cross-compilation toolchain for mlpack](supported_boards.md)
 
-
 ### Cloning mlpack example respository
 
 mlpack has an [example repository](https://github.com/mlpack/examples) that
