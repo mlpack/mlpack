@@ -133,8 +133,17 @@ def arma_to_np(obj):
           n_rows = int(obj[key]["n_rows"])
           n_cols = int(obj[key]["n_cols"])
           # implicit transpose
-          obj[key] = np.array(obj[key]["elem"])\
-              .reshape(n_cols, n_rows).astype(type(obj[key]["elem"][0]))
+          if(key == "selectedBeta"):  
+            # handling of the selectedBeta attribute which
+            # did not have the prop `elem`
+            beta_path_elements = obj["betaPath"]
+            selected_index = obj["selectedIndex"]
+            selected_beta_path = beta_path_elements[selected_index]
+
+            obj[key] = selected_beta_path["elem"]
+          else:
+            obj[key] = np.array(obj[key]["elem"])\
+                .reshape(n_cols, n_rows).astype(type(obj[key]["elem"][0]))
         else:
           arma_to_np(obj[key])
       else:
