@@ -237,9 +237,15 @@ if (ARMA_EXTRA_DEBUG)
   add_definitions(-DARMA_EXTRA_DEBUG)
 endif()
 
-if (CMAKE_CROSSCOMPILING)
-  fetch_mlpack_and_crosscompile()
-elseif(DOWNLOAD_DEPENDENCIES)
+if (NOT USE_OPENMP)
+  set(MLPACK_DISABLE_OPENMP ON)
+endif()
+
+if (USE_SYSTEM_STB)
+  set(MLPACK_USE_SYSTEM_STB ON)
+endif ()
+
+if (CMAKE_CROSSCOMPILING OR DOWNLOAD_DEPENDENCIES)
   fetch_mlpack(ON)
 else()
   find_mlpack()
