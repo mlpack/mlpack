@@ -50,7 +50,7 @@ cmake_minimum_required(VERSION 3.11)
 project(main)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
-include(CMake/Autodownload.cmake)
+include(CMake/mlpack.cmake)
 include(CMake/ConfigureCrossCompile.cmake)
 
 // Download all of mlpack's dependencies and cross-compile OpenBLAS.
@@ -60,8 +60,7 @@ fetch_mlpack()
 #### Setting up include directories and source files
 
 The last part of our `CMakeFiles.txt` consists of merging all of the components above
-together. First we are going to find the OpenMP package if the user defined the
-variable above, then we will start including the directories of our
+together. First we need to start including the directories of our
 program. You will need to do the same for your software if you are trying to
 integrate this example into an existing codebase; this should be done by
 defining an include variable using `set` directive or add them directly in
@@ -73,19 +72,9 @@ Finally do not forget to add any external library that you need to link against
 in `target_link_libraries`.
 
 ```cmake
-include_directories(BEFORE ${MLPACK_INCLUDE_DIRS})
-include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/src/)
-
-## User includes go here
-
-# Finally, add any cross-compilation support libraries (they may need to come
-# last).  If we are not cross-compiling, no changes will happen here.
-set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${CROSS_COMPILE_SUPPORT_LIBRARIES})
-
 ## Add your source files to SOURCES_FILES list
-
+set(SOURCE_FILES main.cpp)
 add_executable(RandomForest main.cpp ${SOURCES_FILES})
-target_sources(RandomForest PRIVATE ${SOURCE_FILES})
 
 # If needed, add any additional include directories here.
 target_include_directories(RandomForest PRIVATE
