@@ -7,113 +7,35 @@
 ##  FUNCTION DOCUMENTATION
 ##===================================================
 #
-# get_deps
-#-------------------
+# find_mlpack() 
+#----------------------
 #
-# This macro allows to download dependenices from the link that is provided to
-# them. You need to pass the LINK to download from, the name of
-# the dependency, and the filename to store the downloaded package to such
-# as armadillo.tar.gz and they are downloaded into 
-# ${CMAKE_BINARY_DIR}/deps/${PACKAGE}
-# At each download, this module sets a GENERIC_INCLUDE_DIR path,
-# which means that you need to set the main path for the include
-# directories for each package.
-# Note that, the package should be compressed only as .tar.gz
+# This macro finds mlpack libraries and it dependencies. Call this function to
+# find mlpack and its dependencies (Armadillo, ensmallen, cereal, and any 
+# Armadillo dependencies).
 #
+# This function will not automatically download any missing dependencies, and
+# will instead throw errors if dependencies are not found.  For a version that
+# automatically downloads dependencies, see `fetch_mlpack()`.
 #
-# find_armadillo
-#------------------
+# Configuration options:
 #
-# This macro finds armadillo library, and sets the necessary paths to each
-# one of the parameters. If the library is not found this macro will set 
-# ARMADILLO_FOUND to false.
+#   MLPACK_DISABLE_OPENMP: if set, parallelism via OpenMP will be disabled.
+#   MLPACK_USE_SYSTEM_STB: if set, STB will be searched for on the system, 
+#       instead of using the version bundled with mlpack.
 #
-# This macro sets the following variables:
-#  ARMADILLO_FOUND - set to true if the library is found
-#  ARMADILLO_INCLUDE_DIRS - list of required include directories
-#  ARMADILLO_LIBRARIES - list of libraries to be linked
-#  ARMADILLO_VERSION_MAJOR - major version number
-#  ARMADILLO_VERSION_MINOR - minor version number
-#  ARMADILLO_VERSION_PATCH - patch version number
-#  ARMADILLO_VERSION_STRING - version number as a string (ex: "1.0.4")
-#  ARMADILLO_VERSION_NAME - name of the version (ex: "Antipodean Antileech")
+# If mlpack is successfully found, the `MLPACK_FOUND` variable will be set to
+# `TRUE`; otherwise, it will be set to `FALSE`.
 #
-#
-# find_ensmallen
-#------------------
-#
-# This macro finds ensmallen library and sets the necessary paths to each
-# one of the parameters. If the library is not found this function will set 
-# ENSMALLEN_FOUND to false.
-#
-# This module sets the following variables:
-#  ENSMALLEN_FOUND - set to true if the library is found
-#  ENSMALLEN_INCLUDE_DIR - list of required include directories
-#  ENSMALLEN_VERSION_MAJOR - major version number
-#  ENSMALLEN_VERSION_MINOR - minor version number
-#  ENSMALLEN_VERSION_PATCH - patch version number
-#  ENSMALLEN_VERSION_STRING - version number as a string (ex: "1.0.4")
-#  ENSMALLEN_VERSION_NAME - name of the version (ex: "Antipodean Antileech")
-#
-#
-# find_cereal
-#------------------
-#
-# This macro finds cereal library and sets the necessary paths to each
-# one of the parameters. If the library is not found this macro will set 
-# CEREAL_FOUND to false.
-
-# This module sets the following variables:
-#  CEREAL_FOUND - set to true if the library is found
-#  CEREAL_INCLUDE_DIR - list of required include directories
-#  CEREAL_VERSION_MAJOR - major version number
-#  CEREAL_VERSION_MINOR - minor version number
-#  CEREAL_VERSION_PATCH - patch version number
-#  CEREAL_VERSION_STRING - version number as a string (ex: "1.0.4")
-#
-#
-# find stb
-#------------------
-#
-# This macro finds STB library and sets the necessary paths to each
-# one of the parameters. If the library is not found this macro will set 
-# STB_FOUND to false.
+# This macro will set the following variables:
 # 
-# - Find STB_IMAGE
-#
-# This module sets the following variables:
-#  STB_IMAGE_FOUND - set to true if the library is found
-#  STB_IMAGE_INCLUDE_DIR - list of required include directories
-#  STB_INCLUDE_NEEDS_STB_SUFFIX - whether or not the include files are under an
-#     stb/ directory; if "YES", then includes must be done as, e.g.,
-#     stb/stb_image.h.
+# MLPACK_INCLUDE_DIRS: list of all include directories for mlpack and its
+#                      dependencies (Armadillo, cereal, ensmallen)
+# MLPACK_LIBRARIES: list of all dependency libraries to link against (typically
+#                   just OpenBLAS)
 #
 #
-# find_openmp
-#-----------------------
-#
-# This macro finds if OpenMP library is installed and supported by the
-# compiler. if the library found then it sets the following parameters:
-#  
-# OpenMP_FOUND - set to true if the library is found
-# 
-#
-# find_mlpack_internal
-#-----------------------
-#
-# This macro finds the mlpack library and sets the necessary paths to each one
-# of the parameters. If the library is not found this macro will set
-# MLPACK_FOUND to false.
-#
-# This module sets the following variables:
-#  MLPACK_FOUND - set to true if the library is found
-#  MLPACK_VERSION_MAJOR - major version number
-#  MLPACK_VERSION_MINOR - minor version number
-#  MLPACK_VERSION_PATCH - patch version number
-#  MLPACK_VERSION_STRING - version number as a string (ex: "1.0.4")
-#  MLPACK_INCLUDE_DIR - list of mlpack include directories
-#
-# fetch_mlpack
+# fetch_mlpack(COMPILE_OPENBLAS)
 #-----------------------
 #
 # This macro downloads the mlpack library and its dependencies.  Call this 
@@ -148,32 +70,112 @@
 #                   just OpenBLAS)
 #
 #
-# find_mlpack 
-#----------------------
+# get_deps(LINK DEPS_NAME PACKAGE)
+#-------------------
 #
-# This macro finds mlpack libraries and it dependencies. Call this function to
-# find mlpack and its dependencies (Armadillo, ensmallen, cereal, and any 
-# Armadillo dependencies).
+# This macro allows to download dependenices from the link that is provided to
+# them. You need to pass the LINK to download from, the name of
+# the dependency, and the filename to store the downloaded package to such
+# as armadillo.tar.gz and they are downloaded into 
+# ${CMAKE_BINARY_DIR}/deps/${PACKAGE}
+# At each download, this module sets a GENERIC_INCLUDE_DIR path,
+# which means that you need to set the main path for the include
+# directories for each package.
+# Note that, the package should be compressed only as .tar.gz
 #
-# This function will not automatically download any missing dependencies, and
-# will instead throw errors if dependencies are not found.  For a version that
-# automatically downloads dependencies, see `fetch_mlpack()`.
 #
-# Configuration options:
+# find_armadillo()
+#------------------
 #
-#   MLPACK_DISABLE_OPENMP: if set, parallelism via OpenMP will be disabled.
-#   MLPACK_USE_SYSTEM_STB: if set, STB will be searched for on the system, 
-#       instead of using the version bundled with mlpack.
+# This macro finds armadillo library, and sets the necessary paths to each
+# one of the parameters. If the library is not found this macro will set 
+# ARMADILLO_FOUND to false.
 #
-# If mlpack is successfully found, the `MLPACK_FOUND` variable will be set to
-# `TRUE`; otherwise, it will be set to `FALSE`.
+# This macro sets the following variables:
+#  ARMADILLO_FOUND - set to true if the library is found
+#  ARMADILLO_INCLUDE_DIRS - list of required include directories
+#  ARMADILLO_LIBRARIES - list of libraries to be linked
+#  ARMADILLO_VERSION_MAJOR - major version number
+#  ARMADILLO_VERSION_MINOR - minor version number
+#  ARMADILLO_VERSION_PATCH - patch version number
+#  ARMADILLO_VERSION_STRING - version number as a string (ex: "1.0.4")
+#  ARMADILLO_VERSION_NAME - name of the version (ex: "Antipodean Antileech")
 #
-# This macro will set the following variables:
+#
+# find_ensmallen
+#------------------
+#
+# This macro finds ensmallen library and sets the necessary paths to each
+# one of the parameters. If the library is not found this function will set 
+# ENSMALLEN_FOUND to false.
+#
+# This module sets the following variables:
+#  ENSMALLEN_FOUND - set to true if the library is found
+#  ENSMALLEN_INCLUDE_DIR - list of required include directories
+#  ENSMALLEN_VERSION_MAJOR - major version number
+#  ENSMALLEN_VERSION_MINOR - minor version number
+#  ENSMALLEN_VERSION_PATCH - patch version number
+#  ENSMALLEN_VERSION_STRING - version number as a string (ex: "1.0.4")
+#  ENSMALLEN_VERSION_NAME - name of the version (ex: "Antipodean Antileech")
+#
+#
+# find_cereal()
+#------------------
+#
+# This macro finds cereal library and sets the necessary paths to each
+# one of the parameters. If the library is not found this macro will set 
+# CEREAL_FOUND to false.
+
+# This module sets the following variables:
+#  CEREAL_FOUND - set to true if the library is found
+#  CEREAL_INCLUDE_DIR - list of required include directories
+#  CEREAL_VERSION_MAJOR - major version number
+#  CEREAL_VERSION_MINOR - minor version number
+#  CEREAL_VERSION_PATCH - patch version number
+#  CEREAL_VERSION_STRING - version number as a string (ex: "1.0.4")
+#
+#
+# find stb()
+#------------------
+#
+# This macro finds STB library and sets the necessary paths to each
+# one of the parameters. If the library is not found this macro will set 
+# STB_FOUND to false.
 # 
-# MLPACK_INCLUDE_DIRS: list of all include directories for mlpack and its
-#                      dependencies (Armadillo, cereal, ensmallen)
-# MLPACK_LIBRARIES: list of all dependency libraries to link against (typically
-#                   just OpenBLAS)
+# - Find STB_IMAGE
+#
+# This module sets the following variables:
+#  STB_IMAGE_FOUND - set to true if the library is found
+#  STB_IMAGE_INCLUDE_DIR - list of required include directories
+#  STB_INCLUDE_NEEDS_STB_SUFFIX - whether or not the include files are under an
+#     stb/ directory; if "YES", then includes must be done as, e.g.,
+#     stb/stb_image.h.
+#
+#
+# find_openmp()
+#-----------------------
+#
+# This macro finds if OpenMP library is installed and supported by the
+# compiler. if the library found then it sets the following parameters:
+#  
+# OpenMP_FOUND - set to true if the library is found
+# 
+#
+# find_mlpack_internal()
+#-----------------------
+#
+# This macro finds the mlpack library and sets the necessary paths to each one
+# of the parameters. If the library is not found this macro will set
+# MLPACK_FOUND to false.
+#
+# This module sets the following variables:
+#  MLPACK_FOUND - set to true if the library is found
+#  MLPACK_VERSION_MAJOR - major version number
+#  MLPACK_VERSION_MINOR - minor version number
+#  MLPACK_VERSION_PATCH - patch version number
+#  MLPACK_VERSION_STRING - version number as a string (ex: "1.0.4")
+#  MLPACK_INCLUDE_DIR - list of mlpack include directories
+#
 #
 ##===================================================
 ##  MLPACK DEPENDENCIES SETTINGS. 
@@ -189,15 +191,17 @@ set(ENSMALLEN_VERSION "2.10.0")
 set(CEREAL_VERSION "1.1.2")
 set(OPENBLAS_VERSION "0.3.29")
 
+# Set library version to be used when fetching them from the source. 
+set(ARMADILLO_FETCH_VERSION "12.6.5")
+set(ENSMALLEN_FETCH_VERSION "latest")
+set(CEREAL_FETCH_VERSION "1.3.2")
+set(MLPACK_FETCH_VERSION "latest")
+
 # Set required standard to C++17.
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(MLPACK_DISABLE_OPENMP OFF)
-
-if (NOT USE_OPENMP)
-  set(MLPACK_DISABLE_OPENMP ON)
-endif()
 
 ##===================================================
 ##  MLPACK AUTODOWNLOADER DEPENDENCIES FUNCTIONS
@@ -609,7 +613,7 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
       find_package(BLAS QUIET)
       find_package(LAPACK QUIET)
     endif()
-    get_deps(https://files.mlpack.org/armadillo-${ARMADILLO_VERSION}.tar.gz armadillo armadillo-${ARMADILLO_VERSION}.tar.gz)
+    get_deps(https://files.mlpack.org/armadillo-${ARMADILLO_FETCH_VERSION}.tar.gz armadillo armadillo-${ARMADILLO_FETCH_VERSION}.tar.gz)
     set(ARMADILLO_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
     if (NOT CMAKE_CROSSCOMPILING)
       find_armadillo(${CMAKE_BINARY_DIR})
@@ -621,7 +625,7 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
 
   find_ensmallen(${CMAKE_BINARY_DIR})
   if (NOT ENSMALLEN_FOUND)
-    get_deps(https://www.ensmallen.org/files/ensmallen-latest.tar.gz ensmallen ensmallen-latest.tar.gz)
+    get_deps(https://www.ensmallen.org/files/ensmallen-${ENSMALLEN_FETCH_VERSION}.tar.gz ensmallen ensmallen-${ENSMALLEN_FETCH_VERSION}.tar.gz)
     set(ENSMALLEN_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
     find_ensmallen(${CMAKE_BINARY_DIR})
     if (ENSMALLEN_FOUND)
@@ -631,7 +635,7 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
 
   find_cereal(${CMAKE_BINARY_DIR})
   if (NOT CEREAL_FOUND)
-    get_deps(https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.2.tar.gz cereal cereal-1.3.2.tar.gz)
+    get_deps(https://github.com/USCiLab/cereal/archive/refs/tags/v${CEREAL_FETCH_VERSION}.tar.gz cereal cereal-${CEREAL_FETCH_VERSION}.tar.gz)
     set(CEREAL_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
     find_cereal(${CMAKE_BINARY_DIR})
     if (CEREAL_FOUND)
@@ -641,7 +645,7 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
 
   find_mlpack_internal(${CMAKE_BINARY_DIR})
   if (NOT MLPACK_FOUND)
-    get_deps(https://www.mlpack.org/files/mlpack-latest.tar.gz mlpack mlpack-latest.tar.gz)
+    get_deps(https://www.mlpack.org/files/mlpack-${MLPACK_FETCH_VERSION}.tar.gz mlpack mlpack-${MLPACK_FETCH_VERSION}.tar.gz)
     set(MLPACK_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
     find_mlpack(${CMAKE_BINARY_DIR})
     if (MLPACK_FOUND)
@@ -691,7 +695,7 @@ macro(find_mlpack)
     message(FATAL_ERROR "Cereal not found, (required dependency of mlpack).")
   endif()
 
-  if (USE_SYSTEM_STB)
+  if (MLPACK_USE_SYSTEM_STB)
     find_stb()
   endif()
   if (StbImage_FOUND)
