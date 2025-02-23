@@ -95,9 +95,7 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 |
 | `minLeafSize` | `size_t` | Minimum number of points in each leaf node of each decision tree. | `1` |
 | `minGainSplit` | `double` | Minimum gain for a node to split in each decision tree. | `1e-7` |
-| `maxDepth` | `size_t` | Maximum depth for each decision tree. (0 means no limit.) | `0` |
-| `dimSelector` | `DimensionSelectionType` | | `DimensionSelectionType()` |
-| `bootstrap` | `BootstrapType` | Bootstrap strategy. | `BootstrapType()` |    
+| `maxDepth` | `size_t` | Maximum depth for each decision tree. (0 means no limit.) | `0` |   
 | `warmStart` | `bool` | (Only available in `Train()`.)  If true, training adds `numTrees` trees to the random forest.  If `false`, an entirely new random forest will be created. | `false` |
 
  * If OpenMP is enabled<!-- TODO: link! -->, one thread will be used to train
@@ -373,41 +371,6 @@ std::cout << "Probabilities of each class: " << probabilities.t();
 
 ---
 
-Train a `RandomForest` with the `SequentialBootstrap` strategy.
-
-```c++
-// 1000 random points in 10 dimensions.
-arma::mat dataset(10 /* rows */, 1000 /* cols */, arma::fill::randu);
-// Random labels for each point, totaling 5 classes.
-arma::Row<size_t> labels =
-arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
-
-arma::umat intervals(labels.n_cols, 2);
-for (arma::uword i(0); i < labels.n_cols; ++i) {
-  // Create intervals of random length.
-  intervals(i, 0) = i;
-  intervals(i, 1) = i + std::rand();
-  if (intervals(i, 1) > 1000) {
-    intervals(i, 1) = 1000;
-  }
-}
-
-SequentialBootstrap bootstrap(intervals, dataset.n_cols);
-
-// Create and train the random forest.
-RandomForest<GiniGain,
-             MultipleRandomDimensionSelect,
-             BestBinaryNumericSplit,
-             AllCategoricalSplit,
-             true,
-             SequentialBootstrap<>> rf(
-               dataset, labels, 5, 20, 1, 1e-7, 0,
-               MultipleRandomDimensionSelect(),
-               bootstrap);
-```
-
----
-
 See also the following fully-working examples:
 
  - [Rainfall prediction with `RandomForest`](https://github.com/mlpack/examples/blob/master/jupyter_notebook/random_forest/rainfall_prediction/rainfall-prediction-cpp.ipynb)
@@ -495,6 +458,10 @@ RandomForest<FitnessFunction,
    when training each tree in the forest. This argument will be removed in mlpack
    5.0.0 as it is superseded by the BootstrapType strategy.
  * `BootstrapType`: the strategy used to bootstrap the samples per tree.
+ * The `RandomForest` constructor offers two additional parameters to pass the
+   `DimensionSelectionType`, via the `dimSelector` argument, and the `BootstrapType`, 
+   via the `bootstrap` argument, in case they have non-default
+   constructors.
 
 Note that the first four of these template parameters are exactly the same as
 the template parameters for the
@@ -782,9 +749,11 @@ value of `true` will be equivalent to `DefaultBootstrap`.
    - `RandomForest(..., bootstrap)`
 
  * A custom `BootstrapType` class must take a `bool` template parameter `UseWeights` and implement one function:
+
 ```c++
 class CustomBootstrapType
 {
+ public:
   /**
    * Compute a bootstrap dataset based on the original dataset.
    * If `UseWeights` is `false`, then `weights` and `bootstrapWeights` can be
@@ -795,15 +764,59 @@ class CustomBootstrapType
    * `bootstrapWeights` should contain the corresponding instance weights for
    * the bootstrapped dataset.
    */
-  template<bool UseWeights,
-           typename MatType,
-           typename LabelsType,
-           typename WeightsType>
-  void Bootstrap(const MatType& dataset,
-                 const LabelsType& labels,
-                 const WeightsType& weights,
-                 MatType& bootstrapDataset,
-                 LabelsType& bootstrapLabels,
-                 WeightsType& bootstrapWeights);
+  template<
+      bool UseWeights,
+      typename MatType,
+      typename LabelsType,
+      typename WeightsType>
+  void Bootstrap(
+      const MatType& dataset,
+      const LabelsType& labels,
+      const WeightsType& weights,
+      MatType& bootstrapDataset,
+      LabelsType& bootstrapLabels,
+      WeightsType& bootstrapWeights);
 };
+```
+
+---
+
+Train a `RandomForest` with the `SequentialBootstrap` strategy.
+
+```c++
+// 1000 random points in 10 dimensions. In reality this might be
+// financial time-series data.
+arma::mat dataset(10 /* rows */, 1000 /* cols */, arma::fill::randu);
+
+// Random labels for each point, totaling 5 classes.
+arma::Row<size_t> labels =
+    arma::randi<arma::Row<size_t>>(1000, arma::fill::zeros);
+
+arma::umat intervals(2, labels.n_cols);
+
+// This example only has 2 active events
+intervals(0, 0) = 0; // start of first event
+intervals(1, 0) = 200; // end of first event
+intervals(0, 200) = 200; // start of second event
+intervals(1, 200) = 500; // end of second event
+
+SequentialBootstrap bootstrap(intervals);
+
+// Create and train the random forest.
+RandomForest<
+    GiniGain,
+    MultipleRandomDimensionSelect,
+    BestBinaryNumericSplit,
+    AllCategoricalSplit,
+    true,
+    SequentialBootstrap<>> rf(
+        dataset,
+        labels,
+        5, // numClasses
+        20, // numTrees
+        1, // minimumLeafSize
+        1e-7, // minimumGainSplit
+        0, // maximumDepth
+        MultipleRandomDimensionSelect(), // dimSelector
+        bootstrap);
 ```
