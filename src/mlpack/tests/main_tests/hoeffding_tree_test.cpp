@@ -299,7 +299,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelCategoricalReuseTest",
   HoeffdingTreeModel* m = params.Get<HoeffdingTreeModel*>("output_model");
   ResetSettings();
 
-  if (!data::Load("braziltourism_test.arff", testData, info))
+  if (!data::Load("braziltourism_test.arff", testData, opts.Mapper()))
     FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   // Input trained model.

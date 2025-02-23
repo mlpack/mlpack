@@ -302,10 +302,12 @@ bool Save(const std::string& filename,
   Log::Info << "Saving " << stringType << " to '" << filename << "'."
       << std::endl;
 
+  arma::SpMat<eT> tmp;
   // Transpose the matrix.
   if (!opts.NoTranspose())
   {
-    inplace_trans(matrix);
+    tmp = matrix;
+    matrix = trans(tmp);
   }
 
   const bool success = matrix.save(stream, ToArmaFileType(saveType));
