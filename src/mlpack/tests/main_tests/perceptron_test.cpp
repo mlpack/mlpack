@@ -32,7 +32,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronOutputDimensionTest",
                  "[PerceptronMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!data::Load("trainSet.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
@@ -44,7 +44,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronOutputDimensionTest",
   inputData.shed_row(inputData.n_rows - 1);
 
   arma::mat testData;
-  if (!data::Load("testSet.csv", testData))
+  if (!data::Load("testSet.csv", testData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
@@ -78,7 +78,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronLabelsLessDimensionTest",
 {
   // Train perceptron without providing labels.
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!data::Load("trainSet.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
@@ -87,7 +87,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronLabelsLessDimensionTest",
     labels[i] = inputData(inputData.n_rows - 1, i);
 
   arma::mat testData;
-  if (!data::Load("testSet.csv", testData))
+  if (!data::Load("testSet.csv", testData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
@@ -147,11 +147,11 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronModelReuseTest",
                  "[PerceptronMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!data::Load("trainSet.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   arma::mat testData;
-  if (!data::Load("testSet.csv", testData))
+  if (!data::Load("testSet.csv", testData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
@@ -200,7 +200,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronMaxItrTest",
                  "[PerceptronMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!data::Load("trainSet.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   // Input training data.
@@ -221,13 +221,13 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronReTrainWithWrongClasses",
   arma::Row<size_t> labelsX1;
 
   // Loading a train data set with 3 classes.
-  if (!data::Load("vc2.csv", trainX1))
+  if (!data::Load("vc2.csv", trainX1, data::NoFatal | data::Transpose))
   {
     FAIL("Could not load the train data (vc2.csv)");
   }
 
   // Loading the corresponding labels to the dataset.
-  if (!data::Load("vc2_labels.txt", labelsX1))
+  if (!data::Load("vc2_labels.txt", labelsX1, data::NoFatal | data::Transpose))
   {
     FAIL("Could not load the train data (vc2_labels.csv)");
   }

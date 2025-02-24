@@ -234,7 +234,8 @@ TEST_CASE("RandomizedPCADimensionalityReductionTest", "[PCATest]")
 TEST_CASE("QUICPCADimensionalityReductionTest", "[PCATest]")
 {
   arma::mat data, data1;
-  if (!data::Load("test_data_3_1000.csv", data))
+  if (!data::Load("test_data_3_1000.csv", data,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset test_data_3_1000.csv");
   data1 = data;
 
