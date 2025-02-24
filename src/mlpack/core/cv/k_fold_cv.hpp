@@ -30,7 +30,7 @@ namespace mlpack {
  * arma::mat data = arma::randu<arma::mat>(5, 100);
  * // Random labels in the [0, 4] interval.
  * arma::Row<size_t> labels =
- *     arma::randi<arma::Row<size_t>>(100, arma::distr_param(0, 4));
+ *     arma::randi<arma::Row<size_t>>(100, DistrParam(0, 4));
  * size_t numClasses = 5;
  *
  * KFoldCV<SoftmaxRegression<>, Accuracy> cv(10, data, labels, numClasses);
