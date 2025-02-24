@@ -69,6 +69,9 @@
 # MLPACK_LIBRARIES: list of all dependency libraries to link against (typically
 #                   just OpenBLAS)
 #
+##===================================================
+##  INTERNAL FUNCTION DOCUMENTATION
+##===================================================
 #
 # get_deps(LINK DEPS_NAME PACKAGE)
 #-------------------
