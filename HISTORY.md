@@ -12,7 +12,7 @@ _????-??-??_
 
  * Bundle STB with mlpack and add `ResizeImages()` functionality (#3823).
 
- * Add `mlpack.cmake` to facilitate finding mlpack and its depedencies to users (#3872).
+ * Add `mlpack.cmake` to facilitate finding mlpack and its dependencies (#3872).
 
 ## mlpack 4.5.1
 
