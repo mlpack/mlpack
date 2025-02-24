@@ -17,14 +17,14 @@
 #ifndef MLPACK_CORE_UTIL_USING_HPP
 #define MLPACK_CORE_UTIL_USING_HPP
 
+#include "arma_traits.hpp"
+
 namespace mlpack {
 
 #ifdef MLPACK_HAS_COOT
 
 /* using for bandicoot namespace*/
-using coot::conv_to;
 using coot::exp;
-using coot::distr_param;
 using coot::dot;
 using coot::join_cols;
 using coot::join_rows;
@@ -48,12 +48,10 @@ using coot::trans;
 using coot::vectorise;
 using coot::zeros;
 
-#else
+#endif
 
 /* using for armadillo namespace */
-using arma::conv_to;
 using arma::exp;
-using arma::distr_param;
 using arma::dot;
 using arma::join_cols;
 using arma::join_rows;
@@ -77,33 +75,38 @@ using arma::trans;
 using arma::vectorise;
 using arma::zeros;
 
-#endif
-
-#ifdef MLPACK_HAS_COOT
-// If the matrix type is a Bandicoot type, use Bandicoot fill objects instead.
-template<
-    typename MatType,
-    typename = std::enable_if_t<coot::is_coot_type<MatType>::value>*>
-struct GetFillType
+template<typename MatType, bool IsArma, bool IsCoot>
+struct GetFillTypeInternal
 {
-  static constexpr const decltype(coot::fill::none)& none   = coot::fill::none;
-  static constexpr const decltype(coot::fill::zeros)& zeros = coot::fill::zeros;
-  static constexpr const decltype(coot::fill::ones)& ones   = coot::fill::ones;
-  static constexpr const decltype(coot::fill::randu)& randu = coot::fill::randu;
-  static constexpr const decltype(coot::fill::randn)& randn = coot::fill::randn;
+  // Default empty implementation
 };
 
-#else
+template<typename MatType>
+struct GetFillType : public GetFillTypeInternal<MatType,
+    IsArmaType<MatType>::value, IsCootType<MatType>::value> { };
 
 // By default, assume that we are using an Armadillo object.
 template<typename MatType>
-struct GetFillType
+struct GetFillTypeInternal<MatType, true, false>
 {
   static constexpr const decltype(arma::fill::none)& none   = arma::fill::none;
   static constexpr const decltype(arma::fill::zeros)& zeros = arma::fill::zeros;
   static constexpr const decltype(arma::fill::ones)& ones   = arma::fill::ones;
   static constexpr const decltype(arma::fill::randu)& randu = arma::fill::randu;
   static constexpr const decltype(arma::fill::randn)& randn = arma::fill::randn;
+};
+
+#ifdef MLPACK_HAS_COOT
+// If the matrix type is a Bandicoot type, use Bandicoot fill objects instead.
+template<
+    typename MatType>
+struct GetFillTypeInternal<MatType, false, true>
+{
+  static constexpr const decltype(coot::fill::none)& none   = coot::fill::none;
+  static constexpr const decltype(coot::fill::zeros)& zeros = coot::fill::zeros;
+  static constexpr const decltype(coot::fill::ones)& ones   = coot::fill::ones;
+  static constexpr const decltype(coot::fill::randu)& randu = coot::fill::randu;
+  static constexpr const decltype(coot::fill::randn)& randn = coot::fill::randn;
 };
 
 #endif
