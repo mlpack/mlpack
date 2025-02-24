@@ -110,7 +110,7 @@ cmake \
     -DCMAKE_SYSROOT=(Check below) \
 ```
 
-In order to fill the `TOOLCHAIN_PREFIX` or the `CMAKE_SYSROOT`, use
+In order to fill the `TOOLCHAIN_PREFIX` and `CMAKE_SYSROOT` variables, use
 [this table](supported_boards.md).
 
 If your preferred architecture is missing, or if the table needs an update,
