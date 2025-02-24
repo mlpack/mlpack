@@ -10,9 +10,8 @@
 # find_mlpack() 
 #----------------------
 #
-# This macro finds mlpack libraries and it dependencies. Call this function to
-# find mlpack and its dependencies (Armadillo, ensmallen, cereal, and any 
-# Armadillo dependencies).
+# Call this macro to find mlpack and its dependencies (Armadillo, ensmallen,
+# cereal, and any Armadillo dependencies).
 #
 # This function will not automatically download any missing dependencies, and
 # will instead throw errors if dependencies are not found.  For a version that
