@@ -12,6 +12,8 @@ _????-??-??_
 
  * Bundle STB with mlpack and add `ResizeImages()` functionality (#3823).
 
+ * Add `mlpack.cmake` to facilitate finding mlpack and its dependencies (#3872).
+
  * Fix conversion of empty Armadillo objects to numpy in Python bindings
    (#3896).
 
