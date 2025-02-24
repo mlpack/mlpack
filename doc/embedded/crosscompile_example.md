@@ -103,7 +103,7 @@ and then `make`. Your cmake command should be similar to the following:
 
 ```sh
 cmake \
-    -ARCH_NAME=(Check below) \
+    -DARCH_NAME=(Check below) \
     -DCMAKE_CROSSCOMPILING=ON \
     -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake \
     -DTOOLCHAIN_PREFIX=(Check below) \
