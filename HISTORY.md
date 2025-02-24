@@ -14,6 +14,9 @@ _????-??-??_
 
  * Add `mlpack.cmake` to facilitate finding mlpack and its dependencies (#3872).
 
+ * Fix conversion of empty Armadillo objects to numpy in Python bindings
+   (#3896).
+
 ## mlpack 4.5.1
 
 _2024-12-02_
