@@ -60,6 +60,32 @@ RPlusPlusTreeAuxiliaryInformation(RPlusPlusTreeAuxiliaryInformation&& other) :
 { /* Nothing to do. */ }
 
 template<typename TreeType>
+RPlusPlusTreeAuxiliaryInformation<TreeType>&
+RPlusPlusTreeAuxiliaryInformation<TreeType>::operator=(
+    const RPlusPlusTreeAuxiliaryInformation& other)
+{
+  if (this != &other)
+  {
+    outerBound = other.outerBound;
+  }
+
+  return *this;
+}
+
+template<typename TreeType>
+RPlusPlusTreeAuxiliaryInformation<TreeType>&
+RPlusPlusTreeAuxiliaryInformation<TreeType>::operator=(
+    RPlusPlusTreeAuxiliaryInformation&& other)
+{
+  if (this != &other)
+  {
+    outerBound = std::move(other.outerBound);
+  }
+
+  return *this;
+}
+
+template<typename TreeType>
 bool RPlusPlusTreeAuxiliaryInformation<TreeType>::HandlePointInsertion(
     TreeType* /* node */, const size_t /* point */)
 {
