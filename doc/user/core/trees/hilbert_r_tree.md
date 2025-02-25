@@ -1,18 +1,24 @@
-# `RTree`
+# `HilbertRTree`
 
-The `RTree` class implements the R tree, a well-known multidimensional space
-partitioning tree that can insert and remove points dynamically.
+The `HilbertRTree` class implements the Hilbert R-tree, a variant of the
+standard [`RTree`](r_tree.md) class that uses the concepts of space-filling
+curves to split nodes in a way that improves search performance.  This is a
+similar strategy to that of the [`UBTree`](ub_tree.md), a variant of the
+[`BinarySpaceTree`](binary_space_tree.md).  The Hilbert R-tree also improves
+performance by deferring splits of a node in favor of a two-to-three splitting
+strategy, where two nodes are simultaneously split into three nodes (as opposed
+to the normal strategy of splitting one node into two).
 
-The `RTree` implementation in mlpack supports three template parameters for
+mlpack's `HilbertRTree` implementation supports three template parameters for
 configurable behavior, and implements all the functionality required by the
 [TreeType API](../../../developer/trees.md#the-treetype-api), plus some
-additional functionality specific to R trees.
+additional functionality specific to Hilbert R-trees.
 
-The R tree is generally less efficient for machine learning tasks than other
-trees such as the [`KDTree`](kdtree.md) or [`Octree`](octree.md), but those
-trees do not support dynamic insertion or deletion of points.  If insert/delete
-functionality is required, then the R tree or other variants of
-[`RectangleTree`](rectangle_tree.md) should be chosen instead.
+The Hilbert R-tree is generally less efficient for machine learning tasks than
+other trees such as the [`KDTree`](kdtree.md) or [`Octree`](octree.md), but
+those trees do not support dynamic insertion or deletion of points.  If
+insert/delete functionality is required, then the Hilbert R-tree or other
+variants of [`RectangleTree`](rectangle_tree.md) should be chosen instead.
 
  * [Template parameters](#template-parameters)
  * [Constructors](#constructors)
@@ -26,8 +32,8 @@ functionality is required, then the R tree or other variants of
 <!-- TODO: add links to all distance-based algorithms and other trees? -->
 
  * [`RectangleTree`](rectangle_tree.md)
- * [R-Tree on Wikipedia](https://en.wikipedia.org/wiki/R-tree)
- * [R-Trees: A Dynamic Index Structure for Spatial Searching (pdf)](http://www-db.deis.unibo.it/courses/SI-LS/papers/Gut84.pdf)
+ * [Hilbert R-Tree on Wikipedia](https://en.wikipedia.org/wiki/Hilbert_R-tree)
+ * [Hilbert R-Tree: An Improved R-Tree Using Fractals (pdf)](https://www.vldb.org/conf/1994/P500.PDF)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 
 ## Template parameters
@@ -35,10 +41,10 @@ functionality is required, then the R tree or other variants of
 In accordance with the [TreeType
 API](../../../developer/trees.md#template-parameters-required-by-the-treetype-policy)
 (see also [this more detailed section](../../../developer/trees.md#template-parameters)),
-the `RTree` class takes three template parameters:
+the `HilbertRTree` class takes three template parameters:
 
 ```
-RTree<DistanceType, StatisticType, MatType>
+HilbertRTree<DistanceType, StatisticType, MatType>
 ```
 
  * `DistanceType`: the [distance metric](../distances.md) to use for distance
@@ -56,49 +62,51 @@ RTree<DistanceType, StatisticType, MatType>
    matching the [Armadillo API](../../matrices.md).  By default, `arma::mat` is
    used, but other types such as `arma::fmat` or similar will work just fine.
 
-The `RTree` class itself is a convenience typedef of the generic
+The `HilbertRTree` class itself is a convenience typedef of the generic
 [`RectangleTree`](rectangle_tree.md) class, using the
-[`RTreeSplit`](rectangle_tree.md#rtreesplit) class as the split strategy, the
-[`RTreeDescentHeuristic`](rectangle_tree.md#rtreedescentheuristic) class as the
-descent strategy, and
-[`NoAuxiliaryInformation`](rectangle_tree.md#auxiliaryinformationtype) as the
+[`HilbertRTreeSplit`](rectangle_tree.md#hilbertrtreesplit) class as the split
+strategy, the
+[`HilbertRTreeDescentHeuristic`](rectangle_tree.md#hilbertrtreedescentheuristic)
+class as the descent strategy, and
+[`DiscreteHilbertRTreeAuxiliaryInformation`](rectangle_tree.md#discretehilbertrtreeauxiliaryinformation) as the
 auxiliary information type.
 
 If no template parameters are explicitly specified, then defaults are used:
 
 ```
-RTree<> = RTree<EuclideanDistance, EmptyStatistic, arma::mat>
+HilbertRTree<> = HilbertRTree<EuclideanDistance, EmptyStatistic, arma::mat>
 ```
 
 ## Constructors
 
-`RTree`s are constructed by inserting points in a dataset sequentially.
+`HilbertRTree`s are constructed by inserting points in a dataset sequentially.
 The dataset is not permuted during the construction process.
 
 ---
 
- * `node = RTree(data)`
- * `node = RTree(data, maxLeafSize=20, minLeafSize=8)`
- * `node = RTree(data, maxLeafSize=20, minLeafSize=8, maxNumChildren=5, minNumChildren=2)`
-   - Construct an `RTree` on the given `data` with the given construction
+ * `node = HilbertRTree(data)`
+ * `node = HilbertRTree(data, maxLeafSize=20, minLeafSize=8)`
+ * `node = HilbertRTree(data, maxLeafSize=20, minLeafSize=8, maxNumChildren=5, minNumChildren=2)`
+   - Construct a `HilbertRTree` on the given `data` with the given construction
      parameters.
    - By default, `data` is copied.  Avoid a copy by using `std::move()` (e.g.
      `std::move(data)`); when doing this, `data` will be set to an empty matrix.
 
 ---
 
- * `node = RTree<DistanceType, StatisticType, MatType>(data)`
- * `node = RTree<DistanceType, StatisticType, MatType>(data, maxLeafSize=20, minLeafSize=8)`
- * `node = RTree<DistanceType, StatisticType, MatType>(data, maxLeafSize=20, minLeafSize=8, maxNumChildren=5, minNumChildren=2)`
-   - Construct an `RTree` on the given `data`, using custom template parameters
-     to control the behavior of the tree and the given construction parameters.
+ * `node = HilbertRTree<DistanceType, StatisticType, MatType>(data)`
+ * `node = HilbertRTree<DistanceType, StatisticType, MatType>(data, maxLeafSize=20, minLeafSize=8)`
+ * `node = HilbertRTree<DistanceType, StatisticType, MatType>(data, maxLeafSize=20, minLeafSize=8, maxNumChildren=5, minNumChildren=2)`
+   - Construct a `HilbertRTree` on the given `data`, using custom template
+     parameters to control the behavior of the tree and the given construction
+     parameters.
    - By default, `data` is copied.  Avoid a copy by using `std::move()` (e.g.
      `std::move(data)`); when doing this, `data` will be set to an empty matrix.
 
 ---
 
- * `node = RTree(dimensionality)`
-   - Construct an empty `RTree` with no children, no points, and
+ * `node = HilbertRTree(dimensionality)`
+   - Construct an empty `HilbertRTree` with no children, no points, and
      default template parameters.
    - Use `node.Insert()` to insert points into the tree.  All points must have
      dimensionality `dimensionality`.
@@ -132,9 +140,9 @@ The dataset is not permuted during the construction process.
 
 ***Notes:***
 
- - The name `node` is used here for `RTree` objects instead of `tree`, because
-   each `RTree` object is a single node in the tree.  The constructor returns
-   the node that is the root of the tree.
+ - The name `node` is used here for `HilbertRTree` objects instead of `tree`,
+   because each `HilbertRTree` object is a single node in the tree.  The
+   constructor returns the node that is the root of the tree.
 
  - See also the
    [developer documentation on tree constructors](../../../developer/trees.md#constructors-and-destructors).
@@ -157,8 +165,8 @@ The dataset is not permuted during the construction process.
 
 ## Basic tree properties
 
-Once an `RTree` object is constructed, various properties of the tree can be
-accessed or inspected.  Many of these functions are required by the [TreeType
+Once a `HilbertRTree` object is constructed, various properties of the tree can
+be accessed or inspected.  Many of these functions are required by the [TreeType
 API](../../../developer/trees.md#the-treetype-api).
 
 ### Navigating the tree
@@ -169,14 +177,14 @@ API](../../../developer/trees.md#the-treetype-api).
 
  * `node.IsLeaf()` returns a `bool` indicating whether or not `node` is a leaf.
 
- * `node.Child(i)` returns an `RTree&` that is the `i`th child.
+ * `node.Child(i)` returns a `HilbertRTree&` that is the `i`th child.
    - `i` must be less than `node.NumChildren()`.
    - This function should only be called if `node.NumChildren()` is not `0`
      (e.g. if `node` is not a leaf).  Note that this returns a valid `RTree&`
      that can itself be used just like the root node of the tree!
 
- * `node.Parent()` will return an `RTree*` that points to the parent of `node`,
-   or `NULL` if `node` is the root of the `RTree`.
+ * `node.Parent()` will return an `HilbertRTree*` that points to the parent of
+   `node`, or `NULL` if `node` is the root of the `HilbertRTree`.
 
 ---
 
@@ -197,6 +205,11 @@ API](../../../developer/trees.md#the-treetype-api).
  * `node.Distance()` will return a `EuclideanDistance&`.  Since
    `EuclideanDistance` has no members, this function is not likely to be useful,
    but it is required by the TreeType API.
+
+ * `node.AuxiliaryInfo()` will return a
+   [`DiscreteHilbertRTreeAuxiliaryInformation&`](rectangle_tree.md#discretehilbertrtreeauxiliaryinformation)
+   containing cached information used when inserting or deleting point from a
+   `HilbertRTree`.
 
  * `node.MinNumChildren()` returns the minimum number of children that the
    node is required to have as a `size_t`.  If points are deleted such that the
@@ -231,8 +244,8 @@ for basic tree functionality in mlpack.
 
  * `node.NumPoints()` returns a `size_t` indicating the number of points held
    directly in `node`.
-   - If `node` is not a leaf, this will return `0`, as `RTree` only holds points
-     directly in its leaves.
+   - If `node` is not a leaf, this will return `0`, as `HilbertRTree` only holds
+     points directly in its leaves.
    - If `node` is a leaf, then this will return values between
      `node.MinLeafSize()` and `node.MaxLeafSize()` (inclusive).
    - If the tree has fewer than `node.MinLeafSize()` points total, then
@@ -246,7 +259,7 @@ for basic tree functionality in mlpack.
      `node.Dataset().col(node.Point(i))`.
    - Accessing the actual `i`'th point itself can be done with, e.g.,
      `node.Dataset().col(node.Point(i))`.
-   - Point indices are not necessarily contiguous for `RTree`s; that is,
+   - Point indices are not necessarily contiguous for `HilbertRTree`s; that is,
      `node.Point(i) + 1` is not necessarily `node.Point(i + 1)`.
 
  * `node.NumDescendants()` returns a `size_t` indicating the number of points
@@ -263,17 +276,17 @@ for basic tree functionality in mlpack.
    - Accessing the actual `i`'th descendant itself can be done with, e.g.,
      `node.Dataset().col(node.Descendant(i))`.
    - Descendant point indices are not necessarily contiguous for
-     `RTree`s; that is, `node.Descendant(i) + 1` is not necessarily
+     `HilbertRTree`s; that is, `node.Descendant(i) + 1` is not necessarily
      `node.Descendant(i + 1)`.
 
 ---
 
 ### Accessing computed bound quantities of a tree
 
-The following quantities are cached for each node in a `RTree`, and so accessing
-them does not require any computation.  In the documentation below, `ElemType`
-is the element type of the given `MatType`; e.g., if `MatType` is `arma::mat`,
-then `ElemType` is `double`.
+The following quantities are cached for each node in a `HilbertRTree`, and so
+accessing them does not require any computation.  In the documentation below,
+`ElemType` is the element type of the given `MatType`; e.g., if `MatType` is
+`arma::mat`, then `ElemType` is `double`.
 
  * `node.FurthestPointDistance()` returns an `ElemType` representing the
    distance between the center of the bound of `node` and the furthest point
@@ -309,7 +322,7 @@ on bound quantities for trees.
      dataset held by `node`.
    - This is equivalent to calling `node.Bound().Center(center)`.
 
- * An `RTree` can be serialized with
+ * A `HilbertRTree` can be serialized with
    [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
 
 ## Bounding distances with the tree
@@ -330,7 +343,7 @@ nodes.  The following functions can be used for these tasks.
  * `node.GetNearestChild(other)`
  * `node.GetFurthestChild(other)`
    - Return a `size_t` indicating the index of the child that is closest to (or
-     furthest from) the `RTree` node `other`, with respect to the
+     furthest from) the `HilbertRTree` node `other`, with respect to the
      `MinDistance()` (or `MaxDistance()`) function.
    - If there is a tie, the node with the lowest index is returned.
    - If `node` is a leaf, `0` is returned.
@@ -340,7 +353,7 @@ nodes.  The following functions can be used for these tasks.
  * `node.MinDistance(point)`
  * `node.MinDistance(other)`
    - Return a `double` indicating the minimum possible distance between `node`
-     and `point`, or the `RTree` node `other`.
+     and `point`, or the `HilbertRTree` node `other`.
    - This is equivalent to the minimum possible distance between any point
      contained in the bounding hyperrectangle of `node` and `point`, or between
      any point contained in the bounding hyperrectangle of `node` and any point
@@ -351,7 +364,7 @@ nodes.  The following functions can be used for these tasks.
  * `node.MaxDistance(point)`
  * `node.MaxDistance(other)`
    - Return a `double` indicating the maximum possible distance between `node`
-     and `point`, or the `RTree` node `other`.
+     and `point`, or the `HilbertRTree` node `other`.
    - This is equivalent to the maximum possible distance between any point
      contained in the bounding hyperrectangle of `node` and `point`, or between
      any point contained in the bounding hyperrectangle of `node` and any point
@@ -370,36 +383,36 @@ nodes.  The following functions can be used for these tasks.
 
 ## Tree traversals
 
-Like every mlpack tree, the `RTree` class provides a [single-tree and
+Like every mlpack tree, the `HilbertRTree` class provides a [single-tree and
 dual-tree traversal](../../../developer/trees.md#traversals) that can be paired
 with a [`RuleType` class](../../../developer/trees.md#rules) to implement a
 single-tree or dual-tree algorithm.
 
- * `RTree::SingleTreeTraverser`
+ * `HilbertRTree::SingleTreeTraverser`
    - Implements a depth-first single-tree traverser.
 
- * `RTree::DualTreeTraverser`
+ * `HilbertRTree::DualTreeTraverser`
    - Implements a dual-depth-first dual-tree traverser.
 
 ## Example usage
 
-Build an `RTree` on the `cloud` dataset and print basic statistics about the
-tree.
+Build a `HilbertRTree` on the `cloud` dataset and print basic statistics about
+the tree.
 
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
 mlpack::data::Load("cloud.csv", dataset, true);
 
-// Build the R tree with a leaf size of 10.  (This means that leaf nodes
+// Build the Hilbert R-tree with a leaf size of 10.  (This means that leaf nodes
 // cannot contain more than 10 points.)
 //
 // The std::move() means that `dataset` will be empty after this call, and no
 // data will be copied during tree building.
 //
-// Note that the '<>' is not necessary if C++20 is being used (e.g.
-// `mlpack::RTree tree(...)` will work fine in C++20 or newer).
-mlpack::RTree<> tree(std::move(dataset));
+// Note that the '<>' isn't necessary if C++20 is being used (e.g.
+// `mlpack::HilbertRTree tree(...)` will work fine in C++20 or newer).
+mlpack::HilbertRTree<> tree(std::move(dataset));
 
 // Print the bounding box of the root node.
 std::cout << "Bounding box of root node:" << std::endl;
@@ -434,8 +447,8 @@ std::cout << "Center of tree: " << center.t();
 
 ---
 
-Build two `RTree`s on subsets of the corel dataset and compute minimum and
-maximum distances between different nodes in the tree.
+Build two `HilbertRTree`s on subsets of the corel dataset and compute minimum
+and maximum distances between different nodes in the tree.
 
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
@@ -443,8 +456,9 @@ arma::mat dataset;
 mlpack::data::Load("corel-histogram.csv", dataset, true);
 
 // Build trees on the first half and the second half of points.
-mlpack::RTree<> tree1(dataset.cols(0, dataset.n_cols / 2));
-mlpack::RTree<> tree2(dataset.cols(dataset.n_cols / 2 + 1, dataset.n_cols - 1));
+mlpack::HilbertRTree<> tree1(dataset.cols(0, dataset.n_cols / 2));
+mlpack::HilbertRTree<> tree2(dataset.cols(dataset.n_cols / 2 + 1,
+                                          dataset.n_cols - 1));
 
 // Compute the maximum distance between the trees.
 std::cout << "Maximum distance between tree root nodes: "
@@ -453,12 +467,12 @@ std::cout << "Maximum distance between tree root nodes: "
 // Get the leftmost grandchild of the first tree's root---if it exists.
 if (!tree1.IsLeaf() && !tree1.Child(0).IsLeaf())
 {
-  mlpack::RTree<>& node1 = tree1.Child(0).Child(0);
+  mlpack::HilbertRTree<>& node1 = tree1.Child(0).Child(0);
 
   // Get the leftmost grandchild of the second tree's root---if it exists.
   if (!tree2.IsLeaf() && !tree2.Child(0).IsLeaf())
   {
-    mlpack::RTree<>& node2 = tree2.Child(0).Child(0);
+    mlpack::HilbertRTree<>& node2 = tree2.Child(0).Child(0);
 
     // Print the minimum and maximum distance between the nodes.
     mlpack::Range dists = node1.RangeDistance(node2);
@@ -488,19 +502,19 @@ if (!tree1.IsLeaf() && !tree1.Child(0).IsLeaf())
 
 ---
 
-Build an `RTree` on 32-bit floating point data and save it to disk.
+Build a `HilbertRTree` on 32-bit floating point data and save it to disk.
 
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::fmat dataset;
 mlpack::data::Load("corel-histogram.csv", dataset);
 
-// Build the RTree using 32-bit floating point data as the matrix type.  We will
-// still use the default EmptyStatistic and EuclideanDistance parameters.  A
-// leaf size of 100 is used here.
-mlpack::RTree<mlpack::EuclideanDistance,
-              mlpack::EmptyStatistic,
-              arma::fmat> tree(std::move(dataset), 100);
+// Build the HilbertRTree using 32-bit floating point data as the matrix type.
+// We will still use the default EmptyStatistic and EuclideanDistance
+// parameters.  A leaf size of 100 is used here.
+mlpack::HilbertRTree<mlpack::EuclideanDistance,
+                     mlpack::EmptyStatistic,
+                     arma::fmat> tree(std::move(dataset), 100);
 
 // Save the tree to disk with the name 'tree'.
 mlpack::data::Save("tree.bin", "tree", tree);
@@ -511,17 +525,17 @@ std::cout << "Saved tree with " << tree.Dataset().n_cols << " points to "
 
 ---
 
-Load a 32-bit floating point `RTree` from disk, then traverse it manually and
-find the number of leaf nodes with less than 10 points.
+Load a 32-bit floating point `HilbertRTree` from disk, then traverse it manually
+and find the number of leaf nodes with less than 10 points.
 
 ```c++
 // This assumes the tree has already been saved to 'tree.bin' (as in the example
 // above).
 
 // This convenient typedef saves us a long type name!
-using TreeType = mlpack::RTree<mlpack::EuclideanDistance,
-                               mlpack::EmptyStatistic,
-                               arma::fmat>;
+using TreeType = mlpack::HilbertRTree<mlpack::EuclideanDistance,
+                                      mlpack::EmptyStatistic,
+                                      arma::fmat>;
 
 TreeType tree;
 mlpack::data::Load("tree.bin", "tree", tree);
@@ -559,8 +573,8 @@ std::cout << leafCount << " out of " << totalLeafCount << " leaves have fewer "
 
 ---
 
-Build an `RTree` by iteratively inserting points from the corel dataset, print
-some information, and then remove a few randomly chosen points.
+Build a `HilbertRTree` by iteratively inserting points from the corel dataset,
+print some information, and then remove a few randomly chosen points.
 
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
@@ -568,7 +582,7 @@ arma::mat dataset;
 mlpack::data::Load("corel-histogram.csv", dataset, true);
 
 // Create an empty tree of the right dimensionality.
-mlpack::RTree<> t(dataset.n_rows);
+mlpack::HilbertRTree<> t(dataset.n_rows);
 
 // Insert points one by one for the first half of the dataset.
 for (size_t i = 0; i < dataset.n_cols / 2; ++i)

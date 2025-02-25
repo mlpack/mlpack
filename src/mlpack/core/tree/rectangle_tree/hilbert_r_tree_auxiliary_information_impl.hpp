@@ -127,10 +127,10 @@ HandlePointDeletion(TreeType* node, const size_t localIndex)
   // Update the largest Hilbert value.
   hilbertValue.DeletePoint(node, localIndex);
 
-  for (size_t i = localIndex + 1; localIndex < node->NumPoints(); ++i)
+  for (size_t i = localIndex + 1; i < node->NumPoints(); ++i)
     node->Point(i - 1) = node->Point(i);
 
-  node->NumPoints()--;
+  node->count--;
   return true;
 }
 
@@ -142,10 +142,10 @@ HandleNodeRemoval(TreeType* node, const size_t nodeIndex)
   // Update the largest Hilbert value.
   hilbertValue.RemoveNode(node, nodeIndex);
 
-  for (size_t i = nodeIndex + 1; nodeIndex < node->NumChildren(); ++i)
+  for (size_t i = nodeIndex + 1; i < node->NumChildren(); ++i)
     node->children[i - 1] = node->children[i];
 
-  node->NumChildren()--;
+  node->numChildren--;
   return true;
 }
 

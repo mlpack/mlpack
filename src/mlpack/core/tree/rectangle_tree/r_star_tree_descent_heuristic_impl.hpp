@@ -2,8 +2,8 @@
  * @file core/tree/rectangle_tree/r_star_tree_descent_heuristic_impl.hpp
  * @author Andrew Wells
  *
- * Implementation of RStarTreeDescentHeuristic, a class that chooses the best child of a node in
- * an R tree when inserting a new point.
+ * Implementation of RStarTreeDescentHeuristic, a class that chooses the best
+ * child of a node in an R tree when inserting a new point.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

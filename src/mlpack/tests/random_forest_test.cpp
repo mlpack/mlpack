@@ -787,4 +787,11 @@ TEST_CASE("RandomForestWithSequentialBootstrapTest", "[RandomForestTest]")
       0,
       mlpack::MultipleRandomDimensionSelect(),
       bootstrap);
+
+  // Sanity check: ensure that the predictions are reasonable.
+  arma::Row<size_t> predictions;
+  rf.Predict(ds, predictions);
+  
+  for (size_t i = 0; i < predictions.n_elem; ++i)
+    REQUIRE(predictions[i] == 0 || predictions[i] == 1);
 }

@@ -11,6 +11,9 @@ _????-??-??_
  * Add `MLPACK_NO_STD_MUTEX` to allow disabling `std::mutex` (#3868).
 
  * Bundle STB with mlpack and add `ResizeImages()` functionality (#3823).
+ * 
+ * Fix conversion of empty Armadillo objects to numpy in Python bindings
+   (#3896).
 
  * Added bootstrap strategies for RandomForest: IdentityBootstrap,
    DefaultBootstrap, and SequentialBootstrap. (#3829)
