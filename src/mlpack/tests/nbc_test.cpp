@@ -486,7 +486,7 @@ TEMPLATE_TEST_CASE("NBCModelMatTypeTest", "[NBCTest]", float, double)
   arma::SpMat<ElemType> data;
   data.sprandu(100, 5000, 0.2);
   arma::Row<size_t> labels =
-      arma::randi<arma::Row<size_t>>(5000, arma::distr_param(0, 3));
+      arma::randi<arma::Row<size_t>>(5000, DistrParam(0, 3));
 
   nbc.Train(data, labels, 4);
 

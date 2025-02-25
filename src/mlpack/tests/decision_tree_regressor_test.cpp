@@ -481,7 +481,7 @@ TEST_CASE("BestBinaryCategoricalSplitRegressionTwoPerfectTest",
   arma::vec splitInfo;
   MSEGain gainFn;
 
-  arma::vec data = randi<arma::vec>(N, arma::distr_param(0, K - 1));
+  arma::vec data = randi<arma::vec>(N, DistrParam(0, K - 1));
   arma::rowvec weights = arma::ones<arma::rowvec>(N);
   arma::rowvec response(N);
   for (size_t i = 0; i < N; ++i)
@@ -509,7 +509,7 @@ TEST_CASE("BestBinaryCategoricalSplitRegressionTwoPerfectTest",
   // one direction and the remaining Cⱼ to the other.
   arma::vec class1Data = arma::ones(N) * 2;
   arma::vec class1Direction(N);
-  arma::vec class0Data = randi<arma::vec>(N, arma::distr_param(3, K - 1));
+  arma::vec class0Data = randi<arma::vec>(N, DistrParam(3, K - 1));
   arma::vec class0Direction(N);
 
   for (size_t i = 0; i < N; ++i)

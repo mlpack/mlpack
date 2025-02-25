@@ -734,7 +734,7 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionConstructorVariantTest",
   // Create random data.
   MatType data(50, 1000, arma::fill::randu);
   arma::Row<size_t> labels =
-      arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 3));
+      arma::randi<arma::Row<size_t>>(1000, DistrParam(0, 3));
 
   // Empty constructor.
   SoftmaxRegression<MatType> sr1;
@@ -814,7 +814,7 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionTrainVariantTest",
   // Create random data.
   MatType data(50, 1000, arma::fill::randu);
   arma::Row<size_t> labels =
-      arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 3));
+      arma::randi<arma::Row<size_t>>(1000, DistrParam(0, 3));
 
   // Create objects that we will use.
   SoftmaxRegression<MatType> sr1, sr2, sr3, sr4, sr5, sr6, sr7, sr8;

@@ -583,7 +583,7 @@ TEST_CASE("BestBinaryCategoricalSplitBinaryClassTwoPerfectTest",
   arma::vec splitInfo;
   BestBinaryCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
 
-  arma::vec data = randi<arma::vec>(N, arma::distr_param(0, K - 1));
+  arma::vec data = randi<arma::vec>(N, DistrParam(0, K - 1));
   arma::rowvec weights = arma::ones<arma::rowvec>(N);
   arma::Row<size_t> labels(N);
   for (size_t i = 0; i < N; ++i)
@@ -611,7 +611,7 @@ TEST_CASE("BestBinaryCategoricalSplitBinaryClassTwoPerfectTest",
   // one direction and the remaining Cⱼ to the other.
   arma::vec class1Data = arma::ones(N) * 2;
   arma::vec class1Direction(N);
-  arma::vec class0Data = randi<arma::vec>(N, arma::distr_param(3, K - 1));
+  arma::vec class0Data = randi<arma::vec>(N, DistrParam(3, K - 1));
   arma::vec class0Direction(N);
 
   for (size_t i = 0; i < N; ++i)
@@ -654,7 +654,7 @@ TEST_CASE("BestBinaryCategoricalSplitMultiClassZeroTest", "[DecisionTreeTest]")
   arma::rowvec weights = arma::ones<arma::rowvec>(N);
   for (size_t category = 1; category < K; ++category)
   {
-    index = randi(arma::distr_param(0, N - 1));
+    index = randi(DistrParam(0, N - 1));
     data[index] = (double) category;
     labels[index] = category;
   }
@@ -682,7 +682,7 @@ TEST_CASE("BestBinaryCategoricalSplitMultiClassZeroTest", "[DecisionTreeTest]")
   // one direction and the remaining Cⱼ to the other.
   arma::vec class0Data = arma::zeros(N);
   arma::vec class0Direction(N);
-  arma::vec classjData = randi<arma::vec>(N, arma::distr_param(1, K - 1));
+  arma::vec classjData = randi<arma::vec>(N, DistrParam(1, K - 1));
   arma::vec classjDirection(N);
 
   for (size_t i = 0; i < N; ++i)

@@ -1048,7 +1048,7 @@ TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest]")
   arma::cube origResponses = responses;
 
   // Assign random sequence lengths for each sine.
-  arma::urowvec lengths = arma::randi<arma::urowvec>(500, distr_param(40, 60));
+  arma::urowvec lengths = arma::randi<arma::urowvec>(500, DistrParam(40, 60));
 
   // Set garbage data for anything past the end of a sequence.
   for (size_t c = 0; c < 500; ++c)

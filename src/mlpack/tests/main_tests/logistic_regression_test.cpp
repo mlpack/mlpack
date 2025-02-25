@@ -640,7 +640,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRPrintTrainingAccuracyTest",
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
   arma::Row<size_t> trainY = arma::randi<arma::Row<size_t>>(N,
-      arma::distr_param(0, 1));
+      DistrParam(0, 1));
 
   SetInputParam("training", trainX);
   SetInputParam("labels", trainY);
