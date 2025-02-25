@@ -46,29 +46,35 @@ class DistrParam
  
  public:
 
-  inline DistrParam()
-      : state   (0)
-      , a_int   (0)
-      , b_int   (0)
-      , a_double(0)
-      , b_double(0)
-      {}
+  inline DistrParam() :
+      state   (0),
+      a_int   (0),
+      b_int   (0),
+      a_double(0),
+      b_double(0)
+  {
+    // Nothing to do here.
+  }
 
-  inline explicit DistrParam(const int a, const int b)
-      : state   (1)
-      , a_int   (a)
-      , b_int   (b)
-      , a_double(double(a))
-      , b_double(double(b))
-      {}
+  inline explicit DistrParam(const int a, const int b) :
+      state   (1),
+      a_int   (a),
+      b_int   (b),
+      a_double(double(a)),
+      b_double(double(b))
+  {
+    // Nothing to do here.
+  }
 
-  inline explicit DistrParam(const double a, const double b)
-      : state   (2)
-      , a_int   (int(a))
-      , b_int   (int(b))
-      , a_double(a)
-      , b_double(b)
-      {}
+  inline explicit DistrParam(const double a, const double b) :
+      state   (2),
+      a_int   (int(a)),
+      b_int   (int(b)),
+      a_double(a),
+      b_double(b)
+  {
+      // Nothing to do here.
+  }
 
   operator arma::distr_param()
   {
