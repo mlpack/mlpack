@@ -12,7 +12,7 @@
  * without any changes.
  *
  * As the implementation is inspired heavily from Armadillo it is necessary to
- * add two different licenses. One for Armadillo and another for mlpack.
+ * add two different licenses: one for Armadillo and another for mlpack.
  *
  * https://gitlab.com/conradsnicta/armadillo-code/-/blob/10.8.x/include/armadillo_bits/distr_param.hpp
  *
