@@ -5,7 +5,7 @@
  *
  * A simple mlpack's `DistrParam` replacement for implementations
  * from`coot::distr_param` or `arma::distr_param`. Since both are identical
- * implementations we can copy it directly from aramdillo and use it in both
+ * implementations we can copy it directly from Armadillo and use it in both
  * cases internally.
  *
  * This will allow to use the same DistrParam for coot and arma matrices
