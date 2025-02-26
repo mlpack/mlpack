@@ -531,10 +531,11 @@ macro(find_mlpack_internal)
 
   if (CURRENT_PATH)
     file(GLOB MLPACK_SEARCH_PATHS
-      ${CMAKE_BINARY_DIR}/deps/mlpack-[0-9]*.[0-9]*.[0-9]*/src/)
+      ${CURRENT_PATH}/deps/mlpack-[0-9]*.[0-9]*.[0-9]*/src/)
 
-    if (EXISTS ${MLPACK_SEARCH_PATHS}/mlpack.hpp)
-      set(MLPACK_INCLUDE_DIR ${MLPACK_SEARCH_PATHS})
+    list(POP_BACK MLPACK_SEARCH_PATHS MLPACK_SEARCH_PATH)
+    if (EXISTS ${MLPACK_SEARCH_PATH}/mlpack.hpp)
+      set(MLPACK_INCLUDE_DIR ${MLPACK_SEARCH_PATH})
     endif()
 
   else()
