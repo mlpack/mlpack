@@ -344,8 +344,8 @@ PartitionNode(const TreeType* node, size_t& minCutAxis,
   // Find the sweep with a minimal cost.
   for (size_t k = 0; k < node->Bound().Dim(); ++k)
   {
-    typename TreeType::ElemType cut;
-    SweepCostType cost;
+    typename TreeType::ElemType cut = 0.0;
+    SweepCostType cost = 0.0;
 
     if (node->IsLeaf())
       cost = SweepType<SplitPolicyType>::SweepLeafNode(k, node, cut);
