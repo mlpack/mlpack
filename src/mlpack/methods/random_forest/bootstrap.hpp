@@ -96,7 +96,7 @@ class SequentialBootstrap
   /**
    * Constructor.
    *
-   * @param[in] intervals Is a `2 x m` matrix, where each of the m columns has
+   * @param[in] intervals Is a `2 x n` matrix, where each of the n columns has
    *                      the start sample and the end sample of an interval.
    *                      This matrix is a space-efficient form of the
    *                      indicator matrix.
