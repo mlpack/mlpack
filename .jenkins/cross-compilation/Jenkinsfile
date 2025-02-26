@@ -107,7 +107,7 @@ pipeline
 
                   ssh jenkins@${hostname} -t mkdir -p test_${BRANCH_NAME}_${BUILD_ID}/
                   scp build/bin/mlpack_test jenkins@${hostname}:test_${BRANCH_NAME}_${BUILD_ID}/
-                  scp -r ../src/mlpack/tests/data/* jenkins@${hostname}:test_${BRANCH_NAME}_${BUILD_ID}/
+                  scp -r src/mlpack/tests/data/* jenkins@${hostname}:test_${BRANCH_NAME}_${BUILD_ID}/
 
                   mkdir -p reports;
                   ssh jenkins@${hostname} -t "
