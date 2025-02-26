@@ -791,15 +791,20 @@ arma::mat dataset(10 /* rows */, 1000 /* cols */, arma::fill::randu);
 
 // Random labels for each point, totaling 5 classes.
 arma::Row<size_t> labels =
-    arma::randi<arma::Row<size_t>>(1000, arma::fill::zeros);
+    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 
 arma::umat intervals(2, labels.n_cols);
 
-// This example only has 2 active events
+// This example only has 3 active events
+// The first two events overlap in [100,200].
+// The third event is fully isolated (no
+// informational overlap)
 intervals(0, 0) = 0; // start of first event
 intervals(1, 0) = 200; // end of first event
-intervals(0, 200) = 200; // start of second event
-intervals(1, 200) = 500; // end of second event
+intervals(0, 100) = 100; // start of second event
+intervals(1, 100) = 500; // end of second event
+intervals(0, 600) = 600; // start of third event
+intervals(1, 600) = 1000; // end of third event
 
 SequentialBootstrap bootstrap(intervals);
 
