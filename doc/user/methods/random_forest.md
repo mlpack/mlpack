@@ -458,10 +458,11 @@ RandomForest<FitnessFunction,
    when training each tree in the forest. This argument will be removed in mlpack
    5.0.0 as it is superseded by the BootstrapType strategy.
  * `BootstrapType`: the strategy used to bootstrap the samples per tree.
- * The `RandomForest` constructor offers two additional parameters to pass the
-   `DimensionSelectionType`, via the `dimSelector` argument, and the `BootstrapType`, 
-   via the `bootstrap` argument, in case they have non-default
-   constructors.
+
+An additional `RandomForest` constructor offers two additional parameters to
+pass the `DimensionSelectionType`, via the `dimSelector` argument, and the
+`BootstrapType`, via the `bootstrap` argument, in case they have non-default
+constructors.  See the [`BootstrapType` documentation](#bootstraptype).
 
 Note that the first four of these template parameters are exactly the same as
 the template parameters for the
