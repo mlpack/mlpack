@@ -740,7 +740,7 @@ value of `true` will be equivalent to `DefaultBootstrap`.
        - `intervals` is of type `arma::umat`, with 2 rows and `n` columns, where `n` is the number of events to be sampled from.
        - Each column in `intervals` represents the start and end columns (inclusive) of each event.
        - So, e.g., if the 10th event is 5 points long, starting at index 6, then column `9` of `intervals` should be `[6, 10]`.
-     * A `SequentialBootstrap` must be passed as the `bootstrap` option to the [advanced constructor](#fully-custom-behavior).
+     * A `SequentialBootstrap` must be passed as the `bootstrap` option to the advanced constructor (below).
      * For more information, see: M. López de Prado (2018): "Advances in Financial Machine Learning", pp. 63-65.
 
  * When using a `BootstrapType` that requires an instantiated object (such as `SequentialBootstrap`), the following advanced constructor forms can be used for `RandomForest`:
