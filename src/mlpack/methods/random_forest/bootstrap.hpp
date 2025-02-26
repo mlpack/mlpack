@@ -84,7 +84,7 @@ class IdentityBootstrap
  * have high informational overlap with already drawn samples. The
  * algorithm assumes that events are active between a start and end
  * point. This allows for an efficient coding of the indicator matrix
- * as a `2 x m` matrix where each column has the start and end point
+ * as a `2 x n` matrix where each column has the start and end point
  * of the event.
  *
  * @tparam IndMatType Indicator matrix type.
