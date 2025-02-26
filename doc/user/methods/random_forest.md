@@ -745,8 +745,8 @@ value of `true` will be equivalent to `DefaultBootstrap`.
 
  * When using a `BootstrapType` that requires an instantiated object (such as `SequentialBootstrap`), the following advanced constructor forms can be used for `RandomForest`:
  
-   - `RandomForest(... , bootstrap)`
-   - `RandomForest(..., bootstrap)`
+   - `rf = RandomForest(data, info, labels, numClasses,          numTrees, minLeafSize, minGainSplit, maxDepth, bootstrap)`
+   - `rf = RandomForest(data, info, labels, numClasses, weights, numTrees, minLeafSize, minGainSplit, maxDepth, bootstrap)`
 
  * A custom `BootstrapType` class must take a `bool` template parameter `UseWeights` and implement one function:
 
