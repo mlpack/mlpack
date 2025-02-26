@@ -40,6 +40,7 @@ pipeline
       steps
       {
         sh '''
+          export CCACHE_DIR=/opt/ccache/;
           ccache --zero-stats
 
           mkdir build
