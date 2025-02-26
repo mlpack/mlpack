@@ -95,7 +95,7 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 |
 | `minLeafSize` | `size_t` | Minimum number of points in each leaf node of each decision tree. | `1` |
 | `minGainSplit` | `double` | Minimum gain for a node to split in each decision tree. | `1e-7` |
-| `maxDepth` | `size_t` | Maximum depth for each decision tree. (0 means no limit.) | `0` |   
+| `maxDepth` | `size_t` | Maximum depth for each decision tree. (0 means no limit.) | `0` |
 | `warmStart` | `bool` | (Only available in `Train()`.)  If true, training adds `numTrees` trees to the random forest.  If `false`, an entirely new random forest will be created. | `false` |
 
  * If OpenMP is enabled<!-- TODO: link! -->, one thread will be used to train
