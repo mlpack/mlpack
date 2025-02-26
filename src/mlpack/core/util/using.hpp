@@ -83,7 +83,7 @@ struct GetFillTypeInternal
 
 template<typename MatType>
 struct GetFillType : public GetFillTypeInternal<MatType,
-    IsArmaType<MatType>::value, IsCootType<MatType>::value> { };
+    IsArma<MatType>::value, IsCoot<MatType>::value> { };
 
 // By default, assume that we are using an Armadillo object.
 template<typename MatType>

@@ -299,7 +299,7 @@ struct IsBaseMatType<arma::SpRow<eT>>
 };
 
 template<typename T>
-struct IsArmaType
+struct IsArma
 {
   constexpr static bool value = arma::is_arma_type<T>::value;
 };
@@ -307,7 +307,7 @@ struct IsArmaType
 #if defined(MLPACK_HAS_COOT)
 
 template<typename T>
-struct IsCootType
+struct IsCoot
 {
   constexpr static bool value = coot::is_coot_type<T>::value;
 };
@@ -315,7 +315,7 @@ struct IsCootType
 #else
 
 template<typename T>
-struct IsCootType
+struct IsCoot
 {
   constexpr static bool value = false;
 };
