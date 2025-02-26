@@ -793,5 +793,5 @@ TEST_CASE("RandomForestWithSequentialBootstrapTest", "[RandomForestTest]")
   rf.Classify(ds, predictions);
 
   for (size_t i = 0; i < predictions.n_elem; ++i)
-    REQUIRE(predictions[i] == 0 || predictions[i] == 1);
+    REQUIRE((predictions[i] == 0 || predictions[i] == 1));
 }
