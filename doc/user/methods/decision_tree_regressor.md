@@ -53,6 +53,7 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 
  * [`DecisionTree`](decision_tree.md)
  * [Random forests](random_forest.md)
+ * [`GradBoosting`] (gradient_boosting.md)
  * [mlpack regression techniques](../modeling.md#regression)
  * [Decision tree on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree)
  * [Decision tree learning on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
