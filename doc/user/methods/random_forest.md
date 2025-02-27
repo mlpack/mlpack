@@ -580,6 +580,11 @@ template<typename FitnessFunction>
 class CustomNumericSplit
 {
  public:
+  // This class can hold any extra data that is necessary to encode a split.  It
+  // should only be non-empty if a single `double` value cannot be used to hold
+  // the information corresponding to a split.
+  class AuxiliarySplitInfo { };
+
   // If a split with better resulting gain than `bestGain` is found, then
   // information about the new, better split should be stored in `splitInfo` and
   // `aux`.  Specifically, a split is better than `bestGain` if the sum of the
@@ -604,20 +609,20 @@ class CustomNumericSplit
   // Otherwise, they are instance weighs for each value in `data` (one dimension
   // of the input data).
   template<bool UseWeights, typename VecType, typename WeightVecType>
-  double SplitIfBetter(const double bestGain,
-                       const VecType& data,
-                       const arma::Row<size_t>& labels,
-                       const size_t numClasses,
-                       const WeightVecType& weights,
-                       const size_t minLeafSize,
-                       const double minGainSplit,
-                       arma::vec& splitInfo,
-                       AuxiliarySplitInfo& aux);
+  static double SplitIfBetter(const double bestGain,
+                              const VecType& data,
+                              const arma::Row<size_t>& labels,
+                              const size_t numClasses,
+                              const WeightVecType& weights,
+                              const size_t minLeafSize,
+                              const double minGainSplit,
+                              arma::vec& splitInfo,
+                              AuxiliarySplitInfo& aux);
 
   // Return the number of children for a given split (stored as the single
   // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
-  size_t NumChildren(const double& splitInfo,
-                     const AuxiliarySplitInfo& aux);
+  static size_t NumChildren(const arma::vec& splitInfo,
+                            const AuxiliarySplitInfo& aux);
 
   // Given a point with value `point`, and split information `splitInfo` and
   // `aux`, return the index of the child that corresponds to the point.  So,
@@ -626,13 +631,8 @@ class CustomNumericSplit
   template<typename ElemType>
   static size_t CalculateDirection(
       const ElemType& point,
-      const double& splitInfo,
+      const arma::vec& splitInfo,
       const AuxiliarySplitInfo& /* aux */);
-
-  // This class can hold any extra data that is necessary to encode a split.  It
-  // should only be non-empty if a single `double` value cannot be used to hold
-  // the information corresponding to a split.
-  class AuxiliarySplitInfo { };
 };
 ```
 
@@ -653,6 +653,11 @@ template<typename FitnessFunction>
 class CustomCategoricalSplit
 {
  public:
+  // This class can hold any extra data that is necessary to encode a split.  It
+  // should only be non-empty if a single `double` value cannot be used to hold
+  // the information corresponding to a split.
+  class AuxiliarySplitInfo { };
+
   // If a split with better resulting gain than `bestGain` is found, then
   // information about the new, better split should be stored in `splitInfo` and
   // `aux`.  Specifically, a split is better than `bestGain` if the sum of the
@@ -693,8 +698,8 @@ class CustomCategoricalSplit
 
   // Return the number of children for a given split (stored as the single
   // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
-  size_t NumChildren(const double& splitInfo,
-                     const AuxiliarySplitInfo& aux);
+  static size_t NumChildren(const arma::vec& splitInfo,
+                            const AuxiliarySplitInfo& aux);
 
   // Given a point with (categorical) value `point`, and split information
   // `splitInfo` and `aux`, return the index of the child that corresponds to
@@ -703,13 +708,8 @@ class CustomCategoricalSplit
   template<typename ElemType>
   static size_t CalculateDirection(
       const ElemType& point,
-      const double& splitInfo,
+      const arma::vec& splitInfo,
       const AuxiliarySplitInfo& /* aux */);
-
-  // This class can hold any extra data that is necessary to encode a split.  It
-  // should only be non-empty if a single `double` value cannot be used to hold
-  // the information corresponding to a split.
-  class AuxiliarySplitInfo { };
 };
 ```
 
@@ -795,10 +795,19 @@ arma::Row<size_t> labels =
 
 arma::umat intervals(2, labels.n_cols);
 
-// This example only has 3 active events
+for (size_t c = 0; c < 1000; ++c)
+{
+  // Every "normal" event has length 1 and happens at the time step
+  equivalent to its column.
+  intervals(0, c) = c;
+  intervals(1, c) = c;
+}
+
+// Now set the three "overlapping" events to have longer ranges.
 // The first two events overlap in [100,200].
-// The third event is fully isolated (no
-// informational overlap)
+// The third event is isolated from the other two.
+// All three still overlap in each time step with one
+// "normal" event.
 intervals(0, 0) = 0; // start of first event
 intervals(1, 0) = 200; // end of first event
 intervals(0, 100) = 100; // start of second event
