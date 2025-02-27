@@ -111,7 +111,7 @@ pipeline
                   # Unpack all compressed test data.
                   ssh jenkins@${hostname} -t "
                       cd test_${BRANCH_NAME}_${BUILD_ID};
-                      for i in *.bz2; do tar xvf $i; done"
+                      find ./ -iname '*.bz2' -exec tar xvf \{\} \;"
 
                   mkdir -p reports;
                   ssh jenkins@${hostname} -t "
