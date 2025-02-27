@@ -252,7 +252,9 @@ endmacro()
 
 macro(find_armadillo)
   cmake_policy(PUSH)
-  cmake_policy(SET CMP0159 NEW) # file(STRINGS) with REGEX updates CMAKE_MATCH_<n>
+  if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.29")
+    cmake_policy(SET CMP0159 NEW) # file(STRINGS) with REGEX updates CMAKE_MATCH_<n>
+  endif()
 
   set(CURRENT_PATH ${ARGN})
   if (CURRENT_PATH)
