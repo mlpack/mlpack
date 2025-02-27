@@ -45,7 +45,6 @@ class DistrParam
 {
  
  public:
-
   inline DistrParam() :
       state   (0),
       a_int   (0),
@@ -103,13 +102,11 @@ class DistrParam
   size_t state;
 
  private:
-
   int a_int;
   int b_int;
 
   double a_double;
   double b_double;
-
 };
 
 } // namespace mlpack
