@@ -43,12 +43,11 @@ namespace mlpack {
 
 class DistrParam
 {
- 
  public:
   inline DistrParam() :
-      state   (0),
-      a_int   (0),
-      b_int   (0),
+      state(0),
+      a_int(0),
+      b_int(0),
       a_double(0),
       b_double(0)
   {
@@ -56,9 +55,9 @@ class DistrParam
   }
 
   inline explicit DistrParam(const int a, const int b) :
-      state   (1),
-      a_int   (a),
-      b_int   (b),
+      state(1),
+      a_int(a),
+      b_int(b),
       a_double(double(a)),
       b_double(double(b))
   {
@@ -66,9 +65,9 @@ class DistrParam
   }
 
   inline explicit DistrParam(const double a, const double b) :
-      state   (2),
-      a_int   (int(a)),
-      b_int   (int(b)),
+      state(2),
+      a_int(int(a)),
+      b_int(int(b)),
       a_double(a),
       b_double(b)
   {
