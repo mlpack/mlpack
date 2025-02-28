@@ -61,6 +61,18 @@ class RPlusPlusTreeAuxiliaryInformation
   RPlusPlusTreeAuxiliaryInformation(RPlusPlusTreeAuxiliaryInformation&& other);
 
   /**
+   * Copy the given RPlusPlusTreeAuxiliaryInformation.
+   */
+  RPlusPlusTreeAuxiliaryInformation& operator=(
+      const RPlusPlusTreeAuxiliaryInformation& other);
+
+  /**
+   * Take ownership of the given RPlusPlusTreeAuxiliaryInformation's data.
+   */
+  RPlusPlusTreeAuxiliaryInformation& operator=(
+      RPlusPlusTreeAuxiliaryInformation&& other);
+
+  /**
    * Some tree types require to save some properties at the insertion process.
    * This method allows the auxiliary information the option of manipulating
    * the tree in order to perform the insertion process. If the auxiliary

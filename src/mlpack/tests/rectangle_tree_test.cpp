@@ -1096,7 +1096,7 @@ TEST_CASE("RPlusPlusTreeBoundTest", "[RectangleTreeTest]")
   // Check the MinimalSplitsNumberSweep.
   using RPlusPlusTreeMinimalSplits = RectangleTree<EuclideanDistance,
       NeighborSearchStat<NearestNeighborSort>, arma::mat,
-      RPlusTreeSplit<RPlusPlusTreeSplitPolicy, MinimalCoverageSweep>,
+      RPlusTreeSplitType<RPlusPlusTreeSplitPolicy, MinimalCoverageSweep>,
       RPlusPlusTreeDescentHeuristic, RPlusPlusTreeAuxiliaryInformation>;
 
   RPlusPlusTreeMinimalSplits rPlusPlusTree2(dataset, 20, 6, 5, 2);

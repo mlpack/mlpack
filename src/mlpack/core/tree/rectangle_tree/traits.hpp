@@ -85,8 +85,8 @@ template<typename DistanceType,
 class TreeTraits<RectangleTree<DistanceType,
     StatisticType,
     MatType,
-    RPlusTreeSplit<SplitPolicyType,
-                   SweepType>,
+    RPlusTreeSplitType<SplitPolicyType,
+                       SweepType>,
     DescentType,
     AuxiliaryInformationType>>
 {
