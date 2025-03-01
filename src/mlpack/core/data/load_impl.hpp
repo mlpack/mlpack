@@ -73,8 +73,12 @@ bool LoadCSVASCII(const std::string& filename,
   else if (opts.NoTranspose() && !opts.HasHeaders() &&
            !opts.SemiColon() && opts.MissingToNan())
 
-    success = matrix.load(arma::csv_name(filename, arma::csv_opts::strict),
+#ifdef NOT_MISSING_TO_NAN
+    success = matrix.load(filename, arma::csv_ascii);
+#else
+  success = matrix.load(arma::csv_name(filename, arma::csv_opts::strict),
         arma::csv_ascii);
+#endif
 
   else if (!opts.NoTranspose() && opts.HasHeaders() &&
            opts.SemiColon() && !opts.MissingToNan())
