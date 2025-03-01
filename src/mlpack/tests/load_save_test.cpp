@@ -591,12 +591,10 @@ TEST_CASE("LoadQuotedStringInCSVTest", "[LoadSaveTest]")
   elements.push_back("");
 
   arma::mat test;
-  data::DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   REQUIRE(data::Load("test_file.csv", test, opts) == true);
 
@@ -609,10 +607,10 @@ TEST_CASE("LoadQuotedStringInCSVTest", "[LoadSaveTest]")
     REQUIRE(test.at(0, i) == Approx((double) (i + 1)).epsilon(1e-7));
 
   for (size_t i = 0; i < 5; ++i)
-    REQUIRE(info.UnmapString(test.at(1, i), 1, 0) == elements[i]);
+    REQUIRE(opts.Mapper().UnmapString(test.at(1, i), 1, 0) == elements[i]);
 
   for (size_t i = 0; i < 5; ++i)
-    REQUIRE(info.UnmapString(test.at(2, i), 2, 0) == "field 3");
+    REQUIRE(opts.Mapper().UnmapString(test.at(2, i), 2, 0) == "field 3");
 
   // Clear the vector to free the space.
   elements.clear();
@@ -639,12 +637,10 @@ TEST_CASE("LoadQuotedStringInTXTTest", "[LoadSaveTest]")
   elements.push_back("\"field 2 with space\"");
 
   arma::mat test;
-  data::DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   REQUIRE(data::Load("test_file.txt", test, opts) == true);
 
@@ -657,10 +653,10 @@ TEST_CASE("LoadQuotedStringInTXTTest", "[LoadSaveTest]")
     REQUIRE(test.at(0, i) == Approx((double) (i + 1)).epsilon(1e-7));
 
   for (size_t i = 0; i < 2; ++i)
-    REQUIRE(info.UnmapString(test.at(1, i), 1, 0) == elements[i]);
+    REQUIRE(opts.Mapper().UnmapString(test.at(1, i), 1, 0) == elements[i]);
 
   for (size_t i = 0; i < 2; ++i)
-    REQUIRE(info.UnmapString(test.at(2, i), 2, 0) == "field3");
+    REQUIRE(opts.Mapper().UnmapString(test.at(2, i), 2, 0) == "field3");
 
   // Clear the vector to free the space.
   elements.clear();
@@ -693,12 +689,10 @@ TEST_CASE("LoadQuotedStringInTSVTest", "[LoadSaveTest]")
   elements.push_back("");
 
   arma::mat test;
-  data::DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   REQUIRE(data::Load("test_file.tsv", test, opts) == true);
 
@@ -711,10 +705,10 @@ TEST_CASE("LoadQuotedStringInTSVTest", "[LoadSaveTest]")
     REQUIRE(test.at(0, i) == Approx((double) (i + 1)).epsilon(1e-7));
 
   for (size_t i = 0; i < 5; ++i)
-    REQUIRE(info.UnmapString(test.at(1, i), 1, 0) == elements[i]);
+    REQUIRE(opts.Mapper().UnmapString(test.at(1, i), 1, 0) == elements[i]);
 
   for (size_t i = 0; i < 5; ++i)
-    REQUIRE(info.UnmapString(test.at(2, i), 2, 0) == "field 3");
+    REQUIRE(opts.Mapper().UnmapString(test.at(2, i), 2, 0) == "field 3");
 
   // Clear the vector to free the space.
   elements.clear();
@@ -1529,12 +1523,10 @@ TEST_CASE("RegularCSVDatasetInfoLoad", "[LoadSaveTest]")
   for (size_t i = 0; i < testFiles.size(); ++i)
   {
     arma::mat one, two;
-    DatasetInfo info;
     data::DataOptions opts;
     opts.Fatal() = false;
     opts.NoTranspose() = false; // Transpose = true;
     opts.Categorical() = true;
-    opts.Mapper() = info;
 
     if (!data::Load(testFiles[i], one, data::NoFatal | data::Transpose))
       FAIL("Cannot load dataset");
@@ -1577,12 +1569,10 @@ TEST_CASE("NontransposedCSVDatasetInfoLoad", "[LoadSaveTest]")
   for (size_t i = 0; i < testFiles.size(); ++i)
   {
     arma::mat one, two;
-    DatasetInfo info;
     data::DataOptions opts;
     opts.Fatal() = false;
     opts.NoTranspose() = true;
     opts.Categorical() = true;
-    opts.Mapper() = info;
 
     if (!data::Load(testFiles[i], one, data::NoFatal | data::NoTranspose))
       FAIL("Cannot load dataset");
@@ -1603,7 +1593,7 @@ TEST_CASE("NontransposedCSVDatasetInfoLoad", "[LoadSaveTest]")
 
     // Check that all dimensions are numeric.
     for (size_t i = 0; i < two.n_rows; ++i)
-      REQUIRE(info.Type(i) == Datatype::numeric);
+      REQUIRE(opts.Mapper().Type(i) == Datatype::numeric);
   }
 }
 
@@ -1625,12 +1615,10 @@ TEST_CASE("CategoricalCSVLoadTest00", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   if (!data::Load("test.csv", matrix, opts))
     FAIL("Cannot load dataset");
@@ -1689,12 +1677,10 @@ TEST_CASE("CategoricalCSVLoadTest01", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   if (!data::Load("test.csv", matrix, opts))
     FAIL("Cannot load dataset");
@@ -1741,12 +1727,10 @@ TEST_CASE("CategoricalCSVLoadTest02", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   if (!data::Load("test.csv", matrix, opts))
     FAIL("Cannot load dataset");
@@ -1792,12 +1776,10 @@ TEST_CASE("CategoricalCSVLoadTest03", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   if (!data::Load("test.csv", matrix, opts))
     FAIL("Cannot load dataset");
@@ -1843,12 +1825,10 @@ TEST_CASE("CategoricalCSVLoadTest04", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   if (!data::Load("test.csv", matrix, opts))
     FAIL("Cannot load dataset");
@@ -1897,12 +1877,10 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest00", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   if (!data::Load("test.csv", matrix, opts))
       FAIL("Cannot load dataset");
@@ -1993,12 +1971,10 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest01", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   if (!data::Load("test.csv", matrix, opts))
       FAIL("Cannot load dataset");
@@ -2045,12 +2021,10 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest02", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   if (!data::Load("test.csv", matrix, opts))
       FAIL("Cannot load dataset");
@@ -2097,12 +2071,10 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest03", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   if (!data::Load("test.csv", matrix, opts))
       FAIL("Cannot load dataset");
@@ -2149,12 +2121,10 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest04", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   if (!data::Load("test.csv", matrix, opts))
     FAIL("Cannot load dataset");
@@ -2204,12 +2174,10 @@ TEST_CASE("HarderKeonTest", "[LoadSaveTest]")
 
   // Load transposed.
   arma::mat dataset;
-  data::DatasetInfo info;
   data::DataOptions opts, optsNt;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   if (!data::Load("test.csv", dataset, opts))
     FAIL("Cannot load dataset");
@@ -2266,12 +2234,10 @@ TEST_CASE("SimpleARFFTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   if (!data::Load("test.arff", dataset, opts))
     FAIL("Cannot load dataset");
@@ -2314,12 +2280,10 @@ TEST_CASE("SimpleARFFCategoricalTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   if (!data::Load("test.arff", dataset, opts))
     FAIL("Cannot load dataset");
@@ -2379,12 +2343,10 @@ TEST_CASE("HarderARFFTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   if (!data::Load("test.arff", dataset, opts))
     FAIL("Cannot load dataset");
@@ -2448,10 +2410,8 @@ TEST_CASE("BadDatasetInfoARFFTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  DatasetInfo info(6);
   data::DataOptions opts;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   REQUIRE_THROWS_AS(data::LoadARFF("test.arff", dataset, opts.Mapper()),
       std::invalid_argument);
@@ -2465,10 +2425,8 @@ TEST_CASE("BadDatasetInfoARFFTest", "[LoadSaveTest]")
 TEST_CASE("NonExistentFileARFFTest", "[LoadSaveTest]")
 {
   arma::mat dataset;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   REQUIRE_THROWS_AS(data::LoadARFF("nonexistentfile.arff", dataset,
       opts.Mapper()), std::runtime_error);
@@ -2516,12 +2474,10 @@ TEST_CASE("CategoryCaseTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  data::DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = true;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   REQUIRE_THROWS_AS(data::Load("test.arff", dataset, opts),
       std::runtime_error);
@@ -2543,12 +2499,10 @@ TEST_CASE("MalformedCSVTest", "[LoadSaveTest]")
   // maybe this could be tested as Missing to NaN ??
   // @rcurtin what do you think ?
   arma::mat dataset;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   REQUIRE(!data::Load("test.csv", dataset, opts));
 
@@ -2567,12 +2521,10 @@ TEST_CASE("LoadCSVTSVTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   REQUIRE(data::Load("test.tsv", dataset, opts));
 
@@ -2597,12 +2549,10 @@ TEST_CASE("LoadCSVTXTTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   REQUIRE(data::Load("test.txt", dataset, opts));
 
@@ -2628,12 +2578,10 @@ TEST_CASE("MalformedNoTransposeCSVTest", "[LoadSaveTest]")
   f.close();
   // Here as well ? missing to nan
   arma::mat dataset;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   REQUIRE(!data::Load("test.csv", dataset, opts));
 
@@ -2652,12 +2600,10 @@ TEST_CASE("LoadCSVNoTransposeTSVTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   REQUIRE(data::Load("test.tsv", dataset, opts));
 
@@ -2688,12 +2634,10 @@ TEST_CASE("LoadCSVNoTransposeTXTTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   REQUIRE(data::Load("test.txt", dataset, opts));
 
