@@ -128,6 +128,114 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
   info.Height() = newHeight;
 }
 
+/**
+ * Resize & Crop one single image matrix or a set of images.
+ *
+ * This function should be used if the image is loaded as an armadillo matrix
+ * and the number of cols equal to the Width and the number of rows equal
+ * the Height of the image, or the total number of image pixels is equal to the
+ * number of element in an armadillo matrix.
+ *
+ * The same applies if a set of images is loaded, but all of them need to have
+ * identical dimension when loaded to this matrix.
+ *
+ * @param image The input matrix that contains the image to be resized.
+ * @param info Contains relevant input images information.
+ * @param newWidth The new requested width for the resized image.
+ * @param newHeight The new requested height for the resized image.
+ */
+template<typename eT>
+inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
+    const size_t newWidth, const size_t newHeight)
+{
+  float ratioW = static_cast<float>(newWidth)  / static_cast<float>(info.Width());
+  float ratioH = static_cast<float>(newHeight) / static_cast<float>(info.Height());
+
+  float largestRatio = ratioW > ratioH ? ratioW : ratioH;
+  //std::cout << "largest_ratio: "<< largest_ratio << std::endl;
+  int midWidth = static_cast<int>(largestRatio * info.Width());
+  int midHeight = static_cast<int>(largestRatio * info.Height());
+
+  // Edge cases, what if the width / height value is odd ? then increase the
+  // resize value to the closest pair.
+  if (midHeight % 2 != 0 && midWidth % 2 == 0)
+      midHeight = midHeight + 1; 
+  else if (midWidth % 2 !=0 && midHeight % 2 == 0)
+    midWidth = midWidth + 1;
+  else if (midWidth % 2 !=0 && midHeight % 2 != 0)
+  {
+    midHeight = midHeight + 1;
+    midWidth = midWidth + 1;
+  }
+
+  ResizeImages(images, info, midWidth, midHeight);
+  int nColsCrop = midWidth > midHeight ? (midWidth - midHeight) : 0;
+  int nRowsCrop = midHeight > midWidth ? (midHeight - midWidth) : 0;
+  for (size_t u = 0; u < images.n_cols; ++u)
+  {
+    if (nRowsCrop != 0)
+    { 
+      std::cout <<"Crop up and down" << std::endl;
+      int cropUpDownEqually = (nRowsCrop / 2) * info.Channels() * midWidth;
+      arma::Col<eT> vec = images.col(u).subvec(cropUpDownEqually,
+          images.n_rows - cropUpDownEqually - 1);
+      images.resize(newHeight * newWidth * info.Channels(), images.n_cols);
+      images.col(u) = std::move(vec);
+      info.Width() = newWidth;
+      info.Height() = newHeight;
+    }
+    else if (nColsCrop !=0)
+    {
+      std::cout <<"Crop left and right" << std::endl;
+      // Just assign the column into a cube, not very efficient.
+      // R into Slice 1.
+      // G into Slice 2.
+      // B into Slice 3.
+      // Tried OpenMP thinking this might make the loop go faster.
+      // However, I have discovered that probably OpenMP is not thread safe ?
+      // Technically speaking the resulted images has nothing in common with the
+      // input, probably problem with the parallel loop.
+      arma::Cube<eT> cube(midHeight, midWidth, info.Channels());
+      size_t k = 0;
+      for (size_t r = 0; r < cube.n_rows; ++r)
+      {
+        for (size_t c = 0; c < cube.n_cols; ++c)
+        {
+          for (size_t i = 0; i < cube.n_slices; ++i)
+          {
+            cube.at(r, c, i) = images.at(k, u);
+            k++;
+          }
+        }
+      }
+    
+      std::cout << "Copying the images passed correctly." << std::endl;
+      cube.shed_cols(0, (nColsCrop / 2) - 1);
+      cube.shed_cols(cube.n_cols - (nColsCrop / 2), cube.n_cols - 1);
+      std::cout << "croping by removing columns" << std::endl;
+      k = 0;
+      images.resize(newHeight * newWidth * info.Channels(), images.n_cols);
+      //arma::Col<eT> vec(newHeight * newWidth * info.Channel());
+      for (size_t c = 0; c < cube.n_rows; ++c)
+      {
+        for (size_t j = 0; j < cube.n_cols; ++j)
+        {
+          for (size_t i = 0; i < cube.n_slices; ++i)
+          {
+            images.at(k, u) = cube.at(c,j,i);
+            k++;
+          }
+        }
+      }
+      info.Width() = newWidth;
+      info.Height() = newHeight;
+      std::cout << "finishing copying the image back" << std::endl;
+      images.brief_print();
+    }
+  }
+}
+
+
 } // namespace data
 } // namespace mlpack
 
