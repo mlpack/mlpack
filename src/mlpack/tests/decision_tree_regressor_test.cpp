@@ -1201,11 +1201,11 @@ TEMPLATE_TEST_CASE("SimpleGeneralizationTest_",
   for (size_t trial = 0; trial < 3; ++trial)
   {
     // Loading data.
-    data::DatasetInfo info;
+    data::DataOptions opts;
     arma::Mat<ElemType> trainData, testData;
     arma::Row<ElemType> trainResponses, testResponses;
     LoadBostonHousingDataset(trainData, testData, trainResponses, testResponses,
-        info);
+        opts);
 
     // Initialize an all-ones weight matrix.
     arma::rowvec weights(trainResponses.n_cols, arma::fill::ones);
@@ -1254,11 +1254,11 @@ TEST_CASE("WeightedDecisionTreeTest_", "[DecisionTreeRegressorTest]")
   for (size_t trial = 0; trial < 3; ++trial)
   {
     // Loading data.
-    data::DatasetInfo info;
+    data::DataOptions opts;
     arma::mat trainData, testData;
     arma::rowvec trainResponses, testResponses;
     LoadBostonHousingDataset(trainData, testData, trainResponses, testResponses,
-        info);
+        opts);
 
     // Add some noise.
     arma::mat noise(trainData.n_rows, 100, arma::fill::randu);
@@ -1309,11 +1309,11 @@ TEST_CASE("WeightedDecisionTreeMADGainTest", "[DecisionTreeRegressorTest]")
   for (size_t trial = 0; trial < 5; ++trial)
   {
     // Loading data.
-    data::DatasetInfo info;
+    data::DataOptions opts;
     arma::mat trainData, testData;
     arma::rowvec trainResponses, testResponses;
     LoadBostonHousingDataset(trainData, testData, trainResponses, testResponses,
-        info);
+        opts);
 
     // Add some noise.
     arma::mat noise(trainData.n_rows, 100, arma::fill::randu);
