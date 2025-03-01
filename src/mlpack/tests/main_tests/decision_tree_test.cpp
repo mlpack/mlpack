@@ -293,9 +293,10 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelReuseTest",
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal))
     FAIL("Cannot load labels for vc2_labels.txt");
-
+  inputData.print("input_data");
+  labels.print("labels");
   // Initialize an all-ones weight matrix.
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
@@ -303,8 +304,10 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelReuseTest",
   if (!data::Load("vc2_test.csv", testData, info))
     FAIL("Cannot load test dataset vc2.csv!");
 
+  testData.print("test data: ");
   size_t testSize = testData.n_cols;
-
+  
+  std::cout << "testSize: " << testSize << std::endl;
   // Input training data.
   SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
@@ -313,7 +316,10 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelReuseTest",
   // Input test data.
   SetInputParam("test", std::make_tuple(info, testData));
 
+  std::cout << "before running bindings" << std::endl;
   RUN_BINDING();
+
+  std::cout << "after running bindings" << std::endl;
 
   arma::Row<size_t> predictions;
   arma::mat probabilities;
@@ -321,6 +327,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelReuseTest",
   probabilities = std::move(params.Get<arma::mat>("probabilities"));
   DecisionTreeModel* m = params.Get<DecisionTreeModel*>("output_model");
 
+  predictions.print("print predictions: ");
   ResetSettings();
 
   // Input trained model.
@@ -417,6 +424,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelCategoricalReuseTest",
   SetInputParam("test", std::make_tuple(opts.Mapper(), testData));
 
   RUN_BINDING();
+
 
   arma::Row<size_t> predictions;
   arma::mat probabilities;

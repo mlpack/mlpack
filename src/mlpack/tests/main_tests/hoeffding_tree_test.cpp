@@ -72,12 +72,10 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
                  "[HoeffdingTreeMainTest][BindingTest]")
 {
   arma::mat inputData;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   if (!data::Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
@@ -260,12 +258,10 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelCategoricalReuseTest",
                  "[HoeffdingTreeMainTest][BindingTest]")
 {
   arma::mat inputData;
-  DatasetInfo info;
   data::DataOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
-  opts.Mapper() = info;
 
   if (!data::Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
