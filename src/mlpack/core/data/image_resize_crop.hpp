@@ -152,7 +152,6 @@ inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
   float ratioH = static_cast<float>(newHeight) / static_cast<float>(info.Height());
 
   float largestRatio = ratioW > ratioH ? ratioW : ratioH;
-  //std::cout << "largest_ratio: "<< largest_ratio << std::endl;
   int midWidth = static_cast<int>(largestRatio * info.Width());
   int midHeight = static_cast<int>(largestRatio * info.Height());
 
@@ -175,7 +174,6 @@ inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
   {
     if (nRowsCrop != 0)
     { 
-      std::cout <<"Crop up and down" << std::endl;
       int cropUpDownEqually = (nRowsCrop / 2) * info.Channels() * midWidth;
       arma::Col<eT> vec = images.col(u).subvec(cropUpDownEqually,
           images.n_rows - cropUpDownEqually - 1);
@@ -186,7 +184,6 @@ inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
     }
     else if (nColsCrop !=0)
     {
-      std::cout <<"Crop left and right" << std::endl;
       // Just assign the column into a cube, not very efficient.
       // R into Slice 1.
       // G into Slice 2.
@@ -209,10 +206,8 @@ inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
         }
       }
     
-      std::cout << "Copying the images passed correctly." << std::endl;
       cube.shed_cols(0, (nColsCrop / 2) - 1);
       cube.shed_cols(cube.n_cols - (nColsCrop / 2), cube.n_cols - 1);
-      std::cout << "croping by removing columns" << std::endl;
       k = 0;
       images.resize(newHeight * newWidth * info.Channels(), images.n_cols);
       //arma::Col<eT> vec(newHeight * newWidth * info.Channel());
@@ -229,8 +224,6 @@ inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
       }
       info.Width() = newWidth;
       info.Height() = newHeight;
-      std::cout << "finishing copying the image back" << std::endl;
-      images.brief_print();
     }
   }
 }
