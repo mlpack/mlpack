@@ -163,13 +163,16 @@ TEMPLATE_TEST_CASE("ImagesResizeTest", "[ImageTest]", unsigned char, size_t,
   data::ImageInfo info, resizedInfo, resizedInfo2;
   std::vector<std::string> files =
       {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
-       "sheep_5.jpg", "sheep_6.jpg"};
+       "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
+       "sheep_9.jpg"};
   std::vector<std::string> reSheeps =
       {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
-       "re_sheep_5.jpg", "re_sheep_6.jpg"};
+       "re_sheep_5.jpg", "re_sheep_6.jpg", "re_sheep_7.jpg", "re_sheep_8.jpg",
+       "re_sheep_9.jpg"};
   std::vector<std::string> smSheeps =
       {"sm_sheep_1.jpg", "sm_sheep_2.jpg", "sm_sheep_3.jpg", "sm_sheep_4.jpg",
-       "sm_sheep_5.jpg", "sm_sheep_6.jpg"};
+       "sm_sheep_5.jpg", "sm_sheep_6.jpg", "sm_sheep_7.jpg", "sm_sheep_8.jpg",
+       "sm_sheep_9.jpg"};
 
   // Load and Resize each one of them individually, because they do not have
   // the same sizes, and then the resized images, will be used in the next
@@ -207,6 +210,65 @@ TEMPLATE_TEST_CASE("ImagesResizeTest", "[ImageTest]", unsigned char, size_t,
 }
 
 /**
+ * Test resize the image if this is done correctly.  Try it with a few different
+ * types.
+ */
+TEMPLATE_TEST_CASE("ImagesCropResizeTest", "[ImageTest]", unsigned char,
+    size_t, float, double)
+{
+  typedef TestType eT;
+
+  arma::Mat<eT> image, images;
+  data::ImageInfo info, resizedInfo, resizedInfo2;
+  std::vector<std::string> files =
+      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
+       "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
+       "sheep_9.jpg"};
+  std::vector<std::string> reSheeps =
+      {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
+       "re_sheep_5.jpg", "re_sheep_6.jpg", "re_sheep_7.jpg", "re_sheep_8.jpg",
+       "re_sheep_9.jpg"};
+  std::vector<std::string> smSheeps =
+      {"sm_sheep_1.jpg", "sm_sheep_2.jpg", "sm_sheep_3.jpg", "sm_sheep_4.jpg",
+       "sm_sheep_5.jpg", "sm_sheep_6.jpg", "sm_sheep_7.jpg", "sm_sheep_8.jpg",
+       "sm_sheep_9.jpg"};
+
+  // Load and Resize each one of them individually, because they do not have
+  // the same sizes, and then the resized images, will be used in the next
+  // test.
+  for (size_t i = 0; i < files.size(); i++)
+  {
+    REQUIRE(data::Load(files.at(i), image, info, false) == true);
+    CropResizeImages(image, info, 320, 320);
+    REQUIRE(data::Save(reSheeps.at(i), image, info, false) == true);
+  }
+
+  // Since they are all resized, this should passes
+  REQUIRE(data::Load(reSheeps, images, resizedInfo, false) == true);
+
+  REQUIRE(info.Width() == resizedInfo.Width());
+  REQUIRE(info.Height() == resizedInfo.Height());
+
+  REQUIRE(data::Load(reSheeps, images, info, false) == true);
+
+  CropResizeImages(images, info, 160, 160);
+
+  REQUIRE(data::Save(smSheeps, images, info, false) == true);
+
+  REQUIRE(data::Load(smSheeps, images, resizedInfo2, false) == true);
+
+  REQUIRE(info.Width() == resizedInfo2.Width());
+  REQUIRE(info.Height() == resizedInfo2.Height());
+
+  // cleanup generated images.
+  for (size_t i = 0; i < reSheeps.size(); ++i)
+  {
+    remove(reSheeps.at(i).c_str());
+    remove(smSheeps.at(i).c_str());
+  }
+}
+
+/**
  * Test if we resize to the same original dimension we will get the same pixels
  * and no modification to the image.  Try it with a few different types.
  */
@@ -219,13 +281,45 @@ TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", unsigned char, size_t,
   data::ImageInfo info;
   std::vector<std::string> files =
       {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
-       "sheep_5.jpg", "sheep_6.jpg"};
+       "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg", 
+       "sheep_9.jpg"};
 
   for (size_t i = 0; i < files.size(); i++)
   {
     REQUIRE(data::Load(files.at(i), image, info, false) == true);
     arma::Mat<eT> originalImage = image;
     ResizeImages(image, info, info.Width(), info.Height());
+    for (size_t i = 0; i < originalImage.n_rows; ++i)
+    {
+      for (size_t j = 0; j < originalImage.n_cols; ++j)
+      {
+        REQUIRE(originalImage.at(i, j) == image.at(i, j));
+      }
+    }
+  }
+}
+
+/**
+ * Test if we resize to the same original dimension we will get the same pixels
+ * and no modification to the image.  Try it with a few different types.
+ */
+TEMPLATE_TEST_CASE("IdenticalCropResizeTest", "[ImageTest]", unsigned char,
+    size_t, float, double)
+{
+  typedef TestType eT;
+
+  arma::Mat<eT> image;
+  data::ImageInfo info;
+  std::vector<std::string> files =
+      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
+       "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg", 
+       "sheep_9.jpg"};
+
+  for (size_t i = 0; i < files.size(); i++)
+  {
+    REQUIRE(data::Load(files.at(i), image, info, false) == true);
+    arma::Mat<eT> originalImage = image;
+    CropResizeImages(image, info, info.Width(), info.Height());
     for (size_t i = 0; i < originalImage.n_rows; ++i)
     {
       for (size_t j = 0; j < originalImage.n_cols; ++j)
