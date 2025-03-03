@@ -23,6 +23,8 @@ different trees.  The following tree types are available in mlpack:
  * [`RTree`](trees/r_tree.md)
  * [`RStarTree`](trees/r_star_tree.md)
  * [`XTree`](trees/x_tree.md)
+ * [`RPlusTree`](trees/r_plus_tree.md)
+ * [`RPlusPlusTree`](trees/r_plus_plus_tree.md)
  * [`HilbertRTree`](trees/hilbert_r_tree.md)
  * [`RectangleTree`](trees/rectangle_tree.md)
 
