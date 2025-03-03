@@ -26,10 +26,6 @@ TEST_CASE("NoExtensionLoad", "[LoadSaveTest]")
 {
   arma::mat out;
   REQUIRE(data::Load("noextension", out) == false);
-
-  std::cerr << "This is some stderr output!\n";
-  std::cout << "This is some stdout output!\n";
-  REQUIRE(false);
 }
 
 /**
