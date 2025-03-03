@@ -117,7 +117,7 @@ pipeline
                   ssh jenkins@${hostname} -t "
                       cd test_${BRANCH_NAME}_${BUILD_ID};
                       mkdir -p reports;
-                      ./mlpack_test -r junit > reports/mlpack_test.junit.xml"
+                      ./mlpack_test -r junit -o reports/mlpack_test.junit.xml"
 
                   # Clean up afterwards.
                   scp jenkins@${hostname}:test_${BRANCH_NAME}_${BUILD_ID}/reports/mlpack_test.junit.xml reports/mlpack_test.${hostname}.junit.xml;
