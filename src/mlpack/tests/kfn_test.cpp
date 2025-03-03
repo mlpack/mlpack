@@ -329,7 +329,8 @@ TEST_CASE("KFNDualTreeVsNaive1", "[KFNTest]")
   arma::mat dataset;
 
   // Hard-coded filename: bad?
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!data::Load("test_data_3_1000.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv");
 
   KFN kfn(dataset);
@@ -363,7 +364,8 @@ TEST_CASE("KFNDualTreeVsNaive2", "[KFNTest]")
 
   // Hard-coded filename: bad?
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!data::Load("test_data_3_1000.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv");
 
   KFN kfn(dataset);
@@ -397,7 +399,8 @@ TEST_CASE("KFNSingleTreeVsNaive", "[KFNTest]")
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!data::Load("test_data_3_1000.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv");
 
   KFN kfn(dataset, SINGLE_TREE_MODE);
@@ -461,7 +464,8 @@ TEST_CASE("KFNSingleCoverTreeTest", "[KFNTest]")
 TEST_CASE("KFNDualCoverTreeTest", "[KFNTest]")
 {
   arma::mat dataset;
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!data::Load("test_data_3_1000.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv");
 
   KFN tree(dataset);
@@ -534,7 +538,8 @@ TEST_CASE("KFNSingleBallTreeTest", "[KFNTest]")
 TEST_CASE("KFNDualBallTreeTest", "[KFNTest]")
 {
   arma::mat dataset;
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!data::Load("test_data_3_1000.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv");
 
   KFN tree(dataset);

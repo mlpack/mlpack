@@ -32,7 +32,7 @@ TEST_CASE_METHOD(NBCTestFixture, "NBCOutputDimensionTest",
                 "[NBCMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!data::Load("trainSet.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
@@ -44,7 +44,7 @@ TEST_CASE_METHOD(NBCTestFixture, "NBCOutputDimensionTest",
   inputData.shed_row(inputData.n_rows - 1);
 
   arma::mat testData;
-  if (!data::Load("testSet.csv", testData))
+  if (!data::Load("testSet.csv", testData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
@@ -80,7 +80,7 @@ TEST_CASE_METHOD(NBCTestFixture, "NBCLabelsLessDimensionTest",
 {
   // Train NBC without providing labels.
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!data::Load("trainSet.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
@@ -89,7 +89,7 @@ TEST_CASE_METHOD(NBCTestFixture, "NBCLabelsLessDimensionTest",
     labels[i] = inputData(inputData.n_rows - 1, i);
 
   arma::mat testData;
-  if (!data::Load("testSet.csv", testData))
+  if (!data::Load("testSet.csv", testData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
@@ -156,11 +156,11 @@ TEST_CASE_METHOD(NBCTestFixture, "NBCModelReuseTest",
                 "[NBCMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!data::Load("trainSet.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   arma::mat testData;
-  if (!data::Load("testSet.csv", testData))
+  if (!data::Load("testSet.csv", testData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
@@ -214,8 +214,8 @@ TEST_CASE_METHOD(NBCTestFixture, "NBCTrainingVerTest",
                 "[NBCMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
-    FAIL("Cannot load train dataset trainSet.csv!");
+  if (!data::Load("trainSet.csv", inputData, data::NoFatal | data::Transpose))
+    FAIL("Cannot load train dataset trainSet!");
 
   // Input training data.
   SetInputParam("training", std::move(inputData));
@@ -238,11 +238,11 @@ TEST_CASE_METHOD(NBCTestFixture, "NBCIncrementalVarianceTest",
 {
   // Train NBC with incremental variance.
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!data::Load("trainSet.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   arma::mat testData;
-  if (!data::Load("testSet.csv", testData))
+  if (!data::Load("testSet.csv", testData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
