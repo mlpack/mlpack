@@ -31,7 +31,7 @@ pipeline
         {
           u = load '.jenkins/utils.groovy'
           u.setBuildStatus("Documentation Link Check (pipeline)", "Building...",
-              "IN PROGRESS");
+              "RUNNING");
         }
 
         sh '''
