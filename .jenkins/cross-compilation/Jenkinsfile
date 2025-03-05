@@ -67,7 +67,8 @@ pipeline
             {
               docker
               {
-                image 'mlpack/mlpack-cross-compile-' + env.arch + ':latest'
+                image 'mlpack/mlpack-cross-compile-' +
+                    arch_names[env.target].toLowerCase() + ':latest'
                 alwaysPull true
                 reuseNode true
               }
@@ -75,8 +76,8 @@ pipeline
 
             environment
             {
-              ARCH_NAME = "${ARCH_NAMES[env.target]}"
-              DEVICE_NAME = "${DEVICE_NAMES[env.target]}"
+              ARCH_NAME = "${arch_names[env.target]}"
+              DEVICE_NAME = "${device_names[env.target]}"
             }
 
             steps
