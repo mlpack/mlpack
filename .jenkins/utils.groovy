@@ -23,8 +23,8 @@ def setBuildStatus(String result,
                    String unstableMessage,
                    String failureMessage)
 {
-  String message = "(unknown Jenkins build result)";
-  String state = "FAILURE";
+  def message = "(unknown Jenkins build result)";
+  def state = "FAILURE";
   if (result == "FAILURE")
   {
     message = failureMessage;
