@@ -17,7 +17,7 @@ def startBuild(String context)
 }
 
 // A simple utility to set the build status on Github for a commit.
-def setBuildStatus(String currentResult,
+def setBuildStatus(String result,
                    String context,
                    String successMessage,
                    String unstableMessage,
@@ -25,16 +25,16 @@ def setBuildStatus(String currentResult,
 {
   String message = "(unknown Jenkins build result)";
   String state = "FAILURE";
-  if (currentResult == "FAILURE")
+  if (result == "FAILURE")
   {
     message = failureMessage;
   }
-  else if (currentResult == "UNSTABLE")
+  else if (result == "UNSTABLE")
   {
     message = unstableMessage;
     state = "UNSTABLE";
   }
-  else if (currentResult == "SUCCESS")
+  else if (result == "SUCCESS")
   {
     message = successMessage;
     state = "SUCCESS";
