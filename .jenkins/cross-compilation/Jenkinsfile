@@ -42,7 +42,10 @@ pipeline
           axis
           {
             name 'target'
-            values 'couscous;rpi5;cortexa76'
+            values 'couscous;rpi5;cortexa76',
+                   'tofu;rpi3;cortexa53',
+                   'chorizo;jetson-orin-nano;cortexa78',
+                   'tatertot;beaglebone-ai64;cortexa72'
           }
         }
 
