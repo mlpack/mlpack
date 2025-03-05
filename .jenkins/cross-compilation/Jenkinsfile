@@ -9,6 +9,13 @@ pipeline
     label 'cross-compile'
   }
 
+  options
+  {
+    // Only allow one build at a time of this job.
+    disableConcurrentBuilds
+    abortPrevious: true
+  }
+
   stages
   {
     stage('Set build as pending')

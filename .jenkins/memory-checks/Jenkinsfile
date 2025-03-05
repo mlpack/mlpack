@@ -13,6 +13,13 @@ pipeline
     }
   }
 
+  options
+  {
+    // Only allow one build at a time of this job.
+    disableConcurrentBuilds
+    abortPrevious: true
+  }
+
   stages
   {
     // First we have to check out the jenkins-conf repository, which contains

@@ -42,6 +42,10 @@ def setBuildStatus(Map paramsMap)
     message = successMessage;
     state = "SUCCESS";
   }
+  else if (result == "ABORTED")
+  {
+    message = "Job aborted.";
+    state = "ERROR";
 
   step([
       $class: "GitHubCommitStatusSetter",
