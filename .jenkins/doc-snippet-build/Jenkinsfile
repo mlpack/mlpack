@@ -1,0 +1,74 @@
+// The documentation snippet build will extract all C++ code snippets from the
+// Markdown documentation in doc/ and ensure that it compiles and runs without
+// error.
+pipeline
+{
+  // Run inside of the custom Docker image for documentation builds.
+  agent
+  {
+    docker
+    {
+      image 'mlpack/jenkins-mlpack-docbuild:latest'
+      alwaysPull true
+      args '-v /home/jenkins/ccache:/opt/ccache'
+    }
+  }
+
+  options
+  {
+    // Only allow one build at a time of this job.
+    disableConcurrentBuilds(abortPrevious: true)
+  }
+
+  stages
+  {
+    stage('Extract and build documentation snippets')
+    {
+      steps
+      {
+        script
+        {
+          u = load '.jenkins/utils.groovy'
+          u.startBuild("Documentation Snippet Build");
+        }
+
+        sh'''
+          export CCACHE_DIR=/opt/ccache/;
+          export CXX="ccache g++";
+          export CXXFLAGS="-O3 -DNDEBUG -fopenmp -I./src/ -I/usr/include/eigen3/";
+          export LDFLAGS="-fopenmp";
+          export OMP_NUM_THREADS=1;
+
+          ccache -p;
+          ls -l /opt/ccache/
+          ccache --zero-stats;
+          ./scripts/test-docs.sh doc/;
+          # Print ccache statistics.
+          ccache -s
+        '''
+      }
+    }
+  }
+
+  post
+  {
+    always
+    {
+      // Clean the workspace.
+      cleanWs(cleanWhenNotBuilt: true,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true);
+
+      // Set the build status.
+      script
+      {
+        u.setBuildStatus(result: currentBuild.currentResult,
+                         context: "Documentation Snippet Build",
+                         successMessage: "All snippets built and run successfully.",
+                         unstableMessage: "Snippets build unstable..",
+                         failureMessage: "Snippet build or runtime failure.");
+      }
+    }
+  }
+}

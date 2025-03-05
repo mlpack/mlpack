@@ -401,6 +401,8 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
+  // Make sure the data loaded okay.
+  REQUIRE(!dataset.is_empty());
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -422,6 +424,8 @@ TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
 {
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
+  // Make sure the data loaded okay.
+  REQUIRE(!dataset.is_empty());
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -549,6 +553,8 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
+  // Make sure the data loaded okay.
+  REQUIRE(!dataset.is_empty());
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -628,6 +634,8 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
+  // Make sure the data loaded okay.
+  REQUIRE(!dataset.is_empty());
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -953,6 +961,8 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
+  // Make sure the data loaded okay.
+  REQUIRE(!dataset.is_empty());
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
