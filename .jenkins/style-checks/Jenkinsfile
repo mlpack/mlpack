@@ -23,7 +23,7 @@ pipeline
         script
         {
           u = load '.jenkins/utils.groovy'
-          u.setBuildStatus("Style Checks (pipeline)", "Building...", "PENDING");
+          u.startBuild('Style Checks')
         }
 
         sh '''
@@ -53,6 +53,15 @@ pipeline
 
   post
   {
+    // Mark unstable builds as failed.
+    unstable
+    {
+      script
+      {
+        error "Style check failure."
+      }
+    }
+
     always
     {
       // Process the test results.
@@ -64,31 +73,14 @@ pipeline
               deleteDirs: true,
               disableDeferredWipeout: true,
               notFailBuild: true)
-    }
 
-    // Mark unstable builds as failed.
-    unstable
-    {
       script
       {
-        error "Style check failure."
-      }
-    }
-
-    success
-    {
-      script
-      {
-        u.setBuildStatus("Style Checks (pipeline)", "Build finished.", "SUCCESS");
-      }
-    }
-
-    failure
-    {
-      script
-      {
-        u.setBuildStatus("Style Checks (pipeline)", "Style check failure.",
-            "FAILURE");
+        u.setBuildStatus(result: currentBuild.currentResult,
+                         context: "Style Checks",
+                         successMessage: "No style issues.",
+                         unstableMessage: "Style issues found.",
+                         failureMessage: "Style issues found.");
       }
     }
   }

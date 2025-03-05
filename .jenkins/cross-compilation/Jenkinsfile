@@ -19,8 +19,7 @@ pipeline
         script
         {
           u = load '.jenkins/utils.groovy'
-          u.setBuildStatus("Cross-compilation tests (pipeline)", "Building...",
-              "PENDING");
+          u.startBuild("Cross-compilation Tests");
         }
 
         // Create a directory for our resulting reports.
@@ -142,23 +141,14 @@ pipeline
               deleteDirs: true,
               disableDeferredWipeout: true,
               notFailBuild: true)
-    }
 
-    success
-    {
       script
       {
-        u.setBuildStatus("Cross-compilation tests (pipeline)",
-            "Build finished.", "SUCCESS");
-      }
-    }
-
-    failure
-    {
-      script
-      {
-        u.setBuildStatus("Cross-compilation tests (pipeline)",
-            "Cross-compilation build failed.", "FAILURE");
+        u.setBuildStatus(result: currentBuild.currentResult,
+                         context: "Cross-compilation Tests",
+                         successMessage: "Cross-compilation succeeded with no errors.",
+                         unstableMessage: "Cross-compilation build unstable.",
+                         failureMessage: "Cross-compilation failed.");
       }
     }
   }

@@ -23,8 +23,7 @@ pipeline
         script
         {
           u = load '.jenkins/utils.groovy'
-          u.setBuildStatus("Documentation Snippet Build (pipeline)",
-              "Building...", "PENDING");
+          u.startBuild("Documentation Snippet Build");
         }
 
         sh'''
@@ -53,24 +52,16 @@ pipeline
       cleanWs(cleanWhenNotBuilt: true,
               deleteDirs: true,
               disableDeferredWipeout: true,
-              notFailBuild: true)
-    }
+              notFailBuild: true);
 
-    success
-    {
+      // Set the build status.
       script
       {
-        u.setBuildStatus("Documentation Snippet Build (pipeline)",
-            "Build finished.", "SUCCESS");
-      }
-    }
-
-    failure
-    {
-      script
-      {
-        u.setBuildStatus("Documentation Snippet Build (pipeline)",
-            "Snippet build or run failure.", "FAILURE");
+        u.setBuildStatus(result: currentBuild.currentResult,
+                         context: "Documentation Snippet Build",
+                         successMessage: "All snippets built and run successfully.",
+                         unstableMessage: "Snippets build unstable..",
+                         failureMessage: "Snippet build or runtime failure.");
       }
     }
   }

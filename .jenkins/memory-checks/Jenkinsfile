@@ -24,8 +24,7 @@ pipeline
         script
         {
           u = load '.jenkins/utils.groovy'
-          u.setBuildStatus("Memory Checks (pipeline)", "Building...",
-              "PENDING");
+          u.startBuild("Memory Checks");
         }
 
         sh '''
@@ -113,23 +112,15 @@ pipeline
               deleteDirs: true,
               disableDeferredWipeout: true,
               notFailBuild: true)
-    }
 
-    success
-    {
+      // Set the build status.
       script
       {
-        u.setBuildStatus("Memory Checks (pipeline)", "Build finished.",
-            "SUCCESS");
-      }
-    }
-
-    failure
-    {
-      script
-      {
-        u.setBuildStatus("Memory checks (pipeline)",
-            "Memory check failure with valgrind.", "FAILURE");
+        u.setBuildStatus(result: currentBuild.currentResult,
+                         context: "Memory Checks",
+                         successMessage: "No memory errors.",
+                         unstableMessage: "Build unstable.",
+                         failureMessage: "Memory check failure with valgrind.");
       }
     }
   }

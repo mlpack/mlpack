@@ -30,8 +30,7 @@ pipeline
         script
         {
           u = load '.jenkins/utils.groovy'
-          u.setBuildStatus("Documentation Link Check (pipeline)", "Building...",
-              "PENDING");
+          u.startBuild("Documentation Link Check");
         }
 
         sh '''
@@ -80,30 +79,22 @@ pipeline
         keepAll: true,
         reportDir: 'doc/html/',
         reportFiles: 'index.html',
-        reportName: 'Build documentation'])
+        reportName: 'Build documentation']);
 
       // Clean the workspace.
       cleanWs(cleanWhenNotBuilt: true,
               deleteDirs: true,
               disableDeferredWipeout: true,
-              notFailBuild: true)
-    }
+              notFailBuild: true);
 
-    success
-    {
+      // Set the build status.
       script
       {
-        u.setBuildStatus("Documentation Link Check (pipeline)",
-            "Build finished.", "SUCCESS");
-      }
-    }
-
-    failure
-    {
-      script
-      {
-        u.setBuildStatus("Documentation Link Check (pipeline)",
-            "Documentation build failure or problem.", "FAILURE");
+        u.setBuildStatus(result: currentBuild.currentResult,
+                         context: "Documentation Link Check",
+                         successMessage: "All HTML links checked.",
+                         unstableMessage: "Problem with HTML links.",
+                         failureMessage: "HTML link check failure or problem.");
       }
     }
   }
