@@ -83,9 +83,9 @@ pipeline
             steps
             {
               sh '''
-                rm -rf build/
-                mkdir build/
-                cd build/
+                rm -rf build-${target}/
+                mkdir build-${target}/
+                cd build-${target}/
                 cmake \
                     -DBUILD_TESTS=ON \
                     -DARCH_NAME=${arch_upper} \
@@ -114,7 +114,7 @@ pipeline
                   echo '  StrictHostKeyChecking no' >> ~/.ssh/config;
 
                   ssh jenkins@${hostname} -t mkdir -p test_${BRANCH_NAME}_${BUILD_ID}/
-                  scp build/bin/mlpack_test jenkins@${hostname}:test_${BRANCH_NAME}_${BUILD_ID}/
+                  scp build-${target}/bin/mlpack_test jenkins@${hostname}:test_${BRANCH_NAME}_${BUILD_ID}/
                   scp -r src/mlpack/tests/data/* jenkins@${hostname}:test_${BRANCH_NAME}_${BUILD_ID}/
                   # Unpack all compressed test data.
                   ssh jenkins@${hostname} -t "
