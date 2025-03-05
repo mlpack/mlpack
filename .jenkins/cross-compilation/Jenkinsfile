@@ -5,7 +5,7 @@
 // Define the ARCH_NAME and device name for each host we will run on.
 arch_names = ['couscous': 'CORTEXA76',
               'tofu':     'CORTEXA53',
-              'chorizo':  'CORTEXA78',
+              'chorizo':  'CORTEXA76', // actually a cortex-a78, will fix later
               'tatertot': 'CORTEXA72']
 
 device_names = ['couscous': 'rpi5',
@@ -123,7 +123,7 @@ pipeline
                       find ./ -iname '*.bz2' -exec tar xvf \\{\\} \\;"
 
                   mkdir -p reports;
-                  ssh jenkins@${hostname} -t "
+                  ssh jenkins@${target} -t "
                       cd test_${BRANCH_NAME}_${BUILD_ID};
                       mkdir -p reports;
                       ./mlpack_test -r junit -o reports/mlpack_test.junit.xml"
