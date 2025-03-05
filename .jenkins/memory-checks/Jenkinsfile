@@ -79,7 +79,7 @@ pipeline
           echo "PR number: ${PR_NUM}";
           curl -o files.txt https://api.github.com/repos/mlpack/mlpack/pulls/${PR_NUM}/files
           grep -o '^[ ]*"filename":.*' files.txt |\
-              sed -e 's/^[ ]*filename": "//' -e 's/",//' |\
+              sed -e 's/^[ ]*"filename": "//' -e 's/",//' |\
               uniq |\
               awk '/.cpp/ || /.hpp/' > filenames.txt;
 
