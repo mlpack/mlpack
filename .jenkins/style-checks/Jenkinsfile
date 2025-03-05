@@ -15,8 +15,7 @@ pipeline
   options
   {
     // Only allow one build at a time of this job.
-    disableConcurrentBuilds
-    abortPrevious: true
+    disableConcurrentBuilds(abortPrevious: true)
   }
 
   stages
