@@ -85,6 +85,7 @@ pipeline
             steps
             {
               sh '''
+                echo $PWD;
                 rm -rf build-${buildname}/
                 mkdir build-${buildname}/
                 cd build-${buildname}/
