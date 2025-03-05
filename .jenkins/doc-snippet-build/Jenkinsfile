@@ -36,7 +36,7 @@ pipeline
         sh'''
           export CCACHE_DIR=/opt/ccache/;
           export CXX="ccache g++";
-          export CXXFLAGS="-I./src/ -I/usr/include/eigen3/";
+          export CXXFLAGS="-O3 -DNDEBUG -fopenmp -I./src/ -I/usr/include/eigen3/";
           export LDFLAGS="-fopenmp";
           export OMP_NUM_THREADS=1;
 
