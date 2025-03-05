@@ -76,11 +76,11 @@ pipeline
 
       script
       {
-        u.setBuildStatus(currentBuild.currentResult,
-                         "Style Checks",
-                         "No style issues.",
-                         "Style issues found.",
-                         "Style issues found.");
+        u.setBuildStatus(result: currentBuild.currentResult,
+                         context: "Style Checks",
+                         successMessage: "No style issues.",
+                         unstableMessage: "Style issues found.",
+                         failureMessage: "Style issues found.");
       }
     }
   }
