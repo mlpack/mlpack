@@ -36,7 +36,7 @@ defines the project name and includes two useful CMake configuration files:
  * `crosscompile-arch-config.cmake`: add necessary flags depending on the
    architecture (optional).
 
-Then we need to call `fetch_mlpack(ON)` will download mlpack including all dependencies,
+Then we need to call `fetch_mlpack(ON)` to download mlpack including all dependencies,
 cross-compile OpenBLAS and set up all the necessary parameters to find these dependencies.
 Most of mlpack's dependencies are header-only with the exception of OpenBLAS;
 thus this is expected to be a quick step.
