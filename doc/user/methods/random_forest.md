@@ -798,7 +798,7 @@ arma::umat intervals(2, labels.n_cols);
 for (size_t c = 0; c < 1000; ++c)
 {
   // Every "normal" event has length 1 and happens at the time step
-  equivalent to its column.
+  // equivalent to its column.
   intervals(0, c) = c;
   intervals(1, c) = c;
 }
@@ -815,16 +815,16 @@ intervals(1, 100) = 500; // end of second event
 intervals(0, 600) = 600; // start of third event
 intervals(1, 600) = 1000; // end of third event
 
-SequentialBootstrap bootstrap(intervals);
+mlpack::SequentialBootstrap bootstrap(intervals);
 
 // Create and train the random forest.
-RandomForest<
-    GiniGain,
-    MultipleRandomDimensionSelect,
-    BestBinaryNumericSplit,
-    AllCategoricalSplit,
+mlpack::RandomForest<
+    mlpack::GiniGain,
+    mlpack::MultipleRandomDimensionSelect,
+    mlpack::BestBinaryNumericSplit,
+    mlpack::AllCategoricalSplit,
     true,
-    SequentialBootstrap<>> rf(
+    mlpack::SequentialBootstrap<>> rf(
         dataset,
         labels,
         5, // numClasses
@@ -832,6 +832,9 @@ RandomForest<
         1, // minimumLeafSize
         1e-7, // minimumGainSplit
         0, // maximumDepth
-        MultipleRandomDimensionSelect(), // dimSelector
+        mlpack::MultipleRandomDimensionSelect(), // dimSelector
         bootstrap);
+
+std::cout << "Forest trained with sequential bootstrap has " << rf.NumTrees()
+    << " trees." << std::endl;
 ```
