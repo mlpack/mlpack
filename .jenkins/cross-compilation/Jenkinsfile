@@ -86,7 +86,7 @@ pipeline
                 echo $PWD;
                 rm -rf build-${target}/
                 mkdir build-${target}/
-                cd build-${buildname}/
+                cd build-${target}/
                 cmake \
                     -DBUILD_TESTS=ON \
                     -DARCH_NAME=${ARCH_NAME} \
