@@ -180,3 +180,9 @@ Link: [***Jenkins (`ci.mlpack.org`)***](http://ci.mlpack.org)
    good meal eaten just before receiving the embedded device.
     - `couscous.ratml.org`: [Raspberry Pi 5](https://datasheets.raspberrypi.com/rpi5/raspberry-pi-5-product-brief.pdf),
       4GB RAM, 4-core ARM Cortex-A76
+    - `tofu.ratml.org`: [Raspberry Pi 3 B+](https://datasheets.raspberrypi.com/rpi3/raspberry-pi-3-b-plus-product-brief.pdf),
+      1GB RAM, 4-core ARM Cortex-A53
+    - `chorizo.ratml.org`: [Jetson Orin Nano](https://developer.download.nvidia.com/assets/embedded/secure/jetson/orin_nano/docs/Jetson-Orin-Nano-DevKit-Carrier-Board-Specification_SP-11324-001_v1.3.pdf),
+      8GB RAM, 6-core ARM Cortex-A78AE, NVIDIA Ampere GPU
+    - `tatertot.ratml.org`: [BeagleBone AI-64](https://www.beagleboard.org/boards/beaglebone-ai-64),
+      4GB RAM, 2-core ARM Cortex-A72
