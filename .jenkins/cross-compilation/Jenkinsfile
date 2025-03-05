@@ -73,7 +73,7 @@ pipeline
               }
             }
 
-            envioronment
+            environment
             {
               ARCH_NAME = "${ARCH_NAMES[env.target]}"
               DEVICE_NAME = "${DEVICE_NAMES[env.target]}"
