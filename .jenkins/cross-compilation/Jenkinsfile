@@ -64,6 +64,8 @@ pipeline
                 env.device = components[1]
                 env.arch = components[2]
                 env.arch_upper = components[2].toUpperCase()
+                env.buildname = env.hostname + '-' + env.device + '-' +
+                    env.arch
               }
             }
           }
@@ -83,9 +85,9 @@ pipeline
             steps
             {
               sh '''
-                rm -rf build-${target}/
-                mkdir build-${target}/
-                cd build-${target}/
+                rm -rf build-${buildname}/
+                mkdir build-${buildname}/
+                cd build-${buildname}/
                 cmake \
                     -DBUILD_TESTS=ON \
                     -DARCH_NAME=${arch_upper} \
@@ -114,7 +116,7 @@ pipeline
                   echo '  StrictHostKeyChecking no' >> ~/.ssh/config;
 
                   ssh jenkins@${hostname} -t mkdir -p test_${BRANCH_NAME}_${BUILD_ID}/
-                  scp build-${target}/bin/mlpack_test jenkins@${hostname}:test_${BRANCH_NAME}_${BUILD_ID}/
+                  scp build-${buildname}/bin/mlpack_test jenkins@${hostname}:test_${BRANCH_NAME}_${BUILD_ID}/
                   scp -r src/mlpack/tests/data/* jenkins@${hostname}:test_${BRANCH_NAME}_${BUILD_ID}/
                   # Unpack all compressed test data.
                   ssh jenkins@${hostname} -t "
