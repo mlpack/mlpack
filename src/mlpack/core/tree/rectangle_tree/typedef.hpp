@@ -171,8 +171,7 @@ template<typename DistanceType = EuclideanDistance,
 using RPlusTree = RectangleTree<DistanceType,
                                 StatisticType,
                                 MatType,
-                                RPlusTreeSplit<RPlusTreeSplitPolicy,
-                                               MinimalCoverageSweep>,
+                                RPlusTreeSplit,
                                 RPlusTreeDescentHeuristic,
                                 NoAuxiliaryInformation>;
 
@@ -202,8 +201,7 @@ template<typename DistanceType = EuclideanDistance,
 using RPlusPlusTree = RectangleTree<DistanceType,
                                     StatisticType,
                                     MatType,
-                                    RPlusTreeSplit<RPlusPlusTreeSplitPolicy,
-                                                   MinimalSplitsNumberSweep>,
+                                    RPlusPlusTreeSplit,
                                     RPlusPlusTreeDescentHeuristic,
                                     RPlusPlusTreeAuxiliaryInformation>;
 } // namespace mlpack
