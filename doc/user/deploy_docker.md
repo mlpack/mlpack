@@ -89,7 +89,7 @@ definitions](compile.md#configuring-mlpack-with-compile-time-definitions) and
 wrapper](compile.md#linking-without-the-armadillo-wrapper) for more details.
 
 Once the program is compiled, we can train on a
-[dataset of domain names](https://datasets.mlpack.org/dga_domains.csv).  The
+[dataset of domain names](https://datasets.mlpack.org/dga_domains.csv.gz).  The
 commands below will download the prepared dataset from the mlpack website, and
 then run the training process.
 
