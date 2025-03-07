@@ -23,3 +23,7 @@ relatively simple environments.
 
  * [***Deploying mlpack on Windows***](deploy_windows.md): build a Windows
    application that uses mlpack.
+
+ * [***Deploying mlpack to a Docker container***](deploy_docker.md): package an
+   mlpack application inside of a lightweight Docker container for local usage
+   or deployment in a cloud environment.

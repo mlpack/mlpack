@@ -560,7 +560,7 @@ For implementation details, see
 
 The `XTreeSplit` class implements the improved splitting strategy for the
 [`XTree`](x_tree.md) as described in the
-[X-tree paper (pdf)](http://www.vldb.org/conf/1996/P028.PDF).  This strategy is
+[X-tree paper (pdf)](https://www.vldb.org/conf/1996/P028.PDF).  This strategy is
 an improved version of the standard [`RTreeSplit`](#rtreesplit), where the
 overlap of sibling nodes is minimized.
 
