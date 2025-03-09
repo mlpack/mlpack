@@ -70,16 +70,6 @@ namespace mlpack {
 	  */
 		std::tuple<arma::vec, arma::vec> Compute();
 
-		/**
-		 * Enable or disable ICE plots.
-		 */
-		void EnableICE(bool enable);
-
-		/**
-		 * Set the histogram flag.
-		 */
-		void EnableHistogram(bool enable);
-
 	private:
 		//! The trained model.
 		const ModelType& model;
@@ -89,10 +79,6 @@ namespace mlpack {
 		size_t featureIndex;
 		//! Number of points to sample.
 		size_t numPoints;
-		//! ICE plot flag.
-		bool iceEnabled;
-		//! Histogram flag.
-		bool histogramEnabled;
 
 	};
 
