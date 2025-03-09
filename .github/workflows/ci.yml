@@ -153,10 +153,7 @@ jobs:
           # The use of only one thread is to prevent thrashing on older versions
           # of OpenBLAS (0.3.26 and older) where OpenMP and pthreads aren't
           # playing together well.
-          OMP_NUM_THREADS=1 bin/mlpack_test -r junit | tee /dev/stderr > mlpack_test.junit.xml
-          # Remove version numbers and other non-xml from the output.
-          cat mlpack_test.junit.xml | sed '/<?xml/,$!d' > mlpack_test.junit.xml.tmp
-          mv mlpack_test.junit.xml.tmp mlpack_test.junit.xml
+          OMP_NUM_THREADS=1 bin/mlpack_test -r junit -o mlpack_test.junit.xml
 
       # Run binding tests for each binding type.
       - name: Run binding tests
