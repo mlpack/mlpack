@@ -37,10 +37,10 @@
 #include "rectangle_tree/r_plus_tree_split_policy.hpp"
 #include "rectangle_tree/minimal_coverage_sweep.hpp"
 #include "rectangle_tree/minimal_splits_number_sweep.hpp"
+#include "rectangle_tree/r_plus_plus_tree_split_policy.hpp"
 #include "rectangle_tree/r_plus_tree_split.hpp"
 #include "rectangle_tree/r_plus_plus_tree_auxiliary_information.hpp"
 #include "rectangle_tree/r_plus_plus_tree_descent_heuristic.hpp"
-#include "rectangle_tree/r_plus_plus_tree_split_policy.hpp"
 #include "rectangle_tree/traits.hpp"
 #include "rectangle_tree/typedef.hpp"
 

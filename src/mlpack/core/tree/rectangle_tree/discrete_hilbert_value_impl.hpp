@@ -383,7 +383,7 @@ void DiscreteHilbertValue<TreeElemType>::InsertNode(TreeType* node)
 {
   DiscreteHilbertValue &val = node->AuxiliaryInfo().HilbertValue();
 
-  if (CompareWith(node, val) < 0)
+  if (node->AuxiliaryInfo().HilbertValue().CompareWith(val) < 0)
   {
     localHilbertValues = val.LocalHilbertValues();
     numValues = val.NumValues();
@@ -417,11 +417,11 @@ RemoveNode(TreeType* node, const size_t nodeIndex)
   {
     // Update the largest Hilbert value if the value exists
     TreeType& child = node->Child(nodeIndex - 1);
-    if (child.AuxiliaryInfo.HilbertValue().NumValues() != 0)
+    if (child.AuxiliaryInfo().HilbertValue().NumValues() != 0)
     {
-      numValues = child.AuxiliaryInfo.HilbertValue().NumValues();
+      numValues = child.AuxiliaryInfo().HilbertValue().NumValues();
       localHilbertValues =
-          child.AuxiliaryInfo.HilbertValue().LocalHilbertValues();
+          child.AuxiliaryInfo().HilbertValue().LocalHilbertValues();
     }
     else
     {
