@@ -212,7 +212,9 @@
       <a xlink:href="../user/compile.html" target="_top">
         <text x="140" y="1130" text-anchor="middle">Compile an mlpack program</text>
       </a>
-      <text x="140" y="1145" text-anchor="middle">Deploy to a Docker container</text>
+      <a xlink:href="../user/deploy_docker.html" target="_top">
+        <text x="140" y="1145" text-anchor="middle">Deploy to a Docker container</text>
+      </a>
       <a xlink:href="../embedded/crosscompile_armv7.html" target="_top">
         <text x="140" y="1160" text-anchor="middle">Cross-compile to a Raspberry
 Pi    </text>
