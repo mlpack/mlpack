@@ -257,6 +257,9 @@ endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
+message(STATUS "mlpack include directories: ${MLPACK_INCLUDE_DIRS}")
+message(STATUS "mlpack libraries: ${MLPACK_LIBRARIES}")
+
 if (USE_SYSTEM_STB)
   # Make sure that we can link STB in multiple translation units.
   include(CMake/TestStaticSTB.cmake)
