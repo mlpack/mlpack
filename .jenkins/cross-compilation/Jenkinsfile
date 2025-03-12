@@ -92,7 +92,7 @@ pipeline
                     -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
                     -DDOWNLOAD_DEPENDENCIES=ON \
                     ../
-                VERBOSE=1 make mlpack_test;
+                make mlpack_test;
               '''
 
               withCredentials([sshUserPrivateKey(
