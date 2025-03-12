@@ -1,0 +1,161 @@
+// The cross-compilation job tests mlpack on a set of low-resource devices.
+// First, the cross-compilation host compiles mlpack tests for each
+// architecture, and then copies them to the destination host and runs them.
+pipeline
+{
+  agent
+  {
+    // Only use a node that has access to the target hosts.
+    label 'cross-compile'
+  }
+
+  options
+  {
+    // Only allow one build at a time of this job.
+    disableConcurrentBuilds(abortPrevious: true)
+  }
+
+  stages
+  {
+    stage('Set build as pending')
+    {
+      steps
+      {
+        // Set the build status...
+        script
+        {
+          u = load '.jenkins/utils.groovy'
+          u.startBuild("Cross-compilation Tests");
+        }
+
+        // Create a directory for our resulting reports.
+        sh'mkdir -p reports/'
+      }
+    }
+
+    stage('Cross-compile mlpack to different targets')
+    {
+      matrix
+      {
+        axes
+        {
+          axis
+          {
+            name 'target'
+            values 'couscous;rpi5;cortexa76'
+          }
+        }
+
+        stages
+        {
+          // Extract the hostname, the device, and the architecture.
+          stage('Extract parameters from build matrix')
+          {
+            steps
+            {
+              script
+              {
+                def components = env.target.split(';')
+
+                env.hostname = components[0]
+                env.device = components[1]
+                env.arch = components[2]
+                env.arch_upper = components[2].toUpperCase()
+              }
+            }
+          }
+
+          // Cross-compile mlpack tests.
+          stage('Cross-compilation tests')
+          {
+            agent
+            {
+              docker
+              {
+                image 'mlpack/mlpack-cross-compile-' + env.arch + ':latest'
+                alwaysPull true
+                reuseNode true
+              }
+            }
+            steps
+            {
+              sh '''
+                rm -rf build/
+                mkdir build/
+                cd build/
+                cmake \
+                    -DBUILD_TESTS=ON \
+                    -DARCH_NAME=${arch_upper} \
+                    -DCMAKE_CROSSCOMPILING=ON \
+                    -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake \
+                    -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
+                    -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
+                    -DDOWNLOAD_DEPENDENCIES=ON \
+                    ../
+                make mlpack_test;
+              '''
+
+              withCredentials([sshUserPrivateKey(
+                  credentialsId: 'mlpack-jenkins-cross-compile-rsa-key',
+                  keyFileVariable: 'KEY_FILE',
+                  passphraseVariable: 'PASSPHRASE')])
+              {
+                sh'''
+                  eval $(ssh-agent -s)
+                  echo ${PASSPHRASE} | SSH_ASKPASS=/bin/cat setsid -w ssh-add ${KEY_FILE}
+
+                  # Don't check the host keys, because they won't be saved in
+                  # this container anyway.
+                  mkdir -p ~/.ssh/
+                  echo 'Host *' >> ~/.ssh/config;
+                  echo '  StrictHostKeyChecking no' >> ~/.ssh/config;
+
+                  ssh jenkins@${hostname} -t mkdir -p test_${BRANCH_NAME}_${BUILD_ID}/
+                  scp build/bin/mlpack_test jenkins@${hostname}:test_${BRANCH_NAME}_${BUILD_ID}/
+                  scp -r src/mlpack/tests/data/* jenkins@${hostname}:test_${BRANCH_NAME}_${BUILD_ID}/
+                  # Unpack all compressed test data.
+                  ssh jenkins@${hostname} -t "
+                      cd test_${BRANCH_NAME}_${BUILD_ID};
+                      find ./ -iname '*.bz2' -exec tar xvf \\{\\} \\;"
+
+                  mkdir -p reports;
+                  ssh jenkins@${hostname} -t "
+                      cd test_${BRANCH_NAME}_${BUILD_ID};
+                      mkdir -p reports;
+                      ./mlpack_test -r junit -o reports/mlpack_test.junit.xml"
+
+                  # Clean up afterwards.
+                  scp jenkins@${hostname}:test_${BRANCH_NAME}_${BUILD_ID}/reports/mlpack_test.junit.xml reports/mlpack_test.${hostname}.junit.xml;
+                  ssh jenkins@${hostname} -t rm -rf test_${BRANCH_NAME}_${BUILD_ID}/;
+                '''
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  post
+  {
+    always
+    {
+      junit '**/reports/mlpack_test.*.junit.xml'
+
+      // Clean the workspace.
+      cleanWs(cleanWhenNotBuilt: true,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true)
+
+      script
+      {
+        u.setBuildStatus(result: currentBuild.currentResult,
+                         context: "Cross-compilation Tests",
+                         successMessage: "Cross-compilation succeeded with no errors.",
+                         unstableMessage: "Cross-compilation build unstable.",
+                         failureMessage: "Cross-compilation failed.");
+      }
+    }
+  }
+}

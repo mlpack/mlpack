@@ -73,8 +73,8 @@ BINDING_SEE_ALSO("@cf", "#cf");
 BINDING_SEE_ALSO("Non-negative matrix factorization on Wikipedia",
     "https://en.wikipedia.org/wiki/Non-negative_matrix_factorization");
 BINDING_SEE_ALSO("Algorithms for non-negative matrix factorization (pdf)",
-    "http://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-"
-    "factorization.pdf");
+    "https://proceedings.neurips.cc/paper_files/paper/2000/file/"
+    "f9d1152547c0bde01830b7e8bd60024c-Paper.pdf");
 BINDING_SEE_ALSO("NMF C++ class documentation", "@doc/user/methods/nmf.md");
 BINDING_SEE_ALSO("AMF C++ class documentation", "@doc/user/methods/amf.md");
 

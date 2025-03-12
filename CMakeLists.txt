@@ -1,13 +1,12 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.11)
 project(mlpack C CXX)
 
 include(CMake/CheckHash.cmake)
-include(CMake/Autodownload.cmake)
 include(CMake/ConfigureCrossCompile.cmake)
 include(CMake/CheckAtomic.cmake)
+include(CMake/mlpack.cmake)
 
 # First, define all the compilation options.
-# We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information." OFF)
 option(PROFILE "Compile with profiling information." OFF)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
@@ -17,15 +16,15 @@ option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DOWNLOAD_DEPENDENCIES "Automatically download dependencies if not available." OFF)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." ON)
+option(USE_SYSTEM_STB "Use system STB instead of version bundled with mlpack." OFF)
 
-# Set minimum library versions required by mlpack.
-#
-# For Armadillo, try to keep the minimum required version less than or equal to
-# what's available on the current Ubuntu LTS or most recent stable RHEL release.
-# See https://github.com/mlpack/mlpack/issues/3033 for some more discussion.
-set(ARMADILLO_VERSION "10.8")
-set(ENSMALLEN_VERSION "2.10.0")
-set(CEREAL_VERSION "1.1.2")
+if (NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release")
+endif()
+
+if (PROFILE)
+  message(WARNING "The PROFILE option is deprecated and will be removed in mlpack 5.0.0; specify -DCMAKE_CXX_FLAGS=\"-pg\" instead!")
+endif()
 
 # Consider using ccache
 find_program(CCACHE_PROGRAM ccache)
@@ -47,11 +46,6 @@ elseif(CMAKE_CROSSCOMPILING)
 else()
   option(BUILD_SHARED_LIBS
       "Compile shared objects for tests and bindings (if OFF, static libraries and binaries are compiled)." ON)
-endif()
-
-# Enable auto-download if we are cross compiling.
-if (CMAKE_CROSSCOMPILING)
-  set(DOWNLOAD_DEPENDENCIES ON)
 endif()
 
 # Support preference of static libs by adjusting CMAKE_FIND_LIBRARY_SUFFIXES.
@@ -106,15 +100,8 @@ option(BUILD_R_BINDINGS "Build R bindings." OFF)
 # Build Markdown bindings for documentation.  This is used as part of website
 # generation.
 option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)
-
-option(MATHJAX
-    "Use MathJax for HTML Doxygen output (disabled by default)." OFF)
 option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
 enable_testing()
-
-# Set required standard to C++17.
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Ensure that GCC is new enough, if the compiler is GCC.
 if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 8)
@@ -169,7 +156,6 @@ endif ()
 
 # If we are using MSVC, we need /bigobj.
 if (MSVC)
-  set(CMAKE_CXX_STANDARD 17)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /Zc:__cplusplus")
 endif ()
 
@@ -199,17 +185,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         "([0-9]+)(\\.([0-9]+).*)*" "\\3"
         MACOSX_MINOR_VERSION
         "${MACOSX_VERSION_RAW}")
-
-     # OSX Lion (10.7) and OS X Mountain Lion (10.8) doesn't automatically
-     # select the right stdlib.
-    if (${MACOSX_MAJOR_VERSION} LESS 11 AND ${MACOSX_MINOR_VERSION} LESS 9)
-      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
-      set(CMAKE_SHARED_LINKER_FLAGS
-          "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
-      set(CMAKE_MODULE_LINKER_FLAGS
-          "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++")
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-     endif()
   endif()
 
   # Link everything with -lm.
@@ -220,25 +195,23 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   endif ()
 endif()
 
-# If we're using gcc, then we need to link against pthreads to use std::thread,
-# which we do in the tests.
-if (CMAKE_COMPILER_IS_GNUCC)
-  find_package(Threads)
-  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
-endif()
-
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 set (BFD_DL_AVAILABLE "NO")
 if (DEBUG)
+  message(WARNING "The DEBUG option is deprecated and will be removed in mlpack 5.0.0; specify CMAKE_BUILD_TYPE as \"Debug\" instead!")
+endif ()
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" OR DEBUG)
   if (NOT MSVC)
     add_definitions(-DDEBUG)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -O0")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftemplate-backtrace-limit=0")
   endif()
 
   # mlpack uses it's own mlpack::backtrace class based on Binary File Descriptor
-  # <bfd.h> and linux Dynamic Loader <libdl.h> and more portable version in future
-  if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  # <bfd.h> and linux Dynamic Loader <libdl.h> and more portable version in
+  # future.  However, if we are cross-compiling, we cannot run the CMake tests
+  # for LibDL and BFD.
+  if (CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT CMAKE_CROSSCOMPILING)
     find_package(Bfd)
     find_package(LibDL)
     if (LIBBFD_FOUND AND LIBDL_FOUND)
@@ -252,19 +225,6 @@ if (DEBUG)
       message(WARNING "No libBFD and/or libDL has been found!")
     endif()
   endif()
-else()
-  add_definitions(-DNDEBUG)
-  if (NOT MSVC)
-    if (NOT CMAKE_CROSSCOMPILING)
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O3")
-    else()
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
-    endif()
-  else ()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O3")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /O3")
-  endif ()
 endif()
 
 # Profiling CFLAGS.  Turn profiling information on.
@@ -279,60 +239,25 @@ if (ARMA_EXTRA_DEBUG)
   add_definitions(-DARMA_EXTRA_DEBUG)
 endif()
 
-# Now, find the libraries we need to compile against.  Several variables can be
-# set to manually specify the directory in which each of these libraries
-# resides.
-#   ARMADILLO_LIBRARY - location of libarmadillo.so / armadillo.lib
-#   ARMADILLO_INCLUDE_DIR - directory containing <armadillo>
-#   ARMADILLO_INCLUDE_DIRS - directories necessary for Armadillo includes
-#   CEREAL_INCLUDE_DIR - include directory for cereal
-#   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
-#   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
-#   MATHJAX_ROOT - root of MathJax installation
-
-# Download and compile OpenBLAS if we are cross compiling mlpack for a specific
-# architecture. The function takes the version of OpenBLAS as variable.
-if (CMAKE_CROSSCOMPILING)
-  search_openblas(0.3.28)
+if (NOT USE_OPENMP)
+  set(MLPACK_DISABLE_OPENMP ON)
 endif()
 
-if (NOT DOWNLOAD_DEPENDENCIES)
-  find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
+if (USE_SYSTEM_STB)
+  set(MLPACK_USE_SYSTEM_STB ON)
+endif ()
+
+if (CMAKE_CROSSCOMPILING OR DOWNLOAD_DEPENDENCIES)
+  fetch_mlpack(ON)
 else()
-  find_package(Armadillo "${ARMADILLO_VERSION}")
-  if (NOT ARMADILLO_FOUND)
-    if (NOT CMAKE_CROSSCOMPILING)
-      find_package(BLAS QUIET)
-      find_package(LAPACK QUIET)
-      if (NOT BLAS_FOUND AND NOT LAPACK_FOUND)
-        message(FATAL_ERROR "Can not find BLAS or LAPACK!  These are required for Armadillo.  Please install one of them---or install Armadillo---before installing mlpack.")
-      endif()
-    endif()
-    get_deps(https://files.mlpack.org/armadillo-12.6.5.tar.gz armadillo armadillo-12.6.5.tar.gz)
-    set(ARMADILLO_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
-    find_package(Armadillo REQUIRED)
-  endif()
+  find_mlpack()
 endif()
+
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
-# Find stb_image.h and stb_image_write.h.
-if (NOT DOWNLOAD_DEPENDENCIES)
-  find_package(StbImage)
-else()
-  find_package(StbImage)
-  if (NOT StbImage_FOUND)
-    get_deps(https://mlpack.org/files/stb.tar.gz stb stb.tar.gz)
-    set(STB_IMAGE_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
-    find_package(StbImage REQUIRED)
-  endif()
-endif()
-
-if (StbImage_FOUND)
-  set(STB_AVAILABLE "1")
-  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
-
+if (USE_SYSTEM_STB)
   # Make sure that we can link STB in multiple translation units.
   include(CMake/TestStaticSTB.cmake)
   if (NOT CMAKE_HAS_WORKING_STATIC_STB)
@@ -340,59 +265,8 @@ if (StbImage_FOUND)
         "multiple translation units!  Try upgrading your STB implementation, "
         "or using the auto-downloader (set DOWNLOAD_DEPENDENCIES=ON in the "
         "CMake configuration command.")
-  endif ()
-endif()
-
-# Find ensmallen.
-if (NOT DOWNLOAD_DEPENDENCIES)
-  find_package(Ensmallen "${ENSMALLEN_VERSION}" REQUIRED)
-else()
-  find_package(Ensmallen "${ENSMALLEN_VERSION}")
-  if (NOT ENSMALLEN_FOUND)
-    get_deps(https://www.ensmallen.org/files/ensmallen-latest.tar.gz ensmallen ensmallen-latest.tar.gz)
-    set(ENSMALLEN_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
-    find_package(Ensmallen REQUIRED)
   endif()
 endif()
-set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
-
-# Find cereal.
-if (NOT DOWNLOAD_DEPENDENCIES)
-  find_package(cereal "${CEREAL_VERSION}" REQUIRED)
-else()
-  find_package(cereal "${CEREAL_VERSION}")
-  if (NOT CEREAL_FOUND)
-    get_deps(https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.0.tar.gz cereal cereal-1.3.0.tar.gz)
-    set(CEREAL_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
-    find_package(cereal REQUIRED)
-  endif()
-endif()
-set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
-
-# Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
-# to compile with OpenMP are returned and added.  Note that MSVC does not
-# support a new-enough version of OpenMP to be useful.
-if (USE_OPENMP)
-  find_package(OpenMP)
-endif ()
-
-if (OpenMP_FOUND AND OpenMP_CXX_VERSION VERSION_GREATER_EQUAL 3.0.0)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OpenMP_CXX_LIBRARIES})
-else ()
-  # Disable warnings for all the unknown OpenMP pragmas.
-  if (NOT MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
-  else ()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4068")
-  endif ()
-  set(OpenMP_CXX_FLAGS "")
-endif ()
-
-# Create a 'distclean' target in case the user is using an in-source build for
-# some reason.
-include(CMake/TargetDistclean.cmake OPTIONAL)
 
 include_directories(BEFORE ${MLPACK_INCLUDE_DIRS})
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/src/)
@@ -486,18 +360,17 @@ if (BFD_DL_AVAILABLE)
   string(REGEX REPLACE "// #define MLPACK_HAS_BFD_DL\n"
       "#define MLPACK_HAS_BFD_DL\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif ()
-if (STB_AVAILABLE)
-  string(REGEX REPLACE "// #define MLPACK_HAS_STB\n"
-      "#define MLPACK_HAS_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
-  if (NOT STB_INCLUDE_NEEDS_STB_SUFFIX)
-    string(REGEX REPLACE "// #define MLPACK_HAS_NO_STB_DIR\n"
-        "#define MLPACK_HAS_NO_STB_DIR\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
-  endif ()
-endif ()
+
 if (USING_GIT)
   string(REGEX REPLACE "// #define MLPACK_GIT_VERSION\n"
       "#define MLPACK_GIT_VERSION\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif ()
+
+if (USE_SYSTEM_STB)
+  string(REGEX REPLACE "// #define MLPACK_USE_SYSTEM_STB\n"
+      "#define MLPACK_USE_SYSTEM_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
 file(WRITE ${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp "${CONFIG_CONTENTS}")
 include_directories(${CMAKE_BINARY_DIR}/include/)
 add_definitions(-DMLPACK_CUSTOM_CONFIG_FILE=mlpack/config-local.hpp)

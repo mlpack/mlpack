@@ -375,16 +375,17 @@ void FFN<
     MatType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
-  #ifndef MLPACK_ENABLE_ANN_SERIALIZATION
+  #if !defined(MLPACK_ENABLE_ANN_SERIALIZATION) && \
+      !defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
     // Note: if you define MLPACK_IGNORE_ANN_SERIALIZATION_WARNING, you had
     // better ensure that every layer you are serializing has had
     // CEREAL_REGISTER_TYPE() called somewhere.  See layer/serialization.hpp for
     // more information.
-    #ifndef MLPACK_ANN_IGNORE_SERIALIZATION_WARNING
-      throw std::runtime_error("Cannot serialize a neural network unless "
-          "MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See the \"Additional "
-          "build options\" section of the README for more information.");
-    #endif
+    throw std::runtime_error("Cannot serialize a neural network unless "
+        "MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See the \"Additional "
+        "build options\" section of the README for more information.");
+
+    (void) ar;
   #else
     // Serialize the output layer and initialization rule.
     ar(CEREAL_NVP(outputLayer));

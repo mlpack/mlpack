@@ -496,6 +496,11 @@ RandomForest<FitnessFunction,
    5.0.0 as it is superseded by the BootstrapType strategy.
  * `BootstrapType`: the strategy used to bootstrap the samples per tree.
 
+An additional `RandomForest` constructor offers two additional parameters to
+pass the `DimensionSelectionType`, via the `dimSelector` argument, and the
+`BootstrapType`, via the `bootstrap` argument, in case they have non-default
+constructors.  See the [`BootstrapType` documentation](#bootstraptype).
+
 Note that the first four of these template parameters are exactly the same as
 the template parameters for the
 [`DecisionTree`](decision_tree.md#fully-custom-behavior) class.
@@ -612,6 +617,11 @@ template<typename FitnessFunction>
 class CustomNumericSplit
 {
  public:
+  // This class can hold any extra data that is necessary to encode a split.  It
+  // should only be non-empty if a single `double` value cannot be used to hold
+  // the information corresponding to a split.
+  class AuxiliarySplitInfo { };
+
   // If a split with better resulting gain than `bestGain` is found, then
   // information about the new, better split should be stored in `splitInfo` and
   // `aux`.  Specifically, a split is better than `bestGain` if the sum of the
@@ -636,20 +646,20 @@ class CustomNumericSplit
   // Otherwise, they are instance weighs for each value in `data` (one dimension
   // of the input data).
   template<bool UseWeights, typename VecType, typename WeightVecType>
-  double SplitIfBetter(const double bestGain,
-                       const VecType& data,
-                       const arma::Row<size_t>& labels,
-                       const size_t numClasses,
-                       const WeightVecType& weights,
-                       const size_t minLeafSize,
-                       const double minGainSplit,
-                       arma::vec& splitInfo,
-                       AuxiliarySplitInfo& aux);
+  static double SplitIfBetter(const double bestGain,
+                              const VecType& data,
+                              const arma::Row<size_t>& labels,
+                              const size_t numClasses,
+                              const WeightVecType& weights,
+                              const size_t minLeafSize,
+                              const double minGainSplit,
+                              arma::vec& splitInfo,
+                              AuxiliarySplitInfo& aux);
 
   // Return the number of children for a given split (stored as the single
   // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
-  size_t NumChildren(const double& splitInfo,
-                     const AuxiliarySplitInfo& aux);
+  static size_t NumChildren(const arma::vec& splitInfo,
+                            const AuxiliarySplitInfo& aux);
 
   // Given a point with value `point`, and split information `splitInfo` and
   // `aux`, return the index of the child that corresponds to the point.  So,
@@ -658,13 +668,8 @@ class CustomNumericSplit
   template<typename ElemType>
   static size_t CalculateDirection(
       const ElemType& point,
-      const double& splitInfo,
+      const arma::vec& splitInfo,
       const AuxiliarySplitInfo& /* aux */);
-
-  // This class can hold any extra data that is necessary to encode a split.  It
-  // should only be non-empty if a single `double` value cannot be used to hold
-  // the information corresponding to a split.
-  class AuxiliarySplitInfo { };
 };
 ```
 
@@ -685,6 +690,11 @@ template<typename FitnessFunction>
 class CustomCategoricalSplit
 {
  public:
+  // This class can hold any extra data that is necessary to encode a split.  It
+  // should only be non-empty if a single `double` value cannot be used to hold
+  // the information corresponding to a split.
+  class AuxiliarySplitInfo { };
+
   // If a split with better resulting gain than `bestGain` is found, then
   // information about the new, better split should be stored in `splitInfo` and
   // `aux`.  Specifically, a split is better than `bestGain` if the sum of the
@@ -725,8 +735,8 @@ class CustomCategoricalSplit
 
   // Return the number of children for a given split (stored as the single
   // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
-  size_t NumChildren(const double& splitInfo,
-                     const AuxiliarySplitInfo& aux);
+  static size_t NumChildren(const arma::vec& splitInfo,
+                            const AuxiliarySplitInfo& aux);
 
   // Given a point with (categorical) value `point`, and split information
   // `splitInfo` and `aux`, return the index of the child that corresponds to
@@ -735,13 +745,8 @@ class CustomCategoricalSplit
   template<typename ElemType>
   static size_t CalculateDirection(
       const ElemType& point,
-      const double& splitInfo,
+      const arma::vec& splitInfo,
       const AuxiliarySplitInfo& /* aux */);
-
-  // This class can hold any extra data that is necessary to encode a split.  It
-  // should only be non-empty if a single `double` value cannot be used to hold
-  // the information corresponding to a split.
-  class AuxiliarySplitInfo { };
 };
 ```
 
@@ -749,9 +754,9 @@ class CustomCategoricalSplit
 
 #### `UseBootstrap`
 
-**This parameter will be removed in mlpack 5.0.0.** A value of `false` will then be
-equivalent to `BootstrapType` `IdentityBootstrap` and a value of `true` will be
-equivalent to `DefaultBootstrap`.
+***Note:*** this parameter will be removed in mlpack 5.0.0. A value of `false`
+will then be equivalent to setting `BootstrapType` to `IdentityBootstrap`, and a
+value of `true` will be equivalent to `DefaultBootstrap`.
 
  * A `bool` value that indicates whether or not a bootstrap sample of the
    dataset should be used for the training of each individual decision tree in
@@ -770,15 +775,23 @@ equivalent to `DefaultBootstrap`.
    - `SequentialBootstrap`: bootstrapping from overlapping sequences such that samples with informational overlap behave more I.I.D.
      * Useful when data consists of multiple overlapping events (or individual sequences).
      * `b = SequentialBootstrap(intervals)` will create a `SequentialBootstrap` object, where:
-       - `intervals` is of type `arma::umat`, with 2 rows and `m` columns, where `m` is the number of events.
+       - `intervals` is of type `arma::umat`, with 2 rows and `n` columns, where `n` is the number of events to be sampled from.
        - Each column in `intervals` represents the start and end columns (inclusive) of each event.
-       - So, e.g., if the 10th event is 5 points long, starting at index 6, then column `9` of `intervals` should be `6, 10`.
-     * A `SequentialBootstrap` must be passed as the `bootstrap` option to the [advanced constructor](#fully-custom-behavior).
+       - So, e.g., if the 10th event is 5 points long, starting at index 6, then column `9` of `intervals` should be `[6, 10]`.
+     * A `SequentialBootstrap` must be passed as the `bootstrap` option to the advanced constructor (below).
      * For more information, see: M. López de Prado (2018): "Advances in Financial Machine Learning", pp. 63-65.
+
+ * When using a `BootstrapType` that requires an instantiated object (such as `SequentialBootstrap`), the following advanced constructor forms can be used for `RandomForest`:
+ 
+   - `rf = RandomForest(data, info, labels, numClasses,          numTrees, minLeafSize, minGainSplit, maxDepth, bootstrap)`
+   - `rf = RandomForest(data, info, labels, numClasses, weights, numTrees, minLeafSize, minGainSplit, maxDepth, bootstrap)`
+
  * A custom `BootstrapType` class must take a `bool` template parameter `UseWeights` and implement one function:
+
 ```c++
 class CustomBootstrapType
 {
+ public:
   /**
    * Compute a bootstrap dataset based on the original dataset.
    * If `UseWeights` is `false`, then `weights` and `bootstrapWeights` can be
@@ -789,15 +802,76 @@ class CustomBootstrapType
    * `bootstrapWeights` should contain the corresponding instance weights for
    * the bootstrapped dataset.
    */
-  template<bool UseWeights,
-           typename MatType,
-           typename LabelsType,
-           typename WeightsType>
-  void Bootstrap(const MatType& dataset,
-                 const LabelsType& labels,
-                 const WeightsType& weights,
-                 MatType& bootstrapDataset,
-                 LabelsType& bootstrapLabels,
-                 WeightsType& bootstrapWeights);
+  template<
+      bool UseWeights,
+      typename MatType,
+      typename LabelsType,
+      typename WeightsType>
+  void Bootstrap(
+      const MatType& dataset,
+      const LabelsType& labels,
+      const WeightsType& weights,
+      MatType& bootstrapDataset,
+      LabelsType& bootstrapLabels,
+      WeightsType& bootstrapWeights);
 };
+```
+
+---
+
+Train a `RandomForest` with the `SequentialBootstrap` strategy.
+
+```c++
+// 1000 random points in 10 dimensions. In reality this might be
+// financial time-series data.
+arma::mat dataset(10 /* rows */, 1000 /* cols */, arma::fill::randu);
+
+// Random labels for each point, totaling 5 classes.
+arma::Row<size_t> labels =
+    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
+
+arma::umat intervals(2, labels.n_cols);
+
+for (size_t c = 0; c < 1000; ++c)
+{
+  // Every "normal" event has length 1 and happens at the time step
+  // equivalent to its column.
+  intervals(0, c) = c;
+  intervals(1, c) = c;
+}
+
+// Now set the three "overlapping" events to have longer ranges.
+// The first two events overlap in [100,200].
+// The third event is isolated from the other two.
+// All three still overlap in each time step with one
+// "normal" event.
+intervals(0, 0) = 0; // start of first event
+intervals(1, 0) = 200; // end of first event
+intervals(0, 100) = 100; // start of second event
+intervals(1, 100) = 500; // end of second event
+intervals(0, 600) = 600; // start of third event
+intervals(1, 600) = 1000; // end of third event
+
+mlpack::SequentialBootstrap bootstrap(intervals);
+
+// Create and train the random forest.
+mlpack::RandomForest<
+    mlpack::GiniGain,
+    mlpack::MultipleRandomDimensionSelect,
+    mlpack::BestBinaryNumericSplit,
+    mlpack::AllCategoricalSplit,
+    true,
+    mlpack::SequentialBootstrap<>> rf(
+        dataset,
+        labels,
+        5, // numClasses
+        20, // numTrees
+        1, // minimumLeafSize
+        1e-7, // minimumGainSplit
+        0, // maximumDepth
+        mlpack::MultipleRandomDimensionSelect(), // dimSelector
+        bootstrap);
+
+std::cout << "Forest trained with sequential bootstrap has " << rf.NumTrees()
+    << " trees." << std::endl;
 ```

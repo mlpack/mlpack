@@ -20,36 +20,34 @@
 namespace mlpack {
 
 /**
- * Implementation of the LSTM module class.
+ * Implementation of the "vanilla" LSTM with peephole connections.
  * The implementation corresponds to the following algorithm:
  *
- * @f{eqnarray}{
- * i &=& sigmoid(W \cdot x + W \cdot h + W \cdot c + b) \\
- * f &=& sigmoid(W  \cdot x + W \cdot h + W \cdot c + b) \\
- * z &=& tanh(W \cdot x + W \cdot h + b) \\
- * c &=& f \odot c + i \odot z \\
- * o &=& sigmoid(W \cdot x + W \cdot h + W \cdot c + b) \\
- * h &=& o \odot tanh(c)
- * @f}
+ * z_t  =    tanh(W_z x_t + R_z y_{t - 1} + b_z)
+ * i_t  = sigmoid(W_i x_t + R_i y_{t - 1} + p_i % c_{t - 1} + b_i)
+ * f_t  = sigmoid(W_f x_t + R_f y_{t - 1} + p_f % c_{t - 1} + b_f)
+ * c_t  =         z_t % i_t + c_{t - 1} % f_t
+ * o_t  = sigmoid(W_o x_t + R_o y_{t - 1} + p_o % c_t + b_o)
+ * y_t  =    tanh(c_t) % o_t
  *
- * Note that if an LSTM layer is desired as the first layer of a neural network,
- * an IdentityLayer should be added to the network as the first layer, and then
- * the LSTM layer should be added.
+ * which is the 'vanilla' implementation described in the following paper:
  *
- * For more information, see the following.
- *
- * @code
- * @article{Graves2013,
- *   author  = {Alex Graves and Abdel{-}rahman Mohamed and Geoffrey E. Hinton},
- *   title   = {Speech Recognition with Deep Recurrent Neural Networks},
- *   journal = CoRR},
- *   year    = {2013},
- *   url     = {http://arxiv.org/abs/1303.5778},
+ * ```
+ * @article{greff2016lstm,
+ *   title={LSTM: A search space odyssey},
+ *   author={Greff, Klaus and Srivastava, Rupesh K and Koutn{\'\i}k, Jan and
+ *       Steunebrink, Bas R and Schmidhuber, J{\"u}rgen},
+ *   journal={IEEE transactions on neural networks and learning systems},
+ *   volume={28},
+ *   number={10},
+ *   pages={2222--2232},
+ *   year={2016},
+ *   publisher={IEEE}
  * }
- * @endcode
+ * ```
  *
- * \see FastLSTM for a faster LSTM version which combines the calculation of the
- * input, forget, output gates and hidden state in a single step.
+ * See `FastLSTM` for a faster LSTM version which combines the calculation of
+ * the input, forget, output gates and hidden state in a single step.
  *
  * @tparam MatType Matrix representation to accept as input and use for
  *    computation.
@@ -124,27 +122,89 @@ class LSTMType : public RecurrentLayer<MatType>
                 const MatType& error,
                 MatType& gradient);
 
-  /**
-   * Reset the recurrent state of the LSTM layer, and allocate enough space to
-   * hold `bpttSteps` of previous passes with a batch size of `batchSize`.
-   *
-   * @param bpttSteps Number of steps of history to allocate space for.
-   * @param batchSize Batch size to prepare for.
-   */
-  void ClearRecurrentState(const size_t bpttSteps, const size_t batchSize);
-
-  //! Get the parameters.
+  // Get the parameters.
   const MatType& Parameters() const { return weights; }
-  //! Modify the parameters.
+  // Modify the parameters.
   MatType& Parameters() { return weights; }
 
-  //! Get the total number of trainable parameters.
-  size_t WeightSize() const
-  {
-    return (4 * outSize * inSize + 7 * outSize + 4 * outSize * outSize);
-  }
+  // Get the block input weight matrix for non-recurrent input.
+  const MatType& BlockInputWeight() const { return blockInputWeight; }
+  // Modify the block input weight matrix for non-recurrent input.
+  MatType& BlockInputWeight() { return blockInputWeight; }
+  // Get the input gate weight matrix for non-recurrent input.
+  const MatType& InputGateWeight() const { return inputGateWeight; }
+  // Modify the input gate weight matrix for non-recurrent input.
+  MatType& InputGateWeight() { return inputGateWeight; }
+  // Get the forget gate weight matrix for non-recurrent input.
+  const MatType& ForgetGateWeight() const { return forgetGateWeight; }
+  // Modify the forget gate weight matrix for non-recurrent input.
+  MatType& ForgetGateWeight() { return forgetGateWeight; }
+  // Get the output gate weight matrix for non-recurrent input.
+  const MatType& OutputGateWeight() const { return outputGateWeight; }
+  // Modify the output gate weight matrix for non-recurrent input.
+  MatType& OutputGateWeight() { return outputGateWeight; }
 
-  //! Given a properly set InputDimensions(), compute the output dimensions.
+  // Get the bias vector that is added to the block input.
+  const MatType& BlockInputBias() const { return blockInputBias; }
+  // Modify the bias vector that is added to the block input.
+  MatType& BlockInputBias() { return blockInputBias; }
+  // Get the bias vector that is added to the input gate.
+  const MatType& InputGateBias() const { return inputGateBias; }
+  // Modify the bias vector that is added to the input gate.
+  MatType& InputGateBias() { return inputGateBias; }
+  // Get the bias vector that is added to the forget gate.
+  const MatType& ForgetGateBias() const { return forgetGateBias; }
+  // Modify the bias vector that is added to the forget gate.
+  MatType& ForgetGateBias() { return forgetGateBias; }
+  // Get the bias vector that is added to the output gate.
+  const MatType& OutputGateBias() const { return outputGateBias; }
+  // Modify the bias vector that is added to the output gate.
+  MatType& OutputGateBias() { return outputGateBias; }
+
+  // Get the block input weight matrix for recurrent input.
+  const MatType& RecurrentBlockInputWeight() const
+  { return recurrentBlockInputWeight; }
+  // Modify the block input weight matrix for recurrent input.
+  MatType& RecurrentBlockInputWeight() { return recurrentBlockInputWeight; }
+  // Get the input gate weight matrix for recurrent input.
+  const MatType& RecurrentInputGateWeight() const
+  { return recurrentInputGateWeight; }
+  // Modify the input gate weight matrix for recurrent input.
+  MatType& RecurrentInputGateWeight() { return recurrentInputGateWeight; }
+  // Get the forget gate weight matrix for recurrent input.
+  const MatType& RecurrentForgetGateWeight() const
+  { return recurrentForgetGateWeight; }
+  // Modify the forget gate weight matrix for recurrent input.
+  MatType& RecurrentForgetGateWeight() { return recurrentForgetGateWeight; }
+  // Get the output gate weight matrix for recurrent input.
+  const MatType& RecurrentOutputGateWeight() const
+  { return recurrentOutputGateWeight; }
+  // Modify the output gate weight matrix for recurrent input.
+  MatType& RecurrentOutputGateWeight() { return recurrentOutputGateWeight; }
+
+  // Get the peephole input gate weight matrix.
+  const MatType& PeepholeInputGateWeight() const
+  { return peepholeInputGateWeight; }
+  // Modify the peephole input gate weight matrix.
+  MatType& PeepholeInputGateWeight() { return peepholeInputGateWeight; }
+  // Get the peephole forget gate weight matrix.
+  const MatType& PeepholeForgetGateWeight() const
+  { return peepholeForgetGateWeight; }
+  // Modify the peephole forget gate weight matrix.
+  MatType& PeepholeForgetGateWeight() { return peepholeForgetGateWeight; }
+  // Get the peephole output gate weight matrix.
+  const MatType& PeepholeOutputGateWeight() const
+  { return peepholeOutputGateWeight; }
+  // Modify the peephole output gate weight matrix.
+  MatType& PeepholeOutputGateWeight() { return peepholeOutputGateWeight; }
+
+  // Get the total number of trainable parameters.
+  size_t WeightSize() const;
+
+  // Get the total number of recurrent state parameters.
+  size_t RecurrentSize() const;
+
+  // Given a properly set InputDimensions(), compute the output dimensions.
   void ComputeOutputDimensions()
   {
     inSize = std::accumulate(this->inputDimensions.begin(),
@@ -163,111 +223,77 @@ class LSTMType : public RecurrentLayer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored number of input units.
+  // Locally-stored number of input units.
   size_t inSize;
 
-  //! Locally-stored number of output units.
+  // Locally-stored number of output units.
   size_t outSize;
 
-  //! Locally-stored weight object.
+  // Locally-stored weight object.
   MatType weights;
 
-  //! Weights between the output and input gate.
-  MatType output2GateInputWeight;
+  // Weight matrices for each of the input connections.
+  MatType blockInputWeight;
+  MatType inputGateWeight;
+  MatType forgetGateWeight;
+  MatType outputGateWeight;
 
-  //! Weights between the input and gate.
-  MatType input2GateInputWeight;
+  // Bias vectors for each of the input connections.
+  MatType blockInputBias;
+  MatType inputGateBias;
+  MatType forgetGateBias;
+  MatType outputGateBias;
 
-  //! Bias between the input and input gate.
-  MatType input2GateInputBias;
+  // Weight matrices for each of the recurrent connections.
+  MatType recurrentBlockInputWeight;
+  MatType recurrentInputGateWeight;
+  MatType recurrentForgetGateWeight;
+  MatType recurrentOutputGateWeight;
 
-  //! Weights between the cell and input gate.
-  MatType cell2GateInputWeight;
+  // Peephole weight connections for each of the recurrent cell connections.
+  MatType peepholeInputGateWeight;
+  MatType peepholeForgetGateWeight;
+  MatType peepholeOutputGateWeight;
 
-  //! Weights between the output and forget gate.
-  MatType output2GateForgetWeight;
-
-  //! Weights between the input and gate.
-  MatType input2GateForgetWeight;
-
-  //! Bias between the input and gate.
-  MatType input2GateForgetBias;
-
-  //! Bias between the input and gate.
-  MatType cell2GateForgetWeight;
-
-  //! Weights between the output and gate.
-  MatType output2GateOutputWeight;
-
-  //! Weights between the input and gate.
-  MatType input2GateOutputWeight;
-
-  //! Bias between the input and gate.
-  MatType input2GateOutputBias;
-
-  //! Weights between cell and output gate.
-  MatType cell2GateOutputWeight;
-
-  // Below here are recurrent state matrices.
-
-  //! Locally-stored input gate parameter.
+  // These matrices are internally used for computation only; they are aliases
+  // for recurrent state.
+  MatType blockInput;
   MatType inputGate;
-
-  //! Locally-stored forget gate parameter.
   MatType forgetGate;
-
-  //! Locally-stored hidden layer parameter.
-  MatType hiddenLayer;
-
-  //! Locally-stored output gate parameter.
   MatType outputGate;
+  MatType thisRecurrent;
+  MatType prevRecurrent;
+  MatType thisCell;
+  MatType prevCell;
+  MatType thisY;
 
-  //! Locally-stored input to hidden weight.
-  MatType input2HiddenWeight;
+  // These matrices are also internally used for computation only.
+  // Everything below 'workspace' is an alias of memory in 'workspace'.
+  //
+  // TODO: right now these are stored inside the class itself, but that is not a
+  // great design; we need some notion of 'working space' that a layer can have.
+  MatType workspace;
+  MatType deltaY;
+  MatType deltaBlockInput;
+  MatType deltaInputGate;
+  MatType deltaForgetGate;
+  MatType deltaOutputGate;
+  MatType deltaCell;
+  // These correspond to, e.g., dy_{t + 1}.
+  MatType nextDeltaY;
+  MatType nextDeltaBlockInput;
+  MatType nextDeltaInputGate;
+  MatType nextDeltaForgetGate;
+  MatType nextDeltaOutputGate;
+  MatType nextDeltaCell;
 
-  //! Locally-stored input to hidden bias.
-  MatType input2HiddenBias;
+  // Calling this function will set all the aliases for the functions above to
+  // the correct places in the current recurrent state methods.
+  void SetInternalAliases(const size_t batchSize);
 
-  //! Locally-stored output to hidden weight.
-  MatType output2HiddenWeight;
-
-  //! Locally-stored cell parameter.
-  arma::Cube<typename MatType::elem_type> cell;
-
-  // These members store recurrent state.
-
-  //! Locally-stored input gate activation.
-  arma::Cube<typename MatType::elem_type> inputGateActivation;
-
-  //! Locally-stored forget gate activation.
-  arma::Cube<typename MatType::elem_type> forgetGateActivation;
-
-  //! Locally-stored output gate activation.
-  arma::Cube<typename MatType::elem_type> outputGateActivation;
-
-  //! Locally-stored hidden layer activation.
-  arma::Cube<typename MatType::elem_type> hiddenLayerActivation;
-
-  //! Locally-stored cell activation error.
-  arma::Cube<typename MatType::elem_type> cellActivation;
-
-  //! Locally-stored forget gate error.
-  MatType forgetGateError;
-
-  //! Locally-stored output gate error.
-  MatType outputGateError;
-
-  //! Locally-stored output parameters.
-  arma::Cube<typename MatType::elem_type> outParameter;
-
-  //! Locally-stored input cell error parameter.
-  MatType inputCellError;
-
-  //! Locally-stored input gate error.
-  MatType inputGateError;
-
-  //! Locally-stored hidden layer error.
-  MatType hiddenError;
+  // Calling this function will set up workspace memory for the backward pass,
+  // if necessary.
+  void SetBackwardWorkspace(const size_t batchSize);
 }; // class LSTMType
 
 // Convenience typedefs.

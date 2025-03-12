@@ -638,13 +638,19 @@ TEST_CASE("ComputeAverageUniquenessTest", "[RandomForestTest]")
   concurrency[4] = 1;
   concurrency[5] = 1;
 
-  const arma::vec avg(SequentialBootstrap<>::ComputeAverageUniqueness(indM,
-    arma::linspace<arma::uvec>(0, 2, 3), concurrency));
+  const arma::vec invConcurrency(1.0 / concurrency);
+  arma::vec       avg(3);
 
-  REQUIRE(avg.n_rows == 3);
-  REQUIRE(avg(0) == 5.0 / 6.0);
-  REQUIRE(avg(1) == 0.75);
-  REQUIRE(avg(2) == 1.0);
+  avg[0] = SequentialBootstrap<>::ComputeAverageUniqueness(
+      indM(0, 0), indM(1, 0), invConcurrency);
+  avg[1] = SequentialBootstrap<>::ComputeAverageUniqueness(
+      indM(0, 1), indM(1, 1), invConcurrency);
+  avg[2] = SequentialBootstrap<>::ComputeAverageUniqueness(
+      indM(0, 2), indM(1, 2), invConcurrency);
+
+  REQUIRE(avg(0) == Approx(5.0 / 6.0));
+  REQUIRE(avg(1) == Approx(0.75));
+  REQUIRE(avg(2) == Approx(1.0));
 }
 
 /**
@@ -664,25 +670,24 @@ TEST_CASE("ComputeNextDrawProbabilitiesTest", "[RandomForestTest]")
   indM(0, 2) = 4;
   indM(1, 2) = 5;
 
-  arma::vec concurrency(6);
-  concurrency[0] = 0;
-  concurrency[1] = 0;
+  arma::vec concurrency(6, arma::fill::zeros);
   concurrency[2] = 1;
   concurrency[3] = 1;
-  concurrency[4] = 0;
-  concurrency[5] = 0;
+
+  arma::vec invConcurrency(concurrency.n_rows, arma::fill::ones);
+  arma::vec delta2(3);
 
   // Compute the probabilities that observations 0, 1, 2 are drawn after
   // observation 1 has already been drawn.
-  const arma::vec delta2(SequentialBootstrap<>::ComputeNextDrawProbabilities(
-    phi1, 1, concurrency, indM));
+  SequentialBootstrap<>::ComputeNextDrawProbabilities(
+      phi1, 1, concurrency, invConcurrency, indM, delta2);
 
-  REQUIRE(delta2(0) == 5.0 / 14.0);
+  REQUIRE(delta2(0) == Approx(5.0 / 14.0));
   // Should have the lowest probability as it has already been drawn.
-  REQUIRE(delta2(1) == 3.0 / 14.0);
+  REQUIRE(delta2(1) == Approx(3.0 / 14.0));
   // Should have the highest probability as this event does not overlap
   // with others.
-  REQUIRE(delta2(2) == 6.0 / 14.0);
+  REQUIRE(delta2(2) == Approx(6.0 / 14.0));
 }
 
 /**
@@ -718,7 +723,7 @@ TEST_CASE("SequentialBootstrapTest", "[RandomForestTest]")
 {
   const arma::mat ds(10 /* rows */, 6 /* cols */, arma::fill::randu);
   const arma::Row<size_t> labels{ 1, 0, 0, 0, 0, 0 };
-  const arma::vec weights(6, arma::fill::ones);
+  const arma::rowvec weights(6, arma::fill::ones);
   arma::umat indM(2 /* rows */, 6 /* cols */, arma::fill::zeros);
 
   indM(0, 0) = 0;
@@ -733,14 +738,60 @@ TEST_CASE("SequentialBootstrapTest", "[RandomForestTest]")
   SequentialBootstrap<> bootstrap(indM);
   arma::mat bsDataset;
   arma::Row<size_t> bsLabels;
-  arma::vec bsWeights;
+  arma::rowvec bsWeights;
 
-  bootstrap.Bootstrap<true>(ds, labels, weights, bsDataset,
-    bsLabels, bsWeights);
+  bootstrap.Bootstrap<true>(
+      ds, labels, weights, bsDataset, bsLabels, bsWeights);
 
   // Check that dimensions are the same.
   REQUIRE(ds.n_rows == bsDataset.n_rows);
   REQUIRE(ds.n_cols == bsDataset.n_cols);
   REQUIRE(labels.n_cols == bsLabels.n_cols);
-  REQUIRE(weights.n_rows == bsWeights.n_rows);
+  REQUIRE(weights.n_cols == bsWeights.n_cols);
+}
+
+TEST_CASE("RandomForestWithSequentialBootstrapTest", "[RandomForestTest]")
+{
+  const arma::mat ds(10 /* rows */, 6 /* cols */, arma::fill::randu);
+  const arma::Row<size_t> labels{ 1, 0, 0, 0, 0, 0 };
+  const arma::rowvec weights(6, arma::fill::ones);
+  arma::umat indM(2 /* rows */, 6 /* cols */, arma::fill::zeros);
+
+  indM(0, 0) = 0;
+  indM(1, 0) = 2;
+  indM(0, 1) = 2;
+  indM(1, 1) = 3;
+  indM(0, 2) = 4;
+  indM(1, 2) = 5;
+
+  indM(1, 3) = indM(1, 4) = indM(1, 5) = 5;
+
+  SequentialBootstrap<> bootstrap(indM);
+
+  using RF = RandomForest<
+      mlpack::GiniGain,
+      mlpack::MultipleRandomDimensionSelect,
+      mlpack::BestBinaryNumericSplit,
+      mlpack::AllCategoricalSplit,
+      true,
+      mlpack::SequentialBootstrap<>>;
+
+  RF rf(
+      ds,
+      labels,
+      2,
+      weights,
+      20,
+      1,
+      1e-7,
+      0,
+      mlpack::MultipleRandomDimensionSelect(),
+      bootstrap);
+
+  // Sanity check: ensure that the predictions are reasonable.
+  arma::Row<size_t> predictions;
+  rf.Classify(ds, predictions);
+
+  for (size_t i = 0; i < predictions.n_elem; ++i)
+    REQUIRE((predictions[i] == 0 || predictions[i] == 1));
 }

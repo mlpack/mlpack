@@ -1,0 +1,107 @@
+// The documentation link checker build will build the Markdown documentation in
+// doc/, and ensures that all of the links contained in the documentation are
+// valid.
+//
+// Note that a cache is maintained on Jenkins to avoid checking the same links
+// over and over again.
+pipeline
+{
+  // Run inside of the custom Docker image for style checking.
+  // Every docker agent has a 'link_cache/' directory in its Jenkins workspace
+  // for this job.
+  agent
+  {
+    docker
+    {
+      image 'mlpack/jenkins-mlpack-docbuild:latest'
+      alwaysPull true
+      args '-v /home/jenkins/link_cache/:/opt/link_cache/'
+    }
+  }
+
+  options
+  {
+    // Only allow one build at a time of this job.
+    disableConcurrentBuilds(abortPrevious: true)
+  }
+
+  stages
+  {
+    // First we have to check out the jenkins-conf repository, which contains
+    // the scripts that we will use for checking the style.
+    stage('Build documentation and check links')
+    {
+      steps
+      {
+        script
+        {
+          u = load '.jenkins/utils.groovy'
+          u.startBuild("Documentation Link Check");
+        }
+
+        sh '''
+          # Set $HOME because the Docker container may be running with a
+          # different uid.  Note that the container has /workspace/ as the
+          # working directory; we'll just reuse that as $HOME.
+          export HOME=/workspace/
+
+          # Print the size of the link cache.
+          if [ ! -f /opt/link_cache/link_cache.db ];
+          then
+            echo "Link cache does not exist!";
+          else
+            echo "Link cache current size:";
+            ls -lh /opt/link_cache/link_cache.db;
+          fi
+
+          # Skip the check if the documentation build script doesn't exist.
+          if [ ! -f scripts/build-docs.sh ];
+          then
+            exit 0;
+          fi
+
+          # This will fail if there are any issues converting the Markdown to
+          # kramdown, or if there is a linting or link-checking failure.
+          LINK_CACHE_FILE=/opt/link_cache/link_cache.db ./scripts/build-docs.sh;
+          build_doc_out=$?;
+          if [ $build_doc_out -ne 0 ];
+          then
+            echo "build-docs.sh failed!";
+            exit 1;
+          fi
+        '''
+      }
+    }
+  }
+
+  post
+  {
+    always
+    {
+      // Publish the generated HTML.
+      publishHTML([
+        allowMissing: false,
+        alwaysLinkToLastBuild: false,
+        keepAll: true,
+        reportDir: 'doc/html/',
+        reportFiles: 'index.html',
+        reportName: 'Build documentation']);
+
+      // Clean the workspace.
+      cleanWs(cleanWhenNotBuilt: true,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true);
+
+      // Set the build status.
+      script
+      {
+        u.setBuildStatus(result: currentBuild.currentResult,
+                         context: "Documentation Link Check",
+                         successMessage: "All HTML links checked.",
+                         unstableMessage: "Problem with HTML links.",
+                         failureMessage: "HTML link check failure or problem.");
+      }
+    }
+  }
+}
