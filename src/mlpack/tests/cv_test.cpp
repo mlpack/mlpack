@@ -18,6 +18,7 @@
 #include <mlpack/methods/naive_bayes.hpp>
 #include <mlpack/methods/perceptron.hpp>
 #include <mlpack/methods/softmax_regression.hpp>
+#include <mlpack/methods/random_forest.hpp>
 
 #include "catch.hpp"
 #include "mock_categorical_data.hpp"
@@ -855,4 +856,154 @@ TEST_CASE("SilhouetteScoreTest", "[CVTest]")
   EuclideanDistance metric;
   double silhouetteScore = SilhouetteScore::Overall(X, labels, metric);
   REQUIRE(silhouetteScore == Approx(0.1121684822489150).epsilon(1e-7));
+}
+
+class RandomForestFacade : public RandomForest<>
+{
+ public:
+  using RandomForest<>::RandomForest;
+
+  void Train(const arma::mat& data,
+             const arma::Row<size_t>& labels,
+             size_t numClasses)
+  {
+    const double _(static_cast<RandomForest<>*>(this)->Train(data,
+                                                             labels,
+                                                             numClasses));
+  }
+};
+
+namespace mlpack {
+  class PurgedKFoldCVTest
+  {
+   public:
+    using PKFCV = PurgedKFoldCV<RandomForestFacade, Accuracy>;
+
+    static size_t ValidationSubsetFirstCol(PKFCV& cv, size_t i)
+    {
+      return cv.ValidationSubsetFirstCol(i);
+    }
+
+    static arma::mat GetTrainingSubset(
+      PKFCV& cv, const arma::mat& m, size_t i)
+    {
+      return cv.GetTrainingSubset(m, i);
+    }
+
+    static arma::Row<size_t> GetTrainingSubset(
+      PKFCV& cv, const arma::Row<size_t>& r, size_t i)
+    {
+      return cv.GetTrainingSubset(r, i);
+    }
+
+    static arma::mat GetValidationSubset(
+      PKFCV& cv, const arma::mat& m, size_t i)
+    {
+      return cv.GetValidationSubset(m, i);
+    }
+
+    static arma::Row<size_t> GetValidationSubset(
+      PKFCV& cv, const arma::Row<size_t>& r, size_t i)
+    {
+      return cv.GetValidationSubset(r, i);
+    }
+  };
+}
+
+TEST_CASE("PurgedKFoldCVTest", "[CVTest]")
+{
+  using PKFCVT = PurgedKFoldCVTest;
+
+  constexpr size_t  k(5);
+  arma::mat         ds(10 /* rows */, 50 /* cols */, arma::fill::randu);
+  arma::mat         intervals(2 /* rows */, ds.n_cols);
+  arma::Row<size_t> labels(ds.n_cols);
+  arma::uword       numClasses(ds.n_cols);
+  constexpr double  embargoPct(0.1);
+  arma::mat         validationSubset(k, ds.n_cols / k);
+  arma::Mat<size_t> validationSubsetVec(k, ds.n_cols / k);
+  arma::rowvec      trainSubsets[k]{arma::rowvec(36),
+                                    arma::rowvec(27),
+                                    arma::rowvec(27),
+                                    arma::rowvec(27),
+                                    arma::rowvec(31)};
+  arma::Row<size_t> trainSubsetsVec[k]{arma::Row<size_t>(36),
+                                       arma::Row<size_t>(27),
+                                       arma::Row<size_t>(27),
+                                       arma::Row<size_t>(27),
+                                       arma::Row<size_t>(31)};
+
+  for (arma::uword i(0); i < k; ++i) {
+    validationSubset.row(i) =
+      arma::linspace<arma::rowvec>(40.0 - i * 10.0, 49.0 - i * 10.0, 10);
+    validationSubsetVec.row(i) =
+      arma::linspace<arma::Row<size_t>>(40 - i * 10, 49 - i * 10, 10);
+  }
+
+  trainSubsets[0] = arma::linspace<arma::rowvec>(0.0, 35.0, 36);
+  trainSubsets[1].subvec(0, 25) = arma::linspace<arma::rowvec>(0.0, 25.0, 26);
+  trainSubsets[1].subvec(26, 26) = 49.0;
+  trainSubsets[2].subvec(0, 15) = arma::linspace<arma::rowvec>(0.0, 15.0, 16);
+  trainSubsets[2].subvec(16, 26) = arma::linspace<arma::rowvec>(39.0, 49.0, 11);
+  trainSubsets[3].subvec(0, 5) = arma::linspace<arma::rowvec>(0.0, 5.0, 6);
+  trainSubsets[3].subvec(6, 26) = arma::linspace<arma::rowvec>(29.0, 49.0, 21);
+  trainSubsets[4] = arma::linspace<arma::rowvec>(19.0, 49.0, 31);
+
+  for (size_t i(0); i < k; ++i) {
+    for (arma::uword j(0); j < trainSubsets[i].n_cols; ++j) {
+      trainSubsetsVec[i](j) = static_cast<size_t>(trainSubsets[i](j));
+    }
+  }
+
+  // Before every validation subset the test subset will loose
+  // four observations. After every every validation subset
+  // the training set will loose 4+h observations (h=5).
+  // If the validation set is the first, then the training set
+  // has 50-10-9=31 elements, when the validation set is the
+  // last, then the training set has 50-10-4=36 elements.
+  // Else the training set has 50-10-4-9=27 elements.
+
+  for (arma::uword i(0); i < ds.n_cols; ++i) {
+    labels[i] = i;
+    ds(0, i)  = static_cast<arma::mat::elem_type>(i);
+
+    // Create a staircase:
+    //      o----
+    //     o----
+    //    o----
+    //   o----
+    //  o----
+    // o----
+    intervals(0, i) = static_cast<arma::mat::elem_type>(i);
+    intervals(1, i) = static_cast<arma::mat::elem_type>(std::min(i + 4,
+      ds.n_cols - 1));
+  }
+
+  // Will first expand the test set by h (embargo)
+  // then purge observations from the training set.
+  PurgedKFoldCV<RandomForestFacade, Accuracy> cv(
+    k, embargoPct, ds, labels, numClasses, intervals);
+
+  arma::mat         mt;
+  arma::mat         mv;
+  arma::Row<size_t> rt;
+  arma::Row<size_t> rv;
+  size_t            firstCol;
+
+  for (size_t i(0); i < k; ++i) {
+    mt = PKFCVT::GetTrainingSubset(cv, ds, i);
+    rt = PKFCVT::GetTrainingSubset(cv, labels, i);
+    mv = PKFCVT::GetValidationSubset(cv, ds, i);
+    rv = PKFCVT::GetValidationSubset(cv, labels, i);
+    firstCol = PKFCVT::ValidationSubsetFirstCol(cv, i);
+
+    REQUIRE(firstCol == validationSubset.row(i)(0));
+    REQUIRE(arma::approx_equal(mt.row(0), trainSubsets[i], "absdiff", 0.0));
+    REQUIRE(arma::approx_equal(rt, trainSubsetsVec[i], "absdiff", 0));
+    REQUIRE(arma::approx_equal(mv.row(0), validationSubset.row(i), "absdiff", 0.0));
+    REQUIRE(arma::approx_equal(rv, validationSubsetVec.row(i), "absdiff", 0));
+  }
+
+  [[maybe_unused]] const double res(cv.Evaluate());
+  [[maybe_unused]] RandomForestFacade& rf(cv.Model());
 }

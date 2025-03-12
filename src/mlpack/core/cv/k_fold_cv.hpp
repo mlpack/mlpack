@@ -12,8 +12,7 @@
 #ifndef MLPACK_CORE_CV_K_FOLD_CV_HPP
 #define MLPACK_CORE_CV_K_FOLD_CV_HPP
 
-#include <mlpack/core/cv/meta_info_extractor.hpp>
-#include <mlpack/core/cv/cv_base.hpp>
+#include <mlpack/core/cv/k_fold_cv_base.hpp>
 
 namespace mlpack {
 
@@ -61,7 +60,14 @@ template<typename MLAlgorithm,
          typename WeightsType =
              typename MetaInfoExtractor<MLAlgorithm, MatType,
                  PredictionsType>::WeightsType>
-class KFoldCV
+class KFoldCV :
+  private KFoldCVBase<
+    KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+    MLAlgorithm,
+    Metric,
+    MatType,
+    PredictionsType,
+    WeightsType>
 {
  public:
   /**
@@ -168,23 +174,6 @@ class KFoldCV
           const bool shuffle = true);
 
   /**
-   * Run k-fold cross-validation.
-   *
-   * @param args Arguments for MLAlgorithm (in addition to the passed
-   *     ones in the constructor).
-   */
-  template<typename... MLAlgorithmArgs>
-  double Evaluate(const MLAlgorithmArgs& ...args);
-
-  //! Access and modify a model from the last run of k-fold cross-validation.
-  MLAlgorithm& Model();
-
- private:
-  //! A short alias for CVBase.
-  using Base = CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>;
-
- public:
-  /**
    * Shuffle the data.  This overload is called if weights are not supported by
    * the model type.
    */
@@ -201,73 +190,13 @@ class KFoldCV
            typename = void>
   void Shuffle();
 
+  using KFoldCVBase::Evaluate;
+
+  using KFoldCVBase::Model;
+
  private:
-  //! An auxiliary object.
-  Base base;
-
-  //! The number of bins in the dataset.
-  const size_t k;
-
-  //! The extended (by repeating the first k - 2 bins) data points.
-  MatType xs;
-  //! The extended (by repeating the first k - 2 bins) predictions.
-  PredictionsType ys;
-  //! The extended (by repeating the first k - 2 bins) weights.
-  WeightsType weights;
-
-  //! The original size of the dataset.
-  size_t lastBinSize;
-
-  //! The size of each bin in terms of data points.
-  size_t binSize;
-
-  //! A pointer to a model from the last run of k-fold cross-validation.
-  std::unique_ptr<MLAlgorithm> modelPtr;
-
-  /**
-   * Assert the k parameter and data consistency and initialize fields required
-   * for running k-fold cross-validation.
-   */
-  KFoldCV(Base&& base,
-          const size_t k,
-          const MatType& xs,
-          const PredictionsType& ys,
-          const bool shuffle);
-
-  /**
-   * Assert the k parameter and data consistency and initialize fields required
-   * for running k-fold cross-validation in the case of weighted learning.
-   */
-  KFoldCV(Base&& base,
-          const size_t k,
-          const MatType& xs,
-          const PredictionsType& ys,
-          const WeightsType& weights,
-          const bool shuffle);
-
-  /**
-   * Initialize the given destination matrix with the given source joined with
-   * its first k - 2 bins.
-   */
-  template<typename DataType>
-  void InitKFoldCVMat(const DataType& source, DataType& destination);
-
-  /**
-   * Train and run evaluation in the case of non-weighted learning.
-   */
-  template<typename... MLAlgorithmArgs,
-           bool Enabled = !Base::MIE::SupportsWeights,
-           typename = std::enable_if_t<Enabled>>
-  double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);
-
-  /**
-   * Train and run evaluation in the case of supporting weighted learning.
-   */
-  template<typename... MLAlgorithmArgs,
-           bool Enabled = Base::MIE::SupportsWeights,
-           typename = std::enable_if_t<Enabled>,
-           typename = void>
-  double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);
+  template<typename, typename, typename, typename, typename, typename>
+    friend class KFoldCVBase;
 
   /**
    * Calculate the index of the first column of the ith validation subset.
