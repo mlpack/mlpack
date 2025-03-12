@@ -326,6 +326,7 @@ macro(find_armadillo)
   # Transitive linking with the wrapper does not work with MSVC,
   # so we must *also* link against Armadillo's dependencies.
   if(NOT _ARMA_USE_WRAPPER OR MSVC)
+    message(STATUS "not using wrapper")
     # Link directly to individual components.
     foreach(pkg
         LAPACK
@@ -337,6 +338,7 @@ macro(find_armadillo)
         find_package(${pkg} QUIET)
         list(APPEND _ARMA_REQUIRED_VARS "${pkg}_FOUND")
         if(${pkg}_FOUND)
+          message(STATUS "found support library ${pkg}: ${${pkg}_LIBRARIES}")
           list(APPEND _ARMA_SUPPORT_LIBRARIES ${${pkg}_LIBRARIES})
         endif()
       endif()
@@ -603,7 +605,7 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
   find_package(BLAS PATHS ${CMAKE_BINARY_DIR})
   if (NOT BLAS_FOUND OR (NOT BLAS_LIBRARIES))
     get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v${OPENBLAS_VERSION}/OpenBLAS-${OPENBLAS_VERSION}.tar.gz
-      OpenBLAS OpenBLAS-${OPENBLAS_VERSION}.tar.gz)
+        OpenBLAS OpenBLAS-${OPENBLAS_VERSION}.tar.gz)
     if (NOT COMPILE_OPENBLAS)
       message(WARNING "OpenBLAS is downloaded but not compiled. Please compile
       OpenBLAS before compiling mlpack")
@@ -612,6 +614,7 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
       file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/libopenblas.a")
       set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
       set(LAPACK_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
+      message(STATUS "openblas location: ${OPENBLAS_LIBRARIES}")
       set(BLAS_FOUND ON)
     endif()
   endif()
