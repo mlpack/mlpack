@@ -108,7 +108,7 @@ held-out test data.
 
 The examples repository also provides the standalone prediction program
 [`lstm_dga_detection_predict.cpp`](https://github.com/mlpack/examples/blob/master/cpp/lstm/dga_detection/lstm_dga_detection_predict.cpp).
-We can also compile this with a call to `gcc`, following the instructions from
+We can also compile this with a call to `g++`, following the instructions from
 [the compilation guide](compile.md):
 
 ```sh
@@ -162,7 +162,7 @@ ENTRYPOINT ["./lstm_dga_detection_predict", \
             "lstm_dga_detector_malicious.bin"]
 ```
 
-Building the container is simple (and nearly instant):
+Building the container is simple (and nearly instantaneous):
 
 ```sh
 docker build -t lstm_dga_detector .
