@@ -983,7 +983,7 @@ TEMPLATE_TEST_CASE("AdaBoostSinglePointClassify", "[AdaBoostTest]", mat, fmat)
   // Create random data.
   MatType data = randu<MatType>(10, 100);
   // Create random labels.
-  Row<size_t> labels = randi<Row<size_t>>(100, distr_param(0, 3));
+  Row<size_t> labels = randi<Row<size_t>>(100, DistrParam(0, 3));
 
   // Train a model.
   using PerceptronType =
@@ -1008,7 +1008,7 @@ TEMPLATE_TEST_CASE("AdaBoostSinglePointClassifyWithProbs", "[AdaBoostTest]",
   // Create random data.
   MatType data = randu<MatType>(10, 100);
   // Create random labels.
-  Row<size_t> labels = randi<Row<size_t>>(100, distr_param(0, 3));
+  Row<size_t> labels = randi<Row<size_t>>(100, DistrParam(0, 3));
 
   // Train a model.
   using PerceptronType =
@@ -1074,7 +1074,7 @@ TEMPLATE_TEST_CASE("AdaBoostTrainOverloads", "[AdaBoostTest]", fmat, mat)
   // Create random data.
   MatType data = randu<MatType>(10, 100);
   // Create random labels.
-  Row<size_t> labels = randi<Row<size_t>>(100, distr_param(0, 3));
+  Row<size_t> labels = randi<Row<size_t>>(100, DistrParam(0, 3));
 
   using PerceptronType =
       Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>;

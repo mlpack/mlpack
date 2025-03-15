@@ -217,7 +217,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentToleranceTest",
     arma::mat x;
     x.randu(3, 600);
     arma::Row<size_t> labels = arma::randi<arma::Row<size_t>>(600,
-        arma::distr_param(0, 1));
+        DistrParam(0, 1));
 
     arma::mat y = x;
     arma::Row<size_t> labels2 = labels;
@@ -397,7 +397,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentNumBasisTest",
     arma::mat x;
     x.randu(8, 600);
     arma::Row<size_t> labels = arma::randi<arma::Row<size_t>>(600,
-        arma::distr_param(0, 1));
+        DistrParam(0, 1));
 
     arma::mat y = x;
     arma::Row<size_t> labels2 = labels;
@@ -452,7 +452,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentMaxIterationTest",
     arma::mat x;
     x.randu(3, 600);
     arma::Row<size_t> labels = arma::randi<arma::Row<size_t>>(600,
-        arma::distr_param(0, 1));
+        DistrParam(0, 1));
 
     arma::mat y = x;
     arma::Row<size_t> labels2 = labels;

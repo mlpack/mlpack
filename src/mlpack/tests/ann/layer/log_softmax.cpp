@@ -51,7 +51,7 @@ TEST_CASE("JacobianLogSoftMaxLayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
-    const size_t elems = arma::randi(arma::distr_param(2, 1000));
+    const size_t elems = arma::randi(DistrParam(2, 1000));
 
     arma::mat input(elems, 1);
 

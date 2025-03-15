@@ -159,6 +159,7 @@ Copyright:
   Copyright 2024, Nikolay Apanasov <nikolay@apanasov.org>
   Copyright 2024, Martin Lambertsen <github@lambertsen.one>
   Copyright 2024, Andrea Novellini <andre.novellini@gmail.com>
+  Copyright 2024, Felix Patschkowski <felix.patschkowski@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.

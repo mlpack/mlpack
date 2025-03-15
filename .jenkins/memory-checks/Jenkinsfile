@@ -1,0 +1,137 @@
+// The static code analysis build will analyze the mlpack codebase for any known
+// C++ issues.
+pipeline
+{
+  // Run inside of the custom Docker image for style checking.
+  agent
+  {
+    docker
+    {
+      image 'mlpack/jenkins-amd64-debian:latest'
+      alwaysPull true
+      args '-v /home/jenkins/ccache:/opt/ccache'
+    }
+  }
+
+  options
+  {
+    // Only allow one build at a time of this job.
+    disableConcurrentBuilds(abortPrevious: true)
+  }
+
+  stages
+  {
+    // First we have to check out the jenkins-conf repository, which contains
+    // the scripts that we will use for checking the style.
+    stage('Check out jenkins-conf repository')
+    {
+      steps
+      {
+        script
+        {
+          u = load '.jenkins/utils.groovy'
+          u.startBuild("Memory Checks");
+        }
+
+        sh '''
+          git clone https://github.com/mlpack/jenkins-conf
+        '''
+      }
+    }
+
+    // First build mlpack_test.
+    stage('Build mlpack')
+    {
+      steps
+      {
+        sh '''
+          export CCACHE_DIR=/opt/ccache/;
+          ccache --zero-stats
+
+          mkdir build
+          cd build
+          cmake -DDEBUG=ON -DBUILD_TESTS=ON -DDOWNLOAD_DEPENDENCIES=ON ..
+          make mlpack_test
+          cd ..
+
+          # Print ccache statistics.
+          ccache -s
+        '''
+      }
+    }
+
+    // Now run the memory checks.
+    stage('Run memory checks')
+    {
+      steps
+      {
+        // First get the number of the PR, as we will need to do that to see
+        // what files have changed.
+        script
+        {
+          if (env.BRANCH_NAME.startsWith('PR-'))
+          {
+            // Strip 'PR-' from the front.
+            env.PR_NUM = env.BRANCH_NAME.substring(3)
+          }
+        }
+
+        sh'''
+          # Move memory tests to the current directory.
+          cp jenkins-conf/memory/* .
+
+          # Get information about the current PR.
+          echo "PR number: ${PR_NUM}";
+          curl -o files.txt https://api.github.com/repos/mlpack/mlpack/pulls/${PR_NUM}/files
+          grep -o '^[ ]*"filename":.*' files.txt |\
+              sed -e 's/^[ ]*"filename": "//' -e 's/",//' |\
+              uniq |\
+              awk '/.cpp/ || /.hpp/' > filenames.txt;
+
+          # Debug print modified files, we try to run the memory check for those
+          # files only.
+          cat filenames.txt;
+
+          # Workaround for docker container where the ulimit is set to a
+          # strangely large number...
+          ulimit -n 1024;
+
+          # Run memory checks.
+          OMP_NUM_THREADS=1 ./run-mlpack-valgrind-tests.sh ||\
+              mkdir -p temp/test;
+
+          # Debug print tests to run.
+          cat testbins.txt;
+
+          # Cat the output...
+          ls -lh reports/tests/
+        '''
+      }
+    }
+  }
+
+  post
+  {
+    always
+    {
+      junit(allowEmptyResults: true,
+            testResults: '**/reports/tests/*.xml')
+
+      // Clean the workspace.
+      cleanWs(cleanWhenNotBuilt: true,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true)
+
+      // Set the build status.
+      script
+      {
+        u.setBuildStatus(result: currentBuild.currentResult,
+                         context: "Memory Checks",
+                         successMessage: "No memory errors.",
+                         unstableMessage: "Build unstable.",
+                         failureMessage: "Memory check failure with valgrind.");
+      }
+    }
+  }
+}

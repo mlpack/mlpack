@@ -17,41 +17,14 @@
 #ifndef MLPACK_CORE_UTIL_USING_HPP
 #define MLPACK_CORE_UTIL_USING_HPP
 
-namespace mlpack {
+#include "arma_traits.hpp"
 
-/* using for armadillo namespace */
-using arma::conv_to;
-using arma::exp;
-using arma::distr_param;
-using arma::dot;
-using arma::join_cols;
-using arma::join_rows;
-using arma::log;
-using arma::min;
-using arma::max;
-using arma::mean;
-using arma::norm;
-using arma::normalise;
-using arma::ones;
-using arma::pow;
-using arma::randi;
-using arma::randn;
-using arma::randu;
-using arma::repmat;
-using arma::sign;
-using arma::sqrt;
-using arma::square;
-using arma::sum;
-using arma::trans;
-using arma::vectorise;
-using arma::zeros;
+namespace mlpack {
 
 #ifdef MLPACK_HAS_COOT
 
 /* using for bandicoot namespace*/
-using coot::conv_to;
 using coot::exp;
-using coot::distr_param;
 using coot::dot;
 using coot::join_cols;
 using coot::join_rows;
@@ -77,9 +50,44 @@ using coot::zeros;
 
 #endif
 
+/* using for armadillo namespace */
+using arma::exp;
+using arma::dot;
+using arma::join_cols;
+using arma::join_rows;
+using arma::log;
+using arma::min;
+using arma::max;
+using arma::mean;
+using arma::norm;
+using arma::normalise;
+using arma::ones;
+using arma::pow;
+using arma::randi;
+using arma::randn;
+using arma::randu;
+using arma::repmat;
+using arma::sign;
+using arma::sqrt;
+using arma::square;
+using arma::sum;
+using arma::trans;
+using arma::vectorise;
+using arma::zeros;
+
+template<typename MatType, bool IsArma, bool IsCoot>
+struct GetFillTypeInternal
+{
+  // Default empty implementation
+};
+
+template<typename MatType>
+struct GetFillType : public GetFillTypeInternal<MatType,
+    IsArma<MatType>::value, IsCoot<MatType>::value> { };
+
 // By default, assume that we are using an Armadillo object.
 template<typename MatType>
-struct GetFillType
+struct GetFillTypeInternal<MatType, true, false>
 {
   static constexpr const decltype(arma::fill::none)& none   = arma::fill::none;
   static constexpr const decltype(arma::fill::zeros)& zeros = arma::fill::zeros;
@@ -91,9 +99,8 @@ struct GetFillType
 #ifdef MLPACK_HAS_COOT
 // If the matrix type is a Bandicoot type, use Bandicoot fill objects instead.
 template<
-    typename MatType,
-    typename = std::enable_if_t<is_coot_type<MatType>::value>*>
-struct GetFillType
+    typename MatType>
+struct GetFillTypeInternal<MatType, false, true>
 {
   static constexpr const decltype(coot::fill::none)& none   = coot::fill::none;
   static constexpr const decltype(coot::fill::zeros)& zeros = coot::fill::zeros;
@@ -101,6 +108,7 @@ struct GetFillType
   static constexpr const decltype(coot::fill::randu)& randu = coot::fill::randu;
   static constexpr const decltype(coot::fill::randn)& randn = coot::fill::randn;
 };
+
 #endif
 
 } // namespace mlpack
