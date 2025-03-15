@@ -16,6 +16,7 @@ Classify points as discrete labels (`0`, `1`, `2`, ...).
  * [`AdaBoost`](methods/adaboost.md): Adaptive Boosting
  * [`DecisionTree`](methods/decision_tree.md): ID3-style decision tree
    classifier
+ * [`GradBoosting`](methods/grad_boosting.md): Gradient Boosting
  * [`HoeffdingTree`](methods/hoeffding_tree.md): streaming/incremental decision
    tree classifier
  * [`LinearSVM`](methods/linear_svm.md): simple linear support vector machine
