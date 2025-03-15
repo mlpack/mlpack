@@ -95,6 +95,24 @@ bool Load(const std::string& filename,
           DataOptions& opts);
 
 /**
+ * This function a set of several dataset files into one matrix.
+ * This is usually the case if the dataset is collected on several occasions
+ * and not agglomerated into one file.
+ *
+ * The user needs to specify all the filesname in one std::vector before using
+ * this function.
+ *
+ * @param filename Names of files to load.
+ * @param matrix Matrix to load contents of files into.
+ * @param opts DataOptions to be passed to the function
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Load(const std::vector<std::string>& filename,
+          arma::Mat<eT>& matrix,
+          DataOptions& opts);
+
+/**
  * Loads a sparse matrix from file, using arma::coord_ascii format.  This
  * will transpose the matrix at load time (unless the transpose parameter is set
  * to false).  If the filetype cannot be determined, an error will be given.

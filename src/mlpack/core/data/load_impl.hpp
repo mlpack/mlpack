@@ -125,15 +125,20 @@ bool Load(const std::string& filename,
   bool success;
   std::fstream stream;
   std::string stringType;
-  success = FileExist(filename, stream, opts);
+  success = OpenFile(filename, stream, opts);
   if (!success)
+  {
+    Timer::Stop("loading_data");
     return false;
-
+  }
   FileType loadType = opts.FileFormat();
 
   success = DetectFileType(filename, stream, loadType, opts);
   if (!success)
+  {
+    Timer::Stop("loading_data");
     return false;
+  }
 
   // Update the FileFormat after detecting it.
   // Probably better to merge the entire operation
@@ -148,6 +153,10 @@ bool Load(const std::string& filename,
   else if (opts.Categorical() || (opts.FileFormat() == FileType::ArffASCII))
   {
     success = LoadCategorical(filename, matrix, opts);
+  }
+  else if (opts.Timeseries())
+  {
+    success = LoadTimeseries(filename, matrix, opts);
   }
   else if constexpr (MatType::is_col)
   {
@@ -347,6 +356,57 @@ bool LoadCategorical(const std::string& filename,
   Timer::Stop("loading_data");
 
   return true;
+}
+
+template<typename eT>
+bool Load(const std::vector<std::string>& filesname,
+          arma::Mat<eT>& matrix,
+          DataOptions& opts)
+{
+  bool success;
+  arma::Mat<eT> tmp;
+  for (size_t i = 0; i < filesname.size(); ++i)
+  {
+    success = Load(filesname.at(i), matrix, opts);
+    if (success)
+    {
+      if (i = 0)
+      {
+        tmp = std::move(matrix);
+      }
+      else
+      {
+        if (!opts.NoTranspose())
+          tmp = join_rows(tmp, matrix);
+        else
+          tmp = join_cols(tmp, matrix);
+      }
+    }
+    else
+      break;
+  }
+
+  if (success);
+    matrix = std::move(tmp);
+
+  return sucess;
+}
+
+template<typename eT>
+bool LoadTimeSeries(const std::string& filename,
+                    arma::Mat<eT>& matrix,
+                    DataOptions& opts)
+{
+  //1. Load the entire dataset into a one matrix
+  //2. The dataset is long timeseries, so there is no label at the end.
+  //3. Cut the cols (since it is transposed) to the number according to the
+  //sampling rate.
+  //4. Check if there is a timestamp col / row, if not continue as proposed.
+  //5. If the sampling rate is not specified, or no timestamp col is specified
+  //then throw an error.
+  //6. each one of the cut put it into its own Rowvec
+  //7. Iterate until the end. and agglomerate all the cuts.
+  //8. Finally re-transpose if necessary, you have the data matrix ready.
 }
 
 } // namespace data
