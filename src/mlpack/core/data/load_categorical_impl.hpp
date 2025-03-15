@@ -1,5 +1,5 @@
 /**
- * @file core/data/load_categorical_csv.hpp
+ * @file core/data/load_categorical_impl.hpp
  * @author Gopi Tatiraju
  *
  * Load a matrix from file. Matrix may contain categorical data.
@@ -9,10 +9,10 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_LOAD_CATEGORICAL_CSV_HPP
-#define MLPACK_CORE_DATA_LOAD_CATEGORICAL_CSV_HPP
+#ifndef MLPACK_CORE_DATA_LOAD_CATEGORICAL_IMPL_HPP
+#define MLPACK_CORE_DATA_LOAD_CATEGORICAL_IMPL_HPP
 
-#include "load_csv.hpp"
+#include "load_categorical.hpp"
 
 namespace mlpack{
 namespace data{

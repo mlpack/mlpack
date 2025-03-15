@@ -264,6 +264,6 @@ class LoadCSV
 } // namespace data
 } // namespace mlpack
 
-#include "load_categorical_csv.hpp"
+#include "load_categorical_impl.hpp"
 
 #endif
