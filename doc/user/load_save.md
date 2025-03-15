@@ -621,7 +621,27 @@ images where dimension differs largely. This idea is simple, the bigger
 dimension is found and then the images are Resized and cropped on that
 dimension only. This algorithm is suitable if the area of interest is in the
 center / or surrounding the center of the image, allowing to keep a high
-resolution of the area of interest when the image is resized.
+resolution of the area of interest when the image is resized. In the following
+example, we show how an image of a cat would look like after cropping or
+resizing:
+
+Original image:
+
+<p align="center" width="100%">
+    <img width="100%" src="../img/cat.jpg">
+</p>
+
+Resized image:
+
+<p align="center" width="100%">
+    <img width="100%" src="../img/resized_cat.jpg">
+</p>
+
+Cropped image:
+
+<p align="center" width="100%">
+    <img width="100%" src="../img/cropped_cat.jpg">
+</p>
 
 Note: cropping is not applied on square images (height and width are equal),
 in this case, images are resized according to the new requestd size.
