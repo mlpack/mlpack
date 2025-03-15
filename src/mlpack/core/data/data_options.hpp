@@ -67,12 +67,25 @@ class DataOptions
     categorical(categorical),
     image(image),
     model(model),
+    timeseries(timeseries),
     fileFormat(fileFormat),
     dataFormat(dataFormat),
     objectName(objectName)
   {
     // Do nothing.
   }
+
+  //! Get if it is load or not.
+  const bool& Load() const { return load; }
+
+  //! Modify to be load.
+  bool& Load() { return load; }
+
+  //! Get if it is save or not.
+  const bool& Save() const { return save; }
+
+  //! Modify to be save.
+  bool& Save() { return save; }
 
   //! Get the error it it is fatal or not.
   const bool& Fatal() const { return fatal; }
@@ -121,6 +134,15 @@ class DataOptions
 
   //! Modify if we are loading an model.
   bool& Model() { return model; }
+
+  //! Get if we are loading an timeseries.
+  const bool& Timeseries() const { return timeseries; }
+
+  //! Modify if we are loading an timeseries.
+  bool& Timeseries() { return timeseries; }
+
+  //! Set the sampling rate in HZ
+  void SamplingRate(int hz) { samplingRate = hz; }
 
   //! Get the headers.
   const arma::field<std::string>& Headers() const { return headers; }
@@ -179,6 +201,11 @@ class DataOptions
 
  private:
 
+  //! Internal options. Must not be documented and used by the user.
+  bool save;
+  bool load;
+
+  //! Public options.
   bool fatal;
   bool hasHeaders;
   bool noTranspose;
@@ -187,6 +214,8 @@ class DataOptions
   bool categorical;
   bool image;
   bool model;
+  bool timeseries;
+  int samplingRate;
   FileType fileFormat;
   format dataFormat;
   std::string objectName;
