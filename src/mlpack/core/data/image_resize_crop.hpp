@@ -128,6 +128,89 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
   info.Height() = newHeight;
 }
 
+/**
+ * Resize & Crop one single image matrix or a set of images.
+ *
+ * This function should be used if the image is loaded as an armadillo matrix
+ * and the number of cols equal to the Width and the number of rows equal
+ * the Height of the image, or the total number of image pixels is equal to the
+ * number of element in an armadillo matrix.
+ *
+ * The same applies if a set of images is loaded, but all of them need to have
+ * identical dimension when loaded to this matrix.
+ *
+ * @param image The input matrix that contains the image to be resized.
+ * @param info Contains relevant input images information.
+ * @param newWidth The new requested width for the resized image.
+ * @param newHeight The new requested height for the resized image.
+ */
+template<typename eT>
+inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
+    const size_t newWidth, const size_t newHeight)
+{
+  float ratioW = static_cast<float>(newWidth)  / static_cast<float>(info.Width());
+  float ratioH = static_cast<float>(newHeight) / static_cast<float>(info.Height());
+
+  float largestRatio = ratioW > ratioH ? ratioW : ratioH;
+  int midWidth = static_cast<int>(largestRatio * info.Width());
+  int midHeight = static_cast<int>(largestRatio * info.Height());
+
+  // Edge cases, what if the width / height value is odd ? then increase the
+  // resize value to the closest pair number.
+  if (midHeight % 2 != 0 && midWidth % 2 == 0)
+      midHeight = midHeight + 1; 
+  else if (midWidth % 2 !=0 && midHeight % 2 == 0)
+    midWidth = midWidth + 1;
+  else if (midWidth % 2 !=0 && midHeight % 2 != 0)
+  {
+    midHeight = midHeight + 1;
+    midWidth = midWidth + 1;
+  }
+
+  ResizeImages(images, info, midWidth, midHeight);
+  int nColsCrop = midWidth > midHeight ? (midWidth - midHeight) : 0;
+  int nRowsCrop = midHeight > midWidth ? (midHeight - midWidth) : 0;
+
+  //temporary matrix to hold the images while being resized.
+  arma::Mat<eT> tmpImages(newHeight * newWidth * info.Channels(), images.n_cols);
+  for (size_t u = 0; u < images.n_cols; ++u)
+  {
+    if (nRowsCrop != 0)
+    { 
+      int cropUpDownEqually = (nRowsCrop / 2) * info.Channels() * midWidth;
+      arma::Col<eT> vec = images.col(u).subvec(cropUpDownEqually,
+          images.n_rows - cropUpDownEqually - 1);
+      tmpImages.col(u) = std::move(vec);
+    }
+    else if (nColsCrop !=0)
+    {
+      // Saving some memory by avoiding copying the images.
+      // R into Row 1.
+      // G into Row 2.
+      // B into Row 3.
+      // Cols are the Width, no change
+      // Slices are the Heiht of the image instead of rows.
+      arma::Cube<eT> cube(images.colptr(u), info.Channels(), midWidth,
+          midHeight, false, false);
+
+      cube.shed_cols(0, (nColsCrop / 2) - 1);
+      cube.shed_cols(cube.n_cols - (nColsCrop / 2), cube.n_cols - 1);
+
+      tmpImages.resize(newHeight * newWidth * info.Channels(), images.n_cols);
+
+      arma::Col<eT> alias_image(cube.memptr(), cube.n_elem, false, false);
+      tmpImages.col(u) = std::move(alias_image);
+    }
+  }
+  if (nRowsCrop != 0 || nColsCrop != 0)
+  {
+    images = std::move(tmpImages);
+  }
+
+  info.Width() = newWidth;
+  info.Height() = newHeight;
+}
+
 } // namespace data
 } // namespace mlpack
 
