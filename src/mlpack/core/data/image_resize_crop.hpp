@@ -156,7 +156,7 @@ inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
   int midHeight = static_cast<int>(largestRatio * info.Height());
 
   // Edge cases, what if the width / height value is odd ? then increase the
-  // resize value to the closest pair.
+  // resize value to the closest pair number.
   if (midHeight % 2 != 0 && midWidth % 2 == 0)
       midHeight = midHeight + 1; 
   else if (midWidth % 2 !=0 && midHeight % 2 == 0)
@@ -170,6 +170,9 @@ inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
   ResizeImages(images, info, midWidth, midHeight);
   int nColsCrop = midWidth > midHeight ? (midWidth - midHeight) : 0;
   int nRowsCrop = midHeight > midWidth ? (midHeight - midWidth) : 0;
+
+  //temporary matrix to hold the images while being resized.
+  arma::Mat<eT> tmpImages(newHeight * newWidth * info.Channels(), images.n_cols);
   for (size_t u = 0; u < images.n_cols; ++u)
   {
     if (nRowsCrop != 0)
@@ -177,57 +180,36 @@ inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
       int cropUpDownEqually = (nRowsCrop / 2) * info.Channels() * midWidth;
       arma::Col<eT> vec = images.col(u).subvec(cropUpDownEqually,
           images.n_rows - cropUpDownEqually - 1);
-      images.resize(newHeight * newWidth * info.Channels(), images.n_cols);
-      images.col(u) = std::move(vec);
-      info.Width() = newWidth;
-      info.Height() = newHeight;
+      tmpImages.col(u) = std::move(vec);
     }
     else if (nColsCrop !=0)
     {
-      // Just assign the column into a cube, not very efficient.
-      // R into Slice 1.
-      // G into Slice 2.
-      // B into Slice 3.
-      // Tried OpenMP thinking this might make the loop go faster.
-      // However, I have discovered that probably OpenMP is not thread safe ?
-      // Technically speaking the resulted images has nothing in common with the
-      // input, probably problem with the parallel loop.
-      arma::Cube<eT> cube(midHeight, midWidth, info.Channels());
-      size_t k = 0;
-      for (size_t r = 0; r < cube.n_rows; ++r)
-      {
-        for (size_t c = 0; c < cube.n_cols; ++c)
-        {
-          for (size_t i = 0; i < cube.n_slices; ++i)
-          {
-            cube.at(r, c, i) = images.at(k, u);
-            k++;
-          }
-        }
-      }
-    
+      // Saving some memory by avoiding copying the images.
+      // R into Row 1.
+      // G into Row 2.
+      // B into Row 3.
+      // Cols are the Width, no change
+      // Slices are the Heiht of the image instead of rows.
+      arma::Cube<eT> cube(images.colptr(u), info.Channels(), midWidth,
+          midHeight, false, false);
+
       cube.shed_cols(0, (nColsCrop / 2) - 1);
       cube.shed_cols(cube.n_cols - (nColsCrop / 2), cube.n_cols - 1);
-      k = 0;
-      images.resize(newHeight * newWidth * info.Channels(), images.n_cols);
-      //arma::Col<eT> vec(newHeight * newWidth * info.Channel());
-      for (size_t c = 0; c < cube.n_rows; ++c)
-      {
-        for (size_t j = 0; j < cube.n_cols; ++j)
-        {
-          for (size_t i = 0; i < cube.n_slices; ++i)
-          {
-            images.at(k, u) = cube.at(c,j,i);
-            k++;
-          }
-        }
-      }
-      info.Width() = newWidth;
-      info.Height() = newHeight;
+
+      tmpImages.resize(newHeight * newWidth * info.Channels(), images.n_cols);
+
+      arma::Col<eT> alias_image(cube.memptr(), cube.n_elem, false, false);
+      tmpImages.col(u) = std::move(alias_image);
     }
   }
-}
+  if (nRowsCrop != 0 || nColsCrop != 0)
+  {
+    images = std::move(tmpImages);
+  }
 
+  info.Width() = newWidth;
+  info.Height() = newHeight;
+}
 
 } // namespace data
 } // namespace mlpack
