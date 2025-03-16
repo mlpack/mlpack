@@ -83,7 +83,7 @@ bool Save(const std::string& filename,
  */
 template<typename MatType>
 bool Save(const std::string& filename,
-          MatType& matrix,
+          const MatType& matrix,
           DataOptions& opts);
 
 /**
