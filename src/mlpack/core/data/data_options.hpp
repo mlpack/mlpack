@@ -17,8 +17,8 @@
 #include <mlpack/prereqs.hpp>
 #include <string>
 
+#include "types.hpp"
 #include "dataset_mapper.hpp"
-#include "detect_file_type.hpp"
 #include "format.hpp"
 #include "image_info.hpp"
 
@@ -56,6 +56,7 @@ class DataOptions
       bool categorical = false,
       bool image = false,
       bool model = false,
+      bool timeseries = false,
       FileType fileFormat = FileType::AutoDetect,
       format dataFormat = format::binary,
       std::string objectName = "") :
@@ -74,7 +75,35 @@ class DataOptions
   {
     // Do nothing.
   }
+  DataOptions(const DataOptions& opts) = default;
+  //DataOptions operator=(const DataOptions& other)
+  //{
+    ////if (&other == this)
+      ////return *this;
 
+    //load  = other.load;
+    //save  = other.save;
+    //fatal = other.fatal;
+    //hasHeaders = other.hasHeaders;
+    //noTranspose = other.noTranspose;
+    //semiColon = other.semiColon;
+    //missingToNan = other.missingToNan;
+    //categorical = other.categorical;
+    //image = other.image;
+    //model = other.model;
+    //timeseries = other.timeseries;
+    //fileFormat = other.fileFormat;
+    //dataFormat = other.dataFormat;
+    //objectName = other.objectName;
+    //headers = other.headers;
+    //mapper = other.mapper;
+    //fileFormat = other.fileFormat;
+    //dataFormat = other.dataFormat;
+    //imgInfo = other.imgInfo;
+    //samplingRate = other.samplingRate;
+    ////return *this;
+  //}
+  //// Should not accessible to users.
   //! Get if it is load or not.
   const bool& Load() const { return load; }
 
@@ -87,6 +116,10 @@ class DataOptions
   //! Modify to be save.
   bool& Save() { return save; }
 
+  //! Modify the file stream.
+  //std::fstream& Stream() { return stream; }
+
+  // These are accessible to users.
   //! Get the error it it is fatal or not.
   const bool& Fatal() const { return fatal; }
 
@@ -216,6 +249,7 @@ class DataOptions
   bool model;
   bool timeseries;
   int samplingRate;
+  //std::fstream stream;
   FileType fileFormat;
   format dataFormat;
   std::string objectName;
