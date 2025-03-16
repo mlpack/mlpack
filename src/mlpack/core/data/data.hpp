@@ -12,7 +12,6 @@
 #ifndef MLPACK_CORE_DATA_DATA_HPP
 #define MLPACK_CORE_DATA_DATA_HPP
 
-#include "detect_file_type.hpp"
 #include "extension.hpp"
 #include "format.hpp"
 #include "has_serialize.hpp"
@@ -31,6 +30,7 @@
 #include "confusion_matrix.hpp"
 #include "dataset_mapper.hpp"
 #include "data_options.hpp"
+#include "detect_file_type.hpp"
 #include "image_info.hpp"
 #include "image_resize_crop.hpp"
 #include "imputer.hpp"
@@ -40,6 +40,6 @@
 #include "split_data.hpp"
 #include "string_algorithms.hpp"
 #include "types.hpp"
-#include "load_utilities.hpp"
+#include "utilities.hpp"
 
 #endif
