@@ -19,9 +19,6 @@
 #ifndef MLPACK_CORE_DATA_TYPES_HPP
 #define MLPACK_CORE_DATA_TYPES_HPP
 
-#include <iostream>
-#include <limits>
-
 namespace mlpack {
 namespace data {
 
