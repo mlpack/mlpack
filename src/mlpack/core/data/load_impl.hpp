@@ -21,7 +21,6 @@
 #include <exception>
 
 #include "extension.hpp"
-#include "load_utilities.hpp"
 #include "string_algorithms.hpp"
 
 namespace mlpack {
@@ -109,10 +108,28 @@ bool Load(const std::string& filename,
   // Copy the options since passing a const into a modifiable function can
   // result in a segmentation fault.
   // We do not copy back to preserve the const property of the function.
-  DataOptions copyOpts = opts;
+  DataOptions copyOpts = opt;
   return Load(filename, matrix, copyOpts);
 }
 
+template<typename eT>
+bool LoadTimeseries(const std::string& filename,
+                    arma::Mat<eT>& matrix,
+                    DataOptions& opts)
+{
+  //1. Load the entire dataset into a one matrix
+  //2. The dataset is long timeseries, so there is no label at the end.
+  //3. Cut the cols (since it is transposed) to the number according to the
+  //sampling rate.
+  //4. Check if there is a timestamp col / row, if not continue as proposed.
+  //5. If the sampling rate is not specified, or no timestamp col is specified
+  //then throw an error.
+  //6. each one of the cut put it into its own Rowvec
+  //7. Iterate until the end. and agglomerate all the cuts.
+  //8. Finally re-transpose if necessary, you have the data matrix ready.
+  return true;
+} 
+ 
 // This is the function that the user is supposed to call.
 // Other functions of this class should be labelled as private.
 template<typename MatType>
@@ -121,34 +138,29 @@ bool Load(const std::string& filename,
           DataOptions& opts)
 {
   using eT = typename MatType::elem_type;
+  //! Specify that we are loading
+  opts.Load() = true;
+  opts.Save() = false;
   Timer::Start("loading_data");
+
   bool success;
-  std::fstream stream;
-  std::string stringType;
-  success = OpenFile(filename, stream, opts);
-  if (!success)
-  {
-    Timer::Stop("loading_data");
-    return false;
-  }
-  FileType loadType = opts.FileFormat();
-
-  success = DetectFileType(filename, stream, loadType, opts);
+  success = OpenFile(filename, opts);
   if (!success)
   {
     Timer::Stop("loading_data");
     return false;
   }
 
-  // Update the FileFormat after detecting it.
-  // Probably better to merge the entire operation
-  // inside the DetectFiltType @rcurtin will have better idea than me
-  // regarding this.
-  opts.FileFormat() = loadType;
+  success = DetectFileType(filename, opts);
+  if (!success)
+  {
+    Timer::Stop("loading_data");
+    return false;
+  }
 
   if constexpr (std::is_same_v<MatType, arma::SpMat<eT>>)
   {
-    success = LoadSparse(filename, stream, matrix, opts);
+    success = LoadSparse(filename, matrix, opts);
   }
   else if (opts.Categorical() || (opts.FileFormat() == FileType::ArffASCII))
   {
@@ -160,15 +172,15 @@ bool Load(const std::string& filename,
   }
   else if constexpr (MatType::is_col)
   {
-    success = LoadCol(filename, stream, matrix, opts);
+    success = LoadCol(filename, matrix, opts);
   }
   else if constexpr (MatType::is_row)
   {
-    success = LoadRow(filename, stream, matrix, opts);
+    success = LoadRow(filename, matrix, opts);
   }
   else if constexpr (std::is_same_v<MatType, arma::Mat<eT>>) 
   {
-    success = LoadDense(filename, stream, matrix, opts);
+    success = LoadDense(filename, matrix, opts);
   }
 
   if (!success)
@@ -187,13 +199,11 @@ bool Load(const std::string& filename,
 
   Timer::Stop("loading_data");
 
-  // Finally, return the success indicator.
   return success;
 }
 
 template<typename MatType>
 bool LoadDense(const std::string& filename,
-               std::fstream& stream,
                MatType& matrix,
                DataOptions& opts)
 {
@@ -218,7 +228,7 @@ bool LoadDense(const std::string& filename,
         << opts.FileTypeToString() << "; " 
         << "but this may not be the actual filetype!" << std::endl;
 
-    success = matrix.load(stream, ToArmaFileType(opts.FileFormat()));
+    success = matrix.load(opts.Stream(), ToArmaFileType(opts.FileFormat()));
     if (!opts.NoTranspose())
       inplace_trans(matrix);
   }
@@ -227,7 +237,6 @@ bool LoadDense(const std::string& filename,
 
 template <typename eT>
 bool LoadSparse(const std::string& filename,
-                std::fstream& stream,
                 arma::SpMat<eT>& matrix,
                 DataOptions& opts)
 {
@@ -239,7 +248,7 @@ bool LoadSparse(const std::string& filename,
   {
     // Get the number of columns in the file.  If it is the right shape, we
     // will assume it is sparse.
-    const size_t cols = CountCols(stream);
+    const size_t cols = CountCols(opts.Stream());
     if (cols == 3)
     {
       // We have the right number of columns, so assume the type is a
@@ -271,7 +280,7 @@ bool LoadSparse(const std::string& filename,
     // matrix to do that.  If the CSV has three columns, we assume it's a
     // coordinate list.
     arma::Mat<eT> dense;
-    success = dense.load(stream, ToArmaFileType(opts.FileFormat()));
+    success = dense.load(opts.Stream(), ToArmaFileType(opts.FileFormat()));
     if (dense.n_cols == 3)
     {
       arma::umat locations = arma::conv_to<arma::umat>::from(
@@ -285,7 +294,7 @@ bool LoadSparse(const std::string& filename,
   }
   else
   {
-    success = matrix.load(stream, ToArmaFileType(opts.FileFormat()));
+    success = matrix.load(opts.Stream(), ToArmaFileType(opts.FileFormat()));
   }
   
   if (!opts.NoTranspose())
@@ -370,7 +379,7 @@ bool Load(const std::vector<std::string>& filesname,
     success = Load(filesname.at(i), matrix, opts);
     if (success)
     {
-      if (i = 0)
+      if (i == 0)
       {
         tmp = std::move(matrix);
       }
@@ -386,27 +395,10 @@ bool Load(const std::vector<std::string>& filesname,
       break;
   }
 
-  if (success);
+  if (success)
     matrix = std::move(tmp);
 
-  return sucess;
-}
-
-template<typename eT>
-bool LoadTimeSeries(const std::string& filename,
-                    arma::Mat<eT>& matrix,
-                    DataOptions& opts)
-{
-  //1. Load the entire dataset into a one matrix
-  //2. The dataset is long timeseries, so there is no label at the end.
-  //3. Cut the cols (since it is transposed) to the number according to the
-  //sampling rate.
-  //4. Check if there is a timestamp col / row, if not continue as proposed.
-  //5. If the sampling rate is not specified, or no timestamp col is specified
-  //then throw an error.
-  //6. each one of the cut put it into its own Rowvec
-  //7. Iterate until the end. and agglomerate all the cuts.
-  //8. Finally re-transpose if necessary, you have the data matrix ready.
+  return success;
 }
 
 } // namespace data

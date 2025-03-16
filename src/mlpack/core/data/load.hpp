@@ -24,7 +24,7 @@
 #include "load_categorical.hpp"
 #include "load_arff.hpp"
 #include "load_image.hpp"
-#include "load_utilities.hpp"
+#include "utilities.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
@@ -98,6 +98,10 @@ bool Load(const std::string& filename,
  * This function a set of several dataset files into one matrix.
  * This is usually the case if the dataset is collected on several occasions
  * and not agglomerated into one file.
+ *
+ * Note, the number of columns in all files must be equal, and the dataset
+ * needs to be of the same natures. Please do not load different datasets using
+ * the following function.
  *
  * The user needs to specify all the filesname in one std::vector before using
  * this function.
