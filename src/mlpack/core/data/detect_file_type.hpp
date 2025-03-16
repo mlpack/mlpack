@@ -16,10 +16,15 @@
 #define MLPACK_CORE_DATA_DETECT_FILE_TYPE_HPP
 
 #include "types.hpp"
+#include "extension.hpp"
+#include "string_algorithms.hpp"
+#include "data_options.hpp"
 
 namespace mlpack {
 namespace data {
 
+//! Forward declaration to be able to use it in this class.
+//class DataOptions;
 /**
  * Given an istream, attempt to guess the file type.  This is taken originally
  * from Armadillo's function guess_file_type_internal(), but we avoid using
@@ -55,7 +60,8 @@ inline FileType AutoDetect(std::fstream& stream,
  * @param filename Name of the file whose type we should detect.
  * @return Detected type of file.  arma::file_type_unknown if unknown.
  */
-inline FileType DetectFromExtension(const std::string& filename);
+inline void DetectFromExtension(const std::string& filename,
+                                DataOptions& opts);
 
 /**
  * Count the number of columns in the file.  The file must be a CSV/TSV/TXT file
