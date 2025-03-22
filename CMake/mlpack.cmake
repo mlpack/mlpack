@@ -252,7 +252,9 @@ endmacro()
 
 macro(find_armadillo)
   cmake_policy(PUSH)
-  cmake_policy(SET CMP0159 NEW) # file(STRINGS) with REGEX updates CMAKE_MATCH_<n>
+  if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.29")
+    cmake_policy(SET CMP0159 NEW) # file(STRINGS) with REGEX updates CMAKE_MATCH_<n>
+  endif()
 
   set(CURRENT_PATH ${ARGN})
   if (CURRENT_PATH)
@@ -601,13 +603,13 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
   find_package(BLAS PATHS ${CMAKE_BINARY_DIR})
   if (NOT BLAS_FOUND OR (NOT BLAS_LIBRARIES))
     get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v${OPENBLAS_VERSION}/OpenBLAS-${OPENBLAS_VERSION}.tar.gz
-      OpenBLAS OpenBLAS-${OPENBLAS_VERSION}.tar.gz)
+        OpenBLAS OpenBLAS-${OPENBLAS_VERSION}.tar.gz)
     if (NOT COMPILE_OPENBLAS)
       message(WARNING "OpenBLAS is downloaded but not compiled. Please compile
       OpenBLAS before compiling mlpack")
     else()
-      execute_process(COMMAND make NO_SHARED=1 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version})
-      file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/libopenblas.a")
+      execute_process(COMMAND make NO_SHARED=1 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
+      file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}/libopenblas.a")
       set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
       set(LAPACK_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
       set(BLAS_FOUND ON)

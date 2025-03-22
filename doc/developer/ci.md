@@ -9,10 +9,10 @@ complex project, there are occasionally spurious failures or other unrelated
 problems.
 
  * [Basic compilation and test jobs](#basic-compilation-and-test-jobs)
- * [Documentation build and test](#documentation-build-and-test)
+ * [Documentation builds](#documentation-builds)
  * [Style checks](#style-checks)
  * [Cross-compilation checks](#cross-compilation-checks)
- * [Static code analysis checks](#static-code-analysis-checks)
+ * [Memory checks](#memory-checks)
 
 Also you can see the [list of CI infrastructure](#list-of-ci-infrastructure).
 
@@ -67,10 +67,10 @@ Similarly, the binding tests are also run using a local Github action.
    can parse it, sometimes we have to do strange things for some languages, and
    we can't use CTest directly.
 
-## Documentation build and test
+## Documentation builds
 
-The 'documentation build and test' job builds and tests *all* documentation,
-checking:
+The 'documentation link check' job and 'documentation snippet build' jobs build
+and tests *all* documentation, checking:
 
  * that all Markdown pages build and render properly;
  * that all HTML is valid;
@@ -78,7 +78,9 @@ checking:
  * that all code examples compile and run.
 
 All of the scripts to perform these builds are located in the `scripts/`
-directory, so that they can be run locally.
+directory, so that they can be run locally.  On CI, these are defined as two
+Jenkins jobs in `.jenkins/doc-link-check/Jenkinsfile` and
+`.jenkins/doc-snippet-build/Jenkinsfile`.
 
  * `./scripts/build-docs.sh`
    - Builds all documentation in `doc/` with the output directory `doc/html/`.
@@ -98,12 +100,14 @@ directory, so that they can be run locally.
 
 When writing new documentation, be sure to test it locally---going back and
 forth with the
-[job on Jenkins](http://ci.mlpack.org/job/pull-request%20documentation%20build%20and%20test/)
+[link checker job on Jenkins](http://ci.mlpack.org/job/mlpack%20documentation%20link%20check/)
+and [snippet build job on Jenkins](http://ci.mlpack.org/job/mlpack%20documentation%20snippet%20build/)
 can be very tedious.
 
 ## Style checks
 
-The [style checker job](http://ci.mlpack.org/job/pull-requests%20mlpack%20style%20checks/) runs on Jenkins.
+The [style checker job](http://ci.mlpack.org/job/mlpack%20style%20checks/) runs
+on Jenkins and is defined in `.jenkins/style-checks/Jenkinsfile`.
 
  * The [`lint.sh` script](https://github.com/mlpack/jenkins-conf/blob/master/linter/lint.sh) to check for C++ style issues.
 
@@ -115,26 +119,41 @@ The [style checker job](http://ci.mlpack.org/job/pull-requests%20mlpack%20style%
 
 ## Cross-compilation checks
 
-The [cross-compilation checks](http://ci.mlpack.org/job/CrossCompile-mlpack-for-embedded-aarch64/)
-run on Jenkins.
+The [cross-compilation checks](http://ci.mlpack.org/job/mlpack%20cross-compile%20tests/)
+run on Jenkins and test cross-compilation of mlpack to a number of low-resource
+and embedded devices.  The job is defined in
+`.jenkins/cross-compilation/Jenkinsfile`.
 
  * The job builds mlpack in a
-   [cross-compilation environment](../embedded/supported_boards.md).
+   [cross-compilation environment](../embedded/supported_boards.md), targeting a
+   number of architectures, and then running tests on actual embedded hardware.
 
  * Any failures seen here *that are not seen in other jobs* will probably be
    failures specific to the cross-compilation environment.
 
-## Static code analysis checks
+ * For the list of targeted devices, see the
+   [list of CI infrastructure](#list-of-ci-infrastructure).
 
-The [static code analysis checks](http://ci.mlpack.org/job/pull-requests-mlpack-static-code-analysis/)
-use a few C++ code analysis tools to try and report issues with the codebase.
+## Memory checks
 
-Currently, most of the output by this job is not actionable---there are too many
-false positives or spurious issues---and therefore should be used only as
-informational output.
+The [memory checks](http://ci.mlpack.org/job/mlpack%20memory%20checks/) run
+valgrind on any tests that were detected to be changed.  This detection is
+performed via a heuristic and may not always be correct.  The job is defined in
+`.jenkins/memory-checks/Jenkinsfile`.
 
-Configuration can be found in the
-[`jenkins-conf` repository](https://github.com/mlpack/jenkins-conf).
+ * The [`parse-test.py` script](https://github.com/mlpack/jenkins-conf/blob/master/memory/parse-tests.py)
+   is used to find tests that are affected by the changes.
+
+ * The [`memory-check.sh` script](https://github.com/mlpack/jenkins-conf/blob/master/memory/memory-check.sh)
+   is used to actually run the tests.
+
+If there are any memory issues with the code, this should be reported by a
+failed memory check job.  If you encounter one of these, try compiling with
+debugging symbols and running valgrind on the affected test, like this:
+
+```
+valgrind --leak-check=full --track-origins=yes bin/mlpack_test "TestName"
+```
 
 ## List of CI infrastructure
 
@@ -155,3 +174,9 @@ Link: [***Jenkins (`ci.mlpack.org`)***](http://ci.mlpack.org)
    maintainer to make changes, or if you are on the Contributors team but still
    don't have access, ask somewhere and someone will give you access.  (Probably
    `#mlpack:matrix.org` is the best bet!)
+
+ * A number of embedded devices are available to Jenkins and are used in the
+   cross-compilation job.  Each system is named after a main ingredient in a
+   good meal eaten just before receiving the embedded device.
+    - `couscous.ratml.org`: [Raspberry Pi 5](https://datasheets.raspberrypi.com/rpi5/raspberry-pi-5-product-brief.pdf),
+      4GB RAM, 4-core ARM Cortex-A76

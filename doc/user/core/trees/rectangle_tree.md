@@ -10,6 +10,8 @@ instead:
  * [`RTree`](r_tree.md)
  * [`RStarTree`](r_star_tree.md)
  * [`XTree`](x_tree.md)
+ * [`RPlusTree`](r_plus_tree.md)
+ * [`RPlusPlusTree`](r_plus_plus_tree.md)
  * [`HilbertRTree`](hilbert_r_tree.md)
 
 The `RectangleTree` and its variants are capable of inserting points and
@@ -501,6 +503,10 @@ to write a fully custom split:
    between them
  * [`XTreeSplit`](#xtreesplit): an improved splitting strategy that minimizes
    overlap of sibling nodes
+ * [`RPlusTreeSplit`](#rplustreesplit): split by partitioning two nodes along
+   the dimension that minimizes overall node volume
+ * [`RPlusPlusTreeSplit`](#rplusplustreesplit): split using maximum bounding
+   rectangles to ensure zero overlap between sibling nodes
  * [`HilbertRTreeSplit<>`](#hilbertrtreesplit): use deferred splitting and
    Z-ordering values of points to decide the split
  * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
@@ -554,7 +560,7 @@ For implementation details, see
 
 The `XTreeSplit` class implements the improved splitting strategy for the
 [`XTree`](x_tree.md) as described in the
-[X-tree paper (pdf)](http://www.vldb.org/conf/1996/P028.PDF).  This strategy is
+[X-tree paper (pdf)](https://www.vldb.org/conf/1996/P028.PDF).  This strategy is
 an improved version of the standard [`RTreeSplit`](#rtreesplit), where the
 overlap of sibling nodes is minimized.
 
@@ -564,6 +570,34 @@ deferred until a later time when overlap can be more effectively avoided.
 
 For implementation details, see
 [the source code](/src/mlpack/core/tree/rectangle_tree/x_tree_split_impl.hpp).
+
+### `RPlusTreeSplit`
+
+The `RPlusTreeSplit` class implements the splitting policy of the
+[R+-tree](r_plus_tree.md).  The strategy splits nodes (leaves and non-leaves) by
+partitioning along the dimension that results in the two children with minimum
+volume, similar to the [kd-tree](kdtree.md).
+
+For implementation details, see
+[the source code](/src/mlpack/core/tree/rectangle_tree/r_plus_tree_split_impl.hpp).
+Note that `RPlusTreeSplit` is a template typedef of the general
+`RPlusTreeSplitType<>` class.
+
+### `RPlusPlusTreeSplit`
+
+The `RPlusPlusTreeSplit` class implements the splitting policy of the
+[R++-tree](r_plus_plus_tree.md).  This class can only be used in a tree that
+uses [`RPlusPlusTreeAuxiliaryInformation`](#rplusplustreeauxiliaryinformation)
+as the [`AuxiliaryInformationType`](#auxiliaryinformationtype).
+
+The splitting strategy splits leaf nodes along an arbitrarily-chosen dimension,
+and splits non-leaf nodes along the dimension that minimizes the number of
+descendant nodes that also must be split along that dimension.
+
+For implementation details, see
+[the source code](/src/mlpack/core/tree/rectangle_tree/r_plus_tree_split_impl.hpp).
+Note that `RPlusPlusTreeSplit` is a template typedef of the general
+`RPlusTreeSplitType<>` class.
 
 ### `HilbertRTreeSplit<>`
 
@@ -642,6 +676,11 @@ possible to write a fully custom split:
  * [`RTreeDescentHeuristic`](#rtreedescentheuristic): selects the closest child,
    which is the child whose volume will increase the least.
  * [`RStarTreeDescentHeuristic`](#rstartreedescentheuristic): selects a child
+   such that overlap is minimized and volume increase is minimized
+ * [`RPlusTreeDescentHeuristic`](#rplustreedescentheuristic): selects a child
+   that does not cause overlap; if not possible, creates a new child
+ * [`RPlusPlusTreeDescentHeuristic`](#rplusplustreedescentheuristic): selects
+   the child whose maximum bounding box contains the point
    such that overlap is minimized and volume increase is minimized.
  * [`HilbertRTreeDescentHeuristic`](#hilbertrtreedescentheuristic): select the
    first child with minimum Z-order value greater than the point or node to be
@@ -681,6 +720,33 @@ insertion.
 For implementation details, see [the source
 code](/src/mlpack/core/tree/rectangle_tree/r_star_tree_descent_heuristic.hpp).
 
+### `RPlusTreeDescentHeuristic`
+
+The `RPlusTreeDescentHeuristic` is the descent strategy used by the
+[`RPlusTree`](r_plus_tree.md).  When determining which node to insert a point
+into, the following heuristic is used:
+
+ * If the point to be inserted already falls within the bounding hyperrectangle
+   of a child, select that child.
+ * If the point to be inserted does not fall within the bounding
+   hyperrectangle of any child, but a child's volume can be expanded to
+   encompass the point *without* causing any children to overlap, select that
+   child.
+ * If neither of the conditions above are true, insert the point into a new
+   child node.  This child node will likely be rebalanced or modified later by
+   [`RPlusTreeSplit`](#rplustreesplit).
+
+### `RPlusPlusTreeDescentHeuristic`
+
+The `RPlusPlusTreeDescentHeuristic` is the descent strategy used by the
+[`RPlusPlusTree`](r_plus_plus_tree.md).  The strategy chooses the child whose
+outer bound (held by
+[`RPlusPlusTreeAuxiliaryInformation`](#rplusplustreeauxiliaryinformation))
+contains the point to be inserted.
+
+For implementation details, see [the source
+code](/src/mlpack/core/tree/rectangle_tree/r_plus_plus_tree_descent_heuristic.hpp).
+
 ### `HilbertRTreeDescentHeuristic`
 
 The `HilbertRTreeDescentHeuristic` is the descent strategy used by the
@@ -691,7 +757,6 @@ is chosen.
 
 For implementation details, see
 [the source code](/src/mlpack/core/tree/rectangle_tree/hilbert_r_tree_descent_heuristic_impl.hpp).
-
 
 ### Custom `DescentType`s
 
@@ -732,6 +797,8 @@ Different variants of `RectangleTree`s may use other predefined types for their
 
  * [`XTreeAuxiliaryInformation`](#xtreeauxiliaryinformation): used for the
    [`XTree`](x_tree.md).
+ * [`RPlusPlusTreeAuxiliaryInformation`](#rplusplustreeauxiliaryinformation):
+   used for the [`RPlusPlusTree`](r_plus_plus_tree.md).
  * [`DiscreteHilbertRTreeAuxiliaryInformation`](#discretehilbertrtreeauxiliaryinformation):
    used for the [`HilbertRTree`](hilbert_r_tree.md).
 
@@ -745,6 +812,26 @@ being deferred.
 
 For implementation details, see [the source
 code](/src/mlpack/core/tree/rectangle_tree/x_tree_auxiliary_information.hpp).
+
+### `RPlusPlusTreeAuxiliaryInformation`
+
+The `RPlusPlusTreeAuxiliaryInformation` class is used by the
+[`RPlusPlusTree`](r_plus_plus_tree.md) to store information required for tree
+building.  In addition to the regular
+[`HRectBound`](binary_space_tree.md#hrectbound) that is used to maintain the
+minimum bounding rectangle of each node, each R++-tree node also maintains an
+'outer bound' that represents the *maximum* bounding rectangle.  This maximum
+bounding rectangle is used for splitting, instead of the minimum bounding
+rectangle; this helps prevent overlap in nodes.
+
+For an object `auxInfo`, the function `auxInfo.OuterBound()` will return an
+[`HRectBound&`](binary_space_tree.md#hrectbound).  If the tree was built with a
+[non-standard `MatType`](#template-parameters), then the type returned will be
+`HRectBound<EuclideanDistance, ElemType>`, where `ElemType` is the element type
+of the given `MatType`.
+
+For implementation details, see [the source
+code](/src/mlpack/core/tree/rectangle_tree/r_plus_plus_tree_auxiliary_information.hpp).
 
 ### `DiscreteHilbertRTreeAuxiliaryInformation`
 
