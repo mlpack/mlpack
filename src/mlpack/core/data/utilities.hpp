@@ -55,40 +55,42 @@ void TransposeTokens(std::vector<std::vector<std::string>> const &input,
 
 inline
 bool OpenFile(const std::string& filename,
-              DataOptions& opts)
+              DataOptions& opts,
+              bool isLoading,
+              std::fstream& stream)
 {
-  if (opts.Load())
+  if (isLoading)
   {
 #ifdef  _WIN32 // Always open in binary mode on Windows.
-    opts.Stream().open(filename.c_str(), std::fstream::in
+    stream.open(filename.c_str(), std::fstream::in
         | std::fstream::binary);
 #else
-    opts.Stream().open(filename.c_str(), std::fstream::in);
+    stream.open(filename.c_str(), std::fstream::in);
 #endif
   }
-  else if (opts.Save())
-  {
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-    opts.Stream().open(filename.c_str(), std::fstream::out
-        | std::fstream::binary);
-#else
-    opts.Stream().open(filename.c_str(), std::fstream::out);
-#endif
-  } 
   else if (opts.Model())
   {
 #ifdef _WIN32 // Open non-text types in binary mode on Windows.
   if (opts.DataFormat() == format::binary)
-    opts.Stream().open(filename, std::fstream::out
+    stream.open(filename, std::fstream::out
         | std::streamtream::binary);
   else
-    opts.Stream().open(filename, std::fstream::out);
+    stream.open(filename, std::fstream::out);
 #else
-  opts.Stream().open(filename, std::fstream::out);
+  stream.open(filename, std::fstream::out);
 #endif
   }
+  else 
+  {
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+    stream.open(filename.c_str(), std::fstream::out
+        | std::fstream::binary);
+#else
+    stream.open(filename.c_str(), std::fstream::out);
+#endif
+  } 
 
-  if (!opts.Stream().is_open())
+  if (!stream.is_open())
   {
     if (opts.Fatal())
       Log::Fatal << "Cannot open file '" << filename << "'. \n"
@@ -107,7 +109,9 @@ bool OpenFile(const std::string& filename,
 
 inline
 bool DetectFileType(const std::string& filename,
-                    DataOptions& opts)
+                    DataOptions& opts,
+                    bool isLoading,
+                    std::fstream* stream = nullptr)
 {
   if (opts.Model())
   {
@@ -133,10 +137,10 @@ bool DetectFileType(const std::string& filename,
   {
     if (opts.FileFormat() == FileType::AutoDetect)
     {
-      if (opts.Load())
+      if (isLoading)
         // Attempt to auto-detect the type from the given file.
-        opts.FileFormat() = AutoDetect(opts.Stream(), filename);
-      else if (opts.Save())
+        opts.FileFormat() = AutoDetect(*stream, filename);
+      else 
         DetectFromExtension(filename, opts);
       // Provide error if we don't know the type.
       if (opts.FileFormat() == FileType::FileTypeUnknown)
@@ -156,7 +160,7 @@ bool DetectFileType(const std::string& filename,
 }
 
 template<typename MatType>
-bool SaveMatrix(const MatType& matrix, DataOptions& opts)
+bool SaveMatrix(const MatType& matrix, DataOptions& opts, std::fstream& stream)
 {
   bool success = false;
   if (opts.FileFormat() == FileType::HDF5Binary)
@@ -168,7 +172,7 @@ bool SaveMatrix(const MatType& matrix, DataOptions& opts)
   }
   else
   {
-    success = matrix.save(opts.Stream(), ToArmaFileType(opts.FileFormat()));
+    success = matrix.save(stream, ToArmaFileType(opts.FileFormat()));
   }
   return success;
 }

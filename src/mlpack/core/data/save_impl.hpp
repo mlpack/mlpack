@@ -87,10 +87,10 @@ bool Save(const std::string& filename,
   DataOptions opts;
   opts.ObjectName() = name;
   opts.Fatal() = fatal;
-  //opts.Model() = t;
+  opts.Model() = true;
   opts.DataFormat() = f;
 
-  return SaveModel(filename, t, opts);
+  return Save(filename, t, opts);
 }
 
 template<typename MatType>
@@ -98,9 +98,7 @@ bool Save(const std::string& filename,
           const MatType& matrix,
           const DataOptions& opts)
 {
-  // Copy the options since passing a const into a modifiable function can
-  // result in a segmentation fault.
-  // We do not copy back to preserve the const property of the function.
+  //! just use default copy ctor with = operator and make a copy.
   DataOptions copyOpts = opts;
   return Save(filename, matrix, copyOpts);
 }
@@ -110,48 +108,17 @@ bool Save(const std::string& filename,
           const MatType& matrix,
           DataOptions& opts)
 {
-  bool success = false;
-  using eT = typename MatType::elem_type;
-  if constexpr (std::is_same_v<MatType, arma::SpMat<eT>>)
-  {
-    success = SaveSparse(filename, matrix, opts);
-  }
-  else if constexpr (std::is_same_v<MatType, arma::Col<eT>>)
-  {
-    opts.NoTranspose() = true;
-    success = SaveDense(filename, matrix, opts);
-  }
-  else if constexpr (std::is_same_v<MatType, arma::Row<eT>>)
-  {
-    opts.NoTranspose() = false;
-    success = SaveDense(filename, matrix, opts);
-  }
-  else
-  {
-    success = SaveDense(filename, matrix, opts);
-  }
-
-  return success;
-}
-
-template<typename eT>
-bool SaveDense(const std::string& filename,
-               const arma::Mat<eT>& matrix,
-               DataOptions& opts)
-{
   Timer::Start("saving_data");
-  // Specify that we are Saving.
-  opts.Save() = true;
-  opts.Load() = false;
 
-  bool success = DetectFileType(filename, opts);
+  bool success = DetectFileType(filename, opts, false);
   if (!success)
   {
     Timer::Stop("loading_data");
     return false;
   }
- 
-  success = OpenFile(filename, opts);
+
+  std::fstream stream;
+  success = OpenFile(filename, opts, false, stream);
   if (!success)
   {
     Timer::Stop("saving_data");
@@ -162,15 +129,28 @@ bool SaveDense(const std::string& filename,
   Log::Info << "Saving " << opts.FileTypeToString() << " to '" << filename
       << "'." << std::endl;
 
-  arma::Mat<eT> tmp;
-  // Transpose the matrix.
-  if (!opts.NoTranspose())
+  if constexpr (IsSparseMat<MatType>::value)
   {
-    tmp = trans(matrix);
-    success = SaveMatrix(tmp, opts);
+    success = SaveSparse(filename, matrix, opts);
+  }
+  else if constexpr (IsCol<MatType>::value)
+  {
+    opts.NoTranspose() = true;
+    success = SaveDense(filename, matrix, opts, stream);
+  }
+  else if constexpr (IsRow<MatType>::value)
+  {
+    opts.NoTranspose() = false;
+    success = SaveDense(filename, matrix, opts, stream);
+  }
+  else if (opts.Model())
+  {
+    success = SaveModel(filename, matrix, opts, stream);
   }
   else
-    success = SaveMatrix(matrix, opts);
+  {
+    success = SaveDense(filename, matrix, opts, stream);
+  }
 
   if (!success)
   {
@@ -184,100 +164,72 @@ bool SaveDense(const std::string& filename,
 
   Timer::Stop("saving_data");
 
-  // Finally return success.
-  return true;
+  return success;
+}
+
+template<typename eT>
+bool SaveDense(const std::string& filename,
+               const arma::Mat<eT>& matrix,
+               DataOptions& opts,
+               std::fstream& stream)
+{
+  bool success = false;
+  arma::Mat<eT> tmp;
+  // Transpose the matrix.
+  if (!opts.NoTranspose())
+  {
+    tmp = trans(matrix);
+    success = SaveMatrix(tmp, opts, stream);
+  }
+  else
+    success = SaveMatrix(matrix, opts, stream);
+  
+  return success;
 }
 
 // Save a Sparse Matrix
 template<typename eT>
 bool SaveSparse(const std::string& filename,
                 const arma::SpMat<eT>& matrix,
-                DataOptions& opts)
+                DataOptions& opts,
+                std::fstream& stream)
 {
-
-  Timer::Start("saving_data");
-  // Specify that we are Saving.
-  opts.Save() = true;
-  opts.Load() = false;
-
-  bool success = DetectFileType(filename, opts);
-  if (!success)
-  {
-    Timer::Stop("saving_data");
-    return false;
-  }
-
-  success = OpenFile(filename, opts);
-  if (!success)
-  {
-    Timer::Stop("saving_data");
-    return false;
-  }
-  
-  // Try to save the file.
-  Log::Info << "Saving " << opts.FileTypeToString() << " to '" << filename
-      << "'." << std::endl;
-
+  bool success = false;
   arma::SpMat<eT> tmp;
   // Transpose the matrix.
   if (!opts.NoTranspose())
   {
     tmp = trans(matrix);
-    success = SaveMatrix(tmp, opts);
+    success = SaveMatrix(tmp, opts, stream);
   }
   else
-    success = SaveMatrix(matrix, opts);
+    success = SaveMatrix(matrix, opts, stream);
 
-  if (!success)
-  {
-    Timer::Stop("saving_data");
-    if (opts.Fatal())
-      Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
-    else
-      Log::Warn << "Save to '" << filename << "' failed." << std::endl;
-
-    return false;
-  }
-
-  Timer::Stop("saving_data");
-
-  // Finally return success.
-  return true;
+  return success;
 }
 
 //! Save a model to file.
 template<typename Object>
 bool SaveModel(const std::string& filename,
                Object& objectToSerialize,
-               DataOptions& opts)
+               DataOptions& opts,
+               std::fstream& stream)
 {
-  bool success = DetectFileType(filename, opts);
-  if (!success)
-  {
-    return false;
-  }
-
-  success = OpenFile(filename, opts);
-  if (!success)
-  {
-    return false;
-  }
-
   try
   {
     if (opts.DataFormat() == format::xml)
     {
-      cereal::XMLOutputArchive ar(opts.Stream());
+      cereal::XMLOutputArchive ar(stream);
       ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
     }
     else if (opts.DataFormat() == format::json)
     {
-      cereal::JSONOutputArchive ar(opts.Stream());
+      cereal::JSONOutputArchive ar(stream);
       ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
     }
     else if (opts.DataFormat() == format::binary)
     {
-      cereal::BinaryOutputArchive ar(opts.Stream());
+      cereal::BinaryOutputArchive ar(stream);
       ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
     }
     return true;

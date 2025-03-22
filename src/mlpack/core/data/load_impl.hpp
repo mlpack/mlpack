@@ -108,7 +108,7 @@ bool Load(const std::string& filename,
   // Copy the options since passing a const into a modifiable function can
   // result in a segmentation fault.
   // We do not copy back to preserve the const property of the function.
-  DataOptions copyOpts = opt;
+  DataOptions copyOpts = opts;
   return Load(filename, matrix, copyOpts);
 }
 
@@ -138,20 +138,18 @@ bool Load(const std::string& filename,
           DataOptions& opts)
 {
   using eT = typename MatType::elem_type;
-  //! Specify that we are loading
-  opts.Load() = true;
-  opts.Save() = false;
   Timer::Start("loading_data");
 
-  bool success;
-  success = OpenFile(filename, opts);
+  bool success = false;
+  std::fstream stream;
+  success = OpenFile(filename, opts, true, stream);
   if (!success)
   {
     Timer::Stop("loading_data");
     return false;
   }
 
-  success = DetectFileType(filename, opts);
+  success = DetectFileType(filename, opts, true, &stream);
   if (!success)
   {
     Timer::Stop("loading_data");
@@ -160,7 +158,7 @@ bool Load(const std::string& filename,
 
   if constexpr (std::is_same_v<MatType, arma::SpMat<eT>>)
   {
-    success = LoadSparse(filename, matrix, opts);
+    success = LoadSparse(filename, matrix, opts, stream);
   }
   else if (opts.Categorical() || (opts.FileFormat() == FileType::ArffASCII))
   {
@@ -172,15 +170,15 @@ bool Load(const std::string& filename,
   }
   else if constexpr (MatType::is_col)
   {
-    success = LoadCol(filename, matrix, opts);
+    success = LoadCol(filename, matrix, opts, stream);
   }
   else if constexpr (MatType::is_row)
   {
-    success = LoadRow(filename, matrix, opts);
+    success = LoadRow(filename, matrix, opts, stream);
   }
   else if constexpr (std::is_same_v<MatType, arma::Mat<eT>>) 
   {
-    success = LoadDense(filename, matrix, opts);
+    success = LoadDense(filename, matrix, opts, stream);
   }
 
   if (!success)
@@ -205,7 +203,8 @@ bool Load(const std::string& filename,
 template<typename MatType>
 bool LoadDense(const std::string& filename,
                MatType& matrix,
-               DataOptions& opts)
+               DataOptions& opts,
+               std::fstream& stream)
 {
   bool success;
   if (opts.FileFormat() != FileType::RawBinary)
@@ -228,17 +227,18 @@ bool LoadDense(const std::string& filename,
         << opts.FileTypeToString() << "; " 
         << "but this may not be the actual filetype!" << std::endl;
 
-    success = matrix.load(opts.Stream(), ToArmaFileType(opts.FileFormat()));
+    success = matrix.load(stream, ToArmaFileType(opts.FileFormat()));
     if (!opts.NoTranspose())
       inplace_trans(matrix);
   }
- return success;
+  return success;
 }
 
 template <typename eT>
 bool LoadSparse(const std::string& filename,
                 arma::SpMat<eT>& matrix,
-                DataOptions& opts)
+                DataOptions& opts,
+                std::fstream& stream)
 {
   bool success;
   // There is still a small amount of differentiation that needs to be done:
@@ -248,7 +248,7 @@ bool LoadSparse(const std::string& filename,
   {
     // Get the number of columns in the file.  If it is the right shape, we
     // will assume it is sparse.
-    const size_t cols = CountCols(opts.Stream());
+    const size_t cols = CountCols(stream);
     if (cols == 3)
     {
       // We have the right number of columns, so assume the type is a
@@ -280,7 +280,7 @@ bool LoadSparse(const std::string& filename,
     // matrix to do that.  If the CSV has three columns, we assume it's a
     // coordinate list.
     arma::Mat<eT> dense;
-    success = dense.load(opts.Stream(), ToArmaFileType(opts.FileFormat()));
+    success = dense.load(stream, ToArmaFileType(opts.FileFormat()));
     if (dense.n_cols == 3)
     {
       arma::umat locations = arma::conv_to<arma::umat>::from(
@@ -294,7 +294,7 @@ bool LoadSparse(const std::string& filename,
   }
   else
   {
-    success = matrix.load(opts.Stream(), ToArmaFileType(opts.FileFormat()));
+    success = matrix.load(stream, ToArmaFileType(opts.FileFormat()));
   }
   
   if (!opts.NoTranspose())

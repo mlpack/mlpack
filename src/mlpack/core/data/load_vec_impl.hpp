@@ -23,12 +23,13 @@ namespace data {
 template<typename eT>
 bool LoadCol(const std::string& filename,
              arma::Col<eT>& vec,
-             DataOptions& opts)
+             DataOptions& opts,
+             std::fstream& stream)
 {
   // First load into auxiliary matrix.
   arma::Mat<eT> tmp;
   opts.NoTranspose() = true; // false Transpose
-  bool success = LoadDense(filename, tmp, opts);
+  bool success = LoadDense(filename, tmp, opts, stream);
   if (!success)
   {
     vec.clear();
@@ -88,11 +89,12 @@ bool LoadCol(const std::string& filename,
 template<typename eT>
 bool LoadRow(const std::string& filename,
              arma::Row<eT>& rowvec,
-             DataOptions& opts)
+             DataOptions& opts,
+             std::fstream& stream)
 {
   arma::Mat<eT> tmp;
   opts.NoTranspose() = true; // false Transpose
-  bool success = LoadDense(filename, tmp, opts);
+  bool success = LoadDense(filename, tmp, opts, stream);
   if (!success)
   {
     rowvec.clear();
