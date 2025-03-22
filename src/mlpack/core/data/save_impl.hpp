@@ -90,7 +90,7 @@ bool Save(const std::string& filename,
   opts.Model() = true;
   opts.DataFormat() = f;
 
-  return Save(filename, t, opts);
+  return SaveModel(filename, t, opts);
 }
 
 template<typename MatType>
@@ -143,9 +143,9 @@ bool Save(const std::string& filename,
     opts.NoTranspose() = false;
     success = SaveDense(filename, matrix, opts, stream);
   }
-  else if (opts.Model())
+  else if (opts.Model() && !IsAnyArmaBaseType<MatType>::value)
   {
-    success = SaveModel(filename, matrix, opts, stream);
+    success = SaveModel(filename, matrix, opts, &stream);
   }
   else
   {
@@ -213,23 +213,23 @@ template<typename Object>
 bool SaveModel(const std::string& filename,
                Object& objectToSerialize,
                DataOptions& opts,
-               std::fstream& stream)
+               std::fstream* stream = nullptr)
 {
   try
   {
     if (opts.DataFormat() == format::xml)
     {
-      cereal::XMLOutputArchive ar(stream);
+      cereal::XMLOutputArchive ar(*stream);
       ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
     }
     else if (opts.DataFormat() == format::json)
     {
-      cereal::JSONOutputArchive ar(stream);
+      cereal::JSONOutputArchive ar(*stream);
       ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
     }
     else if (opts.DataFormat() == format::binary)
     {
-      cereal::BinaryOutputArchive ar(stream);
+      cereal::BinaryOutputArchive ar(*stream);
       ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
     }
     return true;
