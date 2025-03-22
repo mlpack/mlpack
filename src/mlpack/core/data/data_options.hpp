@@ -75,49 +75,6 @@ class DataOptions
   {
     // Do nothing.
   }
-  DataOptions(const DataOptions& opts) = default;
-  //DataOptions operator=(const DataOptions& other)
-  //{
-    ////if (&other == this)
-      ////return *this;
-
-    //load  = other.load;
-    //save  = other.save;
-    //fatal = other.fatal;
-    //hasHeaders = other.hasHeaders;
-    //noTranspose = other.noTranspose;
-    //semiColon = other.semiColon;
-    //missingToNan = other.missingToNan;
-    //categorical = other.categorical;
-    //image = other.image;
-    //model = other.model;
-    //timeseries = other.timeseries;
-    //fileFormat = other.fileFormat;
-    //dataFormat = other.dataFormat;
-    //objectName = other.objectName;
-    //headers = other.headers;
-    //mapper = other.mapper;
-    //fileFormat = other.fileFormat;
-    //dataFormat = other.dataFormat;
-    //imgInfo = other.imgInfo;
-    //samplingRate = other.samplingRate;
-    ////return *this;
-  //}
-  //// Should not accessible to users.
-  //! Get if it is load or not.
-  const bool& Load() const { return load; }
-
-  //! Modify to be load.
-  bool& Load() { return load; }
-
-  //! Get if it is save or not.
-  const bool& Save() const { return save; }
-
-  //! Modify to be save.
-  bool& Save() { return save; }
-
-  //! Modify the file stream.
-  //std::fstream& Stream() { return stream; }
 
   // These are accessible to users.
   //! Get the error it it is fatal or not.
@@ -234,10 +191,6 @@ class DataOptions
 
  private:
 
-  //! Internal options. Must not be documented and used by the user.
-  bool save;
-  bool load;
-
   //! Public options.
   bool fatal;
   bool hasHeaders;
@@ -249,7 +202,6 @@ class DataOptions
   bool model;
   bool timeseries;
   int samplingRate;
-  //std::fstream stream;
   FileType fileFormat;
   format dataFormat;
   std::string objectName;
