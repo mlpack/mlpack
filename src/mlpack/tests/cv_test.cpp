@@ -17,8 +17,8 @@
 #include <mlpack/methods/logistic_regression.hpp>
 #include <mlpack/methods/naive_bayes.hpp>
 #include <mlpack/methods/perceptron.hpp>
-#include <mlpack/methods/softmax_regression.hpp>
 #include <mlpack/methods/random_forest.hpp>
+#include <mlpack/methods/softmax_regression.hpp>
 
 #include "catch.hpp"
 #include "mock_categorical_data.hpp"
@@ -863,51 +863,63 @@ class RandomForestFacade : public RandomForest<>
  public:
   using RandomForest<>::RandomForest;
 
-  void Train(const arma::mat& data,
-             const arma::Row<size_t>& labels,
-             size_t numClasses)
+  void Train(
+      const arma::mat& data,
+      const arma::Row<size_t>& labels,
+      size_t numClasses)
   {
-    const double _(static_cast<RandomForest<>*>(this)->Train(data,
-                                                             labels,
-                                                             numClasses));
+    [[maybe_unused]] const double _(static_cast<RandomForest<>*>(this)->Train(
+        data,
+        labels,
+        numClasses));
   }
 };
 
 namespace mlpack {
-  class PurgedKFoldCVTest
+
+class PurgedKFoldCVTest
+{
+ public:
+  using PKFCV = PurgedKFoldCV<RandomForestFacade, Accuracy>;
+
+  static size_t ValidationSubsetFirstCol(PKFCV& cv, size_t i)
   {
-   public:
-    using PKFCV = PurgedKFoldCV<RandomForestFacade, Accuracy>;
+    return cv.ValidationSubsetFirstCol(i);
+  }
 
-    static size_t ValidationSubsetFirstCol(PKFCV& cv, size_t i)
-    {
-      return cv.ValidationSubsetFirstCol(i);
-    }
+  static arma::mat GetTrainingSubset(
+      PKFCV& cv,
+      const arma::mat& m,
+      size_t i)
+  {
+    return cv.GetTrainingSubset(m, i);
+  }
 
-    static arma::mat GetTrainingSubset(
-      PKFCV& cv, const arma::mat& m, size_t i)
-    {
-      return cv.GetTrainingSubset(m, i);
-    }
+  static arma::Row<size_t> GetTrainingSubset(
+      PKFCV& cv,
+      const arma::Row<size_t>& r,
+      size_t i)
+  {
+    return cv.GetTrainingSubset(r, i);
+  }
 
-    static arma::Row<size_t> GetTrainingSubset(
-      PKFCV& cv, const arma::Row<size_t>& r, size_t i)
-    {
-      return cv.GetTrainingSubset(r, i);
-    }
+  static arma::mat GetValidationSubset(
+      PKFCV& cv,
+      const arma::mat& m,
+      size_t i)
+  {
+    return cv.GetValidationSubset(m, i);
+  }
 
-    static arma::mat GetValidationSubset(
-      PKFCV& cv, const arma::mat& m, size_t i)
-    {
-      return cv.GetValidationSubset(m, i);
-    }
+  static arma::Row<size_t> GetValidationSubset(
+      PKFCV& cv,
+      const arma::Row<size_t>& r,
+      size_t i)
+  {
+    return cv.GetValidationSubset(r, i);
+  }
+};
 
-    static arma::Row<size_t> GetValidationSubset(
-      PKFCV& cv, const arma::Row<size_t>& r, size_t i)
-    {
-      return cv.GetValidationSubset(r, i);
-    }
-  };
 }
 
 TEST_CASE("PurgedKFoldCVTest", "[CVTest]")
@@ -922,22 +934,24 @@ TEST_CASE("PurgedKFoldCVTest", "[CVTest]")
   constexpr double  embargoPct(0.1);
   arma::mat         validationSubset(k, ds.n_cols / k);
   arma::Mat<size_t> validationSubsetVec(k, ds.n_cols / k);
-  arma::rowvec      trainSubsets[k]{arma::rowvec(36),
-                                    arma::rowvec(27),
-                                    arma::rowvec(27),
-                                    arma::rowvec(27),
-                                    arma::rowvec(31)};
-  arma::Row<size_t> trainSubsetsVec[k]{arma::Row<size_t>(36),
-                                       arma::Row<size_t>(27),
-                                       arma::Row<size_t>(27),
-                                       arma::Row<size_t>(27),
-                                       arma::Row<size_t>(31)};
+  arma::rowvec      trainSubsets[k]{
+      arma::rowvec(36),
+      arma::rowvec(27),
+      arma::rowvec(27),
+      arma::rowvec(27),
+      arma::rowvec(31)};
+  arma::Row<size_t> trainSubsetsVec[k]{
+      arma::Row<size_t>(36),
+      arma::Row<size_t>(27),
+      arma::Row<size_t>(27),
+      arma::Row<size_t>(27),
+      arma::Row<size_t>(31)};
 
   for (arma::uword i(0); i < k; ++i) {
     validationSubset.row(i) =
-      arma::linspace<arma::rowvec>(40.0 - i * 10.0, 49.0 - i * 10.0, 10);
+        arma::linspace<arma::rowvec>(40.0 - i * 10.0, 49.0 - i * 10.0, 10);
     validationSubsetVec.row(i) =
-      arma::linspace<arma::Row<size_t>>(40 - i * 10, 49 - i * 10, 10);
+        arma::linspace<arma::Row<size_t>>(40 - i * 10, 49 - i * 10, 10);
   }
 
   trainSubsets[0] = arma::linspace<arma::rowvec>(0.0, 35.0, 36);
@@ -949,11 +963,9 @@ TEST_CASE("PurgedKFoldCVTest", "[CVTest]")
   trainSubsets[3].subvec(6, 26) = arma::linspace<arma::rowvec>(29.0, 49.0, 21);
   trainSubsets[4] = arma::linspace<arma::rowvec>(19.0, 49.0, 31);
 
-  for (size_t i(0); i < k; ++i) {
-    for (arma::uword j(0); j < trainSubsets[i].n_cols; ++j) {
+  for (size_t i(0); i < k; ++i)
+    for (arma::uword j(0); j < trainSubsets[i].n_cols; ++j)
       trainSubsetsVec[i](j) = static_cast<size_t>(trainSubsets[i](j));
-    }
-  }
 
   // Before every validation subset the test subset will loose
   // four observations. After every every validation subset
@@ -975,14 +987,19 @@ TEST_CASE("PurgedKFoldCVTest", "[CVTest]")
     //  o----
     // o----
     intervals(0, i) = static_cast<arma::mat::elem_type>(i);
-    intervals(1, i) = static_cast<arma::mat::elem_type>(std::min(i + 4,
-      ds.n_cols - 1));
+    intervals(1, i) = static_cast<arma::mat::elem_type>(
+        std::min(i + 4, ds.n_cols - 1));
   }
 
   // Will first expand the test set by h (embargo)
   // then purge observations from the training set.
   PurgedKFoldCV<RandomForestFacade, Accuracy> cv(
-    k, embargoPct, ds, labels, numClasses, intervals);
+      k,
+      embargoPct,
+      ds,
+      labels,
+      numClasses,
+      intervals);
 
   arma::mat         mt;
   arma::mat         mv;
@@ -1006,4 +1023,11 @@ TEST_CASE("PurgedKFoldCVTest", "[CVTest]")
 
   [[maybe_unused]] const double res(cv.Evaluate());
   [[maybe_unused]] RandomForestFacade& rf(cv.Model());
+
+  // Sanity check: ensure that the predictions are reasonable.
+  arma::Row<size_t> predictions;
+  rf.Classify(ds, predictions);
+
+  for (size_t i = 0; i < predictions.n_elem; ++i)
+    REQUIRE((predictions[i] == 0 || predictions[i] == 1));
 }
