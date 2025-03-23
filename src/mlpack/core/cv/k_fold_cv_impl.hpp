@@ -27,7 +27,13 @@ KFoldCV<MLAlgorithm,
                               const MatType& xs,
                               const PredictionsType& ys,
                               const bool shuffle) :
-    KFoldCVBase(k, xs, ys)
+    KFoldCVBaseKFoldCVBase<
+        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>(k, xs, ys)
 {
   // Do we need to shuffle the dataset?
   if (shuffle)
@@ -48,7 +54,13 @@ KFoldCV<MLAlgorithm,
                               const PredictionsType& ys,
                               const size_t numClasses,
                               const bool shuffle) :
-    KFoldCVBase(k, xs, ys, numClasses)
+    KFoldCVBase<
+        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>(k, xs, ys, numClasses)
 {
   // Do we need to shuffle the dataset?
   if (shuffle)
@@ -70,7 +82,13 @@ KFoldCV<MLAlgorithm,
                               const PredictionsType& ys,
                               const size_t numClasses,
                               const bool shuffle) :
-    KFoldCVBase(k, xs, datasetInfo, ys, numClasses)
+    KFoldCVBase<
+        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>(k, xs, datasetInfo, ys, numClasses)
 {
   // Do we need to shuffle the dataset?
   if (shuffle)
@@ -91,7 +109,13 @@ KFoldCV<MLAlgorithm,
                               const PredictionsType& ys,
                               const WeightsType& weights,
                               const bool shuffle) :
-    KFoldCVBase(k, xs, ys, weights)
+    KFoldCVBase<
+        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>(k, xs, ys, weights)
 { 
   // Do we need to shuffle the dataset?
   if (shuffle)
@@ -113,7 +137,13 @@ KFoldCV<MLAlgorithm,
                               const size_t numClasses,
                               const WeightsType& weights,
                               const bool shuffle) :
-    KFoldCVBase(k, xs, ys, numClasses, weights)
+    KFoldCVBase<
+        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>(k, xs, ys, numClasses, weights)
 {
   // Do we need to shuffle the dataset?
   if (shuffle)
@@ -136,7 +166,13 @@ KFoldCV<MLAlgorithm,
                               const size_t numClasses,
                               const WeightsType& weights,
                               const bool shuffle) :
-    KFoldCVBase(k, xs, datasetInfo, ys, numClasses, weights)
+    KFoldCVBase<
+        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>(k, xs, datasetInfo, ys, numClasses, weights)
 { 
   // Do we need to shuffle the dataset?
   if (shuffle)
@@ -155,14 +191,15 @@ void KFoldCV<MLAlgorithm,
              PredictionsType,
              WeightsType>::Shuffle()
 {
-  MatType xsOrig = xs.cols(0, (k - 1) * binSize + lastBinSize - 1);
-  PredictionsType ysOrig = ys.cols(0, (k - 1) * binSize + lastBinSize - 1);
+  const size_t index = (this->k - 1) * this->binSize + this->lastBinSize - 1;
+  MatType xsOrig = this->xs.cols(0, index);
+  PredictionsType ysOrig = this->ys.cols(0, index);
 
   // Now shuffle the data.
   ShuffleData(xsOrig, ysOrig, xsOrig, ysOrig);
 
-  InitKFoldCVMat(xsOrig, xs);
-  InitKFoldCVMat(ysOrig, ys);
+  InitKFoldCVMat(xsOrig, this->xs);
+  InitKFoldCVMat(ysOrig, this->ys);
 }
 
 template<typename MLAlgorithm,
@@ -177,22 +214,23 @@ void KFoldCV<MLAlgorithm,
              PredictionsType,
              WeightsType>::Shuffle()
 {
-  MatType xsOrig = xs.cols(0, (k - 1) * binSize + lastBinSize - 1);
-  PredictionsType ysOrig = ys.cols(0, (k - 1) * binSize + lastBinSize - 1);
+  const size_t index = (this->k - 1) * this->binSize + this->lastBinSize - 1;
+  MatType xsOrig = this->xs.cols(0, index);
+  PredictionsType ysOrig = this->ys.cols(0, index);
   WeightsType weightsOrig;
-  if (weights.n_elem > 0)
-    weightsOrig = weights.cols(0, (k - 1) * binSize + lastBinSize - 1);
+  if (this->weights.n_elem > 0)
+    weightsOrig = this->weights.cols(0, index);
 
   // Now shuffle the data.
-  if (weights.n_elem > 0)
+  if (this->weights.n_elem > 0)
     ShuffleData(xsOrig, ysOrig, weightsOrig, xsOrig, ysOrig, weightsOrig);
   else
     ShuffleData(xsOrig, ysOrig, xsOrig, ysOrig);
 
-  InitKFoldCVMat(xsOrig, xs);
-  InitKFoldCVMat(ysOrig, ys);
-  if (weights.n_elem > 0)
-    InitKFoldCVMat(weightsOrig, weights);
+  InitKFoldCVMat(xsOrig, this->xs);
+  InitKFoldCVMat(ysOrig, this->ys);
+  if (this->weights.n_elem > 0)
+    InitKFoldCVMat(weightsOrig, this->weights);
 }
 
 template<typename MLAlgorithm,
@@ -207,7 +245,7 @@ size_t KFoldCV<MLAlgorithm,
                WeightsType>::ValidationSubsetFirstCol(const size_t i)
 {
   // Use as close to the beginning of the dataset as we can.
-  return (i == 0) ? binSize * (k - 1) : binSize * (i - 1);
+  return (i == 0) ? this->binSize * (this->k - 1) : this->binSize * (i - 1);
 }
 
 template<typename MLAlgorithm,
@@ -227,10 +265,11 @@ arma::Mat<ElementType> KFoldCV<MLAlgorithm,
   // If this is not the first fold, we have to handle it a little bit
   // differently, since the last fold may contain slightly more than 'binSize'
   // points.
-  const size_t subsetSize = (i != 0) ? lastBinSize + (k - 2) * binSize :
-      (k - 1) * binSize;
+  const size_t subsetSize = (i != 0) ?
+      this->lastBinSize + (this->k - 2) * this->binSize :
+      (this->k - 1) * this->binSize;
 
-  return arma::Mat<ElementType>(m.colptr(binSize * i), m.n_rows, subsetSize,
+  return arma::Mat<ElementType>(m.colptr(this->binSize * i), m.n_rows, subsetSize,
       false, true);
 }
 
@@ -251,10 +290,11 @@ arma::Row<ElementType> KFoldCV<MLAlgorithm,
   // If this is not the first fold, we have to handle it a little bit
   // differently, since the last fold may contain slightly more than 'binSize'
   // points.
-  const size_t subsetSize = (i != 0) ? lastBinSize + (k - 2) * binSize :
-      (k - 1) * binSize;
+  const size_t subsetSize = (i != 0) ? 
+      this->lastBinSize + (this->k - 2) * this->binSize :
+      (this->k - 1) * this->binSize;
 
-  return arma::Row<ElementType>(r.colptr(binSize * i), subsetSize, false, true);
+  return arma::Row<ElementType>(r.colptr(this->binSize * i), subsetSize, false, true);
 }
 
 template<typename MLAlgorithm,
@@ -271,7 +311,7 @@ arma::Mat<ElementType> KFoldCV<MLAlgorithm,
     arma::Mat<ElementType>& m,
     const size_t i)
 {
-  const size_t subsetSize = (i == 0) ? lastBinSize : binSize;
+  const size_t subsetSize = (i == 0) ? this->lastBinSize : this->binSize;
   return arma::Mat<ElementType>(m.colptr(ValidationSubsetFirstCol(i)), m.n_rows,
       subsetSize, false, true);
 }
@@ -290,7 +330,7 @@ arma::Row<ElementType> KFoldCV<MLAlgorithm,
     arma::Row<ElementType>& r,
     const size_t i)
 {
-  const size_t subsetSize = (i == 0) ? lastBinSize : binSize;
+  const size_t subsetSize = (i == 0) ? this->lastBinSize : this->binSize;
   return arma::Row<ElementType>(r.colptr(ValidationSubsetFirstCol(i)),
       subsetSize, false, true);
 }
