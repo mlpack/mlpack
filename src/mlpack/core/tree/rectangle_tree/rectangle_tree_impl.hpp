@@ -50,14 +50,12 @@ RectangleTree(const MatType& data,
               const size_t maxLeafSize,
               const size_t minLeafSize,
               const size_t maxNumChildren,
-              const size_t minNumChildren,
-              const size_t firstDataIndex) :
+              const size_t minNumChildren) :
     maxNumChildren(maxNumChildren),
     minNumChildren(minNumChildren),
     numChildren(0),
     children(maxNumChildren + 1), // Add one to make splitting the node simpler.
     parent(NULL),
-    begin(0),
     count(0),
     numDescendants(0),
     maxLeafSize(maxLeafSize),
@@ -72,7 +70,7 @@ RectangleTree(const MatType& data,
   // For now, just insert the points in order.
   RectangleTree* root = this;
 
-  for (size_t i = firstDataIndex; i < data.n_cols; ++i)
+  for (size_t i = 0; i < data.n_cols; ++i)
     root->InsertPoint(i);
 
   // Initialize statistic recursively after tree construction is complete.
@@ -91,14 +89,12 @@ RectangleTree(MatType&& data,
               const size_t maxLeafSize,
               const size_t minLeafSize,
               const size_t maxNumChildren,
-              const size_t minNumChildren,
-              const size_t firstDataIndex) :
+              const size_t minNumChildren) :
     maxNumChildren(maxNumChildren),
     minNumChildren(minNumChildren),
     numChildren(0),
     children(maxNumChildren + 1), // Add one to make splitting the node simpler.
     parent(NULL),
-    begin(0),
     count(0),
     numDescendants(0),
     maxLeafSize(maxLeafSize),
@@ -113,7 +109,7 @@ RectangleTree(MatType&& data,
   // For now, just insert the points in order.
   RectangleTree* root = this;
 
-  for (size_t i = firstDataIndex; i < dataset->n_cols; ++i)
+  for (size_t i = 0; i < dataset->n_cols; ++i)
     root->InsertPoint(i);
 
   // Initialize statistic recursively after tree construction is complete.
@@ -138,7 +134,6 @@ RectangleTree(
     numChildren(0),
     children(maxNumChildren + 1),
     parent(parentNode),
-    begin(0),
     count(0),
     numDescendants(0),
     maxLeafSize(parentNode->MaxLeafSize()),
@@ -175,8 +170,7 @@ RectangleTree(
     numChildren(other.NumChildren()),
     children(maxNumChildren + 1, NULL),
     parent(deepCopy ? newParent : other.Parent()),
-    begin(other.Begin()),
-    count(other.Count()),
+    count(other.count),
     numDescendants(other.numDescendants),
     maxLeafSize(other.MaxLeafSize()),
     minLeafSize(other.MinLeafSize()),
@@ -185,7 +179,7 @@ RectangleTree(
     parentDistance(other.ParentDistance()),
     dataset(deepCopy ?
         (parent ? parent->dataset : new MatType(*other.dataset)) :
-        &other.Dataset()),
+        other.dataset),
     ownsDataset(deepCopy && (!parent)),
     points(other.points),
     auxiliaryInfo(other.auxiliaryInfo, this, deepCopy)
@@ -219,8 +213,7 @@ RectangleTree(RectangleTree&& other) :
     numChildren(other.NumChildren()),
     children(std::move(other.children)),
     parent(other.Parent()),
-    begin(other.Begin()),
-    count(other.Count()),
+    count(other.count),
     numDescendants(other.numDescendants),
     maxLeafSize(other.MaxLeafSize()),
     minLeafSize(other.MinLeafSize()),
@@ -251,7 +244,6 @@ RectangleTree(RectangleTree&& other) :
   other.minNumChildren = 0;
   other.numChildren = 0;
   other.parent = NULL;
-  other.begin = 0;
   other.count = 0;
   other.numDescendants = 0;
   other.maxLeafSize = 0;
@@ -292,8 +284,7 @@ operator=(const RectangleTree& other)
   numChildren = other.NumChildren();
   children.resize(maxNumChildren + 1, NULL);
   parent = NULL;
-  begin = other.Begin();
-  count = other.Count();
+  count = other.count;
   numDescendants = other.numDescendants;
   maxLeafSize = other.MaxLeafSize();
   minLeafSize = other.MinLeafSize();
@@ -345,8 +336,7 @@ operator=(RectangleTree&& other)
   numChildren = other.NumChildren();
   children = std::move(other.children);
   parent = other.Parent();
-  begin = other.Begin();
-  count = other.Count();
+  count = other.count;
   numDescendants = other.numDescendants;
   maxLeafSize = other.MaxLeafSize();
   minLeafSize = other.MinLeafSize();
@@ -364,7 +354,6 @@ operator=(RectangleTree&& other)
   other.minNumChildren = 0;
   other.numChildren = 0;
   other.parent = NULL;
-  other.begin = 0;
   other.count = 0;
   other.numDescendants = 0;
   other.maxLeafSize = 0;
@@ -374,6 +363,39 @@ operator=(RectangleTree&& other)
   other.ownsDataset = false;
 
   return *this;
+}
+
+// Construct an empty but ready-to-use tree.
+template<typename DistanceType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
+RectangleTree(const size_t dimensionality,
+              const size_t maxLeafSize,
+              const size_t minLeafSize,
+              const size_t maxNumChildren,
+              const size_t minNumChildren) :
+    maxNumChildren(maxNumChildren),
+    minNumChildren(minNumChildren),
+    numChildren(0),
+    children(maxNumChildren + 1), // Add one to make splitting the node simpler.
+    parent(NULL),
+    count(0),
+    numDescendants(0),
+    maxLeafSize(maxLeafSize),
+    minLeafSize(minLeafSize),
+    bound(dimensionality),
+    parentDistance(0.0),
+    dataset(new MatType(dimensionality, 0)),
+    ownsDataset(true),
+    points(maxLeafSize + 1), // Add one to make splitting the node simpler.
+    auxiliaryInfo(this)
+{
+  // Nothing to do.
 }
 
 /**
@@ -417,6 +439,58 @@ RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
 
   if (ownsDataset)
     delete dataset;
+}
+
+// Insert a point into the dataset.
+template<typename DistanceType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+template<typename InMatType>
+void RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::Insert(const InMatType& points)
+{
+  if (parent != NULL)
+    throw std::runtime_error("RectangleTree::Insert(): cannot insert points "
+        "into a node that is not the root of the tree!");
+
+  const size_t oldCols = dataset->n_cols;
+  dataset->insert_cols(dataset->n_cols, points);
+  for (size_t i = 0; i < points.n_cols; ++i)
+    InsertPoint(oldCols + i);
+}
+
+// Delete a point from the dataset.
+template<typename DistanceType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+void RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::Delete(const size_t pointIndex)
+{
+  // First delete the point.
+  DeletePoint(pointIndex);
+  dataset->shed_col(pointIndex);
+
+  // Now we have to iterate over every node and update any child indices.
+  std::stack<RectangleTree*> s;
+  s.push(this);
+  while (!s.empty())
+  {
+    RectangleTree* node = s.top();
+    s.pop();
+
+    for (size_t i = 0; i < node->points.size(); ++i)
+      if (node->points[i] > pointIndex)
+        --node->points[i];
+
+    for (size_t i = 0; i < node->NumChildren(); ++i)
+      s.push(&node->Child(i));
+  }
 }
 
 /**
@@ -696,7 +770,7 @@ bool RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
         tree->numDescendants -= node->numDescendants;
         tree = tree->Parent();
       }
-      CondenseTree(arma::vec(), relevels, false);
+      CondenseTree(arma::Col<ElemType>(), relevels, false);
       return true;
     }
 
@@ -785,7 +859,7 @@ size_t RectangleTree<DistanceType, StatisticType, MatType, SplitType,
   for (size_t i = 0; i < NumChildren(); ++i)
   {
     ElemType distance = Child(i).MinDistance(point);
-    if (distance <= bestDistance)
+    if (distance < bestDistance)
     {
       bestDistance = distance;
       bestIndex = i;
@@ -818,7 +892,7 @@ size_t RectangleTree<DistanceType, StatisticType, MatType, SplitType,
   for (size_t i = 0; i < NumChildren(); ++i)
   {
     ElemType distance = Child(i).MaxDistance(point);
-    if (distance >= bestDistance)
+    if (distance > bestDistance)
     {
       bestDistance = distance;
       bestIndex = i;
@@ -849,7 +923,7 @@ size_t RectangleTree<DistanceType, StatisticType, MatType, SplitType,
   for (size_t i = 0; i < NumChildren(); ++i)
   {
     ElemType distance = Child(i).MinDistance(queryNode);
-    if (distance <= bestDistance)
+    if (distance < bestDistance)
     {
       bestDistance = distance;
       bestIndex = i;
@@ -880,7 +954,7 @@ size_t RectangleTree<DistanceType, StatisticType, MatType, SplitType,
   for (size_t i = 0; i < NumChildren(); ++i)
   {
     ElemType distance = Child(i).MaxDistance(queryNode);
-    if (distance >= bestDistance)
+    if (distance > bestDistance)
     {
       bestDistance = distance;
       bestIndex = i;
@@ -1037,32 +1111,6 @@ void RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
   }
 }
 
-//! Default constructor for cereal.
-template<typename DistanceType,
-         typename StatisticType,
-         typename MatType,
-         typename SplitType,
-         typename DescentType,
-         template<typename> class AuxiliaryInformationType>
-RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
-              AuxiliaryInformationType>::
-RectangleTree() :
-    maxNumChildren(0), // Try to give sensible defaults, but it shouldn't matter
-    minNumChildren(0), // because this tree isn't valid anyway and is only used
-    numChildren(0),    // by cereal.
-    parent(NULL),
-    begin(0),
-    count(0),
-    numDescendants(0),
-    maxLeafSize(0),
-    minLeafSize(0),
-    parentDistance(0.0),
-    dataset(NULL),
-    ownsDataset(false)
-{
-  // Nothing to do.
-}
-
 /**
  * Condense the tree.  This shrinks the bounds and moves up the tree if
  * applicable.  If a node goes below minimum fill, this code will deal with it.
@@ -1073,9 +1121,10 @@ template<typename DistanceType,
          typename SplitType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
+template<typename VecType>
 void RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
                    AuxiliaryInformationType>::
-    CondenseTree(const arma::vec& point,
+    CondenseTree(const VecType& point,
                  std::vector<bool>& relevels,
                  const bool usePoint)
 {
@@ -1220,7 +1269,7 @@ void RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
       numChildren = child->NumChildren();
       child->NumChildren() = 0;
 
-      for (size_t i = 0; i < child->Count(); ++i)
+      for (size_t i = 0; i < child->count; ++i)
       {
         // In case the tree has a height of two.
         points[i] = child->Point(i);
@@ -1228,8 +1277,8 @@ void RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
 
       auxiliaryInfo = child->AuxiliaryInfo();
 
-      count = child->Count();
-      child->Count() = 0;
+      count = child->count;
+      child->count = 0;
 
       delete child;
       return;
@@ -1257,9 +1306,10 @@ template<typename DistanceType,
          typename SplitType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
+template<typename VecType>
 bool RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
                    AuxiliaryInformationType>::
-    ShrinkBoundForPoint(const arma::vec& point)
+    ShrinkBoundForPoint(const VecType& point)
 {
   bool shrunk = false;
   if (IsLeaf())
@@ -1357,7 +1407,7 @@ template<typename DistanceType,
          template<typename> class AuxiliaryInformationType>
 bool RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
                    AuxiliaryInformationType>::
-    ShrinkBoundForBound(const HRectBound<DistanceType>& /* b */)
+    ShrinkBoundForBound(const HRectBound<DistanceType, ElemType>& /* b */)
 {
   // Using the sum is safe since none of the dimensions can increase.
   ElemType sum = 0;
@@ -1395,7 +1445,7 @@ template<typename Archive>
 void RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
                    AuxiliaryInformationType>::serialize(
     Archive& ar,
-    const uint32_t /* version */)
+    const uint32_t version)
 {
   // Clean up memory, if necessary.
   if (cereal::is_loading<Archive>())
@@ -1418,7 +1468,11 @@ void RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
   if (cereal::is_loading<Archive>())
     children.resize(maxNumChildren + 1);
 
-  ar(CEREAL_NVP(begin));
+  if (version == 0)
+  {
+    size_t begin;
+    ar(CEREAL_NVP(begin));
+  }
   ar(CEREAL_NVP(count));
   ar(CEREAL_NVP(numDescendants));
   ar(CEREAL_NVP(maxLeafSize));
@@ -1466,6 +1520,7 @@ void RectangleTree<DistanceType, StatisticType, MatType, SplitType, DescentType,
       RectangleTree* node = stack.top();
       stack.pop();
       node->dataset = dataset;
+      node->ownsDataset = false;
       for (size_t i = 0; i < node->numChildren; ++i)
       {
         stack.push(node->children[i]);

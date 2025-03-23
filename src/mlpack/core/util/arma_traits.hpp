@@ -62,44 +62,36 @@ struct IsAnyArmaBaseType
       IsCube<T>::value || IsField<T>::value;
 };
 
-// Commenting out the first template per case, because
-// Visual Studio doesn't like this instantiation pattern (error C2910).
-// template<>
 template<typename eT>
 struct IsVector<arma::Col<eT> >
 {
   static const bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsVector<arma::SpCol<eT> >
 {
   static const bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsVector<arma::Row<eT> >
 {
   static const bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsVector<arma::SpRow<eT> >
 {
   static const bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsVector<arma::subview_col<eT> >
 {
   static const bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsVector<arma::subview_row<eT> >
 {
@@ -120,6 +112,12 @@ struct IsVector<arma::SpSubview_row<eT> >
 
 template<typename eT>
 struct IsMatrix<arma::Mat<eT> >
+{
+  static const bool value = true;
+};
+
+template<typename eT>
+struct IsMatrix<arma::SpMat<eT> >
 {
   static const bool value = true;
 };
@@ -299,5 +297,29 @@ struct IsBaseMatType<arma::SpRow<eT>>
 {
   constexpr static bool value = true;
 };
+
+template<typename T>
+struct IsArma
+{
+  constexpr static bool value = arma::is_arma_type<T>::value;
+};
+
+#if defined(MLPACK_HAS_COOT)
+
+template<typename T>
+struct IsCoot
+{
+  constexpr static bool value = coot::is_coot_type<T>::value;
+};
+
+#else
+
+template<typename T>
+struct IsCoot
+{
+  constexpr static bool value = false;
+};
+
+#endif
 
 #endif

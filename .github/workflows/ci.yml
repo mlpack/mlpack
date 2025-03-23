@@ -1,0 +1,276 @@
+# ci.yml: defines all the CI jobs run for each commit and pull request.  For
+# Linux and macOS, we run a matrix job that tests all the bindings.  For
+# Windows, we just run one build (see the later part of the file).
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
+  release:
+    types: [published, created, edited]
+permissions:
+  contents: read
+name: mlpack.mlpack
+
+jobs:
+  ###
+  ### Linux and macOS test matrix for all binding types.
+  ###
+  ci_matrix:
+    strategy:
+      fail-fast: false # Run all configurations even if one fails.
+      matrix:
+        config: [
+          {
+            runner: ubuntu-latest,
+            os: 'Linux',
+            name: 'Debug',
+            # Disable [DEBUG] output from the tests because it's WAY too verbose.
+            cmakeVars: '-DCMAKE_BUILD_TYPE=Debug -DBUILD_CLI_EXECUTABLES=OFF -DCMAKE_CXX_FLAGS="-DMLPACK_NO_PRINT_DEBUG"'
+          },
+          {
+            runner: ubuntu-latest,
+            os: 'Linux',
+            name: 'CLI',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON'
+          },
+          {
+            runner: ubuntu-latest,
+            os: 'Linux',
+            name: 'Python',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON'
+          },
+          {
+            runner: ubuntu-latest,
+            os: 'Linux',
+            name: 'Julia',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_JULIA_BINDINGS=ON'
+          },
+          {
+            runner: ubuntu-latest,
+            os: 'Linux',
+            name: 'R',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_R_BINDINGS=ON -DCEREAL_INCLUDE_DIR=../cereal-1.3.2/include/'
+          },
+          {
+            runner: ubuntu-latest,
+            os: 'Linux',
+            name: 'Go',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_GO_BINDINGS=ON'
+          },
+          {
+            runner: ubuntu-latest,
+            os: 'Linux',
+            name: 'Markdown',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_MARKDOWN_BINDINGS=ON'
+          },
+          {
+            runner: macOS-latest,
+            os: 'macOS',
+            name: 'CLI',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON'
+          },
+          {
+            runner: macOS-latest,
+            os: 'macOS',
+            name: 'Python',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON'
+          }
+        ]
+
+    name: '${{ matrix.config.os }} (${{ matrix.config.name }})'
+    if: ${{ github.repository == 'mlpack/mlpack' }}
+    runs-on: ${{ matrix.config.runner }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      # Set up ccache.
+      - name: Get ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ matrix.config.os }}-${{ matrix.config.name }}
+          variant: ccache
+          max-size: 1G
+
+      # Set up the build environment for any bindings, if needed.
+      - name: Set up binding dependencies
+        uses: ./.github/actions/binding_setup
+        with:
+          lang: ${{ matrix.config.name }}
+
+      # Install build dependencies.
+      - name: Install build dependencies (Linux)
+        if: matrix.config.os == 'Linux'
+        run: |
+          git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
+          sudo apt-get update
+          sudo apt-get install --yes --allow-unauthenticated \
+              libopenblas-dev libstb-dev libcereal-dev xz-utils
+          # Install the oldest Armadillo version that we support.
+          curl -k -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz | tar -xvJ && \
+              cd armadillo* && \
+              cmake . && \
+              make && \
+              sudo make install && \
+              cd ..
+          # Install the latest ensmallen version.
+          wget https://ensmallen.org/files/ensmallen-latest.tar.gz
+              tar -xvzpf ensmallen-latest.tar.gz # Unpack into ensmallen-*/.
+              cd ensmallen-*/ && \
+              sudo cp -vr include/* /usr/include/ && \
+              cd ..
+
+      - name: Install build dependencies (macOS)
+        if: matrix.config.os == 'macOS'
+        run: |
+          sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+          brew install libomp openblas armadillo cereal ensmallen ccache
+
+      # Because mlpack's precompiled headers basically include everything
+      # (mlpack.hpp, core.hpp, etc.), changes to a single file will invalidate
+      # the ccache entry---so it is better to leave it turned off, so that
+      # ccache entries will be at a more granular level and are more likely to
+      # be reused across runs.
+      - name: Configure mlpack with CMake
+        run: |
+          mkdir build && cd build
+          cmake ${{ matrix.config.cmakeVars }} $CMAKE_BINDING_ARGS -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON ../
+
+      - name: Build mlpack
+        run: cd build && make -j4
+
+      # Run the tests manually so that we can get JUnit output.
+      - name: Run mlpack_test
+        run: |
+          cd build
+          # The use of only one thread is to prevent thrashing on older versions
+          # of OpenBLAS (0.3.26 and older) where OpenMP and pthreads aren't
+          # playing together well.
+          OMP_NUM_THREADS=1 bin/mlpack_test -r junit -o mlpack_test.junit.xml
+
+      # Run binding tests for each binding type.
+      - name: Run binding tests
+        uses: ./.github/actions/binding_run_tests
+        with:
+          lang: ${{ matrix.config.name }}
+
+      - name: Parse test output
+        uses: rcurtin/test-summary-action@dist
+        if: success() || failure()
+        with:
+          paths: "build/*.junit.xml"
+          show: "fail, skip"
+          fail_job: true
+          print_output: true
+
+  ###
+  ### Windows CI testing.
+  ###
+
+  ci_windows:
+    name: 'Windows build: VS2022'
+    if: ${{ github.repository == 'mlpack/mlpack' }}
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v3
+
+      # Set up ccache.
+      - name: Get ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ runner.os }}
+          variant: ccache
+          max-size: 5G
+
+      # Set up Visual Studio.
+      - name: Set up Visual Studio
+        uses: microsoft/setup-msbuild@v2
+
+      # Install build dependencies.
+      - name: Install build dependencies (Windows)
+        shell: powershell
+        run: |
+          nuget install OpenBLAS -o deps
+          nuget install ensmallen -o deps -Version 2.17.0
+          # Delete all ensmallen dependencies including armadillo headers, we do not need them here.
+          Remove-Item deps\ensmallen.2.17.0\installed\x64-linux\share -Force -Recurse
+          Remove-Item deps\ensmallen.2.17.0\installed\x64-linux\include\armadillo_bits -Force -Recurse
+          Remove-Item deps\ensmallen.2.17.0\installed\x64-linux\include\armadillo -Force
+
+      # Install the oldest supported version of Armadillo and install cereal.
+      - name: Install some dependencies manually
+        shell: bash
+        run: |
+          cd deps/
+          curl -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz -o armadillo-10.8.2.tar.xz
+          tar -xf armadillo-10.8.2.tar.xz
+          cd armadillo-10.8.2/
+          cmake -G "Visual Studio 17 2022" \
+            -DBLAS_LIBRARY:FILEPATH=${{ github.workspace }}/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+            -DLAPACK_LIBRARY:FILEPATH=${{ github.workspace }}/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+            -DBUILD_SHARED_LIBS=OFF .
+          # Disable the wrapper because transitive linking doesn't work on
+          # Windows anyway.
+          cp tmp/include/armadillo_bits/config.hpp tmp/include/armadillo_bits/config.hpp.tmp
+          cat tmp/include/armadillo_bits/config.hpp.tmp | sed 's|#define ARMA_USE_WRAPPER|// #define ARMA_USE_WRAPPER|' \
+              > tmp/include/armadillo_bits/config.hpp
+          # Now download and unpack cereal.
+          cd ../
+          curl -L https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.2.tar.gz -o cereal-1.3.2.tar.gz
+          tar -xzf cereal-1.3.2.tar.gz
+          # Download and unpack STB.
+          curl -O https://www.mlpack.org/files/stb.tar.gz
+          tar -xzf stb.tar.gz
+
+      # Because mlpack's precompiled headers basically include everything
+      # (mlpack.hpp, core.hpp, etc.), changes to a single file will invalidate
+      # the ccache entry---so it is better to leave it turned off, so that
+      # ccache entries will be at a more granular level and are more likely to
+      # be reused across runs.
+      - name: Configure mlpack with CMake
+        shell: bash
+        run: |
+          mkdir build && cd build
+          cmake -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON \
+              -DARMADILLO_INCLUDE_DIR=../deps/armadillo-10.8.2/tmp/include/ \
+              -DBLAS_LIBRARIES='${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+              -DLAPACK_LIBRARIES='${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+              -DENSMALLEN_INCLUDE_DIR=../deps/ensmallen.2.17.0/installed/x64-linux/include/ \
+              -DCEREAL_INCLUDE_DIR=../deps/cereal-1.3.2/include/ \
+              -DSTB_IMAGE_INCLUDE_DIR='${{ github.workspace }}'/deps/stb/include/ \
+              -DCMAKE_HAS_WORKING_STATIC_STB=1 \
+              ../
+
+      - name: Build mlpack
+        run: cd build && cmake --build . --config Release
+
+      # Run the tests manually so that we can get JUnit output.
+      - name: Run mlpack_test
+        shell: bash
+        run: |
+          # The .dlls are stored in the bin/ directory, and those are the ones
+          # we need to run with.
+          cp -v '${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/bin/x64/* build/Release
+          cd build/
+          ./Release/mlpack_test.exe -r junit > mlpack_test.junit.xml
+          # Remove version numbers and other non-xml from the output.
+          cat mlpack_test.junit.xml | sed '/<?xml/,$!d' > mlpack_test.junit.xml.tmp
+          rm mlpack_test.junit.xml
+          mv mlpack_test.junit.xml.tmp mlpack_test.junit.xml
+
+      - name: Parse test output
+        uses: rcurtin/test-summary-action@dist
+        if: success() || failure()
+        with:
+          paths: "build/*.junit.xml"
+          show: "fail, skip"
+          fail_job: true
+          print_output: true

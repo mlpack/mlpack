@@ -38,7 +38,7 @@ TEST_CASE("BootstrapNoWeightsTest", "[RandomForestTest]")
     arma::rowvec bootstrapWeights;
 
     DefaultBootstrap().Bootstrap<false>(dataset, labels, weights,
-      bootstrapDataset, bootstrapLabels, bootstrapWeights);
+        bootstrapDataset, bootstrapLabels, bootstrapWeights);
 
     REQUIRE(bootstrapDataset.n_cols == 1000);
     REQUIRE(bootstrapDataset.n_rows == 1);
@@ -73,7 +73,7 @@ TEST_CASE("BootstrapWeightsTest", "[RandomForestTest]")
     arma::rowvec bootstrapWeights;
 
     DefaultBootstrap().Bootstrap<true>(dataset, labels, weights,
-      bootstrapDataset, bootstrapLabels, bootstrapWeights);
+        bootstrapDataset, bootstrapLabels, bootstrapWeights);
 
     REQUIRE(bootstrapDataset.n_cols == 1000);
     REQUIRE(bootstrapDataset.n_rows == 1);
@@ -107,9 +107,9 @@ TEST_CASE("EmptyClassifyTest", "[RandomForestTest]")
   REQUIRE_THROWS_AS(rf.Classify(points, predictions), std::invalid_argument);
   REQUIRE_THROWS_AS(rf.Classify(points.col(0)), std::invalid_argument);
   REQUIRE_THROWS_AS(rf.Classify(points, predictions, probabilities),
-    std::invalid_argument);
+      std::invalid_argument);
   REQUIRE_THROWS_AS(rf.Classify(points.col(0), prediction,
-    pointProbabilities), std::invalid_argument);
+      pointProbabilities), std::invalid_argument);
 }
 
 /**
@@ -227,7 +227,7 @@ TEST_CASE("UnweightedCategoricalLearningTest", "[RandomForestTest]")
 
   // Train a random forest and a decision tree.
   RandomForest<> rf(trainingData, di, trainingLabels, 5, 25 /* 25 trees */, 1,
-    1e-7, 0, MultipleRandomDimensionSelect(4));
+      1e-7, 0, MultipleRandomDimensionSelect(4));
   DecisionTree<> dt(trainingData, di, trainingLabels, 5, 5);
 
   // Get performance statistics on test data.
@@ -285,7 +285,7 @@ TEST_CASE("WeightedCategoricalLearningTest", "[RandomForestTest]")
 
   // Build a random forest and a decision tree.
   RandomForest<> rf(fullData, di, fullLabels, 5, weights, 25 /* 25 trees */, 1,
-    1e-7, 0, MultipleRandomDimensionSelect(4));
+      1e-7, 0, MultipleRandomDimensionSelect(4));
   DecisionTree<> dt(fullData, di, fullLabels, 5, weights, 5);
 
   // Get performance statistics on test data.
@@ -371,9 +371,9 @@ TEST_CASE("RandomForestSerializationTest", "[RandomForestTest]")
   binaryForest.Classify(dataset, binaryPredictions, binaryProbabilities);
 
   CheckMatrices(beforePredictions, xmlPredictions, jsonPredictions,
-    binaryPredictions);
+      binaryPredictions);
   CheckMatrices(beforeProbabilities, xmlProbabilities, jsonProbabilities,
-    binaryProbabilities);
+      binaryProbabilities);
 }
 
 /**
@@ -455,14 +455,14 @@ TEST_CASE("RandomForestCategoricalTrainReturnEntropy", "[RandomForestTest]")
   // Test random forest on unweighted categorical dataset.
   RandomForest<> rf;
   double entropy = rf.Train(fullData, di, fullLabels, 5, 15 /* 15 trees */, 1,
-    1e-7, 0, false, MultipleRandomDimensionSelect(3));
+      1e-7, 0, false, MultipleRandomDimensionSelect(3));
 
   REQUIRE(std::isfinite(entropy) == true);
 
   // Test random forest on weighted categorical dataset.
   RandomForest<> wrf;
   entropy = wrf.Train(fullData, di, fullLabels, 5, weights, 15 /* 15 trees */,
-    1, 1e-7, 0, false, MultipleRandomDimensionSelect(3));
+      1, 1e-7, 0, false, MultipleRandomDimensionSelect(3));
 
   REQUIRE(std::isfinite(entropy) == true);
 }
@@ -511,12 +511,12 @@ TEST_CASE("WarmStartTreesTest", "[RandomForestTest]")
 
   // Train a random forest.
   RandomForest<> rf(trainingData, di, trainingLabels, 5, 25 /* 25 trees */, 1,
-    1e-7, 0, MultipleRandomDimensionSelect(4));
+      1e-7, 0, MultipleRandomDimensionSelect(4));
 
   REQUIRE(rf.NumTrees() == 25);
 
   rf.Train(trainingData, di, trainingLabels, 5, 20 /* 20 trees */, 1, 1e-7, 0,
-    true /* warmStart */, MultipleRandomDimensionSelect(4));
+      true /* warmStart */, MultipleRandomDimensionSelect(4));
 
   REQUIRE(rf.NumTrees() == 25 + 20);
 }
@@ -535,7 +535,7 @@ TEST_CASE("WarmStartTreesPredictionsQualityTest", "[RandomForestTest]")
 
   // Train a random forest.
   RandomForest<> rf(trainingData, di, trainingLabels, 5, 3 /* 3 trees */, 1,
-    1e-7, 0, MultipleRandomDimensionSelect(4));
+      1e-7, 0, MultipleRandomDimensionSelect(4));
 
   // Get performance statistics on train data.
   arma::Row<size_t> oldPredictions;
@@ -545,7 +545,7 @@ TEST_CASE("WarmStartTreesPredictionsQualityTest", "[RandomForestTest]")
   size_t oldCorrect = accu(oldPredictions == trainingLabels);
 
   rf.Train(trainingData, di, trainingLabels, 5, 20 /* 20 trees */, 1, 1e-7, 0,
-    true /* warmStart */, MultipleRandomDimensionSelect(4));
+      true /* warmStart */, MultipleRandomDimensionSelect(4));
 
   // Get performance statistics on train data.
   arma::Row<size_t> newPredictions;
@@ -610,7 +610,7 @@ TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
 
 /**
  * Test ComputeAverageUniqueness.
- *
+ * 
  * Average uniqueness is defined as average over the lifetime of an event
  * of how many other events are active at every point in time.
  */
@@ -642,11 +642,11 @@ TEST_CASE("ComputeAverageUniquenessTest", "[RandomForestTest]")
   arma::vec       avg(3);
 
   avg[0] = SequentialBootstrap<>::ComputeAverageUniqueness(
-    indM(0, 0), indM(1, 0), invConcurrency);
+      indM(0, 0), indM(1, 0), invConcurrency);
   avg[1] = SequentialBootstrap<>::ComputeAverageUniqueness(
-    indM(0, 1), indM(1, 1), invConcurrency);
+      indM(0, 1), indM(1, 1), invConcurrency);
   avg[2] = SequentialBootstrap<>::ComputeAverageUniqueness(
-    indM(0, 2), indM(1, 2), invConcurrency);
+      indM(0, 2), indM(1, 2), invConcurrency);
 
   REQUIRE(avg(0) == Approx(5.0 / 6.0));
   REQUIRE(avg(1) == Approx(0.75));
@@ -680,7 +680,7 @@ TEST_CASE("ComputeNextDrawProbabilitiesTest", "[RandomForestTest]")
   // Compute the probabilities that observations 0, 1, 2 are drawn after
   // observation 1 has already been drawn.
   SequentialBootstrap<>::ComputeNextDrawProbabilities(
-    phi1, 1, concurrency, invConcurrency, indM, delta2);
+      phi1, 1, concurrency, invConcurrency, indM, delta2);
 
   REQUIRE(delta2(0) == Approx(5.0 / 14.0));
   // Should have the lowest probability as it has already been drawn.
@@ -741,7 +741,7 @@ TEST_CASE("SequentialBootstrapTest", "[RandomForestTest]")
   arma::rowvec bsWeights;
 
   bootstrap.Bootstrap<true>(
-    ds, labels, weights, bsDataset, bsLabels, bsWeights);
+      ds, labels, weights, bsDataset, bsLabels, bsWeights);
 
   // Check that dimensions are the same.
   REQUIRE(ds.n_rows == bsDataset.n_rows);
@@ -769,24 +769,24 @@ TEST_CASE("RandomForestWithSequentialBootstrapTest", "[RandomForestTest]")
   SequentialBootstrap<> bootstrap(indM);
 
   using RF = RandomForest<
-    mlpack::GiniGain,
-    mlpack::MultipleRandomDimensionSelect,
-    mlpack::BestBinaryNumericSplit,
-    mlpack::AllCategoricalSplit,
-    true,
-    mlpack::SequentialBootstrap<>>;
+      mlpack::GiniGain,
+      mlpack::MultipleRandomDimensionSelect,
+      mlpack::BestBinaryNumericSplit,
+      mlpack::AllCategoricalSplit,
+      true,
+      mlpack::SequentialBootstrap<>>;
 
   RF rf(
-    ds,
-    labels,
-    2,
-    weights,
-    20,
-    1,
-    1e-7,
-    0,
-    mlpack::MultipleRandomDimensionSelect(),
-    bootstrap);
+      ds,
+      labels,
+      2,
+      weights,
+      20,
+      1,
+      1e-7,
+      0,
+      mlpack::MultipleRandomDimensionSelect(),
+      bootstrap);
 
   // Sanity check: ensure that the predictions are reasonable.
   arma::Row<size_t> predictions;

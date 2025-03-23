@@ -85,7 +85,8 @@ BINDING_SEE_ALSO("@local_coordinate_coding", "#local_coordinate_coding");
 BINDING_SEE_ALSO("Sparse dictionary learning on Wikipedia",
     "https://en.wikipedia.org/wiki/Sparse_dictionary_learning");
 BINDING_SEE_ALSO("Efficient sparse coding algorithms (pdf)",
-    "http://papers.nips.cc/paper/2979-efficient-sparse-coding-algorithms.pdf");
+    "https://proceedings.neurips.cc/paper_files/paper/2006/file/"
+    "2d71b2ae158c7c5912cc0bbde2bb9d95-Paper.pdf");
 BINDING_SEE_ALSO("Regularization and variable selection via the elastic net",
     "https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf"
     "&doi=46217f372a75dddc2254fdbc6b9418ba3554e453");
