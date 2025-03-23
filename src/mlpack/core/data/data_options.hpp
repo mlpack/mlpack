@@ -198,6 +198,24 @@ class CSVOptions : public DataOptions
   //! Modify if we have categorical data in the dataset.
   bool& Categorical() { return categorical; }
 
+  //! Get if the labelCol exists.
+  const bool& LabelCol() const { return labelCol; }
+
+  //! Modify if we have labelCol data in the dataset.
+  bool& LabelCol() { return labelCol; }
+
+  //! Get if the labelCol exists.
+  const bool& LabelCol() const { return labelCol; }
+
+  //! Modify if we have labelCol data in the dataset.
+  bool& LabelCol() { return labelCol; }
+
+  //! Get if the timestampCol exists.
+  const bool& TimestampCol() const { return timestampCol; }
+
+  //! Modify if we have timestampCol data in the dataset.
+  bool& TimestampCol() { return timestampCol; }
+
   //! Get if we are loading an timeseries.
   const bool& Timeseries() const { return timeseries; }
 
@@ -211,12 +229,12 @@ class CSVOptions : public DataOptions
   void SamplingRate(int hz) { samplingRate = hz; }
 
   //! Get the Sampling rate.
-  const int& WindowSize() const (return WindowSize);
+  const int& WindowSize() const (return windowSize);
 
   //! Set the sampling rate in the time unit extracted from Sampling Rate.
   // If Sampling Rate is in kHz then Window size is in ms.
   // If Sampling Rate is in Hz then Window size is in s, etc.
-  void WindowSize(int size) { WindowSize = size; }
+  void WindowSize(int size) { windowSize = size; }
 
   //! Get the headers.
   const arma::field<std::string>& Headers() const { return headers; }
@@ -227,11 +245,13 @@ class CSVOptions : public DataOptions
  private:
   bool semiColon;
   bool missingToNan;
-  bool categorical;   
+  bool categorical;
   bool timeseries;
   bool timestampCol;
   bool labelCol;
+  bool timestampCol;
   int samplingRate;
+  int windowSize
   arma::field<std::string> headers;
   DatasetInfo mapper;
 };
