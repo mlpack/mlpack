@@ -95,9 +95,7 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 |
 | `minLeafSize` | `size_t` | Minimum number of points in each leaf node of each decision tree. | `1` |
 | `minGainSplit` | `double` | Minimum gain for a node to split in each decision tree. | `1e-7` |
-| `maxDepth` | `size_t` | Maximum depth for each decision tree. (0 means no limit.) | `0` |
-| `dimSelector` | `DimensionSelectionType` | | `DimensionSelectionType()` |
-| `bootstrap` | `BootstrapType` | Bootstrap strategy. | `BootstrapType()` |    
+| `maxDepth` | `size_t` | Maximum depth for each decision tree. (0 means no limit.) | `0` |  
 | `warmStart` | `bool` | (Only available in `Train()`.)  If true, training adds `numTrees` trees to the random forest.  If `false`, an entirely new random forest will be created. | `false` |
 
  * If OpenMP is enabled<!-- TODO: link! -->, one thread will be used to train
@@ -369,41 +367,6 @@ rf.Classify(testPoint, prediction, probabilities);
 std::cout << "Test point predicted to be class " << prediction << "."
     << std::endl;
 std::cout << "Probabilities of each class: " << probabilities.t();
-```
-
----
-
-Train a `RandomForest` with the `SequentialBootstrap` strategy.
-
-```c++
-// 1000 random points in 10 dimensions.
-arma::mat dataset(10 /* rows */, 1000 /* cols */, arma::fill::randu);
-// Random labels for each point, totaling 5 classes.
-arma::Row<size_t> labels =
-arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
-
-arma::umat intervals(labels.n_cols, 2);
-for (arma::uword i(0); i < labels.n_cols; ++i) {
-  // Create intervals of random length.
-  intervals(i, 0) = i;
-  intervals(i, 1) = i + std::rand();
-  if (intervals(i, 1) > 1000) {
-    intervals(i, 1) = 1000;
-  }
-}
-
-SequentialBootstrap bootstrap(intervals, dataset.n_cols);
-
-// Create and train the random forest.
-RandomForest<GiniGain,
-             MultipleRandomDimensionSelect,
-             BestBinaryNumericSplit,
-             AllCategoricalSplit,
-             true,
-             SequentialBootstrap<>> rf(
-               dataset, labels, 5, 20, 1, 1e-7, 0,
-               MultipleRandomDimensionSelect(),
-               bootstrap);
 ```
 
 ---
