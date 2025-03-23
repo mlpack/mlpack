@@ -49,26 +49,16 @@ class DataOptions
    */
   DataOptions(
       bool fatal = false,
-      bool hasHeaders = false,
       bool noTranspose = false,
-      bool semiColon = false,
-      bool missingToNan = false,
-      bool categorical = false,
       bool image = false,
       bool model = false,
-      bool timeseries = false,
       FileType fileFormat = FileType::AutoDetect,
       format dataFormat = format::binary,
       std::string objectName = "") :
     fatal(fatal),
-    hasHeaders(hasHeaders),
     noTranspose(noTranspose),
-    semiColon(semiColon),
-    missingToNan(missingToNan),
-    categorical(categorical),
     image(image),
     model(model),
-    timeseries(timeseries),
     fileFormat(fileFormat),
     dataFormat(dataFormat),
     objectName(objectName)
@@ -83,35 +73,11 @@ class DataOptions
   //! Modify the error to be fatal.
   bool& Fatal() { return fatal; }
 
-  //! Get if the dataset hasHeaders or not.
-  const bool& HasHeaders() const { return hasHeaders; }
-
-  //! Modify the dataset if it hasHeaders.
-  bool& HasHeaders() { return hasHeaders; }
-
   //! Get if the matrix is transposed or not.
   const bool& NoTranspose() const { return noTranspose; }
 
   //! Transpose the matrix if necessary.
   bool& NoTranspose() { return noTranspose; }
-
-  //! Get if the separator is a semicolon in the matrix.
-  const bool& SemiColon() const { return semiColon; }
-
-  //! Modify the separator type in the matrix.
-  bool& SemiColon() { return semiColon; }
-
-  //! Get if the separator is a semicolon in the matrix.
-  const bool& MissingToNan() const { return missingToNan; }
-
-  //! Modify the separator type in the matrix.
-  bool& MissingToNan() { return missingToNan; }
-
-  //! Get if the categorical data exists.
-  const bool& Categorical() const { return categorical; }
-
-  //! Modify if we have categorical data in the dataset.
-  bool& Categorical() { return categorical; }
 
   //! Get if we are loading an image.
   const bool& Image() const { return image; }
@@ -124,21 +90,6 @@ class DataOptions
 
   //! Modify if we are loading an model.
   bool& Model() { return model; }
-
-  //! Get if we are loading an timeseries.
-  const bool& Timeseries() const { return timeseries; }
-
-  //! Modify if we are loading an timeseries.
-  bool& Timeseries() { return timeseries; }
-
-  //! Set the sampling rate in HZ
-  void SamplingRate(int hz) { samplingRate = hz; }
-
-  //! Get the headers.
-  const arma::field<std::string>& Headers() const { return headers; }
-
-  //! Modify the headers.
-  arma::field<std::string>& Headers() { return headers; }
 
   //! Get the FileType.
   const FileType& FileFormat() const { return fileFormat; }
@@ -195,29 +146,110 @@ class DataOptions
   bool fatal;
   bool hasHeaders;
   bool noTranspose;
-  bool semiColon;
-  bool missingToNan;
-  bool categorical;
   bool image;
   bool model;
-  bool timeseries;
-  int samplingRate;
   FileType fileFormat;
   format dataFormat;
   std::string objectName;
-  arma::field<std::string> headers;
   ImageInfo imgInfo;
+};
+
+class CSVOptions : public DataOptions
+{
+
+ public:
+   CSVOptions(
+       bool hasHeaders = false,
+       bool semiColon = false,
+       bool missingToNan = false,
+       bool categorical = false,
+       bool timeseries = false,
+       int samplingRate = 0) :
+     hasHeaders(hasHeaders),
+     semiColon(semiColon),
+     missingToNan(missingToNan),
+     categorical(categorical),
+     timeseries(timeseries)
+  {
+    // Do Nothing.
+  }
+
+  //! Get if the dataset hasHeaders or not.
+  const bool& HasHeaders() const { return hasHeaders; }
+
+  //! Modify the dataset if it hasHeaders.
+  bool& HasHeaders() { return hasHeaders; }
+
+  //! Get if the separator is a semicolon in the matrix.
+  const bool& SemiColon() const { return semiColon; }
+
+  //! Modify the separator type in the matrix.
+  bool& SemiColon() { return semiColon; }
+
+  //! Get if the separator is a semicolon in the matrix.
+  const bool& MissingToNan() const { return missingToNan; }
+
+  //! Modify the separator type in the matrix.
+  bool& MissingToNan() { return missingToNan; }
+
+  //! Get if the categorical data exists.
+  const bool& Categorical() const { return categorical; }
+
+  //! Modify if we have categorical data in the dataset.
+  bool& Categorical() { return categorical; }
+
+  //! Get if we are loading an timeseries.
+  const bool& Timeseries() const { return timeseries; }
+
+  //! Modify if we are loading an timeseries.
+  bool& Timeseries() { return timeseries; }
+
+  //! Get the Sampling rate.
+  const int& SamplingRate() const (return samplingRate);
+
+  //! Set the sampling rate in HZ
+  void SamplingRate(int hz) { samplingRate = hz; }
+
+  //! Get the Sampling rate.
+  const int& WindowSize() const (return WindowSize);
+
+  //! Set the sampling rate in the time unit extracted from Sampling Rate.
+  // If Sampling Rate is in kHz then Window size is in ms.
+  // If Sampling Rate is in Hz then Window size is in s, etc.
+  void WindowSize(int size) { WindowSize = size; }
+
+  //! Get the headers.
+  const arma::field<std::string>& Headers() const { return headers; }
+
+  //! Modify the headers.
+  arma::field<std::string>& Headers() { return headers; }
+
+ private:
+  bool semiColon;
+  bool missingToNan;
+  bool categorical;   
+  bool timeseries;
+  bool timestampCol;
+  bool labelCol;
+  int samplingRate;
+  arma::field<std::string> headers;
   DatasetInfo mapper;
 };
+
+inline CSVOptions operator|(const CSVOptions& a, CSVOptions& b)
+{
+  DataOption output;
+  output.SemiColon() = a.SemiColon() | b.SemiColon();
+  output.MissingToNan() = a.MissingToNan() | b.MissingToNan();
+  output.Categorical() = a.Categorical() | b.Categorical();
+  output.Timeseries() = a.Timeseries() | b.Timeseries();
+}
 
 inline DataOptions operator|(const DataOptions& a, const DataOptions& b)
 {
   DataOptions output;
   output.Fatal() = a.Fatal() | b.Fatal();
   output.NoTranspose() = a.NoTranspose() | b.NoTranspose();
-  output.SemiColon() = a.SemiColon() | b.SemiColon();
-  output.MissingToNan() = a.MissingToNan() | b.MissingToNan();
-  output.Categorical() = a.Categorical() | b.Categorical();
   output.Image() = a.Image() | b.Image();
   output.Model() = a.Model() | b.Model();
 
