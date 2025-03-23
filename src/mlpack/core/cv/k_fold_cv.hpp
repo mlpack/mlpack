@@ -177,22 +177,46 @@ class KFoldCV :
    * Shuffle the data.  This overload is called if weights are not supported by
    * the model type.
    */
-  template<bool Enabled = !Base::MIE::SupportsWeights,
-           typename = std::enable_if_t<Enabled>>
+  template<bool Enabled = !KFoldCVBase<
+      KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+      MLAlgorithm,
+      Metric,
+      MatType,
+      PredictionsType,
+      WeightsType>::Base::MIE::SupportsWeights,
+          typename = std::enable_if_t<Enabled>>
   void Shuffle();
 
   /**
    * Shuffle the data.  This overload is called if weights are supported by the
    * model type.
    */
-  template<bool Enabled = Base::MIE::SupportsWeights,
-           typename = std::enable_if_t<Enabled>,
-           typename = void>
+  template<bool Enabled = KFoldCVBase<
+      KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+      MLAlgorithm,
+      Metric,
+      MatType,
+      PredictionsType,
+      WeightsType>::Base::MIE::SupportsWeights,
+          typename = std::enable_if_t<Enabled>,
+          typename = void>
   void Shuffle();
 
-  using KFoldCVBase::Evaluate;
+  using KFoldCVBase<
+      KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+      MLAlgorithm,
+      Metric,
+      MatType,
+      PredictionsType,
+      WeightsType>::Evaluate;
 
-  using KFoldCVBase::Model;
+  using KFoldCVBase<
+    KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+    MLAlgorithm,
+    Metric,
+    MatType,
+    PredictionsType,
+    WeightsType>::Model;
 
  private:
   template<typename, typename, typename, typename, typename, typename>
