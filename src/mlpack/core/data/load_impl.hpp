@@ -112,24 +112,85 @@ bool Load(const std::string& filename,
   return Load(filename, matrix, copyOpts);
 }
 
+
+/**
+ * This function loads sensor data into an armadillo matrix.
+ * It assumes that the data is loaded without the possibility to deduce the
+ * timestamp from the data itself, but instead the user needs to provide the
+ * sampling rate for this data. It also remove the label and timestamp columns
+ * if they exist since they are not relevant directly.
+ *
+ * The particularity of this data is the sampling rate. This rate is going to
+ * let us define the window size and the number of windows in our dataset
+ *
+ * Usually sensor collected data does not have a timestamp in the CSV file
+ * itself, but instead it has the label either as a filename or provided by the
+ * user during ingestion. They are never as a column. Even so we test this case
+ * and eliminated it if necessary.
+ */
 template<typename eT>
 bool LoadTimeseries(const std::string& filename,
                     arma::Mat<eT>& matrix,
                     DataOptions& opts)
 {
-  //1. Load the entire dataset into a one matrix
-  //2. The dataset is long timeseries, so there is no label at the end.
-  //3. Cut the cols (since it is transposed) to the number according to the
-  //sampling rate.
-  //4. Check if there is a timestamp col / row, if not continue as proposed.
-  //5. If the sampling rate is not specified, or no timestamp col is specified
-  //then throw an error.
-  //6. each one of the cut put it into its own Rowvec
-  //7. Iterate until the end. and agglomerate all the cuts.
-  //8. Finally re-transpose if necessary, you have the data matrix ready.
-  return true;
+  if (opts.WindowSize() == 0)
+    throw std::runtime_error("Window size is required for timeseries data!");
+
+  // Transpose temporary to faciliate the cases in this function.
+  // If Transpose is not used, the execution continue as supposed to.
+  if (!opts.NoTranspose())
+  {
+    inplace_trans(matrix);
+  }
+  if (!opts.TimestampCol() && !opts.LabelCol())
+  {
+    ReshapeTimeseries(matrix, opts);
+  }
+  else if (opts.TimestampCol() && opts.LabelCol())
+  {
+    matrix.shed_col(0);
+    matrix.shed_col(matrix.n_cols - 1);
+    ReshapeTimeseries(matrix, opts);
+  }
+  else if (!opts.TimestampCol() && opts.LabelCol())
+  {
+    matrix.shed_col(matrix.n_cols - 1);
+    ReshapeTimeseries(matrix, opts);
+  }
+  else if (opts.TimestampCol() && !opts.LabelCol())
+  {
+    matrix.shed_col(0);
+    ReshapeTimeseries(matrix, opts);
+  }
+
+   // Re-Transpose back to faciliate the cases in this function.
+  if (!opts.NoTranspose())
+  {
+    inplace_trans(matrix);
+  }
+  return success;
 } 
- 
+
+/*
+ * This function convert timeseries data collected from sensors into specific
+ * Windows that are suitable to training for machine learning.
+ * 
+ * This function is internal and should not be documented or used by users.
+ *
+ * This function only works on non-transposed matrices
+ */
+template<typename eT>
+bool ReshapeTimeseries(arma::Mat<eT>& matrix,
+                       DataOptions& opts)
+{
+  arma::Mat<eT> tmpMat = matrix.as_row();
+  size_t totalWindows = tmpMat.n_elem / opts.WindowSize();
+  //! This operation will give us by default a transposed operation.
+  //! Therefore we need to transpose back.
+  matrix = reshape(tmpMat, samplingRate, totalWindows);
+  inplace_trans(matrix);
+}
+
 // This is the function that the user is supposed to call.
 // Other functions of this class should be labelled as private.
 template<typename MatType>
