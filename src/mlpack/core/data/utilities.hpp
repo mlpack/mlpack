@@ -53,9 +53,9 @@ void TransposeTokens(std::vector<std::vector<std::string>> const &input,
 }
 } // namespace details
 
-inline
+template<typename DataOptionsType>
 bool OpenFile(const std::string& filename,
-              DataOptions& opts,
+              DataOptionsType& opts,
               bool isLoading,
               std::fstream& stream)
 {
@@ -68,7 +68,7 @@ bool OpenFile(const std::string& filename,
     stream.open(filename.c_str(), std::fstream::in);
 #endif
   }
-  else if (opts.Model())
+  else if constexpr (std::is_same_v<DataOptionsType, ModelOptions>)
   {
 #ifdef _WIN32 // Open non-text types in binary mode on Windows.
   if (opts.DataFormat() == format::binary)
@@ -107,13 +107,13 @@ bool OpenFile(const std::string& filename,
   return true;
 }
 
-inline
+template<typename DataOptionsType>
 bool DetectFileType(const std::string& filename,
-                    DataOptions& opts,
+                    DataOptionsType& opts,
                     bool isLoading,
                     std::fstream* stream = nullptr)
 {
-  if (opts.Model())
+  if constexpr (std::is_same_v<DataOptionsType, ModelOptions>)
   {
     if (opts.DataFormat() == format::autodetect)
     {

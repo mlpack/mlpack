@@ -198,7 +198,7 @@ void ReshapeTimeseries(arma::Mat<eT>& matrix,
 template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
-          DataOptionsType& OptsType)
+          DataOptionsType& opts)
 {
   Timer::Start("loading_data");
 
@@ -385,7 +385,7 @@ bool LoadSparse(const std::string& filename,
 template<typename eT>
 bool LoadCategorical(const std::string& filename,
                      arma::Mat<eT>& matrix,
-                     DataOptions& opts)
+                     CSVOptions& opts)
 {
   // Get the extension and load as necessary.
   Timer::Start("loading_data");

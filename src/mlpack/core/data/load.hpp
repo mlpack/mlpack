@@ -89,10 +89,10 @@ bool Load(const std::string& filename,
  * @param opts DataOptions to be passed to the function
  * @return Boolean value indicating success or failure of load.
  */
-template<typename MatType>
+template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
-          DataOptions& opts);
+          DataOptionsType& opts);
 
 /**
  * This function a set of several dataset files into one matrix.

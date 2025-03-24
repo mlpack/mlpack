@@ -89,7 +89,10 @@ void OutputParamImpl(
       std::get<1>(*std::any_cast<TupleType>(&data.value));
 
   if (filename != "")
+  {
+    data::ModelOptions opts;
     data::Save(filename, "model", *output);
+  }
 }
 
 //! Output a mapped dataset.

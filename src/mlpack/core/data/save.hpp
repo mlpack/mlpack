@@ -81,10 +81,10 @@ bool Save(const std::string& filename,
  * @param opts DataOptions to be passed to the function
  * @return Boolean value indicating success or failure of Save.
  */
-template<typename MatType>
+template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          DataOptions& opts);
+          DataOptionsType& opts);
 
 /**
  * Saves a sparse matrix to file, guessing the filetype from the

@@ -84,10 +84,9 @@ bool Save(const std::string& filename,
           const bool fatal,
           format f)
 {
-  DataOptions opts;
+  ModelOptions opts;
   opts.ObjectName() = name;
   opts.Fatal() = fatal;
-  opts.Model() = true;
   opts.DataFormat() = f;
 
   return SaveModel(filename, t, opts);
@@ -103,7 +102,7 @@ bool Save(const std::string& filename,
   return Save(filename, matrix, copyOpts);
 }
 
-template<typename MatType, DataOptionsType>
+template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
           DataOptions& opts)
@@ -217,7 +216,7 @@ bool SaveSparse(const std::string& filename,
 template<typename Object>
 bool SaveModel(const std::string& filename,
                Object& objectToSerialize,
-               DataOptions& opts,
+               ModelOptions& opts,
                std::fstream* stream = nullptr)
 {
   try

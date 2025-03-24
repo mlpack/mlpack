@@ -288,8 +288,9 @@ inline FileType AutoDetect(std::fstream& stream, const std::string& filename)
  * @param filename Name of the file whose type we should detect.
  * @return Detected type of file.
  */
-inline void DetectFromExtension(const std::string& filename,
-                                DataOptions& opts)
+template<typename DataOptionsType>
+void DetectFromExtension(const std::string& filename,
+                         DataOptionsType& opts)
 {
   const std::string extension = Extension(filename);
 
@@ -318,21 +319,24 @@ inline void DetectFromExtension(const std::string& filename,
   {
     opts.FileFormat() = FileType::ArffASCII;
   }
-  else if (extension == "xml")
+  else if constexpr (std::is_same_v<DataOptionsType, ModelOptions>)
   {
-    opts.DataFormat() = format::xml;
-  }
-  else if (extension == "bin")
-  {
-    opts.DataFormat() = format::binary;
-  }
-  else if (extension == "json")
-  {
-    opts.DataFormat() = format::json;
-  }
-  else
-  {
-    opts.FileFormat() = FileType::FileTypeUnknown;
+    if (extension == "xml")
+    {
+      opts.DataFormat() = format::xml;
+    }
+    else if (extension == "bin")
+    {
+      opts.DataFormat() = format::binary;
+    }
+    else if (extension == "json")
+    {
+      opts.DataFormat() = format::json;
+    }
+    else
+    {
+      opts.FileFormat() = FileType::FileTypeUnknown;
+    }
   }
 }
 

@@ -334,6 +334,18 @@ struct IsRow<arma::Row<eT>>
   constexpr static bool value = true;
 };
 
+template<typename MatType>
+struct IsDense
+{
+  constexpr static bool value = false;
+};
+
+template<typename eT>
+struct IsDense<arma::Mat<eT>>
+{
+  constexpr static bool value = true;
+};
+
 template<typename T>
 struct IsArma
 {
