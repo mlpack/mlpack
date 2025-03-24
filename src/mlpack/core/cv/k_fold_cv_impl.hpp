@@ -27,7 +27,7 @@ KFoldCV<MLAlgorithm,
                               const MatType& xs,
                               const PredictionsType& ys,
                               const bool shuffle) :
-    KFoldCVBaseKFoldCVBase<
+    KFoldCVBase<
         KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
         MLAlgorithm,
         Metric,

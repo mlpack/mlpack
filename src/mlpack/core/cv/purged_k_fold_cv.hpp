@@ -31,13 +31,13 @@ template<typename MLAlgorithm,
              typename MetaInfoExtractor<MLAlgorithm, MatType,
                  PredictionsType>::WeightsType>
 class PurgedKFoldCV :
-  private KFoldCVBase<
-    PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
-    MLAlgorithm,
-    Metric,
-    MatType,
-    PredictionsType,
-    WeightsType>
+    private KFoldCVBase<
+        PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>
 {
  public:
   /**
@@ -56,11 +56,12 @@ class PurgedKFoldCV :
     * @param[in] intervals A `2 x m` matrix, where each column stores the start
     *                      and end sample of an interval.
     */
-  PurgedKFoldCV(size_t k,
-    double embargoPercentage,
-    const MatType& xs,
-    const PredictionsType& ys,
-    const MatType& intervals);
+  PurgedKFoldCV(
+      size_t k,
+      double embargoPercentage,
+      const MatType& xs,
+      const PredictionsType& ys,
+      const MatType& intervals);
 
   /**
     * This constructor can be used for multiclass classification algorithms.
@@ -77,12 +78,13 @@ class PurgedKFoldCV :
     * @param[in] intervals A `2 x m` matrix, where each column stores the start
     *                      and end sample of an interval.
     */
-  PurgedKFoldCV(size_t k,
-    double embargoPercentage,
-    const MatType& xs,
-    const PredictionsType& ys,
-    const size_t numClasses,
-    const MatType& intervals);
+  PurgedKFoldCV(
+      size_t k,
+      double embargoPercentage,
+      const MatType& xs,
+      const PredictionsType& ys,
+      const size_t numClasses,
+      const MatType& intervals);
 
   /**
     * This constructor can be used for multiclass classification algorithms that
@@ -101,13 +103,14 @@ class PurgedKFoldCV :
     * @param[in] intervals A `2 x m` matrix, where each column stores the start
     *                      and end sample of an interval.
     */
-  PurgedKFoldCV(size_t k,
-    double embargoPercentage,
-    const MatType& xs,
-    const data::DatasetInfo& datasetInfo,
-    const PredictionsType& ys,
-    const size_t numClasses,
-    const MatType& intervals);
+  PurgedKFoldCV(
+      size_t k,
+      double embargoPercentage,
+      const MatType& xs,
+      const data::DatasetInfo& datasetInfo,
+      const PredictionsType& ys,
+      const size_t numClasses,
+      const MatType& intervals);
 
   /**
     * This constructor can be used for regression and binary classification
@@ -126,12 +129,13 @@ class PurgedKFoldCV :
     * @param[in] intervals A `2 x m` matrix, where each column stores the start
     *                      and end sample of an interval.
     */
-  PurgedKFoldCV(size_t k,
-    double embargoPercentage,
-    const MatType& xs,
-    const PredictionsType& ys,
-    const WeightsType& weights,
-    const MatType& intervals);
+  PurgedKFoldCV(
+      size_t k,
+      double embargoPercentage,
+      const MatType& xs,
+      const PredictionsType& ys,
+      const WeightsType& weights,
+      const MatType& intervals);
 
   /**
     * This constructor can be used for multiclass classification algorithms that
@@ -150,13 +154,14 @@ class PurgedKFoldCV :
     * @param[in] intervals A `2 x m` matrix, where each column stores the start
     *                      and end sample of an interval.
     */
-  PurgedKFoldCV(size_t k,
-    double embargoPercentage,
-    const MatType& xs,
-    const PredictionsType& ys,
-    const size_t numClasses,
-    const WeightsType& weights,
-    const MatType& intervals);
+  PurgedKFoldCV(
+      size_t k,
+      double embargoPercentage,
+      const MatType& xs,
+      const PredictionsType& ys,
+      const size_t numClasses,
+      const WeightsType& weights,
+      const MatType& intervals);
 
   /**
     * This constructor can be used for multiclass classification algorithms that
@@ -176,22 +181,35 @@ class PurgedKFoldCV :
     * @param[in] intervals A `2 x m` matrix, where each column stores the start
     *                      and end sample of an interval.
     */
-  PurgedKFoldCV(size_t k,
-    double embargoPercentage,
-    const MatType& xs,
-    const data::DatasetInfo& datasetInfo,
-    const PredictionsType& ys,
-    const size_t numClasses,
-    const WeightsType& weights,
-    const MatType& intervals);
+  PurgedKFoldCV(
+      size_t k,
+      double embargoPercentage,
+      const MatType& xs,
+      const data::DatasetInfo& datasetInfo,
+      const PredictionsType& ys,
+      const size_t numClasses,
+      const WeightsType& weights,
+      const MatType& intervals);
 
-  using KFoldCVBase::Evaluate;
+  using KFoldCVBase<
+      PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+      MLAlgorithm,
+      Metric,
+      MatType,
+      PredictionsType,
+      WeightsType>::Evaluate;
 
-  using KFoldCVBase::Model;
+  using KFoldCVBase<
+      PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+      MLAlgorithm,
+      Metric,
+      MatType,
+      PredictionsType,
+      WeightsType>::Model;
 
  private:
   template<typename, typename, typename, typename, typename, typename>
-    friend class KFoldCVBase;
+  friend class KFoldCVBase;
 
   friend class PurgedKFoldCVTest;
 
@@ -208,32 +226,32 @@ class PurgedKFoldCV :
    */
   template<typename ElementType>
   inline arma::Mat<ElementType> GetTrainingSubset(
-    const arma::Mat<ElementType>& m,
-    size_t i);
+      const arma::Mat<ElementType>& m,
+      size_t i);
 
   /**
    * Get the ith training subset from a variable of a row type.
    */
   template<typename ElementType>
   inline arma::Row<ElementType> GetTrainingSubset(
-    const arma::Row<ElementType>& r,
-    size_t i);
+      const arma::Row<ElementType>& r,
+      size_t i);
 
   /**
    * Get the ith validation subset from a variable of a matrix type.
    */
   template<typename ElementType>
   inline arma::Mat<ElementType> GetValidationSubset(
-    const arma::Mat<ElementType>& m,
-    size_t i);
+      const arma::Mat<ElementType>& m,
+      size_t i);
 
   /**
    * Get the ith validation subset from a variable of a row type.
    */
   template<typename ElementType>
   inline arma::Row<ElementType> GetValidationSubset(
-    const arma::Row<ElementType>& r,
-    size_t i);
+      const arma::Row<ElementType>& r,
+      size_t i);
 
   /**
    * Check the invariants on the intervals member.
