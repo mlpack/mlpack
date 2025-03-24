@@ -19,7 +19,7 @@ namespace data {
 template<typename MatType>
 bool LoadCSVASCII(const std::string& filename,
                   MatType& matrix,
-                  const DataOptions& opts)
+                  const CSVOptions& opts)
 {
   bool success = false;
 

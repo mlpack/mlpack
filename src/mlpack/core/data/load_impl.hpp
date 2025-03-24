@@ -131,11 +131,13 @@ bool Load(const std::string& filename,
 template<typename eT>
 bool LoadTimeseries(const std::string& filename,
                     arma::Mat<eT>& matrix,
-                    DataOptions& opts)
+                    CSVOptions& opts,
+                    std::fstream& stream)
 {
   if (opts.WindowSize() == 0)
     throw std::runtime_error("Window size is required for timeseries data!");
 
+  bool success = LoadDense(filename, matrix, opts, stream);
   // Transpose temporary to faciliate the cases in this function.
   // If Transpose is not used, the execution continue as supposed to.
   if (!opts.NoTranspose())
@@ -180,25 +182,24 @@ bool LoadTimeseries(const std::string& filename,
  * This function only works on non-transposed matrices
  */
 template<typename eT>
-bool ReshapeTimeseries(arma::Mat<eT>& matrix,
-                       DataOptions& opts)
+void ReshapeTimeseries(arma::Mat<eT>& matrix,
+                       CSVOptions& opts)
 {
   arma::Mat<eT> tmpMat = matrix.as_row();
   size_t totalWindows = tmpMat.n_elem / opts.WindowSize();
   //! This operation will give us by default a transposed operation.
   //! Therefore we need to transpose back.
-  matrix = reshape(tmpMat, samplingRate, totalWindows);
+  matrix = reshape(tmpMat, opts.WindowSize(), totalWindows);
   inplace_trans(matrix);
 }
 
 // This is the function that the user is supposed to call.
 // Other functions of this class should be labelled as private.
-template<typename MatType>
+template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
-          DataOptions& opts)
+          DataOptionsType& OptsType)
 {
-  using eT = typename MatType::elem_type;
   Timer::Start("loading_data");
 
   bool success = false;
@@ -217,30 +218,42 @@ bool Load(const std::string& filename,
     return false;
   }
 
-  if constexpr (std::is_same_v<MatType, arma::SpMat<eT>>)
+  if (std::is_same_v<DataOptionsType, CSVOptions>)
   {
-    success = LoadSparse(filename, matrix, opts, stream);
+    if constexpr (IsSparseMat<MatType>::value)
+    {
+      success = LoadSparse(filename, matrix, opts, stream);
+    }
+    else if (opts.Categorical() || (opts.FileFormat() == FileType::ArffASCII))
+    {
+      success = LoadCategorical(filename, matrix, opts);
+    }
+    else if (opts.Timeseries() && IsDense<MatType>::value)
+    {
+      success = LoadTimeseries(filename, matrix, opts, stream);
+    }
+    else if constexpr (MatType::is_col)
+    {
+      success = LoadCol(filename, matrix, opts, stream);
+    }
+    else if constexpr (MatType::is_row)
+    {
+      success = LoadRow(filename, matrix, opts, stream);
+    }
+    else if constexpr (IsDense<MatType>::value) 
+    {
+      success = LoadDense(filename, matrix, opts, stream);
+    }
   }
-  else if (opts.Categorical() || (opts.FileFormat() == FileType::ArffASCII))
+  else if (std::is_same_v<DataOptionsType, ImageOptions>)
   {
-    success = LoadCategorical(filename, matrix, opts);
+
   }
-  else if (opts.Timeseries())
+  else if (std::is_same_v<DataOptionsType, ModelOptions>)
   {
-    success = LoadTimeseries(filename, matrix, opts);
+
   }
-  else if constexpr (MatType::is_col)
-  {
-    success = LoadCol(filename, matrix, opts, stream);
-  }
-  else if constexpr (MatType::is_row)
-  {
-    success = LoadRow(filename, matrix, opts, stream);
-  }
-  else if constexpr (std::is_same_v<MatType, arma::Mat<eT>>) 
-  {
-    success = LoadDense(filename, matrix, opts, stream);
-  }
+
 
   if (!success)
   {

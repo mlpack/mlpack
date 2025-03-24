@@ -103,7 +103,7 @@ bool Save(const std::string& filename,
   return Save(filename, matrix, copyOpts);
 }
 
-template<typename MatType>
+template<typename MatType, DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
           DataOptions& opts)
@@ -128,28 +128,33 @@ bool Save(const std::string& filename,
   // Try to save the file.
   Log::Info << "Saving " << opts.FileTypeToString() << " to '" << filename
       << "'." << std::endl;
-
-  if constexpr (IsSparseMat<MatType>::value)
+  if (std::is_same_v<DataOptionsType, CSVOptions>)
   {
-    success = SaveSparse(filename, matrix, opts);
+    if constexpr (IsSparseMat<MatType>::value)
+    {
+      success = SaveSparse(filename, matrix, opts);
+    }
+    else if constexpr (IsCol<MatType>::value)
+    {
+      opts.NoTranspose() = true;
+      success = SaveDense(filename, matrix, opts, stream);
+    }
+    else if constexpr (IsRow<MatType>::value)
+    {
+      opts.NoTranspose() = false;
+      success = SaveDense(filename, matrix, opts, stream);
+    }
+    else if (IsDense<MatType>::value)
+    {
+      success = SaveDense(filename, matrix, opts, stream);
+    }
   }
-  else if constexpr (IsCol<MatType>::value)
+  else if (std::is_same_v<DataOptionsType, ImageOptions>)
   {
-    opts.NoTranspose() = true;
-    success = SaveDense(filename, matrix, opts, stream);
   }
-  else if constexpr (IsRow<MatType>::value)
-  {
-    opts.NoTranspose() = false;
-    success = SaveDense(filename, matrix, opts, stream);
-  }
-  else if (opts.Model() && !IsAnyArmaBaseType<MatType>::value)
+  else if (std::is_same_v<DataOptionsType, ModelOptions>)
   {
     success = SaveModel(filename, matrix, opts, &stream);
-  }
-  else
-  {
-    success = SaveDense(filename, matrix, opts, stream);
   }
 
   if (!success)
