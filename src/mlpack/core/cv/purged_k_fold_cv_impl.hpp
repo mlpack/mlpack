@@ -31,7 +31,13 @@ PurgedKFoldCV<
         const MatType& xs,
         const PredictionsType& ys,
         const MatType& intervals) :
-  KFoldCVBase(k, xs, ys),
+  KFoldCVBase<
+        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>(k, xs, ys),
   embargoPercentage(embargoPercentage),
   intervals(intervals)
 {
@@ -55,7 +61,13 @@ PurgedKFoldCV<
         const PredictionsType& ys,
         const size_t numClasses,
         const MatType& intervals) :
-  KFoldCVBase(k, xs, ys, numClasses),
+  KFoldCVBase<
+        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>(k, xs, ys, numClasses),
   embargoPercentage(embargoPercentage),
   intervals(intervals)
 {
@@ -80,7 +92,13 @@ PurgedKFoldCV<MLAlgorithm,
         const PredictionsType& ys,
         const size_t numClasses,
         const MatType& intervals) :
-  KFoldCVBase(k, xs, datasetInfo, ys, numClasses),
+  KFoldCVBase<
+        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>(k, xs, datasetInfo, ys, numClasses),
   embargoPercentage(embargoPercentage),
   intervals(intervals)
 {
@@ -105,7 +123,13 @@ PurgedKFoldCV<
         const PredictionsType& ys,
         const WeightsType& weights,
         const MatType& intervals) :
-  KFoldCVBase(k, xs, ys, weights),
+  KFoldCVBase<
+        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>(k, xs, ys, weights),
   embargoPercentage(embargoPercentage),
   intervals(intervals)
 {
@@ -131,7 +155,13 @@ PurgedKFoldCV<
         const size_t numClasses,
         const WeightsType& weights,
         const MatType& intervals) :
-  KFoldCVBase(k, xs, ys, numClasses, weights),
+  KFoldCVBase<
+        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>(k, xs, ys, numClasses, weights),
   embargoPercentage(embargoPercentage),
   intervals(intervals)
 {
@@ -158,7 +188,13 @@ PurgedKFoldCV<
         const size_t numClasses,
         const WeightsType& weights,
         const MatType& intervals) :
-  KFoldCVBase(k, xs, datasetInfo, ys, numClasses, weights),
+  KFoldCVBase<
+        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>(k, xs, datasetInfo, ys, numClasses, weights),
   embargoPercentage(embargoPercentage),
   intervals(intervals)
 {
