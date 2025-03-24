@@ -50,18 +50,10 @@ class DataOptions
   DataOptions(
       bool fatal = false,
       bool noTranspose = false,
-      bool image = false,
-      bool model = false,
-      FileType fileFormat = FileType::AutoDetect,
-      format dataFormat = format::binary,
-      std::string objectName = "") :
+      FileType fileFormat = FileType::AutoDetect) :
     fatal(fatal),
     noTranspose(noTranspose),
-    image(image),
-    model(model),
-    fileFormat(fileFormat),
-    dataFormat(dataFormat),
-    objectName(objectName)
+    fileFormat(fileFormat)
   {
     // Do nothing.
   }
@@ -79,47 +71,11 @@ class DataOptions
   //! Transpose the matrix if necessary.
   bool& NoTranspose() { return noTranspose; }
 
-  //! Get if we are loading an image.
-  const bool& Image() const { return image; }
-
-  //! Modify if we are loading an image.
-  bool& Image() { return image; }
-
-  //! Get if we are loading an model.
-  const bool& Model() const { return model; }
-
-  //! Modify if we are loading an model.
-  bool& Model() { return model; }
-
   //! Get the FileType.
   const FileType& FileFormat() const { return fileFormat; }
 
   //! Modify the FileType.
   FileType& FileFormat() { return fileFormat; }
-
-  //! Get the FileType.
-  const format& DataFormat() const { return dataFormat; }
-
-  //! Modify the FileType.
-  format& DataFormat() { return dataFormat; }
-
-  //! Get the FileType.
-  const ImageInfo& ImageInfos() const { return imgInfo; }
-
-  //! Modify the ImageInfo.
-  ImageInfo& ImageInfos() { return imgInfo; }
-
-  //! Get the FileType.
-  const DatasetInfo& Mapper() const { return mapper; }
-
-  //! Modify the DatasetMapper.
-  DatasetInfo & Mapper() { return mapper; }
-
-  //! Get if we are loading an image.
-  const std::string& ObjectName() const { return objectName; }
-
-  //! Modify if we are loading an image.
-  std::string& ObjectName() { return objectName; }
 
   /**
    * Given a file type, return a logical name corresponding to that file type.
@@ -144,13 +100,74 @@ class DataOptions
 
   //! Public options.
   bool fatal;
-  bool hasHeaders;
   bool noTranspose;
-  bool image;
-  bool model;
   FileType fileFormat;
+};
+
+class ModelOptions : public DataOptions
+{
+ public:
+
+   ModelOptions(
+       bool model = false,
+       format dataFormat = format::binary,
+       std::string objectName = "") :
+    model(model),
+    dataFormat(dataFormat),
+    objectName(objectName)
+  {
+    // Do Nothing.
+  }
+
+  //! Get if we are loading an model.
+  const bool& Model() const { return model; }
+
+  //! Modify if we are loading an model.
+  bool& Model() { return model; }
+
+  //! Get the FileType.
+  const format& DataFormat() const { return dataFormat; }
+
+  //! Modify the FileType.
+  format& DataFormat() { return dataFormat; }
+
+  //! Get if we are loading an image.
+  const std::string& ObjectName() const { return objectName; }
+
+  //! Modify if we are loading an image.
+  std::string& ObjectName() { return objectName; }
+
+ private:
+
+  bool model;
   format dataFormat;
   std::string objectName;
+};
+
+class ImageOptions : public DataOptions
+{
+ public:
+ 
+   ImageOptions(bool image = false) :
+    image(image)
+  {
+    // Do Nothing.
+  }
+  //! Get if we are loading an image.
+  const bool& Image() const { return image; }
+
+  //! Modify if we are loading an image.
+  bool& Image() { return image; }
+
+  //! Get the FileType.
+  const ImageInfo& ImageInfos() const { return imgInfo; }
+
+  //! Modify the ImageInfo.
+  ImageInfo& ImageInfos() { return imgInfo; }
+
+ private:
+
+  bool image;
   ImageInfo imgInfo;
 };
 
@@ -204,12 +221,6 @@ class CSVOptions : public DataOptions
   //! Modify if we have labelCol data in the dataset.
   bool& LabelCol() { return labelCol; }
 
-  //! Get if the labelCol exists.
-  const bool& LabelCol() const { return labelCol; }
-
-  //! Modify if we have labelCol data in the dataset.
-  bool& LabelCol() { return labelCol; }
-
   //! Get if the timestampCol exists.
   const bool& TimestampCol() const { return timestampCol; }
 
@@ -223,13 +234,13 @@ class CSVOptions : public DataOptions
   bool& Timeseries() { return timeseries; }
 
   //! Get the Sampling rate.
-  const int& SamplingRate() const (return samplingRate);
+  const int& SamplingRate() const { return samplingRate; }
 
   //! Set the sampling rate in HZ
   void SamplingRate(int hz) { samplingRate = hz; }
 
   //! Get the Sampling rate.
-  const int& WindowSize() const (return windowSize);
+  const int& WindowSize() const { return windowSize; }
 
   //! Set the sampling rate in the time unit extracted from Sampling Rate.
   // If Sampling Rate is in kHz then Window size is in ms.
@@ -242,52 +253,39 @@ class CSVOptions : public DataOptions
   //! Modify the headers.
   arma::field<std::string>& Headers() { return headers; }
 
+  //! Get the FileType.
+  const DatasetInfo& Mapper() const { return mapper; }
+
+  //! Modify the DatasetMapper.
+  DatasetInfo & Mapper() { return mapper; }
+
  private:
+  bool hasHeaders;
   bool semiColon;
   bool missingToNan;
   bool categorical;
   bool timeseries;
   bool timestampCol;
   bool labelCol;
-  bool timestampCol;
   int samplingRate;
-  int windowSize
+  int windowSize;
   arma::field<std::string> headers;
   DatasetInfo mapper;
 };
 
 inline CSVOptions operator|(const CSVOptions& a, CSVOptions& b)
 {
-  DataOption output;
+  CSVOptions output;
   output.SemiColon() = a.SemiColon() | b.SemiColon();
   output.MissingToNan() = a.MissingToNan() | b.MissingToNan();
   output.Categorical() = a.Categorical() | b.Categorical();
   output.Timeseries() = a.Timeseries() | b.Timeseries();
 }
 
-inline DataOptions operator|(const DataOptions& a, const DataOptions& b)
+inline ModelOptions operator|(const ModelOptions& a, const ModelOptions& b)
 {
-  DataOptions output;
-  output.Fatal() = a.Fatal() | b.Fatal();
-  output.NoTranspose() = a.NoTranspose() | b.NoTranspose();
-  output.Image() = a.Image() | b.Image();
+  ModelOptions output;
   output.Model() = a.Model() | b.Model();
-
-  if (a.FileFormat() == FileType::FileTypeUnknown)
-  {
-    output.FileFormat() = b.FileFormat();
-    return output;
-  }
-  else if (b.FileFormat() == FileType::FileTypeUnknown)
-  {
-    output.FileFormat() = a.FileFormat();
-    return output;
-  }
-
-  if (a.FileFormat() != b.FileFormat())
-    throw std::runtime_error("File formats don't match!");
-  else
-    output.FileFormat() = a.FileFormat();
 
   if (a.DataFormat() == format::unknown)
   {
@@ -308,6 +306,39 @@ inline DataOptions operator|(const DataOptions& a, const DataOptions& b)
   return output;
 }
 
+inline ImageOptions operator|(const ImageOptions& a, const ImageOptions& b)
+{
+  ImageOptions output;
+
+  output.Image() = a.Image() | b.Image();
+
+}
+
+inline DataOptions operator|(const DataOptions& a, const DataOptions& b)
+{
+  DataOptions output;
+  output.Fatal() = a.Fatal() | b.Fatal();
+  output.NoTranspose() = a.NoTranspose() | b.NoTranspose();
+
+  if (a.FileFormat() == FileType::FileTypeUnknown)
+  {
+    output.FileFormat() = b.FileFormat();
+    return output;
+  }
+  else if (b.FileFormat() == FileType::FileTypeUnknown)
+  {
+    output.FileFormat() = a.FileFormat();
+    return output;
+  }
+
+  if (a.FileFormat() != b.FileFormat())
+    throw std::runtime_error("File formats don't match!");
+  else
+    output.FileFormat() = a.FileFormat();
+
+  return output;
+}
+
 namespace DataOptionsTypes
 {
 
@@ -321,11 +352,6 @@ struct NoFatalOptions: public DataOptions
   inline NoFatalOptions() : DataOptions() { this->Fatal() = false; }
 };
 
-struct HasHeadersOptions : public DataOptions
-{
-  inline HasHeadersOptions() : DataOptions() { this->HasHeaders() = true; }
-};
-
 struct TransposeOptions : public DataOptions
 {
   inline TransposeOptions() : DataOptions() { this->NoTranspose() = false; }
@@ -336,62 +362,57 @@ struct NoTransposeOptions : public DataOptions
   inline NoTransposeOptions() : DataOptions() { this->NoTranspose() = true; }
 };
 
-struct SemiColonOptions : public DataOptions
+struct HasHeadersOptions : public CSVOptions
 {
-  inline SemiColonOptions() : DataOptions() { this->SemiColon() = true; }
+  inline HasHeadersOptions() : CSVOptions() { this->HasHeaders() = true; }
 };
 
-struct MissingToNanOptions : public DataOptions
+struct SemiColonOptions : public CSVOptions
 {
-  inline MissingToNanOptions() : DataOptions()
+  inline SemiColonOptions() : CSVOptions() { this->SemiColon() = true; }
+};
+
+struct MissingToNanOptions : public CSVOptions
+{
+  inline MissingToNanOptions() : CSVOptions()
   {
     this->MissingToNan() = true;
   }
 };
 
-struct CategoricalOptions : public DataOptions
+struct CategoricalOptions : public CSVOptions
 {
-  inline CategoricalOptions() : DataOptions() { this->Categorical() = true; }
-};
-
-struct ImageOptions : public DataOptions
-{
-  inline ImageOptions() : DataOptions() { this->Image() = true; }
-};
-
-struct ModelOptions : public DataOptions
-{
-  inline ModelOptions() : DataOptions() { this->Model() = true; }
+  inline CategoricalOptions() : CSVOptions() { this->Categorical() = true; }
 };
 
 //! Data serialization options 
-struct AutodetectOptions : public DataOptions
+struct AutodetectOptions : public ModelOptions
 {
-  inline AutodetectOptions() : DataOptions()
+  inline AutodetectOptions() : ModelOptions()
   {
     this->DataFormat() = format::autodetect;
   }
 };
 
-struct JsonDataOptions : public DataOptions
+struct JsonModelOptions : public ModelOptions
 {
-  inline JsonDataOptions() : DataOptions()
+  inline JsonModelOptions() : ModelOptions()
   {
     this->DataFormat() = format::json;
   }
 };
 
-struct XmlDataOptions : public DataOptions
+struct XmlModelOptions : public ModelOptions
 {
-  inline XmlDataOptions() : DataOptions()
+  inline XmlModelOptions() : ModelOptions()
   {
     this->DataFormat() = format::xml;
   }
 };
 
-struct BinaryDataOptions : public DataOptions
+struct BinaryModelOptions : public ModelOptions
 {
-  inline BinaryDataOptions() : DataOptions()
+  inline BinaryModelOptions() : ModelOptions()
   {
     this->DataFormat() = format::binary;
   }
@@ -489,8 +510,6 @@ static const DataOptionsTypes::NoTransposeOptions   NoTranspose;
 static const DataOptionsTypes::SemiColonOptions     SemiColon;
 static const DataOptionsTypes::MissingToNanOptions  MissingToNan;
 static const DataOptionsTypes::CategoricalOptions   Categorical;
-static const DataOptionsTypes::ImageOptions         Image;
-static const DataOptionsTypes::ModelOptions         Model;
 
 //! File options
 static const DataOptionsTypes::CSVOptions            CSV;
@@ -506,9 +525,9 @@ static const DataOptionsTypes::FileAutoDetectOptions AutoDetect_File;
 
 //! Data serialization options 
 static const DataOptionsTypes::AutodetectOptions    AutoDetect_SER;
-static const DataOptionsTypes::JsonDataOptions      JSON_SER;
-static const DataOptionsTypes::XmlDataOptions       XML_SER;
-static const DataOptionsTypes::BinaryDataOptions    BIN_SER;
+static const DataOptionsTypes::JsonModelOptions     JSON_SER;
+static const DataOptionsTypes::XmlModelOptions      XML_SER;
+static const DataOptionsTypes::BinaryModelOptions   BIN_SER;
 
 
 } // namespace data
