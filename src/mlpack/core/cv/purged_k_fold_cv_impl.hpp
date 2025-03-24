@@ -32,7 +32,7 @@ PurgedKFoldCV<
         const PredictionsType& ys,
         const MatType& intervals) :
   KFoldCVBase<
-        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+  PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
         MLAlgorithm,
         Metric,
         MatType,
@@ -62,7 +62,7 @@ PurgedKFoldCV<
         const size_t numClasses,
         const MatType& intervals) :
   KFoldCVBase<
-        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
         MLAlgorithm,
         Metric,
         MatType,
@@ -93,7 +93,7 @@ PurgedKFoldCV<MLAlgorithm,
         const size_t numClasses,
         const MatType& intervals) :
   KFoldCVBase<
-        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
         MLAlgorithm,
         Metric,
         MatType,
@@ -124,7 +124,7 @@ PurgedKFoldCV<
         const WeightsType& weights,
         const MatType& intervals) :
   KFoldCVBase<
-        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
         MLAlgorithm,
         Metric,
         MatType,
@@ -156,7 +156,7 @@ PurgedKFoldCV<
         const WeightsType& weights,
         const MatType& intervals) :
   KFoldCVBase<
-        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
         MLAlgorithm,
         Metric,
         MatType,
@@ -189,7 +189,7 @@ PurgedKFoldCV<
         const WeightsType& weights,
         const MatType& intervals) :
   KFoldCVBase<
-        KFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
         MLAlgorithm,
         Metric,
         MatType,
