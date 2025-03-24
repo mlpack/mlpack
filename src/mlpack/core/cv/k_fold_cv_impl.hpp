@@ -198,8 +198,8 @@ void KFoldCV<MLAlgorithm,
   // Now shuffle the data.
   ShuffleData(xsOrig, ysOrig, xsOrig, ysOrig);
 
-  InitKFoldCVMat(xsOrig, this->xs);
-  InitKFoldCVMat(ysOrig, this->ys);
+  this->InitKFoldCVMat(xsOrig, this->xs);
+  this->InitKFoldCVMat(ysOrig, this->ys);
 }
 
 template<typename MLAlgorithm,
@@ -227,10 +227,10 @@ void KFoldCV<MLAlgorithm,
   else
     ShuffleData(xsOrig, ysOrig, xsOrig, ysOrig);
 
-  InitKFoldCVMat(xsOrig, this->xs);
-  InitKFoldCVMat(ysOrig, this->ys);
+  this->InitKFoldCVMat(xsOrig, this->xs);
+  this->InitKFoldCVMat(ysOrig, this->ys);
   if (this->weights.n_elem > 0)
-    InitKFoldCVMat(weightsOrig, this->weights);
+    this->InitKFoldCVMat(weightsOrig, this->weights);
 }
 
 template<typename MLAlgorithm,

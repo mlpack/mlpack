@@ -321,8 +321,8 @@ arma::span PurgedKFoldCV<
 {
   const size_t firstCol(ValidationSubsetFirstCol(i));
 
-  return arma::span(this->firstCol,
-      std::min(this->firstCol + this->binSize,
+  return arma::span(firstCol,
+      std::min(firstCol + this->binSize,
           (this->k - 1) * this->binSize + this->lastBinSize) - 1);
 }
 
