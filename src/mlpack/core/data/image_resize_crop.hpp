@@ -168,6 +168,7 @@ inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
 
   //temporary matrix to hold the images while being resized.
   arma::Mat<eT> tmpImages(newHeight * newWidth * info.Channels(), images.n_cols);
+  #pragma omp parallel for
   for (size_t u = 0; u < images.n_cols; ++u)
   {
     if (nRowsCrop != 0)
