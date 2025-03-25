@@ -613,51 +613,58 @@ std::vector<std::string> smSheeps =
 mlpack::data::Save(smSheeps, images, info, false);
 ```
 
-### Crop and resize images
+### Resize and crop images
 
-In addition to resize images, mlpack provides also crop and resize
-functionality. The objective of this feature is to keep the aspect ratio in
-images where dimension differs largely. This idea is simple, the bigger
-dimension is found and then the images are Resized and cropped on that
-dimension only. This algorithm is suitable if the area of interest is in the
-center / or surrounding the center of the image, allowing to keep a high
-resolution of the area of interest when the image is resized. In the following
-example, we show how an image of a cat would look like after cropping or
-resizing:
+In addition to resizing images, mlpack also provides resize-and-crop
+functionality.  This is useful when the desired aspect ratio of an image differs
+largely from the original image.
 
-Original image:
+The resize-and-crop operation, given a target size `outputWidth` x
+`outputHeight`, first resizes the image while preserving the aspect ratio such
+that the width and height of the image both no smaller than `outputWidth` and
+`outputHeight`.  Then, the image is cropped to have size `outputWidth` by
+`outputHeight`, keeping the center pixels only.  This process is shown below.
 
-<p align="center" width="100%">
-    <img width="100%" src="../img/cat.jpg">
+*Original image:*
+
+<p align="center">
+  <img src="../img/cat.jpg" alt="cat">
 </p>
 
-Resized image:
+*Original image with target size of* `220`x`220` *pixels:*
 
-<p align="center" width="100%">
-    <img width="100%" src="../img/resized_cat.jpg">
+<p align="center">
+  <img src="../img/cat_rect.jpg" alt="cat with rectangle overlaid">
 </p>
 
-Cropped image:
+*First step: resize while preserving aspect ratio:*
 
-<p align="center" width="100%">
-    <img width="100%" src="../img/cropped_cat.jpg">
+<p align="center">
+  <img src="../img/cat_scaled_rect.jpg"
+       alt="scaled cat with rectangle overlaid">
 </p>
 
-Note: cropping is not applied on square images (height and width are equal),
-in this case, images are resized according to the new requestd size.
+*Second step: crop to desired final size:*
+
+<p align="center">
+  <img src="../img/cat_cropped.jpg" alt="cropped cat">
+</p>
 
 - `CropResizeImages(images, info, newWidth, newHeight)`
    * `images` is a [column-major matrix](matrices.md) containing a set of
       images; each image is represented as a flattened vector in one column.
 
    * `info` is a [`data::ImageInfo&`](#dataimageinfo) containing details about
-     the images in `images`, and will be modified to contain the new size of the
-     images.
+     the images in `images`.
+
+   * `images` and `info` are modified in-place.
 
    * `newWidth` and `newHeight` (of type `size_t`) are the desired new
      dimensions of the resized images.
-
-   * This function returns `void` and modifies `info` and `images`.
+     - If the output size is larger than the input image size, the images will
+       be upscaled the minimum amount necessary before cropping.
+     - If the aspect ratio is not changed from the input aspect ratio, no
+       cropping is performed.
 
    * ***NOTE:*** if the element type of `images` is not `unsigned char` or
      `float` (e.g. if `image` is not `arma::Mat<unsigned char>` or
@@ -665,15 +672,15 @@ in this case, images are resized according to the new requestd size.
      therefore, using `unsigned char` or `float` as the element type is the most
      efficient.
 
-   * This function expects all the images to have identical
-     dimensions. If this is not the case, iteratively call `CropResizeImages()` with
-     a single image/column in `images`.
-    
+   * This function expects all the images to have identical dimensions. If this
+     is not the case, iteratively call `CropResizeImages()` with a single
+     image/column in `images`.
+
 Example usage of the `CropResizeImages()` function on a set of images with
 different dimensions:
 
 ```c++
-// See https://datasets.mlpack.org/sheep.tar.bz2
+// See https://datasets.mlpack.org/sheep.tar.bz2.
 arma::Mat<unsigned char> image;
 mlpack::data::ImageInfo info;
 
@@ -691,13 +698,15 @@ std::vector<std::string> reSheeps =
      "re_sheep_5.jpg", "re_sheep_6.jpg", "re_sheep_7.jpg", "re_sheep_8.jpg",
      "re_sheep_9.jpg"};
 
-// Load and Resize each one of them individually, because they do not have
+// Load and resize-and-crop each image individually, because they do not have
 // the same dimensions. The `info` will contain the dimension for each one.
 for (size_t i = 0; i < files.size(); i++)
 {
   mlpack::data::Load(files.at(i), image, info, false);
   mlpack::data::CropResizeImages(image, info, 320, 320);
   mlpack::data::Save(reSheeps.at(i), image, info, false);
+  std::cout << "Converted " << files.at(i) << " to " << reSheeps.at(i)
+      << " with output size 320x320." << std::endl;
 }
 ```
 
