@@ -168,27 +168,26 @@ inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
 
   //temporary matrix to hold the images while being resized.
   arma::Mat<eT> tmpImages(newHeight * newWidth * info.Channels(), images.n_cols);
+  if (nRowsCrop != 0)
+  {
+    int cropUpDownEqually = (nRowsCrop / 2) * info.Channels() * midWidth;
+    tmpImages = images.rows(cropUpDownEqually, images.n_rows - cropUpDownEqually - 1);
+  }
+
   #pragma omp parallel for
   for (size_t u = 0; u < images.n_cols; ++u)
   {
-    if (nRowsCrop != 0)
-    { 
-      int cropUpDownEqually = (nRowsCrop / 2) * info.Channels() * midWidth;
-      arma::Col<eT> vec = images.col(u).subvec(cropUpDownEqually,
-          images.n_rows - cropUpDownEqually - 1);
-      tmpImages.col(u) = std::move(vec);
-    }
-    else if (nColsCrop != 0)
+    if (nColsCrop != 0)
     {
       // Saving some memory by avoiding copying the images.
       // R into Row 1.
       // G into Row 2.
       // B into Row 3.
       // Cols are the Width, no change
-      // Slices are the Heiht of the image instead of rows.
+      // Slices are the Height of the image instead of rows.
       arma::Cube<eT> cube(images.colptr(u), info.Channels(), midWidth,
           midHeight, false, false);
-      tmpImages.col(u) = vectorise(cube.cols((nColsCrop / 2), (nColsCrop / 2) + nColsCrop));
+      tmpImages.col(u) = vectorise(cube.cols((nColsCrop / 2), (cube.n_cols  - (nColsCrop / 2) - 1)));
     }
   }
   if (nRowsCrop != 0 || nColsCrop != 0)
