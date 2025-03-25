@@ -177,7 +177,7 @@ inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
           images.n_rows - cropUpDownEqually - 1);
       tmpImages.col(u) = std::move(vec);
     }
-    else if (nColsCrop !=0)
+    else if (nColsCrop != 0)
     {
       // Saving some memory by avoiding copying the images.
       // R into Row 1.
