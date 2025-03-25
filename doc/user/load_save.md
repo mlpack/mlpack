@@ -607,8 +607,8 @@ mlpack::data::ResizeImages(images, info, 160, 160);
 // contains the names of the resized images.
 std::vector<std::string> smSheeps =
     {"sm_sheep_1.jpg", "sm_sheep_2.jpg", "sm_sheep_3.jpg", "sm_sheep_4.jpg",
-     "sm_sheep_5.jpg", "sm_sheep_6.jpg", "re_sheep_7.jpg", "re_sheep_8.jpg",
-     "re_sheep_9.jpg"};
+     "sm_sheep_5.jpg", "sm_sheep_6.jpg", "sm_sheep_7.jpg", "sm_sheep_8.jpg",
+     "sm_sheep_9.jpg"};
 
 mlpack::data::Save(smSheeps, images, info, false);
 ```
