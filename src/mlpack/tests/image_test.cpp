@@ -298,3 +298,48 @@ TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", unsigned char, size_t,
     }
   }
 }
+
+/**
+ * Test that if we resize an image, we get the pixels that we expect.
+ */
+TEMPLATE_TEST_CASE("CropResizePixelTest", "[ImageTest]", unsigned char, size_t,
+    float, double)
+{
+  typedef TestType eT;
+
+  // Load cat.jpg, which has a strange aspect ratio.
+  arma::Mat<eT> image;
+  data::ImageInfo info;
+  REQUIRE(data::Load("cat.jpg", image, info, false) == true);
+
+  // When we crop to match the height of the image, no resizing is needed and we
+  // can compare pixels directly.
+  const size_t inputWidth = info.Width();
+  const size_t inputHeight = info.Height();
+  const size_t inputChannels = info.Channels();
+  const size_t leftOffset = (info.Width() - info.Height()) / 2;
+  arma::Mat<eT> oldImage(image);
+  CropResizeImages(image, info, inputHeight, inputHeight);
+
+  REQUIRE(info.Height() == inputHeight);
+  REQUIRE(info.Width() == inputHeight);
+  REQUIRE(info.Channels() == inputChannels);
+  REQUIRE(image.n_elem == info.Height() * info.Width() * info.Channels());
+
+  // Now make sure that all of the pixels are the same as from the center of the
+  // image.
+  for (size_t i = 0; i < image.n_elem; ++i)
+  {
+    const size_t channel = i % info.Channels();
+    const size_t pixel = (i / info.Channels());
+    const size_t x = pixel % info.Width();
+    const size_t y = pixel / info.Width();
+
+    const size_t inputPixel = y * (inputWidth * inputChannels) +
+        (x + leftOffset) * inputChannels + channel;
+    const size_t outputPixel = y * (info.Width() * info.Channels()) +
+        x * info.Channels() + channel;
+
+    REQUIRE(oldImage[inputPixel] == Approx(image[outputPixel]));
+  }
+}
