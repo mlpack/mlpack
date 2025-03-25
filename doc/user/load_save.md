@@ -692,11 +692,11 @@ std::vector<std::string> files =
      "sheep_9.jpg"};
 
 // The resized images will be saved locally. We are declaring the vector that
-// contains the names of the resized images.
-std::vector<std::string> reSheeps =
-    {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
-     "re_sheep_5.jpg", "re_sheep_6.jpg", "re_sheep_7.jpg", "re_sheep_8.jpg",
-     "re_sheep_9.jpg"};
+// contains the names of the resized and cropped images.
+std::vector<std::string> cropSheeps =
+    {"crop_sheep_1.jpg", "crop_sheep_2.jpg", "crop_sheep_3.jpg",
+     "crop_sheep_4.jpg", "crop_sheep_5.jpg", "crop_sheep_6.jpg",
+     "crop_sheep_7.jpg", "crop_sheep_8.jpg", "crop_sheep_9.jpg"};
 
 // Load and resize-and-crop each image individually, because they do not have
 // the same dimensions. The `info` will contain the dimension for each one.
@@ -704,9 +704,9 @@ for (size_t i = 0; i < files.size(); i++)
 {
   mlpack::data::Load(files.at(i), image, info, false);
   mlpack::data::CropResizeImages(image, info, 320, 320);
-  mlpack::data::Save(reSheeps.at(i), image, info, false);
-  std::cout << "Converted " << files.at(i) << " to " << reSheeps.at(i)
-      << " with output size 320x320." << std::endl;
+  mlpack::data::Save(cropSheeps.at(i), image, info, false);
+  std::cout << "Resized and cropped " << files.at(i) << " to "
+      << cropSheeps.at(i) << " with output size 320x320." << std::endl;
 }
 ```
 
