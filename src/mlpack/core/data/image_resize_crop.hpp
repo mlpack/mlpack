@@ -157,15 +157,10 @@ inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
 
   // Edge cases, what if the width / height value is odd ? then increase the
   // resize value to the closest pair number.
-  if (midHeight % 2 != 0 && midWidth % 2 == 0)
-      midHeight = midHeight + 1; 
-  else if (midWidth % 2 !=0 && midHeight % 2 == 0)
+  if (midHeight % 2 != 0)
+    midHeight = midHeight + 1; 
+  if (midWidth % 2 != 0)
     midWidth = midWidth + 1;
-  else if (midWidth % 2 !=0 && midHeight % 2 != 0)
-  {
-    midHeight = midHeight + 1;
-    midWidth = midWidth + 1;
-  }
 
   ResizeImages(images, info, midWidth, midHeight);
   int nColsCrop = midWidth > midHeight ? (midWidth - midHeight) : 0;
