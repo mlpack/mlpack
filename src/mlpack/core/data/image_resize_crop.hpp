@@ -188,14 +188,7 @@ inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
       // Slices are the Heiht of the image instead of rows.
       arma::Cube<eT> cube(images.colptr(u), info.Channels(), midWidth,
           midHeight, false, false);
-
-      cube.shed_cols(0, (nColsCrop / 2) - 1);
-      cube.shed_cols(cube.n_cols - (nColsCrop / 2), cube.n_cols - 1);
-
-      tmpImages.resize(newHeight * newWidth * info.Channels(), images.n_cols);
-
-      arma::Col<eT> alias_image(cube.memptr(), cube.n_elem, false, false);
-      tmpImages.col(u) = std::move(alias_image);
+      tmpImages.col(u) = vectorise(cube.cols((nColsCrop / 2), (nColsCrop / 2) + nColsCrop));
     }
   }
   if (nRowsCrop != 0 || nColsCrop != 0)
