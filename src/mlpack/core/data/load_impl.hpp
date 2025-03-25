@@ -220,29 +220,31 @@ bool Load(const std::string& filename,
 
   if (std::is_same_v<DataOptionsType, CSVOptions>)
   {
+    CSVOptions csvOpts(opts);
     if constexpr (IsSparseMat<MatType>::value)
     {
-      success = LoadSparse(filename, matrix, opts, stream);
+      success = LoadSparse(filename, matrix, csvOpts, stream);
     }
-    else if (opts.Categorical() || (opts.FileFormat() == FileType::ArffASCII))
+    else if (csvOpts.Categorical() ||
+        (csvOpts.FileFormat() == FileType::ArffASCII))
     {
-      success = LoadCategorical(filename, matrix, opts);
+      success = LoadCategorical(filename, matrix, csvOpts);
     }
-    else if (opts.Timeseries() && IsDense<MatType>::value)
+    else if (csvOpts.Timeseries() && IsDense<MatType>::value)
     {
-      success = LoadTimeseries(filename, matrix, opts, stream);
+      success = LoadTimeseries(filename, matrix, csvOpts, stream);
     }
     else if constexpr (MatType::is_col)
     {
-      success = LoadCol(filename, matrix, opts, stream);
+      success = LoadCol(filename, matrix, csvOpts, stream);
     }
     else if constexpr (MatType::is_row)
     {
-      success = LoadRow(filename, matrix, opts, stream);
+      success = LoadRow(filename, matrix, csvOpts, stream);
     }
     else if constexpr (IsDense<MatType>::value) 
     {
-      success = LoadDense(filename, matrix, opts, stream);
+      success = LoadDense(filename, matrix, csvOpts, stream);
     }
   }
   else if (std::is_same_v<DataOptionsType, ImageOptions>)
@@ -277,7 +279,7 @@ bool Load(const std::string& filename,
 template<typename MatType>
 bool LoadDense(const std::string& filename,
                MatType& matrix,
-               DataOptions& opts,
+               CSVOptions& opts,
                std::fstream& stream)
 {
   bool success;
@@ -311,7 +313,7 @@ bool LoadDense(const std::string& filename,
 template <typename eT>
 bool LoadSparse(const std::string& filename,
                 arma::SpMat<eT>& matrix,
-                DataOptions& opts,
+                CSVOptions& opts,
                 std::fstream& stream)
 {
   bool success;

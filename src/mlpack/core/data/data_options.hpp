@@ -191,6 +191,17 @@ class CSVOptions : public DataOptions
     // Do Nothing.
   }
 
+  explicit CSVOptions(const DataOptions& opts) :
+        DataOptions(opts),
+        hasHeaders(false),
+        semiColon(false),
+        missingToNan(false),
+        categorical(false),
+        timeseries(false)
+  {
+    // Do Nothing.
+  }
+
   //! Get if the dataset hasHeaders or not.
   const bool& HasHeaders() const { return hasHeaders; }
 
@@ -280,6 +291,7 @@ inline CSVOptions operator|(const CSVOptions& a, CSVOptions& b)
   output.MissingToNan() = a.MissingToNan() | b.MissingToNan();
   output.Categorical() = a.Categorical() | b.Categorical();
   output.Timeseries() = a.Timeseries() | b.Timeseries();
+  return output;
 }
 
 inline ModelOptions operator|(const ModelOptions& a, const ModelOptions& b)
@@ -312,6 +324,7 @@ inline ImageOptions operator|(const ImageOptions& a, const ImageOptions& b)
 
   output.Image() = a.Image() | b.Image();
 
+  return output;
 }
 
 inline DataOptions operator|(const DataOptions& a, const DataOptions& b)
