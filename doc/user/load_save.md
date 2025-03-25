@@ -613,7 +613,7 @@ std::vector<std::string> smSheeps =
 mlpack::data::Save(smSheeps, images, info, false);
 ```
 
-### Crop and Resize images.
+### Crop and resize images
 
 In addition to resize images, mlpack provides also crop and resize
 functionality. The objective of this feature is to keep the aspect ratio in
