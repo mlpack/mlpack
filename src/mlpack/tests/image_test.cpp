@@ -343,3 +343,32 @@ TEMPLATE_TEST_CASE("CropResizePixelTest", "[ImageTest]", unsigned char, size_t,
     REQUIRE(oldImage[inputPixel] == Approx(image[outputPixel]));
   }
 }
+
+/**
+ * Test that images can be upscaled if desired.
+ */
+TEMPLATE_TEST_CASE("CropResizeUpscaleTest", "[ImageTest]", unsigned char,
+    size_t, float, double)
+{
+  typedef TestType eT;
+
+  // Load cat.jpg, which has a strange aspect ratio.
+  arma::Mat<eT> image;
+  data::ImageInfo info;
+  REQUIRE(data::Load("cat.jpg", image, info, false) == true);
+
+  // When we crop to match the height of the image, no resizing is needed and we
+  // can compare pixels directly.
+  const size_t inputWidth = info.Width();
+  const size_t inputHeight = info.Height();
+  const size_t inputChannels = info.Channels();
+  const size_t leftOffset = (info.Width() - info.Height()) / 2;
+  arma::Mat<eT> oldImage(image);
+  CropResizeImages(image, info, 1000, 1000);
+
+  // Here we just check that the output image has the correct size.
+  REQUIRE(info.Height() == 1000);
+  REQUIRE(info.Width() == 1000);
+  REQUIRE(info.Channels() == inputChannels);
+  REQUIRE(image.n_elem == info.Height() * info.Width() * info.Channels());
+}
