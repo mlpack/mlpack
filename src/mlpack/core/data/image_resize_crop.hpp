@@ -160,7 +160,7 @@ inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
   // We have to avoid touching the image, of the user ask for it.
   // Add a condition to prevent cropping the image if the user did not ask for
   // any modification. Because cropping depends on the aspect ratio.
-  if (ratioH != 1 && ratioW != 1)
+  if (ratioH != 1 || ratioW != 1)
   {
     if (midHeight % 2 != 0)
       midHeight = midHeight + 1;
