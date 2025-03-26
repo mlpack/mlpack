@@ -23,7 +23,7 @@ namespace data {
 template<typename eT>
 bool LoadCol(const std::string& filename,
              arma::Col<eT>& vec,
-             DataOptions& opts,
+             CSVOptions& opts,
              std::fstream& stream)
 {
   // First load into auxiliary matrix.
@@ -89,7 +89,7 @@ bool LoadCol(const std::string& filename,
 template<typename eT>
 bool LoadRow(const std::string& filename,
              arma::Row<eT>& rowvec,
-             DataOptions& opts,
+             CSVOptions& opts,
              std::fstream& stream)
 {
   arma::Mat<eT> tmp;

@@ -60,7 +60,7 @@ void OutputParamImpl(
 
   if (output.n_elem > 0 && filename != "")
   {
-    data::DataOptions opts;
+    data::CSVOptions opts;
     opts.Fatal() = false;
     if (arma::is_Row<T>::value || arma::is_Col<T>::value)
       data::Save(filename, output, opts);
@@ -91,7 +91,7 @@ void OutputParamImpl(
   if (filename != "")
   {
     data::ModelOptions opts;
-    data::Save(filename, "model", *output);
+    data::Save(filename, *output, opts);
   }
 }
 
@@ -113,7 +113,7 @@ void OutputParamImpl(
   // overload for this.
   if (filename != "")
   {
-    data::DataOptions opts;
+    data::CSVOptions opts;
     opts.Fatal() = false;
     opts.NoTranspose() = data.noTranspose;
     data::Save(filename, matrix, opts);

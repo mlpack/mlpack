@@ -89,7 +89,7 @@ bool Save(const std::string& filename,
   opts.Fatal() = fatal;
   opts.DataFormat() = f;
 
-  return SaveModel(filename, t, opts);
+  return Save(filename, t, opts);
 }
 
 template<typename MatType>
@@ -105,7 +105,7 @@ bool Save(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          DataOptions& opts)
+          DataOptionsType& opts)
 {
   Timer::Start("saving_data");
 
@@ -129,23 +129,24 @@ bool Save(const std::string& filename,
       << "'." << std::endl;
   if (std::is_same_v<DataOptionsType, CSVOptions>)
   {
+    CSVOptions csvOpts(opts);
     if constexpr (IsSparseMat<MatType>::value)
     {
-      success = SaveSparse(filename, matrix, opts);
+      success = SaveSparse(filename, matrix, csvOpts);
     }
     else if constexpr (IsCol<MatType>::value)
     {
       opts.NoTranspose() = true;
-      success = SaveDense(filename, matrix, opts, stream);
+      success = SaveDense(filename, matrix, csvOpts, stream);
     }
     else if constexpr (IsRow<MatType>::value)
     {
       opts.NoTranspose() = false;
-      success = SaveDense(filename, matrix, opts, stream);
+      success = SaveDense(filename, matrix, csvOpts, stream);
     }
-    else if (IsDense<MatType>::value)
+    else if constexpr (IsDense<MatType>::value)
     {
-      success = SaveDense(filename, matrix, opts, stream);
+      success = SaveDense(filename, matrix, csvOpts, stream);
     }
   }
   else if (std::is_same_v<DataOptionsType, ImageOptions>)
@@ -153,7 +154,7 @@ bool Save(const std::string& filename,
   }
   else if (std::is_same_v<DataOptionsType, ModelOptions>)
   {
-    success = SaveModel(filename, matrix, opts, &stream);
+    //success = SaveModel(filename, matrix, opts, &stream);
   }
 
   if (!success)
@@ -174,7 +175,7 @@ bool Save(const std::string& filename,
 template<typename eT>
 bool SaveDense(const std::string& filename,
                const arma::Mat<eT>& matrix,
-               DataOptions& opts,
+               CSVOptions& opts,
                std::fstream& stream)
 {
   bool success = false;
@@ -195,7 +196,7 @@ bool SaveDense(const std::string& filename,
 template<typename eT>
 bool SaveSparse(const std::string& filename,
                 const arma::SpMat<eT>& matrix,
-                DataOptions& opts,
+                CSVOptions& opts,
                 std::fstream& stream)
 {
   bool success = false;
@@ -217,23 +218,23 @@ template<typename Object>
 bool SaveModel(const std::string& filename,
                Object& objectToSerialize,
                ModelOptions& opts,
-               std::fstream* stream = nullptr)
+               std::fstream& stream)
 {
   try
   {
     if (opts.DataFormat() == format::xml)
     {
-      cereal::XMLOutputArchive ar(*stream);
+      cereal::XMLOutputArchive ar(stream);
       ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
     }
     else if (opts.DataFormat() == format::json)
     {
-      cereal::JSONOutputArchive ar(*stream);
+      cereal::JSONOutputArchive ar(stream);
       ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
     }
     else if (opts.DataFormat() == format::binary)
     {
-      cereal::BinaryOutputArchive ar(*stream);
+      cereal::BinaryOutputArchive ar(stream);
       ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
     }
     return true;

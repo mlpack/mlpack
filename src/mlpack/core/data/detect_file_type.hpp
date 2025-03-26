@@ -60,8 +60,9 @@ inline FileType AutoDetect(std::fstream& stream,
  * @param filename Name of the file whose type we should detect.
  * @return Detected type of file.  arma::file_type_unknown if unknown.
  */
-inline void DetectFromExtension(const std::string& filename,
-                                DataOptions& opts);
+template<typename DataOptionsType>
+void DetectFromExtension(const std::string& filename,
+                         DataOptionsType& opts);
 
 /**
  * Count the number of columns in the file.  The file must be a CSV/TSV/TXT file
