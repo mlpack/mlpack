@@ -157,44 +157,49 @@ inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
 
   // Edge cases, what if the width / height value is odd ? then increase the
   // resize value to the closest pair number.
-  if (midHeight % 2 != 0)
-    midHeight = midHeight + 1;
-  if (midWidth % 2 != 0)
-    midWidth = midWidth + 1;
-
-  ResizeImages(images, info, midWidth, midHeight);
-  int nColsCrop = midWidth > midHeight ? (midWidth - midHeight) : 0;
-  int nRowsCrop = midHeight > midWidth ? (midHeight - midWidth) : 0;
-
-  //temporary matrix to hold the images while being resized.
-  arma::Mat<eT> tmpImages(newHeight * newWidth * info.Channels(), images.n_cols);
-  if (nRowsCrop != 0)
+  // We have to avoid touching the image, of the user ask for it.
+  // Add a condition to prevent cropping the image if the user did not ask for
+  // any modification. Because cropping depends on the aspect ratio.
+  if (ratioH != 1 && ratioW != 1)
   {
-    int cropUpDownEqually = (nRowsCrop / 2) * info.Channels() * midWidth;
-    tmpImages = images.rows(cropUpDownEqually, images.n_rows - cropUpDownEqually - 1);
-  }
+    if (midHeight % 2 != 0)
+      midHeight = midHeight + 1;
+    if (midWidth % 2 != 0)
+      midWidth = midWidth + 1;
+    
+    ResizeImages(images, info, midWidth, midHeight);
+    int nColsCrop = midWidth > midHeight ? (midWidth - midHeight) : 0;
+    int nRowsCrop = midHeight > midWidth ? (midHeight - midWidth) : 0;
 
-  #pragma omp parallel for
-  for (size_t u = 0; u < images.n_cols; ++u)
-  {
-    if (nColsCrop != 0)
+    //temporary matrix to hold the images while being resized.
+    arma::Mat<eT> tmpImages(newHeight * newWidth * info.Channels(), images.n_cols);
+    if (nRowsCrop != 0)
     {
-      // Saving some memory by avoiding copying the images.
-      // R into Row 1.
-      // G into Row 2.
-      // B into Row 3.
-      // Cols are the Width, no change
-      // Slices are the Height of the image instead of rows.
-      arma::Cube<eT> cube(images.colptr(u), info.Channels(), midWidth,
-          midHeight, false, false);
-      tmpImages.col(u) = vectorise(cube.cols((nColsCrop / 2), (cube.n_cols  - (nColsCrop / 2) - 1)));
+      int cropUpDownEqually = (nRowsCrop / 2) * info.Channels() * midWidth;
+      tmpImages = images.rows(cropUpDownEqually, images.n_rows - cropUpDownEqually - 1);
+    }
+
+    #pragma omp parallel for
+    for (size_t u = 0; u < images.n_cols; ++u)
+    {
+      if (nColsCrop != 0)
+      {
+        // Saving some memory by avoiding copying the images.
+        // R into Row 1.
+        // G into Row 2.
+        // B into Row 3.
+        // Cols are the Width, no change
+        // Slices are the Height of the image instead of rows.
+        arma::Cube<eT> cube(images.colptr(u), info.Channels(), midWidth,
+            midHeight, false, false);
+        tmpImages.col(u) = vectorise(cube.cols((nColsCrop / 2), (cube.n_cols  - (nColsCrop / 2) - 1)));
+      }
+    }
+    if (nRowsCrop != 0 || nColsCrop != 0)
+    {
+      images = std::move(tmpImages);
     }
   }
-  if (nRowsCrop != 0 || nColsCrop != 0)
-  {
-    images = std::move(tmpImages);
-  }
-
   info.Width() = newWidth;
   info.Height() = newHeight;
 }

@@ -300,6 +300,37 @@ TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", unsigned char, size_t,
 }
 
 /**
+ * Test if we resize to the same original dimension we will get the same pixels
+ * and no modification to the image.  Try it with a few different types.
+ */
+TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char, size_t,
+    float, double)
+{
+  typedef TestType eT;
+
+  arma::Mat<eT> image;
+  data::ImageInfo info;
+  std::vector<std::string> files =
+      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
+       "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg", 
+       "sheep_9.jpg"};
+
+  for (size_t i = 0; i < files.size(); i++)
+  {
+    REQUIRE(data::Load(files.at(i), image, info, false) == true);
+    arma::Mat<eT> originalImage = image;
+    CropResizeImages(image, info, info.Width(), info.Height());
+    for (size_t i = 0; i < originalImage.n_rows; ++i)
+    {
+      for (size_t j = 0; j < originalImage.n_cols; ++j)
+      {
+        REQUIRE(originalImage.at(i, j) == image.at(i, j));
+      }
+    }
+  }
+}
+
+/**
  * Test that if we resize an image, we get the pixels that we expect.
  */
 TEMPLATE_TEST_CASE("CropResizePixelTest", "[ImageTest]", unsigned char, size_t,
