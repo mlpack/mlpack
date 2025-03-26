@@ -390,11 +390,7 @@ TEMPLATE_TEST_CASE("CropResizeUpscaleTest", "[ImageTest]", unsigned char,
 
   // When we crop to match the height of the image, no resizing is needed and we
   // can compare pixels directly.
-  const size_t inputWidth = info.Width();
-  const size_t inputHeight = info.Height();
   const size_t inputChannels = info.Channels();
-  const size_t leftOffset = (info.Width() - info.Height()) / 2;
-  arma::Mat<eT> oldImage(image);
   CropResizeImages(image, info, 1000, 1000);
 
   // Here we just check that the output image has the correct size.
