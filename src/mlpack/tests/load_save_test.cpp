@@ -2555,3 +2555,14 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
   REQUIRE(dataset.n_rows == 4);
   REQUIRE(dataset.n_cols == 2);
 }
+
+TEST_CASE("will_fail_test")
+{
+  arma::mat x(10, 10, arma::fill::randu);
+  arma::mat y(20, 20, arma::fill::randu);
+
+  y += x;
+
+  REQUIRE( y.n_rows == 20 );
+  REQUIRE( y.n_cols == 20 );
+}
