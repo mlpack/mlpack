@@ -80,7 +80,8 @@ def startCheck(String name, String status)
 def updateCheckStatus(String status)
 {
   def stepTime = (currentBuild.duration - this.time) / 1000.0
-  this.status += '\n' + status + ' (' + stepTime.toString() + 's)'
+  this.status += ' (' + stepTime.toString() + 's)\n'
+  this.status += status
   this.time = currentBuild.duration
 
   publishChecks(name: this.name,
@@ -93,8 +94,14 @@ def updateCheckStatus(String status)
 def finishCheck(String status, boolean success)
 {
   def stepTime = (currentBuild.duration - this.time) / 1000.0
-  this.status += '\n' + status + ' (' + stepTime.toString() + 's)'
-  this.time = currentBuild.duration
+  this.status += ' (' + stepTime.toString() + 's)\n'
+  this.status += status
+
+  if (!success)
+  {
+    this.status += '\n\n' +
+        '<b>Click \'view more details\' below to see failure details...</b>';
+  }
 
   publishChecks(name: this.name,
                 status: 'COMPLETED',
