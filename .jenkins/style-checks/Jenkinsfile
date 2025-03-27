@@ -101,6 +101,7 @@ pipeline
     {
       // Process the test results.
       junit(allowEmptyResults: true,
+            skipPublishingChecks: true,
             testResults: '**/reports/cpplint.junit.xml')
 
       // Clean the workspace after the build too.
