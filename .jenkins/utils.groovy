@@ -63,17 +63,40 @@ def setBuildStatus(Map paramsMap)
   ]);
 }
 
-def startCheck(Map paramsMap)
+def startCheck(String name, String status)
 {
-  // Extract arguments from the map.
-  def name = paramsMap.name;
-  def status = paramsMap.status;
+  // Set module-level variables that we will retain as we build.
+  this.name = name
+  this.status = status
 
   publishChecks(name: name,
                 status: 'IN_PROGRESS',
                 title: status,
                 text: status,
                 detailsURL: currentBuild.absoluteUrl + 'console')
+}
+
+def updateCheckStatus(String status)
+{
+  this.status += '\n' + status
+
+  publishChecks(name: this.name,
+                status: 'IN_PROGRESS',
+                title: status,
+                text: this.status,
+                detailsURL: currentBuild.absoluteUrl + 'console')
+}
+
+def finishCheck(String status, boolean success)
+{
+  this.status += '\n' + status
+
+  publishChecks(name: this.name,
+                status: 'COMPLETED',
+                conclusion: success ? 'SUCCESS' : 'FAILURE',
+                title: status,
+                text: this.status,
+                detailsURL: currentBuild.absoluteUrl + 'testReport')
 }
 
 return this

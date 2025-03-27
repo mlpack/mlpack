@@ -37,8 +37,7 @@ pipeline
         {
           // Set the initial status.
           u = load '.jenkins/utils.groovy'
-          u.startCheck(name: 'Style checks',
-                       status: 'Setting up workspace...')
+          u.startCheck('Style checks', 'Setting up workspace...')
         }
 
         sh '''
@@ -52,11 +51,10 @@ pipeline
     {
       steps
       {
-        publishChecks(name: 'Style checks',
-                      status: 'IN_PROGRESS',
-                      title: 'Checking code style...',
-                      text: 'Checking code style...',
-                      detailsURL: currentBuild.absoluteUrl + 'console')
+        script
+        {
+          u.updateCheckStatus('Checking code style...')
+        }
 
         sh '''
           mkdir -p reports
@@ -77,33 +75,26 @@ pipeline
     // Mark unstable builds as failed.
     unstable
     {
-      publishChecks(name: 'Style checks',
-                    status: 'COMPLETED',
-                    conclusion: 'FAILURE',
-                    title: 'Style checks failed.',
-                    text: 'Style checks failed.',
-                    detailsURL: currentBuild.absoluteUrl + 'testReport/')
+      script
+      {
+        u.finishCheck('Style checks failed.', false)
+      }
     }
 
     failure
     {
-      publishChecks(name: 'Style checks',
-                    status: 'COMPLETED',
-                    conclusion: 'FAILURE',
-                    title: 'Style checks failed.',
-                    text: 'Style checks failed.',
-                    detailsURL: currentBuild.absoluteUrl + 'testReport/')
+      script
+      {
+        u.finishCheck('Style checks failed.', false)
+      }
     }
 
     success
     {
-      publishChecks(name: 'Style checks',
-                    status: 'COMPLETED',
-                    conclusion: 'SUCCESS',
-                    title: 'Style checks passed.',
-                    text: 'Style checks passed.',
-                    detailsURL: currentBuild.absoluteUrl + 'testReport/')
-
+      script
+      {
+        u.finishCheck('Style checks passed.', true)
+      }
     }
 
     always
