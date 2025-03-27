@@ -51,10 +51,7 @@ pipeline
     {
       steps
       {
-        script
-        {
-          u.updateCheckStatus('Checking code style...')
-        }
+        script { u.updateCheckStatus('Checking code style...') }
 
         sh '''
           mkdir -p reports
@@ -73,29 +70,9 @@ pipeline
   post
   {
     // Mark unstable builds as failed.
-    unstable
-    {
-      script
-      {
-        u.finishCheck('Style checks failed.', false)
-      }
-    }
-
-    failure
-    {
-      script
-      {
-        u.finishCheck('Style checks failed.', false)
-      }
-    }
-
-    success
-    {
-      script
-      {
-        u.finishCheck('Style checks passed.', true)
-      }
-    }
+    unstable { script { u.finishCheck('Style checks failed.', false) } }
+    failure { script { u.finishCheck('Style checks failed.', false) } }
+    success { script { u.finishCheck('Style checks passed.', true) } }
 
     always
     {
@@ -105,7 +82,8 @@ pipeline
             testResults: '**/reports/cpplint.junit.xml')
 
       // Clean the workspace after the build too.
-      cleanWs(deleteDirs: true,
+      cleanWs(cleanWhenNotBuild: true,
+              deleteDirs: true,
               disableDeferredWipeout: true,
               notFailBuild: true)
     }
