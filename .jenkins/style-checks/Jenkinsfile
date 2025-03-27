@@ -36,7 +36,7 @@ pipeline
         script
         {
           // Set the initial status.
-          def u = load '.jenkins/utils.groovy'
+          u = load '.jenkins/utils.groovy'
           u.startCheck('Style checks', 'Setting up workspace...')
         }
 
