@@ -28,10 +28,13 @@ pipeline
     {
       steps
       {
-        // Set the initial status.
-        u = load '.jenkins/utils.groovy'
-        u.startCheck(name: 'Style checks',
-                     status: 'Setting up workspace...')
+        script
+        {
+          // Set the initial status.
+          u = load '.jenkins/utils.groovy'
+          u.startCheck(name: 'Style checks',
+                       status: 'Setting up workspace...')
+        }
 
         cleanWs(deleteDirs: true,
                 disableDeferredWipeout: true,
