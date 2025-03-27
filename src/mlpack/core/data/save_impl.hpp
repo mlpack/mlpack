@@ -154,7 +154,7 @@ bool Save(const std::string& filename,
   }
   else if (std::is_same_v<DataOptionsType, ModelOptions>)
   {
-    //success = SaveModel(filename, matrix, opts, &stream);
+    success = SaveModel(filename, matrix, opts, &stream);
   }
 
   if (!success)
