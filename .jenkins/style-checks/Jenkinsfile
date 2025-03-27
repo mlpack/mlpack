@@ -16,10 +16,25 @@ pipeline
   {
     // Only allow one build at a time of this job.
     disableConcurrentBuilds(abortPrevious: true)
+
+    // We will do checkout manually.
+    skipDefaultCheckout()
   }
 
   stages
   {
+    // Clean the workspace and check out the code.
+    stage('Clean workspace')
+    {
+      steps
+      {
+        cleanWs(deleteDirs: true,
+                disableDeferredWipeout: true,
+                notFailBuild: true)
+        checkout scm
+      }
+    }
+
     // First we have to check out the jenkins-conf repository, which contains
     // the scripts that we will use for checking the style.
     stage('Check out jenkins-conf repository')
@@ -28,8 +43,11 @@ pipeline
       {
         script
         {
-          u = load '.jenkins/utils.groovy'
-          u.startBuild('Style Checks')
+          publishChecks(name: 'Style Checks',
+                        title: 'Style Checks (title)',
+                        summary: 'Style checks for mlpack code',
+                        text: 'checking out the repository',
+                        detailsURL: 'https://ci.mlpack.org/invalid/')
         }
 
         sh '''
@@ -74,20 +92,10 @@ pipeline
       junit(allowEmptyResults: true,
             testResults: '**/reports/cpplint.junit.xml')
 
-      // Clean the workspace.
-      cleanWs(cleanWhenNotBuilt: false,
-              deleteDirs: true,
+      // Clean the workspace after the build too.
+      cleanWs(deleteDirs: true,
               disableDeferredWipeout: true,
               notFailBuild: true)
-
-      script
-      {
-        u.setBuildStatus(result: currentBuild.currentResult,
-                         context: "Style Checks",
-                         successMessage: "No style issues.",
-                         unstableMessage: "Style issues found.",
-                         failureMessage: "Style issues found.");
-      }
     }
   }
 }
