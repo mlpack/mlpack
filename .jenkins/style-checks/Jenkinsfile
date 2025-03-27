@@ -28,6 +28,11 @@ pipeline
     {
       steps
       {
+        cleanWs(deleteDirs: true,
+                disableDeferredWipeout: true,
+                notFailBuild: true)
+        checkout scm
+
         script
         {
           // Set the initial status.
@@ -35,11 +40,6 @@ pipeline
           u.startCheck(name: 'Style checks',
                        status: 'Setting up workspace...')
         }
-
-        cleanWs(deleteDirs: true,
-                disableDeferredWipeout: true,
-                notFailBuild: true)
-        checkout scm
 
         sh '''
           git clone https://github.com/mlpack/jenkins-conf
