@@ -31,9 +31,9 @@ pipeline
         // Set the initial status.
         publishChecks(name: 'Style checks',
                       status: 'IN_PROGRESS',
-                      title: 'Style checks (title)',
+                      title: 'Setting up workspace...',
                       text: 'Setting up workspace...',
-                      detailsURL: currentBuild.absoluteUrl)
+                      detailsURL: currentBuild.absoluteUrl + 'console')
 
         cleanWs(deleteDirs: true,
                 disableDeferredWipeout: true,
@@ -46,25 +46,6 @@ pipeline
       }
     }
 
-    // First we have to check out the jenkins-conf repository, which contains
-    // the scripts that we will use for checking the style.
-    stage('Check out jenkins-conf repository')
-    {
-      steps
-      {
-        script
-        {
-          publishChecks(name: 'Style Checks',
-                        title: 'Style Checks (title)',
-                        summary: 'Style checks for mlpack code',
-                        text: 'checking out the repository',
-                        detailsURL: 'https://ci.mlpack.org/invalid/')
-        }
-
-
-      }
-    }
-
     // Now we can run those scripts.
     stage('Check code style')
     {
@@ -72,9 +53,9 @@ pipeline
       {
         publishChecks(name: 'Style checks',
                       status: 'IN_PROGRESS',
-                      title: 'Style checks (title)',
+                      title: 'Checking code style...',
                       text: 'Checking code style...',
-                      detailsURL: currentBuild.absoluteUrl)
+                      detailsURL: currentBuild.absoluteUrl + 'console')
 
         sh '''
           mkdir -p reports
@@ -95,10 +76,12 @@ pipeline
     // Mark unstable builds as failed.
     unstable
     {
-      script
-      {
-        error "Style check failure."
-      }
+      publishChecks(name: 'Style checks',
+                    status: 'COMPLETED',
+                    conclusion: 'FAILURE',
+                    title: 'Style checks failed.',
+                    text: 'Style checks failed.',
+                    detailsURL: currentBuild.absoluteUrl + 'testReport/')
     }
 
     failure
@@ -106,9 +89,9 @@ pipeline
       publishChecks(name: 'Style checks',
                     status: 'COMPLETED',
                     conclusion: 'FAILURE',
-                    title: 'Style checks (title)',
+                    title: 'Style checks failed.',
                     text: 'Style checks failed.',
-                    detailsURL: currentBuild.absoluteUrl)
+                    detailsURL: currentBuild.absoluteUrl + 'testReport/')
     }
 
     success
@@ -116,9 +99,9 @@ pipeline
       publishChecks(name: 'Style checks',
                     status: 'COMPLETED',
                     conclusion: 'SUCCESS',
-                    title: 'Style checks (title)',
+                    title: 'Style checks passed.',
                     text: 'Style checks passed.',
-                    detailsURL: currentBuild.absoluteUrl)
+                    detailsURL: currentBuild.absoluteUrl + 'testReport/')
 
     }
 
