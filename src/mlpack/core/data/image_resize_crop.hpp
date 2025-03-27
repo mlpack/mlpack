@@ -145,11 +145,13 @@ inline void ResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
  * @param newHeight The new requested height for the resized image.
  */
 template<typename eT>
-inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
+inline void ResizeCropImages(arma::Mat<eT>& images, data::ImageInfo& info,
     const size_t newWidth, const size_t newHeight)
 {
-  float ratioW = static_cast<float>(newWidth)  / static_cast<float>(info.Width());
-  float ratioH = static_cast<float>(newHeight) / static_cast<float>(info.Height());
+  float ratioW = static_cast<float>(newWidth)  /
+      static_cast<float>(info.Width());
+  float ratioH = static_cast<float>(newHeight) /
+      static_cast<float>(info.Height());
 
   float largestRatio = ratioW > ratioH ? ratioW : ratioH;
   int midWidth = static_cast<int>(largestRatio * info.Width());
@@ -166,17 +168,19 @@ inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
       midHeight = midHeight + 1;
     if (midWidth % 2 != 0)
       midWidth = midWidth + 1;
-    
+
     ResizeImages(images, info, midWidth, midHeight);
     int nColsCrop = midWidth > midHeight ? (midWidth - midHeight) : 0;
     int nRowsCrop = midHeight > midWidth ? (midHeight - midWidth) : 0;
 
     //temporary matrix to hold the images while being resized.
-    arma::Mat<eT> tmpImages(newHeight * newWidth * info.Channels(), images.n_cols);
+    arma::Mat<eT> tmpImages(newHeight * newWidth * info.Channels(),
+        images.n_cols);
     if (nRowsCrop != 0)
     {
       int cropUpDownEqually = (nRowsCrop / 2) * info.Channels() * midWidth;
-      tmpImages = images.rows(cropUpDownEqually, images.n_rows - cropUpDownEqually - 1);
+      tmpImages = images.rows(cropUpDownEqually,
+          images.n_rows - cropUpDownEqually - 1);
     }
 
     #pragma omp parallel for
@@ -192,7 +196,8 @@ inline void CropResizeImages(arma::Mat<eT>& images, data::ImageInfo& info,
         // Slices are the Height of the image instead of rows.
         arma::Cube<eT> cube(images.colptr(u), info.Channels(), midWidth,
             midHeight, false, false);
-        tmpImages.col(u) = vectorise(cube.cols((nColsCrop / 2), (cube.n_cols  - (nColsCrop / 2) - 1)));
+        tmpImages.col(u) = vectorise(cube.cols((nColsCrop / 2),
+              (cube.n_cols  - (nColsCrop / 2) - 1)));
       }
     }
     if (nRowsCrop != 0 || nColsCrop != 0)

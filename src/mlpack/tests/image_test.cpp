@@ -213,7 +213,7 @@ TEMPLATE_TEST_CASE("ImagesResizeTest", "[ImageTest]", unsigned char, size_t,
  * Test resize the image if this is done correctly.  Try it with a few different
  * types.
  */
-TEMPLATE_TEST_CASE("ImagesCropResizeTest", "[ImageTest]", unsigned char,
+TEMPLATE_TEST_CASE("ImagesResizeCropTest", "[ImageTest]", unsigned char,
     size_t, float, double)
 {
   typedef TestType eT;
@@ -239,7 +239,7 @@ TEMPLATE_TEST_CASE("ImagesCropResizeTest", "[ImageTest]", unsigned char,
   for (size_t i = 0; i < files.size(); i++)
   {
     REQUIRE(data::Load(files.at(i), image, info, false) == true);
-    CropResizeImages(image, info, 320, 320);
+    ResizeCropImages(image, info, 320, 320);
     REQUIRE(data::Save(reSheeps.at(i), image, info, false) == true);
   }
 
@@ -251,7 +251,7 @@ TEMPLATE_TEST_CASE("ImagesCropResizeTest", "[ImageTest]", unsigned char,
 
   REQUIRE(data::Load(reSheeps, images, info, false) == true);
 
-  CropResizeImages(images, info, 160, 160);
+  ResizeCropImages(images, info, 160, 160);
 
   REQUIRE(data::Save(smSheeps, images, info, false) == true);
 
@@ -319,7 +319,7 @@ TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char, size
   {
     REQUIRE(data::Load(files.at(i), image, info, false) == true);
     arma::Mat<eT> originalImage = image;
-    CropResizeImages(image, info, info.Width(), info.Height());
+    ResizeCropImages(image, info, info.Width(), info.Height());
     for (size_t i = 0; i < originalImage.n_rows; ++i)
     {
       for (size_t j = 0; j < originalImage.n_cols; ++j)
@@ -333,7 +333,7 @@ TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char, size
 /**
  * Test that if we resize an image, we get the pixels that we expect.
  */
-TEMPLATE_TEST_CASE("CropResizePixelTest", "[ImageTest]", unsigned char, size_t,
+TEMPLATE_TEST_CASE("ResizeCropPixelTest", "[ImageTest]", unsigned char, size_t,
     float, double)
 {
   typedef TestType eT;
@@ -350,7 +350,7 @@ TEMPLATE_TEST_CASE("CropResizePixelTest", "[ImageTest]", unsigned char, size_t,
   const size_t inputChannels = info.Channels();
   const size_t leftOffset = (info.Width() - info.Height()) / 2;
   arma::Mat<eT> oldImage(image);
-  CropResizeImages(image, info, inputHeight, inputHeight);
+  ResizeCropImages(image, info, inputHeight, inputHeight);
 
   REQUIRE(info.Height() == inputHeight);
   REQUIRE(info.Width() == inputHeight);
@@ -378,7 +378,7 @@ TEMPLATE_TEST_CASE("CropResizePixelTest", "[ImageTest]", unsigned char, size_t,
 /**
  * Test that images can be upscaled if desired.
  */
-TEMPLATE_TEST_CASE("CropResizeUpscaleTest", "[ImageTest]", unsigned char,
+TEMPLATE_TEST_CASE("ResizeCropUpscaleTest", "[ImageTest]", unsigned char,
     size_t, float, double)
 {
   typedef TestType eT;
@@ -391,7 +391,7 @@ TEMPLATE_TEST_CASE("CropResizeUpscaleTest", "[ImageTest]", unsigned char,
   // When we crop to match the height of the image, no resizing is needed and we
   // can compare pixels directly.
   const size_t inputChannels = info.Channels();
-  CropResizeImages(image, info, 1000, 1000);
+  ResizeCropImages(image, info, 1000, 1000);
 
   // Here we just check that the output image has the correct size.
   REQUIRE(info.Height() == 1000);

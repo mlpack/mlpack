@@ -650,7 +650,7 @@ that the width and height of the image both no smaller than `outputWidth` and
   <img src="../img/cat_cropped.jpg" alt="cropped cat">
 </p>
 
-- `CropResizeImages(images, info, newWidth, newHeight)`
+- `ResizeCropImages(images, info, newWidth, newHeight)`
    * `images` is a [column-major matrix](matrices.md) containing a set of
       images; each image is represented as a flattened vector in one column.
 
@@ -673,10 +673,10 @@ that the width and height of the image both no smaller than `outputWidth` and
      efficient.
 
    * This function expects all the images to have identical dimensions. If this
-     is not the case, iteratively call `CropResizeImages()` with a single
+     is not the case, iteratively call `ResizeCropImages()` with a single
      image/column in `images`.
 
-Example usage of the `CropResizeImages()` function on a set of images with
+Example usage of the `ResizeCropImages()` function on a set of images with
 different dimensions:
 
 ```c++
@@ -703,7 +703,7 @@ std::vector<std::string> cropSheeps =
 for (size_t i = 0; i < files.size(); i++)
 {
   mlpack::data::Load(files.at(i), image, info, false);
-  mlpack::data::CropResizeImages(image, info, 320, 320);
+  mlpack::data::ResizeCropImages(image, info, 320, 320);
   mlpack::data::Save(cropSheeps.at(i), image, info, false);
   std::cout << "Resized and cropped " << files.at(i) << " to "
       << cropSheeps.at(i) << " with output size 320x320." << std::endl;
