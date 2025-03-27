@@ -24,14 +24,25 @@ pipeline
   stages
   {
     // Clean the workspace and check out the code.
-    stage('Clean workspace')
+    stage('Set up workspace')
     {
       steps
       {
+        // Set the initial status.
+        publishChecks(name: 'Style checks',
+                      status: 'IN_PROGRESS',
+                      title: 'Style checks (title)',
+                      text: 'Setting up workspace...',
+                      detailsURL: absoluteUrl)
+
         cleanWs(deleteDirs: true,
                 disableDeferredWipeout: true,
                 notFailBuild: true)
         checkout scm
+
+        sh '''
+          git clone https://github.com/mlpack/jenkins-conf
+        '''
       }
     }
 
@@ -50,9 +61,7 @@ pipeline
                         detailsURL: 'https://ci.mlpack.org/invalid/')
         }
 
-        sh '''
-          git clone https://github.com/mlpack/jenkins-conf
-        '''
+
       }
     }
 
@@ -61,6 +70,12 @@ pipeline
     {
       steps
       {
+        publishChecks(name: 'Style checks',
+                      status: 'IN_PROGRESS',
+                      title: 'Style checks (title)',
+                      text: 'Checking code style...',
+                      detailsURL: absoluteUrl)
+
         sh '''
           mkdir -p reports
           ./jenkins-conf/linter/lint.sh \
@@ -84,6 +99,27 @@ pipeline
       {
         error "Style check failure."
       }
+    }
+
+    failure
+    {
+      publishChecks(name: 'Style checks',
+                    status: 'COMPLETED',
+                    conclusion: 'FAILURE',
+                    title: 'Style checks (title)',
+                    text: 'Style checks failed.',
+                    detailsURL: absoluteUrl)
+    }
+
+    success
+    {
+      publishChecks(name: 'Style checks',
+                    status: 'COMPLETED',
+                    conclusion: 'SUCCESS',
+                    title: 'Style checks (title)',
+                    text: 'Style checks passed.',
+                    detailsURL: absoluteUrl)
+
     }
 
     always
