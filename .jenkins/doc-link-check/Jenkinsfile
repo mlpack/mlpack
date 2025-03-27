@@ -33,17 +33,19 @@ pipeline
     // Check out the repository and start the check.
     stage('Set up workspace')
     {
-      cleanWs(deleteDirs: true,
-              disableDeferredWipeout: true,
-              notFailBuild: true)
-      checkout scm
-
       steps
       {
-        u = load '.jenkins/utils.groovy'
-        u.startCheck('Documentation link check', 'Setting up workspace...')
-      }
+        cleanWs(deleteDirs: true,
+                disableDeferredWipeout: true,
+                notFailBuild: true)
+        checkout scm
 
+        script
+        {
+          u = load '.jenkins/utils.groovy'
+          u.startCheck('Documentation link check', 'Setting up workspace...')
+        }
+      }
     }
 
     // Actually run the check.

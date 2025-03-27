@@ -82,7 +82,7 @@ pipeline
             testResults: '**/reports/cpplint.junit.xml')
 
       // Clean the workspace after the build too.
-      cleanWs(cleanWhenNotBuild: true,
+      cleanWs(cleanWhenNotBuilt: true,
               deleteDirs: true,
               disableDeferredWipeout: true,
               notFailBuild: true)
