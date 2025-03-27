@@ -29,11 +29,9 @@ pipeline
       steps
       {
         // Set the initial status.
-        publishChecks(name: 'Style checks',
-                      status: 'IN_PROGRESS',
-                      title: 'Setting up workspace...',
-                      text: 'Setting up workspace...',
-                      detailsURL: currentBuild.absoluteUrl + 'console')
+        u = load '.jenkins/utils.groovy'
+        u.startCheck(name: 'Style checks',
+                     status: 'Setting up workspace...')
 
         cleanWs(deleteDirs: true,
                 disableDeferredWipeout: true,

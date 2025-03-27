@@ -63,4 +63,17 @@ def setBuildStatus(Map paramsMap)
   ]);
 }
 
+def startCheck(Map paramsMap)
+{
+  // Extract arguments from the map.
+  def name = paramsMap.name;
+  def status = paramsMap.status;
+
+  publishChecks(name: name,
+                status: 'IN_PROGRESS',
+                title: status,
+                text: status,
+                detailsURL: currentBuild.absoluteUrl + 'console')
+}
+
 return this
