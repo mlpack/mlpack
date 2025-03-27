@@ -281,7 +281,7 @@ TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", unsigned char, size_t,
   data::ImageInfo info;
   std::vector<std::string> files =
       {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
-       "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg", 
+       "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
        "sheep_9.jpg"};
 
   for (size_t i = 0; i < files.size(); i++)
@@ -303,8 +303,8 @@ TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", unsigned char, size_t,
  * Test if we resize to the same original dimension we will get the same pixels
  * and no modification to the image.  Try it with a few different types.
  */
-TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char, size_t,
-    float, double)
+TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char,
+    size_t, float, double)
 {
   typedef TestType eT;
 
@@ -312,7 +312,7 @@ TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char, size
   data::ImageInfo info;
   std::vector<std::string> files =
       {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
-       "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg", 
+       "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
        "sheep_9.jpg"};
 
   for (size_t i = 0; i < files.size(); i++)
