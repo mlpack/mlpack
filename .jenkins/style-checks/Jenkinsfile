@@ -33,7 +33,7 @@ pipeline
                       status: 'IN_PROGRESS',
                       title: 'Style checks (title)',
                       text: 'Setting up workspace...',
-                      detailsURL: absoluteUrl)
+                      detailsURL: job.getAbsoluteUrl())
 
         cleanWs(deleteDirs: true,
                 disableDeferredWipeout: true,
@@ -74,7 +74,7 @@ pipeline
                       status: 'IN_PROGRESS',
                       title: 'Style checks (title)',
                       text: 'Checking code style...',
-                      detailsURL: absoluteUrl)
+                      detailsURL: job.getAbsoluteUrl())
 
         sh '''
           mkdir -p reports
@@ -108,7 +108,7 @@ pipeline
                     conclusion: 'FAILURE',
                     title: 'Style checks (title)',
                     text: 'Style checks failed.',
-                    detailsURL: absoluteUrl)
+                    detailsURL: job.getAbsoluteUrl())
     }
 
     success
@@ -118,7 +118,7 @@ pipeline
                     conclusion: 'SUCCESS',
                     title: 'Style checks (title)',
                     text: 'Style checks passed.',
-                    detailsURL: absoluteUrl)
+                    detailsURL: job.getAbsoluteUrl())
 
     }
 
