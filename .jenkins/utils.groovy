@@ -68,7 +68,7 @@ def startCheck(String name, String status)
   // Set module-level variables that we will retain as we build.
   this.name = name
   this.status = status
-  this.time = currentBuild.timeInMillis
+  this.time = currentBuild.duration
 
   publishChecks(name: name,
                 status: 'IN_PROGRESS',
@@ -79,9 +79,9 @@ def startCheck(String name, String status)
 
 def updateCheckStatus(String status)
 {
-  def stepTime = (currentBuild.timeInMillis - this.time) / 1000.0
+  def stepTime = (currentBuild.duration - this.time) / 1000.0
   this.status += '\n' + status + ' (' + stepTime.toString() + 's)'
-  this.time = currentBuild.timeInMillis
+  this.time = currentBuild.duration
 
   publishChecks(name: this.name,
                 status: 'IN_PROGRESS',
@@ -92,9 +92,9 @@ def updateCheckStatus(String status)
 
 def finishCheck(String status, boolean success)
 {
-  def stepTime = (currentBuild.timeInMillis - this.time) / 1000.0
+  def stepTime = (currentBuild.duration - this.time) / 1000.0
   this.status += '\n' + status + ' (' + stepTime.toString() + 's)'
-  this.time = currentBuild.timeInMillis
+  this.time = currentBuild.duration
 
   publishChecks(name: this.name,
                 status: 'COMPLETED',
