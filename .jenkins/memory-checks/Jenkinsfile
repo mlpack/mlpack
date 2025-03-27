@@ -147,16 +147,6 @@ pipeline
               deleteDirs: true,
               disableDeferredWipeout: true,
               notFailBuild: true)
-
-      // Set the build status.
-      script
-      {
-        u.setBuildStatus(result: currentBuild.currentResult,
-                         context: "Memory Checks",
-                         successMessage: "No memory errors.",
-                         unstableMessage: "Build unstable.",
-                         failureMessage: "Memory check failure with valgrind.");
-      }
     }
   }
 }
