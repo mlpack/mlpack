@@ -99,12 +99,12 @@ pipeline
     {
       // Publish the generated HTML.
       publishHTML([
-        allowMissing: false,
-        alwaysLinkToLastBuild: false,
-        keepAll: true,
-        reportDir: 'doc/html/',
-        reportFiles: 'index.html',
-        reportName: 'Build documentation']);
+          allowMissing: false,
+          alwaysLinkToLastBuild: false,
+          keepAll: true,
+          reportDir: 'doc/html/',
+          reportFiles: 'index.html',
+          reportName: 'Build documentation']);
 
       // Clean the workspace.
       cleanWs(cleanWhenNotBuilt: true,
