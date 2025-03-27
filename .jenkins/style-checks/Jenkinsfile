@@ -33,7 +33,13 @@ pipeline
                 notFailBuild: true)
         checkout scm
 
-        // We also need the jenkins-conf repository for the style check scripts.
+        script
+        {
+          // Set the initial status.
+          u = load '.jenkins/utils.groovy'
+          u.startCheck('Style checks', 'Setting up workspace...')
+        }
+
         sh '''
           git clone https://github.com/mlpack/jenkins-conf
         '''
@@ -45,6 +51,11 @@ pipeline
     {
       steps
       {
+        script
+        {
+          u.updateCheckStatus('Checking code style...')
+        }
+
         sh '''
           mkdir -p reports
           ./jenkins-conf/linter/lint.sh \
@@ -61,6 +72,31 @@ pipeline
 
   post
   {
+    // Mark unstable builds as failed.
+    unstable
+    {
+      script
+      {
+        u.finishCheck('Style checks failed.', false)
+      }
+    }
+
+    failure
+    {
+      script
+      {
+        u.finishCheck('Style checks failed.', false)
+      }
+    }
+
+    success
+    {
+      script
+      {
+        u.finishCheck('Style checks passed.', true)
+      }
+    }
+
     always
     {
       // Process the test results.
