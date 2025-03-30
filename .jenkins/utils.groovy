@@ -1,66 +1,54 @@
-// A simple utility to mark the build as pending on Github.
-def startBuild(String context)
+// These variables are set to hold state between status check updates.
+def name = ''
+def status = ''
+def time = 0
+
+def startCheck(String name, String status)
 {
-  step([
-      $class: "GitHubCommitStatusSetter",
-      reposSource: [$class: "ManuallyEnteredRepositorySource",
-                    url: "https://github.com/mlpack/mlpack"],
-      contextSource: [$class: "ManuallyEnteredCommitContextSource",
-                      context: context ],
-      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler",
-                       result: "UNSTABLE"]],
-      statusResultSource: [$class: "ConditionalStatusResultSource",
-                           results: [[$class: "AnyBuildResult",
-                                      message: "Building...",
-                                      state: "PENDING"]]]
-  ]);
+  // Set module-level variables that we will retain as we build.
+  this.name = name
+  this.status = status
+  this.time = currentBuild.duration
+
+  publishChecks(name: name,
+                status: 'IN_PROGRESS',
+                title: status,
+                text: status,
+                detailsURL: currentBuild.absoluteUrl + 'console')
 }
 
-// A simple utility to set the build status on Github for a commit.
-def setBuildStatus(Map paramsMap)
+def updateCheckStatus(String status)
 {
-  // Extract arguments from the map.
-  def result = paramsMap.result;
-  def context = paramsMap.context;
-  def successMessage = paramsMap.successMessage;
-  def unstableMessage = paramsMap.unstableMessage;
-  def failureMessage = paramsMap.failureMessage;
+  def stepTime = (currentBuild.duration - this.time) / 1000.0
+  this.status += ' (' + stepTime.toString() + 's)\n'
+  this.status += status
+  this.time = currentBuild.duration
 
-  def message = "(unknown Jenkins build result)";
-  def state = "FAILURE";
-  if (result == "FAILURE")
+  publishChecks(name: this.name,
+                status: 'IN_PROGRESS',
+                title: status,
+                text: this.status,
+                detailsURL: currentBuild.absoluteUrl + 'console')
+}
+
+def finishCheck(String status, boolean success)
+{
+  def stepTime = (currentBuild.duration - this.time) / 1000.0
+  this.status += ' (' + stepTime.toString() + 's)\n'
+  this.status += status
+
+  if (!success)
   {
-    message = failureMessage;
-  }
-  else if (result == "UNSTABLE")
-  {
-    message = unstableMessage;
-    state = "UNSTABLE";
-  }
-  else if (result == "SUCCESS")
-  {
-    message = successMessage;
-    state = "SUCCESS";
-  }
-  else if (result == "ABORTED")
-  {
-    message = "Job aborted.";
-    state = "ERROR";
+    this.status += '\n\n' +
+        '<b>Click \'view more details\' below to see failure details...</b>';
   }
 
-  step([
-      $class: "GitHubCommitStatusSetter",
-      reposSource: [$class: "ManuallyEnteredRepositorySource",
-                    url: "https://github.com/mlpack/mlpack"],
-      contextSource: [$class: "ManuallyEnteredCommitContextSource",
-                      context: context ],
-      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler",
-                       result: "UNSTABLE"]],
-      statusResultSource: [$class: "ConditionalStatusResultSource",
-                           results: [[$class: "AnyBuildResult",
-                                      message: message,
-                                      state: state]]]
-  ]);
+  publishChecks(name: this.name,
+                status: 'COMPLETED',
+                conclusion: success ? 'SUCCESS' : 'FAILURE',
+                title: status,
+                text: this.status,
+                detailsURL: currentBuild.absoluteUrl + 'testReport')
 }
 
 return this
