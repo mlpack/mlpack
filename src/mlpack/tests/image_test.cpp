@@ -163,13 +163,16 @@ TEMPLATE_TEST_CASE("ImagesResizeTest", "[ImageTest]", unsigned char, size_t,
   data::ImageInfo info, resizedInfo, resizedInfo2;
   std::vector<std::string> files =
       {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
-       "sheep_5.jpg", "sheep_6.jpg"};
+       "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
+       "sheep_9.jpg"};
   std::vector<std::string> reSheeps =
       {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
-       "re_sheep_5.jpg", "re_sheep_6.jpg"};
+       "re_sheep_5.jpg", "re_sheep_6.jpg", "re_sheep_7.jpg", "re_sheep_8.jpg",
+       "re_sheep_9.jpg"};
   std::vector<std::string> smSheeps =
       {"sm_sheep_1.jpg", "sm_sheep_2.jpg", "sm_sheep_3.jpg", "sm_sheep_4.jpg",
-       "sm_sheep_5.jpg", "sm_sheep_6.jpg"};
+       "sm_sheep_5.jpg", "sm_sheep_6.jpg", "sm_sheep_7.jpg", "sm_sheep_8.jpg",
+       "sm_sheep_9.jpg"};
 
   // Load and Resize each one of them individually, because they do not have
   // the same sizes, and then the resized images, will be used in the next
@@ -207,6 +210,65 @@ TEMPLATE_TEST_CASE("ImagesResizeTest", "[ImageTest]", unsigned char, size_t,
 }
 
 /**
+ * Test resize the image if this is done correctly.  Try it with a few different
+ * types.
+ */
+TEMPLATE_TEST_CASE("ImagesResizeCropTest", "[ImageTest]", unsigned char,
+    size_t, float, double)
+{
+  typedef TestType eT;
+
+  arma::Mat<eT> image, images;
+  data::ImageInfo info, resizedInfo, resizedInfo2;
+  std::vector<std::string> files =
+      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
+       "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
+       "sheep_9.jpg"};
+  std::vector<std::string> reSheeps =
+      {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
+       "re_sheep_5.jpg", "re_sheep_6.jpg", "re_sheep_7.jpg", "re_sheep_8.jpg",
+       "re_sheep_9.jpg"};
+  std::vector<std::string> smSheeps =
+      {"sm_sheep_1.jpg", "sm_sheep_2.jpg", "sm_sheep_3.jpg", "sm_sheep_4.jpg",
+       "sm_sheep_5.jpg", "sm_sheep_6.jpg", "sm_sheep_7.jpg", "sm_sheep_8.jpg",
+       "sm_sheep_9.jpg"};
+
+  // Load and Resize each one of them individually, because they do not have
+  // the same sizes, and then the resized images, will be used in the next
+  // test.
+  for (size_t i = 0; i < files.size(); i++)
+  {
+    REQUIRE(data::Load(files.at(i), image, info, false) == true);
+    ResizeCropImages(image, info, 320, 320);
+    REQUIRE(data::Save(reSheeps.at(i), image, info, false) == true);
+  }
+
+  // Since they are all resized, this should passes
+  REQUIRE(data::Load(reSheeps, images, resizedInfo, false) == true);
+
+  REQUIRE(info.Width() == resizedInfo.Width());
+  REQUIRE(info.Height() == resizedInfo.Height());
+
+  REQUIRE(data::Load(reSheeps, images, info, false) == true);
+
+  ResizeCropImages(images, info, 160, 160);
+
+  REQUIRE(data::Save(smSheeps, images, info, false) == true);
+
+  REQUIRE(data::Load(smSheeps, images, resizedInfo2, false) == true);
+
+  REQUIRE(info.Width() == resizedInfo2.Width());
+  REQUIRE(info.Height() == resizedInfo2.Height());
+
+  // cleanup generated images.
+  for (size_t i = 0; i < reSheeps.size(); ++i)
+  {
+    remove(reSheeps.at(i).c_str());
+    remove(smSheeps.at(i).c_str());
+  }
+}
+
+/**
  * Test if we resize to the same original dimension we will get the same pixels
  * and no modification to the image.  Try it with a few different types.
  */
@@ -219,7 +281,8 @@ TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", unsigned char, size_t,
   data::ImageInfo info;
   std::vector<std::string> files =
       {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
-       "sheep_5.jpg", "sheep_6.jpg"};
+       "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
+       "sheep_9.jpg"};
 
   for (size_t i = 0; i < files.size(); i++)
   {
@@ -236,3 +299,103 @@ TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", unsigned char, size_t,
   }
 }
 
+/**
+ * Test if we resize to the same original dimension we will get the same pixels
+ * and no modification to the image.  Try it with a few different types.
+ */
+TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char,
+    size_t, float, double)
+{
+  typedef TestType eT;
+
+  arma::Mat<eT> image;
+  data::ImageInfo info;
+  std::vector<std::string> files =
+      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
+       "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
+       "sheep_9.jpg"};
+
+  for (size_t i = 0; i < files.size(); i++)
+  {
+    REQUIRE(data::Load(files.at(i), image, info, false) == true);
+    arma::Mat<eT> originalImage = image;
+    ResizeCropImages(image, info, info.Width(), info.Height());
+    for (size_t i = 0; i < originalImage.n_rows; ++i)
+    {
+      for (size_t j = 0; j < originalImage.n_cols; ++j)
+      {
+        REQUIRE(originalImage.at(i, j) == image.at(i, j));
+      }
+    }
+  }
+}
+
+/**
+ * Test that if we resize an image, we get the pixels that we expect.
+ */
+TEMPLATE_TEST_CASE("ResizeCropPixelTest", "[ImageTest]", unsigned char, size_t,
+    float, double)
+{
+  typedef TestType eT;
+
+  // Load cat.jpg, which has a strange aspect ratio.
+  arma::Mat<eT> image;
+  data::ImageInfo info;
+  REQUIRE(data::Load("cat.jpg", image, info, false) == true);
+
+  // When we crop to match the height of the image, no resizing is needed and we
+  // can compare pixels directly.
+  const size_t inputWidth = info.Width();
+  const size_t inputHeight = info.Height();
+  const size_t inputChannels = info.Channels();
+  const size_t leftOffset = (info.Width() - info.Height()) / 2;
+  arma::Mat<eT> oldImage(image);
+  ResizeCropImages(image, info, inputHeight, inputHeight);
+
+  REQUIRE(info.Height() == inputHeight);
+  REQUIRE(info.Width() == inputHeight);
+  REQUIRE(info.Channels() == inputChannels);
+  REQUIRE(image.n_elem == info.Height() * info.Width() * info.Channels());
+
+  // Now make sure that all of the pixels are the same as from the center of the
+  // image.
+  for (size_t i = 0; i < image.n_elem; ++i)
+  {
+    const size_t channel = i % info.Channels();
+    const size_t pixel = (i / info.Channels());
+    const size_t x = pixel % info.Width();
+    const size_t y = pixel / info.Width();
+
+    const size_t inputPixel = y * (inputWidth * inputChannels) +
+        (x + leftOffset) * inputChannels + channel;
+    const size_t outputPixel = y * (info.Width() * info.Channels()) +
+        x * info.Channels() + channel;
+
+    REQUIRE(oldImage[inputPixel] == Approx(image[outputPixel]));
+  }
+}
+
+/**
+ * Test that images can be upscaled if desired.
+ */
+TEMPLATE_TEST_CASE("ResizeCropUpscaleTest", "[ImageTest]", unsigned char,
+    size_t, float, double)
+{
+  typedef TestType eT;
+
+  // Load cat.jpg, which has a strange aspect ratio.
+  arma::Mat<eT> image;
+  data::ImageInfo info;
+  REQUIRE(data::Load("cat.jpg", image, info, false) == true);
+
+  // When we crop to match the height of the image, no resizing is needed and we
+  // can compare pixels directly.
+  const size_t inputChannels = info.Channels();
+  ResizeCropImages(image, info, 1000, 1000);
+
+  // Here we just check that the output image has the correct size.
+  REQUIRE(info.Height() == 1000);
+  REQUIRE(info.Width() == 1000);
+  REQUIRE(info.Channels() == inputChannels);
+  REQUIRE(image.n_elem == info.Height() * info.Width() * info.Channels());
+}
