@@ -562,13 +562,15 @@ mlpack::data::ImageInfo info;
 // be used instead.
 std::vector<std::string> files =
     {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
-     "sheep_5.jpg", "sheep_6.jpg"};
+     "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
+     "sheep_9.jpg"};
 
 // The resized images will be saved locally. We are declaring the vector that
 // contains the names of the resized images.
 std::vector<std::string> reSheeps =
     {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
-     "re_sheep_5.jpg", "re_sheep_6.jpg"};
+     "re_sheep_5.jpg", "re_sheep_6.jpg", "re_sheep_7.jpg", "re_sheep_8.jpg",
+     "re_sheep_9.jpg"};
 
 // Load and Resize each one of them individually, because they do not have
 // the same dimensions. The `info` will contain the dimension for each one.
@@ -593,7 +595,8 @@ mlpack::data::ImageInfo info;
 
 std::vector<std::string> reSheeps =
     {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
-     "re_sheep_5.jpg", "re_sheep_6.jpg"};
+     "re_sheep_5.jpg", "re_sheep_6.jpg", "re_sheep_7.jpg", "re_sheep_8.jpg",
+     "re_sheep_9.jpg"};
 
 mlpack::data::Load(reSheeps, images, info, false);
 
@@ -604,9 +607,107 @@ mlpack::data::ResizeImages(images, info, 160, 160);
 // contains the names of the resized images.
 std::vector<std::string> smSheeps =
     {"sm_sheep_1.jpg", "sm_sheep_2.jpg", "sm_sheep_3.jpg", "sm_sheep_4.jpg",
-     "sm_sheep_5.jpg", "sm_sheep_6.jpg"};
+     "sm_sheep_5.jpg", "sm_sheep_6.jpg", "sm_sheep_7.jpg", "sm_sheep_8.jpg",
+     "sm_sheep_9.jpg"};
 
 mlpack::data::Save(smSheeps, images, info, false);
+```
+
+### Resize and crop images
+
+In addition to resizing images, mlpack also provides resize-and-crop
+functionality.  This is useful when the desired aspect ratio of an image differs
+largely from the original image.
+
+The resize-and-crop operation, given a target size `outputWidth` x
+`outputHeight`, first resizes the image while preserving the aspect ratio such
+that the width and height of the image both no smaller than `outputWidth` and
+`outputHeight`.  Then, the image is cropped to have size `outputWidth` by
+`outputHeight`, keeping the center pixels only.  This process is shown below.
+
+*Original image:*
+
+<p align="center">
+  <img src="../img/cat.jpg" alt="cat">
+</p>
+
+*Original image with target size of* `220`x`220` *pixels:*
+
+<p align="center">
+  <img src="../img/cat_rect.jpg" alt="cat with rectangle overlaid">
+</p>
+
+*First step: resize while preserving aspect ratio:*
+
+<p align="center">
+  <img src="../img/cat_scaled_rect.jpg"
+       alt="scaled cat with rectangle overlaid">
+</p>
+
+*Second step: crop to desired final size:*
+
+<p align="center">
+  <img src="../img/cat_cropped.jpg" alt="cropped cat">
+</p>
+
+- `ResizeCropImages(images, info, newWidth, newHeight)`
+   * `images` is a [column-major matrix](matrices.md) containing a set of
+      images; each image is represented as a flattened vector in one column.
+
+   * `info` is a [`data::ImageInfo&`](#dataimageinfo) containing details about
+     the images in `images`.
+
+   * `images` and `info` are modified in-place.
+
+   * `newWidth` and `newHeight` (of type `size_t`) are the desired new
+     dimensions of the resized images.
+     - If the output size is larger than the input image size, the images will
+       be upscaled the minimum amount necessary before cropping.
+     - If the aspect ratio is not changed from the input aspect ratio, no
+       cropping is performed.
+
+   * ***NOTE:*** if the element type of `images` is not `unsigned char` or
+     `float` (e.g. if `image` is not `arma::Mat<unsigned char>` or
+     `arma::fmat`), the matrix will be temporarily converted during resizing;
+     therefore, using `unsigned char` or `float` as the element type is the most
+     efficient.
+
+   * This function expects all the images to have identical dimensions. If this
+     is not the case, iteratively call `ResizeCropImages()` with a single
+     image/column in `images`.
+
+Example usage of the `ResizeCropImages()` function on a set of images with
+different dimensions:
+
+```c++
+// See https://datasets.mlpack.org/sheep.tar.bz2.
+arma::Mat<unsigned char> image;
+mlpack::data::ImageInfo info;
+
+// The images are located in our test/data directory. However, any image could
+// be used instead.
+std::vector<std::string> files =
+    {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
+     "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
+     "sheep_9.jpg"};
+
+// The resized images will be saved locally. We are declaring the vector that
+// contains the names of the resized and cropped images.
+std::vector<std::string> cropSheeps =
+    {"crop_sheep_1.jpg", "crop_sheep_2.jpg", "crop_sheep_3.jpg",
+     "crop_sheep_4.jpg", "crop_sheep_5.jpg", "crop_sheep_6.jpg",
+     "crop_sheep_7.jpg", "crop_sheep_8.jpg", "crop_sheep_9.jpg"};
+
+// Load and resize-and-crop each image individually, because they do not have
+// the same dimensions. The `info` will contain the dimension for each one.
+for (size_t i = 0; i < files.size(); i++)
+{
+  mlpack::data::Load(files.at(i), image, info, false);
+  mlpack::data::ResizeCropImages(image, info, 320, 320);
+  mlpack::data::Save(cropSheeps.at(i), image, info, false);
+  std::cout << "Resized and cropped " << files.at(i) << " to "
+      << cropSheeps.at(i) << " with output size 320x320." << std::endl;
+}
 ```
 
 ## mlpack objects

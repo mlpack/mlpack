@@ -25,19 +25,26 @@ pipeline
   {
     // Only allow one build at a time of this job.
     disableConcurrentBuilds(abortPrevious: true)
+
+    // We will do checkout manually.
+    skipDefaultCheckout()
   }
 
   stages
   {
-    stage('Set build as pending')
+    stage('Set up workspace')
     {
       steps
       {
-        // Set the build status...
+        cleanWs(deleteDirs: true,
+                disableDeferredWipeout: true,
+                notFailBuild: true)
+        checkout scm
+
         script
         {
           u = load '.jenkins/utils.groovy'
-          u.startBuild("Cross-compilation Tests");
+          u.startCheck('Cross-compilation checks', 'Setting up workspace...')
         }
 
         // Create a directory for our resulting reports.
@@ -82,6 +89,11 @@ pipeline
 
             steps
             {
+              script
+              {
+                u.updateCheckStatus('Building mlpack for ' + env.target + '...')
+              }
+
               sh '''
                 echo $PWD;
                 rm -rf build-${target}/
@@ -98,6 +110,11 @@ pipeline
                     ../
                 make mlpack_test;
               '''
+
+              script
+              {
+                u.updateCheckStatus('Testing mlpack on ' + env.target + '...')
+              }
 
               withCredentials([sshUserPrivateKey(
                   credentialsId: 'mlpack-jenkins-cross-compile-rsa-key',
@@ -117,6 +134,8 @@ pipeline
                   ssh jenkins@${target} -t mkdir -p test_${BRANCH_NAME}_${BUILD_ID}/
                   scp build-${target}/bin/mlpack_test jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
                   scp -r src/mlpack/tests/data/* jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
+                  scp -r doc/img/cat.jpg jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
+
                   # Unpack all compressed test data.
                   ssh jenkins@${target} -t "
                       cd test_${BRANCH_NAME}_${BUILD_ID};
@@ -126,7 +145,8 @@ pipeline
                   ssh jenkins@${target} -t "
                       cd test_${BRANCH_NAME}_${BUILD_ID};
                       mkdir -p reports;
-                      ./mlpack_test -r junit -o reports/mlpack_test.junit.xml"
+                      ./mlpack_test -r junit -o reports/mlpack_test.junit.xml" \
+                      || echo "Test failure or other problem.";
 
                   # Clean up afterwards.
                   scp jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/reports/mlpack_test.junit.xml reports/mlpack_test.${hostname}.junit.xml;
@@ -142,24 +162,27 @@ pipeline
 
   post
   {
+    success
+    {
+      script { u.finishCheck('Cross-compilation checks passed.', true) }
+    }
+
+    failure
+    {
+      script { u.finishCheck('Cross-compilation checks failed.', false) }
+    }
+
     always
     {
-      junit '**/reports/mlpack_test.*.junit.xml'
+      junit(allowEmptyResults: true,
+            skipPublishingChecks: true,
+            testResults: '**/reports/mlpack_test.*.junit.xml')
 
       // Clean the workspace.
       cleanWs(cleanWhenNotBuilt: true,
               deleteDirs: true,
               disableDeferredWipeout: true,
               notFailBuild: true)
-
-      script
-      {
-        u.setBuildStatus(result: currentBuild.currentResult,
-                         context: "Cross-compilation Tests",
-                         successMessage: "Cross-compilation succeeded with no errors.",
-                         unstableMessage: "Cross-compilation build unstable.",
-                         failureMessage: "Cross-compilation failed.");
-      }
     }
   }
 }
