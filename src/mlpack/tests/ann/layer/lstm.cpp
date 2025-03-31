@@ -2132,3 +2132,21 @@ TEST_CASE("LSTMGradientPeepholeWeightsTest", "[ANNLayerTest]")
   REQUIRE(approx_equal(forgetGateBiasGrad, sum(df, 1), "both", 1e-5, 1e-5));
   REQUIRE(approx_equal(outputGateBiasGrad, sum(dout, 1), "both", 1e-5, 1e-5));
 }
+
+// Make sure that the output dimensions are computed correctly when the input is
+// multi-dimensional.
+TEST_CASE("LSTMMultidimensionalInputSizeTest", "[ANNLayerTest]")
+{
+  LSTM l(15);
+  l.InputDimensions() = std::vector<size_t>{ 10, 20, 30 };
+  l.ComputeOutputDimensions();
+
+  arma::mat weights(l.WeightSize(), 1);
+  l.CurrentStep(0);
+  l.SetWeights(weights);
+  l.ClearRecurrentState(1, 1);
+
+  // If the number of weight elements is correct, then we computed the input
+  // size correctly.
+  REQUIRE(l.InputGateWeight().n_elem == (10 * 20 * 30) * 15);
+}
