@@ -23,6 +23,8 @@ _????-??-??_
  * Add `ResizeCropImages()` for resize-and-crop image preprocessing
    functionality (#3903).
 
+ * Fix `LSTM` input size calculation for multidimensional inputs (#3913).
+
 ## mlpack 4.5.1
 
 _2024-12-02_
