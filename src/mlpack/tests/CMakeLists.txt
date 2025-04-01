@@ -260,6 +260,8 @@ add_custom_command(TARGET mlpack_test
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/
       ${PROJECT_BINARY_DIR}
+  COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/doc/img/cat.jpg
+      ${PROJECT_BINARY_DIR}/
 )
 
 add_custom_command(TARGET mlpack_test

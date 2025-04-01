@@ -18,19 +18,36 @@ pipeline
   {
     // Only allow one build at a time of this job.
     disableConcurrentBuilds(abortPrevious: true)
+
+    // We will do checkout manually.
+    skipDefaultCheckout()
   }
 
   stages
   {
+    stage('Set up workspace')
+    {
+      steps
+      {
+        // Clean the workspace.
+        cleanWs(deleteDirs: true,
+                disableDeferredWipeout: true,
+                notFailBuild: true);
+        checkout scm
+
+        script
+        {
+          u = load '.jenkins/utils.groovy'
+          u.startCheck('Documentation snippet build', 'Setting up workspace...')
+        }
+      }
+    }
+
     stage('Extract and build documentation snippets')
     {
       steps
       {
-        script
-        {
-          u = load '.jenkins/utils.groovy'
-          u.startBuild("Documentation Snippet Build");
-        }
+        script { u.updateCheckStatus('Testing documentation snippets...') }
 
         sh'''
           export CCACHE_DIR=/opt/ccache/;
@@ -52,6 +69,22 @@ pipeline
 
   post
   {
+    success
+    {
+      script
+      {
+        u.finishCheck('All documentation snippets build and run.', true)
+      }
+    }
+
+    failure
+    {
+      script
+      {
+        u.finishCheck('Problems building documentation snippets.', false)
+      }
+    }
+
     always
     {
       // Clean the workspace.
@@ -59,16 +92,6 @@ pipeline
               deleteDirs: true,
               disableDeferredWipeout: true,
               notFailBuild: true);
-
-      // Set the build status.
-      script
-      {
-        u.setBuildStatus(result: currentBuild.currentResult,
-                         context: "Documentation Snippet Build",
-                         successMessage: "All snippets built and run successfully.",
-                         unstableMessage: "Snippets build unstable..",
-                         failureMessage: "Snippet build or runtime failure.");
-      }
     }
   }
 }

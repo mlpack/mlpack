@@ -207,8 +207,9 @@ class LSTMType : public RecurrentLayer<MatType>
   // Given a properly set InputDimensions(), compute the output dimensions.
   void ComputeOutputDimensions()
   {
-    inSize = std::accumulate(this->inputDimensions.begin(),
-        this->inputDimensions.end(), 0);
+    inSize = this->inputDimensions[0];
+    for (size_t i = 1; i < this->inputDimensions.size(); ++i)
+      inSize *= this->inputDimensions[i];
     this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
         1);
 

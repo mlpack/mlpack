@@ -17,22 +17,32 @@ pipeline
   {
     // Only allow one build at a time of this job.
     disableConcurrentBuilds(abortPrevious: true)
+
+    // We will do checkout manually.
+    skipDefaultCheckout()
   }
 
   stages
   {
     // First we have to check out the jenkins-conf repository, which contains
     // the scripts that we will use for checking the style.
-    stage('Check out jenkins-conf repository')
+    stage('Set up workspace')
     {
       steps
       {
+        cleanWs(deleteDirs: true,
+                disableDeferredWipeout: true,
+                notFailBuild: true)
+        checkout scm
+
         script
         {
           u = load '.jenkins/utils.groovy'
-          u.startBuild("Memory Checks");
+          u.startCheck('Memory checks', 'Setting up workspace...')
         }
 
+        // We also need the jenkins-conf repository for the memory checking
+        // scripts.
         sh '''
           git clone https://github.com/mlpack/jenkins-conf
         '''
@@ -44,6 +54,8 @@ pipeline
     {
       steps
       {
+        script { u.updateCheckStatus('Building mlpack...') }
+
         sh '''
           export CCACHE_DIR=/opt/ccache/;
           ccache --zero-stats
@@ -69,6 +81,8 @@ pipeline
         // what files have changed.
         script
         {
+          u.updateCheckStatus('Running memory checks...')
+
           if (env.BRANCH_NAME.startsWith('PR-'))
           {
             // Strip 'PR-' from the front.
@@ -112,9 +126,20 @@ pipeline
 
   post
   {
+    success
+    {
+      script { u.finishCheck('No memory errors found.', true) }
+    }
+
+    failure
+    {
+      script { u.finishCheck('Memory errors found.', false) }
+    }
+
     always
     {
       junit(allowEmptyResults: true,
+            skipPublishingChecks: true,
             testResults: '**/reports/tests/*.xml')
 
       // Clean the workspace.
@@ -122,16 +147,6 @@ pipeline
               deleteDirs: true,
               disableDeferredWipeout: true,
               notFailBuild: true)
-
-      // Set the build status.
-      script
-      {
-        u.setBuildStatus(result: currentBuild.currentResult,
-                         context: "Memory Checks",
-                         successMessage: "No memory errors.",
-                         unstableMessage: "Build unstable.",
-                         failureMessage: "Memory check failure with valgrind.");
-      }
     }
   }
 }
