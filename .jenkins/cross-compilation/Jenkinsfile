@@ -5,13 +5,22 @@
 // Define the ARCH_NAME and device name for each host we will run on.
 arch_names = ['couscous': 'CORTEXA76',
               'tofu':     'CORTEXA53',
-              'chorizo':  'CORTEXA76', // actually a cortex-a78, will fix later
-              'tatertot': 'CORTEXA72']
+              // chorizo is actually a Cortex-A78, but there is no OpenBLAS
+              // support right now.
+              'chorizo':  'CORTEXA76',
+              // tatertot is a Cortex-A72, but compiling with those flags seems
+              // to cause problems.
+              'tatertot': 'CORTEXA53']
 
 device_names = ['couscous': 'rpi5',
                 'tofu': 'rpi3',
                 'chorizo': 'jetson-orin-nano',
                 'tatertot': 'beaglebone-ai64']
+
+page_sizes = ['couscous': '0x4000' /* 16kb for RPi5s */,
+              'tofu': '',
+              'chorizo': '',
+              'tatertot': '0x10000' /* 64kb */]
 
 pipeline
 {
@@ -85,6 +94,7 @@ pipeline
             {
               ARCH_NAME = "${arch_names[env.target]}"
               DEVICE_NAME = "${device_names[env.target]}"
+              PAGE_SIZE = "${page_sizes[env.target]}"
             }
 
             steps
@@ -95,7 +105,13 @@ pipeline
               }
 
               sh '''
-                echo $PWD;
+                # If a custom page size is needed, set it.
+                EXTRA_CMAKE_OPTS="";
+                if [ ! -z "$PAGE_SIZE" ];
+                then
+                  EXTRA_CMAKE_OPTS="-DCMAKE_CXX_FLAGS=\"-Wl,-z,common-page-size=$PAGE_SIZE -Wl,-z,max-page-size=$PAGE_SIZE\"";
+                fi
+
                 rm -rf build-${target}/
                 mkdir build-${target}/
                 cd build-${target}/
@@ -107,6 +123,7 @@ pipeline
                     -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
                     -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
                     -DDOWNLOAD_DEPENDENCIES=ON \
+                    $EXTRA_CMAKE_OPTS \
                     ../
                 make mlpack_test;
               '''
