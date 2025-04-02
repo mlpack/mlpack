@@ -114,18 +114,18 @@ jobs:
           sudo apt-get install --yes --allow-unauthenticated \
               libopenblas-dev libstb-dev libcereal-dev xz-utils
           # Install the oldest Armadillo version that we support.
-          curl -k -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz | tar -xvJ && \
-              cd armadillo* && \
-              cmake . && \
-              make && \
-              sudo make install && \
-              cd ..
+          curl -k -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz | tar -xvJ
+          cd armadillo*
+          cmake .
+          make
+          sudo make install
+          cd ..
           # Install the latest ensmallen version.
           wget https://ensmallen.org/files/ensmallen-latest.tar.gz
-              tar -xvzpf ensmallen-latest.tar.gz # Unpack into ensmallen-*/.
-              cd ensmallen-*/ && \
-              sudo cp -vr include/* /usr/include/ && \
-              cd ..
+          tar -xvzpf ensmallen-latest.tar.gz # Unpack into ensmallen-*/.
+          cd ensmallen-*/
+          sudo cp -vr include/* /usr/include/
+          cd ..
 
       - name: Install build dependencies (macOS)
         if: matrix.config.os == 'macOS'
