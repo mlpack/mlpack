@@ -109,7 +109,7 @@ pipeline
                 EXTRA_CMAKE_OPTS='';
                 if [ ! -z "$PAGE_SIZE" ];
                 then
-                  EXTRA_CMAKE_OPTS='-DCMAKE_CXX_FLAGS="-Wl,-z,common-page-size='$PAGE_SIZE' -Wl,-z,max-page-size='$PAGE_SIZE'"';
+                  EXTRA_CMAKE_OPTS='"-DCMAKE_CXX_FLAGS=\\"-Wl,-z,common-page-size='$PAGE_SIZE' -Wl,-z,max-page-size='$PAGE_SIZE'\\""';
                 fi
 
                 rm -rf build-${target}/
