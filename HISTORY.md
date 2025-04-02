@@ -1,8 +1,8 @@
 # mlpack changelog
 
-## mlpack ?.?.?
+## mlpack 4.6.0
 
-_????-??-??_
+_2025-04-02_
 
  * Fix command-line duplicate output bug when loading matrices for some bindings
    (#3838).
