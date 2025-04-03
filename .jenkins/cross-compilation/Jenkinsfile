@@ -10,7 +10,7 @@ arch_names = ['couscous': 'CORTEXA76',
               'chorizo':  'CORTEXA76',
               // tatertot is a Cortex-A72, but compiling with those flags seems
               // to cause problems.
-              'tatertot': 'CORTEXA53']
+              'tatertot': 'CORTEXA72']
 
 device_names = ['couscous': 'rpi5',
                 'tofu': 'rpi3',
