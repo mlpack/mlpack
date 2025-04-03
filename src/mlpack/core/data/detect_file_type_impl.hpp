@@ -12,33 +12,10 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include "extension.hpp"
 #include "detect_file_type.hpp"
-#include "string_algorithms.hpp"
 
 namespace mlpack {
 namespace data {
-
-/**
- * Given a file type, return a logical name corresponding to that file type.
- *
- * @param type Type to get the logical name of.
- */
-inline std::string GetStringType(const FileType& type)
-{
-  switch (type)
-  {
-    case FileType::CSVASCII:    return "CSV data";
-    case FileType::RawASCII:    return "raw ASCII formatted data";
-    case FileType::RawBinary:   return "raw binary formatted data";
-    case FileType::ArmaASCII:   return "Armadillo ASCII formatted data";
-    case FileType::ArmaBinary:  return "Armadillo binary formatted data";
-    case FileType::PGMBinary:   return "PGM data";
-    case FileType::HDF5Binary:  return "HDF5 data";
-    case FileType::CoordASCII:  return "ASCII formatted sparse coordinate data";
-    default:                    return "";
-  }
-}
 
 /**
  * Given an istream, attempt to guess the file type.  This is taken originally
@@ -292,6 +269,11 @@ inline FileType AutoDetect(std::fstream& stream, const std::string& filename)
   {
     detectedLoadType = FileType::HDF5Binary;
   }
+  else if (extension == "arff")
+  {
+    return FileType::ArffASCII;
+  }
+
   else // Unknown extension...
   {
     detectedLoadType = FileType::FileTypeUnknown;
@@ -306,34 +288,55 @@ inline FileType AutoDetect(std::fstream& stream, const std::string& filename)
  * @param filename Name of the file whose type we should detect.
  * @return Detected type of file.
  */
-inline FileType DetectFromExtension(const std::string& filename)
+template<typename DataOptionsType>
+void DetectFromExtension(const std::string& filename,
+                         DataOptionsType& opts)
 {
   const std::string extension = Extension(filename);
 
   if (extension == "csv")
   {
-    return FileType::CSVASCII;
+    opts.FileFormat() = FileType::CSVASCII;
   }
   else if (extension == "txt")
   {
-    return FileType::RawASCII;
+    opts.FileFormat() = FileType::RawASCII;
   }
   else if (extension == "bin")
   {
-    return FileType::ArmaBinary;
+    opts.FileFormat() = FileType::ArmaBinary;
   }
   else if (extension == "pgm")
   {
-    return FileType::PGMBinary;
+    opts.FileFormat() = FileType::PGMBinary;
   }
   else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
            extension == "he5")
   {
-    return FileType::HDF5Binary;
+    opts.FileFormat() = FileType::HDF5Binary;
   }
-  else
+  else if (extension == "arff")
   {
-    return FileType::FileTypeUnknown;
+    opts.FileFormat() = FileType::ArffASCII;
+  }
+  else if constexpr (std::is_same_v<DataOptionsType, ModelOptions>)
+  {
+    if (extension == "xml")
+    {
+      opts.DataFormat() = format::xml;
+    }
+    else if (extension == "bin")
+    {
+      opts.DataFormat() = format::binary;
+    }
+    else if (extension == "json")
+    {
+      opts.DataFormat() = format::json;
+    }
+    else
+    {
+      opts.FileFormat() = FileType::FileTypeUnknown;
+    }
   }
 }
 
