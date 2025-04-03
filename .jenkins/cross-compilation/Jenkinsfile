@@ -5,7 +5,7 @@
 // Define the ARCH_NAME and device name for each host we will run on.
 arch_names = ['couscous': 'CORTEXA76',
               'tofu':     'CORTEXA53',
-              'chorizo':  'JETSONORIN',
+              'chorizo':  'CORTEXA78',
               'tatertot': 'CORTEXA72']
 
 device_names = ['couscous': 'rpi5',
