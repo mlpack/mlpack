@@ -61,7 +61,7 @@ program (before including mlpack or Armadillo!).
 |---------------------------|-------------------|---------------|
 |*Functionality.* |||
 | `-DMLPACK_ENABLE_ANN_SERIALIZATION` | `#define MLPACK_ENABLE_ANN_SERIALIZATION` | Allow neural network layers to be serialized. |
-| `-DMLPACK_NO_STD_MUTEX` | `#define MLPACK_NO_STD_MUTEX` | Disable mutexes inside mlpack; use this if your system has no support for `std::mutex` and has only one core.  You may also need to define `ARMA_DO_NOT_USE_STD_MUTEX` for Armadillo. |
+| `-DMLPACK_NO_STD_MUTEX` | `#define MLPACK_NO_STD_MUTEX` | Disable mutexes inside mlpack; use this if your system has no support for `std::mutex` and has only one core.  You may also need to define `ARMA_DONT_USE_STD_MUTEX` for Armadillo. |
 |---------------------------|-------------------|---------------|
 |*Configuration.* |||
 | `-DMLPACK_USE_SYSTEM_STB` | `#define MLPACK_USE_SYSTEM_STB` | Use the version of STB available on the system instead of the version bundled with mlpack.  If set, make sure `stb_image.h`, `stb_image_write.h`, and `stb_image_resize2.h` are available. |
