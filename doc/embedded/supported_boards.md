@@ -5,7 +5,7 @@ compile or cross compile mlpack to.  This page assumes that you have a
 functional operating system (e.g., Linux, MacOS, Windows) with compatible
 ABI on both the host and the target. In addition, your objective is to create
 an embedded ABI (eabi). For now, this guide does not support none-eabi or
-bare-metal C/C++. The following table refers only to possible values of 
+bare-metal C/C++. The following table refers only to possible values of
 `ARCH_NAME` CMake flag that needs to be specified before the compilation
 process starts.
 
@@ -22,7 +22,7 @@ identify two parameters to configure mlpack with CMake:
 
   * `TOOLCHAIN_PREFIX`: this specifies the prefix to use when calling compilers and other tools inside the toolchain
   * `CMAKE_SYSROOT`: this specifies the system root for the cross-compilation environment; in the Bootlin toolchains, this is the `sysroot/` directory
-  
+
 For more detailed information on these options see [this tutorial](crosscompile_armv7.md).
 
 You can use the table below with your desired architecture to find links to
@@ -64,6 +64,10 @@ cmake \
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | CORTEXA76 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#cortexa76) | [Cortex A76 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A76)  |
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| CORTEXA78 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#cortexa78) | [Cortex A78 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A78)  |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| BCM2711   | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#bcm2711) | [Raspberry Pi 4 on Wikipedia](https://en.wikipedia.org/wiki/Raspberry_Pi_4) |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | C906      | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#c906) | [C906 on riscv](https://www.riscvschool.com/2023/03/09/t-head-xuantie-c906-risc-v/) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | x280      | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#x280) | [x280 on SiFive](https://www.sifive.cn/api/document-file?uid=x280-datasheet) |
@@ -87,35 +91,35 @@ the new architecture added to this table.
 -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv6-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
 ```
 
-### CORTEXA7 
+### CORTEXA7
 
 ```
 -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
 -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
 ```
 
-### CORTEXA8 
+### CORTEXA8
 
 ```
 -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
 -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
 ```
 
-### CORTEXA9  
+### CORTEXA9
 
 ```
 -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
 -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
 ```
 
-### CORTEXA15 
+### CORTEXA15
 
 ```
 -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
 -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
 ```
 
-### CORTEXA53 
+### CORTEXA53
 
 ```
 -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/bin/aarch64-buildroot-linux-gnueabihf-
@@ -136,6 +140,20 @@ the new architecture added to this table.
 -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/aarch64-buildroot-linux-gnu/sysroot
 ```
 
+### CORTEXA78
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/bin/aarch64-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/aarch64-buildroot-linux-gnu/sysroot
+```
+
+### BCM2711
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/bin/aarch64-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/aarch64-buildroot-linux-gnueabihf/sysroot
+```
+
 ### C906
 
 ```
@@ -143,14 +161,14 @@ the new architecture added to this table.
 -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2024.02-1/riscv64-buildroot-linux-gnueabihf/sysroot
 ```
 
-### x280 
+### x280
 
 ```
 -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2024.02-1/bin/riscv64-buildroot-linux-gnueabihf-
 -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2024.02-1/riscv64-buildroot-linux-gnueabihf/sysroot
 ```
 
-### KATAMI    
+### KATAMI
 
 ```
 -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2024.02-1/bin/x86-i686-buildroot-linux-gnueabihf-
