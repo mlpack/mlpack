@@ -162,7 +162,7 @@ pipeline
                       || echo "Test failure or other problem.";
 
                   # Clean up afterwards.
-                  scp jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/reports/mlpack_test.junit.xml reports/mlpack_test.${hostname}.junit.xml;
+                  scp jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/reports/mlpack_test.junit.xml reports/mlpack_test.${target}.junit.xml;
                   ssh jenkins@${target} -t rm -rf test_${BRANCH_NAME}_${BUILD_ID}/;
                 '''
               }
@@ -175,16 +175,6 @@ pipeline
 
   post
   {
-    success
-    {
-      script { u.finishCheck('Cross-compilation checks passed.', true) }
-    }
-
-    failure
-    {
-      script { u.finishCheck('Cross-compilation checks failed.', false) }
-    }
-
     always
     {
       junit(allowEmptyResults: true,
@@ -196,6 +186,22 @@ pipeline
               deleteDirs: true,
               disableDeferredWipeout: true,
               notFailBuild: true)
+    }
+
+    success
+    {
+      script { u.finishCheck('Cross-compilation checks passed.', true) }
+    }
+
+    // Mark unstable builds as failed.
+    unstable
+    {
+      script { u.finishCheck('Cross-compilation checks failed.', false) }
+    }
+
+    failure
+    {
+      script { u.finishCheck('Cross-compilation checks failed.', false) }
     }
   }
 }
