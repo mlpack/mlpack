@@ -119,6 +119,15 @@ class ModelOptions : public DataOptions
     // Do Nothing.
   }
 
+  explicit ModelOptions(const DataOptions& opts) :
+    DataOptions(opts),
+    model(false),
+    dataFormat(format::binary),
+    objectName("")
+  {
+    // Do Nothing.
+  }
+
   //! Get if we are loading an model.
   const bool& Model() const { return model; }
 
@@ -186,7 +195,8 @@ class CSVOptions : public DataOptions
      semiColon(semiColon),
      missingToNan(missingToNan),
      categorical(categorical),
-     timeseries(timeseries)
+     timeseries(timeseries),
+     samplingRate(samplingRate)
   {
     // Do Nothing.
   }

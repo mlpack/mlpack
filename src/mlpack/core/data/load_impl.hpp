@@ -234,11 +234,11 @@ bool Load(const std::string& filename,
     {
       success = LoadTimeseries(filename, matrix, csvOpts, stream);
     }
-    else if constexpr (MatType::is_col)
+    else if constexpr (IsCol<MatType>::value)
     {
       success = LoadCol(filename, matrix, csvOpts, stream);
     }
-    else if constexpr (MatType::is_row)
+    else if constexpr (IsRow<MatType>::value)
     {
       success = LoadRow(filename, matrix, csvOpts, stream);
     }

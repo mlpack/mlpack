@@ -132,21 +132,21 @@ bool Save(const std::string& filename,
     CSVOptions csvOpts(opts);
     if constexpr (IsSparseMat<MatType>::value)
     {
-      success = SaveSparse(filename, matrix, csvOpts);
+      success = SaveSparse(matrix, csvOpts, stream);
     }
     else if constexpr (IsCol<MatType>::value)
     {
       opts.NoTranspose() = true;
-      success = SaveDense(filename, matrix, csvOpts, stream);
+      success = SaveDense(matrix, csvOpts, stream);
     }
     else if constexpr (IsRow<MatType>::value)
     {
       opts.NoTranspose() = false;
-      success = SaveDense(filename, matrix, csvOpts, stream);
+      success = SaveDense(matrix, csvOpts, stream);
     }
     else if constexpr (IsDense<MatType>::value)
     {
-      success = SaveDense(filename, matrix, csvOpts, stream);
+      success = SaveDense(matrix, csvOpts, stream);
     }
   }
   else if (std::is_same_v<DataOptionsType, ImageOptions>)
@@ -154,7 +154,8 @@ bool Save(const std::string& filename,
   }
   else if (std::is_same_v<DataOptionsType, ModelOptions>)
   {
-    success = SaveModel(filename, matrix, opts, &stream);
+    ModelOptions modOpts(opts);
+    success = SaveModel(matrix, modOpts, stream);
   }
 
   if (!success)
@@ -173,8 +174,7 @@ bool Save(const std::string& filename,
 }
 
 template<typename eT>
-bool SaveDense(const std::string& filename,
-               const arma::Mat<eT>& matrix,
+bool SaveDense(const arma::Mat<eT>& matrix,
                CSVOptions& opts,
                std::fstream& stream)
 {
@@ -194,8 +194,7 @@ bool SaveDense(const std::string& filename,
 
 // Save a Sparse Matrix
 template<typename eT>
-bool SaveSparse(const std::string& filename,
-                const arma::SpMat<eT>& matrix,
+bool SaveSparse(const arma::SpMat<eT>& matrix,
                 CSVOptions& opts,
                 std::fstream& stream)
 {
@@ -215,8 +214,7 @@ bool SaveSparse(const std::string& filename,
 
 //! Save a model to file.
 template<typename Object>
-bool SaveModel(const std::string& filename,
-               Object& objectToSerialize,
+bool SaveModel(Object& objectToSerialize,
                ModelOptions& opts,
                std::fstream& stream)
 {
