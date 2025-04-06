@@ -58,9 +58,9 @@ class PurgedKFoldCV :
     */
   PurgedKFoldCV(
       size_t k,
-      double embargoPercentage,
       const MatType& xs,
       const PredictionsType& ys,
+      double embargoPercentage,
       const MatType& intervals);
 
   /**
@@ -80,10 +80,10 @@ class PurgedKFoldCV :
     */
   PurgedKFoldCV(
       size_t k,
-      double embargoPercentage,
       const MatType& xs,
       const PredictionsType& ys,
       const size_t numClasses,
+      double embargoPercentage,
       const MatType& intervals);
 
   /**
@@ -105,11 +105,11 @@ class PurgedKFoldCV :
     */
   PurgedKFoldCV(
       size_t k,
-      double embargoPercentage,
       const MatType& xs,
       const data::DatasetInfo& datasetInfo,
       const PredictionsType& ys,
       const size_t numClasses,
+      double embargoPercentage,
       const MatType& intervals);
 
   /**
@@ -131,10 +131,10 @@ class PurgedKFoldCV :
     */
   PurgedKFoldCV(
       size_t k,
-      double embargoPercentage,
       const MatType& xs,
       const PredictionsType& ys,
       const WeightsType& weights,
+      double embargoPercentage,
       const MatType& intervals);
 
   /**
@@ -156,11 +156,11 @@ class PurgedKFoldCV :
     */
   PurgedKFoldCV(
       size_t k,
-      double embargoPercentage,
       const MatType& xs,
       const PredictionsType& ys,
       const size_t numClasses,
       const WeightsType& weights,
+      double embargoPercentage,
       const MatType& intervals);
 
   /**
@@ -178,17 +178,17 @@ class PurgedKFoldCV :
     * @param ys Labels for each data point.
     * @param numClasses Number of classes in the dataset.
     * @param weights Observation weights (for boosting).
-    * @param[in] intervals A `2 x m` matrix, where each column stores the start
-    *                      and end sample of an interval.
+    * @param[in] intervals A `2 x xs.n_cols` matrix, where each column stores
+    *                      the start and end sample of an interval.
     */
   PurgedKFoldCV(
       size_t k,
-      double embargoPercentage,
       const MatType& xs,
       const data::DatasetInfo& datasetInfo,
       const PredictionsType& ys,
       const size_t numClasses,
       const WeightsType& weights,
+      double embargoPercentage,
       const MatType& intervals);
 
   using KFoldCVBase<

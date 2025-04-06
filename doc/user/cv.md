@@ -18,6 +18,10 @@ mlpack currently implements two easy-to-use forms of cross-validation:
  - *k-fold* cross-validation, where we split the data `k` ways and desire the
    average performance measure on each of the `k` splits of the data
 
+Furthermore, a *purged k-fold* cross-validation is provided specifically for
+time-series to prevent informational leakage from the training into the test
+set.
+
 In this tutorial we will see the usage examples and details of the
 cross-validation module.  Because the cross-validation code is generic and can
 be used with any learner and performance measure, any use of the
@@ -279,6 +283,35 @@ numClasses)`.  Therefore, for `KFoldCV` you would call the constructor
 `KFoldCV(k, xs, ys, numClasses)` and for `SimpleCV` you would call the
 constructor `SimpleCV(pct, xs, ys, numClasses)`.
 
+## The `PurgedKFoldCV` class
+
+The `PurgedKFoldCV` class is a variant of the `KFoldCV` class designed for
+time series. It purges and embargos data from the training sets after the
+k-fold splits to avoid information leakage from the training sets into the
+test set for time series. _Purging_ is based on duration of events as per
+the cosntructor argument `interval`. _Embargoing_ is based on a percentage
+value.
+
+Time series are not IID. New samples depend on previous samples and thus
+information is leaked from the training sets into the test set if not
+prevented.
+
+### The `PurgedKFoldCV` constructors
+
+The `PurgedKFoldCV` offers the same six constructors as the `KFoldCV` and
+`SimpleCV` classes but with two additional parameters `embargoPercentage` and
+`intervals`.
+
+ - `intervals` is `2 x xs.n_cols_` matrix, where each column stores the start
+   and end sample of an interval. Similar to
+   [`SequentialBootstrap`'s](methods/random_forest.md#bootstraptype).
+   `intervals` parameter. When the split is made, samples of the training set
+   that have an active interval in the test set, are removed from the training
+   set.
+ - `embargoPercentage` Percentage of the dataset size `xs` that is used to
+   extend the duration of the intervals in the validation set to remove 
+   elements from the training set after the validation set (embargo). 
+
 ### The `Evaluate()` method
 
 The other method that `KFoldCV` and `SimpleCV` have is the method to actually
@@ -336,6 +369,7 @@ classes:
 
  - `SimpleCV`
  - `KFoldCV`
+ - `PurgedKFoldCV`
  - `Accuracy`
  - `F1`
  - `MSE`

@@ -27,9 +27,9 @@ PurgedKFoldCV<
     PredictionsType,
     WeightsType>::PurgedKFoldCV(
         size_t k,
-        double embargoPercentage,
         const MatType& xs,
         const PredictionsType& ys,
+        double embargoPercentage,
         const MatType& intervals) :
   KFoldCVBase<
   PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
@@ -55,11 +55,12 @@ PurgedKFoldCV<
     Metric,
     MatType,
     PredictionsType,
-    WeightsType>::PurgedKFoldCV(size_t k,
-        double embargoPercentage,
+    WeightsType>::PurgedKFoldCV(
+        size_t k,
         const MatType& xs,
         const PredictionsType& ys,
         const size_t numClasses,
+        double embargoPercentage,
         const MatType& intervals) :
   KFoldCVBase<
         PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
@@ -86,11 +87,11 @@ PurgedKFoldCV<MLAlgorithm,
     PredictionsType,
     WeightsType>::PurgedKFoldCV(
         size_t k,
-        double embargoPercentage,
         const MatType& xs,
         const data::DatasetInfo& datasetInfo,
         const PredictionsType& ys,
         const size_t numClasses,
+        double embargoPercentage,
         const MatType& intervals) :
   KFoldCVBase<
         PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
@@ -118,10 +119,10 @@ PurgedKFoldCV<
     PredictionsType,
     WeightsType>::PurgedKFoldCV(
         size_t k,
-        double embargoPercentage,
         const MatType& xs,
         const PredictionsType& ys,
         const WeightsType& weights,
+        double embargoPercentage,
         const MatType& intervals) :
   KFoldCVBase<
         PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
@@ -149,11 +150,11 @@ PurgedKFoldCV<
     PredictionsType,
     WeightsType>::PurgedKFoldCV(
         size_t k,
-        double embargoPercentage,
         const MatType& xs,
         const PredictionsType& ys,
         const size_t numClasses,
         const WeightsType& weights,
+        double embargoPercentage,
         const MatType& intervals) :
   KFoldCVBase<
         PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
@@ -181,12 +182,12 @@ PurgedKFoldCV<
     PredictionsType,
     WeightsType>::PurgedKFoldCV(
         size_t k,
-        double embargoPercentage,
         const MatType& xs,
         const data::DatasetInfo& datasetInfo,
         const PredictionsType& ys,
         const size_t numClasses,
         const WeightsType& weights,
+        double embargoPercentage,
         const MatType& intervals) :
   KFoldCVBase<
         PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
