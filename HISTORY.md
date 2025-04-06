@@ -4,6 +4,8 @@
 
 _????-??-??_
 
+ * Drop pytest-runner and "setup.py test" support (#3921).
+
 
 ## mlpack 4.6.0
 
