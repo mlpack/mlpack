@@ -72,7 +72,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
                  "[HoeffdingTreeMainTest][BindingTest]")
 {
   arma::mat inputData;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -197,7 +197,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelReuseTest",
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels, data::NoFatal))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::CSV))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
@@ -258,7 +258,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelCategoricalReuseTest",
                  "[HoeffdingTreeMainTest][BindingTest]")
 {
   arma::mat inputData;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;

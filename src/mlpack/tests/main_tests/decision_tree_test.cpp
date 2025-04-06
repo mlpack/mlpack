@@ -77,7 +77,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture,
                  "[DecisionTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -126,7 +126,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeMinimumLeafSizeTest",
                  "[DecisionTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -160,7 +160,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture,
                  "[DecisionTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -193,7 +193,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionMinimumGainSplitTest",
                  "[DecisionTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -226,7 +226,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionRegularisationTest",
                  "[DecisionTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -293,7 +293,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelReuseTest",
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels, data::NoFatal))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::CSV))
     FAIL("Cannot load labels for vc2_labels.txt");
   inputData.print("input_data");
   labels.print("labels");
@@ -393,7 +393,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelCategoricalReuseTest",
                  "[DecisionTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
