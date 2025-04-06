@@ -303,8 +303,6 @@ bool Load(const std::string& filename,
 
 // Include implementation of Load() for matrix.
 #include "load_impl.hpp"
-// Include implementation of model-loading Load() overload.
-#include "load_model_impl.hpp"
 // Include implementation of Load() for vectors.
 #include "load_vec_impl.hpp"
 
