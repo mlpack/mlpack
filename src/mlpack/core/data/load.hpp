@@ -17,13 +17,14 @@
 #include <mlpack/prereqs.hpp>
 #include <string>
 
+#include "data_options.hpp"
 #include "format.hpp"
-#include "dataset_mapper.hpp"
-#include "detect_file_type.hpp"
 #include "image_info.hpp"
-#include "load_csv.hpp"
+#include "load_numeric.hpp"
+#include "load_categorical.hpp"
 #include "load_arff.hpp"
 #include "load_image.hpp"
+#include "utilities.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
@@ -70,11 +71,50 @@ namespace data /** Functions to load and save matrices and models. */ {
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           const bool fatal = false,
           const bool transpose = true,
           const FileType inputLoadType = FileType::AutoDetect);
+
+/**
+ * This function is only an overload, and does exactly the same thing as the
+ * above function.
+ * The previous Load is deprecated and will be removed in mlpack 5.0.
+ * Once this is the case, we will only have the following function signature.
+
+ * @param filename Name of file to load.
+ * @param matrix Matrix to load contents of file into.
+ * @param opts DataOptions to be passed to the function
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename MatType, typename DataOptionsType>
+bool Load(const std::string& filename,
+          MatType& matrix,
+          DataOptionsType& opts);
+
+/**
+ * This function a set of several dataset files into one matrix.
+ * This is usually the case if the dataset is collected on several occasions
+ * and not agglomerated into one file.
+ *
+ * Note, the number of columns in all files must be equal, and the dataset
+ * needs to be of the same natures. Please do not load different datasets using
+ * the following function.
+ *
+ * The user needs to specify all the filesname in one std::vector before using
+ * this function.
+ *
+ * @param filename Names of files to load.
+ * @param matrix Matrix to load contents of files into.
+ * @param opts DataOptions to be passed to the function
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Load(const std::vector<std::string>& filename,
+          arma::Mat<eT>& matrix,
+          DataOptions& opts);
 
 /**
  * Loads a sparse matrix from file, using arma::coord_ascii format.  This
@@ -107,6 +147,7 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::SpMat<eT>& matrix,
           const bool fatal = false,
@@ -140,7 +181,9 @@ bool Load(const std::string& filename,
  * @param fatal If an error should be reported as fatal (default false).
  * @return Boolean value indicating success or failure of load.
  */
+
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::Col<eT>& vec,
           const bool fatal = false);
@@ -173,6 +216,7 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::Row<eT>& rowvec,
           const bool fatal = false);
@@ -214,6 +258,7 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT, typename PolicyType>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           DatasetMapper<PolicyType>& info,
@@ -246,6 +291,7 @@ bool Load(const std::string& filename,
  * relevant error information will be printed to Log::Warn.
  */
 template<typename T>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           const std::string& name,
           T& t,
@@ -257,8 +303,6 @@ bool Load(const std::string& filename,
 
 // Include implementation of Load() for matrix.
 #include "load_impl.hpp"
-// Include implementation of model-loading Load() overload.
-#include "load_model_impl.hpp"
 // Include implementation of Load() for vectors.
 #include "load_vec_impl.hpp"
 

@@ -18,10 +18,11 @@
 #include <mlpack/core/util/log.hpp>
 #include <string>
 
+#include "data_options.hpp"
 #include "format.hpp"
 #include "image_info.hpp"
-#include "detect_file_type.hpp"
 #include "save_image.hpp"
+#include "detect_file_type.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices. */ {
@@ -62,11 +63,28 @@ namespace data /** Functions to load and save matrices. */ {
  * @return Boolean value indicating success or failure of save.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Save(const std::string& filename,
           const arma::Mat<eT>& matrix,
           const bool fatal = false,
           bool transpose = true,
           FileType inputSaveType = FileType::AutoDetect);
+
+/**
+ * This function is only an overload, and does exactly the same thing as the
+ * above function.
+ * The previous Load is deprecated and will be removed in mlpack 5.0.
+ * Once this is the case, we will only have the following function signature.
+
+ * @param filename Name of file to load.
+ * @param matrix Matrix to load contents of file into.
+ * @param opts DataOptions to be passed to the function
+ * @return Boolean value indicating success or failure of Save.
+ */
+template<typename MatType, typename DataOptionsType>
+bool Save(const std::string& filename,
+          const MatType& matrix,
+          DataOptionsType& opts);
 
 /**
  * Saves a sparse matrix to file, guessing the filetype from the
@@ -94,6 +112,7 @@ bool Save(const std::string& filename,
  * @return Boolean value indicating success or failure of save.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Save(const std::string& filename,
           const arma::SpMat<eT>& matrix,
           const bool fatal = false,
@@ -125,6 +144,7 @@ bool Save(const std::string& filename,
  * relevant error information will be printed to Log::Warn.
  */
 template<typename T>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Save(const std::string& filename,
           const std::string& name,
           T& t,

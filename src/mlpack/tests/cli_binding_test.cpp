@@ -268,11 +268,11 @@ TEST_CASE("GetParamDatasetInfoMatTest", "[CLIOptionTest]")
 TEST_CASE("GetParamModelTest", "[CLIOptionTest]")
 {
   util::ParamData d;
-
+  data::ModelOptions opts;
   // Create value.
   string filename = "kernel.bin";
   GaussianKernel gk(5.0);
-  data::Save("kernel.bin", "model", gk);
+  data::Save("kernel.bin", gk, opts);
 
   // Create tuple.
   tuple<GaussianKernel*, string> t = make_tuple((GaussianKernel*) NULL,
@@ -390,7 +390,7 @@ TEST_CASE("OutputParamMatTest", "[CLIOptionTest]")
   util::ParamData d;
 
   // Create value.
-  string filename = "test.csv";
+  string filename = "test_tmp.csv";
   arma::mat m(3, 3, arma::fill::randu);
   using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
@@ -405,8 +405,7 @@ TEST_CASE("OutputParamMatTest", "[CLIOptionTest]")
       (void*) NULL);
 
   arma::mat m2;
-  REQUIRE(data::Load("test.csv", m2));
-
+  REQUIRE(data::Load("test_tmp.csv", m2, data::NoFatal | data::Transpose));
   CheckMatrices(m, m2);
 
   remove("test.csv");
@@ -433,7 +432,7 @@ TEST_CASE("OutputParamUmatTest", "[CLIOptionTest]")
       (void*) NULL);
 
   arma::Mat<size_t> m2;
-  REQUIRE(data::Load("test.csv", m2));
+  REQUIRE(data::Load("test.csv", m2, data::NoFatal | data::Transpose));
 
   CheckMatrices(m, m2);
 
@@ -457,8 +456,9 @@ TEST_CASE("OutputParamModelTest", "[CLIOptionTest]")
   OutputParam<GaussianKernel>((util::ParamData&) d, (const void*) NULL,
       (void*) NULL);
 
+  data::ModelOptions opts;
   GaussianKernel gk2(1.0);
-  REQUIRE(data::Load("kernel.bin", "model", gk2));
+  REQUIRE(data::Load("kernel.bin", gk2, opts));
 
   REQUIRE(gk.Bandwidth() == gk2.Bandwidth());
 

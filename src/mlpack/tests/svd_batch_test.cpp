@@ -70,7 +70,8 @@ TEMPLATE_TEST_CASE("SVDBatchMomentumTest", "[SVDBatchTest]", float, double)
   using eT = TestType;
 
   Mat<eT> dataset;
-  if (!data::Load("GroupLensSmall.csv", dataset))
+  if (!data::Load("GroupLensSmall.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset GroupLensSmall.csv!");
 
   // Generate list of locations for batch insert constructor for sparse
@@ -124,7 +125,8 @@ TEMPLATE_TEST_CASE("SVDBatchRegularizationTest", "[SVDBatchTest]", float,
   using eT = TestType;
 
   Mat<eT> dataset;
-  if (!data::Load("GroupLensSmall.csv", dataset))
+  if (!data::Load("GroupLensSmall.csv", dataset,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset GroupLensSmall.csv!");
 
   // Generate list of locations for batch insert constructor for sparse

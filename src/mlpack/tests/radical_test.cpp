@@ -23,7 +23,7 @@ TEMPLATE_TEST_CASE("Radical_Test_Radical3D", "[RadicalTest]", float, double)
   using MatType = arma::Mat<ElemType>;
 
   MatType matX;
-  if (!data::Load("data_3d_mixed.txt", matX))
+  if (!data::Load("data_3d_mixed.txt", matX, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset data_3d_mixed.txt");
 
   Radical rad(0.175, 5, 100, matX.n_rows - 1);
@@ -44,7 +44,7 @@ TEMPLATE_TEST_CASE("Radical_Test_Radical3D", "[RadicalTest]", float, double)
   }
 
   MatType matS;
-  if (!data::Load("data_3d_ind.txt", matS))
+  if (!data::Load("data_3d_ind.txt", matS, data::NoFatal | data::Transpose))
     FAIL("Cannot load dataset data_3d_ind.txt");
   rad.Apply(matS, matY, matW);
 
