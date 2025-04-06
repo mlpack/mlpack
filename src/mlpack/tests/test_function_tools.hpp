@@ -86,7 +86,7 @@ void LoadBostonHousingDataset(MatType& trainData,
                               MatType& testData,
                               ResponsesType& trainResponses,
                               ResponsesType& testResponses,
-                              data::DataOptions& opts)
+                              data::CSVOptions& opts)
 {
   MatType dataset;
   ResponsesType responses;

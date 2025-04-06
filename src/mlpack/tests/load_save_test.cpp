@@ -591,7 +591,7 @@ TEST_CASE("LoadQuotedStringInCSVTest", "[LoadSaveTest]")
   elements.push_back("");
 
   arma::mat test;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -637,7 +637,7 @@ TEST_CASE("LoadQuotedStringInTXTTest", "[LoadSaveTest]")
   elements.push_back("\"field 2 with space\"");
 
   arma::mat test;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -689,7 +689,7 @@ TEST_CASE("LoadQuotedStringInTSVTest", "[LoadSaveTest]")
   elements.push_back("");
 
   arma::mat test;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -1523,7 +1523,7 @@ TEST_CASE("RegularCSVDatasetInfoLoad", "[LoadSaveTest]")
   for (size_t i = 0; i < testFiles.size(); ++i)
   {
     arma::mat one, two;
-    data::DataOptions opts;
+    data::CSVOptions opts;
     opts.Fatal() = false;
     opts.NoTranspose() = false; // Transpose = true;
     opts.Categorical() = true;
@@ -1569,7 +1569,7 @@ TEST_CASE("NontransposedCSVDatasetInfoLoad", "[LoadSaveTest]")
   for (size_t i = 0; i < testFiles.size(); ++i)
   {
     arma::mat one, two;
-    data::DataOptions opts;
+    data::CSVOptions opts;
     opts.Fatal() = false;
     opts.NoTranspose() = true;
     opts.Categorical() = true;
@@ -1615,7 +1615,7 @@ TEST_CASE("CategoricalCSVLoadTest00", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -1677,7 +1677,7 @@ TEST_CASE("CategoricalCSVLoadTest01", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -1727,7 +1727,7 @@ TEST_CASE("CategoricalCSVLoadTest02", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -1776,7 +1776,7 @@ TEST_CASE("CategoricalCSVLoadTest03", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -1825,7 +1825,7 @@ TEST_CASE("CategoricalCSVLoadTest04", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -1877,7 +1877,7 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest00", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.Categorical() = true;
@@ -1971,7 +1971,7 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest01", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.Categorical() = true;
@@ -2021,7 +2021,7 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest02", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.Categorical() = true;
@@ -2071,7 +2071,7 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest03", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.Categorical() = true;
@@ -2121,7 +2121,7 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest04", "[LoadSaveTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.Categorical() = true;
@@ -2174,7 +2174,7 @@ TEST_CASE("HarderKeonTest", "[LoadSaveTest]")
 
   // Load transposed.
   arma::mat dataset;
-  data::DataOptions opts, optsNt;
+  data::CSVOptions opts, optsNt;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -2234,7 +2234,7 @@ TEST_CASE("SimpleARFFTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -2280,7 +2280,7 @@ TEST_CASE("SimpleARFFCategoricalTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -2343,7 +2343,7 @@ TEST_CASE("HarderARFFTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -2410,7 +2410,7 @@ TEST_CASE("BadDatasetInfoARFFTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Categorical() = true;
 
   REQUIRE_THROWS_AS(data::LoadARFF("test.arff", dataset, opts.Mapper()),
@@ -2425,7 +2425,7 @@ TEST_CASE("BadDatasetInfoARFFTest", "[LoadSaveTest]")
 TEST_CASE("NonExistentFileARFFTest", "[LoadSaveTest]")
 {
   arma::mat dataset;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Categorical() = true;
 
   REQUIRE_THROWS_AS(data::LoadARFF("nonexistentfile.arff", dataset,
@@ -2474,7 +2474,7 @@ TEST_CASE("CategoryCaseTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = true;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -2499,7 +2499,7 @@ TEST_CASE("MalformedCSVTest", "[LoadSaveTest]")
   // maybe this could be tested as Missing to NaN ??
   // @rcurtin what do you think ?
   arma::mat dataset;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -2521,7 +2521,7 @@ TEST_CASE("LoadCSVTSVTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -2549,7 +2549,7 @@ TEST_CASE("LoadCSVTXTTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false; // Transpose = true;
   opts.Categorical() = true;
@@ -2578,7 +2578,7 @@ TEST_CASE("MalformedNoTransposeCSVTest", "[LoadSaveTest]")
   f.close();
   // Here as well ? missing to nan
   arma::mat dataset;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.Categorical() = true;
@@ -2600,7 +2600,7 @@ TEST_CASE("LoadCSVNoTransposeTSVTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.Categorical() = true;
@@ -2634,7 +2634,7 @@ TEST_CASE("LoadCSVNoTransposeTXTTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat dataset;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.Categorical() = true;
@@ -2693,7 +2693,7 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
   f << "5, 6, 7, 8" << std::endl;
 
   arma::mat dataset;
-  data::DataOptions opts;
+  data::CSVOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.HasHeaders() = true;

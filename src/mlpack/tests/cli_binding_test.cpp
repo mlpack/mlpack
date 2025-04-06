@@ -268,11 +268,11 @@ TEST_CASE("GetParamDatasetInfoMatTest", "[CLIOptionTest]")
 TEST_CASE("GetParamModelTest", "[CLIOptionTest]")
 {
   util::ParamData d;
-
+  data::ModelOptions opts;
   // Create value.
   string filename = "kernel.bin";
   GaussianKernel gk(5.0);
-  data::Save("kernel.bin", "model", gk);
+  data::Save("kernel.bin", gk, opts);
 
   // Create tuple.
   tuple<GaussianKernel*, string> t = make_tuple((GaussianKernel*) NULL,
@@ -456,8 +456,9 @@ TEST_CASE("OutputParamModelTest", "[CLIOptionTest]")
   OutputParam<GaussianKernel>((util::ParamData&) d, (const void*) NULL,
       (void*) NULL);
 
+  data::ModelOptions opts;
   GaussianKernel gk2(1.0);
-  REQUIRE(data::Load("kernel.bin", "model", gk2));
+  REQUIRE(data::Load("kernel.bin", gk2, opts));
 
   REQUIRE(gk.Bandwidth() == gk2.Bandwidth());
 

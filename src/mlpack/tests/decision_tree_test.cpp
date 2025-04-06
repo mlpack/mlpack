@@ -858,9 +858,13 @@ TEST_CASE("BestCategoricalBuildBinaryTest", "[DecisionTreeTest]")
   // into a training set and test set.
   arma::mat dataset;
   arma::Row<size_t> labels;
-  data::DatasetInfo dataInfo;
 
-  data::Load("mushroom.data.csv", dataset, dataInfo);
+  data::CSVOptions opts;
+  opts.Fatal() = false;
+  opts.NoTranspose() = false; // Transpose = true;
+  opts.Categorical() = true;
+
+  data::Load("mushroom.data.csv", dataset, opts);
   data::Load("mushroom.labels.csv", labels, data::Fatal | data::Transpose);
 
   arma::mat trainDataset, testDataset;
@@ -875,7 +879,7 @@ TEST_CASE("BestCategoricalBuildBinaryTest", "[DecisionTreeTest]")
   double minGainSplit = 10e-7;
 
   DecisionTree<GiniGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit>
-      tree(trainDataset, dataInfo, trainLabels, numClasses,
+      tree(trainDataset, opts.Mapper(), trainLabels, numClasses,
            minLeaf, minGainSplit, maxDepth);
   // Compute the accuracy of the DecisionTree. It should
   // be well over 95%.

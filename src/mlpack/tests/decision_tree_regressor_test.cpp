@@ -1201,7 +1201,7 @@ TEMPLATE_TEST_CASE("SimpleGeneralizationTest_",
   for (size_t trial = 0; trial < 3; ++trial)
   {
     // Loading data.
-    data::DataOptions opts;
+    data::CSVOptions opts;
     arma::Mat<ElemType> trainData, testData;
     arma::Row<ElemType> trainResponses, testResponses;
     LoadBostonHousingDataset(trainData, testData, trainResponses, testResponses,
@@ -1254,7 +1254,7 @@ TEST_CASE("WeightedDecisionTreeTest_", "[DecisionTreeRegressorTest]")
   for (size_t trial = 0; trial < 3; ++trial)
   {
     // Loading data.
-    data::DataOptions opts;
+    data::CSVOptions opts;
     arma::mat trainData, testData;
     arma::rowvec trainResponses, testResponses;
     LoadBostonHousingDataset(trainData, testData, trainResponses, testResponses,
@@ -1309,7 +1309,7 @@ TEST_CASE("WeightedDecisionTreeMADGainTest", "[DecisionTreeRegressorTest]")
   for (size_t trial = 0; trial < 5; ++trial)
   {
     // Loading data.
-    data::DataOptions opts;
+    data::CSVOptions opts;
     arma::mat trainData, testData;
     arma::rowvec trainResponses, testResponses;
     LoadBostonHousingDataset(trainData, testData, trainResponses, testResponses,
