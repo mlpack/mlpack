@@ -134,7 +134,8 @@ T*& GetParam(
   if (d.input && !d.loaded)
   {
     T* model = new T();
-    data::Load(value, "model", *model, true);
+    data::ModelOptions opts;
+    data::Load(value, *model, opts);
     d.loaded = true;
     std::get<0>(*tuple) = model;
   }

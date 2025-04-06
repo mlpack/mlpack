@@ -112,7 +112,7 @@ bool Save(const std::string& filename,
   bool success = DetectFileType(filename, opts, false);
   if (!success)
   {
-    Timer::Stop("loading_data");
+    Timer::Stop("saving_data");
     return false;
   }
 
@@ -127,7 +127,7 @@ bool Save(const std::string& filename,
   // Try to save the file.
   Log::Info << "Saving " << opts.FileTypeToString() << " to '" << filename
       << "'." << std::endl;
-  if (std::is_same_v<DataOptionsType, CSVOptions>)
+  if constexpr (std::is_same_v<DataOptionsType, CSVOptions>)
   {
     CSVOptions csvOpts(opts);
     if constexpr (IsSparseMat<MatType>::value)
@@ -149,10 +149,10 @@ bool Save(const std::string& filename,
       success = SaveDense(matrix, csvOpts, stream);
     }
   }
-  else if (std::is_same_v<DataOptionsType, ImageOptions>)
+  else if constexpr (std::is_same_v<DataOptionsType, ImageOptions>)
   {
   }
-  else if (std::is_same_v<DataOptionsType, ModelOptions>)
+  else if constexpr (std::is_same_v<DataOptionsType, ModelOptions>)
   {
     ModelOptions modOpts(opts);
     success = SaveModel(matrix, modOpts, stream);

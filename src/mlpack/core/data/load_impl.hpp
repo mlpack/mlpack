@@ -112,6 +112,20 @@ bool Load(const std::string& filename,
   return Load(filename, matrix, copyOpts);
 }
 
+template<typename T>
+bool Load(const std::string& filename,
+          const std::string& name,
+          T& t,
+          const bool fatal,
+          format f)
+{
+  ModelOptions opts;
+  opts.ObjectName() = name;
+  opts.Fatal() = fatal;
+  opts.DataFormat() = f;
+
+  return Load(filename, t, opts);
+}
 
 /**
  * This function loads sensor data into an armadillo matrix.
@@ -202,9 +216,8 @@ bool Load(const std::string& filename,
 {
   Timer::Start("loading_data");
 
-  bool success = false;
   std::fstream stream;
-  success = OpenFile(filename, opts, true, stream);
+  bool success = OpenFile(filename, opts, true, stream);
   if (!success)
   {
     Timer::Stop("loading_data");
@@ -218,7 +231,7 @@ bool Load(const std::string& filename,
     return false;
   }
 
-  if (std::is_same_v<DataOptionsType, CSVOptions>)
+  if constexpr (std::is_same_v<DataOptionsType, CSVOptions>)
   {
     CSVOptions csvOpts(opts);
     if constexpr (IsSparseMat<MatType>::value)
@@ -247,15 +260,15 @@ bool Load(const std::string& filename,
       success = LoadDense(filename, matrix, csvOpts, stream);
     }
   }
-  else if (std::is_same_v<DataOptionsType, ImageOptions>)
+  else if constexpr (std::is_same_v<DataOptionsType, ImageOptions>)
   {
 
   }
-  else if (std::is_same_v<DataOptionsType, ModelOptions>)
+  else if constexpr (std::is_same_v<DataOptionsType, ModelOptions>)
   {
-
+    ModelOptions modOpts(opts);
+    success = LoadModel(matrix, modOpts, stream);
   }
-
 
   if (!success)
   {
@@ -269,7 +282,13 @@ bool Load(const std::string& filename,
     return false;
   }
   else
-    Log::Info << "Size is " << matrix.n_rows << " x " << matrix.n_cols << ".\n";
+  {
+   if constexpr (!std::is_same_v<DataOptionsType, ModelOptions>)
+   {
+      Log::Info << "Size is " << matrix.n_rows << " x "
+                << matrix.n_cols << ".\n";
+   }
+  }
 
   Timer::Stop("loading_data");
 
@@ -441,6 +460,43 @@ bool LoadCategorical(const std::string& filename,
   Timer::Stop("loading_data");
 
   return true;
+}
+
+// Load a model from file.
+template<typename Object>
+bool LoadModel(Object& objectToSerialize,
+               ModelOptions& opts,
+               std::fstream& stream)
+{
+  try
+  {
+    if (opts.DataFormat() == format::xml)
+    {
+      cereal::XMLInputArchive ar(stream);
+      ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
+    }
+    else if (opts.DataFormat() == format::json)
+    {
+     cereal::JSONInputArchive ar(stream);
+     ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
+    }
+    else if (opts.DataFormat() == format::binary)
+    {
+      cereal::BinaryInputArchive ar(stream);
+      ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
+    }
+
+    return true;
+  }
+  catch (cereal::Exception& e)
+  {
+    if (opts.Fatal())
+      Log::Fatal << e.what() << std::endl;
+    else
+      Log::Warn << e.what() << std::endl;
+
+    return false;
+  }
 }
 
 template<typename eT>

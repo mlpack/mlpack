@@ -291,6 +291,7 @@ bool Load(const std::string& filename,
  * relevant error information will be printed to Log::Warn.
  */
 template<typename T>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           const std::string& name,
           T& t,
