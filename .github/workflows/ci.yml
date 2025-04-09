@@ -305,7 +305,7 @@ jobs:
           cp build\Release\*.exp dist\win-installer\mlpack-win-installer\Sources\lib\
           cp build\Release\*.dll dist\win-installer\mlpack-win-installer\Sources\
           cp build\Release\*.exe dist\win-installer\mlpack-win-installer\Sources\
-          cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll dist\win-installer\mlpack-win-installer\Sources\
+          cp ${{ github.workspace }}\deps\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll dist\win-installer\mlpack-win-installer\Sources\
           #
           # Copy documentation.
           mkdir dist\win-installer\mlpack-win-installer\Sources\doc
