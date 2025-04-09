@@ -995,10 +995,10 @@ TEST_CASE("PurgedKFoldCVTest", "[CVTest]")
   // then purge observations from the training set.
   PurgedKFoldCV<RandomForestFacade, Accuracy> cv(
       k,
-      embargoPct,
       ds,
       labels,
       numClasses,
+      embargoPct,
       intervals);
 
   arma::mat         mt;
