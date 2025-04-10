@@ -298,13 +298,12 @@ jobs:
 
       - name: Install Ruby for HTML documentation build
         uses: ruby/setup-ruby@v1
-        with:
-          ruby: head
-        run: gem install kramdown
 
       - name: Build HTML documentation
         shell: bash
-        run: DISABLE_HTML_CHECKS=1 ./scripts/build-docs.sh
+        run: |
+          gem install kramdown
+          DISABLE_HTML_CHECKS=1 ./scripts/build-docs.sh
 
       - name: Build MSI installer
         shell: powershell
