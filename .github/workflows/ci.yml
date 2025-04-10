@@ -299,7 +299,7 @@ jobs:
       - name: Install Ruby for HTML documentation build
         uses: ruby/setup-ruby@v1
         with:
-          ruby: head
+          ruby-version: head
 
       - name: Build HTML documentation
         shell: bash
