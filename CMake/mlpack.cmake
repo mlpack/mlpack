@@ -596,16 +596,9 @@ macro(compile_OpenBLAS)
   if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(OPENBLAS_SRC_DIR ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
     set(OPENBLAS_BUILD_DIR ${OPENBLAS_SRC_DIR}/build)
-    set(OPENBLAS_OUTPUT_LIB_DIR ${OPENBLAS_BUILD_DIR}/lib)
+    set(OPENBLAS_OUTPUT_LIB_DIR ${OPENBLAS_BUILD_DIR}/lib/Release)
     # always compile BLAS as release.
     set(BLASS_BUILD_TYPE "Release")
-
-    if (CMAKE_GENERATOR MATCHES "Visual Studio")
-      set(OPENBLAS_OUTPUT_LIB_DIR ${OPENBLAS_BUILD_DIR}/lib/RELEASE)
-    endif()
-    if (CMAKE_GENERATOR MATCHES "Ninja")
-      set(OPENBLAS_OUTPUT_LIB_DIR ${OPENBLAS_BUILD_DIR}/lib/Release)
-    endif()
 
     if (NOT EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib")
       message(STATUS "Compiling OpenBLAS")
