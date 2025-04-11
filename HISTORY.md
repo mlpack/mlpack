@@ -3,6 +3,7 @@
 ## mlpack ?.?.?
 
 _????-??-??_
+ * Add ability to compile OpenBLAS for windows (#3922)
 
  * Drop pytest-runner and "setup.py test" support (#3921).
 
