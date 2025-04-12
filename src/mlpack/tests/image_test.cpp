@@ -11,6 +11,7 @@
  */
 
 #include <mlpack/core.hpp>
+#include <filesystem>
 #include "serialization.hpp"
 #include "test_catch_tools.hpp"
 #include "catch.hpp"
@@ -93,7 +94,8 @@ TEST_CASE("LoadVectorImageAPITest", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
   data::ImageInfo info;
-  std::vector<std::string> files = {"test_image.png", "test_image.png"};
+  std::vector<std::filesystem::path> files = {"test_image.png",
+                                              "test_image.png"};
   REQUIRE(data::Load(files, matrix, info, false) == true);
   // width * height * channels.
   REQUIRE(matrix.n_rows == 50 * 50 * 3);
@@ -161,15 +163,15 @@ TEMPLATE_TEST_CASE("ImagesResizeTest", "[ImageTest]", unsigned char, size_t,
 
   arma::Mat<eT> image, images;
   data::ImageInfo info, resizedInfo, resizedInfo2;
-  std::vector<std::string> files =
+  std::vector<std::filesystem::path> files =
       {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
        "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
        "sheep_9.jpg"};
-  std::vector<std::string> reSheeps =
+  std::vector<std::filesystem::path> reSheeps =
       {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
        "re_sheep_5.jpg", "re_sheep_6.jpg", "re_sheep_7.jpg", "re_sheep_8.jpg",
        "re_sheep_9.jpg"};
-  std::vector<std::string> smSheeps =
+  std::vector<std::filesystem::path> smSheeps =
       {"sm_sheep_1.jpg", "sm_sheep_2.jpg", "sm_sheep_3.jpg", "sm_sheep_4.jpg",
        "sm_sheep_5.jpg", "sm_sheep_6.jpg", "sm_sheep_7.jpg", "sm_sheep_8.jpg",
        "sm_sheep_9.jpg"};
@@ -220,15 +222,15 @@ TEMPLATE_TEST_CASE("ImagesResizeCropTest", "[ImageTest]", unsigned char,
 
   arma::Mat<eT> image, images;
   data::ImageInfo info, resizedInfo, resizedInfo2;
-  std::vector<std::string> files =
+  std::vector<std::filesystem::path> files =
       {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
        "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
        "sheep_9.jpg"};
-  std::vector<std::string> reSheeps =
+  std::vector<std::filesystem::path> reSheeps =
       {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
        "re_sheep_5.jpg", "re_sheep_6.jpg", "re_sheep_7.jpg", "re_sheep_8.jpg",
        "re_sheep_9.jpg"};
-  std::vector<std::string> smSheeps =
+  std::vector<std::filesystem::path> smSheeps =
       {"sm_sheep_1.jpg", "sm_sheep_2.jpg", "sm_sheep_3.jpg", "sm_sheep_4.jpg",
        "sm_sheep_5.jpg", "sm_sheep_6.jpg", "sm_sheep_7.jpg", "sm_sheep_8.jpg",
        "sm_sheep_9.jpg"};

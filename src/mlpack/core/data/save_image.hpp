@@ -13,6 +13,7 @@
 #define MLPACK_CORE_DATA_SAVE_IMAGE_HPP
 
 #include <mlpack/core/stb/stb.hpp>
+#include <filesystem>
 
 #include "image_info.hpp"
 
@@ -29,7 +30,7 @@ namespace data {
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
-bool Save(const std::string& filename,
+bool Save(const std::filesystem::path& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
           const bool fatal = false);
@@ -44,7 +45,7 @@ bool Save(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
-bool Save(const std::vector<std::string>& files,
+bool Save(const std::vector<std::filesystem::path>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
           const bool fatal = false);
@@ -52,7 +53,7 @@ bool Save(const std::vector<std::string>& files,
 /**
  * Helper function to save files.  Implementation in save_image.hpp.
  */
-inline bool SaveImage(const std::string& filename,
+inline bool SaveImage(const std::filesystem::path& filename,
                       arma::Mat<unsigned char>& image,
                       ImageInfo& info,
                       const bool fatal = false);

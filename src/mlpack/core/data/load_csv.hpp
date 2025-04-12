@@ -43,11 +43,11 @@
 #define MLPACK_CORE_DATA_LOAD_CSV_HPP
 
 #include <mlpack/core/util/log.hpp>
+#include <filesystem>
 #include <set>
 #include <string>
 
 #include "string_algorithms.hpp"
-#include "extension.hpp"
 #include "format.hpp"
 #include "dataset_mapper.hpp"
 #include "types.hpp"
@@ -75,8 +75,8 @@ class LoadCSV
   *
   * @param file path of the dataset.
   */
-  LoadCSV(const std::string& file) :
-      extension(Extension(file)),
+  LoadCSV(const std::filesystem::path& file) :
+      extension(file.extension()),
       filename(file),
       inFile(file)
   {

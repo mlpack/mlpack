@@ -28,7 +28,7 @@ namespace data {
  * @param fatal Whether an exception should be thrown on save failure.
  */
 template<typename eT>
-bool Save(const std::string& filename,
+bool Save(const std::filesystem::path& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
           const bool fatal)
@@ -41,7 +41,7 @@ bool Save(const std::string& filename,
 
 // Image saving API for multiple files.
 template<typename eT>
-bool Save(const std::vector<std::string>& files,
+bool Save(const std::vector<std::filesystem::path>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
           const bool fatal)
@@ -75,7 +75,7 @@ bool Save(const std::vector<std::string>& files,
   return status;
 }
 
-inline bool SaveImage(const std::string& filename,
+inline bool SaveImage(const std::filesystem::path& filename,
                       arma::Mat<unsigned char>& image,
                       ImageInfo& info,
                       const bool fatal)
@@ -84,7 +84,7 @@ inline bool SaveImage(const std::string& filename,
   if (!ImageFormatSupported(filename, true))
   {
     std::ostringstream oss;
-    oss << "Save(): file type " << Extension(filename) << " not supported.\n";
+    oss << "Save(): file type " << filename.extension() << " not supported.\n";
     oss << "Currently image saving supports ";
     for (auto extension : SaveFileTypes())
       oss << "  " << extension;
@@ -118,30 +118,31 @@ inline bool SaveImage(const std::string& filename,
 
   bool status = false;
   unsigned char* imageMem = image.memptr();
+  std::string extension = filename.extension();
 
-  if ("png" == Extension(filename))
+  if (".png" == extension)
   {
     status = stbi_write_png(filename.c_str(), info.Width(), info.Height(),
         info.Channels(), imageMem, info.Width() * info.Channels());
   }
-  else if ("bmp" == Extension(filename))
+  else if (".bmp" == extension)
   {
     status = stbi_write_bmp(filename.c_str(), info.Width(), info.Height(),
         info.Channels(), imageMem);
   }
-  else if ("tga" == Extension(filename))
+  else if (".tga" == extension)
   {
     status = stbi_write_tga(filename.c_str(), info.Width(), info.Height(),
         info.Channels(), imageMem);
   }
-  else if ("hdr" == Extension(filename))
+  else if (".hdr" == extension)
   {
     // We'll have to convert to float...
     arma::fmat tmpImage = arma::conv_to<arma::fmat>::from(image);
     status = stbi_write_hdr(filename.c_str(), info.Width(), info.Height(),
         info.Channels(), tmpImage.memptr());
   }
-  else if ("jpg" == Extension(filename))
+  else if (".jpg" == extension)
   {
     status = stbi_write_jpg(filename.c_str(), info.Width(), info.Height(),
         info.Channels(), imageMem, info.Quality());

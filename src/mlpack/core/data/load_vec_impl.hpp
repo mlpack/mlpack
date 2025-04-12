@@ -21,7 +21,7 @@ namespace data {
 
 // Load column vector.
 template<typename eT>
-bool Load(const std::string& filename,
+bool Load(const std::filesystem::path& filename,
           arma::Col<eT>& vec,
           const bool fatal)
 {
@@ -85,7 +85,7 @@ bool Load(const std::string& filename,
 
 // Load row vector.
 template<typename eT>
-bool Load(const std::string& filename,
+bool Load(const std::filesystem::path& filename,
           arma::Row<eT>& rowvec,
           const bool fatal)
 {

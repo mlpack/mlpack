@@ -21,7 +21,7 @@ namespace data {
 
 // Image loading API.
 template<typename eT>
-bool Load(const std::string& filename,
+bool Load(const std::filesystem::path& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
           const bool fatal)
@@ -47,7 +47,7 @@ bool Load(const std::string& filename,
 
 // Image loading API for multiple files.
 template<typename eT>
-bool Load(const std::vector<std::string>& files,
+bool Load(const std::vector<std::filesystem::path>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
           const bool fatal)
@@ -90,7 +90,7 @@ bool Load(const std::vector<std::string>& files,
   return true;
 }
 
-inline bool LoadImage(const std::string& filename,
+inline bool LoadImage(const std::filesystem::path& filename,
                       arma::Mat<unsigned char>& matrix,
                       ImageInfo& info,
                       const bool fatal)
@@ -100,7 +100,7 @@ inline bool LoadImage(const std::string& filename,
   if (!ImageFormatSupported(filename))
   {
     std::ostringstream oss;
-    oss << "Load(): file type " << Extension(filename) << " not supported. ";
+    oss << "Load(): file type " << filename.extension() << " not supported. ";
     oss << "Currently it supports:";
     auto x = LoadFileTypes();
     for (auto extension : x)

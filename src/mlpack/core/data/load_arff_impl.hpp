@@ -21,7 +21,7 @@ namespace mlpack {
 namespace data {
 
 template<typename eT, typename PolicyType>
-void LoadARFF(const std::string& filename,
+void LoadARFF(const std::filesystem::path& filename,
               arma::Mat<eT>& matrix,
               DatasetMapper<PolicyType>& info)
 {

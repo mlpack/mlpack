@@ -88,7 +88,8 @@ PARAM_MATRIX_IN("dataset", "Input matrix to save as images.", "I");
 void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   // Parse command line options.
-  const vector<string> fileNames = params.Get<vector<string> >("input");
+  const vector<std::filesystem::path> fileNames =
+      params.Get<vector<std::filesystem::path> >("input");
   arma::mat out;
 
   if (!params.Has("save"))
