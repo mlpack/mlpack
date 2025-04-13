@@ -152,7 +152,7 @@ to the numeric values used to represent those categories.
 With a `data::DatasetInfo` object, categorical data can be loaded:
 
  - `data::Load(filename, matrix, info, fatal=false, transpose=true)`
-   * `filename` is a `std::string` with a path to the file to be loaded.
+   * `filename` is a `std::filesystem::path` with a path to the file to be loaded.
 
    * The format is auto-detected based on the extension of the filename and the
      contents of the file:
@@ -397,7 +397,7 @@ either one or multiple images at a time:
 
  - `data::Load(files, matrix, info, fatal=false)`
    * Load ***multiple images*** from `files` into `matrix`.
-     - `files` is of type `std::vector<std::string>` and should contain the list
+     - `files` is of type `std::vector<std::filesystem::path>` and should contain the list
        of images to be loaded.
      - `matrix` will have `files.size()` columns, each representing the
        corresponding image as a flattened vector.
@@ -427,7 +427,7 @@ either one or multiple images at a time:
 
  - `data::Save(files, matrix, info, fatal=false)`
    * Save ***multiple images*** from `matrix` into `files`.
-     - `files` is of type `std::vector<std::string>` and should contain the list
+     - `files` is of type `std::vector<std::filesystem::path>` and should contain the list
        of files to save to.
      - The format of each file is chosen by extension (e.g. `image.png` will
        save as PNG); it is allowed for filenames in `files` to have different
@@ -487,7 +487,7 @@ Example of loading and saving multiple images:
 
 ```c++
 // Load some favicons from websites associated with mlpack.
-std::vector<std::string> images;
+std::vector<std::filesystem::path> images;
 // See the following files:
 // - https://datasets.mlpack.org/images/mlpack-favicon.png
 // - https://datasets.mlpack.org/images/ensmallen-favicon.png
@@ -514,7 +514,7 @@ matrix = (255.0 - matrix);
 
 // Save as compressed JPEGs with low quality.
 info.Quality() = 75;
-std::vector<std::string> outImages;
+std::vector<std::filesystem::path> outImages;
 outImages.push_back("mlpack-favicon-inv.jpeg");
 outImages.push_back("ensmallen-favicon-inv.jpeg");
 outImages.push_back("armadillo-favicon-inv.jpeg");
@@ -560,14 +560,14 @@ mlpack::data::ImageInfo info;
 
 // The images are located in our test/data directory. However, any image could
 // be used instead.
-std::vector<std::string> files =
+std::vector<std::filesystem::path> files =
     {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
      "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
      "sheep_9.jpg"};
 
 // The resized images will be saved locally. We are declaring the vector that
 // contains the names of the resized images.
-std::vector<std::string> reSheeps =
+std::vector<std::filesystem::path> reSheeps =
     {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
      "re_sheep_5.jpg", "re_sheep_6.jpg", "re_sheep_7.jpg", "re_sheep_8.jpg",
      "re_sheep_9.jpg"};
@@ -593,7 +593,7 @@ same dimensions.
 arma::Mat<unsigned char> images;
 mlpack::data::ImageInfo info;
 
-std::vector<std::string> reSheeps =
+std::vector<std::filesystem::path> reSheeps =
     {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
      "re_sheep_5.jpg", "re_sheep_6.jpg", "re_sheep_7.jpg", "re_sheep_8.jpg",
      "re_sheep_9.jpg"};
@@ -605,7 +605,7 @@ mlpack::data::ResizeImages(images, info, 160, 160);
 
 // The resized images will be saved locally. We are declaring the vector that
 // contains the names of the resized images.
-std::vector<std::string> smSheeps =
+std::vector<std::filesystem::path> smSheeps =
     {"sm_sheep_1.jpg", "sm_sheep_2.jpg", "sm_sheep_3.jpg", "sm_sheep_4.jpg",
      "sm_sheep_5.jpg", "sm_sheep_6.jpg", "sm_sheep_7.jpg", "sm_sheep_8.jpg",
      "sm_sheep_9.jpg"};
@@ -686,14 +686,14 @@ mlpack::data::ImageInfo info;
 
 // The images are located in our test/data directory. However, any image could
 // be used instead.
-std::vector<std::string> files =
+std::vector<std::filesystem::path> files =
     {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
      "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
      "sheep_9.jpg"};
 
 // The resized images will be saved locally. We are declaring the vector that
 // contains the names of the resized and cropped images.
-std::vector<std::string> cropSheeps =
+std::vector<std::filesystem::path> cropSheeps =
     {"crop_sheep_1.jpg", "crop_sheep_2.jpg", "crop_sheep_3.jpg",
      "crop_sheep_4.jpg", "crop_sheep_5.jpg", "crop_sheep_6.jpg",
      "crop_sheep_7.jpg", "crop_sheep_8.jpg", "crop_sheep_9.jpg"};
