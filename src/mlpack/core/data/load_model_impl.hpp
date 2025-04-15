@@ -15,8 +15,6 @@
 // In case it hasn't already been included.
 #include "load.hpp"
 
-#include "extension.hpp"
-
 #include <cereal/archives/xml.hpp>
 #include <cereal/archives/binary.hpp>
 #include <cereal/archives/json.hpp>
@@ -26,7 +24,7 @@ namespace data {
 
 // Load a model from file.
 template<typename T>
-bool Load(const std::string& filename,
+bool Load(const std::filesystem::path& filename,
           const std::string& name,
           T& t,
           const bool fatal,
@@ -34,7 +32,7 @@ bool Load(const std::string& filename,
 {
   if (f == format::autodetect)
   {
-    std::string extension = Extension(filename);
+    std::string extension = filename.extension();
 
     if (extension == "xml")
       f = format::xml;

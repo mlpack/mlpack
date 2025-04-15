@@ -360,7 +360,7 @@ Load simple images and reshape into blocks.
 
 ```c++
 // Load some favicons from websites associated with mlpack.
-std::vector<std::string> images;
+std::vector<std::filesystem::path> images;
 // See the following files:
 // - https://datasets.mlpack.org/images/mlpack-favicon.png
 // - https://datasets.mlpack.org/images/ensmallen-favicon.png

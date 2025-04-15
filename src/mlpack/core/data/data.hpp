@@ -13,7 +13,6 @@
 #define MLPACK_CORE_DATA_DATA_HPP
 
 #include "detect_file_type.hpp"
-#include "extension.hpp"
 #include "format.hpp"
 #include "has_serialize.hpp"
 

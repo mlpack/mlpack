@@ -14,13 +14,12 @@
 
 // In case it hasn't already been included.
 #include "save.hpp"
-#include "extension.hpp"
 
 namespace mlpack {
 namespace data {
 
 template<typename eT>
-bool Save(const std::string& filename,
+bool Save(const std::filesystem::path& filename,
           const arma::Col<eT>& vec,
           const bool fatal,
           FileType inputSaveType)
@@ -30,7 +29,7 @@ bool Save(const std::string& filename,
 }
 
 template<typename eT>
-bool Save(const std::string& filename,
+bool Save(const std::filesystem::path& filename,
           const arma::Row<eT>& rowvec,
           const bool fatal,
           FileType inputSaveType)
@@ -39,7 +38,7 @@ bool Save(const std::string& filename,
 }
 
 template<typename eT>
-bool Save(const std::string& filename,
+bool Save(const std::filesystem::path& filename,
           const arma::Mat<eT>& matrix,
           const bool fatal,
           bool transpose,
@@ -72,9 +71,9 @@ bool Save(const std::string& filename,
   // Catch errors opening the file.
   std::fstream stream;
 #ifdef  _WIN32 // Always open in binary mode on Windows.
-  stream.open(filename.c_str(), std::fstream::out | std::fstream::binary);
+  stream.open(filename, std::fstream::out | std::fstream::binary);
 #else
-  stream.open(filename.c_str(), std::fstream::out);
+  stream.open(filename, std::fstream::out);
 #endif
   if (!stream.is_open())
   {
@@ -147,7 +146,7 @@ bool Save(const std::string& filename,
 
 // Save a Sparse Matrix
 template<typename eT>
-bool Save(const std::string& filename,
+bool Save(const std::filesystem::path& filename,
           const arma::SpMat<eT>& matrix,
           const bool fatal,
           bool transpose)
@@ -155,7 +154,7 @@ bool Save(const std::string& filename,
   Timer::Start("saving_data");
 
   // First we will try to discriminate by file extension.
-  std::string extension = Extension(filename);
+  std::string extension = filename.extension();
   if (extension == "")
   {
     Timer::Stop("saving_data");
@@ -172,9 +171,9 @@ bool Save(const std::string& filename,
   // Catch errors opening the file.
   std::fstream stream;
 #ifdef  _WIN32 // Always open in binary mode on Windows.
-  stream.open(filename.c_str(), std::fstream::out | std::fstream::binary);
+  stream.open(filename, std::fstream::out | std::fstream::binary);
 #else
-  stream.open(filename.c_str(), std::fstream::out);
+  stream.open(filename, std::fstream::out);
 #endif
   if (!stream.is_open())
   {
@@ -256,7 +255,7 @@ bool Save(const std::string& filename,
 
 //! Save a model to file.
 template<typename T>
-bool Save(const std::string& filename,
+bool Save(const std::filesystem::path& filename,
           const std::string& name,
           T& t,
           const bool fatal,
@@ -264,7 +263,7 @@ bool Save(const std::string& filename,
 {
   if (f == format::autodetect)
   {
-    std::string extension = Extension(filename);
+    std::string extension = filename.extension();
 
     if (extension == "xml")
       f = format::xml;

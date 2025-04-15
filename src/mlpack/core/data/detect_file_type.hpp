@@ -16,6 +16,7 @@
 #define MLPACK_CORE_DATA_DETECT_FILE_TYPE_HPP
 
 #include "types.hpp"
+#include <filesystem>
 
 namespace mlpack {
 namespace data {
@@ -54,7 +55,7 @@ inline FileType GuessFileType(std::istream& f);
  * @return The detected file type.  arma::file_type_unknown if unknown.
  */
 inline FileType AutoDetect(std::fstream& stream,
-                           const std::string& filename);
+                           const std::filesystem::path& filename);
 
 /**
  * Return the type based only on the extension.
@@ -62,7 +63,7 @@ inline FileType AutoDetect(std::fstream& stream,
  * @param filename Name of the file whose type we should detect.
  * @return Detected type of file.  arma::file_type_unknown if unknown.
  */
-inline FileType DetectFromExtension(const std::string& filename);
+inline FileType DetectFromExtension(const std::filesystem::path& filename);
 
 /**
  * Count the number of columns in the file.  The file must be a CSV/TSV/TXT file
