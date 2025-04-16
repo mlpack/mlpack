@@ -26,105 +26,17 @@
 namespace mlpack {
 namespace data {
 
-// The following functions are kept for backward compatibility,
-// Please remove them when we release mlpack 5.
-template<typename eT>
-bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
-          const bool fatal,
-          const bool transpose,
-          const FileType inputLoadType)
-{
-  DataOptions opts;
-  opts.Fatal() = fatal;
-  opts.NoTranspose() = !transpose;
-  opts.FileFormat() = inputLoadType;
-
-  return Load(filename, matrix, opts);
-}
-
-// For loading data into sparse matrix
-template <typename eT>
-bool Load(const std::string& filename,
-          arma::SpMat<eT>& matrix,
-          const bool fatal,
-          const bool transpose,
-          const FileType inputLoadType)
-{
-  DataOptions opts;
-  opts.Fatal() = fatal;
-  opts.NoTranspose() = !transpose;
-  opts.FileFormat() = inputLoadType;
-
-  return Load(filename, matrix, opts);
-}
-
-// For loading data into a column vector
-template <typename eT>
-bool Load(const std::string& filename,
-          arma::Col<eT>& vec,
-          const bool fatal)
-{
-  DataOptions opts;
-  opts.Fatal() = fatal;
-  return Load(filename, vec, opts);
-}
-
-// For loading data into a raw vector
-template <typename eT>
-bool Load(const std::string& filename,
-          arma::Row<eT>& rowvec,
-          const bool fatal)
-{
-  DataOptions opts;
-  opts.Fatal() = fatal;
-  return Load(filename, rowvec, opts);
-}
-
-// Load with mappings.  Unfortunately we have to implement this ourselves.
-template<typename eT, typename PolicyType>
-bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
-          DatasetMapper<PolicyType>& info,
-          const bool fatal,
-          const bool transpose)
-{
-  DataOptions opts;
-  opts.Fatal() = fatal;
-  opts.NoTranspose() = !transpose;
-  // @rcurtin just commenting this one as we need to find a solution for the
-  // template parameter of the DatasetMapper. Assigning the following variable
-  // will simply fails as `info` is different type from opts.Mapper()
-  //opts.Mapper() = info;
-
-  return Load(filename, matrix, opts);
-}
-
-template<typename MatType>
+// TODO: clean this up---this overload is necessary for when a user didn't make
+// an actual DataOptionsType object.  We should check here that they didn't
+// specify that they want to keep headers or anything like this and throw a
+// warning.
+template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
-          const DataOptions& opts)
+          const DataOptionsType& opts)
 {
-  // Copy the options since passing a const into a modifiable function can
-  // result in a segmentation fault.
-  // We do not copy back to preserve the const property of the function.
-  DataOptions copyOpts = opts;
-  return Load(filename, matrix, copyOpts);
-}
-
-template<typename T>
-bool Load(const std::string& filename,
-          const std::string& name,
-          T& t,
-          const bool fatal,
-          format f)
-{
-  ModelOptions opts;
-  opts.ObjectName() = name;
-  opts.Fatal() = fatal;
-  opts.DataFormat() = f;
-
-  return Load(filename, t, opts);
+  DataOptionsType tmpOpts(opts);
+  return Load(filename, matrix, tmpOpts);
 }
 
 /**
@@ -233,11 +145,10 @@ bool Load(const std::string& filename,
 
   if constexpr (std::is_same_v<DataOptionsType, DataOptions>)
   {
+    // Question to @rcurint what should we do in this case.
+    // We can cast, but I do not want the user to be in this case at all
+    // We need to think about it
     std::cout << "this is true if the type is a DataOptions\n";
-
-    // cast the type to any of the following
-    // but how to determin to what type you should cast ???
-    
   }
 
   if constexpr (std::is_same_v<DataOptionsType, CSVOptions>)

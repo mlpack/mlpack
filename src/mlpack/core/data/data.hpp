@@ -17,6 +17,7 @@
 #include "has_serialize.hpp"
 
 #include "load.hpp"
+#include "load_deprecated.hpp"
 #include "save.hpp"
 
 #include "imputation_methods/imputation_methods.hpp"
