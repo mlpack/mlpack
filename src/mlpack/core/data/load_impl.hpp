@@ -231,8 +231,22 @@ bool Load(const std::string& filename,
     return false;
   }
 
+  if constexpr (std::is_same_v<DataOptionsType, DataOptions>)
+  {
+    std::cout << "this is true if the type is a DataOptions\n";
+
+    // cast the type to any of the following
+    // but how to determin to what type you should cast ???
+    
+  }
+
   if constexpr (std::is_same_v<DataOptionsType, CSVOptions>)
   {
+    std::cout << "should be loading a csv matrix" << std::endl;
+    std::cout << "isdense " << IsDense<MatType>::value << std::endl;
+    std::cout << "isSparse " << IsSparseMat<MatType>::value << std::endl;
+    std::cout << "isCol " << IsCol<MatType>::value << std::endl;
+    std::cout << "isRow " << IsRow<MatType>::value << std::endl;
     CSVOptions csvOpts(opts);
     if constexpr (IsSparseMat<MatType>::value)
     {
@@ -245,19 +259,27 @@ bool Load(const std::string& filename,
     }
     else if (csvOpts.Timeseries() && IsDense<MatType>::value)
     {
+      std::cout << "should be loading a timeseries matrix" << std::endl;
       success = LoadTimeseries(filename, matrix, csvOpts, stream);
     }
     else if constexpr (IsCol<MatType>::value)
     {
+      std::cout << "1" << std::endl;
       success = LoadCol(filename, matrix, csvOpts, stream);
     }
     else if constexpr (IsRow<MatType>::value)
     {
+      std::cout << "2" << std::endl;
       success = LoadRow(filename, matrix, csvOpts, stream);
     }
     else if constexpr (IsDense<MatType>::value) 
     {
+      std::cout << "should be loading a dense matrix" << std::endl;
       success = LoadDense(filename, matrix, csvOpts, stream);
+    }
+    else
+    {
+      throw std::runtime_error("Matrix type is not detected!");
     }
   }
   else if constexpr (std::is_same_v<DataOptionsType, ImageOptions>)
@@ -266,8 +288,14 @@ bool Load(const std::string& filename,
   }
   else if constexpr (std::is_same_v<DataOptionsType, ModelOptions>)
   {
+    std::cout << "should be loading a model" << std::endl;
     ModelOptions modOpts(opts);
     success = LoadModel(matrix, modOpts, stream);
+  }
+  else 
+  {
+    throw std::runtime_error("DataOptionType is unknown!."
+        "please use a known type or provide specific overloads");
   }
 
   if (!success)
@@ -306,6 +334,8 @@ bool LoadDense(const std::string& filename,
     Log::Info << "Loading '" << filename << "' as " 
         << opts.FileTypeToString() << ".  " << std::flush;
 
+    std::cout << "loading" << std::endl;
+
   // We can't use the stream if the type is HDF5.
   if (opts.FileFormat() == FileType::HDF5Binary)
   {
@@ -313,6 +343,7 @@ bool LoadDense(const std::string& filename,
   }
   else if (opts.FileFormat() == FileType::CSVASCII)
   {
+    std::cout << "should be loading" << std::endl;
     success = LoadCSVASCII(filename, matrix, opts);
   }
   else
@@ -322,6 +353,7 @@ bool LoadDense(const std::string& filename,
         << opts.FileTypeToString() << "; " 
         << "but this may not be the actual filetype!" << std::endl;
 
+    std::cout << "should not be loading" << std::endl;
     success = matrix.load(stream, ToArmaFileType(opts.FileFormat()));
     if (!opts.NoTranspose())
       inplace_trans(matrix);

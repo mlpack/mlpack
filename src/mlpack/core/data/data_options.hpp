@@ -30,9 +30,13 @@ namespace data {
  * This will allow us to have consistent data API for mlpack. If new data
  * options might be necessary, then they should be added in the following.
  */
-class DataOptions
+
+template<typename Derived>
+class DataOptionsBase
 {
  public:
+
+  using DerivedType = Derived;
   /**
    * DataOptions constructor that takes the followint parameters.
    *  - fatal : true if fatal error should be reported.
@@ -47,7 +51,7 @@ class DataOptions
    *  - imgInfo: Information about the image if we already have them.
    *  - dataFormat: the data serialization format: xml, bin, json
    */
-  DataOptions(
+  DataOptionsBase(
       bool fatal = false,
       bool noTranspose = false,
       FileType fileFormat = FileType::AutoDetect) :
@@ -56,6 +60,16 @@ class DataOptions
     fileFormat(fileFormat)
   {
     // Do nothing.
+  }
+
+  virtual DataOptionsBase& operator=(const DataOptionsBase& other)
+  {
+    if (&other == this)
+      return *this;
+
+    fatal = other.fatal;
+    noTranspose = other.noTranspose;
+    fileFormat = other.fileFormat;
   }
 
   // These are accessible to users.
@@ -92,6 +106,8 @@ class DataOptions
       case FileType::PGMBinary:   return "PGM data";
       case FileType::HDF5Binary:  return "HDF5 data";
       case FileType::CoordASCII:  return "ASCII formatted sparse coordinate data";
+      case FileType::AutoDetect:  return "Detect automatically data type";
+      case FileType::FileTypeUnknown: return "Unknown data type";
       default:                    return "";
     }
   }
@@ -104,7 +120,12 @@ class DataOptions
   FileType fileFormat;
 };
 
-class ModelOptions : public DataOptions
+class DataOptions : public DataOptionsBase<void>
+{
+  // Nothing to do here, it is easier to go this way
+};
+
+class ModelOptions : public DataOptionsBase<ModelOptions>
 {
  public:
 
@@ -119,13 +140,23 @@ class ModelOptions : public DataOptions
     // Do Nothing.
   }
 
-  explicit ModelOptions(const DataOptions& opts) :
-    DataOptions(opts),
+  explicit ModelOptions(const DataOptionsBase& opts) :
+    DataOptionsBase(opts),
     model(false),
     dataFormat(format::binary),
     objectName("")
   {
     // Do Nothing.
+  }
+
+  virtual ModelOptions& operator=(const ModelOptions& other)
+  {
+    if (&other == this)
+      return *this;
+
+    model = other.model;
+    dataFormat = other.dataFormat;
+    objectName = other.objectName;
   }
 
   //! Get if we are loading an model.
@@ -153,7 +184,7 @@ class ModelOptions : public DataOptions
   std::string objectName;
 };
 
-class ImageOptions : public DataOptions
+class ImageOptions : public DataOptionsBase<ImageOptions>
 {
  public:
  
@@ -180,7 +211,7 @@ class ImageOptions : public DataOptions
   ImageInfo imgInfo;
 };
 
-class CSVOptions : public DataOptions
+class CSVOptions : public DataOptionsBase<CSVOptions>
 {
 
  public:
@@ -201,8 +232,8 @@ class CSVOptions : public DataOptions
     // Do Nothing.
   }
 
-  explicit CSVOptions(const DataOptions& opts) :
-        DataOptions(opts),
+  explicit CSVOptions(const DataOptionsBase& opts) :
+        DataOptionsBase(opts),
         hasHeaders(false),
         semiColon(false),
         missingToNan(false),
@@ -210,6 +241,24 @@ class CSVOptions : public DataOptions
         timeseries(false)
   {
     // Do Nothing.
+  }
+
+  virtual CSVOptions& operator=(const CSVOptions& other)
+  {
+    if (&other == this)
+      return *this;
+
+    hasHeaders = other.hasHeaders;
+    semiColon = other.semiColon;
+    missingToNan = other.missingToNan;
+    categorical = other.categorical;
+    labelCol = other.labelCol;
+    timestampCol = other.timestampCol;
+    timeseries = other.timeseries;
+    samplingRate = other.samplingRate;
+    windowSize = other.windowSize;
+    headers = other.headers;
+    mapper = other.mapper;
   }
 
   //! Get if the dataset hasHeaders or not.
@@ -343,46 +392,229 @@ inline DataOptions operator|(const DataOptions& a, const DataOptions& b)
   output.Fatal() = a.Fatal() | b.Fatal();
   output.NoTranspose() = a.NoTranspose() | b.NoTranspose();
 
-  if (a.FileFormat() == FileType::FileTypeUnknown)
+  if (a.FileFormat() == FileType::FileTypeUnknown ||
+      a.FileFormat() == FileType::AutoDetect)
   {
     output.FileFormat() = b.FileFormat();
     return output;
   }
-  else if (b.FileFormat() == FileType::FileTypeUnknown)
+  else if (b.FileFormat() == FileType::FileTypeUnknown ||
+      b.FileFormat() == FileType::AutoDetect)
   {
     output.FileFormat() = a.FileFormat();
     return output;
   }
 
   if (a.FileFormat() != b.FileFormat())
+  {
+    std::cout << a.FileTypeToString() << " " << b.FileTypeToString() << std::endl;
     throw std::runtime_error("File formats don't match!");
+  }
   else
     output.FileFormat() = a.FileFormat();
 
   return output;
 }
 
-namespace DataOptionsTypes
+inline CSVOptions operator|(const CSVOptions& a, const DataOptions& b)
+{
+  CSVOptions output(a);
+  output.Fatal() = a.Fatal() | b.Fatal();
+  output.NoTranspose() = a.NoTranspose() | b.NoTranspose();
+
+  if (a.FileFormat() == FileType::FileTypeUnknown ||
+      a.FileFormat() == FileType::AutoDetect)
+  {
+    output.FileFormat() = b.FileFormat();
+    return output;
+  }
+  else if (b.FileFormat() == FileType::FileTypeUnknown ||
+      b.FileFormat() == FileType::AutoDetect)
+  {
+    output.FileFormat() = a.FileFormat();
+    return output;
+  }
+
+  if (a.FileFormat() != b.FileFormat())
+  {
+    std::cout << a.FileTypeToString() << " " << b.FileTypeToString() << std::endl;
+    throw std::runtime_error("File formats don't match!");
+  }
+  else
+    output.FileFormat() = a.FileFormat();
+
+  return output;
+}
+
+inline CSVOptions operator|(const DataOptions& a, const CSVOptions& b)
+{
+  CSVOptions output(b);
+  output.Fatal() = a.Fatal() | b.Fatal();
+  output.NoTranspose() = a.NoTranspose() | b.NoTranspose();
+
+  if (a.FileFormat() == FileType::FileTypeUnknown ||
+      a.FileFormat() == FileType::AutoDetect)
+  {
+    output.FileFormat() = b.FileFormat();
+    return output;
+  }
+  else if (b.FileFormat() == FileType::FileTypeUnknown ||
+      b.FileFormat() == FileType::AutoDetect)
+  {
+    output.FileFormat() = a.FileFormat();
+    return output;
+  }
+
+  if (a.FileFormat() != b.FileFormat())
+  {
+    std::cout << a.FileTypeToString() << " " << b.FileTypeToString() << std::endl;
+    throw std::runtime_error("File formats don't match!");
+  }
+  else
+    output.FileFormat() = a.FileFormat();
+
+  return output;
+}
+
+inline ModelOptions operator|(const ModelOptions& a, const DataOptions& b)
+{
+  ModelOptions output(a);
+  std::cout << "operator model Data\n";
+  output.Fatal() = a.Fatal() | b.Fatal();
+  output.NoTranspose() = a.NoTranspose() | b.NoTranspose();
+
+  if (a.FileFormat() == FileType::FileTypeUnknown ||
+      a.FileFormat() == FileType::AutoDetect)
+  {
+    output.FileFormat() = b.FileFormat();
+    return output;
+  }
+  else if (b.FileFormat() == FileType::FileTypeUnknown ||
+      b.FileFormat() == FileType::AutoDetect)
+  {
+    output.FileFormat() = a.FileFormat();
+    return output;
+  }
+
+  if (a.FileFormat() != b.FileFormat())
+  {
+    std::cout << a.FileTypeToString() << " " << b.FileTypeToString() << std::endl;
+    throw std::runtime_error("File formats don't match!");
+  }
+  else
+    output.FileFormat() = a.FileFormat();
+
+  return output;
+}
+
+inline ModelOptions operator|(const DataOptions& a, const ModelOptions& b)
+{
+  ModelOptions output(b);
+  std::cout << "operator data model\n";
+  output.Fatal() = a.Fatal() | b.Fatal();
+  output.NoTranspose() = a.NoTranspose() | b.NoTranspose();
+
+  if (a.FileFormat() == FileType::FileTypeUnknown ||
+      a.FileFormat() == FileType::AutoDetect)
+  {
+    output.FileFormat() = b.FileFormat();
+    return output;
+  }
+  else if (b.FileFormat() == FileType::FileTypeUnknown ||
+      b.FileFormat() == FileType::AutoDetect)
+  {
+    output.FileFormat() = a.FileFormat();
+    return output;
+  }
+
+  if (a.FileFormat() != b.FileFormat())
+  {
+    std::cout << a.FileTypeToString() << " " << b.FileTypeToString() << std::endl;
+    throw std::runtime_error("File formats don't match!");
+  }
+  else
+    output.FileFormat() = a.FileFormat();
+
+  return output;
+}
+
+// This will throw an error, 
+//inline CSVOptions operator|(const DataOptions& a, const CSVOptions& b)
+//{
+  //CSVOptions output;
+  //output(a | b);
+  //return output;
+//}
+
+// this will throw a segmentation fault, seems that the operator = is not well
+// implemented
+//inline CSVOptions operator|(const DataOptions& a, const CSVOptions& b)
+//{
+  //CSVOptions output;
+  //output = a | b;
+  //return output;
+//}
+
+inline CSVOptions operator|(const CSVOptions& a, const ImageOptions& b)
+{
+  CSVOptions output;
+  output.Fatal() = a.Fatal() | b.Fatal();
+  if (output.Fatal())
+    Log::Fatal << "Can't load CSV and Image option simultaneously!";
+  else
+    Log::Warn << "Can't load CSV and Image option simultaneously!";
+
+  return output;
+}
+
+inline CSVOptions operator|(const CSVOptions& a, const ModelOptions& b)
+{
+  CSVOptions output;
+  throw std::runtime_error("Can't load CSV and Model option simultaneously!");
+  return output;
+}
+
+inline ModelOptions operator|(const ModelOptions& a, const CSVOptions& b)
+{
+  ModelOptions output;
+  throw std::runtime_error("Can't load CSV and Model option simultaneously!");
+  return output;
+}
+
+inline ImageOptions operator|(const ImageOptions& a, const ModelOptions& b)
+{
+  ImageOptions output;
+  throw std::runtime_error("Can't load Image and Model option simultaneously!");
+  return output;
+}
+
+namespace DataOptionsSpace
 {
 
-struct FatalOptions: public DataOptions
+struct FatalOptions: public DataOptionsBase<void>
 {
-  inline FatalOptions() : DataOptions() { this->Fatal() = true; }
+  inline FatalOptions() : DataOptionsBase() { this->Fatal() = true; }
 };
 
-struct NoFatalOptions: public DataOptions
+struct NoFatalOptions: public DataOptionsBase<void>
 {
-  inline NoFatalOptions() : DataOptions() { this->Fatal() = false; }
+  inline NoFatalOptions() : DataOptionsBase() { this->Fatal() = false; }
 };
 
-struct TransposeOptions : public DataOptions
+struct TransposeOptions : public DataOptionsBase<void>
 {
-  inline TransposeOptions() : DataOptions() { this->NoTranspose() = false; }
+  inline TransposeOptions() : DataOptionsBase()
+  {
+    this->NoTranspose() = false;
+  }
 };
 
-struct NoTransposeOptions : public DataOptions
+struct NoTransposeOptions : public DataOptionsBase<void>
 {
-  inline NoTransposeOptions() : DataOptions() { this->NoTranspose() = true; }
+  inline NoTransposeOptions() : DataOptionsBase()
+  {
+    this->NoTranspose() = true;
+  }
 };
 
 struct HasHeadersOptions : public CSVOptions
@@ -442,81 +674,81 @@ struct BinaryModelOptions : public ModelOptions
 };
 
 //! File serialization options 
-struct FileAutoDetectOptions : public DataOptions
+struct FileAutoDetectOptions : public DataOptionsBase<void>
 {
-  inline FileAutoDetectOptions() : DataOptions()
+  inline FileAutoDetectOptions() : DataOptionsBase()
   {
     this->FileFormat() = FileType::AutoDetect;
   }
 };
 
-struct CSVOptions : public DataOptions
+struct CSVOptions : public DataOptionsBase<void>
 {
-  inline CSVOptions() : DataOptions()
+  inline CSVOptions() : DataOptionsBase()
   {
     this->FileFormat() = FileType::CSVASCII;
   }
 };
 
-struct PGMOptions : public DataOptions
+struct PGMOptions : public DataOptionsBase<void>
 {
-  inline PGMOptions() : DataOptions()
+  inline PGMOptions() : DataOptionsBase()
   {
     this->FileFormat() = FileType::PGMBinary;
   }
 };
 
-struct PPMOptions : public DataOptions
+struct PPMOptions : public DataOptionsBase<void>
 {
-  inline PPMOptions() : DataOptions()
+  inline PPMOptions() : DataOptionsBase()
   {
     this->FileFormat() = FileType::PPMBinary;
   }
 };
 
-struct HDF5Options : public DataOptions
+struct HDF5Options : public DataOptionsBase<void>
 {
-  inline HDF5Options() : DataOptions()
+  inline HDF5Options() : DataOptionsBase()
   {
     this->FileFormat() = FileType::HDF5Binary;
   }
 };
 
-struct ArmaASCIIOptions : public DataOptions
+struct ArmaASCIIOptions : public DataOptionsBase<void>
 {
-  inline ArmaASCIIOptions() : DataOptions()
+  inline ArmaASCIIOptions() : DataOptionsBase()
   {
     this->FileFormat() = FileType::ArmaASCII;
   }
 };
 
-struct ArmaBinOptions : public DataOptions
+struct ArmaBinOptions : public DataOptionsBase<void>
 {
-  inline ArmaBinOptions() : DataOptions()
+  inline ArmaBinOptions() : DataOptionsBase()
   {
     this->FileFormat() = FileType::ArmaBinary;
   }
 };
 
-struct RawASCIIOptions : public DataOptions
+struct RawASCIIOptions : public DataOptionsBase<void>
 {
-  inline RawASCIIOptions() : DataOptions()
+  inline RawASCIIOptions() : DataOptionsBase()
   {
     this->FileFormat() = FileType::RawASCII;
   }
 };
 
-struct RawBinOptions : public DataOptions
+struct RawBinOptions : public DataOptionsBase<void>
 {
-  inline RawBinOptions() : DataOptions()
+  inline RawBinOptions() : DataOptionsBase()
   {
     this->FileFormat() = FileType::RawBinary;
   }
 };
 
-struct CoordASCIIOptions : public DataOptions
+struct CoordASCIIOptions : public DataOptionsBase<void>
 {
-  inline CoordASCIIOptions() : DataOptions()
+  inline CoordASCIIOptions() : DataOptionsBase()
   {
     this->FileFormat() = FileType::CoordASCII;
   }
@@ -525,32 +757,32 @@ struct CoordASCIIOptions : public DataOptions
 } // namespace DataOptionsTypes
 
 //! Boolean options
-static const DataOptionsTypes::FatalOptions         Fatal;
-static const DataOptionsTypes::NoFatalOptions       NoFatal;
-static const DataOptionsTypes::HasHeadersOptions    HasHeaders;
-static const DataOptionsTypes::TransposeOptions     Transpose;
-static const DataOptionsTypes::NoTransposeOptions   NoTranspose;
-static const DataOptionsTypes::SemiColonOptions     SemiColon;
-static const DataOptionsTypes::MissingToNanOptions  MissingToNan;
-static const DataOptionsTypes::CategoricalOptions   Categorical;
+static const DataOptionsSpace::FatalOptions         Fatal;
+static const DataOptionsSpace::NoFatalOptions       NoFatal;
+static const DataOptionsSpace::HasHeadersOptions    HasHeaders;
+static const DataOptionsSpace::TransposeOptions     Transpose;
+static const DataOptionsSpace::NoTransposeOptions   NoTranspose;
+static const DataOptionsSpace::SemiColonOptions     SemiColon;
+static const DataOptionsSpace::MissingToNanOptions  MissingToNan;
+static const DataOptionsSpace::CategoricalOptions   Categorical;
 
 //! File options
-static const DataOptionsTypes::CSVOptions            CSV;
-static const DataOptionsTypes::PGMOptions            PGM_BIN;
-static const DataOptionsTypes::PPMOptions            PPM_BIN;
-static const DataOptionsTypes::HDF5Options           HDF5_BIN;
-static const DataOptionsTypes::ArmaASCIIOptions      ARMA_ASCII;
-static const DataOptionsTypes::ArmaBinOptions        ARMA_BIN;
-static const DataOptionsTypes::RawASCIIOptions       RAW_ASCII;
-static const DataOptionsTypes::RawBinOptions         BIN_ASCII;
-static const DataOptionsTypes::CoordASCIIOptions     COORD_ASCII;
-static const DataOptionsTypes::FileAutoDetectOptions AutoDetect_File;
+static const DataOptionsSpace::CSVOptions            CSV;
+static const DataOptionsSpace::PGMOptions            PGM_BIN;
+static const DataOptionsSpace::PPMOptions            PPM_BIN;
+static const DataOptionsSpace::HDF5Options           HDF5_BIN;
+static const DataOptionsSpace::ArmaASCIIOptions      ARMA_ASCII;
+static const DataOptionsSpace::ArmaBinOptions        ARMA_BIN;
+static const DataOptionsSpace::RawASCIIOptions       RAW_ASCII;
+static const DataOptionsSpace::RawBinOptions         BIN_ASCII;
+static const DataOptionsSpace::CoordASCIIOptions     COORD_ASCII;
+static const DataOptionsSpace::FileAutoDetectOptions AutoDetect_File;
 
 //! Data serialization options 
-static const DataOptionsTypes::AutodetectOptions    AutoDetect_SER;
-static const DataOptionsTypes::JsonModelOptions     JSON_SER;
-static const DataOptionsTypes::XmlModelOptions      XML_SER;
-static const DataOptionsTypes::BinaryModelOptions   BIN_SER;
+static const DataOptionsSpace::AutodetectOptions    AutoDetect_SER;
+static const DataOptionsSpace::JsonModelOptions     JSON_SER;
+static const DataOptionsSpace::XmlModelOptions      XML_SER;
+static const DataOptionsSpace::BinaryModelOptions   BIN_SER;
 
 
 } // namespace data
