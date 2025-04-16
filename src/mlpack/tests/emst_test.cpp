@@ -183,7 +183,8 @@ TEST_CASE("DualTreeVsNaive", "[EMSTTest]")
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", inputData))
+  if (!data::Load("test_data_3_1000.csv", inputData,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with.
@@ -219,7 +220,8 @@ TEST_CASE("DualTreeVsNaive", "[EMSTTest]")
 TEST_CASE("EMSTCoverTreeTest", "[EMSTTest]")
 {
   arma::mat inputData;
-  if (!data::Load("test_data_3_1000.csv", inputData))
+  if (!data::Load("test_data_3_1000.csv", inputData, data::NoFatal
+        | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   DualTreeBoruvka<> bst(inputData);
@@ -247,7 +249,8 @@ TEST_CASE("EMSTCoverTreeTest", "[EMSTTest]")
 TEST_CASE("EMSTBallTreeTest", "[EMSTTest]")
 {
   arma::mat inputData;
-  if (!data::Load("test_data_3_1000.csv", inputData))
+  if (!data::Load("test_data_3_1000.csv", inputData, data::NoFatal 
+        | data::Transpose))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // naive mode.

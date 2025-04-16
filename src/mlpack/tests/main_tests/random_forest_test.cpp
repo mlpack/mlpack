@@ -32,15 +32,15 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestOutputDimensionTest",
                  "[RandomForestMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!data::Load("vc2_test.csv", testData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
@@ -71,15 +71,15 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestModelReuseTest",
                  "[RandomForestMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!data::Load("vc2_test.csv", testData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
@@ -131,11 +131,11 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestNumOfTreesTest",
                  "[RandomForestMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   SetInputParam("num_trees", (int) 0); // Invalid.
@@ -150,11 +150,11 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestMinimumLeafSizeTest",
                  "[RandomForestMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   SetInputParam("minimum_leaf_size", (int) 0); // Invalid.
@@ -169,11 +169,11 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestMaximumDepthTest",
                  "[RandomForestMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   SetInputParam("maximum_depth", (int) -1); // Invalid.
@@ -189,11 +189,11 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestTrainingVerTest",
                  "[RandomForestMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Input training data.
@@ -234,11 +234,11 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMinLeafSizeTest",
 {
   // Train for minimum leaf size 20.
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Input training data.
@@ -306,19 +306,20 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffNumTreeTest",
 {
   // Train for num_trees 1.
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!data::Load("vc2_test.csv", testData, data::NoFatal | data::Transpose))
     FAIL("Cannot load test dataset vc2_test.csv!");
 
   arma::Row<size_t> testLabels;
-  if (!data::Load("vc2_test_labels.txt", testLabels))
+  if (!data::Load("vc2_test_labels.txt", testLabels,
+        data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2__test_labels.txt");
 
   // Input training data.
@@ -376,11 +377,11 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMaxDepthTest",
 {
   // Train for minimum leaf size 20.
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Input training data.
@@ -445,11 +446,11 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestTrainingModelWarmStart",
                  "[RandomForestMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Input training data.
@@ -472,11 +473,11 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestWarmStart",
                  "[RandomForestMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Input training data.

@@ -23,7 +23,7 @@ TEST_CASE("Trigamma", "[TrigammaTest]")
 {
   arma::mat data;
 
-  if (!data::Load("trigamma_data.csv", data, true, false))
+  if (!data::Load("trigamma_data.csv", data, data::Fatal | data::NoTranspose))
     FAIL("Cannot load data trigamma_data.csv");
 
   for (size_t i = 0; i < data.n_rows; i++)

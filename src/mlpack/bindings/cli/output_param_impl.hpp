@@ -60,10 +60,15 @@ void OutputParamImpl(
 
   if (output.n_elem > 0 && filename != "")
   {
+    data::CSVOptions opts;
+    opts.Fatal() = false;
     if (arma::is_Row<T>::value || arma::is_Col<T>::value)
-      data::Save(filename, output, false);
+      data::Save(filename, output, opts);
     else
-      data::Save(filename, output, false, !data.noTranspose);
+    {
+      opts.NoTranspose() = data.noTranspose;
+      data::Save(filename, output, opts);
+    }
   }
 }
 
@@ -84,7 +89,10 @@ void OutputParamImpl(
       std::get<1>(*std::any_cast<TupleType>(&data.value));
 
   if (filename != "")
-    data::Save(filename, "model", *output);
+  {
+    data::ModelOptions opts;
+    data::Save(filename, *output, opts);
+  }
 }
 
 //! Output a mapped dataset.
@@ -104,7 +112,12 @@ void OutputParamImpl(
   // The mapping isn't taken into account.  We should write a data::Save()
   // overload for this.
   if (filename != "")
-    data::Save(filename, matrix, false, !data.noTranspose);
+  {
+    data::CSVOptions opts;
+    opts.Fatal() = false;
+    opts.NoTranspose() = data.noTranspose;
+    data::Save(filename, matrix, opts);
+  }
 }
 
 } // namespace cli
