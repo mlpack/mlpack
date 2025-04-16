@@ -9,10 +9,9 @@ nearest neighbor search) in low dimensions---typically less than 100.
 
 An `MaxRPTree` (or the similar [`RPTree`](rp_tree.md)) may be preferred over
 a [`KDTree`](kdtree.md) or other tree structures as it is theoretically known to
-adapt to the intrinsic dimension of the data.  This is similar to the cover
-tree, but the implementation is far simpler and as a result, more efficient.
-
-<!-- TODO: add cover tree link above -->
+adapt to the intrinsic dimension of the data.  This is similar to the
+[cover tree](cover_tree.md), but the implementation is far simpler and as a
+result, more efficient.
 
 mlpack's `MaxRPTree` implementation supports three template parameters for
 configurable behavior, and implements all the functionality required by the
@@ -137,12 +136,11 @@ different.
    with very loose bounding boxes.  It is better to simply build a new
    `MaxRPTree` on the modified dataset.  For trees that support individual
    insertion and deletions, see the [`RectangleTree`](rectangle_tree.md) class
-   and all its variants (e.g. [`RTree`](r_tree.md), `RStarTree`, etc.).
+   and all its variants (e.g. [`RTree`](r_tree.md),
+   [`RStarTree`](r_star_tree.md), etc.).
 
  - See also the
    [developer documentation on tree constructors](../../../developer/trees.md#constructors-and-destructors).
-
-<!-- TODO: add links to RectangleTree above when it is documented -->
 
 ---
 
@@ -432,7 +430,7 @@ mlpack::data::Load("cloud.csv", dataset, true);
 //
 // Note that the '<>' isn't necessary if C++20 is being used (e.g.
 // `mlpack::MaxRPTree tree(...)` will work fine in C++20 or newer).
-mlpack::MaxRPTree<> tree(std::move(dataset));
+mlpack::MaxRPTree<> tree(std::move(dataset), 10);
 
 // Print the bounding box of the root node.
 std::cout << "Bounding box of root node:" << std::endl;
