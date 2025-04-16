@@ -120,10 +120,7 @@ class DataOptionsBase
   FileType fileFormat;
 };
 
-class DataOptions : public DataOptionsBase<void>
-{
-  // Nothing to do here, it is easier to go this way
-};
+using DataOptions = DataOptionsBase<void>;
 
 class ModelOptions : public DataOptionsBase<ModelOptions>
 {
@@ -343,7 +340,7 @@ class CSVOptions : public DataOptionsBase<CSVOptions>
   DatasetInfo mapper;
 };
 
-inline CSVOptions operator|(const CSVOptions& a, CSVOptions& b)
+inline CSVOptions operator|(const CSVOptions& a, const CSVOptions& b)
 {
   CSVOptions output;
   output.SemiColon() = a.SemiColon() | b.SemiColon();
@@ -757,8 +754,8 @@ struct CoordASCIIOptions : public DataOptionsBase<void>
 } // namespace DataOptionsTypes
 
 //! Boolean options
-static const DataOptionsSpace::FatalOptions         Fatal;
-static const DataOptionsSpace::NoFatalOptions       NoFatal;
+static const DataOptions Fatal = DataOptions(true);
+static const DataOptions NoFatal = DataOptions(false);
 static const DataOptionsSpace::HasHeadersOptions    HasHeaders;
 static const DataOptionsSpace::TransposeOptions     Transpose;
 static const DataOptionsSpace::NoTransposeOptions   NoTranspose;
@@ -782,7 +779,8 @@ static const DataOptionsSpace::FileAutoDetectOptions AutoDetect_File;
 static const DataOptionsSpace::AutodetectOptions    AutoDetect_SER;
 static const DataOptionsSpace::JsonModelOptions     JSON_SER;
 static const DataOptionsSpace::XmlModelOptions      XML_SER;
-static const DataOptionsSpace::BinaryModelOptions   BIN_SER;
+
+static const ModelOptions BIN_SER = ModelOptions(false, format::binary);
 
 
 } // namespace data

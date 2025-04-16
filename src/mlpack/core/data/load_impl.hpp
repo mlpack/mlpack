@@ -339,7 +339,11 @@ bool LoadDense(const std::string& filename,
   // We can't use the stream if the type is HDF5.
   if (opts.FileFormat() == FileType::HDF5Binary)
   {
+    // TODO: if this should always be a CSVOptions, then we should create one:
+    // CSVOptions csvOpts(std::move(opts));
     success = LoadHDF5(filename, matrix, opts);
+    // and then opts = std::move(csvOpts) to convert back (if needed)
+    // afterwards.
   }
   else if (opts.FileFormat() == FileType::CSVASCII)
   {

@@ -94,6 +94,19 @@ bool Load(const std::string& filename,
           MatType& matrix,
           DataOptionsType& opts);
 
+// TODO: clean this up---this overload is necessary for when a user didn't make
+// an actual DataOptionsType object.  We should check here that they didn't
+// specify that they want to keep headers or anything like this and throw a
+// warning.
+template<typename MatType, typename DataOptionsType>
+bool Load(const std::string& filename,
+          MatType& matrix,
+          const DataOptionsType& opts)
+{
+  DataOptionsType tmpOpts(opts);
+  return Load(filename, matrix, tmpOpts);
+}
+
 /**
  * This function a set of several dataset files into one matrix.
  * This is usually the case if the dataset is collected on several occasions

@@ -158,10 +158,10 @@ bool LoadCSVASCII(const std::string& filename,
   return success;
 }
 
-template<typename eT>
+template<typename eT, typename DataOptionsType>
 bool LoadHDF5(const std::string& filename,
               arma::Mat<eT>& matrix,
-              const DataOptions& opts)
+              const DataOptionsBase<DataOptionsType>& opts)
 {
 #ifndef ARMA_USE_HDF5
   // Ensure that HDF5 is supported.
