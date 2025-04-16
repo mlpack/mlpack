@@ -104,6 +104,7 @@ class DataOptionsBase
       case FileType::ArmaASCII:   return "Armadillo ASCII formatted data";
       case FileType::ArmaBinary:  return "Armadillo binary formatted data";
       case FileType::PGMBinary:   return "PGM data";
+      case FileType::PPMBinary:   return "PGM data";
       case FileType::HDF5Binary:  return "HDF5 data";
       case FileType::CoordASCII:  return "ASCII formatted sparse coordinate data";
       case FileType::AutoDetect:  return "Detect automatically data type";
@@ -567,21 +568,33 @@ inline CSVOptions operator|(const CSVOptions& a, const ImageOptions& b)
 inline CSVOptions operator|(const CSVOptions& a, const ModelOptions& b)
 {
   CSVOptions output;
-  throw std::runtime_error("Can't load CSV and Model option simultaneously!");
+  output.Fatal() = a.Fatal() | b.Fatal();
+  if (output.Fatal())
+    Log::Fatal << "Can't load CSV and Model option simultaneously!";
+  else
+    Log::Warn << "Can't load CSV and Model option simultaneously!";
   return output;
 }
 
 inline ModelOptions operator|(const ModelOptions& a, const CSVOptions& b)
 {
   ModelOptions output;
-  throw std::runtime_error("Can't load CSV and Model option simultaneously!");
+  output.Fatal() = a.Fatal() | b.Fatal();
+  if (output.Fatal())
+    Log::Fatal << "Can't load CSV and Model option simultaneously!";
+  else
+    Log::Warn << "Can't load CSV and Model option simultaneously!";
   return output;
 }
 
 inline ImageOptions operator|(const ImageOptions& a, const ModelOptions& b)
 {
   ImageOptions output;
-  throw std::runtime_error("Can't load Image and Model option simultaneously!");
+  output.Fatal() = a.Fatal() | b.Fatal();
+  if (output.Fatal())
+    Log::Fatal << "Can't load Image and Model option simultaneously!";
+  else
+    Log::Warn << "Can't load Image and Model option simultaneously!";
   return output;
 }
 
@@ -754,34 +767,45 @@ struct CoordASCIIOptions : public DataOptionsBase<void>
 } // namespace DataOptionsTypes
 
 //! Boolean options
-static const DataOptions Fatal = DataOptions(true);
-static const DataOptions NoFatal = DataOptions(false);
-static const DataOptionsSpace::HasHeadersOptions    HasHeaders;
-static const DataOptionsSpace::TransposeOptions     Transpose;
-static const DataOptionsSpace::NoTransposeOptions   NoTranspose;
-static const DataOptionsSpace::SemiColonOptions     SemiColon;
-static const DataOptionsSpace::MissingToNanOptions  MissingToNan;
-static const DataOptionsSpace::CategoricalOptions   Categorical;
+static const DataOptions Fatal       = DataOptions(true);
+static const DataOptions NoFatal     = DataOptions(false);
+static const DataOptions Transpose   = DataOptions(false, false);
+static const DataOptions NoTranspose = DataOptions(false, true);
+
+static const CSVOptions HasHeaders   = CSVOptions(true);
+static const CSVOptions SemiColon    = CSVOptions(false, true);
+static const CSVOptions MissingToNan = CSVOptions(false, false, true);
+static const CSVOptions Categorical  = CSVOptions(false, false, false, true);
+static const CSVOptions Timeseries   = CSVOptions(false, false, false, false, true);
 
 //! File options
-static const DataOptionsSpace::CSVOptions            CSV;
-static const DataOptionsSpace::PGMOptions            PGM_BIN;
-static const DataOptionsSpace::PPMOptions            PPM_BIN;
-static const DataOptionsSpace::HDF5Options           HDF5_BIN;
-static const DataOptionsSpace::ArmaASCIIOptions      ARMA_ASCII;
-static const DataOptionsSpace::ArmaBinOptions        ARMA_BIN;
-static const DataOptionsSpace::RawASCIIOptions       RAW_ASCII;
-static const DataOptionsSpace::RawBinOptions         BIN_ASCII;
-static const DataOptionsSpace::CoordASCIIOptions     COORD_ASCII;
-static const DataOptionsSpace::FileAutoDetectOptions AutoDetect_File;
+static const DataOptions CSV           = DataOptions(false, false,
+    FileType::CSVASCII);
+static const DataOptions PGM_BIN       = DataOptions(false, false,
+    FileType::PGMBinary);
+static const DataOptions PPM_BIN       = DataOptions(false, false,
+    FileType::PPMBinary);
+static const DataOptions HDF5_BIN      = DataOptions(false, false,
+    FileType::HDF5Binary);
+static const DataOptions ARMA_ASCII    = DataOptions(false, false,
+    FileType::ArmaASCII);
+static const DataOptions ARMA_BIN      = DataOptions(false, false,
+    FileType::ArmaBinary);
+static const DataOptions RAW_ASCII     = DataOptions(false, false,
+    FileType::RawASCII);
+static const DataOptions BIN_ASCII     = DataOptions(false, false,
+    FileType::RawBinary);
+static const DataOptions COORD_ASCII   = DataOptions(false, false,
+    FileType::CoordASCII);
+static const DataOptions AutoDetect_File = DataOptions(false, false,
+    FileType::AutoDetect);
 
 //! Data serialization options 
-static const DataOptionsSpace::AutodetectOptions    AutoDetect_SER;
-static const DataOptionsSpace::JsonModelOptions     JSON_SER;
-static const DataOptionsSpace::XmlModelOptions      XML_SER;
-
-static const ModelOptions BIN_SER = ModelOptions(false, format::binary);
-
+static const ModelOptions    AutoDetect_SER = ModelOptions(false,
+    format::autodetect);
+static const ModelOptions    JSON_SER= ModelOptions(false, format::json);
+static const ModelOptions    XML_SER = ModelOptions(false, format::xml);
+static const ModelOptions    BIN_SER = ModelOptions(false, format::binary);
 
 } // namespace data
 } // namespace mlpack
