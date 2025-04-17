@@ -164,7 +164,7 @@ void ShuffleData(const MatType& inputPoints,
                  const std::enable_if_t<!arma::is_SpMat<MatType>::value>* = 0,
                  const std::enable_if_t<arma::is_Cube<MatType>::value>* = 0,
                  const std::enable_if_t<arma::is_Cube<LabelsType>::value>* = 0,
-                 const std::enable_if_t<IsVector<LengthsType>::value>* = 0)
+                 const std::enable_if_t<arma::is_Row<LengthsType>::value>* = 0)
 {
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
