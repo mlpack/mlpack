@@ -88,17 +88,18 @@ class AxisParallelProjVector
  * ProjVector defines a general projection vector (not necessarily
  * axis-parallel).
  */
+template<typename MatType = arma::mat>
 class ProjVector
 {
-  //! Projection vector.
-  arma::vec projVect;
+  using ProjVecType = typename GetColType<MatType>::type;
+
+  ProjVecType projVect;
 
  public:
   /**
    * Empty Constructor.
    */
-  ProjVector() :
-      projVect()
+  ProjVector() : projVect()
   {};
 
   /**
@@ -106,7 +107,7 @@ class ProjVector
    *
    * @param vect Vector to be considered.
    */
-  ProjVector(const arma::vec& vect) :
+  ProjVector(const ProjVecType& vect) :
       projVect(normalise(vect))
   {};
 

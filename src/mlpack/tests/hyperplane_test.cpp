@@ -19,8 +19,8 @@ using namespace mlpack;
  */
 TEST_CASE("HyperplaneEmptyConstructor", "[HyperplaneTest]")
 {
-  Hyperplane<EuclideanDistance> h1;
-  AxisOrthogonalHyperplane<EuclideanDistance> h2;
+  Hyperplane<EuclideanDistance, arma::mat> h1;
+  AxisOrthogonalHyperplane<EuclideanDistance, arma::mat> h2;
 
   arma::mat dataset;
   dataset.randu(3, 20); // 20 points in 3 dimensions.
@@ -40,8 +40,8 @@ TEST_CASE("HyperplaneEmptyConstructor", "[HyperplaneTest]")
 TEST_CASE("ProjectionTest", "[HyperplaneTest]")
 {
   // General hyperplane.
-  ProjVector projVect1(arma::vec("1 1"));
-  Hyperplane<EuclideanDistance> h1(projVect1, 0);
+  ProjVector<arma::mat> projVect1(arma::vec("1 1"));
+  Hyperplane<EuclideanDistance, arma::mat> h1(projVect1, 0);
 
   REQUIRE(h1.Project(arma::vec("1 -1")) == 0);
   REQUIRE(h1.Left(arma::vec("1 -1")));
@@ -86,7 +86,7 @@ TEST_CASE("AxisOrthogonalProjectionTest", "[HyperplaneTest]")
 {
   // AxisParallel hyperplane.
   AxisParallelProjVector projVect2(1);
-  AxisOrthogonalHyperplane<EuclideanDistance> h2(projVect2, 1);
+  AxisOrthogonalHyperplane<EuclideanDistance, arma::mat> h2(projVect2, 1);
 
   REQUIRE(h2.Project(arma::vec("0 0")) == -1);
   REQUIRE(h2.Left(arma::vec("0 0")));

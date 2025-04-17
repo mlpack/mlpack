@@ -53,7 +53,9 @@ namespace mlpack {
  *
  * @see @ref trees, SpillTree, MeanSPTree
  */
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using SPTree = SpillTree<DistanceType,
                          StatisticType,
                          MatType,
@@ -71,7 +73,9 @@ using SPTree = SpillTree<DistanceType,
  *
  * @see @ref trees, SpillTree, SPTree
  */
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using MeanSPTree = SpillTree<DistanceType,
                              StatisticType,
                              MatType,
@@ -91,7 +95,9 @@ using MeanSPTree = SpillTree<DistanceType,
  *
  * @see @ref trees, SpillTree, SPTree
  */
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using NonOrtSPTree = SpillTree<DistanceType,
                                StatisticType,
                                MatType,
@@ -110,7 +116,9 @@ using NonOrtSPTree = SpillTree<DistanceType,
  *
  * @see @ref trees, SpillTree, MeanSPTree, NonOrtSPTree
  */
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using NonOrtMeanSPTree = SpillTree<DistanceType,
                                    StatisticType,
                                    MatType,

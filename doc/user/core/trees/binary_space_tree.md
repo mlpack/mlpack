@@ -168,12 +168,11 @@ different.
    with very loose bounding boxes.  It is better to simply build a new
    `BinarySpaceTree` on the modified dataset.  For trees that support individual
    insertion and deletions, see the [`RectangleTree`](rectangle_tree.md) class
-   and all its variants (e.g. [`RTree`](r_tree.md), `RStarTree`, etc.).
+   and all its variants (e.g. [`RTree`](r_tree.md),
+   [`RStarTree`](r_star_tree.md), etc.).
 
  - See also the
    [developer documentation on tree constructors](../../../developer/trees.md#constructors-and-destructors).
-
-<!-- TODO: add links to RectangleTree above when it is documented -->
 
 ---
 
@@ -2240,7 +2239,7 @@ mlpack::BinarySpaceTree<mlpack::EuclideanDistance,
                         mlpack::EmptyStatistic,
                         arma::mat,
                         mlpack::HRectBound,
-                        mlpack::MidpointSplit> tree(std::move(dataset));
+                        mlpack::MidpointSplit> tree(std::move(dataset), 10);
 
 // Print the bounding box of the root node.
 std::cout << "Bounding box of root node:" << std::endl;

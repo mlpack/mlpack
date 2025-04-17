@@ -101,13 +101,11 @@ dataset.
    is not supported, because this generally results in a cover tree with very
    loose bounding balls.  It is better to simply build a new `CoverTree` on the
    modified dataset.  For trees that support individual insertion and deletions,
-   see the `RectangleTree` class and all its variants (e.g. `RTree`,
-   `RStarTree`, etc.).
+   see the [`RectangleTree`](rectangle_tree.md) class and all its variants (e.g.
+   [`RTree`](r_tree.md), [`RStarTree`](r_star_tree.md), etc.).
 
  - See also the
    [developer documentation on tree constructors](../../../developer/trees.md#constructors-and-destructors).
-
-<!-- TODO: add links to RectangleTree above when it is documented -->
 
 ---
 

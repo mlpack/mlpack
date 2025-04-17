@@ -26,7 +26,7 @@ struct IsSpillTree
 template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneDistanceType>
+         template<typename HyperplaneDistanceType, typename HyperplaneMatType>
             class HyperplaneType,
          template<typename SplitDistanceType, typename SplitMatType>
             class SplitType>
