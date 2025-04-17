@@ -145,9 +145,9 @@ permuted during construction.
 
  * `rho` implicitly controls the depth of the tree by forcing very overlapping
    children to be non-overlapping.  As `rho` gets closer to `1`, more overlap is
-   allowed, which in turn makes the tree deeper.  If `rho` is set to `0`, then
-   all splits will be non-overlapping (and the tree will essentially be a
-   [`BinarySpaceTree`](binary_space_tree.md)).
+   allowed, which in turn makes the tree deeper.  If `rho` is set to `0.5` or
+   less, then all splits will be non-overlapping (and the tree will essentially
+   be a [`BinarySpaceTree`](binary_space_tree.md)).
 
 ## Basic tree properties
 
