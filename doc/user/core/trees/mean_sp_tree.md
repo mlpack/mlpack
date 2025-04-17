@@ -1,38 +1,24 @@
-# `SpillTree`
+# `MeanSPTree`
 
-The `SpillTree` class represents a generic multidimensional binary space
-partitioning tree that allows overlapping volumes between nodes, also known as a
-'hybrid spill tree'.  It is heavily templatized to control splitting behavior
-and other behaviors, and is the actual class underlying trees such as the
-[`SPTree`](sp_tree.md).  In general, the `SpillTree` class is not meant to be
-used directly, and instead one of the handful of variants should be used
-instead:
+The `MeanSPTree` class implements the mean-split hybrid spill tree, a binary
+space partitioning tree that allows overlapping volumes between nodes.  This
+type of tree can be more effective than trees like the [`KDTree`](kdtree.md) for
+approximate nearest neighbor search and related tasks.  `MeanSPTree` is the same
+tree as [`SPTree`](sp_tree.md), except nodes are split using the mean value of
+data points projected onto the splitting hyperplane's tangent vector
+([`SPTree`](sp_tree.md) instead uses the midpoint).
 
- * [`SPTree`](sp_tree.md)
- * [`MeanSPTree`](mean_sp_tree.md)
- * [`NonOrtSPTree`](non_ort_sp_tree.md)
- * [`NonOrtMeanSPTree`](non_ort_mean_sp_tree.md)
-
-The `SpillTree` is similar to the [`BinarySpaceTree`](binary_space_tree.md),
-except that the two children of a node are allowed to overlap, and thus a single
-point can be contained in multiple branches of the tree.  This can be useful to,
-e.g., improve nearest neighbor performance when using [defeatist traversals
-without backtracking](#tree-traversals).
-
----
-
-For users who want to use `SpillTree` directly or with custom behavior,
-the full class is still detailed in the subsections below.  `SpillTree` supports
-the [TreeType API](../../../developer/trees.md#the-treetype-api) and can be used
-with mlpack's tree-based algorithms, although using custom behavior may require
-a template typedef.
+`MeanSPTree` supports three template parameters for configurable behavior, and
+implements all the functionality required by the [TreeType
+API](../../../developer/trees.md#the-treetype-api), plus some additional
+functionality specific to spill trees.  `MeanSPTree` is built on the more
+generic [`SpillTree`](spill_tree.md) class, so if fully custom behavior is
+desired, that
 
  * [Template parameters](#template-parameters)
  * [Constructors](#constructors)
  * [Basic tree properties](#basic-tree-properties)
  * [Bounding distances with the tree](#bounding-distances-with-the-tree)
- * [`HyperplaneType`](#hyperplanetype) template parameter
- * [`SplitType`](#splittype) template parameter
  * [Tree traversals](#tree-traversals)
  * [Example usage](#example-usage)
 
@@ -40,8 +26,8 @@ a template typedef.
 
 <!-- TODO: add links to all distance-based algorithms and other trees? -->
 
+ * [`SpillTree`](spill_tree.md)
  * [`SPTree`](sp_tree.md)
- * [`MeanSPTree`](mean_sp_tree.md)
  * [`NonOrtSPTree`](non_ort_sp_tree.md)
  * [`NonOrtMeanSPTree`](non_ort_mean_sp_tree.md)
  * [`BinarySpaceTree`](binary_space_tree.md)
@@ -50,27 +36,22 @@ a template typedef.
 
 ## Template parameters
 
-The `SpillTree` class takes five template parameters.  The first three of
-these are required by the
+In accordance with the
 [TreeType API](../../../developer/trees.md#template-parameters-required-by-the-treetype-policy)
 (see also
-[this more detailed section](../../../developer/trees.md#template-parameters)). The
-full signature of the class is:
+[this more detailed section](../../../developer/trees.md#template-parameters)),
+the `MeanSPTree` class takes three template parameters:
 
 ```
-template<typename DistanceType,
-         typename StatisticType,
-         typename MatType,
-         template<typename HyperplaneDistanceType,
-                  typename HyperplaneMatType> class HyperplaneType,
-         template<typename SplitDistanceType,
-                  typename SplitMatType> class SplitType>
-class SpillTree;
+MeanSPTree<DistanceType, StatisticType, MatType>
 ```
 
  * `DistanceType`: the [distance metric](../distances.md) to use for distance
-   computations.  By default, this is
-   [`EuclideanDistance`](../distances.md#lmetric).
+   computations.  Because the `MeanSPTree` internally uses
+   [`HRectBound`](binary_space_tree.md#hrectbound), this is required to be
+   [`EuclideanDistance`](../distances.md#lmetric).  See
+   [`NonOrtMeanSPTree`](non_ort_mean_sp_tree.md) for a version of the mean-split
+   spill tree where arbitrary distance metrics are allowed.
 
  * `StatisticType`: this holds auxiliary information in each tree node.  By
    default, [`EmptyStatistic`](binary_space_tree.md#emptystatistic) is used,
@@ -82,34 +63,22 @@ class SpillTree;
    matching the [Armadillo API](../../matrices.md).  By default, `arma::mat` is
    used, but other types such as `arma::fmat` or similar will work just fine.
 
- * `HyperplaneType`: the class defining the type of the hyperplane that will
-   split each node.  By default,
-   [`AxisOrthogonalHyperplane`](#axisorthogonalhyperplane) is used.
-   - See the [`HyperplaneType`](#hyperplanetype) section for more details.
+The `MeanSPTree` class itself is a convenience typedef of the generic
+[`SpillTree`](spill_tree.md) class, using the
+[`AxisOrthogonalHyperplane`](spill_tree.md#axisorthogonalhyperplane) class as
+the splitting hyperplane type, and the
+[`MeanSpaceSplit`](spill_tree.md#meanspacesplit) class as the splitting
+strategy.
 
- * `SplitType`: the class defining how an individual `SpillTree` node
-   should be split.  By default, [`MidpointSpaceSplit`](#midpointspacesplit) is
-   used.
-   - See the [`SplitType`](#splittype) section for more details.
-
-Note that the TreeType API requires trees to have only three template
-parameters.  In order to use a `SpillTree` with its five template parameters
-with an mlpack algorithm that needs a TreeType, it is easiest to define a
-template typedef:
+If no template parameters are explicitly specified, then defaults are used:
 
 ```
-template<typename DistanceType, typename StatisticType, typename MatType>
-using CustomTree = SpillTree<DistanceType, StatisticType, MatType,
-    CustomHyperplaneType, CustomSplitType>
+MeanSPTree<> = MeanSPTree<EuclideanDistance, EmptyStatistic, arma::mat>
 ```
-
-Here, `CustomHyperplaneType` and `CustomSplitType` are the desired hyperplane
-type and split strategy.  This is the way that all `SpillTree` variants (such as
-[`SPTree`](sp_tree.md)) are defined.
 
 ## Constructors
 
-`SpillTree`s are constructed by iteratively finding splitting hyperplanes, and
+`MeanSPTree`s are constructed by iteratively finding splitting hyperplanes, and
 points within a margin of the hyperplane are assigned to *both* child nodes.
 Unlike the constructors of
 [`BinarySpaceTree`](binary_space_tree.md#constructors), the dataset is not
@@ -117,11 +86,9 @@ permuted during construction.
 
 ---
 
- * `node = SpillTree(data, tau=0.0, maxLeafSize=20, rho=0.7)`
-   - Construct a `SpillTree` on the given `data`, using the specified
+ * `node = MeanSPTree(data, tau=0.0, maxLeafSize=20, rho=0.7)`
+   - Construct a `MeanSPTree` on the given `data`, using the specified
      hyperparameters to control tree construction behavior.
-   - Default template parameters are used, meaning that this tree will be a
-     [`SPTree`](sp_tree.md).
    - By default, a reference to `data` is stored.  If `data` goes out of scope
      after tree construction, memory errors will occur!  To avoid this, either
      pass the dataset or a copy with `std::move()` (e.g. `std::move(data)`);
@@ -129,8 +96,8 @@ permuted during construction.
 
 ---
 
- * `node = SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>(data, tau=0.0, maxLeafSize=20, rho=0.7)`
-   - Construct a `SpillTree` on the given `data`, using custom template
+ * `node = MeanSPTree<DistanceType, StatisticType, MatType>(data, tau=0.0, maxLeafSize=20, rho=0.7)`
+   - Construct a `MeanSPTree` on the given `data`, using custom template
      parameters, and using the specified hyperparameters to control tree
      construction behavior.
    - By default, a reference to `data` is stored.  If `data` goes out of scope
@@ -140,24 +107,24 @@ permuted during construction.
 
 ---
 
- * `node = SpillTree()`
-   - Construct an empty `SpillTree` with no children, no points, and
-     default template parameters.
+ * `node = MeanSPTree()`
+   - Construct an empty `MeanSPTree` with no children, no points, and default
+     template parameters.
 
 ---
 
 ***Notes:***
 
- - The name `node` is used here for `SpillTree` objects instead of `tree`,
-   because each `SpillTree` object is a single node in the tree.  The
+ - The name `node` is used here for `MeanSPTree` objects instead of `tree`,
+   because each `MeanSPTree` object is a single node in the tree.  The
    constructor returns the node that is the root of the tree.
 
- - Inserting individual points or removing individual points from a
-   `SpillTree` is not supported, because this generally results in a tree
-   with very suboptimal hyperplane splits.  It is better to simply build a new
-   `SpillTree` on the modified dataset.  For trees that support individual
+ - Inserting individual points or removing individual points from a `MeanSPTree`
+   is not supported, because this generally results in a tree with very
+   suboptimal hyperplane splits.  It is better to simply build a new
+   `MeanSPTree` on the modified dataset.  For trees that support individual
    insertion and deletions, see the [`RectangleTree`](rectangle_tree.md) class
-   and all its variants (e.g. [`RTree`](r_tree.md),
+   and all its variants (e.g.  [`RTree`](r_tree.md),
    [`RStarTree`](r_star_tree.md), etc.).
 
  - See also the
@@ -191,8 +158,8 @@ permuted during construction.
 
 ## Basic tree properties
 
-Once a `SpillTree` object is constructed, various properties of the tree
-can be accessed or inspected.  Many of these functions are required by the
+Once a `MeanSPTree` object is constructed, various properties of the tree can be
+accessed or inspected.  Many of these functions are required by the
 [TreeType API](../../../developer/trees.md#the-treetype-api).
 
 ### Navigating the tree
@@ -202,18 +169,18 @@ can be accessed or inspected.  Many of these functions are required by the
 
  * `node.IsLeaf()` returns a `bool` indicating whether or not `node` is a leaf.
 
- * `node.Child(i)` returns a `SpillTree&` that is the `i`th child.
+ * `node.Child(i)` returns an `MeanSPTree&` that is the `i`th child.
    - `i` must be `0` or `1`.
    - This function should only be called if `node.NumChildren()` is not `0`
      (e.g. if `node` is not a leaf).  Note that this returns a valid
-     `SpillTree&` that can itself be used just like the root node of the
+     `MeanSPTree&` that can itself be used just like the root node of the
      tree!
    - `node.Left()` and `node.Right()` are convenience functions specific to
-     `SpillTree` that will return `SpillTree*` (pointers) to the left and right
-     children, respectively, or `NULL` if `node` has no children.
+     `MeanSPTree` that will return `MeanSPTree*` (pointers) to the left and
+     right children, respectively, or `NULL` if `node` has no children.
 
- * `node.Parent()` will return a `SpillTree*` that points to the parent of
-   `node`, or `NULL` if `node` is the root of the `SpillTree`.
+ * `node.Parent()` will return a `MeanSPTree*` that points to the parent of
+   `node`, or `NULL` if `node` is the root of the `MeanSPTree`.
 
 ---
 
@@ -222,8 +189,9 @@ can be accessed or inspected.  Many of these functions are required by the
  * `node.Overlap()` will return a `bool` that is `true` if `node`'s children are
    overlapping, and `false` otherwise.
 
- * `node.Hyperplane()` will return a `HyperplaneType&` object that represents
-   the splitting hyperplane of `node`.
+ * `node.Hyperplane()` will return an
+   [`AxisOrthogonalHyperplane`](spill_tree.md#axisorthogonalhyperplane) object
+   that represents the axis-aligned splitting hyperplane of `node`.
    - All points in `node.Left()` are to the left of `node.Hyperplane()` if
      `node.Overlap()` is `false`; otherwise, all points in `node.Left()` are to
      the left of `node.Hyperplane() + tau`.
@@ -234,19 +202,18 @@ can be accessed or inspected.  Many of these functions are required by the
  * `node.Bound()` will return a
    [`const HRectBound&`](binary_space_tree.md#hrectbound) representing the
    bounding box associated with `node`.
-   - If a [custom `HyperplaneType`](#hyperplanetype) is specified, then the
-     `BoundType` associated with that hyperplane type is returned instead.
    - If a [custom `DistanceType` and/or `MatType`](#template-parameters) are
-     specified, then a `const HRectBound<DistanceType, ElemType>&` is returned
-     (or a `BoundType` with that `DistanceType`, if a custom `HyperplaneType`
-     was also specified).
+     specified, then a `const HRectBound<DistanceType, ElemType>&` is returned.
      * `ElemType` is the element type of the specified `MatType` (e.g. `double`
        for `arma::mat`, `float` for `arma::fmat`, etc.).
 
  * `node.Stat()` will return a `StatisticType&` holding the statistics of the
    node that were computed during tree construction.
 
- * `node.Distance()` will return a `DistanceType&`.
+ * `node.Distance()` will return a `EuclideanDistance&`.  Because
+   `EuclideanDistance` has no instantiated members, this is unlikely to be
+    useful, but is required to satisfy the
+    [`TreeType` API](../../../developer/trees.md#the-treetype-api).
 
 See also the
 [developer documentation](../../../developer/trees.md#basic-tree-functionality)
@@ -261,7 +228,7 @@ for basic tree functionality in mlpack.
 
  * `node.NumPoints()` returns a `size_t` indicating the number of points held
    directly in `node`.
-   - If `node` is not a leaf, this will return `0`, as `SpillTree` only holds
+   - If `node` is not a leaf, this will return `0`, as `MeanSPTree` only holds
      points directly in its leaves.
    - If `node` is a leaf, then the number of points will be less than or equal
      to the `maxLeafSize` that was specified when the tree was constructed.
@@ -293,7 +260,7 @@ for basic tree functionality in mlpack.
 
 ### Accessing computed bound quantities of a tree
 
-The following quantities are cached for each node in a `SpillTree`, and so
+The following quantities are cached for each node in a `MeanSPTree`, and so
 accessing them does not require any computation.  In the documentation below,
 `ElemType` is the element type of the given `MatType`; e.g., if `MatType` is
 `arma::mat`, then `ElemType` is `double`.
@@ -332,7 +299,7 @@ on bound quantities for trees.
      dataset held by `node`.
    - This is equivalent to calling `node.Bound().Center(center)`.
 
- * A `SpillTree` can be serialized with
+ * A `MeanSPTree` can be serialized with
    [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
 
 ## Bounding distances with the tree
@@ -353,8 +320,8 @@ nodes.  The following functions can be used for these tasks.
  * `node.GetNearestChild(other)`
  * `node.GetFurthestChild(other)`
    - Return a `size_t` indicating the index of the child (`0` for left, `1` for
-     right) that is closest to (or furthest from) the `SpillTree` node
-     `other`, with respect to the `MinDistance()` (or `MaxDistance()`) function.
+     right) that is closest to (or furthest from) the `MeanSPTree` node `other`,
+     with respect to the `MinDistance()` (or `MaxDistance()`) function.
    - If there is a tie, `0` (the left child) is returned.
    - If `node` is a leaf, `0` is returned.
 
@@ -363,7 +330,7 @@ nodes.  The following functions can be used for these tasks.
  * `node.MinDistance(point)`
  * `node.MinDistance(other)`
    - Return a `double` indicating the minimum possible distance between `node`
-     and `point`, or the `SpillTree` node `other`.
+     and `point`, or the `MeanSPTree` node `other`.
    - This is equivalent to the minimum possible distance between any point
      contained in the bounding hyperrectangle of `node` and `point`, or between
      any point contained in the bounding hyperrectangle of `node` and any point
@@ -374,7 +341,7 @@ nodes.  The following functions can be used for these tasks.
  * `node.MaxDistance(point)`
  * `node.MaxDistance(other)`
    - Return a `double` indicating the maximum possible distance between `node`
-     and `point`, or the `SpillTree` node `other`.
+     and `point`, or the `MeanSPTree` node `other`.
    - This is equivalent to the maximum possible distance between any point
      contained in the bounding hyperrectangle of `node` and `point`, or between
      any point contained in the bounding hyperrectangle of `node` and any point
@@ -393,18 +360,18 @@ nodes.  The following functions can be used for these tasks.
 
 ## Tree traversals
 
-Like every mlpack tree, the `SpillTree` class provides a [single-tree and
+Like every mlpack tree, the `MeanSPTree` class provides a [single-tree and
 dual-tree traversal](../../../developer/trees.md#traversals) that can be paired
 with a [`RuleType` class](../../../developer/trees.md#rules) to implement a
 single-tree or dual-tree algorithm.
 
- * `SpillTree::SingleTreeTraverser`
+ * `MeanSPTree::SingleTreeTraverser`
    - Implements a depth-first single-tree traverser.
 
- * `SpillTree::DualTreeTraverser`
+ * `MeanSPTree::DualTreeTraverser`
    - Implements a dual-depth-first dual-tree traverser.
 
-However, the spill tree is primarily useful because the overlapping nodes allow
+However, spill trees are primarily useful because the overlapping nodes allow
 *defeatist* search to be effective.  Defeatist search is non-backtracking: the
 tree is traversed to one leaf only.  For example, finding the approximate
 nearest neighbor of a point `p` with defeatist search is done by recursing in
@@ -417,11 +384,11 @@ Defeatist traversers, matching the API for a regular
 [traversal](../../../developer/trees.md#traversals) are made available as the
 following two classes:
 
- * `SpillTree::DefeatistSingleTreeTraverser`
+ * `MeanSPTree::DefeatistSingleTreeTraverser`
    - Implements a depth-first single-tree defeatist traverser with no
      backtracking.  Traversal will terminate after the first leaf is visited.
 
- * `SpillTree::DefeatistDualTreeTraverser`
+ * `MeanSPTree::DefeatistDualTreeTraverser`
    - Implements a dual-depth-first dual-tree defeatist traversal with no
      backtracking.  For each query leaf node, traversal will terminate after the
      first reference leaf node is visited.
@@ -448,290 +415,9 @@ size_t GetBestChild(TreeType& queryNode, TreeType& referenceNode);
 size_t MinimumBaseCases();
 ```
 
-## `HyperplaneType`
-
-Each node in a `SpillTree` corresponds to some region in space that contains all
-of the descendant points in the node.  Similar to the [`KDTree`](kdtree.md), this
-region is a hyperrectangle; however, instead of representing that hyperrectangle
-explicitly like the `KDTree` with the
-[`HRectBound`](binary_space_tree.md#hrectbound) class, the `SpillTree`
-represents the region *implicitly*, with each node storing only the hyperplane
-and margin required to determine whether a point belongs to the left node, the
-right node, or both.
-
-The type of hyperplane (e.g. axis-aligned or arbitrary) can be controlled by the
-`HyperplaneType` template parameter.  mlpack supplies two drop-in classes that
-can be used for `HyperplaneType`, and it is also possible to write a custom
-`HyperplaneType`:
-
- * [`AxisOrthogonalHyperplane`](#axisorthogonalhyperplane): uses hyperplanes
-   that are axis-orthogonal (or axis-aligned).
- * [`Hyperplane`](#hyperplane): uses arbitrary hyperplanes specified by any
-   vector.
- * [Custom `HyperplaneType`s](#custom-hyperplanetypes): implement a fully custom
-   `HyperplaneType` class
-
-### `AxisOrthogonalHyperplane`
-
-The `AxisOrthogonalHyperplane` class is used to provide an axis-orthogonal split
-for a `SpillTree`.  That is, whether or not a point is on the left or right side
-of the split is a very efficient computation using only a single dimension of
-the data.
-
- * The `AxisOrthogonalHyperplane` class defines the following two typedefs:
-   - `AxisOrthogonalHyperplane::BoundType`, which is the type of the bound used
-     by the spill tree with this hyperplane, is
-     [`HRectBound`](binary_space_tree.md#hrectbound), or
-     `HRectBound<DistanceType, MatType>` if custom
-     [`DistanceType` and/or `MatType`](#template-parameters) are specified.
-
-   - `AxisOrthogonalHyperplane::ProjVectorType` is `AxisParallelProjVector`, a
-     class that simply holds the index of the dimension of the projection
-     vector.
-     * For more details, see
-       [the source code](/src/mlpack/core/tree/space_split/projection_vector.hpp).
-
- * An `AxisOrthogonalHyperplane` object `h` (e.g. returned with
-   `node.Hyperplane()`) has the following members:
-
-   - `h.Project(point)` returns a `double` that is the orthogonal projection of
-     `point` onto the tangent vector of the hyperplane `h`.
-
-   - `h.Left(point)` returns `true` if `point` is to the left of `h`.
-
-   - `h.Right(point)` returns `true` if `point` is to the right of `h`.
-
-   - `h.Left(bound)` returns `true` if `bound` (an
-     `AxisOrthogonalHyperplane::BoundType`; see the bullet point above) is to
-     the left of `h`.
-
-   - `h.Right(bound)` returns `true` if `bound` (an
-     `AxisOrthogonalHyperplane::BoundType`; see the bullet point above) is to
-     the right of `h`.
-
- * An `AxisOrthogonalHyperplane` object can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
-
-For more details, see the
-[the source code](/src/mlpack/core/tree/space_split/hyperplane.hpp).
-
-### `Hyperplane`
-
-The `Hyperplane` class is used to provide an arbitrary hyperplane split for a
-`SpillTree`.  The computation of whether or not a point is on the left or right
-side of the split is less efficient than
-[`AxisOrthogonalHyperplane`](#axisorthogonalhyperplane), but `Hyperplane` is
-able to represent any possible hyperplane.
-
- * The `Hyperplane` class defines the two following typedefs:
-   - `Hyperplane::BoundType`, which is the type of the bound used by the spill
-     tree with this hyperplane, is
-     [`BallBound`](binary_space_tree.md#ballbound), or `BallBound<DistanceType>`
-     if a custom [`DistanceType`](#template-parameters) is specified.
-
-   - `Hyperplane::ProjVectorType` is `ProjVector<>`, an arbitrary projection
-     vector class that wraps an `arma::vec`.
-     * If a custom `MatType` is specified, then `Hyperplane::ProjVectorType` is
-       `ProjVector<MatType>`, which wraps a vector of the same type as
-       `MatType`.
-     * For more details, see
-       [the source code](/src/mlpack/core/tree/space_split/projection_vector.hpp).
-
- * A `Hyperplane` object `h` (e.g. returned with `node.Hyperplane()`) has the
-   following members:
-
-   - `h.Project(point)` returns a `double` that is the orthogonal projection of
-     `point` onto the tangent vector of the hyperplane `h`.
-
-   - `h.Left(point)` returns `true` if `point` is to the left of `h`.
-
-   - `h.Right(point)` returns `true` if `point` is to the right of `h`.
-
-   - `h.Left(bound)` returns `true` if `bound` (an
-     `AxisOrthogonalHyperplane::BoundType`; see the bullet point above) is to
-     the left of `h`.
-
-   - `h.Right(bound)` returns `true` if `bound` (a `Hyperplane::BoundType`; see
-     the bullet point above) is to the right of `h`.
-
- * A `Hyperplane` object can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
-
-For more details, see the
-[the source code](/src/mlpack/core/tree/space_split/hyperplane.hpp).
-
-### Custom `HyperplaneType`s
-
-Custom hyperplane types for a spill tree can be implemented via the
-`HyperplaneType` template parameter.  By default, the
-[`AxisOrthogonalHyperplane`](#axisorthogonalhyperplane) hyperplane type is used,
-but it is also possible to implement and use a custom `HyperplaneType`.  Any
-custom `HyperplaneType` class must implement the following signature:
-
-```c++
-// NOTE: the custom HyperplaneType class must take two template parameters.
-template<typename DistanceType, typename MatType>
-class HyperplaneType
-{
- public:
-  // The hyperplane type must specify these two public typedefs, which are used
-  // by the spill tree and the splitting strategy.
-  //
-  // Substitute HRectBound and ProjVector with your choices.
-  using BoundType = mlpack::HRectBound<DistanceType,
-                                       typename MatType::elem_type>;
-  using ProjVectorType = mlpack::ProjVector<MatType>;
-
-  // Empty constructor, which will construct an empty or default hyperplane.
-  HyperplaneType();
-
-  // Construct the HyperplaneType with the given projection vector and split
-  // value along that projection.
-  HyperplaneType(const ProjVectorType& projVector, double splitVal);
-
-  // Compute the projection of the given point (an `arma::vec` or similar type
-  // matching the Armadillo API and element type of `MatType`) onto the vector
-  // tangent to the hyperplane.
-  template<typename VecType>
-  double Project(const VecType& point) const;
-
-  // Return true if the point (an `arma::vec` or similar type matching the
-  // Armadillo API and element type of `MatType`) falls to the left of the
-  // hyperplane.
-  template<typename VecType>
-  double Left(const VecType& point) const;
-
-  // Return true if the point (an `arma::vec` or similar type matching the
-  // Armadillo API and element type of `MatType`) falls to the right of the
-  // hyperplane.
-  template<typename VecType>
-  double Right(const VecType& point) const;
-
-  // Return true if the given bound is fully to the left of the hyperplane.
-  bool Left(const BoundType& bound) const;
-
-  // Return true if the given bound is fully to the right of the hyperplane.
-  bool Right(const BoundType& bound) const;
-
-  // Serialize the hyperplane using cereal.
-  template<typename Archive>
-  void serialize(Archive& ar, const uint32_t version);
-};
-```
-
-## `SplitType`
-
-The `SplitType` template parameter controls the algorithm used to split each
-node of a `SpillTree` while building.  The splitting strategy used can be
-entirely arbitrary---the `SplitType` only needs to compute a
-[`HyperplaneType`](#hyperplanetype) to split a set of points.
-
-mlpack provides two drop-in choices for `SplitType`, and it is also possible
-to write a fully custom split:
-
- * [`MidpointSpaceSplit`](#midpointspacesplit): split a set of points using a
-   hyperplane built on the midpoint (median) of points in a dataset.
- * [`MeanSpaceSplit`](#meanspacesplit): split a set of points using a hyperplane
-   built on the mean (average) of points in a dataset.
- * [Custom `SplitType`s](#custom-splittypes): implement a fully custom
-   `SplitType` class
-
-### `MidpointSpaceSplit`
-
-The `MidpointSpaceSplit` class is a splitting strategy that can be used by
-`SpillTree`.  It is the default strategy for splitting [`SPTree`s](sp_tree.md)
-and [`NonOrtSPTree`s](non_ort_sp_tree.md).
-
-The splitting strategy for the `MidpointSpaceSplit` class is, given a set of
-points:
-
- * If [`AxisOrthogonalHyperplane`](#axisorthogonalhyperplane) is being used,
-   then select the dimension with the maximum width, and use the midpoint of the
-   points' values in that dimension.
-
- * If [`Hyperplane`](#hyperplane) is being used, then estimate the furthest two
-   points in the dataset by random sampling, and use the vector connecting those
-   points as the tangent vector to the hyperplane.  The midpoint of the points
-   projected onto this hyperplane is used as the split value.
-
-Note that `MidpointSpaceSplit` can only be used with a `HyperplaneType` with
-`HyperplaneType::ProjVectorType` as either `AxisAlignedProjVector` or
-`ProjVector`.
-
-For implementation details, see
-[the source code](/src/mlpack/core/tree/space_split/midpoint_space_split_impl.hpp).
-
-### `MeanSpaceSplit`
-
-The `MeanSpaceSplit` class is a splitting strategy that can be used by
-`SpillTree`.  It is the splitting strategy used by the
-[`MeanSPTree`](mean_sp_tree.md) and the
-[`NonOrtMeanSPTree`](non_ort_mean_sp_tree.md) classes.
-
-The splitting strategy for the `MeanSpaceSplit` class is, given a set of
-points:
-
- * If [`AxisOrthogonalHyperplane`](#axisorthogonalhyperplane) is being used,
-   then select the dimension with the maximum width, and use the mean of the
-   points' values in that dimension.
-
- * If [`Hyperplane`](#hyperplane) is being used, then estimate the furthest two
-   points in the dataset by random sampling, and use the vector connecting those
-   points as the tangent vector to the hyperplane.  The mean of the points
-   projected onto this hyperplane is used as the split value.
-
-Note that `MeanSpaceSplit` can only be used with a `HyperplaneType` with
-`HyperplaneType::ProjVectorType` as either `AxisAlignedProjVector` or
-`ProjVector`.
-
-For implementation details, see
-[the source code](/src/mlpack/core/tree/space_split/mean_space_split_impl.hpp).
-
-### Custom `SplitType`s
-
-Custom split strategies for a spill tree can be implemented via the
-`SplitType` template parameter.  By default, the
-[`MidpointSpaceSplit`](#midpointspacesplit) splitting strategy is used, but it
-is also possible to implement and use a custom `SplitType`.  Any custom
-`SplitType` class must implement the following signature:
-
-```c++
-// NOTE: the custom SplitType class must take two template parameters.
-template<typename DistanceType, typename MatType>
-class SplitType
-{
- public:
-  // The SplitType class is only required to provide one static function.
-
-  // Create a splitting hyperplane and store it in the given `HyperplaneType`,
-  // using the given data and bounding box `bound`.  `data` will be an Armadillo
-  // matrix that is the entire dataset, and `points` are the indices of points
-  // in `data` that should be split.
-  template<typename HyperplaneType>
-  static bool SplitSpace(
-      const typename HyperplaneType::BoundType& bound,
-      const MatType& data,
-      const arma::Col<size_t>& points,
-      HyperplaneType& hyp);
-};
-```
-
 ## Example usage
 
-The `SpillTree` class is only really necessary when a custom hyperplane type or
-custom splitting strategy is intended to be used.  For simpler use cases, one of
-the typedefs of `SpillTree` (such as [`SPTree`](sp_tree.md)) will suffice.
-
-For this reason, all of the examples below explicitly specify all five template
-parameters of `SPTree`.
-[Writing a custom hyperplane type](#custom-hyperplanetypes) and
-[writing a custom splitting strategy](#custom-splittypes) are discussed
-in the previous sections.  Each of the parameters in the examples below can be
-trivially changed for different behavior.
-
----
-
-Build a `SpillTree` on the `cloud` dataset and print basic statistics about the
+Build a `MeanSPTree` on the `cloud` dataset and print basic statistics about the
 tree.
 
 ```c++
@@ -739,16 +425,16 @@ tree.
 arma::mat dataset;
 mlpack::data::Load("cloud.csv", dataset, true);
 
-// Build the spill tree with a tau (margin) of 0.2 and a leaf size of 10.
-// (This means that nodes are split until they contain 10 or fewer points.)
+// Build the mean-split spill tree with a tau (margin) of 0.2 and a leaf size of
+// 10.  (This means that nodes are split until they contain 10 or fewer points.)
 //
 // The std::move() means that `dataset` will be empty after this call, and no
 // data will be copied during tree building.
-mlpack::SpillTree<mlpack::EuclideanDistance,
-                  mlpack::EmptyStatistic,
-                  arma::mat,
-                  mlpack::AxisOrthogonalHyperplane,
-                  mlpack::MidpointSpaceSplit> tree(std::move(dataset), 0.2, 10);
+//
+// When C++20 is enabled, then the <> is not necessary and the following line
+// will work:
+// mlpack::MeanSPTree tree(std::move(dataset), 0.2, 10);
+mlpack::MeanSPTree<> tree(std::move(dataset), 0.2, 10);
 
 // Print the bounding box of the root node.
 std::cout << "Bounding box of root node:" << std::endl;
@@ -769,7 +455,7 @@ std::cout << "Descendant points of right child: "
     << tree.Right()->NumDescendants() << "." << std::endl;
 std::cout << std::endl;
 
-// Compute the center of the SpillTree.
+// Compute the center of the MeanSPTree.
 arma::vec center;
 tree.Center(center);
 std::cout << "Center of tree: " << center.t();
@@ -777,27 +463,20 @@ std::cout << "Center of tree: " << center.t();
 
 ---
 
-Build two `SpillTree`s on subsets of the corel dataset and compute minimum
-and maximum distances between different nodes in the tree.
+Build two `MeanSPTree`s on subsets of the corel dataset and compute minimum and
+maximum distances between different nodes in the tree.
 
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
 mlpack::data::Load("corel-histogram.csv", dataset, true);
 
-// Convenience typedef for the tree type.
-using TreeType = mlpack::SpillTree<mlpack::EuclideanDistance,
-                                   mlpack::EmptyStatistic,
-                                   arma::mat,
-                                   mlpack::AxisOrthogonalHyperplane,
-                                   mlpack::MidpointSpaceSplit>;
-
 // Build trees on the first half and the second half of points.  Use a tau
 // (overlap) parameter of 0.3, which is tuned to this dataset, and a rho value
 // of 0.6 to prevent the trees getting too deep.
-TreeType tree1(dataset.cols(0, dataset.n_cols / 2), 0.3, 20, 0.6);
-TreeType tree2(dataset.cols(dataset.n_cols / 2 + 1, dataset.n_cols - 1),
-    0.3, 20, 0.6);
+mlpack::MeanSPTree<> tree1(dataset.cols(0, dataset.n_cols / 2), 0.3, 20, 0.6);
+mlpack::MeanSPTree<> tree2(dataset.cols(dataset.n_cols / 2 + 1,
+                                        dataset.n_cols - 1),  0.3, 20, 0.6);
 
 // Compute the maximum distance between the trees.
 std::cout << "Maximum distance between tree root nodes: "
@@ -806,12 +485,12 @@ std::cout << "Maximum distance between tree root nodes: "
 // Get the leftmost grandchild of the first tree's root---if it exists.
 if (!tree1.IsLeaf() && !tree1.Child(0).IsLeaf())
 {
-  TreeType& node1 = tree1.Child(0).Child(0);
+  mlpack::MeanSPTree<>& node1 = tree1.Child(0).Child(0);
 
   // Get the rightmost grandchild of the second tree's root---if it exists.
   if (!tree2.IsLeaf() && !tree2.Child(1).IsLeaf())
   {
-    TreeType& node2 = tree2.Child(1).Child(1);
+    mlpack::MeanSPTree<>& node2 = tree2.Child(1).Child(1);
 
     // Print the minimum and maximum distance between the nodes.
     mlpack::Range dists = node1.RangeDistance(node2);
@@ -853,22 +532,19 @@ if (!tree1.IsLeaf() && !tree1.Child(0).IsLeaf())
 
 ---
 
-Build a `SpillTree` on 32-bit floating point data and save it to disk.
+Build a `MeanSPTree` on 32-bit floating point data and save it to disk.
 
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::fmat dataset;
 mlpack::data::Load("corel-histogram.csv", dataset);
 
-// Build the SpillTree using 32-bit floating point data as the matrix type.
+// Build the MeanSPTree using 32-bit floating point data as the matrix type.
 // We will still use the default EmptyStatistic and EuclideanDistance
 // parameters.
-mlpack::SpillTree<mlpack::EuclideanDistance,
-                  mlpack::EmptyStatistic,
-                  arma::fmat,
-                  mlpack::AxisOrthogonalHyperplane,
-                  mlpack::MidpointSpaceSplit> tree(
-    std::move(dataset), 0.1, 20, 0.95);
+mlpack::MeanSPTree<mlpack::EuclideanDistance,
+                   mlpack::EmptyStatistic,
+                   arma::fmat> tree(std::move(dataset), 0.1, 20, 0.95);
 
 // Save the tree to disk with the name 'tree'.
 mlpack::data::Save("tree.bin", "tree", tree);
@@ -879,19 +555,17 @@ std::cout << "Saved tree with " << tree.Dataset().n_cols << " points to "
 
 ---
 
-Load a 32-bit floating point `SpillTree` from disk, then traverse it
-manually and find the number of nodes whose children overlap.
+Load a 32-bit floating point `MeanSPTree` from disk, then traverse it manually
+and find the number of nodes whose children overlap.
 
 ```c++
 // This assumes the tree has already been saved to 'tree.bin' (as in the example
 // above).
 
 // This convenient typedef saves us a long type name!
-using TreeType = mlpack::SpillTree<mlpack::EuclideanDistance,
-                                   mlpack::EmptyStatistic,
-                                   arma::fmat,
-                                   mlpack::AxisOrthogonalHyperplane,
-                                   mlpack::MidpointSpaceSplit>;
+using TreeType = mlpack::MeanSPTree<mlpack::EuclideanDistance,
+                                    mlpack::EmptyStatistic,
+                                    arma::fmat>;
 
 TreeType tree;
 mlpack::data::Load("tree.bin", "tree", tree);
@@ -1039,32 +713,26 @@ class SpillNearestNeighborRule
 arma::mat dataset;
 mlpack::data::Load("corel-histogram.csv", dataset, true);
 
-typedef mlpack::SpillTree<mlpack::EuclideanDistance,
-                          mlpack::EmptyStatistic,
-                          arma::mat,
-                          mlpack::AxisOrthogonalHyperplane,
-                          mlpack::MidpointSpaceSplit> TreeType;
-
 // Build two trees, one with a lot of overlap, and one with no overlap
 // (e.g. tau = 0).
-TreeType tree1(dataset, 0.5, 10), tree2(dataset, 0.0, 10);
+mlpack::MeanSPTree<> tree1(dataset, 0.5, 10), tree2(dataset, 0.0, 10);
 
 // Construct the rule types, and then the traversals.
 SpillNearestNeighborRule r1(dataset), r2(dataset);
 
-TreeType::DefeatistSingleTreeTraverser<SpillNearestNeighborRule> t1(r1);
-TreeType::DefeatistSingleTreeTraverser<SpillNearestNeighborRule> t2(r2);
+mlpack::MeanSPTree<>::DefeatistSingleTreeTraverser<SpillNearestNeighborRule>
+    t1(r1), t2(r2);
 
 // Search for the approximate nearest neighbor of point 3 using both trees.
 t1.Traverse(3, tree1);
 t2.Traverse(3, tree2);
 
 std::cout << "Approximate nearest neighbor of point 3:" << std::endl;
-std::cout << " - Spill tree with overlap 0.5 found: point "
+std::cout << " - Mean-split spill tree with overlap 0.5 found: point "
     << r1.NearestNeighbor() << ", distance " << r1.NearestDistance()
     << "." << std::endl;
 
-std::cout << " - Spill tree with no overlap found: point "
+std::cout << " - Mean-split spill tree with no overlap found: point "
     << r2.NearestNeighbor() << ", distance " << r2.NearestDistance()
     << "." << std::endl;
 
@@ -1076,11 +744,11 @@ t1.Traverse(6, tree1);
 t2.Traverse(6, tree2);
 
 std::cout << "Approximate nearest neighbor of point 6:" << std::endl;
-std::cout << " - Spill tree with overlap 0.5 found: point "
+std::cout << " - Mean-split spill tree with overlap 0.5 found: point "
     << r1.NearestNeighbor() << ", distance " << r1.NearestDistance()
     << "." << std::endl;
 
-std::cout << " - Spill tree with no overlap found: point "
+std::cout << " - Mean-split spill tree with no overlap found: point "
     << r2.NearestNeighbor() << ", distance " << r2.NearestDistance()
     << "." << std::endl;
 ```

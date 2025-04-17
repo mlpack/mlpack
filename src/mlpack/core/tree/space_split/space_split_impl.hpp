@@ -98,7 +98,7 @@ bool SpaceSplit<DistanceType, MatType>::GetProjVector(
     return false;
 
   // Calculate the normalized projection vector.
-  projVector = ProjVector(data.col(snd) - data.col(fst));
+  projVector = ProjVector<MatType>(data.col(snd) - data.col(fst));
 
   VecType midPoint = (data.col(snd) + data.col(fst)) / 2;
 
