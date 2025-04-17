@@ -697,6 +697,117 @@ TEST_CASE("CubeShuffleTest", "[MathTest]")
 }
 
 /**
+ * Make sure shuffling cubes with ragged sequence lengths works.
+ */
+TEST_CASE("RaggedCubeShuffleTest", "[MathTest]")
+{
+  arma::cube data(3, 5, 5);
+  arma::cube labels(1, 5, 5);
+  arma::Row<size_t> lengths(5);
+
+  data.fill(-1);
+  labels.fill(-1);
+
+  for (size_t i = 0; i < lengths.n_elem; ++i)
+  {
+    lengths[i] = i;
+    for (size_t j = 0; j < lengths[i]; ++j)
+    {
+      data(0, i, j) = j;
+      data(1, i, j) = i;
+      labels(0, i, j) = i + j;
+    }
+  }
+
+  arma::cube outputData, outputLabels;
+  arma::Row<size_t> outputLengths;
+
+  ShuffleData(data, labels, lengths, outputData, outputLabels, outputLengths);
+
+  REQUIRE(outputData.n_rows == data.n_rows);
+  REQUIRE(outputData.n_cols == data.n_cols);
+  REQUIRE(outputData.n_slices == data.n_slices);
+  REQUIRE(outputLabels.n_rows == labels.n_rows);
+  REQUIRE(outputLabels.n_cols == labels.n_cols);
+  REQUIRE(outputLabels.n_slices == labels.n_slices);
+
+  // Make sure each column has the right number of slices
+  arma::Row<size_t> sliceCount(lengths.n_elem);
+  for (size_t i = 0; i < outputLabels.n_cols; ++i)
+  {
+    for (size_t j = 0; j < outputLabels.n_slices; j++)
+    {
+      if (outputLabels(0, i, j) < 0) {
+        sliceCount = j;
+        break;
+      }
+    }
+  }
+
+  // Make sure we only have each point once.
+  arma::Row<size_t> counts(5);
+  for (size_t i = 0; i < 5; ++i)
+  {
+    for (size_t s = 0; s < lengths[i]; ++s)
+    {
+      REQUIRE(data(0, i, s) + data(1, i, s) == labels(0, i, s));
+      REQUIRE(data(2, i, s) == Approx(-1.0).margin(1e-5));
+      counts[data(1, i, s)]++;
+    }
+  }
+
+  for (size_t i = 0; i < 5; ++i)
+    REQUIRE(counts[i] == lengths[i]);
+}
+
+/**
+ * Make sure shuffling cubes with empty sequence lengths works.
+ * Just a copy of CubeShuffleTest but with an empty lengths argument
+ */
+TEST_CASE("EmptyRaggedCubeShuffleTest", "[MathTest]")
+{
+  arma::cube data(3, 10, 5);
+  arma::cube labels(1, 10, 5);
+  arma::urowvec lengths;
+  for (size_t i = 0; i < labels.n_slices; ++i)
+  {
+    for (size_t j = 0; j < labels.n_cols; ++j)
+    {
+      data(0, j, i) = i;
+      data(1, j, i) = j;
+      labels(0, j, i) = j + i;
+    }
+  }
+
+  arma::cube outputData, outputLabels;
+  arma::urowvec outputLengths;
+
+  ShuffleData(data, labels, lengths, outputData, outputLabels, outputLengths);
+
+  REQUIRE(outputData.n_rows == data.n_rows);
+  REQUIRE(outputData.n_cols == data.n_cols);
+  REQUIRE(outputData.n_slices == data.n_slices);
+  REQUIRE(outputLabels.n_rows == labels.n_rows);
+  REQUIRE(outputLabels.n_cols == labels.n_cols);
+  REQUIRE(outputLabels.n_slices == labels.n_slices);
+
+  // Make sure we only have each point once.
+  arma::Row<size_t> counts(10);
+  for (size_t i = 0; i < 10; ++i)
+  {
+    for (size_t s = 0; s < data.n_slices; ++s)
+    {
+      REQUIRE(data(0, i, s) + data(1, i, s) == labels(0, i, s));
+      REQUIRE(data(2, i, s) == Approx(0.0).margin(1e-5));
+      counts[data(1, i, s)]++;
+    }
+  }
+
+  for (size_t i = 0; i < 10; ++i)
+    REQUIRE(counts[i] == data.n_slices);
+}
+
+/**
  * Make sure shuffling data with weights works.
  */
 TEST_CASE("ShuffleWeightsTest", "[MathTest]")

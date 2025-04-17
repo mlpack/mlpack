@@ -633,7 +633,7 @@ void RNN<
     MatType
 >::Shuffle()
 {
-  ShuffleData(predictors, responses, predictors, responses);
+  ShuffleData(predictors, responses, sequenceLengths, predictors, responses, sequenceLengths);
 }
 
 template<
