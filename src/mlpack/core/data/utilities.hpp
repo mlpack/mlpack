@@ -159,8 +159,10 @@ bool DetectFileType(const std::string& filename,
   return true;
 }
 
-template<typename MatType>
-bool SaveMatrix(const MatType& matrix, DataOptions& opts, std::fstream& stream)
+template<typename MatType, typename DataOptionsType>
+bool SaveMatrix(const MatType& matrix,
+                const DataOptionsType& opts,
+                std::fstream& stream)
 {
   bool success = false;
   if (opts.FileFormat() == FileType::HDF5Binary)
