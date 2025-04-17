@@ -14,12 +14,12 @@ void test()
 {
   std::vector<std::string> testFiles;
   testFiles.push_back("fake.csv");
-  //testFiles.push_back("german.csv");
-  //testFiles.push_back("iris.csv");
-  //testFiles.push_back("vc2.csv");
-  //testFiles.push_back("johnson8-4-4.csv");
-  //testFiles.push_back("lars_dependent_y.csv");
-  //testFiles.push_back("vc2_test_labels.txt");
+  testFiles.push_back("german.csv");
+  testFiles.push_back("iris.csv");
+  testFiles.push_back("vc2.csv");
+  testFiles.push_back("johnson8-4-4.csv");
+  testFiles.push_back("lars_dependent_y.csv");
+  testFiles.push_back("vc2_test_labels.txt");
 
   for (size_t i = 0; i < testFiles.size(); ++i)
   {
@@ -30,8 +30,8 @@ void test()
     opts.Categorical() = true;
     opts.FileFormat() = FileType::CSVASCII; 
 
-    data::Load(testFiles[i], one, data::NoFatal | data::Transpose | data::BIN_SER);
-    //data::Load(testFiles[i], one, data::NoFatal | data::Transpose | data::CSV | data::MissingToNan);
+    //data::Load(testFiles[i], one, data::NoFatal | data::Transpose | data::BIN_SER);
+    data::Load(testFiles[i], one, data::NoFatal | data::Transpose | data::CSV);
     data::Load(testFiles[i], two, opts);
 
     // The following are passing correctly and throwing an error as it should

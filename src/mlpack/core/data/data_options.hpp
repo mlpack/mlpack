@@ -62,7 +62,15 @@ class DataOptionsBase
     // Do nothing.
   }
 
-  virtual DataOptionsBase& operator=(const DataOptionsBase& other)
+  template<typename Derived2>
+  DataOptionsBase(const DataOptionsBase<Derived2>& opts) :
+    fatal(opts.Fatal()),
+    noTranspose(opts.NoTranspose()),
+    fileFormat(opts.FileFormat())
+  {
+    // Do nothing.
+  }
+ virtual DataOptionsBase& operator=(const DataOptionsBase& other)
   {
     if (&other == this)
       return *this;
@@ -213,30 +221,44 @@ class CSVOptions : public DataOptionsBase<CSVOptions>
 {
 
  public:
+
+   friend DataOptions;
+
    CSVOptions(
        bool hasHeaders = false,
        bool semiColon = false,
        bool missingToNan = false,
        bool categorical = false,
        bool timeseries = false,
-       int samplingRate = 0) :
+       bool timestampCol = false,
+       bool labelCol = false,
+       int samplingRate = 0,
+       int windowSize = 0) :
      hasHeaders(hasHeaders),
      semiColon(semiColon),
      missingToNan(missingToNan),
      categorical(categorical),
      timeseries(timeseries),
-     samplingRate(samplingRate)
+     timestampCol(timestampCol),
+     labelCol(labelCol),
+     samplingRate(samplingRate),
+     windowSize(windowSize)
   {
     // Do Nothing.
   }
 
-  explicit CSVOptions(const DataOptionsBase& opts) :
-        DataOptionsBase(opts),
-        hasHeaders(false),
-        semiColon(false),
-        missingToNan(false),
-        categorical(false),
-        timeseries(false)
+  template<typename Derived>
+  explicit CSVOptions(const DataOptionsBase<Derived>& opts) :
+      DataOptionsBase(opts),
+      hasHeaders(false),
+      semiColon(false),
+      missingToNan(false),
+      categorical(false),
+      timeseries(false),
+      timestampCol(false),
+      labelCol(false),
+      samplingRate(0),
+      windowSize(0)
   {
     // Do Nothing.
   }
@@ -344,10 +366,13 @@ class CSVOptions : public DataOptionsBase<CSVOptions>
 inline CSVOptions operator|(const CSVOptions& a, const CSVOptions& b)
 {
   CSVOptions output;
+  output.HasHeaders() = a.HasHeaders() | b.HasHeaders();
   output.SemiColon() = a.SemiColon() | b.SemiColon();
   output.MissingToNan() = a.MissingToNan() | b.MissingToNan();
   output.Categorical() = a.Categorical() | b.Categorical();
   output.Timeseries() = a.Timeseries() | b.Timeseries();
+  output.TimestampCol() = a.TimestampCol() | b.TimestampCol();
+  output.LabelCol() =  a.LabelCol() | b.LabelCol();
   return output;
 }
 
@@ -558,9 +583,11 @@ inline CSVOptions operator|(const CSVOptions& a, const ImageOptions& b)
   CSVOptions output;
   output.Fatal() = a.Fatal() | b.Fatal();
   if (output.Fatal())
-    Log::Fatal << "Can't load CSV and Image option simultaneously!";
+    Log::Fatal << "Can't load CSV and Image option simultaneously!"
+        << std::endl;
   else
-    Log::Warn << "Can't load CSV and Image option simultaneously!";
+    Log::Warn << "Can't load CSV and Image option simultaneously!"
+        << std::endl;
 
   return output;
 }
@@ -570,9 +597,11 @@ inline CSVOptions operator|(const CSVOptions& a, const ModelOptions& b)
   CSVOptions output;
   output.Fatal() = a.Fatal() | b.Fatal();
   if (output.Fatal())
-    Log::Fatal << "Can't load CSV and Model option simultaneously!";
+    Log::Fatal << "Can't load CSV and Model option simultaneously!"
+        << std::endl;
   else
-    Log::Warn << "Can't load CSV and Model option simultaneously!";
+    Log::Warn << "Can't load CSV and Model option simultaneously!"
+        << std::endl;
   return output;
 }
 
@@ -581,9 +610,11 @@ inline ModelOptions operator|(const ModelOptions& a, const CSVOptions& b)
   ModelOptions output;
   output.Fatal() = a.Fatal() | b.Fatal();
   if (output.Fatal())
-    Log::Fatal << "Can't load CSV and Model option simultaneously!";
+    Log::Fatal << "Can't load CSV and Model option simultaneously!"
+        << std::endl;
   else
-    Log::Warn << "Can't load CSV and Model option simultaneously!";
+    Log::Warn << "Can't load CSV and Model option simultaneously!"
+        << std::endl;
   return output;
 }
 
@@ -592,179 +623,13 @@ inline ImageOptions operator|(const ImageOptions& a, const ModelOptions& b)
   ImageOptions output;
   output.Fatal() = a.Fatal() | b.Fatal();
   if (output.Fatal())
-    Log::Fatal << "Can't load Image and Model option simultaneously!";
+    Log::Fatal << "Can't load Image and Model option simultaneously!"
+        << std::endl;
   else
-    Log::Warn << "Can't load Image and Model option simultaneously!";
+    Log::Warn << "Can't load Image and Model option simultaneously!"
+        << std::endl;
   return output;
 }
-
-namespace DataOptionsSpace
-{
-
-struct FatalOptions: public DataOptionsBase<void>
-{
-  inline FatalOptions() : DataOptionsBase() { this->Fatal() = true; }
-};
-
-struct NoFatalOptions: public DataOptionsBase<void>
-{
-  inline NoFatalOptions() : DataOptionsBase() { this->Fatal() = false; }
-};
-
-struct TransposeOptions : public DataOptionsBase<void>
-{
-  inline TransposeOptions() : DataOptionsBase()
-  {
-    this->NoTranspose() = false;
-  }
-};
-
-struct NoTransposeOptions : public DataOptionsBase<void>
-{
-  inline NoTransposeOptions() : DataOptionsBase()
-  {
-    this->NoTranspose() = true;
-  }
-};
-
-struct HasHeadersOptions : public CSVOptions
-{
-  inline HasHeadersOptions() : CSVOptions() { this->HasHeaders() = true; }
-};
-
-struct SemiColonOptions : public CSVOptions
-{
-  inline SemiColonOptions() : CSVOptions() { this->SemiColon() = true; }
-};
-
-struct MissingToNanOptions : public CSVOptions
-{
-  inline MissingToNanOptions() : CSVOptions()
-  {
-    this->MissingToNan() = true;
-  }
-};
-
-struct CategoricalOptions : public CSVOptions
-{
-  inline CategoricalOptions() : CSVOptions() { this->Categorical() = true; }
-};
-
-//! Data serialization options 
-struct AutodetectOptions : public ModelOptions
-{
-  inline AutodetectOptions() : ModelOptions()
-  {
-    this->DataFormat() = format::autodetect;
-  }
-};
-
-struct JsonModelOptions : public ModelOptions
-{
-  inline JsonModelOptions() : ModelOptions()
-  {
-    this->DataFormat() = format::json;
-  }
-};
-
-struct XmlModelOptions : public ModelOptions
-{
-  inline XmlModelOptions() : ModelOptions()
-  {
-    this->DataFormat() = format::xml;
-  }
-};
-
-struct BinaryModelOptions : public ModelOptions
-{
-  inline BinaryModelOptions() : ModelOptions()
-  {
-    this->DataFormat() = format::binary;
-  }
-};
-
-//! File serialization options 
-struct FileAutoDetectOptions : public DataOptionsBase<void>
-{
-  inline FileAutoDetectOptions() : DataOptionsBase()
-  {
-    this->FileFormat() = FileType::AutoDetect;
-  }
-};
-
-struct CSVOptions : public DataOptionsBase<void>
-{
-  inline CSVOptions() : DataOptionsBase()
-  {
-    this->FileFormat() = FileType::CSVASCII;
-  }
-};
-
-struct PGMOptions : public DataOptionsBase<void>
-{
-  inline PGMOptions() : DataOptionsBase()
-  {
-    this->FileFormat() = FileType::PGMBinary;
-  }
-};
-
-struct PPMOptions : public DataOptionsBase<void>
-{
-  inline PPMOptions() : DataOptionsBase()
-  {
-    this->FileFormat() = FileType::PPMBinary;
-  }
-};
-
-struct HDF5Options : public DataOptionsBase<void>
-{
-  inline HDF5Options() : DataOptionsBase()
-  {
-    this->FileFormat() = FileType::HDF5Binary;
-  }
-};
-
-struct ArmaASCIIOptions : public DataOptionsBase<void>
-{
-  inline ArmaASCIIOptions() : DataOptionsBase()
-  {
-    this->FileFormat() = FileType::ArmaASCII;
-  }
-};
-
-struct ArmaBinOptions : public DataOptionsBase<void>
-{
-  inline ArmaBinOptions() : DataOptionsBase()
-  {
-    this->FileFormat() = FileType::ArmaBinary;
-  }
-};
-
-struct RawASCIIOptions : public DataOptionsBase<void>
-{
-  inline RawASCIIOptions() : DataOptionsBase()
-  {
-    this->FileFormat() = FileType::RawASCII;
-  }
-};
-
-struct RawBinOptions : public DataOptionsBase<void>
-{
-  inline RawBinOptions() : DataOptionsBase()
-  {
-    this->FileFormat() = FileType::RawBinary;
-  }
-};
-
-struct CoordASCIIOptions : public DataOptionsBase<void>
-{
-  inline CoordASCIIOptions() : DataOptionsBase()
-  {
-    this->FileFormat() = FileType::CoordASCII;
-  }
-};
-
-} // namespace DataOptionsTypes
 
 //! Boolean options
 static const DataOptions Fatal       = DataOptions(true);
@@ -776,7 +641,12 @@ static const CSVOptions HasHeaders   = CSVOptions(true);
 static const CSVOptions SemiColon    = CSVOptions(false, true);
 static const CSVOptions MissingToNan = CSVOptions(false, false, true);
 static const CSVOptions Categorical  = CSVOptions(false, false, false, true);
-static const CSVOptions Timeseries   = CSVOptions(false, false, false, false, true);
+static const CSVOptions Timeseries   = CSVOptions(false, false, false, false,
+    true);
+static const CSVOptions TimestampCol = CSVOptions(false, false, false, false,
+    false, true);
+static const CSVOptions LabelCol     = CSVOptions(false, false, false, false,
+    false, false, true);
 
 //! File options
 static const DataOptions CSV           = DataOptions(false, false,
@@ -801,11 +671,11 @@ static const DataOptions AutoDetect_File = DataOptions(false, false,
     FileType::AutoDetect);
 
 //! Data serialization options 
-static const ModelOptions    AutoDetect_SER = ModelOptions(false,
+static const ModelOptions AutoDetect_SER = ModelOptions(false,
     format::autodetect);
-static const ModelOptions    JSON_SER= ModelOptions(false, format::json);
-static const ModelOptions    XML_SER = ModelOptions(false, format::xml);
-static const ModelOptions    BIN_SER = ModelOptions(false, format::binary);
+static const ModelOptions JSON_SER= ModelOptions(false, format::json);
+static const ModelOptions XML_SER = ModelOptions(false, format::xml);
+static const ModelOptions BIN_SER = ModelOptions(false, format::binary);
 
 } // namespace data
 } // namespace mlpack

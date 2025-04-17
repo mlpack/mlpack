@@ -151,13 +151,9 @@ bool Load(const std::string& filename,
     std::cout << "this is true if the type is a DataOptions\n";
   }
 
-  if constexpr (std::is_same_v<DataOptionsType, CSVOptions>)
+  if (std::is_same_v<DataOptionsType, CSVOptions>
+      || opts.FileFormat() == FileType::CSVASCII)
   {
-    std::cout << "should be loading a csv matrix" << std::endl;
-    std::cout << "isdense " << IsDense<MatType>::value << std::endl;
-    std::cout << "isSparse " << IsSparseMat<MatType>::value << std::endl;
-    std::cout << "isCol " << IsCol<MatType>::value << std::endl;
-    std::cout << "isRow " << IsRow<MatType>::value << std::endl;
     CSVOptions csvOpts(opts);
     if constexpr (IsSparseMat<MatType>::value)
     {
@@ -170,22 +166,18 @@ bool Load(const std::string& filename,
     }
     else if (csvOpts.Timeseries() && IsDense<MatType>::value)
     {
-      std::cout << "should be loading a timeseries matrix" << std::endl;
       success = LoadTimeseries(filename, matrix, csvOpts, stream);
     }
     else if constexpr (IsCol<MatType>::value)
     {
-      std::cout << "1" << std::endl;
       success = LoadCol(filename, matrix, csvOpts, stream);
     }
     else if constexpr (IsRow<MatType>::value)
     {
-      std::cout << "2" << std::endl;
       success = LoadRow(filename, matrix, csvOpts, stream);
     }
     else if constexpr (IsDense<MatType>::value) 
     {
-      std::cout << "should be loading a dense matrix" << std::endl;
       success = LoadDense(filename, matrix, csvOpts, stream);
     }
     else
