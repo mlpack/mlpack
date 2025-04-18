@@ -162,8 +162,7 @@ void ShuffleData(const MatType& inputPoints,
                  WeightsType& outputWeights,
                  const std::enable_if_t<!arma::is_SpMat<MatType>::value>* = 0,
                  const std::enable_if_t<arma::is_Cube<MatType>::value>* = 0,
-                 const std::enable_if_t<arma::is_Cube<LabelsType>::value>* = 0,
-                 const std::enable_if_t<arma::is_Row<WeightsType>::value>* = 0)
+                 const std::enable_if_t<arma::is_Cube<LabelsType>::value>* = 0)
 {
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
