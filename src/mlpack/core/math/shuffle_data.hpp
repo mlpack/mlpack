@@ -193,10 +193,7 @@ void ShuffleData(const MatType& inputPoints,
     outputLabelsPtr->tube(0, ordering[i], outputLabelsPtr->n_rows - 1,
         ordering[i]) = inputLabels.tube(0, i, inputLabels.n_rows - 1, i);
   }
-  if (inputWeights.n_elem > 0)
-  {
-    *outputWeightsPtr = outputWeightsPtr->cols(ordering);
-  }
+  *outputWeightsPtr = outputWeightsPtr->cols(ordering);
 
   // Clean up memory if needed.
   if (&inputPoints == &outputPoints)
