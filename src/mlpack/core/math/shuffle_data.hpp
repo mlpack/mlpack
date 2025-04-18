@@ -148,23 +148,22 @@ void ShuffleData(const MatType& inputPoints,
 
 /**
  * Shuffle a cube-shaped dataset and associated labels (or responses) which are
- * also cube-shaped.  Also shuffle its sequence lengths if they aren't empty.  
- * It is expected that inputPoints, inputLabels, and inputLengths (if it's not 
- * empty) have the same number of columns.
+ * also cube-shaped.  Also shuffle its weights.  It is expected that inputPoints, 
+ * inputLabels, and inputWeights have the same number of columns.
  *
- * Shuffled data will be output into outputPoints, outputLabels, and outputLengths.
+ * Shuffled data will be output into outputPoints, outputLabels, and outputWeights.
  */
-template<typename MatType, typename LabelsType, typename LengthsType>
+template<typename MatType, typename LabelsType, typename WeightsType>
 void ShuffleData(const MatType& inputPoints,
                  const LabelsType& inputLabels,
-                 const LengthsType& inputLengths,
+                 const WeightsType& inputWeights,
                  MatType& outputPoints,
                  LabelsType& outputLabels,
-                 LengthsType& outputLengths,
+                 WeightsType& outputWeights,
                  const std::enable_if_t<!arma::is_SpMat<MatType>::value>* = 0,
                  const std::enable_if_t<arma::is_Cube<MatType>::value>* = 0,
                  const std::enable_if_t<arma::is_Cube<LabelsType>::value>* = 0,
-                 const std::enable_if_t<arma::is_Row<LengthsType>::value>* = 0)
+                 const std::enable_if_t<arma::is_Row<WeightsType>::value>* = 0)
 {
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -174,19 +173,19 @@ void ShuffleData(const MatType& inputPoints,
   // object.
   MatType* outputPointsPtr = &outputPoints;
   LabelsType* outputLabelsPtr = &outputLabels;
-  LengthsType* outputLengthsPtr = &outputLengths;
+  WeightsType* outputWeightsPtr = &outputWeights;
   if (&inputPoints == &outputPoints)
     outputPointsPtr = new MatType();
   if (&inputLabels == &outputLabels)
     outputLabelsPtr = new LabelsType();
-  if (&inputLengths == &outputLengths)
-    outputLengthsPtr = new LengthsType();
+  if (&inputWeights == &outputWeights)
+    outputWeightsPtr = new WeightsType();
 
   outputPointsPtr->set_size(inputPoints.n_rows, inputPoints.n_cols,
       inputPoints.n_slices);
   outputLabelsPtr->set_size(inputLabels.n_rows, inputLabels.n_cols,
       inputLabels.n_slices);
-  outputLengthsPtr->set_size(inputLengths.n_cols);
+  outputWeightsPtr->set_size(inputWeights.n_cols);
   for (size_t i = 0; i < ordering.n_elem; ++i)
   {
     outputPointsPtr->tube(0, ordering[i], outputPointsPtr->n_rows - 1,
@@ -194,9 +193,9 @@ void ShuffleData(const MatType& inputPoints,
     outputLabelsPtr->tube(0, ordering[i], outputLabelsPtr->n_rows - 1,
         ordering[i]) = inputLabels.tube(0, i, inputLabels.n_rows - 1, i);
   }
-  if (inputLengths.n_elem > 0)
+  if (inputWeights.n_elem > 0)
   {
-    *outputLengthsPtr = outputLengthsPtr->cols(ordering);
+    *outputWeightsPtr = outputWeightsPtr->cols(ordering);
   }
 
   // Clean up memory if needed.
@@ -212,10 +211,10 @@ void ShuffleData(const MatType& inputPoints,
     delete outputLabelsPtr;
   }
 
-  if (&inputLengths == &outputLengths)
+  if (&inputWeights == &outputWeights)
   {
-    outputLengths = std::move(*outputLengthsPtr);
-    delete outputLengthsPtr;
+    outputWeights = std::move(*outputWeightsPtr);
+    delete outputWeightsPtr;
   }
 }
 
