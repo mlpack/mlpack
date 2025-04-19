@@ -747,7 +747,7 @@ TEST_CASE("RaggedCubeShuffleTest", "[MathTest]")
 
   for (size_t i = 0; i < 5; ++i)
     REQUIRE(sliceCount[i] == outputLengths[i]);
-  
+
   // Make sure we only have each point once.
   arma::Row<size_t> counts(5);
   for (size_t c = 0; c < 5; ++c)
