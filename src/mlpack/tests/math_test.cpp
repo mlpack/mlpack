@@ -708,14 +708,14 @@ TEST_CASE("RaggedCubeShuffleTest", "[MathTest]")
   data.fill(-1);
   labels.fill(-1);
 
-  for (size_t i = 0; i < lengths.n_elem; ++i)
+  for (size_t c = 0; c < lengths.n_elem; ++c)
   {
-    lengths[i] = i;
-    for (size_t j = 0; j < lengths[i]; ++j)
+    lengths[c] = c;
+    for (size_t s = 0; s < lengths[c]; ++s)
     {
-      data(0, i, j) = j;
-      data(1, i, j) = i;
-      labels(0, i, j) = i + j;
+      data(0, c, s) = s;
+      data(1, c, s) = c;
+      labels(0, c, s) = c + s;
     }
   }
 
@@ -730,34 +730,39 @@ TEST_CASE("RaggedCubeShuffleTest", "[MathTest]")
   REQUIRE(outputLabels.n_rows == labels.n_rows);
   REQUIRE(outputLabels.n_cols == labels.n_cols);
   REQUIRE(outputLabels.n_slices == labels.n_slices);
+  REQUIRE(lengths.n_elem == outputLengths.n_elem);
 
   // Make sure each column has the right number of slices
-  arma::Row<size_t> sliceCount(lengths.n_elem);
+  arma::Row<size_t> sliceCount(5);
   for (size_t i = 0; i < outputLabels.n_cols; ++i)
   {
     for (size_t j = 0; j < outputLabels.n_slices; j++)
     {
       if (outputLabels(0, i, j) < 0) {
-        sliceCount = j;
+        sliceCount[i] = j;
         break;
       }
     }
   }
 
+  for (size_t i = 0; i < 5; ++i)
+    REQUIRE(sliceCount[i] == outputLengths[i]);
+  
   // Make sure we only have each point once.
   arma::Row<size_t> counts(5);
-  for (size_t i = 0; i < 5; ++i)
+  for (size_t c = 0; c < 5; ++c)
   {
-    for (size_t s = 0; s < lengths[i]; ++s)
+    for (size_t s = 0; s < outputLengths[c]; ++s)
     {
-      REQUIRE(data(0, i, s) + data(1, i, s) == labels(0, i, s));
-      REQUIRE(data(2, i, s) == Approx(-1.0).margin(1e-5));
-      counts[data(1, i, s)]++;
+      REQUIRE(outputData(0, c, s) + outputData(1, c, s)
+          == outputLabels(0, c, s));
+      REQUIRE(outputData(2, c, s) == Approx(-1.0).margin(1e-5));
+      counts[outputLengths[c]]++;
     }
   }
 
   for (size_t i = 0; i < 5; ++i)
-    REQUIRE(counts[i] == lengths[i]);
+    REQUIRE(counts[i] == i);
 }
 
 /**
