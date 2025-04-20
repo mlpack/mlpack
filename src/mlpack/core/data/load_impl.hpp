@@ -193,7 +193,7 @@ bool Load(const std::string& filename,
     std::cout << "this is true if the type is a DataOptions\n";
   }
 
-  if constexpr (IsArma<MatType>::value)
+  if constexpr (IsArma<MatType>::value || IsSparseMat<MatType>::value)
   {
     // compile time type detction
     // convert this to a move, and move back at the end.
@@ -201,7 +201,8 @@ bool Load(const std::string& filename,
     CSVOptions csvOpts(opts);
     success = LoadMatrix(filename, matrix, stream, csvOpts);
   }
-  else if constexpr (!IsArma<MatType>::value)
+  else if constexpr (!IsArma<MatType>::value && !IsSparseMat<MatType>::value ||
+      std::is_same_v<DataOptionsType, ModelOptions>)
   {
     std::cout << "should be loading a model" << std::endl;
     ModelOptions modOpts(opts);
