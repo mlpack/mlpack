@@ -449,13 +449,22 @@ bool LoadModel(Object& objectToSerialize,
   }
 }
 
-template<typename eT>
+template<typename MatType, typename DataOptionsType>
 bool Load(const std::vector<std::string>& filesname,
-          arma::Mat<eT>& matrix,
-          DataOptions& opts)
+          MatType& matrix,
+          const DataOptionsType& opts)
+{
+  DataOptionsType copyOpts(opts);
+  return Load(filesname, matrix, copyOpts);
+}
+
+template<typename MatType, typename DataOptionsType>
+bool Load(const std::vector<std::string>& filesname,
+          MatType& matrix,
+          DataOptionsType& opts)
 {
   bool success;
-  arma::Mat<eT> tmp;
+  MatType tmp;
   for (size_t i = 0; i < filesname.size(); ++i)
   {
     success = Load(filesname.at(i), matrix, opts);
