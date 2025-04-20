@@ -119,6 +119,46 @@ void ReshapeTimeseries(arma::Mat<eT>& matrix,
   inplace_trans(matrix);
 }
 
+template<typename MatType>
+bool LoadMatrix(const std::string& filename,
+                MatType& matrix,
+                std::fstream& stream,
+                CSVOptions& csvOpts)
+{
+  bool success = false;
+  if constexpr (IsSparseMat<MatType>::value)
+  {
+    success = LoadSparse(filename, matrix, csvOpts, stream);
+  }
+  else if (csvOpts.Categorical() ||
+      (csvOpts.FileFormat() == FileType::ArffASCII))
+  {
+    success = LoadCategorical(filename, matrix, csvOpts);
+  }
+  else if (csvOpts.Timeseries() && IsDense<MatType>::value)
+  {
+    success = LoadTimeseries(filename, matrix, csvOpts, stream);
+  }
+  else if constexpr (IsCol<MatType>::value)
+  {
+    success = LoadCol(filename, matrix, csvOpts, stream);
+  }
+  else if constexpr (IsRow<MatType>::value)
+  {
+    success = LoadRow(filename, matrix, csvOpts, stream);
+  }
+  else if constexpr (IsDense<MatType>::value)
+  {
+    success = LoadDense(filename, matrix, csvOpts, stream);
+  }
+  else
+  {
+    throw std::runtime_error("Matrix type is not detected!");
+  }
+  return success;
+}
+
+
 // This is the function that the user is supposed to call.
 // Other functions of this class should be labelled as private.
 template<typename MatType, typename DataOptionsType>
@@ -143,6 +183,8 @@ bool Load(const std::string& filename,
     return false;
   }
 
+  std::cout << opts.FileTypeToString() << std::endl;
+
   if constexpr (std::is_same_v<DataOptionsType, DataOptions>)
   {
     // Question to @rcurint what should we do in this case.
@@ -151,45 +193,15 @@ bool Load(const std::string& filename,
     std::cout << "this is true if the type is a DataOptions\n";
   }
 
-  if (std::is_same_v<DataOptionsType, CSVOptions>
-      || opts.FileFormat() == FileType::CSVASCII)
+  if constexpr (IsArma<MatType>::value)
   {
+    // compile time type detction
+    // convert this to a move, and move back at the end.
+    // add a move constructor that does this.
     CSVOptions csvOpts(opts);
-    if constexpr (IsSparseMat<MatType>::value)
-    {
-      success = LoadSparse(filename, matrix, csvOpts, stream);
-    }
-    else if (csvOpts.Categorical() ||
-        (csvOpts.FileFormat() == FileType::ArffASCII))
-    {
-      success = LoadCategorical(filename, matrix, csvOpts);
-    }
-    else if (csvOpts.Timeseries() && IsDense<MatType>::value)
-    {
-      success = LoadTimeseries(filename, matrix, csvOpts, stream);
-    }
-    else if constexpr (IsCol<MatType>::value)
-    {
-      success = LoadCol(filename, matrix, csvOpts, stream);
-    }
-    else if constexpr (IsRow<MatType>::value)
-    {
-      success = LoadRow(filename, matrix, csvOpts, stream);
-    }
-    else if constexpr (IsDense<MatType>::value) 
-    {
-      success = LoadDense(filename, matrix, csvOpts, stream);
-    }
-    else
-    {
-      throw std::runtime_error("Matrix type is not detected!");
-    }
+    success = LoadMatrix(filename, matrix, stream, csvOpts);
   }
-  else if constexpr (std::is_same_v<DataOptionsType, ImageOptions>)
-  {
-
-  }
-  else if constexpr (std::is_same_v<DataOptionsType, ModelOptions>)
+  else if constexpr (!IsArma<MatType>::value)
   {
     std::cout << "should be loading a model" << std::endl;
     ModelOptions modOpts(opts);
@@ -214,7 +226,7 @@ bool Load(const std::string& filename,
   }
   else
   {
-   if constexpr (!std::is_same_v<DataOptionsType, ModelOptions>)
+   if constexpr (IsArma<MatType>::value)
    {
       Log::Info << "Size is " << matrix.n_rows << " x "
                 << matrix.n_cols << ".\n";
@@ -236,8 +248,6 @@ bool LoadDense(const std::string& filename,
   if (opts.FileFormat() != FileType::RawBinary)
     Log::Info << "Loading '" << filename << "' as " 
         << opts.FileTypeToString() << ".  " << std::flush;
-
-    std::cout << "loading" << std::endl;
 
   // We can't use the stream if the type is HDF5.
   if (opts.FileFormat() == FileType::HDF5Binary)

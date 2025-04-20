@@ -62,15 +62,29 @@ class DataOptionsBase
     // Do nothing.
   }
 
+  // This function is called to convert only the base members of `opts`.
+  // We are guaranteed that Derived2 != void because of the more specific 
+  // overload below.
   template<typename Derived2>
-  DataOptionsBase(const DataOptionsBase<Derived2>& opts) :
-    fatal(opts.Fatal()),
-    noTranspose(opts.NoTranspose()),
-    fileFormat(opts.FileFormat())
+  explicit DataOptionsBase(const DataOptionsBase<Derived2>& opts)
   {
-    // Do nothing.
+    // If opts is an ImageOptions, we "lose" some things.  We want to print
+    // warnings for anything that is "lost" that the user might have set.  So, 
+    // we want to call Derived2::WarnBaseConversion(); however, we can only do 
+    // that if Derived2 != void.
+    //
+    // @rcurtin This is not compiling because Derived2 is void, and this function does
+    // not have WarnBaseConversion, as we have added this in CSVOptions
+    //DataOptionsBase<Derived2> optVoid 
+        //= static_cast<const DataOptionsBase<Derived2>&>(opts).WarnBaseConversion();
+
+    // Now convert base members...
+    fatal = opts.Fatal();
+    noTranspose = opts.NoTranspose();
+    fileFormat = opts.FileFormat();
   }
- virtual DataOptionsBase& operator=(const DataOptionsBase& other)
+
+  virtual DataOptionsBase& operator=(const DataOptionsBase& other)
   {
     if (&other == this)
       return *this;
@@ -279,6 +293,67 @@ class CSVOptions : public DataOptionsBase<CSVOptions>
     windowSize = other.windowSize;
     headers = other.headers;
     mapper = other.mapper;
+  }
+
+  // Print warnings for any members that cannot be represented by a
+  // DataOptionsBase<void>.
+  void WarnBaseConversion() const
+  {
+    // you would do this for each member that has a non-default value (my
+    // warning message is not great)
+    if (missingToNan)
+    {
+      Log::Warn << "Cannot represent missingIsNan!  Option is ignored."
+          << std::endl;
+    }
+
+    if (semiColon)
+    {
+      Log::Warn << "Cannot represent semiColon!  Option is ignored."
+          << std::endl;
+    }
+
+    if (categorical)
+    {
+      Log::Warn << "Cannot represent categorical!  Option is ignored."
+            << std::endl;
+    }
+
+    if (hasHeaders)
+    {
+      Log::Warn << "Cannot represent hasHeaders!  Option is ignored."
+            << std::endl;
+    }
+
+    if (labelCol)
+    {
+      Log::Warn << "Cannot represent labelCol!  Option is ignored."
+            << std::endl;
+    }
+
+    if (timestampCol)
+    {
+      Log::Warn << "Cannot represent timestampCol!  Option is ignored."
+            << std::endl;
+    }
+
+    if (timeseries)
+    {
+      Log::Warn << "Cannot represent timeseries!  Option is ignored."
+            << std::endl;
+    }
+
+    if (samplingRate > 0)
+    {
+      Log::Warn << "Cannot represent samplingRate!  Option is ignored."
+            << std::endl;
+    }
+
+    if (windowSize > 0)
+    {
+      Log::Warn << "Cannot represent windowSize!  Option is ignored."
+            << std::endl;
+    }
   }
 
   //! Get if the dataset hasHeaders or not.
