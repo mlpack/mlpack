@@ -35,7 +35,7 @@ bool Load(const std::string& filename,
           const bool transpose,
           const FileType inputLoadType)
 {
-  DataOptions opts;
+  MatrixOptions opts;
   opts.Fatal() = fatal;
   opts.NoTranspose() = !transpose;
   opts.FileFormat() = inputLoadType;
@@ -51,7 +51,7 @@ bool Load(const std::string& filename,
           const bool transpose,
           const FileType inputLoadType)
 {
-  DataOptions opts;
+  MatrixOptions opts;
   opts.Fatal() = fatal;
   opts.NoTranspose() = !transpose;
   opts.FileFormat() = inputLoadType;
@@ -89,7 +89,7 @@ bool Load(const std::string& filename,
           const bool fatal,
           const bool transpose)
 {
-  DataOptions opts;
+  MatrixOptions opts;
   opts.Fatal() = fatal;
   opts.NoTranspose() = !transpose;
   // @rcurtin just commenting this one as we need to find a solution for the

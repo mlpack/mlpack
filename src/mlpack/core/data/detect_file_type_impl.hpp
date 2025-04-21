@@ -319,25 +319,6 @@ void DetectFromExtension(const std::string& filename,
   {
     opts.FileFormat() = FileType::ArffASCII;
   }
-  else if constexpr (std::is_same_v<DataOptionsType, ModelOptions>)
-  {
-    if (extension == "xml")
-    {
-      opts.DataFormat() = format::xml;
-    }
-    else if (extension == "bin")
-    {
-      opts.DataFormat() = format::binary;
-    }
-    else if (extension == "json")
-    {
-      opts.DataFormat() = format::json;
-    }
-    else
-    {
-      opts.FileFormat() = FileType::FileTypeUnknown;
-    }
-  }
 }
 
 /**

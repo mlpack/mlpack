@@ -116,7 +116,7 @@ class DataOptionsBase
 using DataOptions = DataOptionsBase<void>;
 
 template<typename Derived>
-class MatrixOptionsBase : public DataOptionsBase<MatrixOptions>
+class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
 {
 
  public:
@@ -129,7 +129,7 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptions>
 
   template<typename Derived2>
   explicit MatrixOptionsBase(const DataOptionsBase<Derived2>& opts) :
-      DataOptionsBaseBase(opts),
+      DataOptionsBase(opts),
       noTranspose(noTranspose)
   {
     // Do Nothing.
@@ -143,12 +143,11 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptions>
     noTranspose = other.noTranspose;
     return *this;
   }
-
-  
+ 
   // Use SFINAE to warn about members that can't be converted only in MatrixOptions.
   void WarnBaseConversion(const std::enable_if_t<std::is_same_v<Derived, void>>* = 0)
   {
-    if (noTranspse)
+    if (noTranspose)
     {
       Log::Warn << "Cannot represent noTranspose!  Option is ignored."
           << std::endl;
@@ -157,7 +156,7 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptions>
 
   void WarnBaseConversion(const std::enable_if_t<!std::is_same_v<Derived, void>>* = 0)
   {
-    if (noTranspse)
+    if (noTranspose)
     {
       Log::Warn << "Cannot represent noTranspose!  Option is ignored."
           << std::endl;
@@ -199,8 +198,8 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   }
 
   template<typename Derived>
-  explicit TextOptions(const DataOptionsBase<Derived>& opts) :
-      DataOptionsBase(opts),
+  explicit TextOptions(const MatrixOptionsBase<Derived>& opts) :
+      MatrixOptionsBase(opts),
       hasHeaders(false),
       semiColon(false),
       missingToNan(false),
