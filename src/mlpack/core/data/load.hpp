@@ -1,6 +1,7 @@
 /**
  * @file core/data/load.hpp
  * @author Ryan Curtin
+ * @author Omar Shrit
  *
  * Load an Armadillo matrix from file.  This is necessary because Armadillo does
  * not transpose matrices on input, and it allows us to give better error
@@ -17,6 +18,7 @@
 #include <mlpack/prereqs.hpp>
 #include <string>
 
+#include "data_options.hpp"
 #include "format.hpp"
 #include "dataset_mapper.hpp"
 #include "detect_file_type.hpp"
@@ -27,6 +29,21 @@
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
+
+/**
+ * Loads a matrix from file, guessing the filetype from the extension.  This
+ * will transpose the matrix at load time (unless the transpose parameter is set
+ * to false).
+ *
+ * @param filename Name of file to load.
+ * @param matrix Matrix to load contents of file into.
+ * @param opts DataOptions to be passed to the function
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename MatType, typename DataOptionsType>
+bool Load(const std::string& filename,
+          MatType& matrix,
+          DataOptionsType& opts);
 
 /**
  * Loads a matrix from file, guessing the filetype from the extension.  This
