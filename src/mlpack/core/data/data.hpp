@@ -12,7 +12,6 @@
 #ifndef MLPACK_CORE_DATA_DATA_HPP
 #define MLPACK_CORE_DATA_DATA_HPP
 
-#include "detect_file_type.hpp"
 #include "extension.hpp"
 #include "format.hpp"
 #include "has_serialize.hpp"
@@ -41,5 +40,6 @@
 #include "split_data.hpp"
 #include "string_algorithms.hpp"
 #include "types.hpp"
+#include "utilities.hpp"
 
 #endif
