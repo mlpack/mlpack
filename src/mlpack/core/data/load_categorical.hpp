@@ -108,7 +108,7 @@ class LoadCSV
   */
   template<typename MatType>
   bool LoadCategoricalCSV(MatType& matrix,
-                          CSVOptions& opts);
+                          TextOptions& opts);
 
   /**
   * Peek at the file to determine the number of rows and columns in the matrix,

@@ -122,6 +122,7 @@ bool DetectFileType(const std::string& filename,
 
       return false;
     }
+  }
   return true;
 }
 

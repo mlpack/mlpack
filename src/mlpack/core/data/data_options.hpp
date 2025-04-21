@@ -181,7 +181,7 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptions>
 
 using MatrixOptions = MatrixOptionsBase<void>;
 
-class TextOptions : public MatrixOptionsBase<CSVOptions>
+class TextOptions : public MatrixOptionsBase<TextOptions>
 {
 
  public:

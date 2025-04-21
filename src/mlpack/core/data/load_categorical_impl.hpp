@@ -19,7 +19,7 @@ namespace data{
 
 template<typename MatType>
 bool LoadCSV::LoadCategoricalCSV(MatType& matrix,
-                                 CSVOptions& opts)
+                                 TextOptions& opts)
 {
   CheckOpen();
 

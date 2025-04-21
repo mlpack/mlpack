@@ -128,10 +128,6 @@ bool LoadMatrix(const std::string& filename,
   {
     success = LoadCategorical(filename, matrix, txtOpts);
   }
-  else if (txtOpts.Timeseries() && IsDense<MatType>::value)
-  {
-    success = LoadTimeseries(filename, matrix, txtOpts, stream);
-  }
   else if constexpr (IsCol<MatType>::value)
   {
     success = LoadCol(filename, matrix, txtOpts, stream);
@@ -150,7 +146,6 @@ bool LoadMatrix(const std::string& filename,
   }
   return success;
 }
-
 
 // This is the function that the user is supposed to call.
 // Other functions of this class should be labelled as private.
