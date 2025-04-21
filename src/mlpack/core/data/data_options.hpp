@@ -83,7 +83,7 @@ class DataOptionsBase
     fileFormat = opts.FileFormat();
   }
 
-  virtual DataOptionsBase& operator=(const DataOptionsBase& other)
+  DataOptionsBase& operator=(const DataOptionsBase& other)
   {
     if (&other == this)
       return *this;
@@ -168,7 +168,7 @@ class ModelOptions : public DataOptionsBase<ModelOptions>
     // Do Nothing.
   }
 
-  virtual ModelOptions& operator=(const ModelOptions& other)
+  ModelOptions& operator=(const ModelOptions& other)
   {
     if (&other == this)
       return *this;
@@ -276,7 +276,7 @@ class CSVOptions : public DataOptionsBase<CSVOptions>
     // Do Nothing.
   }
 
-  virtual CSVOptions& operator=(const CSVOptions& other)
+  CSVOptions& operator=(const CSVOptions& other)
   {
     if (&other == this)
       return *this;
@@ -292,6 +292,8 @@ class CSVOptions : public DataOptionsBase<CSVOptions>
     windowSize = other.windowSize;
     headers = other.headers;
     mapper = other.mapper;
+
+    return *this;
   }
 
   // Print warnings for any members that cannot be represented by a
