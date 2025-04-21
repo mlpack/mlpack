@@ -75,8 +75,7 @@ class DataOptionsBase
     //
     // @rcurtin This is not compiling because Derived2 is void, and this function does
     // not have WarnBaseConversion, as we have added this in CSVOptions
-    //DataOptionsBase<Derived2> optVoid 
-        //= static_cast<const DataOptionsBase<Derived2>&>(opts).WarnBaseConversion();
+    static_cast<const Derived2&>(opts).WarnBaseConversion();
 
     // Now convert base members...
     fatal = opts.Fatal();

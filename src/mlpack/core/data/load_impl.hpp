@@ -200,6 +200,7 @@ bool Load(const std::string& filename,
     // add a move constructor that does this.
     CSVOptions csvOpts(opts);
     success = LoadMatrix(filename, matrix, stream, csvOpts);
+    opts = csvOpts;
   }
   else if constexpr (!IsArma<MatType>::value && !IsSparseMat<MatType>::value ||
       std::is_same_v<DataOptionsType, ModelOptions>)
