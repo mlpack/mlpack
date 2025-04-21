@@ -20,85 +20,13 @@
 namespace mlpack {
 namespace data {
 
-/*
- * btw, the following two functions are not documented anywhere
- * If they are not exposed to the public API then I can delete them
- * If they are exposed to the public API, then they are deprecated.
- * @rcurtin please comment:
- */
-template<typename eT>
-[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
-bool Save(const std::string& filename,
-          const arma::Col<eT>& vec,
-          const bool fatal,
-          FileType inputSaveType)
-{
-  // Don't transpose: one observation per line (for CSVs at least).
-  return Save(filename, vec, fatal, false, inputSaveType);
-}
-
-template<typename eT>
-[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
-bool Save(const std::string& filename,
-          const arma::Row<eT>& rowvec,
-          const bool fatal,
-          FileType inputSaveType)
-{
-  return Save(filename, rowvec, fatal, true, inputSaveType);
-}
-
-// Save a Sparse Matrix
-template<typename eT>
-bool Save(const std::string& filename,
-          const arma::SpMat<eT>& matrix,
-          const bool fatal,
-          bool transpose)
-{
-  DataOptions opts;
-  opts.Fatal() = fatal;
-  opts.NoTranspose() = !transpose;
-
-  return Save(filename, matrix, opts);
-}
-
-template<typename eT>
-bool Save(const std::string& filename,
-          const arma::Mat<eT>& matrix,
-          const bool fatal,
-          bool transpose,
-          FileType inputSaveType)
-{
-  DataOptions opts;
-  opts.Fatal() = fatal;
-  opts.NoTranspose() = !transpose;
-  opts.FileFormat() = inputSaveType;
-
-  return Save(filename, matrix, opts);
-}
-
-//! Save a model to file.
-template<typename T>
-bool Save(const std::string& filename,
-          const std::string& name,
-          T& t,
-          const bool fatal,
-          format f)
-{
-  ModelOptions opts;
-  opts.ObjectName() = name;
-  opts.Fatal() = fatal;
-  opts.DataFormat() = f;
-
-  return Save(filename, t, opts);
-}
-
-template<typename MatType>
+template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          const DataOptions& opts)
+          const DataOptionsType& opts)
 {
   //! just use default copy ctor with = operator and make a copy.
-  DataOptions copyOpts = opts;
+  DataOptionsType copyOpts(opts);
   return Save(filename, matrix, copyOpts);
 }
 
@@ -149,13 +77,15 @@ bool Save(const std::string& filename,
       success = SaveDense(matrix, csvOpts, stream);
     }
   }
-  else if constexpr (std::is_same_v<DataOptionsType, ImageOptions>)
-  {
-  }
   else if constexpr (std::is_same_v<DataOptionsType, ModelOptions>)
   {
     ModelOptions modOpts(opts);
     success = SaveModel(matrix, modOpts, stream);
+  }
+  else
+  {
+    throw std::runtime_error("DataOptionType is unknown!."
+        "please use a known type or provide specific overloads");
   }
 
   if (!success)
