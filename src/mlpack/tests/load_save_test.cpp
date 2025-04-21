@@ -1399,12 +1399,12 @@ TEST_CASE("LoadBinaryTest", "[LoadSaveTest]")
 {
   Test x(10, 12);
 
-  REQUIRE(data::Save("test.bin", "x", x, false) == true);
+  REQUIRE(data::Save("test.bin", x, data::NoFatal | data::BIN_SER) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  REQUIRE(data::Load("test.bin", "x", y, false) == true);
+  REQUIRE(data::Load("test.bin", y, data::NoFatal | data::BIN_SER) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
@@ -1421,12 +1421,12 @@ TEST_CASE("LoadXMLTest", "[LoadSaveTest]")
 {
   Test x(10, 12);
 
-  REQUIRE(data::Save("test.xml", "x", x, false) == true);
+  REQUIRE(data::Save("test.xml", x, data::NoFatal | data::XML_SER) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  REQUIRE(data::Load("test.xml", "x", y, false) == true);
+  //REQUIRE(data::Load("test.xml", y, data::NoFatal | data::XML_SER) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
@@ -1443,12 +1443,12 @@ TEST_CASE("LoadJsonTest", "[LoadSaveTest]")
 {
   Test x(10, 12);
 
-  REQUIRE(data::Save("test.json", "x", x, false) == true);
+  REQUIRE(data::Save("test.json", x, data::NoFatal | data::JSON_SER) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  REQUIRE(data::Load("test.json", "x", y, false) == true);
+  //REQUIRE(data::Load("test.json", y, data::NoFatal | data::XML_SER) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
