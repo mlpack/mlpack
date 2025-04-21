@@ -116,33 +116,33 @@ template<typename MatType>
 bool LoadMatrix(const std::string& filename,
                 MatType& matrix,
                 std::fstream& stream,
-                CSVOptions& csvOpts)
+                TextOptions& txtOpts)
 {
   bool success = false;
   if constexpr (IsSparseMat<MatType>::value)
   {
-    success = LoadSparse(filename, matrix, csvOpts, stream);
+    success = LoadSparse(filename, matrix, txtOpts, stream);
   }
-  else if (csvOpts.Categorical() ||
-      (csvOpts.FileFormat() == FileType::ArffASCII))
+  else if (txtOpts.Categorical() ||
+      (txtOpts.FileFormat() == FileType::ArffASCII))
   {
-    success = LoadCategorical(filename, matrix, csvOpts);
+    success = LoadCategorical(filename, matrix, txtOpts);
   }
-  else if (csvOpts.Timeseries() && IsDense<MatType>::value)
+  else if (txtOpts.Timeseries() && IsDense<MatType>::value)
   {
-    success = LoadTimeseries(filename, matrix, csvOpts, stream);
+    success = LoadTimeseries(filename, matrix, txtOpts, stream);
   }
   else if constexpr (IsCol<MatType>::value)
   {
-    success = LoadCol(filename, matrix, csvOpts, stream);
+    success = LoadCol(filename, matrix, txtOpts, stream);
   }
   else if constexpr (IsRow<MatType>::value)
   {
-    success = LoadRow(filename, matrix, csvOpts, stream);
+    success = LoadRow(filename, matrix, txtOpts, stream);
   }
   else if constexpr (IsDense<MatType>::value)
   {
-    success = LoadDense(filename, matrix, csvOpts, stream);
+    success = LoadDense(filename, matrix, txtOpts, stream);
   }
   else
   {
@@ -176,31 +176,14 @@ bool Load(const std::string& filename,
     return false;
   }
 
-  std::cout << opts.FileTypeToString() << std::endl;
-
-  if constexpr (std::is_same_v<DataOptionsType, DataOptions>)
-  {
-    // Question to @rcurint what should we do in this case.
-    // We can cast, but I do not want the user to be in this case at all
-    // We need to think about it
-    std::cout << "this is true if the type is a DataOptions\n";
-  }
-
   if constexpr (IsArma<MatType>::value || IsSparseMat<MatType>::value)
   {
     // compile time type detction
     // convert this to a move, and move back at the end.
     // add a move constructor that does this.
-    CSVOptions csvOpts(opts);
+    TextOptions csvOpts(opts);
     success = LoadMatrix(filename, matrix, stream, csvOpts);
     opts = csvOpts;
-  }
-  else if constexpr (!IsArma<MatType>::value && !IsSparseMat<MatType>::value ||
-      std::is_same_v<DataOptionsType, ModelOptions>)
-  {
-    std::cout << "should be loading a model" << std::endl;
-    ModelOptions modOpts(opts);
-    success = LoadModel(matrix, modOpts, stream);
   }
   else 
   {
@@ -236,7 +219,7 @@ bool Load(const std::string& filename,
 template<typename MatType>
 bool LoadDense(const std::string& filename,
                MatType& matrix,
-               CSVOptions& opts,
+               TextOptions& opts,
                std::fstream& stream)
 {
   bool success;
@@ -247,8 +230,8 @@ bool LoadDense(const std::string& filename,
   // We can't use the stream if the type is HDF5.
   if (opts.FileFormat() == FileType::HDF5Binary)
   {
-    // TODO: if this should always be a CSVOptions, then we should create one:
-    // CSVOptions csvOpts(std::move(opts));
+    // TODO: if this should always be a TextOptions, then we should create one:
+    // TextOptions csvOpts(std::move(opts));
     success = LoadHDF5(filename, matrix, opts);
     // and then opts = std::move(csvOpts) to convert back (if needed)
     // afterwards.
@@ -276,7 +259,7 @@ bool LoadDense(const std::string& filename,
 template <typename eT>
 bool LoadSparse(const std::string& filename,
                 arma::SpMat<eT>& matrix,
-                CSVOptions& opts,
+                TextOptions& opts,
                 std::fstream& stream)
 {
   bool success;
@@ -350,7 +333,7 @@ bool LoadSparse(const std::string& filename,
 template<typename eT>
 bool LoadCategorical(const std::string& filename,
                      arma::Mat<eT>& matrix,
-                     CSVOptions& opts)
+                     TextOptions& opts)
 {
   // Get the extension and load as necessary.
   Timer::Start("loading_data");

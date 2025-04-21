@@ -68,18 +68,7 @@ bool OpenFile(const std::string& filename,
     stream.open(filename.c_str(), std::fstream::in);
 #endif
   }
-  else if constexpr (std::is_same_v<DataOptionsType, ModelOptions>)
-  {
-#ifdef _WIN32 // Open non-text types in binary mode on Windows.
-  if (opts.DataFormat() == format::binary)
-    stream.open(filename, std::fstream::out
-        | std::streamtream::binary);
-  else
-    stream.open(filename, std::fstream::out);
-#else
-  stream.open(filename, std::fstream::out);
-#endif
-  }
+  // Add here and else if for ModelOptions in a couple of stages.
   else 
   {
 #ifdef  _WIN32 // Always open in binary mode on Windows.
@@ -113,49 +102,26 @@ bool DetectFileType(const std::string& filename,
                     bool isLoading,
                     std::fstream* stream = nullptr)
 {
-  if constexpr (std::is_same_v<DataOptionsType, ModelOptions>)
+  // Add if for ModelOptions in a couple of stages
+  if (opts.FileFormat() == FileType::AutoDetect)
   {
-    if (opts.DataFormat() == format::autodetect)
-    {
+    if (isLoading)
+      // Attempt to auto-detect the type from the given file.
+      opts.FileFormat() = AutoDetect(*stream, filename);
+    else 
       DetectFromExtension(filename, opts);
-      if (opts.DataFormat() != format::xml || opts.DataFormat() != format::json
-          || opts.DataFormat() != format::binary)
-      {
-        if (opts.Fatal())
-          Log::Fatal << "Unable to detect type of '" << filename << "'; incorrect"
-              << " extension? (allowed: xml/bin/json)" << std::endl;
-        else
-          Log::Warn << "Unable to detect type of '" << filename << "'; save "
-              << "failed.  Incorrect extension? (allowed: xml/bin/json)"
-              << std::endl;
-
-        return false;
-      }
-    }
-  }
-  else
-  {
-    if (opts.FileFormat() == FileType::AutoDetect)
+    // Provide error if we don't know the type.
+    if (opts.FileFormat() == FileType::FileTypeUnknown)
     {
-      if (isLoading)
-        // Attempt to auto-detect the type from the given file.
-        opts.FileFormat() = AutoDetect(*stream, filename);
-      else 
-        DetectFromExtension(filename, opts);
-      // Provide error if we don't know the type.
-      if (opts.FileFormat() == FileType::FileTypeUnknown)
-      {
-        if (opts.Fatal())
-          Log::Fatal << "Unable to detect type of '" << filename << "'; "
-              << "Incorrect extension?" << std::endl;
-        else
-          Log::Warn << "Unable to detect type of '" << filename << "'; "
-              << "Incorrect extension?" << std::endl;
+      if (opts.Fatal())
+        Log::Fatal << "Unable to detect type of '" << filename << "'; "
+            << "Incorrect extension?" << std::endl;
+      else
+        Log::Warn << "Unable to detect type of '" << filename << "'; "
+            << "Incorrect extension?" << std::endl;
 
-        return false;
-      }
+      return false;
     }
-  }
   return true;
 }
 

@@ -128,8 +128,8 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptions>
     // Do Nothing.
   }
 
-  template<typename Derived>
-  explicit MatrixOptionsBase(const DataOptionsBaseBase<Derived>& opts) :
+  template<typename Derived2>
+  explicit MatrixOptionsBase(const DataOptionsBase<Derived2>& opts) :
       DataOptionsBaseBase(opts),
       noTranspose(noTranspose)
   {

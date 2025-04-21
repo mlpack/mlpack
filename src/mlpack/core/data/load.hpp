@@ -23,7 +23,6 @@
 #include "dataset_mapper.hpp"
 #include "detect_file_type.hpp"
 #include "image_info.hpp"
-#include "load_csv.hpp"
 #include "load_arff.hpp"
 #include "load_image.hpp"
 
