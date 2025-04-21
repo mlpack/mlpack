@@ -19,6 +19,7 @@
 #include "load.hpp"
 #include "load_deprecated.hpp"
 #include "save.hpp"
+#include "save_deprecated.hpp"
 
 #include "imputation_methods/imputation_methods.hpp"
 #include "map_policies/map_policies.hpp"
