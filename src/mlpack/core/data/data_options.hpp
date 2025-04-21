@@ -36,8 +36,6 @@ class DataOptionsBase
 {
  public:
 
-  using DerivedType = Derived;
-
   DataOptionsBase(
       bool fatal = false,
       FileType fileFormat = FileType::AutoDetect) :
@@ -71,6 +69,7 @@ class DataOptionsBase
 
     fatal = other.fatal;
     fileFormat = other.fileFormat;
+    return *this;
   }
 
   // These are accessible to users.
