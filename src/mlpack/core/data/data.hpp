@@ -30,6 +30,8 @@
 #include "check_categorical_param.hpp"
 #include "confusion_matrix.hpp"
 #include "dataset_mapper.hpp"
+#include "data_options.hpp"
+#include "detect_file_type.hpp"
 #include "image_info.hpp"
 #include "image_resize_crop.hpp"
 #include "imputer.hpp"

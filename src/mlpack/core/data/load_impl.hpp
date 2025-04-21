@@ -26,6 +26,79 @@
 namespace mlpack {
 namespace data {
 
+// The following functions are kept for backward compatibility,
+// Please remove them when we release mlpack 5.
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          const bool fatal,
+          const bool transpose,
+          const FileType inputLoadType)
+{
+  DataOptions opts;
+  opts.Fatal() = fatal;
+  opts.NoTranspose() = !transpose;
+  opts.FileFormat() = inputLoadType;
+
+  return Load(filename, matrix, opts);
+}
+
+// For loading data into sparse matrix
+template <typename eT>
+bool Load(const std::string& filename,
+          arma::SpMat<eT>& matrix,
+          const bool fatal,
+          const bool transpose,
+          const FileType inputLoadType)
+{
+  DataOptions opts;
+  opts.Fatal() = fatal;
+  opts.NoTranspose() = !transpose;
+  opts.FileFormat() = inputLoadType;
+
+  return Load(filename, matrix, opts);
+}
+
+// For loading data into a column vector
+template <typename eT>
+bool Load(const std::string& filename,
+          arma::Col<eT>& vec,
+          const bool fatal)
+{
+  DataOptions opts;
+  opts.Fatal() = fatal;
+  return Load(filename, vec, opts);
+}
+
+// For loading data into a raw vector
+template <typename eT>
+bool Load(const std::string& filename,
+          arma::Row<eT>& rowvec,
+          const bool fatal)
+{
+  DataOptions opts;
+  opts.Fatal() = fatal;
+  return Load(filename, rowvec, opts);
+}
+
+// Load with mappings.  Unfortunately we have to implement this ourselves.
+template<typename eT, typename PolicyType>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          DatasetMapper<PolicyType>& info,
+          const bool fatal,
+          const bool transpose)
+{
+  DataOptions opts;
+  opts.Fatal() = fatal;
+  opts.NoTranspose() = !transpose;
+  // @rcurtin just commenting this one as we need to find a solution for the
+  // template parameter of the DatasetMapper. Assigning the following variable
+  // will simply fails as `info` is different type from opts.Mapper()
+  //opts.Mapper() = info;
+
+  return Load(filename, matrix, opts);
+}
 // TODO: clean this up---this overload is necessary for when a user didn't make
 // an actual DataOptionsType object.  We should check here that they didn't
 // specify that they want to keep headers or anything like this and throw a
