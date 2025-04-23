@@ -44,10 +44,15 @@ class TreeTraits<BinarySpaceTree<
    * are possible.
    */
   static const bool HasOverlappingChildren =
-      IsRPTreeSplitType<SplitType<BoundType<DistanceType, typename MatType::elem_type>, MatType>>::value ||
-      IsBallBoundType<BoundType<DistanceType, typename MatType::elem_type>>::value ||
-      IsHollowBallBoundType<BoundType<DistanceType, typename MatType::elem_type>>::value ||
-      IsCellBoundType<BoundType<DistanceType, typename MatType::elem_type>>::value;
+      IsRPTreeSplitType<SplitType<
+          BoundType<DistanceType, typename MatType::elem_type>, MatType>
+      >::value ||
+      IsBallBoundType<BoundType<DistanceType,
+                                typename MatType::elem_type>>::value ||
+      IsHollowBallBoundType<BoundType<DistanceType,
+                                      typename MatType::elem_type>>::value ||
+      IsCellBoundType<BoundType<DistanceType,
+                                typename MatType::elem_type>>::value;
 
   /**
    * Each binary space tree node doesn't share points with any other node.

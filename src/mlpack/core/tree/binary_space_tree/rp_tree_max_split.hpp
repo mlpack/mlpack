@@ -134,8 +134,8 @@ class RPTreeMaxSplit
                           const size_t count,
                           const arma::Col<ElemType>& direction,
                           ElemType& splitVal);
-}
-;
+};
+
 // This template metaprogramming utility can be used to detect whether a given
 // split type is an RPTree split (either max or mean).
 template<typename T>
