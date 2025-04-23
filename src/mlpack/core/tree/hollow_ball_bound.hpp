@@ -252,6 +252,20 @@ struct BoundTraits<HollowBallBound<DistanceType, ElemType>>
   static const bool HasTightBounds = false;
 };
 
+// This template metaprogramming utility can be used to determine if a type is
+// a hollow ball bound.
+template<typename T>
+struct IsHollowBallBoundType
+{
+  constexpr static const bool value = false;
+};
+
+template<typename DistanceType, typename ElemType>
+struct IsHollowBallBoundType<HollowBallBound<DistanceType, ElemType>>
+{
+  constexpr static const bool value = true;
+};
+
 } // namespace mlpack
 
 #include "hollow_ball_bound_impl.hpp"
