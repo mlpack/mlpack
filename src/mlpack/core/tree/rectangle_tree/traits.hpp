@@ -37,7 +37,7 @@ class TreeTraits<RectangleTree<DistanceType, StatisticType, MatType, SplitType,
    * have overlapping children.
    */
   static const bool HasOverlappingChildren =
-      IsRPlusTreeSplitType<SplitType>::value;
+      !IsRPlusTreeSplitType<SplitType>::value;
 
   /**
    * An R-tree node doesn't share points with another node.
