@@ -131,7 +131,8 @@ bool Save(const std::string& filename,
           const std::string& name,
           T& t,
           const bool fatal = false,
-          format f = format::autodetect);
+          format f = format::autodetect,
+          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>* = 0);
 
 /**
  * This function defines a unified data saving interface for the library.
@@ -148,12 +149,14 @@ bool Save(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          DataOptionsType& opts);
+          DataOptionsType& opts,
+          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>* = 0);
 
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          const DataOptionsType& opts);
+          const DataOptionsType& opts,
+          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>* = 0);
 
 } // namespace data
 } // namespace mlpack

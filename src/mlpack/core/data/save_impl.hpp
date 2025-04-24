@@ -71,17 +71,30 @@ bool Save(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          const DataOptionsType& opts)
+          const DataOptionsType& opts,
+          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>*)
 {
   //! just use default copy ctor with = operator and make a copy.
   DataOptionsType copyOpts(opts);
   return Save(filename, matrix, copyOpts);
 }
 
+/*
+ * Add this SFINAE in here because the compiler is so stupid that it is not
+ * able to distibguish between these two:
+ *
+ *  data::Save(filename, "model", *output);
+ *       
+ *  data::Save(filename, matrix, opts);
+ *
+ * This SFINAE is temporary and must be removed after the integration of stage 3 or
+ * when the compiler becomes more intelligent.
+ */
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          DataOptionsType& opts)
+          DataOptionsType& opts,
+          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>*)
 {
   Timer::Start("saving_data");
 
@@ -191,7 +204,8 @@ bool Save(const std::string& filename,
           const std::string& name,
           T& t,
           const bool fatal,
-          format f)
+          format f,
+          std::enable_if_t<!IsArma<T>::value || !IsSparseMat<T>::value>*)
 {
   if (f == format::autodetect)
   {
