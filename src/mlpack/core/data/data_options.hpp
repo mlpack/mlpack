@@ -142,18 +142,8 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
     noTranspose = other.noTranspose;
     return *this;
   }
- 
-  // Use SFINAE to warn about members that can't be converted only in MatrixOptions.
-  void WarnBaseConversion(const std::enable_if_t<std::is_same_v<Derived, void>>* = 0)
-  {
-    if (noTranspose)
-    {
-      Log::Warn << "Cannot represent noTranspose!  Option is ignored."
-          << std::endl;
-    }
-  }
 
-  void WarnBaseConversion(const std::enable_if_t<!std::is_same_v<Derived, void>>* = 0)
+  void WarnBaseConversion()
   {
     if (noTranspose)
     {
@@ -162,7 +152,10 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
     }
 
     // this is not a MatrixOptions only, so we need to cast to the true type and call WarnBaseConversion
-    static_cast<const Derived&>(*this).WarnBaseConversion();
+    if (!std::is_same_v<Derived, void>)
+    {
+      static_cast<const Derived&>(*this).WarnBaseConversion();
+    }
   }
 
   //! Get if the matrix is transposed or not.
@@ -202,7 +195,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
       hasHeaders(false),
       semiColon(false),
       missingToNan(false),
-      categorical(false),
+      categorical(false)
   {
     // Do Nothing.
   }
