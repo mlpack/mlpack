@@ -18,10 +18,12 @@
 #include <mlpack/core/util/log.hpp>
 #include <string>
 
+#include "data_options.hpp"
 #include "format.hpp"
 #include "image_info.hpp"
 #include "detect_file_type.hpp"
 #include "save_image.hpp"
+#include "utilities.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices. */ {
@@ -130,6 +132,28 @@ bool Save(const std::string& filename,
           T& t,
           const bool fatal = false,
           format f = format::autodetect);
+
+/**
+ * This function defines a unified data saving interface for the library.
+ * Using this function it will be possible to save matrices, models, and
+ * images.
+ *
+ * To specify what you would like to save, please use the DataOptionsType.
+ *
+ * @param filename Name of file to load.
+ * @param matrix Matrix to load contents of file into.
+ * @param opts DataOptions to be passed to the function
+ * @return Boolean value indicating success or failure of Save.
+ */
+template<typename MatType, typename DataOptionsType>
+bool Save(const std::string& filename,
+          const MatType& matrix,
+          DataOptionsType& opts);
+
+template<typename MatType, typename DataOptionsType>
+bool Save(const std::string& filename,
+          const MatType& matrix,
+          const DataOptionsType& opts);
 
 } // namespace data
 } // namespace mlpack

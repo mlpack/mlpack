@@ -176,9 +176,9 @@ bool Load(const std::string& filename,
     // compile time type detction
     // convert this to a move, and move back at the end.
     // add a move constructor that does this.
-    TextOptions csvOpts(opts);
-    success = LoadMatrix(filename, matrix, stream, csvOpts);
-    opts = csvOpts;
+    TextOptions txtOpts(opts);
+    success = LoadMatrix(filename, matrix, stream, txtOpts);
+    opts = txtOpts;
   }
   else 
   {

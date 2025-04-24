@@ -24,6 +24,8 @@
 #include "detect_file_type.hpp"
 #include "image_info.hpp"
 #include "load_arff.hpp"
+#include "load_numeric.hpp"
+#include "load_categorical.hpp"
 #include "load_image.hpp"
 
 namespace mlpack {
