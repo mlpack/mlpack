@@ -41,7 +41,7 @@ void CreateNoisyLowRankMatrix(arma::mat& data,
 }
 
 /**
- * The reconstruction and sigular value error of the obtained SVD should be
+ * The reconstruction and singular value error of the obtained SVD should be
  * small.
  */
 TEST_CASE("RandomizedBlockKrylovSVDReconstructionError",
@@ -69,10 +69,10 @@ TEST_CASE("RandomizedBlockKrylovSVDReconstructionError",
   RandomizedBlockKrylovSVD rSVD(20, 10);
   rSVD.Apply(centeredData, U2, s2, V2, 3);
 
-  // Use the same amount of data for the compariosn (matrix rank).
+  // Use the same amount of data for the comparison (matrix rank).
   s3 = s1.subvec(0, s2.n_elem - 1);
 
-  // The sigular value error should be small.
+  // The singular value error should be small.
   double error = arma::norm(s2 - s3, "frob") / arma::norm(s2, "frob");
   REQUIRE(error == Approx(0.0).margin(1e-5));
 
@@ -93,6 +93,48 @@ TEST_CASE("RandomizedBlockKrylovSVDNoisyLowRankTest", "[BlockKrylovSVDTest]")
   CreateNoisyLowRankMatrix(data, 200, 1000, 5, 0.5);
 
   const size_t rank = 5;
+
+  arma::mat U1, U2, V1, V2;
+  arma::vec s1, s2, s3;
+
+  arma::svd_econ(U1, s1, V1, data);
+
+  RandomizedBlockKrylovSVD rSVDB(data, U2, s2, V2, 10, rank, 20);
+
+  double error = arma::max(arma::abs(s1.subvec(0, rank) - s2.subvec(0, rank)));
+  REQUIRE(error == Approx(0.0).margin(1e-4));
+}
+
+// New Test Case: Varying Noise Levels
+TEST_CASE("RandomizedBlockKrylovSVDVaryingNoiseLevels", "[BlockKrylovSVDTest]")
+{
+  arma::mat data;
+  double noiseLevels[] = { 0.1, 0.3, 0.5, 0.7, 1.0 };
+  
+  for (double noise : noiseLevels)
+  {
+    CreateNoisyLowRankMatrix(data, 200, 1000, 5, noise);
+
+    const size_t rank = 5;
+
+    arma::mat U1, U2, V1, V2;
+    arma::vec s1, s2, s3;
+
+    arma::svd_econ(U1, s1, V1, data);
+
+    RandomizedBlockKrylovSVD rSVDB(data, U2, s2, V2, 10, rank, 20);
+
+    double error = arma::max(arma::abs(s1.subvec(0, rank) - s2.subvec(0, rank)));
+    REQUIRE(error == Approx(0.0).margin(1e-4));
+  }
+}
+
+// New Test Case: Very Small Matrix Test
+TEST_CASE("RandomizedBlockKrylovSVDSmallMatrix", "[BlockKrylovSVDTest]")
+{
+  arma::mat data = arma::randn<arma::mat>(2, 3); // 2x3 matrix
+  
+  const size_t rank = 2;
 
   arma::mat U1, U2, V1, V2;
   arma::vec s1, s2, s3;

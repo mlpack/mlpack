@@ -225,3 +225,38 @@ TEST_CASE("SpRowColIteratorTest", "[ArmaExtendTest]")
 
   REQUIRE(count == 1);
 }
+
+TEST_CASE("RowColIteratorModificationTest", "[ArmaExtendTest]")
+{
+  mat X;
+  X.zeros(3, 3);
+
+  // Fill the matrix using the iterator.
+  size_t count = 1;
+  for (mat::row_col_iterator it = X.begin_row_col(); it != X.end_row_col(); ++it)
+  {
+    *it = count++;
+  }
+
+  count = 1;
+  for (size_t i = 0; i < 3; ++i)
+    for (size_t j = 0; j < 3; ++j)
+      REQUIRE(X(i, j) == count++);
+}
+
+TEST_CASE("SparseIteratorSkipsZeros", "[ArmaExtendTest]")
+{
+  sp_mat X(5, 5, arma::fill::zeros);
+  X(1, 1) = 4.2;
+  X(3, 2) = 7.7;
+
+  size_t count = 0;
+  for (sp_mat::const_row_col_iterator it = X.begin_row_col();
+       it != X.end_row_col(); ++it)
+  {
+    ++count;
+    REQUIRE((*it == 4.2) || (*it == 7.7));
+  }
+
+  REQUIRE(count == 2); // Should only see two entries
+}

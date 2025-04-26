@@ -88,3 +88,73 @@ TEST_CASE("CoverTreeTraitsTest", "[TreeTraitsTest]")
   b = TreeTraits<CoverTree<>>::BinaryTree;
   REQUIRE(b == false); // Not necessarily binary.
 }
+
+// New test case: Test for an empty tree.
+TEST_CASE("EmptyTreeTraitsTest", "[TreeTraitsTest]")
+{
+  // Empty tree to verify handling of the empty case.
+  using TreeType = BinarySpaceTree<LMetric<2, false>>;
+
+  TreeType tree;
+  bool b = TreeTraits<TreeType>::HasOverlappingChildren;
+  REQUIRE(b == false);  // Non-overlapping children for an empty tree.
+
+  b = TreeTraits<TreeType>::HasSelfChildren;
+  REQUIRE(b == false);  // No self-children for an empty tree.
+
+  b = TreeTraits<TreeType>::FirstPointIsCentroid;
+  REQUIRE(b == false);  // No points in the tree.
+
+  b = TreeTraits<TreeType>::RearrangesDataset;
+  REQUIRE(b == true);  // Dataset rearranged during tree creation, even if empty.
+
+  b = TreeTraits<TreeType>::BinaryTree;
+  REQUIRE(b == true);  // Still a binary tree structure.
+}
+
+// New test case: Test a custom tree.
+TEST_CASE("CustomTreeTraitsTest", "[TreeTraitsTest]")
+{
+  // Create a custom tree type.
+  struct CustomTree
+  {
+    // Custom tree logic here.
+  };
+
+  bool b = TreeTraits<CustomTree>::HasOverlappingChildren;
+  REQUIRE(b == true);  // Default value for non-standard trees.
+
+  b = TreeTraits<CustomTree>::HasSelfChildren;
+  REQUIRE(b == false);
+
+  b = TreeTraits<CustomTree>::FirstPointIsCentroid;
+  REQUIRE(b == false);
+
+  b = TreeTraits<CustomTree>::RearrangesDataset;
+  REQUIRE(b == false);
+
+  b = TreeTraits<CustomTree>::BinaryTree;
+  REQUIRE(b == false);  // Custom trees are not assumed to be binary.
+}
+
+// New test case: Verify non-binary tree trait.
+TEST_CASE("NonBinaryTreeTraitsTest", "[TreeTraitsTest]")
+{
+  using TreeType = NonBinaryTree<int>;
+
+  bool b = TreeTraits<TreeType>::HasOverlappingChildren;
+  REQUIRE(b == false);
+
+  b = TreeTraits<TreeType>::HasSelfChildren;
+  REQUIRE(b == false);
+
+  b = TreeTraits<TreeType>::FirstPointIsCentroid;
+  REQUIRE(b == false);
+
+  b = TreeTraits<TreeType>::RearrangesDataset;
+  REQUIRE(b == false);
+
+  b = TreeTraits<TreeType>::BinaryTree;
+  REQUIRE(b == false);  // It's explicitly non-binary.
+}
+

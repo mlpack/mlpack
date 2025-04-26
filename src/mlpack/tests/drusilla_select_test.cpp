@@ -162,3 +162,74 @@ TEST_CASE("SparseTest", "[DrusillaSelectTest]")
   REQUIRE(distances.n_cols == 1000);
   REQUIRE(distances.n_rows == 3);
 }
+
+TEST_CASE("DrusillaSelectLargeDatasetTest", "[DrusillaSelectTest]")
+{
+  // Generate a larger dataset with 5000 points, each with 5 features.
+  arma::mat dataset = arma::randu<arma::mat>(5, 5000);
+
+  DrusillaSelect<> ds(dataset, 5000, 5);
+
+  arma::mat distances;
+  arma::Mat<size_t> neighbors;
+  ds.Search(dataset, 5, neighbors, distances);
+
+  // Ensure the search result is as expected.
+  REQUIRE(neighbors.n_cols == 5000);
+  REQUIRE(neighbors.n_rows == 5);
+  REQUIRE(distances.n_cols == 5000);
+  REQUIRE(distances.n_rows == 5);
+}
+
+TEST_CASE("DrusillaSelectDistanceMetricTest", "[DrusillaSelectTest]")
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 100);
+
+  // Construct with a different distance metric (Manhattan distance)
+  DrusillaSelect<> ds(dataset, 100, 5, mlpack::metric::ManhattanDistance());
+
+  arma::mat distances;
+  arma::Mat<size_t> neighbors;
+  ds.Search(dataset, 5, neighbors, distances);
+
+  // Ensure that distances were computed with the correct metric
+  REQUIRE(distances.n_cols == 100);
+  REQUIRE(distances.n_rows == 5);
+}
+
+TEST_CASE("DrusillaSelectDimensionalityTest", "[DrusillaSelectTest]")
+{
+  arma::mat dataset2D = arma::randu<arma::mat>(2, 100); // 2D dataset
+  arma::mat dataset3D = arma::randu<arma::mat>(3, 100); // 3D dataset
+
+  DrusillaSelect<> ds2D(dataset2D, 100, 3);
+  DrusillaSelect<> ds3D(dataset3D, 100, 3);
+
+  arma::mat distances2D, distances3D;
+  arma::Mat<size_t> neighbors2D, neighbors3D;
+  ds2D.Search(dataset2D, 3, neighbors2D, distances2D);
+  ds3D.Search(dataset3D, 3, neighbors3D, distances3D);
+
+  // Ensure results are computed correctly for different dimensionalities.
+  REQUIRE(neighbors2D.n_cols == 100);
+  REQUIRE(neighbors3D.n_cols == 100);
+  REQUIRE(distances2D.n_cols == 100);
+  REQUIRE(distances3D.n_cols == 100);
+}
+
+TEST_CASE("DrusillaSelectSinglePointTest", "[DrusillaSelectTest]")
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 1);  // Only one point.
+
+  DrusillaSelect<> ds(dataset, 1, 1);
+
+  arma::mat distances;
+  arma::Mat<size_t> neighbors;
+  ds.Search(dataset, 1, neighbors, distances);
+
+  // Check that the only neighbor is the point itself.
+  REQUIRE(neighbors.n_cols == 1);
+  REQUIRE(neighbors(0, 0) == 0);  // The point is its own neighbor.
+  REQUIRE(distances.n_cols == 1);
+  REQUIRE(distances(0, 0) == Approx(0.0).epsilon(1e-7));  // Distance to itself is 0.
+}

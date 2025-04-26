@@ -236,3 +236,66 @@ TEST_CASE("AKFNDualBallTreeTest", "[AKFNTest]")
   for (size_t i = 0; i < neighborsBallTree.n_elem; ++i)
     REQUIRE_RELATIVE_ERR(distancesBallTree(i), distancesExact(i), 0.05);
 }
+
+TEST_CASE("AKFNQueryVsExact", "[AKFNTest]")
+{
+  arma::mat referenceData, queryData;
+  referenceData.randu(75, 1000);
+  queryData.randu(75, 500); // Different query set
+
+  KFN exact(referenceData);
+  arma::Mat<size_t> neighborsExact;
+  arma::mat distancesExact;
+  exact.Search(queryData, 15, neighborsExact, distancesExact);
+
+  KFN akfn(referenceData, DUAL_TREE_MODE, 0.05);
+  arma::Mat<size_t> neighborsApprox;
+  arma::mat distancesApprox;
+  akfn.Search(queryData, 15, neighborsApprox, distancesApprox);
+
+  for (size_t i = 0; i < neighborsApprox.n_elem; ++i)
+    REQUIRE_RELATIVE_ERR(distancesApprox(i), distancesExact(i), 0.05);
+}
+
+TEST_CASE("AKFNExactEquivalenceEpsilonZero", "[AKFNTest]")
+{
+  arma::mat dataset;
+  dataset.randu(20, 300);
+
+  KFN exact(dataset);
+  arma::Mat<size_t> neighborsExact;
+  arma::mat distancesExact;
+  exact.Search(10, neighborsExact, distancesExact);
+
+  KFN akfn(dataset, DUAL_TREE_MODE, 0.0);
+  arma::Mat<size_t> neighborsApprox;
+  arma::mat distancesApprox;
+  akfn.Search(10, neighborsApprox, distancesApprox);
+
+  for (size_t i = 0; i < distancesExact.n_elem; ++i)
+  {
+    REQUIRE(distancesApprox(i) == Approx(distancesExact(i)).epsilon(1e-8));
+  }
+}
+
+TEST_CASE("AKFNPerformanceTest", "[AKFNTest]")
+{
+  arma::mat dataset;
+  dataset.randu(50, 10000); // Big dataset
+
+  KFN exact(dataset);
+  Timer::Start("exact_kfn");
+  arma::Mat<size_t> neighborsExact;
+  arma::mat distancesExact;
+  exact.Search(10, neighborsExact, distancesExact);
+  Timer::Stop("exact_kfn");
+
+  KFN akfn(dataset, DUAL_TREE_MODE, 0.1);
+  Timer::Start("approx_kfn");
+  arma::Mat<size_t> neighborsApprox;
+  arma::mat distancesApprox;
+  akfn.Search(10, neighborsApprox, distancesApprox);
+  Timer::Stop("approx_kfn");
+
+  REQUIRE(Timer::Get("approx_kfn") < Timer::Get("exact_kfn"));
+}

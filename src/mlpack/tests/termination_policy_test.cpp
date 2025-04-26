@@ -56,3 +56,19 @@ TEST_CASE("AMFMaxIterationTerminationTest", "[TerminationPolicyTest]")
 
   REQUIRE(nmf.TerminationPolicy().Iteration() == 10);
 }
+
+TEST_CASE("MaxIterationTerminationResetTest", "[TerminationPolicyTest]")
+{
+  MaxIterationTermination mit(5);
+  arma::mat dummy;
+
+  for (size_t i = 0; i < 5; ++i)
+    mit.IsConverged(dummy, dummy);
+
+  REQUIRE(mit.IsConverged(dummy, dummy) == true);
+
+  mit.Reset();
+
+  REQUIRE(mit.Iteration() == 0);
+  REQUIRE(mit.IsConverged(dummy, dummy) == false);
+}

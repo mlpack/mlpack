@@ -87,3 +87,15 @@ TEST_CASE("BatchUpdate", "[SumTreeTest]")
   REQUIRE(sumtree.FindPrefixSum(2.8) <= 3);
   REQUIRE(sumtree.FindPrefixSum(3.0) <= 3);
 }
+
+TEST_CASE("OverwriteCheck", "[SumTreeTest]")
+{
+  SumTree<double> sumtree(4);
+  for (size_t i = 0; i < 4; ++i)
+    sumtree.Set(i, i + 1); // 1.0, 2.0, 3.0, 4.0
+
+  sumtree.Set(0, 10.0); // Overwrite index 0.
+
+  REQUIRE(sumtree.Get(0) == Approx(10.0).epsilon(1e-10));
+  REQUIRE(sumtree.Sum() == Approx(19.0).epsilon(1e-10)); // 10+2+3+4
+}

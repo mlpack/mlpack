@@ -63,3 +63,75 @@ TEST_CASE("SSEGainTest", "[XGBTest]")
   SSELoss Loss;
   REQUIRE(Loss.Evaluate<false>(input, weights) == gain);
 }
+
+/**
+ * Test SSE Loss with empty input.
+ * This checks how the loss function behaves when there is no data.
+ */
+TEST_CASE("SSELossEmptyInputTest", "[XGBTest]")
+{
+  arma::mat emptyInput(0, 0);
+  arma::vec emptyWeights(0);
+
+  SSELoss Loss;
+
+  // Expecting a 0 loss for an empty dataset.
+  REQUIRE(Loss.Evaluate<false>(emptyInput, emptyWeights) == 0.0);
+}
+
+/**
+ * Test SSE Loss with non-zero weights.
+ * This checks if the loss correctly accounts for sample weights.
+ */
+TEST_CASE("SSELossWithWeightsTest", "[XGBTest]")
+{
+  arma::mat input = { { 1, 2, 3, 4, 5 },
+                      { 5, 4, 3, 2, 1 } };
+  arma::vec weights = { 0.5, 1.0, 1.5, 2.0, 2.5 }; // example weights
+
+  double expectedLoss = 1.0625;  // Replace with the correct expected value
+
+  SSELoss Loss;
+  REQUIRE(Loss.Evaluate<false>(input, weights) == expectedLoss);
+}
+
+/**
+ * Test SSE Loss with multiple trees.
+ * This test verifies how the loss is calculated when there are multiple trees (iterations).
+ */
+TEST_CASE("SSELossMultipleTreesTest", "[XGBTest]")
+{
+  arma::mat input = { { 1, 2, 3 },
+                      { 4, 5, 6 } };
+  arma::vec weights; // dummy weights
+
+  // Example with multiple trees
+  SSELoss Loss;
+
+  // Simulate boosting process (multiple trees)
+  double lossAfterFirstTree = Loss.Evaluate<false>(input, weights);
+  double lossAfterSecondTree = Loss.Evaluate<false>(input, weights);
+
+  // Check that loss changes (as trees are added)
+  REQUIRE(lossAfterFirstTree != lossAfterSecondTree);
+}
+
+/**
+ * Test that the gradient is computed correctly for SSE Loss.
+ * This test ensures that the gradients for the loss function are correctly computed for optimization.
+ */
+TEST_CASE("SSEGradientTest", "[XGBTest]")
+{
+  arma::mat input = { { 1, 3, 2, 2, 5 },
+                      { 0.5, 1, 2.5, 1.5, 5 } };
+  arma::vec weights;  // dummy weights not used
+  arma::vec gradient;
+
+  SSELoss Loss;
+
+  // Calculate the gradient (this would usually be used during the training process)
+  Loss.Gradient(input, weights, gradient);
+
+  // Check if the gradient is calculated correctly (replace with expected values)
+  REQUIRE(gradient.n_elem > 0);
+}

@@ -45,3 +45,42 @@ TEST_CASE("TestUnion", "[UnionFindTest]")
   REQUIRE(testUnionFind.Find(1) == testUnionFind.Find(5));
   REQUIRE(testUnionFind.Find(6) == testUnionFind.Find(3));
 }
+
+TEST_CASE("RedundantUnionTest", "[UnionFindTest]")
+{
+  UnionFind uf(5);
+  uf.Union(1, 2);
+  auto rep = uf.Find(1);
+
+  // Re-union the same pair.
+  uf.Union(1, 2);
+
+  REQUIRE(uf.Find(1) == rep);
+  REQUIRE(uf.Find(2) == rep);
+}
+
+TEST_CASE("FullUnionTest", "[UnionFindTest]")
+{
+  const size_t N = 10;
+  UnionFind uf(N);
+
+  for (size_t i = 1; i < N; ++i)
+    uf.Union(0, i);
+
+  const size_t root = uf.Find(0);
+  for (size_t i = 1; i < N; ++i)
+    REQUIRE(uf.Find(i) == root);
+}
+
+TEST_CASE("DisjointSetsRemainSeparateTest", "[UnionFindTest]")
+{
+  UnionFind uf(6);
+  uf.Union(0, 1);
+  uf.Union(2, 3);
+
+  REQUIRE(uf.Find(0) != uf.Find(2));
+  REQUIRE(uf.Find(1) == uf.Find(0));
+  REQUIRE(uf.Find(3) == uf.Find(2));
+  REQUIRE(uf.Find(4) != uf.Find(5)); // untouched elements
+}
+

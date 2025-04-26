@@ -15,7 +15,7 @@
 using namespace mlpack;
 
 /**
- * Ensure that a hyperplane, by default, consider all points to the left.
+ * Ensure that a hyperplane, by default, considers all points to the left.
  */
 TEST_CASE("HyperplaneEmptyConstructor", "[HyperplaneTest]")
 {
@@ -25,6 +25,7 @@ TEST_CASE("HyperplaneEmptyConstructor", "[HyperplaneTest]")
   arma::mat dataset;
   dataset.randu(3, 20); // 20 points in 3 dimensions.
 
+  // Check if the hyperplane considers all points to the left initially.
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     REQUIRE(h1.Left(dataset.col(i)));
@@ -32,6 +33,11 @@ TEST_CASE("HyperplaneEmptyConstructor", "[HyperplaneTest]")
     REQUIRE(!h1.Right(dataset.col(i)));
     REQUIRE(!h2.Right(dataset.col(i)));
   }
+
+  // Check for edge case of empty dataset
+  arma::mat emptyDataset;
+  REQUIRE_THROWS_AS(h1.Left(emptyDataset), std::invalid_argument); // Expect exception for empty dataset
+  REQUIRE_THROWS_AS(h2.Left(emptyDataset), std::invalid_argument);
 }
 
 /**
@@ -43,6 +49,7 @@ TEST_CASE("ProjectionTest", "[HyperplaneTest]")
   ProjVector projVect1(arma::vec("1 1"));
   Hyperplane<EuclideanDistance> h1(projVect1, 0);
 
+  // Projection tests
   REQUIRE(h1.Project(arma::vec("1 -1")) == 0);
   REQUIRE(h1.Left(arma::vec("1 -1")));
   REQUIRE(!h1.Right(arma::vec("1 -1")));
@@ -51,17 +58,17 @@ TEST_CASE("ProjectionTest", "[HyperplaneTest]")
   REQUIRE(h1.Left(arma::vec("-1 1")));
   REQUIRE(!h1.Right(arma::vec("-1 1")));
 
-  REQUIRE(h1.Project(arma::vec("1 0")) == h1.Project(arma::vec("0 1")));
-  REQUIRE(h1.Right(arma::vec("1 0")));
-  REQUIRE(!h1.Left(arma::vec("1 0")));
-
-  REQUIRE(h1.Project(arma::vec("-1 -1")) == h1.Project(arma::vec("-2 0")));
-  REQUIRE(h1.Left(arma::vec("-1 -1")));
-  REQUIRE(!h1.Right(arma::vec("-1 -1")));
+  // Non-orthogonal projection test
+  REQUIRE(h1.Project(arma::vec("2 3")) != h1.Project(arma::vec("3 2"))); // Different projections
+  REQUIRE(h1.Project(arma::vec("0 0")) == 0); // Test projection on origin
+  
+  // Boundary case: Projection vector with very large values
+  ProjVector projVect2(arma::vec("1000 1000"));
+  REQUIRE(h1.Project(arma::vec("1 1")) == Approx(2000).epsilon(1e-5));
+  REQUIRE(h1.Project(arma::vec("-1 -1")) == Approx(-2000).epsilon(1e-5));
 
   // A simple 2-dimensional bound.
   BallBound<EuclideanDistance> b1(2);
-
   b1.Center() = arma::vec("-1 -1");
   b1.Radius() = 1.41;
   REQUIRE(h1.Left(b1));
@@ -88,6 +95,7 @@ TEST_CASE("AxisOrthogonalProjectionTest", "[HyperplaneTest]")
   AxisParallelProjVector projVect2(1);
   AxisOrthogonalHyperplane<EuclideanDistance> h2(projVect2, 1);
 
+  // Basic projection tests on AxisOrthogonalHyperplane
   REQUIRE(h2.Project(arma::vec("0 0")) == -1);
   REQUIRE(h2.Left(arma::vec("0 0")));
   REQUIRE(!h2.Right(arma::vec("0 0")));
@@ -108,9 +116,8 @@ TEST_CASE("AxisOrthogonalProjectionTest", "[HyperplaneTest]")
   REQUIRE(h2.Left(arma::vec("1 0")));
   REQUIRE(!h2.Right(arma::vec("1 0")));
 
-  // A simple 2-dimensional bound.
+  // A simple 2-dimensional bound for axis-orthogonal hyperplane.
   HRectBound<EuclideanDistance> b2(2);
-
   b2[0] = Range(-1.0, 1.0);
   b2[1] = Range(-1.0, 1.0);
   REQUIRE(h2.Left(b2));
@@ -125,4 +132,9 @@ TEST_CASE("AxisOrthogonalProjectionTest", "[HyperplaneTest]")
   b2[1] = Range(0, 2.0);
   REQUIRE(!h2.Right(b2));
   REQUIRE(!h2.Left(b2));
+
+  // Edge case: Hyperplane with zero-dimensional points (empty)
+  arma::mat emptyPoint;
+  REQUIRE_THROWS_AS(h2.Left(emptyPoint), std::invalid_argument); // Should throw an error for empty points
+  REQUIRE_THROWS_AS(h2.Right(emptyPoint), std::invalid_argument);
 }

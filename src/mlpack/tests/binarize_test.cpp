@@ -41,7 +41,7 @@ TEST_CASE("BinarizeOneDimension", "[BinarizeTest]")
   REQUIRE(output(2, 2) == Approx(9.0).epsilon(1e-7)); // 9
 }
 
-TEST_CASE("BinerizeAll", "[BinarizeTest]")
+TEST_CASE("BinarizeAll", "[BinarizeTest]")
 {
   mat input;
   input = { { 1, 2, 3 },
@@ -62,4 +62,67 @@ TEST_CASE("BinerizeAll", "[BinarizeTest]")
   REQUIRE(output(2, 0) == Approx(1.0).epsilon(1e-7)); // 7
   REQUIRE(output(2, 1) == Approx(1.0).epsilon(1e-7)); // 8
   REQUIRE(output(2, 2) == Approx(1.0).epsilon(1e-7)); // 9
+}
+
+// New Test Case: BinarizeEmptyMatrix
+TEST_CASE("BinarizeEmptyMatrix", "[BinarizeTest]")
+{
+  mat input;
+  mat output;
+  const double threshold = 5.0;
+
+  // Test with empty matrix
+  Binarize<double>(input, output, threshold);
+
+  // Ensure the output is also empty
+  REQUIRE(output.n_elem == 0);
+}
+
+// New Test Case: BinarizeAllValuesBelowThreshold
+TEST_CASE("BinarizeAllValuesBelowThreshold", "[BinarizeTest]")
+{
+  mat input;
+  input = { { 1, 2, 3 },
+            { 4, 5, 6 }, 
+            { 0, 0, 0 } };  // All values below the threshold
+
+  mat output;
+  const double threshold = 5.0;
+
+  Binarize<double>(input, output, threshold);
+
+  REQUIRE(output(0, 0) == Approx(0.0).margin(1e-5)); // All values below threshold
+  REQUIRE(output(0, 1) == Approx(0.0).margin(1e-5));
+  REQUIRE(output(0, 2) == Approx(0.0).margin(1e-5));
+  REQUIRE(output(1, 0) == Approx(0.0).margin(1e-5));
+  REQUIRE(output(1, 1) == Approx(0.0).margin(1e-5));
+  REQUIRE(output(1, 2) == Approx(0.0).margin(1e-5));
+  REQUIRE(output(2, 0) == Approx(0.0).margin(1e-5));
+  REQUIRE(output(2, 1) == Approx(0.0).margin(1e-5));
+  REQUIRE(output(2, 2) == Approx(0.0).margin(1e-5));
+}
+
+// New Test Case: BinarizeThresholdBoundary
+TEST_CASE("BinarizeThresholdBoundary", "[BinarizeTest]")
+{
+  mat input;
+  input = { { 5, 5, 5 },
+            { 5, 5, 5 },  // Boundary values at threshold
+            { 5, 5, 5 } };
+
+  mat output;
+  const double threshold = 5.0;
+
+  Binarize<double>(input, output, threshold);
+
+  // Ensure that values exactly equal to the threshold are handled
+  REQUIRE(output(0, 0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(output(0, 1) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(output(0, 2) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(output(1, 0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(output(1, 1) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(output(1, 2) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(output(2, 0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(output(2, 1) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(output(2, 2) == Approx(1.0).epsilon(1e-7));
 }
