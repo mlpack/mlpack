@@ -38,7 +38,7 @@ bool Load(const std::string& filename,
   MatrixOptions opts;
   opts.Fatal() = fatal;
   opts.NoTranspose() = !transpose;
-  opts.FileFormat() = inputLoadType;
+  opts.Format() = inputLoadType;
 
   return Load(filename, matrix, opts);
 }
@@ -54,7 +54,7 @@ bool Load(const std::string& filename,
   MatrixOptions opts;
   opts.Fatal() = fatal;
   opts.NoTranspose() = !transpose;
-  opts.FileFormat() = inputLoadType;
+  opts.Format() = inputLoadType;
 
   return Load(filename, matrix, opts);
 }
@@ -124,7 +124,7 @@ bool LoadMatrix(const std::string& filename,
     success = LoadSparse(filename, matrix, txtOpts, stream);
   }
   else if (txtOpts.Categorical() ||
-      (txtOpts.FileFormat() == FileType::ArffASCII))
+      (txtOpts.Format() == FileType::ArffASCII))
   {
     success = LoadCategorical(filename, matrix, txtOpts);
   }
@@ -218,12 +218,12 @@ bool LoadDense(const std::string& filename,
                std::fstream& stream)
 {
   bool success;
-  if (opts.FileFormat() != FileType::RawBinary)
+  if (opts.Format() != FileType::RawBinary)
     Log::Info << "Loading '" << filename << "' as " 
         << opts.FileTypeToString() << ".  " << std::flush;
 
   // We can't use the stream if the type is HDF5.
-  if (opts.FileFormat() == FileType::HDF5Binary)
+  if (opts.Format() == FileType::HDF5Binary)
   {
     // TODO: if this should always be a TextOptions, then we should create one:
     // TextOptions csvOpts(std::move(opts));
@@ -231,20 +231,20 @@ bool LoadDense(const std::string& filename,
     // and then opts = std::move(csvOpts) to convert back (if needed)
     // afterwards.
   }
-  else if (opts.FileFormat() == FileType::CSVASCII)
+  else if (opts.Format() == FileType::CSVASCII)
   {
     std::cout << "should be loading" << std::endl;
     success = LoadCSVASCII(filename, matrix, opts);
   }
   else
   {
-    if (opts.FileFormat() == FileType::RawBinary)
+    if (opts.Format() == FileType::RawBinary)
       Log::Warn << "Loading '" << filename << "' as " 
         << opts.FileTypeToString() << "; " 
         << "but this may not be the actual filetype!" << std::endl;
 
     std::cout << "should not be loading" << std::endl;
-    success = matrix.load(stream, ToArmaFileType(opts.FileFormat()));
+    success = matrix.load(stream, ToArmaFileType(opts.Format()));
     if (!opts.NoTranspose())
       inplace_trans(matrix);
   }
@@ -261,7 +261,7 @@ bool LoadSparse(const std::string& filename,
   // There is still a small amount of differentiation that needs to be done:
   // if we got a text type, it could be a coordinate list.  We will make an
   // educated guess based on the shape of the input.
-  if (opts.FileFormat() == FileType::RawASCII)
+  if (opts.Format() == FileType::RawASCII)
   {
     // Get the number of columns in the file.  If it is the right shape, we
     // will assume it is sparse.
@@ -270,15 +270,15 @@ bool LoadSparse(const std::string& filename,
     {
       // We have the right number of columns, so assume the type is a
       // coordinate list.
-      opts.FileFormat() = FileType::CoordASCII;
+      opts.Format() = FileType::CoordASCII;
     }
   }
 
   // Filter out invalid types.
-  if ((opts.FileFormat() == FileType::PGMBinary) ||
-      (opts.FileFormat() == FileType::PPMBinary) ||
-      (opts.FileFormat() == FileType::ArmaASCII) ||
-      (opts.FileFormat() == FileType::RawBinary))
+  if ((opts.Format() == FileType::PGMBinary) ||
+      (opts.Format() == FileType::PPMBinary) ||
+      (opts.Format() == FileType::ArmaASCII) ||
+      (opts.Format() == FileType::RawBinary))
   {
     if (opts.Fatal())
       Log::Fatal << "Cannot load '" << filename << "' with type "
@@ -291,13 +291,13 @@ bool LoadSparse(const std::string& filename,
 
     return false;
   }
-  else if (opts.FileFormat() == FileType::CSVASCII)
+  else if (opts.Format() == FileType::CSVASCII)
   {
     // Armadillo sparse matrices can't load CSVs, so we have to load a separate
     // matrix to do that.  If the CSV has three columns, we assume it's a
     // coordinate list.
     arma::Mat<eT> dense;
-    success = dense.load(stream, ToArmaFileType(opts.FileFormat()));
+    success = dense.load(stream, ToArmaFileType(opts.Format()));
     if (dense.n_cols == 3)
     {
       arma::umat locations = arma::conv_to<arma::umat>::from(
@@ -311,9 +311,9 @@ bool LoadSparse(const std::string& filename,
   }
   else
   {
-    success = matrix.load(stream, ToArmaFileType(opts.FileFormat()));
+    success = matrix.load(stream, ToArmaFileType(opts.Format()));
   }
-  
+
   if (!opts.NoTranspose())
   {
     // It seems that there is no direct way to use inplace_trans() on 
@@ -352,7 +352,7 @@ bool LoadCategorical(const std::string& filename,
   {
     Log::Info << "Loading '" << filename << "' as ARFF dataset.  "
         << std::flush;
-    success = LoadARFF(filename, matrix, opts.Mapper());
+    success = LoadARFF(filename, matrix, opts.DatasetInfo());
     if (!success)
     {
       Timer::Stop("loading_data");

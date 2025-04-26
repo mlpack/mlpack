@@ -24,9 +24,9 @@ bool LoadCSV::LoadCategoricalCSV(MatType& matrix,
   CheckOpen();
 
   if (!opts.NoTranspose())
-    return TransposeParse(matrix, opts.Mapper());
+    return TransposeParse(matrix, opts.DatasetInfo());
   else
-    return NonTransposeParse(matrix, opts.Mapper());
+    return NonTransposeParse(matrix, opts.DatasetInfo());
 }
 
 inline void LoadCSV::CategoricalMatColSize(

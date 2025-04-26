@@ -63,7 +63,7 @@ bool Save(const std::string& filename,
   MatrixOptions opts;
   opts.Fatal() = fatal;
   opts.NoTranspose() = !transpose;
-  opts.FileFormat() = inputSaveType;
+  opts.Format() = inputSaveType;
 
   return Save(filename, matrix, opts);
 }

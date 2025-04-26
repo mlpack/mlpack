@@ -132,7 +132,7 @@ bool Save(const std::string& filename,
           T& t,
           const bool fatal = false,
           format f = format::autodetect,
-          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>* = 0);
+          std::enable_if_t<HasSerialize<T>::value>* = 0);
 
 /**
  * This function defines a unified data saving interface for the library.

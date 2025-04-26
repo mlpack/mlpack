@@ -296,28 +296,28 @@ void DetectFromExtension(const std::string& filename,
 
   if (extension == "csv")
   {
-    opts.FileFormat() = FileType::CSVASCII;
+    opts.Format() = FileType::CSVASCII;
   }
   else if (extension == "txt")
   {
-    opts.FileFormat() = FileType::RawASCII;
+    opts.Format() = FileType::RawASCII;
   }
   else if (extension == "bin")
   {
-    opts.FileFormat() = FileType::ArmaBinary;
+    opts.Format() = FileType::ArmaBinary;
   }
   else if (extension == "pgm")
   {
-    opts.FileFormat() = FileType::PGMBinary;
+    opts.Format() = FileType::PGMBinary;
   }
   else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
            extension == "he5")
   {
-    opts.FileFormat() = FileType::HDF5Binary;
+    opts.Format() = FileType::HDF5Binary;
   }
   else if (extension == "arff")
   {
-    opts.FileFormat() = FileType::ArffASCII;
+    opts.Format() = FileType::ArffASCII;
   }
 }
 

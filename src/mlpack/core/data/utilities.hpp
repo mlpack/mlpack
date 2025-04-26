@@ -103,15 +103,15 @@ bool DetectFileType(const std::string& filename,
                     std::fstream* stream = nullptr)
 {
   // Add if for ModelOptions in a couple of stages
-  if (opts.FileFormat() == FileType::AutoDetect)
+  if (opts.Format() == FileType::AutoDetect)
   {
     if (isLoading)
       // Attempt to auto-detect the type from the given file.
-      opts.FileFormat() = AutoDetect(*stream, filename);
+      opts.Format() = AutoDetect(*stream, filename);
     else 
       DetectFromExtension(filename, opts);
     // Provide error if we don't know the type.
-    if (opts.FileFormat() == FileType::FileTypeUnknown)
+    if (opts.Format() == FileType::FileTypeUnknown)
     {
       if (opts.Fatal())
         Log::Fatal << "Unable to detect type of '" << filename << "'; "
@@ -132,16 +132,16 @@ bool SaveMatrix(const MatType& matrix,
                 std::fstream& stream)
 {
   bool success = false;
-  if (opts.FileFormat() == FileType::HDF5Binary)
+  if (opts.Format() == FileType::HDF5Binary)
   {
 #ifdef ARMA_USE_HDF5
     // We can't save with streams for HDF5.
-    success = matrix.save(filename, ToArmaFileType(opts.FileFormat()))
+    success = matrix.save(filename, ToArmaFileType(opts.Format()))
 #endif
   }
   else
   {
-    success = matrix.save(stream, ToArmaFileType(opts.FileFormat()));
+    success = matrix.save(stream, ToArmaFileType(opts.Format()));
   }
   return success;
 }
