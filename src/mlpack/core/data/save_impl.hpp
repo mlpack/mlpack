@@ -130,7 +130,7 @@ bool Save(const std::string& filename,
       << "'." << std::endl;
   if constexpr (IsArma<MatType>::value || IsSparseMat<MatType>::value)
   {
-    TextOptions txtOpts(opts);
+    TextOptions txtOpts(std::move(opts));
     if constexpr (IsSparseMat<MatType>::value)
     {
       success = SaveSparse(matrix, txtOpts, stream);
@@ -149,6 +149,7 @@ bool Save(const std::string& filename,
     {
       success = SaveDense(matrix, txtOpts, stream);
     }
+    opts = std::move(txtOpts);
   }
   else
   {
