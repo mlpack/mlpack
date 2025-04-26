@@ -19,6 +19,7 @@
 
 #include "types.hpp"
 #include "dataset_mapper.hpp"
+#include "map_policies/map_policies.hpp"
 #include "format.hpp"
 #include "image_info.hpp"
 
@@ -486,6 +487,18 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   // Modify the DatasetInfo.
   data::DatasetInfo& DatasetInfo() { return datasetInfo; }
 
+  // Get the DatasetInfo for categorical data.
+  const data::DatasetMapper<data::MissingPolicy>& DatasetMissingPolicy() const
+  { 
+    return datasetMissingPolicy;
+  }
+
+  // Modify the DatasetMissingPolicy.
+  data::DatasetMapper<data::MissingPolicy>& DatasetMissingPolicy()
+  {
+    return datasetMissingPolicy;
+  }
+
  private:
   std::optional<bool> hasHeaders;
   std::optional<bool> semicolon;
@@ -496,6 +509,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   // to mean that `hasHeaders` or `categorical` has been specified as true.
   arma::field<std::string> headers;
   data::DatasetInfo datasetInfo;
+  data::DatasetMapper<data::MissingPolicy> datasetMissingPolicy;
 
   constexpr static const bool defaultHasHeaders = false;
   constexpr static const bool defaultSemicolon = false;

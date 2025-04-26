@@ -89,14 +89,17 @@ bool Load(const std::string& filename,
           const bool fatal,
           const bool transpose)
 {
-  MatrixOptions opts;
+  TextOptions opts;
   opts.Fatal() = fatal;
   opts.NoTranspose() = !transpose;
-  // @rcurtin just commenting this one as we need to find a solution for the
-  // template parameter of the DatasetMapper. Assigning the following variable
-  // will simply fails as `info` is different type from opts.Mapper()
-  //opts.Mapper() = info;
-
+  if constexpr (std::is_same_v<PolicyType, data::IncrementPolicy>)
+  {
+    opts.DatasetInfo() = info;
+  }
+  else if constexpr (std::is_same_v<PolicyType, data::MissingPolicy>)
+  {
+    opts.DatasetMissingPolicy() = info;
+  }
   return Load(filename, matrix, opts);
 }
 
