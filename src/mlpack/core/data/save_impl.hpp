@@ -81,11 +81,22 @@ bool Save(const std::string& filename,
 
 /*
  * Add this SFINAE in here because the compiler is so stupid that it is not
- * able to distibguish between these two:
+ * able to distinguish between these two:
  *
  *  data::Save(filename, "model", *output);
- *       
+ *
+ *  and 
+ *
  *  data::Save(filename, matrix, opts);
+ *  
+ * The second SFINAE is added because the compiler is bot able to see the
+ * difference between:
+ *
+ *  data::Save(filename, Row/Col, fatal);
+ *
+ *  and 
+ *
+ *  data::Save(filename, Row/Col, Opts);
  *
  * This SFINAE is temporary and must be removed after the integration of stage 3 or
  * when the compiler becomes more intelligent.
@@ -94,7 +105,8 @@ template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
           DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>*)
+          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>*,
+          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>*)
 {
   Timer::Start("saving_data");
 
@@ -205,7 +217,7 @@ bool Save(const std::string& filename,
           T& t,
           const bool fatal,
           format f,
-          std::enable_if_t<!IsArma<T>::value || !IsSparseMat<T>::value>*)
+          std::enable_if_t<HasSerialize<T>::value>*)
 {
   if (f == format::autodetect)
   {

@@ -27,6 +27,7 @@
 #include "load_numeric.hpp"
 #include "load_categorical.hpp"
 #include "load_image.hpp"
+#include "utilities.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
@@ -44,7 +45,20 @@ namespace data /** Functions to load and save matrices and models. */ {
 template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
-          DataOptionsType& opts);
+          DataOptionsType& opts, 
+          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>* = 0,
+          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>* = 0);
+
+// TODO: clean this up---this overload is necessary for when a user didn't make
+// an actual DataOptionsType object.  We should check here that they didn't
+// specify that they want to keep headers or anything like this and throw a
+// warning.
+template<typename MatType, typename DataOptionsType>
+bool Load(const std::string& filename,
+          MatType& matrix,
+          const DataOptionsType& opts,
+          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>* = 0,
+          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>* = 0);
 
 /**
  * Loads a matrix from file, guessing the filetype from the extension.  This
@@ -268,7 +282,8 @@ bool Load(const std::string& filename,
           const std::string& name,
           T& t,
           const bool fatal = false,
-          format f = format::autodetect);
+          format f = format::autodetect,
+          std::enable_if_t<HasSerialize<T>::value>* = 0);
 
 } // namespace data
 } // namespace mlpack

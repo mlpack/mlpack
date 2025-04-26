@@ -30,7 +30,8 @@ bool Load(const std::string& filename,
           const std::string& name,
           T& t,
           const bool fatal,
-          format f)
+          format f,
+          std::enable_if_t<HasSerialize<T>::value>*)
 {
   if (f == format::autodetect)
   {

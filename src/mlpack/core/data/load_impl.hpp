@@ -99,14 +99,13 @@ bool Load(const std::string& filename,
 
   return Load(filename, matrix, opts);
 }
-// TODO: clean this up---this overload is necessary for when a user didn't make
-// an actual DataOptionsType object.  We should check here that they didn't
-// specify that they want to keep headers or anything like this and throw a
-// warning.
+
 template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
-          const DataOptionsType& opts)
+          const DataOptionsType& opts,
+          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>*,
+          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>*)
 {
   DataOptionsType tmpOpts(opts);
   return Load(filename, matrix, tmpOpts);
@@ -152,7 +151,9 @@ bool LoadMatrix(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
-          DataOptionsType& opts)
+          DataOptionsType& opts,
+          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>*,
+          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>*)
 {
   Timer::Start("loading_data");
 
