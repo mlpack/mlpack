@@ -108,7 +108,7 @@ bool DetectFileType(const std::string& filename,
     if (isLoading)
       // Attempt to auto-detect the type from the given file.
       opts.Format() = AutoDetect(*stream, filename);
-    else 
+    else
       DetectFromExtension(filename, opts);
     // Provide error if we don't know the type.
     if (opts.Format() == FileType::FileTypeUnknown)

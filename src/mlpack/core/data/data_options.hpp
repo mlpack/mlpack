@@ -48,15 +48,13 @@ class DataOptionsBase
   template<typename Derived2>
   explicit DataOptionsBase(const DataOptionsBase<Derived2>& opts)
   {
-    // Delegate to copy operator.
-    *this = opts;
+    CopyOptions(opts);
   }
 
   template<typename Derived2>
   explicit DataOptionsBase(DataOptionsBase<Derived2>&& opts)
   {
-    // Delegate to move operator.
-    *this = std::move(opts);
+    MoveOptions(std::move(opts));
   }
 
   // Convert any other DataOptions type to this DataOptions type, printing
@@ -73,12 +71,7 @@ class DataOptionsBase
     const char* dataDesc = static_cast<const Derived&>(*this).DataDescription();
     static_cast<const Derived2&>(other).WarnBaseConversion(dataDesc);
 
-    // Only copy options that have been set in the other object.
-    if (other.fatal.has_value())
-      fatal = *other.fatal;
-    if (other.format.has_value())
-      format = *other.format;
-
+    CopyOptions(other);
     return *this;
   }
 
@@ -86,18 +79,44 @@ class DataOptionsBase
   template<typename Derived2>
   DataOptionsBase& operator=(DataOptionsBase<Derived2>&& other)
   {
-    if ((void*) &other == (void*) this)
+    if ((void*) &other != (void*) this)
       return *this;
 
     // Print warnings for any members that cannot be converted.
     const char* dataDesc = static_cast<const Derived&>(*this).DataDescription();
     static_cast<const Derived2&>(other).WarnBaseConversion(dataDesc);
 
+    MoveOptions(std::move(other));
+    return *this;
+  }
+
+  template<typename Derived2>
+  void CopyOptions(const DataOptionsBase<Derived2>& other)
+  {
+    // Only copy options that have been set in the other object.
+    if (other.fatal.has_value())
+      fatal = *other.fatal;
+    if (other.format.has_value())
+      format = *other.format;
+  }
+
+  template<typename Derived2>
+  void MoveOptions(DataOptionsBase<Derived2>&& other)
+  {
     fatal = std::move(other.fatal);
     format = std::move(other.format);
 
     // Reset all of the options in the other object.
-    other = DataOptionsBase<Derived2>();
+    other.Reset();
+  }
+
+  void Reset()
+  {
+    fatal.reset();
+    format.reset();
+
+    // Reset any child members.
+    static_cast<Derived&>(*this).Reset();
   }
 
   // If true, then exceptions are thrown on failures.
@@ -189,6 +208,7 @@ class EmptyOptions : public DataOptionsBase<EmptyOptions>
  public:
   void WarnBaseConversion(const char* /* dataDescription */) const { }
   static const char* DataDescription() { return "general data"; }
+  void Reset() { }
 };
 
 using DataOptions = DataOptionsBase<EmptyOptions>;
@@ -230,6 +250,7 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
 
     if (other.noTranspose.has_value())
       noTranspose = other.noTranspose;
+    DataOptionsBase<MatrixOptionsBase<Derived>>::CopyOptions(other);
 
     return *this;
   }
@@ -240,8 +261,7 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
       return *this;
 
     noTranspose = std::move(other.noTranspose);
-
-    other = MatrixOptionsBase();
+    DataOptionsBase<MatrixOptionsBase<Derived>>::MoveOptions(std::move(other));
 
     return *this;
   }
@@ -261,7 +281,7 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
       noTranspose = other.NoTranspose();
 
     // Copy base members.
-    DataOptionsBase<MatrixOptionsBase<Derived>>::operator=(other);
+    DataOptionsBase<MatrixOptionsBase<Derived>>::CopyOptions(other);
 
     return *this;
   }
@@ -279,10 +299,7 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
     noTranspose = std::move(other.noTranspose);
 
     // Move base members.
-    DataOptionsBase<MatrixOptionsBase<Derived>>::operator=(std::move(other));
-
-    // Reset the other object.
-    other = MatrixOptionsBase<Derived2>();
+    DataOptionsBase<MatrixOptionsBase<Derived>>::MoveOptions(std::move(other));
 
     return *this;
   }
@@ -298,6 +315,14 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
   }
 
   static const char* DataDescription() { return "matrix data"; }
+
+  void Reset()
+  {
+    noTranspose.reset();
+
+    // Reset any child members.
+    static_cast<Derived&>(*this).Reset();
+  }
 
   // Get whether or not we will avoid transposing the matrix during load.
   bool NoTranspose() const
@@ -328,6 +353,7 @@ class EmptyMatrixOptions : public MatrixOptionsBase<EmptyMatrixOptions>
  public:
   void WarnBaseConversion(const char* /* dataDescription */) const { }
   static const char* DataDescription() { return "general data"; }
+  void Reset() { }
 };
 
 using MatrixOptions = MatrixOptionsBase<EmptyMatrixOptions>;
@@ -430,6 +456,14 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   }
 
   static const char* DataDescription() { return "text-file matrix data"; }
+
+  void Reset()
+  {
+    hasHeaders.reset();
+    semicolon.reset();
+    missingToNan.reset();
+    categorical.reset();
+  }
 
   // Get if the dataset has headers or not.
   bool HasHeaders() const
