@@ -858,7 +858,7 @@ TEST_CASE("SilhouetteScoreTest", "[CVTest]")
   REQUIRE(silhouetteScore == Approx(0.1121684822489150).epsilon(1e-7));
 }
 
-class PurgedKFoldCVTest : public PurgedKFoldCV<RandomForest<>, Accuracy>;
+class PurgedKFoldCVTest : public PurgedKFoldCV<RandomForest<>, Accuracy>
 {
  public:
   using PKFCV = PurgedKFoldCV<RandomForestFacade, Accuracy>;
