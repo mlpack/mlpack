@@ -858,26 +858,7 @@ TEST_CASE("SilhouetteScoreTest", "[CVTest]")
   REQUIRE(silhouetteScore == Approx(0.1121684822489150).epsilon(1e-7));
 }
 
-class RandomForestFacade : public RandomForest<>
-{
- public:
-  using RandomForest<>::RandomForest;
-
-  void Train(
-      const arma::mat& data,
-      const arma::Row<size_t>& labels,
-      size_t numClasses)
-  {
-    [[maybe_unused]] const double _(static_cast<RandomForest<>*>(this)->Train(
-        data,
-        labels,
-        numClasses));
-  }
-};
-
-namespace mlpack {
-
-class PurgedKFoldCVTest
+class PurgedKFoldCVTest : public PurgedKFoldCV<RandomForest<>, Accuracy>;
 {
  public:
   using PKFCV = PurgedKFoldCV<RandomForestFacade, Accuracy>;
@@ -919,8 +900,6 @@ class PurgedKFoldCVTest
     return cv.GetValidationSubset(r, i);
   }
 };
-
-}
 
 TEST_CASE("PurgedKFoldCVTest", "[CVTest]")
 {

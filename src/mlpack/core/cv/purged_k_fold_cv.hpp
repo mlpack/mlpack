@@ -32,7 +32,11 @@ template<typename MLAlgorithm,
                  PredictionsType>::WeightsType>
 class PurgedKFoldCV :
     private KFoldCVBase<
-        PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        PurgedKFoldCV<MLAlgorithm,
+                      Metric,
+                      MatType,
+                      PredictionsType,
+                      WeightsType>,
         MLAlgorithm,
         Metric,
         MatType,
@@ -53,8 +57,8 @@ class PurgedKFoldCV :
     * @param xs Data points to cross-validate on.
     * @param ys Predictions (labels for classification algorithms and responses
     *     for regression algorithms) for each data point.
-    * @param[in] intervals A `2 x m` matrix, where each column stores the start
-    *                      and end sample of an interval.
+    * @param[in] intervals A `2 x xs.n_cols` matrix, where each column stores the
+    *                      start and end sample of an interval.
     */
   PurgedKFoldCV(
       size_t k,
@@ -75,8 +79,8 @@ class PurgedKFoldCV :
     * @param xs Data points to cross-validate on.
     * @param ys Labels for each data point.
     * @param numClasses Number of classes in the dataset.
-    * @param[in] intervals A `2 x m` matrix, where each column stores the start
-    *                      and end sample of an interval.
+    * @param[in] intervals A `2 x xs.n_cols` matrix, where each column stores the
+    *                      start and end sample of an interval.
     */
   PurgedKFoldCV(
       size_t k,
@@ -100,8 +104,8 @@ class PurgedKFoldCV :
     * @param datasetInfo Type information for each dimension of the dataset.
     * @param ys Labels for each data point.
     * @param numClasses Number of classes in the dataset.
-    * @param[in] intervals A `2 x m` matrix, where each column stores the start
-    *                      and end sample of an interval.
+    * @param[in] intervals A `2 x xs.n_cols` matrix, where each column stores the
+    *                      start and end sample of an interval.
     */
   PurgedKFoldCV(
       size_t k,
@@ -126,8 +130,8 @@ class PurgedKFoldCV :
     * @param ys Predictions (labels for classification algorithms and responses
     *     for regression algorithms) for each data point.
     * @param weights Observation weights (for boosting).
-    * @param[in] intervals A `2 x m` matrix, where each column stores the start
-    *                      and end sample of an interval.
+    * @param[in] intervals A `2 x xs.n_cols` matrix, where each column stores the
+    *                      start and end sample of an interval.
     */
   PurgedKFoldCV(
       size_t k,
@@ -151,8 +155,8 @@ class PurgedKFoldCV :
     * @param ys Labels for each data point.
     * @param numClasses Number of classes in the dataset.
     * @param weights Observation weights (for boosting).
-    * @param[in] intervals A `2 x m` matrix, where each column stores the start
-    *                      and end sample of an interval.
+    * @param[in] intervals A `2 x xs.n_cols` matrix, where each column stores the
+    *                      start and end sample of an interval.
     */
   PurgedKFoldCV(
       size_t k,
@@ -211,8 +215,6 @@ class PurgedKFoldCV :
   template<typename, typename, typename, typename, typename, typename>
   friend class KFoldCVBase;
 
-  friend class PurgedKFoldCVTest;
-
   /**
    * Calculate the index of the first column of the ith validation subset.
    *
@@ -269,6 +271,8 @@ class PurgedKFoldCV :
    * @param[in] i The ith validation subset to retrieve.
    */
   arma::span GetValidationSubsetCols(size_t i) const;
+
+  void CheckState() const;
 
   const double  embargoPercentage;
   const MatType intervals;

@@ -17,13 +17,17 @@
 
 namespace mlpack {
 
-template<
-  typename Derived,
-  typename MLAlgorithm,
-  typename Metric,
-  typename MatType = arma::mat,
-  typename PredictionsType = typename MetaInfoExtractor<MLAlgorithm, MatType>::PredictionsType,
-  typename WeightsType = typename MetaInfoExtractor<MLAlgorithm, MatType, PredictionsType>::WeightsType>
+template<typename Derived,
+         typename MLAlgorithm,
+         typename Metric,
+         typename MatType = arma::mat,
+         typename PredictionsType =
+             typename MetaInfoExtractor<MLAlgorithm,
+                                        MatType>::PredictionsType,
+         typename WeightsType =
+             typename MetaInfoExtractor<MLAlgorithm,
+                                        MatType,
+                                        PredictionsType>::WeightsType>
 class KFoldCVBase
 {
  public:
@@ -50,8 +54,8 @@ class KFoldCVBase
     *     for regression algorithms) for each data point.
     */
   KFoldCVBase(const size_t k,
-    const MatType& xs,
-    const PredictionsType& ys);
+              const MatType& xs,
+              const PredictionsType& ys);
 
   /**
     * This constructor can be used for multiclass classification algorithms.
@@ -62,9 +66,9 @@ class KFoldCVBase
     * @param numClasses Number of classes in the dataset.
     */
   KFoldCVBase(const size_t k,
-    const MatType& xs,
-    const PredictionsType& ys,
-    const size_t numClasses);
+              const MatType& xs,
+              const PredictionsType& ys,
+              const size_t numClasses);
 
   /**
     * This constructor can be used for multiclass classification algorithms that
@@ -77,10 +81,10 @@ class KFoldCVBase
     * @param numClasses Number of classes in the dataset.
     */
   KFoldCVBase(const size_t k,
-    const MatType& xs,
-    const data::DatasetInfo& datasetInfo,
-    const PredictionsType& ys,
-    const size_t numClasses);
+              const MatType& xs,
+              const data::DatasetInfo& datasetInfo,
+              const PredictionsType& ys,
+              const size_t numClasses);
 
   /**
     * This constructor can be used for regression and binary classification
@@ -93,9 +97,9 @@ class KFoldCVBase
     * @param weights Observation weights (for boosting).
     */
   KFoldCVBase(const size_t k,
-    const MatType& xs,
-    const PredictionsType& ys,
-    const WeightsType& weights);
+              const MatType& xs,
+              const PredictionsType& ys,
+              const WeightsType& weights);
 
   /**
     * This constructor can be used for multiclass classification algorithms that
@@ -108,10 +112,10 @@ class KFoldCVBase
     * @param weights Observation weights (for boosting).
     */
   KFoldCVBase(const size_t k,
-    const MatType& xs,
-    const PredictionsType& ys,
-    const size_t numClasses,
-    const WeightsType& weights);
+              const MatType& xs,
+              const PredictionsType& ys,
+              const size_t numClasses,
+              const WeightsType& weights);
 
   /**
     * This constructor can be used for multiclass classification algorithms that
@@ -125,11 +129,11 @@ class KFoldCVBase
     * @param weights Observation weights (for boosting).
     */
   KFoldCVBase(const size_t k,
-    const MatType& xs,
-    const data::DatasetInfo& datasetInfo,
-    const PredictionsType& ys,
-    const size_t numClasses,
-    const WeightsType& weights);
+              const MatType& xs,
+              const data::DatasetInfo& datasetInfo,
+              const PredictionsType& ys,
+              const size_t numClasses,
+              const WeightsType& weights);
 
  protected:
   /**
@@ -169,36 +173,38 @@ class KFoldCVBase
     * for running k-fold cross-validation.
     */
   KFoldCVBase(Base&& base,
-    const size_t k,
-    const MatType& xs,
-    const PredictionsType& ys);
+              const size_t k,
+              const MatType& xs,
+              const PredictionsType& ys);
 
   /**
     * Assert the k parameter and data consistency and initialize fields required
     * for running k-fold cross-validation in the case of weighted learning.
     */
   KFoldCVBase(Base&& base,
-    const size_t k,
-    const MatType& xs,
-    const PredictionsType& ys,
-    const WeightsType& weights);
+              const size_t k,
+              const MatType& xs,
+              const PredictionsType& ys,
+              const WeightsType& weights);
 
   /**
     * Train and run evaluation in the case of non-weighted learning.
     */
   template<typename... MLAlgorithmArgs,
-    bool Enabled = !Base::MIE::SupportsWeights,
-    typename = std::enable_if_t<Enabled>>
-    double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);
+           bool Enabled = !Base::MIE::SupportsWeights,
+           typename = std::enable_if_t<Enabled>>
+  double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);
 
   /**
     * Train and run evaluation in the case of supporting weighted learning.
     */
   template<typename... MLAlgorithmArgs,
-    bool Enabled = Base::MIE::SupportsWeights,
-    typename = std::enable_if_t<Enabled>,
-    typename = void>
+           bool Enabled = Base::MIE::SupportsWeights,
+           typename = std::enable_if_t<Enabled>,
+           typename = void>
   double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);
+
+  void CheckState() const;
 };
 
 } // namespace mlpack

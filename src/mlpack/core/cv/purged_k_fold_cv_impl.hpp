@@ -41,7 +41,6 @@ PurgedKFoldCV<
   embargoPercentage(embargoPercentage),
   intervals(intervals)
 {
-  CheckIntervals();
 }
 
 template<
@@ -63,7 +62,11 @@ PurgedKFoldCV<
         double embargoPercentage,
         const MatType& intervals) :
   KFoldCVBase<
-        PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        PurgedKFoldCV<MLAlgorithm,
+                      Metric,
+                      MatType,
+                      PredictionsType,
+                      WeightsType>,
         MLAlgorithm,
         Metric,
         MatType,
@@ -72,7 +75,6 @@ PurgedKFoldCV<
   embargoPercentage(embargoPercentage),
   intervals(intervals)
 {
-  CheckIntervals();
 }
 
 template<
@@ -94,7 +96,11 @@ PurgedKFoldCV<MLAlgorithm,
         double embargoPercentage,
         const MatType& intervals) :
   KFoldCVBase<
-        PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        PurgedKFoldCV<MLAlgorithm, 
+                      Metric,
+                      MatType,
+                      PredictionsType,
+                      WeightsType>,
         MLAlgorithm,
         Metric,
         MatType,
@@ -103,7 +109,6 @@ PurgedKFoldCV<MLAlgorithm,
   embargoPercentage(embargoPercentage),
   intervals(intervals)
 {
-  CheckIntervals();
 }
 
 template<
@@ -125,7 +130,11 @@ PurgedKFoldCV<
         double embargoPercentage,
         const MatType& intervals) :
   KFoldCVBase<
-        PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        PurgedKFoldCV<MLAlgorithm,
+                      Metric,
+                      MatType,
+                      PredictionsType,
+                      WeightsType>,
         MLAlgorithm,
         Metric,
         MatType,
@@ -134,7 +143,6 @@ PurgedKFoldCV<
   embargoPercentage(embargoPercentage),
   intervals(intervals)
 {
-  CheckIntervals();
 }
 
 template<
@@ -157,7 +165,11 @@ PurgedKFoldCV<
         double embargoPercentage,
         const MatType& intervals) :
   KFoldCVBase<
-        PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        PurgedKFoldCV<MLAlgorithm,
+                      Metric,
+                      MatType,
+                      PredictionsType,
+                      WeightsType>,
         MLAlgorithm,
         Metric,
         MatType,
@@ -166,7 +178,6 @@ PurgedKFoldCV<
   embargoPercentage(embargoPercentage),
   intervals(intervals)
 {
-  CheckIntervals();
 }
 
 template<
@@ -190,7 +201,11 @@ PurgedKFoldCV<
         double embargoPercentage,
         const MatType& intervals) :
   KFoldCVBase<
-        PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+        PurgedKFoldCV<MLAlgorithm,
+                      Metric,
+                      MatType,
+                      PredictionsType,
+                      WeightsType>,
         MLAlgorithm,
         Metric,
         MatType,
@@ -199,7 +214,6 @@ PurgedKFoldCV<
   embargoPercentage(embargoPercentage),
   intervals(intervals)
 {
-  CheckIntervals();
 }
 
 template<
@@ -299,12 +313,26 @@ void PurgedKFoldCV<
     Metric,
     MatType,
     PredictionsType,
-    WeightsType>::CheckIntervals() const
+    WeightsType>::CheckState() const
 {
   if (intervals.n_rows != 2)
     throw std::invalid_argument(
-        "PurgedKFoldCV::CheckIntervals(): "
+        "PurgedKFoldCV::CheckState(): "
         "intervals must be a 2 x m matrix!");
+
+  for (arma::uword j(0); j < intervals.n_cols; ++j)
+    if (intervals(0, j) > intervals(1, j))
+      throw std::invalid_argument(
+          "PurgedKFoldCV::CheckState(): "
+          "start must not be after end!");
+    else if (intervals(0, j) < 0 || intervals(0, j) > xs.n_cols)
+      throw std::invalid_argument(
+          "PurgedKFoldCV::CheckState(): "
+          "start is outside of the dataset!");
+    else if (intervals(1, j) < 0 || intervals(1, j) > xs.n_cols)
+      throw std::invalid_argument(
+          "PurgedKFoldCV::CheckState(): "
+          "end is outside of the dataset!");
 }
 
 template<
@@ -341,8 +369,7 @@ arma::uvec PurgedKFoldCV<
     WeightsType>::GetTrainingSubsetCols(size_t i) const
 {
   const arma::span  validationSubsetCols(GetValidationSubsetCols(i));
-  const arma::uword datasetSize(
-      (this->k - 1) * this->binSize + this->lastBinSize);
+  const arma::uword datasetSize(xs.n_cols);
   const double      h(std::round(datasetSize * embargoPercentage));
   arma::uvec        trainingSubset(datasetSize);
   arma::uword       trainingSubsetSize(0);

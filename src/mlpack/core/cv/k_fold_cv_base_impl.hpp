@@ -14,145 +14,138 @@
 
 namespace mlpack {
 
-template<
-  typename Derived,
-  typename MLAlgorithm,
-  typename Metric,
-  typename MatType,
-  typename PredictionsType,
-  typename WeightsType>
+template<typename Derived,
+         typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
 KFoldCVBase<Derived,
-  MLAlgorithm,
-  Metric,
-  MatType,
-  PredictionsType,
-  WeightsType>::KFoldCVBase(const size_t k,
-    const MatType& xs,
-    const PredictionsType& ys) :
+            MLAlgorithm,
+            Metric,
+            MatType,
+            PredictionsType,
+            WeightsType>::KFoldCVBase(const size_t k,
+                                      const MatType& xs,
+                                      const PredictionsType& ys) :
   KFoldCVBase(Base(), k, xs, ys)
 { /* Nothing left to do. */
 }
 
-template<
-  typename Derived, 
-  typename MLAlgorithm,
-  typename Metric,
-  typename MatType,
-  typename PredictionsType,
-  typename WeightsType>
+template<typename Derived, 
+         typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
 KFoldCVBase<Derived,
-  MLAlgorithm,
-  Metric,
-  MatType,
-  PredictionsType,
-  WeightsType>::KFoldCVBase(const size_t k,
-    const MatType& xs,
-    const PredictionsType& ys,
-    const size_t numClasses) :
+            MLAlgorithm,
+            Metric,
+            MatType,
+            PredictionsType,
+            WeightsType>::KFoldCVBase(const size_t k,
+                                      const MatType& xs,
+                                      const PredictionsType& ys,
+                                      const size_t numClasses) :
   KFoldCVBase(Base(numClasses), k, xs, ys)
 { /* Nothing left to do. */
 }
 
-template<
-  typename Derived, 
-  typename MLAlgorithm,
-  typename Metric,
-  typename MatType,
-  typename PredictionsType,
-  typename WeightsType>
+template<typename Derived, 
+         typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
 KFoldCVBase<Derived,
-  MLAlgorithm,
-  Metric,
-  MatType,
-  PredictionsType,
-  WeightsType>::KFoldCVBase(const size_t k,
-    const MatType& xs,
-    const data::DatasetInfo& datasetInfo,
-    const PredictionsType& ys,
-    const size_t numClasses) :
+            MLAlgorithm,
+            Metric,
+            MatType,
+            PredictionsType,
+            WeightsType>::KFoldCVBase(const size_t k,
+                                      const MatType& xs,
+                                      const data::DatasetInfo& datasetInfo,
+                                      const PredictionsType& ys,
+                                      const size_t numClasses) :
   KFoldCVBase(Base(datasetInfo, numClasses), k, xs, ys)
 { /* Nothing left to do. */
 }
 
-template<
-  typename Derived, 
-  typename MLAlgorithm,
-  typename Metric,
-  typename MatType,
-  typename PredictionsType,
-  typename WeightsType>
+template<typename Derived, 
+         typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
 KFoldCVBase<Derived,
-  MLAlgorithm,
-  Metric,
-  MatType,
-  PredictionsType,
-  WeightsType>::KFoldCVBase(const size_t k,
-    const MatType& xs,
-    const PredictionsType& ys,
-    const WeightsType& weights) :
+            MLAlgorithm,
+            Metric,
+            MatType,
+            PredictionsType,
+            WeightsType>::KFoldCVBase(const size_t k,
+                                      const MatType& xs,
+                                      const PredictionsType& ys,
+                                      const WeightsType& weights) :
   KFoldCVBase(Base(), k, xs, ys, weights)
 { /* Nothing left to do. */
 }
 
-template<
-  typename Derived, 
-  typename MLAlgorithm,
-  typename Metric,
-  typename MatType,
-  typename PredictionsType,
-  typename WeightsType>
+template<typename Derived, 
+         typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
 KFoldCVBase<Derived,
-  MLAlgorithm,
-  Metric,
-  MatType,
-  PredictionsType,
-  WeightsType>::KFoldCVBase(const size_t k,
-    const MatType& xs,
-    const PredictionsType& ys,
-    const size_t numClasses,
-    const WeightsType& weights) :
+            MLAlgorithm,
+            Metric,
+            MatType,
+            PredictionsType,
+            WeightsType>::KFoldCVBase(const size_t k,
+                                      const MatType& xs,
+                                      const PredictionsType& ys,
+                                      const size_t numClasses,
+                                      const WeightsType& weights) :
   KFoldCVBase(Base(numClasses), k, xs, ys, weights)
 { /* Nothing left to do. */
 }
 
-template<
-  typename Derived, 
-  typename MLAlgorithm,
-  typename Metric,
-  typename MatType,
-  typename PredictionsType,
-  typename WeightsType>
+template<typename Derived, 
+         typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
 KFoldCVBase<Derived,
-  MLAlgorithm,
-  Metric,
-  MatType,
-  PredictionsType,
-  WeightsType>::KFoldCVBase(const size_t k,
-    const MatType& xs,
-    const data::DatasetInfo& datasetInfo,
-    const PredictionsType& ys,
-    const size_t numClasses,
-    const WeightsType& weights) :
+            MLAlgorithm,
+            Metric,
+            MatType,
+            PredictionsType,
+            WeightsType>::KFoldCVBase(const size_t k,
+                                      const MatType& xs,
+                                      const data::DatasetInfo& datasetInfo,
+                                      const PredictionsType& ys,
+                                      const size_t numClasses,
+                                      const WeightsType& weights) :
   KFoldCVBase(Base(datasetInfo, numClasses), k, xs, ys, weights)
 { /* Nothing left to do. */
 }
 
-template<
-  typename Derived,
-  typename MLAlgorithm,
-  typename Metric,
-  typename MatType,
-  typename PredictionsType,
-  typename WeightsType>
+template<typename Derived,
+         typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
 KFoldCVBase<Derived,
-  MLAlgorithm,
-  Metric,
-  MatType,
-  PredictionsType,
-  WeightsType>::KFoldCVBase(Base&& base,
-    const size_t k,
-    const MatType& xs,
-    const PredictionsType& ys) :
+            MLAlgorithm,
+            Metric,
+            MatType,
+            PredictionsType,
+            WeightsType>::KFoldCVBase(Base&& base,
+                                      const size_t k,
+                                      const MatType& xs,
+                                      const PredictionsType& ys) :
   base(std::move(base)),
   k(k)
 {
@@ -165,23 +158,22 @@ KFoldCVBase<Derived,
   InitKFoldCVMat(ys, this->ys);
 }
 
-template<
-  typename Derived,
-  typename MLAlgorithm,
-  typename Metric,
-  typename MatType,
-  typename PredictionsType,
-  typename WeightsType>
+template<typename Derived,
+         typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
 KFoldCVBase<Derived,
-  MLAlgorithm,
-  Metric,
-  MatType,
-  PredictionsType,
-  WeightsType>::KFoldCVBase(Base&& base,
-    const size_t k,
-    const MatType& xs,
-    const PredictionsType& ys,
-    const WeightsType& weights) :
+            MLAlgorithm,
+            Metric,
+            MatType,
+            PredictionsType,
+            WeightsType>::KFoldCVBase(Base&& base,
+                                      const size_t k,
+                                      const MatType& xs,
+                                      const PredictionsType& ys,
+                                      const WeightsType& weights) :
   base(std::move(base)),
   k(k)
 {
@@ -192,37 +184,35 @@ KFoldCVBase<Derived,
   InitKFoldCVMat(weights, this->weights);
 }
 
-template<
-  typename Derived, 
-  typename MLAlgorithm,
-  typename Metric,
-  typename MatType,
-  typename PredictionsType,
-  typename WeightsType>
+template<typename Derived, 
+         typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
 template<typename... MLAlgorithmArgs>
 double KFoldCVBase<Derived,
-  MLAlgorithm,
-  Metric,
-  MatType,
-  PredictionsType,
-  WeightsType>::Evaluate(const MLAlgorithmArgs&... args)
+                   MLAlgorithm,
+                   Metric,
+                   MatType,
+                   PredictionsType,
+                   WeightsType>::Evaluate(const MLAlgorithmArgs&... args)
 {
   return TrainAndEvaluate(args...);
 }
 
-template<
-  typename Derived, 
-  typename MLAlgorithm,
-  typename Metric,
-  typename MatType,
-  typename PredictionsType,
-  typename WeightsType>
+template<typename Derived, 
+         typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
 MLAlgorithm& KFoldCVBase<Derived,
-  MLAlgorithm,
-  Metric,
-  MatType,
-  PredictionsType,
-  WeightsType>::Model()
+                         MLAlgorithm,
+                         Metric,
+                         MatType,
+                         PredictionsType,
+                         WeightsType>::Model()
 {
   if (modelPtr == nullptr)
     throw std::logic_error(
@@ -231,21 +221,20 @@ MLAlgorithm& KFoldCVBase<Derived,
   return *modelPtr;
 }
 
-template<
-  typename Derived,
-  typename MLAlgorithm,
-  typename Metric,
-  typename MatType,
-  typename PredictionsType,
-  typename WeightsType>
+template<typename Derived,
+         typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
 template<typename DataType>
 void KFoldCVBase<Derived,
-  MLAlgorithm,
-  Metric,
-  MatType,
-  PredictionsType,
-  WeightsType>::InitKFoldCVMat(const DataType& source,
-    DataType& destination)
+                 MLAlgorithm,
+                 Metric,
+                 MatType,
+                 PredictionsType,
+                 WeightsType>::InitKFoldCVMat(const DataType& source,
+                                              DataType& destination)
 {
   binSize = source.n_cols / k;
   lastBinSize = source.n_cols - ((k - 1) * binSize);
@@ -254,32 +243,36 @@ void KFoldCVBase<Derived,
     source.cols(0, source.n_cols - lastBinSize - 1));
 }
 
-template<
-  typename Derived, 
-  typename MLAlgorithm,
-  typename Metric,
-  typename MatType,
-  typename PredictionsType,
-  typename WeightsType>
+template<typename Derived, 
+         typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
 template<typename... MLAlgorithmArgs, bool Enabled, typename>
 double KFoldCVBase<Derived,
-  MLAlgorithm,
-  Metric,
-  MatType,
-  PredictionsType,
-  WeightsType>::TrainAndEvaluate(const MLAlgorithmArgs&... args)
+                   MLAlgorithm,
+                   Metric,
+                   MatType,
+                   PredictionsType,
+                   WeightsType>::TrainAndEvaluate(
+                       const MLAlgorithmArgs&... args)
 {
+  Derived* const self = static_cast<Derived*>(this);
+
+  self->CheckState();
+
   arma::vec evaluations(k);
 
   size_t numInvalidScores = 0;
   for (size_t i = 0; i < k; ++i)
   {
     MLAlgorithm&& model = base.Train(
-      static_cast<Derived*>(this)->GetTrainingSubset(xs, i),
-      static_cast<Derived*>(this)->GetTrainingSubset(ys, i), args...);
+        self->GetTrainingSubset(xs, i),
+        self->GetTrainingSubset(ys, i), args...);
     evaluations(i) = Metric::Evaluate(model,
-      static_cast<Derived*>(this)->GetValidationSubset(xs, i),
-      static_cast<Derived*>(this)->GetValidationSubset(ys, i));
+        self->GetValidationSubset(xs, i),
+        self->GetValidationSubset(ys, i));
     if (std::isnan(evaluations(i)) || std::isinf(evaluations(i)))
     {
       ++numInvalidScores;
@@ -301,35 +294,38 @@ double KFoldCVBase<Derived,
   return arma::mean(evaluations.elem(arma::find_finite(evaluations)));
 }
 
-template<
-  typename Derived,
-  typename MLAlgorithm,
-  typename Metric,
-  typename MatType,
-  typename PredictionsType,
-  typename WeightsType>
+template<typename Derived,
+         typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
 template<typename... MLAlgorithmArgs, bool Enabled, typename, typename>
 double KFoldCVBase<Derived,
-  MLAlgorithm,
-  Metric,
-  MatType,
-  PredictionsType,
-  WeightsType>::TrainAndEvaluate(const MLAlgorithmArgs&... args)
+                   MLAlgorithm,
+                   Metric,
+                   MatType,
+                   PredictionsType,
+                   WeightsType>::TrainAndEvaluate(const MLAlgorithmArgs&... args)
 {
+  Derived* const self = static_cast<Derived*>(this);
+
+  self->CheckState();
+
   arma::vec evaluations(k);
 
   for (size_t i = 0; i < k; ++i)
   {
     MLAlgorithm&& model = (weights.n_elem > 0) ?
-      base.Train(static_cast<Derived*>(this)->GetTrainingSubset(xs, i),
-        static_cast<Derived*>(this)->GetTrainingSubset(ys, i),
-        static_cast<Derived*>(this)->GetTrainingSubset(weights, i), args...) :
-      base.Train(static_cast<Derived*>(this)->GetTrainingSubset(xs, i),
-        static_cast<Derived*>(this)->GetTrainingSubset(ys, i),
-        args...);
+        base.Train(self->GetTrainingSubset(xs, i),
+            self->GetTrainingSubset(ys, i),
+            self->GetTrainingSubset(weights, i), args...) :
+        base.Train(self->GetTrainingSubset(xs, i),
+            self->GetTrainingSubset(ys, i),
+            args...);
     evaluations(i) = Metric::Evaluate(model, 
-      static_cast<Derived*>(this)->GetValidationSubset(xs, i),
-      static_cast<Derived*>(this)->GetValidationSubset(ys, i));
+        self->GetValidationSubset(xs, i),
+        self->GetValidationSubset(ys, i));
     if (i == k - 1)
       modelPtr.reset(new MLAlgorithm(std::move(model)));
   }

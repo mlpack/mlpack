@@ -116,7 +116,7 @@ KFoldCV<MLAlgorithm,
         MatType,
         PredictionsType,
         WeightsType>(k, xs, ys, weights)
-{ 
+{
   // Do we need to shuffle the dataset?
   if (shuffle)
     Shuffle();
@@ -173,7 +173,7 @@ KFoldCV<MLAlgorithm,
         MatType,
         PredictionsType,
         WeightsType>(k, xs, datasetInfo, ys, numClasses, weights)
-{ 
+{
   // Do we need to shuffle the dataset?
   if (shuffle)
     Shuffle();
@@ -269,8 +269,11 @@ arma::Mat<ElementType> KFoldCV<MLAlgorithm,
       this->lastBinSize + (this->k - 2) * this->binSize :
       (this->k - 1) * this->binSize;
 
-  return arma::Mat<ElementType>(m.colptr(this->binSize * i), m.n_rows, subsetSize,
-      false, true);
+  return arma::Mat<ElementType>(m.colptr(this->binSize * i),
+                                m.n_rows,
+                                subsetSize,
+                                false,
+                                true);
 }
 
 template<typename MLAlgorithm,
@@ -294,7 +297,10 @@ arma::Row<ElementType> KFoldCV<MLAlgorithm,
       this->lastBinSize + (this->k - 2) * this->binSize :
       (this->k - 1) * this->binSize;
 
-  return arma::Row<ElementType>(r.colptr(this->binSize * i), subsetSize, false, true);
+  return arma::Row<ElementType>(r.colptr(this->binSize * i),
+                                subsetSize,
+                                false,
+                                true);
 }
 
 template<typename MLAlgorithm,
