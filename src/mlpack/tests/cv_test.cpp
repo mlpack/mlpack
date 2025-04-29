@@ -863,42 +863,9 @@ class PurgedKFoldCVTest : public PurgedKFoldCV<RandomForest<>, Accuracy>
  public:
   using PKFCV = PurgedKFoldCV<RandomForest<>, Accuracy>;
 
-  static size_t ValidationSubsetFirstCol(PKFCV& cv, size_t i)
-  {
-    return cv.ValidationSubsetFirstCol(i);
-  }
-
-  static arma::mat GetTrainingSubset(
-      PKFCV& cv,
-      const arma::mat& m,
-      size_t i)
-  {
-    return cv.GetTrainingSubset(m, i);
-  }
-
-  static arma::Row<size_t> GetTrainingSubset(
-      PKFCV& cv,
-      const arma::Row<size_t>& r,
-      size_t i)
-  {
-    return cv.GetTrainingSubset(r, i);
-  }
-
-  static arma::mat GetValidationSubset(
-      PKFCV& cv,
-      const arma::mat& m,
-      size_t i)
-  {
-    return cv.GetValidationSubset(m, i);
-  }
-
-  static arma::Row<size_t> GetValidationSubset(
-      PKFCV& cv,
-      const arma::Row<size_t>& r,
-      size_t i)
-  {
-    return cv.GetValidationSubset(r, i);
-  }
+  using PKFCV::ValidationSubsetFirstCol;
+  using PKFCV::GetTrainingSubset;
+  using PKFCV::GetValidationSubset;
 };
 
 TEST_CASE("PurgedKFoldCVTest", "[CVTest]")
@@ -987,11 +954,11 @@ TEST_CASE("PurgedKFoldCVTest", "[CVTest]")
   size_t            firstCol;
 
   for (size_t i(0); i < k; ++i) {
-    mt = PKFCVT::GetTrainingSubset(cv, ds, i);
-    rt = PKFCVT::GetTrainingSubset(cv, labels, i);
-    mv = PKFCVT::GetValidationSubset(cv, ds, i);
-    rv = PKFCVT::GetValidationSubset(cv, labels, i);
-    firstCol = PKFCVT::ValidationSubsetFirstCol(cv, i);
+    mt = cv.GetTrainingSubset(ds, i);
+    rt = cv.GetTrainingSubset(labels, i);
+    mv = cv.GetValidationSubset(ds, i);
+    rv = cv.GetValidationSubset(labels, i);
+    firstCol = cv.ValidationSubsetFirstCol(i);
 
     REQUIRE(firstCol == validationSubset.row(i)(0));
     REQUIRE(arma::approx_equal(mt.row(0), trainSubsets[i], "absdiff", 0.0));
