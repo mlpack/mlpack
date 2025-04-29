@@ -1011,5 +1011,5 @@ TEST_CASE("PurgedKFoldCVTest", "[CVTest]")
   rf.Classify(ds, predictions);
 
   for (size_t i = 0; i < predictions.n_elem; ++i)
-    REQUIRE((predictions[i] >= 0 || predictions[i] < 50));
+    REQUIRE((predictions[i] < 50));
 }
