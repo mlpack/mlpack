@@ -325,11 +325,11 @@ void PurgedKFoldCV<
       throw std::invalid_argument(
           "PurgedKFoldCV::CheckState(): "
           "start must not be after end!");
-    else if (intervals(0, j) < 0 || intervals(0, j) > xs.n_cols)
+    else if (intervals(0, j) < 0 || intervals(0, j) > this->xs.n_cols)
       throw std::invalid_argument(
           "PurgedKFoldCV::CheckState(): "
           "start is outside of the dataset!");
-    else if (intervals(1, j) < 0 || intervals(1, j) > xs.n_cols)
+    else if (intervals(1, j) < 0 || intervals(1, j) > this->xs.n_cols)
       throw std::invalid_argument(
           "PurgedKFoldCV::CheckState(): "
           "end is outside of the dataset!");
@@ -369,7 +369,7 @@ arma::uvec PurgedKFoldCV<
     WeightsType>::GetTrainingSubsetCols(size_t i) const
 {
   const arma::span  validationSubsetCols(GetValidationSubsetCols(i));
-  const arma::uword datasetSize(xs.n_cols);
+  const arma::uword datasetSize(this->xs.n_cols);
   const double      h(std::round(datasetSize * embargoPercentage));
   arma::uvec        trainingSubset(datasetSize);
   arma::uword       trainingSubsetSize(0);
