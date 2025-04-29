@@ -211,10 +211,7 @@ class PurgedKFoldCV :
       PredictionsType,
       WeightsType>::Model;
 
- private:
-  template<typename, typename, typename, typename, typename, typename>
-  friend class KFoldCVBase;
-
+ protected:
   /**
    * Calculate the index of the first column of the ith validation subset.
    *
@@ -254,6 +251,10 @@ class PurgedKFoldCV :
   inline arma::Row<ElementType> GetValidationSubset(
       const arma::Row<ElementType>& r,
       size_t i);
+
+ private:
+  template<typename, typename, typename, typename, typename, typename>
+  friend class KFoldCVBase;
 
   /**
    * Check the invariants on the intervals member.
