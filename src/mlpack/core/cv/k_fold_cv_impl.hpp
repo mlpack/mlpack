@@ -293,7 +293,7 @@ arma::Row<ElementType> KFoldCV<MLAlgorithm,
   // If this is not the first fold, we have to handle it a little bit
   // differently, since the last fold may contain slightly more than 'binSize'
   // points.
-  const size_t subsetSize = (i != 0) ? 
+  const size_t subsetSize = (i != 0) ?
       this->lastBinSize + (this->k - 2) * this->binSize :
       (this->k - 1) * this->binSize;
 
