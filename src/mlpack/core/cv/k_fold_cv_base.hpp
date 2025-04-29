@@ -42,7 +42,7 @@ class KFoldCVBase
 
   //! Access and modify a model from the last run of k-fold cross-validation.
   MLAlgorithm& Model();
- 
+
  protected:
   /**
     * This constructor can be used for regression algorithms and for binary

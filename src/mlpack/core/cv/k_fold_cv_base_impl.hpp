@@ -32,7 +32,7 @@ KFoldCVBase<Derived,
 { /* Nothing left to do. */
 }
 
-template<typename Derived, 
+template<typename Derived,
          typename MLAlgorithm,
          typename Metric,
          typename MatType,
@@ -51,7 +51,7 @@ KFoldCVBase<Derived,
 { /* Nothing left to do. */
 }
 
-template<typename Derived, 
+template<typename Derived,
          typename MLAlgorithm,
          typename Metric,
          typename MatType,
@@ -71,7 +71,7 @@ KFoldCVBase<Derived,
 { /* Nothing left to do. */
 }
 
-template<typename Derived, 
+template<typename Derived,
          typename MLAlgorithm,
          typename Metric,
          typename MatType,
@@ -90,7 +90,7 @@ KFoldCVBase<Derived,
 { /* Nothing left to do. */
 }
 
-template<typename Derived, 
+template<typename Derived,
          typename MLAlgorithm,
          typename Metric,
          typename MatType,
@@ -110,7 +110,7 @@ KFoldCVBase<Derived,
 { /* Nothing left to do. */
 }
 
-template<typename Derived, 
+template<typename Derived,
          typename MLAlgorithm,
          typename Metric,
          typename MatType,
@@ -184,7 +184,7 @@ KFoldCVBase<Derived,
   InitKFoldCVMat(weights, this->weights);
 }
 
-template<typename Derived, 
+template<typename Derived,
          typename MLAlgorithm,
          typename Metric,
          typename MatType,
@@ -201,7 +201,7 @@ double KFoldCVBase<Derived,
   return TrainAndEvaluate(args...);
 }
 
-template<typename Derived, 
+template<typename Derived,
          typename MLAlgorithm,
          typename Metric,
          typename MatType,
@@ -243,7 +243,7 @@ void KFoldCVBase<Derived,
     source.cols(0, source.n_cols - lastBinSize - 1));
 }
 
-template<typename Derived, 
+template<typename Derived,
          typename MLAlgorithm,
          typename Metric,
          typename MatType,
@@ -306,7 +306,8 @@ double KFoldCVBase<Derived,
                    Metric,
                    MatType,
                    PredictionsType,
-                   WeightsType>::TrainAndEvaluate(const MLAlgorithmArgs&... args)
+                   WeightsType>::TrainAndEvaluate(
+                       const MLAlgorithmArgs&... args)
 {
   Derived* const self = static_cast<Derived*>(this);
 
@@ -323,7 +324,7 @@ double KFoldCVBase<Derived,
         base.Train(self->GetTrainingSubset(xs, i),
             self->GetTrainingSubset(ys, i),
             args...);
-    evaluations(i) = Metric::Evaluate(model, 
+    evaluations(i) = Metric::Evaluate(model,
         self->GetValidationSubset(xs, i),
         self->GetValidationSubset(ys, i));
     if (i == k - 1)

@@ -96,7 +96,7 @@ PurgedKFoldCV<MLAlgorithm,
         double embargoPercentage,
         const MatType& intervals) :
   KFoldCVBase<
-        PurgedKFoldCV<MLAlgorithm, 
+        PurgedKFoldCV<MLAlgorithm,
                       Metric,
                       MatType,
                       PredictionsType,

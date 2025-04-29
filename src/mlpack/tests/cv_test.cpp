@@ -972,7 +972,7 @@ TEST_CASE("PurgedKFoldCVTest", "[CVTest]")
 
   // Will first expand the test set by h (embargo)
   // then purge observations from the training set.
-  PurgedKFoldCV<RandomForestFacade, Accuracy> cv(
+  PurgedKFoldCV<RandomForest<>, Accuracy> cv(
       k,
       ds,
       labels,
@@ -996,12 +996,15 @@ TEST_CASE("PurgedKFoldCVTest", "[CVTest]")
     REQUIRE(firstCol == validationSubset.row(i)(0));
     REQUIRE(arma::approx_equal(mt.row(0), trainSubsets[i], "absdiff", 0.0));
     REQUIRE(arma::approx_equal(rt, trainSubsetsVec[i], "absdiff", 0));
-    REQUIRE(arma::approx_equal(mv.row(0), validationSubset.row(i), "absdiff", 0.0));
+    REQUIRE(arma::approx_equal(mv.row(0),
+                               validationSubset.row(i),
+                               "absdiff",
+                               0.0));
     REQUIRE(arma::approx_equal(rv, validationSubsetVec.row(i), "absdiff", 0));
   }
 
   [[maybe_unused]] const double res(cv.Evaluate());
-  [[maybe_unused]] RandomForestFacade& rf(cv.Model());
+  [[maybe_unused]] RandomForest<>& rf(cv.Model());
 
   // Sanity check: ensure that the predictions are reasonable.
   arma::Row<size_t> predictions;
