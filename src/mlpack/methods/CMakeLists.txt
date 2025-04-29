@@ -27,6 +27,7 @@ add_all_bindings(hmm hmm_generate "Misc. / Other")
 add_all_bindings(hmm hmm_loglik "Misc. / Other")
 add_all_bindings(hmm hmm_viterbi "Misc. / Other")
 add_all_bindings(hoeffding_trees hoeffding_tree "Classification")
+add_all_bindings(preprocess image_converter "Preprocessing")
 add_all_bindings(kde kde "Misc. / Other")
 add_all_bindings(kernel_pca kernel_pca "Transformations")
 add_all_bindings(kmeans kmeans "Clustering")
@@ -87,11 +88,6 @@ add_markdown_docs(linear_regression linear_regression "cli;python;julia;go;r"
 add_category(preprocess_imputer "Preprocessing")
 add_cli_executable(preprocess preprocess_imputer)
 add_markdown_docs(preprocess preprocess_imputer "cli" "")
-
-# The image converter is only enabled if STB is available.
-if (STB_AVAILABLE)
-  add_all_bindings(preprocess image_converter "Preprocessing")
-endif()
 
 # Range search provides a vector of vector of results, and this is only
 # supported for the CLI bindings.

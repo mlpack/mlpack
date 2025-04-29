@@ -3,6 +3,16 @@
 ## mlpack ?.?.?
 
 _????-??-??_
+ * Shuffle sequence lengths (#3926)
+
+ * Add ability to compile OpenBLAS for windows (#3922)
+
+ * Drop pytest-runner and "setup.py test" support (#3921).
+
+
+## mlpack 4.6.0
+
+_2025-04-02_
 
  * Fix command-line duplicate output bug when loading matrices for some bindings
    (#3838).
@@ -17,8 +27,13 @@ _????-??-??_
  * Fix conversion of empty Armadillo objects to numpy in Python bindings
    (#3896).
 
- * Added bootstrap strategies for RandomForest: IdentityBootstrap,
-   DefaultBootstrap, and SequentialBootstrap. (#3829)
+ * Added bootstrap strategies for `RandomForest`: `IdentityBootstrap`,
+   `DefaultBootstrap`, and `SequentialBootstrap` (#3829).
+
+ * Add `ResizeCropImages()` for resize-and-crop image preprocessing
+   functionality (#3903).
+
+ * Fix `LSTM` input size calculation for multidimensional inputs (#3913).
 
 ## mlpack 4.5.1
 

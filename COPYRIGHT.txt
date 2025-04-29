@@ -160,6 +160,9 @@ Copyright:
   Copyright 2024, Martin Lambertsen <github@lambertsen.one>
   Copyright 2024, Andrea Novellini <andre.novellini@gmail.com>
   Copyright 2024, Felix Patschkowski <felix.patschkowski@gmail.com>
+  Copyright 2025, Benjamin A. Beasley <code@musicinmybrain.net>
+  Copyright 2025, Maksym Prots <imaxprots@gmail.com>
+  Copyright 2025, Zachary Ng <zachn716@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.

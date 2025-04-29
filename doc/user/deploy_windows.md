@@ -27,13 +27,13 @@ dependencies in Release Mode).
 - Under C/C++ > General > Additional Include Directories add:
 ```
  - C:\mlpack\armadillo-9.800.3\include
- - C:\mlpack\mlpack-4.5.1\src
+ - C:\mlpack\mlpack-4.6.0\src
  - C:\mlpack\ensmallen-2.19.0\include
  - C:\mlpack\cereal-3.1.2\include
 ```
 - Under Build Events > Post-Build Event > Command Line add:
 ```
- - xcopy /y "C:\mlpack\mlpack-4.5.1\packages\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll" $(OutDir)
+ - xcopy /y "C:\mlpack\mlpack-4.6.0\packages\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll" $(OutDir)
 ```
 
 *Note*: recent versions of Visual Studio set "Conformance Mode" enabled by

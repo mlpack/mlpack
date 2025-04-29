@@ -23,21 +23,37 @@ pipeline
   {
     // Only allow one build at a time of this job.
     disableConcurrentBuilds(abortPrevious: true)
+
+    // We will do checkout manually.
+    skipDefaultCheckout()
   }
 
   stages
   {
-    // First we have to check out the jenkins-conf repository, which contains
-    // the scripts that we will use for checking the style.
+    // Check out the repository and start the check.
+    stage('Set up workspace')
+    {
+      steps
+      {
+        cleanWs(deleteDirs: true,
+                disableDeferredWipeout: true,
+                notFailBuild: true)
+        checkout scm
+
+        script
+        {
+          u = load '.jenkins/utils.groovy'
+          u.startCheck('Documentation link check', 'Setting up workspace...')
+        }
+      }
+    }
+
+    // Actually run the check.
     stage('Build documentation and check links')
     {
       steps
       {
-        script
-        {
-          u = load '.jenkins/utils.groovy'
-          u.startBuild("Documentation Link Check");
-        }
+        script { u.updateCheckStatus('Checking documentation links...') }
 
         sh '''
           # Set $HOME because the Docker container may be running with a
@@ -76,32 +92,25 @@ pipeline
 
   post
   {
+    success { script { u.finishCheck('No HTML issues found.', true) } }
+    failure { script { u.finishCheck('Problems found in HTML.', false) } }
+
     always
     {
       // Publish the generated HTML.
       publishHTML([
-        allowMissing: false,
-        alwaysLinkToLastBuild: false,
-        keepAll: true,
-        reportDir: 'doc/html/',
-        reportFiles: 'index.html',
-        reportName: 'Build documentation']);
+          allowMissing: false,
+          alwaysLinkToLastBuild: false,
+          keepAll: true,
+          reportDir: 'doc/html/',
+          reportFiles: 'index.html',
+          reportName: 'Build documentation']);
 
       // Clean the workspace.
       cleanWs(cleanWhenNotBuilt: true,
               deleteDirs: true,
               disableDeferredWipeout: true,
               notFailBuild: true);
-
-      // Set the build status.
-      script
-      {
-        u.setBuildStatus(result: currentBuild.currentResult,
-                         context: "Documentation Link Check",
-                         successMessage: "All HTML links checked.",
-                         unstableMessage: "Problem with HTML links.",
-                         failureMessage: "HTML link check failure or problem.");
-      }
     }
   }
 }

@@ -55,7 +55,7 @@
 // the system has one core only.
 //
 #ifdef MLPACK_NO_STD_MUTEX
-  #define ARMA_DO_NOT_USE_STD_MUTEX
+  #define ARMA_DONT_USE_STD_MUTEX
 #endif
 
 //

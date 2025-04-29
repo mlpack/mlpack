@@ -592,6 +592,47 @@ macro(find_mlpack_internal)
 
 endmacro()
 
+macro(compile_OpenBLAS)
+  if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(OPENBLAS_SRC_DIR ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
+    set(OPENBLAS_BUILD_DIR ${OPENBLAS_SRC_DIR}/build)
+    set(OPENBLAS_OUTPUT_LIB_DIR ${OPENBLAS_BUILD_DIR}/lib/Release)
+    # always compile BLAS as release.
+    set(BLASS_BUILD_TYPE "Release")
+
+    if (NOT EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib")
+      message(STATUS "Compiling OpenBLAS")
+      file(MAKE_DIRECTORY ${OPENBLAS_BUILD_DIR})
+      # -G -A -T to pass settings from current cmake command.
+      execute_process(
+              COMMAND ${CMAKE_COMMAND}
+              -G "${CMAKE_GENERATOR}"
+              -A "${CMAKE_GENERATOR_PLATFORM}"
+              -T "${CMAKE_GENERATOR_TOOLSET}"
+              "-DCMAKE_BUILD_TYPE=${BLASS_BUILD_TYPE}"
+              "-DBUILD_SHARED_LIBS=OFF"
+              -S ${OPENBLAS_SRC_DIR} -B ${OPENBLAS_BUILD_DIR}
+
+              WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
+      )
+      execute_process(
+              COMMAND ${CMAKE_COMMAND} --build ${OPENBLAS_BUILD_DIR}
+              --config ${BLASS_BUILD_TYPE} --parallel
+              WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
+      )
+    else()
+      message(STATUS "OpenBLAS is already compiled")
+    endif()
+    file(GLOB OPENBLAS_LIBRARIES ${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib)
+  else()
+    execute_process(COMMAND make NO_SHARED=1 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
+    file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}/libopenblas.a")
+  endif()
+  set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
+  set(LAPACK_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
+  set(BLAS_FOUND ON)
+endmacro()
+
 macro(fetch_mlpack COMPILE_OPENBLAS)
 
   if (CMAKE_CROSSCOMPILING)
@@ -608,11 +649,7 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
       message(WARNING "OpenBLAS is downloaded but not compiled. Please compile
       OpenBLAS before compiling mlpack")
     else()
-      execute_process(COMMAND make NO_SHARED=1 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
-      file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}/libopenblas.a")
-      set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
-      set(LAPACK_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
-      set(BLAS_FOUND ON)
+      compile_OpenBLAS()
     endif()
   endif()
 
