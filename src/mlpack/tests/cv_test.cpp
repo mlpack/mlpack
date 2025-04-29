@@ -861,7 +861,7 @@ TEST_CASE("SilhouetteScoreTest", "[CVTest]")
 class PurgedKFoldCVTest : public PurgedKFoldCV<RandomForest<>, Accuracy>
 {
  public:
-  using PKFCV = PurgedKFoldCV<RandomForestFacade, Accuracy>;
+  using PKFCV = PurgedKFoldCV<RandomForest<>, Accuracy>;
 
   static size_t ValidationSubsetFirstCol(PKFCV& cv, size_t i)
   {
