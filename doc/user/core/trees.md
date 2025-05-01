@@ -16,10 +16,13 @@ different trees.  The following tree types are available in mlpack:
  * [`MeanSplitBallTree`](trees/mean_split_ball_tree.md)
  * [`RPTree`](trees/rp_tree.md)
  * [`MaxRPTree`](trees/max_rp_tree.md)
- * [`BinarySpaceTree`](trees/binary_space_tree.md)
  * [`UBTree`](trees/ub_tree.md)
+ * [`BinarySpaceTree`](trees/binary_space_tree.md)
+
  * [`CoverTree`](trees/cover_tree.md)
+
  * [`Octree`](trees/octree.md)
+
  * [`RTree`](trees/r_tree.md)
  * [`RStarTree`](trees/r_star_tree.md)
  * [`XTree`](trees/x_tree.md)
@@ -28,8 +31,11 @@ different trees.  The following tree types are available in mlpack:
  * [`HilbertRTree`](trees/hilbert_r_tree.md)
  * [`RectangleTree`](trees/rectangle_tree.md)
 
-*Note:* this documentation is a work in progress.  Not all trees are documented
-yet.
+ * [`SPTree`](trees/sp_tree.md)
+ * [`MeanSPTree`](trees/mean_sp_tree.md)
+ * [`NonOrtSPTree`](trees/non_ort_sp_tree.md)
+ * [`NonOrtMeanSPTree`](trees/non_ort_mean_sp_tree.md)
+ * [`SpillTree`](trees/spill_tree.md)
 
 ---
 

@@ -128,12 +128,10 @@ different.
    very loose bounding balls.  It is better to simply build a new `VPTree` on
    the modified dataset.  For trees that support individual insertion and
    deletions, see the [`RectangleTree`](rectangle_tree.md) class and all its
-   variants (e.g. [`RTree`](r_tree.md), `RStarTree`, etc.).
+   variants (e.g. [`RTree`](r_tree.md), [`RStarTree`](r_star_tree.md), etc.).
 
  - See also the
    [developer documentation on tree constructors](../../../developer/trees.md#constructors-and-destructors).
-
-<!-- TODO: add links to RectangleTree above when it is documented -->
 
 ---
 
@@ -417,7 +415,7 @@ mlpack::data::Load("cloud.csv", dataset, true);
 //
 // Note that the '<>' isn't necessary if C++20 is being used (e.g.
 // `mlpack::VPTree tree(...)` will work fine in C++20 or newer).
-mlpack::VPTree<> tree(std::move(dataset));
+mlpack::VPTree<> tree(std::move(dataset), 10);
 
 // Print the bounding ball of the root node.  (There will be no hollow ball.)
 std::cout << "Bounding ball of root node:" << std::endl;
