@@ -18,13 +18,13 @@ namespace data {
 
 inline const std::vector<std::string> LoadFileTypes()
 {
-  return std::vector<std::string>({"jpg", "png", "tga", "bmp", "psd", "gif",
-      "hdr", "pic", "pnm", "jpeg"});
+  return std::vector<std::string>({".jpg", ".png", ".tga", ".bmp", ".psd",
+      ".gif", ".hdr", ".pic", ".pnm", ".jpeg"});
 }
 
 inline const std::vector<std::string> SaveFileTypes()
 {
-  return std::vector<std::string>({"jpg", "png", "tga", "bmp", "hdr"});
+  return std::vector<std::string>({".jpg", ".png", ".tga", ".bmp", ".hdr"});
 }
 
 } // namespace data
@@ -36,14 +36,15 @@ inline const std::vector<std::string> SaveFileTypes()
 namespace mlpack {
 namespace data {
 
-inline bool ImageFormatSupported(const std::string& fileName, const bool save)
+inline bool ImageFormatSupported(const std::filesystem::path& fileName,
+                                 const bool save)
 {
   if (save)
   {
     // Iterate over all supported file types that can be saved.
     for (auto extension : SaveFileTypes())
     {
-      if (extension == Extension(fileName))
+      if (extension == fileName.extension())
         return true;
     }
   }
@@ -52,7 +53,7 @@ inline bool ImageFormatSupported(const std::string& fileName, const bool save)
     // Iterate over all supported file types that can be loaded.
     for (auto extension : LoadFileTypes())
     {
-      if (extension == Extension(fileName))
+      if (extension == fileName.extension())
         return true;
     }
   }

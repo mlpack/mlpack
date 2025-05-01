@@ -14,7 +14,7 @@
 #define MLPACK_CORE_DATA_IMAGE_INFO_HPP
 
 #include <mlpack/prereqs.hpp>
-#include "extension.hpp"
+#include <filesystem>
 
 namespace mlpack {
 namespace data {
@@ -26,7 +26,7 @@ namespace data {
  * @param save Set to true to check if the file format can be saved, else loaded.
  * @return Boolean value indicating success if it is an image.
  */
-inline bool ImageFormatSupported(const std::string& fileName,
+inline bool ImageFormatSupported(const std::filesystem::path& fileName,
                                  const bool save = false);
 
 /**

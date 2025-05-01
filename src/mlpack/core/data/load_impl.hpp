@@ -19,7 +19,6 @@
 #include <algorithm>
 #include <exception>
 
-#include "extension.hpp"
 #include "detect_file_type.hpp"
 #include "string_algorithms.hpp"
 
@@ -80,7 +79,7 @@ bool inline inplace_transpose(MatType& X, bool fatal)
 }
 
 template<typename eT>
-bool Load(const std::string& filename,
+bool Load(const std::filesystem::path& filename,
           arma::Mat<eT>& matrix,
           const bool fatal,
           const bool transpose,
@@ -92,9 +91,9 @@ bool Load(const std::string& filename,
   std::fstream stream;
 
 #ifdef  _WIN32 // Always open in binary mode on Windows.
-  stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
+  stream.open(filename, std::fstream::in | std::fstream::binary);
 #else
-  stream.open(filename.c_str(), std::fstream::in);
+  stream.open(filename, std::fstream::in);
 #endif
   if (!stream.is_open())
   {
@@ -200,7 +199,7 @@ bool Load(const std::string& filename,
 
 // Load with mappings.  Unfortunately we have to implement this ourselves.
 template<typename eT, typename PolicyType>
-bool Load(const std::string& filename,
+bool Load(const std::filesystem::path& filename,
           arma::Mat<eT>& matrix,
           DatasetMapper<PolicyType>& info,
           const bool fatal,
@@ -210,11 +209,11 @@ bool Load(const std::string& filename,
   Timer::Start("loading_data");
 
   // Get the extension.
-  std::string extension = Extension(filename);
+  std::string extension = filename.extension();
 
   // Catch nonexistent files by opening the stream ourselves.
   std::fstream stream;
-  stream.open(filename.c_str(), std::fstream::in);
+  stream.open(filename, std::fstream::in);
 
   if (!stream.is_open())
   {
@@ -296,7 +295,7 @@ bool Load(const std::string& filename,
 
 // For loading data into sparse matrix
 template <typename eT>
-bool Load(const std::string& filename,
+bool Load(const std::filesystem::path& filename,
           arma::SpMat<eT>& matrix,
           const bool fatal,
           const bool transpose,
@@ -305,14 +304,14 @@ bool Load(const std::string& filename,
   Timer::Start("loading_data");
 
   // Get the extension.
-  std::string extension = Extension(filename);
+  std::string extension = filename.extension();
 
   // Catch nonexistent files by opening the stream ourselves.
   std::fstream stream;
 #ifdef  _WIN32 // Always open in binary mode on Windows.
-  stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
+  stream.open(filename, std::fstream::in | std::fstream::binary);
 #else
-  stream.open(filename.c_str(), std::fstream::in);
+  stream.open(filename, std::fstream::in);
 #endif
   if (!stream.is_open())
   {

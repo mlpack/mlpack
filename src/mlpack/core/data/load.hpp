@@ -15,6 +15,7 @@
 #define MLPACK_CORE_DATA_LOAD_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <filesystem>
 #include <string>
 
 #include "format.hpp"
@@ -70,7 +71,7 @@ namespace data /** Functions to load and save matrices and models. */ {
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
-bool Load(const std::string& filename,
+bool Load(const std::filesystem::path& filename,
           arma::Mat<eT>& matrix,
           const bool fatal = false,
           const bool transpose = true,
@@ -107,7 +108,7 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
-bool Load(const std::string& filename,
+bool Load(const std::filesystem::path& filename,
           arma::SpMat<eT>& matrix,
           const bool fatal = false,
           const bool transpose = true,
@@ -141,7 +142,7 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
-bool Load(const std::string& filename,
+bool Load(const std::filesystem::path& filename,
           arma::Col<eT>& vec,
           const bool fatal = false);
 
@@ -173,7 +174,7 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
-bool Load(const std::string& filename,
+bool Load(const std::filesystem::path& filename,
           arma::Row<eT>& rowvec,
           const bool fatal = false);
 
@@ -214,7 +215,7 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT, typename PolicyType>
-bool Load(const std::string& filename,
+bool Load(const std::filesystem::path& filename,
           arma::Mat<eT>& matrix,
           DatasetMapper<PolicyType>& info,
           const bool fatal = false,
@@ -246,7 +247,7 @@ bool Load(const std::string& filename,
  * relevant error information will be printed to Log::Warn.
  */
 template<typename T>
-bool Load(const std::string& filename,
+bool Load(const std::filesystem::path& filename,
           const std::string& name,
           T& t,
           const bool fatal = false,

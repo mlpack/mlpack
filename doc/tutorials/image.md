@@ -54,7 +54,7 @@ Standalone loading of images can be done with the function below.
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
-bool Load(const std::string& filename,
+bool Load(const std::filesystem::path& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
           const bool fatal,
@@ -93,7 +93,7 @@ Loading multiple images can be done using the function below.
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
-bool Load(const std::vector<std::string>& files,
+bool Load(const std::vector<std::filesystem::path>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
           const bool fatal,
@@ -102,7 +102,7 @@ bool Load(const std::vector<std::string>& files,
 
 ```c++
 data::ImageInfo info;
-std::vector<std::string>> files{"test_image1.bmp","test_image2.bmp"};
+std::vector<std::filesystem::path>> files{"test_image1.bmp","test_image2.bmp"};
 data::Load(files, matrix, info, false, true);
 ```
 
@@ -128,7 +128,7 @@ Saving one image can be done with the function below:
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
-bool Save(const std::string& filename,
+bool Save(const std::filesystem::path& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
           const bool fatal,
@@ -160,7 +160,7 @@ Saving multiple images can be done with the function below.
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
-bool Save(const std::vector<std::string>& files,
+bool Save(const std::vector<std::filesystem::path>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
           const bool fatal,
@@ -172,7 +172,7 @@ data::ImageInfo info;
 info.width = info.height = 25;
 info.channels = 3;
 info.quality = 90;
-std::vector<std::string>> files{"test_image1.bmp", "test_image2.bmp"};
+std::vector<std::filesystem::path>> files{"test_image1.bmp", "test_image2.bmp"};
 data::Save(files, matrix, info, false, true);
 ```
 

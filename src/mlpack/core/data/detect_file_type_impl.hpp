@@ -12,7 +12,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include "extension.hpp"
 #include "detect_file_type.hpp"
 #include "string_algorithms.hpp"
 
@@ -187,24 +186,25 @@ inline FileType GuessFileType(std::istream& f)
  * @param filename Name of the file.
  * @return The detected file type.
  */
-inline FileType AutoDetect(std::fstream& stream, const std::string& filename)
+inline FileType AutoDetect(std::fstream& stream,
+                           const std::filesystem::path& filename)
 {
   // Get the extension.
-  std::string extension = Extension(filename);
+  std::string extension = filename.extension();
   FileType detectedLoadType = FileType::FileTypeUnknown;
 
-  if (extension == "csv" || extension == "tsv")
+  if (extension == ".csv" || extension == ".tsv")
   {
     detectedLoadType = GuessFileType(stream);
     if (detectedLoadType == FileType::CSVASCII)
     {
-      if (extension == "tsv")
+      if (extension == ".tsv")
         Log::Warn << "'" << filename << "' is comma-separated, not "
             "tab-separated!" << std::endl;
     }
     else if (detectedLoadType == FileType::RawASCII) // .csv file can be tsv.
     {
-      if (extension == "csv")
+      if (extension == ".csv")
       {
         // We should issue a warning, but we don't want to issue the warning if
         // there is only one column in the CSV (since there will be no commas
@@ -232,7 +232,7 @@ inline FileType AutoDetect(std::fstream& stream, const std::string& filename)
       detectedLoadType = FileType::FileTypeUnknown;
     }
   }
-  else if (extension == "txt")
+  else if (extension == ".txt")
   {
     // This could be raw ASCII or Armadillo ASCII (ASCII with size header).
     // We'll let Armadillo do its guessing (although we have to check if it is
@@ -260,7 +260,7 @@ inline FileType AutoDetect(std::fstream& stream, const std::string& filename)
         detectedLoadType = FileType::FileTypeUnknown;
     }
   }
-  else if (extension == "bin")
+  else if (extension == ".bin")
   {
     // This could be raw binary or Armadillo binary (binary with header).  We
     // will check to see if it is Armadillo binary.
@@ -283,12 +283,12 @@ inline FileType AutoDetect(std::fstream& stream, const std::string& filename)
       detectedLoadType = FileType::RawBinary;
     }
   }
-  else if (extension == "pgm")
+  else if (extension == ".pgm")
   {
     detectedLoadType = FileType::PGMBinary;
   }
-  else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
-           extension == "he5")
+  else if (extension == ".h5" || extension == ".hdf5" || extension == ".hdf" ||
+           extension == ".he5")
   {
     detectedLoadType = FileType::HDF5Binary;
   }
@@ -306,28 +306,28 @@ inline FileType AutoDetect(std::fstream& stream, const std::string& filename)
  * @param filename Name of the file whose type we should detect.
  * @return Detected type of file.
  */
-inline FileType DetectFromExtension(const std::string& filename)
+inline FileType DetectFromExtension(const std::filesystem::path& filename)
 {
-  const std::string extension = Extension(filename);
+  const std::string extension = filename.extension();
 
-  if (extension == "csv")
+  if (extension == ".csv")
   {
     return FileType::CSVASCII;
   }
-  else if (extension == "txt")
+  else if (extension == ".txt")
   {
     return FileType::RawASCII;
   }
-  else if (extension == "bin")
+  else if (extension == ".bin")
   {
     return FileType::ArmaBinary;
   }
-  else if (extension == "pgm")
+  else if (extension == ".pgm")
   {
     return FileType::PGMBinary;
   }
-  else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
-           extension == "he5")
+  else if (extension == ".h5" || extension == ".hdf5" || extension == ".hdf" ||
+           extension == ".he5")
   {
     return FileType::HDF5Binary;
   }

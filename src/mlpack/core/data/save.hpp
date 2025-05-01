@@ -16,6 +16,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/log.hpp>
+#include <filesystem>
 #include <string>
 
 #include "format.hpp"
@@ -62,7 +63,7 @@ namespace data /** Functions to load and save matrices. */ {
  * @return Boolean value indicating success or failure of save.
  */
 template<typename eT>
-bool Save(const std::string& filename,
+bool Save(const std::filesystem::path& filename,
           const arma::Mat<eT>& matrix,
           const bool fatal = false,
           bool transpose = true,
@@ -94,7 +95,7 @@ bool Save(const std::string& filename,
  * @return Boolean value indicating success or failure of save.
  */
 template<typename eT>
-bool Save(const std::string& filename,
+bool Save(const std::filesystem::path& filename,
           const arma::SpMat<eT>& matrix,
           const bool fatal = false,
           bool transpose = true);
@@ -125,7 +126,7 @@ bool Save(const std::string& filename,
  * relevant error information will be printed to Log::Warn.
  */
 template<typename T>
-bool Save(const std::string& filename,
+bool Save(const std::filesystem::path& filename,
           const std::string& name,
           T& t,
           const bool fatal = false,
