@@ -166,12 +166,6 @@ class RPTreeMeanSplit
                             ElemType& splitVal);
 };
 
-template<typename BoundType, typename MatType>
-struct IsRPTreeSplitType<RPTreeMeanSplit<BoundType, MatType>>
-{
-  constexpr static const bool value = true;
-};
-
 } // namespace mlpack
 
 // Include implementation.

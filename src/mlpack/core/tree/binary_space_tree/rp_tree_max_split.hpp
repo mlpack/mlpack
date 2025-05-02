@@ -136,20 +136,6 @@ class RPTreeMaxSplit
                           ElemType& splitVal);
 };
 
-// This template metaprogramming utility can be used to detect whether a given
-// split type is an RPTree split (either max or mean).
-template<typename T>
-struct IsRPTreeSplitType
-{
-  constexpr static const bool value = false;
-};
-
-template<typename BoundType, typename MatType>
-struct IsRPTreeSplitType<RPTreeMaxSplit<BoundType, MatType>>
-{
-  constexpr static const bool value = true;
-};
-
 } // namespace mlpack
 
 // Include implementation.
