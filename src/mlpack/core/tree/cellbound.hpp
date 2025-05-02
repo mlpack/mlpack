@@ -325,20 +325,6 @@ struct BoundTraits<CellBound<DistanceType, ElemType>>
   static const bool HasTightBounds = true;
 };
 
-// This template metaprogramming utility can be used to determine if a type is
-// a cell bound.
-template<typename T>
-struct IsCellBoundType
-{
-  constexpr static const bool value = false;
-};
-
-template<typename DistanceType, typename ElemType>
-struct IsCellBoundType<CellBound<DistanceType, ElemType>>
-{
-  constexpr static const bool value = true;
-};
-
 } // namespace mlpack
 
 #include "cellbound_impl.hpp"

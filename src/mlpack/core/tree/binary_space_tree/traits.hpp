@@ -17,6 +17,46 @@
 
 namespace mlpack {
 
+// Utility struct: random projection trees allow overlapping children, so we
+// want to capture that as a compile-time constant.
+template<template<typename BoundType, typename MatType> class SplitType>
+struct SplitIsOverlapping
+{
+  static const bool value = false;
+};
+
+template<>
+struct SplitIsOverlapping<RPTreeMaxSplit>
+{
+  static const bool value = true;
+};
+
+template<>
+struct SplitIsOverlapping<RPTreeMeanSplit>
+{
+  static const bool value = true;
+};
+
+// Utility struct: ball bounds or cell bounds correspond to overlapping regions,
+// and we want to capture that as a compile-time constant.
+template<template<typename SplitBoundType, typename SplitMatType> class SplitType>
+struct BoundIsOverlapping
+{
+  static const bool value = false;
+};
+
+template<>
+struct BoundIsOverlapping<BallBound>
+{
+  static const bool value = true;
+};
+
+template<>
+struct BoundIsOverlapping<CellBound>
+{
+  static const bool value = true;
+};
+
 /**
  * This is a specialization of the TreeTraits class to the BinarySpaceTree tree
  * type.  It defines characteristics of the binary space tree, and is used to
@@ -44,15 +84,8 @@ class TreeTraits<BinarySpaceTree<
    * are possible.
    */
   static const bool HasOverlappingChildren =
-      IsRPTreeSplitType<SplitType<
-          BoundType<DistanceType, typename MatType::elem_type>, MatType>
-      >::value ||
-      IsBallBoundType<BoundType<DistanceType,
-                                typename MatType::elem_type>>::value ||
-      IsHollowBallBoundType<BoundType<DistanceType,
-                                      typename MatType::elem_type>>::value ||
-      IsCellBoundType<BoundType<DistanceType,
-                                typename MatType::elem_type>>::value;
+      SplitIsOverlapping<SplitType>::value ||
+      BoundIsOverlapping<BoundType>::value;
 
   /**
    * Each binary space tree node doesn't share points with any other node.

@@ -217,20 +217,6 @@ struct BoundTraits<BallBound<DistanceType, VecType>>
   static const bool HasTightBounds = false;
 };
 
-// This template metaprogramming utility can be used to determine if a type is
-// a ball bound.
-template<typename T>
-struct IsBallBoundType
-{
-  constexpr static const bool value = false;
-};
-
-template<typename DistanceType, typename ElemType, typename VecType>
-struct IsBallBoundType<BallBound<DistanceType, ElemType, VecType>>
-{
-  constexpr static const bool value = true;
-};
-
 } // namespace mlpack
 
 #include "ballbound_impl.hpp"

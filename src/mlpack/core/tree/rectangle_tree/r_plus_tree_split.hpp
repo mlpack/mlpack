@@ -126,20 +126,6 @@ class RPlusTreeSplitType
   static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);
 };
 
-// This template metaprogramming utility detects when a given type is an
-// RPlusTreeSplitType with any template parameters.
-template<typename T>
-struct IsRPlusTreeSplitType
-{
-  constexpr static const bool value = false;
-};
-
-template<typename SplitPolicy, template<typename> class SweepType>
-struct IsRPlusTreeSplitType<RPlusTreeSplitType<SplitPolicy, SweepType>>
-{
-  constexpr static const bool value = true;
-};
-
 // Convenience typedefs.
 using RPlusTreeSplit = RPlusTreeSplitType<RPlusTreeSplitPolicy,
                                           MinimalCoverageSweep>;
