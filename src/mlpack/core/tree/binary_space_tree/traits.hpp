@@ -21,43 +21,29 @@ namespace mlpack {
 // want to capture that as a compile-time constant.
 template<template<typename BoundType, typename MatType, typename...>
          class SplitType>
-struct SplitIsOverlapping
-{
-  static const bool value = false;
-};
+struct SplitIsOverlapping { static const bool value = false; };
 
 template<>
-struct SplitIsOverlapping<RPTreeMaxSplit>
-{
-  static const bool value = true;
-};
+struct SplitIsOverlapping<RPTreeMaxSplit> { static const bool value = true; };
 
 template<>
-struct SplitIsOverlapping<RPTreeMeanSplit>
-{
-  static const bool value = true;
-};
+struct SplitIsOverlapping<RPTreeMeanSplit> { static const bool value = true; };
 
-// Utility struct: ball bounds or cell bounds correspond to overlapping regions,
-// and we want to capture that as a compile-time constant.
+// Utility struct: ball bounds, hollow ball bounds, and cell bounds correspond
+// to overlapping regions, and we want to capture that as a compile-time
+// constant.
 template<template<typename SplitBoundType, typename SplitMatType, typename...>
          class SplitType>
-struct BoundIsOverlapping
-{
-  static const bool value = false;
-};
+struct BoundIsOverlapping {   static const bool value = false; };
 
 template<>
-struct BoundIsOverlapping<BallBound>
-{
-  static const bool value = true;
-};
+struct BoundIsOverlapping<BallBound> { static const bool value = true; };
 
 template<>
-struct BoundIsOverlapping<CellBound>
-{
-  static const bool value = true;
-};
+struct BoundIsOverlapping<HollowBallBound> { static const bool value = true; }
+
+template<>
+struct BoundIsOverlapping<CellBound> { static const bool value = true; };
 
 /**
  * This is a specialization of the TreeTraits class to the BinarySpaceTree tree
