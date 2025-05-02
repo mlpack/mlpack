@@ -19,7 +19,8 @@ namespace mlpack {
 
 // Utility struct: random projection trees allow overlapping children, so we
 // want to capture that as a compile-time constant.
-template<template<typename BoundType, typename MatType> class SplitType>
+template<template<typename BoundType, typename MatType, typename...>
+         class SplitType>
 struct SplitIsOverlapping
 {
   static const bool value = false;
@@ -39,7 +40,7 @@ struct SplitIsOverlapping<RPTreeMeanSplit>
 
 // Utility struct: ball bounds or cell bounds correspond to overlapping regions,
 // and we want to capture that as a compile-time constant.
-template<template<typename SplitBoundType, typename SplitMatType>
+template<template<typename SplitBoundType, typename SplitMatType, typename...>
          class SplitType>
 struct BoundIsOverlapping
 {
