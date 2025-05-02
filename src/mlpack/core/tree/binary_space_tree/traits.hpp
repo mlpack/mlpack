@@ -39,7 +39,8 @@ struct SplitIsOverlapping<RPTreeMeanSplit>
 
 // Utility struct: ball bounds or cell bounds correspond to overlapping regions,
 // and we want to capture that as a compile-time constant.
-template<template<typename SplitBoundType, typename SplitMatType> class SplitType>
+template<template<typename SplitBoundType, typename SplitMatType>
+         class SplitType>
 struct BoundIsOverlapping
 {
   static const bool value = false;
