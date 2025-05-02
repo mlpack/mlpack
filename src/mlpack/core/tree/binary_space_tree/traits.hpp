@@ -40,7 +40,7 @@ template<>
 struct BoundIsOverlapping<BallBound> { static const bool value = true; };
 
 template<>
-struct BoundIsOverlapping<HollowBallBound> { static const bool value = true; }
+struct BoundIsOverlapping<HollowBallBound> { static const bool value = true; };
 
 template<>
 struct BoundIsOverlapping<CellBound> { static const bool value = true; };
