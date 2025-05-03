@@ -117,11 +117,11 @@ TEST_CASE_METHOD(NCATestFixture, "NCANormalizationTest",
                 "[NCAMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, data::NoFatal | data::Transpose))
     FAIL("Cannot load vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, data::NoFatal | data::Transpose))
     FAIL("Cannot load vc2_labels.txt!");
 
   // Set parameters and set normalize to true.
@@ -139,11 +139,11 @@ TEST_CASE_METHOD(NCATestFixture, "NCANormalizationTest",
   ResetSettings();
 
   arma::mat inputData2;
-  if (!data::Load("vc2.csv", inputData2))
+  if (!data::Load("vc2.csv", inputData2, data::NoFatal | data::Transpose))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels2;
-  if (!data::Load("vc2_labels.txt", labels2))
+  if (!data::Load("vc2_labels.txt", labels2, data::NoFatal | data::Transpose))
     FAIL("Cannot load vc2_labels.txt!");
 
   // Use the same input but set normalize to false.
