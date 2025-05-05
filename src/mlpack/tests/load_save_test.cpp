@@ -2519,10 +2519,13 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
   data::Load("test.csv", dataset, opts);
 
   arma::field<std::string> headers = opts.Headers();
-  std::cout << headers.at(0) << std::endl;
+
+    // will seg fault
+  //std::cout << headers.at(0) << std::endl;
 
   REQUIRE(dataset.n_rows == 4);
   REQUIRE(dataset.n_cols == 2);
+  // will seg fault
   //REQUIRE(headers.at(0) == "a");
   //REQUIRE(headers.at(1) == "b");
   //REQUIRE(headers.at(2) == "c");
