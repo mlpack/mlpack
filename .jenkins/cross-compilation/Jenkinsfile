@@ -180,15 +180,18 @@ pipeline
   {
     always
     {
-      junit(allowEmptyResults: true,
-            skipPublishingChecks: true,
-            testResults: '**/reports/mlpack_test.*.junit.xml')
+      script
+      {
+        junit(allowEmptyResults: true,
+              skipPublishingChecks: true,
+              testResults: '**/reports/mlpack_test.*.junit.xml')
 
-      // Clean the workspace.
-      cleanWs(cleanWhenNotBuilt: true,
-              deleteDirs: true,
-              disableDeferredWipeout: true,
-              notFailBuild: true)
+        // Clean the workspace.
+        cleanWs(cleanWhenNotBuilt: true,
+                deleteDirs: true,
+                disableDeferredWipeout: true,
+                notFailBuild: true)
+      }
     }
 
     success
