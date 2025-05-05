@@ -6,17 +6,20 @@
 arch_names = ['couscous': 'CORTEXA76',
               'tofu':     'CORTEXA53',
               'chorizo':  'CORTEXA78',
-              'tatertot': 'CORTEXA72']
+              'tatertot': 'CORTEXA72',
+              'tanteo':   'CORTEXA53']
 
 device_names = ['couscous': 'rpi5',
                 'tofu': 'rpi3',
                 'chorizo': 'jetson-orin-nano',
-                'tatertot': 'beaglebone-ai64']
+                'tatertot': 'beaglebone-ai64',
+                'tanteo': 'avnet-ultra96-v2']
 
 page_sizes = ['couscous': '0x4000' /* 16kb for RPi5s */,
               'tofu': '',
               'chorizo': '',
-              'tatertot': '0x10000' /* 64kb */]
+              'tatertot': '0x10000' /* 64kb */,
+              'tanteo': '']
 
 pipeline
 {
