@@ -92,6 +92,8 @@ bool Load(const std::string& filename,
   TextOptions opts;
   opts.Fatal() = fatal;
   opts.NoTranspose() = !transpose;
+  opts.Categorical() = true;
+
   if constexpr (std::is_same_v<PolicyType, data::IncrementPolicy>)
   {
     opts.DatasetInfo() = info;
@@ -100,7 +102,19 @@ bool Load(const std::string& filename,
   {
     opts.DatasetMissingPolicy() = info;
   }
-  return Load(filename, matrix, opts);
+
+  bool success = Load(filename, matrix, opts);
+
+  if constexpr (std::is_same_v<PolicyType, data::IncrementPolicy>)
+  {
+    info = opts.DatasetInfo();
+  }
+  else if constexpr (std::is_same_v<PolicyType, data::MissingPolicy>)
+  {
+    info = opts.DatasetMissingPolicy();
+  }
+
+  return success;
 }
 
 template<typename MatType, typename DataOptionsType>
@@ -229,16 +243,16 @@ bool LoadDense(const std::string& filename,
   // We can't use the stream if the type is HDF5.
   if (opts.Format() == FileType::HDF5Binary)
   {
-    // TODO: if this should always be a TextOptions, then we should create one:
-    // TextOptions csvOpts(std::move(opts));
     success = LoadHDF5(filename, matrix, opts);
-    // and then opts = std::move(csvOpts) to convert back (if needed)
-    // afterwards.
   }
   else if (opts.Format() == FileType::CSVASCII)
   {
     std::cout << "should be loading" << std::endl;
     success = LoadCSVASCII(filename, matrix, opts);
+
+    if (matrix.col(0).is_zero())
+      Log::Warn << "First column is zeros, if dataset contains headers, "
+                   "please use HasHeaders() option." << std::endl;
   }
   else
   {
@@ -354,6 +368,7 @@ bool LoadCategorical(const std::string& filename,
   }
   else if (extension == "arff")
   {
+    std::cout << "loading arff" << std::endl;
     Log::Info << "Loading '" << filename << "' as ARFF dataset.  "
         << std::flush;
     success = LoadARFF(filename, matrix, opts.DatasetInfo());
@@ -362,7 +377,8 @@ bool LoadCategorical(const std::string& filename,
       Timer::Stop("loading_data");
       return false;
     }
-    if (!opts.NoTranspose())
+    // Retranspose back as we are transposing by default
+    if (opts.NoTranspose())
     {
       inplace_trans(matrix);
     }

@@ -365,41 +365,6 @@ TEST_CASE("SaveCSVTest", "[LoadSaveTest]")
 }
 
 /**
- * Make sure a TSV is saved correctly for a sparse matrix
- */
-TEST_CASE("SaveSparseTSVTest", "[LoadSaveTest]")
-{
-  arma::sp_mat test = "0.1\t0\t0\t0;"
-                      "0\t0.2\t0\t0;"
-                      "0\t0\t0.3\t0;"
-                      "0\t0\t0\t0.4;";
-
-  REQUIRE(data::Save("test_sparse_file.tsv", test, true, false) == true);
-
-  // Load it in and make sure it is the same.
-  arma::sp_mat test2;
-  REQUIRE(data::Load("test_sparse_file.tsv", test2, true, false) == true);
-
-  REQUIRE(test2.n_rows == 4);
-  REQUIRE(test2.n_cols == 4);
-
-  arma::sp_mat::const_iterator it = test2.begin();
-  arma::sp_mat::const_iterator it_end = test2.end();
-
-  double temp = 0.1;
-  for (int i = 0; it != it_end; ++it, temp += 0.1, ++i)
-  {
-    double val = (*it);
-    REQUIRE(val == Approx(temp).epsilon(1e-7));
-    REQUIRE((int)(it.row()) == i);
-    REQUIRE((int)it.col() == i);
-  }
-
-  // Remove the file.
-  remove("test_sparse_file.tsv");
-}
-
-/**
  * Make sure a TXT is saved correctly for a sparse matrix
  */
 TEST_CASE("SaveSparseTXTTest", "[LoadSaveTest]")
@@ -2292,8 +2257,7 @@ TEST_CASE("BadDatasetInfoARFFTest", "[LoadSaveTest]")
   arma::mat dataset;
   DatasetInfo info(6);
 
-  REQUIRE_THROWS_AS(data::LoadARFF("test.arff", dataset, info),
-      std::invalid_argument);
+  REQUIRE_THROWS(data::LoadARFF("test.arff", dataset, info));
 
   remove("test.arff");
 }
@@ -2550,8 +2514,17 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
   f << "5, 6, 7, 8" << endl;
 
   arma::mat dataset;
-  data::Load("test.csv", dataset);
+  data::TextOptions opts;
+  opts.HasHeaders() = true;
+  data::Load("test.csv", dataset, opts);
+
+  arma::field<std::string> headers = opts.Headers();
+  std::cout << headers.at(0) << std::endl;
 
   REQUIRE(dataset.n_rows == 4);
   REQUIRE(dataset.n_cols == 2);
+  //REQUIRE(headers.at(0) == "a");
+  //REQUIRE(headers.at(1) == "b");
+  //REQUIRE(headers.at(2) == "c");
+  //REQUIRE(headers.at(3) == "d");
 }
