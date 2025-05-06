@@ -16,144 +16,87 @@
 namespace mlpack {
 namespace data {
 
+// These help assemble the Armadillo csv_opts flags.
+inline const arma::csv_opts::opts& NoTransposeOpt(const bool noTranspose)
+{
+  if (noTranspose)
+    return arma::csv_opts::none;
+  else
+    return arma::csv_opts::trans;
+}
+
+inline const arma::csv_opts::opts& HasHeadersOpt(const bool hasHeaders)
+{
+  if (hasHeaders)
+    return arma::csv_opts::with_header;
+  else
+    return arma::csv_opts::no_header;
+}
+
+inline const arma::csv_opts::opts& SemicolonOpt(const bool semicolon)
+{
+  if (semicolon)
+    return arma::csv_opts::semicolon;
+  else
+    return arma::csv_opts::none;
+}
+
+inline const arma::csv_opts::opts& MissingToNanOpt(const bool missingToNan)
+{
+  if (missingToNan)
+  {
+    #ifdef ARMA_VERSION_MAJOR >= 12
+    return arma::csv_opts::strict;
+    #else
+    return arma::csv_opts::none;
+    #endif
+  }
+  else
+  {
+    return arma::csv_opts::none;
+  }
+}
+
 template<typename MatType>
 bool LoadCSVASCII(const std::string& filename,
                   MatType& matrix,
-                  const TextOptions& opts)
+                  TextOptions& opts)
 {
   bool success = false;
 
-// show a warning if strict is availabe on not.
-#if ARMA_VERSION_MAJOR < 12
-  #pragma warning ("MissingToNan() support requires minimum Armadillo version >= 12.0.")
-  #define NOT_MISSING_TO_NAN
-#endif
+  // Show a warning if strict is not available.
+  #ifdef ARMA_VERSION_MAJOR >= 12
+  if (opts.MissingToNan())
+  {
+    if (opts.Fatal())
+    {
+      Log::Fatal << "data::Load(): MissingToNan() requires Armadillo version "
+          << ">= 12.0!" << std::endl;
+    }
+    else
+    {
+      Log::Warn << "data::Load(): MissingToNan() requires Armadillo version "
+          << ">= 12.0!  Option ignored." << std::endl;
+    }
+  }
+  #endif
 
-  if (!opts.NoTranspose() && opts.HasHeaders() &&
-      !opts.Semicolon() && !opts.MissingToNan())
+  // Build Armadillo flags for loading based on our settings.
+  arma::csv_opts::opts flags =
+      NoTransposeOpt(opts.NoTranspose()) +
+      HasHeadersOpt(opts.HasHeaders()) +
+      SemicolonOpt(opts.Semicolon()) +
+      MissingToNanOpt(opts.MissingToNan());
 
-    success = matrix.load(arma::csv_name(filename, opts.Headers(),
-          arma::csv_opts::trans), arma::csv_ascii);
-
-  else if (!opts.NoTranspose() && !opts.HasHeaders() &&
-           !opts.Semicolon() && !opts.MissingToNan())
-
-    success = matrix.load(arma::csv_name(filename, arma::csv_opts::trans),
+  if (opts.HasHeaders())
+  {
+    success = matrix.load(arma::csv_name(filename, opts.Headers(), flags),
         arma::csv_ascii);
-
-  else if (opts.NoTranspose() && !opts.HasHeaders() &&
-           !opts.Semicolon() && !opts.MissingToNan())
-
-    success = matrix.load(filename, arma::csv_ascii);
-
-  else if (opts.NoTranspose() && opts.HasHeaders() &&
-           !opts.Semicolon() && !opts.MissingToNan())
-
-    success = matrix.load(arma::csv_name(filename, opts.Headers()),
-        arma::csv_ascii);
-
-  else if (opts.NoTranspose() && !opts.HasHeaders() &&
-           opts.Semicolon() && !opts.MissingToNan())
-
-    success = matrix.load(arma::csv_name(filename, arma::csv_opts::semicolon),
-        arma::csv_ascii);
-
-  else if (opts.NoTranspose() && !opts.HasHeaders() &&
-           !opts.Semicolon() && opts.MissingToNan())
-
-#ifdef NOT_MISSING_TO_NAN
-    success = matrix.load(filename, arma::csv_ascii);
-#else
-  success = matrix.load(arma::csv_name(filename, arma::csv_opts::strict),
-        arma::csv_ascii);
-#endif
-
-  else if (!opts.NoTranspose() && opts.HasHeaders() &&
-           opts.Semicolon() && !opts.MissingToNan())
-
-    success = matrix.load(arma::csv_name(filename, opts.Headers(),
-          arma::csv_opts::semicolon + arma::csv_opts::trans), arma::csv_ascii);
-
-  else if (!opts.NoTranspose() && opts.HasHeaders() &&
-           opts.Semicolon() && opts.MissingToNan())
-
-#ifdef NOT_MISSING_TO_NAN
-    success = matrix.load(arma::csv_name(filename, opts.Headers(),
-        arma::csv_opts::semicolon + arma::csv_opts::trans),
-        arma::csv_ascii);
-#else
-    success = matrix.load(arma::csv_name(filename, opts.Headers(),
-          arma::csv_opts::semicolon + arma::csv_opts::trans +
-          arma::csv_opts::strict), arma::csv_ascii);
-#endif
-
-  else if (!opts.NoTranspose() && !opts.HasHeaders() &&
-           !opts.Semicolon() && opts.MissingToNan())
-
-#ifdef NOT_MISSING_TO_NAN
-    success = matrix.load(arma::csv_name(filename, arma::csv_opts::trans),
-        arma::csv_ascii);
-#else
-    success = matrix.load(arma::csv_name(filename,
-          arma::csv_opts::trans + arma::csv_opts::strict), arma::csv_ascii);
-
-#endif
-   
-  else if (!opts.NoTranspose() && !opts.HasHeaders() &&
-           opts.Semicolon() && !opts.MissingToNan())
-
-    success = matrix.load(arma::csv_name(filename,
-          arma::csv_opts::trans + arma::csv_opts::semicolon), arma::csv_ascii);
-
-  else if (opts.NoTranspose() && opts.HasHeaders() &&
-           opts.Semicolon() && !opts.MissingToNan())
-
-    success = matrix.load(arma::csv_name(filename, opts.Headers(),
-          arma::csv_opts::semicolon), arma::csv_ascii);
-
-  else if (opts.NoTranspose() && opts.HasHeaders() &&
-           !opts.Semicolon() && opts.MissingToNan())
-
-#ifdef NOT_MISSING_TO_NAN
-    success = matrix.load(arma::csv_name(filename, opts.Headers()),
-        arma::csv_ascii);
-#else
-    success = matrix.load(arma::csv_name(filename, opts.Headers(),
-          arma::csv_opts::strict), arma::csv_ascii);
-#endif
-    
-  else if (opts.NoTranspose() && opts.HasHeaders() &&
-            opts.Semicolon() && opts.MissingToNan())
-
-#ifdef NOT_MISSING_TO_NAN
-    success = matrix.load(arma::csv_name(filename, opts.Headers(),
-        arma::csv_opts::semicolon), arma::csv_ascii);
-#else
-    success = matrix.load(arma::csv_name(filename, opts.Headers(),
-        arma::csv_opts::strict + arma::csv_opts::semicolon), arma::csv_ascii);
-#endif
-
-  else if (!opts.NoTranspose() && !opts.HasHeaders() &&
-           opts.Semicolon() && opts.MissingToNan())
-
-#ifdef NOT_MISSING_TO_NAN
-    success = matrix.load(arma::csv_name(filename, arma::csv_opts::trans +
-        arma::csv_opts::semicolon), arma::csv_ascii);
-#else
-    success = matrix.load(arma::csv_name(filename, arma::csv_opts::strict +
-          arma::csv_opts::trans + arma::csv_opts::semicolon), arma::csv_ascii);
-#endif
-
-  else if (opts.NoTranspose() && !opts.HasHeaders() &&
-           opts.Semicolon() && opts.MissingToNan())
-
-#ifdef NOT_MISSING_TO_NAN
-    success = matrix.load(arma::csv_name(filename, arma::csv_opts::semicolon),
-        arma::csv_ascii);
-#else
-    success = matrix.load(arma::csv_name(filename, arma::csv_opts::strict +
-          arma::csv_opts::semicolon), arma::csv_ascii);
-#endif
+  }
+  else
+  {
+    success = matrix.load(arma::csv_name(filename, flags), arma::csv_ascii);
+  }
 
   return success;
 }

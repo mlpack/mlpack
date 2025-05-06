@@ -2520,14 +2520,11 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
 
   arma::field<std::string> headers = opts.Headers();
 
-    // will seg fault
-  //std::cout << headers.at(0) << std::endl;
-
   REQUIRE(dataset.n_rows == 4);
   REQUIRE(dataset.n_cols == 2);
-  // will seg fault
-  //REQUIRE(headers.at(0) == "a");
-  //REQUIRE(headers.at(1) == "b");
-  //REQUIRE(headers.at(2) == "c");
-  //REQUIRE(headers.at(3) == "d");
+  REQUIRE(headers.n_elem == 4);
+  REQUIRE(headers.at(0) == "a");
+  REQUIRE(headers.at(1) == "b");
+  REQUIRE(headers.at(2) == "c");
+  REQUIRE(headers.at(3) == "d");
 }
