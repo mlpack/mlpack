@@ -138,18 +138,15 @@ pipeline
 
     always
     {
-      script
-      {
-        junit(allowEmptyResults: true,
-              skipPublishingChecks: true,
-              testResults: '**/reports/tests/*.xml')
+      junit(allowEmptyResults: true,
+            skipPublishingChecks: true,
+            testResults: '**/reports/tests/*.xml')
 
-        // Clean the workspace.
-        cleanWs(cleanWhenNotBuilt: true,
-                deleteDirs: true,
-                disableDeferredWipeout: true,
-                notFailBuild: true)
-      }
+      // Clean the workspace.
+      cleanWs(cleanWhenNotBuilt: true,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true)
     }
   }
 }

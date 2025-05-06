@@ -87,14 +87,11 @@ pipeline
 
     always
     {
-      script
-      {
-        // Clean the workspace.
-        cleanWs(cleanWhenNotBuilt: true,
-                deleteDirs: true,
-                disableDeferredWipeout: true,
-                notFailBuild: true);
-      }
+      // Clean the workspace.
+      cleanWs(cleanWhenNotBuilt: true,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true);
     }
   }
 }

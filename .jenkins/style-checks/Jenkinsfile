@@ -76,19 +76,16 @@ pipeline
 
     always
     {
-      script
-      {
-        // Process the test results.
-        junit(allowEmptyResults: true,
-              skipPublishingChecks: true,
-              testResults: '**/reports/cpplint.junit.xml')
+      // Process the test results.
+      junit(allowEmptyResults: true,
+            skipPublishingChecks: true,
+            testResults: '**/reports/cpplint.junit.xml')
 
-        // Clean the workspace after the build too.
-        cleanWs(cleanWhenNotBuilt: true,
-                deleteDirs: true,
-                disableDeferredWipeout: true,
-                notFailBuild: true)
-      }
+      // Clean the workspace after the build too.
+      cleanWs(cleanWhenNotBuilt: true,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true)
     }
   }
 }

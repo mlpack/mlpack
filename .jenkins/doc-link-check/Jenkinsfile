@@ -97,23 +97,20 @@ pipeline
 
     always
     {
-      script
-      {
-        // Publish the generated HTML.
-        publishHTML([
-            allowMissing: false,
-            alwaysLinkToLastBuild: false,
-            keepAll: true,
-            reportDir: 'doc/html/',
-            reportFiles: 'index.html',
-            reportName: 'Build documentation']);
+      // Publish the generated HTML.
+      publishHTML([
+          allowMissing: false,
+          alwaysLinkToLastBuild: false,
+          keepAll: true,
+          reportDir: 'doc/html/',
+          reportFiles: 'index.html',
+          reportName: 'Build documentation']);
 
-        // Clean the workspace.
-        cleanWs(cleanWhenNotBuilt: true,
-                deleteDirs: true,
-                disableDeferredWipeout: true,
-                notFailBuild: true);
-      }
+      // Clean the workspace.
+      cleanWs(cleanWhenNotBuilt: true,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true);
     }
   }
 }
