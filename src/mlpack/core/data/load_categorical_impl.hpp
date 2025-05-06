@@ -23,10 +23,20 @@ bool LoadCSV::LoadCategoricalCSV(MatType& matrix,
 {
   CheckOpen();
 
-  if (!opts.NoTranspose())
-    return TransposeParse(matrix, opts.DatasetInfo());
-  else
-    return NonTransposeParse(matrix, opts.DatasetInfo());
+  if (opts.Categorical())
+  {
+    if (!opts.NoTranspose())
+      return TransposeParse(matrix, opts.DatasetInfo());
+    else
+      return NonTransposeParse(matrix, opts.DatasetInfo());
+  }
+  else if (opts.MissingPolicy())
+  {
+    if (!opts.NoTranspose())
+      return TransposeParse(matrix, opts.DatasetMissingPolicy());
+    else
+      return NonTransposeParse(matrix, opts.DatasetMissingPolicy());
+  }
 }
 
 inline void LoadCSV::CategoricalMatColSize(
@@ -99,6 +109,7 @@ bool LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
     // If we need to do a first pass for the DatasetMapper, do it.
     if (MapPolicy::NeedsFirstPass)
     {
+      std::cout << "needed a first pass" << std::endl;
       // In this case we must pass everything we parse to the MapPolicy.
       size_t dim = 0;
       std::stringstream lineStream;
@@ -224,6 +235,10 @@ bool LoadCSV::TransposeParse(arma::Mat<T>& inout,
   size_t rows, cols;
   InitializeTransposeMapper<T>(rows, cols, infoSet);
 
+  if (std::is_same_v<PolicyType, MissingPolicy>)
+    std::cout << "correct policy" <<std::endl;
+  else if (std::is_same_v<PolicyType, IncrementPolicy>)
+    std::cout << "wrong policy" <<std::endl;
   // Set the matrix size.
   inout.set_size(rows, cols);
 
@@ -266,7 +281,7 @@ bool LoadCSV::TransposeParse(arma::Mat<T>& inout,
       inout(row, col) = infoSet.template MapString<T>(std::move(token), row);
       row++;
     }
-
+    std::cout << "was here" << std::endl;
     // Make sure we got the right number of rows.
     if (row != rows)
     {
@@ -278,6 +293,7 @@ bool LoadCSV::TransposeParse(arma::Mat<T>& inout,
     // Increment the column index.
     ++col;
   }
+  inout.print();
   return true;
 }
 

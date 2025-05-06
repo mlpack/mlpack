@@ -65,7 +65,7 @@ bool LoadCSVASCII(const std::string& filename,
   bool success = false;
 
   // Show a warning if strict is not available.
-  #ifdef ARMA_VERSION_MAJOR >= 12
+  #ifdef ARMA_VERSION_MAJOR < 12
   if (opts.MissingToNan())
   {
     if (opts.Fatal())

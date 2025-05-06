@@ -92,14 +92,16 @@ bool Load(const std::string& filename,
   TextOptions opts;
   opts.Fatal() = fatal;
   opts.NoTranspose() = !transpose;
-  opts.Categorical() = true;
 
   if constexpr (std::is_same_v<PolicyType, data::IncrementPolicy>)
   {
+    opts.Categorical() = true;
     opts.DatasetInfo() = info;
   }
   else if constexpr (std::is_same_v<PolicyType, data::MissingPolicy>)
   {
+    std::cout << "this is being executed" << std::endl;
+    opts.MissingPolicy() = true;
     opts.DatasetMissingPolicy() = info;
   }
 
@@ -111,6 +113,7 @@ bool Load(const std::string& filename,
   }
   else if constexpr (std::is_same_v<PolicyType, data::MissingPolicy>)
   {
+    std::cout << "this is being executed" << std::endl;
     info = opts.DatasetMissingPolicy();
   }
 

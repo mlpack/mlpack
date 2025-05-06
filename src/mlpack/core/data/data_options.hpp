@@ -511,6 +511,19 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     return this->ModifyMember(categorical, defaultCategorical);
   }
 
+  // Get whether the data should be interpreted as categorical when columns are
+  // not numeric.
+  bool MissingPolicy() const
+  {
+    return this->AccessMember(missingPolicy, defaultMissingPolicy);
+  }
+  // Modify whether the data should be interpreted as missingPolicy when columns
+  // are not numeric.
+  bool& MissingPolicy()
+  {
+    return this->ModifyMember(missingPolicy, defaultMissingPolicy);
+  }
+
   // Get the headers.
   const arma::field<std::string>& Headers() const { return headers; }
   // Modify the headers.
@@ -530,6 +543,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   // Modify the DatasetMissingPolicy.
   data::DatasetMapper<data::MissingPolicy>& DatasetMissingPolicy()
   {
+    std::cout << "was assigned in here" << std::endl; 
     return datasetMissingPolicy;
   }
 
@@ -538,6 +552,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   std::optional<bool> semicolon;
   std::optional<bool> missingToNan;
   std::optional<bool> categorical;
+  std::optional<bool> missingPolicy;
 
   // These are not optional, but if either is specified, then it should be taken
   // to mean that `hasHeaders` or `categorical` has been specified as true.
@@ -549,6 +564,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   constexpr static const bool defaultSemicolon = false;
   constexpr static const bool defaultMissingToNan = false;
   constexpr static const bool defaultCategorical = false;
+  constexpr static const bool defaultMissingPolicy = false;
 };
 
 } // namespace data
