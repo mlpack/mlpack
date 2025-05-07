@@ -159,7 +159,12 @@ bool LoadMatrix(const std::string& filename,
   }
   else
   {
-    throw std::runtime_error("Matrix type is not detected!");
+    if (txtOpts.Fatal())
+      Log::Fatal << "data::Load(): unknown matrix-like type given!" << std::endl;
+    else
+      Log::Warn << "data::Load(): unknown matrix-like type given!" << std::endl;
+      
+    return false;
   }
   return success;
 }
