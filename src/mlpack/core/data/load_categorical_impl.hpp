@@ -23,14 +23,17 @@ bool LoadCSV::LoadCategoricalCSV(MatType& matrix,
 {
   CheckOpen();
 
-  if (opts.Categorical())
+  std::cout << "Categotical: " << opts.Categorical() << std::endl;
+  std::cout << "MissingPolicy: " << opts.MissingPolicy() << std::endl;
+    
+  if (!opts.MissingPolicy() && opts.Categorical())
   {
     if (!opts.NoTranspose())
       return TransposeParse(matrix, opts.DatasetInfo());
     else
       return NonTransposeParse(matrix, opts.DatasetInfo());
   }
-  else if (opts.MissingPolicy())
+  else if (opts.MissingPolicy() && opts.Categorical())
   {
     if (!opts.NoTranspose())
       return TransposeParse(matrix, opts.DatasetMissingPolicy());
@@ -281,7 +284,6 @@ bool LoadCSV::TransposeParse(arma::Mat<T>& inout,
       inout(row, col) = infoSet.template MapString<T>(std::move(token), row);
       row++;
     }
-    std::cout << "was here" << std::endl;
     // Make sure we got the right number of rows.
     if (row != rows)
     {

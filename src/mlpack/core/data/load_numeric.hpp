@@ -45,7 +45,7 @@ inline const arma::csv_opts::opts& MissingToNanOpt(const bool missingToNan)
 {
   if (missingToNan)
   {
-    #ifdef ARMA_VERSION_MAJOR >= 12
+    #ifdef ARMA_VERSION_MAJOR < 12
     return arma::csv_opts::strict;
     #else
     return arma::csv_opts::none;

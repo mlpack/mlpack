@@ -365,12 +365,14 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   TextOptions(bool hasHeaders = defaultHasHeaders,
               bool semicolon = defaultSemicolon,
               bool missingToNan = defaultMissingToNan,
-              bool categorical = defaultCategorical) :
+              bool categorical = defaultCategorical,
+              bool missingPolicy = defaultMissingPolicy) :
       MatrixOptionsBase<TextOptions>(),
       hasHeaders(hasHeaders),
       semicolon(semicolon),
       missingToNan(missingToNan),
-      categorical(categorical)
+      categorical(categorical),
+      missingPolicy(missingPolicy)
   {
     // Do Nothing.
   }
@@ -405,6 +407,8 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
       missingToNan = *other.missingToNan;
     if (other.categorical.has_value())
       categorical = *other.categorical;
+    if (other.missingPolicy.has_value())
+      missingPolicy = *other.missingPolicy;
 
     headers = other.headers;
     datasetInfo = other.datasetInfo;
@@ -424,6 +428,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     semicolon = std::move(other.semicolon);
     missingToNan = std::move(other.missingToNan);
     categorical = std::move(other.categorical);
+    missingPolicy = std::move(other.missingPolicy);
 
     headers = std::move(other.headers);
     datasetInfo = std::move(other.datasetInfo);
@@ -446,6 +451,8 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
       this->WarnOptionConversion("categorical", dataDescription);
     if (hasHeaders.has_value() && hasHeaders != defaultHasHeaders)
       this->WarnOptionConversion("hasHeaders", dataDescription);
+    if (missingPolicy.has_value() && missingPolicy != defaultMissingPolicy)
+      this->WarnOptionConversion("missingPolicy", dataDescription);
 
     // If either headers or datasetInfo are non-empty, then we take it that the
     // user has manually modified them.
@@ -463,6 +470,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     semicolon.reset();
     missingToNan.reset();
     categorical.reset();
+    missingPolicy.reset();
   }
 
   // Get if the dataset has headers or not.
@@ -543,7 +551,6 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   // Modify the DatasetMissingPolicy.
   data::DatasetMapper<data::MissingPolicy>& DatasetMissingPolicy()
   {
-    std::cout << "was assigned in here" << std::endl; 
     return datasetMissingPolicy;
   }
 
