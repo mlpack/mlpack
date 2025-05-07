@@ -22,7 +22,7 @@
 namespace mlpack {
 namespace data {
 
-namespace details{
+namespace details {
 
 template<typename Tokenizer>
 std::vector<std::string> ToTokens(Tokenizer& lineTok)
