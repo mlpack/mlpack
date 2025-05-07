@@ -49,10 +49,15 @@ bool Load(const std::string& filename,
           std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>* = 0,
           std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>* = 0);
 
-// TODO: clean this up---this overload is necessary for when a user didn't make
-// an actual DataOptionsType object.  We should check here that they didn't
-// specify that they want to keep headers or anything like this and throw a
-// warning.
+/**
+ * Loads a matrix from file, guessing the filetype from the extension.  This
+ * will load with the options specified in `opts`.
+ *
+ * @param filename Name of file to load.
+ * @param matrix Matrix to load contents of file into.
+ * @param opts Non-modifiable DataOptions to be passed to the function
+ * @return Boolean value indicating success or failure of load.
+ */
 template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
