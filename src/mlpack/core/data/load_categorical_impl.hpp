@@ -30,6 +30,8 @@ bool LoadCSV::LoadCategoricalCSV(MatType& matrix,
     else
       return NonTransposeParse(matrix, opts.DatasetInfo(), opts.Fatal());
   }
+  // NOTE: this is only here to preserve the behavior of loading missing data
+  // until it is refactored; then, `opts.MissingPolicy()` will be removed.
   else if (opts.MissingPolicy() && opts.Categorical())
   {
     if (!opts.NoTranspose())
