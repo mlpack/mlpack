@@ -34,8 +34,7 @@ namespace data /** Functions to load and save matrices and models. */ {
 
 /**
  * Loads a matrix from file, guessing the filetype from the extension.  This
- * will transpose the matrix at load time (unless the transpose parameter is set
- * to false).
+ * will load with the options specified in `opts`.
  *
  * @param filename Name of file to load.
  * @param matrix Matrix to load contents of file into.
