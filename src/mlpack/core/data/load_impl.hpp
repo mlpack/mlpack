@@ -335,9 +335,8 @@ bool LoadSparse(const std::string& filename,
   if (!opts.NoTranspose())
   {
     // It seems that there is no direct way to use inplace_trans() on 
-    // sparse matrices. Therefore, we need the temporary SpMat
-    arma::SpMat<eT> tmp = matrix.t();
-    matrix = tmp;
+    // sparse matrices.
+    matrix = matrix.t();
   }
 
   return success;
