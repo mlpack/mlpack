@@ -197,9 +197,6 @@ bool Load(const std::string& filename,
 
   if constexpr (IsArma<MatType>::value || IsSparseMat<MatType>::value)
   {
-    // compile time type detction
-    // convert this to a move, and move back at the end.
-    // add a move constructor that does this.
     TextOptions txtOpts(std::move(opts));
     success = LoadMatrix(filename, matrix, stream, txtOpts);
     opts = std::move(txtOpts);
