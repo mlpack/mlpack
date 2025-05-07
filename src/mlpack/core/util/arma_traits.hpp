@@ -239,6 +239,16 @@ struct GetCubeType<arma::Mat<eT>>
   using type = arma::Cube<eT>;
 };
 
+#if defined(MLPACK_HAS_COOT)
+
+template<typename eT>
+struct GetCubeType<coot::Mat<eT>>
+{
+  using type = coot::Cube<eT>;
+};
+
+#endif
+
 // Get the sparse matrix type corresponding to a given MatType.
 
 template<typename MatType>
