@@ -567,6 +567,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   // to mean that `hasHeaders` or `categorical` has been specified as true.
   arma::field<std::string> headers;
   data::DatasetInfo datasetInfo;
+  // Temporary internal member until MissingPolicy is refactored out.
   data::DatasetMapper<data::MissingPolicy> datasetMissingPolicy;
 
   constexpr static const bool defaultHasHeaders = false;
