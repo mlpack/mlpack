@@ -184,7 +184,7 @@ bool Load(const std::string& filename,
     return false;
   }
 
-  success = DetectFileType(filename, opts, true, &stream);
+  success = DetectFileType<MatType>(filename, opts, true, &stream);
   if (!success)
   {
     Timer::Stop("loading_data");

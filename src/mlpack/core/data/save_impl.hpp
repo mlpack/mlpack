@@ -110,7 +110,7 @@ bool Save(const std::string& filename,
 {
   Timer::Start("saving_data");
 
-  bool success = DetectFileType(filename, opts, false);
+  bool success = DetectFileType<MatType>(filename, opts, false);
   if (!success)
   {
     Timer::Stop("saving_data");
@@ -199,6 +199,9 @@ bool SaveSparse(const arma::SpMat<eT>& matrix,
 {
   bool success = false;
   arma::SpMat<eT> tmp;
+
+  std::cout << "save sprase is exected" << std::endl;
+  std::cout << opts.FileTypeToString() << std::endl;
   // Transpose the matrix.
   if (!opts.NoTranspose())
   {

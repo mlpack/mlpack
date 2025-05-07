@@ -288,7 +288,7 @@ inline FileType AutoDetect(std::fstream& stream, const std::string& filename)
  * @param filename Name of the file whose type we should detect.
  * @return Detected type of file.
  */
-template<typename DataOptionsType>
+template<typename MatType, typename DataOptionsType>
 void DetectFromExtension(const std::string& filename,
                          DataOptionsType& opts)
 {
@@ -300,7 +300,10 @@ void DetectFromExtension(const std::string& filename,
   }
   else if (extension == "txt")
   {
-    opts.Format() = FileType::RawASCII;
+    if (IsSparseMat<MatType>::value)
+      opts.Format() = FileType::CoordASCII;
+    else
+      opts.Format() = FileType::RawASCII;
   }
   else if (extension == "bin")
   {

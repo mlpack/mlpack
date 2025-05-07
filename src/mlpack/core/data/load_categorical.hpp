@@ -239,7 +239,8 @@ class LoadCSV
   */
   template<typename T, typename PolicyType>
   bool NonTransposeParse(arma::Mat<T>& inout,
-                         DatasetMapper<PolicyType>& infoSet);
+                         DatasetMapper<PolicyType>& infoSet,
+                         bool fatal);
 
   /**
   * Parse a transposed matrix.
@@ -249,7 +250,9 @@ class LoadCSV
   * @return false on errors.
   */
   template<typename T, typename PolicyType>
-  bool TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& infoSet);
+  bool TransposeParse(arma::Mat<T>& inout,
+                      DatasetMapper<PolicyType>& infoSet,
+                      bool fatal);
 
   //! Extension (type) of file.
   std::string extension;

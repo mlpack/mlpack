@@ -29,16 +29,18 @@ bool LoadCSV::LoadCategoricalCSV(MatType& matrix,
   if (!opts.MissingPolicy() && opts.Categorical())
   {
     if (!opts.NoTranspose())
-      return TransposeParse(matrix, opts.DatasetInfo());
+      return TransposeParse(matrix, opts.DatasetInfo(), opts.Fatal());
     else
-      return NonTransposeParse(matrix, opts.DatasetInfo());
+      return NonTransposeParse(matrix, opts.DatasetInfo(), opts.Fatal());
   }
   else if (opts.MissingPolicy() && opts.Categorical())
   {
     if (!opts.NoTranspose())
-      return TransposeParse(matrix, opts.DatasetMissingPolicy());
+      return TransposeParse(matrix, opts.DatasetMissingPolicy(),
+          opts.Fatal());
     else
-      return NonTransposeParse(matrix, opts.DatasetMissingPolicy());
+      return NonTransposeParse(matrix, opts.DatasetMissingPolicy(),
+          opts.Fatal());
   }
 }
 
@@ -112,7 +114,6 @@ bool LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
     // If we need to do a first pass for the DatasetMapper, do it.
     if (MapPolicy::NeedsFirstPass)
     {
-      std::cout << "needed a first pass" << std::endl;
       // In this case we must pass everything we parse to the MapPolicy.
       size_t dim = 0;
       std::stringstream lineStream;
@@ -232,7 +233,8 @@ bool LoadCSV::InitializeMapper(size_t& rows, size_t& cols,
 
 template<typename T, typename PolicyType>
 bool LoadCSV::TransposeParse(arma::Mat<T>& inout,
-                             DatasetMapper<PolicyType>& infoSet)
+                             DatasetMapper<PolicyType>& infoSet,
+                             bool fatal)
 {
   // Get matrix size.  This also initializes infoSet correctly.
   size_t rows, cols;
@@ -287,21 +289,26 @@ bool LoadCSV::TransposeParse(arma::Mat<T>& inout,
     // Make sure we got the right number of rows.
     if (row != rows)
     {
-      Log::Fatal << "LoadCSV::TransposeParse(): wrong number of dimensions ("
-          << row << ") on line " << col << "; should be " << rows 
+      if (fatal)
+        Log::Fatal << "LoadCSV::TransposeParse(): wrong number of dimensions ("
+            << row << ") on line " << col << "; should be " << rows
+            << " dimensions." << std::endl;
+      else
+      Log::Warn << "LoadCSV::TransposeParse(): wrong number of dimensions ("
+          << row << ") on line " << col << "; should be " << rows
           << " dimensions." << std::endl;
       return false;
     }
     // Increment the column index.
     ++col;
   }
-  inout.print();
   return true;
 }
 
 template<typename T, typename PolicyType>
 bool LoadCSV::NonTransposeParse(arma::Mat<T>& inout,
-                                DatasetMapper<PolicyType>& infoSet)
+                                DatasetMapper<PolicyType>& infoSet,
+                                bool fatal)
 {
   // Get the size of the matrix.
   size_t rows, cols;
@@ -354,9 +361,14 @@ bool LoadCSV::NonTransposeParse(arma::Mat<T>& inout,
     // Make sure we got the right number of rows.
     if (col != cols)
     {
-      Log::Fatal << "LoadCSV::NonTransposeParse(): wrong number of "
-          "dimensions (" << col << ") on line " << row << "; should be "
-          << cols << " dimensions." << std::endl;
+      if (fatal)
+        Log::Fatal << "LoadCSV::NonTransposeParse(): wrong number of "
+            "dimensions (" << col << ") on line " << row << "; should be "
+            << cols << " dimensions." << std::endl;
+      else
+        Log::Warn << "LoadCSV::NonTransposeParse(): wrong number of "
+            "dimensions (" << col << ") on line " << row << "; should be "
+            << cols << " dimensions." << std::endl;
       return false;
     }
     ++row; col = 0;

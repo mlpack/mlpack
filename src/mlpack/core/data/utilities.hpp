@@ -96,7 +96,7 @@ bool OpenFile(const std::string& filename,
   return true;
 }
 
-template<typename DataOptionsType>
+template<typename MatType, typename DataOptionsType>
 bool DetectFileType(const std::string& filename,
                     DataOptionsType& opts,
                     bool isLoading,
@@ -109,7 +109,7 @@ bool DetectFileType(const std::string& filename,
       // Attempt to auto-detect the type from the given file.
       opts.Format() = AutoDetect(*stream, filename);
     else
-      DetectFromExtension(filename, opts);
+      DetectFromExtension<MatType>(filename, opts);
     // Provide error if we don't know the type.
     if (opts.Format() == FileType::FileTypeUnknown)
     {
