@@ -23,9 +23,6 @@ bool LoadCSV::LoadCategoricalCSV(MatType& matrix,
 {
   CheckOpen();
 
-  std::cout << "Categotical: " << opts.Categorical() << std::endl;
-  std::cout << "MissingPolicy: " << opts.MissingPolicy() << std::endl;
-    
   if (!opts.MissingPolicy() && opts.Categorical())
   {
     if (!opts.NoTranspose())
@@ -240,10 +237,6 @@ bool LoadCSV::TransposeParse(arma::Mat<T>& inout,
   size_t rows, cols;
   InitializeTransposeMapper<T>(rows, cols, infoSet);
 
-  if (std::is_same_v<PolicyType, MissingPolicy>)
-    std::cout << "correct policy" <<std::endl;
-  else if (std::is_same_v<PolicyType, IncrementPolicy>)
-    std::cout << "wrong policy" <<std::endl;
   // Set the matrix size.
   inout.set_size(rows, cols);
 

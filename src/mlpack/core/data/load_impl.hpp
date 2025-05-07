@@ -100,7 +100,6 @@ bool Load(const std::string& filename,
   }
   else if constexpr (std::is_same_v<PolicyType, data::MissingPolicy>)
   {
-    std::cout << "this is being executed" << std::endl;
     opts.MissingPolicy() = true;
     opts.DatasetMissingPolicy() = info;
   }
@@ -249,7 +248,6 @@ bool LoadDense(const std::string& filename,
   }
   else if (opts.Format() == FileType::CSVASCII)
   {
-    std::cout << "should be loading" << std::endl;
     success = LoadCSVASCII(filename, matrix, opts);
 
     if (matrix.col(0).is_zero())
@@ -263,7 +261,6 @@ bool LoadDense(const std::string& filename,
         << opts.FileTypeToString() << "; " 
         << "but this may not be the actual filetype!" << std::endl;
 
-    std::cout << "should not be loading" << std::endl;
     success = matrix.load(stream, ToArmaFileType(opts.Format()));
     if (!opts.NoTranspose())
       inplace_trans(matrix);
@@ -370,7 +367,6 @@ bool LoadCategorical(const std::string& filename,
   }
   else if (extension == "arff")
   {
-    std::cout << "loading arff" << std::endl;
     Log::Info << "Loading '" << filename << "' as ARFF dataset.  "
         << std::flush;
     success = LoadARFF(filename, matrix, opts.DatasetInfo());
