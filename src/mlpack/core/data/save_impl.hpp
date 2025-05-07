@@ -203,7 +203,7 @@ bool SaveSparse(const arma::SpMat<eT>& matrix,
   // Transpose the matrix.
   if (!opts.NoTranspose())
   {
-    tmp = trans(matrix);
+    arma::SpMat<eT> tmp = trans(matrix);
     success = SaveMatrix(tmp, opts, stream);
   }
   else
