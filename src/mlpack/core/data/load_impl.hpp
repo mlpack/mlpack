@@ -207,7 +207,6 @@ bool Load(const std::string& filename,
 
   if (!success)
   {
-    Log::Info << std::endl;
     Timer::Stop("loading_data");
     if (opts.Fatal())
       Log::Fatal << "Loading from '" << filename << "' failed." << std::endl;
