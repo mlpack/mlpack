@@ -412,6 +412,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
 
     headers = other.headers;
     datasetInfo = other.datasetInfo;
+    datasetMissingPolicy = other.datasetMissingPolicy;
 
     // Copy base members.
     MatrixOptionsBase<TextOptions>::operator=(other);
@@ -432,6 +433,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
 
     headers = std::move(other.headers);
     datasetInfo = std::move(other.datasetInfo);
+    datasetMissingPolicy = std::move(other.datasetMissingPolicy);
 
     // Move base members.
     MatrixOptionsBase<TextOptions>::operator=(std::move(other));

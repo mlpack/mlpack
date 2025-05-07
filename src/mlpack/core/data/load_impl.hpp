@@ -113,7 +113,6 @@ bool Load(const std::string& filename,
   }
   else if constexpr (std::is_same_v<PolicyType, data::MissingPolicy>)
   {
-    std::cout << "this is being executed" << std::endl;
     info = opts.DatasetMissingPolicy();
   }
 
