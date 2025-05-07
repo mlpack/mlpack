@@ -45,7 +45,7 @@ inline const arma::csv_opts::opts& MissingToNanOpt(const bool missingToNan)
 {
   if (missingToNan)
   {
-    #ifdef ARMA_VERSION_MAJOR < 12
+    #if ARMA_VERSION_MAJOR < 12
     return arma::csv_opts::strict;
     #else
     return arma::csv_opts::none;
@@ -65,7 +65,7 @@ bool LoadCSVASCII(const std::string& filename,
   bool success = false;
 
   // Show a warning if strict is not available.
-  #ifdef ARMA_VERSION_MAJOR < 12
+  #if ARMA_VERSION_MAJOR < 12
   if (opts.MissingToNan())
   {
     if (opts.Fatal())

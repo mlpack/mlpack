@@ -39,6 +39,8 @@ bool LoadCSV::LoadCategoricalCSV(MatType& matrix,
       return NonTransposeParse(matrix, opts.DatasetMissingPolicy(),
           opts.Fatal());
   }
+
+  return false; // fix warning
 }
 
 inline void LoadCSV::CategoricalMatColSize(
