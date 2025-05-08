@@ -254,8 +254,9 @@ bool LoadDense(const std::string& filename,
     success = LoadCSVASCII(filename, matrix, opts);
 
     if (matrix.col(0).is_zero())
-      Log::Warn << "First column is zeros, if dataset contains headers, "
-                   "please use HasHeaders() option." << std::endl;
+      Log::Warn << "data::Load(): the first line in '" << filename << "' was "
+          << "loaded as all zeros; if the first row is headers, specify "
+          << "`HasHeaders() = true` in the given DataOptions." << std::endl;
   }
   else
   {
