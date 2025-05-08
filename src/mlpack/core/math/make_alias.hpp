@@ -26,10 +26,8 @@ void MakeAlias(OutVecType& v,
                const size_t offset = 0,
                const bool strict = true,
                const typename std::enable_if_t<
-                   IsVector<OutVecType>::value>* = 0,
-               const typename std::enable_if_t<
-                   IsArma<InVecType>::value>* = 0,
-               const typename std::enable_if_t<
+                   IsVector<OutVecType>::value &&
+                   IsArma<InVecType>::value &&
                    IsArma<OutVecType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
@@ -53,10 +51,8 @@ void MakeAlias(OutMatType& m,
                const size_t offset = 0,
                const bool strict = true,
                const typename std::enable_if_t<
-                   IsMatrix<OutMatType>::value>* = 0,
-               const typename std::enable_if_t<
-                   IsArma<InMatType>::value>* = 0,
-               const typename std::enable_if_t<
+                   IsMatrix<OutMatType>::value &&
+                   IsArma<InMatType>::value &&
                    IsArma<OutMatType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
@@ -80,10 +76,9 @@ void MakeAlias(OutCubeType& c,
                const size_t numSlices,
                const size_t offset = 0,
                const bool strict = true,
-               const typename std::enable_if_t<IsCube<OutCubeType>::value>* = 0,
                const typename std::enable_if_t<
-                   IsArma<InCubeType>::value>* = 0,
-               const typename std::enable_if_t<
+                   IsCube<OutCubeType>::value &&
+                   IsArma<InCubeType>::value &&
                    IsArma<OutCubeType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
@@ -144,10 +139,8 @@ void MakeAlias(OutVecType& v,
                const size_t offset = 0,
                const bool strict = true,
                const typename std::enable_if_t<
-                   IsVector<OutVecType>::value>* = 0,
-               const typename std::enable_if_t<
-                   IsCoot<InVecType>::value>* = 0,
-               const typename std::enable_if_t<
+                   IsVector<OutVecType>::value &&
+                   IsCoot<InVecType>::value &&
                    IsCoot<OutVecType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
@@ -170,10 +163,8 @@ void MakeAlias(OutMatType& m,
                const size_t offset = 0,
                const bool strict = true,
                const typename std::enable_if_t<
-                   IsMatrix<OutMatType>::value>* = 0,
-               const typename std::enable_if_t<
-                   IsCoot<InMatType>::value>* = 0,
-               const typename std::enable_if_t<
+                   IsMatrix<OutMatType>::value &&
+                   IsCoot<InMatType>::value &&
                    IsCoot<OutMatType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
@@ -196,10 +187,9 @@ void MakeAlias(OutCubeType& c,
                const size_t numSlices,
                const size_t offset = 0,
                const bool strict = true,
-               const typename std::enable_if_t<IsCube<OutCubeType>::value>* = 0,
                const typename std::enable_if_t<
-                   IsCoot<InCubeType>::value>* = 0,
-               const typename std::enable_if_t<
+                   IsCube<OutCubeType>::value &&
+                   IsCoot<InCubeType>::value &&
                    IsCoot<OutCubeType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
@@ -212,22 +202,6 @@ void MakeAlias(OutCubeType& c,
 }
 
 /**
- * Make `m` an alias of `in`, using the given size.
- */
-// Bandicoot does not have sparse matrices
-//template<typename eT>
-//void MakeAlias(coot::SpMat<eT>& m,
-//               const coot:SpMat<eT>& in,
-//               const size_t /* numRows */,
-//               const size_t /* numCols */,
-//               const size_t /* offset */,
-//               const bool /* strict */)
-//{
-//  // We can't make aliases of sparse objects, so just copy it.
-//  m = in;
-//}
-
-/**
  * Clear an alias so that no data is overwritten.  This resets the matrix if it
  * is an alias (and does nothing otherwise).
  */
@@ -237,17 +211,6 @@ void ClearAlias(coot::Mat<ElemType>& mat)
   if (mat.mem_state >= 1)
     mat.reset();
 }
-
-/**
- * Clear an alias so that no data is overwritten.  This resets the matrix if it
- * is an alias (and does nothing otherwise).
- */
-// Bandicoot does not have sparse matrices
-//template<typename ElemType>
-//void ClearAlias(coot::SpMat<ElemType>& /* mat */)
-//{
-//  // We cannot make aliases of sparse matrices, so, nothing to do.
-//}
 
 #endif // defined(MLPACK_HAS_COOT)
 

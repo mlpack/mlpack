@@ -97,12 +97,10 @@ Forward(const MatType& input, MatType& output)
   // The shape of q : (embedDim, tgtSeqLen, batchSize).
   // The shape of k : (embedDim, srcSeqLen, batchSize).
   // The shape of v : (embedDim, srcSeqLen, batchSize).
-  CubeType q;
+  CubeType q, k, v;
   MakeAlias(q, input, embedDim, tgtSeqLen, batchSize, 0, false);
-  CubeType k;
   MakeAlias(k, input, embedDim, srcSeqLen, batchSize,
       (selfAttention ? 0 : embedDim * tgtSeqLen * batchSize), false);
-  CubeType v;
   MakeAlias(v, input, embedDim, srcSeqLen, batchSize,
       (selfAttention ? 0 : embedDim * (tgtSeqLen + srcSeqLen) * batchSize),
       false);
@@ -204,8 +202,7 @@ Backward(const MatType& /* input */,
   // We need not split it into n heads now because this is the part when
   // output were concatenated from n heads.
   CubeType gyTemp;
-  MakeAlias(gyTemp, gy, embedDim,
-      tgtSeqLen, batchSize, 0, false);
+  MakeAlias(gyTemp, gy, embedDim, tgtSeqLen, batchSize, 0, false);
 
   // The shape of gyTemp : (embedDim, tgtSeqLen, batchSize).
   // The shape of outWt : (embedDim, embedDim).
@@ -334,20 +331,17 @@ Gradient(const MatType& input,
   // The shape of gradient : (4 * embedDim * embedDim + 4 * embedDim, 1).
   gradient.set_size(arma::size(weights));
 
-  CubeType q;
+  CubeType q, k, v;
   MakeAlias(q, input, embedDim, tgtSeqLen, batchSize, 0, false);
-  CubeType k;
   MakeAlias(k, input, embedDim, srcSeqLen, batchSize,
       (selfAttention ? 0 : q.n_elem), false);
-  CubeType v;
   MakeAlias(v, input, embedDim, srcSeqLen, batchSize,
       (selfAttention ? 0 : (q.n_elem + k.n_elem)), false);
 
   // Reshape the propagated error into a cube.
   // The shape of errorTemp : (embedDim, tgtSeqLen, batchSize).
   CubeType errorTemp;
-  MakeAlias(errorTemp, error, embedDim,
-      tgtSeqLen, batchSize, 0, false);
+  MakeAlias(errorTemp, error, embedDim, tgtSeqLen, batchSize, 0, false);
 
   // Gradient wrt. outBias, i.e. dL/d(outBias).
   gradient.rows(4 * wtSize + 3 * embedDim, 4 * wtSize + 4 * embedDim - 1)

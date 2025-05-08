@@ -161,8 +161,8 @@ void Linear3DType<MatType, RegularizerType>::Gradient(
   const size_t batchSize = input.n_cols;
 
   CubeType inputTemp;
-  MakeAlias(inputTemp, input,
-      this->inputDimensions[0], nPoints, batchSize, 0, false);
+  MakeAlias(inputTemp, input, this->inputDimensions[0], nPoints, batchSize, 0,
+      false);
   CubeType errorTemp;
   MakeAlias(errorTemp, error, outSize, nPoints, batchSize, 0, false);
 

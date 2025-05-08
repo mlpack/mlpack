@@ -308,24 +308,25 @@ struct IsBaseMatType<arma::SpRow<eT>>
   constexpr static bool value = true;
 };
 
+// Get whether or not the given type is any non-field Armadillo type
+// This includes sparse, dense, and cube types
 template<typename T>
 struct IsArma
 {
-  constexpr static bool value
-  =  arma::is_arma_type<T>::value
-  || arma::is_arma_cube_type<T>::value
-  || arma::is_arma_sparse_type<T>::value;
+  constexpr static bool value = arma::is_arma_type<T>::value ||
+                                arma::is_arma_cube_type<T>::value ||
+                                arma::is_arma_sparse_type<T>::value;
 };
 
 #if defined(MLPACK_HAS_COOT)
 
+// Get whether or not the given type is any Bandicoot type
+// This includes dense and cube types
 template<typename T>
 struct IsCoot
 {
-  constexpr static bool value
-  =  coot::is_coot_type<T>::value
-  || coot::is_coot_cube_type<T>::value;
-  //|| coot::is_coot_sparse_type<T>::value;
+  constexpr static bool value = coot::is_coot_type<T>::value ||
+                                coot::is_coot_cube_type<T>::value;
 };
 
 #else
