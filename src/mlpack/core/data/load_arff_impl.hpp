@@ -301,12 +301,21 @@ bool LoadARFF(const std::string& filename,
             std::string tokenStr = token.str();
             Trim(tokenStr);
             if (tokenStr == "?")
-              Log::Fatal << "Missing values ('?') not supported, "
-                  << std::endl;
+              if (fatal)
+                Log::Fatal << "Missing values ('?') not supported, "
+                    << std::endl;
+              else
+                Log::Warn << "Missing values ('?') not supported, "
+                    << std::endl;
             else
-              Log::Fatal << "Parse error " << "at line " <<
-                  (headerLines + row) << " token " << col << ": \""
-                  << tokenStr << "\"." << std::endl;
+              if (fatal)
+                Log::Fatal << "Parse error " << "at line " <<
+                    (headerLines + row) << " token " << col << ": \""
+                    << tokenStr << "\"." << std::endl;
+              else
+                Log::Warn << "Parse error " << "at line " <<
+                    (headerLines + row) << " token " << col << ": \""
+                    << tokenStr << "\"." << std::endl;
             return false;
           }
         }
