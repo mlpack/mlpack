@@ -197,8 +197,10 @@ Backward(const MatType& /* input */,
   // The shape of gyTemp : (tgtSeqLen, embedDim, batchSize).
   // We need not split it into n heads now because this is the part when
   // output were concatenated from n heads.
-  CubeType gyTemp;
-  MakeAlias(gyTemp, gy, embedDim, tgtSeqLen, batchSize, 0, false);
+  CubeType gyTempAlias;
+  MakeAlias(gyTempAlias, gy, embedDim, tgtSeqLen, batchSize, 0, false);
+  // Make a copy of the alias so gy actually remains constant
+  CubeType gyTemp = gyTempAlias;
 
   // The shape of gyTemp : (embedDim, tgtSeqLen, batchSize).
   // The shape of outWt : (embedDim, embedDim).
@@ -334,8 +336,10 @@ Gradient(const MatType& input,
 
   // Reshape the propagated error into a cube.
   // The shape of errorTemp : (embedDim, tgtSeqLen, batchSize).
-  CubeType errorTemp;
-  MakeAlias(errorTemp, error, embedDim, tgtSeqLen, batchSize, 0, false);
+  CubeType errorTempAlias;
+  MakeAlias(errorTempAlias, error, embedDim, tgtSeqLen, batchSize, 0, false);
+  // Make a copy of the alias so error actually remains constant
+  CubeType errorTemp = errorTempAlias;
 
   // Gradient wrt. outBias, i.e. dL/d(outBias).
   gradient.rows(4 * wtSize + 3 * embedDim, 4 * wtSize + 4 * embedDim - 1)
