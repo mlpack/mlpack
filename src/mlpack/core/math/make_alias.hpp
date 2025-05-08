@@ -151,7 +151,7 @@ void MakeAlias(OutVecType& v,
                    IsCoot<OutVecType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
-  // assignment operators in Armadillo will end up copying memory instead of
+  // assignment operators in Bandicoot will end up copying memory instead of
   // making an alias.
   coot::dev_mem_t<InVecType::elem_type> newMem = oldVec.get_dev_mem() + offset;
   v.~OutVecType();
@@ -177,7 +177,7 @@ void MakeAlias(OutMatType& m,
                    IsCoot<OutMatType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
-  // assignment operators in Armadillo will end up copying memory instead of
+  // assignment operators in Bandicoot will end up copying memory instead of
   // making an alias.
   coot::dev_mem_t<InMatType::elem_type> newMem = oldMat.get_dev_mem() + offset;
   m.~OutMatType();
@@ -203,7 +203,7 @@ void MakeAlias(OutCubeType& c,
                    IsCoot<OutCubeType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
-  // assignment operators in Armadillo will end up copying memory instead of
+  // assignment operators in Bandicoot will end up copying memory instead of
   // making an alias.
   coot::dev_mem_t<InCubeType::elem_type> newMem =
       oldCube.get_dev_mem() + offset;
@@ -214,17 +214,18 @@ void MakeAlias(OutCubeType& c,
 /**
  * Make `m` an alias of `in`, using the given size.
  */
-template<typename eT>
-void MakeAlias(coot::SpMat<eT>& m,
-               const acoot:SpMat<eT>& in,
-               const size_t /* numRows */,
-               const size_t /* numCols */,
-               const size_t /* offset */,
-               const bool /* strict */)
-{
-  // We can't make aliases of sparse objects, so just copy it.
-  m = in;
-}
+// Bandicoot does not have sparse matrices
+//template<typename eT>
+//void MakeAlias(coot::SpMat<eT>& m,
+//               const coot:SpMat<eT>& in,
+//               const size_t /* numRows */,
+//               const size_t /* numCols */,
+//               const size_t /* offset */,
+//               const bool /* strict */)
+//{
+//  // We can't make aliases of sparse objects, so just copy it.
+//  m = in;
+//}
 
 /**
  * Clear an alias so that no data is overwritten.  This resets the matrix if it
@@ -241,11 +242,12 @@ void ClearAlias(coot::Mat<ElemType>& mat)
  * Clear an alias so that no data is overwritten.  This resets the matrix if it
  * is an alias (and does nothing otherwise).
  */
-template<typename ElemType>
-void ClearAlias(coot::SpMat<ElemType>& /* mat */)
-{
-  // We cannot make aliases of sparse matrices, so, nothing to do.
-}
+// Bandicoot does not have sparse matrices
+//template<typename ElemType>
+//void ClearAlias(coot::SpMat<ElemType>& /* mat */)
+//{
+//  // We cannot make aliases of sparse matrices, so, nothing to do.
+//}
 
 #endif // defined(MLPACK_HAS_COOT)
 
