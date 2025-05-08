@@ -246,7 +246,7 @@ bool LoadARFF(const std::string& filename,
           Log::Fatal << error.str() << std::endl;
         else
           Log::Warn << error.str() << std::endl;
-          
+
         return false;
       }
 
@@ -271,7 +271,7 @@ bool LoadARFF(const std::string& filename,
           for (size_t i = 0; i < categoryStrings.at(col).size() - 1; ++i)
             error << "\"" << categoryStrings.at(col)[i] << "\", ";
           error << "\"" << categoryStrings.at(col).back() << "\").";
-          
+
           if (fatal)
             Log::Fatal << error.str() << std::endl;
           else

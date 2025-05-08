@@ -161,9 +161,11 @@ bool LoadMatrix(const std::string& filename,
   else
   {
     if (txtOpts.Fatal())
-      Log::Fatal << "data::Load(): unknown matrix-like type given!" << std::endl;
+      Log::Fatal << "data::Load(): unknown matrix-like type given!"
+          << std::endl;
     else
-      Log::Warn << "data::Load(): unknown matrix-like type given!" << std::endl;
+      Log::Warn << "data::Load(): unknown matrix-like type given!"
+          << std::endl;
 
     return false;
   }

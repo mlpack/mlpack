@@ -143,7 +143,7 @@ class DataOptionsBase
       case FileType::PGMBinary:   return "PGM data";
       case FileType::PPMBinary:   return "PGM data";
       case FileType::HDF5Binary:  return "HDF5 data";
-      case FileType::CoordASCII:  
+      case FileType::CoordASCII:
           return "ASCII formatted sparse coordinate data";
       case FileType::AutoDetect:  return "Detect automatically data type";
       case FileType::FileTypeUnknown: return "Unknown data type";
