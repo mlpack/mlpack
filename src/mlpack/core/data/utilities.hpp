@@ -81,15 +81,20 @@ bool OpenFile(const std::string& filename,
 
   if (!stream.is_open())
   {
-    if (opts.Fatal())
+    if (opts.Fatal() && isLoading)
       Log::Fatal << "Cannot open file '" << filename << "'. \n"
-          << "please check if the file is available if loading. \n" 
-          << "or if you have the rights for writing if saving. \n";
+          << "please check if the file is available. \n";
 
-    else
+    else if (!opts.Fatal() && isLoading)
       Log::Warn << "Cannot open file '" << filename << "'. \n"
-          << "please check if the file is available if loading. \n" 
-          << "or if you have the rights for writing if saving. \n";
+          << "please check if the file is available. \n";
+    else if (opts.Fatal() && !isLoading)
+      Log::Fatal << "Cannot open file '" << filename << "'. \n"
+          << "Please check if you have the rights for writing \n";
+
+    else if (!opts.Fatal() && !isLoading)
+      Log::Warn << "Cannot open file '" << filename << "'. \n"
+          << "Please check if you have the rights for writing. \n";
 
     return false;
   }
