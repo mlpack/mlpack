@@ -15,7 +15,6 @@
 #define MLPACK_CORE_DATA_TEXT_OPTIONS_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <string>
 
 #include "matrix_options.hpp"
 
@@ -208,7 +207,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
 
   // Get the DatasetInfo for categorical data.
   const data::DatasetMapper<data::MissingPolicy>& DatasetMissingPolicy() const
-  { 
+  {
     return datasetMissingPolicy;
   }
 

@@ -220,10 +220,10 @@ class LoadCSV
     if (!inFile.is_open())
     {
       if (fatal)
-        Log::Fatal << "Cannot open file '" << filename 
+        Log::Fatal << "Cannot open file '" << filename
             << "'. File is already open" << std::endl;
       else
-        Log::Warn << "Cannot open file '" << filename 
+        Log::Warn << "Cannot open file '" << filename
             << "'. File is already open" << std::endl;
 
       return false;

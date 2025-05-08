@@ -122,7 +122,8 @@ template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
           const DataOptionsType& opts,
-          std::enable_if_t<IsMatrix<MatType>::value>*,
+          std::enable_if_t<IsArma<MatType>::value ||
+              IsSparseMat<MatType>::value>*,
           std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>*)
 {
   DataOptionsType tmpOpts(opts);
@@ -163,7 +164,7 @@ bool LoadMatrix(const std::string& filename,
       Log::Fatal << "data::Load(): unknown matrix-like type given!" << std::endl;
     else
       Log::Warn << "data::Load(): unknown matrix-like type given!" << std::endl;
-      
+
     return false;
   }
   return success;
@@ -173,7 +174,8 @@ template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
           DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>*,
+          std::enable_if_t<IsArma<MatType>::value ||
+              IsSparseMat<MatType>::value>*,
           std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>*)
 {
   Timer::Start("loading_data");
@@ -199,7 +201,7 @@ bool Load(const std::string& filename,
     success = LoadMatrix(filename, matrix, stream, txtOpts);
     opts = std::move(txtOpts);
   }
-  else 
+  else
   {
     if (opts.Fatal())
       Log::Fatal << "DataOptionsType is unknown!  Please use a known type "
@@ -241,7 +243,7 @@ bool LoadDense(const std::string& filename,
 {
   bool success;
   if (opts.Format() != FileType::RawBinary)
-    Log::Info << "Loading '" << filename << "' as " 
+    Log::Info << "Loading '" << filename << "' as "
         << opts.FileTypeToString() << ".  " << std::flush;
 
   // We can't use the stream if the type is HDF5.
@@ -261,8 +263,8 @@ bool LoadDense(const std::string& filename,
   else
   {
     if (opts.Format() == FileType::RawBinary)
-      Log::Warn << "Loading '" << filename << "' as " 
-        << opts.FileTypeToString() << "; " 
+      Log::Warn << "Loading '" << filename << "' as "
+        << opts.FileTypeToString() << "; "
         << "but this may not be the actual filetype!" << std::endl;
 
     success = matrix.load(stream, ToArmaFileType(opts.Format()));
@@ -337,7 +339,7 @@ bool LoadSparse(const std::string& filename,
 
   if (!opts.NoTranspose())
   {
-    // It seems that there is no direct way to use inplace_trans() on 
+    // It seems that there is no direct way to use inplace_trans() on
     // sparse matrices.
     matrix = matrix.t();
   }

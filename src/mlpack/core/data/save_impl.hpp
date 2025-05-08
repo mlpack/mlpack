@@ -72,7 +72,8 @@ template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
           const DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>*)
+          std::enable_if_t<IsArma<MatType>::value ||
+              IsSparseMat<MatType>::value>*)
 {
   //! just use default copy ctor with = operator and make a copy.
   DataOptionsType copyOpts(opts);
@@ -105,7 +106,8 @@ template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
           DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>*,
+          std::enable_if_t<IsArma<MatType>::value ||
+              IsSparseMat<MatType>::value>*,
           std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>*)
 {
   Timer::Start("saving_data");

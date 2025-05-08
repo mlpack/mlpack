@@ -274,7 +274,7 @@ bool LoadARFF(const std::string& filename,
           
           if (fatal)
             Log::Fatal << error.str() << std::endl;
-          else  
+          else
             Log::Warn << error.str() << std::endl;
           return false;
         }

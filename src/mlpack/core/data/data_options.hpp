@@ -15,7 +15,6 @@
 #define MLPACK_CORE_DATA_DATA_OPTIONS_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <string>
 
 #include "types.hpp"
 #include "dataset_mapper.hpp"
@@ -36,7 +35,6 @@ template<typename Derived>
 class DataOptionsBase
 {
  public:
-
   DataOptionsBase(const bool fatal = defaultFatal,
                   const FileType format = defaultFormat) :
       fatal(fatal),
@@ -145,7 +143,8 @@ class DataOptionsBase
       case FileType::PGMBinary:   return "PGM data";
       case FileType::PPMBinary:   return "PGM data";
       case FileType::HDF5Binary:  return "HDF5 data";
-      case FileType::CoordASCII:  return "ASCII formatted sparse coordinate data";
+      case FileType::CoordASCII:  
+          return "ASCII formatted sparse coordinate data";
       case FileType::AutoDetect:  return "Detect automatically data type";
       case FileType::FileTypeUnknown: return "Unknown data type";
       default:                    return "";

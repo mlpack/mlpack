@@ -15,7 +15,6 @@
 #define MLPACK_CORE_DATA_MATRIX_OPTIONS_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <string>
 
 #include "data_options.hpp"
 

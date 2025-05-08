@@ -15,7 +15,6 @@
 #define MLPACK_CORE_DATA_UTILITIES_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <string>
 
 #include "detect_file_type.hpp"
 
@@ -69,7 +68,7 @@ bool OpenFile(const std::string& filename,
 #endif
   }
   // Add here and else if for ModelOptions in a couple of stages.
-  else 
+  else
   {
 #ifdef  _WIN32 // Always open in binary mode on Windows.
     stream.open(filename.c_str(), std::fstream::out
@@ -77,7 +76,7 @@ bool OpenFile(const std::string& filename,
 #else
     stream.open(filename.c_str(), std::fstream::out);
 #endif
-  } 
+  }
 
   if (!stream.is_open())
   {
