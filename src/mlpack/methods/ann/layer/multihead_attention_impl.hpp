@@ -347,7 +347,7 @@ Gradient(const MatType& input,
   // The shape of errorTemp : (embedDim, tgtSeqLen, batchSize).
   CubeType errorTemp;
   MakeAlias(errorTemp, error, embedDim,
-      tgtSeqLen, batchSize, true, false);
+      tgtSeqLen, batchSize, 0, false);
 
   // Gradient wrt. outBias, i.e. dL/d(outBias).
   gradient.rows(4 * wtSize + 3 * embedDim, 4 * wtSize + 4 * embedDim - 1)
