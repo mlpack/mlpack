@@ -73,8 +73,6 @@ template <typename MatType, typename RegularizerType>
 void MultiheadAttentionType<MatType, RegularizerType>::
 Forward(const MatType& input, MatType& output)
 {
-  using CubeType = typename GetCubeType<MatType>::type;
-
   if (input.n_rows != embedDim *
       (selfAttention ? srcSeqLen : (tgtSeqLen + 2 * srcSeqLen)))
   {
@@ -186,8 +184,6 @@ Backward(const MatType& /* input */,
          const MatType& gy,
          MatType& g)
 {
-  using CubeType = typename GetCubeType<MatType>::type;
-
   if (gy.n_rows != tgtSeqLen * embedDim)
   {
     Log::Fatal << "Backpropagated error has incorrect dimensions!" << std::endl;
@@ -305,8 +301,6 @@ Gradient(const MatType& input,
          const MatType& error,
          MatType& gradient)
 {
-  using CubeType = typename GetCubeType<MatType>::type;
-
   if (input.n_rows != embedDim * (selfAttention ? srcSeqLen :
       (tgtSeqLen + 2 * srcSeqLen)))
   {
