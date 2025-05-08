@@ -150,14 +150,14 @@ template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
           DataOptionsType& opts,
-          std::enable_if_t<IsMatrix<MatType>::value>* = 0,
+          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>* = 0,
           std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>* = 0);
 
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
           const DataOptionsType& opts,
-          std::enable_if_t<IsMatrix<MatType>::value>* = 0,
+          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>* = 0,
           std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>* = 0);
 
 } // namespace data

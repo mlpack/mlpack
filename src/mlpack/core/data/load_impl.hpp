@@ -173,7 +173,7 @@ template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
           DataOptionsType& opts,
-          std::enable_if_t<IsMatrix<MatType>::value>*,
+          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>*,
           std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>*)
 {
   Timer::Start("loading_data");
@@ -193,7 +193,7 @@ bool Load(const std::string& filename,
     return false;
   }
 
-  if constexpr (IsMatrix<MatType>::value)
+  if constexpr (IsArma<MatType>::value || IsSparseMat<MatType>::value)
   {
     TextOptions txtOpts(std::move(opts));
     success = LoadMatrix(filename, matrix, stream, txtOpts);
