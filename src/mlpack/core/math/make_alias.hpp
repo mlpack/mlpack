@@ -26,11 +26,7 @@ void MakeAlias(OutVecType& v,
                const size_t offset = 0,
                const bool strict = true,
                const typename std::enable_if_t<
-                   IsVector<OutVecType>::value>* = 0,
-               const typename std::enable_if_t<
-                   IsArma<InVecType>::value>* = 0,
-               const typename std::enable_if_t<
-                   IsArma<OutVecType>::value>* = 0)
+                   IsVector<OutVecType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
@@ -53,11 +49,7 @@ void MakeAlias(OutMatType& m,
                const size_t offset = 0,
                const bool strict = true,
                const typename std::enable_if_t<
-                   IsMatrix<OutMatType>::value>* = 0,
-               const typename std::enable_if_t<
-                   IsArma<InMatType>::value>* = 0,
-               const typename std::enable_if_t<
-                   IsArma<OutMatType>::value>* = 0)
+                   IsMatrix<OutMatType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
@@ -80,11 +72,7 @@ void MakeAlias(OutCubeType& c,
                const size_t numSlices,
                const size_t offset = 0,
                const bool strict = true,
-               const typename std::enable_if_t<IsCube<OutCubeType>::value>* = 0,
-               const typename std::enable_if_t<
-                   IsArma<InCubeType>::value>* = 0,
-               const typename std::enable_if_t<
-                   IsArma<OutCubeType>::value>* = 0)
+               const typename std::enable_if_t<IsCube<OutCubeType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
@@ -130,123 +118,6 @@ void ClearAlias(arma::SpMat<ElemType>& /* mat */)
 {
   // We cannot make aliases of sparse matrices, so, nothing to do.
 }
-
-#if defined(MLPACK_HAS_COOT)
-
-/**
- * Reconstruct `v` as an alias around the memory `newMem`, with size `numRows` x
- * `numCols`.
- */
-template<typename InVecType, typename OutVecType>
-void MakeAlias(OutVecType& v,
-               const InVecType& oldVec,
-               const size_t numElems,
-               const size_t offset = 0,
-               const bool strict = true,
-               const typename std::enable_if_t<
-                   IsVector<OutVecType>::value>* = 0,
-               const typename std::enable_if_t<
-                   IsCoot<InVecType>::value>* = 0,
-               const typename std::enable_if_t<
-                   IsCoot<OutVecType>::value>* = 0)
-{
-  // We use placement new to reinitialize the object, since the copy and move
-  // assignment operators in Armadillo will end up copying memory instead of
-  // making an alias.
-  coot::dev_mem_t<InVecType::elem_type> newMem = oldVec.get_dev_mem() + offset;
-  v.~OutVecType();
-  new (&v) OutVecType(newMem, numElems, false, strict);
-}
-
-/**
- * Reconstruct `m` as an alias around the memory `newMem`, with size `numRows` x
- * `numCols`.
- */
-template<typename InMatType, typename OutMatType>
-void MakeAlias(OutMatType& m,
-               const InMatType& oldMat,
-               const size_t numRows,
-               const size_t numCols,
-               const size_t offset = 0,
-               const bool strict = true,
-               const typename std::enable_if_t<
-                   IsMatrix<OutMatType>::value>* = 0,
-               const typename std::enable_if_t<
-                   IsCoot<InMatType>::value>* = 0,
-               const typename std::enable_if_t<
-                   IsCoot<OutMatType>::value>* = 0)
-{
-  // We use placement new to reinitialize the object, since the copy and move
-  // assignment operators in Armadillo will end up copying memory instead of
-  // making an alias.
-  coot::dev_mem_t<InMatType::elem_type> newMem = oldMat.get_dev_mem() + offset;
-  m.~OutMatType();
-  new (&m) OutMatType(newMem, numRows, numCols);
-}
-
-/**
- * Reconstruct `c` as an alias around the memory` newMem`, with size `numRows` x
- * `numCols` x `numSlices`.
- */
-template<typename InCubeType, typename OutCubeType>
-void MakeAlias(OutCubeType& c,
-               const InCubeType& oldCube,
-               const size_t numRows,
-               const size_t numCols,
-               const size_t numSlices,
-               const size_t offset = 0,
-               const bool strict = true,
-               const typename std::enable_if_t<IsCube<OutCubeType>::value>* = 0,
-               const typename std::enable_if_t<
-                   IsCoot<InCubeType>::value>* = 0,
-               const typename std::enable_if_t<
-                   IsCoot<OutCubeType>::value>* = 0)
-{
-  // We use placement new to reinitialize the object, since the copy and move
-  // assignment operators in Armadillo will end up copying memory instead of
-  // making an alias.
-  coot::dev_mem_t<InCubeType::elem_type> newMem = oldCube.get_dev_mem() + offset;
-  c.~OutCubeType();
-  new (&c) OutCubeType(newMem, numRows, numCols, numSlices);
-}
-
-/**
- * Make `m` an alias of `in`, using the given size.
- */
-template<typename eT>
-void MakeAlias(coot::SpMat<eT>& m,
-               const acoot:SpMat<eT>& in,
-               const size_t /* numRows */,
-               const size_t /* numCols */,
-               const size_t /* offset */,
-               const bool /* strict */)
-{
-  // We can't make aliases of sparse objects, so just copy it.
-  m = in;
-}
-
-/**
- * Clear an alias so that no data is overwritten.  This resets the matrix if it
- * is an alias (and does nothing otherwise).
- */
-template<typename ElemType>
-void ClearAlias(coot::Mat<ElemType>& mat)
-{
-  if (mat.mem_state >= 1)
-    mat.reset();
-}
-
-/**
- * Clear an alias so that no data is overwritten.  This resets the matrix if it
- * is an alias (and does nothing otherwise).
- */
-template<typename ElemType>
-void ClearAlias(coot::SpMat<ElemType>& /* mat */)
-{
-  // We cannot make aliases of sparse matrices, so, nothing to do.
-}
-
-#endif // defined(MLPACK_HAS_COOT)
 
 } // namespace mlpack
 
