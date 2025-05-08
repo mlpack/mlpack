@@ -40,7 +40,7 @@ enum struct FileType
               // store arbitrary data
   CoordASCII, // simple co-ordinate format for sparse matrices (indices start at
               // zero)
-  ArffASCII   // ARFF data format, with a header specifying information about
+  ARFFASCII   // ARFF data format, with a header specifying information about
               // categories of the data.
 };
 

@@ -271,7 +271,7 @@ inline FileType AutoDetect(std::fstream& stream, const std::string& filename)
   }
   else if (extension == "arff")
   {
-    return FileType::ArffASCII;
+    return FileType::ARFFASCII;
   }
 
   else // Unknown extension...
@@ -320,7 +320,7 @@ void DetectFromExtension(const std::string& filename,
   }
   else if (extension == "arff")
   {
-    opts.Format() = FileType::ArffASCII;
+    opts.Format() = FileType::ARFFASCII;
   }
 }
 
