@@ -18,7 +18,7 @@
 #include <mlpack/core/util/log.hpp>
 #include <string>
 
-#include "data_options.hpp"
+#include "text_options.hpp"
 #include "format.hpp"
 #include "image_info.hpp"
 #include "detect_file_type.hpp"

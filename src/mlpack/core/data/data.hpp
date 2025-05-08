@@ -35,10 +35,12 @@
 #include "image_resize_crop.hpp"
 #include "imputer.hpp"
 #include "is_naninf.hpp"
+#include "matrix_options.hpp"
 #include "normalize_labels.hpp"
 #include "one_hot_encoding.hpp"
 #include "split_data.hpp"
 #include "string_algorithms.hpp"
+#include "text_options.hpp"
 #include "types.hpp"
 #include "utilities.hpp"
 

@@ -18,7 +18,7 @@
 #include <mlpack/prereqs.hpp>
 #include <string>
 
-#include "data_options.hpp"
+#include "text_options.hpp"
 #include "format.hpp"
 #include "dataset_mapper.hpp"
 #include "detect_file_type.hpp"

@@ -18,7 +18,7 @@
 #include "types.hpp"
 #include "extension.hpp"
 #include "string_algorithms.hpp"
-#include "data_options.hpp"
+#include "text_options.hpp"
 
 namespace mlpack {
 namespace data {
