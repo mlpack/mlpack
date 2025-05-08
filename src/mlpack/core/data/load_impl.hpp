@@ -209,6 +209,7 @@ bool Load(const std::string& filename,
     else
       Log::Warn << "DataOptionsType is unknown!  Please use a known type "
           << "or provide specific overloads." << std::endl;
+    return false;
   }
 
   if (!success)
