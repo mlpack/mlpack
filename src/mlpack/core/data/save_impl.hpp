@@ -154,11 +154,13 @@ bool Save(const std::string& filename,
   else
   {
     if (opts.Fatal())
-      Log::Fatal << "DataOptionType is unknown!."
-        "please use a known type or provide specific overloads" << std::endl;
+      Log::Fatal << "DataOptionsType is unknown!  Please use a known type or "
+          << "or provide specific overloads." << std::endl;
     else
-      Log::Warn << "DataOptionType is unknown!."
-        "please use a known type or provide specific overloads" << std::endl;
+      Log::Warn << "DataOptionsType is unknown!  Please use a known type or "
+          << "or provide specific overloads." << std::endl;
+
+    return false;
   }
 
   if (!success)
