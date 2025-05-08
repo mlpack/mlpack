@@ -246,6 +246,8 @@ bool LoadARFF(const std::string& filename,
           Log::Fatal << error.str() << std::endl;
         else
           Log::Warn << error.str() << std::endl;
+          
+        return false;
       }
 
       // What should this token be?
