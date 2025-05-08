@@ -302,7 +302,7 @@ bool LoadCSV::TransposeParse(arma::Mat<T>& inout,
           << row << ") on line " << col << "; should be " << rows
           << " dimensions.";
 
-    if (fatal)
+      if (fatal)
         Log::Fatal << oss.str() << std::endl;
       else
         Log::Warn << oss.str() << std::endl;
