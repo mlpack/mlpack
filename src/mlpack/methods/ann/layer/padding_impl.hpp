@@ -95,15 +95,15 @@ PaddingType<MatType>::operator=(PaddingType&& other)
 template<typename MatType>
 void PaddingType<MatType>::Forward(const MatType& input, MatType& output)
 {
+  using CubeType = typename GetCubeType<MatType>::type;
   // Make an alias of the input and output so that we can deal with the first
   // two dimensions directly.
-  arma::Cube<typename MatType::elem_type> reshapedInput(
-      (typename MatType::elem_type*) input.memptr(),
-      this->inputDimensions[0], this->inputDimensions[1], totalInMaps *
-      input.n_cols, false, true);
-  arma::Cube<typename MatType::elem_type> reshapedOutput(output.memptr(),
-      this->outputDimensions[0], this->outputDimensions[1], totalInMaps *
-      output.n_cols, false, true);
+  CubeType reshapedInput;
+  MakeAlias(reshapedInput, input, this->inputDimensions[0],
+      this->inputDimensions[1], totalInMaps * input.n_cols, 0, true);
+  CubeType reshapedOutput;
+  MakeAlias(reshapedOutput, output, this->outputDimensions[0],
+      this->outputDimensions[1], totalInMaps * output.n_cols, 0, true);
 
   // Set the padding parts to 0.
   if (padHTop > 0)
@@ -152,14 +152,15 @@ void PaddingType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
+  using CubeType = typename GetCubeType<MatType>::type;
   // Reshape g and gy so that extracting the un-padded input is easier to
   // understand.
-  arma::Cube<typename MatType::elem_type> reshapedGy(
-      (typename MatType::elem_type*) gy.memptr(), this->outputDimensions[0],
-      this->outputDimensions[1], totalInMaps * gy.n_cols, false, true);
-  arma::Cube<typename MatType::elem_type> reshapedG(g.memptr(),
-      this->inputDimensions[0], this->inputDimensions[1], totalInMaps *
-      g.n_cols, false, true);
+  CubeType reshapedGy;
+  MakeAlias(reshapedGy, gy, this->outputDimensions[0], 
+      this->outputDimensions[1], totalInMaps * gy.n_cols, 0, true);
+  CubeType reshapedG;
+  MakeAlias(reshapedG, g, this->inputDimensions[0],
+      this->inputDimensions[1], totalInMaps * g.n_cols, 0, true);
 
   reshapedG = reshapedGy.tube(padWLeft,
                               padHTop,

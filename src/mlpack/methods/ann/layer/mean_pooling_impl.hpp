@@ -113,14 +113,14 @@ void MeanPoolingType<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   // Create Alias of input as 2D image as input is 1D vector.
-  arma::Cube<typename MatType::elem_type> inputTemp(
-      const_cast<MatType&>(input).memptr(), this->inputDimensions[0],
-      this->inputDimensions[1], input.n_cols * channels, false, false);
+  CubeType inputTemp;
+  MakeAlias(inputTemp, input, this->inputDimensions[0],
+      this->inputDimensions[1], input.n_cols * channels, 0, false);
 
   // Create Alias of output as 2D image as output is 1D vector.
-  arma::Cube<typename MatType::elem_type> outputTemp(output.memptr(),
-      this->outputDimensions[0], this->outputDimensions[1],
-      input.n_cols * channels, false, true);
+  CubeType outputTemp;
+  MakeAlias(outputTemp, output, this->outputDimensions[0],
+      this->outputDimensions[1], input.n_cols * channels, 0, true);
 
   // Apply Pooling to the input.
   PoolingOperation(inputTemp, outputTemp);
@@ -134,15 +134,14 @@ void MeanPoolingType<MatType>::Backward(
   MatType& g)
 {
   // Create Alias of gy as 2D matrix as gy is 1D vector.
-  arma::Cube<typename MatType::elem_type> mappedError =
-      arma::Cube<typename MatType::elem_type>(((MatType&) gy).memptr(),
-      this->outputDimensions[0], this->outputDimensions[1],
-      channels * input.n_cols, false, false);
+  CubeType mappedError;
+  MakeAlias(mappedError, gy, this->outputDimensions[0],
+      this->outputDimensions[1], channels * input.n_cols, 0, false);
 
   // Create Alias of g as 2D matrix as g is 1D vector.
-  arma::Cube<typename MatType::elem_type> gTemp(g.memptr(),
-      this->inputDimensions[0], this->inputDimensions[1],
-      channels * input.n_cols, false, true);
+  CubeType gTemp;
+  MakeAlias(gTemp, g, this->inputDimensions[0],
+      this->inputDimensions[1], channels * input.n_cols, 0, true);
 
   // Initialize the gradient with zero.
   gTemp.zeros();
@@ -201,8 +200,8 @@ void MeanPoolingType<MatType>::serialize(
 
 template<typename MatType>
 void MeanPoolingType<MatType>::PoolingOperation(
-    const arma::Cube<typename MatType::elem_type>& input,
-    arma::Cube<typename MatType::elem_type>& output)
+    const CubeType& input,
+    CubeType& output)
 {
   // Iterate over all slices individually.
   #pragma omp parallel for
