@@ -45,7 +45,7 @@ template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
           DataOptionsType& opts, 
-          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>* = 0,
+          std::enable_if_t<IsMatrix<MatType>::value>* = 0,
           std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>* = 0);
 
 /**
@@ -61,7 +61,7 @@ template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
           const DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>* = 0,
+          std::enable_if_t<IsMatrix<MatType>::value>* = 0,
           std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>* = 0);
 
 /**

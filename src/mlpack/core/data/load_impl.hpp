@@ -122,7 +122,7 @@ template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
           const DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>*,
+          std::enable_if_t<IsMatrix<MatType>::value>*,
           std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>*)
 {
   DataOptionsType tmpOpts(opts);
@@ -141,7 +141,7 @@ bool LoadMatrix(const std::string& filename,
     success = LoadSparse(filename, matrix, txtOpts, stream);
   }
   else if (txtOpts.Categorical() ||
-      (txtOpts.Format() == FileType::ArffASCII))
+      (txtOpts.Format() == FileType::ARFFASCII))
   {
     success = LoadCategorical(filename, matrix, txtOpts);
   }
@@ -169,13 +169,11 @@ bool LoadMatrix(const std::string& filename,
   return success;
 }
 
-// This is the function that the user is supposed to call.
-// Other functions of this class should be labelled as private.
 template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
           DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value || IsSparseMat<MatType>::value>*,
+          std::enable_if_t<IsMatrix<MatType>::value>*,
           std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>*)
 {
   Timer::Start("loading_data");
@@ -195,7 +193,7 @@ bool Load(const std::string& filename,
     return false;
   }
 
-  if constexpr (IsArma<MatType>::value || IsSparseMat<MatType>::value)
+  if constexpr (IsMatrix<MatType>::value)
   {
     TextOptions txtOpts(std::move(opts));
     success = LoadMatrix(filename, matrix, stream, txtOpts);
@@ -203,8 +201,12 @@ bool Load(const std::string& filename,
   }
   else 
   {
-    throw std::runtime_error("DataOptionType is unknown!."
-        "please use a known type or provide specific overloads");
+    if (opts.Fatal())
+      Log::Fatal << "DataOptionType is unknown!."
+        "please use a known type or provide specific overloads" << std::endl;
+    else
+      Log::Warn << "DataOptionType is unknown!."
+          "please use a known type or provide specific overloads" << std::endl;
   }
 
   if (!success)
@@ -219,11 +221,11 @@ bool Load(const std::string& filename,
   }
   else
   {
-   if constexpr (IsArma<MatType>::value)
-   {
+    if constexpr (IsArma<MatType>::value)
+    {
       Log::Info << "Size is " << matrix.n_rows << " x "
-                << matrix.n_cols << ".\n";
-   }
+          << matrix.n_cols << ".\n";
+    }
   }
 
   Timer::Stop("loading_data");
@@ -357,7 +359,7 @@ bool LoadCategorical(const std::string& filename,
   if (extension == "csv" || extension == "tsv" || extension == "txt")
   {
     Log::Info << "Loading '" << filename << "' as CSV dataset.  " << std::flush;
-    LoadCSV loader(filename);
+    LoadCSV loader(filename, opts.Fatal());
     success = loader.LoadCategoricalCSV(matrix, opts);
     if (!success)
     {
@@ -369,7 +371,7 @@ bool LoadCategorical(const std::string& filename,
   {
     Log::Info << "Loading '" << filename << "' as ARFF dataset.  "
         << std::flush;
-    success = LoadARFF(filename, matrix, opts.DatasetInfo());
+    success = LoadARFF(filename, matrix, opts.DatasetInfo(), opts.Fatal());
     if (!success)
     {
       Timer::Stop("loading_data");

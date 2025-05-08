@@ -23,7 +23,8 @@ namespace data {
 template<typename eT, typename PolicyType>
 bool LoadARFF(const std::string& filename,
               arma::Mat<eT>& matrix,
-              DatasetMapper<PolicyType>& info)
+              DatasetMapper<PolicyType>& info,
+              bool fatal)
 {
   // First, open the file.
   std::ifstream ifs;
@@ -128,8 +129,13 @@ bool LoadARFF(const std::string& filename,
       }
       else
       {
-        Log::Fatal << "unknown ARFF annotation '" + (*tok.begin()) + "'"
-            << std::endl;
+        if (fatal)
+          Log::Fatal << "unknown ARFF annotation '" + (*tok.begin()) + "'"
+              << std::endl;
+        else
+          Log::Warn << "unknown ARFF annotation '" + (*tok.begin()) + "'"
+              << std::endl;
+
         return false;
       }
     }
@@ -137,7 +143,10 @@ bool LoadARFF(const std::string& filename,
 
   if (ifs.eof())
   {
-    Log::Fatal << "no @data section found" << std::endl;
+    if (fatal)
+      Log::Fatal << "no @data section found" << std::endl;
+    else
+      Log::Warn << "no @data section found" << std::endl;
     return false;
   }
 
@@ -208,7 +217,10 @@ bool LoadARFF(const std::string& filename,
     // is not handled for now...
     if (line[0] == '{')
     {
-      Log::Fatal << "cannot yet parse sparse ARFF data" << std::endl;
+      if (fatal)
+        Log::Fatal << "cannot yet parse sparse ARFF data" << std::endl;
+      else
+        Log::Warn << "cannot yet parse sparse ARFF data" << std::endl;
       return false;
     }
 
@@ -223,8 +235,13 @@ bool LoadARFF(const std::string& filename,
       // Check that we are not too many columns in.
       if (col >= matrix.n_rows)
       {
-        Log::Fatal << "Too many columns in line " << (headerLines + row)
+        if (fatal)
+          Log::Fatal << "Too many columns in line " << (headerLines + row)
             << "." << std::endl;
+        else
+          Log::Warn << "Too many columns in line " << (headerLines + row)
+            << "." << std::endl;
+
         return false;
       }
 

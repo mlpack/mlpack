@@ -52,7 +52,8 @@ bool LoadARFF(const std::string& filename, arma::Mat<eT>& matrix);
 template<typename eT, typename PolicyType>
 bool LoadARFF(const std::string& filename,
               arma::Mat<eT>& matrix,
-              DatasetMapper<PolicyType>& info);
+              DatasetMapper<PolicyType>& info,
+              bool fatal);
 
 } // namespace data
 } // namespace mlpack

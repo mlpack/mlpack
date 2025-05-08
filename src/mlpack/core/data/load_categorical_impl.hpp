@@ -21,7 +21,7 @@ template<typename MatType>
 bool LoadCSV::LoadCategoricalCSV(MatType& matrix,
                                  TextOptions& opts)
 {
-  CheckOpen();
+  CheckOpen(opts.Fatal());
 
   if (!opts.MissingPolicy() && opts.Categorical())
   {
@@ -64,7 +64,8 @@ inline void LoadCSV::CategoricalMatColSize(
 
 template<typename T, typename MapPolicy>
 bool LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
-                                        DatasetMapper<MapPolicy>& info)
+                                        DatasetMapper<MapPolicy>& info,
+                                        bool fatal)
 {
   // Take a pass through the file.  If the DatasetMapper policy requires it,
   // we will pass everything as string through MapString().  This might be
@@ -94,9 +95,14 @@ bool LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
       }
       else if (info.Dimensionality() != rows)
       {
-        Log::Fatal << "data::LoadCSV(): given DatasetInfo has dimensionality "
-            << info.Dimensionality() << ", but data has dimensionality "
-            << rows << std::endl;;
+        if (fatal)
+          Log::Fatal << "data::LoadCSV(): given DatasetInfo has dimensionality "
+              << info.Dimensionality() << ", but data has dimensionality "
+              << rows << std::endl;
+        else
+          Log::Warn << "data::LoadCSV(): given DatasetInfo has dimensionality "
+              << info.Dimensionality() << ", but data has dimensionality "
+              << rows << std::endl;
         return false;
       }
     }
@@ -149,7 +155,7 @@ bool LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
 
 template<typename T, typename MapPolicy>
 bool LoadCSV::InitializeMapper(size_t& rows, size_t& cols,
-    DatasetMapper<MapPolicy>& info)
+    DatasetMapper<MapPolicy>& info, bool fatal)
 {
   // Take a pass through the file.  If the DatasetMapper policy requires it, we
   // will pass everything as string through MapString().  This might be useful
@@ -174,9 +180,14 @@ bool LoadCSV::InitializeMapper(size_t& rows, size_t& cols,
   }
   else if (info.Dimensionality() != rows)
   {
-    Log::Fatal << "data::LoadCSV(): given DatasetInfo has dimensionality "
-        << info.Dimensionality() << ", but data has dimensionality "
-        << rows << std::endl;
+    if (fatal)
+      Log::Fatal << "data::LoadCSV(): given DatasetInfo has dimensionality "
+          << info.Dimensionality() << ", but data has dimensionality "
+          << rows << std::endl;
+    else
+      Log::Warn << "data::LoadCSV(): given DatasetInfo has dimensionality "
+          << info.Dimensionality() << ", but data has dimensionality "
+          << rows << std::endl;
     return false;
   }
 
@@ -239,7 +250,7 @@ bool LoadCSV::TransposeParse(arma::Mat<T>& inout,
 {
   // Get matrix size.  This also initializes infoSet correctly.
   size_t rows, cols;
-  InitializeTransposeMapper<T>(rows, cols, infoSet);
+  InitializeTransposeMapper<T>(rows, cols, infoSet, fatal);
 
   // Set the matrix size.
   inout.set_size(rows, cols);
@@ -286,14 +297,16 @@ bool LoadCSV::TransposeParse(arma::Mat<T>& inout,
     // Make sure we got the right number of rows.
     if (row != rows)
     {
-      if (fatal)
-        Log::Fatal << "LoadCSV::TransposeParse(): wrong number of dimensions ("
-            << row << ") on line " << col << "; should be " << rows
-            << " dimensions." << std::endl;
-      else
-      Log::Warn << "LoadCSV::TransposeParse(): wrong number of dimensions ("
+      std::stringstream oss;
+      oss << "LoadCSV::TransposeParse(): wrong number of dimensions ("
           << row << ") on line " << col << "; should be " << rows
-          << " dimensions." << std::endl;
+          << " dimensions.";
+
+    if (fatal)
+        Log::Fatal << oss.str() << std::endl;
+      else
+        Log::Warn << oss.str() << std::endl;
+
       return false;
     }
     // Increment the column index.
@@ -309,7 +322,7 @@ bool LoadCSV::NonTransposeParse(arma::Mat<T>& inout,
 {
   // Get the size of the matrix.
   size_t rows, cols;
-  InitializeMapper<T>(rows, cols, infoSet);
+  InitializeMapper<T>(rows, cols, infoSet, fatal);
 
   // Set up output matrix.
   inout.set_size(rows, cols);

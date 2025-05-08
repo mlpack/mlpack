@@ -39,8 +39,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_LOAD_CSV_HPP
-#define MLPACK_CORE_DATA_LOAD_CSV_HPP
+#ifndef MLPACK_CORE_DATA_LOAD_CATEGORICAL_HPP
+#define MLPACK_CORE_DATA_LOAD_CATEGORICAL_HPP
 
 #include <mlpack/core/util/log.hpp>
 #include <set>
@@ -75,7 +75,7 @@ class LoadCSV
   *
   * @param file path of the dataset.
   */
-  LoadCSV(const std::string& file) :
+  LoadCSV(const std::string& file, bool fatal) :
       extension(Extension(file)),
       filename(file),
       inFile(file)
@@ -93,7 +93,7 @@ class LoadCSV
       delim = ' ';
     }
 
-    CheckOpen();
+    CheckOpen(fatal);
   }
 
   // Functions for Categorical Parse.
@@ -123,7 +123,8 @@ class LoadCSV
   */
   template<typename T, typename MapPolicy>
   bool InitializeMapper(size_t& rows, size_t& cols,
-                        DatasetMapper<MapPolicy>& info);
+                        DatasetMapper<MapPolicy>& info,
+                        bool fatal);
 
   /**
   * Peek at the file to determine the number of rows and columns in the matrix,
@@ -138,7 +139,8 @@ class LoadCSV
   */
   template<typename T, typename MapPolicy>
   bool InitializeTransposeMapper(size_t& rows, size_t& cols,
-                                 DatasetMapper<MapPolicy>& info);
+                                 DatasetMapper<MapPolicy>& info,
+                                 bool fatal);
 
   /**
    * Calculate the number of columns in each row
@@ -212,14 +214,18 @@ class LoadCSV
   * if not.
   * @return false on errors.
   */
-  inline bool CheckOpen()
+  inline bool CheckOpen(bool fatal)
   {
     // Check if the file is opening.
     if (!inFile.is_open())
     {
-      std::ostringstream oss;
-      Log::Fatal << "Cannot open file '" << filename 
-          << "'. File is already open" << std::endl;
+      if (fatal)
+        Log::Fatal << "Cannot open file '" << filename 
+            << "'. File is already open" << std::endl;
+      else
+        Log::Warn << "Cannot open file '" << filename 
+            << "'. File is already open" << std::endl;
+
       return false;
     }
 
