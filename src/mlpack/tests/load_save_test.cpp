@@ -2509,9 +2509,9 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
-  f << "a, b, c, d" << endl;
-  f << "1, 2, 3, 4" << endl;
-  f << "5, 6, 7, 8" << endl;
+  f << "a,b,c,d" << endl;
+  f << "1,2,3,4" << endl;
+  f << "5,6,7,8" << endl;
 
   arma::mat dataset;
   data::TextOptions opts;
