@@ -205,7 +205,8 @@ void MakeAlias(OutCubeType& c,
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
-  coot::dev_mem_t<InCubeType::elem_type> newMem = oldCube.get_dev_mem() + offset;
+  coot::dev_mem_t<InCubeType::elem_type> newMem =
+      oldCube.get_dev_mem() + offset;
   c.~OutCubeType();
   new (&c) OutCubeType(newMem, numRows, numCols, numSlices);
 }

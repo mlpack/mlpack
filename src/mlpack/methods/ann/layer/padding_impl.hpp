@@ -156,7 +156,7 @@ void PaddingType<MatType>::Backward(
   // Reshape g and gy so that extracting the un-padded input is easier to
   // understand.
   CubeType reshapedGy;
-  MakeAlias(reshapedGy, gy, this->outputDimensions[0], 
+  MakeAlias(reshapedGy, gy, this->outputDimensions[0],
       this->outputDimensions[1], totalInMaps * gy.n_cols, 0, true);
   CubeType reshapedG;
   MakeAlias(reshapedG, g, this->inputDimensions[0],
