@@ -322,6 +322,10 @@ void DetectFromExtension(const std::string& filename,
   {
     opts.Format() = FileType::ARFFASCII;
   }
+  else
+  {
+    opts.Format() = FileType::FileTypeUnknown;
+  }
 }
 
 /**

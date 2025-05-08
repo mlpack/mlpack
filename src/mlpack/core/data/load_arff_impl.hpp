@@ -157,9 +157,14 @@ bool LoadARFF(const std::string& filename,
   }
   else if (info.Dimensionality() != dimensionality)
   {
-    Log::Fatal << "data::LoadARFF(): given DatasetInfo has dimensionality "
-        << info.Dimensionality() << ", but data has dimensionality "
-        << dimensionality << std::endl;
+    if (fatal)
+      Log::Fatal << "data::LoadARFF(): given DatasetInfo has dimensionality "
+          << info.Dimensionality() << ", but data has dimensionality "
+          << dimensionality << std::endl;
+    else
+      Log::Warn << "data::LoadARFF(): given DatasetInfo has dimensionality "
+          << info.Dimensionality() << ", but data has dimensionality "
+          << dimensionality << std::endl;
     return false;
   }
 
@@ -235,14 +240,12 @@ bool LoadARFF(const std::string& filename,
       // Check that we are not too many columns in.
       if (col >= matrix.n_rows)
       {
+        std::stringstream error;
+        error << "Too many columns in line " << (headerLines + row) << ".";
         if (fatal)
-          Log::Fatal << "Too many columns in line " << (headerLines + row)
-            << "." << std::endl;
+          Log::Fatal << error.str() << std::endl;
         else
-          Log::Warn << "Too many columns in line " << (headerLines + row)
-            << "." << std::endl;
-
-        return false;
+          Log::Warn << error.str() << std::endl;
       }
 
       // What should this token be?
@@ -259,14 +262,18 @@ bool LoadARFF(const std::string& filename,
         if (categoryStrings.count(col) > 0 &&
             currentNumMappings < info.NumMappings(col))
         {
-          Log::Fatal << "Parse error at line " << (headerLines + row) << " token "
+          std::stringstream error;
+          error << "Parse error at line " << (headerLines + row) << " token "
               << col << ": category \"" << token << "\" not in the set of known"
-              << " categories for this dimension (" << std::endl;
+              << " categories for this dimension (";
           for (size_t i = 0; i < categoryStrings.at(col).size() - 1; ++i)
-            Log::Fatal << "\"" << categoryStrings.at(col)[i] << "\", "
-                << std::endl;
-          Log::Fatal << "\"" << categoryStrings.at(col).back() << "\")."
-              << std::endl;
+            error << "\"" << categoryStrings.at(col)[i] << "\", ";
+          error << "\"" << categoryStrings.at(col).back() << "\").";
+          
+          if (fatal)
+            Log::Fatal << error.str() << std::endl;
+          else  
+            Log::Warn << error.str() << std::endl;
           return false;
         }
 

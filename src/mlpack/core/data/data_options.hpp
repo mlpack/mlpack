@@ -453,8 +453,6 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
       this->WarnOptionConversion("categorical", dataDescription);
     if (hasHeaders.has_value() && hasHeaders != defaultHasHeaders)
       this->WarnOptionConversion("hasHeaders", dataDescription);
-    if (missingPolicy.has_value() && missingPolicy != defaultMissingPolicy)
-      this->WarnOptionConversion("missingPolicy", dataDescription);
 
     // If either headers or datasetInfo are non-empty, then we take it that the
     // user has manually modified them.
