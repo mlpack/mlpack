@@ -314,7 +314,7 @@ bool LoadARFF(const std::string& filename,
               std::stringstream error;
               error << "Parse error " << "at line " <<
                   (headerLines + row) << " token " << col << ": \""
-                  << tokenStr << "\"." << std::endl;
+                  << tokenStr << "\".";
 
               if (fatal)
                 Log::Fatal << error.str() << std::endl;
