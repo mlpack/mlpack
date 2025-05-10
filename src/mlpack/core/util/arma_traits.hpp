@@ -308,6 +308,54 @@ struct IsBaseMatType<arma::SpRow<eT>>
   constexpr static bool value = true;
 };
 
+template<typename MatType>
+struct IsSparseMat
+{
+  constexpr static bool value = false;
+};
+
+template<typename eT>
+struct IsSparseMat<arma::SpMat<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename MatType>
+struct IsCol
+{
+  constexpr static bool value = false;
+};
+
+template<typename eT>
+struct IsCol<arma::Col<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename MatType>
+struct IsRow
+{
+  constexpr static bool value = false;
+};
+
+template<typename eT>
+struct IsRow<arma::Row<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename MatType>
+struct IsDense
+{
+  constexpr static bool value = false;
+};
+
+template<typename eT>
+struct IsDense<arma::Mat<eT>>
+{
+  constexpr static bool value = true;
+};
+
 // Get whether or not the given type is any non-field Armadillo type
 // This includes sparse, dense, and cube types
 template<typename T>

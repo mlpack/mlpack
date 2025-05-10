@@ -1,5 +1,5 @@
 /**
- * @file core/data/load_categorical_csv.hpp
+ * @file core/data/load_categorical_impl.hpp
  * @author Gopi Tatiraju
  *
  * Load a matrix from file. Matrix may contain categorical data.
@@ -9,28 +9,43 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_LOAD_CATEGORICAL_CSV_HPP
-#define MLPACK_CORE_DATA_LOAD_CATEGORICAL_CSV_HPP
+#ifndef MLPACK_CORE_DATA_LOAD_CATEGORICAL_IMPL_HPP
+#define MLPACK_CORE_DATA_LOAD_CATEGORICAL_IMPL_HPP
 
-#include "load_csv.hpp"
+#include "load_categorical.hpp"
 
 namespace mlpack{
 namespace data{
 
-template<typename eT, typename PolicyType>
-void LoadCSV::LoadCategoricalCSV(arma::Mat<eT> &inout,
-                                 DatasetMapper<PolicyType> &infoSet,
-                                 const bool transpose)
+template<typename MatType>
+bool LoadCSV::LoadCategoricalCSV(MatType& matrix,
+                                 TextOptions& opts)
 {
-  CheckOpen();
+  CheckOpen(opts.Fatal());
 
-  if (transpose)
-    TransposeParse(inout, infoSet);
-  else
-    NonTransposeParse(inout, infoSet);
+  if (!opts.MissingPolicy() && opts.Categorical())
+  {
+    if (!opts.NoTranspose())
+      return TransposeParse(matrix, opts.DatasetInfo(), opts.Fatal());
+    else
+      return NonTransposeParse(matrix, opts.DatasetInfo(), opts.Fatal());
+  }
+  // NOTE: this is only here to preserve the behavior of loading missing data
+  // until it is refactored; then, `opts.MissingPolicy()` will be removed.
+  else if (opts.MissingPolicy() && opts.Categorical())
+  {
+    if (!opts.NoTranspose())
+      return TransposeParse(matrix, opts.DatasetMissingPolicy(),
+          opts.Fatal());
+    else
+      return NonTransposeParse(matrix, opts.DatasetMissingPolicy(),
+          opts.Fatal());
+  }
+
+  return false; // fix warning
 }
 
-inline void LoadCSV::CategoricalMatSize(
+inline void LoadCSV::CategoricalMatColSize(
     std::stringstream& lineStream, size_t& col, const char delim)
 {
   std::string token;
@@ -48,8 +63,9 @@ inline void LoadCSV::CategoricalMatSize(
 }
 
 template<typename T, typename MapPolicy>
-void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
-                                        DatasetMapper<MapPolicy>& info)
+bool LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
+                                        DatasetMapper<MapPolicy>& info,
+                                        bool fatal)
 {
   // Take a pass through the file.  If the DatasetMapper policy requires it,
   // we will pass everything as string through MapString().  This might be
@@ -70,7 +86,7 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
     if (cols == 1)
     {
       // Extract the number of dimensions.
-      std::pair<size_t, size_t> dimen = GetMatrixSize<false>(inFile, delim);
+      std::pair<size_t, size_t> dimen = CategoricalMatrixSize(inFile, delim);
       rows = dimen.second;
 
       if (info.Dimensionality() == 0)
@@ -79,11 +95,15 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
       }
       else if (info.Dimensionality() != rows)
       {
-        std::ostringstream oss;
-        oss << "data::LoadCSV(): given DatasetInfo has dimensionality "
-            << info.Dimensionality() << ", but data has dimensionality "
-            << rows;
-        throw std::invalid_argument(oss.str());
+        if (fatal)
+          Log::Fatal << "data::LoadCSV(): given DatasetInfo has dimensionality "
+              << info.Dimensionality() << ", but data has dimensionality "
+              << rows << std::endl;
+        else
+          Log::Warn << "data::LoadCSV(): given DatasetInfo has dimensionality "
+              << info.Dimensionality() << ", but data has dimensionality "
+              << rows << std::endl;
+        return false;
       }
     }
 
@@ -130,11 +150,12 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
       }
     }
   }
+  return true;
 }
 
 template<typename T, typename MapPolicy>
-void LoadCSV::InitializeMapper(size_t& rows, size_t& cols,
-    DatasetMapper<MapPolicy>& info)
+bool LoadCSV::InitializeMapper(size_t& rows, size_t& cols,
+    DatasetMapper<MapPolicy>& info, bool fatal)
 {
   // Take a pass through the file.  If the DatasetMapper policy requires it, we
   // will pass everything as string through MapString().  This might be useful
@@ -159,11 +180,15 @@ void LoadCSV::InitializeMapper(size_t& rows, size_t& cols,
   }
   else if (info.Dimensionality() != rows)
   {
-    std::ostringstream oss;
-    oss << "data::LoadCSV(): given DatasetInfo has dimensionality "
-        << info.Dimensionality() << ", but data has dimensionality "
-        << rows;
-    throw std::invalid_argument(oss.str());
+    if (fatal)
+      Log::Fatal << "data::LoadCSV(): given DatasetInfo has dimensionality "
+          << info.Dimensionality() << ", but data has dimensionality "
+          << rows << std::endl;
+    else
+      Log::Warn << "data::LoadCSV(): given DatasetInfo has dimensionality "
+          << info.Dimensionality() << ", but data has dimensionality "
+          << rows << std::endl;
+    return false;
   }
 
   // Now, jump back to the beginning of the file.
@@ -179,7 +204,7 @@ void LoadCSV::InitializeMapper(size_t& rows, size_t& cols,
     if (rows == 1)
     {
       // Extract the number of columns.
-      std::pair<size_t, size_t> dimen = GetMatrixSize<false>(inFile, delim);
+      std::pair<size_t, size_t> dimen = CategoricalMatrixSize(inFile, delim);
       cols = dimen.second;
     }
 
@@ -215,15 +240,17 @@ void LoadCSV::InitializeMapper(size_t& rows, size_t& cols,
       }
     }
   }
+  return true;
 }
 
 template<typename T, typename PolicyType>
-void LoadCSV::TransposeParse(arma::Mat<T>& inout,
-                             DatasetMapper<PolicyType>& infoSet)
+bool LoadCSV::TransposeParse(arma::Mat<T>& inout,
+                             DatasetMapper<PolicyType>& infoSet,
+                             bool fatal)
 {
   // Get matrix size.  This also initializes infoSet correctly.
   size_t rows, cols;
-  InitializeTransposeMapper<T>(rows, cols, infoSet);
+  InitializeTransposeMapper<T>(rows, cols, infoSet, fatal);
 
   // Set the matrix size.
   inout.set_size(rows, cols);
@@ -267,27 +294,35 @@ void LoadCSV::TransposeParse(arma::Mat<T>& inout,
       inout(row, col) = infoSet.template MapString<T>(std::move(token), row);
       row++;
     }
-
     // Make sure we got the right number of rows.
     if (row != rows)
     {
-      std::ostringstream oss;
-      oss << "LoadCSV::TransposeParse(): wrong number of dimensions (" << row
-          << ") on line " << col << "; should be " << rows << " dimensions.";
-      throw std::runtime_error(oss.str());
+      std::stringstream oss;
+      oss << "LoadCSV::TransposeParse(): wrong number of dimensions ("
+          << row << ") on line " << col << "; should be " << rows
+          << " dimensions.";
+
+      if (fatal)
+        Log::Fatal << oss.str() << std::endl;
+      else
+        Log::Warn << oss.str() << std::endl;
+
+      return false;
     }
     // Increment the column index.
     ++col;
   }
+  return true;
 }
 
 template<typename T, typename PolicyType>
-void LoadCSV::NonTransposeParse(arma::Mat<T>& inout,
-                                DatasetMapper<PolicyType>& infoSet)
+bool LoadCSV::NonTransposeParse(arma::Mat<T>& inout,
+                                DatasetMapper<PolicyType>& infoSet,
+                                bool fatal)
 {
   // Get the size of the matrix.
   size_t rows, cols;
-  InitializeMapper<T>(rows, cols, infoSet);
+  InitializeMapper<T>(rows, cols, infoSet, fatal);
 
   // Set up output matrix.
   inout.set_size(rows, cols);
@@ -336,14 +371,19 @@ void LoadCSV::NonTransposeParse(arma::Mat<T>& inout,
     // Make sure we got the right number of rows.
     if (col != cols)
     {
-      std::ostringstream oss;
-      oss << "LoadCSV::NonTransposeParse(): wrong number of dimensions ("
-          << col << ") on line " << row << "; should be " << cols
-          << " dimensions.";
-      throw std::runtime_error(oss.str());
+      if (fatal)
+        Log::Fatal << "LoadCSV::NonTransposeParse(): wrong number of "
+            "dimensions (" << col << ") on line " << row << "; should be "
+            << cols << " dimensions." << std::endl;
+      else
+        Log::Warn << "LoadCSV::NonTransposeParse(): wrong number of "
+            "dimensions (" << col << ") on line " << row << "; should be "
+            << cols << " dimensions." << std::endl;
+      return false;
     }
     ++row; col = 0;
   }
+  return true;
 }
 
 } //namespace data

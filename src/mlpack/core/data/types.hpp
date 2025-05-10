@@ -19,9 +19,6 @@
 #ifndef MLPACK_CORE_DATA_TYPES_HPP
 #define MLPACK_CORE_DATA_TYPES_HPP
 
-#include <iostream>
-#include <limits>
-
 namespace mlpack {
 namespace data {
 
@@ -41,8 +38,10 @@ enum struct FileType
               // classes
   HDF5Binary, // HDF5: open binary format, not specific to Armadillo, which can
               // store arbitrary data
-  CoordASCII  // simple co-ordinate format for sparse matrices (indices start at
+  CoordASCII, // simple co-ordinate format for sparse matrices (indices start at
               // zero)
+  ARFFASCII   // ARFF data format, with a header specifying information about
+              // categories of the data.
 };
 
 /**

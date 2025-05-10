@@ -33,6 +33,7 @@
 #include <numeric>
 #include <vector>
 #include <queue>
+#include <string>
 
 // But if it's not defined, we'll do it.
 #ifndef M_PI

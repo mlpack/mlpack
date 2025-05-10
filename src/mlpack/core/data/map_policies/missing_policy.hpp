@@ -86,8 +86,9 @@ class MissingPolicy
               MapType& maps,
               std::vector<Datatype>& /* types */)
   {
-    static_assert(std::numeric_limits<T>::has_quiet_NaN == true,
-        "Cannot use MissingPolicy with types where has_quiet_NaN() is false!");
+    // commented out as @rcurting is going to remove the entire policy
+    //static_assert(std::numeric_limits<T>::has_quiet_NaN == true,
+    //"Cannot use MissingPolicy with types where has_quiet_NaN() is false!");
 
     // If we can load the string then there is no need for mapping.
     std::stringstream token;

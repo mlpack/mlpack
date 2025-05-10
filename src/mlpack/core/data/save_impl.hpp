@@ -1,6 +1,7 @@
 /**
  * @file core/data/save_impl.hpp
  * @author Ryan Curtin
+ * @author Omar Shrit
  *
  * Implementation of save functionality.
  *
@@ -38,113 +39,6 @@ bool Save(const std::string& filename,
   return Save(filename, rowvec, fatal, true, inputSaveType);
 }
 
-template<typename eT>
-bool Save(const std::string& filename,
-          const arma::Mat<eT>& matrix,
-          const bool fatal,
-          bool transpose,
-          FileType inputSaveType)
-{
-  Timer::Start("saving_data");
-
-  FileType saveType = inputSaveType;
-  std::string stringType = "";
-
-  if (inputSaveType == FileType::AutoDetect)
-  {
-    // Detect the file type using only the extension.
-    saveType = DetectFromExtension(filename);
-    if (saveType == FileType::FileTypeUnknown)
-    {
-      if (fatal)
-        Log::Fatal << "Could not detect type of file '" << filename << "' for "
-            << "writing.  Save failed." << std::endl;
-      else
-        Log::Warn << "Could not detect type of file '" << filename << "' for "
-            << "writing.  Save failed." << std::endl;
-
-      return false;
-    }
-  }
-
-  stringType = GetStringType(saveType);
-
-  // Catch errors opening the file.
-  std::fstream stream;
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-  stream.open(filename.c_str(), std::fstream::out | std::fstream::binary);
-#else
-  stream.open(filename.c_str(), std::fstream::out);
-#endif
-  if (!stream.is_open())
-  {
-    Timer::Stop("saving_data");
-    if (fatal)
-      Log::Fatal << "Cannot open file '" << filename << "' for writing. "
-          << "Save failed." << std::endl;
-    else
-      Log::Warn << "Cannot open file '" << filename << "' for writing; save "
-          << "failed." << std::endl;
-
-    return false;
-  }
-
-  // Try to save the file.
-  Log::Info << "Saving " << stringType << " to '" << filename << "'."
-      << std::endl;
-
-  // Transpose the matrix.
-  if (transpose)
-  {
-    arma::Mat<eT> tmp = trans(matrix);
-
-#ifdef ARMA_USE_HDF5
-    // We can't save with streams for HDF5.
-    const bool success = (saveType == FileType::HDF5Binary) ?
-        tmp.save(filename, ToArmaFileType(saveType)) :
-        tmp.save(stream, ToArmaFileType(saveType));
-#else
-    const bool success = tmp.save(stream, ToArmaFileType(saveType));
-#endif
-    if (!success)
-    {
-      Timer::Stop("saving_data");
-      if (fatal)
-        Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
-      else
-        Log::Warn << "Save to '" << filename << "' failed." << std::endl;
-
-      return false;
-    }
-  }
-  else
-  {
-#ifdef ARMA_USE_HDF5
-    // We can't save with streams for HDF5.
-    const bool success = (saveType == FileType::HDF5Binary) ?
-        matrix.save(filename, ToArmaFileType(saveType)) :
-        matrix.save(stream, ToArmaFileType(saveType));
-#else
-    const bool success = matrix.save(stream, ToArmaFileType(saveType));
-#endif
-    if (!success)
-    {
-      Timer::Stop("saving_data");
-      if (fatal)
-        Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
-      else
-        Log::Warn << "Save to '" << filename << "' failed." << std::endl;
-
-      return false;
-    }
-  }
-
-  Timer::Stop("saving_data");
-
-  // Finally return success.
-  return true;
-}
-
 // Save a Sparse Matrix
 template<typename eT>
 bool Save(const std::string& filename,
@@ -152,106 +46,178 @@ bool Save(const std::string& filename,
           const bool fatal,
           bool transpose)
 {
+  MatrixOptions opts;
+  opts.Fatal() = fatal;
+  opts.NoTranspose() = !transpose;
+
+  return Save(filename, matrix, opts);
+}
+
+template<typename eT>
+bool Save(const std::string& filename,
+          const arma::Mat<eT>& matrix,
+          const bool fatal,
+          bool transpose,
+          FileType inputSaveType)
+{
+  MatrixOptions opts;
+  opts.Fatal() = fatal;
+  opts.NoTranspose() = !transpose;
+  opts.Format() = inputSaveType;
+
+  return Save(filename, matrix, opts);
+}
+
+template<typename MatType, typename DataOptionsType>
+bool Save(const std::string& filename,
+          const MatType& matrix,
+          const DataOptionsType& opts,
+          std::enable_if_t<IsArma<MatType>::value ||
+              IsSparseMat<MatType>::value>*)
+{
+  //! just use default copy ctor with = operator and make a copy.
+  DataOptionsType copyOpts(opts);
+  return Save(filename, matrix, copyOpts);
+}
+
+/*
+ * Add this SFINAE in here because the compiler is so stupid that it is not
+ * able to distinguish between these two:
+ *
+ *  data::Save(filename, "model", *output);
+ *
+ *  and 
+ *
+ *  data::Save(filename, matrix, opts);
+ *  
+ * The second SFINAE is added because the compiler is bot able to see the
+ * difference between:
+ *
+ *  data::Save(filename, Row/Col, fatal);
+ *
+ *  and 
+ *
+ *  data::Save(filename, Row/Col, Opts);
+ *
+ * This SFINAE is temporary and must be removed after the integration of stage 3 or
+ * when the compiler becomes more intelligent.
+ */
+template<typename MatType, typename DataOptionsType>
+bool Save(const std::string& filename,
+          const MatType& matrix,
+          DataOptionsType& opts,
+          std::enable_if_t<IsArma<MatType>::value ||
+              IsSparseMat<MatType>::value>*,
+          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>*)
+{
   Timer::Start("saving_data");
 
-  // First we will try to discriminate by file extension.
-  std::string extension = Extension(filename);
-  if (extension == "")
+  bool success = DetectFileType<MatType>(filename, opts, false);
+  if (!success)
   {
     Timer::Stop("saving_data");
-    if (fatal)
-      Log::Fatal << "No extension given with filename '" << filename << "'; "
-          << "type unknown.  Save failed." << std::endl;
-    else
-      Log::Warn << "No extension given with filename '" << filename << "'; "
-          << "type unknown.  Save failed." << std::endl;
-
     return false;
   }
 
-  // Catch errors opening the file.
   std::fstream stream;
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-  stream.open(filename.c_str(), std::fstream::out | std::fstream::binary);
-#else
-  stream.open(filename.c_str(), std::fstream::out);
-#endif
-  if (!stream.is_open())
+  success = OpenFile(filename, opts, false, stream);
+  if (!success)
   {
     Timer::Stop("saving_data");
-    if (fatal)
-      Log::Fatal << "Cannot open file '" << filename << "' for writing. "
-          << "Save failed." << std::endl;
-    else
-      Log::Warn << "Cannot open file '" << filename << "' for writing; save "
-          << "failed." << std::endl;
-
-    return false;
-  }
-
-  bool unknownType = false;
-  FileType saveType;
-  std::string stringType;
-
-  if (extension == "txt" || extension == "tsv")
-  {
-    saveType = FileType::CoordASCII;
-    stringType = "raw ASCII formatted data";
-  }
-  else if (extension == "bin")
-  {
-    saveType = FileType::ArmaBinary;
-    stringType = "Armadillo binary formatted data";
-  }
-  else
-  {
-    unknownType = true;
-    saveType = FileType::RawBinary; // Won't be used; prevent a warning.
-    stringType = "";
-  }
-
-  // Provide error if we don't know the type.
-  if (unknownType)
-  {
-    Timer::Stop("saving_data");
-    if (fatal)
-      Log::Fatal << "Unable to determine format to save to from filename '"
-          << filename << "'.  Save failed." << std::endl;
-    else
-      Log::Warn << "Unable to determine format to save to from filename '"
-          << filename << "'.  Save failed." << std::endl;
-
     return false;
   }
 
   // Try to save the file.
-  Log::Info << "Saving " << stringType << " to '" << filename << "'."
-      << std::endl;
-
-  arma::SpMat<eT> tmp = matrix;
-
-  // Transpose the matrix.
-  if (transpose)
+  Log::Info << "Saving " << opts.FileTypeToString() << " to '" << filename
+      << "'." << std::endl;
+  if constexpr (IsArma<MatType>::value || IsSparseMat<MatType>::value)
   {
-    tmp = trans(matrix);
+    TextOptions txtOpts(std::move(opts));
+    if constexpr (IsSparseMat<MatType>::value)
+    {
+      success = SaveSparse(matrix, txtOpts, stream);
+    }
+    else if constexpr (IsCol<MatType>::value)
+    {
+      opts.NoTranspose() = true;
+      success = SaveDense(matrix, txtOpts, stream);
+    }
+    else if constexpr (IsRow<MatType>::value)
+    {
+      opts.NoTranspose() = false;
+      success = SaveDense(matrix, txtOpts, stream);
+    }
+    else if constexpr (IsDense<MatType>::value)
+    {
+      success = SaveDense(matrix, txtOpts, stream);
+    }
+    opts = std::move(txtOpts);
+  }
+  else
+  {
+    if (opts.Fatal())
+      Log::Fatal << "DataOptionsType is unknown!  Please use a known type or "
+          << "or provide specific overloads." << std::endl;
+    else
+      Log::Warn << "DataOptionsType is unknown!  Please use a known type or "
+          << "or provide specific overloads." << std::endl;
+
+    return false;
   }
 
-  const bool success = tmp.save(stream, ToArmaFileType(saveType));
   if (!success)
   {
     Timer::Stop("saving_data");
-    if (fatal)
+    if (opts.Fatal())
       Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
     else
       Log::Warn << "Save to '" << filename << "' failed." << std::endl;
-
     return false;
   }
 
   Timer::Stop("saving_data");
 
-  // Finally return success.
-  return true;
+  return success;
+}
+
+template<typename eT>
+bool SaveDense(const arma::Mat<eT>& matrix,
+               TextOptions& opts,
+               std::fstream& stream)
+{
+  bool success = false;
+  arma::Mat<eT> tmp;
+  // Transpose the matrix.
+  if (!opts.NoTranspose())
+  {
+    tmp = trans(matrix);
+    success = SaveMatrix(tmp, opts, stream);
+  }
+  else
+    success = SaveMatrix(matrix, opts, stream);
+
+  return success;
+}
+
+// Save a Sparse Matrix
+template<typename eT>
+bool SaveSparse(const arma::SpMat<eT>& matrix,
+                TextOptions& opts,
+                std::fstream& stream)
+{
+  bool success = false;
+  arma::SpMat<eT> tmp;
+
+  // Transpose the matrix.
+  if (!opts.NoTranspose())
+  {
+    arma::SpMat<eT> tmp = trans(matrix);
+    success = SaveMatrix(tmp, opts, stream);
+  }
+  else
+    success = SaveMatrix(matrix, opts, stream);
+
+  return success;
 }
 
 //! Save a model to file.
@@ -260,7 +226,8 @@ bool Save(const std::string& filename,
           const std::string& name,
           T& t,
           const bool fatal,
-          format f)
+          format f,
+          std::enable_if_t<HasSerialize<T>::value>*)
 {
   if (f == format::autodetect)
   {

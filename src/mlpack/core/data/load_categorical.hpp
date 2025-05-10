@@ -39,8 +39,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_LOAD_CSV_HPP
-#define MLPACK_CORE_DATA_LOAD_CSV_HPP
+#ifndef MLPACK_CORE_DATA_LOAD_CATEGORICAL_HPP
+#define MLPACK_CORE_DATA_LOAD_CATEGORICAL_HPP
 
 #include <mlpack/core/util/log.hpp>
 #include <set>
@@ -75,7 +75,7 @@ class LoadCSV
   *
   * @param file path of the dataset.
   */
-  LoadCSV(const std::string& file) :
+  LoadCSV(const std::string& file, bool fatal) :
       extension(Extension(file)),
       filename(file),
       inFile(file)
@@ -93,66 +93,22 @@ class LoadCSV
       delim = ' ';
     }
 
-    CheckOpen();
+    CheckOpen(fatal);
   }
-
-  // Functions for Numeric Parser
-
-  /**
-  * Returns a bool value showing whether data was loaded successfully or not.
-  *
-  * Parses a csv file and loads the data into the given matrix. In the first pass,
-  * the function will determine the number of cols and rows in the given file.
-  * Once the rows and cols are fixed we initialize the matrix with zeros. In 
-  * the second pass, the function converts each value to required datatype
-  * and sets it equal to val. 
-  *
-  * @param x Matrix in which data will be loaded.
-  * @param f File stream to access the data file.
-  */
-  template<typename eT>
-  bool LoadNumericCSV(arma::Mat<eT>& x, std::fstream& f);
-
-  /**
-  * Converts the given string token to assigned datatype and assigns
-  * this value to the given address. The address here will be a
-  * matrix location eg. matrix(row, col).
-  * 
-  * Token is always read as a string, if the given token is +/-INF or NAN
-  * it converts them to infinity and NAN using numeric_limits.
-  *
-  * @param val Token's value will be assigned to this address.
-  * @param token Value which should be assigned.
-  */
-  template<typename eT>
-  bool ConvertToken(eT& val, const std::string& token);
-
-  /**
-   * Calculate the number of columns in each row
-   * and assign the value to the col. This function
-   * will work only for numeric data.
-   *
-   * @param lineStream a single row of data.
-   * @param col number of columns in lineStream.
-   * @param delim delimiter character.
-   */
-  inline void NumericMatSize(std::stringstream& lineStream, size_t& col,
-                             const char delim);
 
   // Functions for Categorical Parse.
 
   /**
   * Load the file into the given matrix with the given DatasetMapper object.
-  * Throws exceptions on errors.
   *
   * @param inout Matrix to load into.
   * @param infoSet DatasetMapper to use while loading.
   * @param transpose If true, the matrix should be transposed on loading(default).
+  * @return false on errors.
   */
-  template<typename eT, typename PolicyType>
-  void LoadCategoricalCSV(arma::Mat<eT> &inout,
-                          DatasetMapper<PolicyType> &infoSet,
-                          const bool transpose = true);
+  template<typename MatType>
+  bool LoadCategoricalCSV(MatType& matrix,
+                          TextOptions& opts);
 
   /**
   * Peek at the file to determine the number of rows and columns in the matrix,
@@ -163,10 +119,12 @@ class LoadCSV
   * @param rows Variable to be filled with the number of rows.
   * @param cols Variable to be filled with the number of columns.
   * @param info DatasetMapper object to use for first pass.
+  * @return false on errors.
   */
   template<typename T, typename MapPolicy>
-  void InitializeMapper(size_t& rows, size_t& cols,
-                        DatasetMapper<MapPolicy>& info);
+  bool InitializeMapper(size_t& rows, size_t& cols,
+                        DatasetMapper<MapPolicy>& info,
+                        bool fatal);
 
   /**
   * Peek at the file to determine the number of rows and columns in the matrix,
@@ -177,10 +135,12 @@ class LoadCSV
   * @param rows Variable to be filled with the number of rows.
   * @param cols Variable to be filled with the number of columns.
   * @param info DatasetMapper object to use for first pass.
+  * @return false on errors.
   */
   template<typename T, typename MapPolicy>
-  void InitializeTransposeMapper(size_t& rows, size_t& cols,
-                                 DatasetMapper<MapPolicy>& info);
+  bool InitializeTransposeMapper(size_t& rows, size_t& cols,
+                                 DatasetMapper<MapPolicy>& info,
+                                 bool fatal);
 
   /**
    * Calculate the number of columns in each row
@@ -191,21 +151,18 @@ class LoadCSV
    * @param col the number of columns in lineStream.
    * @param delim the delimiter character.
    */
-  inline void CategoricalMatSize(std::stringstream& lineStream, size_t& col,
-                                 const char delim);
+  inline void CategoricalMatColSize(std::stringstream& lineStream, size_t& col,
+                                    const char delim);
 
   // Functions common to both numeric & categorical parser.
-
   /**
-   * Get the size of the matrix. Based on isNumeric the function can be used
-   * for both numeric_parse and categorical_parse.
+   * Get the size of Categorical matrix.
    *
    * @param f fstream stream to open the data file.
    * @param delim char delimiter charecter.
    */
-  template<bool isNumeric>
-  inline std::pair<size_t, size_t> GetMatrixSize(std::fstream& f,
-                                                 const char delim = ',')
+  inline std::pair<size_t, size_t> CategoricalMatrixSize(std::fstream& f,
+      const char delim = ',')
   {
     bool loadOkay = f.good();
 
@@ -230,10 +187,7 @@ class LoadCSV
       size_t lineNCols = 0;
 
       // Get number of columns based on the type of data.
-      if (isNumeric)
-        NumericMatSize(lineStream, lineNCols, delim);
-      else
-        CategoricalMatSize(lineStream, lineNCols, delim);
+      CategoricalMatColSize(lineStream, lineNCols, delim);
 
       // If there are different number of columns in each
       // row, then the highest number of cols will be
@@ -248,9 +202,9 @@ class LoadCSV
     f.clear();
     f.seekg(pos1);
 
-    std::pair<size_t, size_t> mat_size(fnRows, fnCols);
+    std::pair<size_t, size_t> matSize(fnRows, fnCols);
 
-    return mat_size;
+    return matSize;
   }
 
 
@@ -258,20 +212,26 @@ class LoadCSV
   /**
   * Check whether or not the file has successfully opened; throw an exception
   * if not.
+  * @return false on errors.
   */
-  inline void CheckOpen()
+  inline bool CheckOpen(bool fatal)
   {
     // Check if the file is opening.
     if (!inFile.is_open())
     {
-      std::ostringstream oss;
-      oss << "Cannot open file '" << filename << "'. " << std::endl;
-      // Throw an exception if the file is not opening.
-      throw std::runtime_error(oss.str());
+      if (fatal)
+        Log::Fatal << "Cannot open file '" << filename
+            << "'. File is already open" << std::endl;
+      else
+        Log::Warn << "Cannot open file '" << filename
+            << "'. File is already open" << std::endl;
+
+      return false;
     }
 
     // Clear format flag.
     inFile.unsetf(std::ios::skipws);
+    return true;
   }
 
   // Functions for Categorical Parse.
@@ -281,19 +241,24 @@ class LoadCSV
   *
   * @param input Matrix to load into.
   * @param infoSet DatasetMapper object to load with.
+  * @return false on errors.
   */
   template<typename T, typename PolicyType>
-  void NonTransposeParse(arma::Mat<T>& inout,
-                         DatasetMapper<PolicyType>& infoSet);
+  bool NonTransposeParse(arma::Mat<T>& inout,
+                         DatasetMapper<PolicyType>& infoSet,
+                         bool fatal);
 
   /**
   * Parse a transposed matrix.
   *
   * @param input Matrix to load into.
   * @param infoSet DatasetMapper to load with.
+  * @return false on errors.
   */
   template<typename T, typename PolicyType>
-  void TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& infoSet);
+  bool TransposeParse(arma::Mat<T>& inout,
+                      DatasetMapper<PolicyType>& infoSet,
+                      bool fatal);
 
   //! Extension (type) of file.
   std::string extension;
@@ -308,7 +273,6 @@ class LoadCSV
 } // namespace data
 } // namespace mlpack
 
-#include "load_numeric_csv.hpp"
-#include "load_categorical_csv.hpp"
+#include "load_categorical_impl.hpp"
 
 #endif
