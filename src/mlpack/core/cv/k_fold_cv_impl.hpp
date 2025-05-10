@@ -439,7 +439,8 @@ SubsetMatType KFoldCV<MLAlgorithm,
 {
   const size_t subsetSize = (i == 0) ? lastBinSize : binSize;
   SubsetMatType alias;
-  MakeAlias(alias, m, m.n_rows, subsetSize, m.n_rows * ValidationSubsetFirstCol(i));
+  MakeAlias(alias, m, m.n_rows, subsetSize,
+      m.n_rows * ValidationSubsetFirstCol(i));
   return alias;
 }
 

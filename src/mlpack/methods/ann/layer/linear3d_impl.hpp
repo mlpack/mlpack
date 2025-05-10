@@ -164,7 +164,7 @@ void Linear3DType<MatType, RegularizerType>::Gradient(
   const CubeType inputTemp, errorTemp;
   MakeAlias(const_cast<CubeType&>(inputTemp), input, this->inputDimensions[0],
       nPoints, batchSize, 0, false);
-  MakeAlias(const_cast<CubeType&>(errorTemp), error, outSize, nPoints, 
+  MakeAlias(const_cast<CubeType&>(errorTemp), error, outSize, nPoints,
       batchSize, 0, false);
 
   CubeType dW(outSize, this->inputDimensions[0], batchSize);
