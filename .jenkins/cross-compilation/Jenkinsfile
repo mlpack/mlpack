@@ -154,11 +154,18 @@ pipeline
                       cd test_${BRANCH_NAME}_${BUILD_ID};
                       find ./ -iname '*.bz2' -exec tar xvf \\{\\} \\;"
 
+                  # We use a lockfile to ensure that we don't run more than one
+                  # test on the device at once.  `lockfile` is provided by
+                  # procmail.  The configuration here kills any tests that took
+                  # more than two hours.
                   mkdir -p reports;
                   ssh jenkins@${target} -t "
                       cd test_${BRANCH_NAME}_${BUILD_ID};
+                      lockfile -r-1 -l 7200 ~/mlpack_test.lock;
+                      killall -9 mlpack_test;
                       mkdir -p reports;
-                      ./mlpack_test -r junit -o reports/mlpack_test.junit.xml" \
+                      ./mlpack_test -r junit -o reports/mlpack_test.junit.xml;
+                      rm -f ~/mlpack_test.lock;" \
                       || echo "Test failure or other problem.";
 
                   # Clean up afterwards.
