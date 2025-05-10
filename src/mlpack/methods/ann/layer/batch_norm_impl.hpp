@@ -202,14 +202,14 @@ void BatchNormType<MatType>::Forward(
 
     // Input corresponds to output from previous layer.
     // Used a cube for simplicity.
-    arma::Cube<typename MatType::elem_type> inputTemp(
-        const_cast<MatType&>(input).memptr(), inputSize, size,
-        batchSize * higherDimension, false, false);
+    CubeType inputTemp;
+    MakeAlias(inputTemp, input, inputSize, size,
+        batchSize * higherDimension, 0, false);
 
     // Initialize output to same size and values for convenience.
-    arma::Cube<typename MatType::elem_type> outputTemp(
-        const_cast<MatType&>(output).memptr(), inputSize, size,
-        batchSize * higherDimension, false, false);
+    CubeType outputTemp;
+    MakeAlias(outputTemp, output, inputSize, size,
+        batchSize * higherDimension, 0, false);
     outputTemp = inputTemp;
 
     // Calculate mean and variance over all channels.
@@ -251,9 +251,9 @@ void BatchNormType<MatType>::Forward(
   {
     // Normalize the input and scale and shift the output.
     output = input;
-    arma::Cube<typename MatType::elem_type> outputTemp(
-        const_cast<MatType&>(output).memptr(), inputSize, size,
-        batchSize * higherDimension, false, false);
+    CubeType outputTemp;
+    MakeAlias(outputTemp, output, inputSize, size,
+        batchSize * higherDimension, 0, false);
 
     outputTemp.each_slice() -= repmat(runningMean.t(), inputSize, 1);
     outputTemp.each_slice() /= sqrt(repmat(runningVariance.t(),
@@ -276,16 +276,15 @@ void BatchNormType<MatType>::Backward(
   const size_t inputSize = inputDimension;
   const size_t m = inputSize * batchSize * higherDimension;
 
-  arma::Cube<typename MatType::elem_type> gyTemp(
-      const_cast<MatType&>(gy).memptr(), inputSize, size,
-      batchSize * higherDimension, false, false);
-  arma::Cube<typename MatType::elem_type> gTemp(
-      const_cast<MatType&>(g).memptr(), inputSize, size,
-      batchSize * higherDimension, false, false);
+  CubeType gyTemp;
+  MakeAlias(gyTemp, gy, inputSize, size,
+      batchSize * higherDimension, 0, false);
+  CubeType gTemp;
+  MakeAlias(gTemp, g, inputSize, size,
+      batchSize * higherDimension, 0, false);
 
   // Step 1: dl / dxhat.
-  arma::Cube<typename MatType::elem_type> norm =
-      gyTemp.each_slice() % repmat(gamma.t(), inputSize, 1);
+  CubeType norm = gyTemp.each_slice() % repmat(gamma.t(), inputSize, 1);
 
   // Step 2: sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
   MatType temp = sum(sum(norm % inputMean, 2), 0);
@@ -313,9 +312,9 @@ void BatchNormType<MatType>::Gradient(
 {
   const size_t inputSize = inputDimension;
 
-  arma::Cube<typename MatType::elem_type> errorTemp(
-      const_cast<MatType&>(error).memptr(), inputSize, size,
-      error.n_cols * higherDimension, false, false);
+  CubeType errorTemp;
+  MakeAlias(errorTemp, error, inputSize, size,
+      error.n_cols * higherDimension, 0, false);
 
   // Step 5: dl / dy * xhat.
   MatType temp = sum(sum(normalized % errorTemp, 0), 2);

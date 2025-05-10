@@ -119,7 +119,7 @@ void ConcatType<MatType>::Forward(const MatType& input, MatType& output)
   for (size_t i = axis + 1; i < this->outputDimensions.size(); ++i)
     slices *= this->outputDimensions[i];
 
-  std::vector<arma::Cube<typename MatType::elem_type>> layerOutputAliases(
+  std::vector<CubeType> layerOutputAliases(
       this->layerOutputs.size());
   for (size_t i = 0; i < this->layerOutputs.size(); ++i)
   {
@@ -127,7 +127,7 @@ void ConcatType<MatType>::Forward(const MatType& input, MatType& output)
         this->network[i]->OutputDimensions()[axis], slices);
   }
 
-  arma::Cube<typename MatType::elem_type> outputAlias;
+  CubeType outputAlias;
   MakeAlias(outputAlias, output, rows, this->outputDimensions[axis], slices);
 
   // Now get the columns from each output.
@@ -163,7 +163,7 @@ void ConcatType<MatType>::Backward(
   for (size_t i = axis + 1; i < this->outputDimensions.size(); ++i)
     slices *= this->outputDimensions[i];
 
-  arma::Cube<typename MatType::elem_type> gyTmp;
+  CubeType gyTmp;
   MakeAlias(gyTmp, gy, rows, this->outputDimensions[axis], slices);
 
   size_t startCol = 0;
@@ -209,7 +209,7 @@ void ConcatType<MatType>::Backward(
   for (size_t i = axis + 1; i < this->outputDimensions.size(); ++i)
     slices *= this->outputDimensions[i];
 
-  arma::Cube<typename MatType::elem_type> gyTmp;
+  CubeType gyTmp;
   MakeAlias(gyTmp, gy, rows, this->outputDimensions[axis], slices);
 
   size_t startCol = 0;
@@ -243,7 +243,7 @@ void ConcatType<MatType>::Gradient(
   for (size_t i = axis + 1; i < this->outputDimensions.size(); ++i)
     slices *= this->outputDimensions[i];
 
-  arma::Cube<typename MatType::elem_type> errorTmp;
+  CubeType errorTmp;
   MakeAlias(errorTmp, error, rows, this->outputDimensions[axis], slices);
 
   size_t startCol = 0;
@@ -282,7 +282,7 @@ void ConcatType<MatType>::Gradient(
   for (size_t i = axis + 1; i < this->outputDimensions.size(); ++i)
     slices *= this->outputDimensions[i];
 
-  arma::Cube<typename MatType::elem_type> errorTmp;
+  CubeType errorTmp;
   MakeAlias(errorTmp, error, rows, this->outputDimensions[axis], slices);
 
   size_t startCol = 0;

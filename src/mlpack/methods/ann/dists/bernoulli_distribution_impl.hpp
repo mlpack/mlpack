@@ -40,8 +40,7 @@ BernoulliDistribution<DataType>::BernoulliDistribution(
   }
   else
   {
-    probability = arma::mat(logits.memptr(), logits.n_rows,
-        logits.n_cols, false, false);
+    MakeAlias(probability, logits, logits.n_rows, logits.n_cols);
   }
 }
 

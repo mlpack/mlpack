@@ -14,6 +14,7 @@
 
 #include <mlpack/core/cv/meta_info_extractor.hpp>
 #include <mlpack/core/cv/cv_base.hpp>
+#include <mlpack/core/util/arma_traits.hpp>
 
 namespace mlpack {
 
@@ -280,30 +281,42 @@ class KFoldCV
   /**
    * Get the ith training subset from a variable of a matrix type.
    */
-  template<typename ElementType>
-  inline arma::Mat<ElementType> GetTrainingSubset(arma::Mat<ElementType>& m,
-                                                  const size_t i);
+  template<typename SubsetMatType>
+  inline SubsetMatType GetTrainingSubset(SubsetMatType& m,
+                                         const size_t i,
+                                         const typename std::enable_if_t<
+                                           IsMatrix<SubsetMatType>::value
+                                         >* = 0);
 
   /**
    * Get the ith training subset from a variable of a row type.
    */
-  template<typename ElementType>
-  inline arma::Row<ElementType> GetTrainingSubset(arma::Row<ElementType>& r,
-                                                  const size_t i);
+  template<typename SubsetRowType>
+  inline SubsetRowType GetTrainingSubset(SubsetRowType& r,
+                                         const size_t i,
+                                         const typename std::enable_if_t<
+                                           IsRow<SubsetRowType>::value
+                                         >* = 0);
 
   /**
    * Get the ith validation subset from a variable of a matrix type.
    */
-  template<typename ElementType>
-  inline arma::Mat<ElementType> GetValidationSubset(arma::Mat<ElementType>& m,
-                                                    const size_t i);
+  template<typename SubsetMatType>
+  inline SubsetMatType GetValidationSubset(SubsetMatType& m,
+                                           const size_t i,
+                                           const typename std::enable_if_t<
+                                             IsMatrix<SubsetMatType>::value
+                                           >* = 0);
 
   /**
    * Get the ith validation subset from a variable of a row type.
    */
-  template<typename ElementType>
-  inline arma::Row<ElementType> GetValidationSubset(arma::Row<ElementType>& r,
-                                                    const size_t i);
+  template<typename SubsetRowType>
+  inline SubsetRowType GetValidationSubset(SubsetRowType& r,
+                                           const size_t i,
+                                           const typename std::enable_if_t<
+                                             IsRow<SubsetRowType>::value
+                                           >* = 0);
 };
 
 } // namespace mlpack

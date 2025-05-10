@@ -68,14 +68,11 @@ class GiniGain
 
     // Count the number of elements in each class.  Use four auxiliary vectors
     // to exploit SIMD instructions if possible.
-    arma::vec countSpace(4 * numClasses);
-    arma::vec counts(countSpace.memptr(), numClasses, false, true);
-    arma::vec counts2(countSpace.memptr() + numClasses, numClasses, false,
-        true);
-    arma::vec counts3(countSpace.memptr() + 2 * numClasses, numClasses, false,
-        true);
-    arma::vec counts4(countSpace.memptr() + 3 * numClasses, numClasses, false,
-        true);
+    arma::vec countSpace(4 * numClasses), counts, counts2, counts3, counts4;
+    MakeAlias(counts, countSpace, numClasses, 0);
+    MakeAlias(counts2, countSpace, numClasses, numClasses);
+    MakeAlias(counts3, countSpace, numClasses, 2 * numClasses);
+    MakeAlias(counts4, countSpace, numClasses, 3 * numClasses);
 
     // Calculate the Gini impurity of the un-split node.
     double impurity = 0.0;

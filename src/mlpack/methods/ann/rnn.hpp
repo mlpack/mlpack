@@ -37,6 +37,7 @@ template<
 class RNN
 {
  public:
+  using CubeType = typename GetCubeType<MatType>::type;
   /**
    * Create the RNN object.
    *
@@ -128,8 +129,8 @@ class RNN
    */
   template<typename OptimizerType, typename... CallbackTypes>
   typename MatType::elem_type Train(
-      arma::Cube<typename MatType::elem_type> predictors,
-      arma::Cube<typename MatType::elem_type> responses,
+      CubeType predictors,
+      CubeType responses,
       OptimizerType& optimizer,
       CallbackTypes&&... callbacks);
 
@@ -156,8 +157,8 @@ class RNN
    */
   template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
   typename MatType::elem_type Train(
-      arma::Cube<typename MatType::elem_type> predictors,
-      arma::Cube<typename MatType::elem_type> responses,
+      CubeType predictors,
+      CubeType responses,
       CallbackTypes&&... callbacks);
 
   /**
@@ -186,8 +187,8 @@ class RNN
    */
   template<typename OptimizerType, typename... CallbackTypes>
   typename MatType::elem_type Train(
-      arma::Cube<typename MatType::elem_type> predictors,
-      arma::Cube<typename MatType::elem_type> responses,
+      CubeType predictors,
+      CubeType responses,
       arma::urowvec sequenceLengths,
       OptimizerType& optimizer,
       CallbackTypes&&... callbacks);
@@ -222,8 +223,8 @@ class RNN
    */
   template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
   typename MatType::elem_type Train(
-      arma::Cube<typename MatType::elem_type> predictors,
-      arma::Cube<typename MatType::elem_type> responses,
+      CubeType predictors,
+      CubeType responses,
       arma::urowvec sequenceLengths,
       CallbackTypes&&... callbacks);
 
@@ -236,8 +237,8 @@ class RNN
    * @param results Matrix to put output predictions of responses into.
    * @param batchSize Batch size to use for prediction.
    */
-  void Predict(const arma::Cube<typename MatType::elem_type>& predictors,
-               arma::Cube<typename MatType::elem_type>& results,
+  void Predict(const CubeType& predictors,
+               CubeType& results,
                const size_t batchSize = 128);
 
   /**
@@ -254,8 +255,8 @@ class RNN
    * @param predictors Input predictors.
    * @param results Matrix to put output predictions of responses into.
    */
-  void Predict(const arma::Cube<typename MatType::elem_type>& predictors,
-               arma::Cube<typename MatType::elem_type>& results,
+  void Predict(const CubeType& predictors,
+               CubeType& results,
                const arma::urowvec& sequenceLengths);
 
   // Return the nujmber of weights in the model.
@@ -318,8 +319,8 @@ class RNN
    * @param responses Target outputs for input variables.
    */
   typename MatType::elem_type Evaluate(
-      const arma::Cube<typename MatType::elem_type>& predictors,
-      const arma::Cube<typename MatType::elem_type>& responses);
+      const CubeType& predictors,
+      const CubeType& responses);
 
   //! Serialize the model.
   template<typename Archive>
@@ -425,8 +426,8 @@ class RNN
    * @param sequenceLengths (Optional) sequence length for each predictor
    *     sequence.
    */
-  void ResetData(arma::Cube<typename MatType::elem_type> predictors,
-                 arma::Cube<typename MatType::elem_type> responses,
+  void ResetData(CubeType predictors,
+                 CubeType responses,
                  arma::urowvec sequenceLengths = arma::urowvec());
 
  private:
@@ -456,11 +457,11 @@ class RNN
   // The matrix of data points (predictors).  These members are empty, except
   // during training---we must store a local copy of the training data since
   // the ensmallen optimizer will not provide training data.
-  arma::Cube<typename MatType::elem_type> predictors;
+  CubeType predictors;
 
   // The matrix of responses to the input data points.  This member is empty,
   // except during training.
-  arma::Cube<typename MatType::elem_type> responses;
+  CubeType responses;
 
   // The length of each input sequence.  If this is empty, then every sequence
   // is assuemd to have the same length (`predictors.n_slices`).

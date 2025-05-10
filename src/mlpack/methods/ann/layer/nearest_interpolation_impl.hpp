@@ -84,6 +84,8 @@ template<typename MatType>
 void NearestInterpolationType<MatType>::Forward(
   const MatType& input, MatType& output)
 {
+  using CubeType = typename GetCubeType<MatType>::type;
+
   const size_t channels = this->inputDimensions[2];
 
   const size_t outRowSize = this->outputDimensions[0];
@@ -92,8 +94,8 @@ void NearestInterpolationType<MatType>::Forward(
   const size_t inRowSize = this->inputDimensions[0];
   const size_t inColSize = this->inputDimensions[1];
 
-  arma::cube inputAsCube;
-  arma::cube outputAsCube;
+  CubeType inputAsCube;
+  CubeType outputAsCube;
 
   MakeAlias(inputAsCube, input, inRowSize, inColSize, channels, 0, false);
   MakeAlias(outputAsCube, output, outRowSize, outColSize, channels, 0, true);
@@ -118,6 +120,8 @@ void NearestInterpolationType<MatType>::Backward(
   const MatType& gradient,
   MatType& output)
 {
+  using CubeType = typename GetCubeType<MatType>::type;
+
   const size_t channels = this->inputDimensions[2];
 
   const size_t outRowSize = this->outputDimensions[0];
@@ -126,8 +130,8 @@ void NearestInterpolationType<MatType>::Backward(
   const size_t inRowSize = this->inputDimensions[0];
   const size_t inColSize = this->inputDimensions[1];
 
-  arma::cube outputAsCube;
-  arma::cube gradientAsCube;
+  CubeType outputAsCube;
+  CubeType gradientAsCube;
 
   MakeAlias(outputAsCube, output, inRowSize, inColSize, channels, 0, true);
   MakeAlias(gradientAsCube, gradient, outRowSize, outColSize, channels, 0,

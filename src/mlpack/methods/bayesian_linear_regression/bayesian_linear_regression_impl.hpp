@@ -273,11 +273,8 @@ inline double BayesianLinearRegression<ModelMatType>::CenterScaleData(
 {
   if (!centerData && !scaleData)
   {
-    dataProc = MatType(const_cast<ElemType*>(data.memptr()), data.n_rows,
-                                             data.n_cols, false, true);
-    responsesProc = ResponsesType(const_cast<ElemType*>(responses.memptr()),
-                                                        responses.n_elem, false,
-                                                        true);
+    MakeAlias(dataProc, data, data.n_rows, data.n_cols, 0, true);
+    MakeAlias(responsesProc, responses, responses.n_elem, 0, true);
   }
   else if (centerData && !scaleData)
   {
@@ -290,9 +287,7 @@ inline double BayesianLinearRegression<ModelMatType>::CenterScaleData(
   {
     dataScale = stddev(data, 0, 1);
     dataProc = data.each_col() / dataScale;
-    responsesProc = ResponsesType(const_cast<ElemType*>(responses.memptr()),
-                                                        responses.n_elem, false,
-                                                        true);
+    MakeAlias(responsesProc, responses, responses.n_elem, 0, true);
   }
   else
   {
