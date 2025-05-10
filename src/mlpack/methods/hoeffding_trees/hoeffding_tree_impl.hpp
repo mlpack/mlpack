@@ -1142,7 +1142,7 @@ void HoeffdingTree<
       ar(CEREAL_NVP(numericSplit));
 
     // Serialize the children, because we have split.
-      ar(CEREAL_VECTOR_POINTER(children));
+    ar(CEREAL_VECTOR_POINTER(children));
 
     if (cereal::is_loading<Archive>())
     {
