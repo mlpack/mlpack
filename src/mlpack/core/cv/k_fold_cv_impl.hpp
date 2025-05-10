@@ -375,14 +375,15 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename ElementType>
-arma::Mat<ElementType> KFoldCV<MLAlgorithm,
-                               Metric,
-                               MatType,
-                               PredictionsType,
-                               WeightsType>::GetTrainingSubset(
-    arma::Mat<ElementType>& m,
-    const size_t i)
+template<typename SubsetMatType>
+SubsetMatType KFoldCV<MLAlgorithm,
+                      Metric,
+                      MatType,
+                      PredictionsType,
+                      WeightsType>::GetTrainingSubset(
+    SubsetMatType& m,
+    const size_t i,
+    const typename std::enable_if_t<IsMatrix<SubsetMatType>::value>*)
 {
   // If this is not the first fold, we have to handle it a little bit
   // differently, since the last fold may contain slightly more than 'binSize'
@@ -390,8 +391,9 @@ arma::Mat<ElementType> KFoldCV<MLAlgorithm,
   const size_t subsetSize = (i != 0) ? lastBinSize + (k - 2) * binSize :
       (k - 1) * binSize;
 
-  return arma::Mat<ElementType>(m.colptr(binSize * i), m.n_rows, subsetSize,
-      false, true);
+  SubsetMatType alias;
+  MakeAlias(alias, m, m.n_rows, subsetSize, m.n_rows * binSize * i);
+  return alias;
 }
 
 template<typename MLAlgorithm,
@@ -399,14 +401,15 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename ElementType>
-arma::Row<ElementType> KFoldCV<MLAlgorithm,
-                               Metric,
-                               MatType,
-                               PredictionsType,
-                               WeightsType>::GetTrainingSubset(
-    arma::Row<ElementType>& r,
-    const size_t i)
+template<typename SubsetRowType>
+SubsetRowType KFoldCV<MLAlgorithm,
+                      Metric,
+                      MatType,
+                      PredictionsType,
+                      WeightsType>::GetTrainingSubset(
+    SubsetRowType& r,
+    const size_t i,
+    const typename std::enable_if_t<IsRow<SubsetRowType>::value>*)
 {
   // If this is not the first fold, we have to handle it a little bit
   // differently, since the last fold may contain slightly more than 'binSize'
@@ -414,7 +417,9 @@ arma::Row<ElementType> KFoldCV<MLAlgorithm,
   const size_t subsetSize = (i != 0) ? lastBinSize + (k - 2) * binSize :
       (k - 1) * binSize;
 
-  return arma::Row<ElementType>(r.colptr(binSize * i), subsetSize, false, true);
+  SubsetRowType alias;
+  MakeAlias(alias, r, subsetSize, r.n_rows * binSize * i);
+  return alias;
 }
 
 template<typename MLAlgorithm,
@@ -422,18 +427,20 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename ElementType>
-arma::Mat<ElementType> KFoldCV<MLAlgorithm,
-                               Metric,
-                               MatType,
-                               PredictionsType,
-                               WeightsType>::GetValidationSubset(
-    arma::Mat<ElementType>& m,
-    const size_t i)
+template<typename SubsetMatType>
+SubsetMatType KFoldCV<MLAlgorithm,
+                      Metric,
+                      MatType,
+                      PredictionsType,
+                      WeightsType>::GetValidationSubset(
+    SubsetMatType& m,
+    const size_t i,
+    const typename std::enable_if_t<IsMatrix<SubsetMatType>::value>*)
 {
   const size_t subsetSize = (i == 0) ? lastBinSize : binSize;
-  return arma::Mat<ElementType>(m.colptr(ValidationSubsetFirstCol(i)), m.n_rows,
-      subsetSize, false, true);
+  SubsetMatType alias;
+  MakeAlias(alias, m, m.n_rows, subsetSize, m.n_rows * ValidationSubsetFirstCol(i));
+  return alias;
 }
 
 template<typename MLAlgorithm,
@@ -441,18 +448,20 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename ElementType>
-arma::Row<ElementType> KFoldCV<MLAlgorithm,
-                               Metric,
-                               MatType,
-                               PredictionsType,
-                               WeightsType>::GetValidationSubset(
-    arma::Row<ElementType>& r,
-    const size_t i)
+template<typename SubsetRowType>
+SubsetRowType KFoldCV<MLAlgorithm,
+                      Metric,
+                      MatType,
+                      PredictionsType,
+                      WeightsType>::GetValidationSubset(
+    SubsetRowType& r,
+    const size_t i,
+    const typename std::enable_if_t<IsRow<SubsetRowType>::value>*)
 {
   const size_t subsetSize = (i == 0) ? lastBinSize : binSize;
-  return arma::Row<ElementType>(r.colptr(ValidationSubsetFirstCol(i)),
-      subsetSize, false, true);
+  SubsetRowType alias;
+  MakeAlias(alias, r, subsetSize, r.n_rows * ValidationSubsetFirstCol(i));
+  return alias;
 }
 
 } // namespace mlpack
