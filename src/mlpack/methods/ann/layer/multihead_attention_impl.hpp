@@ -95,11 +95,12 @@ Forward(const MatType& input, MatType& output)
   // The shape of q : (embedDim, tgtSeqLen, batchSize).
   // The shape of k : (embedDim, srcSeqLen, batchSize).
   // The shape of v : (embedDim, srcSeqLen, batchSize).
-  CubeType q, k, v;
-  MakeAlias(q, input, embedDim, tgtSeqLen, batchSize, 0, false);
-  MakeAlias(k, input, embedDim, srcSeqLen, batchSize,
+  const CubeType q, k, v;
+  MakeAlias(const_cast<CubeType&>(q), input, embedDim, tgtSeqLen, batchSize,
+      0, false);
+  MakeAlias(const_cast<CubeType&>(k), input, embedDim, srcSeqLen, batchSize,
       (selfAttention ? 0 : embedDim * tgtSeqLen * batchSize), false);
-  MakeAlias(v, input, embedDim, srcSeqLen, batchSize,
+  MakeAlias(const_cast<CubeType&>(v), input, embedDim, srcSeqLen, batchSize,
       (selfAttention ? 0 : embedDim * (tgtSeqLen + srcSeqLen) * batchSize),
       false);
 
@@ -197,8 +198,9 @@ Backward(const MatType& /* input */,
   // The shape of gyTemp : (tgtSeqLen, embedDim, batchSize).
   // We need not split it into n heads now because this is the part when
   // output were concatenated from n heads.
-  CubeType gyTempAlias;
-  MakeAlias(gyTempAlias, gy, embedDim, tgtSeqLen, batchSize, 0, false);
+  const CubeType gyTempAlias;
+  MakeAlias(const_cast<CubeType&>(gyTempAlias), gy, embedDim, tgtSeqLen,
+      batchSize, 0, false);
   // Make a copy of the alias so gy actually remains constant
   CubeType gyTemp = gyTempAlias;
 
@@ -327,17 +329,19 @@ Gradient(const MatType& input,
   // The shape of gradient : (4 * embedDim * embedDim + 4 * embedDim, 1).
   gradient.set_size(arma::size(weights));
 
-  CubeType q, k, v;
-  MakeAlias(q, input, embedDim, tgtSeqLen, batchSize, 0, false);
-  MakeAlias(k, input, embedDim, srcSeqLen, batchSize,
+  const CubeType q, k, v;
+  MakeAlias(const_cast<CubeType&>(q), input, embedDim, tgtSeqLen, batchSize,
+      0, false);
+  MakeAlias(const_cast<CubeType&>(k), input, embedDim, srcSeqLen, batchSize,
       (selfAttention ? 0 : q.n_elem), false);
-  MakeAlias(v, input, embedDim, srcSeqLen, batchSize,
+  MakeAlias(const_cast<CubeType&>(v), input, embedDim, srcSeqLen, batchSize,
       (selfAttention ? 0 : (q.n_elem + k.n_elem)), false);
 
   // Reshape the propagated error into a cube.
   // The shape of errorTemp : (embedDim, tgtSeqLen, batchSize).
-  CubeType errorTempAlias;
-  MakeAlias(errorTempAlias, error, embedDim, tgtSeqLen, batchSize, 0, false);
+  const CubeType errorTempAlias;
+  MakeAlias(const_cast<CubeType&>(errorTempAlias), error, embedDim, tgtSeqLen,
+      batchSize, 0, false);
   // Make a copy of the alias so error actually remains constant
   CubeType errorTemp = errorTempAlias;
 

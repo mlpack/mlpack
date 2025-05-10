@@ -103,8 +103,8 @@ void Linear3DType<MatType, RegularizerType>::Forward(
   const size_t nPoints = input.n_rows / this->inputDimensions[0];
   const size_t batchSize = input.n_cols;
 
-  CubeType inputTemp;
-  MakeAlias(inputTemp, input, this->inputDimensions[0],
+  const CubeType inputTemp;
+  MakeAlias(const_cast<CubeType&>(inputTemp), input, this->inputDimensions[0],
       nPoints, batchSize, 0, false);
 
   for (size_t i = 0; i < batchSize; ++i)
@@ -135,8 +135,9 @@ void Linear3DType<MatType, RegularizerType>::Backward(
   const size_t nPoints = gy.n_rows / outSize;
   const size_t batchSize = gy.n_cols;
 
-  CubeType gyTemp;
-  MakeAlias(gyTemp, gy, outSize, nPoints, batchSize, 0, false);
+  const CubeType gyTemp;
+  MakeAlias(const_cast<CubeType&>(gyTemp), gy, outSize, nPoints, batchSize,
+      0, false);
 
   for (size_t i = 0; i < gyTemp.n_slices; ++i)
   {
@@ -160,11 +161,11 @@ void Linear3DType<MatType, RegularizerType>::Gradient(
   const size_t nPoints = input.n_rows / this->inputDimensions[0];
   const size_t batchSize = input.n_cols;
 
-  CubeType inputTemp;
-  MakeAlias(inputTemp, input, this->inputDimensions[0], nPoints, batchSize, 0,
-      false);
-  CubeType errorTemp;
-  MakeAlias(errorTemp, error, outSize, nPoints, batchSize, 0, false);
+  const CubeType inputTemp, errorTemp;
+  MakeAlias(const_cast<CubeType&>(inputTemp), input, this->inputDimensions[0],
+      nPoints, batchSize, 0, false);
+  MakeAlias(const_cast<CubeType&>(errorTemp), error, outSize, nPoints, 
+      batchSize, 0, false);
 
   CubeType dW(outSize, this->inputDimensions[0], batchSize);
   for (size_t i = 0; i < batchSize; ++i)
