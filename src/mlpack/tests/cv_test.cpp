@@ -858,10 +858,29 @@ TEST_CASE("SilhouetteScoreTest", "[CVTest]")
   REQUIRE(silhouetteScore == Approx(0.1121684822489150).epsilon(1e-7));
 }
 
-class PurgedKFoldCVTest : public PurgedKFoldCV<RandomForest<>, Accuracy>
+class RandomForestFacade : public RandomForest<>
+{
+public:
+  using RandomForest<>::RandomForest;
+
+  void Train(
+    const arma::mat& data,
+    const arma::Row<size_t>& labels,
+    size_t numClasses)
+  {
+    [[maybe_unused]] const double _(static_cast<RandomForest<>*>(this)->Train(
+      data,
+      labels,
+      numClasses));
+  }
+};
+
+class PurgedKFoldCVTest : public PurgedKFoldCV<RandomForestFacade, Accuracy>
 {
  public:
-  using PKFCV = PurgedKFoldCV<RandomForest<>, Accuracy>;
+  using PKFCV = PurgedKFoldCV<RandomForestFacade, Accuracy>;
+
+  using PKFCV::PKFCV;
 
   using PKFCV::ValidationSubsetFirstCol;
   using PKFCV::GetTrainingSubset;
@@ -939,7 +958,7 @@ TEST_CASE("PurgedKFoldCVTest", "[CVTest]")
 
   // Will first expand the test set by h (embargo)
   // then purge observations from the training set.
-  PurgedKFoldCV<RandomForest<>, Accuracy> cv(
+  PurgedKFoldCVTest cv(
       k,
       ds,
       labels,

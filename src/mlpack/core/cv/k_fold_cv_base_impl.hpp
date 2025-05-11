@@ -334,6 +334,22 @@ double KFoldCVBase<Derived,
   return arma::mean(evaluations);
 }
 
+template<typename Derived,
+         typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+void KFoldCVBase<Derived,
+                 MLAlgorithm,
+                 Metric,
+                 MatType,
+                 PredictionsType,
+                 WeightsType>::CheckState() const
+{
+  // Do nothing.
+}
+
 } // namespace mlpack
 
 #endif

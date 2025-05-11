@@ -270,6 +270,7 @@ template<typename MLAlgorithm,
          typename WT = arma::rowvec>
 class MetaInfoExtractor
 {
+public:
   /* Defining type functions that check presence of Train methods of a given
    * form. Defining such functions for templated and non-templated Train
    * methods. */
@@ -279,6 +280,12 @@ class MetaInfoExtractor
   HAS_METHOD_FORM(SINGLE_ARG(template Train<const MT&, const PT&>), HasMPTrain);
   HAS_METHOD_FORM(SINGLE_ARG(template Train<const MT&, const PT&, const WT&>),
       HasMPWTrain);
+
+  // template<typename MatType,
+  //          typename PredictionsType,
+  //          typename WeightsType,
+  //          bool DatasetInfo,
+  //          bool NumClasses>
 
   /* Forms of Train for regression algorithms */
   using TF1 = TrainForm<MT, arma::rowvec, void, false, false>;
