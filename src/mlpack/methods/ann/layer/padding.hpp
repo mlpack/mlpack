@@ -28,6 +28,7 @@ template<typename MatType = arma::mat>
 class PaddingType : public Layer<MatType>
 {
  public:
+  using CubeType = typename GetCubeType<MatType>::type;
   /**
    * Create the Padding object using the specified number of output units.
    *

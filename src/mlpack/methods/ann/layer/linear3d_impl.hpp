@@ -98,8 +98,6 @@ template<typename MatType, typename RegularizerType>
 void Linear3DType<MatType, RegularizerType>::Forward(
     const MatType& input, MatType& output)
 {
-  using CubeType = typename GetCubeType<MatType>::type;
-
   const size_t nPoints = input.n_rows / this->inputDimensions[0];
   const size_t batchSize = input.n_cols;
 
@@ -124,8 +122,6 @@ void Linear3DType<MatType, RegularizerType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  using CubeType = typename GetCubeType<MatType>::type;
-
   if (gy.n_rows % outSize != 0)
   {
     Log::Fatal << "Number of rows in propagated error must be divisible by "
@@ -153,8 +149,6 @@ void Linear3DType<MatType, RegularizerType>::Gradient(
     const MatType& error,
     MatType& gradient)
 {
-  using CubeType = typename GetCubeType<MatType>::type;
-
   if (error.n_rows % outSize != 0)
     Log::Fatal << "Propagated error matrix has invalid dimension!" << std::endl;
 

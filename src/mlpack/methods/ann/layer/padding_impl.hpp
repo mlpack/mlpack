@@ -95,7 +95,6 @@ PaddingType<MatType>::operator=(PaddingType&& other)
 template<typename MatType>
 void PaddingType<MatType>::Forward(const MatType& input, MatType& output)
 {
-  using CubeType = typename GetCubeType<MatType>::type;
   // Make an alias of the input and output so that we can deal with the first
   // two dimensions directly.
   CubeType reshapedInput;
@@ -152,7 +151,6 @@ void PaddingType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  using CubeType = typename GetCubeType<MatType>::type;
   // Reshape g and gy so that extracting the un-padded input is easier to
   // understand.
   CubeType reshapedGy;

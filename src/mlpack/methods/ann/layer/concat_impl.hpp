@@ -119,8 +119,7 @@ void ConcatType<MatType>::Forward(const MatType& input, MatType& output)
   for (size_t i = axis + 1; i < this->outputDimensions.size(); ++i)
     slices *= this->outputDimensions[i];
 
-  std::vector<CubeType> layerOutputAliases(
-      this->layerOutputs.size());
+  std::vector<CubeType> layerOutputAliases(this->layerOutputs.size());
   for (size_t i = 0; i < this->layerOutputs.size(); ++i)
   {
     MakeAlias(layerOutputAliases[i], this->layerOutputs[i], rows,

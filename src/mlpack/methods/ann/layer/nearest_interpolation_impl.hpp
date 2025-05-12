@@ -84,8 +84,6 @@ template<typename MatType>
 void NearestInterpolationType<MatType>::Forward(
   const MatType& input, MatType& output)
 {
-  using CubeType = typename GetCubeType<MatType>::type;
-
   const size_t channels = this->inputDimensions[2];
 
   const size_t outRowSize = this->outputDimensions[0];
@@ -120,8 +118,6 @@ void NearestInterpolationType<MatType>::Backward(
   const MatType& gradient,
   MatType& output)
 {
-  using CubeType = typename GetCubeType<MatType>::type;
-
   const size_t channels = this->inputDimensions[2];
 
   const size_t outRowSize = this->outputDimensions[0];
