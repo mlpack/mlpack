@@ -44,7 +44,14 @@ class PurgedKFoldCV :
         WeightsType>
 {
  public:
-   using Base = typename KFoldCVBase::Base;
+  using Base = typename KFoldCVBase<
+      PurgedKFoldCV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+      MLAlgorithm,
+      Metric,
+      MatType,
+      PredictionsType,
+      WeightsType>::Base;
+
   /**
     * This constructor can be used for regression algorithms and for binary
     * classification algorithms.
