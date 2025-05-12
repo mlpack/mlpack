@@ -2527,3 +2527,132 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
   REQUIRE(headers.at(2) == "c");
   REQUIRE(headers.at(3) == "d");
 }
+
+TEST_CASE("LoadCSVMissingNanTest", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "1, , 3, 4" << std::endl;
+  f << "5, 6, 7, 8" << std::endl;
+  f << "9, 10, 11, 12" << std::endl;
+
+  arma::mat dataset;
+  data::TextOptions opts;
+  opts.Fatal() = false;
+  opts.NoTranspose() = true;
+  opts.MissingToNan() = true;
+
+  data::Load("test.csv", dataset, opts);
+
+  REQUIRE(dataset.n_rows == 3);
+  REQUIRE(dataset.n_cols == 4);
+  REQUIRE(std::isnan(dataset.at(0,1)) == true);
+
+  remove("test.csv");
+}
+
+TEST_CASE("LoadCSVMissingNanTestTransposed", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "1, , 3, 4" << std::endl;
+  f << "5, 6, 7, 8" << std::endl;
+  f << "9, 10, 11, 12" << std::endl;
+
+  arma::mat dataset;
+  data::TextOptions opts;
+  opts.Fatal() = false;
+  opts.NoTranspose() = false;
+  opts.MissingToNan() = true;
+
+  data::Load("test.csv", dataset, opts);
+
+  REQUIRE(dataset.n_rows == 4);
+  REQUIRE(dataset.n_cols == 3);
+  REQUIRE(std::isnan(dataset.at(1,0)) == true);
+
+  remove("test.csv");
+}
+
+TEST_CASE("LoadCSVSemiColon", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "1; 2; 3; 4" << std::endl;
+  f << "5; 6; 7; 8" << std::endl;
+  f << "9; 10; 11; 12" << std::endl;
+
+  arma::mat dataset;
+  data::TextOptions opts;
+  opts.Fatal() = false;
+  opts.NoTranspose() = false;
+  opts.SemiColon() = true;
+
+  data::Load("test.csv", dataset, opts);
+
+  REQUIRE(dataset.n_rows == 4);
+  REQUIRE(dataset.n_cols == 3);
+
+  remove("test.csv");
+}
+
+TEST_CASE("LoadCSVSemiColonHeader", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "a;b;c;d" << std::endl;
+  f << "1;2;3;4" << std::endl;
+  f << "5;6;7;8" << std::endl;
+
+  arma::mat dataset;
+  data::TextOptions opts;
+  opts.Fatal() = true;
+  opts.NoTranspose() = false;
+  opts.SemiColon() = true;
+  opts.HasHeaders() = true;
+
+  data::Load("test.csv", dataset, opts);
+
+  arma::field<std::string> headers = opts.Headers();
+
+  REQUIRE(dataset.n_rows == 4);
+  REQUIRE(dataset.n_cols == 2);
+  REQUIRE(headers.at(0) == "a");
+  REQUIRE(headers.at(1) == "b");
+  REQUIRE(headers.at(2) == "c");
+  REQUIRE(headers.at(3) == "d");
+
+  remove("test.csv");
+}
+
+TEST_CASE("LoadCSVSemiColonMissingToNanHeader", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "a;b;c;d" << std::endl;
+  f << ";;3;4" << std::endl;
+  f << "5;6;7;8" << std::endl;
+
+  arma::mat dataset;
+  data::TextOptions opts;
+  opts.Fatal() = false;
+  opts.NoTranspose() = true;
+  opts.SemiColon() = true;
+  opts.HasHeaders() = true;
+  opts.MissingToNan() = true;
+
+  data::Load("test.csv", dataset, opts);
+
+  dataset.print();
+  arma::field<std::string> headers = opts.Headers();
+
+  REQUIRE(dataset.n_rows == 2);
+  REQUIRE(dataset.n_cols == 4);
+  REQUIRE(headers.at(0) == "a");
+  REQUIRE(headers.at(1) == "b");
+  REQUIRE(headers.at(2) == "c");
+  REQUIRE(headers.at(3) == "d");
+  REQUIRE(std::isnan(dataset.at(0,0)) == true);
+  REQUIRE(std::isnan(dataset.at(0,1)) == true);
+  remove("test.csv");
+}
