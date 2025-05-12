@@ -2546,7 +2546,7 @@ TEST_CASE("LoadCSVMissingNanTest", "[LoadSaveTest]")
 
   REQUIRE(dataset.n_rows == 3);
   REQUIRE(dataset.n_cols == 4);
-  REQUIRE(std::isnan(dataset.at(0,1)) == true);
+  REQUIRE(std::isnan(dataset.at(0, 1)) == true);
 
   remove("test.csv");
 }
@@ -2569,7 +2569,7 @@ TEST_CASE("LoadCSVMissingNanTestTransposed", "[LoadSaveTest]")
 
   REQUIRE(dataset.n_rows == 4);
   REQUIRE(dataset.n_cols == 3);
-  REQUIRE(std::isnan(dataset.at(1,0)) == true);
+  REQUIRE(std::isnan(dataset.at(1, 0)) == true);
 
   remove("test.csv");
 }
@@ -2652,7 +2652,7 @@ TEST_CASE("LoadCSVSemiColonMissingToNanHeader", "[LoadSaveTest]")
   REQUIRE(headers.at(1) == "b");
   REQUIRE(headers.at(2) == "c");
   REQUIRE(headers.at(3) == "d");
-  REQUIRE(std::isnan(dataset.at(0,0)) == true);
-  REQUIRE(std::isnan(dataset.at(0,1)) == true);
+  REQUIRE(std::isnan(dataset.at(0, 0)) == true);
+  REQUIRE(std::isnan(dataset.at(0, 1)) == true);
   remove("test.csv");
 }
