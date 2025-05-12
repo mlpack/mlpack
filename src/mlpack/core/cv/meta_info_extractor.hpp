@@ -270,7 +270,6 @@ template<typename MLAlgorithm,
          typename WT = arma::rowvec>
 class MetaInfoExtractor
 {
-public:
   /* Defining type functions that check presence of Train methods of a given
    * form. Defining such functions for templated and non-templated Train
    * methods. */

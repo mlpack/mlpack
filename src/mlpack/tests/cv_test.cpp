@@ -860,7 +860,7 @@ TEST_CASE("SilhouetteScoreTest", "[CVTest]")
 
 class RandomForestFacade : public RandomForest<>
 {
-public:
+ public:
   using RandomForest<>::RandomForest;
 
   void Train(
