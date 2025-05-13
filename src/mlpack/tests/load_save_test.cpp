@@ -2528,6 +2528,8 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
   REQUIRE(headers.at(3) == "d");
 }
 
+// These tests only work with Armadillo 12, as we need the `strict` option to be
+// available in Armadillo.
 #if ARMA_VERSION_MAJOR >= 12
 
 TEST_CASE("LoadCSVMissingNanTest", "[LoadSaveTest]")
