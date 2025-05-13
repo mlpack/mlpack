@@ -2551,6 +2551,8 @@ TEST_CASE("LoadCSVMissingNanTest", "[LoadSaveTest]")
   remove("test.csv");
 }
 
+#if ARMA_VERSION_MAJOR >= 12
+
 TEST_CASE("LoadCSVMissingNanTestTransposed", "[LoadSaveTest]")
 {
   fstream f;
@@ -2573,6 +2575,8 @@ TEST_CASE("LoadCSVMissingNanTestTransposed", "[LoadSaveTest]")
 
   remove("test.csv");
 }
+
+#endif
 
 TEST_CASE("LoadCSVSemiColon", "[LoadSaveTest]")
 {
@@ -2625,6 +2629,8 @@ TEST_CASE("LoadCSVSemiColonHeader", "[LoadSaveTest]")
   remove("test.csv");
 }
 
+#if ARMA_VERSION_MAJOR >= 12
+
 TEST_CASE("LoadCSVSemiColonMissingToNanHeader", "[LoadSaveTest]")
 {
   fstream f;
@@ -2656,3 +2662,5 @@ TEST_CASE("LoadCSVSemiColonMissingToNanHeader", "[LoadSaveTest]")
   REQUIRE(std::isnan(dataset.at(0, 1)) == true);
   remove("test.csv");
 }
+
+#endif

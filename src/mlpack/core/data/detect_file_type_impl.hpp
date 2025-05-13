@@ -100,6 +100,8 @@ inline FileType GuessFileType(std::istream& f)
     }
   }
 
+  delete[] dataMem;
+
   if (hasBinary)
     return FileType::RawBinary;
 
