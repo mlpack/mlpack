@@ -410,23 +410,23 @@ bool LoadCategorical(const std::string& filename,
   return true;
 }
 
-template<typename MatType, typename DataOptionsType>
+template<typename MatType>
 bool Load(const std::vector<std::string>& filesname,
           MatType& matrix,
-          const DataOptionsType& opts)
+          const TextOptions& opts)
 {
-  DataOptionsType copyOpts(opts);
+  TextOptions copyOpts(opts);
   return Load(filesname, matrix, copyOpts);
 }
 
-template<typename MatType, typename DataOptionsType>
+template<typename MatType>
 bool Load(const std::vector<std::string>& filesname,
           MatType& matrix,
-          DataOptionsType& opts)
+          TextOptions& opts)
 {
   bool success;
   MatType tmp;
-  arma::field<std::string> firstHeaders
+  arma::field<std::string> firstHeaders;
   for (size_t i = 0; i < filesname.size(); ++i)
   {
     success = Load(filesname.at(i), matrix, opts); 
@@ -437,7 +437,7 @@ bool Load(const std::vector<std::string>& filesname,
       else
       {
         arma::field<std::string> headers = opts.Headers();
-        if (firstHeader.at(0) != headers.at(0))
+        if (firstHeaders.at(0) != headers.at(0))
           Log::Warn << "Load(): Headers from different CSV does not match!"
               << std::endl;
       }

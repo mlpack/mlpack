@@ -2534,7 +2534,7 @@ TEST_CASE("LoadVectorCSVFiles", "[LoadSaveTest]")
       "f3.csv", "f4.csv", "f5.csv", "f6.csv", "f7.csv", "f8.csv", "f9.csv"};
 
   arma::mat dataset;
-  data::CSVOptions opts;
+  data::TextOptions opts;
   REQUIRE(data::Load(files, dataset, opts)
       == true);
 
@@ -2548,7 +2548,7 @@ TEST_CASE("LoadVectorCSVFilesNoTranspose", "[LoadSaveTest]")
       "f3.csv", "f4.csv", "f5.csv", "f6.csv", "f7.csv", "f8.csv", "f9.csv"};
 
   arma::mat dataset;
-  data::CSVOptions opts;
+  data::TextOptions opts;
   opts.NoTranspose() = true;
   opts.Fatal() = true;
   REQUIRE(data::Load(files, dataset, opts)

@@ -307,10 +307,10 @@ bool Load(const std::string& filename,
  * @param opts DataOptions to be passed to the function
  * @return Boolean value indicating success or failure of load.
  */
-template<typename MatType, typename DataOptionsType>
+template<typename MatType>
 bool Load(const std::vector<std::string>& filesname,
           MatType& matrix,
-          DataOptionsType& opts);
+          TextOptions& opts);
 
 /**
  * This function a set of several dataset files into one matrix.
@@ -329,10 +329,10 @@ bool Load(const std::vector<std::string>& filesname,
  * @param opts DataOptions to be passed to the function
  * @return Boolean value indicating success or failure of load.
  */
-template<typename MatType, typename DataOptionsType>
+template<typename MatType>
 bool Load(const std::vector<std::string>& filesname,
           MatType& matrix,
-          const DataOptionsType& opts);
+          const TextOptions& opts);
 
 
 } // namespace data
