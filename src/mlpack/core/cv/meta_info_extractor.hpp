@@ -280,6 +280,12 @@ class MetaInfoExtractor
   HAS_METHOD_FORM(SINGLE_ARG(template Train<const MT&, const PT&, const WT&>),
       HasMPWTrain);
 
+  // template<typename MatType,
+  //          typename PredictionsType,
+  //          typename WeightsType,
+  //          bool DatasetInfo,
+  //          bool NumClasses>
+
   /* Forms of Train for regression algorithms */
   using TF1 = TrainForm<MT, arma::rowvec, void, false, false>;
   using TF2 = TrainForm<MT, arma::mat, void, false, false>;
