@@ -1,8 +1,8 @@
 # mlpack changelog
 
-## mlpack ?.?.?
+## mlpack 4.6.1
 
-_????-??-??_
+_2025-05-13_
 
  * Shuffle sequence lengths for RNNs (#3926).
 
