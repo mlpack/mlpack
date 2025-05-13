@@ -2528,6 +2528,8 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
   REQUIRE(headers.at(3) == "d");
 }
 
+#if ARMA_VERSION_MAJOR >= 12
+
 TEST_CASE("LoadCSVMissingNanTest", "[LoadSaveTest]")
 {
   fstream f;
@@ -2550,8 +2552,6 @@ TEST_CASE("LoadCSVMissingNanTest", "[LoadSaveTest]")
 
   remove("test.csv");
 }
-
-#if ARMA_VERSION_MAJOR >= 12
 
 TEST_CASE("LoadCSVMissingNanTestTransposed", "[LoadSaveTest]")
 {
