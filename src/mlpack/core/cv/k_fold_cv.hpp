@@ -282,41 +282,37 @@ class KFoldCV
    * Get the ith training subset from a variable of a matrix type.
    */
   template<typename SubsetMatType>
-  inline SubsetMatType GetTrainingSubset(SubsetMatType& m,
-                                         const size_t i,
-                                         const typename std::enable_if_t<
-                                           IsMatrix<SubsetMatType>::value
-                                         >* = 0);
+  inline SubsetMatType GetTrainingSubset(
+      SubsetMatType& m,
+      const size_t i,
+      const typename std::enable_if_t<IsMatrix<SubsetMatType>::value>* = 0);
 
   /**
    * Get the ith training subset from a variable of a row type.
    */
   template<typename SubsetRowType>
-  inline SubsetRowType GetTrainingSubset(SubsetRowType& r,
-                                         const size_t i,
-                                         const typename std::enable_if_t<
-                                           IsRow<SubsetRowType>::value
-                                         >* = 0);
+  inline SubsetRowType GetTrainingSubset(
+      SubsetRowType& r,
+      const size_t i,
+      const typename std::enable_if_t<IsRow<SubsetRowType>::value>* = 0);
 
   /**
    * Get the ith validation subset from a variable of a matrix type.
    */
   template<typename SubsetMatType>
-  inline SubsetMatType GetValidationSubset(SubsetMatType& m,
-                                           const size_t i,
-                                           const typename std::enable_if_t<
-                                             IsMatrix<SubsetMatType>::value
-                                           >* = 0);
+  inline SubsetMatType GetValidationSubset(
+      SubsetMatType& m,
+      const size_t i,
+      const typename std::enable_if_t<IsMatrix<SubsetMatType>::value>* = 0);
 
   /**
    * Get the ith validation subset from a variable of a row type.
    */
   template<typename SubsetRowType>
-  inline SubsetRowType GetValidationSubset(SubsetRowType& r,
-                                           const size_t i,
-                                           const typename std::enable_if_t<
-                                             IsRow<SubsetRowType>::value
-                                           >* = 0);
+  inline SubsetRowType GetValidationSubset(
+      SubsetRowType& r,
+      const size_t i,
+      const typename std::enable_if_t<IsRow<SubsetRowType>::value>* = 0);
 };
 
 } // namespace mlpack
