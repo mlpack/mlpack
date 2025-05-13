@@ -290,6 +290,51 @@ bool Load(const std::string& filename,
           format f = format::autodetect,
           std::enable_if_t<HasSerialize<T>::value>* = 0);
 
+/**
+ * This function a set of several dataset files into one matrix.
+ * This is usually the case if the dataset is collected on several occasions
+ * and not agglomerated into one file.
+ *
+ * Note, the number of columns in all files must be equal, and the dataset
+ * needs to be of the same natures. Please do not load different datasets using
+ * the following function.
+ *
+ * The user needs to specify all the filesname in one std::vector before using
+ * this function.
+ *
+ * @param filename Names of files to load.
+ * @param matrix Matrix to load contents of files into.
+ * @param opts DataOptions to be passed to the function
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename MatType, typename DataOptionsType>
+bool Load(const std::vector<std::string>& filesname,
+          MatType& matrix,
+          DataOptionsType& opts);
+
+/**
+ * This function a set of several dataset files into one matrix.
+ * This is usually the case if the dataset is collected on several occasions
+ * and not agglomerated into one file.
+ *
+ * Note, the number of columns in all files must be equal, and the dataset
+ * needs to be of the same natures. Please do not load different datasets using
+ * the following function.
+ *
+ * The user needs to specify all the filesname in one std::vector before using
+ * this function.
+ *
+ * @param filename Names of files to load.
+ * @param matrix Matrix to load contents of files into.
+ * @param opts DataOptions to be passed to the function
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename MatType, typename DataOptionsType>
+bool Load(const std::vector<std::string>& filesname,
+          MatType& matrix,
+          const DataOptionsType& opts);
+
+
 } // namespace data
 } // namespace mlpack
 
