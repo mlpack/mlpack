@@ -410,6 +410,77 @@ bool LoadCategorical(const std::string& filename,
   return true;
 }
 
+template<typename MatType>
+bool Load(const std::vector<std::string>& filesname,
+          MatType& matrix,
+          const TextOptions& opts)
+{
+  TextOptions copyOpts(opts);
+  return Load(filesname, matrix, copyOpts);
+}
+
+template<typename MatType>
+bool Load(const std::vector<std::string>& filesname,
+          MatType& matrix,
+          TextOptions& opts)
+{
+  bool success;
+  MatType tmp;
+  arma::field<std::string> firstHeaders;
+  for (size_t i = 0; i < filesname.size(); ++i)
+  {
+    success = Load(filesname.at(i), matrix, opts); 
+    if (opts.HasHeaders())
+    {
+      if (i == 0)
+        firstHeaders = opts.Headers();
+      else
+      {
+        arma::field<std::string> headers = opts.Headers();
+        if (firstHeaders.at(0) != headers.at(0))
+          Log::Warn << "Load(): Headers from different CSV does not match!"
+              << std::endl;
+      }
+    }
+
+    if (success)
+    {
+      if (i == 0)
+      {
+        tmp = std::move(matrix);
+      }
+      else
+      {
+        if (!opts.NoTranspose()) // if transpose
+        {
+          if (tmp.n_rows != matrix.n_rows)
+          {
+            Log::Fatal << "Load(): dimension mismatch when loading vectors" << std::endl;
+          }
+          else
+            tmp = join_rows(tmp, matrix);
+        }
+        else
+        {
+          if (tmp.n_cols != matrix.n_cols)
+          {
+            Log::Fatal << "Load(): dimension mismatch when loading vectors" << std::endl;
+          }
+          else
+            tmp = join_cols(tmp, matrix);
+        }
+      }
+    }
+    else
+      break;
+  }
+
+  if (success)
+    matrix = std::move(tmp);
+
+  return success;
+}
+
 } // namespace data
 } // namespace mlpack
 
