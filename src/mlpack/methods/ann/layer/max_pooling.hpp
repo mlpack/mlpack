@@ -59,6 +59,7 @@ template<typename MatType = arma::mat>
 class MaxPoolingType : public Layer<MatType>
 {
  public:
+  using CubeType = typename GetCubeType<MatType>::type;
   //! Create the MaxPooling object.
   MaxPoolingType();
 
@@ -160,8 +161,8 @@ class MaxPoolingType : public Layer<MatType>
    * @param poolingIndices The pooled indices.
    */
   void PoolingOperation(
-      const arma::Cube<typename MatType::elem_type>& input,
-      arma::Cube<typename MatType::elem_type>& output,
+      const CubeType& input,
+      CubeType& output,
       arma::Cube<size_t>& poolingIndices)
   {
     // Iterate over all slices individually.
@@ -222,8 +223,8 @@ class MaxPoolingType : public Layer<MatType>
    * @param output The pooled result.
    */
   void PoolingOperation(
-      const arma::Cube<typename MatType::elem_type>& input,
-      arma::Cube<typename MatType::elem_type>& output)
+      const CubeType& input,
+      CubeType& output)
   {
     // Iterate over all slices individually.
     #pragma omp parallel for

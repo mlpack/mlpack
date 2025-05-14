@@ -172,7 +172,8 @@ inline void DiagonalGMM::LogProbability(const arma::mat& observation,
   // Assign value to the matrix.
   for (size_t i = 0; i < gaussians; i++)
   {
-    arma::vec temp(logProb.colptr(i), observation.n_cols, false, true);
+    arma::vec temp;
+    MakeAlias(temp, logProb, observation.n_cols, logProb.n_rows * i);
     dists[i].LogProbability(observation, temp);
   }
 

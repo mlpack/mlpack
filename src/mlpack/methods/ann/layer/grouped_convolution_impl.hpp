@@ -527,9 +527,9 @@ void GroupedConvolutionType<
   const size_t paddedRows = this->inputDimensions[0] + padWLeft + padWRight;
   const size_t paddedCols = this->inputDimensions[1] + padHTop + padHBottom;
 
-  CubeType inputTemp(
-      const_cast<MatType&>(usingPadding ? inputPadded : input).memptr(),
-      paddedRows, paddedCols, inMaps * batchSize, false, false);
+  CubeType inputTemp;
+  MakeAlias(inputTemp, (usingPadding ? inputPadded : input),
+      paddedRows, paddedCols, inMaps * batchSize, 0, false);
 
   MatType temp(apparentWidth * apparentHeight * inMaps * higherInDimensions,
       batchSize);

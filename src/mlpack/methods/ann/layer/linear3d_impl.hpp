@@ -98,13 +98,12 @@ template<typename MatType, typename RegularizerType>
 void Linear3DType<MatType, RegularizerType>::Forward(
     const MatType& input, MatType& output)
 {
-  using CubeType = arma::Cube<typename MatType::elem_type>;
-
   const size_t nPoints = input.n_rows / this->inputDimensions[0];
   const size_t batchSize = input.n_cols;
 
-  const CubeType inputTemp(const_cast<MatType&>(input).memptr(),
-      this->inputDimensions[0], nPoints, batchSize, false, false);
+  const CubeType inputTemp;
+  MakeAlias(const_cast<CubeType&>(inputTemp), input, this->inputDimensions[0],
+      nPoints, batchSize, 0, false);
 
   for (size_t i = 0; i < batchSize; ++i)
   {
@@ -123,8 +122,6 @@ void Linear3DType<MatType, RegularizerType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  using CubeType = arma::Cube<typename MatType::elem_type>;
-
   if (gy.n_rows % outSize != 0)
   {
     Log::Fatal << "Number of rows in propagated error must be divisible by "
@@ -134,8 +131,9 @@ void Linear3DType<MatType, RegularizerType>::Backward(
   const size_t nPoints = gy.n_rows / outSize;
   const size_t batchSize = gy.n_cols;
 
-  const CubeType gyTemp(const_cast<MatType&>(gy).memptr(), outSize,
-      nPoints, batchSize, false, false);
+  const CubeType gyTemp;
+  MakeAlias(const_cast<CubeType&>(gyTemp), gy, outSize, nPoints, batchSize,
+      0, false);
 
   for (size_t i = 0; i < gyTemp.n_slices; ++i)
   {
@@ -151,18 +149,17 @@ void Linear3DType<MatType, RegularizerType>::Gradient(
     const MatType& error,
     MatType& gradient)
 {
-  using CubeType = arma::Cube<typename MatType::elem_type>;
-
   if (error.n_rows % outSize != 0)
     Log::Fatal << "Propagated error matrix has invalid dimension!" << std::endl;
 
   const size_t nPoints = input.n_rows / this->inputDimensions[0];
   const size_t batchSize = input.n_cols;
 
-  const CubeType inputTemp(const_cast<MatType&>(input).memptr(),
-      this->inputDimensions[0], nPoints, batchSize, false, false);
-  const CubeType errorTemp(const_cast<MatType&>(error).memptr(), outSize,
-      nPoints, batchSize, false, false);
+  const CubeType inputTemp, errorTemp;
+  MakeAlias(const_cast<CubeType&>(inputTemp), input, this->inputDimensions[0],
+      nPoints, batchSize, 0, false);
+  MakeAlias(const_cast<CubeType&>(errorTemp), error, outSize, nPoints,
+      batchSize, 0, false);
 
   CubeType dW(outSize, this->inputDimensions[0], batchSize);
   for (size_t i = 0; i < batchSize; ++i)

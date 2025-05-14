@@ -73,8 +73,6 @@ template <typename MatType, typename RegularizerType>
 void MultiheadAttentionType<MatType, RegularizerType>::
 Forward(const MatType& input, MatType& output)
 {
-  using CubeType = arma::Cube<typename MatType::elem_type>;
-
   if (input.n_rows != embedDim *
       (selfAttention ? srcSeqLen : (tgtSeqLen + 2 * srcSeqLen)))
   {
@@ -97,14 +95,14 @@ Forward(const MatType& input, MatType& output)
   // The shape of q : (embedDim, tgtSeqLen, batchSize).
   // The shape of k : (embedDim, srcSeqLen, batchSize).
   // The shape of v : (embedDim, srcSeqLen, batchSize).
-  const CubeType q(const_cast<MatType&>(input).memptr(),
-      embedDim, tgtSeqLen, batchSize, false, false);
-  const CubeType k(const_cast<MatType&>(input).memptr() +
-      (selfAttention ? 0 : embedDim * tgtSeqLen * batchSize),
-      embedDim, srcSeqLen, batchSize, false, false);
-  const CubeType v(const_cast<MatType&>(input).memptr() +
+  const CubeType q, k, v;
+  MakeAlias(const_cast<CubeType&>(q), input, embedDim, tgtSeqLen, batchSize,
+      0, false);
+  MakeAlias(const_cast<CubeType&>(k), input, embedDim, srcSeqLen, batchSize,
+      (selfAttention ? 0 : embedDim * tgtSeqLen * batchSize), false);
+  MakeAlias(const_cast<CubeType&>(v), input, embedDim, srcSeqLen, batchSize,
       (selfAttention ? 0 : embedDim * (tgtSeqLen + srcSeqLen) * batchSize),
-      embedDim, srcSeqLen, batchSize, false, false);
+      false);
 
   // qProj, kProj, and vProj are the linearly projected query, key and value
   // respectively.
@@ -187,8 +185,6 @@ Backward(const MatType& /* input */,
          const MatType& gy,
          MatType& g)
 {
-  using CubeType = arma::Cube<typename MatType::elem_type>;
-
   if (gy.n_rows != tgtSeqLen * embedDim)
   {
     Log::Fatal << "Backpropagated error has incorrect dimensions!" << std::endl;
@@ -202,8 +198,11 @@ Backward(const MatType& /* input */,
   // The shape of gyTemp : (tgtSeqLen, embedDim, batchSize).
   // We need not split it into n heads now because this is the part when
   // output were concatenated from n heads.
-  CubeType gyTemp(const_cast<MatType&>(gy).memptr(), embedDim,
-      tgtSeqLen, batchSize, true, false);
+  const CubeType gyTempAlias;
+  MakeAlias(const_cast<CubeType&>(gyTempAlias), gy, embedDim, tgtSeqLen,
+      batchSize, 0, false);
+  // Make a copy of the alias so gy actually remains constant
+  CubeType gyTemp = gyTempAlias;
 
   // The shape of gyTemp : (embedDim, tgtSeqLen, batchSize).
   // The shape of outWt : (embedDim, embedDim).
@@ -306,8 +305,6 @@ Gradient(const MatType& input,
          const MatType& error,
          MatType& gradient)
 {
-  using CubeType = arma::Cube<typename MatType::elem_type>;
-
   if (input.n_rows != embedDim * (selfAttention ? srcSeqLen :
       (tgtSeqLen + 2 * srcSeqLen)))
   {
@@ -332,19 +329,21 @@ Gradient(const MatType& input,
   // The shape of gradient : (4 * embedDim * embedDim + 4 * embedDim, 1).
   gradient.set_size(arma::size(weights));
 
-  const CubeType q(const_cast<MatType&>(input).memptr(),
-      embedDim, tgtSeqLen, batchSize, false, false);
-  const CubeType k(const_cast<MatType&>(input).memptr() +
-      (selfAttention ? 0 : q.n_elem), embedDim, srcSeqLen, batchSize, false,
-      false);
-  const CubeType v(const_cast<MatType&>(input).memptr() +
-      (selfAttention ? 0 : (q.n_elem + k.n_elem)), embedDim, srcSeqLen,
-      batchSize, false, false);
+  const CubeType q, k, v;
+  MakeAlias(const_cast<CubeType&>(q), input, embedDim, tgtSeqLen, batchSize,
+      0, false);
+  MakeAlias(const_cast<CubeType&>(k), input, embedDim, srcSeqLen, batchSize,
+      (selfAttention ? 0 : q.n_elem), false);
+  MakeAlias(const_cast<CubeType&>(v), input, embedDim, srcSeqLen, batchSize,
+      (selfAttention ? 0 : (q.n_elem + k.n_elem)), false);
 
   // Reshape the propagated error into a cube.
   // The shape of errorTemp : (embedDim, tgtSeqLen, batchSize).
-  CubeType errorTemp(const_cast<MatType&>(error).memptr(), embedDim,
-      tgtSeqLen, batchSize, true, false);
+  const CubeType errorTempAlias;
+  MakeAlias(const_cast<CubeType&>(errorTempAlias), error, embedDim, tgtSeqLen,
+      batchSize, 0, false);
+  // Make a copy of the alias so error actually remains constant
+  CubeType errorTemp = errorTempAlias;
 
   // Gradient wrt. outBias, i.e. dL/d(outBias).
   gradient.rows(4 * wtSize + 3 * embedDim, 4 * wtSize + 4 * embedDim - 1)
