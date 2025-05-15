@@ -4,6 +4,8 @@
 
 _????-??-??_
 
+ * Fix cross-validation support for algorithms with many parameters (including
+   `RandomForest`) (#3941).
 
 ## mlpack 4.6.1
 
