@@ -134,6 +134,7 @@ bool DetectFileType(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool SaveMatrix(const MatType& matrix,
                 const DataOptionsType& opts,
+                const std::string& filename,
                 std::fstream& stream)
 {
   bool success = false;
