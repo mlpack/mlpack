@@ -73,9 +73,9 @@ class RandomForest
    * @param dimensionSelector Instantiated dimension selection policy.
    * @param bootstrap Instantiated bootstrap policy.
    */
-  template<typename MatType>
+  template<typename MatType, typename LabelsType>
   RandomForest(const MatType& dataset,
-               const arma::Row<size_t>& labels,
+               const LabelsType& labels,
                const size_t numClasses,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
@@ -104,10 +104,10 @@ class RandomForest
    * @param dimensionSelector Instantiated dimension selection policy.
    * @param bootstrap Instantiated bootstrap policy.
    */
-  template<typename MatType>
+  template<typename MatType, typename LabelsType>
   RandomForest(const MatType& dataset,
                const data::DatasetInfo& datasetInfo,
-               const arma::Row<size_t>& labels,
+               const LabelsType& labels,
                const size_t numClasses,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
@@ -133,18 +133,22 @@ class RandomForest
    * @param dimensionSelector Instantiated dimension selection policy.
    * @param bootstrap Instantiated bootstrap policy.
    */
-  template<typename MatType>
+  template<typename MatType,
+           typename LabelsType,
+           typename WeightsType>
   RandomForest(const MatType& dataset,
-               const arma::Row<size_t>& labels,
+               const LabelsType& labels,
                const size_t numClasses,
-               const arma::rowvec& weights,
+               const WeightsType& weights,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
-               BootstrapType bootstrap = BootstrapType());
+               BootstrapType bootstrap = BootstrapType(),
+               const std::enable_if_t<arma::is_arma_type<
+                   std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Create a random forest, training on the given weighted labeled training
@@ -166,19 +170,23 @@ class RandomForest
    * @param dimensionSelector Instantiated dimension selection policy.
    * @param bootstrap Instantiated bootstrap policy.
    */
-  template<typename MatType>
+  template<typename MatType,
+           typename LabelsType,
+           typename WeightsType>
   RandomForest(const MatType& dataset,
                const data::DatasetInfo& datasetInfo,
-               const arma::Row<size_t>& labels,
+               const LabelsType& labels,
                const size_t numClasses,
-               const arma::rowvec& weights,
+               const WeightsType& weights,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
-               BootstrapType bootstrap = BootstrapType());
+               BootstrapType bootstrap = BootstrapType(),
+               const std::enable_if_t<arma::is_arma_type<
+                   std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Train the random forest on the given labeled training data with the given
@@ -200,9 +208,9 @@ class RandomForest
    * @param bootstrap Instantiated bootstrap policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<typename MatType>
+  template<typename MatType, typename LabelsType>
   double Train(const MatType& data,
-               const arma::Row<size_t>& labels,
+               const LabelsType& labels,
                const size_t numClasses,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
@@ -236,10 +244,10 @@ class RandomForest
    * @param bootstrap Instantiated bootstrap policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<typename MatType>
+  template<typename MatType, typename LabelsType>
   double Train(const MatType& data,
                const data::DatasetInfo& datasetInfo,
-               const arma::Row<size_t>& labels,
+               const LabelsType& labels,
                const size_t numClasses,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
@@ -271,11 +279,13 @@ class RandomForest
    * @param bootstrap Instantiated bootstrap policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<typename MatType>
+  template<typename MatType,
+           typename LabelsType,
+           typename WeightsType>
   double Train(const MatType& data,
-               const arma::Row<size_t>& labels,
+               const LabelsType& labels,
                const size_t numClasses,
-               const arma::rowvec& weights,
+               const WeightsType& weights,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
@@ -283,7 +293,9 @@ class RandomForest
                const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
-               BootstrapType bootstrap = BootstrapType());
+               BootstrapType bootstrap = BootstrapType(),
+               const std::enable_if_t<arma::is_arma_type<
+                   std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Train the random forest on the given weighted labeled training data with
@@ -308,12 +320,14 @@ class RandomForest
    * @param bootstrap Instantiated bootstrap policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<typename MatType>
+  template<typename MatType,
+           typename LabelsType,
+           typename WeightsType>
   double Train(const MatType& data,
                const data::DatasetInfo& datasetInfo,
-               const arma::Row<size_t>& labels,
+               const LabelsType& labels,
                const size_t numClasses,
-               const arma::rowvec& weights,
+               const WeightsType& weights,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
@@ -321,7 +335,9 @@ class RandomForest
                const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
-               BootstrapType bootstrap = BootstrapType());
+               BootstrapType bootstrap = BootstrapType(),
+               const std::enable_if_t<arma::is_arma_type<
+                   std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Predict the class of the given point.  If the random forest has not been
@@ -414,19 +430,23 @@ class RandomForest
    * @tparam MatType The type of data matrix (i.e. arma::mat).
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<bool UseWeights, bool UseDatasetInfo, typename MatType>
-  double Train(const MatType& data,
-               const data::DatasetInfo& datasetInfo,
-               const arma::Row<size_t>& labels,
-               const size_t numClasses,
-               const arma::rowvec& weights,
-               const size_t numTrees,
-               const size_t minimumLeafSize,
-               const double minimumGainSplit,
-               const size_t maximumDepth,
-               const bool warmStart,
-               DimensionSelectionType& dimensionSelector,
-               BootstrapType& bootstrap);
+  template<bool UseWeights,
+           bool UseDatasetInfo,
+           typename MatType,
+           typename LabelsType,
+           typename WeightsType>
+  double TrainInternal(const MatType& data,
+                       const data::DatasetInfo& datasetInfo,
+                       const LabelsType& labels,
+                       const size_t numClasses,
+                       const WeightsType& weights,
+                       const size_t numTrees,
+                       const size_t minimumLeafSize,
+                       const double minimumGainSplit,
+                       const size_t maximumDepth,
+                       const bool warmStart,
+                       DimensionSelectionType& dimensionSelector,
+                       BootstrapType& bootstrap);
 
   //! The trees in the forest.
   std::vector<DecisionTreeType> trees;
