@@ -4,6 +4,7 @@
 
 _????-??-??_
 
+ * Update bundled STB to fix warnings in R bindings (#3940).
 
 ## mlpack 4.6.1
 
