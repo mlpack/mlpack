@@ -6,12 +6,14 @@
 namespace mlpack {
 
 template<
+    typename OutputLayerType = NegativeLogLikelihood,
     typename InitializationRuleType = RandomInitialization,
     typename MatType = arma::mat>
 class DAGNetwork 
 {
 public:
-  DAGNetwork(InitializationRuleType initializeRule = InitializationRuleType());
+  DAGNetwork(OutputLayerType outputLayer = OutputLayerType(),
+             InitializationRuleType initializeRule = InitializationRuleType());
 
   DAGNetwork(const DAGNetwork& other);
   DAGNetwork(DAGNetwork&& other);
@@ -19,7 +21,10 @@ public:
   DAGNetwork& operator=(DAGNetwork&& other);
 
 private:
+
+  OutputLayerType outputLayer;
   InitializationRuleType initializeRule;
+
 };
 
 } // namespace mlpack

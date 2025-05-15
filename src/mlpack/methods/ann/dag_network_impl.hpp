@@ -5,57 +5,78 @@
 
 namespace mlpack {
 
-template<typename InitializationRuleType, 
+template<typename OutputLayerType,
+         typename InitializationRuleType, 
          typename MatType>
 DAGNetwork<
+    OutputLayerType,
     InitializationRuleType, 
     MatType
->::DAGNetwork(InitializationRuleType initializeRule) :
+>::DAGNetwork(OutputLayerType outputLayer,
+              InitializationRuleType initializeRule) :
+    outputLayer(outputLayer),
     initializeRule(initializeRule)
 {}
 
-template<typename InitializationRuleType,
+template<typename OutputLayerType,
+         typename InitializationRuleType,
          typename MatType>
 DAGNetwork<
+    OutputLayerType,
     InitializationRuleType,
     MatType
 >::DAGNetwork(const DAGNetwork& network) :
+    outputLayer(network.outputLayer),
     initializeRule(network.initializeRule)
 {}
 
-template<typename InitializationRuleType,
+template<typename OutputLayerType,
+         typename InitializationRuleType,
          typename MatType>
 DAGNetwork<
+    OutputLayerType,
     InitializationRuleType,
     MatType
 >::DAGNetwork(DAGNetwork&& network) :
+    outputLayer(std::move(network.outputLayer)),
     initializeRule(std::move(network.initializeRule))
 {}
 
-template<typename InitializationRuleType,
+template<typename OutputLayerType,
+         typename InitializationRuleType,
          typename MatType>
-DAGNetwork<InitializationRuleType, MatType>& DAGNetwork<
+DAGNetwork<OutputLayerType,
+           InitializationRuleType,
+           MatType>&
+DAGNetwork<
+    OutputLayerType,
     InitializationRuleType,
     MatType
 >::operator=(const DAGNetwork& other)
 {
   if (this != &other)
   {
+    outputLayer = other.outputLayer;
     initializeRule = other.initializeRule;
   }
 
   return *this;
 }
 
-template<typename InitializationRuleType,
+template<typename OutputLayerType,
+         typename InitializationRuleType,
          typename MatType>
-DAGNetwork<InitializationRuleType, MatType>& DAGNetwork<
+DAGNetwork<OutputLayerType,
+           InitializationRuleType,
+           MatType>& DAGNetwork<
+    OutputLayerType,
     InitializationRuleType,
     MatType
 >::operator=(DAGNetwork&& other)
 {
   if (this != &other)
   {
+    outputLayer = std::move(other.outputLayer);
     initializeRule = std::move(other.initializeRule);
   }
 
