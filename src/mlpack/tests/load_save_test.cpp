@@ -2551,8 +2551,7 @@ TEST_CASE("LoadVectorCSVFilesNoTranspose", "[LoadSaveTest]")
   data::TextOptions opts;
   opts.NoTranspose() = true;
   opts.Fatal() = true;
-  REQUIRE(data::Load(files, dataset, opts)
-      == true);
+  REQUIRE(data::Load(files, dataset, opts) == true);
 
   REQUIRE(dataset.n_rows == 110);
   REQUIRE(dataset.n_cols == 5);
