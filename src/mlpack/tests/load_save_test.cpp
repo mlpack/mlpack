@@ -2535,8 +2535,7 @@ TEST_CASE("LoadVectorCSVFiles", "[LoadSaveTest]")
 
   arma::mat dataset;
   data::TextOptions opts;
-  REQUIRE(data::Load(files, dataset, opts)
-      == true);
+  REQUIRE(data::Load(files, dataset, opts) == true);
 
   REQUIRE(dataset.n_rows == 5);
   REQUIRE(dataset.n_cols == 110);
