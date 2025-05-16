@@ -291,7 +291,7 @@ bool Load(const std::string& filename,
           std::enable_if_t<HasSerialize<T>::value>* = 0);
 
 /**
- * This function a set of several dataset files into one matrix.
+ * This function loads a set of several dataset files into one matrix.
  * This is usually the case if the dataset is collected on several occasions
  * and not agglomerated into one file.
  *
