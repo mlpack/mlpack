@@ -293,7 +293,8 @@ bool Load(const std::string& filename,
 /**
  * This function loads a set of several dataset files into one matrix.
  * This is usually the case if the dataset is collected on several occasions
- * and not agglomerated into one file.
+ * and not agglomerated into one file, or if the dataset has been partitioned
+ * into multiple files.
  *
  * Note, the number of columns in all files must be equal, and the dataset
  * needs to be of the same natures. Please do not load different datasets using
