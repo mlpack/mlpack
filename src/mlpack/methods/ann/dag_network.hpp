@@ -9,7 +9,7 @@ template<
     typename OutputLayerType = NegativeLogLikelihood,
     typename InitializationRuleType = RandomInitialization,
     typename MatType = arma::mat>
-class DAGNetwork 
+class DAGNetwork
 {
 public:
   DAGNetwork(OutputLayerType outputLayer = OutputLayerType(),
@@ -20,10 +20,21 @@ public:
   DAGNetwork& operator=(const DAGNetwork& other);
   DAGNetwork& operator=(DAGNetwork&& other);
 
+  std::vector<size_t>& InputDimensions()
+  {
+    inputDimensionsAreSet = false;
+    return inputDimensions;
+  }
+
+  const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
+
 private:
 
   OutputLayerType outputLayer;
   InitializationRuleType initializeRule;
+
+  bool inputDimensionsAreSet;
+  std::vector<size_t> inputDimensions;
 
 };
 

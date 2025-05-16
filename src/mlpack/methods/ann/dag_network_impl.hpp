@@ -15,7 +15,8 @@ DAGNetwork<
 >::DAGNetwork(OutputLayerType outputLayer,
               InitializationRuleType initializeRule) :
     outputLayer(outputLayer),
-    initializeRule(initializeRule)
+    initializeRule(initializeRule),
+    inputDimensionsAreSet(false)
 {}
 
 template<typename OutputLayerType,
@@ -27,7 +28,8 @@ DAGNetwork<
     MatType
 >::DAGNetwork(const DAGNetwork& network) :
     outputLayer(network.outputLayer),
-    initializeRule(network.initializeRule)
+    initializeRule(network.initializeRule),
+    inputDimensionsAreSet(false)
 {}
 
 template<typename OutputLayerType,
@@ -39,7 +41,8 @@ DAGNetwork<
     MatType
 >::DAGNetwork(DAGNetwork&& network) :
     outputLayer(std::move(network.outputLayer)),
-    initializeRule(std::move(network.initializeRule))
+    initializeRule(std::move(network.initializeRule)),
+    inputDimensionsAreSet(std::move(network.inputDimensionsAreSet))
 {}
 
 template<typename OutputLayerType,
@@ -58,6 +61,7 @@ DAGNetwork<
   {
     outputLayer = other.outputLayer;
     initializeRule = other.initializeRule;
+    inputDimensionsAreSet = other.inputDimensionsAreSet;
   }
 
   return *this;
@@ -78,6 +82,7 @@ DAGNetwork<OutputLayerType,
   {
     outputLayer = std::move(other.outputLayer);
     initializeRule = std::move(other.initializeRule);
+    inputDimensionsAreSet = std::move(other.inputDimensionsAreSet);
   }
 
   return *this;
