@@ -411,7 +411,7 @@ bool LoadCategorical(const std::string& filename,
 }
 
 template<typename MatType>
-bool Load(const std::vector<std::string>& filesname,
+bool Load(const std::vector<std::string>& filenames,
           MatType& matrix,
           const TextOptions& opts)
 {
