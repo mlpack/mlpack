@@ -142,7 +142,7 @@ bool SaveMatrix(const MatType& matrix,
   {
 #ifdef ARMA_USE_HDF5
     // We can't save with streams for HDF5.
-    success = matrix.save(filename, ToArmaFileType(opts.Format()))
+    success = matrix.save(filename, ToArmaFileType(opts.Format()));
 #endif
   }
   else
