@@ -32,6 +32,20 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
     // Do Nothing.
   }
 
+  MatrixOptionsBase(const MatrixOptionsBase<Derived>& opts) :
+      DataOptionsBase<MatrixOptionsBase<Derived>>()
+  {
+    // Delegate to copy operator.
+    *this = opts;
+  }
+
+  MatrixOptionsBase(MatrixOptionsBase<Derived>&& opts) :
+      DataOptionsBase<MatrixOptionsBase<Derived>>()
+  {
+    // Delegate to move operator.
+    *this = std::move(opts);
+  }
+
   template<typename Derived2>
   explicit MatrixOptionsBase(const MatrixOptionsBase<Derived2>& opts) :
       DataOptionsBase<MatrixOptionsBase<Derived>>()
@@ -110,6 +124,60 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
     DataOptionsBase<MatrixOptionsBase<Derived>>::MoveOptions(std::move(other));
 
     return *this;
+  }
+
+  template<typename Derived2>
+  MatrixOptionsBase operator|(DataOptionsBase<Derived2>& other)
+  {
+    MatrixOptionsBase output(*this);
+    if (other.noTranspose.has_value())
+      output.NoTranspose() = this->NoTranspose() | other.NoTranspose();
+    else
+      output.NoTranspose() = this->NoTranspose();
+
+    if (other.fatal.has_value())
+      output.Fatal() = this->Fatal() | other.Fatal();
+    else
+      output.Fatal() = this->Fatal();
+
+    if (other.format.has_value())
+    {
+      if (this->Format() == FileType::FileTypeUnknown ||
+          this->Format() == FileType::AutoDetect)
+      {
+        output.Format() = other.Format();
+        return output;
+      }
+      else if (other.Format() == FileType::FileTypeUnknown ||
+          other.Format() == FileType::AutoDetect)
+      {
+        output.Format() = this->Format();
+        return output;
+      }
+
+      if (this->Format() != other.Format())
+      {
+        std::cout << this->FileTypeToString() <<
+            " " << other.FileTypeToString() << std::endl;
+        Log::Fatal << "File formats don't match!" << std::endl;
+      }
+      else
+        output.Format() = this->Format();
+    }
+
+    return output;
+  }
+
+  template<typename Derived2>
+  MatrixOptionsBase operator|(MatrixOptionsBase<Derived2>& other)
+  {
+    MatrixOptionsBase output(*this);
+    if (other.noTranspose.has_value())
+      output.NoTranspose() = this->NoTranspose() | other.NoTranspose();
+    else
+      output.NoTranspose() = this->NoTranspose();
+
+    return output;
   }
 
   void WarnBaseConversion(const char* dataDescription) const

@@ -88,6 +88,46 @@ class DataOptionsBase
     return *this;
   }
 
+  // Take ownership of the options of another `DataOptionsBase` type.
+  template<typename Derived2>
+  DataOptionsBase operator|(DataOptionsBase<Derived2>& other)
+  {
+    DataOptionsBase output;
+    if (other.fatal.has_value())
+      output.Fatal() = this->Fatal() | other.Fatal();
+    // do not forget to consider this.
+    //else if (fatal.has_value() && !output.fatal.has_value())
+      //output.Fatal() = this->Fatal();
+    else
+      output.Fatal() = this->Fatal();
+
+    if (other.format.has_value())
+    {
+      if (this->Format() == FileType::FileTypeUnknown ||
+          this->Format() == FileType::AutoDetect)
+      {
+        output.Format() = other.Format();
+        return output;
+      }
+      else if (other.Format() == FileType::FileTypeUnknown ||
+          other.Format() == FileType::AutoDetect)
+      {
+        output.Format() = this->Format();
+        return output;
+      }
+
+      if (this->Format() != other.Format())
+      {
+        std::cout << this->FileTypeToString() <<
+            " " << other.FileTypeToString() << std::endl;
+        Log::Fatal << "File formats don't match!" << std::endl;
+      }
+      else
+        output.Format() = this->Format();
+    }
+    return output;
+  }
+
   template<typename Derived2>
   void CopyOptions(const DataOptionsBase<Derived2>& other)
   {
