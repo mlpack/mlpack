@@ -29,6 +29,7 @@ template <typename MatType = arma::mat>
 class MeanPoolingType : public Layer<MatType>
 {
  public:
+  using CubeType = typename GetCubeType<MatType>::type;
   //! Create the MeanPoolingType object.
   MeanPoolingType();
 
@@ -129,8 +130,8 @@ class MeanPoolingType : public Layer<MatType>
    * @param output The pooled result.
    */
   void PoolingOperation(
-      const arma::Cube<typename MatType::elem_type>& input,
-      arma::Cube<typename MatType::elem_type>& output);
+      const CubeType& input,
+      CubeType& output);
 
   /**
    * Apply unpooling to the input and store the results.

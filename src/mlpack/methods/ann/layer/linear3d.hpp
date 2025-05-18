@@ -37,6 +37,7 @@ template<
 class Linear3DType : public Layer<MatType>
 {
  public:
+  using CubeType = typename GetCubeType<MatType>::type;
   //! Create the Linear3D object.
   Linear3DType();
 

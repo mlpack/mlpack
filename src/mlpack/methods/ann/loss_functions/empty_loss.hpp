@@ -57,7 +57,7 @@ class EmptyLossType
 
   //! Serialize the EmptyLossType.
   template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */) { }
+  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 }; // class EmptyLossType
 
 // Default typedef for typical `arma::mat` usage.

@@ -157,7 +157,8 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
       for (size_t i = 0; i < logTransition.n_rows; i++)
       {
         // Define alias of desired column.
-        arma::vec alias(logProbs.colptr(i), logProbs.n_rows, false, true);
+        arma::vec alias;
+        MakeAlias(alias, logProbs, logProbs.n_rows, logProbs.n_rows * i);
         // Use advanced constructor for using logProbs directly.
         emission[i].LogProbability(dataSeq[seq], alias);
       }
@@ -358,7 +359,8 @@ double HMM<Distribution>::LogEstimate(const arma::mat& dataSeq,
   for (size_t i = 0; i < logTransition.n_rows; i++)
   {
     // Define alias of desired column.
-    arma::vec alias(logProbs.colptr(i), logProbs.n_rows, false, true);
+    arma::vec alias;
+    MakeAlias(alias, logProbs, logProbs.n_rows, logProbs.n_rows * i);
     // Use advanced constructor for using logProbs directly.
     emission[i].LogProbability(dataSeq, alias);
   }
@@ -515,7 +517,8 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
   for (size_t i = 0; i < logTransition.n_rows; i++)
   {
     // Define alias of desired column.
-    arma::vec alias(logProbs.colptr(i), logProbs.n_rows, false, true);
+    arma::vec alias;
+    MakeAlias(alias, logProbs, logProbs.n_rows, logProbs.n_rows * i);
     // Use advanced constructor for using logProbs directly.
     emission[i].LogProbability(dataSeq, alias);
   }
@@ -562,7 +565,8 @@ double HMM<Distribution>::LogLikelihood(const arma::mat& dataSeq) const
   for (size_t i = 0; i < logTransition.n_rows; i++)
   {
     // Define alias of desired column.
-    arma::vec alias(logProbs.colptr(i), logProbs.n_rows, false, true);
+    arma::vec alias;
+    MakeAlias(alias, logProbs, logProbs.n_rows, logProbs.n_rows * i);
     // Use advanced constructor for using logProbs directly.
     emission[i].LogProbability(dataSeq, alias);
   }
@@ -664,7 +668,8 @@ void HMM<Distribution>::Filter(const arma::mat& dataSeq,
   for (size_t i = 0; i < logTransition.n_rows; i++)
   {
     // Define alias of desired column.
-    arma::vec alias(logProbs.colptr(i), logProbs.n_rows, false, true);
+    arma::vec alias;
+    MakeAlias(alias, logProbs, logProbs.n_rows, logProbs.n_rows * i);
     // Use advanced constructor for using logProbs directly.
     emission[i].LogProbability(dataSeq, alias);
   }

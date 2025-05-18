@@ -3,12 +3,19 @@
 ## mlpack ?.?.?
 
 _????-??-??_
- * Shuffle sequence lengths (#3926)
 
- * Add ability to compile OpenBLAS for windows (#3922)
+
+## mlpack 4.6.1
+
+_2025-05-13_
+
+ * Shuffle sequence lengths for RNNs (#3926).
+
+ * Add ability to compile OpenBLAS for Windows (#3922).
 
  * Drop pytest-runner and "setup.py test" support (#3921).
 
+ * Fix compilation errors with clang++ version 20 (#3928).
 
 ## mlpack 4.6.0
 
