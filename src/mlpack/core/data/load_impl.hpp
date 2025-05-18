@@ -416,20 +416,20 @@ bool Load(const std::vector<std::string>& filenames,
           const TextOptions& opts)
 {
   TextOptions copyOpts(opts);
-  return Load(filesname, matrix, copyOpts);
+  return Load(filenames, matrix, copyOpts);
 }
 
 template<typename MatType>
-bool Load(const std::vector<std::string>& filesname,
+bool Load(const std::vector<std::string>& filenames,
           MatType& matrix,
           TextOptions& opts)
 {
   bool success;
   MatType tmp;
   arma::field<std::string> firstHeaders;
-  for (size_t i = 0; i < filesname.size(); ++i)
+  for (size_t i = 0; i < filenames.size(); ++i)
   {
-    success = Load(filesname.at(i), matrix, opts); 
+    success = Load(filenames.at(i), matrix, opts); 
     if (opts.HasHeaders())
     {
       if (i == 0)
