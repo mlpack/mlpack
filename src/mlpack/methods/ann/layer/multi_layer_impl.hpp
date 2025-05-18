@@ -187,12 +187,12 @@ void MultiLayer<MatType>::Backward(
     // Initialize memory for the backward pass (if needed).
     InitializeBackwardPassMemory(input.n_cols);
 
-    network.back()->Backward(layerOutputs[network.size() - 2], output, gy,
+    network.back()->Backward(layerOutputs.back(), output, gy,
         layerDeltas.back());
     for (size_t i = network.size() - 2; i > 0; --i)
       network[i]->Backward(layerOutputs[i - 1], layerOutputs[i],
-          layerDeltas[i + 1], layerDeltas[i]);
-    network[0]->Backward(input, layerOutputs[0], layerDeltas[1], g);
+          layerDeltas[i], layerDeltas[i - 1]);
+    network[0]->Backward(input, layerOutputs[0], layerDeltas[0], g);
   }
   else if (network.size() == 1)
   {
@@ -217,10 +217,10 @@ void MultiLayer<MatType>::Gradient(
     // Initialize memory for the gradient pass (if needed).
     InitializeGradientPassMemory(gradient);
 
-    network.front()->Gradient(input, layerDeltas[1], layerGradients.front());
+    network.front()->Gradient(input, layerDeltas[0], layerGradients.front());
     for (size_t i = 1; i < network.size() - 1; ++i)
     {
-      network[i]->Gradient(layerOutputs[i - 1], layerDeltas[i + 1],
+      network[i]->Gradient(layerOutputs[i - 1], layerDeltas[i],
           layerGradients[i]);
     }
     network.back()->Gradient(layerOutputs[network.size() - 2], error,
@@ -316,7 +316,6 @@ void MultiLayer<MatType>::ComputeOutputDimensions()
   inSize = this->inputDimensions[0];
   for (size_t i = 1; i < this->inputDimensions.size(); ++i)
     inSize *= this->inputDimensions[i];
-  totalInputSize += inSize;
 
   for (size_t i = 1; i < network.size(); ++i)
   {
@@ -391,7 +390,7 @@ void MultiLayer<MatType>::InitializeForwardPassMemory(const size_t batchSize)
   {
     const size_t layerOutputSize = network[i]->OutputSize();
     MakeAlias(layerOutputs[i], layerOutputMatrix, layerOutputSize, batchSize,
-        start * layerOutputMatrix.n_rows);
+        start);
     start += batchSize * layerOutputSize;
   }
 }
@@ -416,11 +415,11 @@ void MultiLayer<MatType>::InitializeBackwardPassMemory(
   for (size_t i = 0; i < layerDeltas.size(); ++i)
   {
     size_t layerInputSize = 1;
-    for (size_t j = 0; j < this->network[i]->InputDimensions().size(); ++j)
-      layerInputSize *= this->network[i]->InputDimensions()[j];
+    for (size_t j = 0; j < this->network[i+1]->InputDimensions().size(); ++j)
+      layerInputSize *= this->network[i+1]->InputDimensions()[j];
 
     MakeAlias(layerDeltas[i], layerDeltaMatrix, layerInputSize,
-        batchSize, start * layerDeltaMatrix.n_rows);
+        batchSize, start);
     start += batchSize * layerInputSize;
   }
 }

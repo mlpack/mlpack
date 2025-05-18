@@ -169,8 +169,8 @@ class MultiLayer : public Layer<MatType>
     network.push_back(new LayerType(args...));
     if (network.size() > 1) {
       layerOutputs.push_back(MatType());
+      layerDeltas.push_back(MatType());
     }
-    layerDeltas.push_back(MatType());
     layerGradients.push_back(MatType());
   }
 
@@ -184,8 +184,8 @@ class MultiLayer : public Layer<MatType>
     network.push_back(layer);
     if (network.size() > 1) {
       layerOutputs.push_back(MatType());
+      layerDeltas.push_back(MatType());
     }
-    layerDeltas.push_back(MatType());
     layerGradients.push_back(MatType());
   }
 
