@@ -424,9 +424,23 @@ bool Load(const std::vector<std::string>& filenames,
           MatType& matrix,
           TextOptions& opts)
 {
-  bool success;
+  bool success = false;
   MatType tmp;
   arma::field<std::string> firstHeaders;
+  if (filenames.empty())
+  {
+    if (opts.Fatal())
+    {
+      Log::Fatal << "Load(): Please specify the filenames to be loaded!"
+          << std::endl;
+    }
+    else
+    {
+      Log::Warn << "Load(): Please specify the filenames to be loaded!"
+          << std::endl;
+      return false;
+    }
+  }
   for (size_t i = 0; i < filenames.size(); ++i)
   {
     success = Load(filenames.at(i), matrix, opts); 
@@ -437,9 +451,12 @@ bool Load(const std::vector<std::string>& filenames,
       else
       {
         arma::field<std::string>& headers = opts.Headers();
-        if (firstHeaders != headers)
-          Log::Warn << "Load(): Headers from different CSV does not match!"
-              << std::endl;
+        for (size_t j = 0; j < headers.size(); ++j)
+        {
+          if (firstHeaders.at(0) != headers.at(0))
+            Log::Warn << "Load(): Headers from different CSV does not match!"
+                << std::endl;
+        }
       }
     }
 

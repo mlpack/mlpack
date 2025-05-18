@@ -2531,20 +2531,61 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
 TEST_CASE("LoadVectorCSVFiles", "[LoadSaveTest]")
 {
   std::vector<std::string> files = {"f0.csv", "f1.csv", "f2.csv", "f3.csv",
-      "f3.csv", "f4.csv", "f5.csv", "f6.csv", "f7.csv", "f8.csv", "f9.csv"};
+      "f4.csv", "f5.csv", "f6.csv", "f7.csv", "f8.csv", "f9.csv"};
 
   arma::mat dataset;
   data::TextOptions opts;
   REQUIRE(data::Load(files, dataset, opts) == true);
 
   REQUIRE(dataset.n_rows == 5);
-  REQUIRE(dataset.n_cols == 110);
+  REQUIRE(dataset.n_cols == 100);
+}
+
+TEST_CASE("LoadVectorCSVOneFile", "[LoadSaveTest]")
+{
+  std::vector<std::string> files = {"f0.csv"};
+
+  arma::mat dataset;
+  data::TextOptions opts;
+  REQUIRE(data::Load(files, dataset, opts) == true);
+
+  REQUIRE(dataset.n_rows == 5);
+  REQUIRE(dataset.n_cols == 10);
+}
+
+TEST_CASE("LoadVectorCSVEmptyFile", "[LoadSaveTest]")
+{
+  std::vector<std::string> files;
+
+  arma::mat dataset;
+  data::TextOptions opts;
+  opts.Fatal() = false;
+  REQUIRE(data::Load(files, dataset, opts) == false);
+}
+
+TEST_CASE("LoadVectorCSVDiffCols", "[LoadSaveTest]")
+{
+  std::vector<std::string> files = {"f0.csv", "f10.csv"};
+
+  arma::mat dataset;
+  data::TextOptions opts;
+  REQUIRE(data::Load(files, dataset, opts) == false);
+}
+
+TEST_CASE("LoadVectorCSVDiffHeaders", "[LoadSaveTest]")
+{
+  std::vector<std::string> files = {"f0headers.csv", "f10headers.csv"};
+
+  arma::mat dataset;
+  data::TextOptions opts;
+  opts.HasHeaders() = true;
+  REQUIRE(data::Load(files, dataset, opts) == false);
 }
 
 TEST_CASE("LoadVectorCSVFilesNoTranspose", "[LoadSaveTest]")
 {
   std::vector<std::string> files = {"f0.csv", "f1.csv", "f2.csv", "f3.csv",
-      "f3.csv", "f4.csv", "f5.csv", "f6.csv", "f7.csv", "f8.csv", "f9.csv"};
+      "f4.csv", "f5.csv", "f6.csv", "f7.csv", "f8.csv", "f9.csv"};
 
   arma::mat dataset;
   data::TextOptions opts;
@@ -2552,7 +2593,7 @@ TEST_CASE("LoadVectorCSVFilesNoTranspose", "[LoadSaveTest]")
   opts.Fatal() = true;
   REQUIRE(data::Load(files, dataset, opts) == true);
 
-  REQUIRE(dataset.n_rows == 110);
+  REQUIRE(dataset.n_rows == 100);
   REQUIRE(dataset.n_cols == 5);
 }
 
