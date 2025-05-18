@@ -124,7 +124,7 @@ sed --in-place 's/MLPACK_VERSION_PATCH [0-9]*$/MLPACK_VERSION_PATCH '$PATCH'/' \
     src/mlpack/core/util/version.hpp;
 
 sed --in-place 's/mlpack-[0-9]\.[0-9]\.[0-9]/mlpack-'$MAJOR'.'$MINOR'.'$PATCH'/g' \
-    doc/user/sample_ml_app.md;
+    doc/user/deploy_windows.md;
 sed --in-place 's/mlpack-[0-9]\.[0-9]\.[0-9]/mlpack-'$MAJOR'.'$MINOR'.'$PATCH'/g' \
     doc/examples/sample-ml-app/README.txt;
 sed --in-place 's/mlpack-[0-9]\.[0-9]\.[0-9]/mlpack-'$MAJOR'.'$MINOR'.'$PATCH'/g' \
@@ -157,7 +157,7 @@ rm -rf /tmp/ensmallen;
 git checkout -b release-$MAJOR.$MINOR.$PATCH;
 
 git add src/mlpack/core/util/version.hpp \
-    doc/user/sample_ml_app.md \
+    doc/user/deploy_windows.md \
     doc/examples/sample-ml-app/README.txt \
     doc/examples/sample-ml-app/sample-ml-app/sample-ml-app.vcxproj \
     CMakeLists.txt \
