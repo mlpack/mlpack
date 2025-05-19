@@ -135,21 +135,21 @@ bool Save(const std::string& filename,
     TextOptions txtOpts(std::move(opts));
     if constexpr (IsSparseMat<MatType>::value)
     {
-      success = SaveSparse(matrix, txtOpts, stream);
+      success = SaveSparse(matrix, txtOpts, filename, stream);
     }
     else if constexpr (IsCol<MatType>::value)
     {
       opts.NoTranspose() = true;
-      success = SaveDense(matrix, txtOpts, stream);
+      success = SaveDense(matrix, txtOpts, filename, stream);
     }
     else if constexpr (IsRow<MatType>::value)
     {
       opts.NoTranspose() = false;
-      success = SaveDense(matrix, txtOpts, stream);
+      success = SaveDense(matrix, txtOpts, filename, stream);
     }
     else if constexpr (IsDense<MatType>::value)
     {
-      success = SaveDense(matrix, txtOpts, stream);
+      success = SaveDense(matrix, txtOpts, filename, stream);
     }
     opts = std::move(txtOpts);
   }
@@ -183,6 +183,7 @@ bool Save(const std::string& filename,
 template<typename eT>
 bool SaveDense(const arma::Mat<eT>& matrix,
                TextOptions& opts,
+               const std::string& filename,
                std::fstream& stream)
 {
   bool success = false;
@@ -191,10 +192,10 @@ bool SaveDense(const arma::Mat<eT>& matrix,
   if (!opts.NoTranspose())
   {
     tmp = trans(matrix);
-    success = SaveMatrix(tmp, opts, stream);
+    success = SaveMatrix(tmp, opts, filename, stream);
   }
   else
-    success = SaveMatrix(matrix, opts, stream);
+    success = SaveMatrix(matrix, opts, filename, stream);
 
   return success;
 }
@@ -203,6 +204,7 @@ bool SaveDense(const arma::Mat<eT>& matrix,
 template<typename eT>
 bool SaveSparse(const arma::SpMat<eT>& matrix,
                 TextOptions& opts,
+                const std::string& filename,
                 std::fstream& stream)
 {
   bool success = false;
@@ -212,10 +214,10 @@ bool SaveSparse(const arma::SpMat<eT>& matrix,
   if (!opts.NoTranspose())
   {
     arma::SpMat<eT> tmp = trans(matrix);
-    success = SaveMatrix(tmp, opts, stream);
+    success = SaveMatrix(tmp, opts, filename, stream);
   }
   else
-    success = SaveMatrix(matrix, opts, stream);
+    success = SaveMatrix(matrix, opts, filename, stream);
 
   return success;
 }

@@ -4,6 +4,8 @@
 
 _????-??-??_
 
+ * Fix compilation of `Save()` when HDF5 is enabled (#3942).
+
  * Fix cross-validation support for algorithms with many parameters (including
    `RandomForest`) (#3941).
 
