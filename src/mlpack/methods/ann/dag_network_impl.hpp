@@ -88,6 +88,22 @@ DAGNetwork<OutputLayerType,
   return *this;
 }
 
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::Add(Layer<MatType>* layer)
+{
+    auto layerIter = connections.find(layer);
+    if (layerIter == connections.end()) {
+        layers.push_back(layer);
+        connections.insert({layer, {}});
+    }
+}
++
 } // namespace mlpack
 
 #endif

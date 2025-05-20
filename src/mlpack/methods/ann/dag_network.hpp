@@ -28,14 +28,8 @@ public:
 
   const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
 
-  const std::vector<Layer<MatType>*>& Network() const
-  {
-    return network;
-  }
 
-  void Add(Layer<MatType>* layer) {
-    network.push_back(layer);
-  }
+  void Add(Layer<MatType>* layer);
 
 private:
 
@@ -45,7 +39,8 @@ private:
   bool inputDimensionsAreSet;
   std::vector<size_t> inputDimensions;
 
-  std::vector<Layer<MatType>*> network;
+  std::vector<Layer<MatType>*> layers;
+  std::map<Layer<MatType>*, std::vector<Layer<MatType>*>> connections;
 
 };
 
