@@ -130,40 +130,16 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
   MatrixOptionsBase operator|(DataOptionsBase<Derived2>& other)
   {
     MatrixOptionsBase output(*this);
-    if (other.noTranspose.has_value())
-      output.NoTranspose() = this->NoTranspose() | other.NoTranspose();
-    else
+    // Keep it like this otherwise we need to overload the |= operator, which
+    // is not necessary outside this context
+    static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(*this) =
+        static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(*this) |
+        static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(other);
+
+    if (this->noTranspose.has_value())
       output.NoTranspose() = this->NoTranspose();
-
-    if (other.fatal.has_value())
-      output.Fatal() = this->Fatal() | other.Fatal();
     else
-      output.Fatal() = this->Fatal();
-
-    if (other.format.has_value())
-    {
-      if (this->Format() == FileType::FileTypeUnknown ||
-          this->Format() == FileType::AutoDetect)
-      {
-        output.Format() = other.Format();
-        return output;
-      }
-      else if (other.Format() == FileType::FileTypeUnknown ||
-          other.Format() == FileType::AutoDetect)
-      {
-        output.Format() = this->Format();
-        return output;
-      }
-
-      if (this->Format() != other.Format())
-      {
-        std::cout << this->FileTypeToString() <<
-            " " << other.FileTypeToString() << std::endl;
-        Log::Fatal << "File formats don't match!" << std::endl;
-      }
-      else
-        output.Format() = this->Format();
-    }
+      output.NoTranspose() = false;
 
     return output;
   }
@@ -172,11 +148,17 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
   MatrixOptionsBase operator|(MatrixOptionsBase<Derived2>& other)
   {
     MatrixOptionsBase output(*this);
-    if (other.noTranspose.has_value())
-      output.NoTranspose() = this->NoTranspose() | other.NoTranspose();
-    else
-      output.NoTranspose() = this->NoTranspose();
 
+    static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(*this) =
+        static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(*this) |
+        static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(other);
+
+    if (other.noTranspose.has_value() && !this->noTranspose.has_value())
+      output.NoTranspose() = other.NoTranspose();
+    else if (!other.noTranspose.has_value() && this->noTranspose.has_value())
+      output.NoTranspose() = this->NoTranspose();
+    else
+      output.NoTranspose() = false;
     return output;
   }
 

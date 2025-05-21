@@ -40,14 +40,14 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     // Do Nothing.
   }
 
-  explicit TextOptions(const TextOptions& opts) :
+  TextOptions(const TextOptions& opts) :
       MatrixOptionsBase<TextOptions>()
   {
     // Delegate to copy operator.
     *this = opts;
   }
 
-  explicit TextOptions(TextOptions&& opts) :
+  TextOptions(TextOptions&& opts) :
       MatrixOptionsBase<TextOptions>()
   {
     // Delegate to move operator.
@@ -102,6 +102,78 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     MatrixOptionsBase<TextOptions>::operator=(std::move(other));
 
     return *this;
+  }
+
+  template<typename Derived2>
+  TextOptions operator|(MatrixOptionsBase<Derived2>& other)
+  {
+    TextOptions output(*this);
+    // Keep it like this otherwise we need to overload the |= operator, which
+    // is not necessary outside this context
+    static_cast<MatrixOptionsBase<TextOptions>&>(*this) =
+        static_cast<MatrixOptionsBase<TextOptions>&>(*this) |
+        static_cast<MatrixOptionsBase<TextOptions>&>(other);
+
+    if (this->hasHeaders.has_value())
+      output.HasHeaders() = this->HasHeaders();
+    else
+      output.HasHeaders() = false;
+
+    if (this->missingToNan.has_value())
+      output.MissingToNan() = this->MissingToNan();
+    else
+      output.MissingToNan() = false;
+
+    if (this->categorical.has_value())
+      output.Categorical() = this->Categorical();
+    else
+      output.Categorical() = false;
+
+    if (this->semicolon.has_value())
+      output.SemiColon() = this->SemiColon();
+    else
+      output.SemiColon() = false;
+
+    return output;
+  }
+
+  TextOptions operator|(TextOptions& other)
+  {
+    TextOptions output(*this);
+
+    static_cast<MatrixOptionsBase<TextOptions>&>(*this) =
+        static_cast<MatrixOptionsBase<TextOptions>&>(*this) |
+        static_cast<MatrixOptionsBase<TextOptions>&>(other);
+
+    if (other.hasHeaders.has_value() && !this->hasHeaders.has_value())
+      output.HasHeaders() = other.HasHeaders();
+    else if (!other.hasHeaders.has_value() && this->hasHeaders.has_value())
+      output.HasHeaders() = this->HasHeaders();
+    else
+      output.HasHeaders() = false;
+
+    if (other.missingToNan.has_value() && !this->missingToNan.has_value())
+      output.MissingToNan() = other.MissingToNan();
+    else if (!other.missingToNan.has_value() && this->missingToNan.has_value())
+      output.MissingToNan() = this->MissingToNan();
+    else
+      output.MissingToNan() = false;
+
+    if (other.categorical.has_value() && !this->categorical.has_value())
+      output.Categorical() = other.Categorical();
+    else if (!other.categorical.has_value() && this->categorical.has_value())
+      output.Categorical() = this->Categorical();
+    else
+      output.Categorical() = false;
+
+    if (other.semicolon.has_value() && !this->semicolon.has_value())
+      output.SemiColon() = other.SemiColon();
+    else if (!other.semicolon.has_value() && this->semicolon.has_value())
+      output.SemiColon() = this->SemiColon();
+    else
+      output.SemiColon() = false;
+
+    return output;
   }
 
   // Print warnings for any members that cannot be represented by a

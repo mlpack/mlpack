@@ -93,13 +93,12 @@ class DataOptionsBase
   DataOptionsBase operator|(DataOptionsBase<Derived2>& other)
   {
     DataOptionsBase output;
-    if (other.fatal.has_value())
-      output.Fatal() = this->Fatal() | other.Fatal();
-    // do not forget to consider this.
-    //else if (fatal.has_value() && !output.fatal.has_value())
-      //output.Fatal() = this->Fatal();
-    else
+    if (other.fatal.has_value() && !this->fatal.has_value())
+      output.Fatal() = other.Fatal();
+    else if (fatal.has_value() && !output.fatal.has_value())
       output.Fatal() = this->Fatal();
+    else
+      output.Fatal() = false;
 
     if (other.format.has_value())
     {
