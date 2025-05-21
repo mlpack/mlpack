@@ -441,6 +441,7 @@ bool Load(const std::vector<std::string>& filenames,
       return false;
     }
   }
+
   for (size_t i = 0; i < filenames.size(); ++i)
   {
     success = Load(filenames.at(i), matrix, opts);
@@ -451,12 +452,32 @@ bool Load(const std::vector<std::string>& filenames,
       else
       {
         arma::field<std::string>& headers = opts.Headers();
+
+        // Make sure that the headers in this file match the first file's
+        // headers.
         for (size_t j = 0; j < headers.size(); ++j)
         {
           if (firstHeaders.at(j) != headers.at(j))
-            Log::Warn << "Load(): first file headers size: "
-              << firstHeader.size() << " from current file: " << header.size()
-              << std::endl;
+          {
+            if (opts.Fatal())
+            {
+              Log::Fatal << "Load(): header column " << j << " in file '"
+                  << filenames[j] << "' ('" << headers[j] << "') does not match"
+                  << " header column " << j << " in first file '"
+                  << filenames[0] << "' ('" << firstHeaders[j] << "'); load "
+                  << "failed." << std::endl;
+            }
+            else
+            {
+              Log::Warn << "Load(): header column " << j << " in file '"
+                  << filenames[j] << "' ('" << headers[j] << "') does not match"
+                  << " header column " << j << " in first file '"
+                  << filenames[0] << "' ('" << firstHeaders[j] << "'); load "
+                  << "failed." << std::endl;
+              matrix.clear();
+              return false;
+            }
+          }
         }
       }
     }
@@ -474,12 +495,18 @@ bool Load(const std::vector<std::string>& filenames,
           if (tmp.n_rows != matrix.n_rows)
           {
             if (opts.Fatal())
-              Log::Fatal << "Load(): dimension mismatch when loading vectors"
-                << std::endl;
+            {
+              Log::Fatal << "Load(): dimension mismatch; file '" << filenames[j]
+                  << "' has " << matrix.n_rows << " dimensions, but first file "
+                  << "'" << filenames[0] << "' has " << tmp.n_rows
+                  << " dimensions." << std::endl;
+            }
             else
             {
-              Log::Warn << "Load(): dimension mismatch when loading vectors"
-                << std::endl;
+              Log::Warn << "Load(): dimension mismatch; file '" << filenames[j]
+                  << "' has " << matrix.n_rows << " dimensions, but first file "
+                  << "'" << filenames[0] << "' has " << tmp.n_rows
+                  << " dimensions." << std::endl;
               return false;
             }
           }
@@ -491,19 +518,25 @@ bool Load(const std::vector<std::string>& filenames,
           if (tmp.n_cols != matrix.n_cols)
           {
             if (opts.Fatal())
-              Log::Fatal << "Load(): matrix dimension: " << tmp.n_cols
-                <<" mismatch with file:" << filename.at(i) << " dimensions ("
-                << matrix.n_cols << ")" << std::endl;
+            {
+              Log::Fatal << "Load(): dimension mismatch; file '" << filenames[j]
+                  << "' has " << matrix.n_cols << " dimensions, but first file "
+                  << "'" << filenames[0] << "' has " << tmp.n_cols
+                  << " dimensions." << std::endl;
+            }
             else
             {
-              Log::Warn << "Load(): matrix dimension: " << tmp.n_cols
-                <<" mismatch with file:" << filename.at(i) << " dimensions ("
-                << matrix.n_cols << ")" << std::endl;
+              Log::Warn << "Load(): dimension mismatch; file '" << filenames[j]
+                  << "' has " << matrix.n_cols << " dimensions, but first file "
+                  << "'" << filenames[0] << "' has " << tmp.n_cols
+                  << " dimensions." << std::endl;
               return false;
             }
           }
           else
+          {
             tmp = join_cols(tmp, matrix);
+          }
         }
       }
     }
