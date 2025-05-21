@@ -119,23 +119,23 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     if (strategy == "mean")
     {
       Imputer<MeanImputation> imputer;
-      imputer.Impute(data, missingValue, dimension);
+      imputer.Impute(data, missingValue, d);
     }
     else if (strategy == "median")
     {
       Imputer<MedianImputation> imputer;
-      imputer.Impute(data, missingValue, dimension);
+      imputer.Impute(data, missingValue, d);
     }
     else if (strategy == "listwise_deletion")
     {
       Imputer<ListwiseDeletion> imputer;
-      imputer.Impute(data, missingValue, dimension);
+      imputer.Impute(data, missingValue, d);
     }
     else if (strategy == "custom")
     {
       CustomImputation<> c(customValue);
       Imputer<CustomImputation<>> imputer(c);
-      imputer.Impute(data, missingValue, dimension);
+      imputer.Impute(data, missingValue, d);
     }
   }
 
