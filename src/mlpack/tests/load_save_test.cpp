@@ -2567,6 +2567,7 @@ TEST_CASE("LoadVectorCSVFiles", "[LoadSaveTest]")
 
   REQUIRE(dataset.n_rows == 5);
   REQUIRE(dataset.n_cols == 100);
+  REQUIRE(dataset(0, 10) == 1.0);
 }
 
 TEST_CASE("LoadVectorCSVOneFile", "[LoadSaveTest]")
