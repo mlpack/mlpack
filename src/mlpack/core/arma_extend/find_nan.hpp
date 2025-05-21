@@ -13,9 +13,12 @@ namespace mlpack {
 #if ARMA_VERSION_MAJOR < 11 || \
     (ARMA_VERSION_MAJOR == 11 && ARMA_VERSION_MINOR < 4)
 
-template<typename ElemType>
-arma::uvec find_nan(const arma::Mat<ElemType>& m)
+template<typename T>
+arma::uvec find_nan(const T& m,
+                    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0)
 {
+  typedef typename T::elem_type ElemType;
+
   if (!std::numeric_limits<ElemType>::has_quiet_NaN)
     return arma::uvec(); // There can't be any NaNs.
 
