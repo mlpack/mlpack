@@ -190,7 +190,7 @@ ElemType BLEU<ElemType, PrecisionType>::Evaluate(
 template <typename ElemType, typename PrecisionType>
 template <typename Archive>
 void BLEU<ElemType, PrecisionType>::serialize(Archive& ar,
-    const uint32_t version)
+    const uint32_t /* version */)
 {
   ar(CEREAL_NVP(maxOrder));
 }

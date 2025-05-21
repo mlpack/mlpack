@@ -183,15 +183,13 @@ The dataset is not permuted during the construction process.
  - See also the
    [developer documentation on tree constructors](../../../developer/trees.md#constructors-and-destructors).
 
-<!-- TODO: add links to RectangleTree above when it is documented -->
-
 ---
 
 ### Constructor parameters:
 
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `data` | [`MatType`](../../matrices.md) | [Column-major](../../matrices.md#representing-data-in-mlpack) matrix to build the tree on.  Pass with `std::move(data)` to avoid copying the matrix. | _(N/A)_ |
+| `data` | [`MatType`](../../matrices.md) | [Column-major](../../matrices.md#representing-data-in-mlpack) matrix to build the tree on. | _(N/A)_ |
 | `maxLeafSize` | `size_t` | Maximum number of points to store in each leaf. | `20` |
 | `minLeafSize` | `size_t` | Minimum number of points to store in each leaf. | `8` |
 | `maxNumChildren` | `size_t` | Maximum number of children allowed in each non-leaf node. | `5` |
@@ -560,7 +558,7 @@ For implementation details, see
 
 The `XTreeSplit` class implements the improved splitting strategy for the
 [`XTree`](x_tree.md) as described in the
-[X-tree paper (pdf)](http://www.vldb.org/conf/1996/P028.PDF).  This strategy is
+[X-tree paper (pdf)](https://www.vldb.org/conf/1996/P028.PDF).  This strategy is
 an improved version of the standard [`RTreeSplit`](#rtreesplit), where the
 overlap of sibling nodes is minimized.
 

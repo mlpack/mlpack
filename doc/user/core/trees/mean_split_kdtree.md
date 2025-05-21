@@ -137,12 +137,10 @@ different.
    build a new `MeanSplitKDTree` on the modified dataset.  For trees that
    support individual insertion and deletions, see the
    [`RectangleTree`](rectangle_tree.md) class and all its variants (e.g.
-   [`RTree`](r_tree.md), `RStarTree`, etc.).
+   [`RTree`](r_tree.md), [`RStarTree`](r_star_tree.md), etc.).
 
  - See also the
    [developer documentation on tree constructors](../../../developer/trees.md#constructors-and-destructors).
-
-<!-- TODO: add links to RectangleTree above when it is documented -->
 
 ---
 
@@ -434,7 +432,7 @@ mlpack::data::Load("cloud.csv", dataset, true);
 //
 // Note that the '<>' isn't necessary if C++20 is being used (e.g.
 // `mlpack::MeanSplitKDTree tree(...)` will work fine in C++20 or newer).
-mlpack::MeanSplitKDTree<> tree(std::move(dataset));
+mlpack::MeanSplitKDTree<> tree(std::move(dataset), 10);
 
 // Print the bounding box of the root node.
 std::cout << "Bounding box of root node:" << std::endl;

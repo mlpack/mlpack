@@ -156,8 +156,8 @@ typename MatType::elem_type RNN<
     InitializationRuleType,
     MatType
 >::Train(
-    arma::Cube<typename MatType::elem_type> predictors,
-    arma::Cube<typename MatType::elem_type> responses,
+    CubeType predictors,
+    CubeType responses,
     OptimizerType& optimizer,
     CallbackTypes&&... callbacks)
 {
@@ -190,8 +190,8 @@ typename MatType::elem_type RNN<
     InitializationRuleType,
     MatType
 >::Train(
-    arma::Cube<typename MatType::elem_type> predictors,
-    arma::Cube<typename MatType::elem_type> responses,
+    CubeType predictors,
+    CubeType responses,
     CallbackTypes&&... callbacks)
 {
   OptimizerType optimizer;
@@ -210,8 +210,8 @@ typename MatType::elem_type RNN<
     InitializationRuleType,
     MatType
 >::Train(
-    arma::Cube<typename MatType::elem_type> predictors,
-    arma::Cube<typename MatType::elem_type> responses,
+    CubeType predictors,
+    CubeType responses,
     arma::urowvec sequenceLengths,
     OptimizerType& optimizer,
     CallbackTypes&&... callbacks)
@@ -246,8 +246,8 @@ typename MatType::elem_type RNN<
     InitializationRuleType,
     MatType
 >::Train(
-    arma::Cube<typename MatType::elem_type> predictors,
-    arma::Cube<typename MatType::elem_type> responses,
+    CubeType predictors,
+    CubeType responses,
     arma::urowvec sequenceLengths,
     CallbackTypes&&... callbacks)
 {
@@ -266,8 +266,8 @@ void RNN<
     InitializationRuleType,
     MatType
 >::Predict(
-    const arma::Cube<typename MatType::elem_type>& predictors,
-    arma::Cube<typename MatType::elem_type>& results,
+    const CubeType& predictors,
+    CubeType& results,
     const size_t batchSize)
 {
   // Ensure that the network is configured correctly.
@@ -313,8 +313,8 @@ void RNN<
     InitializationRuleType,
     MatType
 >::Predict(
-    const arma::Cube<typename MatType::elem_type>& predictors,
-    arma::Cube<typename MatType::elem_type>& results,
+    const CubeType& predictors,
+    CubeType& results,
     const arma::urowvec& sequenceLengths)
 {
   // Ensure that the network is configured correctly.
@@ -512,7 +512,7 @@ typename MatType::elem_type RNN<
   // This will store the outputs of the network at each time step.  Note that we
   // only need to store `effectiveBPTTSteps` of output.  We will treat `outputs`
   // as a circular buffer.
-  arma::Cube<typename MatType::elem_type> outputs(
+  CubeType outputs(
       network.network.OutputSize(), batchSize, effectiveBPTTSteps);
 
   MatType stepData, outputData, responseData;
@@ -633,7 +633,15 @@ void RNN<
     MatType
 >::Shuffle()
 {
-  ShuffleData(predictors, responses, predictors, responses);
+  if (sequenceLengths.n_elem > 0)
+  {
+    ShuffleData(predictors, responses, sequenceLengths,
+        predictors, responses, sequenceLengths);
+  }
+  else
+  {
+    ShuffleData(predictors, responses, predictors, responses);
+  }
 }
 
 template<
@@ -646,8 +654,8 @@ void RNN<
     InitializationRuleType,
     MatType
 >::ResetData(
-    arma::Cube<typename MatType::elem_type> predictors,
-    arma::Cube<typename MatType::elem_type> responses,
+    CubeType predictors,
+    CubeType responses,
     arma::urowvec sequenceLengths)
 {
   this->predictors = std::move(predictors);

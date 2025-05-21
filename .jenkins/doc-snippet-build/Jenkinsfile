@@ -1,0 +1,97 @@
+// The documentation snippet build will extract all C++ code snippets from the
+// Markdown documentation in doc/ and ensure that it compiles and runs without
+// error.
+pipeline
+{
+  // Run inside of the custom Docker image for documentation builds.
+  agent
+  {
+    docker
+    {
+      image 'mlpack/jenkins-mlpack-docbuild:latest'
+      alwaysPull true
+      args '-v /home/jenkins/ccache:/opt/ccache'
+    }
+  }
+
+  options
+  {
+    // Only allow one build at a time of this job.
+    disableConcurrentBuilds(abortPrevious: true)
+
+    // We will do checkout manually.
+    skipDefaultCheckout()
+  }
+
+  stages
+  {
+    stage('Set up workspace')
+    {
+      steps
+      {
+        // Clean the workspace.
+        cleanWs(deleteDirs: true,
+                disableDeferredWipeout: true,
+                notFailBuild: true);
+        checkout scm
+
+        script
+        {
+          u = load '.jenkins/utils.groovy'
+          u.startCheck('Documentation snippet build', 'Setting up workspace...')
+        }
+      }
+    }
+
+    stage('Extract and build documentation snippets')
+    {
+      steps
+      {
+        script { u.updateCheckStatus('Testing documentation snippets...') }
+
+        sh'''
+          export CCACHE_DIR=/opt/ccache/;
+          export CXX="ccache g++";
+          export CXXFLAGS="-O3 -DNDEBUG -fopenmp -I./src/ -I/usr/include/eigen3/";
+          export LDFLAGS="-fopenmp";
+          export OMP_NUM_THREADS=1;
+
+          ccache -p;
+          ls -l /opt/ccache/
+          ccache --zero-stats;
+          ./scripts/test-docs.sh doc/;
+          # Print ccache statistics.
+          ccache -s
+        '''
+      }
+    }
+  }
+
+  post
+  {
+    success
+    {
+      script
+      {
+        u.finishCheck('All documentation snippets build and run.', true)
+      }
+    }
+
+    failure
+    {
+      script
+      {
+        u.finishCheck('Problems building documentation snippets.', false)
+      }
+    }
+
+    always
+    {
+      // Clean the workspace.
+      cleanWs(cleanWhenNotBuilt: true,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true);
+    }
+  }
+}

@@ -12,33 +12,10 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include "extension.hpp"
 #include "detect_file_type.hpp"
-#include "string_algorithms.hpp"
 
 namespace mlpack {
 namespace data {
-
-/**
- * Given a file type, return a logical name corresponding to that file type.
- *
- * @param type Type to get the logical name of.
- */
-inline std::string GetStringType(const FileType& type)
-{
-  switch (type)
-  {
-    case FileType::CSVASCII:    return "CSV data";
-    case FileType::RawASCII:    return "raw ASCII formatted data";
-    case FileType::RawBinary:   return "raw binary formatted data";
-    case FileType::ArmaASCII:   return "Armadillo ASCII formatted data";
-    case FileType::ArmaBinary:  return "Armadillo binary formatted data";
-    case FileType::PGMBinary:   return "PGM data";
-    case FileType::HDF5Binary:  return "HDF5 data";
-    case FileType::CoordASCII:  return "ASCII formatted sparse coordinate data";
-    default:                    return "";
-  }
-}
 
 /**
  * Given an istream, attempt to guess the file type.  This is taken originally
@@ -96,6 +73,7 @@ inline FileType GuessFileType(std::istream& f)
   bool hasBinary = false;
   bool hasBracket = false;
   bool hasComma = false;
+  bool hasSemicolon = false;
 
   for (arma::uword i = 0; i < nUse; ++i)
   {
@@ -110,63 +88,25 @@ inline FileType GuessFileType(std::istream& f)
     {
       hasBracket = true;
     }
+
+    if (val == ';')
+    {
+      hasSemicolon = true;
+    }
+
     if (val == ',')
     {
       hasComma = true;
     }
   }
 
-  if (hasComma && (hasBracket == false))
-  {
-    // If we believe we have a CSV file, then we want to try to skip any header
-    // row.  We'll detect a header row by simply seeing if anything in the first
-    // line doesn't parse as a number.
-    //
-    // TODO: this is not a foolproof algorithm, so there should eventually be a
-    // way added for the user to explicitly indicate that there is or isn't a
-    // header.
-    std::string firstLine;
-    std::getline(f, firstLine);
-
-    std::stringstream str(firstLine);
-    std::string token;
-    bool allNumeric = true;
-    // We'll abuse 'getline()' to split on commas.
-    while (std::getline(str, token, ','))
-    {
-      // Let's see if we can parse the token into a number.
-      double num;
-      std::string rest;
-
-      // Try to parse into a number.
-      std::stringstream s(token);
-      s >> num;
-      if (s.fail())
-      {
-        allNumeric = false;
-        break;
-      }
-
-      // Now check to see there isn't anything else.  (This catches cases like,
-      // e.g., "1a".)
-      s >> rest;
-      if (rest.length() > 0)
-      {
-        allNumeric = false;
-        break;
-      }
-    }
-
-    // If we could parse everything into a number, then let's rewind `f` so that
-    // it's at the start of the file.
-    if (allNumeric)
-      f.seekg(pos1);
-  }
-
   delete[] dataMem;
 
   if (hasBinary)
     return FileType::RawBinary;
+
+  if (hasSemicolon && (hasBracket == false))
+    return FileType::CSVASCII;
 
   if (hasComma && (hasBracket == false))
     return FileType::CSVASCII;
@@ -292,6 +232,11 @@ inline FileType AutoDetect(std::fstream& stream, const std::string& filename)
   {
     detectedLoadType = FileType::HDF5Binary;
   }
+  else if (extension == "arff")
+  {
+    return FileType::ARFFASCII;
+  }
+
   else // Unknown extension...
   {
     detectedLoadType = FileType::FileTypeUnknown;
@@ -306,34 +251,43 @@ inline FileType AutoDetect(std::fstream& stream, const std::string& filename)
  * @param filename Name of the file whose type we should detect.
  * @return Detected type of file.
  */
-inline FileType DetectFromExtension(const std::string& filename)
+template<typename MatType, typename DataOptionsType>
+void DetectFromExtension(const std::string& filename,
+                         DataOptionsType& opts)
 {
   const std::string extension = Extension(filename);
 
   if (extension == "csv")
   {
-    return FileType::CSVASCII;
+    opts.Format() = FileType::CSVASCII;
   }
   else if (extension == "txt")
   {
-    return FileType::RawASCII;
+    if (IsSparseMat<MatType>::value)
+      opts.Format() = FileType::CoordASCII;
+    else
+      opts.Format() = FileType::RawASCII;
   }
   else if (extension == "bin")
   {
-    return FileType::ArmaBinary;
+    opts.Format() = FileType::ArmaBinary;
   }
   else if (extension == "pgm")
   {
-    return FileType::PGMBinary;
+    opts.Format() = FileType::PGMBinary;
   }
   else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
            extension == "he5")
   {
-    return FileType::HDF5Binary;
+    opts.Format() = FileType::HDF5Binary;
+  }
+  else if (extension == "arff")
+  {
+    opts.Format() = FileType::ARFFASCII;
   }
   else
   {
-    return FileType::FileTypeUnknown;
+    opts.Format() = FileType::FileTypeUnknown;
   }
 }
 

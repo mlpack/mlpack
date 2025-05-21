@@ -7,7 +7,7 @@ Source:
 
 Files: *
 Copyright:
-  Copyright 2008-2023, Ryan Curtin <ryan@ratml.org>
+  Copyright 2008-2025, Ryan Curtin <ryan@ratml.org>
   Copyright 2008-2013, Bill March <march@gatech.edu>
   Copyright 2008-2012, Dongryeol Lee <dongryel@cc.gatech.edu>
   Copyright 2008-2013, Nishant Mehta <niche@cc.gatech.edu>
@@ -159,6 +159,10 @@ Copyright:
   Copyright 2024, Nikolay Apanasov <nikolay@apanasov.org>
   Copyright 2024, Martin Lambertsen <github@lambertsen.one>
   Copyright 2024, Andrea Novellini <andre.novellini@gmail.com>
+  Copyright 2024, Felix Patschkowski <felix.patschkowski@gmail.com>
+  Copyright 2025, Benjamin A. Beasley <code@musicinmybrain.net>
+  Copyright 2025, Maksym Prots <imaxprots@gmail.com>
+  Copyright 2025, Zachary Ng <zachn716@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.

@@ -58,6 +58,7 @@ template<typename MatType = arma::mat>
 class RecurrentLayer : public Layer<MatType>
 {
  public:
+  using CubeType = typename GetCubeType<MatType>::type;
   /**
    * Create the RecurrentLayer.
    */
@@ -152,10 +153,10 @@ class RecurrentLayer : public Layer<MatType>
   // This holds the recurrent state at each time step for BPTT.  If BPTT is not
   // being used (e.g. if we are only running the network in forward mode and not
   // training), then only one previous time step is held.
-  arma::Cube<typename MatType::elem_type> recurrentState;
+  CubeType recurrentState;
   // This holds the recurrent gradient for BPTT.  If BPTT is not being used,
   // this is empty.
-  arma::Cube<typename MatType::elem_type> recurrentGradient;
+  CubeType recurrentGradient;
 };
 
 } // namespace mlpack

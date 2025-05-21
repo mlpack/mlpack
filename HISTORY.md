@@ -4,6 +4,26 @@
 
 _????-??-??_
 
+ * Fix compilation of `Save()` when HDF5 is enabled (#3942).
+
+ * Update bundled STB to fix warnings in R bindings (#3940).
+
+## mlpack 4.6.1
+
+_2025-05-13_
+
+ * Shuffle sequence lengths for RNNs (#3926).
+
+ * Add ability to compile OpenBLAS for Windows (#3922).
+
+ * Drop pytest-runner and "setup.py test" support (#3921).
+
+ * Fix compilation errors with clang++ version 20 (#3928).
+
+## mlpack 4.6.0
+
+_2025-04-02_
+
  * Fix command-line duplicate output bug when loading matrices for some bindings
    (#3838).
  * Use `CMAKE_BUILD_TYPE` to specify build type instead of DEBUG and PROFILE options (#3865).
@@ -16,6 +36,14 @@ _????-??-??_
 
  * Fix conversion of empty Armadillo objects to numpy in Python bindings
    (#3896).
+
+ * Added bootstrap strategies for `RandomForest`: `IdentityBootstrap`,
+   `DefaultBootstrap`, and `SequentialBootstrap` (#3829).
+
+ * Add `ResizeCropImages()` for resize-and-crop image preprocessing
+   functionality (#3903).
+
+ * Fix `LSTM` input size calculation for multidimensional inputs (#3913).
 
 ## mlpack 4.5.1
 

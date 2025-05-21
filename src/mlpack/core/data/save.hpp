@@ -16,12 +16,13 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/log.hpp>
-#include <string>
 
+#include "text_options.hpp"
 #include "format.hpp"
 #include "image_info.hpp"
 #include "detect_file_type.hpp"
 #include "save_image.hpp"
+#include "utilities.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices. */ {
@@ -129,7 +130,36 @@ bool Save(const std::string& filename,
           const std::string& name,
           T& t,
           const bool fatal = false,
-          format f = format::autodetect);
+          format f = format::autodetect,
+          std::enable_if_t<HasSerialize<T>::value>* = 0);
+
+/**
+ * This function defines a unified data saving interface for the library.
+ * Using this function it will be possible to save matrices, models, and
+ * images.
+ *
+ * To specify what you would like to save, please use the DataOptionsType.
+ *
+ * @param filename Name of file to load.
+ * @param matrix Matrix to load contents of file into.
+ * @param opts DataOptions to be passed to the function
+ * @return Boolean value indicating success or failure of Save.
+ */
+template<typename MatType, typename DataOptionsType>
+bool Save(const std::string& filename,
+          const MatType& matrix,
+          DataOptionsType& opts,
+          std::enable_if_t<IsArma<MatType>::value ||
+              IsSparseMat<MatType>::value>* = 0,
+          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>* = 0);
+
+template<typename MatType, typename DataOptionsType>
+bool Save(const std::string& filename,
+          const MatType& matrix,
+          const DataOptionsType& opts,
+          std::enable_if_t<IsArma<MatType>::value ||
+              IsSparseMat<MatType>::value>* = 0,
+          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>* = 0);
 
 } // namespace data
 } // namespace mlpack
