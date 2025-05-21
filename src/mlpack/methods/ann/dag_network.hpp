@@ -37,6 +37,8 @@ public:
 
   void Add(Layer<MatType>* layer);
 
+  void Add(Layer<MatType>* layer, size_t axis);
+
   void Connect(Layer<MatType>* inputLayer, Layer<MatType>* outputLayer);
 
   // topo sort, no cycles, network has one output
@@ -51,6 +53,7 @@ public:
 
   std::vector<Layer<MatType>*> layers;
   std::map<Layer<MatType>*, std::vector<Layer<MatType>*>> adjacencyList;
+  std::map<Layer<MatType>*, size_t> layerAxes;
 };
 
 } // namespace mlpack

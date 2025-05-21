@@ -108,6 +108,20 @@ void DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
     MatType
+>::Add(Layer<MatType>* layer, size_t axis)
+{
+    layers.push_back(layer);
+    layerAxes[layer] = axis;
+    inputDimensionsAreSet = false;
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
 >::Connect(Layer<MatType>* inputLayer, Layer<MatType>* outputLayer)
 {
     if (adjacencyList.count(outputLayer) == 0) {
