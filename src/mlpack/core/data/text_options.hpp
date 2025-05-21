@@ -149,6 +149,8 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
       output.HasHeaders() = other.HasHeaders();
     else if (!other.hasHeaders.has_value() && this->hasHeaders.has_value())
       output.HasHeaders() = this->HasHeaders();
+    else if (other.hasHeaders.has_value() && this->hasHeaders.has_value())
+      output.HasHeaders() = this->HasHeaders(); | other.HasHeaders();
     else
       output.HasHeaders() = false;
 
@@ -156,6 +158,8 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
       output.MissingToNan() = other.MissingToNan();
     else if (!other.missingToNan.has_value() && this->missingToNan.has_value())
       output.MissingToNan() = this->MissingToNan();
+    else if (other.missingToNan.has_value() && this->missingToNan.has_value())
+      output.MissingToNan() = this->MissingToNan(); | other.MissingToNan();
     else
       output.MissingToNan() = false;
 
@@ -163,6 +167,8 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
       output.Categorical() = other.Categorical();
     else if (!other.categorical.has_value() && this->categorical.has_value())
       output.Categorical() = this->Categorical();
+    else if (other.categorical.has_value() && this->categorical.has_value())
+      output.Categorical() = this->Categorical() | other.Categorical();
     else
       output.Categorical() = false;
 
@@ -170,6 +176,8 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
       output.SemiColon() = other.SemiColon();
     else if (!other.semicolon.has_value() && this->semicolon.has_value())
       output.SemiColon() = this->SemiColon();
+    else if (other.semicolon.has_value() && this->semicolon.has_value())
+      output.SemiColon() = this->SemiColon(); | other.SemiColon();
     else
       output.SemiColon() = false;
 

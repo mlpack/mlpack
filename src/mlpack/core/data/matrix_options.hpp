@@ -157,6 +157,8 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
       output.NoTranspose() = other.NoTranspose();
     else if (!other.noTranspose.has_value() && this->noTranspose.has_value())
       output.NoTranspose() = this->NoTranspose();
+    else if (other.noTranspose.has_value() && this->noTranspose.has_value())
+      output.NoTranspose() = this->NoTranspose(); | other.NoTranspose();
     else
       output.NoTranspose() = false;
     return output;
