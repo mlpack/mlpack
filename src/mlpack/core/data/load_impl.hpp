@@ -82,10 +82,10 @@ bool Load(const std::string& filename,
 }
 
 // Load with mappings.  Unfortunately we have to implement this ourselves.
-template<typename eT, typename PolicyType>
+template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
-          DatasetMapper<PolicyType>& info,
+          DatasetInfo& info,
           const bool fatal,
           const bool transpose)
 {
@@ -93,27 +93,11 @@ bool Load(const std::string& filename,
   opts.Fatal() = fatal;
   opts.NoTranspose() = !transpose;
   opts.Categorical() = true;
-
-  if constexpr (std::is_same_v<PolicyType, data::IncrementPolicy>)
-  {
-    opts.DatasetInfo() = info;
-  }
-  else if constexpr (std::is_same_v<PolicyType, data::MissingPolicy>)
-  {
-    opts.MissingPolicy() = true;
-    opts.DatasetMissingPolicy() = info;
-  }
+  opts.DatasetInfo() = info;
 
   bool success = Load(filename, matrix, opts);
 
-  if constexpr (std::is_same_v<PolicyType, data::IncrementPolicy>)
-  {
-    info = opts.DatasetInfo();
-  }
-  else if constexpr (std::is_same_v<PolicyType, data::MissingPolicy>)
-  {
-    info = opts.DatasetMissingPolicy();
-  }
+  info = opts.DatasetInfo();
 
   return success;
 }
