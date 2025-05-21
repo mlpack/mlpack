@@ -2548,10 +2548,10 @@ TEST_CASE("LoadCSVNoHeaderTest", "[LoadSaveTest]")
 
   REQUIRE(dataset.n_rows == 4);
   REQUIRE(dataset.n_cols == 3);
-  REQUIRE(std::isnan(dataset.at(0,0)) == true);
-  REQUIRE(std::isnan(dataset.at(1,0)) == true);
-  REQUIRE(std::isnan(dataset.at(2,0)) == true);
-  REQUIRE(std::isnan(dataset.at(3,0)) == true);
+  REQUIRE(std::isnan(dataset.at(0, 0)) == true);
+  REQUIRE(std::isnan(dataset.at(1, 0)) == true);
+  REQUIRE(std::isnan(dataset.at(2, 0)) == true);
+  REQUIRE(std::isnan(dataset.at(3, 0)) == true);
 }
 
 #endif
@@ -2626,15 +2626,15 @@ TEST_CASE("LoadVectorCSVDiffNoHeaders", "[LoadSaveTest]")
 
   REQUIRE(dataset.n_rows == 5);
   REQUIRE(dataset.n_cols == 22);
-  REQUIRE(std::isnan(dataset.at(0,0)) == true);
-  REQUIRE(std::isnan(dataset.at(1,0)) == true);
-  REQUIRE(std::isnan(dataset.at(2,0)) == true);
-  REQUIRE(std::isnan(dataset.at(3,0)) == true);
+  REQUIRE(std::isnan(dataset.at(0, 0)) == true);
+  REQUIRE(std::isnan(dataset.at(1, 0)) == true);
+  REQUIRE(std::isnan(dataset.at(2, 0)) == true);
+  REQUIRE(std::isnan(dataset.at(3, 0)) == true);
   // Check the Nan from the second file
-  REQUIRE(std::isnan(dataset.at(0,11)) == true);
-  REQUIRE(std::isnan(dataset.at(1,11)) == true);
-  REQUIRE(std::isnan(dataset.at(2,11)) == true);
-  REQUIRE(std::isnan(dataset.at(3,11)) == true);
+  REQUIRE(std::isnan(dataset.at(0, 11)) == true);
+  REQUIRE(std::isnan(dataset.at(1, 11)) == true);
+  REQUIRE(std::isnan(dataset.at(2, 11)) == true);
+  REQUIRE(std::isnan(dataset.at(3, 11)) == true);
 }
 
 #endif
