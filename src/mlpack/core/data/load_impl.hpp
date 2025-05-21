@@ -454,8 +454,9 @@ bool Load(const std::vector<std::string>& filenames,
         for (size_t j = 0; j < headers.size(); ++j)
         {
           if (firstHeaders.at(j) != headers.at(j))
-            Log::Warn << "Load(): Headers from different CSV does not match!"
-                << std::endl;
+            Log::Warn << "Load(): first file headers size: "
+              << firstHeader.size() << " from current file: " << header.size()
+              << std::endl;
         }
       }
     }
@@ -490,12 +491,14 @@ bool Load(const std::vector<std::string>& filenames,
           if (tmp.n_cols != matrix.n_cols)
           {
             if (opts.Fatal())
-              Log::Fatal << "Load(): dimension mismatch when loading vectors"
-                << std::endl;
+              Log::Fatal << "Load(): matrix dimension: " << tmp.n_cols
+                <<" mismatch with file:" << filename.at(i) << " dimensions ("
+                << matrix.n_cols << ")" << std::endl;
             else
             {
-              Log::Warn << "Load(): dimension mismatch when loading vectors"
-                << std::endl;
+              Log::Warn << "Load(): matrix dimension: " << tmp.n_cols
+                <<" mismatch with file:" << filename.at(i) << " dimensions ("
+                << matrix.n_cols << ")" << std::endl;
               return false;
             }
           }
