@@ -1,6 +1,8 @@
 #ifndef MLPACK_METHODS_ANN_DAG_NETWORK_HPP
 #define MLPACK_METHODS_ANN_DAG_NETWORK_HPP
 
+#include <mlpack/core.hpp>
+
 #include "init_rules/init_rules.hpp"
 
 namespace mlpack {
@@ -28,11 +30,19 @@ public:
 
   const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
 
+  const std::vector<Layer<MatType>*>& Network() {
+    CheckGraph();
+    return layers;
+  }
 
   void Add(Layer<MatType>* layer);
 
-private:
+  void Connect(Layer<MatType>* inputLayer, Layer<MatType>* outputLayer);
 
+  // topo sort, no cycles, network has one output
+  void CheckGraph();
+
+// private:
   OutputLayerType outputLayer;
   InitializationRuleType initializeRule;
 
@@ -40,8 +50,7 @@ private:
   std::vector<size_t> inputDimensions;
 
   std::vector<Layer<MatType>*> layers;
-  std::map<Layer<MatType>*, std::vector<Layer<MatType>*>> connections;
-
+  std::map<Layer<MatType>*, std::vector<Layer<MatType>*>> adjacencyList;
 };
 
 } // namespace mlpack
