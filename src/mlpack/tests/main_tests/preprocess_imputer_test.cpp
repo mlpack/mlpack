@@ -65,7 +65,7 @@ TEST_CASE_METHOD(
   RUN_BINDING();
 
   // Now check that the output has desired dimensions.
-  outputData = std::move(params.Get<arma::mat>("output_file"));
+  outputData = std::move(params.Get<arma::mat>("output"));
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 
@@ -80,7 +80,7 @@ TEST_CASE_METHOD(
   RUN_BINDING();
 
   // Now check that the output has desired dimensions.
-  outputData = std::move(params.Get<std::string>("output"));
+  outputData = std::move(params.Get<arma::mat>("output"));
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 }
