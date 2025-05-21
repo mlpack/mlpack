@@ -20,7 +20,7 @@ contain missing values.
      contain missing values.
    - [`CustomImputation`](#customimputation): replace missing values with a
      user-specified custom value.
-   - [Custom imputation strategies](#customimputationstrategies): use a fully
+   - [Custom imputation strategies](#custom-imputation-strategies): use a fully
      custom strategy to impute missing values
 
  * [Simple examples](#simple-examples) of imputing missing values with
@@ -157,7 +157,7 @@ is also possible to write a
 Implementing a fully custom imputation strategy requires a class with only one
 method, matching the following API:
 
-```
+```c++
 class FullyCustomImputation
 {
  public:
@@ -187,7 +187,7 @@ class FullyCustomImputation
 Replace all NaNs in dimension 2 of a random matrix with the mean in that
 dimension.
 
-```
+```c++
 // Create a random matrix with integer values that are either 0, 1, or NaN.
 arma::mat data = arma::randi<arma::mat>(10, 20, arma::distr_param(0, 2));
 // Replace the value 2 with NaN.
@@ -209,9 +209,9 @@ std::cout << data.row(2);
 Replace the value 0.0 in dimension 3 of a random matrix with the median in that
 dimension.
 
-```
+```c++
 // Create a random matrix with NaNs and random values in [0.5, 1].
-arma::mat data(10, 20, fill::randu);
+arma::mat data(10, 20, arma::fill::randu);
 // Replace anything below 0.5 with NaN.
 data.transform([](double val) { return (val <= 0.5) ? std::nan("") : val; });
 
@@ -230,10 +230,10 @@ std::cout << data.row(3);
 
 Remove any columns where dimension 4 contains a NaN value from a random matrix.
 
-```
+```c++
 // Create a random matrix with values in [0, 1].  In dimension 4, any value less
 // than 0.3 will be turned into a NaN.
-arma::mat data(10, 1000, fill::randu);
+arma::mat data(10, 1000, arma::fill::randu);
 data.row(4).transform(
     [](double val) { return (val < 0.3) ? std::nan("") : val; });
 
@@ -243,6 +243,9 @@ std::cout << "Dataset contains " << data.n_cols << " points before removing "
     << "points that have NaN in dimension 4." << std::endl;
 
 imputer.Impute(data, std::nan(""), 4);
+
+std::cout << "Dataset contains " << data.n_cols << " points after removing "
+    << "points that have NaN in dimension 4." << std::endl;
 ```
 
 ---
@@ -250,7 +253,7 @@ imputer.Impute(data, std::nan(""), 4);
 Replace the value 0.0 in dimension 0 of a random matrix with the value 2.5.  Use
 a 32-bit floating point matrix as the data type.
 
-```
+```c++
 // Create random matrix with values in [0, 5].
 arma::fmat data = arma::randi<arma::fmat>(5, 20, arma::distr_param(0, 5));
 
