@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * A simple custom imputation class, which replaces missing values with a
@@ -62,7 +61,6 @@ class CustomImputation
   ElemType customValue;
 }; // class CustomImputation
 
-} // namespace data
 } // namespace mlpack
 
 #endif

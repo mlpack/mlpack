@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * Given a dataset of a particular datatype, replace user-specified missing
@@ -82,7 +81,6 @@ class Imputer
   StrategyType strategy;
 }; // class Imputer
 
-} // namespace data
 } // namespace mlpack
 
 #endif

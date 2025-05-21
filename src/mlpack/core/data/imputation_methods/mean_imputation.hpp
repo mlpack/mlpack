@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * A simple mean imputation class.
@@ -171,7 +170,6 @@ class MeanImputation
   }
 }; // class MeanImputation
 
-} // namespace data
 } // namespace mlpack
 
 #endif

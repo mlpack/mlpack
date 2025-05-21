@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * A complete-case analysis to remove the columns containing missingValue.
@@ -60,7 +59,6 @@ class ListwiseDeletion
   }
 }; // class ListwiseDeletion
 
-} // namespace data
 } // namespace mlpack
 
 #endif

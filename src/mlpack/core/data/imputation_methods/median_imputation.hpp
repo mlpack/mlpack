@@ -15,7 +15,7 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
+
 /**
  * This is a class implementation of simple median imputation: replace missing
  * value with the median of non-missing values.
@@ -88,7 +88,6 @@ class MedianImputation
   }
 }; // class MedianImputation
 
-} // namespace data
 } // namespace mlpack
 
 #endif
