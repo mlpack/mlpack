@@ -2527,3 +2527,85 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
   REQUIRE(headers.at(2) == "c");
   REQUIRE(headers.at(3) == "d");
 }
+
+TEST_CASE("DataOptionsTest", "[LoadSaveTest]")
+{
+  data::DataOptions opts1, opts2, opts3;
+  
+  opts1.Fatal() = false;
+  opts2.Fatal() = false;
+  opts3 = opts1 | opts2;
+  REQUIRE(opts3.Fatal() == false);
+
+  opts1.Fatal() = true;
+  opts2.Fatal() = false;
+  opts3 = opts1 | opts2;
+  REQUIRE(opts3.Fatal() == true);
+
+  opts1.Fatal() = true;
+  opts2.Fatal() = true;
+  opts3 = opts1 | opts2;
+  REQUIRE(opts3.Fatal() == true);
+
+  opts1.Fatal() = false;
+  opts2.Fatal() = true;
+  opts3 = opts1 | opts2;
+  REQUIRE(opts3.Fatal() == true);
+}
+
+TEST_CASE("MatrixOptionsTest", "[LoadSaveTest]")
+{
+  data::MatrixOptions opts1, opts2, opts3;
+  
+  opts1.Fatal() = false;
+  opts1.NoTranspose() = false;
+  opts2.Fatal() = false;
+  opts2.NoTranspose() = false;
+  opts3 = opts1 | opts2;
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+
+  opts1.Fatal() = true;
+  opts1.NoTranspose() = true;
+  opts2.Fatal() = false;
+  opts2.NoTranspose() = false;
+  opts3 = opts1 | opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+
+  opts1.Fatal() = false;
+  opts1.NoTranspose() = false;
+  opts2.Fatal() = true;
+  opts2.NoTranspose() = true;
+  opts3 = opts1 | opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+
+  opts1.Fatal() = true;
+  opts1.NoTranspose() = true;
+  opts2.Fatal() = true;
+  opts2.NoTranspose() = true;
+  opts3 = opts1 | opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+}
+
+TEST_CASE("TextOptionsTest", "[LoadSaveTest]")
+{
+  data::MatrixOptions opts1, opts2, opts3;
+  
+  opts1.Fatal() = false;
+  opts1.NoTranspose() = false;
+  opts1.HasHeaders() = false;
+  opts1.MissingToNan() = false;
+   
+  opts2.Fatal() = false;
+  opts2.NoTranspose() = false;
+  opts2.HasHeaders() = false;
+  opts2.MissingToNan() = false;
+  opts3 = opts1 | opts2;
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+
+}
+

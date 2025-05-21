@@ -132,7 +132,7 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
     MatrixOptionsBase output(*this);
     // Keep it like this otherwise we need to overload the |= operator, which
     // is not necessary outside this context
-    static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(*this) =
+    static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(output) =
         static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(*this) |
         static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(other);
 
@@ -149,7 +149,7 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
   {
     MatrixOptionsBase output(*this);
 
-    static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(*this) =
+    static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(output) =
         static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(*this) |
         static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(other);
 
@@ -158,7 +158,7 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
     else if (!other.noTranspose.has_value() && this->noTranspose.has_value())
       output.NoTranspose() = this->NoTranspose();
     else if (other.noTranspose.has_value() && this->noTranspose.has_value())
-      output.NoTranspose() = this->NoTranspose(); | other.NoTranspose();
+      output.NoTranspose() = this->NoTranspose() | other.NoTranspose();
     else
       output.NoTranspose() = false;
     return output;

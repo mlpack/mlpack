@@ -97,6 +97,8 @@ class DataOptionsBase
       output.Fatal() = other.Fatal();
     else if (fatal.has_value() && !output.fatal.has_value())
       output.Fatal() = this->Fatal();
+    else if (fatal.has_value() && output.fatal.has_value())
+      output.Fatal() = this->Fatal() | other.Fatal();
     else
       output.Fatal() = false;
 

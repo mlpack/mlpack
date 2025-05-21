@@ -110,7 +110,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     TextOptions output(*this);
     // Keep it like this otherwise we need to overload the |= operator, which
     // is not necessary outside this context
-    static_cast<MatrixOptionsBase<TextOptions>&>(*this) =
+    static_cast<MatrixOptionsBase<TextOptions>&>(output) =
         static_cast<MatrixOptionsBase<TextOptions>&>(*this) |
         static_cast<MatrixOptionsBase<TextOptions>&>(other);
 
@@ -141,7 +141,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   {
     TextOptions output(*this);
 
-    static_cast<MatrixOptionsBase<TextOptions>&>(*this) =
+    static_cast<MatrixOptionsBase<TextOptions>&>(output) =
         static_cast<MatrixOptionsBase<TextOptions>&>(*this) |
         static_cast<MatrixOptionsBase<TextOptions>&>(other);
 
@@ -150,7 +150,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     else if (!other.hasHeaders.has_value() && this->hasHeaders.has_value())
       output.HasHeaders() = this->HasHeaders();
     else if (other.hasHeaders.has_value() && this->hasHeaders.has_value())
-      output.HasHeaders() = this->HasHeaders(); | other.HasHeaders();
+      output.HasHeaders() = this->HasHeaders() | other.HasHeaders();
     else
       output.HasHeaders() = false;
 
@@ -159,7 +159,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     else if (!other.missingToNan.has_value() && this->missingToNan.has_value())
       output.MissingToNan() = this->MissingToNan();
     else if (other.missingToNan.has_value() && this->missingToNan.has_value())
-      output.MissingToNan() = this->MissingToNan(); | other.MissingToNan();
+      output.MissingToNan() = this->MissingToNan() | other.MissingToNan();
     else
       output.MissingToNan() = false;
 
@@ -177,7 +177,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     else if (!other.semicolon.has_value() && this->semicolon.has_value())
       output.SemiColon() = this->SemiColon();
     else if (other.semicolon.has_value() && this->semicolon.has_value())
-      output.SemiColon() = this->SemiColon(); | other.SemiColon();
+      output.SemiColon() = this->SemiColon() | other.SemiColon();
     else
       output.SemiColon() = false;
 
