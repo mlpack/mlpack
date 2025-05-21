@@ -453,7 +453,7 @@ bool Load(const std::vector<std::string>& filenames,
         arma::field<std::string>& headers = opts.Headers();
         for (size_t j = 0; j < headers.size(); ++j)
         {
-          if (firstHeaders.at(0) != headers.at(0))
+          if (firstHeaders.at(j) != headers.at(j))
             Log::Warn << "Load(): Headers from different CSV does not match!"
                 << std::endl;
         }
