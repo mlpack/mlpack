@@ -443,7 +443,7 @@ bool Load(const std::vector<std::string>& filenames,
   }
   for (size_t i = 0; i < filenames.size(); ++i)
   {
-    success = Load(filenames.at(i), matrix, opts); 
+    success = Load(filenames.at(i), matrix, opts);
     if (opts.HasHeaders())
     {
       if (i == 0)
@@ -472,7 +472,15 @@ bool Load(const std::vector<std::string>& filenames,
         {
           if (tmp.n_rows != matrix.n_rows)
           {
-            Log::Fatal << "Load(): dimension mismatch when loading vectors" << std::endl;
+            if (opts.Fatal())
+              Log::Fatal << "Load(): dimension mismatch when loading vectors"
+                << std::endl;
+            else
+            {
+              Log::Warn << "Load(): dimension mismatch when loading vectors"
+                << std::endl;
+              return false;
+            }
           }
           else
             tmp = join_rows(tmp, matrix);
@@ -481,7 +489,15 @@ bool Load(const std::vector<std::string>& filenames,
         {
           if (tmp.n_cols != matrix.n_cols)
           {
-            Log::Fatal << "Load(): dimension mismatch when loading vectors" << std::endl;
+            if (opts.Fatal())
+              Log::Fatal << "Load(): dimension mismatch when loading vectors"
+                << std::endl;
+            else
+            {
+              Log::Warn << "Load(): dimension mismatch when loading vectors"
+                << std::endl;
+              return false;
+            }
           }
           else
             tmp = join_cols(tmp, matrix);
