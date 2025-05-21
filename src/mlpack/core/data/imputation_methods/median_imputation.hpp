@@ -40,7 +40,8 @@ class MedianImputation
                      const bool columnMajor = true)
   {
     static_assert(!IsSparse<MatType>::value, "MedianImputation::Impute(): "
-        "sparse matrix imputation is not supported; use a dense matrix instead!");
+        "sparse matrix imputation is not supported; use a dense matrix "
+        "instead!");
 
     typedef typename MatType::elem_type ElemType;
 
