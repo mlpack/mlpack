@@ -30,9 +30,9 @@ BINDING_LONG_DESC(
     "This utility takes a dataset and converts a user-defined missing variable "
     "to another to provide more meaningful analysis."
     "\n\n"
-    "The program does not modify the original file, but instead makes a "
-    "separate file to save the output data; You can save the output by "
-    "specifying the file name with" + PRINT_PARAM_STRING("output_file") + ".");
+    "The program does not modify the original matrix, but instead makes a "
+    "separate matrix for the output, via the " + PRINT_PARAM_STRING("output") +
+    "option.");
 
 // Example.
 BINDING_EXAMPLE(
