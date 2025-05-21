@@ -431,7 +431,7 @@ bool Load(const std::vector<std::string>& filenames,
   {
     if (opts.Fatal())
     {
-      Log::Fatal << "Load(): Please specify the filenames to be loaded!"
+      Log::Fatal << "Load(): given set of filenames is empty; loading failed."
           << std::endl;
     }
     else
