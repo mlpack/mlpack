@@ -99,7 +99,7 @@ is also possible to write a
    `arma::sp_mat`); use dense matrices (e.g. `arma::mat`) instead.
 
  * For more details, see
-   [the source code](/src/mlpack/core/data/imputation_strategies/mean_imputation.hpp).
+   [the source code](/src/mlpack/core/data/imputation_methods/mean_imputation.hpp).
 
 ### `MedianImputation`
 
@@ -114,7 +114,7 @@ is also possible to write a
    `arma::sp_mat`); use dense matrices (e.g. `arma::mat`) instead.
 
  * For more details, see
-   [the source code](/src/mlpack/core/data/imputation_strategies/median_imputation.hpp).
+   [the source code](/src/mlpack/core/data/imputation_methods/median_imputation.hpp).
 
 ### `ListwiseDeletion`
 
@@ -129,7 +129,7 @@ is also possible to write a
    `arma::sp_mat`); use dense matrices (e.g. `arma::mat`) instead.
 
  * For more details, see
-   [the source code](/src/mlpack/core/data/imputation_strategies/listwise_deletion.hpp).
+   [the source code](/src/mlpack/core/data/imputation_methods/listwise_deletion.hpp).
 
 ### `CustomImputation<>`
 
@@ -150,7 +150,7 @@ is also possible to write a
    `Imputer<CustomImputation<T>>` will need to be used.
 
  * For more details, see
-   [the source code](/src/mlpack/core/data/imputation_strategies/custom_imputation.hpp).
+   [the source code](/src/mlpack/core/data/imputation_methods/custom_imputation.hpp).
 
 ### Custom imputation strategies
 
