@@ -43,9 +43,11 @@ arma::uvec find_nan(const T& m,
   size_t outputIndex = 0;
   for (size_t i = 0; i < nonfiniteIndices.n_elem; ++i)
   {
-    if (nonfiniteIndices[i] == infIndices[infIndex])
+    if (infIndex < infIndices.n_elem &&
+        nonfiniteIndices[i] == infIndices[infIndex])
       ++infIndex;
-    else if (nonfiniteIndices[i] == neginfIndices[neginfIndex])
+    else if (neginfIndex < neginfIndices.n_elem &&
+             nonfiniteIndices[i] == neginfIndices[neginfIndex])
       ++neginfIndex;
     else
       result[outputIndex++] = nonfiniteIndices[i];
