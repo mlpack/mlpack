@@ -36,29 +36,30 @@ BINDING_LONG_DESC(
 
 // Example.
 BINDING_EXAMPLE(
-    "For example, if we consider 'NULL' in dimension 0 to be a missing "
-    "variable and want to delete whole row containing the NULL in the "
-    "column-wise" + PRINT_DATASET("dataset") + ", and save the result to " +
-    PRINT_DATASET("result") + ", we could run :"
+    "For example, if we consider NaN values in dimension 0 to be a missing "
+    "variable and want to delete whole data point if it contains a NaN in the "
+    "column-wise" + PRINT_DATASET("dataset") + ", we could run:"
     "\n\n" +
-    PRINT_CALL("preprocess_imputer", "input_file", "dataset", "output_file",
-        "result", "missing_value", "NULL", "dimension", "0", "strategy",
-        "listwise_deletion"));
+    PRINT_CALL("preprocess_imputer", "input", "dataset", "output",
+        "result", "dimension", "0", "strategy", "listwise_deletion"));
 
 // See also...
 BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
 BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
 BINDING_SEE_ALSO("@preprocess_split", "#preprocess_split");
 
-PARAM_STRING_IN_REQ("input_file", "File containing data.", "i");
-PARAM_STRING_OUT("output_file", "File to save output into.", "o");
-PARAM_STRING_IN_REQ("missing_value", "User defined missing value.", "m");
+PARAM_MATRIX_IN("input", "Input matrix to impute values for.", "i");
+PARAM_MATRIX_OUT("output", "Matrix to output that will have imputed values.",
+    "o");
+PARAM_DOUBLE_IN("missing_value", "Value to use to indicate missing elements "
+    "that will be imputed.", "m", std::nan(""));
 PARAM_STRING_IN_REQ("strategy", "imputation strategy to be applied. Strategies "
     "should be one of 'custom', 'mean', 'median', and 'listwise_deletion'.",
     "s");
-PARAM_DOUBLE_IN("custom_value", "User-defined custom imputation value.", "c",
-    0.0);
-PARAM_INT_IN("dimension", "The dimension to apply imputation to.", "d", 0);
+PARAM_DOUBLE_IN("custom_value", "User-defined custom imputation value; only "
+    "used if the strategy is 'custom'.", "c", 0.0);
+PARAM_INT_IN("dimension", "The dimension to apply imputation to.  If not "
+    "specified, missing values will be imputed in every dimension.", "d", 0);
 
 using namespace mlpack;
 using namespace mlpack::util;
@@ -68,21 +69,20 @@ using namespace data;
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  const string inputFile = params.Get<string>("input_file");
-  const string outputFile = params.Get<string>("output_file");
-  const string missingValue = params.Get<string>("missing_value");
+  mat data = std::move(params.Get<mat>("input"));
+  const double missingValue = params.Get<double>("missing_value");
   const double customValue = params.Get<double>("custom_value");
   const size_t dimension = (size_t) params.Get<int>("dimension");
   string strategy = params.Get<string>("strategy");
 
   RequireParamInSet<string>(params, "strategy", { "custom", "mean", "median",
       "listwise_deletion" }, true, "unknown imputation strategy");
-  RequireAtLeastOnePassed(params, { "output_file" }, false,
+  RequireAtLeastOnePassed(params, { "output" }, false,
       "no output will be saved");
 
   if (!params.Has("dimension"))
   {
-    Log::Warn << "--dimension is not specified; the imputation will be "
+    Log::Info << "--dimension is not specified; the imputation will be "
         << "applied to all dimensions."<< endl;
   }
 
@@ -97,125 +97,47 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         "custom imputation value when using 'custom' imputation strategy");
   }
 
-  arma::mat input;
-  // Policy tells how the DatasetMapper should map the values.
-  std::set<std::string> missingSet;
-  missingSet.insert(missingValue);
-  MissingPolicy policy(missingSet);
-  using MapperType = DatasetMapper<MissingPolicy>;
-  DatasetMapper<MissingPolicy> info(policy);
+  const size_t dimStart = params.Has("dimension") ? dimension : 0;
+  const size_t dimEnd = params.Has("dimension") ? dimension + 1 : data.n_rows;
 
-  Load(inputFile, input, info, true, true);
+  timers.Start("imputation");
 
-  // print how many mapping exist in each dimensions
-  std::vector<size_t> dirtyDimensions;
-  for (size_t i = 0; i < input.n_rows; ++i)
+  if (params.Has("dimension"))
   {
-    size_t numMappings = info.NumMappings(i);
-    if (numMappings > 0)
-    {
-      Log::Info << "Replacing " << numMappings << " values in dimension " << i
-          << "." << endl;
-      dirtyDimensions.push_back(i);
-    }
-  }
-
-  if (dirtyDimensions.size() == 0)
-  {
-    Log::Warn << "The file does not contain any user-defined missing "
-        << "variables. The program did not perform any imputation." << endl;
-  }
-  else if (params.Has("dimension") &&
-      !(std::find(dirtyDimensions.begin(), dirtyDimensions.end(), dimension)
-      != dirtyDimensions.end()))
-  {
-    Log::Warn << "The given dimension of the file does not contain any "
-        << "user-defined missing variables. The program did not perform any "
-        << "imputation." << endl;
+    Log::Info << "Performing '" << strategy << "' imputation strategy "
+        << "to replace '" << missingValue << "' on dimension " << dimension
+        << "." << endl;
   }
   else
   {
-    timers.Start("imputation");
-    if (params.Has("dimension"))
-    {
-      // when --dimension is specified,
-      // the program will apply the changes to only the given dimension.
-      Log::Info << "Performing '" << strategy << "' imputation strategy "
-          << "to replace '" << missingValue << "' on dimension " << dimension
-          << "." << endl;
-      if (strategy == "mean")
-      {
-        Imputer<double, MapperType, MeanImputation<double>> imputer(info);
-        imputer.Impute(input, missingValue, dimension);
-      }
-      else if (strategy == "median")
-      {
-        Imputer<double, MapperType, MedianImputation<double>> imputer(info);
-        imputer.Impute(input, missingValue, dimension);
-      }
-      else if (strategy == "listwise_deletion")
-      {
-        Imputer<double, MapperType, ListwiseDeletion<double>> imputer(info);
-        imputer.Impute(input, missingValue, dimension);
-      }
-      else if (strategy == "custom")
-      {
-        CustomImputation<double> strat(customValue);
-        Imputer<double, MapperType, CustomImputation<double>> imputer(
-            info, strat);
-        imputer.Impute(input, missingValue, dimension);
-      }
-      else
-      {
-        Log::Fatal << "'" <<  strategy << "' imputation strategy does not exist"
-            << endl;
-      }
-    }
-    else
-    {
-      // when --dimension is not specified,
-      // the program will apply the changes to all dimensions.
-      Log::Info << "Performing '" << strategy << "' imputation strategy "
-          << "to replace '" << missingValue << "' on all dimensions." << endl;
+    Log::Info << "Performing '" << strategy << "' imputation strategy "
+        << "to replace '" << missingValue << "' in all dimensions." << endl;
+  }
 
-      if (strategy == "mean")
-      {
-        Imputer<double, MapperType, MeanImputation<double>> imputer(info);
-        for (size_t i : dirtyDimensions)
-          imputer.Impute(input, missingValue, i);
-      }
-      else if (strategy == "median")
-      {
-        Imputer<double, MapperType, MedianImputation<double>> imputer(info);
-        for (size_t i : dirtyDimensions)
-          imputer.Impute(input, missingValue, i);
-      }
-      else if (strategy == "listwise_deletion")
-      {
-        Imputer<double, MapperType, ListwiseDeletion<double>> imputer(info);
-        for (size_t i : dirtyDimensions)
-          imputer.Impute(input, missingValue, i);
-      }
-      else if (strategy == "custom")
-      {
-        CustomImputation<double> strat(customValue);
-        Imputer<double, MapperType, CustomImputation<double>> imputer(
-            info, strat);
-        for (size_t i : dirtyDimensions)
-          imputer.Impute(input, missingValue, i);
-      }
-      else
-      {
-        Log::Fatal << "'" <<  strategy << "' imputation strategy does not "
-            << "exist!" << endl;
-      }
-    }
-    timers.Stop("imputation");
-
-    if (!outputFile.empty())
+  for (size_t d = dimStart; d < dimEnd; ++d)
+  {
+    if (strategy == "mean")
     {
-      Log::Info << "Saving results to '" << outputFile << "'." << endl;
-      Save(outputFile, input, false);
+      Imputer<MeanImputation> imputer;
+      imputer.Impute(data, missingValue, dimension);
+    }
+    else if (strategy == "median")
+    {
+      Imputer<MedianImputation> imputer;
+      imputer.Impute(data, missingValue, dimension);
+    }
+    else if (strategy == "listwise_deletion")
+    {
+      Imputer<ListwiseDeletion> imputer;
+      imputer.Impute(data, missingValue, dimension);
+    }
+    else if (strategy == "custom")
+    {
+      CustomImputation<> c(customValue);
+      Imputer<CustomImputation<>> imputer(c);
+      imputer.Impute(data, missingValue, dimension);
     }
   }
+
+  params.Get<mat>("output") = std::move(data);
 }

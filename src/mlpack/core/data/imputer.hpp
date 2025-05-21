@@ -14,78 +14,72 @@
 #define MLPACK_CORE_DATA_IMPUTER_HPP
 
 #include <mlpack/prereqs.hpp>
-#include "dataset_mapper.hpp"
-#include "map_policies/missing_policy.hpp"
-#include "map_policies/increment_policy.hpp"
 
 namespace mlpack {
 namespace data {
 
 /**
  * Given a dataset of a particular datatype, replace user-specified missing
- * value with a variable dependent on the StrategyType and MapperType.
+ * value with a variable dependent on the StrategyType.
  *
- * @tparam T Type of armadillo matrix used for imputation strategy.
- * @tparam MapperType DatasetMapper that is used to hold dataset information.
  * @tparam StrategyType Imputation strategy used.
  */
-template<typename T, typename MapperType, typename StrategyType>
+template<typename StrategyType = MeanImputation>
 class Imputer
 {
  public:
-  Imputer(MapperType mapper, bool columnMajor = true):
-      mapper(std::move(mapper)),
-      columnMajor(columnMajor)
+  // Create an imputer, optionally specifying an instantiated imputation
+  // strategy.
+  Imputer(StrategyType strategy = StrategyType()) :
+      strategy(std::move(strategy))
   {
-    // Nothing to initialize here.
-  }
-
-  Imputer(MapperType mapper, StrategyType strategy, bool columnMajor = true):
-      strategy(std::move(strategy)),
-      mapper(std::move(mapper)),
-      columnMajor(columnMajor)
-  {
-    // Nothing to initialize here.
+    // Nothing to do.
   }
 
   /**
-  * Given an input dataset, replace missing values of a dimension with given
-  * imputation strategy. This function does not produce output matrix, but
-  * overwrites the result into the input matrix.
-  *
-  * @param input Input dataset to apply imputation.
-  * @param missingValue User defined missing value; it can be anything.
-  * @param dimension Dimension to apply the imputation.
-  */
-  void Impute(arma::Mat<T>& input,
-              const std::string& missingValue,
-              const size_t dimension)
+   * Given an input dataset, replace missing values of a dimension with given
+   * imputation strategy. This function does not produce an output matrix, but
+   * overwrites the result into the input matrix.
+   *
+   * @param input Input dataset to apply imputation.
+   * @param missingValue User defined missing value; it can be anything.
+   * @param dimension Dimension to apply the imputation.
+   */
+  template<typename MatType>
+  void Impute(MatType& input,
+              const typename MatType::elem_type& missingValue,
+              const size_t dimension,
+              const bool columnMajor = true,
+              const std::enable_if_t<IsArma<MatType>::value>* = 0)
   {
-    T mappedValue = static_cast<T>(mapper.UnmapValue(missingValue, dimension));
-    strategy.Impute(input, mappedValue, dimension, columnMajor);
+    if (columnMajor && (dimension >= input.n_rows))
+    {
+      std::ostringstream oss;
+      oss << "Imputer::Impute(): given dimension to impute (" << dimension
+          << ") must be less than the number of rows in the matrix ("
+          << input.n_rows << ")!" << std::endl;
+      throw std::invalid_argument(oss.str());
+    }
+    else if (!columnMajor && (dimension >= input.n_cols))
+    {
+      std::ostringstream oss;
+      oss << "Imputer::Impute(): given dimension to impute (" << dimension
+          << ") must be less than the number of columns in the matrix ("
+          << input.n_cols << ")!" << std::endl;
+      throw std::invalid_argument(oss.str());
+    }
+
+    strategy.Impute(input, missingValue, dimension, columnMajor);
   }
 
-  //! Get the strategy.
+  // Get the strategy.
   const StrategyType& Strategy() const { return strategy; }
-
-  //! Modify the given strategy.
+  // Modify the given strategy.
   StrategyType& Strategy() { return strategy; }
-
-  //! Get the mapper.
-  const MapperType& Mapper() const { return mapper; }
-
-  //! Modify the given mapper.
-  MapperType& Mapper() { return mapper; }
 
  private:
   // StrategyType
   StrategyType strategy;
-
-  // DatasetMapperType<MapPolicy>
-  MapperType mapper;
-
-  // save columnMajor as a member variable since it is rarely changed.
-  bool columnMajor;
 }; // class Imputer
 
 } // namespace data
