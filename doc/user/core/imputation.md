@@ -2,11 +2,11 @@
 
 mlpack provides functionality for replacing missing values in a dataset either
 with imputed values, user-specified values, or removing points from a dataset
-that have missing values entirely.
+that have missing values.
 
-Removing missing values is an important part of the data science pipeline, as
-mlpack's machine learning techniques do not support learning on data that
-contain missing values.
+Imputing or removing missing values is an important part of the data science
+pipeline, as mlpack's machine learning techniques do not support learning on
+data that contain missing values.
 
  * [`Imputer`](#imputer): the class that is used for imputation.
 
@@ -18,7 +18,7 @@ contain missing values.
      median value in a row or column.
    - [`ListwiseDeletion`](#listwisedeletion): remove any data points that
      contain missing values.
-   - [`CustomImputation`](#customimputation): replace missing values with a
+   - [`CustomImputation<>`](#customimputation): replace missing values with a
      user-specified custom value.
    - [Custom imputation strategies](#custom-imputation-strategies): use a fully
      custom strategy to impute missing values
@@ -131,9 +131,9 @@ is also possible to write a
  * For more details, see
    [the source code](/src/mlpack/core/data/imputation_strategies/listwise_deletion.hpp).
 
-### `CustomImputation`
+### `CustomImputation<>`
 
- * `CustomImputation` replaces any missing elements in a dimension with a
+ * `CustomImputation<>` replaces any missing elements in a dimension with a
    specified value.
 
  * `c = CustomImputation<>(value)` creates a `CustomImputation` object for use
