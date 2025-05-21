@@ -26,9 +26,9 @@ arma::uvec find_nan(const arma::Mat<ElemType>& m)
     return arma::uvec();
 
   arma::uvec infIndices = arma::find(
-      m == std::numeric_limits<ElemType>::infty());
+      m == std::numeric_limits<ElemType>::infinity());
   arma::uvec neginfIndices = arma::find(
-      m == -std::numeric_limits<ElemType>::infty());
+      m == -std::numeric_limits<ElemType>::infinity());
 
   arma::uvec result(nonfiniteIndices.n_elem -
       (infIndices.n_elem + neginfIndices.n_elem));
