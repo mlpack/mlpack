@@ -1,8 +1,8 @@
 # mlpack changelog
 
-## mlpack ?.?.?
+## mlpack 4.6.2
 
-_????-??-??_
+_2025-05-22_
 
  * Fix compilation of `Save()` when HDF5 is enabled (#3942).
 
