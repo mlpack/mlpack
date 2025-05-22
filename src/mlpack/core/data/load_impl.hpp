@@ -436,7 +436,7 @@ bool Load(const std::vector<std::string>& filenames,
     }
     else
     {
-      Log::Fatal << "Load(): given set of filenames is empty; loading failed."
+      Log::Warn << "Load(): given set of filenames is empty; loading failed."
           << std::endl;
       return false;
     }
