@@ -2651,7 +2651,6 @@ TEST_CASE("LoadCSVSemiColonMissingToNanHeader", "[LoadSaveTest]")
 
   data::Load("test.csv", dataset, opts);
 
-  dataset.print();
   arma::field<std::string> headers = opts.Headers();
 
   REQUIRE(dataset.n_rows == 2);
