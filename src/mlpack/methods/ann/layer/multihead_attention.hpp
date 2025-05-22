@@ -69,6 +69,7 @@ template <
 class MultiheadAttentionType : public Layer<MatType>
 {
  public:
+  using CubeType = typename GetCubeType<MatType>::type;
   /**
    * Default constructor.
    */
@@ -321,19 +322,19 @@ class MultiheadAttentionType : public Layer<MatType>
   MatType weights;
 
   //! Locally-stored projected query matrix over linear layer.
-  arma::Cube<ElemType> qProj;
+  CubeType qProj;
 
   //! Locally-stored projected key matrix over linear layer.
-  arma::Cube<ElemType> kProj;
+  CubeType kProj;
 
   //! Locally-stored projected value matrix over linear layer.
-  arma::Cube<ElemType> vProj;
+  CubeType vProj;
 
   //! Locally-stored result of output of dropout layer.
-  arma::Cube<ElemType> scores;
+  CubeType scores;
 
   //! Locally-stored attention output weight to be fed to last linear layer.
-  arma::Cube<ElemType> attnOut;
+  CubeType attnOut;
 
   //! Softmax layer to represent the probabilities of next sequence.
   SoftmaxType<MatType> softmax;

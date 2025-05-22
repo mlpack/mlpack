@@ -114,13 +114,14 @@ MaxPoolingType<MatType>::operator=(MaxPoolingType&& other)
 template<typename MatType>
 void MaxPoolingType<MatType>::Forward(const MatType& input, MatType& output)
 {
-  arma::Cube<typename MatType::elem_type> inputTemp(
-      const_cast<MatType&>(input).memptr(), this->inputDimensions[0],
-      this->inputDimensions[1], input.n_cols * channels, false, false);
+  using CubeType = typename GetCubeType<MatType>::type;
+  CubeType inputTemp;
+  MakeAlias(inputTemp, input, this->inputDimensions[0],
+      this->inputDimensions[1], input.n_cols * channels, 0, false);
 
-  arma::Cube<typename MatType::elem_type> outputTemp(output.memptr(),
-      this->outputDimensions[0], this->outputDimensions[1],
-      input.n_cols * channels, false, true);
+  CubeType outputTemp;
+  MakeAlias(outputTemp, output, this->outputDimensions[0],
+      this->outputDimensions[1], input.n_cols * channels, 0, true);
 
   if (this->training)
   {
@@ -144,14 +145,14 @@ void MaxPoolingType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  arma::Cube<typename MatType::elem_type> mappedError =
-      arma::Cube<typename MatType::elem_type>(((MatType&) gy).memptr(),
-      this->outputDimensions[0], this->outputDimensions[1],
-      channels * input.n_cols, false, false);
+  using CubeType = typename GetCubeType<MatType>::type;
+  CubeType mappedError;
+  MakeAlias(mappedError, gy, this->outputDimensions[0],
+      this->outputDimensions[1], channels * input.n_cols, 0, false);
 
-  arma::Cube<typename MatType::elem_type> gTemp(g.memptr(),
-      this->inputDimensions[0], this->inputDimensions[1],
-      channels * input.n_cols, false, true);
+  CubeType gTemp;
+  MakeAlias(gTemp, g, this->inputDimensions[0], this->inputDimensions[1],
+      channels * input.n_cols, 0, true);
 
   gTemp.zeros();
 

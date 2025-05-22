@@ -32,6 +32,7 @@ template<typename MatType = arma::mat>
 class NearestInterpolationType : public Layer<MatType>
 {
  public:
+  using CubeType = typename GetCubeType<MatType>::type;
   //! Create the NearestInterpolation object.
   NearestInterpolationType();
 

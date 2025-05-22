@@ -53,6 +53,7 @@ template <typename MatType = arma::mat>
 class BatchNormType : public Layer<MatType>
 {
  public:
+  using CubeType = typename GetCubeType<MatType>::type;
   /**
    * Create the BatchNorm object.
    *
@@ -266,10 +267,10 @@ class BatchNormType : public Layer<MatType>
   MatType runningVariance;
 
   //! Locally-stored normalized input.
-  arma::Cube<typename MatType::elem_type> normalized;
+  CubeType normalized;
 
   //! Locally-stored zero mean input.
-  arma::Cube<typename MatType::elem_type> inputMean;
+  CubeType inputMean;
 }; // class BatchNorm
 
 // Convenience typedefs.
