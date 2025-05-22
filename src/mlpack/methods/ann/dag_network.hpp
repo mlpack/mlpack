@@ -41,6 +41,11 @@ public:
 
   void Connect(Layer<MatType>* inputLayer, Layer<MatType>* outputLayer);
 
+  void ComputeOutputDimensions();
+
+  void UpdateDimensions(const std::string& functionName,
+                        const size_t inputDimensionality = 0);
+
   // topo sort, no cycles, network has one output
   void CheckGraph();
 
