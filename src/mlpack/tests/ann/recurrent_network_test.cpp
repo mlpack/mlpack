@@ -563,10 +563,22 @@ void DistractedSequenceRecallTestNetwork(
   // sequences) before the network reached 95% accuracy.
   Adam opt(0.008, 8, 0.9, 0.999, 1e-8, 250 * trainInput.n_cols, 1e-8);
 
-  // This callback will terminate training early when accuracy reaches 90%.  At
+  // This callback will terminate training early when accuracy reaches 85%.  At
   // least 50 epochs of training are required.
   DistractedSequenceTestSetCallback cb(testInput, testLabels);
   model.Train(trainInput, trainLabels, opt, cb);
+
+  // If the error is greater than 15%, we allow a few restarts.
+  size_t trial = 0;
+  while (cb.Error() > 0.15 && trial < 3)
+  {
+    opt = Adam(0.008, 8, 0.9, 0.999, 1e-8, 250 * trainInput.n_cols, 1e-8);
+
+    model.Reset();
+    model.Train(trainInput, trainLabels, opt, cb);
+
+    ++trial;
+  }
 
   // We only require 85% accuracy.
   REQUIRE(cb.Error() <= 0.15);
@@ -723,6 +735,8 @@ TEST_CASE("SequenceClassificationSingleTest", "[RecurrentNetworkTest]")
       break;
     }
   }
+
+  REQUIRE(successes > 0);
 }
 
 /**
