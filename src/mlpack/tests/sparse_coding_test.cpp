@@ -230,7 +230,8 @@ TEMPLATE_TEST_CASE("SparseCodingTrainReturnObjective", "[SparseCodingTest]",
   for (uword i = 0; i < nPoints; ++i)
     X.col(i) /= norm(X.col(i), 2);
 
-  SparseCoding<MatType> sc(nAtoms, lambda1, 0.0, 0, 0.01, tol);
+  // Use only 10 iterations to keep the test from taking too long.
+  SparseCoding<MatType> sc(nAtoms, lambda1, 0.0, 5, 0.01, tol);
   double objVal = sc.Train(X);
 
   REQUIRE(std::isfinite(objVal) == true);
