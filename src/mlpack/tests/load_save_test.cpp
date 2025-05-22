@@ -2531,7 +2531,7 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
 TEST_CASE("DataOptionsTest", "[LoadSaveTest]")
 {
   data::DataOptions opts1, opts2, opts3;
-  
+ 
   opts1.Fatal() = false;
   opts2.Fatal() = false;
   opts1.Format() = FileType::FileTypeUnknown;
@@ -2568,7 +2568,7 @@ TEST_CASE("DataOptionsTest", "[LoadSaveTest]")
 TEST_CASE("MatrixOptionsTest", "[LoadSaveTest]")
 {
   data::MatrixOptions opts1, opts2, opts3;
-  
+
   opts1.Fatal() = false;
   opts1.NoTranspose() = false;
   opts2.Fatal() = false;
@@ -2605,7 +2605,7 @@ TEST_CASE("MatrixOptionsTest", "[LoadSaveTest]")
 TEST_CASE("TextOptionsTest", "[LoadSaveTest]")
 {
   data::TextOptions opts1, opts2, opts3;
-  
+
   opts1.Fatal() = false;
   opts1.NoTranspose() = false;
   opts1.Categorical() = false;
