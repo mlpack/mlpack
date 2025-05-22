@@ -8,6 +8,9 @@ _????-??-??_
 
  * Update bundled STB to fix warnings in R bindings (#3940).
 
+ * Fix cross-validation support for algorithms with many parameters (including
+   `RandomForest`) (#3941).
+
 ## mlpack 4.6.1
 
 _2025-05-13_
