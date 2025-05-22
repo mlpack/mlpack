@@ -4,6 +4,11 @@
 
 _????-??-??_
 
+
+## mlpack 4.6.2
+
+_2025-05-22_
+
  * Fix compilation of `Save()` when HDF5 is enabled (#3942).
 
  * Update bundled STB to fix warnings in R bindings (#3940).
