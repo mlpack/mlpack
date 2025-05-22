@@ -496,14 +496,14 @@ bool Load(const std::vector<std::string>& filenames,
           {
             if (opts.Fatal())
             {
-              Log::Fatal << "Load(): dimension mismatch; file '" << filenames[j]
+              Log::Fatal << "Load(): dimension mismatch; file '" << filenames[i]
                   << "' has " << matrix.n_rows << " dimensions, but first file "
                   << "'" << filenames[0] << "' has " << tmp.n_rows
                   << " dimensions." << std::endl;
             }
             else
             {
-              Log::Warn << "Load(): dimension mismatch; file '" << filenames[j]
+              Log::Warn << "Load(): dimension mismatch; file '" << filenames[i]
                   << "' has " << matrix.n_rows << " dimensions, but first file "
                   << "'" << filenames[0] << "' has " << tmp.n_rows
                   << " dimensions." << std::endl;
@@ -519,14 +519,14 @@ bool Load(const std::vector<std::string>& filenames,
           {
             if (opts.Fatal())
             {
-              Log::Fatal << "Load(): dimension mismatch; file '" << filenames[j]
+              Log::Fatal << "Load(): dimension mismatch; file '" << filenames[i]
                   << "' has " << matrix.n_cols << " dimensions, but first file "
                   << "'" << filenames[0] << "' has " << tmp.n_cols
                   << " dimensions." << std::endl;
             }
             else
             {
-              Log::Warn << "Load(): dimension mismatch; file '" << filenames[j]
+              Log::Warn << "Load(): dimension mismatch; file '" << filenames[i]
                   << "' has " << matrix.n_cols << " dimensions, but first file "
                   << "'" << filenames[0] << "' has " << tmp.n_cols
                   << " dimensions." << std::endl;
