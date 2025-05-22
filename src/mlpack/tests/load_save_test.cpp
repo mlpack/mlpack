@@ -2608,7 +2608,7 @@ TEST_CASE("LoadVectorCSVDiffHeaders", "[LoadSaveTest]")
   arma::mat dataset;
   data::TextOptions opts;
   opts.HasHeaders() = true;
-  REQUIRE(data::Load(files, dataset, opts) == true);
+  REQUIRE(data::Load(files, dataset, opts) == false);
 }
 
 // These tests only work with Armadillo 12, as we need the `strict` option to be
