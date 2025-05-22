@@ -2534,23 +2534,35 @@ TEST_CASE("DataOptionsTest", "[LoadSaveTest]")
   
   opts1.Fatal() = false;
   opts2.Fatal() = false;
+  opts1.Format() = FileType::FileTypeUnknown;
+  opts2.Format() = FileType::CSVASCII;
   opts3 = opts1 | opts2;
   REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.Format() == FileType::CSVASCII);
 
   opts1.Fatal() = true;
   opts2.Fatal() = false;
+  opts1.Format() = FileType::AutoDetect;
+  opts2.Format() = FileType::RawASCII;
   opts3 = opts1 | opts2;
   REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.Format() == FileType::RawASCII);
 
   opts1.Fatal() = true;
   opts2.Fatal() = true;
+  opts1.Format() = FileType::RawASCII;
+  opts2.Format() = FileType::AutoDetect;
   opts3 = opts1 | opts2;
   REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.Format() == FileType::RawASCII);
 
   opts1.Fatal() = false;
   opts2.Fatal() = true;
+  opts1.Format() = FileType::CSVASCII;
+  opts2.Format() = FileType::FileTypeUnknown;
   opts3 = opts1 | opts2;
   REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.Format() == FileType::CSVASCII);
 }
 
 TEST_CASE("MatrixOptionsTest", "[LoadSaveTest]")
@@ -2592,21 +2604,87 @@ TEST_CASE("MatrixOptionsTest", "[LoadSaveTest]")
 
 TEST_CASE("TextOptionsTest", "[LoadSaveTest]")
 {
-  data::MatrixOptions opts1, opts2, opts3;
+  data::TextOptions opts1, opts2, opts3;
   
   opts1.Fatal() = false;
   opts1.NoTranspose() = false;
+  opts1.Categorical() = false;
   opts1.HasHeaders() = false;
   opts1.MissingToNan() = false;
-   
+  opts1.SemiColon() = false;
   opts2.Fatal() = false;
   opts2.NoTranspose() = false;
+  opts2.Categorical() = false;
   opts2.HasHeaders() = false;
   opts2.MissingToNan() = false;
+  opts2.SemiColon() = false;
   opts3 = opts1 | opts2;
   REQUIRE(opts3.Fatal() == false);
   REQUIRE(opts3.NoTranspose() == false);
+  REQUIRE(opts3.Categorical() == false);
+  REQUIRE(opts3.HasHeaders() == false);
+  REQUIRE(opts3.MissingToNan() == false);
+  REQUIRE(opts3.SemiColon() == false);
 
+  opts1.Fatal() = true;
+  opts1.NoTranspose() = true;
+  opts1.Categorical() = true;
+  opts1.HasHeaders() = true;
+  opts1.MissingToNan() = true;
+  opts1.SemiColon() = true;
+  opts2.Fatal() = false;
+  opts2.NoTranspose() = false;
+  opts2.Categorical() = false;
+  opts2.HasHeaders() = false;
+  opts2.MissingToNan() = false;
+  opts2.SemiColon() = false;
+  opts3 = opts1 | opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+  REQUIRE(opts3.Categorical() == true);
+  REQUIRE(opts3.HasHeaders() == true);
+  REQUIRE(opts3.MissingToNan() == true);
+  REQUIRE(opts3.SemiColon() == true);
+
+  opts1.Fatal() = false;
+  opts1.NoTranspose() = false;
+  opts1.Categorical() = false;
+  opts1.HasHeaders() = false;
+  opts1.MissingToNan() = false;
+  opts1.SemiColon() = false;
+  opts2.Fatal() = true;
+  opts2.NoTranspose() = true;
+  opts2.Categorical() = true;
+  opts2.HasHeaders() = true;
+  opts2.MissingToNan() = true;
+  opts2.SemiColon() = true;
+  opts3 = opts1 | opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+  REQUIRE(opts3.Categorical() == true);
+  REQUIRE(opts3.HasHeaders() == true);
+  REQUIRE(opts3.MissingToNan() == true);
+  REQUIRE(opts3.SemiColon() == true);
+
+  opts1.Fatal() = true;
+  opts1.NoTranspose() = true;
+  opts1.Categorical() = true;
+  opts1.HasHeaders() = true;
+  opts1.MissingToNan() = true;
+  opts1.SemiColon() = true;
+  opts2.Fatal() = true;
+  opts2.NoTranspose() = true;
+  opts2.Categorical() = true;
+  opts2.HasHeaders() = true;
+  opts2.MissingToNan() = true;
+  opts2.SemiColon() = true;
+  opts3 = opts1 | opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+  REQUIRE(opts3.Categorical() == true);
+  REQUIRE(opts3.HasHeaders() == true);
+  REQUIRE(opts3.MissingToNan() == true);
+  REQUIRE(opts3.SemiColon() == true);
 }
 
 // These tests only work with Armadillo 12, as we need the `strict` option to be
