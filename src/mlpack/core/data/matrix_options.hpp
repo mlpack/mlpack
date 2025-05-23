@@ -32,6 +32,20 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
     // Do Nothing.
   }
 
+  MatrixOptionsBase(const MatrixOptionsBase<Derived>& opts) :
+      DataOptionsBase<MatrixOptionsBase<Derived>>()
+  {
+    // Delegate to copy operator.
+    *this = opts;
+  }
+
+  MatrixOptionsBase(MatrixOptionsBase<Derived>&& opts) :
+      DataOptionsBase<MatrixOptionsBase<Derived>>()
+  {
+    // Delegate to move operator.
+    *this = std::move(opts);
+  }
+
   template<typename Derived2>
   explicit MatrixOptionsBase(const MatrixOptionsBase<Derived2>& opts) :
       DataOptionsBase<MatrixOptionsBase<Derived>>()
@@ -110,6 +124,44 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
     DataOptionsBase<MatrixOptionsBase<Derived>>::MoveOptions(std::move(other));
 
     return *this;
+  }
+
+  template<typename Derived2>
+  MatrixOptionsBase operator|(DataOptionsBase<Derived2>& other)
+  {
+    MatrixOptionsBase output(*this);
+    // Keep it like this otherwise we need to overload the |= operator, which
+    // is not necessary outside this context
+    static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(output) =
+        static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(*this) |
+        static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(other);
+
+    if (this->noTranspose.has_value())
+      output.NoTranspose() = this->NoTranspose();
+    else
+      output.NoTranspose() = false;
+
+    return output;
+  }
+
+  template<typename Derived2>
+  MatrixOptionsBase operator|(MatrixOptionsBase<Derived2>& other)
+  {
+    MatrixOptionsBase output(*this);
+
+    static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(output) =
+        static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(*this) |
+        static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(other);
+
+    if (other.noTranspose.has_value() && !this->noTranspose.has_value())
+      output.NoTranspose() = other.NoTranspose();
+    else if (!other.noTranspose.has_value() && this->noTranspose.has_value())
+      output.NoTranspose() = this->NoTranspose();
+    else if (other.noTranspose.has_value() && this->noTranspose.has_value())
+      output.NoTranspose() = this->NoTranspose() | other.NoTranspose();
+    else
+      output.NoTranspose() = false;
+    return output;
   }
 
   void WarnBaseConversion(const char* dataDescription) const
