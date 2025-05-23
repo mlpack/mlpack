@@ -1,4 +1,3 @@
-//
 /**
  * @filer methods/ann/layer/nearest_interpolation.hpp
  * @author Andrew Furey
@@ -36,7 +35,8 @@ class NearestInterpolationType : public Layer<MatType>
   //! Create the NearestInterpolation object.
   NearestInterpolationType();
 
-  /**Create NearestInterpolation Object with the same scaleFactor along 
+  /**
+   * Create NearestInterpolation Object with the same scaleFactor along
    * each dimension.
    * NOTE: scaleFactors must be a two element vector, the first element
    * for scaling the first dimension and the second element for scaling
@@ -44,7 +44,7 @@ class NearestInterpolationType : public Layer<MatType>
    *
    * If the input dimensions are n x m x ..., then the output dimensions
    * will be (n x scaleFactors[0]) x (m x scaleFactors[1]) x ...
-   * 
+   *
    * @param scaleFactor Scale factors to scale each dimension by.
    */
   NearestInterpolationType(const std::vector<double> scaleFactors);
@@ -81,10 +81,12 @@ class NearestInterpolationType : public Layer<MatType>
    * the input size.
    *
    * @param * (input) The input matrix.
+   * @param * (output) The output matrix.
    * @param gradient The computed backward gradient.
    * @param output The resulting down-sampled output.
    */
-  void Backward(const MatType& /*input*/,
+  void Backward(const MatType& /* input */,
+                const MatType& /* output */,
                 const MatType& gradient,
                 MatType& output);
 

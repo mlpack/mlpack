@@ -310,7 +310,7 @@ void FFN<
   // We must always store a copy of the forward pass in `networkOutputs` in case
   // we do a backward pass.
   networkOutput.set_size(network.OutputSize(), inputs.n_cols);
-  network.Forward(inputs, networkOutput, begin, end);
+  network.PartialForward(inputs, networkOutput, begin, end);
 
   // It's possible the user passed `networkOutput` as `results`; in this case,
   // we don't need to create an alias.

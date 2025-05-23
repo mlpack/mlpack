@@ -453,7 +453,7 @@ double KnnAccuracy(const MatType& dataset,
     for (size_t j = 0; j < k; ++j)
       m(labels(neighbors(j, i))) += 1 / std::pow(distances(j, i) + 1, 2);
 
-    size_t index = ConvTo<size_t>::From(arma::find(m == arma::max(m)));
+    size_t index = arma::as_scalar(arma::find(m == arma::max(m)));
 
     // Increase count if labels match.
     if (index == labels(i))

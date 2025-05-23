@@ -37,16 +37,13 @@ void GetPointset(const size_t N, arma::mat& rdata)
   arma::mat c4(d, N / 4, arma::fill::randu);
 
   arma::colvec offset1;
-  offset1 = { { 0 },
-              { 3 } };
+  offset1 = { 0, 3 };
 
   arma::colvec offset2;
-  offset2 = { { 3 },
-              { 3 } };
+  offset2 = { 3, 3 };
 
   arma::colvec offset4;
-  offset4 = { { 3 },
-              { 0 } };
+  offset4 = { 3, 0 };
 
   // Spread points in plane.
   for (size_t p = 0; p < N / 4; ++p)

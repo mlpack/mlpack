@@ -30,8 +30,9 @@ namespace mlpack {
  *  - Forward(input, output): Performs the forward logic of applying the layer
  *    to the input object and storing the result in the output object.
  *
- *  - Backward(input, gy, g): Performs a backpropagation step through the layer,
- *    with respect to the given input.
+ *  - Backward(input, output, gy, g): Performs a backpropagation step through
+ *    the layer, with respect to the given input.  `output` is the result of
+ *    `Forward()`, which should have been previously called.
  *
  *  - Gradient(input, error, gradient): Computing the gradient of the layer with
  *    respect to its own input.
@@ -138,7 +139,7 @@ class Layer
    * Performs a backpropagation step through the layer, with respect to the
    * given input. In general this method makes the assumption Forward(input,
    * output) has been called before, with the same input. If you do not respect
-   * this rule, Backward(input, gy, g) might compute incorrect results.
+   * this rule, Backward(input, output, gy, g) might compute incorrect results.
    *
    * In general input and gy and g are matrices. However, some special
    * sub-classes like table layers might expect something else. Please, refer to
