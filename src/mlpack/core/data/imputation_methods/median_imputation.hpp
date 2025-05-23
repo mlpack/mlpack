@@ -15,13 +15,11 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
+
 /**
- * This is a class implementation of simple median imputation.
- * replace missing value with middle or average of middle values
- * @tparam T Type of armadillo matrix
+ * This is a class implementation of simple median imputation: replace missing
+ * value with the median of non-missing values.
  */
-template <typename T>
 class MedianImputation
 {
  public:
@@ -35,59 +33,62 @@ class MedianImputation
    * @param dimension Index of the dimension of the mappedValue.
    * @param columnMajor State of whether the input matrix is columnMajor or not.
    */
-  void Impute(arma::Mat<T>& input,
-              const T& mappedValue,
-              const size_t dimension,
-              const bool columnMajor = true)
+  template<typename MatType>
+  static void Impute(MatType& input,
+                     const typename MatType::elem_type& missingValue,
+                     const size_t dimension,
+                     const bool columnMajor = true)
   {
-    using PairType = std::pair<size_t, size_t>;
-    // dimensions and indexes are saved as pairs inside this vector.
-    std::vector<PairType> targets;
-    // good elements are kept inside this vector.
-    std::vector<double> elemsToKeep;
+    static_assert(!IsSparse<MatType>::value, "MedianImputation::Impute(): "
+        "sparse matrix imputation is not supported; use a dense matrix "
+        "instead!");
 
-    if (columnMajor)
+    typedef typename MatType::elem_type ElemType;
+
+    // If mappedValue is NaN, Armadillo does not quite provide the tools we need
+    // so we have to do our own implementation.  Otherwise, we can directly use
+    // Armadillo pretty easily.
+    ElemType medianValue;
+    MatType tmp;
+    if (std::isnan(missingValue))
     {
-      for (size_t i = 0; i < input.n_cols; ++i)
-      {
-        if (input(dimension, i) == mappedValue ||
-            std::isnan(input(dimension, i)))
-        {
-          targets.emplace_back(dimension, i);
-        }
-        else
-        {
-          elemsToKeep.push_back(input(dimension, i));
-        }
-      }
+      if (columnMajor)
+        tmp = input.row(dimension);
+      else
+        tmp = input.col(dimension).t();
+
+      tmp.shed_cols(find_nan(tmp));
     }
     else
     {
-      for (size_t i = 0; i < input.n_rows; ++i)
+      typedef typename GetUColType<MatType>::type UCol;
+      if (columnMajor)
       {
-        if (input(i, dimension) == mappedValue ||
-            std::isnan(input(i, dimension)))
-        {
-          targets.emplace_back(i, dimension);
-        }
-        else
-        {
-           elemsToKeep.push_back(input(i, dimension));
-        }
+        tmp = input.submat(UCol({ dimension }),
+            find(input.row(dimension) != missingValue));
+      }
+      else
+      {
+        tmp = input.submat(
+            find(input.col(dimension) != missingValue), UCol({ dimension }));
       }
     }
 
-    // calculate median
-    const double median = arma::median(arma::vec(elemsToKeep));
-
-    for (const PairType& target : targets)
+    // Compute the median on the extracted elements.
+    if (tmp.is_empty())
     {
-       input(target.first, target.second) = median;
+      throw std::invalid_argument("MedianImputation::Impute(): no non-missing "
+          "elements; cannot compute median!");
     }
+    medianValue = median(vectorise(tmp));
+
+    if (columnMajor)
+      input.row(dimension).replace(missingValue, medianValue);
+    else
+      input.col(dimension).replace(missingValue, medianValue);
   }
 }; // class MedianImputation
 
-} // namespace data
 } // namespace mlpack
 
 #endif

@@ -23,24 +23,10 @@ bool LoadCSV::LoadCategoricalCSV(MatType& matrix,
 {
   CheckOpen(opts.Fatal());
 
-  if (!opts.MissingPolicy() && opts.Categorical())
-  {
-    if (!opts.NoTranspose())
-      return TransposeParse(matrix, opts.DatasetInfo(), opts.Fatal());
-    else
-      return NonTransposeParse(matrix, opts.DatasetInfo(), opts.Fatal());
-  }
-  // NOTE: this is only here to preserve the behavior of loading missing data
-  // until it is refactored; then, `opts.MissingPolicy()` will be removed.
-  else if (opts.MissingPolicy() && opts.Categorical())
-  {
-    if (!opts.NoTranspose())
-      return TransposeParse(matrix, opts.DatasetMissingPolicy(),
-          opts.Fatal());
-    else
-      return NonTransposeParse(matrix, opts.DatasetMissingPolicy(),
-          opts.Fatal());
-  }
+  if (!opts.NoTranspose())
+    return TransposeParse(matrix, opts.DatasetInfo(), opts.Fatal());
+  else
+    return NonTransposeParse(matrix, opts.DatasetInfo(), opts.Fatal());
 
   return false; // fix warning
 }

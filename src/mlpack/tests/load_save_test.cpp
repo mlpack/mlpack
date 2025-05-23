@@ -2478,29 +2478,6 @@ TEST_CASE("LoadCSVNoTransposeTXTTest", "[LoadSaveTest]")
 }
 
 /**
- * Make sure DatasetMapper properly unmaps from non-unique strings.
- */
-TEST_CASE("DatasetMapperNonUniqueTest", "[LoadSaveTest]")
-{
-  DatasetMapper<MissingPolicy> dm(1);
-
-  // Map a couple of strings; they'll map to quiet_NaN().
-  dm.MapString<double>("0.5", 0); // No mapping created.
-  dm.MapString<double>("hello", 0); // Mapping created.
-  dm.MapString<double>("goodbye", 0);
-  dm.MapString<double>("cheese", 0);
-
-  double nan = std::numeric_limits<double>::quiet_NaN();
-  REQUIRE(dm.NumMappings(0) == 3);
-  REQUIRE(dm.NumUnmappings(nan, 0) == 3);
-
-  REQUIRE(dm.UnmapString(nan, 0) == "hello");
-  REQUIRE(dm.UnmapString(nan, 0, 0) == "hello");
-  REQUIRE(dm.UnmapString(nan, 0, 1) == "goodbye");
-  REQUIRE(dm.UnmapString(nan, 0, 2) == "cheese");
-}
-
-/**
  * Make sure if we load a CSV with a header, that that header doesn't get loaded
  * as a point.
  */
