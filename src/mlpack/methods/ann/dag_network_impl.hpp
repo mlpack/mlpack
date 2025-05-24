@@ -232,28 +232,35 @@ void DAGNetwork<
 >::ComputeOutputDimensions()
 {
   // assuming topological sorted layers
-  std::stack<std::pair<Layer<MatType>*, bool>> exploredParents;
-  exploredParents.push(std::make_pair(layers.back(), false));
+  std::stack<std::pair<Layer<MatType>*, bool>> exploring;
+  std::unordered_set<Layer<MatType>*> explored;
+  exploring.push(std::make_pair(layers.back(), false));
 
-  while (!exploredParents.empty())
+  while (!exploring.empty())
   {
-    auto [currentLayer, explored] = exploredParents.top();
-    exploredParents.pop();
+    auto [currentLayer, alreadyExplored] = exploring.top();
+    exploring.pop();
     size_t numParents = adjacencyList[currentLayer].size();
+
+    if (explored.count(currentLayer))
+      continue;
 
     if (numParents == 0)
     {
       currentLayer->InputDimensions() = inputDimensions;
+      explored.insert(currentLayer);
     }
-    else if (explored)
+    else if (alreadyExplored)
     {
       if (numParents == 1)
       {
         currentLayer->InputDimensions() = adjacencyList[currentLayer][0]->OutputDimensions();
+        explored.insert(currentLayer);
       }
       else
       {
         // compute concat dimensions
+        explored.insert(currentLayer);
         assert(layerAxes.count(currentLayer) && "Axis does not exist for a skip connection");
 
         size_t axis = layerAxes[currentLayer];
@@ -293,10 +300,10 @@ void DAGNetwork<
     }
     else
     {
-      exploredParents.push(std::make_pair(currentLayer, true));
+      exploring.push(std::make_pair(currentLayer, true));
       for (size_t i = 0; i < numParents; i++)
       {
-        exploredParents.push(std::make_pair(adjacencyList[currentLayer][i], false));
+        exploring.push(std::make_pair(adjacencyList[currentLayer][i], false));
       }
     }
   }
