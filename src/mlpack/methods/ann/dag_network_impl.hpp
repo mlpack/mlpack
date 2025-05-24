@@ -136,8 +136,6 @@ void DAGNetwork<
   inputDimensionsAreSet = false;
 }
 
-// topo sort, no cycles,
-// network has one output
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
@@ -162,6 +160,7 @@ void DAGNetwork<
     {
       auto [currentLayer, explored] = exploring.top();
       exploring.pop();
+      std::vector<Layer<MatType>*> parents = adjacencyList[currentLayer];
 
       if (exploredLayers.count(currentLayer))
           continue;
@@ -174,9 +173,9 @@ void DAGNetwork<
       else
       {
         exploring.push({currentLayer, true});
-        for (size_t j = 0; j < adjacencyList[currentLayer].size(); j++)
+        for (size_t j = 0; j < parents.size(); j++)
         {
-          Layer<MatType>* parent = adjacencyList[currentLayer][j];
+          Layer<MatType>* parent = parents[j];
           assert(parent != layers[i]  && "A cycle exists");
           if (!exploredLayers.count(parent))
           {
@@ -187,32 +186,39 @@ void DAGNetwork<
     }
   }
 
-  size_t totalParents = 0;
-  std::stack<Layer<MatType>*> parents;
-  parents.push(sortedLayers.back());
+  size_t size = 0;
+  exploring.push(std::make_pair(sortedLayers.back(), false));
+  exploredLayers.clear();
 
-  bool parentsExist = true;
-  while (parentsExist)
+  while (!exploring.empty())
   {
-    Layer<MatType>* currentLayer = parents.top();
-    parents.pop();
+    auto [currentLayer, explored] = exploring.top();
+    exploring.pop();
+    std::vector<Layer<MatType>*> parents = adjacencyList[currentLayer];
+    if (exploredLayers.count(currentLayer))
+      continue;
 
-    size_t numParents = adjacencyList[currentLayer].size();
-    if (numParents == 0)
+    if (explored)
     {
-      parentsExist = false;
+      size++;
+      exploredLayers.insert(currentLayer);
     }
     else
     {
-      totalParents += numParents;
-      for (size_t i = 0; i < numParents; i++)
+      exploring.push({currentLayer, true});
+      for (size_t j = 0; j < parents.size(); j++)
       {
-          parents.push(adjacencyList[currentLayer][i]);
+        Layer<MatType>* parent = parents[j];
+        if (!exploredLayers.count(parent))
+        {
+          exploring.push({parent, false});
+        }
       }
     }
+
   }
 
-  assert(totalParents == sortedLayers.size() - 1 && "multiple sinks detected.");
+  assert(size == sortedLayers.size() && "multiple sinks detected");
   layers = sortedLayers;
 }
 
