@@ -375,9 +375,53 @@ void DAGNetwork<
     layers[i]->SetWeights(tmpWeights);
     offset += weightSize;
   }
-
-
 }
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::CustomInitialize(
+    MatType& W,
+    const size_t elements)
+{
+  size_t start = 0;
+  const size_t totalWeightSize = elements;
+  for (size_t i = 0; i < layers.size(); ++i)
+  {
+    const size_t weightSize = layers[i]->WeightSize();
+
+    Log::Assert(start + weightSize <= totalWeightSize,
+        "FNN::CustomInitialize(): parameter size does not match total layer "
+        "weight size!");
+
+    MatType WTemp;
+    MakeAlias(WTemp, W, weightSize, 1, start);
+    layers[i]->CustomInitialize(WTemp, weightSize);
+
+    start += weightSize;
+  }
+  Log::Assert(start == totalWeightSize,
+      "FNN::CustomInitialize(): total layer weight size does not match rows "
+      "size!");
+}
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::InitializeWeights()
+{
+  NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
+  networkInit.Initialize(layers, parameters);
+  CustomInitialize(parameters, WeightSize());
+}
+
 
 } // namespace mlpack
 

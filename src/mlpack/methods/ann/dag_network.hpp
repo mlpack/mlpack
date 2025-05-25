@@ -52,6 +52,9 @@ public:
   const size_t WeightSize() const;
   void SetWeights(const MatType& weightsIn);
 
+  void InitializeWeights();
+  void CustomInitialize(MatType& W, const size_t elements);
+
 // private:
   OutputLayerType outputLayer;
   InitializationRuleType initializeRule;
@@ -62,6 +65,8 @@ public:
   std::vector<Layer<MatType>*> layers;
   std::map<Layer<MatType>*, std::vector<Layer<MatType>*>> adjacencyList;
   std::map<Layer<MatType>*, size_t> layerAxes;
+
+  MatType parameters;
 };
 
 } // namespace mlpack
