@@ -49,6 +49,9 @@ public:
   // topo sort, no cycles, network has one output
   void CheckGraph();
 
+  const size_t WeightSize() const;
+  void SetWeights(const MatType& weightsIn);
+
 // private:
   OutputLayerType outputLayer;
   InitializationRuleType initializeRule;

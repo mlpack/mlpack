@@ -335,6 +335,50 @@ void DAGNetwork<
   inputDimensionsAreSet = true;
 }
 
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+const size_t DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::WeightSize() const
+{
+  // FIXME: assumed toposorted
+
+  size_t total = 0;
+  for (size_t i = 0; i < layers.size(); i++)
+    total += layers[i]->WeightSize();
+  return total;
+
+}
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::SetWeights(const MatType& weightsIn)
+{
+  // FIXME: assumed toposorted
+
+  size_t offset = 0;
+  const size_t totalWeightSize = WeightSize();
+  for (size_t i = 0; i < layers.size(); i++)
+  {
+    const size_t weightSize = layers[i]->WeightSize();
+    assert(weightSize + offset <= totalWeightSize);
+    MatType tmpWeights;
+    MakeAlias(tmpWeights, weightsIn, weightSize, 1, offset);
+    layers[i]->SetWeights(tmpWeights);
+    offset += weightSize;
+  }
+
+
+}
+
 } // namespace mlpack
 
 #endif
