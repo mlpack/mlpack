@@ -422,6 +422,24 @@ void DAGNetwork<
   CustomInitialize(parameters, WeightSize());
 }
 
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::SetLayerMemory()
+{
+  size_t totalWeightSize = WeightSize();
+
+  Log::Assert(totalWeightSize == parameters.n_elem,
+      "FFN::SetLayerMemory(): total layer weight size does not match parameter "
+      "size!");
+
+  SetWeights(parameters);
+  layerMemoryIsSet = true;
+}
 
 } // namespace mlpack
 

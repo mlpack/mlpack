@@ -55,6 +55,8 @@ public:
   void InitializeWeights();
   void CustomInitialize(MatType& W, const size_t elements);
 
+  void SetLayerMemory();
+
 // private:
   OutputLayerType outputLayer;
   InitializationRuleType initializeRule;
@@ -67,6 +69,7 @@ public:
   std::map<Layer<MatType>*, size_t> layerAxes;
 
   MatType parameters;
+  bool layerMemoryIsSet;
 };
 
 } // namespace mlpack
