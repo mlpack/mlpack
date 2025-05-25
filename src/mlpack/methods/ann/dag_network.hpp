@@ -57,6 +57,8 @@ public:
 
   void SetLayerMemory();
 
+  void SetNetworkMode(const bool training);
+
 // private:
   OutputLayerType outputLayer;
   InitializationRuleType initializeRule;

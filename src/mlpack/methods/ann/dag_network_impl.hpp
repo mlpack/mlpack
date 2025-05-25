@@ -441,6 +441,19 @@ void DAGNetwork<
   layerMemoryIsSet = true;
 }
 
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::SetNetworkMode(const bool training)
+{
+  for (size_t i = 0; i < layers.size(); i++)
+    layers[i]->Training() = training;
+}
+
 } // namespace mlpack
 
 #endif
