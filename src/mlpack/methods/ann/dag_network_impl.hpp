@@ -99,6 +99,12 @@ void DAGNetwork<
 {
   // check if layer exists in layers?
   layers.push_back(layer);
+  if (layers.size() > 1)
+  {
+    layerOutputs.push_back(MatType());
+    layerInputs.push_back(MatType());
+  }
+
   inputDimensionsAreSet = false;
 }
 
@@ -112,6 +118,11 @@ void DAGNetwork<
 >::Add(Layer<MatType>* layer, size_t axis)
 {
   layers.push_back(layer);
+  if (layers.size() > 1)
+  {
+    layerOutputs.push_back(MatType());
+    layerInputs.push_back(MatType());
+  }
   layerAxes[layer] = axis;
   inputDimensionsAreSet = false;
 }
@@ -457,6 +468,77 @@ void DAGNetwork<
 {
   for (size_t i = 0; i < layers.size(); i++)
     layers[i]->Training() = training;
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::InitializeForwardPassMemory(const size_t batchSize)
+{
+  // assumed toposorted and computeoutputdimensions
+  size_t totalOutputSize = 0;
+  for (size_t i = 0; i < layers.size() - 1; i++)
+  {
+    totalOutputSize += layers[i]->OutputSize();
+  }
+
+  size_t totalConcatSize = 0;
+  for (size_t i = 1; i < layers.size(); i++)
+  {
+    if (adjacencyList[layers[i]].size() > 1)
+    {
+      size_t concatSize = layers[i]->InputDimensions()[0];
+      for (size_t j = 1; j < layers[i]->InputDimensions().size(); j++)
+      {
+        concatSize += layers[i]->InputDimensions()[j];
+      }
+      totalConcatSize += concatSize;
+    }
+  }
+
+  size_t forwardMemSize = totalOutputSize + totalConcatSize;
+  if (batchSize * forwardMemSize >
+    layerOutputMatrix.n_elem)
+  {
+    layerOutputMatrix = MatType(1, batchSize * forwardMemSize);
+  }
+
+  size_t offset = 0;
+  indices.clear();
+  //setup layerOutputs
+  for (size_t i = 0; i < layers.size() - 1; i++)
+  {
+    const size_t layerOutputSize = layers[i]->OutputSize();
+    MakeAlias(layerOutputs[i], layerOutputMatrix, layerOutputSize, batchSize, offset);
+    offset += batchSize * layerOutputSize;
+    indices.insert({layers[i], i});
+  }
+
+  //setup layerInputs
+  for (size_t i = 1; i < layers.size(); i++)
+  {
+    Layer<MatType>* currentLayer = layers[i];
+    std::vector<Layer<MatType>*> parents = adjacencyList[currentLayer];
+    size_t numParents = parents.size();
+    assert(numParents > 0);
+    if (numParents == 1)
+    {
+      size_t inputIndex = indices[parents.front()];
+      MakeAlias(layerInputs[i-1], layerOutputs[inputIndex], layerOutputs[inputIndex].n_rows, layerOutputs[inputIndex].n_cols, 0);
+    }
+    else
+    {
+      size_t concatSize = currentLayer->InputDimensions()[0];
+      for (size_t j = 1; j < currentLayer->InputDimensions().size(); j++)
+        concatSize += currentLayer->InputDimensions()[j];
+      MakeAlias(layerInputs[i-1], layerOutputMatrix, concatSize, batchSize, offset);
+      offset += concatSize;
+    }
+  }
 }
 
 } // namespace mlpack

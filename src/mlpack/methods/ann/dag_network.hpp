@@ -59,6 +59,7 @@ public:
 
   void SetNetworkMode(const bool training);
 
+  void InitializeForwardPassMemory(const size_t batchSize);
 // private:
   OutputLayerType outputLayer;
   InitializationRuleType initializeRule;
@@ -69,9 +70,14 @@ public:
   std::vector<Layer<MatType>*> layers;
   std::map<Layer<MatType>*, std::vector<Layer<MatType>*>> adjacencyList;
   std::map<Layer<MatType>*, size_t> layerAxes;
+  std::map<Layer<MatType>*, size_t> indices; // layer, i (i == where in toposorted layers)
 
   MatType parameters;
   bool layerMemoryIsSet;
+
+  MatType layerOutputMatrix;
+  std::vector<MatType> layerInputs;
+  std::vector<MatType> layerOutputs;
 };
 
 } // namespace mlpack
