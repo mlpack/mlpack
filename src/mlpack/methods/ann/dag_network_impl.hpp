@@ -256,12 +256,12 @@ void DAGNetwork<
 
     if (explored.count(currentLayer))
     {
-      assert(inputs++ == 0);
       continue;
     }
 
     if (numParents == 0)
     {
+      assert(inputs++ == 0);
       currentLayer->InputDimensions() = inputDimensions;
       explored.insert(currentLayer);
     }
