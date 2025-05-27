@@ -236,6 +236,7 @@ void DAGNetwork<
   std::unordered_set<Layer<MatType>*> explored;
   exploring.push(std::make_pair(layers.back(), false));
 
+  size_t inputs = 0;
   while (!exploring.empty())
   {
     auto [currentLayer, alreadyExplored] = exploring.top();
@@ -243,7 +244,10 @@ void DAGNetwork<
     size_t numParents = adjacencyList[currentLayer].size();
 
     if (explored.count(currentLayer))
+    {
+      assert(inputs++ == 0);
       continue;
+    }
 
     if (numParents == 0)
     {
