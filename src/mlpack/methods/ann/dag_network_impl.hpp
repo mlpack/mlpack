@@ -277,7 +277,7 @@ void DAGNetwork<
         assert(axis < numOutputDimensions);
         currentLayer->InputDimensions() = std::vector<size_t>(numOutputDimensions, 0);
 
-        for (size_t i = 0; i < currentLayer->OutputDimensions().size(); i++)
+        for (size_t i = 0; i < currentLayer->InputDimensions().size(); i++)
         {
           if (i == axis)
           {
@@ -301,6 +301,7 @@ void DAGNetwork<
           }
         }
       }
+      currentLayer->ComputeOutputDimensions();
     }
     else
     {
