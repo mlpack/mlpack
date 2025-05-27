@@ -158,9 +158,7 @@ class MeanImputation
       throw std::invalid_argument("MeanImputation::Impute(): no non-missing "
           "elements; cannot compute mean!");
     }
-    tmp.print("tmp");
     meanValue = mean(vectorise(tmp));
-    std::cout << "mean value " << meanValue << "\n";
 
     // Now impute the computed mean value.
     if (columnMajor)
