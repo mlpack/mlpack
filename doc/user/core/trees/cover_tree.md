@@ -1,11 +1,9 @@
 # `CoverTree`
 
-<!-- TODO: link to knn.md once it's done -->
-
 The `CoverTree` class implements the cover tree, a hierarchical tree structure
 with favorable theoretical properties.  The cover tree is useful for efficient
-distance operations (such as nearest neighbor search) in low to moderate
-dimensions.
+distance operations (such as [nearest neighbor search](../methods/knn.md)) in
+low to moderate dimensions.
 
 mlpack's `CoverTree` implementation supports three template parameters for
 configurable behavior, and implements all the functionality required by the
@@ -27,10 +25,11 @@ work with any [distance metric](../distances.md), not just
 
 ## See also
 
-<!-- TODO: add links to all distance-based algorithms and other trees? -->
-
  * [Cover tree on Wikipedia](https://en.wikipedia.org/wiki/Cover_tree)
  * [`KDTree`](kdtree.md)
+ * [mlpack trees](../trees.md)
+ * [`KNN`](../methods/knn.md)
+ * [mlpack geometric algorithms](../modeling.md#geometric-algorithms)
  * [Cover trees for nearest neighbor (pdf)](https://www.hunch.net/~jl/projects/cover_tree/paper/paper.pdf)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 

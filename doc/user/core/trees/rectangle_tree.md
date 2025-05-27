@@ -43,9 +43,10 @@ may require a template typedef.
 
 ## See also
 
-<!-- TODO: add links to all distance-based algorithms and other trees? -->
-
  * [`RTree`](r_tree.md)
+ * [mlpack trees](../trees.md)
+ * [`KNN`](../methods/knn.md)
+ * [mlpack geometric algorithms](../modeling.md#geometric-algorithms)
  * [R-Tree on Wikipedia](https://en.wikipedia.org/wiki/R-tree)
  * [R-Trees: A Dynamic Index Structure for Spatial Searching (pdf)](http://www-db.deis.unibo.it/courses/SI-LS/papers/Gut84.pdf)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)

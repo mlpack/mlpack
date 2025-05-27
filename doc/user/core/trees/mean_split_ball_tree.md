@@ -1,11 +1,9 @@
 # `MeanSplitBallTree`
 
-<!-- TODO: link to knn.md once it's done -->
-
 The `MeanSplitBallTree` class represents a `k`-dimensional binary space
 partitioning tree where each node contains points within a ball.  This is a
-well-known data structure for efficient distance operations (such as nearest
-neighbor search) in low to moderate dimensions.
+well-known data structure for efficient distance operations (such as
+[nearest neighbor search](../methods/knn.md)) in low to moderate dimensions.
 
 In general, a `MeanSplitBallTree` will be a better balanced tree and have fewer
 nodes than a [`BallTree`](ball_tree.md).  However, counterintuitively, a more
@@ -28,9 +26,10 @@ additional functionality specific to ball trees.
 
 ## See also
 
-<!-- TODO: add links to all distance-based algorithms and other trees? -->
-
  * [`BallTree`](ball_tree.md)
+ * [mlpack trees](../trees.md)
+ * [`KNN`](../methods/knn.md)
+ * [mlpack geometric algorithms](../modeling.md#geometric-algorithms)
  * [Ball tree on Wikipedia](https://en.wikipedia.org/wiki/Ball_tree)
  * [`BinarySpaceTree`](binary_space_tree.md)
  * [`MeanSplit`](binary_space_tree.md#meansplit)
