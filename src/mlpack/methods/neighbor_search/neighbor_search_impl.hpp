@@ -63,13 +63,12 @@ NeighborSearch<SortPolicy, DistanceType, MatType, TreeType,
     DualTreeTraversalType, SingleTreeTraversalType>::
 NeighborSearch(Tree referenceTree,
                const NeighborSearchMode mode,
-               const double epsilon,
-               const DistanceType distance) :
+               const double epsilon) :
     referenceTree(new Tree(std::move(referenceTree))),
     referenceSet(&this->referenceTree->Dataset()),
     searchMode(mode),
     epsilon(epsilon),
-    distance(distance),
+    distance(referenceTree->Distance()),
     baseCases(0),
     scores(0),
     treeNeedsReset(false)
@@ -591,8 +590,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
 
   // Make sure we are in dual-tree mode.
   if (searchMode != DUAL_TREE_MODE)
-    throw std::invalid_argument("cannot call NeighborSearch::Search() with a "
-        "query tree when naive or singleMode are set to true");
+    throw std::invalid_argument("Cannot call NeighborSearch::Search() with a "
+        "query tree when search mode is not DUAL_TREE_MODE!");
 
   baseCases = 0;
   scores = 0;
@@ -732,22 +731,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       // The dual-tree monochromatic search case may require resetting the
       // bounds in the tree.
       if (treeNeedsReset)
-      {
-        std::stack<Tree*> nodes;
-        nodes.push(referenceTree);
-        while (!nodes.empty())
-        {
-          Tree* node = nodes.top();
-          nodes.pop();
-
-          // Reset bounds of this node.
-          node->Stat().Reset();
-
-          // Then add the children.
-          for (size_t i = 0; i < node->NumChildren(); ++i)
-            nodes.push(&node->Child(i));
-        }
-      }
+        ResetTree(*referenceTree);
 
       // Create the traverser.
       DualTreeTraversalType<RuleType> traverser(rules);
@@ -762,8 +746,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       else
       {
         traverser.Traverse(*referenceTree, *referenceTree);
-        // Next time we perform this search, we'll need to reset the tree.
-        treeNeedsReset = true;
       }
 
       scores += rules.Scores();
@@ -891,6 +873,35 @@ DualTreeTraversalType, SingleTreeTraversalType>::Recall(
         }
 
   return ((double) found) / realNeighbors.n_elem;
+}
+
+template<typename SortPolicy,
+         typename DistanceType,
+         typename MatType,
+         template<typename TreeDistanceType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
+void NeighborSearch<
+    SortPolicy, DistanceType, MatType, TreeType,
+    DualTreeTraversalType, SingleTreeTraversalType
+>::ResetTree(Tree& tree)
+{
+  std::stack<Tree*> nodes;
+  nodes.push(&tree);
+  while (!nodes.empty())
+  {
+    Tree* node = nodes.top();
+    nodes.pop();
+
+    // Reset bounds of this node.
+    node->Stat().Reset();
+
+    // Then add the children.
+    for (size_t i = 0; i < node->NumChildren(); ++i)
+      nodes.push(&node->Child(i));
+  }
 }
 
 //! Serialize the NeighborSearch model.
