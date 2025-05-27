@@ -59,7 +59,10 @@ public:
 
   void SetNetworkMode(const bool training);
 
+  using CubeType = typename GetCubeType<MatType>::type;
   void InitializeForwardPassMemory(const size_t batchSize);
+  void Forward(const MatType& input, MatType& output);
+
 // private:
   OutputLayerType outputLayer;
   InitializationRuleType initializeRule;

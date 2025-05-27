@@ -541,6 +541,71 @@ void DAGNetwork<
   }
 }
 
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::Forward(const MatType& input, MatType& output)
+{
+  if (layers.size() > 1)
+  {
+    InitializeForwardPassMemory(input.n_cols);
+    layers.front()->Forward(input, layerOutputs.front());
+    for (size_t i = 1; i < layers.size(); i++)
+    {
+      std::vector<Layer<MatType>*> parents = adjacencyList[layers[i]];
+      assert(parents.size() > 0);
+      if (parents.size() > 1)
+      {
+        size_t axis = layerAxes[layers[i]];
+        //concat: setup layerInputs[i-1]
+        size_t rows = 1;
+        for (size_t j = 0; j < axis; j++)
+          rows *= layers[i]->InputDimensions()[j];
+
+        size_t slices = input.n_cols;
+        for (size_t j = axis + 1; j < layers[i]->InputDimensions().size(); j++)
+          slices *= layers[i]->InputDimensions()[j];
+
+
+        std::vector<CubeType> parentOutputAliases(parents.size());
+        for (size_t j = 0; j < parents.size(); j++)
+        {
+          size_t cols = parents[j]->OutputDimensions()[axis];
+          MatType& parentOutput = layerOutputs[indices[parents[j]]];
+          MakeAlias(parentOutputAliases[j], parentOutput, rows, cols, slices);
+        }
+
+        CubeType inputAlias;
+        MakeAlias(inputAlias, layerInputs[i-1], rows, layers[i]->InputDimensions()[axis], slices);
+
+        size_t startCol = 0;
+        for (size_t j = 0; j < parentOutputAliases.size(); j++)
+        {
+          const size_t cols = parentOutputAliases[j].n_cols;
+          inputAlias.cols(startCol, startCol + cols - 1) = parentOutputAliases[j];
+          startCol += cols;
+        }
+      }
+      if (i < layers.size() - 1)
+        layers[i]->Forward(layerInputs[i-1], layerOutputs[i]);
+      else
+        layers[i]->Forward(layerInputs[i-1], output);
+    }
+  }
+  else if (layers.size() == 1)
+  {
+    layers[0]->Forward(input, output);
+  }
+  else
+  {
+    output = input;
+  }
+}
+
 } // namespace mlpack
 
 #endif
