@@ -990,6 +990,22 @@ means that the order of visitation is:
         (q6, r6)
 ```
 
+### `GreedySingleTreeTraversal`
+
+mlpack also provides a special single-tree traversal,
+`GreedySingleTreeTraversal<TreeType, RuleType>`,
+that can be used to recurse in a greedy fashion to the best leaf node (according
+to the `RuleType`, described below).
+
+This single-tree traversal only visits nodes on the direct path between the root
+of the tree and the best leaf.  It can be used with any `TreeType` that
+satisfies the [`TreeType` API requirements](#the-treetype-api).
+
+`GreedySingleTreeTraversal` is used by [`KNN`](../user/methods/knn.md)
+(k-nearest-neighbor search) for its [greedy search
+mode](../user/methods/knn.md#search-modes), where approximate nearest neighbors
+are returned by recursing directly to the closest leaf in a tree.
+
 ## Rules
 
 The third part of a tree-based algorithm are the rules for when nodes in the

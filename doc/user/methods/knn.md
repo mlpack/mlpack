@@ -623,16 +623,165 @@ std::cout << "Effective error of approximate dual-tree search was "
 
 ---
 
+<!-- TODO: add some KNN examples to the examples repository! -->
+
 ### Advanced functionality: template parameters
 
-The `KNN`
+The `KNN` class has five template parameters that can be used for custom
+behavior.  The full signature of the class is:
 
-#### Custom distance metrics
+```
+KNN<DistanceType,
+    TreeType,
+    MatType,
+    DualTreeTraversalType,
+    SingleTreeTraversalType>
+```
 
-#### Different element types
+ * `DistanceType`: specifies the [distance metric](../core/distances.md) to be
+   used for finding nearest neighbors.
+ * `TreeType`: specifies the type of [tree](../core/trees.md) to be used for
+   indexing points for fast tree-based search.
+ * `MatType`: specifies the type of matrix used for representation of data.
+ * `DualTreeTraversalType`: specifies the
+   [traversal](../../developer/trees.md#traversals) strategy that will be used
+   when searching in dual-tree mode.
+ * `SingleTreeTraversalType`: specifies the
+   [traversal](../../developer/trees.md#traversals) strategy that will be used
+   when searching in dual-tree mode.
 
-#### Custom tree types
+When custom template parameters are specified:
 
-#### Different traversal types
+ * The `referenceSet` and `querySet` parameters to
+   [the constructor](#constructors),
+   [`Train()`](#setting-the-reference-set-train), and
+   [`Search()`](#searching-for-neighbors) must have type `MatType` instead of
+   `arma::mat`.
+ * The `distances` parameter to [`Search()`](#searching-for-neigbors) should
+   have type `MatType`.
+ * The convenience typedef `Tree` (e.g. `KNN<DistanceType, TreeType, MatType, DualTreeTraversalType, SingleTreeTraversalType>::Tree`) will be equivalent to
+   `TreeType<DistanceType, NeighborSearchStat, MatType>`.
+ * All tree parameters (`referenceTree` and `queryTree`) should have type
+   `TreeType<DistanceType, NeighborSearchStat, MatType>`.
+
+---
+
+#### `DistanceType`
+
+ * Specifies the distance metric that will be used when searching for nearest
+   neighbors.
+
+ * The default distance type is
+   [`EuclideanDistance`](../core/distances.md#lmetric).
+
+ * Many [pre-implemented distance metric](../core/distances.md) are available
+   for use, such as [`ManhattanDistance`](../core/distances.md#lmetric) and
+   [`ChebyshevDistance`](../core/distances.md#lmetric) and others.
+
+ * [Custom distance metrics](../../developer/distances.md) are easy to
+   implement, but *must* satisfy the triangle inequality to provide correct
+   results when searching with trees (e.g. `knn.SearchMode()` is not
+   `NAIVE_MODE`)..
+   - ***NOTE:*** the cosine distance ***does not*** satisfy the triangle
+     inequality.
+
+<!-- TODO: link to FastMKS or some other solution for the cosine distance -->
+
+#### `TreeType`
+
+ * Specifies the tree type that will be built on the reference set (and
+   possibly query set), if `knn.SearchMode()` is not `NAIVE_MODE`.
+
+ * The default tree type is [`KDTree`](../core/trees/kdtree.md).
+
+ * Numerous [pre-implemented tree types](../core/trees.md) are available for
+   use.
+
+ * [Custom trees](../../developer/trees.md) are very difficult to implement, but
+   it is possible if needed.  (If you have implemented a fully-working
+   `TreeType` yourself, please contribute it upstream if possible!)
+
+#### `MatType`
+
+ * Specifies the type of matrix to use for representing data (the reference set
+   and the query set).
+
+ * The default `MatType` is `arma::mat` (dense 64-bit precision matrix).
+
+ * Any matrix type implementing the Armadillo API will work; so, for instance,
+   `arma::fmat` or `arma::sp_mat` can also be used.
+
+#### `DualTreeTraversalType`
+
+ * Specifies the [traversal strategy](../../developer/trees.md#traversal) to use
+   when performing a dual-tree search to find nearest neighbors (e.g. when
+   `knn.SearchMode()` is `DUAL_TREE_MODE`).
+
+ * By default, the [`TreeType`](#treetype)'s default dual-tree traversal (e.g.
+   `TreeType<DistanceType, NeighborSearchStat, MatType>::DualTreeTraversalType`)
+   will be used.
+
+ * In general, this parameter does not need to be specified, except when a
+   custom type of traversal is desired.
+   - For instance, the [`SpillTree`](../core/trees/spill_tree.md) class provides
+     the
+     [`DefeatistDualTreeTraversal`](../core/trees/spill_tree.md#tree-traversals)
+     strategy, which is a specific greedy strategy for spill trees when
+     performing approximate nearest neighbor search.
+
+#### `SingleTreeTraversalType`
+
+ * Specifies the [traversal strategy](../../developer/trees.md#traversal) to use
+   when performing a single-tree search to find nearest neighbors (e.g. when
+   `knn.SearchMode()` is `SINGLE_TREE_MODE`).
+
+ * By default, the [`TreeType`](#treetype)'s default dual-tree traversal (e.g.
+   `TreeType<DistanceType, NeighborSearchStat, MatType>::SingleTreeTraversalType`)
+   will be used.
+
+ * In general, this parameter does not need to be specified, except when a
+   custom type of traversal is desired.
+   - For instance, the [`SpillTree`](../core/trees/spill_tree.md) class provides
+     the
+     [`DefeatistSingleTreeTraversal`](../core/trees/spill_tree.md#tree-traversals)
+     strategy, which is a specific greedy strategy for spill trees when
+     performing approximate nearest neighbor search.
+
+---
 
 ### Advanced examples
+
+Perform exact nearest neighbor search to find the 5 nearest neighbors of the
+`cloud` dataset, using 32-bit floats to represent the data.
+
+```c++
+
+```
+
+---
+
+Perform approximate single-tree nearest neighbor search using the Manhattan (L1)
+distance as the distance metric.
+
+```c++
+
+```
+
+---
+
+Use an [Octree](../core/trees/octree.md) (a tree known to be faster in very few
+dimensions) to find the exact nearest neighbors of all the points in a tiny
+subset of the 3-dimensional LCDM dataset.
+
+```c++
+
+```
+
+---
+
+Use [spill trees](../core/trees/sp_tree.md) to perform greedy single-tree
+approximate nearest neighbor search on the `cloud` dataset, and compare with
+exact results.  Compare with the results in the
+[simple examples](#simple-examples) section where the default
+[`KDTree`](../core/trees/kdtree.md) is used---spill trees perform significantly
+better for greedy search!
