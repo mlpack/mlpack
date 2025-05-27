@@ -366,6 +366,12 @@ struct IsArma
                                 arma::is_arma_sparse_type<T>::value;
 };
 
+template<typename T>
+struct IsSparse
+{
+  constexpr static bool value = arma::is_arma_sparse_type<T>::value;
+};
+
 #if defined(MLPACK_HAS_COOT)
 
 // Get whether or not the given type is any Bandicoot type
