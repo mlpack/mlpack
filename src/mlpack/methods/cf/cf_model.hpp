@@ -100,7 +100,7 @@ class CFWrapper : public CFWrapperBase
             const size_t numUsersForSimilarity,
             const size_t rank,
             const size_t maxIterations,
-            const size_t minResidue,
+            const double minResidue,
             const bool mit) :
       cf(data,
          decomposition,

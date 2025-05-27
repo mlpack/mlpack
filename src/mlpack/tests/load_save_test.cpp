@@ -2509,6 +2509,133 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
 // available in Armadillo.
 #if ARMA_VERSION_MAJOR >= 12
 
+TEST_CASE("LoadCSVNoHeaderTest", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "a,b,c,d" << endl;
+  f << "1,2,3,4" << endl;
+  f << "5,6,7,8" << endl;
+
+  arma::mat dataset;
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.MissingToNan() = true;
+  REQUIRE(data::Load("test.csv", dataset, opts) == true);
+
+  REQUIRE(dataset.n_rows == 4);
+  REQUIRE(dataset.n_cols == 3);
+  REQUIRE(std::isnan(dataset.at(0, 0)) == true);
+  REQUIRE(std::isnan(dataset.at(1, 0)) == true);
+  REQUIRE(std::isnan(dataset.at(2, 0)) == true);
+  REQUIRE(std::isnan(dataset.at(3, 0)) == true);
+}
+
+#endif
+
+TEST_CASE("LoadVectorCSVFiles", "[LoadSaveTest]")
+{
+  std::vector<std::string> files = {"f0.csv", "f1.csv", "f2.csv", "f3.csv",
+      "f4.csv", "f5.csv", "f6.csv", "f7.csv", "f8.csv", "f9.csv"};
+
+  arma::mat dataset;
+  data::TextOptions opts;
+  REQUIRE(data::Load(files, dataset, opts) == true);
+
+  REQUIRE(dataset.n_rows == 5);
+  REQUIRE(dataset.n_cols == 100);
+  REQUIRE(dataset(0, 10) == 1.0);
+}
+
+TEST_CASE("LoadVectorCSVOneFile", "[LoadSaveTest]")
+{
+  std::vector<std::string> files = {"f0.csv"};
+
+  arma::mat dataset;
+  data::TextOptions opts;
+  REQUIRE(data::Load(files, dataset, opts) == true);
+
+  REQUIRE(dataset.n_rows == 5);
+  REQUIRE(dataset.n_cols == 10);
+}
+
+TEST_CASE("LoadVectorCSVEmptyFile", "[LoadSaveTest]")
+{
+  std::vector<std::string> files;
+
+  arma::mat dataset;
+  data::TextOptions opts;
+  opts.Fatal() = false;
+  REQUIRE(data::Load(files, dataset, opts) == false);
+}
+
+TEST_CASE("LoadVectorCSVDiffCols", "[LoadSaveTest]")
+{
+  std::vector<std::string> files = {"f0.csv", "f10.csv"};
+
+  arma::mat dataset;
+  data::TextOptions opts;
+  REQUIRE(data::Load(files, dataset, opts) == false);
+}
+
+TEST_CASE("LoadVectorCSVDiffHeaders", "[LoadSaveTest]")
+{
+  std::vector<std::string> files = {"f0header.csv", "f10header.csv"};
+
+  arma::mat dataset;
+  data::TextOptions opts;
+  opts.HasHeaders() = true;
+  REQUIRE(data::Load(files, dataset, opts) == false);
+}
+
+// These tests only work with Armadillo 12, as we need the `strict` option to be
+// available in Armadillo.
+#if ARMA_VERSION_MAJOR >= 12
+
+TEST_CASE("LoadVectorCSVDiffNoHeaders", "[LoadSaveTest]")
+{
+  std::vector<std::string> files = {"f0header.csv", "f10header.csv"};
+
+  arma::mat dataset;
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.MissingToNan() = true;
+  REQUIRE(data::Load(files, dataset, opts) == true);
+
+  REQUIRE(dataset.n_rows == 5);
+  REQUIRE(dataset.n_cols == 22);
+  REQUIRE(std::isnan(dataset.at(0, 0)) == true);
+  REQUIRE(std::isnan(dataset.at(1, 0)) == true);
+  REQUIRE(std::isnan(dataset.at(2, 0)) == true);
+  REQUIRE(std::isnan(dataset.at(3, 0)) == true);
+  // Check the Nan from the second file
+  REQUIRE(std::isnan(dataset.at(0, 11)) == true);
+  REQUIRE(std::isnan(dataset.at(1, 11)) == true);
+  REQUIRE(std::isnan(dataset.at(2, 11)) == true);
+  REQUIRE(std::isnan(dataset.at(3, 11)) == true);
+}
+
+#endif
+
+TEST_CASE("LoadVectorCSVFilesNoTranspose", "[LoadSaveTest]")
+{
+  std::vector<std::string> files = {"f0.csv", "f1.csv", "f2.csv", "f3.csv",
+      "f4.csv", "f5.csv", "f6.csv", "f7.csv", "f8.csv", "f9.csv"};
+
+  arma::mat dataset;
+  data::TextOptions opts;
+  opts.NoTranspose() = true;
+  opts.Fatal() = true;
+  REQUIRE(data::Load(files, dataset, opts) == true);
+
+  REQUIRE(dataset.n_rows == 100);
+  REQUIRE(dataset.n_cols == 5);
+}
+
+// These tests only work with Armadillo 12, as we need the `strict` option to be
+// available in Armadillo.
+#if ARMA_VERSION_MAJOR >= 12
+
 TEST_CASE("LoadCSVMissingNanTest", "[LoadSaveTest]")
 {
   fstream f;

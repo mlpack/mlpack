@@ -488,6 +488,16 @@ macro (post_r_setup)
       STB_IMAGE_WRITE_H_MOD "${STB_IMAGE_WRITE_H}")
   file(WRITE "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/core/stb/bundled/stb_image_write.h" "${STB_IMAGE_WRITE_H_MOD}")
 
+  # NOTE: also for CRAN, the `static` definition of STBIRDEF causes a warning
+  # indicating that it should instead be `static inline`, so we make that
+  # replacement below.
+  file(READ "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/core/stb/bundled/stb_image_resize2.h" STB_IMAGE_RESIZE2_H)
+  string(REGEX REPLACE "#define STBIRDEF static"
+      "#define STBIRDEF static inline" STB_IMAGE_RESIZE2_H_MOD
+      "${STB_IMAGE_RESIZE2_H}")
+  file(WRITE "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/core/stb/bundled/stb_image_resize2.h"
+      "${STB_IMAGE_RESIZE2_H_MOD}")
+
   # Then configure 'mlpack.h.in' using ${R_SRC}.
   configure_file(
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack.h.in
