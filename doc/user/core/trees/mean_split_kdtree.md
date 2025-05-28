@@ -2,7 +2,7 @@
 
 The `MeanSplitKDTree` class represents a `k`-dimensional binary space
 partitioning tree, and is a well-known data structure for efficient distance
-operations (such as [nearest neighbor search](../methods/knn.md)) in low
+operations (such as [nearest neighbor search](../../methods/knn.md)) in low
 dimensions---typically less than 100.  This is very similar to the
 [`KDTree`](kdtree.md) class, except that a different splitting strategy is used
 to split nodes in the tree.
@@ -31,8 +31,8 @@ additional functionality specific to kd-trees.
  * [`BinarySpaceTree`](binary_space_tree.md)
  * [`MeanSplit`](binary_space_tree.md#meansplit)
  * [mlpack trees](../trees.md)
- * [`KNN`](../methods/knn.md)
- * [mlpack geometric algorithms](../modeling.md#geometric-algorithms)
+ * [`KNN`](../../methods/knn.md)
+ * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [kd-tree on Wikipedia](https://en.wikipedia.org/wiki/Kd-tree)
  * [Binary space partitioning on Wikipedia](https://dl.acm.org/doi/pdf/10.1145/361002.361007)
  * [original kd-tree paper (pdf)](https://dl.acm.org/doi/pdf/10.1145/361002.361007)

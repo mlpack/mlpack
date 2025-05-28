@@ -2,8 +2,8 @@
 
 The `VPTree` class represents a `k`-dimensional vantage point tree,
 and is a well-known data structure for efficient distance operations (such as
-[nearest neighbor search](../methods/knn.md)) in low dimensions---typically less
-than 100.  The vantage point tree is also known as the 'metric tree'.
+[nearest neighbor search](../../methods/knn.md)) in low dimensions---typically
+less than 100.  The vantage point tree is also known as the 'metric tree'.
 
 A vantage point tree is a binary tree where each node selects a 'vantage
 point', and child nodes partition points into those that are nearer to the
@@ -27,8 +27,8 @@ additional functionality specific to vantage point trees.
 
  * [`BinarySpaceTree`](binary_space_tree.md)
  * [mlpack trees](../trees.md)
- * [`KNN`](../methods/knn.md)
- * [mlpack geometric algorithms](../modeling.md#geometric-algorithms)
+ * [`KNN`](../../methods/knn.md)
+ * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [Vantage point tree on Wikipedia](https://en.wikipedia.org/wiki/Vantage-point_tree)
  * [Binary space partitioning on Wikipedia](https://dl.acm.org/doi/pdf/10.1145/361002.361007)
  * [Data structures and algorithms for nearest neighbor search in general metric spaces (pdf)](https://dl.acm.org/doi/pdf/10.5555/313559.313789)

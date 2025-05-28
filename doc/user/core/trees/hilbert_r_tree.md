@@ -31,8 +31,8 @@ variants of [`RectangleTree`](rectangle_tree.md) should be chosen instead.
 
  * [`RectangleTree`](rectangle_tree.md)
  * [mlpack trees](../trees.md)
- * [`KNN`](../methods/knn.md)
- * [mlpack geometric algorithms](../modeling.md#geometric-algorithms)
+ * [`KNN`](../../methods/knn.md)
+ * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [Hilbert R-Tree on Wikipedia](https://en.wikipedia.org/wiki/Hilbert_R-tree)
  * [Hilbert R-Tree: An Improved R-Tree Using Fractals (pdf)](https://www.vldb.org/conf/1994/P500.PDF)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)

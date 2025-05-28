@@ -3,8 +3,8 @@
 The `UBTree` class implements the universal B-tree, a `k`-dimensional space
 partitioning tree based on the B-tree.  The `UBTree` class can be used for
 efficient distance operations (such as
-[nearest neighbor search](../methods/knn.md)) in low dimensions---typically less
-than 100.
+[nearest neighbor search](../../methods/knn.md)) in low dimensions---typically
+less than 100.
 
 The univeral B-tree considers each point to have an
 [address](binary_space_tree.md#addressing-in-a-cellbound), which is an ordered
@@ -27,8 +27,8 @@ additional functionality specific to UB-trees.
 
  * [`BinarySpaceTree`](binary_space_tree.md)
  * [mlpack trees](../trees.md)
- * [`KNN`](../methods/knn.md)
- * [mlpack geometric algorithms](../modeling.md#geometric-algorithms)
+ * [`KNN`](../../methods/knn.md)
+ * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [UB-tree on Wikipedia](https://en.wikipedia.org/wiki/UB-tree)
  * [Z-ordering on Wikipedia](https://en.wikipedia.org/wiki/Z-order_curve)
  * [The Universal B-tree for multidimensional indexing (pdf)](https://www.mlpack.org/papers/bayer96.pdf)

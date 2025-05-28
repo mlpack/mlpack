@@ -2,7 +2,7 @@
 
 The `Octree` class implements the generalized octree, a hierarchical tree
 structure useful for tasks such as
-[nearest neighbor search](../methods/knn.md).  When built on data in two
+[nearest neighbor search](../../methods/knn.md).  When built on data in two
 dimensions, it is also called a 'quadtree'.  The generalized octree is most
 useful on data in only two or three dimensions, as its number of children is
 exponential in the data dimension: so, e.g., an octree node in two dimensions
@@ -34,8 +34,8 @@ additional functionality specific to octrees.
 ## See also
 
  * [mlpack trees](../trees.md)
- * [`KNN`](../methods/knn.md)
- * [mlpack geometric algorithms](../modeling.md#geometric-algorithms)
+ * [`KNN`](../../methods/knn.md)
+ * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [Octree on Wikipedia](https://en.wikipedia.org/wiki/Octree)
  * [Quadtree on Wikipedia](https://en.wikipedia.org/wiki/Quadtree)
  * [Binary space partitioning on Wikipedia](https://dl.acm.org/doi/pdf/10.1145/361002.361007)

@@ -68,7 +68,7 @@ NeighborSearch(Tree referenceTree,
     referenceSet(&this->referenceTree->Dataset()),
     searchMode(mode),
     epsilon(epsilon),
-    distance(referenceTree->Distance()),
+    distance(this->referenceTree->Distance()),
     baseCases(0),
     scores(0),
     treeNeedsReset(false)
@@ -837,7 +837,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::EffectiveError(
     }
   }
 
-  if (numCases)
+  if (numCases > 0)
     effectiveError /= numCases;
 
   return effectiveError;

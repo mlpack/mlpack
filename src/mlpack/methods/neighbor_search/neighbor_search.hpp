@@ -16,8 +16,6 @@
 #include <mlpack/core.hpp>
 
 #include "neighbor_search_stat.hpp"
-#include "sort_policies/nearest_neighbor_sort.hpp"
-#include "sort_policies/furthest_neighbor_sort.hpp"
 #include "neighbor_search_rules.hpp"
 #include "unmap.hpp"
 

@@ -26,8 +26,8 @@ functionality is required, then the R+-tree or other variants of
 
  * [`RectangleTree`](rectangle_tree.md)
  * [mlpack trees](../trees.md)
- * [`KNN`](../methods/knn.md)
- * [mlpack geometric algorithms](../modeling.md#geometric-algorithms)
+ * [`KNN`](../../methods/knn.md)
+ * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [R+-Tree on Wikipedia](https://en.wikipedia.org/wiki/R%2B_tree)
  * [The R+-tree: A Dynamic Index for Multi-Dimensional Objects (pdf)](https://www.inf.ed.ac.uk/teaching/courses/adbs/extras/sellis87rtree.pdf)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
