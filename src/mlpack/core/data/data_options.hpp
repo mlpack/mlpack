@@ -285,13 +285,18 @@ class DataOptionsBase
 class PlainDataOptions : public DataOptionsBase<PlainDataOptions>
 {
  public:
-  // Allow access to all DataOptionsBase constructors and operators, but with
-  // the PlainDataOptions type name.
+  // Allow access to all DataOptionsBase non-protected constructors and
+  // operators, but with the PlainDataOptions type name.
   using DataOptionsBase::DataOptionsBase;
   using DataOptionsBase::operator=;
 
   // However, C++ does not allow inheriting copy and move constructors or
-  // operators, so forward those manually.
+  // operators, and any inherited protected constructors will still be
+  // protected, so forward those manually.
+  PlainDataOptions(const std::optional<bool> fatal = std::nullopt,
+                   const std::optional<FileType> format = std::nullopt) :
+      DataOptionsBase(fatal, format) { }
+
   PlainDataOptions(const DataOptionsBase<PlainDataOptions>& other) :
       DataOptionsBase(other) { }
 

@@ -222,13 +222,16 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
 class PlainMatrixOptions : public MatrixOptionsBase<PlainMatrixOptions>
 {
  public:
-  // Allow access to all MatrixOptionsBase constructors and operators, but with
-  // the PlainMatrixOptions type name.
+  // Allow access to all public MatrixOptionsBase constructors and operators,
+  // but with the PlainMatrixOptions type name.
   using MatrixOptionsBase::MatrixOptionsBase;
   using MatrixOptionsBase::operator=;
 
   // However, C++ does not allow inheriting copy and move constructors or
-  // operators, so forward those manually.
+  // operators, and the inherited protected constructor will still be protected,
+  // so forward those manually.
+  PlainMatrixOptions(const std::optional<bool> noTranspose = std::nullopt) :
+      MatrixOptionsBase(noTranspose) { }
   PlainMatrixOptions(const MatrixOptionsBase<PlainMatrixOptions>& other) :
       MatrixOptionsBase(other) { }
   PlainMatrixOptions(MatrixOptionsBase<PlainMatrixOptions>&& other) :
