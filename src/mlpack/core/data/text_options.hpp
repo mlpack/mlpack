@@ -25,11 +25,11 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
 {
  public:
   // TODO: pass through noTranspose option?
-  TextOptions(bool hasHeaders = defaultHasHeaders,
-              bool semicolon = defaultSemicolon,
-              bool missingToNan = defaultMissingToNan,
-              bool categorical = defaultCategorical,
-              bool missingPolicy = defaultMissingPolicy) :
+  TextOptions(std::optional<bool> hasHeaders = std::nullopt,
+              std::optional<bool> semicolon = std::nullopt,
+              std::optional<bool> missingToNan = std::nullopt,
+              std::optional<bool> categorical = std::nullopt,
+              std::optional<bool> missingPolicy = std::nullopt) :
       MatrixOptionsBase<TextOptions>(),
       hasHeaders(hasHeaders),
       semicolon(semicolon),
@@ -40,25 +40,35 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     // Do Nothing.
   }
 
-  TextOptions(const TextOptions& opts) :
+  TextOptions(const DataOptionsBase<MatrixOptionsBase<TextOptions>>& opts) :
       MatrixOptionsBase<TextOptions>()
   {
     // Delegate to copy operator.
     *this = opts;
   }
 
-  TextOptions(TextOptions&& opts) :
+  TextOptions(DataOptionsBase<MatrixOptionsBase<TextOptions>>&& opts) :
       MatrixOptionsBase<TextOptions>()
   {
     // Delegate to move operator.
     *this = std::move(opts);
   }
 
-  // Inherit base class constructors.
-  using MatrixOptionsBase<TextOptions>::MatrixOptionsBase;
+  template<typename Derived>
+  explicit TextOptions(const DataOptionsBase<Derived>& opts) :
+      MatrixOptionsBase<TextOptions>(opts)
+  { }
 
-  TextOptions& operator=(const TextOptions& other)
+  template<typename Derived>
+  explicit TextOptions(DataOptionsBase<Derived>&& opts) :
+      MatrixOptionsBase<TextOptions>(std::move(opts))
+  { }
+
+  TextOptions& operator=(
+      const DataOptionsBase<MatrixOptionsBase<TextOptions>>& otherIn)
   {
+    const TextOptions& other = static_cast<const TextOptions&>(otherIn);
+
     if (&other == this)
       return *this;
 
@@ -83,8 +93,11 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     return *this;
   }
 
-  TextOptions& operator=(TextOptions&& other)
+  TextOptions& operator=(
+      DataOptionsBase<MatrixOptionsBase<TextOptions>>&& otherIn)
   {
+    TextOptions&& other = static_cast<TextOptions&&>(otherIn);
+
     if (&other == this)
       return *this;
 
@@ -104,84 +117,23 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     return *this;
   }
 
-  template<typename Derived2>
-  TextOptions operator|(MatrixOptionsBase<Derived2>& other)
+  void Combine(const TextOptions& other)
   {
-    TextOptions output(*this);
-    // Keep it like this otherwise we need to overload the |= operator, which
-    // is not necessary outside this context
-    static_cast<MatrixOptionsBase<TextOptions>&>(output) =
-        static_cast<MatrixOptionsBase<TextOptions>&>(*this) |
-        static_cast<MatrixOptionsBase<TextOptions>&>(other);
+    // Combine all boolean options.
+    hasHeaders =
+        DataOptionsBase<MatrixOptionsBase<TextOptions>>::CombineBooleanOption(
+        hasHeaders, other.hasHeaders, "HasHeaders()");
+    missingToNan =
+        DataOptionsBase<MatrixOptionsBase<TextOptions>>::CombineBooleanOption(
+        missingToNan, other.missingToNan, "MissingToNan()");
+    categorical =
+        DataOptionsBase<MatrixOptionsBase<TextOptions>>::CombineBooleanOption(
+        categorical, other.categorical, "Categorical()");
+    semicolon =
+        DataOptionsBase<MatrixOptionsBase<TextOptions>>::CombineBooleanOption(
+        semicolon, other.semicolon, "Semicolon()");
 
-    if (this->hasHeaders.has_value())
-      output.HasHeaders() = this->HasHeaders();
-    else
-      output.HasHeaders() = false;
-
-    if (this->missingToNan.has_value())
-      output.MissingToNan() = this->MissingToNan();
-    else
-      output.MissingToNan() = false;
-
-    if (this->categorical.has_value())
-      output.Categorical() = this->Categorical();
-    else
-      output.Categorical() = false;
-
-    if (this->semicolon.has_value())
-      output.SemiColon() = this->SemiColon();
-    else
-      output.SemiColon() = false;
-
-    return output;
-  }
-
-  TextOptions operator|(TextOptions& other)
-  {
-    TextOptions output(*this);
-
-    static_cast<MatrixOptionsBase<TextOptions>&>(output) =
-        static_cast<MatrixOptionsBase<TextOptions>&>(*this) |
-        static_cast<MatrixOptionsBase<TextOptions>&>(other);
-
-    if (other.hasHeaders.has_value() && !this->hasHeaders.has_value())
-      output.HasHeaders() = other.HasHeaders();
-    else if (!other.hasHeaders.has_value() && this->hasHeaders.has_value())
-      output.HasHeaders() = this->HasHeaders();
-    else if (other.hasHeaders.has_value() && this->hasHeaders.has_value())
-      output.HasHeaders() = this->HasHeaders() | other.HasHeaders();
-    else
-      output.HasHeaders() = false;
-
-    if (other.missingToNan.has_value() && !this->missingToNan.has_value())
-      output.MissingToNan() = other.MissingToNan();
-    else if (!other.missingToNan.has_value() && this->missingToNan.has_value())
-      output.MissingToNan() = this->MissingToNan();
-    else if (other.missingToNan.has_value() && this->missingToNan.has_value())
-      output.MissingToNan() = this->MissingToNan() | other.MissingToNan();
-    else
-      output.MissingToNan() = false;
-
-    if (other.categorical.has_value() && !this->categorical.has_value())
-      output.Categorical() = other.Categorical();
-    else if (!other.categorical.has_value() && this->categorical.has_value())
-      output.Categorical() = this->Categorical();
-    else if (other.categorical.has_value() && this->categorical.has_value())
-      output.Categorical() = this->Categorical() | other.Categorical();
-    else
-      output.Categorical() = false;
-
-    if (other.semicolon.has_value() && !this->semicolon.has_value())
-      output.SemiColon() = other.SemiColon();
-    else if (!other.semicolon.has_value() && this->semicolon.has_value())
-      output.SemiColon() = this->SemiColon();
-    else if (other.semicolon.has_value() && this->semicolon.has_value())
-      output.SemiColon() = this->SemiColon() | other.SemiColon();
-    else
-      output.SemiColon() = false;
-
-    return output;
+    // TODO before PR: we don't combine 'headers' or 'datasetInfo'---should we?
   }
 
   // Print warnings for any members that cannot be represented by a
@@ -214,6 +166,9 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     missingToNan.reset();
     categorical.reset();
     missingPolicy.reset();
+
+    headers.clear();
+    datasetInfo = DatasetInfo();
   }
 
   // Get if the dataset has headers or not.

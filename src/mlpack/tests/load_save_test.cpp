@@ -2536,7 +2536,7 @@ TEST_CASE("DataOptionsTest", "[LoadSaveTest]")
   opts2.Fatal() = false;
   opts1.Format() = FileType::FileTypeUnknown;
   opts2.Format() = FileType::CSVASCII;
-  opts3 = opts1 | opts2;
+  opts3 = opts1 + opts2;
   REQUIRE(opts3.Fatal() == false);
   REQUIRE(opts3.Format() == FileType::CSVASCII);
 
@@ -2544,7 +2544,7 @@ TEST_CASE("DataOptionsTest", "[LoadSaveTest]")
   opts2.Fatal() = false;
   opts1.Format() = FileType::AutoDetect;
   opts2.Format() = FileType::RawASCII;
-  opts3 = opts1 | opts2;
+  opts3 = opts1 + opts2;
   REQUIRE(opts3.Fatal() == true);
   REQUIRE(opts3.Format() == FileType::RawASCII);
 
@@ -2552,7 +2552,7 @@ TEST_CASE("DataOptionsTest", "[LoadSaveTest]")
   opts2.Fatal() = true;
   opts1.Format() = FileType::RawASCII;
   opts2.Format() = FileType::AutoDetect;
-  opts3 = opts1 | opts2;
+  opts3 = opts1 + opts2;
   REQUIRE(opts3.Fatal() == true);
   REQUIRE(opts3.Format() == FileType::RawASCII);
 
@@ -2560,7 +2560,7 @@ TEST_CASE("DataOptionsTest", "[LoadSaveTest]")
   opts2.Fatal() = true;
   opts1.Format() = FileType::CSVASCII;
   opts2.Format() = FileType::FileTypeUnknown;
-  opts3 = opts1 | opts2;
+  opts3 = opts1 + opts2;
   REQUIRE(opts3.Fatal() == true);
   REQUIRE(opts3.Format() == FileType::CSVASCII);
 }
@@ -2573,7 +2573,7 @@ TEST_CASE("MatrixOptionsTest", "[LoadSaveTest]")
   opts1.NoTranspose() = false;
   opts2.Fatal() = false;
   opts2.NoTranspose() = false;
-  opts3 = opts1 | opts2;
+  opts3 = opts1 + opts2;
   REQUIRE(opts3.Fatal() == false);
   REQUIRE(opts3.NoTranspose() == false);
 
@@ -2581,7 +2581,7 @@ TEST_CASE("MatrixOptionsTest", "[LoadSaveTest]")
   opts1.NoTranspose() = true;
   opts2.Fatal() = false;
   opts2.NoTranspose() = false;
-  opts3 = opts1 | opts2;
+  opts3 = opts1 + opts2;
   REQUIRE(opts3.Fatal() == true);
   REQUIRE(opts3.NoTranspose() == true);
 
@@ -2589,7 +2589,7 @@ TEST_CASE("MatrixOptionsTest", "[LoadSaveTest]")
   opts1.NoTranspose() = false;
   opts2.Fatal() = true;
   opts2.NoTranspose() = true;
-  opts3 = opts1 | opts2;
+  opts3 = opts1 + opts2;
   REQUIRE(opts3.Fatal() == true);
   REQUIRE(opts3.NoTranspose() == true);
 
@@ -2597,7 +2597,7 @@ TEST_CASE("MatrixOptionsTest", "[LoadSaveTest]")
   opts1.NoTranspose() = true;
   opts2.Fatal() = true;
   opts2.NoTranspose() = true;
-  opts3 = opts1 | opts2;
+  opts3 = opts1 + opts2;
   REQUIRE(opts3.Fatal() == true);
   REQUIRE(opts3.NoTranspose() == true);
 }
@@ -2618,7 +2618,7 @@ TEST_CASE("TextOptionsTest", "[LoadSaveTest]")
   opts2.HasHeaders() = false;
   opts2.MissingToNan() = false;
   opts2.SemiColon() = false;
-  opts3 = opts1 | opts2;
+  opts3 = opts1 + opts2;
   REQUIRE(opts3.Fatal() == false);
   REQUIRE(opts3.NoTranspose() == false);
   REQUIRE(opts3.Categorical() == false);
@@ -2638,7 +2638,7 @@ TEST_CASE("TextOptionsTest", "[LoadSaveTest]")
   opts2.HasHeaders() = false;
   opts2.MissingToNan() = false;
   opts2.SemiColon() = false;
-  opts3 = opts1 | opts2;
+  opts3 = opts1 + opts2;
   REQUIRE(opts3.Fatal() == true);
   REQUIRE(opts3.NoTranspose() == true);
   REQUIRE(opts3.Categorical() == true);
@@ -2658,7 +2658,7 @@ TEST_CASE("TextOptionsTest", "[LoadSaveTest]")
   opts2.HasHeaders() = true;
   opts2.MissingToNan() = true;
   opts2.SemiColon() = true;
-  opts3 = opts1 | opts2;
+  opts3 = opts1 + opts2;
   REQUIRE(opts3.Fatal() == true);
   REQUIRE(opts3.NoTranspose() == true);
   REQUIRE(opts3.Categorical() == true);
@@ -2678,7 +2678,7 @@ TEST_CASE("TextOptionsTest", "[LoadSaveTest]")
   opts2.HasHeaders() = true;
   opts2.MissingToNan() = true;
   opts2.SemiColon() = true;
-  opts3 = opts1 | opts2;
+  opts3 = opts1 + opts2;
   REQUIRE(opts3.Fatal() == true);
   REQUIRE(opts3.NoTranspose() == true);
   REQUIRE(opts3.Categorical() == true);

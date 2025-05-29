@@ -24,49 +24,68 @@ namespace data {
 template<typename Derived>
 class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
 {
- public:
-  MatrixOptionsBase(bool noTranspose = defaultNoTranspose) :
+ protected:
+  // Users should not construct a MatrixOptionsBase directly.
+  MatrixOptionsBase(std::optional<bool> noTranspose = std::nullopt) :
       DataOptionsBase<MatrixOptionsBase<Derived>>(),
       noTranspose(noTranspose)
-  {
-    // Do Nothing.
-  }
+  { }
 
-  MatrixOptionsBase(const MatrixOptionsBase<Derived>& opts) :
-      DataOptionsBase<MatrixOptionsBase<Derived>>()
+ public:
+  MatrixOptionsBase(const DataOptionsBase<MatrixOptionsBase<Derived>>& opts) :
+      DataOptionsBase<MatrixOptionsBase<Derived>>(),
+      noTranspose()
   {
     // Delegate to copy operator.
     *this = opts;
   }
 
-  MatrixOptionsBase(MatrixOptionsBase<Derived>&& opts) :
-      DataOptionsBase<MatrixOptionsBase<Derived>>()
+  MatrixOptionsBase(DataOptionsBase<MatrixOptionsBase<Derived>>&& opts) :
+      DataOptionsBase<MatrixOptionsBase<Derived>>(),
+      noTranspose()
   {
     // Delegate to move operator.
     *this = std::move(opts);
   }
 
   template<typename Derived2>
-  explicit MatrixOptionsBase(const MatrixOptionsBase<Derived2>& opts) :
-      DataOptionsBase<MatrixOptionsBase<Derived>>()
+  explicit MatrixOptionsBase(
+      const DataOptionsBase<MatrixOptionsBase<Derived2>>& opts) :
+      DataOptionsBase<MatrixOptionsBase<Derived>>(),
+      noTranspose()
   {
     // Delegate to copy operator.
     *this = opts;
   }
 
   template<typename Derived2>
-  explicit MatrixOptionsBase(MatrixOptionsBase<Derived2>&& opts) :
-      DataOptionsBase<MatrixOptionsBase<Derived>>()
+  explicit MatrixOptionsBase(
+      DataOptionsBase<MatrixOptionsBase<Derived2>>&& opts) :
+      DataOptionsBase<MatrixOptionsBase<Derived>>(),
+      noTranspose()
   {
     // Delegate to move operator.
     *this = std::move(opts);
   }
 
-  // Inherit base class constructors.
-  using DataOptionsBase<MatrixOptionsBase<Derived>>::DataOptionsBase;
+  template<typename Derived2>
+  explicit MatrixOptionsBase(const DataOptionsBase<Derived2>& opts) :
+      DataOptionsBase<MatrixOptionsBase<Derived>>(opts),
+      noTranspose()
+  { }
 
-  MatrixOptionsBase& operator=(const MatrixOptionsBase& other)
+  template<typename Derived2>
+  explicit MatrixOptionsBase(DataOptionsBase<Derived2>&& opts) :
+      DataOptionsBase<MatrixOptionsBase<Derived>>(std::move(opts)),
+      noTranspose()
+  { }
+
+  MatrixOptionsBase& operator=(
+      const DataOptionsBase<MatrixOptionsBase<Derived>>& otherIn)
   {
+    const MatrixOptionsBase& other =
+        static_cast<const MatrixOptionsBase&>(otherIn);
+
     if (&other == this)
       return *this;
 
@@ -77,8 +96,11 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
     return *this;
   }
 
-  MatrixOptionsBase& operator=(MatrixOptionsBase&& other)
+  MatrixOptionsBase& operator=(
+      DataOptionsBase<MatrixOptionsBase<Derived>>&& otherIn)
   {
+    MatrixOptionsBase&& other = static_cast<MatrixOptionsBase&&>(otherIn);
+
     if (&other == this)
       return *this;
 
@@ -89,8 +111,12 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
   }
 
   template<typename Derived2>
-  MatrixOptionsBase& operator=(const MatrixOptionsBase<Derived2>& other)
+  MatrixOptionsBase& operator=(
+      const DataOptionsBase<MatrixOptionsBase<Derived2>>& otherIn)
   {
+    const MatrixOptionsBase<Derived2>& other =
+        static_cast<const MatrixOptionsBase<Derived2>&>(otherIn);
+
     if ((void*) &other == (void*) this)
       return *this;
 
@@ -109,8 +135,12 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
   }
 
   template<typename Derived2>
-  MatrixOptionsBase& operator=(MatrixOptionsBase<Derived2>&& other)
+  MatrixOptionsBase& operator=(
+      DataOptionsBase<MatrixOptionsBase<Derived2>>&& otherIn)
   {
+    MatrixOptionsBase<Derived2>&& other =
+        static_cast<MatrixOptionsBase<Derived2>&&>(otherIn);
+
     if ((void*) this == (void*) &other)
       return *this;
 
@@ -126,42 +156,23 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
     return *this;
   }
 
+  // Augment with the options of the other `MatrixOptionsBase`.
   template<typename Derived2>
-  MatrixOptionsBase operator|(DataOptionsBase<Derived2>& other)
+  void Combine(const MatrixOptionsBase<Derived2>& other)
   {
-    MatrixOptionsBase output(*this);
-    // Keep it like this otherwise we need to overload the |= operator, which
-    // is not necessary outside this context
-    static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(output) =
-        static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(*this) |
-        static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(other);
+    // Combine the noTranspose option.
+    noTranspose =
+        DataOptionsBase<MatrixOptionsBase<Derived>>::CombineBooleanOption(
+        noTranspose, other.noTranspose, "NoTranspose()");
 
-    if (this->noTranspose.has_value())
-      output.NoTranspose() = this->NoTranspose();
-    else
-      output.NoTranspose() = false;
+    // If the derived type is the same, we can take any options from it.
+    if (std::is_same_v<Derived, Derived2>)
+    {
+      static_cast<Derived&>(*this).Combine(static_cast<const Derived&>(other));
+    }
 
-    return output;
-  }
-
-  template<typename Derived2>
-  MatrixOptionsBase operator|(MatrixOptionsBase<Derived2>& other)
-  {
-    MatrixOptionsBase output(*this);
-
-    static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(output) =
-        static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(*this) |
-        static_cast<DataOptionsBase<MatrixOptionsBase<Derived>>&>(other);
-
-    if (other.noTranspose.has_value() && !this->noTranspose.has_value())
-      output.NoTranspose() = other.NoTranspose();
-    else if (!other.noTranspose.has_value() && this->noTranspose.has_value())
-      output.NoTranspose() = this->NoTranspose();
-    else if (other.noTranspose.has_value() && this->noTranspose.has_value())
-      output.NoTranspose() = this->NoTranspose() | other.NoTranspose();
-    else
-      output.NoTranspose() = false;
-    return output;
+    // If Derived is not the same as Derived2, we will have printed warnings in
+    // the standalone operator+().
   }
 
   void WarnBaseConversion(const char* dataDescription) const
@@ -208,15 +219,41 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
 // This utility class is meant to be used as the Derived parameter for a matrix
 // option that is not actually a derived type.  It provides the
 // WarnBaseConversion() member, which does nothing.
-class EmptyMatrixOptions : public MatrixOptionsBase<EmptyMatrixOptions>
+class PlainMatrixOptions : public MatrixOptionsBase<PlainMatrixOptions>
 {
  public:
+  // Allow access to all MatrixOptionsBase constructors and operators, but with
+  // the PlainMatrixOptions type name.
+  using MatrixOptionsBase::MatrixOptionsBase;
+  using MatrixOptionsBase::operator=;
+
+  // However, C++ does not allow inheriting copy and move constructors or
+  // operators, so forward those manually.
+  PlainMatrixOptions(const MatrixOptionsBase<PlainMatrixOptions>& other) :
+      MatrixOptionsBase(other) { }
+  PlainMatrixOptions(MatrixOptionsBase<PlainMatrixOptions>&& other) :
+      MatrixOptionsBase(std::move(other)) { }
+
+  PlainMatrixOptions& operator=(
+      const MatrixOptionsBase<PlainMatrixOptions>& other)
+  {
+    return static_cast<PlainMatrixOptions&>(
+        MatrixOptionsBase::operator=(other));
+  }
+
+  PlainMatrixOptions& operator=(MatrixOptionsBase<PlainMatrixOptions>&& other)
+  {
+    return static_cast<PlainMatrixOptions&>(
+        MatrixOptionsBase::operator=(std::move(other)));
+  }
+
   void WarnBaseConversion(const char* /* dataDescription */) const { }
   static const char* DataDescription() { return "general data"; }
   void Reset() { }
+  void Combine(const PlainMatrixOptions&) { }
 };
 
-using MatrixOptions = MatrixOptionsBase<EmptyMatrixOptions>;
+using MatrixOptions = PlainMatrixOptions;
 
 } // namespace data
 } // namespace mlpack
