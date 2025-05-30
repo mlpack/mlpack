@@ -2592,6 +2592,18 @@ TEST_CASE("MatrixOptionsTest", "[LoadSaveTest]")
   opts3 = opts1 + opts2;
   REQUIRE(opts3.Fatal() == true);
   REQUIRE(opts3.NoTranspose() == true);
+
+  opts1.Fatal() = true;
+  opts2.Fatal() = false;
+  opts1.NoTranspose() = true;
+  opts2.NoTranspose() = false;
+  REQUIRE_THROWS_AS(opts3 = opts1 + opts2, std::invalid_argument);
+
+  opts1.Fatal() = false;
+  opts2.Fatal() = true;
+  opts1.NoTranspose() = false;
+  opts2.NoTranspose() = true;
+  REQUIRE_THROWS_AS(opts3 = opts1 + opts2, std::invalid_argument);
 }
 
 TEST_CASE("TextOptionsTest", "[LoadSaveTest]")
@@ -2665,6 +2677,21 @@ TEST_CASE("TextOptionsTest", "[LoadSaveTest]")
   REQUIRE(opts3.HasHeaders() == true);
   REQUIRE(opts3.MissingToNan() == true);
   REQUIRE(opts3.SemiColon() == true);
+
+  opts1.Fatal() = true;
+  opts1.NoTranspose() = true;
+  opts1.Categorical() = true;
+  opts1.HasHeaders() = true;
+  opts1.MissingToNan() = true;
+  opts1.SemiColon() = true;
+  opts2.Fatal() = false;
+  opts2.NoTranspose() = false;
+  opts2.Categorical() = false;
+  opts2.HasHeaders() = false;
+  opts2.MissingToNan() = false;
+  opts2.SemiColon() = false;
+
+  REQUIRE_THROWS_AS(opts3 = opts1 + opts2, std::invalid_argument);
 }
 
 TEST_CASE("MatrixDataOptionsTest", "[LoadSaveTest]")
@@ -2710,6 +2737,14 @@ TEST_CASE("MatrixDataOptionsTest", "[LoadSaveTest]")
   opts3 = opts2 + opts1;
   REQUIRE(opts3.Fatal() == true);
   REQUIRE(opts3.NoTranspose() == true);
+
+  opts1.Fatal() = true;
+  opts2.Fatal() = false;
+  REQUIRE_THROWS_AS(opts3 = opts1 + opts2, std::invalid_argument);
+
+  opts1.Fatal() = false;
+  opts2.Fatal() = true;
+  REQUIRE_THROWS_AS(opts3 = opts1 + opts2, std::invalid_argument);
 }
 
 TEST_CASE("TextDataOptionsTest", "[LoadSaveTest]")
