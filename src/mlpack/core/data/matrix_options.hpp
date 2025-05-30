@@ -68,17 +68,8 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
     *this = std::move(opts);
   }
 
-  template<typename Derived2>
-  explicit MatrixOptionsBase(const DataOptionsBase<Derived2>& opts) :
-      DataOptionsBase<MatrixOptionsBase<Derived>>(opts),
-      noTranspose()
-  { }
-
-  template<typename Derived2>
-  explicit MatrixOptionsBase(DataOptionsBase<Derived2>&& opts) :
-      DataOptionsBase<MatrixOptionsBase<Derived>>(std::move(opts)),
-      noTranspose()
-  { }
+  // Inherit base class constructors and operators.
+  using DataOptionsBase<MatrixOptionsBase<Derived>>::DataOptionsBase;
 
   MatrixOptionsBase& operator=(
       const DataOptionsBase<MatrixOptionsBase<Derived>>& otherIn)

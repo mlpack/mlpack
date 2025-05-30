@@ -54,15 +54,8 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     *this = std::move(opts);
   }
 
-  template<typename Derived>
-  explicit TextOptions(const DataOptionsBase<Derived>& opts) :
-      MatrixOptionsBase<TextOptions>(opts)
-  { }
-
-  template<typename Derived>
-  explicit TextOptions(DataOptionsBase<Derived>&& opts) :
-      MatrixOptionsBase<TextOptions>(std::move(opts))
-  { }
+  // Inherit base class constructors.
+  using MatrixOptionsBase<TextOptions>::MatrixOptionsBase;
 
   TextOptions& operator=(
       const DataOptionsBase<MatrixOptionsBase<TextOptions>>& otherIn)
