@@ -126,7 +126,9 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
         DataOptionsBase<MatrixOptionsBase<TextOptions>>::CombineBooleanOption(
         semicolon, other.semicolon, "Semicolon()");
 
-    // TODO before PR: we don't combine 'headers' or 'datasetInfo'---should we?
+    // Whenever we combine two TextOptions, we reset the headers and datasetInfo.
+    headers.clear();
+    datasetInfo = DatasetInfo();
   }
 
   // Print warnings for any members that cannot be represented by a
