@@ -126,7 +126,8 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
         DataOptionsBase<MatrixOptionsBase<TextOptions>>::CombineBooleanOption(
         semicolon, other.semicolon, "Semicolon()");
 
-    // Whenever we combine two TextOptions, we reset the headers and datasetInfo.
+    // Whenever we combine two TextOptions, we reset the headers and
+    // datasetInfo.
     headers.clear();
     datasetInfo = DatasetInfo();
   }
