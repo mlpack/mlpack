@@ -130,6 +130,17 @@ class NeighborSearch
                  const NeighborSearchMode mode = DUAL_TREE_MODE,
                  const double epsilon = 0);
 
+  // This version is kept around for reverse compatibility; but, if you are
+  // passing a distance, you should use the overload above, which will just use
+  // the distance directly from the given tree.
+  [[deprecated("Will be removed in mlpack 5.0.0.  Use the version without "
+               "`distance` instead (`referenceTree.Distance()` will be used as "
+               "the distance metric).")]]
+  NeighborSearch(Tree referenceTree,
+                 const NeighborSearchMode mode,
+                 const double epsilon,
+                 const DistanceType distance);
+
   /**
    * Create a NeighborSearch object without any reference data.  If Search() is
    * called before a reference set is set with Train(), an exception will be

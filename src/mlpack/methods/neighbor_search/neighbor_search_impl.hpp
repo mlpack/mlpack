@@ -77,6 +77,33 @@ NeighborSearch(Tree referenceTree,
     throw std::invalid_argument("epsilon must be non-negative");
 }
 
+template<typename SortPolicy,
+         typename DistanceType,
+         typename MatType,
+         template<typename TreeDistanceType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
+NeighborSearch<SortPolicy, DistanceType, MatType, TreeType,
+    DualTreeTraversalType, SingleTreeTraversalType>::
+NeighborSearch(Tree referenceTree,
+               const NeighborSearchMode mode,
+               const double epsilon,
+               const DistanceType distance) :
+    referenceTree(new Tree(std::move(referenceTree))),
+    referenceSet(&this->referenceTree->Dataset()),
+    searchMode(mode),
+    epsilon(epsilon),
+    distance(distance),
+    baseCases(0),
+    scores(0),
+    treeNeedsReset(false)
+{
+  if (epsilon < 0)
+    throw std::invalid_argument("epsilon must be non-negative");
+}
+
 // Construct the object without a reference dataset.
 template<typename SortPolicy,
          typename DistanceType,
