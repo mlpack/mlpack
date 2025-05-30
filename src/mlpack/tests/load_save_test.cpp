@@ -2531,7 +2531,7 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
 TEST_CASE("DataOptionsTest", "[LoadSaveTest]")
 {
   data::DataOptions opts1, opts2, opts3;
- 
+
   opts1.Fatal() = false;
   opts2.Fatal() = false;
   opts1.Format() = FileType::FileTypeUnknown;
