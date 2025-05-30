@@ -68,37 +68,46 @@ struct GetCombinedDataOptionsType<DataOptionsBase<Derived>,
 
 // When both types are different, the result is hardcoded.
 template<>
-struct GetCombinedDataOptionsType<DataOptions, MatrixOptions>
+struct GetCombinedDataOptionsType<DataOptionsBase<PlainDataOptions>,
+    DataOptionsBase<MatrixOptionsBase<PlainMatrixOptions>>>
 {
   typedef MatrixOptions result;
 };
 
 template<>
-struct GetCombinedDataOptionsType<MatrixOptions, DataOptions>
+struct GetCombinedDataOptionsType<DataOptionsBase<
+    MatrixOptionsBase<PlainMatrixOptions>>,
+    DataOptionsBase<PlainDataOptions>>
+{
+  typedef MatrixOptions result;
+};
+
+template<>
+struct GetCombinedDataOptionsType<DataOptionsBase<
+    MatrixOptionsBase<TextOptions>>, DataOptionsBase<PlainDataOptions>>
 {
   typedef TextOptions result;
 };
 
 template<>
-struct GetCombinedDataOptionsType<DataOptions, TextOptions>
+struct GetCombinedDataOptionsType<DataOptionsBase<PlainDataOptions>,
+    DataOptionsBase<MatrixOptionsBase<TextOptions>>>
 {
   typedef TextOptions result;
 };
 
 template<>
-struct GetCombinedDataOptionsType<TextOptions, DataOptions>
+struct GetCombinedDataOptionsType<
+    DataOptionsBase<MatrixOptionsBase<PlainMatrixOptions>>,
+    DataOptionsBase<MatrixOptionsBase<TextOptions>>>
 {
   typedef TextOptions result;
 };
 
 template<>
-struct GetCombinedDataOptionsType<MatrixOptions, TextOptions>
-{
-  typedef TextOptions result;
-};
-
-template<>
-struct GetCombinedDataOptionsType<TextOptions, MatrixOptions>
+struct GetCombinedDataOptionsType<
+    DataOptionsBase<MatrixOptionsBase<TextOptions>>,
+    DataOptionsBase<MatrixOptionsBase<PlainMatrixOptions>>>
 {
   typedef TextOptions result;
 };
