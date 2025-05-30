@@ -157,9 +157,9 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
         noTranspose, other.noTranspose, "NoTranspose()");
 
     // If the derived type is the same, we can take any options from it.
-    if (std::is_same_v<Derived, Derived2>)
+    if constexpr (std::is_same_v<Derived, Derived2>)
     {
-      static_cast<Derived&>(*this).Combine(static_cast<const Derived&>(other));
+      static_cast<Derived&>(*this).Combine(static_cast<const Derived2&>(other));
     }
 
     // If Derived is not the same as Derived2, we will have printed warnings in
