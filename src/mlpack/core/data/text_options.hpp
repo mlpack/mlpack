@@ -54,8 +54,16 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     *this = std::move(opts);
   }
 
-  // Inherit base class constructors.
-  using MatrixOptionsBase<TextOptions>::MatrixOptionsBase;
+  // Conversions must be explicit.
+  template<typename Derived2>
+  explicit TextOptions(const DataOptionsBase<Derived2>& other) :
+      MatrixOptionsBase<TextOptions>(other)
+  { }
+
+  template<typename Derived2>
+  explicit TextOptions(DataOptionsBase<Derived2>&& other) :
+      MatrixOptionsBase<TextOptions>(std::move(other))
+  { }
 
   TextOptions& operator=(
       const DataOptionsBase<MatrixOptionsBase<TextOptions>>& otherIn)
