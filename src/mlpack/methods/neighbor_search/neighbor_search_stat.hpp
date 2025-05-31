@@ -14,6 +14,8 @@
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_STAT_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "sort_policies/nearest_neighbor_sort.hpp"
+#include "sort_policies/furthest_neighbor_sort.hpp"
 
 namespace mlpack {
 
@@ -99,6 +101,10 @@ class NeighborSearchStat
     ar(CEREAL_NVP(lastDistance));
   }
 };
+
+// This is the type that must be used as the StatisticType for
+// k-nearest-neighbor search (e.g. the KNN or KNNType<> class).
+using NearestNeighborStat = NeighborSearchStat<NearestNeighborSort>;
 
 } // namespace mlpack
 

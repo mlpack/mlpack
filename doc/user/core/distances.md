@@ -20,6 +20,7 @@ including:
 
 <!-- TODO: better names for each link -->
 
+ * [`KNN`](../methods/knn.md)
  * [`NeighborSearch`](/src/mlpack/methods/neighbor_search/neighbor_search.hpp)
  * [`RangeSearch`](/src/mlpack/methods/range_search/range_search.hpp)
  * [`LMNN`](../methods/lmnn.md)
