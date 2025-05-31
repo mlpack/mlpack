@@ -25,11 +25,11 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
 {
  public:
   // TODO: pass through noTranspose option?
-  TextOptions(bool hasHeaders = defaultHasHeaders,
-              bool semicolon = defaultSemicolon,
-              bool missingToNan = defaultMissingToNan,
-              bool categorical = defaultCategorical,
-              bool missingPolicy = defaultMissingPolicy) :
+  TextOptions(std::optional<bool> hasHeaders = std::nullopt,
+              std::optional<bool> semicolon = std::nullopt,
+              std::optional<bool> missingToNan = std::nullopt,
+              std::optional<bool> categorical = std::nullopt,
+              std::optional<bool> missingPolicy = std::nullopt) :
       MatrixOptionsBase<TextOptions>(),
       hasHeaders(hasHeaders),
       semicolon(semicolon),
@@ -37,28 +37,47 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
       categorical(categorical),
       missingPolicy(missingPolicy)
   {
+    std::cout << "TextOptions default constructor, this " << this << "\n";
     // Do Nothing.
   }
 
-  explicit TextOptions(const TextOptions& opts) :
+  TextOptions(const DataOptionsBase<MatrixOptionsBase<TextOptions>>& opts) :
       MatrixOptionsBase<TextOptions>()
   {
+    std::cout << "TextOptions copy constructor same, this " << this << " other " << &opts << "\n";
     // Delegate to copy operator.
     *this = opts;
   }
 
-  explicit TextOptions(TextOptions&& opts) :
+  TextOptions(DataOptionsBase<MatrixOptionsBase<TextOptions>>&& opts) :
       MatrixOptionsBase<TextOptions>()
   {
+    std::cout << "TextOptions move constructor same, this " << this << " other " << &opts << "\n";
     // Delegate to move operator.
     *this = std::move(opts);
   }
 
-  // Inherit base class constructors.
-  using MatrixOptionsBase<TextOptions>::MatrixOptionsBase;
-
-  TextOptions& operator=(const TextOptions& other)
+  // Conversions must be explicit.
+  template<typename Derived2>
+  explicit TextOptions(const DataOptionsBase<Derived2>& other) :
+      MatrixOptionsBase<TextOptions>(other)
   {
+    std::cout << "TextOptions copy constructor different, this " << this << " other " << &other << "\n";
+  }
+
+  template<typename Derived2>
+  explicit TextOptions(DataOptionsBase<Derived2>&& other) :
+      MatrixOptionsBase<TextOptions>(std::move(other))
+  {
+    std::cout << "TextOptions move constructor different, this " << this << " other " << &other << "\n";
+  }
+
+  TextOptions& operator=(
+      const DataOptionsBase<MatrixOptionsBase<TextOptions>>& otherIn)
+  {
+    std::cout << "TextOptions copy operator same this " << this << " other " << &otherIn << "\n";
+    const TextOptions& other = static_cast<const TextOptions&>(otherIn);
+
     if (&other == this)
       return *this;
 
@@ -83,8 +102,12 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     return *this;
   }
 
-  TextOptions& operator=(TextOptions&& other)
+  TextOptions& operator=(
+      DataOptionsBase<MatrixOptionsBase<TextOptions>>&& otherIn)
   {
+    std::cout << "TextOptions move operator same this " << this << " other " << &otherIn << "\n";
+    TextOptions&& other = static_cast<TextOptions&&>(otherIn);
+
     if (&other == this)
       return *this;
 
@@ -102,6 +125,29 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     MatrixOptionsBase<TextOptions>::operator=(std::move(other));
 
     return *this;
+  }
+
+  void Combine(const TextOptions& other)
+  {
+    std::cout << "TextOptions combine, this " << this << " other " << &other << "\n";
+    // Combine all boolean options.
+    hasHeaders =
+        DataOptionsBase<MatrixOptionsBase<TextOptions>>::CombineBooleanOption(
+        hasHeaders, other.hasHeaders, "HasHeaders()");
+    missingToNan =
+        DataOptionsBase<MatrixOptionsBase<TextOptions>>::CombineBooleanOption(
+        missingToNan, other.missingToNan, "MissingToNan()");
+    categorical =
+        DataOptionsBase<MatrixOptionsBase<TextOptions>>::CombineBooleanOption(
+        categorical, other.categorical, "Categorical()");
+    semicolon =
+        DataOptionsBase<MatrixOptionsBase<TextOptions>>::CombineBooleanOption(
+        semicolon, other.semicolon, "Semicolon()");
+
+    // Whenever we combine two TextOptions, we reset the headers and
+    // datasetInfo.
+    headers.clear();
+    datasetInfo = DatasetInfo();
   }
 
   // Print warnings for any members that cannot be represented by a
@@ -129,11 +175,15 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
 
   void Reset()
   {
+    std::cout << "TextOptions Reset, this " << this << "\n";
     hasHeaders.reset();
     semicolon.reset();
     missingToNan.reset();
     categorical.reset();
     missingPolicy.reset();
+
+    headers.clear();
+    datasetInfo = DatasetInfo();
   }
 
   // Get if the dataset has headers or not.

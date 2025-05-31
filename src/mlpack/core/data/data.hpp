@@ -44,4 +44,6 @@
 #include "types.hpp"
 #include "utilities.hpp"
 
+#include "combine_options.hpp"
+
 #endif
