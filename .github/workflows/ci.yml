@@ -267,8 +267,14 @@ jobs:
           cp -v '${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/bin/x64/* build/Release
           cd build/
           ./Release/mlpack_test.exe -r xml
+          echo "done xml"
+          ./Release/mlpack_test.exe -r junit [LoadSaveTest]
+          echo "done junit1"
           ./Release/mlpack_test.exe -r junit > mlpack_test.junit.xml
+          echo "done junit2"
           # Remove version numbers and other non-xml from the output.
+          cat mlpack_test.junit.xml
+          echo "done cat junit"
           cat mlpack_test.junit.xml | sed '/<?xml/,$!d' > mlpack_test.junit.xml.tmp
           rm mlpack_test.junit.xml
           mv mlpack_test.junit.xml.tmp mlpack_test.junit.xml
