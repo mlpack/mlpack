@@ -40,18 +40,22 @@ class DataOptionsBase
                   const std::optional<FileType> format = std::nullopt) :
       fatal(fatal),
       format(format)
-  { }
+  {
+    std::cout << "DataOptions default constructor, this " << this << "\n";
+  }
 
  public:
   template<typename Derived2>
   explicit DataOptionsBase(const DataOptionsBase<Derived2>& opts)
   {
+    std::cout << "DataOptions conversion copy constructor, this " << this << " other " << &opts << "\n";
     CopyOptions(opts);
   }
 
   template<typename Derived2>
   explicit DataOptionsBase(DataOptionsBase<Derived2>&& opts)
   {
+    std::cout << "DataOptions conversion move constructor, this " << this << " other " << &opts << "\n";
     MoveOptions(std::move(opts));
   }
 
@@ -62,6 +66,7 @@ class DataOptionsBase
   template<typename Derived2>
   DataOptionsBase& operator=(const DataOptionsBase<Derived2>& other)
   {
+    std::cout << "DataOptions conversion copy operator, this " << this << " other " << &other << "\n";
     if ((void*) &other == (void*) this)
       return *this;
 
@@ -77,6 +82,7 @@ class DataOptionsBase
   template<typename Derived2>
   DataOptionsBase& operator=(DataOptionsBase<Derived2>&& other)
   {
+    std::cout << "DataOptions conversion move operator, this " << this << " other " << &other << "\n";
     if ((void*) &other != (void*) this)
       return *this;
 
@@ -92,6 +98,7 @@ class DataOptionsBase
   template<typename Derived2>
   DataOptionsBase& operator+=(const DataOptionsBase<Derived2>& other)
   {
+    std::cout << "DataOptions operator+=, this " << this << " other " << &other << "\n";
     Combine(other);
     return *this;
   }
@@ -100,6 +107,7 @@ class DataOptionsBase
   template<typename Derived2>
   void Combine(const DataOptionsBase<Derived2>& other)
   {
+    std::cout << "DataOptions combine, this " << this << "\n";
     // Combine the fatal option.
     fatal = CombineBooleanOption(fatal, other.fatal, "Fatal()");
 
@@ -138,6 +146,7 @@ class DataOptionsBase
     // If the derived type is the same, we can take any options from it.
     if constexpr (std::is_same_v<Derived, Derived2>)
     {
+      std::cout << "do derived combine\n";
       static_cast<Derived&>(*this).Combine(static_cast<const Derived2&>(other));
     }
 
@@ -295,21 +304,32 @@ class PlainDataOptions : public DataOptionsBase<PlainDataOptions>
   // protected, so forward those manually.
   PlainDataOptions(const std::optional<bool> fatal = std::nullopt,
                    const std::optional<FileType> format = std::nullopt) :
-      DataOptionsBase(fatal, format) { }
+      DataOptionsBase(fatal, format)
+  {
+    std::cout << "PlainDataOptions default constructor, this " << this << "\n";
+  }
 
   PlainDataOptions(const DataOptionsBase<PlainDataOptions>& other) :
-      DataOptionsBase(other) { }
+      DataOptionsBase(other)
+  {
+    std::cout << "PlainDataOptions copy constructor, this " << this << " other " << &other << "\n";
+  }
 
   PlainDataOptions(DataOptionsBase<PlainDataOptions>&& other) :
-      DataOptionsBase(std::move(other)) { }
+      DataOptionsBase(std::move(other))
+  {
+    std::cout << "PlainDataOptions move constructor, this " << this << " other " << &other << "\n";
+  }
 
   PlainDataOptions& operator=(const DataOptionsBase<PlainDataOptions>& other)
   {
+    std::cout << "PlainDataOptions copy operator, this " << this << " other " << &other << "\n";
     return static_cast<PlainDataOptions&>(DataOptionsBase::operator=(other));
   }
 
   PlainDataOptions& operator=(DataOptionsBase<PlainDataOptions>&& other)
   {
+    std::cout << "PlainDataOptions move operator, this " << this << " other " << &other << "\n";
     return static_cast<PlainDataOptions&>(
         DataOptionsBase::operator=(std::move(other)));
   }

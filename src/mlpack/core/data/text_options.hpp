@@ -37,12 +37,14 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
       categorical(categorical),
       missingPolicy(missingPolicy)
   {
+    std::cout << "TextOptions default constructor, this " << this << "\n";
     // Do Nothing.
   }
 
   TextOptions(const DataOptionsBase<MatrixOptionsBase<TextOptions>>& opts) :
       MatrixOptionsBase<TextOptions>()
   {
+    std::cout << "TextOptions copy constructor same, this " << this << " other " << &opts << "\n";
     // Delegate to copy operator.
     *this = opts;
   }
@@ -50,6 +52,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   TextOptions(DataOptionsBase<MatrixOptionsBase<TextOptions>>&& opts) :
       MatrixOptionsBase<TextOptions>()
   {
+    std::cout << "TextOptions move constructor same, this " << this << " other " << &opts << "\n";
     // Delegate to move operator.
     *this = std::move(opts);
   }
@@ -58,16 +61,21 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   template<typename Derived2>
   explicit TextOptions(const DataOptionsBase<Derived2>& other) :
       MatrixOptionsBase<TextOptions>(other)
-  { }
+  {
+    std::cout << "TextOptions copy constructor different, this " << this << " other " << &other << "\n";
+  }
 
   template<typename Derived2>
   explicit TextOptions(DataOptionsBase<Derived2>&& other) :
       MatrixOptionsBase<TextOptions>(std::move(other))
-  { }
+  {
+    std::cout << "TextOptions move constructor different, this " << this << " other " << &other << "\n";
+  }
 
   TextOptions& operator=(
       const DataOptionsBase<MatrixOptionsBase<TextOptions>>& otherIn)
   {
+    std::cout << "TextOptions copy operator same this " << this << " other " << &otherIn << "\n";
     const TextOptions& other = static_cast<const TextOptions&>(otherIn);
 
     if (&other == this)
@@ -97,6 +105,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   TextOptions& operator=(
       DataOptionsBase<MatrixOptionsBase<TextOptions>>&& otherIn)
   {
+    std::cout << "TextOptions move operator same this " << this << " other " << &otherIn << "\n";
     TextOptions&& other = static_cast<TextOptions&&>(otherIn);
 
     if (&other == this)
@@ -120,6 +129,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
 
   void Combine(const TextOptions& other)
   {
+    std::cout << "TextOptions combine, this " << this << " other " << &other << "\n";
     // Combine all boolean options.
     hasHeaders =
         DataOptionsBase<MatrixOptionsBase<TextOptions>>::CombineBooleanOption(
@@ -165,6 +175,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
 
   void Reset()
   {
+    std::cout << "TextOptions Reset, this " << this << "\n";
     hasHeaders.reset();
     semicolon.reset();
     missingToNan.reset();

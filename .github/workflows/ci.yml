@@ -266,9 +266,7 @@ jobs:
           # we need to run with.
           cp -v '${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/bin/x64/* build/Release
           cd build/
-          ./Release/mlpack_test.exe -r xml || true
-          echo "done xml"
-          ./Release/mlpack_test.exe -r junit [LoadSaveTest] || true
+          ./Release/mlpack_test.exe -r junit MatrixOptionsTest || true
           echo "done junit1"
           ./Release/mlpack_test.exe -r junit > mlpack_test.junit.xml || true
           echo "done junit2"
