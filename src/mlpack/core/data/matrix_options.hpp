@@ -36,14 +36,14 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
       DataOptionsBase<MatrixOptionsBase<Derived>>()
   {
     // Delegate to copy operator.
-    *this = opts;
+    MatrixOptionsBase<Derived>::operator=(opts);
   }
 
   MatrixOptionsBase(DataOptionsBase<MatrixOptionsBase<Derived>>&& opts) :
       DataOptionsBase<MatrixOptionsBase<Derived>>()
   {
     // Delegate to move operator.
-    *this = std::move(opts);
+    MatrixOptionsBase<Derived>::operator=(std::move(opts));
   }
 
   template<typename Derived2>
