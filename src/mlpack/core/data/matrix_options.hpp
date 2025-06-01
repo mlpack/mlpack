@@ -129,7 +129,7 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
   }
 
   template<typename Derived2>
-  MatrixOptionsBase(DataOptionsBase<MatrixOptionsBase<Derived2>>&& other) :
+  MatrixOptionsBase(DataOptionsBase<MatrixOptionsBase<Derived2>>&& opts) :
       DataOptionsBase<MatrixOptionsBase<Derived>>()
   {
     // Delegate to move operator.
