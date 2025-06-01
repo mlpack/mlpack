@@ -25,6 +25,7 @@ public:
   std::vector<size_t>& InputDimensions()
   {
     inputDimensionsAreSet = false;
+    graphIsSet = false;
     return inputDimensions;
   }
 
@@ -32,7 +33,8 @@ public:
 
   const std::vector<Layer<MatType>*>& Network()
   {
-    CheckGraph();
+    if (!graphIsSet)
+      CheckGraph();
     return layers;
   }
 
@@ -69,6 +71,7 @@ public:
   InitializationRuleType initializeRule;
 
   bool inputDimensionsAreSet;
+  bool graphIsSet;
   std::vector<size_t> inputDimensions;
 
   std::vector<Layer<MatType>*> layers;

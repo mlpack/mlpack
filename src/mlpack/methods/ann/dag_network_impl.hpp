@@ -242,7 +242,8 @@ void DAGNetwork<
     MatType
 >::ComputeOutputDimensions()
 {
-  // assuming topological sorted layers
+  if (!graphIsSet)
+    CheckGraph();
   std::stack<std::pair<Layer<MatType>*, bool>> exploring;
   std::unordered_set<Layer<MatType>*> explored;
   exploring.push(std::make_pair(layers.back(), false));
@@ -352,7 +353,6 @@ void DAGNetwork<
   inputDimensionsAreSet = true;
 }
 
-
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
@@ -362,14 +362,12 @@ const size_t DAGNetwork<
     MatType
 >::WeightSize() const
 {
-  // FIXME: assumed toposorted
-
   size_t total = 0;
   for (size_t i = 0; i < layers.size(); i++)
     total += layers[i]->WeightSize();
   return total;
-
 }
+
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
@@ -379,7 +377,8 @@ void DAGNetwork<
     MatType
 >::SetWeights(const MatType& weightsIn)
 {
-  // FIXME: assumed toposorted
+  if (!graphIsSet)
+    CheckGraph();
 
   size_t offset = 0;
   const size_t totalWeightSize = WeightSize();
@@ -480,7 +479,9 @@ void DAGNetwork<
     MatType
 >::InitializeForwardPassMemory(const size_t batchSize)
 {
-  // assumed toposorted and computeoutputdimensions
+  if (!graphIsSet)
+    CheckGraph();
+
   size_t totalOutputSize = 0;
   for (size_t i = 0; i < layers.size() - 1; i++)
   {
