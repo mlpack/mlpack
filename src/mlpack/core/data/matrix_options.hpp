@@ -85,6 +85,20 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
     return *this;
   }
 
+  template<typename Derived2>
+  MatrixOptionsBase& operator=(const DataOptionsBase<Derived2>& otherIn)
+  {
+    // Call out to base operator=.
+    return static_cast<MatrixOptionsBase&>(DataOptionsBase<MatrixOptionsBase>::operator=(otherIn));
+  }
+
+  template<typename Derived2>
+  MatrixOptionsBase& operator=(DataOptionsBase<Derived2>&& otherIn)
+  {
+    // Call out to base operator=.
+    return static_cast<MatrixOptionsBase&>(DataOptionsBase<MatrixOptionsBase>::operator=(std::move(otherIn)));
+  }
+
   MatrixOptionsBase& operator=(
       DataOptionsBase<MatrixOptionsBase<Derived>>&& otherIn)
   {

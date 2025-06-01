@@ -127,6 +127,18 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     return *this;
   }
 
+  template<typename Derived2>
+  TextOptions& operator=(const DataOptionsBase<Derived2>& other)
+  {
+    return static_cast<TextOptions&>(MatrixOptionsBase<TextOptions>::operator=(other));
+  }
+
+  template<typename Derived2>
+  TextOptions& operator=(DataOptionsBase<Derived2>&& other)
+  {
+    return static_cast<TextOptions&>(MatrixOptionsBase<TextOptions>::operator=(std::move(other)));
+  }
+
   void Combine(const TextOptions& other)
   {
     std::cout << "TextOptions combine, this " << this << " other " << &other << "\n";
