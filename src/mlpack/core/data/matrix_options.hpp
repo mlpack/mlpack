@@ -39,7 +39,7 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
   {
     // Delegate to copy operator.
     std::cout << "MatrixOptions copy constructor same, this " << this << " other " << &opts << "\n";
-    MatrixOptionsBase<Derived>::operator=(opts);
+    *this = opts;
   }
 
   MatrixOptionsBase(DataOptionsBase<MatrixOptionsBase<Derived>>&& opts) :
@@ -47,7 +47,7 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
   {
     // Delegate to move operator.
     std::cout << "MatrixOptions move constructor same, this " << this << " other " << &opts << "\n";
-    MatrixOptionsBase<Derived>::operator=(std::move(opts));
+    *this = std::move(opts);
   }
 
   template<typename Derived2>
@@ -99,8 +99,6 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
 
     return *this;
   }
-
-  using DataOptionsBase<MatrixOptionsBase>::operator=;
 
   template<typename Derived2>
   MatrixOptionsBase& operator=(
