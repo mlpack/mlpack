@@ -263,6 +263,7 @@ void DAGNetwork<
     {
       assert(inputs++ == 0);
       currentLayer->InputDimensions() = inputDimensions;
+      currentLayer->ComputeOutputDimensions();
       explored.insert(currentLayer);
     }
     else if (alreadyExplored)
@@ -494,7 +495,7 @@ void DAGNetwork<
       size_t concatSize = layers[i]->InputDimensions()[0];
       for (size_t j = 1; j < layers[i]->InputDimensions().size(); j++)
       {
-        concatSize += layers[i]->InputDimensions()[j];
+        concatSize *= layers[i]->InputDimensions()[j];
       }
       totalConcatSize += concatSize;
     }
@@ -534,7 +535,7 @@ void DAGNetwork<
     {
       size_t concatSize = currentLayer->InputDimensions()[0];
       for (size_t j = 1; j < currentLayer->InputDimensions().size(); j++)
-        concatSize += currentLayer->InputDimensions()[j];
+        concatSize *= currentLayer->InputDimensions()[j];
       MakeAlias(layerInputs[i-1], layerOutputMatrix, concatSize, batchSize, offset);
       offset += concatSize;
     }
@@ -550,6 +551,8 @@ void DAGNetwork<
     MatType
 >::Forward(const MatType& input, MatType& output)
 {
+  output.set_size(layers.back()->OutputSize(), input.n_cols);
+
   if (layers.size() > 1)
   {
     InitializeForwardPassMemory(input.n_cols);
@@ -560,6 +563,8 @@ void DAGNetwork<
       assert(parents.size() > 0);
       if (parents.size() > 1)
       {
+        parentOutputAliases.clear();
+        parentOutputAliases.resize(parents.size());
         size_t axis = layerAxes[layers[i]];
         //concat: setup layerInputs[i-1]
         size_t rows = 1;
@@ -571,7 +576,6 @@ void DAGNetwork<
           slices *= layers[i]->InputDimensions()[j];
 
 
-        std::vector<CubeType> parentOutputAliases(parents.size());
         for (size_t j = 0; j < parents.size(); j++)
         {
           size_t cols = parents[j]->OutputDimensions()[axis];
@@ -579,7 +583,6 @@ void DAGNetwork<
           MakeAlias(parentOutputAliases[j], parentOutput, rows, cols, slices);
         }
 
-        CubeType inputAlias;
         MakeAlias(inputAlias, layerInputs[i-1], rows, layers[i]->InputDimensions()[axis], slices);
 
         size_t startCol = 0;

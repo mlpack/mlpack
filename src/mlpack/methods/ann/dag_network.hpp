@@ -30,7 +30,8 @@ public:
 
   const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
 
-  const std::vector<Layer<MatType>*>& Network() {
+  const std::vector<Layer<MatType>*>& Network()
+  {
     CheckGraph();
     return layers;
   }
@@ -77,6 +78,9 @@ public:
 
   MatType parameters;
   bool layerMemoryIsSet;
+
+  CubeType inputAlias;
+  std::vector<CubeType> parentOutputAliases;
 
   MatType layerOutputMatrix;
   std::vector<MatType> layerInputs;
