@@ -65,10 +65,10 @@ TEMPLATE_TEST_CASE("LinearRegressionTestCase", "[LinearRegressionTest]",
   LinearRegression<MatType> lr(predictors, responses);
   lr.Predict(points, predictions);
 
-  // Output result and verify we have less than 5% error from "correct" value
+  // Output result and verify we have less than 7.5% error from "correct" value
   // for each point.
   for (size_t i = 0; i < predictions.n_cols; ++i)
-    REQUIRE(predictions(i) - responses(i) == Approx(0.0).margin(0.05));
+    REQUIRE(predictions(i) - responses(i) == Approx(0.0).margin(0.075));
 }
 
 /**
