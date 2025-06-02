@@ -15,6 +15,8 @@
 
 #include "multi_layer.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 template<typename MatType>
@@ -136,11 +138,11 @@ template<typename MatType>
 void MultiLayer<MatType>::Forward(
     const MatType& input, MatType& output)
 {
-  Forward(input, output, 0, network.size() - 1);
+  PartialForward(input, output, 0, network.size() - 1);
 }
 
 template<typename MatType>
-void MultiLayer<MatType>::Forward(
+void MultiLayer<MatType>::PartialForward(
     const MatType& input,
     MatType& output,
     const size_t start,
@@ -277,11 +279,11 @@ void MultiLayer<MatType>::CustomInitialize(
     Log::Assert(start + weightSize <= totalWeightSize,
         "FNN::CustomInitialize(): parameter size does not match total layer "
         "weight size!");
-    
+
     MatType WTemp;
     MakeAlias(WTemp, W, weightSize, 1, start);
     network[i]->CustomInitialize(WTemp, weightSize);
-    
+
     start += weightSize;
   }
 

@@ -35,10 +35,13 @@
 #include <mlpack/prereqs.hpp>
 
 // Now the core mlpack classes.
+#include <mlpack/core/stb/stb.hpp>
 #include <mlpack/core/util/arma_traits.hpp>
 #include <mlpack/core/util/ens_traits.hpp>
+#include <mlpack/core/util/first_element_is_arma.hpp>
 #include <mlpack/core/util/using.hpp>
 #include <mlpack/core/util/conv_to.hpp>
+#include <mlpack/core/util/distr_param.hpp>
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/io.hpp>
 #include <mlpack/core/data/data.hpp>
@@ -49,7 +52,8 @@
   #include <mlpack/core/util/backtrace.hpp>
 #endif
 
-#include <mlpack/core/dists/dists.hpp>
+#include <mlpack/core/distances/distances.hpp>
+#include <mlpack/core/distributions/distributions.hpp>
 #include <mlpack/core/kernels/kernels.hpp>
 #include <mlpack/core/metrics/metrics.hpp>
 #include <mlpack/core/tree/tree.hpp>

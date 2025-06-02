@@ -31,11 +31,10 @@ inline arma::Mat<eT> ColumnCovariance(const arma::Mat<eT>& x,
 
   if (x.n_elem > 0)
   {
-    const arma::Mat<eT>& xAlias = (x.n_cols == 1) ?
-        arma::Mat<eT>(const_cast<eT*>(x.memptr()), x.n_cols, x.n_rows, false,
-            false) :
-        arma::Mat<eT>(const_cast<eT*>(x.memptr()), x.n_rows, x.n_cols, false,
-            false);
+    const arma::Mat<eT> xAlias;
+    MakeAlias(const_cast<arma::Mat<eT>&>(xAlias), x,
+        (x.n_cols == 1) ? x.n_cols : x.n_rows,
+        (x.n_cols == 1) ? x.n_rows : x.n_cols, 0, false);
 
     const size_t n = xAlias.n_cols;
     const eT normVal = (normType == 0) ? ((n > 1) ? eT(n - 1) : eT(1)) : eT(n);
@@ -59,7 +58,7 @@ inline arma::Mat<std::complex<T>> ColumnCovariance(
     Log::Fatal << "ColumnCovariance(): normType must be 0 or 1" << std::endl;
   }
 
-  typedef typename std::complex<T> eT;
+  using eT = std::complex<T>;
 
   arma::Mat<eT> out;
 

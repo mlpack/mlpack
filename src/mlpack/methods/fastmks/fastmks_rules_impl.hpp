@@ -141,7 +141,7 @@ double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
       const double delta = (1 - 0.5 * squaredDist);
       if (lastKernel <= delta)
       {
-        const double gamma = combinedDistBound * 
+        const double gamma = combinedDistBound *
             std::sqrt(1 - 0.25 * squaredDist);
         maxKernelBound = lastKernel * delta +
              gamma * std::sqrt(1 - std::pow(lastKernel, 2.0));
@@ -371,7 +371,7 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
     if (kernelEval <= (1 - 0.5 * bothSqDist))
     {
       const double queryDelta = (1 - 0.5 * querySqDist);
-      const double queryGamma = queryDescDist * 
+      const double queryGamma = queryDescDist *
           std::sqrt(1 - 0.25 * querySqDist);
       const double refDelta = (1 - 0.5 * refSqDist);
       const double refGamma = refDescDist * std::sqrt(1 - 0.25 * refSqDist);
@@ -476,7 +476,7 @@ double FastMKSRules<KernelType, TreeType>::CalculateBound(TreeType& queryNode)
     // where p_j^*(p_q) is the j'th kernel candidate for query point p_q and
     // k_j^*(p_q) is K(p_q, p_j^*(p_q)).
     double worstPointCandidateKernel = DBL_MAX;
-    typedef std::vector<Candidate>::const_iterator iter;
+    using iter = std::vector<Candidate>::const_iterator;
     for (iter it = candidatesPoints.begin(); it != candidatesPoints.end(); ++it)
     {
       const double candidateKernel = it->first - queryDescendantDistance *

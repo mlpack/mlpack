@@ -62,6 +62,7 @@
     CEREAL_REGISTER_TYPE(mlpack::Linear3DType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::LinearType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::LinearNoBiasType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::LinearRecurrentType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::LogSoftMaxType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::LSTMType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::MaxPoolingType<__VA_ARGS__>); \

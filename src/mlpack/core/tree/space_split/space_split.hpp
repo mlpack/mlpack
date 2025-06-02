@@ -18,7 +18,7 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename MatType>
+template<typename DistanceType, typename MatType>
 class SpaceSplit
 {
  public:
@@ -35,11 +35,11 @@ class SpaceSplit
    * @return Flag to determine if it is possible.
    */
   static bool GetProjVector(
-      const HRectBound<MetricType>& bound,
+      const HRectBound<DistanceType, typename MatType::elem_type>& bound,
       const MatType& data,
       const arma::Col<size_t>& points,
       AxisParallelProjVector& projVector,
-      double& midValue);
+      typename MatType::elem_type& midValue);
 
   /**
    * Create a projection vector based on the given set of point. We efficiently
@@ -58,8 +58,8 @@ class SpaceSplit
       const BoundType& bound,
       const MatType& data,
       const arma::Col<size_t>& points,
-      ProjVector& projVector,
-      double& midValue);
+      ProjVector<MatType>& projVector,
+      typename MatType::elem_type& midValue);
 };
 
 } // namespace mlpack

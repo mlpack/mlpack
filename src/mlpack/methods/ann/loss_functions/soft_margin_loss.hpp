@@ -85,7 +85,7 @@ class SoftMarginLossType
 }; // class SoftMarginLossType
 
 // Default typedef for typical `arma::mat` usage.
-typedef SoftMarginLossType<arma::mat> SoftMarginLoss;
+using SoftMarginLoss = SoftMarginLossType<arma::mat>;
 
 } // namespace mlpack
 

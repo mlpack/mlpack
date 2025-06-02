@@ -25,10 +25,10 @@ namespace mlpack {
  * when performing rank-approximate search via random-sampling.
  *
  * @tparam SortPolicy The sort policy for distances.
- * @tparam MetricType The metric to use for computation.
+ * @tparam DistanceType The distance metric to use for computation.
  * @tparam TreeType The tree type to use; must adhere to the TreeType API.
  */
-template<typename SortPolicy, typename MetricType, typename TreeType>
+template<typename SortPolicy, typename DistanceType, typename TreeType>
 class RASearchRules
 {
  public:
@@ -39,7 +39,7 @@ class RASearchRules
    * @param referenceSet Set of reference data.
    * @param querySet Set of query data.
    * @param k Number of neighbors to search for.
-   * @param metric Instantiated metric.
+   * @param distance Instantiated distance metric.
    * @param tau The rank-approximation in percentile of the data.
    * @param alpha The desired success probability.
    * @param naive If true, the rank-approximate search will be performed by
@@ -56,7 +56,7 @@ class RASearchRules
   RASearchRules(const arma::mat& referenceSet,
                 const arma::mat& querySet,
                 const size_t k,
-                MetricType& metric,
+                DistanceType& distance,
                 const double tau = 5,
                 const double alpha = 0.95,
                 const bool naive = false,
@@ -235,7 +235,7 @@ class RASearchRules
       return sum(numSamplesMade);
   }
 
-  typedef typename mlpack::TraversalInfo<TreeType> TraversalInfoType;
+  using TraversalInfoType = mlpack::TraversalInfo<TreeType>;
 
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
@@ -253,7 +253,7 @@ class RASearchRules
   const arma::mat& querySet;
 
   //! Candidate represents a possible candidate neighbor (distance, index).
-  typedef std::pair<double, size_t> Candidate;
+  using Candidate = std::pair<double, size_t>;
 
   //! Compare two candidates based on the distance.
   struct CandidateCmp {
@@ -264,8 +264,8 @@ class RASearchRules
   };
 
   //! Use a priority queue to represent the list of candidate neighbors.
-  typedef std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp>
-      CandidateList;
+  using CandidateList = std::priority_queue<Candidate, std::vector<Candidate>,
+      CandidateCmp>;
 
   //! Set of candidate neighbors for each point.
   std::vector<CandidateList> candidates;
@@ -273,8 +273,8 @@ class RASearchRules
   //! Number of neighbors to search for.
   const size_t k;
 
-  //! The instantiated metric.
-  MetricType& metric;
+  //! The instantiated distance metric.
+  DistanceType& distance;
 
   //! Whether to sample at leaves or just use all of it.
   bool sampleAtLeaves;

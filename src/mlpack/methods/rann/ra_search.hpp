@@ -35,7 +35,7 @@
 namespace mlpack {
 
 // Forward declaration.
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 class LeafSizeRAWrapper;
@@ -61,26 +61,26 @@ class LeafSizeRAWrapper;
  * RASearch is currently known to not work with ball trees (#356).
  *
  * @tparam SortPolicy The sort policy for distances; see NearestNeighborSort.
- * @tparam MetricType The metric to use for computation.
+ * @tparam DistanceType The distance metric to use for computation.
  * @tparam TreeType The tree type to use.
  */
 template<typename SortPolicy = NearestNeighborSort,
-         typename MetricType = EuclideanDistance,
+         typename DistanceType = EuclideanDistance,
          typename MatType = arma::mat,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType = KDTree>
 class RASearch
 {
  public:
   //! Convenience typedef.
-  typedef TreeType<MetricType, RAQueryStat<SortPolicy>, MatType> Tree;
+  using Tree = TreeType<DistanceType, RAQueryStat<SortPolicy>, MatType>;
 
   /**
    * Initialize the RASearch object, passing both a reference dataset (this is
    * the dataset that will be searched).  Optionally, perform the computation in
    * naive mode or single-tree mode.  An initialized distance metric can be
-   * given, for cases where the metric has internal data (i.e. the
+   * given, for cases where the distance metric has internal data (i.e. the
    * distance::MahalanobisDistance class).
    *
    * This method will copy the matrices to internal copies, which are rearranged
@@ -109,7 +109,7 @@ class RASearch
    * @param singleMode If true, single-tree search will be used (as opposed to
    *      dual-tree search).  This is useful when Search() will be called with
    *      few query points.
-   * @param metric An optional instance of the MetricType class.
+   * @param distance An optional instance of the DistanceType class.
    * @param tau The rank-approximation in percentile of the data. The default
    *     value is 5%.
    * @param alpha The desired success probability. The default value is 0.95.
@@ -129,7 +129,7 @@ class RASearch
            const bool sampleAtLeaves = false,
            const bool firstLeafExact = false,
            const size_t singleSampleLimit = 20,
-           const MetricType metric = MetricType());
+           const DistanceType distance = DistanceType());
 
   /**
    * Initialize the RASearch object with the given pre-constructed reference
@@ -176,7 +176,7 @@ class RASearch
    *     if there exists one.  This defaults to 'false' for now.
    * @param singleSampleLimit The limit on the largest node that can be
    *     approximated by sampling. This defaults to 20.
-   * @param metric Instantiated distance metric.
+   * @param distance Instantiated distance metric.
    */
   RASearch(Tree* referenceTree,
            const bool singleMode = false,
@@ -185,7 +185,7 @@ class RASearch
            const bool sampleAtLeaves = false,
            const bool firstLeafExact = false,
            const size_t singleSampleLimit = 20,
-           const MetricType metric = MetricType());
+           const DistanceType distance = DistanceType());
 
   /**
    * Create an RASearch object with no reference data.  If Search() is called
@@ -204,7 +204,7 @@ class RASearch
    *     if there exists one.  This defaults to 'false' for now.
    * @param singleSampleLimit The limit on the largest node that can be
    *     approximated by sampling. This defaults to 20.
-   * @param metric Instantiated distance metric.
+   * @param distance Instantiated distance metric.
    */
   RASearch(const bool naive = false,
            const bool singleMode = false,
@@ -213,7 +213,7 @@ class RASearch
            const bool sampleAtLeaves = false,
            const bool firstLeafExact = false,
            const size_t singleSampleLimit = 20,
-           const MetricType metric = MetricType());
+           const DistanceType distance = DistanceType());
 
   /**
    * Delete the RASearch object. The tree is the only member we are
@@ -388,8 +388,8 @@ class RASearch
   //! approximated by sampling.
   size_t singleSampleLimit;
 
-  //! Instantiation of kernel.
-  MetricType metric;
+  //! Instantiation of distance metric.
+  DistanceType distance;
 
   //! For access to mappings when building models.
   friend class LeafSizeRAWrapper<TreeType>;

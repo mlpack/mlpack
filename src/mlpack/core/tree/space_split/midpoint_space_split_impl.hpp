@@ -18,18 +18,18 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename MatType>
+template<typename DistanceType, typename MatType>
 template<typename HyperplaneType>
-bool MidpointSpaceSplit<MetricType, MatType>::SplitSpace(
+bool MidpointSpaceSplit<DistanceType, MatType>::SplitSpace(
     const typename HyperplaneType::BoundType& bound,
     const MatType& data,
     const arma::Col<size_t>& points,
     HyperplaneType& hyp)
 {
   typename HyperplaneType::ProjVectorType projVector;
-  double midValue;
+  typename MatType::elem_type midValue;
 
-  if (!SpaceSplit<MetricType, MatType>::GetProjVector(bound, data, points,
+  if (!SpaceSplit<DistanceType, MatType>::GetProjVector(bound, data, points,
       projVector, midValue))
     return false;
 

@@ -124,8 +124,8 @@ BINDING_SEE_ALSO("Kernel density estimation on Wikipedia",
 BINDING_SEE_ALSO("Tree-Independent Dual-Tree Algorithms",
     "https://arxiv.org/pdf/1304.4327");
 BINDING_SEE_ALSO("Fast High-dimensional Kernel Summations Using the Monte Carlo"
-    " Multipole Method", "http://papers.nips.cc/paper/3539-fast-high-"
-    "dimensional-kernel-summations-using-the-monte-carlo-multipole-method.pdf");
+    " Multipole Method", "https://proceedings.neurips.cc/paper_files/"
+    "paper/2008/file/39059724f73a9969845dfe4146c5660e-Paper.pdf");
 BINDING_SEE_ALSO("KDE C++ class documentation",
     "@src/mlpack/methods/kde/kde.hpp");
 
@@ -246,8 +246,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RequireParamValue<int>(params, "initial_sample_size",
       [](int x){ return x > 0; },
       true, "initial sample size must be greater than 0");
-  RequireParamValue<double>(params, "mc_entry_coef", [](double x){return x >= 1;},
-      true, "Monte Carlo entry coefficient must be greater than or equal to 1");
+  RequireParamValue<double>(params, "mc_entry_coef",
+      [](double x){ return x >= 1; }, true,
+      "Monte Carlo entry coefficient must be greater than or equal to 1");
   RequireParamValue<double>(params, "mc_break_coef",
       [](double x){ return x > 0 && x <= 1; }, true,
       "Monte Carlo break coefficient must be greater than 0 and less than "

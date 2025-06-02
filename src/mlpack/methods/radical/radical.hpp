@@ -71,29 +71,55 @@ class Radical
    * @param matW Estimated unmixing matrix, where matY = matW * matX.
    * @param timers Optional Timers struct for storing timing information.
    */
-  void DoRadical(const arma::mat& matX,
-                 arma::mat& matY,
-                 arma::mat& matW,
+  template<typename MatType = arma::mat>
+  [[deprecated("Will be removed in mlpack 5.0.0.  Use Apply() instead.")]]
+  void DoRadical(const MatType& matX,
+                 MatType& matY,
+                 MatType& matW,
                  util::Timers& timers = IO::GetTimers());
+
+  /**
+   * Run RADICAL.
+   *
+   * @param matX Input data into the algorithm - a matrix where each column is
+   *    a point and each row is a dimension.
+   * @param matY Estimated independent components - a matrix where each column
+   *    is a point and each row is an estimated independent component.
+   * @param matW Estimated unmixing matrix, where matY = matW * matX.
+   * @param timers Optional Timers struct for storing timing information.
+   */
+  template<typename MatType = arma::mat>
+  void Apply(const MatType& matX,
+             MatType& matY,
+             MatType& matW,
+             util::Timers& timers = IO::GetTimers());
 
   /**
    * Vasicek's m-spacing estimator of entropy, with overlap modification from
    * (Learned-Miller and Fisher, 2003).
    *
    * @param x Empirical sample (one-dimensional) over which to estimate entropy.
+   * @param m The variable m from Vasicek's m-spacing estimator of entropy.
    */
-  double Vasicek(arma::vec& x) const;
+  template<typename VecType>
+  typename VecType::elem_type Vasicek(VecType& x, const size_t m) const;
 
   /**
    * Make replicates of each data point (the number of replicates is set in
    * either the constructor or with Replicates()) and perturb data with Gaussian
    * noise with standard deviation noiseStdDev.
    */
-  void CopyAndPerturb(arma::mat& xNew, const arma::mat& x) const;
+  template<typename MatType>
+  void CopyAndPerturb(MatType& xNew, const MatType& x) const;
 
   //! Two-dimensional version of RADICAL.
-  double DoRadical2D(const arma::mat& matX,
-                     util::Timers& timers = IO::GetTimers());
+  template<typename MatType>
+  typename MatType::elem_type Apply2D(
+      const MatType& matX,
+      const size_t m,
+      MatType& perturbed, // auxiliary memory
+      MatType& candidate, // auxiliary memory
+      util::Timers& timers = IO::GetTimers());
 
   //! Get the standard deviation of the additive Gaussian noise.
   double NoiseStdDev() const { return noiseStdDev; }
@@ -115,6 +141,15 @@ class Radical
   //! Modify the number of sweeps.
   size_t& Sweeps() { return sweeps; }
 
+  //! Get the value of m to use for Vasicek's m-spacing estimator of entropy.
+  size_t M() const { return m; }
+  //! Set the value of m to use for Vasicek's m-spacing estimator of entropy.
+  size_t& M() { return m; }
+
+  // Serialize the Radical object.
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */);
+
  private:
   //! Standard deviation of the Gaussian noise added to the replicates of
   //! the data points during Radical2D.
@@ -132,16 +167,12 @@ class Radical
 
   //! Value of m to use for Vasicek's m-spacing estimator of entropy.
   size_t m;
-
-  //! Internal matrix, held as member variable to prevent memory reallocations.
-  arma::mat perturbed;
-  //! Internal matrix, held as member variable to prevent memory reallocations.
-  arma::mat candidate;
 };
 
-void WhitenFeatureMajorMatrix(const arma::mat& matX,
-                              arma::mat& matXWhitened,
-                              arma::mat& matWhitening);
+template<typename MatType>
+void WhitenFeatureMajorMatrix(const MatType& matX,
+                              MatType& matXWhitened,
+                              MatType& matWhitening);
 
 } // namespace mlpack
 

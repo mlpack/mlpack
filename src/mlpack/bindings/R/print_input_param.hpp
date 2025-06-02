@@ -29,7 +29,7 @@ void PrintInputParam(util::ParamData& d,
                      void* /* output */)
 {
   MLPACK_COUT_STREAM << d.name;
-  if (std::is_same<T, bool>::value)
+  if (std::is_same_v<T, bool>)
   {
     if (d.name == "verbose")
     {

@@ -98,6 +98,28 @@ struct MethodFormDetector<Class, MethodForm, 7>
   void operator()(MethodForm<Class, T1, T2, T3, T4, T5, T6, T7>);
 };
 
+template<typename Class, template<typename...> class MethodForm>
+struct MethodFormDetector<Class, MethodForm, 8>
+{
+  template<class T1, class T2, class T3, class T4, class T5, class T6, class T7,
+           class T8>
+  void operator()(MethodForm<Class, T1, T2, T3, T4, T5, T6, T7, T8>);
+};
+template<typename Class, template<typename...> class MethodForm>
+struct MethodFormDetector<Class, MethodForm, 9>
+{
+  template<class T1, class T2, class T3, class T4, class T5, class T6, class T7,
+           class T8, class T9>
+  void operator()(MethodForm<Class, T1, T2, T3, T4, T5, T6, T7, T8, T9>);
+};
+template<typename Class, template<typename...> class MethodForm>
+struct MethodFormDetector<Class, MethodForm, 10>
+{
+  template<class T1, class T2, class T3, class T4, class T5, class T6, class T7,
+           class T8, class T9, class T10>
+  void operator()(MethodForm<Class, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>);
+};
+
 //! Utility struct for checking signatures.
 template<typename U, U> struct SigCheck : std::true_type {};
 
@@ -155,8 +177,7 @@ struct NAME                                                                    \
     using no = char[2];                                                        \
                                                                                \
     template<typename T, typename ResultType>                                  \
-    using EnableIfVoid =                                                       \
-        typename std::enable_if<std::is_void<T>::value, ResultType>::type;     \
+    using EnableIfVoid = std::enable_if_t<std::is_void_v<T>, ResultType>;      \
                                                                                \
     template<typename C>                                                       \
     static EnableIfVoid<decltype(MFD<C, MF, N>()(&C::METHOD)), yes&> chk(int); \
@@ -169,13 +190,13 @@ struct NAME                                                                    \
   template<size_t N>                                                           \
   struct WithGreaterOrEqualNumberOfAdditionalArgs                              \
   {                                                                            \
-    using type = typename std::conditional<                                    \
+    using type = std::conditional_t<                                           \
         WithNAdditionalArgs<N>::value,                                         \
         std::true_type,                                                        \
-        typename std::conditional<                                             \
+        std::conditional_t<                                                    \
             N < MAXN,                                                          \
             WithGreaterOrEqualNumberOfAdditionalArgs<N + 1>,                   \
-            std::false_type>::type>::type;                                     \
+            std::false_type>>;                                                 \
     static const bool value = type::value;                                     \
   };                                                                           \
                                                                                \
@@ -196,20 +217,19 @@ struct NAME                                                                    \
  * function in the given class name.
  * This can also be used in conjunction with std::enable_if.
  */
-#define HAS_ANY_METHOD_FORM(FUNC, NAME)                                      \
-template <typename T>                                                        \
-struct NAME                                                                  \
-{                                                                            \
-  template <typename Q = T>                                                  \
-  static typename                                                            \
-  std::enable_if<std::is_member_function_pointer<decltype(&Q::FUNC)>::value, \
-                 int>::type                                                  \
-  f(int) { return 1;}                                                      \
-                                                                             \
-  template <typename Q = T>                                                  \
-  static char f(char) { return 0; }                                        \
-                                                                             \
-  static const bool value = sizeof(f<T>(0)) != sizeof(char);                 \
+#define HAS_ANY_METHOD_FORM(FUNC, NAME)                                       \
+template <typename T>                                                         \
+struct NAME                                                                   \
+{                                                                             \
+  template <typename Q = T>                                                   \
+  static                                                                      \
+  std::enable_if_t<std::is_member_function_pointer_v<decltype(&Q::FUNC)>, int>\
+  f(int) { return 1; }                                                        \
+                                                                              \
+  template <typename Q = T>                                                   \
+  static char f(char) { return 0; }                                           \
+                                                                              \
+  static const bool value = sizeof(f<T>(0)) != sizeof(char);                  \
 };
 /*
  * A macro that can be used for passing arguments containing commas to other
@@ -239,7 +259,7 @@ struct NAME                                                                  \
  * we can check whether the class A has a Train method of the specified form:
  *
  * HAS_METHOD_FORM(Train, HasTrain);
- * static_assert(HasTrain<A, TrainFrom>::value, "value should be true");
+ * static_assert(HasTrain<A, TrainForm>::value, "value should be true");
  *
  * The class generated by this will also return true values if the given class
  * has a method that also has extra parameters.
@@ -248,7 +268,7 @@ struct NAME                                                                  \
  * @param NAME The name of the struct to construct.
  */
 #define HAS_METHOD_FORM(METHOD, NAME) \
-    HAS_METHOD_FORM_BASE(SINGLE_ARG(METHOD), SINGLE_ARG(NAME), 7)
+    HAS_METHOD_FORM_BASE(SINGLE_ARG(METHOD), SINGLE_ARG(NAME), 10)
 
 /**
  * HAS_EXACT_METHOD_FORM generates a template that allows a compile time check

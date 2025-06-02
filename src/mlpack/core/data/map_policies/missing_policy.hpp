@@ -86,8 +86,9 @@ class MissingPolicy
               MapType& maps,
               std::vector<Datatype>& /* types */)
   {
-    static_assert(std::numeric_limits<T>::has_quiet_NaN == true,
-        "Cannot use MissingPolicy with types where has_quiet_NaN() is false!");
+    // commented out as @rcurting is going to remove the entire policy
+    //static_assert(std::numeric_limits<T>::has_quiet_NaN == true,
+    //"Cannot use MissingPolicy with types where has_quiet_NaN() is false!");
 
     // If we can load the string then there is no need for mapping.
     std::stringstream token;
@@ -112,7 +113,7 @@ class MissingPolicy
           maps[dimension].first.count(string) == 0)
       {
         // This string does not exist yet.
-        typedef std::pair<std::string, MappedType> PairType;
+        using PairType = std::pair<std::string, MappedType>;
         maps[dimension].first.insert(PairType(string, value));
 
         // Insert right mapping too.

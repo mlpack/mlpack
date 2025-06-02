@@ -94,7 +94,7 @@ BINDING_SEE_ALSO("Random forest", "#random_forest");
 BINDING_SEE_ALSO("Decision trees on Wikipedia",
     "https://en.wikipedia.org/wiki/Decision_tree_learning");
 BINDING_SEE_ALSO("Induction of Decision Trees (pdf)",
-    "http://www.cs.bc.edu/~alvarez/ML/QuinlanID3Paper.pdf");
+    "https://www.hunch.net/~coms-4771/quinlan.pdf");
 BINDING_SEE_ALSO("DecisionTree C++ class documentation",
     "@doc/user/methods/decision_tree.md");
 
@@ -151,7 +151,7 @@ PARAM_MODEL_OUT(DecisionTreeModel, "output_model", "Output for trained decision"
     " tree.", "M");
 
 // Convenience typedef.
-typedef tuple<DatasetInfo, arma::mat> TupleType;
+using TupleType = tuple<DatasetInfo, arma::mat>;
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {

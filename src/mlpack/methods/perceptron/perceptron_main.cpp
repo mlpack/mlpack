@@ -97,7 +97,7 @@ BINDING_SEE_ALSO("@adaboost", "#adaboost");
 BINDING_SEE_ALSO("Perceptron on Wikipedia",
     "https://en.wikipedia.org/wiki/Perceptron");
 BINDING_SEE_ALSO("Perceptron C++ class documentation",
-    "@src/mlpack/methods/perceptron/perceptron.hpp");
+    "@doc/user/methods/perceptron.md");
 
 // When we save a model, we must also save the class mappings.  So we use this
 // auxiliary structure to store both the perceptron and the mapping, and we'll
@@ -282,9 +282,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // Now, the training procedure is complete.  Do we have any test data?
   if (params.Has("test"))
   {
+    mat& testData = params.Get<arma::mat>("test");
     Log::Info << "Classifying dataset '"
         << params.GetPrintable<arma::mat>("test") << "'." << endl;
-    mat testData = std::move(params.Get<arma::mat>("test"));
 
     if (testData.n_rows != p->P().Weights().n_rows)
     {

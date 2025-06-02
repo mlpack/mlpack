@@ -16,14 +16,14 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/range.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 #include "bound_traits.hpp"
 
 namespace mlpack {
 
 //! Utility struct where Value is true if and only if the argument is of type
 //! LMetric.
-template<typename MetricType>
+template<typename DistanceType>
 struct IsLMetric
 {
   static const bool Value = false;
@@ -41,15 +41,15 @@ struct IsLMetric<LMetric<Power, TakeRoot>>
  * with the LMetric class.  Be sure to use the same template parameters for
  * LMetric as you do for HRectBound -- otherwise odd results may occur.
  *
- * @tparam MetricType Type of metric to use; must be of type LMetric.
+ * @tparam DistanceType Type of distance metric to use; must be of type LMetric.
  * @tparam ElemType Element type (double/float/int/etc.).
  */
-template<typename MetricType = LMetric<2, true>,
+template<typename DistanceType = LMetric<2, true>,
          typename ElemType = double>
 class HRectBound
 {
-  // It is required that HRectBound have an LMetric as the given MetricType.
-  static_assert(IsLMetric<MetricType>::Value == true,
+  // It is required that HRectBound have an LMetric as the given DistanceType.
+  static_assert(IsLMetric<DistanceType>::Value == true,
       "HRectBound can only be used with the LMetric<> metric type.");
 
  public:
@@ -102,10 +102,20 @@ class HRectBound
   //! Modify the minimum width of the bound.
   ElemType& MinWidth() { return minWidth; }
 
-  //! Get the instantiated metric associated with the bound.
-  const MetricType& Metric() const { return metric; }
-  //! Modify the instantiated metric associated with the bound.
-  MetricType& Metric() { return metric; }
+  //! Recompute the minimum width of the bound.
+  void RecomputeMinWidth();
+
+  //! Get the instantiated distance metric associated with the bound.
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  const DistanceType& Metric() const { return distance; }
+  //! Modify the instantiated distance metric associated with the bound.
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  DistanceType& Metric() { return distance; }
+
+  //! Get the instantiated distance metric associated with the bound.
+  const DistanceType& Distance() const { return distance; }
+  //! Modify the instantiated distance metric associated with the bound.
+  DistanceType& Distance() { return distance; }
 
   /**
    * Calculates the center of the range, placing it into the given vector.
@@ -237,16 +247,16 @@ class HRectBound
   RangeType<ElemType>* bounds;
   //! Cached minimum width of bound.
   ElemType minWidth;
-  //! Instantiated metric (likely has size 0).
-  MetricType metric;
+  //! Instantiated distance metric (likely has size 0).
+  DistanceType distance;
 };
 
 // A specialization of BoundTraits for this class.
-template<typename MetricType, typename ElemType>
-struct BoundTraits<HRectBound<MetricType, ElemType>>
+template<typename DistanceType, typename ElemType>
+struct BoundTraits<HRectBound<DistanceType, ElemType>>
 {
   //! These bounds are always tight for each dimension.
-  const static bool HasTightBounds = true;
+  static const bool HasTightBounds = true;
 };
 
 } // namespace mlpack

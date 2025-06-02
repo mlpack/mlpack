@@ -79,11 +79,10 @@ class SoftmaxType : public Layer<MatType>
   //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
-
 }; // class SoftmaxType
 
 // Convenience typedef.
-typedef SoftmaxType<arma::mat> Softmax;
+using Softmax = SoftmaxType<arma::mat>;
 
 } // namespace mlpack
 

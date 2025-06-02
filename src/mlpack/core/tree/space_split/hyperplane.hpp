@@ -25,21 +25,23 @@ namespace mlpack {
  * @tparam ProjVectorT Type of projection vector (AxisParallelProjVector,
  *     ProjVector).
  */
-template<typename BoundT, typename ProjVectorT>
+template<typename BoundT, typename ProjVectorT, typename MatType>
 class HyperplaneBase
 {
  public:
-  //! Useful typedef for the bound type.
-  typedef BoundT BoundType;
-  //! Useful typedef for the projection vector type.
-  typedef ProjVectorT ProjVectorType;
+  // Useful typedef for the bound type.
+  using BoundType = BoundT;
+  // Useful typedef for the projection vector type.
+  using ProjVectorType = ProjVectorT;
+  // Useful typedef for the element type held by data matrices.
+  using ElemType = typename MatType::elem_type;
 
  private:
-  //! Projection vector.
+  // Projection vector.
   ProjVectorType projVect;
 
-  //! Projection value that determines the decision boundary.
-  double splitVal;
+  // Projection value that determines the decision boundary.
+  ElemType splitVal;
 
  public:
   /**
@@ -55,7 +57,7 @@ class HyperplaneBase
    * @param projVect Projection vector.
    * @param splitVal Split value.
    */
-  HyperplaneBase(const ProjVectorType& projVect, double splitVal) :
+  HyperplaneBase(const ProjVectorType& projVect, ElemType splitVal) :
       projVect(projVect),
       splitVal(splitVal)
   {};
@@ -67,8 +69,9 @@ class HyperplaneBase
    * @param point Point to be projected.
    */
   template<typename VecType>
-  double Project(const VecType& point,
-                 typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
+  ElemType Project(const VecType& point,
+                   typename std::enable_if_t<IsVector<VecType>::value>* = 0)
+      const
   {
     if (splitVal == DBL_MAX)
       return 0;
@@ -139,15 +142,18 @@ class HyperplaneBase
 /**
  * AxisOrthogonalHyperplane represents a hyperplane orthogonal to an axis.
  */
-template<typename MetricType>
-using AxisOrthogonalHyperplane = HyperplaneBase<HRectBound<MetricType>,
-    AxisParallelProjVector>;
+template<typename DistanceType, typename MatType>
+using AxisOrthogonalHyperplane = HyperplaneBase<
+    HRectBound<DistanceType, typename MatType::elem_type>,
+    AxisParallelProjVector, MatType>;
 
 /**
  * Hyperplane represents a general hyperplane (not necessarily axis-orthogonal).
  */
-template<typename MetricType>
-using Hyperplane = HyperplaneBase<BallBound<MetricType>, ProjVector>;
+template<typename DistanceType, typename MatType>
+using Hyperplane = HyperplaneBase<
+    BallBound<DistanceType, typename MatType::elem_type>, ProjVector<MatType>,
+    MatType>;
 
 } // namespace mlpack
 

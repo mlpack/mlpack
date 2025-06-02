@@ -27,7 +27,7 @@ TEST_CASE("SpillTreeConstructionCountTest", "[SpillTreeTest]")
   arma::mat dataset;
   dataset.randu(3, 1000); // 1000 points in 3 dimensions.
 
-  typedef SPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = SPTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 
   // When overlapping buffer is 0, there shouldn't be repeated points.
   TreeType tree1(dataset, 0);
@@ -79,7 +79,7 @@ TEST_CASE("SpillTreeConstructionParentTest", "[SpillTreeTest]")
   arma::mat dataset;
   dataset.randu(3, 1000); // 1000 points in 3 dimensions.
 
-  typedef SPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = SPTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 
   TreeType tree(dataset, 0.5);
 
@@ -204,11 +204,11 @@ void SpillTreeHyperplaneTestAux()
  */
 TEST_CASE("SpillTreeHyperplaneTest", "[SpillTreeTest]")
 {
-  typedef SPTree<EuclideanDistance, EmptyStatistic, arma::mat> SpillType1;
-  typedef NonOrtSPTree<EuclideanDistance, EmptyStatistic, arma::mat> SpillType2;
-  typedef MeanSPTree<EuclideanDistance, EmptyStatistic, arma::mat> SpillType3;
-  typedef NonOrtMeanSPTree<EuclideanDistance, EmptyStatistic, arma::mat>
-      SpillType4;
+  using SpillType1 = SPTree<EuclideanDistance, EmptyStatistic, arma::mat>;
+  using SpillType2 = NonOrtSPTree<EuclideanDistance, EmptyStatistic, arma::mat>;
+  using SpillType3 = MeanSPTree<EuclideanDistance, EmptyStatistic, arma::mat>;
+  using SpillType4 =
+      NonOrtMeanSPTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 
   SpillTreeHyperplaneTestAux<SpillType1>();
   SpillTreeHyperplaneTestAux<SpillType2>();
@@ -222,7 +222,7 @@ TEST_CASE("SpillTreeHyperplaneTest", "[SpillTreeTest]")
 TEST_CASE("SpillTreeMoveConstructorTest", "[SpillTreeTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(3, 1000);
-  typedef SPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = SPTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 
   TreeType tree(dataset);
 
@@ -257,7 +257,7 @@ TEST_CASE("SpillTreeMoveConstructorTest", "[SpillTreeTest]")
 TEST_CASE("SpillTreeCopyConstructorTest", "[SpillTreeTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(3, 1000);
-  typedef SPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = SPTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 
   TreeType* tree = new TreeType(dataset);
 
@@ -293,7 +293,7 @@ TEST_CASE("SpillTreeCopyConstructorTest", "[SpillTreeTest]")
 TEST_CASE("SpillTreeMoveDatasetTest", "[SpillTreeTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(3, 1000);
-  typedef SPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = SPTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 
   TreeType tree(std::move(dataset));
 

@@ -28,7 +28,7 @@ size_t RStarTreeSplit::ReinsertPoints(TreeType* tree,
                                       std::vector<bool>& relevels)
 {
   // Convenience typedef.
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
 
   // Check if we need to reinsert.
   if (relevels[tree->TreeDepth() - 1])
@@ -51,7 +51,7 @@ size_t RStarTreeSplit::ReinsertPoints(TreeType* tree,
       tree->Bound().Center(center);
       for (size_t i = 0; i < sorted.size(); ++i)
       {
-        sorted[i].first = tree->Metric().Evaluate(center,
+        sorted[i].first = tree->Distance().Evaluate(center,
             tree->Dataset().col(tree->Point(i)));
         sorted[i].second = tree->Point(i);
       }
@@ -83,8 +83,8 @@ void RStarTreeSplit::PickLeafSplit(TreeType* tree,
                                    size_t& bestIndex)
 {
   // Convenience typedef.
-  typedef typename TreeType::ElemType ElemType;
-  typedef HRectBound<EuclideanDistance, ElemType> BoundType;
+  using ElemType = typename TreeType::ElemType;
+  using BoundType = HRectBound<EuclideanDistance, ElemType>;
 
   bestAxis = 0;
   bestIndex = 0;
@@ -106,9 +106,9 @@ void RStarTreeSplit::PickLeafSplit(TreeType* tree,
     // We'll store each of the three scores for each distribution.
     const size_t numPossibleSplits = tree->MaxLeafSize() -
         2 * tree->MinLeafSize() + 2;
-    arma::Col<ElemType> areas(numPossibleSplits, arma::fill::zeros);
-    arma::Col<ElemType> margins(numPossibleSplits, arma::fill::zeros);
-    arma::Col<ElemType> overlaps(numPossibleSplits, arma::fill::zeros);
+    arma::Col<ElemType> areas(numPossibleSplits);
+    arma::Col<ElemType> margins(numPossibleSplits);
+    arma::Col<ElemType> overlaps(numPossibleSplits);
 
     for (size_t i = 0; i < numPossibleSplits; ++i)
     {
@@ -176,7 +176,7 @@ template<typename TreeType>
 void RStarTreeSplit::SplitLeafNode(TreeType *tree, std::vector<bool>& relevels)
 {
   // Convenience typedef.
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
 
   // If there's no need to split, don't.
   if (tree->Count() <= tree->MaxLeafSize())
@@ -272,8 +272,8 @@ bool RStarTreeSplit::SplitNonLeafNode(
     std::vector<bool>& relevels)
 {
   // Convenience typedef.
-  typedef typename TreeType::ElemType ElemType;
-  typedef HRectBound<EuclideanDistance, ElemType> BoundType;
+  using ElemType = typename TreeType::ElemType;
+  using BoundType = HRectBound<EuclideanDistance, ElemType>;
 
   // Reinsertion isn't done for non-leaf nodes; the paper doesn't seem to make
   // it clear how to reinsert an entire node without reinserting each of the
@@ -310,9 +310,9 @@ bool RStarTreeSplit::SplitNonLeafNode(
     // each rectangle.
     const size_t numPossibleSplits = tree->MaxNumChildren() -
         2 * tree->MinNumChildren() + 2;
-    arma::Col<ElemType> areas(2 * numPossibleSplits, arma::fill::zeros);
-    arma::Col<ElemType> margins(2 * numPossibleSplits, arma::fill::zeros);
-    arma::Col<ElemType> overlaps(2 * numPossibleSplits, arma::fill::zeros);
+    arma::Col<ElemType> areas(2 * numPossibleSplits);
+    arma::Col<ElemType> margins(2 * numPossibleSplits);
+    arma::Col<ElemType> overlaps(2 * numPossibleSplits);
 
     for (size_t i = 0; i < numPossibleSplits; ++i)
     {

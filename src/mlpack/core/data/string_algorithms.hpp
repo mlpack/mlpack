@@ -17,45 +17,6 @@ namespace mlpack {
 namespace data {
 
 /**
- * A simple trim function to strip off whitespaces 
- * from both the sides of a string. If input is a string
- * with all spaces then str will be empty string.
- *
- * @param str the string to be trimmed.
- */
-inline void Trim(std::string& str)
-{
-  if (str.find_first_not_of(' ') == std::string::npos)
-  {
-    str = "";
-    return;
-  }
-
-  size_t startIndex = 0;
-
-  while (std::isspace(str[startIndex]))
-    startIndex++;
-
-  size_t endIndex = str.size() - 1;
-
-  while (std::isspace(str[endIndex]))
-    endIndex--;
-
-  std::string trimmedStr;
-  
-  // Using ternary operator is not recommended here.
-  // Ternary operator is only useful for simple expressions
-  // that don't involve varrying types.
-  // https://en.cppreference.com/w/cpp/language/operator_other
-  if (endIndex - startIndex == str.size())
-    trimmedStr = std::move(str);
-  else
-    trimmedStr = str.substr(startIndex, endIndex - startIndex + 1);
-
-  str = trimmedStr;
-}
-
-/**
  * Trim off characters from start and end of
  * of the string. The supplied function is
  * used to determine which characters will
@@ -66,47 +27,25 @@ inline void Trim(std::string& str)
  */
 inline void TrimIf(std::string &str, std::function<bool(char)> func)
 {
-  if (str.find_first_not_of(' ') == std::string::npos)
-  {
-    str = "";
-    return;
-  }
+  const std::string::iterator leftmostCharToKeep =
+      std::find_if_not(str.begin(), str.end(), func);
+  str.erase(str.begin(), leftmostCharToKeep);
 
-  size_t startIndex = 0;
+  const std::string::iterator leftmostTrailingCharToRemove =
+      std::find_if_not(str.rbegin(), str.rend(), func).base();
+  str.erase(leftmostTrailingCharToRemove, str.end());
+}
 
-  for (size_t i = 0; i < str.size(); i++)
-  {
-    bool match = func(str[i]);
-
-    if (match)
-      startIndex++;
-    else
-      break;
-  }
-
-  size_t endIndex = str.size() - 1;
-
-  for (int i = str.size() - 1; i >= 0; i--)
-  {
-    bool match = func(str[i]);
-    if (match)
-      endIndex--;
-    else
-      break;
-  }
-
-  std::string trimmedStr;
-
-  // Using ternary operator is not recommended here.
-  // Ternary operator is only useful for simple expressions
-  // that don't involve varrying types.
-  // https://en.cppreference.com/w/cpp/language/operator_other
-  if (endIndex - startIndex == str.size())
-    trimmedStr = std::move(str);
-  else
-    trimmedStr = str.substr(startIndex, endIndex - startIndex + 1);
-
-  str = trimmedStr;
+/**
+ * A simple trim function to strip off whitespaces
+ * from both the sides of a string. If input is a string
+ * with all spaces then str will be empty string.
+ *
+ * @param str the string to be trimmed.
+ */
+inline void Trim(std::string &str)
+{
+  TrimIf(str, [](char c) { return std::isspace(c); });
 }
 
 /**
@@ -183,7 +122,7 @@ inline std::vector<std::string> Tokenize(
   return tokens;
 }
 
-}  // namespace data
-}  // namespace mlpack
+} // namespace data
+} // namespace mlpack
 
-#endif 
+#endif

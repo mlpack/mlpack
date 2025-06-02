@@ -1,4 +1,7 @@
-# Loading and saving in mlpack
+<object data="../img/pipeline-top-1.svg" type="image/svg+xml" id="pipeline-top">
+</object>
+
+# Data loading and I/O
 
 mlpack provides the `data::Load()` and `data::Save()` functions to load and save
 [Armadillo matrices](matrices.md) (e.g. numeric and categorical datasets) and
@@ -14,8 +17,6 @@ saving data and objects are also available.
    - [`data::ImageInfo`](#dataimageinfo)
    - [Loading images](#loading-images)
  * [mlpack objects](#mlpack-objects): load or save any mlpack object
- * [Normalizing labels](#normalizing-labels): convert labels to ranges required
-   by mlpack classifiers
  * [Formats](#formats): supported formats for each load/save variant
 
 ## Numeric data
@@ -37,9 +38,9 @@ following functions.
    * If `fatal` is `true`, a `std::runtime_error` will be thrown on failure.
 
    * If `transpose` is `true`, then for plaintext formats (CSV/TSV/ASCII), the
-     matrix will be transposed on save.  (Keep this `true` if you want a
-     column-major matrix to be saved with points as rows and dimensions as
-     columns; that is generally what is desired.)
+     matrix will be transposed on load or save.  (Keep this `true` if you want a
+     column-major matrix to be loaded or saved with points as rows and
+     dimensions as columns; that is generally what is desired.)
 
    * A `bool` is returned indicating whether the operation was successful.
 
@@ -522,6 +523,193 @@ outImages.push_back("bandicoot-favicon-inv.jpeg");
 mlpack::data::Save(outImages, matrix, info);
 ```
 
+### Resize images
+
+It is possible to resize images in mlpack with the following function:
+
+- `ResizeImages(images, info, newWidth, newHeight)`
+   * `images` is a [column-major matrix](matrices.md) containing a set of
+      images; each image is represented as a flattened vector in one column.
+
+   * `info` is a [`data::ImageInfo&`](#dataimageinfo) containing details about
+     the images in `images`, and will be modified to contain the new size of the
+     images.
+
+   * `newWidth` and `newHeight` (of type `size_t`) are the desired new
+     dimensions of the resized images.
+
+   * This function returns `void` and modifies `info` and `images`.
+
+   * ***NOTE:*** if the element type of `images` is not `unsigned char` or
+     `float` (e.g. if `image` is not `arma::Mat<unsigned char>` or
+     `arma::fmat`), the matrix will be temporarily converted during resizing;
+     therefore, using `unsigned char` or `float` as the element type is the most
+     efficient.
+
+   * This function expects all the images to have identical
+     dimensions. If this is not the case, iteratively call `ResizeImages()` with
+     a single image/column in `images`.
+    
+Example usage of the `ResizeImages()` function on a set of images with
+different dimensions:
+
+```c++
+// See https://datasets.mlpack.org/sheep.tar.bz2
+arma::Mat<unsigned char> image;
+mlpack::data::ImageInfo info;
+
+// The images are located in our test/data directory. However, any image could
+// be used instead.
+std::vector<std::string> files =
+    {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
+     "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
+     "sheep_9.jpg"};
+
+// The resized images will be saved locally. We are declaring the vector that
+// contains the names of the resized images.
+std::vector<std::string> reSheeps =
+    {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
+     "re_sheep_5.jpg", "re_sheep_6.jpg", "re_sheep_7.jpg", "re_sheep_8.jpg",
+     "re_sheep_9.jpg"};
+
+// Load and Resize each one of them individually, because they do not have
+// the same dimensions. The `info` will contain the dimension for each one.
+for (size_t i = 0; i < files.size(); i++)
+{
+  mlpack::data::Load(files.at(i), image, info, false);
+  mlpack::data::ResizeImages(image, info, 320, 320);
+  mlpack::data::Save(reSheeps.at(i), image, info, false);
+}
+```
+
+Example usage of `ResizeImages()` function on a set of images that have the
+same dimensions.
+
+```c++
+// All images have the same dimension, It would be possible to load all of
+// them into one matrix
+
+// See https://datasets.mlpack.org/sheep.tar.bz2
+arma::Mat<unsigned char> images;
+mlpack::data::ImageInfo info;
+
+std::vector<std::string> reSheeps =
+    {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
+     "re_sheep_5.jpg", "re_sheep_6.jpg", "re_sheep_7.jpg", "re_sheep_8.jpg",
+     "re_sheep_9.jpg"};
+
+mlpack::data::Load(reSheeps, images, info, false);
+
+// Now let us resize all these images at once, to specific dimensions.
+mlpack::data::ResizeImages(images, info, 160, 160);
+
+// The resized images will be saved locally. We are declaring the vector that
+// contains the names of the resized images.
+std::vector<std::string> smSheeps =
+    {"sm_sheep_1.jpg", "sm_sheep_2.jpg", "sm_sheep_3.jpg", "sm_sheep_4.jpg",
+     "sm_sheep_5.jpg", "sm_sheep_6.jpg", "sm_sheep_7.jpg", "sm_sheep_8.jpg",
+     "sm_sheep_9.jpg"};
+
+mlpack::data::Save(smSheeps, images, info, false);
+```
+
+### Resize and crop images
+
+In addition to resizing images, mlpack also provides resize-and-crop
+functionality.  This is useful when the desired aspect ratio of an image differs
+largely from the original image.
+
+The resize-and-crop operation, given a target size `outputWidth` x
+`outputHeight`, first resizes the image while preserving the aspect ratio such
+that the width and height of the image both no smaller than `outputWidth` and
+`outputHeight`.  Then, the image is cropped to have size `outputWidth` by
+`outputHeight`, keeping the center pixels only.  This process is shown below.
+
+*Original image:*
+
+<p align="center">
+  <img src="../img/cat.jpg" alt="cat">
+</p>
+
+*Original image with target size of* `220`x`220` *pixels:*
+
+<p align="center">
+  <img src="../img/cat_rect.jpg" alt="cat with rectangle overlaid">
+</p>
+
+*First step: resize while preserving aspect ratio:*
+
+<p align="center">
+  <img src="../img/cat_scaled_rect.jpg"
+       alt="scaled cat with rectangle overlaid">
+</p>
+
+*Second step: crop to desired final size:*
+
+<p align="center">
+  <img src="../img/cat_cropped.jpg" alt="cropped cat">
+</p>
+
+- `ResizeCropImages(images, info, newWidth, newHeight)`
+   * `images` is a [column-major matrix](matrices.md) containing a set of
+      images; each image is represented as a flattened vector in one column.
+
+   * `info` is a [`data::ImageInfo&`](#dataimageinfo) containing details about
+     the images in `images`.
+
+   * `images` and `info` are modified in-place.
+
+   * `newWidth` and `newHeight` (of type `size_t`) are the desired new
+     dimensions of the resized images.
+     - If the output size is larger than the input image size, the images will
+       be upscaled the minimum amount necessary before cropping.
+     - If the aspect ratio is not changed from the input aspect ratio, no
+       cropping is performed.
+
+   * ***NOTE:*** if the element type of `images` is not `unsigned char` or
+     `float` (e.g. if `image` is not `arma::Mat<unsigned char>` or
+     `arma::fmat`), the matrix will be temporarily converted during resizing;
+     therefore, using `unsigned char` or `float` as the element type is the most
+     efficient.
+
+   * This function expects all the images to have identical dimensions. If this
+     is not the case, iteratively call `ResizeCropImages()` with a single
+     image/column in `images`.
+
+Example usage of the `ResizeCropImages()` function on a set of images with
+different dimensions:
+
+```c++
+// See https://datasets.mlpack.org/sheep.tar.bz2.
+arma::Mat<unsigned char> image;
+mlpack::data::ImageInfo info;
+
+// The images are located in our test/data directory. However, any image could
+// be used instead.
+std::vector<std::string> files =
+    {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
+     "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
+     "sheep_9.jpg"};
+
+// The resized images will be saved locally. We are declaring the vector that
+// contains the names of the resized and cropped images.
+std::vector<std::string> cropSheeps =
+    {"crop_sheep_1.jpg", "crop_sheep_2.jpg", "crop_sheep_3.jpg",
+     "crop_sheep_4.jpg", "crop_sheep_5.jpg", "crop_sheep_6.jpg",
+     "crop_sheep_7.jpg", "crop_sheep_8.jpg", "crop_sheep_9.jpg"};
+
+// Load and resize-and-crop each image individually, because they do not have
+// the same dimensions. The `info` will contain the dimension for each one.
+for (size_t i = 0; i < files.size(); i++)
+{
+  mlpack::data::Load(files.at(i), image, info, false);
+  mlpack::data::ResizeCropImages(image, info, 320, 320);
+  mlpack::data::Save(cropSheeps.at(i), image, info, false);
+  std::cout << "Resized and cropped " << files.at(i) << " to "
+      << cropSheeps.at(i) << " with output size 320x320." << std::endl;
+}
+```
+
 ## mlpack objects
 
 All mlpack objects can be saved with `data::Save()` and loaded with
@@ -586,79 +774,6 @@ mlpack::data::Save("range.json", "range", r2, true);
 ```
 
 ---
-
-## Normalizing labels
-
-mlpack classifiers and other algorithms require labels to be in the range `0` to
-`numClasses - 1`.  A vector of labels with arbitrary (`size_t`) values can be
-normalized to the required range with the `NormalizeLabels()` function.
-
----
-
- * `data::NormalizeLabels(labelsIn, labelsOut, mappings)`
-    - Map vector `labelsIn` into the range `0` to `numClasses - 1`, storing as
-      `labelsOut` (of type `arma::Row<size_t>`).
-      * `numClasses` is automatically detected using the number of unique values
-        in `labelsIn`.
-
-    - The column vector `mappings` will be filled with the reverse mappings to
-      convert back to the old labels; this can be used by `RevertLabels()`.
-
-    - `mappings[i]` contains the original class label for the mapped label `i`.
-
----
-
- * `data::RevertLabels(labelsIn, mappings, labelsOut)`
-    - Unmap normalized labels `labelsIn` using `mappings` into `labelsOut`.
-
-    - Performs the reverse operation of `NormalizeLabels()`; `mappings` should
-      be the same vector output by `NormalizeLabels()`.
-
----
-
-Simple example: convert labels into `0`, `1`, `2`, learn a model, then convert
-predictions back to the original label values.
-
-```c++
-// Create a random dataset with 5 points in 10 dimensions.
-arma::mat dataset(10, 5, arma::fill::randu);
-
-// Manually assemble labels vector: [3, 7, 3, 3, 5]
-arma::Row<size_t> labels = { 3, 7, 3, 3, 5 };
-
-// Note that these labels are not in the range `0` to `2`, and thus cannot be
-// used directly by mlpack classifiers!
-// We will map them to that range using NormalizeLabels().
-arma::Row<size_t> mappedLabels;
-arma::Col<size_t> mappings;
-mlpack::data::NormalizeLabels(labels, mappedLabels, mappings);
-const size_t numClasses = mappedLabels.max() + 1;
-
-// Print the mapped values:
-// [3, 7, 3, 3, 5] maps to [0, 1, 0, 0, 2].
-// The `mappings` vector will be [3, 7, 5].
-std::cout << "Original labels: " << labels;
-std::cout << "Mapped labels:   " << mappedLabels;
-std::cout << "Mappings: " << mappings;
-
-// Learn a model with the mapped labels.
-mlpack::DecisionTree d(dataset, mappedLabels, numClasses, 1 /* leaf size */);
-
-// Make predictions on the training dataset.
-arma::Row<size_t> mappedPredictions;
-d.Classify(dataset, mappedPredictions);
-
-// The predictions use mapped labels (0, 1, 2), which we will need to map back
-// to the original labels using RevertLabels().
-arma::Row<size_t> predictions;
-mlpack::data::RevertLabels(mappedPredictions, mappings, predictions);
-
-// Print the predictions before and after unmapping.
-// The mapped predictions will take values 0, 1, or 2; the predictions will take
-// values 3, 7, or 5 (like the original data).
-std::cout << "Mapped predictions: " << mappedPredictions;
-std::cout << "Predictions:        " << predictions;
-```
 
 ## Formats
 

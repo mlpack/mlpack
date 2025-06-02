@@ -31,7 +31,7 @@ namespace mlpack {
  *
  * This tree does allow growth, so you can add and delete nodes from it.
  *
- * @tparam MetricType This *must* be EuclideanDistance, but the template
+ * @tparam DistanceType This *must* be EuclideanDistance, but the template
  *     parameter is required to satisfy the TreeType API.
  * @tparam StatisticType Extra data contained in the node.  See statistic.hpp
  *     for the necessary skeleton interface.
@@ -43,7 +43,7 @@ namespace mlpack {
  *    in the node. This information depends on the type of the RectangleTree.
  */
 
-template<typename MetricType = EuclideanDistance,
+template<typename DistanceType = EuclideanDistance,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
          typename SplitType = RTreeSplit,
@@ -52,17 +52,17 @@ template<typename MetricType = EuclideanDistance,
              NoAuxiliaryInformation>
 class RectangleTree
 {
-  // The metric *must* be the euclidean distance.
-  static_assert(std::is_same<MetricType, EuclideanDistance>::value,
-      "RectangleTree: MetricType must be EuclideanDistance.");
+  // The distance metric *must* be the euclidean distance.
+  static_assert(std::is_same_v<DistanceType, EuclideanDistance>,
+      "RectangleTree: DistanceType must be EuclideanDistance.");
 
  public:
   //! So other classes can use TreeType::Mat.
-  typedef MatType Mat;
+  using Mat = MatType;
   //! The element type held by the matrix type.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
   //! The auxiliary information type held by the tree.
-  typedef AuxiliaryInformationType<RectangleTree> AuxiliaryInformation;
+  using AuxiliaryInformation = AuxiliaryInformationType<RectangleTree>;
  private:
   //! The max number of child nodes a non-leaf node can have.
   size_t maxNumChildren;
@@ -74,11 +74,6 @@ class RectangleTree
   std::vector<RectangleTree*> children;
   //! The parent node (NULL if this is the root of the tree).
   RectangleTree* parent;
-  //! The index of the first point in the dataset contained in this node (and
-  //! its children).  THIS IS ALWAYS 0 AT THE MOMENT.  IT EXISTS MERELY IN CASE
-  //! I THINK OF A WAY TO CHANGE THAT.  IN OTHER WORDS, IT WILL PROBABLY BE
-  //! REMOVED.
-  size_t begin;
   //! The number of points in the dataset contained in this node (and its
   //! children).
   size_t count;
@@ -95,7 +90,7 @@ class RectangleTree
   //! The distance from the centroid of this node to the centroid of the parent.
   ElemType parentDistance;
   //! The dataset.
-  const MatType* dataset;
+  MatType* dataset;
   //! Whether or not we are responsible for deleting the dataset.  This is
   //! probably not aligned well...
   bool ownsDataset;
@@ -124,15 +119,12 @@ class RectangleTree
    *      have.
    * @param minNumChildren The minimum number of child nodes a non-leaf node may
    *      have.
-   * @param firstDataIndex The index of the first data point.  UNUSED UNLESS WE
-   *      ADD SUPPORT FOR HAVING A "CENTERAL" DATA MATRIX.
    */
   RectangleTree(const MatType& data,
                 const size_t maxLeafSize = 20,
                 const size_t minLeafSize = 8,
                 const size_t maxNumChildren = 5,
-                const size_t minNumChildren = 2,
-                const size_t firstDataIndex = 0);
+                const size_t minNumChildren = 2);
 
   /**
    * Construct this as the root node of a rectangle tree type using the given
@@ -145,15 +137,30 @@ class RectangleTree
    *      have.
    * @param minNumChildren The minimum number of child nodes a non-leaf node may
    *      have.
-   * @param firstDataIndex The index of the first data point.  UNUSED UNLESS WE
-   *      ADD SUPPORT FOR HAVING A "CENTERAL" DATA MATRIX.
    */
   RectangleTree(MatType&& data,
                 const size_t maxLeafSize = 20,
                 const size_t minLeafSize = 8,
                 const size_t maxNumChildren = 5,
-                const size_t minNumChildren = 2,
-                const size_t firstDataIndex = 0);
+                const size_t minNumChildren = 2);
+
+  /**
+   * Construct an empty RectangleTree where points will have the given
+   * dimensionality.
+   *
+   * @param data Dataset from which to create the tree.
+   * @param maxLeafSize Maximum size of each leaf in the tree.
+   * @param minLeafSize Minimum size of each leaf in the tree.
+   * @param maxNumChildren The maximum number of child nodes a non-leaf node may
+   *      have.
+   * @param minNumChildren The minimum number of child nodes a non-leaf node may
+   *      have.
+   */
+  RectangleTree(const size_t dimensionality = 0,
+                const size_t maxLeafSize = 20,
+                const size_t minLeafSize = 8,
+                const size_t maxNumChildren = 5,
+                const size_t minNumChildren = 2);
 
   /**
    * Construct this as an empty node with the specified parent.  Copying the
@@ -213,6 +220,24 @@ class RectangleTree
    * to any nodes which are children of this one.
    */
   ~RectangleTree();
+
+  /**
+   * Insert the given point into the tree and into the dataset held by the tree.
+   *
+   * An exception will be thrown if this is not called on the root of the tree.
+   */
+  template<typename InMatType>
+  void Insert(const InMatType& points);
+
+  /**
+   * Delete the given point index from the tree.  This will resize Dataset()
+   * accordingly and correct the point indexes in the rest of the tree, so is
+   * not a trivial operation.
+   *
+   * `pointIndex` must be between `0` and `numDescendants`, and an exception
+   * will be thrown if this is not called on the root of the tree.
+   */
+  void Delete(const size_t pointIndex);
 
   /**
    * Delete this node of the tree, but leave the stuff contained in it intact.
@@ -311,9 +336,9 @@ class RectangleTree
   RectangleTree* FindByBeginCount(size_t begin, size_t count);
 
   //! Return the bound object for this node.
-  const HRectBound<MetricType>& Bound() const { return bound; }
+  const HRectBound<DistanceType, ElemType>& Bound() const { return bound; }
   //! Modify the bound object for this node.
-  HRectBound<MetricType>& Bound() { return bound; }
+  HRectBound<DistanceType, ElemType>& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
@@ -329,6 +354,11 @@ class RectangleTree
 
   //! Return whether or not this node is a leaf (true if it has no children).
   bool IsLeaf() const;
+
+  //! Return the number of points in the node.
+  size_t Count() const { return count; }
+  //! Modify the number of points in the node.
+  size_t& Count() { return count; }
 
   //! Return the maximum leaf size.
   size_t MaxLeafSize() const { return maxLeafSize; }
@@ -360,11 +390,16 @@ class RectangleTree
   //! Modify the dataset which the tree is built on.  Be careful!
   MatType& Dataset() { return const_cast<MatType&>(*dataset); }
 
-  //! Get the metric which the tree uses.
-  MetricType Metric() const { return MetricType(); }
+  //! Get the distance metric which the tree uses.
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  DistanceType Metric() const { return DistanceType(); }
+
+  //! Get the distance metric which the tree uses.
+  DistanceType Distance() const { return DistanceType(); }
 
   //! Get the centroid of the node and store it in the given vector.
-  void Center(arma::vec& center) { bound.Center(center); }
+  template<typename VecType>
+  void Center(VecType& center) { bound.Center(center); }
 
   //! Return the number of child nodes.  (One level beneath this one only.)
   size_t NumChildren() const { return numChildren; }
@@ -538,16 +573,6 @@ class RectangleTree
    */
   size_t TreeDepth() const;
 
-  //! Return the index of the beginning point of this subset.
-  size_t Begin() const { return begin; }
-  //! Modify the index of the beginning point of this subset.
-  size_t& Begin() { return begin; }
-
-  //! Return the number of points in this subset.
-  size_t Count() const { return count; }
-  //! Modify the number of points in this subset.
-  size_t& Count() { return count; }
-
  private:
   /**
    * Splits the current node, recursing up the tree.
@@ -562,15 +587,6 @@ class RectangleTree
    * @param node Node for which statistics will be built.
    */
   void BuildStatistics(RectangleTree* node);
-
- protected:
-  /**
-   * A default constructor.  This is meant to only be used with
-   * cereal, which is allowed with the friend declaration below.
-   * This does not return a valid tree!  This method must be protected, so that
-   * the serialization shim can work with the default constructor.
-   */
-  RectangleTree();
 
   //! Friend access is given for the default constructor.
   friend class cereal::access;
@@ -587,10 +603,10 @@ class RectangleTree
  public:
   /**
    * Condense the bounding rectangles for this node based on the removal of the
-   * point specified by the arma::vec&.  This recurses up the tree.  If a node
+   * point specified by the VecType&.  This recurses up the tree.  If a node
    * goes below the minimum fill, this function will fix the tree.
    *
-   * @param point The arma::vec& of the point that was removed to require this
+   * @param point The VecType& of the point that was removed to require this
    *      condesation of the tree.
    * @param usePoint True if we use the optimized version of the algorithm that
    *      is possible when we now what point was deleted.  False otherwise (eg.
@@ -598,18 +614,20 @@ class RectangleTree
    * @param relevels The levels that have been reinserted to on this top level
    *      insertion.
    */
-  void CondenseTree(const arma::vec& point,
+  template<typename VecType>
+  void CondenseTree(const VecType& point,
                     std::vector<bool>& relevels,
                     const bool usePoint);
 
   /**
    * Shrink the bound object of this node for the removal of a point.
    *
-   * @param point The arma::vec& of the point that was removed to require this
+   * @param point The VecType& of the point that was removed to require this
    *      shrinking.
    * @return true if the bound needed to be changed, false if it did not.
    */
-  bool ShrinkBoundForPoint(const arma::vec& point);
+  template<typename VecType>
+  bool ShrinkBoundForPoint(const VecType& point);
 
   /**
    * Shrink the bound object of this node for the removal of a child node.
@@ -618,7 +636,8 @@ class RectangleTree
    *      shrinking.
    * @return true if the bound needed to be changed, false if it did not.
    */
-  bool ShrinkBoundForBound(const HRectBound<MetricType>& changedBound);
+  bool ShrinkBoundForBound(
+      const HRectBound<DistanceType, ElemType>& changedBound);
 
   /**
    * Make an exact copy of this node, pointers and everything.
@@ -629,10 +648,17 @@ class RectangleTree
    * Serialize the tree.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */);
+  void serialize(Archive& ar, const uint32_t version);
 };
 
 } // namespace mlpack
+
+CEREAL_TEMPLATE_CLASS_VERSION(
+    (typename DistanceType, typename StatisticType, typename MatType,
+     typename SplitType, typename DescentType,
+     template<typename> class AuxiliaryInformationType),
+    (mlpack::RectangleTree<DistanceType, StatisticType, MatType, SplitType,
+                           DescentType, AuxiliaryInformationType>), (1));
 
 // Include implementation.
 #include "rectangle_tree_impl.hpp"

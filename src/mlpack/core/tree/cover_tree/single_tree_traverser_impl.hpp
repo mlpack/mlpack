@@ -22,7 +22,7 @@ namespace mlpack {
 
 //! This is the structure the cover tree map will use for traversal.
 template<
-    typename MetricType,
+    typename DistanceType,
     typename StatisticType,
     typename MatType,
     typename RootPointPolicy
@@ -30,7 +30,7 @@ template<
 struct CoverTreeMapEntry
 {
   //! The node this entry refers to.
-  CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>* node;
+  CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>* node;
   //! The score of the node.
   double score;
   //! The index of the parent node.
@@ -46,34 +46,34 @@ struct CoverTreeMapEntry
 };
 
 template<
-    typename MetricType,
+    typename DistanceType,
     typename StatisticType,
     typename MatType,
     typename RootPointPolicy
 >
 template<typename RuleType>
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
 SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0)
 { /* Nothing to do. */ }
 
 template<
-    typename MetricType,
+    typename DistanceType,
     typename StatisticType,
     typename MatType,
     typename RootPointPolicy
 >
 template<typename RuleType>
-void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+void CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
 SingleTreeTraverser<RuleType>::Traverse(
     const size_t queryIndex,
     CoverTree& referenceNode)
 {
   // This is a non-recursive implementation (which should be faster than a
   // recursive implementation).
-  typedef CoverTreeMapEntry<MetricType, StatisticType, MatType, RootPointPolicy>
-      MapEntryType;
+  using MapEntryType = CoverTreeMapEntry<DistanceType, StatisticType, MatType,
+      RootPointPolicy>;
 
   // We will use this map as a priority queue.  Each key represents the scale,
   // and then the vector is all the nodes in that scale which need to be

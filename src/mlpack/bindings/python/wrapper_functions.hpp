@@ -31,9 +31,9 @@ inline std::vector<std::string> GetMethods(const std::string& validMethods);
 // Get mapped name of an internal mlapck method.
 inline std::string GetMappedName(const std::string& methodName);
 
-} // python.
-} // bindings.
-} // mlpack.
+} // namespace python
+} // namespace bindings
+} // namespace mlpack
 
 // Include implementation.
 #include "wrapper_functions_impl.hpp"

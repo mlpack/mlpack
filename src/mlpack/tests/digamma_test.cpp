@@ -1,7 +1,7 @@
 /**
  * @file tests/digamma_test.cpp
  * @author Gopi Tatiraju
- * 
+ *
  * Test the digamma distribution.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -25,7 +25,7 @@ TEST_CASE("DigammaLarge", "[DigammaTest]")
 
   if (!data::Load("digamma_data.csv", data, true, false))
     FAIL("Cannot load data digamma_data.csv");
-  
+
   for (size_t i = 0; i < data.n_rows; i++)
     REQUIRE(Digamma(data(i, 0)) == Approx(data(i, 1)).epsilon(1e-7));
 }
@@ -39,7 +39,7 @@ TEST_CASE("DigammaNegative", "[DigammaTest]")
 
   if (!data::Load("digamma_neg_data.csv", data, true, false))
     FAIL("Cannot load data digamma_neg_data.csv");
-  
+
   for (size_t i = 0; i < data.n_rows; i++)
     REQUIRE(Digamma(data(i, 0)) == Approx(data(i, 1)).epsilon(1e-7));
 }
@@ -53,7 +53,7 @@ TEST_CASE("DigammaSmall", "[DigammaTest]")
 
   if (!data::Load("digamma_small_data.csv", data, true, false))
     FAIL("Cannot load data digamma_small_data.csv");
-  
+
   for (size_t i = 0; i < data.n_rows; i++)
     REQUIRE(Digamma(data(i, 0)) == Approx(data(i, 1)).epsilon(1e-7));
 }
@@ -67,7 +67,7 @@ TEST_CASE("DigammaNearPositiveRoots", "[DigammaTest]")
 
   if (!data::Load("digamma_root_data.csv", data, true, false))
     FAIL("Cannot load data digamma_root_data.csv");
-  
+
   for (size_t i = 0; i < data.n_rows; i++)
     REQUIRE(Digamma(data(i, 0)) == Approx(data(i, 1)).epsilon(1e-7));
 }

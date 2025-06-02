@@ -90,7 +90,7 @@ class DiceLossType
 }; // class DiceLossType
 
 // Default typedef for typical `arma::mat` usage.
-typedef DiceLossType<arma::mat> DiceLoss;
+using DiceLoss = DiceLossType<arma::mat>;
 
 } // namespace mlpack
 

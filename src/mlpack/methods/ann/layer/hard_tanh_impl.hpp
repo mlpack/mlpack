@@ -48,7 +48,8 @@ HardTanHType<MatType>::HardTanHType(HardTanHType&& layer) :
 }
 
 template<typename MatType>
-HardTanHType<MatType>& HardTanHType<MatType>::operator=(const HardTanHType& layer)
+HardTanHType<MatType>& HardTanHType<MatType>::operator=(
+    const HardTanHType& layer)
 {
   if (&layer != this)
   {
@@ -58,7 +59,7 @@ HardTanHType<MatType>& HardTanHType<MatType>::operator=(const HardTanHType& laye
   }
 
   return *this;
-} 
+}
 
 template<typename MatType>
 HardTanHType<MatType>& HardTanHType<MatType>::operator=(HardTanHType&& layer)
@@ -92,7 +93,7 @@ void HardTanHType<MatType>::Backward(
     MatType& g)
 {
   g = gy;
-  
+
   #pragma omp parallel for
   for (size_t i = 0; i < input.n_elem; ++i)
   {

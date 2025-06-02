@@ -32,11 +32,11 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   // The copy_all_inputs parameter must be handled first, and therefore is
   // outside the scope of this code.
@@ -46,7 +46,7 @@ void PrintInputProcessing(
   const std::string prefix(indent, ' ');
 
   std::string def = "None";
-  if (std::is_same<T, bool>::value)
+  if (std::is_same_v<T, bool>)
     def = "False";
 
   // Make sure that we don't use names that are Python keywords.
@@ -128,8 +128,8 @@ void PrintInputProcessing(
           << GetPrintableType<T>(d) << "):" << std::endl;
     }
 
-    std::cout << prefix << "    SetParam[" << GetCythonType<T>(d) << "](p, <const "
-        << "string> '" << d.name << "', ";
+    std::cout << prefix << "    SetParam[" << GetCythonType<T>(d)
+        << "](p, <const string> '" << d.name << "', ";
     if (GetCythonType<T>(d) == "string")
       std::cout << name << ".encode(\"UTF-8\")";
     else if (GetCythonType<T>(d) == "vector[string]")
@@ -165,11 +165,11 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0,
+    const std::enable_if_t<util::IsStdVector<T>::value>* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -255,8 +255,8 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+    const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -383,9 +383,9 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   // First, get the correct class name if needed.
   std::string strippedType, printedType, defaultsType;
@@ -417,9 +417,9 @@ void PrintInputProcessing(
   {
     std::cout << prefix << "if " << name << " is not None:" << std::endl;
     std::cout << prefix << "  try:" << std::endl;
-    std::cout << prefix << "    SetParamPtr[" << strippedType << "](p, '" << d.name
-        << "', (<" << strippedType << "Type?> " << name << ").modelptr, "
-        << "p.Has('copy_all_inputs'))" << std::endl;
+    std::cout << prefix << "    SetParamPtr[" << strippedType << "](p, '"
+        << d.name << "', (<" << strippedType << "Type?> " << name
+        << ").modelptr, p.Has('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "  except TypeError as e:" << std::endl;
     std::cout << prefix << "    if type(" << name << ").__name__ == '"
         << strippedType << "Type':" << std::endl;
@@ -434,15 +434,15 @@ void PrintInputProcessing(
   else
   {
     std::cout << prefix << "try:" << std::endl;
-    std::cout << prefix << "  SetParamPtr[" << strippedType << "](p, '" << d.name
-        << "', (<" << strippedType << "Type?> " << name << ").modelptr, "
-        << "p.Has('copy_all_inputs'))" << std::endl;
+    std::cout << prefix << "  SetParamPtr[" << strippedType << "](p, '"
+        << d.name << "', (<" << strippedType << "Type?> " << name
+        << ").modelptr, p.Has('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "except TypeError as e:" << std::endl;
     std::cout << prefix << "  if type(" << name << ").__name__ == '"
         << strippedType << "Type':" << std::endl;
-    std::cout << prefix << "    SetParamPtr[" << strippedType << "](p,'" << d.name
-        << "', (<" << strippedType << "Type> " << name << ").modelptr, "
-        << "p.Has('copy_all_inputs'))" << std::endl;
+    std::cout << prefix << "    SetParamPtr[" << strippedType << "](p,'"
+        << d.name << "', (<" << strippedType << "Type> " << name
+        << ").modelptr, p.Has('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "  else:" << std::endl;
     std::cout << prefix << "    raise e" << std::endl;
     std::cout << prefix << "p.SetPassed(<const string> '" << d.name << "')"
@@ -458,9 +458,9 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
 {
   std::string name = GetValidName(d.name);
 
@@ -486,7 +486,8 @@ void PrintInputProcessing(
       << std::endl;
   if (!d.required)
   {
-    std::cout << prefix << "cdef extern from \"numpy/arrayobject.h\":" << std::endl;
+    std::cout << prefix << "cdef extern from \"numpy/arrayobject.h\":"
+        << std::endl;
     std::cout << prefix << "  void* PyArray_DATA(np.ndarray arr)" << std::endl;
     std::cout << prefix << "if " << name << " is not None:" << std::endl;
     std::cout << prefix << "  " << name << "_tuple = to_matrix_with_info("
@@ -509,7 +510,8 @@ void PrintInputProcessing(
   }
   else
   {
-    std::cout << prefix << "cdef extern from \"numpy/arrayobject.h\":" << std::endl;
+    std::cout << prefix << "cdef extern from \"numpy/arrayobject.h\":"
+        << std::endl;
     std::cout << prefix << "  void* PyArray_DATA(np.ndarray arr)" << std::endl;
     std::cout << prefix << name << "_tuple = to_matrix_with_info(" << name
         << ", dtype=np.double, copy=p.Has('copy_all_inputs'))"
@@ -548,8 +550,7 @@ void PrintInputProcessing(util::ParamData& d,
                           const void* input,
                           void* /* output */)
 {
-  PrintInputProcessing<typename std::remove_pointer<T>::type>(d,
-      *((size_t*) input));
+  PrintInputProcessing<std::remove_pointer_t<T>>(d, *((size_t*) input));
 }
 
 } // namespace python

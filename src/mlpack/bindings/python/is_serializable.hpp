@@ -21,7 +21,7 @@ namespace python {
 template<typename T>
 inline bool IsSerializable(
     util::ParamData& /* d */,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0)
 {
   return false;
 }
@@ -29,7 +29,7 @@ inline bool IsSerializable(
 template<typename T>
 inline bool IsSerializable(
     util::ParamData& /* d */,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   return true;
 }
@@ -39,12 +39,11 @@ void IsSerializable(util::ParamData& data,
                     const void* /* input */,
                     void* output)
 {
-  *((bool*) output) =
-      IsSerializable<typename std::remove_pointer<T>::type>(data);
+  *((bool*) output) = IsSerializable<std::remove_pointer_t<T>>(data);
 }
 
-} // python
-} // bindings
-} // mlpack
+} // namespace python
+} // namespace bindings
+} // namespace mlpack
 
 #endif

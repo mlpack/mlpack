@@ -21,8 +21,8 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename KernelType, typename TreeType>
-KDERules<MetricType, KernelType, TreeType>::KDERules(
+template<typename DistanceType, typename KernelType, typename TreeType>
+KDERules<DistanceType, KernelType, TreeType>::KDERules(
     const arma::mat& referenceSet,
     const arma::mat& querySet,
     arma::vec& densities,
@@ -32,7 +32,7 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     const size_t initialSampleSize,
     const double mcAccessCoef,
     const double mcBreakCoef,
-    MetricType& metric,
+    DistanceType& distance,
     KernelType& kernel,
     const bool monteCarlo,
     const bool sameSet) :
@@ -45,7 +45,7 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     initialSampleSize(initialSampleSize),
     mcAccessCoef(mcAccessCoef),
     mcBreakCoef(mcBreakCoef),
-    metric(metric),
+    distance(distance),
     kernel(kernel),
     monteCarlo(monteCarlo),
     sameSet(sameSet),
@@ -56,17 +56,17 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     scores(0)
 {
   // Initialize accumError.
-  accumError = arma::vec(querySet.n_cols, arma::fill::zeros);
+  accumError = arma::vec(querySet.n_cols);
 
   // Initialize accumMCAlpha only if Monte Carlo estimations are available.
   if (monteCarlo && kernelIsGaussian)
-    accumMCAlpha = arma::vec(querySet.n_cols, arma::fill::zeros);
+    accumMCAlpha = arma::vec(querySet.n_cols);
 }
 
 //! The base case.
-template<typename MetricType, typename KernelType, typename TreeType>
+template<typename DistanceType, typename KernelType, typename TreeType>
 inline mlpack_force_inline
-double KDERules<MetricType, KernelType, TreeType>::BaseCase(
+double KDERules<DistanceType, KernelType, TreeType>::BaseCase(
     const size_t queryIndex,
     const size_t referenceIndex)
 {
@@ -80,9 +80,9 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
     return 0.0;
 
   // Calculations.
-  const double distance = metric.Evaluate(querySet.col(queryIndex),
-                                          referenceSet.col(referenceIndex));
-  const double kernelValue = kernel.Evaluate(distance);
+  const double d = distance.Evaluate(querySet.col(queryIndex),
+                                     referenceSet.col(referenceIndex));
+  const double kernelValue = kernel.Evaluate(d);
   densities(queryIndex) += kernelValue;
 
   // Update accumulated relative error tolerance for single-tree pruning.
@@ -91,13 +91,13 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
   ++baseCases;
   lastQueryIndex = queryIndex;
   lastReferenceIndex = referenceIndex;
-  traversalInfo.LastBaseCase() = distance;
-  return distance;
+  traversalInfo.LastBaseCase() = d;
+  return d;
 }
 
 //! Single-tree scoring function.
-template<typename MetricType, typename KernelType, typename TreeType>
-inline double KDERules<MetricType, KernelType, TreeType>::
+template<typename DistanceType, typename KernelType, typename TreeType>
+inline double KDERules<DistanceType, KernelType, TreeType>::
 Score(const size_t queryIndex, TreeType& referenceNode)
 {
   // Auxiliary variables.
@@ -290,8 +290,8 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   return score;
 }
 
-template<typename MetricType, typename KernelType, typename TreeType>
-inline mlpack_force_inline double KDERules<MetricType, KernelType, TreeType>::
+template<typename DistanceType, typename KernelType, typename TreeType>
+inline mlpack_force_inline double KDERules<DistanceType, KernelType, TreeType>::
 Rescore(const size_t /* queryIndex */,
         TreeType& /* referenceNode */,
         const double oldScore) const
@@ -301,8 +301,8 @@ Rescore(const size_t /* queryIndex */,
 }
 
 //! Dual-tree scoring function.
-template<typename MetricType, typename KernelType, typename TreeType>
-inline double KDERules<MetricType, KernelType, TreeType>::
+template<typename DistanceType, typename KernelType, typename TreeType>
+inline double KDERules<DistanceType, KernelType, TreeType>::
 Score(TreeType& queryNode, TreeType& referenceNode)
 {
   KDEStat& queryStat = queryNode.Stat();
@@ -513,8 +513,8 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 }
 
 //! Dual-tree rescore.
-template<typename MetricType, typename KernelType, typename TreeType>
-inline mlpack_force_inline double KDERules<MetricType, KernelType, TreeType>::
+template<typename DistanceType, typename KernelType, typename TreeType>
+inline mlpack_force_inline double KDERules<DistanceType, KernelType, TreeType>::
 Rescore(TreeType& /*queryNode*/,
         TreeType& /*referenceNode*/,
         const double oldScore) const
@@ -523,8 +523,8 @@ Rescore(TreeType& /*queryNode*/,
   return oldScore;
 }
 
-template<typename MetricType, typename KernelType, typename TreeType>
-inline mlpack_force_inline double KDERules<MetricType, KernelType, TreeType>::
+template<typename DistanceType, typename KernelType, typename TreeType>
+inline mlpack_force_inline double KDERules<DistanceType, KernelType, TreeType>::
 EvaluateKernel(const size_t queryIndex,
                const size_t referenceIndex) const
 {
@@ -532,15 +532,15 @@ EvaluateKernel(const size_t queryIndex,
                         referenceSet.unsafe_col(referenceIndex));
 }
 
-template<typename MetricType, typename KernelType, typename TreeType>
-inline mlpack_force_inline double KDERules<MetricType, KernelType, TreeType>::
+template<typename DistanceType, typename KernelType, typename TreeType>
+inline mlpack_force_inline double KDERules<DistanceType, KernelType, TreeType>::
 EvaluateKernel(const arma::vec& query, const arma::vec& reference) const
 {
-  return kernel.Evaluate(metric.Evaluate(query, reference));
+  return kernel.Evaluate(distance.Evaluate(query, reference));
 }
 
-template<typename MetricType, typename KernelType, typename TreeType>
-inline mlpack_force_inline double KDERules<MetricType, KernelType, TreeType>::
+template<typename DistanceType, typename KernelType, typename TreeType>
+inline mlpack_force_inline double KDERules<DistanceType, KernelType, TreeType>::
 CalculateAlpha(TreeType* node)
 {
   KDEStat& stat = node->Stat();

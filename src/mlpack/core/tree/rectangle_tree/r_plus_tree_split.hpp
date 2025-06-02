@@ -18,7 +18,9 @@
 namespace mlpack {
 
 /**
- * The RPlusTreeSplit class performs the split process of a node on overflow.
+ * The RPlusTreeSplitType class performs the split process of a node on
+ * overflow.  This is used for both the RPlusTree and the RPlusPlusTree,
+ * depending on the SplitPolicyType and the SweepType.
  *
  * @tparam SplitPolicyType The class that helps to determine the subtree into
  *     which we should insert a child node.
@@ -28,10 +30,10 @@ namespace mlpack {
  */
 template<typename SplitPolicyType,
          template<typename> class SweepType>
-class RPlusTreeSplit
+class RPlusTreeSplitType
 {
  public:
-  typedef SplitPolicyType SplitPolicy;
+  using SplitPolicy = SplitPolicyType;
   /**
    * Split a leaf node using the "default" algorithm.  If necessary, this split
    * will propagate upwards through the tree.
@@ -123,6 +125,13 @@ class RPlusTreeSplit
   template<typename TreeType>
   static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);
 };
+
+// Convenience typedefs.
+using RPlusTreeSplit = RPlusTreeSplitType<RPlusTreeSplitPolicy,
+                                          MinimalCoverageSweep>;
+
+using RPlusPlusTreeSplit = RPlusTreeSplitType<RPlusPlusTreeSplitPolicy,
+                                              MinimalSplitsNumberSweep>;
 
 } // namespace mlpack
 

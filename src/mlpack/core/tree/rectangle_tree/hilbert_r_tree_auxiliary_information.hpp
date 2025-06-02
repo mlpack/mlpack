@@ -22,7 +22,7 @@ class HilbertRTreeAuxiliaryInformation
 {
  public:
   //! The element type held by the tree.
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
   //! Default constructor
   HilbertRTreeAuxiliaryInformation();
 

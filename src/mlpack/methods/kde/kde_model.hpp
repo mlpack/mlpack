@@ -43,9 +43,9 @@ class KernelNormalizer
       KernelType& /* kernel */,
       const size_t /* dimension */,
       arma::vec& /* estimations */,
-      const typename std::enable_if<
-          !HasNormalizer<KernelType, double(KernelType::*)(size_t)>::value>::
-          type* = 0)
+      const std::enable_if_t<
+          !HasNormalizer<KernelType, double(KernelType::*)(size_t)>::value>*
+          = 0)
   { return; }
 
   //! Normalize kernels that have normalizer.
@@ -54,9 +54,9 @@ class KernelNormalizer
       KernelType& kernel,
       const size_t dimension,
       arma::vec& estimations,
-      const typename std::enable_if<
-          HasNormalizer<KernelType, double(KernelType::*)(size_t)>::value>::
-          type* = 0)
+      const std::enable_if_t<
+          HasNormalizer<KernelType, double(KernelType::*)(size_t)>::value>*
+          = 0)
   {
     estimations /= kernel.Normalizer(dimension);
   }
@@ -132,7 +132,7 @@ class KDEWrapperBase
  * is needed.
  */
 template<typename KernelType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 class KDEWrapper : public KDEWrapperBase
@@ -212,7 +212,7 @@ class KDEWrapper : public KDEWrapperBase
   }
 
  protected:
-  typedef KDE<KernelType, EuclideanDistance, arma::mat, TreeType> KDEType;
+  using KDEType = KDE<KernelType, EuclideanDistance, arma::mat, TreeType>;
 
   //! The instantiated KDE object that we are wrapping.
   KDEType kde;

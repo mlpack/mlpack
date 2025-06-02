@@ -15,19 +15,9 @@
 
 #include <mlpack/core.hpp>
 
-#include "gini_gain.hpp"
-#include "information_gain.hpp"
-#include "mad_gain.hpp"
-#include "mse_gain.hpp"
-
-#include "best_binary_numeric_split.hpp"
-#include "random_binary_numeric_split.hpp"
-
-#include "all_categorical_split.hpp"
-
-#include "all_dimension_select.hpp"
-#include "random_dimension_select.hpp"
-#include "multiple_random_dimension_select.hpp"
+#include "fitness_functions/fitness_functions.hpp"
+#include "splits/splits.hpp"
+#include "select_functions/select_functions.hpp"
 
 namespace mlpack {
 
@@ -49,11 +39,11 @@ class DecisionTree :
 {
  public:
   //! Allow access to the numeric split type.
-  typedef NumericSplitType<FitnessFunction> NumericSplit;
+  using NumericSplit = NumericSplitType<FitnessFunction>;
   //! Allow access to the categorical split type.
-  typedef CategoricalSplitType<FitnessFunction> CategoricalSplit;
+  using CategoricalSplit = CategoricalSplitType<FitnessFunction>;
   //! Allow access to the dimension selection type.
-  typedef DimensionSelectionType DimensionSelection;
+  using DimensionSelection = DimensionSelectionType;
 
   /**
    * Construct the decision tree on the given data and labels, where the data
@@ -140,7 +130,7 @@ class DecisionTree :
       const size_t maximumDepth = 0,
       DimensionSelectionType dimensionSelector = DimensionSelectionType(),
       const std::enable_if_t<arma::is_arma_type<
-          typename std::remove_reference<WeightsType>::type>::value>* = 0);
+          std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Construct the decision tree on the given data and labels with weights,
@@ -171,7 +161,7 @@ class DecisionTree :
       const size_t maximumDepth = 0,
       DimensionSelectionType dimensionSelector = DimensionSelectionType(),
       const std::enable_if_t<arma::is_arma_type<
-          typename std::remove_reference<WeightsType>::type>::value>* = 0);
+          std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Using the hyperparameters of another decision tree, train on the given data
@@ -203,7 +193,7 @@ class DecisionTree :
       const size_t minimumLeafSize = 10,
       const double minimumGainSplit = 1e-7,
       const std::enable_if_t<arma::is_arma_type<
-          typename std::remove_reference<WeightsType>::type>::value>* = 0);
+          std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Take ownership of another decision tree and train on the given data and
@@ -235,7 +225,7 @@ class DecisionTree :
       const size_t maximumDepth = 0,
       DimensionSelectionType dimensionSelector = DimensionSelectionType(),
       const std::enable_if_t<arma::is_arma_type<
-          typename std::remove_reference<WeightsType>::type>::value>* = 0);
+          std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Construct a decision tree without training it.  It will be a leaf node with
@@ -369,8 +359,8 @@ class DecisionTree :
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
-               const std::enable_if_t<arma::is_arma_type<typename
-                   std::remove_reference<WeightsType>::type>::value>* = 0);
+               const std::enable_if_t<arma::is_arma_type<
+                   std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Train the decision tree on the given weighted data, assuming that all
@@ -401,8 +391,8 @@ class DecisionTree :
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
-               const std::enable_if_t<arma::is_arma_type<typename
-                   std::remove_reference<WeightsType>::type>::value>* = 0);
+               const std::enable_if_t<arma::is_arma_type<
+                   std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Classify the given point, using the entire tree.  The predicted label is
@@ -517,10 +507,9 @@ class DecisionTree :
   //! Note that this class will also hold the members of the NumericSplit and
   //! CategoricalSplit AuxiliarySplitInfo classes, since it inherits from them.
   //! We'll define some convenience typedefs here.
-  typedef typename NumericSplit::AuxiliarySplitInfo
-      NumericAuxiliarySplitInfo;
-  typedef typename CategoricalSplit::AuxiliarySplitInfo
-      CategoricalAuxiliarySplitInfo;
+  using NumericAuxiliarySplitInfo = typename NumericSplit::AuxiliarySplitInfo;
+  using CategoricalAuxiliarySplitInfo =
+      typename CategoricalSplit::AuxiliarySplitInfo;
 
   /**
    * Calculate the class probabilities of the given labels.
@@ -606,11 +595,11 @@ using DecisionStump = DecisionTree<FitnessFunction,
  * Convenience typedef for ID3 decision stumps (single level decision trees made
  * with the ID3 algorithm).
  */
-typedef DecisionTree<InformationGain,
-                     BestBinaryNumericSplit,
-                     AllCategoricalSplit,
-                     AllDimensionSelect,
-                     true> ID3DecisionStump;
+using ID3DecisionStump = DecisionTree<InformationGain,
+                                      BestBinaryNumericSplit,
+                                      AllCategoricalSplit,
+                                      AllDimensionSelect,
+                                      true>;
 } // namespace mlpack
 
 // Include implementation.

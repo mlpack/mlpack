@@ -23,15 +23,15 @@ struct IsSpillTree
 };
 
 // Specialization for SpillTree.
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType>
+         template<typename HyperplaneDistanceType, typename HyperplaneMatType>
             class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename SplitDistanceType, typename SplitMatType>
             class SplitType>
-struct IsSpillTree<SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
-    SplitType>>
+struct IsSpillTree<SpillTree<DistanceType, StatisticType, MatType,
+    HyperplaneType, SplitType>>
 {
   static const bool value = true;
 };

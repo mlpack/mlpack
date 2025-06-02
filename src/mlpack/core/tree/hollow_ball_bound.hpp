@@ -2,7 +2,7 @@
  * @file core/tree/hollow_ball_bound.hpp
  *
  * Bounds that are useful for binary space partitioning trees.
- * Interface to a ball bound that works in arbitrary metric spaces.
+ * Interface to a hollow ball bound that works in arbitrary metric spaces.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -13,7 +13,7 @@
 #define MLPACK_CORE_TREE_HOLLOW_BALL_BOUND_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 #include "bound_traits.hpp"
 
 namespace mlpack {
@@ -21,19 +21,19 @@ namespace mlpack {
 /**
  * Hollow ball bound encloses a set of points at a specific distance (radius)
  * from a specific point (center) except points at a specific distance from
- * another point (the center of the hole). MetricType is the custom metric type
- * that defaults to the Euclidean (L2) distance.
+ * another point (the center of the hole). DistanceType is the custom distance
+ * metric type that defaults to the Euclidean (L2) distance.
  *
- * @tparam TMetricType metric type used in the distance measure.
+ * @tparam TDistanceType metric type used in the distance measure.
  * @tparam ElemType Type of element (float or double or similar).
  */
-template<typename TMetricType = LMetric<2, true>,
+template<typename TDistanceType = LMetric<2, true>,
          typename ElemType = double>
 class HollowBallBound
 {
  public:
   //! A public version of the metric type.
-  typedef TMetricType MetricType;
+  using DistanceType = TDistanceType;
 
  private:
   //! The inner and the outer radii of the bound.
@@ -42,16 +42,16 @@ class HollowBallBound
   arma::Col<ElemType> center;
   //! The center of the hollow.
   arma::Col<ElemType> hollowCenter;
-  //! The metric used in this bound.
-  MetricType* metric;
+  //! The distance metric used in this bound.
+  DistanceType* distance;
 
   /**
-   * To know whether this object allocated memory to the metric member
+   * To know whether this object allocated memory to the distance member
    * variable. This will be true except in the copy constructor and the
    * overloaded assignment operator. We need this to know whether we should
-   * delete the metric member variable in the destructor.
+   * delete the distance member variable in the destructor.
    */
-  bool ownsMetric;
+  bool ownsDistance;
 
  public:
   //! Empty Constructor.
@@ -228,9 +228,16 @@ class HollowBallBound
   ElemType Diameter() const { return 2 * radii.Hi(); }
 
   //! Returns the distance metric used in this bound.
-  const MetricType& Metric() const { return *metric; }
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  const DistanceType& Metric() const { return *distance; }
   //! Modify the distance metric used in this bound.
-  MetricType& Metric() { return *metric; }
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  DistanceType& Metric() { return *distance; }
+
+  //! Returns the distance metric used in this bound.
+  const DistanceType& Distance() const { return *distance; }
+  //! Modify the distance metric used in this bound.
+  DistanceType& Distance() { return *distance; }
 
   //! Serialize the bound.
   template<typename Archive>
@@ -238,11 +245,11 @@ class HollowBallBound
 };
 
 //! A specialization of BoundTraits for this bound type.
-template<typename MetricType, typename ElemType>
-struct BoundTraits<HollowBallBound<MetricType, ElemType>>
+template<typename DistanceType, typename ElemType>
+struct BoundTraits<HollowBallBound<DistanceType, ElemType>>
 {
   //! These bounds are potentially loose in some dimensions.
-  const static bool HasTightBounds = false;
+  static const bool HasTightBounds = false;
 };
 
 } // namespace mlpack

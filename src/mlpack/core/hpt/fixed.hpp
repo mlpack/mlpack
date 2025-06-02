@@ -101,7 +101,7 @@ class IsPreFixedArg
   struct Implementation<PreFixedArg<Type>> : std::true_type {};
 
  public:
-  static const bool value = Implementation<typename std::decay<T>::type>::value;
+  static const bool value = Implementation<std::decay_t<T>>::value;
 };
 
 } // namespace mlpack

@@ -15,7 +15,7 @@
 #define MLPACK_METHODS_GMM_EM_FIT_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/dists/dists.hpp>
+#include <mlpack/core/distributions/distributions.hpp>
 
 // Default clustering mechanism.
 #include <mlpack/methods/kmeans/kmeans.hpp>
@@ -39,7 +39,7 @@ namespace mlpack {
  */
 template<typename InitialClusteringType = KMeans<>,
          typename CovarianceConstraintPolicy = PositiveDefiniteConstraint,
-         typename Distribution = GaussianDistribution>
+         typename Distribution = GaussianDistribution<>>
 class EMFit
 {
  public:

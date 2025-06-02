@@ -105,7 +105,7 @@ class RAWrapperBase
 /**
  * RAWrapper is a wrapper class for most RASearch types.
  */
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 class RAWrapper : public RAWrapperBase
@@ -193,10 +193,10 @@ class RAWrapper : public RAWrapperBase
   }
 
  protected:
-  typedef RASearch<NearestNeighborSort,
-                   EuclideanDistance,
-                   arma::mat,
-                   TreeType> RAType;
+  using RAType = RASearch<NearestNeighborSort,
+                          EuclideanDistance,
+                          arma::mat,
+                          TreeType>;
 
   //! The instantiated RASearch object that we are wrapping.
   RAType ra;
@@ -207,7 +207,7 @@ class RAWrapper : public RAWrapperBase
  * leaf size into account when building trees.  The implementations of Train()
  * and bichromatic Search() take this leaf size into account.
  */
-template<template<typename TreeMetricType,
+template<template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 class LeafSizeRAWrapper : public RAWrapper<TreeType>

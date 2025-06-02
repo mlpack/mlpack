@@ -1,0 +1,91 @@
+// The style checker build will check the style of all the code in the
+// repository.
+pipeline
+{
+  // Run inside of the custom Docker image for style checking.
+  agent
+  {
+    docker
+    {
+      image 'mlpack/jenkins-mlpack-style-checks:latest'
+      alwaysPull true
+    }
+  }
+
+  options
+  {
+    // Only allow one build at a time of this job.
+    disableConcurrentBuilds(abortPrevious: true)
+
+    // We will do checkout manually.
+    skipDefaultCheckout()
+  }
+
+  stages
+  {
+    // Clean the workspace and check out the code.
+    stage('Set up workspace')
+    {
+      steps
+      {
+        cleanWs(deleteDirs: true,
+                disableDeferredWipeout: true,
+                notFailBuild: true)
+        checkout scm
+
+        script
+        {
+          // Set the initial status.
+          u = load '.jenkins/utils.groovy'
+          u.startCheck('Style checks', 'Setting up workspace...')
+        }
+
+        sh '''
+          git clone https://github.com/mlpack/jenkins-conf
+        '''
+      }
+    }
+
+    // Now we can run those scripts.
+    stage('Check code style')
+    {
+      steps
+      {
+        script { u.updateCheckStatus('Checking code style...') }
+
+        sh '''
+          mkdir -p reports
+          ./jenkins-conf/linter/lint.sh \
+              --root . \
+              --reports reports/cpplint.junit.xml \
+              --dir ./src/mlpack
+
+          # Print the results.
+          cat reports/cpplint.junit.xml
+        '''
+      }
+    }
+  }
+
+  post
+  {
+    // Mark unstable builds as failed.
+    unstable { script { u.finishCheck('Style checks failed.', false) } }
+    failure { script { u.finishCheck('Style checks failed.', false) } }
+    success { script { u.finishCheck('Style checks passed.', true) } }
+
+    always
+    {
+      // Process the test results.
+      junit(allowEmptyResults: true,
+            skipPublishingChecks: true,
+            testResults: '**/reports/cpplint.junit.xml')
+
+      // Clean the workspace after the build too.
+      cleanWs(cleanWhenNotBuilt: true,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true)
+    }
+  }
+}

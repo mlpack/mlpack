@@ -97,9 +97,9 @@ BINDING_SEE_ALSO("@lmnn", "#lmnn");
 BINDING_SEE_ALSO("Neighbourhood components analysis on Wikipedia",
     "https://en.wikipedia.org/wiki/Neighbourhood_components_analysis");
 BINDING_SEE_ALSO("Neighbourhood components analysis (pdf)",
-    "http://papers.nips.cc/paper/2566-neighbourhood-components-analysis.pdf");
-BINDING_SEE_ALSO("NCA C++ class documentation",
-    "@src/mlpack/methods/nca/nca.hpp");
+    "https://proceedings.neurips.cc/paper_files/paper/2004/file/"
+    "42fe880812925e520249e808937738d2-Paper.pdf");
+BINDING_SEE_ALSO("NCA C++ class documentation", "@doc/user/methods/nca.md");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run NCA on.", "i");
 PARAM_MATRIX_OUT("output", "Output matrix for learned distance matrix.", "o");
@@ -172,7 +172,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   else if (optimizerType == "lbfgs")
   {
     ReportIgnoredParam(params, "step_size", "SGD optimizer is not being used");
-    ReportIgnoredParam(params, "linear_scan", "SGD optimizer is not being used");
+    ReportIgnoredParam(params, "linear_scan", "SGD optimizer is not being "
+        "used");
     ReportIgnoredParam(params, "batch_size", "SGD optimizer is not being used");
   }
 
@@ -240,30 +241,31 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   // Now create the NCA object and run the optimization.
   timers.Start("nca_optimization");
+  NCA nca;
   if (optimizerType == "sgd")
   {
-    NCA<LMetric<2> > nca(data, labels);
-    nca.Optimizer().StepSize() = stepSize;
-    nca.Optimizer().MaxIterations() = maxIterations;
-    nca.Optimizer().Tolerance() = tolerance;
-    nca.Optimizer().Shuffle() = shuffle;
-    nca.Optimizer().BatchSize() = batchSize;
+    ens::StandardSGD opt;
+    opt.StepSize() = stepSize;
+    opt.MaxIterations() = maxIterations;
+    opt.Tolerance() = tolerance;
+    opt.Shuffle() = shuffle;
+    opt.BatchSize() = batchSize;
 
-    nca.LearnDistance(distance);
+    nca.LearnDistance(data, labels, distance, opt);
   }
   else if (optimizerType == "lbfgs")
   {
-    NCA<LMetric<2>, ens::L_BFGS> nca(data, labels);
-    nca.Optimizer().NumBasis() = numBasis;
-    nca.Optimizer().MaxIterations() = maxIterations;
-    nca.Optimizer().ArmijoConstant() = armijoConstant;
-    nca.Optimizer().Wolfe() = wolfe;
-    nca.Optimizer().MinGradientNorm() = tolerance;
-    nca.Optimizer().MaxLineSearchTrials() = maxLineSearchTrials;
-    nca.Optimizer().MinStep() = minStep;
-    nca.Optimizer().MaxStep() = maxStep;
+    ens::L_BFGS opt;
+    opt.NumBasis() = numBasis;
+    opt.MaxIterations() = maxIterations;
+    opt.ArmijoConstant() = armijoConstant;
+    opt.Wolfe() = wolfe;
+    opt.MinGradientNorm() = tolerance;
+    opt.MaxLineSearchTrials() = maxLineSearchTrials;
+    opt.MinStep() = minStep;
+    opt.MaxStep() = maxStep;
 
-    nca.LearnDistance(distance);
+    nca.LearnDistance(data, labels, distance, opt);
   }
   timers.Stop("nca_optimization");
 

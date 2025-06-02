@@ -57,7 +57,7 @@ BINDING_SEE_ALSO("ICA using spacings estimates of entropy (pdf)",
     "https://www.jmlr.org/papers/volume4/learned-miller03a/"
     "learned-miller03a.pdf");
 BINDING_SEE_ALSO("Radical C++ class documentation",
-    "@src/mlpack/methods/radical/radical.hpp");
+    "@doc/user/methods/radical.md");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset for ICA.", "i");
 
@@ -117,11 +117,13 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     nSweeps = matX.n_rows - 1;
   }
 
+  const size_t m = std::floor(std::sqrt((double) matX.n_rows));
+
   // Run RADICAL.
   Radical rad(noiseStdDev, nReplicates, nAngles, nSweeps);
   mat matY;
   mat matW;
-  rad.DoRadical(matX, matY, matW, timers);
+  rad.Apply(matX, matY, matW, timers);
 
   // Save results.
   if (params.Has("output_ic"))
@@ -138,7 +140,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     for (size_t i = 0; i < matYT.n_cols; ++i)
     {
       vec y = vec(matYT.col(i));
-      valEst += rad.Vasicek(y);
+      valEst += rad.Vasicek(y, m);
     }
 
     // Force output even if --verbose is not given.

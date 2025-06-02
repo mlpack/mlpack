@@ -18,27 +18,89 @@
 namespace mlpack {
 
 // Just set the internal matrix reference.
-template<typename MetricType, typename OptimizerType>
-NCA<MetricType, OptimizerType>::NCA(const arma::mat& dataset,
-                                    const arma::Row<size_t>& labels,
-                                    MetricType metric) :
-    dataset(dataset),
-    labels(labels),
-    metric(metric),
-    errorFunction(dataset, labels, metric)
+template<typename DistanceType, typename DeprecatedOptimizerType>
+NCA<DistanceType, DeprecatedOptimizerType>::NCA(
+    const arma::mat& dataset,
+    const arma::Row<size_t>& labels,
+    DistanceType distance) :
+    dataset(&dataset),
+    labels(&labels),
+    distance(std::move(distance))
 { /* Nothing to do. */ }
 
-template<typename MetricType, typename OptimizerType>
-template<typename... CallbackTypes>
-void NCA<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix,
+template<typename DistanceType, typename DeprecatedOptimizerType>
+NCA<DistanceType, DeprecatedOptimizerType>::NCA(DistanceType distance) :
+    distance(std::move(distance))
+{ /* Nothing to do. */ }
+
+template<typename DistanceType, typename DeprecatedOptimizerType>
+template<typename... CallbackTypes,
+         typename /* callback SFINAE check */,
+         typename /* SFINAE check to disambiguate overloads */>
+void NCA<DistanceType, DeprecatedOptimizerType>::LearnDistance(
+    arma::mat& outputMatrix,
     CallbackTypes&&... callbacks)
 {
+  if (!dataset || !labels)
+  {
+    throw std::runtime_error("NCA::LearnDistance(): cannot call without a "
+        "dataset!");
+  }
+
+  LearnDistance(*dataset, *labels, outputMatrix, optimizer,
+      std::forward<CallbackTypes>(callbacks)...);
+}
+
+template<typename DistanceType, typename DeprecatedOptimizerType>
+template<typename MatType,
+         typename LabelsType,
+         typename... CallbackTypes,
+         typename /* SFINAE check that first callback is not an optimizer */,
+         typename /* callback SFINAE check */>
+void NCA<DistanceType, DeprecatedOptimizerType>::LearnDistance(
+    const MatType& dataset,
+    const LabelsType& labels,
+    MatType& outputMatrix,
+    CallbackTypes&&... callbacks) const
+{
+  // This should be replaced with ens::StandardSGD when the deprecated members
+  // are removed for mlpack 5.0.0.
+  DeprecatedOptimizerType opt;
+  LearnDistance(dataset, labels, outputMatrix, opt,
+      std::forward<CallbackTypes>(callbacks)...);
+}
+
+template<typename DistanceType, typename DeprecatedOptimizerType>
+template<typename MatType,
+         typename LabelsType,
+         typename OptimizerType,
+         typename... CallbackTypes,
+         typename /* SFINAE check that opt is an ensmallen optimizer */>
+void NCA<DistanceType, DeprecatedOptimizerType>::LearnDistance(
+    const MatType& dataset,
+    const LabelsType& labels,
+    MatType& outputMatrix,
+    OptimizerType& opt,
+    CallbackTypes&&... callbacks) const
+{
+  SoftmaxErrorFunction<MatType, LabelsType, DistanceType> errorFunction(
+      dataset, labels, distance);
+
   // See if we were passed an initialized matrix.
   if ((outputMatrix.n_rows != dataset.n_rows) ||
       (outputMatrix.n_cols != dataset.n_rows))
     outputMatrix.eye(dataset.n_rows, dataset.n_rows);
 
-  optimizer.Optimize(errorFunction, outputMatrix, callbacks...);
+  opt.Optimize(errorFunction, outputMatrix,
+      std::forward<CallbackTypes>(callbacks)...);
+}
+
+template<typename DistanceType, typename DeprecatedOptimizerType>
+template<typename Archive>
+void NCA<DistanceType, DeprecatedOptimizerType>::serialize(
+    Archive& ar, const uint32_t /* version */)
+{
+  ar(CEREAL_NVP(distance));
 }
 
 } // namespace mlpack

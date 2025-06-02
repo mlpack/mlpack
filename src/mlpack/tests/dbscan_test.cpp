@@ -17,18 +17,6 @@
 
 using namespace mlpack;
 
-/**
- * A couple of handful declarations for float32 testing.
- * These will be removed when we refactor the Bounds to accept MatType.
- * For now, we will keep the following declarations.
- */
-template<typename MetricType>
-using FloatHRectBound = HRectBound<MetricType, float>;
-
-template<typename MetricType, typename StatisticType, typename MatType>
-using FloatKDTree = BinarySpaceTree<MetricType, StatisticType, MatType,
-                                    FloatHRectBound, MidpointSplit>;
-
 TEST_CASE("OneClusterTest", "[DBSCANTest]")
 {
   // Make sure that if we have points in the unit box, and if we set epsilon
@@ -95,7 +83,7 @@ TEST_CASE("GaussiansTest", "[DBSCANTest]")
 {
   arma::mat points(3, 300);
 
-  GaussianDistribution g1(3), g2(3), g3(3);
+  GaussianDistribution<> g1(3), g2(3), g3(3);
   g1.Mean() = arma::vec("0.0 0.0 0.0");
   g2.Mean() = arma::vec("6.0 6.0 8.0");
   g3.Mean() = arma::vec("-6.0 1.0 -7.0");
@@ -229,7 +217,7 @@ TEST_CASE("Float32OutlierSingleModeTest", "[DBSCANTest]")
   DBSCAN<RangeSearch<
          EuclideanDistance,
          arma::Mat<float>,
-         FloatKDTree>,
+         KDTree>,
          OrderedPointSelection> d(0.1, 3, false);
 
   arma::Row<size_t> assignments;
@@ -249,7 +237,7 @@ TEST_CASE("GaussiansSingleModeTest", "[DBSCANTest]")
 {
   arma::mat points(3, 300);
 
-  GaussianDistribution g1(3), g2(3), g3(3);
+  GaussianDistribution<> g1(3), g2(3), g3(3);
   g1.Mean() = arma::vec("0.0 0.0 0.0");
   g2.Mean() = arma::vec("6.0 6.0 8.0");
   g3.Mean() = arma::vec("-6.0 1.0 -7.0");

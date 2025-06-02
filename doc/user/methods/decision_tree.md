@@ -48,7 +48,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
  * [`DecisionTreeRegressor`](decision_tree_regressor.md)
  * [Random forests](random_forest.md)
- * [mlpack classifiers](../../index.md#classification-algorithms)
+ * [mlpack classifiers](../modeling.md#classification)
  * [Decision tree on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree)
  * [Decision tree learning on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
 
@@ -79,7 +79,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
 | `datasetInfo` | [`data::DatasetInfo`](../load_save.md#loading-categorical-data) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../core/normalizing_labels.md) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `weights` | [`arma::rowvec`](../matrices.md) | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `minLeafSize` | `size_t` | Minimum number of points in each leaf node. | `10` |
@@ -183,7 +183,7 @@ that is used should be the same type that was used for training.
    [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
  * `tree.NumChildren()` will return a `size_t` indicating the number of children
-   in the node `tree`.
+   in the node `tree`. If there was no split, zero is returned. 
 
  * `tree.Child(i)` will return a `DecisionTree` object representing the `i`th
    child of the node `tree`.
@@ -270,7 +270,7 @@ else
 
 See also the following fully-working examples:
 
- - [Loan default prediction with `DecisionTree`](https://github.com/mlpack/examples/blob/master/loan_default_prediction_with_decision_tree/loan-default-prediction-with-decision-tree-cpp.ipynb)
+ - [Loan default prediction with `DecisionTree`](https://github.com/mlpack/examples/blob/master/jupyter_notebook/decision_tree/loan_default_prediction/loan-default-prediction-cpp.ipynb)
 
 ### Advanced Functionality: Template Parameters
 
@@ -427,9 +427,10 @@ class CustomNumericSplit
                        arma::vec& splitInfo,
                        AuxiliarySplitInfo& aux);
 
-  // Return the number of children for a given split (stored as the single
-  // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
-  size_t NumChildren(const double& splitInfo,
+  // Return the number of children for a given split. If there was no split, 
+  // return zero. `splitInfo` and `aux` contain the split information, as set 
+  // in `SplitIfBetter`. 
+  size_t NumChildren(const arma::vec& splitInfo,
                      const AuxiliarySplitInfo& aux);
 
   // Given a point with value `point`, and split information `splitInfo` and
@@ -455,11 +456,22 @@ class CustomNumericSplit
 
  * Specifies the strategy to be used during training when splitting a
     categorical feature.
- * The `AllCategoricalSplit` _(default)_ is available for drop-in usage and
-   splits all categories into their own node.
+ * The `AllCategoricalSplit` _(default)_ and `BestBinaryCategoricalSplit` are~
+   available for drop-in usage.
+ * `AllCategoricalSplit`, the default ID3 split
+   algorithm, splits all categories into their own node. This variant is simple,
+   and has complexity `O(n)`, where `n` is the number of samples.
+ * `BestBinaryCategoricalSplit` is the preferred algorithm of
+   [the CART system](https://www.taylorfrancis.com/books/mono/10.1201/9781315139470/classification-regression-trees-leo-breiman-jerome-friedman-olshen-charles-stone).
+   It will find the the best (entropy-minimizing) binary partition of the
+   categories. This algorithm has complexity `O(n lg n)` in the case of binary
+   outcomes, but is exponential in the number of _categories_ when there are
+   more than two _classes_.~
+   - ***Note***: `BestBinaryCategoricalSplit` should not be chosen when there
+     are multiple classes and many categories.
  * A custom class must take a [`FitnessFunction`](#fitnessfunction) as a
-   template parameter, implement three functions, and have an internal structure
-   `AuxiliarySplitInfo` that is used at classification time:
+   template parameter, implement three functions, and have an internal
+   structure `AuxiliarySplitInfo` that is used at classification time:
 
 ```c++
 template<typename FitnessFunction>
@@ -483,7 +495,7 @@ class CustomCategoricalSplit
   // If a new best split is found, then `splitInfo` and `aux` should be
   // populated with the information that will be needed for
   // `CalculateDirection()` to successfully choose the child for a given point.
-  // `splitInfo` should be set to a vector of length 1.  The format of `aux` is
+  // `splitInfo` should be set to a non-empty vector.  The format of `aux` is
   // arbitrary and is detailed more below.
   //
   // If `UseWeights` is false, the vector `weights` should be ignored.
@@ -504,9 +516,10 @@ class CustomCategoricalSplit
       arma::vec& splitInfo,
       AuxiliarySplitInfo& aux);
 
-  // Return the number of children for a given split (stored as the single
-  // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
-  size_t NumChildren(const double& splitInfo,
+  // Return the number of children for a given split. If there was no split,
+  // return zero. `splitInfo` and `aux` contain the split information, as set
+  // in `SplitIfBetter`.
+  size_t NumChildren(const arma::vec& splitInfo,
                      const AuxiliarySplitInfo& aux);
 
   // Given a point with (categorical) value `point`, and split information

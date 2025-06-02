@@ -583,7 +583,7 @@ TEST_CASE("RangeContainsRange", "[MathTest]")
  */
 TEST_CASE("ShuffleTest", "[MathTest]")
 {
-  arma::mat data(3, 10, arma::fill::zeros);
+  arma::mat data(3, 10);
   arma::Row<size_t> labels(10);
   for (size_t i = 0; i < 10; ++i)
   {
@@ -601,7 +601,7 @@ TEST_CASE("ShuffleTest", "[MathTest]")
   REQUIRE(outputLabels.n_elem == labels.n_elem);
 
   // Make sure we only have each point once.
-  arma::Row<size_t> counts(10, arma::fill::zeros);
+  arma::Row<size_t> counts(10);
   for (size_t i = 0; i < 10; ++i)
   {
     REQUIRE((size_t) outputData(0, i) == outputLabels[i]);
@@ -639,7 +639,7 @@ TEST_CASE("SparseShuffleTest", "[MathTest]")
   REQUIRE(outputLabels.n_elem == labels.n_elem);
 
   // Make sure we only have each point once.
-  arma::Row<size_t> counts(10, arma::fill::zeros);
+  arma::Row<size_t> counts(10);
   for (size_t i = 0; i < 10; ++i)
   {
     REQUIRE((size_t) outputData(0, i) == outputLabels[i]);
@@ -657,7 +657,7 @@ TEST_CASE("SparseShuffleTest", "[MathTest]")
  */
 TEST_CASE("CubeShuffleTest", "[MathTest]")
 {
-  arma::cube data(3, 10, 5, arma::fill::zeros);
+  arma::cube data(3, 10, 5);
   arma::cube labels(1, 10, 5);
   for (size_t i = 0; i < labels.n_slices; ++i)
   {
@@ -681,7 +681,7 @@ TEST_CASE("CubeShuffleTest", "[MathTest]")
   REQUIRE(outputLabels.n_slices == labels.n_slices);
 
   // Make sure we only have each point once.
-  arma::Row<size_t> counts(10, arma::fill::zeros);
+  arma::Row<size_t> counts(10);
   for (size_t i = 0; i < 10; ++i)
   {
     for (size_t s = 0; s < data.n_slices; ++s)
@@ -697,11 +697,80 @@ TEST_CASE("CubeShuffleTest", "[MathTest]")
 }
 
 /**
+ * Make sure shuffling cubes with ragged sequence lengths works.
+ */
+TEST_CASE("RaggedCubeShuffleTest", "[MathTest]")
+{
+  arma::cube data(3, 5, 5);
+  arma::cube labels(1, 5, 5);
+  arma::Row<size_t> lengths(5);
+
+  data.fill(-1);
+  labels.fill(-1);
+
+  for (size_t c = 0; c < lengths.n_elem; ++c)
+  {
+    lengths[c] = c;
+    for (size_t s = 0; s < lengths[c]; ++s)
+    {
+      data(0, c, s) = s;
+      data(1, c, s) = c;
+      labels(0, c, s) = c + s;
+    }
+  }
+
+  arma::cube outputData, outputLabels;
+  arma::Row<size_t> outputLengths;
+
+  ShuffleData(data, labels, lengths, outputData, outputLabels, outputLengths);
+
+  REQUIRE(outputData.n_rows == data.n_rows);
+  REQUIRE(outputData.n_cols == data.n_cols);
+  REQUIRE(outputData.n_slices == data.n_slices);
+  REQUIRE(outputLabels.n_rows == labels.n_rows);
+  REQUIRE(outputLabels.n_cols == labels.n_cols);
+  REQUIRE(outputLabels.n_slices == labels.n_slices);
+  REQUIRE(lengths.n_elem == outputLengths.n_elem);
+
+  // Make sure each column has the right number of slices
+  arma::Row<size_t> sliceCount(5);
+  for (size_t i = 0; i < outputLabels.n_cols; ++i)
+  {
+    for (size_t j = 0; j < outputLabels.n_slices; j++)
+    {
+      if (outputLabels(0, i, j) < 0) {
+        sliceCount[i] = j;
+        break;
+      }
+    }
+  }
+
+  for (size_t i = 0; i < 5; ++i)
+    REQUIRE(sliceCount[i] == outputLengths[i]);
+
+  // Make sure we only have each point once.
+  arma::Row<size_t> counts(5);
+  for (size_t c = 0; c < 5; ++c)
+  {
+    for (size_t s = 0; s < outputLengths[c]; ++s)
+    {
+      REQUIRE(outputData(0, c, s) + outputData(1, c, s)
+          == outputLabels(0, c, s));
+      REQUIRE(outputData(2, c, s) == Approx(-1.0).margin(1e-5));
+      counts[outputLengths[c]]++;
+    }
+  }
+
+  for (size_t i = 0; i < 5; ++i)
+    REQUIRE(counts[i] == i);
+}
+
+/**
  * Make sure shuffling data with weights works.
  */
 TEST_CASE("ShuffleWeightsTest", "[MathTest]")
 {
-  arma::mat data(3, 10, arma::fill::zeros);
+  arma::mat data(3, 10);
   arma::Row<size_t> labels(10);
   arma::rowvec weights(10);
   for (size_t i = 0; i < 10; ++i)
@@ -723,8 +792,8 @@ TEST_CASE("ShuffleWeightsTest", "[MathTest]")
   REQUIRE(outputWeights.n_elem == weights.n_elem);
 
   // Make sure we only have each point once.
-  arma::Row<size_t> counts(10, arma::fill::zeros);
-  arma::Row<size_t> weightCounts(10, arma::fill::zeros);
+  arma::Row<size_t> counts(10);
+  arma::Row<size_t> weightCounts(10);
   for (size_t i = 0; i < 10; ++i)
   {
     REQUIRE((size_t) outputData(0, i) == outputLabels[i]);
@@ -771,8 +840,8 @@ TEST_CASE("SparseShuffleWeightsTest", "[MathTest]")
   REQUIRE(outputWeights.n_elem == weights.n_elem);
 
   // Make sure we only have each point once.
-  arma::Row<size_t> counts(10, arma::fill::zeros);
-  arma::Row<size_t> weightCounts(10, arma::fill::zeros);
+  arma::Row<size_t> counts(10);
+  arma::Row<size_t> weightCounts(10);
   for (size_t i = 0; i < 10; ++i)
   {
     REQUIRE((size_t) outputData(0, i) == outputLabels[i]);
@@ -796,7 +865,7 @@ TEST_CASE("SparseShuffleWeightsTest", "[MathTest]")
  */
 TEST_CASE("InplaceShuffleTest", "[MathTest]")
 {
-  arma::mat data(3, 10, arma::fill::zeros);
+  arma::mat data(3, 10);
   arma::Row<size_t> labels(10);
   for (size_t i = 0; i < 10; ++i)
   {
@@ -814,7 +883,7 @@ TEST_CASE("InplaceShuffleTest", "[MathTest]")
   REQUIRE(outputLabels.n_elem == labels.n_elem);
 
   // Make sure we only have each point once.
-  arma::Row<size_t> counts(10, arma::fill::zeros);
+  arma::Row<size_t> counts(10);
   for (size_t i = 0; i < 10; ++i)
   {
     REQUIRE((size_t) outputData(0, i) == outputLabels[i]);
@@ -851,7 +920,7 @@ TEST_CASE("InplaceSparseShuffleTest", "[MathTest]")
   REQUIRE(outputLabels.n_elem == labels.n_elem);
 
   // Make sure we only have each point once.
-  arma::Row<size_t> counts(10, arma::fill::zeros);
+  arma::Row<size_t> counts(10);
   for (size_t i = 0; i < 10; ++i)
   {
     REQUIRE((size_t) outputData(0, i) == outputLabels[i]);
@@ -869,7 +938,7 @@ TEST_CASE("InplaceSparseShuffleTest", "[MathTest]")
  */
 TEST_CASE("InplaceCubeShuffleTest", "[MathTest]")
 {
-  arma::cube data(3, 10, 5, arma::fill::zeros);
+  arma::cube data(3, 10, 5);
   arma::cube labels(1, 10, 5);
   for (size_t i = 0; i < labels.n_slices; ++i)
   {
@@ -893,7 +962,7 @@ TEST_CASE("InplaceCubeShuffleTest", "[MathTest]")
   REQUIRE(outputLabels.n_slices == labels.n_slices);
 
   // Make sure we only have each point once.
-  arma::Row<size_t> counts(10, arma::fill::zeros);
+  arma::Row<size_t> counts(10);
   for (size_t i = 0; i < 10; ++i)
   {
     for (size_t s = 0; s < data.n_slices; ++s)
@@ -914,7 +983,7 @@ TEST_CASE("InplaceCubeShuffleTest", "[MathTest]")
  */
 TEST_CASE("InplaceShuffleWeightsTest", "[MathTest]")
 {
-  arma::mat data(3, 10, arma::fill::zeros);
+  arma::mat data(3, 10);
   arma::Row<size_t> labels(10);
   arma::rowvec weights(10);
   for (size_t i = 0; i < 10; ++i)
@@ -937,8 +1006,8 @@ TEST_CASE("InplaceShuffleWeightsTest", "[MathTest]")
   REQUIRE(outputWeights.n_elem == weights.n_elem);
 
   // Make sure we only have each point once.
-  arma::Row<size_t> counts(10, arma::fill::zeros);
-  arma::Row<size_t> weightCounts(10, arma::fill::zeros);
+  arma::Row<size_t> counts(10);
+  arma::Row<size_t> weightCounts(10);
   for (size_t i = 0; i < 10; ++i)
   {
     REQUIRE((size_t) outputData(0, i) == outputLabels[i]);
@@ -985,8 +1054,8 @@ TEST_CASE("InplaceSparseShuffleWeightsTest", "[MathTest]")
   REQUIRE(outputWeights.n_elem == weights.n_elem);
 
   // Make sure we only have each point once.
-  arma::Row<size_t> counts(10, arma::fill::zeros);
-  arma::Row<size_t> weightCounts(10, arma::fill::zeros);
+  arma::Row<size_t> counts(10);
+  arma::Row<size_t> weightCounts(10);
   for (size_t i = 0; i < 10; ++i)
   {
     REQUIRE((size_t) outputData(0, i) == outputLabels[i]);

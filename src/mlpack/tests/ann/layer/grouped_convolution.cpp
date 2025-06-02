@@ -175,8 +175,9 @@ TEST_CASE("GradientGroupedConvolutionLayerTest", "[ANNLayerTest]")
     {
       model = new FFN<NegativeLogLikelihood, RandomInitialization>();
       model->ResetData(input, target);
-      model->Add<GroupedConvolution>(4, 3, 3, 2, 1, 1, std::tuple<size_t, size_t>(0, 0),
-          std::tuple<size_t, size_t>(0, 0), "same");
+      model->Add<GroupedConvolution>(4, 3, 3, 2, 1, 1,
+          std::tuple<size_t, size_t>(0, 0), std::tuple<size_t, size_t>(0, 0),
+          "same");
       model->Add<LogSoftMax>();
 
       model->InputDimensions() = std::vector<size_t>({ 6, 6, 2 });
@@ -215,10 +216,11 @@ TEST_CASE("NonSquareGroupedConvolutionTest", "[ANNLayerTest]")
   module1.SetWeights(weights1);
 
   arma::mat data(49, 10, arma::fill::randu);
-  arma::mat forwardResult(module1.OutputSize(), 10, arma::fill::zeros);
+  arma::mat forwardResult(module1.OutputSize(), 10);
   REQUIRE_NOTHROW(module1.Forward(data, forwardResult));
   arma::mat backwardResult(49, 10);
-  REQUIRE_NOTHROW(module1.Backward(data, forwardResult, forwardResult, backwardResult));
+  REQUIRE_NOTHROW(module1.Backward(data, forwardResult, forwardResult,
+      backwardResult));
   arma::mat gradientResult(module1.WeightSize(), 1);
   REQUIRE_NOTHROW(module1.Gradient(data, backwardResult, gradientResult));
 }

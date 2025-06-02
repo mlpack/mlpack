@@ -141,10 +141,9 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::Split(
   }
 
   // Calculate the majority classes of the children.
-  arma::uword maxIndex;
-  counts.unsafe_col(0).max(maxIndex);
+  arma::uword maxIndex = counts.unsafe_col(0).index_max();
   childMajorities[0] = size_t(maxIndex);
-  counts.unsafe_col(1).max(maxIndex);
+  maxIndex = counts.unsafe_col(1).index_max();
   childMajorities[1] = size_t(maxIndex);
 
   // Create the according SplitInfo object.
@@ -155,8 +154,7 @@ template<typename FitnessFunction, typename ObservationType>
 size_t BinaryNumericSplit<FitnessFunction, ObservationType>::MajorityClass()
     const
 {
-  arma::uword maxIndex;
-  classCounts.max(maxIndex);
+  arma::uword maxIndex = classCounts.index_max();
   return size_t(maxIndex);
 }
 

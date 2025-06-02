@@ -15,12 +15,9 @@
 
 #include <mlpack/core.hpp>
 
-#include "mad_gain.hpp"
-#include "mse_gain.hpp"
-#include "best_binary_numeric_split.hpp"
-#include "all_categorical_split.hpp"
-#include "random_binary_numeric_split.hpp"
-#include "all_dimension_select.hpp"
+#include "fitness_functions/fitness_functions.hpp"
+#include "splits/splits.hpp"
+#include "select_functions/select_functions.hpp"
 
 namespace mlpack {
 
@@ -42,11 +39,11 @@ class DecisionTreeRegressor :
 {
  public:
   //! Allow access to the numeric split type.
-  typedef NumericSplitType<FitnessFunction> NumericSplit;
+  using NumericSplit = NumericSplitType<FitnessFunction>;
   //! Allow access to the categorical split type.
-  typedef CategoricalSplitType<FitnessFunction> CategoricalSplit;
+  using CategoricalSplit = CategoricalSplitType<FitnessFunction>;
   //! Allow access to the dimension selection type.
-  typedef DimensionSelectionType DimensionSelection;
+  using DimensionSelection = DimensionSelectionType;
 
   /**
    * Construct a decision tree without training it.  It will be a leaf node.
@@ -132,7 +129,7 @@ class DecisionTreeRegressor :
       const size_t maximumDepth = 0,
       DimensionSelectionType dimensionSelector = DimensionSelectionType(),
       const std::enable_if_t<arma::is_arma_type<
-          typename std::remove_reference<WeightsType>::type>::value>* = 0);
+          std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Construct the decision tree on the given data and responses with weights,
@@ -161,7 +158,7 @@ class DecisionTreeRegressor :
       const size_t maximumDepth = 0,
       DimensionSelectionType dimensionSelector = DimensionSelectionType(),
       const std::enable_if_t<arma::is_arma_type<
-          typename std::remove_reference<WeightsType>::type>::value>* = 0);
+          std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Take ownership of another decision tree and train on the given data and
@@ -191,7 +188,7 @@ class DecisionTreeRegressor :
       const size_t minimumLeafSize = 10,
       const double minimumGainSplit = 1e-7,
       const std::enable_if_t<arma::is_arma_type<
-          typename std::remove_reference<WeightsType>::type>::value>* = 0);
+          std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Take ownership of another decision tree and train on the given data and
@@ -221,7 +218,7 @@ class DecisionTreeRegressor :
       const size_t maximumDepth = 0,
       DimensionSelectionType dimensionSelector = DimensionSelectionType(),
       const std::enable_if_t<arma::is_arma_type<
-          typename std::remove_reference<WeightsType>::type>::value>* = 0);
+          std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Copy another tree.  This may use a lot of memory---be sure that it's what
@@ -350,8 +347,8 @@ class DecisionTreeRegressor :
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
                FitnessFunction fitnessFunction = FitnessFunction(),
-               const std::enable_if_t<arma::is_arma_type<typename
-                   std::remove_reference<WeightsType>::type>::value>* = 0);
+               const std::enable_if_t<arma::is_arma_type<
+                   std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Train the decision tree on the given weighted data, assuming that all
@@ -383,8 +380,8 @@ class DecisionTreeRegressor :
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
                FitnessFunction fitnessFunction = FitnessFunction(),
-               const std::enable_if_t<arma::is_arma_type<typename
-                   std::remove_reference<WeightsType>::type>::value>* = 0);
+               const std::enable_if_t<arma::is_arma_type<
+                   std::remove_reference_t<WeightsType>>::value>* = 0);
 
   /**
    * Make prediction for the given point, using the entire tree.  The predicted
@@ -443,27 +440,24 @@ class DecisionTreeRegressor :
  private:
   //! The vector of children.
   std::vector<DecisionTreeRegressor*> children;
-  //! The dimension this node splits on.
-  size_t splitDimension;
-  //! The type of the dimension that we have split on (only meaningful if this
-  //! is a non-leaf in a trained tree).
-  size_t dimensionType;
-
   union
   {
-    //! Stores the split point for internal nodes of the tree.
-    double splitPoint;
-    //! Stores the prediction value for leaf nodes of the tree.
+    //! Stores the prediction value, for leaf nodes of the tree.
     double prediction;
+    //! The dimension of the split, for internal nodes.
+    size_t splitDimension;
   };
+  //! For internal nodes, the type of the split variable.
+  size_t dimensionType;
+  //! For internal nodes, the split information for the splitter.
+  arma::vec splitInfo;
 
   //! Note that this class will also hold the members of the NumericSplit and
   //! CategoricalSplit AuxiliarySplitInfo classes, since it inherits from them.
   //! We'll define some convenience typedefs here.
-  typedef typename NumericSplit::AuxiliarySplitInfo
-      NumericAuxiliarySplitInfo;
-  typedef typename CategoricalSplit::AuxiliarySplitInfo
-      CategoricalAuxiliarySplitInfo;
+  using NumericAuxiliarySplitInfo = typename NumericSplit::AuxiliarySplitInfo;
+  using CategoricalAuxiliarySplitInfo =
+      typename CategoricalSplit::AuxiliarySplitInfo;
 
   /**
    * Corresponding to the public Train() method, this method is designed for

@@ -30,7 +30,7 @@ typename MatType::elem_type CosineEmbeddingLossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   const size_t cols = prediction.n_cols;
   const size_t batchSize = prediction.n_elem / cols;
@@ -67,19 +67,20 @@ void CosineEmbeddingLossType<MatType>::Backward(
     const MatType& target,
     MatType& loss)
 {
-  typedef typename MatType::elem_type ElemType;
+  using ColType = typename GetColType<MatType>::type;
+  using ElemType = typename MatType::elem_type;
 
   const size_t cols = prediction.n_cols;
   const size_t batchSize = prediction.n_elem / cols;
   if (arma::size(prediction) != arma::size(target))
     Log::Fatal << "Input Tensors must have same dimensions." << std::endl;
 
-  arma::Col<ElemType> inputTemp1 = vectorise(prediction);
-  arma::Col<ElemType> inputTemp2 = vectorise(target);
+  ColType inputTemp1 = vectorise(prediction);
+  ColType inputTemp2 = vectorise(target);
   loss.set_size(arma::size(inputTemp1));
 
-  arma::Col<ElemType> outputTemp(loss.memptr(), inputTemp1.n_elem,
-      false, false);
+  ColType outputTemp;
+  MakeAlias(outputTemp, loss, inputTemp1.n_elem, 0, false);
   for (size_t i = 0; i < inputTemp1.n_elem; i += cols)
   {
     const ElemType cosDist = CosineDistance::Evaluate(inputTemp1(

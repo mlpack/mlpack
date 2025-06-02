@@ -42,6 +42,8 @@ class BilinearInterpolationType : public Layer<InputType, OutputType>
   //! Create the BilinearInterpolationType object.
   BilinearInterpolationType();
 
+  // TODO: use scaleFactors instead of outRowSize and outColSize
+
   /**
    * The constructor for the Bilinear Interpolation.  The input size will be set
    * by the given input when the layer is used.
@@ -114,7 +116,7 @@ class BilinearInterpolationType : public Layer<InputType, OutputType>
 }; // class BilinearInterpolation
 
 // Standard BilinearInterpolation layer.
-typedef BilinearInterpolationType<arma::mat, arma::mat> BilinearInterpolation;
+using BilinearInterpolation = BilinearInterpolationType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

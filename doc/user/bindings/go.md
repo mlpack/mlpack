@@ -10,7 +10,7 @@ Further useful mlpack documentation links are given below.
 
  - [mlpack homepage](https://www.mlpack.org/)
  - [mlpack on Github](https://github.com/mlpack/mlpack)
- - [mlpack main documentation page](https://www.mlpack.org/docs.html)
+ - [mlpack main documentation page](https://www.mlpack.org/doc/index.html)
 
 See also the quickstart guide for Go:
 
@@ -263,7 +263,7 @@ _, test_predictions, stds := mlpack.BayesianLinearRegression(param)
 
  - [Bayesian Interpolation](https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf)
  - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
- - [BayesianLinearRegression C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/bayesian_linear_regression/bayesian_linear_regression.hpp)
+ - [BayesianLinearRegression C++ class documentation](../../user/methods/bayesian_linear_regression.md)
 
 ## Cf()
 {: #cf }
@@ -600,7 +600,7 @@ _, predictions, _ := mlpack.DecisionTree(param)
 
  - [Random forest](#random_forest)
  - [Decision trees on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
- - [Induction of Decision Trees (pdf)](http://www.cs.bc.edu/~alvarez/ML/QuinlanID3Paper.pdf)
+ - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
  - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
 
 ## Det()
@@ -1467,7 +1467,7 @@ _, predictions, class_probs := mlpack.HoeffdingTree(param)
  - [DecisionTree()](#decision_tree)
  - [RandomForest()](#random_forest)
  - [Mining High-Speed Data Streams (pdf)](http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf)
- - [HoeffdingTree class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp)
+ - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
 
 ## Kde()
 {: #kde }
@@ -1591,7 +1591,7 @@ _, out_data := mlpack.Kde(param)
  - [Knn()](#knn)
  - [Kernel density estimation on Wikipedia](https://en.wikipedia.org/wiki/Kernel_density_estimation)
  - [Tree-Independent Dual-Tree Algorithms](https://arxiv.org/pdf/1304.4327)
- - [Fast High-dimensional Kernel Summations Using the Monte Carlo Multipole Method](http://papers.nips.cc/paper/3539-fast-high-dimensional-kernel-summations-using-the-monte-carlo-multipole-method.pdf)
+ - [Fast High-dimensional Kernel Summations Using the Monte Carlo Multipole Method](https://proceedings.neurips.cc/paper_files/paper/2008/file/39059724f73a9969845dfe4146c5660e-Paper.pdf)
  - [KDE C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kde/kde.hpp)
 
 ## KernelPca()
@@ -1923,7 +1923,7 @@ _, test_predictions := mlpack.Lars(param)
 
  - [LinearRegression()](#linear_regression)
  - [Least angle regression (pdf)](https://mlpack.org/papers/lars.pdf)
- - [LARS C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/lars/lars.hpp)
+ - [LARS C++ class documentation](../../user/methods/lars.md)
 
 ## LinearSvm()
 {: #linear_svm }
@@ -2042,7 +2042,7 @@ _, predictions, _ := mlpack.LinearSvm(param)
  - [RandomForest()](#random_forest)
  - [LogisticRegression()](#logistic_regression)
  - [LinearSVM on Wikipedia](https://en.wikipedia.org/wiki/Support-vector_machine)
- - [LinearSVM C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/linear_svm/linear_svm.hpp)
+ - [LinearSVM C++ class documentation](../../user/methods/linear_svm.md)
 
 ## Lmnn()
 {: #lmnn }
@@ -2069,12 +2069,12 @@ param.Normalize = false
 param.Optimizer = "amsgrad"
 param.Passes = 50
 param.PrintAccuracy = false
-param.Range = 1
 param.Rank = 0
 param.Regularization = 0.5
 param.Seed = 0
 param.StepSize = 0.01
 param.Tolerance = 1e-07
+param.UpdateInterval = 1
 param.Verbose = false
 
 centered_data, output, transformed_data := mlpack.Lmnn(input, param)
@@ -2102,12 +2102,12 @@ There are two types of input options: required options, which are passed directl
 | `Optimizer` | [`string`](#doc_string) | Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or 'lbfgs'. | `"amsgrad"` |
 | `Passes` | [`int`](#doc_int) | Maximum number of full passes over dataset for AMSGrad, BB_SGD and SGD. | `50` |
 | `PrintAccuracy` | [`bool`](#doc_bool) | Print accuracies on initial and transformed dataset | `false` |
-| `Range` | [`int`](#doc_int) | Number of iterations after which impostors needs to be recalculated | `1` |
 | `Rank` | [`int`](#doc_int) | Rank of distance matrix to be optimized.  | `0` |
 | `Regularization` | [`float64`](#doc_float64) | Regularization for LMNN objective function  | `0.5` |
 | `Seed` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
 | `StepSize` | [`float64`](#doc_float64) | Step size for AMSGrad, BB_SGD and SGD (alpha). | `0.01` |
 | `Tolerance` | [`float64`](#doc_float64) | Maximum tolerance for termination of AMSGrad, BB_SGD, SGD or L-BFGS. | `1e-07` |
+| `UpdateInterval` | [`int`](#doc_int) | Number of iterations after which impostors need to be recalculated. | `1` |
 | `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
 
 ### Output options
@@ -2127,7 +2127,7 @@ This program implements Large Margin Nearest Neighbors, a distance learning tech
 
 To work, this algorithm needs labeled data.  It can be given as the last row of the input dataset (specified with `Input`), or alternatively as a separate matrix (specified with `Labels`).  Additionally, a starting point for optimization (specified with `Distance`can be given, having (r x d) dimensionality.  Here r should satisfy 1 <= r <= d, Consequently a Low-Rank matrix will be optimized. Alternatively, Low-Rank distance can be learned by specifying the `Rank`parameter (A Low-Rank matrix with uniformly distributed values will be used as initial learning point). 
 
-The program also requires number of targets neighbors to work with ( specified with `K`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `Regularization`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `Range`).
+The program also requires number of targets neighbors to work with ( specified with `K`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `Regularization`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `UpdateInterval`).
 
 Output can either be the learned distance matrix (specified with `Output`), or the transformed dataset  (specified with `TransformedData`), or both. Additionally mean-centered dataset (specified with `CenteredData`) can be accessed given mean-centering (specified with `Center`) is performed on the dataset. Accuracy on initial dataset and final transformed dataset can be printed by specifying the `PrintAccuracy`parameter. 
 
@@ -2156,13 +2156,13 @@ param.Optimizer = "bbsgd"
 _, output, _ := mlpack.Lmnn(iris, param)
 ```
 
-An another program call making use of range & regularization parameter with dataset having labels as last column can be made as: 
+Another program call making use of update interval & regularization parameter with dataset having labels as last column can be made as: 
 
 ```go
 // Initialize optional parameters for Lmnn().
 param := mlpack.LmnnOptions()
 param.K = 5
-param.Range = 10
+param.UpdateInterval = 10
 param.Regularization = 0.4
 
 _, output, _ := mlpack.Lmnn(letter_recognition, param)
@@ -2172,8 +2172,8 @@ _, output, _ := mlpack.Lmnn(letter_recognition, param)
 
  - [Nca()](#nca)
  - [Large margin nearest neighbor on Wikipedia](https://en.wikipedia.org/wiki/Large_margin_nearest_neighbor)
- - [Distance metric learning for large margin nearest neighbor classification (pdf)](http://papers.nips.cc/paper/2795-distance-metric-learning-for-large-margin-nearest-neighbor-classification.pdf)
- - [LMNN C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/lmnn/lmnn.hpp)
+ - [Distance metric learning for large margin nearest neighbor classification (pdf)](https://proceedings.neurips.cc/paper_files/paper/2005/file/a7f592cef8b130a6967a90617db5681b-Paper.pdf)
+ - [LMNN C++ class documentation](../../user/methods/lmnn.md)
 
 ## LocalCoordinateCoding()
 {: #local_coordinate_coding }
@@ -2276,7 +2276,7 @@ new_codes, _, _ := mlpack.LocalCoordinateCoding(param)
 ### See also
 
  - [SparseCoding()](#sparse_coding)
- - [Nonlinear learning using local coordinate coding (pdf)](https://papers.nips.cc/paper/3875-nonlinear-learning-using-local-coordinate-coding.pdf)
+ - [Nonlinear learning using local coordinate coding (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/2afe4567e1bf64d32a5527244d104cea-Paper.pdf)
  - [LocalCoordinateCoding C++ class documentation](../../user/methods/local_coordinate_coding.md)
 
 ## LogisticRegression()
@@ -2396,7 +2396,7 @@ _, predictions, _ := mlpack.LogisticRegression(param)
  - [SoftmaxRegression()](#softmax_regression)
  - [RandomForest()](#random_forest)
  - [Logistic regression on Wikipedia](https://en.wikipedia.org/wiki/Logistic_regression)
- - [:LogisticRegression C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/logistic_regression/logistic_regression.hpp)
+ - [:LogisticRegression C++ class documentation](../../user/methods/logistic_regression.md)
 
 ## Lsh()
 {: #lsh }
@@ -2570,7 +2570,7 @@ centroids, _ := mlpack.MeanShift(data, param)
  - [Dbscan()](#dbscan)
  - [Mean shift on Wikipedia](https://en.wikipedia.org/wiki/Mean_shift)
  - [Mean Shift, Mode Seeking, and Clustering (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=1c168275c59ba382588350ee1443537f59978183)
- - [mlpack::mean_shift::MeanShift C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/mean_shift/mean_shift.hpp)
+ - [mlpack::mean_shift::MeanShift C++ class documentation](../../user/methods/mean_shift.md)
 
 ## Nbc()
 {: #nbc }
@@ -2666,7 +2666,7 @@ _, predictions, _ := mlpack.Nbc(param)
  - [SoftmaxRegression()](#softmax_regression)
  - [RandomForest()](#random_forest)
  - [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
- - [NaiveBayesClassifier C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp)
+ - [NaiveBayesClassifier C++ class documentation](../../user/methods/naive_bayes_classifier.md)
 
 ## Nca()
 {: #nca }
@@ -2757,8 +2757,8 @@ By default, the SGD optimizer is used.
 
  - [Lmnn()](#lmnn)
  - [Neighbourhood components analysis on Wikipedia](https://en.wikipedia.org/wiki/Neighbourhood_components_analysis)
- - [Neighbourhood components analysis (pdf)](http://papers.nips.cc/paper/2566-neighbourhood-components-analysis.pdf)
- - [NCA C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/nca/nca.hpp)
+ - [Neighbourhood components analysis (pdf)](https://proceedings.neurips.cc/paper_files/paper/2004/file/42fe880812925e520249e808937738d2-Paper.pdf)
+ - [NCA C++ class documentation](../../user/methods/nca.md)
 
 ## Knn()
 {: #knn }
@@ -3035,8 +3035,9 @@ H, W := mlpack.Nmf(V, 10, param)
 
  - [Cf()](#cf)
  - [Non-negative matrix factorization on Wikipedia](https://en.wikipedia.org/wiki/Non-negative_matrix_factorization)
- - [Algorithms for non-negative matrix factorization (pdf)](http://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-factorization.pdf)
- - [AMF C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/amf/amf.hpp)
+ - [Algorithms for non-negative matrix factorization (pdf)](https://proceedings.neurips.cc/paper_files/paper/2000/file/f9d1152547c0bde01830b7e8bd60024c-Paper.pdf)
+ - [NMF C++ class documentation](../../user/methods/nmf.md)
+ - [AMF C++ class documentation](../../user/methods/amf.md)
 
 ## Pca()
 {: #pca }
@@ -3110,7 +3111,7 @@ data_mod := mlpack.Pca(data, param)
 ### See also
 
  - [Principal component analysis on Wikipedia](https://en.wikipedia.org/wiki/Principal_component_analysis)
- - [PCA C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/pca/pca.hpp)
+ - [PCA C++ class documentation](../../user/methods/pca.md)
 
 ## Perceptron()
 {: #perceptron }
@@ -3200,7 +3201,7 @@ Note that all of the options may be specified at once: predictions may be calcul
 
  - [Adaboost()](#adaboost)
  - [Perceptron on Wikipedia](https://en.wikipedia.org/wiki/Perceptron)
- - [Perceptron C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/perceptron/perceptron.hpp)
+ - [Perceptron C++ class documentation](../../user/methods/perceptron.md)
 
 ## PreprocessSplit()
 {: #preprocess_split }
@@ -3728,7 +3729,7 @@ ic, _ := mlpack.Radical(X, param)
 
  - [Independent component analysis on Wikipedia](https://en.wikipedia.org/wiki/Independent_component_analysis)
  - [ICA using spacings estimates of entropy (pdf)](https://www.jmlr.org/papers/volume4/learned-miller03a/learned-miller03a.pdf)
- - [Radical C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/radical/radical.hpp)
+ - [Radical C++ class documentation](../../user/methods/radical.md)
 
 ## RandomForest()
 {: #random_forest }
@@ -3842,7 +3843,7 @@ _, predictions, _ := mlpack.RandomForest(param)
  - [SoftmaxRegression()](#softmax_regression)
  - [Random forest on Wikipedia](https://en.wikipedia.org/wiki/Random_forest)
  - [Random forests (pdf)](https://www.eecis.udel.edu/~shatkay/Course/papers/BreimanRandomForests2001.pdf)
- - [RandomForest C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/random_forest/random_forest.hpp)
+ - [RandomForest C++ class documentation](../../user/methods/random_forest.md)
 
 ## Krann()
 {: #krann }
@@ -3941,7 +3942,7 @@ The output matrices are organized such that row i and column j in the neighbors 
 
  - [Knn()](#knn)
  - [Lsh()](#lsh)
- - [Rank-approximate nearest neighbor search: Retaining meaning and speed in high dimensions (pdf)](https://papers.nips.cc/paper/3864-rank-approximate-nearest-neighbor-search-retaining-meaning-and-speed-in-high-dimensions.pdf)
+ - [Rank-approximate nearest neighbor search: Retaining meaning and speed in high dimensions (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/ddb30680a691d157187ee1cf9e896d03-Paper.pdf)
  - [RASearch C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/rann/ra_search.hpp)
 
 ## SoftmaxRegression()
@@ -4042,7 +4043,7 @@ _, predictions, _ := mlpack.SoftmaxRegression(param)
  - [LogisticRegression()](#logistic_regression)
  - [RandomForest()](#random_forest)
  - [Multinomial logistic regression (softmax regression) on Wikipedia](https://en.wikipedia.org/wiki/Multinomial_logistic_regression)
- - [SoftmaxRegression C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/softmax_regression/softmax_regression.hpp)
+ - [SoftmaxRegression C++ class documentation](../../user/methods/softmax_regression.md)
 
 ## SparseCoding()
 {: #sparse_coding }
@@ -4150,9 +4151,9 @@ codes, _, _ := mlpack.SparseCoding(param)
 
  - [LocalCoordinateCoding()](#local_coordinate_coding)
  - [Sparse dictionary learning on Wikipedia](https://en.wikipedia.org/wiki/Sparse_dictionary_learning)
- - [Efficient sparse coding algorithms (pdf)](http://papers.nips.cc/paper/2979-efficient-sparse-coding-algorithms.pdf)
+ - [Efficient sparse coding algorithms (pdf)](https://proceedings.neurips.cc/paper_files/paper/2006/file/2d71b2ae158c7c5912cc0bbde2bb9d95-Paper.pdf)
  - [Regularization and variable selection via the elastic net](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=46217f372a75dddc2254fdbc6b9418ba3554e453)
- - [SparseCoding C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/sparse_coding/sparse_coding.hpp)
+ - [SparseCoding C++ class documentation](../../user/methods/sparse_coding.md)
 
 ## Adaboost()
 {: #adaboost }
@@ -4344,7 +4345,7 @@ _, X_test_responses := mlpack.LinearRegression(param)
 
  - [Lars()](#lars)
  - [Linear regression on Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
- - [LinearRegression C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/linear_regression/linear_regression.hpp)
+ - [LinearRegression C++ class documentation](../../user/methods/linear_regression.md)
 
 ## ImageConverter()
 {: #image_converter }

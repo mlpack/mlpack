@@ -14,7 +14,7 @@
 #define MLPACK_CORE_CV_METRICS_FACILITIES_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 
 namespace mlpack {
 
@@ -24,16 +24,16 @@ namespace mlpack {
   * @param data Column-major matrix.
   * @param metric Distance metric to be used.
   */
-template<typename DataType, typename Metric>
+template<typename DataType, typename DistanceType>
 DataType PairwiseDistances(const DataType& data,
-                           const Metric& metric)
+                           const DistanceType& distance)
 {
   DataType distances = DataType(data.n_cols, data.n_cols, arma::fill::none);
   for (size_t i = 0; i < data.n_cols; i++)
   {
     for (size_t j = 0; j < i; j++)
     {
-      distances(i, j) = metric.Evaluate(data.col(i), data.col(j));
+      distances(i, j) = distance.Evaluate(data.col(i), data.col(j));
       distances(j, i) = distances(i, j);
     }
   }

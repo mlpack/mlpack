@@ -414,8 +414,8 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRMaxIterationsChangeTest",
   // arma::all function checks that each element of the vector is equal to zero.
   if (arma::all((parameters1-parameters2) == 0))
   {
-    FAIL("parameters1 and parameters2 are equal. \
-         Parameter(Max Iteration) has no effect on the output");
+    FAIL("parameters1 and parameters2 are equal. "
+         "Parameter(Max Iteration) has no effect on the output");
   }
 }
 
@@ -466,8 +466,8 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRLambdaChangeTest",
   // arma::all function checks that each element of the vector is equal to zero.
   if (arma::all((parameters1-parameters2) == 0))
   {
-    FAIL("parameters1 and parameters2 are equal. \
-         Parameter(lambda) has no effect on the output");
+    FAIL("parameters1 and parameters2 are equal. "
+         "Parameter(lambda) has no effect on the output");
   }
 }
 
@@ -520,8 +520,8 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRStepSizeChangeTest",
   // arma::all function checks that each element of the vector is equal to zero.
   if (arma::all((parameters1-parameters2) == 0))
   {
-    FAIL("parameters1 and parameters2 are equal. \
-         Parameter(Step Size) has no effect on the output");
+    FAIL("parameters1 and parameters2 are equal. "
+         "Parameter(Step Size) has no effect on the output");
   }
 }
 
@@ -573,8 +573,8 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LROptimizerChangeTest",
   // arma::all function checks that each element of the vector is equal to zero.
   if (arma::all((parameters1 - parameters2) == 0))
   {
-    FAIL("parameters1 and parameters2 are equal. \
-         Parameter(Step Size) has no effect on the output");
+    FAIL("parameters1 and parameters2 are equal. "
+         "Parameter(Step Size) has no effect on the output");
   }
 }
 
@@ -640,7 +640,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRPrintTrainingAccuracyTest",
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
   arma::Row<size_t> trainY = arma::randi<arma::Row<size_t>>(N,
-      arma::distr_param(0, 1));
+      DistrParam(0, 1));
 
   SetInputParam("training", trainX);
   SetInputParam("labels", trainY);

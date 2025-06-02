@@ -23,8 +23,8 @@ namespace cli {
  */
 template<typename T>
 std::string StringTypeParamImpl(
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type* /* junk */,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* /* junk */)
+    const std::enable_if_t<!util::IsStdVector<T>::value>*,
+    const std::enable_if_t<!data::HasSerialize<T>::value>*)
 {
   // Don't know what type this is.
   return "unknown";
@@ -35,7 +35,7 @@ std::string StringTypeParamImpl(
  */
 template<typename T>
 std::string StringTypeParamImpl(
-    const typename std::enable_if<util::IsStdVector<T>::value>::type* /* junk */)
+    const std::enable_if_t<util::IsStdVector<T>::value>*)
 {
   return "vector";
 }
@@ -45,7 +45,7 @@ std::string StringTypeParamImpl(
  */
 template<typename T>
 std::string StringTypeParamImpl(
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* /* junk */)
+    const std::enable_if_t<data::HasSerialize<T>::value>*)
 {
   return "string";
 }

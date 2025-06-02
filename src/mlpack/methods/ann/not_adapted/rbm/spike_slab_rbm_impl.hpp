@@ -25,7 +25,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
+std::enable_if_t<std::is_same_v<Policy, SpikeSlabRBM>, void>
 RBM<InitializationRuleType, DataType, PolicyType>::Reset()
 {
   size_t shape = (visibleSize * hiddenSize * poolSize) + visibleSize +
@@ -65,7 +65,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, double>::type
+std::enable_if_t<std::is_same_v<Policy, SpikeSlabRBM>, double>
 RBM<InitializationRuleType, DataType, PolicyType>::FreeEnergy(
     const arma::Mat<ElemType>& input)
 {
@@ -90,7 +90,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
+std::enable_if_t<std::is_same_v<Policy, SpikeSlabRBM>, void>
 RBM<InitializationRuleType, DataType, PolicyType>::Phase(
     const InputType& input,
     DataType& gradient)
@@ -123,7 +123,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
+std::enable_if_t<std::is_same_v<Policy, SpikeSlabRBM>, void>
 RBM<InitializationRuleType, DataType, PolicyType>::SampleHidden(
     const arma::Mat<ElemType>& input,
     arma::Mat<ElemType>& output)
@@ -146,7 +146,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
+std::enable_if_t<std::is_same_v<Policy, SpikeSlabRBM>, void>
 RBM<InitializationRuleType, DataType, PolicyType>::SampleVisible(
     arma::Mat<ElemType>& input,
     arma::Mat<ElemType>& output)
@@ -184,7 +184,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
+std::enable_if_t<std::is_same_v<Policy, SpikeSlabRBM>, void>
 RBM<InitializationRuleType, DataType, PolicyType>::VisibleMean(
     InputType& input,
     DataType& output)
@@ -209,7 +209,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
+std::enable_if_t<std::is_same_v<Policy, SpikeSlabRBM>, void>
 RBM<InitializationRuleType, DataType, PolicyType>::HiddenMean(
     const InputType& input,
     DataType& output)
@@ -231,7 +231,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
+std::enable_if_t<std::is_same_v<Policy, SpikeSlabRBM>, void>
 RBM<InitializationRuleType, DataType, PolicyType>::SpikeMean(
     const InputType& visible,
     DataType& spikeMean)
@@ -250,7 +250,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
+std::enable_if_t<std::is_same_v<Policy, SpikeSlabRBM>, void>
 RBM<InitializationRuleType, DataType, PolicyType>::SampleSpike(
     InputType& spikeMean,
     DataType& spike)
@@ -267,7 +267,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
+std::enable_if_t<std::is_same_v<Policy, SpikeSlabRBM>, void>
 RBM<InitializationRuleType, DataType, PolicyType>::SlabMean(
     const DataType& visible,
     DataType& spike,
@@ -286,7 +286,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename InputType>
-typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
+std::enable_if_t<std::is_same_v<Policy, SpikeSlabRBM>, void>
 RBM<InitializationRuleType, DataType, PolicyType>::SampleSlab(
     InputType& slabMean,
     DataType& slab)

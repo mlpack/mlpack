@@ -83,8 +83,7 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     const size_t numClasses,
     const WeightsType& instanceWeights,
     const size_t maxIterations,
-    const typename std::enable_if<
-        arma::is_arma_type<WeightsType>::value>::type*) :
+    const std::enable_if_t<arma::is_arma_type<WeightsType>::value>*) :
     maxIterations(maxIterations)
 {
   // Start training.
@@ -114,8 +113,7 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const WeightsType& instanceWeights,
-    const typename std::enable_if<
-        arma::is_arma_type<WeightsType>::value>::type*) :
+    const std::enable_if_t<arma::is_arma_type<WeightsType>::value>*) :
     maxIterations(other.maxIterations)
 {
   TrainInternal<true>(data, labels, numClasses, instanceWeights);
@@ -227,7 +225,7 @@ void Perceptron<
   size_t j, i = 0;
   bool converged = false;
   size_t tempLabel;
-  arma::uword maxIndexRow = 0, maxIndexCol = 0;
+  arma::uword maxIndexRow = 0;
   arma::Mat<ElemType> tempLabelMat;
 
   LearnPolicy LP;
@@ -246,7 +244,8 @@ void Perceptron<
       // correctly classifies this.
       tempLabelMat = weights.t() * data.col(j) + biases;
 
-      tempLabelMat.max(maxIndexRow, maxIndexCol);
+      maxIndexRow = arma::ind2sub(arma::size(tempLabelMat),
+          tempLabelMat.index_max())(0);
 
       // Check whether prediction is correct.
       if (maxIndexRow != labels(0, j))
@@ -291,7 +290,7 @@ size_t Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
   arma::uword maxIndex = 0;
 
   tempLabelVec = weights.t() * point + biases;
-  tempLabelVec.max(maxIndex);
+  maxIndex = tempLabelVec.index_max();
 
   return size_t(maxIndex);
 }
@@ -324,7 +323,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
   for (size_t i = 0; i < test.n_cols; ++i)
   {
     tempLabelMat = weights.t() * test.col(i) + biases;
-    tempLabelMat.max(maxIndex);
+    maxIndex = tempLabelMat.index_max();
     predictedLabels(i) = maxIndex;
   }
 }

@@ -35,7 +35,7 @@ NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
     trainingPoints(0), // Set when we call Train().
     epsilon(epsilon)
 {
-  static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
+  static_assert(std::is_same_v<ElemType, typename MatType::elem_type>,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
@@ -82,7 +82,7 @@ void NaiveBayesClassifier<ModelMatType>::Train(
     const size_t numClasses,
     const bool incremental)
 {
-  static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
+  static_assert(std::is_same_v<ElemType, typename MatType::elem_type>,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
@@ -178,7 +178,7 @@ template<typename VecType>
 void NaiveBayesClassifier<ModelMatType>::Train(const VecType& point,
                                                const size_t label)
 {
-  static_assert(std::is_same<ElemType, typename VecType::elem_type>::value,
+  static_assert(std::is_same_v<ElemType, typename VecType::elem_type>,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
@@ -213,7 +213,7 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
     const MatType& data,
     ModelMatType& logLikelihoods) const
 {
-  static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
+  static_assert(std::is_same_v<ElemType, typename MatType::elem_type>,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
@@ -241,7 +241,7 @@ template<typename ModelMatType>
 template<typename VecType>
 size_t NaiveBayesClassifier<ModelMatType>::Classify(const VecType& point) const
 {
-  static_assert(std::is_same<ElemType, typename VecType::elem_type>::value,
+  static_assert(std::is_same_v<ElemType, typename VecType::elem_type>,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
@@ -258,8 +258,7 @@ size_t NaiveBayesClassifier<ModelMatType>::Classify(const VecType& point) const
   ModelMatType logLikelihoods;
   LogLikelihood(point, logLikelihoods);
 
-  arma::uword maxIndex = 0;
-  logLikelihoods.max(maxIndex);
+  arma::uword maxIndex = logLikelihoods.index_max();
   return maxIndex;
 }
 
@@ -270,11 +269,11 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
     size_t& prediction,
     ProbabilitiesVecType& probabilities) const
 {
-  static_assert(std::is_same<ElemType, typename VecType::elem_type>::value,
+  static_assert(std::is_same_v<ElemType, typename VecType::elem_type>,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
-  static_assert(std::is_same<ElemType,
-                             typename ProbabilitiesVecType::elem_type>::value,
+  static_assert(std::is_same_v<ElemType,
+                               typename ProbabilitiesVecType::elem_type>,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
@@ -301,8 +300,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
       maxValue;
   probabilities = exp(logLikelihoods - logProbX); // log(exp(value)) == value.
 
-  arma::uword maxIndex = 0;
-  logLikelihoods.max(maxIndex);
+  arma::uword maxIndex = logLikelihoods.index_max();
   prediction = (size_t) maxIndex;
 }
 
@@ -312,7 +310,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
     const MatType& data,
     arma::Row<size_t>& predictions) const
 {
-  static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
+  static_assert(std::is_same_v<ElemType, typename MatType::elem_type>,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
@@ -332,8 +330,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
 
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    arma::uword maxIndex = 0;
-    logLikelihoods.unsafe_col(i).max(maxIndex);
+    arma::uword maxIndex = logLikelihoods.unsafe_col(i).index_max();
     predictions[i] = maxIndex;
   }
 }
@@ -345,11 +342,11 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
     arma::Row<size_t>& predictions,
     ProbabilitiesMatType& predictionProbs) const
 {
-  static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
+  static_assert(std::is_same_v<ElemType, typename MatType::elem_type>,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
-  static_assert(std::is_same<ElemType,
-                             typename ProbabilitiesMatType::elem_type>::value,
+  static_assert(std::is_same_v<ElemType,
+                               typename ProbabilitiesMatType::elem_type>,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
@@ -384,8 +381,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
   // Now calculate maximum probabilities for each point.
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    arma::uword maxIndex = 0;
-    logLikelihoods.unsafe_col(i).max(maxIndex);
+    arma::uword maxIndex = logLikelihoods.unsafe_col(i).index_max();
     predictions[i] = maxIndex;
   }
 }

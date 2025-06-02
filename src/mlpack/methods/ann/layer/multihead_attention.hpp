@@ -69,6 +69,7 @@ template <
 class MultiheadAttentionType : public Layer<MatType>
 {
  public:
+  using CubeType = typename GetCubeType<MatType>::type;
   /**
    * Default constructor.
    */
@@ -183,8 +184,8 @@ class MultiheadAttentionType : public Layer<MatType>
   //! Modify the Key Padding Mask.  Should take values 0 or 1.
   MatType& KeyPaddingMask() { return keyPaddingMask; }
 
-  //! Get whether or not self-attention is used (source key, value, and query all
-  //! come from the same input).
+  //! Get whether or not self-attention is used (source key, value, and query
+  //! all come from the same input).
   bool SelfAttention() const { return selfAttention; }
   //! Modify whether or not self-attention is used (source key, value, and query
   //! all come from the same input).
@@ -265,7 +266,7 @@ class MultiheadAttentionType : public Layer<MatType>
 
  private:
   //! Element Type of the output.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   //! Target sequence length.
   size_t tgtSeqLen;
@@ -321,19 +322,19 @@ class MultiheadAttentionType : public Layer<MatType>
   MatType weights;
 
   //! Locally-stored projected query matrix over linear layer.
-  arma::Cube<ElemType> qProj;
+  CubeType qProj;
 
   //! Locally-stored projected key matrix over linear layer.
-  arma::Cube<ElemType> kProj;
+  CubeType kProj;
 
   //! Locally-stored projected value matrix over linear layer.
-  arma::Cube<ElemType> vProj;
+  CubeType vProj;
 
   //! Locally-stored result of output of dropout layer.
-  arma::Cube<ElemType> scores;
+  CubeType scores;
 
   //! Locally-stored attention output weight to be fed to last linear layer.
-  arma::Cube<ElemType> attnOut;
+  CubeType attnOut;
 
   //! Softmax layer to represent the probabilities of next sequence.
   SoftmaxType<MatType> softmax;
@@ -343,7 +344,7 @@ class MultiheadAttentionType : public Layer<MatType>
 }; // class MultiheadAttention
 
 // Standard MultiheadAttention layer using no regularization.
-typedef MultiheadAttentionType<arma::mat, NoRegularizer> MultiheadAttention;
+using MultiheadAttention = MultiheadAttentionType<arma::mat, NoRegularizer>;
 
 } // namespace mlpack
 

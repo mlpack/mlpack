@@ -32,8 +32,9 @@ docker run -it mlpack/mlpack /bin/bash
 This Docker image has mlpack's command-line bindings already built and
 installed.
 
-If you prefer to build mlpack from scratch, see the
-[main README](../../README.md).
+If you prefer to build the command-line programs from scratch, follow the
+instructions in the
+[installation guide](../user/install.md#compile-bindings-manually).
 
 ## Simple quickstart example
 
@@ -173,7 +174,7 @@ these two examples have only shown a little bit of the functionality of mlpack.
 Lots of other commands are available with different functionality.  A full list
 of commands and full documentation for each can be found on the following page:
 
- - [CLI program documentation](https://www.mlpack.org/doc/stable/cli_documentation.html)
+ - [CLI program documentation](https://www.mlpack.org/doc/user/bindings/cli.html)
 
 Also, mlpack is much more flexible from C++ and allows much greater
 functionality.  So, more complicated tasks are possible if you are willing to

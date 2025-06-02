@@ -534,8 +534,10 @@ TEST_CASE("LinearSVMLBFGSTwoClasses", "[LinearSVMTest]")
   const double lambda = 0.5;
 
   // Generate two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 9.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("4.0 3.0 4.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 9.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("4.0 3.0 4.0"),
+      arma::eye<arma::mat>(3, 3));
 
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
@@ -573,7 +575,7 @@ TEST_CASE("LinearSVMLBFGSTwoClasses", "[LinearSVMTest]")
     for (size_t i = 0; i < points / 2; ++i)
     {
       data.col(i) = g1.Random();
-      labels(i) =  0;
+      labels(i) = 0;
     }
     for (size_t i = points / 2; i < points; ++i)
     {
@@ -607,8 +609,10 @@ TEST_CASE("LinearSVMFitIntercept", "[LinearSVMTest]")
   const double delta = 1.0;
 
   // Generate a two-Gaussian dataset,
-  GaussianDistribution g1(arma::vec("1.0 9.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("4.0 3.0 4.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 9.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("4.0 3.0 4.0"),
+      arma::eye<arma::mat>(3, 3));
 
   // This loop can be removed when ensmallen PR #136 is merged into a version
   // of ensmallen that is the minimum required ensmallen version for mlpack.
@@ -679,8 +683,10 @@ TEST_CASE("LinearSVMDeltaLBFGSTwoClasses", "[LinearSVMTest]")
   const double delta = 5.0;
 
   // Generate two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 9.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("4.0 3.0 4.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 9.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("4.0 3.0 4.0"),
+      arma::eye<arma::mat>(3, 3));
 
   // This loop can be removed when ensmallen PR #136 is merged into a version
   // of ensmallen that is the minimum required ensmallen version for mlpack.
@@ -796,8 +802,10 @@ TEST_CASE("LinearSVMParallelSGDTwoClasses", "[LinearSVMTest]")
   const double delta = 1.0;
 
   // Generate two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 9.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("4.0 3.0 4.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 9.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("4.0 3.0 4.0"),
+      arma::eye<arma::mat>(3, 3));
 
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
@@ -836,7 +844,7 @@ TEST_CASE("LinearSVMParallelSGDTwoClasses", "[LinearSVMTest]")
     for (size_t i = 0; i < points / 2; ++i)
     {
       data.col(i) = g1.Random();
-      labels(i) =  0;
+      labels(i) = 0;
     }
     for (size_t i = points / 2; i < points; ++i)
     {
@@ -867,9 +875,9 @@ TEST_CASE("LinearSVMParallelSGDTwoClasses", "[LinearSVMTest]")
  */
 TEMPLATE_TEST_CASE("LinearSVMSparseLBFGSTest", "[LinearSVMTest]", float, double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::SpMat<ElemType> SparseMatType;
-  typedef typename arma::Mat<ElemType> MatType;
+  using ElemType = TestType;
+  using SparseMatType = arma::SpMat<ElemType>;
+  using MatType = arma::Mat<ElemType>;
 
   // Create a random dataset.
   SparseMatType dataset;
@@ -900,9 +908,9 @@ TEMPLATE_TEST_CASE("LinearSVMSparseLBFGSTest", "[LinearSVMTest]", float, double)
 TEMPLATE_TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest]", float,
     double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Mat<ElemType> MatType;
-  typedef typename arma::Col<ElemType> VecType;
+  using ElemType = TestType;
+  using MatType = arma::Mat<ElemType>;
+  using VecType = arma::Col<ElemType>;
 
   const size_t points = 1000;
   const size_t inputSize = 5;
@@ -910,12 +918,12 @@ TEMPLATE_TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest]", float,
   const double lambda = 0.5;
 
   // Generate five-Gaussian dataset.
-  arma::mat identity = arma::eye<arma::mat>(5, 5);
-  GaussianDistribution g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
-  GaussianDistribution g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
-  GaussianDistribution g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
-  GaussianDistribution g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
-  GaussianDistribution g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
+  MatType identity = arma::eye<MatType>(5, 5);
+  GaussianDistribution<MatType> g1(VecType("1.0 9.0 1.0 2.0 2.0"), identity);
+  GaussianDistribution<MatType> g2(VecType("4.0 3.0 4.0 2.0 2.0"), identity);
+  GaussianDistribution<MatType> g3(VecType("3.0 2.0 7.0 0.0 5.0"), identity);
+  GaussianDistribution<MatType> g4(VecType("4.0 1.0 1.0 2.0 7.0"), identity);
+  GaussianDistribution<MatType> g5(VecType("1.0 0.0 1.0 8.0 3.0"), identity);
 
   MatType data(inputSize, points);
   arma::Row<size_t> labels(points);
@@ -930,27 +938,27 @@ TEMPLATE_TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest]", float,
   {
     for (size_t i = 0; i < points / 5; ++i)
     {
-      data.col(i) = ConvTo<VecType>::From(g1.Random());
+      data.col(i) = g1.Random();
       labels(i) = 0;
     }
     for (size_t i = points / 5; i < (2 * points) / 5; ++i)
     {
-      data.col(i) = ConvTo<VecType>::From(g2.Random());
+      data.col(i) = g2.Random();
       labels(i) = 1;
     }
     for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
     {
-      data.col(i) = ConvTo<VecType>::From(g3.Random());
+      data.col(i) = g3.Random();
       labels(i) = 2;
     }
     for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
     {
-      data.col(i) = ConvTo<VecType>::From(g4.Random());
+      data.col(i) = g4.Random();
       labels(i) = 3;
     }
     for (size_t i = (4 * points) / 5; i < points; ++i)
     {
-      data.col(i) = ConvTo<VecType>::From(g5.Random());
+      data.col(i) = g5.Random();
       labels(i) = 4;
     }
 
@@ -1007,9 +1015,9 @@ TEMPLATE_TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest]", float,
 TEMPLATE_TEST_CASE("LinearSVMClassifySinglePointTest", "[LinearSVMTest]", float,
     double)
 {
-  typedef TestType ElemType;
-  typedef typename arma::Mat<ElemType> MatType;
-  typedef typename arma::Col<ElemType> VecType;
+  using ElemType = TestType;
+  using MatType = arma::Mat<ElemType>;
+  using VecType = arma::Col<ElemType>;
 
   const size_t points = 500;
   const size_t inputSize = 5;
@@ -1017,39 +1025,39 @@ TEMPLATE_TEST_CASE("LinearSVMClassifySinglePointTest", "[LinearSVMTest]", float,
   const double lambda = 0.5;
 
   // Generate five-Gaussian dataset.
-  arma::mat identity = arma::eye<arma::mat>(5, 5);
-  GaussianDistribution g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
-  GaussianDistribution g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
-  GaussianDistribution g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
-  GaussianDistribution g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
-  GaussianDistribution g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
+  MatType identity = arma::eye<MatType>(5, 5);
+  GaussianDistribution<MatType> g1(VecType("1.0 9.0 1.0 2.0 2.0"), identity);
+  GaussianDistribution<MatType> g2(VecType("4.0 3.0 4.0 2.0 2.0"), identity);
+  GaussianDistribution<MatType> g3(VecType("3.0 2.0 7.0 0.0 5.0"), identity);
+  GaussianDistribution<MatType> g4(VecType("4.0 1.0 1.0 2.0 7.0"), identity);
+  GaussianDistribution<MatType> g5(VecType("1.0 0.0 1.0 8.0 3.0"), identity);
 
   MatType data(inputSize, points);
   arma::Row<size_t> labels(points);
 
   for (size_t i = 0; i < points / 5; ++i)
   {
-    data.col(i) = ConvTo<VecType>::From(g1.Random());
+    data.col(i) = g1.Random();
     labels(i) = 0;
   }
   for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
-    data.col(i) = ConvTo<VecType>::From(g2.Random());
+    data.col(i) = g2.Random();
     labels(i) = 1;
   }
   for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
-    data.col(i) = ConvTo<VecType>::From(g3.Random());
+    data.col(i) = g3.Random();
     labels(i) = 2;
   }
   for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
-    data.col(i) = ConvTo<VecType>::From(g4.Random());
+    data.col(i) = g4.Random();
     labels(i) = 3;
   }
   for (size_t i = (4 * points) / 5; i < points; ++i)
   {
-    data.col(i) = ConvTo<VecType>::From(g5.Random());
+    data.col(i) = g5.Random();
     labels(i) = 4;
   }
 
@@ -1059,27 +1067,27 @@ TEMPLATE_TEST_CASE("LinearSVMClassifySinglePointTest", "[LinearSVMTest]", float,
   // Create test dataset.
   for (size_t i = 0; i < points / 5; ++i)
   {
-    data.col(i) = ConvTo<VecType>::From(g1.Random());
+    data.col(i) = g1.Random();
     labels(i) = 0;
   }
   for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
-    data.col(i) = ConvTo<VecType>::From(g2.Random());
+    data.col(i) = g2.Random();
     labels(i) = 1;
   }
   for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
-    data.col(i) = ConvTo<VecType>::From(g3.Random());
+    data.col(i) = g3.Random();
     labels(i) = 2;
   }
   for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
-    data.col(i) = ConvTo<VecType>::From(g4.Random());
+    data.col(i) = g4.Random();
     labels(i) = 3;
   }
   for (size_t i = (4 * points) / 5; i < points; ++i)
   {
-    data.col(i) = ConvTo<VecType>::From(g5.Random());
+    data.col(i) = g5.Random();
     labels(i) = 4;
   }
 
@@ -1113,11 +1121,11 @@ TEST_CASE("SinglePointClassifyTest", "[LinearSVMTest]")
 
   // Generate five-Gaussian dataset.
   arma::mat identity = arma::eye<arma::mat>(5, 5);
-  GaussianDistribution g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
-  GaussianDistribution g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
-  GaussianDistribution g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
-  GaussianDistribution g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
-  GaussianDistribution g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
+  GaussianDistribution<> g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
+  GaussianDistribution<> g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
+  GaussianDistribution<> g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
+  GaussianDistribution<> g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
+  GaussianDistribution<> g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
 
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
@@ -1221,7 +1229,7 @@ TEST_CASE("LinearSVMCallbackTest", "[LinearSVMTest]")
 TEMPLATE_TEST_CASE("LinearSVMConstructorVariantTest", "[LinearSVMTest]",
     arma::fmat, arma::mat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Create some random data.  The results here do not matter all that much;
   // this is more of a test that all constructor variants successfully compile
@@ -1319,7 +1327,7 @@ TEMPLATE_TEST_CASE("LinearSVMConstructorVariantTest", "[LinearSVMTest]",
 TEMPLATE_TEST_CASE("LinearSVMTrainVariantTest", "[LinearSVMTest]", arma::fmat,
     arma::mat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Create some random data.  The results here do not matter all that much;
   // this is more of a test that all constructor variants successfully compile

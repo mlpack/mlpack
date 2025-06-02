@@ -49,8 +49,7 @@ class NaiveConvolution
    */
   template<typename InMatType, typename FilMatType, typename OutMatType,
       typename Border = BorderMode>
-  static typename std::enable_if<
-      std::is_same<Border, ValidConvolution>::value, void>::type
+  static std::enable_if_t<std::is_same_v<Border, ValidConvolution>, void>
   Convolution(const InMatType& input,
               const FilMatType& filter,
               OutMatType& output,
@@ -61,7 +60,7 @@ class NaiveConvolution
               const bool appending = false,
               const typename std::enable_if_t<IsMatrix<InMatType>::value>* = 0)
   {
-    typedef typename InMatType::elem_type eT;
+    using eT = typename InMatType::elem_type;
     // Compute the output size.  The filterRows and filterCols computation must
     // take into account the fact that dilation only adds rows or columns
     // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
@@ -110,8 +109,7 @@ class NaiveConvolution
    */
   template<typename InMatType, typename FilMatType, typename OutMatType,
       typename Border = BorderMode>
-  static typename std::enable_if<
-      std::is_same<Border, FullConvolution>::value, void>::type
+  static std::enable_if_t<std::is_same_v<Border, FullConvolution>, void>
   Convolution(const InMatType& input,
               const FilMatType& filter,
               OutMatType& output,
@@ -132,7 +130,7 @@ class NaiveConvolution
 
     // Pad filter and input to the working output shape.
     InMatType inputPadded(input.n_rows + 2 * paddingRows,
-        input.n_cols + 2 * paddingCols, arma::fill::zeros);
+        input.n_cols + 2 * paddingCols);
     inputPadded.submat(paddingRows, paddingCols, paddingRows + input.n_rows - 1,
         paddingCols + input.n_cols - 1) = input;
 
@@ -154,17 +152,18 @@ class NaiveConvolution
    *                  it will append the results to the output.
    */
   template<typename CubeType>
-  static void Convolution(const CubeType& input,
-                          const CubeType& filter,
-                          CubeType& output,
-                          const size_t dW = 1,
-                          const size_t dH = 1,
-                          const size_t dilationW = 1,
-                          const size_t dilationH = 1,
-                          const bool appending = false,
-                          const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
+  static void Convolution(
+      const CubeType& input,
+      const CubeType& filter,
+      CubeType& output,
+      const size_t dW = 1,
+      const size_t dH = 1,
+      const size_t dilationW = 1,
+      const size_t dilationH = 1,
+      const bool appending = false,
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
-    typedef typename GetDenseMatType<CubeType>::type MatType;
+    using MatType = typename GetDenseMatType<CubeType>::type;
     MatType convOutput;
     NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
         convOutput, dW, dH, dilationW, dilationH, appending);
@@ -196,16 +195,17 @@ class NaiveConvolution
    *                  it will append the results to the output.
    */
   template<typename MatType, typename CubeType>
-  static void Convolution(const MatType& input,
-                          const CubeType& filter,
-                          CubeType& output,
-                          const size_t dW = 1,
-                          const size_t dH = 1,
-                          const size_t dilationW = 1,
-                          const size_t dilationH = 1,
-                          const bool appending = false,
-                          const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
-                          const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
+  static void Convolution(
+      const MatType& input,
+      const CubeType& filter,
+      CubeType& output,
+      const size_t dW = 1,
+      const size_t dH = 1,
+      const size_t dilationW = 1,
+      const size_t dilationH = 1,
+      const bool appending = false,
+      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     MatType convOutput;
     NaiveConvolution<BorderMode>::Convolution(input, filter.slice(0),
@@ -238,16 +238,17 @@ class NaiveConvolution
    *                  it will append the results to the output.
    */
   template<typename MatType, typename CubeType>
-  static void Convolution(const CubeType& input,
-                          const MatType& filter,
-                          CubeType& output,
-                          const size_t dW = 1,
-                          const size_t dH = 1,
-                          const size_t dilationW = 1,
-                          const size_t dilationH = 1,
-                          const bool appending = false,
-                          const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
-                          const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
+  static void Convolution(
+      const CubeType& input,
+      const MatType& filter,
+      CubeType& output,
+      const size_t dW = 1,
+      const size_t dH = 1,
+      const size_t dilationW = 1,
+      const size_t dilationH = 1,
+      const bool appending = false,
+      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     MatType convOutput;
     NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter,

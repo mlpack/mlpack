@@ -63,28 +63,29 @@ struct KDEDefaultParams
  * dual-tree algorithm. Details about this algorithm are available in KDERules.
  *
  * @tparam KernelType Kernel function to use for KDE calculations.
- * @tparam MetricType Metric to use for KDE calculations.
+ * @tparam DistanceType Metric to use for KDE calculations.
  * @tparam MatType Type of data to use.
  * @tparam TreeType Type of tree to use; must satisfy the TreeType policy API.
  * @tparam DualTreeTraversalType Type of dual-tree traversal to use.
  * @tparam SingleTreeTraversalType Type of single-tree traversal to use.
  */
 template<typename KernelType = GaussianKernel,
-         typename MetricType = EuclideanDistance,
+         typename DistanceType = EuclideanDistance,
          typename MatType = arma::mat,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType = KDTree,
          template<typename RuleType> class DualTreeTraversalType =
-             TreeType<MetricType, KDEStat, MatType>::template DualTreeTraverser,
+             TreeType<DistanceType, KDEStat, MatType>::template
+              DualTreeTraverser,
          template<typename RuleType> class SingleTreeTraversalType =
-             TreeType<MetricType, KDEStat, MatType>::template
+             TreeType<DistanceType, KDEStat, MatType>::template
              SingleTreeTraverser>
 class KDE
 {
  public:
   //! Convenience typedef.
-  typedef TreeType<MetricType, KDEStat, MatType> Tree;
+  using Tree = TreeType<DistanceType, KDEStat, MatType>;
 
   /**
    * Initialize KDE object using custom instantiated Metric and Kernel objects.
@@ -93,7 +94,7 @@ class KDE
    * @param absError Absolute error tolerance of the model.
    * @param kernel Instantiated kernel object.
    * @param mode Mode for the algorithm.
-   * @param metric Instantiated metric object.
+   * @param distance Instantiated distance metric object.
    * @param monteCarlo Whether to use Monte Carlo estimations when possible.
    * @param mcProb Probability of a Monte Carlo estimation to be bounded by
    *               relative error tolerance.
@@ -110,7 +111,7 @@ class KDE
       const double absError = KDEDefaultParams::absError,
       KernelType kernel = KernelType(),
       const KDEMode mode = KDEDefaultParams::mode,
-      MetricType metric = MetricType(),
+      DistanceType distance = DistanceType(),
       const bool monteCarlo = KDEDefaultParams::monteCarlo,
       const double mcProb = KDEDefaultParams::mcProb,
       const size_t initialSampleSize = KDEDefaultParams::initialSampleSize,
@@ -226,11 +227,17 @@ class KDE
   //! Modify the kernel.
   KernelType& Kernel() { return kernel; }
 
-  //! Get the metric.
-  const MetricType& Metric() const { return metric; }
+  //! Get the distance metric.
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  const DistanceType& Metric() const { return distance; }
+  //! Modify the distance metric.
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  DistanceType& Metric() { return distance; }
 
+  //! Get the distance metric.
+  const DistanceType& Distance() const { return distance; }
   //! Modify the metric.
-  MetricType& Metric() { return metric; }
+  DistanceType& Distance() { return distance; }
 
   //! Get the reference tree.
   Tree* ReferenceTree() { return referenceTree; }
@@ -298,8 +305,8 @@ class KDE
   //! Kernel.
   KernelType kernel;
 
-  //! Metric.
-  MetricType metric;
+  //! Distance metric.
+  DistanceType distance;
 
   //! Reference tree.
   Tree* referenceTree;

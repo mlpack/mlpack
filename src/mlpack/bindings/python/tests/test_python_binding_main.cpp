@@ -126,9 +126,11 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timer */)
     }
 
     arma::mat tmat = params.Get<arma::mat>("tmatrix_in");
-    std::cerr << "tmat has size " << tmat.n_rows << " x " << tmat.n_cols << "\n";
+    std::cerr << "tmat has size " << tmat.n_rows << " x " << tmat.n_cols
+        << std::endl;
     arma::mat mat = params.Get<arma::mat>("matrix_in");
-    std::cerr << "mat has size " << mat.n_rows << " x " << mat.n_cols << "\n";
+    std::cerr << "mat has size " << mat.n_rows << " x " << mat.n_cols
+        << std::endl;
 
     if (!arma::approx_equal(tmat.t(), mat, "reldiff", 0.001))
     {
@@ -233,7 +235,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timer */)
   // All numeric elements should be multiplied by 3.
   if (params.Has("matrix_and_info_in"))
   {
-    typedef tuple<data::DatasetInfo, arma::mat> TupleType;
+    using TupleType = tuple<data::DatasetInfo, arma::mat>;
     TupleType tuple = std::move(params.Get<TupleType>("matrix_and_info_in"));
 
     const data::DatasetInfo& di = std::get<0>(tuple);

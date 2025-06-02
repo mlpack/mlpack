@@ -42,8 +42,8 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 #### See also:
 
- * [mlpack classifiers](../../index.md#classification-algorithms)
- * [`GaussianDistribution`](../core.md#gaussiandistribution)
+ * [mlpack classifiers](../modeling.md#classification)
+ * [`GaussianDistribution`](../core/distributions.md#gaussiandistribution)
  * [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
 
 ### Constructors
@@ -73,7 +73,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../core/normalizing_labels.md) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `incremental` | `bool` | If `true`, then the model will not be reset before training, and will use a robust incremental algorithm for variance computation. | `true` |
 | `epsilon` | `double` | Initial small value for sample variances, to prevent underflow (via `log(0)`). | 1e-10 |
@@ -275,7 +275,7 @@ std::cout << "Random point class probabilities: " << probabilities.t();
 
 See also the following fully-working examples:
 
- - [Microchip QA Classification using `NaiveBayesClassifier`](https://github.com/mlpack/examples/blob/master/microchip_quality_control_naive_bayes/microchip-quality-control-naive-bayes-cpp.ipynb)
+ - [Microchip QA Classification using `NaiveBayesClassifier`](https://github.com/mlpack/examples/blob/master/jupyter_notebook/naive_bayes/microchip_quality_control/microchip-quality-control-cpp.ipynb)
 
 ### Advanced Functionality: Different Element Types
 

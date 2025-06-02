@@ -213,7 +213,7 @@ The `KNN` class is, specifically, a typedef of the more extensible
 distance.
 
 ```c++
-typedef NeighborSearch<NearestNeighborSort, EuclideanDistance> KNN;
+using KNN = NeighborSearch<NearestNeighborSort, EuclideanDistance>;
 ```
 
 Using the `KNN` class is particularly simple; first, the object must be
@@ -296,13 +296,13 @@ arguments:
 ```c++
 template<
   typename SortPolicy = NearestNeighborSort,
-  typename MetricType = EuclideanDistance,
+  typename DistanceType = EuclideanDistance,
   typename MatType = arma::mat,
-  template<typename TreeMetricType,
+  template<typename TreeDistanceType,
            typename TreeStatType,
            typename TreeMatType> class TreeType = KDTree,
   template<typename RuleType> class TraversalType =
-      TreeType<MetricType, NeighborSearchStat<SortPolicy>,
+      TreeType<DistanceType, NeighborSearchStat<SortPolicy>,
                MatType>::template DualTreeTraverser>
 >
 class NeighborSearch;
@@ -341,29 +341,29 @@ The `FurthestNeighborSort` class is another implementation, which is used to
 create the `KFN` typedef class, which finds the furthest neighbors, as opposed
 to the nearest neighbors.
 
-## `MetricType` policy class
+## `DistanceType` policy class
 
-The `MetricType` policy class allows the neighbor search to take place in any
+The `DistanceType` policy class allows the neighbor search to take place in any
 arbitrary metric space.  The `LMetric` class is a good example implementation.
-A `MetricType` class must provide the following functions:
+A `DistanceType` class must provide the following functions:
 
 ```c++
 // Empty constructor is required.
-MetricType();
+DistanceType();
 
 // Compute the distance between two points.
 template<typename VecType>
 double Evaluate(const VecType& a, const VecType& b);
 ```
 
-Internally, the `NeighborSearch` class keeps an instantiated `MetricType` class
-(which can be given in the constructor).   This is useful for a metric like the
-Mahalanobis distance (`MahalanobisDistance`), which must store state (the
-covariance matrix).  Therefore, you can write a non-static MetricType class and
-use it seamlessly with `NeighborSearch`.
+Internally, the `NeighborSearch` class keeps an instantiated `DistanceType` class
+(which can be given in the constructor).   This is useful for a distance metric
+like the Mahalanobis distance (`MahalanobisDistance`), which must store state
+(the covariance matrix).  Therefore, you can write a non-static DistanceType
+class and use it seamlessly with `NeighborSearch`.
 
-For more information on the `MetricType` policy, see the [documentation for
-`MetricType`](../developer/metrics.md).
+For more information on the `DistanceType` policy, see the [documentation for
+`DistanceType`](../developer/distances.md).
 
 ### `MatType` policy class
 

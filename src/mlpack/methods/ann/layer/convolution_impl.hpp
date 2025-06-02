@@ -401,7 +401,7 @@ void ConvolutionType<
     dilatedMappedError.zeros(mappedError.n_rows * strideWidth -
         (strideWidth - 1), mappedError.n_cols * strideHeight -
         (strideHeight - 1), mappedError.n_slices);
-    #pragma omp parallel for collapse(3)
+    #pragma omp parallel for collapse(3) schedule(static)
     for (size_t i = 0; i < mappedError.n_slices; ++i)
     {
       for (size_t j = 0; j < mappedError.n_cols; ++j)
@@ -415,26 +415,26 @@ void ConvolutionType<
     }
   }
 
-  #pragma omp parallel for
+  #pragma omp parallel for schedule(static)
   for (size_t map = 0; map < (size_t) (maps * inMaps); ++map)
   {
     Rotate180(weight.slice(map), rotatedFilters.slice(map));
   }
 
   MatType output(apparentWidth * apparentHeight * inMaps * higherInDimensions,
-      batchSize, arma::fill::zeros);
+      batchSize);
   CubeType outputCube;
   MakeAlias(outputCube, output, apparentWidth, apparentHeight,
       inMaps * higherInDimensions * batchSize);
 
   // See Forward() for the overall iteration strategy.
+  #pragma omp parallel for schedule(dynamic)
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
     // Iterate over input maps.
-    #pragma omp parallel for
     for (size_t inMap = 0; inMap < (size_t) inMaps; ++inMap)
     {
       // Iterate over output maps.
@@ -500,22 +500,24 @@ void ConvolutionType<
   const size_t paddedRows = this->inputDimensions[0] + padWLeft + padWRight;
   const size_t paddedCols = this->inputDimensions[1] + padHTop + padHBottom;
 
-  CubeType inputTemp(
-      const_cast<MatType&>(usingPadding ? inputPadded : input).memptr(),
-      paddedRows, paddedCols, inMaps * batchSize, false, false);
+  CubeType inputTemp;
+  MakeAlias(inputTemp, (usingPadding ? inputPadded : input),
+      paddedRows, paddedCols, inMaps * batchSize, 0, false);
 
   MatType temp(apparentWidth * apparentHeight * inMaps * higherInDimensions,
       batchSize);
   CubeType tempCube;
   MakeAlias(tempCube, temp, apparentWidth, apparentHeight,
       inMaps * higherInDimensions * batchSize);
-  paddingBackward.Backward(input, {} /* unused */, usingPadding ? inputPadded : input, temp);
+  paddingBackward.Backward(input, {} /* unused */,
+      usingPadding ? inputPadded : input, temp);
 
   // We will make an alias for the gradient, but note that this is only for the
   // convolution map weights!  The bias will be handled by direct accesses into
   // `gradient`.
   gradient.zeros();
-  MakeAlias(gradientTemp, gradient, weight.n_rows, weight.n_cols, weight.n_slices);
+  MakeAlias(gradientTemp, gradient, weight.n_rows, weight.n_cols,
+      weight.n_slices);
 
   // See Forward() for our iteration strategy.
   for (size_t offset = 0; offset < higherInDimensions * batchSize; ++offset)

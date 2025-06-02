@@ -12,7 +12,7 @@
 #define MLPACK_TESTS_MOCK_CATEGORICAL_DATA_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/dists/discrete_distribution.hpp>
+#include <mlpack/core/distributions/discrete_distribution.hpp>
 
 /**
  * Create a mock categorical dataset for testing classification.
@@ -24,21 +24,21 @@ inline void MockCategoricalData(arma::mat& d,
   // We'll build a spiral dataset plus two noisy categorical features.  We need
   // to build the distributions for the categorical features (they'll be
   // discrete distributions).
-  mlpack::DiscreteDistribution c1[5];
+  mlpack::DiscreteDistribution<> c1[5];
   // The distribution will be automatically normalized.
   for (size_t i = 0; i < 5; ++i)
   {
     std::vector<arma::vec> probs;
     probs.push_back(arma::vec(4, arma::fill::randu));
-    c1[i] = mlpack::DiscreteDistribution(probs);
+    c1[i] = mlpack::DiscreteDistribution<>(probs);
   }
 
-  mlpack::DiscreteDistribution c2[5];
+  mlpack::DiscreteDistribution<> c2[5];
   for (size_t i = 0; i < 5; ++i)
   {
     std::vector<arma::vec> probs;
     probs.push_back(arma::vec(2, arma::fill::randu));
-    c2[i] = mlpack::DiscreteDistribution(probs);
+    c2[i] = mlpack::DiscreteDistribution<>(probs);
   }
 
   arma::mat spiralDataset(4, 4000);

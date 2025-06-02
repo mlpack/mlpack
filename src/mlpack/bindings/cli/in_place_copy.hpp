@@ -31,10 +31,10 @@ template<typename T>
 void InPlaceCopyInternal(
     util::ParamData& /* d */,
     util::ParamData& /* input */,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>* = 0)
 {
   // Nothing to do.
 }
@@ -50,14 +50,13 @@ template<typename T>
 void InPlaceCopyInternal(
     util::ParamData& d,
     util::ParamData& input,
-    const typename std::enable_if<
+    const std::enable_if_t<
         arma::is_arma_type<T>::value ||
-        std::is_same<T,
-                     std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value
-                 >::type* = 0)
+        std::is_same_v<T, std::tuple<mlpack::data::DatasetInfo, arma::mat>>>*
+            = 0)
 {
   // Make the output filename the same as the input filename.
-  typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
+  using TupleType = std::tuple<T, typename ParameterType<T>::type>;
   TupleType& tuple = *std::any_cast<TupleType>(&d.value);
   std::string& value = std::get<0>(std::get<1>(tuple));
 
@@ -76,11 +75,10 @@ template<typename T>
 void InPlaceCopyInternal(
     util::ParamData& d,
     util::ParamData& input,
-    const typename std::enable_if<
-        data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
 {
   // Make the output filename the same as the input filename.
-  typedef std::tuple<T*, typename ParameterType<T>::type> TupleType;
+  using TupleType = std::tuple<T*, typename ParameterType<T>::type>;
   TupleType& tuple = *std::any_cast<TupleType>(&d.value);
   std::string& value = std::get<1>(tuple);
 
@@ -102,7 +100,7 @@ void InPlaceCopy(util::ParamData& d,
                  void* /* output */)
 {
   // Cast to the correct type.
-  InPlaceCopyInternal<typename std::remove_pointer<T>::type>(
+  InPlaceCopyInternal<std::remove_pointer_t<T>>(
       const_cast<util::ParamData&>(d), *((util::ParamData*) input));
 }
 

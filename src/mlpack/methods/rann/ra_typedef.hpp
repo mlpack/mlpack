@@ -16,7 +16,7 @@
 // In case someone included this directly.
 #include "ra_search.hpp"
 
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 
 #include <mlpack/methods/neighbor_search/sort_policies/nearest_neighbor_sort.hpp>
 #include <mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp>
@@ -32,7 +32,7 @@ namespace mlpack {
  * while the search can be performed multiple times with different approximation
  * levels.
  */
-typedef RASearch<> KRANN;
+using KRANN = RASearch<>;
 
 /**
  * The KRAFN class is the k-rank-approximate-farthest-neighbors method.  It
@@ -43,7 +43,7 @@ typedef RASearch<> KRANN;
  * while the search can be performed multiple times with different approximation
  * levels.
  */
-typedef RASearch<FurthestNeighborSort> KRAFN;
+using KRAFN = RASearch<FurthestNeighborSort>;
 
 } // namespace mlpack
 

@@ -35,7 +35,7 @@ class Perceptron
 {
  public:
   //! The element type used in the Perceptron.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   /**
    * Constructor: create the perceptron with the given number of classes and
@@ -92,8 +92,8 @@ class Perceptron
              const size_t numClasses,
              const WeightsType& instanceWeights,
              const size_t maxIterations = 1000,
-             const typename std::enable_if<
-                 arma::is_arma_type<WeightsType>::value>::type* = 0);
+             const std::enable_if_t<
+                 arma::is_arma_type<WeightsType>::value>* = 0);
 
   /**
    * Alternate constructor which copies parameters from an already initiated
@@ -114,8 +114,8 @@ class Perceptron
              const arma::Row<size_t>& labels,
              const size_t numClasses,
              const WeightsType& instanceWeights,
-             const typename std::enable_if<
-                 arma::is_arma_type<WeightsType>::value>::type* = 0);
+             const std::enable_if_t<
+                 arma::is_arma_type<WeightsType>::value>* = 0);
 
   /**
    * Train the perceptron on the given data for up to the given maximum number

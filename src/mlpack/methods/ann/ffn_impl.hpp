@@ -310,7 +310,7 @@ void FFN<
   // We must always store a copy of the forward pass in `networkOutputs` in case
   // we do a backward pass.
   networkOutput.set_size(network.OutputSize(), inputs.n_cols);
-  network.Forward(inputs, networkOutput, begin, end);
+  network.PartialForward(inputs, networkOutput, begin, end);
 
   // It's possible the user passed `networkOutput` as `results`; in this case,
   // we don't need to create an alias.
@@ -375,16 +375,17 @@ void FFN<
     MatType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
-  #ifndef MLPACK_ENABLE_ANN_SERIALIZATION
+  #if !defined(MLPACK_ENABLE_ANN_SERIALIZATION) && \
+      !defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
     // Note: if you define MLPACK_IGNORE_ANN_SERIALIZATION_WARNING, you had
     // better ensure that every layer you are serializing has had
     // CEREAL_REGISTER_TYPE() called somewhere.  See layer/serialization.hpp for
     // more information.
-    #ifndef MLPACK_ANN_IGNORE_SERIALIZATION_WARNING
-      throw std::runtime_error("Cannot serialize a neural network unless "
-          "MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See the \"Additional "
-          "build options\" section of the README for more information.");
-    #endif
+    throw std::runtime_error("Cannot serialize a neural network unless "
+        "MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See the \"Additional "
+        "build options\" section of the README for more information.");
+
+    (void) ar;
   #else
     // Serialize the output layer and initialization rule.
     ar(CEREAL_NVP(outputLayer));
@@ -470,7 +471,8 @@ typename MatType::elem_type FFN<
 {
   typename MatType::elem_type res = 0;
   res += EvaluateWithGradient(parameters, 0, gradient, 1);
-  MatType tmpGradient(gradient.n_rows, gradient.n_cols, arma::fill::none);
+  MatType tmpGradient(gradient.n_rows, gradient.n_cols,
+      GetFillType<MatType>::none);
   for (size_t i = 1; i < predictors.n_cols; ++i)
   {
     res += EvaluateWithGradient(parameters, i, tmpGradient, 1);
@@ -693,9 +695,8 @@ template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
 template<typename OptimizerType>
-typename std::enable_if<
-    ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void
->::type
+std::enable_if_t<
+    ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void>
 FFN<
     OutputLayerType,
     InitializationRuleType,
@@ -717,9 +718,8 @@ template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
 template<typename OptimizerType>
-typename std::enable_if<
-    !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void
->::type
+std::enable_if_t<
+    !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void>
 FFN<
     OutputLayerType,
     InitializationRuleType,

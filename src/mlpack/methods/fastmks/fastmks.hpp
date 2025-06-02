@@ -53,7 +53,7 @@ namespace mlpack {
 template<
     typename KernelType,
     typename MatType = arma::mat,
-    template<typename TreeMetricType,
+    template<typename TreeDistanceType,
              typename TreeStatType,
              typename TreeMatType> class TreeType = StandardCoverTree
 >
@@ -61,7 +61,7 @@ class FastMKS
 {
  public:
   //! Convenience typedef.
-  typedef TreeType<IPMetric<KernelType>, FastMKSStat, MatType> Tree;
+  using Tree = TreeType<IPMetric<KernelType>, FastMKSStat, MatType>;
 
   /**
    * Create the FastMKS object with an empty reference set and default kernel.
@@ -134,9 +134,9 @@ class FastMKS
 
   /**
    * Create the FastMKS object with an already-initialized tree built on the
-   * reference points.  Be sure that the tree is built with the metric type
-   * IPMetric<KernelType>.  Optionally, whether or not to run single-tree search
-   * can be specified.  Brute-force search is not available with this
+   * reference points.  Be sure that the tree is built with the distance metric
+   * type IPMetric<KernelType>.  Optionally, whether or not to run single-tree
+   * search can be specified.  Brute-force search is not available with this
    * constructor since a tree is given (use one of the other constructors).
    *
    * @param referenceTree Tree built on reference data.
@@ -178,8 +178,8 @@ class FastMKS
 
   /**
    * "Train" the FastMKS model on the given reference set and use the given
-   * kernel.  This will just build a tree and replace the metric, if the current
-   * search mode is not naive mode.
+   * kernel.  This will just build a tree and replace the distance metric, if
+   * the current search mode is not naive mode.
    *
    * @param referenceSet Set of reference points.
    * @param kernel Kernel to use for search.
@@ -197,8 +197,9 @@ class FastMKS
 
   /**
    * "Train" the FastMKS model on the given reference set and use the given
-   * kernel.  This will just build a tree and replace the metric, if the current
-   * search mode is not naive mode.  This takes ownership of the reference set.
+   * kernel.  This will just build a tree and replace the distance metric, if
+   * the current search mode is not naive mode.  This takes ownership of the
+   * reference set.
    *
    * @param referenceSet Set of reference points.
    * @param kernel Kernel to use for search.
@@ -284,10 +285,17 @@ class FastMKS
               arma::Mat<size_t>& indices,
               arma::mat& products);
 
-  //! Get the inner-product metric induced by the given kernel.
-  const IPMetric<KernelType>& Metric() const { return metric; }
-  //! Modify the inner-product metric induced by the given kernel.
-  IPMetric<KernelType>& Metric() { return metric; }
+  //! Get the inner-product distance metric induced by the given kernel.
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  const IPMetric<KernelType>& Metric() const { return distance; }
+  //! Modify the inner-product distance metric induced by the given kernel.
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  IPMetric<KernelType>& Metric() { return distance; }
+
+  //! Get the inner-product distance metric induced by the given kernel.
+  const IPMetric<KernelType>& Distance() const { return distance; }
+  //! Modify the inner-product distance metric induced by the given kernel.
+  IPMetric<KernelType>& Distance() { return distance; }
 
   //! Get whether or not single-tree search is used.
   bool SingleMode() const { return singleMode; }
@@ -319,11 +327,12 @@ class FastMKS
   //! If true, naive (brute-force) search is used.
   bool naive;
 
-  //! The instantiated inner-product metric induced by the given kernel.
-  IPMetric<KernelType> metric;
+  //! The instantiated inner-product distance metric induced by the given
+  //! kernel.
+  IPMetric<KernelType> distance;
 
   //! Candidate represents a possible candidate point (value, index).
-  typedef std::pair<double, size_t> Candidate;
+  using Candidate = std::pair<double, size_t>;
 
   //! Compare two candidates based on the value.
   struct CandidateCmp {
@@ -334,8 +343,8 @@ class FastMKS
   };
 
   //! Use a priority queue to represent the list of candidate points.
-  typedef std::priority_queue<Candidate, std::vector<Candidate>,
-      CandidateCmp> CandidateList;
+  using CandidateList = std::priority_queue<Candidate, std::vector<Candidate>,
+      CandidateCmp>;
 };
 
 } // namespace mlpack

@@ -54,14 +54,13 @@ namespace mlpack {
 template<typename AddressType, typename VecType>
 void PointToAddress(AddressType& address, const VecType& point)
 {
-  typedef typename VecType::elem_type VecElemType;
+  using VecElemType = typename VecType::elem_type;
   // Check that the arguments are compatible.
-  typedef typename std::conditional<sizeof(VecElemType) * CHAR_BIT <= 32,
-                                    uint32_t,
-                                    uint64_t>::type AddressElemType;
+  using AddressElemType = std::conditional_t<
+      (sizeof(VecElemType) * CHAR_BIT <= 32), uint32_t, uint64_t>;
 
-  static_assert(std::is_same<typename AddressType::elem_type,
-      AddressElemType>::value == true, "The vector element type does not "
+  static_assert(std::is_same_v<typename AddressType::elem_type,
+      AddressElemType> == true, "The vector element type does not "
       "correspond to the address element type.");
   arma::Col<AddressElemType> result(point.n_elem);
 
@@ -150,14 +149,13 @@ void PointToAddress(AddressType& address, const VecType& point)
 template<typename AddressType, typename VecType>
 void AddressToPoint(VecType& point, const AddressType& address)
 {
-  typedef typename VecType::elem_type VecElemType;
+  using VecElemType = typename VecType::elem_type;
   // Check that the arguments are compatible.
-  typedef typename std::conditional<sizeof(VecElemType) * CHAR_BIT <= 32,
-                                    uint32_t,
-                                    uint64_t>::type AddressElemType;
+  using AddressElemType = std::conditional_t<
+      (sizeof(VecElemType) * CHAR_BIT <= 32), uint32_t, uint64_t>;
 
-  static_assert(std::is_same<typename AddressType::elem_type,
-      AddressElemType>::value == true, "The vector element type does not "
+  static_assert(std::is_same_v<typename AddressType::elem_type,
+      AddressElemType> == true, "The vector element type does not "
       "correspond to the address element type.");
 
   constexpr size_t order = sizeof(AddressElemType) * CHAR_BIT;
@@ -230,8 +228,8 @@ void AddressToPoint(VecType& point, const AddressType& address)
 template<typename AddressType1, typename AddressType2>
 int CompareAddresses(const AddressType1& addr1, const AddressType2& addr2)
 {
-  static_assert(std::is_same<typename AddressType1::elem_type,
-      typename AddressType2::elem_type>::value == true, "Can't compare "
+  static_assert(std::is_same_v<typename AddressType1::elem_type,
+      typename AddressType2::elem_type> == true, "Can't compare "
       "addresses of distinct types");
 
   assert(addr1.n_elem == addr2.n_elem);

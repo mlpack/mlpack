@@ -21,7 +21,7 @@ using namespace mlpack;
 
 // Test the traits on RectangleTrees.
 
-TEST_CASE("RectangleTreeTraitsTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("RectangleTreeTest", "[RectangleTreeTest]")
 {
   // Children may be overlapping.
   bool b = TreeTraits<RTree<EuclideanDistance, EmptyStatistic,
@@ -37,15 +37,15 @@ TEST_CASE("RectangleTreeTraitsTest", "[RectangleTreeTraitsTest]")
 // Test to make sure the tree can be contains the correct number of points after
 // it is constructed.
 
-TEST_CASE("RectangleTreeConstructionCountTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("RectangleTreeConstructionCountTest", "[RectangleTreeTest]")
 {
   arma::mat dataset;
   dataset.randu(3, 1000); // 1000 points in 3 dimensions.
 
-  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
+  using TreeType = RTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
 
-  TreeType tree(dataset, 20, 6, 5, 2, 0);
+  TreeType tree(dataset, 20, 6, 5, 2);
   TreeType tree2 = tree;
 
   REQUIRE(tree.NumDescendants() == 1000);
@@ -85,15 +85,15 @@ std::vector<arma::vec*> GetAllPointsInTree(const TreeType& tree)
 // Test to ensure that none of the points in the tree are duplicates.  This,
 // combined with the above test to see how many points are in the tree, should
 // ensure that we inserted all points.
-TEST_CASE("RectangleTreeConstructionRepeatTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("RectangleTreeConstructionRepeatTest", "[RectangleTreeTest]")
 {
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
-  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
+  using TreeType = RTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
 
-  TreeType tree(dataset, 20, 6, 5, 2, 0);
+  TreeType tree(dataset, 20, 6, 5, 2);
 
   std::vector<arma::vec*> allPoints = GetAllPointsInTree(tree);
   for (size_t i = 0; i < allPoints.size(); ++i)
@@ -213,15 +213,15 @@ void CheckHierarchy(const TreeType& tree)
 
 // Test to see if the bounds of the tree are correct. (Cover all bounds and
 // points beneath this node of the tree).
-TEST_CASE("RectangleTreeContainmentTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("RectangleTreeContainmentTest", "[RectangleTreeTest]")
 {
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
-  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
+  using TreeType = RTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
 
-  TreeType tree(dataset, 20, 6, 5, 2, 0);
+  TreeType tree(dataset, 20, 6, 5, 2);
   CheckContainment(tree);
   CheckExactContainment(tree);
 }
@@ -258,15 +258,15 @@ void CheckFills(const TreeType& tree)
 }
 
 // Test to ensure that the minimum and maximum fills are satisfied.
-TEST_CASE("CheckMinAndMaxFills", "[RectangleTreeTraitsTest]")
+TEST_CASE("CheckMinAndMaxFills", "[RectangleTreeTest]")
 {
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
-  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
+  using TreeType = RTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
 
-  TreeType tree(dataset, 20, 6, 5, 2, 0);
+  TreeType tree(dataset, 20, 6, 5, 2);
   CheckFills(tree);
 }
 
@@ -348,15 +348,15 @@ size_t CheckNumDescendants(const TreeType& tree)
 
 // A test to ensure that all leaf nodes are stored on the same level of the
 // tree.
-TEST_CASE("TreeBalance", "[RectangleTreeTraitsTest]")
+TEST_CASE("TreeBalance", "[RectangleTreeTest]")
 {
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
-  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
+  using TreeType = RTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
 
-  TreeType tree(dataset, 20, 6, 5, 2, 0);
+  TreeType tree(dataset, 20, 6, 5, 2);
 
   REQUIRE(GetMinLevel(tree) == GetMaxLevel(tree));
   REQUIRE((int) tree.TreeDepth() == GetMinLevel(tree));
@@ -366,7 +366,7 @@ TEST_CASE("TreeBalance", "[RectangleTreeTraitsTest]")
 // delete numIter points and test that the query gives correct results.  It is
 // remotely possible that this test will give a false negative if it should
 // happen that two points are the same distance from a third point.
-TEST_CASE("PointDeletion", "[RectangleTreeTraitsTest]")
+TEST_CASE("PointDeletion", "[RectangleTreeTest]")
 {
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
@@ -376,9 +376,9 @@ TEST_CASE("PointDeletion", "[RectangleTreeTraitsTest]")
 
   const int numIter = 50;
 
-  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
-  TreeType tree(dataset, 20, 6, 5, 2, 0);
+  using TreeType = RTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
+  TreeType tree(dataset, 20, 6, 5, 2);
 
   for (int i = 0; i < numIter; ++i)
     tree.DeletePoint(999 - i);
@@ -443,15 +443,15 @@ TEST_CASE("PointDeletion", "[RectangleTreeTraitsTest]")
 // negative if it should happen that two points are the same distance from a
 // third point.  Note that this is extremely inefficient.  You should not use
 // dynamic insertion until a better solution for resizing matrices is available.
-TEST_CASE("PointDynamicAdd", "[RectangleTreeTraitsTest]")
+TEST_CASE("PointDynamicAdd", "[RectangleTreeTest]")
 {
   const int numIter = 50;
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
-  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
-  TreeType tree(dataset, 20, 6, 5, 2, 0);
+  using TreeType = RTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
+  TreeType tree(dataset, 20, 6, 5, 2);
 
   // Add numIter new points to the dataset.  The tree copies the dataset, so we
   // must modify both the original dataset and the one that the tree holds.
@@ -520,7 +520,7 @@ TEST_CASE("PointDynamicAdd", "[RectangleTreeTraitsTest]")
 
 // A test to ensure that the SingleTreeTraverser is working correctly by
 // comparing its results to the results of a naive search.
-TEST_CASE("SingleTreeTraverserTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("SingleTreeTraverserTest", "[RectangleTreeTest]")
 {
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
@@ -529,9 +529,9 @@ TEST_CASE("SingleTreeTraverserTest", "[RectangleTreeTraitsTest]")
   arma::Mat<size_t> neighbors2;
   arma::mat distances2;
 
-  typedef RStarTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
-  TreeType rTree(dataset, 20, 6, 5, 2, 0);
+  using TreeType = RStarTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
+  TreeType rTree(dataset, 20, 6, 5, 2);
 
   REQUIRE(rTree.NumDescendants() == 1000);
 
@@ -560,7 +560,7 @@ TEST_CASE("SingleTreeTraverserTest", "[RectangleTreeTraitsTest]")
 
 // A test to ensure that the SingleTreeTraverser is working correctly by
 // comparing its results to the results of a naive search.
-TEST_CASE("XTreeTraverserTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("XTreeTraverserTest", "[RectangleTreeTest]")
 {
   arma::mat dataset;
 
@@ -572,9 +572,9 @@ TEST_CASE("XTreeTraverserTest", "[RectangleTreeTraitsTest]")
   arma::Mat<size_t> neighbors2;
   arma::mat distances2;
 
-  typedef XTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
-  TreeType xTree(dataset, 20, 6, 5, 2, 0);
+  using TreeType = XTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
+  TreeType xTree(dataset, 20, 6, 5, 2);
 
   REQUIRE(xTree.NumDescendants() == numP);
 
@@ -601,7 +601,7 @@ TEST_CASE("XTreeTraverserTest", "[RectangleTreeTraitsTest]")
   }
 }
 
-TEST_CASE("HilbertRTreeTraverserTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("HilbertRTreeTraverserTest", "[RectangleTreeTest]")
 {
   arma::mat dataset;
 
@@ -613,9 +613,9 @@ TEST_CASE("HilbertRTreeTraverserTest", "[RectangleTreeTraitsTest]")
   arma::Mat<size_t> neighbors2;
   arma::mat distances2;
 
-  typedef HilbertRTree<EuclideanDistance,
-      NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
-  TreeType hilbertRTree(dataset, 20, 6, 5, 2, 0);
+  using TreeType = HilbertRTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
+  TreeType hilbertRTree(dataset, 20, 6, 5, 2);
 
   REQUIRE(hilbertRTree.NumDescendants() == numP);
 
@@ -679,14 +679,14 @@ void CheckHilbertOrdering(const TreeType& tree)
   }
 }
 
-TEST_CASE("HilbertRTreeOrderingTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("HilbertRTreeOrderingTest", "[RectangleTreeTest]")
 {
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
-  typedef HilbertRTree<EuclideanDistance,
-      NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
-  TreeType hilbertRTree(dataset, 20, 6, 5, 2, 0);
+  using TreeType = HilbertRTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
+  TreeType hilbertRTree(dataset, 20, 6, 5, 2);
 
   CheckHilbertOrdering(hilbertRTree);
 }
@@ -694,9 +694,8 @@ TEST_CASE("HilbertRTreeOrderingTest", "[RectangleTreeTraitsTest]")
 template<typename TreeType>
 void CheckDiscreteHilbertValueSync(const TreeType& tree)
 {
-  typedef DiscreteHilbertValue<typename TreeType::ElemType>
-      HilbertValue;
-  typedef typename HilbertValue::HilbertElemType HilbertElemType;
+  using HilbertValue = DiscreteHilbertValue<typename TreeType::ElemType>;
+  using HilbertElemType = typename HilbertValue::HilbertElemType;
 
   if (tree.IsLeaf())
   {
@@ -720,19 +719,19 @@ void CheckDiscreteHilbertValueSync(const TreeType& tree)
   }
 }
 
-TEST_CASE("DiscreteHilbertValueSyncTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("DiscreteHilbertValueSyncTest", "[RectangleTreeTest]")
 {
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
-  typedef HilbertRTree<EuclideanDistance,
-      NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
-  TreeType hilbertRTree(dataset, 20, 6, 5, 2, 0);
+  using TreeType = HilbertRTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
+  TreeType hilbertRTree(dataset, 20, 6, 5, 2);
 
   CheckDiscreteHilbertValueSync(hilbertRTree);
 }
 
-TEST_CASE("DiscreteHilbertValueTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("DiscreteHilbertValueTest", "[RectangleTreeTest]")
 {
   arma::vec point01(1);
   arma::vec point02(1);
@@ -856,8 +855,7 @@ TEST_CASE("DiscreteHilbertValueTest", "[RectangleTreeTraitsTest]")
 template<typename TreeType>
 void CheckHilbertValue(const TreeType& tree)
 {
-  typedef DiscreteHilbertValue<typename TreeType::ElemType>
-      HilbertValue;
+  using HilbertValue = DiscreteHilbertValue<typename TreeType::ElemType>;
 
   const HilbertValue& value = tree.AuxiliaryInfo().HilbertValue();
 
@@ -890,15 +888,15 @@ void CheckHilbertValue(const TreeType& tree)
     CheckHilbertValue(tree.Child(i));
 }
 
-TEST_CASE("HilbertRTeeCopyConstructorTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("HilbertRTreeCopyConstructorTest", "[RectangleTreeTest]")
 {
-  typedef HilbertRTree<EuclideanDistance,
-      NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
+  using TreeType = HilbertRTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
 
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
-  TreeType tree(dataset, 20, 6, 5, 2, 0);
+  TreeType tree(dataset, 20, 6, 5, 2);
   TreeType copy(tree);
 
   CheckHilbertValue(copy);
@@ -910,15 +908,15 @@ TEST_CASE("HilbertRTeeCopyConstructorTest", "[RectangleTreeTraitsTest]")
   CheckNumDescendants(copy);
 }
 
-TEST_CASE("HilbertRTeeMoveConstructorTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("HilbertRTeeMoveConstructorTest", "[RectangleTreeTest]")
 {
-  typedef HilbertRTree<EuclideanDistance,
-      NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
+  using TreeType = HilbertRTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
 
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
-  TreeType tree(dataset, 20, 6, 5, 2, 0);
+  TreeType tree(dataset, 20, 6, 5, 2);
   TreeType copy(std::move(tree));
 
   CheckHilbertValue(copy);
@@ -960,14 +958,14 @@ void CheckOverlap(const TreeType& tree)
 }
 
 
-TEST_CASE("RPlusTreeOverlapTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("RPlusTreeOverlapTest", "[RectangleTreeTest]")
 {
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
-  typedef RPlusTree<EuclideanDistance,
-      NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
-  TreeType rPlusTree(dataset, 20, 6, 5, 2, 0);
+  using TreeType = RPlusTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
+  TreeType rPlusTree(dataset, 20, 6, 5, 2);
 
   CheckOverlap(rPlusTree);
 
@@ -981,7 +979,7 @@ TEST_CASE("RPlusTreeOverlapTest", "[RectangleTreeTraitsTest]")
 }
 
 
-TEST_CASE("RPlusTreeTraverserTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("RPlusTreeTraverserTest", "[RectangleTreeTest]")
 {
   arma::mat dataset;
 
@@ -993,9 +991,9 @@ TEST_CASE("RPlusTreeTraverserTest", "[RectangleTreeTraitsTest]")
   arma::Mat<size_t> neighbors2;
   arma::mat distances2;
 
-  typedef RPlusTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat > TreeType;
-  TreeType rPlusTree(dataset, 20, 6, 5, 2, 0);
+  using TreeType = RPlusTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
+  TreeType rPlusTree(dataset, 20, 6, 5, 2);
 
   REQUIRE(rPlusTree.NumDescendants() == numP);
 
@@ -1026,7 +1024,7 @@ TEST_CASE("RPlusTreeTraverserTest", "[RectangleTreeTraitsTest]")
 template<typename TreeType>
 void CheckRPlusPlusTreeBound(const TreeType& tree)
 {
-  typedef HRectBound<EuclideanDistance, typename TreeType::ElemType> Bound;
+  using Bound = HRectBound<EuclideanDistance, typename TreeType::ElemType>;
 
   bool success = true;
 
@@ -1076,15 +1074,15 @@ void CheckRPlusPlusTreeBound(const TreeType& tree)
     CheckRPlusPlusTreeBound(tree.Child(i));
 }
 
-TEST_CASE("RPlusPlusTreeBoundTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("RPlusPlusTreeBoundTest", "[RectangleTreeTest]")
 {
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
   // Check the MinimalCoverageSweep.
-  typedef RPlusPlusTree<EuclideanDistance,
-      NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
-  TreeType rPlusPlusTree(dataset, 20, 6, 5, 2, 0);
+  using TreeType = RPlusPlusTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
+  TreeType rPlusPlusTree(dataset, 20, 6, 5, 2);
 
   CheckRPlusPlusTreeBound(rPlusPlusTree);
 
@@ -1096,13 +1094,12 @@ TEST_CASE("RPlusPlusTreeBoundTest", "[RectangleTreeTraitsTest]")
   REQUIRE((int) rPlusPlusTree.TreeDepth() == GetMinLevel(rPlusPlusTree));
 
   // Check the MinimalSplitsNumberSweep.
-  typedef RectangleTree<EuclideanDistance,
+  using RPlusPlusTreeMinimalSplits = RectangleTree<EuclideanDistance,
       NeighborSearchStat<NearestNeighborSort>, arma::mat,
-      RPlusTreeSplit<RPlusPlusTreeSplitPolicy, MinimalCoverageSweep>,
-      RPlusPlusTreeDescentHeuristic, RPlusPlusTreeAuxiliaryInformation>
-          RPlusPlusTreeMinimalSplits;
+      RPlusTreeSplitType<RPlusPlusTreeSplitPolicy, MinimalCoverageSweep>,
+      RPlusPlusTreeDescentHeuristic, RPlusPlusTreeAuxiliaryInformation>;
 
-  RPlusPlusTreeMinimalSplits rPlusPlusTree2(dataset, 20, 6, 5, 2, 0);
+  RPlusPlusTreeMinimalSplits rPlusPlusTree2(dataset, 20, 6, 5, 2);
 
   CheckRPlusPlusTreeBound(rPlusPlusTree2);
 
@@ -1110,7 +1107,7 @@ TEST_CASE("RPlusPlusTreeBoundTest", "[RectangleTreeTraitsTest]")
   REQUIRE((int) rPlusPlusTree2.TreeDepth() == GetMinLevel(rPlusPlusTree2));
 }
 
-TEST_CASE("RPlusPlusTreeTraverserTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("RPlusPlusTreeTraverserTest", "[RectangleTreeTest]")
 {
   arma::mat dataset;
 
@@ -1122,9 +1119,9 @@ TEST_CASE("RPlusPlusTreeTraverserTest", "[RectangleTreeTraitsTest]")
   arma::Mat<size_t> neighbors2;
   arma::mat distances2;
 
-  typedef RPlusPlusTree<EuclideanDistance,
-      NeighborSearchStat<NearestNeighborSort>, arma::mat > TreeType;
-  TreeType rPlusPlusTree(dataset, 20, 6, 5, 2, 0);
+  using TreeType = RPlusPlusTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
+  TreeType rPlusPlusTree(dataset, 20, 6, 5, 2);
 
   REQUIRE(rPlusPlusTree.NumDescendants() == numP);
 
@@ -1156,7 +1153,7 @@ TEST_CASE("RPlusPlusTreeTraverserTest", "[RectangleTreeTraitsTest]")
 
 // Test the tree splitting.  We set MaxLeafSize and MaxNumChildren rather low
 // to allow us to test by hand without adding hundreds of points.
-TEST_CASE("RTreeSplitTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("RTreeSplitTest", "[RectangleTreeTest]")
 {
   arma::mat data = trans(arma::mat("0.0 0.0;"
                                          "0.0 1.0;"
@@ -1169,9 +1166,9 @@ TEST_CASE("RTreeSplitTest", "[RectangleTreeTraitsTest]")
                                          "0.1 0.5;"
                                          "0.3 0.7;"));
 
-  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
-  TreeType rTree(data, 5, 2, 2, 1, 0);
+  using TreeType = RTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
+  TreeType rTree(data, 5, 2, 2, 1);
 
   // There's technically no reason they have to be in a certain order, so we
   // use firstChild etc. to arbitrarily name them.
@@ -1251,7 +1248,7 @@ TEST_CASE("RTreeSplitTest", "[RectangleTreeTraitsTest]")
 
 // Test the tree splitting.  We set MaxLeafSize and MaxNumChildren rather low
 // to allow us to test by hand without adding hundreds of points.
-TEST_CASE("RStarTreeSplitTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("RStarTreeSplitTest", "[RectangleTreeTest]")
 {
   arma::mat data = trans(arma::mat("0.0 0.0;"
                                          "0.0 1.0;"
@@ -1264,10 +1261,10 @@ TEST_CASE("RStarTreeSplitTest", "[RectangleTreeTraitsTest]")
                                          "0.1 0.5;"
                                          "0.3 0.7;"));
 
-  typedef RStarTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-    arma::mat> TreeType;
+  using TreeType = RStarTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
 
-  TreeType rTree(data, 5, 2, 2, 1, 0);
+  TreeType rTree(data, 5, 2, 2, 1);
 
   // There's technically no reason they have to be in a certain order, so we
   // use firstChild etc. to arbitrarily name them.
@@ -1342,14 +1339,88 @@ TEST_CASE("RStarTreeSplitTest", "[RectangleTreeTraitsTest]")
       Approx(0.9).epsilon(1e-17));
 }
 
-TEST_CASE("RectangleTreeMoveDatasetTest", "[RectangleTreeTraitsTest]")
+TEST_CASE("RectangleTreeMoveDatasetTest", "[RectangleTreeTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(3, 1000);
-  typedef RTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = RTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 
   TreeType tree(std::move(dataset));
 
   REQUIRE(dataset.n_elem == 0);
   REQUIRE(tree.Dataset().n_rows == 3);
   REQUIRE(tree.Dataset().n_cols == 1000);
+}
+
+// Test that points can be added to the tree.
+TEST_CASE("RectangleTreeInsertVsBatchTest", "[RectangleTreeTest]")
+{
+  // Make sure that manually inserting points gives the same tree as if we build
+  // the tree all at once.
+  arma::mat dataset = arma::randu<arma::mat>(3, 1000);
+  using TreeType = RTree<EuclideanDistance, EmptyStatistic, arma::mat>;
+
+  TreeType tree1(dataset);
+  TreeType tree2;
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+    tree2.Insert(dataset.col(i));
+
+  REQUIRE(tree1.Dataset().n_cols == tree2.Dataset().n_cols);
+  REQUIRE(tree1.Dataset().n_rows == tree2.Dataset().n_rows);
+
+  // We should have the same structure, too.
+  std::stack<std::pair<TreeType*, TreeType*>> s;
+  s.push(std::make_pair(&tree1, &tree2));
+  while (!s.empty())
+  {
+    std::pair<TreeType*, TreeType*> p = s.top();
+    s.pop();
+
+    TreeType* n1 = p.first;
+    TreeType* n2 = p.second;
+
+    REQUIRE(n1->NumChildren() == n2->NumChildren());
+    REQUIRE(n1->MinNumChildren() == n2->MinNumChildren());
+    REQUIRE(n1->MaxNumChildren() == n2->MaxNumChildren());
+    REQUIRE(n1->NumDescendants() == n2->NumDescendants());
+    REQUIRE(n1->NumPoints() == n2->NumPoints());
+    REQUIRE(n1->MinLeafSize() == n2->MinLeafSize());
+    REQUIRE(n1->MaxLeafSize() == n2->MaxLeafSize());
+    for (size_t p = 0; p < n1->NumPoints(); ++p)
+      REQUIRE(n1->Point(p) == n2->Point(p));
+
+    for (size_t c = 0; c < n1->NumChildren(); ++c)
+      s.push(std::make_pair(&n1->Child(c), &n2->Child(c)));
+  }
+}
+
+// Test that points can be removed from the tree.
+TEST_CASE("RectangleTreeDeleteTest", "[RectangleTreeTest]")
+{
+  // Build a tree on a random dataset and then remove points from it one-by-one.
+  // At the end, we should have an empty tree.
+  arma::mat dataset = arma::randu<arma::mat>(3, 1000);
+  using TreeType = RTree<EuclideanDistance, EmptyStatistic, arma::mat>;
+
+  TreeType tree(dataset);
+  REQUIRE(tree.NumDescendants() == dataset.n_cols);
+
+  arma::Col<size_t> removeOrder = arma::shuffle(
+      arma::linspace<arma::Col<size_t>>(0, dataset.n_cols - 1, dataset.n_cols));
+
+  for (size_t i = 0; i < removeOrder.n_elem; ++i)
+  {
+    // We will have to adjust the index of our point, since we have removed
+    // other points first.
+    const size_t adjust = (i == 0) ? 0 :
+        arma::accu(removeOrder.subvec(0, i - 1) < removeOrder[i]);
+
+    REQUIRE((removeOrder[i] - adjust) < tree.Dataset().n_cols);
+    tree.Delete(removeOrder[i] - adjust);
+    REQUIRE(tree.NumDescendants() == (dataset.n_cols - i - 1));
+    REQUIRE(tree.Dataset().n_cols == (dataset.n_cols - i - 1));
+  }
+
+  // Now the tree should be empty.
+  REQUIRE(tree.NumDescendants() == 0);
+  REQUIRE(tree.NumPoints() == 0);
 }

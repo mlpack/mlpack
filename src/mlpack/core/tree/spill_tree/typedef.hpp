@@ -53,8 +53,10 @@ namespace mlpack {
  *
  * @see @ref trees, SpillTree, MeanSPTree
  */
-template<typename MetricType, typename StatisticType, typename MatType>
-using SPTree = SpillTree<MetricType,
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
+using SPTree = SpillTree<DistanceType,
                          StatisticType,
                          MatType,
                          AxisOrthogonalHyperplane,
@@ -71,8 +73,10 @@ using SPTree = SpillTree<MetricType,
  *
  * @see @ref trees, SpillTree, SPTree
  */
-template<typename MetricType, typename StatisticType, typename MatType>
-using MeanSPTree = SpillTree<MetricType,
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
+using MeanSPTree = SpillTree<DistanceType,
                              StatisticType,
                              MatType,
                              AxisOrthogonalHyperplane,
@@ -91,8 +95,10 @@ using MeanSPTree = SpillTree<MetricType,
  *
  * @see @ref trees, SpillTree, SPTree
  */
-template<typename MetricType, typename StatisticType, typename MatType>
-using NonOrtSPTree = SpillTree<MetricType,
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
+using NonOrtSPTree = SpillTree<DistanceType,
                                StatisticType,
                                MatType,
                                Hyperplane,
@@ -110,8 +116,10 @@ using NonOrtSPTree = SpillTree<MetricType,
  *
  * @see @ref trees, SpillTree, MeanSPTree, NonOrtSPTree
  */
-template<typename MetricType, typename StatisticType, typename MatType>
-using NonOrtMeanSPTree = SpillTree<MetricType,
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
+using NonOrtMeanSPTree = SpillTree<DistanceType,
                                    StatisticType,
                                    MatType,
                                    Hyperplane,

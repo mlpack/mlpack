@@ -29,11 +29,10 @@ void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
                    const size_t end,
                    const size_t minLeafSize)
 {
-  static_assert(
-    std::is_same<typename MatType::elem_type, ElemType>::value == true,
+  static_assert(std::is_same_v<typename MatType::elem_type, ElemType>,
     "The ElemType does not correspond to the matrix's element type.");
 
-  typedef std::pair<ElemType, size_t> SplitItem;
+  using SplitItem = std::pair<ElemType, size_t>;
   const typename MatType::row_type dimVec =
       arma::sort(data(dim, arma::span(start, end - 1)));
 
@@ -62,7 +61,7 @@ void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
                    const size_t end,
                    const size_t minLeafSize)
 {
-  typedef std::pair<ElemType, size_t> SplitItem;
+  using SplitItem = std::pair<ElemType, size_t>;
   arma::rowvec dimVec = data(dim, arma::span(start, end - 1));
 
   // We sort these, in-place (it's a copy of the data, anyways).
@@ -93,7 +92,7 @@ void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
   // It's common sense, but we also use it in a check later.
   Log::Assert(minLeafSize > 0);
 
-  typedef std::pair<ElemType, size_t> SplitItem;
+  using SplitItem = std::pair<ElemType, size_t>;
   const size_t n_elem = end - start;
 
   // Construct a vector of values.
@@ -435,7 +434,7 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
                                         double& rightError,
                                         const size_t minLeafSize) const
 {
-  typedef std::pair<ElemType, size_t> SplitItem;
+  using SplitItem = std::pair<ElemType, size_t>;
 
   // Ensure the dimensionality of the data is the same as the dimensionality of
   // the bounding rectangle.

@@ -16,7 +16,7 @@ including
 
 mlpack implements a number of kernel methods and, accordingly, each of these
 methods allows arbitrary kernels to be used via the `KernelType` template
-parameter.  Like the [MetricType policy](metrics.md), the requirements are
+parameter.  Like the [DistanceType policy](distances.md), the requirements are
 quite simple: a class implementing the `KernelType` policy must have
 
  - an `Evaluate()` function
@@ -42,7 +42,7 @@ Note that for kernels that do not hold any state, the `Evaluate()` method can be
 marked as `static`.
 
 Overall, the `KernelType` template policy is quite simple (much like the
-[MetricType policy](metrics.md)).  Below is an example kernel class, which
+[DistanceType policy](distances.md)).  Below is an example kernel class, which
 outputs `1` if the vectors are close and `0` otherwise.
 
 ```c++
@@ -131,28 +131,29 @@ At this time, there is only one kernel trait that is used in mlpack code:
 
 mlpack comes with a number of pre-implemented and ready-to-use kernels:
 
- * [`GaussianKernel`](../user/core.md#gaussiankernel): standard Gaussian/radial
-   basis function/RBF kernel
- * [`CauchyKernel`](../user/core.md#cauchykernel): Cauchy kernel, with longer
-   tails than the standard Gaussian kernel
- * [`CosineSimilarity`](../user/core.md#cosinesimilarity): dot-product vector
-   similarity
- * [`EpanechnikovKernel`](../user/core.md#epanechnikovkernel): Epanechnikov
-   kernel (parabolic), with zero tails
- * [`HyperbolicTangentKernel`](../user/core.md#hyperbolictangentkernel):
+ * [`GaussianKernel`](../user/core/kernels.md#gaussiankernel): standard
+   Gaussian/radial basis function/RBF kernel
+ * [`CauchyKernel`](../user/core/kernels.md#cauchykernel): Cauchy kernel, with
+   longer tails than the standard Gaussian kernel
+ * [`CosineSimilarity`](../user/core/kernels.md#cosinesimilarity): dot-product
+   vector similarity
+ * [`EpanechnikovKernel`](../user/core/kernels.md#epanechnikovkernel):
+   Epanechnikov kernel (parabolic), with zero tails
+ * [`HyperbolicTangentKernel`](../user/core/kernels.md#hyperbolictangentkernel):
    hyperbolic tangent kernel (not positive definite)
- * [`LaplacianKernel`](../user/core.md#laplaciankernel): Laplacian
+ * [`LaplacianKernel`](../user/core/kernels.md#laplaciankernel): Laplacian
    kernel/exponential kernel
- * [`LinearKernel`](../user/core.md#linearkernel): linear (dot-product) kernel
- * [`PolynomialKernel`](../user/core.md#polynomialkernel): arbitrary-power
-   polynomial kernel with offset
- * [`PSpectrumStringKernel`](../user/core.md#pspectrumstringkernel): kernel to
-   compute length-p subsequence match counts
- * [`SphericalKernel`](../user/core.md#sphericalkernel):
+ * [`LinearKernel`](../user/core/kernels.md#linearkernel): linear (dot-product)
+   kernel
+ * [`PolynomialKernel`](../user/core/kernels.md#polynomialkernel):
+   arbitrary-power polynomial kernel with offset
+ * [`PSpectrumStringKernel`](../user/core/kernels.md#pspectrumstringkernel):
+   kernel to compute length-p subsequence match counts
+ * [`SphericalKernel`](../user/core/kernels.md#sphericalkernel):
    spherical/uniform/rectangular window kernel
- * [`TriangularKernel`](../user/core.md#triangularkernel): triangular kernel,
-   with zero tails
- * [Implement a custom kernel](../user/core.md#implement-a-custom-kernel)
+ * [`TriangularKernel`](../user/core/kernels.md#triangularkernel): triangular
+   kernel, with zero tails
+ * [Implement a custom kernel](../user/core/kernels.md#implement-a-custom-kernel)
 
 These kernels (or a custom kernel) may be used in a variety of mlpack methods:
 

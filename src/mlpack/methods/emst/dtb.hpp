@@ -64,15 +64,15 @@ namespace mlpack {
  * More advanced usage of the class can use different types of trees, pass in an
  * already-built tree, or compute the MST using the O(n^2) naive algorithm.
  *
- * @tparam MetricType The metric to use.
+ * @tparam DistanceType The distance metric to use.
  * @tparam MatType The type of data matrix to use.
  * @tparam TreeType Type of tree to use.  This should follow the TreeType policy
  *      API.
  */
 template<
-    typename MetricType = EuclideanDistance,
+    typename DistanceType = EuclideanDistance,
     typename MatType = arma::mat,
-    template<typename TreeMetricType,
+    template<typename TreeDistanceType,
              typename TreeStatType,
              typename TreeMatType> class TreeType = KDTree
 >
@@ -80,7 +80,7 @@ class DualTreeBoruvka
 {
  public:
   //! Convenience typedef.
-  typedef TreeType<MetricType, DTBStat, MatType> Tree;
+  using Tree = TreeType<DistanceType, DTBStat, MatType>;
 
  private:
   //! Permutations of points during tree building.
@@ -111,8 +111,8 @@ class DualTreeBoruvka
   //! Total distance of the tree.
   double totalDist;
 
-  //! The instantiated metric.
-  MetricType metric;
+  //! The instantiated distance metric.
+  DistanceType distance;
 
   //! For sorting the edge list after the computation.
   struct SortEdgesHelper
@@ -130,11 +130,11 @@ class DualTreeBoruvka
    *
    * @param dataset Dataset to build a tree for.
    * @param naive Whether the computation should be done in O(n^2) naive mode.
-   * @param metric An optional instantiated metric to use.
+   * @param distance An optional instantiated distance metric to use.
    */
   DualTreeBoruvka(const MatType& dataset,
                   const bool naive = false,
-                  const MetricType metric = MetricType());
+                  const DistanceType distance = DistanceType());
 
   /**
    * Create the DualTreeBoruvka object with an already initialized tree.  This
@@ -150,10 +150,10 @@ class DualTreeBoruvka
    * is not done when this constructor is used.
    *
    * @param tree Pre-built tree.
-   * @param metric An optional instantiated metric to use.
+   * @param distance An optional instantiated distance metric to use.
    */
   DualTreeBoruvka(Tree* tree,
-                  const MetricType metric = MetricType());
+                  const DistanceType distance = DistanceType());
 
   /**
    * Delete the tree, if it was created inside the object.

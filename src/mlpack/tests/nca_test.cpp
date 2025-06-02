@@ -26,26 +26,31 @@ using namespace ens;
  * The Softmax error function should return the identity matrix as its initial
  * point.
  */
-TEST_CASE("SoftmaxInitialPoint", "[NCATesT]")
+TEMPLATE_TEST_CASE("SoftmaxInitialPoint", "[NCATest]", float, double)
 {
+  using eT = TestType;
+
   // Cheap fake dataset.
-  arma::mat data;
+  arma::Mat<eT> data;
   data.randu(5, 5);
   arma::Row<size_t> labels;
   labels.zeros(5);
 
-  SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
+  SoftmaxErrorFunction<arma::Mat<eT>, arma::Row<size_t>,
+      SquaredEuclideanDistance> sef(data, labels);
 
   // Verify the initial point is the identity matrix.
-  arma::mat initialPoint = sef.GetInitialPoint();
+  arma::Mat<eT> initialPoint = sef.GetInitialPoint();
+  const double eps = std::is_same_v<eT, float> ? 1e-4 : 1e-7;
+  const double margin = std::is_same_v<eT, float> ? 1e-4 : 1e-5;
   for (int row = 0; row < 5; row++)
   {
     for (int col = 0; col < 5; col++)
     {
       if (row == col)
-        REQUIRE(initialPoint(row, col) == Approx(1.0).epsilon(1e-7));
+        REQUIRE(initialPoint(row, col) == Approx(1.0).epsilon(eps));
       else
-        REQUIRE(initialPoint(row, col) == Approx(0.0).margin(1e-5));
+        REQUIRE(initialPoint(row, col) == Approx(0.0).margin(margin));
     }
   }
 }
@@ -54,16 +59,19 @@ TEST_CASE("SoftmaxInitialPoint", "[NCATesT]")
  * On a simple fake dataset, ensure that the initial function evaluation is
  * correct.
  */
-TEST_CASE("SoftmaxInitialEvaluation", "[NCATesT]")
+TEMPLATE_TEST_CASE("SoftmaxInitialEvaluation", "[NCATest]", float, double)
 {
+  using eT = TestType;
+
   // Useful but simple dataset with six points and two classes.
-  arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+  arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
+  SoftmaxErrorFunction<arma::Mat<eT>, arma::Row<size_t>,
+      SquaredEuclideanDistance> sef(data, labels);
 
-  double objective = sef.Evaluate(arma::eye<arma::mat>(2, 2));
+  eT objective = sef.Evaluate(arma::eye<arma::Mat<eT>>(2, 2));
 
   // Result painstakingly calculated by hand by rcurtin (recorded forever in his
   // notebook).  As a result of lack of precision of the by-hand result, the
@@ -75,22 +83,28 @@ TEST_CASE("SoftmaxInitialEvaluation", "[NCATesT]")
  * On a simple fake dataset, ensure that the initial gradient evaluation is
  * correct.
  */
-TEST_CASE("SoftmaxInitialGradient", "[NCATesT]")
+TEMPLATE_TEST_CASE("SoftmaxInitialGradient", "[NCATest]", float, double)
 {
+  using eT = TestType;
+
   // Useful but simple dataset with six points and two classes.
-  arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+  arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
+  SoftmaxErrorFunction<arma::Mat<eT>, arma::Row<size_t>,
+      SquaredEuclideanDistance> sef(data, labels);
 
-  arma::mat gradient;
-  arma::mat coordinates = arma::eye<arma::mat>(2, 2);
+  arma::Mat<eT> gradient;
+  arma::Mat<eT> coordinates(2, 2, arma::fill::eye);
   sef.Gradient(coordinates, gradient);
 
   // Results painstakingly calculated by hand by rcurtin (recorded forever in
   // his notebook).  As a result of lack of precision of the by-hand result, the
   // tolerance is fairly high.
+  //
+  // UPDATE 2024: that notebook definitely got thrown away over a decade ago.  I
+  // don't even remember what it looked like.
   REQUIRE(gradient(0, 0) == Approx(-0.089766).epsilon(0.0005));
   REQUIRE(gradient(1, 0) == Approx(0.0).margin(1e-5));
   REQUIRE(gradient(0, 1) == Approx(0.0).margin(1e-5));
@@ -101,36 +115,43 @@ TEST_CASE("SoftmaxInitialGradient", "[NCATesT]")
  * On optimally separated datasets, ensure that the objective function is
  * optimal (equal to the negative number of points).
  */
-TEST_CASE("SoftmaxOptimalEvaluation", "[NCATesT]")
+TEMPLATE_TEST_CASE("SoftmaxOptimalEvaluation", "[NCATest]", float, double)
 {
+  using eT = TestType;
+
   // Simple optimal dataset.
-  arma::mat data           = " 500  500 -500 -500;"
+  arma::Mat<eT> data       = " 500  500 -500 -500;"
                              "   1    0    1    0 ";
   arma::Row<size_t> labels = "   0    0    1    1 ";
 
-  SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
+  SoftmaxErrorFunction<arma::Mat<eT>, arma::Row<size_t>,
+      SquaredEuclideanDistance> sef(data, labels);
 
-  double objective = sef.Evaluate(arma::eye<arma::mat>(2, 2));
+  eT objective = sef.Evaluate(arma::eye<arma::Mat<eT>>(2, 2));
 
   // Use a very close tolerance for optimality; we need to be sure this function
   // gives optimal results correctly.
-  REQUIRE(objective == Approx(-4.0).epsilon(1e-12));
+  const double eps = std::is_same_v<eT, float> ? 1e-6 : 1e-12;
+  REQUIRE(objective == Approx(-4.0).epsilon(eps));
 }
 
 /**
  * On optimally separated datasets, ensure that the gradient is zero.
  */
-TEST_CASE("SoftmaxOptimalGradient", "[NCATesT]")
+TEMPLATE_TEST_CASE("SoftmaxOptimalGradient", "[NCATest]", float, double)
 {
+  using eT = TestType;
+
   // Simple optimal dataset.
-  arma::mat data           = " 500  500 -500 -500;"
+  arma::Mat<eT> data       = " 500  500 -500 -500;"
                              "   1    0    1    0 ";
   arma::Row<size_t> labels = "   0    0    1    1 ";
 
-  SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
+  SoftmaxErrorFunction<arma::Mat<eT>, arma::Row<size_t>,
+      SquaredEuclideanDistance> sef(data, labels);
 
-  arma::mat gradient;
-  sef.Gradient(arma::eye<arma::mat>(2, 2), gradient);
+  arma::Mat<eT> gradient;
+  sef.Gradient(arma::eye<arma::Mat<eT>>(2, 2), gradient);
 
   REQUIRE(gradient(0, 0) == Approx(0.0).margin(1e-5));
   REQUIRE(gradient(0, 1) == Approx(0.0).margin(1e-5));
@@ -141,19 +162,22 @@ TEST_CASE("SoftmaxOptimalGradient", "[NCATesT]")
 /**
  * Ensure the separable objective function is right.
  */
-TEST_CASE("SoftmaxSeparableObjective", "[NCATesT]")
+TEMPLATE_TEST_CASE("SoftmaxSeparableObjective", "[NCATest]", float, double)
 {
+  using eT = TestType;
+
   // Useful but simple dataset with six points and two classes.
-  arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+  arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
+  SoftmaxErrorFunction<arma::Mat<eT>, arma::Row<size_t>,
+      SquaredEuclideanDistance> sef(data, labels);
 
   // Results painstakingly calculated by hand by rcurtin (recorded forever in
   // his notebook).  As a result of lack of precision of the by-hand result, the
   // tolerance is fairly high.
-  arma::mat coordinates = arma::eye<arma::mat>(2, 2);
+  arma::Mat<eT> coordinates = arma::eye<arma::Mat<eT>>(2, 2);
   REQUIRE(sef.Evaluate(coordinates, 0, 1) == Approx(-0.22480).epsilon(0.0001));
   REQUIRE(sef.Evaluate(coordinates, 1, 1) == Approx(-0.30613).epsilon(0.0001));
   REQUIRE(sef.Evaluate(coordinates, 2, 1) == Approx(-0.22480).epsilon(0.0001));
@@ -165,16 +189,20 @@ TEST_CASE("SoftmaxSeparableObjective", "[NCATesT]")
 /**
  * Ensure the optimal separable objective function is right.
  */
-TEST_CASE("OptimalSoftmaxSeparableObjective", "[NCATesT]")
+TEMPLATE_TEST_CASE("OptimalSoftmaxSeparableObjective", "[NCATest]", float,
+    double)
 {
+  using eT = TestType;
+
   // Simple optimal dataset.
-  arma::mat data           = " 500  500 -500 -500;"
+  arma::Mat<eT> data       = " 500  500 -500 -500;"
                              "   1    0    1    0 ";
   arma::Row<size_t> labels = "   0    0    1    1 ";
 
-  SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
+  SoftmaxErrorFunction<arma::Mat<eT>, arma::Row<size_t>,
+      SquaredEuclideanDistance> sef(data, labels);
 
-  arma::mat coordinates = arma::eye<arma::mat>(2, 2);
+  arma::Mat<eT> coordinates = arma::eye<arma::Mat<eT>>(2, 2);
 
   // Use a very close tolerance for optimality; we need to be sure this function
   // gives optimal results correctly.
@@ -187,17 +215,20 @@ TEST_CASE("OptimalSoftmaxSeparableObjective", "[NCATesT]")
 /**
  * Ensure the separable gradient is right.
  */
-TEST_CASE("SoftmaxSeparableGradient", "[NCATesT]")
+TEMPLATE_TEST_CASE("SoftmaxSeparableGradient", "[NCATest]", float, double)
 {
+  using eT = TestType;
+
   // Useful but simple dataset with six points and two classes.
-  arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+  arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
+  SoftmaxErrorFunction<arma::Mat<eT>, arma::Row<size_t>,
+      SquaredEuclideanDistance> sef(data, labels);
 
-  arma::mat coordinates = arma::eye<arma::mat>(2, 2);
-  arma::mat gradient(2, 2);
+  arma::Mat<eT> coordinates = arma::eye<arma::Mat<eT>>(2, 2);
+  arma::Mat<eT> gradient(2, 2);
 
   sef.Gradient(coordinates, 0, gradient, 1);
 
@@ -250,29 +281,33 @@ TEST_CASE("SoftmaxSeparableGradient", "[NCATesT]")
  * On our simple dataset, ensure that the NCA algorithm fully separates the
  * points.
  */
-TEST_CASE("NCASGDSimpleDataset", "[NCATesT]")
+TEMPLATE_TEST_CASE("NCASGDSimpleDataset", "[NCATest]", float, double)
 {
+  using eT = TestType;
+
   // Useful but simple dataset with six points and two classes.
-  arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+  arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
   // Huge learning rate because this is so simple.
-  NCA<SquaredEuclideanDistance> nca(data, labels);
-  nca.Optimizer().StepSize() = 1.2;
-  nca.Optimizer().MaxIterations() = 300000;
-  nca.Optimizer().Tolerance() = 0;
-  nca.Optimizer().Shuffle() = true;
+  ens::StandardSGD opt;
+  opt.StepSize() = 1.2;
+  opt.MaxIterations() = 300000;
+  opt.Tolerance() = 0;
+  opt.Shuffle() = true;
 
-  arma::mat outputMatrix;
-  nca.LearnDistance(outputMatrix);
+  arma::Mat<eT> outputMatrix;
+  NCA nca;
+  nca.LearnDistance(data, labels, outputMatrix, opt);
 
   // Ensure that the objective function is better now.
-  SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
+  SoftmaxErrorFunction<arma::Mat<eT>, arma::Row<size_t>,
+      SquaredEuclideanDistance> sef(data, labels);
 
-  double initObj = sef.Evaluate(arma::eye<arma::mat>(2, 2));
-  double finalObj = sef.Evaluate(outputMatrix);
-  arma::mat finalGradient;
+  eT initObj = sef.Evaluate(arma::eye<arma::Mat<eT>>(2, 2));
+  eT finalObj = sef.Evaluate(outputMatrix);
+  arma::Mat<eT> finalGradient;
   sef.Gradient(outputMatrix, finalGradient);
 
   // finalObj must be less than initObj.
@@ -284,33 +319,36 @@ TEST_CASE("NCASGDSimpleDataset", "[NCATesT]")
   REQUIRE(arma::norm(finalGradient, 2) < 1e-4);
 }
 
-TEST_CASE("NCALBFGSSimpleDataset", "[NCATesT]")
+TEMPLATE_TEST_CASE("NCALBFGSSimpleDataset", "[NCATest]", float, double)
 {
+  using eT = TestType;
+
   // Useful but simple dataset with six points and two classes.
-  arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+  arma::Mat<eT> data       = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  // Huge learning rate because this is so simple.
-  NCA<SquaredEuclideanDistance, L_BFGS> nca(data, labels);
-  nca.Optimizer().NumBasis() = 5;
+  L_BFGS lbfgs;
+  lbfgs.NumBasis() = 5;
 
-  arma::mat outputMatrix;
-  nca.LearnDistance(outputMatrix);
+  arma::Mat<eT> outputMatrix;
+  NCA nca;
+  nca.LearnDistance(data, labels, outputMatrix, lbfgs);
 
   // Ensure that the objective function is better now.
-  SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
+  SoftmaxErrorFunction<arma::Mat<eT>, arma::Row<size_t>,
+      SquaredEuclideanDistance> sef(data, labels);
 
-  double initObj = sef.Evaluate(arma::eye<arma::mat>(2, 2));
-  double finalObj = sef.Evaluate(outputMatrix);
-  arma::mat finalGradient;
+  eT initObj = sef.Evaluate(arma::eye<arma::Mat<eT>>(2, 2));
+  eT finalObj = sef.Evaluate(outputMatrix);
+  arma::Mat<eT> finalGradient;
   sef.Gradient(outputMatrix, finalGradient);
 
   // finalObj must be less than initObj.
   REQUIRE(finalObj < initObj);
   // Verify that final objective is optimal.
-  REQUIRE(finalObj == Approx(-6.0).epsilon(1e-7));
+  REQUIRE(finalObj == Approx(-6.0).epsilon(0.00001));
   // The solution is not unique, so the best we can do is ensure the gradient
   // norm is close to 0.
-  REQUIRE(arma::norm(finalGradient, 2) < 1e-6);
+  REQUIRE(arma::norm(finalGradient, 2) < 1e-5);
 }

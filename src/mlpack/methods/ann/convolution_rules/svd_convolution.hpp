@@ -50,12 +50,13 @@ class SVDConvolution
    * @param output Output data that contains the results of the convolution.
    */
   template<typename MatType>
-  static void Convolution(const MatType& input,
-                          const MatType& filter,
-                          MatType& output,
-                          const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
+  static void Convolution(
+      const MatType& input,
+      const MatType& filter,
+      MatType& output,
+      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
-    typedef typename GetColType<MatType>::type ColType;
+    using ColType = typename GetColType<MatType>::type;
     // Use the naive convolution in case the filter isn't two dimensional or the
     // filter is bigger than the input.
     if (filter.n_rows > input.n_rows || filter.n_cols > input.n_cols ||
@@ -115,12 +116,13 @@ class SVDConvolution
    * @param output Output data that contains the results of the convolution.
    */
   template<typename CubeType>
-  static void Convolution(const CubeType& input,
-                          const CubeType& filter,
-                          CubeType& output,
-                          const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
+  static void Convolution(
+      const CubeType& input,
+      const CubeType& filter,
+      CubeType& output,
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
-    typedef typename GetDenseMatType<CubeType>::type MatType;
+    using MatType = typename GetDenseMatType<CubeType>::type;
     MatType convOutput;
     SVDConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
         convOutput);
@@ -144,11 +146,12 @@ class SVDConvolution
    * @param output Output data that contains the results of the convolution.
    */
   template<typename MatType, typename CubeType>
-  static void Convolution(const MatType& input,
-                          const CubeType& filter,
-                          CubeType& output,
-                          const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
-                          const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
+  static void Convolution(
+      const MatType& input,
+      const CubeType& filter,
+      CubeType& output,
+      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     MatType convOutput;
     SVDConvolution<BorderMode>::Convolution(input, filter.slice(0), convOutput);
@@ -172,11 +175,12 @@ class SVDConvolution
    * @param output Output data that contains the results of the convolution.
    */
   template<typename MatType, typename CubeType>
-  static void Convolution(const CubeType& input,
-                          const MatType& filter,
-                          CubeType& output,
-                          const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
-                          const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
+  static void Convolution(
+      const CubeType& input,
+      const MatType& filter,
+      CubeType& output,
+      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     MatType convOutput;
     SVDConvolution<BorderMode>::Convolution(input.slice(0), filter, convOutput);

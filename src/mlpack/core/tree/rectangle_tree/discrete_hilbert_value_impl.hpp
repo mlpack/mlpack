@@ -152,7 +152,7 @@ DiscreteHilbertValue<TreeElemType>::
 CalculateValue(const VecType& pt,
                typename std::enable_if_t<IsVector<VecType>::value>*)
 {
-  typedef typename VecType::elem_type VecElemType;
+  using VecElemType = typename VecType::elem_type;
   arma::Col<HilbertElemType> res(pt.n_rows);
   // Calculate the number of bits for the exponent.
   const int numExpBits = std::ceil(std::log2(
@@ -243,7 +243,7 @@ CalculateValue(const VecType& pt,
     res(i) ^= t;
 
   // We should rearrange bits in order to compare two Hilbert values faster.
-  arma::Col<HilbertElemType> rearrangedResult(pt.n_rows, arma::fill::zeros);
+  arma::Col<HilbertElemType> rearrangedResult(pt.n_rows);
 
   for (size_t i = 0; i < order; ++i)
     for (size_t j = 0; j < pt.n_rows; ++j)
@@ -383,7 +383,7 @@ void DiscreteHilbertValue<TreeElemType>::InsertNode(TreeType* node)
 {
   DiscreteHilbertValue &val = node->AuxiliaryInfo().HilbertValue();
 
-  if (CompareWith(node, val) < 0)
+  if (node->AuxiliaryInfo().HilbertValue().CompareWith(val) < 0)
   {
     localHilbertValues = val.LocalHilbertValues();
     numValues = val.NumValues();
@@ -417,11 +417,11 @@ RemoveNode(TreeType* node, const size_t nodeIndex)
   {
     // Update the largest Hilbert value if the value exists
     TreeType& child = node->Child(nodeIndex - 1);
-    if (child.AuxiliaryInfo.HilbertValue().NumValues() != 0)
+    if (child.AuxiliaryInfo().HilbertValue().NumValues() != 0)
     {
-      numValues = child.AuxiliaryInfo.HilbertValue().NumValues();
+      numValues = child.AuxiliaryInfo().HilbertValue().NumValues();
       localHilbertValues =
-          child.AuxiliaryInfo.HilbertValue().LocalHilbertValues();
+          child.AuxiliaryInfo().HilbertValue().LocalHilbertValues();
     }
     else
     {

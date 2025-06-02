@@ -20,14 +20,15 @@
 
 namespace mlpack {
 
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType, typename HyperplaneMatType>
+             class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
 template<typename RuleType, bool Defeatist>
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
 SpillDualTreeTraverser<RuleType, Defeatist>::SpillDualTreeTraverser(
     RuleType& rule) :
     rule(rule),
@@ -37,18 +38,20 @@ SpillDualTreeTraverser<RuleType, Defeatist>::SpillDualTreeTraverser(
     numBaseCases(0)
 { /* Nothing to do. */ }
 
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType, typename HyperplaneMatType>
+             class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
 template<typename RuleType, bool Defeatist>
-void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+void
+SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>::
 SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
-    SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
+    SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>&
         queryNode,
-    SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
+    SpillTree<DistanceType, StatisticType, MatType, HyperplaneType, SplitType>&
         referenceNode,
     const bool bruteForce)
 {

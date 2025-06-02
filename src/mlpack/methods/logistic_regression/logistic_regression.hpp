@@ -37,9 +37,9 @@ template<typename MatType = arma::mat>
 class LogisticRegression
 {
  public:
-  typedef typename MatType::elem_type ElemType;
-  typedef typename GetDenseRowType<MatType>::type RowType;
-  typedef typename GetDenseColType<MatType>::type ColType;
+  using ElemType = typename MatType::elem_type;
+  using RowType = typename GetDenseRowType<MatType>::type;
+  using ColType = typename GetDenseColType<MatType>::type;
 
   /**
    * Construct the LogisticRegression class without performing any training.
@@ -67,9 +67,9 @@ class LogisticRegression
    * @param lambda L2-regularization parameter.
    */
   template<typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
+           typename = std::enable_if_t<IsEnsCallbackTypes<
                CallbackTypes...
-           >::value>::type>
+           >::value>>
   LogisticRegression(const MatType& predictors,
                      const arma::Row<size_t>& responses,
                      const double lambda = 0.0,
@@ -91,9 +91,9 @@ class LogisticRegression
    *     (L-BFGS).
    */
   template<typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
+           typename = std::enable_if_t<IsEnsCallbackTypes<
                CallbackTypes...
-           >::value>::type>
+           >::value>>
   LogisticRegression(const MatType& predictors,
                      const arma::Row<size_t>& responses,
                      const RowType& initialPoint,
@@ -117,12 +117,12 @@ class LogisticRegression
    */
   template<typename OptimizerType,
            typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsOptimizer<
+           typename = std::enable_if_t<IsEnsOptimizer<
                OptimizerType, LogisticRegressionFunction<MatType>, RowType
-           >::value>::type,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
+           >::value>,
+           typename = std::enable_if_t<IsEnsCallbackTypes<
                CallbackTypes...
-           >::value>::type>
+           >::value>>
   LogisticRegression(const MatType& predictors,
                      const arma::Row<size_t>& responses,
                      OptimizerType& optimizer,
@@ -147,12 +147,12 @@ class LogisticRegression
    */
   template<typename OptimizerType,
            typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsOptimizer<
+           typename = std::enable_if_t<IsEnsOptimizer<
                OptimizerType, LogisticRegressionFunction<MatType>, RowType
-           >::value>::type,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
+           >::value>,
+           typename = std::enable_if_t<IsEnsCallbackTypes<
                CallbackTypes...
-           >::value>::type>
+           >::value>>
   LogisticRegression(const MatType& predictors,
                      const arma::Row<size_t>& responses,
                      OptimizerType& optimizer,
@@ -179,9 +179,9 @@ class LogisticRegression
    */
   template<typename OptimizerType = ens::L_BFGS,
            typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
+           typename = std::enable_if_t<IsEnsCallbackTypes<
                CallbackTypes...
-           >::value>::type>
+           >::value>>
   ElemType Train(const MatType& predictors,
                  const arma::Row<size_t>& responses,
                  CallbackTypes&&... callbacks);
@@ -206,9 +206,9 @@ class LogisticRegression
    */
   template<typename OptimizerType = ens::L_BFGS,
            typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
+           typename = std::enable_if_t<IsEnsCallbackTypes<
                CallbackTypes...
-           >::value>::type>
+           >::value>>
   ElemType Train(const MatType& predictors,
                  const arma::Row<size_t>& responses,
                  const double lambda,
@@ -234,12 +234,12 @@ class LogisticRegression
    */
   template<typename OptimizerType,
            typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsOptimizer<
+           typename = std::enable_if_t<IsEnsOptimizer<
                OptimizerType, LogisticRegressionFunction<MatType>, RowType
-           >::value>::type,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
+           >::value>,
+           typename = std::enable_if_t<IsEnsCallbackTypes<
                CallbackTypes...
-           >::value>::type>
+           >::value>>
   ElemType Train(const MatType& predictors,
                  const arma::Row<size_t>& responses,
                  OptimizerType& optimizer,
@@ -266,12 +266,12 @@ class LogisticRegression
    */
   template<typename OptimizerType,
            typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsOptimizer<
+           typename = std::enable_if_t<IsEnsOptimizer<
                OptimizerType, LogisticRegressionFunction<MatType>, RowType
-           >::value>::type,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
+           >::value>,
+           typename = std::enable_if_t<IsEnsCallbackTypes<
                CallbackTypes...
-           >::value>::type>
+           >::value>>
   ElemType Train(const MatType& predictors,
                  const arma::Row<size_t>& responses,
                  OptimizerType& optimizer,

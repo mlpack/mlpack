@@ -96,11 +96,10 @@ class ConcatenateType : public Layer<MatType>
  private:
   //! Matrix to be concatenated to input.
   MatType concat;
-
 }; // class Concatenate
 
 // Standard Concatenate layer.
-typedef ConcatenateType<arma::mat> Concatenate;
+using Concatenate = ConcatenateType<arma::mat>;
 
 } // namespace mlpack
 

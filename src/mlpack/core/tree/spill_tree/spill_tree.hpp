@@ -53,7 +53,7 @@ namespace mlpack {
  * }
  * @endcode
  *
- * @tparam MetricType The metric used for tree-building.
+ * @tparam DistanceType The distance metric used for tree-building.
  * @tparam StatisticType Extra data contained in the node.  See statistic.hpp
  *     for the necessary skeleton interface.
  * @tparam MatType The dataset class.
@@ -62,22 +62,22 @@ namespace mlpack {
  *     particular node into two parts. Its definition decides the way this split
  *     is done.
  */
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
-         template<typename HyperplaneMetricType>
+         template<typename HyperplaneDistanceType, typename HyperplaneMatType>
             class HyperplaneType = AxisOrthogonalHyperplane,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename SplitDistanceType, typename SplitMatType>
             class SplitType = MidpointSpaceSplit>
 class SpillTree
 {
  public:
   //! So other classes can use TreeType::Mat.
-  typedef MatType Mat;
+  using Mat = MatType;
   //! The type of element held in MatType.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
   //! The bound type.
-  typedef typename HyperplaneType<MetricType>::BoundType BoundType;
+  using BoundType = typename HyperplaneType<DistanceType, MatType>::BoundType;
 
  private:
   //! The left child node.
@@ -95,7 +95,7 @@ class SpillTree
   //! Flag to distinguish overlapping nodes from non-overlapping nodes.
   bool overlappingNode;
   //! Splitting hyperplane represented by this node.
-  HyperplaneType<MetricType> hyperplane;
+  HyperplaneType<DistanceType, MatType> hyperplane;
   //! The bound object for this node.
   BoundType bound;
   //! Any extra data contained in the node.
@@ -143,6 +143,13 @@ class SpillTree
   //! A defeatist dual-tree traverser for hybrid spill trees.
   template<typename RuleType>
   using DefeatistDualTreeTraverser = SpillDualTreeTraverser<RuleType, true>;
+
+  /**
+   * A default constructor.  This returns an empty tree, which is not useful.
+   * In general this is only used for serialization or right before copying from
+   * a different object.
+   */
+  SpillTree();
 
   /**
    * Construct this as the root node of a hybrid spill tree using the given
@@ -274,10 +281,15 @@ class SpillTree
   bool Overlap() const { return overlappingNode; }
 
   //! Get the Hyperplane instance.
-  const HyperplaneType<MetricType>& Hyperplane() const { return hyperplane; }
+  const HyperplaneType<DistanceType, MatType>& Hyperplane() const
+      { return hyperplane; }
 
-  //! Get the metric that the tree uses.
-  MetricType Metric() const { return MetricType(); }
+  //! Get the distance metric that the tree uses.
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  DistanceType Metric() const { return DistanceType(); }
+
+  //! Get the distance metric that the tree uses.
+  DistanceType Distance() const { return DistanceType(); }
 
   //! Return the number of children in this node.
   size_t NumChildren() const;
@@ -434,7 +446,7 @@ class SpillTree
   static bool HasSelfChildren() { return false; }
 
   //! Store the center of the bounding region in the given vector.
-  void Center(arma::vec& center) { bound.Center(center); }
+  void Center(arma::Col<ElemType>& center) { bound.Center(center); }
 
  private:
   /**
@@ -465,17 +477,6 @@ class SpillTree
                    const arma::Col<size_t>& points,
                    arma::Col<size_t>& leftPoints,
                    arma::Col<size_t>& rightPoints);
- protected:
-  /**
-   * A default constructor.  This is meant to only be used with
-   * cereal, which is allowed with the friend declaration below.
-   * This does not return a valid tree!  The method must be protected, so that
-   * the serialization shim can work with the default constructor.
-   */
-  SpillTree();
-
-  //! Friend access is given for the default constructor.
-  friend class cereal::access;
 
  public:
   /**

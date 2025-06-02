@@ -87,7 +87,7 @@ class NSWrapperBase
  * NSWrapper is a wrapper class for most NeighborSearch types.
  */
 template<typename SortPolicy,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType,
          template<typename RuleType> class DualTreeTraversalType =
@@ -164,12 +164,12 @@ class NSWrapper : public NSWrapperBase
 
  protected:
   // Convenience typedef for the neighbor search type held by this class.
-  typedef NeighborSearch<SortPolicy,
-                         EuclideanDistance,
-                         arma::mat,
-                         TreeType,
-                         DualTreeTraversalType,
-                         SingleTreeTraversalType> NSType;
+  using NSType = NeighborSearch<SortPolicy,
+                                EuclideanDistance,
+                                arma::mat,
+                                TreeType,
+                                DualTreeTraversalType,
+                                SingleTreeTraversalType>;
 
   //! The instantiated NeighborSearch object that we are wrapping.
   NSType ns;
@@ -181,7 +181,7 @@ class NSWrapper : public NSWrapperBase
  * size into account.
  */
 template<typename SortPolicy,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType,
          template<typename RuleType> class DualTreeTraversalType =

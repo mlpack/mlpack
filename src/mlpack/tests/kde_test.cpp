@@ -23,13 +23,13 @@ void BruteForceKDE(const arma::mat& reference,
                    arma::vec& densities,
                    KernelType& kernel)
 {
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   for (size_t i = 0; i < query.n_cols; ++i)
   {
     for (size_t j = 0; j < reference.n_cols; ++j)
     {
-      double distance = metric.Evaluate(query.col(i), reference.col(j));
-      densities(i) += kernel.Evaluate(distance);
+      double dist = distance.Evaluate(query.col(i), reference.col(j));
+      densities(i) += kernel.Evaluate(dist);
     }
   }
   densities /= reference.n_cols;
@@ -88,8 +88,8 @@ TEST_CASE("KDETreeAsArguments", "[KDETest]")
                       {-2.1,  1.0} };
   arma::inplace_trans(reference);
   arma::inplace_trans(query);
-  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec estimationsResult = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec estimations = arma::vec(query.n_cols);
+  arma::vec estimationsResult = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.8;
 
   // Get brute force results.
@@ -100,7 +100,7 @@ TEST_CASE("KDETreeAsArguments", "[KDETest]")
                                 kernel);
 
   // Get dual-tree results.
-  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
+  using Tree = KDTree<EuclideanDistance, KDEStat, arma::mat>;
   std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
@@ -124,8 +124,8 @@ TEST_CASE("GaussianKDEBruteForceTest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 200);
   arma::mat query = arma::randu(2, 60);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.12;
   const double relError = 0.05;
 
@@ -137,9 +137,9 @@ TEST_CASE("GaussianKDEBruteForceTest", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, KDTree> kde(
-      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -155,8 +155,8 @@ TEST_CASE("GaussianSingleKDEBruteForceTest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 300);
   arma::mat query = arma::randu(2, 100);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.3;
   const double relError = 0.04;
 
@@ -168,9 +168,9 @@ TEST_CASE("GaussianSingleKDEBruteForceTest", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, KDTree> kde(
-      relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, metric);
+      relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -187,8 +187,8 @@ TEST_CASE("EpanechnikovCoverSingleKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 300);
   arma::mat query = arma::randu(2, 100);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 1.1;
   const double relError = 0.08;
 
@@ -200,9 +200,9 @@ TEST_CASE("EpanechnikovCoverSingleKDETest", "[KDETest]")
                                     kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<EpanechnikovKernel, EuclideanDistance, arma::mat, StandardCoverTree>
-      kde(relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, metric);
+      kde(relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -219,8 +219,8 @@ TEST_CASE("GaussianCoverSingleKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 300);
   arma::mat query = arma::randu(2, 100);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 1.1;
   const double relError = 0.08;
 
@@ -232,9 +232,9 @@ TEST_CASE("GaussianCoverSingleKDETest", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, StandardCoverTree>
-      kde(relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, metric);
+      kde(relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -251,8 +251,8 @@ TEST_CASE("EpanechnikovOctreeSingleKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 300);
   arma::mat query = arma::randu(2, 100);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 1.0;
   const double relError = 0.05;
 
@@ -264,9 +264,9 @@ TEST_CASE("EpanechnikovOctreeSingleKDETest", "[KDETest]")
                                     kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<EpanechnikovKernel, EuclideanDistance, arma::mat, Octree> kde(
-      relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, metric);
+      relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -282,8 +282,8 @@ TEST_CASE("BallTreeGaussianKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 200);
   arma::mat query = arma::randu(2, 60);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.4;
   const double relError = 0.05;
 
@@ -295,7 +295,7 @@ TEST_CASE("BallTreeGaussianKDETest", "[KDETest]")
                                 kernel);
 
   // BallTree KDE.
-  typedef BallTree<EuclideanDistance, KDEStat, arma::mat> Tree;
+  using Tree = BallTree<EuclideanDistance, KDEStat, arma::mat>;
   std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
@@ -322,8 +322,8 @@ TEST_CASE("OctreeGaussianKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 500);
   arma::mat query = arma::randu(2, 200);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.3;
   const double relError = 0.01;
 
@@ -335,9 +335,9 @@ TEST_CASE("OctreeGaussianKDETest", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, Octree> kde(
-      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -353,8 +353,8 @@ TEST_CASE("RTreeGaussianKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 500);
   arma::mat query = arma::randu(2, 200);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.3;
   const double relError = 0.01;
 
@@ -366,9 +366,9 @@ TEST_CASE("RTreeGaussianKDETest", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, RTree> kde(
-      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -385,8 +385,8 @@ TEST_CASE("StandardCoverTreeGaussianKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 500);
   arma::mat query = arma::randu(2, 200);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.3;
   const double relError = 0.01;
 
@@ -398,9 +398,9 @@ TEST_CASE("StandardCoverTreeGaussianKDETest", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, StandardCoverTree>
-      kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -417,8 +417,8 @@ TEST_CASE("StandardCoverTreeEpanechnikovKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 500);
   arma::mat query = arma::randu(2, 200);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.3;
   const double relError = 0.01;
 
@@ -430,12 +430,12 @@ TEST_CASE("StandardCoverTreeEpanechnikovKDETest", "[KDETest]")
                                     kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<EpanechnikovKernel,
       EuclideanDistance,
       arma::mat,
       StandardCoverTree>
-      kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -451,8 +451,8 @@ TEST_CASE("DuplicatedReferenceSampleKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 30);
   arma::mat query = arma::randu(2, 10);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.4;
   const double relError = 0.05;
 
@@ -467,7 +467,7 @@ TEST_CASE("DuplicatedReferenceSampleKDETest", "[KDETest]")
                                 kernel);
 
   // Dual-tree KDE.
-  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
+  using Tree = KDTree<EuclideanDistance, KDEStat, arma::mat>;
   std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
@@ -494,7 +494,7 @@ TEST_CASE("DuplicatedQuerySampleKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 30);
   arma::mat query = arma::randu(2, 10);
-  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec estimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.4;
   const double relError = 0.05;
 
@@ -502,7 +502,7 @@ TEST_CASE("DuplicatedQuerySampleKDETest", "[KDETest]")
   query.col(2) = query.col(3);
 
   // Dual-tree KDE.
-  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
+  using Tree = KDTree<EuclideanDistance, KDEStat, arma::mat>;
   std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
@@ -529,8 +529,8 @@ TEST_CASE("BreadthFirstKDETest", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 200);
   arma::mat query = arma::randu(2, 60);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.8;
   const double relError = 0.01;
 
@@ -542,14 +542,14 @@ TEST_CASE("BreadthFirstKDETest", "[KDETest]")
                                 kernel);
 
   // Breadth-First KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel,
       EuclideanDistance,
       arma::mat,
       KDTree,
       KDTree<EuclideanDistance, KDEStat, arma::mat>::template
           BreadthFirstDualTreeTraverser>
-      kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -565,8 +565,8 @@ TEST_CASE("OneDimensionalTest", "[KDETest]")
 {
   arma::mat reference = arma::randu(1, 200);
   arma::mat query = arma::randu(1, 60);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.7;
   const double relError = 0.01;
 
@@ -578,9 +578,9 @@ TEST_CASE("OneDimensionalTest", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, KDTree> kde(
-      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -596,22 +596,22 @@ TEST_CASE("EmptyReferenceTest", "[KDETest]")
 {
   arma::mat reference;
   arma::mat query = arma::randu(1, 10);
-  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec estimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.7;
   const double relError = 0.01;
 
   // KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   GaussianKernel kernel(kernelBandwidth);
   KDE<GaussianKernel, EuclideanDistance, arma::mat, KDTree> kde(
-      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
 
   // When training using the dataset matrix.
   REQUIRE_THROWS_AS(kde.Train(reference), std::invalid_argument);
 
   // When training using a tree.
   std::vector<size_t> oldFromNewReferences;
-  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
+  using Tree = KDTree<EuclideanDistance, KDEStat, arma::mat>;
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
   REQUIRE_THROWS_AS(
       kde.Train(referenceTree, &oldFromNewReferences), std::invalid_argument);
@@ -626,17 +626,17 @@ TEST_CASE("EvaluationMatchDimensionsTest", "[KDETest]")
 {
   arma::mat reference = arma::randu(3, 10);
   arma::mat query = arma::randu(1, 10);
-  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec estimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.7;
   const double relError = 0.01;
 
   // KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   GaussianKernel kernel(kernelBandwidth);
   KDE<GaussianKernel,
       EuclideanDistance,
       arma::mat,
-      KDTree> kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      KDTree> kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
 
   // When evaluating using the query dataset matrix.
@@ -644,7 +644,7 @@ TEST_CASE("EvaluationMatchDimensionsTest", "[KDETest]")
                     std::invalid_argument);
 
   // When evaluating using a query tree.
-  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
+  using Tree = KDTree<EuclideanDistance, KDEStat, arma::mat>;
   std::vector<size_t> oldFromNewQueries;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 3);
   REQUIRE_THROWS_AS(kde.Evaluate(queryTree, oldFromNewQueries, estimations),
@@ -660,17 +660,17 @@ TEST_CASE("EmptyQuerySetTest", "[KDETest]")
   arma::mat reference = arma::randu(1, 10);
   arma::mat query;
   // Set estimations to the wrong size.
-  arma::vec estimations(33, arma::fill::zeros);
+  arma::vec estimations(33);
   const double kernelBandwidth = 0.7;
   const double relError = 0.01;
 
   // KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   GaussianKernel kernel(kernelBandwidth);
   KDE<GaussianKernel,
       EuclideanDistance,
       arma::mat,
-      KDTree> kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
+      KDTree> kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, distance);
   kde.Train(reference);
 
   // The query set must be empty.
@@ -679,7 +679,7 @@ TEST_CASE("EmptyQuerySetTest", "[KDETest]")
   REQUIRE_NOTHROW(kde.Evaluate(query, estimations));
 
   // When evaluating using a query tree.
-  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
+  using Tree = KDTree<EuclideanDistance, KDEStat, arma::mat>;
   std::vector<size_t> oldFromNewQueries;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 3);
   REQUIRE_NOTHROW(
@@ -718,8 +718,8 @@ TEST_CASE("KDESerializationTest", "[KDETest]")
   kde.Train(reference);
 
   // Get estimations to compare.
-  arma::mat query = arma::randu(4, 100);;
-  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::mat query = arma::randu(4, 100);
+  arma::vec estimations = arma::vec(query.n_cols);
   kde.Evaluate(query, estimations);
 
   // Initialize serialized objects.
@@ -775,9 +775,9 @@ TEST_CASE("KDESerializationTest", "[KDETest]")
   REQUIRE(kdeBinary.MCBreakCoef() == Approx(breakCoef).epsilon(1e-10));
 
   // Test if execution gives the same result.
-  arma::vec xmlEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec textEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec binEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec xmlEstimations = arma::vec(query.n_cols);
+  arma::vec textEstimations = arma::vec(query.n_cols);
+  arma::vec binEstimations = arma::vec(query.n_cols);
 
   kdeXml.Evaluate(query, xmlEstimations);
   kdeText.Evaluate(query, textEstimations);
@@ -802,7 +802,7 @@ TEST_CASE("CopyConstructor", "[KDETest]")
   const double kernelBandwidth = 1.5;
   const double relError = 0.05;
 
-  typedef KDE<GaussianKernel, EuclideanDistance, arma::mat> KDEType;
+  using KDEType = KDE<GaussianKernel, EuclideanDistance, arma::mat>;
 
   // KDE.
   KDEType kde(relError, 0, GaussianKernel(kernelBandwidth));
@@ -838,8 +838,7 @@ TEST_CASE("MoveConstructor", "[KDETest]")
   const double kernelBandwidth = 1.2;
   const double relError = 0.05;
 
-  typedef KDE<EpanechnikovKernel, EuclideanDistance, arma::mat>
-      KDEType;
+  using KDEType = KDE<EpanechnikovKernel, EuclideanDistance, arma::mat>;
 
   // KDE.
   KDEType kde(relError, 0, EpanechnikovKernel(kernelBandwidth));
@@ -883,8 +882,8 @@ TEST_CASE("GaussianSingleKDTreeMonteCarloKDE", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 100);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.35;
   const double relError = 0.05;
 
@@ -896,13 +895,13 @@ TEST_CASE("GaussianSingleKDTreeMonteCarloKDE", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, KDTree> kde(
       relError,
       0.0,
       kernel,
       KDEMode::KDE_SINGLE_TREE_MODE,
-      metric,
+      distance,
       true,
       0.95,
       100,
@@ -933,8 +932,8 @@ TEST_CASE("GaussianSingleCoverTreeMonteCarloKDE", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 100);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.35;
   const double relError = 0.05;
 
@@ -946,13 +945,13 @@ TEST_CASE("GaussianSingleCoverTreeMonteCarloKDE", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, StandardCoverTree>
       kde(relError,
           0.0,
           kernel,
           KDEMode::KDE_SINGLE_TREE_MODE,
-          metric,
+          distance,
           true,
           0.95,
           100,
@@ -983,8 +982,8 @@ TEST_CASE("GaussianSingleOctreeMonteCarloKDE", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 100);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.55;
   const double relError = 0.02;
 
@@ -996,13 +995,13 @@ TEST_CASE("GaussianSingleOctreeMonteCarloKDE", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, Octree> kde(
       relError,
       0.0,
       kernel,
       KDEMode::KDE_SINGLE_TREE_MODE,
-      metric,
+      distance,
       true,
       0.95,
       100,
@@ -1033,8 +1032,8 @@ TEST_CASE("GaussianDualKDTreeMonteCarloKDE", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 200);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.4;
   const double relError = 0.05;
 
@@ -1046,13 +1045,13 @@ TEST_CASE("GaussianDualKDTreeMonteCarloKDE", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, KDTree> kde(
       relError,
       0.0,
       kernel,
       KDEMode::KDE_DUAL_TREE_MODE,
-      metric,
+      distance,
       true,
       0.95,
       100,
@@ -1083,8 +1082,8 @@ TEST_CASE("GaussianDualCoverTreeMonteCarloKDE", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 200);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.5;
   const double relError = 0.025;
 
@@ -1096,13 +1095,13 @@ TEST_CASE("GaussianDualCoverTreeMonteCarloKDE", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, StandardCoverTree>
       kde(relError,
           0.0,
           kernel,
           KDEMode::KDE_DUAL_TREE_MODE,
-          metric,
+          distance,
           true,
           0.95,
           100,
@@ -1133,8 +1132,8 @@ TEST_CASE("GaussianDualOctreeMonteCarloKDE", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 200);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.7;
   const double relError = 0.03;
 
@@ -1146,13 +1145,13 @@ TEST_CASE("GaussianDualOctreeMonteCarloKDE", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel, EuclideanDistance, arma::mat, Octree> kde(
       relError,
       0.0,
       kernel,
       KDEMode::KDE_DUAL_TREE_MODE,
-      metric,
+      distance,
       true,
       0.95,
       100,
@@ -1183,8 +1182,8 @@ TEST_CASE("GaussianBreadthDualKDTreeMonteCarloKDE", "[KDETest]")
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 200);
-  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec bfEstimations = arma::vec(query.n_cols);
+  arma::vec treeEstimations = arma::vec(query.n_cols);
   const double kernelBandwidth = 0.7;
   const double relError = 0.025;
 
@@ -1196,7 +1195,7 @@ TEST_CASE("GaussianBreadthDualKDTreeMonteCarloKDE", "[KDETest]")
                                 kernel);
 
   // Optimized KDE.
-  EuclideanDistance metric;
+  EuclideanDistance distance;
   KDE<GaussianKernel,
       EuclideanDistance,
       arma::mat,
@@ -1207,7 +1206,7 @@ TEST_CASE("GaussianBreadthDualKDTreeMonteCarloKDE", "[KDETest]")
         0.0,
         kernel,
         KDEMode::KDE_DUAL_TREE_MODE,
-        metric,
+        distance,
         true,
         0.95,
         100,

@@ -36,7 +36,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/range.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 #include "bound_traits.hpp"
 #include "address.hpp"
 
@@ -69,16 +69,15 @@ namespace mlpack {
  * }
  * @endcode
  */
-template<typename MetricType = LMetric<2, true>,
+template<typename DistanceType = LMetric<2, true>,
          typename ElemType = double>
 class CellBound
 {
  public:
   //! Depending on the precision of the tree element type, we may need to use
   //! uint32_t or uint64_t.
-  typedef typename std::conditional<sizeof(ElemType) * CHAR_BIT <= 32,
-                                    uint32_t,
-                                    uint64_t>::type AddressElemType;
+  using AddressElemType = std::conditional_t<
+      (sizeof(ElemType) * CHAR_BIT <= 32), uint32_t, uint64_t>;
 
   /**
    * Empty constructor; creates a bound of dimensionality 0.
@@ -143,10 +142,17 @@ class CellBound
   //! Modify the minimum width of the bound.
   ElemType& MinWidth() { return minWidth; }
 
-  //! Get the metric associated with this bound.
-  const MetricType& Metric() const { return metric; }
-  //! Modify the metric associated with this bound.
-  MetricType& Metric() { return metric; }
+  //! Get the distance metric associated with this bound.
+  [[deprecated("Will be removed in 5.0.0; use Distance()")]]
+  const DistanceType& Metric() const { return distance; }
+  //! Modify the distance metric associated with this bound.
+  [[deprecated("Will be removed in 5.0.0; use Distance()")]]
+  DistanceType& Metric() { return distance; }
+
+  //! Get the distance metric associated with this bound.
+  const DistanceType& Distance() const { return distance; }
+  //! Modify the distance metric associated with this bound.
+  DistanceType& Distance() { return distance; }
 
   /**
    * Calculates the center of the range, placing it into the given vector.
@@ -274,8 +280,8 @@ class CellBound
   arma::Col<AddressElemType> hiAddress;
   //! The minimal width of the outer rectangle.
   ElemType minWidth;
-  //! The instantiated metric (likely has size 0).
-  MetricType metric;
+  //! The instantiated distance metric (likely has size 0).
+  DistanceType distance;
 
   /**
    * Add a subrectangle to the bound.
@@ -312,11 +318,11 @@ class CellBound
 };
 
 // A specialization of BoundTraits for this class.
-template<typename MetricType, typename ElemType>
-struct BoundTraits<CellBound<MetricType, ElemType>>
+template<typename DistanceType, typename ElemType>
+struct BoundTraits<CellBound<DistanceType, ElemType>>
 {
   //! These bounds are always tight for each dimension.
-  const static bool HasTightBounds = true;
+  static const bool HasTightBounds = true;
 };
 
 } // namespace mlpack

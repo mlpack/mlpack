@@ -167,7 +167,7 @@ class LinearType : public Layer<MatType>
 // Convenience typedefs.
 
 // Standard Linear layer using no regularization.
-typedef LinearType<arma::mat, NoRegularizer> Linear;
+using Linear = LinearType<arma::mat, NoRegularizer>;
 
 } // namespace mlpack
 

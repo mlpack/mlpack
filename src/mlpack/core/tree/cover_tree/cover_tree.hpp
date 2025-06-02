@@ -78,20 +78,20 @@ namespace mlpack {
  * }
  * @endcode
  *
- * The CoverTree class offers three template parameters; a custom metric type
- * can be used with MetricType (this class defaults to the L2-squared metric).
- * The root node's point can be chosen with the RootPointPolicy; by default, the
- * FirstPointIsRoot policy is used, meaning the first point in the dataset is
- * used.  The StatisticType policy allows you to define statistics which can be
- * gathered during the creation of the tree.
+ * The CoverTree class offers three template parameters; a custom distance
+ * metric type can be used with DistanceType (this class defaults to the
+ * L2-squared metric).  The root node's point can be chosen with the
+ * RootPointPolicy; by default, the FirstPointIsRoot policy is used, meaning the
+ * first point in the dataset is used.  The StatisticType policy allows you to
+ * define statistics which can be gathered during the creation of the tree.
  *
- * @tparam MetricType Metric type to use during tree construction.
+ * @tparam DistanceType Metric type to use during tree construction.
  * @tparam RootPointPolicy Determines which point to use as the root node.
  * @tparam StatisticType Statistic to be used during tree creation.
  * @tparam MatType Type of matrix to build the tree on (generally mat or
  *      sp_mat).
  */
-template<typename MetricType = LMetric<2, true>,
+template<typename DistanceType = LMetric<2, true>,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
          typename RootPointPolicy = FirstPointIsRoot>
@@ -99,9 +99,16 @@ class CoverTree
 {
  public:
   //! So that other classes can access the matrix type.
-  typedef MatType Mat;
+  using Mat = MatType;
   //! The type held by the matrix type.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
+
+  /**
+   * A default constructor.  This returns an empty tree, which is not useful.
+   * In general this is only used for serialization or right before copying from
+   * a different object.
+   */
+  CoverTree();
 
   /**
    * Create the cover tree with the given dataset and given base.
@@ -112,23 +119,23 @@ class CoverTree
    *
    * @param dataset Reference to the dataset to build a tree on.
    * @param base Base to use during tree building (default 2.0).
-   * @param metric Metric to use (default NULL).
+   * @param distance Distance metric to use (default NULL).
    */
   CoverTree(const MatType& dataset,
             const ElemType base = 2.0,
-            MetricType* metric = NULL);
+            DistanceType* distance = NULL);
 
   /**
    * Create the cover tree with the given dataset and the given instantiated
-   * metric.  Optionally, set the base.  The dataset will not be modified during
-   * the building procedure (unlike BinarySpaceTree).
+   * distance metric.  Optionally, set the base.  The dataset will not be
+   * modified during the building procedure (unlike BinarySpaceTree).
    *
    * @param dataset Reference to the dataset to build a tree on.
-   * @param metric Instantiated metric to use during tree building.
+   * @param distance Instantiated distance metric to use during tree building.
    * @param base Base to use during tree building (default 2.0).
    */
   CoverTree(const MatType& dataset,
-            MetricType& metric,
+            DistanceType& distance,
             const ElemType base = 2.0);
 
   /**
@@ -143,14 +150,15 @@ class CoverTree
 
   /**
    * Create the cover tree with the given dataset and the given instantiated
-   * metric, taking ownership of the dataset.  Optionally, set the base.
+   * distance metric, taking ownership of the dataset.  Optionally, set the
+   * base.
    *
    * @param dataset Reference to the dataset to build a tree on.
-   * @param metric Instantiated metric to use during tree building.
+   * @param distance Instantiated distance metric to use during tree building.
    * @param base Base to use during tree building (default 2.0).
    */
   CoverTree(MatType&& dataset,
-            MetricType& metric,
+            DistanceType& distance,
             const ElemType base = 2.0);
 
   /**
@@ -183,7 +191,7 @@ class CoverTree
    * @param farSetSize Size of the far set; may be modified (if this node uses
    *     any points in the far set).
    * @param usedSetSize The number of points used will be added to this number.
-   * @param metric Metric to use (default NULL).
+   * @param distance Distance metric to use (default NULL).
    */
   CoverTree(const MatType& dataset,
             const ElemType base,
@@ -196,7 +204,7 @@ class CoverTree
             size_t nearSetSize,
             size_t& farSetSize,
             size_t& usedSetSize,
-            MetricType& metric = NULL);
+            DistanceType& distance = NULL);
 
   /**
    * Manually construct a cover tree node; no tree assembly is done in this
@@ -212,7 +220,7 @@ class CoverTree
    * @param parent Parent node (NULL indicates no parent).
    * @param parentDistance Distance to parent node point.
    * @param furthestDescendantDistance Distance to furthest descendant point.
-   * @param metric Instantiated metric (optional).
+   * @param distance Instantiated distance metric (optional).
    */
   CoverTree(const MatType& dataset,
             const ElemType base,
@@ -221,7 +229,7 @@ class CoverTree
             CoverTree* parent,
             const ElemType parentDistance,
             const ElemType furthestDescendantDistance,
-            MetricType* metric = NULL);
+            DistanceType* distance = NULL);
 
   /**
    * Create a cover tree from another tree.  Be careful!  This may use a lot of
@@ -429,8 +437,21 @@ class CoverTree
     center = arma::vec(dataset->col(point));
   }
 
-  //! Get the instantiated metric.
-  MetricType& Metric() const { return *metric; }
+  //! Get the instantiated distance metric.
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  DistanceType& Metric() const { return *distance; }
+
+  //! Get the instantiated distance metric.
+  DistanceType& Distance() const { return *distance; }
+
+  /**
+   * Serialize the tree.
+   */
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */);
+
+  size_t DistanceComps() const { return distanceComps; }
+  size_t& DistanceComps() { return distanceComps; }
 
  private:
   //! Reference to the matrix which this tree is built on.
@@ -453,12 +474,12 @@ class CoverTree
   ElemType parentDistance;
   //! Distance to the furthest descendant.
   ElemType furthestDescendantDistance;
-  //! Whether or not we need to destroy the metric in the destructor.
-  bool localMetric;
+  //! Whether or not we need to destroy the distance metric in the destructor.
+  bool localDistance;
   //! If true, we own the dataset and need to destroy it in the destructor.
   bool localDataset;
-  //! The metric used for this tree.
-  MetricType* metric;
+  //! The distance metric used for this tree.
+  DistanceType* distance;
 
   /**
    * Create the children for this node.
@@ -547,28 +568,6 @@ class CoverTree
    * any implicit nodes that have been created.
    */
   void RemoveNewImplicitNodes();
-
- protected:
-  /**
-   * A default constructor.  This is meant to only be used with
-   * cereal, which is allowed with the friend declaration below.
-   * This does not return a valid tree!  This method must be protected, so that
-   * the serialization shim can work with the default constructor.
-   */
-  CoverTree();
-
-  //! Friend access is given for the default constructor.
-  friend class cereal::access;
-
- public:
-  /**
-   * Serialize the tree.
-   */
-  template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */);
-
-  size_t DistanceComps() const { return distanceComps; }
-  size_t& DistanceComps() { return distanceComps; }
 
  private:
   size_t distanceComps;

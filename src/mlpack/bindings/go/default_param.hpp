@@ -26,13 +26,12 @@ namespace go {
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::string>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value>::type* = 0);
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
+    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T, std::string>>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>* = 0);
 
 /**
  * Return the default value of a vector option.
@@ -40,7 +39,7 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0);
+    const std::enable_if_t<util::IsStdVector<T>::value>* = 0);
 
 /**
  * Return the default value of a string option.
@@ -48,7 +47,7 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<std::is_same<T, std::string>::value>::type* = 0);
+    const std::enable_if_t<std::is_same_v<T, std::string>>* = 0);
 
 /**
  * Return the default value of a matrix option, a tuple option, a
@@ -58,10 +57,10 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<
+    const std::enable_if_t<
         arma::is_arma_type<T>::value ||
-        std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
-                                   arma::mat>>::value>::type* = 0);
+        std::is_same_v<T, std::tuple<mlpack::data::DatasetInfo,
+                                     arma::mat>>>* = 0);
 
 /**
  * Return the default value of a model option (this returns the default
@@ -70,8 +69,8 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0);
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<data::HasSerialize<T>::value>* = 0);
 
 /**
  * Return the default value of an option.  This is the function that will be
@@ -83,7 +82,7 @@ void DefaultParam(util::ParamData& data,
                   void* output)
 {
   std::string* outstr = (std::string*) output;
-  *outstr = DefaultParamImpl<typename std::remove_pointer<T>::type>(data);
+  *outstr = DefaultParamImpl<std::remove_pointer_t<T>>(data);
 }
 
 } // namespace go

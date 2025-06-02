@@ -77,70 +77,90 @@ extract_code_blocks()
   # preceding fence close above it.
   last_line_fence=1;
 
-  # Track whether or not the entire last file corresponded to a class
-  # declaration.
-  class_decl=0;
-
   while IFS= read -r line;
   do
     if [[ $last_line_fence == 1 ]];
     then
       # Skip this line---it will be a fence opening.
       last_line_fence=0;
-
-      # Create main() function to wrap the code in.
-      echo "#include <mlpack.hpp>" > $output_prefix$output_file_display.cpp;
-      echo "" >> $output_prefix$output_file_display.cpp;
-
-      # If we have a class declaration from the previous file, insert it.
-      if [[ $class_decl == 1 ]];
-      then
-        class_decl=0;
-        last_output_file_id=$(($output_file_id - 1));
-        last_output_file_display=$(printf "%02d" $last_output_file_id);
-
-        cat $output_prefix$last_output_file_display.cpp | awk '
-            BEGIN { p=0 }
-            /int main()/ { p=1 }
-            /^{/ { if(p == 1) { p=2; o=1 } }
-            /^}/ { p=0; }
-            // { if (p == 2 && o == 0) { print substr($0, 3) } o=0 }' >> $output_prefix$output_file_display.cpp;
-        echo "" >> $output_prefix$output_file_display.cpp;
-        rm -f $output_prefix$last_output_file_display.cpp;
-      fi
-
-      echo "int main()" >> $output_prefix$output_file_display.cpp;
-      echo "{" >> $output_prefix$output_file_display.cpp;
       continue;
     fi
 
-    if [[ $line == '```'* ]];
+    if [[ $line == '```' ]];
     then
       last_line_fence=1;
 
-      # Close main() function.
-      echo "}" >> $output_prefix$output_file_display.cpp;
-
-      # Check after the fact: was this file only a class declaration?  If so, we
-      # want to put it instead into the next file.
-      has_class1=`grep '^  class' $output_prefix$output_file_display.cpp | wc -l`;
-      has_class2=`grep '^  };' $output_prefix$output_file_display.cpp | wc -l`;
-      if [[ "$has_class1" != "0" && "$has_class2" != "0" ]];
+      if [ -f $output_prefix$output_file_display.body.cpp ];
       then
-        class_decl=1;
-      fi;
+        # Determine whether we need a main() function for the code.  Also check
+        # whether the file is simply a class definition, in which case we don't
+        # need to do anything except prepare it to be inserted into the next
+        # example.
+        has_main=`grep 'int main(' $output_prefix$output_file_display.body.cpp | wc -l`;
+        has_class1=`grep '^  class\|^  struct' $output_prefix$output_file_display.body.cpp | wc -l`;
+        has_class2=`grep '^  };' $output_prefix$output_file_display.body.cpp | wc -l`;
+        class_decl=0;
+        if [ $has_class1 -ne 0 -a $has_class2 -ne 0 ];
+        then
+          class_decl=1;
+        fi;
 
-      # Detect if we need any to add any special headers.  We have to do this
-      # when we finish with the file...
-      if [[ `grep 'Eigen::' $output_prefix$output_file_display.cpp | wc -l` -gt 0 ]];
-      then
-        sed -i '1s/^/#include <Eigen\/Dense>\n/' $output_prefix$output_file_display.cpp;
-      fi
+        if [ $has_main -eq 0 -a $class_decl -eq 0 ];
+        then
+          # Create main() function to wrap the code in.
+          echo "#include <mlpack.hpp>" > $output_prefix$output_file_display.cpp;
+          echo "" >> $output_prefix$output_file_display.cpp;
 
-      if [[ `grep 'xt::' $output_prefix$output_file_display.cpp | wc -l` -gt 0 ]];
-      then
-        sed -i '1s/^/#include <xtensor\/xrandom.hpp>\n/' $output_prefix$output_file_display.cpp;
-        sed -i '1s/^/#include <xtensor\/xarray.hpp>\n/' $output_prefix$output_file_display.cpp;
+          # Insert any class definitions.
+          if [ -f $output_prefix$output_file_display.defn.cpp ];
+          then
+            cat $output_prefix$output_file_display.defn.cpp >> $output_prefix$output_file_display.cpp;
+            rm -f $output_prefix$output_file_display.defn.cpp;
+          fi
+
+          echo "int main()" >> $output_prefix$output_file_display.cpp;
+          echo "{" >> $output_prefix$output_file_display.cpp;
+
+          # Insert the code itself.
+          cat $output_prefix$output_file_display.body.cpp >> $output_prefix$output_file_display.cpp;
+          rm -f $output_prefix$output_file_display.body.cpp;
+
+          # Close main() function.
+          echo "}" >> $output_prefix$output_file_display.cpp;
+        elif [[ "$class_decl" == "1" ]];
+        then
+          # If the function is only a class declaration, set it aside, along
+          # with any other declarations, for the next program.
+          next_id=$(($output_file_id + 1));
+          next_display=$(printf "%02d" $next_id);
+          if [ -f $output_prefix$output_file_display.defn.cpp ];
+          then
+            mv $output_prefix$output_file_display.defn.cpp $output_prefix$next_display.defn.cpp;
+            cat $output_prefix$output_file_display.body.cpp >> $output_prefix$next_display.defn.cpp;
+            rm -f $output_prefix$output_file_display.body.cpp;
+          else
+            mv $output_prefix$output_file_display.body.cpp $output_prefix$next_display.defn.cpp;
+          fi
+        else
+          # The file should be able to compile on its own.
+          mv $output_prefix$output_file_display.body.cpp $output_prefix$output_file_display.cpp;
+        fi
+
+        # Detect if we need any to add any special headers.  We have to do this
+        # when we finish with the file...
+        if [ -f $output_prefix$output_file_display.cpp ];
+        then
+          if [[ `grep 'Eigen::' $output_prefix$output_file_display.cpp | wc -l` -gt 0 ]];
+          then
+            sed -i '1s/^/#include <Eigen\/Dense>\n/' $output_prefix$output_file_display.cpp;
+          fi
+
+          if [[ `grep 'xt::' $output_prefix$output_file_display.cpp | wc -l` -gt 0 ]];
+          then
+            sed -i '1s/^/#include <xtensor\/xrandom.hpp>\n/' $output_prefix$output_file_display.cpp;
+            sed -i '1s/^/#include <xtensor\/xarray.hpp>\n/' $output_prefix$output_file_display.cpp;
+          fi
+        fi
       fi
 
       output_file_id=$(($output_file_id + 1));
@@ -150,35 +170,10 @@ extract_code_blocks()
     fi
 
     # Include indentation (two spaces).
-    echo "  $line" >> $output_prefix$output_file_display.cpp;
+    echo "  $line" >> $output_prefix$output_file_display.body.cpp;
   done < $input_file.tmp;
 
-  # The last file is always invalid---we opened it without knowing whether
-  # anything would be in it.
-  rm -f $output_prefix$output_file_display.cpp;
-
-  # Check the "true" last file: if it's only class declarations, no need to
-  # compile it.
-  output_file_id=$(($output_file_id - 1));
-  output_file_display=$(printf "%02d" $output_file_id);
-  if [ -f $output_prefix$output_file_display.cpp ];
-  then
-    cat $output_prefix$output_file_display.cpp | awk '
-        BEGIN { p=0 }
-        /int main()/ { p=1 }
-        /^{/ { if(p == 1) { p=2; o=1 } }
-        /^}/ { p=0 }
-        // { if (p == 2 && o == 0) { print substr($0, 3) } o=0 }' >> $output_prefix$output_file_display.cpp.tmp;
-    has_class1=`grep '^class' $output_prefix$output_file_display.cpp.tmp | wc -l`;
-    has_class2=`grep '^};' $output_prefix$output_file_display.cpp.tmp | wc -l`;
-    if [[ "$has_class1" != "0" && "$has_class2" != "0" ]];
-    then
-      # The file's main() function is just a class declaration.  Nuke it.
-      rm -f $output_prefix$output_file_display.cpp;
-    fi
-    rm -f $output_prefix$output_file_display.cpp.tmp;
-  fi
-
+  rm -f $output_prefix*.defn.cpp; # Remove any unused definitions.
   rm -f $input_file.tmp;
 }
 
@@ -195,9 +190,10 @@ compile_code_blocks()
   for f in $input_dir/*.cpp;
   do
     echo "  Compiling $f...";
-    of=${f%.cpp};
+    of=${f/.cpp/.o};
+    lf=${f%.cpp};
 
-    if ! $CXX -std=c++17 -Isrc/ $CXXFLAGS -o $of $f $LDFLAGS -larmadillo 2>$of.tmp;
+    if ! $CXX -std=c++17 -Isrc/ $CXXFLAGS -c -o $of $f 2>$of.tmp;
     then
       echo "Compilation of the following program failed:";
       echo "";
@@ -208,9 +204,26 @@ compile_code_blocks()
       echo "";
       echo "For full error output run either:";
       echo " - less $of.tmp";
-      echo " - $CXX -std=c++17 -Isrc/ $CXXFLAGS -o $of $f $LDFLAGS -larmadillo";
+      echo " - $CXX -std=c++17 -Isrc/ $CXXFLAGS -c -o $of $f";
       echo "";
-      echo "Did you set \$CXX, \$CXXFLAGS, and \$LDFLAGS correctly?"
+      echo "Did you set \$CXX and \$CXXFLAGS correctly?"
+      exit 1;
+    fi
+
+    if ! $CXX -o $lf $of $LDFLAGS -larmadillo 2>$lf.tmp;
+    then
+      echo "Linking of the following program failed:"
+      echo "";
+      cat $f;
+      echo "";
+      echo "First ten lines of error output:";
+      head $lf.tmp;
+      echo "";
+      echo "For full error output run either:";
+      echo " - less $lf.tmp";
+      echo " - $CXX -o $lf $of $LDFLAGS -larmadillo";
+      echo "";
+      echo "Did you set \$CXX and \$LDFLAGS correctly?"
       exit 1;
     fi
   done
@@ -226,7 +239,7 @@ download_http_artifacts()
       sed 's/^.*\(http[^ ]*\).*$/\1/' |\
       sort |\
       uniq |\
-      grep 'csv\|arff\|bin\|png' |\
+      grep 'csv\|arff\|bin\|png\|jpg\|bz2\|gz' |\
       sed 's/\.$//'`;
   cd $output_dir;
   for a in $artifacts;
@@ -239,6 +252,18 @@ download_http_artifacts()
       then
         echo "Error downloading $a!";
         exit 1;
+      fi
+
+      if [[ $a == *.gz ]];
+      then
+        echo "Unpacking $a...";
+        tar -xzpf *.gz;
+      fi
+
+      if [[ $a == *.bz2 ]];
+      then
+        echo "Unpacking $a...";
+        tar -xjpf *.bz2;
       fi
     fi
   done
@@ -300,6 +325,11 @@ run_code_blocks()
       if ! ./$f_exec 2>&1 >/dev/null;
       then
         echo "  Error running $f_exec!";
+        echo "  ---------------------------------------------------------------------  ";
+        echo "  Contents of $f:";
+        echo "";
+        cat $f;
+        echo "";
         exit 1;
       fi
     else
@@ -333,16 +363,18 @@ do
     declare -a files_to_skip=(
         # These files have small incomplete snippets that can't compile into
         # standalone programs.
-        "sample_ml_app.md"
+        "deploy_windows.md"
         "hpt.md"
         "cv.md"
         "timer.md"
         "bindings.md"
-        "elemtype.md"
         "iodoc.md"
+        "distances.md"
+        "elemtype.md"
         "kernels.md"
-        "metrics.md"
         "trees.md"
+        # Skip the quickstart, since it depends on some specific data.
+        "cpp.md"
         # The tutorials are old and are likely to be replaced, so let's not test
         # them.
         "amf.md"
@@ -364,8 +396,6 @@ do
         "q_learning.md"
         "sac.md"
         "td3.md"
-        # Skip quickstarts, although we should eventually test them.
-        "cpp.md"
     );
 
     skip=0;

@@ -76,8 +76,8 @@ TEST_CASE("WeightedRandomTest", "[RandomTest]")
   const size_t iterations = 50000;
   for (std::vector<double> weightSet : weights)
   {
-    DiscreteDistribution d(1);
-    d.Probabilities(0) =  arma::vec(weightSet);
+    DiscreteDistribution<> d(1);
+    d.Probabilities(0) = arma::vec(weightSet);
     std::vector<int> count(weightSet.size(), 0);
     for (size_t iter = 0; iter < iterations; ++iter)
     {

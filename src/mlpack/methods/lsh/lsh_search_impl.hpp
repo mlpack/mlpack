@@ -299,7 +299,7 @@ void LSHSearch<SortPolicy, MatType>::Train(MatType referenceSet,
 
   // Now, using the hash vectors for each table, count the number of rows we
   // have in the second hash table.
-  arma::Row<size_t> secondHashBinCounts(secondHashSize, arma::fill::zeros);
+  arma::Row<size_t> secondHashBinCounts(secondHashSize);
   for (size_t i = 0; i < secondHashVectors.n_elem; ++i)
     secondHashBinCounts[secondHashVectors[i]]++;
 
@@ -647,8 +647,7 @@ void LSHSearch<SortPolicy, MatType>::GetAdditionalProbingBins(
   std::priority_queue<
     std::pair<double, size_t>,        // contents: pairs of (score, index)
     std::vector<                      // container: vector of pairs
-      std::pair<double, size_t>
-      >,
+      std::pair<double, size_t>>,
     std::greater< std::pair<double, size_t> > // comparator of pairs
   > minHeap; // our minheap
 
@@ -835,7 +834,7 @@ void LSHSearch<SortPolicy, MatType>::ReturnIndicesFromTable(
     {
       for (size_t p = 0; p < T + 1; ++p)
       {
-        const size_t hashInd =  hashMat(p, i); // Find the query's bucket.
+        const size_t hashInd = hashMat(p, i); // Find the query's bucket.
         const size_t tableRow = bucketRowInHashTable[hashInd];
 
         if (tableRow < secondHashSize)

@@ -49,7 +49,7 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 
 #### See also:
 
- * [mlpack classifiers](../../index.md#classification-algorithms)
+ * [mlpack classifiers](../modeling.md#classification)
  * [`Perceptron`](perceptron.md)
  * [`DecisionTree`](decision_tree.md)
  * [AdaBoost on Wikipedia](https://en.wikipedia.org/wiki/AdaBoost)
@@ -84,7 +84,7 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../core/normalizing_labels.md) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `weakLearner` | `Perceptron` | An initialized weak learner whose hyperparameters will be used as settings for weak learners during training. | _(N/A)_ |
 | `maxIterations` | `size_t` | Maximum number of iterations of AdaBoost.MH to use.  This is the maximum number of weak learners to train.  (0 means no limit, and weak learners will be trained until the tolerance is met.) | `100` |
@@ -289,7 +289,7 @@ if (ab.WeakLearners() > 0)
 
 See also the following fully-working examples:
 
- - [Graduate admission classification with `AdaBoost`](https://github.com/mlpack/examples/blob/master/graduate_admission_classification_with_Adaboost/graduate-admission-classification-with-adaboost-cpp.ipynb)
+ - [Graduate admission classification with `AdaBoost`](https://github.com/mlpack/examples/blob/master/jupyter_notebook/adaboost/graduate_admission_classification/graduate-admission-classification-cpp.ipynb)
 
 ### Advanced Functionality: Template Parameters
 
@@ -418,9 +418,9 @@ arma::Row<size_t> labels =
 
 // Train in the constructor, using floating-point data.
 // The weak learner type is now a floating-point Perceptron.
-typedef mlpack::Perceptron<mlpack::SimpleWeightUpdate,
-                           mlpack::ZeroInitialization,
-                           arma::fmat> PerceptronType;
+using PerceptronType = mlpack::Perceptron<mlpack::SimpleWeightUpdate,
+                                          mlpack::ZeroInitialization,
+                                          arma::fmat>;
 mlpack::AdaBoost<PerceptronType, arma::fmat> ab(dataset, labels, 5);
 
 // Create test data (500 points).

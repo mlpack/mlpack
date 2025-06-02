@@ -27,12 +27,25 @@ namespace mlpack {
  * data point) and Triplets() (Generates sets of {dataset, target neighbors,
  * impostors} tripltets.)
  */
-template<typename MetricType = SquaredEuclideanDistance>
+template<typename MatType = arma::mat,
+         typename LabelsType = arma::Row<size_t>,
+         typename DistanceType = SquaredEuclideanDistance>
 class Constraints
 {
  public:
   //! Convenience typedef.
-  typedef NeighborSearch<NearestNeighborSort, MetricType> KNN;
+  using KNN = NeighborSearch<NearestNeighborSort, DistanceType, MatType>;
+
+  // Convenience typedef for element type of data.
+  using ElemType = typename MatType::elem_type;
+  // Convenience typedef for column vector of data.
+  using VecType = typename GetColType<MatType>::type;
+  // Convenience typedef for cube of data.
+  using CubeType = typename GetCubeType<MatType>::type;
+  // Convenience typedef for dense matrix of indices.
+  using UMatType = typename GetUDenseMatType<MatType>::type;
+  // Convenience typedef for dense vector of indices.
+  using UVecType = typename GetColType<UMatType>::type;
 
   /**
    * Constructor for creating a Constraints instance.
@@ -41,8 +54,8 @@ class Constraints
    * @param labels Input dataset labels.
    * @param k Number of target neighbors, impostors & triplets.
    */
-  Constraints(const arma::mat& dataset,
-              const arma::Row<size_t>& labels,
+  Constraints(const MatType& dataset,
+              const LabelsType& labels,
               const size_t k);
 
   /**
@@ -54,10 +67,10 @@ class Constraints
    * @param labels Input dataset labels.
    * @param norms Input dataset norms.
    */
-  void TargetNeighbors(arma::Mat<size_t>& outputMatrix,
-                       const arma::mat& dataset,
-                       const arma::Row<size_t>& labels,
-                       const arma::vec& norms);
+  void TargetNeighbors(UMatType& outputMatrix,
+                       const MatType& dataset,
+                       const LabelsType& labels,
+                       const VecType& norms);
 
   /**
    * Calculates k similar labeled nearest neighbors for a batch of dataset and
@@ -70,10 +83,10 @@ class Constraints
    * @param begin Index of the initial point of dataset.
    * @param batchSize Number of data points to use.
    */
-  void TargetNeighbors(arma::Mat<size_t>& outputMatrix,
-                       const arma::mat& dataset,
-                       const arma::Row<size_t>& labels,
-                       const arma::vec& norms,
+  void TargetNeighbors(UMatType& outputMatrix,
+                       const MatType& dataset,
+                       const LabelsType& labels,
+                       const VecType& norms,
                        const size_t begin,
                        const size_t batchSize);
 
@@ -86,10 +99,10 @@ class Constraints
    * @param labels Input dataset labels.
    * @param norms Input dataset norms.
    */
-  void Impostors(arma::Mat<size_t>& outputMatrix,
-                 const arma::mat& dataset,
-                 const arma::Row<size_t>& labels,
-                 const arma::vec& norms);
+  void Impostors(UMatType& outputMatrix,
+                 const MatType& dataset,
+                 const LabelsType& labels,
+                 const VecType& norms);
 
   /**
    * Calculates k differently labeled nearest neighbors & distances to
@@ -101,11 +114,11 @@ class Constraints
    * @param labels Input dataset labels.
    * @param norms Input dataset norms.
    */
-  void Impostors(arma::Mat<size_t>& outputNeighbors,
-                 arma::mat& outputDistance,
-                 const arma::mat& dataset,
-                 const arma::Row<size_t>& labels,
-                 const arma::vec& norms);
+  void Impostors(UMatType& outputNeighbors,
+                 MatType& outputDistance,
+                 const MatType& dataset,
+                 const LabelsType& labels,
+                 const VecType& norms);
 
   /**
    * Calculates k differently labeled nearest neighbors for a batch of dataset
@@ -118,10 +131,10 @@ class Constraints
    * @param begin Index of the initial point of dataset.
    * @param batchSize Number of data points to use.
    */
-  void Impostors(arma::Mat<size_t>& outputMatrix,
-                 const arma::mat& dataset,
-                 const arma::Row<size_t>& labels,
-                 const arma::vec& norms,
+  void Impostors(UMatType& outputMatrix,
+                 const MatType& dataset,
+                 const LabelsType& labels,
+                 const VecType& norms,
                  const size_t begin,
                  const size_t batchSize);
 
@@ -137,11 +150,11 @@ class Constraints
    * @param begin Index of the initial point of dataset.
    * @param batchSize Number of data points to use.
    */
-  void Impostors(arma::Mat<size_t>& outputNeighbors,
-                 arma::mat& outputDistance,
-                 const arma::mat& dataset,
-                 const arma::Row<size_t>& labels,
-                 const arma::vec& norms,
+  void Impostors(UMatType& outputNeighbors,
+                 MatType& outputDistance,
+                 const MatType& dataset,
+                 const LabelsType& labels,
+                 const VecType& norms,
                  const size_t begin,
                  const size_t batchSize);
 
@@ -158,12 +171,12 @@ class Constraints
    * @param points Indices of data points to calculate impostors on.
    * @param numPoints Number of points to actually calculate impostors on.
    */
-  void Impostors(arma::Mat<size_t>& outputNeighbors,
-                 arma::mat& outputDistance,
-                 const arma::mat& dataset,
-                 const arma::Row<size_t>& labels,
-                 const arma::vec& norms,
-                 const arma::uvec& points,
+  void Impostors(UMatType& outputNeighbors,
+                 MatType& outputDistance,
+                 const MatType& dataset,
+                 const LabelsType& labels,
+                 const VecType& norms,
+                 const UVecType& points,
                  const size_t numPoints);
 
   /**
@@ -175,10 +188,10 @@ class Constraints
    * @param labels Input dataset labels.
    * @param norms Input dataset norms.
    */
-  void Triplets(arma::Mat<size_t>& outputMatrix,
-                const arma::mat& dataset,
-                const arma::Row<size_t>& labels,
-                const arma::vec& norms);
+  void Triplets(UMatType& outputMatrix,
+                const MatType& dataset,
+                const LabelsType& labels,
+                const VecType& norms);
 
   //! Get the number of target neighbors (k).
   const size_t& K() const { return k; }
@@ -195,13 +208,13 @@ class Constraints
   size_t k;
 
   //! Store unique labels.
-  arma::Row<size_t> uniqueLabels;
+  LabelsType uniqueLabels;
 
   //! Store indices of data points having similar label.
-  std::vector<arma::uvec> indexSame;
+  std::vector<UVecType> indexSame;
 
   //! Store indices of data points having different label.
-  std::vector<arma::uvec> indexDiff;
+  std::vector<UVecType> indexDiff;
 
   //! False if nothing has ever been precalculated.
   bool precalculated;
@@ -210,15 +223,15 @@ class Constraints
   * Precalculate the unique labels, and indices of similar
   * and different datapoints on the basis of labels.
   */
-  inline void Precalculate(const arma::Row<size_t>& labels);
+  inline void Precalculate(const LabelsType& labels);
 
   /**
   * Re-order neighbors on the basis of increasing norm in case
   * of ties among distances.
   */
-  inline void ReorderResults(const arma::mat& distances,
-                             arma::Mat<size_t>& neighbors,
-                             const arma::vec& norms);
+  inline void ReorderResults(const MatType& distances,
+                             UMatType& neighbors,
+                             const VecType& norms);
 };
 
 } // namespace mlpack

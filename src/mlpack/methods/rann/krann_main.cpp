@@ -70,9 +70,8 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@knn", "#knn");
 BINDING_SEE_ALSO("@lsh", "#lsh");
 BINDING_SEE_ALSO("Rank-approximate nearest neighbor search: Retaining meaning"
-    " and speed in high dimensions (pdf)", "https://papers.nips.cc/paper/3864-"
-    "rank-approximate-nearest-neighbor-search-retaining-meaning-and-speed-in-"
-    "high-dimensions.pdf");
+    " and speed in high dimensions (pdf)", "https://proceedings.neurips.cc/"
+    "paper_files/paper/2009/file/ddb30680a691d157187ee1cf9e896d03-Paper.pdf");
 BINDING_SEE_ALSO("RASearch C++ class documentation",
     "@src/mlpack/methods/rann/ra_search.hpp");
 
@@ -205,9 +204,10 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     rann->TreeType() = tree;
     rann->RandomBasis() = randomBasis;
 
+    arma::mat& referenceSet = params.Get<arma::mat>("reference");
+
     Log::Info << "Using reference data from "
         << params.GetPrintable<arma::mat>("reference") << "." << endl;
-    arma::mat referenceSet = std::move(params.Get<arma::mat>("reference"));
 
     rann->BuildModel(timers, std::move(referenceSet), size_t(lsInt), naive,
         singleMode);
@@ -246,6 +246,12 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     arma::mat queryData;
     if (params.Has("query"))
     {
+      // Workaround: this avoids printing load information twice for the CLI
+      // bindings, where GetPrintable() will trigger a call to data::Load(),
+      // which prints loading information in the middle of the Log::Info
+      // message.
+      (void) params.Get<arma::mat>("query");
+
       queryData = std::move(params.Get<arma::mat>("query"));
       Log::Info << "Using query data from '"
           << params.GetPrintable<arma::mat>("query") << "' ("

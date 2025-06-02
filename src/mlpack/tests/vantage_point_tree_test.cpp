@@ -18,7 +18,7 @@ using namespace mlpack;
 
 TEST_CASE("VPTreeTraitsTest", "[VantagePointTreeTest]")
 {
-  typedef VPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = VPTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 
   bool b = TreeTraits<TreeType>::HasOverlappingChildren;
   REQUIRE(b == true);
@@ -124,15 +124,15 @@ TEST_CASE("HollowBallBoundTest", "[VantagePointTreeTest]")
 template<typename TreeType>
 void CheckBound(TreeType& tree)
 {
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
   if (tree.IsLeaf())
   {
     // Ensure that the bound contains all descendant points.
     for (size_t i = 0; i < tree.NumPoints(); ++i)
     {
-      ElemType dist = tree.Bound().Metric().Evaluate(tree.Bound().Center(),
+      ElemType dist = tree.Bound().Distance().Evaluate(tree.Bound().Center(),
           tree.Dataset().col(tree.Point(i)));
-      ElemType hollowDist = tree.Bound().Metric().Evaluate(
+      ElemType hollowDist = tree.Bound().Distance().Evaluate(
           tree.Bound().HollowCenter(),
           tree.Dataset().col(tree.Point(i)));
 
@@ -148,9 +148,9 @@ void CheckBound(TreeType& tree)
     // Ensure that the bound contains all descendant points.
     for (size_t i = 0; i < tree.NumDescendants(); ++i)
     {
-      ElemType dist = tree.Bound().Metric().Evaluate(tree.Bound().Center(),
+      ElemType dist = tree.Bound().Distance().Evaluate(tree.Bound().Center(),
           tree.Dataset().col(tree.Descendant(i)));
-      ElemType hollowDist = tree.Bound().Metric().Evaluate(
+      ElemType hollowDist = tree.Bound().Distance().Evaluate(
           tree.Bound().HollowCenter(),
           tree.Dataset().col(tree.Descendant(i)));
 
@@ -168,7 +168,7 @@ void CheckBound(TreeType& tree)
 
 TEST_CASE("VPTreeBoundTest", "[VantagePointTreeTest]")
 {
-  typedef VPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = VPTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 
   arma::mat dataset(8, 1000);
   dataset.randu();
@@ -179,7 +179,7 @@ TEST_CASE("VPTreeBoundTest", "[VantagePointTreeTest]")
 
 TEST_CASE("VPTreeTest", "[VantagePointTreeTest]")
 {
-  typedef VPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = VPTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 
   size_t maxRuns = 10; // Ten total tests.
   size_t pointIncrements = 1000; // Range is from 2000 points to 11000.

@@ -18,29 +18,29 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename MatType>
-PellegMooreKMeans<MetricType, MatType>::PellegMooreKMeans(
+template<typename DistanceType, typename MatType>
+PellegMooreKMeans<DistanceType, MatType>::PellegMooreKMeans(
     const MatType& dataset,
-    MetricType& metric) :
+    DistanceType& distance) :
     datasetOrig(dataset),
     tree(new TreeType(const_cast<MatType&>(datasetOrig))),
     dataset(tree->Dataset()),
-    metric(metric),
+    distance(distance),
     distanceCalculations(0)
 {
   // Nothing to do.
 }
 
-template<typename MetricType, typename MatType>
-PellegMooreKMeans<MetricType, MatType>::~PellegMooreKMeans()
+template<typename DistanceType, typename MatType>
+PellegMooreKMeans<DistanceType, MatType>::~PellegMooreKMeans()
 {
   if (tree)
     delete tree;
 }
 
 // Run a single iteration.
-template<typename MetricType, typename MatType>
-double PellegMooreKMeans<MetricType, MatType>::Iterate(
+template<typename DistanceType, typename MatType>
+double PellegMooreKMeans<DistanceType, MatType>::Iterate(
     const arma::mat& centroids,
     arma::mat& newCentroids,
     arma::Col<size_t>& counts)
@@ -49,8 +49,8 @@ double PellegMooreKMeans<MetricType, MatType>::Iterate(
   counts.zeros(centroids.n_cols);
 
   // Create rules object.
-  typedef PellegMooreKMeansRules<MetricType, TreeType> RulesType;
-  RulesType rules(dataset, centroids, newCentroids, counts, metric);
+  using RulesType = PellegMooreKMeansRules<DistanceType, TreeType>;
+  RulesType rules(dataset, centroids, newCentroids, counts, distance);
 
   // Use single-tree traverser.
   typename TreeType::template SingleTreeTraverser<RulesType> traverser(rules);
@@ -68,8 +68,8 @@ double PellegMooreKMeans<MetricType, MatType>::Iterate(
     if (counts[c] > 0)
     {
       newCentroids.col(c) /= counts(c);
-      residual += std::pow(metric.Evaluate(centroids.col(c),
-                                           newCentroids.col(c)), 2.0);
+      residual += std::pow(distance.Evaluate(centroids.col(c),
+                                             newCentroids.col(c)), 2.0);
     }
   }
   distanceCalculations += centroids.n_cols;

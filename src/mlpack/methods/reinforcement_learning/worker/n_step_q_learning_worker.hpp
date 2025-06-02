@@ -282,7 +282,7 @@ class NStepQLearningWorker
     {
       // Initialize the gradient storage.
       arma::mat totalGradients(learningNetwork.Parameters().n_rows,
-          learningNetwork.Parameters().n_cols, arma::fill::zeros);
+          learningNetwork.Parameters().n_cols);
 
       // Bootstrap from the value of next state.
       arma::colvec actionValue;

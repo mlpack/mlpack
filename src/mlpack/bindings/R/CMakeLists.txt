@@ -403,7 +403,8 @@ macro (post_r_setup)
   # Collect all header and source files in the library.
   file(GLOB_RECURSE R_SRC_HPP_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" *.hpp)
   file(GLOB_RECURSE R_SRC_CPP_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" *.cpp)
-  set(R_SRC_FILES ${R_SRC_HPP_FILES} ${R_SRC_CPP_FILES})
+  file(GLOB_RECURSE R_SRC_H_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" *.h)
+  set(R_SRC_FILES ${R_SRC_HPP_FILES} ${R_SRC_CPP_FILES} ${R_SRC_H_FILES})
 
   # In case of R_Bindings we are copying all of these header to
   # <package>/src/cereal/ because the currently-packaged version
@@ -470,7 +471,7 @@ macro (post_r_setup)
     )
   endforeach()
 
-  # Resolve gcc Warnings.
+  # Resolve gcc warnings.
   file(READ ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/cereal/external/base64.hpp CEREAL_BASE64)
   string(REGEX REPLACE
       "\n#ifdef __GNUC__\n#pragma GCC diagnostic push\n#pragma GCC diagnostic ignored \"-Wconversion\"\n#endif\n"
@@ -480,23 +481,22 @@ macro (post_r_setup)
       "" CEREAL_BASE64 "${CEREAL_BASE64}")
   file(WRITE ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/cereal/external/base64.hpp "${CEREAL_BASE64}")
 
-  # Copy STB headers for inclusion in the package, if STB is used.
   # NOTE: for CRAN, `sprintf` cannot be used; but it is used in
   # `stb_image_write.h`, so we replace it with `snprintf` below.
-  if (StbImage_FOUND)
-    execute_process(
-      COMMAND ${CMAKE_COMMAND} -E
-        make_directory ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/stb
-    )
-    execute_process(
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${STB_IMAGE_INCLUDE_DIR}/stb_image.h
-            ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/stb/stb_image.h)
-    file(READ "${STB_IMAGE_INCLUDE_DIR}/stb_image_write.h" STB_IMAGE_WRITE_H)
-    string(REGEX REPLACE "sprintf\\(buffer," "snprintf(buffer, 128,"
-        STB_IMAGE_WRITE_H_MOD "${STB_IMAGE_WRITE_H}")
-    file(WRITE "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/stb/stb_image_write.h" "${STB_IMAGE_WRITE_H_MOD}")
-  endif ()
+  file(READ "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/core/stb/bundled/stb_image_write.h" STB_IMAGE_WRITE_H)
+  string(REGEX REPLACE "sprintf\\(buffer," "snprintf(buffer, 128,"
+      STB_IMAGE_WRITE_H_MOD "${STB_IMAGE_WRITE_H}")
+  file(WRITE "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/core/stb/bundled/stb_image_write.h" "${STB_IMAGE_WRITE_H_MOD}")
+
+  # NOTE: also for CRAN, the `static` definition of STBIRDEF causes a warning
+  # indicating that it should instead be `static inline`, so we make that
+  # replacement below.
+  file(READ "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/core/stb/bundled/stb_image_resize2.h" STB_IMAGE_RESIZE2_H)
+  string(REGEX REPLACE "#define STBIRDEF static"
+      "#define STBIRDEF static inline" STB_IMAGE_RESIZE2_H_MOD
+      "${STB_IMAGE_RESIZE2_H}")
+  file(WRITE "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/core/stb/bundled/stb_image_resize2.h"
+      "${STB_IMAGE_RESIZE2_H_MOD}")
 
   # Then configure 'mlpack.h.in' using ${R_SRC}.
   configure_file(

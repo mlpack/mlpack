@@ -4,11 +4,11 @@
 # This file will compile OpenBLAS if it is downloaded and it is not
 # available on your system in order to find the BLAS library.  If OpenBLAS will
 # be compiled, the OPENBLAS_TARGET variable must be set.  This can be done
-# by, e.g., setting BOARD_NAME (which will set OPENBLAS_TARGET in
-# `board/flags-config.cmake`).
+# by, e.g., setting ARCH_NAME (which will set OPENBLAS_TARGET in
+# `flags-config.cmake`).
 
 if (CMAKE_CROSSCOMPILING)
-  include(board/flags-config.cmake)
+  include(CMake/crosscompile-arch-config.cmake)
   if (NOT CMAKE_SYSROOT AND (NOT TOOLCHAIN_PREFIX))
     message(FATAL_ERROR "Neither CMAKE_SYSROOT nor TOOLCHAIN_PREFIX are set; please set both of them and try again.")
   elseif(NOT CMAKE_SYSROOT)
@@ -16,6 +16,27 @@ if (CMAKE_CROSSCOMPILING)
   elseif(NOT TOOLCHAIN_PREFIX)
     message(FATAL_ERROR "Cannot configure: TOOLCHAIN_PREFIX must be set when performing cross-compiling!")
   endif()
+
+  # Now make sure that we can still compile a simple test program.
+  # (This ensures we didn't add any bad CXXFLAGS.)
+  # Note that OUTPUT_VARIABLE is only available in newer versions of CMake!
+  # CMake 3.23 (silently) introduced the variable.
+  include(CheckCXXSourceCompiles)
+  if (CMAKE_VERSION VERSION_LESS "3.22.0")
+    check_cxx_source_compiles("int main() { return 0; }" COMPILE_SUCCESS)
+    if (NOT COMPILE_SUCCESS)
+      message(FATAL_ERROR "The C++ cross-compiler at ${CMAKE_CXX_COMPILER} is "
+        "not able to compile a trivial test program.  Check the CXXFLAGS!")
+    endif ()
+  else ()
+    check_cxx_source_compiles("int main() { return 0; }" COMPILE_SUCCESS
+        OUTPUT_VARIABLE COMPILE_OUTPUT)
+    if (NOT COMPILE_SUCCESS)
+      message(FATAL_ERROR "The C++ cross-compiler at ${CMAKE_CXX_COMPILER} is "
+        "not able to compile a trivial test program.  Compiler output:\n\n"
+        "${COMPILE_OUTPUT}")
+    endif ()
+  endif ()
 endif()
 
 macro(search_openblas version)
@@ -28,6 +49,7 @@ macro(search_openblas version)
     get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v${version}/OpenBLAS-${version}.tar.gz OpenBLAS OpenBLAS-${version}.tar.gz)
     if (NOT MSVC)
       if (NOT EXISTS "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/libopenblas.a")
+        set(ENV{COMMON_OPT} "${CMAKE_OPENBLAS_FLAGS}") # Pass our flags to OpenBLAS
         execute_process(COMMAND make TARGET=${OPENBLAS_TARGET} BINARY=${OPENBLAS_BINARY} HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER} NO_SHARED=1
                         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version})
       endif()

@@ -32,9 +32,9 @@ class VantagePointSplit
 {
  public:
   //! The matrix element type.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
   //! The bounding shape type.
-  typedef typename BoundType::MetricType MetricType;
+  using DistanceType = typename BoundType::DistanceType;
   //! A struct that contains an information about the split.
   struct SplitInfo
   {
@@ -42,20 +42,20 @@ class VantagePointSplit
     arma::Col<ElemType> vantagePoint;
     //! The median distance according to which the node will be split.
     ElemType mu;
-    //! An instance of the MetricType class.
-    const MetricType* metric;
+    //! An instance of the DistanceType class.
+    const DistanceType* distance;
 
     SplitInfo() :
         mu(0),
-        metric(NULL)
+        distance(NULL)
     { }
 
     template<typename VecType>
-    SplitInfo(const MetricType& metric, const VecType& vantagePoint,
+    SplitInfo(const DistanceType& distance, const VecType& vantagePoint,
         ElemType mu) :
         vantagePoint(vantagePoint),
         mu(mu),
-        metric(&metric)
+        distance(&distance)
     { }
   };
 
@@ -135,7 +135,7 @@ class VantagePointSplit
   static bool AssignToLeftNode(const VecType& point,
                                const SplitInfo& splitInfo)
   {
-    return (splitInfo.metric->Evaluate(splitInfo.vantagePoint, point) <
+    return (splitInfo.distance->Evaluate(splitInfo.vantagePoint, point) <
         splitInfo.mu);
   }
 
@@ -148,7 +148,7 @@ class VantagePointSplit
    * second moment and selects the point with the largest moment. Each random
    * point belongs to the node.
    *
-   * @param metric The metric used by the tree.
+   * @param distance The distance metric used by the tree.
    * @param data The dataset used by the tree.
    * @param begin Index of the starting point in the dataset that belongs to
    *    this node.
@@ -157,7 +157,7 @@ class VantagePointSplit
    * @param mu The median value of distance form the vantage point to
    * a number of random points.
    */
-  static void SelectVantagePoint(const MetricType& metric,
+  static void SelectVantagePoint(const DistanceType& distance,
                                  const MatType& data,
                                  const size_t begin,
                                  const size_t count,

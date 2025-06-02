@@ -78,11 +78,11 @@ BayesianLinearRegression<ModelMatType>::Train(
     const std::optional<size_t> maxIterations)
 {
   return Train(data, responses,
-       (centerData.has_value()) ? centerData.value() :  this->centerData,
-       (scaleData.has_value()) ?   scaleData.value() :  this->scaleData,
-       (maxIterations.has_value()) ? maxIterations.value() : this->maxIterations,
-       this->tolerance);
- }
+      (centerData.has_value()) ? centerData.value() : this->centerData,
+      (scaleData.has_value()) ? scaleData.value() : this->scaleData,
+      (maxIterations.has_value()) ? maxIterations.value() : this->maxIterations,
+      this->tolerance);
+}
 
 template<typename ModelMatType>
 template<typename MatType, typename ResponsesType, typename, typename>
@@ -121,7 +121,7 @@ BayesianLinearRegression<ModelMatType>::Train(
 
   // Initialize the hyperparameters and begin with an infinitely broad prior.
   alpha = ((ElemType) 1e-6);
-  beta =  ((ElemType) 1 / (var(t, 1) * 0.1));
+  beta = ((ElemType) 1 / (var(t, 1) * 0.1));
 
   unsigned short i = 0;
   ElemType crit = ((ElemType) 1.0);
@@ -273,11 +273,8 @@ inline double BayesianLinearRegression<ModelMatType>::CenterScaleData(
 {
   if (!centerData && !scaleData)
   {
-    dataProc = MatType(const_cast<ElemType*>(data.memptr()), data.n_rows,
-                                             data.n_cols, false, true);
-    responsesProc = ResponsesType(const_cast<ElemType*>(responses.memptr()),
-                                                        responses.n_elem, false,
-                                                        true);
+    MakeAlias(dataProc, data, data.n_rows, data.n_cols, 0, true);
+    MakeAlias(responsesProc, responses, responses.n_elem, 0, true);
   }
   else if (centerData && !scaleData)
   {
@@ -290,9 +287,7 @@ inline double BayesianLinearRegression<ModelMatType>::CenterScaleData(
   {
     dataScale = stddev(data, 0, 1);
     dataProc = data.each_col() / dataScale;
-    responsesProc = ResponsesType(const_cast<ElemType*>(responses.memptr()),
-                                                        responses.n_elem, false,
-                                                        true);
+    MakeAlias(responsesProc, responses, responses.n_elem, 0, true);
   }
   else
   {

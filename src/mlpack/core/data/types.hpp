@@ -19,25 +19,29 @@
 #ifndef MLPACK_CORE_DATA_TYPES_HPP
 #define MLPACK_CORE_DATA_TYPES_HPP
 
-#include <iostream>
-#include <limits>
-
 namespace mlpack {
 namespace data {
 
 enum struct FileType
 {
   FileTypeUnknown,
-  AutoDetect,        //!< attempt to automatically detect the file type
-  RawASCII,          //!< raw text (ASCII), without a header
-  ArmaASCII,         //!< Armadillo text format, with a header specifying matrix type and size
-  CSVASCII,          //!< comma separated values (CSV), without a header
-  RawBinary,         //!< raw binary format (machine dependent), without a header
-  ArmaBinary,        //!< Armadillo binary format (machine dependent), with a header specifying matrix type and size
-  PGMBinary,         //!< Portable Grey Map (greyscale image)
-  PPMBinary,         //!< Portable Pixel Map (colour image), used by the field and cube classes
-  HDF5Binary,        //!< HDF5: open binary format, not specific to Armadillo, which can store arbitrary data
-  CoordASCII         //!< simple co-ordinate format for sparse matrices (indices start at zero)
+  AutoDetect, // attempt to automatically detect the file type
+  RawASCII,   // raw text (ASCII), without a header
+  ArmaASCII,  // Armadillo text format, with a header specifying matrix type and
+              // size
+  CSVASCII,   // comma separated values (CSV), without a header
+  RawBinary,  // raw binary format (machine dependent), without a header
+  ArmaBinary, // Armadillo binary format (machine dependent), with a header
+              // specifying matrix type and size
+  PGMBinary,  // Portable Grey Map (greyscale image)
+  PPMBinary,  // Portable Pixel Map (colour image), used by the field and cube
+              // classes
+  HDF5Binary, // HDF5: open binary format, not specific to Armadillo, which can
+              // store arbitrary data
+  CoordASCII, // simple co-ordinate format for sparse matrices (indices start at
+              // zero)
+  ARFFASCII   // ARFF data format, with a header specifying information about
+              // categories of the data.
 };
 
 /**

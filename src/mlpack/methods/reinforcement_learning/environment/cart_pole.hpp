@@ -3,7 +3,7 @@
  * @author Shangtong Zhang
  *
  * This file is an implementation of Cart Pole task:
- * https://www.gymlibrary.ml/environments/classic_control/cart_pole
+ * https://www.gymlibrary.dev/environments/classic_control/cart_pole
  *
  * TODO: provide an option to use dynamics directly from OpenAI gym.
  *
@@ -125,7 +125,7 @@ class CartPole
            const double doneReward = 1.0) :
       maxSteps(maxSteps),
       gravity(gravity),
-      massCart(massCart),
+      //massCart(massCart),
       massPole(massPole),
       totalMass(massCart + massPole),
       length(length),
@@ -247,8 +247,8 @@ class CartPole
   //! Locally-stored gravity.
   double gravity;
 
-  //! Locally-stored mass of the cart.
-  double massCart;
+  //! Locally-stored mass of the cart.  NOTE: not currently used.
+  //double massCart;
 
   //! Locally-stored mass of the pole.
   double massPole;

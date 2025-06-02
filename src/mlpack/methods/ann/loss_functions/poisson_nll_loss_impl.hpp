@@ -16,6 +16,8 @@
 // In case it hasn't yet been included.
 #include "poisson_nll_loss.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 template<typename MatType>
@@ -55,10 +57,10 @@ typename MatType::elem_type PoissonNLLLossType<MatType>::Forward(
     loss.elem(arma::find(mask)) += approx.elem(arma::find(mask));
   }
   typename MatType::elem_type lossSum = accu(loss);
-  
+
   if (reduction)
     return lossSum;
-  
+
   return lossSum / loss.n_elem;
 }
 

@@ -106,8 +106,7 @@ class MainTestFixture
   template<typename T>
   void SetInputParam(const std::string& name, T&& value)
   {
-    params.Get<typename std::remove_reference<T>::type>(name) =
-        std::forward<T>(value);
+    params.Get<std::remove_reference_t<T>>(name) = std::forward<T>(value);
     params.SetPassed(name);
   }
 

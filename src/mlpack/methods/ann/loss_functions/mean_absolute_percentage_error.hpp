@@ -74,11 +74,11 @@ class MeanAbsolutePercentageErrorType
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 }; // class MeanAbsolutePercentageErrorType
 
 // Default typedef for typical `arma::mat` usage.
-typedef MeanAbsolutePercentageErrorType<arma::mat> MeanAbsolutePercentageError;
+using MeanAbsolutePercentageError = MeanAbsolutePercentageErrorType<arma::mat>;
 
 } // namespace mlpack
 

@@ -14,7 +14,7 @@
 
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include <mlpack/core/kernels/kernel_traits.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/methods/range_search/range_search.hpp>
 
@@ -28,11 +28,10 @@ namespace mlpack {
 /**
  * Construct the Mean Shift object.
  */
-template<bool UseKernel, typename KernelType, typename MatType>
-MeanShift<UseKernel, KernelType, MatType>::
-MeanShift(const double radius,
-          const size_t maxIterations,
-          const KernelType kernel) :
+template<bool UseKernel, typename KernelType>
+MeanShift<UseKernel, KernelType>::MeanShift(const double radius,
+                                            const size_t maxIterations,
+                                            const KernelType kernel) :
     radius(radius),
     maxIterations(maxIterations),
     kernel(kernel)
@@ -40,18 +39,21 @@ MeanShift(const double radius,
   // Nothing to do.
 }
 
-template<bool UseKernel, typename KernelType, typename MatType>
-void MeanShift<UseKernel, KernelType, MatType>::Radius(double radius)
+template<bool UseKernel, typename KernelType>
+void MeanShift<UseKernel, KernelType>::Radius(double radius)
 {
   this->radius = radius;
 }
 
 // Estimate radius based on given dataset.
-template<bool UseKernel, typename KernelType, typename MatType>
-double MeanShift<UseKernel, KernelType, MatType>::
-EstimateRadius(const MatType& data, double ratio)
+template<bool UseKernel, typename KernelType>
+template<typename MatType>
+typename MatType::elem_type
+MeanShift<UseKernel, KernelType>::EstimateRadius(const MatType& data,
+                                                 double ratio)
 {
-  KNN neighborSearch(data);
+  NeighborSearch<NearestNeighborSort, EuclideanDistance, MatType>
+      neighborSearch(data);
 
   /**
    * For each point in dataset, select nNeighbors nearest points and get
@@ -60,14 +62,11 @@ EstimateRadius(const MatType& data, double ratio)
    */
   const size_t nNeighbors = size_t(data.n_cols * ratio);
   arma::Mat<size_t> neighbors;
-  arma::mat distances;
+  MatType distances;
   neighborSearch.Search(nNeighbors, neighbors, distances);
 
-  // Get max distance for each point.
-  arma::rowvec maxDistances = max(distances);
-
   // Calculate and return the radius.
-  return sum(maxDistances) / (double) data.n_cols;
+  return sum(max(distances)) / (typename MatType::elem_type) data.n_cols;
 }
 
 // Class to compare two vectors.
@@ -88,14 +87,15 @@ class less
 };
 
 // Generate seeds from given data set.
-template<bool UseKernel, typename KernelType, typename MatType>
-void MeanShift<UseKernel, KernelType, MatType>::GenSeeds(
-    const MatType& data,
-    const double binSize,
-    const int minFreq,
-    MatType& seeds)
+template<bool UseKernel, typename KernelType>
+template<typename MatType, typename CentroidsType>
+void MeanShift<UseKernel, KernelType>::GenSeeds(const MatType& data,
+                                                const double binSize,
+                                                const int minFreq,
+                                                CentroidsType& seeds)
 {
-  typedef arma::colvec VecType;
+  using VecType = typename GetColType<MatType>::type;
+  using CentroidVecType = typename GetColType<CentroidsType>::type;
   std::map<VecType, int, less<VecType> > allSeeds;
   for (size_t i = 0; i < data.n_cols; ++i)
   {
@@ -108,7 +108,7 @@ void MeanShift<UseKernel, KernelType, MatType>::GenSeeds(
 
   // Remove seeds with too few points.  First we count the number of seeds we
   // end up with, then we add them.
-  std::map<VecType, int, less<VecType> >::iterator it;
+  typename std::map<VecType, int, less<VecType> >::iterator it;
   size_t count = 0;
   for (it = allSeeds.begin(); it != allSeeds.end(); ++it)
     if (it->second >= minFreq)
@@ -120,7 +120,7 @@ void MeanShift<UseKernel, KernelType, MatType>::GenSeeds(
   {
     if (it->second >= minFreq)
     {
-      seeds.col(count) = it->first;
+      seeds.col(count) = arma::conv_to<CentroidVecType>::from(it->first);
       ++count;
     }
   }
@@ -129,22 +129,24 @@ void MeanShift<UseKernel, KernelType, MatType>::GenSeeds(
 }
 
 // Calculate new centroid with given kernel.
-template<bool UseKernel, typename KernelType, typename MatType>
-template<bool ApplyKernel>
-typename std::enable_if<ApplyKernel, bool>::type
-MeanShift<UseKernel, KernelType, MatType>::
-CalculateCentroid(const MatType& data,
-                  const std::vector<size_t>& neighbors,
-                  const std::vector<double>& distances,
-                  arma::colvec& centroid)
+template<bool UseKernel, typename KernelType>
+template<bool ApplyKernel, typename MatType, typename VecType>
+std::enable_if_t<ApplyKernel, bool>
+MeanShift<UseKernel, KernelType>::CalculateCentroid(
+    const MatType& data,
+    const std::vector<size_t>& neighbors,
+    const std::vector<typename MatType::elem_type>& distances,
+    VecType& centroid)
 {
-  double sumWeight = 0;
+  using ElemType = typename MatType::elem_type;
+
+  ElemType sumWeight = 0;
   for (size_t i = 0; i < neighbors.size(); ++i)
   {
     if (distances[i] > 0)
     {
-      double dist = distances[i] / radius;
-      double weight = kernel.Gradient(dist) / dist;
+      ElemType dist = distances[i] / radius;
+      ElemType weight = kernel.Gradient(dist) / dist;
       sumWeight += weight;
       centroid += weight * data.unsafe_col(neighbors[i]);
     }
@@ -159,14 +161,14 @@ CalculateCentroid(const MatType& data,
 }
 
 // Calculate new centroid by mean.
-template<bool UseKernel, typename KernelType, typename MatType>
-template<bool ApplyKernel>
-typename std::enable_if<!ApplyKernel, bool>::type
-MeanShift<UseKernel, KernelType, MatType>::
-CalculateCentroid(const MatType& data,
-                  const std::vector<size_t>& neighbors,
-                  const std::vector<double>&, /*unused*/
-                  arma::colvec& centroid)
+template<bool UseKernel, typename KernelType>
+template<bool ApplyKernel, typename MatType, typename VecType>
+std::enable_if_t<!ApplyKernel, bool>
+MeanShift<UseKernel, KernelType>::CalculateCentroid(
+    const MatType& data,
+    const std::vector<size_t>& neighbors,
+    const std::vector<typename MatType::elem_type>&, /*unused*/
+    VecType& centroid)
 {
   for (size_t i = 0; i < neighbors.size(); ++i)
     centroid += data.unsafe_col(neighbors[i]);
@@ -176,24 +178,27 @@ CalculateCentroid(const MatType& data,
 }
 
 /**
- * Perform Mean Shift clustering on the data set, returning a list of cluster
- * assignments and centroids.
+ * Perform Mean Shift clustering on the data set, returning a list of centroids.
  */
-template<bool UseKernel, typename KernelType, typename MatType>
-inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
+template<bool UseKernel, typename KernelType>
+template<typename MatType, typename CentroidsType>
+inline void MeanShift<UseKernel, KernelType>::Cluster(
     const MatType& data,
-    arma::Row<size_t>& assignments,
-    arma::mat& centroids,
+    CentroidsType& centroids,
     bool forceConvergence,
     bool useSeeds)
 {
+  // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
+  using VecType = typename GetColType<MatType>::type;
+
   if (radius <= 0)
   {
     // An invalid radius is given; an estimation is needed.
     Radius(EstimateRadius(data));
   }
 
-  MatType seeds;
+  CentroidsType seeds;
   const MatType* pSeeds = &data;
   if (useSeeds)
   {
@@ -202,14 +207,12 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
   }
 
   // Holds all centroids before removing duplicate ones.
-  arma::mat allCentroids(pSeeds->n_rows, pSeeds->n_cols);
+  CentroidsType allCentroids(pSeeds->n_rows, pSeeds->n_cols);
 
-  assignments.set_size(data.n_cols);
-
-  RangeSearch<> rangeSearcher(data);
-  Range validRadius(0, radius);
-  std::vector<std::vector<size_t> > neighbors;
-  std::vector<std::vector<double> > distances;
+  RangeSearch<EuclideanDistance, MatType> rangeSearcher(data);
+  RangeType<ElemType> validRadius((ElemType) 0, (ElemType) radius);
+  std::vector<std::vector<size_t>> neighbors;
+  std::vector<std::vector<ElemType>> distances;
 
   // For each seed, perform mean shift algorithm.
   for (size_t i = 0; i < pSeeds->n_cols; ++i)
@@ -220,7 +223,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
         || forceConvergence; completedIterations++)
     {
       // Store new centroid in this.
-      arma::colvec newCentroid = zeros<arma::colvec>(pSeeds->n_rows);
+      VecType newCentroid = zeros<VecType>(pSeeds->n_rows);
 
       rangeSearcher.Search(allCentroids.unsafe_col(i), validRadius,
           neighbors, distances);
@@ -239,7 +242,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
         bool isDuplicated = false;
         for (size_t k = 0; k < centroids.n_cols; ++k)
         {
-          const double distance = EuclideanDistance::Evaluate(
+          const ElemType distance = EuclideanDistance::Evaluate(
               allCentroids.unsafe_col(i), centroids.unsafe_col(k));
           if (distance < radius)
           {
@@ -276,18 +279,43 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
     {
       centroids.insert_cols(centroids.n_cols, allCentroids.col(0));
     }
-    assignments.zeros();
   }
-  else if (centroids.n_cols == 1)
+}
+
+/**
+ * Perform Mean Shift clustering on the data set, returning a list of cluster
+ * assignments and centroids.
+ */
+template<bool UseKernel, typename KernelType>
+template<typename MatType, typename LabelsType, typename CentroidsType>
+inline void MeanShift<UseKernel, KernelType>::Cluster(
+    const MatType& data,
+    LabelsType& assignments,
+    CentroidsType& centroids,
+    bool forceConvergence,
+    bool useSeeds)
+{
+  // Perform the actual clustering.
+  Cluster(data, centroids, forceConvergence, useSeeds);
+
+  assignments.set_size(data.n_cols);
+  if (centroids.n_cols == 1)
   {
     assignments.zeros();
   }
   else
   {
     // Assign centroids to each point.
-    KNN neighborSearcher(centroids);
-    arma::mat neighborDistances;
+    //
+    // NeighborSearch only supports when the reference and query set have the
+    // same type, so forcibly convert the centroids to the same type as data if
+    // needed.  This also means we have to separate out the neighbor searching
+    // operation to a utility function, so that the compiler doesn't try to
+    // instantiate the NeighborSearch class with invalid types.
+    arma::Mat<typename MatType::elem_type> neighborDistances;
     arma::Mat<size_t> resultingNeighbors;
+    NeighborSearch<NearestNeighborSort, EuclideanDistance, MatType>
+        neighborSearcher(centroids);
     neighborSearcher.Search(data, 1, resultingNeighbors, neighborDistances);
     assignments = resultingNeighbors;
   }

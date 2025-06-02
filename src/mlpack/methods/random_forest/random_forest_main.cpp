@@ -103,7 +103,7 @@ BINDING_SEE_ALSO("Random forest on Wikipedia",
 BINDING_SEE_ALSO("Random forests (pdf)", "https://www.eecis.udel.edu/~shatkay"
     "/Course/papers/BreimanRandomForests2001.pdf");
 BINDING_SEE_ALSO("RandomForest C++ class documentation",
-    "@src/mlpack/methods/random_forest/random_forest.hpp");
+    "@doc/user/methods/random_forest.md");
 
 PARAM_MATRIX_IN("training", "Training dataset.", "t");
 PARAM_UROW_IN("labels", "Labels for training dataset.", "l");

@@ -12,33 +12,35 @@
 #ifndef MLPACK_METHODS_EMST_DTB_RULES_IMPL_HPP
 #define MLPACK_METHODS_EMST_DTB_RULES_IMPL_HPP
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
-template<typename MetricType, typename TreeType>
-DTBRules<MetricType, TreeType>::
+template<typename DistanceType, typename TreeType>
+DTBRules<DistanceType, TreeType>::
 DTBRules(const arma::mat& dataSet,
          UnionFind& connections,
          arma::vec& neighborsDistances,
          arma::Col<size_t>& neighborsInComponent,
          arma::Col<size_t>& neighborsOutComponent,
-         MetricType& metric)
+         DistanceType& distance)
 :
   dataSet(dataSet),
   connections(connections),
   neighborsDistances(neighborsDistances),
   neighborsInComponent(neighborsInComponent),
   neighborsOutComponent(neighborsOutComponent),
-  metric(metric),
+  distance(distance),
   baseCases(0),
   scores(0)
 {
   // Nothing else to do.
 }
 
-template<typename MetricType, typename TreeType>
+template<typename DistanceType, typename TreeType>
 inline mlpack_force_inline
-double DTBRules<MetricType, TreeType>::BaseCase(const size_t queryIndex,
-                                                const size_t referenceIndex)
+double DTBRules<DistanceType, TreeType>::BaseCase(const size_t queryIndex,
+                                                  const size_t referenceIndex)
 {
   // Check if the points are in the same component at this iteration.
   // If not, return the distance between them.  Also, store a better result as
@@ -53,14 +55,14 @@ double DTBRules<MetricType, TreeType>::BaseCase(const size_t queryIndex,
   if (queryComponentIndex != referenceComponentIndex)
   {
     ++baseCases;
-    double distance = metric.Evaluate(dataSet.col(queryIndex),
-                                      dataSet.col(referenceIndex));
+    double dist = distance.Evaluate(dataSet.col(queryIndex),
+                                    dataSet.col(referenceIndex));
 
-    if (distance < neighborsDistances[queryComponentIndex])
+    if (dist < neighborsDistances[queryComponentIndex])
     {
       Log::Assert(queryIndex != referenceIndex);
 
-      neighborsDistances[queryComponentIndex] = distance;
+      neighborsDistances[queryComponentIndex] = dist;
       neighborsInComponent[queryComponentIndex] = queryIndex;
       neighborsOutComponent[queryComponentIndex] = referenceIndex;
     }
@@ -74,9 +76,9 @@ double DTBRules<MetricType, TreeType>::BaseCase(const size_t queryIndex,
   return newUpperBound;
 }
 
-template<typename MetricType, typename TreeType>
-double DTBRules<MetricType, TreeType>::Score(const size_t queryIndex,
-                                             TreeType& referenceNode)
+template<typename DistanceType, typename TreeType>
+double DTBRules<DistanceType, TreeType>::Score(const size_t queryIndex,
+                                               TreeType& referenceNode)
 {
   size_t queryComponentIndex = connections.Find(queryIndex);
 
@@ -96,10 +98,10 @@ double DTBRules<MetricType, TreeType>::Score(const size_t queryIndex,
       ? DBL_MAX : distance;
 }
 
-template<typename MetricType, typename TreeType>
-double DTBRules<MetricType, TreeType>::Rescore(const size_t queryIndex,
-                                               TreeType& /* referenceNode */,
-                                               const double oldScore)
+template<typename DistanceType, typename TreeType>
+double DTBRules<DistanceType, TreeType>::Rescore(const size_t queryIndex,
+                                                 TreeType& /* referenceNode */,
+                                                 const double oldScore)
 {
   // We don't need to check component membership again, because it can't
   // change inside a single iteration.
@@ -107,9 +109,9 @@ double DTBRules<MetricType, TreeType>::Rescore(const size_t queryIndex,
       ? DBL_MAX : oldScore;
 }
 
-template<typename MetricType, typename TreeType>
-double DTBRules<MetricType, TreeType>::Score(TreeType& queryNode,
-                                             TreeType& referenceNode)
+template<typename DistanceType, typename TreeType>
+double DTBRules<DistanceType, TreeType>::Score(TreeType& queryNode,
+                                               TreeType& referenceNode)
 {
   // If all the queries belong to the same component as all the references
   // then we prune.
@@ -127,10 +129,10 @@ double DTBRules<MetricType, TreeType>::Score(TreeType& queryNode,
   return (bound < distance) ? DBL_MAX : distance;
 }
 
-template<typename MetricType, typename TreeType>
-double DTBRules<MetricType, TreeType>::Rescore(TreeType& queryNode,
-                                               TreeType& /* referenceNode */,
-                                               const double oldScore) const
+template<typename DistanceType, typename TreeType>
+double DTBRules<DistanceType, TreeType>::Rescore(TreeType& queryNode,
+                                                 TreeType& /* referenceNode */,
+                                                 const double oldScore) const
 {
   const double bound = CalculateBound(queryNode);
   return (oldScore > bound) ? DBL_MAX : oldScore;
@@ -138,8 +140,8 @@ double DTBRules<MetricType, TreeType>::Rescore(TreeType& queryNode,
 
 // Calculate the bound for a given query node in its current state and update
 // it.
-template<typename MetricType, typename TreeType>
-inline double DTBRules<MetricType, TreeType>::CalculateBound(
+template<typename DistanceType, typename TreeType>
+inline double DTBRules<DistanceType, TreeType>::CalculateBound(
     TreeType& queryNode) const
 {
   double worstPointBound = -DBL_MAX;

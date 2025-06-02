@@ -10,7 +10,7 @@ Further useful mlpack documentation links are given below.
 
  - [mlpack homepage](https://www.mlpack.org/)
  - [mlpack on Github](https://github.com/mlpack/mlpack)
- - [mlpack main documentation page](https://www.mlpack.org/docs.html)
+ - [mlpack main documentation page](https://www.mlpack.org/doc/index.html)
 
 See also the quickstart guide for Python:
 
@@ -222,7 +222,7 @@ Because the estimator computes a predictive distribution instead of a simple poi
 
  - [Bayesian Interpolation](https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf)
  - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
- - [BayesianLinearRegression C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/bayesian_linear_regression/bayesian_linear_regression.hpp)
+ - [BayesianLinearRegression C++ class documentation](../../user/methods/bayesian_linear_regression.md)
 
 ## cf()
 {: #cf }
@@ -500,7 +500,7 @@ Then, to use that model to classify points in `'test_set'` and print the test er
 
  - [Random forest](#random_forest)
  - [Decision trees on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
- - [Induction of Decision Trees (pdf)](http://www.cs.bc.edu/~alvarez/ML/QuinlanID3Paper.pdf)
+ - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
  - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
 
 ## det()
@@ -1235,7 +1235,7 @@ Then, this tree may be used to make predictions on the test set `'test_set'`, sa
  - [decision_tree()](#decision_tree)
  - [random_forest()](#random_forest)
  - [Mining High-Speed Data Streams (pdf)](http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf)
- - [HoeffdingTree class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp)
+ - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
 
 ## kde()
 {: #kde }
@@ -1327,7 +1327,7 @@ In addition to the last program call, it is also possible to activate Monte Carl
  - [knn()](#knn)
  - [Kernel density estimation on Wikipedia](https://en.wikipedia.org/wiki/Kernel_density_estimation)
  - [Tree-Independent Dual-Tree Algorithms](https://arxiv.org/pdf/1304.4327)
- - [Fast High-dimensional Kernel Summations Using the Monte Carlo Multipole Method](http://papers.nips.cc/paper/3539-fast-high-dimensional-kernel-summations-using-the-monte-carlo-multipole-method.pdf)
+ - [Fast High-dimensional Kernel Summations Using the Monte Carlo Multipole Method](https://proceedings.neurips.cc/paper_files/paper/2008/file/39059724f73a9969845dfe4146c5660e-Paper.pdf)
  - [KDE C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kde/kde.hpp)
 
 ## kernel_pca()
@@ -1607,7 +1607,7 @@ The following command uses the `'lasso_model'` to provide predicted responses fo
 
  - [linear_regression()](#linear_regression)
  - [Least angle regression (pdf)](https://mlpack.org/papers/lars.pdf)
- - [LARS C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/lars/lars.hpp)
+ - [LARS C++ class documentation](../../user/methods/lars.md)
 
 ## linear_svm()
 {: #linear_svm }
@@ -1701,7 +1701,7 @@ Then, to use that model to predict classes for the dataset '`'test'`', storing t
  - [random_forest()](#random_forest)
  - [logistic_regression()](#logistic_regression)
  - [LinearSVM on Wikipedia](https://en.wikipedia.org/wiki/Support-vector_machine)
- - [LinearSVM C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/linear_svm/linear_svm.hpp)
+ - [LinearSVM C++ class documentation](../../user/methods/linear_svm.md)
 
 ## lmnn()
 {: #lmnn }
@@ -1715,8 +1715,8 @@ Then, to use that model to predict classes for the dataset '`'test'`', storing t
         copy_all_inputs=False, distance=np.empty([0, 0]), input_=np.empty([0,
         0]), k=1, labels=np.empty([0], dtype=np.uint64), linear_scan=False,
         max_iterations=100000, normalize=False, optimizer='amsgrad', passes=50,
-        print_accuracy=False, range=1, rank=0, regularization=0.5, seed=0,
-        step_size=0.01, tolerance=1e-07, verbose=False)
+        print_accuracy=False, rank=0, regularization=0.5, seed=0,
+        step_size=0.01, tolerance=1e-07, update_interval=1, verbose=False)
 >>> centered_data = d['centered_data']
 >>> output = d['output']
 >>> transformed_data = d['transformed_data']
@@ -1744,12 +1744,12 @@ An implementation of Large Margin Nearest Neighbors (LMNN), a distance learning 
 | `optimizer` | [`str`](#doc_str) | Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or 'lbfgs'. | `'amsgrad'` |
 | `passes` | [`int`](#doc_int) | Maximum number of full passes over dataset for AMSGrad, BB_SGD and SGD. | `50` |
 | `print_accuracy` | [`bool`](#doc_bool) | Print accuracies on initial and transformed dataset | `False` |
-| `range` | [`int`](#doc_int) | Number of iterations after which impostors needs to be recalculated | `1` |
 | `rank` | [`int`](#doc_int) | Rank of distance matrix to be optimized.  | `0` |
 | `regularization` | [`float`](#doc_float) | Regularization for LMNN objective function  | `0.5` |
 | `seed` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
 | `step_size` | [`float`](#doc_float) | Step size for AMSGrad, BB_SGD and SGD (alpha). | `0.01` |
 | `tolerance` | [`float`](#doc_float) | Maximum tolerance for termination of AMSGrad, BB_SGD, SGD or L-BFGS. | `1e-07` |
+| `update_interval` | [`int`](#doc_int) | Number of iterations after which impostors need to be recalculated. | `1` |
 | `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
 
 ### Output options
@@ -1769,7 +1769,7 @@ This program implements Large Margin Nearest Neighbors, a distance learning tech
 
 To work, this algorithm needs labeled data.  It can be given as the last row of the input dataset (specified with `input_`), or alternatively as a separate matrix (specified with `labels`).  Additionally, a starting point for optimization (specified with `distance`can be given, having (r x d) dimensionality.  Here r should satisfy 1 <= r <= d, Consequently a Low-Rank matrix will be optimized. Alternatively, Low-Rank distance can be learned by specifying the `rank`parameter (A Low-Rank matrix with uniformly distributed values will be used as initial learning point). 
 
-The program also requires number of targets neighbors to work with ( specified with `k`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `regularization`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `range`).
+The program also requires number of targets neighbors to work with ( specified with `k`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `regularization`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `update_interval`).
 
 Output can either be the learned distance matrix (specified with `output`), or the transformed dataset  (specified with `transformed_data`), or both. Additionally mean-centered dataset (specified with `centered_data`) can be accessed given mean-centering (specified with `center`) is performed on the dataset. Accuracy on initial dataset and final transformed dataset can be printed by specifying the `print_accuracy`parameter. 
 
@@ -1793,10 +1793,10 @@ Example - Let's say we want to learn distance on iris dataset with number of tar
 >>> output = output['output']
 ```
 
-An another program call making use of range & regularization parameter with dataset having labels as last column can be made as: 
+Another program call making use of update interval & regularization parameter with dataset having labels as last column can be made as: 
 
 ```python
->>> output = lmnn(input_=letter_recognition, k=5, range=10,
+>>> output = lmnn(input_=letter_recognition, k=5, update_interval=10,
   regularization=0.4)
 >>> output = output['output']
 ```
@@ -1805,8 +1805,8 @@ An another program call making use of range & regularization parameter with data
 
  - [nca()](#nca)
  - [Large margin nearest neighbor on Wikipedia](https://en.wikipedia.org/wiki/Large_margin_nearest_neighbor)
- - [Distance metric learning for large margin nearest neighbor classification (pdf)](http://papers.nips.cc/paper/2795-distance-metric-learning-for-large-margin-nearest-neighbor-classification.pdf)
- - [LMNN C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/lmnn/lmnn.hpp)
+ - [Distance metric learning for large margin nearest neighbor classification (pdf)](https://proceedings.neurips.cc/paper_files/paper/2005/file/a7f592cef8b130a6967a90617db5681b-Paper.pdf)
+ - [LMNN C++ class documentation](../../user/methods/lmnn.md)
 
 ## local_coordinate_coding()
 {: #local_coordinate_coding }
@@ -1890,7 +1890,7 @@ An LCC model may be saved using the `output_model` output parameter.  Then, to e
 ### See also
 
  - [sparse_coding()](#sparse_coding)
- - [Nonlinear learning using local coordinate coding (pdf)](https://papers.nips.cc/paper/3875-nonlinear-learning-using-local-coordinate-coding.pdf)
+ - [Nonlinear learning using local coordinate coding (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/2afe4567e1bf64d32a5527244d104cea-Paper.pdf)
  - [LocalCoordinateCoding C++ class documentation](../../user/methods/local_coordinate_coding.md)
 
 ## logistic_regression()
@@ -1988,7 +1988,7 @@ Then, to use that model to predict classes for the dataset '`'test'`', storing t
  - [softmax_regression()](#softmax_regression)
  - [random_forest()](#random_forest)
  - [Logistic regression on Wikipedia](https://en.wikipedia.org/wiki/Logistic_regression)
- - [:LogisticRegression C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/logistic_regression/logistic_regression.hpp)
+ - [:LogisticRegression C++ class documentation](../../user/methods/logistic_regression.md)
 
 ## lsh()
 {: #lsh }
@@ -2135,7 +2135,7 @@ For example, to run mean shift clustering on the dataset `'data'` and store the 
  - [dbscan()](#dbscan)
  - [Mean shift on Wikipedia](https://en.wikipedia.org/wiki/Mean_shift)
  - [Mean Shift, Mode Seeking, and Clustering (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=1c168275c59ba382588350ee1443537f59978183)
- - [mlpack::mean_shift::MeanShift C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/mean_shift/mean_shift.hpp)
+ - [mlpack::mean_shift::MeanShift C++ class documentation](../../user/methods/mean_shift.md)
 
 ## nbc()
 {: #nbc }
@@ -2216,7 +2216,7 @@ Then, to use `'nbc_model'` to predict the classes of the dataset `'test_set'` an
  - [softmax_regression()](#softmax_regression)
  - [random_forest()](#random_forest)
  - [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
- - [NaiveBayesClassifier C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp)
+ - [NaiveBayesClassifier C++ class documentation](../../user/methods/naive_bayes_classifier.md)
 
 ## nca()
 {: #nca }
@@ -2290,8 +2290,8 @@ By default, the SGD optimizer is used.
 
  - [lmnn()](#lmnn)
  - [Neighbourhood components analysis on Wikipedia](https://en.wikipedia.org/wiki/Neighbourhood_components_analysis)
- - [Neighbourhood components analysis (pdf)](http://papers.nips.cc/paper/2566-neighbourhood-components-analysis.pdf)
- - [NCA C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/nca/nca.hpp)
+ - [Neighbourhood components analysis (pdf)](https://proceedings.neurips.cc/paper_files/paper/2004/file/42fe880812925e520249e808937738d2-Paper.pdf)
+ - [NCA C++ class documentation](../../user/methods/nca.md)
 
 ## knn()
 {: #knn }
@@ -2523,8 +2523,9 @@ For example, to run NMF on the input matrix `'V'` using the 'multdist' update ru
 
  - [cf()](#cf)
  - [Non-negative matrix factorization on Wikipedia](https://en.wikipedia.org/wiki/Non-negative_matrix_factorization)
- - [Algorithms for non-negative matrix factorization (pdf)](http://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-factorization.pdf)
- - [AMF C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/amf/amf.hpp)
+ - [Algorithms for non-negative matrix factorization (pdf)](https://proceedings.neurips.cc/paper_files/paper/2000/file/f9d1152547c0bde01830b7e8bd60024c-Paper.pdf)
+ - [NMF C++ class documentation](../../user/methods/nmf.md)
+ - [AMF C++ class documentation](../../user/methods/amf.md)
 
 ## pca()
 {: #pca }
@@ -2586,7 +2587,7 @@ For example, to reduce the dimensionality of the matrix `'data'` to 5 dimensions
 ### See also
 
  - [Principal component analysis on Wikipedia](https://en.wikipedia.org/wiki/Principal_component_analysis)
- - [PCA C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/pca/pca.hpp)
+ - [PCA C++ class documentation](../../user/methods/pca.md)
 
 ## perceptron()
 {: #perceptron }
@@ -2660,7 +2661,7 @@ Note that all of the options may be specified at once: predictions may be calcul
 
  - [adaboost()](#adaboost)
  - [Perceptron on Wikipedia](https://en.wikipedia.org/wiki/Perceptron)
- - [Perceptron C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/perceptron/perceptron.hpp)
+ - [Perceptron C++ class documentation](../../user/methods/perceptron.md)
 
 ## preprocess_split()
 {: #preprocess_split }
@@ -3092,7 +3093,7 @@ For example, to perform ICA on the matrix `'X'` with 40 replicates, saving the i
 
  - [Independent component analysis on Wikipedia](https://en.wikipedia.org/wiki/Independent_component_analysis)
  - [ICA using spacings estimates of entropy (pdf)](https://www.jmlr.org/papers/volume4/learned-miller03a/learned-miller03a.pdf)
- - [Radical C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/radical/radical.hpp)
+ - [Radical C++ class documentation](../../user/methods/radical.md)
 
 ## random_forest()
 {: #random_forest }
@@ -3183,7 +3184,7 @@ Then, to use that model to classify points in `'test_set'` and print the test er
  - [softmax_regression()](#softmax_regression)
  - [Random forest on Wikipedia](https://en.wikipedia.org/wiki/Random_forest)
  - [Random forests (pdf)](https://www.eecis.udel.edu/~shatkay/Course/papers/BreimanRandomForests2001.pdf)
- - [RandomForest C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/random_forest/random_forest.hpp)
+ - [RandomForest C++ class documentation](../../user/methods/random_forest.md)
 
 ## krann()
 {: #krann }
@@ -3263,7 +3264,7 @@ The output matrices are organized such that row i and column j in the neighbors 
 
  - [knn()](#knn)
  - [lsh()](#lsh)
- - [Rank-approximate nearest neighbor search: Retaining meaning and speed in high dimensions (pdf)](https://papers.nips.cc/paper/3864-rank-approximate-nearest-neighbor-search-retaining-meaning-and-speed-in-high-dimensions.pdf)
+ - [Rank-approximate nearest neighbor search: Retaining meaning and speed in high dimensions (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/ddb30680a691d157187ee1cf9e896d03-Paper.pdf)
  - [RASearch C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/rann/ra_search.hpp)
 
 ## softmax_regression()
@@ -3347,7 +3348,7 @@ Then, to use `'sr_model'` to classify the test points in `'test_points'`, saving
  - [logistic_regression()](#logistic_regression)
  - [random_forest()](#random_forest)
  - [Multinomial logistic regression (softmax regression) on Wikipedia](https://en.wikipedia.org/wiki/Multinomial_logistic_regression)
- - [SoftmaxRegression C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/softmax_regression/softmax_regression.hpp)
+ - [SoftmaxRegression C++ class documentation](../../user/methods/softmax_regression.md)
 
 ## sparse_coding()
 {: #sparse_coding }
@@ -3434,9 +3435,9 @@ Then, this model could be used to encode a new matrix, `'otherdata'`, and save t
 
  - [local_coordinate_coding()](#local_coordinate_coding)
  - [Sparse dictionary learning on Wikipedia](https://en.wikipedia.org/wiki/Sparse_dictionary_learning)
- - [Efficient sparse coding algorithms (pdf)](http://papers.nips.cc/paper/2979-efficient-sparse-coding-algorithms.pdf)
+ - [Efficient sparse coding algorithms (pdf)](https://proceedings.neurips.cc/paper_files/paper/2006/file/2d71b2ae158c7c5912cc0bbde2bb9d95-Paper.pdf)
  - [Regularization and variable selection via the elastic net](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=46217f372a75dddc2254fdbc6b9418ba3554e453)
- - [SparseCoding C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/sparse_coding/sparse_coding.hpp)
+ - [SparseCoding C++ class documentation](../../user/methods/sparse_coding.md)
 
 ## class Adaboost
 {: #adaboost }

@@ -22,9 +22,9 @@ template<typename MatType = arma::mat>
 class SoftmaxRegressionFunction
 {
  public:
-  typedef typename MatType::elem_type ElemType;
-  typedef typename GetDenseMatType<MatType>::type DenseMatType;
-  typedef typename GetSparseMatType<MatType>::type SpMatType;
+  using ElemType = typename MatType::elem_type;
+  using DenseMatType = typename GetDenseMatType<MatType>::type;
+  using SpMatType = typename GetSparseMatType<MatType>::type;
 
   /**
    * Construct the Softmax Regression objective function with the given

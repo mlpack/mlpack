@@ -22,7 +22,7 @@ namespace mlpack {
 // No data; create a model on an empty dataset.
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 FastMKS<KernelType, MatType, TreeType>::FastMKS(const bool singleMode,
@@ -41,7 +41,7 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(const bool singleMode,
 // No instantiated kernel.
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 FastMKS<KernelType, MatType, TreeType>::FastMKS(
@@ -62,7 +62,7 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(
 // Instantiated kernel.
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 FastMKS<KernelType, MatType, TreeType>::FastMKS(const MatType& referenceSet,
@@ -75,17 +75,17 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(const MatType& referenceSet,
     setOwner(false),
     singleMode(singleMode),
     naive(naive),
-    metric(kernel)
+    distance(kernel)
 {
   // If necessary, the reference tree should be built.  There is no query tree.
   if (!naive)
-    referenceTree = new Tree(referenceSet, metric);
+    referenceTree = new Tree(referenceSet, distance);
 }
 
 // No instantiated kernel.
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 FastMKS<KernelType, MatType, TreeType>::FastMKS(
@@ -109,7 +109,7 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(
 // Instantiated kernel.
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 FastMKS<KernelType, MatType, TreeType>::FastMKS(MatType&& referenceSet,
@@ -122,12 +122,12 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(MatType&& referenceSet,
     setOwner(naive),
     singleMode(singleMode),
     naive(naive),
-    metric(kernel)
+    distance(kernel)
 {
   // If necessary, the reference tree should be built.  There is no query tree.
   if (!naive)
   {
-    referenceTree = new Tree(referenceSet, metric);
+    referenceTree = new Tree(referenceSet, distance);
     referenceSet = &referenceTree->Dataset();
   }
 }
@@ -135,7 +135,7 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(MatType&& referenceSet,
 // One dataset, pre-built tree.
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 FastMKS<KernelType, MatType, TreeType>::FastMKS(Tree* referenceTree,
@@ -146,14 +146,14 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(Tree* referenceTree,
     setOwner(false),
     singleMode(singleMode),
     naive(false),
-    metric(referenceTree->Metric())
+    distance(referenceTree->Distance())
 {
   // Nothing to do.
 }
 
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 FastMKS<KernelType, MatType, TreeType>::FastMKS(const FastMKS& other) :
@@ -163,7 +163,7 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(const FastMKS& other) :
     setOwner(other.referenceTree == NULL),
     singleMode(other.singleMode),
     naive(other.naive),
-    metric(other.metric)
+    distance(other.distance)
 {
   // Set reference set correctly.
   if (referenceTree)
@@ -174,7 +174,7 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(const FastMKS& other) :
 
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 FastMKS<KernelType, MatType, TreeType>::FastMKS(FastMKS&& other) :
@@ -184,7 +184,7 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(FastMKS&& other) :
     setOwner(other.setOwner),
     singleMode(other.singleMode),
     naive(other.naive),
-    metric(std::move(other.metric))
+    distance(std::move(other.distance))
 {
   // Clear information from the other.
   other.referenceSet = NULL;
@@ -197,7 +197,7 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(FastMKS&& other) :
 
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 FastMKS<KernelType, MatType, TreeType>&
@@ -235,7 +235,7 @@ FastMKS<KernelType, MatType, TreeType>::operator=(const FastMKS& other)
 
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 FastMKS<KernelType, MatType, TreeType>&
@@ -249,7 +249,7 @@ FastMKS<KernelType, MatType, TreeType>::operator=(FastMKS&& other)
     setOwner = other.setOwner;
     singleMode = other.singleMode;
     naive = other.naive;
-    metric = std::move(other.metric);
+    distance = std::move(other.distance);
 
     // Clear information from the other.
     other.referenceSet = nullptr;
@@ -264,7 +264,7 @@ FastMKS<KernelType, MatType, TreeType>::operator=(FastMKS&& other)
 
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 FastMKS<KernelType, MatType, TreeType>::~FastMKS()
@@ -278,7 +278,7 @@ FastMKS<KernelType, MatType, TreeType>::~FastMKS()
 
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::Train(const MatType& referenceSet)
@@ -293,14 +293,14 @@ void FastMKS<KernelType, MatType, TreeType>::Train(const MatType& referenceSet)
   {
     if (treeOwner && referenceTree)
       delete referenceTree;
-    referenceTree = new Tree(referenceSet, metric);
+    referenceTree = new Tree(referenceSet, distance);
     treeOwner = true;
   }
 }
 
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::Train(const MatType& referenceSet,
@@ -310,21 +310,21 @@ void FastMKS<KernelType, MatType, TreeType>::Train(const MatType& referenceSet,
     delete this->referenceSet;
 
   this->referenceSet = &referenceSet;
-  this->metric = IPMetric<KernelType>(kernel);
+  this->distance = IPMetric<KernelType>(kernel);
   this->setOwner = false;
 
   if (!naive)
   {
     if (treeOwner && referenceTree)
       delete referenceTree;
-    referenceTree = new Tree(referenceSet, metric);
+    referenceTree = new Tree(referenceSet, distance);
     treeOwner = true;
   }
 }
 
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::Train(MatType&& referenceSet)
@@ -336,7 +336,7 @@ void FastMKS<KernelType, MatType, TreeType>::Train(MatType&& referenceSet)
   {
     if (treeOwner && referenceTree)
       delete referenceTree;
-    referenceTree = new Tree(std::move(referenceSet), metric);
+    referenceTree = new Tree(std::move(referenceSet), distance);
     referenceSet = referenceTree->Dataset();
     treeOwner = true;
     setOwner = false;
@@ -350,7 +350,7 @@ void FastMKS<KernelType, MatType, TreeType>::Train(MatType&& referenceSet)
 
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::Train(MatType&& referenceSet,
@@ -359,13 +359,13 @@ void FastMKS<KernelType, MatType, TreeType>::Train(MatType&& referenceSet,
   if (setOwner)
     delete this->referenceSet;
 
-  this->metric = IPMetric<KernelType>(kernel);
+  this->distance = IPMetric<KernelType>(kernel);
 
   if (!naive)
   {
     if (treeOwner && referenceTree)
       delete referenceTree;
-    referenceTree = new Tree(std::move(referenceSet), metric);
+    referenceTree = new Tree(std::move(referenceSet), distance);
     treeOwner = true;
     setOwner = false;
   }
@@ -378,7 +378,7 @@ void FastMKS<KernelType, MatType, TreeType>::Train(MatType&& referenceSet,
 
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::Train(Tree* tree)
@@ -391,7 +391,7 @@ void FastMKS<KernelType, MatType, TreeType>::Train(Tree* tree)
     delete this->referenceSet;
 
   this->referenceSet = &tree->Dataset();
-  this->metric = IPMetric<KernelType>(tree->Metric().Kernel());
+  this->distance = IPMetric<KernelType>(tree->Distance().Kernel());
   this->setOwner = false;
 
   if (treeOwner && referenceTree)
@@ -403,7 +403,7 @@ void FastMKS<KernelType, MatType, TreeType>::Train(Tree* tree)
 
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::Search(
@@ -445,8 +445,8 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
 
       for (size_t r = 0; r < referenceSet->n_cols; ++r)
       {
-        const double eval = metric.Kernel().Evaluate(querySet.col(q),
-                                                     referenceSet->col(r));
+        const double eval = distance.Kernel().Evaluate(querySet.col(q),
+                                                       referenceSet->col(r));
 
         if (eval > pqueue.top().first)
         {
@@ -472,8 +472,8 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   {
     // Create rules object (this will store the results).  This constructor
     // precalculates each self-kernel value.
-    typedef FastMKSRules<KernelType, Tree> RuleType;
-    RuleType rules(*referenceSet, querySet, k, metric.Kernel());
+    using RuleType = FastMKSRules<KernelType, Tree>;
+    RuleType rules(*referenceSet, querySet, k, distance.Kernel());
 
     typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
@@ -497,7 +497,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
 
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::Search(
@@ -533,8 +533,8 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   indices.set_size(k, queryTree->Dataset().n_cols);
   kernels.set_size(k, queryTree->Dataset().n_cols);
 
-  typedef FastMKSRules<KernelType, Tree> RuleType;
-  RuleType rules(*referenceSet, queryTree->Dataset(), k, metric.Kernel());
+  using RuleType = FastMKSRules<KernelType, Tree>;
+  RuleType rules(*referenceSet, queryTree->Dataset(), k, distance.Kernel());
 
   typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
@@ -548,7 +548,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
 
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::Search(
@@ -575,8 +575,8 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
         if (q == r)
           continue; // Don't return the point as its own candidate.
 
-        const double eval = metric.Kernel().Evaluate(referenceSet->col(q),
-                                                     referenceSet->col(r));
+        const double eval = distance.Kernel().Evaluate(referenceSet->col(q),
+                                                       referenceSet->col(r));
 
         if (eval > pqueue.top().first)
         {
@@ -602,8 +602,8 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   {
     // Create rules object (this will store the results).  This constructor
     // precalculates each self-kernel value.
-    typedef FastMKSRules<KernelType, Tree> RuleType;
-    RuleType rules(*referenceSet, *referenceSet, k, metric.Kernel());
+    using RuleType = FastMKSRules<KernelType, Tree>;
+    RuleType rules(*referenceSet, *referenceSet, k, distance.Kernel());
 
     typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
@@ -630,7 +630,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
 //! Serialize the model.
 template<typename KernelType,
          typename MatType,
-         template<typename TreeMetricType,
+         template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 template<typename Archive>
@@ -654,7 +654,7 @@ void FastMKS<KernelType, MatType, TreeType>::serialize(
     }
 
     ar(CEREAL_POINTER(const_cast<MatType*&>(referenceSet)));
-    ar(CEREAL_NVP(metric));
+    ar(CEREAL_NVP(distance));
   }
   else
   {
@@ -675,7 +675,7 @@ void FastMKS<KernelType, MatType, TreeType>::serialize(
         delete referenceSet;
 
       referenceSet = &referenceTree->Dataset();
-      metric = IPMetric<KernelType>(referenceTree->Metric().Kernel());
+      distance = IPMetric<KernelType>(referenceTree->Distance().Kernel());
       setOwner = false;
     }
   }

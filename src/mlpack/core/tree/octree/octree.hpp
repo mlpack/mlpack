@@ -18,16 +18,16 @@
 
 namespace mlpack {
 
-template<typename MetricType = EuclideanDistance,
+template<typename DistanceType = EuclideanDistance,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat>
 class Octree
 {
  public:
   //! So other classes can use TreeType::Mat.
-  typedef MatType Mat;
+  using Mat = MatType;
   //! The type of element held in MatType.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   //! A single-tree traverser; see single_tree_traverser.hpp.
   template<typename RuleType>
@@ -49,7 +49,7 @@ class Octree
   size_t count;
   //! The minimum bounding rectangle of the points held in the node (and its
   //! children).
-  HRectBound<MetricType> bound;
+  HRectBound<DistanceType, ElemType> bound;
   //! The dataset.
   MatType* dataset;
   //! The parent (NULL if this node is the root).
@@ -60,8 +60,8 @@ class Octree
   ElemType parentDistance;
   //! The distance to the furthest descendant, cached to speed things up.
   ElemType furthestDescendantDistance;
-  //! An instantiated metric.
-  MetricType metric;
+  //! An instantiated distance metric.
+  DistanceType distance;
 
  public:
   /**
@@ -172,8 +172,8 @@ class Octree
   Octree(Octree* parent,
          const size_t begin,
          const size_t count,
-         const arma::vec& center,
-         const double width,
+         const arma::Col<ElemType>& center,
+         const ElemType width,
          const size_t maxLeafSize = 20);
 
   /**
@@ -200,9 +200,15 @@ class Octree
          const size_t begin,
          const size_t count,
          std::vector<size_t>& oldFromNew,
-         const arma::vec& center,
-         const double width,
+         const arma::Col<ElemType>& center,
+         const ElemType width,
          const size_t maxLeafSize = 20);
+
+  /**
+   * A default constructor.  This is meant to only be used with cereal.  This
+   * returns an empty tree with no points!  It is not very useful.
+   */
+  Octree();
 
   /**
    * Copy the given tree.  Be careful!  This may use a lot of memory.
@@ -257,9 +263,9 @@ class Octree
   Octree*& Parent() { return parent; }
 
   //! Return the bound object for this node.
-  const HRectBound<MetricType>& Bound() const { return bound; }
+  const HRectBound<DistanceType, ElemType>& Bound() const { return bound; }
   //! Modify the bound object for this node.
-  HRectBound<MetricType>& Bound() { return bound; }
+  HRectBound<DistanceType, ElemType>& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
@@ -269,8 +275,12 @@ class Octree
   //! Return the number of children in this node.
   size_t NumChildren() const;
 
-  //! Return the metric that this tree uses.
-  MetricType Metric() const { return MetricType(); }
+  //! Return the distance metric that this tree uses.
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  DistanceType Metric() const { return distance; }
+
+  //! Return the distance metric that this tree uses.
+  DistanceType Distance() const { return distance; }
 
   /**
    * Return the index of the nearest child node to the given query point.  If
@@ -393,20 +403,12 @@ class Octree
       typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   //! Store the center of the bounding region in the given vector.
-  void Center(arma::vec& center) const { bound.Center(center); }
+  template<typename VecType>
+  void Center(VecType& center) const { bound.Center(center); }
 
   //! Serialize the tree.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
-
- protected:
-  /**
-   * A default constructor.  This is meant to only be used with
-   * cereal, which is allowed with the friend declaration below.
-   * This does not return a valid treee!  The method must be protected, so that
-   * the serialization shim can work with the default constructor.
-   */
-  Octree();
 
   //! Friend access is given for the default constructor.
   friend class cereal::access;
@@ -420,8 +422,8 @@ class Octree
    * @param width Width of the current node.
    * @param maxLeafSize Maximum number of points allowed in a leaf.
    */
-  void SplitNode(const arma::vec& center,
-                 const double width,
+  void SplitNode(const arma::Col<ElemType>& center,
+                 const ElemType width,
                  const size_t maxLeafSize);
 
   /**
@@ -433,8 +435,8 @@ class Octree
    * @param oldFromNew Mappings from old to new.
    * @param maxLeafSize Maximum number of points allowed in a leaf.
    */
-  void SplitNode(const arma::vec& center,
-                 const double width,
+  void SplitNode(const arma::Col<ElemType>& center,
+                 const ElemType width,
                  std::vector<size_t>& oldFromNew,
                  const size_t maxLeafSize);
 
@@ -446,12 +448,13 @@ class Octree
     struct SplitInfo
     {
       //! Create the SplitInfo object.
-      SplitInfo(const size_t d, const arma::vec& c) : d(d), center(c) {}
+      SplitInfo(const size_t d, const arma::Col<ElemType>& c) :
+          d(d), center(c) {}
 
       //! The dimension we are splitting on.
       size_t d;
       //! The center of the node.
-      const arma::vec& center;
+      const arma::Col<ElemType>& center;
     };
 
     template<typename VecType>

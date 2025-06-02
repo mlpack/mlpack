@@ -33,6 +33,7 @@
 #include <numeric>
 #include <vector>
 #include <queue>
+#include <string>
 
 // But if it's not defined, we'll do it.
 #ifndef M_PI
@@ -84,6 +85,7 @@
 // Now include Armadillo and traits that we use for it.
 #include <armadillo>
 #include <mlpack/core/util/arma_traits.hpp>
+#include <mlpack/core/util/omp_reductions.hpp>
 
 // On Visual Studio, disable C4519 (default arguments for function templates)
 // since it's by default an error, which doesn't even make any sense because
@@ -92,11 +94,16 @@
   #pragma warning(disable : 4519)
 #endif
 
-// This can be removed when Visual Studio supports an OpenMP version with
-// unsigned loop variables.
+// OpenMP usage must be version 3.1 or newer, if it is being used.
 #if (defined(_OPENMP) && (_OPENMP >= 201107))
-  #undef  MLPACK_USE_OPENMP
+  #undef MLPACK_USE_OPENMP
   #define MLPACK_USE_OPENMP
+#elif defined(_OPENMP)
+  #ifdef _MSC_VER
+    #error "mlpack requires OpenMP 3.1+; compile without /OPENMP"
+  #else
+    #error "mlpack requires OpenMP 3.1+; disable OpenMP in your compiler"
+  #endif
 #endif
 
 #endif

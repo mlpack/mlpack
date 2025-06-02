@@ -13,28 +13,27 @@
 #define MLPACK_CORE_TREE_BALLBOUND_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 #include "bound_traits.hpp"
 
 namespace mlpack {
 
 /**
  * Ball bound encloses a set of points at a specific distance (radius) from a
- * specific point (center). MetricType is the custom metric type that defaults
- * to the Euclidean (L2) distance.
+ * specific point (center). DistanceType is the custom distance metric type that
+ * defaults to the Euclidean (L2) distance.
  *
- * @tparam MetricType metric type used in the distance measure.
+ * @tparam DistanceType distance metric type used in the distance measure.
  * @tparam VecType Type of vector (arma::vec or arma::sp_vec or similar).
  */
-template<typename MetricType = LMetric<2, true>,
-         typename VecType = arma::vec>
+template<typename DistanceType = LMetric<2, true>,
+         typename ElemType = double,
+         typename VecType = arma::Col<ElemType>>
 class BallBound
 {
  public:
-  //! The underlying data type.
-  typedef typename VecType::elem_type ElemType;
   //! A public version of the vector type.
-  typedef VecType Vec;
+  using Vec = VecType;
 
  private:
   //! The radius of the ball bound.
@@ -42,15 +41,15 @@ class BallBound
   //! The center of the ball bound.
   VecType center;
   //! The metric used in this bound.
-  MetricType* metric;
+  DistanceType* distance;
 
   /**
-   * To know whether this object allocated memory to the metric member
+   * To know whether this object allocated memory to the distance metric member
    * variable. This will be true except in the copy constructor and the
    * overloaded assignment operator. We need this to know whether we should
-   * delete the metric member variable in the destructor.
+   * delete the distance metric member variable in the destructor.
    */
-  bool ownsMetric;
+  bool ownsDistance;
 
  public:
   //! Empty Constructor.
@@ -178,11 +177,6 @@ class BallBound
   RangeType<ElemType> RangeDistance(const BallBound& other) const;
 
   /**
-   * Expand the bound to include the given node.
-   */
-  const BallBound& operator|=(const BallBound& other);
-
-  /**
    * Expand the bound to include the given point.  The centroid is recalculated
    * to be the center of all of the given points.
    *
@@ -199,9 +193,16 @@ class BallBound
   ElemType Diameter() const { return 2 * radius; }
 
   //! Returns the distance metric used in this bound.
-  const MetricType& Metric() const { return *metric; }
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  const DistanceType& Metric() const { return *distance; }
   //! Modify the distance metric used in this bound.
-  MetricType& Metric() { return *metric; }
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
+  DistanceType& Metric() { return *distance; }
+
+  //! Returns the distance metric used in this bound.
+  const DistanceType& Distance() const { return *distance; }
+  //! Modify the distance metric used in this bound.
+  DistanceType& Distance() { return *distance; }
 
   //! Serialize the bound.
   template<typename Archive>
@@ -209,11 +210,11 @@ class BallBound
 };
 
 //! A specialization of BoundTraits for this bound type.
-template<typename MetricType, typename VecType>
-struct BoundTraits<BallBound<MetricType, VecType>>
+template<typename DistanceType, typename VecType>
+struct BoundTraits<BallBound<DistanceType, VecType>>
 {
   //! These bounds are potentially loose in some dimensions.
-  const static bool HasTightBounds = false;
+  static const bool HasTightBounds = false;
 };
 
 } // namespace mlpack

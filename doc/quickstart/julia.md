@@ -18,7 +18,7 @@ Pkg.add("mlpack")
 
 Building the Julia bindings from scratch is a little more in-depth, though.  For
 information on that, follow the instructions in the
-[main README](../../README.md).
+[installation guide](../user/install.md#compile-bindings-manually).
 
 ## Simple quickstart example
 

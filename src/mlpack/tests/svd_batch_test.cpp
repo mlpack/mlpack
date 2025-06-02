@@ -24,7 +24,7 @@ using namespace arma;
 TEMPLATE_TEST_CASE("SVDBatchConvergenceElementTest", "[SVDBatchTest]", float,
     double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   SpMat<eT> data;
   data.sprandn(100, 100, 0.2);
@@ -67,7 +67,7 @@ class SpecificRandomInitialization
  */
 TEMPLATE_TEST_CASE("SVDBatchMomentumTest", "[SVDBatchTest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   Mat<eT> dataset;
   if (!data::Load("GroupLensSmall.csv", dataset))
@@ -96,11 +96,13 @@ TEMPLATE_TEST_CASE("SVDBatchMomentumTest", "[SVDBatchTest]", float, double)
   SpecificRandomInitialization<Mat<eT>> sri(cleanedData.n_rows, 2,
       cleanedData.n_cols);
 
-  ValidationRMSETermination<SpMat<eT>, Mat<eT>> vrt(cleanedData, 500);
+  // Use only 25 iterations---with momentum, we should be able to get a better
+  // result quickly.
+  ValidationRMSETermination<SpMat<eT>, Mat<eT>> vrt(cleanedData, 500, 1e-5, 25);
   AMF<ValidationRMSETermination<SpMat<eT>, Mat<eT>>,
       SpecificRandomInitialization<Mat<eT>>,
       SVDBatchLearning<Mat<eT>>> amf1(vrt, sri,
-      SVDBatchLearning<Mat<eT>>(0.0009, 0, 0, 0));
+      SVDBatchLearning<Mat<eT>>(0.001, 0, 0, 0));
 
   Mat<eT> m1, m2;
   const double regularRMSE = amf1.Apply(cleanedData, 2, m1, m2);
@@ -108,7 +110,7 @@ TEMPLATE_TEST_CASE("SVDBatchMomentumTest", "[SVDBatchTest]", float, double)
   AMF<ValidationRMSETermination<SpMat<eT>, Mat<eT>>,
       SpecificRandomInitialization<Mat<eT>>,
       SVDBatchLearning<Mat<eT>>> amf2(vrt, sri,
-      SVDBatchLearning<Mat<eT>>(0.0009, 0, 0, 0.8));
+      SVDBatchLearning<Mat<eT>>(0.001, 0, 0, 0.8));
 
   const double momentumRMSE = amf2.Apply(cleanedData, 2, m1, m2);
 
@@ -121,7 +123,7 @@ TEMPLATE_TEST_CASE("SVDBatchMomentumTest", "[SVDBatchTest]", float, double)
 TEMPLATE_TEST_CASE("SVDBatchRegularizationTest", "[SVDBatchTest]", float,
     double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   Mat<eT> dataset;
   if (!data::Load("GroupLensSmall.csv", dataset))

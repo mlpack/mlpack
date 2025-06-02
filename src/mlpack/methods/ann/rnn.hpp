@@ -37,6 +37,7 @@ template<
 class RNN
 {
  public:
+  using CubeType = typename GetCubeType<MatType>::type;
   /**
    * Create the RNN object.
    *
@@ -90,7 +91,7 @@ class RNN
   //! Get the network model.
   const std::vector<Layer<MatType>*>& Network() const
   {
-    return network.Network().Network();
+    return network.Network();
   }
 
   /**
@@ -102,7 +103,7 @@ class RNN
    */
   std::vector<Layer<MatType>*>& Network()
   {
-    return network.Network().Network();
+    return network.Network();
   }
 
   /**
@@ -128,8 +129,8 @@ class RNN
    */
   template<typename OptimizerType, typename... CallbackTypes>
   typename MatType::elem_type Train(
-      arma::Cube<typename MatType::elem_type> predictors,
-      arma::Cube<typename MatType::elem_type> responses,
+      CubeType predictors,
+      CubeType responses,
       OptimizerType& optimizer,
       CallbackTypes&&... callbacks);
 
@@ -156,8 +157,75 @@ class RNN
    */
   template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
   typename MatType::elem_type Train(
-      arma::Cube<typename MatType::elem_type> predictors,
-      arma::Cube<typename MatType::elem_type> responses,
+      CubeType predictors,
+      CubeType responses,
+      CallbackTypes&&... callbacks);
+
+  /**
+   * Train the recurrent network on the given input data using the given
+   * optimizer, given that input sequences may have different lengths.
+   *
+   * This will use the existing model parameters as a starting point for the
+   * optimization. If this is not what you want, then you should access the
+   * parameters vector directly with Parameters() and modify it as desired.
+   *
+   * Note that due to shuffling, training will make a copy of the data, unless
+   * you use `std::move()` to pass the `predictors` and `responses` (that is,
+   * `Train(std::move(predictors), std::move(responses))`).
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions.
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
+   * @param sequenceLengths Length of each input sequences.  Should have size
+   *     `predictors.n_cols`, and all values should be less than or equal to
+   *     `predictors.n_slices`.
+   * @param optimizer Instantiated optimizer used to train the model.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return The final objective of the trained model (NaN or Inf on error).
+   */
+  template<typename OptimizerType, typename... CallbackTypes>
+  typename MatType::elem_type Train(
+      CubeType predictors,
+      CubeType responses,
+      arma::urowvec sequenceLengths,
+      OptimizerType& optimizer,
+      CallbackTypes&&... callbacks);
+
+  /**
+   * Train the recurrent network on the given input data, given that each input
+   * sequence may have a different length.  By default, the RMSProp optimization
+   * algorithm is used, but others can be specified (such as ens::SGD).
+   *
+   * When passing sequences with different lengths, the batch size of the
+   * optimizer must be set to 1; if it is not, an exception will be thrown
+   * during training.
+   *
+   * This will use the existing model parameters as a starting point for the
+   * optimization. If this is not what you want, then you should access the
+   * parameters vector directly with Parameters() and modify it as desired.
+   *
+   * Note that due to shuffling, training will make a copy of the data, unless
+   * you use `std::move()` to pass the `predictors` and `responses` (that is,
+   * `Train(std::move(predictors), std::move(responses))`).
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions.
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
+   * @param sequenceLengths Length of each input sequences.  Should have size
+   *     `predictors.n_cols`, and all values should be less than or equal to
+   *     `predictors.n_slices`.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return The final objective of the trained model (NaN or Inf on error).
+   */
+  template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
+  typename MatType::elem_type Train(
+      CubeType predictors,
+      CubeType responses,
+      arma::urowvec sequenceLengths,
       CallbackTypes&&... callbacks);
 
   /**
@@ -169,9 +237,27 @@ class RNN
    * @param results Matrix to put output predictions of responses into.
    * @param batchSize Batch size to use for prediction.
    */
-  void Predict(const arma::Cube<typename MatType::elem_type>& predictors,
-               arma::Cube<typename MatType::elem_type>& results,
+  void Predict(const CubeType& predictors,
+               CubeType& results,
                const size_t batchSize = 128);
+
+  /**
+   * Predict the responses to a given set of predictors, given that each
+   * sequence can have a different length. The responses will reflect the output
+   * of the given output layer as returned by the output layer function.
+   *
+   * Slices of column `i` of `results` at time indexes greater than
+   * `sequenceLengths[i]` should not be considered valid predictions.
+   *
+   * The batch size is limited to 1 when predicting on sequences of different
+   * lengths.
+   *
+   * @param predictors Input predictors.
+   * @param results Matrix to put output predictions of responses into.
+   */
+  void Predict(const CubeType& predictors,
+               CubeType& results,
+               const arma::urowvec& sequenceLengths);
 
   // Return the nujmber of weights in the model.
   size_t WeightSize() { return network.WeightSize(); }
@@ -233,8 +319,8 @@ class RNN
    * @param responses Target outputs for input variables.
    */
   typename MatType::elem_type Evaluate(
-      const arma::Cube<typename MatType::elem_type>& predictors,
-      const arma::Cube<typename MatType::elem_type>& responses);
+      const CubeType& predictors,
+      const CubeType& responses);
 
   //! Serialize the model.
   template<typename Archive>
@@ -337,9 +423,12 @@ class RNN
    *
    * @param predictors Input data variables.
    * @param responses Outputs results from input data variables.
+   * @param sequenceLengths (Optional) sequence length for each predictor
+   *     sequence.
    */
-  void ResetData(arma::Cube<typename MatType::elem_type> predictors,
-                 arma::Cube<typename MatType::elem_type> responses);
+  void ResetData(CubeType predictors,
+                 CubeType responses,
+                 arma::urowvec sequenceLengths = arma::urowvec());
 
  private:
   // Helper functions.
@@ -351,10 +440,8 @@ class RNN
    */
   void ResetMemoryState(const size_t memorySize, const size_t batchSize);
 
-  //! Set the previous step index of all recurrent layers to `step`.
-  void SetPreviousStep(const size_t step);
   //! Set the current step index of all recurrent layers to `step`.
-  void SetCurrentStep(const size_t step);
+  void SetCurrentStep(const size_t step, const bool end);
 
   //! Number of timesteps to consider for backpropagation through time (BPTT).
   size_t bpttSteps;
@@ -367,14 +454,18 @@ class RNN
   //! occasionally resetting any memory cells.
   FFN<OutputLayerType, InitializationRuleType, MatType> network;
 
-  //! The matrix of data points (predictors).  This member is empty, except
-  //! during training---we must store a local copy of the training data since
-  //! the ensmallen optimizer will not provide training data.
-  arma::Cube<typename MatType::elem_type> predictors;
+  // The matrix of data points (predictors).  These members are empty, except
+  // during training---we must store a local copy of the training data since
+  // the ensmallen optimizer will not provide training data.
+  CubeType predictors;
 
-  //! The matrix of responses to the input data points.  This member is empty,
-  //! except during training.
-  arma::Cube<typename MatType::elem_type> responses;
+  // The matrix of responses to the input data points.  This member is empty,
+  // except during training.
+  CubeType responses;
+
+  // The length of each input sequence.  If this is empty, then every sequence
+  // is assuemd to have the same length (`predictors.n_slices`).
+  arma::urowvec sequenceLengths;
 }; // class RNNType
 
 } // namespace mlpack

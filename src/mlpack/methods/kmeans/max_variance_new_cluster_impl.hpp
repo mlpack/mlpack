@@ -20,23 +20,22 @@ namespace mlpack {
 /**
  * Take action about an empty cluster.
  */
-template<typename MetricType, typename MatType>
+template<typename DistanceType, typename MatType>
 void MaxVarianceNewCluster::EmptyCluster(const MatType& data,
                                          const size_t emptyCluster,
                                          const arma::mat& oldCentroids,
                                          arma::mat& newCentroids,
                                          arma::Col<size_t>& clusterCounts,
-                                         MetricType& metric,
+                                         DistanceType& distance,
                                          const size_t iteration)
 {
   // If necessary, calculate the variances and assignments.
   if (iteration != this->iteration || assignments.n_elem != data.n_cols)
-    Precalculate(data, oldCentroids, clusterCounts, metric);
+    Precalculate(data, oldCentroids, clusterCounts, distance);
   this->iteration = iteration;
 
   // Now find the cluster with maximum variance.
-  arma::uword maxVarCluster = 0;
-  variances.max(maxVarCluster);
+  arma::uword maxVarCluster = variances.index_max();
 
   // If the cluster with maximum variance has variance of 0, then we can't
   // continue.  All the points are the same.
@@ -50,12 +49,12 @@ void MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   {
     if (assignments[i] == maxVarCluster)
     {
-      const double distance = std::pow(metric.Evaluate(data.col(i),
+      const double dist = std::pow(distance.Evaluate(data.col(i),
           newCentroids.col(maxVarCluster)), 2.0);
 
-      if (distance > maxDistance)
+      if (dist > maxDistance)
       {
-        maxDistance = distance;
+        maxDistance = dist;
         furthestPoint = i;
       }
     }
@@ -110,11 +109,11 @@ void MaxVarianceNewCluster::serialize(Archive& /* ar */,
     assignments.set_size(0);
 }
 
-template<typename MetricType, typename MatType>
+template<typename DistanceType, typename MatType>
 void MaxVarianceNewCluster::Precalculate(const MatType& data,
                                          const arma::mat& oldCentroids,
                                          arma::Col<size_t>& clusterCounts,
-                                         MetricType& metric)
+                                         DistanceType& distance)
 {
   // We have to calculate the variances of each cluster and the assignments of
   // each point.  This is most easily done by iterating through the entire
@@ -132,17 +131,17 @@ void MaxVarianceNewCluster::Precalculate(const MatType& data,
 
     for (size_t j = 0; j < oldCentroids.n_cols; ++j)
     {
-      const double distance = metric.Evaluate(data.col(i), oldCentroids.col(j));
+      const double dist = distance.Evaluate(data.col(i), oldCentroids.col(j));
 
-      if (distance < minDistance)
+      if (dist < minDistance)
       {
-        minDistance = distance;
+        minDistance = dist;
         closestCluster = j;
       }
     }
 
     assignments[i] = closestCluster;
-    variances[closestCluster] += std::pow(metric.Evaluate(data.col(i),
+    variances[closestCluster] += std::pow(distance.Evaluate(data.col(i),
         oldCentroids.col(closestCluster)), 2.0);
   }
 

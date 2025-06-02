@@ -17,21 +17,21 @@
 
 namespace mlpack {
 
-template<typename MetricType, typename MatType>
-ElkanKMeans<MetricType, MatType>::ElkanKMeans(const MatType& dataset,
-                                              MetricType& metric) :
+template<typename DistanceType, typename MatType>
+ElkanKMeans<DistanceType, MatType>::ElkanKMeans(const MatType& dataset,
+                                                DistanceType& distance) :
     dataset(dataset),
-    metric(metric),
+    distance(distance),
     distanceCalculations(0)
 {
   // Nothing to do here.
 }
 
 // Run a single iteration of Elkan's algorithm for Lloyd iterations.
-template<typename MetricType, typename MatType>
-double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
-                                                 arma::mat& newCentroids,
-                                                 arma::Col<size_t>& counts)
+template<typename DistanceType, typename MatType>
+double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
+                                                   arma::mat& newCentroids,
+                                                   arma::Col<size_t>& counts)
 {
   // Clear new centroids.
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
@@ -62,15 +62,16 @@ double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
 
   // Step 1: for all centers, compute between-cluster distances.  For all
   // centers, compute s(c) = 1/2 min d(c, c').
+  #pragma omp parallel for schedule(dynamic) reduction(+:distanceCalculations)
   for (size_t i = 0; i < centroids.n_cols; ++i)
   {
     for (size_t j = i + 1; j < centroids.n_cols; ++j)
     {
-      const double distance = metric.Evaluate(centroids.col(i),
-                                              centroids.col(j));
+      const double dist = distance.Evaluate(centroids.col(i),
+                                            centroids.col(j));
       distanceCalculations++;
-      clusterDistances(i, j) = distance;
-      clusterDistances(j, i) = distance;
+      clusterDistances(i, j) = dist;
+      clusterDistances(j, i) = dist;
     }
   }
 
@@ -79,6 +80,8 @@ double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
   minClusterDistances = 0.5 * min(clusterDistances).t();
 
   // Now loop over all points, and see which ones need to be updated.
+  #pragma omp parallel for schedule(dynamic) reduction(matAdd: newCentroids) \
+      reduction(colAdd: counts) reduction(+: distanceCalculations)
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     // Step 2: identify all points such that u(x) <= s(c(x)).
@@ -87,7 +90,6 @@ double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
       // No change needed.  This point must still belong to that cluster.
       counts(assignments[i])++;
       newCentroids.col(assignments[i]) += arma::vec(dataset.col(i));
-      continue;
     }
     else
     {
@@ -110,7 +112,8 @@ double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
         if (mustRecalculate[i])
         {
           mustRecalculate[i] = false;
-          dist = metric.Evaluate(dataset.col(i), centroids.col(assignments[i]));
+          dist = distance.Evaluate(dataset.col(i),
+                                   centroids.col(assignments[i]));
           lowerBounds(assignments[i], i) = dist;
           upperBounds(i) = dist;
           distanceCalculations++;
@@ -132,8 +135,8 @@ double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
             dist > 0.5 * clusterDistances(assignments[i], c))
         {
           // Compute d(x, c).  If d(x, c) < d(x, c(x)) then assign c(x) = c.
-          const double pointDist = metric.Evaluate(dataset.col(i),
-                                                   centroids.col(c));
+          const double pointDist = distance.Evaluate(dataset.col(i),
+                                                     centroids.col(c));
           lowerBounds(c, i) = pointDist;
           distanceCalculations++;
           if (pointDist < dist)
@@ -143,28 +146,30 @@ double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
           }
         }
       }
-    }
 
-    // At this point, we know the new cluster assignment.
-    // Step 4: for each center c, let m(c) be the mean of the points assigned to
-    // c.
-    newCentroids.col(assignments[i]) += arma::vec(dataset.col(i));
-    counts[assignments[i]]++;
+      // At this point, we know the new cluster assignment.
+      // Step 4: for each center c, let m(c) be the mean of the points
+      // assigned to c.
+      newCentroids.col(assignments[i]) += arma::vec(dataset.col(i));
+      counts[assignments[i]]++;
+    }
   }
 
   // Now, normalize and calculate the distance each cluster has moved.
   arma::vec moveDistances(centroids.n_cols);
   double cNorm = 0.0; // Cluster movement for residual.
+  #pragma omp parallel for reduction(+: cNorm, distanceCalculations)
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
     if (counts[c] > 0)
       newCentroids.col(c) /= counts[c];
 
-    moveDistances(c) = metric.Evaluate(newCentroids.col(c), centroids.col(c));
+    moveDistances(c) = distance.Evaluate(newCentroids.col(c), centroids.col(c));
     cNorm += std::pow(moveDistances(c), 2.0);
     distanceCalculations++;
   }
 
+  #pragma omp parallel for
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     // Step 5: for each point x and center c, assign

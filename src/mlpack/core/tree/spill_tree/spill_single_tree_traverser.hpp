@@ -23,15 +23,16 @@
 
 namespace mlpack {
 
-template<typename MetricType,
+template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
+         template<typename HyperplaneDistanceType, typename HyperplaneMatType>
+             class HyperplaneType,
+         template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
 template<typename RuleType, bool Defeatist>
-class SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-    SpillSingleTreeTraverser
+class SpillTree<DistanceType, StatisticType, MatType, HyperplaneType,
+                SplitType>::SpillSingleTreeTraverser
 {
  public:
   /**

@@ -75,8 +75,6 @@ bool Save(const std::vector<std::string>& files,
   return status;
 }
 
-#ifdef MLPACK_HAS_STB
-
 inline bool SaveImage(const std::string& filename,
                       arma::Mat<unsigned char>& image,
                       ImageInfo& info,
@@ -165,29 +163,6 @@ inline bool SaveImage(const std::string& filename,
 
   return status;
 }
-
-#else // MLPACK_HAS_STB
-
-inline bool SaveImage(const std::string& /* filename */,
-                      arma::Mat<unsigned char>& /* image */,
-                      ImageInfo& /* info */,
-                      const bool fatal)
-{
-  if (fatal)
-  {
-    Log::Fatal << "Save(): mlpack was not compiled with STB support, so images "
-        << "cannot be saved!" << std::endl;
-  }
-  else
-  {
-    Log::Warn << "Save(): mlpack was not compiled with STB support, so images "
-        << "cannot be saved!" << std::endl;
-  }
-
-  return false;
-}
-
-#endif
 
 } // namespace data
 } // namespace mlpack

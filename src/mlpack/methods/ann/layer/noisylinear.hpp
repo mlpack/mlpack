@@ -147,13 +147,12 @@ class NoisyLinearType : public Layer<MatType>
 
   //! Locally-stored bias-epsilon parameters.
   MatType biasEpsilon;
-
 }; // class NoisyLinearType
 
 // Convenience typedefs.
 
 // Standard noisy linear layer.
-typedef NoisyLinearType<arma::mat> NoisyLinear;
+using NoisyLinear = NoisyLinearType<arma::mat>;
 
 } // namespace mlpack
 

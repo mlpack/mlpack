@@ -232,7 +232,7 @@ void PrintDocs(const string& bindingName,
 
     unordered_set<string> paramsSet; // to prevent duplicates.
 
-    for(size_t j = 0; j < paramMethods.size(); ++j)
+    for (size_t j = 0; j < paramMethods.size(); ++j)
     {
       PrintParamTable(bindingName + "_" + validMethods[j],
           paramMethods[j], {"name", "type", "description",
@@ -256,7 +256,8 @@ void PrintDocs(const string& bindingName,
     }
 
     cout << "```" << BindingInfo::Language() << endl;
-    cout << example.substr(0, example.size() - 1) << endl; // do not want the last "\n".
+    // do not want the last "\n".
+    cout << example.substr(0, example.size() - 1) << endl;
     cout << "```" << endl;
     cout << endl;
 

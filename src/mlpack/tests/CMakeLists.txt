@@ -57,6 +57,7 @@ add_executable(mlpack_test
   decision_tree_test.cpp
   det_test.cpp
   digamma_test.cpp
+  distance_test.cpp
   distribution_test.cpp
   drusilla_select_test.cpp
   emst_test.cpp
@@ -67,9 +68,10 @@ add_executable(mlpack_test
   hpt_test.cpp
   hoeffding_tree_test.cpp
   hyperplane_test.cpp
-  image_load_test.cpp
+  image_test.cpp
   imputation_test.cpp
   io_test.cpp
+  kde_model_test.cpp
   kde_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
@@ -258,6 +260,8 @@ add_custom_command(TARGET mlpack_test
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/
       ${PROJECT_BINARY_DIR}
+  COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/doc/img/cat.jpg
+      ${PROJECT_BINARY_DIR}/
 )
 
 add_custom_command(TARGET mlpack_test
@@ -267,6 +271,7 @@ add_custom_command(TARGET mlpack_test
   COMMAND ${CMAKE_COMMAND} -E tar xjf digits_test.tar.bz2
   COMMAND ${CMAKE_COMMAND} -E tar xjf digits_train_label.tar.bz2
   COMMAND ${CMAKE_COMMAND} -E tar xjf digits_test_label.tar.bz2
+  COMMAND ${CMAKE_COMMAND} -E tar xjf sheep.tar.bz2
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
 )
 

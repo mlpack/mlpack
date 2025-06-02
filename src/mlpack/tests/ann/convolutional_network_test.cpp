@@ -72,6 +72,8 @@ TEST_CASE("PaddingTest", "[ConvolutionalNetworktest]")
 {
   arma::mat X;
   X.load("mnist_first250_training_4s_and_9s.csv");
+  // Make sure the data loaded okay.
+  REQUIRE(!X.is_empty());
 
   // Create the network.
   FFN<NegativeLogLikelihood, RandomInitialization> model;
@@ -149,6 +151,8 @@ TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest]")
 {
   arma::mat X;
   X.load("mnist_first250_training_4s_and_9s.csv");
+  // Make sure the data loaded okay.
+  REQUIRE(!X.is_empty());
 
   // Normalize each point since these are images.
   arma::uword nPoints = X.n_cols;
@@ -265,6 +269,8 @@ TEST_CASE("VanillaNetworkBatchSizeTest", "[ConvolutionalNetworkTest]")
 
   arma::mat X;
   X.load("mnist_first250_training_4s_and_9s.csv");
+  // Make sure the data loaded okay.
+  REQUIRE(!X.is_empty());
 
   // Normalize each point since these are images.
   arma::uword nPoints = X.n_cols;
@@ -313,7 +319,7 @@ TEST_CASE("VanillaNetworkBatchSizeTest", "[ConvolutionalNetworkTest]")
 
     // Now compute results with a batch size of 1.
     arma::mat singleResults(results.n_rows, results.n_cols);
-    arma::mat singleGradient(gradient.n_rows, gradient.n_cols, arma::fill::zeros);
+    arma::mat singleGradient(gradient.n_rows, gradient.n_cols);
     double singleObj = 0.0;
 
     for (size_t i = 0; i < batchSize; ++i)
@@ -348,6 +354,8 @@ TEST_CASE("CheckCopyVanillaNetworkTest", "[ConvolutionalNetworkTest]")
 {
   arma::mat X;
   X.load("mnist_first250_training_4s_and_9s.csv");
+  // Make sure the data loaded okay.
+  REQUIRE(!X.is_empty());
 
   // Normalize each point since these are images.
   arma::uword nPoints = X.n_cols;

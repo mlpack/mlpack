@@ -34,125 +34,124 @@
 template<typename VecType>
 struct IsVector
 {
-  const static bool value = false;
+  static const bool value = false;
 };
 
 template<typename MatType>
 struct IsMatrix
 {
-  const static bool value = false;
+  static const bool value = false;
 };
 
 template<typename CubeType>
 struct IsCube
 {
-  const static bool value = false;
+  static const bool value = false;
 };
 
-// Commenting out the first template per case, because
-// Visual Studio doesn't like this instantiaion pattern (error C2910).
-// template<>
+template<typename FieldType>
+struct IsField
+{
+  static const bool value = false;
+};
+
+template<typename T>
+struct IsAnyArmaBaseType
+{
+  static const bool value = IsVector<T>::value || IsMatrix<T>::value ||
+      IsCube<T>::value || IsField<T>::value;
+};
+
 template<typename eT>
 struct IsVector<arma::Col<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsVector<arma::SpCol<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsVector<arma::Row<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsVector<arma::SpRow<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsVector<arma::subview_col<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsVector<arma::subview_row<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
+};
+
+template<typename eT>
+struct IsVector<arma::SpSubview_col<eT> >
+{
+  static const bool value = true;
+};
+
+template<typename eT>
+struct IsVector<arma::SpSubview_row<eT> >
+{
+  static const bool value = true;
 };
 
 template<typename eT>
 struct IsMatrix<arma::Mat<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
+};
+
+template<typename eT>
+struct IsMatrix<arma::SpMat<eT> >
+{
+  static const bool value = true;
 };
 
 template<typename eT>
 struct IsCube<arma::Cube<eT> >
 {
-  const static bool value = true;
+  static const bool value = true;
 };
 
-
-#if ((ARMA_VERSION_MAJOR >= 10) || \
-    ((ARMA_VERSION_MAJOR == 9) && (ARMA_VERSION_MINOR >= 869)))
-
-  // Armadillo 9.869+ has SpSubview_col and SpSubview_row
-
-  template<typename eT>
-  struct IsVector<arma::SpSubview_col<eT> >
-  {
-    const static bool value = true;
-  };
-
-  template<typename eT>
-  struct IsVector<arma::SpSubview_row<eT> >
-  {
-    const static bool value = true;
-  };
-
-#else
-
-  // fallback for older Armadillo versions
-
-  template<typename eT>
-  struct IsVector<arma::SpSubview<eT> >
-  {
-    const static bool value = true;
-  };
-
-#endif
+template<typename eT>
+struct IsField<arma::field<eT> >
+{
+  static const bool value = true;
+};
 
 // Get the row vector type corresponding to a given MatType.
 
 template<typename MatType>
 struct GetRowType
 {
-  typedef arma::Row<typename MatType::elem_type> type;
+  using type = arma::Row<typename MatType::elem_type>;
 };
 
 template<typename eT>
 struct GetRowType<arma::Mat<eT>>
 {
-  typedef arma::Row<eT> type;
+  using type = arma::Row<eT>;
 };
 
 template<typename eT>
 struct GetRowType<arma::SpMat<eT>>
 {
-  typedef arma::SpRow<eT> type;
+  using type = arma::SpRow<eT>;
 };
 
 // Get the column vector type corresponding to a given MatType.
@@ -160,25 +159,25 @@ struct GetRowType<arma::SpMat<eT>>
 template<typename MatType>
 struct GetColType
 {
-  typedef arma::Col<typename MatType::elem_type> type;
+  using type = arma::Col<typename MatType::elem_type>;
 };
 
 template<typename MatType>
 struct GetUColType
 {
-  typedef arma::Col<arma::uword> type;
+  using type = arma::Col<arma::uword>;
 };
 
 template<typename eT>
 struct GetColType<arma::Mat<eT>>
 {
-  typedef arma::Col<eT> type;
+  using type = arma::Col<eT>;
 };
 
 template<typename eT>
 struct GetColType<arma::SpMat<eT>>
 {
-  typedef arma::SpCol<eT> type;
+  using type = arma::SpCol<eT>;
 };
 
 // Get the dense row vector type corresponding to a given MatType.
@@ -186,13 +185,13 @@ struct GetColType<arma::SpMat<eT>>
 template<typename MatType>
 struct GetDenseRowType
 {
-  typedef typename GetRowType<MatType>::type type;
+  using type = typename GetRowType<MatType>::type;
 };
 
 template<typename eT>
 struct GetDenseRowType<arma::SpMat<eT>>
 {
-  typedef arma::Row<eT> type;
+  using type = arma::Row<eT>;
 };
 
 // Get the dense column vector type corresponding to a given MatType.
@@ -200,13 +199,13 @@ struct GetDenseRowType<arma::SpMat<eT>>
 template<typename MatType>
 struct GetDenseColType
 {
-  typedef typename GetColType<MatType>::type type;
+  using type = typename GetColType<MatType>::type;
 };
 
 template<typename eT>
 struct GetDenseColType<arma::SpMat<eT>>
 {
-  typedef arma::Col<eT> type;
+  using type = arma::Col<eT>;
 };
 
 // Get the dense matrix type corresponding to a given MatType.
@@ -214,19 +213,19 @@ struct GetDenseColType<arma::SpMat<eT>>
 template<typename MatType>
 struct GetDenseMatType
 {
-  typedef arma::Mat<typename MatType::elem_type> type;
+  using type = arma::Mat<typename MatType::elem_type>;
 };
 
 template<typename MatType>
 struct GetUDenseMatType
 {
-  typedef arma::Mat<arma::uword> type;
+  using type = arma::Mat<arma::uword>;
 };
 
 template<typename eT>
 struct GetDenseMatType<arma::SpMat<eT>>
 {
-  typedef arma::Mat<eT> type;
+  using type = arma::Mat<eT>;
 };
 
 // Get the cube type corresponding to a given MatType.
@@ -237,21 +236,31 @@ struct GetCubeType;
 template<typename eT>
 struct GetCubeType<arma::Mat<eT>>
 {
-  typedef arma::Cube<eT> type;
+  using type = arma::Cube<eT>;
 };
+
+#if defined(MLPACK_HAS_COOT)
+
+template<typename eT>
+struct GetCubeType<coot::Mat<eT>>
+{
+  using type = coot::Cube<eT>;
+};
+
+#endif
 
 // Get the sparse matrix type corresponding to a given MatType.
 
 template<typename MatType>
 struct GetSparseMatType
 {
-  typedef arma::SpMat<typename MatType::elem_type> type;
+  using type = arma::SpMat<typename MatType::elem_type>;
 };
 
 template<typename eT>
 struct GetSparseMatType<arma::SpMat<eT>>
 {
-  typedef arma::SpMat<eT> type;
+  using type = arma::SpMat<eT>;
 };
 
 // Get whether or not the given type is a base matrix type (e.g. not an
@@ -298,5 +307,84 @@ struct IsBaseMatType<arma::SpRow<eT>>
 {
   constexpr static bool value = true;
 };
+
+template<typename MatType>
+struct IsSparseMat
+{
+  constexpr static bool value = false;
+};
+
+template<typename eT>
+struct IsSparseMat<arma::SpMat<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename MatType>
+struct IsCol
+{
+  constexpr static bool value = false;
+};
+
+template<typename eT>
+struct IsCol<arma::Col<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename MatType>
+struct IsRow
+{
+  constexpr static bool value = false;
+};
+
+template<typename eT>
+struct IsRow<arma::Row<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename MatType>
+struct IsDense
+{
+  constexpr static bool value = false;
+};
+
+template<typename eT>
+struct IsDense<arma::Mat<eT>>
+{
+  constexpr static bool value = true;
+};
+
+// Get whether or not the given type is any non-field Armadillo type
+// This includes sparse, dense, and cube types
+template<typename T>
+struct IsArma
+{
+  constexpr static bool value = arma::is_arma_type<T>::value ||
+                                arma::is_arma_cube_type<T>::value ||
+                                arma::is_arma_sparse_type<T>::value;
+};
+
+#if defined(MLPACK_HAS_COOT)
+
+// Get whether or not the given type is any Bandicoot type
+// This includes dense and cube types
+template<typename T>
+struct IsCoot
+{
+  constexpr static bool value = coot::is_coot_type<T>::value ||
+                                coot::is_coot_cube_type<T>::value;
+};
+
+#else
+
+template<typename T>
+struct IsCoot
+{
+  constexpr static bool value = false;
+};
+
+#endif
 
 #endif
