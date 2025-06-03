@@ -5,6 +5,24 @@
  *
  * Definition of the GRU layer.
  *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+#ifndef MLPACK_METHODS_ANN_LAYER_GRU_HPP
+#define MLPACK_METHODS_ANN_LAYER_GRU_HPP
+
+#include <list>
+#include <limits>
+
+#include <mlpack/prereqs.hpp>
+
+namespace mlpack {
+
+/**
+ * An implementation of a gru network layer.
+ *
  * For more information, read the following paper:
  *
  * @code
@@ -19,44 +37,17 @@
  * }
  * @endcode
  *
- * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#ifndef MLPACK_METHODS_ANN_LAYER_GRU_HPP
-#define MLPACK_METHODS_ANN_LAYER_GRU_HPP
-
-#include <list>
-#include <limits>
-
-#include <mlpack/prereqs.hpp>
-
-#include "layer_types.hpp"
-#include "add_merge.hpp"
-#include "sequential.hpp"
-
-namespace mlpack {
-
-/**
- * An implementation of a gru network layer.
+ * This cell can be used in RNNs.
  *
- * This cell can be used in RNN networks.
- *
- * @tparam InputType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat
->
-class GRU : public Layer<InputType, OutputType>
+template <typename MatType = arma::mat>
+class GRUType : public RecurrentLayer<MatType>
 {
  public:
-  //! Create the GRU object.
-  GRU();
+  // Create the GRU object.
+  GRUType();
 
   /**
    * Create the GRU layer object using the specified parameters.
@@ -65,9 +56,23 @@ class GRU : public Layer<InputType, OutputType>
    * @param outSize The number of output units.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
-  GRU(const size_t inSize,
-      const size_t outSize,
-      const size_t rho = std::numeric_limits<size_t>::max());
+  GRUType(const size_t inSize,
+          const size_t outSize,
+          const size_t rho = std::numeric_limits<size_t>::max());
+
+  //! Clone the GRUType object. This handles polymorphism correctly.
+  GRUType* Clone() const { return new GRUType(*this); }
+
+  //! Copy the given GRUType object.
+  GRUType(const GRUType& other);
+  //! Take ownership of the given GRUType object's data.
+  GRUType(GRUType&& other);
+  //! Copy the given GRUType object.
+  GRUType& operator=(const GRUType& other);
+  //! Take ownership of the given GRUType object's data.
+  GRUType& operator=(GRUType&& other);
+
+  virtual ~GRUType() { }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -76,7 +81,7 @@ class GRU : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -87,9 +92,9 @@ class GRU : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& /* input */,
-                const OutputType& gy,
-                OutputType& g);
+  void Backward(const MatType& /* input */,
+                const MatType& gy,
+                MatType& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -98,41 +103,32 @@ class GRU : public Layer<InputType, OutputType>
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  void Gradient(const InputType& input,
-                const OutputType& /* error */,
-                OutputType& /* gradient */);
+  void Gradient(const MatType& input,
+                const MatType& /* error */,
+                MatType& /* gradient */);
 
-  /*
-   * Resets the cell to accept a new input. This breaks the BPTT chain starts a
-   * new one.
-   *
-   * @param size The current maximum number of steps through time.
-   */
-  void ResetCell(const size_t size);
+  // Get the parameters.
+  MatType const& Parameters() const { return weights; }
+  // Modify the parameters.
+  MatType& Parameters() { return weights; }
 
-  //! Get the maximum number of steps to backpropagate through time (BPTT).
-  size_t Rho() const { return rho; }
-  //! Modify the maximum number of steps to backpropagate through time (BPTT).
-  size_t& Rho() { return rho; }
+  // Get the total number of trainable parameters.
+  size_t WeightSize() const;
 
-  //! Get the parameters.
-  OutputType const& Parameters() const { return weights; }
-  //! Modify the parameters.
-  OutputType& Parameters() { return weights; }
+  // Get the total number of recurrent state parameters.
+  size_t RecurrentSize() const;
 
-  //! Get the model modules.
-  std::vector<Layer<InputType, OutputType>*>& Model() { return network; }
-
-  //! Get the number of input units.
-  size_t InSize() const { return inSize; }
-
-  //! Get the number of output units.
-  size_t OutSize() const { return outSize; }
-
-  //! Get the shape of the input.
-  size_t InputShape() const
+  // Given a properly set InputDimensions(), compute the output dimensions.
+  void ComputeOutputDimensions()
   {
-    return inSize;
+    inSize = this->inputDimensions[0];
+    for (size_t i = 1; i < this->inputDimensions.size(); ++i)
+      inSize *= this->inputDimensions[i];
+    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+        1);
+
+    // The GRU layer flattens its input.
+    this->outputDimensions[0] = outSize;
   }
 
   /**
@@ -142,81 +138,36 @@ class GRU : public Layer<InputType, OutputType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored number of input units.
+  // Locally-stored number of input units.
   size_t inSize;
 
-  //! Locally-stored number of output units.
+  // Locally-stored number of output units.
   size_t outSize;
 
-  //! Number of steps to backpropagate through time (BPTT).
-  size_t rho;
+  // Locally-stored weight object.
+  MatType weights;
 
-  //! Current batch size.
-  size_t batchSize;
+  // Locally-stored input 2 gate module.
+  RecurrentLayer<MatType>* input2GateModule;
 
-  //! Locally-stored weight object.
-  OutputType weights;
+  // Locally-stored output 2 gate module.
+  RecurrentLayer<MatType>* output2GateModule;
 
-  //! Locally-stored input 2 gate module.
-  Layer<InputType, OutputType>* input2GateModule;
+  // Locally-stored output hidden state 2 gate module.
+  RecurrentLayer<MatType>* outputHidden2GateModule;
 
-  //! Locally-stored output 2 gate module.
-  Layer<InputType, OutputType>* output2GateModule;
+  // Locally-stored input gate module.
+  RecurrentLayer<MatType>* inputGateModule;
 
-  //! Locally-stored output hidden state 2 gate module.
-  Layer<InputType, OutputType>* outputHidden2GateModule;
+  // Locally-stored hidden state module.
+  RecurrentLayer<MatType>* hiddenStateModule;
 
-  //! Locally-stored input gate module.
-  Layer<InputType, OutputType>* inputGateModule;
-
-  //! Locally-stored hidden state module.
-  Layer<InputType, OutputType>* hiddenStateModule;
-
-  //! Locally-stored forget gate module.
-  Layer<InputType, OutputType>* forgetGateModule;
-
-  //! Locally-stored list of network modules.
-  std::vector<Layer<InputType, OutputType>*> network;
-
-  //! Locally-stored number of forward steps.
-  size_t forwardStep;
-
-  //! Locally-stored number of backward steps.
-  size_t backwardStep;
-
-  //! Locally-stored number of gradient steps.
-  size_t gradientStep;
-
-  //! Locally-stored output parameters.
-  std::list<OutputType> outParameter;
-
-  //! Matrix of all zeroes to initialize the output
-  OutputType allZeros;
-
-  //! Iterator pointed to the last output produced by the cell
-  typename std::list<OutputType>::iterator prevOutput;
-
-  //! Iterator pointed to the last output processed by backward
-  typename std::list<OutputType>::iterator backIterator;
-
-  //! Iterator pointed to the last output processed by gradient
-  typename std::list<OutputType>::iterator gradIterator;
-
-  //! Locally-stored previous error.
-  OutputType prevError;
-
-  //! If true dropout and scaling is disabled, see notes above.
-  bool deterministic;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
+  // Locally-stored forget gate module.
+  RecurrentLayer<MatType>* forgetGateModule;
 }; // class GRU
+
+// Standard GRU layer
+using GRU = GRUType<arma::mat>;
 
 } // namespace mlpack
 
