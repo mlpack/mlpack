@@ -24,35 +24,38 @@ namespace data {
 template<typename Derived>
 class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
 {
- public:
-  MatrixOptionsBase(bool noTranspose = defaultNoTranspose) :
+ protected:
+  // Users should not construct a MatrixOptionsBase directly.
+  MatrixOptionsBase(std::optional<bool> noTranspose = std::nullopt) :
       DataOptionsBase<MatrixOptionsBase<Derived>>(),
       noTranspose(noTranspose)
-  {
-    // Do Nothing.
-  }
+  { }
 
-  template<typename Derived2>
-  explicit MatrixOptionsBase(const MatrixOptionsBase<Derived2>& opts) :
+ public:
+  //
+  // Handling for copying and moving MatrixOptionsBase of the exact same type.
+  //
+
+  MatrixOptionsBase(const DataOptionsBase<MatrixOptionsBase<Derived>>& opts) :
       DataOptionsBase<MatrixOptionsBase<Derived>>()
   {
     // Delegate to copy operator.
     *this = opts;
   }
 
-  template<typename Derived2>
-  explicit MatrixOptionsBase(MatrixOptionsBase<Derived2>&& opts) :
+  MatrixOptionsBase(DataOptionsBase<MatrixOptionsBase<Derived>>&& opts) :
       DataOptionsBase<MatrixOptionsBase<Derived>>()
   {
     // Delegate to move operator.
     *this = std::move(opts);
   }
 
-  // Inherit base class constructors.
-  using DataOptionsBase<MatrixOptionsBase<Derived>>::DataOptionsBase;
-
-  MatrixOptionsBase& operator=(const MatrixOptionsBase& other)
+  MatrixOptionsBase& operator=(
+      const DataOptionsBase<MatrixOptionsBase<Derived>>& otherIn)
   {
+    const MatrixOptionsBase& other =
+        static_cast<const MatrixOptionsBase&>(otherIn);
+
     if (&other == this)
       return *this;
 
@@ -63,8 +66,11 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
     return *this;
   }
 
-  MatrixOptionsBase& operator=(MatrixOptionsBase&& other)
+  MatrixOptionsBase& operator=(
+      DataOptionsBase<MatrixOptionsBase<Derived>>&& otherIn)
   {
+    MatrixOptionsBase&& other = static_cast<MatrixOptionsBase&&>(otherIn);
+
     if (&other == this)
       return *this;
 
@@ -74,9 +80,69 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
     return *this;
   }
 
+  //
+  // Handling for copying and moving entirely different DataOptionsBase types.
+  //
+
   template<typename Derived2>
-  MatrixOptionsBase& operator=(const MatrixOptionsBase<Derived2>& other)
+  explicit MatrixOptionsBase(const DataOptionsBase<Derived2>& opts) :
+      DataOptionsBase<MatrixOptionsBase<Derived>>()
   {
+    // Delegate to copy operator.
+    *this = opts;
+  }
+
+  template<typename Derived2>
+  explicit MatrixOptionsBase(DataOptionsBase<Derived2>&& opts) :
+      DataOptionsBase<MatrixOptionsBase<Derived>>()
+  {
+    // Delegate to move operator.
+    *this = std::move(opts);
+  }
+
+  template<typename Derived2>
+  MatrixOptionsBase& operator=(const DataOptionsBase<Derived2>& otherIn)
+  {
+    // Call out to base operator=.
+    return static_cast<MatrixOptionsBase&>(
+        DataOptionsBase<MatrixOptionsBase>::operator=(otherIn));
+  }
+
+  template<typename Derived2>
+  MatrixOptionsBase& operator=(DataOptionsBase<Derived2>&& otherIn)
+  {
+    // Call out to base operator=.
+    return static_cast<MatrixOptionsBase&>(
+        DataOptionsBase<MatrixOptionsBase>::operator=(std::move(otherIn)));
+  }
+
+  //
+  // Handling for copying and moving different child types of MatrixOptionsBase.
+  //
+
+  template<typename Derived2>
+  MatrixOptionsBase(const DataOptionsBase<MatrixOptionsBase<Derived2>>& opts) :
+      DataOptionsBase<MatrixOptionsBase<Derived>>()
+  {
+    // Delegate to copy operator.
+    *this = opts;
+  }
+
+  template<typename Derived2>
+  MatrixOptionsBase(DataOptionsBase<MatrixOptionsBase<Derived2>>&& opts) :
+      DataOptionsBase<MatrixOptionsBase<Derived>>()
+  {
+    // Delegate to move operator.
+    *this = std::move(opts);
+  }
+
+  template<typename Derived2>
+  MatrixOptionsBase& operator=(
+      const DataOptionsBase<MatrixOptionsBase<Derived2>>& otherIn)
+  {
+    const MatrixOptionsBase<Derived2>& other =
+        static_cast<const MatrixOptionsBase<Derived2>&>(otherIn);
+
     if ((void*) &other == (void*) this)
       return *this;
 
@@ -95,8 +161,12 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
   }
 
   template<typename Derived2>
-  MatrixOptionsBase& operator=(MatrixOptionsBase<Derived2>&& other)
+  MatrixOptionsBase& operator=(
+      DataOptionsBase<MatrixOptionsBase<Derived2>>&& otherIn)
   {
+    MatrixOptionsBase<Derived2>&& other =
+        static_cast<MatrixOptionsBase<Derived2>&&>(otherIn);
+
     if ((void*) this == (void*) &other)
       return *this;
 
@@ -110,6 +180,25 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
     DataOptionsBase<MatrixOptionsBase<Derived>>::MoveOptions(std::move(other));
 
     return *this;
+  }
+
+  // Augment with the options of the other `MatrixOptionsBase`.
+  template<typename Derived2>
+  void Combine(const MatrixOptionsBase<Derived2>& other)
+  {
+    // Combine the noTranspose option.
+    noTranspose =
+        DataOptionsBase<MatrixOptionsBase<Derived>>::CombineBooleanOption(
+        noTranspose, other.noTranspose, "NoTranspose()");
+
+    // If the derived type is the same, we can take any options from it.
+    if constexpr (std::is_same_v<Derived, Derived2>)
+    {
+      static_cast<Derived&>(*this).Combine(static_cast<const Derived2&>(other));
+    }
+
+    // If Derived is not the same as Derived2, we will have printed warnings in
+    // the standalone operator+().
   }
 
   void WarnBaseConversion(const char* dataDescription) const
@@ -156,15 +245,44 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
 // This utility class is meant to be used as the Derived parameter for a matrix
 // option that is not actually a derived type.  It provides the
 // WarnBaseConversion() member, which does nothing.
-class EmptyMatrixOptions : public MatrixOptionsBase<EmptyMatrixOptions>
+class PlainMatrixOptions : public MatrixOptionsBase<PlainMatrixOptions>
 {
  public:
+  // Allow access to all public MatrixOptionsBase constructors and operators,
+  // but with the PlainMatrixOptions type name.
+  using MatrixOptionsBase::MatrixOptionsBase;
+  using MatrixOptionsBase::operator=;
+
+  // However, C++ does not allow inheriting copy and move constructors or
+  // operators, and the inherited protected constructor will still be protected,
+  // so forward those manually.
+  PlainMatrixOptions(const std::optional<bool> noTranspose = std::nullopt) :
+      MatrixOptionsBase(noTranspose) { }
+  PlainMatrixOptions(const MatrixOptionsBase<PlainMatrixOptions>& other) :
+      MatrixOptionsBase(other) { }
+  PlainMatrixOptions(MatrixOptionsBase<PlainMatrixOptions>&& other) :
+      MatrixOptionsBase(std::move(other)) { }
+
+  PlainMatrixOptions& operator=(
+      const MatrixOptionsBase<PlainMatrixOptions>& other)
+  {
+    return static_cast<PlainMatrixOptions&>(
+        MatrixOptionsBase::operator=(other));
+  }
+
+  PlainMatrixOptions& operator=(MatrixOptionsBase<PlainMatrixOptions>&& other)
+  {
+    return static_cast<PlainMatrixOptions&>(
+        MatrixOptionsBase::operator=(std::move(other)));
+  }
+
   void WarnBaseConversion(const char* /* dataDescription */) const { }
   static const char* DataDescription() { return "general data"; }
   void Reset() { }
+  void Combine(const PlainMatrixOptions&) { }
 };
 
-using MatrixOptions = MatrixOptionsBase<EmptyMatrixOptions>;
+using MatrixOptions = PlainMatrixOptions;
 
 } // namespace data
 } // namespace mlpack

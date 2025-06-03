@@ -34,15 +34,15 @@ namespace data {
 template<typename Derived>
 class DataOptionsBase
 {
- public:
-  DataOptionsBase(const bool fatal = defaultFatal,
-                  const FileType format = defaultFormat) :
+ protected:
+  // Users should not construct a DataOptionsBase directly.
+  DataOptionsBase(const std::optional<bool> fatal = std::nullopt,
+                  const std::optional<FileType> format = std::nullopt) :
       fatal(fatal),
       format(format)
-  {
-    // Do nothing.
-  }
+  { }
 
+ public:
   template<typename Derived2>
   explicit DataOptionsBase(const DataOptionsBase<Derived2>& opts)
   {
@@ -86,6 +86,63 @@ class DataOptionsBase
 
     MoveOptions(std::move(other));
     return *this;
+  }
+
+  // Augment with the options of the other `DataOptionsBase`.
+  template<typename Derived2>
+  DataOptionsBase& operator+=(const DataOptionsBase<Derived2>& other)
+  {
+    Combine(other);
+    return *this;
+  }
+
+  // Augment with the options of the other `DataOptionsBase`.
+  template<typename Derived2>
+  void Combine(const DataOptionsBase<Derived2>& other)
+  {
+    // Combine the fatal option.
+    fatal = CombineBooleanOption(fatal, other.fatal, "Fatal()");
+
+    // Combine the format option.
+    if (format.has_value() && other.format.has_value())
+    {
+      // There are two cases where we can accept the other's format---when we
+      // are unknown or autodetect.
+      if (format == FileType::FileTypeUnknown)
+      {
+        // Here we always take the other format.
+        format = other.format;
+      }
+      else if (format == FileType::AutoDetect && \
+               other.format != FileType::FileTypeUnknown)
+      {
+        format = other.format;
+      }
+      else if (other.format != FileType::FileTypeUnknown && \
+               other.format != FileType::AutoDetect &&
+               format != other.format)
+      {
+        // In any other case, we won't overwrite one specified format with
+        // another.
+        throw std::invalid_argument("DataOptions::operator+(): cannot combine "
+            "options with formats '" + FileTypeToString() + "' and '" +
+            other.FileTypeToString() + "'!");
+      }
+    }
+    else if (!format.has_value() && other.format.has_value())
+    {
+      // Always take the format of the other if it's unspecified.
+      format = other.format;
+    }
+
+    // If the derived type is the same, we can take any options from it.
+    if constexpr (std::is_same_v<Derived, Derived2>)
+    {
+      static_cast<Derived&>(*this).Combine(static_cast<const Derived2&>(other));
+    }
+
+    // If Derived is not the same as Derived2, we will have printed warnings in
+    // the standalone operator+().
   }
 
   template<typename Derived2>
@@ -187,6 +244,30 @@ class DataOptionsBase
     }
   }
 
+  std::optional<bool> CombineBooleanOption(const std::optional<bool>& a,
+                                           const std::optional<bool>& b,
+                                           const std::string name)
+  {
+    if (a.has_value() && b.has_value() && ((*a) != (*b)))
+    {
+      // If both are set, but not the same, then throw an exception---this is
+      // invalid.
+      throw std::invalid_argument("DataOptions::operator+(): cannot combine "
+          "options where " + name + " is set to true in one object and false "
+          "in the other!");
+    }
+    else if (!a.has_value() && b.has_value())
+    {
+      // If only b is set, take b.
+      return b;
+    }
+    else
+    {
+      // Otherwise, take a (whether or not it is set).
+      return a;
+    }
+  }
+
  private:
   std::optional<bool> fatal;
   std::optional<FileType> format;
@@ -199,19 +280,45 @@ class DataOptionsBase
   friend class DataOptionsBase;
 };
 
-// This utility class is meant to be used as the Derived parameter for an option
-// that is not actually a derived type.  It provides the WarnBaseConversion()
-// member, which does nothing.
-class EmptyOptions : public DataOptionsBase<EmptyOptions>
+// This is the class that should be used if a DataOptions with no extra options
+// is meant to be constructed.
+class PlainDataOptions : public DataOptionsBase<PlainDataOptions>
 {
  public:
+  // Allow access to all DataOptionsBase non-protected constructors and
+  // operators, but with the PlainDataOptions type name.
+  using DataOptionsBase::DataOptionsBase;
+  using DataOptionsBase::operator=;
+
+  // However, C++ does not allow inheriting copy and move constructors or
+  // operators, and any inherited protected constructors will still be
+  // protected, so forward those manually.
+  PlainDataOptions(const std::optional<bool> fatal = std::nullopt,
+                   const std::optional<FileType> format = std::nullopt) :
+      DataOptionsBase(fatal, format) { }
+  PlainDataOptions(const DataOptionsBase<PlainDataOptions>& other) :
+      DataOptionsBase(other) { }
+  PlainDataOptions(DataOptionsBase<PlainDataOptions>&& other) :
+      DataOptionsBase(std::move(other)) { }
+
+  PlainDataOptions& operator=(const DataOptionsBase<PlainDataOptions>& other)
+  {
+    return static_cast<PlainDataOptions&>(DataOptionsBase::operator=(other));
+  }
+
+  PlainDataOptions& operator=(DataOptionsBase<PlainDataOptions>&& other)
+  {
+    return static_cast<PlainDataOptions&>(
+        DataOptionsBase::operator=(std::move(other)));
+  }
+
   void WarnBaseConversion(const char* /* dataDescription */) const { }
   static const char* DataDescription() { return "general data"; }
   void Reset() { }
+  void Combine(const PlainDataOptions&) { }
 };
 
-using DataOptions = DataOptionsBase<EmptyOptions>;
-
+using DataOptions = PlainDataOptions;
 
 } // namespace data
 } // namespace mlpack
