@@ -56,6 +56,7 @@
         mlpack::NaiveConvolution<mlpack::FullConvolution>, \
         mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
         __VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::GRU<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::IdentityType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::LeakyReLUType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::LayerNormType<__VA_ARGS__>); \
