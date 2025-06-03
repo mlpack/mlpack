@@ -28,14 +28,12 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   TextOptions(std::optional<bool> hasHeaders = std::nullopt,
               std::optional<bool> semicolon = std::nullopt,
               std::optional<bool> missingToNan = std::nullopt,
-              std::optional<bool> categorical = std::nullopt,
-              std::optional<bool> missingPolicy = std::nullopt) :
+              std::optional<bool> categorical = std::nullopt) :
       MatrixOptionsBase<TextOptions>(),
       hasHeaders(hasHeaders),
       semicolon(semicolon),
       missingToNan(missingToNan),
-      categorical(categorical),
-      missingPolicy(missingPolicy)
+      categorical(categorical)
   {
     // Do Nothing.
   }
@@ -74,12 +72,9 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
       missingToNan = *other.missingToNan;
     if (other.categorical.has_value())
       categorical = *other.categorical;
-    if (other.missingPolicy.has_value())
-      missingPolicy = *other.missingPolicy;
 
     headers = other.headers;
     datasetInfo = other.datasetInfo;
-    datasetMissingPolicy = other.datasetMissingPolicy;
 
     // Copy base members.
     MatrixOptionsBase<TextOptions>::operator=(other);
@@ -99,11 +94,9 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     semicolon = std::move(other.semicolon);
     missingToNan = std::move(other.missingToNan);
     categorical = std::move(other.categorical);
-    missingPolicy = std::move(other.missingPolicy);
 
     headers = std::move(other.headers);
     datasetInfo = std::move(other.datasetInfo);
-    datasetMissingPolicy = std::move(other.datasetMissingPolicy);
 
     // Move base members.
     MatrixOptionsBase<TextOptions>::operator=(std::move(other));
@@ -189,7 +182,6 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     semicolon.reset();
     missingToNan.reset();
     categorical.reset();
-    missingPolicy.reset();
 
     headers.clear();
     datasetInfo = DatasetInfo();
@@ -241,19 +233,6 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     return this->ModifyMember(categorical, defaultCategorical);
   }
 
-  // Get whether the data should be interpreted as categorical when columns are
-  // not numeric.
-  bool MissingPolicy() const
-  {
-    return this->AccessMember(missingPolicy, defaultMissingPolicy);
-  }
-  // Modify whether the data should be interpreted as missingPolicy when columns
-  // are not numeric.
-  bool& MissingPolicy()
-  {
-    return this->ModifyMember(missingPolicy, defaultMissingPolicy);
-  }
-
   // Get the headers.
   const arma::field<std::string>& Headers() const { return headers; }
   // Modify the headers.
@@ -264,37 +243,21 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   // Modify the DatasetInfo.
   data::DatasetInfo& DatasetInfo() { return datasetInfo; }
 
-  // Get the DatasetInfo for categorical data.
-  const data::DatasetMapper<data::MissingPolicy>& DatasetMissingPolicy() const
-  {
-    return datasetMissingPolicy;
-  }
-
-  // Modify the DatasetMissingPolicy.
-  data::DatasetMapper<data::MissingPolicy>& DatasetMissingPolicy()
-  {
-    return datasetMissingPolicy;
-  }
-
  private:
   std::optional<bool> hasHeaders;
   std::optional<bool> semicolon;
   std::optional<bool> missingToNan;
   std::optional<bool> categorical;
-  std::optional<bool> missingPolicy;
 
   // These are not optional, but if either is specified, then it should be taken
   // to mean that `hasHeaders` or `categorical` has been specified as true.
   arma::field<std::string> headers;
   data::DatasetInfo datasetInfo;
-  // Temporary internal member until MissingPolicy is refactored out.
-  data::DatasetMapper<data::MissingPolicy> datasetMissingPolicy;
 
   constexpr static const bool defaultHasHeaders = false;
   constexpr static const bool defaultSemicolon = false;
   constexpr static const bool defaultMissingToNan = false;
   constexpr static const bool defaultCategorical = false;
-  constexpr static const bool defaultMissingPolicy = false;
 };
 
 } // namespace data
