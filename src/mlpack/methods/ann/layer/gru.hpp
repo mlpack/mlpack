@@ -2,6 +2,7 @@
 /**
  * @file methods/ann/layer/gru.hpp
  * @author Sumedh Ghaisas
+ * @author Zachary Ng
  *
  * Definition of the GRU layer.
  *
@@ -13,15 +14,17 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_GRU_HPP
 #define MLPACK_METHODS_ANN_LAYER_GRU_HPP
 
-#include <list>
-#include <limits>
-
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 
 /**
- * An implementation of a gru network layer.
+ * An implementation of a gru network layer using the following algorithm.
+ * 
+ * z_t = sigmoid(W_z x_t + U_z y_{t - 1})
+ * r_t = sigmoid(W_r x_t + U_r y_{t - 1})
+ * h_t =    tanh(W_h x_t + r_t % (U_h y_{t - 1}))
+ * y_t =        (1 - z_t) % y_{t - 1} + z_t % h_t
  *
  * For more information, read the following paper:
  *
@@ -29,7 +32,7 @@ namespace mlpack {
  * @inproceedings{chung2015gated,
  *    title     = {Gated Feedback Recurrent Neural Networks.},
  *    author    = {Chung, Junyoung and G{\"u}l{\c{c}}ehre, Caglar and Cho,
-                  Kyunghyun and Bengio, Yoshua},
+ *                Kyunghyun and Bengio, Yoshua},
  *    booktitle = {ICML},
  *    pages     = {2067--2075},
  *    year      = {2015},
@@ -52,27 +55,29 @@ class GRUType : public RecurrentLayer<MatType>
   /**
    * Create the GRU layer object using the specified parameters.
    *
-   * @param inSize The number of input units.
    * @param outSize The number of output units.
-   * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
-  GRUType(const size_t inSize,
-          const size_t outSize,
-          const size_t rho = std::numeric_limits<size_t>::max());
+  GRUType(const size_t outSize);
 
-  //! Clone the GRUType object. This handles polymorphism correctly.
+  // Clone the GRUType object. This handles polymorphism correctly.
   GRUType* Clone() const { return new GRUType(*this); }
 
-  //! Copy the given GRUType object.
+  // Copy the given GRUType object.
   GRUType(const GRUType& other);
-  //! Take ownership of the given GRUType object's data.
+  // Take ownership of the given GRUType object's data.
   GRUType(GRUType&& other);
-  //! Copy the given GRUType object.
+  // Copy the given GRUType object.
   GRUType& operator=(const GRUType& other);
-  //! Take ownership of the given GRUType object's data.
+  // Take ownership of the given GRUType object's data.
   GRUType& operator=(GRUType&& other);
 
   virtual ~GRUType() { }
+
+  /**
+   * Reset the layer parameter. The method is called to
+   * assign the allocated memory to the internal learnable parameters.
+   */
+  void SetWeights(const MatType& weightsIn);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -88,24 +93,26 @@ class GRUType : public RecurrentLayer<MatType>
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param * (input) The propagated input activation.
-   * @param gy The backpropagated error.
-   * @param g The calculated gradient.
+   * @param input The input data (x) given to the forward pass.
+   * @param output The propagated data (f(x)) resulting from Forward()
+   * @param gy Propagated error from next layer.
+   * @param g Matrix to store propagated error in for previous layer.
    */
-  void Backward(const MatType& /* input */,
+  void Backward(const MatType& input,
+                const MatType& output,
                 const MatType& gy,
                 MatType& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
    *
-   * @param input The input parameter used for calculating the gradient.
-   * @param error The calculated error.
-   * @param gradient The calculated gradient.
+   * @param input Original input data provided to Forward().
+   * @param error Error as computed by `Backward()`.
+   * @param gradient Matrix to store the gradients in.
    */
   void Gradient(const MatType& input,
-                const MatType& /* error */,
-                MatType& /* gradient */);
+                const MatType& error,
+                MatType& gradient);
 
   // Get the parameters.
   MatType const& Parameters() const { return weights; }
@@ -147,23 +154,25 @@ class GRUType : public RecurrentLayer<MatType>
   // Locally-stored weight object.
   MatType weights;
 
-  // Locally-stored input 2 gate module.
-  RecurrentLayer<MatType>* input2GateModule;
+  // Weight aliases for input connections.
+  MatType resetGateWeight;
+  MatType updateGateWeight;
+  MatType hiddenGateWeight;
 
-  // Locally-stored output 2 gate module.
-  RecurrentLayer<MatType>* output2GateModule;
+  // Weight aliases for recurrent connections.
+  MatType recurrentResetGateWeight;
+  MatType recurrentUpdateGateWeight;
+  MatType recurrentHiddenGateWeight;
 
-  // Locally-stored output hidden state 2 gate module.
-  RecurrentLayer<MatType>* outputHidden2GateModule;
+  // Recurrent state aliases.
+  MatType resetGate;
+  MatType updateGate;
+  MatType hiddenGate;
+  MatType currentOutput;
+  MatType prevOutput;
 
-  // Locally-stored input gate module.
-  RecurrentLayer<MatType>* inputGateModule;
-
-  // Locally-stored hidden state module.
-  RecurrentLayer<MatType>* hiddenStateModule;
-
-  // Locally-stored forget gate module.
-  RecurrentLayer<MatType>* forgetGateModule;
+  // Makes internal state aliases from the recurrent state.
+  void MakeStateAliases(size_t batchSize);
 }; // class GRU
 
 // Standard GRU layer
