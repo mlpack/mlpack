@@ -16,8 +16,6 @@
 #include <mlpack/core.hpp>
 
 #include "neighbor_search_stat.hpp"
-#include "sort_policies/nearest_neighbor_sort.hpp"
-#include "sort_policies/furthest_neighbor_sort.hpp"
 #include "neighbor_search_rules.hpp"
 #include "unmap.hpp"
 
@@ -116,7 +114,7 @@ class NeighborSearch
    *
    * This method will copy the given tree. When copies must absolutely be
    * avoided, you can avoid this copy, while taking ownership of the given tree,
-   * by passing std::move(yourReferenceTree)
+   * by passing std::move(yourReferenceTree).
    *
    * @note
    * Mapping the points of the matrix back to their original indices is not done
@@ -127,12 +125,21 @@ class NeighborSearch
    * @param referenceTree Pre-built tree for reference points.
    * @param mode Neighbor search mode.
    * @param epsilon Relative approximate error (non-negative).
-   * @param distance Instantiated distance metric.
    */
   NeighborSearch(Tree referenceTree,
                  const NeighborSearchMode mode = DUAL_TREE_MODE,
-                 const double epsilon = 0,
-                 const DistanceType distance = DistanceType());
+                 const double epsilon = 0);
+
+  // This version is kept around for reverse compatibility; but, if you are
+  // passing a distance, you should use the overload above, which will just use
+  // the distance directly from the given tree.
+  [[deprecated("Will be removed in mlpack 5.0.0.  Use the version without "
+               "`distance` instead (`referenceTree.Distance()` will be used as "
+               "the distance metric).")]]
+  NeighborSearch(Tree referenceTree,
+                 const NeighborSearchMode mode,
+                 const double epsilon,
+                 const DistanceType distance);
 
   /**
    * Create a NeighborSearch object without any reference data.  If Search() is
@@ -213,8 +220,8 @@ class NeighborSearch
    *
    * If querySet contains only a few query points, the extra cost of building a
    * tree on the points for dual-tree search may not be warranted, and it may be
-   * worthwhile to set singleMode = false (either in the constructor or with
-   * SingleMode()).
+   * worthwhile to set mode to SINGLE_TREE_MODE (either in the constructor or
+   * with SearchMode()).
    *
    * @param querySet Set of query points (can be just one point).
    * @param k Number of neighbors to search for.
@@ -310,6 +317,11 @@ class NeighborSearch
   template<typename IndexType = size_t>
   static double Recall(arma::Mat<IndexType>& foundNeighbors,
                        arma::Mat<IndexType>& realNeighbors);
+
+  // Reset all bounding quantities in a prebuilt external tree.
+  // When calling Search() multiple times with a prebuilt query tree, this must
+  // be called between each Search() invocation!
+  static void ResetTree(Tree& tree);
 
   //! Return the total number of base case evaluations performed during the last
   //! search.
