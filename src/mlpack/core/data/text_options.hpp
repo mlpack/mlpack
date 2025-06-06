@@ -204,7 +204,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     return this->AccessMember(semicolon, defaultSemicolon);
   }
   // Modify the separator type in the matrix.
-  bool& SemiColon()
+  bool& Semicolon()
   {
     return this->ModifyMember(semicolon, defaultSemicolon);
   }
@@ -262,7 +262,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
 
 // Boolean options
 static const TextOptions HasHeaders   = TextOptions(true);
-static const TextOptions SemiColon    = TextOptions(std::nullopt, true);
+static const TextOptions Semicolon    = TextOptions(std::nullopt, true);
 static const TextOptions MissingToNan = TextOptions(std::nullopt, std::nullopt,
       true);
 static const TextOptions Categorical  = TextOptions(std::nullopt,
