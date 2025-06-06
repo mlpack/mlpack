@@ -3087,6 +3087,25 @@ TEST_CASE("LoadCSVMissingNanTestTransposed", "[LoadSaveTest]")
   remove("test.csv");
 }
 
+TEST_CASE("LoadCSVMissingNanTestTransposedInOptions", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "1, , 3, 4" << std::endl;
+  f << "5, 6, 7, 8" << std::endl;
+  f << "9, 10, 11, 12" << std::endl;
+
+  arma::mat dataset;
+
+  data::Load("test.csv", dataset, NoFatal + Transpose + MissingToNan);
+
+  REQUIRE(dataset.n_rows == 4);
+  REQUIRE(dataset.n_cols == 3);
+  REQUIRE(std::isnan(dataset.at(1, 0)) == true);
+
+  remove("test.csv");
+}
+
 #endif
 
 TEST_CASE("LoadCSVSemiColon", "[LoadSaveTest]")
@@ -3186,6 +3205,26 @@ TEST_CASE("LoadCSVSemiColonMissingToNanHeader", "[LoadSaveTest]")
   REQUIRE(headers.at(1) == "b");
   REQUIRE(headers.at(2) == "c");
   REQUIRE(headers.at(3) == "d");
+  REQUIRE(std::isnan(dataset.at(0, 0)) == true);
+  REQUIRE(std::isnan(dataset.at(0, 1)) == true);
+  remove("test.csv");
+}
+
+TEST_CASE("LoadCSVSemiColonMissingToNanHeaderInOptions", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "a;b;c;d" << std::endl;
+  f << ";;3;4" << std::endl;
+  f << "5;6;7;8" << std::endl;
+
+  arma::mat dataset;
+
+  data::Load("test.csv", dataset,
+      NoFatal + NoTranspose + SemiColon + HasHeaders + MissingToNan);
+
+  REQUIRE(dataset.n_rows == 2);
+  REQUIRE(dataset.n_cols == 4);
   REQUIRE(std::isnan(dataset.at(0, 0)) == true);
   REQUIRE(std::isnan(dataset.at(0, 1)) == true);
   remove("test.csv");

@@ -325,18 +325,26 @@ static const DataOptions Fatal   = DataOptions(true);
 static const DataOptions NoFatal = DataOptions(false);
 
 //! File options
-static const DataOptions CSV        = DataOptions(false, FileType::CSVASCII);
-static const DataOptions PGM_BIN    = DataOptions(false, FileType::PGMBinary);
-static const DataOptions PPM_BIN    = DataOptions(false, FileType::PPMBinary);
-static const DataOptions HDF5_BIN  = DataOptions(false, FileType::HDF5Binary);
-static const DataOptions ARMA_ASCII = DataOptions(false, FileType::ArmaASCII);
-static const DataOptions ARMA_BIN  = DataOptions(false, FileType::ArmaBinary);
-static const DataOptions RAW_ASCII  = DataOptions(false, FileType::RawASCII);
-static const DataOptions BIN_ASCII  = DataOptions(false, FileType::RawBinary);
-static const DataOptions COORD_ASCII =
-    DataOptions(false, FileType::CoordASCII);
-static const DataOptions AutoDetect_File =
-    DataOptions(false, FileType::AutoDetect);
+static const DataOptions CSV        = DataOptions(std::nullopt,
+    FileType::CSVASCII);
+static const DataOptions PGM_BIN    = DataOptions(std::nullopt,
+    FileType::PGMBinary);
+static const DataOptions PPM_BIN    = DataOptions(std::nullopt,
+    FileType::PPMBinary);
+static const DataOptions HDF5_BIN  = DataOptions(std::nullopt,
+    FileType::HDF5Binary);
+static const DataOptions ARMA_ASCII = DataOptions(std::nullopt,
+    FileType::ArmaASCII);
+static const DataOptions ARMA_BIN  = DataOptions(std::nullopt,
+    FileType::ArmaBinary);
+static const DataOptions RAW_ASCII  = DataOptions(std::nullopt,
+    FileType::RawASCII);
+static const DataOptions BIN_ASCII  = DataOptions(std::nullopt,
+    FileType::RawBinary);
+static const DataOptions COORD_ASCII = DataOptions(std::nullopt,
+    FileType::CoordASCII);
+static const DataOptions AutoDetect_File = DataOptions(std::nullopt,
+    FileType::AutoDetect);
 
 } // namespace data
 } // namespace mlpack
