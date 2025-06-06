@@ -3111,6 +3111,24 @@ TEST_CASE("LoadCSVSemiColon", "[LoadSaveTest]")
   remove("test.csv");
 }
 
+TEST_CASE("LoadCSVSemiColonInOptions", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "1; 2; 3; 4" << std::endl;
+  f << "5; 6; 7; 8" << std::endl;
+  f << "9; 10; 11; 12" << std::endl;
+
+  arma::mat dataset;
+
+  data::Load("test.csv", dataset, NoFatal + Transpose + SemiColon);
+
+  REQUIRE(dataset.n_rows == 4);
+  REQUIRE(dataset.n_cols == 3);
+
+  remove("test.csv");
+}
+
 TEST_CASE("LoadCSVSemiColonHeader", "[LoadSaveTest]")
 {
   fstream f;

@@ -260,6 +260,12 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   constexpr static const bool defaultCategorical = false;
 };
 
+// Boolean options
+static const TextOptions HasHeaders   = TextOptions(true);
+static const TextOptions SemiColon    = TextOptions(false, true);
+static const TextOptions MissingToNan = TextOptions(false, false, true);
+static const TextOptions Categorical  = TextOptions(false, false, false, true);
+
 } // namespace data
 } // namespace mlpack
 
