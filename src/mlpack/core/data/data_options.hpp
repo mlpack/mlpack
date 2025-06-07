@@ -320,6 +320,29 @@ class PlainDataOptions : public DataOptionsBase<PlainDataOptions>
 
 using DataOptions = PlainDataOptions;
 
+// Boolean options
+static const DataOptions Fatal   = DataOptions(true);
+static const DataOptions NoFatal = DataOptions(false);
+
+//! File options
+static const DataOptions CSV = DataOptions(std::nullopt, FileType::CSVASCII);
+static const DataOptions PGM = DataOptions(std::nullopt, FileType::PGMBinary);
+static const DataOptions PPM = DataOptions(std::nullopt, FileType::PPMBinary);
+static const DataOptions HDF5 = DataOptions(std::nullopt,
+    FileType::HDF5Binary);
+static const DataOptions ArmaAscii = DataOptions(std::nullopt,
+    FileType::ArmaASCII);
+static const DataOptions ArmaBin = DataOptions(std::nullopt,
+    FileType::ArmaBinary);
+static const DataOptions RawAscii = DataOptions(std::nullopt,
+    FileType::RawASCII);
+static const DataOptions BinAscii = DataOptions(std::nullopt,
+    FileType::RawBinary);
+static const DataOptions CoordAscii = DataOptions(std::nullopt,
+    FileType::CoordASCII);
+static const DataOptions AutoDetect = DataOptions(std::nullopt,
+    FileType::AutoDetect);
+
 } // namespace data
 } // namespace mlpack
 

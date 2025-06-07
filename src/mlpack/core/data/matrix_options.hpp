@@ -284,6 +284,10 @@ class PlainMatrixOptions : public MatrixOptionsBase<PlainMatrixOptions>
 
 using MatrixOptions = PlainMatrixOptions;
 
+// Boolean options.
+static const MatrixOptions Transpose   = MatrixOptions(false);
+static const MatrixOptions NoTranspose = MatrixOptions(true);
+
 } // namespace data
 } // namespace mlpack
 
