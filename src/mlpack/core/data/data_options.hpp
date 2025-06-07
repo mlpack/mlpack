@@ -325,25 +325,22 @@ static const DataOptions Fatal   = DataOptions(true);
 static const DataOptions NoFatal = DataOptions(false);
 
 //! File options
-static const DataOptions CSV        = DataOptions(std::nullopt,
-    FileType::CSVASCII);
-static const DataOptions PGM_BIN    = DataOptions(std::nullopt,
-    FileType::PGMBinary);
-static const DataOptions PPM_BIN    = DataOptions(std::nullopt,
-    FileType::PPMBinary);
-static const DataOptions HDF5_BIN  = DataOptions(std::nullopt,
+static const DataOptions CSV = DataOptions(std::nullopt, FileType::CSVASCII);
+static const DataOptions PGM = DataOptions(std::nullopt, FileType::PGMBinary);
+static const DataOptions PPM = DataOptions(std::nullopt, FileType::PPMBinary);
+static const DataOptions HDF5 = DataOptions(std::nullopt,
     FileType::HDF5Binary);
-static const DataOptions ARMA_ASCII = DataOptions(std::nullopt,
+static const DataOptions ArmaAscii = DataOptions(std::nullopt,
     FileType::ArmaASCII);
-static const DataOptions ARMA_BIN  = DataOptions(std::nullopt,
+static const DataOptions ArmaBin = DataOptions(std::nullopt,
     FileType::ArmaBinary);
-static const DataOptions RAW_ASCII  = DataOptions(std::nullopt,
+static const DataOptions RawAscii = DataOptions(std::nullopt,
     FileType::RawASCII);
-static const DataOptions BIN_ASCII  = DataOptions(std::nullopt,
+static const DataOptions BinAscii = DataOptions(std::nullopt,
     FileType::RawBinary);
-static const DataOptions COORD_ASCII = DataOptions(std::nullopt,
+static const DataOptions CoordAscii = DataOptions(std::nullopt,
     FileType::CoordASCII);
-static const DataOptions AutoDetect_File = DataOptions(std::nullopt,
+static const DataOptions AutoDetect = DataOptions(std::nullopt,
     FileType::AutoDetect);
 
 } // namespace data
