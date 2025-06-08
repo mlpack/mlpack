@@ -15,7 +15,6 @@
 #ifndef MLPACK_CORE_DATA_DETECT_FILE_TYPE_HPP
 #define MLPACK_CORE_DATA_DETECT_FILE_TYPE_HPP
 
-#include "types.hpp"
 #include "extension.hpp"
 #include "string_algorithms.hpp"
 #include "text_options.hpp"
