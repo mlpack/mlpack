@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/layer/gru_impl.hpp
  * @author Sumedh Ghaisas
+ * @author Zachary Ng
  *
  * Implementation of the GRUType class, which implements a gru network
  * layer.
@@ -166,18 +167,19 @@ void GRUType<MatType>::Backward(
   const size_t batchSize = output.n_cols;
   MakeStateAliases(batchSize);
 
-  // Work backwards to get error at each gate
-  MatType deltaPrev = gy % (-1 * updateGate);
+  // Work backwards to get error at each gate.
+  deltaPrev = gy % (-1 * updateGate);
 
-  MatType deltaUpdate = gy % ((-1 * prevOutput) + hiddenGate);
+  deltaUpdate = gy % ((-1 * prevOutput) + hiddenGate);
   deltaUpdate = deltaUpdate % (1 - deltaUpdate);
 
-  MatType deltaHidden = gy % updateGate;
+  deltaHidden = gy % updateGate;
   deltaHidden = 1 - square(tanh(deltaHidden));
 
-  MatType deltaReset = recurrentHiddenGateWeight.t() * deltaHidden;
+  deltaReset = (deltaPrev * recurrentHiddenGateWeight).t() % deltaHidden;
   deltaReset = deltaReset % (1 - deltaReset);
 
+  // Get the layer error.
   g = resetGateWeight.t() * deltaReset +
       updateGateWeight.t() * deltaUpdate +
       hiddenGateWeight.t() * deltaHidden;
@@ -185,11 +187,47 @@ void GRUType<MatType>::Backward(
 
 template<typename MatType>
 void GRUType<MatType>::Gradient(
-    const MatType& /* input */,
+    const MatType& input,
     const MatType& /* error */,
     MatType& gradient)
 {
-  // Compute gradient from partial derivatives.
+  // This implementation assumes that Gradient() is being called immediately
+  // after Backward().
+  size_t offset = 0;
+  // Non recurrent reset gate weights.
+  gradient.submat(offset, 0, resetGateWeight.n_elem - 1, 0) =
+      vectorize(deltaReset * input.t());
+  offset += resetGateWeight.n_elem;
+  // Non recurrent update gate weights.
+  gradient.submat(offset, 0, updateGateWeight.n_elem - 1, 0) =
+      vectorize(deltaUpdate * input.t());
+  offset += updateGateWeight.n_elem;
+  // Non recurrent hidden gate weights.
+  gradient.submat(offset, 0, hiddenGateWeight.n_elem - 1, 0) =
+      vectorize(deltaHidden * input.t());
+  offset += hiddenGateWeight.n_elem;
+
+  // We don't have access to nextDelta at the first step.
+  if (!this->AtFinalStep())
+  {
+    // Recurrent reset gate weights.
+    gradient.submat(offset, 0, recurrentResetGateWeight.n_elem - 1, 0) =
+        vectorize(nextDeltaReset * currentOutput.t());
+    offset += recurrentResetGateWeight.n_elem;
+    // Recurrent update gate weights.
+    gradient.submat(offset, 0, recurrentUpdateGateWeight.n_elem - 1, 0) =
+        vectorize(nextDeltaUpdate * currentOutput.t());
+    offset += recurrentUpdateGateWeight.n_elem;
+    // Recurrent hidden gate weights.
+    gradient.submat(offset, 0, recurrentHiddenGateWeight.n_elem - 1, 0) =
+        vectorize(nextDeltaHidden * currentOutput.t());
+    offset += recurrentHiddenGateWeight.n_elem;
+  }
+
+  // Move delta to nextDelta for next pass.
+  nextDeltaReset = std::move(deltaReset);
+  nextDeltaUpdate = std::move(deltaUpdate);
+  nextDeltaHidden = std::move(deltaHidden);
 }
 
 template<typename MatType>

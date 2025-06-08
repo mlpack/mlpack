@@ -172,9 +172,15 @@ class GRUType : public RecurrentLayer<MatType>
   MatType prevOutput;
 
   // Backwards workspace
-  MatType nextDeltaInputGate;
-  MatType nextDeltaResetGate;
-  MatType nextDeltaHiddenGate;
+  MatType deltaPrev;
+  MatType deltaReset;
+  MatType deltaUpdate;
+  MatType deltaHidden;
+
+  // Backwards workspace of previous step
+  MatType nextDeltaReset;
+  MatType nextDeltaUpdate;
+  MatType nextDeltaHidden;
 
   // Makes internal state aliases from the recurrent state.
   void MakeStateAliases(size_t batchSize);
