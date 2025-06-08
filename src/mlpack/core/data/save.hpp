@@ -107,14 +107,14 @@ bool Save(const std::string& filename,
  * The supported types of files are the same as what is supported by the
  * cereal library:
  *
- *  - json, denoted by .json
- *  - xml, denoted by .xml
- *  - binary, denoted by .bin
+ *  - JSON, denoted by .json
+ *  - XML, denoted by .xml
+ *  - BIN, denoted by .bin
  *
- * The format parameter can take any of the values in the 'format' enum:
- * 'format::autodetect', 'format::json', 'format::xml', and 'format::binary'.
- * The autodetect functionality operates on the file extension (so, "file.txt"
- * would be autodetected as text).
+ * The FileType parameter can take any of the values in the 'FileType' enum:
+ * 'FileType::Autodetect', 'FileType::JSON', 'FileType::XML', and
+ * 'FileType::BIN'. The autodetect functionality operates on the file extension
+ * (so, "file.txt" would be autodetected as text).
  *
  * The name parameter should be specified to indicate the name of the structure
  * to be saved.  If Load() is later called on the generated file, the name used
@@ -129,7 +129,7 @@ bool Save(const std::string& filename,
           const std::string& name,
           T& t,
           const bool fatal = false,
-          format f = format::autodetect,
+          FileType f = FileType::AutoDetect,
           std::enable_if_t<HasSerialize<T>::value>* = 0);
 
 /**

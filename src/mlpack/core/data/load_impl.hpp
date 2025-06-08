@@ -187,12 +187,10 @@ bool Load(const std::string& filename,
     success = LoadMatrix(filename, matrix, stream, txtOpts);
     opts = std::move(txtOpts);
   }
-  else if constexpr (!IsArma<MatType>::value && !IsSparseMat<MatType>::value ||
-      std::is_same_v<DataOptionsType, ModelOptions>)
+  else if constexpr (!IsArma<MatType>::value && !IsSparseMat<MatType>::value)
   {
     std::cout << "should be loading a model" << std::endl;
-    ModelOptions modOpts(opts);
-    success = LoadModel(matrix, modOpts, stream);
+    success = LoadModel(matrix, opts, stream);
   }
   else
   {
@@ -403,25 +401,35 @@ bool LoadCategorical(const std::string& filename,
 
 template<typename Object>
 bool LoadModel(Object& objectToSerialize,
-               ModelOptions& opts,
+               DataOptions& opts,
                std::fstream& stream)
 {
   try
   {
-    if (opts.DataFormat() == format::xml)
+    if (opts.Format() == FileType::AutoDetect)
+    {
+      std::stringstream oss;
+      oss << "Serialization data format is not specified."
+        " Please specify the format to be either BIN, JSON or XML";
+      if (opts.Fatal())
+        Log::Fatal << oss.str() << std::endl;
+      else
+        Log::Warn << oss.str() << std::endl;
+    }
+    else if (opts.Format() == FileType::XML)
     {
       cereal::XMLInputArchive ar(stream);
-      ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
+      ar(cereal::make_nvp("model", objectToSerialize));
     }
-    else if (opts.DataFormat() == format::json)
+    else if (opts.Format() == FileType::JSON)
     {
      cereal::JSONInputArchive ar(stream);
-     ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
+     ar(cereal::make_nvp("model", objectToSerialize));
     }
-    else if (opts.DataFormat() == format::binary)
+    else if (opts.Format() == FileType::BIN)
     {
       cereal::BinaryInputArchive ar(stream);
-      ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
+      ar(cereal::make_nvp("model", objectToSerialize));
     }
 
     return true;
