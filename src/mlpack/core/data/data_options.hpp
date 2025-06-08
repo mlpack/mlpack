@@ -16,7 +16,6 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "types.hpp"
 #include "dataset_mapper.hpp"
 #include "map_policies/map_policies.hpp"
 #include "format.hpp"
@@ -24,6 +23,31 @@
 
 namespace mlpack {
 namespace data {
+
+enum struct FileType
+{
+  FileTypeUnknown,
+  AutoDetect, // attempt to automatically detect the file type
+  RawASCII,   // raw text (ASCII), without a header
+  ArmaASCII,  // Armadillo text format, with a header specifying matrix type and
+              // size
+  CSVASCII,   // comma separated values (CSV), without a header
+  RawBinary,  // raw binary format (machine dependent), without a header
+  ArmaBinary, // Armadillo binary format (machine dependent), with a header
+              // specifying matrix type and size
+  PGMBinary,  // Portable Grey Map (greyscale image)
+  PPMBinary,  // Portable Pixel Map (colour image), used by the field and cube
+              // classes
+  HDF5Binary, // HDF5: open binary format, not specific to Armadillo, which can
+              // store arbitrary data
+  CoordASCII, // simple co-ordinate format for sparse matrices (indices start at
+              // zero)
+  ARFFASCII,  // ARFF data format, with a header specifying information about
+              // categories of the data.
+  JSON,       // Serialize data using Cereal library into JSON format.
+  XML,        // Serialize data using Cereal library into xml format.
+  BIN         // Serialize data using Cereal library into binary format.
+};
 
 /**
  * All possible DataOptions grouped under one class.
@@ -185,6 +209,64 @@ class DataOptionsBase
   FileType& Format() { return ModifyMember(format, defaultFormat); }
 
   /**
+   * Given a file type, return Armadillo type corresponding to that file type.
+   */
+  inline arma::file_type ToArmaFileType()
+  {
+    FileType f = format.has_value() ? *format : defaultFormat;
+    switch (f)
+    {
+      case FileType::FileTypeUnknown:
+        return arma::file_type_unknown;
+        break;
+
+      case FileType::AutoDetect:
+        return arma::auto_detect;
+        break;
+
+      case FileType::RawASCII:
+        return arma::raw_ascii;
+        break;
+
+      case FileType::ArmaASCII:
+        return arma::arma_ascii;
+        break;
+
+      case FileType::CSVASCII:
+        return arma::csv_ascii;
+        break;
+
+      case FileType::RawBinary:
+        return arma::raw_binary;
+        break;
+
+      case FileType::ArmaBinary:
+        return arma::arma_binary;
+        break;
+
+      case FileType::PGMBinary:
+        return arma::pgm_binary;
+        break;
+
+      case FileType::PPMBinary:
+        return arma::ppm_binary;
+        break;
+
+      case FileType::HDF5Binary:
+        return arma::hdf5_binary;
+        break;
+
+      case FileType::CoordASCII:
+        return arma::coord_ascii;
+        break;
+
+      default:
+        return arma::file_type_unknown;
+        break;
+    }
+  }
+
+  /**
    * Given a file type, return a logical name corresponding to that file type.
    */
   const std::string FileTypeToString() const
@@ -342,6 +424,9 @@ static const DataOptions CoordAscii = DataOptions(std::nullopt,
     FileType::CoordASCII);
 static const DataOptions AutoDetect = DataOptions(std::nullopt,
     FileType::AutoDetect);
+static const DataOptions JSON = DataOptions(std::nullopt, FileType::JSON);
+static const DataOptions XML  = DataOptions(std::nullopt, FileType::XML);
+static const DataOptions BIN  = DataOptions(std::nullopt, FileType::BIN);
 
 } // namespace data
 } // namespace mlpack

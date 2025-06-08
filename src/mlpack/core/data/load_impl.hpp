@@ -187,6 +187,13 @@ bool Load(const std::string& filename,
     success = LoadMatrix(filename, matrix, stream, txtOpts);
     opts = std::move(txtOpts);
   }
+  else if constexpr (!IsArma<MatType>::value && !IsSparseMat<MatType>::value ||
+      std::is_same_v<DataOptionsType, ModelOptions>)
+  {
+    std::cout << "should be loading a model" << std::endl;
+    ModelOptions modOpts(opts);
+    success = LoadModel(matrix, modOpts, stream);
+  }
   else
   {
     if (opts.Fatal())
@@ -254,7 +261,7 @@ bool LoadDense(const std::string& filename,
         << opts.FileTypeToString() << "; "
         << "but this may not be the actual filetype!" << std::endl;
 
-    success = matrix.load(stream, ToArmaFileType(opts.Format()));
+    success = matrix.load(stream, opts.ToArmaFileType());
     if (!opts.NoTranspose())
       inplace_trans(matrix);
   }
@@ -307,7 +314,7 @@ bool LoadSparse(const std::string& filename,
     // matrix to do that.  If the CSV has three columns, we assume it's a
     // coordinate list.
     arma::Mat<eT> dense;
-    success = dense.load(stream, ToArmaFileType(opts.Format()));
+    success = dense.load(stream, opts.ToArmaFileType());
     if (dense.n_cols == 3)
     {
       arma::umat locations = arma::conv_to<arma::umat>::from(
@@ -321,7 +328,7 @@ bool LoadSparse(const std::string& filename,
   }
   else
   {
-    success = matrix.load(stream, ToArmaFileType(opts.Format()));
+    success = matrix.load(stream, opts.ToArmaFileType());
   }
 
   if (!opts.NoTranspose())
@@ -392,6 +399,42 @@ bool LoadCategorical(const std::string& filename,
   Timer::Stop("loading_data");
 
   return true;
+}
+
+template<typename Object>
+bool LoadModel(Object& objectToSerialize,
+               ModelOptions& opts,
+               std::fstream& stream)
+{
+  try
+  {
+    if (opts.DataFormat() == format::xml)
+    {
+      cereal::XMLInputArchive ar(stream);
+      ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
+    }
+    else if (opts.DataFormat() == format::json)
+    {
+     cereal::JSONInputArchive ar(stream);
+     ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
+    }
+    else if (opts.DataFormat() == format::binary)
+    {
+      cereal::BinaryInputArchive ar(stream);
+      ar(cereal::make_nvp(opts.ObjectName().c_str(), objectToSerialize));
+    }
+
+    return true;
+  }
+  catch (cereal::Exception& e)
+  {
+    if (opts.Fatal())
+      Log::Fatal << e.what() << std::endl;
+    else
+      Log::Warn << e.what() << std::endl;
+
+    return false;
+  }
 }
 
 template<typename MatType>
