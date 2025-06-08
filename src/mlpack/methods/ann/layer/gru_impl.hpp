@@ -115,15 +115,14 @@ void GRUType<MatType>::Forward(const MatType& input, MatType& output)
   // y_t =        (1 - z_t) % y_{t - 1} + z_t % h_t
 
   // Process non recurrent input.
-  resetGate = resetGateWeight * input;
   updateGate = updateGateWeight * input;
+  resetGate = resetGateWeight * input;
 
-  // Process recurrent input.
+  // Add recurrent input.
   if (this->HasPreviousStep())
   {
-    MatType& prevState = this->RecurrentState(this->CurrentStep() - 1);
-    resetGate += recurrentResetGateWeight * prevState;
-    updateGate += recurrentUpdateGateWeight * prevState;
+    resetGate += recurrentResetGateWeight * prevOutput;
+    updateGate += recurrentUpdateGateWeight * prevOutput;
   }
 
   // Apply sigmoid activation function.
@@ -136,8 +135,7 @@ void GRUType<MatType>::Forward(const MatType& input, MatType& output)
   // Add recurrent portion to activation vector.
   if (this->HasPreviousStep())
   {
-    MatType& prevState = this->RecurrentState(this->CurrentStep() - 1);
-    hiddenGate += recurrentHiddenGateWeight * (resetGate % prevState);
+    hiddenGate += recurrentHiddenGateWeight * (resetGate % prevOutput);
   }
 
   // Apply tanh activation function.
@@ -149,8 +147,7 @@ void GRUType<MatType>::Forward(const MatType& input, MatType& output)
   // Add recurrent portion to output.
   if (this->HasPreviousStep())
   {
-    MatType& prevState = this->RecurrentState(this->CurrentStep() - 1);
-    output += (1 - updateGate) % prevState;
+    output += (1 - updateGate) % prevOutput;
   }
 
   // If necessary, store output in recurrent state.
@@ -161,18 +158,36 @@ void GRUType<MatType>::Forward(const MatType& input, MatType& output)
 template<typename MatType>
 void GRUType<MatType>::Backward(
     const MatType& /* input */,
-    const MatType& /* output */,
-    const MatType& /* gy */,
-    MatType& /* g */)
+    const MatType& output,
+    const MatType& gy,
+    MatType& g)
 {
-  // Compute backwards partial derivatives.
+  // Get aliases from the recurrent state.
+  const size_t batchSize = output.n_cols;
+  MakeStateAliases(batchSize);
+
+  // Work backwards to get error at each gate
+  MatType deltaPrev = gy % (-1 * updateGate);
+
+  MatType deltaUpdate = gy % ((-1 * prevOutput) + hiddenGate);
+  deltaUpdate = deltaUpdate % (1 - deltaUpdate);
+
+  MatType deltaHidden = gy % updateGate;
+  deltaHidden = 1 - square(tanh(deltaHidden));
+
+  MatType deltaReset = recurrentHiddenGateWeight.t() * deltaHidden;
+  deltaReset = deltaReset % (1 - deltaReset);
+
+  g = resetGateWeight.t() * deltaReset +
+      updateGateWeight.t() * deltaUpdate +
+      hiddenGateWeight.t() * deltaHidden;
 }
 
 template<typename MatType>
 void GRUType<MatType>::Gradient(
     const MatType& /* input */,
     const MatType& /* error */,
-    MatType& /* gradient */)
+    MatType& gradient)
 {
   // Compute gradient from partial derivatives.
 }

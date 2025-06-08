@@ -110,8 +110,8 @@ class GRUType : public RecurrentLayer<MatType>
    * @param error Error as computed by `Backward()`.
    * @param gradient Matrix to store the gradients in.
    */
-  void Gradient(const MatType& input,
-                const MatType& error,
+  void Gradient(const MatType& /* input */,
+                const MatType& /* error */,
                 MatType& gradient);
 
   // Get the parameters.
@@ -170,6 +170,11 @@ class GRUType : public RecurrentLayer<MatType>
   MatType hiddenGate;
   MatType currentOutput;
   MatType prevOutput;
+
+  // Backwards workspace
+  MatType nextDeltaInputGate;
+  MatType nextDeltaResetGate;
+  MatType nextDeltaHiddenGate;
 
   // Makes internal state aliases from the recurrent state.
   void MakeStateAliases(size_t batchSize);
