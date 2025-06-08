@@ -133,7 +133,7 @@ bool DetectFileType(const std::string& filename,
 
 template<typename MatType, typename DataOptionsType>
 bool SaveMatrix(const MatType& matrix,
-                const DataOptionsType& opts,
+                DataOptionsType& opts,
 #ifdef ARMA_USE_HDF5
                 const std::string& filename,
 #else
@@ -146,12 +146,12 @@ bool SaveMatrix(const MatType& matrix,
   {
 #ifdef ARMA_USE_HDF5
     // We can't save with streams for HDF5.
-    success = matrix.save(filename, ToArmaFileType(opts.Format()));
+    success = matrix.save(filename, opts.ToArmaFileType());
 #endif
   }
   else
   {
-    success = matrix.save(stream, ToArmaFileType(opts.Format()));
+    success = matrix.save(stream, opts.ToArmaFileType());
   }
   return success;
 }
