@@ -590,7 +590,7 @@ typename MatType::elem_type RNN<
       // TODO: note that we could avoid the copy of currentGradient by having
       // each layer *add* its gradient to `gradient`.  However that would
       // require some amount of refactoring.
-      MatType networkDelta;
+      MatType networkDelta(predictors.n_rows, batchSize);
       GradType currentGradient(gradient.n_rows, gradient.n_cols,
           GetFillType<MatType>::zeros);
       network.network.Backward(stepData, outputData, error, networkDelta);
