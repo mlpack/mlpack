@@ -137,7 +137,10 @@ void DAGNetwork<
     MatType
 >::Add(Layer<MatType>* layer)
 {
-  // check if layer exists in layers?
+  // check if layer exists in layers
+  for (size_t i = 0; i < layers.size(); i++)
+    assert(layer != layers[i]);
+
   layers.push_back(layer);
   if (layers.size() > 1)
   {
@@ -146,6 +149,8 @@ void DAGNetwork<
   }
 
   inputDimensionsAreSet = false;
+  graphIsSet = false;
+  layerMemoryIsSet = false;
 }
 
 template<typename OutputLayerType,
@@ -155,17 +160,23 @@ void DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::Add(Layer<MatType>* layer, size_t axis)
+>::Add(Layer<MatType>* layer, size_t concatAxis)
 {
-  // check if layer exists in layers?
+  // check if layer exists in layers
+  for (size_t i = 0; i < layers.size(); i++)
+    assert(layer != layers[i]);
+
   layers.push_back(layer);
   if (layers.size() > 1)
   {
     layerOutputs.push_back(MatType());
     layerInputs.push_back(MatType());
   }
-  layerAxes[layer] = axis;
+  layerAxes[layer] = concatAxis;
+
   inputDimensionsAreSet = false;
+  graphIsSet = false;
+  layerMemoryIsSet = false;
 }
 
 template<typename OutputLayerType,
@@ -177,7 +188,24 @@ void DAGNetwork<
     MatType
 >::Connect(Layer<MatType>* inputLayer, Layer<MatType>* outputLayer)
 {
-  // check if layer exists in layers?
+  assert(inputLayer != outputLayer);
+
+  // check if inputLayer and outputlayer exist in layers
+  bool inputExists = false;
+  bool outputExists = false;
+  for (size_t i = 0; i < layers.size(); i++)
+  {
+    if (layers[i] == inputLayer)
+    {
+      inputExists = true;
+    }
+    else if (layers[i] == outputLayer)
+    {
+      outputExists = true;
+    }
+  }
+  assert(inputExists && outputExists);
+
   if (adjacencyList.count(outputLayer) == 0)
   {
     adjacencyList.insert({outputLayer, {inputLayer}});
@@ -186,7 +214,10 @@ void DAGNetwork<
   {
     adjacencyList[outputLayer].push_back(inputLayer);
   }
+
   inputDimensionsAreSet = false;
+  graphIsSet = false;
+  layerMemoryIsSet = false;
 }
 
 template<typename OutputLayerType,
@@ -402,6 +433,8 @@ const size_t DAGNetwork<
     MatType
 >::WeightSize() const
 {
+  UpdateDimensions("DAGNetwork::WeightSize()");
+
   size_t total = 0;
   for (size_t i = 0; i < layers.size(); i++)
     total += layers[i]->WeightSize();

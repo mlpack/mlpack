@@ -26,6 +26,8 @@ public:
   {
     inputDimensionsAreSet = false;
     graphIsSet = false;
+    layerMemoryIsSet = false;
+
     return inputDimensions;
   }
 
@@ -40,7 +42,10 @@ public:
 
   void Add(Layer<MatType>* layer);
 
-  void Add(Layer<MatType>* layer, size_t axis);
+  template <typename LayerType, typename... Args>
+  void Add(Args... args);
+
+  void Add(Layer<MatType>* layer, size_t concatAxis);
 
   void Connect(Layer<MatType>* inputLayer, Layer<MatType>* outputLayer);
 
