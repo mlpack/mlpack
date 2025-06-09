@@ -172,7 +172,6 @@ class GRUType : public RecurrentLayer<MatType>
   MatType prevOutput;
 
   // Backwards workspace
-  MatType deltaPrev;
   MatType deltaReset;
   MatType deltaUpdate;
   MatType deltaHidden;
