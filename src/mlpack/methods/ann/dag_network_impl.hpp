@@ -91,6 +91,7 @@ DAGNetwork<
     adjacencyList = other.adjacencyList;
     layerAxes = other.layerAxes;
     indices = other.indices;
+    networkOutput = other.networkOutput;
 
     layerMemoryIsSet = false;
   }
@@ -119,6 +120,7 @@ DAGNetwork<OutputLayerType,
     adjacencyList = std::move(other.adjacencyList);
     layerAxes = std::move(other.layerAxes);
     indices = std::move(other.indices);
+    networkOutput = std::move(other.networkOutput);
 
     inputDimensionsAreSet = std::move(other.inputDimensionsAreSet);
     graphIsSet = std::move(other.graphIsSet);
@@ -696,12 +698,13 @@ void DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::Forward(const MatType& input, MatType& output)
+>::Forward(const MatType& input, MatType& results)
 {
   CheckNetwork("DAGNetwork::Forward", input.n_rows);
 
-  output.set_size(network.back()->OutputSize(), input.n_cols);
+  networkOutput.set_size(network.back()->OutputSize(), input.n_cols);
 
+  // equivalent to MultiLayer->Forward()
   if (network.size() > 1)
   {
     InitializeForwardPassMemory(input.n_cols);
@@ -745,17 +748,20 @@ void DAGNetwork<
       if (i < network.size() - 1)
         network[i]->Forward(layerInputs[i-1], layerOutputs[i]);
       else
-        network[i]->Forward(layerInputs[i-1], output);
+        network[i]->Forward(layerInputs[i-1], networkOutput);
     }
   }
   else if (network.size() == 1)
   {
-    network[0]->Forward(input, output);
+    network[0]->Forward(input, networkOutput);
   }
   else
   {
-    output = input;
+    networkOutput = input;
   }
+
+  if (&results != &networkOutput)
+    results = networkOutput;
 }
 
 } // namespace mlpack

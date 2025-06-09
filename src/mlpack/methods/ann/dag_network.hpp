@@ -85,6 +85,8 @@ public:
   OutputLayerType outputLayer;
   InitializationRuleType initializeRule;
 
+  MatType networkOutput;
+
   bool inputDimensionsAreSet;
   bool graphIsSet;
   bool layerMemoryIsSet;
