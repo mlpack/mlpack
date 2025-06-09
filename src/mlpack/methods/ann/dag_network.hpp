@@ -37,7 +37,7 @@ public:
   {
     if (!graphIsSet)
       CheckGraph();
-    return layers;
+    return network;
   }
 
   void Add(Layer<MatType>* layer);
@@ -81,10 +81,10 @@ public:
 
   std::vector<size_t> inputDimensions;
 
-  std::vector<Layer<MatType>*> layers;
+  std::vector<Layer<MatType>*> network;
   std::map<Layer<MatType>*, std::vector<Layer<MatType>*>> adjacencyList;
   std::map<Layer<MatType>*, size_t> layerAxes;
-  std::map<Layer<MatType>*, size_t> indices; // layer, i (i == where in toposorted layers)
+  std::map<Layer<MatType>*, size_t> indices; // layer, i (i == where in toposorted network)
 
   MatType parameters;
 
