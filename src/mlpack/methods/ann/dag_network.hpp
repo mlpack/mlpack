@@ -72,6 +72,8 @@ public:
 
   bool inputDimensionsAreSet;
   bool graphIsSet;
+  bool layerMemoryIsSet;
+
   std::vector<size_t> inputDimensions;
 
   std::vector<Layer<MatType>*> layers;
@@ -80,7 +82,6 @@ public:
   std::map<Layer<MatType>*, size_t> indices; // layer, i (i == where in toposorted layers)
 
   MatType parameters;
-  bool layerMemoryIsSet;
 
   CubeType inputAlias;
   std::vector<CubeType> parentOutputAliases;

@@ -16,7 +16,10 @@ DAGNetwork<
               InitializationRuleType initializeRule) :
     outputLayer(outputLayer),
     initializeRule(initializeRule),
-    inputDimensionsAreSet(false)
+    // These will be set correctly in the first Forward() call.
+    inputDimensionsAreSet(false),
+    layerMemoryIsSet(false),
+    graphIsSet(false)
 {}
 
 template<typename OutputLayerType,
@@ -29,7 +32,16 @@ DAGNetwork<
 >::DAGNetwork(const DAGNetwork& network) :
     outputLayer(network.outputLayer),
     initializeRule(network.initializeRule),
-    inputDimensionsAreSet(false)
+    layers(network.layers),
+    parameters(network.parameters),
+    inputDimensions(network.inputDimensions),
+    adjacencyList(network.adjacencyList),
+    layerAxes(network.layerAxes),
+    indices(network.indices),
+    // These will be set correctly in the first Forward() call.
+    inputDimensionsAreSet(false),
+    layerMemoryIsSet(false),
+    graphIsSet(false)
 {}
 
 template<typename OutputLayerType,
@@ -42,6 +54,16 @@ DAGNetwork<
 >::DAGNetwork(DAGNetwork&& network) :
     outputLayer(std::move(network.outputLayer)),
     initializeRule(std::move(network.initializeRule)),
+    layers(std::move(network.layers)),
+    parameters(std::move(network.parameters)),
+    inputDimensions(std::move(network.inputDimensions)),
+    adjacencyList(std::move(network.adjacencyList)),
+    layerAxes(std::move(network.layerAxes)),
+    indices(std::move(network.indices)),
+    // Aliases will not be correct after a std::move(), so we will manually
+    // reset them.
+    layerMemoryIsSet(false),
+    graphIsSet(std::move(network.graphIsSet)),
     inputDimensionsAreSet(std::move(network.inputDimensionsAreSet))
 {}
 
@@ -61,7 +83,16 @@ DAGNetwork<
   {
     outputLayer = other.outputLayer;
     initializeRule = other.initializeRule;
+    layers = other.layers;
+    parameters = other.parameters;
+    inputDimensions = other.inputDimensions;
     inputDimensionsAreSet = other.inputDimensionsAreSet;
+    graphIsSet = other.graphIsSet;
+    adjacencyList = other.adjacencyList;
+    layerAxes = other.layerAxes;
+    indices = other.indices;
+
+    layerMemoryIsSet = false;
   }
 
   return *this;
@@ -82,7 +113,16 @@ DAGNetwork<OutputLayerType,
   {
     outputLayer = std::move(other.outputLayer);
     initializeRule = std::move(other.initializeRule);
+    layers = std::move(other.layers);
+    parameters = std::move(other.parameters);
+    inputDimensions = std::move(other.inputDimensions);
+    adjacencyList = std::move(other.adjacencyList);
+    layerAxes = std::move(other.layerAxes);
+    indices = std::move(other.indices);
+
     inputDimensionsAreSet = std::move(other.inputDimensionsAreSet);
+    graphIsSet = std::move(other.graphIsSet);
+    layerMemoryIsSet = false;
   }
 
   return *this;
@@ -117,6 +157,7 @@ void DAGNetwork<
     MatType
 >::Add(Layer<MatType>* layer, size_t axis)
 {
+  // check if layer exists in layers?
   layers.push_back(layer);
   if (layers.size() > 1)
   {
@@ -136,6 +177,7 @@ void DAGNetwork<
     MatType
 >::Connect(Layer<MatType>* inputLayer, Layer<MatType>* outputLayer)
 {
+  // check if layer exists in layers?
   if (adjacencyList.count(outputLayer) == 0)
   {
     adjacencyList.insert({outputLayer, {inputLayer}});
@@ -269,15 +311,13 @@ void DAGNetwork<
     }
     else if (alreadyExplored)
     {
+      explored.insert(currentLayer);
       if (numParents == 1)
       {
         currentLayer->InputDimensions() = adjacencyList[currentLayer][0]->OutputDimensions();
-        explored.insert(currentLayer);
       }
       else
       {
-        // compute concat dimensions
-        explored.insert(currentLayer);
         assert(layerAxes.count(currentLayer) && "Axis does not exist for a skip connection");
 
         size_t axis = layerAxes[currentLayer];
@@ -503,8 +543,7 @@ void DAGNetwork<
   }
 
   size_t forwardMemSize = totalOutputSize + totalConcatSize;
-  if (batchSize * forwardMemSize >
-    layerOutputMatrix.n_elem)
+  if (batchSize * forwardMemSize > layerOutputMatrix.n_elem)
   {
     layerOutputMatrix = MatType(1, batchSize * forwardMemSize);
   }
@@ -567,7 +606,7 @@ void DAGNetwork<
         parentOutputAliases.clear();
         parentOutputAliases.resize(parents.size());
         size_t axis = layerAxes[layers[i]];
-        //concat: setup layerInputs[i-1]
+
         size_t rows = 1;
         for (size_t j = 0; j < axis; j++)
           rows *= layers[i]->InputDimensions()[j];
