@@ -1,3 +1,16 @@
+/**
+ * @file methods/ann/dag_network.hpp
+ * @author Andrew Furey
+ *
+ * Definition of the DAGNetwork class, which allows uers to describe a
+ * computational graph to build arbitrary neural networks with skip
+ * connections.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #ifndef MLPACK_METHODS_ANN_DAG_NETWORK_HPP
 #define MLPACK_METHODS_ANN_DAG_NETWORK_HPP
 
@@ -5,6 +18,28 @@
 
 #include "init_rules/init_rules.hpp"
 
+/**
+ * Implementation of a direct acyclic graph. Any layer that inherits
+ * from the base `Layer` class can be added to this model.
+ *
+ * A network can be created by using the `Add()` method to add
+ * layers to the network. Each layer is then linked using `Connect()`.
+ * A node with multiple parents will concatenate the output of its
+ * parents along a specified axis.
+ *
+ * Although the actual types passed as input will be matrix objects with one
+ * data point per column, each data point can be a tensor of arbitrary shape.
+ * If data points are not 1-dimensional vectors, then set the shape of the input
+ * with `InputDimensions()` before calling `Train()`.
+ *
+ * More granular functionality is available with `Forward()`, Backward()`, and
+ * `Evaluate()`, or even by accessing the individual layers directly with
+ * `Network()`.
+ *
+ * @tparam OutputLayerType The output layer type used to evaluate the network.
+ * @tparam InitializationRuleType Rule used to initialize the weight matrix.
+ * @tparam MatType Type of matrix to be given as input to the network.
+ */
 namespace mlpack {
 
 template<
@@ -14,14 +49,97 @@ template<
 class DAGNetwork
 {
 public:
+  /**
+   * Create the DAGNetwork object.
+   *
+   * Optionally, specify which initialize rule and performance function should
+   * be used.
+   *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
+   *
+   * @param outputLayer Output layer used to evaluate the network.
+   * @param initializeRule Optional instantiated InitializationRule object
+   *        for initializing the network parameter.
+   */
   DAGNetwork(OutputLayerType outputLayer = OutputLayerType(),
              InitializationRuleType initializeRule = InitializationRuleType());
 
+  //! Copy constructor.
   DAGNetwork(const DAGNetwork& other);
+  //! Move constructor.
   DAGNetwork(DAGNetwork&& other);
+  //! Copy operator.
   DAGNetwork& operator=(const DAGNetwork& other);
+  //! Move assignment operator.
   DAGNetwork& operator=(DAGNetwork&& other);
 
+  using CubeType = typename GetCubeType<MatType>::type;
+
+  /**
+   * Add a new layer to the model.  Note that any trainable weights of this
+   * layer will be reset!  (Any constant parameters are kept.) This layer
+   * should only receive input from one layer.
+   *
+   * @param layer The Layer to be added to the model.
+   */
+  void Add(Layer<MatType>* layer);
+
+  /**
+   * Add a new layer to the model that expect multiple parent nodes.
+   *
+   * @param layer The layer to be added to the model.
+   * @param concatAxis The axis to concatenate parent node outputs along.
+   */
+  void Add(Layer<MatType>* layer, size_t concatAxis);
+
+  /**
+   * Create an edge between two layers. If the child node expects multiple
+   * parents, the child must have been added to the network with an axis.
+   *
+   * @param inputLayer The parent node whose output is the input to `outputLayer`
+   * @param outputLayer The child node whose input will come from `inputLayer`
+   */
+  void Connect(Layer<MatType>* inputLayer, Layer<MatType>* outputLayer);
+
+  //! Get the layers of the network. The network will be sorted topologically.
+  const std::vector<Layer<MatType>*>& Network()
+  {
+    if (!graphIsSet)
+      CheckGraph();
+    return network;
+  }
+
+  /**
+   * Predict the responses to a given set of predictors. The responses will be
+   * the output of the output layer when `predictors` is passed through the
+   * whole network (`OutputLayerType`).
+   *
+   * @param predictors Input predictors.
+   * @param results Matrix to put output predictions of responses into.
+   * @param batchSize Batch size to use for prediction.
+   */
+  void Predict(const MatType& predictors,
+               MatType& results,
+               const size_t batchSize = 128);
+
+  // Return the number of weights in the model.
+  size_t WeightSize();
+
+  /**
+   * Set the logical dimensions of the input.  `Train()` and `Predict()` expect
+   * data to be passed such that one point corresponds to one column, but this
+   * data is allowed to be an arbitrary higher-order tensor.
+   *
+   * So, if the input is meant to be 28x28x3 images, then the
+   * input data to `Train()` or `Predict()` should have 28*28*3 = 2352 rows, and
+   * `InputDimensions()` should be set to `{ 28, 28, 3 }`.  Then, the layers of
+   * the network will interpret each input point as a 3-dimensional image
+   * instead of a 1-dimensional vector.
+   *
+   * If `InputDimensions()` is left unset before training, the data will be
+   * assumed to be a 1-dimensional vector.
+   */
   std::vector<size_t>& InputDimensions()
   {
     inputDimensionsAreSet = false;
@@ -31,88 +149,197 @@ public:
     return inputDimensions;
   }
 
+  //! Get the logical dimensions of the input.
   const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
 
+  //! Return the current set of weights.  These are linearized: this contains
+  //! the weights of every layer.
   const MatType& Parameters() const { return parameters; }
+  //! Modify the current set of weights.  These are linearized: this contains
+  //! the weights of every layer.  Be careful!  If you change the shape of
+  //! `parameters` to something incorrect, it may be re-initialized the next
+  //! time a forward pass is done.
   MatType& Parameters() { return parameters; }
 
+  /**
+   * Reset the stored data of the network entirely.  This resets all weights of
+   * each layer using `InitializationRuleType`, and prepares the network to
+   * accept a (flat 1-d) input size of `inputDimensionality` (if passed), or
+   * whatever input size has been set with `InputDimensions()`.
+   *
+   * If no input size has been set with `InputDimensions()`, and
+   * `inputDimensionality` is 0, an exception will be thrown, since an empty
+   * input size is invalid.
+   *
+   * This also resets the mode of the network to prediction mode (not training
+   * mode).  See `SetNetworkMode()` for more information.
+   */
   void Reset(const size_t inputDimensionality = 0);
 
-  const std::vector<Layer<MatType>*>& Network()
-  {
-    if (!graphIsSet)
-      CheckGraph();
-    return network;
-  }
+  /**
+   * Set all the layers in the network to training mode, if `training` is
+   * `true`, or set all the layers in the network to testing mode, if `training`
+   * is `false`.
+   */
+  void SetNetworkMode(const bool training);
 
-  void Add(Layer<MatType>* layer);
+  /**
+   * Perform a manual forward pass of the data.
+   *
+   * `Forward()` and `Backward()` should be used as a pair, and they are
+   * designed mainly for advanced users. You should try to use `Predict()` and
+   * `Train()`, if you can.
+   *
+   * @param inputs The input data.
+   * @param results The predicted results.
+   */
+  void Forward(const MatType& input, MatType& output);
 
-  template <typename LayerType, typename... Args>
-  void Add(Args... args);
+  /**
+   * Evaluate the network with the given predictors and responses.
+   * This function is usually used to monitor progress while training.
+   *
+   * @param predictors Input variables.
+   * @param responses Target outputs for input variables.
+   */
+  typename MatType::elem_type Evaluate(const MatType& predictors,
+                                       const MatType& responses);
 
-  void Add(Layer<MatType>* layer, size_t concatAxis);
+private:
+  // Helper functions.
 
-  void Connect(Layer<MatType>* inputLayer, Layer<MatType>* outputLayer);
+  //! Use the InitializationPolicy to initialize all the weights in the network.
+  void InitializeWeights();
 
-  void ComputeOutputDimensions();
+  //! Call each layers `CustomInitialize`
+  void CustomInitialize(MatType& W, const size_t elements);
 
-  void UpdateDimensions(const std::string& functionName,
-                        const size_t inputDimensionality = 0);
+  //! Make the memory of each layer point to the right place, by calling
+  //! SetWeights() on each layer.
+  void SetLayerMemory();
 
-  // topo sorts network, no cycles, network has one input and one output
+  /**
+   * Ensure that all the there are no cycles in the graph and that the graph
+   * has one input and one output only. It will topologically sort the network
+   * for the forward and backward passes. This will set `graphIsSet` to true
+   * only if the graph is valid and topologically sorted.
+   */
   void CheckGraph();
 
+  /**
+   * Ensure that all the locally-cached information about the network is valid,
+   * all parameter memory is initialized, and we can make forward and backward
+   * passes.
+   *
+   * @param functionName Name of function to use if an exception is thrown.
+   * @param inputDimensionality Given dimensionality of the input data.
+   * @param setMode If true, the mode of the network will be set to the
+   *     parameter given in `training`.  Otherwise the mode of the network is
+   *     left unmodified.
+   * @param training Mode to set the network to; `true` indicates the network
+   *     should be set to training mode; `false` indicates testing mode.
+   */
   void CheckNetwork(const std::string& functionName,
                     const size_t inputDimensionality,
                     const bool setMode = false,
                     const bool training = false);
 
-  const size_t WeightSize();
+  /**
+   * This computes the dimensions of each layer held by the network, and the
+   * output dimensions are set to the output dimensions of the last layer.
+   *
+   * Layers with multiple inputs need an axis to concatenate their output
+   * along, specifed in Add(). Every dimension not along that axis in each
+   * input tensor must be the same, while the dimension along that axis can
+   * vary.
+   */
+  void ComputeOutputDimensions();
+
+  /**
+   * Set the input and output dimensions of each layer in the network correctly.
+   * The size of the input is taken, in case `inputDimensions` has not been set
+   * otherwise (e.g. via `InputDimensions()`).  If `InputDimensions()` is not
+   * empty, then `inputDimensionality` is ignored.
+   */
+  void UpdateDimensions(const std::string& functionName,
+                        const size_t inputDimensionality = 0);
+
+  /**
+   * Set the weights of the layers
+   */
   void SetWeights(const MatType& weightsIn);
 
-  void InitializeWeights();
-  void CustomInitialize(MatType& W, const size_t elements);
-
-  void SetLayerMemory();
-
-  void SetNetworkMode(const bool training);
-
-  using CubeType = typename GetCubeType<MatType>::type;
+  /**
+   * Initialize memory that will be used by each layer for the forward pass,
+   * assuming that the input will have the given `batchSize`.  When `Forward()`
+   * is called, `layerOutputMatrix` is allocated with enough memory to fit
+   * the outputs of each layer and to hold concatenations of output layers
+   * as inputs into layers as specified by `Add()` and `Connect()`.
+   */
   void InitializeForwardPassMemory(const size_t batchSize);
+
+  /**
+   * Compute the loss that should be added to the objective for each layer.
+   */
   double Loss() const;
 
-  void Forward(const MatType& input, MatType& output);
-  typename MatType::elem_type Evaluate(const MatType& predictors,
-                                       const MatType& responses);
-  void Predict(const MatType& predictors,
-               MatType& results,
-               const size_t batchSize = 128);
-
-// private:
+  //! Instantiated output layer used to evaluate the network.
   OutputLayerType outputLayer;
+
+  //! Instantiated InitializationRule object for initializing the network
+  //! parameter.
   InitializationRuleType initializeRule;
 
-  MatType networkOutput;
-
-  bool inputDimensionsAreSet;
-  bool graphIsSet;
-  bool layerMemoryIsSet;
-
-  std::vector<size_t> inputDimensions;
-
+  //! The internally-held network.
   std::vector<Layer<MatType>*> network;
-  std::map<Layer<MatType>*, std::vector<Layer<MatType>*>> adjacencyList;
-  std::map<Layer<MatType>*, size_t> layerAxes;
-  std::map<Layer<MatType>*, size_t> indices; // layer, i (i == where in toposorted network)
 
+  //! The internall-held adjacencyList of all the nodes
+  std::map<Layer<MatType>*, std::vector<Layer<MatType>*>> adjacencyList;
+
+  //! The internally-held map of what axes to concatenate along for each layer
+  //! with multiple inputs
+  std::map<Layer<MatType>*, size_t> layerAxes;
+
+  //! The internall-held map of Layers corresponding to what their position
+  //! is in the topologically sorted network vector.
+  std::map<Layer<MatType>*, size_t> indices;
+
+  /**
+   * Matrix of (trainable) parameters.  Each weight here corresponds to a layer,
+   * and each layer's `parameters` member is an alias pointing to parameters in
+   * this matrix.
+   *
+   * Note: although each layer may have its own MatType and MatType,
+   * ensmallen optimization requires everything to be stored in one matrix
+   * object, so we have chosen MatType.  This could be made more flexible
+   * with a "wrapper" class implementing the Armadillo API.
+   */
   MatType parameters;
 
-  CubeType inputAlias;
-  std::vector<CubeType> parentOutputAliases;
+  //! Dimensions of input data.
+  std::vector<size_t> inputDimensions;
 
+  //! Locally-stored output of the network from a forward pass; used by the
+  //! backward pass.
+  MatType networkOutput;
+
+  //! This matrix stores all of the outputs of each layer when Forward() is
+  //! called.  See `InitializeForwardPassMemory()`.
   MatType layerOutputMatrix;
+  //! These are aliases of `layerOutputMatrix` for the input of each layer
   std::vector<MatType> layerInputs;
+  //! These are aliases of `layerOutputMatrix` for the output of each layer.
   std::vector<MatType> layerOutputs;
+
+  //! If true, each layer has its inputDimensions properly set.
+  bool inputDimensionsAreSet;
+
+  //! If true, the graph is valid and has been topologically sorted.
+  bool graphIsSet;
+
+  //! If true, each layer has its memory properly set for a forward/backward
+  //! pass.
+  bool layerMemoryIsSet;
 };
 
 } // namespace mlpack

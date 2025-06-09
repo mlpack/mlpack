@@ -336,6 +336,7 @@ void DAGNetwork<
 
     if (numParents == 0)
     {
+      // TODO: this problem should be found in CheckGraph
       inputs++;
       Log::Assert(inputs == 1, "DAGNetwork::ComputeOutputDimensions(): There should only be one input node.");
       currentLayer->InputDimensions() = inputDimensions;
@@ -435,7 +436,7 @@ void DAGNetwork<
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
-const size_t DAGNetwork<
+size_t DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
     MatType
@@ -724,8 +725,7 @@ void DAGNetwork<
         "DAGNetwork::Forward(): Non-input nodes must have atleast one parent node.");
       if (parents.size() > 1)
       {
-        parentOutputAliases.clear();
-        parentOutputAliases.resize(parents.size());
+        std::vector<CubeType> parentOutputAliases(parents.size());
         size_t axis = layerAxes[network[i]];
 
         size_t rows = 1;
@@ -744,6 +744,7 @@ void DAGNetwork<
           MakeAlias(parentOutputAliases[j], parentOutput, rows, cols, slices);
         }
 
+        CubeType inputAlias;
         MakeAlias(inputAlias, layerInputs[i-1], rows, network[i]->InputDimensions()[axis], slices);
 
         size_t startCol = 0;
