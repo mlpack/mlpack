@@ -33,6 +33,9 @@ public:
 
   const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
 
+  const MatType& Parameters() const { return parameters; }
+  MatType& Parameters() { return parameters; }
+
   const std::vector<Layer<MatType>*>& Network()
   {
     if (!graphIsSet)
