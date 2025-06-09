@@ -764,6 +764,22 @@ void DAGNetwork<
     results = networkOutput;
 }
 
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+double DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::Loss() const
+{
+  double loss = 0.0;
+  for (size_t i = 0; i < network.size(); i++)
+       loss += network[i]->Loss();
+  return loss;
+}
+
 } // namespace mlpack
 
 #endif

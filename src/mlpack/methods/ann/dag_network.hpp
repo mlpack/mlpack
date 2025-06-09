@@ -79,6 +79,8 @@ public:
 
   using CubeType = typename GetCubeType<MatType>::type;
   void InitializeForwardPassMemory(const size_t batchSize);
+  double Loss() const;
+
   void Forward(const MatType& input, MatType& output);
 
 // private:
