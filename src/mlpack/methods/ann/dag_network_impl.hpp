@@ -558,7 +558,7 @@ void DAGNetwork<
   size_t totalWeightSize = WeightSize();
 
   Log::Assert(totalWeightSize == parameters.n_elem,
-      "FFN::SetLayerMemory(): total layer weight size does not match parameter "
+      "DAGNetwork::SetLayerMemory(): total layer weight size does not match parameter "
       "size!");
 
   SetWeights(parameters);
@@ -778,6 +778,20 @@ double DAGNetwork<
   for (size_t i = 0; i < network.size(); i++)
        loss += network[i]->Loss();
   return loss;
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+typename MatType::elem_type DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::Evaluate(const MatType& predictors, const MatType& responses)
+{
+  CheckNetwork("DAGNetwork::Evaluate()", predictors.n_rows);
+  Forward(predictors, networkOutput);
+  return outputLayer.Forward(networkOutput, responses) + Loss();
 }
 
 } // namespace mlpack

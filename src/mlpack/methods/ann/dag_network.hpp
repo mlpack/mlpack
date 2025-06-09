@@ -82,6 +82,8 @@ public:
   double Loss() const;
 
   void Forward(const MatType& input, MatType& output);
+  typename MatType::elem_type Evaluate(const MatType& predictors,
+                                       const MatType& responses);
 
 // private:
   OutputLayerType outputLayer;
