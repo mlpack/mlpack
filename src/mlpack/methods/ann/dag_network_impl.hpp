@@ -304,6 +304,7 @@ void DAGNetwork<
 
   assert(size == sortedLayers.size() && "multiple sinks detected");
   network = sortedLayers;
+  graphIsSet = true;
 }
 
 template<typename OutputLayerType,

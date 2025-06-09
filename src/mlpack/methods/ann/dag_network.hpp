@@ -54,7 +54,7 @@ public:
   void UpdateDimensions(const std::string& functionName,
                         const size_t inputDimensionality = 0);
 
-  // topo sort, no cycles, network has one output
+  // topo sorts network, no cycles, network has one input and one output
   void CheckGraph();
 
   const size_t WeightSize();
