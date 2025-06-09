@@ -130,7 +130,8 @@ bool Save(const std::string& filename,
           T& t,
           const bool fatal = false,
           FileType f = FileType::AutoDetect,
-          std::enable_if_t<HasSerialize<T>::value>* = 0);
+          std::enable_if_t<HasSerialize<T>::value>* = 0
+          );
 
 /**
  * This function defines a unified data saving interface for the library.
@@ -147,18 +148,12 @@ bool Save(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value ||
-              IsSparseMat<MatType>::value>* = 0,
-          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>* = 0);
+          DataOptionsBase<DataOptionsType>& opts);
 
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          const DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value ||
-              IsSparseMat<MatType>::value>* = 0,
-          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>* = 0);
+          const DataOptionsBase<DataOptionsType>& opts);
 
 } // namespace data
 } // namespace mlpack

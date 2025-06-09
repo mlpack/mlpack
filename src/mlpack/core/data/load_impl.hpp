@@ -105,10 +105,7 @@ bool Load(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
-          const DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value ||
-              IsSparseMat<MatType>::value>*,
-          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>*)
+          const DataOptionsBase<DataOptionsType>& opts)
 {
   DataOptionsType tmpOpts(opts);
   return Load(filename, matrix, tmpOpts);
@@ -159,10 +156,7 @@ bool LoadMatrix(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
-          DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value ||
-              IsSparseMat<MatType>::value>*,
-          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>*)
+          DataOptionsBase<DataOptionsType>& opts)
 {
   Timer::Start("loading_data");
 
@@ -401,7 +395,7 @@ bool LoadCategorical(const std::string& filename,
 
 template<typename Object>
 bool LoadModel(Object& objectToSerialize,
-               DataOptions& opts,
+               DataOptionsBase<PlainDataOptions>& opts,
                std::fstream& stream)
 {
   try

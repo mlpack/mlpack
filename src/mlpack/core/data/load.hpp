@@ -42,11 +42,7 @@ namespace data /** Functions to load and save matrices and models. */ {
 template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
-          DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value ||
-              IsSparseMat<MatType>::value>* = 0,
-          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>* = 0);
-
+          DataOptionsBase<DataOptionsType>& opts);
 /**
  * Loads a matrix from file, guessing the filetype from the extension.  This
  * will load with the options specified in `opts`.
@@ -59,11 +55,7 @@ bool Load(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
-          const DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value ||
-              IsSparseMat<MatType>::value>* = 0,
-          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>* = 0);
-
+          const DataOptionsBase<DataOptionsType>& opts);
 /**
  * Loads a matrix from file, guessing the filetype from the extension.  This
  * will transpose the matrix at load time (unless the transpose parameter is set

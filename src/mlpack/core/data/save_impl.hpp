@@ -71,44 +71,17 @@ bool Save(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          const DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value ||
-              IsSparseMat<MatType>::value>*)
-{
+          const DataOptionsBase<DataOptionsType>& opts)
+ {
   //! just use default copy ctor with = operator and make a copy.
   DataOptionsType copyOpts(opts);
   return Save(filename, matrix, copyOpts);
 }
 
-/*
- * Add this SFINAE in here because the compiler is so stupid that it is not
- * able to distinguish between these two:
- *
- *  data::Save(filename, "model", *output);
- *
- *  and 
- *
- *  data::Save(filename, matrix, opts);
- *  
- * The second SFINAE is added because the compiler is bot able to see the
- * difference between:
- *
- *  data::Save(filename, Row/Col, fatal);
- *
- *  and 
- *
- *  data::Save(filename, Row/Col, Opts);
- *
- * This SFINAE is temporary and must be removed after the integration of stage 3 or
- * when the compiler becomes more intelligent.
- */
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value ||
-              IsSparseMat<MatType>::value>*,
-          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>*)
+          DataOptionsBase<DataOptionsType>& opts)
 {
   Timer::Start("saving_data");
 
@@ -152,6 +125,10 @@ bool Save(const std::string& filename,
       success = SaveDense(matrix, txtOpts, filename, stream);
     }
     opts = std::move(txtOpts);
+  }
+  else if constexpr (!IsArma<MatType>::value && !IsSparseMat<MatType>::value)
+  {
+    success = SaveModel(matrix, opts, stream);
   }
   else
   {
@@ -224,7 +201,7 @@ bool SaveSparse(const arma::SpMat<eT>& matrix,
 
 template<typename Object>
 bool SaveModel(Object& objectToSerialize,
-               DataOptions& opts,
+               DataOptionsBase<PlainDataOptions>& opts,
                std::fstream& stream)
 {
   try
@@ -276,7 +253,8 @@ bool Save(const std::string& filename,
           T& t,
           const bool fatal,
           FileType f,
-          std::enable_if_t<HasSerialize<T>::value>*)
+          std::enable_if_t<HasSerialize<T>::value>*
+          )
 {
   if (f == FileType::AutoDetect)
   {
