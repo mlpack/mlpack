@@ -553,6 +553,47 @@ void DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
     MatType
+>::CheckNetwork(const std::string& functionName,
+                const size_t inputDimensionality,
+                const bool setMode,
+                const bool training)
+{
+  if (network.size() == 0)
+  {
+    throw std::invalid_argument(functionName + ": cannot use network with no "
+        "layers!");
+  }
+
+  if (!graphIsSet)
+    CheckGraph();
+
+  if (!inputDimensionsAreSet)
+    UpdateDimensions(functionName, inputDimensionality);
+
+  if (parameters.is_empty())
+  {
+    InitializeWeights();
+  }
+  else if (parameters.n_elem != WeightSize())
+  {
+    parameters.clear();
+    InitializeWeights();
+  }
+
+  if (!layerMemoryIsSet)
+    SetLayerMemory();
+
+  if (setMode)
+    SetNetworkMode(training);
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
 >::InitializeForwardPassMemory(const size_t batchSize)
 {
   if (!graphIsSet)
@@ -627,6 +668,8 @@ void DAGNetwork<
     MatType
 >::Forward(const MatType& input, MatType& output)
 {
+  CheckNetwork("DAGNetwork::Forward", input.n_rows);
+
   output.set_size(network.back()->OutputSize(), input.n_cols);
 
   if (network.size() > 1)

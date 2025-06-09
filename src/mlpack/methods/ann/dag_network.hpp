@@ -57,6 +57,11 @@ public:
   // topo sorts network, no cycles, network has one input and one output
   void CheckGraph();
 
+  void CheckNetwork(const std::string& functionName,
+                    const size_t inputDimensionality,
+                    const bool setMode = false,
+                    const bool training = false);
+
   const size_t WeightSize();
   void SetWeights(const MatType& weightsIn);
 
