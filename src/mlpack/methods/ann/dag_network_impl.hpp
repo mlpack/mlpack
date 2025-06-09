@@ -449,6 +449,36 @@ void DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
     MatType
+>::Reset(const size_t inputDimensionality)
+{
+  parameters.clear();
+
+  if (inputDimensionality != 0)
+  {
+    CheckNetwork("DAGNetwork::Reset()", inputDimensionality, true, false);
+  }
+  else if (inputDimensions.size() > 0)
+  {
+    size_t inputDim = inputDimensions[0];
+    for (size_t i = 1; i < inputDimensions.size(); i++)
+      inputDim *= inputDimensions[i];
+    CheckNetwork("DAGNetwork::Reset()", inputDim, true, false);
+  }
+  else
+  {
+    throw std::invalid_argument("DAGNetwork::Reset(): cannot reset network when no "
+        "input dimensionality is given, and `InputDimensions()` has not been "
+        "set!");
+  }
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
 >::SetWeights(const MatType& weightsIn)
 {
   if (!graphIsSet)

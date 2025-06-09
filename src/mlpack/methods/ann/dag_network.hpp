@@ -36,6 +36,8 @@ public:
   const MatType& Parameters() const { return parameters; }
   MatType& Parameters() { return parameters; }
 
+  void Reset(const size_t inputDimensionality = 0);
+
   const std::vector<Layer<MatType>*>& Network()
   {
     if (!graphIsSet)
