@@ -139,9 +139,8 @@ void DAGNetwork<
     MatType
 >::Add(Layer<MatType>* layer)
 {
-  // check if layer exists in network
   for (size_t i = 0; i < network.size(); i++)
-    assert(layer != network[i]);
+    Log::Assert(layer != network[i], "DAGNetwork::Add(): Layer already exists.");
 
   network.push_back(layer);
   if (network.size() > 1)
@@ -164,9 +163,8 @@ void DAGNetwork<
     MatType
 >::Add(Layer<MatType>* layer, size_t concatAxis)
 {
-  // check if layer exists in network
   for (size_t i = 0; i < network.size(); i++)
-    assert(layer != network[i]);
+    Log::Assert(layer != network[i], "DAGNetwork::Add(): Layer already exists.");
 
   network.push_back(layer);
   if (network.size() > 1)
@@ -190,9 +188,8 @@ void DAGNetwork<
     MatType
 >::Connect(Layer<MatType>* inputLayer, Layer<MatType>* outputLayer)
 {
-  assert(inputLayer != outputLayer);
+  Log::Assert(inputLayer != outputLayer, "DAGNetwork::Connect(): `inputLayer` and `outputLayer` cannot be the same.");
 
-  // check if inputLayer and outputlayer exist in network
   bool inputExists = false;
   bool outputExists = false;
   for (size_t i = 0; i < network.size(); i++)
@@ -206,7 +203,8 @@ void DAGNetwork<
       outputExists = true;
     }
   }
-  assert(inputExists && outputExists);
+
+  Log::Assert(inputExists && outputExists, "DAGNetwork::Connect(): `inputLayer` and `outputLayer` must exist.");
 
   if (adjacencyList.count(outputLayer) == 0)
   {
@@ -262,7 +260,7 @@ void DAGNetwork<
         for (size_t j = 0; j < parents.size(); j++)
         {
           Layer<MatType>* parent = parents[j];
-          assert(parent != network[i]  && "A cycle exists");
+          Log::Assert(parent != network[i], "DAGNetwork::CheckGraph(): A cycle exists in the graph.");
           if (!exploredLayers.count(parent))
           {
             exploring.push({parent, false});
@@ -304,7 +302,7 @@ void DAGNetwork<
 
   }
 
-  assert(size == sortedLayers.size() && "multiple sinks detected");
+  Log::Assert(size == sortedLayers.size(), "DAGNetwork::CheckGraph(): Multiple inputs and/or outputs exist when there should only be one of each");
   network = sortedLayers;
   graphIsSet = true;
 }
@@ -338,7 +336,8 @@ void DAGNetwork<
 
     if (numParents == 0)
     {
-      assert(inputs++ == 0);
+      inputs++;
+      Log::Assert(inputs == 1, "DAGNetwork::ComputeOutputDimensions(): There should only be one input node.");
       currentLayer->InputDimensions() = inputDimensions;
       currentLayer->ComputeOutputDimensions();
       explored.insert(currentLayer);
@@ -352,16 +351,20 @@ void DAGNetwork<
       }
       else
       {
-        assert(layerAxes.count(currentLayer) && "Axis does not exist for a skip connection");
+        Log::Assert(layerAxes.count(currentLayer), "DAGNetwork::ComputeOutputDimensions(): Axis does not exist for an input into a concatenation.");
 
         size_t axis = layerAxes[currentLayer];
         const size_t numOutputDimensions = adjacencyList[currentLayer][0]->OutputDimensions().size();
+        Log::Assert(axis > 0 && axis < numOutputDimensions,
+        "DAGNetwork::ComputeOutputDimensions(): Axis to concatenate along must be within the "
+                    "number of output dimensions.");
         for (size_t i = 1; i < numParents; i++)
         {
           Layer<MatType>* parent = adjacencyList[currentLayer][i];
-          assert(numOutputDimensions == parent->OutputDimensions().size());
+          Log::Assert(numOutputDimensions == parent->OutputDimensions().size(),
+          "DAGNetwork::ComputeOutputDimensions(): Number of output dimensions are not the same for "
+                      "each input in the concatenation.");
         }
-        assert(axis < numOutputDimensions);
         currentLayer->InputDimensions() = std::vector<size_t>(numOutputDimensions, 0);
 
         for (size_t i = 0; i < currentLayer->InputDimensions().size(); i++)
@@ -382,7 +385,9 @@ void DAGNetwork<
             {
               Layer<MatType>* parent = adjacencyList[currentLayer][n];
               const size_t axisDim2 = parent->OutputDimensions()[i];
-              assert(axisDim == axisDim2);
+              Log::Assert(axisDim < axisDim2,
+              "DAGNetwork::ComputeOutputDimensions(): Size of inputs dimensions not along the axis "
+                          "dimension need to be the same.");
             }
             currentLayer->InputDimensions()[i] = axisDim;
           }
@@ -491,7 +496,9 @@ void DAGNetwork<
   for (size_t i = 0; i < network.size(); i++)
   {
     const size_t weightSize = network[i]->WeightSize();
-    assert(weightSize + offset <= totalWeightSize);
+    Log::Assert(offset + weightSize <= totalWeightSize,
+        "DAGNetwork::SetLayerMemory(): Parameter size does not match total layer "
+        "weight size!");
     MatType tmpWeights;
     MakeAlias(tmpWeights, weightsIn, weightSize, 1, offset);
     network[i]->SetWeights(tmpWeights);
@@ -517,7 +524,7 @@ void DAGNetwork<
     const size_t weightSize = network[i]->WeightSize();
 
     Log::Assert(start + weightSize <= totalWeightSize,
-        "FNN::CustomInitialize(): parameter size does not match total layer "
+        "DAGNetwork::CustomInitialize(): Parameter size does not match total layer "
         "weight size!");
 
     MatType WTemp;
@@ -527,7 +534,7 @@ void DAGNetwork<
     start += weightSize;
   }
   Log::Assert(start == totalWeightSize,
-      "FNN::CustomInitialize(): total layer weight size does not match rows "
+      "DAGNetwork::CustomInitialize(): Total layer weight size does not match rows "
       "size!");
 }
 template<typename OutputLayerType,
@@ -558,7 +565,7 @@ void DAGNetwork<
   size_t totalWeightSize = WeightSize();
 
   Log::Assert(totalWeightSize == parameters.n_elem,
-      "DAGNetwork::SetLayerMemory(): total layer weight size does not match parameter "
+      "DAGNetwork::SetLayerMemory(): Total layer weight size does not match parameter "
       "size!");
 
   SetWeights(parameters);
@@ -674,7 +681,8 @@ void DAGNetwork<
     Layer<MatType>* currentLayer = network[i];
     std::vector<Layer<MatType>*> parents = adjacencyList[currentLayer];
     size_t numParents = parents.size();
-    assert(numParents > 0);
+    Log::Assert(numParents > 0,
+        "DAGNetwork::InitializeForwardPassMemory(): Non-input nodes must have atleast one parent node.");
     if (numParents == 1)
     {
       size_t inputIndex = indices[parents.front()];
@@ -712,7 +720,8 @@ void DAGNetwork<
     for (size_t i = 1; i < network.size(); i++)
     {
       std::vector<Layer<MatType>*> parents = adjacencyList[network[i]];
-      assert(parents.size() > 0);
+      Log::Assert(parents.size() > 0,
+        "DAGNetwork::Forward(): Non-input nodes must have atleast one parent node.");
       if (parents.size() > 1)
       {
         parentOutputAliases.clear();
