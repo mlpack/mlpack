@@ -794,6 +794,31 @@ typename MatType::elem_type DAGNetwork<
   return outputLayer.Forward(networkOutput, responses) + Loss();
 }
 
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::Predict(const MatType& predictors, MatType& results, const size_t batchSize)
+{
+  CheckNetwork("DAGNetwork::Predict()", predictors.n_rows, true, false);
+  results.set_size(network.back()->OutputSize(), predictors.n_cols);
+  for (size_t i = 0; i < predictors.n_cols; i += batchSize)
+  {
+    const size_t effectiveBatchSize = std::min(batchSize,
+        size_t(predictors.n_cols) - i);
+
+    MatType predictorAlias, resultAlias;
+
+    MakeAlias(predictorAlias, predictors, predictors.n_rows, effectiveBatchSize, i * predictors.n_rows);
+    MakeAlias(resultAlias, results, results.n_rows, effectiveBatchSize, i * results.n_rows);
+
+    Forward(predictorAlias, resultAlias);
+  }
+}
+
 } // namespace mlpack
 
 #endif

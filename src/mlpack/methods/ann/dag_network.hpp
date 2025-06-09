@@ -84,6 +84,9 @@ public:
   void Forward(const MatType& input, MatType& output);
   typename MatType::elem_type Evaluate(const MatType& predictors,
                                        const MatType& responses);
+  void Predict(const MatType& predictors,
+               MatType& results,
+               const size_t batchSize = 128);
 
 // private:
   OutputLayerType outputLayer;
