@@ -57,7 +57,7 @@ public:
   // topo sort, no cycles, network has one output
   void CheckGraph();
 
-  const size_t WeightSize() const;
+  const size_t WeightSize();
   void SetWeights(const MatType& weightsIn);
 
   void InitializeWeights();

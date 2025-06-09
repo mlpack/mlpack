@@ -431,7 +431,7 @@ const size_t DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::WeightSize() const
+>::WeightSize()
 {
   UpdateDimensions("DAGNetwork::WeightSize()");
 
