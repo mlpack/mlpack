@@ -213,12 +213,23 @@ void DAGNetwork<
   std::stack<std::pair<Layer<MatType>*, bool>> exploring;
   sortedNetwork.clear();
 
+  size_t inputLayers = 0;
+
   for (size_t i = 0; i < network.size(); i++)
   {
     size_t parents = 0;
     if (exploredLayers.count(network[i]))
       continue;
     exploring.push({network[i], false});
+
+    if (adjacencyList[network[i]].size() == 0)
+    {
+      inputLayers++;
+      if (inputLayers > 1)
+      {
+        throw std::logic_error("DAGNetwork::CheckGraph(): There should only be one input node.");
+      }
+    }
 
     while (!exploring.empty())
     {
@@ -307,7 +318,6 @@ void DAGNetwork<
   std::unordered_set<Layer<MatType>*> explored;
   exploring.push(std::make_pair(sortedNetwork.back(), false));
 
-  size_t inputs = 0;
   while (!exploring.empty())
   {
     auto [currentLayer, alreadyExplored] = exploring.top();
@@ -321,13 +331,6 @@ void DAGNetwork<
 
     if (numParents == 0)
     {
-      // TODO: this problem should be found in CheckGraph
-      inputs++;
-
-      if (inputs != 1)
-      {
-        throw std::logic_error("DAGNetwork::ComputeOutputDimensions(): There should only be one input node.");
-      }
       currentLayer->InputDimensions() = inputDimensions;
       currentLayer->ComputeOutputDimensions();
       explored.insert(currentLayer);
