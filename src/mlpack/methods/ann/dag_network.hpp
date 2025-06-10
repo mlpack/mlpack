@@ -89,16 +89,34 @@ public:
    * should only receive input from one layer.
    *
    * @param layer The Layer to be added to the model.
+   *
+   * returns the index of the layer in `network`, to be used in `Connect()`
    */
-  void Add(Layer<MatType>* layer);
+  template <typename LayerType, typename... Args>
+  size_t Add(Args... args)
+  {
+    network.push_back(new LayerType(args...));
+    if (network.size() > 1)
+    {
+      layerOutputs.push_back(MatType());
+      layerInputs.push_back(MatType());
+    }
+
+    inputDimensionsAreSet = false;
+    graphIsSet = false;
+    layerMemoryIsSet = false;
+
+    return (size_t)(network.size() - 1);
+  }
 
   /**
-   * Add a new layer to the model that expect multiple parent nodes.
+   * Set the axis to concatenate along for a layer that expects multiple
+   * parent node.
    *
-   * @param layer The layer to be added to the model.
    * @param concatAxis The axis to concatenate parent node outputs along.
+   * @param layerId The layer to be added to the model.
    */
-  void Add(Layer<MatType>* layer, size_t concatAxis);
+  void SetAxis(size_t layerId, size_t concatAxis);
 
   /**
    * Create an edge between two layers. If the child node expects multiple
@@ -107,7 +125,7 @@ public:
    * @param inputLayer The parent node whose output is the input to `outputLayer`
    * @param outputLayer The child node whose input will come from `inputLayer`
    */
-  void Connect(Layer<MatType>* inputLayer, Layer<MatType>* outputLayer);
+  void Connect(size_t parentNodeId, size_t childNodeId);
 
   //! Get the layers of the network. The network will be sorted topologically.
   const std::vector<Layer<MatType>*>& Network()

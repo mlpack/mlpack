@@ -1,3 +1,14 @@
+/**
+ * @file methods/ann/dag_network_impl.hpp
+ * @author Andrew Furey
+ *
+ * Definition of the DAGNetwork class
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #ifndef MLPACK_METHODS_ANN_DAG_NETWORK_IMPL_HPP
 #define MLPACK_METHODS_ANN_DAG_NETWORK_IMPL_HPP
 
@@ -20,7 +31,9 @@ DAGNetwork<
     inputDimensionsAreSet(false),
     layerMemoryIsSet(false),
     graphIsSet(false)
-{}
+{
+  /* Nothing to do here. */
+}
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
@@ -42,7 +55,9 @@ DAGNetwork<
     inputDimensionsAreSet(false),
     layerMemoryIsSet(false),
     graphIsSet(false)
-{}
+{
+  /* Nothing to do here. */
+}
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
@@ -65,7 +80,9 @@ DAGNetwork<
     layerMemoryIsSet(false),
     graphIsSet(std::move(network.graphIsSet)),
     inputDimensionsAreSet(std::move(network.inputDimensionsAreSet))
-{}
+{
+  /* Nothing to do here. */
+}
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
@@ -137,21 +154,13 @@ void DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::Add(Layer<MatType>* layer)
+>::SetAxis(size_t layerId, size_t concatAxis)
 {
-  for (size_t i = 0; i < network.size(); i++)
-    Log::Assert(layer != network[i], "DAGNetwork::Add(): Layer already exists.");
-
-  network.push_back(layer);
-  if (network.size() > 1)
+  if (layerId >= network.size())
   {
-    layerOutputs.push_back(MatType());
-    layerInputs.push_back(MatType());
+    throw std::logic_error("DAGNetwork::SetAxis(): layer does not exist in the network.");
   }
-
-  inputDimensionsAreSet = false;
-  graphIsSet = false;
-  layerMemoryIsSet = false;
+  layerAxes[network[layerId]] = concatAxis;
 }
 
 template<typename OutputLayerType,
@@ -161,58 +170,25 @@ void DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::Add(Layer<MatType>* layer, size_t concatAxis)
+>::Connect(size_t parentNodeId, size_t childNodeId)
 {
-  for (size_t i = 0; i < network.size(); i++)
-    Log::Assert(layer != network[i], "DAGNetwork::Add(): Layer already exists.");
-
-  network.push_back(layer);
-  if (network.size() > 1)
+  if (parentNodeId == childNodeId)
   {
-    layerOutputs.push_back(MatType());
-    layerInputs.push_back(MatType());
-  }
-  layerAxes[layer] = concatAxis;
-
-  inputDimensionsAreSet = false;
-  graphIsSet = false;
-  layerMemoryIsSet = false;
-}
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename MatType>
-void DAGNetwork<
-    OutputLayerType,
-    InitializationRuleType,
-    MatType
->::Connect(Layer<MatType>* inputLayer, Layer<MatType>* outputLayer)
-{
-  Log::Assert(inputLayer != outputLayer, "DAGNetwork::Connect(): `inputLayer` and `outputLayer` cannot be the same.");
-
-  bool inputExists = false;
-  bool outputExists = false;
-  for (size_t i = 0; i < network.size(); i++)
-  {
-    if (network[i] == inputLayer)
-    {
-      inputExists = true;
-    }
-    else if (network[i] == outputLayer)
-    {
-      outputExists = true;
-    }
+    throw std::logic_error("DAGNetwork::Connect(): `inputLayer` and `outputLayer` cannot be the same.");
   }
 
-  Log::Assert(inputExists && outputExists, "DAGNetwork::Connect(): `inputLayer` and `outputLayer` must exist.");
-
-  if (adjacencyList.count(outputLayer) == 0)
+  if (parentNodeId >= network.size() || childNodeId >= network.size())
   {
-    adjacencyList.insert({outputLayer, {inputLayer}});
+    throw std::logic_error("DAGNetwork::Connect(): `inputLayer` and `outputLayer` must exist in the network before connecting them.");
+  }
+
+  if (adjacencyList.count(network[childNodeId]) == 0)
+  {
+    adjacencyList.insert({network[childNodeId], {network[parentNodeId]}});
   }
   else
   {
-    adjacencyList[outputLayer].push_back(inputLayer);
+    adjacencyList[network[childNodeId]].push_back(network[parentNodeId]);
   }
 
   inputDimensionsAreSet = false;
