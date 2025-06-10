@@ -46,10 +46,9 @@ std::cout << " - After LMNN:  "
 
 #### See also:
 
-<!-- TODO: link to kNN -->
-
  * [mlpack distance metrics](../core/distances.md)
  * [`NCA`](nca.md)
+ * [`KNN`](knn.md)
  * [Metric learning on Wikipedia](https://en.wikipedia.org/wiki/Similarity_learning#Metric_learning)
  * [Large margin nearest neighbor on Wikipedia](https://en.wikipedia.org/wiki/Large_margin_nearest_neighbor)
  * [Distance metric learning for Large Margin Nearest Neighbor Classification (pdf)](https://proceedings.neurips.cc/paper_files/paper/2005/file/a7f592cef8b130a6967a90617db5681b-Paper.pdf)
