@@ -165,18 +165,27 @@ void GRUType<MatType>::Backward(
   const size_t batchSize = output.n_cols;
   MakeStateAliases(batchSize);
 
+  MatType deltaY = gy;
+  if (this->HasPreviousStep())
+  {
+    // nextDelta is set in Gradient()
+    deltaY += recurrentResetGateWeight.t() * nextDeltaReset +
+        recurrentUpdateGateWeight.t() * nextDeltaUpdate +
+        recurrentHiddenGateWeight.t() * nextDeltaHidden;
+  }
+
   // Work backwards to get error at each gate.
   // y_t = (1 - z_t) % y_{t - 1} + z_t % h_t
   // dh_t = dy % z_t
-  deltaHidden = gy % updateGate;
-  deltaHidden = 1.0 - square(tanh(deltaHidden));
+  deltaHidden = deltaY % updateGate;
+  deltaHidden = deltaHidden % (1.0 - square(tanh(hiddenGate)));
 
   // y_t = (1 - z_t) % y_{t - 1} + z_t % h_t
   // dz_t = dy % h_t - dy % y_{t - 1}
-  deltaUpdate = gy % hiddenGate;
+  deltaUpdate = deltaY % hiddenGate;
   if (this->HasPreviousStep())
-    deltaUpdate -= gy % prevOutput;
-  deltaUpdate = deltaUpdate % (1.0 - deltaUpdate);
+    deltaUpdate -= deltaY % prevOutput;
+  deltaUpdate = deltaUpdate % (updateGate % (1.0 - updateGate));
 
   if (this->HasPreviousStep())
   {
@@ -184,7 +193,7 @@ void GRUType<MatType>::Backward(
     // h_t = tanh(W_h x_t + r_t % (U_h y_{t - 1}))
     // dr_t = dh_t % (U_h y_{t - 1})
     deltaReset = deltaHidden % (recurrentHiddenGateWeight * prevOutput);
-    deltaReset = deltaReset % (1.0 - deltaReset);
+    deltaReset = deltaReset % (resetGate % (1.0 - resetGate));
   }
   else
   {
