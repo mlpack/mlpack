@@ -165,31 +165,23 @@ void GRUType<MatType>::Backward(
   const size_t batchSize = output.n_cols;
   MakeStateAliases(batchSize);
 
-  MatType deltaY = gy;
-  if (this->HasPreviousStep())
-  {
-    // nextDelta is set in Gradient()
-    deltaY += recurrentResetGateWeight.t() * nextDeltaReset +
-        recurrentUpdateGateWeight.t() * nextDeltaUpdate +
-        recurrentHiddenGateWeight.t() * nextDeltaHidden;
-  }
-
   // Work backwards to get error at each gate.
   // y_t = (1 - z_t) % y_{t - 1} + z_t % h_t
   // dh_t = dy % z_t
-  deltaHidden = deltaY % updateGate;
-  deltaHidden = deltaHidden % (1.0 - square(tanh(hiddenGate)));
+  deltaHidden = gy % updateGate;
+  // Note the derivative of tanh(x) is 1 - tanh^2(x) but
+  // tanh has already been applied on hiddenGate in Forward().
+  deltaHidden = deltaHidden % (1.0 - square(hiddenGate));
 
   // y_t = (1 - z_t) % y_{t - 1} + z_t % h_t
   // dz_t = dy % h_t - dy % y_{t - 1}
-  deltaUpdate = deltaY % hiddenGate;
+  deltaUpdate = gy % hiddenGate;
   if (this->HasPreviousStep())
-    deltaUpdate -= deltaY % prevOutput;
+    deltaUpdate -= gy % prevOutput;
   deltaUpdate = deltaUpdate % (updateGate % (1.0 - updateGate));
 
   if (this->HasPreviousStep())
   {
-    // Note the derivative of tanh has already been taken for deltaHidden.
     // h_t = tanh(W_h x_t + r_t % (U_h y_{t - 1}))
     // dr_t = dh_t % (U_h y_{t - 1})
     deltaReset = deltaHidden % (recurrentHiddenGateWeight * prevOutput);

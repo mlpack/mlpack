@@ -27,8 +27,8 @@ TEST_CASE("GradientGRULayerTest", "[ANNLayerTest]")
   struct GradientFunction
   {
     GradientFunction() :
-        input(arma::randu(4, 1, 5)),
-        target(arma::ones(1, 1, 5))
+        input(arma::randu(4, 1, 1)),
+        target(arma::ones(1, 1, 1))
     {
       model = RNN<MeanSquaredError, RandomInitialization>(5);
       model.ResetData(input, target);
