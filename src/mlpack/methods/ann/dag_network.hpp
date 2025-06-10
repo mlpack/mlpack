@@ -74,6 +74,13 @@ public:
   //! Move assignment operator.
   DAGNetwork& operator=(DAGNetwork&& other);
 
+  //! Destructor: delete all layers.
+  ~DAGNetwork()
+  {
+    for (size_t i = 0; i < network.size(); ++i)
+      delete network[i];
+  }
+
   using CubeType = typename GetCubeType<MatType>::type;
 
   /**
