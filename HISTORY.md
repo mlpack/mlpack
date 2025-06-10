@@ -4,6 +4,8 @@
 
 _????-??-??_
 
+ * Adapt `GRU` layer to new interface (#3955).
+
  * Fix warning on CRAN for bundled STB (#3950).
 
 ## mlpack 4.6.2

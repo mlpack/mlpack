@@ -52,7 +52,10 @@ TEST_CASE("SineGRULayerTest", "[ANNLayerTest]")
   arma::vec initalDiff = arma::vectorise(responses - inital);
   double initalDist = arma::dot(initalDiff, initalDiff);
 
-  model.Train(predictors, responses);
+  ens::RMSProp optim;
+  optim.MaxIterations() = predictors.n_cols * 5;
+
+  model.Train(predictors, responses, optim);
 
   // Distance from truth after training
   model.Predict(predictors, out);
@@ -60,7 +63,7 @@ TEST_CASE("SineGRULayerTest", "[ANNLayerTest]")
   double trainedDist = arma::dot(trainedDiff, trainedDiff);
 
   // Make sure the training result is better
-  REQUIRE(initalDist - 1.0 > trainedDist);
+  REQUIRE(trainedDist < initalDist / 5);
 }
 
 /**
