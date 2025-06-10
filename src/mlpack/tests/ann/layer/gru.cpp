@@ -18,6 +18,45 @@
 
 using namespace mlpack;
 
+void GenerateSineData(arma::cube& predictors,
+                      arma::cube& responses,
+                      size_t cols,
+                      size_t slices)
+{
+  predictors.resize(1, cols, slices);
+  responses.resize(1, cols, 1);
+  arma::vec theta = arma::linspace(0, 100, 1000);
+
+  for (size_t i = 0; i < cols; i++)
+  {
+    predictors.tube(0, i) = arma::sin(theta.rows(i, i + slices - 1));
+    responses[i] = sin(theta[i + slices]);
+  }
+}
+
+/**
+ * Try to train a simple RNN using a GRU layer
+ */
+TEST_CASE("SineGRULayerTest", "[ANNLayerTest]")
+{
+  size_t rho = 50;
+  RNN<MeanSquaredError> model(rho, true);
+  model.Add<GRU>(20);
+  model.Add<Linear>(1);
+
+  arma::cube predictors, responses, out;
+  GenerateSineData(predictors, responses, 10, rho);
+  model.Train(predictors, responses);
+
+  model.Predict(predictors, out);
+  // Calculate distance between predictions and labels
+  responses -= out;
+  double distSqr = arma::dot(arma::vectorise(responses),
+      arma::vectorise(responses));
+
+  REQUIRE(distSqr < 0.01);
+}
+
 /**
  * GRU layer numerical gradient test.
  */
