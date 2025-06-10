@@ -44,26 +44,22 @@ TEST_CASE("SineGRULayerTest", "[ANNLayerTest]")
   model.Add<GRU>(20);
   model.Add<Linear>(1);
 
-  arma::cube predictors, responses, inital, out;
+  arma::cube predictors, responses;
   GenerateSineData(predictors, responses, 10, rho);
 
-  // Distance from truth without training
-  model.Predict(predictors, inital);
-  arma::vec initalDiff = arma::vectorise(responses - inital);
-  double initalDist = arma::dot(initalDiff, initalDiff);
+  // Evaluate before training
+  double inital = model.Evaluate(predictors, responses);
 
   ens::RMSProp optim;
   optim.MaxIterations() = predictors.n_cols * 5;
 
   model.Train(predictors, responses, optim);
 
-  // Distance from truth after training
-  model.Predict(predictors, out);
-  arma::vec trainedDiff = arma::vectorise(responses - out);
-  double trainedDist = arma::dot(trainedDiff, trainedDiff);
+  // Evaluate after training
+  double trained = model.Evaluate(predictors, responses);
 
   // Make sure the training result is better
-  REQUIRE(trainedDist < initalDist / 5);
+  REQUIRE(trained < inital / 5);
 }
 
 /**
