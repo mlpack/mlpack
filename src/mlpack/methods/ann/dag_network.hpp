@@ -315,8 +315,13 @@ private:
   //! parameter.
   InitializationRuleType initializeRule;
 
-  //! The internally-held network.
+  //! The internally-held network, sorted in the order that the user
+  //! specified when using `Add()`
   std::vector<Layer<MatType>*> network;
+
+  //! The internally-held network, sorted topologically when `CheckNetwork`
+  //! is called if the graph is valid.
+  std::vector<Layer<MatType>*> sortedNetwork;
 
   //! The internall-held adjacencyList of all the nodes
   std::map<Layer<MatType>*, std::vector<Layer<MatType>*>> adjacencyList;
@@ -325,9 +330,9 @@ private:
   //! with multiple inputs
   std::map<Layer<MatType>*, size_t> layerAxes;
 
-  //! The internall-held map of Layers corresponding to what their position
-  //! is in the topologically sorted network vector.
-  std::map<Layer<MatType>*, size_t> indices;
+  //! The internally-held map of Layers corresponding to what their position
+  //! is in the topologically sorted `sortedNetwork` vector.
+  std::map<Layer<MatType>*, size_t> sortedIndices;
 
   /**
    * Matrix of (trainable) parameters.  Each weight here corresponds to a layer,

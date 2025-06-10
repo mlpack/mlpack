@@ -50,7 +50,8 @@ DAGNetwork<
     inputDimensions(network.inputDimensions),
     adjacencyList(network.adjacencyList),
     layerAxes(network.layerAxes),
-    indices(network.indices),
+    sortedNetwork(network.sortedNetwork),
+    sortedIndices(network.sortedIndices),
     // These will be set correctly in the first Forward() call.
     inputDimensionsAreSet(false),
     layerMemoryIsSet(false),
@@ -74,7 +75,8 @@ DAGNetwork<
     inputDimensions(std::move(network.inputDimensions)),
     adjacencyList(std::move(network.adjacencyList)),
     layerAxes(std::move(network.layerAxes)),
-    indices(std::move(network.indices)),
+    sortedNetwork(std::move(network.sortedNetwork)),
+    sortedIndices(std::move(network.sortedIndices)),
     // Aliases will not be correct after a std::move(), so we will manually
     // reset them.
     layerMemoryIsSet(false),
@@ -107,7 +109,8 @@ DAGNetwork<
     graphIsSet = other.graphIsSet;
     adjacencyList = other.adjacencyList;
     layerAxes = other.layerAxes;
-    indices = other.indices;
+    sortedNetwork = other.sortedNetwork;
+    sortedIndices = other.sortedIndices;
     networkOutput = other.networkOutput;
 
     layerMemoryIsSet = false;
@@ -136,7 +139,8 @@ DAGNetwork<OutputLayerType,
     inputDimensions = std::move(other.inputDimensions);
     adjacencyList = std::move(other.adjacencyList);
     layerAxes = std::move(other.layerAxes);
-    indices = std::move(other.indices);
+    sortedNetwork = std::move(other.sortedNetwork);
+    sortedIndices = std::move(other.sortedIndices);
     networkOutput = std::move(other.networkOutput);
 
     inputDimensionsAreSet = std::move(other.inputDimensionsAreSet);
@@ -206,8 +210,8 @@ void DAGNetwork<
 >::CheckGraph()
 {
   std::unordered_set<Layer<MatType>*> exploredLayers;
-  std::vector<Layer<MatType>*> sortedLayers;
   std::stack<std::pair<Layer<MatType>*, bool>> exploring;
+  sortedNetwork.clear();
 
   for (size_t i = 0; i < network.size(); i++)
   {
@@ -227,7 +231,7 @@ void DAGNetwork<
 
       if (explored)
       {
-        sortedLayers.push_back(currentLayer);
+        sortedNetwork.push_back(currentLayer);
         exploredLayers.insert(currentLayer);
       }
       else
@@ -251,7 +255,7 @@ void DAGNetwork<
   }
 
   size_t size = 0;
-  exploring.push(std::make_pair(sortedLayers.back(), false));
+  exploring.push(std::make_pair(sortedNetwork.back(), false));
   exploredLayers.clear();
 
   while (!exploring.empty())
@@ -281,11 +285,10 @@ void DAGNetwork<
     }
   }
 
-  if (size != sortedLayers.size())
+  if (size != sortedNetwork.size())
   {
     std::logic_error("DAGNetwork::CheckGraph(): Multiple inputs and/or outputs exist when there should only be one of each");
   }
-  network = sortedLayers;
   graphIsSet = true;
 }
 
@@ -302,7 +305,7 @@ void DAGNetwork<
     CheckGraph();
   std::stack<std::pair<Layer<MatType>*, bool>> exploring;
   std::unordered_set<Layer<MatType>*> explored;
-  exploring.push(std::make_pair(network.back(), false));
+  exploring.push(std::make_pair(sortedNetwork.back(), false));
 
   size_t inputs = 0;
   while (!exploring.empty())
@@ -443,8 +446,8 @@ size_t DAGNetwork<
   UpdateDimensions("DAGNetwork::WeightSize()");
 
   size_t total = 0;
-  for (size_t i = 0; i < network.size(); i++)
-    total += network[i]->WeightSize();
+  for (size_t i = 0; i < sortedNetwork.size(); i++)
+    total += sortedNetwork[i]->WeightSize();
   return total;
 }
 
@@ -492,9 +495,9 @@ void DAGNetwork<
 
   size_t offset = 0;
   const size_t totalWeightSize = WeightSize();
-  for (size_t i = 0; i < network.size(); i++)
+  for (size_t i = 0; i < sortedNetwork.size(); i++)
   {
-    const size_t weightSize = network[i]->WeightSize();
+    const size_t weightSize = sortedNetwork[i]->WeightSize();
 
     if (offset + weightSize > totalWeightSize)
     {
@@ -503,7 +506,7 @@ void DAGNetwork<
     }
     MatType tmpWeights;
     MakeAlias(tmpWeights, weightsIn, weightSize, 1, offset);
-    network[i]->SetWeights(tmpWeights);
+    sortedNetwork[i]->SetWeights(tmpWeights);
     offset += weightSize;
   }
 }
@@ -519,11 +522,14 @@ void DAGNetwork<
     MatType& W,
     const size_t elements)
 {
+  if (!graphIsSet)
+    CheckGraph();
+
   size_t offset = 0;
   const size_t totalWeightSize = elements;
-  for (size_t i = 0; i < network.size(); ++i)
+  for (size_t i = 0; i < sortedNetwork.size(); ++i)
   {
-    const size_t weightSize = network[i]->WeightSize();
+    const size_t weightSize = sortedNetwork[i]->WeightSize();
     if (offset + weightSize > totalWeightSize)
     {
       throw std::logic_error("DAGNetwork::SetLayerMemory(): Parameter size does not match total layer "
@@ -532,7 +538,7 @@ void DAGNetwork<
 
     MatType WTemp;
     MakeAlias(WTemp, W, weightSize, 1, offset);
-    network[i]->CustomInitialize(WTemp, weightSize);
+    sortedNetwork[i]->CustomInitialize(WTemp, weightSize);
 
     offset += weightSize;
   }
@@ -554,7 +560,7 @@ void DAGNetwork<
 {
   // Reset the network parameters with the given initialization rule.
   NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
-  networkInit.Initialize(network, parameters);
+  networkInit.Initialize(sortedNetwork, parameters);
   // Override the weight matrix if necessary.
   CustomInitialize(parameters, WeightSize());
 }
@@ -646,20 +652,20 @@ void DAGNetwork<
   CheckNetwork("DAGNetwork::InitializeForwardPassMemory()", 0);
 
   size_t totalOutputSize = 0;
-  for (size_t i = 0; i < network.size() - 1; i++)
+  for (size_t i = 0; i < sortedNetwork.size() - 1; i++)
   {
-    totalOutputSize += network[i]->OutputSize();
+    totalOutputSize += sortedNetwork[i]->OutputSize();
   }
 
   size_t totalConcatSize = 0;
-  for (size_t i = 1; i < network.size(); i++)
+  for (size_t i = 1; i < sortedNetwork.size(); i++)
   {
-    if (adjacencyList[network[i]].size() > 1)
+    if (adjacencyList[sortedNetwork[i]].size() > 1)
     {
-      size_t concatSize = network[i]->InputDimensions()[0];
-      for (size_t j = 1; j < network[i]->InputDimensions().size(); j++)
+      size_t concatSize = sortedNetwork[i]->InputDimensions()[0];
+      for (size_t j = 1; j < sortedNetwork[i]->InputDimensions().size(); j++)
       {
-        concatSize *= network[i]->InputDimensions()[j];
+        concatSize *= sortedNetwork[i]->InputDimensions()[j];
       }
       totalConcatSize += concatSize;
     }
@@ -672,20 +678,20 @@ void DAGNetwork<
   }
 
   size_t offset = 0;
-  indices.clear();
+  sortedIndices.clear();
   //setup layerOutputs
-  for (size_t i = 0; i < network.size() - 1; i++)
+  for (size_t i = 0; i < sortedNetwork.size() - 1; i++)
   {
-    const size_t layerOutputSize = network[i]->OutputSize();
+    const size_t layerOutputSize = sortedNetwork[i]->OutputSize();
     MakeAlias(layerOutputs[i], layerOutputMatrix, layerOutputSize, batchSize, offset);
     offset += batchSize * layerOutputSize;
-    indices.insert({network[i], i});
+    sortedIndices.insert({sortedNetwork[i], i});
   }
 
   //setup layerInputs
-  for (size_t i = 1; i < network.size(); i++)
+  for (size_t i = 1; i < sortedNetwork.size(); i++)
   {
-    Layer<MatType>* currentLayer = network[i];
+    Layer<MatType>* currentLayer = sortedNetwork[i];
     std::vector<Layer<MatType>*> parents = adjacencyList[currentLayer];
     size_t numParents = parents.size();
     if (numParents <= 0)
@@ -696,7 +702,7 @@ void DAGNetwork<
 
     if (numParents == 1)
     {
-      size_t inputIndex = indices[parents.front()];
+      size_t inputIndex = sortedIndices[parents.front()];
       MakeAlias(layerInputs[i-1], layerOutputs[inputIndex], layerOutputs[inputIndex].n_rows, layerOutputs[inputIndex].n_cols, 0);
     }
     else
@@ -721,40 +727,40 @@ void DAGNetwork<
 {
   CheckNetwork("DAGNetwork::Forward", input.n_rows);
 
-  networkOutput.set_size(network.back()->OutputSize(), input.n_cols);
+  networkOutput.set_size(sortedNetwork.back()->OutputSize(), input.n_cols);
 
   // equivalent to MultiLayer->Forward(), but with a concat.
-  if (network.size() > 1)
+  if (sortedNetwork.size() > 1)
   {
     InitializeForwardPassMemory(input.n_cols);
-    network.front()->Forward(input, layerOutputs.front());
-    for (size_t i = 1; i < network.size(); i++)
+    sortedNetwork.front()->Forward(input, layerOutputs.front());
+    for (size_t i = 1; i < sortedNetwork.size(); i++)
     {
-      std::vector<Layer<MatType>*> parents = adjacencyList[network[i]];
+      std::vector<Layer<MatType>*> parents = adjacencyList[sortedNetwork[i]];
 
       if (parents.size() > 1)
       {
         std::vector<CubeType> parentOutputAliases(parents.size());
-        size_t axis = layerAxes[network[i]];
+        size_t axis = layerAxes[sortedNetwork[i]];
 
         size_t rows = 1;
         for (size_t j = 0; j < axis; j++)
-          rows *= network[i]->InputDimensions()[j];
+          rows *= sortedNetwork[i]->InputDimensions()[j];
 
         size_t slices = input.n_cols;
-        for (size_t j = axis + 1; j < network[i]->InputDimensions().size(); j++)
-          slices *= network[i]->InputDimensions()[j];
+        for (size_t j = axis + 1; j < sortedNetwork[i]->InputDimensions().size(); j++)
+          slices *= sortedNetwork[i]->InputDimensions()[j];
 
 
         for (size_t j = 0; j < parents.size(); j++)
         {
           size_t cols = parents[j]->OutputDimensions()[axis];
-          MatType& parentOutput = layerOutputs[indices[parents[j]]];
+          MatType& parentOutput = layerOutputs[sortedIndices[parents[j]]];
           MakeAlias(parentOutputAliases[j], parentOutput, rows, cols, slices);
         }
 
         CubeType inputAlias;
-        MakeAlias(inputAlias, layerInputs[i-1], rows, network[i]->InputDimensions()[axis], slices);
+        MakeAlias(inputAlias, layerInputs[i-1], rows, sortedNetwork[i]->InputDimensions()[axis], slices);
 
         size_t startCol = 0;
         for (size_t j = 0; j < parentOutputAliases.size(); j++)
@@ -770,15 +776,15 @@ void DAGNetwork<
         throw std::logic_error("DAGNetwork::Forward(): Non-input nodes must have atleast one parent node.");
       }
 
-      if (i < network.size() - 1)
-        network[i]->Forward(layerInputs[i-1], layerOutputs[i]);
+      if (i < sortedNetwork.size() - 1)
+        sortedNetwork[i]->Forward(layerInputs[i-1], layerOutputs[i]);
       else
-        network[i]->Forward(layerInputs[i-1], networkOutput);
+        sortedNetwork[i]->Forward(layerInputs[i-1], networkOutput);
     }
   }
-  else if (network.size() == 1)
+  else if (sortedNetwork.size() == 1)
   {
-    network[0]->Forward(input, networkOutput);
+    sortedNetwork[0]->Forward(input, networkOutput);
   }
   else
   {
@@ -799,6 +805,7 @@ double DAGNetwork<
     MatType
 >::Loss() const
 {
+  CheckNetwork("DAGNetwork::Loss()", 0);
   double loss = 0.0;
   for (size_t i = 0; i < network.size(); i++)
        loss += network[i]->Loss();
@@ -829,7 +836,7 @@ void DAGNetwork<
 >::Predict(const MatType& predictors, MatType& results, const size_t batchSize)
 {
   CheckNetwork("DAGNetwork::Predict()", predictors.n_rows, true, false);
-  results.set_size(network.back()->OutputSize(), predictors.n_cols);
+  results.set_size(sortedNetwork.back()->OutputSize(), predictors.n_cols);
   for (size_t i = 0; i < predictors.n_cols; i += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize,
