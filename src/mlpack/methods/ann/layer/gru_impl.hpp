@@ -110,8 +110,8 @@ void GRUType<MatType>::Forward(const MatType& input, MatType& output)
   MakeStateAliases(batchSize);
 
   // Compute internal state using the following algorithm.
-  // z_t = sigmoid(W_z x_t + U_z y_{t - 1})
   // r_t = sigmoid(W_r x_t + U_r y_{t - 1})
+  // z_t = sigmoid(W_z x_t + U_z y_{t - 1})
   // h_t =    tanh(W_h x_t + r_t % (U_h y_{t - 1}))
   // y_t =        (1 - z_t) % y_{t - 1} + z_t % h_t
 
@@ -136,7 +136,7 @@ void GRUType<MatType>::Forward(const MatType& input, MatType& output)
   // Add recurrent portion to activation vector.
   if (this->HasPreviousStep())
   {
-    hiddenGate += recurrentHiddenGateWeight * (resetGate % prevOutput);
+    hiddenGate += resetGate % (recurrentHiddenGateWeight * prevOutput);
   }
 
   // Apply tanh activation function.
@@ -169,10 +169,13 @@ void GRUType<MatType>::Backward(
   // y_t = (1 - z_t) % y_{t - 1} + z_t % h_t
   // dh_t = dy % z_t
   deltaHidden = gy % updateGate;
-  // Note the derivative of tanh(x) is 1 - tanh^2(x) but
-  // tanh has already been applied on hiddenGate in Forward().
+  // The hidden gate uses a tanh activation function.
+  // The derivative of tanh(x) is actually 1 - tanh^2(x) but
+  // tanh has already been applied to hiddenGate in Forward().
   deltaHidden = deltaHidden % (1.0 - square(hiddenGate));
 
+  // The reset and upadte gate use sigmoid activation.
+  // The derivative is sigmoid(x) * (1 - sigmoid(x)).
   // y_t = (1 - z_t) % y_{t - 1} + z_t % h_t
   // dz_t = dy % h_t - dy % y_{t - 1}
   deltaUpdate = gy % hiddenGate;
@@ -192,7 +195,11 @@ void GRUType<MatType>::Backward(
     deltaReset.zeros(deltaHidden.n_rows, deltaHidden.n_cols);
   }
 
-  // Get the layer error.
+  // Calculate the input error.
+  // r_t = sigmoid(W_r x_t + U_r y_{t - 1})
+  // z_t = sigmoid(W_z x_t + U_z y_{t - 1})
+  // h_t =    tanh(W_h x_t + r_t % (U_h y_{t - 1}))
+  // dx_t = W_r * dr_t + W_z * dz_t + W_h * dh_t
   g = resetGateWeight.t() * deltaReset +
       updateGateWeight.t() * deltaUpdate +
       hiddenGateWeight.t() * deltaHidden;
@@ -220,7 +227,7 @@ void GRUType<MatType>::Gradient(
       vectorise(deltaHidden * input.t());
   offset += hiddenGateWeight.n_elem;
 
-  // We don't have access to nextDelta at the first step.
+  // nextDelta is not set until after the first step.
   if (!this->AtFinalStep())
   {
     // Recurrent reset gate weights.
@@ -237,7 +244,7 @@ void GRUType<MatType>::Gradient(
     offset += recurrentHiddenGateWeight.n_elem;
   }
 
-  // Move delta to nextDelta for next pass.
+  // Move delta to nextDelta for the next pass.
   nextDeltaReset = std::move(deltaReset);
   nextDeltaUpdate = std::move(deltaUpdate);
   nextDeltaHidden = std::move(deltaHidden);
