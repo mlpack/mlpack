@@ -380,6 +380,84 @@ template<
     typename InitializationRuleType,
     typename MatType
 >
+typename MatType::elem_type RNN<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::Evaluate(
+    const CubeType& predictors,
+    const CubeType& responses)
+{
+  // Ensure that the network is configured correctly.
+  network.CheckNetwork("RNN::Evaluate()", predictors.n_rows);
+
+  // Add the loss of the network unrelated to output.
+  typename MatType::elem_type lossSum = network.network.Loss();
+
+  // Reset memory
+  ResetMemoryState(0, predictors.n_cols);
+
+  // Iterate over all time slices.
+  MatType forwardOutput;
+  for (size_t t = 0; t < predictors.n_slices; t++)
+  {
+    // Do a forward pass and get the loss.
+    network.Forward(predictors.slice(t), forwardOutput);
+    lossSum += network.outputLayer.Forward(forwardOutput,
+        responses.slice(single ? 0 : t));
+  }
+
+  return lossSum;
+}
+
+template<
+    typename OutputLayerType,
+    typename InitializationRuleType,
+    typename MatType
+>
+typename MatType::elem_type RNN<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::Evaluate(
+    const CubeType& predictors,
+    const CubeType& responses,
+    const arma::urowvec& sequenceLengths)
+{
+  // Ensure that the network is configured correctly.
+  network.CheckNetwork("RNN::Evaluate()", predictors.n_rows);
+
+  // Add the loss of the network unrelated to output.
+  typename MatType::elem_type lossSum = network.network.Loss();
+
+  MatType forwardOutput, inputAlias;
+  for (size_t i = 0; i < predictors.n_cols; i++)
+  {
+    // Reset memory for a new sequence.
+    ResetMemoryState(0, 1);
+
+    // Iterate over all time slices.
+    for (size_t t = 0; t < predictors.n_slices; t++)
+    {
+      // Get the input data.
+      MakeAlias(inputAlias, predictors, predictors.n_rows, 1,
+          i * predictors.n_rows);
+
+      // Do a forward pass and get the loss.
+      network.Forward(inputAlias, forwardOutput);
+      lossSum += network.outputLayer.Forward(forwardOutput,
+          responses.slice(single ? 0 : t));
+    }
+  }
+
+  return lossSum;
+}
+
+template<
+    typename OutputLayerType,
+    typename InitializationRuleType,
+    typename MatType
+>
 template<typename Archive>
 void RNN<
     OutputLayerType,
