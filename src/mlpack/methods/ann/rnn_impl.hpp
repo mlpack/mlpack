@@ -394,17 +394,19 @@ typename MatType::elem_type RNN<
   // Add the loss of the network unrelated to output.
   typename MatType::elem_type lossSum = network.network.Loss();
 
-  // Reset memory
+  // Reset recurrent memory state.
   ResetMemoryState(0, predictors.n_cols);
 
   // Iterate over all time slices.
   MatType forwardOutput;
   for (size_t t = 0; t < predictors.n_slices; t++)
   {
-    // Do a forward pass and get the loss.
+    SetCurrentStep(t, (t == predictors.n_slices - 1));
+    // Do a forward pass and calculate the loss.
     network.Forward(predictors.slice(t), forwardOutput);
-    lossSum += network.outputLayer.Forward(forwardOutput,
-        responses.slice(single ? 0 : t));
+    if (!single || t == predictors.n_slices - 1)
+      lossSum += network.outputLayer.Forward(forwardOutput,
+          responses.slice(single ? 0 : t));
   }
 
   return lossSum;
@@ -437,16 +439,19 @@ typename MatType::elem_type RNN<
     ResetMemoryState(0, 1);
 
     // Iterate over all time slices.
-    for (size_t t = 0; t < predictors.n_slices; t++)
+    size_t slices = sequenceLengths[i];
+    for (size_t t = 0; t < slices; t++)
     {
+      SetCurrentStep(t, (t == slices - 1));
       // Get the input data.
       MakeAlias(inputAlias, predictors, predictors.n_rows, 1,
           i * predictors.n_rows);
 
-      // Do a forward pass and get the loss.
+      // Do a forward pass and calculate the loss.
       network.Forward(inputAlias, forwardOutput);
-      lossSum += network.outputLayer.Forward(forwardOutput,
-          responses.slice(single ? 0 : t));
+      if (!single || t == predictors.n_slices - 1)
+        lossSum += network.outputLayer.Forward(forwardOutput,
+            responses.slice(single ? 0 : t));
     }
   }
 
