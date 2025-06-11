@@ -105,7 +105,9 @@ bool Load(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
-          const DataOptionsBase<DataOptionsType>& opts)
+          const DataOptionsType& opts,
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>*)
 {
   DataOptionsType tmpOpts(opts);
   return Load(filename, matrix, tmpOpts);
@@ -156,7 +158,9 @@ bool LoadMatrix(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
-          DataOptionsBase<DataOptionsType>& opts)
+          DataOptionsType& opts,
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>*)
 {
   Timer::Start("loading_data");
 
@@ -183,7 +187,6 @@ bool Load(const std::string& filename,
   }
   else if constexpr (!IsArma<MatType>::value && !IsSparseMat<MatType>::value)
   {
-    std::cout << "should be loading a model" << std::endl;
     success = LoadModel(matrix, opts, stream);
   }
   else

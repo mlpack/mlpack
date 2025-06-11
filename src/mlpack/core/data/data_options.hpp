@@ -427,6 +427,26 @@ static const DataOptions JSON = DataOptions(std::nullopt, FileType::JSON);
 static const DataOptions XML  = DataOptions(std::nullopt, FileType::XML);
 static const DataOptions BIN  = DataOptions(std::nullopt, FileType::BIN);
 
+// Utility struct to detect when something is a data options.
+
+template<typename T>
+struct IsDataOptions
+{
+  constexpr static bool value = false;
+};
+
+template<typename T>
+struct IsDataOptions<DataOptionsBase<T>>
+{
+  constexpr static bool value = true;
+};
+
+template<>
+struct IsDataOptions<DataOptions>
+{
+  constexpr static bool value = true;
+};
+
 } // namespace data
 } // namespace mlpack
 

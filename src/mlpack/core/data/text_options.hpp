@@ -268,6 +268,12 @@ static const TextOptions MissingToNan = TextOptions(std::nullopt, std::nullopt,
 static const TextOptions Categorical  = TextOptions(std::nullopt,
       std::nullopt, std::nullopt, true);
 
+template<>
+struct IsDataOptions<TextOptions>
+{
+  constexpr static bool value = true;
+};
+
 } // namespace data
 } // namespace mlpack
 
