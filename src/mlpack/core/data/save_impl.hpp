@@ -72,7 +72,7 @@ template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
           const DataOptionsBase<DataOptionsType>& opts)
- {
+{
   //! just use default copy ctor with = operator and make a copy.
   DataOptionsType copyOpts(opts);
   return Save(filename, matrix, copyOpts);

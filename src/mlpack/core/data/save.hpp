@@ -130,8 +130,7 @@ bool Save(const std::string& filename,
           T& t,
           const bool fatal = false,
           FileType f = FileType::AutoDetect,
-          std::enable_if_t<HasSerialize<T>::value>* = 0
-          );
+          std::enable_if_t<HasSerialize<T>::value>* = 0);
 
 /**
  * This function defines a unified data saving interface for the library.
