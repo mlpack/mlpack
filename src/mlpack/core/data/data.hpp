@@ -40,7 +40,6 @@
 #include "split_data.hpp"
 #include "string_algorithms.hpp"
 #include "text_options.hpp"
-#include "utilities.hpp"
 
 #include "combine_options.hpp"
 
