@@ -16,8 +16,6 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "detect_file_type.hpp"
-
 namespace mlpack {
 namespace data {
 
@@ -52,109 +50,6 @@ void TransposeTokens(std::vector<std::vector<std::string>> const &input,
 }
 } // namespace details
 
-template<typename DataOptionsType>
-bool OpenFile(const std::string& filename,
-              DataOptionsType& opts,
-              bool isLoading,
-              std::fstream& stream)
-{
-  if (isLoading)
-  {
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-    stream.open(filename.c_str(), std::fstream::in
-        | std::fstream::binary);
-#else
-    stream.open(filename.c_str(), std::fstream::in);
-#endif
-  }
-  // Add here and else if for ModelOptions in a couple of stages.
-  else
-  {
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-    stream.open(filename.c_str(), std::fstream::out
-        | std::fstream::binary);
-#else
-    stream.open(filename.c_str(), std::fstream::out);
-#endif
-  }
-
-  if (!stream.is_open())
-  {
-    if (opts.Fatal() && isLoading)
-      Log::Fatal << "Cannot open file '" << filename << "' for loading.  "
-          << "Please check if the file exists." << std::endl;
-
-    else if (!opts.Fatal() && isLoading)
-      Log::Warn << "Cannot open file '" << filename << "' for loading.  "
-          << "Please check if the file exists." << std::endl;
-
-    else if (opts.Fatal() && !isLoading)
-      Log::Fatal << "Cannot open file '" << filename << "' for saving.  "
-          << "Please check if you have permissions for writing." << std::endl;
-
-    else if (!opts.Fatal() && !isLoading)
-      Log::Warn << "Cannot open file '" << filename << "' for saving.  "
-          << "Please check if you have permissions for writing." << std::endl;
-
-    return false;
-  }
-  return true;
-}
-
-template<typename MatType, typename DataOptionsType>
-bool DetectFileType(const std::string& filename,
-                    DataOptionsType& opts,
-                    bool isLoading,
-                    std::fstream* stream = nullptr)
-{
-  // Add if for ModelOptions in a couple of stages
-  if (opts.Format() == FileType::AutoDetect)
-  {
-    if (isLoading)
-      // Attempt to auto-detect the type from the given file.
-      opts.Format() = AutoDetectFile(*stream, filename);
-    else
-      DetectFromExtension<MatType>(filename, opts);
-    // Provide error if we don't know the type.
-    if (opts.Format() == FileType::FileTypeUnknown)
-    {
-      if (opts.Fatal())
-        Log::Fatal << "Unable to detect type of '" << filename << "'; "
-            << "Incorrect extension?" << std::endl;
-      else
-        Log::Warn << "Unable to detect type of '" << filename << "'; "
-            << "Incorrect extension?" << std::endl;
-
-      return false;
-    }
-  }
-  return true;
-}
-
-template<typename MatType, typename DataOptionsType>
-bool SaveMatrix(const MatType& matrix,
-                DataOptionsType& opts,
-#ifdef ARMA_USE_HDF5
-                const std::string& filename,
-#else
-                const std::string& /* filename */,
-#endif
-                std::fstream& stream)
-{
-  bool success = false;
-  if (opts.Format() == FileType::HDF5Binary)
-  {
-#ifdef ARMA_USE_HDF5
-    // We can't save with streams for HDF5.
-    success = matrix.save(filename, opts.ToArmaFileType());
-#endif
-  }
-  else
-  {
-    success = matrix.save(stream, opts.ToArmaFileType());
-  }
-  return success;
-}
 
 } //namespace data
 } //namespace mlpack
