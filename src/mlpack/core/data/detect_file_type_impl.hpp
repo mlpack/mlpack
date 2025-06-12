@@ -17,6 +17,54 @@
 namespace mlpack {
 namespace data {
 
+template<typename DataOptionsType>
+bool OpenFile(const std::string& filename,
+              DataOptionsType& opts,
+              bool isLoading,
+              std::fstream& stream)
+{
+  if (isLoading)
+  {
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+    stream.open(filename.c_str(), std::fstream::in
+        | std::fstream::binary);
+#else
+    stream.open(filename.c_str(), std::fstream::in);
+#endif
+  }
+  else
+  {
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+    stream.open(filename.c_str(), std::fstream::out
+        | std::fstream::binary);
+#else
+    stream.open(filename.c_str(), std::fstream::out);
+#endif
+  }
+
+  if (!stream.is_open())
+  {
+    if (opts.Fatal() && isLoading)
+      Log::Fatal << "Cannot open file '" << filename << "' for loading.  "
+          << "Please check if the file exists." << std::endl;
+
+    else if (!opts.Fatal() && isLoading)
+      Log::Warn << "Cannot open file '" << filename << "' for loading.  "
+          << "Please check if the file exists." << std::endl;
+
+    else if (opts.Fatal() && !isLoading)
+      Log::Fatal << "Cannot open file '" << filename << "' for saving.  "
+          << "Please check if you have permissions for writing." << std::endl;
+
+    else if (!opts.Fatal() && !isLoading)
+      Log::Warn << "Cannot open file '" << filename << "' for saving.  "
+          << "Please check if you have permissions for writing." << std::endl;
+
+    return false;
+  }
+  return true;
+}
+
 /**
  * Given an istream, attempt to guess the file type.  This is taken originally
  * from Armadillo's function guess_file_type_internal(), but we avoid using
@@ -252,7 +300,7 @@ inline FileType AutoDetectFile(std::fstream& stream,
  * @param filename Name of the file whose type we should detect.
  * @return Detected type of file.
  */
-template<typename MatType, typename DataOptionsType>
+template<typename ObjectType, typename DataOptionsType>
 void DetectFromExtension(const std::string& filename,
                          DataOptionsType& opts)
 {
@@ -264,12 +312,12 @@ void DetectFromExtension(const std::string& filename,
   }
   else if (extension == "txt")
   {
-    if (IsSparseMat<MatType>::value)
+    if (IsSparseMat<ObjectType>::value)
       opts.Format() = FileType::CoordASCII;
     else
       opts.Format() = FileType::RawASCII;
   }
-  else if (extension == "bin")
+  else if (!HasSerialize<ObjectType>::value && extension == "bin")
   {
     opts.Format() = FileType::ArmaBinary;
   }
@@ -286,10 +334,78 @@ void DetectFromExtension(const std::string& filename,
   {
     opts.Format() = FileType::ARFFASCII;
   }
+  else if constexpr (HasSerialize<ObjectType>::value)
+  {
+    if (extension == "xml")
+    {
+      opts.Format() = FileType::XML;
+    }
+    else if (extension == "bin")
+    {
+      opts.Format() = FileType::BIN;
+    }
+    else if (extension == "json")
+    {
+      opts.Format() = FileType::JSON;
+    }
+  }
   else
   {
     opts.Format() = FileType::FileTypeUnknown;
   }
+}
+
+template<typename ObjectType, typename DataOptionsType>
+bool DetectFileType(const std::string& filename,
+                    DataOptionsType& opts,
+                    bool isLoading,
+                    std::fstream* stream)
+{
+  if constexpr (HasSerialize<ObjectType>::value)
+  {
+    if (opts.Format() == FileType::AutoDetect)
+    {
+      DetectFromExtension<ObjectType>(filename, opts);
+      if (opts.Format() != FileType::XML && opts.Format() != FileType::JSON
+          && opts.Format() != FileType::BIN)
+      {
+        if (opts.Fatal())
+          Log::Fatal << "Unable to detect type of '" << filename
+              << "'; incorrect extension? (allowed: xml/bin/json)"
+              << std::endl;
+        else
+          Log::Warn << "Unable to detect type of '" << filename
+              << "' ; incorrect extension? (allowed: xml/bin/json)"
+              << std::endl;
+
+        return false;
+      }
+    }
+  }
+  else
+  {
+    if (opts.Format() == FileType::AutoDetect)
+    {
+      if (isLoading)
+        // Attempt to auto-detect the type from the given file.
+        opts.Format() = AutoDetectFile(*stream, filename);
+      else
+        DetectFromExtension<ObjectType>(filename, opts);
+      // Provide error if we don't know the type.
+      if (opts.Format() == FileType::FileTypeUnknown)
+      {
+        if (opts.Fatal())
+          Log::Fatal << "Unable to detect type of '" << filename << "'; "
+              << "Incorrect extension?" << std::endl;
+        else
+          Log::Warn << "Unable to detect type of '" << filename << "'; "
+              << "Incorrect extension?" << std::endl;
+
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 /**

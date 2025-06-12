@@ -71,48 +71,25 @@ bool Save(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          const DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value ||
-              IsSparseMat<MatType>::value>*)
+          const DataOptionsBase<DataOptionsType>& opts)
 {
   //! just use default copy ctor with = operator and make a copy.
   DataOptionsType copyOpts(opts);
   return Save(filename, matrix, copyOpts);
 }
 
-/*
- * Add this SFINAE in here because the compiler is so stupid that it is not
- * able to distinguish between these two:
- *
- *  data::Save(filename, "model", *output);
- *
- *  and 
- *
- *  data::Save(filename, matrix, opts);
- *  
- * The second SFINAE is added because the compiler is bot able to see the
- * difference between:
- *
- *  data::Save(filename, Row/Col, fatal);
- *
- *  and 
- *
- *  data::Save(filename, Row/Col, Opts);
- *
- * This SFINAE is temporary and must be removed after the integration of stage 3 or
- * when the compiler becomes more intelligent.
- */
-template<typename MatType, typename DataOptionsType>
+template<typename ObjectType, typename DataOptionsType>
 bool Save(const std::string& filename,
-          const MatType& matrix,
-          DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value ||
-              IsSparseMat<MatType>::value>*,
-          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>*)
+          const ObjectType& matrix,
+          DataOptionsBase<DataOptionsType>& opts)
 {
   Timer::Start("saving_data");
+  static_assert(!IsArma<ObjectType>::value || !IsSparseMat<ObjectType>::value
+      || !HasSerialize<ObjectType>::value, "mlpack can load Armadillo,"
+      " or a serialized mlpack model, please use a known type or"
+      " provide specific overloads.");
 
-  bool success = DetectFileType<MatType>(filename, opts, false);
+  bool success = DetectFileType<ObjectType>(filename, opts, false);
   if (!success)
   {
     Timer::Stop("saving_data");
@@ -130,28 +107,32 @@ bool Save(const std::string& filename,
   // Try to save the file.
   Log::Info << "Saving " << opts.FileTypeToString() << " to '" << filename
       << "'." << std::endl;
-  if constexpr (IsArma<MatType>::value || IsSparseMat<MatType>::value)
+  if constexpr (IsArma<ObjectType>::value || IsSparseMat<ObjectType>::value)
   {
     TextOptions txtOpts(std::move(opts));
-    if constexpr (IsSparseMat<MatType>::value)
+    if constexpr (IsSparseMat<ObjectType>::value)
     {
       success = SaveSparse(matrix, txtOpts, filename, stream);
     }
-    else if constexpr (IsCol<MatType>::value)
+    else if constexpr (IsCol<ObjectType>::value)
     {
       opts.NoTranspose() = true;
       success = SaveDense(matrix, txtOpts, filename, stream);
     }
-    else if constexpr (IsRow<MatType>::value)
+    else if constexpr (IsRow<ObjectType>::value)
     {
       opts.NoTranspose() = false;
       success = SaveDense(matrix, txtOpts, filename, stream);
     }
-    else if constexpr (IsDense<MatType>::value)
+    else if constexpr (IsDense<ObjectType>::value)
     {
       success = SaveDense(matrix, txtOpts, filename, stream);
     }
     opts = std::move(txtOpts);
+  }
+  else if constexpr (HasSerialize<ObjectType>::value)
+  {
+    success = SaveModel(matrix, opts, stream);
   }
   else
   {
@@ -222,25 +203,97 @@ bool SaveSparse(const arma::SpMat<eT>& matrix,
   return success;
 }
 
-//! Save a model to file.
+template<typename Object>
+bool SaveModel(Object& objectToSerialize,
+               DataOptionsBase<PlainDataOptions>& opts,
+               std::fstream& stream)
+{
+  try
+  {
+    if (opts.Format() == FileType::AutoDetect)
+    {
+      std::stringstream oss;
+      oss << "Serialization data format is not specified."
+        " Please specify the format to be either BIN, JSON or XML";
+      if (opts.Fatal())
+        Log::Fatal << oss.str() << std::endl;
+      else
+        Log::Warn << oss.str() << std::endl;
+    }
+    else if (opts.Format() == FileType::XML)
+    {
+      cereal::XMLOutputArchive ar(stream);
+      ar(cereal::make_nvp("model", objectToSerialize));
+    }
+    else if (opts.Format() == FileType::JSON)
+    {
+      cereal::JSONOutputArchive ar(stream);
+      ar(cereal::make_nvp("model", objectToSerialize));
+    }
+    else if (opts.Format() == FileType::BIN)
+    {
+      cereal::BinaryOutputArchive ar(stream);
+      ar(cereal::make_nvp("model", objectToSerialize));
+    }
+    return true;
+  }
+  catch (cereal::Exception& e)
+  {
+    if (opts.Fatal())
+      Log::Fatal << e.what() << std::endl;
+    else
+      Log::Warn << e.what() << std::endl;
+
+    return false;
+  }
+}
+
+template<typename MatType, typename DataOptionsType>
+bool SaveMatrix(const MatType& matrix,
+                const DataOptionsType& opts,
+#ifdef ARMA_USE_HDF5
+                const std::string& filename,
+#else
+                const std::string& /* filename */,
+#endif
+                std::fstream& stream)
+{
+  bool success = false;
+  if (opts.Format() == FileType::HDF5Binary)
+  {
+#ifdef ARMA_USE_HDF5
+    // We can't save with streams for HDF5.
+    success = matrix.save(filename, opts.ArmaFormat());
+#endif
+  }
+  else
+  {
+    success = matrix.save(stream, opts.ArmaFormat());
+  }
+  return success;
+}
+
+// Save a model to file.
+// Keep this implementation until mlpack 5. Then we can remove it.
 template<typename T>
 bool Save(const std::string& filename,
           const std::string& name,
           T& t,
           const bool fatal,
-          format f,
-          std::enable_if_t<HasSerialize<T>::value>*)
+          FileType f,
+          std::enable_if_t<HasSerialize<T>::value>*
+          )
 {
-  if (f == format::autodetect)
+  if (f == FileType::AutoDetect)
   {
     std::string extension = Extension(filename);
 
     if (extension == "xml")
-      f = format::xml;
+      f = FileType::XML;
     else if (extension == "bin")
-      f = format::binary;
+      f = FileType::BIN;
     else if (extension == "json")
-      f = format::json;
+      f = FileType::JSON;
     else
     {
       if (fatal)
@@ -258,7 +311,7 @@ bool Save(const std::string& filename,
   // Open the file to save to.
   std::ofstream ofs;
 #ifdef _WIN32
-  if (f == format::binary) // Open non-text types in binary mode on Windows.
+  if (f == FileType::BIN) // Open non-text types in binary mode on Windows.
     ofs.open(filename, std::ofstream::out | std::ofstream::binary);
   else
     ofs.open(filename, std::ofstream::out);
@@ -280,17 +333,17 @@ bool Save(const std::string& filename,
 
   try
   {
-    if (f == format::xml)
+    if (f == FileType::XML)
     {
       cereal::XMLOutputArchive ar(ofs);
       ar(cereal::make_nvp(name.c_str(), t));
     }
-    else if (f == format::json)
+    else if (f == FileType::JSON)
     {
       cereal::JSONOutputArchive ar(ofs);
       ar(cereal::make_nvp(name.c_str(), t));
     }
-    else if (f == format::binary)
+    else if (f == FileType::BIN)
     {
       cereal::BinaryOutputArchive ar(ofs);
       ar(cereal::make_nvp(name.c_str(), t));

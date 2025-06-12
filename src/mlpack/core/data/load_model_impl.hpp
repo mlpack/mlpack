@@ -30,19 +30,19 @@ bool Load(const std::string& filename,
           const std::string& name,
           T& t,
           const bool fatal,
-          format f,
+          FileType f,
           std::enable_if_t<HasSerialize<T>::value>*)
 {
-  if (f == format::autodetect)
+  if (f == FileType::AutoDetect)
   {
     std::string extension = Extension(filename);
 
     if (extension == "xml")
-      f = format::xml;
+      f = FileType::XML;
     else if (extension == "bin")
-      f = format::binary;
+      f = FileType::BIN;
     else if (extension == "json")
-      f = format::json;
+      f = FileType::JSON;
     else
     {
       if (fatal)
@@ -59,7 +59,7 @@ bool Load(const std::string& filename,
   // Now load the given format.
   std::ifstream ifs;
 #ifdef _WIN32 // Open non-text in binary mode on Windows.
-  if (f == format::binary)
+  if (f == FileType::BIN)
     ifs.open(filename, std::ifstream::in | std::ifstream::binary);
   else
     ifs.open(filename, std::ifstream::in);
@@ -80,17 +80,17 @@ bool Load(const std::string& filename,
   }
   try
   {
-    if (f == format::xml)
+    if (f == FileType::XML)
     {
       cereal::XMLInputArchive ar(ifs);
       ar(cereal::make_nvp(name.c_str(), t));
     }
-    else if (f == format::json)
+    else if (f == FileType::JSON)
     {
      cereal::JSONInputArchive ar(ifs);
      ar(cereal::make_nvp(name.c_str(), t));
     }
-    else if (f == format::binary)
+    else if (f == FileType::BIN)
     {
       cereal::BinaryInputArchive ar(ifs);
       ar(cereal::make_nvp(name.c_str(), t));
