@@ -86,7 +86,7 @@ bool Save(const std::string& filename,
   Timer::Start("saving_data");
   static_assert(!IsArma<ObjectType>::value || !IsSparseMat<ObjectType>::value
       || !HasSerialize<ObjectType>::value, "mlpack can load Armadillo,"
-      " or a serialized mlpack model, please use a known type or" 
+      " or a serialized mlpack model, please use a known type or"
       " provide specific overloads.");
 
   bool success = DetectFileType<ObjectType>(filename, opts, false);
