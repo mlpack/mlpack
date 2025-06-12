@@ -25,7 +25,6 @@
 #include "load_numeric.hpp"
 #include "load_categorical.hpp"
 #include "load_image.hpp"
-#include "utilities.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {

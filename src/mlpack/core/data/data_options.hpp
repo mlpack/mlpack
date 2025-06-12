@@ -210,7 +210,7 @@ class DataOptionsBase
   /**
    * Given a file type, return Armadillo type corresponding to that file type.
    */
-  inline arma::file_type ToArmaFileType()
+  inline arma::file_type ArmaFormat() const
   {
     FileType f = format.has_value() ? *format : defaultFormat;
     switch (f)
