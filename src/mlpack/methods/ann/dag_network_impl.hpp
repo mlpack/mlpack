@@ -28,7 +28,7 @@ DAGNetwork<
     outputLayer(outputLayer),
     initializeRule(initializeRule),
     // These will be set correctly in the first Forward() call.
-    inputDimensionsAreSet(false),
+    validOutputDimensions(false),
     layerMemoryIsSet(false),
     graphIsSet(false)
 {
@@ -53,7 +53,7 @@ DAGNetwork<
     sortedNetwork(network.sortedNetwork),
     sortedIndices(network.sortedIndices),
     // These will be set correctly in the first Forward() call.
-    inputDimensionsAreSet(false),
+    validOutputDimensions(false),
     layerMemoryIsSet(false),
     graphIsSet(false)
 {
@@ -81,7 +81,7 @@ DAGNetwork<
     // reset them.
     layerMemoryIsSet(false),
     graphIsSet(std::move(network.graphIsSet)),
-    inputDimensionsAreSet(std::move(network.inputDimensionsAreSet))
+    validOutputDimensions(std::move(network.validOutputDimensions))
 {
   /* Nothing to do here. */
 }
@@ -105,7 +105,7 @@ DAGNetwork<
     network = other.network;
     parameters = other.parameters;
     inputDimensions = other.inputDimensions;
-    inputDimensionsAreSet = other.inputDimensionsAreSet;
+    validOutputDimensions = other.validOutputDimensions;
     graphIsSet = other.graphIsSet;
     adjacencyList = other.adjacencyList;
     layerAxes = other.layerAxes;
@@ -143,7 +143,7 @@ DAGNetwork<OutputLayerType,
     sortedIndices = std::move(other.sortedIndices);
     networkOutput = std::move(other.networkOutput);
 
-    inputDimensionsAreSet = std::move(other.inputDimensionsAreSet);
+    validOutputDimensions = std::move(other.validOutputDimensions);
     graphIsSet = std::move(other.graphIsSet);
     layerMemoryIsSet = false;
   }
@@ -163,6 +163,11 @@ void DAGNetwork<
   if (layerId >= network.size())
   {
     throw std::logic_error("DAGNetwork::SetAxis(): layer does not exist in the network.");
+  }
+
+  if (layerAxes.find(network[layerId]) != layerAxes.end())
+  {
+    throw std::logic_error("DAGNetwork::SetAxis(): Cannot change concatenation axis.");
   }
   layerAxes[network[layerId]] = concatAxis;
 }
@@ -195,7 +200,7 @@ void DAGNetwork<
     adjacencyList[network[childNodeId]].push_back(network[parentNodeId]);
   }
 
-  inputDimensionsAreSet = false;
+  validOutputDimensions = false;
   graphIsSet = false;
   layerMemoryIsSet = false;
 }
@@ -298,7 +303,7 @@ void DAGNetwork<
 
   if (size != sortedNetwork.size())
   {
-    std::logic_error("DAGNetwork::CheckGraph(): Multiple inputs and/or outputs exist when there should only be one of each");
+    throw std::logic_error("DAGNetwork::CheckGraph(): Multiple inputs and/or outputs exist when there should only be one of each");
   }
   graphIsSet = true;
 }
@@ -434,7 +439,7 @@ void DAGNetwork<
   }
 
   ComputeOutputDimensions();
-  inputDimensionsAreSet = true;
+  validOutputDimensions = true;
 }
 
 template<typename OutputLayerType,
@@ -623,7 +628,7 @@ void DAGNetwork<
   if (!graphIsSet)
     CheckGraph();
 
-  if (!inputDimensionsAreSet)
+  if (!validOutputDimensions)
     UpdateDimensions(functionName, inputDimensionality);
 
   if (parameters.is_empty())
@@ -728,7 +733,7 @@ void DAGNetwork<
     MatType
 >::Forward(const MatType& input, MatType& results)
 {
-  CheckNetwork("DAGNetwork::Forward", input.n_rows);
+  CheckNetwork("DAGNetwork::Forward()", input.n_rows);
 
   networkOutput.set_size(sortedNetwork.back()->OutputSize(), input.n_cols);
 
@@ -791,7 +796,8 @@ void DAGNetwork<
   }
   else
   {
-    networkOutput = input;
+    throw std::invalid_argument("DAGNetwork::Forward(): cannot use network with no "
+        "layers!");
   }
 
   if (&results != &networkOutput)

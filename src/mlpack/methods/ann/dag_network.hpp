@@ -102,7 +102,7 @@ public:
       layerInputs.push_back(MatType());
     }
 
-    inputDimensionsAreSet = false;
+    validOutputDimensions = false;
     graphIsSet = false;
     layerMemoryIsSet = false;
 
@@ -111,7 +111,7 @@ public:
 
   /**
    * Set the axis to concatenate along for a layer that expects multiple
-   * parent node.
+   * parent node. Can only be set once per layer.
    *
    * @param concatAxis The axis to concatenate parent node outputs along.
    * @param layerId The layer to be added to the model.
@@ -167,7 +167,7 @@ public:
    */
   std::vector<size_t>& InputDimensions()
   {
-    inputDimensionsAreSet = false;
+    validOutputDimensions = false;
     graphIsSet = false;
     layerMemoryIsSet = false;
 
@@ -176,6 +176,19 @@ public:
 
   //! Get the logical dimensions of the input.
   const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
+
+  const std::vector<size_t>& OutputDimensions()
+  {
+    if (!graphIsSet)
+      CheckGraph();
+
+    if (!validOutputDimensions)
+    {
+      UpdateDimensions("DAGNetwork::OutputDimensions()");
+    }
+
+    return sortedNetwork.back()->OutputDimensions();
+  }
 
   //! Return the current set of weights.  These are linearized: this contains
   //! the weights of every layer.
@@ -362,7 +375,7 @@ private:
   std::vector<MatType> layerOutputs;
 
   //! If true, each layer has its inputDimensions properly set.
-  bool inputDimensionsAreSet;
+  bool validOutputDimensions;
 
   //! If true, the graph is valid and has been topologically sorted.
   bool graphIsSet;
