@@ -78,14 +78,18 @@ bool Save(const std::string& filename,
   return Save(filename, matrix, copyOpts);
 }
 
-template<typename MatType, typename DataOptionsType>
+template<typename ObjectType, typename DataOptionsType>
 bool Save(const std::string& filename,
-          const MatType& matrix,
+          const ObjectType& matrix,
           DataOptionsBase<DataOptionsType>& opts)
 {
   Timer::Start("saving_data");
+  static_assert(!IsArma<ObjectType>::value || !IsSparseMat<ObjectType>::value
+      || !HasSerialize<ObjectType>::value, "mlpack can load Armadillo,"
+      " or a serialized mlpack model, please use a known type or" 
+      " provide specific overloads.");
 
-  bool success = DetectFileType<MatType>(filename, opts, false);
+  bool success = DetectFileType<ObjectType>(filename, opts, false);
   if (!success)
   {
     Timer::Stop("saving_data");
@@ -103,30 +107,30 @@ bool Save(const std::string& filename,
   // Try to save the file.
   Log::Info << "Saving " << opts.FileTypeToString() << " to '" << filename
       << "'." << std::endl;
-  if constexpr (IsArma<MatType>::value || IsSparseMat<MatType>::value)
+  if constexpr (IsArma<ObjectType>::value || IsSparseMat<ObjectType>::value)
   {
     TextOptions txtOpts(std::move(opts));
-    if constexpr (IsSparseMat<MatType>::value)
+    if constexpr (IsSparseMat<ObjectType>::value)
     {
       success = SaveSparse(matrix, txtOpts, filename, stream);
     }
-    else if constexpr (IsCol<MatType>::value)
+    else if constexpr (IsCol<ObjectType>::value)
     {
       opts.NoTranspose() = true;
       success = SaveDense(matrix, txtOpts, filename, stream);
     }
-    else if constexpr (IsRow<MatType>::value)
+    else if constexpr (IsRow<ObjectType>::value)
     {
       opts.NoTranspose() = false;
       success = SaveDense(matrix, txtOpts, filename, stream);
     }
-    else if constexpr (IsDense<MatType>::value)
+    else if constexpr (IsDense<ObjectType>::value)
     {
       success = SaveDense(matrix, txtOpts, filename, stream);
     }
     opts = std::move(txtOpts);
   }
-  else if constexpr (!IsArma<MatType>::value && !IsSparseMat<MatType>::value)
+  else if constexpr (HasSerialize<ObjectType>::value)
   {
     success = SaveModel(matrix, opts, stream);
   }
@@ -244,6 +248,30 @@ bool SaveModel(Object& objectToSerialize,
   }
 }
 
+template<typename MatType, typename DataOptionsType>
+bool SaveMatrix(const MatType& matrix,
+                const DataOptionsType& opts,
+#ifdef ARMA_USE_HDF5
+                const std::string& filename,
+#else
+                const std::string& /* filename */,
+#endif
+                std::fstream& stream)
+{
+  bool success = false;
+  if (opts.Format() == FileType::HDF5Binary)
+  {
+#ifdef ARMA_USE_HDF5
+    // We can't save with streams for HDF5.
+    success = matrix.save(filename, opts.ArmaFormat());
+#endif
+  }
+  else
+  {
+    success = matrix.save(stream, opts.ArmaFormat());
+  }
+  return success;
+}
 
 // Save a model to file.
 // Keep this implementation until mlpack 5. Then we can remove it.

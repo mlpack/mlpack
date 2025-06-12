@@ -23,6 +23,22 @@ namespace mlpack {
 namespace data {
 
 /**
+ * Open any file type as long as it is supported by mlpack.
+ * Supported files are armadillo matrices and mlpack serialized models.
+ *
+ * param filename filename with extension to be opened.
+ * param opts  DataOption type describing the file.
+ * param isLoading true if we are loding, false otherwise.
+ * param stream the stream that will hold the content of the file.
+ * @return bool if opening the file was successful.
+ */
+template<typename DataOptionsType>
+bool OpenFile(const std::string& filename,
+              DataOptionsType& opts,
+              bool isLoading,
+              std::fstream& stream);
+
+/**
  * Given an istream, attempt to guess the file type.  This is taken originally
  * from Armadillo's function guess_file_type_internal(), but we avoid using
  * internal Armadillo functionality.
@@ -55,11 +71,27 @@ inline FileType AutoDetectFile(std::fstream& stream,
  * Return the type based only on the extension.
  *
  * @param filename Name of the file whose type we should detect.
+ * @param DataOptionsType Type of the data option, text, data, matrix, etc.
  * @return Detected type of file.  arma::file_type_unknown if unknown.
  */
 template<typename MatType, typename DataOptionsType>
 void DetectFromExtension(const std::string& filename,
                          DataOptionsType& opts);
+
+/**
+ * Return the type of the file.
+ *
+ * @param filename Name of the file whose type we should detect.
+ * @param DataOptionsType Type of the data option, text, data, matrix, etc.
+ * @param isLoading True if we are loading, false if otherwise
+ * @param stream is the stream that is holiding the content of the file.
+ * @return Detected type of file. arma::file_type_unknown if unknown.
+ */
+template<typename ObjectType, typename DataOptionsType>
+bool DetectFileType(const std::string& filename,
+                    DataOptionsType& opts,
+                    bool isLoading,
+                    std::fstream* stream = nullptr);
 
 /**
  * Count the number of columns in the file.  The file must be a CSV/TSV/TXT file

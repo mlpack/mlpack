@@ -155,15 +155,18 @@ bool LoadMatrix(const std::string& filename,
   return success;
 }
 
-template<typename MatType, typename DataOptionsType>
+template<typename ObjectType, typename DataOptionsType>
 bool Load(const std::string& filename,
-          MatType& matrix,
+          ObjectType& matrix,
           DataOptionsType& opts,
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>*)
 {
   Timer::Start("loading_data");
-
+  static_assert(!IsArma<ObjectType>::value || !IsSparseMat<ObjectType>::value
+      || !HasSerialize<ObjectType>::value, "mlpack can load Armadillo,"
+      " or a serialized mlpack model, please use a known type or" 
+      " provide specific overloads.");
   std::fstream stream;
   bool success = OpenFile(filename, opts, true, stream);
   if (!success)
@@ -172,20 +175,20 @@ bool Load(const std::string& filename,
     return false;
   }
 
-  success = DetectFileType<MatType>(filename, opts, true, &stream);
+  success = DetectFileType<ObjectType>(filename, opts, true, &stream);
   if (!success)
   {
     Timer::Stop("loading_data");
     return false;
   }
 
-  if constexpr (IsArma<MatType>::value || IsSparseMat<MatType>::value)
+  if constexpr (IsArma<ObjectType>::value || IsSparseMat<ObjectType>::value)
   {
     TextOptions txtOpts(std::move(opts));
     success = LoadMatrix(filename, matrix, stream, txtOpts);
     opts = std::move(txtOpts);
   }
-  else if constexpr (!IsArma<MatType>::value && !IsSparseMat<MatType>::value)
+  else if constexpr (HasSerialize<ObjectType>::value)
   {
     success = LoadModel(matrix, opts, stream);
   }
@@ -212,7 +215,7 @@ bool Load(const std::string& filename,
   }
   else
   {
-    if constexpr (IsArma<MatType>::value)
+    if constexpr (IsArma<ObjectType>::value)
     {
       Log::Info << "Size is " << matrix.n_rows << " x "
           << matrix.n_cols << ".\n";
@@ -256,7 +259,7 @@ bool LoadDense(const std::string& filename,
         << opts.FileTypeToString() << "; "
         << "but this may not be the actual filetype!" << std::endl;
 
-    success = matrix.load(stream, opts.ToArmaFileType());
+    success = matrix.load(stream, opts.ArmaFormat());
     if (!opts.NoTranspose())
       inplace_trans(matrix);
   }
@@ -309,7 +312,7 @@ bool LoadSparse(const std::string& filename,
     // matrix to do that.  If the CSV has three columns, we assume it's a
     // coordinate list.
     arma::Mat<eT> dense;
-    success = dense.load(stream, opts.ToArmaFileType());
+    success = dense.load(stream, opts.ArmaFormat());
     if (dense.n_cols == 3)
     {
       arma::umat locations = arma::conv_to<arma::umat>::from(
@@ -323,7 +326,7 @@ bool LoadSparse(const std::string& filename,
   }
   else
   {
-    success = matrix.load(stream, opts.ToArmaFileType());
+    success = matrix.load(stream, opts.ArmaFormat());
   }
 
   if (!opts.NoTranspose())
@@ -403,17 +406,7 @@ bool LoadModel(Object& objectToSerialize,
 {
   try
   {
-    if (opts.Format() == FileType::AutoDetect)
-    {
-      std::stringstream oss;
-      oss << "Serialization data format is not specified."
-        " Please specify the format to be either BIN, JSON or XML";
-      if (opts.Fatal())
-        Log::Fatal << oss.str() << std::endl;
-      else
-        Log::Warn << oss.str() << std::endl;
-    }
-    else if (opts.Format() == FileType::XML)
+    if (opts.Format() == FileType::XML)
     {
       cereal::XMLInputArchive ar(stream);
       ar(cereal::make_nvp("model", objectToSerialize));
