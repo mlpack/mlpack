@@ -1368,6 +1368,45 @@ TEST_CASE("LoadBinaryTestInOptions", "[LoadSaveTest]")
   REQUIRE(y.inb.s == x.inb.s);
 }
 
+TEST_CASE("LoadAutoDetectTestInOptions", "[LoadSaveTest]")
+{
+  Test x(10, 12);
+
+  REQUIRE(data::Save("test.bin", x, NoFatal + AutoDetect) == true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  REQUIRE(data::Load("test.bin", y, NoFatal + AutoDetect) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+
+  REQUIRE(data::Save("test.xml", x, NoFatal + AutoDetect) == true);
+  REQUIRE(data::Load("test.xml", y, NoFatal + AutoDetect) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+
+  REQUIRE(data::Save("test.JSON", x, NoFatal + AutoDetect) == true);
+  REQUIRE(data::Load("test.JSON", y, NoFatal + AutoDetect) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+}
+
 TEST_CASE("LoadBinaryTestBadOptions", "[LoadSaveTest]")
 {
   Test x(10, 12);

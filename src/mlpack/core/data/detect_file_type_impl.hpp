@@ -300,7 +300,7 @@ inline FileType AutoDetectFile(std::fstream& stream,
  * @param filename Name of the file whose type we should detect.
  * @return Detected type of file.
  */
-template<typename MatType, typename DataOptionsType>
+template<typename ObjectType, typename DataOptionsType>
 void DetectFromExtension(const std::string& filename,
                          DataOptionsType& opts)
 {
@@ -312,12 +312,12 @@ void DetectFromExtension(const std::string& filename,
   }
   else if (extension == "txt")
   {
-    if (IsSparseMat<MatType>::value)
+    if (IsSparseMat<ObjectType>::value)
       opts.Format() = FileType::CoordASCII;
     else
       opts.Format() = FileType::RawASCII;
   }
-  else if (extension == "bin")
+  else if (!HasSerialize<ObjectType>::value && extension == "bin")
   {
     opts.Format() = FileType::ArmaBinary;
   }
@@ -333,6 +333,21 @@ void DetectFromExtension(const std::string& filename,
   else if (extension == "arff")
   {
     opts.Format() = FileType::ARFFASCII;
+  }
+  else if constexpr (HasSerialize<ObjectType>::value)
+  {
+    if (extension == "xml")
+    {
+      opts.Format() = FileType::XML;
+    }
+    else if (extension == "bin")
+    {
+      opts.Format() = FileType::BIN;
+    }
+    else if (extension == "json")
+    {
+      opts.Format() = FileType::JSON;
+    }
   }
   else
   {
@@ -351,8 +366,8 @@ bool DetectFileType(const std::string& filename,
     if (opts.Format() == FileType::AutoDetect)
     {
       DetectFromExtension<ObjectType>(filename, opts);
-      if (opts.Format() != FileType::XML || opts.Format() != FileType::JSON
-          || opts.Format() != FileType::BIN)
+      if (opts.Format() != FileType::XML && opts.Format() != FileType::JSON
+          && opts.Format() != FileType::BIN)
       {
         if (opts.Fatal())
           Log::Fatal << "Unable to detect type of '" << filename
