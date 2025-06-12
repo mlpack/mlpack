@@ -427,7 +427,7 @@ static const DataOptions JSON = DataOptions(std::nullopt, FileType::JSON);
 static const DataOptions XML  = DataOptions(std::nullopt, FileType::XML);
 static const DataOptions BIN  = DataOptions(std::nullopt, FileType::BIN);
 
-// Utility struct to detect when something is a data options.
+// Utility struct to detect when something is a `DataOptions`.
 
 template<typename T>
 struct IsDataOptions
