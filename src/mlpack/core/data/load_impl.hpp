@@ -164,9 +164,8 @@ bool Load(const std::string& filename,
 {
   Timer::Start("loading_data");
   static_assert(!IsArma<ObjectType>::value || !IsSparseMat<ObjectType>::value
-      || !HasSerialize<ObjectType>::value, "mlpack can load Armadillo,"
-      " or a serialized mlpack model, please use a known type or"
-      " provide specific overloads.");
+      || !HasSerialize<ObjectType>::value, "mlpack can load Armadillo"
+      " matrices or serialized mlpack models only; please use a known type.");
   std::fstream stream;
   bool success = OpenFile(filename, opts, true, stream);
   if (!success)
