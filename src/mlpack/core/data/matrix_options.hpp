@@ -288,6 +288,18 @@ using MatrixOptions = PlainMatrixOptions;
 static const MatrixOptions Transpose   = MatrixOptions(false);
 static const MatrixOptions NoTranspose = MatrixOptions(true);
 
+template<typename T>
+struct IsDataOptions<MatrixOptionsBase<T>>
+{
+  constexpr static bool value = true;
+};
+
+template<>
+struct IsDataOptions<PlainMatrixOptions>
+{
+  constexpr static bool value = true;
+};
+
 } // namespace data
 } // namespace mlpack
 

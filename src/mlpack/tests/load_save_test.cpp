@@ -1304,6 +1304,8 @@ class Test
 
 /**
  * Make sure we can load and save.
+ *
+ * Make sure to remove this one when releasing mlpack 5.0.0
  */
 TEST_CASE("LoadBinaryTest", "[LoadSaveTest]")
 {
@@ -1324,8 +1326,107 @@ TEST_CASE("LoadBinaryTest", "[LoadSaveTest]")
   REQUIRE(y.inb.s == x.inb.s);
 }
 
+TEST_CASE("LoadBinaryTestOptions", "[LoadSaveTest]")
+{
+  Test x(10, 12);
+
+  data::DataOptions opts;
+  opts.Format() = FileType::BIN;
+  opts.Fatal() = false;
+
+  REQUIRE(data::Save("test.bin", x, opts) == true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  REQUIRE(data::Load("test.bin", y, opts) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+}
+
+TEST_CASE("LoadBinaryTestInOptions", "[LoadSaveTest]")
+{
+  Test x(10, 12);
+
+  REQUIRE(data::Save("test.bin", x, NoFatal + BIN) == true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  REQUIRE(data::Load("test.bin", y, NoFatal + BIN) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+}
+
+TEST_CASE("LoadAutoDetectTestInOptions", "[LoadSaveTest]")
+{
+  Test x(10, 12);
+
+  REQUIRE(data::Save("test.bin", x, NoFatal + AutoDetect) == true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  REQUIRE(data::Load("test.bin", y, NoFatal + AutoDetect) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+
+  REQUIRE(data::Save("test.xml", x, NoFatal + AutoDetect) == true);
+  REQUIRE(data::Load("test.xml", y, NoFatal + AutoDetect) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+
+  REQUIRE(data::Save("test.JSON", x, NoFatal + AutoDetect) == true);
+  REQUIRE(data::Load("test.JSON", y, NoFatal + AutoDetect) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+}
+
+TEST_CASE("LoadBinaryTestBadOptions", "[LoadSaveTest]")
+{
+  Test x(10, 12);
+
+  REQUIRE_THROWS_AS(data::Save("test.bin", x, NoFatal + BIN + CSV),
+      std::invalid_argument);
+
+  REQUIRE(data::Save("test.bin", x, NoFatal + BIN) == true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  REQUIRE_THROWS_AS(data::Load("test.bin", y, NoFatal + BIN + HDF5),
+      std::invalid_argument);
+}
+
 /**
  * Make sure we can load and save.
+ *
+ * Make sure to remove this one when releasing mlpack 5.0.0
  */
 TEST_CASE("LoadXMLTest", "[LoadSaveTest]")
 {
@@ -1346,8 +1447,51 @@ TEST_CASE("LoadXMLTest", "[LoadSaveTest]")
   REQUIRE(y.inb.s == x.inb.s);
 }
 
+TEST_CASE("LoadXMLTestOptions", "[LoadSaveTest]")
+{
+  Test x(10, 12);
+
+  data::DataOptions opts;
+  opts.Fatal() = false;
+  opts.Format() = FileType::XML;
+  REQUIRE(data::Save("test.xml", x, opts) == true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  REQUIRE(data::Load("test.xml", y, opts) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+}
+
+TEST_CASE("LoadXMLTestInOptions", "[LoadSaveTest]")
+{
+  Test x(10, 12);
+
+  REQUIRE(data::Save("test.xml", x, NoFatal + XML) == true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  REQUIRE(data::Load("test.xml", y, NoFatal + XML) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+}
+
 /**
  * Make sure we can load and save.
+ *
+ * Make sure to remove this one when releasing mlpack 5.0.0
  */
 TEST_CASE("LoadJsonTest", "[LoadSaveTest]")
 {
@@ -1359,6 +1503,47 @@ TEST_CASE("LoadJsonTest", "[LoadSaveTest]")
   Test y(11, 14);
 
   REQUIRE(data::Load("test.json", "x", y, false) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+}
+
+TEST_CASE("LoadJsonTestOptions", "[LoadSaveTest]")
+{
+  Test x(10, 12);
+  data::DataOptions opts;
+  opts.Fatal() = false;
+  opts.Format() = FileType::JSON;
+
+  REQUIRE(data::Save("test.json", x, opts) == true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  REQUIRE(data::Load("test.json", y, opts) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+}
+
+TEST_CASE("LoadJsonTestInOptions", "[LoadSaveTest]")
+{
+  Test x(10, 12);
+
+  REQUIRE(data::Save("test.json", x, NoFatal + JSON) == true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  REQUIRE(data::Load("test.json", y, NoFatal + JSON) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
