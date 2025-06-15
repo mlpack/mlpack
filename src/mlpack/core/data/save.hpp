@@ -110,7 +110,7 @@ bool Save(const std::string& filename,
  *  - XML, denoted by .xml
  *  - BIN, denoted by .bin
  *
- * The FileType parameter can take any of the values in the 'FileType' enum:
+ * The FileType parameter can take any of the model-specific values in the 'FileType' enum:
  * 'FileType::Autodetect', 'FileType::JSON', 'FileType::XML', and
  * 'FileType::BIN'. The autodetect functionality operates on the file extension
  * (so, "file.txt" would be autodetected as text).
