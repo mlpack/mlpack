@@ -281,8 +281,7 @@ bool Save(const std::string& filename,
           T& t,
           const bool fatal,
           FileType f,
-          std::enable_if_t<HasSerialize<T>::value>*
-          )
+          std::enable_if_t<HasSerialize<T>::value>*)
 {
   if (f == FileType::AutoDetect)
   {
