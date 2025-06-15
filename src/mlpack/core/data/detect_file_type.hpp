@@ -28,7 +28,7 @@ namespace data {
  *
  * param filename filename with extension to be opened.
  * param opts  DataOption type describing the file.
- * param isLoading true if we are loding, false otherwise.
+ * param isLoading true if we are loading, false otherwise.
  * param stream the stream that will hold the content of the file.
  * @return bool if opening the file was successful.
  */
