@@ -213,8 +213,8 @@ bool SaveModel(Object& objectToSerialize,
     if (opts.Format() == FileType::AutoDetect)
     {
       std::stringstream oss;
-      oss << "Serialization data format is not specified."
-        " Please specify the format to be either BIN, JSON or XML";
+      oss << "data::Save(): cannot use FileType::AutoDetect for saving; "
+          << "please specify the format to be one of BIN, JSON, or XML!";
       if (opts.Fatal())
         Log::Fatal << oss.str() << std::endl;
       else
