@@ -97,7 +97,7 @@ class GRUType : public RecurrentLayer<MatType>
    * @param gy Propagated error from next layer.
    * @param g Matrix to store propagated error in for previous layer.
    */
-  void Backward(const MatType& input,
+  void Backward(const MatType& /* input */,
                 const MatType& output,
                 const MatType& gy,
                 MatType& g);
@@ -109,7 +109,7 @@ class GRUType : public RecurrentLayer<MatType>
    * @param error Error as computed by `Backward()`.
    * @param gradient Matrix to store the gradients in.
    */
-  void Gradient(const MatType& /* input */,
+  void Gradient(const MatType& input,
                 const MatType& /* error */,
                 MatType& gradient);
 

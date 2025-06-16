@@ -4,7 +4,7 @@
 
 _????-??-??_
 
- * Adapt `GRU` layer to new interface (#3955).
+ * Adapt `GRU` ANN layer to the new interface (#3955).
 
  * Fix warning on CRAN for bundled STB (#3950).
 

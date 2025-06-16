@@ -161,6 +161,9 @@ void GRUType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
+  // This implementation reuses the values of the gates from Forward() and 
+  // assumes that they have not been changed.
+
   // Get aliases from the recurrent state.
   const size_t batchSize = output.n_cols;
   MakeStateAliases(batchSize);
@@ -174,13 +177,14 @@ void GRUType<MatType>::Backward(
   // tanh has already been applied to hiddenGate in Forward().
   deltaHidden = deltaHidden % (1.0 - square(hiddenGate));
 
-  // The reset and upadte gate use sigmoid activation.
-  // The derivative is sigmoid(x) * (1 - sigmoid(x)).
   // y_t = (1 - z_t) % y_{t - 1} + z_t % h_t
   // dz_t = dy % h_t - dy % y_{t - 1}
   deltaUpdate = gy % hiddenGate;
   if (this->HasPreviousStep())
     deltaUpdate -= gy % prevOutput;
+  // The reset and update gate use sigmoid activation.
+  // The derivative is sigmoid(x) * (1 - sigmoid(x)).  Since sigmoid has
+  // already been applied to the gates, it's just `x * (1 - x)`
   deltaUpdate = deltaUpdate % (updateGate % (1.0 - updateGate));
 
   if (this->HasPreviousStep())
@@ -211,8 +215,9 @@ void GRUType<MatType>::Gradient(
     const MatType& /* error */,
     MatType& gradient)
 {
-  // This implementation assumes that Gradient() is being called immediately
-  // after Backward().
+  // This implementation reuses the deltas from Backward() and assumes that
+  // they have not been changed.
+
   size_t offset = 0;
   // Non recurrent reset gate weights.
   gradient.submat(offset, 0, offset + resetGateWeight.n_elem - 1, 0) =
@@ -244,7 +249,7 @@ void GRUType<MatType>::Gradient(
     offset += recurrentHiddenGateWeight.n_elem;
   }
 
-  // Move delta to nextDelta for the next pass.
+  // Move delta to nextDelta for the next step.
   nextDeltaReset = std::move(deltaReset);
   nextDeltaUpdate = std::move(deltaUpdate);
   nextDeltaHidden = std::move(deltaHidden);
