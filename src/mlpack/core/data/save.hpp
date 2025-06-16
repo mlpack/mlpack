@@ -128,7 +128,7 @@ bool Save(const std::string& filename,
           const std::string& name,
           T& t,
           const bool fatal = false,
-          FileType f = FileType::AutoDetect,
+          format f = format::autodetect,
           std::enable_if_t<HasSerialize<T>::value>* = 0);
 
 /**
@@ -146,12 +146,16 @@ bool Save(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          DataOptionsBase<DataOptionsType>& opts);
+          DataOptionsBase<DataOptionsType>& opts,
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>* = 0);
 
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          const DataOptionsBase<DataOptionsType>& opts);
+          const DataOptionsBase<DataOptionsType>& opts,
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>* = 0);
 
 } // namespace data
 } // namespace mlpack

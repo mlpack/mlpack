@@ -71,7 +71,9 @@ bool Save(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          const DataOptionsBase<DataOptionsType>& opts)
+          const DataOptionsBase<DataOptionsType>& opts,
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>*)
 {
   //! just use default copy ctor with = operator and make a copy.
   DataOptionsType copyOpts(opts);
@@ -81,7 +83,9 @@ bool Save(const std::string& filename,
 template<typename ObjectType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const ObjectType& matrix,
-          DataOptionsBase<DataOptionsType>& opts)
+          DataOptionsBase<DataOptionsType>& opts,
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>*)
 {
   Timer::Start("saving_data");
   static_assert(!IsArma<ObjectType>::value || !IsSparseMat<ObjectType>::value
@@ -209,17 +213,7 @@ bool SaveModel(Object& objectToSerialize,
 {
   try
   {
-    if (opts.Format() == FileType::AutoDetect)
-    {
-      std::stringstream oss;
-      oss << "data::Save(): cannot use FileType::AutoDetect for saving; "
-          << "please specify the format to be one of BIN, JSON, or XML!";
-      if (opts.Fatal())
-        Log::Fatal << oss.str() << std::endl;
-      else
-        Log::Warn << oss.str() << std::endl;
-    }
-    else if (opts.Format() == FileType::XML)
+    if (opts.Format() == FileType::XML)
     {
       cereal::XMLOutputArchive ar(stream);
       ar(cereal::make_nvp("model", objectToSerialize));
@@ -279,19 +273,19 @@ bool Save(const std::string& filename,
           const std::string& name,
           T& t,
           const bool fatal,
-          FileType f,
+          format f,
           std::enable_if_t<HasSerialize<T>::value>*)
 {
-  if (f == FileType::AutoDetect)
+  if (f == format::autodetect)
   {
     std::string extension = Extension(filename);
 
     if (extension == "xml")
-      f = FileType::XML;
+      f = format::xml;
     else if (extension == "bin")
-      f = FileType::BIN;
+      f = format::binary;
     else if (extension == "json")
-      f = FileType::JSON;
+      f = format::json;
     else
     {
       if (fatal)
@@ -309,7 +303,7 @@ bool Save(const std::string& filename,
   // Open the file to save to.
   std::ofstream ofs;
 #ifdef _WIN32
-  if (f == FileType::BIN) // Open non-text types in binary mode on Windows.
+  if (f == format::binary) // Open non-text types in binary mode on Windows.
     ofs.open(filename, std::ofstream::out | std::ofstream::binary);
   else
     ofs.open(filename, std::ofstream::out);
@@ -331,17 +325,17 @@ bool Save(const std::string& filename,
 
   try
   {
-    if (f == FileType::XML)
+    if (f == format::xml)
     {
       cereal::XMLOutputArchive ar(ofs);
       ar(cereal::make_nvp(name.c_str(), t));
     }
-    else if (f == FileType::JSON)
+    else if (f == format::json)
     {
       cereal::JSONOutputArchive ar(ofs);
       ar(cereal::make_nvp(name.c_str(), t));
     }
-    else if (f == FileType::BIN)
+    else if (f == format::binary)
     {
       cereal::BinaryOutputArchive ar(ofs);
       ar(cereal::make_nvp(name.c_str(), t));

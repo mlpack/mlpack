@@ -283,7 +283,7 @@ bool Load(const std::string& filename,
           const std::string& name,
           T& t,
           const bool fatal = false,
-          FileType f = FileType::AutoDetect,
+          format f = format::autodetect,
           std::enable_if_t<HasSerialize<T>::value>* = 0);
 
 /**

@@ -48,6 +48,16 @@ enum struct FileType
   BIN         // Serialize data using Cereal library into binary format.
 };
 
+// This should be removed in mlpack 5.0.0. It is only here for backward
+// compatibility.
+enum format
+{
+  autodetect,
+  json,
+  xml,
+  binary
+};
+
 /**
  * All possible DataOptions grouped under one class.
  * This will allow us to have consistent data API for mlpack. If new data

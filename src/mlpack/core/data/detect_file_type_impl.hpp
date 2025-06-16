@@ -295,10 +295,9 @@ inline FileType AutoDetectFile(std::fstream& stream,
 }
 
 /**
- * Return the type based only on the extension.
+ * Update FileType in DataOptions based on extension 
  *
  * @param filename Name of the file whose type we should detect.
- * @return Detected type of file.
  */
 template<typename ObjectType, typename DataOptionsType>
 void DetectFromExtension(const std::string& filename,
@@ -334,20 +333,28 @@ void DetectFromExtension(const std::string& filename,
   {
     opts.Format() = FileType::ARFFASCII;
   }
-  else if constexpr (HasSerialize<ObjectType>::value)
+  else
   {
-    if (extension == "xml")
-    {
-      opts.Format() = FileType::XML;
-    }
-    else if (extension == "bin")
-    {
-      opts.Format() = FileType::BIN;
-    }
-    else if (extension == "json")
-    {
-      opts.Format() = FileType::JSON;
-    }
+    opts.Format() = FileType::FileTypeUnknown;
+  }
+}
+
+template<typename ObjectType, typename DataOptionsType>
+void DetectFromSerializedExtension(const std::string& filename,
+                                   DataOptionsType& opts)
+{
+  const std::string extension = Extension(filename);
+  if (extension == "xml")
+  {
+    opts.Format() = FileType::XML;
+  }
+  else if (extension == "bin")
+  {
+    opts.Format() = FileType::BIN;
+  }
+  else if (extension == "json")
+  {
+    opts.Format() = FileType::JSON;
   }
   else
   {
@@ -365,20 +372,20 @@ bool DetectFileType(const std::string& filename,
   {
     if (opts.Format() == FileType::AutoDetect)
     {
-      DetectFromExtension<ObjectType>(filename, opts);
-      if (opts.Format() != FileType::XML && opts.Format() != FileType::JSON
-          && opts.Format() != FileType::BIN)
+      DetectFromSerializedExtension<ObjectType>(filename, opts);
+      if (opts.Format() == FileType::FileTypeUnknown)
       {
         if (opts.Fatal())
           Log::Fatal << "Unable to detect type of '" << filename
               << "'; incorrect extension? (allowed: xml/bin/json)"
               << std::endl;
         else
+        {
           Log::Warn << "Unable to detect type of '" << filename
               << "' ; incorrect extension? (allowed: xml/bin/json)"
               << std::endl;
-
-        return false;
+          return false;
+        }
       }
     }
   }
@@ -398,10 +405,11 @@ bool DetectFileType(const std::string& filename,
           Log::Fatal << "Unable to detect type of '" << filename << "'; "
               << "Incorrect extension?" << std::endl;
         else
+        {
           Log::Warn << "Unable to detect type of '" << filename << "'; "
               << "Incorrect extension?" << std::endl;
-
-        return false;
+          return false;
+        }
       }
     }
   }
