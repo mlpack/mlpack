@@ -59,7 +59,7 @@ bool Load(const std::string& filename,
   // Now load the given format.
   std::ifstream ifs;
 #ifdef _WIN32 // Open non-text in binary mode on Windows.
-  if (f == format::bin)
+  if (f == format::binary)
     ifs.open(filename, std::ifstream::in | std::ifstream::binary);
   else
     ifs.open(filename, std::ifstream::in);
