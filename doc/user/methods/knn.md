@@ -558,7 +558,7 @@ Build a `KNN` object on the `cloud` dataset and save it to disk.
 arma::mat dataset;
 mlpack::data::Load("cloud.csv", dataset);
 
-// Build the tree.
+// Build the reference tree.
 mlpack::KNN knn(std::move(dataset));
 
 // Save the KNN object to disk with the name 'knn'.
@@ -900,7 +900,7 @@ using TreeType = mlpack::RPTree<mlpack::ManhattanDistance,
 //                                  mlpack::RPTree,
 //                                  arma::fmat>::Tree;
 
-// Build the trees with std::move() to avoid copying data.
+// We build the trees here with std::move() in order to avoid copying data.
 //
 // For RPTrees, this reorders the points in the dataset, but if original indices
 // are needed, trees can be constructed with mapping objects.  (See the RPTree
