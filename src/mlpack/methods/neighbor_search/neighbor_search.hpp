@@ -30,7 +30,17 @@ template<typename SortPolicy,
          template<typename RuleType> class SingleTreeTraversalType>
 class LeafSizeNSWrapper;
 
-//! NeighborSearchMode represents the different neighbor search modes available.
+// NeighborSearchStrategy represents the different neighbor search strategies
+// available.
+enum NeighborSearchStrategy
+{
+  NAIVE,
+  SINGLE_TREE,
+  DUAL_TREE,
+  GREEDY_SINGLE_TREE
+};
+
+// This is for reverse compatibility and will be removed in mlpack 5.0.0.
 enum NeighborSearchMode
 {
   NAIVE_MODE,
@@ -38,6 +48,36 @@ enum NeighborSearchMode
   DUAL_TREE_MODE,
   GREEDY_SINGLE_TREE_MODE
 };
+
+// This is for reverse compatibility and will be removed in mlpack 5.0.0.
+inline NeighborSearchStrategy ModeToStrategy(const NeighborSearchMode& mode)
+{
+  switch (mode)
+  {
+    case NAIVE_MODE:              return NAIVE;
+    case SINGLE_TREE_MODE:        return SINGLE_TREE;
+    case DUAL_TREE_MODE:          return DUAL_TREE;
+    case GREEDY_SINGLE_TREE_MODE: return GREEDY_SINGLE_TREE;
+  }
+
+  // Fix warning.
+  return DUAL_TREE;
+}
+
+// This is for reverse compatibility and will be removed in mlpack 5.0.0.
+inline NeighborSearchMode StrategyToMode(const NeighborSearchStrategy& strategy)
+{
+  switch (strategy)
+  {
+    case NAIVE:              return NAIVE_MODE;
+    case SINGLE_TREE:        return SINGLE_TREE_MODE;
+    case DUAL_TREE:          return DUAL_TREE_MODE;
+    case GREEDY_SINGLE_TREE: return GREEDY_SINGLE_TREE_MODE;
+  }
+
+  // Fix warning.
+  return DUAL_TREE_MODE;
+}
 
 /**
  * The NeighborSearch class is a template class for performing distance-based
@@ -95,22 +135,30 @@ class NeighborSearch
    * pre-constructing the trees, passing std::move(yourReferenceSet).
    *
    * @param referenceSet Set of reference points.
-   * @param mode Neighbor search mode.
+   * @param strategy Neighbor search strategy.
    * @param epsilon Relative approximate error (non-negative).
    * @param distance An optional instance of the DistanceType class.
    */
   NeighborSearch(MatType referenceSet,
-                 const NeighborSearchMode mode = DUAL_TREE_MODE,
+                 const NeighborSearchStrategy strategy = DUAL_TREE,
                  const double epsilon = 0,
                  const DistanceType distance = DistanceType());
+
+  [[deprecated("Will be removed in mlpack 5.0.0.  Instead of a "
+               "NeighborSearchMode, pass a NeighborSearchStrategy.")]]
+  NeighborSearch(MatType referenceSet,
+                 const NeighborSearchMode mode,
+                 const double epsilon = 0,
+                 const DistanceType distance = DistanceType()) :
+      NeighborSearch(std::move(referenceSet), ModeToStrategy(mode), epsilon,
+                     distance) { }
 
   /**
    * Initialize the NeighborSearch object with a copy of the given
    * pre-constructed reference tree (this is the tree built on the points that
-   * will be searched).  Optionally, choose to use single-tree mode.  Naive mode
-   * is not available as an option for this constructor.  Additionally, an
-   * instantiated distance metric can be given, for cases where the distance
-   * metric holds data.
+   * will be searched).  Optionally, choose to use a different search strategy.
+   * Additionally, an instantiated distance metric can be given, for cases where
+   * the distance metric holds data.
    *
    * This method will copy the given tree. When copies must absolutely be
    * avoided, you can avoid this copy, while taking ownership of the given tree,
@@ -127,8 +175,15 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    */
   NeighborSearch(Tree referenceTree,
-                 const NeighborSearchMode mode = DUAL_TREE_MODE,
+                 const NeighborSearchStrategy strategy = DUAL_TREE,
                  const double epsilon = 0);
+
+  [[deprecated("Will be removed in mlpack 5.0.0.  Instead of a "
+               "NeighborSearchMode, pass a NeighborSearchStrategy.")]]
+  NeighborSearch(Tree referenceTree,
+                 const NeighborSearchMode mode,
+                 const double epsilon = 0) :
+      NeighborSearch(std::move(referenceTree), ModeToStrategy(mode), epsilon) {}
 
   // This version is kept around for reverse compatibility; but, if you are
   // passing a distance, you should use the overload above, which will just use
@@ -150,9 +205,16 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    * @param distance Instantiated distance metric.
    */
-  NeighborSearch(const NeighborSearchMode mode = DUAL_TREE_MODE,
+  NeighborSearch(const NeighborSearchStrategy strategy = DUAL_TREE,
                  const double epsilon = 0,
                  const DistanceType distance = DistanceType());
+
+  [[deprecated("Will be removed in mlpack 5.0.0.  Instead of a "
+               "NeighborSearchMode, pass a NeighborSearchStrategy.")]]
+  NeighborSearch(const NeighborSearchMode mode,
+                 const double epsilon = 0,
+                 const DistanceType distance = DistanceType()) :
+      NeighborSearch(ModeToStrategy(mode), epsilon, distance) { }
 
   /**
    * Construct the NeighborSearch object by copying the given NeighborSearch
@@ -323,17 +385,26 @@ class NeighborSearch
   // be called between each Search() invocation!
   static void ResetTree(Tree& tree);
 
-  //! Return the total number of base case evaluations performed during the last
-  //! search.
+  // Return the total number of base case evaluations performed during the last
+  // search.
   size_t BaseCases() const { return baseCases; }
 
-  //! Return the number of node combination scores during the last search.
+  // Return the number of node combination scores during the last search.
   size_t Scores() const { return scores; }
 
-  //! Access the search mode.
+  // Access the search mode.
+  [[deprecated("Will be removed in mlpack 5.0.0.  Use SearchStrategy() "
+               "instead.")]]
   NeighborSearchMode SearchMode() const { return searchMode; }
-  //! Modify the search mode.
-  NeighborSearchMode& SearchMode() { return searchMode; }
+  // Modify the search mode.
+  [[deprecated("Will be removed in mlpack 5.0.0.  Use SearchStrategy() "
+               "instead.")]]
+  NeighborSearchMode& SearchMode() { searchModeMod = true; return searchMode; }
+
+  // Access the search strategy.
+  NeighborSearchStrategy SearchStrategy() const { return searchStrategy; }
+  // Modify the search strategy.
+  NeighborSearchStrategy& SearchStrategy() { return searchStrategy; }
 
   //! Access the relative error to be considered in approximate search.
   double Epsilon() const { return epsilon; }
@@ -353,36 +424,73 @@ class NeighborSearch
   void serialize(Archive& ar, const uint32_t version);
 
  private:
-  //! Permutations of reference points during tree building.
+  // Permutations of reference points during tree building.
   std::vector<size_t> oldFromNewReferences;
-  //! Pointer to the root of the reference tree.
+  // Pointer to the root of the reference tree.
   Tree* referenceTree;
-  //! Reference dataset.  In some situations we may be the owner of this.
+  // Reference dataset.  In some situations we may be the owner of this.
   const MatType* referenceSet;
 
-  //! Indicates the neighbor search mode.
+  // This is only kept for reverse compatibility and will be removed in mlpack
+  // 5.0.0.
   NeighborSearchMode searchMode;
-  //! Indicates the relative error to be considered in approximate search.
+  bool searchModeMod; // also for reverse compatibility
+  // Indicates the neighbor search strategy.
+  NeighborSearchStrategy searchStrategy;
+  // Indicates the relative error to be considered in approximate search.
   double epsilon;
 
-  //! Instantiation of distance metric.
+  // Instantiation of distance metric.
   DistanceType distance;
 
-  //! The total number of base cases.
+  // The total number of base cases.
   size_t baseCases;
-  //! The total number of scores (applicable for non-naive search).
+  // The total number of scores (applicable for non-naive search).
   size_t scores;
 
-  //! If this is true, the reference tree bounds need to be reset on a call to
-  //! Search() without a query set.
+  // If this is true, the reference tree bounds need to be reset on a call to
+  // Search() without a query set.
   bool treeNeedsReset;
 
-  //! The NSModel class should have access to internal members.
+  // The NSModel class should have access to internal members.
   friend class LeafSizeNSWrapper<SortPolicy, TreeType, DualTreeTraversalType,
       SingleTreeTraversalType>;
 }; // class NeighborSearch
 
 } // namespace mlpack
+
+// The CEREAL_TEMPLATE_CLASS_VERSION() macro does not work with template
+// template parameters so we write it manually.
+namespace cereal {
+namespace detail {
+
+template<typename SortPolicy,
+         typename DistanceType,
+         typename MatType,
+         template<typename TreeDistanceType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename RuleType> class DualTreeTraversalType,
+         template<typename RuleType> class SingleTreeTraversalType>
+struct Version<mlpack::NeighborSearch<SortPolicy, DistanceType, MatType,
+    TreeType, DualTreeTraversalType, SingleTreeTraversalType>>
+{
+  static std::uint32_t registerVersion()
+  {
+    ::cereal::detail::StaticObject<Versions>::getInstance().mapping.emplace(
+        std::type_index(typeid(mlpack::NeighborSearch<SortPolicy, DistanceType,
+        MatType, TreeType, DualTreeTraversalType,
+        SingleTreeTraversalType>)).hash_code(), 1);
+    return 1;
+  }
+
+  static inline const std::uint32_t version = registerVersion();
+
+  static void unused() { (void) version; }
+}; /* end Version */
+
+}
+}
 
 // Include implementation.
 #include "neighbor_search_impl.hpp"

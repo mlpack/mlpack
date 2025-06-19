@@ -53,8 +53,8 @@ std::cout << "Found " << neighbors.n_rows << " neighbors for each of "
 #### Quick links:
 
  * [Constructors](#constructors): create `KNN` objects.
- * [Search modes](#search-modes): details of search strategies supported by
-   `KNN`.
+ * [Search strategies](#search-strategies): details of search strategies
+   supported by `KNN`.
  * [Setting the reference set (`Train()`)](#setting-the-reference-set-train):
    set the dataset that will be searched for nearest neighbors.
  * [Searching for neighbors](#searching-for-neighbors): call `Search()` to
@@ -80,35 +80,35 @@ std::cout << "Found " << neighbors.n_rows << " neighbors for each of "
 ### Constructors
 
  * `knn = KNN()`
- * `knn = KNN(mode=DUAL_TREE_MODE, epsilon=0)`
-   - Construct a `KNN` object, optionally using the given `mode` for search and
-     `epsilon` for maximum relative approximation level.
+ * `knn = KNN(strategy=DUAL_TREE, epsilon=0)`
+   - Construct a `KNN` object, optionally using the given `strategy` for search
+     and `epsilon` for maximum relative approximation level.
    - This does not set the reference set to be searched!
      [`Train()`](#setting-the-reference-set-train) must be called before calling
      [`Search()`](#searching-for-neighbors).
 
  * `knn = KNN(referenceSet)`
- * `knn = KNN(referenceSet, mode=DUAL_TREE_MODE, epsilon=0)`
+ * `knn = KNN(referenceSet, strategy=DUAL_TREE, epsilon=0)`
    - Construct a `KNN` object on the given set of reference points, using the
-     given `mode` for search and `epsilon` for maximum relative approximation
-     level.
+     given `strategy` for search and `epsilon` for maximum relative
+     approximation level.
    - This will build a [`KDTree`](../core/trees/kdtree.md) with default
-     parameters on `referenceSet`, if `mode` is not `NAIVE_MODE`.
+     parameters on `referenceSet`, if `strategy` is not `NAIVE`.
    - If `referenceSet` is not needed elsewhere, pass with `std::move()` (e.g.
      `std::move(referenceSet)`) to avoid copying `referenceSet`.  The dataset
      will still be accessible via [`ReferenceSet()`](#other-functionality), but
      points may be in shuffled order.
 
  * `knn = KNN(referenceTree)`
- * `knn = KNN(referenceTree, mode=DUAL_TREE_MODE, epsilon=0)`
+ * `knn = KNN(referenceTree, strategy=DUAL_TREE, epsilon=0)`
    - Construct a `KNN` object with a pre-built tree `referenceTree`, which
      should be of type `KNN::Tree` (a convenience typedef of
      [`KDTree`](../core/trees/kdtree.md) that uses
      [`NearestNeighborStat`](../core/trees/binary_space_tree.md#nearestneighborstat)
      as its
      [`StatisticType`](../core/trees/binary_space_tree.md#statistictype)).
-   - The search mode will be set to `mode` and maximum relative approximation
-     level will be set to `epsilon`.
+   - The search strategy will be set to `strategy` and maximum relative
+     approximation level will be set to `epsilon`.
    - If `referenceTree` is not needed elsewhere, pass with `std::move()` (e.g.
      `std::move(referenceTree)`) to avoid copying `referenceTree`.  The tree
      will still be accessible via [`ReferenceTree()`](#other-functionality).
@@ -125,15 +125,15 @@ to use `std::move()` if possible.
 |----------|----------|-----------------|-------------|
 | `referenceSet` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) matrix containing dataset to search for nearest neighbors in. | _(N/A)_ |
 | `referenceTree` | `KNN::Tree` (a [`KDTree`](../core/trees/kdtree.md)) | Pre-built kd-tree on reference data. | _(N/A)_ |
-| `mode` | `enum NeighborSearchMode` | The search technique that will be used when `Search()` is called.  Must be one of `NAIVE_MODE`, `SINGLE_TREE_MODE`, `DUAL_TREE_MODE`, or `GREEDY_SINGLE_TREE_MODE`.  [More details.](#search-modes) | `DUAL_TREE_MODE` |
+| `strategy` | `enum NeighborSearchStrategy` | The search strategy that will be used when `Search()` is called.  Must be one of `NAIVE`, `SINGLE_TREE`, `DUAL_TREE`, or `GREEDY_SINGLE_TREE`.  [More details.](#search-strategies) | `DUAL_TREE` |
 | `epsilon` | `double` | Allowed relative approximation error.  `0` means exact search.  Must be non-negative. | `0.0` |
 
 ***Notes:***
 
- - By default, exact nearest neighbors are found.  When `mode` is
-   `SINGLE_TREE_MODE` or `DUAL_TREE_MODE`, set `epsilon` to a positive
-   value to enable approximation (higher `epsilon` means more approximation is
-   allowed).  See more in [Search modes](#search-modes), below.
+ - By default, exact nearest neighbors are found.  When `strategy` is
+   `SINGLE_TREE` or `DUAL_TREE`, set `epsilon` to a positive value to enable
+   approximation (higher `epsilon` means more approximation is allowed).  See
+   more in [Search strategies](#search-strategies), below.
 
  - If constructing a tree manually, the `KNN::Tree` type can be used (e.g.,
    `tree = KNN::Tree(referenceData)`).  `KNN::Tree` is a convenience typedef of
@@ -141,15 +141,15 @@ to use `std::move()` if possible.
    [custom template parameters](#advanced-functionality-template-parameters) are
    being used.
 
-### Search modes
+### Search strategies
 
 The `KNN` class can search for nearest neighbors using one of the following four
-strategies.  These can be specified in the constructor as the `mode` parameters,
-or by calling `knn.SearchMode() = mode`.
+strategies.  These can be specified in the constructor as the `strategy`
+parameter, or by calling `knn.SearchStrategy() = strategy`.
 
- * `DUAL_TREE_MODE` _(default)_: two trees will be used at search time with a
-   [dual-tree algorithm (pdf)](https://ratml.org/pub/pdf/2013tree.pdf) to allow
-   the maximum amount of pruning.
+ * `DUAL_TREE` _(default)_: two trees will be used at search time with a
+   [dual-tree algorithm (pdf)](https://ratml.org/pub/pdf/2013tree.pdf) to
+   allow the maximum amount of pruning.
    - This is generally the fastest strategy for exact search.
    - Under some assumptions on the structure of the dataset and the tree type
      being used, dual-tree search
@@ -158,14 +158,14 @@ or by calling `knn.SearchMode() = mode`.
    - Backtracking search is performed to find either exact nearest neighbors or
      approximate nearest neighbors if `knn.Epsilon() > 0`.
 
- * `SINGLE_TREE_MODE`: a tree built on the reference points will be traversed
-   once for each point whose nearest neighbors are being searched for.
+ * `SINGLE_TREE`: a tree built on the reference points will be traversed once
+   for each point whose nearest neighbors are being searched for.
    - Single-tree search generally empirically
      [scales logarithmically](https://en.wikipedia.org/wiki/Nearest_neighbor_search#Space_partitioning).
    - Backtracking search is performed to find either exact nearest neighbors or
      approximate nearest neighbors if `knn.Epsilon() > 0`.
 
- * `GREEDY_SINGLE_TREE_MODE`: for each point whose nearest neighbors are being
+ * `GREEDY_SINGLE_TREE`: for each point whose nearest neighbors are being
    searched for, a tree built on the reference points will be traversed in a
    greedy manner---recursing directly and only to the nearest node in the tree
    to find nearest neighbor candidates.
@@ -181,7 +181,7 @@ or by calling `knn.SearchMode() = mode`.
      the
      [`TreeType` template parameter](#advanced-functionality-template-parameters).
 
- * `NAIVE_MODE`: brute-force search---for each point whose nearest neighbors are
+ * `NAIVE`: brute-force search---for each point whose nearest neighbors are
    being searched for, compute the distance to *every* point in the reference
    set.
    - This strategy gives exact results always; the setting of `knn.Epsilon()` is
@@ -200,8 +200,8 @@ changed to a new reference set, the `Train()` method can be used.
  * `knn.Train(referenceSet)`
    - Set the reference set to `referenceSet`.
    - This will build a [`KDTree`](../core/trees/kdtree.md) with default
-     parameters on `referenceSet`, if `mode` is not
-     [`NAIVE_MODE`](#search-modes).
+     parameters on `referenceSet`, if `strategy` is not
+     [`NAIVE`](#search-strategies).
    - If `referenceSet` is not needed elsewhere, pass with `std::move()` (e.g.
      `std::move(referenceSet)`) to avoid copying `referenceSet`.  The dataset
      will still be accessible via [`ReferenceSet()`](#other-functionality), but
@@ -274,21 +274,21 @@ can be done with the `Search()` method.
    there are duplicate points `x` and `y` in the dataset, `y` may be returned as
    the nearest neighbor of `x`.
 
- * If `knn.Epsilon() > 0` and the search mode is
-   [`DUAL_TREE_MODE` or `SINGLE_TREE_MODE`](#search-modes), then the search will
-   return approximate nearest neighbors within a relative distance of
-   `knn.Epsilon()` of the true nearest neighbor.
+ * If `knn.Epsilon() > 0` and the search strategy is
+   [`DUAL_TREE` or `SINGLE_TREE`](#search-strategies), then
+   the search will return approximate nearest neighbors within a relative
+   distance of `knn.Epsilon()` of the true nearest neighbor.
 
- * `knn.Epsilon()` is ignored when the search mode is
-   [`GREEDY_SINGLE_TREE_MODE` or `NAIVE_MODE`](#search-modes).
+ * `knn.Epsilon()` is ignored when the search strategy is
+   [`GREEDY_SINGLE_TREE` or `NAIVE`](#search-strategies).
 
  * When using a `queryTree` multiple times, the bounds in the tree must be
    reset.  Call `knn.ResetTree(queryTree)` after each call to `Search()` to
    reset the bounds, or call `node.Stat().Reset()` on each node in `queryTree`.
 
- * In approximate search mode, it is possible that no nearest neighbor candidate
-   will be found.  If this is true, then the corresponding element in
-   `neighbors` will be set to `SIZE_MAX` (e.g. `size_t(-1)`), and the
+ * When searching for approximate neighbors, it is possible that no nearest
+   neighbor candidate will be found.  If this is true, then the corresponding
+   element in `neighbors` will be set to `SIZE_MAX` (e.g. `size_t(-1)`), and the
    corresponding element in `distances` will be set to `DBL_MAX`.
 
 ---
@@ -344,34 +344,35 @@ compute quality metrics of the approximate search.
    [`NearestNeighborStat`](../core/trees/binary_space_tree.md#nearestneighborstat)
    as the
    [`StatisticType`](../core/trees/binary_space_tree.md#statistictype)).
-   * This is the tree that will be used at search time, if the search mode is
-     not [`NAIVE_MODE`](#search-modes).
-   * If the search mode was [`NAIVE_MODE`](#search-modes) when the object was
-     constructed, then `knn.ReferenceTree()` will return `nullptr`.
+   * This is the tree that will be used at search time, if the search strategy
+     is not [`NAIVE`](#search-strategies).
+   * If the search strategy was [`NAIVE`](#search-strategies) when the
+     object was constructed, then `knn.ReferenceTree()` will return `nullptr`.
    * If a
      [custom `TreeType` template parameter](#advanced-functionality-template-parameters)
      has been specified, then `KNN::Tree*` will be that type of tree, not a
      `KDTree`.
 
- - `knn.SearchMode()` will return the [search mode](#search-modes) that will be
-   used when `knn.Search()` is called.
-   * `knn.SearchMode() = newMode` will set the [search mode](#search-modes) to
-     `newMode`.
-   * `newMode` must be one of the supported search modes.
+ - `knn.SearchStrategy()` will return the [search strategy](#search-strategies)
+   that will be used when `knn.Search()` is called.
+   * `knn.SearchStrategy() = newStrategy` will set the
+     [search strategy](#search-strategies) to `newStrategy`.
+   * `newStrategy` must be one of the supported search strategies.
 
  - `knn.Epsilon()` returns a `double` representing the allowed level of
-   approximation.  If `0` and `knn.SearchMode()` is either dual- or single-tree
-   search, then `knn.Search()` will return exact results.
+   approximation.  If `0` and `knn.SearchStrategy()` is either dual- or
+   single-tree search, then `knn.Search()` will return exact results.
    * `knn.Epsilon() = eps` will set the allowed level of approximation to `eps`.
    * `eps` must be greater than or equal to `0.0`.
 
  - After calling `knn.Search()`, `knn.BaseCases()` will return a `size_t`
    representing the number of point-to-point distance computations that were
-   performed, if a [tree-traversing search mode](#search-modes) was used.
+   performed, if a [tree-traversing search strategy](#search-strategies) was
+   used.
 
  - After calling `knn.Search()`, `knn.Scores()` will return a `size_t` indicates
    the number of tree nodes that were visited during search, if a
-   [tree-traversing search mode](#search-modes) was used.
+   [tree-traversing search strategy](#search-strategies) was used.
 
  - A `KNN` object can be serialized with
    [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).  Note
@@ -476,7 +477,7 @@ arma::mat dataset;
 mlpack::data::Load("lcdm_tiny.csv", dataset);
 
 // Build a KNN object on the LCDM dataset, and pass with `std::move()` so that
-// we can avoid copying the dataset.  Set the search mode to single-tree mode.
+// we can avoid copying the dataset.  Set the search strategy to single-tree.
 mlpack::KNN knn(std::move(dataset), mlpack::SINGLE_TREE_MODE);
 
 // Now we will compute the 5 nearest neighbors of the first point in the
@@ -519,8 +520,8 @@ does exactly that.
 arma::mat dataset;
 mlpack::data::Load("cloud.csv", dataset);
 
-// Build a tree on the dataset and set the search mode to greedy single tree
-// mode.
+// Build a tree on the dataset and set the search strategy to the greedy single
+// tree strategy.
 mlpack::KNN knn(std::move(dataset), mlpack::GREEDY_SINGLE_TREE_MODE);
 
 // Compute the 5 approximate nearest neighbors of every point in the dataset.
@@ -532,10 +533,10 @@ std::cout << "Greedy approximate kNN search computed " << knn.BaseCases()
     << " point-to-point distances and visited " << knn.Scores()
     << " tree nodes in total." << std::endl;
 
-// Now switch to exact mode and compute the true neighbors and distances.
+// Now switch to exact computation and compute the true neighbors and distances.
 arma::Mat<size_t> trueNeighbors;
 arma::mat trueDistances;
-knn.SearchMode() = mlpack::DUAL_TREE_MODE;
+knn.SearchStrategy() = mlpack::DUAL_TREE;
 knn.Epsilon() = 0.0;
 knn.Search(5, trueNeighbors, trueDistances);
 
@@ -608,7 +609,7 @@ arma::mat referenceSet, querySet;
 mlpack::data::Split(dataset, referenceSet, querySet, 0.5);
 
 // Build the KNN object, passing the reference set with `std::move()` to avoid a
-// copy.  We use the default dual-tree mode for search and set the maximum
+// copy.  We use the default dual-tree strategy for search and set the maximum
 // allowed relative error to 0.1 (10%).
 mlpack::KNN knn(std::move(referenceSet), mlpack::DUAL_TREE_MODE, 0.1);
 
@@ -622,7 +623,7 @@ arma::mat distances;
 arma::Mat<size_t> neighbors;
 knn.Search(queryTree, 5, neighbors, distances);
 
-// Now compute the exact neighbors---but since we are using dual-tree mode and
+// Now compute the exact neighbors---but since we are using dual-tree search and
 // an externally-constructed query tree, we must reset the bounds!
 arma::mat trueDistances;
 arma::Mat<size_t> trueNeighbors;
@@ -662,10 +663,10 @@ KNNType<DistanceType,
  * `MatType`: specifies the type of matrix used for representation of data.
  * `DualTreeTraversalType`: specifies the
    [traversal](../../developer/trees.md#traversals) strategy that will be used
-   when searching in dual-tree mode.
+   when searching with the dual-tree strategy.
  * `SingleTreeTraversalType`: specifies the
    [traversal](../../developer/trees.md#traversals) strategy that will be used
-   when searching in dual-tree mode.
+   when searching with the dual-tree strategy.
 
 When custom template parameters are specified:
 
@@ -701,8 +702,8 @@ When custom template parameters are specified:
 
  * [Custom distance metrics](../../developer/distances.md) are easy to
    implement, but *must* satisfy the triangle inequality to provide correct
-   results when searching with trees (e.g. `knn.SearchMode()` is not
-   `NAIVE_MODE`)..
+   results when searching with trees (e.g. `knn.SearchStrategy()` is not
+   `NAIVE`).
    - ***NOTE:*** the cosine distance ***does not*** satisfy the triangle
      inequality.
 
@@ -713,7 +714,7 @@ When custom template parameters are specified:
 #### `TreeType`
 
  * Specifies the tree type that will be built on the reference set (and
-   possibly query set), if `knn.SearchMode()` is not `NAIVE_MODE`.
+   possibly query set), if `knn.SearchStrategy()` is not `NAIVE`.
 
  * The default tree type is [`KDTree`](../core/trees/kdtree.md).
 
@@ -743,7 +744,7 @@ When custom template parameters are specified:
 
  * Specifies the [traversal strategy](../../developer/trees.md#traversals) to
    use when performing a dual-tree search to find nearest neighbors (e.g. when
-   `knn.SearchMode()` is `DUAL_TREE_MODE`).
+   `knn.SearchStrategy()` is `DUAL_TREE`).
 
  * By default, the [`TreeType`](#treetype)'s default dual-tree traversal (e.g.
    `TreeType<DistanceType, NearestNeighborStat, MatType>::DualTreeTraversalType`)
@@ -763,7 +764,7 @@ When custom template parameters are specified:
 
  * Specifies the [traversal strategy](../../developer/trees.md#traversals) to
    use when performing a single-tree search to find nearest neighbors (e.g. when
-   `knn.SearchMode()` is `SINGLE_TREE_MODE`).
+   `knn.SearchStrategy()` is `SINGLE_TREE`).
 
  * By default, the [`TreeType`](#treetype)'s default dual-tree traversal (e.g.
    `TreeType<DistanceType, NearestNeighborStat, MatType>::SingleTreeTraversalType`)
@@ -950,9 +951,10 @@ better for greedy search!
 arma::mat dataset;
 mlpack::data::Load("cloud.csv", dataset);
 
-// Build a spill tree on the dataset and set the search mode to greedy single
-// tree mode.  We will build the tree manually, so that we can configure the
-// build-time parameters (see the SPTree documentation for more details).
+// Build a spill tree on the dataset and set the search strategy to the greedy
+// single tree strategy.  We will build the tree manually, so that we can
+// configure the build-time parameters (see the SPTree documentation for more
+// details).
 using TreeType = mlpack::SPTree<mlpack::EuclideanDistance,
                                 mlpack::NearestNeighborStat,
                                 arma::mat>;
@@ -981,7 +983,7 @@ std::cout << "Greedy approximate kNN search computed " << knn.BaseCases()
 // Now do the same thing, but with defeatist dual-tree search.  Note that
 // defeatist dual-tree search is not backtracking, so we don't need to set
 // knn.Epsilon().
-knn.SearchMode() = mlpack::DUAL_TREE_MODE;
+knn.SearchStrategy() = mlpack::DUAL_TREE;
 knn.Search(5, dualNeighbors, dualDistances);
 
 std::cout << "Dual-tree approximate kNN search computed " << knn.BaseCases()
@@ -989,15 +991,16 @@ std::cout << "Dual-tree approximate kNN search computed " << knn.BaseCases()
     << " tree nodes in total." << std::endl;
 
 // Finally, use defeatist single-tree search.
-knn.SearchMode() = mlpack::SINGLE_TREE_MODE;
+knn.SearchStrategy() = mlpack::SINGLE_TREE;
 knn.Search(5, singleNeighbors, singleDistances);
 
 std::cout << "Single-tree approximate kNN search computed " << knn.BaseCases()
     << " point-to-point distances and visited " << knn.Scores()
     << " tree nodes in total." << std::endl;
 
-// Now switch to exact naive mode and compute the true neighbors and distances.
-knn.SearchMode() = mlpack::NAIVE_MODE;
+// Now switch to the exact naive strategy and compute the true neighbors and
+// distances.
+knn.SearchStrategy() = mlpack::NAIVE;
 knn.Epsilon() = 0.0;
 knn.Search(5, exactNeighbors, exactDistances);
 

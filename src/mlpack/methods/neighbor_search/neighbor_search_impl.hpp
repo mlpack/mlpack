@@ -32,14 +32,16 @@ template<typename SortPolicy,
 NeighborSearch<SortPolicy, DistanceType, MatType, TreeType,
     DualTreeTraversalType, SingleTreeTraversalType>::
 NeighborSearch(MatType referenceSetIn,
-               const NeighborSearchMode mode,
+               const NeighborSearchStrategy strategy,
                const double epsilon,
                const DistanceType distance) :
-    referenceTree(mode == NAIVE_MODE ? NULL :
+    referenceTree(strategy == NAIVE ? NULL :
         BuildTree<Tree>(std::move(referenceSetIn), oldFromNewReferences)),
-    referenceSet(mode == NAIVE_MODE ?  new MatType(std::move(referenceSetIn)) :
-        &referenceTree->Dataset()),
-    searchMode(mode),
+    referenceSet(strategy == NAIVE ?
+        new MatType(std::move(referenceSetIn)) : &referenceTree->Dataset()),
+    searchMode(StrategyToMode(strategy)),
+    searchModeMod(false),
+    searchStrategy(strategy),
     epsilon(epsilon),
     distance(distance),
     baseCases(0),
@@ -62,11 +64,13 @@ template<typename SortPolicy,
 NeighborSearch<SortPolicy, DistanceType, MatType, TreeType,
     DualTreeTraversalType, SingleTreeTraversalType>::
 NeighborSearch(Tree referenceTree,
-               const NeighborSearchMode mode,
+               const NeighborSearchStrategy strategy,
                const double epsilon) :
     referenceTree(new Tree(std::move(referenceTree))),
     referenceSet(&this->referenceTree->Dataset()),
-    searchMode(mode),
+    searchMode(StrategyToMode(strategy)),
+    searchModeMod(false),
+    searchStrategy(strategy),
     epsilon(epsilon),
     distance(this->referenceTree->Distance()),
     baseCases(0),
@@ -94,6 +98,8 @@ NeighborSearch(Tree referenceTree,
     referenceTree(new Tree(std::move(referenceTree))),
     referenceSet(&this->referenceTree->Dataset()),
     searchMode(mode),
+    searchModeMod(false),
+    searchStrategy(ModeToStrategy(mode)),
     epsilon(epsilon),
     distance(distance),
     baseCases(0),
@@ -115,12 +121,14 @@ template<typename SortPolicy,
          template<typename> class SingleTreeTraversalType>
 NeighborSearch<SortPolicy, DistanceType, MatType, TreeType,
     DualTreeTraversalType, SingleTreeTraversalType>::
-NeighborSearch(const NeighborSearchMode mode,
+NeighborSearch(const NeighborSearchStrategy strategy,
                const double epsilon,
                const DistanceType distance) :
     referenceTree(NULL),
-    referenceSet(mode == NAIVE_MODE ? new MatType() : NULL), // Empty matrix.
-    searchMode(mode),
+    referenceSet(strategy == NAIVE ? new MatType() : NULL),
+    searchMode(StrategyToMode(strategy)),
+    searchModeMod(false),
+    searchStrategy(strategy),
     epsilon(epsilon),
     distance(distance),
     baseCases(0),
@@ -131,7 +139,7 @@ NeighborSearch(const NeighborSearchMode mode,
     throw std::invalid_argument("epsilon must be non-negative");
 
   // Build the tree on the empty dataset, if necessary.
-  if (mode != NAIVE_MODE)
+  if (strategy != NAIVE)
   {
     referenceTree = BuildTree<Tree>(std::move(MatType()),
         oldFromNewReferences);
@@ -156,6 +164,8 @@ NeighborSearch(const NeighborSearch& other) :
     referenceSet(other.referenceTree ? &referenceTree->Dataset() :
         new MatType(*other.referenceSet)),
     searchMode(other.searchMode),
+    searchModeMod(other.searchModeMod),
+    searchStrategy(other.searchStrategy),
     epsilon(other.epsilon),
     distance(other.distance),
     baseCases(other.baseCases),
@@ -181,6 +191,8 @@ NeighborSearch(NeighborSearch&& other) :
     referenceTree(other.referenceTree),
     referenceSet(other.referenceSet),
     searchMode(other.searchMode),
+    searchModeMod(other.searchModeMod),
+    searchStrategy(other.searchStrategy),
     epsilon(other.epsilon),
     distance(std::move(other.distance)),
     baseCases(other.baseCases),
@@ -191,7 +203,9 @@ NeighborSearch(NeighborSearch&& other) :
   other.referenceTree = BuildTree<Tree>(std::move(MatType()),
       other.oldFromNewReferences);
   other.referenceSet = &other.referenceTree->Dataset();
-  other.searchMode = DUAL_TREE_MODE,
+  other.searchMode = DUAL_TREE_MODE;
+  other.searchModeMod = false;
+  other.searchStrategy = DUAL_TREE;
   other.epsilon = 0.0;
   other.baseCases = 0;
   other.scores = 0;
@@ -234,6 +248,8 @@ NeighborSearch<SortPolicy,
   referenceSet = other.referenceTree ? &referenceTree->Dataset() :
       new MatType(*other.referenceSet);
   searchMode = other.searchMode;
+  searchModeMod = other.searchModeMod;
+  searchStrategy = other.searchStrategy;
   epsilon = other.epsilon;
   distance = other.distance;
   baseCases = other.baseCases;
@@ -276,6 +292,8 @@ NeighborSearch<SortPolicy,
   referenceTree = other.referenceTree;
   referenceSet = other.referenceSet;
   searchMode = other.searchMode;
+  searchModeMod = other.searchModeMod;
+  searchStrategy = other.searchStrategy;
   epsilon = other.epsilon;
   distance = other.distance;
   baseCases = other.baseCases;
@@ -289,7 +307,9 @@ NeighborSearch<SortPolicy,
   other.referenceTree = BuildTree<Tree>(std::move(MatType()),
       other.oldFromNewReferences);
   other.referenceSet = &other.referenceTree->Dataset();
-  other.searchMode = DUAL_TREE_MODE,
+  other.searchMode = DUAL_TREE_MODE;
+  other.searchModeMod = false;
+  other.searchStrategy = DUAL_TREE;
   other.epsilon = 0.0;
   other.baseCases = 0;
   other.scores = 0;
@@ -326,6 +346,17 @@ void NeighborSearch<SortPolicy, DistanceType, MatType, TreeType,
     DualTreeTraversalType, SingleTreeTraversalType>::
 Train(MatType referenceSetIn)
 {
+  // For reverse compatibility; can be removed in mlpack 5.0.0.
+  if (searchModeMod)
+  {
+    searchStrategy = ModeToStrategy(searchMode);
+    searchModeMod = false;
+  }
+  else
+  {
+    searchMode = StrategyToMode(searchStrategy);
+  }
+
   // Clean up the old tree, if we built one.
   if (referenceTree)
   {
@@ -339,7 +370,7 @@ Train(MatType referenceSetIn)
   }
 
   // We may need to rebuild the tree.
-  if (searchMode != NAIVE_MODE)
+  if (searchStrategy != NAIVE)
   {
     referenceTree = BuildTree<Tree>(std::move(referenceSetIn),
         oldFromNewReferences);
@@ -362,7 +393,18 @@ template<typename SortPolicy,
 void NeighborSearch<SortPolicy, DistanceType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree referenceTree)
 {
-  if (searchMode == NAIVE_MODE)
+  // For reverse compatibility; can be removed in mlpack 5.0.0.
+  if (searchModeMod)
+  {
+    searchStrategy = ModeToStrategy(searchMode);
+    searchModeMod = false;
+  }
+  else
+  {
+    searchMode = StrategyToMode(searchStrategy);
+  }
+
+  if (searchStrategy == NAIVE)
     throw std::invalid_argument("cannot train on given reference tree when "
         "naive search (without trees) is desired");
 
@@ -400,6 +442,17 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     arma::Mat<IndexType>& neighbors,
     arma::Mat<ElemType>& distances)
 {
+  // For reverse compatibility; can be removed in mlpack 5.0.0.
+  if (searchModeMod)
+  {
+    searchStrategy = ModeToStrategy(searchMode);
+    searchModeMod = false;
+  }
+  else
+  {
+    searchMode = StrategyToMode(searchStrategy);
+  }
+
   if (k > referenceSet->n_cols)
   {
     std::stringstream ss;
@@ -424,7 +477,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   // Mapping is only necessary if the tree rearranges points.
   if (TreeTraits<Tree>::RearrangesDataset)
   {
-    if (searchMode == DUAL_TREE_MODE)
+    if (searchStrategy == DUAL_TREE)
     {
       distancePtr = new arma::Mat<ElemType>; // Query indices need to be mapped.
       neighborPtr = new arma::Mat<IndexType>;
@@ -439,9 +492,9 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
 
   using RuleType = NeighborSearchRules<SortPolicy, DistanceType, Tree>;
 
-  switch (searchMode)
+  switch (searchStrategy)
   {
-    case NAIVE_MODE:
+    case NAIVE:
     {
       // Create the helper object for the tree traversal.
       RuleType rules(*referenceSet, querySet, k, distance, epsilon);
@@ -456,7 +509,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       rules.GetResults(*neighborPtr, *distancePtr);
       break;
     }
-    case SINGLE_TREE_MODE:
+    case SINGLE_TREE:
     {
       // Create the helper object for the tree traversal.
       RuleType rules(*referenceSet, querySet, k, distance, epsilon);
@@ -479,7 +532,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       rules.GetResults(*neighborPtr, *distancePtr);
       break;
     }
-    case DUAL_TREE_MODE:
+    case DUAL_TREE:
     {
       // Build the query tree.
       Tree* queryTree = BuildTree<Tree>(querySet, oldFromNewQueries);
@@ -505,7 +558,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       delete queryTree;
       break;
     }
-    case GREEDY_SINGLE_TREE_MODE:
+    case GREEDY_SINGLE_TREE:
     {
       // Create the helper object for the tree traversal.
       RuleType rules(*referenceSet, querySet, k, distance);
@@ -533,7 +586,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   // Map points back to original indices, if necessary.
   if (TreeTraits<Tree>::RearrangesDataset)
   {
-    if (searchMode == DUAL_TREE_MODE && !oldFromNewReferences.empty())
+    if (searchStrategy == DUAL_TREE && !oldFromNewReferences.empty())
     {
       // We must map both query and reference indices.
       neighbors.set_size(k, querySet.n_cols);
@@ -556,7 +609,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       delete neighborPtr;
       delete distancePtr;
     }
-    else if (searchMode == DUAL_TREE_MODE)
+    else if (searchStrategy == DUAL_TREE)
     {
       // We must map query indices only.
       neighbors.set_size(k, querySet.n_cols);
@@ -607,6 +660,17 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     arma::Mat<ElemType>& distances,
     bool sameSet)
 {
+  // For reverse compatibility; can be removed in mlpack 5.0.0.
+  if (searchModeMod)
+  {
+    searchStrategy = ModeToStrategy(searchMode);
+    searchModeMod = false;
+  }
+  else
+  {
+    searchMode = StrategyToMode(searchStrategy);
+  }
+
   if (k > referenceSet->n_cols)
   {
     std::stringstream ss;
@@ -616,9 +680,9 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   }
 
   // Make sure we are in dual-tree mode.
-  if (searchMode != DUAL_TREE_MODE)
+  if (searchStrategy != DUAL_TREE)
     throw std::invalid_argument("Cannot call NeighborSearch::Search() with a "
-        "query tree when search mode is not DUAL_TREE_MODE!");
+        "query tree when search strategy is not DUAL_TREE!");
 
   baseCases = 0;
   scores = 0;
@@ -685,6 +749,17 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     arma::Mat<IndexType>& neighbors,
     arma::Mat<ElemType>& distances)
 {
+  // For reverse compatibility; can be removed in mlpack 5.0.0.
+  if (searchModeMod)
+  {
+    searchStrategy = ModeToStrategy(searchMode);
+    searchModeMod = false;
+  }
+  else
+  {
+    searchMode = StrategyToMode(searchStrategy);
+  }
+
   if (k > referenceSet->n_cols)
   {
     std::stringstream ss;
@@ -723,9 +798,9 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   RuleType rules(*referenceSet, *referenceSet, k, distance, epsilon,
       true /* don't return the same point as nearest neighbor */);
 
-  switch (searchMode)
+  switch (searchStrategy)
   {
-    case NAIVE_MODE:
+    case NAIVE:
     {
       // The naive brute-force solution.
       for (size_t i = 0; i < referenceSet->n_cols; ++i)
@@ -735,7 +810,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       baseCases += referenceSet->n_cols * referenceSet->n_cols;
       break;
     }
-    case SINGLE_TREE_MODE:
+    case SINGLE_TREE:
     {
       // Create the traverser.
       SingleTreeTraversalType<RuleType> traverser(rules);
@@ -753,7 +828,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
           << std::endl;
       break;
     }
-    case DUAL_TREE_MODE:
+    case DUAL_TREE:
     {
       // The dual-tree monochromatic search case may require resetting the
       // bounds in the tree.
@@ -787,7 +862,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       treeNeedsReset = true;
       break;
     }
-    case GREEDY_SINGLE_TREE_MODE:
+    case GREEDY_SINGLE_TREE:
     {
       // Create the traverser.
       GreedySingleTreeTraverser<Tree, RuleType> traverser(rules);
@@ -943,15 +1018,41 @@ template<typename SortPolicy,
 template<typename Archive>
 void NeighborSearch<SortPolicy, DistanceType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::serialize(
-    Archive& ar, const uint32_t /* version */)
+    Archive& ar, const uint32_t version)
 {
+  if (cereal::is_saving<Archive>())
+  {
+    // For reverse compatibility; can be removed in mlpack 5.0.0.
+    if (searchModeMod)
+    {
+      searchStrategy = ModeToStrategy(searchMode);
+      searchModeMod = false;
+    }
+    else
+    {
+      searchMode = StrategyToMode(searchStrategy);
+    }
+  }
+
   // Serialize preferences for search.
-  ar(CEREAL_NVP(searchMode));
+  if (version == 0)
+  {
+    ar(CEREAL_NVP(searchMode));
+    searchModeMod = false;
+    searchStrategy = ModeToStrategy(searchMode);
+  }
+  else
+  {
+    ar(CEREAL_NVP(searchStrategy));
+    searchModeMod = false;
+    searchMode = StrategyToMode(searchStrategy);
+  }
+
   ar(CEREAL_NVP(treeNeedsReset));
 
   // If we are doing naive search, we serialize the dataset.  Otherwise we
   // serialize the tree.
-  if (searchMode == NAIVE_MODE)
+  if (searchStrategy == NAIVE)
   {
     // Delete the current reference set, if necessary and if we are loading.
     if (cereal::is_loading<Archive>() && referenceSet)
