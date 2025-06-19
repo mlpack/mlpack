@@ -295,7 +295,7 @@ inline FileType AutoDetectFile(std::fstream& stream,
 }
 
 /**
- * Update FileType in DataOptions based on extension 
+ * Update FileType in DataOptions based on extension.
  *
  * @param filename Name of the file whose type we should detect.
  */
