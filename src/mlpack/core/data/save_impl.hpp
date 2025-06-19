@@ -89,7 +89,7 @@ bool Save(const std::string& filename,
 {
   Timer::Start("saving_data");
   static_assert(!IsArma<ObjectType>::value || !IsSparseMat<ObjectType>::value
-      || !HasSerialize<ObjectType>::value, "mlpack can load Armadillo"
+      || !HasSerialize<ObjectType>::value, "mlpack can save Armadillo"
       " matrices or a serialized mlpack model only; please use a known type.");
 
   bool success = DetectFileType<ObjectType>(filename, opts, false);
