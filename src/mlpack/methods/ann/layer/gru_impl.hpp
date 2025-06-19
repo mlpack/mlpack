@@ -161,9 +161,6 @@ void GRUType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  // This implementation reuses the values of the gates from Forward() and
-  // assumes that they have not been changed.
-
   // Get aliases from the recurrent state.
   const size_t batchSize = output.n_cols;
   MakeStateAliases(batchSize);
