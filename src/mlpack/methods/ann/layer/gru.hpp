@@ -29,7 +29,7 @@ namespace mlpack {
  *
  * @code
  * @inproceedings{chung2015gated,
- *    title     = {Gated Feedback Recurrent Neural Networks.},
+ *    title     = {Gated Feedback Recurrent Neural Networks},
  *    author    = {Chung, Junyoung and G{\"u}l{\c{c}}ehre, Caglar and Cho,
  *                Kyunghyun and Bengio, Yoshua},
  *    booktitle = {ICML},

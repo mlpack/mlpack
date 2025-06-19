@@ -130,7 +130,7 @@ void GRUType<MatType>::Forward(const MatType& input, MatType& output)
   resetGate = 1.0 / (1.0 + exp(-resetGate));
   updateGate = 1.0 / (1.0 + exp(-updateGate));
 
-  // Calculate canidate activation vector.
+  // Calculate candidate activation vector.
   hiddenGate = hiddenGateWeight * input;
 
   // Add recurrent portion to activation vector.
