@@ -208,7 +208,7 @@ bool SaveSparse(const arma::SpMat<eT>& matrix,
 
 template<typename Object>
 bool SaveModel(Object& objectToSerialize,
-               DataOptionsBase<PlainDataOptions>& opts,
+               const DataOptionsBase<PlainDataOptions>& opts,
                std::fstream& stream)
 {
   try
