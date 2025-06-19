@@ -403,11 +403,11 @@ bool DetectFileType(const std::string& filename,
       {
         if (opts.Fatal())
           Log::Fatal << "Unable to detect type of '" << filename << "'; "
-              << "Incorrect extension?" << std::endl;
+              << "incorrect extension?" << std::endl;
         else
         {
           Log::Warn << "Unable to detect type of '" << filename << "'; "
-              << "Incorrect extension?" << std::endl;
+              << "incorrect extension?" << std::endl;
           return false;
         }
       }
