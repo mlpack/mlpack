@@ -1,8 +1,8 @@
 /**
- * @file tests/ann/layer/add.cpp
- * @author Ryan Curtin
+ * @file tests/ann/layer/nearest_interpolation.cpp
+ * @author Andrew Furey
  *
- * Tests the nearest interpolation layer
+ * Tests the nearest interpolation layer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -60,7 +60,7 @@ TEST_CASE("NearestInterpolationLayerTest", "[ANNLayerTest]")
 
   expectedOutput = arma::mat{4.0, 8.0, 12.0, 16.0};
   expectedOutput.reshape(4, 1);
-  layer.Backward(output, output, unzoomedOutput);
+  layer.Backward(output, output, output, unzoomedOutput);
   CheckMatrices(unzoomedOutput - expectedOutput,
       arma::zeros(input.n_rows), 1e-4);
 
@@ -71,15 +71,15 @@ TEST_CASE("NearestInterpolationLayerTest", "[ANNLayerTest]")
   arma::mat input1 {{1.0, 2.0, 3.0},
                     {4.0, 5.0, 6.0}};
   input1.reshape(6, 1);
-  output1.zeros(17*23, 1);
+  output1.zeros(17 * 23, 1);
   unzoomedOutput1.zeros(6, 1);
-  mlpack::NearestInterpolation layer1({17/2.0f, 23/3.0f});
+  mlpack::NearestInterpolation layer1({17 / 2.0f, 23 / 3.0f});
 
   layer1.InputDimensions() = { 2, 3, channels };
   layer1.ComputeOutputDimensions();
 
   layer1.Forward(input1, output1);
-  layer1.Backward(output1, output1, unzoomedOutput1);
+  layer1.Backward(output1, output1, output1, unzoomedOutput1);
   REQUIRE(accu(output1) - 1317.00 == Approx(0.0).margin(1e-05));
   REQUIRE(accu(unzoomedOutput1) - 1317.00 ==
           Approx(0.0).margin(1e-05));

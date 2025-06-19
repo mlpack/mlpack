@@ -127,7 +127,8 @@ inline FileType GuessFileType(std::istream& f)
  * @param filename Name of the file.
  * @return The detected file type.
  */
-inline FileType AutoDetect(std::fstream& stream, const std::string& filename)
+inline FileType AutoDetectFile(std::fstream& stream,
+                               const std::string& filename)
 {
   // Get the extension.
   std::string extension = Extension(filename);

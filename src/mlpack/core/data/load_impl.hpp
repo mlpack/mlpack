@@ -82,10 +82,10 @@ bool Load(const std::string& filename,
 }
 
 // Load with mappings.  Unfortunately we have to implement this ourselves.
-template<typename eT, typename PolicyType>
+template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
-          DatasetMapper<PolicyType>& info,
+          DatasetInfo& info,
           const bool fatal,
           const bool transpose)
 {
@@ -93,27 +93,11 @@ bool Load(const std::string& filename,
   opts.Fatal() = fatal;
   opts.NoTranspose() = !transpose;
   opts.Categorical() = true;
-
-  if constexpr (std::is_same_v<PolicyType, data::IncrementPolicy>)
-  {
-    opts.DatasetInfo() = info;
-  }
-  else if constexpr (std::is_same_v<PolicyType, data::MissingPolicy>)
-  {
-    opts.MissingPolicy() = true;
-    opts.DatasetMissingPolicy() = info;
-  }
+  opts.DatasetInfo() = info;
 
   bool success = Load(filename, matrix, opts);
 
-  if constexpr (std::is_same_v<PolicyType, data::IncrementPolicy>)
-  {
-    info = opts.DatasetInfo();
-  }
-  else if constexpr (std::is_same_v<PolicyType, data::MissingPolicy>)
-  {
-    info = opts.DatasetMissingPolicy();
-  }
+  info = opts.DatasetInfo();
 
   return success;
 }
@@ -408,6 +392,146 @@ bool LoadCategorical(const std::string& filename,
   Timer::Stop("loading_data");
 
   return true;
+}
+
+template<typename MatType>
+bool Load(const std::vector<std::string>& filenames,
+          MatType& matrix,
+          const TextOptions& opts)
+{
+  TextOptions copyOpts(opts);
+  return Load(filenames, matrix, copyOpts);
+}
+
+template<typename MatType>
+bool Load(const std::vector<std::string>& filenames,
+          MatType& matrix,
+          TextOptions& opts)
+{
+  bool success = false;
+  MatType tmp;
+  arma::field<std::string> firstHeaders;
+  if (filenames.empty())
+  {
+    if (opts.Fatal())
+    {
+      Log::Fatal << "Load(): given set of filenames is empty; loading failed."
+          << std::endl;
+    }
+    else
+    {
+      Log::Warn << "Load(): given set of filenames is empty; loading failed."
+          << std::endl;
+      return false;
+    }
+  }
+
+  for (size_t i = 0; i < filenames.size(); ++i)
+  {
+    success = Load(filenames.at(i), matrix, opts);
+    if (opts.HasHeaders())
+    {
+      if (i == 0)
+        firstHeaders = opts.Headers();
+      else
+      {
+        arma::field<std::string>& headers = opts.Headers();
+
+        // Make sure that the headers in this file match the first file's
+        // headers.
+        for (size_t j = 0; j < headers.size(); ++j)
+        {
+          if (firstHeaders.at(j) != headers.at(j))
+          {
+            if (opts.Fatal())
+            {
+              Log::Fatal << "Load(): header column " << j << " in file '"
+                  << filenames[j] << "' ('" << headers[j] << "') does not match"
+                  << " header column " << j << " in first file '"
+                  << filenames[0] << "' ('" << firstHeaders[j] << "'); load "
+                  << "failed." << std::endl;
+            }
+            else
+            {
+              Log::Warn << "Load(): header column " << j << " in file '"
+                  << filenames[j] << "' ('" << headers[j] << "') does not match"
+                  << " header column " << j << " in first file '"
+                  << filenames[0] << "' ('" << firstHeaders[j] << "'); load "
+                  << "failed." << std::endl;
+              matrix.clear();
+              return false;
+            }
+          }
+        }
+      }
+    }
+
+    if (success)
+    {
+      if (i == 0)
+      {
+        tmp = std::move(matrix);
+      }
+      else
+      {
+        if (!opts.NoTranspose()) // if transpose
+        {
+          if (tmp.n_rows != matrix.n_rows)
+          {
+            if (opts.Fatal())
+            {
+              Log::Fatal << "Load(): dimension mismatch; file '" << filenames[i]
+                  << "' has " << matrix.n_rows << " dimensions, but first file "
+                  << "'" << filenames[0] << "' has " << tmp.n_rows
+                  << " dimensions." << std::endl;
+            }
+            else
+            {
+              Log::Warn << "Load(): dimension mismatch; file '" << filenames[i]
+                  << "' has " << matrix.n_rows << " dimensions, but first file "
+                  << "'" << filenames[0] << "' has " << tmp.n_rows
+                  << " dimensions." << std::endl;
+              return false;
+            }
+          }
+          else
+            tmp = join_rows(tmp, matrix);
+        }
+        else
+        {
+          if (tmp.n_cols != matrix.n_cols)
+          {
+            if (opts.Fatal())
+            {
+              Log::Fatal << "Load(): dimension mismatch; file '" << filenames[i]
+                  << "' has " << matrix.n_cols << " dimensions, but first file "
+                  << "'" << filenames[0] << "' has " << tmp.n_cols
+                  << " dimensions." << std::endl;
+            }
+            else
+            {
+              Log::Warn << "Load(): dimension mismatch; file '" << filenames[i]
+                  << "' has " << matrix.n_cols << " dimensions, but first file "
+                  << "'" << filenames[0] << "' has " << tmp.n_cols
+                  << " dimensions." << std::endl;
+              return false;
+            }
+          }
+          else
+          {
+            tmp = join_cols(tmp, matrix);
+          }
+        }
+      }
+    }
+    else
+      break;
+  }
+
+  if (success)
+    matrix = std::move(tmp);
+
+  return success;
 }
 
 } // namespace data

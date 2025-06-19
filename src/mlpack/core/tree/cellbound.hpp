@@ -143,10 +143,10 @@ class CellBound
   ElemType& MinWidth() { return minWidth; }
 
   //! Get the distance metric associated with this bound.
-  [[deprecated("Will be removed in 5.0.0; use Distance()")]]
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
   const DistanceType& Metric() const { return distance; }
   //! Modify the distance metric associated with this bound.
-  [[deprecated("Will be removed in 5.0.0; use Distance()")]]
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
   DistanceType& Metric() { return distance; }
 
   //! Get the distance metric associated with this bound.

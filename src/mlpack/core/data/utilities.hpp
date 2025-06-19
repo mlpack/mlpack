@@ -112,7 +112,7 @@ bool DetectFileType(const std::string& filename,
   {
     if (isLoading)
       // Attempt to auto-detect the type from the given file.
-      opts.Format() = AutoDetect(*stream, filename);
+      opts.Format() = AutoDetectFile(*stream, filename);
     else
       DetectFromExtension<MatType>(filename, opts);
     // Provide error if we don't know the type.
@@ -134,7 +134,11 @@ bool DetectFileType(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool SaveMatrix(const MatType& matrix,
                 const DataOptionsType& opts,
+#ifdef ARMA_USE_HDF5
                 const std::string& filename,
+#else
+                const std::string& /* filename */,
+#endif
                 std::fstream& stream)
 {
   bool success = false;
