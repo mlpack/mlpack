@@ -293,9 +293,9 @@ class DataOptionsBase
       case FileType::HDF5Binary:  return "HDF5 data";
       case FileType::CoordASCII:
           return "ASCII formatted sparse coordinate data";
-      case FileType::XML:         return "XML Model";
-      case FileType::BIN:         return "BIN Model";
-      case FileType::JSON:        return "JSON Model";
+      case FileType::XML:         return "XML model";
+      case FileType::BIN:         return "binary model";
+      case FileType::JSON:        return "JSON model";
       case FileType::AutoDetect:  return "Detect automatically data type";
       case FileType::FileTypeUnknown: return "Unknown data type";
       default:                    return "";
