@@ -489,8 +489,8 @@ struct Version<mlpack::NeighborSearch<SortPolicy, DistanceType, MatType,
   static void unused() { (void) version; }
 }; /* end Version */
 
-}
-}
+} // namespace detail
+} // namespace cereal
 
 // Include implementation.
 #include "neighbor_search_impl.hpp"
