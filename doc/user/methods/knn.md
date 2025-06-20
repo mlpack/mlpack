@@ -1,22 +1,62 @@
 ## `KNN`: k-nearest-neighbor search
 
-The `KNN` class implements k-nearest neighbor search (both exact and
-approximate), a core computational task that is useful in many machine learning
-situations.  mlpack's `KNN` class uses [trees](../core/trees.md), by default the
-[`KDTree`](../core/trees/kdtree.md), to provide significantly accelerated
-computation; depending on input options, an efficient dual-tree or single-tree
-algorithm is used.
+The `KNN` class implements k-nearest neighbor search, a core computational task
+that is useful in many machine learning situations.  Either exact or approximate
+nearest neighbors can be computed.  mlpack's `KNN` class uses
+[trees](../core/trees.md), by default the [`KDTree`](../core/trees/kdtree.md),
+to provide significantly accelerated computation; depending on input options, an
+efficient dual-tree or single-tree algorithm is used.
 
-mlpack's `KNN` implementation builds a tree structure on the dataset to be
-searched (called the 'reference set').  This provides significant efficiency
-gains, and is most effective in low to medium dimensions, typically less than
-100.
+<!-- An image showing a simple reference set and query set. -->
+<div style="text-align: center">
+<svg width="500" height="250" viewBox="0 0 500 250" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <!-- Border. -->
+  <line x1="0"   y1="0"   x2="500" y2="0"   stroke="black" />
+  <line x1="500" y1="0"   x2="500" y2="250" stroke="black" />
+  <line x1="500" y1="250" x2="0"   y2="250" stroke="black" />
+  <line x1="0"   y1="250" x2="0"   y2="0"   stroke="black" />
+
+  <!-- Lines between points. -->
+  <line x1="360" y1="170" x2="425" y2="215" stroke="black" stroke-dasharray="2" />
+  <line x1="110" y1="135" x2="100" y2="55"  stroke="black" stroke-dasharray="2" />
+
+  <!-- Five reference points. -->
+  <circle cx="100" cy="55" r="5" fill="#880000" />
+  <circle cx="70"  cy="10" r="5" fill="#880000" />
+  <circle cx="425" cy="215" r="5" fill="#880000" />
+  <circle cx="15"  cy="175" r="5" fill="#880000" />
+  <circle cx="200" cy="220" r="5" fill="#880000" />
+  <text x="115" y="55"  text-anchor="middle" fill="black" font-style="italic">r₀</text>
+  <text x="85"  y="10"  text-anchor="middle" fill="black" font-style="italic">r₁</text>
+  <text x="440" y="220" text-anchor="middle" fill="black" font-style="italic">r₂</text>
+  <text x="30"  y="180" text-anchor="middle" fill="black" font-style="italic">r₃</text>
+  <text x="215" y="225" text-anchor="middle" fill="black" font-style="italic">r₄</text>
+
+  <!-- Two query points. -->
+  <circle cx="360" cy="170" r="5" fill="#000088" />
+  <circle cx="110" cy="135" r="5" fill="#000088" />
+  <text x="375" y="175" text-anchor="middle" fill="black" font-style="italic">q₀</text>
+  <text x="125" y="140" text-anchor="middle" fill="black" font-style="italic">q₁</text>
+</svg>
+<p style="font-size: 85%">
+The exact nearest neighbor of the query point <i>q₀</i> is <i>r₂</i>.
+<br />
+The exact nearest neighbor of the query point <i>q₁</i> is <i>r₀</i>.
+<br />
+Approximate search will not return exact neighbors, but results will be close;
+<br />
+e.g., <i>r₃</i> could be returned as the approximate nearest neighbor of
+<i>q₁</i>.
+</p>
+</div>
+
+Given a _reference set_ of points and a _query set_ of queries, the `KNN` class
+will compute the nearest neighbors in the reference set of every point in the
+query set.  If no query set is given, then `KNN` will find the nearest neighbors
+of every point in the reference set; this is also called the
+_all-nearest-neighbors_ problem.
 
 <!-- TODO: link to LSH as an alternative for higher dimensions -->
-
-`KNN` can either search for the nearest neighbors of all points in the reference
-set (also called all-nearest-neighbors), or a separate set of query points can
-be used.
 
 The `KNN` class supports configurable behavior, with numerous runtime and
 compile-time parameters, including the distance metric, type of data, search
@@ -32,17 +72,17 @@ computing the nearest neighbors of points.
 
 // All data is uniform random: 10-dimensional data.  Replace with a data::Load()
 // call or similar for a real application.
-arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
+arma::mat referenceSet(10, 1000, arma::fill::randu); // 1000 points.
 
 mlpack::KNN knn;                     // Step 1: create object.
-knn.Train(dataset);                  // Step 2: set the dataset to search in.
+knn.Train(referenceSet);             // Step 2: set the reference set.
 arma::mat distances;
 arma::Mat<size_t> neighbors;
 knn.Search(5, neighbors, distances); // Step 3: find 5 nearest neighbors of
-                                     //         every point in `dataset`.
+                                     //         every point in `referenceSet`.
 
 // Note: you can also call `knn.Search(querySet, 5, neighbors, distances)` to
-// find the nearest neighbors in `dataset` of a different set of points.
+// find the nearest neighbors in `referenceSet` of a different set of points.
 
 // Print some information about the results.
 std::cout << "Found " << neighbors.n_rows << " neighbors for each of "
@@ -155,14 +195,14 @@ parameter, or by calling `knn.SearchStrategy() = strategy`.
      being used, dual-tree search
      [scales linearly (pdf)](https://ratml.org/pub/pdf/2015plug.pdf) (e.g.
      `O(1)` time for each point whose nearest neighbors are being computed).
-   - Backtracking search is performed to find either exact nearest neighbors or
+   - Backtracking search is performed to find either exact nearest neighbors, or
      approximate nearest neighbors if `knn.Epsilon() > 0`.
 
  * `SINGLE_TREE`: a tree built on the reference points will be traversed once
    for each point whose nearest neighbors are being searched for.
    - Single-tree search generally empirically
      [scales logarithmically](https://en.wikipedia.org/wiki/Nearest_neighbor_search#Space_partitioning).
-   - Backtracking search is performed to find either exact nearest neighbors or
+   - Backtracking search is performed to find either exact nearest neighbors, or
      approximate nearest neighbors if `knn.Epsilon() > 0`.
 
  * `GREEDY_SINGLE_TREE`: for each point whose nearest neighbors are being
@@ -184,7 +224,7 @@ parameter, or by calling `knn.SearchStrategy() = strategy`.
  * `NAIVE`: brute-force search---for each point whose nearest neighbors are
    being searched for, compute the distance to *every* point in the reference
    set.
-   - This strategy gives exact results always; the setting of `knn.Epsilon()` is
+   - This strategy always gives exact results; the setting of `knn.Epsilon()` is
      ignored.
    - Brute-force search scales poorly, with a runtime cost of `O(N)` per point,
      where `N` is the size of the reference set.

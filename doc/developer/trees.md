@@ -1002,9 +1002,10 @@ of the tree and the best leaf.  It can be used with any `TreeType` that
 satisfies the [`TreeType` API requirements](#the-treetype-api).
 
 `GreedySingleTreeTraversal` is used by [`KNN`](../user/methods/knn.md)
-(k-nearest-neighbor search) for its [greedy search
-mode](../user/methods/knn.md#search-modes), where approximate nearest neighbors
-are returned by recursing directly to the closest leaf in a tree.
+(k-nearest-neighbor search) for its
+[greedy search strategy](../user/methods/knn.md#search-strategies), where
+approximate nearest neighbors are returned by recursing directly to the closest
+leaf in a tree.
 
 ## Rules
 
