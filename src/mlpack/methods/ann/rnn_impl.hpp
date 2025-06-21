@@ -451,7 +451,7 @@ typename MatType::elem_type RNN<
       network.Forward(inputAlias, forwardOutput);
       if (!single || t == predictors.n_slices - 1)
         lossSum += network.outputLayer.Forward(forwardOutput,
-            responses.slice(single ? 0 : t));
+            responses.slice(single ? 0 : t).col(i));
     }
   }
 
