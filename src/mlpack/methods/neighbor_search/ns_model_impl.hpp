@@ -351,7 +351,7 @@ void NSModel<SortPolicy>::serialize(Archive& ar, const uint32_t /* version */)
 
   // This should never happen, but just in case, be clean with memory.
   if (cereal::is_loading<Archive>())
-    InitializeModel(DUAL_TREE_MODE, 0.0); // Values will be overwritten.
+    InitializeModel(DUAL_TREE, 0.0); // Values will be overwritten.
 
   // Avoid polymorphic serialization by explicitly serializing the correct type.
   switch (treeType)
