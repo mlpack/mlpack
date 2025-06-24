@@ -104,10 +104,10 @@ class CategoricalDQN
    * @param config Hyper-parameters for categorical dqn.
    * @param isNoisy Specifies whether the network needs to be of type noisy.
    */
-  CategoricalDQN(NetworkType& network,
+  CategoricalDQN(NetworkType& networkIn,
                  TrainingConfig config,
                  const bool isNoisy = false):
-      network(std::move(network)),
+      network(std::move(networkIn)),
       atomSize(config.AtomSize()),
       vMin(config.VMin()),
       vMax(config.VMax()),
