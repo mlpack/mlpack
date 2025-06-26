@@ -6,6 +6,8 @@ _????-??-??_
 
  * Fix warning on CRAN for bundled STB (#3950).
 
+ * Fix potential MSVC constructor shadowing (#3958).
+
  * Use a looser check for auto-detection of categorical file types (#3961).
 
 ## mlpack 4.6.2
