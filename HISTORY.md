@@ -8,6 +8,8 @@ _????-??-??_
 
  * Fix potential MSVC constructor shadowing (#3958).
 
+ * Use a looser check for auto-detection of categorical file types (#3961).
+
 ## mlpack 4.6.2
 
 _2025-05-22_

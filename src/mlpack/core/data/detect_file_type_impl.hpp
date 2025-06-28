@@ -126,7 +126,7 @@ inline FileType GuessFileType(std::istream& f)
   for (arma::uword i = 0; i < nUse; ++i)
   {
     const unsigned char val = dataMem[i];
-    if ((val <= 8) || (val >= 123))
+    if (val <= 8)
     {
       hasBinary = true;
       break;
@@ -394,10 +394,14 @@ bool DetectFileType(const std::string& filename,
     if (opts.Format() == FileType::AutoDetect)
     {
       if (isLoading)
+      {
         // Attempt to auto-detect the type from the given file.
         opts.Format() = AutoDetectFile(*stream, filename);
+      }
       else
+      {
         DetectFromExtension<ObjectType>(filename, opts);
+      }
       // Provide error if we don't know the type.
       if (opts.Format() == FileType::FileTypeUnknown)
       {
