@@ -52,10 +52,9 @@ std::cout << " - After NCA:  "
 
 #### See also:
 
-<!-- TODO: link to kNN -->
-
  * [mlpack distance metrics](../core/distances.md)
  * [`LMNN`](lmnn.md)
+ * [`KNN`](knn.md)
  * [Metric learning on Wikipedia](https://en.wikipedia.org/wiki/Similarity_learning#Metric_learning)
  * [Neighborhood Components Analysis on Wikipedia](https://en.wikipedia.org/wiki/Neighbourhood_components_analysis)
  * [Neighbourhood Components Analysis (pdf)](https://proceedings.neurips.cc/paper_files/paper/2004/file/42fe880812925e520249e808937738d2-Paper.pdf)

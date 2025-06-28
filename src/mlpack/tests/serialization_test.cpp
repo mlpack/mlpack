@@ -606,7 +606,7 @@ TEST_CASE("KNNTest", "[SerializationTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 2000);
 
-  KNN knn(dataset, DUAL_TREE_MODE);
+  KNN knn(dataset, DUAL_TREE);
 
   KNN knnXml, knnText, knnBinary;
 

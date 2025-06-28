@@ -26,9 +26,10 @@ functionality is required, then the X-tree or other variants of
 
 ## See also
 
-<!-- TODO: add links to all distance-based algorithms and other trees? -->
-
  * [`RectangleTree`](rectangle_tree.md)
+ * [mlpack trees](../trees.md)
+ * [`KNN`](../../methods/knn.md)
+ * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [X-Tree on Wikipedia](https://en.wikipedia.org/wiki/X-tree)
  * [The X-tree: An Index Structure for High-Dimensional Data (pdf)](https://www.vldb.org/conf/1996/P028.PDF)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
