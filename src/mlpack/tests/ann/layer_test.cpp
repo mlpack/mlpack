@@ -32,6 +32,7 @@
 #include "layer/dropout.cpp"
 #include "layer/flexible_relu.cpp"
 #include "layer/grouped_convolution.cpp"
+#include "layer/gru.cpp"
 #include "layer/hard_tanh.cpp"
 #include "layer/identity.cpp"
 #include "layer/linear3d.cpp"

@@ -459,19 +459,6 @@ TEST_CASE("FastLSTMReberGrammarTest", "[RecurrentNetworkTest]")
 }
 
 /**
- * Train the specified networks on an embedded Reber grammar dataset.
- */
-TEST_CASE("GRURecursiveReberGrammarTest", "[RecurrentNetworkTest]")
-{
-  RNN<MeanSquaredError<> > model(5);
-  model.Add<Linear<> >(7, 16);
-  model.Add<GRU<> >(16, 16);
-  model.Add<Linear<> >(16, 7);
-  model.Add<SigmoidLayer<> >();
-  ReberGrammarTestNetwork(model, true, 3, 5, 10, 7);
-}
-
-/**
  * Train BLSTM on an embedded Reber grammar dataset.
  */
 TEST_CASE("BRNNReberGrammarTest", "[RecurrentNetworkTest]")

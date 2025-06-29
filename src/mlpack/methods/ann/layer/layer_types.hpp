@@ -34,6 +34,7 @@
 #include <mlpack/methods/ann/layer/elu.hpp>
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
 #include <mlpack/methods/ann/layer/grouped_convolution.hpp>
+#include <mlpack/methods/ann/layer/gru.hpp>
 #include <mlpack/methods/ann/layer/hard_tanh.hpp>
 #include <mlpack/methods/ann/layer/identity.hpp>
 #include <mlpack/methods/ann/layer/layer_norm.hpp>

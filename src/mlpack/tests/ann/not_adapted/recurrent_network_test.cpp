@@ -52,14 +52,6 @@ using namespace ens;
 //}
 
 /**
- * Ensure GRUs work with larger batch sizes.
- */
-//TEST_CASE("GRUBatchSizeTest", "[RecurrentNetworkTest]")
-//{
-//  BatchSizeTest<GRU<>>();
-//}
-
-/**
  * Train the BRNN on a larger dataset.
  *
 TEST_CASE("SequenceClassificationBRNNTest", "[RecurrentNetworkTest]")
