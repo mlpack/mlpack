@@ -181,7 +181,7 @@ mlpack::RangeType<int> r6(3, 4); // [3, 4]
 `Range` is used by:
 
  * [`RangeSearch`](/src/mlpack/methods/range_search/range_search.hpp)
- * [mlpack trees](../../developer/trees.md) <!-- TODO: link to local trees section -->
+ * [mlpack trees](trees.md)
 
 ## `ColumnCovariance()`
 

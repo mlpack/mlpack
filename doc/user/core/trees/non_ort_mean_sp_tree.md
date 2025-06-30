@@ -4,7 +4,8 @@ The `NonOrtMeanSPTree` class implements the hybrid spill tree with
 non-axis-orthogonal splitting hyperplanes and mean-split behavior; this is a
 binary space partitioning tree that allows overlapping volumes between nodes.
 This type of tree can be more effective than trees like the
-[`KDTree`](kdtree.md) for approximate nearest neighbor search and related tasks.
+[`KDTree`](kdtree.md) for
+[approximate nearest neighbor search](../../methods/knn.md) and related tasks.
 
 `NonOrtMeanSPTree` supports three template parameters for configurable behavior,
 and implements all the functionality required by the
@@ -22,13 +23,14 @@ behavior is desired, that
 
 ## See also
 
-<!-- TODO: add links to all distance-based algorithms and other trees? -->
-
  * [`SpillTree`](spill_tree.md)
  * [`SPTree`](sp_tree.md)
  * [`MeanSPTree`](mean_sp_tree.md)
  * [`NonOrtSPTree`](non_ort_sp_tree.md)
  * [`BinarySpaceTree`](binary_space_tree.md)
+ * [mlpack trees](../trees.md)
+ * [`KNN`](../../methods/knn.md)
+ * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [An Investigation of Practical Approximate Nearest Neighbor Algorithms (pdf)](https://proceedings.neurips.cc/paper/2004/file/1102a326d5f7c9e04fc3c89d0ede88c9-Paper.pdf)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 
@@ -600,10 +602,8 @@ std::cout << overlapCount << " out of " << totalInternalNodeCount
 
 Use a defeatist traversal to find the approximate nearest neighbor of the third
 and fourth points in the `corel-histogram` dataset.  (Note: this can also be
-done more easily with the `KNN` class!  This example is a demonstration of how
-to use the defeatist traverser.)
-
-<!-- TODO: link to KNN class -->
+done more easily with the [`KNN`](../../methods/knn.md) class!  This example is
+a demonstration of how to use the defeatist traverser.)
 
 For this example, we must first define a
 [`RuleType` class](../../../developer/trees.md#rules).

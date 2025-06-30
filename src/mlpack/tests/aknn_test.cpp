@@ -56,7 +56,7 @@ TEST_CASE("AKNNApproxVsExact1", "[AKNNTest]")
     }
 
     // Now perform the actual calculation.
-    aknn = new KNN(dataset, DUAL_TREE_MODE, epsilon);
+    aknn = new KNN(dataset, DUAL_TREE, epsilon);
     arma::Mat<size_t> neighborsApprox;
     arma::mat distancesApprox;
     aknn->Search(dataset, 15, neighborsApprox, distancesApprox);
@@ -87,7 +87,7 @@ TEST_CASE("AKNNApproxVsExact2", "[AKNNTest]")
   arma::mat distancesExact;
   exact.Search(15, neighborsExact, distancesExact);
 
-  KNN aknn(dataset, DUAL_TREE_MODE, 0.05);
+  KNN aknn(dataset, DUAL_TREE, 0.05);
   arma::Mat<size_t> neighborsApprox;
   arma::mat distancesApprox;
   aknn.Search(15, neighborsApprox, distancesApprox);
@@ -114,7 +114,7 @@ TEST_CASE("AKNNSingleTreeApproxVsExact", "[AKNNTest]")
   arma::mat distancesExact;
   exact.Search(15, neighborsExact, distancesExact);
 
-  KNN aknn(dataset, SINGLE_TREE_MODE, 0.05);
+  KNN aknn(dataset, SINGLE_TREE, 0.05);
   arma::Mat<size_t> neighborsApprox;
   arma::mat distancesApprox;
   aknn.Search(15, neighborsApprox, distancesApprox);
@@ -143,7 +143,7 @@ TEST_CASE("AKNNSingleCoverTreeTest", "[AKNNTest]")
       arma::mat> tree(dataset);
 
   NeighborSearch<NearestNeighborSort, LMetric<2>, arma::mat, StandardCoverTree>
-      coverTreeSearch(std::move(tree), SINGLE_TREE_MODE, 0.05);
+      coverTreeSearch(std::move(tree), SINGLE_TREE, 0.05);
 
   arma::Mat<size_t> neighborsCoverTree;
   arma::mat distancesCoverTree;
@@ -171,7 +171,7 @@ TEST_CASE("AKNNDualCoverTreeTest", "[AKNNTest]")
   exact.Search(dataset, 15, neighborsExact, distancesExact);
 
   NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      StandardCoverTree> coverTreeSearch(dataset, DUAL_TREE_MODE, 0.05);
+      StandardCoverTree> coverTreeSearch(dataset, DUAL_TREE, 0.05);
 
   arma::Mat<size_t> neighborsCoverTree;
   arma::mat distancesCoverTree;
@@ -198,7 +198,7 @@ TEST_CASE("AKNNSingleBallTreeTest", "[AKNNTest]")
   exact.Search(dataset, 15, neighborsExact, distancesExact);
 
   NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat, BallTree>
-      ballTreeSearch(dataset, SINGLE_TREE_MODE, 0.05);
+      ballTreeSearch(dataset, SINGLE_TREE, 0.05);
 
   arma::Mat<size_t> neighborsBallTree;
   arma::mat distancesBallTree;
@@ -226,7 +226,7 @@ TEST_CASE("AKNNDualBallTreeTest", "[AKNNTest]")
   exact.Search(15, neighborsExact, distancesExact);
 
   NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat, BallTree>
-      ballTreeSearch(dataset, DUAL_TREE_MODE, 0.05);
+      ballTreeSearch(dataset, DUAL_TREE, 0.05);
   arma::Mat<size_t> neighborsBallTree;
   arma::mat distancesBallTree;
   ballTreeSearch.Search(15, neighborsBallTree, distancesBallTree);
@@ -266,7 +266,7 @@ TEST_CASE("AKNNSingleSpillTreeTest", "[AKNNTest]")
       referenceTree(dataset, maxDist * 1.01 /* tau parameter */);
 
   NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat, SPTree>
-      spTreeSearch(std::move(referenceTree), SINGLE_TREE_MODE, 0.05);
+      spTreeSearch(std::move(referenceTree), SINGLE_TREE, 0.05);
 
   arma::Mat<size_t> neighborsSPTree;
   arma::mat distancesSPTree;
@@ -295,7 +295,7 @@ TEST_CASE("AKNNSparseKNNKDTreeTest", "[AKNNTest]")
   using SparseKNN = NeighborSearch<NearestNeighborSort, EuclideanDistance,
       arma::sp_mat, KDTree>;
 
-  SparseKNN aknn(referenceDataset, DUAL_TREE_MODE, 0.05);
+  SparseKNN aknn(referenceDataset, DUAL_TREE, 0.05);
   arma::mat distancesSparse;
   arma::Mat<size_t> neighborsSparse;
   aknn.Search(queryDataset, 10, neighborsSparse, distancesSparse);
@@ -367,17 +367,17 @@ TEST_CASE("AKNNModelTest", "[AKNNTest]")
       models[i].LeafSize() = 20;
       if (j == 0)
       {
-        models[i].BuildModel(timers, std::move(referenceCopy), DUAL_TREE_MODE,
-            0.05);
+        models[i].BuildModel(timers, std::move(referenceCopy),
+            DUAL_TREE, 0.05);
       }
       if (j == 1)
       {
-        models[i].BuildModel(timers, std::move(referenceCopy), SINGLE_TREE_MODE,
-            0.05);
+        models[i].BuildModel(timers, std::move(referenceCopy),
+            SINGLE_TREE, 0.05);
       }
       if (j == 2)
       {
-        models[i].BuildModel(timers, std::move(referenceCopy), NAIVE_MODE);
+        models[i].BuildModel(timers, std::move(referenceCopy), NAIVE);
       }
 
       arma::Mat<size_t> neighborsApprox;
@@ -453,13 +453,13 @@ TEST_CASE("AKNNModelMonochromaticTest", "[AKNNTest]")
       models[i].LeafSize() = 20;
       if (j == 0)
       {
-        models[i].BuildModel(timers, std::move(referenceCopy), DUAL_TREE_MODE,
-            0.05);
+        models[i].BuildModel(timers, std::move(referenceCopy),
+            DUAL_TREE, 0.05);
       }
       if (j == 1)
       {
-        models[i].BuildModel(timers, std::move(referenceCopy), SINGLE_TREE_MODE,
-            0.05);
+        models[i].BuildModel(timers, std::move(referenceCopy),
+            SINGLE_TREE, 0.05);
       }
 
       arma::Mat<size_t> neighborsApprox;
