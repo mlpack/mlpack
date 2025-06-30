@@ -167,8 +167,11 @@ class MultiLayer : public Layer<MatType>
   void Add(Args... args)
   {
     network.push_back(new LayerType(args...));
-    layerOutputs.push_back(MatType());
-    layerDeltas.push_back(MatType());
+    if (network.size() > 1)
+    {
+      layerOutputs.push_back(MatType());
+      layerDeltas.push_back(MatType());
+    }
     layerGradients.push_back(MatType());
   }
 
@@ -180,8 +183,11 @@ class MultiLayer : public Layer<MatType>
   void Add(Layer<MatType>* layer)
   {
     network.push_back(layer);
-    layerOutputs.push_back(MatType());
-    layerDeltas.push_back(MatType());
+    if (network.size() > 1)
+    {
+      layerOutputs.push_back(MatType());
+      layerDeltas.push_back(MatType());
+    }
     layerGradients.push_back(MatType());
   }
 
@@ -230,9 +236,9 @@ class MultiLayer : public Layer<MatType>
 
   // Total number of elements in the input, cached for convenience.
   size_t inSize;
-  // Total number of input elements for *every* layer.
-  size_t totalInputSize;
-  // Total number of output elements for *every* layer.
+  // Total number of deltas for every layer except the first one.
+  size_t totalDeltaSize;
+  // Total number of output elements for layer except the last one.
   size_t totalOutputSize;
 
   //! This matrix stores all of the outputs of each layer when Forward() is
