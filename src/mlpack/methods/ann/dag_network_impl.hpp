@@ -25,8 +25,8 @@ DAGNetwork<
     MatType
 >::DAGNetwork(OutputLayerType outputLayer,
               InitializationRuleType initializeRule) :
-    outputLayer(outputLayer),
-    initializeRule(initializeRule),
+    outputLayer(std::move(outputLayer)),
+    initializeRule(std::move(initializeRule)),
     // These will be set correctly in the first Forward() call.
     validOutputDimensions(false),
     layerMemoryIsSet(false),
@@ -105,15 +105,18 @@ DAGNetwork<
     network = other.network;
     parameters = other.parameters;
     inputDimensions = other.inputDimensions;
-    validOutputDimensions = other.validOutputDimensions;
-    graphIsSet = other.graphIsSet;
     adjacencyList = other.adjacencyList;
     layerAxes = other.layerAxes;
     sortedNetwork = other.sortedNetwork;
     sortedIndices = other.sortedIndices;
     networkOutput = other.networkOutput;
 
+    validOutputDimensions = false;
+    graphIsSet = false;
     layerMemoryIsSet = false;
+
+    layerInputs.clear();
+    layerOutputs.clear();
   }
 
   return *this;
@@ -143,9 +146,12 @@ DAGNetwork<OutputLayerType,
     sortedIndices = std::move(other.sortedIndices);
     networkOutput = std::move(other.networkOutput);
 
-    validOutputDimensions = std::move(other.validOutputDimensions);
-    graphIsSet = std::move(other.graphIsSet);
+    validOutputDimensions = false;
+    graphIsSet = false;
     layerMemoryIsSet = false;
+
+    layerInputs.clear();
+    layerOutputs.clear();
   }
 
   return *this;
@@ -197,7 +203,13 @@ void DAGNetwork<
   }
   else
   {
-    adjacencyList[network[childNodeId]].push_back(network[parentNodeId]);
+    const std::vector<Layer<MatType>*>& list = adjacencyList[network[childNodeId]];
+    for (size_t i = 0; i < list.size(); i++)
+    {
+      if (list[i] == network[parentNodeId])
+        throw std::logic_error("DAGNetwork::Connect(): Cannot concatenate the outputs of the same layer.");
+    }
+    list.push_back(network[parentNodeId]);
   }
 
   validOutputDimensions = false;
@@ -240,7 +252,7 @@ void DAGNetwork<
     {
       auto [currentLayer, explored] = exploring.top();
       exploring.pop();
-      std::vector<Layer<MatType>*> parents = adjacencyList[currentLayer];
+      const std::vector<Layer<MatType>*>& parents = adjacencyList[currentLayer];
 
       if (exploredLayers.count(currentLayer))
           continue;
@@ -278,7 +290,7 @@ void DAGNetwork<
   {
     auto [currentLayer, explored] = exploring.top();
     exploring.pop();
-    std::vector<Layer<MatType>*> parents = adjacencyList[currentLayer];
+    const std::vector<Layer<MatType>*>& parents = adjacencyList[currentLayer];
     if (exploredLayers.count(currentLayer))
       continue;
 
@@ -700,13 +712,8 @@ void DAGNetwork<
   for (size_t i = 1; i < sortedNetwork.size(); i++)
   {
     Layer<MatType>* currentLayer = sortedNetwork[i];
-    std::vector<Layer<MatType>*> parents = adjacencyList[currentLayer];
+    const std::vector<Layer<MatType>*>& parents = adjacencyList[currentLayer];
     size_t numParents = parents.size();
-    if (numParents <= 0)
-    {
-      // TODO: should be caught in CheckGraph
-      throw std::logic_error("DAGNetwork::InitializeForwardPassMemory(): Non-input nodes must have atleast one parent node.");
-    }
 
     if (numParents == 1)
     {
@@ -744,7 +751,7 @@ void DAGNetwork<
     sortedNetwork.front()->Forward(input, layerOutputs.front());
     for (size_t i = 1; i < sortedNetwork.size(); i++)
     {
-      std::vector<Layer<MatType>*> parents = adjacencyList[sortedNetwork[i]];
+      const std::vector<Layer<MatType>*>& parents = adjacencyList[sortedNetwork[i]];
 
       if (parents.size() > 1)
       {
@@ -777,11 +784,6 @@ void DAGNetwork<
           inputAlias.cols(startCol, startCol + cols - 1) = parentOutputAliases[j];
           startCol += cols;
         }
-      }
-      else if (parents.size() == 0)
-      {
-        // TODO: should be redunant and done inside CheckGraph
-        throw std::logic_error("DAGNetwork::Forward(): Non-input nodes must have atleast one parent node.");
       }
 
       if (i < sortedNetwork.size() - 1)

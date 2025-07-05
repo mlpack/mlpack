@@ -18,6 +18,8 @@
 
 #include "init_rules/init_rules.hpp"
 
+namespace mlpack {
+
 /**
  * Implementation of a direct acyclic graph. Any layer that inherits
  * from the base `Layer` class can be added to this model.
@@ -40,8 +42,6 @@
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
  * @tparam MatType Type of matrix to be given as input to the network.
  */
-namespace mlpack {
-
 template<
     typename OutputLayerType = NegativeLogLikelihood,
     typename InitializationRuleType = RandomInitialization,
@@ -65,16 +65,16 @@ public:
   DAGNetwork(OutputLayerType outputLayer = OutputLayerType(),
              InitializationRuleType initializeRule = InitializationRuleType());
 
-  //! Copy constructor.
+  // Copy constructor.
   DAGNetwork(const DAGNetwork& other);
-  //! Move constructor.
+  // Move constructor.
   DAGNetwork(DAGNetwork&& other);
-  //! Copy operator.
+  // Copy operator.
   DAGNetwork& operator=(const DAGNetwork& other);
-  //! Move assignment operator.
+  // Move assignment operator.
   DAGNetwork& operator=(DAGNetwork&& other);
 
-  //! Destructor: delete all layers.
+  // Destructor: delete all layers.
   ~DAGNetwork()
   {
     for (size_t i = 0; i < network.size(); ++i)
@@ -106,7 +106,7 @@ public:
     graphIsSet = false;
     layerMemoryIsSet = false;
 
-    return (size_t)(network.size() - 1);
+    return network.size() - 1;
   }
 
   /**
@@ -127,7 +127,7 @@ public:
    */
   void Connect(size_t parentNodeId, size_t childNodeId);
 
-  //! Get the layers of the network. The network will be sorted topologically.
+  // Get the layers of the network. The network will be sorted topologically.
   const std::vector<Layer<MatType>*>& Network()
   {
     if (!graphIsSet)
@@ -174,7 +174,7 @@ public:
     return inputDimensions;
   }
 
-  //! Get the logical dimensions of the input.
+  // Get the logical dimensions of the input.
   const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
 
   const std::vector<size_t>& OutputDimensions()
@@ -183,20 +183,18 @@ public:
       CheckGraph();
 
     if (!validOutputDimensions)
-    {
       UpdateDimensions("DAGNetwork::OutputDimensions()");
-    }
 
     return sortedNetwork.back()->OutputDimensions();
   }
 
-  //! Return the current set of weights.  These are linearized: this contains
-  //! the weights of every layer.
+  // Return the current set of weights.  These are linearized: this contains
+  // the weights of every layer.
   const MatType& Parameters() const { return parameters; }
-  //! Modify the current set of weights.  These are linearized: this contains
-  //! the weights of every layer.  Be careful!  If you change the shape of
-  //! `parameters` to something incorrect, it may be re-initialized the next
-  //! time a forward pass is done.
+  // Modify the current set of weights.  These are linearized: this contains
+  // the weights of every layer.  Be careful!  If you change the shape of
+  // `parameters` to something incorrect, it may be re-initialized the next
+  // time a forward pass is done.
   MatType& Parameters() { return parameters; }
 
   /**
@@ -246,14 +244,14 @@ public:
 private:
   // Helper functions.
 
-  //! Use the InitializationPolicy to initialize all the weights in the network.
+  // Use the InitializationPolicy to initialize all the weights in the network.
   void InitializeWeights();
 
-  //! Call each layers `CustomInitialize`
+  // Call each layers `CustomInitialize`
   void CustomInitialize(MatType& W, const size_t elements);
 
-  //! Make the memory of each layer point to the right place, by calling
-  //! SetWeights() on each layer.
+  // Make the memory of each layer point to the right place, by calling
+  // SetWeights() on each layer.
   void SetLayerMemory();
 
   /**
@@ -321,31 +319,31 @@ private:
    */
   double Loss() const;
 
-  //! Instantiated output layer used to evaluate the network.
+  // Instantiated output layer used to evaluate the network.
   OutputLayerType outputLayer;
 
-  //! Instantiated InitializationRule object for initializing the network
-  //! parameter.
+  // Instantiated InitializationRule object for initializing the network
+  // parameter.
   InitializationRuleType initializeRule;
 
-  //! The internally-held network, sorted in the order that the user
-  //! specified when using `Add()`
+  // The internally-held network, sorted in the order that the user
+  // specified when using `Add()`
   std::vector<Layer<MatType>*> network;
 
-  //! The internally-held network, sorted topologically when `CheckNetwork`
-  //! is called if the graph is valid.
+  // The internally-held network, sorted topologically when `CheckNetwork`
+  // is called if the graph is valid.
   std::vector<Layer<MatType>*> sortedNetwork;
 
-  //! The internall-held adjacencyList of all the nodes
-  std::map<Layer<MatType>*, std::vector<Layer<MatType>*>> adjacencyList;
+  // The internall-held adjacencyList of all the nodes
+  std::unordered_map<Layer<MatType>*, std::vector<Layer<MatType>*>> adjacencyList;
 
-  //! The internally-held map of what axes to concatenate along for each layer
-  //! with multiple inputs
-  std::map<Layer<MatType>*, size_t> layerAxes;
+  // The internally-held map of what axes to concatenate along for each layer
+  // with multiple inputs
+  std::unordered_map<Layer<MatType>*, size_t> layerAxes;
 
-  //! The internally-held map of Layers corresponding to what their position
-  //! is in the topologically sorted `sortedNetwork` vector.
-  std::map<Layer<MatType>*, size_t> sortedIndices;
+  // The internally-held map of Layers corresponding to what their position
+  // is in the topologically sorted `sortedNetwork` vector.
+  std::unordered_map<Layer<MatType>*, size_t> sortedIndices;
 
   /**
    * Matrix of (trainable) parameters.  Each weight here corresponds to a layer,
@@ -359,29 +357,29 @@ private:
    */
   MatType parameters;
 
-  //! Dimensions of input data.
+  // Dimensions of input data.
   std::vector<size_t> inputDimensions;
 
-  //! Locally-stored output of the network from a forward pass; used by the
-  //! backward pass.
+  // Locally-stored output of the network from a forward pass; used by the
+  // backward pass.
   MatType networkOutput;
 
-  //! This matrix stores all of the outputs of each layer when Forward() is
-  //! called.  See `InitializeForwardPassMemory()`.
+  // This matrix stores all of the outputs of each layer when Forward() is
+  // called.  See `InitializeForwardPassMemory()`.
   MatType layerOutputMatrix;
-  //! These are aliases of `layerOutputMatrix` for the input of each layer
+  // These are aliases of `layerOutputMatrix` for the input of each layer
   std::vector<MatType> layerInputs;
-  //! These are aliases of `layerOutputMatrix` for the output of each layer.
+  // These are aliases of `layerOutputMatrix` for the output of each layer.
   std::vector<MatType> layerOutputs;
 
-  //! If true, each layer has its inputDimensions properly set.
+  // If true, each layer has its inputDimensions properly set.
   bool validOutputDimensions;
 
-  //! If true, the graph is valid and has been topologically sorted.
+  // If true, the graph is valid and has been topologically sorted.
   bool graphIsSet;
 
-  //! If true, each layer has its memory properly set for a forward/backward
-  //! pass.
+  // If true, each layer has its memory properly set for a forward/backward
+  // pass.
   bool layerMemoryIsSet;
 };
 
