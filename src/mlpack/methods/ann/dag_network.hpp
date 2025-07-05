@@ -319,6 +319,21 @@ private:
    */
   double Loss() const;
 
+  /**
+   * Finds the index of layerPtr in network.
+   */
+  size_t FindLayerIndex(Layer<MatType>* layerPtr)
+  {
+    size_t layerIndex = 0;
+    for (size_t i = 0; i < network.size(); i++)
+    {
+      layerIndex = i;
+      if (layerPtr == network[i])
+        break;
+    }
+    return layerIndex;
+  }
+
   // Instantiated output layer used to evaluate the network.
   OutputLayerType outputLayer;
 
