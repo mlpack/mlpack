@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_ANN_DAG_NETWORK_IMPL_HPP
 
 #include "dag_network.hpp"
+#include <utility>
 
 namespace mlpack {
 
@@ -48,7 +49,8 @@ DAGNetwork<
     network(network.network),
     parameters(network.parameters),
     inputDimensions(network.inputDimensions),
-    adjacencyList(network.adjacencyList),
+    parentsList(network.parentsList),
+    childrenList(network.childrenList),
     layerAxes(network.layerAxes),
     sortedNetwork(network.sortedNetwork),
     sortedIndices(network.sortedIndices),
@@ -73,7 +75,8 @@ DAGNetwork<
     network(std::move(network.network)),
     parameters(std::move(network.parameters)),
     inputDimensions(std::move(network.inputDimensions)),
-    adjacencyList(std::move(network.adjacencyList)),
+    parentsList(std::move(network.parentsList)),
+    childrenList(std::move(network.childrenList)),
     layerAxes(std::move(network.layerAxes)),
     sortedNetwork(std::move(network.sortedNetwork)),
     sortedIndices(std::move(network.sortedIndices)),
@@ -105,7 +108,8 @@ DAGNetwork<
     network = other.network;
     parameters = other.parameters;
     inputDimensions = other.inputDimensions;
-    adjacencyList = other.adjacencyList;
+    childrenList = other.childrenList;
+    parentsList = other.parentsList;
     layerAxes = other.layerAxes;
     sortedNetwork = other.sortedNetwork;
     sortedIndices = other.sortedIndices;
@@ -140,7 +144,8 @@ DAGNetwork<OutputLayerType,
     network = std::move(other.network);
     parameters = std::move(other.parameters);
     inputDimensions = std::move(other.inputDimensions);
-    adjacencyList = std::move(other.adjacencyList);
+    childrenList = std::move(other.childrenList);
+    parentsList = std::move(other.parentsList);
     layerAxes = std::move(other.layerAxes);
     sortedNetwork = std::move(other.sortedNetwork);
     sortedIndices = std::move(other.sortedIndices);
@@ -172,6 +177,8 @@ void DAGNetwork<
     errorMessage << "DAGNetwork::SetAxis(): layer " << layerId << " does not exist in the network.";
     throw std::logic_error(errorMessage.str());
   }
+
+  layerAxes[network[layerId]] = concatAxis;
 
   validOutputDimensions = false;
   graphIsSet = false;
@@ -206,27 +213,20 @@ void DAGNetwork<
     throw std::logic_error(errorMessage.str());
   }
 
-  if (adjacencyList.count(network[childNodeId]) == 0)
+  std::vector<Layer<MatType>*>& childNodeParents = parentsList[network[childNodeId]];
+  for (size_t i = 0; i < childNodeParents.size(); i++)
   {
-    adjacencyList.insert({network[childNodeId], {network[parentNodeId]}});
-  }
-  else
-  {
-    std::vector<Layer<MatType>*>& list = adjacencyList[network[childNodeId]];
-    for (size_t i = 0; i < list.size(); i++)
+    if (childNodeParents[i] == network[parentNodeId])
     {
-      if (list[i] == network[parentNodeId])
-      {
-        std::ostringstream errorMessage;
-        errorMessage << "DAGNetwork::Connect(): Layer " << parentNodeId << " cannot be concatenated with itself.";
-        throw std::logic_error(errorMessage.str());
-      }
+      std::ostringstream errorMessage;
+      errorMessage << "DAGNetwork::Connect(): Layer " << parentNodeId << " cannot be concatenated with itself.";
+      throw std::logic_error(errorMessage.str());
     }
-    list.push_back(network[parentNodeId]);
   }
+  childNodeParents.push_back(network[parentNodeId]);
+  childrenList[network[parentNodeId]].push_back(network[childNodeId]);
 
   validOutputDimensions = false;
-  graphIsSet = false;
   layerMemoryIsSet = false;
 }
 
@@ -239,106 +239,87 @@ void DAGNetwork<
     MatType
 >::CheckGraph()
 {
-  std::unordered_set<Layer<MatType>*> exploredLayers;
-  std::stack<std::pair<Layer<MatType>*, bool>> exploring;
-  sortedNetwork.clear();
-
+  // Check that the graph has only one input and one output
   size_t inputLayers = 0;
-
+  size_t outputLayers = 0;
+  size_t outputLayerId = 0;
   for (size_t i = 0; i < network.size(); i++)
   {
-    size_t parents = 0;
-    if (exploredLayers.count(network[i]))
-      continue;
-    exploring.push({network[i], false});
-
-    if (adjacencyList[network[i]].size() == 0)
-    {
-      // Count number of input errors and throw an error at
-      // the end of the method if there are more than one
-      // input layers.
+    if (parentsList[network[i]].size() == 0)
       inputLayers++;
-    }
-
-    while (!exploring.empty())
+    if (childrenList[network[i]].size() == 0)
     {
-      auto [currentLayer, explored] = exploring.top();
-      exploring.pop();
-      const std::vector<Layer<MatType>*>& parents = adjacencyList[currentLayer];
-
-      if (exploredLayers.count(currentLayer))
-          continue;
-
-      if (explored)
-      {
-        sortedNetwork.push_back(currentLayer);
-        exploredLayers.insert(currentLayer);
-      }
-      else
-      {
-        exploring.push({currentLayer, true});
-        for (size_t j = 0; j < parents.size(); j++)
-        {
-          Layer<MatType>* parent = parents[j];
-          if (parent == network[i])
-          {
-            std::ostringstream errorMessage;
-            errorMessage << "DAGNetwork::CheckGraph(): A cycle exists in the graph. Layer "
-                         << FindLayerIndex(network[i]) << " can be reached from itself.";
-            throw std::logic_error(errorMessage.str());
-          }
-
-          if (!exploredLayers.count(parent))
-          {
-            exploring.push({parent, false});
-          }
-        }
-      }
-    }
-  }
-
-  size_t size = 0;
-  exploring.push(std::make_pair(sortedNetwork.back(), false));
-  exploredLayers.clear();
-
-  while (!exploring.empty())
-  {
-    auto [currentLayer, explored] = exploring.top();
-    exploring.pop();
-    const std::vector<Layer<MatType>*>& parents = adjacencyList[currentLayer];
-    if (exploredLayers.count(currentLayer))
-      continue;
-
-    if (explored)
-    {
-      size++;
-      exploredLayers.insert(currentLayer);
-    }
-    else
-    {
-      exploring.push({currentLayer, true});
-      for (size_t j = 0; j < parents.size(); j++)
-      {
-        Layer<MatType>* parent = parents[j];
-        if (!exploredLayers.count(parent))
-        {
-          exploring.push({parent, false});
-        }
-      }
+      outputLayers++;
+      outputLayerId = i;
     }
   }
 
   if (inputLayers > 1)
   {
     std::ostringstream errorMessage;
-    errorMessage << "DAGNetwork::CheckGraph(): There should only be one input node, but this network has " << inputLayers << " input nodes.";
+    errorMessage << "DAGNetwork::CheckGraph(): There should only be one input node, "
+                    "but this network has " << inputLayers << " input nodes.";
+    throw std::logic_error(errorMessage.str());
+  }
+  if (outputLayers > 1)
+  {
+    std::ostringstream errorMessage;
+    errorMessage << "DAGNetwork::CheckGraph(): There should only be one output node, "
+                    "but this network has " << outputLayers << " output nodes.";
     throw std::logic_error(errorMessage.str());
   }
 
-  if (size != sortedNetwork.size())
+  // Check for cycles and topologically sort the network
+  sortedNetwork.clear();
+
+  std::unordered_set<Layer<MatType>*> exploredLayers;
+  std::vector<std::pair<Layer<MatType>*, bool>> exploreNext;
+  exploreNext.push_back(std::make_pair(network[outputLayerId], false));
+
+  typedef std::pair<Layer<MatType>*, Layer<MatType>*> LayerEdge; // use using?
+  std::vector<LayerEdge> layerEdges;
+
+  while (!exploreNext.empty())
   {
-    throw std::logic_error("DAGNetwork::CheckGraph(): There should only be one output node.");
+    // Layer<MatType>* currentLayer = exploreNext.back();
+    auto [currentLayer, explored] = exploreNext.back();
+    exploreNext.pop_back();
+
+    if (!explored)
+    {
+      const std::vector<Layer<MatType>*>& parents = parentsList[currentLayer];
+
+      // If an edge has already been traversed, there is a cycle.
+      for (size_t i = 0; i < parents.size(); i++)
+      {
+        LayerEdge edge = std::make_pair(parents[i], currentLayer);
+        for (size_t j = 0; j < layerEdges.size(); j++)
+        {
+          if (layerEdges[j] == edge)
+            throw std::logic_error("DAGNetwork::CheckGraph(): A cycle exists in the graph.");
+        }
+        layerEdges.push_back(edge);
+      }
+
+      if (exploredLayers.count(currentLayer))
+        continue;
+
+      exploreNext.push_back({ currentLayer, true });
+
+      for (size_t i = 0; i < parents.size(); i++)
+      {
+        exploreNext.push_back({ parents[i], false });
+      }
+    }
+    else
+    {
+      exploredLayers.insert(currentLayer);
+
+      // Topo sort
+      sortedNetwork.push_back(currentLayer);
+    }
   }
+
   graphIsSet = true;
 }
 
@@ -361,12 +342,10 @@ void DAGNetwork<
   {
     auto [currentLayer, alreadyExplored] = exploring.top();
     exploring.pop();
-    size_t numParents = adjacencyList[currentLayer].size();
+    size_t numParents = parentsList[currentLayer].size();
 
     if (explored.count(currentLayer))
-    {
       continue;
-    }
 
     if (numParents == 0)
     {
@@ -379,7 +358,7 @@ void DAGNetwork<
       explored.insert(currentLayer);
       if (numParents == 1)
       {
-        currentLayer->InputDimensions() = adjacencyList[currentLayer][0]->OutputDimensions();
+        currentLayer->InputDimensions() = parentsList[currentLayer][0]->OutputDimensions();
       }
       else
       {
@@ -392,20 +371,20 @@ void DAGNetwork<
         }
 
         size_t axis = layerAxes[currentLayer];
-        const size_t numOutputDimensions = adjacencyList[currentLayer][0]->OutputDimensions().size();
+        const size_t numOutputDimensions = parentsList[currentLayer][0]->OutputDimensions().size();
 
         if (axis >= numOutputDimensions)
         {
           std::ostringstream errorMessage;
           errorMessage << "DAGNetwork::ComputeOutputDimensions(): The concatenation axis of layer "
                        << FindLayerIndex(currentLayer) << " is " << axis
-                       << ", but that's greater than the number of output dimensions, which is " << numOutputDimensions << ".";
+                       << ", but that's greater than or equal to the number of output dimensions, which is " << numOutputDimensions << ".";
           throw std::logic_error(errorMessage.str());
         }
 
         for (size_t i = 1; i < numParents; i++)
         {
-          Layer<MatType>* parent = adjacencyList[currentLayer][i];
+          Layer<MatType>* parent = parentsList[currentLayer][i];
 
           if (numOutputDimensions != parent->OutputDimensions().size())
           {
@@ -424,17 +403,17 @@ void DAGNetwork<
           {
             for (size_t n = 0; n < numParents; n++)
             {
-              Layer<MatType>* parent = adjacencyList[currentLayer][n];
+              Layer<MatType>* parent = parentsList[currentLayer][n];
               currentLayer->InputDimensions()[i] += parent->OutputDimensions()[i];
             }
           }
           else
           {
-            Layer<MatType>* firstParent = adjacencyList[currentLayer].front();
+            Layer<MatType>* firstParent = parentsList[currentLayer].front();
             const size_t axisDim = firstParent->OutputDimensions()[i];
-            for (size_t n = 1; n < adjacencyList[currentLayer].size(); n++)
+            for (size_t n = 1; n < parentsList[currentLayer].size(); n++)
             {
-              Layer<MatType>* parent = adjacencyList[currentLayer][n];
+              Layer<MatType>* parent = parentsList[currentLayer][n];
               const size_t axisDim2 = parent->OutputDimensions()[i];
 
               if (axisDim != axisDim2)
@@ -456,7 +435,7 @@ void DAGNetwork<
       exploring.push(std::make_pair(currentLayer, true));
       for (size_t i = 0; i < numParents; i++)
       {
-        exploring.push(std::make_pair(adjacencyList[currentLayer][i], false));
+        exploring.push(std::make_pair(parentsList[currentLayer][i], false));
       }
     }
   }
@@ -714,7 +693,7 @@ void DAGNetwork<
   size_t totalConcatSize = 0;
   for (size_t i = 1; i < sortedNetwork.size(); i++)
   {
-    if (adjacencyList[sortedNetwork[i]].size() > 1)
+    if (parentsList[sortedNetwork[i]].size() > 1)
     {
       size_t concatSize = sortedNetwork[i]->InputDimensions()[0];
       for (size_t j = 1; j < sortedNetwork[i]->InputDimensions().size(); j++)
@@ -746,7 +725,7 @@ void DAGNetwork<
   for (size_t i = 1; i < sortedNetwork.size(); i++)
   {
     Layer<MatType>* currentLayer = sortedNetwork[i];
-    const std::vector<Layer<MatType>*>& parents = adjacencyList[currentLayer];
+    const std::vector<Layer<MatType>*>& parents = parentsList[currentLayer];
     size_t numParents = parents.size();
 
     if (numParents == 1)
@@ -785,7 +764,7 @@ void DAGNetwork<
     sortedNetwork.front()->Forward(input, layerOutputs.front());
     for (size_t i = 1; i < sortedNetwork.size(); i++)
     {
-      const std::vector<Layer<MatType>*>& parents = adjacencyList[sortedNetwork[i]];
+      const std::vector<Layer<MatType>*>& parents = parentsList[sortedNetwork[i]];
 
       if (parents.size() > 1)
       {

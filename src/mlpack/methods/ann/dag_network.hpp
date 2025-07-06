@@ -96,6 +96,10 @@ public:
   size_t Add(Args... args)
   {
     network.push_back(new LayerType(args...));
+    size_t nodeId = network.size();
+    childrenList.insert({network[nodeId], {}});
+    parentsList.insert({network[nodeId], {}});
+
     if (network.size() > 1)
     {
       layerOutputs.push_back(MatType());
@@ -349,8 +353,11 @@ private:
   // is called if the graph is valid.
   std::vector<Layer<MatType>*> sortedNetwork;
 
-  // The internall-held adjacencyList of all the nodes
-  std::unordered_map<Layer<MatType>*, std::vector<Layer<MatType>*>> adjacencyList;
+  // The internally-held map of nodes that holds it's edges to outgoing nodes.
+  std::unordered_map<Layer<MatType>*, std::vector<Layer<MatType>*>> childrenList;
+
+  // The internally-held map of nodes that holds it's edges to incoming nodes.
+  std::unordered_map<Layer<MatType>*, std::vector<Layer<MatType>*>> parentsList;
 
   // The internally-held map of what axes to concatenate along for each layer
   // with multiple inputs
