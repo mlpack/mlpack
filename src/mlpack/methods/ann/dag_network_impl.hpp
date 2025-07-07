@@ -54,6 +54,8 @@ DAGNetwork<
     layerAxes(network.layerAxes),
     sortedNetwork(network.sortedNetwork),
     sortedIndices(network.sortedIndices),
+    predictors(network.predictors),
+    responses(network.responses),
     // These will be set correctly in the first Forward() call.
     validOutputDimensions(false),
     layerMemoryIsSet(false),
@@ -80,6 +82,8 @@ DAGNetwork<
     layerAxes(std::move(network.layerAxes)),
     sortedNetwork(std::move(network.sortedNetwork)),
     sortedIndices(std::move(network.sortedIndices)),
+    predictors(std::move(network.predictors)),
+    responses(std::move(network.responses)),
     // Aliases will not be correct after a std::move(), so we will manually
     // reset them.
     layerMemoryIsSet(false),
@@ -114,6 +118,8 @@ DAGNetwork<
     sortedNetwork = other.sortedNetwork;
     sortedIndices = other.sortedIndices;
     networkOutput = other.networkOutput;
+    predictors = other.predictors;
+    responses = other.responses;
 
     validOutputDimensions = false;
     graphIsSet = false;
@@ -150,6 +156,8 @@ DAGNetwork<OutputLayerType,
     sortedNetwork = std::move(other.sortedNetwork);
     sortedIndices = std::move(other.sortedIndices);
     networkOutput = std::move(other.networkOutput);
+    predictors = std::move(other.predictors);
+    responses = std::move(other.responses);
 
     validOutputDimensions = false;
     graphIsSet = false;
@@ -594,6 +602,35 @@ void DAGNetwork<
       "size!");
   }
 }
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::Shuffle()
+{
+  ShuffleData(predictors, responses, predictors, responses);
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::ResetData(MatType predictors, MatType responses)
+{
+  this->predictors = std::move(predictors);
+  this->responses = std::move(responses);
+
+  // Set the network to training mode.
+  SetNetworkMode(true);
+}
+
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
@@ -895,6 +932,45 @@ void DAGNetwork<
 
     Forward(predictorAlias, resultAlias);
   }
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+template<typename OptimizerType>
+std::enable_if_t<
+    ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void>
+DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const
+{
+  if (optimizer.MaxIterations() < samples &&
+      optimizer.MaxIterations() != 0)
+  {
+    Log::Warn << "The optimizer's maximum number of iterations is less than the"
+        << " size of the dataset; the optimizer will not pass over the entire "
+        << "dataset. To fix this, modify the maximum number of iterations to be"
+        << " at least equal to the number of points of your dataset ("
+        << samples << ")." << std::endl;
+  }
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+template<typename OptimizerType>
+std::enable_if_t<
+    !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void>
+DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::WarnMessageMaxIterations(OptimizerType& /* optimizer */,
+                            size_t /* samples */) const
+{
+  // Nothing to do here.
 }
 
 } // namespace mlpack

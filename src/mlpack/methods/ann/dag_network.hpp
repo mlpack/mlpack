@@ -244,6 +244,33 @@ public:
    */
   typename MatType::elem_type Evaluate(const MatType& predictors,
                                        const MatType& responses);
+  /**
+   * Note: this function is implemented so that it can be used by ensmallen's
+   * optimizers.  It's not generally meant to be used otherwise.
+   *
+   * Return the number of separable functions (the number of predictor points).
+   */
+  size_t NumFunctions() const { return responses.n_cols; }
+
+  /**
+   * Note: this function is implemented so that it can be used by ensmallen's
+   * optimizers.  It's not generally meant to be used otherwise.
+   *
+   * Shuffle the order of function visitation.  (This is equivalent to shuffling
+   * the dataset during training.)
+   */
+  void Shuffle();
+
+  /**
+   * Prepare the network for training on the given data.
+   *
+   * This function won't actually trigger the training process, and is
+   * generally only useful internally.
+   *
+   * @param predictors Input data variables.
+   * @param responses Outputs results from input data variables.
+   */
+  void ResetData(MatType predictors, MatType responses);
 
 private:
   // Helper functions.
@@ -338,6 +365,32 @@ private:
     return layerIndex;
   }
 
+  /**
+   * Check if the optimizer has MaxIterations() parameter, if it does then check
+   * if its value is less than the number of datapoints in the dataset.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param optimizer optimizer used in the training process.
+   * @param samples Number of datapoints in the dataset.
+   */
+  template<typename OptimizerType>
+  std::enable_if_t<
+      ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void>
+  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
+
+  /**
+   * Check if the optimizer has MaxIterations() parameter; if it doesn't then
+   * simply return from the function.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param optimizer optimizer used in the training process.
+   * @param samples Number of datapoints in the dataset.
+   */
+  template<typename OptimizerType>
+  std::enable_if_t<
+      !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void>
+  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
+
   // Instantiated output layer used to evaluate the network.
   OutputLayerType outputLayer;
 
@@ -381,6 +434,15 @@ private:
 
   // Dimensions of input data.
   std::vector<size_t> inputDimensions;
+
+  //! The matrix of data points (predictors).  This member is empty, except
+  //! during training---we must store a local copy of the training data since
+  //! the ensmallen optimizer will not provide training data.
+  MatType predictors;
+
+  //! The matrix of responses to the input data points.  This member is empty,
+  //! except during training.
+  MatType responses;
 
   // Locally-stored output of the network from a forward pass; used by the
   // backward pass.
