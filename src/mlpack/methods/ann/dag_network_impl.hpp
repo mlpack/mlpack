@@ -246,7 +246,9 @@ void DAGNetwork<
   for (size_t i = 0; i < network.size(); i++)
   {
     if (parentsList[network[i]].size() == 0)
-      inputLayers++;
+    {
+      inputLayers++; 
+    }
     if (childrenList[network[i]].size() == 0)
     {
       outputLayers++;
@@ -276,14 +278,16 @@ void DAGNetwork<
   std::vector<std::pair<Layer<MatType>*, bool>> exploreNext;
   exploreNext.push_back(std::make_pair(network[outputLayerId], false));
 
-  typedef std::pair<Layer<MatType>*, Layer<MatType>*> LayerEdge; // use using?
+  typedef std::pair<Layer<MatType>*, Layer<MatType>*> LayerEdge;
   std::vector<LayerEdge> layerEdges;
 
   while (!exploreNext.empty())
   {
-    // Layer<MatType>* currentLayer = exploreNext.back();
     auto [currentLayer, explored] = exploreNext.back();
     exploreNext.pop_back();
+
+    if (exploredLayers.count(currentLayer))
+      continue;
 
     if (!explored)
     {
@@ -301,11 +305,7 @@ void DAGNetwork<
         layerEdges.push_back(edge);
       }
 
-      if (exploredLayers.count(currentLayer))
-        continue;
-
       exploreNext.push_back({ currentLayer, true });
-
       for (size_t i = 0; i < parents.size(); i++)
       {
         exploreNext.push_back({ parents[i], false });
@@ -334,110 +334,104 @@ void DAGNetwork<
 {
   if (!graphIsSet)
     CheckGraph();
-  std::stack<std::pair<Layer<MatType>*, bool>> exploring;
-  std::unordered_set<Layer<MatType>*> explored;
-  exploring.push(std::make_pair(sortedNetwork.back(), false));
 
-  while (!exploring.empty())
+  // `CheckGraph` guarantees that the first layer in `sortedNetwork`
+  // has no parents and that there is only one layer with no parents.
+  Layer<MatType>* currentLayer = sortedNetwork[0];
+  currentLayer->InputDimensions() = inputDimensions;
+  currentLayer->ComputeOutputDimensions();
+
+  for (size_t i = 1; i < sortedNetwork.size(); i++)
   {
-    auto [currentLayer, alreadyExplored] = exploring.top();
-    exploring.pop();
+    currentLayer = sortedNetwork[i];
     size_t numParents = parentsList[currentLayer].size();
-
-    if (explored.count(currentLayer))
-      continue;
-
-    if (numParents == 0)
+    if (numParents == 1)
     {
-      currentLayer->InputDimensions() = inputDimensions;
-      currentLayer->ComputeOutputDimensions();
-      explored.insert(currentLayer);
-    }
-    else if (alreadyExplored)
-    {
-      explored.insert(currentLayer);
-      if (numParents == 1)
-      {
-        currentLayer->InputDimensions() = parentsList[currentLayer][0]->OutputDimensions();
-      }
-      else
-      {
-        if (layerAxes.count(currentLayer) == 0)
-        {
-          std::ostringstream errorMessage;
-          errorMessage << "DAGNetwork::ComputeOutputDimensions(): Axis does not exist for layer "
-                       << FindLayerIndex(currentLayer) << ".";
-          throw std::logic_error(errorMessage.str());
-        }
-
-        size_t axis = layerAxes[currentLayer];
-        const size_t numOutputDimensions = parentsList[currentLayer][0]->OutputDimensions().size();
-
-        if (axis >= numOutputDimensions)
-        {
-          std::ostringstream errorMessage;
-          errorMessage << "DAGNetwork::ComputeOutputDimensions(): The concatenation axis of layer "
-                       << FindLayerIndex(currentLayer) << " is " << axis
-                       << ", but that's greater than or equal to the number of output dimensions, which is " << numOutputDimensions << ".";
-          throw std::logic_error(errorMessage.str());
-        }
-
-        for (size_t i = 1; i < numParents; i++)
-        {
-          Layer<MatType>* parent = parentsList[currentLayer][i];
-
-          if (numOutputDimensions != parent->OutputDimensions().size())
-          {
-            std::ostringstream errorMessage;
-            errorMessage << "DAGNetwork::ComputeOutputDimensions(): Number of output dimensions for layer 0 (" 
-                         << numOutputDimensions << ") should be equal to the number of output dimensions for layer " << FindLayerIndex(parent) 
-                         << " (" << parent->OutputDimensions().size() << ").";
-            throw std::logic_error(errorMessage.str());
-          }
-        }
-        currentLayer->InputDimensions() = std::vector<size_t>(numOutputDimensions, 0);
-
-        for (size_t i = 0; i < currentLayer->InputDimensions().size(); i++)
-        {
-          if (i == axis)
-          {
-            for (size_t n = 0; n < numParents; n++)
-            {
-              Layer<MatType>* parent = parentsList[currentLayer][n];
-              currentLayer->InputDimensions()[i] += parent->OutputDimensions()[i];
-            }
-          }
-          else
-          {
-            Layer<MatType>* firstParent = parentsList[currentLayer].front();
-            const size_t axisDim = firstParent->OutputDimensions()[i];
-            for (size_t n = 1; n < parentsList[currentLayer].size(); n++)
-            {
-              Layer<MatType>* parent = parentsList[currentLayer][n];
-              const size_t axisDim2 = parent->OutputDimensions()[i];
-
-              if (axisDim != axisDim2)
-              {
-                std::ostringstream errorMessage;
-                errorMessage << "DAGNetwork::ComputeOutputDimensions(): Axes that are not the concatenation axis (axis = " << axis << ") "
-                                "should be equal, but " << axisDim << " != " << axisDim2 << " along axis " << i << ".";
-                throw std::logic_error(errorMessage.str());
-              }
-            }
-            currentLayer->InputDimensions()[i] = axisDim;
-          }
-        }
-      }
-      currentLayer->ComputeOutputDimensions();
+      currentLayer->InputDimensions() =
+        parentsList[currentLayer][0]->OutputDimensions();
     }
     else
     {
-      exploring.push(std::make_pair(currentLayer, true));
-      for (size_t i = 0; i < numParents; i++)
+      if (layerAxes.count(currentLayer) == 0)
       {
-        exploring.push(std::make_pair(parentsList[currentLayer][i], false));
+        std::ostringstream errorMessage;
+        errorMessage << "DAGNetwork::ComputeOutputDimensions(): "
+                        "Axis does not exist for layer "
+                     << FindLayerIndex(currentLayer) << ".";
+        throw std::logic_error(errorMessage.str());
+      }
+
+      size_t axis = layerAxes[currentLayer];
+      const size_t numOutputDimensions =
+        parentsList[currentLayer][0]->OutputDimensions().size();
+
+      if (axis >= numOutputDimensions)
+      {
+        std::ostringstream errorMessage;
+        errorMessage << "DAGNetwork::ComputeOutputDimensions(): "
+                        "The concatenation axis of layer "
+                     << FindLayerIndex(currentLayer) << " is " << axis
+                     << ", but that's greater than or equal to the number "
+                        "of output dimensions, which is "
+                     << numOutputDimensions << ".";
+        throw std::logic_error(errorMessage.str());
+      }
+
+      for (size_t i = 1; i < numParents; i++)
+      {
+        Layer<MatType>* parent = parentsList[currentLayer][i];
+
+        if (numOutputDimensions != parent->OutputDimensions().size())
+        {
+          std::ostringstream errorMessage;
+          errorMessage << "DAGNetwork::ComputeOutputDimensions(): "
+                          "Number of output dimensions for layer 0 ("
+                       << numOutputDimensions << ") should be equal "
+                          "to the number of output dimensions for layer "
+                       << FindLayerIndex(parent)
+                       << " (" << parent->OutputDimensions().size() << ").";
+          throw std::logic_error(errorMessage.str());
+        }
+      }
+      currentLayer->InputDimensions()
+        = std::vector<size_t>(numOutputDimensions, 0);
+
+      for (size_t i = 0; i < currentLayer->InputDimensions().size(); i++)
+      {
+        if (i == axis)
+        {
+          for (size_t n = 0; n < numParents; n++)
+          {
+            Layer<MatType>* parent = parentsList[currentLayer][n];
+            currentLayer->InputDimensions()[i] += parent->OutputDimensions()[i];
+          }
+        }
+        else
+        {
+          Layer<MatType>* firstParent = parentsList[currentLayer].front();
+          const size_t axisDim = firstParent->OutputDimensions()[i];
+          for (size_t n = 1; n < parentsList[currentLayer].size(); n++)
+          {
+            Layer<MatType>* parent = parentsList[currentLayer][n];
+            const size_t axisDim2 = parent->OutputDimensions()[i];
+
+            if (axisDim != axisDim2)
+            {
+              std::ostringstream errorMessage;
+              errorMessage << "DAGNetwork::ComputeOutputDimensions(): "
+                              "Axes not on the concatenation axis (axis = "
+                            << axis << ") should be equal, but "
+                            << axisDim << " != "
+                            << axisDim2 << " along axis " << i << ".";
+              throw std::logic_error(errorMessage.str());
+            }
+          }
+          // Set dimension not along axis to axisDim (as long as they are equal)
+          currentLayer->InputDimensions()[i] = axisDim;
+        }
       }
     }
+    currentLayer->ComputeOutputDimensions();
   }
 }
 
