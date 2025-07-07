@@ -271,7 +271,27 @@ void DAGNetwork<
     throw std::logic_error(errorMessage.str());
   }
 
-  // Check for cycles and topologically sort the network
+  /*
+    Topological sort using an iterative depth-first search approach.
+
+    We search from the output node through it's parents, until
+    we reach a node without any parents (i.e the input layer, where there can
+    only be one input layer). We maintain a stack of pairs (node, bool)
+    tracking whether or not a nodes parents (and grand-parents, etc)
+    have been explored.
+
+    If a nodes parents, grand-parents etc have been explored, we add this node
+    to `exploredLayers`, and push it onto `sortedNetwork`, which is equivalent to
+    `network` but topologically sorted.
+
+    If a nodes parents, grand-parents etc have not been explored, we check that
+    no edge has already been traversed. If an edge has already been traversed,
+    (i.e a node is it's own parent) we have found a cycle. Otherwise we add
+    the pair (node, true) to the stack, indicating it's parents, grand-parents etc
+    have been explored. The current nodes parents are then added to the stack as
+    (parent[i], false), indicating that the parent has parents, grand-parents etc
+    that have not been searched.
+  */
   sortedNetwork.clear();
 
   std::unordered_set<Layer<MatType>*> exploredLayers;
@@ -314,8 +334,6 @@ void DAGNetwork<
     else
     {
       exploredLayers.insert(currentLayer);
-
-      // Topo sort
       sortedNetwork.push_back(currentLayer);
     }
   }
@@ -706,11 +724,20 @@ void DAGNetwork<
 
   size_t offset = 0;
   sortedIndices.clear();
+
+  // The first section of layerOuputMatrix (totalOutputSize)
+  // gets used for layerOutputs.
+  // layerInputs will be aliases to layerOutputs unless
+  // those layers have multiple parents. If thats the case
+  // those layerInputs will aliases to the second section
+  // of layerOutputMatrix (totalConcatSize).
+
   //setup layerOutputs
   for (size_t i = 0; i < sortedNetwork.size() - 1; i++)
   {
     const size_t layerOutputSize = sortedNetwork[i]->OutputSize();
-    MakeAlias(layerOutputs[i], layerOutputMatrix, layerOutputSize, batchSize, offset);
+    MakeAlias(layerOutputs[i], layerOutputMatrix, layerOutputSize, 
+      batchSize, offset);
     offset += batchSize * layerOutputSize;
     sortedIndices.insert({sortedNetwork[i], i});
   }
@@ -725,7 +752,8 @@ void DAGNetwork<
     if (numParents == 1)
     {
       size_t inputIndex = sortedIndices[parents.front()];
-      MakeAlias(layerInputs[i-1], layerOutputs[inputIndex], layerOutputs[inputIndex].n_rows, layerOutputs[inputIndex].n_cols, 0);
+      MakeAlias(layerInputs[i-1], layerOutputs[inputIndex], 
+        layerOutputs[inputIndex].n_rows, layerOutputs[inputIndex].n_cols, 0);
     }
     else
     {
