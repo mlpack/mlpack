@@ -256,7 +256,7 @@ class TransposedConvolutionType : public Layer<MatType>
   template <typename Archive>
   void serialize(Archive &ar, const uint32_t /* version */);
 
-private:
+ private:
   /**
    * Return the transposed convolution output size.
    *
@@ -345,7 +345,7 @@ private:
         (this->inputDimensions[0] - 1) + 1;
     const size_t expandedCols = strideHeight *
         (this->inputDimensions[1] - 1) + 1;
-    const size_t outputSize = expandedRows * expandedCols * inMaps 
+    const size_t outputSize = expandedRows * expandedCols * inMaps
         * higherInDimensions * batchSize;
     if (output.size() != outputSize) {
       output = zeros(outputSize, 1);
@@ -448,7 +448,6 @@ private:
 
   //! Locally-cached higher-order input dimensions.
   size_t higherInDimensions;
-
 }; // class TransposedConvolution
 
 // Standard Transposed Convolution layer

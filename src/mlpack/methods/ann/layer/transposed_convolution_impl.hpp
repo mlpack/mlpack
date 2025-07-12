@@ -87,7 +87,7 @@ TransposedConvolutionType<
     const std::tuple<size_t, size_t>& padW,
     const std::tuple<size_t, size_t>& padH,
     const std::string& paddingType,
-    const bool useBias  ) :
+    const bool useBias) :
     Layer<MatType>(),
     maps(maps),
     kernelWidth(kernelWidth),
@@ -302,8 +302,8 @@ void TransposedConvolutionType<
 
   if (usingPadding)
   {
-    inputPadded.set_size(padding.OutputDimensions()[0]
-        * padding.OutputDimensions()[1] * inMaps * higherInDimensions, batchSize);
+    inputPadded.set_size(padding.OutputDimensions()[0] *
+        padding.OutputDimensions()[1] * inMaps * higherInDimensions, batchSize);
     padding.Forward(expandInput ? inputExpanded : input, inputPadded);
   }
 
@@ -390,7 +390,7 @@ void TransposedConvolutionType<
   MakeAlias(mappedError,
       (usingPaddingBackward ? errorPadded : gy),
       paddingBackward.OutputDimensions()[0],
-      paddingBackward.OutputDimensions()[1], 
+      paddingBackward.OutputDimensions()[1],
       maps * higherInDimensions * batchSize);
 
   MakeAlias(gTemp, g, this->inputDimensions[0], this->inputDimensions[1],
@@ -493,12 +493,15 @@ void TransposedConvolutionType<
 {
   // First, we must make sure the padding sizes are up to date,
   // which we can now do since inputDimensions is set correctly.
-  if (paddingType == "valid") {
+  if (paddingType == "valid")
+  {
     padWLeft = 0;
     padWRight = 0;
     padHTop = 0;
     padHBottom = 0;
-  } else if (paddingType == "same") {
+  }
+  else if (paddingType == "same")
+  {
     InitializeSamePadding();
   }
 
@@ -515,22 +518,23 @@ void TransposedConvolutionType<
   const size_t padHBottomForward = kernelHeight - padHBottom - 1;
   padding = PaddingType<MatType>(padWLeftForward, padWRightForward,
       padHTopForward, padHBottomForward);
-  
+
   // Padding is applied after input expansion, so padding layer
   // for the forward pass must account for the expanded size.
   padding.InputDimensions() = this->inputDimensions;
-  if (expandInput) {
+  if (expandInput)
+  {
     padding.InputDimensions()[0] = strideWidth
         * (this->inputDimensions[0] - 1) + 1;
-    padding.InputDimensions()[1] = strideWidth 
+    padding.InputDimensions()[1] = strideWidth
         * (this->inputDimensions[1] - 1) + 1;
   }
-  
+
   // We only pad the input if there is a non zero padding value.
   padding.ComputeOutputDimensions();
   usingPadding = (padding.PadWLeft() != 0 ||
                   padding.PadWRight() != 0 ||
-                  padding.PadHTop() != 0 || 
+                  padding.PadHTop() != 0 ||
                   padding.PadHBottom() != 0);
 
   // TODO: Add this alignment back along with output padding
@@ -551,7 +555,8 @@ void TransposedConvolutionType<
 
   // dimensions higher than the third are treated as different input points.
   higherInDimensions = 1;
-  for (size_t i = 3; i < this->inputDimensions.size(); ++i) {
+  for (size_t i = 3; i < this->inputDimensions.size(); ++i)
+  {
     higherInDimensions *= this->inputDimensions[i];
     this->outputDimensions[i] = this->inputDimensions[i];
   }
