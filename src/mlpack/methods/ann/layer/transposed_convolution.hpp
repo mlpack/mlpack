@@ -410,21 +410,6 @@ class TransposedConvolutionType : public Layer<MatType>
   //! Locally-stored transformed input parameter.
   CubeType inputTemp;
 
-  //! Locally-stored expand input flag.
-  bool expandInput;
-
-  //! Locally-stored expanded input parameter.
-  MatType inputExpanded;
-
-  //! Locally-stored pad input flag.
-  bool usingPadding;
-
-  //! Locally-stored padded input parameter.
-  MatType inputPadded;
-
-  //! Locally-stored pad input flag.
-  bool usingPaddingBackward;
-
   //! Locally-stored transformed output parameter.
   CubeType outputTemp;
 

@@ -293,24 +293,38 @@ void TransposedConvolutionType<
 {
   batchSize = input.n_cols;
 
-  // If there are non-zero padding values, we will need to pad the input.
-  // If we are expanding the input, we will need to pad the expanded input.
-  // If we are not expanding the input, we will use the original input.
-  if (expandInput) {
+  const bool expandInput = (strideWidth > 1 || strideHeight > 1);
+  const bool usingPadding = (
+      padding.PadWLeft() != 0 || padding.PadWRight() != 0 ||
+      padding.PadHTop() != 0 || padding.PadHBottom() != 0);
+
+  // If input requires processing (expanding and/or padding) we will store
+  // the modified input in member variable inputTemp so that Gradient function
+  // can reuse it. Otherwise inputTemp will just be an alias to the input
+  // passed here.
+  MatType inputExpanded, inputPadded;
+  if (expandInput || usingPadding) {
+    inputTemp.set_size(padding.OutputDimensions()[0],
+        padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
+  } else {
+    MakeAlias(inputTemp, input, padding.OutputDimensions()[0],
+        padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
+  }
+
+  // If we are using padding the final input will be stored in `inputPadded`.
+  // If we aren't using padding the final input may be in `inputExpanded`
+  MakeAlias(usingPadding ? inputPadded : inputExpanded,
+      inputTemp, padding.OutputDimensions()[0] * padding.OutputDimensions()[1]
+      * inMaps * higherInDimensions, batchSize);
+
+  if (expandInput)
+  {
     InsertZeros(input, inputExpanded);
   }
-
   if (usingPadding)
   {
-    inputPadded.set_size(padding.OutputDimensions()[0] *
-        padding.OutputDimensions()[1] * inMaps * higherInDimensions, batchSize);
     padding.Forward(expandInput ? inputExpanded : input, inputPadded);
   }
-
-  MakeAlias(inputTemp,
-      usingPadding ? inputPadded : (expandInput ? inputExpanded : input),
-      padding.OutputDimensions()[0], padding.OutputDimensions()[1],
-      inMaps * higherInDimensions * batchSize);
 
   MakeAlias(outputTemp, output, this->outputDimensions[0],
       this->outputDimensions[1], maps * higherInDimensions * batchSize);
@@ -377,6 +391,10 @@ void TransposedConvolutionType<
             MatType &g)
 {
   MatType errorPadded;
+
+  const bool usingPaddingBackward = (
+      paddingBackward.PadWLeft() != 0 || paddingBackward.PadWRight() != 0 ||
+      paddingBackward.PadHTop() != 0 || paddingBackward.PadHBottom() != 0);
 
   if (usingPaddingBackward) {
     errorPadded.set_size(paddingBackward.OutputDimensions()[0]
@@ -505,11 +523,6 @@ void TransposedConvolutionType<
     InitializeSamePadding();
   }
 
-  // If strideWidth or strideHeight is greater than 1, we will expand the input
-  // by inserting zeros between the elements. This is necessary to ensure that
-  // the output dimensions are correct for the forward pass.
-  expandInput = (strideWidth > 1 || strideHeight > 1);
-
   // Calculate padding for the forward pass of transposed convolution
   // based on the padding for the forward pass of regular convolution.
   const size_t padWLeftForward = kernelWidth - padWLeft - 1;
@@ -522,20 +535,14 @@ void TransposedConvolutionType<
   // Padding is applied after input expansion, so padding layer
   // for the forward pass must account for the expanded size.
   padding.InputDimensions() = this->inputDimensions;
-  if (expandInput)
+  if (strideWidth > 1 || strideHeight > 1)
   {
     padding.InputDimensions()[0] = strideWidth
         * (this->inputDimensions[0] - 1) + 1;
     padding.InputDimensions()[1] = strideWidth
         * (this->inputDimensions[1] - 1) + 1;
   }
-
-  // We only pad the input if there is a non zero padding value.
   padding.ComputeOutputDimensions();
-  usingPadding = (padding.PadWLeft() != 0 ||
-                  padding.PadWRight() != 0 ||
-                  padding.PadHTop() != 0 ||
-                  padding.PadHBottom() != 0);
 
   // TODO: Add this alignment back along with output padding
   // aW = (outputWidth + kernelWidth - totalPadWidth - 2) % strideWidth;
@@ -567,10 +574,6 @@ void TransposedConvolutionType<
       padHTop, padHBottom);
   paddingBackward.InputDimensions() = this->outputDimensions;
   paddingBackward.ComputeOutputDimensions();
-  usingPaddingBackward = (paddingBackward.PadWLeft() != 0 ||
-                          paddingBackward.PadWRight() != 0 ||
-                          paddingBackward.PadHTop() != 0 ||
-                          paddingBackward.PadHBottom() != 0);
 
   this->outputDimensions[2] = maps;
 }
