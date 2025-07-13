@@ -104,6 +104,8 @@ public:
     {
       layerOutputs.push_back(MatType());
       layerInputs.push_back(MatType());
+      layerDeltas.push_back(MatType());
+      childDeltas.push_back(MatType());
     }
 
     validOutputDimensions = false;
@@ -236,6 +238,22 @@ public:
   void Forward(const MatType& input, MatType& output);
 
   /**
+   * Perform a manual backward pass of the data.
+   *
+   * `Forward()` and `Backward()` should be used as a pair, and they are
+   * designed mainly for advanced users. You should try to use `Predict()` and
+   * `Train()` instead, if you can.
+   *
+   * @param inputs Inputs of current pass.
+   * @param targets The training target.
+   * @param gradients Computed gradients.
+   * @return Training error of the current pass.
+   */
+  typename MatType::elem_type Backward(const MatType& input,
+                                       const MatType& output,
+                                       MatType& gradients);
+
+  /**
    * Evaluate the network with the given predictors and responses.
    * This function is usually used to monitor progress while training.
    *
@@ -346,6 +364,15 @@ private:
   void InitializeForwardPassMemory(const size_t batchSize);
 
   /**
+   * Initialize memory that will be used by each layer for the backwards pass,
+   * assuming that the input will have the given `batchSize`.  When `Backward()`
+   * is called, each internally-held layer will output the results of its
+   * backwards pass into the memory allocated by this function (this is the
+   * internal member `layerDeltaMatrix` and its aliases `layerDeltas`).
+   */
+  void InitializeBackwardPassMemory(const size_t batchSize);
+
+  /**
    * Compute the loss that should be added to the objective for each layer.
    */
   double Loss() const;
@@ -447,14 +474,29 @@ private:
   // Locally-stored output of the network from a forward pass; used by the
   // backward pass.
   MatType networkOutput;
+  //! Locally-stored output of the backward pass; used by the gradient pass.
+  MatType networkDelta;
+  //! Locally-stored error of the backward pass; used by the gradient pass.
+  MatType error;
 
   // This matrix stores all of the outputs of each layer when Forward() is
   // called.  See `InitializeForwardPassMemory()`.
   MatType layerOutputMatrix;
+  // Size of activations for each layer.
+  size_t residualMemorySize;
+  // Total 
   // These are aliases of `layerOutputMatrix` for the input of each layer
   std::vector<MatType> layerInputs;
   // These are aliases of `layerOutputMatrix` for the output of each layer.
   std::vector<MatType> layerOutputs;
+
+  // This matrix stores all of the outputs of each layer when Backward() is
+  // called.  See `InitializeBackwardPassMemory()`.
+  MatType layerDeltaMatrix;
+  // These are aliases of `layerDeltasMatrix` for the delta of each layer
+  std::vector<MatType> layerDeltas;
+  // These are aliases of `layerDeltasMatrix` for the delta of 
+  std::vector<MatType> childDeltas;
 
   // If true, each layer has its inputDimensions properly set.
   bool validOutputDimensions;

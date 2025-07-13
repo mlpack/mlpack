@@ -733,10 +733,10 @@ void DAGNetwork<
 {
   CheckNetwork("DAGNetwork::InitializeForwardPassMemory()", 0);
 
-  size_t totalOutputSize = 0;
+  size_t layerOutputSize = 0;
   for (size_t i = 0; i < sortedNetwork.size() - 1; i++)
   {
-    totalOutputSize += sortedNetwork[i]->OutputSize();
+    layerOutputSize += sortedNetwork[i]->OutputSize();
   }
 
   size_t totalConcatSize = 0;
@@ -753,16 +753,16 @@ void DAGNetwork<
     }
   }
 
-  size_t forwardMemSize = totalOutputSize + totalConcatSize;
-  if (batchSize * forwardMemSize > layerOutputMatrix.n_elem)
+  residualMemorySize = totalConcatSize + layerOutputSize;
+  if (batchSize * residualMemorySize > layerOutputMatrix.n_elem)
   {
-    layerOutputMatrix = MatType(1, batchSize * forwardMemSize);
+    layerOutputMatrix = MatType(1, batchSize * residualMemorySize);
   }
 
   size_t offset = 0;
   sortedIndices.clear();
 
-  // The first section of layerOuputMatrix (totalOutputSize)
+  // The first section of layerOuputMatrix (layerOutputSize)
   // gets used for layerOutputs.
   // layerInputs will be aliases to layerOutputs unless
   // those layers have multiple parents. If thats the case
@@ -773,7 +773,7 @@ void DAGNetwork<
   for (size_t i = 0; i < sortedNetwork.size() - 1; i++)
   {
     const size_t layerOutputSize = sortedNetwork[i]->OutputSize();
-    MakeAlias(layerOutputs[i], layerOutputMatrix, layerOutputSize, 
+    MakeAlias(layerOutputs[i], layerOutputMatrix, layerOutputSize,
       batchSize, offset);
     offset += batchSize * layerOutputSize;
     sortedIndices.insert({sortedNetwork[i], i});
@@ -789,7 +789,7 @@ void DAGNetwork<
     if (numParents == 1)
     {
       size_t inputIndex = sortedIndices[parents.front()];
-      MakeAlias(layerInputs[i-1], layerOutputs[inputIndex], 
+      MakeAlias(layerInputs[i - 1], layerOutputs[inputIndex], 
         layerOutputs[inputIndex].n_rows, layerOutputs[inputIndex].n_cols, 0);
     }
     else
@@ -797,7 +797,64 @@ void DAGNetwork<
       size_t concatSize = currentLayer->InputDimensions()[0];
       for (size_t j = 1; j < currentLayer->InputDimensions().size(); j++)
         concatSize *= currentLayer->InputDimensions()[j];
-      MakeAlias(layerInputs[i-1], layerOutputMatrix, concatSize, batchSize, offset);
+      MakeAlias(layerInputs[i - 1], layerOutputMatrix, concatSize,
+        batchSize, offset);
+      offset += concatSize;
+    }
+  }
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::InitializeBackwardPassMemory(const size_t batchSize)
+{
+  CheckNetwork("DAGNetwork::InitializeBackwardPassMemory()", 0);
+
+  if (network.size() <= 1)
+    return;
+
+  // TODO: check `InitializeForwardPassMemory()` has set `residualMemorySize`
+  if (batchSize * residualMemorySize > layerDeltaMatrix.n_elem)
+  {
+    layerDeltaMatrix = MatType(1, batchSize * residualMemorySize);
+  }
+
+  size_t offset = 0;
+
+  //setup layerDeltas
+  for (size_t i = 0; i < sortedNetwork.size() - 1; i++)
+  {
+    const size_t outputSize = sortedNetwork[i]->OutputSize();
+    MakeAlias(layerDeltas[i], layerDeltaMatrix, outputSize,
+      batchSize, offset);
+    offset += batchSize * outputSize;
+  }
+
+  //setup childDeltas
+  for (size_t i = 1; i < sortedNetwork.size(); i++)
+  {
+    Layer<MatType>* currentLayer = sortedNetwork[i];
+    const std::vector<Layer<MatType>*>& parents = parentsList[currentLayer];
+    size_t numParents = parents.size();
+
+    if (numParents == 1)
+    {
+      size_t inputIndex = sortedIndices[parents.front()];
+      MakeAlias(childDeltas[i - 1], layerDeltas[inputIndex],
+        layerDeltas[inputIndex].n_rows, layerDeltas[inputIndex].n_cols, 0);
+    }
+    else
+    {
+      size_t concatSize = currentLayer->InputDimensions()[0];
+      for (size_t j = 1; j < currentLayer->InputDimensions().size(); j++)
+        concatSize *= currentLayer->InputDimensions()[j];
+      MakeAlias(childDeltas[i - 1], layerDeltaMatrix, concatSize,
+        batchSize, offset);
       offset += concatSize;
     }
   }
