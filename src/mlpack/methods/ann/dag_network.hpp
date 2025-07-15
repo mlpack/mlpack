@@ -244,14 +244,15 @@ public:
    * designed mainly for advanced users. You should try to use `Predict()` and
    * `Train()` instead, if you can.
    *
-   * @param inputs Inputs of current pass.
-   * @param targets The training target.
+   * @param input Input of the network
+   * @param output Output of the network
+   * @param error  Error from loss function.
    * @param gradients Computed gradients.
-   * @return Training error of the current pass.
    */
-  typename MatType::elem_type Backward(const MatType& input,
-                                       const MatType& output,
-                                       MatType& gradients);
+   void Backward(const MatType& input,
+                 const MatType& output,
+                 const MatType& error,
+                 MatType& gradients);
 
   /**
    * Evaluate the network with the given predictors and responses.
@@ -495,8 +496,6 @@ private:
   MatType layerDeltaMatrix;
   // These are aliases of `layerDeltasMatrix` for the delta of each layer
   std::vector<MatType> layerDeltas;
-  // These are aliases of `layerDeltasMatrix` for the delta of 
-  std::vector<MatType> childDeltas;
 
   // If true, each layer has its inputDimensions properly set.
   bool validOutputDimensions;
