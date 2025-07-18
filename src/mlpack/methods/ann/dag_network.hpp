@@ -105,7 +105,6 @@ public:
       layerOutputs.push_back(MatType());
       layerInputs.push_back(MatType());
       layerDeltas.push_back(MatType());
-      childDeltas.push_back(MatType());
     }
 
     validOutputDimensions = false;
@@ -254,15 +253,11 @@ public:
                  const MatType& error,
                  MatType& gradients);
 
-  /**
-   * Evaluate the network with the given predictors and responses.
-   * This function is usually used to monitor progress while training.
-   *
-   * @param predictors Input variables.
-   * @param responses Target outputs for input variables.
-   */
-  typename MatType::elem_type Evaluate(const MatType& predictors,
-                                       const MatType& responses);
+  //
+  // Only ensmallen utility functions for training are found below here.
+  // They aren't generally useful otherwise.
+  //
+
   /**
    * Note: this function is implemented so that it can be used by ensmallen's
    * optimizers.  It's not generally meant to be used otherwise.
@@ -290,6 +285,10 @@ public:
    * @param responses Outputs results from input data variables.
    */
   void ResetData(MatType predictors, MatType responses);
+
+  // Instantiated output layer used to evaluate the network.
+  // TODO: make private, this is just for testing.
+  OutputLayerType outputLayer;
 
 private:
   // Helper functions.
@@ -365,11 +364,7 @@ private:
   void InitializeForwardPassMemory(const size_t batchSize);
 
   /**
-   * Initialize memory that will be used by each layer for the backwards pass,
-   * assuming that the input will have the given `batchSize`.  When `Backward()`
-   * is called, each internally-held layer will output the results of its
-   * backwards pass into the memory allocated by this function (this is the
-   * internal member `layerDeltaMatrix` and its aliases `layerDeltas`).
+   * TODO: explain how the backward pass memory works.
    */
   void InitializeBackwardPassMemory(const size_t batchSize);
 
@@ -419,8 +414,6 @@ private:
       !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void>
   WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
 
-  // Instantiated output layer used to evaluate the network.
-  OutputLayerType outputLayer;
 
   // Instantiated InitializationRule object for initializing the network
   // parameter.
@@ -476,8 +469,6 @@ private:
   // backward pass.
   MatType networkOutput;
   //! Locally-stored output of the backward pass; used by the gradient pass.
-  MatType networkDelta;
-  //! Locally-stored error of the backward pass; used by the gradient pass.
   MatType error;
 
   // This matrix stores all of the outputs of each layer when Forward() is
@@ -491,11 +482,12 @@ private:
   // These are aliases of `layerOutputMatrix` for the output of each layer.
   std::vector<MatType> layerOutputs;
 
-  // This matrix stores all of the outputs of each layer when Backward() is
-  // called.  See `InitializeBackwardPassMemory()`.
+
   MatType layerDeltaMatrix;
-  // These are aliases of `layerDeltasMatrix` for the delta of each layer
   std::vector<MatType> layerDeltas;
+  std::unordered_map<Layer<MatType>*, MatType> outputDeltas;
+  std::unordered_map<Layer<MatType>*, MatType> inputDeltas;
+  std::unordered_map<Layer<MatType>*, MatType> accumulatedDeltas;
 
   // If true, each layer has its inputDimensions properly set.
   bool validOutputDimensions;

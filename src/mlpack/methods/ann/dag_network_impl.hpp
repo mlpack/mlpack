@@ -312,7 +312,7 @@ void DAGNetwork<
   std::vector<std::pair<Layer<MatType>*, bool>> exploreNext;
   exploreNext.push_back(std::make_pair(network[outputLayerId], false));
 
-  typedef std::pair<Layer<MatType>*, Layer<MatType>*> LayerEdge;
+  using LayerEdge = std::pair<Layer<MatType>*, Layer<MatType>*>;
   std::vector<LayerEdge> layerEdges;
 
   while (!exploreNext.empty())
@@ -334,7 +334,8 @@ void DAGNetwork<
         for (size_t j = 0; j < layerEdges.size(); j++)
         {
           if (layerEdges[j] == edge)
-            throw std::logic_error("DAGNetwork::CheckGraph(): A cycle exists in the graph.");
+            throw std::logic_error("DAGNetwork::CheckGraph(): A cycle "
+              "exists in the graph.");
         }
         layerEdges.push_back(edge);
       }
@@ -826,20 +827,70 @@ void DAGNetwork<
   if (network.size() <= 1)
     return;
 
-  // TODO: check `InitializeForwardPassMemory()` has set `residualMemorySize`
-  if (batchSize * residualMemorySize > layerDeltaMatrix.n_elem)
+  size_t deltaMatrixSize = 0;
+  for (size_t i = 0; i < sortedNetwork.size() - 1; i++)
   {
-    layerDeltaMatrix = MatType(1, batchSize * residualMemorySize);
+    Layer<MatType>* currentLayer = sortedNetwork[i];
+
+    size_t layerDeltaSize = currentLayer->OutputSize();
+    size_t concatDeltaSize = 0;
+
+    if (childrenList[currentLayer].size() > 1)
+      layerDeltaSize *= 2;
+
+    if (parentsList[currentLayer].size() > 1)
+    {
+      concatDeltaSize = currentLayer->InputDimensions()[0];
+      for (size_t j = 1; j < currentLayer->InputDimensions().size(); j++)
+        concatDeltaSize *= currentLayer->InputDimensions()[j];
+    }
+    deltaMatrixSize += layerDeltaSize + concatDeltaSize;
   }
 
-  //setup layerDeltas
+  if (batchSize * deltaMatrixSize > layerDeltaMatrix.n_elem)
+    layerDeltaMatrix = MatType(1, batchSize * deltaMatrixSize);
+
   size_t offset = 0;
   for (size_t i = 0; i < sortedNetwork.size() - 1; i++)
   {
-    const size_t outputSize = sortedNetwork[i]->OutputSize();
-    MakeAlias(layerDeltas[i], layerDeltaMatrix, outputSize,
-      batchSize, offset);
-    offset += batchSize * outputSize;
+    Layer<MatType>* currentLayer = sortedNetwork[i];
+    if (childrenList[currentLayer].size() > 1)
+    {
+      accumulatedDeltas.insert({currentLayer, layerDeltas[i]});
+      MakeAlias(accumulatedDeltas[currentLayer], layerDeltaMatrix,
+        currentLayer->OutputSize(), batchSize, offset);
+      offset += currentLayer->OutputSize() * batchSize;
+      outputDeltas.insert({currentLayer, MatType()});
+    }
+    else
+       outputDeltas.insert({currentLayer, layerDeltas[i]});
+
+    MakeAlias(outputDeltas[currentLayer], layerDeltaMatrix,
+       currentLayer->OutputSize(), batchSize, offset);
+    offset += currentLayer->OutputSize() * batchSize;
+  }
+
+  for (size_t i = 1; i < sortedNetwork.size(); i++)
+  {
+    Layer<MatType>* currentLayer = sortedNetwork[i];
+    std::vector<Layer<MatType>*> parents = parentsList[currentLayer]; 
+    if (parents.size() > 1)
+    {
+      inputDeltas.insert({currentLayer, MatType()});
+
+      size_t inputSize = currentLayer->InputDimensions()[0];
+      for (size_t j = 1; j < currentLayer->InputDimensions().size(); j++)
+        inputSize *= currentLayer->InputDimensions()[j];
+
+      MakeAlias(inputDeltas[currentLayer], layerDeltaMatrix,
+        inputSize, batchSize, offset);
+      offset += inputSize * batchSize;
+    }
+    else
+    {
+      Layer<MatType>* onlyParent = parents.front();
+      inputDeltas[currentLayer] = outputDeltas[onlyParent];
+    }
   }
 }
 
@@ -850,7 +901,7 @@ void DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::Forward(const MatType& input, MatType& output)
+>::Forward(const MatType& input, MatType& results)
 {
   CheckNetwork("DAGNetwork::Forward()", input.n_rows);
 
@@ -900,21 +951,24 @@ void DAGNetwork<
         }
       }
 
-      if (i != sortedNetwork.size() - 1)
+      // Don't execute if it's the last iteration.
+      if (i < sortedNetwork.size() - 1)
         sortedNetwork[i]->Forward(layerInputs[i-1], layerOutputs[i]);
-      else
-        sortedNetwork[i]->Forward(layerInputs[i-1], output);
     }
+    sortedNetwork.back()->Forward(layerInputs.back(), networkOutput);
   }
   else if (sortedNetwork.size() == 1)
   {
-    sortedNetwork[0]->Forward(input, output);
+    sortedNetwork[0]->Forward(input, networkOutput);
   }
   else
   {
     throw std::invalid_argument("DAGNetwork::Forward(): Cannot use network"
         " with no layers!");
   }
+
+  if (&results != &networkOutput)
+    results = networkOutput;
 }
 
 template<typename OutputLayerType,
@@ -929,16 +983,16 @@ void DAGNetwork<
             const MatType& error,
             MatType& gradients)
 {
-  CheckNetwork("DAGNetwork::Backward()");
+  CheckNetwork("DAGNetwork::Backward()", input.n_rows);
   gradients.set_size(parameters.n_rows, parameters.n_cols);
 
   if (network.size() > 1)
   {
-    throw std::logic_error("Not implemented yet.");
+    InitializeBackwardPassMemory(input.n_cols);
   }
   else if (network.size() == 1)
   {
-    network[0].Gradient(input, error, gradients);
+    network[0]->Gradient(input, error, gradients);
   }
   else
   {
@@ -962,19 +1016,35 @@ double DAGNetwork<
   return loss;
 }
 
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename MatType>
-typename MatType::elem_type DAGNetwork<
-    OutputLayerType,
-    InitializationRuleType,
-    MatType
->::Evaluate(const MatType& predictors, const MatType& responses)
-{
-  CheckNetwork("DAGNetwork::Evaluate()", predictors.n_rows);
-  Forward(predictors, networkOutput);
-  return outputLayer.Forward(networkOutput, responses) + Loss();
-}
+// template<typename OutputLayerType,
+//          typename InitializationRuleType,
+//          typename MatType>
+// typename MatType::elem_type DAGNetwork<
+//     OutputLayerType,
+//     InitializationRuleType,
+//     MatType
+// >::Evaluate(const MatType& parameters)
+// {
+//   typename MatType::elem_type res = 0;
+//   for (size_t i = 0; i < predictors.n_cols; ++i)
+//     res += Evaluate(parameters, i, 1);
+//
+//   return res;
+// }
+
+// template<typename OutputLayerType,
+//          typename InitializationRuleType,
+//          typename MatType>
+// typename MatType::elem_type DAGNetwork<
+//     OutputLayerType,
+//     InitializationRuleType,
+//     MatType
+// >::Evaluate(const MatType& predictors, const MatType& responses)
+// {
+//   CheckNetwork("DAGNetwork::Evaluate()", predictors.n_rows);
+//   Forward(predictors, networkOutput);
+//   return outputLayer.Forward(networkOutput, responses) + Loss();
+// }
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
