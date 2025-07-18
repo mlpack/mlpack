@@ -448,11 +448,11 @@ if (PKG_CONFIG_FOUND)
   set(MLPACK_VERSION_STRING "@MLPACK_VERSION_STRING@")
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/CMake/mlpack.pc.in
-    ${CMAKE_BINARY_DIR}/CMake/mlpack.pc.in.partial @ONLY)
+    ${CMAKE_CURRENT_BINARY_DIR}/CMake/mlpack.pc.in.partial @ONLY)
 
   add_custom_target(pkgconfig ALL
       ${CMAKE_COMMAND}
-          -D MLPACK_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
+          -D MLPACK_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
           -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GeneratePkgConfig.cmake"
       COMMENT "Generating mlpack.pc (pkg-config) file.")
 
