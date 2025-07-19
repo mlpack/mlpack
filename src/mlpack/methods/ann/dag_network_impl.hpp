@@ -828,7 +828,7 @@ void DAGNetwork<
     return;
 
   size_t deltaMatrixSize = 0;
-  for (size_t i = 0; i < sortedNetwork.size() - 1; i++)
+  for (size_t i = 0; i < sortedNetwork.size(); i++)
   {
     Layer<MatType>* currentLayer = sortedNetwork[i];
 
@@ -844,6 +844,11 @@ void DAGNetwork<
       for (size_t j = 1; j < currentLayer->InputDimensions().size(); j++)
         concatDeltaSize *= currentLayer->InputDimensions()[j];
     }
+
+    // If at the last layer, we only need to add it's concatDeltaSize.
+    if (i == sortedNetwork.size() - 1)
+      layerDeltaSize = 0;
+
     deltaMatrixSize += layerDeltaSize + concatDeltaSize;
   }
 
