@@ -105,6 +105,7 @@ public:
   size_t Add(Args... args)
   {
     network.push_back(new LayerType(args...));
+    layerGradients.push_back(MatType());
     size_t nodeId = network.size();
     childrenList.insert({network[nodeId], {}});
     parentsList.insert({network[nodeId], {}});
@@ -378,6 +379,14 @@ private:
   void InitializeBackwardPassMemory(const size_t batchSize);
 
   /**
+   * Initialize memory for the gradient pass.  This sets the internal aliases
+   * `layerGradients` appropriately using the memory from the given `gradient`,
+   * such that each layer will output its gradient (via its `Gradient()` method)
+   * into the appropriate member of `layerGradients`.
+   */
+  void InitializeGradientPassMemory(MatType& gradient);
+
+  /**
    * Compute the loss that should be added to the objective for each layer.
    */
   double Loss() const;
@@ -480,7 +489,7 @@ private:
   //! Locally-stored output of the backward pass; used by the gradient pass.
   MatType error;
 
-  // This matrix stores all of the outputs of each layer when Forward() is
+  // This matrix stores all of the outputs of each layer when `Forward()` is
   // called.  See `InitializeForwardPassMemory()`.
   MatType layerOutputMatrix;
   // Size of activations for each layer.
@@ -497,6 +506,9 @@ private:
   std::unordered_map<Layer<MatType>*, MatType*> outputDeltas;
   std::unordered_map<Layer<MatType>*, MatType*> inputDeltas;
   std::unordered_map<Layer<MatType>*, MatType*> accumulatedDeltas;
+
+  // Gradient aliases for each layer.
+  std::vector<MatType> layerGradients;
 
   // If true, each layer has its inputDimensions properly set.
   bool validOutputDimensions;

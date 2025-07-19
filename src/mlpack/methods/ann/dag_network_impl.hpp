@@ -907,6 +907,24 @@ void DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
     MatType
+>::InitializeGradientPassMemory(MatType& gradient)
+{
+  size_t gradientStart = 0;
+  for (size_t i = 0; i < sortedNetwork.size(); ++i)
+  {
+    const size_t weightSize = sortedNetwork[i]->WeightSize();
+    MakeAlias(layerGradients[i], gradient, weightSize, 1, gradientStart);
+    gradientStart += weightSize;
+  }
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
 >::Forward(const MatType& input, MatType& results)
 {
   CheckNetwork("DAGNetwork::Forward()", input.n_rows);
