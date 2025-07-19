@@ -283,6 +283,37 @@ public:
    * optimizers.  It's not generally meant to be used otherwise.
    *
    * Evaluate the network with the given parameters.
+   *
+   * @param parameters Matrix model parameters.
+   */
+  typename MatType::elem_type Evaluate(const MatType& parameters);
+
+  /**
+   * Note: this function is implemented so that it can be used by ensmallen's
+   * optimizers.  It's not generally meant to be used otherwise.
+   *
+   * Evaluate the network with the given parameters, but using only
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function.
+   *
+   * Note that the network may return different results depending on the mode it
+   * is in (see `SetNetworkMode()`).
+   *
+   * @param parameters Matrix model parameters.
+   * @param begin Index of the starting point to use for objective function
+   *        evaluation.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
+   */
+  typename MatType::elem_type Evaluate(const MatType& parameters,
+                                       const size_t begin,
+                                       const size_t batchSize);
+
+  /**
+   * Note: this function is implemented so that it can be used by ensmallen's
+   * optimizers.  It's not generally meant to be used otherwise.
+   *
+   * Evaluate the network with the given parameters.
    * This function is usually called by the optimizer to train the model.
    * This just calls the overload of EvaluateWithGradient() with batchSize = 1.
    *

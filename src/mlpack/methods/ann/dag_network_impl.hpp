@@ -1126,6 +1126,47 @@ typename MatType::elem_type DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
     MatType
+>::Evaluate(const MatType& parameters)
+{
+  typename MatType::elem_type res = 0;
+  for (size_t i = 0; i < predictors.n_cols; i++)
+    res += Evaluate(parameters, i, 1);
+  return res;
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+typename MatType::elem_type DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::Evaluate(const MatType& /* parameters */,
+            const size_t begin,
+            const size_t batchSize)
+{
+  CheckNetwork("DAGNetwork::Evaluate()", predictors.n_rows);
+
+  // Set networkOutput to the right size if needed, then perform the forward
+  // pass.
+  networkOutput.set_size(sortedNetwork.back()->OutputSize(), batchSize);
+  MatType predictorsBatch, responsesBatch;
+  MakeAlias(predictorsBatch, predictors, predictors.n_rows, batchSize,
+      begin * predictors.n_rows);
+  MakeAlias(responsesBatch, responses, responses.n_rows, batchSize,
+      begin * responses.n_rows);
+  Forward(predictorsBatch, networkOutput);
+
+  return outputLayer.Forward(networkOutput, responsesBatch) + Loss();
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+typename MatType::elem_type DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
 >::EvaluateWithGradient(const MatType& parameters,
                         MatType& gradient)
 {
