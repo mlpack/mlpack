@@ -1143,6 +1143,29 @@ typename MatType::elem_type DAGNetwork<
     InitializationRuleType,
     MatType
 >::EvaluateWithGradient(const MatType& parameters,
+                        MatType& gradient)
+{
+  typename MatType::elem_type res = 0;
+  res += EvaluateWithGradient(parameters, 0, gradient, 1);
+  MatType tmpGradient(gradient.n_rows, gradient.n_cols,
+    GetFillType<MatType>::none);
+  for (size_t i = 1; i < predictors.n_cols; ++i)
+  {
+    res += EvaluateWithGradient(parameters, i, tmpGradient, 1);
+    gradient += tmpGradient;
+  }
+
+  return res;
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+typename MatType::elem_type DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::EvaluateWithGradient(const MatType& parameters,
                         const size_t begin,
                         MatType& gradient,
                         const size_t batchSize)

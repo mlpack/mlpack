@@ -272,6 +272,21 @@ public:
    * Note: this function is implemented so that it can be used by ensmallen's
    * optimizers.  It's not generally meant to be used otherwise.
    *
+   * Evaluate the network with the given parameters.
+   * This function is usually called by the optimizer to train the model.
+   * This just calls the overload of EvaluateWithGradient() with batchSize = 1.
+   *
+   * @param parameters Matrix model parameters.
+   * @param gradient Matrix to output gradient into.
+   */
+  typename MatType::elem_type EvaluateWithGradient(const MatType& parameters,
+                                                   MatType& gradient);
+
+
+  /**
+   * Note: this function is implemented so that it can be used by ensmallen's
+   * optimizers.  It's not generally meant to be used otherwise.
+   *
    * Evaluate the network with the given parameters, but using only
    * a number of data points. This is useful for optimizers such as SGD, which
    * require a separable objective function.
