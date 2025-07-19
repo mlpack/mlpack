@@ -1250,12 +1250,61 @@ void DAGNetwork<
 
     MatType predictorAlias, resultAlias;
 
-    MakeAlias(predictorAlias, predictors, predictors.n_rows, effectiveBatchSize, i * predictors.n_rows);
-    MakeAlias(resultAlias, results, results.n_rows, effectiveBatchSize, i * results.n_rows);
+    MakeAlias(predictorAlias, predictors, predictors.n_rows,
+      effectiveBatchSize, i * predictors.n_rows);
+    MakeAlias(resultAlias, results, results.n_rows,
+      effectiveBatchSize, i * results.n_rows);
 
     Forward(predictorAlias, resultAlias);
   }
 }
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+template<typename OptimizerType, typename... CallbackTypes>
+typename MatType::elem_type DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::Train(MatType predictors,
+         MatType responses,
+         OptimizerType& optimizer,
+         CallbackTypes&&... callbacks)
+{
+  ResetData(std::move(predictors), std::move(responses));
+  WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
+
+  CheckNetwork("DAGNetwork::Train()", this->predictors.n_rows, true, true);
+
+  Timer::Start("dag_network_optimization");
+  const typename MatType::elem_type out =
+    optimizer.Optimize(*this, parameters, callbacks...);
+  Timer::Stop("dag_network_optimization");
+
+  Log::Info << "DAGNetwork::Train(): final objective of trained model is "
+    << out << "." << std::endl;
+
+  return out;
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+template<typename OptimizerType, typename... CallbackTypes>
+typename MatType::elem_type DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::Train(MatType predictors,
+         MatType responses,
+         CallbackTypes&&... callbacks)
+{
+  OptimizerType optimizer;
+  return Train(std::move(predictors), std::move(responses), optimizer,
+      callbacks...);
+}
+
 
 template<typename OutputLayerType,
          typename InitializationRuleType,

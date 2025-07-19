@@ -150,6 +150,17 @@ public:
     return network;
   }
 
+  template<typename OptimizerType, typename... CallbackTypes>
+  typename MatType::elem_type Train(MatType predictors,
+                                    MatType responses,
+                                    OptimizerType& optimizer,
+                                    CallbackTypes&&... callbacks);
+
+  template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
+  typename MatType::elem_type Train(MatType predictors,
+                                    MatType responses,
+                                    CallbackTypes&&... callbacks);
+
   /**
    * Predict the responses to a given set of predictors. The responses will be
    * the output of the output layer when `predictors` is passed through the
