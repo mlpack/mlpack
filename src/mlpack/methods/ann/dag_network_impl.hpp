@@ -201,7 +201,7 @@ void DAGNetwork<
     MatType
 >::Connect(size_t parentNodeId, size_t childNodeId)
 {
-  if (parentNodeId == childNodeId)
+if (parentNodeId == childNodeId)
   {
     throw std::logic_error("DAGNetwork::Connect(): `parentNodeId` "
       "and `childNodeId` cannot be the same.");
@@ -317,20 +317,20 @@ void DAGNetwork<
 
   while (!exploreNext.empty())
   {
-    auto [currentLayer, explored] = exploreNext.back();
+    auto [layer, explored] = exploreNext.back();
     exploreNext.pop_back();
 
-    if (exploredLayers.count(currentLayer))
+    if (exploredLayers.count(layer))
       continue;
 
     if (!explored)
     {
-      const std::vector<Layer<MatType>*>& parents = parentsList[currentLayer];
+      const std::vector<Layer<MatType>*>& parents = parentsList[layer];
 
       // If an edge has already been traversed, there is a cycle.
       for (size_t i = 0; i < parents.size(); i++)
       {
-        LayerEdge edge = std::make_pair(parents[i], currentLayer);
+        LayerEdge edge = std::make_pair(parents[i], layer);
         for (size_t j = 0; j < layerEdges.size(); j++)
         {
           if (layerEdges[j] == edge)
@@ -340,7 +340,7 @@ void DAGNetwork<
         layerEdges.push_back(edge);
       }
 
-      exploreNext.push_back({ currentLayer, true });
+      exploreNext.push_back({ layer, true });
       for (size_t i = 0; i < parents.size(); i++)
       {
         exploreNext.push_back({ parents[i], false });
@@ -348,8 +348,8 @@ void DAGNetwork<
     }
     else
     {
-      exploredLayers.insert(currentLayer);
-      sortedNetwork.push_back(currentLayer);
+      exploredLayers.insert(layer);
+      sortedNetwork.push_back(layer);
     }
   }
 
@@ -370,40 +370,40 @@ void DAGNetwork<
 
   // `CheckGraph` guarantees that the first layer in `sortedNetwork`
   // has no parents and that there is only one layer with no parents.
-  Layer<MatType>* currentLayer = sortedNetwork[0];
-  currentLayer->InputDimensions() = inputDimensions;
-  currentLayer->ComputeOutputDimensions();
+  Layer<MatType>* layer = sortedNetwork[0];
+  layer->InputDimensions() = inputDimensions;
+  layer->ComputeOutputDimensions();
 
   for (size_t i = 1; i < sortedNetwork.size(); i++)
   {
-    currentLayer = sortedNetwork[i];
-    size_t numParents = parentsList[currentLayer].size();
+    layer = sortedNetwork[i];
+    size_t numParents = parentsList[layer].size();
     if (numParents == 1)
     {
-      currentLayer->InputDimensions() =
-        parentsList[currentLayer][0]->OutputDimensions();
+      layer->InputDimensions() =
+        parentsList[layer][0]->OutputDimensions();
     }
     else
     {
-      if (layerAxes.count(currentLayer) == 0)
+      if (layerAxes.count(layer) == 0)
       {
         std::ostringstream errorMessage;
         errorMessage << "DAGNetwork::ComputeOutputDimensions(): "
                         "Axis does not exist for layer "
-                     << FindLayerIndex(currentLayer) << ".";
+                     << FindLayerIndex(layer) << ".";
         throw std::logic_error(errorMessage.str());
       }
 
-      size_t axis = layerAxes[currentLayer];
+      size_t axis = layerAxes[layer];
       const size_t numOutputDimensions =
-        parentsList[currentLayer][0]->OutputDimensions().size();
+        parentsList[layer][0]->OutputDimensions().size();
 
       if (axis >= numOutputDimensions)
       {
         std::ostringstream errorMessage;
         errorMessage << "DAGNetwork::ComputeOutputDimensions(): "
                         "The concatenation axis of layer "
-                     << FindLayerIndex(currentLayer) << " is " << axis
+                     << FindLayerIndex(layer) << " is " << axis
                      << ", but that's greater than or equal to the number "
                         "of output dimensions, which is "
                      << numOutputDimensions << ".";
@@ -412,7 +412,7 @@ void DAGNetwork<
 
       for (size_t i = 1; i < numParents; i++)
       {
-        Layer<MatType>* parent = parentsList[currentLayer][i];
+        Layer<MatType>* parent = parentsList[layer][i];
 
         if (numOutputDimensions != parent->OutputDimensions().size())
         {
@@ -426,28 +426,28 @@ void DAGNetwork<
           throw std::logic_error(errorMessage.str());
         }
       }
-      currentLayer->InputDimensions()
+      layer->InputDimensions()
         = std::vector<size_t>(numOutputDimensions, 0);
 
-      for (size_t i = 0; i < currentLayer->InputDimensions().size(); i++)
+      for (size_t i = 0; i < layer->InputDimensions().size(); i++)
       {
         if (i == axis)
         {
           for (size_t n = 0; n < numParents; n++)
           {
-            Layer<MatType>* parent = parentsList[currentLayer][n];
-            currentLayer->InputDimensions()[i] += parent->OutputDimensions()[i];
+            Layer<MatType>* parent = parentsList[layer][n];
+            layer->InputDimensions()[i] += parent->OutputDimensions()[i];
           }
         }
         else
         {
           // Set dimension not along concatenation axis to axisDim
           // as long as these dimensions are equal along all input.
-          Layer<MatType>* firstParent = parentsList[currentLayer].front();
+          Layer<MatType>* firstParent = parentsList[layer].front();
           const size_t axisDim = firstParent->OutputDimensions()[i];
-          for (size_t n = 1; n < parentsList[currentLayer].size(); n++)
+          for (size_t n = 1; n < parentsList[layer].size(); n++)
           {
-            Layer<MatType>* parent = parentsList[currentLayer][n];
+            Layer<MatType>* parent = parentsList[layer][n];
             const size_t axisDim2 = parent->OutputDimensions()[i];
 
             if (axisDim != axisDim2)
@@ -461,11 +461,11 @@ void DAGNetwork<
               throw std::logic_error(errorMessage.str());
             }
           }
-          currentLayer->InputDimensions()[i] = axisDim;
+          layer->InputDimensions()[i] = axisDim;
         }
       }
     }
-    currentLayer->ComputeOutputDimensions();
+    layer->ComputeOutputDimensions();
   }
 }
 
@@ -791,8 +791,8 @@ void DAGNetwork<
   //setup layerInputs
   for (size_t i = 1; i < sortedNetwork.size(); i++)
   {
-    Layer<MatType>* currentLayer = sortedNetwork[i];
-    const std::vector<Layer<MatType>*>& parents = parentsList[currentLayer];
+    Layer<MatType>* layer = sortedNetwork[i];
+    const std::vector<Layer<MatType>*>& parents = parentsList[layer];
     size_t numParents = parents.size();
 
     if (numParents == 1)
@@ -803,9 +803,9 @@ void DAGNetwork<
     }
     else
     {
-      size_t concatSize = currentLayer->InputDimensions()[0];
-      for (size_t j = 1; j < currentLayer->InputDimensions().size(); j++)
-        concatSize *= currentLayer->InputDimensions()[j];
+      size_t concatSize = layer->InputDimensions()[0];
+      for (size_t j = 1; j < layer->InputDimensions().size(); j++)
+        concatSize *= layer->InputDimensions()[j];
       MakeAlias(layerInputs[i - 1], layerOutputMatrix, concatSize,
         batchSize, offset);
       offset += concatSize;
@@ -830,19 +830,19 @@ void DAGNetwork<
   size_t deltaMatrixSize = 0;
   for (size_t i = 0; i < sortedNetwork.size(); i++)
   {
-    Layer<MatType>* currentLayer = sortedNetwork[i];
+    Layer<MatType>* layer = sortedNetwork[i];
 
-    size_t layerDeltaSize = currentLayer->OutputSize();
+    size_t layerDeltaSize = layer->OutputSize();
     size_t concatDeltaSize = 0;
 
-    if (childrenList[currentLayer].size() > 1)
+    if (childrenList[layer].size() > 1)
       layerDeltaSize *= 2;
 
-    if (parentsList[currentLayer].size() > 1)
+    if (parentsList[layer].size() > 1)
     {
-      concatDeltaSize = currentLayer->InputDimensions()[0];
-      for (size_t j = 1; j < currentLayer->InputDimensions().size(); j++)
-        concatDeltaSize *= currentLayer->InputDimensions()[j];
+      concatDeltaSize = layer->InputDimensions()[0];
+      for (size_t j = 1; j < layer->InputDimensions().size(); j++)
+        concatDeltaSize *= layer->InputDimensions()[j];
     }
 
     // If at the last layer, we only need to add it's concatDeltaSize.
@@ -858,43 +858,44 @@ void DAGNetwork<
   size_t offset = 0;
   for (size_t i = 0; i < sortedNetwork.size() - 1; i++)
   {
-    Layer<MatType>* currentLayer = sortedNetwork[i];
-    if (childrenList[currentLayer].size() > 1)
+    Layer<MatType>* layer = sortedNetwork[i];
+    if (childrenList[layer].size() > 1)
     {
-      accumulatedDeltas.insert({currentLayer, layerDeltas[i]});
-      MakeAlias(accumulatedDeltas[currentLayer], layerDeltaMatrix,
-        currentLayer->OutputSize(), batchSize, offset);
-      offset += currentLayer->OutputSize() * batchSize;
-      outputDeltas.insert({currentLayer, MatType()});
+      accumulatedDeltas.insert({layer, &layerDeltas[i]});
+      MakeAlias(*accumulatedDeltas[layer], layerDeltaMatrix,
+        layer->OutputSize(), batchSize, offset);
+      offset += layer->OutputSize() * batchSize;
+      accumulatedDeltas[layer]->fill(0.0f);
+      outputDeltas.insert({layer, new MatType()});
     }
     else
-       outputDeltas.insert({currentLayer, layerDeltas[i]});
+       outputDeltas.insert({layer, &layerDeltas[i]});
 
-    MakeAlias(outputDeltas[currentLayer], layerDeltaMatrix,
-       currentLayer->OutputSize(), batchSize, offset);
-    offset += currentLayer->OutputSize() * batchSize;
+    MakeAlias(*outputDeltas[layer], layerDeltaMatrix,
+       layer->OutputSize(), batchSize, offset);
+    offset += layer->OutputSize() * batchSize;
   }
 
   for (size_t i = 1; i < sortedNetwork.size(); i++)
   {
-    Layer<MatType>* currentLayer = sortedNetwork[i];
-    std::vector<Layer<MatType>*> parents = parentsList[currentLayer]; 
+    Layer<MatType>* layer = sortedNetwork[i];
+    std::vector<Layer<MatType>*> parents = parentsList[layer]; 
     if (parents.size() > 1)
     {
-      inputDeltas.insert({currentLayer, MatType()});
+      inputDeltas.insert({layer, new MatType()});
 
-      size_t inputSize = currentLayer->InputDimensions()[0];
-      for (size_t j = 1; j < currentLayer->InputDimensions().size(); j++)
-        inputSize *= currentLayer->InputDimensions()[j];
+      size_t inputSize = layer->InputDimensions()[0];
+      for (size_t j = 1; j < layer->InputDimensions().size(); j++)
+        inputSize *= layer->InputDimensions()[j];
 
-      MakeAlias(inputDeltas[currentLayer], layerDeltaMatrix,
+      MakeAlias(*inputDeltas[layer], layerDeltaMatrix,
         inputSize, batchSize, offset);
       offset += inputSize * batchSize;
     }
     else
     {
       Layer<MatType>* onlyParent = parents.front();
-      inputDeltas[currentLayer] = outputDeltas[onlyParent];
+      inputDeltas[layer] = outputDeltas[onlyParent];
     }
   }
 }
@@ -919,21 +920,22 @@ void DAGNetwork<
     sortedNetwork.front()->Forward(input, layerOutputs.front());
     for (size_t i = 1; i < sortedNetwork.size(); i++)
     {
-      const std::vector<Layer<MatType>*>& parents = 
-        parentsList[sortedNetwork[i]];
+      Layer<MatType>* layer = sortedNetwork[i];
+      const std::vector<Layer<MatType>*>& parents =
+        parentsList[layer];
 
       if (parents.size() > 1)
       {
-        size_t axis = layerAxes[sortedNetwork[i]];
+        size_t axis = layerAxes[layer];
 
         size_t rows = 1;
         for (size_t j = 0; j < axis; j++)
-          rows *= sortedNetwork[i]->InputDimensions()[j];
+          rows *= layer->InputDimensions()[j];
 
         size_t slices = input.n_cols;
-        size_t numDims = sortedNetwork[i]->InputDimensions().size();
+        size_t numDims = layer->InputDimensions().size();
         for (size_t j = axis + 1; j < numDims; j++)
-          slices *= sortedNetwork[i]->InputDimensions()[j];
+          slices *= layer->InputDimensions()[j];
 
         std::vector<CubeType> parentOutputAliases(parents.size());
         for (size_t j = 0; j < parents.size(); j++)
@@ -945,7 +947,7 @@ void DAGNetwork<
 
         CubeType inputAlias;
         MakeAlias(inputAlias, layerInputs[i-1], rows,
-          sortedNetwork[i]->InputDimensions()[axis], slices);
+          layer->InputDimensions()[axis], slices);
 
         size_t startCol = 0;
         for (size_t j = 0; j < parentOutputAliases.size(); j++)
@@ -958,7 +960,7 @@ void DAGNetwork<
 
       // Don't execute if it's the last iteration.
       if (i < sortedNetwork.size() - 1)
-        sortedNetwork[i]->Forward(layerInputs[i-1], layerOutputs[i]);
+        layer->Forward(layerInputs[i-1], layerOutputs[i]);
     }
     sortedNetwork.back()->Forward(layerInputs.back(), networkOutput);
   }
@@ -991,13 +993,65 @@ void DAGNetwork<
   CheckNetwork("DAGNetwork::Backward()", input.n_rows);
   gradients.set_size(parameters.n_rows, parameters.n_cols);
 
-  if (network.size() > 1)
+  if (sortedNetwork.size() > 1)
   {
     InitializeBackwardPassMemory(input.n_cols);
+
+    MatType const* currentOutput = &output;
+    MatType const* currentDelta = &error;
+
+    for (size_t i = sortedNetwork.size() - 1; i > 0; --i)
+    {
+      Layer<MatType>* layer = sortedNetwork[i];
+      layer->Backward(layerInputs[i-1], *currentOutput, *currentDelta,
+         *inputDeltas[layer]);
+
+      size_t numParents = parentsList[layer].size();
+      if (numParents > 1)
+      {
+        // Calculating deltas for concatenation.
+        size_t axis = layerAxes[layer];
+        size_t rows = 1;
+        for (size_t j = 0; j < axis; j++)
+          rows *= layer->InputDimensions()[j];
+
+        size_t batchSize = inputDeltas[layer]->n_cols;
+        size_t slices = batchSize;
+        for (size_t j = axis + 1; j < layer->InputDimensions().size(); j++)
+          slices *= layer->InputDimensions()[j];
+
+        CubeType inputDeltaAlias;
+        MakeAlias(inputDeltaAlias, *inputDeltas[layer], rows,
+          layer->InputDimensions()[axis], slices);
+
+        const std::vector<Layer<MatType>*>& parents = parentsList[layer];
+        size_t startCol = 0;
+        for (size_t j = 0; j < parents.size(); j++)
+        {
+          Layer<MatType>* parent = parents[j];
+          const size_t cols = parent->OutputDimensions()[axis];
+          *outputDeltas[parent] = inputDeltaAlias.cols(startCol,
+            startCol + cols - 1);
+          outputDeltas[parent]->reshape(outputDeltas[parent]->n_elem / batchSize, batchSize);
+        }
+      }
+
+      for (size_t j = 0; j < numParents; j++)
+      {
+        Layer<MatType>* parent = parentsList[layer][j];
+        size_t parentNumChildren = childrenList[parent].size();
+        if (parentNumChildren > 1)
+          *accumulatedDeltas[parent] += *outputDeltas[parent];
+        // TODO: make sure accumulatedDeltas is getting zeroed out correctly.
+      }
+
+      currentOutput = &layerOutputs[i-1];
+      currentDelta = &layerDeltas[i-1];
+    }
   }
-  else if (network.size() == 1)
+  else if (sortedNetwork.size() == 1)
   {
-    network[0]->Gradient(input, error, gradients);
+    sortedNetwork.front()->Gradient(input, error, gradients);
   }
   else
   {

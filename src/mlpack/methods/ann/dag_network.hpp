@@ -77,8 +77,17 @@ public:
   // Destructor: delete all layers.
   ~DAGNetwork()
   {
-    for (size_t i = 0; i < network.size(); ++i)
+    for (size_t i = 0; i < sortedNetwork.size(); i++)
+    {
+      Layer<MatType>* currentLayer = sortedNetwork[i];
+      if (childrenList[currentLayer].size() > 1)
+        delete outputDeltas[currentLayer];
+
+      if (parentsList[currentLayer].size() > 1)
+        delete inputDeltas[currentLayer];
+
       delete network[i];
+    }
   }
 
   using CubeType = typename GetCubeType<MatType>::type;
@@ -485,9 +494,9 @@ private:
 
   MatType layerDeltaMatrix;
   std::vector<MatType> layerDeltas;
-  std::unordered_map<Layer<MatType>*, MatType> outputDeltas;
-  std::unordered_map<Layer<MatType>*, MatType> inputDeltas;
-  std::unordered_map<Layer<MatType>*, MatType> accumulatedDeltas;
+  std::unordered_map<Layer<MatType>*, MatType*> outputDeltas;
+  std::unordered_map<Layer<MatType>*, MatType*> inputDeltas;
+  std::unordered_map<Layer<MatType>*, MatType*> accumulatedDeltas;
 
   // If true, each layer has its inputDimensions properly set.
   bool validOutputDimensions;
