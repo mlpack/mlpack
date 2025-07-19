@@ -272,6 +272,28 @@ public:
    * Note: this function is implemented so that it can be used by ensmallen's
    * optimizers.  It's not generally meant to be used otherwise.
    *
+   * Evaluate the network with the given parameters, but using only
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function.
+   *
+   * @param parameters Matrix model parameters.
+   * @param begin Index of the starting point to use for objective function
+   *        evaluation.
+   * @param gradient Matrix to output gradient into.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
+   */
+
+  typename MatType::elem_type EvaluateWithGradient(const MatType& parameters,
+                                                   const size_t begin,
+                                                   MatType& gradient,
+                                                   const size_t batchSize);
+
+
+  /**
+   * Note: this function is implemented so that it can be used by ensmallen's
+   * optimizers.  It's not generally meant to be used otherwise.
+   *
    * Return the number of separable functions (the number of predictor points).
    */
   size_t NumFunctions() const { return responses.n_cols; }

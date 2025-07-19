@@ -1138,6 +1138,40 @@ double DAGNetwork<
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
+typename MatType::elem_type DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::EvaluateWithGradient(const MatType& parameters,
+                        const size_t begin,
+                        MatType& gradient,
+                        const size_t batchSize)
+{
+  CheckNetwork("DAGNetwork::EvaluateWithGradient()", predictors.n_rows);
+  networkOutput.set_size(sortedNetwork.back()->OutputSize(),
+    predictors.n_cols);
+
+  MatType predictorsBatch, responsesBatch;
+  MakeAlias(predictorsBatch, predictors, predictors.n_rows,
+    batchSize, begin * predictors.n_rows);
+  MakeAlias(responsesBatch, responses, responses.n_rows,
+    batchSize, begin * responses.n_rows);
+
+  Forward(predictorsBatch, networkOutput);
+
+  const typename MatType::elem_type obj = outputLayer.Forward(networkOutput,
+    responsesBatch) + Loss();
+
+  outputLayer.Backward(networkOutput, responsesBatch, error);
+  Backward(predictorsBatch, networkOutput, error, gradient);
+
+  return obj;
+}
+
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
 void DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
