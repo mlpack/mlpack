@@ -1066,6 +1066,18 @@ void DAGNetwork<
       currentOutput = &layerOutputs[i-1];
       currentDelta = &layerDeltas[i-1];
     }
+
+    InitializeGradientPassMemory(gradients);
+
+    sortedNetwork.front()->Gradient(input, layerDeltas.front(),
+      layerGradients.front());
+    for (size_t i = 1; i < sortedNetwork.size() - 1; i++)
+    {
+      sortedNetwork[i]->Gradient(layerInputs[i-1], layerDeltas[i],
+        layerGradients[i]);
+    }
+    sortedNetwork.back()->Gradient(layerInputs.back(), error,
+      layerGradients.back());
   }
   else if (sortedNetwork.size() == 1)
   {
