@@ -1105,35 +1105,19 @@ double DAGNetwork<
   return loss;
 }
 
-// template<typename OutputLayerType,
-//          typename InitializationRuleType,
-//          typename MatType>
-// typename MatType::elem_type DAGNetwork<
-//     OutputLayerType,
-//     InitializationRuleType,
-//     MatType
-// >::Evaluate(const MatType& parameters)
-// {
-//   typename MatType::elem_type res = 0;
-//   for (size_t i = 0; i < predictors.n_cols; ++i)
-//     res += Evaluate(parameters, i, 1);
-//
-//   return res;
-// }
-
-// template<typename OutputLayerType,
-//          typename InitializationRuleType,
-//          typename MatType>
-// typename MatType::elem_type DAGNetwork<
-//     OutputLayerType,
-//     InitializationRuleType,
-//     MatType
-// >::Evaluate(const MatType& predictors, const MatType& responses)
-// {
-//   CheckNetwork("DAGNetwork::Evaluate()", predictors.n_rows);
-//   Forward(predictors, networkOutput);
-//   return outputLayer.Forward(networkOutput, responses) + Loss();
-// }
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+typename MatType::elem_type DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::Evaluate(const MatType& predictors, const MatType& responses)
+{
+  CheckNetwork("DAGNetwork::Evaluate()", predictors.n_rows);
+  Forward(predictors, networkOutput);
+  return outputLayer.Forward(networkOutput, responses) + Loss();
+}
 
 template<typename OutputLayerType,
          typename InitializationRuleType,

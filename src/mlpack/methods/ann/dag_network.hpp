@@ -263,6 +263,16 @@ public:
                  const MatType& error,
                  MatType& gradients);
 
+  /**
+   * Evaluate the network with the given predictors and responses.
+   * This functions is usually used to monitor progress while training.
+   *
+   * @param predictors Input variables.
+   * @param responses Target outputs for input variables.
+   */
+  typename MatType::elem_type Evaluate(const MatType& predictors,
+                                       const MatType& responses);
+
   //
   // Only ensmallen utility functions for training are found below here.
   // They aren't generally useful otherwise.
