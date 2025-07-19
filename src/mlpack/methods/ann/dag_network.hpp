@@ -304,6 +304,26 @@ public:
                                                    MatType& gradient,
                                                    const size_t batchSize);
 
+  /**
+   * Note: this function is implemented so that it can be used by ensmallen's
+   * optimizers.  It's not generally meant to be used otherwise.
+   *
+   * Evaluate the gradient of the network with the given parameters,
+   * and with respect to only a number of points in the dataset. This is useful
+   * for optimizers such as SGD, which require a separable objective function.
+   *
+   * @param parameters Matrix of the model parameters to be optimized.
+   * @param begin Index of the starting point to use for objective function
+   *        gradient evaluation.
+   * @param gradient Matrix to output gradient into.
+   * @param batchSize Number of points to be processed as a batch for objective
+   *        function gradient evaluation.
+   */
+  void Gradient(const MatType& parameters,
+                const size_t begin,
+                MatType& gradient,
+                const size_t batchSize);
+
 
   /**
    * Note: this function is implemented so that it can be used by ensmallen's

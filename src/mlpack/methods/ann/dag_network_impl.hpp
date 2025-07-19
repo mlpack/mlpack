@@ -1161,6 +1161,21 @@ typename MatType::elem_type DAGNetwork<
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::Gradient(const MatType& parameters,
+            const size_t begin,
+            MatType& gradient,
+            const size_t batchSize)
+{
+  this->EvaluateWithGradient(parameters, begin, gradient, batchSize);
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
 typename MatType::elem_type DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
