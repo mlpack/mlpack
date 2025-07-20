@@ -22,50 +22,6 @@
 namespace mlpack {
 namespace data {
 
-inline const std::vector<std::string> LoadFileTypes()
-{
-  return std::vector<std::string>({"jpg", "png", "tga", "bmp", "psd", "gif",
-      "hdr", "pic", "pnm", "jpeg"});
-}
-
-inline const std::vector<std::string> SaveFileTypes()
-{
-  return std::vector<std::string>({"jpg", "png", "tga", "bmp", "hdr"});
-}
-
-
-/**
- * Checks if the given image filename is supported.
- *
- * @param fileName Name of the image file.
- * @param save Set to true to check if the file format can be saved, else loaded.
- * @return Boolean value indicating success if it is an image.
- */
-inline bool ImageFormatSupported(const std::string& fileName,
-                                 const bool save = false)
-{
-  if (save)
-  {
-    // Iterate over all supported file types that can be saved.
-    for (auto extension : SaveFileTypes())
-    {
-      if (extension == Extension(fileName))
-        return true;
-    }
-  }
-  else
-  {
-    // Iterate over all supported file types that can be loaded.
-    for (auto extension : LoadFileTypes())
-    {
-      if (extension == Extension(fileName))
-        return true;
-    }
-  }
-
-  return false;
-}
-
 /**
  * Implements meta-data of images required by data::Load and
  * data::Save for loading and saving images into arma::Mat.
@@ -181,6 +137,49 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     height = 0;
     channels = 3;
     quality = 90;
+  }
+
+  inline const std::vector<std::string> LoadFileTypes()
+  {
+    return std::vector<std::string>({"jpg", "png", "tga", "bmp", "psd", "gif",
+        "hdr", "pic", "pnm", "jpeg"});
+  }
+
+  inline const std::vector<std::string> SaveFileTypes()
+  {
+    return std::vector<std::string>({"jpg", "png", "tga", "bmp", "hdr"});
+  }
+
+  /**
+   * Checks if the given image filename is supported.
+   *
+   * @param fileName Name of the image file.
+   * @param save Set to true to check if the file format can be saved, else loaded.
+   * @return Boolean value indicating success if it is an image.
+   */
+  inline bool ImageFormatSupported(const std::string& fileName,
+                                   const bool save = false)
+  {
+    if (save)
+    {
+      // Iterate over all supported file types that can be saved.
+      for (auto extension : SaveFileTypes())
+      {
+        if (extension == Extension(fileName))
+          return true;
+      }
+    }
+    else
+    {
+      // Iterate over all supported file types that can be loaded.
+      for (auto extension : LoadFileTypes())
+      {
+        if (extension == Extension(fileName))
+          return true;
+      }
+    }
+
+    return false;
   }
 
   //! Get the image width.

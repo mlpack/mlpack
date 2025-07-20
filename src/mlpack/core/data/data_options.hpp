@@ -18,7 +18,6 @@
 
 #include "dataset_mapper.hpp"
 #include "map_policies/map_policies.hpp"
-#include "image_info.hpp"
 
 namespace mlpack {
 namespace data {

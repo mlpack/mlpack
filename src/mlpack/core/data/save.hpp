@@ -18,7 +18,6 @@
 #include <mlpack/core/util/log.hpp>
 
 #include "text_options.hpp"
-#include "image_info.hpp"
 #include "detect_file_type.hpp"
 #include "save_image.hpp"
 
