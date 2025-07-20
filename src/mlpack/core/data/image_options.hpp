@@ -1,8 +1,11 @@
 /**
  * @file core/data/image_options.hpp
  * @author Mehul Kumar Nirala
+ * @author Ryan Curtin
+ * @author Omar Shrit
  *
- * An image information holder.
+ * Image options, all possible options to load different image formats
+ * with specific settings into mlpack.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -71,7 +74,7 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
 {
  public:
   /**
-   * Instantiate the ImageInfo object with the given image width, height,
+   * Instantiate the ImageOptions object with the given image width, height,
    * number of channels and quality parameter.
    *
    * @param width Image width.
@@ -79,17 +82,107 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
    * @param channels Number of channels in the image.
    * @param quality Compression of the image if saved as jpg (0 - 100).
    */
-  ImageInfo(const size_t width = 0,
-            const size_t height = 0,
-            const size_t channels = 3,
-            const size_t quality = 90) :
+  ImageOptions(const size_t width = 0,
+               const size_t height = 0,
+               const size_t channels = 3,
+               const size_t quality = 90) :
     width(width),
     height(height),
     channels(channels),
     quality(quality)
-{
-  // Do nothing.
-}
+  {
+    // Do nothing.
+  }
+
+  ImageOptions(const DataOptionsBase<ImageOptions>& opts) :
+      DataOptionsBase<ImageOptions>()
+  {
+    // Delegate to copy operator.
+    *this = opts;
+  }
+
+  ImageOptions(DataOptionsBase<ImageOptions>&& opts) :
+      DataOptionsBase<ImageOptions>()
+  {
+    // Delegate to move operator.
+    *this = std::move(opts);
+  }
+
+  ImageOptions& operator=(const DataOptionsBase<ImageOptions>>& otherIn)
+  {
+    const ImageOptions& other = static_cast<const ImageOptions&>(otherIn);
+
+    if (&other == this)
+      return *this;
+
+    width    = other.width;
+    height   = other.height;
+    channels = other.channel;
+    quality  = other.quality;
+
+    // Copy base members.
+    DataOptionsBase<ImageOptions>::operator=(other);
+
+    return *this;
+  }
+
+  ImageOptions& operator=(DataOptionsBase<ImageOptions>>&& otherIn)
+  {
+    ImageOptions&& other = static_cast<ImageOptions&&>(otherIn);
+
+    if (&other == this)
+      return *this;
+
+    width    = std::move(other.width);
+    height   = std::move(other.height);
+    channels = std::move(other.channel);
+    quality  = std::move(other.quality);
+
+    // Move base members.
+    DataOptionsBase<ImageOptions>::operator=(std::move(other));
+
+    return *this;
+  }
+
+  //
+  // Handling for copy and move operations on other DataOptionsBase types.
+  //
+
+  // Conversions must be explicit.
+  template<typename Derived2>
+  explicit ImageOptions(const DataOptionsBase<Derived2>& other) :
+      DataOptionsBase<ImageOptions>(other) { }
+
+  template<typename Derived2>
+  explicit ImageOptions(DataOptionsBase<Derived2>&& other) :
+      DataOptionsBase<ImageOptions>(std::move(other)) { }
+
+  template<typename Derived2>
+  ImageOptions& operator=(const DataOptionsBase<Derived2>& other)
+  {
+    return static_cast<ImageOptions&>(
+        DataOptionsBase<ImageOptions>::operator=(other));
+  }
+
+  template<typename Derived2>
+  ImageOptions& operator=(DataOptionsBase<Derived2>&& other)
+  {
+    return static_cast<ImageOptions&>(
+        DataOptionsBase<ImageOptions>::operator=(std::move(other)));
+  }
+
+  static const char* DataDescription() { return "Image data"; }
+
+  // @rcurtin do we really need this if private memebers are not
+  // std::optionals ??
+  void Reset()
+  {
+    width = 0;
+    height = 0;
+    channels = 3;
+    quality = 90;
+  }
+
   //! Get the image width.
   const size_t& Width() const { return width; }
   //! Modify the image width.
