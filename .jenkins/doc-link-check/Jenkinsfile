@@ -11,6 +11,11 @@ pipeline
   // for this job.
   agent
   {
+    node
+    {
+      label 'doc-check'
+    }
+
     docker
     {
       image 'mlpack/jenkins-mlpack-docbuild:latest'
