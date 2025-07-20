@@ -1,5 +1,5 @@
 /**
- * @file core/data/image_info.hpp
+ * @file core/data/image_options.hpp
  * @author Mehul Kumar Nirala
  *
  * An image information holder.
@@ -19,6 +19,18 @@
 namespace mlpack {
 namespace data {
 
+inline const std::vector<std::string> LoadFileTypes()
+{
+  return std::vector<std::string>({"jpg", "png", "tga", "bmp", "psd", "gif",
+      "hdr", "pic", "pnm", "jpeg"});
+}
+
+inline const std::vector<std::string> SaveFileTypes()
+{
+  return std::vector<std::string>({"jpg", "png", "tga", "bmp", "hdr"});
+}
+
+
 /**
  * Checks if the given image filename is supported.
  *
@@ -27,13 +39,35 @@ namespace data {
  * @return Boolean value indicating success if it is an image.
  */
 inline bool ImageFormatSupported(const std::string& fileName,
-                                 const bool save = false);
+                                 const bool save = false)
+{
+  if (save)
+  {
+    // Iterate over all supported file types that can be saved.
+    for (auto extension : SaveFileTypes())
+    {
+      if (extension == Extension(fileName))
+        return true;
+    }
+  }
+  else
+  {
+    // Iterate over all supported file types that can be loaded.
+    for (auto extension : LoadFileTypes())
+    {
+      if (extension == Extension(fileName))
+        return true;
+    }
+  }
+
+  return false;
+}
 
 /**
  * Implements meta-data of images required by data::Load and
  * data::Save for loading and saving images into arma::Mat.
  */
-class ImageInfo
+class ImageOptions : public DataOptionsBase<ImageOptions>
 {
  public:
   /**
@@ -48,8 +82,14 @@ class ImageInfo
   ImageInfo(const size_t width = 0,
             const size_t height = 0,
             const size_t channels = 3,
-            const size_t quality = 90);
-
+            const size_t quality = 90) :
+    width(width),
+    height(height),
+    channels(channels),
+    quality(quality)
+{
+  // Do nothing.
+}
   //! Get the image width.
   const size_t& Width() const { return width; }
   //! Modify the image width.
