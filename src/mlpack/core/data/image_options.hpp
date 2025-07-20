@@ -136,7 +136,4 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
 } // namespace data
 } // namespace mlpack
 
-// Include implementation of Image.
-#include "image_info_impl.hpp"
-
 #endif
