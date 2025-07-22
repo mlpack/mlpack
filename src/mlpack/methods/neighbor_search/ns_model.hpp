@@ -49,9 +49,9 @@ class NSWrapperBase
   virtual const arma::mat& Dataset() const = 0;
 
   //! Get the search mode.
-  virtual NeighborSearchMode SearchMode() const = 0;
+  virtual NeighborSearchStrategy SearchStrategy() const = 0;
   //! Modify the search modem
-  virtual NeighborSearchMode& SearchMode() = 0;
+  virtual NeighborSearchStrategy& SearchStrategy() = 0;
 
   //! Get the approximation parameter epsilon.
   virtual double Epsilon() const = 0;
@@ -103,9 +103,9 @@ class NSWrapper : public NSWrapperBase
  public:
   //! Construct the NSWrapper object, initializing the internally-held
   //! NeighborSearch object.
-  NSWrapper(const NeighborSearchMode searchMode,
+  NSWrapper(const NeighborSearchStrategy searchStrategy,
             const double epsilon) :
-      ns(searchMode, epsilon)
+      ns(searchStrategy, epsilon)
   {
     // Nothing else to do.
   }
@@ -121,9 +121,9 @@ class NSWrapper : public NSWrapperBase
   const arma::mat& Dataset() const { return ns.ReferenceSet(); }
 
   //! Get the search mode.
-  NeighborSearchMode SearchMode() const { return ns.SearchMode(); }
+  NeighborSearchStrategy SearchStrategy() const { return ns.SearchStrategy(); }
   //! Modify the search mode.
-  NeighborSearchMode& SearchMode() { return ns.SearchMode(); }
+  NeighborSearchStrategy& SearchStrategy() { return ns.SearchStrategy(); }
 
   //! Get epsilon, the approximation parameter.
   double Epsilon() const { return ns.Epsilon(); }
@@ -201,12 +201,12 @@ class LeafSizeNSWrapper :
  public:
   //! Construct the LeafSizeNSWrapper by delegating to the NSWrapper
   //! constructor.
-  LeafSizeNSWrapper(const NeighborSearchMode searchMode,
+  LeafSizeNSWrapper(const NeighborSearchStrategy searchStrategy,
                     const double epsilon) :
       NSWrapper<SortPolicy,
                 TreeType,
                 DualTreeTraversalType,
-                SingleTreeTraversalType>(searchMode, epsilon)
+                SingleTreeTraversalType>(searchStrategy, epsilon)
   {
     // Nothing to do.
   }
@@ -270,7 +270,7 @@ class SpillNSWrapper :
 {
  public:
   //! Construct the SpillNSWrapper.
-  SpillNSWrapper(const NeighborSearchMode searchMode,
+  SpillNSWrapper(const NeighborSearchStrategy searchStrategy,
                  const double epsilon) :
       NSWrapper<
           SortPolicy,
@@ -281,7 +281,7 @@ class SpillNSWrapper :
           SPTree<EuclideanDistance,
                  NeighborSearchStat<SortPolicy>,
                  arma::mat>::template DefeatistSingleTreeTraverser>(
-          searchMode, epsilon)
+          searchStrategy, epsilon)
   {
     // Nothing to do.
   }
@@ -430,9 +430,9 @@ class NSModel
   //! Expose the dataset.
   const arma::mat& Dataset() const;
 
-  //! Expose SearchMode.
-  NeighborSearchMode SearchMode() const;
-  NeighborSearchMode& SearchMode();
+  //! Expose search strategy..
+  NeighborSearchStrategy SearchStrategy() const;
+  NeighborSearchStrategy& SearchStrategy();
 
   //! Expose LeafSize.
   size_t LeafSize() const { return leafSize; }
@@ -459,13 +459,13 @@ class NSModel
   bool& RandomBasis() { return randomBasis; }
 
   //! Initialize the model type.  (This does not perform any training.)
-  void InitializeModel(const NeighborSearchMode searchMode,
+  void InitializeModel(const NeighborSearchStrategy searchStrategy,
                        const double epsilon);
 
   //! Build the reference tree.
   void BuildModel(util::Timers& timers,
                   arma::mat&& referenceSet,
-                  const NeighborSearchMode searchMode,
+                  const NeighborSearchStrategy searchStrategy,
                   const double epsilon = 0);
 
   //! Perform neighbor search.  The query set will be reordered.
