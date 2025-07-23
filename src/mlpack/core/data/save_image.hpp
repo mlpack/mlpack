@@ -1,14 +1,14 @@
-/**
- * @file core/data/save_image.hpp
- * @author Ryan Curtin
- *
- * Implementation of save functionality.
- *
- * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
+  /**
+   * @file core/data/save_image.hpp
+   * @author Ryan Curtin
+   *
+   * Implementation of save functionality.
+   *
+   * mlpack is free software; you may redistribute it and/or modify it under the
+   * terms of the 3-clause BSD license.  You should have received a copy of the
+   * 3-clause BSD license along with mlpack.  If not, see
+   * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+   */
 #ifndef MLPACK_CORE_DATA_SAVE_IMAGE_HPP
 #define MLPACK_CORE_DATA_SAVE_IMAGE_HPP
 
@@ -32,7 +32,14 @@ template<typename eT>
 bool Save(const std::string& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal = false);
+          const bool fatal = false)
+{
+  ImageOptions opts;
+  opts.Fatal() = fatal;
+  std::vector<std::string> files;
+  files.push_back(filename);
+  Save(files.back(), matrix, opts);
+}
 
 /**
  * Save the image file from the given matrix.
@@ -47,15 +54,21 @@ template<typename eT>
 bool Save(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal = false);
+          const bool fatal = false)
+{
+  ImageOptions opts;
+  opts.Fatal() = fatal;
+  Save(files, matrix, opts);
+}
 
 /**
  * Helper function to save files.  Implementation in save_image.hpp.
  */
-inline bool SaveImage(const std::string& filename,
-                      arma::Mat<unsigned char>& image,
-                      ImageInfo& info,
-                      const bool fatal = false);
+
+template<typename eT>
+bool Save(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageOptions& opts);
 
 } //namespace data
 } //namespace mlpack
