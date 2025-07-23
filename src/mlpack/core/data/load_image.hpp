@@ -46,7 +46,9 @@ bool Load(const std::string& filename,
   // Use the new implementation.
   ImageOptions opts;
   opts.Fatal() = fatal;
-  Load(filename.at(0), matrix, opts);
+  std::vector<std::string> files;
+  files.push_back(filename);
+  Load(files.back(), matrix, opts);
 }
 
 /**
@@ -69,13 +71,6 @@ bool Load(const std::vector<std::string>& files,
   opts.Fatal() = fatal;
   Load(files, matrix, opts);
 }
-
-// Check with @rcurtin what he considers of this one.
-// Implementation found in load_image.hpp.
-inline bool LoadImage(const std::string& filename,
-                      arma::Mat<unsigned char>& matrix,
-                      ImageInfo& info,
-                      const bool fatal = false);
 
 /**
  * Load a set of image files into the given matrix.

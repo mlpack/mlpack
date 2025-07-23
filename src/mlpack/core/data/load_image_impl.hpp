@@ -51,15 +51,18 @@ bool Load(const std::vector<std::string>& files,
     mlpackException(oss, opts); 
   }
 
-  if (!opts.ImageFormatSupported(files.back()))
+  for (size_t i = 0; i < files.size(); ++i)
   {
-    std::stringstream oss;
-    oss << "Load(): file type " << Extension(files.back())
-        << " isn't supported. Currently it supports: ";
-    auto x = opts.LoadFileTypes();
-    for (auto extension : x)
-      oss << " " << extension;
-    mlpackException(oss, opts);
+    if (!opts.ImageFormatSupported(files.at(i)))
+    {
+      std::stringstream oss;
+      oss << "Load(): file type " << Extension(files.at(i))
+          << " isn't supported. Currently it supports: ";
+      auto x = opts.LoadFileTypes();
+      for (auto extension : x)
+        oss << " " << extension;
+      mlpackException(oss, opts);
+    }
   }
 
   // Temporary variables needed as stb_image.h supports int parameters.
@@ -84,7 +87,7 @@ bool Load(const std::vector<std::string>& files,
     
       mlpackException(oss, opts);
     }
-    
+
     opts.Width() = tempWidth;
     opts.Height() = tempHeight;
     opts.Channels() = tempChannels;
@@ -154,18 +157,18 @@ bool Load(const std::vector<std::string>& files,
           << "function iteratively." << std::endl;
         mlpackException(oss, opts);
       }
-      floatImages.colptr(i) = arma::Mat<unsigned char>(imageBuf, dimension, 1,
+      floatImages.colptr(i) = arma::Mat<float>(imageBuf, dimension, 1,
           true, true);
       stbi_image_free(floatImageBuf);
     }
   }
   if constexpr (std::is_same<et, float>::value)
   {
-    matrix = arma::conv_to<arma::Mat<eT>>::from(floatImages);
+    matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(floatImages));
   }
   else
   {
-    matrix = arma::conv_to<arma::Mat<eT>>::from(images);
+    matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(images));
   }
 
   return true;
