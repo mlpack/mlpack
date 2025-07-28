@@ -22,6 +22,40 @@
 namespace mlpack {
 namespace data {
 
+template<typename Derived>
+bool mlpackException(const std::stringstream& oss,
+    const DataOptionsBase<Derived>& opts)
+{
+  bool success = true; // this should never be returned
+  if (opts.Fatal())
+  {
+    Log::Fatal << oss.str() << std::endl;
+  }
+  else
+  {
+    Log::Warn << oss.str() << std::endl;
+    success = false;
+  }
+  return success;
+}
+
+template<typename Derived>
+bool mlpackException(const std::string& msg,
+    const DataOptionsBase<Derived>& opts)
+{
+  bool success = true; // this should never be returned
+  if (opts.Fatal())
+  {
+    Log::Fatal << msg << std::endl;
+  }
+  else
+  {
+    Log::Warn << msg << std::endl;
+    success = false;
+  }
+  return success;
+}
+
 /**
  * Implements meta-data of images required by data::Load and
  * data::Save for loading and saving images into arma::Mat.
@@ -64,7 +98,7 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     *this = std::move(opts);
   }
 
-  ImageOptions& operator=(const DataOptionsBase<ImageOptions>>& otherIn)
+  ImageOptions& operator=(const DataOptionsBase<ImageOptions>& otherIn)
   {
     const ImageOptions& other = static_cast<const ImageOptions&>(otherIn);
 
@@ -73,7 +107,7 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
 
     width    = other.width;
     height   = other.height;
-    channels = other.channel;
+    channels = other.channels;
     quality  = other.quality;
 
     // Copy base members.
@@ -82,7 +116,7 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     return *this;
   }
 
-  ImageOptions& operator=(DataOptionsBase<ImageOptions>>&& otherIn)
+  ImageOptions& operator=(DataOptionsBase<ImageOptions>&& otherIn)
   {
     ImageOptions&& other = static_cast<ImageOptions&&>(otherIn);
 
@@ -91,7 +125,7 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
 
     width    = std::move(other.width);
     height   = std::move(other.height);
-    channels = std::move(other.channel);
+    channels = std::move(other.channels);
     quality  = std::move(other.quality);
 
     // Move base members.
@@ -127,7 +161,7 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
         DataOptionsBase<ImageOptions>::operator=(std::move(other)));
   }
 
-  static const char* DataDescription() { return "Image data"; }
+  static const char* DataDescription() { return "image data"; }
 
   // @rcurtin do we really need this if private memebers are not
   // std::optionals ??
@@ -223,7 +257,18 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
 
   // Compression of the image if saved as jpg (0 - 100).
   size_t quality;
+
+  inline static const std::unordered_set<std::string> saveType
+      = {"jpg", "png", "tga", "bmp", "hdr"};
+
+  inline static const std::unordered_set<std::string> loadType
+      = {"jpg", "png", "tga", "bmp", "psd", "gif", "hdr", "pic", "pnm", "jpeg"};
+
 };
+
+// Provide backward compatibility with the previous API
+// This should be removed with mlpack 5.0.0
+using ImageInfo = ImageOptions;
 
 } // namespace data
 } // namespace mlpack

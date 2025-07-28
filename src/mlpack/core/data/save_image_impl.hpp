@@ -15,7 +15,6 @@
 
 // In case it hasn't been included yet.
 #include "save_image.hpp"
-#include "image_info.hpp"
 
 namespace mlpack {
 namespace data {
@@ -38,10 +37,10 @@ bool Save(const std::vector<std::string>& files,
     // Check to see if the file type is supported.
     if (!opts.ImageFormatSupported(files.at(i), true))
     {
-      std::ostringstream oss;
+      std::stringstream oss;
       oss << "Save(): file type " << Extension(files.at(i))
           << " isn't supported. Currently image saving supports: ";
-      for (auto extension : SaveFileTypes())
+      for (auto extension : opts.SaveFileTypes())
         oss << "  " << extension;
       oss << "." << std::endl;
       mlpackException(oss, opts);
@@ -93,10 +92,7 @@ bool Save(const std::vector<std::string>& files,
     else if ("hdr" == Extension(files.at(i)))
     {
       // We have to convert to float for HDR.
-      if constexpr (!std::is_same<eT, float>::value)
-      {
-        arma::fmat imageBuf = arma::conv_to<arma::fmat>::from(matrix.col(i));
-      }
+      arma::fmat imageBuf = arma::conv_to<arma::fmat>::from(matrix.col(i));
       success = stbi_write_hdr(files.at(i).c_str(), opts.Width(), opts.Height(),
           opts.Channels(), imageBuf.memptr());
     }
@@ -109,8 +105,8 @@ bool Save(const std::vector<std::string>& files,
     if (!success)
     {
       std::stringstream oss;
-      oss << "Save(): error saving image to '" << filename << "'.";
-      mlpackException(oss, opts)
+      oss << "Save(): error saving image to '" << files.at(i) << "'.";
+      mlpackException(oss, opts);
     }
   }
   return success;

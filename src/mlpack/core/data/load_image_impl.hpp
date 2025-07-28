@@ -20,23 +20,6 @@
 namespace mlpack {
 namespace data {
 
-// @rcurtin this function is a trial for now
-bool mlpackException(const std::stringstream& oss, const DataOptions& opts)
-{
-  bool success;
-  if (opts.Fatal())
-  {
-    Log::Fatal << oss.str() << std::endl;
-    success = false;
-  }
-  else
-  {
-    Log::Warn << oss.str() << std::endl;
-    success = true;
-  }
-  return success;
-}
-
 // Image loading API for multiple files.
 template<typename eT>
 bool Load(const std::vector<std::string>& files,
@@ -47,7 +30,7 @@ bool Load(const std::vector<std::string>& files,
   if (files.empty())
   {
     std::stringstream oss;
-    oss << "Load(): list of images is empty, please specify the files names."
+    oss << "Load(): list of images is empty, please specify the files names.";
     mlpackException(oss, opts); 
   }
 
@@ -56,8 +39,8 @@ bool Load(const std::vector<std::string>& files,
     if (!opts.ImageFormatSupported(files.at(i)))
     {
       std::stringstream oss;
-      oss << "Load(): file type " << Extension(files.at(i))
-          << " isn't supported. Currently it supports: ";
+      oss << "Load(): image type " << Extension(files.at(i))
+          << " not supported. Supported formats: ";
       auto x = opts.LoadFileTypes();
       for (auto extension : x)
         oss << " " << extension;
@@ -83,8 +66,8 @@ bool Load(const std::vector<std::string>& files,
     {
       std::stringstream oss;
       oss << "Load(): failed to load image '" << files.front() << "': "
-              << stbi_failure_reason();
-    
+          << stbi_failure_reason() << ".";
+
       mlpackException(oss, opts);
     }
 
@@ -124,13 +107,13 @@ bool Load(const std::vector<std::string>& files,
       {
         std::stringstream oss;
         oss << "Load(): dimension mismatch: in the case of "
-          << "several images, please check that all the images have the same "
-          << "dimensions; if not, load each image in one column and call this "
-          << "function iteratively." << std::endl;
+            << "several images, please check that all the images have the same "
+            << "dimensions; if not, load each image in one column and call this"
+            << " function iteratively." << std::endl;
         mlpackException(oss, opts);
       }
-      images.colptr(i) = arma::Mat<unsigned char>(imageBuf, dimension, 1,
-          true, true);
+      images.col(i) = arma::Mat<unsigned char>(imageBuf, dimension, 1,
+          false, true);
       stbi_image_free(imageBuf);
     }
     else if constexpr (std::is_same<eT, float>::value)
@@ -157,12 +140,12 @@ bool Load(const std::vector<std::string>& files,
           << "function iteratively." << std::endl;
         mlpackException(oss, opts);
       }
-      floatImages.colptr(i) = arma::Mat<float>(imageBuf, dimension, 1,
-          true, true);
+      floatImages.col(i) = arma::Mat<float>(imageBuf, dimension, 1,
+          false, true);
       stbi_image_free(floatImageBuf);
     }
   }
-  if constexpr (std::is_same<et, float>::value)
+  if constexpr (std::is_same<eT, float>::value)
   {
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(floatImages));
   }
