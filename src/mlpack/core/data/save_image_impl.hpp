@@ -29,7 +29,7 @@ bool Save(const std::vector<std::string>& files,
   {
     std::stringstream oss;
     oss << "Save(): vector of image files is empty; nothing to save.";
-    mlpackException(oss, opts);
+    handleError(oss, opts);
   }
 
   for (size_t i = 0; i < files.size(); ++i)
@@ -43,7 +43,7 @@ bool Save(const std::vector<std::string>& files,
       for (auto extension : opts.SaveFileTypes())
         oss << "  " << extension;
       oss << "." << std::endl;
-      mlpackException(oss, opts);
+      handleError(oss, opts);
     }
   }
 
@@ -54,7 +54,7 @@ bool Save(const std::vector<std::string>& files,
     std::stringstream oss;
     oss << "data::Save(): The given image dimensions do not match the "
         << "dimensions of the matrix to be saved!";
-    mlpackException(oss, opts);
+    handleError(oss, opts);
   }
 
   bool success = false;
@@ -106,7 +106,7 @@ bool Save(const std::vector<std::string>& files,
     {
       std::stringstream oss;
       oss << "Save(): error saving image to '" << files.at(i) << "'.";
-      mlpackException(oss, opts);
+      handleError(oss, opts);
     }
   }
   return success;

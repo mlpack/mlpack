@@ -23,7 +23,7 @@ namespace mlpack {
 namespace data {
 
 template<typename Derived>
-bool mlpackException(const std::stringstream& oss,
+bool handleError(const std::stringstream& oss,
     const DataOptionsBase<Derived>& opts)
 {
   bool success = true; // this should never be returned
@@ -40,7 +40,7 @@ bool mlpackException(const std::stringstream& oss,
 }
 
 template<typename Derived>
-bool mlpackException(const std::string& msg,
+bool handleError(const std::string& msg,
     const DataOptionsBase<Derived>& opts)
 {
   bool success = true; // this should never be returned

@@ -31,7 +31,7 @@ bool Load(const std::vector<std::string>& files,
   {
     std::stringstream oss;
     oss << "Load(): list of images is empty, please specify the files names.";
-    mlpackException(oss, opts); 
+    handleError(oss, opts);
   }
 
   for (size_t i = 0; i < files.size(); ++i)
@@ -44,7 +44,7 @@ bool Load(const std::vector<std::string>& files,
       auto x = opts.LoadFileTypes();
       for (auto extension : x)
         oss << " " << extension;
-      mlpackException(oss, opts);
+      handleError(oss, opts);
     }
   }
 
@@ -68,7 +68,7 @@ bool Load(const std::vector<std::string>& files,
       oss << "Load(): failed to load image '" << files.front() << "': "
           << stbi_failure_reason() << ".";
 
-      mlpackException(oss, opts);
+      handleError(oss, opts);
     }
 
     opts.Width() = tempWidth;
@@ -98,7 +98,7 @@ bool Load(const std::vector<std::string>& files,
         oss << "Load(): failed to load image '" << files.front() << "': "
                 << stbi_failure_reason();
       
-        mlpackException(oss, opts);
+        handleError(oss, opts);
       }
 
       // We need to do this check after loading every image to be sure that
@@ -110,7 +110,7 @@ bool Load(const std::vector<std::string>& files,
             << "several images, please check that all the images have the same "
             << "dimensions; if not, load each image in one column and call this"
             << " function iteratively." << std::endl;
-        mlpackException(oss, opts);
+        handleError(oss, opts);
       }
       images.col(i) = arma::Mat<unsigned char>(imageBuf, dimension, 1,
           false, true);
@@ -126,7 +126,7 @@ bool Load(const std::vector<std::string>& files,
         oss << "Load(): failed to load image '" << files.front() << "': "
                 << stbi_failure_reason();
       
-        mlpackException(oss, opts);
+        handleError(oss, opts);
       }
 
       // We need to do this check after loading every image to be sure that
@@ -138,7 +138,7 @@ bool Load(const std::vector<std::string>& files,
           << "several images, please check that all the images have the same "
           << "dimensions; if not, load each image in one column and call this "
           << "function iteratively." << std::endl;
-        mlpackException(oss, opts);
+        handleError(oss, opts);
       }
       floatImages.col(i) = arma::Mat<float>(imageBuf, dimension, 1,
           false, true);
