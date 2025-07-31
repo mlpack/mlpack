@@ -44,6 +44,9 @@ template<
 class LinearRecurrent : public RecurrentLayer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the LinearRecurrent layer.
    */

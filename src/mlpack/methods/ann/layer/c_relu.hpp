@@ -47,10 +47,13 @@ template<typename MatType = arma::mat>
 class CReLU : public Layer<MatType>
 {
  public:
-  //! Create the CReLU object.
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
+  // Create the CReLU object.
   CReLU();
 
-  //! Clone the CReLU object. This handles polymorphism correctly.
+  // Clone the CReLU object. This handles polymorphism correctly.
   CReLU* Clone() const { return new CReLU(*this); }
 
   // Virtual destructor.

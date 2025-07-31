@@ -73,9 +73,11 @@ template <
 class Convolution : public Layer<MatType>
 {
  public:
+  // Convenience typedefs for element types and reshaping data into cubes.
+  using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
 
-  //! Create the Convolution object.
+  // Create the Convolution object.
   Convolution();
 
   /**

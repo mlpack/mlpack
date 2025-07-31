@@ -35,8 +35,14 @@ template <typename MatType = arma::mat>
 class AdaptiveMeanPooling : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   //! Create the AdaptiveMeanPooling object.
   AdaptiveMeanPooling();
+
+  // Create the AdaptiveMeanPooling object.
+  AdaptiveMeanPoolingType();
 
   /**
    * Create the AdaptiveMeanPooling object.

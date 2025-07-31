@@ -40,6 +40,9 @@ template<typename MatType = arma::mat>
 class LeakyReLU : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the LeakyReLU object using the specified parameters.
    * The non zero gradient can be adjusted by specifying the parameter
@@ -49,7 +52,7 @@ class LeakyReLU : public Layer<MatType>
    */
   LeakyReLU(const typename MatType::elem_type alpha = 0.03);
 
-  //! Clone the LeakyReLU object. This handles polymorphism correctly.
+  // Clone the LeakyReLU object. This handles polymorphism correctly.
   LeakyReLU* Clone() const { return new LeakyReLU(*this); }
 
   // Virtual destructor.

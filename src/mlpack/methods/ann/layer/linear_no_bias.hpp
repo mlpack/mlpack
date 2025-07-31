@@ -36,7 +36,10 @@ template<
 class LinearNoBias : public Layer<MatType>
 {
  public:
-  //! Create the LinearNoBias object.
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
+  // Create the LinearNoBias object.
   LinearNoBias();
 
   /**

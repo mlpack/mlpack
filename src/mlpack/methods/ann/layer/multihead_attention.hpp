@@ -69,7 +69,10 @@ template <
 class MultiheadAttention : public Layer<MatType>
 {
  public:
+  // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
+
   /**
    * Default constructor.
    */

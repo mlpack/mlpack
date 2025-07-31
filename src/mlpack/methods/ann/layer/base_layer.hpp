@@ -68,6 +68,9 @@ template <
 class BaseLayer : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the BaseLayer object.
    */

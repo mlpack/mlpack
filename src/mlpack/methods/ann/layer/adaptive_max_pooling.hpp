@@ -34,8 +34,14 @@ template <typename MatType = arma::mat>
 class AdaptiveMaxPooling : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   //! Create the AdaptiveMaxPooling object.
   AdaptiveMaxPooling();
+
+  // Create the AdaptiveMaxPooling object.
+  AdaptiveMaxPoolingType();
 
   /**
    * Create the AdaptiveMaxPooling object.

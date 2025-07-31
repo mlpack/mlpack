@@ -29,8 +29,11 @@ template <typename MatType = arma::mat>
 class MeanPooling : public Layer<MatType>
 {
  public:
+  // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
-  //! Create the MeanPooling object.
+
+  // Create the MeanPooling object.
   MeanPooling();
 
   /**

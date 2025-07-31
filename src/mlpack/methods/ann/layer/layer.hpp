@@ -53,35 +53,38 @@ template<typename MatType = arma::mat>
 class Layer
 {
  public:
-  //! Default constructor.
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
+  // Default constructor.
   Layer() :
       validOutputDimensions(false),
       training(false)
   { /* Nothing to do here */ }
 
-  //! Default deconstructor.
-  virtual ~Layer() { /* Nothing to do here */ }
+  // Default deconstructor.
+  virtual ~Layer() { /* Nothing to do here. */ }
 
-  //! Copy constructor.  This is not responsible for copying weights!
+  // Copy constructor.  This is not responsible for copying weights!
   Layer(const Layer& layer) :
       inputDimensions(layer.inputDimensions),
       outputDimensions(layer.outputDimensions),
       validOutputDimensions(layer.validOutputDimensions),
       training(layer.training)
-  { /* Nothing to do here */ }
+  { /* Nothing to do here. */ }
 
-  //! Make a copy of the object.
+  // Make a copy of the object.
   virtual Layer* Clone() const = 0;
 
-  //! Move constructor.  This is not responsible for moving weights!
+  // Move constructor.  This is not responsible for moving weights!
   Layer(Layer&& layer) :
       inputDimensions(std::move(layer.inputDimensions)),
       outputDimensions(std::move(layer.outputDimensions)),
       validOutputDimensions(std::move(layer.validOutputDimensions)),
       training(std::move(layer.training))
-  { /* Nothing to do here */ }
+  { /* Nothing to do here. */ }
 
-  //! Copy assignment operator.  This is not responsible for copying weights!
+  // Copy assignment operator.  This is not responsible for copying weights!
   Layer& operator=(const Layer& layer)
   {
     if (&layer != this)
@@ -95,7 +98,7 @@ class Layer
     return *this;
   }
 
-  //! Move assignment operator.  This is not responsible for moving weights!
+  // Move assignment operator.  This is not responsible for moving weights!
   Layer& operator=(Layer&& layer)
   {
     if (&layer != this)
@@ -120,7 +123,7 @@ class Layer
    */
   virtual void Forward(const MatType& /* input */,
                        MatType& /* output */)
-  { /* Nothing to do here */ }
+  { /* Nothing to do here. */ }
 
   /**
    * Takes an input and output object, and computes the corresponding loss of
@@ -133,7 +136,7 @@ class Layer
    */
   virtual void Forward(const MatType& /* input */,
                        const MatType& /* output */)
-  { /* Nothing to do here */ }
+  { /* Nothing to do here. */ }
 
   /**
    * Performs a backpropagation step through the layer, with respect to the
@@ -161,7 +164,7 @@ class Layer
                         const MatType& /* output */,
                         const MatType& /* gy */,
                         MatType& /* g */)
-  { /* Nothing to do here */ }
+  { /* Nothing to do here. */ }
 
   /**
    * Computing the gradient of the layer with respect to its own input. This is
@@ -178,7 +181,7 @@ class Layer
   virtual void Gradient(const MatType& /* input */,
                         const MatType& /* error */,
                         MatType& /* gradient */)
-  { /* Nothing to do here */ }
+  { /* Nothing to do here. */ }
 
   /**
    * Reset the layer parameter. The method is called to assigned the allocated
@@ -219,20 +222,20 @@ class Layer
    */
   virtual bool& Training() { return training; }
 
-  //! Get the layer loss.  Overload this if the layer should add any extra loss
-  //! to the loss function when computing the objective.  (TODO: better comment)
+  // Get the layer loss.  Overload this if the layer should add any extra loss
+  // to the loss function when computing the objective.  (TODO: better comment)
   virtual double Loss() const { return 0; }
 
-  //! Get the input dimensions.
+  // Get the input dimensions.
   const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
-  //! Modify the input dimensions.
+  // Modify the input dimensions.
   std::vector<size_t>& InputDimensions()
   {
     validOutputDimensions = false;
     return inputDimensions;
   }
 
-  //! Get the output dimensions.
+  // Get the output dimensions.
   const std::vector<size_t>& OutputDimensions()
   {
     if (!validOutputDimensions)
@@ -244,13 +247,13 @@ class Layer
     return outputDimensions;
   }
 
-  //! Get the parameters.
+  // Get the parameters.
   virtual const MatType& Parameters() const
   {
     throw std::invalid_argument("Layer::Parameters(): cannot access parameters "
         "of a layer with no weights!");
   }
-  //! Set the parameters.
+  // Set the parameters.
   virtual MatType& Parameters()
   {
     throw std::invalid_argument("Layer::Parameters(): cannot modify parameters "
@@ -272,9 +275,9 @@ class Layer
       const size_t /* elements */)
   { /* Nothing to do here */ }
 
-  //! Compute the output dimensions.  This should be overloaded if the layer is
-  //! meant to work on higher-dimensional objects.  When this is called, it is a
-  //! safe assumption that InputDimensions() is correct.
+  // Compute the output dimensions.  This should be overloaded if the layer is
+  // meant to work on higher-dimensional objects.  When this is called, it is a
+  // safe assumption that InputDimensions() is correct.
   virtual void ComputeOutputDimensions()
   {
     // The default implementation is to assume that the output size is the same
@@ -282,8 +285,8 @@ class Layer
     outputDimensions = inputDimensions;
   }
 
-  //! Get the number of elements in the output from this layer.  This cannot be
-  //! overloaded!  Overload `ComputeOutputDimensions()` instead.
+  // Get the number of elements in the output from this layer.  This cannot be
+  // overloaded!  Overload `ComputeOutputDimensions()` instead.
   virtual size_t OutputSize() final
   {
     if (!validOutputDimensions)
@@ -298,7 +301,7 @@ class Layer
     return outputSize;
   }
 
-  //! Serialize the layer.
+  // Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
@@ -329,11 +332,11 @@ class Layer
    */
   std::vector<size_t> outputDimensions;
 
-  //! This is `true` if `ComputeOutputDimensions()` has been called, and
-  //! `outputDimensions` can be considered to be up-to-date.
+  // This is `true` if `ComputeOutputDimensions()` has been called, and
+  // `outputDimensions` can be considered to be up-to-date.
   bool validOutputDimensions;
 
-  //! If true, the layer is in training mode; otherwise, it is in testing mode.
+  // If true, the layer is in training mode; otherwise, it is in testing mode.
   bool training;
 };
 
