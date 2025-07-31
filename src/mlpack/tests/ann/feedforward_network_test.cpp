@@ -234,11 +234,11 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
 
   // Create concatenate layer.
   arma::mat concatMatrix = arma::ones(5, 1);
-  Concatenate* concatLayer = new Concatenate();
-  concatLayer->Concat() = concatMatrix;
+  Concatenate concatLayer;
+  concatLayer.Concat() = concatMatrix;
 
   // Add concatenate layer to the current network.
-  model1->Add(concatLayer);
+  model1->Add(std::move(concatLayer));
   model1->Add<Linear>(5);
   model1->Add<LogSoftMax>();
 
@@ -251,11 +251,11 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
   model2->Add<Linear>(5);
 
   // Create new concat layer.
-  Concatenate* concatLayer2 = new Concatenate();
-  concatLayer2->Concat() = concatMatrix;
+  Concatenate concatLayer2;
+  concatLayer2.Concat() = concatMatrix;
 
   // Add concatenate layer to the current network.
-  model2->Add(concatLayer2);
+  model2->Add(std::move(concatLayer2));
   model2->Add<Linear>(5);
   model2->Add<LogSoftMax>();
 
@@ -731,11 +731,11 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
   model.Add<Linear>(10);
 
   // Add a new Add<> module which adds a (learnable) constant term to the input.
-  Add* addModule = new Add();
-  model.Add(addModule);
+  Add addModule;
+  model.Add(std::move(addModule));
 
-  LinearNoBias* linearNoBiasModule = new LinearNoBias(10);
-  model.Add(linearNoBiasModule);
+  LinearNoBias linearNoBiasModule(10);
+  model.Add(std::move(linearNoBiasModule));
 
   model.Add<Linear>(10);
 
@@ -743,9 +743,9 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
   model.Reset(10);
 
   // Set the parameters of the Add<> module to a matrix of ones.
-  addModule->Parameters() = arma::ones(10, 1);
+  model.Network()[0]->Parameters() = arma::ones(10, 1);
   // Set the parameters of the LinearNoBias<> module to a matrix of ones.
-  linearNoBiasModule->Parameters() = arma::ones(10, 10);
+  model.Network()[1]->Parameters() = arma::ones(10, 10);
 
   arma::mat input = arma::ones(10, 1);
   arma::mat output;
@@ -817,10 +817,10 @@ TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
 {
   // Create dummy network.
   FFN<NegativeLogLikelihood> model;
-  Linear* linearA = new Linear(3);
-  model.Add(linearA);
-  Linear* linearB = new Linear(4);
-  model.Add(linearB);
+  Linear linearA(3);
+  model.Add(std::move(linearA));
+  Linear linearB(4);
+  model.Add(std::move(linearB));
 
   // Initialize network parameters, with a new input size of 3.
   model.Reset(3);
@@ -829,7 +829,7 @@ TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
   model.Parameters().ones();
 
   // Zero the second layer parameter.
-  linearB->Parameters().zeros();
+  model.Network()[1]->Parameters().zeros();
 
   // Get the layer parameter from layer A and layer B and store them in
   // parameterA and parameterB.
@@ -839,8 +839,8 @@ TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
   CheckMatrices(parameterA, arma::ones(3 * 3 + 3, 1));
   CheckMatrices(parameterB, arma::zeros(3 * 4 + 4, 1));
 
-  CheckMatrices(linearA->Parameters(), arma::ones(3 * 3 + 3, 1));
-  CheckMatrices(linearB->Parameters(), arma::zeros(3 * 4 + 4, 1));
+  CheckMatrices(model.Network()[0]->Parameters(), arma::ones(3 * 3 + 3, 1));
+  CheckMatrices(model.Network()[1]->Parameters(), arma::zeros(3 * 4 + 4, 1));
 }
 
 /**

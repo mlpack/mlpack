@@ -18,28 +18,28 @@
 namespace mlpack {
 
 template<typename MatType>
-SoftminType<MatType>::SoftminType()
+Softmin<MatType>::Softmin()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-SoftminType<MatType>::SoftminType(const SoftminType& other) :
+Softmin<MatType>::Softmin(const Softmin& other) :
     Layer<MatType>(other)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-SoftminType<MatType>::SoftminType(SoftminType&& other) :
+Softmin<MatType>::Softmin(Softmin&& other) :
     Layer<MatType>(std::move(other))
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-SoftminType<MatType>&
-SoftminType<MatType>::operator=(const SoftminType& other)
+Softmin<MatType>&
+Softmin<MatType>::operator=(const Softmin& other)
 {
   if (this != &other)
     Layer<MatType>::operator=(other);
@@ -48,8 +48,8 @@ SoftminType<MatType>::operator=(const SoftminType& other)
 }
 
 template<typename MatType>
-SoftminType<MatType>&
-SoftminType<MatType>::operator=(SoftminType&& other)
+Softmin<MatType>&
+Softmin<MatType>::operator=(Softmin&& other)
 {
   if (this != &other)
     Layer<MatType>::operator=(std::move(other));
@@ -58,7 +58,7 @@ SoftminType<MatType>::operator=(SoftminType&& other)
 }
 
 template<typename MatType>
-void SoftminType<MatType>::Forward(
+void Softmin<MatType>::Forward(
     const MatType& input,
     MatType& output)
 {
@@ -68,7 +68,7 @@ void SoftminType<MatType>::Forward(
 }
 
 template<typename MatType>
-void SoftminType<MatType>::Backward(
+void Softmin<MatType>::Backward(
     const MatType& /* input */,
     const MatType& output,
     const MatType& gy,
@@ -79,7 +79,7 @@ void SoftminType<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void SoftminType<MatType>::serialize(
+void Softmin<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

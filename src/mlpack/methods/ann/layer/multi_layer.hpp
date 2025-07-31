@@ -164,9 +164,24 @@ class MultiLayer : public Layer<MatType>
    * @param args The layer parameter.
    */
   template <typename LayerType, typename... Args>
-  void Add(Args... args)
+  void Add(Args&&... args)
   {
-    network.push_back(new LayerType(args...));
+    network.push_back(new LayerType(std::forward<Args>(args)...));
+    layerOutputs.push_back(MatType());
+    layerDeltas.push_back(MatType());
+    layerGradients.push_back(MatType());
+  }
+
+  /**
+   * Add a new module to the model, using the MatType of this layer.
+   *
+   * @param args The layer parameter.
+   */
+  template<template<typename LayerMatType> typename LayerType,
+           typename... Args>
+  void Add(Args&&... args)
+  {
+    network.push_back(new LayerType<MatType>(std::forward<Args>(args)...));
     layerOutputs.push_back(MatType());
     layerDeltas.push_back(MatType());
     layerGradients.push_back(MatType());
@@ -177,9 +192,24 @@ class MultiLayer : public Layer<MatType>
    *
    * @param layer The Layer to be added to the model.
    */
+  [[deprecated("Will be removed in mlpack 5.0.0.  Pass a reference instead.")]]
   void Add(Layer<MatType>* layer)
   {
     network.push_back(layer);
+    layerOutputs.push_back(MatType());
+    layerDeltas.push_back(MatType());
+    layerGradients.push_back(MatType());
+  }
+
+  template<typename LayerType>
+  void Add(LayerType&& layer,
+           typename std::enable_if_t<
+               !std::is_pointer_v<std::remove_reference_t<LayerType>>>* = 0)
+  {
+    using NewLayerType =
+        typename std::remove_cv_t<std::remove_reference_t<LayerType>>;
+
+    network.push_back(new NewLayerType(std::forward<LayerType>(layer)));
     layerOutputs.push_back(MatType());
     layerDeltas.push_back(MatType());
     layerGradients.push_back(MatType());

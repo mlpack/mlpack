@@ -104,7 +104,7 @@ namespace mlpack {
  *     type to differ from the input type (Default: arma::mat).
  */
 template <typename MatType = arma::mat>
-class ELUType : public Layer<MatType>
+class ELU : public Layer<MatType>
 {
  public:
   /**
@@ -112,7 +112,7 @@ class ELUType : public Layer<MatType>
    *
    * NOTE: Use this constructor for SELU activation function.
    */
-  ELUType();
+  ELU();
 
   /**
    * Create the ELU object using the specified parameter. The non zero
@@ -122,25 +122,25 @@ class ELUType : public Layer<MatType>
    * @note Use this constructor for ELU activation function.
    * @param alpha Scale parameter for the negative factor.
    */
-  ELUType(const double alpha);
+  ELU(const double alpha);
 
-  //! Clone the ELUType object. This handles polymorphism correctly.
-  ELUType* Clone() const { return new ELUType(*this); }
+  //! Clone the ELU object. This handles polymorphism correctly.
+  ELU* Clone() const { return new ELU(*this); }
 
   // Virtual destructor.
-  virtual ~ELUType() { }
+  virtual ~ELU() { }
 
   // Copy constructor.
-  ELUType(const ELUType& other);
+  ELU(const ELU& other);
 
   // Move Constructor.
-  ELUType(ELUType&& other);
+  ELU(ELU&& other);
 
   // Copy assignment operator.
-  ELUType& operator=(const ELUType& other);
+  ELU& operator=(const ELU& other);
 
   // Move assignement operator.
-  ELUType& operator=(ELUType&& other);
+  ELU& operator=(ELU&& other);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -193,15 +193,13 @@ class ELUType : public Layer<MatType>
   //! For SELU activation function, lambda = 1.0507009873554802 for normalized
   //! inputs.
   double lambda;
-}; // class ELUType
+}; // class ELU
 
 // Convenience typedefs.
 
-// ELU layer.
-using ELU = ELUType<arma::mat>;
-
-// SELU layer.
-using SELU = ELUType<arma::mat>;
+// SELU layer (implemented as a class for template deduction).
+template<typename MatType = arma::mat>
+class SELU : public ELU<MatType> { };
 
 } // namespace mlpack
 

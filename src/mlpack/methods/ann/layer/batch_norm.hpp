@@ -50,7 +50,7 @@ namespace mlpack {
  *         computation.
  */
 template <typename MatType = arma::mat>
-class BatchNormType : public Layer<MatType>
+class BatchNorm : public Layer<MatType>
 {
  public:
   using CubeType = typename GetCubeType<MatType>::type;
@@ -72,7 +72,7 @@ class BatchNormType : public Layer<MatType>
    * three dimensions rows, columns and slices), and `minAxis` & `maxAxis` is
    * 2, then we apply the same normalization across different slices.
    */
-  BatchNormType();
+  BatchNorm();
 
   /**
    * Create the BatchNorm layer object for a specified axis of input units as
@@ -93,30 +93,30 @@ class BatchNormType : public Layer<MatType>
    *                updating the parameters or momentum is used.
    * @param momentum Parameter used to to update the running mean and variance.
    */
-  BatchNormType(const size_t minAxis,
+  BatchNorm(const size_t minAxis,
                 const size_t maxAxis,
                 const double eps = 1e-8,
                 const bool average = true,
                 const double momentum = 0.1);
 
-  virtual ~BatchNormType() { }
+  virtual ~BatchNorm() { }
 
-  //! Clone the BatchNormType object. This handles polymorphism correctly.
-  BatchNormType* Clone() const { return new BatchNormType(*this); }
+  //! Clone the BatchNorm object. This handles polymorphism correctly.
+  BatchNorm* Clone() const { return new BatchNorm(*this); }
 
   //! Copy the other BatchNorm layer (but not weights).
-  BatchNormType(const BatchNormType& layer);
+  BatchNorm(const BatchNorm& layer);
 
   //! Take ownership of the members of the other BatchNorm layer (but not
   //! weights).
-  BatchNormType(BatchNormType&& layer);
+  BatchNorm(BatchNorm&& layer);
 
   //! Copy the other BatchNorm layer (but not weights).
-  BatchNormType& operator=(const BatchNormType& layer);
+  BatchNorm& operator=(const BatchNorm& layer);
 
   //! Take ownership of the members of the other BatchNorm layer (but not
   //! weights).
-  BatchNormType& operator=(BatchNormType&& layer);
+  BatchNorm& operator=(BatchNorm&& layer);
 
   /**
    * Reset the layer parameters.
@@ -272,11 +272,6 @@ class BatchNormType : public Layer<MatType>
   //! Locally-stored zero mean input.
   CubeType inputMean;
 }; // class BatchNorm
-
-// Convenience typedefs.
-
-// Standard Adaptive max pooling layer.
-using BatchNorm = BatchNormType<arma::mat>;
 
 } // namespace mlpack
 
