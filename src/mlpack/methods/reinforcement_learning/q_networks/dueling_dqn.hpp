@@ -56,17 +56,15 @@ class DuelingDQN
   //! Default constructor.
   DuelingDQN() : isNoisy(false)
   {
-    // TODO: this really ought to use a DAG network, but that's not implemented
-    // yet.
-    featureNetwork = new MultiLayer<arma::mat>();
-    valueNetwork = new MultiLayer<arma::mat>();
-    advantageNetwork = new MultiLayer<arma::mat>();
-    concat = new Concat();
+    MultiLayer<arma::mat> featureNetwork;
+    MultiLayer<arma::mat> valueNetwork;
+    MultiLayer<arma::mat> advantageNetwork;
+    Concat concat;
 
-    concat->Add(valueNetwork);
-    concat->Add(advantageNetwork);
+    concat.Add(std::move(valueNetwork));
+    concat.Add(std::move(advantageNetwork));
     completeNetwork.Add(featureNetwork);
-    completeNetwork.Add(concat);
+    completeNetwork.Add(std::move(concat));
   }
 
   /**
@@ -88,43 +86,52 @@ class DuelingDQN
       completeNetwork(outputLayer, init),
       isNoisy(isNoisy)
   {
-    featureNetwork = new MultiLayer<arma::mat>();
-    featureNetwork->Add(new Linear(h1));
-    featureNetwork->Add(new ReLU());
+    // TODO: this really ought to use a DAG network, but that's not implemented
+    // yet.
+    MultiLayer<arma::mat> featureNetwork;
+    featureNetwork.template Add<Linear>(h1);
+    featureNetwork.template Add<ReLU<>>();
 
-    valueNetwork = new MultiLayer<arma::mat>();
-    advantageNetwork = new MultiLayer<arma::mat>();
+    MultiLayer<arma::mat> valueNetwork;
+    MultiLayer<arma::mat> advantageNetwork;
 
     if (isNoisy)
     {
-      noisyLayerIndex.push_back(valueNetwork->Network().size());
-      valueNetwork->Add(new NoisyLinear(h2));
-      advantageNetwork->Add(new NoisyLinear(h2));
+      valueNetwork.Add<NoisyLinear>(h2);
+      noisyLayers.push_back(dynamic_cast<NoisyLinear<>*>(
+          valueNetwork.Network().back()));
 
-      valueNetwork->Add(new ReLU());
-      advantageNetwork->Add(new ReLU());
+      advantageNetwork.Add<NoisyLinear>(h2);
+      noisyLayers.push_back(dynamic_cast<NoisyLinear<>*>(
+          advantageNetwork.Network().back()));
 
-      noisyLayerIndex.push_back(valueNetwork->Network().size());
-      valueNetwork->Add(new NoisyLinear(1));
-      advantageNetwork->Add(new NoisyLinear(outputDim));
+      valueNetwork.template Add<ReLU>();
+      advantageNetwork.template Add<ReLU>();
+
+      valueNetwork.template Add<NoisyLinear>(1);
+      noisyLayers.push_back(dynamic_cast<NoisyLinear<>*>(
+          valueNetwork.Network().back()));
+      advantageNetwork.template Add<NoisyLinear>(outputDim);
+      noisyLayers.push_back(dynamic_cast<NoisyLinear<>*>(
+          advantageNetwork.Network().back()));
     }
     else
     {
-      valueNetwork->Add(new Linear(h2));
-      valueNetwork->Add(new ReLU());
-      valueNetwork->Add(new Linear(1));
+      valueNetwork.template Add<Linear>(h2);
+      valueNetwork.template Add<ReLU>();
+      valueNetwork.template Add<Linear>(1);
 
-      advantageNetwork->Add(new Linear(h2));
-      advantageNetwork->Add(new ReLU());
-      advantageNetwork->Add(new Linear(outputDim));
+      advantageNetwork.template Add<Linear>(h2);
+      advantageNetwork.template Add<ReLU>();
+      advantageNetwork.template Add<Linear>(outputDim);
     }
 
-    concat = new Concat();
-    concat->Add(valueNetwork);
-    concat->Add(advantageNetwork);
+    Concat concat;
+    concat.Add(std::move(valueNetwork));
+    concat.Add(std::move(advantageNetwork));
 
-    completeNetwork.Add(featureNetwork);
-    completeNetwork.Add(concat);
+    completeNetwork.template Add(std::move(featureNetwork));
+    completeNetwork.template Add(std::move(concat));
   }
 
   /**
@@ -135,35 +142,35 @@ class DuelingDQN
    * @param valueNetwork The value network to be used by DuelingDQN class.
    * @param isNoisy Specifies whether the network needs to be of type noisy.
    */
-  DuelingDQN(FeatureNetworkType& featureNetwork,
-             AdvantageNetworkType& advantageNetwork,
-             ValueNetworkType& valueNetwork,
+  DuelingDQN(FeatureNetworkType&& featureNetwork,
+             AdvantageNetworkType&& advantageNetwork,
+             ValueNetworkType&& valueNetwork,
              const bool isNoisy = false):
-      featureNetwork(featureNetwork),
-      advantageNetwork(advantageNetwork),
-      valueNetwork(valueNetwork),
       isNoisy(isNoisy)
   {
-    concat = new Concat();
-    concat->Add(valueNetwork);
-    concat->Add(advantageNetwork);
-    completeNetwork.Add(featureNetwork);
-    completeNetwork.Add(concat);
+    Concat concat;
+    concat.Add(std::move(valueNetwork));
+    concat.Add(std::move(advantageNetwork));
+    completeNetwork.Add(std::move(featureNetwork));
+    completeNetwork.Add(std::move(concat));
   }
 
-  //! Copy constructor.
-  DuelingDQN(const DuelingDQN& /* model */) : isNoisy(false)
-  { /* Nothing to do here. */ }
+  // Copy constructor.
+  //DuelingDQN(const DuelingDQN& model) : isNoisy(false)
+//  {
+//    // Use copy operator.
+//    *this = model;
+//  }
 
-  //! Copy assignment operator.
-  void operator = (const DuelingDQN& model)
-  {
-    *valueNetwork = *model.valueNetwork;
-    *advantageNetwork = *model.advantageNetwork;
-    *featureNetwork = *model.featureNetwork;
-    isNoisy = model.isNoisy;
-    noisyLayerIndex = model.noisyLayerIndex;
-  }
+  // Copy assignment operator.
+//  void operator=(const DuelingDQN& model)
+//  {
+//    completeNetwork = model.completeNetwork;
+
+//    isNoisy = model.isNoisy;
+//  }
+
+  DuelingDQN(const DuelingDQN& model) = delete;
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -234,12 +241,9 @@ class DuelingDQN
    */
   void ResetNoise()
   {
-    for (size_t i = 0; i < noisyLayerIndex.size(); i++)
+    for (size_t i = 0; i < noisyLayers.size(); i++)
     {
-      dynamic_cast<NoisyLinear*>(
-          (valueNetwork->Network()[noisyLayerIndex[i]]))->ResetNoise();
-      dynamic_cast<NoisyLinear*>(
-          (advantageNetwork->Network()[noisyLayerIndex[i]]))->ResetNoise();
+      noisyLayers[i]->ResetNoise();
     }
   }
 
@@ -252,23 +256,11 @@ class DuelingDQN
   //! Locally-stored complete network.
   CompleteNetworkType completeNetwork;
 
-  //! Locally-stored concat network.
-  Concat* concat;
-
-  //! Locally-stored feature network.
-  FeatureNetworkType* featureNetwork;
-
-  //! Locally-stored advantage network.
-  AdvantageNetworkType* advantageNetwork;
-
-  //! Locally-stored value network.
-  ValueNetworkType* valueNetwork;
+  // Pointers to noisy layers.
+  std::vector<NoisyLinear<>*> noisyLayers;
 
   //! Locally-stored check for noisy network.
   bool isNoisy;
-
-  //! Locally-stored indexes of noisy layers in the network.
-  std::vector<size_t> noisyLayerIndex;
 
   //! Locally-stored actionValues of the network.
   arma::mat actionValues;
