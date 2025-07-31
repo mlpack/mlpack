@@ -53,7 +53,7 @@ class Linear : public Layer<MatType>
    *     regularizer).
    */
   Linear(const size_t outSize,
-             RegularizerType regularizer = RegularizerType());
+         RegularizerType regularizer = RegularizerType());
 
   virtual ~Linear() { }
 

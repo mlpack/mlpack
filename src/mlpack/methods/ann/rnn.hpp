@@ -90,7 +90,7 @@ class RNN
    *
    * @param args The parameters to pass to the constructor of the layer.
    */
-  template<template<typename LayerMatType> typename LayerType,
+  template<template<typename...> typename LayerType,
            typename... Args>
   void Add(Args&&... args)
   {

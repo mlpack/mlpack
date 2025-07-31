@@ -97,7 +97,7 @@ class FFN
    *
    * @param args The layer parameter.
    */
-  template<template<typename LayerMatType> typename LayerType,
+  template<template<typename...> typename LayerType,
            typename... Args>
   void Add(Args... args)
   {
