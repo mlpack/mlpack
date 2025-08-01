@@ -743,9 +743,9 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
   model.Reset(10);
 
   // Set the parameters of the Add<> module to a matrix of ones.
-  model.Network()[0]->Parameters() = arma::ones(10, 1);
+  model.Network()[1]->Parameters() = arma::ones(10, 1);
   // Set the parameters of the LinearNoBias<> module to a matrix of ones.
-  model.Network()[1]->Parameters() = arma::ones(10, 10);
+  model.Network()[2]->Parameters() = arma::ones(10, 10);
 
   arma::mat input = arma::ones(10, 1);
   arma::mat output;
