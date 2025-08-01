@@ -346,9 +346,9 @@ class TransposedConvolutionType : public Layer<MatType>
     const size_t expandedCols = strideHeight *
         (this->inputDimensions[1] - 1) + 1;
     const size_t outputSize = expandedRows * expandedCols * inMaps
-        * higherInDimensions * batchSize;
+        * higherInDimensions;
     if (output.size() != outputSize) {
-      output = zeros(outputSize, 1);
+      output = zeros(outputSize, batchSize);
     }
 
     CubeType reshapedInput, reshapedOutput;
