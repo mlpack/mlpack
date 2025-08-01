@@ -459,6 +459,55 @@ struct IsDataOptions<DataOptions>
   constexpr static bool value = true;
 };
 
+template<typename Derived>
+bool handleError(const std::stringstream& oss,
+    const DataOptionsBase<Derived>& opts)
+{
+  bool success = true; // this should never be returned as true.
+  if (opts.Fatal())
+  {
+    Log::Fatal << oss.str() << std::endl;
+  }
+  else
+  {
+    Log::Warn << oss.str() << std::endl;
+    success = false;
+  }
+  return success;
+}
+
+template<typename Derived>
+bool handleError(const std::string& msg,
+    const DataOptionsBase<Derived>& opts)
+{
+  std::stringstream oss;
+  oss << msg;
+  handleError(oss, opts);
+}
+
+// Required for backward compatibility.
+bool handleError(const std::stringstream& oss, bool fatal)
+{
+  bool success = true; // this should never be returned as true.
+  if (fatal)
+  {
+    Log::Fatal << oss.str() << std::endl;
+  }
+  else
+  {
+    Log::Warn << oss.str() << std::endl;
+    success = false;
+  }
+  return success;
+}
+
+bool handleError(const std::string& msg, bool fatal)
+{
+  std::stringstream oss;
+  oss << msg;
+  handleError(oss, fatal);
+}
+
 } // namespace data
 } // namespace mlpack
 

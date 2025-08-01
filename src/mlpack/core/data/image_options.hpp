@@ -22,40 +22,6 @@
 namespace mlpack {
 namespace data {
 
-template<typename Derived>
-bool handleError(const std::stringstream& oss,
-    const DataOptionsBase<Derived>& opts)
-{
-  bool success = true; // this should never be returned
-  if (opts.Fatal())
-  {
-    Log::Fatal << oss.str() << std::endl;
-  }
-  else
-  {
-    Log::Warn << oss.str() << std::endl;
-    success = false;
-  }
-  return success;
-}
-
-template<typename Derived>
-bool handleError(const std::string& msg,
-    const DataOptionsBase<Derived>& opts)
-{
-  bool success = true; // this should never be returned
-  if (opts.Fatal())
-  {
-    Log::Fatal << msg << std::endl;
-  }
-  else
-  {
-    Log::Warn << msg << std::endl;
-    success = false;
-  }
-  return success;
-}
-
 /**
  * Implements meta-data of images required by data::Load and
  * data::Save for loading and saving images into arma::Mat.

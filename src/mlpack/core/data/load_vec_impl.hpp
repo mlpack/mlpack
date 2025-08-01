@@ -41,22 +41,11 @@ bool LoadCol(const std::string& filename,
   {
     if (tmp.n_rows > 1)
     {
-      // Problem: invalid size!
-      if (opts.Fatal())
-      {
-        Log::Fatal << "Matrix in file '" << filename << "' is not a vector, but"
-            << " instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!"
-            << std::endl;
-      }
-      else
-      {
-        Log::Warn << "Matrix in file '" << filename << "' is not a vector, but "
-            << "instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!"
-            << std::endl;
-      }
-
+      std::stringstream oss;
+      oss << "Matrix in file '" << filename << "' is not a vector, but"
+            << " instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!";
       vec.clear();
-      return false;
+      return handleError(oss, opts);
     }
     else
     {
@@ -105,22 +94,11 @@ bool LoadRow(const std::string& filename,
   {
     if (tmp.n_cols > 1)
     {
-      // Problem: invalid size!
-      if (opts.Fatal())
-      {
-        Log::Fatal << "Matrix in file '" << filename << "' is not a vector, but"
-            << " instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!"
-            << std::endl;
-      }
-      else
-      {
-        Log::Warn << "Matrix in file '" << filename << "' is not a vector, but "
-            << "instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!"
-            << std::endl;
-      }
-
+      std::stringstream oss;
+      oss << "Matrix in file '" << filename << "' is not a vector, but"
+          << " instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!";
       rowvec.clear();
-      return false;
+      return handleError(oss, opts);
     }
     else
     {

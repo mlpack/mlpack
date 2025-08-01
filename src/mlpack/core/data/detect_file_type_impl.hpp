@@ -44,23 +44,19 @@ bool OpenFile(const std::string& filename,
 
   if (!stream.is_open())
   {
-    if (opts.Fatal() && isLoading)
-      Log::Fatal << "Cannot open file '" << filename << "' for loading.  "
-          << "Please check if the file exists." << std::endl;
-
-    else if (!opts.Fatal() && isLoading)
-      Log::Warn << "Cannot open file '" << filename << "' for loading.  "
-          << "Please check if the file exists." << std::endl;
-
-    else if (opts.Fatal() && !isLoading)
-      Log::Fatal << "Cannot open file '" << filename << "' for saving.  "
-          << "Please check if you have permissions for writing." << std::endl;
-
-    else if (!opts.Fatal() && !isLoading)
-      Log::Warn << "Cannot open file '" << filename << "' for saving.  "
-          << "Please check if you have permissions for writing." << std::endl;
-
-    return false;
+    std::stringstream oss;
+    if (isLoading)
+    {
+      oss << "Cannot open file '" << filename << "' for loading.  "
+          << "Please check if the file exists.";
+      return handleError(oss, opts);
+    }
+    else if (!isLoading)
+    {
+      oss << "Cannot open file '" << filename << "' for saving.  "
+          << "Please check if you have permissions for writing.";
+      return handleError(oss, opts);
+    }
   }
   return true;
 }
@@ -375,17 +371,10 @@ bool DetectFileType(const std::string& filename,
       DetectFromSerializedExtension<ObjectType>(filename, opts);
       if (opts.Format() == FileType::FileTypeUnknown)
       {
-        if (opts.Fatal())
-          Log::Fatal << "Unable to detect type of '" << filename
-              << "'; incorrect extension? (allowed: xml/bin/json)"
-              << std::endl;
-        else
-        {
-          Log::Warn << "Unable to detect type of '" << filename
-              << "' ; incorrect extension? (allowed: xml/bin/json)"
-              << std::endl;
-          return false;
-        }
+        std::stringstream oss;
+        oss << "Unable to detect type of '" << filename
+            << "'; incorrect extension? (allowed: xml/bin/json)";
+        return handleError(oss, opts);
       }
     }
   }
@@ -405,15 +394,10 @@ bool DetectFileType(const std::string& filename,
       // Provide error if we don't know the type.
       if (opts.Format() == FileType::FileTypeUnknown)
       {
-        if (opts.Fatal())
-          Log::Fatal << "Unable to detect type of '" << filename << "'; "
-              << "incorrect extension?" << std::endl;
-        else
-        {
-          Log::Warn << "Unable to detect type of '" << filename << "'; "
-              << "incorrect extension?" << std::endl;
-          return false;
-        }
+        std::stringstream oss;
+        oss <<  "Unable to detect type of '" << filename << "'; "
+            << "incorrect extension?";
+        return handleError(oss, opts);
       }
     }
   }
