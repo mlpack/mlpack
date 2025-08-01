@@ -143,14 +143,8 @@ bool LoadMatrix(const std::string& filename,
   }
   else
   {
-    if (txtOpts.Fatal())
-      Log::Fatal << "data::Load(): unknown matrix-like type given!"
-          << std::endl;
-    else
-      Log::Warn << "data::Load(): unknown matrix-like type given!"
-          << std::endl;
-
-    return false;
+    return handleError("data::Load(): unknown matrix-like type given!",
+        txtOpts);
   }
   return success;
 }
@@ -193,24 +187,16 @@ bool Load(const std::string& filename,
   }
   else
   {
-    if (opts.Fatal())
-      Log::Fatal << "DataOptionsType is unknown!  Please use a known type "
-          << "or provide specific overloads." << std::endl;
-    else
-      Log::Warn << "DataOptionsType is unknown!  Please use a known type "
-          << "or provide specific overloads." << std::endl;
-    return false;
+    return handleError("DataOptionsType is unknown!  Please use a known type "
+        "or provide specific overloads." ,opts);
   }
 
   if (!success)
   {
     Timer::Stop("loading_data");
-    if (opts.Fatal())
-      Log::Fatal << "Loading from '" << filename << "' failed." << std::endl;
-    else
-      Log::Warn << "Loading from '" << filename << "' failed." << std::endl;
-
-    return false;
+    std::stringstream oss;
+    oss << "Loading from '" << filename << "' failed.";
+    return handleError(oss, opts);
   }
   else
   {
@@ -294,16 +280,11 @@ bool LoadSparse(const std::string& filename,
       (opts.Format() == FileType::ArmaASCII) ||
       (opts.Format() == FileType::RawBinary))
   {
-    if (opts.Fatal())
-      Log::Fatal << "Cannot load '" << filename << "' with type "
-          << opts.FileTypeToString() << " into a sparse matrix; format is "
-          << "only supported for dense matrices." << std::endl;
-    else
-      Log::Warn << "Cannot load '" << filename << "' with type "
-          << opts.FileTypeToString() << " into a sparse matrix; format is "
-          << "only supported for dense matrices; load failed." << std::endl;
-
-    return false;
+    std::stringstream oss;
+    oss << "Cannot load '" << filename << "' with type "
+        << opts.FileTypeToString() << " into a sparse matrix; format is "
+        << "only supported for dense matrices.";
+    return handleError(oss, opts);
   }
   else if (opts.Format() == FileType::CSVASCII)
   {
@@ -381,14 +362,10 @@ bool LoadCategorical(const std::string& filename,
   {
     // The type is unknown.
     Timer::Stop("loading_data");
-    if (opts.Fatal())
-      Log::Fatal << "Unable to detect type of '" << filename << "'; "
-          << "Incorrect extension?" << std::endl;
-    else
-      Log::Warn << "Unable to detect type of '" << filename << "'; load failed."
-          << " Incorrect extension?" << std::endl;
-
-    return false;
+    std::stringstream oss;
+    oss << "Unable to detect type of '" << filename << "'; "
+          << "Incorrect extension?";
+    return handleError(oss, opts);
   }
 
   Log::Info << "Size is " << matrix.n_rows << " x " << matrix.n_cols << ".\n";
@@ -453,17 +430,8 @@ bool Load(const std::vector<std::string>& filenames,
   arma::field<std::string> firstHeaders;
   if (filenames.empty())
   {
-    if (opts.Fatal())
-    {
-      Log::Fatal << "Load(): given set of filenames is empty; loading failed."
-          << std::endl;
-    }
-    else
-    {
-      Log::Warn << "Load(): given set of filenames is empty; loading failed."
-          << std::endl;
-      return false;
-    }
+    return handleError("Load(): given set of filenames is empty;"
+        " loading failed.", opts);
   }
 
   for (size_t i = 0; i < filenames.size(); ++i)
@@ -483,24 +451,14 @@ bool Load(const std::vector<std::string>& filenames,
         {
           if (firstHeaders.at(j) != headers.at(j))
           {
-            if (opts.Fatal())
-            {
-              Log::Fatal << "Load(): header column " << j << " in file '"
-                  << filenames[j] << "' ('" << headers[j] << "') does not match"
-                  << " header column " << j << " in first file '"
-                  << filenames[0] << "' ('" << firstHeaders[j] << "'); load "
-                  << "failed." << std::endl;
-            }
-            else
-            {
-              Log::Warn << "Load(): header column " << j << " in file '"
-                  << filenames[j] << "' ('" << headers[j] << "') does not match"
-                  << " header column " << j << " in first file '"
-                  << filenames[0] << "' ('" << firstHeaders[j] << "'); load "
-                  << "failed." << std::endl;
-              matrix.clear();
-              return false;
-            }
+            std::stringstream oss;
+            oss << "Load(): header column " << j << " in file '"
+                << filenames[j] << "' ('" << headers[j] << "') does not match"
+                << " header column " << j << " in first file '"
+                << filenames[0] << "' ('" << firstHeaders[j] << "'); load "
+                << "failed.";
+            matrix.clear();
+            return handleError(oss, opts);
           }
         }
       }
@@ -518,21 +476,12 @@ bool Load(const std::vector<std::string>& filenames,
         {
           if (tmp.n_rows != matrix.n_rows)
           {
-            if (opts.Fatal())
-            {
-              Log::Fatal << "Load(): dimension mismatch; file '" << filenames[i]
-                  << "' has " << matrix.n_rows << " dimensions, but first file "
-                  << "'" << filenames[0] << "' has " << tmp.n_rows
-                  << " dimensions." << std::endl;
-            }
-            else
-            {
-              Log::Warn << "Load(): dimension mismatch; file '" << filenames[i]
-                  << "' has " << matrix.n_rows << " dimensions, but first file "
-                  << "'" << filenames[0] << "' has " << tmp.n_rows
-                  << " dimensions." << std::endl;
-              return false;
-            }
+            std::stringstream oss;
+            oss << "Load(): dimension mismatch; file '" << filenames[i]
+                << "' has " << matrix.n_rows << " dimensions, but first file "
+                << "'" << filenames[0] << "' has " << tmp.n_rows
+                << " dimensions.";
+            return handleError(oss, opts);
           }
           else
             tmp = join_rows(tmp, matrix);
@@ -541,21 +490,12 @@ bool Load(const std::vector<std::string>& filenames,
         {
           if (tmp.n_cols != matrix.n_cols)
           {
-            if (opts.Fatal())
-            {
-              Log::Fatal << "Load(): dimension mismatch; file '" << filenames[i]
-                  << "' has " << matrix.n_cols << " dimensions, but first file "
-                  << "'" << filenames[0] << "' has " << tmp.n_cols
-                  << " dimensions." << std::endl;
-            }
-            else
-            {
-              Log::Warn << "Load(): dimension mismatch; file '" << filenames[i]
-                  << "' has " << matrix.n_cols << " dimensions, but first file "
-                  << "'" << filenames[0] << "' has " << tmp.n_cols
-                  << " dimensions." << std::endl;
-              return false;
-            }
+            std::stringstream oss;
+            oss <<  "Load(): dimension mismatch; file '" << filenames[i]
+                << "' has " << matrix.n_cols << " dimensions, but first file "
+                << "'" << filenames[0] << "' has " << tmp.n_cols
+                << " dimensions.";
+            return handleError(oss, opts);
           }
           else
           {
