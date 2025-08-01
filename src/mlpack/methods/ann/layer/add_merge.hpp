@@ -24,33 +24,33 @@ namespace mlpack {
  * @tparam MatType Matrix representation to accept as input and use for
  *    computation.
  */
-template<typename MatType>
-class AddMergeType : public MultiLayer<MatType>
+template<typename MatType = arma::mat>
+class AddMerge : public MultiLayer<MatType>
 {
  public:
   /**
-   * Create an empty AddMergeType that holds no layers of its own.  Be sure to add
+   * Create an empty AddMerge that holds no layers of its own.  Be sure to add
    * layers with Add() before using!
    */
-  AddMergeType();
+  AddMerge();
 
-  //! Copy the given AddMergeType.
-  AddMergeType(const AddMergeType& other);
-  //! Take ownership of the layers of the given AddMergeType.
-  AddMergeType(AddMergeType&& other);
-  //! Copy the given AddMergeType.
-  AddMergeType& operator=(const AddMergeType& other);
-  //! Take ownership of the given AddMergeType.
-  AddMergeType& operator=(AddMergeType&& other);
+  //! Copy the given AddMerge.
+  AddMerge(const AddMerge& other);
+  //! Take ownership of the layers of the given AddMerge.
+  AddMerge(AddMerge&& other);
+  //! Copy the given AddMerge.
+  AddMerge& operator=(const AddMerge& other);
+  //! Take ownership of the given AddMerge.
+  AddMerge& operator=(AddMerge&& other);
 
   //! Virtual destructor: delete all held layers.
-  virtual ~AddMergeType()
+  virtual ~AddMerge()
   {
     // Nothing to do here.
   }
 
-  //! Create a copy of the AddMergeType (this is safe for polymorphic use).
-  AddMergeType* Clone() const { return new AddMergeType(*this); }
+  //! Create a copy of the AddMerge (this is safe for polymorphic use).
+  AddMerge* Clone() const { return new AddMerge(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -90,12 +90,10 @@ class AddMergeType : public MultiLayer<MatType>
   //! Compute the size of the output given `InputDimensions()`.
   void ComputeOutputDimensions();
 
-  //! Serialize the AddMergeType.
+  //! Serialize the AddMerge.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 };
-
-using AddMerge = AddMergeType<arma::mat>;
 
 } // namespace mlpack
 

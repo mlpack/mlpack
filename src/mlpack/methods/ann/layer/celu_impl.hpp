@@ -18,7 +18,7 @@
 namespace mlpack {
 
 template<typename MatType>
-CELUType<MatType>::CELUType(const double alpha) :
+CELU<MatType>::CELU(const double alpha) :
     Layer<MatType>(),
     alpha(alpha)
 {
@@ -30,7 +30,7 @@ CELUType<MatType>::CELUType(const double alpha) :
 }
 
 template<typename MatType>
-CELUType<MatType>::CELUType(const CELUType& other) :
+CELU<MatType>::CELU(const CELU& other) :
     Layer<MatType>(other),
     alpha(other.alpha)
 {
@@ -38,8 +38,8 @@ CELUType<MatType>::CELUType(const CELUType& other) :
 }
 
 template<typename MatType>
-CELUType<MatType>::CELUType(
-    CELUType&& other) :
+CELU<MatType>::CELU(
+    CELU&& other) :
     Layer<MatType>(std::move(other)),
     alpha(std::move(other.alpha))
 {
@@ -47,8 +47,8 @@ CELUType<MatType>::CELUType(
 }
 
 template<typename MatType>
-CELUType<MatType>&
-CELUType<MatType>::operator=(const CELUType& other)
+CELU<MatType>&
+CELU<MatType>::operator=(const CELU& other)
 {
   if (&other != this)
   {
@@ -60,8 +60,8 @@ CELUType<MatType>::operator=(const CELUType& other)
 }
 
 template<typename MatType>
-CELUType<MatType>&
-CELUType<MatType>::operator=(CELUType&& other)
+CELU<MatType>&
+CELU<MatType>::operator=(CELU&& other)
 {
     if (&other != this)
     {
@@ -73,7 +73,7 @@ CELUType<MatType>::operator=(CELUType&& other)
 }
 
 template<typename MatType>
-void CELUType<MatType>::Forward(
+void CELU<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   for (size_t i = 0; i < input.n_elem; ++i)
@@ -94,7 +94,7 @@ void CELUType<MatType>::Forward(
 }
 
 template<typename MatType>
-void CELUType<MatType>::Backward(
+void CELU<MatType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
@@ -105,7 +105,7 @@ void CELUType<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void CELUType<MatType>::serialize(
+void CELU<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

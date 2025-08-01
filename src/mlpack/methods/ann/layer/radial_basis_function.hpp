@@ -21,7 +21,7 @@
 namespace mlpack {
 
 /**
- * Implementation of the Radial Basis Function layer. The RBFType class, when
+ * Implementation of the Radial Basis Function layer. The RBF class, when
  * used with a non-linear activation function, acts as a Radial Basis Function
  * which can be used with a feed-forward neural network.
  *
@@ -45,11 +45,11 @@ template <
     typename MatType = arma::mat,
     typename Activation = GaussianFunction
 >
-class RBFType : public Layer<MatType>
+class RBF : public Layer<MatType>
 {
  public:
-  //! Create the RBFType object.
-  RBFType();
+  //! Create the RBF object.
+  RBF();
 
   /**
    * Create the Radial Basis Function layer object using the specified
@@ -59,24 +59,36 @@ class RBFType : public Layer<MatType>
    * @param centres The centres calculated using k-means of data.
    * @param betas The beta value to be used with centres.
    */
-  RBFType(const size_t outSize,
-          MatType& centres,
-          double betas = 0);
+  RBF(const size_t outSize,
+      const MatType& centres,
+      double betas = 0);
 
-  //! Clone the LinearType object. This handles polymorphism correctly.
-  RBFType* Clone() const { return new RBFType(*this); }
+  /**
+   * Create the Radial Basis Function layer object using the specified
+   * parameters.
+   *
+   * @param outSize The number of output units.
+   * @param centres The centres calculated using k-means of data.
+   * @param betas The beta value to be used with centres.
+   */
+  RBF(const size_t outSize,
+      MatType&& centres,
+      double betas = 0);
+
+  // Clone the RBF object. This handles polymorphism correctly.
+  RBF* Clone() const { return new RBF(*this); }
 
   // Virtual destructor.
-  virtual ~RBFType() { }
+  virtual ~RBF() { }
 
-  //! Copy the given RBFType layer.
-  RBFType(const RBFType& other);
-  //! Take ownership of the given RBFType layer.
-  RBFType(RBFType&& other);
-  //! Copy the given RBFType layer.
-  RBFType& operator=(const RBFType& other);
-  //! Take ownership of the given RBFType layer.
-  RBFType& operator=(RBFType&& other);
+  //! Copy the given RBF layer.
+  RBF(const RBF& other);
+  //! Take ownership of the given RBF layer.
+  RBF(RBF&& other);
+  //! Copy the given RBF layer.
+  RBF& operator=(const RBF& other);
+  //! Take ownership of the given RBF layer.
+  RBF& operator=(RBF&& other);
 
   /**
    * Ordinary feed forward pass of the radial basis function.
@@ -95,7 +107,7 @@ class RBFType : public Layer<MatType>
                 MatType& /* g */);
 
   //! Compute the output dimensions of the layer given `InputDimensions()`.  The
-  //! RBFType layer flattens the input.
+  //! RBF layer flattens the input.
   void ComputeOutputDimensions();
 
   //! Get the size of the weights.
@@ -119,9 +131,7 @@ class RBFType : public Layer<MatType>
 
   //! Locally-stored the output distances of the shape.
   MatType distances;
-}; // class RBFType
-
-using RBF = RBFType<arma::mat>;
+}; // class RBF
 
 } // namespace mlpack
 

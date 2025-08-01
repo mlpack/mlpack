@@ -19,7 +19,7 @@
 namespace mlpack {
 
 template<typename MatType>
-ConcatType<MatType>::ConcatType(
+Concat<MatType>::Concat(
     const size_t axis) :
     MultiLayer<MatType>(),
     axis(axis),
@@ -29,7 +29,7 @@ ConcatType<MatType>::ConcatType(
 }
 
 template<typename MatType>
-ConcatType<MatType>::ConcatType() :
+Concat<MatType>::Concat() :
     MultiLayer<MatType>(),
     axis(0),
     useAxis(false)
@@ -38,13 +38,13 @@ ConcatType<MatType>::ConcatType() :
 }
 
 template<typename MatType>
-ConcatType<MatType>::~ConcatType()
+Concat<MatType>::~Concat()
 {
   // Nothing to do: the child layer memory is already cleared by MultiLayer.
 }
 
 template<typename MatType>
-ConcatType<MatType>::ConcatType(const ConcatType& other) :
+Concat<MatType>::Concat(const Concat& other) :
     MultiLayer<MatType>(other),
     axis(other.axis),
     useAxis(other.useAxis)
@@ -53,7 +53,7 @@ ConcatType<MatType>::ConcatType(const ConcatType& other) :
 }
 
 template<typename MatType>
-ConcatType<MatType>::ConcatType(ConcatType&& other) :
+Concat<MatType>::Concat(Concat&& other) :
     MultiLayer<MatType>(std::move(other)),
     axis(std::move(other.axis)),
     useAxis(std::move(other.useAxis))
@@ -62,7 +62,7 @@ ConcatType<MatType>::ConcatType(ConcatType&& other) :
 }
 
 template<typename MatType>
-ConcatType<MatType>& ConcatType<MatType>::operator=(const ConcatType& other)
+Concat<MatType>& Concat<MatType>::operator=(const Concat& other)
 {
   if (this != &other)
   {
@@ -75,7 +75,7 @@ ConcatType<MatType>& ConcatType<MatType>::operator=(const ConcatType& other)
 }
 
 template<typename MatType>
-ConcatType<MatType>& ConcatType<MatType>::operator=(ConcatType&& other)
+Concat<MatType>& Concat<MatType>::operator=(Concat&& other)
 {
   if (this != &other)
   {
@@ -88,7 +88,7 @@ ConcatType<MatType>& ConcatType<MatType>::operator=(ConcatType&& other)
 }
 
 template<typename MatType>
-void ConcatType<MatType>::Forward(const MatType& input, MatType& output)
+void Concat<MatType>::Forward(const MatType& input, MatType& output)
 {
   // The implementation of MultiLayer is fine: this will allocate a matrix that
   // is able to hold each child layer's output.
@@ -140,7 +140,7 @@ void ConcatType<MatType>::Forward(const MatType& input, MatType& output)
 }
 
 template<typename MatType>
-void ConcatType<MatType>::Backward(
+void Concat<MatType>::Backward(
     const MatType& input,
     const MatType& /* output */,
     const MatType& gy,
@@ -189,7 +189,7 @@ void ConcatType<MatType>::Backward(
 }
 
 template<typename MatType>
-void ConcatType<MatType>::Backward(
+void Concat<MatType>::Backward(
     const MatType& input,
     const MatType& /* output */,
     const MatType& gy,
@@ -226,7 +226,7 @@ void ConcatType<MatType>::Backward(
 }
 
 template<typename MatType>
-void ConcatType<MatType>::Gradient(
+void Concat<MatType>::Gradient(
     const MatType& input,
     const MatType& error,
     MatType& gradient)
@@ -264,7 +264,7 @@ void ConcatType<MatType>::Gradient(
 }
 
 template<typename MatType>
-void ConcatType<MatType>::Gradient(
+void Concat<MatType>::Gradient(
     const MatType& input,
     const MatType& error,
     MatType& gradient,
@@ -304,7 +304,7 @@ void ConcatType<MatType>::Gradient(
 
 template<typename MatType>
 template<typename Archive>
-void ConcatType<MatType>::serialize(
+void Concat<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<MultiLayer<MatType>>(this));

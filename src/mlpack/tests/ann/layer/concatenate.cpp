@@ -63,10 +63,7 @@ TEST_CASE("GradientConcatenateLayerTest", "[ANNLayerTest]")
       model->Add<Linear>(5);
 
       arma::mat concat = arma::ones(5, 1);
-      // concatenate = new Concatenate();
-      // concatenate->Concat() = concat;
-      // model->Add(concatenate);
-      model->Add<Concatenate>(concat);
+      model->Add<Concatenate>(std::move(concat));
 
       model->Add<Linear>(5);
       model->Add<LogSoftMax>();
@@ -87,7 +84,6 @@ TEST_CASE("GradientConcatenateLayerTest", "[ANNLayerTest]")
     arma::mat& Parameters() { return model->Parameters(); }
 
     FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
-    Concatenate* concatenate;
     arma::mat input, target;
   } function;
 
