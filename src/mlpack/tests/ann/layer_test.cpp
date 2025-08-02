@@ -26,6 +26,7 @@
 #include "layer/alpha_dropout.cpp"
 #include "layer/batch_norm.cpp"
 #include "layer/convolution.cpp"
+#include "layer/transposed_convolution.cpp"
 #include "layer/concat.cpp"
 #include "layer/concatenate.cpp"
 #include "layer/c_relu.cpp"
