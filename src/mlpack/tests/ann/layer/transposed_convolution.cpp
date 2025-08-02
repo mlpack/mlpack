@@ -14,11 +14,12 @@
  */
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/ann.hpp>
+#include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/ann/layer/transposed_convolution.hpp>
 
-#include "../../test_catch_tools.hpp"
 #include "../../catch.hpp"
-#include "../../serialization.hpp"
+#include "../../test_catch_tools.hpp"
+#include "../ann_test_tools.hpp"
 #include "../ann_test_tools.hpp"
 
 using namespace mlpack;
@@ -70,7 +71,7 @@ TEST_CASE("TransposedConvolutionParametersTest", "[ANNLayerTest]")
  * Test the functions that compute dimensions for
  * Transposed Convolution layer.
  */
-TEST_CASE("TransposedConvolutionDimensionTest", "[ANNLayerTest]")
+TEST_CASE("TransposedConvolutionDimensionsTest", "[ANNLayerTest]")
 {
   struct Config
   {
@@ -123,35 +124,46 @@ TEST_CASE("TransposedConvolutionDimensionTest", "[ANNLayerTest]")
   };
 
   const size_t inMaps = 1, maps = 2;
-  for (auto& c : configs)
+  for (size_t i = 0; i < configs.size(); ++i)
   {
-    TransposedConvolution module(
-        maps,
-        c.kernelWidth,
-        c.kernelHeight,
-        c.strideWidth,
-        c.strideHeight,
-        std::make_tuple(c.padWLeft, c.padWRight),
-        std::make_tuple(c.padHTop, c.padHBottom),
-        c.paddingType);
+    const auto& c = configs[i];
+    std::ostringstream sectionName;
+    sectionName << "Config " << i << ": paddingType=" << c.paddingType
+                << ", input=" << c.inputWidth << "x" << c.inputHeight
+                << ", kernel=" << c.kernelWidth << "x" << c.kernelHeight
+                << ", stride=" << c.strideWidth << "x" << c.strideHeight
+                << ", padW=" << c.padWLeft << "," << c.padWRight
+                << ", padH=" << c.padHTop << "," << c.padHBottom;
+    SECTION(sectionName.str())
+    {
+      TransposedConvolution module(
+          maps,
+          c.kernelWidth,
+          c.kernelHeight,
+          c.strideWidth,
+          c.strideHeight,
+          std::make_tuple(c.padWLeft, c.padWRight),
+          std::make_tuple(c.padHTop, c.padHBottom),
+          c.paddingType);
 
-    module.InputDimensions() = { c.inputWidth, c.inputHeight, inMaps };
-    module.ComputeOutputDimensions();
+      module.InputDimensions() = { c.inputWidth, c.inputHeight, inMaps };
+      module.ComputeOutputDimensions();
 
-    // WeightSize = inMaps * maps * kernelWidth + maps (bias).
-    size_t expectedWeightSize = inMaps * maps * c.kernelWidth
-        * c.kernelHeight + maps;
-    REQUIRE(module.WeightSize() == expectedWeightSize);
+      // WeightSize = inMaps * maps * kernelWidth * kernelHeight + maps (bias).
+      size_t expectedWeightSize = inMaps * maps * c.kernelWidth
+          * c.kernelHeight + maps;
+      REQUIRE(module.WeightSize() == expectedWeightSize);
 
-    // OutputSize = (outputWidth * outputHeight * maps).
-    size_t expectedOutputSize = c.expecedOutputWidth * c.expecedOutputHeight
-        * maps;
-    REQUIRE(module.OutputSize() == expectedOutputSize);
+      // OutputSize = (outputWidth * outputHeight * maps).
+      size_t expectedOutputSize = c.expecedOutputWidth * c.expecedOutputHeight
+          * maps;
+      REQUIRE(module.OutputSize() == expectedOutputSize);
+    }
   }
 }
 
 /**
- * Transposed Convolution Layer weight initialization test.
+ * Test The Functions That Set Weights of Transposed Convolution Layer.
  */
 TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
 {
@@ -186,169 +198,198 @@ TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
 }
 
 /**
- * Simple Transposed Convolution layer test.
+ * Test the Forward and Backward pass of the Transposed Convolution layer.
  **/
-TEST_CASE("SimpleTransposedConvolutionTest", "[ANNLayerTest]")
+TEST_CASE("TransposedConvolutionForwardBackwardTest", "[ANNLayerTest]")
 {
-  arma::mat input, output, delta;
+  arma::mat input, output, weights, delta;
 
-  TransposedConvolution module1(1, 3, 3, 1, 1, 0, 0);
-  // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 15, 16);
-  module1.InputDimensions() = std::vector<size_t>({ 4, 4 });
-  module1.ComputeOutputDimensions();
-  arma::mat weights1(module1.WeightSize(), 1);
-  REQUIRE(weights1.n_elem == 9 + 1);
-  weights1[0] = 1.0;
-  weights1[8] = 2.0;
-  module1.SetWeights(weights1);
-  output.set_size(module1.OutputSize(), 1);
-  module1.Forward(input, output);
-  // Value calculated using tensorflow.nn.conv2d_transpose()
-  REQUIRE(accu(output) == 360.0);
-  // Test the backward function.
-  delta.set_size(arma::size(input));
-  module1.Backward(input, output, output, delta);
-  // Value calculated using tensorflow.nn.conv2d()
-  REQUIRE(accu(delta) == 720.0);
+  SECTION("3x3 Kernel, stride=1, no padding")
+  {
+    TransposedConvolution module(1, 3, 3, 1, 1, 0, 0);
+    input = arma::linspace<arma::colvec>(0, 15, 16);
+    module.InputDimensions() = {4, 4};
+    module.ComputeOutputDimensions();
 
-  TransposedConvolution module2(1, 4, 4, 1, 1, 1, 1);
-  // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 24, 25);
-  module2.InputDimensions() = std::vector<size_t>({ 5, 5 });
-  module2.ComputeOutputDimensions();
-  arma::mat weights2(module2.WeightSize(), 1);
-  REQUIRE(weights2.n_elem == 16 + 1);
-  weights2[0] = 1.0;
-  weights2[3] = 1.0;
-  weights2[6] = 1.0;
-  weights2[9] = 1.0;
-  weights2[12] = 1.0;
-  weights2[15] = 2.0;
-  module2.SetWeights(weights2);
-  output.set_size(module2.OutputSize(), 1);
-  module2.Forward(input, output);
-  // Value calculated using torch.nn.functional.conv_transpose2d()
-  REQUIRE(accu(output) == 1512.0);
-  // Test the backward function.
-  delta.set_size(arma::size(input));
-  module2.Backward(input, output, output, delta);
-  // Value calculated using torch.nn.functional.conv2d()
-  REQUIRE(accu(delta) == 6504.0);
+    weights.set_size(module.WeightSize(), 1);
+    weights.zeros();
+    weights[0] = 1.0;
+    weights[8] = 2.0;
+    module.SetWeights(weights);
 
-  TransposedConvolution module3(1, 3, 3, 1, 1, 1, 1);
-  // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 24, 25);
-  module3.InputDimensions() = std::vector<size_t>({ 5, 5 });
-  module3.ComputeOutputDimensions();
-  arma::mat weights3(module3.WeightSize(), 1);
-  REQUIRE(weights3.n_elem == 9 + 1);
-  weights3[1] = 2.0;
-  weights3[2] = 4.0;
-  weights3[3] = 3.0;
-  weights3[8] = 1.0;
-  module3.SetWeights(weights3);
-  output.set_size(module3.OutputSize(), 1);
-  module3.Forward(input, output);
-  // Value calculated using torch.nn.functional.conv_transpose2d()
-  REQUIRE(accu(output) == 2370.0);
-  // Test the backward function.
-  delta.set_size(arma::size(input));
-  module3.Backward(input, output, output, delta);
-  // Value calculated using torch.nn.functional.conv2d()
-  REQUIRE(accu(delta) == 19154.0);
+    output.set_size(module.OutputSize(), 1);
+    module.Forward(input, output);
 
-  TransposedConvolution module4(1, 3, 3, 1, 1, 0, 0);
-  // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 24, 25);
-  module4.InputDimensions() = std::vector<size_t>({ 5, 5 });
-  module4.ComputeOutputDimensions();
-  arma::mat weights4(module4.WeightSize(), 1);
-  REQUIRE(weights4.n_elem == 9 + 1);
-  weights4[2] = 2.0;
-  weights4[4] = 4.0;
-  weights4[6] = 6.0;
-  weights4[8] = 8.0;
-  module4.SetWeights(weights4);
-  output.set_size(module4.OutputSize(), 1);
-  module4.Forward(input, output);
-  // Value calculated using torch.nn.functional.conv_transpose2d()
-  REQUIRE(accu(output) == 6000.0);
-  // Test the backward function.
-  delta.set_size(arma::size(input));
-  module4.Backward(input, output, output, delta);
-  // Value calculated using torch.nn.functional.conv2d()
-  REQUIRE(accu(delta) == 86208.0);
+    delta.set_size(arma::size(input));
+    module.Backward(input, output, output, delta);
 
-  TransposedConvolution module5(1, 3, 3, 2, 2, 0, 0);
-  // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 3, 4);
-  module5.InputDimensions() = std::vector<size_t>({ 2, 2 });
-  module5.ComputeOutputDimensions();
-  arma::mat weights5(module5.WeightSize(), 1);
-  REQUIRE(weights5.n_elem == 9 + 1);
-  weights5(2) = 8.0;
-  weights5(4) = 6.0;
-  weights5(6) = 4.0;
-  weights5(8) = 2.0;
-  module5.SetWeights(weights5);
-  output.set_size(module5.OutputSize(), 1);
-  module5.Forward(input, output);
-  // Value calculated using torch.nn.functional.conv_transpose2d()
-  REQUIRE(accu(output) == 120.0);
-  // Test the backward function.
-  delta.set_size(arma::size(input));
-  module5.Backward(input, output, output, delta);
-  // Value calculated using torch.nn.functional.conv2d()
-  REQUIRE(accu(delta) == 960.0);
+    REQUIRE(accu(output) == 360.0);
+    REQUIRE(accu(delta) == 720.0);
+    REQUIRE(weights.n_elem == 9 + 1);
+  }
 
-  TransposedConvolution module6(1, 3, 3, 2, 2, 1, 1);
-  // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 8, 9);
-  module6.InputDimensions() = std::vector<size_t>({ 3, 3 });
-  module6.ComputeOutputDimensions();
-  arma::mat weights6(module6.WeightSize(), 1);
-  REQUIRE(weights6.n_elem == 9 + 1);
-  weights6(0) = 8.0;
-  weights6(3) = 6.0;
-  weights6(6) = 2.0;
-  weights6(8) = 4.0;
-  module6.SetWeights(weights6);
-  output.set_size(module6.OutputSize(), 1);
-  module6.Forward(input, output);
-  // Value calculated using torch.nn.functional.conv_transpose2d()
-  REQUIRE(accu(output) == 410.0);
-  // Test the backward function.
-  delta.set_size(arma::size(input));
-  module6.Backward(input, output, output, delta);
-  // Value calculated using torch.nn.functional.conv2d()
-  REQUIRE(accu(delta) == 4444.0);
+  SECTION("4x4 kernel, pad=1, stride=1")
+  {
+    TransposedConvolution module(1, 4, 4, 1, 1, 1, 1);
+    input = arma::linspace<arma::colvec>(0, 24, 25);
+    module.InputDimensions() = {5, 5};
+    module.ComputeOutputDimensions();
 
-  TransposedConvolution module7(1, 3, 3, 2, 2, 1, 1);
-  // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 8, 9);
-  module7.InputDimensions() = std::vector<size_t>({ 3, 3 });
-  module7.ComputeOutputDimensions();
-  arma::mat weights7(module7.WeightSize(), 1);
-  REQUIRE(weights7.n_elem == 9 + 1);
-  weights7(0) = 8.0;
-  weights7(2) = 6.0;
-  weights7(4) = 2.0;
-  weights7(8) = 4.0;
-  module7.SetWeights(weights7);
-  output.set_size(module7.OutputSize(), 1);
-  module7.Forward(input, output);
-  // Value calculated using torch.nn.functional.conv_transpose2d()
-  REQUIRE(accu(output) == 416.0);
-  // Test the backward function.
-  delta.set_size(arma::size(input));
-  module7.Backward(input, output, output, delta);
-  // Value calculated using torch.nn.functional.conv2d()
-  REQUIRE(accu(delta) == 6336.0);
+    weights.set_size(module.WeightSize(), 1);
+    weights.zeros();
+    weights[0] = 1.0;
+    weights[3] = 1.0;
+    weights[6] = 1.0;
+    weights[9] = 1.0;
+    weights[12] = 1.0;
+    weights[15] = 2.0;
+    module.SetWeights(weights);
+
+    output.set_size(module.OutputSize(), 1);
+    module.Forward(input, output);
+
+    delta.set_size(arma::size(input));
+    module.Backward(input, output, output, delta);
+
+    REQUIRE(accu(delta) == 6504.0);
+    REQUIRE(accu(output) == 1512.0);
+    REQUIRE(weights.n_elem == 16 + 1);
+  }
+
+  SECTION("3x3 kernel, pad=1, stride=1")
+  {
+    TransposedConvolution module(1, 3, 3, 1, 1, 1, 1);
+    input = arma::linspace<arma::colvec>(0, 24, 25);
+    module.InputDimensions() = {5, 5};
+    module.ComputeOutputDimensions();
+
+    weights.set_size(module.WeightSize(), 1);
+    weights.zeros();
+    weights[1] = 2.0;
+    weights[2] = 4.0;
+    weights[3] = 3.0;
+    weights[8] = 1.0;
+    module.SetWeights(weights);
+
+    output.set_size(module.OutputSize(), 1);
+    module.Forward(input, output);
+
+    delta.set_size(arma::size(input));
+    module.Backward(input, output, output, delta);
+
+    REQUIRE(accu(delta) == 19154.0);
+    REQUIRE(accu(output) == 2370.0);
+    REQUIRE(weights.n_elem == 9 + 1);
+  }
+
+  SECTION("3x3 kernel, stride=1, no padding")
+  {
+    TransposedConvolution module(1, 3, 3, 1, 1, 0, 0);
+    input = arma::linspace<arma::colvec>(0, 24, 25);
+    module.InputDimensions() = {5, 5};
+    module.ComputeOutputDimensions();
+
+    weights.set_size(module.WeightSize(), 1);
+    weights.zeros();
+    weights[2] = 2.0;
+    weights[4] = 4.0;
+    weights[6] = 6.0;
+    weights[8] = 8.0;
+    module.SetWeights(weights);
+
+    output.set_size(module.OutputSize(), 1);
+    module.Forward(input, output);
+
+    delta.set_size(arma::size(input));
+    module.Backward(input, output, output, delta);
+
+    REQUIRE(accu(delta) == 86208.0);
+    REQUIRE(accu(output) == 6000.0);
+    REQUIRE(weights.n_elem == 9 + 1);
+  }
+
+  SECTION("3x3 kernel, stride=2, no padding")
+  {
+    TransposedConvolution module(1, 3, 3, 2, 2, 0, 0);
+    input = arma::linspace<arma::colvec>(0, 3, 4);
+    module.InputDimensions() = {2, 2};
+    module.ComputeOutputDimensions();
+
+    weights.set_size(module.WeightSize(), 1);
+    weights.zeros();
+    weights[2] = 8.0;
+    weights[4] = 6.0;
+    weights[6] = 4.0;
+    weights[8] = 2.0;
+    module.SetWeights(weights);
+
+    output.set_size(module.OutputSize(), 1);
+    module.Forward(input, output);
+
+    delta.set_size(arma::size(input));
+    module.Backward(input, output, output, delta);
+
+    REQUIRE(accu(delta) == 960.0);
+    REQUIRE(accu(output) == 120.0);
+    REQUIRE(weights.n_elem == 9 + 1);
+  }
+
+  SECTION("3x3 kernel, stride=2, pad=1")
+  {
+    TransposedConvolution module(1, 3, 3, 2, 2, 1, 1);
+    input = arma::linspace<arma::colvec>(0, 8, 9);
+    module.InputDimensions() = {3, 3};
+    module.ComputeOutputDimensions();
+
+    weights.set_size(module.WeightSize(), 1);
+    weights.zeros();
+
+    weights[0] = 8.0;
+    weights[3] = 6.0;
+    weights[6] = 2.0;
+    weights[8] = 4.0;
+    module.SetWeights(weights);
+
+    output.set_size(module.OutputSize(), 1);
+    module.Forward(input, output);
+
+    delta.set_size(arma::size(input));
+    module.Backward(input, output, output, delta);
+
+    REQUIRE(accu(output) == 410.0);
+    REQUIRE(accu(delta) == 4444.0);
+    REQUIRE(weights.n_elem == 9 + 1);
+  }
+
+  SECTION("3x3 kernel, stride=2, pad=1")
+  {
+    TransposedConvolution module(1, 3, 3, 2, 2, 1, 1);
+    input = arma::linspace<arma::colvec>(0, 8, 9);
+    module.InputDimensions() = {3, 3};
+    module.ComputeOutputDimensions();
+
+    weights.set_size(module.WeightSize(), 1);
+    weights.zeros();
+    weights[0] = 8.0;
+    weights[2] = 6.0;
+    weights[4] = 2.0;
+    weights[8] = 4.0;
+    module.SetWeights(weights);
+
+    output.set_size(module.OutputSize(), 1);
+    module.Forward(input, output);
+
+    delta.set_size(arma::size(input));
+    module.Backward(input, output, output, delta);
+
+    REQUIRE(accu(delta) == 6336.0);
+    REQUIRE(accu(output) == 416.0);
+    REQUIRE(weights.n_elem == 9 + 1);
+  }
 }
 
 /**
- * Transposed Convolution layer numerical gradient test.
+ * Test the numerical gradient of the Transposed Convolution layer.
  */
 TEST_CASE("TransposedConvolutionGradientTest", "[ANNLayerTest]")
 {
@@ -360,15 +401,7 @@ TEST_CASE("TransposedConvolutionGradientTest", "[ANNLayerTest]")
     {
       model = new FFN<NegativeLogLikelihood, RandomInitialization>();
       model->ResetData(input, target);
-      model->Add<TransposedConvolution>(
-          1,
-          3,
-          3,
-          1,
-          1,
-          std::tuple<size_t, size_t>(0, 0),
-          std::tuple<size_t, size_t>(0, 0),
-          "same");
+      model->Add<TransposedConvolution>(1, 3, 3, 1, 1, 0, 0, "same");
       model->Add<LogSoftMax>();
       model->InputDimensions() = std::vector<size_t>({ 6, 6 });
     }
@@ -391,54 +424,5 @@ TEST_CASE("TransposedConvolutionGradientTest", "[ANNLayerTest]")
     arma::mat input, target;
   } function;
 
-  REQUIRE(CheckGradient(function) < 1e-3);
+  REQUIRE(CheckGradient(function) < 1e-4);
 }
-
-
-// TODO: Uncomment when output padding has been added
-// /**
-//  * Transposed Convolution layer numerical gradient test with stride = 2.
-//  */
-// TEST_CASE("TranposedConvolutionGradientTestWithStride", "[ANNLayerTest]")
-// {
-//   struct GradientFunction
-//   {
-//     GradientFunction() :
-//         input(arma::linspace<arma::colvec>(0, 35, 36)),
-//         target(arma::mat("1"))
-//     {
-//       model = new FFN<NegativeLogLikelihood, RandomInitialization>();
-//       model->ResetData(input, target);
-//       model->Add<TransposedConvolution>(
-//         1,
-//         3,
-//         3,
-//         2,
-//         2,
-//         std::tuple<size_t, size_t>(0, 0),
-//         std::tuple<size_t, size_t>(0, 0),
-//         "same");
-//       model->Add<LogSoftMax>();
-//       model->InputDimensions() = std::vector<size_t>({ 6, 6 });
-//     }
-
-//     ~GradientFunction()
-//     {
-//       delete model;
-//     }
-
-//     double Gradient(arma::mat& gradient) const
-//     {
-//       double error = model->Evaluate(model->Parameters(), 0, 1);
-//       model->Gradient(model->Parameters(), 0, gradient, 1);
-//       return error;
-//     }
-
-//     arma::mat& Parameters() { return model->Parameters(); }
-
-//     FFN<NegativeLogLikelihood, RandomInitialization>* model;
-//     arma::mat input, target;
-//   } function;
-
-//   REQUIRE(CheckGradient(function) < 1e-3);
-// }
