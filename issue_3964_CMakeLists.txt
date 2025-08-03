@@ -1,28 +1,28 @@
 # CMakeLists.txt for Issue #3964 Reproduction Test
-# Exact build configuration from the original issue
+# Uses LOCAL mlpack source with ARM64 OpenMP fixes (not system installation)
 
 cmake_minimum_required(VERSION 3.16.0)
 set(CMAKE_CXX_STANDARD 17)
 
 project(issue_3964_test CXX)
 
+# Use the LOCAL mlpack source directory with our fixes
+set(MLPACK_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../src" CACHE PATH "Path to mlpack source directory")
+
 # Add the reproduction test executable
 add_executable(issue_3964_test "issue_3964_reproduction_test.cpp")
 
-# Find mlpack (use system installation or build from source)
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(MLPACK REQUIRED mlpack)
+# Include the LOCAL mlpack headers with our ARM64 fixes
+target_include_directories(issue_3964_test PRIVATE 
+    ${MLPACK_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
+)
 
-if(MLPACK_FOUND)
-    target_include_directories(issue_3964_test PRIVATE ${MLPACK_INCLUDE_DIRS})
-    target_link_libraries(issue_3964_test PRIVATE ${MLPACK_LIBRARIES})
-    target_compile_options(issue_3964_test PRIVATE ${MLPACK_CFLAGS_OTHER})
-endif()
-
-# Find and link Armadillo
+# Find required dependencies
 find_package(PkgConfig REQUIRED)
+
+# Find Armadillo
 pkg_check_modules(ARMADILLO REQUIRED armadillo)
-
 if(ARMADILLO_FOUND)
     target_include_directories(issue_3964_test PRIVATE ${ARMADILLO_INCLUDE_DIRS})
     target_link_libraries(issue_3964_test PRIVATE ${ARMADILLO_LIBRARIES})
@@ -35,6 +35,16 @@ if(OpenMP_CXX_FOUND)
     message(STATUS "OpenMP found and linked - required for issue reproduction")
 else()
     message(FATAL_ERROR "OpenMP not found - cannot reproduce issue #3964")
+endif()
+
+# Find other dependencies
+find_package(Boost REQUIRED)
+target_link_libraries(issue_3964_test PRIVATE Boost::boost)
+
+# Find ensmallen
+pkg_check_modules(ENSMALLEN ensmallen)
+if(ENSMALLEN_FOUND)
+    target_include_directories(issue_3964_test PRIVATE ${ENSMALLEN_INCLUDE_DIRS})
 endif()
 
 # Compilation flags matching the original issue

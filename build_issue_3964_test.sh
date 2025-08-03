@@ -42,11 +42,21 @@ echo "Setting up build environment..."
 mkdir -p build_issue_3964
 cd build_issue_3964
 
-# Configure with CMake
-echo "Configuring with CMake..."
-cmake .. -f ../issue_3964_CMakeLists.txt \
+# Copy the test files
+cp ../issue_3964_reproduction_test.cpp .
+cp ../issue_3964_CMakeLists.txt ./CMakeLists.txt
+
+# Configure with CMake to use LOCAL mlpack source
+echo "Configuring with CMake (using LOCAL mlpack source with ARM64 fixes)..."
+echo "MLPACK_SOURCE_DIR will be set to: $(pwd)/../src"
+echo "Verifying our fixed files exist:"
+echo "  naive_convolution.hpp: $(ls -la $(pwd)/../src/mlpack/methods/ann/convolution_rules/naive_convolution.hpp 2>/dev/null | wc -l) file(s)"
+echo "  convolution_impl.hpp: $(ls -la $(pwd)/../src/mlpack/methods/ann/layer/convolution_impl.hpp 2>/dev/null | wc -l) file(s)"
+
+cmake . \
     -DCMAKE_BUILD_TYPE=Debug \
-    -DCMAKE_CXX_STANDARD=17
+    -DCMAKE_CXX_STANDARD=17 \
+    -DMLPACK_SOURCE_DIR="$(pwd)/../src"
 
 if [ $? -ne 0 ]; then
     echo "✗ CMake configuration failed"
