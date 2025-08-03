@@ -15,6 +15,7 @@
 #define MLPACK_METHODS_ANN_DAG_NETWORK_HPP
 
 #include <mlpack/core.hpp>
+#include <type_traits>
 
 #include "init_rules/init_rules.hpp"
 
@@ -102,26 +103,29 @@ public:
    * returns the index of the layer in `network`, to be used in `Connect()`
    */
   template <typename LayerType, typename... Args>
-  size_t Add(Args... args)
+  size_t Add(Args&&... args)
   {
-    network.push_back(new LayerType(args...));
-    layerGradients.push_back(MatType());
-    size_t nodeId = network.size();
-    childrenList.insert({network[nodeId], {}});
-    parentsList.insert({network[nodeId], {}});
+    network.push_back(new LayerType(std::forward<Args>(args)...));
+    return AddLayer();
+  }
 
-    if (network.size() > 1)
-    {
-      layerOutputs.push_back(MatType());
-      layerInputs.push_back(MatType());
-      layerDeltas.push_back(MatType());
-    }
+  template <template<typename...> typename LayerType, typename... Args>
+  size_t Add(Args&&... args)
+  {
+    network.push_back(new LayerType<MatType>(std::forward<Args>(args)...));
+    return AddLayer();
+  }
 
-    validOutputDimensions = false;
-    graphIsSet = false;
-    layerMemoryIsSet = false;
+  template <typename LayerType>
+  size_t Add(LayerType&& layer,
+             typename std::enable_if_t<
+                 !std::is_pointer_v<std::remove_reference_t<LayerType>>>* = 0)
+  {
+    using NewLayerType =
+        typename std::remove_cv_t<std::remove_reference_t<LayerType>>;
 
-    return network.size() - 1;
+    network.push_back(new NewLayerType(std::forward<LayerType>(layer)));
+    return AddLayer();
   }
 
   /**
@@ -411,6 +415,26 @@ public:
 
 private:
   // Helper functions.
+
+  size_t AddLayer() {
+    layerGradients.push_back(MatType());
+    size_t nodeId = network.size();
+    childrenList.insert({network[nodeId], {}});
+    parentsList.insert({network[nodeId], {}});
+
+    if (network.size() > 1)
+    {
+      layerOutputs.push_back(MatType());
+      layerInputs.push_back(MatType());
+      layerDeltas.push_back(MatType());
+    }
+
+    validOutputDimensions = false;
+    graphIsSet = false;
+    layerMemoryIsSet = false;
+
+    return network.size() - 1;
+  }
 
   // Use the InitializationPolicy to initialize all the weights in the network.
   void InitializeWeights();
