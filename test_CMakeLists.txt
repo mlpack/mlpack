@@ -1,0 +1,47 @@
+# CMake configuration for testing the ARM64 OpenMP convolution fix
+
+cmake_minimum_required(VERSION 3.10)
+project(ARM64_OpenMP_Convolution_Test)
+
+# Enable C++17 (required by mlpack)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Find required packages
+find_package(Armadillo REQUIRED)
+find_package(OpenMP)
+
+# Include mlpack headers from the current source
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+# Create the test executable
+add_executable(test_arm64_openmp_convolution test_arm64_openmp_convolution.cpp)
+
+# Link libraries
+target_link_libraries(test_arm64_openmp_convolution ${ARMADILLO_LIBRARIES})
+
+# Enable OpenMP if available
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(test_arm64_openmp_convolution OpenMP::OpenMP_CXX)
+    message(STATUS "OpenMP found and enabled for ARM64 convolution test")
+else()
+    message(WARNING "OpenMP not found - test will run without parallelization")
+endif()
+
+# Add compiler flags for debugging and ARM64 optimization
+target_compile_options(test_arm64_openmp_convolution PRIVATE
+    -Wall -Wextra -g -O2
+    $<$<BOOL:${OpenMP_CXX_FOUND}>:-fopenmp>
+)
+
+# Create a custom target to run the test
+add_custom_target(run_arm64_test
+    COMMAND test_arm64_openmp_convolution
+    DEPENDS test_arm64_openmp_convolution
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Running ARM64 OpenMP convolution segfault fix test"
+)
+
+message(STATUS "ARM64 OpenMP Convolution test configured")
+message(STATUS "Build with: cmake --build . --target test_arm64_openmp_convolution")
+message(STATUS "Run test with: cmake --build . --target run_arm64_test")

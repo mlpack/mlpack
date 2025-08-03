@@ -332,7 +332,8 @@ void ConvolutionType<
     const size_t fullOutputOffset = offset * maps;
 
     // Iterate over output maps.
-    #pragma omp parallel for
+    // Add schedule(static) and chunk size to improve ARM64 + OpenMP stability
+    #pragma omp parallel for schedule(static, 1) if(maps > 4)
     for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
     {
       MatType& convOutput = outputTemp.slice(outMap + fullOutputOffset);
@@ -428,7 +429,8 @@ void ConvolutionType<
       inMaps * higherInDimensions * batchSize);
 
   // See Forward() for the overall iteration strategy.
-  #pragma omp parallel for schedule(dynamic)
+  // Use static scheduling for ARM64 + OpenMP stability
+  #pragma omp parallel for schedule(static, 1) if(higherInDimensions * batchSize > 4)
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
@@ -525,7 +527,8 @@ void ConvolutionType<
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    #pragma omp parallel for
+    // Add ARM64 + OpenMP safety: use static scheduling and disable for small maps
+    #pragma omp parallel for schedule(static, 1) if(maps > 4)
     for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
     {
       MatType& curError = mappedError.slice(outMap + fullOutputOffset);
@@ -543,7 +546,11 @@ void ConvolutionType<
       }
 
       if (useBias)
+      {
+        // Use atomic operation for thread safety on ARM64
+        #pragma omp atomic
         gradient[weight.n_elem + outMap] += accu(curError);
+      }
     }
   }
 }

@@ -16,6 +16,13 @@
 #include <mlpack/prereqs.hpp>
 #include "border_modes.hpp"
 
+// Architecture-specific optimizations and fixes
+#if defined(__aarch64__) || defined(_M_ARM64)
+#define MLPACK_ARM64_ARCH 1
+#else
+#define MLPACK_ARM64_ARCH 0
+#endif
+
 namespace mlpack {
 
 /**
@@ -74,8 +81,43 @@ class NaiveConvolution
       output.zeros(outputRows, outputCols);
     }
 
-    // It seems to be about 3.5 times faster to use pointers instead of
-    // filter(ki, kj) * input(leftInput + ki, topInput + kj) and output(i, j).
+    // Performance vs safety trade-off: Use safer bounds-checked approach on ARM64
+    // with OpenMP due to memory access pattern issues, use faster pointer arithmetic
+    // on other architectures where it's been proven stable.
+#if MLPACK_ARM64_ARCH && defined(_OPENMP)
+    // ARM64 + OpenMP: Use safer bounds-checked approach to prevent segfaults
+    for (size_t j = 0; j < output.n_cols; ++j)
+    {
+      for (size_t i = 0; i < output.n_rows; ++i)
+      {
+        eT accumulator = 0;
+        const eT* kernelPtr = filter.memptr();
+        
+        for (size_t kj = 0; kj < filter.n_cols; ++kj)
+        {
+          // Add bounds checking for ARM64 safety
+          const size_t inputCol = kj * dilationW + j * dW;
+          if (inputCol >= input.n_cols) continue;
+          
+          const eT* inputColPtr = input.colptr(inputCol);
+          const size_t inputRowStart = i * dH;
+          
+          for (size_t ki = 0; ki < filter.n_rows; ++ki, ++kernelPtr)
+          {
+            const size_t inputRow = inputRowStart + ki * dilationH;
+            // Bounds check to prevent segfaults on ARM64
+            if (inputRow < input.n_rows)
+            {
+              accumulator += *kernelPtr * inputColPtr[inputRow];
+            }
+          }
+        }
+        // Use direct indexing instead of pointer arithmetic for thread safety
+        output(i, j) += accumulator;
+      }
+    }
+#else
+    // Other architectures: Use optimized pointer arithmetic (original implementation)
     eT* outputPtr = output.memptr();
 
     for (size_t j = 0; j < output.n_cols; ++j)
@@ -92,6 +134,7 @@ class NaiveConvolution
         }
       }
     }
+#endif
   }
 
   /**
