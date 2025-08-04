@@ -235,11 +235,13 @@ class MultiLayer : public Layer<MatType>
   std::vector<Layer<MatType>*> network;
 
   // Total number of elements in the input, cached for convenience.
-  size_t inSize;
+  // size_t inSize;
   // Total number of deltas for every layer except the first one.
-  size_t totalDeltaSize;
+  // size_t totalDeltaSize;
   // Total number of output elements for layer except the last one.
-  size_t totalOutputSize;
+  // size_t totalOutputSize;
+
+  size_t residualMemorySize;
 
   //! This matrix stores all of the outputs of each layer when Forward() is
   //! called.  See `InitializeForwardPassMemory()`.
