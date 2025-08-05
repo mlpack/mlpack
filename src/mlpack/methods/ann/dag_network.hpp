@@ -646,7 +646,6 @@ private:
   // These are aliases of `layerOutputMatrix` for the output of each layer.
   std::vector<MatType> layerOutputs;
 
-
   MatType layerDeltaMatrix;
   std::vector<MatType> layerDeltas;
   std::unordered_map<Layer<MatType>*, MatType*> outputDeltas;

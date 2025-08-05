@@ -878,7 +878,6 @@ void DAGNetwork<
       MakeAlias(*accumulatedDeltas[layer], layerDeltaMatrix,
         layer->OutputSize(), batchSize, offset);
       offset += layer->OutputSize() * batchSize;
-      accumulatedDeltas[layer]->fill(0.0f);
       outputDeltas.insert({layer, new MatType()});
     }
     else
@@ -1028,6 +1027,12 @@ void DAGNetwork<
   {
     InitializeBackwardPassMemory(input.n_cols);
 
+    for (Layer<MatType>* layer: sortedNetwork)
+    {
+      if (childrenList[layer].size() > 1)
+        accumulatedDeltas[layer]->fill(0.0f);
+    }
+
     MatType const* currentOutput = &output;
     MatType const* currentDelta = &error;
 
@@ -1073,7 +1078,6 @@ void DAGNetwork<
         size_t parentNumChildren = childrenList[parent].size();
         if (parentNumChildren > 1)
           *accumulatedDeltas[parent] += *outputDeltas[parent];
-        // TODO: make sure accumulatedDeltas is getting zeroed out correctly.
       }
 
       currentOutput = &layerOutputs[i-1];
@@ -1238,6 +1242,8 @@ typename MatType::elem_type DAGNetwork<
     responsesBatch) + Loss();
 
   outputLayer.Backward(networkOutput, responsesBatch, error);
+
+  gradient.set_size(parameters.n_rows, parameters.n_cols);
   Backward(predictorsBatch, networkOutput, error, gradient);
 
   return obj;
