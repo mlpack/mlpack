@@ -146,13 +146,21 @@ public:
    */
   void Connect(size_t parentNodeId, size_t childNodeId);
 
-  // Get the layers of the network. The network will be sorted topologically.
-  const std::vector<Layer<MatType>*>& Network()
+  // Get the layers of the network, in the order the user specified.
+  const std::vector<Layer<MatType>*>& Network() const
+  {
+    return network;
+  }
+
+  // Get the layers of the network, in topological order.
+  const std::vector<Layer<MatType>*>& SortedNetwork()
   {
     if (!graphIsSet)
       CheckGraph();
-    return network;
+    return sortedNetwork;
   }
+
+
 
   template<typename OptimizerType, typename... CallbackTypes>
   typename MatType::elem_type Train(MatType predictors,
