@@ -1109,9 +1109,8 @@ double DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::Loss()
+>::Loss() const
 {
-  CheckNetwork("DAGNetwork::Loss()", 0);
   double loss = 0.0;
   for (size_t i = 0; i < network.size(); i++)
        loss += network[i]->Loss();

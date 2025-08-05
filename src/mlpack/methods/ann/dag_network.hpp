@@ -535,7 +535,7 @@ private:
   /**
    * Compute the loss that should be added to the objective for each layer.
    */
-  double Loss();
+  double Loss() const;
 
   /**
    * Finds the index of layerPtr in network.
