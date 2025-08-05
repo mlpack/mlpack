@@ -225,7 +225,8 @@ if (parentNodeId == childNodeId)
     throw std::logic_error(errorMessage.str());
   }
 
-  std::vector<Layer<MatType>*>& childNodeParents = parentsList[network[childNodeId]];
+  std::vector<Layer<MatType>*>& childNodeParents
+    = parentsList[network[childNodeId]];
   for (size_t i = 0; i < childNodeParents.size(); i++)
   {
     if (childNodeParents[i] == network[parentNodeId])
@@ -967,23 +968,21 @@ void DAGNetwork<
         for (size_t j = axis + 1; j < numDims; j++)
           slices *= layer->InputDimensions()[j];
 
-        std::vector<CubeType> parentOutputAliases(parents.size());
-        for (size_t j = 0; j < parents.size(); j++)
-        {
-          size_t cols = parents[j]->OutputDimensions()[axis];
-          MatType& parentOutput = layerOutputs[sortedIndices[parents[j]]];
-          MakeAlias(parentOutputAliases[j], parentOutput, rows, cols, slices);
-        }
-
         CubeType inputAlias;
         MakeAlias(inputAlias, layerInputs[i-1], rows,
           layer->InputDimensions()[axis], slices);
-
         size_t startCol = 0;
-        for (size_t j = 0; j < parentOutputAliases.size(); j++)
+
+        for (size_t j = 0; j < parents.size(); j++)
         {
-          const size_t cols = parentOutputAliases[j].n_cols;
-          inputAlias.cols(startCol, startCol + cols - 1) = parentOutputAliases[j];
+          size_t index = FindLayerIndex(parents[j]);
+          MatType& parentOutput = layerOutputs[index];
+
+          const size_t cols = parents[j]->OutputDimensions()[axis];
+          CubeType parentOutputAlias;
+          MakeAlias(parentOutputAlias, parentOutput, rows, cols, slices);
+
+          inputAlias.cols(startCol, startCol + cols - 1) = parentOutputAlias;
           startCol += cols;
         }
       }
