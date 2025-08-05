@@ -693,6 +693,19 @@ void DAGNetwork<
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
+size_t DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::OutputSize()
+{
+  CheckNetwork("DAGNetwork::OutputSize()", 0);
+  return sortedNetwork.back()->OutputSize();
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
 void DAGNetwork<
     OutputLayerType,
     InitializationRuleType,

@@ -256,6 +256,11 @@ public:
    * is `false`.
    */
   void SetNetworkMode(const bool training);
+  
+  /**
+   *  Returns the output size of the last layer.
+   */
+  size_t OutputSize();
 
   /**
    * Perform a manual forward pass of the data.
