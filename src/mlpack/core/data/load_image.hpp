@@ -46,6 +46,7 @@ bool Load(const std::string& filename,
   // Use the new implementation.
   ImageOptions opts;
   opts.Fatal() = fatal;
+  opts.Image() = true;
   std::vector<std::string> files;
   files.push_back(filename);
   Load(files.back(), matrix, opts);
@@ -69,6 +70,7 @@ bool Load(const std::vector<std::string>& files,
   // Use the new implementation.
   ImageOptions opts;
   opts.Fatal() = fatal;
+  opts.Image() = true;
   Load(files, matrix, opts);
 }
 

@@ -113,38 +113,52 @@ bool Load(const std::string& filename,
   return Load(filename, matrix, tmpOpts);
 }
 
-template<typename MatType>
+template<typename MatType, typename DataOptionsType>
 bool LoadMatrix(const std::string& filename,
                 MatType& matrix,
                 std::fstream& stream,
-                TextOptions& txtOpts)
+                DataOptionsType& opts)
 {
   bool success = false;
-  if constexpr (IsSparseMat<MatType>::value)
+
+  //@rcurtin this is the solution that I have found for now. This implies that
+  // Image() is part of DataOptions and not
+  if (opts.InternalImage())
   {
-    success = LoadSparse(filename, matrix, txtOpts, stream);
-  }
-  else if (txtOpts.Categorical() ||
-      (txtOpts.Format() == FileType::ARFFASCII))
-  {
-    success = LoadCategorical(filename, matrix, txtOpts);
-  }
-  else if constexpr (IsCol<MatType>::value)
-  {
-    success = LoadCol(filename, matrix, txtOpts, stream);
-  }
-  else if constexpr (IsRow<MatType>::value)
-  {
-    success = LoadRow(filename, matrix, txtOpts, stream);
-  }
-  else if constexpr (IsDense<MatType>::value)
-  {
-    success = LoadDense(filename, matrix, txtOpts, stream);
+    ImageOptions imgOpts(std::move(opts));
+    success = Load(filename, matrix, imgOpts);
+    opts = std::move(imgOpts);
   }
   else
   {
-    return handleError("data::Load(): unknown matrix-like type given!",
-        txtOpts);
+    TextOptions txtOpts(std::move(opts));
+    if constexpr (IsSparseMat<MatType>::value)
+    {
+      success = LoadSparse(filename, matrix, txtOpts, stream);
+    }
+    else if (txtOpts.Categorical() ||
+        (txtOpts.Format() == FileType::ARFFASCII))
+    {
+      success = LoadCategorical(filename, matrix, txtOpts);
+    }
+    else if constexpr (IsCol<MatType>::value)
+    {
+      success = LoadCol(filename, matrix, txtOpts, stream);
+    }
+    else if constexpr (IsRow<MatType>::value)
+    {
+      success = LoadRow(filename, matrix, txtOpts, stream);
+    }
+    else if constexpr (IsDense<MatType>::value)
+    {
+      success = LoadDense(filename, matrix, txtOpts, stream);
+    }
+    else
+    {
+      return handleError("data::Load(): unknown matrix-like type given!",
+          txtOpts);
+    }
+    opts = std::move(txtOpts);
   }
   return success;
 }
@@ -177,9 +191,9 @@ bool Load(const std::string& filename,
 
   if constexpr (IsArma<ObjectType>::value || IsSparseMat<ObjectType>::value)
   {
-    TextOptions txtOpts(std::move(opts));
-    success = LoadMatrix(filename, matrix, stream, txtOpts);
-    opts = std::move(txtOpts);
+    //TextOptions txtOpts(std::move(opts));
+    success = LoadMatrix(filename, matrix, stream, opts);
+    //opts = std::move(txtOpts);
   }
   else if constexpr (HasSerialize<ObjectType>::value)
   {

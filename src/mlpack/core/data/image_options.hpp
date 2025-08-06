@@ -37,15 +37,19 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
    * @param height Image height.
    * @param channels Number of channels in the image.
    * @param quality Compression of the image if saved as jpg (0 - 100).
+   * #param image Indicate if we are loading / saving an image. 
    */
-  ImageOptions(const size_t width = 0,
-               const size_t height = 0,
-               const size_t channels = 3,
-               const size_t quality = 90) :
+  ImageOptions(std::optional<size_t> width = std::nullopt,
+               std::optional<size_t> height = std::nullopt,
+               std::optional<size_t> channels = std::nullopt,
+               std::optional<size_t> quality = std::nullopt,
+               std::optional<bool> image = std::nullopt) :
+    DataOptionsBase<ImageOptions>(),
     width(width),
     height(height),
     channels(channels),
-    quality(quality)
+    quality(quality),
+    image(image)
   {
     // Do nothing.
   }
@@ -127,16 +131,97 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
         DataOptionsBase<ImageOptions>::operator=(std::move(other)));
   }
 
+  void Combine(const ImageOptions& other)
+  {
+    image = DataOptionsBase<ImageOptions>::CombineBooleanOption(image,
+        other.image, "Image()");
+
+    // if the user specifies several Width / heights, then reset everything to
+    // the default value and leave it for the loader to figure out the
+    // dimension, if we have different dimensions, error is going to be thrown
+    // in any case.
+    width.reset();
+    height.reset();
+    channels.reset();
+    quality.reset();
+  }
+
+  // Print warnings for any members that cannot be represented by a
+  // DataOptionsBase<void>.
+  void WarnBaseConversion(const char* dataDescription) const
+  {
+    if (image.has_value() && image != defaultImage)
+      this->WarnOptionConversion("image", dataDescription);
+    if (width.has_value() && width != defaultImage)
+      this->WarnOptionConversion("width", dataDescription);
+    if (height.has_value() && height != defaultImage)
+      this->WarnOptionConversion("height", dataDescription);
+    if (channels.has_value() && channels != defaultImage)
+      this->WarnOptionConversion("channels", dataDescription);
+    if (quality.has_value() && quality != defaultImage)
+      this->WarnOptionConversion("quality", dataDescription);
+  }
+
   static const char* DataDescription() { return "image data"; }
 
-  // @rcurtin do we really need this if private memebers are not
-  // std::optionals ??
   void Reset()
   {
-    width = 0;
-    height = 0;
-    channels = 3;
-    quality = 90;
+    image.reset();
+    width.reset();
+    height.reset();
+    channels.reset();
+    quality.reset();
+  }
+
+  bool Image() const
+  {
+    return this->AccessMember(image, defaultImage);
+  }
+
+  bool& Image()
+  {
+    this->InternalImage() = true;
+    return this->ModifyMember(image, defaultImage);
+  }
+
+  size_t Width() const
+  {
+    return this->AccessMember(width, defaultWidth);
+  }
+
+  size_t& Width()
+  {
+    return this->ModifyMember(width, defaultWidth);
+  }
+
+  size_t Height() const
+  {
+    return this->AccessMember(height, defaultHeight);
+  }
+
+  size_t& Height()
+  {
+    return this->ModifyMember(height, defaultHeight);
+  }
+
+  size_t Channels() const
+  {
+    return this->AccessMember(channels, defaultChannels);
+  }
+
+  size_t& Channels()
+  {
+    return this->ModifyMember(channels, defaultChannels);
+  }
+
+  size_t Quality() const
+  {
+    return this->AccessMember(quality, defaultQuality);
+  }
+
+  size_t& Quality()
+  {
+    return this->ModifyMember(quality, defaultQuality);
   }
 
   inline const std::vector<std::string> LoadFileTypes()
@@ -182,47 +267,23 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     return false;
   }
 
-  //! Get the image width.
-  const size_t& Width() const { return width; }
-  //! Modify the image width.
-  size_t& Width() { return width; }
-  //! Get the image height.
-
-  const size_t& Height() const { return height; }
-  //! Modify the image height.
-  size_t& Height() { return height; }
-
-  //! Get the image channels.
-  const size_t& Channels() const { return channels; }
-  //! Modify the image channels.
-  size_t& Channels() { return channels; }
-
-  //! Get the image quality.
-  const size_t& Quality() const { return quality; }
-  //! Modify the image quality.
-  size_t& Quality() { return quality; }
-
+  // @rcurtin Wondering if the serialization of optional member is the same.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar(CEREAL_NVP(width));
-    ar(CEREAL_NVP(channels));
-    ar(CEREAL_NVP(height));
-    ar(CEREAL_NVP(quality));
+    ar(CEREAL_NVP(Width()));
+    ar(CEREAL_NVP(Channels()));
+    ar(CEREAL_NVP(Height()));
+    ar(CEREAL_NVP(Quality()));
   }
 
  private:
-  // To store the image width.
-  size_t width;
 
-  // To store the image height.
-  size_t height;
-
-  // To store the number of channels in the image.
-  size_t channels;
-
-  // Compression of the image if saved as jpg (0 - 100).
-  size_t quality;
+  std::optional<size_t> width;
+  std::optional<size_t> height;
+  std::optional<size_t> channels;
+  std::optional<size_t> quality;
+  std::optional<bool> image;
 
   inline static const std::unordered_set<std::string> saveType
       = {"jpg", "png", "tga", "bmp", "hdr"};
@@ -230,6 +291,19 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
   inline static const std::unordered_set<std::string> loadType
       = {"jpg", "png", "tga", "bmp", "psd", "gif", "hdr", "pic", "pnm", "jpeg"};
 
+  constexpr static const size_t defaultWidth = 0;
+  constexpr static const size_t defaultHeight = 0;
+  constexpr static const size_t defaultChannels = 3;
+  constexpr static const size_t defaultQuality = 90;
+  constexpr static const bool   defaultImage = false;
+};
+
+static const ImageOptions Image = ImageOptions(0, 0, 3, 90, true);
+
+template<>
+struct IsDataOptions<ImageOptions>
+{
+  constexpr static bool value = true;
 };
 
 // Provide backward compatibility with the previous API
