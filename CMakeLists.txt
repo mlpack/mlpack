@@ -247,11 +247,13 @@ if (USE_SYSTEM_STB)
   set(MLPACK_USE_SYSTEM_STB ON)
 endif ()
 
+set(MLPACK_DONT_FIND_MLPACK 1)
 if (CMAKE_CROSSCOMPILING OR DOWNLOAD_DEPENDENCIES)
   fetch_mlpack(ON)
 else()
   find_mlpack()
 endif()
+unset(MLPACK_DONT_FIND_MLPACK)
 
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
