@@ -645,7 +645,12 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
     set(COMPILE_OPENBLAS ON)
   endif()
 
-  find_package(BLAS QUIET)
+  if (NOT CMAKE_CROSSCOMPILING)
+    # Only search for system BLAS if we know we can use it (e.g. if OpenBLAS
+    # doesn't need to be cross-compiled).
+    find_package(BLAS QUIET)
+  endif ()
+
   if (NOT BLAS_FOUND)
     # Also search in case we already downloaded it.
     find_package(BLAS PATHS ${CMAKE_BINARY_DIR} QUIET)
