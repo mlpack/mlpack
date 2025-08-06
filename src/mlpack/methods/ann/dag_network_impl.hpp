@@ -873,16 +873,17 @@ void DAGNetwork<
   for (size_t i = 0; i < sortedNetwork.size() - 1; i++)
   {
     Layer<MatType>* layer = sortedNetwork[i];
+    size_t index = FindLayerIndex(layer);
     if (childrenList[layer].size() > 1)
     {
-      accumulatedDeltas.insert({layer, &layerDeltas[i]});
+      accumulatedDeltas.insert({layer, &layerDeltas[index]});
       MakeAlias(*accumulatedDeltas[layer], layerDeltaMatrix,
         layer->OutputSize(), batchSize, offset);
       offset += layer->OutputSize() * batchSize;
       outputDeltas.insert({layer, new MatType()});
     }
     else
-       outputDeltas.insert({layer, &layerDeltas[i]});
+       outputDeltas.insert({layer, &layerDeltas[index]});
 
     MakeAlias(*outputDeltas[layer], layerDeltaMatrix,
        layer->OutputSize(), batchSize, offset);
@@ -1068,6 +1069,8 @@ void DAGNetwork<
           *outputDeltas[parent] = inputDeltaAlias.cols(startCol,
             startCol + cols - 1);
           outputDeltas[parent]->reshape(outputDeltas[parent]->n_elem / batchSize, batchSize);
+
+          startCol += cols;
         }
       }
 
