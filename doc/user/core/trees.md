@@ -46,6 +46,8 @@ and can have the type of tree specified via template parameters:
 
 <!-- TODO: document these! -->
 
+ * [`KNN`](../methods/knn.md): `k`-nearest-neighbor search (exact and
+   approximate)
  * [`NeighborSearch`](/src/mlpack/methods/neighbor_search/neighbor_search.hpp)
    (for k-nearest-neighbor and k-furthest-neighbor)
  * [`RangeSearch`](/src/mlpack/methods/range_search/range_search.hpp)
