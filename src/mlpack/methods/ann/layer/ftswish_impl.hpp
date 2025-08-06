@@ -4,7 +4,6 @@
  *
  * Definition of Flatten T Swish layer first introduced in the acoustic model,
  * Hock Hung Chieng, Noorhaniza Wahid, Pauline Ong, Sai Raj Kishore Perla,
- * 
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -76,9 +75,9 @@ void FTSwish<MatType>::Forward(const MatType& input, MatType& output)
   for (size_t i = 0; i < (size_t) input.n_elem; ++i)
   {
     if (input(i) >= 0)
-      output(i) = input(i) / (1 + std::exp(-input(i))) + T;
+      output(i) = input(i) / (1 + std::exp(-input(i))) + ElemType(T);
     else
-      output(i) = T;
+      output(i) = ElemType(T);
   }
 }
 
@@ -94,8 +93,8 @@ void FTSwish<MatType>::Backward(
   {
     if (input(i) >= 0)
     {
-      const double sigmoidX = 1 / (1 + std::exp(-input(i)));
-      const double fX = input(i) * sigmoidX;
+      const ElemType sigmoidX = 1 / (1 + std::exp(-input(i)));
+      const ElemType fX = input(i) * sigmoidX;
 
       g(i) = gy(i) * (sigmoidX * (1 - fX) + fX);
     }

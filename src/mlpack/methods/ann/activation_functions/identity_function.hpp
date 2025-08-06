@@ -33,7 +33,8 @@ class IdentityFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
     return x;
   }
@@ -59,9 +60,10 @@ class IdentityFunction
    * @param * (y) Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double /* x */, const double /* y */)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType /* x */, const ElemType /* y */)
   {
-    return 1.0;
+    return 1;
   }
 
   /**
@@ -76,7 +78,7 @@ class IdentityFunction
                     const OutputVecType& /* y */,
                     DerivVecType& dy)
   {
-    dy.ones(arma::size(x));
+    dy.ones(size(x));
   }
 
   /**

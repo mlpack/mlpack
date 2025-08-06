@@ -63,13 +63,13 @@ template<typename MatType>
 CELU<MatType>&
 CELU<MatType>::operator=(CELU&& other)
 {
-    if (&other != this)
-    {
-      Layer<MatType>::operator=(std::move(other));
-      alpha = std::move(other.alpha);
-    }
+  if (&other != this)
+  {
+    Layer<MatType>::operator=(std::move(other));
+    alpha = std::move(other.alpha);
+  }
 
-    return *this;
+  return *this;
 }
 
 template<typename MatType>
@@ -78,8 +78,8 @@ void CELU<MatType>::Forward(
 {
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    output(i) = (input(i) >= 0) ? input(i) : alpha *
-        (std::exp(input(i) / alpha) - 1);
+    output(i) = (input(i) >= 0) ? input(i) : ElemType(alpha) *
+        (std::exp(input(i) / ElemType(alpha)) - 1);
   }
 
   if (this->training)
@@ -88,7 +88,7 @@ void CELU<MatType>::Forward(
     for (size_t i = 0; i < input.n_elem; ++i)
     {
       derivative(i) = (input(i) >= 0) ? 1 :
-          (output(i) / alpha) + 1;
+          (output(i) / ElemType(alpha)) + 1;
     }
   }
 }

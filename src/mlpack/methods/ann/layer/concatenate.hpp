@@ -97,7 +97,7 @@ class Concatenate : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Matrix to be concatenated to input.
+  // Matrix to be concatenated to input.
   MatType concat;
 }; // class Concatenate
 

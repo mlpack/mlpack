@@ -34,9 +34,10 @@ class MultiQuadFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
-    return std::pow(1 + x * x, 0.5);
+    return std::sqrt(1 + x * x);
   }
 
   /**
@@ -48,7 +49,7 @@ class MultiQuadFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = pow((1 + pow(x, 2)), 0.5);
+    y = sqrt((1 + pow(x, 2)));
   }
 
   /**
@@ -61,7 +62,8 @@ class MultiQuadFunction
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x, const double y)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType x, const ElemType y)
   {
     return x / y;
   }

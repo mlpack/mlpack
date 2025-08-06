@@ -122,7 +122,7 @@ Forward(const MatType& input, MatType& output)
 
   // The scaling factor sqrt(headDim) is used to prevent exploding values
   // after dot product i.e. when qProj is multiplied with kProj.
-  qProj /= std::sqrt(headDim);
+  qProj /= ElemType(std::sqrt(headDim));
 
   // Split the qProj, kProj and vProj into n heads. That's what Multihead
   // Attention is.
@@ -278,7 +278,7 @@ Backward(const MatType& /* input */,
   // The shape of kProj : (srcSeqLen, headDim, numHeads * batchSize).
   // The shape of gyTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
   // The new shape of tmp : (tgtSeqLen, headDim, numHeads * batchSize).
-  tmp = MultiplyCube2Cube(gyTemp, kProj) / std::sqrt(headDim);
+  tmp = MultiplyCube2Cube(gyTemp, kProj) / ElemType(std::sqrt(headDim));
 
   // Concatenate results of all the attention heads.
   tmp.reshape(tgtSeqLen, embedDim, batchSize);
@@ -435,7 +435,7 @@ Gradient(const MatType& input,
 
   // Now, we will concatenate propagated error of all heads.
   gyTemp.reshape(tgtSeqLen, embedDim, batchSize);
-  gyTemp /= std::sqrt(headDim);
+  gyTemp /= ElemType(std::sqrt(headDim));
 
   // Gradient wrt. qBias, i.e. dL/d(qBias). We will take summation over all the
   // batches of gyTemp and over all the sequences.

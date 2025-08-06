@@ -268,9 +268,6 @@ class MultiheadAttention : public Layer<MatType>
   }
 
  private:
-  //! Element Type of the output.
-  using ElemType = typename MatType::elem_type;
-
   //! Target sequence length.
   size_t tgtSeqLen;
 

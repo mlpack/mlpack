@@ -42,7 +42,7 @@ class Linear3D : public Layer<MatType>
   using CubeType = typename GetCubeType<MatType>::type;
 
   // Create the Linear3D object.
-  Linear3DType();
+  Linear3D();
 
   /**
    * Create the Linear3D layer object using the specified number of output

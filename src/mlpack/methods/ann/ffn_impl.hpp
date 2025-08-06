@@ -362,7 +362,8 @@ typename MatType::elem_type FFN<
   // pass.
   network.Forward(predictors, networkOutput);
 
-  return outputLayer.Forward(networkOutput, responses) + network.Loss();
+  return outputLayer.Forward(networkOutput, responses) +
+      ElemType(network.Loss());
 }
 
 template<typename OutputLayerType,
@@ -457,7 +458,8 @@ typename MatType::elem_type FFN<
       begin * responses.n_rows);
   network.Forward(predictorsBatch, networkOutput);
 
-  return outputLayer.Forward(networkOutput, responsesBatch) + network.Loss();
+  return outputLayer.Forward(networkOutput, responsesBatch) +
+      ElemType(network.Loss());
 }
 
 template<typename OutputLayerType,
@@ -509,8 +511,8 @@ typename MatType::elem_type FFN<
 
   network.Forward(predictorsBatch, networkOutput);
 
-  const typename MatType::elem_type obj = outputLayer.Forward(networkOutput,
-      responsesBatch) + network.Loss();
+  const ElemType obj = outputLayer.Forward(networkOutput, responsesBatch) +
+      ElemType(network.Loss());
 
   // Now perform the backward pass.
   outputLayer.Backward(networkOutput, responsesBatch, error);

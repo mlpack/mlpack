@@ -54,6 +54,9 @@ template<
 class FFN
 {
  public:
+  // Convenience typedef for the element type of the network.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the FFN object.
    *

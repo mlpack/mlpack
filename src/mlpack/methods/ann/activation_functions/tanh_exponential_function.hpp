@@ -48,7 +48,8 @@ class TanhExpFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
     return x * std::tanh(std::exp(x));
   }
@@ -62,7 +63,7 @@ class TanhExpFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = x % arma::tanh(exp(x));
+    y = x % tanh(exp(x));
   }
 
   /**
@@ -72,11 +73,12 @@ class TanhExpFunction
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x, const double y)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType x, const ElemType y)
   {
     // leverage both y and x
-    return x == 0 ? std::tanh(1) :
-        y / x + x * std::exp(x) * (1 - std::pow(y / x, 2));
+    return (x == 0) ? std::tanh(1) :
+        y / x + x * std::exp(x) * (1 - std::pow(y / x, ElemType(2)));
   }
 
   /**
@@ -92,10 +94,10 @@ class TanhExpFunction
                     DerivVecType& dy)
   {
     // leverage both y and x
-    dy = y / x + x % exp(x) % (1 - pow(y / x, 2));
+    dy = y / x + x % exp(x) % (1 - square(y / x));
     // the expression above is indeterminate at 0, even though
     // the expression solely in terms of x is defined (= tanh(1))
-    dy(arma::find(x == 0)).fill(std::tanh(1));
+    dy(find(x == 0)).fill(std::tanh(typename InputVecType::elem_type(1)));
   }
 }; // class TanhExpFunction
 

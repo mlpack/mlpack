@@ -48,9 +48,9 @@ class LeakyReLU : public Layer<MatType>
    * The non zero gradient can be adjusted by specifying the parameter
    * alpha in the range 0 to 1. Default (alpha = 0.03)
    *
-   * @param alpha Non zero gradient.
+   * @param alpha Nonzero gradient parameter.
    */
-  LeakyReLU(const typename MatType::elem_type alpha = 0.03);
+  LeakyReLU(const ElemType alpha = ElemType(0.03));
 
   // Clone the LeakyReLU object. This handles polymorphism correctly.
   LeakyReLU* Clone() const { return new LeakyReLU(*this); }
@@ -101,8 +101,8 @@ class LeakyReLU : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Leakyness Parameter in the range 0 <alpha< 1
-  typename MatType::elem_type alpha;
+  // Leakyness parameter in the range 0 < alpha < 1.
+  ElemType alpha;
 }; // class LeakyReLU
 
 } // namespace mlpack

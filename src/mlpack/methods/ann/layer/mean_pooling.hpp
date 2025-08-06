@@ -47,10 +47,10 @@ class MeanPooling : public Layer<MatType>
    *              input will be skipped.
    */
   MeanPooling(const size_t kernelWidth,
-                  const size_t kernelHeight,
-                  const size_t strideWidth = 1,
-                  const size_t strideHeight = 1,
-                  const bool floor = true);
+              const size_t kernelHeight,
+              const size_t strideWidth = 1,
+              const size_t strideHeight = 1,
+              const bool floor = true);
 
   // Virtual destructor.
   virtual ~MeanPooling() { }

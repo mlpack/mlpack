@@ -68,16 +68,10 @@ template<typename MatType>
 void CReLU<MatType>::Forward(
     const MatType& input, MatType& output)
 {
-  typename MatType::elem_type zero = 0.0;
-  #pragma omp for
-  for (size_t i = 0; i < (size_t) input.n_cols; ++i)
-  {
-    for (size_t j = 0; j < (size_t) input.n_rows; ++j)
-    {
-      output(j, i) = std::max(input(j, i), zero);
-      output(j + input.n_rows, i) = std::max(-input(j, i), zero);
-    }
-  }
+  output.rows(0, input.n_rows - 1) =
+      clamp(input, 0, std::numeric_limits<typename MatType::elem_type>::max());
+  output.rows(input.n_rows, output.n_rows - 1) =
+      clamp(-input, 0, std::numeric_limits<typename MatType::elem_type>::max());
 }
 
 template<typename MatType>
@@ -91,8 +85,9 @@ void CReLU<MatType>::Backward(
   // exactly 0, since we have the discontinuity from -1 to 1 between 0- and 0+,
   // it seems cleaner to set the gradient at x=0 to 0 instead of picking either
   // +1 or -1.
-  g = gy.rows(0, input.n_rows - 1) % (input > 0) -
-      gy.rows(input.n_rows, input.n_rows * 2 - 1) % (input < 0);
+  g = gy.rows(0, input.n_rows - 1) % conv_to<MatType>::from(input > 0) -
+      gy.rows(input.n_rows, input.n_rows * 2 - 1) %
+      conv_to<MatType>::from(input < 0);
 }
 
 template<typename MatType>

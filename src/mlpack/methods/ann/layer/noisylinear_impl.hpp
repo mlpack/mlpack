@@ -104,13 +104,13 @@ void NoisyLinear<MatType>::ResetNoise()
 template<typename MatType>
 void NoisyLinear<MatType>::ResetParameters()
 {
-  const double muRange = 1 / std::sqrt(inSize);
+  const ElemType muRange = 1 / std::sqrt(ElemType(inSize));
   weightMu.randu();
   weightMu = muRange * (weightMu * 2 - 1);
   biasMu.randu();
   biasMu = muRange * (biasMu * 2 - 1);
-  weightSigma.fill(0.5 / std::sqrt(inSize));
-  biasSigma.fill(0.5 / std::sqrt(outSize));
+  weightSigma.fill(1 / (2 * std::sqrt(ElemType(inSize))));
+  biasSigma.fill(1 / (2 * std::sqrt(ElemType(outSize))));
 }
 
 template<typename MatType>

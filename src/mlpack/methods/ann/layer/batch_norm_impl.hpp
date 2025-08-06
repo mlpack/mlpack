@@ -173,8 +173,8 @@ void BatchNorm<MatType>::CustomInitialize(
   // Beta acts as the shifting parameters for the normalized output.
   MakeAlias(betaTemp, W, size, 1, gammaTemp.n_elem);
 
-  gammaTemp.fill(1.0);
-  betaTemp.fill(0.0);
+  gammaTemp.ones();
+  betaTemp.zeros();
 
   runningMean.zeros(size, 1);
   runningVariance.ones(size, 1);
@@ -224,7 +224,8 @@ void BatchNorm<MatType>::Forward(
     inputMean = outputTemp;
 
     // Normalize output.
-    outputTemp.each_slice() /= sqrt(repmat(variance, inputSize, 1) + eps);
+    outputTemp.each_slice() /= sqrt(repmat(variance, inputSize, 1) +
+        ElemType(eps));
 
     // Re-used in backward propagation.
     normalized.set_size(arma::size(inputTemp));
@@ -235,11 +236,11 @@ void BatchNorm<MatType>::Forward(
 
     count += 1;
     // Value for average factor which used to update running parameters.
-    double averageFactor = average ? 1.0 / count : momentum;
+    ElemType averageFactor = ElemType(average ? 1.0 / count : momentum);
 
-    double nElements = 0.0;
+    ElemType nElements = 0;
     if (m - 1 != 0)
-      nElements = m * (1.0 / (m - 1));
+      nElements = m * (ElemType(1) / (m - 1));
 
     // Update running mean and running variance.
     runningMean = (1 - averageFactor) * runningMean + averageFactor *
@@ -257,7 +258,7 @@ void BatchNorm<MatType>::Forward(
 
     outputTemp.each_slice() -= repmat(runningMean.t(), inputSize, 1);
     outputTemp.each_slice() /= sqrt(repmat(runningVariance.t(),
-        inputSize, 1) + eps);
+        inputSize, 1) + ElemType(eps));
     outputTemp.each_slice() %= repmat(gamma.t(), inputSize, 1);
     outputTemp.each_slice() += repmat(beta.t(), inputSize, 1);
   }
@@ -270,7 +271,7 @@ void BatchNorm<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  const MatType stdInv = 1.0 / sqrt(variance + eps);
+  const MatType stdInv = 1 / sqrt(variance + ElemType(eps));
 
   const size_t batchSize = gy.n_cols;
   const size_t inputSize = inputDimension;
@@ -288,18 +289,18 @@ void BatchNorm<MatType>::Backward(
 
   // Step 2: sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
   MatType temp = sum(sum(norm % inputMean, 2), 0);
-  MatType vars = temp % pow(stdInv, 3) * (-0.5);
+  MatType vars = -temp % pow(stdInv, 3) / 2;
 
   // Step 3: dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * 1 / m.
   gTemp = (norm.each_slice() % repmat(stdInv, inputSize, 1)) +
-      ((inputMean.each_slice() % repmat(vars, inputSize, 1) * 2.0) / m);
+      ((inputMean.each_slice() % repmat(vars, inputSize, 1) * 2) / m);
 
   // Step 4: sum (dl / dxhat * -1 / stdInv) + variance *
   // sum (-2 * (x - mu)) / m.
   MatType normTemp = sum(sum((norm.each_slice() %
       repmat(-stdInv, inputSize, 1)) +
-      (inputMean.each_slice() % repmat(vars, inputSize, 1) * (-2.0) / m),
+      -2 * (inputMean.each_slice() % repmat(vars, inputSize, 1) / m),
       2), 0) / m;
   gTemp.each_slice() += repmat(normTemp, inputSize, 1);
 }

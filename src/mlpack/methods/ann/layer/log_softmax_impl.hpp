@@ -97,23 +97,23 @@ void LogSoftMax<MatType>::ForwardImpl(
       y *= y;
       y *= y;
       y = 1 / y;
-      output(i) = y;
+      output(i) = ElemType(y);
     }
     else
     {
-      output(i) = 0.0;
+      output(i) = 0;
     }
   }
 
   #pragma omp parallel for
   for (size_t col = 0; col < maxInput.n_cols; ++col)
   {
-    double colSum = 0.0;
+    ElemType colSum = 0;
     for (size_t row = 0; row < output.n_rows; ++row)
     {
       colSum += output(row, col);
     }
-    double logSum = std::log(colSum);
+    ElemType logSum = std::log(colSum);
     for (size_t row = 0; row < maxInput.n_rows; ++row)
     {
       maxInput(row, col) += logSum;
@@ -133,7 +133,7 @@ void LogSoftMax<MatType>::ForwardImpl(
 {
   MatType maxInput = repmat(max(input), input.n_rows, 1);
   output = (maxInput - input);
-  output = exp(output * -1);
+  output = exp(-output);
   maxInput.each_row() += log(sum(output));
   output = input - maxInput;
 }

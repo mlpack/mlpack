@@ -37,11 +37,8 @@ class AdaptiveMaxPooling : public Layer<MatType>
   // Convenience typedef to access the element type of the weights and data.
   using ElemType = typename MatType::elem_type;
 
-  //! Create the AdaptiveMaxPooling object.
-  AdaptiveMaxPooling();
-
   // Create the AdaptiveMaxPooling object.
-  AdaptiveMaxPoolingType();
+  AdaptiveMaxPooling();
 
   /**
    * Create the AdaptiveMaxPooling object.

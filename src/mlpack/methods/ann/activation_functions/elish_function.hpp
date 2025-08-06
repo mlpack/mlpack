@@ -54,9 +54,10 @@ class ElishFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
-    if (x < 0.0)
+    if (x < 0)
       return (std::exp(x) - 1) / (1 + std::exp(-x));
 
     return x / (1 + std::exp(-x));
@@ -71,8 +72,8 @@ class ElishFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = ((x < 0.0) % ((exp(x) - 1) / (1 + exp(-x))))
-        + ((x >= 0.0) % (x / (1 + exp(-x))));
+    y = (conv_to<InputVecType>::from(x < 0) % ((exp(x) - 1) / (1 + exp(-x))))
+        + (conv_to<InputVecType>::from(x >= 0) % (x / (1 + exp(-x))));
   }
 
   /**
@@ -82,17 +83,19 @@ class ElishFunction
    * @param y Result of Fn(x).
    * @return f'(x).
    */
-  static double Deriv(const double x, const double y)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType x, const ElemType y)
   {
-    if (x < 0.0)
+    if (x < 0)
     {
       return std::exp(x) - 2 / (1 + std::exp(x)) +
           2 / std::pow(1 + std::exp(x) , 2);
     }
     else if (x == 0)
     {
-      return 0.5; // the expression below is indeterminate at 0, even though
-                  // the expression solely in terms of x is defined (= 0.5)
+      // The expression below is indeterminate at 0, even though the expression
+      // solely in terms of x is defined (= 0.5).
+      return ElemType(0.5);
     }
     else
     {
@@ -118,12 +121,14 @@ class ElishFunction
     // the expression solely in terms of x is defined (= 0.5)
     // only calculate exp(x) once for each element where x < 0
     // this gives approx 3x speedup, despite allocating the temp vector
-    DerivVecType ex = (x < 0) % exp(x);
-    dy = ((x < 0) % ((ex - 2 / (1 + ex) + 2 / pow(1 + ex, 2)))) +
-         ((x > 0) % ((y / x) % (1.0 + x - y)));
+    DerivVecType ex = conv_to<DerivVecType>::from(x < 0) % exp(x);
+    dy = (conv_to<InputVecType>::from(x < 0) %
+            ((ex - 2 / (1 + ex) + 2 / pow(1 + ex, 2)))) +
+         (conv_to<InputVecType>::from(x > 0) %
+            ((y / x) % (1 + x - y)));
     // need to do this here, because the /x above gives nans even when the
     // condition is not met (e.g. when x > 0 is false)
-    dy(arma::find(x == 0)).fill(0.5);
+    dy(arma::find(x == 0)).fill(typename InputVecType::elem_type(0.5));
   }
 }; // class ElishFunction
 
