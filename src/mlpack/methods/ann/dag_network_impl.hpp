@@ -201,7 +201,7 @@ void DAGNetwork<
     MatType
 >::Connect(size_t parentNodeId, size_t childNodeId)
 {
-if (parentNodeId == childNodeId)
+  if (parentNodeId == childNodeId)
   {
     throw std::logic_error("DAGNetwork::Connect(): `parentNodeId` "
       "and `childNodeId` cannot be the same.");
@@ -553,14 +553,11 @@ void DAGNetwork<
     MatType
 >::SetWeights(const MatType& weightsIn)
 {
-  if (!graphIsSet)
-    CheckGraph();
-
   size_t offset = 0;
   const size_t totalWeightSize = WeightSize();
-  for (size_t i = 0; i < sortedNetwork.size(); i++)
+  for (size_t i = 0; i < network.size(); i++)
   {
-    const size_t weightSize = sortedNetwork[i]->WeightSize();
+    const size_t weightSize = network[i]->WeightSize();
 
     if (offset + weightSize > totalWeightSize)
     {
@@ -569,7 +566,7 @@ void DAGNetwork<
     }
     MatType tmpWeights;
     MakeAlias(tmpWeights, weightsIn, weightSize, 1, offset);
-    sortedNetwork[i]->SetWeights(tmpWeights);
+    network[i]->SetWeights(tmpWeights);
     offset += weightSize;
   }
 }
@@ -769,9 +766,8 @@ void DAGNetwork<
     {
       size_t concatSize = sortedNetwork[i]->InputDimensions()[0];
       for (size_t j = 1; j < sortedNetwork[i]->InputDimensions().size(); j++)
-      {
         concatSize *= sortedNetwork[i]->InputDimensions()[j];
-      }
+
       totalConcatSize += concatSize;
     }
   }
@@ -812,7 +808,7 @@ void DAGNetwork<
     if (numParents == 1)
     {
       size_t inputIndex = sortedIndices[parents.front()];
-      MakeAlias(layerInputs[i - 1], layerOutputs[inputIndex], 
+      MakeAlias(layerInputs[i - 1], layerOutputs[inputIndex],
         layerOutputs[inputIndex].n_rows, layerOutputs[inputIndex].n_cols, 0);
     }
     else
@@ -873,17 +869,16 @@ void DAGNetwork<
   for (size_t i = 0; i < sortedNetwork.size() - 1; i++)
   {
     Layer<MatType>* layer = sortedNetwork[i];
-    size_t index = FindLayerIndex(layer);
     if (childrenList[layer].size() > 1)
     {
-      accumulatedDeltas.insert({layer, &layerDeltas[index]});
+      accumulatedDeltas.insert({layer, &layerDeltas[i]});
       MakeAlias(*accumulatedDeltas[layer], layerDeltaMatrix,
         layer->OutputSize(), batchSize, offset);
       offset += layer->OutputSize() * batchSize;
       outputDeltas.insert({layer, new MatType()});
     }
     else
-       outputDeltas.insert({layer, &layerDeltas[index]});
+       outputDeltas.insert({layer, &layerDeltas[i]});
 
     MakeAlias(*outputDeltas[layer], layerDeltaMatrix,
        layer->OutputSize(), batchSize, offset);
@@ -970,13 +965,13 @@ void DAGNetwork<
           slices *= layer->InputDimensions()[j];
 
         CubeType inputAlias;
-        MakeAlias(inputAlias, layerInputs[i-1], rows,
+        MakeAlias(inputAlias, layerInputs[i - 1], rows,
           layer->InputDimensions()[axis], slices);
         size_t startCol = 0;
 
         for (size_t j = 0; j < parents.size(); j++)
         {
-          size_t index = FindLayerIndex(parents[j]);
+          size_t index = sortedIndices[parents[j]];
           MatType& parentOutput = layerOutputs[index];
 
           const size_t cols = parents[j]->OutputDimensions()[axis];
@@ -990,7 +985,7 @@ void DAGNetwork<
 
       // Don't execute if it's the last iteration.
       if (i < sortedNetwork.size() - 1)
-        layer->Forward(layerInputs[i-1], layerOutputs[i]);
+        layer->Forward(layerInputs[i - 1], layerOutputs[i]);
     }
     sortedNetwork.back()->Forward(layerInputs.back(), networkOutput);
   }
@@ -1039,7 +1034,7 @@ void DAGNetwork<
     for (size_t i = sortedNetwork.size() - 1; i > 0; --i)
     {
       Layer<MatType>* layer = sortedNetwork[i];
-      layer->Backward(layerInputs[i-1], *currentOutput, *currentDelta,
+      layer->Backward(layerInputs[i - 1], *currentOutput, *currentDelta,
          *inputDeltas[layer]);
 
       size_t numParents = parentsList[layer].size();
@@ -1082,8 +1077,8 @@ void DAGNetwork<
           *accumulatedDeltas[parent] += *outputDeltas[parent];
       }
 
-      currentOutput = &layerOutputs[i-1];
-      currentDelta = &layerDeltas[i-1];
+      currentOutput = &layerOutputs[i - 1];
+      currentDelta = &layerDeltas[i - 1];
     }
 
     InitializeGradientPassMemory(gradients);
