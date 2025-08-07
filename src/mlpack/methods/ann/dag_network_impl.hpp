@@ -1081,6 +1081,8 @@ void DAGNetwork<
       currentDelta = &layerDeltas[i - 1];
     }
 
+    sortedNetwork[0]->Backward(input, *currentOutput, *currentDelta, networkDelta);
+
     InitializeGradientPassMemory(gradients);
 
     sortedNetwork.front()->Gradient(input, layerDeltas.front(),

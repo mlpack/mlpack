@@ -646,6 +646,8 @@ private:
   std::vector<MatType> layerOutputs;
 
   MatType layerDeltaMatrix;
+  MatType networkDelta;
+
   std::vector<MatType> layerDeltas;
   std::unordered_map<Layer<MatType>*, MatType*> outputDeltas;
   std::unordered_map<Layer<MatType>*, MatType*> inputDeltas;
