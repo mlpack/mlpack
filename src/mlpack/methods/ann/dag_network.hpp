@@ -639,8 +639,7 @@ private:
   // called.  See `InitializeForwardPassMemory()`.
   MatType layerOutputMatrix;
   // Size of activations for each layer.
-  size_t residualMemorySize;
-  // Total 
+  size_t activationMemorySize;
   // These are aliases of `layerOutputMatrix` for the input of each layer
   std::vector<MatType> layerInputs;
   // These are aliases of `layerOutputMatrix` for the output of each layer.

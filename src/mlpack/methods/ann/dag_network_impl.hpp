@@ -772,10 +772,10 @@ void DAGNetwork<
     }
   }
 
-  residualMemorySize = totalConcatSize + layerOutputSize;
-  if (batchSize * residualMemorySize > layerOutputMatrix.n_elem)
+  activationMemorySize = totalConcatSize + layerOutputSize;
+  if (batchSize * activationMemorySize > layerOutputMatrix.n_elem)
   {
-    layerOutputMatrix = MatType(1, batchSize * residualMemorySize);
+    layerOutputMatrix = MatType(1, batchSize * activationMemorySize);
   }
 
   size_t offset = 0;
@@ -1087,7 +1087,7 @@ void DAGNetwork<
       layerGradients.front());
     for (size_t i = 1; i < sortedNetwork.size() - 1; i++)
     {
-      sortedNetwork[i]->Gradient(layerInputs[i-1], layerDeltas[i],
+      sortedNetwork[i]->Gradient(layerInputs[i - 1], layerDeltas[i],
         layerGradients[i]);
     }
     sortedNetwork.back()->Gradient(layerInputs.back(), error,
