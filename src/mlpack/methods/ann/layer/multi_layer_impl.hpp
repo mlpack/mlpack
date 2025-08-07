@@ -39,8 +39,9 @@ MultiLayer<MatType>::MultiLayer(const MultiLayer& other) :
     network.push_back(other.network[i]->Clone());
 
   // Ensure that the aliases for layers during passes have the right size.
-  layerOutputs.resize(network.size(), MatType());
-  layerDeltas.resize(network.size(), MatType());
+  size_t size = std::max(network.size() - 1, 0);
+  layerOutputs.resize(size, MatType());
+  layerDeltas.resize(size, MatType());
   layerGradients.resize(network.size(), MatType());
 
   // layerOutputs, layerDeltas, and layerGradients will be reset the next time
@@ -56,8 +57,9 @@ MultiLayer<MatType>::MultiLayer(MultiLayer&& other) :
     layerDeltaMatrix(std::move(other.layerDeltaMatrix))
 {
   // Ensure that the aliases for layers during passes have the right size.
-  layerOutputs.resize(network.size(), MatType());
-  layerDeltas.resize(network.size(), MatType());
+  size_t size = std::max(network.size() - 1, 0);
+  layerOutputs.resize(size, MatType());
+  layerDeltas.resize(size, MatType());
   layerGradients.resize(network.size(), MatType());
 
   // layerOutputs, layerDeltas, and layerGradients will be reset the next time
@@ -89,8 +91,9 @@ MultiLayer<MatType>& MultiLayer<MatType>::operator=(const MultiLayer& other)
       network.push_back(other.network[i]->Clone());
 
     // Ensure that the aliases for layers during passes have the right size.
-    layerOutputs.resize(network.size(), MatType());
-    layerDeltas.resize(network.size(), MatType());
+    size_t size = std::max(network.size() - 1, 0);
+    layerOutputs.resize(size, MatType());
+    layerDeltas.resize(size, MatType());
     layerGradients.resize(network.size(), MatType());
   }
 
@@ -112,8 +115,9 @@ MultiLayer<MatType>& MultiLayer<MatType>::operator=(MultiLayer&& other)
 
     network = std::move(other.network);
 
-    layerOutputs.resize(network.size(), MatType());
-    layerDeltas.resize(network.size(), MatType());
+    size_t size = std::max(network.size() - 1, 0);
+    layerOutputs.resize(size, MatType());
+    layerDeltas.resize(size, MatType());
     layerGradients.resize(network.size(), MatType());
 
     other.layerOutputs.clear();
