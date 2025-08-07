@@ -312,10 +312,6 @@ void MultiLayer<MatType>::ComputeOutputDimensions()
     residualMemorySize += layerInputSize;
   }
 
-  size_t lastLayerSize = network.back()->OutputDimensions()[0];
-  for (size_t i = 1; i < network.back()->OutputDimensions().size(); ++i)
-    lastLayerSize *= network.back()->OutputDimensions()[i];
-
   this->outputDimensions = network.back()->OutputDimensions();
 }
 
