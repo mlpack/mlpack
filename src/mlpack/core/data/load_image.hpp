@@ -41,7 +41,7 @@ template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal = false)
+          const bool fatal)
 {
   // Use the new implementation.
   ImageOptions opts;
@@ -65,7 +65,7 @@ template<typename eT>
 bool Load(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal = false)
+          const bool fatal)
 {
   // Use the new implementation.
   ImageOptions opts;

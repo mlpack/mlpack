@@ -32,7 +32,7 @@ template<typename eT>
 bool Save(const std::string& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal = false)
+          const bool fatal)
 {
   ImageOptions opts;
   opts.Fatal() = fatal;
@@ -54,7 +54,7 @@ template<typename eT>
 bool Save(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal = false)
+          const bool fatal)
 {
   ImageOptions opts;
   opts.Fatal() = fatal;

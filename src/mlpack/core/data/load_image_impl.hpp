@@ -140,7 +140,7 @@ bool Load(const std::vector<std::string>& files,
           << "function iteratively." << std::endl;
         handleError(oss, opts);
       }
-      floatImages.col(i) = arma::Mat<float>(imageBuf, dimension, 1,
+      floatImages.col(i) = arma::Mat<float>(floatImageBuf, dimension, 1,
           false, true);
       stbi_image_free(floatImageBuf);
     }
