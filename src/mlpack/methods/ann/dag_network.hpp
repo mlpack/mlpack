@@ -81,7 +81,7 @@ public:
     for (size_t i = 0; i < network.size(); i++)
     {
       Layer<MatType>* currentLayer = network[i];
-      if (childrenList[currentLayer].size() > 1)
+      if (childrenList[i].size() > 1)
         delete outputDeltas[currentLayer];
 
       if (parentsList[i].size() > 1)
@@ -428,7 +428,7 @@ private:
   size_t AddLayer() {
     layerGradients.push_back(MatType());
     size_t nodeId = network.size();
-    childrenList.insert({network[nodeId], {}});
+    childrenList.insert({nodeId, {}});
     parentsList.insert({nodeId, {}});
 
     if (network.size() > 1)
@@ -590,8 +590,7 @@ private:
   std::vector<Layer<MatType>*> sortedNetwork;
 
   // The internally-held map of nodes that holds it's edges to outgoing nodes.
-  // std::unordered_map<Layer<MatType>*, std::vector<size_t>> childrenList;
-  std::unordered_map<Layer<MatType>*, std::vector<Layer<MatType>*>> childrenList;
+  std::unordered_map<size_t, std::vector<size_t>> childrenList;
 
   // The internally-held map of nodes that holds it's edges to incoming nodes.
   std::unordered_map<size_t, std::vector<size_t>> parentsList;
