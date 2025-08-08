@@ -28,6 +28,7 @@
 #include "layer/convolution.cpp"
 #include "layer/concat.cpp"
 #include "layer/concatenate.cpp"
+#include "layer/celu.cpp"
 #include "layer/c_relu.cpp"
 #include "layer/dropout.cpp"
 #include "layer/flexible_relu.cpp"
