@@ -98,29 +98,22 @@ void ELU<MatType>::Forward(
 {
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    if (input(i) < DBL_MAX)
-    {
-      output(i) = (input(i) > 0) ? lambda * input(i) : lambda * alpha *
-          (std::exp(input(i)) - 1);
-    }
-  }
-
-  if (this->training)
-  {
-    derivative.set_size(arma::size(input));
-    for (size_t i = 0; i < input.n_elem; ++i)
-      derivative(i) = (input(i) > 0) ? lambda : output(i) + lambda * alpha;
+    output(i) = (input(i) >= 0) ? lambda * input(i) : lambda * alpha *
+        (std::exp(input(i)) - 1);
   }
 }
 
 template<typename MatType>
 void ELU<MatType>::Backward(
-    const MatType& /* input */,
-    const MatType& /* output */,
+    const MatType& input,
+    const MatType& output,
     const MatType& gy,
     MatType& g)
 {
-  g = gy % derivative;
+  for (size_t i = 0; i < input.n_elem; ++i)
+  {
+    g(i) = gy(i) * ((input(i) >= 0) ? lambda : output(i) + lambda * alpha);
+  }
 }
 
 template<typename MatType>

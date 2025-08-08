@@ -121,10 +121,7 @@ class CELU : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally stored first derivative of the activation function.
-  MatType derivative;
-
-  //! CELU Hyperparameter (alpha > 0).
+  // CELU Hyperparameter (alpha > 0).
   double alpha;
 }; // class CELU
 
