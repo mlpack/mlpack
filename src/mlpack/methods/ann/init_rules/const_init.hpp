@@ -43,7 +43,7 @@ class ConstInitialization
     if (W.is_empty())
       W.set_size(rows, cols);
 
-    W.fill(initVal);
+    W.fill(typename MatType::elem_type(initVal));
   }
 
   /**
@@ -58,7 +58,7 @@ class ConstInitialization
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
 
-    W.fill(initVal);
+    W.fill(typename MatType::elem_type(initVal));
   }
 
   /**
@@ -78,7 +78,7 @@ class ConstInitialization
     if (W.is_empty())
       W.set_size(rows, cols, slices);
 
-    W.fill(initVal);
+    W.fill(typename CubeType::elem_type(initVal));
   }
 
   /**
@@ -93,7 +93,7 @@ class ConstInitialization
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty cube." << std::endl;
 
-    W.fill(initVal);
+    W.fill(typename CubeType::elem_type(initVal));
   }
 
   //! Get the initialization value.

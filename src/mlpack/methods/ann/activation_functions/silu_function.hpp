@@ -49,9 +49,10 @@ class SILUFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
-    return x / (1.0 + std::exp(-x));
+    return x / (1 + std::exp(-x));
   }
 
   /**
@@ -63,7 +64,7 @@ class SILUFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType &x, OutputVecType &y)
   {
-    y = x / (1.0 + exp(-x));
+    y = x / (1 + exp(-x));
   }
 
   /**
@@ -73,11 +74,12 @@ class SILUFunction
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x, const double y)
+  template<typename ElemType>
+  static double Deriv(const ElemType x, const ElemType y)
   {
     // since y = x * sigmoid(x)
-    double sigmoid = y / x; // save an exp
-    return x == 0 ? 0.5 : sigmoid * (1.0 + x * (1.0 - sigmoid));
+    const ElemType sigmoid = y / x; // save an exp
+    return x == 0 ? ElemType(0.5) : sigmoid * (1 + x * (1 - sigmoid));
     // the expression above is indeterminate at 0, even though
     // the expression solely in terms of x is defined (= 0.5)
   }
@@ -97,10 +99,10 @@ class SILUFunction
     // since y = x * sigmoid(x)
     // DerivVecType sigmoid = y / x;
     // dy = sigmoid % (1.0 + x % (1.0 - sigmoid));
-    dy = (y / x) % (1.0 + x - y);
+    dy = (y / x) % (1 + x - y);
     // the expression above is indeterminate at 0, even though
     // the expression solely in terms of x is defined (= 0.5)
-    dy(arma::find(x == 0)).fill(0.5);
+    dy(arma::find(x == 0)).fill(typename InputVecType::elem_type(0.5));
   }
 }; // class SILUFunction
 

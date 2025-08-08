@@ -27,7 +27,8 @@ NegativeLogLikelihoodType<MatType>::NegativeLogLikelihoodType(
 }
 
 template<typename MatType>
-double NegativeLogLikelihoodType<MatType>::Forward(
+typename MatType::elem_type
+NegativeLogLikelihoodType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {

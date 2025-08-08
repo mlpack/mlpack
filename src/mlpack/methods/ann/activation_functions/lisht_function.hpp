@@ -47,7 +47,8 @@ class LiSHTFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
     return x * std::tanh(x);
   }
@@ -61,7 +62,7 @@ class LiSHTFunction
   template <typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType &x, OutputVecType &y)
   {
-    y = x % arma::tanh(x);
+    y = x % tanh(x);
   }
 
   /**
@@ -71,9 +72,10 @@ class LiSHTFunction
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x, const double /* y */)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType x, const ElemType /* y */)
   {
-    return std::tanh(x) + x * (1 - std::pow(std::tanh(x), 2));
+    return std::tanh(x) + x * (1 - std::pow(std::tanh(x), ElemType(2)));
   }
 
   /**
@@ -88,7 +90,7 @@ class LiSHTFunction
                     const OutputVecType& /* y */,
                     DerivVecType& dy)
   {
-    dy = arma::tanh(x) + x % (1 - pow(arma::tanh(x), 2));
+    dy = tanh(x) + x % (1 - square(tanh(x)));
   }
 }; // class LishtFunction
 

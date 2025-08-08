@@ -44,7 +44,10 @@ template<typename DataType>
 DataType NormalDistribution<DataType>::LogProbability(
     const DataType& observation) const
 {
-  const DataType v1 = log(sigma) + std::log(std::sqrt(2 * M_PI));
+  typedef typename DataType::elem_type ElemType;
+
+  const DataType v1 = log(sigma) +
+      std::log(std::sqrt(2 * arma::Datum<ElemType>::pi));
   const DataType v2 = square(observation - mean) / (2 * square(sigma));
   return  (-v1 - v2);
 }
@@ -55,8 +58,10 @@ void NormalDistribution<DataType>::ProbBackward(
     DataType& dmu,
     DataType& dsigma) const
 {
+  typedef typename DataType::elem_type ElemType;
+
   dmu = (observation - mean) / (square(sigma)) % Probability(observation);
-  dsigma = (-1.0 / sigma + (square(observation - mean) / pow(sigma, 3)))
+  dsigma = (-1 / sigma + (square(observation - mean) / pow(sigma, ElemType(3))))
             % Probability(observation);
 }
 

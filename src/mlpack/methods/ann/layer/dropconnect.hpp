@@ -46,11 +46,14 @@ namespace mlpack {
  *    computation.
  */
 template<typename MatType = arma::mat>
-class DropConnectType : public Layer<MatType>
+class DropConnect : public Layer<MatType>
 {
  public:
-  //! Create the DropConnect object.
-  DropConnectType();
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
+  // Create the DropConnect object.
+  DropConnect();
 
   /**
    * Creates the DropConnect Layer as a Linear Object that takes the number of
@@ -59,23 +62,23 @@ class DropConnectType : public Layer<MatType>
    * @param outSize The number of output units.
    * @param ratio The probability of setting a value to zero.
    */
-  DropConnectType(const size_t outSize,
+  DropConnect(const size_t outSize,
                   const double ratio = 0.5);
 
-  //! Clone the DropConnectType object. This handles polymorphism correctly.
-  DropConnectType* Clone() const { return new DropConnectType(*this); }
+  //! Clone the DropConnect object. This handles polymorphism correctly.
+  DropConnect* Clone() const { return new DropConnect(*this); }
 
   // Virtual destructor.
-  virtual ~DropConnectType();
+  virtual ~DropConnect();
 
-  //! Copy the given DropConnectType (except for weights).
-  DropConnectType(const DropConnectType& other);
-  //! Take ownership of the given DropConnectType (except for weights).
-  DropConnectType(DropConnectType&& other);
-  //! Copy the given DropConnectType (except for weights).
-  DropConnectType& operator=(const DropConnectType& other);
-  //! Take ownership of the given DropConnectType (except for weights).
-  DropConnectType& operator=(DropConnectType&& other);
+  //! Copy the given DropConnect (except for weights).
+  DropConnect(const DropConnect& other);
+  //! Take ownership of the given DropConnect (except for weights).
+  DropConnect(DropConnect&& other);
+  //! Copy the given DropConnect (except for weights).
+  DropConnect& operator=(const DropConnect& other);
+  //! Take ownership of the given DropConnect (except for weights).
+  DropConnect& operator=(DropConnect&& other);
 
   /**
    * Ordinary feed forward pass of the DropConnect layer.
@@ -148,11 +151,6 @@ class DropConnectType : public Layer<MatType>
   //! Locally-stored layer module.
   Layer<MatType>* baseLayer;
 }; // class DropConnect.
-
-// Convenience typedefs.
-
-// Standard DropConnect layer.
-using DropConnect = DropConnectType<arma::mat>;
 
 }  // namespace mlpack
 

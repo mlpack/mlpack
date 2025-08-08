@@ -48,9 +48,10 @@ class SoftplusFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
-    const double val = std::log(1 + std::exp(x));
+    const ElemType val = std::log(1 + std::exp(x));
     if (std::isfinite(val))
       return val;
     return x;
@@ -78,9 +79,10 @@ class SoftplusFunction
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x, const double /* y */)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType x, const ElemType /* y */)
   {
-    return 1.0 / (1 + std::exp(-x));
+    return 1 / (1 + std::exp(-x));
   }
 
   /**
@@ -95,7 +97,7 @@ class SoftplusFunction
                     const OutputType& /* y */,
                     DerivType& dy)
   {
-    dy = 1.0 / (1 + exp(-x));
+    dy = 1 / (1 + exp(-x));
   }
 
   /**
@@ -104,9 +106,10 @@ class SoftplusFunction
    * @param y Input data.
    * @return f^{-1}(y)
    */
-  static double Inv(const double y)
+  template<typename ElemType>
+  static ElemType Inv(const ElemType y)
   {
-    const double val = std::log(std::exp(y) - 1);
+    const ElemType val = std::log(std::exp(y) - 1);
     if (std::isfinite(val))
       return val;
     return y;

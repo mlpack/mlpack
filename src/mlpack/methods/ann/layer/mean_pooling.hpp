@@ -26,12 +26,15 @@ namespace mlpack {
  *         computation.
  */
 template <typename MatType = arma::mat>
-class MeanPoolingType : public Layer<MatType>
+class MeanPooling : public Layer<MatType>
 {
  public:
+  // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
-  //! Create the MeanPoolingType object.
-  MeanPoolingType();
+
+  // Create the MeanPooling object.
+  MeanPooling();
 
   /**
    * Create the MeanPooling object using the specified number of units.
@@ -43,26 +46,26 @@ class MeanPoolingType : public Layer<MatType>
    * @param floor If true, then a pooling operation that would oly part of the
    *              input will be skipped.
    */
-  MeanPoolingType(const size_t kernelWidth,
-                  const size_t kernelHeight,
-                  const size_t strideWidth = 1,
-                  const size_t strideHeight = 1,
-                  const bool floor = true);
+  MeanPooling(const size_t kernelWidth,
+              const size_t kernelHeight,
+              const size_t strideWidth = 1,
+              const size_t strideHeight = 1,
+              const bool floor = true);
 
   // Virtual destructor.
-  virtual ~MeanPoolingType() { }
+  virtual ~MeanPooling() { }
 
-  //! Copy the given MeanPoolingType.
-  MeanPoolingType(const MeanPoolingType& other);
-  //! Take ownership of the given MeanPoolingType.
-  MeanPoolingType(MeanPoolingType&& other);
-  //! Copy the given MeanPoolingType.
-  MeanPoolingType& operator=(const MeanPoolingType& other);
-  //! Take ownership of the given MeanPoolingType.
-  MeanPoolingType& operator=(MeanPoolingType&& other);
+  //! Copy the given MeanPooling.
+  MeanPooling(const MeanPooling& other);
+  //! Take ownership of the given MeanPooling.
+  MeanPooling(MeanPooling&& other);
+  //! Copy the given MeanPooling.
+  MeanPooling& operator=(const MeanPooling& other);
+  //! Take ownership of the given MeanPooling.
+  MeanPooling& operator=(MeanPooling&& other);
 
-  //! Clone the MeanPoolingType object. This handles polymorphism correctly.
-  MeanPoolingType* Clone() const { return new MeanPoolingType(*this); }
+  //! Clone the MeanPooling object. This handles polymorphism correctly.
+  MeanPooling* Clone() const { return new MeanPooling(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -169,10 +172,7 @@ class MeanPoolingType : public Layer<MatType>
 
   //! Locally-stored number channels.
   size_t channels;
-}; // class MeanPoolingType
-
-// Standard MeanPooling layer.
-using MeanPooling = MeanPoolingType<arma::mat>;
+}; // class MeanPooling
 
 } // namespace mlpack
 

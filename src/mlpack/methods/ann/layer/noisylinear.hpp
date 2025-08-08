@@ -26,38 +26,41 @@ namespace mlpack {
  *    computation.
  */
 template<typename MatType = arma::mat>
-class NoisyLinearType : public Layer<MatType>
+class NoisyLinear : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the NoisyLinear layer object using the specified number of units.
    *
    * @param outSize The number of output units.
    */
-  NoisyLinearType(const size_t outSize = 0);
+  NoisyLinear(const size_t outSize = 0);
 
-  //! Clone the NoisyLinearType object. This handles polymorphism correctly.
-  NoisyLinearType* Clone() const { return new NoisyLinearType(*this); }
+  // Clone the NoisyLinear object. This handles polymorphism correctly.
+  NoisyLinear* Clone() const { return new NoisyLinear(*this); }
 
   // Virtual destructor.
-  virtual ~NoisyLinearType() { }
+  virtual ~NoisyLinear() { }
 
-  //! Copy the given NoisyLinear layer (but not weights).
-  NoisyLinearType(const NoisyLinearType& other);
-  //! Take ownership of the given NoisyLinear layer (but not weights).
-  NoisyLinearType(NoisyLinearType&& other);
-  //! Copy the given NoisyLinear layer (but not weights).
-  NoisyLinearType& operator=(const NoisyLinearType& other);
-  //! Take ownership of the given NoisyLinear layer (but not weights).
-  NoisyLinearType& operator=(NoisyLinearType&& other);
+  // Copy the given NoisyLinear layer (but not weights).
+  NoisyLinear(const NoisyLinear& other);
+  // Take ownership of the given NoisyLinear layer (but not weights).
+  NoisyLinear(NoisyLinear&& other);
+  // Copy the given NoisyLinear layer (but not weights).
+  NoisyLinear& operator=(const NoisyLinear& other);
+  // Take ownership of the given NoisyLinear layer (but not weights).
+  NoisyLinear& operator=(NoisyLinear&& other);
 
-  //! Reset the layer parameter.
+  // Reset the layer parameter.
   void SetWeights(const MatType& weightsIn);
 
-  //! Reset the noise parameters (epsilons).
+  // Reset the noise parameters (epsilons).
   void ResetNoise();
 
-  //! Reset the values of layer parameters (factorized gaussian noise).
+  // Reset the values of layer parameters (factorized gaussian noise).
   void ResetParameters();
 
   /**
@@ -95,64 +98,58 @@ class NoisyLinearType : public Layer<MatType>
                 const MatType& error,
                 MatType& gradient);
 
-  //! Get the parameters.
+  // Get the parameters.
   MatType const& Parameters() const { return weights; }
-  //! Modify the parameters.
+  // Modify the parameters.
   MatType& Parameters() { return weights; }
 
-  //! Get the shape of the input.
-  //! Modify the bias weights of the layer.
+  // Modify the bias weights of the layer.
   MatType& Bias() { return bias; }
 
-  //! Compute the number of parameters in the layer.
+  // Compute the number of parameters in the layer.
   size_t WeightSize() const { return (outSize * inSize + outSize) * 2; }
 
-  //! Compute the output dimensions of the layer given `InputDimensions()`.
+  // Compute the output dimensions of the layer given `InputDimensions()`.
   void ComputeOutputDimensions();
 
-  //! Serialize the layer.
+  // Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored number of output units.
+  // Locally-stored number of output units.
   size_t outSize;
 
-  //! Locally stored number of input units.
+  // Locally stored number of input units.
   size_t inSize;
 
-  //! Locally-stored weight object.
+  // Locally-stored weight object.
   MatType weights;
 
-  //! Locally-stored weight parameters.
+  // Locally-stored weight parameters.
   MatType weight;
 
-  //! Locally-stored weight-mean parameters.
+  // Locally-stored weight-mean parameters.
   MatType weightMu;
 
-  //! Locally-stored weight-standard-deviation parameters.
+  // Locally-stored weight-standard-deviation parameters.
   MatType weightSigma;
 
-  //! Locally-stored weight-epsilon parameters.
+  // Locally-stored weight-epsilon parameters.
   MatType weightEpsilon;
 
-  //! Locally-stored bias parameters.
+  // Locally-stored bias parameters.
   MatType bias;
 
-  //! Locally-stored bias-mean parameters.
+  // Locally-stored bias-mean parameters.
   MatType biasMu;
 
-  //! Locally-stored bias-standard-deviation parameters.
+  // Locally-stored bias-standard-deviation parameters.
   MatType biasSigma;
 
-  //! Locally-stored bias-epsilon parameters.
+  // Locally-stored bias-epsilon parameters.
   MatType biasEpsilon;
-}; // class NoisyLinearType
-
-// Convenience typedefs.
-
-// Standard noisy linear layer.
-using NoisyLinear = NoisyLinearType<arma::mat>;
+}; // class NoisyLinear
 
 } // namespace mlpack
 

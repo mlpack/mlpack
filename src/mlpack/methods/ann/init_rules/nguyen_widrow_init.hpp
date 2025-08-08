@@ -78,7 +78,7 @@ class NguyenWidrowInitialization
     randomInit.Initialize(W, rows, cols);
 
     double beta = 0.7 * std::pow(cols, 1.0 / rows);
-    W *= (beta / norm(W));
+    W *= (typename MatType::elem_type(beta) / norm(W));
   }
 
   /**
@@ -95,7 +95,7 @@ class NguyenWidrowInitialization
     randomInit.Initialize(W);
 
     double beta = 0.7 * std::pow(W.n_cols, 1.0 / W.n_rows);
-    W *= (beta / norm(W));
+    W *= (typename MatType::elem_type(beta) / norm(W));
   }
 
   /**

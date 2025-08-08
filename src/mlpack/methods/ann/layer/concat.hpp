@@ -31,15 +31,18 @@ namespace mlpack {
  *    computation.
  */
 template <typename MatType = arma::mat>
-class ConcatType : public MultiLayer<MatType>
+class Concat : public MultiLayer<MatType>
 {
  public:
+  // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
+
   /**
    * Create the Concat object.  The axis used for concatenation will be the last
    * one.
    */
-  ConcatType();
+  Concat();
 
   /**
    * Create the Concat object, specifying a particular axis on which the layer
@@ -47,24 +50,24 @@ class ConcatType : public MultiLayer<MatType>
    *
    * @param axis Concat axis.
    */
-  ConcatType(const size_t axis);
+  Concat(const size_t axis);
 
   /**
    * Destroy the layers held by the model.
    */
-  virtual ~ConcatType();
+  virtual ~Concat();
 
-  //! Clone the ConcatType object. This handles polymorphism correctly.
-  ConcatType* Clone() const { return new ConcatType(*this); }
+  //! Clone the Concat object. This handles polymorphism correctly.
+  Concat* Clone() const { return new Concat(*this); }
 
-  //! Copy the given ConcatType layer.
-  ConcatType(const ConcatType& other);
-  //! Take ownership of the given ConcatType layer.
-  ConcatType(ConcatType&& other);
-  //! Copy the given ConcatType layer.
-  ConcatType& operator=(const ConcatType& other);
-  //! Take ownership of the given ConcatType layer.
-  ConcatType& operator=(ConcatType&& other);
+  //! Copy the given Concat layer.
+  Concat(const Concat& other);
+  //! Take ownership of the given Concat layer.
+  Concat(Concat&& other);
+  //! Copy the given Concat layer.
+  Concat& operator=(const Concat& other);
+  //! Take ownership of the given Concat layer.
+  Concat& operator=(Concat&& other);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -226,10 +229,7 @@ class ConcatType : public MultiLayer<MatType>
 
   //! Parameter which indicates whether to use the axis of concatenation.
   bool useAxis;
-}; // class ConcatType.
-
-// Standard Concat layer.
-using Concat = ConcatType<arma::mat>;
+}; // class Concat.
 
 } // namespace mlpack
 

@@ -44,34 +44,37 @@ namespace mlpack {
  *    computation.
  */
 template<typename MatType = arma::mat>
-class AlphaDropoutType : public Layer<MatType>
+class AlphaDropout : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the Alpha_Dropout object using the specified ratio.
    *
    * @param ratio The probability of setting a value to alphaDash.
    * @param alphaDash The dropout scaling parameter.
    */
-  AlphaDropoutType(const double ratio = 0.5,
+  AlphaDropout(const double ratio = 0.5,
                    const double alphaDash = -alpha * lambda);
 
   /**
-   * Clone the AlphaDropoutType object. This handles polymorphism correctly.
+   * Clone the AlphaDropout object. This handles polymorphism correctly.
    */
-  AlphaDropoutType* Clone() const { return new AlphaDropoutType(*this); }
+  AlphaDropout* Clone() const { return new AlphaDropout(*this); }
 
   // Virtual destructor.
-  virtual ~AlphaDropoutType() { }
+  virtual ~AlphaDropout() { }
 
-  //! Copy the given AlphaDropoutType layer.
-  AlphaDropoutType(const AlphaDropoutType& other);
-  //! Take ownership of the given AlphaDropoutType layer.
-  AlphaDropoutType(AlphaDropoutType&& other);
-  //! Copy the given AlphaDropoutType layer.
-  AlphaDropoutType& operator=(const AlphaDropoutType& other);
-  //! Take ownership of the given AlphaDropoutType layer.
-  AlphaDropoutType& operator=(AlphaDropoutType&& other);
+  //! Copy the given AlphaDropout layer.
+  AlphaDropout(const AlphaDropout& other);
+  //! Take ownership of the given AlphaDropout layer.
+  AlphaDropout(AlphaDropout&& other);
+  //! Copy the given AlphaDropout layer.
+  AlphaDropout& operator=(const AlphaDropout& other);
+  //! Take ownership of the given AlphaDropout layer.
+  AlphaDropout& operator=(AlphaDropout&& other);
 
   /**
    * Ordinary feed forward pass of the AlphaDropout layer.
@@ -145,9 +148,7 @@ class AlphaDropoutType : public Layer<MatType>
 
   //! Value to be added to a*x for affine transformation.
   double b;
-}; // class AlphaDropoutType
-
-using AlphaDropout = AlphaDropoutType<arma::mat>;
+}; // class AlphaDropout
 
 } // namespace mlpack
 

@@ -37,10 +37,12 @@ class GELUFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
-    return 0.5 * x * (1 + std::tanh(std::sqrt(2 / M_PI) *
-           (x + 0.044715 * std::pow(x, 3))));
+    return (x / 2) *
+        (1 + std::tanh(std::sqrt(2 / arma::Datum<ElemType>::pi) *
+        (x + ElemType(0.044715) * std::pow(x, ElemType(3)))));
   }
 
   /**
@@ -52,8 +54,11 @@ class GELUFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = 0.5 * x % (1 + arma::tanh(std::sqrt(2 / M_PI) *
-        (x + 0.044715 * pow(x, 3))));
+    typedef typename InputVecType::elem_type ElemType;
+
+    y = (x / 2) %
+        (1 + tanh(std::sqrt(2 / arma::Datum<ElemType>::pi) *
+        (x + ElemType(0.044715) * pow(x, ElemType(3)))));
   }
 
   /**
@@ -63,13 +68,16 @@ class GELUFunction
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x, const double /* y */)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType x, const ElemType /* y */)
   {
-    if (x < -10) return 0.0; // catch overflows
-    return 0.5 * std::tanh(0.0356774 * std::pow(x, 3) + 0.797885 * x) +
-           (0.0535161 * std::pow(x, 3) + 0.398942 * x) *
-           std::pow(1 / std::cosh(0.0356774 * std::pow(x, 3) +
-           0.797885 * x), 2) + 0.5;
+    if (x < -10) return 0; // catch overflows
+    return ElemType(0.5) * std::tanh(ElemType(0.0356774) *
+        std::pow(x, ElemType(3)) + ElemType(0.797885) * x) +
+        (ElemType(0.0535161) * std::pow(x, ElemType(3)) +
+         ElemType(0.398942) * x) *
+         std::pow(1 / std::cosh(ElemType(0.0356774) * std::pow(x, 3) +
+         ElemType(0.797885) * x), 2) + ElemType(0.5);
   }
 
   /**
@@ -84,11 +92,14 @@ class GELUFunction
                     const OutputVecType& /* y */,
                     DerivVecType& dy)
   {
-    dy = 0.5 * arma::tanh(0.0356774 * pow(x, 3) + 0.797885 * x) +
-        (0.0535161 * pow(x, 3) + 0.398942 * x) %
-        pow(1 / arma::cosh(0.0356774 * pow(x, 3) +
-        0.797885 * x), 2) + 0.5;
-    dy(arma::find(x < -10)).fill(0); // catch overflows
+    typedef typename InputVecType::elem_type ElemType;
+
+    dy = ElemType(0.5) * tanh(ElemType(0.0356774) * pow(x, ElemType(3)) +
+        ElemType(0.797885) * x) + (ElemType(0.0535161) * pow(x, ElemType(3)) +
+        ElemType(0.398942) * x) %
+        pow(1 / cosh(ElemType(0.0356774) * pow(x, ElemType(3)) +
+        ElemType(0.797885) * x), 2) + ElemType(0.5);
+    dy(find(x < -10)).fill(0); // catch overflows
   }
 }; // class GELUFunction
 

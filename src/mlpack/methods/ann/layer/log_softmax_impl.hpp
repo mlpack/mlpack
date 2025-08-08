@@ -18,29 +18,29 @@
 namespace mlpack {
 
 template<typename MatType>
-LogSoftMaxType<MatType>::LogSoftMaxType() :
+LogSoftMax<MatType>::LogSoftMax() :
     Layer<MatType>()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-LogSoftMaxType<MatType>::LogSoftMaxType(const LogSoftMaxType& other) :
+LogSoftMax<MatType>::LogSoftMax(const LogSoftMax& other) :
     Layer<MatType>(other)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-LogSoftMaxType<MatType>::LogSoftMaxType(LogSoftMaxType&& other) :
+LogSoftMax<MatType>::LogSoftMax(LogSoftMax&& other) :
     Layer<MatType>(std::move(other))
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-LogSoftMaxType<MatType>&
-LogSoftMaxType<MatType>::operator=(const LogSoftMaxType& other)
+LogSoftMax<MatType>&
+LogSoftMax<MatType>::operator=(const LogSoftMax& other)
 {
   if (&other != this)
   {
@@ -51,8 +51,8 @@ LogSoftMaxType<MatType>::operator=(const LogSoftMaxType& other)
 }
 
 template<typename MatType>
-LogSoftMaxType<MatType>&
-LogSoftMaxType<MatType>::operator=(LogSoftMaxType&& other)
+LogSoftMax<MatType>&
+LogSoftMax<MatType>::operator=(LogSoftMax&& other)
 {
   if (&other != this)
   {
@@ -63,13 +63,13 @@ LogSoftMaxType<MatType>::operator=(LogSoftMaxType&& other)
 }
 
 template<typename MatType>
-void LogSoftMaxType<MatType>::Forward(const MatType& input, MatType& output)
+void LogSoftMax<MatType>::Forward(const MatType& input, MatType& output)
 {
   ForwardImpl(input, output);
 }
 
 template<typename MatType>
-void LogSoftMaxType<MatType>::ForwardImpl(
+void LogSoftMax<MatType>::ForwardImpl(
     const MatType& input,
     MatType& output,
     const typename std::enable_if_t<arma::is_arma_type<MatType>::value>*)
@@ -97,23 +97,23 @@ void LogSoftMaxType<MatType>::ForwardImpl(
       y *= y;
       y *= y;
       y = 1 / y;
-      output(i) = y;
+      output(i) = ElemType(y);
     }
     else
     {
-      output(i) = 0.0;
+      output(i) = 0;
     }
   }
 
   #pragma omp parallel for
   for (size_t col = 0; col < maxInput.n_cols; ++col)
   {
-    double colSum = 0.0;
+    ElemType colSum = 0;
     for (size_t row = 0; row < output.n_rows; ++row)
     {
       colSum += output(row, col);
     }
-    double logSum = std::log(colSum);
+    ElemType logSum = std::log(colSum);
     for (size_t row = 0; row < maxInput.n_rows; ++row)
     {
       maxInput(row, col) += logSum;
@@ -126,14 +126,14 @@ void LogSoftMaxType<MatType>::ForwardImpl(
 #ifdef MLPACK_HAS_COOT
 
 template<typename MatType>
-void LogSoftMaxType<MatType>::ForwardImpl(
+void LogSoftMax<MatType>::ForwardImpl(
     const MatType& input,
     MatType& output,
     const typename std::enable_if_t<coot::is_coot_type<MatType>::value>*)
 {
   MatType maxInput = repmat(max(input), input.n_rows, 1);
   output = (maxInput - input);
-  output = exp(output * -1);
+  output = exp(-output);
   maxInput.each_row() += log(sum(output));
   output = input - maxInput;
 }
@@ -141,7 +141,7 @@ void LogSoftMaxType<MatType>::ForwardImpl(
 #endif
 
 template<typename MatType>
-void LogSoftMaxType<MatType>::Backward(
+void LogSoftMax<MatType>::Backward(
     const MatType& /* input */,
     const MatType& output,
     const MatType& gy,

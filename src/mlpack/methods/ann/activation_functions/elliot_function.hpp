@@ -45,9 +45,10 @@ class ElliotFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
-    return x / (1.0 + std::abs(x));
+    return x / (1 + std::abs(x));
   }
 
   /**
@@ -56,10 +57,10 @@ class ElliotFunction
    * @param x Input data.
    * @param y The resulting output activation.
    */
-  template <typename InputVecType, typename OutputVecType>
+  template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType &x, OutputVecType &y)
   {
-    y = x / (1.0 + arma::abs(x));
+    y = x / (1 + arma::abs(x));
   }
 
   /**
@@ -69,9 +70,10 @@ class ElliotFunction
    * @param y Result of Fn(x).
    * @return f'(x).
    */
-  static double Deriv(const double x, const double /* y */)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType x, const ElemType /* y */)
   {
-    return 1.0 / std::pow(1.0 + std::abs(x), 2);
+    return 1 / std::pow(1 + std::abs(x), ElemType(2));
   }
 
   /**
@@ -86,7 +88,7 @@ class ElliotFunction
                     const OutputVecType& /* y */,
                     DerivVecType &dy)
   {
-    dy = 1.0 / pow(1.0 + arma::abs(x), 2);
+    dy = 1 / square(1 + abs(x));
   }
 }; // class ElliotFunction
 

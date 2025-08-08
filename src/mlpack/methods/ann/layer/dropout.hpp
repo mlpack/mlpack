@@ -44,30 +44,33 @@ namespace mlpack {
  *    computation.
  */
 template<typename MatType = arma::mat>
-class DropoutType : public Layer<MatType>
+class Dropout : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the Dropout object using the specified ratio parameter.
    *
    * @param ratio The probability of setting a value to zero.
    */
-  DropoutType(const double ratio = 0.5);
+  Dropout(const double ratio = 0.5);
 
-  //! Clone the DropoutType object. This handles polymorphism correctly.
-  DropoutType* Clone() const { return new DropoutType(*this); }
+  // Clone the Dropout object. This handles polymorphism correctly.
+  Dropout* Clone() const { return new Dropout(*this); }
 
   // Virtual destructor.
-  virtual ~DropoutType() { }
+  virtual ~Dropout() { }
 
-  //! Copy the given DropoutType.
-  DropoutType(const DropoutType& other);
-  //! Take ownership of the given DropoutType.
-  DropoutType(DropoutType&& other);
-  //! Copy the given DropoutType.
-  DropoutType& operator=(const DropoutType& other);
-  //! Take ownership of the given DropoutType.
-  DropoutType& operator=(DropoutType&& other);
+  //! Copy the given Dropout.
+  Dropout(const Dropout& other);
+  //! Take ownership of the given Dropout.
+  Dropout(Dropout&& other);
+  //! Copy the given Dropout.
+  Dropout& operator=(const Dropout& other);
+  //! Take ownership of the given Dropout.
+  Dropout& operator=(Dropout&& other);
 
   /**
    * Ordinary feed forward pass of the dropout layer.
@@ -115,12 +118,7 @@ class DropoutType : public Layer<MatType>
 
   //! The scale fraction.
   double scale;
-}; // class DropoutType
-
-// Convenience typedefs.
-
-// Standard Dropout layer.
-using Dropout = DropoutType<arma::mat>;
+}; // class Dropout
 
 } // namespace mlpack
 

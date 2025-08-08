@@ -33,7 +33,8 @@ class Poisson1Function
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
     return (x - 1) * std::exp(-x);
   }
@@ -57,7 +58,8 @@ class Poisson1Function
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x, const double /* y */)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType x, const ElemType /* y */)
   {
     return -std::exp(-x) * (x - 2);
   }

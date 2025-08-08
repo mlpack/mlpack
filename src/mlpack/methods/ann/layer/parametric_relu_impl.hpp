@@ -21,7 +21,7 @@
 namespace mlpack {
 
 template<typename MatType>
-PReLUType<MatType>::PReLUType(const double userAlpha) :
+PReLU<MatType>::PReLU(const double userAlpha) :
     Layer<MatType>(),
     userAlpha(userAlpha)
 {
@@ -29,8 +29,8 @@ PReLUType<MatType>::PReLUType(const double userAlpha) :
 }
 
 template<typename MatType>
-PReLUType<MatType>::PReLUType(
-    const PReLUType& other) :
+PReLU<MatType>::PReLU(
+    const PReLU& other) :
     Layer<MatType>(other),
     userAlpha(other.userAlpha)
 {
@@ -38,8 +38,8 @@ PReLUType<MatType>::PReLUType(
 }
 
 template<typename MatType>
-PReLUType<MatType>::PReLUType(
-    PReLUType&& other) :
+PReLU<MatType>::PReLU(
+    PReLU&& other) :
     Layer<MatType>(std::move(other)),
     userAlpha(std::move(other.userAlpha))
 {
@@ -47,8 +47,8 @@ PReLUType<MatType>::PReLUType(
 }
 
 template<typename MatType>
-PReLUType<MatType>&
-PReLUType<MatType>::operator=(const PReLUType& other)
+PReLU<MatType>&
+PReLU<MatType>::operator=(const PReLU& other)
 {
   if (&other != this)
   {
@@ -60,8 +60,8 @@ PReLUType<MatType>::operator=(const PReLUType& other)
 }
 
 template<typename MatType>
-PReLUType<MatType>&
-PReLUType<MatType>::operator=(PReLUType&& other)
+PReLU<MatType>&
+PReLU<MatType>::operator=(PReLU&& other)
 {
   if (&other != this)
   {
@@ -73,27 +73,27 @@ PReLUType<MatType>::operator=(PReLUType&& other)
 }
 
 template<typename MatType>
-void PReLUType<MatType>::SetWeights(const MatType& weightsIn)
+void PReLU<MatType>::SetWeights(const MatType& weightsIn)
 {
   MakeAlias(alpha, weightsIn, 1, 1);
 }
 
 template<typename MatType>
-void PReLUType<MatType>::CustomInitialize(
+void PReLU<MatType>::CustomInitialize(
     MatType& W,
     const size_t elements)
 {
   if (elements != 1)
   {
-    throw std::invalid_argument("PReLUType::CustomInitialize(): wrong "
+    throw std::invalid_argument("PReLU::CustomInitialize(): wrong "
         "elements size!");
   }
 
-  W(0) = userAlpha;
+  W(0) = ElemType(userAlpha);
 }
 
 template<typename MatType>
-void PReLUType<MatType>::Forward(
+void PReLU<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   output = input;
@@ -103,7 +103,7 @@ void PReLUType<MatType>::Forward(
 }
 
 template<typename MatType>
-void PReLUType<MatType>::Backward(
+void PReLU<MatType>::Backward(
     const MatType& input,
     const MatType& /* output */,
     const MatType& gy,
@@ -119,7 +119,7 @@ void PReLUType<MatType>::Backward(
 }
 
 template<typename MatType>
-void PReLUType<MatType>::Gradient(
+void PReLU<MatType>::Gradient(
     const MatType& input,
     const MatType& error,
     MatType& gradient)
@@ -131,7 +131,7 @@ void PReLUType<MatType>::Gradient(
 
 template<typename MatType>
 template<typename Archive>
-void PReLUType<MatType>::serialize(
+void PReLU<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

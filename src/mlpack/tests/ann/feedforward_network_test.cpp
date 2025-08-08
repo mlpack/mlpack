@@ -19,39 +19,9 @@
 
 #include "../catch.hpp"
 #include "../serialization.hpp"
+#include "ann_test_tools.hpp"
 
 using namespace mlpack;
-
-/**
- * Train and evaluate a model with the specified structure.
- */
-template<typename MatType = arma::mat, typename ModelType>
-void TestNetwork(ModelType& model,
-                 MatType& trainData,
-                 MatType& trainLabels,
-                 MatType& testData,
-                 MatType& testLabels,
-                 const size_t maxEpochs,
-                 const double classificationErrorThreshold)
-{
-  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols * maxEpochs, -100);
-  model.Train(trainData, trainLabels, opt);
-
-  MatType predictionTemp;
-  model.Predict(testData, predictionTemp);
-  MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
-
-  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
-  {
-    prediction(i) = arma::as_scalar(arma::find(
-        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1));
-  }
-
-  size_t correct = accu(prediction == testLabels);
-
-  double classificationError = 1 - double(correct) / testData.n_cols;
-  REQUIRE(classificationError <= classificationErrorThreshold);
-}
 
 // network1 should be allocated with `new`, and trained on some data.
 template<typename MatType = arma::mat, typename ModelType>
@@ -234,11 +204,11 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
 
   // Create concatenate layer.
   arma::mat concatMatrix = arma::ones(5, 1);
-  Concatenate* concatLayer = new Concatenate();
-  concatLayer->Concat() = concatMatrix;
+  Concatenate concatLayer;
+  concatLayer.Concat() = concatMatrix;
 
   // Add concatenate layer to the current network.
-  model1->Add(concatLayer);
+  model1->Add(std::move(concatLayer));
   model1->Add<Linear>(5);
   model1->Add<LogSoftMax>();
 
@@ -251,11 +221,11 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
   model2->Add<Linear>(5);
 
   // Create new concat layer.
-  Concatenate* concatLayer2 = new Concatenate();
-  concatLayer2->Concat() = concatMatrix;
+  Concatenate concatLayer2;
+  concatLayer2.Concat() = concatMatrix;
 
   // Add concatenate layer to the current network.
-  model2->Add(concatLayer2);
+  model2->Add(std::move(concatLayer2));
   model2->Add<Linear>(5);
   model2->Add<LogSoftMax>();
 
@@ -397,7 +367,9 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  double error = TestClassificationNetwork(model, trainData, trainLabels,
+      testData, testLabels, 10);
+  REQUIRE(error <= 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
@@ -417,7 +389,9 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   model1.Add<Linear>(2);
   model1.Add<LogSoftMax>();
   // Vanilla neural net with logistic activation function.
-  TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
+  error = TestClassificationNetwork(model1, dataset, labels, dataset, labels,
+      10);
+  REQUIRE(error <= 0.2);
 }
 
 TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
@@ -550,7 +524,9 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  double error = TestClassificationNetwork(model, trainData, trainLabels,
+      testData, testLabels, 10);
+  REQUIRE(error <= 0.1);
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
   // Make sure the data loaded okay.
@@ -572,7 +548,9 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   model1.Add<Linear>(2);
   model1.Add<LogSoftMax>();
   // Vanilla neural net with logistic activation function.
-  TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
+  error = TestClassificationNetwork(model1, dataset, labels, dataset, labels,
+      10);
+  REQUIRE(error <= 0.2);
 }
 
 /**
@@ -630,7 +608,8 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  double error = TestClassificationNetwork(model, trainData, trainLabels,
+      testData, testLabels, 10);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
@@ -651,7 +630,9 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
   model1.Add<LogSoftMax>();
 
   // Vanilla neural net with logistic activation function.
-  TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
+  error = TestClassificationNetwork(model1, dataset, labels, dataset, labels,
+      10);
+  REQUIRE(error <= 0.2);
 }
 
 /**
@@ -731,11 +712,11 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
   model.Add<Linear>(10);
 
   // Add a new Add<> module which adds a (learnable) constant term to the input.
-  Add* addModule = new Add();
-  model.Add(addModule);
+  Add addModule;
+  model.Add(std::move(addModule));
 
-  LinearNoBias* linearNoBiasModule = new LinearNoBias(10);
-  model.Add(linearNoBiasModule);
+  LinearNoBias linearNoBiasModule(10);
+  model.Add(std::move(linearNoBiasModule));
 
   model.Add<Linear>(10);
 
@@ -743,9 +724,9 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
   model.Reset(10);
 
   // Set the parameters of the Add<> module to a matrix of ones.
-  addModule->Parameters() = arma::ones(10, 1);
+  model.Network()[0]->Parameters() = arma::ones(10, 1);
   // Set the parameters of the LinearNoBias<> module to a matrix of ones.
-  linearNoBiasModule->Parameters() = arma::ones(10, 10);
+  model.Network()[1]->Parameters() = arma::ones(10, 10);
 
   arma::mat input = arma::ones(10, 1);
   arma::mat output;
@@ -817,10 +798,10 @@ TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
 {
   // Create dummy network.
   FFN<NegativeLogLikelihood> model;
-  Linear* linearA = new Linear(3);
-  model.Add(linearA);
-  Linear* linearB = new Linear(4);
-  model.Add(linearB);
+  Linear linearA(3);
+  model.Add(std::move(linearA));
+  Linear linearB(4);
+  model.Add(std::move(linearB));
 
   // Initialize network parameters, with a new input size of 3.
   model.Reset(3);
@@ -829,7 +810,7 @@ TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
   model.Parameters().ones();
 
   // Zero the second layer parameter.
-  linearB->Parameters().zeros();
+  model.Network()[1]->Parameters().zeros();
 
   // Get the layer parameter from layer A and layer B and store them in
   // parameterA and parameterB.
@@ -839,8 +820,8 @@ TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
   CheckMatrices(parameterA, arma::ones(3 * 3 + 3, 1));
   CheckMatrices(parameterB, arma::zeros(3 * 4 + 4, 1));
 
-  CheckMatrices(linearA->Parameters(), arma::ones(3 * 3 + 3, 1));
-  CheckMatrices(linearB->Parameters(), arma::zeros(3 * 4 + 4, 1));
+  CheckMatrices(model.Network()[0]->Parameters(), arma::ones(3 * 3 + 3, 1));
+  CheckMatrices(model.Network()[1]->Parameters(), arma::zeros(3 * 4 + 4, 1));
 }
 
 /**
@@ -957,7 +938,9 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   model.Add<Linear>(3);
 
   // RBFN neural net with MeanSquaredError.
-  TestNetwork<>(model, trainData, trainLabels1, testData, testLabels, 10, 0.1);
+  double error = TestClassificationNetwork(model, trainData, trainLabels1,
+      testData, testLabels, 10);
+  REQUIRE(error <= 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
@@ -990,5 +973,7 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   model1.Add<Linear>(2);
 
   // RBFN neural net with MeanSquaredError.
-  TestNetwork<>(model1, dataset, labels1, dataset, labels, 10, 0.1);
+  error = TestClassificationNetwork(model1, dataset, labels1, dataset, labels,
+      10);
+  REQUIRE(error <= 0.1);
 }

@@ -18,7 +18,7 @@
 namespace mlpack {
 
 template<typename MatType>
-LSTMType<MatType>::LSTMType() :
+LSTM<MatType>::LSTM() :
     RecurrentLayer<MatType>(),
     inSize(0),
     outSize(0)
@@ -27,7 +27,7 @@ LSTMType<MatType>::LSTMType() :
 }
 
 template<typename MatType>
-LSTMType<MatType>::LSTMType(const size_t outSize) :
+LSTM<MatType>::LSTM(const size_t outSize) :
     RecurrentLayer<MatType>(),
     inSize(0),
     outSize(outSize)
@@ -36,7 +36,7 @@ LSTMType<MatType>::LSTMType(const size_t outSize) :
 }
 
 template<typename MatType>
-LSTMType<MatType>::LSTMType(const LSTMType& layer) :
+LSTM<MatType>::LSTM(const LSTM& layer) :
     RecurrentLayer<MatType>(layer),
     inSize(layer.inSize),
     outSize(layer.outSize)
@@ -45,7 +45,7 @@ LSTMType<MatType>::LSTMType(const LSTMType& layer) :
 }
 
 template<typename MatType>
-LSTMType<MatType>::LSTMType(LSTMType&& layer) :
+LSTM<MatType>::LSTM(LSTM&& layer) :
     RecurrentLayer<MatType>(std::move(layer)),
     inSize(layer.inSize),
     outSize(layer.outSize)
@@ -55,7 +55,7 @@ LSTMType<MatType>::LSTMType(LSTMType&& layer) :
 }
 
 template<typename MatType>
-LSTMType<MatType>& LSTMType<MatType>::operator=(const LSTMType& layer)
+LSTM<MatType>& LSTM<MatType>::operator=(const LSTM& layer)
 {
   if (this != &layer)
   {
@@ -68,7 +68,7 @@ LSTMType<MatType>& LSTMType<MatType>::operator=(const LSTMType& layer)
 }
 
 template<typename MatType>
-LSTMType<MatType>& LSTMType<MatType>::operator=(LSTMType&& layer)
+LSTM<MatType>& LSTM<MatType>::operator=(LSTM&& layer)
 {
   if (this != &layer)
   {
@@ -84,7 +84,7 @@ LSTMType<MatType>& LSTMType<MatType>::operator=(LSTMType&& layer)
 }
 
 template<typename MatType>
-void LSTMType<MatType>::SetWeights(const MatType& weights)
+void LSTM<MatType>::SetWeights(const MatType& weights)
 {
   // Set the weight parameters for the inputs.
   const size_t inputWeightSize = outSize * inSize;
@@ -123,7 +123,7 @@ void LSTMType<MatType>::SetWeights(const MatType& weights)
 
 // Forward when cellState is not needed.
 template<typename MatType>
-void LSTMType<MatType>::Forward(const MatType& input, MatType& output)
+void LSTM<MatType>::Forward(const MatType& input, MatType& output)
 {
   // Convenience alias.
   const size_t batchSize = input.n_cols;
@@ -159,8 +159,8 @@ void LSTMType<MatType>::Forward(const MatType& input, MatType& output)
 
   // Apply nonlinearities.  (TODO: fast sigmoid?)
   blockInput = tanh(blockInput);
-  inputGate = 1.0 / (1.0 + exp(-inputGate));
-  forgetGate = 1.0 / (1.0 + exp(-forgetGate));
+  inputGate = 1 / (1 + exp(-inputGate));
+  forgetGate = 1 / (1 + exp(-forgetGate));
 
   // Compute the cell state.
   if (this->HasPreviousStep())
@@ -182,7 +182,7 @@ void LSTMType<MatType>::Forward(const MatType& input, MatType& output)
   }
 
   // Apply nonlinearity for output gate.
-  outputGate = 1.0 / (1.0 + exp(-outputGate));
+  outputGate = 1 / (1 + exp(-outputGate));
 
   // Finally, we can compute the output itself.
   output = tanh(thisCell) % outputGate;
@@ -193,7 +193,7 @@ void LSTMType<MatType>::Forward(const MatType& input, MatType& output)
 }
 
 template<typename MatType>
-void LSTMType<MatType>::Backward(
+void LSTM<MatType>::Backward(
     const MatType& /* input */,
     const MatType& output,
     const MatType& gy,
@@ -239,12 +239,12 @@ void LSTMType<MatType>::Backward(
                   recurrentOutputGateWeight.t() * nextDeltaOutputGate;
   }
 
-  deltaOutputGate = deltaY % tanh(thisCell) % (outputGate % (1.0 - outputGate));
+  deltaOutputGate = deltaY % tanh(thisCell) % (outputGate % (1 - outputGate));
 
   // Only first two terms if at final step
   if (this->AtFinalStep())
   {
-    deltaCell = deltaY % outputGate % (1.0 - square(tanh(thisCell))) +
+    deltaCell = deltaY % outputGate % (1 - square(tanh(thisCell))) +
         repmat(peepholeOutputGateWeight, 1, batchSize) % deltaOutputGate;
   }
   else
@@ -255,7 +255,7 @@ void LSTMType<MatType>::Backward(
     MakeAlias(nextForgetGate, this->RecurrentState(this->CurrentStep() + 1),
         outSize, batchSize, 4 * outSize * batchSize);
 
-    deltaCell = deltaY % outputGate % (1.0 - square(tanh(thisCell))) +
+    deltaCell = deltaY % outputGate % (1 - square(tanh(thisCell))) +
         repmat(peepholeOutputGateWeight, 1, batchSize) % deltaOutputGate +
         repmat(peepholeInputGateWeight, 1, batchSize) % nextDeltaInputGate +
         repmat(peepholeForgetGateWeight, 1, batchSize) % nextDeltaForgetGate +
@@ -263,11 +263,11 @@ void LSTMType<MatType>::Backward(
   }
 
   if (this->HasPreviousStep())
-    deltaForgetGate = deltaCell % prevCell % (forgetGate % (1.0 - forgetGate));
+    deltaForgetGate = deltaCell % prevCell % (forgetGate % (1 - forgetGate));
   else
     deltaForgetGate.zeros();
-  deltaInputGate = deltaCell % blockInput % (inputGate % (1.0 - inputGate));
-  deltaBlockInput = deltaCell % inputGate % (1.0 - square(blockInput));
+  deltaInputGate = deltaCell % blockInput % (inputGate % (1 - inputGate));
+  deltaBlockInput = deltaCell % inputGate % (1 - square(blockInput));
 
   // Finally, compute deltaX (which is what we wanted all along).
   g = blockInputWeight.t() * deltaBlockInput +
@@ -280,7 +280,7 @@ void LSTMType<MatType>::Backward(
 }
 
 template<typename MatType>
-void LSTMType<MatType>::Gradient(
+void LSTM<MatType>::Gradient(
     const MatType& input,
     const MatType& /* error */,
     MatType& gradient)
@@ -390,7 +390,7 @@ void LSTMType<MatType>::Gradient(
 }
 
 template<typename MatType>
-size_t LSTMType<MatType>::WeightSize() const
+size_t LSTM<MatType>::WeightSize() const
 {
   return 4 * inSize * outSize /* input weight connections */ +
       4 * outSize /* input bias */ +
@@ -399,7 +399,7 @@ size_t LSTMType<MatType>::WeightSize() const
 }
 
 template<typename MatType>
-size_t LSTMType<MatType>::RecurrentSize() const
+size_t LSTM<MatType>::RecurrentSize() const
 {
   // We have to account for the cell, recurrent connection, and the four
   // internal matrices: block input, input gate, forget gate, and output gate.
@@ -410,7 +410,7 @@ size_t LSTMType<MatType>::RecurrentSize() const
 }
 
 template<typename MatType>
-void LSTMType<MatType>::SetInternalAliases(const size_t batchSize)
+void LSTM<MatType>::SetInternalAliases(const size_t batchSize)
 {
   // Make all of the aliases for internal state point to the correct place.
   MatType& state = this->RecurrentState(this->CurrentStep());
@@ -437,7 +437,7 @@ void LSTMType<MatType>::SetInternalAliases(const size_t batchSize)
 }
 
 template<typename MatType>
-void LSTMType<MatType>::SetBackwardWorkspace(const size_t batchSize)
+void LSTM<MatType>::SetBackwardWorkspace(const size_t batchSize)
 {
   // We need to hold enough space for two time steps.
   workspace.set_size(12 * outSize, batchSize);
@@ -500,7 +500,7 @@ void LSTMType<MatType>::SetBackwardWorkspace(const size_t batchSize)
 
 template<typename MatType>
 template<typename Archive>
-void LSTMType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
+void LSTM<MatType>::serialize(Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<RecurrentLayer<MatType>>(this));
 

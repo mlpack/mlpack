@@ -32,6 +32,7 @@
 #include <mlpack/core/cereal/pointer_vector_wrapper.hpp>
 #include <mlpack/core/cereal/pointer_wrapper.hpp>
 #include <mlpack/core/cereal/template_class_version.hpp>
+#include <mlpack/core/cereal/low_precision.hpp>
 #include <mlpack/core/data/has_serialize.hpp>
 
 // Include ready to use utility function to check sizes of datasets.

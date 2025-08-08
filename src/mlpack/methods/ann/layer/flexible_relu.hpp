@@ -52,9 +52,12 @@ namespace mlpack {
  *         (Default: arma::mat).
  */
 template<typename MatType = arma::mat>
-class FlexibleReLUType : public Layer<MatType>
+class FlexibleReLU : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the FlexibleReLU object using the specified alpha parameter.
    * The trainable alpha parameter controls the range of the ReLU function.
@@ -62,22 +65,22 @@ class FlexibleReLUType : public Layer<MatType>
    *
    * @param alpha Parameter to adjust the range of the ReLU function.
    */
-  FlexibleReLUType(const double alpha = 0);
+  FlexibleReLU(const double alpha = 0);
 
-  //! Clone the FlexibleReLUType object. This handles polymorphism correctly.
-  FlexibleReLUType* Clone() const { return new FlexibleReLUType(*this); }
+  //! Clone the FlexibleReLU object. This handles polymorphism correctly.
+  FlexibleReLU* Clone() const { return new FlexibleReLU(*this); }
 
   // Virtual destructor.
-  virtual ~FlexibleReLUType() { }
+  virtual ~FlexibleReLU() { }
 
-  //! Copy the given FlexibleReLUType.
-  FlexibleReLUType(const FlexibleReLUType& other);
-  //! Take ownership of the given FlexibleReLUType.
-  FlexibleReLUType(FlexibleReLUType&& other);
-  //! Copy the given FlexibleReLUType.
-  FlexibleReLUType& operator=(const FlexibleReLUType& other);
-  //! Take ownership of the given FlexibleReLUType.
-  FlexibleReLUType& operator=(FlexibleReLUType&& other);
+  //! Copy the given FlexibleReLU.
+  FlexibleReLU(const FlexibleReLU& other);
+  //! Take ownership of the given FlexibleReLU.
+  FlexibleReLU(FlexibleReLU&& other);
+  //! Copy the given FlexibleReLU.
+  FlexibleReLU& operator=(const FlexibleReLU& other);
+  //! Take ownership of the given FlexibleReLU.
+  FlexibleReLU& operator=(FlexibleReLU&& other);
 
   /**
    * Reset the layer parameter (alpha). The method is called to
@@ -155,12 +158,7 @@ class FlexibleReLUType : public Layer<MatType>
 
   //! Parameter controlling the range of the ReLU function.
   double userAlpha;
-}; // class FlexibleReLUType
-
-// Convenience typedefs.
-
-// Standard flexible ReLU layer.
-using FlexibleReLU = FlexibleReLUType<arma::mat>;
+}; // class FlexibleReLU
 
 } // namespace mlpack
 

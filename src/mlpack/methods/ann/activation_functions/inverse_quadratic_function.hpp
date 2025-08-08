@@ -33,9 +33,10 @@ class InvQuadFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
-    return 1 / ( 1 + x * x);
+    return 1 / (1 + x * x);
   }
 
   /**
@@ -47,7 +48,7 @@ class InvQuadFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = 1 / (1 + pow(x, 2));
+    y = 1 / (1 + square(x));
   }
 
   /**
@@ -57,9 +58,10 @@ class InvQuadFunction
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x, const double /* y */)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType x, const ElemType /* y */)
   {
-    return -2 * x / std::pow(1 + std::pow(x, 2), 2);
+    return -2 * x / std::pow(1 + std::pow(x, ElemType(2)), ElemType(2));
   }
 
   /**
@@ -74,7 +76,7 @@ class InvQuadFunction
                     const OutputVecType& /* y */,
                     DerivVecType &dy)
   {
-    dy = - 2 * x / pow(1 + pow(x, 2), 2);
+    dy = -2 * x / square(1 + square(x));
   }
 }; // class InvQuadFunction
 

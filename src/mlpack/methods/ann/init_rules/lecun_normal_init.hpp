@@ -79,7 +79,8 @@ class LecunNormalInitialization
 
     // Multipling a random variable X with variance V(X) by some factor c,
     // then the variance V(cX) = (c ^ 2) * V(X).
-    W = randn<MatType>(rows, cols) * std::sqrt(variance);
+    W = randn<MatType>(rows, cols) *
+        typename MatType::elem_type(std::sqrt(variance));
   }
 
   /**
@@ -102,7 +103,8 @@ class LecunNormalInitialization
 
     // Multipling a random variable X with variance V(X) by some factor c,
     // then the variance V(cX) = (c ^ 2) * V(X).
-    W = randn<MatType>(W.n_rows, W.n_cols) * std::sqrt(variance);
+    W = randn<MatType>(W.n_rows, W.n_cols) *
+        typename MatType::elem_type(std::sqrt(variance));
   }
 
   /**

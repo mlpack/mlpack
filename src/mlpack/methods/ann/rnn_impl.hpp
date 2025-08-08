@@ -170,8 +170,8 @@ typename MatType::elem_type RNN<
 
   // Train the model.
   Timer::Start("rnn_optimization");
-  const typename MatType::elem_type out =
-      optimizer.Optimize(*this, network.Parameters(), callbacks...);
+  const ElemType out = optimizer.Optimize(*this, network.Parameters(),
+      callbacks...);
   Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::Train(): final objective of trained model is " << out
@@ -226,8 +226,8 @@ typename MatType::elem_type RNN<
 
   // Train the model.
   Timer::Start("rnn_optimization");
-  const typename MatType::elem_type out =
-      optimizer.Optimize(*this, network.Parameters(), callbacks...);
+  const ElemType out = optimizer.Optimize(*this, network.Parameters(),
+      callbacks...);
   Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::Train(): final objective of trained model is " << out
@@ -392,7 +392,7 @@ typename MatType::elem_type RNN<
   network.CheckNetwork("RNN::Evaluate()", predictors.n_rows);
 
   // Add the loss of the network unrelated to output.
-  typename MatType::elem_type lossSum = network.network.Loss();
+  ElemType lossSum = ElemType(network.network.Loss());
 
   // Reset recurrent memory state.
   ResetMemoryState(0, predictors.n_cols);
@@ -430,7 +430,7 @@ typename MatType::elem_type RNN<
   network.CheckNetwork("RNN::Evaluate()", predictors.n_rows);
 
   // Add the loss of the network unrelated to output.
-  typename MatType::elem_type lossSum = network.network.Loss();
+  ElemType lossSum = ElemType(network.network.Loss());
 
   MatType forwardOutput, inputAlias;
   for (size_t i = 0; i < predictors.n_cols; i++)
@@ -523,7 +523,7 @@ typename MatType::elem_type RNN<
   if (sequenceLengths.n_elem > 0 && batchSize != 1)
     throw std::invalid_argument("Batch size must be 1 for ragged sequences!");
 
-  typename MatType::elem_type loss = 0.0;
+  ElemType loss = 0;
   MatType stepData, responseData;
   const size_t steps = (sequenceLengths.n_elem == 0) ? predictors.n_slices :
       sequenceLengths[begin];
@@ -583,7 +583,7 @@ typename MatType::elem_type RNN<
   if (sequenceLengths.n_elem > 0 && batchSize != 1)
     throw std::invalid_argument("Batch size must be 1 for ragged sequences!");
 
-  typename MatType::elem_type loss = 0;
+  ElemType loss = 0;
 
   // We must save anywhere between 1 and `bpttSteps` states, but we are limited
   // by `predictors.n_slices`.
@@ -606,7 +606,7 @@ typename MatType::elem_type RNN<
   // Add loss (this is not dependent on time steps, and should only be added
   // once).  This is, e.g., regularizer loss, and other additive losses not
   // having to do with the output layer.
-  loss += network.network.Loss();
+  loss += ElemType(network.network.Loss());
 
   // For backpropagation through time, we must backpropagate for every
   // subsequence of length `bpttSteps`.  Before we've taken `bpttSteps` though,

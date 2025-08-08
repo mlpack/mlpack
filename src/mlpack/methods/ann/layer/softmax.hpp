@@ -31,26 +31,29 @@ namespace mlpack {
  *    computation.
  */
 template<typename MatType = arma::mat>
-class SoftmaxType : public Layer<MatType>
+class Softmax : public Layer<MatType>
 {
  public:
-  //! Create the Softmax object.
-  SoftmaxType();
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
 
-  //! Clone the SoftmaxType object. This handles polymorphism correctly.
-  SoftmaxType* Clone() const { return new SoftmaxType(*this); }
+  // Create the Softmax object.
+  Softmax();
 
-  //! Virtual destructor.
-  virtual ~SoftmaxType() { }
+  // Clone the Softmax object. This handles polymorphism correctly.
+  Softmax* Clone() const { return new Softmax(*this); }
 
-  //! Copy the given SoftmaxType.
-  SoftmaxType(const SoftmaxType& other);
-  //! Take ownership of the given SoftmaxType.
-  SoftmaxType(SoftmaxType&& other);
-  //! Copy the given SoftmaxType.
-  SoftmaxType& operator=(const SoftmaxType& other);
-  //! Take ownership of the given SoftmaxType.
-  SoftmaxType& operator=(SoftmaxType&& other);
+  // Virtual destructor.
+  virtual ~Softmax() { }
+
+  // Copy the given Softmax.
+  Softmax(const Softmax& other);
+  // Take ownership of the given Softmax.
+  Softmax(Softmax&& other);
+  // Copy the given Softmax.
+  Softmax& operator=(const Softmax& other);
+  // Take ownership of the given Softmax.
+  Softmax& operator=(Softmax&& other);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -76,13 +79,10 @@ class SoftmaxType : public Layer<MatType>
                 const MatType& gy,
                 MatType& g);
 
-  //! Serialize the layer.
+  // Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
-}; // class SoftmaxType
-
-// Convenience typedef.
-using Softmax = SoftmaxType<arma::mat>;
+}; // class Softmax
 
 } // namespace mlpack
 

@@ -22,8 +22,8 @@
 namespace mlpack {
 
 template <typename MatType, typename RegularizerType>
-MultiheadAttentionType<MatType, RegularizerType>::
-MultiheadAttentionType() :
+MultiheadAttention<MatType, RegularizerType>::
+MultiheadAttention() :
     tgtSeqLen(0),
     srcSeqLen(0),
     embedDim(0),
@@ -35,8 +35,8 @@ MultiheadAttentionType() :
 }
 
 template <typename MatType, typename RegularizerType>
-MultiheadAttentionType<MatType, RegularizerType>::
-MultiheadAttentionType(
+MultiheadAttention<MatType, RegularizerType>::
+MultiheadAttention(
     const size_t tgtSeqLen,
     const size_t numHeads,
     const MatType& attnmask,
@@ -53,7 +53,7 @@ MultiheadAttentionType(
 }
 
 template <typename MatType, typename RegularizerType>
-void MultiheadAttentionType<MatType, RegularizerType>::SetWeights(
+void MultiheadAttention<MatType, RegularizerType>::SetWeights(
     const MatType& weightsIn)
 {
   MakeAlias(weights, weightsIn, (4 * embedDim + 4) * embedDim, 1);
@@ -70,7 +70,7 @@ void MultiheadAttentionType<MatType, RegularizerType>::SetWeights(
 }
 
 template <typename MatType, typename RegularizerType>
-void MultiheadAttentionType<MatType, RegularizerType>::
+void MultiheadAttention<MatType, RegularizerType>::
 Forward(const MatType& input, MatType& output)
 {
   if (input.n_rows != embedDim *
@@ -122,7 +122,7 @@ Forward(const MatType& input, MatType& output)
 
   // The scaling factor sqrt(headDim) is used to prevent exploding values
   // after dot product i.e. when qProj is multiplied with kProj.
-  qProj /= std::sqrt(headDim);
+  qProj /= ElemType(std::sqrt(headDim));
 
   // Split the qProj, kProj and vProj into n heads. That's what Multihead
   // Attention is.
@@ -179,7 +179,7 @@ Forward(const MatType& input, MatType& output)
 }
 
 template <typename MatType, typename RegularizerType>
-void MultiheadAttentionType<MatType, RegularizerType>::
+void MultiheadAttention<MatType, RegularizerType>::
 Backward(const MatType& /* input */,
          const MatType& /* output */,
          const MatType& gy,
@@ -278,7 +278,7 @@ Backward(const MatType& /* input */,
   // The shape of kProj : (srcSeqLen, headDim, numHeads * batchSize).
   // The shape of gyTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
   // The new shape of tmp : (tgtSeqLen, headDim, numHeads * batchSize).
-  tmp = MultiplyCube2Cube(gyTemp, kProj) / std::sqrt(headDim);
+  tmp = MultiplyCube2Cube(gyTemp, kProj) / ElemType(std::sqrt(headDim));
 
   // Concatenate results of all the attention heads.
   tmp.reshape(tgtSeqLen, embedDim, batchSize);
@@ -300,7 +300,7 @@ Backward(const MatType& /* input */,
 }
 
 template <typename MatType, typename RegularizerType>
-void MultiheadAttentionType<MatType, RegularizerType>::
+void MultiheadAttention<MatType, RegularizerType>::
 Gradient(const MatType& input,
          const MatType& error,
          MatType& gradient)
@@ -435,7 +435,7 @@ Gradient(const MatType& input,
 
   // Now, we will concatenate propagated error of all heads.
   gyTemp.reshape(tgtSeqLen, embedDim, batchSize);
-  gyTemp /= std::sqrt(headDim);
+  gyTemp /= ElemType(std::sqrt(headDim));
 
   // Gradient wrt. qBias, i.e. dL/d(qBias). We will take summation over all the
   // batches of gyTemp and over all the sequences.
@@ -457,7 +457,7 @@ Gradient(const MatType& input,
 
 template <typename MatType, typename RegularizerType>
 template <typename Archive>
-void MultiheadAttentionType<MatType, RegularizerType>::
+void MultiheadAttention<MatType, RegularizerType>::
 serialize(Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));
