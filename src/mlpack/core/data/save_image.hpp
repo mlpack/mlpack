@@ -31,11 +31,11 @@ namespace data {
 template<typename eT>
 bool Save(const std::string& filename,
           arma::Mat<eT>& matrix,
-          ImageInfo& info,
+          ImageInfo& opts,
           const bool fatal)
 {
-  ImageOptions opts;
   opts.Fatal() = fatal;
+  opts.Format() = FileType::ImageType;
   std::vector<std::string> files;
   files.push_back(filename);
   Save(files.back(), matrix, opts);
@@ -53,11 +53,11 @@ bool Save(const std::string& filename,
 template<typename eT>
 bool Save(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
-          ImageInfo& info,
+          ImageInfo& opts,
           const bool fatal)
 {
-  ImageOptions opts;
   opts.Fatal() = fatal;
+  opts.Format() = FileType::ImageType;
   Save(files, matrix, opts);
 }
 
