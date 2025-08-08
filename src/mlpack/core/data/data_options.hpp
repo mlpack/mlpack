@@ -503,7 +503,7 @@ bool handleError(const std::string& msg,
 }
 
 // Required for backward compatibility.
-bool handleError(const std::stringstream& oss, bool fatal)
+inline bool handleError(const std::stringstream& oss, bool fatal)
 {
   bool success = true; // this should never be returned as true.
   if (fatal)
@@ -518,7 +518,7 @@ bool handleError(const std::stringstream& oss, bool fatal)
   return success;
 }
 
-bool handleError(const std::string& msg, bool fatal)
+inline bool handleError(const std::string& msg, bool fatal)
 {
   std::stringstream oss;
   oss << msg;
