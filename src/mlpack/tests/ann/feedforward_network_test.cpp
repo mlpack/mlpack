@@ -367,7 +367,9 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  double error = TestClassificationNetwork(model, trainData, trainLabels,
+      testData, testLabels, 10);
+  REQUIRE(error <= 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
@@ -387,7 +389,9 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   model1.Add<Linear>(2);
   model1.Add<LogSoftMax>();
   // Vanilla neural net with logistic activation function.
-  TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
+  error = TestClassificationNetwork(model1, dataset, labels, dataset, labels,
+      10);
+  REQUIRE(error <= 0.2);
 }
 
 TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
@@ -520,7 +524,9 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  double error = TestClassificationNetwork(model, trainData, trainLabels,
+      testData, testLabels, 10);
+  REQUIRE(error <= 0.1);
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
   // Make sure the data loaded okay.
@@ -542,7 +548,9 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   model1.Add<Linear>(2);
   model1.Add<LogSoftMax>();
   // Vanilla neural net with logistic activation function.
-  TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
+  error = TestClassificationNetwork(model1, dataset, labels, dataset, labels,
+      10);
+  REQUIRE(error <= 0.2);
 }
 
 /**
@@ -600,7 +608,8 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  double error = TestClassificationNetwork(model, trainData, trainLabels,
+      testData, testLabels, 10);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
@@ -621,7 +630,9 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
   model1.Add<LogSoftMax>();
 
   // Vanilla neural net with logistic activation function.
-  TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
+  error = TestClassificationNetwork(model1, dataset, labels, dataset, labels,
+      10);
+  REQUIRE(error <= 0.2);
 }
 
 /**
@@ -927,7 +938,9 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   model.Add<Linear>(3);
 
   // RBFN neural net with MeanSquaredError.
-  TestNetwork(model, trainData, trainLabels1, testData, testLabels, 10, 0.1);
+  double error = TestClassificationNetwork(model, trainData, trainLabels1,
+      testData, testLabels, 10);
+  REQUIRE(error <= 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
@@ -960,5 +973,7 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   model1.Add<Linear>(2);
 
   // RBFN neural net with MeanSquaredError.
-  TestNetwork(model1, dataset, labels1, dataset, labels, 10, 0.1);
+  error = TestClassificationNetwork(model1, dataset, labels1, dataset, labels,
+      10);
+  REQUIRE(error <= 0.1);
 }

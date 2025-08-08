@@ -49,7 +49,9 @@ TEST_CASE("FFNSimpleFP16Test", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  const double error = TestClassificationNetwork(model, trainData, trainLabels,
+      testData, testLabels, 10);
+  REQUIRE(error <= 0.1);
 }
 
 TEST_CASE("RNNSimpleFP16Test", "[RecurrentNetworkTest]")

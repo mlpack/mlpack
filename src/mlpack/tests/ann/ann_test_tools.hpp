@@ -287,16 +287,16 @@ double CheckRegularizerGradient(FunctionType& function, const double eps = 1e-7)
 }
 
 /**
- * Train and evaluate a model with the specified structure.
+ * Train and evaluate a model with the specified structure, returning the
+ * classification error.
  */
 template<typename MatType = arma::mat, typename ModelType>
-void TestNetwork(ModelType& model,
-                 MatType& trainData,
-                 MatType& trainLabels,
-                 MatType& testData,
-                 MatType& testLabels,
-                 const size_t maxEpochs,
-                 const double classificationErrorThreshold)
+double TestClassificationNetwork(ModelType& model,
+                                 MatType& trainData,
+                                 MatType& trainLabels,
+                                 MatType& testData,
+                                 MatType& testLabels,
+                                 const size_t maxEpochs)
 {
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols * maxEpochs, -100);
   model.Train(trainData, trainLabels, opt);
@@ -313,8 +313,7 @@ void TestNetwork(ModelType& model,
 
   size_t correct = accu(prediction == testLabels);
 
-  double classificationError = 1 - double(correct) / testData.n_cols;
-  REQUIRE(classificationError <= classificationErrorThreshold);
+  return (1 - double(correct) / testData.n_cols);
 }
 
 // Utilities for RNN testing.
