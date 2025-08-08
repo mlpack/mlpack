@@ -159,8 +159,7 @@ typename MatType::elem_type FFN<
 
   // Train the model.
   Timer::Start("ffn_optimization");
-  const typename MatType::elem_type out =
-      optimizer.Optimize(*this, parameters, callbacks...);
+  ElemType out = optimizer.Optimize(*this, parameters, callbacks...);
   Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::Train(): final objective of trained model is " << out
@@ -329,8 +328,8 @@ typename MatType::elem_type FFN<
             const MatType& targets,
             MatType& gradients)
 {
-  const typename MatType::elem_type res =
-      outputLayer.Forward(networkOutput, targets) + network.Loss();
+  const ElemType res = outputLayer.Forward(networkOutput, targets) +
+      ElemType(network.Loss());
 
   // Compute the error of the output layer.
   outputLayer.Backward(networkOutput, targets, error);
@@ -428,7 +427,7 @@ typename MatType::elem_type FFN<
     MatType
 >::Evaluate(const MatType& parameters)
 {
-  typename MatType::elem_type res = 0;
+  ElemType res = 0;
   for (size_t i = 0; i < predictors.n_cols; ++i)
     res += Evaluate(parameters, i, 1);
 
@@ -471,7 +470,7 @@ typename MatType::elem_type FFN<
     MatType
 >::EvaluateWithGradient(const MatType& parameters, MatType& gradient)
 {
-  typename MatType::elem_type res = 0;
+  ElemType res = 0;
   res += EvaluateWithGradient(parameters, 0, gradient, 1);
   MatType tmpGradient(gradient.n_rows, gradient.n_cols,
       GetFillType<MatType>::none);

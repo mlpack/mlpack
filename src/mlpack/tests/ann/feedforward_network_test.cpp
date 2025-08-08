@@ -19,39 +19,9 @@
 
 #include "../catch.hpp"
 #include "../serialization.hpp"
+#include "ann_test_tools.hpp"
 
 using namespace mlpack;
-
-/**
- * Train and evaluate a model with the specified structure.
- */
-template<typename MatType = arma::mat, typename ModelType>
-void TestNetwork(ModelType& model,
-                 MatType& trainData,
-                 MatType& trainLabels,
-                 MatType& testData,
-                 MatType& testLabels,
-                 const size_t maxEpochs,
-                 const double classificationErrorThreshold)
-{
-  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols * maxEpochs, -100);
-  model.Train(trainData, trainLabels, opt);
-
-  MatType predictionTemp;
-  model.Predict(testData, predictionTemp);
-  MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
-
-  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
-  {
-    prediction(i) = arma::as_scalar(arma::find(
-        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1));
-  }
-
-  size_t correct = accu(prediction == testLabels);
-
-  double classificationError = 1 - double(correct) / testData.n_cols;
-  REQUIRE(classificationError <= classificationErrorThreshold);
-}
 
 // network1 should be allocated with `new`, and trained on some data.
 template<typename MatType = arma::mat, typename ModelType>
@@ -397,7 +367,7 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  TestNetwork(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
@@ -550,7 +520,7 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  TestNetwork(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
   // Make sure the data loaded okay.
@@ -957,7 +927,7 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   model.Add<Linear>(3);
 
   // RBFN neural net with MeanSquaredError.
-  TestNetwork<>(model, trainData, trainLabels1, testData, testLabels, 10, 0.1);
+  TestNetwork(model, trainData, trainLabels1, testData, testLabels, 10, 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
@@ -990,5 +960,5 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   model1.Add<Linear>(2);
 
   // RBFN neural net with MeanSquaredError.
-  TestNetwork<>(model1, dataset, labels1, dataset, labels, 10, 0.1);
+  TestNetwork(model1, dataset, labels1, dataset, labels, 10, 0.1);
 }
