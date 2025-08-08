@@ -592,16 +592,20 @@ private:
   std::vector<Layer<MatType>*> sortedNetwork;
 
   // The internally-held map of nodes that holds it's edges to outgoing nodes.
+  // Uses network indices as keys.
   std::unordered_map<size_t, std::vector<size_t>> childrenList;
 
   // The internally-held map of nodes that holds it's edges to incoming nodes.
+  // Uses network indices as keys.
   std::unordered_map<size_t, std::vector<size_t>> parentsList;
 
   // The internally-held map of what axes to concatenate along for each layer
   // with multiple inputs
+  // Uses network indices as keys.
   std::unordered_map<size_t, size_t> layerAxes;
 
   // Map layer index in network to layer index in sortedNetwork
+  // Uses network indices as keys.
   std::unordered_map<size_t, size_t> sortedIndices;
 
   /**
@@ -651,14 +655,16 @@ private:
   // A layers delta Loss w.r.t delta Outputs.
   std::vector<MatType> layerDeltas;
 
-  // A layers output deltas.
-  std::unordered_map<Layer<MatType>*, MatType*> outputDeltas;
+  // A layers output deltas. Uses sortedNetwork indices as keys.
+  std::unordered_map<size_t, MatType*> outputDeltas;
+  // std::unordered_map<Layer<MatType>*, MatType*> outputDeltas;
 
-  // A layers input deltas.
-  std::unordered_map<Layer<MatType>*, MatType*> inputDeltas;
+  // A layers input deltas. Uses sortedNetwork indices as keys.
+  std::unordered_map<size_t, MatType*> inputDeltas;
 
   // A layers accumulated deltas, for layers with multiple children.
-  std::unordered_map<Layer<MatType>*, MatType*> accumulatedDeltas;
+  // Uses sortedNetwork indices as keys.
+  std::unordered_map<size_t, MatType*> accumulatedDeltas;
 
   // Gradient aliases for each layer.
   std::vector<MatType> layerGradients;

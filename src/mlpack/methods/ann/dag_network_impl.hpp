@@ -201,7 +201,8 @@ void DAGNetwork<
   if (layerId >= network.size())
   {
     std::ostringstream errorMessage;
-    errorMessage << "DAGNetwork::SetAxis(): layer " << layerId << " does not exist in the network.";
+    errorMessage << "DAGNetwork::SetAxis(): layer "
+      << layerId << " does not exist in the network.";
     throw std::logic_error(errorMessage.str());
   }
 
@@ -898,16 +899,16 @@ void DAGNetwork<
 
     if (childrenList[layerIndex].size() > 1)
     {
-      accumulatedDeltas.insert({layer, &layerDeltas[i]});
-      MakeAlias(*accumulatedDeltas[layer], layerDeltaMatrix,
+      accumulatedDeltas.insert({i, &layerDeltas[i]});
+      MakeAlias(*accumulatedDeltas[i], layerDeltaMatrix,
         layer->OutputSize(), batchSize, offset);
       offset += layer->OutputSize() * batchSize;
-      outputDeltas.insert({layer, new MatType()});
+      outputDeltas.insert({i, new MatType()});
     }
     else
-       outputDeltas.insert({layer, &layerDeltas[i]});
+      outputDeltas.insert({i, &layerDeltas[i]});
 
-    MakeAlias(*outputDeltas[layer], layerDeltaMatrix,
+    MakeAlias(*outputDeltas[i], layerDeltaMatrix,
        layer->OutputSize(), batchSize, offset);
     offset += layer->OutputSize() * batchSize;
   }
@@ -920,20 +921,20 @@ void DAGNetwork<
     const std::vector<size_t>& parents = parentsList[layerIndex]; 
     if (parents.size() > 1)
     {
-      inputDeltas.insert({layer, new MatType()});
+      inputDeltas.insert({i, new MatType()});
 
       size_t inputSize = layer->InputDimensions()[0];
       for (size_t j = 1; j < layer->InputDimensions().size(); j++)
         inputSize *= layer->InputDimensions()[j];
 
-      MakeAlias(*inputDeltas[layer], layerDeltaMatrix,
+      MakeAlias(*inputDeltas[i], layerDeltaMatrix,
         inputSize, batchSize, offset);
       offset += inputSize * batchSize;
     }
     else
     {
-      Layer<MatType>* onlyParent = network[parents.front()];
-      inputDeltas[layer] = outputDeltas[onlyParent];
+      size_t onlyParent = sortedIndices[parents.front()];
+      inputDeltas[i] = outputDeltas[onlyParent];
     }
   }
 }
@@ -1053,8 +1054,9 @@ void DAGNetwork<
     for (Layer<MatType>* layer: sortedNetwork)
     {
       size_t layerIndex = FindLayerIndex(layer);
+      size_t sortedIndex = sortedIndices[layerIndex];
       if (childrenList[layerIndex].size() > 1)
-        accumulatedDeltas[layer]->fill(0.0f);
+        accumulatedDeltas[sortedIndex]->fill(0.0f);
     }
 
     MatType const* currentOutput = &output;
@@ -1066,7 +1068,7 @@ void DAGNetwork<
       size_t layerIndex = FindLayerIndex(layer);
 
       layer->Backward(layerInputs[i - 1], *currentOutput, *currentDelta,
-         *inputDeltas[layer]);
+         *inputDeltas[i]);
 
       size_t numParents = parentsList[layerIndex].size();
       if (numParents > 1)
@@ -1077,13 +1079,13 @@ void DAGNetwork<
         for (size_t j = 0; j < axis; j++)
           rows *= layer->InputDimensions()[j];
 
-        size_t batchSize = inputDeltas[layer]->n_cols;
+        size_t batchSize = inputDeltas[i]->n_cols;
         size_t slices = batchSize;
         for (size_t j = axis + 1; j < layer->InputDimensions().size(); j++)
           slices *= layer->InputDimensions()[j];
 
         CubeType inputDeltaAlias;
-        MakeAlias(inputDeltaAlias, *inputDeltas[layer], rows,
+        MakeAlias(inputDeltaAlias, *inputDeltas[i], rows,
           layer->InputDimensions()[axis], slices);
 
         const std::vector<size_t>& parents = parentsList[layerIndex];
@@ -1091,10 +1093,11 @@ void DAGNetwork<
         for (size_t j = 0; j < parents.size(); j++)
         {
           Layer<MatType>* parent = network[parents[j]];
+          size_t parentIndex = sortedIndices[parents[j]];
           const size_t cols = parent->OutputDimensions()[axis];
-          *outputDeltas[parent] = inputDeltaAlias.cols(startCol,
+          *outputDeltas[parentIndex] = inputDeltaAlias.cols(startCol,
             startCol + cols - 1);
-          outputDeltas[parent]->reshape(outputDeltas[parent]->n_elem / batchSize, batchSize);
+          outputDeltas[parentIndex]->reshape(outputDeltas[parentIndex]->n_elem / batchSize, batchSize);
 
           startCol += cols;
         }
@@ -1106,8 +1109,8 @@ void DAGNetwork<
         size_t parentNumChildren = childrenList[parent].size();
         if (parentNumChildren > 1)
         {
-           Layer<MatType>* parentLayer = network[parent];
-           *accumulatedDeltas[parentLayer] += *outputDeltas[parentLayer];
+          size_t parentIndex = sortedIndices[parent];
+          *accumulatedDeltas[parentIndex] += *outputDeltas[parent];
         }
       }
 
