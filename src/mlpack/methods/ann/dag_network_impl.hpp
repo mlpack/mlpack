@@ -82,8 +82,6 @@ DAGNetwork<
     initializeRule(std::move(other.initializeRule)),
 
     network(std::move(other.network)),
-    parentsList(std::move(other.parentsList)),
-    childrenList(std::move(other.childrenList)),
     layerAxes(std::move(other.layerAxes)),
 
     parameters(std::move(other.parameters)),
@@ -95,12 +93,17 @@ DAGNetwork<
     graphIsSet(false),
     validOutputDimensions(false)
 {
+  other.DeleteExtraDeltas();
+
   size_t size = std::max<int>(network.size() - 1, 0);
   layerOutputs.resize(size, MatType());
   layerDeltas.resize(size, MatType());
   layerInputs.resize(size, MatType());
 
   layerGradients.resize(network.size(), MatType());
+
+  parentsList = std::move(other.parentsList);
+  childrenList = std::move(other.childrenList);
 }
 
 template<typename OutputLayerType,
@@ -161,6 +164,8 @@ DAGNetwork<OutputLayerType,
 {
   if (this != &other)
   {
+    other.DeleteExtraDeltas();
+
     outputLayer = std::move(other.outputLayer);
     initializeRule = std::move(other.initializeRule);
 
@@ -822,6 +827,10 @@ void DAGNetwork<
     offset += batchSize * layerOutputSize;
     sortedIndices.insert({FindLayerIndex(sortedNetwork[i]), i});
   }
+
+  sortedIndices.insert({
+    FindLayerIndex(sortedNetwork.back()), sortedNetwork.size() - 1
+  });
 
   //setup layerInputs
   for (size_t i = 1; i < sortedNetwork.size(); i++)

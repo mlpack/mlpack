@@ -80,18 +80,11 @@ public:
   // Destructor: delete all layers.
   ~DAGNetwork()
   {
+    DeleteExtraDeltas();
     for (size_t i = 0; i < network.size(); i++)
-    {
-      Layer<MatType>* currentLayer = network[i];
-      if (childrenList[i].size() > 1)
-        delete outputDeltas[currentLayer];
-
-      if (parentsList[i].size() > 1)
-        delete inputDeltas[currentLayer];
-
       delete network[i];
-    }
   }
+
 
   using CubeType = typename GetCubeType<MatType>::type;
 
@@ -548,6 +541,20 @@ private:
         break;
     }
     return layerIndex;
+  }
+
+  /**
+   * Delete extra deltas allocated in `InitializeBackwardPassMemory`
+   */
+  void DeleteExtraDeltas() {
+    for (size_t i = 0; i < network.size(); i++)
+    {
+      if (childrenList[i].size() > 1)
+        delete outputDeltas[sortedIndices[i]];
+
+      if (parentsList[i].size() > 1)
+        delete inputDeltas[sortedIndices[i]];
+    }
   }
 
   /**
