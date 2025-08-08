@@ -145,10 +145,12 @@ pipeline
                   # Don't check the host keys, because they won't be saved in
                   # this container anyway.
                   mkdir -p ~/.ssh/
-                  echo "Host ${target}" >> ~/.ssh/config;
+                  echo "Host *" >> ~/.ssh/config;
                   echo '  StrictHostKeyChecking no' >> ~/.ssh/config;
                   if [ ! -z "$JUMP_HOST" ];
                   then
+                    echo "" >> ~/.ssh/config;
+                    echo "Host ${target}" >> ~/.ssh/config;
                     echo "  ProxyJump $JUMP_HOST" >> ~/.ssh/config;
                   fi
                   cat ~/.ssh/config;
