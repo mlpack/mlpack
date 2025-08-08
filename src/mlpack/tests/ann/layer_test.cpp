@@ -31,6 +31,7 @@
 #include "layer/celu.cpp"
 #include "layer/c_relu.cpp"
 #include "layer/dropout.cpp"
+#include "layer/elu.cpp"
 #include "layer/flexible_relu.cpp"
 #include "layer/grouped_convolution.cpp"
 #include "layer/gru.cpp"
