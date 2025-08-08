@@ -44,7 +44,17 @@ enum struct FileType
               // categories of the data.
   JSON,       // Serialize data using Cereal library into JSON format.
   XML,        // Serialize data using Cereal library into xml format.
-  BIN         // Serialize data using Cereal library into binary format.
+  BIN,        // Serialize data using Cereal library into binary format.
+  ImageType,  // Any image type, STB will try to detect the type.
+  PNG,        // Portable Network Graphics image type.
+  JPG,        // Joint Photographic Experts Group image type.
+  TGA,        // Truevision TGA image type.
+  BMP,        // Bitmap image type.
+  HDR,        // High Dynamic Range image format.
+  PSD,        // PhotoShop image type.
+  GIF,        // Graphics Interchange Format image type.
+  PIC,        // PICtor image format.
+  PNM         // Portable Anymap format.
 };
 
 // This should be removed in mlpack 5.0.0. It is only here for backward
@@ -216,22 +226,6 @@ class DataOptionsBase
   // Modify the file format to load.
   FileType& Format() { return ModifyMember(format, defaultFormat); }
 
-  //@rcurtin I do not want to merge interalImage with the constructor, so I
-  //kept it separated. I do not want to user to know that this function exist
-  //at all. If I would construct it I would need to set it with
-  //PlainDataOptions which will open the door for unecessary handing.
-  // I think this is a shitty implementation, this is only a try, to see if
-  // this compiles at least.
-  const bool& InternalImage() const
-  {
-    return AccessMember(image, defaultImage);
-  }
-
-  bool& InternalImage()
-  {
-    return ModifyMember(image, defaultImage);
-  }
-
   /**
    * Given a file type, return Armadillo type corresponding to that file type.
    */
@@ -313,6 +307,18 @@ class DataOptionsBase
       case FileType::JSON:        return "JSON model";
       case FileType::AutoDetect:  return "Detect automatically data type";
       case FileType::FileTypeUnknown: return "Unknown data type";
+      case FileType::ImageType:   return "Any Image type";
+      case FileType::PNG:         return "Portable Network Graphics image data";
+      case FileType::JPG:
+          return "Joint Photographic Experts Group image data.";
+      case FileType::TGA:         return "Truevision TGA image data.";
+      case FileType::BMP:         return "Bitmap image data.";
+      case FileType::HDR:         return "High Dynamic Range image data.";
+      case FileType::PSD:         return "PhotoShop image data.";
+      case FileType::GIF:
+          return "Graphics Interchange Format image data.";
+      case FileType::PIC:         return "PICtor image data.";
+      case FileType::PNM:         return "Portable Anymap data.";
       default:                    return "";
     }
   }
@@ -380,11 +386,9 @@ class DataOptionsBase
  private:
   std::optional<bool> fatal;
   std::optional<FileType> format;
-  std::optional<bool> image;
 
   constexpr static const bool defaultFatal = false;
   constexpr static const FileType defaultFormat = FileType::AutoDetect;
-  constexpr static const bool defaultImage = false;
   // For access to internal optional members.
   template<typename Derived2>
   friend class DataOptionsBase;
@@ -453,8 +457,18 @@ static const DataOptions CoordAscii = DataOptions(std::nullopt,
 static const DataOptions AutoDetect = DataOptions(std::nullopt,
     FileType::AutoDetect);
 static const DataOptions JSON = DataOptions(std::nullopt, FileType::JSON);
-static const DataOptions XML  = DataOptions(std::nullopt, FileType::XML);
-static const DataOptions BIN  = DataOptions(std::nullopt, FileType::BIN);
+static const DataOptions XML = DataOptions(std::nullopt, FileType::XML);
+static const DataOptions BIN = DataOptions(std::nullopt, FileType::BIN);
+static const DataOptions PNG = DataOptions(std::nullopt, FileType::PNG);
+static const DataOptions JPG = DataOptions(std::nullopt, FileType::JPG);
+static const DataOptions TGA = DataOptions(std::nullopt, FileType::TGA);
+static const DataOptions BMP = DataOptions(std::nullopt, FileType::BMP);
+static const DataOptions HDR = DataOptions(std::nullopt, FileType::HDR);
+static const DataOptions PSD = DataOptions(std::nullopt, FileType::PSD);
+static const DataOptions GIF = DataOptions(std::nullopt, FileType::GIF);
+static const DataOptions PIC = DataOptions(std::nullopt, FileType::PIC);
+static const DataOptions PNM = DataOptions(std::nullopt, FileType::PNM);
+static const DataOptions Image  = DataOptions(std::nullopt, FileType::ImageType);
 
 // Utility struct to detect when something is a `DataOptions`.
 

@@ -173,6 +173,8 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     quality.reset();
   }
 
+  // I think this is not necessary @rcurtin up to you to keep it or to remove
+  // it.
   bool Image() const
   {
     return this->AccessMember(image, defaultImage);
@@ -180,7 +182,6 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
 
   bool& Image()
   {
-    this->InternalImage() = true;
     return this->ModifyMember(image, defaultImage);
   }
 
@@ -297,8 +298,6 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
   constexpr static const size_t defaultQuality = 90;
   constexpr static const bool   defaultImage = false;
 };
-
-static const ImageOptions Image = ImageOptions(0, 0, 3, 90, true);
 
 template<>
 struct IsDataOptions<ImageOptions>

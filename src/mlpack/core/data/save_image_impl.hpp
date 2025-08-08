@@ -76,19 +76,11 @@ bool Save(const std::vector<std::string>& files,
       success = stbi_write_bmp(files.at(i).c_str(), opts.Width(), opts.Height(),
           opts.Channels(), matrix.colptr(i));
     }
-    // I am happy to keep it, but I think there is no dataset that exist with
-    // this type anymore
     else if ("tga" == Extension(files.at(i)))
     {
       success = stbi_write_tga(files.at(i).c_str(), opts.Width(), opts.Height(),
           opts.Channels(), matrix.colptr(i));
     }
-    // @rcurtin, I doubt that this extension exist, I think usually it is just
-    // one of the following: HEIC, AVIF, JPEG XR, JPEG XL, according to
-    // Wikipedia.
-    // The question here is, we need to test these ones to be sure that we
-    // support all of the above extensions, I have no idea if we already doing
-    // some kind of testing.
     else if ("hdr" == Extension(files.at(i)))
     {
       // We have to convert to float for HDR.

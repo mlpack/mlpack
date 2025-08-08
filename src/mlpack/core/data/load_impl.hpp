@@ -121,13 +121,12 @@ bool LoadMatrix(const std::string& filename,
 {
   bool success = false;
 
-  //@rcurtin this is the solution that I have found for now. This implies that
-  // Image() is part of DataOptions and not
-  if (opts.InternalImage())
-  // if (we are loading an image)
+  if (opts.Format() == FileType::PNG || opts.Format() == FileType::JPG ||
+      opts.Format() == FileType::HDR || opts.Format() == FileType::TGA ||
+      opts.Format() == FileType::GIF || opts.Format() == FileType::PIC ||
+      opts.Format() == FileType::PSD || opts.Format() == FileType::PNM ||
+      opts.Format() == FileType::ImageType)
   {
-    // DataOptionsType could be anything: DataOptions, TextOptions, ImageOptions
-    // we need to either convert to an ImageOptions, or cast to an ImageOptions
     ImageOptions imgOpts(std::move(opts));
     success = Load(filename, matrix, imgOpts);
     opts = std::move(imgOpts);

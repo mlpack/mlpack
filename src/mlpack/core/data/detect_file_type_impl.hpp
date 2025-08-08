@@ -277,11 +277,38 @@ inline FileType AutoDetectFile(std::fstream& stream,
   {
     detectedLoadType = FileType::HDF5Binary;
   }
-  else if (extension == "arff")
+  else if (extension == "png")
   {
-    return FileType::ARFFASCII;
+    detectedLoadType = FileType::PNG;
   }
-
+  else if (extension == "jpg" || extension == "jpeg")
+  {
+    detectedLoadType = FileType::JPG;
+  }
+  else if (extension == "tga")
+  {
+    detectedLoadType = FileType::TGA;
+  }
+  else if (extension == "psd")
+  {
+    detectedLoadType = FileType::PSD;
+  }
+  else if (extension == "hdr")
+  {
+    detectedLoadType = FileType::HDR;
+  }
+  else if (extension == "gif")
+  {
+    detectedLoadType = FileType::GIF;
+  }
+  else if (extension == "pic")
+  {
+    detectedLoadType = FileType::PIC;
+  }
+  else if (extension == "pnm")
+  {
+    detectedLoadType = FileType::PNM;
+  }
   else // Unknown extension...
   {
     detectedLoadType = FileType::FileTypeUnknown;
@@ -328,6 +355,38 @@ void DetectFromExtension(const std::string& filename,
   else if (extension == "arff")
   {
     opts.Format() = FileType::ARFFASCII;
+  }
+  else if (extension == "png")
+  {
+    opts.Format() = FileType::PNG;
+  }
+  else if (extension == "jpg" || extension == "jpeg")
+  {
+    opts.Format() = FileType::JPG;
+  }
+  else if (extension == "tga")
+  {
+    opts.Format() = FileType::TGA;
+  }
+  else if (extension == "psd")
+  {
+    opts.Format() = FileType::PSD;
+  }
+  else if (extension == "hdr")
+  {
+    opts.Format() = FileType::HDR;
+  }
+  else if (extension == "gif")
+  {
+    opts.Format() = FileType::GIF;
+  }
+  else if (extension == "pic")
+  {
+    opts.Format() = FileType::PIC;
+  }
+  else if (extension == "pnm")
+  {
+    opts.Format() = FileType::PNM;
   }
   else
   {
