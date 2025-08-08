@@ -139,24 +139,16 @@ bool Save(const std::string& filename,
   }
   else
   {
-    if (opts.Fatal())
-      Log::Fatal << "DataOptionsType is unknown!  Please use a known type or "
-          << "or provide specific overloads." << std::endl;
-    else
-      Log::Warn << "DataOptionsType is unknown!  Please use a known type or "
-          << "or provide specific overloads." << std::endl;
-
-    return false;
+    return handleError("DataOptionsType is unknown!  Please use a known type "
+        "or provide specific overloads." ,opts);
   }
 
   if (!success)
   {
     Timer::Stop("saving_data");
-    if (opts.Fatal())
-      Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
-    else
-      Log::Warn << "Save to '" << filename << "' failed." << std::endl;
-    return false;
+    std::stringstream oss;
+    oss << "Save to '" << filename << "' failed.";
+    return handleError(oss, opts);
   }
 
   Timer::Stop("saving_data");

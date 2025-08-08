@@ -18,7 +18,6 @@
 
 #include "dataset_mapper.hpp"
 #include "map_policies/map_policies.hpp"
-#include "image_info.hpp"
 
 namespace mlpack {
 namespace data {
@@ -217,6 +216,22 @@ class DataOptionsBase
   // Modify the file format to load.
   FileType& Format() { return ModifyMember(format, defaultFormat); }
 
+  //@rcurtin I do not want to merge interalImage with the constructor, so I
+  //kept it separated. I do not want to user to know that this function exist
+  //at all. If I would construct it I would need to set it with
+  //PlainDataOptions which will open the door for unecessary handing.
+  // I think this is a shitty implementation, this is only a try, to see if
+  // this compiles at least.
+  const bool& InternalImage() const
+  {
+    return AccessMember(image, defaultImage);
+  }
+
+  bool& InternalImage()
+  {
+    return ModifyMember(image, defaultImage);
+  }
+
   /**
    * Given a file type, return Armadillo type corresponding to that file type.
    */
@@ -365,10 +380,11 @@ class DataOptionsBase
  private:
   std::optional<bool> fatal;
   std::optional<FileType> format;
+  std::optional<bool> image;
 
   constexpr static const bool defaultFatal = false;
   constexpr static const FileType defaultFormat = FileType::AutoDetect;
-
+  constexpr static const bool defaultImage = false;
   // For access to internal optional members.
   template<typename Derived2>
   friend class DataOptionsBase;
@@ -459,6 +475,55 @@ struct IsDataOptions<DataOptions>
 {
   constexpr static bool value = true;
 };
+
+template<typename Derived>
+bool handleError(const std::stringstream& oss,
+    const DataOptionsBase<Derived>& opts)
+{
+  bool success = true; // this should never be returned as true.
+  if (opts.Fatal())
+  {
+    Log::Fatal << oss.str() << std::endl;
+  }
+  else
+  {
+    Log::Warn << oss.str() << std::endl;
+    success = false;
+  }
+  return success;
+}
+
+template<typename Derived>
+bool handleError(const std::string& msg,
+    const DataOptionsBase<Derived>& opts)
+{
+  std::stringstream oss;
+  oss << msg;
+  return handleError(oss, opts);
+}
+
+// Required for backward compatibility.
+bool handleError(const std::stringstream& oss, bool fatal)
+{
+  bool success = true; // this should never be returned as true.
+  if (fatal)
+  {
+    Log::Fatal << oss.str() << std::endl;
+  }
+  else
+  {
+    Log::Warn << oss.str() << std::endl;
+    success = false;
+  }
+  return success;
+}
+
+bool handleError(const std::string& msg, bool fatal)
+{
+  std::stringstream oss;
+  oss << msg;
+  return handleError(oss, fatal);
+}
 
 } // namespace data
 } // namespace mlpack
