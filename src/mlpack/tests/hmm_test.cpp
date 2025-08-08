@@ -1518,6 +1518,8 @@ TEST_CASE("DiagonalGMMHMMPredictTest", "[HMMTest]")
   bool success = false;
   for (size_t trial = 0; trial < 3; trial++)
   {
+    std::cout << "trial: " << trial << "\n";
+
     std::vector<DiagonalGMM> gmms(2);
     gmms[0] = DiagonalGMM(2, 2);
 
@@ -1575,6 +1577,7 @@ TEST_CASE("DiagonalGMMHMMPredictTest", "[HMMTest]")
     {
       if (predictions[i] != states[i])
       {
+        std::cout << "prediction " << i << " (" << predictions[i] << ") differs from state (" << states[i] << ")!\n";
         success = false;
         break;
       }
