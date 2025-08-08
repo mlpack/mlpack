@@ -739,6 +739,10 @@ void DAGNetwork<
         "without any layers!");
   }
 
+  if (inputDimensions.size() == 0)
+    throw std::invalid_argument(functionName + ": Input dimensions are not "
+        "set.");
+
   if (!graphIsSet)
     CheckGraph();
 
@@ -792,7 +796,7 @@ void DAGNetwork<
     }
   }
 
-  activationMemorySize = totalConcatSize + layerOutputSize;
+  size_t activationMemorySize = totalConcatSize + layerOutputSize;
   if (batchSize * activationMemorySize > layerOutputMatrix.n_elem)
   {
     layerOutputMatrix = MatType(1, batchSize * activationMemorySize);
