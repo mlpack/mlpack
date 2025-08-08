@@ -69,7 +69,7 @@ pipeline
           axis
           {
             name 'target'
-            values 'couscous', 'tofu', 'chorizo', 'tatertot'
+            values 'couscous', 'tofu', 'chorizo', 'tatertot', 'megakelvin'
           }
         }
 
