@@ -15,9 +15,11 @@
 #define MLPACK_METHODS_ANN_DAG_NETWORK_HPP
 
 #include <mlpack/core.hpp>
-#include <type_traits>
 
+#include "loss_functions/loss_functions.hpp"
 #include "init_rules/init_rules.hpp"
+
+#include <ensmallen.hpp>
 
 namespace mlpack {
 
@@ -594,7 +596,6 @@ private:
 
   // The internally-held map of nodes that holds it's edges to incoming nodes.
   std::unordered_map<size_t, std::vector<size_t>> parentsList;
-  // std::unordered_map<Layer<MatType>*, std::vector<Layer<MatType>*>> parentsList;
 
   // The internally-held map of what axes to concatenate along for each layer
   // with multiple inputs

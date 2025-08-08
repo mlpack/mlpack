@@ -42,25 +42,32 @@ DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::DAGNetwork(const DAGNetwork& network) :
-    outputLayer(network.outputLayer),
-    initializeRule(network.initializeRule),
-    network(network.network),
-    parameters(network.parameters),
-    inputDimensions(network.inputDimensions),
-    parentsList(network.parentsList),
-    childrenList(network.childrenList),
-    layerAxes(network.layerAxes),
-    sortedNetwork(network.sortedNetwork),
-    sortedIndices(network.sortedIndices),
-    predictors(network.predictors),
-    responses(network.responses),
-    // These will be set correctly in the first Forward() call.
+>::DAGNetwork(const DAGNetwork& other) :
+    outputLayer(other.outputLayer),
+    initializeRule(other.initializeRule),
+
+    childrenList(other.childrenList),
+    parentsList(other.parentsList),
+    layerAxes(other.layerAxes),
+
+    parameters(other.parameters),
+    inputDimensions(other.inputDimensions),
+    predictors(other.predictors),
+    responses(other.responses),
+
     validOutputDimensions(false),
     layerMemoryIsSet(false),
     graphIsSet(false)
 {
-  /* Nothing to do here. */
+  for (size_t i = 0; i < other.network.size(); i++)
+    network.push_back(other.network[i]->Clone());
+
+  size_t size = std::max<int>(network.size() - 1, 0);
+  layerOutputs.resize(size, MatType());
+  layerDeltas.resize(size, MatType());
+  layerInputs.resize(size, MatType());
+
+  layerGradients.resize(network.size(), MatType());
 }
 
 template<typename OutputLayerType,
@@ -70,26 +77,30 @@ DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::DAGNetwork(DAGNetwork&& network) :
-    outputLayer(std::move(network.outputLayer)),
-    initializeRule(std::move(network.initializeRule)),
-    network(std::move(network.network)),
-    parameters(std::move(network.parameters)),
-    inputDimensions(std::move(network.inputDimensions)),
-    parentsList(std::move(network.parentsList)),
-    childrenList(std::move(network.childrenList)),
-    layerAxes(std::move(network.layerAxes)),
-    sortedNetwork(std::move(network.sortedNetwork)),
-    sortedIndices(std::move(network.sortedIndices)),
-    predictors(std::move(network.predictors)),
-    responses(std::move(network.responses)),
-    // Aliases will not be correct after a std::move(), so we will manually
-    // reset them.
+>::DAGNetwork(DAGNetwork&& other) :
+    outputLayer(std::move(other.outputLayer)),
+    initializeRule(std::move(other.initializeRule)),
+
+    network(std::move(other.network)),
+    parentsList(std::move(other.parentsList)),
+    childrenList(std::move(other.childrenList)),
+    layerAxes(std::move(other.layerAxes)),
+
+    parameters(std::move(other.parameters)),
+    inputDimensions(std::move(other.inputDimensions)),
+    predictors(std::move(other.predictors)),
+    responses(std::move(other.responses)),
+
     layerMemoryIsSet(false),
-    graphIsSet(std::move(network.graphIsSet)),
-    validOutputDimensions(std::move(network.validOutputDimensions))
+    graphIsSet(false),
+    validOutputDimensions(false)
 {
-  /* Nothing to do here. */
+  size_t size = std::max<int>(network.size() - 1, 0);
+  layerOutputs.resize(size, MatType());
+  layerDeltas.resize(size, MatType());
+  layerInputs.resize(size, MatType());
+
+  layerGradients.resize(network.size(), MatType());
 }
 
 template<typename OutputLayerType,
@@ -108,15 +119,13 @@ DAGNetwork<
   {
     outputLayer = other.outputLayer;
     initializeRule = other.initializeRule;
-    network = other.network;
+
+    parentsList = other.parentsList;
+    childrenList = other.childrenList;
+    layerAxes = other.layerAxes;
+
     parameters = other.parameters;
     inputDimensions = other.inputDimensions;
-    childrenList = other.childrenList;
-    parentsList = other.parentsList;
-    layerAxes = other.layerAxes;
-    sortedNetwork = other.sortedNetwork;
-    sortedIndices = other.sortedIndices;
-    networkOutput = other.networkOutput;
     predictors = other.predictors;
     responses = other.responses;
 
@@ -124,8 +133,16 @@ DAGNetwork<
     graphIsSet = false;
     layerMemoryIsSet = false;
 
-    layerInputs.clear();
-    layerOutputs.clear();
+    for (size_t i = 0; i < other.network.size(); i++)
+      network.push_back(other.network[i]->Clone());
+
+    size_t size = std::max<int>(network.size() - 1, 0);
+    layerOutputs.resize(size, MatType());
+    layerDeltas.resize(size, MatType());
+    layerInputs.resize(size, MatType());
+
+    layerGradients.resize(network.size(), MatType());
+
   }
 
   return *this;
@@ -146,15 +163,14 @@ DAGNetwork<OutputLayerType,
   {
     outputLayer = std::move(other.outputLayer);
     initializeRule = std::move(other.initializeRule);
+
     network = std::move(other.network);
+    parentsList = std::move(other.parentsList);
+    childrenList = std::move(other.childrenList);
+    layerAxes = std::move(other.layerAxes);
+
     parameters = std::move(other.parameters);
     inputDimensions = std::move(other.inputDimensions);
-    childrenList = std::move(other.childrenList);
-    parentsList = std::move(other.parentsList);
-    layerAxes = std::move(other.layerAxes);
-    sortedNetwork = std::move(other.sortedNetwork);
-    sortedIndices = std::move(other.sortedIndices);
-    networkOutput = std::move(other.networkOutput);
     predictors = std::move(other.predictors);
     responses = std::move(other.responses);
 
@@ -162,8 +178,12 @@ DAGNetwork<OutputLayerType,
     graphIsSet = false;
     layerMemoryIsSet = false;
 
-    layerInputs.clear();
-    layerOutputs.clear();
+    size_t size = std::max<int>(network.size() - 1, 0);
+    layerOutputs.resize(size, MatType());
+    layerDeltas.resize(size, MatType());
+    layerInputs.resize(size, MatType());
+
+    layerGradients.resize(network.size(), MatType());
   }
 
   return *this;
