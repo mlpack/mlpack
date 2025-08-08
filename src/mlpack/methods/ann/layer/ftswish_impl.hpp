@@ -84,8 +84,8 @@ void FTSwishType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  // The sign() makes sure that we only multiply non-zero input elements.
-  g = gy % sign(output - T) % (1 - (1 / (1 + exp(-input))) % (output - T));
+  g = gy % sign(output - T) % (((output - T) / input) % (1 - (output - T)) +
+      (output - T));
 }
 
 template<typename MatType>
