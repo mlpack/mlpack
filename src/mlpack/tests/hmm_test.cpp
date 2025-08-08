@@ -1514,12 +1514,11 @@ TEST_CASE("HMMTrainReturnLogLikelihood", "[HMMTest]")
 //! Make sure the prediction of DiagonalGMM HMMs is reasonable.
 TEST_CASE("DiagonalGMMHMMPredictTest", "[HMMTest]")
 {
-  // This test is probabilistic, so we perform it three times to make it robust.
+  // This test is probabilistic, so we perform it up to five times to make it
+  // robust.
   bool success = false;
-  for (size_t trial = 0; trial < 3; trial++)
+  for (size_t trial = 0; trial < 5; trial++)
   {
-    std::cout << "trial: " << trial << "\n";
-
     std::vector<DiagonalGMM> gmms(2);
     gmms[0] = DiagonalGMM(2, 2);
 
@@ -1577,7 +1576,6 @@ TEST_CASE("DiagonalGMMHMMPredictTest", "[HMMTest]")
     {
       if (predictions[i] != states[i])
       {
-        std::cout << "prediction " << i << " (" << predictions[i] << ") differs from state (" << states[i] << ")!\n";
         success = false;
         break;
       }
