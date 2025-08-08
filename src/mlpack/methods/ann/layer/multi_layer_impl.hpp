@@ -39,7 +39,7 @@ MultiLayer<MatType>::MultiLayer(const MultiLayer& other) :
     network.push_back(other.network[i]->Clone());
 
   // Ensure that the aliases for layers during passes have the right size.
-  size_t size = std::max(network.size() - 1, 0);
+  size_t size = std::max<int>(network.size() - 1, 0);
   layerOutputs.resize(size, MatType());
   layerDeltas.resize(size, MatType());
   layerGradients.resize(network.size(), MatType());
@@ -57,7 +57,7 @@ MultiLayer<MatType>::MultiLayer(MultiLayer&& other) :
     layerDeltaMatrix(std::move(other.layerDeltaMatrix))
 {
   // Ensure that the aliases for layers during passes have the right size.
-  size_t size = std::max(network.size() - 1, 0);
+  size_t size = std::max<int>(network.size() - 1, 0);
   layerOutputs.resize(size, MatType());
   layerDeltas.resize(size, MatType());
   layerGradients.resize(network.size(), MatType());
@@ -91,7 +91,7 @@ MultiLayer<MatType>& MultiLayer<MatType>::operator=(const MultiLayer& other)
       network.push_back(other.network[i]->Clone());
 
     // Ensure that the aliases for layers during passes have the right size.
-    size_t size = std::max(network.size() - 1, 0);
+    size_t size = std::max<int>(network.size() - 1, 0);
     layerOutputs.resize(size, MatType());
     layerDeltas.resize(size, MatType());
     layerGradients.resize(network.size(), MatType());
@@ -115,7 +115,7 @@ MultiLayer<MatType>& MultiLayer<MatType>::operator=(MultiLayer&& other)
 
     network = std::move(other.network);
 
-    size_t size = std::max(network.size() - 1, 0);
+    size_t size = std::max<int>(network.size() - 1, 0);
     layerOutputs.resize(size, MatType());
     layerDeltas.resize(size, MatType());
     layerGradients.resize(network.size(), MatType());
