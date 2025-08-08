@@ -81,26 +81,19 @@ void CELU<MatType>::Forward(
     output(i) = (input(i) >= 0) ? input(i) : ElemType(alpha) *
         (std::exp(input(i) / ElemType(alpha)) - 1);
   }
-
-  if (this->training)
-  {
-    derivative.set_size(arma::size(input));
-    for (size_t i = 0; i < input.n_elem; ++i)
-    {
-      derivative(i) = (input(i) >= 0) ? 1 :
-          (output(i) / ElemType(alpha)) + 1;
-    }
-  }
 }
 
 template<typename MatType>
 void CELU<MatType>::Backward(
-    const MatType& /* input */,
-    const MatType& /* output */,
+    const MatType& input,
+    const MatType& output,
     const MatType& gy,
     MatType& g)
 {
-  g = gy % derivative;
+  for (size_t i = 0; i < input.n_elem; ++i)
+  {
+    g(i) = gy(i) * ((input(i) >= 0) ? 1 : (output(i) / ElemType(alpha)) + 1);
+  }
 }
 
 template<typename MatType>
@@ -112,8 +105,6 @@ void CELU<MatType>::serialize(
   ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(alpha));
-  if (Archive::is_loading::value)
-    derivative.clear();
 }
 
 } // namespace mlpack

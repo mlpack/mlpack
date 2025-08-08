@@ -184,17 +184,14 @@ class ELU : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally stored first derivative of the activation function.
-  MatType derivative;
-
-  //! ELU Hyperparameter (0 < alpha)
-  //! SELU parameter fixed to 1.6732632423543774 for normalized inputs.
+  // ELU Hyperparameter (0 < alpha)
+  // SELU parameter fixed to 1.6732632423543774 for normalized inputs.
   double alpha;
 
-  //! Lambda parameter used for multiplication of ELU function.
-  //! For ELU activation function, lambda = 1.
-  //! For SELU activation function, lambda = 1.0507009873554802 for normalized
-  //! inputs.
+  // Lambda parameter used for multiplication of ELU function.
+  // For ELU activation function, lambda = 1.
+  // For SELU activation function, lambda = 1.0507009873554802 for normalized
+  // inputs.
   double lambda;
 }; // class ELU
 
