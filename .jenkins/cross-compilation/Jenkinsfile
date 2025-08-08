@@ -151,7 +151,7 @@ pipeline
                   then
                     echo "  ProxyJump $JUMP_HOST" >> ~/.ssh/config;
                   fi
-                  cat .ssh/config;
+                  cat ~/.ssh/config;
 
                   ssh jenkins@${target} -t mkdir -p test_${BRANCH_NAME}_${BUILD_ID}/
                   scp build-${target}/bin/mlpack_test jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
