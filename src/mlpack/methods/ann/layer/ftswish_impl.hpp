@@ -72,7 +72,7 @@ FTSwishType<MatType>::operator=(FTSwishType&& other)
 template<typename MatType>
 void FTSwishType<MatType>::Forward(const MatType& input, MatType& output)
 {
-  output = clamp(input, 0,
+  output = T + clamp(input, 0,
       std::numeric_limits<typename MatType::elem_type>::max()) /
       (1 + exp(-input));
 }
