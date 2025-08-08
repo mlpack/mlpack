@@ -78,13 +78,13 @@ public:
   // Destructor: delete all layers.
   ~DAGNetwork()
   {
-    for (size_t i = 0; i < sortedNetwork.size(); i++)
+    for (size_t i = 0; i < network.size(); i++)
     {
-      Layer<MatType>* currentLayer = sortedNetwork[i];
+      Layer<MatType>* currentLayer = network[i];
       if (childrenList[currentLayer].size() > 1)
         delete outputDeltas[currentLayer];
 
-      if (parentsList[currentLayer].size() > 1)
+      if (parentsList[i].size() > 1)
         delete inputDeltas[currentLayer];
 
       delete network[i];
@@ -422,10 +422,6 @@ public:
    */
   void ResetData(MatType predictors, MatType responses);
 
-  // Instantiated output layer used to evaluate the network.
-  // TODO: make private, this is just for testing.
-  OutputLayerType outputLayer;
-
 private:
   // Helper functions.
 
@@ -433,7 +429,7 @@ private:
     layerGradients.push_back(MatType());
     size_t nodeId = network.size();
     childrenList.insert({network[nodeId], {}});
-    parentsList.insert({network[nodeId], {}});
+    parentsList.insert({nodeId, {}});
 
     if (network.size() > 1)
     {
@@ -578,6 +574,8 @@ private:
       !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void>
   WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
 
+  // Instantiated output layer used to evaluate the network.
+  OutputLayerType outputLayer;
 
   // Instantiated InitializationRule object for initializing the network
   // parameter.
@@ -592,18 +590,19 @@ private:
   std::vector<Layer<MatType>*> sortedNetwork;
 
   // The internally-held map of nodes that holds it's edges to outgoing nodes.
+  // std::unordered_map<Layer<MatType>*, std::vector<size_t>> childrenList;
   std::unordered_map<Layer<MatType>*, std::vector<Layer<MatType>*>> childrenList;
 
   // The internally-held map of nodes that holds it's edges to incoming nodes.
-  std::unordered_map<Layer<MatType>*, std::vector<Layer<MatType>*>> parentsList;
+  std::unordered_map<size_t, std::vector<size_t>> parentsList;
+  // std::unordered_map<Layer<MatType>*, std::vector<Layer<MatType>*>> parentsList;
 
   // The internally-held map of what axes to concatenate along for each layer
   // with multiple inputs
-  std::unordered_map<Layer<MatType>*, size_t> layerAxes;
+  std::unordered_map<size_t, size_t> layerAxes;
 
-  // The internally-held map of Layers corresponding to what their position
-  // is in the topologically sorted `sortedNetwork` vector.
-  std::unordered_map<Layer<MatType>*, size_t> sortedIndices;
+  // Map layer index in network to layer index in sortedNetwork
+  std::unordered_map<size_t, size_t> sortedIndices;
 
   /**
    * Matrix of (trainable) parameters.  Each weight here corresponds to a layer,
@@ -638,19 +637,27 @@ private:
   // This matrix stores all of the outputs of each layer when `Forward()` is
   // called.  See `InitializeForwardPassMemory()`.
   MatType layerOutputMatrix;
-  // Size of activations for each layer.
-  size_t activationMemorySize;
   // These are aliases of `layerOutputMatrix` for the input of each layer
   std::vector<MatType> layerInputs;
   // These are aliases of `layerOutputMatrix` for the output of each layer.
   std::vector<MatType> layerOutputs;
 
+  // Memory for the backward pass.
   MatType layerDeltaMatrix;
+
+  // Needed incase the first layer is a `MultiLayer`
   MatType networkDelta;
 
+  // A layers delta Loss w.r.t delta Outputs.
   std::vector<MatType> layerDeltas;
+
+  // A layers output deltas.
   std::unordered_map<Layer<MatType>*, MatType*> outputDeltas;
+
+  // A layers input deltas.
   std::unordered_map<Layer<MatType>*, MatType*> inputDeltas;
+
+  // A layers accumulated deltas, for layers with multiple children.
   std::unordered_map<Layer<MatType>*, MatType*> accumulatedDeltas;
 
   // Gradient aliases for each layer.
@@ -662,8 +669,8 @@ private:
   // If true, the graph is valid and has been topologically sorted.
   bool graphIsSet;
 
-  // If true, each layer has its memory properly set for a forward/backward
-  // pass.
+  // If true, each layer has its activation/gradient memory properly set 
+  // for the forward/backward pass.
   bool layerMemoryIsSet;
 };
 
