@@ -12,6 +12,8 @@ _????-??-??_
 
  * Use a looser check for auto-detection of categorical file types (#3961).
 
+ * Accelerate `CELU` layer (#3975).
+
  * Fix dependency detection bugs in `mlpack.cmake` (#3981).
 
 ## mlpack 4.6.2
