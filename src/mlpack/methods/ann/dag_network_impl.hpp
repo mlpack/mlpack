@@ -295,11 +295,15 @@ void DAGNetwork<
     }
   }
 
+  if (inputLayers == 0 || outputLayers == 0)
+    throw std::logic_error("DAGNetwork::CheckGraph(): A cycle "
+      "exists in the graph.");
+
   if (inputLayers > 1)
   {
     std::ostringstream errorMessage;
     errorMessage << "DAGNetwork::CheckGraph(): "
-      "There should only be one input node, "
+      "There should be exactly one input node, "
       "but this network has " << inputLayers << " input nodes.";
     throw std::logic_error(errorMessage.str());
   }
@@ -307,7 +311,7 @@ void DAGNetwork<
   {
     std::ostringstream errorMessage;
     errorMessage << "DAGNetwork::CheckGraph(): "
-      "There should only be one output node, "
+      "There should be exactly one output node, "
       "but this network has " << outputLayers << " output nodes.";
     throw std::logic_error(errorMessage.str());
   }
@@ -337,7 +341,7 @@ void DAGNetwork<
 
   std::unordered_set<size_t> exploredLayers;
   std::vector<std::pair<size_t, bool>> exploreNext;
-  exploreNext.push_back(std::make_pair(outputLayerId, false));
+  exploreNext.push_back({ outputLayerId, false });
 
   using LayerEdge = std::pair<size_t, size_t>;
   std::vector<LayerEdge> layerEdges;
@@ -353,12 +357,11 @@ void DAGNetwork<
     if (!explored)
     {
       const std::vector<size_t>& parents = parentsList[layer];
-      // const std::vector<Layer<MatType>*>& parents = parentsList[layer];
 
       // If an edge has already been traversed, there is a cycle.
       for (size_t i = 0; i < parents.size(); i++)
       {
-        LayerEdge edge = std::make_pair(parents[i], layer);
+        LayerEdge edge = { parents[i], layer };
         for (size_t j = 0; j < layerEdges.size(); j++)
         {
           if (layerEdges[j] == edge)
@@ -594,8 +597,8 @@ void DAGNetwork<
 
     if (offset + weightSize > totalWeightSize)
     {
-      throw std::logic_error("DAGNetwork::SetLayerMemory(): Parameter size does not match total layer "
-        "weight size!");
+      throw std::logic_error("DAGNetwork::SetLayerMemory(): Parameter "
+        "size does not match total layer weight size!");
     }
     MatType tmpWeights;
     MakeAlias(tmpWeights, weightsIn, weightSize, 1, offset);
@@ -626,8 +629,8 @@ void DAGNetwork<
     const size_t weightSize = network[index]->WeightSize();
     if (offset + weightSize > totalWeightSize)
     {
-      throw std::logic_error("DAGNetwork::SetLayerMemory(): Parameter size does not match total layer "
-        "weight size!");
+      throw std::logic_error("DAGNetwork::SetLayerMemory(): Parameter "
+        "size does not match total layer weight size!");
     }
 
     MatType WTemp;
@@ -639,8 +642,8 @@ void DAGNetwork<
 
   if (offset != totalWeightSize)
   {
-    throw std::logic_error("DAGNetwork::CustomInitialize(): Total layer weight size does not match rows "
-      "size!");
+    throw std::logic_error("DAGNetwork::CustomInitialize(): Total layer "
+      "weight size does not match rows size!");
   }
 }
 
