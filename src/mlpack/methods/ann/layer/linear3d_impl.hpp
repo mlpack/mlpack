@@ -18,7 +18,7 @@
 namespace mlpack {
 
 template<typename MatType, typename RegularizerType>
-Linear3DType<MatType, RegularizerType>::Linear3DType() :
+Linear3D<MatType, RegularizerType>::Linear3D() :
     Layer<MatType>(),
     outSize(0)
 {
@@ -26,7 +26,7 @@ Linear3DType<MatType, RegularizerType>::Linear3DType() :
 }
 
 template<typename MatType, typename RegularizerType>
-Linear3DType<MatType, RegularizerType>::Linear3DType(
+Linear3D<MatType, RegularizerType>::Linear3D(
     const size_t outSize,
     RegularizerType regularizer) :
     Layer<MatType>(),
@@ -35,8 +35,8 @@ Linear3DType<MatType, RegularizerType>::Linear3DType(
 { }
 
 template<typename MatType, typename RegularizerType>
-Linear3DType<MatType, RegularizerType>::Linear3DType(
-    const Linear3DType& other) :
+Linear3D<MatType, RegularizerType>::Linear3D(
+    const Linear3D& other) :
     Layer<MatType>(other),
     outSize(other.outSize),
     regularizer(other.regularizer)
@@ -45,8 +45,8 @@ Linear3DType<MatType, RegularizerType>::Linear3DType(
 }
 
 template<typename MatType, typename RegularizerType>
-Linear3DType<MatType, RegularizerType>::Linear3DType(
-    Linear3DType&& other) :
+Linear3D<MatType, RegularizerType>::Linear3D(
+    Linear3D&& other) :
     Layer<MatType>(std::move(other)),
     outSize(std::move(other.outSize)),
     regularizer(std::move(other.regularizer))
@@ -55,9 +55,9 @@ Linear3DType<MatType, RegularizerType>::Linear3DType(
 }
 
 template<typename MatType, typename RegularizerType>
-Linear3DType<MatType, RegularizerType>&
-Linear3DType<MatType, RegularizerType>::operator=(
-    const Linear3DType& other)
+Linear3D<MatType, RegularizerType>&
+Linear3D<MatType, RegularizerType>::operator=(
+    const Linear3D& other)
 {
   if (&other != this)
   {
@@ -70,9 +70,9 @@ Linear3DType<MatType, RegularizerType>::operator=(
 }
 
 template<typename MatType, typename RegularizerType>
-Linear3DType<MatType, RegularizerType>&
-Linear3DType<MatType, RegularizerType>::operator=(
-    Linear3DType&& other)
+Linear3D<MatType, RegularizerType>&
+Linear3D<MatType, RegularizerType>::operator=(
+    Linear3D&& other)
 {
   if (&other != this)
   {
@@ -85,7 +85,7 @@ Linear3DType<MatType, RegularizerType>::operator=(
 }
 
 template<typename MatType, typename RegularizerType>
-void Linear3DType<MatType, RegularizerType>::SetWeights(
+void Linear3D<MatType, RegularizerType>::SetWeights(
     const MatType& weightsIn)
 {
   MakeAlias(weights, weightsIn, outSize * this->inputDimensions[0] + outSize,
@@ -95,7 +95,7 @@ void Linear3DType<MatType, RegularizerType>::SetWeights(
 }
 
 template<typename MatType, typename RegularizerType>
-void Linear3DType<MatType, RegularizerType>::Forward(
+void Linear3D<MatType, RegularizerType>::Forward(
     const MatType& input, MatType& output)
 {
   const size_t nPoints = input.n_rows / this->inputDimensions[0];
@@ -116,7 +116,7 @@ void Linear3DType<MatType, RegularizerType>::Forward(
 }
 
 template<typename MatType, typename RegularizerType>
-void Linear3DType<MatType, RegularizerType>::Backward(
+void Linear3D<MatType, RegularizerType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
@@ -144,7 +144,7 @@ void Linear3DType<MatType, RegularizerType>::Backward(
 }
 
 template<typename MatType, typename RegularizerType>
-void Linear3DType<MatType, RegularizerType>::Gradient(
+void Linear3D<MatType, RegularizerType>::Gradient(
     const MatType& input,
     const MatType& error,
     MatType& gradient)
@@ -178,7 +178,7 @@ void Linear3DType<MatType, RegularizerType>::Gradient(
 }
 
 template<typename MatType, typename RegularizerType>
-void Linear3DType<
+void Linear3D<
     MatType, RegularizerType
 >::ComputeOutputDimensions()
 {
@@ -191,7 +191,7 @@ void Linear3DType<
 
 template<typename MatType, typename RegularizerType>
 template<typename Archive>
-void Linear3DType<MatType, RegularizerType>::serialize(
+void Linear3D<MatType, RegularizerType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));

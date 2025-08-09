@@ -32,11 +32,11 @@ namespace mlpack {
  *         computation.
  */
 template <typename MatType = arma::mat>
-class AdaptiveMeanPoolingType : public Layer<MatType>
+class AdaptiveMeanPooling : public Layer<MatType>
 {
  public:
   //! Create the AdaptiveMeanPooling object.
-  AdaptiveMeanPoolingType();
+  AdaptiveMeanPooling();
 
   /**
    * Create the AdaptiveMeanPooling object.
@@ -44,29 +44,29 @@ class AdaptiveMeanPoolingType : public Layer<MatType>
    * @param outputWidth Width of the output.
    * @param outputHeight Height of the output.
    */
-  AdaptiveMeanPoolingType(const size_t outputWidth,
+  AdaptiveMeanPooling(const size_t outputWidth,
                           const size_t outputHeight);
 
   // Virtual destructor.
-  virtual ~AdaptiveMeanPoolingType()
+  virtual ~AdaptiveMeanPooling()
   {
     // Nothing to do here.
   }
 
-  //! Copy the given AdaptiveMeanPoolingType.
-  AdaptiveMeanPoolingType(const AdaptiveMeanPoolingType& other);
-  //! Take ownership of the given AdaptiveMeanPoolingType.
-  AdaptiveMeanPoolingType(AdaptiveMeanPoolingType&& other);
-  //! Copy the given AdaptiveMeanPoolingType.
-  AdaptiveMeanPoolingType& operator=(const AdaptiveMeanPoolingType& other);
-  //! Take ownership of the given AdaptiveMeanPoolingType.
-  AdaptiveMeanPoolingType& operator=(AdaptiveMeanPoolingType&& other);
+  //! Copy the given AdaptiveMeanPooling.
+  AdaptiveMeanPooling(const AdaptiveMeanPooling& other);
+  //! Take ownership of the given AdaptiveMeanPooling.
+  AdaptiveMeanPooling(AdaptiveMeanPooling&& other);
+  //! Copy the given AdaptiveMeanPooling.
+  AdaptiveMeanPooling& operator=(const AdaptiveMeanPooling& other);
+  //! Take ownership of the given AdaptiveMeanPooling.
+  AdaptiveMeanPooling& operator=(AdaptiveMeanPooling&& other);
 
-  //! Clone the AdaptiveMeanPoolingType object.
+  //! Clone the AdaptiveMeanPooling object.
   //! This handles polymorphism correctly.
-  AdaptiveMeanPoolingType* Clone() const
+  AdaptiveMeanPooling* Clone() const
   {
-    return new AdaptiveMeanPoolingType(*this);
+    return new AdaptiveMeanPooling(*this);
   }
 
   /**
@@ -114,7 +114,7 @@ class AdaptiveMeanPoolingType : public Layer<MatType>
 
  private:
   //! Locally stored MeanPooling Object.
-  MeanPoolingType<MatType> poolingLayer;
+  MeanPooling<MatType> poolingLayer;
 
   //! Locally-stored output width. These are user specified outputWidth.
   //! Actual outputWidth will be equal to this but only after
@@ -125,12 +125,7 @@ class AdaptiveMeanPoolingType : public Layer<MatType>
   //! Actual outputWidth will be equal to this but only after
   //! `ComputeOutputDimensions()` is called.
   size_t outputHeight;
-}; // class AdaptiveMeanPoolingType
-
-// Convenience typedefs.
-
-// Standard Adaptive mean pooling layer.
-using AdaptiveMeanPooling = AdaptiveMeanPoolingType<arma::mat>;
+}; // class AdaptiveMeanPooling
 
 } // namespace mlpack
 

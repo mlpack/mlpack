@@ -19,15 +19,15 @@
 namespace mlpack {
 
 template<typename MatType>
-NearestInterpolationType<MatType>::NearestInterpolationType():
+NearestInterpolation<MatType>::NearestInterpolation():
     Layer<MatType>()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-NearestInterpolationType<MatType>::
-NearestInterpolationType(const std::vector<double> scaleFactors) :
+NearestInterpolation<MatType>::
+NearestInterpolation(const std::vector<double> scaleFactors) :
     Layer<MatType>()
 {
   if (scaleFactors.size() != 2) {
@@ -37,8 +37,8 @@ NearestInterpolationType(const std::vector<double> scaleFactors) :
 }
 
 template<typename MatType>
-NearestInterpolationType<MatType>::
-NearestInterpolationType(const NearestInterpolationType& other) :
+NearestInterpolation<MatType>::
+NearestInterpolation(const NearestInterpolation& other) :
     Layer<MatType>(),
     scaleFactors(other.scaleFactors)
 {
@@ -46,8 +46,8 @@ NearestInterpolationType(const NearestInterpolationType& other) :
 }
 
 template<typename MatType>
-NearestInterpolationType<MatType>::
-NearestInterpolationType(NearestInterpolationType&& other) :
+NearestInterpolation<MatType>::
+NearestInterpolation(NearestInterpolation&& other) :
     Layer<MatType>(std::move(other)),
     scaleFactors(std::move(other.scaleFactors))
 {
@@ -55,9 +55,9 @@ NearestInterpolationType(NearestInterpolationType&& other) :
 }
 
 template<typename MatType>
-NearestInterpolationType<MatType>&
-NearestInterpolationType<MatType>::
-operator=(const NearestInterpolationType& other)
+NearestInterpolation<MatType>&
+NearestInterpolation<MatType>::
+operator=(const NearestInterpolation& other)
 {
   if (&other != this)
   {
@@ -68,9 +68,9 @@ operator=(const NearestInterpolationType& other)
 }
 
 template<typename MatType>
-NearestInterpolationType<MatType>&
-NearestInterpolationType<MatType>::
-operator=(NearestInterpolationType&& other)
+NearestInterpolation<MatType>&
+NearestInterpolation<MatType>::
+operator=(NearestInterpolation&& other)
 {
   if (&other != this)
   {
@@ -81,7 +81,7 @@ operator=(NearestInterpolationType&& other)
 }
 
 template<typename MatType>
-void NearestInterpolationType<MatType>::Forward(
+void NearestInterpolation<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   const size_t channels = this->inputDimensions[2];
@@ -113,7 +113,7 @@ void NearestInterpolationType<MatType>::Forward(
 }
 
 template<typename MatType>
-void NearestInterpolationType<MatType>::Backward(
+void NearestInterpolation<MatType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gradient,
@@ -149,7 +149,7 @@ void NearestInterpolationType<MatType>::Backward(
 }
 
 template<typename MatType>
-void NearestInterpolationType<MatType>::ComputeOutputDimensions()
+void NearestInterpolation<MatType>::ComputeOutputDimensions()
 {
   if (this->inputDimensions.size() < scaleFactors.size())
   {
@@ -169,7 +169,7 @@ void NearestInterpolationType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void NearestInterpolationType<MatType>::serialize(
+void NearestInterpolation<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(scaleFactors));

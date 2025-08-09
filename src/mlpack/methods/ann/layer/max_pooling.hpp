@@ -56,12 +56,12 @@ class MaxPoolingRule
  *    computation.
  */
 template<typename MatType = arma::mat>
-class MaxPoolingType : public Layer<MatType>
+class MaxPooling : public Layer<MatType>
 {
  public:
   using CubeType = typename GetCubeType<MatType>::type;
   //! Create the MaxPooling object.
-  MaxPoolingType();
+  MaxPooling();
 
   /**
    * Create the MaxPooling object using the specified number of units.
@@ -73,26 +73,26 @@ class MaxPoolingType : public Layer<MatType>
    * @param floor If true, then a pooling operation that would oly part of the
    *              input will be skipped.
    */
-  MaxPoolingType(const size_t kernelWidth,
+  MaxPooling(const size_t kernelWidth,
                  const size_t kernelHeight,
                  const size_t strideWidth = 1,
                  const size_t strideHeight = 1,
                  const bool floor = true);
 
   // Virtual destructor.
-  virtual ~MaxPoolingType() { }
+  virtual ~MaxPooling() { }
 
-  //! Copy the given MaxPoolingType.
-  MaxPoolingType(const MaxPoolingType& other);
-  //! Take ownership of the given MaxPoolingType.
-  MaxPoolingType(MaxPoolingType&& other);
-  //! Copy the given MaxPoolingType.
-  MaxPoolingType& operator=(const MaxPoolingType& other);
-  //! Take ownership of the given MaxPoolingType.
-  MaxPoolingType& operator=(MaxPoolingType&& other);
+  //! Copy the given MaxPooling.
+  MaxPooling(const MaxPooling& other);
+  //! Take ownership of the given MaxPooling.
+  MaxPooling(MaxPooling&& other);
+  //! Copy the given MaxPooling.
+  MaxPooling& operator=(const MaxPooling& other);
+  //! Take ownership of the given MaxPooling.
+  MaxPooling& operator=(MaxPooling&& other);
 
-  //! Clone the MaxPoolingType object. This handles polymorphism correctly.
-  MaxPoolingType* Clone() const { return new MaxPoolingType(*this); }
+  //! Clone the MaxPooling object. This handles polymorphism correctly.
+  MaxPooling* Clone() const { return new MaxPooling(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -306,10 +306,7 @@ class MaxPoolingType : public Layer<MatType>
 
   //! Locally-stored pooling indices.
   arma::Cube<size_t> poolingIndices;
-}; // class MaxPoolingType
-
-// Standard MaxPooling layer.
-using MaxPooling = MaxPoolingType<arma::mat>;
+}; // class MaxPooling
 
 } // namespace mlpack
 

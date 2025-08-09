@@ -36,7 +36,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseI0", "[ANNLayerTest]", arma::mat, arma::fmat)
   // Output-Size should be 8 x 3.
   output.set_size(24, 1);
 
-  RepeatType<MatType> module1({2, 1}, true);
+  Repeat<MatType> module1({2, 1}, true);
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
   REQUIRE(module1.OutputDimensions().size() == 2);
@@ -78,7 +78,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseI1", "[ANNLayerTest]", arma::mat, arma::fmat)
   // Output-Size should be 4 x 6.
   output.set_size(24, 1);
 
-  RepeatType<MatType> module1({1, 2}, true);
+  Repeat<MatType> module1({1, 2}, true);
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
   REQUIRE(module1.OutputDimensions().size() == 2);
@@ -120,7 +120,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseI2", "[ANNLayerTest]", arma::mat, arma::fmat)
   // Output-Size should be 8 x 6.
   output.set_size(48, 1);
 
-  RepeatType<MatType> module1({2, 2}, true);
+  Repeat<MatType> module1({2, 2}, true);
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
   REQUIRE(module1.OutputDimensions().size() == 2);
@@ -168,7 +168,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseB1", "[ANNLayerTest]", arma::mat, arma::fmat)
   // Output-Size should be 8 x 3.
   output.set_size(24, 1);
 
-  RepeatType<MatType> module1({2, 1}, false);
+  Repeat<MatType> module1({2, 1}, false);
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
   REQUIRE(module1.OutputDimensions().size() == 2);
@@ -207,7 +207,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseB2", "[ANNLayerTest]", arma::mat, arma::fmat)
   // Output-Size should be 4 x 6.
   output.set_size(24, 1);
 
-  RepeatType<MatType> module1({1, 2}, false);
+  Repeat<MatType> module1({1, 2}, false);
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
   REQUIRE(module1.OutputDimensions().size() == 2);
@@ -246,7 +246,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseB3", "[ANNLayerTest]", arma::mat, arma::fmat)
   // Output-Size should be 8 x 6.
   output.set_size(48, 1);
 
-  RepeatType<MatType> module1({2, 2}, false);
+  Repeat<MatType> module1({2, 2}, false);
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
   REQUIRE(module1.OutputDimensions().size() == 2);
@@ -314,9 +314,9 @@ TEMPLATE_TEST_CASE("GradientRepeatTest", "[ANNLayerTest]", arma::mat,
                       RandomInitialization, MatType>();
       model->InputDimensions() = inputDimensions;
       model->ResetData(input, target);
-      model->template Add<RepeatType<MatType>>(multiples, interleave);
-      model->template Add<LinearType<MatType>>(vocabSize);
-      model->template Add<LogSoftMaxType<MatType>>();
+      model->template Add<Repeat>(multiples, interleave);
+      model->template Add<Linear>(vocabSize);
+      model->template Add<LogSoftMax>();
     }
 
     ~GradientFunction()

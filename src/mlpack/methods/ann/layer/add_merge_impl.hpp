@@ -17,29 +17,29 @@
 namespace mlpack {
 
 template<typename MatType>
-AddMergeType<MatType>::AddMergeType() :
+AddMerge<MatType>::AddMerge() :
     MultiLayer<MatType>()
 {
   // Nothing to do.
 }
 
 template<typename MatType>
-AddMergeType<MatType>::AddMergeType(const AddMergeType& other) :
+AddMerge<MatType>::AddMerge(const AddMerge& other) :
     MultiLayer<MatType>(other)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-AddMergeType<MatType>::AddMergeType(AddMergeType&& other) :
+AddMerge<MatType>::AddMerge(AddMerge&& other) :
     MultiLayer<MatType>(std::move(other))
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-AddMergeType<MatType>& AddMergeType<MatType>::operator=(
-    const AddMergeType& other)
+AddMerge<MatType>& AddMerge<MatType>::operator=(
+    const AddMerge& other)
 {
   if (this != &other)
   {
@@ -50,7 +50,7 @@ AddMergeType<MatType>& AddMergeType<MatType>::operator=(
 }
 
 template<typename MatType>
-AddMergeType<MatType>& AddMergeType<MatType>::operator=(AddMergeType&& other)
+AddMerge<MatType>& AddMerge<MatType>::operator=(AddMerge&& other)
 {
   if (this != &other)
   {
@@ -61,7 +61,7 @@ AddMergeType<MatType>& AddMergeType<MatType>::operator=(AddMergeType&& other)
 }
 
 template<typename MatType>
-void AddMergeType<MatType>::Forward(
+void AddMerge<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   // Make sure training/testing mode is set right in each layer.
@@ -98,7 +98,7 @@ void AddMergeType<MatType>::Forward(
 }
 
 template<typename MatType>
-void AddMergeType<MatType>::Backward(
+void AddMerge<MatType>::Backward(
     const MatType& input,
     const MatType& output,
     const MatType& gy,
@@ -129,7 +129,7 @@ void AddMergeType<MatType>::Backward(
 }
 
 template<typename MatType>
-void AddMergeType<MatType>::Gradient(
+void AddMerge<MatType>::Gradient(
     const MatType& input, const MatType& error, MatType& gradient)
 {
   // We assume gradient has the right size already.
@@ -156,7 +156,7 @@ void AddMergeType<MatType>::Gradient(
 }
 
 template<typename MatType>
-void AddMergeType<MatType>::ComputeOutputDimensions()
+void AddMerge<MatType>::ComputeOutputDimensions()
 {
   this->inSize = 0;
   this->totalInputSize = 0;
@@ -197,7 +197,7 @@ void AddMergeType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void AddMergeType<MatType>::serialize(
+void AddMerge<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<MultiLayer<MatType>>(this));

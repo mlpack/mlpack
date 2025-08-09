@@ -22,7 +22,7 @@
 namespace mlpack {
 
 template<typename MatType>
-AlphaDropoutType<MatType>::AlphaDropoutType(
+AlphaDropout<MatType>::AlphaDropout(
     const double ratio,
     const double alphaDash) :
     Layer<MatType>(),
@@ -33,7 +33,7 @@ AlphaDropoutType<MatType>::AlphaDropoutType(
 }
 
 template<typename MatType>
-AlphaDropoutType<MatType>::AlphaDropoutType(const AlphaDropoutType& other) :
+AlphaDropout<MatType>::AlphaDropout(const AlphaDropout& other) :
     Layer<MatType>(other),
     mask(other.mask),
     ratio(other.ratio),
@@ -45,7 +45,7 @@ AlphaDropoutType<MatType>::AlphaDropoutType(const AlphaDropoutType& other) :
 }
 
 template<typename MatType>
-AlphaDropoutType<MatType>::AlphaDropoutType(AlphaDropoutType&& other) :
+AlphaDropout<MatType>::AlphaDropout(AlphaDropout&& other) :
     Layer<MatType>(std::move(other)),
     mask(std::move(other.mask)),
     ratio(std::move(other.ratio)),
@@ -57,8 +57,8 @@ AlphaDropoutType<MatType>::AlphaDropoutType(AlphaDropoutType&& other) :
 }
 
 template<typename MatType>
-AlphaDropoutType<MatType>&
-AlphaDropoutType<MatType>::operator=(const AlphaDropoutType& other)
+AlphaDropout<MatType>&
+AlphaDropout<MatType>::operator=(const AlphaDropout& other)
 {
   if (&other != this)
   {
@@ -74,8 +74,8 @@ AlphaDropoutType<MatType>::operator=(const AlphaDropoutType& other)
 }
 
 template<typename MatType>
-AlphaDropoutType<MatType>&
-AlphaDropoutType<MatType>::operator=(AlphaDropoutType&& other)
+AlphaDropout<MatType>&
+AlphaDropout<MatType>::operator=(AlphaDropout&& other)
 {
   if (&other != this)
   {
@@ -91,7 +91,7 @@ AlphaDropoutType<MatType>::operator=(AlphaDropoutType&& other)
 }
 
 template<typename MatType>
-void AlphaDropoutType<MatType>::Forward(const MatType& input, MatType& output)
+void AlphaDropout<MatType>::Forward(const MatType& input, MatType& output)
 {
   // The dropout mask will not be multiplied during testing.
   if (!this->training)
@@ -110,7 +110,7 @@ void AlphaDropoutType<MatType>::Forward(const MatType& input, MatType& output)
 }
 
 template<typename MatType>
-void AlphaDropoutType<MatType>::Backward(
+void AlphaDropout<MatType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
@@ -121,7 +121,7 @@ void AlphaDropoutType<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void AlphaDropoutType<MatType>::serialize(
+void AlphaDropout<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));
