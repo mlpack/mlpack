@@ -157,11 +157,18 @@ public:
   }
 
   // Get the layers of the network, in topological order.
-  const std::vector<Layer<MatType>*>& SortedNetwork()
+  const std::vector<Layer<MatType>*> SortedNetwork()
   {
     if (!graphIsSet)
       CheckGraph();
-    return sortedNetwork;
+
+    std::vector<Layer<MatType>*> sortedLayers;
+    for (size_t i = 0; i < sortedNetwork.size(); i++)
+    {
+      size_t layerIndex = sortedNetwork[i];
+      sortedLayers.push_back(network[layerIndex]);
+    }
+    return sortedLayers;
   }
 
 
@@ -227,7 +234,8 @@ public:
     if (!validOutputDimensions)
       UpdateDimensions("DAGNetwork::OutputDimensions()");
 
-    return sortedNetwork.back()->OutputDimensions();
+    size_t lastLayer = sortedNetwork.back();
+    return network[lastLayer]->OutputDimensions();
   }
 
   // Return the current set of weights.  These are linearized: this contains
@@ -260,11 +268,6 @@ public:
    * is `false`.
    */
   void SetNetworkMode(const bool training);
-  
-  /**
-   *  Returns the output size of the last layer.
-   */
-  size_t OutputSize();
 
   /**
    * Perform a manual forward pass of the data.
@@ -537,31 +540,18 @@ private:
   double Loss() const;
 
   /**
-   * Finds the index of layerPtr in network.
-   */
-  size_t FindLayerIndex(Layer<MatType>* layerPtr)
-  {
-    size_t layerIndex = 0;
-    for (size_t i = 0; i < network.size(); i++)
-    {
-      layerIndex = i;
-      if (layerPtr == network[i])
-        break;
-    }
-    return layerIndex;
-  }
-
-  /**
    * Delete extra deltas allocated in `InitializeBackwardPassMemory`
    */
   void DeleteExtraDeltas() {
-    for (size_t i = 0; i < network.size(); i++)
+    // TODO: return if backward pass memory not allocated
+    for (size_t i = 0; i < sortedNetwork.size(); i++)
     {
-      if (childrenList[i].size() > 1)
-        delete outputDeltas[sortedIndices[i]];
+      size_t layerIndex = sortedNetwork[i];
+      if (childrenList.at(layerIndex).size() > 1)
+        delete outputDeltas.at(i);
 
-      if (parentsList[i].size() > 1)
-        delete inputDeltas[sortedIndices[i]];
+      if (parentsList.at(layerIndex).size() > 1)
+        delete inputDeltas.at(i);
     }
   }
 
@@ -604,7 +594,7 @@ private:
 
   // The internally-held network, sorted topologically when `CheckNetwork`
   // is called if the graph is valid.
-  std::vector<Layer<MatType>*> sortedNetwork;
+  std::vector<size_t> sortedNetwork;
 
   // The internally-held map of nodes that holds it's edges to outgoing nodes.
   // Uses network indices as keys.
@@ -664,7 +654,8 @@ private:
   // Memory for the backward pass.
   MatType layerDeltaMatrix;
 
-  // Needed incase the first layer is a `MultiLayer`
+  // Needed in case the first layer is a `MultiLayer` so that its 
+  // gradients are calculated.
   MatType networkDelta;
 
   // A layers delta Loss w.r.t delta Outputs.
@@ -672,7 +663,6 @@ private:
 
   // A layers output deltas. Uses sortedNetwork indices as keys.
   std::unordered_map<size_t, MatType*> outputDeltas;
-  // std::unordered_map<Layer<MatType>*, MatType*> outputDeltas;
 
   // A layers input deltas. Uses sortedNetwork indices as keys.
   std::unordered_map<size_t, MatType*> inputDeltas;
