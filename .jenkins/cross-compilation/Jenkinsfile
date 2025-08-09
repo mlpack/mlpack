@@ -6,17 +6,26 @@
 arch_names = ['couscous': 'CORTEXA76',
               'tofu':     'CORTEXA53',
               'chorizo':  'CORTEXA78',
-              'tatertot': 'CORTEXA72']
+              'tatertot': 'CORTEXA72',
+              'laziji': 'SPARC64']
 
 device_names = ['couscous': 'rpi5',
                 'tofu': 'rpi3',
                 'chorizo': 'jetson-orin-nano',
-                'tatertot': 'beaglebone-ai64']
+                'tatertot': 'beaglebone-ai64',
+                'laziji': 'sunblade-150']
 
 page_sizes = ['couscous': '0x4000' /* 16kb for RPi5s */,
               'tofu': '',
               'chorizo': '',
-              'tatertot': '0x10000' /* 64kb */]
+              'tatertot': '0x10000' /* 64kb */,
+              'laziji': '']
+
+extra_cmake_opts = ['couscous': '',
+                    'tofu': '-DUSE_OPENMP=OFF', /* try not to overheat... */
+                    'chorizo': '',
+                    'tatertot': '',
+                    'laziji': '']
 
 pipeline
 {
@@ -91,6 +100,7 @@ pipeline
               ARCH_NAME = "${arch_names[env.target]}"
               DEVICE_NAME = "${device_names[env.target]}"
               PAGE_SIZE = "${page_sizes[env.target]}"
+              EXTRA_CMAKE_OPTS = "${extra_cmake_opts[env.target]}"
             }
 
             steps
@@ -102,10 +112,9 @@ pipeline
 
               sh '''
                 # If a custom page size is needed, set it.
-                EXTRA_CMAKE_OPTS='';
                 if [ ! -z "$PAGE_SIZE" ];
                 then
-                  EXTRA_CMAKE_OPTS='"-DCMAKE_CXX_FLAGS=\\"-Wl,-z,common-page-size='$PAGE_SIZE' -Wl,-z,max-page-size='$PAGE_SIZE'\\""';
+                  EXTRA_CMAKE_OPTS="${EXTRA_CMAKE_OPTS} "'"-DCMAKE_CXX_FLAGS=\\"-Wl,-z,common-page-size='$PAGE_SIZE' -Wl,-z,max-page-size='$PAGE_SIZE'\\""';
                 fi
 
                 rm -rf build-${target}/
