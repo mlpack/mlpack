@@ -251,9 +251,7 @@ void DAGNetwork<
     throw std::logic_error(errorMessage.str());
   }
 
-  std::vector<size_t>& childNodeParents
-    = parentsList[childNodeId];
-    // = parentsList[network[childNodeId]];
+  std::vector<size_t>& childNodeParents = parentsList[childNodeId];
   for (size_t i = 0; i < childNodeParents.size(); i++)
   {
     if (childNodeParents[i] == parentNodeId)
@@ -300,15 +298,17 @@ void DAGNetwork<
   if (inputLayers > 1)
   {
     std::ostringstream errorMessage;
-    errorMessage << "DAGNetwork::CheckGraph(): There should only be one input node, "
-                    "but this network has " << inputLayers << " input nodes.";
+    errorMessage << "DAGNetwork::CheckGraph(): "
+      "There should only be one input node, "
+      "but this network has " << inputLayers << " input nodes.";
     throw std::logic_error(errorMessage.str());
   }
   if (outputLayers > 1)
   {
     std::ostringstream errorMessage;
-    errorMessage << "DAGNetwork::CheckGraph(): There should only be one output node, "
-                    "but this network has " << outputLayers << " output nodes.";
+    errorMessage << "DAGNetwork::CheckGraph(): "
+      "There should only be one output node, "
+      "but this network has " << outputLayers << " output nodes.";
     throw std::logic_error(errorMessage.str());
   }
 

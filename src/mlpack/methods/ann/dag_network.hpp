@@ -100,15 +100,21 @@ public:
   template <typename LayerType, typename... Args>
   size_t Add(Args&&... args)
   {
+    size_t id = network.size();
     network.push_back(new LayerType(std::forward<Args>(args)...));
-    return AddLayer();
+    AddLayer(id);
+
+    return id;
   }
 
   template <template<typename...> typename LayerType, typename... Args>
   size_t Add(Args&&... args)
   {
+    size_t id = network.size();
     network.push_back(new LayerType<MatType>(std::forward<Args>(args)...));
-    return AddLayer();
+    AddLayer(id);
+
+    return id;
   }
 
   template <typename LayerType>
@@ -119,8 +125,11 @@ public:
     using NewLayerType =
         typename std::remove_cv_t<std::remove_reference_t<LayerType>>;
 
+    size_t id = network.size();
     network.push_back(new NewLayerType(std::forward<LayerType>(layer)));
-    return AddLayer();
+    AddLayer(id);
+
+    return id;
   }
 
   /**
@@ -417,12 +426,13 @@ public:
    */
   void ResetData(MatType predictors, MatType responses);
 
+  OutputLayerType outputLayer;
+
 private:
   // Helper functions.
 
-  size_t AddLayer() {
+  void AddLayer(size_t nodeId) {
     layerGradients.push_back(MatType());
-    size_t nodeId = network.size();
     childrenList.insert({nodeId, {}});
     parentsList.insert({nodeId, {}});
 
@@ -436,8 +446,6 @@ private:
     validOutputDimensions = false;
     graphIsSet = false;
     layerMemoryIsSet = false;
-
-    return network.size() - 1;
   }
 
   // Use the InitializationPolicy to initialize all the weights in the network.
