@@ -543,15 +543,14 @@ private:
    * Delete extra deltas allocated in `InitializeBackwardPassMemory`
    */
   void DeleteExtraDeltas() {
-    // TODO: return if backward pass memory not allocated
     for (size_t i = 0; i < sortedNetwork.size(); i++)
     {
       size_t layerIndex = sortedNetwork[i];
       if (childrenList.at(layerIndex).size() > 1)
-        delete outputDeltas.at(i);
+        delete outputDeltas[i];
 
       if (parentsList.at(layerIndex).size() > 1)
-        delete inputDeltas.at(i);
+        delete inputDeltas[i];
     }
   }
 

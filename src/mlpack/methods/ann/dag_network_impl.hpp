@@ -803,10 +803,10 @@ void DAGNetwork<
   }
 
   size_t activationMemorySize = totalConcatSize + layerOutputSize;
-  if (batchSize * activationMemorySize > layerOutputMatrix.n_elem)
-  {
-    layerOutputMatrix = MatType(1, batchSize * activationMemorySize);
-  }
+  if (batchSize * activationMemorySize == layerOutputMatrix.n_elem)
+    return;
+
+  layerOutputMatrix = MatType(1, batchSize * activationMemorySize);
 
   size_t offset = 0;
   sortedIndices.clear();
@@ -843,9 +843,9 @@ void DAGNetwork<
 
     if (numParents == 1)
     {
-      size_t inputIndex = sortedIndices[parents.front()];
-      MakeAlias(layerInputs[i - 1], layerOutputs[inputIndex],
-        layerOutputs[inputIndex].n_rows, layerOutputs[inputIndex].n_cols, 0);
+      size_t parentIndex = sortedIndices[parents.front()];
+      MakeAlias(layerInputs[i - 1], layerOutputs[parentIndex],
+        layerOutputs[parentIndex].n_rows, layerOutputs[parentIndex].n_cols, 0);
     }
     else
     {
@@ -898,8 +898,14 @@ void DAGNetwork<
     deltaMatrixSize += layerDeltaSize + concatDeltaSize;
   }
 
-  if (batchSize * deltaMatrixSize > layerDeltaMatrix.n_elem)
-    layerDeltaMatrix = MatType(1, batchSize * deltaMatrixSize);
+  if (batchSize * deltaMatrixSize == layerDeltaMatrix.n_elem)
+    return;
+
+  DeleteExtraDeltas();
+  layerDeltaMatrix = MatType(1, batchSize * deltaMatrixSize);
+  outputDeltas.clear();
+  accumulatedDeltas.clear();
+  inputDeltas.clear();
 
   size_t offset = 0;
   for (size_t i = 0; i < sortedNetwork.size() - 1; i++)
@@ -943,7 +949,7 @@ void DAGNetwork<
     else
     {
       size_t onlyParent = sortedIndices[parents.front()];
-      inputDeltas[i] = outputDeltas[onlyParent];
+      inputDeltas.insert({ i, outputDeltas[onlyParent]});
     }
   }
 }
@@ -1066,12 +1072,10 @@ void DAGNetwork<
     InitializeBackwardPassMemory(input.n_cols);
 
     for (size_t i = 0; i < sortedNetwork.size(); i++)
-    // for (size_t currentLayer : sortedNetwork)
     {
       size_t currentLayer = sortedNetwork[i];
       if (childrenList[currentLayer].size() > 1)
         accumulatedDeltas[i]->fill(0.0f);
-        // accumulatedDeltas[sortedIndex]->fill(0.0f);
     }
 
     MatType const* currentOutput = &output;
