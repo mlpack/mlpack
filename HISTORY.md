@@ -14,6 +14,8 @@ _????-??-??_
 
  * Accelerate `CELU` layer (#3975).
 
+ * Fix dependency detection bugs in `mlpack.cmake` (#3981).
+
 ## mlpack 4.6.2
 
 _2025-05-22_
