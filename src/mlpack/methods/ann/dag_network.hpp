@@ -308,6 +308,10 @@ public:
   typename MatType::elem_type Evaluate(const MatType& predictors,
                                        const MatType& responses);
 
+  //! Serialize the model.
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */);
+
   //
   // Only ensmallen utility functions for training are found below here.
   // They aren't generally useful otherwise.

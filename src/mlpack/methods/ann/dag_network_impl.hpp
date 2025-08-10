@@ -1424,6 +1424,72 @@ DAGNetwork<
   // Nothing to do here.
 }
 
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+template<typename Archive>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::serialize(Archive& ar, const uint32_t /* version */)
+{
+  #if !defined(MLPACK_ENABLE_ANN_SERIALIZATION) && \
+      !defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
+    // Note: if you define MLPACK_IGNORE_ANN_SERIALIZATION_WARNING, you had
+    // better ensure that every layer you are serializing has had
+    // CEREAL_REGISTER_TYPE() called somewhere.  See layer/serialization.hpp for
+    // more information.
+    throw std::runtime_error("Cannot serialize a neural network unless "
+        "MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See the \"Additional "
+        "build options\" section of the README for more information.");
+
+    (void) ar;
+  #else
+    // Serialize the output layer and initialization rule.
+    ar(CEREAL_NVP(outputLayer));
+    ar(CEREAL_NVP(initializeRule));
+
+    // Serialize the network itself.
+    ar(CEREAL_VECTOR_POINTER(network));
+    ar(CEREAL_NVP(childrenList));
+    ar(CEREAL_NVP(parentsList));
+    ar(CEREAL_NVP(layerAxes));
+    ar(CEREAL_NVP(parameters));
+
+    ar(CEREAL_NVP(inputDimensions));
+
+    // If we are loading, we need to initialize the weights.
+    if (cereal::is_loading<Archive>())
+    {
+      sortedIndices.clear();
+
+      predictors.clear();
+      responses.clear();
+
+      networkOutput.clear();
+      networkDelta.clear();
+      error.clear();
+
+      size_t size = std::max<int>(network.size() - 1, 0);
+      layerOutputs.resize(size, MatType());
+      layerDeltas.resize(size, MatType());
+      layerInputs.resize(size, MatType());
+
+      layerGradients.resize(network.size(), MatType());
+
+      outputDeltas.clear();
+      inputDeltas.clear();
+      accumulatedDeltas.clear();
+
+      layerMemoryIsSet = false;
+      validOutputDimensions = false;
+      graphIsSet = false;
+    }
+  #endif
+}
+
 } // namespace mlpack
 
 #endif
