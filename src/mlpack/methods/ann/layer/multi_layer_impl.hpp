@@ -22,9 +22,7 @@ namespace mlpack {
 template<typename MatType>
 MultiLayer<MatType>::MultiLayer() :
     Layer<MatType>(),
-    inSize(0),
-    totalInputSize(0),
-    totalOutputSize(0)
+    residualMemorySize(0)
 {
   // Nothing to do.
 }
@@ -32,9 +30,7 @@ MultiLayer<MatType>::MultiLayer() :
 template<typename MatType>
 MultiLayer<MatType>::MultiLayer(const MultiLayer& other) :
     Layer<MatType>(other),
-    inSize(other.inSize),
-    totalInputSize(other.totalInputSize),
-    totalOutputSize(other.totalOutputSize),
+    residualMemorySize(other.residualMemorySize),
     layerOutputMatrix(other.layerOutputMatrix),
     layerDeltaMatrix(other.layerDeltaMatrix)
 {
@@ -43,8 +39,9 @@ MultiLayer<MatType>::MultiLayer(const MultiLayer& other) :
     network.push_back(other.network[i]->Clone());
 
   // Ensure that the aliases for layers during passes have the right size.
-  layerOutputs.resize(network.size(), MatType());
-  layerDeltas.resize(network.size(), MatType());
+  size_t size = std::max<int>(network.size() - 1, 0);
+  layerOutputs.resize(size, MatType());
+  layerDeltas.resize(size, MatType());
   layerGradients.resize(network.size(), MatType());
 
   // layerOutputs, layerDeltas, and layerGradients will be reset the next time
@@ -55,15 +52,14 @@ template<typename MatType>
 MultiLayer<MatType>::MultiLayer(MultiLayer&& other) :
     Layer<MatType>(other),
     network(std::move(other.network)),
-    inSize(std::move(other.inSize)),
-    totalInputSize(std::move(other.totalInputSize)),
-    totalOutputSize(std::move(other.totalOutputSize)),
+    residualMemorySize(std::move(other.residualMemorySize)),
     layerOutputMatrix(std::move(other.layerOutputMatrix)),
     layerDeltaMatrix(std::move(other.layerDeltaMatrix))
 {
   // Ensure that the aliases for layers during passes have the right size.
-  layerOutputs.resize(network.size(), MatType());
-  layerDeltas.resize(network.size(), MatType());
+  size_t size = std::max<int>(network.size() - 1, 0);
+  layerOutputs.resize(size, MatType());
+  layerDeltas.resize(size, MatType());
   layerGradients.resize(network.size(), MatType());
 
   // layerOutputs, layerDeltas, and layerGradients will be reset the next time
@@ -86,9 +82,7 @@ MultiLayer<MatType>& MultiLayer<MatType>::operator=(const MultiLayer& other)
     layerDeltas.clear();
     layerGradients.clear();
 
-    inSize = other.inSize;
-    totalInputSize = other.totalInputSize;
-    totalOutputSize = other.totalOutputSize;
+    residualMemorySize = other.residualMemorySize;
 
     layerOutputMatrix = other.layerOutputMatrix;
     layerDeltaMatrix = other.layerDeltaMatrix;
@@ -97,8 +91,9 @@ MultiLayer<MatType>& MultiLayer<MatType>::operator=(const MultiLayer& other)
       network.push_back(other.network[i]->Clone());
 
     // Ensure that the aliases for layers during passes have the right size.
-    layerOutputs.resize(network.size(), MatType());
-    layerDeltas.resize(network.size(), MatType());
+    size_t size = std::max<int>(network.size() - 1, 0);
+    layerOutputs.resize(size, MatType());
+    layerDeltas.resize(size, MatType());
     layerGradients.resize(network.size(), MatType());
   }
 
@@ -116,14 +111,13 @@ MultiLayer<MatType>& MultiLayer<MatType>::operator=(MultiLayer&& other)
     layerDeltas.clear();
     layerGradients.clear();
 
-    inSize = std::move(other.inSize);
-    totalInputSize = std::move(other.totalInputSize);
-    totalOutputSize = std::move(other.totalOutputSize);
+    residualMemorySize = std::move(other.residualMemorySize);
 
     network = std::move(other.network);
 
-    layerOutputs.resize(network.size(), MatType());
-    layerDeltas.resize(network.size(), MatType());
+    size_t size = std::max<int>(network.size() - 1, 0);
+    layerOutputs.resize(size, MatType());
+    layerDeltas.resize(size, MatType());
     layerGradients.resize(network.size(), MatType());
 
     other.layerOutputs.clear();
@@ -187,12 +181,12 @@ void MultiLayer<MatType>::Backward(
     // Initialize memory for the backward pass (if needed).
     InitializeBackwardPassMemory(input.n_cols);
 
-    network.back()->Backward(layerOutputs[network.size() - 2], output, gy,
+    network.back()->Backward(layerOutputs.back(), output, gy,
         layerDeltas.back());
     for (size_t i = network.size() - 2; i > 0; --i)
       network[i]->Backward(layerOutputs[i - 1], layerOutputs[i],
-          layerDeltas[i + 1], layerDeltas[i]);
-    network[0]->Backward(input, layerOutputs[0], layerDeltas[1], g);
+          layerDeltas[i], layerDeltas[i - 1]);
+    network[0]->Backward(input, layerOutputs[0], layerDeltas[0], g);
   }
   else if (network.size() == 1)
   {
@@ -217,10 +211,10 @@ void MultiLayer<MatType>::Gradient(
     // Initialize memory for the gradient pass (if needed).
     InitializeGradientPassMemory(gradient);
 
-    network.front()->Gradient(input, layerDeltas[1], layerGradients.front());
+    network.front()->Gradient(input, layerDeltas[0], layerGradients.front());
     for (size_t i = 1; i < network.size() - 1; ++i)
     {
-      network[i]->Gradient(layerOutputs[i - 1], layerDeltas[i + 1],
+      network[i]->Gradient(layerOutputs[i - 1], layerDeltas[i],
           layerGradients[i]);
     }
     network.back()->Gradient(layerOutputs[network.size() - 2], error,
@@ -307,16 +301,10 @@ size_t MultiLayer<MatType>::WeightSize() const
 template<typename MatType>
 void MultiLayer<MatType>::ComputeOutputDimensions()
 {
-  inSize = 0;
-  totalInputSize = 0;
-  totalOutputSize = 0;
+  residualMemorySize = 0;
 
   // Propagate the input dimensions forward to the output.
   network.front()->InputDimensions() = this->inputDimensions;
-  inSize = this->inputDimensions[0];
-  for (size_t i = 1; i < this->inputDimensions.size(); ++i)
-    inSize *= this->inputDimensions[i];
-  totalInputSize += inSize;
 
   for (size_t i = 1; i < network.size(); ++i)
   {
@@ -325,15 +313,9 @@ void MultiLayer<MatType>::ComputeOutputDimensions()
     for (size_t j = 1; j < network[i]->InputDimensions().size(); ++j)
       layerInputSize *= network[i]->InputDimensions()[j];
 
-    totalInputSize += layerInputSize;
-    totalOutputSize += layerInputSize;
+    residualMemorySize += layerInputSize;
   }
 
-  size_t lastLayerSize = network.back()->OutputDimensions()[0];
-  for (size_t i = 1; i < network.back()->OutputDimensions().size(); ++i)
-    lastLayerSize *= network.back()->OutputDimensions()[i];
-
-  totalOutputSize += lastLayerSize;
   this->outputDimensions = network.back()->OutputDimensions();
 }
 
@@ -355,9 +337,7 @@ void MultiLayer<MatType>::serialize(
   ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_VECTOR_POINTER(network));
-  ar(CEREAL_NVP(inSize));
-  ar(CEREAL_NVP(totalInputSize));
-  ar(CEREAL_NVP(totalOutputSize));
+  ar(CEREAL_NVP(residualMemorySize));
 
   if (Archive::is_loading::value)
   {
@@ -377,12 +357,12 @@ void MultiLayer<MatType>::InitializeForwardPassMemory(const size_t batchSize)
   // call.  We'll do this all in one matrix, but, the size of this matrix
   // depends on the batch size we are using for computation.  We avoid resizing
   // layerOutputMatrix down, unless we only need 10% or less of it.
-  if (batchSize * totalOutputSize > layerOutputMatrix.n_elem ||
-      batchSize * totalOutputSize <
+  if (batchSize * residualMemorySize > layerOutputMatrix.n_elem ||
+      batchSize * residualMemorySize <
           std::floor(0.1 * layerOutputMatrix.n_elem))
   {
     // All outputs will be represented by one big block of memory.
-    layerOutputMatrix = MatType(1, batchSize * totalOutputSize);
+    layerOutputMatrix = MatType(1, batchSize * residualMemorySize);
   }
 
   // Now, create an alias to the right place for each layer.  We assume that
@@ -392,7 +372,7 @@ void MultiLayer<MatType>::InitializeForwardPassMemory(const size_t batchSize)
   {
     const size_t layerOutputSize = network[i]->OutputSize();
     MakeAlias(layerOutputs[i], layerOutputMatrix, layerOutputSize, batchSize,
-        start * layerOutputMatrix.n_rows);
+        start);
     start += batchSize * layerOutputSize;
   }
 }
@@ -404,11 +384,11 @@ void MultiLayer<MatType>::InitializeBackwardPassMemory(
   // We need to initialize memory to store the output of each layer's Backward()
   // call.  We do this similarly to InitializeForwardPassMemory(), but we must
   // store a matrix to use as the delta for each layer.
-  if (batchSize * totalInputSize > layerDeltaMatrix.n_elem ||
-      batchSize * totalInputSize < std::floor(0.1 * layerDeltaMatrix.n_elem))
+  if (batchSize * residualMemorySize > layerDeltaMatrix.n_elem ||
+      batchSize * residualMemorySize < std::floor(0.1 * layerDeltaMatrix.n_elem))
   {
     // All deltas will be represented by one big block of memory.
-    layerDeltaMatrix = MatType(1, batchSize * totalInputSize);
+    layerDeltaMatrix = MatType(1, batchSize * residualMemorySize);
   }
 
   // Now, create an alias to the right place for each layer.  We assume that
@@ -417,11 +397,11 @@ void MultiLayer<MatType>::InitializeBackwardPassMemory(
   for (size_t i = 0; i < layerDeltas.size(); ++i)
   {
     size_t layerInputSize = 1;
-    for (size_t j = 0; j < this->network[i]->InputDimensions().size(); ++j)
-      layerInputSize *= this->network[i]->InputDimensions()[j];
+    for (size_t j = 0; j < this->network[i + 1]->InputDimensions().size(); ++j)
+      layerInputSize *= this->network[i + 1]->InputDimensions()[j];
 
     MakeAlias(layerDeltas[i], layerDeltaMatrix, layerInputSize,
-        batchSize, start * layerDeltaMatrix.n_rows);
+        batchSize, start);
     start += batchSize * layerInputSize;
   }
 }
