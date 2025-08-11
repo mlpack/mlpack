@@ -99,7 +99,7 @@ class FFN
    */
   template<template<typename...> typename LayerType,
            typename... Args>
-  void Add(Args... args)
+  void Add(Args&&... args)
   {
     network.template Add<LayerType<MatType>>(std::forward<Args>(args)...);
     inputDimensionsAreSet = false;
