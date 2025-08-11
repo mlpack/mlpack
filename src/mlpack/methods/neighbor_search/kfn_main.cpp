@@ -179,16 +179,16 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   const string algorithm = params.Get<string>("algorithm");
   RequireParamInSet<string>(params, "algorithm", { "naive", "single_tree",
       "dual_tree", "greedy" }, true, "unknown neighbor search algorithm");
-  NeighborSearchMode searchMode = DUAL_TREE_MODE;
+  NeighborSearchStrategy searchStrategy = DUAL_TREE;
 
   if (algorithm == "naive")
-    searchMode = NAIVE_MODE;
+    searchStrategy = NAIVE;
   else if (algorithm == "single_tree")
-    searchMode = SINGLE_TREE_MODE;
+    searchStrategy = SINGLE_TREE;
   else if (algorithm == "dual_tree")
-    searchMode = DUAL_TREE_MODE;
+    searchStrategy = DUAL_TREE;
   else if (algorithm == "greedy")
-    searchMode = GREEDY_SINGLE_TREE_MODE;
+    searchStrategy = GREEDY_SINGLE_TREE;
 
   if (params.Has("reference"))
   {
@@ -240,7 +240,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     Log::Info << "Using reference data from "
         << params.GetPrintable<arma::mat>("reference") << "." << endl;
 
-    kfn->BuildModel(timers, std::move(referenceSet), searchMode, epsilon);
+    kfn->BuildModel(timers, std::move(referenceSet), searchStrategy, epsilon);
   }
   else
   {
@@ -248,7 +248,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     kfn = params.Get<KFNModel*>("input_model");
 
     // Adjust search mode.
-    kfn->SearchMode() = searchMode;
+    kfn->SearchStrategy() = searchStrategy;
     kfn->Epsilon() = epsilon;
 
     // If leaf_size wasn't provided, let's consider the current value in the

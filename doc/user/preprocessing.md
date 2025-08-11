@@ -17,3 +17,6 @@ documented yet.*
 
  * [Dataset splitting](core/split.md): split a dataset into a training and test
    set, optionally including labels.
+
+ * [Imputation](core/imputation.md): replace missing values in a dataset with
+   imputed values using a variety of imputation strategies.

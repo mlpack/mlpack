@@ -20,7 +20,7 @@ namespace mlpack {
 
 template<typename MatType>
 NearestInterpolationType<MatType>::NearestInterpolationType():
-  Layer<MatType>()
+    Layer<MatType>()
 {
   // Nothing to do here.
 }
@@ -28,7 +28,7 @@ NearestInterpolationType<MatType>::NearestInterpolationType():
 template<typename MatType>
 NearestInterpolationType<MatType>::
 NearestInterpolationType(const std::vector<double> scaleFactors) :
-  Layer<MatType>()
+    Layer<MatType>()
 {
   if (scaleFactors.size() != 2) {
     throw std::runtime_error("Scale factors must have 2 dimensions");
@@ -39,8 +39,8 @@ NearestInterpolationType(const std::vector<double> scaleFactors) :
 template<typename MatType>
 NearestInterpolationType<MatType>::
 NearestInterpolationType(const NearestInterpolationType& other) :
-  Layer<MatType>(),
-  scaleFactors(other.scaleFactors)
+    Layer<MatType>(),
+    scaleFactors(other.scaleFactors)
 {
   // Nothing to do here.
 }
@@ -48,8 +48,8 @@ NearestInterpolationType(const NearestInterpolationType& other) :
 template<typename MatType>
 NearestInterpolationType<MatType>::
 NearestInterpolationType(NearestInterpolationType&& other) :
-  Layer<MatType>(std::move(other)),
-  scaleFactors(std::move(other.scaleFactors))
+    Layer<MatType>(std::move(other)),
+    scaleFactors(std::move(other.scaleFactors))
 {
   // Nothing to do here.
 }
@@ -82,7 +82,7 @@ operator=(NearestInterpolationType&& other)
 
 template<typename MatType>
 void NearestInterpolationType<MatType>::Forward(
-  const MatType& input, MatType& output)
+    const MatType& input, MatType& output)
 {
   const size_t channels = this->inputDimensions[2];
 
@@ -114,9 +114,10 @@ void NearestInterpolationType<MatType>::Forward(
 
 template<typename MatType>
 void NearestInterpolationType<MatType>::Backward(
-  const MatType& /*input*/,
-  const MatType& gradient,
-  MatType& output)
+    const MatType& /* input */,
+    const MatType& /* output */,
+    const MatType& gradient,
+    MatType& output)
 {
   const size_t channels = this->inputDimensions[2];
 
@@ -169,7 +170,7 @@ void NearestInterpolationType<MatType>::ComputeOutputDimensions()
 template<typename MatType>
 template<typename Archive>
 void NearestInterpolationType<MatType>::serialize(
-  Archive& ar, const uint32_t /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(scaleFactors));
 }

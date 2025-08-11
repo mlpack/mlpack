@@ -78,10 +78,10 @@ class MultiLayer : public Layer<MatType>
    * @param start Index of first layer to pass data through.
    * @param end Index of last layer to pass data through.
    */
-  void Forward(const MatType& input,
-               MatType& output,
-               const size_t start,
-               const size_t end);
+  void PartialForward(const MatType& input,
+                      MatType& output,
+                      const size_t start,
+                      const size_t end);
 
   /**
    * Perform a backward pass with the given data.  `gy` is expected to be the

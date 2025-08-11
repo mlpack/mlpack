@@ -35,9 +35,9 @@ class AggregatedPolicy
    *     User should make sure its size is same as the number of policies
    *     and the sum of its element is equal to 1.
    */
-  AggregatedPolicy(std::vector<PolicyType> policies,
+  AggregatedPolicy(std::vector<PolicyType> policiesIn,
                    const arma::colvec& distribution) :
-      policies(std::move(policies)),
+      policies(std::move(policiesIn)),
       sampler({distribution})
   { /* Nothing to do here. */ };
 

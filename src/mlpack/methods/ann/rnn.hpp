@@ -322,6 +322,21 @@ class RNN
       const CubeType& predictors,
       const CubeType& responses);
 
+  /**
+   * Evaluate the recurrent network with the given predictors and responses.
+   * This functions is usually used to monitor progress while training.
+   *
+   * @param predictors Input variables.
+   * @param responses Target outputs for input variables.
+   * @param sequenceLengths Length of each input sequences.  Should have size
+   *     `predictors.n_cols`, and all values should be less than or equal to
+   *     `predictors.n_slices`.
+   */
+  typename MatType::elem_type Evaluate(
+      const CubeType& predictors,
+      const CubeType& responses,
+      const arma::urowvec& sequenceLengths);
+
   //! Serialize the model.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);

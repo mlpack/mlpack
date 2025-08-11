@@ -25,40 +25,42 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
 {
  public:
   // TODO: pass through noTranspose option?
-  TextOptions(bool hasHeaders = defaultHasHeaders,
-              bool semicolon = defaultSemicolon,
-              bool missingToNan = defaultMissingToNan,
-              bool categorical = defaultCategorical,
-              bool missingPolicy = defaultMissingPolicy) :
+  TextOptions(std::optional<bool> hasHeaders = std::nullopt,
+              std::optional<bool> semicolon = std::nullopt,
+              std::optional<bool> missingToNan = std::nullopt,
+              std::optional<bool> categorical = std::nullopt) :
       MatrixOptionsBase<TextOptions>(),
       hasHeaders(hasHeaders),
       semicolon(semicolon),
       missingToNan(missingToNan),
-      categorical(categorical),
-      missingPolicy(missingPolicy)
+      categorical(categorical)
   {
     // Do Nothing.
   }
 
-  explicit TextOptions(const TextOptions& opts) :
+  //
+  // Handling for copy and move operations on other TextOptions objects.
+  //
+
+  TextOptions(const DataOptionsBase<MatrixOptionsBase<TextOptions>>& opts) :
       MatrixOptionsBase<TextOptions>()
   {
     // Delegate to copy operator.
     *this = opts;
   }
 
-  explicit TextOptions(TextOptions&& opts) :
+  TextOptions(DataOptionsBase<MatrixOptionsBase<TextOptions>>&& opts) :
       MatrixOptionsBase<TextOptions>()
   {
     // Delegate to move operator.
     *this = std::move(opts);
   }
 
-  // Inherit base class constructors.
-  using MatrixOptionsBase<TextOptions>::MatrixOptionsBase;
-
-  TextOptions& operator=(const TextOptions& other)
+  TextOptions& operator=(
+      const DataOptionsBase<MatrixOptionsBase<TextOptions>>& otherIn)
   {
+    const TextOptions& other = static_cast<const TextOptions&>(otherIn);
+
     if (&other == this)
       return *this;
 
@@ -70,12 +72,9 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
       missingToNan = *other.missingToNan;
     if (other.categorical.has_value())
       categorical = *other.categorical;
-    if (other.missingPolicy.has_value())
-      missingPolicy = *other.missingPolicy;
 
     headers = other.headers;
     datasetInfo = other.datasetInfo;
-    datasetMissingPolicy = other.datasetMissingPolicy;
 
     // Copy base members.
     MatrixOptionsBase<TextOptions>::operator=(other);
@@ -83,8 +82,11 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     return *this;
   }
 
-  TextOptions& operator=(TextOptions&& other)
+  TextOptions& operator=(
+      DataOptionsBase<MatrixOptionsBase<TextOptions>>&& otherIn)
   {
+    TextOptions&& other = static_cast<TextOptions&&>(otherIn);
+
     if (&other == this)
       return *this;
 
@@ -92,16 +94,63 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     semicolon = std::move(other.semicolon);
     missingToNan = std::move(other.missingToNan);
     categorical = std::move(other.categorical);
-    missingPolicy = std::move(other.missingPolicy);
 
     headers = std::move(other.headers);
     datasetInfo = std::move(other.datasetInfo);
-    datasetMissingPolicy = std::move(other.datasetMissingPolicy);
 
     // Move base members.
     MatrixOptionsBase<TextOptions>::operator=(std::move(other));
 
     return *this;
+  }
+
+  //
+  // Handling for copy and move operations on other DataOptionsBase types.
+  //
+
+  // Conversions must be explicit.
+  template<typename Derived2>
+  explicit TextOptions(const DataOptionsBase<Derived2>& other) :
+      MatrixOptionsBase<TextOptions>(other) { }
+
+  template<typename Derived2>
+  explicit TextOptions(DataOptionsBase<Derived2>&& other) :
+      MatrixOptionsBase<TextOptions>(std::move(other)) { }
+
+  template<typename Derived2>
+  TextOptions& operator=(const DataOptionsBase<Derived2>& other)
+  {
+    return static_cast<TextOptions&>(
+        MatrixOptionsBase<TextOptions>::operator=(other));
+  }
+
+  template<typename Derived2>
+  TextOptions& operator=(DataOptionsBase<Derived2>&& other)
+  {
+    return static_cast<TextOptions&>(
+        MatrixOptionsBase<TextOptions>::operator=(std::move(other)));
+  }
+
+  void Combine(const TextOptions& other)
+  {
+    // Combine all boolean options.
+    hasHeaders =
+        DataOptionsBase<MatrixOptionsBase<TextOptions>>::CombineBooleanOption(
+        hasHeaders, other.hasHeaders, "HasHeaders()");
+    missingToNan =
+        DataOptionsBase<MatrixOptionsBase<TextOptions>>::CombineBooleanOption(
+        missingToNan, other.missingToNan, "MissingToNan()");
+    categorical =
+        DataOptionsBase<MatrixOptionsBase<TextOptions>>::CombineBooleanOption(
+        categorical, other.categorical, "Categorical()");
+    semicolon =
+        DataOptionsBase<MatrixOptionsBase<TextOptions>>::CombineBooleanOption(
+        semicolon, other.semicolon, "Semicolon()");
+
+    // Whenever we combine two TextOptions, we reset the headers and
+    // datasetInfo.
+    headers.clear();
+    datasetInfo = DatasetInfo();
   }
 
   // Print warnings for any members that cannot be represented by a
@@ -133,7 +182,9 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     semicolon.reset();
     missingToNan.reset();
     categorical.reset();
-    missingPolicy.reset();
+
+    headers.clear();
+    datasetInfo = DatasetInfo();
   }
 
   // Get if the dataset has headers or not.
@@ -153,7 +204,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     return this->AccessMember(semicolon, defaultSemicolon);
   }
   // Modify the separator type in the matrix.
-  bool& SemiColon()
+  bool& Semicolon()
   {
     return this->ModifyMember(semicolon, defaultSemicolon);
   }
@@ -182,19 +233,6 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
     return this->ModifyMember(categorical, defaultCategorical);
   }
 
-  // Get whether the data should be interpreted as categorical when columns are
-  // not numeric.
-  bool MissingPolicy() const
-  {
-    return this->AccessMember(missingPolicy, defaultMissingPolicy);
-  }
-  // Modify whether the data should be interpreted as missingPolicy when columns
-  // are not numeric.
-  bool& MissingPolicy()
-  {
-    return this->ModifyMember(missingPolicy, defaultMissingPolicy);
-  }
-
   // Get the headers.
   const arma::field<std::string>& Headers() const { return headers; }
   // Modify the headers.
@@ -205,37 +243,35 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   // Modify the DatasetInfo.
   data::DatasetInfo& DatasetInfo() { return datasetInfo; }
 
-  // Get the DatasetInfo for categorical data.
-  const data::DatasetMapper<data::MissingPolicy>& DatasetMissingPolicy() const
-  {
-    return datasetMissingPolicy;
-  }
-
-  // Modify the DatasetMissingPolicy.
-  data::DatasetMapper<data::MissingPolicy>& DatasetMissingPolicy()
-  {
-    return datasetMissingPolicy;
-  }
-
  private:
   std::optional<bool> hasHeaders;
   std::optional<bool> semicolon;
   std::optional<bool> missingToNan;
   std::optional<bool> categorical;
-  std::optional<bool> missingPolicy;
 
   // These are not optional, but if either is specified, then it should be taken
   // to mean that `hasHeaders` or `categorical` has been specified as true.
   arma::field<std::string> headers;
   data::DatasetInfo datasetInfo;
-  // Temporary internal member until MissingPolicy is refactored out.
-  data::DatasetMapper<data::MissingPolicy> datasetMissingPolicy;
 
   constexpr static const bool defaultHasHeaders = false;
   constexpr static const bool defaultSemicolon = false;
   constexpr static const bool defaultMissingToNan = false;
   constexpr static const bool defaultCategorical = false;
-  constexpr static const bool defaultMissingPolicy = false;
+};
+
+// Boolean options
+static const TextOptions HasHeaders   = TextOptions(true);
+static const TextOptions Semicolon    = TextOptions(std::nullopt, true);
+static const TextOptions MissingToNan = TextOptions(std::nullopt, std::nullopt,
+      true);
+static const TextOptions Categorical  = TextOptions(std::nullopt,
+      std::nullopt, std::nullopt, true);
+
+template<>
+struct IsDataOptions<TextOptions>
+{
+  constexpr static bool value = true;
 };
 
 } // namespace data

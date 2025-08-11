@@ -36,10 +36,9 @@ may require a template typedef.
 
 ## See also
 
-<!-- TODO: add links to all distance-based algorithms and other trees? -->
-
- * [`KDTree`](kdtree.md)
- * [`MeanSplitKDTree`](mean_split_kdtree.md)
+ * [mlpack trees](../trees.md)
+ * [`KNN`](../../methods/knn.md)
+ * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [Binary space partitioning on Wikipedia](https://dl.acm.org/doi/pdf/10.1145/361002.361007)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 
@@ -1910,6 +1909,9 @@ mlpack provides a few existing `StatisticType` classes, and a custom
 
  * [`EmptyStatistic`](#emptystatistic): an empty statistic class that does not
    hold any information
+ * [`NearestNeighborStat`](#nearestneighborstat): a statistic class storing data
+   relevant during nearest neighbor search, used by
+   [`KNN`](../../methods/knn.md).
  * [Custom `StatisticType`s](#custom-statistictypes): implement a fully custom
    `StatisticType`
 
@@ -1923,6 +1925,23 @@ default `StatisticType` template parameter for mlpack trees.
 
 The class ***does not hold any members and provides no functionality***.
 [See the implementation.](/src/mlpack/core/tree/statistic.hpp)
+
+### `NearestNeighborStat`
+
+The `NearestNeighborStat` class is a utility structure that holds a number of
+bounding quantities used in tree-based algorithms for nearest neighbor search
+and furthest neighbor search.  The held quantities are used internally by the
+[`RuleType`](../../../developer/trees.md#rules) used for nearest neighbor or
+furthest neighbor search, and these quantities are detailed in the
+[tree-independent dual tree algorithms paper (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf).
+
+In general, there is no need to directly interact with the
+`NearestNeighborStat`, and classes such as [`KNN`](../../methods/knn.md) provide
+a convenience typedef (e.g. `KNN::TreeType`) that corresponds to the tree type
+with `NearestNeighborStat` as the `StatisticType`.
+
+For more details, see
+[the source code](/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp).
 
 ### Custom `StatisticType`s
 

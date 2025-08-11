@@ -13,7 +13,6 @@
 #define MLPACK_CORE_DATA_DATA_HPP
 
 #include "extension.hpp"
-#include "format.hpp"
 #include "has_serialize.hpp"
 
 #include "load.hpp"
@@ -41,7 +40,7 @@
 #include "split_data.hpp"
 #include "string_algorithms.hpp"
 #include "text_options.hpp"
-#include "types.hpp"
-#include "utilities.hpp"
+
+#include "combine_options.hpp"
 
 #endif

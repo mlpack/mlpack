@@ -132,11 +132,11 @@ template<typename MatType>
 void MultiLayer<MatType>::Forward(
     const MatType& input, MatType& output)
 {
-  Forward(input, output, 0, network.size() - 1);
+  PartialForward(input, output, 0, network.size() - 1);
 }
 
 template<typename MatType>
-void MultiLayer<MatType>::Forward(
+void MultiLayer<MatType>::PartialForward(
     const MatType& input,
     MatType& output,
     const size_t start,

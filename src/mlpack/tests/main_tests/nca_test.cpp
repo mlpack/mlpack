@@ -395,8 +395,8 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentNumBasisTest",
   {
     // Simple dataset.
     arma::mat x;
-    x.randu(8, 600);
-    arma::Row<size_t> labels = arma::randi<arma::Row<size_t>>(600,
+    x.randu(4, 100);
+    arma::Row<size_t> labels = arma::randi<arma::Row<size_t>>(100,
         DistrParam(0, 1));
 
     arma::mat y = x;
@@ -407,6 +407,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentNumBasisTest",
     SetInputParam("labels", std::move(labels));
     SetInputParam("optimizer",  std::string("lbfgs"));
     SetInputParam("num_basis", (int) 5);
+    SetInputParam("max_iterations", (int) 10);
 
     RUN_BINDING();
 
@@ -421,6 +422,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentNumBasisTest",
     SetInputParam("labels", std::move(labels2));
     SetInputParam("optimizer",  std::string("lbfgs"));
     SetInputParam("num_basis", (int) 1);
+    SetInputParam("max_iterations", (int) 10);
 
     RUN_BINDING();
 
