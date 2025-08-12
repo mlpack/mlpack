@@ -336,6 +336,7 @@ typename MatType::elem_type FFN<
   outputLayer.Backward(networkOutput, targets, error);
 
   // Perform the backward pass.
+  networkDelta.set_size(inputs.n_rows, inputs.n_cols);
   network.Backward(inputs, networkOutput, error, networkDelta);
 
   // Now compute the gradients.
