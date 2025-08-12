@@ -40,7 +40,8 @@ class PaddingType : public Layer<MatType>
   PaddingType(const size_t padWLeft = 0,
               const size_t padWRight = 0,
               const size_t padHTop = 0,
-              const size_t padHBottom = 0);
+              const size_t padHBottom = 0,
+              const typename MatType::elem_type fillValue = 0);
 
   //! Clone the PaddingType object. This handles polymorphism correctly.
   PaddingType* Clone() const { return new PaddingType(*this); }
@@ -125,6 +126,9 @@ class PaddingType : public Layer<MatType>
 
   //! Cached number of input maps.
   size_t totalInMaps;
+
+  //! Pad the input with this value
+  typename MatType::elem_type fillValue;
 }; // class PaddingType
 
 // Standard Padding layer.

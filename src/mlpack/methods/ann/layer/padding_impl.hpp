@@ -23,13 +23,15 @@ PaddingType<MatType>::PaddingType(
     const size_t padWLeft,
     const size_t padWRight,
     const size_t padHTop,
-    const size_t padHBottom) :
+    const size_t padHBottom,
+    const typename MatType::elem_type fillValue) :
     Layer<MatType>(),
     padWLeft(padWLeft),
     padWRight(padWRight),
     padHTop(padHTop),
     padHBottom(padHBottom),
-    totalInMaps(0)
+    totalInMaps(0),
+    fillValue(fillValue)
 {
   // Nothing to do here.
 }
@@ -41,7 +43,7 @@ PaddingType<MatType>::PaddingType(const PaddingType& other) :
     padWRight(other.padWRight),
     padHTop(other.padHTop),
     padHBottom(other.padHBottom),
-    totalInMaps(other.totalInMaps)
+    fillValue(other.fillValue)
 {
   // Nothing to do here.
 }
@@ -53,7 +55,8 @@ PaddingType<MatType>::PaddingType(PaddingType&& other) :
     padWRight(std::move(other.padWRight)),
     padHTop(std::move(other.padHTop)),
     padHBottom(std::move(other.padHBottom)),
-    totalInMaps(std::move(other.totalInMaps))
+    totalInMaps(std::move(other.totalInMaps)),
+    fillValue(std::move(other.fillValue))
 {
   // Nothing to do here.
 }
@@ -70,6 +73,7 @@ PaddingType<MatType>::operator=(const PaddingType& other)
     padHTop = other.padHTop;
     padHBottom = other.padHBottom;
     totalInMaps = other.totalInMaps;
+    fillValue = other.fillValue;
   }
 
   return *this;
@@ -87,6 +91,7 @@ PaddingType<MatType>::operator=(PaddingType&& other)
     padHTop = std::move(other.padHTop);
     padHBottom = std::move(other.padHBottom);
     totalInMaps = std::move(other.totalInMaps);
+    fillValue = std::move(other.fillValue);
   }
 
   return *this;
@@ -110,7 +115,7 @@ void PaddingType<MatType>::Forward(const MatType& input, MatType& output)
     reshapedOutput.tube(0,
                         0,
                         reshapedOutput.n_rows - 1,
-                        padHTop - 1).zeros();
+                        padHTop - 1).fill(fillValue);
   }
 
   if (padWLeft > 0)
@@ -118,7 +123,7 @@ void PaddingType<MatType>::Forward(const MatType& input, MatType& output)
     reshapedOutput.tube(0,
                         padHTop,
                         padWLeft - 1,
-                        padHTop + this->inputDimensions[1] - 1).zeros();
+                        padHTop + this->inputDimensions[1] - 1).fill(fillValue);
   }
 
   if (padHBottom > 0)
@@ -126,7 +131,7 @@ void PaddingType<MatType>::Forward(const MatType& input, MatType& output)
     reshapedOutput.tube(0,
                         padHTop + this->inputDimensions[1],
                         reshapedOutput.n_rows - 1,
-                        reshapedOutput.n_cols - 1).zeros();
+                        reshapedOutput.n_cols - 1).fill(fillValue);
   }
 
   if (padWRight > 0)
@@ -134,7 +139,7 @@ void PaddingType<MatType>::Forward(const MatType& input, MatType& output)
     reshapedOutput.tube(padWLeft + this->inputDimensions[0],
                         padHTop,
                         reshapedOutput.n_rows - 1,
-                        padHTop + this->inputDimensions[1] - 1).zeros();
+                        padHTop + this->inputDimensions[1] - 1).fill(fillValue);
   }
 
   // Copy the input matrix.
