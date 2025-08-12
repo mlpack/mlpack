@@ -497,10 +497,6 @@ typename MatType::elem_type FFN<
 {
   CheckNetwork("FFN::EvaluateWithGradient()", predictors.n_rows);
 
-  // Set networkOutput to the right size if needed, then perform the forward
-  // pass.
-  networkOutput.set_size(network.OutputSize(), batchSize);
-
   // Alias the batches so we don't copy memory.
   MatType predictorsBatch, responsesBatch;
   MakeAlias(predictorsBatch, predictors, predictors.n_rows,
@@ -508,24 +504,8 @@ typename MatType::elem_type FFN<
   MakeAlias(responsesBatch, responses, responses.n_rows,
       batchSize, begin * responses.n_rows);
 
-  network.Forward(predictorsBatch, networkOutput);
-
-  const typename MatType::elem_type obj = outputLayer.Forward(networkOutput,
-      responsesBatch) + network.Loss();
-
-  // Now perform the backward pass.
-  outputLayer.Backward(networkOutput, responsesBatch, error);
-
-  // The delta should have the same size as the input.
-  networkDelta.set_size(predictors.n_rows, batchSize);
-  network.Backward(predictorsBatch, networkOutput, error, networkDelta);
-
-  // Now compute the gradients.
-  // The gradient should have the same size as the parameters.
-  gradient.set_size(parameters.n_rows, parameters.n_cols);
-  network.Gradient(predictorsBatch, error, gradient);
-
-  return obj;
+  Forward(predictorsBatch, networkOutput);
+  return Backward(predictorsBatch, responsesBatch, gradient);
 }
 
 template<typename OutputLayerType,
