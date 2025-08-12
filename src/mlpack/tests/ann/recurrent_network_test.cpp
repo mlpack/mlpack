@@ -914,52 +914,36 @@ void ReberGrammarTestNetwork(ModelType& model,
   // Each input sequence might have a different length, so, we have to use an
   // arma::field, and we will train on each sequence with a separate call to
   // Train().
-  arma::cube trainInput, trainLabels, testInput;
-  arma::urowvec trainLengths, testLengths;
+  arma::field<arma::cube> trainInput, trainLabels, testInput;
   const std::unordered_map<char, size_t> charDimMap = ReberToDimMap();
 
   // Generate the training data.
-  std::vector<std::string> reberStrings;
-  size_t maxLen = 0;
+  trainInput.set_size(trainSize);
+  trainLabels.set_size(trainSize);
   for (size_t i = 0; i < trainSize; ++i)
   {
-    reberStrings.push_back(GenerateReberString(embedded));
-    maxLen = std::max(maxLen, reberStrings.back().length());
-  }
+    const std::string reber = GenerateReberString(embedded);
 
-  trainInput.zeros(7, trainSize, maxLen - 1);
-  trainLabels.zeros(7, trainSize, maxLen - 1);
-  trainLengths.set_size(trainSize);
+    trainInput[i].zeros(7, 1, reber.length() - 1);
+    trainLabels[i].zeros(7, 1, reber.length() - 1);
 
-  for (size_t i = 0; i < trainSize; ++i)
-  {
-    trainLengths[i] = reberStrings[i].length() - 1;
-    for (size_t j = 0; j < reberStrings[i].length() - 1; ++j)
+    for (size_t j = 0; j < reber.length() - 1; ++j)
     {
-      trainInput(charDimMap.at(reberStrings[i][j]), i, j) = 1.0;
-      trainLabels(charDimMap.at(reberStrings[i][j + 1]), i, j) = 1.0;
+      trainInput[i](charDimMap.at(reber[j]), 0, j) = 1.0;
+      trainLabels[i](charDimMap.at(reber[j + 1]), 0, j) = 1.0;
     }
   }
 
   // Generate the test data (responses are not needed to check that the
   // predictions are valid).
-  reberStrings.clear();
-  maxLen = 0;
+  testInput.set_size(testSize);
   for (size_t i = 0; i < testSize; ++i)
   {
-    reberStrings.push_back(GenerateReberString(embedded));
-    maxLen = std::max(maxLen, reberStrings.back().length());
-  }
+    const std::string reber = GenerateReberString(embedded);
 
-  testInput.zeros(7, testSize, maxLen);
-  testLengths.set_size(testSize);
-  for (size_t i = 0; i < testSize; ++i)
-  {
-    testLengths[i] = reberStrings[i].length() - 1;
-    for (size_t j = 0; j < reberStrings[i].length() - 1; ++j)
-    {
-      testInput(charDimMap.at(reberStrings[i][j]), i, j) = 1.0;
-    }
+    testInput[i].zeros(7, 1, reber.length() - 1);
+    for (size_t j = 0; j < reber.length() - 1; ++j)
+      testInput[i](charDimMap.at(reber[j]), 0, j) = 1.0;
   }
 
   // It isn't guaranteed that the recurrent network will converge in the
@@ -971,26 +955,33 @@ void ReberGrammarTestNetwork(ModelType& model,
   for (size_t trial = 0; trial < trials; ++trial)
   {
     // Reset model before using for next trial.
-    model.Reset(trainInput.n_rows);
-    // Train one epoch at a time.
-    Adam opt(embedded ? 0.05 : 0.1, 1, 0.9, 0.999, 1e-8, trainSize);
+    model.Reset(trainInput[0].n_rows);
+    // This will only run one iteration for one grammar.
+    Adam opt(embedded ? 0.05 : 0.1, 1, 0.9, 0.999, 1e-8, 1);
     opt.ResetPolicy() = false;
 
     for (size_t epoch = 0; epoch < maxEpochs; epoch++)
     {
-      model.Train(trainInput, trainLabels, trainLengths, opt);
+      double loss = 0.0;
+      for (size_t j = 0; j < trainSize; ++j)
+      {
+        // Each input sequence may have a different length, so we need to train
+        // them differently.
+        model.BPTTSteps() = trainInput[j].n_slices;
+        loss += model.Train(trainInput[j], trainLabels[j], opt);
+      }
+
 
       // Ask the network to predict the next Reber grammar in the given
       // sequence.
       error = 0.0;
-      arma::cube prediction;
-      model.Predict(testInput, prediction, testLengths);
       for (size_t i = 0; i < testSize; ++i)
       {
-        const std::string inputString = PredictionToReberString(
-            testInput.subcube(0, i, 0, 6, i, testLengths[i] - 1));
-        const std::string predictedString = PredictionToReberString(
-            prediction.subcube(0, i, 0, 6, i, testLengths[i] - 1));
+        arma::cube prediction;
+        model.Predict(testInput[i], prediction);
+
+        const std::string inputString = PredictionToReberString(testInput[i]);
+        const std::string predictedString = PredictionToReberString(prediction);
         if (!IsReberResponse(inputString, predictedString, embedded))
           ++error;
       }
