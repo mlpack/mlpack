@@ -18,31 +18,31 @@
 namespace mlpack {
 
 template<typename MatType>
-CReLUType<MatType>::CReLUType() :
+CReLU<MatType>::CReLU() :
     Layer<MatType>()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-CReLUType<MatType>::CReLUType(
-    const CReLUType& other) :
+CReLU<MatType>::CReLU(
+    const CReLU& other) :
     Layer<MatType>(other)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-CReLUType<MatType>::CReLUType(
-    CReLUType&& other) :
+CReLU<MatType>::CReLU(
+    CReLU&& other) :
     Layer<MatType>(std::move(other))
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-CReLUType<MatType>&
-CReLUType<MatType>::operator=(const CReLUType& other)
+CReLU<MatType>&
+CReLU<MatType>::operator=(const CReLU& other)
 {
   if (&other != this)
   {
@@ -53,8 +53,8 @@ CReLUType<MatType>::operator=(const CReLUType& other)
 }
 
 template<typename MatType>
-CReLUType<MatType>&
-CReLUType<MatType>::operator=(CReLUType&& other)
+CReLU<MatType>&
+CReLU<MatType>::operator=(CReLU&& other)
 {
   if (&other != this)
   {
@@ -65,7 +65,7 @@ CReLUType<MatType>::operator=(CReLUType&& other)
 }
 
 template<typename MatType>
-void CReLUType<MatType>::Forward(
+void CReLU<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   typename MatType::elem_type zero = 0.0;
@@ -81,7 +81,7 @@ void CReLUType<MatType>::Forward(
 }
 
 template<typename MatType>
-void CReLUType<MatType>::Backward(
+void CReLU<MatType>::Backward(
     const MatType& input,
     const MatType& /* output */,
     const MatType& gy,
@@ -96,7 +96,7 @@ void CReLUType<MatType>::Backward(
 }
 
 template<typename MatType>
-void CReLUType<MatType>::ComputeOutputDimensions()
+void CReLU<MatType>::ComputeOutputDimensions()
 {
   // The CReLU gives twice as many outputs as inputs.
   // We treat this as flattening the input, and then doubling the number of
@@ -117,7 +117,7 @@ void CReLUType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void CReLUType<MatType>::serialize(
+void CReLU<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

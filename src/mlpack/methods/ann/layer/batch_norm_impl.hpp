@@ -22,7 +22,7 @@
 namespace mlpack {
 
 template<typename MatType>
-BatchNormType<MatType>::BatchNormType() :
+BatchNorm<MatType>::BatchNorm() :
     Layer<MatType>(),
     minAxis(2),
     maxAxis(2),
@@ -38,7 +38,7 @@ BatchNormType<MatType>::BatchNormType() :
 }
 
 template <typename MatType>
-BatchNormType<MatType>::BatchNormType(
+BatchNorm<MatType>::BatchNorm(
     const size_t minAxis,
     const size_t maxAxis,
     const double eps,
@@ -60,7 +60,7 @@ BatchNormType<MatType>::BatchNormType(
 
 // Copy constructor.
 template<typename MatType>
-BatchNormType<MatType>::BatchNormType(const BatchNormType& layer) :
+BatchNorm<MatType>::BatchNorm(const BatchNorm& layer) :
     Layer<MatType>(layer),
     minAxis(layer.minAxis),
     maxAxis(layer.maxAxis),
@@ -80,7 +80,7 @@ BatchNormType<MatType>::BatchNormType(const BatchNormType& layer) :
 
 // Move constructor.
 template<typename MatType>
-BatchNormType<MatType>::BatchNormType(BatchNormType&& layer) :
+BatchNorm<MatType>::BatchNorm(BatchNorm&& layer) :
     Layer<MatType>(std::move(layer)),
     minAxis(std::move(layer.minAxis)),
     maxAxis(std::move(layer.maxAxis)),
@@ -99,8 +99,8 @@ BatchNormType<MatType>::BatchNormType(BatchNormType&& layer) :
 }
 
 template<typename MatType>
-BatchNormType<MatType>&
-BatchNormType<MatType>::operator=(const BatchNormType& layer)
+BatchNorm<MatType>&
+BatchNorm<MatType>::operator=(const BatchNorm& layer)
 {
   if (&layer != this)
   {
@@ -123,9 +123,9 @@ BatchNormType<MatType>::operator=(const BatchNormType& layer)
 }
 
 template<typename MatType>
-BatchNormType<MatType>&
-BatchNormType<MatType>::operator=(
-    BatchNormType&& layer)
+BatchNorm<MatType>&
+BatchNorm<MatType>::operator=(
+    BatchNorm&& layer)
 {
   if (&layer != this)
   {
@@ -148,7 +148,7 @@ BatchNormType<MatType>::operator=(
 }
 
 template<typename MatType>
-void BatchNormType<MatType>::SetWeights(const MatType& weightsIn)
+void BatchNorm<MatType>::SetWeights(const MatType& weightsIn)
 {
   MakeAlias(weights, weightsIn, WeightSize(), 1);
   // Gamma acts as the scaling parameters for the normalized output.
@@ -158,12 +158,12 @@ void BatchNormType<MatType>::SetWeights(const MatType& weightsIn)
 }
 
 template<typename MatType>
-void BatchNormType<MatType>::CustomInitialize(
+void BatchNorm<MatType>::CustomInitialize(
     MatType& W,
     const size_t elements)
 {
   if (elements != 2 * size) {
-    throw std::invalid_argument("BatchNormType::CustomInitialize(): wrong "
+    throw std::invalid_argument("BatchNorm::CustomInitialize(): wrong "
         "elements size!");
   }
   MatType gammaTemp;
@@ -181,7 +181,7 @@ void BatchNormType<MatType>::CustomInitialize(
 }
 
 template<typename MatType>
-void BatchNormType<MatType>::Forward(
+void BatchNorm<MatType>::Forward(
     const MatType& input,
     MatType& output)
 {
@@ -264,7 +264,7 @@ void BatchNormType<MatType>::Forward(
 }
 
 template<typename MatType>
-void BatchNormType<MatType>::Backward(
+void BatchNorm<MatType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
@@ -305,7 +305,7 @@ void BatchNormType<MatType>::Backward(
 }
 
 template<typename MatType>
-void BatchNormType<MatType>::Gradient(
+void BatchNorm<MatType>::Gradient(
     const MatType& /* input */,
     const MatType& error,
     MatType& gradient)
@@ -326,7 +326,7 @@ void BatchNormType<MatType>::Gradient(
 }
 
 template<typename MatType>
-void BatchNormType<MatType>::ComputeOutputDimensions()
+void BatchNorm<MatType>::ComputeOutputDimensions()
 {
   if (minAxis > maxAxis)
   {
@@ -365,7 +365,7 @@ void BatchNormType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void BatchNormType<MatType>::serialize(
+void BatchNorm<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));

@@ -22,8 +22,8 @@
 namespace mlpack {
 
 template <typename MatType, typename RegularizerType>
-MultiheadAttentionType<MatType, RegularizerType>::
-MultiheadAttentionType() :
+MultiheadAttention<MatType, RegularizerType>::
+MultiheadAttention() :
     tgtSeqLen(0),
     srcSeqLen(0),
     embedDim(0),
@@ -35,8 +35,8 @@ MultiheadAttentionType() :
 }
 
 template <typename MatType, typename RegularizerType>
-MultiheadAttentionType<MatType, RegularizerType>::
-MultiheadAttentionType(
+MultiheadAttention<MatType, RegularizerType>::
+MultiheadAttention(
     const size_t tgtSeqLen,
     const size_t numHeads,
     const MatType& attnmask,
@@ -53,7 +53,7 @@ MultiheadAttentionType(
 }
 
 template <typename MatType, typename RegularizerType>
-void MultiheadAttentionType<MatType, RegularizerType>::SetWeights(
+void MultiheadAttention<MatType, RegularizerType>::SetWeights(
     const MatType& weightsIn)
 {
   MakeAlias(weights, weightsIn, (4 * embedDim + 4) * embedDim, 1);
@@ -70,7 +70,7 @@ void MultiheadAttentionType<MatType, RegularizerType>::SetWeights(
 }
 
 template <typename MatType, typename RegularizerType>
-void MultiheadAttentionType<MatType, RegularizerType>::
+void MultiheadAttention<MatType, RegularizerType>::
 Forward(const MatType& input, MatType& output)
 {
   if (input.n_rows != embedDim *
@@ -179,7 +179,7 @@ Forward(const MatType& input, MatType& output)
 }
 
 template <typename MatType, typename RegularizerType>
-void MultiheadAttentionType<MatType, RegularizerType>::
+void MultiheadAttention<MatType, RegularizerType>::
 Backward(const MatType& /* input */,
          const MatType& /* output */,
          const MatType& gy,
@@ -300,7 +300,7 @@ Backward(const MatType& /* input */,
 }
 
 template <typename MatType, typename RegularizerType>
-void MultiheadAttentionType<MatType, RegularizerType>::
+void MultiheadAttention<MatType, RegularizerType>::
 Gradient(const MatType& input,
          const MatType& error,
          MatType& gradient)
@@ -457,7 +457,7 @@ Gradient(const MatType& input,
 
 template <typename MatType, typename RegularizerType>
 template <typename Archive>
-void MultiheadAttentionType<MatType, RegularizerType>::
+void MultiheadAttention<MatType, RegularizerType>::
 serialize(Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));

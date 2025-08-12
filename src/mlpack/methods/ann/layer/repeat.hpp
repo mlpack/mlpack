@@ -30,7 +30,7 @@ namespace mlpack {
  *    computation.
  */
 template <typename MatType = arma::mat>
-class RepeatType : public Layer<MatType>
+class Repeat : public Layer<MatType>
 {
  public:
   //! Get Specific Col type, not only arma
@@ -41,7 +41,7 @@ class RepeatType : public Layer<MatType>
    * dimensions), so this is the equivalent of an Identity Layer.
    * Interleave will be false (e.g. repeat in blocks).
    */
-  RepeatType();
+  Repeat();
 
   /**
    * Create the Repeat object, specifying the number of times to repeat
@@ -53,24 +53,24 @@ class RepeatType : public Layer<MatType>
    * @apram interleave If true, the output will be interleaved (similar to
    *        arma::repelem).  If false, the output will be repeated in blocks.
    */
-  RepeatType(std::vector<size_t> multiples, bool interleave = false);
+  Repeat(std::vector<size_t> multiples, bool interleave = false);
 
   /**
    * Destroy the layers held by the model.
    */
-  virtual ~RepeatType() { }
+  virtual ~Repeat() { }
 
-  //! Clone the RepeatType object. This handles polymorphism correctly.
-  RepeatType* Clone() const override { return new RepeatType(*this); }
+  //! Clone the Repeat object. This handles polymorphism correctly.
+  Repeat* Clone() const override { return new Repeat(*this); }
 
-  //! Copy the given RepeatType layer.
-  RepeatType(const RepeatType& other);
-  //! Take ownership of the given RepeatType layer.
-  RepeatType(RepeatType&& other) noexcept;
-  //! Copy the given RepeatType layer.
-  RepeatType& operator=(const RepeatType& other);
-  //! Take ownership of the given RepeatType layer.
-  RepeatType& operator=(RepeatType&& other) noexcept;
+  //! Copy the given Repeat layer.
+  Repeat(const Repeat& other);
+  //! Take ownership of the given Repeat layer.
+  Repeat(Repeat&& other) noexcept;
+  //! Copy the given Repeat layer.
+  Repeat& operator=(const Repeat& other);
+  //! Take ownership of the given Repeat layer.
+  Repeat& operator=(Repeat&& other) noexcept;
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -144,10 +144,7 @@ class RepeatType : public Layer<MatType>
   // input elements for use in the backward pass.
   size_t sizeMult;
   UintMat backIdxs;
-}; // class RepeatType.
-
-// Standard Repeat layer.
-using Repeat = RepeatType<arma::mat>;
+}; // class Repeat.
 
 } // namespace mlpack
 

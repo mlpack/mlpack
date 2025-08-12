@@ -28,32 +28,32 @@ namespace mlpack {
  *         computation.
  */
 template <typename MatType = arma::mat>
-class IdentityType : public Layer<MatType>
+class Identity : public Layer<MatType>
 {
  public:
   //! Create the AdaptiveMaxPooling object.
-  IdentityType();
+  Identity();
 
   // Virtual destructor.
-  virtual ~IdentityType()
+  virtual ~Identity()
   {
     // Nothing to do here.
   }
 
-  //! Copy the given IdentityType.
-  IdentityType(const IdentityType& other);
-  //! Take ownership of the given IdentityType.
-  IdentityType(IdentityType&& other);
-  //! Copy the given IdentityType.
-  IdentityType& operator=(const IdentityType& other);
-  //! Take ownership of the given IdentityType.
-  IdentityType& operator=(IdentityType&& other);
+  //! Copy the given Identity.
+  Identity(const Identity& other);
+  //! Take ownership of the given Identity.
+  Identity(Identity&& other);
+  //! Copy the given Identity.
+  Identity& operator=(const Identity& other);
+  //! Take ownership of the given Identity.
+  Identity& operator=(Identity&& other);
 
-  //! Clone the IdentityType object.
+  //! Clone the Identity object.
   //! This handles polymorphism correctly.
-  IdentityType* Clone() const
+  Identity* Clone() const
   {
-    return new IdentityType(*this);
+    return new Identity(*this);
   }
 
   /**
@@ -85,11 +85,7 @@ class IdentityType : public Layer<MatType>
    */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t version);
-}; // class IdentityType
-
-// Convenience typedefs.
-
-using Identity = IdentityType<arma::mat>;
+}; // class Identity
 
 } // namespace mlpack
 

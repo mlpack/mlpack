@@ -19,7 +19,7 @@
 namespace mlpack {
 
 template<typename MatType, typename RegularizerType>
-LinearNoBiasType<MatType, RegularizerType>::LinearNoBiasType() :
+LinearNoBias<MatType, RegularizerType>::LinearNoBias() :
     Layer<MatType>(),
     inSize(0),
     outSize(0)
@@ -28,7 +28,7 @@ LinearNoBiasType<MatType, RegularizerType>::LinearNoBiasType() :
 }
 
 template<typename MatType, typename RegularizerType>
-LinearNoBiasType<MatType, RegularizerType>::LinearNoBiasType(
+LinearNoBias<MatType, RegularizerType>::LinearNoBias(
     const size_t outSize,
     RegularizerType regularizer) :
     Layer<MatType>(),
@@ -40,8 +40,8 @@ LinearNoBiasType<MatType, RegularizerType>::LinearNoBiasType(
 }
 
 template<typename MatType, typename RegularizerType>
-LinearNoBiasType<MatType, RegularizerType>::LinearNoBiasType(
-    const LinearNoBiasType& layer) :
+LinearNoBias<MatType, RegularizerType>::LinearNoBias(
+    const LinearNoBias& layer) :
     Layer<MatType>(layer),
     inSize(layer.inSize),
     outSize(layer.outSize),
@@ -51,11 +51,11 @@ LinearNoBiasType<MatType, RegularizerType>::LinearNoBiasType(
 }
 
 template<typename MatType, typename RegularizerType>
-LinearNoBiasType<MatType, RegularizerType>::LinearNoBiasType(
-    LinearNoBiasType&& layer) :
+LinearNoBias<MatType, RegularizerType>::LinearNoBias(
+    LinearNoBias&& layer) :
     Layer<MatType>(std::move(layer)),
-    inSize(0),
-    outSize(0),
+    inSize(std::move(layer.inSize)),
+    outSize(std::move(layer.outSize)),
     regularizer(std::move(layer.regularizer))
 {
   // Reset parameters of other layer.
@@ -64,9 +64,9 @@ LinearNoBiasType<MatType, RegularizerType>::LinearNoBiasType(
 }
 
 template<typename MatType, typename RegularizerType>
-LinearNoBiasType<MatType, RegularizerType>&
-LinearNoBiasType<MatType, RegularizerType>::operator=(
-    const LinearNoBiasType& layer)
+LinearNoBias<MatType, RegularizerType>&
+LinearNoBias<MatType, RegularizerType>::operator=(
+    const LinearNoBias& layer)
 {
   if (this != &layer)
   {
@@ -80,9 +80,9 @@ LinearNoBiasType<MatType, RegularizerType>::operator=(
 }
 
 template<typename MatType, typename RegularizerType>
-LinearNoBiasType<MatType, RegularizerType>&
-LinearNoBiasType<MatType, RegularizerType>::operator=(
-    LinearNoBiasType&& layer)
+LinearNoBias<MatType, RegularizerType>&
+LinearNoBias<MatType, RegularizerType>::operator=(
+    LinearNoBias&& layer)
 {
   if (this != &layer)
   {
@@ -100,21 +100,21 @@ LinearNoBiasType<MatType, RegularizerType>::operator=(
 }
 
 template<typename MatType, typename RegularizerType>
-void LinearNoBiasType<MatType, RegularizerType>::SetWeights(
+void LinearNoBias<MatType, RegularizerType>::SetWeights(
     const MatType& weights)
 {
   MakeAlias(weight, weights, outSize, inSize);
 }
 
 template<typename MatType, typename RegularizerType>
-void LinearNoBiasType<MatType, RegularizerType>::Forward(
+void LinearNoBias<MatType, RegularizerType>::Forward(
     const MatType& input, MatType& output)
 {
   output = weight * input;
 }
 
 template<typename MatType, typename RegularizerType>
-void LinearNoBiasType<MatType, RegularizerType>::Backward(
+void LinearNoBias<MatType, RegularizerType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
@@ -124,7 +124,7 @@ void LinearNoBiasType<MatType, RegularizerType>::Backward(
 }
 
 template<typename MatType, typename RegularizerType>
-void LinearNoBiasType<MatType, RegularizerType>::Gradient(
+void LinearNoBias<MatType, RegularizerType>::Gradient(
     const MatType& input,
     const MatType& error,
     MatType& gradient)
@@ -134,7 +134,7 @@ void LinearNoBiasType<MatType, RegularizerType>::Gradient(
 }
 
 template<typename MatType, typename RegularizerType>
-void LinearNoBiasType<MatType, RegularizerType>::ComputeOutputDimensions()
+void LinearNoBias<MatType, RegularizerType>::ComputeOutputDimensions()
 {
   inSize = this->inputDimensions[0];
   for (size_t i = 1; i < this->inputDimensions.size(); ++i)
@@ -148,7 +148,7 @@ void LinearNoBiasType<MatType, RegularizerType>::ComputeOutputDimensions()
 
 template<typename MatType, typename RegularizerType>
 template<typename Archive>
-void LinearNoBiasType<MatType, RegularizerType>::serialize(
+void LinearNoBias<MatType, RegularizerType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));

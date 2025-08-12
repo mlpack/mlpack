@@ -19,7 +19,7 @@
 namespace mlpack {
 
 template<typename MatType>
-AddType<MatType>::AddType() :
+Add<MatType>::Add() :
     Layer<MatType>(),
     outSize(0)
 {
@@ -27,7 +27,7 @@ AddType<MatType>::AddType() :
 }
 
 template<typename MatType>
-AddType<MatType>::AddType(const AddType& other) :
+Add<MatType>::Add(const Add& other) :
     Layer<MatType>(other),
     outSize(other.outSize)
 {
@@ -35,7 +35,7 @@ AddType<MatType>::AddType(const AddType& other) :
 }
 
 template<typename MatType>
-AddType<MatType>::AddType(AddType&& other) :
+Add<MatType>::Add(Add&& other) :
     Layer<MatType>(std::move(other)),
     outSize(std::move(other.outSize))
 {
@@ -43,8 +43,8 @@ AddType<MatType>::AddType(AddType&& other) :
 }
 
 template<typename MatType>
-AddType<MatType>&
-AddType<MatType>::operator=(const AddType& other)
+Add<MatType>&
+Add<MatType>::operator=(const Add& other)
 {
   if (&other != this)
   {
@@ -56,8 +56,8 @@ AddType<MatType>::operator=(const AddType& other)
 }
 
 template<typename MatType>
-AddType<MatType>&
-AddType<MatType>::operator=(AddType&& other)
+Add<MatType>&
+Add<MatType>::operator=(Add&& other)
 {
   if (&other != this)
   {
@@ -69,13 +69,13 @@ AddType<MatType>::operator=(AddType&& other)
 }
 
 template<typename MatType>
-void AddType<MatType>::Forward(const MatType& input, MatType& output)
+void Add<MatType>::Forward(const MatType& input, MatType& output)
 {
   output = input + repmat(vectorise(weights), 1, input.n_cols);
 }
 
 template<typename MatType>
-void AddType<MatType>::Backward(
+void Add<MatType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
@@ -85,7 +85,7 @@ void AddType<MatType>::Backward(
 }
 
 template<typename MatType>
-void AddType<MatType>::Gradient(
+void Add<MatType>::Gradient(
     const MatType& /* input */,
     const MatType& error,
     MatType& gradient)
@@ -95,14 +95,14 @@ void AddType<MatType>::Gradient(
 }
 
 template<typename MatType>
-void AddType<MatType>::SetWeights(const MatType& weightsIn)
+void Add<MatType>::SetWeights(const MatType& weightsIn)
 {
   // Set the weights to wrap the given memory.
   MakeAlias(weights, weightsIn, 1, outSize);
 }
 
 template<typename MatType>
-void AddType<MatType>::ComputeOutputDimensions()
+void Add<MatType>::ComputeOutputDimensions()
 {
   this->outputDimensions = this->inputDimensions;
 
@@ -113,7 +113,7 @@ void AddType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void AddType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
+void Add<MatType>::serialize(Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));
 

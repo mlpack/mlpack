@@ -45,32 +45,32 @@ namespace mlpack {
  *         arma::sp_mat or arma::cube).
  */
 template <typename MatType = arma::mat>
-class GRUType : public RecurrentLayer<MatType>
+class GRU : public RecurrentLayer<MatType>
 {
  public:
   // Create the GRU object.
-  GRUType();
+  GRU();
 
   /**
    * Create the GRU layer object using the specified parameters.
    *
    * @param outSize The number of output units.
    */
-  GRUType(const size_t outSize);
+  GRU(const size_t outSize);
 
-  // Clone the GRUType object. This handles polymorphism correctly.
-  GRUType* Clone() const { return new GRUType(*this); }
+  // Clone the GRU object. This handles polymorphism correctly.
+  GRU* Clone() const { return new GRU(*this); }
 
-  // Copy the given GRUType object.
-  GRUType(const GRUType& other);
-  // Take ownership of the given GRUType object's data.
-  GRUType(GRUType&& other);
-  // Copy the given GRUType object.
-  GRUType& operator=(const GRUType& other);
-  // Take ownership of the given GRUType object's data.
-  GRUType& operator=(GRUType&& other);
+  // Copy the given GRU object.
+  GRU(const GRU& other);
+  // Take ownership of the given GRU object's data.
+  GRU(GRU&& other);
+  // Copy the given GRU object.
+  GRU& operator=(const GRU& other);
+  // Take ownership of the given GRU object's data.
+  GRU& operator=(GRU&& other);
 
-  virtual ~GRUType() { }
+  virtual ~GRU() { }
 
   /**
    * Reset the layer parameter. The method is called to
@@ -183,9 +183,6 @@ class GRUType : public RecurrentLayer<MatType>
   // Makes internal state aliases from the recurrent state.
   void MakeStateAliases(size_t batchSize);
 }; // class GRU
-
-// Standard GRU layer
-using GRU = GRUType<arma::mat>;
 
 } // namespace mlpack
 

@@ -16,6 +16,9 @@ _????-??-??_
 
  * Fix dependency detection bugs in `mlpack.cmake` (#3981).
 
+ * Add `FFN::Add()` and `RNN::Add()` with copy and move semantics; use these
+   instead of passing layers to `Add()` as pointers (#3974).
+
 ## mlpack 4.6.2
 
 _2025-05-22_

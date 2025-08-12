@@ -53,11 +53,11 @@ namespace mlpack {
  *    computation.
  */
 template<typename MatType = arma::mat>
-class LSTMType : public RecurrentLayer<MatType>
+class LSTM : public RecurrentLayer<MatType>
 {
  public:
   //! Create the LSTM object.
-  LSTMType();
+  LSTM();
 
   /**
    * Create the LSTM layer object using the specified parameters.
@@ -65,21 +65,21 @@ class LSTMType : public RecurrentLayer<MatType>
    * @param outSize The number of output units.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
-  LSTMType(const size_t outSize);
+  LSTM(const size_t outSize);
 
-  //! Clone the LSTMType object. This handles polymorphism correctly.
-  LSTMType* Clone() const { return new LSTMType(*this); }
+  //! Clone the LSTM object. This handles polymorphism correctly.
+  LSTM* Clone() const { return new LSTM(*this); }
 
-  //! Copy the given LSTMType object.
-  LSTMType(const LSTMType& other);
-  //! Take ownership of the given LSTMType object's data.
-  LSTMType(LSTMType&& other);
-  //! Copy the given LSTMType object.
-  LSTMType& operator=(const LSTMType& other);
-  //! Take ownership of the given LSTMType object's data.
-  LSTMType& operator=(LSTMType&& other);
+  //! Copy the given LSTM object.
+  LSTM(const LSTM& other);
+  //! Take ownership of the given LSTM object's data.
+  LSTM(LSTM&& other);
+  //! Copy the given LSTM object.
+  LSTM& operator=(const LSTM& other);
+  //! Take ownership of the given LSTM object's data.
+  LSTM& operator=(LSTM&& other);
 
-  virtual ~LSTMType() { }
+  virtual ~LSTM() { }
 
   /**
    * Reset the layer parameter. The method is called to
@@ -295,12 +295,7 @@ class LSTMType : public RecurrentLayer<MatType>
   // Calling this function will set up workspace memory for the backward pass,
   // if necessary.
   void SetBackwardWorkspace(const size_t batchSize);
-}; // class LSTMType
-
-// Convenience typedefs.
-
-// Standard LSTM layer.
-using LSTM = LSTMType<arma::mat>;
+}; // class LSTM
 
 } // namespace mlpack
 

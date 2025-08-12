@@ -46,7 +46,7 @@ namespace mlpack {
  *    type to differ from the input type (Default: arma::mat).
  */
 template <typename MatType = arma::mat>
-class HardTanHType : public Layer<MatType>
+class HardTanH : public Layer<MatType>
 {
  public:
   /**
@@ -57,24 +57,24 @@ class HardTanHType : public Layer<MatType>
    * @param maxValue Range of the linear region maximum value.
    * @param minValue Range of the linear region minimum value.
    */
-  HardTanHType(const double maxValue = 1, const double minValue = -1);
+  HardTanH(const double maxValue = 1, const double minValue = -1);
 
-  virtual ~HardTanHType() { }
-
-  //! Copy the other HardTanH layer
-  HardTanHType(const HardTanHType& layer);
-
-  //! Take ownership of the members of the other HardTanH Layer
-  HardTanHType(HardTanHType&& layer);
+  virtual ~HardTanH() { }
 
   //! Copy the other HardTanH layer
-  HardTanHType& operator=(const HardTanHType& layer);
+  HardTanH(const HardTanH& layer);
 
   //! Take ownership of the members of the other HardTanH Layer
-  HardTanHType& operator=(HardTanHType&& layer);
+  HardTanH(HardTanH&& layer);
 
-  //! Clone the HardTanHType object. This handles polymorphism correctly.
-  HardTanHType* Clone() const { return new HardTanHType(*this); }
+  //! Copy the other HardTanH layer
+  HardTanH& operator=(const HardTanH& layer);
+
+  //! Take ownership of the members of the other HardTanH Layer
+  HardTanH& operator=(HardTanH&& layer);
+
+  //! Clone the HardTanH object. This handles polymorphism correctly.
+  HardTanH* Clone() const { return new HardTanH(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -122,12 +122,7 @@ class HardTanHType : public Layer<MatType>
 
   //! Minimum value for the HardTanH function.
   double minValue;
-}; // class HardTanHType
-
-// Convenience typedefs.
-
-// Standard HardTanH layer.
-using HardTanH = HardTanHType<arma::mat>;
+}; // class HardTanH
 
 } // namespace mlpack
 
