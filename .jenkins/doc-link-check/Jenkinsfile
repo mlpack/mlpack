@@ -11,14 +11,10 @@ pipeline
   // for this job.
   agent
   {
-    node
-    {
-      label 'doc-check'
-    }
-
     docker
     {
       image 'mlpack/jenkins-mlpack-docbuild:latest'
+      label 'doc-check'
       alwaysPull true
       args '-v /home/jenkins/link_cache/:/opt/link_cache/'
     }
