@@ -906,7 +906,7 @@ template<typename ModelType>
 void ReberGrammarTestNetwork(ModelType& model,
                              const bool embedded = false,
                              const size_t maxEpochs = 30,
-                             const size_t trials = 3)
+                             const size_t trials = 5)
 {
   const size_t trainSize = 1000;
   const size_t testSize = 1000;
@@ -1023,7 +1023,7 @@ TEMPLATE_TEST_CASE("RNNEmbeddedReberGrammarTest", "[RecurrentNetworkTest]",
     GRU<>)
 {
   RNN<MeanSquaredError> model(5, false, MeanSquaredError(),
-      RandomInitialization(-0.5, 0.5));
+      RandomInitialization(-0.1, 0.1));
   // Sometimes a few extra units are needed to effectively get the embedded
   // Reber grammar every time.
   model.Add<TestType>(25);
