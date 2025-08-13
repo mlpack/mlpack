@@ -175,7 +175,7 @@ pipeline
                       lockfile -r-1 -l 7200 ~/mlpack_test.lock;
                       killall -9 mlpack_test;
                       mkdir -p reports;
-                      ./mlpack_test -r junit -o reports/mlpack_test.junit.xml;
+                      ./mlpack_test -r junit -n mlpack_test.${target} -o reports/mlpack_test.junit.xml;
                       rm -f ~/mlpack_test.lock;" \
                       || echo "Test failure or other problem.";
 
