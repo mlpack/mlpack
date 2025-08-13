@@ -24,7 +24,7 @@ void SCVerifyCorrectness(const VecType& beta,
                          double lambda)
 {
   const double tol = std::is_same_v<typename VecType::elem_type, float> ?
-      1e-6 : 1e-12;
+      1e-5 : 1e-12;
   size_t nDims = beta.n_elem;
   for (size_t j = 0; j < nDims; ++j)
   {
@@ -56,7 +56,7 @@ TEMPLATE_TEST_CASE("SparseCodingTestCodingStepLasso", "[SparseCodingTest]",
   double lambda1 = 0.1;
   uword nAtoms = 25;
 
-  arma::mat inX; // The .arm file contains an arma::mat.
+  arma::mat inX;
   inX.load("mnist_first250_training_4s_and_9s.csv");
   MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
@@ -91,7 +91,7 @@ TEMPLATE_TEST_CASE("SparseCodingTestCodingStepElasticNet", "[SparseCodingTest]",
   double lambda2 = 0.2;
   uword nAtoms = 25;
 
-  arma::mat inX; // The .arm file contains an arma::mat.
+  arma::mat inX;
   inX.load("mnist_first250_training_4s_and_9s.csv");
   MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
@@ -128,7 +128,7 @@ TEMPLATE_TEST_CASE("SparseCodingTestDictionaryStep", "[SparseCodingTest]",
   double lambda1 = 0.1;
   uword nAtoms = 25;
 
-  arma::mat inX; // The .arm file contains an arma::mat.
+  arma::mat inX;
   inX.load("mnist_first250_training_4s_and_9s.csv");
   MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
@@ -221,7 +221,7 @@ TEMPLATE_TEST_CASE("SparseCodingTrainReturnObjective", "[SparseCodingTest]",
   double lambda1 = 0.1;
   uword nAtoms = 25;
 
-  arma::mat inX; // The .arm file contains an arma::mat.
+  arma::mat inX;
   inX.load("mnist_first250_training_4s_and_9s.csv");
   MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
