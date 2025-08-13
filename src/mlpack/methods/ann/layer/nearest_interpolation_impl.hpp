@@ -114,8 +114,8 @@ void NearestInterpolationType<MatType>::Forward(
 
 template<typename MatType>
 void NearestInterpolationType<MatType>::Backward(
-  const MatType& /*input*/,
-  const MatType& /*input*/,
+  const MatType& /* input */,
+  const MatType& /* output */,
   const MatType& gy,
   MatType& g)
 {
