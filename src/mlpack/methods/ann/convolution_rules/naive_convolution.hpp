@@ -73,12 +73,20 @@ class NaiveConvolution
       output.zeros(outputRows, outputCols);
     }
 
-    FilMatType dilatedFilter(filterRows, filterCols, arma::fill::zeros);
-    for (size_t i = 0; i < filter.n_rows; i++)
+    FilMatType dilatedFilter;
+    if (dilationW == 1 && dilationH == 1)
     {
-      for (size_t j = 0; j < filter.n_cols; j++)
+      MakeAlias(dilatedFilter, filter, filter.n_rows, filter.n_cols);
+    }
+    else
+    {
+      dilatedFilter = FilMatType(filterRows, filterCols, arma::fill::zeros);
+      for (size_t i = 0; i < filter.n_rows; i++)
       {
-        dilatedFilter(i * dilationH, j * dilationW) = filter(i, j);
+        for (size_t j = 0; j < filter.n_cols; j++)
+        {
+          dilatedFilter(i * dilationH, j * dilationW) = filter(i, j);
+        }
       }
     }
 
