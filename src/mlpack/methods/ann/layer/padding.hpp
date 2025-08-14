@@ -136,6 +136,9 @@ using Padding = PaddingType<arma::mat>;
 
 } // namespace mlpack
 
+CEREAL_TEMPLATE_CLASS_VERSION((typename MatType),
+    (mlpack::PaddingType<MatType>), (1))
+
 // Include implementation.
 #include "padding_impl.hpp"
 

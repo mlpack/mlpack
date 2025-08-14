@@ -188,7 +188,7 @@ void PaddingType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void PaddingType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
+void PaddingType<MatType>::serialize(Archive& ar, const uint32_t version)
 {
   ar(cereal::base_class<Layer<MatType>>(this));
 
@@ -197,6 +197,15 @@ void PaddingType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(padHTop));
   ar(CEREAL_NVP(padHBottom));
   ar(CEREAL_NVP(totalInMaps));
+
+  if (cereal::is_loading<Archive>() && version == 0)
+  {
+    fillValue = 0;
+  }
+  else
+  {
+    ar(CEREAL_NVP(fillValue));
+  }
 }
 
 } // namespace mlpack
