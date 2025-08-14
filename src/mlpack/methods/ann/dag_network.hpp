@@ -16,7 +16,6 @@
 
 #include <mlpack/core.hpp>
 
-#include "loss_functions/loss_functions.hpp"
 #include "init_rules/init_rules.hpp"
 
 #include <ensmallen.hpp>
@@ -433,8 +432,6 @@ public:
    */
   void ResetData(MatType predictors, MatType responses);
 
-  OutputLayerType outputLayer;
-
 private:
   // Helper functions.
 
@@ -547,6 +544,9 @@ private:
    * Delete extra deltas allocated in `InitializeBackwardPassMemory`
    */
   void DeleteExtraDeltas() {
+    if (!extraDeltasAllocated)
+      return;
+
     for (size_t i = 0; i < sortedNetwork.size(); i++)
     {
       size_t layerIndex = sortedNetwork[i];
@@ -556,6 +556,7 @@ private:
       if (parentsList.at(layerIndex).size() > 1)
         delete inputDeltas[i];
     }
+    extraDeltasAllocated = false;
   }
 
   /**
@@ -686,6 +687,8 @@ private:
   // If true, each layer has its activation/gradient memory properly set 
   // for the forward/backward pass.
   bool layerMemoryIsSet;
+
+  bool extraDeltasAllocated;
 };
 
 } // namespace mlpack
