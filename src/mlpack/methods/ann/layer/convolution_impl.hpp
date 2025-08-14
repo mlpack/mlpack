@@ -339,7 +339,7 @@ void ConvolutionType<
       // Iterate over input maps (we will apply the filter and sum).
       for (size_t inMap = 0; inMap < inMaps; ++inMap)
       {
-        MakeAlias(inputSlice, (usingPadding ? inputPadded : input), 
+        MakeAlias(inputSlice, (usingPadding ? inputPadded : input),
             paddedRows, paddedCols, (inMap + fullInputOffset) *
             (paddedRows * paddedCols));
         ForwardConvolutionRule::Convolution(
