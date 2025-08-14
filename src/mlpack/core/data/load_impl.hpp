@@ -121,47 +121,34 @@ bool LoadMatrix(const std::string& filename,
 {
   bool success = false;
 
-  if (opts.Format() == FileType::PNG || opts.Format() == FileType::JPG ||
-      opts.Format() == FileType::HDR || opts.Format() == FileType::TGA ||
-      opts.Format() == FileType::GIF || opts.Format() == FileType::PIC ||
-      opts.Format() == FileType::PSD || opts.Format() == FileType::PNM ||
-      opts.Format() == FileType::ImageType)
+  TextOptions txtOpts(std::move(opts));
+  if constexpr (IsSparseMat<MatType>::value)
   {
-    ImageOptions imgOpts(std::move(opts));
-    success = Load(filename, matrix, imgOpts);
-    opts = std::move(imgOpts);
+    success = LoadSparse(filename, matrix, txtOpts, stream);
+  }
+  else if (txtOpts.Categorical() ||
+      (txtOpts.Format() == FileType::ARFFASCII))
+  {
+    success = LoadCategorical(filename, matrix, txtOpts);
+  }
+  else if constexpr (IsCol<MatType>::value)
+  {
+    success = LoadCol(filename, matrix, txtOpts, stream);
+  }
+  else if constexpr (IsRow<MatType>::value)
+  {
+    success = LoadRow(filename, matrix, txtOpts, stream);
+  }
+  else if constexpr (IsDense<MatType>::value)
+  {
+    success = LoadDense(filename, matrix, txtOpts, stream);
   }
   else
   {
-    TextOptions txtOpts(std::move(opts));
-    if constexpr (IsSparseMat<MatType>::value)
-    {
-      success = LoadSparse(filename, matrix, txtOpts, stream);
-    }
-    else if (txtOpts.Categorical() ||
-        (txtOpts.Format() == FileType::ARFFASCII))
-    {
-      success = LoadCategorical(filename, matrix, txtOpts);
-    }
-    else if constexpr (IsCol<MatType>::value)
-    {
-      success = LoadCol(filename, matrix, txtOpts, stream);
-    }
-    else if constexpr (IsRow<MatType>::value)
-    {
-      success = LoadRow(filename, matrix, txtOpts, stream);
-    }
-    else if constexpr (IsDense<MatType>::value)
-    {
-      success = LoadDense(filename, matrix, txtOpts, stream);
-    }
-    else
-    {
-      return handleError("data::Load(): unknown matrix-like type given!",
-          txtOpts);
-    }
-    opts = std::move(txtOpts);
+    return handleError("data::Load(): unknown matrix-like type given!",
+        txtOpts);
   }
+  opts = std::move(txtOpts);
   return success;
 }
 

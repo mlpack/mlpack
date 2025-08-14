@@ -38,7 +38,7 @@ bool Save(const std::string& filename,
   opts.Format() = FileType::ImageType;
   std::vector<std::string> files;
   files.push_back(filename);
-  Save(files.back(), matrix, opts);
+  return Save(files, matrix, opts);
 }
 
 /**
@@ -58,7 +58,7 @@ bool Save(const std::vector<std::string>& files,
 {
   opts.Fatal() = fatal;
   opts.Format() = FileType::ImageType;
-  Save(files, matrix, opts);
+  return Save(files, matrix, opts);
 }
 
 /**

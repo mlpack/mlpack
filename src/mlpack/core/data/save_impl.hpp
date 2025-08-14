@@ -88,39 +88,27 @@ bool SaveInternal(const std::string& filename,
 {
   bool success = false;
 
-  if (opts.Format() == FileType::PNG || opts.Format() == FileType::JPG ||
-      opts.Format() == FileType::HDR || opts.Format() == FileType::TGA ||
-      opts.Format() == FileType::GIF || opts.Format() == FileType::PIC ||
-      opts.Format() == FileType::PSD || opts.Format() == FileType::PNM ||
-      opts.Format() == FileType::ImageType)
+  TextOptions txtOpts(std::move(opts));
+  if constexpr (IsSparseMat<ObjectType>::value)
   {
-    ImageOptions imgOpts(std::move(opts));
-    success = Save(filename, matrix, imgOpts);
-    opts = std::move(imgOpts);
+    success = SaveSparse(matrix, txtOpts, filename, stream);
   }
-  else
+  else if constexpr (IsCol<ObjectType>::value)
   {
-    TextOptions txtOpts(std::move(opts));
-    if constexpr (IsSparseMat<ObjectType>::value)
-    {
-      success = SaveSparse(matrix, txtOpts, filename, stream);
-    }
-    else if constexpr (IsCol<ObjectType>::value)
-    {
-      opts.NoTranspose() = true;
-      success = SaveDense(matrix, txtOpts, filename, stream);
-    }
-    else if constexpr (IsRow<ObjectType>::value)
-    {
-      opts.NoTranspose() = false;
-      success = SaveDense(matrix, txtOpts, filename, stream);
-    }
-    else if constexpr (IsDense<ObjectType>::value)
-    {
-      success = SaveDense(matrix, txtOpts, filename, stream);
-    }
-    opts = std::move(txtOpts);
+    opts.NoTranspose() = true;
+    success = SaveDense(matrix, txtOpts, filename, stream);
   }
+  else if constexpr (IsRow<ObjectType>::value)
+  {
+    opts.NoTranspose() = false;
+    success = SaveDense(matrix, txtOpts, filename, stream);
+  }
+  else if constexpr (IsDense<ObjectType>::value)
+  {
+    success = SaveDense(matrix, txtOpts, filename, stream);
+  }
+  opts = std::move(txtOpts);
+
   return success;
 }
 

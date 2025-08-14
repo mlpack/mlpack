@@ -68,6 +68,40 @@ TEST_CASE("LoadImageNewAPITest", "[ImageLoadTest]")
 }
 
 /**
+ * Test that the image is loaded correctly when specifying the type.
+ */
+TEST_CASE("LoadImageSpecifyTypeTest", "[ImageLoadTest]")
+{
+  arma::Mat<unsigned char> matrix;
+  data::ImageOptions opts;
+  opts.Fatal() = false;
+  opts.Format() = FileType::PNG;
+
+  REQUIRE(data::Load("test_image.png", matrix, opts) == true);
+  // width * height * channels.
+  REQUIRE(matrix.n_rows == 50 * 50 * 3);
+  REQUIRE(opts.Height() == 50);
+  REQUIRE(opts.Width() == 50);
+  REQUIRE(opts.Channels() == 3);
+  REQUIRE(matrix.n_cols == 1);
+}
+
+/**
+ * Test that the image is loaded correctly if the type is specified in the
+ * function.
+ */
+TEST_CASE("LoadPNGImageTest", "[ImageLoadTest]")
+{
+  arma::Mat<unsigned char> matrix;
+  // This is a rare case where the user is not supposed to used it.
+  // but we should test against it
+  REQUIRE(data::Load("test_image.png", matrix, PNG) == true);
+  // width * height * channels.
+  REQUIRE(matrix.n_rows == 50 * 50 * 3);
+  REQUIRE(matrix.n_cols == 1);
+}
+
+/**
  * Test if the image is saved correctly using API.
  */
 TEST_CASE("SaveImageAPITest", "[ImageLoadTest]")
@@ -89,10 +123,11 @@ TEST_CASE("SaveImageAPITest", "[ImageLoadTest]")
   remove("APITest.bmp");
 }
 
+
 /**
  * Test if the image is saved correctly using the new API.
  */
-TEST_CASE("SaveImageAPITest", "[ImageLoadTest]")
+TEST_CASE("SaveImageNewAPITest", "[ImageLoadTest]")
 {
   data::ImageInfo opts(5, 5, 3, 90);
   opts.Fatal() = false;

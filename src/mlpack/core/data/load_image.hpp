@@ -48,7 +48,7 @@ bool Load(const std::string& filename,
   opts.Format() = FileType::ImageType;
   std::vector<std::string> files;
   files.push_back(filename);
-  Load(files.back(), matrix, opts);
+  return Load(files, matrix, opts);
 }
 
 /**
@@ -69,7 +69,7 @@ bool Load(const std::vector<std::string>& files,
   // Use the new implementation.
   opts.Fatal() = fatal;
   opts.Format() = FileType::ImageType;
-  Load(files, matrix, opts);
+  return Load(files, matrix, opts);
 }
 
 /**
