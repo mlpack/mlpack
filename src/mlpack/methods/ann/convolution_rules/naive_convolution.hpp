@@ -60,36 +60,34 @@ class NaiveConvolution
               const bool appending = false,
               const typename std::enable_if_t<IsMatrix<InMatType>::value>* = 0)
   {
-    using eT = typename InMatType::elem_type;
     // Compute the output size.  The filterRows and filterCols computation must
     // take into account the fact that dilation only adds rows or columns
     // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
     // 3x3 means an effective kernel size of 5x5, *not* 6x6.
+    const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
+    const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
     if (!appending)
     {
-      const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
-      const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
       const size_t outputRows = (input.n_rows - filterRows + dH) / dH;
       const size_t outputCols = (input.n_cols - filterCols + dW) / dW;
       output.zeros(outputRows, outputCols);
     }
 
-    // It seems to be about 3.5 times faster to use pointers instead of
-    // filter(ki, kj) * input(leftInput + ki, topInput + kj) and output(i, j).
-    eT* outputPtr = output.memptr();
+    FilMatType dilatedFilter(filterRows, filterCols, arma::fill::zeros);
+    for (size_t i = 0; i < filter.n_rows; i++)
+    {
+      for (size_t j = 0; j < filter.n_cols; j++)
+      {
+        dilatedFilter(i * dilationH, j * dilationW) = filter(i, j);
+      }
+    }
 
     for (size_t j = 0; j < output.n_cols; ++j)
     {
-      for (size_t i = 0; i < output.n_rows; ++i, outputPtr++)
+      for (size_t i = 0; i < output.n_rows; ++i)
       {
-        const eT* kernelPtr = filter.memptr();
-        for (size_t kj = 0; kj < filter.n_cols; ++kj)
-        {
-          const eT* inputPtr = input.colptr(kj * dilationW + j * dW) + i * dH;
-          for (size_t ki = 0; ki < filter.n_rows; ++ki, ++kernelPtr,
-              inputPtr += dilationH)
-            *outputPtr += *kernelPtr * (*inputPtr);
-        }
+        output(i, j) += accu(dilatedFilter % input.submat(i * dH, j * dW,
+            i * dH + filterRows - 1, j * dW + filterCols - 1));
       }
     }
   }
