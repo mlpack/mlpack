@@ -17,11 +17,11 @@
 namespace mlpack {
 
 template<typename OutputLayerType,
-         typename InitializationRuleType, 
+         typename InitializationRuleType,
          typename MatType>
 DAGNetwork<
     OutputLayerType,
-    InitializationRuleType, 
+    InitializationRuleType,
     MatType
 >::DAGNetwork(OutputLayerType outputLayer,
               InitializationRuleType initializeRule) :
@@ -145,7 +145,6 @@ DAGNetwork<
     layerInputs.resize(size, MatType());
 
     layerGradients.resize(network.size(), MatType());
-
   }
 
   return *this;
@@ -802,7 +801,7 @@ void DAGNetwork<
   // The first section of layerOuputMatrix (layerOutputSize)
   // gets used for layerOutputs.
   // layerInputs will be aliases to layerOutputs unless
-  // those layers have multiple parents. It's inputs will need 
+  // those layers have multiple parents. It's inputs will need
   // to be concatenated first). If thats the case
   // those layerInputs will aliases to the second section
   // of layerOutputMatrix (totalConcatSize).
@@ -923,7 +922,7 @@ void DAGNetwork<
     size_t currentLayer = sortedNetwork[i];
     Layer<MatType>* layer = network[currentLayer];
 
-    const std::vector<size_t>& parents = parentsList[currentLayer]; 
+    const std::vector<size_t>& parents = parentsList[currentLayer];
     if (parents.size() > 1)
     {
       inputDeltas.insert({ i, new MatType() });
@@ -1110,8 +1109,7 @@ void DAGNetwork<
             startCol + cols - 1);
 
           outputDeltas[parentIndex]->reshape(
-            outputDeltas[parentIndex]->n_elem / batchSize, batchSize
-          );
+            outputDeltas[parentIndex]->n_elem / batchSize, batchSize);
           startCol += cols;
         }
       }

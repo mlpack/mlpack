@@ -229,7 +229,7 @@ TEST_CASE("DAGNetworkTestConcatAxis1", "[DAGNetworkTest]")
 {
   size_t axis = 1;
   arma::mat input = arma::mat({
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
   }).t();
 
   arma::mat expectedOutput = arma::mat({
@@ -626,9 +626,7 @@ TEST_CASE("DAGNetworkAddMultiLayer", "[DAGNetworkTest]")
 TEST_CASE("DAGNetworkGradientAccumulatesAndResetsToZero", "[DAGNetworkTest]")
 {
   DAGNetwork<MeanSquaredError, ConstInitialization> model =
-    DAGNetwork(
-      MeanSquaredError(), ConstInitialization(1.0f)
-    );
+    DAGNetwork(MeanSquaredError(), ConstInitialization(1.0f));
 
   int a = model.Add<Add>();
   int b = model.Add<Add>();
@@ -659,55 +657,55 @@ TEST_CASE("DAGNetworkGradientAccumulatesAndResetsToZero", "[DAGNetworkTest]")
   CheckMatrices(gradients, expectedGradients);
 }
 
-// TEST_CASE("DAGNetworkSerializationTest", "[DAGNetworkTest]")
-// {
-//   arma::mat trainData;
-//   if (!data::Load("thyroid_train.csv", trainData))
-//     FAIL("Cannot open thyroid_train.csv");
-//
-//   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
-//   trainData.shed_row(trainData.n_rows - 1);
-//   trainLabels -= 1; // The labels should be between 0 and numClasses - 1.
-//
-//   arma::mat testData;
-//   if (!data::Load("thyroid_test.csv", testData))
-//     FAIL("Cannot load dataset thyroid_test.csv");
-//
-//   arma::mat testLabels = testData.row(testData.n_rows - 1);
-//   testData.shed_row(testData.n_rows - 1);
-//   testLabels -= 1; // The labels should be between 0 and numClasses - 1.
-//
-//   // Vanilla neural net with logistic activation function.
-//   // Because 92% of the patients are not hyperthyroid the neural
-//   // network must be significant better than 92%.
-//   DAGNetwork model;
-//   int linear_layer_1 = model.Add<Linear>(8);
-//   int sigmoid_layer_2 = model.Add<Sigmoid>();
-//   int dropout_layer_3 = model.Add<Dropout>();
-//   int linear_layer_4 = model.Add<Linear>(3);
-//   int logsoftmax_layer_5 = model.Add<LogSoftMax>();
-//
-//   model.Connect(linear_layer_1, sigmoid_layer_2);
-//   model.Connect(sigmoid_layer_2, dropout_layer_3);
-//   model.Connect(dropout_layer_3, linear_layer_4);
-//   model.Connect(linear_layer_4, logsoftmax_layer_5);
-//
-//   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
-//
-//   model.Train(trainData, trainLabels, opt);
-//
-//   FFN<NegativeLogLikelihood> xmlModel, jsonModel, binaryModel;
-//   xmlModel.Add<Linear>(10); // Layer that will get removed.
-//
-//   // Serialize into other models.
-//   SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
-//
-//   arma::mat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
-//   model.Predict(testData, predictions);
-//   xmlModel.Predict(testData, xmlPredictions);
-//   jsonModel.Predict(testData, jsonPredictions);
-//   binaryModel.Predict(testData, binaryPredictions);
-//
-//   CheckMatrices(predictions, xmlPredictions, jsonPredictions,
-//       binaryPredictions);
-// }
+TEST_CASE("DAGNetworkSerializationTest", "[DAGNetworkTest]")
+{
+  arma::mat trainData;
+  if (!data::Load("thyroid_train.csv", trainData))
+    FAIL("Cannot open thyroid_train.csv");
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+  trainLabels -= 1; // The labels should be between 0 and numClasses - 1.
+
+  arma::mat testData;
+  if (!data::Load("thyroid_test.csv", testData))
+    FAIL("Cannot load dataset thyroid_test.csv");
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+  testLabels -= 1; // The labels should be between 0 and numClasses - 1.
+
+  // Vanilla neural net with logistic activation function.
+  // Because 92% of the patients are not hyperthyroid the neural
+  // network must be significant better than 92%.
+  DAGNetwork model;
+  int linear_layer_1 = model.Add<Linear>(8);
+  int sigmoid_layer_2 = model.Add<Sigmoid>();
+  int dropout_layer_3 = model.Add<Dropout>();
+  int linear_layer_4 = model.Add<Linear>(3);
+  int logsoftmax_layer_5 = model.Add<LogSoftMax>();
+
+  model.Connect(linear_layer_1, sigmoid_layer_2);
+  model.Connect(sigmoid_layer_2, dropout_layer_3);
+  model.Connect(dropout_layer_3, linear_layer_4);
+  model.Connect(linear_layer_4, logsoftmax_layer_5);
+
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+
+  model.Train(trainData, trainLabels, opt);
+
+  FFN<NegativeLogLikelihood> xmlModel, jsonModel, binaryModel;
+  xmlModel.Add<Linear>(10); // Layer that will get removed.
+
+  // Serialize into other models.
+  SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
+
+  arma::mat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
+  model.Predict(testData, predictions);
+  xmlModel.Predict(testData, xmlPredictions);
+  jsonModel.Predict(testData, jsonPredictions);
+  binaryModel.Predict(testData, binaryPredictions);
+
+  CheckMatrices(predictions, xmlPredictions, jsonPredictions,
+      binaryPredictions);
+}

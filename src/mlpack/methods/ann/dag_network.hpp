@@ -50,7 +50,7 @@ template<
     typename MatType = arma::mat>
 class DAGNetwork
 {
-public:
+ public:
   /**
    * Create the DAGNetwork object.
    *
@@ -292,10 +292,10 @@ public:
    * @param error  Error from loss function.
    * @param gradients Computed gradients.
    */
-   void Backward(const MatType& input,
-                 const MatType& output,
-                 const MatType& error,
-                 MatType& gradients);
+  void Backward(const MatType& input,
+                const MatType& output,
+                const MatType& error,
+                MatType& gradients);
 
   /**
    * Evaluate the network with the given predictors and responses.
@@ -432,7 +432,7 @@ public:
    */
   void ResetData(MatType predictors, MatType responses);
 
-private:
+ private:
   // Helper functions.
 
   void AddLayer(size_t nodeId) {
@@ -658,7 +658,7 @@ private:
   // Memory for the backward pass.
   MatType layerDeltaMatrix;
 
-  // Needed in case the first layer is a `MultiLayer` so that its 
+  // Needed in case the first layer is a `MultiLayer` so that its
   // gradients are calculated.
   MatType networkDelta;
 
@@ -684,7 +684,7 @@ private:
   // If true, the graph is valid and has been topologically sorted.
   bool graphIsSet;
 
-  // If true, each layer has its activation/gradient memory properly set 
+  // If true, each layer has its activation/gradient memory properly set
   // for the forward/backward pass.
   bool layerMemoryIsSet;
 
