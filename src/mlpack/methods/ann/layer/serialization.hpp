@@ -45,6 +45,11 @@
         mlpack::NaiveConvolution<mlpack::FullConvolution>, \
         mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
         __VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::TransposedConvolutionType< \
+        mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
+        mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
+        mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
+        __VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::CELUType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::CReLUType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::DropConnectType<__VA_ARGS__>); \
