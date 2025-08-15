@@ -873,21 +873,24 @@ void CheckKKT(const arma::vec& beta,
 
 TEST_CASE("LARSTestKKT", "[LARSTest]")
 {
-  // Each row of F corresponds to a test.
-  //
-  // For each test i,
-  //    F(0, i) is the matrix of covariates X, and
-  //    F(1, i) is the matrix (vector) of responses/observations y.
-  arma::field<arma::mat> F;
-  F.load("lars_kkt.bin");
+  // There are 10 test cases for which we have the matrix of covariates and
+  // responses.
+  const size_t tests = 10;
 
   bool useCholesky = true;
   LARS<> lars(useCholesky, 1.0, 0.0);
 
-  for (size_t i = 0; i < F.n_cols; i++)
+  for (size_t i = 0; i < tests; i++)
   {
-    arma::mat X = std::move(F(0, i));
-    arma::rowvec y = std::move(F(1, i));
+    std::ostringstream nameX, nameY;
+    nameX << "lars_kkt_X_" << i << ".csv";
+    nameY << "lars_kkt_y_" << i << ".csv";
+
+    arma::mat X;
+    X.load(nameX.str(), arma::csv_ascii);
+    arma::rowvec y;
+    y.load(nameY.str(), arma::csv_ascii);
+
     const arma::rowvec xMean = arma::mean(X, 0);
     arma::rowvec xStds = arma::stddev(X, 0, 0);
     xStds.replace(0.0, 1.0);
