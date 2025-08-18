@@ -35,7 +35,7 @@ class NaiveConvolution
 {
  public:
   /**
-   * Perform a convolution (valid mode).
+   * Perform a convolution (valid mode - armadillo).
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the convolution.
@@ -58,7 +58,87 @@ class NaiveConvolution
               const size_t dilationW = 1,
               const size_t dilationH = 1,
               const bool appending = false,
-              const typename std::enable_if_t<IsMatrix<InMatType>::value>* = 0)
+              const typename std::enable_if_t<IsMatrix<InMatType>::value &&
+                                              IsArma<InMatType>::value>* = 0)
+  {
+    using eT = typename InMatType::elem_type;
+    // Compute the output size.  The filterRows and filterCols computation must
+    // take into account the fact that dilation only adds rows or columns
+    // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
+    // 3x3 means an effective kernel size of 5x5, *not* 6x6.
+    const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
+    if (!appending)
+    {
+      const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
+      const size_t outputRows = (input.n_rows - filterRows + dH) / dH;
+      const size_t outputCols = (input.n_cols - filterCols + dW) / dW;
+      output.zeros(outputRows, outputCols);
+    }
+
+    // Filter with dilation applied. Only dilated in the y direction.
+    FilMatType dilatedFilter;
+    if (dilationH == 1)
+    {
+      MakeAlias(dilatedFilter, filter, filter.n_rows, filter.n_cols);
+    }
+    else
+    {
+      dilatedFilter = FilMatType(filterRows, filter.n_cols,
+          GetFillType<FilMatType>::zeros);
+      for (size_t j = 0; j < filter.n_cols; j++)
+      {
+        eT* dilatedCol = dilatedFilter.colptr(j);
+        const eT* filCol = filter.colptr(j);
+        for (size_t i = 0; i < filter.n_rows; i++)
+        {
+          *dilatedCol = *(filCol++);
+          dilatedCol += dilationH;
+        }
+      }
+    }
+
+    for (size_t j = 0; j < output.n_cols; ++j)
+    {
+      for (size_t i = 0; i < output.n_rows; ++i)
+      {
+        eT accu = 0;
+        for (size_t kj = 0; kj < filter.n_cols; ++kj)
+        {
+          const eT* inCol = input.colptr(j * dW + kj * dilationW) + i * dH;
+          const eT* filCol = dilatedFilter.colptr(kj);
+          accu += arma::op_dot::direct_dot(filterRows, inCol, filCol);
+        }
+        output.at(i, j) += accu;
+      }
+    }
+  }
+
+  /**
+   * Perform a convolution (valid mode - bandicoot).
+   *
+   * @param input Input used to perform the convolution.
+   * @param filter Filter used to perform the convolution.
+   * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
+   */
+  template<typename InMatType, typename FilMatType, typename OutMatType,
+      typename Border = BorderMode>
+  static std::enable_if_t<std::is_same_v<Border, ValidConvolution>, void>
+  Convolution(const InMatType& input,
+              const FilMatType& filter,
+              OutMatType& output,
+              const size_t dW = 1,
+              const size_t dH = 1,
+              const size_t dilationW = 1,
+              const size_t dilationH = 1,
+              const bool appending = false,
+              const typename std::enable_if_t<IsMatrix<InMatType>::value &&
+                                              IsCoot<InMatType>::value>* = 0)
   {
     // Compute the output size.  The filterRows and filterCols computation must
     // take into account the fact that dilation only adds rows or columns
@@ -80,7 +160,8 @@ class NaiveConvolution
     }
     else
     {
-      dilatedFilter = FilMatType(filterRows, filterCols, arma::fill::zeros);
+      dilatedFilter = FilMatType(filterRows, filterCols,
+          GetFillType<FilMatType>::zeros);
       for (size_t i = 0; i < filter.n_rows; i++)
       {
         for (size_t j = 0; j < filter.n_cols; j++)
