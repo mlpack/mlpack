@@ -12,6 +12,9 @@
 #ifndef MLPACK_BINDINGS_R_RCPP_MLPACK_H
 #define MLPACK_BINDINGS_R_RCPP_MLPACK_H
 
+// Set up actual #include <armadillo> after first #include <RcppArmadilloConfig> and more config
+#include <RcppArmadillo/interface/RcppArmadilloForward.h>
+
 #include <Rcpp.h>
 
 #undef MLPACK_PRINT_INFO
@@ -49,7 +52,7 @@
 
 @R_SRC@
 
-#include <mlpack/core.hpp>
+#include <mlpack.hpp>
 
 #undef ARMA_EXTRA_MAT_PROTO
 #undef ARMA_EXTRA_MAT_MEAT
