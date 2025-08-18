@@ -52,7 +52,10 @@
 
 @R_SRC@
 
-#include <mlpack.hpp>
+// Include all of the core library components.
+#include <mlpack/base.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
 #undef ARMA_EXTRA_MAT_PROTO
 #undef ARMA_EXTRA_MAT_MEAT

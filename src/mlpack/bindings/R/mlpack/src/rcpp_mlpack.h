@@ -13,7 +13,7 @@
 #ifndef MLPACK_BINDINGS_R_RCPP_MLPACK_H
 #define MLPACK_BINDINGS_R_RCPP_MLPACK_H
 
-#include <Rcpp.h>
+#include <RcppArmadillo.h>
 
 // Rcpp has its own stream object which cooperates more nicely with R's i/o
 // And as of armadillo and mlpack, we can use this stream object as well.
