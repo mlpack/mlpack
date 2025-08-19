@@ -34,18 +34,27 @@ bool Load(const std::vector<std::string>& files,
     handleError(oss, opts);
   }
 
-  for (size_t i = 0; i < files.size(); ++i)
+  // @rcurtin I would recommend only testing the last element in the vector.
+  // Even if testing is fast, if you have 2M images it will take some time to
+  // examin all of them for no reason.
+  // Especially that in our case all files needs to have the same dimension
+  // when loading them, if not we have to do resize for all of them. So it only
+  // make sense that all have the same format.
+  // Also we will need to check what is the extension if the user has provided
+  // ImageType by default in case of backward compatibility or if they did not
+  // specify the image
+  if (opts.Format() == FileType::ImageType)
   {
-    if (!opts.ImageFormatSupported(files.at(i)))
-    {
-      std::stringstream oss;
-      oss << "Load(): image type " << Extension(files.at(i))
-          << " not supported. Supported formats: ";
-      auto x = opts.LoadFileTypes();
-      for (auto extension : x)
-        oss << " " << extension;
-      handleError(oss, opts);
-    }
+    DetectFromExtension<arma::Mat<eT>, ImageOptions>(files.back(), opts);
+  }
+  if (!opts.loadType.count(Extension(files.back())))
+  {
+    std::stringstream oss;
+    oss << "Load(): image type " << opts.FileTypeToString()
+      << " not supported. Supported formats: ";
+    for (const auto& x : opts.loadType)
+      oss << " " << x;
+    handleError(oss, opts);
   }
 
   // Temporary variables needed as stb_image.h supports int parameters.
@@ -54,6 +63,7 @@ bool Load(const std::vector<std::string>& files,
   // to an armadillo matrix, but I doubt this is possible
   unsigned char* imageBuf;
   float* floatImageBuf;
+  size_t i = 0;
   // Check dimension if provided or not
   // if not, then call the function on the first image to get the dimension
   // Note that, similar to the Resize function, we need to document that the
@@ -74,6 +84,7 @@ bool Load(const std::vector<std::string>& files,
     opts.Width() = tempWidth;
     opts.Height() = tempHeight;
     opts.Channels() = tempChannels;
+    i++;
   }
 
   dimension = opts.Width() * opts.Height() * opts.Channels();
@@ -86,7 +97,7 @@ bool Load(const std::vector<std::string>& files,
   else
     images.set_size(dimension, files.size());
 
-  for (size_t i = 0; i < files.size(); ++i)
+  while (i < files.size())
   {
     if constexpr (std::is_same<eT, unsigned char>::value)
     {
@@ -125,7 +136,7 @@ bool Load(const std::vector<std::string>& files,
         std::stringstream oss;
         oss << "Load(): failed to load image '" << files.front() << "': "
                 << stbi_failure_reason();
-      
+
         handleError(oss, opts);
       }
 
@@ -144,6 +155,7 @@ bool Load(const std::vector<std::string>& files,
           false, true);
       stbi_image_free(floatImageBuf);
     }
+    i++;
   }
   if constexpr (std::is_same<eT, float>::value)
   {

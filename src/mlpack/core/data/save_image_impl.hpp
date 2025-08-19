@@ -32,19 +32,22 @@ bool Save(const std::vector<std::string>& files,
     handleError(oss, opts);
   }
 
-  for (size_t i = 0; i < files.size(); ++i)
+  // @rcurtin Same here, I would not expect the user to have a vector of different
+  // filetypes that they would like to save. Therefore I would propose to
+  // remove the following loop.
+  if (opts.Format() == FileType::ImageType)
   {
-    // Check to see if the file type is supported.
-    if (!opts.ImageFormatSupported(files.at(i), true))
-    {
-      std::stringstream oss;
-      oss << "Save(): file type " << Extension(files.at(i))
-          << " isn't supported. Currently image saving supports: ";
-      for (auto extension : opts.SaveFileTypes())
-        oss << "  " << extension;
-      oss << "." << std::endl;
-      handleError(oss, opts);
-    }
+    DetectFromExtension<arma::Mat<eT>, ImageOptions>(files.back(), opts);
+  }
+  if (!opts.saveType.count(Extension(files.back())))
+  {
+    std::stringstream oss;
+    oss << "Save(): file type " << opts.FileTypeToString()
+        << " isn't supported. Currently image saving supports: ";
+    for (const auto& x : opts.saveType)
+      oss << "  " << x;
+    oss << "." << std::endl;
+    handleError(oss, opts);
   }
 
   size_t dimension = opts.Width() * opts.Height() * opts.Channels();
@@ -58,6 +61,7 @@ bool Save(const std::vector<std::string>& files,
   }
 
   bool success = false;
+  std::string extension = opts.FileTypeToString();
   for (size_t i = 0; i < files.size() ; ++i)
   {
     // I do not like the fact that we are looping over and over again and
@@ -66,29 +70,29 @@ bool Save(const std::vector<std::string>& files,
     // I also do not know how much this if else deduction is costing us, but
     // could be avoided since we are already looping and checking at the start
     // all of the provided extensions.
-    if ("png" == Extension(files.at(i)))
+    if (extension == "PNG")
     {
       success = stbi_write_png(files.at(i).c_str(), opts.Width(), opts.Height(),
           opts.Channels(), matrix.colptr(i), opts.Width() * opts.Channels());
     }
-    else if ("bmp" == Extension(files.at(i)))
+    else if (extension == "BMP")
     {
       success = stbi_write_bmp(files.at(i).c_str(), opts.Width(), opts.Height(),
           opts.Channels(), matrix.colptr(i));
     }
-    else if ("tga" == Extension(files.at(i)))
+    else if (extension == "TGA")
     {
       success = stbi_write_tga(files.at(i).c_str(), opts.Width(), opts.Height(),
           opts.Channels(), matrix.colptr(i));
     }
-    else if ("hdr" == Extension(files.at(i)))
+    else if (extension == "HDR")
     {
       // We have to convert to float for HDR.
       arma::fmat imageBuf = arma::conv_to<arma::fmat>::from(matrix.col(i));
       success = stbi_write_hdr(files.at(i).c_str(), opts.Width(), opts.Height(),
           opts.Channels(), imageBuf.memptr());
     }
-    else if ("jpg" == Extension(files.at(i)))
+    else if (extension == "JPG")
     {
       success = stbi_write_jpg(files.at(i).c_str(), opts.Width(), opts.Height(),
           opts.Channels(), matrix.colptr(i), opts.Quality());

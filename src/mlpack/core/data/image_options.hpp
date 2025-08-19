@@ -225,48 +225,11 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     return this->ModifyMember(quality, defaultQuality);
   }
 
-  inline const std::vector<std::string> LoadFileTypes()
-  {
-    return std::vector<std::string>({"jpg", "png", "tga", "bmp", "psd", "gif",
-        "hdr", "pic", "pnm", "jpeg"});
-  }
+  inline static const std::unordered_set<std::string> saveType
+      = {"jpg", "png", "tga", "bmp", "hdr"};
 
-  inline const std::vector<std::string> SaveFileTypes()
-  {
-    return std::vector<std::string>({"jpg", "png", "tga", "bmp", "hdr"});
-  }
-
-  /**
-   * Checks if the given image filename is supported.
-   *
-   * @param fileName Name of the image file.
-   * @param save Set to true to check if the file format can be saved, else loaded.
-   * @return Boolean value indicating success if it is an image.
-   */
-  inline bool ImageFormatSupported(const std::string& fileName,
-                                   const bool save = false)
-  {
-    if (save)
-    {
-      // Iterate over all supported file types that can be saved.
-      for (auto extension : SaveFileTypes())
-      {
-        if (extension == Extension(fileName))
-          return true;
-      }
-    }
-    else
-    {
-      // Iterate over all supported file types that can be loaded.
-      for (auto extension : LoadFileTypes())
-      {
-        if (extension == Extension(fileName))
-          return true;
-      }
-    }
-
-    return false;
-  }
+  inline static const std::unordered_set<std::string> loadType
+      = {"jpg", "png", "tga", "bmp", "psd", "gif", "hdr", "pic", "pnm", "jpeg"};
 
   // @rcurtin Wondering if the serialization of optional member is the same.
   template<typename Archive>
@@ -285,12 +248,6 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
   std::optional<size_t> channels;
   std::optional<size_t> quality;
   std::optional<bool> image;
-
-  inline static const std::unordered_set<std::string> saveType
-      = {"jpg", "png", "tga", "bmp", "hdr"};
-
-  inline static const std::unordered_set<std::string> loadType
-      = {"jpg", "png", "tga", "bmp", "psd", "gif", "hdr", "pic", "pnm", "jpeg"};
 
   constexpr static const size_t defaultWidth = 0;
   constexpr static const size_t defaultHeight = 0;
