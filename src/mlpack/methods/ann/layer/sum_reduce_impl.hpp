@@ -93,23 +93,21 @@ void SumReduceType<MatType>::Forward(const MatType& input, MatType& output)
 
 template<typename MatType>
 void SumReduceType<MatType>::Backward(
-    const MatType& /* input */,
+    const MatType& input,
     const MatType& /* output */,
     const MatType& gy,
     MatType& g)
 {
-  g.set_size(gy.n_rows, gy.n_cols);
+  g.set_size(input.n_rows, input.n_cols);
   CubeType gAlias;
   MakeAlias(gAlias, g, rows, this->inputDimensions[axis],
-    slices * gy.n_cols);
+    slices * input.n_cols);
 
   CubeType gyAlias;
   MakeAlias(gyAlias, gy, rows, 1, slices * gy.n_cols);
 
   for (size_t i = 0; i < this->inputDimensions[axis]; i++)
-  {
     gAlias.col(i) = gyAlias;
-  }
 }
 
 template<typename MatType>
