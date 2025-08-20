@@ -67,8 +67,56 @@ TEST_CASE("SumReduceKeepDimensionsTrue", "[ANNLayerTest]")
 /**
  * Test sum reduce forward pass.
  */
-TEST_CASE("SumReduceForwardPass", "[ANNLayerTest]")
+TEST_CASE("SumReduceForwardPassAxis0", "[ANNLayerTest]")
 {
+  size_t axis = 0;
+
+  size_t batchSize = 3;
+  arma::mat input = arma::regspace(0, 8 * batchSize - 1);
+  arma::mat output;
+
+  arma::mat expectedOutput = arma::mat(
+    { 1, 5, 9, 13, 17, 21, 25, 29, 33, 37, 41, 45 });
+  expectedOutput.reshape(4, batchSize);
+
+  SumReduce layer(axis, false);
+  layer.InputDimensions() = { 2, 2, 2 };
+  layer.ComputeOutputDimensions();
+
+  input.reshape(8, batchSize);
+  layer.Forward(input, output);
+  CheckMatrices(output, expectedOutput);
+}
+
+/**
+ * Test sum reduce forward pass.
+ */
+TEST_CASE("SumReduceForwardPassAxis1", "[ANNLayerTest]")
+{
+  size_t axis = 1;
+  size_t batchSize = 3;
+  arma::mat input = arma::regspace(0, 8 * batchSize - 1);
+  arma::mat output;
+
+  arma::mat expectedOutput = arma::mat(
+    {2, 4, 10, 12, 18, 20, 26, 28, 34, 36, 42, 44});
+  expectedOutput.reshape(4, batchSize);
+
+  SumReduce layer(axis, false);
+  layer.InputDimensions() = { 2, 2, 2 };
+  layer.ComputeOutputDimensions();
+
+  input.reshape(8, batchSize);
+  layer.Forward(input, output);
+  CheckMatrices(output, expectedOutput);
+}
+
+/**
+ * Test sum reduce forward pass.
+ */
+TEST_CASE("SumReduceForwardPassAxis2", "[ANNLayerTest]")
+{
+  size_t axis = 2;
   size_t batchSize = 3;
   arma::mat input = arma::regspace(0, 12 * batchSize - 1);
   arma::mat output;
@@ -77,7 +125,7 @@ TEST_CASE("SumReduceForwardPass", "[ANNLayerTest]")
     {6, 8, 10, 12, 14, 16, 30, 32, 34, 36, 38, 40, 54, 56, 58, 60, 62, 64});
   expectedOutput.reshape(6, batchSize);
 
-  SumReduce layer(2, false);
+  SumReduce layer(axis, false);
   layer.InputDimensions() = { 3, 2, 2 };
   layer.ComputeOutputDimensions();
 
