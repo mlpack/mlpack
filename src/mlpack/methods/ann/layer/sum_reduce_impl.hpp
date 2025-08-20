@@ -14,7 +14,6 @@
 
 // In case it hasn't yet been included.
 #include "sum_reduce.hpp"
-#include <armadillo>
 
 namespace mlpack {
 
