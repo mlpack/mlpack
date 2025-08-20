@@ -33,9 +33,65 @@ namespace mlpack {
 template<typename BorderMode = FullConvolution>
 class NaiveConvolution
 {
+ private:
+  /**
+   * Take an input and convert each patch into rows.
+   *
+   * @param input Input used to perform the convolution.
+   * @param im2row Patches of the input as rows.
+   * @param filterRows Number of rows in a filter.
+   * @param filterCols Number of columns in a filter.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   */
+  template<typename MatType>
+  static void Im2Row(const MatType& input,
+              MatType& im2row,
+              const size_t filterRows,
+              const size_t filterCols,
+              const size_t dW = 1,
+              const size_t dH = 1,
+              const size_t dilationW = 1,
+              const size_t dilationH = 1)
+  {
+    const size_t dFilterRows = filterRows * dilationH - (dilationH - 1);
+    const size_t dFilterCols = filterCols * dilationW - (dilationW - 1);
+    const size_t filterElems = filterRows * filterCols;
+    const size_t outputRows = (input.n_rows - dFilterRows + dH) / dH;
+    const size_t outputCols = (input.n_cols - dFilterCols + dW) / dW;
+    const size_t outputElems = outputRows * outputCols;
+
+    // output = im2row * fil2col.
+    // im2row has `outputElems` rows and `filterElems` cols so that output has
+    // `outputElems` rows and `outMaps` cols. Each output column is a slice of the
+    // output cube.
+    im2row = MatType(outputElems, filterElems, GetFillType<MatType>::none);
+
+    // (i, j) = top left corner of a patch
+    for (size_t j = 0; j < outputCols; j++)
+    {
+      for (size_t i = 0; i < outputRows; i++)
+      {
+        size_t nRow = j * outputRows + i;
+        size_t nCol = 0;
+        for (size_t kj = 0; kj < filterCols; kj++)
+        {
+          for (size_t ki = 0; ki < filterRows; ki++)
+          {
+            im2row.at(nRow, nCol) = input.at(i * dH + ki * dilationH,
+                j * dW + kj * dilationW);
+            nCol++;
+          }
+        }
+      }
+    }
+  }
+
  public:
   /**
-   * Perform a convolution (valid mode - armadillo).
+   * Perform a convolution (valid mode).
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the convolution.
@@ -58,127 +114,33 @@ class NaiveConvolution
               const size_t dilationW = 1,
               const size_t dilationH = 1,
               const bool appending = false,
-              const typename std::enable_if_t<IsMatrix<InMatType>::value &&
-                                              IsArma<InMatType>::value>* = 0)
+              const typename std::enable_if_t<IsMatrix<InMatType>::value>* = 0)
   {
     using eT = typename InMatType::elem_type;
     // Compute the output size.  The filterRows and filterCols computation must
     // take into account the fact that dilation only adds rows or columns
     // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
     // 3x3 means an effective kernel size of 5x5, *not* 6x6.
-    const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
     if (!appending)
     {
+      const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
       const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
       const size_t outputRows = (input.n_rows - filterRows + dH) / dH;
       const size_t outputCols = (input.n_cols - filterCols + dW) / dW;
       output.zeros(outputRows, outputCols);
     }
 
-    // Filter with dilation applied. Only dilated in the y direction.
-    FilMatType dilatedFilter;
-    if (dilationH == 1)
-    {
-      MakeAlias(dilatedFilter, filter, filter.n_rows, filter.n_cols);
-    }
-    else
-    {
-      dilatedFilter = FilMatType(filterRows, filter.n_cols,
-          GetFillType<FilMatType>::zeros);
-      for (size_t j = 0; j < filter.n_cols; j++)
-      {
-        eT* dilatedCol = dilatedFilter.colptr(j);
-        const eT* filCol = filter.colptr(j);
-        for (size_t i = 0; i < filter.n_rows; i++)
-        {
-          *dilatedCol = *(filCol++);
-          dilatedCol += dilationH;
-        }
-      }
-    }
+    InMatType im2row;
+    Im2Row(input, im2row, filter.n_rows, filter.n_cols, dW, dH,
+        dilationW, dilationH);
 
-    for (size_t j = 0; j < output.n_cols; ++j)
-    {
-      for (size_t i = 0; i < output.n_rows; ++i)
-      {
-        eT accu = 0;
-        for (size_t kj = 0; kj < filter.n_cols; ++kj)
-        {
-          const eT* inCol = input.colptr(j * dW + kj * dilationW) + i * dH;
-          const eT* filCol = dilatedFilter.colptr(kj);
-          accu += arma::op_dot::direct_dot(filterRows, inCol, filCol);
-        }
-        output.at(i, j) += accu;
-      }
-    }
-  }
+    FilMatType fil2col;
+    MakeAlias(fil2col, filter, filter.n_elem, 1);
 
-  /**
-   * Perform a convolution (valid mode - bandicoot).
-   *
-   * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the convolution.
-   * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
-   * @param dilationW The dilation factor in x direction.
-   * @param dilationH The dilation factor in y direction.
-   * @param appending If true, it will not initialize the output. Instead,
-   *                  it will append the results to the output.
-   */
-  template<typename InMatType, typename FilMatType, typename OutMatType,
-      typename Border = BorderMode>
-  static std::enable_if_t<std::is_same_v<Border, ValidConvolution>, void>
-  Convolution(const InMatType& input,
-              const FilMatType& filter,
-              OutMatType& output,
-              const size_t dW = 1,
-              const size_t dH = 1,
-              const size_t dilationW = 1,
-              const size_t dilationH = 1,
-              const bool appending = false,
-              const typename std::enable_if_t<IsMatrix<InMatType>::value &&
-                                              IsCoot<InMatType>::value>* = 0)
-  {
-    // Compute the output size.  The filterRows and filterCols computation must
-    // take into account the fact that dilation only adds rows or columns
-    // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
-    // 3x3 means an effective kernel size of 5x5, *not* 6x6.
-    const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
-    const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
-    if (!appending)
-    {
-      const size_t outputRows = (input.n_rows - filterRows + dH) / dH;
-      const size_t outputCols = (input.n_cols - filterCols + dW) / dW;
-      output.zeros(outputRows, outputCols);
-    }
+    FilMatType outputTmp;
+    MakeAlias(outputTmp, output, output.n_elem, 1);
 
-    FilMatType dilatedFilter;
-    if (dilationW == 1 && dilationH == 1)
-    {
-      MakeAlias(dilatedFilter, filter, filter.n_rows, filter.n_cols);
-    }
-    else
-    {
-      dilatedFilter = FilMatType(filterRows, filterCols,
-          GetFillType<FilMatType>::zeros);
-      for (size_t i = 0; i < filter.n_rows; i++)
-      {
-        for (size_t j = 0; j < filter.n_cols; j++)
-        {
-          dilatedFilter(i * dilationH, j * dilationW) = filter(i, j);
-        }
-      }
-    }
-
-    for (size_t j = 0; j < output.n_cols; ++j)
-    {
-      for (size_t i = 0; i < output.n_rows; ++i)
-      {
-        output(i, j) += accu(dilatedFilter % input.submat(i * dH, j * dW,
-            i * dH + filterRows - 1, j * dW + filterCols - 1));
-      }
-    }
+    outputTmp += im2row * fil2col;
   }
 
   /**
