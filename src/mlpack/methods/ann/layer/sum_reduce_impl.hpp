@@ -117,8 +117,8 @@ void SumReduceType<MatType>::ComputeOutputDimensions()
   {
     std::ostringstream errMessage;
     errMessage << "SumReduce::ComputeOutputDimensions(): Cannot "
-      "sum along axis " << axis << " when there are " <<
-      this->inputDimensions.size() << " input dimensions.";
+        << "sum along axis " << axis << " when there are "
+        << this->inputDimensions.size() << " input dimensions.";
     throw std::logic_error(errMessage.str());
   }
   this->outputDimensions = this->inputDimensions;
