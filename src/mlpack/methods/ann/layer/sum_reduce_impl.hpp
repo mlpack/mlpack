@@ -78,16 +78,8 @@ void SumReduceType<MatType>::Forward(const MatType& input, MatType& output)
   CubeType inputAlias;
   MakeAlias(inputAlias, input, rows, this->inputDimensions[axis],
     slices * input.n_cols);
-
-  // Slices become the columns.
-  MatType outputMat = sum(inputAlias, 1);
-  output.set_size(input.n_rows / this->inputDimensions[axis], input.n_cols);
-
-  for (size_t i = 0; i < input.n_cols; i++)
-  {
-    output.col(i) = outputMat.submat(0, i * slices, rows - 1,
-      (i + 1) * slices - 1).as_col();
-  }
+  output = reshape((MatType)sum(inputAlias, 1),
+    input.n_rows / this->inputDimensions[axis], input.n_cols);
 }
 
 template<typename MatType>
