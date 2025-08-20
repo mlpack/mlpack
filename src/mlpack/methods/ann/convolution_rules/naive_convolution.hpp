@@ -48,13 +48,13 @@ class NaiveConvolution
    */
   template<typename MatType>
   static void Im2Row(const MatType& input,
-              MatType& im2row,
-              const size_t filterRows,
-              const size_t filterCols,
-              const size_t dW = 1,
-              const size_t dH = 1,
-              const size_t dilationW = 1,
-              const size_t dilationH = 1)
+                     MatType& im2row,
+                     const size_t filterRows,
+                     const size_t filterCols,
+                     const size_t dW = 1,
+                     const size_t dH = 1,
+                     const size_t dilationW = 1,
+                     const size_t dilationH = 1)
   {
     const size_t dFilterRows = filterRows * dilationH - (dilationH - 1);
     const size_t dFilterCols = filterCols * dilationW - (dilationW - 1);
@@ -89,85 +89,38 @@ class NaiveConvolution
     }
   }
 
- public:
   /**
-   * Perform a convolution (valid mode).
+   * Apply padding to an input matrix (valid mode).
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the convolution.
-   * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
-   * @param dilationW The dilation factor in x direction.
-   * @param dilationH The dilation factor in y direction.
-   * @param appending If true, it will not initialize the output. Instead,
-   *                  it will append the results to the output.
+   * @param inputPadded Input with padding applied.
    */
-  template<typename InMatType, typename FilMatType, typename OutMatType,
-      typename Border = BorderMode>
+  template<typename InMatType, typename FilMatType, typename Border = BorderMode>
   static std::enable_if_t<std::is_same_v<Border, ValidConvolution>, void>
-  Convolution(const InMatType& input,
-              const FilMatType& filter,
-              OutMatType& output,
-              const size_t dW = 1,
-              const size_t dH = 1,
-              const size_t dilationW = 1,
-              const size_t dilationH = 1,
-              const bool appending = false,
-              const typename std::enable_if_t<IsMatrix<InMatType>::value>* = 0)
+  PadInput(const InMatType& input,
+           const FilMatType& /* filter */,
+           InMatType& inputPadded,
+           const size_t /* dilationW */,
+           const size_t /* dilationH */)
   {
-    using eT = typename InMatType::elem_type;
-    // Compute the output size.  The filterRows and filterCols computation must
-    // take into account the fact that dilation only adds rows or columns
-    // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
-    // 3x3 means an effective kernel size of 5x5, *not* 6x6.
-    if (!appending)
-    {
-      const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
-      const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
-      const size_t outputRows = (input.n_rows - filterRows + dH) / dH;
-      const size_t outputCols = (input.n_cols - filterCols + dW) / dW;
-      output.zeros(outputRows, outputCols);
-    }
-
-    InMatType im2row;
-    Im2Row(input, im2row, filter.n_rows, filter.n_cols, dW, dH,
-        dilationW, dilationH);
-
-    FilMatType fil2col;
-    MakeAlias(fil2col, filter, filter.n_elem, 1);
-
-    FilMatType outputTmp;
-    MakeAlias(outputTmp, output, output.n_elem, 1);
-
-    outputTmp += im2row * fil2col;
+    MakeAlias(inputPadded, input, input.n_rows, input.n_cols);
   }
 
   /**
-   * Perform a convolution (full mode).
+   * Apply padding to an input matrix (full mode).
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the convolution.
-   * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
-   * @param dilationW The dilation factor in x direction.
-   * @param dilationH The dilation factor in y direction.
-   * @param appending If true, it will not initialize the output. Instead,
-   *                  it will append the results to the output.
+   * @param inputPadded Input with padding applied.
    */
-  template<typename InMatType, typename FilMatType, typename OutMatType,
-      typename Border = BorderMode>
+  template<typename InMatType, typename FilMatType, typename Border = BorderMode>
   static std::enable_if_t<std::is_same_v<Border, FullConvolution>, void>
-  Convolution(const InMatType& input,
-              const FilMatType& filter,
-              OutMatType& output,
-              const size_t dW = 1,
-              const size_t dH = 1,
-              const size_t dilationW = 1,
-              const size_t dilationH = 1,
-              const bool appending = false,
-              const typename std::enable_if_t<IsMatrix<InMatType>::value>* = 0)
+  PadInput(const InMatType& input,
+           const FilMatType& filter,
+           InMatType& inputPadded,
+           const size_t dilationW,
+           const size_t dilationH)
   {
     // First, compute the necessary padding for the full convolution.  It is
     // possible that this might be an overestimate.  Note that these variables
@@ -178,13 +131,64 @@ class NaiveConvolution
     const size_t paddingCols = filterCols - 1;
 
     // Pad filter and input to the working output shape.
-    InMatType inputPadded(input.n_rows + 2 * paddingRows,
+    inputPadded = InMatType(input.n_rows + 2 * paddingRows,
         input.n_cols + 2 * paddingCols);
     inputPadded.submat(paddingRows, paddingCols, paddingRows + input.n_rows - 1,
         paddingCols + input.n_cols - 1) = input;
+  }
 
-    NaiveConvolution<ValidConvolution>::Convolution(inputPadded, filter,
-        output, dW, dH, dilationW, dilationH, appending);
+ public:
+  /**
+   * Perform a convolution with dense matrices.
+   *
+   * @param input Input used to perform the convolution.
+   * @param filter Filter used to perform the convolution.
+   * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
+   */
+  template<typename InMatType, typename FilMatType, typename OutMatType>
+  static void
+  Convolution(const InMatType& input,
+              const FilMatType& filter,
+              OutMatType& output,
+              const size_t dW = 1,
+              const size_t dH = 1,
+              const size_t dilationW = 1,
+              const size_t dilationH = 1,
+              const bool appending = false,
+              const typename std::enable_if_t<IsMatrix<InMatType>::value>* = 0)
+  {
+    InMatType inputPadded;
+    PadInput(input, filter, inputPadded, dilationW, dilationH);
+    // Compute the output size.  The filterRows and filterCols computation must
+    // take into account the fact that dilation only adds rows or columns
+    // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
+    // 3x3 means an effective kernel size of 5x5, *not* 6x6.
+    if (!appending)
+    {
+      const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
+      const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
+      const size_t outputRows = (inputPadded.n_rows - filterRows + dH) / dH;
+      const size_t outputCols = (inputPadded.n_cols - filterCols + dW) / dW;
+      output.zeros(outputRows, outputCols);
+    }
+
+    InMatType im2row;
+    Im2Row(inputPadded, im2row, filter.n_rows, filter.n_cols, dW, dH,
+        dilationW, dilationH);
+
+    FilMatType fil2col;
+    MakeAlias(fil2col, filter, filter.n_elem, 1);
+
+    OutMatType outputTmp;
+    MakeAlias(outputTmp, output, output.n_elem, 1);
+
+    outputTmp += im2row * fil2col;
   }
 
   /**
