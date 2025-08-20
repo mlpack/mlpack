@@ -419,34 +419,29 @@ void ConvolutionType<
   MatType output(apparentWidth * apparentHeight * inMaps * higherInDimensions,
       batchSize);
 
-  MatType outputSlice;
-
   // See Forward() for the overall iteration strategy.
-  #pragma omp parallel for schedule(dynamic) private(outputSlice)
+  #pragma omp parallel for schedule(dynamic)
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    // Iterate over input maps.
-    for (size_t inMap = 0; inMap < (size_t) inMaps; ++inMap)
-    {
-      // Iterate over output maps.
-      MakeAlias(outputSlice, output, apparentWidth, apparentHeight,
-          (inMap + fullInputOffset) * (apparentWidth * apparentHeight));
-      for (size_t outMap = 0; outMap < maps; ++outMap)
-      {
-        BackwardConvolutionRule::Convolution(
-            dilatedMappedError.slice(outMap + fullOutputOffset),
-            rotatedFilters.slice((outMap * inMaps) + inMap),
-            outputSlice,
-            1,
-            1,
-            1,
-            1,
-            true);
-      }
-    }
+    CubeType outputTemp, dilatedMappedErrorTemp;
+
+    MakeAlias(outputTemp, output, apparentWidth, apparentHeight, inMaps,
+        (fullInputOffset) * (apparentWidth * apparentHeight));
+    MakeAlias(dilatedMappedErrorTemp, dilatedMappedError,
+        dilatedMappedError.n_rows, dilatedMappedError.n_cols, maps,
+        (fullOutputOffset) * (dilatedMappedError.n_elem_slice));
+    BackwardConvolutionRule::Convolution(
+        dilatedMappedErrorTemp,
+        rotatedFilters,
+        outputTemp,
+        1,
+        1,
+        1,
+        1,
+        true);
   }
   MatType temp(padding.OutputDimensions()[0] * padding.OutputDimensions()[1] *
       inMaps * higherInDimensions, batchSize);

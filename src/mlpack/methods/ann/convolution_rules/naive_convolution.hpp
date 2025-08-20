@@ -47,9 +47,9 @@ class NaiveConvolution
    * @param dilationW The dilation factor in x direction.
    * @param dilationH The dilation factor in y direction.
    */
-  template<typename MatType, typename OutMatType>
+  template<typename MatType>
   static void Im2Row(const MatType& input,
-                     OutMatType& im2row,
+                     MatType& im2row,
                      const size_t filterRows,
                      const size_t filterCols,
                      const size_t dW = 1,
@@ -80,7 +80,7 @@ class NaiveConvolution
         {
           for (size_t ki = 0; ki < filterRows; ki++)
           {
-            im2row.at(nRow, nCol) = input.at(i * dH + ki * dilationH,
+            im2row(nRow, nCol) = input(i * dH + ki * dilationH,
                 j * dW + kj * dilationW);
             nCol++;
           }
@@ -232,7 +232,8 @@ class NaiveConvolution
       output.zeros(outputRows, outputCols);
     }
 
-    InMatType im2row(output.n_elem, filter.n_elem, GetFillType<InMatType>::none);
+    InMatType im2row(output.n_elem, filter.n_elem,
+        GetFillType<InMatType>::none);
     Im2Row(inputPadded, im2row, filter.n_rows, filter.n_cols, dW, dH,
         dilationW, dilationH);
 
@@ -276,12 +277,17 @@ class NaiveConvolution
     CubeType inputPadded;
     PadInput(input, filter, inputPadded, dilationW, dilationH);
 
-    MatType im2row(output.n_elem_slice, filter.n_elem_slice * input.n_slices);
+    MatType im2row(output.n_elem_slice, filter.n_elem_slice * input.n_slices,
+        GetFillType<MatType>::none);
+    // Arrange im2row so that each row has patches from each input map.
+    #pragma omp parallel for
     for (size_t i = 0; i < input.n_slices; ++i)
     {
-      auto subview = im2row.submat(0, i * filter.n_elem_slice,
-          output.n_elem_slice - 1, (i + 1) * filter.n_elem_slice - 1);
-      Im2Row(inputPadded.slice(i), subview, filter.n_rows, filter.n_cols,
+      // Get a subview from columns `i` to `i * filter.n_elem_slice`.
+      MatType im2rowSv;
+      MakeAlias(im2rowSv, im2row, output.n_elem_slice, filter.n_elem_slice,
+          output.n_elem_slice * filter.n_elem_slice * i);
+      Im2Row(inputPadded.slice(i), im2rowSv, filter.n_rows, filter.n_cols,
           dW, dH, dilationW, dilationH);
     }
 
@@ -327,7 +333,8 @@ class NaiveConvolution
     MatType inputPadded;
     PadInput(input, filter, inputPadded, dilationW, dilationH);
 
-    MatType im2row(output.n_elem_slice, filter.n_elem_slice);
+    MatType im2row(output.n_elem_slice, filter.n_elem_slice,
+        GetFillType<MatType>::none);
     Im2Row(inputPadded, im2row, filter.n_rows, filter.n_cols, dW, dH,
         dilationW, dilationH);
 
