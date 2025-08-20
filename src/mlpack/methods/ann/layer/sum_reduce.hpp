@@ -18,7 +18,7 @@
 namespace mlpack {
 
 /**
- * Implementation of the SumReduce layer. The SumReduce module sums it's
+ * Implementation of the SumReduce layer. The SumReduce module sums its
  * incoming data along a given axis.
  *
  * @tparam MatType Matrix representation to accept as input and use for
@@ -85,8 +85,8 @@ class SumReduceType : public Layer<MatType>
   //! Locally-stored axis to reduce.
   size_t axis;
 
-  //! If true, the dimension that gets summed is set to 1, otherwise it is
-  //! deleted.
+  //! If true, the dimension that gets summed is set to have size 1, otherwise
+  //! it is deleted and the output will have one fewer dimension than the input.;
   bool keepDimensions;
 
   //! Number of rows in cube alias.
