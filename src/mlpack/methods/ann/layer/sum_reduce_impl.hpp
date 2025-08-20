@@ -13,7 +13,7 @@
 #define MLPACK_METHODS_ANN_LAYER_ADD_REDUCE_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "add_reduce.hpp"
+#include "sum_reduce.hpp"
 #include <armadillo>
 
 namespace mlpack {

@@ -66,8 +66,8 @@ class SumReduceType : public Layer<MatType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& /* input */,
-                const MatType& /* output */,
+  void Backward(const MatType& input,
+                const MatType& output,
                 const MatType& gy,
                 MatType& g);
 
@@ -102,6 +102,6 @@ using SumReduce = SumReduceType<arma::mat>;
 } // namespace mlpack
 
 // Include implementation.
-#include "add_reduce_impl.hpp"
+#include "sum_reduce_impl.hpp"
 
 #endif

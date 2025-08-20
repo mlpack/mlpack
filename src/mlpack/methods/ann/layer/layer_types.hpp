@@ -21,7 +21,6 @@
 #include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/add.hpp>
 #include <mlpack/methods/ann/layer/add_merge.hpp>
-#include <mlpack/methods/ann/layer/add_reduce.hpp>
 #include <mlpack/methods/ann/layer/alpha_dropout.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 #include <mlpack/methods/ann/layer/batch_norm.hpp>
@@ -58,6 +57,7 @@
 #include <mlpack/methods/ann/layer/repeat.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
 #include <mlpack/methods/ann/layer/softmin.hpp>
+#include <mlpack/methods/ann/layer/sum_reduce.hpp>
 #include <mlpack/methods/ann/layer/ftswish.hpp>
 
 // Convolution modes.
