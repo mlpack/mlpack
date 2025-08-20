@@ -313,10 +313,7 @@ void ConvolutionType<
     padding.Forward(input, inputPadded);
   }
 
-  // Alias matrices of slices in the input and output cubes.
-  // Making aliases directly instead of using temporary cubes allows us to avoid
-  // the overhead of creating the cubes every time this function is called.
-  MatType inputSlice, convOutput;
+  CubeType inputTemp, outputTemp;
   output.zeros();
 
   // We "ignore" dimensions higher than the third---that means that we just pass
@@ -329,34 +326,29 @@ void ConvolutionType<
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    // Iterate over output maps.
-    #pragma omp parallel for private(inputSlice, convOutput)
-    for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
-    {
-      MakeAlias(convOutput, output, this->outputDimensions[0],
-          this->outputDimensions[1], (outMap + fullOutputOffset) *
-          (this->outputDimensions[0] * this->outputDimensions[1]));
-      // Iterate over input maps (we will apply the filter and sum).
-      for (size_t inMap = 0; inMap < inMaps; ++inMap)
-      {
-        MakeAlias(inputSlice, (usingPadding ? inputPadded : input),
-            paddedRows, paddedCols, (inMap + fullInputOffset) *
-            (paddedRows * paddedCols));
-        ForwardConvolutionRule::Convolution(
-            inputSlice,
-            weight.slice((outMap * inMaps) + inMap),
-            convOutput,
-            strideWidth,
-            strideHeight,
-            1,
-            1,
-            true);
-      }
+    MakeAlias(inputTemp, (usingPadding ? inputPadded : input), paddedRows,
+        paddedCols, inMaps, fullInputOffset * paddedRows * paddedCols *
+        higherInDimensions * batchSize);
 
-      // Make sure to add the bias.
-      if (useBias)
-        convOutput += bias(outMap);
-    }
+    MakeAlias(outputTemp, output, this->outputDimensions[0],
+        this->outputDimensions[1], maps, fullOutputOffset *
+        this->outputDimensions[0] * this->outputDimensions[1] *
+        higherInDimensions * batchSize);
+
+    ForwardConvolutionRule::Convolution(
+        inputTemp,
+        weight,
+        outputTemp,
+        strideWidth,
+        strideHeight,
+        1,
+        1,
+        true);
+
+    // Make sure to add the bias.
+    if (useBias)
+      for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
+        outputTemp.slice(outMap) += bias(outMap);
   }
 }
 

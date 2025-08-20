@@ -35,7 +35,8 @@ class NaiveConvolution
 {
  private:
   /**
-   * Take an input and convert each patch into rows.
+   * Take an input and convert each patch into rows. Assumes that im2row
+   * already has the correct shape.
    *
    * @param input Input used to perform the convolution.
    * @param im2row Patches of the input as rows.
@@ -46,9 +47,9 @@ class NaiveConvolution
    * @param dilationW The dilation factor in x direction.
    * @param dilationH The dilation factor in y direction.
    */
-  template<typename MatType>
+  template<typename MatType, typename OutMatType>
   static void Im2Row(const MatType& input,
-                     MatType& im2row,
+                     OutMatType& im2row,
                      const size_t filterRows,
                      const size_t filterCols,
                      const size_t dW = 1,
@@ -58,16 +59,15 @@ class NaiveConvolution
   {
     const size_t dFilterRows = filterRows * dilationH - (dilationH - 1);
     const size_t dFilterCols = filterCols * dilationW - (dilationW - 1);
-    const size_t filterElems = filterRows * filterCols;
+    //const size_t filterElems = filterRows * filterCols;
     const size_t outputRows = (input.n_rows - dFilterRows + dH) / dH;
     const size_t outputCols = (input.n_cols - dFilterCols + dW) / dW;
-    const size_t outputElems = outputRows * outputCols;
+    //const size_t outputElems = outputRows * outputCols;
 
     // output = im2row * fil2col.
     // im2row has `outputElems` rows and `filterElems` cols so that output has
     // `outputElems` rows and `outMaps` cols. Each output column is a slice of the
     // output cube.
-    im2row = MatType(outputElems, filterElems, GetFillType<MatType>::none);
 
     // (i, j) = top left corner of a patch
     for (size_t j = 0; j < outputCols; j++)
@@ -232,17 +232,18 @@ class NaiveConvolution
       output.zeros(outputRows, outputCols);
     }
 
-    InMatType im2row;
+    InMatType im2row(output.n_elem, filter.n_elem, GetFillType<InMatType>::none);
     Im2Row(inputPadded, im2row, filter.n_rows, filter.n_cols, dW, dH,
         dilationW, dilationH);
 
     FilMatType fil2col;
     MakeAlias(fil2col, filter, filter.n_elem, 1);
 
-    OutMatType outputTmp;
-    MakeAlias(outputTmp, output, output.n_elem, 1);
+    // Alias so that we don't have to reshape output
+    OutMatType tempOutput;
+    MakeAlias(tempOutput, output, output.n_elem, 1);
 
-    outputTmp += im2row * fil2col;
+    tempOutput += im2row * fil2col;
   }
 
   /**
@@ -271,20 +272,29 @@ class NaiveConvolution
       const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     using MatType = typename GetDenseMatType<CubeType>::type;
-    MatType convOutput;
-    NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
-        convOutput, dW, dH, dilationW, dilationH, appending);
+  
+    CubeType inputPadded;
+    PadInput(input, filter, inputPadded, dilationW, dilationH);
 
-    if (!appending)
-      output = CubeType(convOutput.n_rows, convOutput.n_cols, input.n_slices);
-
-    output.slice(0) = convOutput;
-
-    for (size_t i = 1; i < input.n_slices; ++i)
+    MatType im2row(output.n_elem_slice, filter.n_elem_slice * input.n_slices);
+    for (size_t i = 0; i < input.n_slices; ++i)
     {
-      NaiveConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
-          output.slice(i), dW, dH, dilationW, dilationH, appending);
+      auto subview = im2row.submat(0, i * filter.n_elem_slice,
+          output.n_elem_slice - 1, (i + 1) * filter.n_elem_slice - 1);
+      Im2Row(inputPadded.slice(i), subview, filter.n_rows, filter.n_cols,
+          dW, dH, dilationW, dilationH);
     }
+
+    // Repeat filters so each input map is multiplied by the filter
+    MatType tempFilter;
+    MakeAlias(tempFilter, filter, filter.n_elem_slice, filter.n_slices);
+    MatType fil2col = repmat(tempFilter, input.n_slices, 1);
+
+    // Alias so that we don't have to reshape output
+    MatType tempOutput;
+    MakeAlias(tempOutput, output, output.n_elem_slice, filter.n_slices);
+
+    tempOutput += im2row * fil2col;
   }
 
   /**
@@ -314,20 +324,21 @@ class NaiveConvolution
       const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
       const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
-    MatType convOutput;
-    NaiveConvolution<BorderMode>::Convolution(input, filter.slice(0),
-        convOutput, dW, dH, dilationW, dilationH, appending);
+    MatType inputPadded;
+    PadInput(input, filter, inputPadded, dilationW, dilationH);
 
-    if (!appending)
-      output = CubeType(convOutput.n_rows, convOutput.n_cols, filter.n_slices);
+    MatType im2row(output.n_elem_slice, filter.n_elem_slice);
+    Im2Row(inputPadded, im2row, filter.n_rows, filter.n_cols, dW, dH,
+        dilationW, dilationH);
 
-    output.slice(0) = convOutput;
+    MatType fil2col;
+    MakeAlias(fil2col, filter, filter.n_elem_slice, filter.n_slices);
 
-    for (size_t i = 1; i < filter.n_slices; ++i)
-    {
-      NaiveConvolution<BorderMode>::Convolution(input, filter.slice(i),
-          output.slice(i), dW, dH, dilationW, dilationH, appending);
-    }
+    // Alias so that we don't have to reshape output
+    MatType tempOutput;
+    MakeAlias(tempOutput, output, output.n_elem_slice, filter.n_slices);
+
+    tempOutput += im2row * fil2col;
   }
 
   /**
