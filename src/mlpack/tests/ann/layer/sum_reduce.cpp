@@ -1,8 +1,8 @@
 /**
- * @file tests/ann/layer/sumreduce.cpp
+ * @file tests/ann/layer/sum_reduce.cpp
  * @author Andrew Furey
  *
- * Tests the ann SumReduce layer module.
+ * Tests the ann SumReduce layer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -110,4 +110,22 @@ TEST_CASE("SumReduceBackwardPass", "[ANNLayerTest]")
       6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 12, 13, 14, 15, 16, 17 });
   expectedG.reshape(12, batchSize);
   CheckMatrices(g, expectedG);
+}
+
+/**
+ * JacobianTest for SumReduce layer
+ */
+TEST_CASE("SumReduceJacobianTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    arma::mat input(3 * 4 * 5, 1, arma::fill::randu);
+
+    SumReduce layer(2, false);
+    layer.InputDimensions() = { 3, 4, 5 };
+    layer.ComputeOutputDimensions();
+
+    double error = JacobianTest(layer, input);
+    REQUIRE(error <= 1e-5);
+  }
 }
