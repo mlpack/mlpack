@@ -369,9 +369,6 @@ class ConvolutionType : public Layer<MatType>
   //! Locally-stored transformed error parameter.
   CubeType gTemp;
 
-  //! Locally-stored transformed gradient parameter.
-  CubeType gradientTemp;
-
   //! Locally-stored padding layer.
   PaddingType<MatType> padding;
 

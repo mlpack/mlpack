@@ -496,8 +496,11 @@ void ConvolutionType<
   // convolution map weights!  The bias will be handled by direct accesses into
   // `gradient`.
   gradient.zeros();
+  CubeType gradientTemp;
+  MakeAlias(gradientTemp, gradient, weight.n_rows, weight.n_cols,
+      weight.n_slices);
 
-  MatType tempSlice, curError, gradientSlice;
+  MatType tempSlice;
 
   // See Forward() for our iteration strategy.
   for (size_t offset = 0; offset < higherInDimensions * batchSize; ++offset)
@@ -505,32 +508,35 @@ void ConvolutionType<
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    #pragma omp parallel for private(tempSlice, curError, gradientSlice)
-    for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
+    CubeType mappedError;
+    MakeAlias(mappedError, error, this->outputDimensions[0],
+        this->outputDimensions[1], maps, fullOutputOffset *
+        this->outputDimensions[0] * this->outputDimensions[1]);
+    CubeType gradientTempTemp(gradientTemp.n_rows, gradientTemp.n_cols, maps,
+        GetFillType<CubeType>::none);
+    for (size_t inMap = 0; inMap < inMaps; ++inMap)
     {
-      MakeAlias(curError, error, this->outputDimensions[0],
-          this->outputDimensions[1], (outMap + fullOutputOffset) *
-          (this->outputDimensions[0] * this->outputDimensions[1]));
-      for (size_t inMap = 0; inMap < inMaps; ++inMap)
-      {
-        MakeAlias(tempSlice, temp, apparentWidth, apparentHeight,
-            (inMap + fullInputOffset) * (apparentWidth * apparentHeight));
-        MakeAlias(gradientSlice, gradient, weight.n_rows, weight.n_cols,
-            ((outMap * inMaps) + inMap) * (weight.n_rows * weight.n_cols));
-        GradientConvolutionRule::Convolution(
-            tempSlice,
-            curError,
-            gradientSlice,
-            1,
-            1,
-            strideWidth,
-            strideHeight,
-            true);
-      }
+      MakeAlias(tempSlice, temp, apparentWidth, apparentHeight,
+          (inMap + fullInputOffset) * (apparentWidth * apparentHeight));
+      GradientConvolutionRule::Convolution(
+          tempSlice,
+          mappedError,
+          gradientTempTemp,
+          1,
+          1,
+          strideWidth,
+          strideHeight,
+          true);
 
-      if (useBias)
-        gradient[weight.n_elem + outMap] += accu(curError);
+      // Reorder convolution output slices.
+      for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
+        gradientTemp.slice((outMap * inMaps) + inMap) =
+            gradientTempTemp.slice(outMap);
     }
+
+    if (useBias)
+      for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
+        gradient[weight.n_elem + outMap] += accu(mappedError.slice(outMap));
   }
 }
 
