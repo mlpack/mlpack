@@ -912,7 +912,7 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
 /**
  * Train the RBF network on a larger dataset.
  */
-TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
+TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest][long]")
 {
   // Load the dataset.
   arma::mat trainData;

@@ -100,7 +100,7 @@ TEST_CASE("RNNImpulseStepLinearRecurrentTest", "[RecurrentNetworkTest]")
   REQUIRE(err <= 0.005);
 }
 
-TEST_CASE("RNNImpulseStepLSTMTest", "[RecurrentNetworkTest]")
+TEST_CASE("RNNImpulseStepLSTMTest", "[RecurrentNetworkTest][long]")
 {
   double err = ImpulseStepDataTest<LSTM>(1, 5);
   REQUIRE(err <= 0.001);
@@ -209,7 +209,7 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 10)
 /**
  * Test RNN using multiple timestep input and single output.
  */
-TEMPLATE_TEST_CASE("RNNSineTest", "[RecurrentNetworkTest]",
+TEMPLATE_TEST_CASE("RNNSineTest", "[RecurrentNetworkTest][long]",
     LinearRecurrent,
     LSTM,
     GRU)
@@ -568,7 +568,7 @@ void DistractedSequenceRecallTestNetwork(
  * Train the specified networks on the Derek D. Monner's distracted sequence
  * recall task.
  */
-TEST_CASE("LSTMDistractedSequenceRecallTest", "[RecurrentNetworkTest]")
+TEST_CASE("LSTMDistractedSequenceRecallTest", "[RecurrentNetworkTest][long]")
 {
   DistractedSequenceRecallTestNetwork<LSTM>(10, 8);
 }
@@ -1018,7 +1018,7 @@ TEST_CASE("LSTMReberGrammarTest", "[RecurrentNetworkTest]")
 /**
  * Train the specified networks on an embedded Reber grammar dataset.
  */
-TEMPLATE_TEST_CASE("RNNEmbeddedReberGrammarTest", "[RecurrentNetworkTest]",
+TEMPLATE_TEST_CASE("RNNEmbeddedReberGrammarTest", "[RecurrentNetworkTest][long]",
     LSTM,
     GRU)
 {
@@ -1036,7 +1036,7 @@ TEMPLATE_TEST_CASE("RNNEmbeddedReberGrammarTest", "[RecurrentNetworkTest]",
  * Test that we can train an RNN on sequences of different lengths, and get
  * roughly the same thing we would for training on non-ragged sequences.
  */
-TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest]")
+TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]")
 {
   const size_t rho = 25;
   const size_t numEpochs = 3;

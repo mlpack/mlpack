@@ -94,7 +94,7 @@ TEST_CASE("OneStepQLearningTest", "[AsyncLearningTest]")
 }
 
 // Test async one step Sarsa in Cart Pole.
-TEST_CASE("OneStepSarsaTest", "[AsyncLearningTest]")
+TEST_CASE("OneStepSarsaTest", "[AsyncLearningTest][long]")
 {
   /**
    * This is for the Travis CI server, in your own machine you shuold use more
@@ -172,7 +172,7 @@ TEST_CASE("OneStepSarsaTest", "[AsyncLearningTest]")
 }
 
 // Test async n step q-learning in Cart Pole.
-TEST_CASE("NStepQLearningTest", "[AsyncLearningTest]")
+TEST_CASE("NStepQLearningTest", "[AsyncLearningTest][long]")
 {
   /**
    * This is for the Travis CI server, in your own machine you shuold use more

@@ -442,7 +442,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentNumBasisTest",
  * results in a different output matrix.
  */
 TEST_CASE_METHOD(NCATestFixture, "NCADifferentMaxIterationTest",
-                "[NCAMainTest][BindingTests]")
+                "[NCAMainTest][BindingTests][long]")
 {
   // This test can randomly fail and it can be okay, so we run multiple times if
   // necessary.
