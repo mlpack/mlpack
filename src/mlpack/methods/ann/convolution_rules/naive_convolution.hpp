@@ -376,19 +376,24 @@ class NaiveConvolution
       const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
       const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
-    MatType convOutput;
-    NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter,
-        convOutput, dW, dH, dilationW, dilationH, appending);
+    CubeType inputPadded;
+    PadInput(input, filter, inputPadded, dilationW, dilationH);
 
-    if (!appending)
-      output = CubeType(convOutput.n_rows, convOutput.n_cols, input.n_slices);
+    MatType fil2col;
+    MakeAlias(fil2col, filter, filter.n_elem, 1);
 
-    output.slice(0) = convOutput;
+    MatType tempOutput;
+    MatType im2row(output.n_elem_slice, filter.n_elem,
+        GetFillType<CubeType>::none);
 
-    for (size_t i = 1; i < input.n_slices; ++i)
+    for (size_t i = 0; i < input.n_slices; ++i)
     {
-      NaiveConvolution<BorderMode>::Convolution(input.slice(i), filter,
-          output.slice(i), dW, dH, dilationW, dilationH, appending);
+      MakeAlias(tempOutput, output, output.n_elem_slice, 1,
+          i * output.n_elem_slice);
+      Im2Row(inputPadded.slice(i), im2row, filter.n_rows, filter.n_cols,
+          dW, dH, dilationW, dilationH);
+
+      tempOutput += im2row * fil2col;
     }
   }
 };  // class NaiveConvolution
