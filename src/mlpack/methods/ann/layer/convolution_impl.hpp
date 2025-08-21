@@ -313,7 +313,6 @@ void ConvolutionType<
     padding.Forward(input, inputPadded);
   }
 
-  CubeType inputTemp, outputTemp;
   output.zeros();
 
   // We "ignore" dimensions higher than the third---that means that we just pass
@@ -321,19 +320,20 @@ void ConvolutionType<
   //
   // If we eventually have a way to do convolutions for a single kernel
   // in-batch, then this strategy may not be the most efficient solution.
+  #pragma omp parallel for schedule(dynamic)
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
+    CubeType inputTemp, outputTemp;
+
     MakeAlias(inputTemp, (usingPadding ? inputPadded : input), paddedRows,
-        paddedCols, inMaps, fullInputOffset * paddedRows * paddedCols *
-        higherInDimensions * batchSize);
+        paddedCols, inMaps, fullInputOffset * paddedRows * paddedCols);
 
     MakeAlias(outputTemp, output, this->outputDimensions[0],
         this->outputDimensions[1], maps, fullOutputOffset *
-        this->outputDimensions[0] * this->outputDimensions[1] *
-        higherInDimensions * batchSize);
+        this->outputDimensions[0] * this->outputDimensions[1]);
 
     ForwardConvolutionRule::Convolution(
         inputTemp,
@@ -426,16 +426,19 @@ void ConvolutionType<
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    CubeType outputTemp, dilatedMappedErrorTemp;
+    CubeType outputTemp, dilatedMappedErrorTemp, rotatedFiltersTemp;
 
     MakeAlias(outputTemp, output, apparentWidth, apparentHeight, inMaps,
         (fullInputOffset) * (apparentWidth * apparentHeight));
     MakeAlias(dilatedMappedErrorTemp, dilatedMappedError,
         dilatedMappedError.n_rows, dilatedMappedError.n_cols, maps,
         (fullOutputOffset) * (dilatedMappedError.n_elem_slice));
+    MakeAlias(rotatedFiltersTemp, rotatedFilters, rotatedFilters.n_rows,
+        rotatedFilters.n_cols, inMaps,
+        (fullInputOffset) * (rotatedFilters.n_rows * rotatedFilters.n_cols));
     BackwardConvolutionRule::Convolution(
         dilatedMappedErrorTemp,
-        rotatedFilters,
+        rotatedFiltersTemp,
         outputTemp,
         1,
         1,

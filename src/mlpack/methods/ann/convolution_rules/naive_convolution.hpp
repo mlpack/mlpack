@@ -65,7 +65,7 @@ class NaiveConvolution
     //const size_t outputElems = outputRows * outputCols;
 
     // output = im2row * fil2col.
-    // im2row has `outputElems` rows and `filterElems` cols so that output has
+    // im2row has `outputElems` rows and `filterElems * inMaps` cols so that output has
     // `outputElems` rows and `outMaps` cols. Each output column is a slice of the
     // output cube.
 
@@ -291,14 +291,15 @@ class NaiveConvolution
           dW, dH, dilationW, dilationH);
     }
 
-    // Repeat filters so each input map is multiplied by the filter
-    MatType tempFilter;
-    MakeAlias(tempFilter, filter, filter.n_elem_slice, filter.n_slices);
-    MatType fil2col = repmat(tempFilter, input.n_slices, 1);
+    const size_t inMaps = input.n_slices;
+    const size_t outMaps = filter.n_slices / inMaps;
+
+    MatType fil2col;
+    MakeAlias(fil2col, filter, filter.n_elem_slice * inMaps, outMaps);
 
     // Alias so that we don't have to reshape output
     MatType tempOutput;
-    MakeAlias(tempOutput, output, output.n_elem_slice, filter.n_slices);
+    MakeAlias(tempOutput, output, output.n_elem_slice, outMaps);
 
     tempOutput += im2row * fil2col;
   }
