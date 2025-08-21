@@ -174,7 +174,7 @@ pipeline
                   # procmail.  The configuration here kills any tests that took
                   # more than two hours.
                   mkdir -p reports;
-                  ssh jenkins@${target} -t "
+                  time ssh jenkins@${target} -t "
                       cd test_${BRANCH_NAME}_${BUILD_ID};
                       lockfile -r-1 -l 7200 ~/mlpack_test.lock;
                       killall -9 mlpack_test;
