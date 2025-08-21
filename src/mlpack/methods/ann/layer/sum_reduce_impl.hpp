@@ -130,7 +130,8 @@ void SumReduceType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void SumReduceType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
+void SumReduceType<MatType>::serialize(Archive& ar,
+  const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));
   ar(CEREAL_NVP(axis));

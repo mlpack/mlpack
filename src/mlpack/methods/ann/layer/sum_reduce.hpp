@@ -86,14 +86,13 @@ class SumReduceType : public Layer<MatType>
   size_t axis;
 
   //! If true, the dimension that gets summed is set to have size 1, otherwise
-  //! it is deleted and the output will have one fewer dimension than the input.;
+  //! it is deleted and the output will have one fewer dimension than the input.
   bool keepDimensions;
 
   //! Number of rows in cube alias.
   size_t rows;
   //! Number of slices in cube alias.
   size_t slices;
-
 }; // class SumReduceType
 
 // Standard SumReduce layer.
