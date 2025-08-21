@@ -277,6 +277,10 @@ inline FileType AutoDetectFile(std::fstream& stream,
   {
     detectedLoadType = FileType::HDF5Binary;
   }
+  else if (extension == "arff")
+  {
+    detectedLoadType = FileType::ARFFASCII;
+  }
   else if (extension == "png")
   {
     detectedLoadType = FileType::PNG;
@@ -308,6 +312,10 @@ inline FileType AutoDetectFile(std::fstream& stream,
   else if (extension == "pnm")
   {
     detectedLoadType = FileType::PNM;
+  }
+  else if (extension == "bmp")
+  {
+    detectedLoadType = FileType::BMP;
   }
   else // Unknown extension...
   {
@@ -387,6 +395,10 @@ void DetectFromExtension(const std::string& filename,
   else if (extension == "pnm")
   {
     opts.Format() = FileType::PNM;
+  }
+  else if (extension == "bmp")
+  {
+    opts.Format() = FileType::BMP;
   }
   else
   {
