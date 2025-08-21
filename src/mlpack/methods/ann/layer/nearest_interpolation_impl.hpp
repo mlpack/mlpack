@@ -114,10 +114,10 @@ void NearestInterpolationType<MatType>::Forward(
 
 template<typename MatType>
 void NearestInterpolationType<MatType>::Backward(
-    const MatType& /* input */,
-    const MatType& /* output */,
-    const MatType& gradient,
-    MatType& output)
+  const MatType& /* input */,
+  const MatType& /* output */,
+  const MatType& gy,
+  MatType& g)
 {
   const size_t channels = this->inputDimensions[2];
 
@@ -127,12 +127,11 @@ void NearestInterpolationType<MatType>::Backward(
   const size_t inRowSize = this->inputDimensions[0];
   const size_t inColSize = this->inputDimensions[1];
 
-  CubeType outputAsCube;
-  CubeType gradientAsCube;
+  CubeType gTemp;
+  CubeType gyTemp;
 
-  MakeAlias(outputAsCube, output, inRowSize, inColSize, channels, 0, true);
-  MakeAlias(gradientAsCube, gradient, outRowSize, outColSize, channels, 0,
-      false);
+  MakeAlias(gTemp, g, inRowSize, inColSize, channels, 0);
+  MakeAlias(gyTemp, gy, outRowSize, outColSize, channels, 0);
 
   for (size_t i = 0; i < outRowSize; ++i)
   {
@@ -141,9 +140,7 @@ void NearestInterpolationType<MatType>::Backward(
     {
       size_t cOrigin = std::floor(j / scaleFactors[1]);
       for (size_t k = 0; k < channels; ++k)
-      {
-        outputAsCube(rOrigin, cOrigin, k) += gradientAsCube(i, j, k);
-      }
+        gTemp(rOrigin, cOrigin, k) += gyTemp(i, j, k);
     }
   }
 }
