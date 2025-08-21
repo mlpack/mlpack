@@ -451,7 +451,7 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
     // Get the stepsize for this iteration
     double stepSize = decayPolicy.StepSize(i);
 
-    if (shuffle) // Determine order of visitation.
+    if (Shuffle()) // Determine order of visitation.
       std::shuffle(visitationOrder.begin(), visitationOrder.end(),
           mlpack::RandGen());
 

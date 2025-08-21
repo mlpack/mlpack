@@ -380,6 +380,89 @@ template<
     typename InitializationRuleType,
     typename MatType
 >
+typename MatType::elem_type RNN<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::Evaluate(
+    const CubeType& predictors,
+    const CubeType& responses)
+{
+  // Ensure that the network is configured correctly.
+  network.CheckNetwork("RNN::Evaluate()", predictors.n_rows);
+
+  // Add the loss of the network unrelated to output.
+  typename MatType::elem_type lossSum = network.network.Loss();
+
+  // Reset recurrent memory state.
+  ResetMemoryState(0, predictors.n_cols);
+
+  // Iterate over all time slices.
+  MatType forwardOutput;
+  for (size_t t = 0; t < predictors.n_slices; t++)
+  {
+    SetCurrentStep(t, (t == predictors.n_slices - 1));
+    // Do a forward pass and calculate the loss.
+    network.Forward(predictors.slice(t), forwardOutput);
+    if (!single || t == predictors.n_slices - 1)
+      lossSum += network.outputLayer.Forward(forwardOutput,
+          responses.slice(single ? 0 : t));
+  }
+
+  return lossSum;
+}
+
+template<
+    typename OutputLayerType,
+    typename InitializationRuleType,
+    typename MatType
+>
+typename MatType::elem_type RNN<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::Evaluate(
+    const CubeType& predictors,
+    const CubeType& responses,
+    const arma::urowvec& sequenceLengths)
+{
+  // Ensure that the network is configured correctly.
+  network.CheckNetwork("RNN::Evaluate()", predictors.n_rows);
+
+  // Add the loss of the network unrelated to output.
+  typename MatType::elem_type lossSum = network.network.Loss();
+
+  MatType forwardOutput, inputAlias;
+  for (size_t i = 0; i < predictors.n_cols; i++)
+  {
+    // Reset memory for a new sequence.
+    ResetMemoryState(0, 1);
+
+    // Iterate over all time slices.
+    size_t slices = sequenceLengths[i];
+    for (size_t t = 0; t < slices; t++)
+    {
+      SetCurrentStep(t, (t == slices - 1));
+      // Get the input data.
+      MakeAlias(inputAlias, predictors, predictors.n_rows, 1,
+          i * predictors.n_rows);
+
+      // Do a forward pass and calculate the loss.
+      network.Forward(inputAlias, forwardOutput);
+      if (!single || t == predictors.n_slices - 1)
+        lossSum += network.outputLayer.Forward(forwardOutput,
+            responses.slice(single ? 0 : t).col(i));
+    }
+  }
+
+  return lossSum;
+}
+
+template<
+    typename OutputLayerType,
+    typename InitializationRuleType,
+    typename MatType
+>
 template<typename Archive>
 void RNN<
     OutputLayerType,
@@ -590,7 +673,7 @@ typename MatType::elem_type RNN<
       // TODO: note that we could avoid the copy of currentGradient by having
       // each layer *add* its gradient to `gradient`.  However that would
       // require some amount of refactoring.
-      MatType networkDelta;
+      MatType networkDelta(predictors.n_rows, batchSize, arma::fill::none);
       GradType currentGradient(gradient.n_rows, gradient.n_cols,
           GetFillType<MatType>::zeros);
       network.network.Backward(stepData, outputData, error, networkDelta);

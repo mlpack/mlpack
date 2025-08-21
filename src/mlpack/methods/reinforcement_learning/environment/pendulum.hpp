@@ -111,18 +111,19 @@ class Pendulum
    * @param maxAngularVelocity Maximum angular velocity.
    * @param maxTorque Maximum torque.
    * @param dt The differential value.
-   * @param doneReward The reward recieved by the agent on success.
+   * @param doneReward The reward recieved by the agent on success.  NOTE: not
+   *      currently used.
    */
   Pendulum(const size_t maxSteps = 200,
            const double maxAngularVelocity = 8,
            const double maxTorque = 2.0,
            const double dt = 0.05,
-           const double doneReward = 0.0) :
+           const double /* doneReward */ = 0.0) :
       maxSteps(maxSteps),
       maxAngularVelocity(maxAngularVelocity),
       maxTorque(maxTorque),
       dt(dt),
-      doneReward(doneReward),
+      //doneReward(doneReward),
       stepsPerformed(0)
   { /* Nothing to do here */ }
 
@@ -254,8 +255,8 @@ class Pendulum
   //! Locally-stored dt.
   double dt;
 
-  //! Locally-stored done reward.
-  double doneReward;
+  //! Locally-stored done reward.  NOTE: not currently used.
+  //double doneReward;
 
   //! Locally-stored number of steps performed.
   size_t stepsPerformed;

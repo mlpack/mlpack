@@ -301,12 +301,12 @@ TEST_CASE("SingleUBTreeTraverserTest", "[UBTreeTest]")
 
   // Nearest neighbor search with the UB tree.
   NeighborSearch<NearestNS, LMetric<2, true>, arma::mat, UBTree> knn1(dataset,
-      SINGLE_TREE_MODE);
+      SINGLE_TREE);
 
   knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  KNN knn2(dataset, NAIVE_MODE);
+  KNN knn2(dataset, NAIVE);
 
   knn2.Search(5, neighbors2, distances2);
 
@@ -328,12 +328,12 @@ TEST_CASE("DualUBTreeTraverserTest", "[UBTreeTest]")
 
   // Nearest neighbor search with the UB tree.
   NeighborSearch<NearestNS, LMetric<2, true>, arma::mat, UBTree> knn1(dataset,
-      DUAL_TREE_MODE);
+      DUAL_TREE);
 
   knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  KNN knn2(dataset, NAIVE_MODE);
+  KNN knn2(dataset, NAIVE);
 
   knn2.Search(5, neighbors2, distances2);
 

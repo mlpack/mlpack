@@ -24,8 +24,11 @@ namespace mlpack {
 #ifdef MLPACK_HAS_COOT
 
 /* using for bandicoot namespace*/
-using coot::exp;
 using coot::dot;
+using coot::exp;
+using coot::find;
+using coot::find_nan;
+using coot::find_nonfinite;
 using coot::join_cols;
 using coot::join_rows;
 using coot::log;
@@ -51,8 +54,14 @@ using coot::zeros;
 #endif
 
 /* using for armadillo namespace */
-using arma::exp;
 using arma::dot;
+using arma::exp;
+using arma::find;
+#if ARMA_VERSION_MAJOR > 11 || \
+    (ARMA_VERSION_MAJOR == 11 && ARMA_VERSION_MINOR >= 4)
+using arma::find_nan;
+#endif
+using arma::find_nonfinite;
 using arma::join_cols;
 using arma::join_rows;
 using arma::log;

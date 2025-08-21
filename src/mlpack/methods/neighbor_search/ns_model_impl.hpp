@@ -36,12 +36,12 @@ void NSWrapper<
          const double /* tau */,
          const double /* rho */)
 {
-  if (ns.SearchMode() != NAIVE_MODE)
+  if (ns.SearchStrategy() != NAIVE)
     timers.Start("tree_building");
 
   ns.Train(std::move(referenceSet));
 
-  if (ns.SearchMode() != NAIVE_MODE)
+  if (ns.SearchStrategy() != NAIVE)
     timers.Stop("tree_building");
 }
 
@@ -63,7 +63,7 @@ void NSWrapper<
           const size_t /* leafSize */,
           const double /* rho */)
 {
-  if (ns.SearchMode() == DUAL_TREE_MODE)
+  if (ns.SearchStrategy() == DUAL_TREE)
   {
     // We build the query tree manually, so that we can time how long it takes.
     timers.Start("tree_building");
@@ -118,7 +118,7 @@ void LeafSizeNSWrapper<
          const double /* tau */,
          const double /* rho */)
 {
-  if (ns.SearchMode() == NAIVE_MODE)
+  if (ns.SearchStrategy() == NAIVE)
   {
     ns.Train(std::move(referenceSet));
   }
@@ -153,7 +153,7 @@ void LeafSizeNSWrapper<
           const size_t leafSize,
           const double /* rho */)
 {
-  if (ns.SearchMode() == DUAL_TREE_MODE)
+  if (ns.SearchStrategy() == DUAL_TREE)
   {
     // We actually have to do the mapping of query points ourselves, since the
     // NeighborSearch class does not provide a way for us to specify the leaf
@@ -215,7 +215,7 @@ void SpillNSWrapper<SortPolicy>::Search(util::Timers& timers,
                                         const size_t leafSize,
                                         const double rho)
 {
-  if (ns.SearchMode() == DUAL_TREE_MODE)
+  if (ns.SearchStrategy() == DUAL_TREE)
   {
     // For Dual Tree Search on SpillTrees, the queryTree must be built with
     // non overlapping (tau = 0).
@@ -351,7 +351,7 @@ void NSModel<SortPolicy>::serialize(Archive& ar, const uint32_t /* version */)
 
   // This should never happen, but just in case, be clean with memory.
   if (cereal::is_loading<Archive>())
-    InitializeModel(DUAL_TREE_MODE, 0.0); // Values will be overwritten.
+    InitializeModel(DUAL_TREE, 0.0); // Values will be overwritten.
 
   // Avoid polymorphic serialization by explicitly serializing the correct type.
   switch (treeType)
@@ -473,16 +473,16 @@ const arma::mat& NSModel<SortPolicy>::Dataset() const
 
 //! Access the search mode.
 template<typename SortPolicy>
-NeighborSearchMode NSModel<SortPolicy>::SearchMode() const
+NeighborSearchStrategy NSModel<SortPolicy>::SearchStrategy() const
 {
-  return nSearch->SearchMode();
+  return nSearch->SearchStrategy();
 }
 
 //! Modify the search mode.
 template<typename SortPolicy>
-NeighborSearchMode& NSModel<SortPolicy>::SearchMode()
+NeighborSearchStrategy& NSModel<SortPolicy>::SearchStrategy()
 {
-  return nSearch->SearchMode();
+  return nSearch->SearchStrategy();
 }
 
 template<typename SortPolicy>
@@ -499,8 +499,9 @@ double& NSModel<SortPolicy>::Epsilon()
 
 //! Initialize a model given the tree type.  (No training happens here.)
 template<typename SortPolicy>
-void NSModel<SortPolicy>::InitializeModel(const NeighborSearchMode searchMode,
-                                          const double epsilon)
+void NSModel<SortPolicy>::InitializeModel(
+    const NeighborSearchStrategy searchStrategy,
+    const double epsilon)
 {
   // Clear existing memory.
   if (nSearch)
@@ -509,62 +510,70 @@ void NSModel<SortPolicy>::InitializeModel(const NeighborSearchMode searchMode,
   switch (treeType)
   {
     case KD_TREE:
-      nSearch = new LeafSizeNSWrapper<SortPolicy, KDTree>(searchMode, epsilon);
+      nSearch = new LeafSizeNSWrapper<SortPolicy, KDTree>(searchStrategy,
+          epsilon);
       break;
     case COVER_TREE:
-      nSearch = new NSWrapper<SortPolicy, StandardCoverTree>(searchMode,
+      nSearch = new NSWrapper<SortPolicy, StandardCoverTree>(searchStrategy,
           epsilon);
       break;
     case R_TREE:
-      nSearch = new NSWrapper<SortPolicy, RTree>(searchMode, epsilon);
+      nSearch = new NSWrapper<SortPolicy, RTree>(searchStrategy, epsilon);
       break;
     case R_STAR_TREE:
-      nSearch = new NSWrapper<SortPolicy, RStarTree>(searchMode, epsilon);
+      nSearch = new NSWrapper<SortPolicy, RStarTree>(searchStrategy, epsilon);
       break;
     case BALL_TREE:
-      nSearch = new LeafSizeNSWrapper<SortPolicy, BallTree>(searchMode,
+      nSearch = new LeafSizeNSWrapper<SortPolicy, BallTree>(searchStrategy,
           epsilon);
       break;
     case X_TREE:
-      nSearch = new NSWrapper<SortPolicy, XTree>(searchMode, epsilon);
+      nSearch = new NSWrapper<SortPolicy, XTree>(searchStrategy, epsilon);
       break;
     case HILBERT_R_TREE:
-      nSearch = new NSWrapper<SortPolicy, HilbertRTree>(searchMode, epsilon);
+      nSearch = new NSWrapper<SortPolicy, HilbertRTree>(searchStrategy,
+          epsilon);
       break;
     case R_PLUS_TREE:
-      nSearch = new NSWrapper<SortPolicy, RPlusTree>(searchMode, epsilon);
+      nSearch = new NSWrapper<SortPolicy, RPlusTree>(searchStrategy, epsilon);
       break;
     case R_PLUS_PLUS_TREE:
-      nSearch = new NSWrapper<SortPolicy, RPlusPlusTree>(searchMode, epsilon);
+      nSearch = new NSWrapper<SortPolicy, RPlusPlusTree>(searchStrategy,
+          epsilon);
       break;
     case VP_TREE:
-      nSearch = new LeafSizeNSWrapper<SortPolicy, VPTree>(searchMode, epsilon);
+      nSearch = new LeafSizeNSWrapper<SortPolicy, VPTree>(searchStrategy,
+          epsilon);
       break;
     case RP_TREE:
-      nSearch = new LeafSizeNSWrapper<SortPolicy, RPTree>(searchMode, epsilon);
+      nSearch = new LeafSizeNSWrapper<SortPolicy, RPTree>(searchStrategy,
+          epsilon);
       break;
     case MAX_RP_TREE:
-      nSearch = new LeafSizeNSWrapper<SortPolicy, MaxRPTree>(searchMode,
+      nSearch = new LeafSizeNSWrapper<SortPolicy, MaxRPTree>(searchStrategy,
           epsilon);
       break;
     case SPILL_TREE:
-      nSearch = new SpillNSWrapper<SortPolicy>(searchMode, epsilon);
+      nSearch = new SpillNSWrapper<SortPolicy>(searchStrategy, epsilon);
       break;
     case UB_TREE:
-      nSearch = new LeafSizeNSWrapper<SortPolicy, UBTree>(searchMode, epsilon);
+      nSearch = new LeafSizeNSWrapper<SortPolicy, UBTree>(searchStrategy,
+          epsilon);
       break;
     case OCTREE:
-      nSearch = new LeafSizeNSWrapper<SortPolicy, Octree>(searchMode, epsilon);
+      nSearch = new LeafSizeNSWrapper<SortPolicy, Octree>(searchStrategy,
+          epsilon);
       break;
   }
 }
 
 //! Build the reference tree.
 template<typename SortPolicy>
-void NSModel<SortPolicy>::BuildModel(util::Timers& timers,
-                                     arma::mat&& referenceSet,
-                                     const NeighborSearchMode searchMode,
-                                     const double epsilon)
+void NSModel<SortPolicy>::BuildModel(
+    util::Timers& timers,
+    arma::mat&& referenceSet,
+    const NeighborSearchStrategy searchStrategy,
+    const double epsilon)
 {
   // Initialize random basis if necessary.
   if (randomBasis)
@@ -602,13 +611,13 @@ void NSModel<SortPolicy>::BuildModel(util::Timers& timers,
     timers.Stop("computing_random_basis");
   }
 
-  if (searchMode != NAIVE_MODE)
+  if (searchStrategy != NAIVE)
     Log::Info << "Building reference tree..." << std::endl;
 
-  InitializeModel(searchMode, epsilon);
+  InitializeModel(searchStrategy, epsilon);
   nSearch->Train(timers, std::move(referenceSet), leafSize, tau, rho);
 
-  if (searchMode != NAIVE_MODE)
+  if (searchStrategy != NAIVE)
     Log::Info << "Tree built." << std::endl;
 }
 
@@ -630,18 +639,18 @@ void NSModel<SortPolicy>::Search(util::Timers& timers,
 
   Log::Info << "Searching for " << k << " neighbors with ";
 
-  switch (SearchMode())
+  switch (SearchStrategy())
   {
-    case NAIVE_MODE:
+    case NAIVE:
       Log::Info << "brute-force (naive) search..." << std::endl;
       break;
-    case SINGLE_TREE_MODE:
+    case SINGLE_TREE:
       Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
       break;
-    case DUAL_TREE_MODE:
+    case DUAL_TREE:
       Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
       break;
-    case GREEDY_SINGLE_TREE_MODE:
+    case GREEDY_SINGLE_TREE:
       Log::Info << "greedy single-tree " << TreeName() << " search..."
           << std::endl;
       break;
@@ -660,24 +669,24 @@ void NSModel<SortPolicy>::Search(util::Timers& timers,
 {
   Log::Info << "Searching for " << k << " neighbors with ";
 
-  switch (SearchMode())
+  switch (SearchStrategy())
   {
-    case NAIVE_MODE:
+    case NAIVE:
       Log::Info << "brute-force (naive) search..." << std::endl;
       break;
-    case SINGLE_TREE_MODE:
+    case SINGLE_TREE:
       Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
       break;
-    case DUAL_TREE_MODE:
+    case DUAL_TREE:
       Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
       break;
-    case GREEDY_SINGLE_TREE_MODE:
+    case GREEDY_SINGLE_TREE:
       Log::Info << "greedy single-tree " << TreeName() << " search..."
           << std::endl;
       break;
   }
 
-  if (Epsilon() != 0 && SearchMode() != NAIVE_MODE)
+  if (Epsilon() != 0 && SearchStrategy() != NAIVE)
     Log::Info << "Maximum of " << Epsilon() * 100 << "% relative error."
         << std::endl;
 

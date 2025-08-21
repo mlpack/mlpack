@@ -17,6 +17,7 @@
 #include <mlpack/methods/logistic_regression.hpp>
 #include <mlpack/methods/naive_bayes.hpp>
 #include <mlpack/methods/perceptron.hpp>
+#include <mlpack/methods/random_forest.hpp>
 #include <mlpack/methods/softmax_regression.hpp>
 
 #include "catch.hpp"
@@ -319,6 +320,10 @@ TEST_CASE("PredictionsTypeTest", "[CVTest]")
       arma::Row<size_t>>();
   CheckPredictionsType<DecisionTree<>, arma::Row<char>, arma::mat,
       arma::Row<char>>();
+  CheckPredictionsType<RandomForest<>, arma::Row<size_t>, arma::mat,
+      arma::Row<size_t>>();
+  CheckPredictionsType<RandomForest<>, arma::Row<char>, arma::mat,
+      arma::Row<char>>();
 }
 
 /**
@@ -332,6 +337,10 @@ TEST_CASE("SupportsWeightsTest", "[CVTest]")
   static_assert(MetaInfoExtractor<DecisionTree<>>::SupportsWeights,
       "Value should be true");
   static_assert(MetaInfoExtractor<DecisionTree<>, arma::mat, arma::urowvec,
+      arma::Row<float>>::SupportsWeights, "Value should be true");
+  static_assert(MetaInfoExtractor<RandomForest<>>::SupportsWeights,
+      "Value should be true");
+  static_assert(MetaInfoExtractor<RandomForest<>, arma::mat, arma::urowvec,
       arma::Row<float>>::SupportsWeights, "Value should be true");
 
   static_assert(!MetaInfoExtractor<LARS<>>::SupportsWeights,
@@ -362,6 +371,9 @@ TEST_CASE("WeightsTypeTest", "[CVTest]")
   CheckWeightsType<DecisionTree<>, arma::rowvec>();
   CheckWeightsType<DecisionTree<>, arma::Row<float>, arma::mat,
       arma::Row<size_t>, arma::Row<float>>();
+  CheckWeightsType<RandomForest<>, arma::rowvec>();
+  CheckWeightsType<RandomForest<>, arma::Row<float>, arma::mat,
+      arma::Row<size_t>, arma::Row<float>>();
 }
 
 /**
@@ -371,6 +383,8 @@ TEST_CASE("WeightsTypeTest", "[CVTest]")
 TEST_CASE("TakesDatasetInfoTest", "[CVTest]")
 {
   static_assert(MetaInfoExtractor<DecisionTree<>>::TakesDatasetInfo,
+      "Value should be true");
+  static_assert(MetaInfoExtractor<RandomForest<>>::TakesDatasetInfo,
       "Value should be true");
   static_assert(!MetaInfoExtractor<LinearRegression<>>::TakesDatasetInfo,
       "Value should be false");
@@ -385,6 +399,8 @@ TEST_CASE("TakesDatasetInfoTest", "[CVTest]")
 TEST_CASE("TakesNumClassesTest", "[CVTest]")
 {
   static_assert(MetaInfoExtractor<DecisionTree<>>::TakesNumClasses,
+      "Value should be true");
+  static_assert(MetaInfoExtractor<RandomForest<>>::TakesNumClasses,
       "Value should be true");
   static_assert(MetaInfoExtractor<SoftmaxRegression<>>::TakesNumClasses,
       "Value should be true");
@@ -596,6 +612,34 @@ TEST_CASE("KFoldCVPerceptronTest", "[CVTest]")
 
   // 10-fold cross-validation, no shuffling.
   KFoldCV<Perceptron<>, Accuracy> cv(10, data, labels, numClasses);
+
+  // We should succeed in classifying separately the first nine samples, and
+  // fail with the remaining one.
+  double expectedAccuracy = 1.0;
+
+  REQUIRE(cv.Evaluate() == Approx(expectedAccuracy).epsilon(1e-7));
+
+  // Assert we can access a trained model without the exception of
+  // uninitialization.
+  REQUIRE_NOTHROW(cv.Model());
+}
+
+/**
+ * Test KFoldCV on random forests.
+ */
+TEST_CASE("KFoldCVRandomForestTest", "[CVTest]")
+{
+  // Basically the same as the test above (for Naive Bayes), but with the
+  // random forest.
+
+  // Making a 10-points dataset. All points should always be correctly
+  // classified.
+  arma::mat data("0 0 0 0 0 1 1 1 1 1");
+  arma::Row<size_t> labels("0 0 0 0 0 1 1 1 1 1");
+  size_t numClasses = 2;
+
+  // 10-fold cross-validation, no shuffling.
+  KFoldCV<RandomForest<>, Accuracy> cv(10, data, labels, numClasses);
 
   // We should succeed in classifying separately the first nine samples, and
   // fail with the remaining one.
