@@ -191,6 +191,75 @@ class NaiveConvolution
         paddingCols + input.n_cols - 1, input.n_slices - 1) = input;
   }
 
+  /**
+   * Set the size of the output matrix.
+   *
+   * @param inputPadded Input with padding applied.
+   * @param filter Filter used to perform the convolution.
+   * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   */
+  template<typename InMatType, typename FilMatType, typename OutMatType>
+  static void
+  ComputeOutputSize(const InMatType& inputPadded,
+                    const FilMatType& filter,
+                    OutMatType& output,
+                    const size_t dW = 1,
+                    const size_t dH = 1,
+                    const size_t dilationW = 1,
+                    const size_t dilationH = 1,
+                    const typename std::enable_if_t<
+                        IsMatrix<OutMatType>::value>* = 0)
+  {
+    // Compute the output size.  The filterRows and filterCols computation must
+    // take into account the fact that dilation only adds rows or columns
+    // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
+    // 3x3 means an effective kernel size of 5x5, *not* 6x6.
+    const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
+    const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
+    const size_t outputRows = (inputPadded.n_rows - filterRows + dH) / dH;
+    const size_t outputCols = (inputPadded.n_cols - filterCols + dW) / dW;
+    output.zeros(outputRows, outputCols);
+  }
+
+  /**
+   * Set the size of the output cube. Assumes that the output already has the
+   * correct amount of slices.
+   *
+   * @param inputPadded Input with padding applied.
+   * @param filter Filter used to perform the convolution.
+   * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   */
+  template<typename InMatType, typename FilMatType, typename OutCubeType>
+  static void
+  ComputeOutputSize(const InMatType& inputPadded,
+                    const FilMatType& filter,
+                    OutCubeType& output,
+                    const size_t dW = 1,
+                    const size_t dH = 1,
+                    const size_t dilationW = 1,
+                    const size_t dilationH = 1,
+                    const typename std::enable_if_t<
+                        IsCube<OutCubeType>::value>* = 0)
+  {
+    // Compute the output size.  The filterRows and filterCols computation must
+    // take into account the fact that dilation only adds rows or columns
+    // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
+    // 3x3 means an effective kernel size of 5x5, *not* 6x6.
+    const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
+    const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
+    const size_t outputRows = (inputPadded.n_rows - filterRows + dH) / dH;
+    const size_t outputCols = (inputPadded.n_cols - filterCols + dW) / dW;
+    output.zeros(outputRows, outputCols, output.n_slices);
+  }
+
  public:
   /**
    * Perform a convolution with dense matrices.
@@ -219,18 +288,10 @@ class NaiveConvolution
   {
     InMatType inputPadded;
     PadInput(input, filter, inputPadded, dilationW, dilationH);
-    // Compute the output size.  The filterRows and filterCols computation must
-    // take into account the fact that dilation only adds rows or columns
-    // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
-    // 3x3 means an effective kernel size of 5x5, *not* 6x6.
+
     if (!appending)
-    {
-      const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
-      const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
-      const size_t outputRows = (inputPadded.n_rows - filterRows + dH) / dH;
-      const size_t outputCols = (inputPadded.n_cols - filterCols + dW) / dW;
-      output.zeros(outputRows, outputCols);
-    }
+      ComputeOutputSize(inputPadded, filter, output, dW, dH,
+          dilationW, dilationH);
 
     InMatType im2row(output.n_elem, filter.n_elem,
         GetFillType<InMatType>::none);
@@ -276,6 +337,10 @@ class NaiveConvolution
   
     CubeType inputPadded;
     PadInput(input, filter, inputPadded, dilationW, dilationH);
+
+    if (!appending)
+      ComputeOutputSize(inputPadded, filter, output, dW, dH,
+          dilationW, dilationH);
 
     MatType im2row(output.n_elem_slice, filter.n_elem_slice * input.n_slices,
         GetFillType<MatType>::none);
@@ -334,6 +399,10 @@ class NaiveConvolution
     MatType inputPadded;
     PadInput(input, filter, inputPadded, dilationW, dilationH);
 
+    if (!appending)
+      ComputeOutputSize(inputPadded, filter, output, dW, dH,
+          dilationW, dilationH);
+
     MatType im2row(output.n_elem_slice, filter.n_elem_slice,
         GetFillType<MatType>::none);
     Im2Row(inputPadded, im2row, filter.n_rows, filter.n_cols, dW, dH,
@@ -378,6 +447,10 @@ class NaiveConvolution
   {
     CubeType inputPadded;
     PadInput(input, filter, inputPadded, dilationW, dilationH);
+
+    if (!appending)
+      ComputeOutputSize(inputPadded, filter, output, dW, dH,
+          dilationW, dilationH);
 
     MatType fil2col;
     MakeAlias(fil2col, filter, filter.n_elem, 1);
