@@ -1300,7 +1300,8 @@ TEST_CASE("LARSSelectBetaInvalidLambda1Test", "[LARSTest]")
 }
 
 // Test that we can train a sparse model on dense data.
-TEMPLATE_TEST_CASE("LARSSparseModelDenseData", "[LARSTest][long]", float, double)
+TEMPLATE_TEST_CASE("LARSSparseModelDenseData", "[LARSTest][long]", float,
+    double)
 {
   using eT = TestType;
 

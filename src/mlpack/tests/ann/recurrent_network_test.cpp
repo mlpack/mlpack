@@ -1018,7 +1018,8 @@ TEST_CASE("LSTMReberGrammarTest", "[RecurrentNetworkTest]")
 /**
  * Train the specified networks on an embedded Reber grammar dataset.
  */
-TEMPLATE_TEST_CASE("RNNEmbeddedReberGrammarTest", "[RecurrentNetworkTest][long]",
+TEMPLATE_TEST_CASE("RNNEmbeddedReberGrammarTest",
+    "[RecurrentNetworkTest][long]",
     LSTM,
     GRU)
 {
