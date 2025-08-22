@@ -350,9 +350,9 @@ class NaiveConvolution
     for (size_t i = 0; i < input.n_slices; ++i)
     {
       MatType im2rowSv;
-      MakeAlias(im2rowSv, im2row, output.n_elem_.n_rows * output.n_cols,
-          filter.n_elem_.n_rows * filter.n_cols, output.n_elem_.n_rows *
-          output.n_cols * filter.n_elem_.n_rows * filter.n_cols * i);
+      MakeAlias(im2rowSv, im2row, output.n_rows * output.n_cols,
+          filter.n_rows * filter.n_cols, output.n_rows *
+          output.n_cols * filter.n_rows * filter.n_cols * i);
       Im2Row(inputPadded.slice(i), im2rowSv, filter.n_rows, filter.n_cols,
           dW, dH, dilationW, dilationH);
     }

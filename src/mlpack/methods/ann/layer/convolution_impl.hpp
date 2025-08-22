@@ -496,9 +496,7 @@ void ConvolutionType<
 
   MatType temp(apparentWidth * apparentHeight * inMaps * higherInDimensions,
       batchSize);
-  CubeType tempCube, gradientTemp;
-  MakeAlias(tempCube, temp, apparentWidth, apparentHeight,
-      inMaps * higherInDimensions * batchSize);
+  CubeType gradientTemp;
   paddingBackward.Backward(input, {} /* unused */,
       usingPadding ? inputPadded : input, temp);
 
@@ -509,25 +507,29 @@ void ConvolutionType<
   MakeAlias(gradientTemp, gradient, weight.n_rows, weight.n_cols,
       weight.n_slices);
 
+  MatType tempSlice;
+
   // See Forward() for our iteration strategy.
-  #pragma omp parallel for schedule(dynamic)
+  #pragma omp parallel for schedule(dynamic) private(tempSlice)
   for (size_t offset = 0; offset < higherInDimensions * batchSize; ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
     CubeType mappedErrorTemp;
-    MakeAlias(mappedErrorTemp, mappedError, mappedError.n_rows,
-        mappedError.n_cols, maps, fullOutputOffset * mappedError.n_rows *
-        mappedError.n_cols);
+    MakeAlias(mappedErrorTemp, error, this->outputDimensions[0],
+        this->outputDimensions[1], maps, fullOutputOffset *
+        this->outputDimensions[0] * this->outputDimensions[1]);
 
     for (size_t inMap = 0; inMap < inMaps; ++inMap)
     {
       CubeType gradientTempTemp(gradientTemp.n_rows, gradientTemp.n_cols,
           maps);
+      MakeAlias(tempSlice, temp, apparentWidth, apparentHeight,
+          (inMap + fullInputOffset) * (apparentWidth * apparentHeight));
 
       GradientConvolutionRule::Convolution(
-          tempCube.slice(inMap + fullInputOffset),
+          tempSlice,
           mappedErrorTemp,
           gradientTempTemp,
           1,
@@ -550,8 +552,8 @@ void ConvolutionType<
       for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
       {
         #pragma omp atomic update
-        gradient[weight.n_elem + outMap] += accu(mappedError
-            .slice(outMap + fullOutputOffset));
+        gradient[weight.n_elem + outMap] += accu(mappedErrorTemp
+            .slice(outMap));
       }
     }
   }
