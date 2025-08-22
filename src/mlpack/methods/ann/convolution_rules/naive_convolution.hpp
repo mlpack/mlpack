@@ -35,7 +35,7 @@ class NaiveConvolution
 {
  private:
   /**
-   * Take an input and convert each patch into rows. Assumes that im2row
+   * Take an input and convert each patch into rows. Expects that im2row
    * already has the correct shape.
    *
    * @param input Input used to perform the convolution.
@@ -59,17 +59,9 @@ class NaiveConvolution
   {
     const size_t dFilterRows = filterRows * dilationH - (dilationH - 1);
     const size_t dFilterCols = filterCols * dilationW - (dilationW - 1);
-    //const size_t filterElems = filterRows * filterCols;
     const size_t outputRows = (input.n_rows - dFilterRows + dH) / dH;
     const size_t outputCols = (input.n_cols - dFilterCols + dW) / dW;
-    //const size_t outputElems = outputRows * outputCols;
 
-    // output = im2row * fil2col.
-    // im2row has `outputElems` rows and `filterElems * inMaps` cols so that output has
-    // `outputElems` rows and `outMaps` cols. Each output column is a slice of the
-    // output cube.
-
-    // (i, j) = top left corner of a patch
     for (size_t j = 0; j < outputCols; j++)
     {
       for (size_t i = 0; i < outputRows; i++)
@@ -80,7 +72,7 @@ class NaiveConvolution
         {
           for (size_t ki = 0; ki < filterRows; ki++)
           {
-            im2row(nRow, nCol) = input(i * dH + ki * dilationH,
+            im2row.at(nRow, nCol) = input.at(i * dH + ki * dilationH,
                 j * dW + kj * dilationW);
             nCol++;
           }
@@ -226,7 +218,7 @@ class NaiveConvolution
   }
 
   /**
-   * Set the size of the output cube. Assumes that the output already has the
+   * Set the size of the output cube. Expects that the output already has the
    * correct amount of slices.
    *
    * @param inputPadded Input with padding applied.
@@ -298,10 +290,11 @@ class NaiveConvolution
     Im2Row(inputPadded, im2row, filter.n_rows, filter.n_cols, dW, dH,
         dilationW, dilationH);
 
+    // The filters already have the correct order in memory, just reshape it.
     FilMatType fil2col;
     MakeAlias(fil2col, filter, filter.n_elem, 1);
 
-    // Alias so that we don't have to reshape output
+    // The output is also already in the correct order.
     OutMatType tempOutput;
     MakeAlias(tempOutput, output, output.n_elem, 1);
 
@@ -309,7 +302,12 @@ class NaiveConvolution
   }
 
   /**
-   * Perform a convolution using 3rd order tensors.
+   * Perform a convolution using 3rd order tensors. Expects that `filter` has
+   * `input.n_slices * output.n_slices` slices. The first `input.n_slices`
+   * filters output to the first output slice.
+   * eg. 2 input slices: filter 0 applies to input 0, output 0,
+   * fil 1 -> in 1, out 0, fil 2 -> in 0, out 1, fil 3 -> in 1, out 1,
+   * fil 4 -> in 0, out 2, fil 5 -> in 1, out 2, etc.
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the convolution.
@@ -348,7 +346,6 @@ class NaiveConvolution
     #pragma omp parallel for
     for (size_t i = 0; i < input.n_slices; ++i)
     {
-      // Get a subview from columns `i` to `i * filter.n_elem_slice`.
       MatType im2rowSv;
       MakeAlias(im2rowSv, im2row, output.n_elem_slice, filter.n_elem_slice,
           output.n_elem_slice * filter.n_elem_slice * i);
@@ -359,10 +356,11 @@ class NaiveConvolution
     const size_t inMaps = input.n_slices;
     const size_t outMaps = filter.n_slices / inMaps;
 
+    // The filters already have the correct order in memory, just reshape it.
     MatType fil2col;
     MakeAlias(fil2col, filter, filter.n_elem_slice * inMaps, outMaps);
 
-    // Alias so that we don't have to reshape output
+    // The output is also already in the correct order.
     MatType tempOutput;
     MakeAlias(tempOutput, output, output.n_elem_slice, outMaps);
 
@@ -408,10 +406,11 @@ class NaiveConvolution
     Im2Row(inputPadded, im2row, filter.n_rows, filter.n_cols, dW, dH,
         dilationW, dilationH);
 
+    // The filters already have the correct order in memory, just reshape it.
     MatType fil2col;
     MakeAlias(fil2col, filter, filter.n_elem_slice, filter.n_slices);
 
-    // Alias so that we don't have to reshape output
+    // The output is also already in the correct order.
     MatType tempOutput;
     MakeAlias(tempOutput, output, output.n_elem_slice, filter.n_slices);
 
@@ -452,6 +451,7 @@ class NaiveConvolution
       ComputeOutputSize(inputPadded, filter, output, dW, dH,
           dilationW, dilationH);
 
+    // The filters already have the correct order in memory, just reshape it.
     MatType fil2col;
     MakeAlias(fil2col, filter, filter.n_elem, 1);
 
