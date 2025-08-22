@@ -25,7 +25,8 @@ namespace mlpack {
  *    computation.
  */
 template<typename MatType>
-class AddMergeType : public MultiLayer<MatType>
+class [[deprecated("Will be removed in mlpack 5.0.0. Use SumReduce.")]]
+  AddMergeType : public MultiLayer<MatType>
 {
  public:
   /**

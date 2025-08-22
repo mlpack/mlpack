@@ -24,14 +24,12 @@ namespace mlpack {
  * feed-forward fully connected network container which plugs various layers
  * together.
  *
- * NOTE: this class is not intended to exist for long!  It will be replaced with
- * a more flexible DAG network type.
- *
  * @tparam MatType Matrix representation to accept as input and use for
  *    computation.
  */
 template <typename MatType = arma::mat>
-class ConcatType : public MultiLayer<MatType>
+class [[deprecated("Will be removed in mlpack 5.0.0.")]] ConcatType
+  : public MultiLayer<MatType>
 {
  public:
   using CubeType = typename GetCubeType<MatType>::type;
