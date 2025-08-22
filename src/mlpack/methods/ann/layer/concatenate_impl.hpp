@@ -19,8 +19,8 @@
 namespace mlpack {
 
 template<typename MatType>
-ConcatenateType<MatType>::
-ConcatenateType(const MatType& concat) :
+Concatenate<MatType>::
+Concatenate(const MatType& concat) :
     Layer<MatType>(),
     concat(concat)
 {
@@ -28,8 +28,8 @@ ConcatenateType(const MatType& concat) :
 }
 
 template<typename MatType>
-ConcatenateType<MatType>::
-ConcatenateType(const ConcatenateType& other) :
+Concatenate<MatType>::
+Concatenate(const Concatenate& other) :
     Layer<MatType>(other),
     concat(other.concat)
 {
@@ -37,8 +37,8 @@ ConcatenateType(const ConcatenateType& other) :
 }
 
 template<typename MatType>
-ConcatenateType<MatType>::
-ConcatenateType(ConcatenateType&& other) :
+Concatenate<MatType>::
+Concatenate(Concatenate&& other) :
     Layer<MatType>(std::move(other)),
     concat(other.concat)
 {
@@ -46,8 +46,8 @@ ConcatenateType(ConcatenateType&& other) :
 }
 
 template<typename MatType>
-ConcatenateType<MatType>&
-ConcatenateType<MatType>::operator=(const ConcatenateType& other)
+Concatenate<MatType>&
+Concatenate<MatType>::operator=(const Concatenate& other)
 {
   if (&other != this)
   {
@@ -59,8 +59,8 @@ ConcatenateType<MatType>::operator=(const ConcatenateType& other)
 }
 
 template<typename MatType>
-ConcatenateType<MatType>&
-ConcatenateType<MatType>::operator=(ConcatenateType&& other)
+Concatenate<MatType>&
+Concatenate<MatType>::operator=(Concatenate&& other)
 {
   if (&other != this)
   {
@@ -72,7 +72,7 @@ ConcatenateType<MatType>::operator=(ConcatenateType&& other)
 }
 
 template<typename MatType>
-void ConcatenateType<MatType>::Forward(const MatType& input, MatType& output)
+void Concatenate<MatType>::Forward(const MatType& input, MatType& output)
 {
   if (concat.is_empty())
   {
@@ -86,7 +86,7 @@ void ConcatenateType<MatType>::Forward(const MatType& input, MatType& output)
 }
 
 template<typename MatType>
-void ConcatenateType<MatType>::Backward(
+void Concatenate<MatType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
@@ -97,7 +97,7 @@ void ConcatenateType<MatType>::Backward(
 }
 
 template<typename MatType>
-void ConcatenateType<MatType>::ComputeOutputDimensions()
+void Concatenate<MatType>::ComputeOutputDimensions()
 {
   // This flattens the input.
   size_t inSize = this->inputDimensions[0];
@@ -114,7 +114,7 @@ void ConcatenateType<MatType>::ComputeOutputDimensions()
  */
 template<typename MatType>
 template<typename Archive>
-void ConcatenateType<MatType>::serialize(
+void Concatenate<MatType>::serialize(
   Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));

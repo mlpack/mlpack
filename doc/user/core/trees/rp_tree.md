@@ -32,7 +32,7 @@ additional functionality specific to random projection trees.
  * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [Random projection on Wikipedia](https://en.wikipedia.org/wiki/Random_projection)
  * [`BinarySpaceTree`](binary_space_tree.md)
- * [Binary space partitioning on Wikipedia](https://dl.acm.org/doi/pdf/10.1145/361002.361007)
+ * [Binary space partitioning on Wikipedia](https://en.wikipedia.org/wiki/Binary_space_partitioning)
  * [Random Projection Trees and Low Dimensional Manifolds (pdf)](https://www.cs.cornell.edu/~abrahao/tdg/papers/p537.pdf)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 

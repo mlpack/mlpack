@@ -41,13 +41,13 @@ template<
     typename MatType = arma::mat,
     typename RegularizerType = NoRegularizer
 >
-class LinearRecurrentType : public RecurrentLayer<MatType>
+class LinearRecurrent : public RecurrentLayer<MatType>
 {
  public:
   /**
    * Create the LinearRecurrent layer.
    */
-  LinearRecurrentType();
+  LinearRecurrent();
 
   /**
    * Create the LinearRecurrent layer object with the specified number of
@@ -57,29 +57,29 @@ class LinearRecurrentType : public RecurrentLayer<MatType>
    * @param regularizer The regularizer to use; optional (default: no
    *    regularizer)
    */
-  LinearRecurrentType(const size_t outSize,
+  LinearRecurrent(const size_t outSize,
                       RegularizerType regularizer = RegularizerType());
 
-  virtual ~LinearRecurrentType() { }
+  virtual ~LinearRecurrent() { }
 
-  // Clone the LinearRecurrentType layer.  This handles polymorphism correctly.
-  LinearRecurrentType* Clone() const { return new LinearRecurrentType(*this); }
-
-  // Copy the other linear recurrent layer, including hidden recurrent state
-  // (but not weights).
-  LinearRecurrentType(const LinearRecurrentType& layer);
-
-  // Take ownership of the members of the other linear recurrent layer,
-  // including hidden recurrent state (but not weights).
-  LinearRecurrentType(LinearRecurrentType&& layer);
+  // Clone the LinearRecurrent layer.  This handles polymorphism correctly.
+  LinearRecurrent* Clone() const { return new LinearRecurrent(*this); }
 
   // Copy the other linear recurrent layer, including hidden recurrent state
   // (but not weights).
-  LinearRecurrentType& operator=(const LinearRecurrentType& layer);
+  LinearRecurrent(const LinearRecurrent& layer);
 
   // Take ownership of the members of the other linear recurrent layer,
   // including hidden recurrent state (but not weights).
-  LinearRecurrentType& operator=(LinearRecurrentType&& layer);
+  LinearRecurrent(LinearRecurrent&& layer);
+
+  // Copy the other linear recurrent layer, including hidden recurrent state
+  // (but not weights).
+  LinearRecurrent& operator=(const LinearRecurrent& layer);
+
+  // Take ownership of the members of the other linear recurrent layer,
+  // including hidden recurrent state (but not weights).
+  LinearRecurrent& operator=(LinearRecurrent&& layer);
 
   /**
    * Set the parameters of the layer (weights, hidden state weights, and bias).
@@ -163,10 +163,6 @@ class LinearRecurrentType : public RecurrentLayer<MatType>
   // Locally-stored regularizer object.
   RegularizerType regularizer;
 };
-
-// Convenience typedefs.
-
-using LinearRecurrent = LinearRecurrentType<arma::mat, NoRegularizer>;
 
 } // namespace mlpack
 

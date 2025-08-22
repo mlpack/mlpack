@@ -70,7 +70,7 @@ cmake \
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | C906      | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#c906) | [C906 on riscv](https://www.riscvschool.com/2023/03/09/t-head-xuantie-c906-risc-v/) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| x280      | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#x280) | [x280 on SiFive](https://www.sifive.cn/api/document-file?uid=x280-datasheet) |
+| x280      | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#x280) | [SiFive x280 product brief](https://www.sifive.com/document-file/sifive-intelligence-x280-product-brief) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | KATAMI    | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-i686.html)     | [Sysroot and toolchain prefix](#katami) |[Pentium 3 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_III)          |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
