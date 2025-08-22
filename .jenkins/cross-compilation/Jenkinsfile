@@ -109,7 +109,7 @@ pipeline
               }
 
               // Specifically use bash so `time` is available.
-              sh '''
+              sh '''#!/bin/bash
                 # If a custom page size is needed, set it.
                 EXTRA_CMAKE_OPTS='';
                 if [ ! -z "$PAGE_SIZE" ];
