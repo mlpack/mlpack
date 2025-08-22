@@ -347,8 +347,10 @@ void ConvolutionType<
 
     // Make sure to add the bias.
     if (useBias)
+    {
       for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
         outputTemp.slice(outMap) += bias(outMap);
+    }
   }
 }
 
@@ -515,8 +517,8 @@ void ConvolutionType<
     const size_t fullOutputOffset = offset * maps;
 
     CubeType mappedErrorTemp;
-    MakeAlias(mappedErrorTemp, mappedError, mappedError.n_rows, mappedError.n_cols,
-        maps, fullOutputOffset * mappedError.n_elem_slice);
+    MakeAlias(mappedErrorTemp, mappedError, mappedError.n_rows,
+        mappedError.n_cols, maps, fullOutputOffset * mappedError.n_elem_slice);
 
     for (size_t inMap = 0; inMap < inMaps; ++inMap)
     {
@@ -536,13 +538,21 @@ void ConvolutionType<
       // Reorder convolution output slices.
       #pragma omp critical
       for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
-        gradientTemp.slice((outMap * inMaps) + inMap) += gradientTempTemp.slice(outMap);
+      {
+        gradientTemp.slice((outMap * inMaps) + inMap) +=
+            gradientTempTemp.slice(outMap);
+      }
     }
 
     if (useBias)
+    {
       for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
+      {
         #pragma omp atomic update
-        gradient[weight.n_elem + outMap] += accu(mappedError.slice(outMap + fullOutputOffset));
+        gradient[weight.n_elem + outMap] += accu(mappedError
+            .slice(outMap + fullOutputOffset));
+      }
+    }
   }
 }
 

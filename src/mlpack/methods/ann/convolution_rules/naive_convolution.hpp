@@ -88,7 +88,8 @@ class NaiveConvolution
    * @param filter Filter used to perform the convolution.
    * @param inputPadded Input with padding applied.
    */
-  template<typename InMatType, typename FilMatType, typename Border = BorderMode>
+  template<typename InMatType, typename FilMatType,
+      typename Border = BorderMode>
   static std::enable_if_t<std::is_same_v<Border, ValidConvolution>, void>
   PadInput(const InMatType& input,
            const FilMatType& /* filter */,
@@ -107,7 +108,8 @@ class NaiveConvolution
    * @param filter Filter used to perform the convolution.
    * @param inputPadded Input with padding applied.
    */
-  template<typename InMatType, typename FilMatType, typename Border = BorderMode>
+  template<typename InMatType, typename FilMatType,
+      typename Border = BorderMode>
   static std::enable_if_t<std::is_same_v<Border, FullConvolution>, void>
   PadInput(const InMatType& input,
            const FilMatType& filter,
@@ -179,8 +181,9 @@ class NaiveConvolution
     // Pad filter and input to the working output shape.
     inputPadded = InCubeType(input.n_rows + 2 * paddingRows,
         input.n_cols + 2 * paddingCols, input.n_slices);
-    inputPadded.subcube(paddingRows, paddingCols, 0, paddingRows + input.n_rows - 1,
-        paddingCols + input.n_cols - 1, input.n_slices - 1) = input;
+    inputPadded.subcube(paddingRows, paddingCols, 0,
+        paddingRows + input.n_rows - 1, paddingCols + input.n_cols - 1,
+        input.n_slices - 1) = input;
   }
 
   /**
@@ -332,7 +335,7 @@ class NaiveConvolution
       const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     using MatType = typename GetDenseMatType<CubeType>::type;
-  
+
     CubeType inputPadded;
     PadInput(input, filter, inputPadded, dilationW, dilationH);
 
