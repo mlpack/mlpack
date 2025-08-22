@@ -108,6 +108,7 @@ pipeline
                 u.updateCheckStatus('Building mlpack for ' + env.target + '...')
               }
 
+              // Specifically use bash so `time` is available.
               sh '''
                 # If a custom page size is needed, set it.
                 EXTRA_CMAKE_OPTS='';
@@ -129,7 +130,7 @@ pipeline
                     -DDOWNLOAD_DEPENDENCIES=ON \
                     $EXTRA_CMAKE_OPTS \
                     ../
-                make mlpack_test;
+                time make mlpack_test;
               '''
 
               script
@@ -142,7 +143,8 @@ pipeline
                   keyFileVariable: 'KEY_FILE',
                   passphraseVariable: 'PASSPHRASE')])
               {
-                sh'''
+                // Specifically use bash so `time` is available.
+                sh'''#!/bin/bash
                   eval $(ssh-agent -s)
                   echo ${PASSPHRASE} | SSH_ASKPASS=/bin/cat setsid -w ssh-add ${KEY_FILE}
 
