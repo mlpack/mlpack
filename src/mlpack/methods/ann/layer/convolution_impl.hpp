@@ -503,6 +503,7 @@ void ConvolutionType<
   MatType tempSlice;
 
   // See Forward() for our iteration strategy.
+  #pragma omp parallel for schedule(dynamic)
   for (size_t offset = 0; offset < higherInDimensions * batchSize; ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
