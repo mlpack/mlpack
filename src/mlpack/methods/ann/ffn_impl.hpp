@@ -490,7 +490,7 @@ typename MatType::elem_type FFN<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::EvaluateWithGradient(const MatType& parameters,
+>::EvaluateWithGradient(const MatType& /* parameters */,
                         const size_t begin,
                         MatType& gradient,
                         const size_t batchSize)
