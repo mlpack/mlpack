@@ -16,6 +16,8 @@ _????-??-??_
 
  * Fix dependency detection bugs in `mlpack.cmake` (#3981).
 
+ * Update header used by R packages compiling directly against C++ API (#3990).
+
 ## mlpack 4.6.2
 
 _2025-05-22_
