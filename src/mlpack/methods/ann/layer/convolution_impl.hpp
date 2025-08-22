@@ -437,7 +437,7 @@ void ConvolutionType<
     {
       MakeAlias(rotatedFiltersTemp, rotatedFilters, rotatedFilters.n_rows,
           rotatedFilters.n_cols, inMaps,
-          outMap * inMaps * rotatedFilters.n_elem_slice);
+          outMap * inMaps * rotatedFilters.n_rows * rotatedFilters.n_cols);
       BackwardConvolutionRule::Convolution(
           dilatedMappedError.slice(outMap + fullOutputOffset),
           rotatedFiltersTemp,
@@ -518,7 +518,8 @@ void ConvolutionType<
 
     CubeType mappedErrorTemp;
     MakeAlias(mappedErrorTemp, mappedError, mappedError.n_rows,
-        mappedError.n_cols, maps, fullOutputOffset * mappedError.n_elem_slice);
+        mappedError.n_cols, maps, fullOutputOffset * mappedError.n_rows *
+        mappedError.n_cols);
 
     for (size_t inMap = 0; inMap < inMaps; ++inMap)
     {

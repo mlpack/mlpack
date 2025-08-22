@@ -343,15 +343,16 @@ class NaiveConvolution
       ComputeOutputSize(inputPadded, filter, output, dW, dH,
           dilationW, dilationH);
 
-    MatType im2row(output.n_elem_slice, filter.n_elem_slice * input.n_slices,
-        GetFillType<MatType>::none);
+    MatType im2row(output.n_rows * output.n_cols, filter.n_rows *
+        filter.n_cols * input.n_slices, GetFillType<MatType>::none);
     // Arrange im2row so that each row has patches from each input map.
     #pragma omp parallel for
     for (size_t i = 0; i < input.n_slices; ++i)
     {
       MatType im2rowSv;
-      MakeAlias(im2rowSv, im2row, output.n_elem_slice, filter.n_elem_slice,
-          output.n_elem_slice * filter.n_elem_slice * i);
+      MakeAlias(im2rowSv, im2row, output.n_elem_.n_rows * output.n_cols,
+          filter.n_elem_.n_rows * filter.n_cols, output.n_elem_.n_rows *
+          output.n_cols * filter.n_elem_.n_rows * filter.n_cols * i);
       Im2Row(inputPadded.slice(i), im2rowSv, filter.n_rows, filter.n_cols,
           dW, dH, dilationW, dilationH);
     }
@@ -361,11 +362,12 @@ class NaiveConvolution
 
     // The filters already have the correct order in memory, just reshape it.
     MatType fil2col;
-    MakeAlias(fil2col, filter, filter.n_elem_slice * inMaps, outMaps);
+    MakeAlias(fil2col, filter, filter.n_rows * filter.n_cols * inMaps,
+        outMaps);
 
     // The output is also already in the correct order.
     MatType tempOutput;
-    MakeAlias(tempOutput, output, output.n_elem_slice, outMaps);
+    MakeAlias(tempOutput, output, output.n_rows * output.n_cols, outMaps);
 
     tempOutput += im2row * fil2col;
   }
@@ -404,18 +406,19 @@ class NaiveConvolution
       ComputeOutputSize(inputPadded, filter, output, dW, dH,
           dilationW, dilationH);
 
-    MatType im2row(output.n_elem_slice, filter.n_elem_slice,
-        GetFillType<MatType>::none);
+    MatType im2row(output.n_rows * output.n_cols, filter.n_rows *
+        filter.n_cols, GetFillType<MatType>::none);
     Im2Row(inputPadded, im2row, filter.n_rows, filter.n_cols, dW, dH,
         dilationW, dilationH);
 
     // The filters already have the correct order in memory, just reshape it.
     MatType fil2col;
-    MakeAlias(fil2col, filter, filter.n_elem_slice, filter.n_slices);
+    MakeAlias(fil2col, filter, filter.n_rows * filter.n_cols, filter.n_slices);
 
     // The output is also already in the correct order.
     MatType tempOutput;
-    MakeAlias(tempOutput, output, output.n_elem_slice, filter.n_slices);
+    MakeAlias(tempOutput, output, output.n_rows * output.n_cols,
+        filter.n_slices);
 
     tempOutput += im2row * fil2col;
   }
@@ -459,13 +462,13 @@ class NaiveConvolution
     MakeAlias(fil2col, filter, filter.n_elem, 1);
 
     MatType tempOutput;
-    MatType im2row(output.n_elem_slice, filter.n_elem,
+    MatType im2row(output.n_rows * output.n_cols, filter.n_elem,
         GetFillType<CubeType>::none);
 
     for (size_t i = 0; i < input.n_slices; ++i)
     {
-      MakeAlias(tempOutput, output, output.n_elem_slice, 1,
-          i * output.n_elem_slice);
+      MakeAlias(tempOutput, output, output.n_rows * output.n_cols, 1,
+          i * output.n_rows * output.n_cols);
       Im2Row(inputPadded.slice(i), im2row, filter.n_rows, filter.n_cols,
           dW, dH, dilationW, dilationH);
 
