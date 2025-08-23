@@ -446,41 +446,39 @@ void GroupedConvolutionType<
 
   MatType output(apparentWidth * apparentHeight * inMaps * higherInDimensions,
       batchSize);
-  CubeType outputCube;
-  MakeAlias(outputCube, output, apparentWidth, apparentHeight,
-      inMaps * higherInDimensions * batchSize);
 
   size_t inGroupSize = inMaps / groups;
   size_t outGroupSize = maps / groups;
 
   // See Forward() for the overall iteration strategy.
+  #pragma omp parallel for schedule(dynamic)
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    #pragma omp parallel for collapse(2)
+    CubeType outputCube, rotatedFiltersTemp;
     for (size_t group = 0; group < groups; group++)
     {
-      // Iterate over input maps.
-      for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
-      {
-        // Iterate over output maps.
-        MatType& curG = outputCube.slice((group * inGroupSize) + inMap +
-            fullInputOffset);
-        for (size_t outMap = group * outGroupSize; outMap < (group + 1) *
+      // Iterate over output maps.
+      for (size_t outMap = group * outGroupSize; outMap < (group + 1) *
             outGroupSize; ++outMap)
-        {
-          BackwardConvolutionRule::Convolution(
-              dilatedMappedError.slice(outMap + fullOutputOffset),
-              rotatedFilters.slice((outMap * inGroupSize) + inMap),
-              curG,
-              1,
-              1,
-              1,
-              1,
-              true);
-        }
+      {
+        MakeAlias(rotatedFiltersTemp, rotatedFilters, rotatedFilters.n_rows,
+            rotatedFilters.n_cols, inGroupSize, (outMap * inGroupSize) *
+            (rotatedFilters.n_rows * rotatedFilters.n_cols));
+        MakeAlias(outputCube, output, apparentWidth, apparentHeight,
+            inGroupSize, (group * inGroupSize + fullInputOffset) *
+            (apparentWidth * apparentHeight));
+        BackwardConvolutionRule::Convolution(
+            dilatedMappedError.slice(outMap + fullOutputOffset),
+            rotatedFiltersTemp,
+            outputCube,
+            1,
+            1,
+            1,
+            1,
+            true);
       }
     }
   }
