@@ -323,9 +323,7 @@ void GroupedConvolutionType<
     padding.Forward(input, inputPadded);
   }
 
-  CubeType inputTemp;
-  MakeAlias(inputTemp, (usingPadding ? inputPadded : input),
-      paddedRows, paddedCols, inMaps * higherInDimensions * batchSize);
+  CubeType outputTemp;
 
   MakeAlias(outputTemp, output, this->outputDimensions[0],
       this->outputDimensions[1], maps * higherInDimensions * batchSize);
@@ -339,37 +337,44 @@ void GroupedConvolutionType<
   //
   // If we eventually have a way to do convolutions for a single kernel
   // in-batch, then this strategy may not be the most efficient solution.
+  #pragma omp parallel for schedule(dynamic)
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    #pragma omp parallel for collapse(2)
+    CubeType inputTemp, weightTemp, outputTempTemp;
     for (size_t group = 0; group < groups; group++)
     {
-      // Iterate over output maps.
-      for (size_t outMap = 0; outMap < outGroupSize; ++outMap)
-      {
-        MatType& convOutput = outputTemp.slice(group * outGroupSize + outMap +
-            fullOutputOffset);
-        // Iterate over input maps (we will apply the filter and sum).
-        for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
-        {
-          ForwardConvolutionRule::Convolution(
-              inputTemp.slice((group * inGroupSize) + inMap + fullInputOffset),
-              weight.slice(((group * outGroupSize + outMap) * inGroupSize) +
-                  inMap),
-              convOutput,
-              strideWidth,
-              strideHeight,
-              1,
-              1,
-              true);
-        }
+      MakeAlias(inputTemp, (usingPadding ? inputPadded : input), paddedRows,
+          paddedCols, inGroupSize, (group * inGroupSize + fullInputOffset) *
+          (paddedRows * paddedCols));
+      MakeAlias(weightTemp, weight, weight.n_rows, weight.n_cols,
+          inGroupSize * outGroupSize, (group * outGroupSize * inGroupSize) *
+          (weight.n_rows * weight.n_cols));
+      MakeAlias(outputTempTemp, outputTemp, outputTemp.n_rows,
+          outputTemp.n_cols, outGroupSize,
+          (group * outGroupSize + fullOutputOffset) *
+          (outputTemp.n_rows * outputTemp.n_cols));
+      ForwardConvolutionRule::Convolution(
+          inputTemp,
+          weightTemp,
+          outputTempTemp,
+          strideWidth,
+          strideHeight,
+          1,
+          1,
+          true);
+    }
 
-        // Make sure to add the bias.
-        if (useBias)
-          convOutput += bias(group * outGroupSize + outMap);
+    // Make sure to add the bias.
+    if (useBias)
+    {
+      for (size_t group = 0; group < groups; group++)
+      {
+        for (size_t outMap = 0; outMap < outGroupSize; ++outMap)
+          outputTemp.slice(group * outGroupSize + outMap + fullOutputOffset) +=
+              bias(group * outGroupSize + outMap);
       }
     }
   }

@@ -383,9 +383,6 @@ class GroupedConvolutionType : public Layer<MatType>
   //! Locally-stored bias term object.
   MatType bias;
 
-  //! Locally-stored transformed output parameter.
-  CubeType outputTemp;
-
   //! Locally-stored transformed padded input parameter.
   MatType inputPadded;
 
