@@ -238,16 +238,18 @@ TEST_CASE("ValidConvolution3DTest", "[ConvolutionTest]")
              {  0, 1,  0 },
              { -1, 0,  1 } };
 
-  output = { { -3, -2 },
-             {  8, -3 } };
+  output = { { -6, -4 },
+             { 16, -6 } };
 
   arma::cube inputCube(input.n_rows, input.n_cols, 2);
   inputCube.slice(0) = input;
   inputCube.slice(1) = input;
 
-  arma::cube filterCube(filter.n_rows, filter.n_cols, 2);
+  arma::cube filterCube(filter.n_rows, filter.n_cols, 4);
   filterCube.slice(0) = filter;
   filterCube.slice(1) = filter;
+  filterCube.slice(2) = filter;
+  filterCube.slice(3) = filter;
 
   arma::cube outputCube(output.n_rows, output.n_cols, 2);
   outputCube.slice(0) = output;
@@ -257,7 +259,7 @@ TEST_CASE("ValidConvolution3DTest", "[ConvolutionTest]")
   Convolution3DMethodTest<NaiveConvolution<ValidConvolution> >(inputCube,
       filterCube, outputCube);
 
-  // Perform the convolution trough fft.
+  // Perform the convolution through fft.
   Convolution3DMethodTest<FFTConvolution<ValidConvolution> >(inputCube,
       filterCube, outputCube);
 
@@ -283,20 +285,22 @@ TEST_CASE("FullConvolution3DTest", "[ConvolutionTest]")
              {  1, 1,  1 },
              { -1, 0,  1 } };
 
-  output = { {  1,  2,  2,  2, -3, -4 },
-             {  5,  4,  4, 11,  5,  1 },
-             {  6,  7,  3,  2,  7,  5 },
-             {  1,  9, 12,  3,  1,  4 },
-             { -1,  1, 11, 10,  6,  3 },
-             { -2, -3, -2,  2,  4,  1 } };
+  output = { {  2,  4,  4,  4, -6, -8 },
+             { 10,  8,  8, 22, 10,  2 },
+             { 12, 14,  6,  4, 14, 10 },
+             {  2, 18, 24,  6,  2,  8 },
+             { -2,  2, 22, 20, 12,  6 },
+             { -4, -6, -4,  4,  8,  2 } };
 
   arma::cube inputCube(input.n_rows, input.n_cols, 2);
   inputCube.slice(0) = input;
   inputCube.slice(1) = input;
 
-  arma::cube filterCube(filter.n_rows, filter.n_cols, 2);
+  arma::cube filterCube(filter.n_rows, filter.n_cols, 4);
   filterCube.slice(0) = filter;
   filterCube.slice(1) = filter;
+  filterCube.slice(2) = filter;
+  filterCube.slice(3) = filter;
 
   arma::cube outputCube(output.n_rows, output.n_cols, 2);
   outputCube.slice(0) = output;

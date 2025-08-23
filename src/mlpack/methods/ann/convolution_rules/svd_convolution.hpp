@@ -109,7 +109,9 @@ class SVDConvolution
   }
 
   /**
-   * Perform a convolution using 3rd order tensors.
+   * Perform a convolution using 3rd order tensors. Expects that `filter` has
+   * `input.n_slices * output.n_slices` slices. The Nth `input.n_slices` filters
+   * are applied to all input slices and output to the Nth output slice.
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
@@ -127,13 +129,20 @@ class SVDConvolution
     SVDConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
         convOutput);
 
-    output = CubeType(convOutput.n_rows, convOutput.n_cols, input.n_slices);
+    const size_t inMaps = input.n_slices;
+    const size_t outMaps = filter.n_slices / inMaps;
+
+    output = CubeType(convOutput.n_rows, convOutput.n_cols, outMaps);
     output.slice(0) = convOutput;
 
-    for (size_t i = 1; i < input.n_slices; ++i)
+    for (size_t j = 0; j < output.n_slices; ++j)
     {
-      SVDConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
-          output.slice(i));
+      for (size_t i = (j == 0) ? 1 : 0; i < input.n_slices; ++i)
+      {
+        FFTConvolution<BorderMode>::Convolution(input.slice(i),
+            filter.slice(j * inMaps + i), convOutput);
+        output.slice(j) += convOutput;
+      }
     }
   }
 

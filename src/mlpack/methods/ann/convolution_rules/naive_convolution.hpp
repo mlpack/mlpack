@@ -206,6 +206,7 @@ class NaiveConvolution
                     const size_t dH = 1,
                     const size_t dilationW = 1,
                     const size_t dilationH = 1,
+                    const size_t /* outSlices */ = 1,
                     const typename std::enable_if_t<
                         IsMatrix<OutMatType>::value>* = 0)
   {
@@ -231,6 +232,7 @@ class NaiveConvolution
    * @param dH Stride of filter application in the y direction.
    * @param dilationW The dilation factor in x direction.
    * @param dilationH The dilation factor in y direction.
+   * @param outSlices The number of slices in the output cube.
    */
   template<typename InMatType, typename FilMatType, typename OutCubeType>
   static void
@@ -241,6 +243,7 @@ class NaiveConvolution
                     const size_t dH = 1,
                     const size_t dilationW = 1,
                     const size_t dilationH = 1,
+                    const size_t outSlices = 1,
                     const typename std::enable_if_t<
                         IsCube<OutCubeType>::value>* = 0)
   {
@@ -252,7 +255,7 @@ class NaiveConvolution
     const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
     const size_t outputRows = (inputPadded.n_rows - filterRows + dH) / dH;
     const size_t outputCols = (inputPadded.n_cols - filterCols + dW) / dW;
-    output.zeros(outputRows, outputCols, output.n_slices);
+    output.zeros(outputRows, outputCols, outSlices);
   }
 
  public:
@@ -286,7 +289,7 @@ class NaiveConvolution
 
     if (!appending)
       ComputeOutputSize(inputPadded, filter, output, dW, dH,
-          dilationW, dilationH);
+          dilationW, dilationH, 1);
 
     InMatType im2row(output.n_elem, filter.n_elem,
         GetFillType<InMatType>::none);
@@ -306,8 +309,8 @@ class NaiveConvolution
 
   /**
    * Perform a convolution using 3rd order tensors. Expects that `filter` has
-   * `input.n_slices * output.n_slices` slices. The first `input.n_slices`
-   * filters output to the first output slice.
+   * `input.n_slices * output.n_slices` slices. The Nth `input.n_slices` filters
+   * are applied to all input slices and output to the Nth output slice.
    * eg. 2 input slices: filter 0 applies to input 0, output 0,
    * fil 1 -> in 1, out 0, fil 2 -> in 0, out 1, fil 3 -> in 1, out 1,
    * fil 4 -> in 0, out 2, fil 5 -> in 1, out 2, etc.
@@ -339,9 +342,12 @@ class NaiveConvolution
     CubeType inputPadded;
     PadInput(input, filter, inputPadded, dilationW, dilationH);
 
+    const size_t inMaps = input.n_slices;
+    const size_t outMaps = filter.n_slices / inMaps;
+
     if (!appending)
       ComputeOutputSize(inputPadded, filter, output, dW, dH,
-          dilationW, dilationH);
+          dilationW, dilationH, outMaps);
 
     MatType im2row(output.n_rows * output.n_cols, filter.n_rows *
         filter.n_cols * input.n_slices, GetFillType<MatType>::none);
@@ -356,9 +362,6 @@ class NaiveConvolution
       Im2Row(inputPadded.slice(i), im2rowSv, filter.n_rows, filter.n_cols,
           dW, dH, dilationW, dilationH);
     }
-
-    const size_t inMaps = input.n_slices;
-    const size_t outMaps = filter.n_slices / inMaps;
 
     // The filters already have the correct order in memory, just reshape it.
     MatType fil2col;
@@ -404,7 +407,7 @@ class NaiveConvolution
 
     if (!appending)
       ComputeOutputSize(inputPadded, filter, output, dW, dH,
-          dilationW, dilationH);
+          dilationW, dilationH, filter.n_slices);
 
     MatType im2row(output.n_rows * output.n_cols, filter.n_rows *
         filter.n_cols, GetFillType<MatType>::none);
@@ -455,7 +458,7 @@ class NaiveConvolution
 
     if (!appending)
       ComputeOutputSize(inputPadded, filter, output, dW, dH,
-          dilationW, dilationH);
+          dilationW, dilationH, input.n_slices);
 
     // The filters already have the correct order in memory, just reshape it.
     MatType fil2col;
