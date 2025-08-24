@@ -164,7 +164,7 @@ TEST_CASE("DAGNetworkConnectNonExistentChild", "[DAGNetworkTest]")
 }
 
 template <typename MatType>
-using LinearMatType = LinearType<MatType>;
+using LinearMatType = Linear<MatType>;
 
 template<typename MatType>
 using ExampleModel =
