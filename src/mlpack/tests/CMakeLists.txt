@@ -15,6 +15,7 @@ add_executable(mlpack_test
   ann/convolution_test.cpp
   ann/custom_layer.hpp
   ann/feedforward_network_test.cpp
+  ann/dagnetwork_test.cpp
   ann/init_rules_test.cpp
   ann/ksinit_test.cpp
   ann/loss_functions_test.cpp
