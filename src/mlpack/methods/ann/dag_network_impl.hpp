@@ -495,6 +495,16 @@ void DAGNetwork<
           network[currentLayer]->InputDimensions()[i] = axisDim;
         }
       }
+
+      size_t rows = 1;
+      for (size_t j = 0; j < axis; j++)
+        rows *= network[currentLayer]->InputDimensions()[j];
+      rowsCache.insert({ currentLayer, rows });
+
+      size_t slices = 1;
+      for (size_t j = axis + 1; j < numOutputDimensions; j++)
+        slices *= network[currentLayer]->InputDimensions()[j];
+      slicesCache.insert({ currentLayer, slices });
     }
     network[currentLayer]->ComputeOutputDimensions();
   }
@@ -995,14 +1005,8 @@ void DAGNetwork<
       {
         const size_t axis = layerAxes[currentLayer];
 
-        size_t rows = 1;
-        for (size_t j = 0; j < axis; j++)
-          rows *= network[currentLayer]->InputDimensions()[j];
-
-        size_t slices = input.n_cols;
-        const size_t numDims = network[currentLayer]->InputDimensions().size();
-        for (size_t j = axis + 1; j < numDims; j++)
-          slices *= network[currentLayer]->InputDimensions()[j];
+        size_t rows = rowsCache[currentLayer];
+        size_t slices = slicesCache[currentLayer] * input.n_cols;
 
         CubeType inputAlias;
         MakeAlias(inputAlias, layerInputs[i - 1], rows,
@@ -1085,14 +1089,10 @@ void DAGNetwork<
       {
         // Calculating deltas for concatenation.
         const size_t axis = layerAxes[currentLayer];
-        size_t rows = 1;
-        for (size_t j = 0; j < axis; j++)
-          rows *= layer->InputDimensions()[j];
 
         size_t batchSize = input.n_cols;
-        size_t slices = batchSize;
-        for (size_t j = axis + 1; j < layer->InputDimensions().size(); j++)
-          slices *= layer->InputDimensions()[j];
+        size_t rows = rowsCache[currentLayer];
+        size_t slices = slicesCache[currentLayer] * batchSize;
 
         CubeType inputDeltaAlias;
         MakeAlias(inputDeltaAlias, *inputDeltas[i], rows,

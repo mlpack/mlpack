@@ -680,6 +680,11 @@ class DAGNetwork
   // Gradient aliases for each layer.
   std::vector<MatType> layerGradients;
 
+  // Cache of rows for concatenation.
+  std::unordered_map<size_t, size_t> rowsCache;
+  // Cache of slices for concatenation.
+  std::unordered_map<size_t, size_t> slicesCache;
+
   // If true, each layer has its inputDimensions properly set.
   bool validOutputDimensions;
 
