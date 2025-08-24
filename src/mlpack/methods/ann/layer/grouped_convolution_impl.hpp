@@ -519,8 +519,6 @@ void GroupedConvolutionType<
     const MatType& error,
     MatType& gradient)
 {
-  CubeType mappedError;
-
   // We are depending here on `inputPadded` being properly set from a call to
   // Forward().
   const bool usingPadding =
@@ -540,6 +538,7 @@ void GroupedConvolutionType<
   // convolution map weights!  The bias will be handled by direct accesses into
   // `gradient`.
   gradient.zeros();
+  CubeType gradientTemp;
   MakeAlias(gradientTemp, gradient, weight.n_rows, weight.n_cols,
       weight.n_slices);
 

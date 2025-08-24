@@ -525,6 +525,8 @@ void ConvolutionType<
     {
       CubeType gradientTempTemp(gradientTemp.n_rows, gradientTemp.n_cols,
           maps);
+      // Make an alias of the slice directly instead of using a cube to avoid
+      // the overhead of creating a cube every time this function is called
       MakeAlias(tempSlice, temp, apparentWidth, apparentHeight,
           (inMap + fullInputOffset) * (apparentWidth * apparentHeight));
 

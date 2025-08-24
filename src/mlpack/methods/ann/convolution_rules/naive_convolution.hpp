@@ -352,7 +352,6 @@ class NaiveConvolution
     MatType im2row(output.n_rows * output.n_cols, filter.n_rows *
         filter.n_cols * input.n_slices, GetFillType<MatType>::none);
     // Arrange im2row so that each row has patches from each input map.
-    #pragma omp parallel for
     for (size_t i = 0; i < input.n_slices; ++i)
     {
       MatType im2rowSv;
