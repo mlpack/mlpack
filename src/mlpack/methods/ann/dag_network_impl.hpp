@@ -405,8 +405,8 @@ void DAGNetwork<
   for (size_t i = 1; i < sortedNetwork.size(); i++)
   {
     currentLayer = sortedNetwork[i];
-    size_t numParents = parentsList[currentLayer].size();
-    size_t firstParent = parentsList[currentLayer].front();
+    const size_t numParents = parentsList[currentLayer].size();
+    const size_t firstParent = parentsList[currentLayer].front();
     if (numParents == 1)
     {
       network[currentLayer]->InputDimensions() =
@@ -443,7 +443,7 @@ void DAGNetwork<
         }
       }
 
-      size_t axis = layerAxes[currentLayer];
+      const size_t axis = layerAxes[currentLayer];
       if (axis >= numOutputDimensions)
       {
         std::ostringstream errorMessage;
@@ -465,7 +465,7 @@ void DAGNetwork<
         {
           for (size_t j = 0; j < numParents; j++)
           {
-            size_t parentIndex = parentsList[currentLayer][j];
+            const size_t parentIndex = parentsList[currentLayer][j];
             network[currentLayer]->InputDimensions()[i]
               += network[parentIndex]->OutputDimensions()[i];
           }
@@ -477,7 +477,7 @@ void DAGNetwork<
           const size_t axisDim = network[firstParent]->OutputDimensions()[i];
           for (size_t j = 1; j < parentsList[currentLayer].size(); j++)
           {
-            size_t parentIndex = parentsList[currentLayer][j];
+            const size_t parentIndex = parentsList[currentLayer][j];
             Layer<MatType>* parent = network[parentIndex];
             const size_t currentAxisDim = parent->OutputDimensions()[i];
 
@@ -619,7 +619,7 @@ void DAGNetwork<
   const size_t totalWeightSize = elements;
   for (size_t i = 0; i < sortedNetwork.size(); ++i)
   {
-    size_t index = sortedNetwork[i];
+    const size_t index = sortedNetwork[i];
     const size_t weightSize = network[index]->WeightSize();
     if (offset + weightSize > totalWeightSize)
     {
@@ -770,14 +770,14 @@ void DAGNetwork<
   size_t layerOutputSize = 0;
   for (size_t i = 0; i < sortedNetwork.size() - 1; i++)
   {
-    size_t currentLayer = sortedNetwork[i];
+    const size_t currentLayer = sortedNetwork[i];
     layerOutputSize += network[currentLayer]->OutputSize();
   }
 
   size_t totalConcatSize = 0;
   for (size_t i = 1; i < sortedNetwork.size(); i++)
   {
-    size_t currentLayer = sortedNetwork[i];
+    const size_t currentLayer = sortedNetwork[i];
     Layer<MatType>* layer = network[currentLayer];
     if (parentsList[currentLayer].size() > 1)
     {
@@ -789,7 +789,7 @@ void DAGNetwork<
     }
   }
 
-  size_t activationMemorySize = totalConcatSize + layerOutputSize;
+  const size_t activationMemorySize = totalConcatSize + layerOutputSize;
   if (batchSize * activationMemorySize == layerOutputMatrix.n_elem)
     return;
 
@@ -809,7 +809,7 @@ void DAGNetwork<
   //setup layerOutputs
   for (size_t i = 0; i < sortedNetwork.size() - 1; i++)
   {
-    size_t currentLayer = sortedNetwork[i];
+    const size_t currentLayer = sortedNetwork[i];
     const size_t layerOutputSize = network[currentLayer]->OutputSize();
     MakeAlias(layerOutputs[i], layerOutputMatrix, layerOutputSize,
       batchSize, offset);
@@ -824,14 +824,14 @@ void DAGNetwork<
   //setup layerInputs
   for (size_t i = 1; i < sortedNetwork.size(); i++)
   {
-    size_t currentLayer = sortedNetwork[i];
+    const size_t currentLayer = sortedNetwork[i];
     Layer<MatType>* layer = network[currentLayer];
     const std::vector<size_t>& parents = parentsList[currentLayer];
-    size_t numParents = parents.size();
+    const size_t numParents = parents.size();
 
     if (numParents == 1)
     {
-      size_t parentIndex = sortedIndices[parents.front()];
+      const size_t parentIndex = sortedIndices[parents.front()];
       MakeAlias(layerInputs[i - 1], layerOutputs[parentIndex],
         layerOutputs[parentIndex].n_rows, layerOutputs[parentIndex].n_cols, 0);
     }
@@ -864,7 +864,7 @@ void DAGNetwork<
   size_t deltaMatrixSize = 0;
   for (size_t i = 0; i < sortedNetwork.size(); i++)
   {
-    size_t currentLayer = sortedNetwork[i];
+    const size_t currentLayer = sortedNetwork[i];
     Layer<MatType>* layer = network[currentLayer];
     size_t layerDeltaSize = layer->OutputSize();
     size_t concatDeltaSize = 0;
@@ -898,7 +898,7 @@ void DAGNetwork<
   size_t offset = 0;
   for (size_t i = 0; i < sortedNetwork.size() - 1; i++)
   {
-    size_t currentLayer = sortedNetwork[i];
+    const size_t currentLayer = sortedNetwork[i];
 
     if (childrenList[currentLayer].size() > 1)
     {
@@ -919,7 +919,7 @@ void DAGNetwork<
 
   for (size_t i = 1; i < sortedNetwork.size(); i++)
   {
-    size_t currentLayer = sortedNetwork[i];
+    const size_t currentLayer = sortedNetwork[i];
     Layer<MatType>* layer = network[currentLayer];
 
     const std::vector<size_t>& parents = parentsList[currentLayer];
@@ -956,7 +956,7 @@ void DAGNetwork<
   size_t gradientStart = 0;
   for (size_t i = 0; i < sortedNetwork.size(); ++i)
   {
-    size_t currentLayer = sortedNetwork[i];
+    const size_t currentLayer = sortedNetwork[i];
     const size_t weightSize = network[currentLayer]->WeightSize();
     MakeAlias(layerGradients[i], gradient, weightSize, 1, gradientStart);
     gradientStart += weightSize;
@@ -974,7 +974,7 @@ void DAGNetwork<
 {
   CheckNetwork("DAGNetwork::Forward()", input.n_rows);
 
-  size_t lastLayer = sortedNetwork.back();
+  const size_t lastLayer = sortedNetwork.back();
   networkOutput.set_size(network[lastLayer]->OutputSize(), input.n_cols);
 
   // equivalent to MultiLayer->Forward(), but with a concat.
@@ -982,25 +982,25 @@ void DAGNetwork<
   {
     InitializeForwardPassMemory(input.n_cols);
 
-    size_t firstLayer = sortedNetwork.front();
+    const size_t firstLayer = sortedNetwork.front();
     network[firstLayer]->Forward(input, layerOutputs.front());
 
     for (size_t i = 1; i < sortedNetwork.size(); i++)
     {
-      size_t currentLayer = sortedNetwork[i];
+      const size_t currentLayer = sortedNetwork[i];
       const std::vector<size_t>& parents = parentsList[currentLayer];
 
       // Concatenation
       if (parents.size() > 1)
       {
-        size_t axis = layerAxes[currentLayer];
+        const size_t axis = layerAxes[currentLayer];
 
         size_t rows = 1;
         for (size_t j = 0; j < axis; j++)
           rows *= network[currentLayer]->InputDimensions()[j];
 
         size_t slices = input.n_cols;
-        size_t numDims = network[currentLayer]->InputDimensions().size();
+        const size_t numDims = network[currentLayer]->InputDimensions().size();
         for (size_t j = axis + 1; j < numDims; j++)
           slices *= network[currentLayer]->InputDimensions()[j];
 
@@ -1011,8 +1011,8 @@ void DAGNetwork<
 
         for (size_t j = 0; j < parents.size(); j++)
         {
-          size_t index = sortedIndices[parents[j]];
-          MatType& parentOutput = layerOutputs[index];
+          const size_t index = sortedIndices[parents[j]];
+          const MatType& parentOutput = layerOutputs[index];
 
           const size_t cols = network[parents[j]]->OutputDimensions()[axis];
           CubeType parentOutputAlias;
@@ -1065,7 +1065,7 @@ void DAGNetwork<
 
     for (size_t i = 0; i < sortedNetwork.size(); i++)
     {
-      size_t currentLayer = sortedNetwork[i];
+      const size_t currentLayer = sortedNetwork[i];
       if (childrenList[currentLayer].size() > 1)
         accumulatedDeltas[i]->fill(0.0f);
     }
@@ -1075,16 +1075,16 @@ void DAGNetwork<
 
     for (size_t i = sortedNetwork.size() - 1; i > 0; --i)
     {
-      size_t currentLayer = sortedNetwork[i];
+      const size_t currentLayer = sortedNetwork[i];
       Layer<MatType>* layer = network[currentLayer];
       layer->Backward(layerInputs[i - 1], *currentOutput,
         *currentDelta, *inputDeltas[i]);
 
-      size_t numParents = parentsList[currentLayer].size();
+      const size_t numParents = parentsList[currentLayer].size();
       if (numParents > 1)
       {
         // Calculating deltas for concatenation.
-        size_t axis = layerAxes[currentLayer];
+        const size_t axis = layerAxes[currentLayer];
         size_t rows = 1;
         for (size_t j = 0; j < axis; j++)
           rows *= layer->InputDimensions()[j];
@@ -1103,7 +1103,7 @@ void DAGNetwork<
         for (size_t j = 0; j < parents.size(); j++)
         {
           Layer<MatType>* parent = network[parents[j]];
-          size_t parentIndex = sortedIndices[parents[j]];
+          const size_t parentIndex = sortedIndices[parents[j]];
           const size_t cols = parent->OutputDimensions()[axis];
           *outputDeltas[parentIndex] = inputDeltaAlias.cols(startCol,
             startCol + cols - 1);
@@ -1116,11 +1116,11 @@ void DAGNetwork<
 
       for (size_t j = 0; j < numParents; j++)
       {
-        size_t parent = parentsList[currentLayer][j];
-        size_t parentNumChildren = childrenList[parent].size();
+        const size_t parent = parentsList[currentLayer][j];
+        const size_t parentNumChildren = childrenList[parent].size();
         if (parentNumChildren > 1)
         {
-          size_t parentIndex = sortedIndices[parent];
+          const size_t parentIndex = sortedIndices[parent];
           *accumulatedDeltas[parentIndex] += *outputDeltas[parent];
         }
       }
@@ -1128,7 +1128,7 @@ void DAGNetwork<
       currentOutput = &layerOutputs[i - 1];
       currentDelta = &layerDeltas[i - 1];
     }
-    size_t firstLayer = sortedNetwork.front();
+    const size_t firstLayer = sortedNetwork.front();
     network[firstLayer]->Backward(input, *currentOutput, *currentDelta,
       networkDelta);
 
@@ -1138,11 +1138,11 @@ void DAGNetwork<
       layerGradients.front());
     for (size_t i = 1; i < sortedNetwork.size() - 1; i++)
     {
-      size_t currentLayer = sortedNetwork[i];
+      const size_t currentLayer = sortedNetwork[i];
       network[currentLayer]->Gradient(layerInputs[i - 1], layerDeltas[i],
         layerGradients[i]);
     }
-    size_t lastLayer = sortedNetwork.back();
+    const size_t lastLayer = sortedNetwork.back();
     network[lastLayer]->Gradient(layerInputs.back(), error,
       layerGradients.back());
   }
@@ -1216,7 +1216,7 @@ typename MatType::elem_type DAGNetwork<
 
   // Set networkOutput to the right size if needed, then perform the forward
   // pass.
-  size_t lastLayer = sortedNetwork.back();
+  const size_t lastLayer = sortedNetwork.back();
   networkOutput.set_size(network[lastLayer]->OutputSize(), batchSize);
   MatType predictorsBatch, responsesBatch;
   MakeAlias(predictorsBatch, predictors, predictors.n_rows, batchSize,
@@ -1279,7 +1279,7 @@ typename MatType::elem_type DAGNetwork<
                         const size_t batchSize)
 {
   CheckNetwork("DAGNetwork::EvaluateWithGradient()", predictors.n_rows);
-  size_t lastLayer = sortedNetwork.back();
+  const size_t lastLayer = sortedNetwork.back();
   networkOutput.set_size(network[lastLayer]->OutputSize(),
     predictors.n_cols);
 

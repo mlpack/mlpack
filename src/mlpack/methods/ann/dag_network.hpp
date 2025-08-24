@@ -602,11 +602,11 @@ class DAGNetwork
   // is called if the graph is valid.
   std::vector<size_t> sortedNetwork;
 
-  // The internally-held map of nodes that holds it's edges to outgoing nodes.
+  // The internally-held map of nodes that holds its edges to outgoing nodes.
   // Uses network indices as keys.
   std::unordered_map<size_t, std::vector<size_t>> childrenList;
 
-  // The internally-held map of nodes that holds it's edges to incoming nodes.
+  // The internally-held map of nodes that holds its edges to incoming nodes.
   // Uses network indices as keys.
   std::unordered_map<size_t, std::vector<size_t>> parentsList;
 
