@@ -32,26 +32,26 @@ TD3<
   PolicyNetworkType,
   UpdaterType,
   ReplayType
->::TD3(TrainingConfig& config,
-       QNetworkType& learningQ1Network,
-       PolicyNetworkType& policyNetwork,
-       ReplayType& replayMethod,
-       UpdaterType qNetworkUpdater,
-       UpdaterType policyNetworkUpdater,
-       EnvironmentType environment):
-  config(config),
-  learningQ1Network(learningQ1Network),
-  policyNetwork(policyNetwork),
-  replayMethod(replayMethod),
-  qNetworkUpdater(std::move(qNetworkUpdater)),
+>::TD3(TrainingConfig& configIn,
+       QNetworkType& learningQ1NetworkIn,
+       PolicyNetworkType& policyNetworkIn,
+       ReplayType& replayMethodIn,
+       UpdaterType qNetworkUpdaterIn,
+       UpdaterType policyNetworkUpdaterIn,
+       EnvironmentType environmentIn):
+  config(configIn),
+  learningQ1Network(learningQ1NetworkIn),
+  policyNetwork(policyNetworkIn),
+  replayMethod(replayMethodIn),
+  qNetworkUpdater(std::move(qNetworkUpdaterIn)),
   #if ENS_VERSION_MAJOR >= 2
   qNetworkUpdatePolicy(NULL),
   #endif
-  policyNetworkUpdater(std::move(policyNetworkUpdater)),
+  policyNetworkUpdater(std::move(policyNetworkUpdaterIn)),
   #if ENS_VERSION_MAJOR >= 2
   policyNetworkUpdatePolicy(NULL),
   #endif
-  environment(std::move(environment)),
+  environment(std::move(environmentIn)),
   totalSteps(0),
   deterministic(false)
 {

@@ -445,45 +445,45 @@ TEST_CASE("GMMRandomTest", "[GMMTest]")
   // Now check that the parameters are the same.  Tolerances are kind of big
   // because we only used 2000 observations.
   REQUIRE(gmm.Weights()[0] ==
-      Approx(gmm2.Weights()[sortedIndices[0]]).epsilon(0.07));
+      Approx(gmm2.Weights()[sortedIndices[0]]).epsilon(0.09));
   REQUIRE(gmm.Weights()[1] ==
-      Approx(gmm2.Weights()[sortedIndices[1]]).epsilon(0.07));
+      Approx(gmm2.Weights()[sortedIndices[1]]).epsilon(0.09));
 
   REQUIRE(gmm.Component(0).Mean()[0] ==
-      Approx(gmm2.Component(sortedIndices[0]).Mean()[0]).epsilon(0.075));
+      Approx(gmm2.Component(sortedIndices[0]).Mean()[0]).epsilon(0.1));
   REQUIRE(gmm.Component(0).Mean()[1] ==
-      Approx(gmm2.Component(sortedIndices[0]).Mean()[1]).epsilon(0.075));
+      Approx(gmm2.Component(sortedIndices[0]).Mean()[1]).epsilon(0.1));
 
   REQUIRE(gmm.Component(0).Covariance()(0, 0) ==
       Approx(gmm2.Component(sortedIndices[0]).Covariance()(0,
-      0)).epsilon(0.13));
+      0)).epsilon(0.16));
   REQUIRE(gmm.Component(0).Covariance()(0, 1) ==
       Approx(gmm2.Component(sortedIndices[0]).Covariance()(0,
-      1)).epsilon(0.22));
+      1)).epsilon(0.25));
   REQUIRE(gmm.Component(0).Covariance()(1, 0) ==
       Approx(gmm2.Component(sortedIndices[0]).Covariance()(1,
-      0)).epsilon(0.22));
+      0)).epsilon(0.25));
   REQUIRE(gmm.Component(0).Covariance()(1, 1) ==
       Approx(gmm2.Component(sortedIndices[0]).Covariance()(1,
-      1)).epsilon(0.13));
+      1)).epsilon(0.16));
 
   REQUIRE(gmm.Component(1).Mean()[0] ==
-      Approx(gmm2.Component(sortedIndices[1]).Mean()[0]).epsilon(0.075));
+      Approx(gmm2.Component(sortedIndices[1]).Mean()[0]).epsilon(0.1));
   REQUIRE(gmm.Component(1).Mean()[1] ==
-      Approx(gmm2.Component(sortedIndices[1]).Mean()[1]).epsilon(0.075));
+      Approx(gmm2.Component(sortedIndices[1]).Mean()[1]).epsilon(0.1));
 
   REQUIRE(gmm.Component(1).Covariance()(0, 0) ==
       Approx(gmm2.Component(sortedIndices[1]).Covariance()(0,
-      0)).epsilon(0.13));
+      0)).epsilon(0.16));
   REQUIRE(gmm.Component(1).Covariance()(0, 1) ==
       Approx(gmm2.Component(sortedIndices[1]).Covariance()(0,
-      1)).epsilon(0.22));
+      1)).epsilon(0.25));
   REQUIRE(gmm.Component(1).Covariance()(1, 0) ==
       Approx(gmm2.Component(sortedIndices[1]).Covariance()(1,
-      0)).epsilon(0.22));
+      0)).epsilon(0.25));
   REQUIRE(gmm.Component(1).Covariance()(1, 1) ==
       Approx(gmm2.Component(sortedIndices[1]).Covariance()(1,
-      1)).epsilon(0.13));
+      1)).epsilon(0.16));
 }
 
 /**

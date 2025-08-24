@@ -19,7 +19,7 @@
 namespace mlpack {
 
 template<typename MatType, typename RegularizerType>
-LinearType<MatType, RegularizerType>::LinearType() :
+Linear<MatType, RegularizerType>::Linear() :
     Layer<MatType>(),
     inSize(0),
     outSize(0)
@@ -28,7 +28,7 @@ LinearType<MatType, RegularizerType>::LinearType() :
 }
 
 template<typename MatType, typename RegularizerType>
-LinearType<MatType, RegularizerType>::LinearType(
+Linear<MatType, RegularizerType>::Linear(
     const size_t outSize,
     RegularizerType regularizer) :
     Layer<MatType>(),
@@ -41,7 +41,7 @@ LinearType<MatType, RegularizerType>::LinearType(
 
 // Copy constructor.
 template<typename MatType, typename RegularizerType>
-LinearType<MatType, RegularizerType>::LinearType(const LinearType& layer) :
+Linear<MatType, RegularizerType>::Linear(const Linear& layer) :
     Layer<MatType>(layer),
     inSize(layer.inSize),
     outSize(layer.outSize),
@@ -52,7 +52,7 @@ LinearType<MatType, RegularizerType>::LinearType(const LinearType& layer) :
 
 // Move constructor.
 template<typename MatType, typename RegularizerType>
-LinearType<MatType, RegularizerType>::LinearType(LinearType&& layer) :
+Linear<MatType, RegularizerType>::Linear(Linear&& layer) :
     Layer<MatType>(std::move(layer)),
     inSize(std::move(layer.inSize)),
     outSize(std::move(layer.outSize)),
@@ -64,8 +64,8 @@ LinearType<MatType, RegularizerType>::LinearType(LinearType&& layer) :
 }
 
 template<typename MatType, typename RegularizerType>
-LinearType<MatType, RegularizerType>&
-LinearType<MatType, RegularizerType>::operator=(const LinearType& layer)
+Linear<MatType, RegularizerType>&
+Linear<MatType, RegularizerType>::operator=(const Linear& layer)
 {
   if (&layer != this)
   {
@@ -79,9 +79,9 @@ LinearType<MatType, RegularizerType>::operator=(const LinearType& layer)
 }
 
 template<typename MatType, typename RegularizerType>
-LinearType<MatType, RegularizerType>&
-LinearType<MatType, RegularizerType>::operator=(
-    LinearType&& layer)
+Linear<MatType, RegularizerType>&
+Linear<MatType, RegularizerType>::operator=(
+    Linear&& layer)
 {
   if (&layer != this)
   {
@@ -99,7 +99,7 @@ LinearType<MatType, RegularizerType>::operator=(
 }
 
 template<typename MatType, typename RegularizerType>
-void LinearType<MatType, RegularizerType>::SetWeights(const MatType& weightsIn)
+void Linear<MatType, RegularizerType>::SetWeights(const MatType& weightsIn)
 {
   MakeAlias(weights, weightsIn, outSize * inSize + outSize, 1);
   MakeAlias(weight, weightsIn, outSize, inSize);
@@ -107,7 +107,7 @@ void LinearType<MatType, RegularizerType>::SetWeights(const MatType& weightsIn)
 }
 
 template<typename MatType, typename RegularizerType>
-void LinearType<MatType, RegularizerType>::Forward(
+void Linear<MatType, RegularizerType>::Forward(
     const MatType& input, MatType& output)
 {
   output = weight * input;
@@ -118,7 +118,7 @@ void LinearType<MatType, RegularizerType>::Forward(
 }
 
 template<typename MatType, typename RegularizerType>
-void LinearType<MatType, RegularizerType>::Backward(
+void Linear<MatType, RegularizerType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
@@ -128,7 +128,7 @@ void LinearType<MatType, RegularizerType>::Backward(
 }
 
 template<typename MatType, typename RegularizerType>
-void LinearType<MatType, RegularizerType>::Gradient(
+void Linear<MatType, RegularizerType>::Gradient(
     const MatType& input,
     const MatType& error,
     MatType& gradient)
@@ -139,7 +139,7 @@ void LinearType<MatType, RegularizerType>::Gradient(
 }
 
 template<typename MatType, typename RegularizerType>
-void LinearType<MatType, RegularizerType>::ComputeOutputDimensions()
+void Linear<MatType, RegularizerType>::ComputeOutputDimensions()
 {
   inSize = this->inputDimensions[0];
   for (size_t i = 1; i < this->inputDimensions.size(); ++i)
@@ -153,7 +153,7 @@ void LinearType<MatType, RegularizerType>::ComputeOutputDimensions()
 
 template<typename MatType, typename RegularizerType>
 template<typename Archive>
-void LinearType<MatType, RegularizerType>::serialize(
+void Linear<MatType, RegularizerType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));

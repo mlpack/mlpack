@@ -76,17 +76,51 @@ class RNN
   /**
    * Add a new module to the model.
    *
-   * @param args The layer parameter.
+   * @param args The parameters to pass to the constructor of the layer.
    */
-  template <typename LayerType, typename... Args>
-  void Add(Args... args) { network.template Add<LayerType>(args...); }
+  template<typename LayerType, typename... Args>
+  void Add(Args&&... args)
+  {
+    network.template Add<LayerType>(std::forward<Args>(args)...);
+  }
+
+  /**
+   * Add a new layer to the model, without specifying the matrix type of the
+   * layer as a template parameter.
+   *
+   * @param args The parameters to pass to the constructor of the layer.
+   */
+  template<template<typename...> typename LayerType,
+           typename... Args>
+  void Add(Args&&... args)
+  {
+    network.template Add<LayerType<MatType>>(std::forward<Args>(args)...);
+  }
 
   /**
    * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
    */
+  [[deprecated("Will be removed in mlpack 5.0.0.  Use Add(std::move(layer)).")]]
   void Add(Layer<MatType>* layer) { network.Add(layer); }
+
+  /**
+   * Add a new layer to the model by copying/moving the parameters of the given
+   * layer.  Note that any trainable weights of this layer will be reset!
+   * (Constant parameters are kept.)  Preferably, pass the layer with
+   * std::move().
+   *
+   * @param layer The layer to be added to the model.
+   */
+  template<typename LayerType>
+  void Add(LayerType&& layer,
+           // This SFINAE can be removed in mlpack 5.0.0.
+           typename std::enable_if<!std::is_pointer_v<
+                std::remove_reference_t<LayerType>>>::type* = 0)
+  {
+    network.Add(std::forward<LayerType>(layer));
+  }
 
   //! Get the network model.
   const std::vector<Layer<MatType>*>& Network() const
@@ -321,6 +355,21 @@ class RNN
   typename MatType::elem_type Evaluate(
       const CubeType& predictors,
       const CubeType& responses);
+
+  /**
+   * Evaluate the recurrent network with the given predictors and responses.
+   * This functions is usually used to monitor progress while training.
+   *
+   * @param predictors Input variables.
+   * @param responses Target outputs for input variables.
+   * @param sequenceLengths Length of each input sequences.  Should have size
+   *     `predictors.n_cols`, and all values should be less than or equal to
+   *     `predictors.n_slices`.
+   */
+  typename MatType::elem_type Evaluate(
+      const CubeType& predictors,
+      const CubeType& responses,
+      const arma::urowvec& sequenceLengths);
 
   //! Serialize the model.
   template<typename Archive>

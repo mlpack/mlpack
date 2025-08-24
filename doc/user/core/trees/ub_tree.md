@@ -1,11 +1,10 @@
 # `UBTree`
 
-<!-- TODO: link to knn.md once it's done -->
-
 The `UBTree` class implements the universal B-tree, a `k`-dimensional space
 partitioning tree based on the B-tree.  The `UBTree` class can be used for
-efficient distance operations (such as nearest neighbor search) in low
-dimensions---typically less than 100.
+efficient distance operations (such as
+[nearest neighbor search](../../methods/knn.md)) in low dimensions---typically
+less than 100.
 
 The univeral B-tree considers each point to have an
 [address](binary_space_tree.md#addressing-in-a-cellbound), which is an ordered
@@ -26,13 +25,14 @@ additional functionality specific to UB-trees.
 
 ## See also
 
-<!-- TODO: add links to all distance-based algorithms and other trees? -->
-
+ * [`BinarySpaceTree`](binary_space_tree.md)
+ * [mlpack trees](../trees.md)
+ * [`KNN`](../../methods/knn.md)
+ * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [UB-tree on Wikipedia](https://en.wikipedia.org/wiki/UB-tree)
  * [Z-ordering on Wikipedia](https://en.wikipedia.org/wiki/Z-order_curve)
- * [`BinarySpaceTree`](binary_space_tree.md)
  * [The Universal B-tree for multidimensional indexing (pdf)](https://www.mlpack.org/papers/bayer96.pdf)
- * [Binary space partitioning on Wikipedia](https://dl.acm.org/doi/pdf/10.1145/361002.361007)
+ * [Binary space partitioning on Wikipedia](https://en.wikipedia.org/wiki/Binary_space_partitioning)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 
 ## Template parameters

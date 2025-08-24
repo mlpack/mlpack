@@ -32,16 +32,16 @@ AsyncLearning<
   UpdaterType,
   PolicyType
 >::AsyncLearning(
-    TrainingConfig config,
+    TrainingConfig configIn,
     NetworkType network,
-    PolicyType policy,
-    UpdaterType updater,
-    EnvironmentType environment):
-    config(std::move(config)),
+    PolicyType policyIn,
+    UpdaterType updaterIn,
+    EnvironmentType environmentIn):
+    config(std::move(configIn)),
     learningNetwork(std::move(network)),
-    policy(std::move(policy)),
-    updater(std::move(updater)),
-    environment(std::move(environment))
+    policy(std::move(policyIn)),
+    updater(std::move(updaterIn)),
+    environment(std::move(environmentIn))
 { /* Nothing to do here. */ };
 
 template <

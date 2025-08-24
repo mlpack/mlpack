@@ -121,7 +121,7 @@ class Acrobot
   Acrobot(const size_t maxSteps = 500,
           const double gravity = 9.81,
           const double linkLength1 = 1.0,
-          const double linkLength2 = 1.0,
+          const double /* linkLength2 */ = 1.0,
           const double linkMass1 = 1.0,
           const double linkMass2 = 1.0,
           const double linkCom1 = 0.5,
@@ -134,7 +134,7 @@ class Acrobot
       maxSteps(maxSteps),
       gravity(gravity),
       linkLength1(linkLength1),
-      linkLength2(linkLength2),
+      //linkLength2(linkLength2),
       linkMass1(linkMass1),
       linkMass2(linkMass2),
       linkCom1(linkCom1),
@@ -360,8 +360,8 @@ class Acrobot
   //! Locally-stored length of link 1.
   double linkLength1;
 
-  //! Locally-stored length of link 2.
-  double linkLength2;
+  //! Locally-stored length of link 2.  (NOTE: not currently used)
+  //double linkLength2;
 
   //! Locally-stored mass of link 1.
   double linkMass1;

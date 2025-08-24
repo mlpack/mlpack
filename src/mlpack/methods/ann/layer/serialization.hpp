@@ -18,66 +18,65 @@
     CEREAL_REGISTER_TYPE(mlpack::Layer<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::MultiLayer<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::RecurrentLayer<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::AdaptiveMeanPoolingType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::AdaptiveMaxPoolingType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::AddType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::AddMergeType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::AlphaDropoutType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::AdaptiveMeanPooling<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::AdaptiveMaxPooling<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Add<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::AddMerge<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::AlphaDropout<__VA_ARGS__>); \
     /* Base layers from base_layer.hpp. */ \
-    CEREAL_REGISTER_TYPE(mlpack::SigmoidType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::ReLUType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::TanHType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::SoftPlusType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::HardSigmoidType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::SwishType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::MishType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::LiSHTType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::GELUType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::ElliotType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::ElishType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::GaussianType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Sigmoid<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ReLU<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::TanH<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::SoftPlus<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::HardSigmoid<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Swish<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Mish<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::LiSHT<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::GELU<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Elliot<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Elish<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Gaussian<__VA_ARGS__>); \
     /* (end of base_layer.hpp) */ \
-    CEREAL_REGISTER_TYPE(mlpack::BatchNormType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::ConcatType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::ConcatenateType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::ConvolutionType< \
+    CEREAL_REGISTER_TYPE(mlpack::BatchNorm<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::CELU<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Concat<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Concatenate<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Convolution<__VA_ARGS__, \
         mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
         mlpack::NaiveConvolution<mlpack::FullConvolution>, \
-        mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
-        __VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::CELUType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::CReLUType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::DropConnectType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::DropoutType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::ELUType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::FlexibleReLUType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::GroupedConvolutionType< \
+        mlpack::NaiveConvolution<mlpack::ValidConvolution>>); \
+    CEREAL_REGISTER_TYPE(mlpack::CReLU<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::DropConnect<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Dropout<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ELU<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::FlexibleReLU<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::GroupedConvolution<__VA_ARGS__, \
         mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
         mlpack::NaiveConvolution<mlpack::FullConvolution>, \
-        mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
-        __VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::IdentityType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::LeakyReLUType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::LayerNormType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::Linear3DType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::LinearType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::LinearNoBiasType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::LinearRecurrentType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::LogSoftMaxType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::LSTMType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::MaxPoolingType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::MeanPoolingType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::MultiheadAttentionType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::NoisyLinearType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::PaddingType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::PReLUType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::RBFType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::ReLU6Type<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::RepeatType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::SoftmaxType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::SoftminType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::HardTanHType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::FTSwishType<__VA_ARGS__>); \
+        mlpack::NaiveConvolution<mlpack::ValidConvolution>>); \
+    CEREAL_REGISTER_TYPE(mlpack::GRU<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Identity<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::LeakyReLU<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::LayerNorm<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Linear3D<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Linear<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::LinearNoBias<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::LinearRecurrent<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::LogSoftMax<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::LSTM<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::MaxPooling<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::MeanPooling<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::MultiheadAttention<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::NoisyLinear<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Padding<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::PReLU<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::RBF<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ReLU6<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Repeat<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Softmax<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Softmin<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::HardTanH<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::FTSwish<__VA_ARGS__>); \
 
 CEREAL_REGISTER_MLPACK_LAYERS(arma::mat);
 

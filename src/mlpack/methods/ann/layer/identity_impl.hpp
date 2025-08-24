@@ -18,31 +18,31 @@
 namespace mlpack {
 
 template<typename MatType>
-IdentityType<MatType>::IdentityType() :
+Identity<MatType>::Identity() :
     Layer<MatType>()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-IdentityType<MatType>::IdentityType(
-    const IdentityType& other) :
+Identity<MatType>::Identity(
+    const Identity& other) :
     Layer<MatType>(other)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-IdentityType<MatType>::IdentityType(
-    IdentityType&& other) :
+Identity<MatType>::Identity(
+    Identity&& other) :
     Layer<MatType>(std::move(other))
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-IdentityType<MatType>&
-IdentityType<MatType>::operator=(const IdentityType& other)
+Identity<MatType>&
+Identity<MatType>::operator=(const Identity& other)
 {
   if (&other != this)
   {
@@ -53,8 +53,8 @@ IdentityType<MatType>::operator=(const IdentityType& other)
 }
 
 template<typename MatType>
-IdentityType<MatType>&
-IdentityType<MatType>::operator=(IdentityType&& other)
+Identity<MatType>&
+Identity<MatType>::operator=(Identity&& other)
 {
   if (&other != this)
   {
@@ -65,14 +65,14 @@ IdentityType<MatType>::operator=(IdentityType&& other)
 }
 
 template<typename MatType>
-void IdentityType<MatType>::Forward(
+void Identity<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   output = input;
 }
 
 template<typename MatType>
-void IdentityType<MatType>::Backward(
+void Identity<MatType>::Backward(
   const MatType& /* input */,
   const MatType& /* output */,
   const MatType& gy,
@@ -83,7 +83,7 @@ void IdentityType<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void IdentityType<MatType>::serialize(
+void Identity<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

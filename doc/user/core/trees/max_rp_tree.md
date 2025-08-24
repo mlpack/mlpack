@@ -1,11 +1,10 @@
 # `MaxRPTree`
 
-<!-- TODO: link to knn.md once it's done -->
-
 The `MaxRPTree` class represents a random projection tree, a variant of the
 [`k`-d tree](kdtree.md) based on random projections.  The random projection tree
 is a well-known data structure for efficient distance operations (such as
-nearest neighbor search) in low dimensions---typically less than 100.
+[nearest neighbor search](../../methods/knn.md)) in low dimensions---typically
+less than 100.
 
 An `MaxRPTree` (or the similar [`RPTree`](rp_tree.md)) may be preferred over
 a [`KDTree`](kdtree.md) or other tree structures as it is theoretically known to
@@ -27,13 +26,14 @@ additional functionality specific to random projection trees.
 
 ## See also
 
-<!-- TODO: add links to all distance-based algorithms and other trees? -->
-
  * [`RPTree`](rp_tree.md)
+ * [mlpack trees](../trees.md)
+ * [`KNN`](../../methods/knn.md)
+ * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [kd-tree on Wikipedia](https://en.wikipedia.org/wiki/Kd-tree)
  * [Random projection on Wikipedia](https://en.wikipedia.org/wiki/Random_projection)
  * [`BinarySpaceTree`](binary_space_tree.md)
- * [Binary space partitioning on Wikipedia](https://dl.acm.org/doi/pdf/10.1145/361002.361007)
+ * [Binary space partitioning on Wikipedia](https://en.wikipedia.org/wiki/Binary_space_partitioning)
  * [Random Projection Trees and Low Dimensional Manifolds (pdf)](https://www.cs.cornell.edu/~abrahao/tdg/papers/p537.pdf)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 

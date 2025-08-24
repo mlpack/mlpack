@@ -31,11 +31,11 @@ namespace mlpack {
  *         computation.
  */
 template <typename MatType = arma::mat>
-class AdaptiveMaxPoolingType : public Layer<MatType>
+class AdaptiveMaxPooling : public Layer<MatType>
 {
  public:
   //! Create the AdaptiveMaxPooling object.
-  AdaptiveMaxPoolingType();
+  AdaptiveMaxPooling();
 
   /**
    * Create the AdaptiveMaxPooling object.
@@ -43,29 +43,29 @@ class AdaptiveMaxPoolingType : public Layer<MatType>
    * @param outputWidth Width of the output.
    * @param outputHeight Height of the output.
    */
-  AdaptiveMaxPoolingType(const size_t outputWidth,
+  AdaptiveMaxPooling(const size_t outputWidth,
                          const size_t outputHeight);
 
   // Virtual destructor.
-  virtual ~AdaptiveMaxPoolingType()
+  virtual ~AdaptiveMaxPooling()
   {
     // Nothing to do here.
   }
 
-  //! Copy the given AdaptiveMaxPoolingType.
-  AdaptiveMaxPoolingType(const AdaptiveMaxPoolingType& other);
-  //! Take ownership of the given AdaptiveMaxPoolingType.
-  AdaptiveMaxPoolingType(AdaptiveMaxPoolingType&& other);
-  //! Copy the given AdaptiveMaxPoolingType.
-  AdaptiveMaxPoolingType& operator=(const AdaptiveMaxPoolingType& other);
-  //! Take ownership of the given AdaptiveMaxPoolingType.
-  AdaptiveMaxPoolingType& operator=(AdaptiveMaxPoolingType&& other);
+  //! Copy the given AdaptiveMaxPooling.
+  AdaptiveMaxPooling(const AdaptiveMaxPooling& other);
+  //! Take ownership of the given AdaptiveMaxPooling.
+  AdaptiveMaxPooling(AdaptiveMaxPooling&& other);
+  //! Copy the given AdaptiveMaxPooling.
+  AdaptiveMaxPooling& operator=(const AdaptiveMaxPooling& other);
+  //! Take ownership of the given AdaptiveMaxPooling.
+  AdaptiveMaxPooling& operator=(AdaptiveMaxPooling&& other);
 
-  //! Clone the AdaptiveMaxPoolingType object.
+  //! Clone the AdaptiveMaxPooling object.
   //! This handles polymorphism correctly.
-  AdaptiveMaxPoolingType* Clone() const
+  AdaptiveMaxPooling* Clone() const
   {
-    return new AdaptiveMaxPoolingType(*this);
+    return new AdaptiveMaxPooling(*this);
   }
 
   /**
@@ -113,7 +113,7 @@ class AdaptiveMaxPoolingType : public Layer<MatType>
 
  private:
   //! Locally stored MaxPooling Object.
-  MaxPoolingType<MatType> poolingLayer;
+  MaxPooling<MatType> poolingLayer;
 
   //! Locally-stored output width. These are user specified outputWidth.
   //! Actual outputWidth will be equal to this but only after
@@ -124,12 +124,7 @@ class AdaptiveMaxPoolingType : public Layer<MatType>
   //! Actual outputWidth will be equal to this but only after
   //! `ComputeOutputDimensions()` is called.
   size_t outputHeight;
-}; // class AdaptiveMaxPoolingType
-
-// Convenience typedefs.
-
-// Standard Adaptive max pooling layer.
-using AdaptiveMaxPooling = AdaptiveMaxPoolingType<arma::mat>;
+}; // class AdaptiveMaxPooling
 
 } // namespace mlpack
 

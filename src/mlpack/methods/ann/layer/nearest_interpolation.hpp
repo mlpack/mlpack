@@ -1,4 +1,3 @@
-//
 /**
  * @filer methods/ann/layer/nearest_interpolation.hpp
  * @author Andrew Furey
@@ -29,14 +28,15 @@ namespace mlpack {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class NearestInterpolationType : public Layer<MatType>
+class NearestInterpolation : public Layer<MatType>
 {
  public:
   using CubeType = typename GetCubeType<MatType>::type;
   //! Create the NearestInterpolation object.
-  NearestInterpolationType();
+  NearestInterpolation();
 
-  /**Create NearestInterpolation Object with the same scaleFactor along 
+  /**
+   * Create NearestInterpolation Object with the same scaleFactor along
    * each dimension.
    * NOTE: scaleFactors must be a two element vector, the first element
    * for scaling the first dimension and the second element for scaling
@@ -44,25 +44,25 @@ class NearestInterpolationType : public Layer<MatType>
    *
    * If the input dimensions are n x m x ..., then the output dimensions
    * will be (n x scaleFactors[0]) x (m x scaleFactors[1]) x ...
-   * 
+   *
    * @param scaleFactor Scale factors to scale each dimension by.
    */
-  NearestInterpolationType(const std::vector<double> scaleFactors);
+  NearestInterpolation(const std::vector<double> scaleFactors);
 
-  NearestInterpolationType* Clone() const {
-    return new NearestInterpolationType(*this);
+  NearestInterpolation* Clone() const {
+    return new NearestInterpolation(*this);
   }
 
-  virtual ~NearestInterpolationType() { }
+  virtual ~NearestInterpolation() { }
 
-  //! Copy the given NearestInterpolationType layer.
-  NearestInterpolationType(const NearestInterpolationType& other);
-  //! Take ownership of the given NearestInterpolationType layer.
-  NearestInterpolationType(NearestInterpolationType&& other);
-  //! Copy the given NearestInterpolationType layer.
-  NearestInterpolationType& operator=(const NearestInterpolationType& other);
-  //! Take ownership of the given NearestInterpolationType layer.
-  NearestInterpolationType& operator=(NearestInterpolationType&& other);
+  //! Copy the given NearestInterpolation layer.
+  NearestInterpolation(const NearestInterpolation& other);
+  //! Take ownership of the given NearestInterpolation layer.
+  NearestInterpolation(NearestInterpolation&& other);
+  //! Copy the given NearestInterpolation layer.
+  NearestInterpolation& operator=(const NearestInterpolation& other);
+  //! Take ownership of the given NearestInterpolation layer.
+  NearestInterpolation& operator=(NearestInterpolation&& other);
 
   /**
    * Forward pass through the layer. The layer interpolates
@@ -81,12 +81,14 @@ class NearestInterpolationType : public Layer<MatType>
    * the input size.
    *
    * @param * (input) The input matrix.
-   * @param gradient The computed backward gradient.
-   * @param output The resulting down-sampled output.
+   * @param * (output) The output matrix.
+   * @param gy The computed backward gradient.
+   * @param g The resulting down-sampled output.
    */
-  void Backward(const MatType& /*input*/,
-                const MatType& gradient,
-                MatType& output);
+  void Backward(const MatType& /* input */,
+                const MatType& /* output */,
+                const MatType& gy,
+                MatType& g);
 
   //! Compute the output dimensions of the layer, based on the internal values
   //! of `InputDimensions()`.
@@ -102,8 +104,6 @@ class NearestInterpolationType : public Layer<MatType>
   //! Vector of scale factors to scale different dimensions.
   std::vector<double> scaleFactors;
 }; // class NearestInterpolation
-
-using NearestInterpolation = NearestInterpolationType<arma::mat>;
 
 } // namespace mlpack
 

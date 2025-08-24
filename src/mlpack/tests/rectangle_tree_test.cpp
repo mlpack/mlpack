@@ -412,7 +412,7 @@ TEST_CASE("PointDeletion", "[RectangleTreeTest]")
 
   // Single-tree search.
   NeighborSearch<NearestNeighborSort, LMetric<2, true>, arma::mat, RTree>
-      knn1(std::move(tree), SINGLE_TREE_MODE);
+      knn1(std::move(tree), SINGLE_TREE);
 
   arma::Mat<size_t> neighbors1;
   arma::mat distances1;
@@ -426,7 +426,7 @@ TEST_CASE("PointDeletion", "[RectangleTreeTest]")
   arma::mat distances2;
 
   // Nearest neighbor search the naive way.
-  KNN knn2(newDataset, NAIVE_MODE);
+  KNN knn2(newDataset, NAIVE);
 
   knn2.Search(querySet, 5, neighbors2, distances2);
 
@@ -502,12 +502,12 @@ TEST_CASE("PointDynamicAdd", "[RectangleTreeTest]")
 
   // Nearest neighbor search with the R tree.
   NeighborSearch<NearestNeighborSort, LMetric<2, true>, arma::mat, RTree>
-      knn1(std::move(tree), SINGLE_TREE_MODE);
+      knn1(std::move(tree), SINGLE_TREE);
 
   knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  KNN knn2(dataset, NAIVE_MODE);
+  KNN knn2(dataset, NAIVE);
 
   knn2.Search(5, neighbors2, distances2);
 
@@ -542,12 +542,12 @@ TEST_CASE("SingleTreeTraverserTest", "[RectangleTreeTest]")
 
   // Nearest neighbor search with the R tree.
   NeighborSearch<NearestNeighborSort, LMetric<2, true>, arma::mat, RStarTree>
-      knn1(std::move(rTree), SINGLE_TREE_MODE);
+      knn1(std::move(rTree), SINGLE_TREE);
 
   knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  KNN knn2(dataset, NAIVE_MODE);
+  KNN knn2(dataset, NAIVE);
 
   knn2.Search(5, neighbors2, distances2);
 
@@ -585,12 +585,12 @@ TEST_CASE("XTreeTraverserTest", "[RectangleTreeTest]")
 
   // Nearest neighbor search with the X tree.
   NeighborSearch<NearestNeighborSort, LMetric<2, true>, arma::mat, XTree>
-      knn1(std::move(xTree), SINGLE_TREE_MODE);
+      knn1(std::move(xTree), SINGLE_TREE);
 
   knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  KNN knn2(dataset, NAIVE_MODE);
+  KNN knn2(dataset, NAIVE);
 
   knn2.Search(5, neighbors2, distances2);
 
@@ -626,12 +626,12 @@ TEST_CASE("HilbertRTreeTraverserTest", "[RectangleTreeTest]")
 
   // Nearest neighbor search with the Hilbert R tree.
   NeighborSearch<NearestNeighborSort, LMetric<2, true>, arma::mat, HilbertRTree>
-      knn1(std::move(hilbertRTree), SINGLE_TREE_MODE);
+      knn1(std::move(hilbertRTree), SINGLE_TREE);
 
   knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  KNN knn2(dataset, NAIVE_MODE);
+  KNN knn2(dataset, NAIVE);
 
   knn2.Search(5, neighbors2, distances2);
 
@@ -1005,12 +1005,12 @@ TEST_CASE("RPlusTreeTraverserTest", "[RectangleTreeTest]")
 
   // Nearest neighbor search with the R+ tree.
   NeighborSearch<NearestNeighborSort, LMetric<2, true>, arma::mat, RPlusTree>
-      knn1(std::move(rPlusTree), SINGLE_TREE_MODE);
+      knn1(std::move(rPlusTree), SINGLE_TREE);
 
   knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  KNN knn2(dataset, NAIVE_MODE);
+  KNN knn2(dataset, NAIVE);
 
   knn2.Search(5, neighbors2, distances2);
 
@@ -1134,12 +1134,12 @@ TEST_CASE("RPlusPlusTreeTraverserTest", "[RectangleTreeTest]")
   // Nearest neighbor search with the R++ tree.
   NeighborSearch<NearestNeighborSort, LMetric<2, true>,
       arma::mat, RPlusPlusTree> knn1(std::move(rPlusPlusTree),
-      SINGLE_TREE_MODE);
+      SINGLE_TREE);
 
   knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  KNN knn2(dataset, NAIVE_MODE);
+  KNN knn2(dataset, NAIVE);
 
   knn2.Search(5, neighbors2, distances2);
 

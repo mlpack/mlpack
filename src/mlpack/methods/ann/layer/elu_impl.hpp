@@ -26,7 +26,7 @@ namespace mlpack {
 // This constructor is called for SELU activation function.  The values of
 // alpha and lambda are constant for normalized inputs.
 template<typename MatType>
-ELUType<MatType>::ELUType() :
+ELU<MatType>::ELU() :
     Layer<MatType>(),
     alpha(1.6732632423543774),
     lambda(1.0507009873554802)
@@ -37,7 +37,7 @@ ELUType<MatType>::ELUType() :
 // This constructor is called for ELU activation function. The value of lambda
 // is fixed and equal to 1. 'alpha' is a hyperparameter.
 template<typename MatType>
-ELUType<MatType>::ELUType(const double alpha) :
+ELU<MatType>::ELU(const double alpha) :
     Layer<MatType>(),
     alpha(alpha),
     lambda(1)
@@ -46,7 +46,7 @@ ELUType<MatType>::ELUType(const double alpha) :
 }
 
 template<typename MatType>
-ELUType<MatType>::ELUType(const ELUType& other) :
+ELU<MatType>::ELU(const ELU& other) :
     Layer<MatType>(other),
     alpha(other.alpha),
     lambda(other.lambda)
@@ -55,8 +55,8 @@ ELUType<MatType>::ELUType(const ELUType& other) :
 }
 
 template<typename MatType>
-ELUType<MatType>::ELUType(
-    ELUType&& other) :
+ELU<MatType>::ELU(
+    ELU&& other) :
     Layer<MatType>(std::move(other)),
     alpha(std::move(other.alpha)),
     lambda(std::move(other.lambda))
@@ -65,8 +65,8 @@ ELUType<MatType>::ELUType(
 }
 
 template<typename MatType>
-ELUType<MatType>&
-ELUType<MatType>::operator=(const ELUType& other)
+ELU<MatType>&
+ELU<MatType>::operator=(const ELU& other)
 {
   if (&other != this)
   {
@@ -79,8 +79,8 @@ ELUType<MatType>::operator=(const ELUType& other)
 }
 
 template<typename MatType>
-ELUType<MatType>&
-ELUType<MatType>::operator=(ELUType&& other)
+ELU<MatType>&
+ELU<MatType>::operator=(ELU&& other)
 {
   if (&other != this)
   {
@@ -93,39 +93,32 @@ ELUType<MatType>::operator=(ELUType&& other)
 }
 
 template<typename MatType>
-void ELUType<MatType>::Forward(
+void ELU<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    if (input(i) < DBL_MAX)
-    {
-      output(i) = (input(i) > 0) ? lambda * input(i) : lambda * alpha *
-          (std::exp(input(i)) - 1);
-    }
-  }
-
-  if (this->training)
-  {
-    derivative.set_size(arma::size(input));
-    for (size_t i = 0; i < input.n_elem; ++i)
-      derivative(i) = (input(i) > 0) ? lambda : output(i) + lambda * alpha;
+    output(i) = (input(i) >= 0) ? lambda * input(i) : lambda * alpha *
+        (std::exp(input(i)) - 1);
   }
 }
 
 template<typename MatType>
-void ELUType<MatType>::Backward(
-    const MatType& /* input */,
-    const MatType& /* output */,
+void ELU<MatType>::Backward(
+    const MatType& input,
+    const MatType& output,
     const MatType& gy,
     MatType& g)
 {
-  g = gy % derivative;
+  for (size_t i = 0; i < input.n_elem; ++i)
+  {
+    g(i) = gy(i) * ((input(i) >= 0) ? lambda : output(i) + lambda * alpha);
+  }
 }
 
 template<typename MatType>
 template<typename Archive>
-void ELUType<MatType>::serialize(
+void ELU<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));

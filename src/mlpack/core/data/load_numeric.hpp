@@ -121,7 +121,7 @@ bool LoadHDF5(const std::string& filename,
   return false;
 #endif
 
-  return matrix.load(filename, ToArmaFileType(opts.Format()));
+  return matrix.load(filename, opts.ArmaFormat());
 }
 
 } // namespace data
