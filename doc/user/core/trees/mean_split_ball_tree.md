@@ -33,7 +33,7 @@ additional functionality specific to ball trees.
  * [Ball tree on Wikipedia](https://en.wikipedia.org/wiki/Ball_tree)
  * [`BinarySpaceTree`](binary_space_tree.md)
  * [`MeanSplit`](binary_space_tree.md#meansplit)
- * [Binary space partitioning on Wikipedia](https://dl.acm.org/doi/pdf/10.1145/361002.361007)
+ * [Binary space partitioning on Wikipedia](https://en.wikipedia.org/wiki/Binary_space_partitioning)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 
 ## Template parameters

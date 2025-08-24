@@ -34,8 +34,8 @@ additional functionality specific to kd-trees.
  * [`KNN`](../../methods/knn.md)
  * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [kd-tree on Wikipedia](https://en.wikipedia.org/wiki/Kd-tree)
- * [Binary space partitioning on Wikipedia](https://dl.acm.org/doi/pdf/10.1145/361002.361007)
- * [original kd-tree paper (pdf)](https://dl.acm.org/doi/pdf/10.1145/361002.361007)
+ * [Binary space partitioning on Wikipedia](https://en.wikipedia.org/wiki/Binary_space_partitioning)
+ * [original kd-tree paper (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=bb0dc7f89a8e64aa537e2e2d26e8c44e30bead86)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 
 ## Template parameters
