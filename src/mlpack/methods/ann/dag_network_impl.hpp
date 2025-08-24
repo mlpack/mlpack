@@ -402,9 +402,9 @@ void DAGNetwork<
   network[currentLayer]->InputDimensions() = inputDimensions;
   network[currentLayer]->ComputeOutputDimensions();
 
-  for (size_t i = 1; i < sortedNetwork.size(); i++)
+  for (size_t layer = 1; layer < sortedNetwork.size(); layer++)
   {
-    currentLayer = sortedNetwork[i];
+    currentLayer = sortedNetwork[layer];
     const size_t numParents = parentsList[currentLayer].size();
     const size_t firstParent = parentsList[currentLayer].front();
     if (numParents == 1)
@@ -456,8 +456,8 @@ void DAGNetwork<
         throw std::logic_error(errorMessage.str());
       }
 
-      network[currentLayer]->InputDimensions()
-        = std::vector<size_t>(numOutputDimensions, 0);
+      network[currentLayer]->InputDimensions() =
+          std::vector<size_t>(numOutputDimensions, 0);
 
       for (size_t i = 0; i < numOutputDimensions; i++)
       {
@@ -466,8 +466,8 @@ void DAGNetwork<
           for (size_t j = 0; j < numParents; j++)
           {
             const size_t parentIndex = parentsList[currentLayer][j];
-            network[currentLayer]->InputDimensions()[i]
-              += network[parentIndex]->OutputDimensions()[i];
+            network[currentLayer]->InputDimensions()[i] +=
+                network[parentIndex]->OutputDimensions()[i];
           }
         }
         else
@@ -1067,7 +1067,7 @@ void DAGNetwork<
     {
       const size_t currentLayer = sortedNetwork[i];
       if (childrenList[currentLayer].size() > 1)
-        accumulatedDeltas[i]->fill(0.0f);
+        accumulatedDeltas[i]->zeros();
     }
 
     MatType const* currentOutput = &output;
@@ -1291,8 +1291,8 @@ typename MatType::elem_type DAGNetwork<
 
   Forward(predictorsBatch, networkOutput);
 
-  const typename MatType::elem_type obj = outputLayer.Forward(networkOutput,
-    responsesBatch) + Loss();
+  const typename MatType::elem_type obj =
+      outputLayer.Forward(networkOutput, responsesBatch) + Loss();
 
   outputLayer.Backward(networkOutput, responsesBatch, error);
 
@@ -1352,7 +1352,7 @@ typename MatType::elem_type DAGNetwork<
 
   Timer::Start("dag_network_optimization");
   const typename MatType::elem_type out =
-    optimizer.Optimize(*this, parameters, callbacks...);
+      optimizer.Optimize(*this, parameters, callbacks...);
   Timer::Stop("dag_network_optimization");
 
   Log::Info << "DAGNetwork::Train(): final objective of trained model is "

@@ -93,7 +93,7 @@ void CheckMove(ModelType* network1,
 /**
  * Check whether copying and moving Vanila network is working or not.
  */
-TEST_CASE("CheckCopyVanillaNetworkTest", "[DAGNetworkTest]")
+TEST_CASE("CheckCopyVanillaDAGNetworkTest", "[DAGNetworkTest]")
 {
   arma::mat trainData;
   if (!data::Load("thyroid_train.csv", trainData))
@@ -103,10 +103,10 @@ TEST_CASE("CheckCopyVanillaNetworkTest", "[DAGNetworkTest]")
   trainData.shed_row(trainData.n_rows - 1);
 
   DAGNetwork<> *model = new DAGNetwork();
-  int layer1 = model->Add<Linear>(8);
-  int layer2 = model->Add<Sigmoid>();
-  int layer3 = model->Add<Linear>(3);
-  int layer4 = model->Add<LogSoftMax>();
+  size_t layer1 = model->Add<Linear>(8);
+  size_t layer2 = model->Add<Sigmoid>();
+  size_t layer3 = model->Add<Linear>(3);
+  size_t layer4 = model->Add<LogSoftMax>();
   model->Connect(layer1, layer2);
   model->Connect(layer2, layer3);
   model->Connect(layer3, layer4);
@@ -114,7 +114,7 @@ TEST_CASE("CheckCopyVanillaNetworkTest", "[DAGNetworkTest]")
   CheckCopy(model, trainData, trainLabels);
 }
 
-TEST_CASE("CheckMoveVanillaNetworkTest", "[DAGNetworkTest]")
+TEST_CASE("CheckMoveVanillaDAGNetworkTest", "[DAGNetworkTest]")
 {
   arma::mat trainData;
   if (!data::Load("thyroid_train.csv", trainData))
@@ -124,10 +124,10 @@ TEST_CASE("CheckMoveVanillaNetworkTest", "[DAGNetworkTest]")
   trainData.shed_row(trainData.n_rows - 1);
 
   DAGNetwork<> *model = new DAGNetwork();
-  int layer1 = model->Add<Linear>(8);
-  int layer2 = model->Add<Sigmoid>();
-  int layer3 = model->Add<Linear>(3);
-  int layer4 = model->Add<LogSoftMax>();
+  size_t layer1 = model->Add<Linear>(8);
+  size_t layer2 = model->Add<Sigmoid>();
+  size_t layer3 = model->Add<Linear>(3);
+  size_t layer4 = model->Add<LogSoftMax>();
   model->Connect(layer1, layer2);
   model->Connect(layer2, layer3);
   model->Connect(layer3, layer4);
@@ -156,8 +156,8 @@ TEST_CASE("DAGNetworkConnectNonExistentChild", "[DAGNetworkTest]")
   arma::mat testInput = arma::ones(6);
   arma::mat testOutput;
 
-  int a = model.Add<Linear>(2);
-  int b = model.Add<Linear>(2);
+  size_t a = model.Add<Linear>(2);
+  size_t b = model.Add<Linear>(2);
 
   model.Connect(a, b);
   REQUIRE_THROWS_AS(model.Connect(b, 2), std::logic_error);
@@ -178,8 +178,8 @@ TEST_CASE("DAGNetworkUseNetworkMatType", "[DAGNetworkTest]")
   arma::mat testInput = arma::ones(6);
   arma::mat testOutput;
 
-  int a = model.Add<LinearMatType>(2);
-  int b = model.Add<LinearMatType>(2);
+  size_t a = model.Add<LinearMatType>(2);
+  size_t b = model.Add<LinearMatType>(2);
   model.Connect(a, b);
 
   REQUIRE_NOTHROW(model.Predict(testInput, testOutput));
@@ -197,9 +197,9 @@ void CheckConcatenation(arma::mat& input,
 
   arma::mat testOutput;
 
-  int a = model.Add<Identity>();
-  int b = model.Add<Identity>();
-  int c = model.Add<Identity>();
+  size_t a = model.Add<Identity>();
+  size_t b = model.Add<Identity>();
+  size_t c = model.Add<Identity>();
   model.Connect(a, b);
   model.Connect(b, c);
   model.Connect(a, c);
@@ -287,8 +287,8 @@ TEST_CASE("DAGNetworkConnectNonExistentParent", "[DAGNetworkTest]")
   arma::mat testInput = arma::ones(6);
   arma::mat testOutput;
 
-  int a = model.Add<Linear>(2);
-  int b = model.Add<Linear>(2);
+  size_t a = model.Add<Linear>(2);
+  size_t b = model.Add<Linear>(2);
 
   model.Connect(a, b);
   REQUIRE_THROWS_AS(model.Connect(a, 2), std::logic_error);
@@ -302,7 +302,7 @@ TEST_CASE("DAGNetworkParentIsChild", "[DAGNetworkTest]")
   arma::mat testInput = arma::ones(6);
   arma::mat testOutput;
 
-  int parent = model.Add<Linear>(2);
+  size_t parent = model.Add<Linear>(2);
 
   REQUIRE_THROWS_AS(model.Connect(parent, parent), std::logic_error);
 }
@@ -608,16 +608,14 @@ TEST_CASE("DAGNetworkAddMultiLayer", "[DAGNetworkTest]")
 {
   Model<arma::mat> model;
 
-  int a = AddLinearRelu<Model, arma::mat>(model);
-  int b = AddLinearRelu<Model, arma::mat>(model);
-  int c = AddLinearRelu<Model, arma::mat>(model);
+  size_t a = AddLinearRelu<Model, arma::mat>(model);
+  size_t b = AddLinearRelu<Model, arma::mat>(model);
+  size_t c = AddLinearRelu<Model, arma::mat>(model);
 
   model.Connect(a, b);
   model.Connect(b, c);
 
   arma::mat actual = arma::mat({ { 1.5f, -2.0f} }).t();
-  arma::mat output;
-
   arma::mat input  = arma::mat({ { 4.5f, -2.0f} }).t();
 
   REQUIRE_NOTHROW(model.Evaluate(input, actual));
@@ -628,9 +626,9 @@ TEST_CASE("DAGNetworkGradientAccumulatesAndResetsToZero", "[DAGNetworkTest]")
   DAGNetwork<MeanSquaredError, ConstInitialization> model =
     DAGNetwork(MeanSquaredError(), ConstInitialization(1.0f));
 
-  int a = model.Add<Add>();
-  int b = model.Add<Add>();
-  int c = model.Add<Add>();
+  size_t a = model.Add<Add>();
+  size_t b = model.Add<Add>();
+  size_t c = model.Add<Add>();
 
   model.Connect(a, b);
   model.Connect(a, c);
@@ -679,11 +677,11 @@ TEST_CASE("DAGNetworkSerializationTest", "[DAGNetworkTest]")
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
   DAGNetwork model;
-  int linear_layer_1 = model.Add<Linear>(8);
-  int sigmoid_layer_2 = model.Add<Sigmoid>();
-  int dropout_layer_3 = model.Add<Dropout>();
-  int linear_layer_4 = model.Add<Linear>(3);
-  int logsoftmax_layer_5 = model.Add<LogSoftMax>();
+  size_t linear_layer_1 = model.Add<Linear>(8);
+  size_t sigmoid_layer_2 = model.Add<Sigmoid>();
+  size_t dropout_layer_3 = model.Add<Dropout>();
+  size_t linear_layer_4 = model.Add<Linear>(3);
+  size_t logsoftmax_layer_5 = model.Add<LogSoftMax>();
 
   model.Connect(linear_layer_1, sigmoid_layer_2);
   model.Connect(sigmoid_layer_2, dropout_layer_3);
