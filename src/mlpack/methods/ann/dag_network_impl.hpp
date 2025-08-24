@@ -496,11 +496,13 @@ void DAGNetwork<
         }
       }
 
+      rowsCache.clear();
       size_t rows = 1;
       for (size_t j = 0; j < axis; j++)
         rows *= network[currentLayer]->InputDimensions()[j];
       rowsCache.insert({ currentLayer, rows });
 
+      slicesCache.clear();
       size_t slices = 1;
       for (size_t j = axis + 1; j < numOutputDimensions; j++)
         slices *= network[currentLayer]->InputDimensions()[j];
@@ -1483,6 +1485,9 @@ void DAGNetwork<
       outputDeltas.clear();
       inputDeltas.clear();
       accumulatedDeltas.clear();
+
+      rowsCache.clear();
+      slicesCache.clear();
 
       layerMemoryIsSet = false;
       validOutputDimensions = false;
