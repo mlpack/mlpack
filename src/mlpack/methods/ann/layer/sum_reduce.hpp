@@ -1,5 +1,5 @@
 /**
- * @file methods/ann/layer/add_reduce.hpp
+ * @file methods/ann/layer/sum_reduce.hpp
  * @author Andrew Furey
  *
  * Definition of the SumReduce class sums inputs along a given axis.
@@ -24,29 +24,29 @@ namespace mlpack {
  * @tparam MatType Matrix representation to accept as input and use for
  *    computation.
  */
-template<typename MatType>
-class SumReduceType : public Layer<MatType>
+template<typename MatType = arma::mat>
+class SumReduce : public Layer<MatType>
 {
  public:
   /**
-   * Create the SumReduceType object.
+   * Create the SumReduce object.
    */
-  SumReduceType(size_t axis = 0, bool keepDimensions = false);
+  SumReduce(size_t axis = 0, bool keepDimensions = false);
 
-  //! Clone the SumReduceType object. This handles polymorphism correctly.
-  SumReduceType* Clone() const { return new SumReduceType(*this); }
+  //! Clone the SumReduce object. This handles polymorphism correctly.
+  SumReduce* Clone() const { return new SumReduce(*this); }
 
   // Virtual destructor.
-  virtual ~SumReduceType() { }
+  virtual ~SumReduce() { }
 
-  //! Copy the given SumReduceType layer.
-  SumReduceType(const SumReduceType& other);
-  //! Take ownership of the given SumReduceType layer.
-  SumReduceType(SumReduceType&& other);
-  //! Copy the given SumReduceType layer.
-  SumReduceType& operator=(const SumReduceType& other);
-  //! Take ownership of the given SumReduceType layer.
-  SumReduceType& operator=(SumReduceType&& other);
+  //! Copy the given SumReduce layer.
+  SumReduce(const SumReduce& other);
+  //! Take ownership of the given SumReduce layer.
+  SumReduce(SumReduce&& other);
+  //! Copy the given SumReduce layer.
+  SumReduce& operator=(const SumReduce& other);
+  //! Take ownership of the given SumReduce layer.
+  SumReduce& operator=(SumReduce&& other);
 
   using CubeType = typename GetCubeType<MatType>::type;
 
@@ -93,10 +93,7 @@ class SumReduceType : public Layer<MatType>
   size_t rows;
   //! Number of slices in cube alias.
   size_t slices;
-}; // class SumReduceType
-
-// Standard SumReduce layer.
-using SumReduce = SumReduceType<arma::mat>;
+}; // class SumReduce
 
 } // namespace mlpack
 

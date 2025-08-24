@@ -1,5 +1,5 @@
 /**
- * @file methods/ann/layer/add_reduce_impl.hpp
+ * @file methods/ann/layer/sum_reduce_impl.hpp
  * @author Andrew Furey
  *
  * Definition of the SumReduce class sums inputs along a given axis.
@@ -18,7 +18,7 @@
 namespace mlpack {
 
 template<typename MatType>
-SumReduceType<MatType>::SumReduceType(size_t axis, bool keepDimensions) :
+SumReduce<MatType>::SumReduce(size_t axis, bool keepDimensions) :
     Layer<MatType>(),
     axis(axis),
     keepDimensions(keepDimensions)
@@ -27,7 +27,7 @@ SumReduceType<MatType>::SumReduceType(size_t axis, bool keepDimensions) :
 }
 
 template<typename MatType>
-SumReduceType<MatType>::SumReduceType(const SumReduceType& other) :
+SumReduce<MatType>::SumReduce(const SumReduce& other) :
     Layer<MatType>(other),
     axis(other.axis),
     keepDimensions(other.keepDimensions)
@@ -36,7 +36,7 @@ SumReduceType<MatType>::SumReduceType(const SumReduceType& other) :
 }
 
 template<typename MatType>
-SumReduceType<MatType>::SumReduceType(SumReduceType&& other) :
+SumReduce<MatType>::SumReduce(SumReduce&& other) :
     Layer<MatType>(std::move(other)),
     axis(std::move(other.axis)),
     keepDimensions(std::move(other.keepDimensions))
@@ -45,8 +45,8 @@ SumReduceType<MatType>::SumReduceType(SumReduceType&& other) :
 }
 
 template<typename MatType>
-SumReduceType<MatType>&
-SumReduceType<MatType>::operator=(const SumReduceType& other)
+SumReduce<MatType>&
+SumReduce<MatType>::operator=(const SumReduce& other)
 {
   if (&other != this)
   {
@@ -59,8 +59,8 @@ SumReduceType<MatType>::operator=(const SumReduceType& other)
 }
 
 template<typename MatType>
-SumReduceType<MatType>&
-SumReduceType<MatType>::operator=(SumReduceType&& other)
+SumReduce<MatType>&
+SumReduce<MatType>::operator=(SumReduce&& other)
 {
   if (&other != this)
   {
@@ -73,7 +73,7 @@ SumReduceType<MatType>::operator=(SumReduceType&& other)
 }
 
 template<typename MatType>
-void SumReduceType<MatType>::Forward(const MatType& input, MatType& output)
+void SumReduce<MatType>::Forward(const MatType& input, MatType& output)
 {
   CubeType inputAlias;
   MakeAlias(inputAlias, input, rows, this->inputDimensions[axis],
@@ -83,7 +83,7 @@ void SumReduceType<MatType>::Forward(const MatType& input, MatType& output)
 }
 
 template<typename MatType>
-void SumReduceType<MatType>::Backward(
+void SumReduce<MatType>::Backward(
     const MatType& input,
     const MatType& /* output */,
     const MatType& gy,
@@ -102,7 +102,7 @@ void SumReduceType<MatType>::Backward(
 }
 
 template<typename MatType>
-void SumReduceType<MatType>::ComputeOutputDimensions()
+void SumReduce<MatType>::ComputeOutputDimensions()
 {
   if (axis >= this->inputDimensions.size())
   {
@@ -130,7 +130,7 @@ void SumReduceType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void SumReduceType<MatType>::serialize(Archive& ar,
+void SumReduce<MatType>::serialize(Archive& ar,
   const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));
