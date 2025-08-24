@@ -438,8 +438,8 @@ class DAGNetwork
   void AddLayer(size_t nodeId)
   {
     layerGradients.push_back(MatType());
-    childrenList.insert({nodeId, {}});
-    parentsList.insert({nodeId, {}});
+    childrenList.insert({ nodeId, {} });
+    parentsList.insert({ nodeId, {} });
 
     if (network.size() > 1)
     {

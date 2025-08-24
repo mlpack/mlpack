@@ -1027,7 +1027,8 @@ void DAGNetwork<
         }
       }
 
-      // Don't execute if it's the last iteration.
+      // Don't execute if it's the last iteration
+      // network[lastLayer] might need a concatenation.
       if (i < sortedNetwork.size() - 1)
         network[currentLayer]->Forward(layerInputs[i - 1], layerOutputs[i]);
     }
@@ -1114,6 +1115,12 @@ void DAGNetwork<
         }
       }
 
+      /*
+       * If a parent has multiple children, you need to accumulate
+       * the deltas instead across all it's children in order
+       * to correctly calculate that layers gradient w.r.t the
+       * networks loss.
+       */
       for (size_t j = 0; j < numParents; j++)
       {
         const size_t parent = parentsList[currentLayer][j];
