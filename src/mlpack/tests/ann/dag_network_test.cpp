@@ -16,6 +16,7 @@
 #include <mlpack/methods/ann/ann.hpp>
 
 #include "../catch.hpp"
+#include "../serialization.hpp"
 
 using namespace mlpack;
 
@@ -102,7 +103,7 @@ TEST_CASE("CheckCopyVanillaDAGNetworkTest", "[DAGNetworkTest]")
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
   trainData.shed_row(trainData.n_rows - 1);
 
-  DAGNetwork<> *model = new DAGNetwork();
+  DAGNetwork<> *model = new DAGNetwork<>();
   size_t layer1 = model->Add<Linear>(8);
   size_t layer2 = model->Add<Sigmoid>();
   size_t layer3 = model->Add<Linear>(3);
@@ -692,7 +693,7 @@ TEST_CASE("DAGNetworkSerializationTest", "[DAGNetworkTest]")
 
   model.Train(trainData, trainLabels, opt);
 
-  FFN<NegativeLogLikelihood> xmlModel, jsonModel, binaryModel;
+  DAGNetwork xmlModel, jsonModel, binaryModel;
   xmlModel.Add<Linear>(10); // Layer that will get removed.
 
   // Serialize into other models.

@@ -29,8 +29,8 @@ DAGNetwork<
     initializeRule(std::move(initializeRule)),
     // These will be set correctly in the first Forward() call.
     validOutputDimensions(false),
-    layerMemoryIsSet(false),
-    graphIsSet(false)
+    graphIsSet(false),
+    layerMemoryIsSet(false)
 {
   /* Nothing to do here. */
 }
@@ -56,8 +56,8 @@ DAGNetwork<
     responses(other.responses),
 
     validOutputDimensions(false),
-    layerMemoryIsSet(false),
-    graphIsSet(false)
+    graphIsSet(false),
+    layerMemoryIsSet(false)
 {
   for (size_t i = 0; i < other.network.size(); i++)
     network.push_back(other.network[i]->Clone());
@@ -89,9 +89,9 @@ DAGNetwork<
     predictors(std::move(other.predictors)),
     responses(std::move(other.responses)),
 
-    layerMemoryIsSet(false),
+    validOutputDimensions(false),
     graphIsSet(false),
-    validOutputDimensions(false)
+    layerMemoryIsSet(false)
 {
   other.DeleteExtraDeltas();
 
