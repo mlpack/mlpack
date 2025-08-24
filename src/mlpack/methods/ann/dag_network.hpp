@@ -435,7 +435,8 @@ class DAGNetwork
  private:
   // Helper functions.
 
-  void AddLayer(size_t nodeId) {
+  void AddLayer(size_t nodeId)
+  {
     layerGradients.push_back(MatType());
     childrenList.insert({nodeId, {}});
     parentsList.insert({nodeId, {}});
@@ -543,7 +544,8 @@ class DAGNetwork
   /**
    * Delete extra deltas allocated in `InitializeBackwardPassMemory`
    */
-  void DeleteExtraDeltas() {
+  void DeleteExtraDeltas()
+  {
     if (!extraDeltasAllocated)
       return;
 
