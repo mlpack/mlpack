@@ -200,7 +200,7 @@ TEST_CASE("NoCholeskySingularityTest", "[LARSTest]")
 }
 
 // Make sure that Predict() provides reasonable enough solutions.
-TEST_CASE("PredictTest", "[LARSTest]")
+TEST_CASE("PredictTest", "[LARSTest][long]")
 {
   for (size_t i = 0; i < 2; ++i)
   {
@@ -702,7 +702,7 @@ TEST_CASE("LARSFitInterceptTest", "[LARSTest]")
 
 // Make sure that Predict() provides reasonable enough solutions when we are
 // fitting an intercept.
-TEST_CASE("PredictFitInterceptTest", "[LARSTest]")
+TEST_CASE("PredictFitInterceptTest", "[LARSTest][long]")
 {
   for (size_t i = 0; i < 2; ++i)
   {
@@ -747,7 +747,7 @@ TEST_CASE("PredictFitInterceptTest", "[LARSTest]")
 
 // Make sure that Predict() provides reasonable enough solutions when we are
 // normalizing data.
-TEST_CASE("PredictNormalizeDataTest", "[LARSTest]")
+TEST_CASE("PredictNormalizeDataTest", "[LARSTest][long]")
 {
   for (size_t i = 0; i < 2; ++i)
   {
@@ -790,7 +790,7 @@ TEST_CASE("PredictNormalizeDataTest", "[LARSTest]")
 
 // Make sure that Predict() provides reasonable enough solutions when we are
 // fitting an intercept and normalizing data.
-TEST_CASE("PredictFitInterceptNormalizeDataTest", "[LARSTest]")
+TEST_CASE("PredictFitInterceptNormalizeDataTest", "[LARSTest][long]")
 {
   for (size_t i = 0; i < 2; ++i)
   {

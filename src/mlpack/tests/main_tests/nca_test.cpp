@@ -205,7 +205,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentStepSizeTest",
  * Ensure that output is different when the tolerance is different.
  */
 TEST_CASE_METHOD(NCATestFixture, "NCADifferentToleranceTest",
-                "[NCAMainTest][BindingTests]")
+                "[NCAMainTest][BindingTests][long]")
 {
   // We aren't guaranteed that the test will be successful, so we run it
   // multiple times.

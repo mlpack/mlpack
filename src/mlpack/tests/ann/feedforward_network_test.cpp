@@ -420,7 +420,7 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
 }
 
-TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
+TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest][long]")
 {
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
@@ -871,7 +871,9 @@ TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
   model.Add<Linear>(3);
   model.Add<LogSoftMax>();
 
-  ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
+  // Since we are only checking compilation here, we set the tolerance to the
+  // very large value of 1e5 so it converges quickly.
+  ens::DE opt(200, 1000, 0.6, 0.8, 1e5);
   model.Train(trainData, trainLabels, opt);
 }
 

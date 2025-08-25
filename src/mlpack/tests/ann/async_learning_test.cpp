@@ -18,7 +18,7 @@
 using namespace mlpack;
 
 // Test async one step q-learning in Cart Pole.
-TEST_CASE("OneStepQLearningTest", "[AsyncLearningTest]")
+TEST_CASE("OneStepQLearningTest", "[AsyncLearningTest][long]")
 {
   /**
    * This is for the Travis CI server, in your own machine you should use more

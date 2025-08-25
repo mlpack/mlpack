@@ -88,7 +88,7 @@ double ImpulseStepDataTest(const size_t dimensions, const size_t rho)
   return error;
 }
 
-TEST_CASE("RNNImpulseStepLinearRecurrentTest", "[RecurrentNetworkTest]")
+TEST_CASE("RNNImpulseStepLinearRecurrentTest", "[RecurrentNetworkTest][long]")
 {
   double err = ImpulseStepDataTest<LinearRecurrent>(1, 5);
   REQUIRE(err <= 0.001);

@@ -422,7 +422,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainPercentageTest",
 
 // Ensure that Sampling affects the final result when refined_start is true.
 TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainSamplingsTest",
-                 "[GmmTrainMainTest][BindingTests]")
+                 "[GmmTrainMainTest][BindingTests][long]")
 {
   arma::mat inputData;
   if (!data::Load("data_3d_mixed.txt", inputData))

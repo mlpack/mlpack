@@ -585,7 +585,8 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorNonLinearSepData_DS", "[AdaBoostTest]", mat,
  * dataset.  It tests the Classify function and checks for a satisfactory error
  * rate.
  */
-TEMPLATE_TEST_CASE("ClassifyTest_VERTEBRALCOL", "[AdaBoostTest]", mat, fmat)
+TEMPLATE_TEST_CASE("ClassifyTest_VERTEBRALCOL", "[AdaBoostTest][long]", mat,
+    fmat)
 {
   using MatType = TestType;
   using eT = typename MatType::elem_type;
@@ -1059,7 +1060,7 @@ TEMPLATE_TEST_CASE("AdaBoostParamsConstructor", "[AdaBoostTest]", fmat, mat)
 }
 
 // Ensure that all Train() overloads work correctly.
-TEMPLATE_TEST_CASE("AdaBoostTrainOverloads", "[AdaBoostTest]", fmat, mat)
+TEMPLATE_TEST_CASE("AdaBoostTrainOverloads", "[AdaBoostTest][long]", fmat, mat)
 {
   using MatType = TestType;
 
