@@ -139,7 +139,7 @@ class SVDConvolution
     {
       for (size_t i = (j == 0) ? 1 : 0; i < input.n_slices; ++i)
       {
-        FFTConvolution<BorderMode>::Convolution(input.slice(i),
+        SVDConvolution<BorderMode>::Convolution(input.slice(i),
             filter.slice(j * inMaps + i), convOutput);
         output.slice(j) += convOutput;
       }
