@@ -19,29 +19,29 @@
 namespace mlpack {
 
 template<typename MatType>
-SoftmaxType<MatType>::SoftmaxType() :
+Softmax<MatType>::Softmax() :
     Layer<MatType>()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-SoftmaxType<MatType>::SoftmaxType(const SoftmaxType& other) :
+Softmax<MatType>::Softmax(const Softmax& other) :
     Layer<MatType>(other)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-SoftmaxType<MatType>::SoftmaxType(SoftmaxType&& other) :
+Softmax<MatType>::Softmax(Softmax&& other) :
     Layer<MatType>(std::move(other))
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-SoftmaxType<MatType>&
-SoftmaxType<MatType>::operator=(const SoftmaxType& other)
+Softmax<MatType>&
+Softmax<MatType>::operator=(const Softmax& other)
 {
   if (this != &other)
     Layer<MatType>::operator=(other);
@@ -50,8 +50,8 @@ SoftmaxType<MatType>::operator=(const SoftmaxType& other)
 }
 
 template<typename MatType>
-SoftmaxType<MatType>&
-SoftmaxType<MatType>::operator=(SoftmaxType&& other)
+Softmax<MatType>&
+Softmax<MatType>::operator=(Softmax&& other)
 {
   if (this != &other)
     Layer<MatType>::operator=(std::move(other));
@@ -60,14 +60,14 @@ SoftmaxType<MatType>::operator=(SoftmaxType&& other)
 }
 
 template<typename MatType>
-void SoftmaxType<MatType>::Forward(const MatType& input, MatType& output)
+void Softmax<MatType>::Forward(const MatType& input, MatType& output)
 {
   MatType softmaxInput = exp(input.each_row() - max(input, 0));
   output = softmaxInput.each_row() / sum(softmaxInput, 0);
 }
 
 template<typename MatType>
-void SoftmaxType<MatType>::Backward(
+void Softmax<MatType>::Backward(
     const MatType& /* input */,
     const MatType& output,
     const MatType& gy,
@@ -78,7 +78,7 @@ void SoftmaxType<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void SoftmaxType<MatType>::serialize(
+void Softmax<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

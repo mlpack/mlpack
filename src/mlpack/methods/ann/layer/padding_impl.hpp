@@ -19,7 +19,7 @@
 namespace mlpack {
 
 template<typename MatType>
-PaddingType<MatType>::PaddingType(
+Padding<MatType>::Padding(
     const size_t padWLeft,
     const size_t padWRight,
     const size_t padHTop,
@@ -37,7 +37,7 @@ PaddingType<MatType>::PaddingType(
 }
 
 template<typename MatType>
-PaddingType<MatType>::PaddingType(const PaddingType& other) :
+Padding<MatType>::Padding(const Padding& other) :
     Layer<MatType>(other),
     padWLeft(other.padWLeft),
     padWRight(other.padWRight),
@@ -49,7 +49,7 @@ PaddingType<MatType>::PaddingType(const PaddingType& other) :
 }
 
 template<typename MatType>
-PaddingType<MatType>::PaddingType(PaddingType&& other) :
+Padding<MatType>::Padding(Padding&& other) :
     Layer<MatType>(std::move(other)),
     padWLeft(std::move(other.padWLeft)),
     padWRight(std::move(other.padWRight)),
@@ -62,8 +62,8 @@ PaddingType<MatType>::PaddingType(PaddingType&& other) :
 }
 
 template<typename MatType>
-PaddingType<MatType>&
-PaddingType<MatType>::operator=(const PaddingType& other)
+Padding<MatType>&
+Padding<MatType>::operator=(const Padding& other)
 {
   if (this != &other)
   {
@@ -80,8 +80,8 @@ PaddingType<MatType>::operator=(const PaddingType& other)
 }
 
 template<typename MatType>
-PaddingType<MatType>&
-PaddingType<MatType>::operator=(PaddingType&& other)
+Padding<MatType>&
+Padding<MatType>::operator=(Padding&& other)
 {
   if (this != &other)
   {
@@ -98,7 +98,7 @@ PaddingType<MatType>::operator=(PaddingType&& other)
 }
 
 template<typename MatType>
-void PaddingType<MatType>::Forward(const MatType& input, MatType& output)
+void Padding<MatType>::Forward(const MatType& input, MatType& output)
 {
   // Make an alias of the input and output so that we can deal with the first
   // two dimensions directly.
@@ -150,7 +150,7 @@ void PaddingType<MatType>::Forward(const MatType& input, MatType& output)
 }
 
 template<typename MatType>
-void PaddingType<MatType>::Backward(
+void Padding<MatType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
@@ -172,7 +172,7 @@ void PaddingType<MatType>::Backward(
 }
 
 template<typename MatType>
-void PaddingType<MatType>::ComputeOutputDimensions()
+void Padding<MatType>::ComputeOutputDimensions()
 {
   this->outputDimensions = this->inputDimensions;
 
@@ -188,7 +188,7 @@ void PaddingType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void PaddingType<MatType>::serialize(Archive& ar, const uint32_t version)
+void Padding<MatType>::serialize(Archive& ar, const uint32_t version)
 {
   ar(cereal::base_class<Layer<MatType>>(this));
 
