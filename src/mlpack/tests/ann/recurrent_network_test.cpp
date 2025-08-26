@@ -665,7 +665,7 @@ TEST_CASE("SequenceClassificationTest", "[RecurrentNetworkTest]")
  * Train a simple RNN to perform a classification task, but in 'single' mode, so
  * the response is only backpropagated at the final time step.
  */
-TEST_CASE("SequenceClassificationSingleTest", "[RecurrentNetworkTest]")
+TEST_CASE("SequenceClassificationSingleTest", "[RecurrentNetworkTest][long]")
 {
   size_t successes = 0;
   const size_t rho = 10;

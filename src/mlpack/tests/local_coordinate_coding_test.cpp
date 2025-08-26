@@ -181,7 +181,7 @@ TEMPLATE_TEST_CASE("LocalCoordinateCodingSerializationTest",
  * value.
  */
 TEMPLATE_TEST_CASE("LocalCoordinateCodingTrainReturnObjective",
-    "[LocalCoordinateCodingTest]", arma::mat, arma::fmat)
+    "[LocalCoordinateCodingTest][long]", arma::mat, arma::fmat)
 {
   using MatType = TestType;
 

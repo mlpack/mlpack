@@ -141,7 +141,7 @@ TEST_CASE("SingleTreeSearch", "[KRANNTest]")
 
 // Test dual-tree rank-approximate search (harder to test because of the
 // randomness involved).
-TEST_CASE("DualTreeSearch", "[KRANNTest]")
+TEST_CASE("DualTreeSearch", "[KRANNTest][long]")
 {
   arma::mat refData;
   arma::mat queryData;

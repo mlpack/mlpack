@@ -272,7 +272,7 @@ TEST_CASE("PredictTest", "[LARSTest][long]")
 
 // This is the same as PredictTest, but for arma::fmat, and it allows multiple
 // trials for run to deal with the lower precision of floats.
-TEST_CASE("PredictFloatTest", "[LARSTest]")
+TEST_CASE("PredictFloatTest", "[LARSTest][long]")
 {
   for (size_t i = 0; i < 2; ++i)
   {

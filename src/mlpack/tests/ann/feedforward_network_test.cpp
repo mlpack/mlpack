@@ -847,7 +847,7 @@ TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
  * Test to see if the FFN code compiles when the Optimizer
  * doesn't have the MaxIterations() method.
  */
-TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
+TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest][long]")
 {
   // Load the dataset.
   arma::mat trainData;

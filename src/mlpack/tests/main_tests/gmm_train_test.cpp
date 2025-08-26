@@ -381,7 +381,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainDiffKmeansMaxIterationsTest",
 
 // Ensure that Percentage affects the final result when refined_start is true.
 TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainPercentageTest",
-                 "[GmmTrainMainTest][BindingTests]")
+                 "[GmmTrainMainTest][BindingTests][long]")
 {
   arma::mat inputData;
   if (!data::Load("data_3d_mixed.txt", inputData))

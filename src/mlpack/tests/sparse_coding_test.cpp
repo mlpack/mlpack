@@ -150,7 +150,7 @@ TEMPLATE_TEST_CASE("SparseCodingTestDictionaryStep", "[SparseCodingTest]",
   REQUIRE(normGradient == Approx(0.0).margin(tol));
 }
 
-TEMPLATE_TEST_CASE("SerializationTest", "[SparseCodingTest]", arma::mat,
+TEMPLATE_TEST_CASE("SerializationTest", "[SparseCodingTest][long]", arma::mat,
     arma::fmat)
 {
   using MatType = TestType;
