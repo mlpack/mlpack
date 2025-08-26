@@ -40,7 +40,7 @@ bool LoadImage(const std::vector<std::string>& files,
   {
     std::stringstream oss;
     oss << "Load(): list of images is empty, please specify the files names.";
-    handleError(oss, opts);
+    HandleError(oss, opts);
   }
 
   // @rcurtin I would recommend only testing the last element in the vector.
@@ -63,7 +63,7 @@ bool LoadImage(const std::vector<std::string>& files,
       << " not supported. Supported formats: ";
     for (const auto& x : opts.loadType)
       oss << " " << x;
-    handleError(oss, opts);
+    HandleError(oss, opts);
   }
   std::cout << "we passed file detection stage" << std::endl;
   // Temporary variables needed as stb_image.h supports int parameters.
@@ -91,7 +91,7 @@ bool LoadImage(const std::vector<std::string>& files,
         oss << "Load(): failed to load image '" << files.front() << "': "
             << stbi_failure_reason() << ".";
 
-        handleError(oss, opts);
+        HandleError(oss, opts);
       }
     }
     else if constexpr (std::is_same_v<eT, float> || std::is_same_v<eT, double>)
@@ -105,7 +105,7 @@ bool LoadImage(const std::vector<std::string>& files,
         oss << "Load(): failed to load image '" << files.front() << "': "
                 << stbi_failure_reason();
 
-        handleError(oss, opts);
+        HandleError(oss, opts);
       }
     }
     opts.Width() = tempWidth;
@@ -142,7 +142,7 @@ bool LoadImage(const std::vector<std::string>& files,
         oss << "Load(): failed to load image '" << files.front() << "': "
                 << stbi_failure_reason();
 
-        handleError(oss, opts);
+        HandleError(oss, opts);
       }
 
       // We need to do this check after loading every image to be sure that
@@ -155,7 +155,7 @@ bool LoadImage(const std::vector<std::string>& files,
             << "several images, please check that all the images have the same "
             << "dimensions; if not, load each image in one column and call this"
             << " function iteratively." << std::endl;
-        handleError(oss, opts);
+        HandleError(oss, opts);
       }
       images.col(i) = arma::Mat<unsigned char>(imageBuf, dimension, 1,
           false, true);
@@ -172,7 +172,7 @@ bool LoadImage(const std::vector<std::string>& files,
         oss << "Load(): failed to load image '" << files.front() << "': "
                 << stbi_failure_reason();
 
-        handleError(oss, opts);
+        HandleError(oss, opts);
       }
 
       // We need to do this check after loading every image to be sure that
@@ -184,7 +184,7 @@ bool LoadImage(const std::vector<std::string>& files,
           << "several images, please check that all the images have the same "
           << "dimensions; if not, load each image in one column and call this "
           << "function iteratively." << std::endl;
-        handleError(oss, opts);
+        HandleError(oss, opts);
       }
       floatImages.col(i) = arma::Mat<float>(floatImageBuf, dimension, 1,
           false, true);

@@ -146,7 +146,7 @@ bool LoadMatrix(const std::string& filename,
   }
   else
   {
-    return handleError("data::Load(): unknown matrix-like type given!",
+    return HandleError("data::Load(): unknown matrix-like type given!",
         txtOpts);
   }
   opts = std::move(txtOpts);
@@ -188,7 +188,7 @@ bool Load(const std::string& filename,
       opts.Format() == FileType::PIC || opts.Format() == FileType::GIF ||
       opts.Format() == FileType::PNM || opts.Format() == FileType::ImageType)
   {
-    return handleError("ImageOptions is not specified!  Please specify"
+    return HandleError("ImageOptions is not specified!  Please specify"
         "ImageOptions before loading an image.", opts);
   }
   if constexpr (IsArma<ObjectType>::value || IsSparseMat<ObjectType>::value)
@@ -203,7 +203,7 @@ bool Load(const std::string& filename,
   }
   else
   {
-    return handleError("DataOptionsType is unknown!  Please use a known type "
+    return HandleError("DataOptionsType is unknown!  Please use a known type "
         "or provide specific overloads.", opts);
   }
 
@@ -212,7 +212,7 @@ bool Load(const std::string& filename,
     Timer::Stop("loading_data");
     std::stringstream oss;
     oss << "Loading from '" << filename << "' failed.";
-    return handleError(oss, opts);
+    return HandleError(oss, opts);
   }
   else
   {
@@ -300,7 +300,7 @@ bool LoadSparse(const std::string& filename,
     oss << "Cannot load '" << filename << "' with type "
         << opts.FileTypeToString() << " into a sparse matrix; format is "
         << "only supported for dense matrices.";
-    return handleError(oss, opts);
+    return HandleError(oss, opts);
   }
   else if (opts.Format() == FileType::CSVASCII)
   {
@@ -381,7 +381,7 @@ bool LoadCategorical(const std::string& filename,
     std::stringstream oss;
     oss << "Unable to detect type of '" << filename << "'; "
           << "Incorrect extension?";
-    return handleError(oss, opts);
+    return HandleError(oss, opts);
   }
 
   Log::Info << "Size is " << matrix.n_rows << " x " << matrix.n_cols << ".\n";
@@ -446,7 +446,7 @@ bool Load(const std::vector<std::string>& filenames,
   arma::field<std::string> firstHeaders;
   if (filenames.empty())
   {
-    return handleError("Load(): given set of filenames is empty;"
+    return HandleError("Load(): given set of filenames is empty;"
         " loading failed.", opts);
   }
 
@@ -474,7 +474,7 @@ bool Load(const std::vector<std::string>& filenames,
                 << filenames[0] << "' ('" << firstHeaders[j] << "'); load "
                 << "failed.";
             matrix.clear();
-            return handleError(oss, opts);
+            return HandleError(oss, opts);
           }
         }
       }
@@ -497,7 +497,7 @@ bool Load(const std::vector<std::string>& filenames,
                 << "' has " << matrix.n_rows << " dimensions, but first file "
                 << "'" << filenames[0] << "' has " << tmp.n_rows
                 << " dimensions.";
-            return handleError(oss, opts);
+            return HandleError(oss, opts);
           }
           else
             tmp = join_rows(tmp, matrix);
@@ -511,7 +511,7 @@ bool Load(const std::vector<std::string>& filenames,
                 << "' has " << matrix.n_cols << " dimensions, but first file "
                 << "'" << filenames[0] << "' has " << tmp.n_cols
                 << " dimensions.";
-            return handleError(oss, opts);
+            return HandleError(oss, opts);
           }
           else
           {

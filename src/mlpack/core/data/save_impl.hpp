@@ -147,7 +147,7 @@ bool Save(const std::string& filename,
       opts.Format() == FileType::PIC || opts.Format() == FileType::GIF ||
       opts.Format() == FileType::PNM || opts.Format() == FileType::ImageType)
   {
-    return handleError("ImageOptions is not specified!  Please specify"
+    return HandleError("ImageOptions is not specified!  Please specify"
         "ImageOptions before saving an image.", opts);
   }
 
@@ -164,7 +164,7 @@ bool Save(const std::string& filename,
   }
   else
   {
-    return handleError("DataOptionsType is unknown!  Please use a known type "
+    return HandleError("DataOptionsType is unknown!  Please use a known type "
         "or provide specific overloads.", opts);
   }
 
@@ -173,7 +173,7 @@ bool Save(const std::string& filename,
     Timer::Stop("saving_data");
     std::stringstream oss;
     oss << "Save to '" << filename << "' failed.";
-    return handleError(oss, opts);
+    return HandleError(oss, opts);
   }
 
   Timer::Stop("saving_data");

@@ -49,13 +49,13 @@ bool OpenFile(const std::string& filename,
     {
       oss << "Cannot open file '" << filename << "' for loading.  "
           << "Please check if the file exists.";
-      return handleError(oss, opts);
+      return HandleError(oss, opts);
     }
     else if (!isLoading)
     {
       oss << "Cannot open file '" << filename << "' for saving.  "
           << "Please check if you have permissions for writing.";
-      return handleError(oss, opts);
+      return HandleError(oss, opts);
     }
   }
   return true;
@@ -445,7 +445,7 @@ bool DetectFileType(const std::string& filename,
         std::stringstream oss;
         oss << "Unable to detect type of '" << filename
             << "'; incorrect extension? (allowed: xml/bin/json)";
-        return handleError(oss, opts);
+        return HandleError(oss, opts);
       }
     }
   }
@@ -468,7 +468,7 @@ bool DetectFileType(const std::string& filename,
         std::stringstream oss;
         oss <<  "Unable to detect type of '" << filename << "'; "
             << "incorrect extension?";
-        return handleError(oss, opts);
+        return HandleError(oss, opts);
       }
     }
   }

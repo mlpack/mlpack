@@ -45,7 +45,7 @@ bool LoadCol(const std::string& filename,
       oss << "Matrix in file '" << filename << "' is not a vector, but"
             << " instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!";
       vec.clear();
-      return handleError(oss, opts);
+      return HandleError(oss, opts);
     }
     else
     {
@@ -98,7 +98,7 @@ bool LoadRow(const std::string& filename,
       oss << "Matrix in file '" << filename << "' is not a vector, but"
           << " instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!";
       rowvec.clear();
-      return handleError(oss, opts);
+      return HandleError(oss, opts);
     }
     else
     {

@@ -38,7 +38,7 @@ bool SaveImage(const std::vector<std::string>& files,
   {
     std::stringstream oss;
     oss << "Save(): vector of image files is empty; nothing to save.";
-    handleError(oss, opts);
+    HandleError(oss, opts);
   }
 
   // @rcurtin Same here, I would not expect the user to have a vector of
@@ -56,7 +56,7 @@ bool SaveImage(const std::vector<std::string>& files,
     for (const auto& x : opts.saveType)
       oss << "  " << x;
     oss << "." << std::endl;
-    handleError(oss, opts);
+    HandleError(oss, opts);
   }
 
   size_t dimension = opts.Width() * opts.Height() * opts.Channels();
@@ -66,7 +66,7 @@ bool SaveImage(const std::vector<std::string>& files,
     std::stringstream oss;
     oss << "data::Save(): The given image dimensions do not match the "
         << "dimensions of the matrix to be saved!";
-    handleError(oss, opts);
+    HandleError(oss, opts);
   }
 
   bool success = false;
@@ -111,7 +111,7 @@ bool SaveImage(const std::vector<std::string>& files,
     {
       std::stringstream oss;
       oss << "Save(): error saving image to '" << files.at(i) << "'.";
-      handleError(oss, opts);
+      HandleError(oss, opts);
     }
   }
   return success;

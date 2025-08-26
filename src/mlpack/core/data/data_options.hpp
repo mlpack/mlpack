@@ -490,7 +490,7 @@ struct IsDataOptions<DataOptions>
 };
 
 template<typename Derived>
-bool handleError(const std::stringstream& oss,
+bool HandleError(const std::stringstream& oss,
     const DataOptionsBase<Derived>& opts)
 {
   bool success = true; // this should never be returned as true.
@@ -507,16 +507,16 @@ bool handleError(const std::stringstream& oss,
 }
 
 template<typename Derived>
-bool handleError(const std::string& msg,
+bool HandleError(const std::string& msg,
     const DataOptionsBase<Derived>& opts)
 {
   std::stringstream oss;
   oss << msg;
-  return handleError(oss, opts);
+  return HandleError(oss, opts);
 }
 
 // Required for backward compatibility.
-inline bool handleError(const std::stringstream& oss, bool fatal)
+inline bool HandleError(const std::stringstream& oss, bool fatal)
 {
   bool success = true; // this should never be returned as true.
   if (fatal)
@@ -531,11 +531,11 @@ inline bool handleError(const std::stringstream& oss, bool fatal)
   return success;
 }
 
-inline bool handleError(const std::string& msg, bool fatal)
+inline bool HandleError(const std::string& msg, bool fatal)
 {
   std::stringstream oss;
   oss << msg;
-  return handleError(oss, fatal);
+  return HandleError(oss, fatal);
 }
 
 } // namespace data
