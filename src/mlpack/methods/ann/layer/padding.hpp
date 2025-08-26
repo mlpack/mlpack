@@ -40,7 +40,8 @@ class Padding : public Layer<MatType>
   Padding(const size_t padWLeft = 0,
               const size_t padWRight = 0,
               const size_t padHTop = 0,
-              const size_t padHBottom = 0);
+              const size_t padHBottom = 0,
+              const typename MatType::elem_type fillValue = 0);
 
   //! Clone the Padding object. This handles polymorphism correctly.
   Padding* Clone() const { return new Padding(*this); }
@@ -125,6 +126,9 @@ class Padding : public Layer<MatType>
 
   //! Cached number of input maps.
   size_t totalInMaps;
+
+  //! Pad the input with this value
+  typename MatType::elem_type fillValue;
 }; // class Padding
 
 } // namespace mlpack
