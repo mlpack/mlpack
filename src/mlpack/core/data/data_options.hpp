@@ -309,16 +309,14 @@ class DataOptionsBase
       case FileType::FileTypeUnknown: return "Unknown data type";
       case FileType::ImageType:   return "Any Image type";
       case FileType::PNG:         return "Portable Network Graphics image data";
-      case FileType::JPG:
-          return "Joint Photographic Experts Group image data.";
-      case FileType::TGA:         return "Truevision TGA image data.";
-      case FileType::BMP:         return "Bitmap image data.";
-      case FileType::HDR:         return "High Dynamic Range image data.";
-      case FileType::PSD:         return "PhotoShop image data.";
-      case FileType::GIF:
-          return "Graphics Interchange Format image data.";
-      case FileType::PIC:         return "PICtor image data.";
-      case FileType::PNM:         return "Portable Anymap data.";
+      case FileType::JPG:         return "JPEG image data";
+      case FileType::TGA:         return "Truevision TGA image data";
+      case FileType::BMP:         return "Bitmap image data";
+      case FileType::HDR:         return "High Dynamic Range image data";
+      case FileType::PSD:         return "PhotoShop image data";
+      case FileType::GIF:         return "GIF image data";
+      case FileType::PIC:         return "PICtor image data";
+      case FileType::PNM:         return "Portable Anymap data";
       default:                    return "";
     }
   }
