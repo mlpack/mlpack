@@ -861,7 +861,8 @@ TEMPLATE_TEST_CASE("TrainTest", "[AdaBoostTest]", mat, fmat)
   REQUIRE(lError <= 0.30);
 }
 
-TEMPLATE_TEST_CASE("PerceptronSerializationTest", "[AdaBoostTest][long]", fmat, mat)
+TEMPLATE_TEST_CASE("PerceptronSerializationTest", "[AdaBoostTest][long]", fmat,
+    mat)
 {
   using MatType = TestType;
 
