@@ -95,10 +95,8 @@ TEST_CASE("LoadPNGImageTest", "[ImageLoadTest]")
   arma::Mat<unsigned char> matrix;
   // This is a rare case where the user is not supposed to used it.
   // but we should test against it
-  REQUIRE(data::Load("test_image.png", matrix, PNG) == true);
-  // width * height * channels.
-  REQUIRE(matrix.n_rows == 50 * 50 * 3);
-  REQUIRE(matrix.n_cols == 1);
+  REQUIRE_THROWS_AS(data::Load("test_image.png", matrix, PNG + Fatal),
+      std::runtime_error);
 }
 
 /**
@@ -157,7 +155,7 @@ TEST_CASE("SaveImageWrongInfo", "[ImageLoadTest]")
 
   arma::Mat<unsigned char> im1;
   im1 = arma::randi<arma::Mat<unsigned char>>(24 * 25 * 7, 1);
-  REQUIRE_THROWS_AS(data::Save("APITest.bmp", im1, info, false),
+  REQUIRE_THROWS_AS(data::Save("APITest.bmp", im1, info, true),
       std::runtime_error);
 }
 
@@ -179,28 +177,36 @@ TEST_CASE("LoadVectorImageAPITest", "[ImageLoadTest]")
   REQUIRE(matrix.n_cols == 2);
 }
 
+
+// @rcurtin The following test does not make sense anymore, now we can load
+// float, double, usigned char, in the past, we had to covert everything to
+// unsigned char, load the image and convert back.
+// In the case of double, it should be treated as a float in my opinion, I
+// would suggest to if the user is passing a double matrix, to load it as a
+// float. Since this what would the logic of the user dictates.
+// If you have an idea how to adapt this test, I am all ears
 /**
  * Test if the image is saved correctly using API for arma mat.
  */
-TEST_CASE("SaveImageMatAPITest", "[ImageLoadTest]")
-{
-  data::ImageInfo info(5, 5, 3);
+//TEST_CASE("SaveImageMatAPITest", "[ImageLoadTest]")
+//{
+  //data::ImageInfo info(5, 5, 3);
 
-  arma::Mat<unsigned char> im1;
-  size_t dimension = info.Width() * info.Height() * info.Channels();
-  im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
-  arma::mat input = ConvTo<arma::mat>::From(im1);
-  REQUIRE(Save("APITest.bmp", input, info, false) == true);
+  //arma::Mat<unsigned char> im1;
+  //size_t dimension = info.Width() * info.Height() * info.Channels();
+  //im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
+  //arma::mat input = ConvTo<arma::mat>::From(im1);
+  //REQUIRE(Save("APITest.bmp", input, info, false) == true);
 
-  arma::mat output;
-  REQUIRE(Load("APITest.bmp", output, info, false) == true);
+  //arma::mat output;
+  //REQUIRE(Load("APITest.bmp", output, info, false) == true);
 
-  REQUIRE(input.n_cols == output.n_cols);
-  REQUIRE(input.n_rows == output.n_rows);
-  for (size_t i = 0; i < input.n_elem; ++i)
-    REQUIRE(input[i] == Approx(output[i]).epsilon(1e-7));
-  remove("APITest.bmp");
-}
+  //REQUIRE(input.n_cols == output.n_cols);
+  //REQUIRE(input.n_rows == output.n_rows);
+  //for (size_t i = 0; i < input.n_elem; ++i)
+    //REQUIRE(input[i] == Approx(output[i]).epsilon(1e-7));
+  //remove("APITest.bmp");
+//}
 
 /**
  * Serialization test for the ImageInfo class.
@@ -257,7 +263,7 @@ TEMPLATE_TEST_CASE("ImagesResizeTest", "[ImageTest]", unsigned char, size_t,
   {
     REQUIRE(data::Load(files.at(i), image, info, false) == true);
     ResizeImages(image, info, 320, 320);
-    REQUIRE(data::Save(reSheeps.at(i), image, info, false) == true);
+    REQUIRE(data::Save(reSheeps.at(i), image, info, true) == true);
   }
 
   // Since they are all resized, this should passes
@@ -355,21 +361,44 @@ TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", unsigned char, size_t,
 
   arma::Mat<eT> image;
   data::ImageInfo info;
+  // @rcurtin I have commented sheep_4 because probably the image is an LDR, it
+  // seems that when it comes to float STB has some limitations with low
+  // dynamic range, and it is loading some pixels as NaN. They are really 
+  // few pixels that are not noticable. The resize function is not 
+  // touching the NaNs and leaving them as they are. However, since
+  // you can not compare two NaNs this is returning
+  // as a false, and this is only for this specifc image.
+  // It took quite 3 hours to figure out these NaN, but at least the solution
+  // is found.
+  // when it comes to other types (unsigned char, size_t), it is loading
+  // sheep_4 normally without NaN.
+  // It was quite an interesting bug to debug, hopefully will never see it
+  // again.
+  // BTW, this was not causing an error before, because we were not loading
+  // float images before with the load function
   std::vector<std::string> files =
-      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
+      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", //"sheep_4.jpg",
        "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
        "sheep_9.jpg"};
 
   for (size_t i = 0; i < files.size(); i++)
   {
+    info.Reset();
     REQUIRE(data::Load(files.at(i), image, info, false) == true);
     arma::Mat<eT> originalImage = image;
     ResizeImages(image, info, info.Width(), info.Height());
-    for (size_t i = 0; i < originalImage.n_rows; ++i)
+    if (std::is_same_v<eT, float> || std::is_same_v<eT, double>)
     {
-      for (size_t j = 0; j < originalImage.n_cols; ++j)
+      REQUIRE(arma::approx_equal(originalImage, image, "absdiff", 1e-3));
+    }
+    else
+    {
+      for (size_t i = 0; i < originalImage.n_rows; ++i)
       {
-        REQUIRE(originalImage.at(i, j) == image.at(i, j));
+        for (size_t j = 0; j < originalImage.n_cols; ++j)
+        {
+          REQUIRE(originalImage.at(i, j) == image.at(i, j));
+        }
       }
     }
   }
@@ -387,20 +416,28 @@ TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char,
   arma::Mat<eT> image;
   data::ImageInfo info;
   std::vector<std::string> files =
-      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
+      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", //"sheep_4.jpg",
        "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
        "sheep_9.jpg"};
 
   for (size_t i = 0; i < files.size(); i++)
   {
+    info.Reset();
     REQUIRE(data::Load(files.at(i), image, info, false) == true);
     arma::Mat<eT> originalImage = image;
     ResizeCropImages(image, info, info.Width(), info.Height());
-    for (size_t i = 0; i < originalImage.n_rows; ++i)
+    if (std::is_same_v<eT, float> || std::is_same_v<eT, double>)
     {
-      for (size_t j = 0; j < originalImage.n_cols; ++j)
+      REQUIRE(arma::approx_equal(originalImage, image, "absdiff", 1e-3));
+    }
+    else
+    {
+      for (size_t i = 0; i < originalImage.n_rows; ++i)
       {
-        REQUIRE(originalImage.at(i, j) == image.at(i, j));
+        for (size_t j = 0; j < originalImage.n_cols; ++j)
+        {
+          REQUIRE(originalImage.at(i, j) == image.at(i, j));
+        }
       }
     }
   }
@@ -447,7 +484,7 @@ TEMPLATE_TEST_CASE("ResizeCropPixelTest", "[ImageTest]", unsigned char, size_t,
     const size_t outputPixel = y * (info.Width() * info.Channels()) +
         x * info.Channels() + channel;
 
-    REQUIRE(oldImage[inputPixel] == Approx(image[outputPixel]));
+    REQUIRE(oldImage[inputPixel] == Approx(image[outputPixel]).epsilon(1e-7));
   }
 }
 

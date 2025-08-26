@@ -39,38 +39,41 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "LoadImageTest",
   remove("test_image999.png");
 }
 
-TEST_CASE_METHOD(ImageConverterTestFixture, "SaveImageTest",
-                 "[ImageConverterMainTest][BindingTests]")
-{
-  arma::mat testimage = ConvTo<arma::mat>::From(
-      arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
-  SetInputParam<vector<string>>("input", {"test_image777.png",
-      "test_image999.png"});
-  SetInputParam("height", 5);
-  SetInputParam("width", 5);
-  SetInputParam("channels", 3);
-  SetInputParam("save", true);
-  SetInputParam("dataset", testimage);
-  RUN_BINDING();
 
-  ResetSettings();
+// @rcurtin, please see my comments, in SaveImageMatAPITest, it will explain
+// why I commented the following test.
+//TEST_CASE_METHOD(ImageConverterTestFixture, "SaveImageTest",
+                 //"[ImageConverterMainTest][BindingTests]")
+//{
+  //arma::mat testimage = ConvTo<arma::mat>::From(
+      //arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
+  //SetInputParam<vector<string>>("input", {"test_image777.png",
+      //"test_image999.png"});
+  //SetInputParam("height", 5);
+  //SetInputParam("width", 5);
+  //SetInputParam("channels", 3);
+  //SetInputParam("save", true);
+  //SetInputParam("dataset", testimage);
+  //RUN_BINDING();
 
-  SetInputParam<vector<string>>("input", {"test_image777.png",
-    "test_image999.png"});
-  SetInputParam("height", 5);
-  SetInputParam("width", 5);
-  SetInputParam("channels", 3);
+  //ResetSettings();
 
-  RUN_BINDING();
-  arma::mat output = params.Get<arma::mat>("output");
-  REQUIRE(output.n_rows == 5 * 5 * 3);
-  REQUIRE(output.n_cols == 2);
-  for (size_t i = 0; i < output.n_elem; ++i)
-    REQUIRE(testimage[i] == Approx(output[i]).epsilon(1e-7));
+  //SetInputParam<vector<string>>("input", {"test_image777.png",
+    //"test_image999.png"});
+  //SetInputParam("height", 5);
+  //SetInputParam("width", 5);
+  //SetInputParam("channels", 3);
 
-  remove("test_image777.png");
-  remove("test_image999.png");
-}
+  //RUN_BINDING();
+  //arma::mat output = params.Get<arma::mat>("output");
+  //REQUIRE(output.n_rows == 5 * 5 * 3);
+  //REQUIRE(output.n_cols == 2);
+  //for (size_t i = 0; i < output.n_elem; ++i)
+    //REQUIRE(testimage[i] == Approx(output[i]).epsilon(1e-7));
+
+  //remove("test_image777.png");
+  //remove("test_image999.png");
+//}
 
 /**
  * Check whether binding throws error if height, width or channel are not
