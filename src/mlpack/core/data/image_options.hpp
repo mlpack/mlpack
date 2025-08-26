@@ -185,45 +185,17 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     return this->ModifyMember(image, defaultImage);
   }
 
-  size_t Width() const
-  {
-    return this->AccessMember(width, defaultWidth);
-  }
+  size_t Width() const { return this->AccessMember(width, defaultWidth); }
+  size_t& Width() { return this->ModifyMember(width, defaultWidth); }
 
-  size_t& Width()
-  {
-    return this->ModifyMember(width, defaultWidth);
-  }
+  size_t Height() const { return this->AccessMember(height, defaultHeight); }
+  size_t& Height() { return this->ModifyMember(height, defaultHeight); }
 
-  size_t Height() const
-  {
-    return this->AccessMember(height, defaultHeight);
-  }
+  size_t Channels() const { return this->AccessMember(channels, defaultChannels); }
+  size_t& Channels() { return this->ModifyMember(channels, defaultChannels); }
 
-  size_t& Height()
-  {
-    return this->ModifyMember(height, defaultHeight);
-  }
-
-  size_t Channels() const
-  {
-    return this->AccessMember(channels, defaultChannels);
-  }
-
-  size_t& Channels()
-  {
-    return this->ModifyMember(channels, defaultChannels);
-  }
-
-  size_t Quality() const
-  {
-    return this->AccessMember(quality, defaultQuality);
-  }
-
-  size_t& Quality()
-  {
-    return this->ModifyMember(quality, defaultQuality);
-  }
+  size_t Quality() const { return this->AccessMember(quality, defaultQuality); }
+  size_t& Quality() { return this->ModifyMember(quality, defaultQuality); }
 
   inline static const std::unordered_set<std::string> saveType
       = {"jpg", "png", "tga", "bmp", "hdr"};
