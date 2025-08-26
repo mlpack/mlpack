@@ -468,7 +468,8 @@ static const DataOptions PSD = DataOptions(std::nullopt, FileType::PSD);
 static const DataOptions GIF = DataOptions(std::nullopt, FileType::GIF);
 static const DataOptions PIC = DataOptions(std::nullopt, FileType::PIC);
 static const DataOptions PNM = DataOptions(std::nullopt, FileType::PNM);
-static const DataOptions Image  = DataOptions(std::nullopt, FileType::ImageType);
+static const DataOptions Image = DataOptions(std::nullopt,
+    FileType::ImageType);
 
 // Utility struct to detect when something is a `DataOptions`.
 

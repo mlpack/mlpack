@@ -242,7 +242,6 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
   }
 
  private:
-
   std::optional<size_t> width;
   std::optional<size_t> height;
   std::optional<size_t> channels;

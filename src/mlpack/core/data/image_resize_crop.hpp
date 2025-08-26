@@ -90,7 +90,8 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
   // We need to covert to a float if we are resizing a double.
   if constexpr (std::is_same_v<eT, double> || std::is_same_v<eT, float>)
   {
-    originalImagesFloat = arma::conv_to<arma::Mat<float>>::from(std::move(images));
+    originalImagesFloat = 
+        arma::conv_to<arma::Mat<float>>::from(std::move(images));
   }
 
   // This is not optimal, but I do not want to allocate memory for nothing.
@@ -109,8 +110,8 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
     else if constexpr (std::is_same_v<eT, float> || std::is_same_v<eT, double>)
     {
       stbir_resize_float_linear(originalImagesFloat.colptr(i), opts.Width(),
-          opts.Height(), 0, resizedFloatImages.colptr(i), newWidth, newHeight, 0,
-          channels);
+          opts.Height(), 0, resizedFloatImages.colptr(i), newWidth, newHeight,
+          0, channels);
     }
     else
     {

@@ -141,7 +141,7 @@ bool LoadImage(const std::vector<std::string>& files,
         std::stringstream oss;
         oss << "Load(): failed to load image '" << files.front() << "': "
                 << stbi_failure_reason();
-      
+
         handleError(oss, opts);
       }
 
@@ -194,7 +194,6 @@ bool LoadImage(const std::vector<std::string>& files,
   }
   if constexpr (std::is_same<eT, float>::value || std::is_same_v<eT, double>)
   {
-    std::cout << "conversion back to the original matrix should be happening" << std::endl;
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(floatImages));
   }
   else

@@ -165,7 +165,7 @@ bool Save(const std::string& filename,
   else
   {
     return handleError("DataOptionsType is unknown!  Please use a known type "
-        "or provide specific overloads." ,opts);
+        "or provide specific overloads.", opts);
   }
 
   if (!success)

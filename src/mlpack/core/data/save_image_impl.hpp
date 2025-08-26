@@ -41,9 +41,9 @@ bool SaveImage(const std::vector<std::string>& files,
     handleError(oss, opts);
   }
 
-  // @rcurtin Same here, I would not expect the user to have a vector of different
-  // filetypes that they would like to save. Therefore I would propose to
-  // remove the following loop.
+  // @rcurtin Same here, I would not expect the user to have a vector of
+  // different filetypes that they would like to save. Therefore I
+  // removed the following loop.
   if (opts.Format() == FileType::ImageType)
   {
     DetectFromExtension<arma::Mat<eT>, ImageOptions>(files.back(), opts);

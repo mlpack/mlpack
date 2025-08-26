@@ -71,7 +71,7 @@ bool Load(const std::string& filename,
   {
     std::stringstream oss;
     oss << "Unable to open file '" << filename << "' to load object '"
-        << name << "'." ;
+        << name << "'.";
     return handleError(oss, fatal);
   }
   try
