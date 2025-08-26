@@ -138,6 +138,18 @@ bool Save(const std::string& filename,
     Timer::Stop("saving_data");
     return false;
   }
+  // We should not save images through this function, this should be handled
+  // by other overloads. Therefore if the user is forcing to use this function
+  // we should throw an error.
+  if (opts.Format() == FileType::PNG || opts.Format() == FileType::JPG ||
+      opts.Format() == FileType::BMP || opts.Format() == FileType::HDR ||
+      opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
+      opts.Format() == FileType::PIC || opts.Format() == FileType::GIF ||
+      opts.Format() == FileType::PNM || opts.Format() == FileType::ImageType)
+  {
+    return handleError("ImageOptions is not specified!  Please specify"
+        "ImageOptions before saving an image.", opts);
+  }
 
   // Try to save the file.
   Log::Info << "Saving " << opts.FileTypeToString() << " to '" << filename

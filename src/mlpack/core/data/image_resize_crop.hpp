@@ -83,26 +83,34 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
   // This is required since STB only accept unsigned chars.
   // set the new matrix size for copy
   size_t newDimension = newWidth * newHeight * opts.Channels();
+  arma::Mat<float> originalImagesFloat;
   arma::Mat<float> resizedFloatImages;
   arma::Mat<unsigned char> resizedImages;
 
+  // We need to covert to a float if we are resizing a double.
+  if constexpr (std::is_same_v<eT, double> || std::is_same_v<eT, float>)
+  {
+    originalImagesFloat = arma::conv_to<arma::Mat<float>>::from(std::move(images));
+  }
+
   // This is not optimal, but I do not want to allocate memory for nothing.
-  if (std::is_same<eT, float>::value)
+  if constexpr (std::is_same_v<eT, float> || std::is_same_v<eT, double>)
     resizedFloatImages.set_size(newDimension, images.n_cols);
   else
     resizedImages.set_size(newDimension, images.n_cols);
 
   for (size_t i = 0; i < images.n_cols; ++i)
   {
-    if constexpr (std::is_same<eT, unsigned char>::value)
+    if constexpr (std::is_same_v<eT, unsigned char>)
     {
       stbir_resize_uint8_linear(images.colptr(i), opts.Width(), opts.Height(),
           0, resizedImages.colptr(i), newWidth, newHeight, 0, channels);
     }
-    else if constexpr (std::is_same<eT, float>::value)
+    else if constexpr (std::is_same_v<eT, float> || std::is_same_v<eT, double>)
     {
-      stbir_resize_float_linear(images.colptr(i), opts.Width(), opts.Height(),
-          0, resizedFloatImages.colptr(i), newWidth, newHeight, 0, channels);
+      stbir_resize_float_linear(originalImagesFloat.colptr(i), opts.Width(),
+          opts.Height(), 0, resizedFloatImages.colptr(i), newWidth, newHeight, 0,
+          channels);
     }
     else
     {
@@ -114,7 +122,7 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
     }
   }
 
-  if (std::is_same<eT, float>::value)
+  if constexpr (std::is_same_v<eT, float> || std::is_same_v<eT, double>)
   {
     // The conv_to is needed here so that this code compiles even when this
     // branch isn't taken.

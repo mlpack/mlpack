@@ -26,6 +26,15 @@ bool Load(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
           ImageOptions& opts)
 {
+  std::cout << "this should not execute Load for Image" << std::endl;
+  return LoadImage(files, matrix, opts);
+}
+
+template<typename eT>
+bool LoadImage(const std::vector<std::string>& files,
+               arma::Mat<eT>& matrix,
+               ImageOptions& opts)
+{
   size_t dimension = 0;
   if (files.empty())
   {
@@ -56,7 +65,7 @@ bool Load(const std::vector<std::string>& files,
       oss << " " << x;
     handleError(oss, opts);
   }
-
+  std::cout << "we passed file detection stage" << std::endl;
   // Temporary variables needed as stb_image.h supports int parameters.
   int tempWidth, tempHeight, tempChannels;
   // I think we can get rid of these two if we will be able to assign directly
@@ -70,17 +79,35 @@ bool Load(const std::vector<std::string>& files,
   // user cannot load images with different dimension in the same matrix.
   if (opts.Width() == 0 || opts.Height() == 0)
   {
-    imageBuf = stbi_load(files.front().c_str(), &tempWidth, &tempHeight,
-        &tempChannels, STBI_rgb);
-    if (!imageBuf)
+    if constexpr (std::is_same_v<eT, unsigned char> ||
+                  std::is_same_v<eT, size_t>)
     {
-      std::stringstream oss;
-      oss << "Load(): failed to load image '" << files.front() << "': "
-          << stbi_failure_reason() << ".";
+      std::cout << "load an unsigned char" << std::endl;
+      imageBuf = stbi_load(files.front().c_str(), &tempWidth, &tempHeight,
+          &tempChannels, STBI_rgb);
+      if (!imageBuf)
+      {
+        std::stringstream oss;
+        oss << "Load(): failed to load image '" << files.front() << "': "
+            << stbi_failure_reason() << ".";
 
-      handleError(oss, opts);
+        handleError(oss, opts);
+      }
     }
+    else if constexpr (std::is_same_v<eT, float> || std::is_same_v<eT, double>)
+    {
+      std::cout << "load a a double" << std::endl;
+      floatImageBuf = stbi_loadf(files.at(i).c_str(), &tempWidth, &tempHeight,
+          &tempChannels, opts.Channels());
+      if (!floatImageBuf)
+      {
+        std::stringstream oss;
+        oss << "Load(): failed to load image '" << files.front() << "': "
+                << stbi_failure_reason();
 
+        handleError(oss, opts);
+      }
+    }
     opts.Width() = tempWidth;
     opts.Height() = tempHeight;
     opts.Channels() = tempChannels;
@@ -91,16 +118,22 @@ bool Load(const std::vector<std::string>& files,
 
   arma::Mat<unsigned char> images;
   arma::Mat<float> floatImages;
-
-  if constexpr (std::is_same<eT, float>::value)
+  std::cout << "Allocated matrices" << std::endl;
+  if constexpr (std::is_same_v<eT, float> || std::is_same_v<eT, double>)
     floatImages.set_size(dimension, files.size());
   else
     images.set_size(dimension, files.size());
 
+  std::cout << "Allocated matrices 2" << std::endl;
   while (i < files.size())
-  {
-    if constexpr (std::is_same<eT, unsigned char>::value)
+  { // Good question to @rcurtin, what if the user is passing, double, should
+    // we handle it as a unsigned char and then we are converting by default to
+    // double at the end of the function ? Or treat it as a float, but in this
+    // case, we need to modify a couple of tests that we have
+    if constexpr (std::is_same_v<eT, unsigned char> ||
+                  std::is_same_v<eT, size_t>)
     {
+      std::cout << "load an unsigned char" << std::endl;
       imageBuf = stbi_load(files.at(i).c_str(), &tempWidth, &tempHeight,
           &tempChannels, opts.Channels());
       if (!imageBuf)
@@ -127,8 +160,9 @@ bool Load(const std::vector<std::string>& files,
           false, true);
       stbi_image_free(imageBuf);
     }
-    else if constexpr (std::is_same<eT, float>::value)
+    else if constexpr (std::is_same_v<eT, float> || std::is_same_v<eT, double>)
     {
+      std::cout << "load a a double" << std::endl;
       floatImageBuf = stbi_loadf(files.at(i).c_str(), &tempWidth, &tempHeight,
           &tempChannels, opts.Channels());
       if (!floatImageBuf)
@@ -157,8 +191,9 @@ bool Load(const std::vector<std::string>& files,
     }
     i++;
   }
-  if constexpr (std::is_same<eT, float>::value)
+  if constexpr (std::is_same<eT, float>::value || std::is_same_v<eT, double>)
   {
+    std::cout << "conversion back to the original matrix should be happening" << std::endl;
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(floatImages));
   }
   else
@@ -166,6 +201,7 @@ bool Load(const std::vector<std::string>& files,
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(images));
   }
 
+  std::cout << "passed loop" << std::endl;
   return true;
 }
 

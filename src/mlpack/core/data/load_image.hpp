@@ -41,14 +41,15 @@ template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& opts,
-          const bool fatal)
+          const bool fatal = false)
 {
   // Use the new implementation.
+  std::cout << "this should not execute Load for Image 2" << std::endl;
   opts.Fatal() = fatal;
   opts.Format() = FileType::ImageType;
   std::vector<std::string> files;
   files.push_back(filename);
-  return Load(files, matrix, opts);
+  return LoadImage(files, matrix, opts);
 }
 
 /**
@@ -64,12 +65,13 @@ template<typename eT>
 bool Load(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& opts,
-          const bool fatal)
+          const bool fatal = false)
 {
   // Use the new implementation.
+  std::cout << "this should not execute Load for Image 3" << std::endl;
   opts.Fatal() = fatal;
   opts.Format() = FileType::ImageType;
-  return Load(files, matrix, opts);
+  return LoadImage(files, matrix, opts);
 }
 
 /**
