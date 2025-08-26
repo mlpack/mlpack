@@ -147,7 +147,8 @@ bool LoadImage(const std::vector<std::string>& files,
 
       // We need to do this check after loading every image to be sure that
       // images provided by the user have an identical dimensions.
-      if (tempWidth != opts.Width() && tempHeight != opts.Height())
+      if (tempWidth != opts.Width() || tempHeight != opts.Height()
+          || tempChannels != opts.Channels())
       {
         std::stringstream oss;
         oss << "Load(): dimension mismatch: in the case of "
