@@ -43,7 +43,72 @@ namespace data {
  */
 template<typename eT>
 void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
-    const size_t newWidth, const size_t newHeight)
+    const size_t newWidth, const size_t newHeight,
+    const typename std::enable_if_t<std::is_floating_point<eT>::value>* = 0)
+{
+  // First check if we are resizing one image or a group of images, the check
+  // is going to be different depending on the dimension.
+  // If the user would like to resize a set of images of different dimensions,
+  // then they need to consider passing them image by image. Otherwise, as
+  // assume that all images have identical dimension and need to be resized.
+  if (images.n_cols == 1)
+  {
+    if (images.n_elem != (opts.Width() * opts.Height() * opts.Channels()))
+    {
+      Log::Fatal << "ResizeImages(): dimensions mismatch: the number of pixels "
+          << "is not equal to the dimension provided by the given ImageInfo."
+          << std::endl;
+    }
+  }
+  else
+  {
+    if (images.n_rows != (opts.Width() * opts.Height() * opts.Channels()))
+    {
+      Log::Fatal << "ResizeImages(): dimension mismatch: in the case of "
+          << "several images, please check that all the images have the same "
+          << "dimensions; if not, load each image in one column and call this "
+          << "function iteratively." << std::endl;
+    }
+  }
+
+  stbir_pixel_layout channels;
+  if (opts.Channels() == 1)
+  {
+    channels = STBIR_1CHANNEL;
+  }
+  else if (opts.Channels() == 3)
+  {
+    channels = STBIR_RGB;
+  }
+
+  size_t newDimension = newWidth * newHeight * opts.Channels();
+  arma::Mat<float> originalImagesFloat;
+  arma::Mat<float> resizedFloatImages;
+
+  // We need to covert to a float if we are resizing a double.
+  if constexpr (std::is_same_v<eT, double> || std::is_same_v<eT, float>)
+  {
+    originalImagesFloat = 
+        arma::conv_to<arma::Mat<float>>::from(std::move(images));
+  }
+
+  resizedFloatImages.set_size(newDimension, images.n_cols);
+  for (size_t i = 0; i < images.n_cols; ++i)
+  {
+    stbir_resize_float_linear(originalImagesFloat.colptr(i), opts.Width(),
+          opts.Height(), 0, resizedFloatImages.colptr(i), newWidth, newHeight,
+          0, channels);
+  }
+
+  images = arma::conv_to<arma::Mat<eT>>::from(std::move(resizedFloatImages));
+  opts.Width() = newWidth;
+  opts.Height() = newHeight;
+}
+
+template<typename eT>
+void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
+    const size_t newWidth, const size_t newHeight,
+    const typename std::enable_if_t<std::is_integral_v<eT>>* = 0)
 {
   // First check if we are resizing one image or a group of images, the check
   // is going to be different depending on the dimension.
@@ -83,56 +148,24 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
   // This is required since STB only accept unsigned chars.
   // set the new matrix size for copy
   size_t newDimension = newWidth * newHeight * opts.Channels();
-  arma::Mat<float> originalImagesFloat;
-  arma::Mat<float> resizedFloatImages;
   arma::Mat<unsigned char> resizedImages;
-
-  // We need to covert to a float if we are resizing a double.
-  if constexpr (std::is_same_v<eT, double> || std::is_same_v<eT, float>)
+  arma::Mat<unsigned char> originalImages;
+  if constexpr (std::is_same_v<eT, long unsigned int> ||
+                std::is_same_v<eT, unsigned char>)
   {
-    originalImagesFloat = 
-        arma::conv_to<arma::Mat<float>>::from(std::move(images));
+    originalImages =
+        arma::conv_to<arma::Mat<unsigned char>>::from(std::move(images));
   }
 
-  // This is not optimal, but I do not want to allocate memory for nothing.
-  if constexpr (std::is_same_v<eT, float> || std::is_same_v<eT, double>)
-    resizedFloatImages.set_size(newDimension, images.n_cols);
-  else
-    resizedImages.set_size(newDimension, images.n_cols);
+  resizedImages.set_size(newDimension, images.n_cols);
 
   for (size_t i = 0; i < images.n_cols; ++i)
   {
-    if constexpr (std::is_same_v<eT, unsigned char>)
-    {
-      stbir_resize_uint8_linear(images.colptr(i), opts.Width(), opts.Height(),
+      stbir_resize_uint8_linear(originalImages.colptr(i), opts.Width(), opts.Height(),
           0, resizedImages.colptr(i), newWidth, newHeight, 0, channels);
-    }
-    else if constexpr (std::is_same_v<eT, float> || std::is_same_v<eT, double>)
-    {
-      stbir_resize_float_linear(originalImagesFloat.colptr(i), opts.Width(),
-          opts.Height(), 0, resizedFloatImages.colptr(i), newWidth, newHeight,
-          0, channels);
-    }
-    else
-    {
-      arma::Mat<unsigned char> tempSrc =
-          arma::conv_to<arma::Mat<unsigned char>>::from(images);
-
-      stbir_resize_uint8_linear(tempSrc.colptr(i), opts.Width(), opts.Height(),
-          0, resizedImages.colptr(i), newWidth, newHeight, 0, channels);
-    }
   }
 
-  if constexpr (std::is_same_v<eT, float> || std::is_same_v<eT, double>)
-  {
-    // The conv_to is needed here so that this code compiles even when this
-    // branch isn't taken.
-    images = arma::conv_to<arma::Mat<eT>>::from(std::move(resizedFloatImages));
-  }
-  else
-  {
-    images = arma::conv_to<arma::Mat<eT>>::from(std::move(resizedImages));
-  }
+  images = arma::conv_to<arma::Mat<eT>>::from(std::move(resizedImages));
   opts.Width() = newWidth;
   opts.Height() = newHeight;
 }
