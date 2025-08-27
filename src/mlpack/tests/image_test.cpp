@@ -93,9 +93,19 @@ TEST_CASE("LoadImageSpecifyTypeTest", "[ImageLoadTest]")
 TEST_CASE("LoadPNGImageTest", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
+  REQUIRE(data::Load("test_image.png", matrix, PNG + Fatal) == true);
+}
+
+/**
+ * Test that the image is loaded correctly if the type is specified in the
+ * function.
+ */
+TEST_CASE("LoadWrongPNGImageTest", "[ImageLoadTest]")
+{
+  arma::Mat<unsigned char> matrix;
   // This is a rare case where the user is not supposed to used it.
   // but we should test against it
-  REQUIRE_THROWS_AS(data::Load("test_image.png", matrix, PNG + Fatal),
+  REQUIRE_THROWS_AS(data::Load("test_image.png", matrix, JPG + Fatal),
       std::runtime_error);
 }
 

@@ -179,23 +179,32 @@ bool Load(const std::string& filename,
     Timer::Stop("loading_data");
     return false;
   }
-  // We should not load images through this function, this should be handled
-  // by other overloads. Therefore if the user is forcing to use this function
-  // we should throw an error.
-  if (opts.Format() == FileType::PNG || opts.Format() == FileType::JPG ||
-      opts.Format() == FileType::BMP || opts.Format() == FileType::HDR ||
-      opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
-      opts.Format() == FileType::PIC || opts.Format() == FileType::GIF ||
-      opts.Format() == FileType::PNM || opts.Format() == FileType::ImageType)
-  {
-    return HandleError("ImageOptions is not specified!  Please specify"
-        "ImageOptions before loading an image.", opts);
-  }
+
   if constexpr (IsArma<ObjectType>::value || IsSparseMat<ObjectType>::value)
   {
-    TextOptions txtOpts(std::move(opts));
-    success = LoadNumeric(filename, matrix, stream, txtOpts);
-    opts = std::move(txtOpts);
+    if (opts.Format() != FileType::PNG && opts.Format() != FileType::JPG &&
+        opts.Format() != FileType::BMP && opts.Format() != FileType::HDR &&
+        opts.Format() != FileType::PSD && opts.Format() != FileType::TGA &&
+        opts.Format() != FileType::PIC && opts.Format() != FileType::GIF &&
+        opts.Format() != FileType::PNM && opts.Format() != FileType::ImageType)
+    {
+      std::cout << "got converted to a text opttion" << std::endl;
+      TextOptions txtOpts(std::move(opts));
+      success = LoadNumeric(filename, matrix, stream, txtOpts);
+      opts = std::move(txtOpts);
+    }
+    else
+    {
+      if constexpr (!IsSparseMat<ObjectType>::value)
+      {
+        std::cout << "we are dealing with an image" << std::endl;
+        ImageOptions imgOpts(std::move(opts));
+        std::vector<std::string> files;
+        files.push_back(filename);
+        success = LoadImage(files, matrix, imgOpts);
+        opts = std::move(imgOpts);
+      }
+    }
   }
   else if constexpr (HasSerialize<ObjectType>::value)
   {

@@ -41,7 +41,7 @@ template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& opts,
-          const bool fatal = false)
+          const bool fatal)
 {
   // Use the new implementation.
   std::cout << "this should not execute Load for Image 2" << std::endl;
@@ -65,7 +65,7 @@ template<typename eT>
 bool Load(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& opts,
-          const bool fatal = false)
+          const bool fatal)
 {
   // Use the new implementation.
   std::cout << "this should not execute Load for Image 3" << std::endl;
