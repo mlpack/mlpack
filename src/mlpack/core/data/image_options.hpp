@@ -131,14 +131,57 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
 
   void Combine(const ImageOptions& other)
   {
-    // if the user specifies several Width / heights, then reset everything to
-    // the default value and leave it for the loader to figure out the
-    // dimension, if we have different dimensions, error is going to be thrown
-    // in any case.
-    width.reset();
-    height.reset();
-    channels.reset();
-    quality.reset();
+    if (!width.has_value() && other.width.has_value())
+    {
+      width = other.width;
+    }
+    else if (width.has_value() && other.width.has_value())
+    {
+      if (width.has_value() != other.width.has_value())
+      {
+        throw std::invalid_argument("ImageOptions: operator+(): cannot combine"
+            "width with different values!");
+      }
+    }
+
+    if (!height.has_value() && other.height.has_value())
+    {
+      height = other.height;
+    }
+    else if (height.has_value() && other.height.has_value())
+    {
+      if (height.has_value() != other.height.has_value())
+      {
+        throw std::invalid_argument("ImageOptions: operator+(): cannot combine"
+            "height with different values!");
+      }
+    }
+
+    if (!channels.has_value() && other.channels.has_value())
+    {
+      channels = other.channels;
+    }
+    else if (channels.has_value() && other.channels.has_value())
+    {
+      if (channels.has_value() != other.channels.has_value())
+      {
+        throw std::invalid_argument("ImageOptions: operator+(): cannot combine"
+            "channels with different values!");
+      }
+    }
+
+    if (!quality.has_value() && other.quality.has_value())
+    {
+      quality = other.quality;
+    }
+    else if (quality.has_value() && other.quality.has_value())
+    {
+      if (quality.has_value() != other.quality.has_value())
+      {
+        throw std::invalid_argument("ImageOptions: operator+(): cannot combine"
+            "quality with different values!");
+      }
+    }
   }
 
   // Print warnings for any members that cannot be represented by a

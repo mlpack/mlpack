@@ -30,7 +30,7 @@ namespace data {
  */
 template<typename eT>
 bool Save(const std::string& filename,
-          arma::Mat<eT>& matrix,
+          const arma::Mat<eT>& matrix,
           ImageInfo& opts,
           const bool fatal = false)
 {
@@ -52,7 +52,7 @@ bool Save(const std::string& filename,
  */
 template<typename eT>
 bool Save(const std::vector<std::string>& files,
-          arma::Mat<eT>& matrix,
+          const arma::Mat<eT>& matrix,
           ImageInfo& opts,
           const bool fatal = false)
 {
@@ -67,7 +67,7 @@ bool Save(const std::vector<std::string>& files,
 
 template<typename eT>
 bool Save(const std::vector<std::string>& files,
-          arma::Mat<eT>& matrix,
+          const arma::Mat<eT>& matrix,
           ImageOptions& opts);
 
 } //namespace data

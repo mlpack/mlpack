@@ -22,7 +22,7 @@ namespace data {
 // Image saving API for multiple files.
 template<typename eT>
 bool Save(const std::vector<std::string>& files,
-          arma::Mat<eT>& matrix,
+          const arma::Mat<eT>& matrix,
           ImageOptions& opts)
 
 {

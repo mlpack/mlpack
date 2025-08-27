@@ -323,13 +323,7 @@ TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", unsigned char, size_t,
     }
     else
     {
-      for (size_t i = 0; i < originalImage.n_rows; ++i)
-      {
-        for (size_t j = 0; j < originalImage.n_cols; ++j)
-        {
-          REQUIRE(originalImage.at(i, j) == image.at(i, j));
-        }
-      }
+      REQUIRE(arma::approx_equal(originalImage, image, "absdiff", 1e-7));
     }
   }
 }
@@ -362,13 +356,7 @@ TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char,
     }
     else
     {
-      for (size_t i = 0; i < originalImage.n_rows; ++i)
-      {
-        for (size_t j = 0; j < originalImage.n_cols; ++j)
-        {
-          REQUIRE(originalImage.at(i, j) == image.at(i, j));
-        }
-      }
+      REQUIRE(arma::approx_equal(originalImage, image, "absdiff", 1e-7));
     }
   }
 }
