@@ -114,7 +114,7 @@ bool Load(const std::string& filename,
   return Load(filename, matrix, tmpOpts);
 }
 
-template<typename MatType, typename DataOptionsType>
+template<typename MatType>
 bool LoadNumeric(const std::string& filename,
                  MatType& matrix,
                  std::fstream& stream,

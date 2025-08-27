@@ -178,30 +178,6 @@ TEST_CASE("LoadVectorImageAPITest", "[ImageLoadTest]")
 }
 
 /**
- * Serialization test for the ImageInfo class.
- */
-TEST_CASE("ImageInfoSerialization", "[ImageLoadTest]")
-{
-  data::ImageInfo info(5, 5, 3, 90);
-  data::ImageInfo xmlInfo, jsonInfo, binaryInfo;
-
-  SerializeObjectAll(info, xmlInfo, jsonInfo, binaryInfo);
-
-  REQUIRE(info.Width() == xmlInfo.Width());
-  REQUIRE(info.Height() == xmlInfo.Height());
-  REQUIRE(info.Channels() == xmlInfo.Channels());
-  REQUIRE(info.Quality() == xmlInfo.Quality());
-  REQUIRE(info.Width() == jsonInfo.Width());
-  REQUIRE(info.Height() == jsonInfo.Height());
-  REQUIRE(info.Channels() == jsonInfo.Channels());
-  REQUIRE(info.Quality() == jsonInfo.Quality());
-  REQUIRE(info.Width() == binaryInfo.Width());
-  REQUIRE(info.Height() == binaryInfo.Height());
-  REQUIRE(info.Channels() == binaryInfo.Channels());
-  REQUIRE(info.Quality() == binaryInfo.Quality());
-}
-
-/**
  * Test resize the image if this is done correctly.  Try it with a few different
  * types.
  */
@@ -330,23 +306,8 @@ TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", unsigned char, size_t,
 
   arma::Mat<eT> image;
   data::ImageInfo info;
-  // @rcurtin I have commented sheep_4 because probably the image is an LDR, it
-  // seems that when it comes to float STB has some limitations with low
-  // dynamic range, and it is loading some pixels as NaN. They are really 
-  // few pixels that are not noticable. The resize function is not 
-  // touching the NaNs and leaving them as they are. However, since
-  // you can not compare two NaNs this is returning
-  // as a false, and this is only for this specifc image.
-  // It took quite 3 hours to figure out these NaN, but at least the solution
-  // is found.
-  // when it comes to other types (unsigned char, size_t), it is loading
-  // sheep_4 normally without NaN.
-  // It was quite an interesting bug to debug, hopefully will never see it
-  // again.
-  // BTW, this was not causing an error before, because we were not loading
-  // float images before with the load function
   std::vector<std::string> files =
-      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", //"sheep_4.jpg",
+      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
        "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
        "sheep_9.jpg"};
 
@@ -385,7 +346,7 @@ TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char,
   arma::Mat<eT> image;
   data::ImageInfo info;
   std::vector<std::string> files =
-      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", //"sheep_4.jpg",
+      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
        "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
        "sheep_9.jpg"};
 

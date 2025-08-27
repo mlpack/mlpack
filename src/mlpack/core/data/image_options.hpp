@@ -42,14 +42,12 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
   ImageOptions(std::optional<size_t> width = std::nullopt,
                std::optional<size_t> height = std::nullopt,
                std::optional<size_t> channels = std::nullopt,
-               std::optional<size_t> quality = std::nullopt,
-               std::optional<bool> image = std::nullopt) :
+               std::optional<size_t> quality = std::nullopt) :
     DataOptionsBase<ImageOptions>(),
     width(width),
     height(height),
     channels(channels),
-    quality(quality),
-    image(image)
+    quality(quality)
   {
     // Do nothing.
   }
@@ -133,9 +131,6 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
 
   void Combine(const ImageOptions& other)
   {
-    image = DataOptionsBase<ImageOptions>::CombineBooleanOption(image,
-        other.image, "Image()");
-
     // if the user specifies several Width / heights, then reset everything to
     // the default value and leave it for the loader to figure out the
     // dimension, if we have different dimensions, error is going to be thrown
@@ -150,15 +145,13 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
   // DataOptionsBase<void>.
   void WarnBaseConversion(const char* dataDescription) const
   {
-    if (image.has_value() && image != defaultImage)
-      this->WarnOptionConversion("image", dataDescription);
-    if (width.has_value() && width != defaultImage)
+    if (width.has_value() && width != defaultWidth)
       this->WarnOptionConversion("width", dataDescription);
-    if (height.has_value() && height != defaultImage)
+    if (height.has_value() && height != defaultHeight)
       this->WarnOptionConversion("height", dataDescription);
-    if (channels.has_value() && channels != defaultImage)
+    if (channels.has_value() && channels != defaultChannels)
       this->WarnOptionConversion("channels", dataDescription);
-    if (quality.has_value() && quality != defaultImage)
+    if (quality.has_value() && quality != defaultQuality)
       this->WarnOptionConversion("quality", dataDescription);
   }
 
@@ -166,7 +159,6 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
 
   void Reset()
   {
-    image.reset();
     width.reset();
     height.reset();
     channels.reset();
@@ -201,7 +193,6 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
   constexpr static const size_t defaultHeight = 0;
   constexpr static const size_t defaultChannels = 3;
   constexpr static const size_t defaultQuality = 90;
-  constexpr static const bool   defaultImage = false;
 };
 
 template<>
