@@ -173,18 +173,6 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     quality.reset();
   }
 
-  // I think this is not necessary @rcurtin up to you to keep it or to remove
-  // it.
-  bool Image() const
-  {
-    return this->AccessMember(image, defaultImage);
-  }
-
-  bool& Image()
-  {
-    return this->ModifyMember(image, defaultImage);
-  }
-
   size_t Width() const { return this->AccessMember(width, defaultWidth); }
   size_t& Width() { return this->ModifyMember(width, defaultWidth); }
 
@@ -203,22 +191,11 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
   inline static const std::unordered_set<std::string> loadType
       = {"jpg", "png", "tga", "bmp", "psd", "gif", "hdr", "pic", "pnm", "jpeg"};
 
-  // @rcurtin Wondering if the serialization of optional member is the same.
-  template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */)
-  {
-    ar(CEREAL_NVP(Width()));
-    ar(CEREAL_NVP(Channels()));
-    ar(CEREAL_NVP(Height()));
-    ar(CEREAL_NVP(Quality()));
-  }
-
  private:
   std::optional<size_t> width;
   std::optional<size_t> height;
   std::optional<size_t> channels;
   std::optional<size_t> quality;
-  std::optional<bool> image;
 
   constexpr static const size_t defaultWidth = 0;
   constexpr static const size_t defaultHeight = 0;

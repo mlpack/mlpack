@@ -81,10 +81,10 @@ bool Save(const std::string& filename,
 }
 
 template<typename ObjectType, typename DataOptionsType>
-bool SaveInternal(const std::string& filename,
-                  const ObjectType& matrix,
-                  DataOptionsBase<DataOptionsType>& opts,
-                  std::fstream& stream)
+bool SaveNumeric(const std::string& filename,
+                 const ObjectType& matrix,
+                 DataOptionsBase<DataOptionsType>& opts,
+                 std::fstream& stream)
 {
   bool success = false;
 
@@ -156,7 +156,7 @@ bool Save(const std::string& filename,
       << "'." << std::endl;
   if constexpr (IsArma<ObjectType>::value || IsSparseMat<ObjectType>::value)
   {
-    success = SaveInternal(filename, matrix, opts, stream);
+    success = SaveNumeric(filename, matrix, opts, stream);
   }
   else if constexpr (HasSerialize<ObjectType>::value)
   {

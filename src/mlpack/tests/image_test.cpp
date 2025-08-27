@@ -177,37 +177,6 @@ TEST_CASE("LoadVectorImageAPITest", "[ImageLoadTest]")
   REQUIRE(matrix.n_cols == 2);
 }
 
-
-// @rcurtin The following test does not make sense anymore, now we can load
-// float, double, usigned char, in the past, we had to covert everything to
-// unsigned char, load the image and convert back.
-// In the case of double, it should be treated as a float in my opinion, I
-// would suggest to if the user is passing a double matrix, to load it as a
-// float. Since this what would the logic of the user dictates.
-// If you have an idea how to adapt this test, I am all ears
-/**
- * Test if the image is saved correctly using API for arma mat.
- */
-//TEST_CASE("SaveImageMatAPITest", "[ImageLoadTest]")
-//{
-  //data::ImageInfo info(5, 5, 3);
-
-  //arma::Mat<unsigned char> im1;
-  //size_t dimension = info.Width() * info.Height() * info.Channels();
-  //im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
-  //arma::mat input = ConvTo<arma::mat>::From(im1);
-  //REQUIRE(Save("APITest.bmp", input, info, false) == true);
-
-  //arma::mat output;
-  //REQUIRE(Load("APITest.bmp", output, info, false) == true);
-
-  //REQUIRE(input.n_cols == output.n_cols);
-  //REQUIRE(input.n_rows == output.n_rows);
-  //for (size_t i = 0; i < input.n_elem; ++i)
-    //REQUIRE(input[i] == Approx(output[i]).epsilon(1e-7));
-  //remove("APITest.bmp");
-//}
-
 /**
  * Serialization test for the ImageInfo class.
  */

@@ -115,10 +115,10 @@ bool Load(const std::string& filename,
 }
 
 template<typename MatType, typename DataOptionsType>
-bool LoadMatrix(const std::string& filename,
-                MatType& matrix,
-                std::fstream& stream,
-                DataOptionsType& opts)
+bool LoadNumeric(const std::string& filename,
+                 MatType& matrix,
+                 std::fstream& stream,
+                 TextOptions& opts)
 {
   bool success = false;
 
@@ -194,7 +194,7 @@ bool Load(const std::string& filename,
   if constexpr (IsArma<ObjectType>::value || IsSparseMat<ObjectType>::value)
   {
     TextOptions txtOpts(std::move(opts));
-    success = LoadMatrix(filename, matrix, stream, txtOpts);
+    success = LoadNumeric(filename, matrix, stream, txtOpts);
     opts = std::move(txtOpts);
   }
   else if constexpr (HasSerialize<ObjectType>::value)
