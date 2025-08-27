@@ -20,7 +20,7 @@
 namespace mlpack {
 
 template<typename MatType>
-LeakyReLUType<MatType>::LeakyReLUType(const typename MatType::elem_type alpha) :
+LeakyReLU<MatType>::LeakyReLU(const typename MatType::elem_type alpha) :
     Layer<MatType>(),
     alpha(alpha)
 {
@@ -28,7 +28,7 @@ LeakyReLUType<MatType>::LeakyReLUType(const typename MatType::elem_type alpha) :
 }
 
 template<typename MatType>
-LeakyReLUType<MatType>::LeakyReLUType(const LeakyReLUType& other) :
+LeakyReLU<MatType>::LeakyReLU(const LeakyReLU& other) :
     Layer<MatType>(other),
     alpha(other.alpha)
 {
@@ -36,8 +36,8 @@ LeakyReLUType<MatType>::LeakyReLUType(const LeakyReLUType& other) :
 }
 
 template<typename MatType>
-LeakyReLUType<MatType>::LeakyReLUType(
-    LeakyReLUType&& other) :
+LeakyReLU<MatType>::LeakyReLU(
+    LeakyReLU&& other) :
     Layer<MatType>(std::move(other)),
     alpha(std::move(other.alpha))
 {
@@ -45,8 +45,8 @@ LeakyReLUType<MatType>::LeakyReLUType(
 }
 
 template<typename MatType>
-LeakyReLUType<MatType>&
-LeakyReLUType<MatType>::operator=(const LeakyReLUType& other)
+LeakyReLU<MatType>&
+LeakyReLU<MatType>::operator=(const LeakyReLU& other)
 {
   if (&other != this)
   {
@@ -58,8 +58,8 @@ LeakyReLUType<MatType>::operator=(const LeakyReLUType& other)
 }
 
 template<typename MatType>
-LeakyReLUType<MatType>&
-LeakyReLUType<MatType>::operator=(LeakyReLUType&& other)
+LeakyReLU<MatType>&
+LeakyReLU<MatType>::operator=(LeakyReLU&& other)
 {
   if (&other != this)
   {
@@ -71,7 +71,7 @@ LeakyReLUType<MatType>::operator=(LeakyReLUType&& other)
 }
 
 template<typename MatType>
-void LeakyReLUType<MatType>::Forward(const MatType& input, MatType& output)
+void LeakyReLU<MatType>::Forward(const MatType& input, MatType& output)
 {
   #pragma omp for
   for (size_t i = 0; i < (size_t) input.n_elem; ++i)
@@ -80,7 +80,7 @@ void LeakyReLUType<MatType>::Forward(const MatType& input, MatType& output)
 }
 
 template<typename MatType>
-void LeakyReLUType<MatType>::Backward(
+void LeakyReLU<MatType>::Backward(
     const MatType& input,
     const MatType& /* output */,
     const MatType& gy,
@@ -93,7 +93,7 @@ void LeakyReLUType<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void LeakyReLUType<MatType>::serialize(
+void LeakyReLU<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

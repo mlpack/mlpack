@@ -19,48 +19,51 @@
 namespace mlpack {
 
 template<typename MatType>
-PaddingType<MatType>::PaddingType(
+Padding<MatType>::Padding(
     const size_t padWLeft,
     const size_t padWRight,
     const size_t padHTop,
-    const size_t padHBottom) :
+    const size_t padHBottom,
+    const typename MatType::elem_type fillValue) :
     Layer<MatType>(),
     padWLeft(padWLeft),
     padWRight(padWRight),
     padHTop(padHTop),
     padHBottom(padHBottom),
-    totalInMaps(0)
+    totalInMaps(0),
+    fillValue(fillValue)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-PaddingType<MatType>::PaddingType(const PaddingType& other) :
+Padding<MatType>::Padding(const Padding& other) :
     Layer<MatType>(other),
     padWLeft(other.padWLeft),
     padWRight(other.padWRight),
     padHTop(other.padHTop),
     padHBottom(other.padHBottom),
-    totalInMaps(other.totalInMaps)
+    fillValue(other.fillValue)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-PaddingType<MatType>::PaddingType(PaddingType&& other) :
+Padding<MatType>::Padding(Padding&& other) :
     Layer<MatType>(std::move(other)),
     padWLeft(std::move(other.padWLeft)),
     padWRight(std::move(other.padWRight)),
     padHTop(std::move(other.padHTop)),
     padHBottom(std::move(other.padHBottom)),
-    totalInMaps(std::move(other.totalInMaps))
+    totalInMaps(std::move(other.totalInMaps)),
+    fillValue(std::move(other.fillValue))
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-PaddingType<MatType>&
-PaddingType<MatType>::operator=(const PaddingType& other)
+Padding<MatType>&
+Padding<MatType>::operator=(const Padding& other)
 {
   if (this != &other)
   {
@@ -70,14 +73,15 @@ PaddingType<MatType>::operator=(const PaddingType& other)
     padHTop = other.padHTop;
     padHBottom = other.padHBottom;
     totalInMaps = other.totalInMaps;
+    fillValue = other.fillValue;
   }
 
   return *this;
 }
 
 template<typename MatType>
-PaddingType<MatType>&
-PaddingType<MatType>::operator=(PaddingType&& other)
+Padding<MatType>&
+Padding<MatType>::operator=(Padding&& other)
 {
   if (this != &other)
   {
@@ -87,13 +91,14 @@ PaddingType<MatType>::operator=(PaddingType&& other)
     padHTop = std::move(other.padHTop);
     padHBottom = std::move(other.padHBottom);
     totalInMaps = std::move(other.totalInMaps);
+    fillValue = std::move(other.fillValue);
   }
 
   return *this;
 }
 
 template<typename MatType>
-void PaddingType<MatType>::Forward(const MatType& input, MatType& output)
+void Padding<MatType>::Forward(const MatType& input, MatType& output)
 {
   // Make an alias of the input and output so that we can deal with the first
   // two dimensions directly.
@@ -110,7 +115,7 @@ void PaddingType<MatType>::Forward(const MatType& input, MatType& output)
     reshapedOutput.tube(0,
                         0,
                         reshapedOutput.n_rows - 1,
-                        padHTop - 1).zeros();
+                        padHTop - 1).fill(fillValue);
   }
 
   if (padWLeft > 0)
@@ -118,7 +123,7 @@ void PaddingType<MatType>::Forward(const MatType& input, MatType& output)
     reshapedOutput.tube(0,
                         padHTop,
                         padWLeft - 1,
-                        padHTop + this->inputDimensions[1] - 1).zeros();
+                        padHTop + this->inputDimensions[1] - 1).fill(fillValue);
   }
 
   if (padHBottom > 0)
@@ -126,7 +131,7 @@ void PaddingType<MatType>::Forward(const MatType& input, MatType& output)
     reshapedOutput.tube(0,
                         padHTop + this->inputDimensions[1],
                         reshapedOutput.n_rows - 1,
-                        reshapedOutput.n_cols - 1).zeros();
+                        reshapedOutput.n_cols - 1).fill(fillValue);
   }
 
   if (padWRight > 0)
@@ -134,7 +139,7 @@ void PaddingType<MatType>::Forward(const MatType& input, MatType& output)
     reshapedOutput.tube(padWLeft + this->inputDimensions[0],
                         padHTop,
                         reshapedOutput.n_rows - 1,
-                        padHTop + this->inputDimensions[1] - 1).zeros();
+                        padHTop + this->inputDimensions[1] - 1).fill(fillValue);
   }
 
   // Copy the input matrix.
@@ -145,7 +150,7 @@ void PaddingType<MatType>::Forward(const MatType& input, MatType& output)
 }
 
 template<typename MatType>
-void PaddingType<MatType>::Backward(
+void Padding<MatType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
@@ -167,7 +172,7 @@ void PaddingType<MatType>::Backward(
 }
 
 template<typename MatType>
-void PaddingType<MatType>::ComputeOutputDimensions()
+void Padding<MatType>::ComputeOutputDimensions()
 {
   this->outputDimensions = this->inputDimensions;
 
@@ -183,7 +188,7 @@ void PaddingType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void PaddingType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
+void Padding<MatType>::serialize(Archive& ar, const uint32_t version)
 {
   ar(cereal::base_class<Layer<MatType>>(this));
 
@@ -192,6 +197,15 @@ void PaddingType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(padHTop));
   ar(CEREAL_NVP(padHBottom));
   ar(CEREAL_NVP(totalInMaps));
+
+  if (cereal::is_loading<Archive>() && version == 0)
+  {
+    fillValue = 0;
+  }
+  else
+  {
+    ar(CEREAL_NVP(fillValue));
+  }
 }
 
 } // namespace mlpack

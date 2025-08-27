@@ -40,17 +40,17 @@ TEST_CASE("PendulumWithDDPG", "[PolicyGradientTest][long]")
     // Set up Actor network.
     FFN<EmptyLoss, GaussianInitialization>
         policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    policyNetwork.Add(new Linear(128));
-    policyNetwork.Add(new ReLU());
-    policyNetwork.Add(new Linear(1));
-    policyNetwork.Add(new TanH());
+    policyNetwork.Add<Linear>(128);
+    policyNetwork.Add<ReLU>();
+    policyNetwork.Add<Linear>(1);
+    policyNetwork.Add<TanH>();
 
     // Set up Critic network.
     FFN<EmptyLoss, GaussianInitialization>
         qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    qNetwork.Add(new Linear(128));
-    qNetwork.Add(new ReLU());
-    qNetwork.Add(new Linear(1));
+    qNetwork.Add<Linear>(128);
+    qNetwork.Add<ReLU>();
+    qNetwork.Add<Linear>(1);
 
     // Set up the OUNoise parameters.
     int size = 1;
@@ -93,17 +93,17 @@ TEST_CASE("PendulumWithGaussianDDPG", "[PolicyGradientTest][long]")
     // Set up Actor network.
     FFN<EmptyLoss, GaussianInitialization>
         policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    policyNetwork.Add(new Linear(128));
-    policyNetwork.Add(new ReLU());
-    policyNetwork.Add(new Linear(1));
-    policyNetwork.Add(new TanH());
+    policyNetwork.Add<Linear>(128);
+    policyNetwork.Add<ReLU>();
+    policyNetwork.Add<Linear>(1);
+    policyNetwork.Add<TanH>();
 
     // Set up Critic network.
     FFN<EmptyLoss, GaussianInitialization>
         qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    qNetwork.Add(new Linear(128));
-    qNetwork.Add(new ReLU());
-    qNetwork.Add(new Linear(1));
+    qNetwork.Add<Linear>(128);
+    qNetwork.Add<ReLU>();
+    qNetwork.Add<Linear>(1);
 
     // Set up the GaussianNoise parameters.
     int size = 1;
@@ -130,16 +130,16 @@ TEST_CASE("DDPGForMultipleActions", "[PolicyGradientTest]")
 {
   FFN<EmptyLoss, GaussianInitialization>
       policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-  policyNetwork.Add(new Linear(128));
-  policyNetwork.Add(new ReLU());
-  policyNetwork.Add(new Linear(4));
-  policyNetwork.Add(new TanH());
+  policyNetwork.Add<Linear>(128);
+  policyNetwork.Add<ReLU>();
+  policyNetwork.Add<Linear>(4);
+  policyNetwork.Add<TanH>();
 
   FFN<EmptyLoss, GaussianInitialization>
       qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-  qNetwork.Add(new Linear(128));
-  qNetwork.Add(new ReLU());
-  qNetwork.Add(new Linear(1));
+  qNetwork.Add<Linear>(128);
+  qNetwork.Add<ReLU>();
+  qNetwork.Add<Linear>(1);
 
   // Set up the replay method.
   RandomReplay<ContinuousActionEnv<3, 4>> replayMethod(32, 10000);
@@ -246,17 +246,17 @@ TEST_CASE("PendulumWithTD3", "[PolicyGradientTest][long]")
     // Set up Actor network.
     FFN<EmptyLoss, GaussianInitialization>
         policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    policyNetwork.Add(new Linear(128));
-    policyNetwork.Add(new ReLU());
-    policyNetwork.Add(new Linear(1));
-    policyNetwork.Add(new TanH());
+    policyNetwork.Add<Linear>(128);
+    policyNetwork.Add<ReLU>();
+    policyNetwork.Add<Linear>(1);
+    policyNetwork.Add<TanH>();
 
     // Set up Critic network.
     FFN<EmptyLoss, GaussianInitialization>
         qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    qNetwork.Add(new Linear(128));
-    qNetwork.Add(new ReLU());
-    qNetwork.Add(new Linear(1));
+    qNetwork.Add<Linear>(128);
+    qNetwork.Add<ReLU>();
+    qNetwork.Add<Linear>(1);
 
     // Set up Twin Delayed Deep Deterministic policy gradient agent.
     TD3<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
@@ -274,16 +274,16 @@ TEST_CASE("TD3ForMultipleActions", "[PolicyGradientTest]")
 {
   FFN<EmptyLoss, GaussianInitialization>
       policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-  policyNetwork.Add(new Linear(128));
-  policyNetwork.Add(new ReLU());
-  policyNetwork.Add(new Linear(4));
-  policyNetwork.Add(new TanH());
+  policyNetwork.Add<Linear>(128);
+  policyNetwork.Add<ReLU>();
+  policyNetwork.Add<Linear>(4);
+  policyNetwork.Add<TanH>();
 
   FFN<EmptyLoss, GaussianInitialization>
       qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-  qNetwork.Add(new Linear(128));
-  qNetwork.Add(new ReLU());
-  qNetwork.Add(new Linear(1));
+  qNetwork.Add<Linear>(128);
+  qNetwork.Add<ReLU>();
+  qNetwork.Add<Linear>(1);
 
   // Set up the replay method.
   RandomReplay<ContinuousActionEnv<3, 4>> replayMethod(32, 10000);
@@ -331,16 +331,16 @@ TEST_CASE("PendulumWithSAC", "[PolicyGradientTest][long]")
 
     FFN<EmptyLoss, GaussianInitialization>
         policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    policyNetwork.Add(new Linear(128));
-    policyNetwork.Add(new ReLU());
-    policyNetwork.Add(new Linear(1));
-    policyNetwork.Add(new TanH());
+    policyNetwork.Add<Linear>(128);
+    policyNetwork.Add<ReLU>();
+    policyNetwork.Add<Linear>(1);
+    policyNetwork.Add<TanH>();
 
     FFN<EmptyLoss, GaussianInitialization>
         qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    qNetwork.Add(new Linear(128));
-    qNetwork.Add(new ReLU());
-    qNetwork.Add(new Linear(1));
+    qNetwork.Add<Linear>(128);
+    qNetwork.Add<ReLU>();
+    qNetwork.Add<Linear>(1);
 
     // Set up Soft actor-critic agent.
     SAC<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
@@ -358,16 +358,16 @@ TEST_CASE("SACForMultipleActions", "[PolicyGradientTest]")
 {
   FFN<EmptyLoss, GaussianInitialization>
       policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-  policyNetwork.Add(new Linear(128));
-  policyNetwork.Add(new ReLU());
-  policyNetwork.Add(new Linear(4));
-  policyNetwork.Add(new TanH());
+  policyNetwork.Add<Linear>(128);
+  policyNetwork.Add<ReLU>();
+  policyNetwork.Add<Linear>(4);
+  policyNetwork.Add<TanH>();
 
   FFN<EmptyLoss, GaussianInitialization>
       qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-  qNetwork.Add(new Linear(128));
-  qNetwork.Add(new ReLU());
-  qNetwork.Add(new Linear(1));
+  qNetwork.Add<Linear>(128);
+  qNetwork.Add<ReLU>();
+  qNetwork.Add<Linear>(1);
 
   // Set up the replay method.
   RandomReplay<ContinuousActionEnv<3, 4>> replayMethod(32, 10000);

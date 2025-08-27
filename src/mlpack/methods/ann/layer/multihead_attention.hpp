@@ -66,14 +66,14 @@ template <
     typename MatType = arma::mat,
     typename RegularizerType = NoRegularizer
 >
-class MultiheadAttentionType : public Layer<MatType>
+class MultiheadAttention : public Layer<MatType>
 {
  public:
   using CubeType = typename GetCubeType<MatType>::type;
   /**
    * Default constructor.
    */
-  MultiheadAttentionType();
+  MultiheadAttention();
 
   /**
    * Create the MultiheadAttention object using the specified modules.
@@ -87,17 +87,17 @@ class MultiheadAttentionType : public Layer<MatType>
    * @param selfAttention Use self-attention; source key, query, and value all
    *     come from the same inputs
    */
-  MultiheadAttentionType(const size_t tgtSeqLen,
+  MultiheadAttention(const size_t tgtSeqLen,
                          const size_t numHeads,
                          const MatType& attnMask = MatType(),
                          const MatType& keyPaddingMask = MatType(),
                          const bool selfAttention = false);
 
-  //! Clone the MultiheadAttentionType object. This handles polymorphism
+  //! Clone the MultiheadAttention object. This handles polymorphism
   //! correctly.
-  MultiheadAttentionType* Clone() const override
+  MultiheadAttention* Clone() const override
   {
-    return new MultiheadAttentionType(*this);
+    return new MultiheadAttention(*this);
   }
 
   /**
@@ -337,14 +337,11 @@ class MultiheadAttentionType : public Layer<MatType>
   CubeType attnOut;
 
   //! Softmax layer to represent the probabilities of next sequence.
-  SoftmaxType<MatType> softmax;
+  Softmax<MatType> softmax;
 
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
 }; // class MultiheadAttention
-
-// Standard MultiheadAttention layer using no regularization.
-using MultiheadAttention = MultiheadAttentionType<arma::mat, NoRegularizer>;
 
 } // namespace mlpack
 

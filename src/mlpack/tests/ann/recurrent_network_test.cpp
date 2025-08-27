@@ -90,25 +90,25 @@ double ImpulseStepDataTest(const size_t dimensions, const size_t rho)
 
 TEST_CASE("RNNImpulseStepLinearRecurrentTest", "[RecurrentNetworkTest][long]")
 {
-  double err = ImpulseStepDataTest<LinearRecurrent>(1, 5);
+  double err = ImpulseStepDataTest<LinearRecurrent<>>(1, 5);
   REQUIRE(err <= 0.001);
 
-  err = ImpulseStepDataTest<LinearRecurrent>(3, 5);
+  err = ImpulseStepDataTest<LinearRecurrent<>>(3, 5);
   REQUIRE(err <= 0.003);
 
-  err = ImpulseStepDataTest<LinearRecurrent>(5, 5);
+  err = ImpulseStepDataTest<LinearRecurrent<>>(5, 5);
   REQUIRE(err <= 0.005);
 }
 
 TEST_CASE("RNNImpulseStepLSTMTest", "[RecurrentNetworkTest][long]")
 {
-  double err = ImpulseStepDataTest<LSTM>(1, 5);
+  double err = ImpulseStepDataTest<LSTM<>>(1, 5);
   REQUIRE(err <= 0.001);
 
-  err = ImpulseStepDataTest<LSTM>(3, 5);
+  err = ImpulseStepDataTest<LSTM<>>(3, 5);
   REQUIRE(err <= 0.001);
 
-  err = ImpulseStepDataTest<LSTM>(5, 5);
+  err = ImpulseStepDataTest<LSTM<>>(5, 5);
   REQUIRE(err <= 0.001);
 }
 
@@ -210,9 +210,9 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 10)
  * Test RNN using multiple timestep input and single output.
  */
 TEMPLATE_TEST_CASE("RNNSineTest", "[RecurrentNetworkTest][long]",
-    LinearRecurrent,
-    LSTM,
-    GRU)
+    LinearRecurrent<>,
+    LSTM<>,
+    GRU<>)
 {
   // This can sometimes fail due to bad initializations or bad luck.  So, try it
   // up to three times.
@@ -287,9 +287,9 @@ void BatchSizeTest()
  * Ensure recurrent layers work with larger batch sizes.
  */
 TEMPLATE_TEST_CASE("RNNBatchSizeTest", "[RecurrentNetworkTest]",
-    LinearRecurrent,
-    LSTM,
-    GRU)
+    LinearRecurrent<>,
+    LSTM<>,
+    GRU<>)
 {
   BatchSizeTest<TestType>();
 }
@@ -570,7 +570,7 @@ void DistractedSequenceRecallTestNetwork(
  */
 TEST_CASE("LSTMDistractedSequenceRecallTest", "[RecurrentNetworkTest][long]")
 {
-  DistractedSequenceRecallTestNetwork<LSTM>(10, 8);
+  DistractedSequenceRecallTestNetwork<LSTM<>>(10, 8);
 }
 
 /**
@@ -906,7 +906,7 @@ template<typename ModelType>
 void ReberGrammarTestNetwork(ModelType& model,
                              const bool embedded = false,
                              const size_t maxEpochs = 30,
-                             const size_t trials = 3)
+                             const size_t trials = 5)
 {
   const size_t trainSize = 1000;
   const size_t testSize = 1000;
@@ -1020,11 +1020,11 @@ TEST_CASE("LSTMReberGrammarTest", "[RecurrentNetworkTest]")
  */
 TEMPLATE_TEST_CASE("RNNEmbeddedReberGrammarTest",
     "[RecurrentNetworkTest][long]",
-    LSTM,
-    GRU)
+    LSTM<>,
+    GRU<>)
 {
   RNN<MeanSquaredError> model(5, false, MeanSquaredError(),
-      RandomInitialization(-0.5, 0.5));
+      RandomInitialization(-0.1, 0.1));
   // Sometimes a few extra units are needed to effectively get the embedded
   // Reber grammar every time.
   model.Add<TestType>(25);

@@ -18,18 +18,18 @@
 namespace mlpack {
 
 template<typename MatType>
-AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType() :
+AdaptiveMeanPooling<MatType>::AdaptiveMeanPooling() :
     Layer<MatType>()
 {
   // Nothing to do here.
 }
 
 template <typename MatType>
-AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType(
+AdaptiveMeanPooling<MatType>::AdaptiveMeanPooling(
     const size_t outputWidth,
     const size_t outputHeight) :
     Layer<MatType>(),
-    poolingLayer(MeanPoolingType<MatType>(1, 1)),
+    poolingLayer(MeanPooling<MatType>(1, 1)),
     outputWidth(outputWidth),
     outputHeight(outputHeight)
 {
@@ -37,8 +37,8 @@ AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType(
 }
 
 template<typename MatType>
-AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType(
-    const AdaptiveMeanPoolingType& other) :
+AdaptiveMeanPooling<MatType>::AdaptiveMeanPooling(
+    const AdaptiveMeanPooling& other) :
     Layer<MatType>(other),
     poolingLayer(other.poolingLayer),
     outputWidth(other.outputWidth),
@@ -48,8 +48,8 @@ AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType(
 }
 
 template<typename MatType>
-AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType(
-    AdaptiveMeanPoolingType&& other) :
+AdaptiveMeanPooling<MatType>::AdaptiveMeanPooling(
+    AdaptiveMeanPooling&& other) :
     Layer<MatType>(std::move(other)),
     poolingLayer(std::move(other.poolingLayer)),
     outputWidth(std::move(other.outputWidth)),
@@ -59,9 +59,9 @@ AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType(
 }
 
 template<typename MatType>
-AdaptiveMeanPoolingType<MatType>&
-AdaptiveMeanPoolingType<MatType>::operator=(
-    const AdaptiveMeanPoolingType& other)
+AdaptiveMeanPooling<MatType>&
+AdaptiveMeanPooling<MatType>::operator=(
+    const AdaptiveMeanPooling& other)
 {
   if (&other != this)
   {
@@ -75,8 +75,8 @@ AdaptiveMeanPoolingType<MatType>::operator=(
 }
 
 template<typename MatType>
-AdaptiveMeanPoolingType<MatType>&
-AdaptiveMeanPoolingType<MatType>::operator=(AdaptiveMeanPoolingType&& other)
+AdaptiveMeanPooling<MatType>&
+AdaptiveMeanPooling<MatType>::operator=(AdaptiveMeanPooling&& other)
 {
   if (&other != this)
   {
@@ -90,7 +90,7 @@ AdaptiveMeanPoolingType<MatType>::operator=(AdaptiveMeanPoolingType&& other)
 }
 
 template<typename MatType>
-void AdaptiveMeanPoolingType<MatType>::Forward(
+void AdaptiveMeanPooling<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   poolingLayer.Training() = this->training;
@@ -98,7 +98,7 @@ void AdaptiveMeanPoolingType<MatType>::Forward(
 }
 
 template<typename MatType>
-void AdaptiveMeanPoolingType<MatType>::Backward(
+void AdaptiveMeanPooling<MatType>::Backward(
   const MatType& input,
   const MatType& output,
   const MatType& gy,
@@ -108,7 +108,7 @@ void AdaptiveMeanPoolingType<MatType>::Backward(
 }
 
 template<typename MatType>
-void AdaptiveMeanPoolingType<MatType>::ComputeOutputDimensions()
+void AdaptiveMeanPooling<MatType>::ComputeOutputDimensions()
 {
   // The AdaptiveMaxPooling layer only affects the first two dimensions.
   this->outputDimensions = this->inputDimensions;
@@ -140,7 +140,7 @@ void AdaptiveMeanPoolingType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void AdaptiveMeanPoolingType<MatType>::serialize(
+void AdaptiveMeanPooling<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
