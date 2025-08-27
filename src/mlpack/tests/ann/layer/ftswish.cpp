@@ -29,7 +29,7 @@ TEST_CASE("FTSwishTest", "[ANNLayerTest]")
   double threshold = -0.2;
 
   // Create the FTSwish layer.
-  FTSwishType<> layer(threshold);
+  FTSwish layer(threshold);
 
   // Input and output matrices.
   arma::mat input = {{0.234, 1.23, -1.34},

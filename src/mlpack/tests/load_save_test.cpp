@@ -1304,6 +1304,8 @@ class Test
 
 /**
  * Make sure we can load and save.
+ *
+ * Make sure to remove this one when releasing mlpack 5.0.0
  */
 TEST_CASE("LoadBinaryTest", "[LoadSaveTest]")
 {
@@ -1324,8 +1326,107 @@ TEST_CASE("LoadBinaryTest", "[LoadSaveTest]")
   REQUIRE(y.inb.s == x.inb.s);
 }
 
+TEST_CASE("LoadBinaryTestOptions", "[LoadSaveTest]")
+{
+  Test x(10, 12);
+
+  data::DataOptions opts;
+  opts.Format() = FileType::BIN;
+  opts.Fatal() = false;
+
+  REQUIRE(data::Save("test.bin", x, opts) == true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  REQUIRE(data::Load("test.bin", y, opts) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+}
+
+TEST_CASE("LoadBinaryTestInOptions", "[LoadSaveTest]")
+{
+  Test x(10, 12);
+
+  REQUIRE(data::Save("test.bin", x, NoFatal + BIN) == true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  REQUIRE(data::Load("test.bin", y, NoFatal + BIN) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+}
+
+TEST_CASE("LoadAutoDetectTestInOptions", "[LoadSaveTest]")
+{
+  Test x(10, 12);
+
+  REQUIRE(data::Save("test.bin", x, NoFatal + AutoDetect) == true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  REQUIRE(data::Load("test.bin", y, NoFatal + AutoDetect) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+
+  REQUIRE(data::Save("test.xml", x, NoFatal + AutoDetect) == true);
+  REQUIRE(data::Load("test.xml", y, NoFatal + AutoDetect) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+
+  REQUIRE(data::Save("test.JSON", x, NoFatal + AutoDetect) == true);
+  REQUIRE(data::Load("test.JSON", y, NoFatal + AutoDetect) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+}
+
+TEST_CASE("LoadBinaryTestBadOptions", "[LoadSaveTest]")
+{
+  Test x(10, 12);
+
+  REQUIRE_THROWS_AS(data::Save("test.bin", x, NoFatal + BIN + CSV),
+      std::invalid_argument);
+
+  REQUIRE(data::Save("test.bin", x, NoFatal + BIN) == true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  REQUIRE_THROWS_AS(data::Load("test.bin", y, NoFatal + BIN + HDF5),
+      std::invalid_argument);
+}
+
 /**
  * Make sure we can load and save.
+ *
+ * Make sure to remove this one when releasing mlpack 5.0.0
  */
 TEST_CASE("LoadXMLTest", "[LoadSaveTest]")
 {
@@ -1346,8 +1447,51 @@ TEST_CASE("LoadXMLTest", "[LoadSaveTest]")
   REQUIRE(y.inb.s == x.inb.s);
 }
 
+TEST_CASE("LoadXMLTestOptions", "[LoadSaveTest]")
+{
+  Test x(10, 12);
+
+  data::DataOptions opts;
+  opts.Fatal() = false;
+  opts.Format() = FileType::XML;
+  REQUIRE(data::Save("test.xml", x, opts) == true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  REQUIRE(data::Load("test.xml", y, opts) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+}
+
+TEST_CASE("LoadXMLTestInOptions", "[LoadSaveTest]")
+{
+  Test x(10, 12);
+
+  REQUIRE(data::Save("test.xml", x, NoFatal + XML) == true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  REQUIRE(data::Load("test.xml", y, NoFatal + XML) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+}
+
 /**
  * Make sure we can load and save.
+ *
+ * Make sure to remove this one when releasing mlpack 5.0.0
  */
 TEST_CASE("LoadJsonTest", "[LoadSaveTest]")
 {
@@ -1359,6 +1503,47 @@ TEST_CASE("LoadJsonTest", "[LoadSaveTest]")
   Test y(11, 14);
 
   REQUIRE(data::Load("test.json", "x", y, false) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+}
+
+TEST_CASE("LoadJsonTestOptions", "[LoadSaveTest]")
+{
+  Test x(10, 12);
+  data::DataOptions opts;
+  opts.Fatal() = false;
+  opts.Format() = FileType::JSON;
+
+  REQUIRE(data::Save("test.json", x, opts) == true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  REQUIRE(data::Load("test.json", y, opts) == true);
+
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
+}
+
+TEST_CASE("LoadJsonTestInOptions", "[LoadSaveTest]")
+{
+  Test x(10, 12);
+
+  REQUIRE(data::Save("test.json", x, NoFatal + JSON) == true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  REQUIRE(data::Load("test.json", y, NoFatal + JSON) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
@@ -2478,29 +2663,6 @@ TEST_CASE("LoadCSVNoTransposeTXTTest", "[LoadSaveTest]")
 }
 
 /**
- * Make sure DatasetMapper properly unmaps from non-unique strings.
- */
-TEST_CASE("DatasetMapperNonUniqueTest", "[LoadSaveTest]")
-{
-  DatasetMapper<MissingPolicy> dm(1);
-
-  // Map a couple of strings; they'll map to quiet_NaN().
-  dm.MapString<double>("0.5", 0); // No mapping created.
-  dm.MapString<double>("hello", 0); // Mapping created.
-  dm.MapString<double>("goodbye", 0);
-  dm.MapString<double>("cheese", 0);
-
-  double nan = std::numeric_limits<double>::quiet_NaN();
-  REQUIRE(dm.NumMappings(0) == 3);
-  REQUIRE(dm.NumUnmappings(nan, 0) == 3);
-
-  REQUIRE(dm.UnmapString(nan, 0) == "hello");
-  REQUIRE(dm.UnmapString(nan, 0, 0) == "hello");
-  REQUIRE(dm.UnmapString(nan, 0, 1) == "goodbye");
-  REQUIRE(dm.UnmapString(nan, 0, 2) == "cheese");
-}
-
-/**
  * Make sure if we load a CSV with a header, that that header doesn't get loaded
  * as a point.
  */
@@ -2526,6 +2688,411 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
   REQUIRE(headers.at(1) == "b");
   REQUIRE(headers.at(2) == "c");
   REQUIRE(headers.at(3) == "d");
+}
+
+TEST_CASE("DataOptionsTest", "[LoadSaveTest]")
+{
+  data::DataOptions opts1, opts2, opts3;
+
+  opts1.Fatal() = false;
+  opts2.Fatal() = false;
+  opts1.Format() = FileType::FileTypeUnknown;
+  opts2.Format() = FileType::CSVASCII;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.Format() == FileType::CSVASCII);
+
+  opts1.Fatal() = true;
+  opts2.Fatal() = true;
+  opts1.Format() = FileType::AutoDetect;
+  opts2.Format() = FileType::RawASCII;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.Format() == FileType::RawASCII);
+
+  opts2.Fatal() = true;
+  opts1.Format() = FileType::RawASCII;
+  opts2.Format() = FileType::AutoDetect;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.Format() == FileType::RawASCII);
+
+  opts1.Format() = FileType::CSVASCII;
+  opts2.Format() = FileType::FileTypeUnknown;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Format() == FileType::CSVASCII);
+}
+
+TEST_CASE("MatrixOptionsTest", "[LoadSaveTest]")
+{
+  data::MatrixOptions opts1, opts2, opts3;
+
+  opts1.Fatal() = false;
+  opts1.NoTranspose() = false;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+
+  opts1.Fatal() = true;
+  opts1.NoTranspose() = true;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+
+  opts1.Fatal() = false;
+  opts1.NoTranspose() = false;
+  opts2.Fatal() = false;
+  opts2.NoTranspose() = false;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+
+  opts1.Fatal() = true;
+  opts1.NoTranspose() = true;
+  opts2.Fatal() = true;
+  opts2.NoTranspose() = true;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+
+  opts1.Fatal() = true;
+  opts2.Fatal() = false;
+  opts1.NoTranspose() = true;
+  opts2.NoTranspose() = false;
+  REQUIRE_THROWS_AS(opts3 = opts1 + opts2, std::invalid_argument);
+
+  opts1.Fatal() = false;
+  opts2.Fatal() = true;
+  opts1.NoTranspose() = false;
+  opts2.NoTranspose() = true;
+  REQUIRE_THROWS_AS(opts3 = opts1 + opts2, std::invalid_argument);
+}
+
+TEST_CASE("TextOptionsTest", "[LoadSaveTest]")
+{
+  data::TextOptions opts1, opts2, opts3;
+
+  opts1.Fatal() = false;
+  opts1.NoTranspose() = false;
+  opts1.Categorical() = false;
+  opts1.HasHeaders() = false;
+  opts1.MissingToNan() = false;
+  opts1.Semicolon() = false;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+  REQUIRE(opts3.Categorical() == false);
+  REQUIRE(opts3.HasHeaders() == false);
+  REQUIRE(opts3.MissingToNan() == false);
+  REQUIRE(opts3.Semicolon() == false);
+
+  opts1.Fatal() = true;
+  opts1.NoTranspose() = true;
+  opts1.Categorical() = true;
+  opts1.HasHeaders() = true;
+  opts1.MissingToNan() = true;
+  opts1.Semicolon() = true;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+  REQUIRE(opts3.Categorical() == true);
+  REQUIRE(opts3.HasHeaders() == true);
+  REQUIRE(opts3.MissingToNan() == true);
+  REQUIRE(opts3.Semicolon() == true);
+
+  opts1.Fatal() = false;
+  opts1.NoTranspose() = false;
+  opts1.Categorical() = false;
+  opts1.HasHeaders() = false;
+  opts1.MissingToNan() = false;
+  opts1.Semicolon() = false;
+  opts2.Fatal() = false;
+  opts2.NoTranspose() = false;
+  opts2.Categorical() = false;
+  opts2.HasHeaders() = false;
+  opts2.MissingToNan() = false;
+  opts2.Semicolon() = false;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+  REQUIRE(opts3.Categorical() == false);
+  REQUIRE(opts3.HasHeaders() == false);
+  REQUIRE(opts3.MissingToNan() == false);
+  REQUIRE(opts3.Semicolon() == false);
+
+  opts1.Fatal() = true;
+  opts1.NoTranspose() = true;
+  opts1.Categorical() = true;
+  opts1.HasHeaders() = true;
+  opts1.MissingToNan() = true;
+  opts1.Semicolon() = true;
+  opts2.Fatal() = true;
+  opts2.NoTranspose() = true;
+  opts2.Categorical() = true;
+  opts2.HasHeaders() = true;
+  opts2.MissingToNan() = true;
+  opts2.Semicolon() = true;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+  REQUIRE(opts3.Categorical() == true);
+  REQUIRE(opts3.HasHeaders() == true);
+  REQUIRE(opts3.MissingToNan() == true);
+  REQUIRE(opts3.Semicolon() == true);
+
+  opts1.Fatal() = true;
+  opts1.NoTranspose() = true;
+  opts1.Categorical() = true;
+  opts1.HasHeaders() = true;
+  opts1.MissingToNan() = true;
+  opts1.Semicolon() = true;
+  opts2.Fatal() = false;
+  opts2.NoTranspose() = false;
+  opts2.Categorical() = false;
+  opts2.HasHeaders() = false;
+  opts2.MissingToNan() = false;
+  opts2.Semicolon() = false;
+
+  REQUIRE_THROWS_AS(opts3 = opts1 + opts2, std::invalid_argument);
+}
+
+TEST_CASE("MatrixDataOptionsTest", "[LoadSaveTest]")
+{
+  data::MatrixOptions opts1;
+  data::DataOptions opts2;
+
+  opts1.Fatal() = false;
+  opts1.NoTranspose() = false;
+  auto opts3 = opts1 + opts2;
+  static_assert(std::is_same_v<decltype(opts3), MatrixOptions>);
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+  opts3 = opts2 + opts1;
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+
+  opts1.Fatal() = true;
+  opts1.NoTranspose() = true;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+  opts3 = opts2 + opts1;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+
+  opts1.Fatal() = false;
+  opts1.NoTranspose() = false;
+  opts2.Fatal() = false;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+  opts3 = opts2 + opts1;
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+
+  opts1.Fatal() = true;
+  opts1.NoTranspose() = true;
+  opts2.Fatal() = true;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+  opts3 = opts2 + opts1;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+
+  opts1.Fatal() = true;
+  opts2.Fatal() = false;
+  REQUIRE_THROWS_AS(opts3 = opts1 + opts2, std::invalid_argument);
+
+  opts1.Fatal() = false;
+  opts2.Fatal() = true;
+  REQUIRE_THROWS_AS(opts3 = opts1 + opts2, std::invalid_argument);
+}
+
+TEST_CASE("TextDataOptionsTest", "[LoadSaveTest]")
+{
+  data::TextOptions opts1;
+  data::DataOptions opts2;
+
+  opts1.Fatal() = false;
+  opts1.NoTranspose() = false;
+  opts1.Categorical() = false;
+  opts1.HasHeaders() = false;
+  opts1.MissingToNan() = false;
+  opts1.Semicolon() = false;
+  auto opts3 = opts1 + opts2;
+  static_assert(std::is_same_v<decltype(opts3), TextOptions>);
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+  REQUIRE(opts3.Categorical() == false);
+  REQUIRE(opts3.HasHeaders() == false);
+  REQUIRE(opts3.MissingToNan() == false);
+  REQUIRE(opts3.Semicolon() == false);
+  opts3 = opts2 + opts1;
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+  REQUIRE(opts3.Categorical() == false);
+  REQUIRE(opts3.HasHeaders() == false);
+  REQUIRE(opts3.MissingToNan() == false);
+  REQUIRE(opts3.Semicolon() == false);
+
+  opts1.Fatal() = true;
+  opts1.NoTranspose() = true;
+  opts1.Categorical() = true;
+  opts1.HasHeaders() = true;
+  opts1.MissingToNan() = true;
+  opts1.Semicolon() = true;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+  REQUIRE(opts3.Categorical() == true);
+  REQUIRE(opts3.HasHeaders() == true);
+  REQUIRE(opts3.MissingToNan() == true);
+  REQUIRE(opts3.Semicolon() == true);
+  opts3 = opts2 + opts1;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+  REQUIRE(opts3.Categorical() == true);
+  REQUIRE(opts3.HasHeaders() == true);
+  REQUIRE(opts3.MissingToNan() == true);
+  REQUIRE(opts3.Semicolon() == true);
+
+  opts1.Fatal() = false;
+  opts1.NoTranspose() = false;
+  opts1.Categorical() = false;
+  opts1.HasHeaders() = false;
+  opts1.MissingToNan() = false;
+  opts1.Semicolon() = false;
+  opts2.Fatal() = false;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+  REQUIRE(opts3.Categorical() == false);
+  REQUIRE(opts3.HasHeaders() == false);
+  REQUIRE(opts3.MissingToNan() == false);
+  REQUIRE(opts3.Semicolon() == false);
+  opts3 = opts2 + opts1;
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+  REQUIRE(opts3.Categorical() == false);
+  REQUIRE(opts3.HasHeaders() == false);
+  REQUIRE(opts3.MissingToNan() == false);
+  REQUIRE(opts3.Semicolon() == false);
+
+  opts1.Fatal() = true;
+  opts1.NoTranspose() = true;
+  opts1.Categorical() = true;
+  opts1.HasHeaders() = true;
+  opts1.MissingToNan() = true;
+  opts1.Semicolon() = true;
+  opts2.Fatal() = true;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+  REQUIRE(opts3.Categorical() == true);
+  REQUIRE(opts3.HasHeaders() == true);
+  REQUIRE(opts3.MissingToNan() == true);
+  REQUIRE(opts3.Semicolon() == true);
+  opts3 = opts2 + opts1;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+  REQUIRE(opts3.Categorical() == true);
+  REQUIRE(opts3.HasHeaders() == true);
+  REQUIRE(opts3.MissingToNan() == true);
+  REQUIRE(opts3.Semicolon() == true);
+}
+
+TEST_CASE("MatrixTextOptionsTest", "[LoadSaveTest]")
+{
+  data::TextOptions opts1;
+  data::MatrixOptions opts2;
+
+  opts1.Fatal() = false;
+  opts1.NoTranspose() = false;
+  opts1.Categorical() = false;
+  opts1.HasHeaders() = false;
+  opts1.MissingToNan() = false;
+  opts1.Semicolon() = false;
+  auto opts3 = opts1 + opts2;
+  static_assert(std::is_same_v<decltype(opts3), TextOptions>);
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+  REQUIRE(opts3.Categorical() == false);
+  REQUIRE(opts3.HasHeaders() == false);
+  REQUIRE(opts3.MissingToNan() == false);
+  REQUIRE(opts3.Semicolon() == false);
+  opts3 = opts2 + opts1;
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+  REQUIRE(opts3.Categorical() == false);
+  REQUIRE(opts3.HasHeaders() == false);
+  REQUIRE(opts3.MissingToNan() == false);
+  REQUIRE(opts3.Semicolon() == false);
+
+  opts1.Fatal() = true;
+  opts1.NoTranspose() = true;
+  opts1.Categorical() = true;
+  opts1.HasHeaders() = true;
+  opts1.MissingToNan() = true;
+  opts1.Semicolon() = true;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+  REQUIRE(opts3.Categorical() == true);
+  REQUIRE(opts3.HasHeaders() == true);
+  REQUIRE(opts3.MissingToNan() == true);
+  REQUIRE(opts3.Semicolon() == true);
+  opts3 = opts2 + opts1;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+  REQUIRE(opts3.Categorical() == true);
+  REQUIRE(opts3.HasHeaders() == true);
+  REQUIRE(opts3.MissingToNan() == true);
+  REQUIRE(opts3.Semicolon() == true);
+
+  opts1.Fatal() = false;
+  opts1.NoTranspose() = false;
+  opts1.Categorical() = false;
+  opts1.HasHeaders() = false;
+  opts1.MissingToNan() = false;
+  opts1.Semicolon() = false;
+  opts2.NoTranspose() = false;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+  REQUIRE(opts3.Categorical() == false);
+  REQUIRE(opts3.HasHeaders() == false);
+  REQUIRE(opts3.MissingToNan() == false);
+  REQUIRE(opts3.Semicolon() == false);
+  opts3 = opts2 + opts1;
+  REQUIRE(opts3.Fatal() == false);
+  REQUIRE(opts3.NoTranspose() == false);
+  REQUIRE(opts3.Categorical() == false);
+  REQUIRE(opts3.HasHeaders() == false);
+  REQUIRE(opts3.MissingToNan() == false);
+  REQUIRE(opts3.Semicolon() == false);
+
+  opts1.Fatal() = true;
+  opts1.NoTranspose() = true;
+  opts1.Categorical() = true;
+  opts1.HasHeaders() = true;
+  opts1.MissingToNan() = true;
+  opts1.Semicolon() = true;
+  opts2.NoTranspose() = true;
+  opts3 = opts1 + opts2;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+  REQUIRE(opts3.Categorical() == true);
+  REQUIRE(opts3.HasHeaders() == true);
+  REQUIRE(opts3.MissingToNan() == true);
+  REQUIRE(opts3.Semicolon() == true);
+  opts3 = opts2 + opts1;
+  REQUIRE(opts3.Fatal() == true);
+  REQUIRE(opts3.NoTranspose() == true);
+  REQUIRE(opts3.Categorical() == true);
+  REQUIRE(opts3.HasHeaders() == true);
+  REQUIRE(opts3.MissingToNan() == true);
+  REQUIRE(opts3.Semicolon() == true);
 }
 
 // These tests only work with Armadillo 12, as we need the `strict` option to be
@@ -2705,9 +3272,28 @@ TEST_CASE("LoadCSVMissingNanTestTransposed", "[LoadSaveTest]")
   remove("test.csv");
 }
 
+TEST_CASE("LoadCSVMissingNanTestTransposedInOptions", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "1, , 3, 4" << std::endl;
+  f << "5, 6, 7, 8" << std::endl;
+  f << "9, 10, 11, 12" << std::endl;
+
+  arma::mat dataset;
+
+  data::Load("test.csv", dataset, NoFatal + Transpose + MissingToNan);
+
+  REQUIRE(dataset.n_rows == 4);
+  REQUIRE(dataset.n_cols == 3);
+  REQUIRE(std::isnan(dataset.at(1, 0)) == true);
+
+  remove("test.csv");
+}
+
 #endif
 
-TEST_CASE("LoadCSVSemiColon", "[LoadSaveTest]")
+TEST_CASE("LoadCSVSemicolon", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -2719,7 +3305,7 @@ TEST_CASE("LoadCSVSemiColon", "[LoadSaveTest]")
   data::TextOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false;
-  opts.SemiColon() = true;
+  opts.Semicolon() = true;
 
   data::Load("test.csv", dataset, opts);
 
@@ -2729,7 +3315,25 @@ TEST_CASE("LoadCSVSemiColon", "[LoadSaveTest]")
   remove("test.csv");
 }
 
-TEST_CASE("LoadCSVSemiColonHeader", "[LoadSaveTest]")
+TEST_CASE("LoadCSVSemicolonInOptions", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "1; 2; 3; 4" << std::endl;
+  f << "5; 6; 7; 8" << std::endl;
+  f << "9; 10; 11; 12" << std::endl;
+
+  arma::mat dataset;
+
+  data::Load("test.csv", dataset, NoFatal + Transpose + Semicolon);
+
+  REQUIRE(dataset.n_rows == 4);
+  REQUIRE(dataset.n_cols == 3);
+
+  remove("test.csv");
+}
+
+TEST_CASE("LoadCSVSemicolonHeader", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -2741,7 +3345,7 @@ TEST_CASE("LoadCSVSemiColonHeader", "[LoadSaveTest]")
   data::TextOptions opts;
   opts.Fatal() = true;
   opts.NoTranspose() = false;
-  opts.SemiColon() = true;
+  opts.Semicolon() = true;
   opts.HasHeaders() = true;
 
   data::Load("test.csv", dataset, opts);
@@ -2760,7 +3364,7 @@ TEST_CASE("LoadCSVSemiColonHeader", "[LoadSaveTest]")
 
 #if ARMA_VERSION_MAJOR >= 12
 
-TEST_CASE("LoadCSVSemiColonMissingToNanHeader", "[LoadSaveTest]")
+TEST_CASE("LoadCSVSemicolonMissingToNanHeader", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -2772,7 +3376,7 @@ TEST_CASE("LoadCSVSemiColonMissingToNanHeader", "[LoadSaveTest]")
   data::TextOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
-  opts.SemiColon() = true;
+  opts.Semicolon() = true;
   opts.HasHeaders() = true;
   opts.MissingToNan() = true;
 
@@ -2786,6 +3390,26 @@ TEST_CASE("LoadCSVSemiColonMissingToNanHeader", "[LoadSaveTest]")
   REQUIRE(headers.at(1) == "b");
   REQUIRE(headers.at(2) == "c");
   REQUIRE(headers.at(3) == "d");
+  REQUIRE(std::isnan(dataset.at(0, 0)) == true);
+  REQUIRE(std::isnan(dataset.at(0, 1)) == true);
+  remove("test.csv");
+}
+
+TEST_CASE("LoadCSVSemicolonMissingToNanHeaderInOptions", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "a;b;c;d" << std::endl;
+  f << ";;3;4" << std::endl;
+  f << "5;6;7;8" << std::endl;
+
+  arma::mat dataset;
+
+  data::Load("test.csv", dataset,
+      NoFatal + NoTranspose + Semicolon + HasHeaders + MissingToNan);
+
+  REQUIRE(dataset.n_rows == 2);
+  REQUIRE(dataset.n_cols == 4);
   REQUIRE(std::isnan(dataset.at(0, 0)) == true);
   REQUIRE(std::isnan(dataset.at(0, 1)) == true);
   remove("test.csv");

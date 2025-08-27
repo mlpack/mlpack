@@ -43,9 +43,10 @@ may require a template typedef.
 
 ## See also
 
-<!-- TODO: add links to all distance-based algorithms and other trees? -->
-
  * [`RTree`](r_tree.md)
+ * [mlpack trees](../trees.md)
+ * [`KNN`](../../methods/knn.md)
+ * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [R-Tree on Wikipedia](https://en.wikipedia.org/wiki/R-tree)
  * [R-Trees: A Dynamic Index Structure for Spatial Searching (pdf)](http://www-db.deis.unibo.it/courses/SI-LS/papers/Gut84.pdf)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
@@ -536,7 +537,7 @@ The `RStarTreeSplit` class implements the improved R\*-tree splitting strategy
 and can be used with the [`RectangleTree`](#rectangletree) class.  This is the
 splitting strategy used for the [`RStarTree`](r_star_tree.md) class, and is the
 strategy proposed in the
-[R\*-tree paper (pdf)](https://dl.acm.org/doi/pdf/10.1145/93597.98741).  The
+[R\*-tree paper (pdf)](https://core.ac.uk/download/pdf/12165134.pdf).  The
 strategy computes, for each possible binary split in each dimension,
 
  * The combined volume of the two child nodes,

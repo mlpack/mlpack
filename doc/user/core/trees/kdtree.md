@@ -1,10 +1,9 @@
 # `KDTree`
 
-<!-- TODO: link to knn.md once it's done -->
-
 The `KDTree` class represents a `k`-dimensional binary space partitioning tree,
 and is a well-known data structure for efficient distance operations (such as
-nearest neighbor search) in low dimensions---typically less than 100.
+[nearest neighbor search](../../methods/knn.md)) in low dimensions---typically
+less than 100.
 
 mlpack's `KDTree` implementation supports three template parameters for
 configurable behavior, and implements all the functionality required by the
@@ -20,12 +19,13 @@ additional functionality specific to kd-trees.
 
 ## See also
 
-<!-- TODO: add links to all distance-based algorithms and other trees? -->
-
  * [kd-tree on Wikipedia](https://en.wikipedia.org/wiki/Kd-tree)
  * [`BinarySpaceTree`](binary_space_tree.md)
- * [Binary space partitioning on Wikipedia](https://dl.acm.org/doi/pdf/10.1145/361002.361007)
- * [original kd-tree paper (pdf)](https://dl.acm.org/doi/pdf/10.1145/361002.361007)
+ * [mlpack trees](../trees.md)
+ * [`KNN`](../../methods/knn.md)
+ * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
+ * [Binary space partitioning on Wikipedia](https://en.wikipedia.org/wiki/Binary_space_partitioning)
+ * [original kd-tree paper (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=bb0dc7f89a8e64aa537e2e2d26e8c44e30bead86)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 
 ## Template parameters

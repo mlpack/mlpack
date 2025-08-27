@@ -4,7 +4,22 @@
 
 _????-??-??_
 
+ * Adapt `GRU` ANN layer to the new interface (#3955).
+
  * Fix warning on CRAN for bundled STB (#3950).
+
+ * Fix potential MSVC constructor shadowing (#3958).
+
+ * Use a looser check for auto-detection of categorical file types (#3961).
+
+ * Accelerate `CELU` layer (#3975).
+
+ * Fix dependency detection bugs in `mlpack.cmake` (#3981).
+
+ * Update header used by R packages compiling directly against C++ API (#3990).
+
+ * Add `FFN::Add()` and `RNN::Add()` with copy and move semantics; use these
+   instead of passing layers to `Add()` as pointers (#3974).
 
 ## mlpack 4.6.2
 

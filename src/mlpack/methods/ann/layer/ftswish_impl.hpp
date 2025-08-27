@@ -20,7 +20,7 @@
 namespace mlpack {
 
 template<typename MatType>
-FTSwishType<MatType>::FTSwishType(const double T) :
+FTSwish<MatType>::FTSwish(const double T) :
     Layer<MatType>(),
     T(T)
 {
@@ -28,7 +28,7 @@ FTSwishType<MatType>::FTSwishType(const double T) :
 }
 
 template<typename MatType>
-FTSwishType<MatType>::FTSwishType(const FTSwishType& other) :
+FTSwish<MatType>::FTSwish(const FTSwish& other) :
     Layer<MatType>(other),
     T(other.T)
 {
@@ -36,7 +36,7 @@ FTSwishType<MatType>::FTSwishType(const FTSwishType& other) :
 }
 
 template<typename MatType>
-FTSwishType<MatType>::FTSwishType(FTSwishType&& other) :
+FTSwish<MatType>::FTSwish(FTSwish&& other) :
     Layer<MatType>(std::move(other)),
     T(std::move(other.T))
 {
@@ -44,8 +44,8 @@ FTSwishType<MatType>::FTSwishType(FTSwishType&& other) :
 }
 
 template<typename MatType>
-FTSwishType<MatType>&
-FTSwishType<MatType>::operator=(const FTSwishType& other)
+FTSwish<MatType>&
+FTSwish<MatType>::operator=(const FTSwish& other)
 {
   if (&other != this)
   {
@@ -57,8 +57,8 @@ FTSwishType<MatType>::operator=(const FTSwishType& other)
 }
 
 template<typename MatType>
-FTSwishType<MatType>&
-FTSwishType<MatType>::operator=(FTSwishType&& other)
+FTSwish<MatType>&
+FTSwish<MatType>::operator=(FTSwish&& other)
 {
   if (&other != this)
   {
@@ -70,45 +70,27 @@ FTSwishType<MatType>::operator=(FTSwishType&& other)
 }
 
 template<typename MatType>
-void FTSwishType<MatType>::Forward(const MatType& input, MatType& output)
+void FTSwish<MatType>::Forward(const MatType& input, MatType& output)
 {
-  #pragma omp for
-  for (size_t i = 0; i < (size_t) input.n_elem; ++i)
-  {
-    if (input(i) >= 0)
-      output(i) = input(i) / (1 + std::exp(-input(i))) + T;
-    else
-      output(i) = T;
-  }
+  output = T + clamp(input, 0,
+      std::numeric_limits<typename MatType::elem_type>::max()) /
+      (1 + exp(-input));
 }
 
 template<typename MatType>
-void FTSwishType<MatType>::Backward(
+void FTSwish<MatType>::Backward(
     const MatType& input,
-    const MatType& /* output */,
+    const MatType& output,
     const MatType& gy,
     MatType& g)
 {
-  #pragma omp for
-  for (size_t i = 0; i < (size_t) input.n_elem; ++i)
-  {
-    if (input(i) >= 0)
-    {
-      const double sigmoidX = 1 / (1 + std::exp(-input(i)));
-      const double fX = input(i) * sigmoidX;
-
-      g(i) = gy(i) * (sigmoidX * (1 - fX) + fX);
-    }
-    else
-    {
-      g(i) = 0;
-    }
-  }
+  g = gy % sign(output - T) % (((output - T) / input) % (1 - (output - T)) +
+      (output - T));
 }
 
 template<typename MatType>
 template<typename Archive>
-void FTSwishType<MatType>::serialize(
+void FTSwish<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

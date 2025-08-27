@@ -90,25 +90,25 @@ double ImpulseStepDataTest(const size_t dimensions, const size_t rho)
 
 TEST_CASE("RNNImpulseStepLinearRecurrentTest", "[RecurrentNetworkTest]")
 {
-  double err = ImpulseStepDataTest<LinearRecurrent>(1, 5);
+  double err = ImpulseStepDataTest<LinearRecurrent<>>(1, 5);
   REQUIRE(err <= 0.001);
 
-  err = ImpulseStepDataTest<LinearRecurrent>(3, 5);
+  err = ImpulseStepDataTest<LinearRecurrent<>>(3, 5);
   REQUIRE(err <= 0.003);
 
-  err = ImpulseStepDataTest<LinearRecurrent>(5, 5);
+  err = ImpulseStepDataTest<LinearRecurrent<>>(5, 5);
   REQUIRE(err <= 0.005);
 }
 
 TEST_CASE("RNNImpulseStepLSTMTest", "[RecurrentNetworkTest]")
 {
-  double err = ImpulseStepDataTest<LSTM>(1, 5);
+  double err = ImpulseStepDataTest<LSTM<>>(1, 5);
   REQUIRE(err <= 0.001);
 
-  err = ImpulseStepDataTest<LSTM>(3, 5);
+  err = ImpulseStepDataTest<LSTM<>>(3, 5);
   REQUIRE(err <= 0.001);
 
-  err = ImpulseStepDataTest<LSTM>(5, 5);
+  err = ImpulseStepDataTest<LSTM<>>(5, 5);
   REQUIRE(err <= 0.001);
 }
 
@@ -209,32 +209,17 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 10)
 /**
  * Test RNN using multiple timestep input and single output.
  */
-TEST_CASE("RNNSineLinearRecurrentTest", "[RecurrentNetworkTest]")
+TEMPLATE_TEST_CASE("RNNSineTest", "[RecurrentNetworkTest]",
+    LinearRecurrent<>,
+    LSTM<>,
+    GRU<>)
 {
   // This can sometimes fail due to bad initializations or bad luck.  So, try it
   // up to three times.
   bool success = false;
   for (size_t t = 0; t < 3; ++t)
   {
-    const double err = RNNSineTest<LinearRecurrent>(3, 3, 50);
-    if (err <= 0.08)
-    {
-      success = true;
-      break;
-    }
-  }
-
-  REQUIRE(success == true);
-}
-
-TEST_CASE("RNNSineLSTMTest", "[RecurrentNetworkTest]")
-{
-  // This can sometimes fail due to bad initializations or bad luck.  So, try it
-  // up to three times.
-  bool success = false;
-  for (size_t t = 0; t < 3; ++t)
-  {
-    const double err = RNNSineTest<LSTM>(3, 3, 50);
+    const double err = RNNSineTest<TestType>(3, 3, 50);
     if (err <= 0.08)
     {
       success = true;
@@ -299,19 +284,14 @@ void BatchSizeTest()
 }
 
 /**
- * Ensure LinearRecurrent networks work with larger batch sizes.
+ * Ensure recurrent layers work with larger batch sizes.
  */
-TEST_CASE("LinearRecurrentBatchSizeTest", "[RecurrentNetworkTest]")
+TEMPLATE_TEST_CASE("RNNBatchSizeTest", "[RecurrentNetworkTest]",
+    LinearRecurrent<>,
+    LSTM<>,
+    GRU<>)
 {
-  BatchSizeTest<LinearRecurrent>();
-}
-
-/**
- * Ensure LSTMs work with larger batch sizes.
- */
-TEST_CASE("LSTMBatchSizeTest", "[RecurrentNetworkTest]")
-{
-  BatchSizeTest<LSTM>();
+  BatchSizeTest<TestType>();
 }
 
 /**
@@ -590,7 +570,7 @@ void DistractedSequenceRecallTestNetwork(
  */
 TEST_CASE("LSTMDistractedSequenceRecallTest", "[RecurrentNetworkTest]")
 {
-  DistractedSequenceRecallTestNetwork<LSTM>(10, 8);
+  DistractedSequenceRecallTestNetwork<LSTM<>>(10, 8);
 }
 
 /**
@@ -755,6 +735,7 @@ TEST_CASE("RNNSerializationTest", "[RecurrentNetworkTest]")
   RNN<> model(rho);
   model.Add<LSTM>(3);
   model.Add<LinearRecurrent>(3);
+  model.Add<GRU>(3);
   model.Add<Linear>(2);
   model.Add<LogSoftMax>();
 
@@ -925,7 +906,7 @@ template<typename ModelType>
 void ReberGrammarTestNetwork(ModelType& model,
                              const bool embedded = false,
                              const size_t maxEpochs = 30,
-                             const size_t trials = 3)
+                             const size_t trials = 5)
 {
   const size_t trainSize = 1000;
   const size_t testSize = 1000;
@@ -1034,13 +1015,18 @@ TEST_CASE("LSTMReberGrammarTest", "[RecurrentNetworkTest]")
   ReberGrammarTestNetwork(model, false);
 }
 
-TEST_CASE("LSTMEmbeddedReberGrammarTest", "[RecurrentNetworkTest]")
+/**
+ * Train the specified networks on an embedded Reber grammar dataset.
+ */
+TEMPLATE_TEST_CASE("RNNEmbeddedReberGrammarTest", "[RecurrentNetworkTest]",
+    LSTM<>,
+    GRU<>)
 {
   RNN<MeanSquaredError> model(5, false, MeanSquaredError(),
-      RandomInitialization(-0.5, 0.5));
+      RandomInitialization(-0.1, 0.1));
   // Sometimes a few extra units are needed to effectively get the embedded
   // Reber grammar every time.
-  model.Add<LSTM>(25);
+  model.Add<TestType>(25);
   model.Add<Linear>(7);
   model.Add<Sigmoid>();
   ReberGrammarTestNetwork(model, true);
@@ -1119,4 +1105,57 @@ TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest]")
   // There can be some margin in the results because we are not training on as
   // much data for the ragged sequences.
   REQUIRE(abs(averageError - refAverageError) <= 0.1);
+}
+
+/**
+ * Test that `RNN::Evaluate()` returns a reasonable value.
+ */
+TEST_CASE("RNNEvaluateTest", "[RecurrentNetworkTest]")
+{
+  arma::cube predictors, labels;
+  predictors.zeros(1, 5, 10);
+  labels.ones(1, 5, 10);
+
+  // Create the network.
+  RNN<MeanSquaredError> net(0, false, MeanSquaredError(true));
+  net.Add<LinearNoBias>(1);
+
+  // The input is all zeros so the output should also be all zeros.
+  // The loss at each slice should then be equal to the mean squared error
+  // between 0 (output) and 1 (labels) which is 1.
+  double loss = net.Evaluate(predictors, labels);
+
+  // The total loss should be equal to the total number of slices.
+  REQUIRE(loss == Approx(labels.n_cols * labels.n_slices));
+}
+
+/**
+ * Test that `RNN::Evaluate()` returns a reasonable value with a ragged input
+ * sequence.
+ */
+TEST_CASE("RNNRaggedEvaluateTest", "[RecurrentNetworkTest]")
+{
+  arma::cube predictors, labels;
+  predictors.zeros(1, 5, 10);
+  labels.ones(1, 5, 10);
+
+  // Create sequence lengths from 2 to 10.
+  arma::urowvec lengths(5);
+  for (int i = 0; i < 5; i++)
+    lengths[i] = (i + 1) * 2;
+
+  // Create the network.
+  RNN<MeanSquaredError> net(0, false, MeanSquaredError(true));
+  net.Add<LinearNoBias>(1);
+
+  // The input is all zeros so the output should also be all zeros.
+  // The loss at each slice should then be equal to the mean squared error
+  // between 0 (output) and 1 (labels) which is 1.
+  double loss = net.Evaluate(predictors, labels, lengths);
+
+  // The total loss should be equal to the total number of slices.
+  int totalSlices = 0;
+  for (unsigned int i = 0; i < 5; i++)
+    totalSlices += lengths[i];
+  REQUIRE(loss == Approx(totalSlices));
 }

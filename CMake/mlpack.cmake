@@ -7,7 +7,7 @@
 ##  FUNCTION DOCUMENTATION
 ##===================================================
 #
-# find_mlpack() 
+# find_mlpack()
 #----------------------
 #
 # Call this macro to find mlpack and its dependencies (Armadillo, ensmallen,
@@ -20,14 +20,16 @@
 # Configuration options:
 #
 #   MLPACK_DISABLE_OPENMP: if set, parallelism via OpenMP will be disabled.
-#   MLPACK_USE_SYSTEM_STB: if set, STB will be searched for on the system, 
+#   MLPACK_USE_SYSTEM_STB: if set, STB will be searched for on the system,
 #       instead of using the version bundled with mlpack.
+#   MLPACK_DONT_FIND_MLPACK: if set, mlpack itself will not be searched
+#       for---only its dependencies.
 #
 # If mlpack is successfully found, the `MLPACK_FOUND` variable will be set to
 # `TRUE`; otherwise, it will be set to `FALSE`.
 #
 # This macro will set the following variables:
-# 
+#
 # MLPACK_INCLUDE_DIRS: list of all include directories for mlpack and its
 #                      dependencies (Armadillo, cereal, ensmallen)
 # MLPACK_LIBRARIES: list of all dependency libraries to link against (typically
@@ -37,15 +39,15 @@
 # fetch_mlpack(COMPILE_OPENBLAS)
 #-----------------------
 #
-# This macro downloads the mlpack library and its dependencies.  Call this 
+# This macro downloads the mlpack library and its dependencies.  Call this
 # function to find mlpack and its dependencies (Armadillo, ensmallen, cereal) on
 # a system where mlpack or those dependencies may not be available.
 #
 # fetch_mlpack() accepts one parameter, `COMPILE_OPENBLAS`.  When this is set to
-# `TRUE`, then OpenBLAS will be downloaded and compiled as a dependency of 
+# `TRUE`, then OpenBLAS will be downloaded and compiled as a dependency of
 # Armadillo.  If `COMPILE_OPENBLAS` is set to `FALSE`, then it is expected that
-# OpenBLAS or a BLAS/LAPACK library is already available on the system.  When 
-# CMAKE_CROSSCOMPILING is set, then OpenBLAS is always compiled for the target 
+# OpenBLAS or a BLAS/LAPACK library is already available on the system.  When
+# CMAKE_CROSSCOMPILING is set, then OpenBLAS is always compiled for the target
 # architecture.
 #
 # Other dependencies of mlpack do not need compilation, as they are all
@@ -57,10 +59,10 @@
 # Configuration options:
 #
 #   MLPACK_DISABLE_OPENMP: if set, parallelism via OpenMP will be disabled.
-#   MLPACK_USE_SYSTEM_STB: if set, STB will be searched for on the system, 
+#   MLPACK_USE_SYSTEM_STB: if set, STB will be searched for on the system,
 #       instead of using the version bundled with mlpack.
 #
-# After all libraries are downloaded and set up, the macro will set the 
+# After all libraries are downloaded and set up, the macro will set the
 # following variables:
 #
 # MLPACK_INCLUDE_DIRS: list of all include directories for mlpack and its
@@ -78,7 +80,7 @@
 # This macro allows to download dependenices from the link that is provided to
 # them. You need to pass the LINK to download from, the name of
 # the dependency, and the filename to store the downloaded package to such
-# as armadillo.tar.gz and they are downloaded into 
+# as armadillo.tar.gz and they are downloaded into
 # ${CMAKE_BINARY_DIR}/deps/${PACKAGE}
 # At each download, this module sets a GENERIC_INCLUDE_DIR path,
 # which means that you need to set the main path for the include
@@ -90,7 +92,7 @@
 #------------------
 #
 # This macro finds armadillo library, and sets the necessary paths to each
-# one of the parameters. If the library is not found this macro will set 
+# one of the parameters. If the library is not found this macro will set
 # ARMADILLO_FOUND to false.
 #
 # This macro sets the following variables:
@@ -108,7 +110,7 @@
 #------------------
 #
 # This macro finds ensmallen library and sets the necessary paths to each
-# one of the parameters. If the library is not found this function will set 
+# one of the parameters. If the library is not found this function will set
 # ENSMALLEN_FOUND to false.
 #
 # This module sets the following variables:
@@ -125,7 +127,7 @@
 #------------------
 #
 # This macro finds cereal library and sets the necessary paths to each
-# one of the parameters. If the library is not found this macro will set 
+# one of the parameters. If the library is not found this macro will set
 # CEREAL_FOUND to false.
 
 # This module sets the following variables:
@@ -141,9 +143,9 @@
 #------------------
 #
 # This macro finds STB library and sets the necessary paths to each
-# one of the parameters. If the library is not found this macro will set 
+# one of the parameters. If the library is not found this macro will set
 # STB_FOUND to false.
-# 
+#
 # - Find STB_IMAGE
 #
 # This module sets the following variables:
@@ -159,9 +161,9 @@
 #
 # This macro finds if OpenMP library is installed and supported by the
 # compiler. if the library found then it sets the following parameters:
-#  
+#
 # OpenMP_FOUND - set to true if the library is found
-# 
+#
 #
 # find_mlpack_internal()
 #-----------------------
@@ -180,7 +182,7 @@
 #
 #
 ##===================================================
-##  MLPACK DEPENDENCIES SETTINGS. 
+##  MLPACK DEPENDENCIES SETTINGS.
 ##===================================================
 
 # Set minimum library versions required by mlpack.
@@ -193,17 +195,21 @@ set(ENSMALLEN_VERSION "2.10.0")
 set(CEREAL_VERSION "1.1.2")
 set(OPENBLAS_VERSION "0.3.29")
 
-# Set library version to be used when fetching them from the source. 
+# Set library version to be used when fetching them from the source.
 set(ARMADILLO_FETCH_VERSION "12.6.5")
 set(ENSMALLEN_FETCH_VERSION "latest")
 set(CEREAL_FETCH_VERSION "1.3.2")
 set(MLPACK_FETCH_VERSION "latest")
 
-# Set required standard to C++17.
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Set required standard to C++17, if it's not already set.
+if (NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif ()
 
-set(MLPACK_DISABLE_OPENMP OFF)
+if (NOT MLPACK_DISABLE_OPENMP)
+  set(MLPACK_DISABLE_OPENMP OFF)
+endif ()
 
 ##===================================================
 ##  MLPACK AUTODOWNLOADER DEPENDENCIES FUNCTIONS
@@ -235,7 +241,7 @@ macro(get_deps LINK DEPS_NAME PACKAGE)
         "${CMAKE_BINARY_DIR}/deps/${DEPS_NAME}")
   endif()
   # list(FILTER) is not available on 3.5 or older, but try to keep
-  # configuring without filtering the list anyway 
+  # configuring without filtering the list anyway
   # (it works only if the file is present as .tar.gz).
   list(FILTER DIRECTORIES EXCLUDE REGEX ".*\.tar\.gz")
   list(LENGTH DIRECTORIES DIRECTORIES_LEN)
@@ -334,7 +340,7 @@ macro(find_armadillo)
         HDF5
         )
       if(_ARMA_USE_${pkg})
-        find_package(${pkg} QUIET)
+        find_package(${pkg})
         list(APPEND _ARMA_REQUIRED_VARS "${pkg}_FOUND")
         if(${pkg}_FOUND)
           list(APPEND _ARMA_SUPPORT_LIBRARIES ${${pkg}_LIBRARIES})
@@ -641,7 +647,17 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
     set(COMPILE_OPENBLAS ON)
   endif()
 
-  find_package(BLAS PATHS ${CMAKE_BINARY_DIR})
+  if (NOT CMAKE_CROSSCOMPILING)
+    # Only search for system BLAS if we know we can use it (e.g. if OpenBLAS
+    # doesn't need to be cross-compiled).
+    find_package(BLAS QUIET)
+  endif ()
+
+  if (NOT BLAS_FOUND)
+    # Also search in case we already downloaded it.
+    find_package(BLAS PATHS ${CMAKE_BINARY_DIR} QUIET)
+  endif()
+
   if (NOT BLAS_FOUND OR (NOT BLAS_LIBRARIES))
     get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v${OPENBLAS_VERSION}/OpenBLAS-${OPENBLAS_VERSION}.tar.gz
         OpenBLAS OpenBLAS-${OPENBLAS_VERSION}.tar.gz)
@@ -689,22 +705,24 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
     set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
   endif()
 
-  find_mlpack_internal(${CMAKE_BINARY_DIR})
-  if (NOT MLPACK_FOUND)
-    get_deps(https://www.mlpack.org/files/mlpack-${MLPACK_FETCH_VERSION}.tar.gz mlpack mlpack-${MLPACK_FETCH_VERSION}.tar.gz)
-    set(MLPACK_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+  if (NOT MLPACK_DONT_FIND_MLPACK)
     find_mlpack_internal(${CMAKE_BINARY_DIR})
-  endif()
-  if (MLPACK_FOUND)
-    set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${MLPACK_INCLUDE_DIR})
+    if (NOT MLPACK_FOUND)
+      get_deps(https://www.mlpack.org/files/mlpack-${MLPACK_FETCH_VERSION}.tar.gz mlpack mlpack-${MLPACK_FETCH_VERSION}.tar.gz)
+      set(MLPACK_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+      find_mlpack_internal(${CMAKE_BINARY_DIR})
+    endif()
+    if (MLPACK_FOUND)
+      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${MLPACK_INCLUDE_DIR})
+    endif()
   endif()
 
-  find_openmp() 
+  find_openmp()
 
 endmacro()
 
 ##===================================================
-##  MLPACK MAIN FUNCTIONS CALL. 
+##  MLPACK MAIN FUNCTIONS CALL.
 ##===================================================
 
 macro(find_mlpack)

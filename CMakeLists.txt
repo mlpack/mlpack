@@ -247,11 +247,13 @@ if (USE_SYSTEM_STB)
   set(MLPACK_USE_SYSTEM_STB ON)
 endif ()
 
+set(MLPACK_DONT_FIND_MLPACK 1)
 if (CMAKE_CROSSCOMPILING OR DOWNLOAD_DEPENDENCIES)
   fetch_mlpack(ON)
 else()
   find_mlpack()
 endif()
+unset(MLPACK_DONT_FIND_MLPACK)
 
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
@@ -355,7 +357,7 @@ if (BUILD_CLI_EXECUTABLES AND UNIX)
 endif ()
 
 # Modify config.hpp as necessary.
-file(READ ${CMAKE_SOURCE_DIR}/src/mlpack/config.hpp CONFIG_CONTENTS)
+file(READ ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/config.hpp CONFIG_CONTENTS)
 if (BFD_DL_AVAILABLE)
   string(REGEX REPLACE "// #define MLPACK_HAS_BFD_DL\n"
       "#define MLPACK_HAS_BFD_DL\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
@@ -448,11 +450,11 @@ if (PKG_CONFIG_FOUND)
   set(MLPACK_VERSION_STRING "@MLPACK_VERSION_STRING@")
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/CMake/mlpack.pc.in
-    ${CMAKE_BINARY_DIR}/CMake/mlpack.pc.in.partial @ONLY)
+    ${CMAKE_CURRENT_BINARY_DIR}/CMake/mlpack.pc.in.partial @ONLY)
 
   add_custom_target(pkgconfig ALL
       ${CMAKE_COMMAND}
-          -D MLPACK_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
+          -D MLPACK_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
           -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GeneratePkgConfig.cmake"
       COMMENT "Generating mlpack.pc (pkg-config) file.")
 

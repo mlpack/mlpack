@@ -17,7 +17,7 @@
 namespace mlpack {
 
 template<typename MatType>
-RepeatType<MatType>::RepeatType(
+Repeat<MatType>::Repeat(
     std::vector<size_t> multiples, bool interleave) :
     Layer<MatType>(),
     multiples(std::move(multiples)),
@@ -27,7 +27,7 @@ RepeatType<MatType>::RepeatType(
 }
 
 template<typename MatType>
-RepeatType<MatType>::RepeatType() :
+Repeat<MatType>::Repeat() :
     Layer<MatType>(),
     interleave(false)
 {
@@ -35,7 +35,7 @@ RepeatType<MatType>::RepeatType() :
 }
 
 template<typename MatType>
-RepeatType<MatType>::RepeatType(const RepeatType& other) :
+Repeat<MatType>::Repeat(const Repeat& other) :
     Layer<MatType>(other),
     multiples(other.multiples),
     interleave(other.interleave),
@@ -47,7 +47,7 @@ RepeatType<MatType>::RepeatType(const RepeatType& other) :
 }
 
 template<typename MatType>
-RepeatType<MatType>::RepeatType(RepeatType&& other)  noexcept :
+Repeat<MatType>::Repeat(Repeat&& other)  noexcept :
     Layer<MatType>(std::move(other)),
     multiples(other.multiples),
     interleave(other.interleave),
@@ -59,7 +59,7 @@ RepeatType<MatType>::RepeatType(RepeatType&& other)  noexcept :
 }
 
 template<typename MatType>
-RepeatType<MatType>& RepeatType<MatType>::operator=(const RepeatType& other)
+Repeat<MatType>& Repeat<MatType>::operator=(const Repeat& other)
 {
   if (this != &other)
   {
@@ -75,7 +75,7 @@ RepeatType<MatType>& RepeatType<MatType>::operator=(const RepeatType& other)
 }
 
 template<typename MatType>
-RepeatType<MatType>& RepeatType<MatType>::operator=(RepeatType&& other) noexcept
+Repeat<MatType>& Repeat<MatType>::operator=(Repeat&& other) noexcept
 {
   if (this != &other)
   {
@@ -91,7 +91,7 @@ RepeatType<MatType>& RepeatType<MatType>::operator=(RepeatType&& other) noexcept
 }
 
 template<typename MatType>
-void RepeatType<MatType>::ComputeOutputDimensions()
+void Repeat<MatType>::ComputeOutputDimensions()
 {
   if (multiples.size() > this->inputDimensions.size())
   {
@@ -165,13 +165,13 @@ void RepeatType<MatType>::ComputeOutputDimensions()
 }
 
 template<typename MatType>
-void RepeatType<MatType>::Forward(const MatType& input, MatType& output)
+void Repeat<MatType>::Forward(const MatType& input, MatType& output)
 {
   output = input.rows(outIdxs);
 }
 
 template<typename MatType>
-void RepeatType<MatType>::Backward(
+void Repeat<MatType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
@@ -187,7 +187,7 @@ void RepeatType<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void RepeatType<MatType>::serialize(
+void Repeat<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));

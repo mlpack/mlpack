@@ -78,21 +78,23 @@ class CategoricalDQN
       vMax(config.VMax()),
       isNoisy(isNoisy)
   {
-    network.Add(new Linear(h1));
-    network.Add(new ReLU());
+    network.template Add<Linear>(h1);
+    network.template Add<ReLU>();
     if (isNoisy)
     {
-      noisyLayerIndex.push_back(network.Network().size());
-      network.Add(new NoisyLinear(h2));
-      network.Add(new ReLU());
-      noisyLayerIndex.push_back(network.Network().size());
-      network.Add(new NoisyLinear(outputDim * atomSize));
+      network.template Add<NoisyLinear>(h2);
+      noisyLayers.push_back(
+          dynamic_cast<NoisyLinear<>*>(network.Network().back()));
+      network.template Add<ReLU>();
+      network.template Add<NoisyLinear>(outputDim * atomSize);
+      noisyLayers.push_back(
+          dynamic_cast<NoisyLinear<>*>(network.Network().back()));
     }
     else
     {
-      network.Add(new Linear(h2));
-      network.Add(new ReLU());
-      network.Add(new Linear(outputDim * atomSize));
+      network.template Add<Linear>(h2);
+      network.template Add<ReLU>();
+      network.template Add<Linear>(outputDim * atomSize);
     }
   }
 
@@ -104,15 +106,18 @@ class CategoricalDQN
    * @param config Hyper-parameters for categorical dqn.
    * @param isNoisy Specifies whether the network needs to be of type noisy.
    */
-  CategoricalDQN(NetworkType& network,
+  CategoricalDQN(NetworkType& networkIn,
                  TrainingConfig config,
                  const bool isNoisy = false):
-      network(std::move(network)),
+      network(std::move(networkIn)),
       atomSize(config.AtomSize()),
       vMin(config.VMin()),
       vMax(config.VMax()),
       isNoisy(isNoisy)
   { /* Nothing to do here. */ }
+
+  // TODO: implement copy constructor and operator
+  CategoricalDQN(const CategoricalDQN& other) = delete;
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -176,10 +181,9 @@ class CategoricalDQN
    */
   void ResetNoise()
   {
-    for (size_t i = 0; i < noisyLayerIndex.size(); ++i)
+    for (size_t i = 0; i < noisyLayers.size(); ++i)
     {
-      dynamic_cast<NoisyLinear*>(
-          (network.Network()[noisyLayerIndex[i]]))->ResetNoise();
+      noisyLayers[i]->ResetNoise();
     }
   }
 
@@ -228,10 +232,10 @@ class CategoricalDQN
   bool isNoisy;
 
   //! Locally-stored indexes of noisy layers in the network.
-  std::vector<size_t> noisyLayerIndex;
+  std::vector<NoisyLinear<>*> noisyLayers;
 
   //! Locally-stored softmax activation function.
-  Softmax softMax;
+  Softmax<> softMax;
 
   //! Locally-stored activations from softMax.
   arma::mat activations;

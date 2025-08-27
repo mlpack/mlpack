@@ -18,7 +18,6 @@
 #include <mlpack/prereqs.hpp>
 
 #include "text_options.hpp"
-#include "format.hpp"
 #include "dataset_mapper.hpp"
 #include "detect_file_type.hpp"
 #include "image_info.hpp"
@@ -26,7 +25,6 @@
 #include "load_numeric.hpp"
 #include "load_categorical.hpp"
 #include "load_image.hpp"
-#include "utilities.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
@@ -44,9 +42,8 @@ template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
           DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value ||
-              IsSparseMat<MatType>::value>* = 0,
-          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>* = 0);
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>* = 0);
 
 /**
  * Loads a matrix from file, guessing the filetype from the extension.  This
@@ -61,9 +58,8 @@ template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
           const DataOptionsType& opts,
-          std::enable_if_t<IsArma<MatType>::value ||
-              IsSparseMat<MatType>::value>* = 0,
-          std::enable_if_t<!std::is_same_v<DataOptionsType, bool>>* = 0);
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>* = 0);
 
 /**
  * Loads a matrix from file, guessing the filetype from the extension.  This
@@ -250,10 +246,10 @@ bool Load(const std::string& filename,
  * @param transpose If true, transpose the matrix after loading.
  * @return Boolean value indicating success or failure of load.
  */
-template<typename eT, typename PolicyType>
+template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
-          DatasetMapper<PolicyType>& info,
+          DatasetInfo& info,
           const bool fatal = false,
           const bool transpose = true);
 
