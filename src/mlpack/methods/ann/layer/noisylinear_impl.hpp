@@ -18,7 +18,7 @@
 namespace mlpack {
 
 template<typename MatType>
-NoisyLinearType<MatType>::NoisyLinearType(const size_t outSize) :
+NoisyLinear<MatType>::NoisyLinear(const size_t outSize) :
     Layer<MatType>(),
     outSize(outSize),
     inSize(0)
@@ -27,7 +27,7 @@ NoisyLinearType<MatType>::NoisyLinearType(const size_t outSize) :
 }
 
 template<typename MatType>
-NoisyLinearType<MatType>::NoisyLinearType(const NoisyLinearType& other) :
+NoisyLinear<MatType>::NoisyLinear(const NoisyLinear& other) :
     Layer<MatType>(other),
     outSize(other.outSize),
     inSize(other.inSize)
@@ -36,7 +36,7 @@ NoisyLinearType<MatType>::NoisyLinearType(const NoisyLinearType& other) :
 }
 
 template<typename MatType>
-NoisyLinearType<MatType>::NoisyLinearType(NoisyLinearType&& other) :
+NoisyLinear<MatType>::NoisyLinear(NoisyLinear&& other) :
     Layer<MatType>(std::move(other)),
     outSize(std::move(other.outSize)),
     inSize(std::move(other.inSize))
@@ -45,8 +45,8 @@ NoisyLinearType<MatType>::NoisyLinearType(NoisyLinearType&& other) :
 }
 
 template<typename MatType>
-NoisyLinearType<MatType>&
-NoisyLinearType<MatType>::operator=(const NoisyLinearType& other)
+NoisyLinear<MatType>&
+NoisyLinear<MatType>::operator=(const NoisyLinear& other)
 {
   if (&other != this)
   {
@@ -59,8 +59,8 @@ NoisyLinearType<MatType>::operator=(const NoisyLinearType& other)
 }
 
 template<typename MatType>
-NoisyLinearType<MatType>&
-NoisyLinearType<MatType>::operator=(NoisyLinearType&& other)
+NoisyLinear<MatType>&
+NoisyLinear<MatType>::operator=(NoisyLinear&& other)
 {
   if (&other != this)
   {
@@ -73,7 +73,7 @@ NoisyLinearType<MatType>::operator=(NoisyLinearType&& other)
 }
 
 template<typename MatType>
-void NoisyLinearType<MatType>::SetWeights(const MatType& weightsIn)
+void NoisyLinear<MatType>::SetWeights(const MatType& weightsIn)
 {
   MakeAlias(weights, weightsIn, 1, (outSize * inSize + outSize) * 2);
   MakeAlias(weightMu, weightsIn, outSize, inSize);
@@ -87,7 +87,7 @@ void NoisyLinearType<MatType>::SetWeights(const MatType& weightsIn)
 }
 
 template<typename MatType>
-void NoisyLinearType<MatType>::ResetNoise()
+void NoisyLinear<MatType>::ResetNoise()
 {
   MatType epsilonIn;
   epsilonIn.randn(inSize, 1);
@@ -102,7 +102,7 @@ void NoisyLinearType<MatType>::ResetNoise()
 }
 
 template<typename MatType>
-void NoisyLinearType<MatType>::ResetParameters()
+void NoisyLinear<MatType>::ResetParameters()
 {
   const double muRange = 1 / std::sqrt(inSize);
   weightMu.randu();
@@ -114,7 +114,7 @@ void NoisyLinearType<MatType>::ResetParameters()
 }
 
 template<typename MatType>
-void NoisyLinearType<MatType>::Forward(const MatType& input, MatType& output)
+void NoisyLinear<MatType>::Forward(const MatType& input, MatType& output)
 {
   weight = weightMu + weightSigma % weightEpsilon;
   bias = biasMu + biasSigma % biasEpsilon;
@@ -123,7 +123,7 @@ void NoisyLinearType<MatType>::Forward(const MatType& input, MatType& output)
 }
 
 template<typename MatType>
-void NoisyLinearType<MatType>::Backward(
+void NoisyLinear<MatType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
@@ -133,7 +133,7 @@ void NoisyLinearType<MatType>::Backward(
 }
 
 template<typename MatType>
-void NoisyLinearType<MatType>::Gradient(
+void NoisyLinear<MatType>::Gradient(
     const MatType& input, const MatType& error, MatType& gradient)
 {
   // Locally stored to prevent multiplication twice.
@@ -151,7 +151,7 @@ void NoisyLinearType<MatType>::Gradient(
 }
 
 template<typename MatType>
-void NoisyLinearType<MatType>::ComputeOutputDimensions()
+void NoisyLinear<MatType>::ComputeOutputDimensions()
 {
   inSize = this->inputDimensions[0];
   for (size_t i = 1; i < this->inputDimensions.size(); ++i)
@@ -166,7 +166,7 @@ void NoisyLinearType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void NoisyLinearType<MatType>::serialize(
+void NoisyLinear<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));

@@ -23,13 +23,13 @@ using namespace mlpack;
 
 // Prepare an LSTM layer.  All weights will be set to zero.
 template<typename MatType = arma::mat>
-LSTMType<MatType> SetupLSTM(const size_t inputSize,
-                            const size_t batchSize,
-                            const size_t outputSize,
-                            const size_t timeSteps,
-                            arma::mat& weights)
+LSTM<MatType> SetupLSTM(const size_t inputSize,
+                        const size_t batchSize,
+                        const size_t outputSize,
+                        const size_t timeSteps,
+                        arma::mat& weights)
 {
-  LSTM l(outputSize);
+  LSTM<MatType> l(outputSize);
   l.InputDimensions() = std::vector<size_t>{ inputSize };
   l.ComputeOutputDimensions();
   l.CurrentStep(0);

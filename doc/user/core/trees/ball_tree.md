@@ -36,7 +36,7 @@ with [`KDTree`](kdtree.md) first.
  * [mlpack trees](../trees.md)
  * [`KNN`](../../methods/knn.md)
  * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
- * [Binary space partitioning on Wikipedia](https://dl.acm.org/doi/pdf/10.1145/361002.361007)
+ * [Binary space partitioning on Wikipedia](https://en.wikipedia.org/wiki/Binary_space_partitioning)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 
 ## Template parameters

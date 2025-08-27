@@ -3,7 +3,7 @@
  * @author Sumedh Ghaisas
  * @author Zachary Ng
  *
- * Implementation of the GRUType class, which implements a gru network
+ * Implementation of the GRU class, which implements a gru network
  * layer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -20,14 +20,14 @@
 namespace mlpack {
 
 template<typename MatType>
-GRUType<MatType>::GRUType() :
+GRU<MatType>::GRU() :
     RecurrentLayer<MatType>()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-GRUType<MatType>::GRUType(const size_t outSize) :
+GRU<MatType>::GRU(const size_t outSize) :
     RecurrentLayer<MatType>(),
     inSize(0),
     outSize(outSize)
@@ -36,7 +36,7 @@ GRUType<MatType>::GRUType(const size_t outSize) :
 }
 
 template<typename MatType>
-GRUType<MatType>::GRUType(const GRUType& other) :
+GRU<MatType>::GRU(const GRU& other) :
     RecurrentLayer<MatType>(other),
     inSize(other.inSize),
     outSize(other.outSize)
@@ -45,7 +45,7 @@ GRUType<MatType>::GRUType(const GRUType& other) :
 }
 
 template<typename MatType>
-GRUType<MatType>::GRUType(GRUType&& other) :
+GRU<MatType>::GRU(GRU&& other) :
     RecurrentLayer<MatType>(std::move(other)),
     inSize(other.inSize),
     outSize(other.outSize)
@@ -54,7 +54,7 @@ GRUType<MatType>::GRUType(GRUType&& other) :
 }
 
 template<typename MatType>
-GRUType<MatType>& GRUType<MatType>::operator=(const GRUType& other)
+GRU<MatType>& GRU<MatType>::operator=(const GRU& other)
 {
   if (this != &other)
   {
@@ -67,7 +67,7 @@ GRUType<MatType>& GRUType<MatType>::operator=(const GRUType& other)
 }
 
 template<typename MatType>
-GRUType<MatType>& GRUType<MatType>::operator=(GRUType&& other)
+GRU<MatType>& GRU<MatType>::operator=(GRU&& other)
 {
   if (this != &other)
   {
@@ -81,7 +81,7 @@ GRUType<MatType>& GRUType<MatType>::operator=(GRUType&& other)
 
 
 template<typename MatType>
-void GRUType<MatType>::SetWeights(const MatType& weightsIn)
+void GRU<MatType>::SetWeights(const MatType& weightsIn)
 {
   MakeAlias(weights, weightsIn, weightsIn.n_rows, weightsIn.n_cols);
 
@@ -101,7 +101,7 @@ void GRUType<MatType>::SetWeights(const MatType& weightsIn)
 }
 
 template<typename MatType>
-void GRUType<MatType>::Forward(const MatType& input, MatType& output)
+void GRU<MatType>::Forward(const MatType& input, MatType& output)
 {
   // Convenience alias.
   const size_t batchSize = input.n_cols;
@@ -155,7 +155,7 @@ void GRUType<MatType>::Forward(const MatType& input, MatType& output)
 }
 
 template<typename MatType>
-void GRUType<MatType>::Backward(
+void GRU<MatType>::Backward(
     const MatType& /* input */,
     const MatType& output,
     const MatType& gy,
@@ -207,7 +207,7 @@ void GRUType<MatType>::Backward(
 }
 
 template<typename MatType>
-void GRUType<MatType>::Gradient(
+void GRU<MatType>::Gradient(
     const MatType& input,
     const MatType& /* error */,
     MatType& gradient)
@@ -253,14 +253,14 @@ void GRUType<MatType>::Gradient(
 }
 
 template<typename MatType>
-size_t GRUType<MatType>::WeightSize() const
+size_t GRU<MatType>::WeightSize() const
 {
   return outSize * inSize * 3 + /* Input weight connections */
       outSize * outSize * 3; /* Recurrent weight connections */
 }
 
 template<typename MatType>
-size_t GRUType<MatType>::RecurrentSize() const
+size_t GRU<MatType>::RecurrentSize() const
 {
   // The recurrent state has to store the output, reset gate, update gate,
   // and hidden gate. The last 3 aren't recurrent but are stored in Forward()
@@ -270,7 +270,7 @@ size_t GRUType<MatType>::RecurrentSize() const
 
 template<typename MatType>
 template<typename Archive>
-void GRUType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
+void GRU<MatType>::serialize(Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<RecurrentLayer<MatType>>(this));
 
@@ -279,7 +279,7 @@ void GRUType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
 }
 
 template<typename MatType>
-void GRUType<MatType>::MakeStateAliases(size_t batchSize)
+void GRU<MatType>::MakeStateAliases(size_t batchSize)
 {
   MatType& state = this->RecurrentState(this->CurrentStep());
 

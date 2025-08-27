@@ -100,7 +100,7 @@ BINDING_SEE_ALSO("Bayesian Interpolation",
     "https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf");
 BINDING_SEE_ALSO("Bayesian Linear Regression, Section 3.3",
     // I wonder how long this full text PDF will remain available...
-    "https://www.microsoft.com/en-us/research/uploads/prod/2006/01/"
+    "https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/"
     "Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf");
 BINDING_SEE_ALSO("BayesianLinearRegression C++ class documentation",
     "@doc/user/methods/bayesian_linear_regression.md");
