@@ -89,7 +89,7 @@ class MultiheadAttention : public Layer<MatType>
    */
   MultiheadAttention(const size_t tgtSeqLen,
                          const size_t numHeads,
-                         const CubeType& attnMask = MatType(),
+                         const MatType& attnMask = MatType(),
                          const MatType& keyPaddingMask = MatType(),
                          const bool selfAttention = false);
 
@@ -175,9 +175,9 @@ class MultiheadAttention : public Layer<MatType>
   size_t& NumHeads() { return numHeads; }
 
   //! Get the two dimensional Attention Mask.  Contains values 0 or 1.
-  CubeType const& AttentionMask() const { return attnMask; }
+  MatType const& AttentionMask() const { return attnMask; }
   //! Modify the two dimensional Attention Mask.  Should take values 0 or 1.
-  CubeType& AttentionMask() { return attnMask; }
+  MatType& AttentionMask() { return attnMask; }
 
   //! Get Key Padding Mask.  Contains values 0 or 1.
   MatType const& KeyPaddingMask() const { return keyPaddingMask; }
@@ -283,12 +283,11 @@ class MultiheadAttention : public Layer<MatType>
   //! Dimensionality of each head.
   size_t headDim;
 
-  //! Two dimensional Attention Mask of shape (tgtSeqLen, srcSeqLen, batchSize).  Takes
+  //! Two dimensional Attention Mask of shape (tgtSeqLen, srcSeqLen).  Takes
   //! the values [-Inf, 0]
-  CubeType attnMask;
+  MatType attnMask;
 
-  //! Key Padding Mask.  The shape of keyPaddingMask : (batchSize, srcSeqLen)
-  //! the values [-Inf, 0]
+  //! Key Padding Mask.  Takes the values [-Inf, 0]
   MatType keyPaddingMask;
 
   //! Whether or not self-attention is used (source key, value, and query all

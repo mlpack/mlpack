@@ -39,7 +39,7 @@ MultiheadAttention<MatType, RegularizerType>::
 MultiheadAttention(
     const size_t tgtSeqLen,
     const size_t numHeads,
-    const CubeType& attnmask,
+    const MatType& attnmask,
     const MatType& keypaddingmask,
     const bool selfAttention) :
     tgtSeqLen(tgtSeqLen),
@@ -132,7 +132,7 @@ Forward(const MatType& input, MatType& output)
 
   // Calculate the scores i.e. perform the matrix multiplication operation
   // on qProj and kProj. Here score = qProj . kProj'
-  scores = MultiplyCube2Cube(kProj, qProj, false, true);
+  scores = MultiplyCube2Cube(qProj, kProj, false, true);
 
   // Apply the attention mask if provided. The attention mask is used to black-
   // out future sequences and generally used in Encoder-Decoder attention.
@@ -140,33 +140,20 @@ Forward(const MatType& input, MatType& output)
   // The shape of the attention mask : (tgtSeqLen, srcSeqLen).
   if (!attnMask.is_empty())
   {
-    if (attnMask.n_slices != input.n_cols || attnMask.n_rows != tgtSeqLen || attnMask.n_cols != srcSeqLen)
+    if (attnMask.n_rows != tgtSeqLen || attnMask.n_cols != srcSeqLen)
       Log::Fatal << "The size of the 'attn_mask' is not correct.\n";
-    for (size_t i = 0; i < batchSize; ++i)
-    {
-      for (size_t h = 0; h < numHeads; ++h)
-      {
-          scores.slice(i * numHeads + h) += attnMask.slice(i).t();
-      }
-    }
+    scores.each_slice() += attnMask;
   }
-
 
   // Apply the key padding mask when provided. It blacks-out any particular
   // word in the sequence.
   // The key padding mask has elements -inf or 0
-  // The shape of keyPaddingMask : (batchSize, srcSeqLen).
+  // The shape of keyPaddingMask : (1, srcSeqLen).
   if (!keyPaddingMask.is_empty())
   {
-    if (keyPaddingMask.n_rows != input.n_cols || keyPaddingMask.n_cols != srcSeqLen)
+    if (keyPaddingMask.n_rows != 1 || keyPaddingMask.n_cols != srcSeqLen)
         Log::Fatal << "The size of the 'keyPaddingMask' is not correct.\n";
-    for (size_t i = 0; i < batchSize; ++i)
-    {
-      for (size_t h = 0; h < numHeads; ++h)
-      {
-          scores.slice(i * numHeads + h) += repmat(keyPaddingMask.row(i), tgtSeqLen, 1).t();
-      }
-    }
+    scores.each_slice() += repmat(keyPaddingMask, tgtSeqLen, 1);
   }
 
   for (size_t i = 0; i < numHeads * batchSize; ++i)
@@ -177,7 +164,7 @@ Forward(const MatType& input, MatType& output)
   // Calculate the attention output i.e. matrix multiplication of softmax
   // output and vProj.
   // The shape of attnOutput : (tgtSeqLen, headDim, numHeads * batchSize).
-  attnOut = MultiplyCube2Cube(scores, vProj, true, false);
+  attnOut = MultiplyCube2Cube(scores, vProj, false, false);
 
   // Now we will concatenate output of all the heads i.e. we will reshape
   // attnOut to (tgtSeqLen, embedDim, batchSize).
@@ -186,7 +173,7 @@ Forward(const MatType& input, MatType& output)
   // The final output is the linear projection of attention output.
   for (size_t i = 0; i < batchSize; ++i)
   {
-    output.col(i) = vectorise(trans(attnOut.slice(i) * outWt.t()
+    output.col(i) = vectorise(trans(attnOut.slice(i) * outWt
         + repmat(outBias, tgtSeqLen, 1)));
   }
 }
