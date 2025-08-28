@@ -412,13 +412,7 @@ void DAGNetwork<
     {
       // numParents guaranteed to be > 1
       if (layerAxes.count(currentLayer) == 0)
-      {
-        std::ostringstream errorMessage;
-        errorMessage << "DAGNetwork::ComputeOutputDimensions(): "
-                        "Axis does not exist for layer "
-                     << currentLayer << ".";
-        throw std::logic_error(errorMessage.str());
-      }
+        layerAxes.insert({ currentLayer, 0 });
 
       const size_t numOutputDimensions =
         network[firstParent]->OutputDimensions().size();

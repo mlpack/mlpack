@@ -189,7 +189,8 @@ TEST_CASE("DAGNetworkUseNetworkMatType", "[DAGNetworkTest]")
 void CheckConcatenation(arma::mat& input,
                         arma::mat& expectedOutput,
                         std::vector<size_t>& inputDimensions,
-                        size_t axis)
+                        size_t axis,
+                        bool useAxis = true)
 {
   DAGNetwork<MeanSquaredError, ConstInitialization> model =
     DAGNetwork(MeanSquaredError(), ConstInitialization(1.0f));
@@ -204,7 +205,9 @@ void CheckConcatenation(arma::mat& input,
   model.Connect(a, b);
   model.Connect(b, c);
   model.Connect(a, c);
-  model.SetAxis(c, axis);
+
+  if (useAxis)
+    model.SetAxis(c, axis);
 
   model.Predict(input, testOutput);
   CheckMatrices(testOutput, expectedOutput);
@@ -389,23 +392,17 @@ TEST_CASE("DAGNetworkCheckCycle", "[DAGNetworkTest]")
 
 TEST_CASE("DAGNetworkNoAxisForConcatenation", "[DAGNetworkTest]")
 {
-  DAGNetwork model;
-  model.InputDimensions() = { 6 };
+  arma::mat input = arma::mat({
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+  }).t();
 
-  size_t layer0 = model.Add<Linear>(10);
-  size_t layer1 = model.Add<Linear>(10);
-  size_t layer2 = model.Add<Linear>(10);
-  size_t layer3 = model.Add<Linear>(10);
+  arma::mat expectedOutput = arma::mat({
+    0, 1, 0, 1, 2, 3, 2, 3, 4, 5, 4, 5, 6, 7, 6, 7,
+    8, 9, 8, 9, 10, 11, 10, 11, 12, 13, 12, 13, 14, 15, 14, 15
+  }).t();
 
-  model.Connect(layer0, layer1);
-  model.Connect(layer0, layer2);
-  model.Connect(layer2, layer3);
-  model.Connect(layer1, layer3);
-
-  arma::mat testInput = arma::ones(6);
-  arma::mat testOutput;
-
-  REQUIRE_THROWS_AS(model.Predict(testInput, testOutput), std::logic_error);
+  std::vector<size_t> inputDimensions = { 2, 2, 2, 2 };
+  CheckConcatenation(input, expectedOutput, inputDimensions, 0, false);
 }
 
 TEST_CASE("DAGNetworkConcatenationAxisOutOfBounds", "[DAGNetworkTest]")

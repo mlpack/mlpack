@@ -29,7 +29,9 @@ namespace mlpack {
  * A network can be created by using the `Add()` method to add
  * layers to the network. Each layer is then linked using `Connect()`.
  * A node with multiple parents will concatenate the output of its
- * parents along a specified axis.
+ * parents along a specified axis. You can specify the axis of
+ * concatenation with `SetAxis`. If the axis is not specifed, the default
+ * axis will be used, which is 0.
  *
  * A DAGNetwork cannot have any cycles. Creating a network with a cycle will
  * result in an error.
