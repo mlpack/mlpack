@@ -31,6 +31,11 @@ namespace mlpack {
  * A node with multiple parents will concatenate the output of its
  * parents along a specified axis.
  *
+ * A DAGNetwork cannot have any cycles. Creating a network with a cycle will
+ * result in an error.
+ *
+ * A DAGNetwork can only have one input layer and one output layer.
+ *
  * Although the actual types passed as input will be matrix objects with one
  * data point per column, each data point can be a tensor of arbitrary shape.
  * If data points are not 1-dimensional vectors, then set the shape of the input
