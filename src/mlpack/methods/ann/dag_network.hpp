@@ -84,7 +84,6 @@ class DAGNetwork
   // Destructor: delete all layers.
   ~DAGNetwork()
   {
-    DeleteExtraDeltas();
     for (size_t i = 0; i < network.size(); i++)
       delete network[i];
   }
@@ -547,26 +546,6 @@ class DAGNetwork
   double Loss() const;
 
   /**
-   * Delete extra deltas allocated in `InitializeBackwardPassMemory`
-   */
-  void DeleteExtraDeltas()
-  {
-    if (!extraDeltasAllocated)
-      return;
-
-    for (size_t i = 0; i < sortedNetwork.size(); i++)
-    {
-      size_t layerIndex = sortedNetwork[i];
-      if (childrenList.at(layerIndex).size() > 1)
-        delete outputDeltas[i];
-
-      if (parentsList.at(layerIndex).size() > 1)
-        delete inputDeltas[i];
-    }
-    extraDeltasAllocated = false;
-  }
-
-  /**
    * Check if the optimizer has MaxIterations() parameter, if it does then check
    * if its value is less than the number of datapoints in the dataset.
    *
@@ -673,14 +652,14 @@ class DAGNetwork
   std::vector<MatType> layerDeltas;
 
   // A layers output deltas. Uses sortedNetwork indices as keys.
-  std::unordered_map<size_t, MatType*> outputDeltas;
+  std::unordered_map<size_t, MatType> outputDeltas;
 
   // A layers input deltas. Uses sortedNetwork indices as keys.
-  std::unordered_map<size_t, MatType*> inputDeltas;
+  std::unordered_map<size_t, MatType> inputDeltas;
 
   // A layers accumulated deltas, for layers with multiple children.
   // Uses sortedNetwork indices as keys.
-  std::unordered_map<size_t, MatType*> accumulatedDeltas;
+  std::unordered_map<size_t, MatType> accumulatedDeltas;
 
   // Gradient aliases for each layer.
   std::vector<MatType> layerGradients;
