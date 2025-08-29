@@ -258,8 +258,8 @@ TEMPLATE_TEST_CASE("HammingLossBoundNonLinearSepData", "[AdaBoostTest]", mat,
  * dataset.  It checks if the error returned by running a single instance of the
  * weak learner is close to that of a boosted weak learner using AdaBoost.
  */
-TEMPLATE_TEST_CASE("WeakLearnerErrorNonLinearSepData", "[AdaBoostTest]", mat,
-    fmat)
+TEMPLATE_TEST_CASE("WeakLearnerErrorNonLinearSepData", "[AdaBoostTest][long]",
+    mat, fmat)
 {
   using MatType = TestType;
   using eT = typename MatType::elem_type;
@@ -491,8 +491,8 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorVertebralColumn_DS", "[AdaBoostTest]", mat,
  * dataset.  It checks whether the hamming loss breaches the upperbound, which
  * is provided by ztAccumulator.  This is for the weak learner: decision stumps.
  */
-TEMPLATE_TEST_CASE("HammingLossBoundNonLinearSepData_DS", "[AdaBoostTest]", mat,
-    fmat)
+TEMPLATE_TEST_CASE("HammingLossBoundNonLinearSepData_DS",
+    "[AdaBoostTest][long]", mat, fmat)
 {
   using MatType = TestType;
   using eT = typename MatType::elem_type;
@@ -585,7 +585,8 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorNonLinearSepData_DS", "[AdaBoostTest]", mat,
  * dataset.  It tests the Classify function and checks for a satisfactory error
  * rate.
  */
-TEMPLATE_TEST_CASE("ClassifyTest_VERTEBRALCOL", "[AdaBoostTest]", mat, fmat)
+TEMPLATE_TEST_CASE("ClassifyTest_VERTEBRALCOL", "[AdaBoostTest][long]", mat,
+    fmat)
 {
   using MatType = TestType;
   using eT = typename MatType::elem_type;
@@ -860,7 +861,8 @@ TEMPLATE_TEST_CASE("TrainTest", "[AdaBoostTest]", mat, fmat)
   REQUIRE(lError <= 0.30);
 }
 
-TEMPLATE_TEST_CASE("PerceptronSerializationTest", "[AdaBoostTest]", fmat, mat)
+TEMPLATE_TEST_CASE("PerceptronSerializationTest", "[AdaBoostTest][long]", fmat,
+    mat)
 {
   using MatType = TestType;
 
@@ -968,7 +970,8 @@ TEMPLATE_TEST_CASE("ID3DecisionStumpSerializationTest", "[AdaBoostTest]", mat,
   }
 }
 
-TEMPLATE_TEST_CASE("AdaBoostSinglePointClassify", "[AdaBoostTest]", mat, fmat)
+TEMPLATE_TEST_CASE("AdaBoostSinglePointClassify", "[AdaBoostTest][long]", mat,
+    fmat)
 {
   using MatType = TestType;
 
@@ -991,8 +994,8 @@ TEMPLATE_TEST_CASE("AdaBoostSinglePointClassify", "[AdaBoostTest]", mat, fmat)
   }
 }
 
-TEMPLATE_TEST_CASE("AdaBoostSinglePointClassifyWithProbs", "[AdaBoostTest]",
-    mat, fmat)
+TEMPLATE_TEST_CASE("AdaBoostSinglePointClassifyWithProbs",
+    "[AdaBoostTest][long]", mat, fmat)
 {
   using MatType = TestType;
   using eT = typename MatType::elem_type;
@@ -1059,7 +1062,7 @@ TEMPLATE_TEST_CASE("AdaBoostParamsConstructor", "[AdaBoostTest]", fmat, mat)
 }
 
 // Ensure that all Train() overloads work correctly.
-TEMPLATE_TEST_CASE("AdaBoostTrainOverloads", "[AdaBoostTest]", fmat, mat)
+TEMPLATE_TEST_CASE("AdaBoostTrainOverloads", "[AdaBoostTest][long]", fmat, mat)
 {
   using MatType = TestType;
 

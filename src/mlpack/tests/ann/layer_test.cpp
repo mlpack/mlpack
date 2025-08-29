@@ -54,3 +54,4 @@
 #include "layer/ftswish.cpp"
 #include "layer/layer_norm.cpp"
 #include "layer/multihead_attention.cpp"
+#include "layer/sum_reduce.cpp"

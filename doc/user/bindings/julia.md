@@ -220,7 +220,7 @@ julia> _, test_predictions, stds =
 ### See also
 
  - [Bayesian Interpolation](https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf)
- - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
+ - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
  - [BayesianLinearRegression C++ class documentation](../../user/methods/bayesian_linear_regression.md)
 
 ## cf()
@@ -1216,6 +1216,74 @@ julia> _, predictions, class_probs =
  - [random_forest()](#random_forest)
  - [Mining High-Speed Data Streams (pdf)](http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf)
  - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
+
+## image_converter()
+{: #image_converter }
+
+#### Image Converter
+{: #image_converter_descr }
+
+```julia
+julia> using mlpack: image_converter
+julia> output = image_converter(input;
+                                channels=0, dataset=zeros(0, 0), height=0,
+                                quality=90, save=false, verbose=false, width=0)
+```
+
+A utility to load an image or set of images into a single dataset that can then be used by other mlpack methods and utilities. This can also unpack an image dataset into individual files, for instance after mlpack methods have been used. [Detailed documentation](#image_converter_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `channels` | [`Int`](#doc_Int) | Number of channels in the image. | `0` |
+| `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `dataset` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Input matrix to save as images. | `zeros(0, 0)` |
+| `height` | [`Int`](#doc_Int) | Height of the images. | `0` |
+| `input` | [`Array{String, 1}`](#doc_Array_String__1_) | Image filenames which have to be loaded/saved. | `**--**` |
+| `quality` | [`Int`](#doc_Int) | Compression of the image if saved as jpg (0-100). | `90` |
+| `save` | [`Bool`](#doc_Bool) | Save a dataset as images. | `false` |
+| `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+| `width` | [`Int`](#doc_Int) | Width of the image. | `0` |
+
+### Output options
+
+Results are returned as a tuple, and can be unpacked directly into return values or stored directly as a tuple; undesired results can be ignored with the _ keyword.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save images data to, Onlyneeded if you are specifying 'save' option. | 
+
+### Detailed documentation
+{: #image_converter_detailed-documentation }
+
+This utility takes an image or an array of images and loads them to a matrix. You can optionally specify the height `height` width `width` and channel `channels` of the images that needs to be loaded; otherwise, these parameters will be automatically detected from the image.
+There are other options too, that can be specified such as `quality`.
+
+You can also provide a dataset and save them as images using `dataset` and `save` as an parameter.
+
+### Example
+ An example to load an image : 
+
+```julia
+julia> Y = image_converter(X; channels=3, height=256, width=256)
+```
+
+ An example to save an image is :
+
+```julia
+julia> using CSV
+julia> Y = CSV.read("Y.csv")
+julia> _ = image_converter(X; channels=3, dataset=Y, height=256,
+            save=1, width=256)
+```
+
+### See also
+
+ - [preprocess_binarize()](#preprocess_binarize)
+ - [preprocess_describe()](#preprocess_describe)
 
 ## kde()
 {: #kde }
@@ -3464,7 +3532,7 @@ julia> _, predictions, _ = adaboost(input_model=model,
 ### See also
 
  - [AdaBoost on Wikipedia](https://en.wikipedia.org/wiki/AdaBoost)
- - [Improved boosting algorithms using confidence-rated predictions (pdf)](http://rob.schapire.net/papers/SchapireSi98.pdf)
+ - [Improved boosting algorithms using confidence-rated predictions (pdf)](http://www.schapire.net/papers/SchapireSi98.pdf)
  - [Perceptron](#perceptron)
  - [Decision Trees](#decision_tree)
  - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
@@ -3547,72 +3615,4 @@ julia> _, X_test_responses = linear_regression(input_model=lr_model,
  - [lars()](#lars)
  - [Linear regression on Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
  - [LinearRegression C++ class documentation](../../user/methods/linear_regression.md)
-
-## image_converter()
-{: #image_converter }
-
-#### Image Converter
-{: #image_converter_descr }
-
-```julia
-julia> using mlpack: image_converter
-julia> output = image_converter(input;
-                                channels=0, dataset=zeros(0, 0), height=0,
-                                quality=90, save=false, verbose=false, width=0)
-```
-
-A utility to load an image or set of images into a single dataset that can then be used by other mlpack methods and utilities. This can also unpack an image dataset into individual files, for instance after mlpack methods have been used. [Detailed documentation](#image_converter_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `channels` | [`Int`](#doc_Int) | Number of channels in the image. | `0` |
-| `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `dataset` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Input matrix to save as images. | `zeros(0, 0)` |
-| `height` | [`Int`](#doc_Int) | Height of the images. | `0` |
-| `input` | [`Array{String, 1}`](#doc_Array_String__1_) | Image filenames which have to be loaded/saved. | `**--**` |
-| `quality` | [`Int`](#doc_Int) | Compression of the image if saved as jpg (0-100). | `90` |
-| `save` | [`Bool`](#doc_Bool) | Save a dataset as images. | `false` |
-| `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-| `width` | [`Int`](#doc_Int) | Width of the image. | `0` |
-
-### Output options
-
-Results are returned as a tuple, and can be unpacked directly into return values or stored directly as a tuple; undesired results can be ignored with the _ keyword.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save images data to, Onlyneeded if you are specifying 'save' option. | 
-
-### Detailed documentation
-{: #image_converter_detailed-documentation }
-
-This utility takes an image or an array of images and loads them to a matrix. You can optionally specify the height `height` width `width` and channel `channels` of the images that needs to be loaded; otherwise, these parameters will be automatically detected from the image.
-There are other options too, that can be specified such as `quality`.
-
-You can also provide a dataset and save them as images using `dataset` and `save` as an parameter.
-
-### Example
- An example to load an image : 
-
-```julia
-julia> Y = image_converter(X; channels=3, height=256, width=256)
-```
-
- An example to save an image is :
-
-```julia
-julia> using CSV
-julia> Y = CSV.read("Y.csv")
-julia> _ = image_converter(X; channels=3, dataset=Y, height=256,
-            save=1, width=256)
-```
-
-### See also
-
- - [preprocess_binarize()](#preprocess_binarize)
- - [preprocess_describe()](#preprocess_describe)
 

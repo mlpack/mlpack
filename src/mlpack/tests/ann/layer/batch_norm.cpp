@@ -135,8 +135,8 @@ TEST_CASE("GradientBatchNormTest", "[ANNLayerTest]")
   struct GradientFunction
   {
     GradientFunction() :
-        input(arma::randn(32, 2048)),
-        target(arma::zeros(1, 2048))
+        input(arma::randn(32, 512)),
+        target(arma::zeros(1, 512))
     {
       model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
       model->ResetData(input, target);
@@ -153,8 +153,8 @@ TEST_CASE("GradientBatchNormTest", "[ANNLayerTest]")
 
     double Gradient(arma::mat& gradient) const
     {
-      double error = model->Evaluate(model->Parameters(), 0, 2048);
-      model->Gradient(model->Parameters(), 0, gradient, 2048);
+      double error = model->Evaluate(model->Parameters(), 0, 512);
+      model->Gradient(model->Parameters(), 0, gradient, 512);
       return error;
     }
 

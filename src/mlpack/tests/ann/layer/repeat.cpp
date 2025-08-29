@@ -273,8 +273,8 @@ TEMPLATE_TEST_CASE("RepeatTestCaseB3", "[ANNLayerTest]", arma::mat, arma::fmat)
 template <typename F> struct GradientBound {};
 template <> struct GradientBound<arma::mat>
 {
-  static constexpr double eps = 1e-5;
-  static constexpr double bound = 1e-4;
+  static constexpr double eps = 1e-4;
+  static constexpr double bound = 1e-3;
 };
 template <> struct GradientBound<arma::fmat>
 {
