@@ -20,38 +20,8 @@
 using namespace mlpack;
 
 /*
- * Implementation of the convolution function test.
- *
- * @param input Input used to perform the convolution.
- * @param filter Filter used to perform the convolution.
- * @param output The reference output data that contains the results of the
- * convolution.
- *
- * @tparam ConvolutionFunction Convolution function used for the check.
- */
-template<class ConvolutionFunction>
-void Convolution2DMethodTest(const arma::mat input,
-                             const arma::mat filter,
-                             const arma::mat output)
-{
-  arma::mat convOutput;
-  ConvolutionFunction::Convolution(input, filter, convOutput);
-
-  // Check the output dimension.
-  bool b = (convOutput.n_rows == output.n_rows) &&
-      (convOutput.n_cols == output.n_cols);
-  REQUIRE(b == 1);
-
-  const double* outputPtr = output.memptr();
-  const double* convOutputPtr = convOutput.memptr();
-
-  for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
-    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-5));
-}
-
-/*
  * Implementation of the convolution function test with custom stride and
- * dilation.  This does not work for every convolution type.
+ * dilation.  Some convolution types only work with 1 stride and dilation.
  *
  * @param input Input used to perform the convolution.
  * @param filter Filter used to perform the convolution.
@@ -68,10 +38,10 @@ template<class ConvolutionFunction>
 void Convolution2DMethodTest(const arma::mat input,
                              const arma::mat filter,
                              const arma::mat output,
-                             const size_t strideW,
-                             const size_t strideH,
-                             const size_t dilationW,
-                             const size_t dilationH)
+                             const size_t strideW = 1,
+                             const size_t strideH = 1,
+                             const size_t dilationW = 1,
+                             const size_t dilationH = 1)
 {
   arma::mat convOutput;
   ConvolutionFunction::Convolution(input, filter, convOutput, strideW, strideH,

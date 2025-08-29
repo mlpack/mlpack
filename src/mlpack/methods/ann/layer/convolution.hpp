@@ -18,6 +18,7 @@
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
+#include <mlpack/methods/ann/convolution_rules/im2col_convolution.hpp>
 #include <mlpack/core/util/to_lower.hpp>
 
 #include "layer.hpp"
