@@ -1,5 +1,5 @@
 # mlpack CLI binding documentation
-test message to make markdown build fail
+
 ## mlpack overview
 
 mlpack is an intuitive, fast, and flexible header-only C++ machine learning library with bindings to other languages.  It aims to provide fast, lightweight implementations of both common and cutting-edge machine learning algorithms.
