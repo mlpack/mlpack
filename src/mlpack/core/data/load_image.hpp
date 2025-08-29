@@ -15,7 +15,7 @@
 
 #include <mlpack/core/stb/stb.hpp>
 
-#include "image_info.hpp"
+#include "image_options.hpp"
 
 namespace mlpack {
 namespace data {
@@ -23,6 +23,10 @@ namespace data {
 /**
  * Image load/save interfaces.
  */
+
+//
+// Old Image loading interface, to be removed in mlpack 5.0.0
+//
 
 /**
  * Load the image file into the given matrix.
@@ -36,8 +40,17 @@ namespace data {
 template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal = false);
+          ImageInfo& opts,
+          const bool fatal)
+{
+  // Use the new implementation.
+  std::cout << "this should not execute Load for Image 2" << std::endl;
+  opts.Fatal() = fatal;
+  opts.Format() = FileType::ImageType;
+  std::vector<std::string> files;
+  files.push_back(filename);
+  return LoadImage(files, matrix, opts);
+}
 
 /**
  * Load the image file into the given matrix.
@@ -51,14 +64,28 @@ bool Load(const std::string& filename,
 template<typename eT>
 bool Load(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal = false);
+          ImageInfo& opts,
+          const bool fatal)
+{
+  // Use the new implementation.
+  std::cout << "this should not execute Load for Image 3" << std::endl;
+  opts.Fatal() = fatal;
+  opts.Format() = FileType::ImageType;
+  return LoadImage(files, matrix, opts);
+}
 
-// Implementation found in load_image.hpp.
-inline bool LoadImage(const std::string& filename,
-                      arma::Mat<unsigned char>& matrix,
-                      ImageInfo& info,
-                      const bool fatal = false);
+/**
+ * Load a set of image files into the given matrix.
+ *
+ * @param files A vector consisting of filenames.
+ * @param matrix Matrix to save the image from.
+ * @param opts An object of ImageOptions class.
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Load(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageOptions& opts);
 
 } // namespace data
 } // namespace mlpack

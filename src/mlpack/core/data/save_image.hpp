@@ -14,7 +14,7 @@
 
 #include <mlpack/core/stb/stb.hpp>
 
-#include "image_info.hpp"
+#include "image_options.hpp"
 
 namespace mlpack {
 namespace data {
@@ -30,9 +30,16 @@ namespace data {
  */
 template<typename eT>
 bool Save(const std::string& filename,
-          arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal = false);
+          const arma::Mat<eT>& matrix,
+          ImageInfo& opts,
+          const bool fatal = false)
+{
+  opts.Fatal() = fatal;
+  opts.Format() = FileType::ImageType;
+  std::vector<std::string> files;
+  files.push_back(filename);
+  return SaveImage(files, matrix, opts);
+}
 
 /**
  * Save the image file from the given matrix.
@@ -45,17 +52,23 @@ bool Save(const std::string& filename,
  */
 template<typename eT>
 bool Save(const std::vector<std::string>& files,
-          arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal = false);
+          const arma::Mat<eT>& matrix,
+          ImageInfo& opts,
+          const bool fatal = false)
+{
+  opts.Fatal() = fatal;
+  opts.Format() = FileType::ImageType;
+  return SaveImage(files, matrix, opts);
+}
 
 /**
  * Helper function to save files.  Implementation in save_image.hpp.
  */
-inline bool SaveImage(const std::string& filename,
-                      arma::Mat<unsigned char>& image,
-                      ImageInfo& info,
-                      const bool fatal = false);
+
+template<typename eT>
+bool Save(const std::vector<std::string>& files,
+          const arma::Mat<eT>& matrix,
+          ImageOptions& opts);
 
 } //namespace data
 } //namespace mlpack
