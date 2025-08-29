@@ -27,7 +27,7 @@ using namespace mlpack;
 TEST_CASE("SimpleMultiheadAttentionTest", "[ANNLayerTest]")
 {
   size_t tLen = 5;
-  size_t sLen = tLen;
+  size_t sLen = 4;
   size_t embedDim = 4;
   size_t numHeads = 2;
   size_t bsz = 3;
@@ -35,21 +35,24 @@ TEST_CASE("SimpleMultiheadAttentionTest", "[ANNLayerTest]")
   arma::mat query = 0.1 * arma::randu(embedDim * tLen, bsz);
   arma::mat output;
 
-  arma::mat attnMask = arma::zeros(tLen, sLen);
-  for (size_t i = 0; i < tLen; ++i)
+  arma::cube attnMask = arma::zeros(sLen, tLen, bsz);
+  for (size_t k = 0; k < bsz; ++k)
   {
-    for (size_t j = 0; j < sLen; ++j)
+    for (size_t i = 0; i < tLen; ++i)
     {
-      if (i < j)
-        attnMask(i, j) = std::numeric_limits<double>::lowest();
+      for (size_t j = 0; j < sLen; ++j)
+      {
+        if (i < j)
+          attnMask(i, j, k) = std::numeric_limits<double>::lowest();
+      }
     }
   }
 
-  arma::mat keyPaddingMask = arma::zeros(1, sLen);
-  keyPaddingMask(sLen - 1) = std::numeric_limits<double>::lowest();
+  arma::mat keyPaddingMask = arma::zeros(sLen, bsz);
+  keyPaddingMask.row(sLen - 1) = std::numeric_limits<double>::lowest();
 
   MultiheadAttention module(tLen, numHeads);
-  module.InputDimensions() = std::vector<size_t>({ embedDim, 2 * sLen + tLen });
+  module.InputDimensions() = std::vector<size_t>({embedDim, 2 * sLen + tLen});
   module.ComputeOutputDimensions();
   arma::mat weights(module.WeightSize(), 1);
   weights.randu();
@@ -97,7 +100,7 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
     arma::mat input = join_cols(join_cols(query, query), query);
 
     MultiheadAttention module(tgtSeqLen, nHeads);
-    module.InputDimensions() = std::vector<size_t>({ embedDim, 3 * tgtSeqLen });
+    module.InputDimensions() = std::vector<size_t>({embedDim, 3 * tgtSeqLen});
     module.ComputeOutputDimensions();
     arma::mat weights(module.WeightSize(), 1);
     weights.randu();
@@ -122,7 +125,7 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
 
     MultiheadAttention module(tgtSeqLen, nHeads);
     module.InputDimensions() = std::vector<size_t>(
-        { embedDim, 2 * srcSeqLen + tgtSeqLen });
+        {embedDim, 2 * srcSeqLen + tgtSeqLen});
     module.ComputeOutputDimensions();
     arma::mat weights(module.WeightSize(), 1);
     weights.randu();
@@ -148,7 +151,7 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
 
     MultiheadAttention module(tgtSeqLen, nHeads);
     module.InputDimensions() = std::vector<size_t>(
-        { embedDim, 2 * srcSeqLen + tgtSeqLen });
+        {embedDim, 2 * srcSeqLen + tgtSeqLen});
     module.ComputeOutputDimensions();
     arma::mat weights(module.WeightSize(), 1);
     weights.randu();
@@ -166,13 +169,12 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
 {
   struct GradientFunction
   {
-    GradientFunction() :
-        tgtSeqLen(2),
-        srcSeqLen(2),
-        embedDim(4),
-        nHeads(2),
-        vocabSize(5),
-        batchSize(2)
+    GradientFunction() : tgtSeqLen(2),
+                         srcSeqLen(2),
+                         embedDim(4),
+                         nHeads(2),
+                         vocabSize(5),
+                         batchSize(2)
     {
       input = arma::randu(embedDim * (tgtSeqLen + 2 * srcSeqLen), batchSize);
       target = arma::zeros(vocabSize, batchSize);
@@ -182,17 +184,20 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
         target(i) = label;
       }
 
-      attnMask = arma::zeros(tgtSeqLen, srcSeqLen);
-      for (size_t i = 0; i < tgtSeqLen; ++i)
+      attnMask = arma::zeros(srcSeqLen, tgtSeqLen, batchSize);
+      for (size_t k = 0; k < batchSize; ++k)
       {
-        for (size_t j = 0; j < srcSeqLen; ++j)
+        for (size_t i = 0; i < tgtSeqLen; ++i)
         {
-          if (i < j)
-            attnMask(i, j) = std::numeric_limits<double>::lowest();
+          for (size_t j = 0; j < srcSeqLen; ++j)
+          {
+            if (i < j)
+              attnMask(i, j, k) = std::numeric_limits<double>::lowest();
+          }
         }
       }
 
-      keyPaddingMask = arma::zeros(1, srcSeqLen);
+      keyPaddingMask = arma::zeros(srcSeqLen, batchSize);
       keyPaddingMask(srcSeqLen - 1) = std::numeric_limits<double>::lowest();
 
       model = new FFN<NegativeLogLikelihood, XavierInitialization>();
@@ -209,19 +214,20 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
       delete model;
     }
 
-    double Gradient(arma::mat& gradient)
+    double Gradient(arma::mat &gradient)
     {
       double error = model->Evaluate(model->Parameters(), 0, batchSize);
       model->Gradient(model->Parameters(), 0, gradient, batchSize);
       return error;
     }
 
-    arma::mat& Parameters() { return model->Parameters(); }
+    arma::mat &Parameters() { return model->Parameters(); }
 
-    FFN<NegativeLogLikelihood, XavierInitialization>* model;
+    FFN<NegativeLogLikelihood, XavierInitialization> *model;
     // MultiheadAttention* attnModule;
 
-    arma::mat input, target, attnMask, keyPaddingMask;
+    arma::mat input, target, keyPaddingMask;
+    arma::cube attnMask;
     const size_t tgtSeqLen;
     const size_t srcSeqLen;
     const size_t embedDim;

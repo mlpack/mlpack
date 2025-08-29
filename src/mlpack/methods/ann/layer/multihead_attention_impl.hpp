@@ -146,7 +146,7 @@ Forward(const MatType& input, MatType& output)
     {
       for (size_t h = 0; h < numHeads; ++h)
       {
-          scores.slice(i * numHeads + h) += attnMask.slice(i).t();
+          scores.slice(i * numHeads + h) += attnMask.slice(i);
       }
     }
   }
@@ -164,7 +164,7 @@ Forward(const MatType& input, MatType& output)
     {
       for (size_t h = 0; h < numHeads; ++h)
       {
-          scores.slice(i * numHeads + h) += repmat(keyPaddingMask.row(i), tgtSeqLen, 1).t();
+          scores.slice(i * numHeads + h) += repmat(keyPaddingMask.row(i), tgtSeqLen, 1);
       }
     }
   }
