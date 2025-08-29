@@ -214,16 +214,16 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
       delete model;
     }
 
-    double Gradient(arma::mat &gradient)
+    double Gradient(arma::mat& gradient)
     {
       double error = model->Evaluate(model->Parameters(), 0, batchSize);
       model->Gradient(model->Parameters(), 0, gradient, batchSize);
       return error;
     }
 
-    arma::mat &Parameters() { return model->Parameters(); }
+    arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<NegativeLogLikelihood, XavierInitialization> *model;
+    FFN<NegativeLogLikelihood, XavierInitialization>* model;
     // MultiheadAttention* attnModule;
 
     arma::mat input, target, keyPaddingMask;
