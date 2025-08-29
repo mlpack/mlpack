@@ -81,6 +81,8 @@ MultiLayer<MatType>& MultiLayer<MatType>::operator=(const MultiLayer& other)
   {
     Layer<MatType>::operator=(other);
 
+    for (size_t i = 0; i < network.size(); ++i)
+      delete network[i];
     network.clear();
     layerOutputs.clear();
     layerDeltas.clear();
@@ -120,6 +122,8 @@ MultiLayer<MatType>& MultiLayer<MatType>::operator=(MultiLayer&& other)
     totalInputSize = std::move(other.totalInputSize);
     totalOutputSize = std::move(other.totalOutputSize);
 
+    for (size_t i = 0; i < network.size(); ++i)
+      delete network[i];
     network = std::move(other.network);
 
     layerOutputs.resize(network.size(), MatType());

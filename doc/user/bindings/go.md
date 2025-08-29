@@ -262,7 +262,7 @@ _, test_predictions, stds := mlpack.BayesianLinearRegression(param)
 ### See also
 
  - [Bayesian Interpolation](https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf)
- - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
+ - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
  - [BayesianLinearRegression C++ class documentation](../../user/methods/bayesian_linear_regression.md)
 
 ## Cf()
@@ -1468,6 +1468,98 @@ _, predictions, class_probs := mlpack.HoeffdingTree(param)
  - [RandomForest()](#random_forest)
  - [Mining High-Speed Data Streams (pdf)](http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf)
  - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
+
+## ImageConverter()
+{: #image_converter }
+
+#### Image Converter
+{: #image_converter_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for ImageConverter().
+param := mlpack.ImageConverterOptions()
+param.Channels = 0
+param.Dataset = mat.NewDense(1, 1, nil)
+param.Height = 0
+param.Quality = 90
+param.Save = false
+param.Verbose = false
+param.Width = 0
+
+output := mlpack.ImageConverter(input, param)
+```
+
+A utility to load an image or set of images into a single dataset that can then be used by other mlpack methods and utilities. This can also unpack an image dataset into individual files, for instance after mlpack methods have been used. [Detailed documentation](#image_converter_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `Channels` | [`int`](#doc_int) | Number of channels in the image. | `0` |
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `Dataset` | [`*mat.Dense`](#doc_a__mat_Dense) | Input matrix to save as images. | `mat.NewDense(1, 1, nil)` |
+| `Height` | [`int`](#doc_int) | Height of the images. | `0` |
+| `input` | [`array of strings`](#doc_array_of_strings) | Image filenames which have to be loaded/saved. | `**--**` |
+| `Quality` | [`int`](#doc_int) | Compression of the image if saved as jpg (0-100). | `90` |
+| `Save` | [`bool`](#doc_bool) | Save a dataset as images. | `false` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+| `Width` | [`int`](#doc_int) | Width of the image. | `0` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save images data to, Onlyneeded if you are specifying 'save' option. | 
+
+### Detailed documentation
+{: #image_converter_detailed-documentation }
+
+This utility takes an image or an array of images and loads them to a matrix. You can optionally specify the height `Height` width `Width` and channel `Channels` of the images that needs to be loaded; otherwise, these parameters will be automatically detected from the image.
+There are other options too, that can be specified such as `Quality`.
+
+You can also provide a dataset and save them as images using `Dataset` and `Save` as an parameter.
+
+### Example
+ An example to load an image : 
+
+```go
+// Initialize optional parameters for ImageConverter().
+param := mlpack.ImageConverterOptions()
+param.Height = 256
+param.Width = 256
+param.Channels = 3
+
+Y := mlpack.ImageConverter(X, param)
+```
+
+ An example to save an image is :
+
+```go
+// Initialize optional parameters for ImageConverter().
+param := mlpack.ImageConverterOptions()
+param.Height = 256
+param.Width = 256
+param.Channels = 3
+param.Dataset = Y
+param.Save = true
+
+_ := mlpack.ImageConverter(X, param)
+```
+
+### See also
+
+ - [PreprocessBinarize()](#preprocess_binarize)
+ - [PreprocessDescribe()](#preprocess_describe)
 
 ## Kde()
 {: #kde }
@@ -4248,7 +4340,7 @@ _, predictions, _ := mlpack.Adaboost(param)
 ### See also
 
  - [AdaBoost on Wikipedia](https://en.wikipedia.org/wiki/AdaBoost)
- - [Improved boosting algorithms using confidence-rated predictions (pdf)](http://rob.schapire.net/papers/SchapireSi98.pdf)
+ - [Improved boosting algorithms using confidence-rated predictions (pdf)](http://www.schapire.net/papers/SchapireSi98.pdf)
  - [Perceptron](#perceptron)
  - [Decision Trees](#decision_tree)
  - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
@@ -4346,96 +4438,4 @@ _, X_test_responses := mlpack.LinearRegression(param)
  - [Lars()](#lars)
  - [Linear regression on Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
  - [LinearRegression C++ class documentation](../../user/methods/linear_regression.md)
-
-## ImageConverter()
-{: #image_converter }
-
-#### Image Converter
-{: #image_converter_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for ImageConverter().
-param := mlpack.ImageConverterOptions()
-param.Channels = 0
-param.Dataset = mat.NewDense(1, 1, nil)
-param.Height = 0
-param.Quality = 90
-param.Save = false
-param.Verbose = false
-param.Width = 0
-
-output := mlpack.ImageConverter(input, param)
-```
-
-A utility to load an image or set of images into a single dataset that can then be used by other mlpack methods and utilities. This can also unpack an image dataset into individual files, for instance after mlpack methods have been used. [Detailed documentation](#image_converter_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `Channels` | [`int`](#doc_int) | Number of channels in the image. | `0` |
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `Dataset` | [`*mat.Dense`](#doc_a__mat_Dense) | Input matrix to save as images. | `mat.NewDense(1, 1, nil)` |
-| `Height` | [`int`](#doc_int) | Height of the images. | `0` |
-| `input` | [`array of strings`](#doc_array_of_strings) | Image filenames which have to be loaded/saved. | `**--**` |
-| `Quality` | [`int`](#doc_int) | Compression of the image if saved as jpg (0-100). | `90` |
-| `Save` | [`bool`](#doc_bool) | Save a dataset as images. | `false` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-| `Width` | [`int`](#doc_int) | Width of the image. | `0` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save images data to, Onlyneeded if you are specifying 'save' option. | 
-
-### Detailed documentation
-{: #image_converter_detailed-documentation }
-
-This utility takes an image or an array of images and loads them to a matrix. You can optionally specify the height `Height` width `Width` and channel `Channels` of the images that needs to be loaded; otherwise, these parameters will be automatically detected from the image.
-There are other options too, that can be specified such as `Quality`.
-
-You can also provide a dataset and save them as images using `Dataset` and `Save` as an parameter.
-
-### Example
- An example to load an image : 
-
-```go
-// Initialize optional parameters for ImageConverter().
-param := mlpack.ImageConverterOptions()
-param.Height = 256
-param.Width = 256
-param.Channels = 3
-
-Y := mlpack.ImageConverter(X, param)
-```
-
- An example to save an image is :
-
-```go
-// Initialize optional parameters for ImageConverter().
-param := mlpack.ImageConverterOptions()
-param.Height = 256
-param.Width = 256
-param.Channels = 3
-param.Dataset = Y
-param.Save = true
-
-_ := mlpack.ImageConverter(X, param)
-```
-
-### See also
-
- - [PreprocessBinarize()](#preprocess_binarize)
- - [PreprocessDescribe()](#preprocess_describe)
 

@@ -266,7 +266,7 @@ TEST_CASE("IrisDataset", "[KSInitialization]")
  * Kathirvalavakumar Subavathi Initialization Test case for
  * the Non Linear Function Approximation Problem.
  */
-TEST_CASE("NonLinearFunctionApproximation", "[KSInitialization]")
+TEST_CASE("NonLinearFunctionApproximation", "[KSInitialization][long]")
 {
   double trainErrorThreshold = 0.0045;
   double validationErrorThreshold = 0.0045;

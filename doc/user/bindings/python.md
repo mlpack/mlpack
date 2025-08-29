@@ -221,7 +221,7 @@ Because the estimator computes a predictive distribution instead of a simple poi
 ### See also
 
  - [Bayesian Interpolation](https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf)
- - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
+ - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
  - [BayesianLinearRegression C++ class documentation](../../user/methods/bayesian_linear_regression.md)
 
 ## cf()
@@ -1236,6 +1236,75 @@ Then, this tree may be used to make predictions on the test set `'test_set'`, sa
  - [random_forest()](#random_forest)
  - [Mining High-Speed Data Streams (pdf)](http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf)
  - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
+
+## image_converter()
+{: #image_converter }
+
+#### Image Converter
+{: #image_converter_descr }
+
+```python
+>>> from mlpack import image_converter
+>>> d = image_converter(channels=0, check_input_matrices=False,
+        copy_all_inputs=False, dataset=np.empty([0, 0]), height=0, input_=[],
+        quality=90, save=False, verbose=False, width=0)
+>>> output = d['output']
+```
+
+A utility to load an image or set of images into a single dataset that can then be used by other mlpack methods and utilities. This can also unpack an image dataset into individual files, for instance after mlpack methods have been used. [Detailed documentation](#image_converter_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `channels` | [`int`](#doc_int) | Number of channels in the image. | `0` |
+| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
+| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
+| `dataset` | [`matrix`](#doc_matrix) | Input matrix to save as images. | `np.empty([0, 0])` |
+| `height` | [`int`](#doc_int) | Height of the images. | `0` |
+| `input_` | [`list of strs`](#doc_list_of_strs) | Image filenames which have to be loaded/saved. | `**--**` |
+| `quality` | [`int`](#doc_int) | Compression of the image if saved as jpg (0-100). | `90` |
+| `save` | [`bool`](#doc_bool) | Save a dataset as images. | `False` |
+| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
+| `width` | [`int`](#doc_int) | Width of the image. | `0` |
+
+### Output options
+
+Results are returned in a Python dictionary.  The keys of the dictionary are the names of the output parameters.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `output` | [`matrix`](#doc_matrix) | Matrix to save images data to, Onlyneeded if you are specifying 'save' option. | 
+
+### Detailed documentation
+{: #image_converter_detailed-documentation }
+
+This utility takes an image or an array of images and loads them to a matrix. You can optionally specify the height `height` width `width` and channel `channels` of the images that needs to be loaded; otherwise, these parameters will be automatically detected from the image.
+There are other options too, that can be specified such as `quality`.
+
+You can also provide a dataset and save them as images using `dataset` and `save` as an parameter.
+
+### Example
+ An example to load an image : 
+
+```python
+>>> output = image_converter(input_=X, height=256, width=256, channels=3)
+>>> Y = output['output']
+```
+
+ An example to save an image is :
+
+```python
+>>> image_converter(input_=X, height=256, width=256, channels=3, dataset=Y,
+  save=True)
+```
+
+### See also
+
+ - [preprocess_binarize()](#preprocess_binarize)
+ - [preprocess_describe()](#preprocess_describe)
 
 ## kde()
 {: #kde }
@@ -3615,73 +3684,4 @@ Predictions from model.
 | **type** | **description** |
 |----------|-----------------|
 | [`vector`](#doc_vector) | If --test_file is specified, this matrix is where the predicted responses will be saved. | 
-
-## image_converter()
-{: #image_converter }
-
-#### Image Converter
-{: #image_converter_descr }
-
-```python
->>> from mlpack import image_converter
->>> d = image_converter(channels=0, check_input_matrices=False,
-        copy_all_inputs=False, dataset=np.empty([0, 0]), height=0, input_=[],
-        quality=90, save=False, verbose=False, width=0)
->>> output = d['output']
-```
-
-A utility to load an image or set of images into a single dataset that can then be used by other mlpack methods and utilities. This can also unpack an image dataset into individual files, for instance after mlpack methods have been used. [Detailed documentation](#image_converter_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `channels` | [`int`](#doc_int) | Number of channels in the image. | `0` |
-| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
-| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `dataset` | [`matrix`](#doc_matrix) | Input matrix to save as images. | `np.empty([0, 0])` |
-| `height` | [`int`](#doc_int) | Height of the images. | `0` |
-| `input_` | [`list of strs`](#doc_list_of_strs) | Image filenames which have to be loaded/saved. | `**--**` |
-| `quality` | [`int`](#doc_int) | Compression of the image if saved as jpg (0-100). | `90` |
-| `save` | [`bool`](#doc_bool) | Save a dataset as images. | `False` |
-| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
-| `width` | [`int`](#doc_int) | Width of the image. | `0` |
-
-### Output options
-
-Results are returned in a Python dictionary.  The keys of the dictionary are the names of the output parameters.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `output` | [`matrix`](#doc_matrix) | Matrix to save images data to, Onlyneeded if you are specifying 'save' option. | 
-
-### Detailed documentation
-{: #image_converter_detailed-documentation }
-
-This utility takes an image or an array of images and loads them to a matrix. You can optionally specify the height `height` width `width` and channel `channels` of the images that needs to be loaded; otherwise, these parameters will be automatically detected from the image.
-There are other options too, that can be specified such as `quality`.
-
-You can also provide a dataset and save them as images using `dataset` and `save` as an parameter.
-
-### Example
- An example to load an image : 
-
-```python
->>> output = image_converter(input_=X, height=256, width=256, channels=3)
->>> Y = output['output']
-```
-
- An example to save an image is :
-
-```python
->>> image_converter(input_=X, height=256, width=256, channels=3, dataset=Y,
-  save=True)
-```
-
-### See also
-
- - [preprocess_binarize()](#preprocess_binarize)
- - [preprocess_describe()](#preprocess_describe)
 
