@@ -20,38 +20,8 @@
 using namespace mlpack;
 
 /*
- * Implementation of the convolution function test.
- *
- * @param input Input used to perform the convolution.
- * @param filter Filter used to perform the convolution.
- * @param output The reference output data that contains the results of the
- * convolution.
- *
- * @tparam ConvolutionFunction Convolution function used for the check.
- */
-template<class ConvolutionFunction>
-void Convolution2DMethodTest(const arma::mat input,
-                             const arma::mat filter,
-                             const arma::mat output)
-{
-  arma::mat convOutput;
-  ConvolutionFunction::Convolution(input, filter, convOutput);
-
-  // Check the output dimension.
-  bool b = (convOutput.n_rows == output.n_rows) &&
-      (convOutput.n_cols == output.n_cols);
-  REQUIRE(b == 1);
-
-  const double* outputPtr = output.memptr();
-  const double* convOutputPtr = convOutput.memptr();
-
-  for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
-    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-5));
-}
-
-/*
  * Implementation of the convolution function test with custom stride and
- * dilation.  This does not work for every convolution type.
+ * dilation.  Some convolution types only work with 1 stride and dilation.
  *
  * @param input Input used to perform the convolution.
  * @param filter Filter used to perform the convolution.
@@ -68,10 +38,10 @@ template<class ConvolutionFunction>
 void Convolution2DMethodTest(const arma::mat input,
                              const arma::mat filter,
                              const arma::mat output,
-                             const size_t strideW,
-                             const size_t strideH,
-                             const size_t dilationW,
-                             const size_t dilationH)
+                             const size_t strideW = 1,
+                             const size_t strideH = 1,
+                             const size_t dilationW = 1,
+                             const size_t dilationH = 1)
 {
   arma::mat convOutput;
   ConvolutionFunction::Convolution(input, filter, convOutput, strideW, strideH,
@@ -175,13 +145,17 @@ TEST_CASE("ValidConvolution2DTest", "[ConvolutionTest]")
   Convolution2DMethodTest<NaiveConvolution<ValidConvolution> >(input, filter,
       output);
 
-  // Perform the convolution trough fft.
+  // Perform the convolution through fft.
   Convolution2DMethodTest<FFTConvolution<ValidConvolution> >(input, filter,
       output);
 
   // Perform the convolution using singular value decomposition to
   // speed up the computation.
   Convolution2DMethodTest<SVDConvolution<ValidConvolution> >(input, filter,
+      output);
+
+  // Perform the convolution using im2col.
+  Convolution2DMethodTest<Im2ColConvolution<ValidConvolution> >(input, filter,
       output);
 }
 
@@ -212,13 +186,17 @@ TEST_CASE("FullConvolution2DTest", "[ConvolutionTest]")
   Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
       output);
 
-  // Perform the convolution trough fft.
+  // Perform the convolution through fft.
   Convolution2DMethodTest<FFTConvolution<FullConvolution> >(input, filter,
       output);
 
   // Perform the convolution using singular value decomposition to
   // speed up the computation.
   Convolution2DMethodTest<SVDConvolution<FullConvolution> >(input, filter,
+      output);
+
+  // Perform the convolution using im2col.
+  Convolution2DMethodTest<Im2ColConvolution<FullConvolution> >(input, filter,
       output);
 }
 
@@ -238,16 +216,18 @@ TEST_CASE("ValidConvolution3DTest", "[ConvolutionTest]")
              {  0, 1,  0 },
              { -1, 0,  1 } };
 
-  output = { { -3, -2 },
-             {  8, -3 } };
+  output = { { -6, -4 },
+             { 16, -6 } };
 
   arma::cube inputCube(input.n_rows, input.n_cols, 2);
   inputCube.slice(0) = input;
   inputCube.slice(1) = input;
 
-  arma::cube filterCube(filter.n_rows, filter.n_cols, 2);
+  arma::cube filterCube(filter.n_rows, filter.n_cols, 4);
   filterCube.slice(0) = filter;
   filterCube.slice(1) = filter;
+  filterCube.slice(2) = filter;
+  filterCube.slice(3) = filter;
 
   arma::cube outputCube(output.n_rows, output.n_cols, 2);
   outputCube.slice(0) = output;
@@ -257,13 +237,17 @@ TEST_CASE("ValidConvolution3DTest", "[ConvolutionTest]")
   Convolution3DMethodTest<NaiveConvolution<ValidConvolution> >(inputCube,
       filterCube, outputCube);
 
-  // Perform the convolution trough fft.
+  // Perform the convolution through fft.
   Convolution3DMethodTest<FFTConvolution<ValidConvolution> >(inputCube,
       filterCube, outputCube);
 
   // Perform the convolution using using the singular value decomposition to
   // speed up the computation.
   Convolution3DMethodTest<SVDConvolution<ValidConvolution> >(inputCube,
+      filterCube, outputCube);
+
+  // Perform the convolution using im2col.
+  Convolution3DMethodTest<Im2ColConvolution<ValidConvolution> >(inputCube,
       filterCube, outputCube);
 }
 
@@ -283,20 +267,22 @@ TEST_CASE("FullConvolution3DTest", "[ConvolutionTest]")
              {  1, 1,  1 },
              { -1, 0,  1 } };
 
-  output = { {  1,  2,  2,  2, -3, -4 },
-             {  5,  4,  4, 11,  5,  1 },
-             {  6,  7,  3,  2,  7,  5 },
-             {  1,  9, 12,  3,  1,  4 },
-             { -1,  1, 11, 10,  6,  3 },
-             { -2, -3, -2,  2,  4,  1 } };
+  output = { {  2,  4,  4,  4, -6, -8 },
+             { 10,  8,  8, 22, 10,  2 },
+             { 12, 14,  6,  4, 14, 10 },
+             {  2, 18, 24,  6,  2,  8 },
+             { -2,  2, 22, 20, 12,  6 },
+             { -4, -6, -4,  4,  8,  2 } };
 
   arma::cube inputCube(input.n_rows, input.n_cols, 2);
   inputCube.slice(0) = input;
   inputCube.slice(1) = input;
 
-  arma::cube filterCube(filter.n_rows, filter.n_cols, 2);
+  arma::cube filterCube(filter.n_rows, filter.n_cols, 4);
   filterCube.slice(0) = filter;
   filterCube.slice(1) = filter;
+  filterCube.slice(2) = filter;
+  filterCube.slice(3) = filter;
 
   arma::cube outputCube(output.n_rows, output.n_cols, 2);
   outputCube.slice(0) = output;
@@ -306,13 +292,17 @@ TEST_CASE("FullConvolution3DTest", "[ConvolutionTest]")
   Convolution3DMethodTest<NaiveConvolution<FullConvolution> >(inputCube,
       filterCube, outputCube);
 
-  // Perform the convolution trough fft.
+  // Perform the convolution through fft.
   Convolution3DMethodTest<FFTConvolution<FullConvolution> >(inputCube,
       filterCube, outputCube);
 
   // Perform the convolution using using the singular value decomposition to
   // speed up the computation.
   Convolution3DMethodTest<SVDConvolution<FullConvolution> >(inputCube,
+      filterCube, outputCube);
+
+  // Perform the convolution using im2col.
+  Convolution3DMethodTest<Im2ColConvolution<FullConvolution> >(inputCube,
       filterCube, outputCube);
 }
 
@@ -348,13 +338,17 @@ TEST_CASE("ValidConvolutionBatchTest", "[ConvolutionTest]")
   ConvolutionMethodBatchTest<NaiveConvolution<ValidConvolution> >(input,
       filterCube, outputCube);
 
-  // Perform the convolution trough fft.
+  // Perform the convolution through fft.
   ConvolutionMethodBatchTest<FFTConvolution<ValidConvolution> >(input,
       filterCube, outputCube);
 
   // Perform the convolution using using the singular value decomposition to
   // speed up the computation.
   ConvolutionMethodBatchTest<SVDConvolution<ValidConvolution> >(input,
+      filterCube, outputCube);
+
+  // Perform the convolution using im2col.
+  ConvolutionMethodBatchTest<Im2ColConvolution<ValidConvolution> >(input,
       filterCube, outputCube);
 }
 
@@ -394,13 +388,17 @@ TEST_CASE("FullConvolutionBatchTest", "[ConvolutionTest]")
   ConvolutionMethodBatchTest<NaiveConvolution<FullConvolution> >(input,
       filterCube, outputCube);
 
-  // Perform the convolution trough fft.
+  // Perform the convolution through fft.
   ConvolutionMethodBatchTest<FFTConvolution<FullConvolution> >(input,
       filterCube, outputCube);
 
   // Perform the convolution using using the singular value decomposition to
   // speed up the computation.
   ConvolutionMethodBatchTest<SVDConvolution<FullConvolution> >(input,
+      filterCube, outputCube);
+
+  // Perform the convolution using im2col.
+  ConvolutionMethodBatchTest<Im2ColConvolution<FullConvolution> >(input,
       filterCube, outputCube);
 }
 
@@ -427,6 +425,10 @@ TEST_CASE("Stride2ConvolutionTest", "[ConvolutionTest]")
   // Perform the naive convolution approach.
   Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
       output, 2, 2, 1, 1);
+
+  // Perform the convolution using im2col.
+  Convolution2DMethodTest<Im2ColConvolution<FullConvolution> >(input, filter,
+      output, 2, 2, 1, 1);
 }
 
 TEST_CASE("Stride3ConvolutionTest", "[ConvolutionTest]")
@@ -446,6 +448,10 @@ TEST_CASE("Stride3ConvolutionTest", "[ConvolutionTest]")
 
   // Perform the naive convolution approach.
   Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
+      output, 3, 3, 1, 1);
+
+  // Perform the convolution using im2col.
+  Convolution2DMethodTest<Im2ColConvolution<FullConvolution> >(input, filter,
       output, 3, 3, 1, 1);
 }
 
@@ -467,6 +473,10 @@ TEST_CASE("UnequalStrideConvolutionTest", "[ConvolutionTest]")
 
   // Perform the naive convolution approach.
   Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
+      output, 3, 2, 1, 1);
+
+  // Perform the convolution using im2col.
+  Convolution2DMethodTest<Im2ColConvolution<FullConvolution> >(input, filter,
       output, 3, 2, 1, 1);
 }
 
@@ -491,6 +501,10 @@ TEST_CASE("Dilation2ConvolutionTest", "[ConvolutionTest]")
 
   // Perform the naive convolution approach.
   Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
+      output, 1, 1, 2, 2);
+
+  // Perform the convolution using im2col.
+  Convolution2DMethodTest<Im2ColConvolution<FullConvolution> >(input, filter,
       output, 1, 1, 2, 2);
 }
 
@@ -517,6 +531,10 @@ TEST_CASE("Dilation3ConvolutionTest", "[ConvolutionTest]")
   // Perform the naive convolution approach.
   Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
       output, 1, 1, 3, 3);
+
+  // Perform the convolution using im2col.
+  Convolution2DMethodTest<Im2ColConvolution<FullConvolution> >(input, filter,
+      output, 1, 1, 3, 3);
 }
 
 TEST_CASE("UnequalDilationConvolutionTest", "[ConvolutionTest]")
@@ -541,6 +559,10 @@ TEST_CASE("UnequalDilationConvolutionTest", "[ConvolutionTest]")
   // Perform the naive convolution approach.
   Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
       output, 1, 1, 3, 2);
+
+  // Perform the convolution using im2col.
+  Convolution2DMethodTest<Im2ColConvolution<FullConvolution> >(input, filter,
+      output, 1, 1, 3, 2);
 }
 
 TEST_CASE("DilationAndStrideConvolutionTest", "[ConvolutionTest]")
@@ -561,5 +583,9 @@ TEST_CASE("DilationAndStrideConvolutionTest", "[ConvolutionTest]")
 
   // Perform the naive convolution approach.
   Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
+      output, 2, 2, 2, 2);
+
+  // Perform the convolution using im2col.
+  Convolution2DMethodTest<Im2ColConvolution<FullConvolution> >(input, filter,
       output, 2, 2, 2, 2);
 }

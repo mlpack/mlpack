@@ -52,8 +52,19 @@ class FFTConvolution
   Convolution(const MatType& input,
               const MatType& filter,
               MatType& output,
+              const size_t dW = 1,
+              const size_t dH = 1,
+              const size_t dilationW = 1,
+              const size_t dilationH = 1,
+              const bool appending = false,
               const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
+    // TODO: Add dilation and stride
+    if (dW != 1 || dH != 1)
+      throw std::invalid_argument("FFT convolution does not support stride");
+    if (dilationW != 1 || dilationH != 1)
+      throw std::invalid_argument("FFT convolution does not support dilation");
+
     MatType inputPadded = input;
     MatType filterPadded = filter;
 
@@ -67,8 +78,16 @@ class FFTConvolution
 
     // Extract the region of interest. We don't need to handle the padLastDim in
     // a special way we just cut it out from the output matrix.
-    output = temp.submat(filter.n_rows - 1, filter.n_cols - 1,
-        input.n_rows - 1, input.n_cols - 1);
+    if (appending)
+    {
+      output += temp.submat(filter.n_rows - 1, filter.n_cols - 1,
+          input.n_rows - 1, input.n_cols - 1);
+    }
+    else
+    {
+      output = temp.submat(filter.n_rows - 1, filter.n_cols - 1,
+          input.n_rows - 1, input.n_cols - 1);
+    }
   }
 
   /**
@@ -86,8 +105,19 @@ class FFTConvolution
   Convolution(const MatType& input,
               const MatType& filter,
               MatType& output,
+              const size_t dW = 1,
+              const size_t dH = 1,
+              const size_t dilationW = 1,
+              const size_t dilationH = 1,
+              const bool appending = false,
               const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
+    // TODO: Add dilation and stride
+    if (dW != 1 || dH != 1)
+      throw std::invalid_argument("FFT convolution does not support stride");
+    if (dilationW != 1 || dilationH != 1)
+      throw std::invalid_argument("FFT convolution does not support dilation");
+
     // In case of the full convolution outputRows and outputCols doesn't
     // represent the true output size when the padLastDim parameter is set,
     // instead it's the working size.
@@ -111,9 +141,18 @@ class FFTConvolution
 
     // Extract the region of interest. We don't need to handle the padLastDim
     // parameter in a special way we just cut it out from the output matrix.
-    output = temp.submat(filter.n_rows - 1, filter.n_cols - 1,
-        2 * (filter.n_rows - 1) + input.n_rows - 1,
-        2 * (filter.n_cols - 1) + input.n_cols - 1);
+    if (appending)
+    {
+      output += temp.submat(filter.n_rows - 1, filter.n_cols - 1,
+          2 * (filter.n_rows - 1) + input.n_rows - 1,
+          2 * (filter.n_cols - 1) + input.n_cols - 1);
+    }
+    else
+    {
+      output = temp.submat(filter.n_rows - 1, filter.n_cols - 1,
+          2 * (filter.n_rows - 1) + input.n_rows - 1,
+          2 * (filter.n_cols - 1) + input.n_cols - 1);
+    }
   }
 
   /**
@@ -121,7 +160,9 @@ class FFTConvolution
    * supports input which is even on the last dimension. In case of an odd input
    * width, a user can manually pad the input or specify the padLastDim
    * parameter which takes care of the padding. The filter instead can have any
-   * size.
+   * size. Expects that `filter` has `input.n_slices * output.n_slices` slices.
+   * The Nth `input.n_slices` filters are applied to all input slices and output
+   * to the Nth output slice.
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the convolution.
@@ -132,20 +173,39 @@ class FFTConvolution
       const CubeType& input,
       const CubeType& filter,
       CubeType& output,
+      const size_t dW = 1,
+      const size_t dH = 1,
+      const size_t dilationW = 1,
+      const size_t dilationH = 1,
+      const bool appending = false,
       const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     using MatType = typename GetDenseMatType<CubeType>::type;
     MatType convOutput;
     FFTConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
-        convOutput);
+        convOutput, dW, dH, dilationW, dilationH);
 
-    output = CubeType(convOutput.n_rows, convOutput.n_cols, input.n_slices);
-    output.slice(0) = convOutput;
+    const size_t inMaps = input.n_slices;
+    const size_t outMaps = filter.n_slices / inMaps;
 
-    for (size_t i = 1; i < input.n_slices; ++i)
+    if (appending)
     {
-      FFTConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
-          output.slice(i));
+      output.slice(0) += convOutput;
+    }
+    else
+    {
+      output = CubeType(convOutput.n_rows, convOutput.n_cols, outMaps);
+      output.slice(0) = convOutput;
+    }
+
+    for (size_t j = 0; j < output.n_slices; ++j)
+    {
+      for (size_t i = (j == 0) ? 1 : 0; i < input.n_slices; ++i)
+      {
+        FFTConvolution<BorderMode>::Convolution(input.slice(i),
+            filter.slice(j * inMaps + i), output.slice(j), dW, dH,
+            dilationW, dilationH, true);
+      }
     }
   }
 
@@ -161,21 +221,36 @@ class FFTConvolution
    * @param output Output data that contains the results of the convolution.
    */
   template<typename MatType, typename CubeType>
-  static void Convolution(const MatType& input,
-                          const CubeType& filter,
-                          CubeType& output)
+  static void Convolution(
+      const MatType& input,
+      const CubeType& filter,
+      CubeType& output,
+      const size_t dW = 1,
+      const size_t dH = 1,
+      const size_t dilationW = 1,
+      const size_t dilationH = 1,
+      const bool appending = false,
+      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     MatType convOutput;
     FFTConvolution<BorderMode>::Convolution(input, filter.slice(0),
-        convOutput);
+        convOutput, dW, dH, dilationW, dilationH);
 
-    output = CubeType(convOutput.n_rows, convOutput.n_cols, filter.n_slices);
-    output.slice(0) = convOutput;
+    if (appending)
+    {
+      output.slice(0) += convOutput;
+    }
+    else
+    {
+      output = CubeType(convOutput.n_rows, convOutput.n_cols, filter.n_slices);
+      output.slice(0) = convOutput;
+    }
 
     for (size_t i = 1; i < filter.n_slices; ++i)
     {
       FFTConvolution<BorderMode>::Convolution(input, filter.slice(i),
-          output.slice(i));
+          output.slice(i), dW, dH, dilationW, dilationH, appending);
     }
   }
 
@@ -188,22 +263,36 @@ class FFTConvolution
    * @param output Output data that contains the results of the convolution.
    */
   template<typename MatType, typename CubeType>
-  static void Convolution(const CubeType& input,
-                          const MatType& filter,
-                          CubeType& output)
+  static void Convolution(
+      const CubeType& input,
+      const MatType& filter,
+      CubeType& output,
+      const size_t dW = 1,
+      const size_t dH = 1,
+      const size_t dilationW = 1,
+      const size_t dilationH = 1,
+      const bool appending = false,
+      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     MatType convOutput;
     FFTConvolution<BorderMode>::Convolution(input.slice(0), filter,
-        convOutput);
+        convOutput, dW, dH, dilationW, dilationH);
 
-    output = CubeType(convOutput.n_rows, convOutput.n_cols,
-        input.n_slices);
-    output.slice(0) = convOutput;
+    if (appending)
+    {
+      output.slice(0) += convOutput;
+    }
+    else
+    {
+      output = CubeType(convOutput.n_rows, convOutput.n_cols, input.n_slices);
+      output.slice(0) = convOutput;
+    }
 
     for (size_t i = 1; i < input.n_slices; ++i)
     {
       FFTConvolution<BorderMode>::Convolution(input.slice(i), filter,
-          output.slice(i));
+          output.slice(i), dW, dH, dilationW, dilationH, appending);
     }
   }
 };  // class FFTConvolution
