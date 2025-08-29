@@ -27,7 +27,7 @@ using namespace mlpack;
 TEST_CASE("SimpleMultiheadAttentionTest", "[ANNLayerTest]")
 {
   size_t tLen = 5;
-  size_t sLen = 4;
+  size_t sLen = tLen;
   size_t embedDim = 4;
   size_t numHeads = 2;
   size_t bsz = 3;
@@ -49,10 +49,10 @@ TEST_CASE("SimpleMultiheadAttentionTest", "[ANNLayerTest]")
   }
 
   arma::mat keyPaddingMask = arma::zeros(sLen, bsz);
-  keyPaddingMask.row(sLen - 1) = std::numeric_limits<double>::lowest();
+  keyPaddingMask.row(sLen - 1).fill(std::numeric_limits<double>::lowest());
 
   MultiheadAttention module(tLen, numHeads);
-  module.InputDimensions() = std::vector<size_t>({embedDim, 2 * sLen + tLen});
+  module.InputDimensions() = std::vector<size_t>({ embedDim, 2 * sLen + tLen });
   module.ComputeOutputDimensions();
   arma::mat weights(module.WeightSize(), 1);
   weights.randu();

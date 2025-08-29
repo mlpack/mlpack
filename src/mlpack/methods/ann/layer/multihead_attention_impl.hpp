@@ -156,7 +156,7 @@ Forward(const MatType& input, MatType& output)
   // The shape of keyPaddingMask : (batchSize, srcSeqLen).
   if (!keyPaddingMask.is_empty())
   {
-    if (keyPaddingMask.n_rows != input.n_cols || keyPaddingMask.n_cols != srcSeqLen)
+    if (keyPaddingMask.n_cols != input.n_cols || keyPaddingMask.n_rows != srcSeqLen)
         Log::Fatal << "The size of the 'keyPaddingMask' is not correct.\n";
     for (size_t i = 0; i < batchSize; ++i)
     {
