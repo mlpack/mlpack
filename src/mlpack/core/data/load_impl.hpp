@@ -160,11 +160,16 @@ bool Load(const std::string& filename,
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>*)
 {
-  std::cout << "executed " << std::endl;
   Timer::Start("loading_data");
+
   static_assert(!IsArma<ObjectType>::value || !IsSparseMat<ObjectType>::value
       || !HasSerialize<ObjectType>::value, "mlpack can load Armadillo"
       " matrices or serialized mlpack models only; please use a known type.");
+  const bool isMatrixType = IsArma<ObjectType>::value ||
+      IsSparseMat<ObjectType>::value;
+  const bool isSerializable = HasSerialize<ObjectType>::value;
+  const bool isSparseMatrixType = IsSparseMat<ObjectType>::value;
+
   std::fstream stream;
   bool success = OpenFile(filename, opts, true, stream);
   if (!success)
@@ -179,23 +184,23 @@ bool Load(const std::string& filename,
     Timer::Stop("loading_data");
     return false;
   }
+  const bool isImageFormat = (opts.Format() == FileType::PNG ||
+        opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
+        opts.Format() == FileType::BMP || opts.Format() == FileType::HDR ||
+        opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
+        opts.Format() == FileType::PIC || opts.Format() == FileType::GIF ||
+        opts.Format() == FileType::ImageType);
 
-  if constexpr (IsArma<ObjectType>::value || IsSparseMat<ObjectType>::value)
+  if constexpr (isMatrixType)
   {
-    if (opts.Format() != FileType::PNG && opts.Format() != FileType::JPG &&
-        opts.Format() != FileType::BMP && opts.Format() != FileType::HDR &&
-        opts.Format() != FileType::PSD && opts.Format() != FileType::TGA &&
-        opts.Format() != FileType::PIC && opts.Format() != FileType::GIF &&
-        opts.Format() != FileType::PNM && opts.Format() != FileType::ImageType)
+    if (isImageFormat)
     {
-      std::cout << "got converted to a text opttion" << std::endl;
-      TextOptions txtOpts(std::move(opts));
-      success = LoadNumeric(filename, matrix, stream, txtOpts);
-      opts = std::move(txtOpts);
-    }
-    else
-    {
-      if constexpr (!IsSparseMat<ObjectType>::value)
+      if constexpr (isSparseMatrixType)
+      {
+        return HandleError("Cannot load image data into a sparse matrix. "
+        "Please use dense matrix instead.", opts);
+      }
+      else
       {
         std::cout << "we are dealing with an image" << std::endl;
         ImageOptions imgOpts(std::move(opts));
@@ -205,8 +210,15 @@ bool Load(const std::string& filename,
         opts = std::move(imgOpts);
       }
     }
+    else
+    {
+      std::cout << "got converted to a text opttion" << std::endl;
+      TextOptions txtOpts(std::move(opts));
+      success = LoadNumeric(filename, matrix, stream, txtOpts);
+      opts = std::move(txtOpts);
+    }
   }
-  else if constexpr (HasSerialize<ObjectType>::value)
+  else if constexpr (isSerializable)
   {
     success = LoadModel(matrix, opts, stream);
   }

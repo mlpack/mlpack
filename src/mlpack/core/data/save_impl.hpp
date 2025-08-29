@@ -83,8 +83,8 @@ bool Save(const std::string& filename,
 template<typename ObjectType, typename DataOptionsType>
 bool SaveNumeric(const std::string& filename,
                  const ObjectType& matrix,
-                 DataOptionsBase<DataOptionsType>& opts,
-                 std::fstream& stream)
+                 std::fstream& stream,
+                 DataOptionsBase<DataOptionsType>& opts)
 {
   bool success = false;
 
@@ -123,6 +123,10 @@ bool Save(const std::string& filename,
   static_assert(!IsArma<ObjectType>::value || !IsSparseMat<ObjectType>::value
       || !HasSerialize<ObjectType>::value, "mlpack can save Armadillo"
       " matrices or a serialized mlpack model only; please use a known type.");
+  const bool isMatrixType = IsArma<ObjectType>::value ||
+      IsSparseMat<ObjectType>::value;
+  const bool isSerializable = HasSerialize<ObjectType>::value;
+  const bool isSparseMatrixType = IsSparseMat<ObjectType>::value;
 
   bool success = DetectFileType<ObjectType>(filename, opts, false);
   if (!success)
@@ -138,27 +142,41 @@ bool Save(const std::string& filename,
     Timer::Stop("saving_data");
     return false;
   }
-  // We should not save images through this function, this should be handled
-  // by other overloads. Therefore if the user is forcing to use this function
-  // we should throw an error.
-  if (opts.Format() == FileType::PNG || opts.Format() == FileType::JPG ||
-      opts.Format() == FileType::BMP || opts.Format() == FileType::HDR ||
-      opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
-      opts.Format() == FileType::PIC || opts.Format() == FileType::GIF ||
-      opts.Format() == FileType::PNM || opts.Format() == FileType::ImageType)
-  {
-    return HandleError("ImageOptions is not specified!  Please specify"
-        "ImageOptions before saving an image.", opts);
-  }
+  const bool isImageFormat = (opts.Format() == FileType::PNG ||
+        opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
+        opts.Format() == FileType::BMP || opts.Format() == FileType::HDR ||
+        opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
+        opts.Format() == FileType::PIC || opts.Format() == FileType::GIF ||
+        opts.Format() == FileType::ImageType);
 
   // Try to save the file.
   Log::Info << "Saving " << opts.FileTypeToString() << " to '" << filename
       << "'." << std::endl;
-  if constexpr (IsArma<ObjectType>::value || IsSparseMat<ObjectType>::value)
+  if constexpr (isMatrixType)
   {
-    success = SaveNumeric(filename, matrix, opts, stream);
+    if (isImageFormat)
+    {
+      if constexpr (isSparseMatrixType)
+      {
+        return HandleError("Cannot load image data into a sparse matrix. "
+        "Please use dense matrix instead.", opts);
+      }
+      else
+      {
+        std::cout << "Saving an image" << std::endl;
+        ImageOptions imgOpts(std::move(opts));
+        std::vector<std::string> files;
+        files.push_back(filename);
+        success = SaveImage(files, matrix, imgOpts);
+        opts = std::move(imgOpts);
+      }
+    }
+    else
+    {
+      success = SaveNumeric(filename, matrix, stream, opts);
+    }
   }
-  else if constexpr (HasSerialize<ObjectType>::value)
+  else if constexpr (isSerializable)
   {
     success = SaveModel(matrix, opts, stream);
   }
