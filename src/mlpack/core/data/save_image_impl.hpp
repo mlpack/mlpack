@@ -68,43 +68,33 @@ bool SaveImage(const std::vector<std::string>& files,
         << "dimensions of the matrix to be saved!";
     HandleError(oss, opts);
   }
+  // Unfortunately we cannot move because matrix is const.
+  arma::Mat<unsigned char> tempMatrix =
+      arma::conv_to<arma::Mat<unsigned char>>::from(matrix);
 
   bool success = false;
   for (size_t i = 0; i < files.size() ; ++i)
   {
-    // I do not like the fact that we are looping over and over again and
-    // trying to figure out the extension at evertime, usually the user have
-    // all the of dataset of the same extension.
-    // I also do not know how much this if else deduction is costing us, but
-    // could be avoided since we are already looping and checking at the start
-    // all of the provided extensions.
     if (opts.Format() == FileType::PNG)
     {
       success = stbi_write_png(files.at(i).c_str(), opts.Width(), opts.Height(),
-          opts.Channels(), matrix.colptr(i), opts.Width() * opts.Channels());
+          opts.Channels(), tempMatrix.colptr(i),
+          opts.Width() * opts.Channels());
     }
     else if (opts.Format() == FileType::BMP)
     {
-      std::cout << "we should be here" <<std::endl;
       success = stbi_write_bmp(files.at(i).c_str(), opts.Width(), opts.Height(),
-          opts.Channels(), matrix.colptr(i));
+          opts.Channels(), tempMatrix.colptr(i));
     }
     else if (opts.Format() == FileType::TGA)
     {
       success = stbi_write_tga(files.at(i).c_str(), opts.Width(), opts.Height(),
-          opts.Channels(), matrix.colptr(i));
-    }
-    else if (opts.Format() == FileType::HDR)
-    {
-      // We have to convert to float for HDR.
-      arma::fmat imageBuf = arma::conv_to<arma::fmat>::from(matrix.col(i));
-      success = stbi_write_hdr(files.at(i).c_str(), opts.Width(), opts.Height(),
-          opts.Channels(), imageBuf.memptr());
+          opts.Channels(), tempMatrix.colptr(i));
     }
     else if (opts.Format() == FileType::JPG)
     {
       success = stbi_write_jpg(files.at(i).c_str(), opts.Width(), opts.Height(),
-          opts.Channels(), matrix.colptr(i), opts.Quality());
+          opts.Channels(), tempMatrix.colptr(i), opts.Quality());
     }
 
     if (!success)

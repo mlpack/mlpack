@@ -43,7 +43,8 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "LoadImageTest",
 TEST_CASE_METHOD(ImageConverterTestFixture, "SaveImageTest",
                  "[ImageConverterMainTest][BindingTests]")
 {
-  arma::mat testimage = arma::randi<arma::mat>((5 * 5 * 3), 2);
+  arma::mat testimage = arma::randi<arma::mat>((5 * 5 * 3), 2,
+      arma::distr_param(1, 255));
   SetInputParam<vector<string>>("input", {"test_image777.png",
       "test_image999.png"});
   SetInputParam("height", 5);
