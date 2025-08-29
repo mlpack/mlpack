@@ -410,9 +410,11 @@ void DAGNetwork<
     }
     else
     {
-      // numParents guaranteed to be > 1
+      // numParents guaranteed to be > 1.
+      // If layerAxes for currentLayer is not set, set it to the last dimension
+      // by default.
       if (layerAxes.count(currentLayer) == 0)
-        layerAxes.insert({ currentLayer, 0 });
+        layerAxes.insert({ currentLayer, OutputDimensions().size() - 1 });
 
       const size_t numOutputDimensions =
         network[firstParent]->OutputDimensions().size();
