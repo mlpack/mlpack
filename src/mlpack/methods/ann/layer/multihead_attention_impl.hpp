@@ -145,9 +145,7 @@ Forward(const MatType& input, MatType& output)
     for (size_t i = 0; i < batchSize; ++i)
     {
       for (size_t h = 0; h < numHeads; ++h)
-      {
           scores.slice(i * numHeads + h) += attnMask.slice(i);
-      }
     }
   }
 
@@ -163,9 +161,7 @@ Forward(const MatType& input, MatType& output)
     for (size_t i = 0; i < batchSize; ++i)
     {
       for (size_t h = 0; h < numHeads; ++h)
-      {
-          scores.slice(i * numHeads + h) += repmat(keyPaddingMask.row(i), tgtSeqLen, 1);
-      }
+          scores.slice(i * numHeads + h) += repmat(keyPaddingMask.col(i), 1, tgtSeqLen);
     }
   }
 
