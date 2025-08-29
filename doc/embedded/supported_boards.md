@@ -80,6 +80,8 @@ cmake \
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | POWERPCG4 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_powerpc-440fp.html)   | [Sysroot and toolchain prefix](#powerpcg4) |[Power Mac G4 Cube](https://en.wikipedia.org/wiki/Power_Mac_G4_Cube), [BAE RAD750](https://en.wikipedia.org/wiki/RAD750) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| MIPS24K | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_mips32.html)   | [Sysroot and toolchain prefix](#mips24k) |[MIPS32k on Wikipedia](https://en.wikipedia.org/wiki/MIPS_architecture#MIPS32/MIPS64) [VoCore Ultimate](http://vocore.io/v2u.html) |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 If you didn't see your architecture in the table above, use the closest
 architecture with a similar word size, or, adapt the parameters directly in
@@ -196,4 +198,11 @@ the new architecture added to this table.
 ```
 -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/powerpc-440fp--glibc--stable-2024.02-1/bin/powerpc-buildroot-linux-gnu-
 -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/powerpc-440fp--glibc--stable-2024.02-1/powerpc-buildroot-linux-gnu/sysroot
+```
+
+### MIPS24K
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/mips32--glibc--stable-2025.08-1/bin/mips32-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/mips32--glibc--stable-2025.08-1/mips32-buildroot-linux-gnu/sysroot
 ```
