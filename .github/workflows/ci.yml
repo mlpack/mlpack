@@ -146,6 +146,7 @@ jobs:
           brew install libomp openblas armadillo cereal ensmallen ccache
           echo `which clang++`
           ls -lh /usr/bin/clang*
+          clang++ --version
 
       # Because mlpack's precompiled headers basically include everything
       # (mlpack.hpp, core.hpp, etc.), changes to a single file will invalidate
