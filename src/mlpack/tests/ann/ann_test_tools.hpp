@@ -246,6 +246,10 @@ double CheckGradient(FunctionType& function, const double eps = 1e-7)
     estGradient(i) = (costPlus - costMinus) / (2 * eps);
   }
 
+  std::cout << "orgGradient:\n" << orgGradient.t();
+  std::cout << "estGradient:\n" << estGradient.t();
+  std::cout << "diff:\n" << (orgGradient - estGradient).t();
+
   // Estimate error of gradient.
   return arma::norm(orgGradient - estGradient) /
       arma::norm(orgGradient + estGradient);

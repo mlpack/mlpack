@@ -73,6 +73,8 @@ void Softmax<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
+  if (output.n_rows != gy.n_rows || output.n_cols != gy.n_cols)
+    throw std::runtime_error("size mismatch");
   g = output % (gy - repmat(sum(gy % output), output.n_rows, 1));
 }
 
