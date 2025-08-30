@@ -228,7 +228,7 @@ jobs:
           curl -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz -o armadillo-10.8.2.tar.xz
           tar -xf armadillo-10.8.2.tar.xz
           cd armadillo-10.8.2/
-          cmake -G "Visual Studio 17 2022" \
+          cmake -G "Ninja" \
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DBLAS_LIBRARY:FILEPATH=${{ github.workspace }}/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
             -DLAPACK_LIBRARY:FILEPATH=${{ github.workspace }}/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
