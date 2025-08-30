@@ -159,7 +159,7 @@ jobs:
           cmake ${{ matrix.config.cmakeVars }} $CMAKE_BINDING_ARGS -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON ../
 
       - name: Build mlpack
-        run: cd build && make -j4
+        run: cd build && VERBOSE=1 make -j4
 
       # Run the tests manually so that we can get JUnit output.
       - name: Run mlpack_test
@@ -262,6 +262,7 @@ jobs:
               -DENSMALLEN_INCLUDE_DIR=../deps/ensmallen.2.17.0/installed/x64-linux/include/ \
               -DCEREAL_INCLUDE_DIR=../deps/cereal-1.3.2/include/ \
               -DSTB_IMAGE_INCLUDE_DIR='${{ github.workspace }}'/deps/stb/include/ \
+              -DCMAKE_VERBOSE_MAKEFILE=ON \
               -DCMAKE_HAS_WORKING_STATIC_STB=1 \
               ../
 
