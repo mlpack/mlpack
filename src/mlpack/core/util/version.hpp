@@ -15,10 +15,12 @@
 #include <string>
 
 // The version of mlpack.  If this is a git repository, this will be a version
-// with higher number than the most recent release.
+// with higher number than the most recent release, and the MLPACK_PRERELEASE
+// macro will be defined.
 #define MLPACK_VERSION_MAJOR 4
 #define MLPACK_VERSION_MINOR 6
 #define MLPACK_VERSION_PATCH 3
+#define MLPACK_PRERELEASE
 
 // The name of the version (for use by --version).
 namespace mlpack {

@@ -14,6 +14,13 @@ import re
 import platform
 from pathlib import Path
 
+ccache_prog = '${CCACHE_PROGRAM}'
+compiler_prog = '${CMAKE_CXX_COMPILER}'
+if ccache_prog != '':
+    os.environ['CXX'] = f'{ccache_prog} {compiler_prog}'
+else:
+    os.environ['CXX'] = f'{compiler_prog}'
+
 # Process input argument --module={name} first if needed.
 module = None
 if "--module=" in sys.argv[-1]:

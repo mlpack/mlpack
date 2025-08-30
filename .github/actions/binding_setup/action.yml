@@ -78,14 +78,6 @@ runs:
         r-version: "release"
         use-public-rspm: true
 
-    - name: "Configure ccache for R"
-      if: inputs.lang == 'R'
-      shell: bash
-      run: |
-          ccache --set-config "sloppiness=include_file_ctime"
-          ccache --set-config "hash_dir=false"
-          ccache --zero-stats
-
     - name: "Query R dependencies"
       if: inputs.lang == 'R'
       shell: bash
