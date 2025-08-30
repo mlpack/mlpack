@@ -104,6 +104,7 @@ jobs:
         run: |
           ccache --set-config "sloppiness=include_file_ctime"
           ccache --set-config "hash_dir=false"
+          ccache --set-config "log_file=\"$PWD/ccache-log\""
           ccache --zero-stats
 
       # Set up the build environment for any bindings, if needed.
@@ -144,9 +145,6 @@ jobs:
         run: |
           sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
           brew install libomp openblas armadillo cereal ensmallen ccache
-          echo `which clang++`
-          ls -lh /usr/bin/clang*
-          clang++ --version
 
       # Because mlpack's precompiled headers basically include everything
       # (mlpack.hpp, core.hpp, etc.), changes to a single file will invalidate
@@ -175,6 +173,10 @@ jobs:
         uses: ./.github/actions/binding_run_tests
         with:
           lang: ${{ matrix.config.name }}
+
+      - name: Print ccache log
+        run: |
+          cat ccache-log
 
       - name: Parse test output
         uses: rcurtin/test-summary-action@dist
