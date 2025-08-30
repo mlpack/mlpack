@@ -99,6 +99,13 @@ jobs:
           variant: ccache
           max-size: 5G # Large sizes needed for debug builds.
 
+      - name: Configure ccache
+        shell: bash
+        run: |
+          ccache --set-config "sloppiness=include_file_ctime"
+          ccache --set-config "hash_dir=false"
+          ccache --zero-stats
+
       # Set up the build environment for any bindings, if needed.
       - name: Set up binding dependencies
         uses: ./.github/actions/binding_setup
