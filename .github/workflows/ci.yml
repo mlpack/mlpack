@@ -97,7 +97,7 @@ jobs:
         with:
           key: ${{ matrix.config.os }}-${{ matrix.config.name }}
           variant: ccache
-          max-size: 1G
+          max-size: 5G # Large sizes needed for debug builds.
 
       # Set up the build environment for any bindings, if needed.
       - name: Set up binding dependencies
