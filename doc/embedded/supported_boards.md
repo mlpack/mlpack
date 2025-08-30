@@ -203,6 +203,6 @@ the new architecture added to this table.
 ### MIPS24K
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/mips32--glibc--stable-2025.08-1/bin/mips32-buildroot-linux-gnu-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/mips32--glibc--stable-2025.08-1/mips32-buildroot-linux-gnu/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/mips32--glibc--stable-2024.02-1/bin/mips32-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/mips32--glibc--stable-2024.02-1/mips32-buildroot-linux-gnu/sysroot
 ```
