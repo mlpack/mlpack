@@ -43,13 +43,13 @@ TEST_CASE("SimpleMultiheadAttentionTest", "[ANNLayerTest]")
       for (size_t j = 0; j < sLen; ++j)
       {
         if (i < j)
-          attnMask(i, j, k) = std::numeric_limits<double>::lowest();
+          attnMask(i, j, k) = -std::numeric_limits<double>::infinity();
       }
     }
   }
 
   arma::mat keyPaddingMask = arma::zeros(sLen, bsz);
-  keyPaddingMask.row(sLen - 1).fill(std::numeric_limits<double>::lowest());
+  keyPaddingMask.row(sLen - 1).fill(-std::numeric_limits<double>::infinity());
 
   MultiheadAttention module(tLen, numHeads);
   module.InputDimensions() = std::vector<size_t>({ embedDim, 2 * sLen + tLen });
@@ -192,13 +192,13 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
           for (size_t j = 0; j < srcSeqLen; ++j)
           {
             if (i < j)
-              attnMask(i, j, k) = std::numeric_limits<double>::lowest();
+              attnMask(i, j, k) = -std::numeric_limits<double>::infinity();
           }
         }
       }
 
       keyPaddingMask = arma::zeros(srcSeqLen, batchSize);
-      keyPaddingMask(srcSeqLen - 1) = std::numeric_limits<double>::lowest();
+      keyPaddingMask(srcSeqLen - 1) = -std::numeric_limits<double>::infinity();
 
       model = new FFN<NegativeLogLikelihood, XavierInitialization>();
       model->InputDimensions() = {embedDim, srcSeqLen * 2 + tgtSeqLen};

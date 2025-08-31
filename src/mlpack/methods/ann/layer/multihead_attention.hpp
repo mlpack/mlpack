@@ -265,6 +265,12 @@ class MultiheadAttention : public Layer<MatType>
   }
 
  private:
+  static void MaskedForwardSoftmax(CubeType& scores,
+                                   const size_t numHeads,
+                                   const size_t batchSize,
+                                   const CubeType& attnMask,
+                                   const MatType& keyPaddingMask);
+
   //! Element Type of the output.
   using ElemType = typename MatType::elem_type;
 
