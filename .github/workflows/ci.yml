@@ -99,6 +99,10 @@ jobs:
           variant: ccache
           max-size: 5G # Large sizes needed for debug builds.
 
+      - name: Create ccache log file
+        shell: bash
+        run: touch "$PWD/ccache-log"
+
       - name: Configure ccache
         shell: bash
         run: |
