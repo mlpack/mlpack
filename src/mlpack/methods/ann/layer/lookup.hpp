@@ -41,6 +41,8 @@ template<
 class Lookup : public Layer<MatType>
 {
  public:
+  using CubeType = typename GetCubeType<MatType>::type;
+
   //! Create the Lookup object.
   Lookup();
 

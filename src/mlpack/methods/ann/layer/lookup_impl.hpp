@@ -143,8 +143,9 @@ void Lookup<MatType, RegularizerType>::Gradient(
   const size_t seqLength = input.n_rows;
   const size_t batchSize = input.n_cols;
 
-  arma::Cube<eT> errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(),
-      seqLength, embeddingSize, batchSize, false, false);
+  const CubeType errorTemp;
+  MakeAlias(const_cast<CubeType&>(errorTemp), error, seqLength, embeddingSize,
+      batchSize, 0, false);
 
   gradient.set_size(arma::size(weights));
   gradient.zeros();
