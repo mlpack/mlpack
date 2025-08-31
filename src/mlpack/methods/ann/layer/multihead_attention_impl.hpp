@@ -220,11 +220,6 @@ Backward(const MatType& /* input */,
 
   for (size_t i = 0; i < numHeads * batchSize; ++i)
   {
-    // In the forward pass, each column of scores was put through the softmax;
-    // now we only have the output and need to go backwards.
-
-    // gyTemp should have the same shape as scores.
-
     // We will perform backpropagation of softmax over each slice of gyTemp.
     softmax.Backward({} /* unused */, scores.slice(i), gyTemp.slice(i),
         gyTemp.slice(i));
