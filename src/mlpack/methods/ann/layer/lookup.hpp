@@ -135,7 +135,7 @@ class Lookup : public Layer<MatType>
   size_t embeddingSize;
 
   //! Locally-stored weight object.
-  OutputDataType weights;
+  MatType weights;
 
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
