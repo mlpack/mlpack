@@ -22,6 +22,7 @@ namespace mlpack {
  * Computes the two-dimensional convolution through fft. This class allows
  * specification of the type of the border type. The convolution can be
  * computed with the valid border type or the full border type (default).
+ * Dilation and stride arguments must be equal to one.
  *
  * FullConvolution: returns the full two-dimensional convolution.
  * ValidConvolution: returns only those parts of the convolution that are
@@ -46,6 +47,12 @@ class FFTConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the convolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
    */
   template<typename MatType, typename Border = BorderMode>
   static std::enable_if_t<std::is_same_v<Border, ValidConvolution>, void>
@@ -99,6 +106,12 @@ class FFTConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the convolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
    */
   template<typename MatType, typename Border = BorderMode>
   static std::enable_if_t<std::is_same_v<Border, FullConvolution>, void>
@@ -167,6 +180,12 @@ class FFTConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the convolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
    */
   template<typename CubeType>
   static void Convolution(
@@ -219,6 +238,12 @@ class FFTConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the convolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
    */
   template<typename MatType, typename CubeType>
   static void Convolution(
@@ -261,6 +286,12 @@ class FFTConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the convolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
    */
   template<typename MatType, typename CubeType>
   static void Convolution(
