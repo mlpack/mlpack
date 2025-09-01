@@ -83,11 +83,11 @@ runs:
       run: |
           mkdir -p ~/.R
           echo "CCACHE=ccache" >> ~/.R/Makevars
-          echo "CC=$(CCACHE) gcc" >> ~/.R/Makevars
-          echo "CC17=$(CCACHE) gcc" >> ~/.R/Makevars
-          echo "CC23=$(CCACHE) gcc" >> ~/.R/Makevars
-          echo "CC90=$(CCACHE) gcc" >> ~/.R/Makevars
-          echo "CC99=$(CCACHE) gcc" >> ~/.R/Makevars
+          echo "CC=$(CCACHE) gcc -std=gnu2x" >> ~/.R/Makevars
+          echo "CC17=$(CCACHE) gcc -std=gnu17" >> ~/.R/Makevars
+          echo "CC23=$(CCACHE) gcc -std=gnu2x" >> ~/.R/Makevars
+          echo "CC90=$(CCACHE) gcc -std=gnu90" >> ~/.R/Makevars
+          echo "CC99=$(CCACHE) gcc -std=gnu99" >> ~/.R/Makevars
           echo "CXX=$(CCACHE) g++" >> ~/.R/Makevars
           echo "CXX11=$(CCACHE) g++" >> ~/.R/Makevars
           echo "CXX14=$(CCACHE) g++" >> ~/.R/Makevars
@@ -98,6 +98,7 @@ runs:
       shell: bash
       run: |
           cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
+          echo "R_HOME: $R_HOME"
           R CMD config CXX
           R CMD config CXX17
           Rscript -e 'install.packages(c("remotes", "roxygen2", "pkgbuild"))'
