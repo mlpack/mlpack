@@ -208,7 +208,7 @@ jobs:
 
       # Set up paths for MS build tools.
       - name: Set up devcmd
-        uses: ilammy/msvc-dev-cmd@v1.3.0
+        uses: ilammy/msvc-dev-cmd@v1
 
       # Install build dependencies.
       - name: Install build dependencies (Windows)
