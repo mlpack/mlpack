@@ -82,7 +82,16 @@ runs:
       shell: bash
       run: |
           mkdir -p ~/.R
-          echo "CXX=\"ccache g++ -std=c++17\"" >> ~/.R/Makevars
+          echo "CCACHE=ccache" >> ~/.R/Makevars
+          echo "CC=$(CCACHE) gcc" >> ~/.R/Makevars
+          echo "CC17=$(CCACHE) gcc" >> ~/.R/Makevars
+          echo "CC23=$(CCACHE) gcc" >> ~/.R/Makevars
+          echo "CC90=$(CCACHE) gcc" >> ~/.R/Makevars
+          echo "CC99=$(CCACHE) gcc" >> ~/.R/Makevars
+          echo "CXX=$(CCACHE) g++" >> ~/.R/Makevars
+          echo "CXX11=$(CCACHE) g++" >> ~/.R/Makevars
+          echo "CXX14=$(CCACHE) g++" >> ~/.R/Makevars
+          echo "CXX17=$(CCACHE) g++" >> ~/.R/Makevars
 
     - name: "Query R dependencies"
       if: inputs.lang == 'R'

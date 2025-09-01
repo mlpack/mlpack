@@ -99,16 +99,11 @@ jobs:
           variant: ccache
           max-size: 5G # Large sizes needed for debug builds.
 
-      - name: Create ccache log file
-        shell: bash
-        run: touch "/home/runner/work/mlpack/mlpack/ccache-log"
-
       - name: Configure ccache
         shell: bash
         run: |
           ccache --set-config "sloppiness=include_file_ctime"
           ccache --set-config "hash_dir=false"
-          ccache --set-config "log_file=/home/runner/work/mlpack/mlpack/ccache-log"
           ccache --zero-stats
 
       # Set up the build environment for any bindings, if needed.
@@ -177,10 +172,6 @@ jobs:
         uses: ./.github/actions/binding_run_tests
         with:
           lang: ${{ matrix.config.name }}
-
-      - name: Print ccache log
-        run: |
-          cat ccache-log
 
       - name: Parse test output
         uses: rcurtin/test-summary-action@dist
