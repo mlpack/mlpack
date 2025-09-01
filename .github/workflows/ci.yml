@@ -221,6 +221,7 @@ jobs:
       - name: Install some dependencies manually
         shell: bash
         run: |
+          which msbuild
           cd deps/
           curl -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz -o armadillo-10.8.2.tar.xz
           tar -xf armadillo-10.8.2.tar.xz
