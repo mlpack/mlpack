@@ -206,6 +206,10 @@ jobs:
       - name: Set up Visual Studio
         uses: microsoft/setup-msbuild@v2
 
+      # Set up paths for MS build tools.
+      - name: Set up devcmd
+        uses: ilammy/msvc-dev-cmd@v1.3.0
+
       # Install build dependencies.
       - name: Install build dependencies (Windows)
         shell: powershell
