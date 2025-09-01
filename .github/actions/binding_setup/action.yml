@@ -98,6 +98,8 @@ runs:
       shell: bash
       run: |
           cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
+          R CMD config CXX
+          R CMD config CXX17
           Rscript -e 'install.packages(c("remotes", "roxygen2", "pkgbuild"))'
           Rscript -e 'remotes::install_deps(".", dependencies=TRUE)'
 
