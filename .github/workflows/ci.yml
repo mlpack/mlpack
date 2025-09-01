@@ -250,6 +250,7 @@ jobs:
         shell: bash
         run: |
           mkdir build && cd build
+          which msbuild
           cmake -G "Ninja" -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON \
               -DCMAKE_CXX_COMPILER=cl.exe \
               -DARMADILLO_INCLUDE_DIR=../deps/armadillo-10.8.2/tmp/include/ \
