@@ -228,7 +228,7 @@ jobs:
           tar -xf armadillo-10.8.2.tar.xz
           cd armadillo-10.8.2/
           cmake -G "Ninja" \
-            -DCMAKE_CXX_COMPILER="/c/Program Files/Microsoft Visual Studio/2022/Enterprise/bin/cl.exe" \
+            -DCMAKE_CXX_COMPILER="/c/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/cl.exe" \
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DBLAS_LIBRARY:FILEPATH=${{ github.workspace }}/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
             -DLAPACK_LIBRARY:FILEPATH=${{ github.workspace }}/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
@@ -254,7 +254,7 @@ jobs:
           mkdir build && cd build
           which msbuild
           cmake -G "Ninja" -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON \
-              -DCMAKE_CXX_COMPILER=cl.exe \
+              -DCMAKE_CXX_COMPILER="/c/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/cl.exe" \
               -DARMADILLO_INCLUDE_DIR=../deps/armadillo-10.8.2/tmp/include/ \
               -DBLAS_LIBRARIES='${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
               -DLAPACK_LIBRARIES='${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
