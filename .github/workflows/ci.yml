@@ -275,9 +275,9 @@ jobs:
         run: |
           # The .dlls are stored in the bin/ directory, and those are the ones
           # we need to run with.
-          cp -v '${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/bin/x64/* build/Release
+          cp -v '${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/bin/x64/* build/
           cd build/
-          ./Release/mlpack_test.exe -r junit > mlpack_test.junit.xml || true
+          bin/mlpack_test.exe -r junit > mlpack_test.junit.xml || true
           # Remove version numbers and other non-xml from the output.
           cat mlpack_test.junit.xml | sed '/<?xml/,$!d' > mlpack_test.junit.xml.tmp
           rm mlpack_test.junit.xml
@@ -293,7 +293,7 @@ jobs:
           print_output: true
 
       - name: Archive compiled programs
-        run: mkdir exe_archive && cp -r build/Release/*.exe exe_archive/
+        run: mkdir exe_archive && cp -r build/bin/*.exe exe_archive/
 
       - name: Publish Windows no-libs archive
         uses: actions/upload-artifact@v4.4.0
@@ -305,7 +305,7 @@ jobs:
         uses: actions/upload-artifact@v4.4.0
         with:
           name: mlpack-windows-vs17
-          path: build/Release/
+          path: build/
 
       - name: Install Ruby for HTML documentation build
         uses: ruby/setup-ruby@v1
@@ -323,10 +323,10 @@ jobs:
         run: |
           # Preparing installer staging.
           mkdir dist\win-installer\mlpack-win-installer\Sources\lib
-          cp build\Release\*.lib dist\win-installer\mlpack-win-installer\Sources\lib\
-          cp build\Release\*.exp dist\win-installer\mlpack-win-installer\Sources\lib\
-          cp build\Release\*.dll dist\win-installer\mlpack-win-installer\Sources\
-          cp build\Release\*.exe dist\win-installer\mlpack-win-installer\Sources\
+          cp build\lib\*.lib dist\win-installer\mlpack-win-installer\Sources\lib\
+          cp build\lib\*.exp dist\win-installer\mlpack-win-installer\Sources\lib\
+          cp build\lib\*.dll dist\win-installer\mlpack-win-installer\Sources\
+          cp build\lib\*.exe dist\win-installer\mlpack-win-installer\Sources\
           cp ${{ github.workspace }}\deps\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll dist\win-installer\mlpack-win-installer\Sources\
           #
           # Copy documentation.

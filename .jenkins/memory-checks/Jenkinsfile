@@ -58,11 +58,17 @@ pipeline
 
         sh '''
           export CCACHE_DIR=/opt/ccache/;
+          ccache --set-config "sloppiness=include_file_ctime";
+          ccache --set-config "hash_dir=false";
           ccache --zero-stats
 
           mkdir build
           cd build
-          cmake -DDEBUG=ON -DBUILD_TESTS=ON -DDOWNLOAD_DEPENDENCIES=ON ..
+          cmake \
+              -DCMAKE_BUILD_TYPE=Debug \
+              -DUSE_PRECOMPILED_HEADERS=OFF \
+              -DBUILD_TESTS=ON \
+              -DDOWNLOAD_DEPENDENCIES=ON ..
           make mlpack_test
           cd ..
 

@@ -58,6 +58,8 @@ pipeline
 
           ccache -p;
           ls -l /opt/ccache/
+          ccache --set-config "sloppiness=include_file_ctime";
+          ccache --set-config "hash_dir=false";
           ccache --zero-stats;
           ./scripts/test-docs.sh doc/;
           # Print ccache statistics.

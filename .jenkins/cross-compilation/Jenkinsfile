@@ -117,11 +117,17 @@ pipeline
                   EXTRA_CMAKE_OPTS='"-DCMAKE_CXX_FLAGS=\\"-Wl,-z,common-page-size='$PAGE_SIZE' -Wl,-z,max-page-size='$PAGE_SIZE'\\""';
                 fi
 
+                # Configure ccache.
+                ccache --set-config "sloppiness=include_file_ctime";
+                ccache --set-config "hash_dir=false";
+                ccache --zero-stats;
+
                 rm -rf build-${target}/
                 mkdir build-${target}/
                 cd build-${target}/
                 cmake \
                     -DBUILD_TESTS=ON \
+                    -DUSE_PRECOMPILED_HEADERS=OFF \
                     -DARCH_NAME=${ARCH_NAME} \
                     -DCMAKE_CROSSCOMPILING=ON \
                     -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake \
@@ -131,6 +137,9 @@ pipeline
                     $EXTRA_CMAKE_OPTS \
                     ../
                 time make mlpack_test;
+
+                # Print ccache results.
+                ccache -s;
               '''
 
               script
