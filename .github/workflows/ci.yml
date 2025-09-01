@@ -225,7 +225,7 @@ jobs:
           curl -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz -o armadillo-10.8.2.tar.xz
           tar -xf armadillo-10.8.2.tar.xz
           cd armadillo-10.8.2/
-          cmake \
+          cmake -G "Ninja" \
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DCMAKE_C_COMPILER=cl \
             -DCMAKE_CXX_COMPILER=cl \
@@ -251,7 +251,6 @@ jobs:
         shell: bash
         run: |
           mkdir build && cd build
-          which msbuild
           cmake -G "Ninja" -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON \
               -DCMAKE_C_COMPILER=cl \
               -DCMAKE_CXX_COMPILER=cl \
