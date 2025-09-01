@@ -277,7 +277,8 @@ jobs:
           # we need to run with.
           cp -v '${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/bin/x64/* build/
           cd build/
-          bin/mlpack_test.exe -r junit > mlpack_test.junit.xml || true
+          ls
+          ./mlpack_test.exe -r junit > mlpack_test.junit.xml || true
           # Remove version numbers and other non-xml from the output.
           cat mlpack_test.junit.xml | sed '/<?xml/,$!d' > mlpack_test.junit.xml.tmp
           rm mlpack_test.junit.xml
