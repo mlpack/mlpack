@@ -289,8 +289,8 @@ class MultiheadAttention : public Layer<MatType>
   //! Dimensionality of each head.
   size_t headDim;
 
-  //! Two dimensional Attention Mask of shape (srcSeqLen, tgtSeqLen, batchSize).  Takes
-  //! the values [-Inf, 0]
+  //! Two dimensional Attention Mask of shape (srcSeqLen, tgtSeqLen, batchSize).
+  //! Takes the values [-Inf, 0]
   CubeType attnMask;
 
   //! Key Padding Mask.  The shape of keyPaddingMask : (srcSeqLen, batchSize)
