@@ -222,7 +222,7 @@ jobs:
         shell: bash
         run: |
           ls -l "/c/Program Files/Microsoft Visual Studio/2022/Enterprise/";
-          ls -l "/c/Program Files/Microsoft Visual Studio/2022/Enterprise/bin/";
+          find "/c/Program Files/Microsoft Visual Studio/2022/Enterprise/" -iname '*cl.exe*';
           cd deps/
           curl -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz -o armadillo-10.8.2.tar.xz
           tar -xf armadillo-10.8.2.tar.xz
