@@ -82,16 +82,16 @@ runs:
       shell: bash
       run: |
           mkdir -p ~/.R
-          echo "CCACHE=ccache" >> ~/.R/Makevars
-          echo "CC=$(CCACHE) gcc -std=gnu2x" >> ~/.R/Makevars
-          echo "CC17=$(CCACHE) gcc -std=gnu17" >> ~/.R/Makevars
-          echo "CC23=$(CCACHE) gcc -std=gnu2x" >> ~/.R/Makevars
-          echo "CC90=$(CCACHE) gcc -std=gnu90" >> ~/.R/Makevars
-          echo "CC99=$(CCACHE) gcc -std=gnu99" >> ~/.R/Makevars
-          echo "CXX=$(CCACHE) g++" >> ~/.R/Makevars
-          echo "CXX11=$(CCACHE) g++" >> ~/.R/Makevars
-          echo "CXX14=$(CCACHE) g++" >> ~/.R/Makevars
-          echo "CXX17=$(CCACHE) g++" >> ~/.R/Makevars
+          echo 'CCACHE=ccache' >> ~/.R/Makevars
+          echo 'CC=$(CCACHE) gcc -std=gnu2x' >> ~/.R/Makevars
+          echo 'CC17=$(CCACHE) gcc -std=gnu17' >> ~/.R/Makevars
+          echo 'CC23=$(CCACHE) gcc -std=gnu2x' >> ~/.R/Makevars
+          echo 'CC90=$(CCACHE) gcc -std=gnu90' >> ~/.R/Makevars
+          echo 'CC99=$(CCACHE) gcc -std=gnu99' >> ~/.R/Makevars
+          echo 'CXX=$(CCACHE) g++' >> ~/.R/Makevars
+          echo 'CXX11=$(CCACHE) g++' >> ~/.R/Makevars
+          echo 'CXX14=$(CCACHE) g++' >> ~/.R/Makevars
+          echo 'CXX17=$(CCACHE) g++' >> ~/.R/Makevars
 
     - name: "Query R dependencies"
       if: inputs.lang == 'R'
