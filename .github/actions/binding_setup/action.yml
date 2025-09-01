@@ -78,6 +78,12 @@ runs:
         r-version: "release"
         use-public-rspm: true
 
+    - name: Configure ccache for R
+      shell: bash
+      run: |
+          mkdir -p ~/.R
+          echo "CXX=\"ccache g++ -std=c++17\"" >> ~/.R/Makevars
+
     - name: "Query R dependencies"
       if: inputs.lang == 'R'
       shell: bash
