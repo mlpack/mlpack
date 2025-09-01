@@ -92,6 +92,8 @@ runs:
           echo 'CXX11=$(CCACHE) g++' >> ~/.R/Makevars
           echo 'CXX14=$(CCACHE) g++' >> ~/.R/Makevars
           echo 'CXX17=$(CCACHE) g++' >> ~/.R/Makevars
+          cat ~/.R/Makevars
+          R CMD config CXX
 
     - name: "Query R dependencies"
       if: inputs.lang == 'R'
