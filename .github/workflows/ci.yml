@@ -258,6 +258,7 @@ jobs:
           cmake -G "Ninja" -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON \
               -DCMAKE_C_COMPILER=cl \
               -DCMAKE_CXX_COMPILER=cl \
+              -DCMAKE_CXX_FLAGS="/fp:precise" \
               -DARMADILLO_INCLUDE_DIR=../deps/armadillo-10.8.2/tmp/include/ \
               -DBLAS_LIBRARIES='${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
               -DLAPACK_LIBRARIES='${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
@@ -277,7 +278,6 @@ jobs:
           # we need to run with.
           cp -v '${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/bin/x64/* build/
           cd build/
-          ls
           ./mlpack_test.exe -r junit > mlpack_test.junit.xml || true
           # Remove version numbers and other non-xml from the output.
           cat mlpack_test.junit.xml | sed '/<?xml/,$!d' > mlpack_test.junit.xml.tmp
@@ -294,7 +294,7 @@ jobs:
           print_output: true
 
       - name: Archive compiled programs
-        run: mkdir exe_archive && cp -r build/bin/*.exe exe_archive/
+        run: mkdir exe_archive && cp -r build/*.exe exe_archive/
 
       - name: Publish Windows no-libs archive
         uses: actions/upload-artifact@v4.4.0
