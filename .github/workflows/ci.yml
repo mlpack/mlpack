@@ -325,10 +325,10 @@ jobs:
         run: |
           # Preparing installer staging.
           mkdir dist\win-installer\mlpack-win-installer\Sources\lib
-          cp build\lib\*.lib dist\win-installer\mlpack-win-installer\Sources\lib\
-          cp build\lib\*.exp dist\win-installer\mlpack-win-installer\Sources\lib\
-          cp build\lib\*.dll dist\win-installer\mlpack-win-installer\Sources\
-          cp build\lib\*.exe dist\win-installer\mlpack-win-installer\Sources\
+          cp build\*.lib dist\win-installer\mlpack-win-installer\Sources\lib\
+          cp build\*.exp dist\win-installer\mlpack-win-installer\Sources\lib\
+          cp build\*.dll dist\win-installer\mlpack-win-installer\Sources\
+          cp build\*.exe dist\win-installer\mlpack-win-installer\Sources\
           cp ${{ github.workspace }}\deps\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll dist\win-installer\mlpack-win-installer\Sources\
           #
           # Copy documentation.
