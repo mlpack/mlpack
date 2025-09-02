@@ -174,7 +174,7 @@ TEST_CASE("SVDPlusPlusFunctionRegularizationEvaluate", "[SVDPlusPlusTest]")
   }
 }
 
-TEST_CASE("SVDPlusPlusFunctionGradient", "[SVDPlusPlusTest]")
+TEST_CASE("SVDPlusPlusFunctionGradient", "[SVDPlusPlusTest][long]")
 {
   // Define useful constants.
   const size_t numUsers = 100;

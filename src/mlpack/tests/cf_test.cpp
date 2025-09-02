@@ -500,8 +500,15 @@ void Serialization()
  */
 TEMPLATE_TEST_CASE("CFGetRecommendationsAllUsersTest", "[CFTest]",
     RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
-    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
-    QUIC_SVDPolicy, BlockKrylovSVDPolicy)
+    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, QUIC_SVDPolicy,
+    BlockKrylovSVDPolicy)
+{
+  GetRecommendationsAllUsers<TestType>();
+}
+
+// The SVDPlusPlus policy takes noticeably longer.
+TEMPLATE_TEST_CASE("CFGetRecommendationsAllUsersTest", "[CFTest][long]",
+    SVDPlusPlusPolicy)
 {
   GetRecommendationsAllUsers<TestType>();
 }
@@ -511,9 +518,16 @@ TEMPLATE_TEST_CASE("CFGetRecommendationsAllUsersTest", "[CFTest]",
  * for all methods.
  */
 TEMPLATE_TEST_CASE("CFGetRecommendationsQueriedUsersTest", "[CFTest]",
-  RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
-  SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
-  QUIC_SVDPolicy, BlockKrylovSVDPolicy)
+    RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
+    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, QUIC_SVDPolicy,
+    BlockKrylovSVDPolicy)
+{
+  GetRecommendationsQueriedUser<TestType>();
+}
+
+// The SVDPlusPlus policy takes noticeably longer.
+TEMPLATE_TEST_CASE("CFGetRecommendationsQueriedUsersTest", "[CFTest][long]",
+  SVDPlusPlusPolicy)
 {
   GetRecommendationsQueriedUser<TestType>();
 }
@@ -546,8 +560,15 @@ TEMPLATE_TEST_CASE("RecommendationAccuracyTest", "[CFTest]",
  */
 TEMPLATE_TEST_CASE("CFPredictTest", "[CFTest]",
     RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
-    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
-    QUIC_SVDPolicy, BlockKrylovSVDPolicy)
+    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, QUIC_SVDPolicy,
+    BlockKrylovSVDPolicy)
+{
+  CFPredict<TestType>();
+}
+
+// The SVDPlusPlus policy takes noticeably longer.
+TEMPLATE_TEST_CASE("CFPredictTest", "[CFTest][long]",
+    SVDPlusPlusPolicy)
 {
   CFPredict<TestType>();
 }
@@ -557,8 +578,15 @@ TEMPLATE_TEST_CASE("CFPredictTest", "[CFTest]",
  */
 TEMPLATE_TEST_CASE("CFBatchPredictTest", "[CFTest]",
     RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
-    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
-    QUIC_SVDPolicy, BlockKrylovSVDPolicy)
+    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, QUIC_SVDPolicy,
+    BlockKrylovSVDPolicy)
+{
+  BatchPredict<TestType>();
+}
+
+// The SVDPlusPlus policy takes noticeably longer.
+TEMPLATE_TEST_CASE("CFBatchPredictTest", "[CFTest][long]",
+    SVDPlusPlusPolicy)
 {
   BatchPredict<TestType>();
 }
@@ -580,7 +608,15 @@ TEMPLATE_TEST_CASE("TrainTest_1", "[CFTest]",
  * some methods
  */
 TEMPLATE_TEST_CASE("TrainTest_2", "[CFTest]",
-    RegSVDPolicy, BiasSVDPolicy, SVDPlusPlusPolicy)
+    RegSVDPolicy, BiasSVDPolicy)
+{
+  TestType decomposition;
+  TrainWithCoordinateList(decomposition);
+}
+
+// The SVDPlusPlus policy takes noticeably longer.
+TEMPLATE_TEST_CASE("TrainTest_2", "[CFTest][long]",
+    SVDPlusPlusPolicy)
 {
   TestType decomposition;
   TrainWithCoordinateList(decomposition);

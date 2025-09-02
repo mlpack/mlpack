@@ -6,17 +6,23 @@
 arch_names = ['couscous': 'CORTEXA76',
               'tofu':     'CORTEXA53',
               'chorizo':  'CORTEXA78',
-              'tatertot': 'CORTEXA72']
+              'tatertot': 'CORTEXA72',
+              'megakelvin': 'POWERPCG4']
 
 device_names = ['couscous': 'rpi5',
                 'tofu': 'rpi3',
                 'chorizo': 'jetson-orin-nano',
-                'tatertot': 'beaglebone-ai64']
+                'tatertot': 'beaglebone-ai64',
+                'megakelvin': 'mac-g4-cube']
 
 page_sizes = ['couscous': '0x4000' /* 16kb for RPi5s */,
-              'tofu': '',
-              'chorizo': '',
               'tatertot': '0x10000' /* 64kb */]
+
+test_filters = ['tofu': '~[long]',
+                'megakelvin': '~[long]']
+
+// Thanks to NC Semi for hosting the little G4 cube!
+jump_hosts = ['megakelvin': 'millivolt.ncsemiconductor.com']
 
 pipeline
 {
@@ -66,7 +72,7 @@ pipeline
           axis
           {
             name 'target'
-            values 'couscous', 'tofu', 'chorizo', 'tatertot'
+            values 'couscous', 'tofu', 'chorizo', 'tatertot', 'megakelvin'
           }
         }
 
@@ -90,7 +96,9 @@ pipeline
             {
               ARCH_NAME = "${arch_names[env.target]}"
               DEVICE_NAME = "${device_names[env.target]}"
-              PAGE_SIZE = "${page_sizes[env.target]}"
+              PAGE_SIZE = "${page_sizes[env.target] ?: ''}"
+              TEST_FILTERS = "${test_filters[env.target] ?: ''}"
+              JUMP_HOST = "${jump_hosts[env.target] ?: ''}"
             }
 
             steps
@@ -100,7 +108,8 @@ pipeline
                 u.updateCheckStatus('Building mlpack for ' + env.target + '...')
               }
 
-              sh '''
+              // Specifically use bash so `time` is available.
+              sh '''#!/bin/bash -x
                 # If a custom page size is needed, set it.
                 EXTRA_CMAKE_OPTS='';
                 if [ ! -z "$PAGE_SIZE" ];
@@ -121,7 +130,7 @@ pipeline
                     -DDOWNLOAD_DEPENDENCIES=ON \
                     $EXTRA_CMAKE_OPTS \
                     ../
-                make mlpack_test;
+                time make mlpack_test;
               '''
 
               script
@@ -134,15 +143,23 @@ pipeline
                   keyFileVariable: 'KEY_FILE',
                   passphraseVariable: 'PASSPHRASE')])
               {
-                sh'''
+                // Specifically use bash so `time` is available.
+                sh'''#!/bin/bash -x
                   eval $(ssh-agent -s)
                   echo ${PASSPHRASE} | SSH_ASKPASS=/bin/cat setsid -w ssh-add ${KEY_FILE}
 
                   # Don't check the host keys, because they won't be saved in
                   # this container anyway.
                   mkdir -p ~/.ssh/
-                  echo 'Host *' >> ~/.ssh/config;
+                  echo "Host *" >> ~/.ssh/config;
                   echo '  StrictHostKeyChecking no' >> ~/.ssh/config;
+                  if [ ! -z "$JUMP_HOST" ];
+                  then
+                    echo "" >> ~/.ssh/config;
+                    echo "Host ${target}" >> ~/.ssh/config;
+                    echo "  ProxyJump $JUMP_HOST" >> ~/.ssh/config;
+                  fi
+                  cat ~/.ssh/config;
 
                   ssh jenkins@${target} -t mkdir -p test_${BRANCH_NAME}_${BUILD_ID}/
                   scp build-${target}/bin/mlpack_test jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
@@ -159,12 +176,12 @@ pipeline
                   # procmail.  The configuration here kills any tests that took
                   # more than two hours.
                   mkdir -p reports;
-                  ssh jenkins@${target} -t "
+                  time ssh jenkins@${target} -t "
                       cd test_${BRANCH_NAME}_${BUILD_ID};
                       lockfile -r-1 -l 7200 ~/mlpack_test.lock;
                       killall -9 mlpack_test;
                       mkdir -p reports;
-                      ./mlpack_test -r junit -o reports/mlpack_test.junit.xml;
+                      ./mlpack_test -r junit -n mlpack_test.${target} -o reports/mlpack_test.junit.xml ${TEST_FILTERS};
                       rm -f ~/mlpack_test.lock;" \
                       || echo "Test failure or other problem.";
 
