@@ -369,6 +369,7 @@ jobs:
           & 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe' `
               -t:rebuild `
               -p:Configuration=Release `
+              -p:Platform=x64 `
               -p:TreatWarningsAsErrors=True `
               mlpack-win-installer.wixproj
 
