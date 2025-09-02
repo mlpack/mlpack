@@ -120,6 +120,7 @@ pipeline
                 # Configure ccache.
                 ccache --set-config "sloppiness=include_file_ctime";
                 ccache --set-config "hash_dir=false";
+                ccache --set-config "debug=true";
                 ccache --zero-stats;
 
                 rm -rf build-${target}/
@@ -139,7 +140,7 @@ pipeline
                 time make mlpack_test;
 
                 # Print ccache results.
-                ccache -s;
+                ccache -sv;
               '''
 
               script
