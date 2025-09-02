@@ -225,7 +225,7 @@ jobs:
           curl -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz -o armadillo-10.8.2.tar.xz
           tar -xf armadillo-10.8.2.tar.xz
           cd armadillo-10.8.2/
-          "/c/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvarsall.bat" x64
+          "/c/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvarsall.bat" x64
           cmake -G "Ninja" \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
@@ -253,7 +253,7 @@ jobs:
         shell: bash
         run: |
           mkdir build && cd build
-          "/c/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvarsall.bat" x64
+          "/c/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvarsall.bat" x64
           cmake -G "Ninja" -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON \
               -DCMAKE_BUILD_TYPE=Release \
               -DCMAKE_C_COMPILER=cl \
