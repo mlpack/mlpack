@@ -210,7 +210,7 @@ jobs:
       - name: Set up devcmd
         uses: ilammy/msvc-dev-cmd@v1
         with:
-          arch: x86
+          arch: x64
 
       # Install build dependencies.
       - name: Install build dependencies (Windows)
