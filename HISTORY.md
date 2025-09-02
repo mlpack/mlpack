@@ -21,6 +21,8 @@ _????-??-??_
  * Add `FFN::Add()` and `RNN::Add()` with copy and move semantics; use these
    instead of passing layers to `Add()` as pointers (#3974).
 
+ * Added DAGNetwork class to represent complex neural network structurs (#3944)
+
 ## mlpack 4.6.2
 
 _2025-05-22_
