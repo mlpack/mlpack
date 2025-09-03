@@ -108,7 +108,7 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("AdaBoost on Wikipedia", "https://en.wikipedia.org/wiki/"
     "AdaBoost");
 BINDING_SEE_ALSO("Improved boosting algorithms using confidence-rated "
-    "predictions (pdf)", "http://rob.schapire.net/papers/SchapireSi98.pdf");
+    "predictions (pdf)", "http://www.schapire.net/papers/SchapireSi98.pdf");
 BINDING_SEE_ALSO("Perceptron", "#perceptron");
 BINDING_SEE_ALSO("Decision Trees", "#decision_tree");
 BINDING_SEE_ALSO("AdaBoost C++ class documentation",

@@ -53,7 +53,7 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
  * [`Perceptron`](perceptron.md)
  * [`DecisionTree`](decision_tree.md)
  * [AdaBoost on Wikipedia](https://en.wikipedia.org/wiki/AdaBoost)
- * [AdaBoost.MH paper (pdf)](https://dl.acm.org/doi/pdf/10.1145/279943.279960)
+ * [AdaBoost.MH paper (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=df5da5fb2cfb1bdf0c24e64e21b44f078d6ae887)
 
 ### Constructors
 

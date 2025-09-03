@@ -102,16 +102,17 @@ TEST_CASE("AddMergeTestCase", "[ANNLayerTest]")
 TEST_CASE("AddMergeAdvanceTestCase", "[ANNLayerTest]")
 {
   AddMerge r;
-  AddMerge* r2 = new AddMerge();
-  r2->Add<Linear>(5);
+  AddMerge r2;
+  r2.Add<Linear>(5);
   r.Add<Linear>(5);
-  r.Add(r2);
+  r.Add(std::move(r2));
   r.InputDimensions() = std::vector<size_t>({ 5 });
   r.ComputeOutputDimensions();
   arma::mat rParams(r.WeightSize(), 1);
   r.SetWeights(rParams);
   r.Network()[0]->Parameters().fill(2.0);
-  ((AddMerge*) r.Network()[1])->Network()[0]->Parameters().fill(-1.0);
+  (dynamic_cast<AddMerge<>*>(r.Network()[1]))->Network()[0]->Parameters().fill(
+      -1.0);
 
   Linear l(5);
   l.InputDimensions() = std::vector<size_t>({ 5 });

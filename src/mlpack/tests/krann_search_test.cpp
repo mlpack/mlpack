@@ -20,7 +20,7 @@ using namespace std;
 using namespace mlpack;
 
 // Test the correctness and guarantees of KRANN when in naive mode.
-TEST_CASE("NaiveGuaranteeTest", "[KRANNTest]")
+TEST_CASE("NaiveGuaranteeTest", "[KRANNTest][long]")
 {
   arma::Mat<size_t> neighbors;
   arma::mat distances;
@@ -141,7 +141,7 @@ TEST_CASE("SingleTreeSearch", "[KRANNTest]")
 
 // Test dual-tree rank-approximate search (harder to test because of the
 // randomness involved).
-TEST_CASE("DualTreeSearch", "[KRANNTest]")
+TEST_CASE("DualTreeSearch", "[KRANNTest][long]")
 {
   arma::mat refData;
   arma::mat queryData;
@@ -625,7 +625,7 @@ TEST_CASE("KRANNMoveTrainTest", "[KRANNTest]")
 /**
  * Make sure the RAModel class works.
  */
-TEST_CASE("RAModelTest", "[KRANNTest]")
+TEST_CASE("RAModelTest", "[KRANNTest][long]")
 {
   // Ensure that we can build an RAModel<NearestNeighborSearch> and get correct
   // results.

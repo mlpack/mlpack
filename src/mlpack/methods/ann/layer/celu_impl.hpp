@@ -18,7 +18,7 @@
 namespace mlpack {
 
 template<typename MatType>
-CELUType<MatType>::CELUType(const double alpha) :
+CELU<MatType>::CELU(const double alpha) :
     Layer<MatType>(),
     alpha(alpha)
 {
@@ -30,7 +30,7 @@ CELUType<MatType>::CELUType(const double alpha) :
 }
 
 template<typename MatType>
-CELUType<MatType>::CELUType(const CELUType& other) :
+CELU<MatType>::CELU(const CELU& other) :
     Layer<MatType>(other),
     alpha(other.alpha)
 {
@@ -38,8 +38,8 @@ CELUType<MatType>::CELUType(const CELUType& other) :
 }
 
 template<typename MatType>
-CELUType<MatType>::CELUType(
-    CELUType&& other) :
+CELU<MatType>::CELU(
+    CELU&& other) :
     Layer<MatType>(std::move(other)),
     alpha(std::move(other.alpha))
 {
@@ -47,8 +47,8 @@ CELUType<MatType>::CELUType(
 }
 
 template<typename MatType>
-CELUType<MatType>&
-CELUType<MatType>::operator=(const CELUType& other)
+CELU<MatType>&
+CELU<MatType>::operator=(const CELU& other)
 {
   if (&other != this)
   {
@@ -60,20 +60,20 @@ CELUType<MatType>::operator=(const CELUType& other)
 }
 
 template<typename MatType>
-CELUType<MatType>&
-CELUType<MatType>::operator=(CELUType&& other)
+CELU<MatType>&
+CELU<MatType>::operator=(CELU&& other)
 {
-    if (&other != this)
-    {
-      Layer<MatType>::operator=(std::move(other));
-      alpha = std::move(other.alpha);
-    }
+  if (&other != this)
+  {
+    Layer<MatType>::operator=(std::move(other));
+    alpha = std::move(other.alpha);
+  }
 
-    return *this;
+  return *this;
 }
 
 template<typename MatType>
-void CELUType<MatType>::Forward(
+void CELU<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   for (size_t i = 0; i < input.n_elem; ++i)
@@ -81,39 +81,30 @@ void CELUType<MatType>::Forward(
     output(i) = (input(i) >= 0) ? input(i) : alpha *
         (std::exp(input(i) / alpha) - 1);
   }
+}
 
-  if (this->training)
+template<typename MatType>
+void CELU<MatType>::Backward(
+    const MatType& input,
+    const MatType& output,
+    const MatType& gy,
+    MatType& g)
+{
+  for (size_t i = 0; i < input.n_elem; ++i)
   {
-    derivative.set_size(arma::size(input));
-    for (size_t i = 0; i < input.n_elem; ++i)
-    {
-      derivative(i) = (input(i) >= 0) ? 1 :
-          (output(i) / alpha) + 1;
-    }
+    g(i) = gy(i) * ((input(i) >= 0) ? 1 : (output(i) / alpha) + 1);
   }
 }
 
 template<typename MatType>
-void CELUType<MatType>::Backward(
-    const MatType& /* input */,
-    const MatType& /* output */,
-    const MatType& gy,
-    MatType& g)
-{
-  g = gy % derivative;
-}
-
-template<typename MatType>
 template<typename Archive>
-void CELUType<MatType>::serialize(
+void CELU<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(alpha));
-  if (Archive::is_loading::value)
-    derivative.clear();
 }
 
 } // namespace mlpack

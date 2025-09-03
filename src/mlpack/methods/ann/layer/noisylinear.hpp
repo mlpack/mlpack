@@ -26,7 +26,7 @@ namespace mlpack {
  *    computation.
  */
 template<typename MatType = arma::mat>
-class NoisyLinearType : public Layer<MatType>
+class NoisyLinear : public Layer<MatType>
 {
  public:
   /**
@@ -34,22 +34,22 @@ class NoisyLinearType : public Layer<MatType>
    *
    * @param outSize The number of output units.
    */
-  NoisyLinearType(const size_t outSize = 0);
+  NoisyLinear(const size_t outSize = 0);
 
-  //! Clone the NoisyLinearType object. This handles polymorphism correctly.
-  NoisyLinearType* Clone() const { return new NoisyLinearType(*this); }
+  //! Clone the NoisyLinear object. This handles polymorphism correctly.
+  NoisyLinear* Clone() const { return new NoisyLinear(*this); }
 
   // Virtual destructor.
-  virtual ~NoisyLinearType() { }
+  virtual ~NoisyLinear() { }
 
   //! Copy the given NoisyLinear layer (but not weights).
-  NoisyLinearType(const NoisyLinearType& other);
+  NoisyLinear(const NoisyLinear& other);
   //! Take ownership of the given NoisyLinear layer (but not weights).
-  NoisyLinearType(NoisyLinearType&& other);
+  NoisyLinear(NoisyLinear&& other);
   //! Copy the given NoisyLinear layer (but not weights).
-  NoisyLinearType& operator=(const NoisyLinearType& other);
+  NoisyLinear& operator=(const NoisyLinear& other);
   //! Take ownership of the given NoisyLinear layer (but not weights).
-  NoisyLinearType& operator=(NoisyLinearType&& other);
+  NoisyLinear& operator=(NoisyLinear&& other);
 
   //! Reset the layer parameter.
   void SetWeights(const MatType& weightsIn);
@@ -147,12 +147,7 @@ class NoisyLinearType : public Layer<MatType>
 
   //! Locally-stored bias-epsilon parameters.
   MatType biasEpsilon;
-}; // class NoisyLinearType
-
-// Convenience typedefs.
-
-// Standard noisy linear layer.
-using NoisyLinear = NoisyLinearType<arma::mat>;
+}; // class NoisyLinear
 
 } // namespace mlpack
 

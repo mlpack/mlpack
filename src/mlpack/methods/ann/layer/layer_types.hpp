@@ -57,6 +57,7 @@
 #include <mlpack/methods/ann/layer/repeat.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
 #include <mlpack/methods/ann/layer/softmin.hpp>
+#include <mlpack/methods/ann/layer/sum_reduce.hpp>
 #include <mlpack/methods/ann/layer/ftswish.hpp>
 
 // Convolution modes.

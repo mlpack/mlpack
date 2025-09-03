@@ -1069,7 +1069,7 @@ TEST_CASE("ConstructionThenTraining", "[LogisticRegressionTest]")
 /**
  * Make sure that incremental training works.
  */
-TEST_CASE("IncrementalTraining", "[LogisticRegressionTest]")
+TEST_CASE("IncrementalTraining", "[LogisticRegressionTest][long]")
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution<> g1(arma::vec("1.0 1.0 1.0"),

@@ -51,7 +51,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
  * [Random forests](random_forest.md)
  * [mlpack classifiers](../modeling.md#classification)
  * [Incremental decision tree on Wikipedia](https://en.wikipedia.org/wiki/Incremental_decision_tree)
- * [Mining High-Speed Data Streams (pdf)](https://dl.acm.org/doi/pdf/10.1145/347090.347107)
+ * [Mining High-Speed Data Streams (pdf)](http://cs.washington.edu/dm/vfml/papers/vfdt-kdd00.pdf)
 
 ### Constructors
 

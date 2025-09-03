@@ -85,9 +85,23 @@ class FFN
    * @param args The layer parameter.
    */
   template <typename LayerType, typename... Args>
-  void Add(Args... args)
+  void Add(Args&&... args)
   {
-    network.template Add<LayerType>(args...);
+    network.template Add<LayerType>(std::forward<Args>(args)...);
+    inputDimensionsAreSet = false;
+  }
+
+  /**
+   * Add a new layer to the model, without specifying the matrix type of the
+   * layer as a template parameter.
+   *
+   * @param args The layer parameter.
+   */
+  template<template<typename...> typename LayerType,
+           typename... Args>
+  void Add(Args&&... args)
+  {
+    network.template Add<LayerType<MatType>>(std::forward<Args>(args)...);
     inputDimensionsAreSet = false;
   }
 
@@ -97,13 +111,32 @@ class FFN
    *
    * @param layer The Layer to be added to the model.
    */
+  [[deprecated("Will be removed in mlpack 5.0.0.  Use Add(std::move(layer)).")]]
   void Add(Layer<MatType>* layer)
   {
     network.Add(layer);
     inputDimensionsAreSet = false;
   }
 
-  //! Get the layers of the network.
+  /**
+   * Add a new layer to the model by copying/moving the parameters of the given
+   * layer.  Note that any trainable weights of this layer will be reset!
+   * (Constant parameters are kept.)  Preferably, pass the layer with
+   * std::move().
+   *
+   * @param layer The layer to be added to the model.
+   */
+  template<typename LayerType>
+  void Add(LayerType&& layer,
+           // This SFINAE can be removed in mlpack 5.0.0.
+           typename std::enable_if<!std::is_pointer_v<
+                std::remove_reference_t<LayerType>>>::type* = 0)
+  {
+    network.Add(std::forward<LayerType>(layer));
+    inputDimensionsAreSet = false;
+  }
+
+  // Get the layers of the network.
   const std::vector<Layer<MatType>*>& Network() const
   {
     return network.Network();
