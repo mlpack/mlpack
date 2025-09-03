@@ -109,7 +109,7 @@ pipeline
               }
 
               // Specifically use bash so `time` is available.
-              sh '''#!/bin/bash -x
+              sh '''#!/bin/bash -xe
                 # If a custom page size is needed, set it.
                 EXTRA_CMAKE_OPTS='';
                 if [ ! -z "$PAGE_SIZE" ];
@@ -155,7 +155,7 @@ pipeline
                   passphraseVariable: 'PASSPHRASE')])
               {
                 // Specifically use bash so `time` is available.
-                sh'''#!/bin/bash -x
+                sh'''#!/bin/bash -xe
                   eval $(ssh-agent -s)
                   echo ${PASSPHRASE} | SSH_ASKPASS=/bin/cat setsid -w ssh-add ${KEY_FILE}
 
