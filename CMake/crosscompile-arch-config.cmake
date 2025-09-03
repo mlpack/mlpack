@@ -108,7 +108,7 @@ elseif(ARCH STREQUAL "POWERPCG4")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcpu=G4")
   set(OPENBLAS_TARGET "PPCG4")
   set(OPENBLAS_BINARY "32")
-  set(OPENBLAS_EXTRA_ARGS "USE_OPENMP=0")
+  set(OPENBLAS_EXTRA_ARGS "${OPENBLAS_EXTRA_ARGS} USE_OPENMP=0")
 elseif(ARCH AND NOT MANUAL_ARCH)
   ## TODO: update documentation with a list of the supported boards.
   message(FATAL_ERROR "Given ARCH_NAME is not known; please choose a supported board from the list, or set CMAKE_CXX_FLAGS, OPENBLAS_TARGET, and OPENBLAS_BINARY manually and set MANUAL_ARCH=TRUE.")

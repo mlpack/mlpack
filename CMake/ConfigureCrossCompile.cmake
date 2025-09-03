@@ -51,12 +51,10 @@ macro(search_openblas version)
       if (NOT EXISTS "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/libopenblas.a")
         set(ENV{COMMON_OPT} "${CMAKE_OPENBLAS_FLAGS}") # Pass our flags to OpenBLAS
         set(CC_COMMAND ${CMAKE_C_COMPILER})
-        set(FC_COMMAND ${CMAKE_FORTRAN_COMPILER})
         if (CCACHE_PROGRAM)
           set (CC_COMMAND "${CCACHE_PROGRAM} ${CC_COMMAND}")
-          set (FC_COMMAND "${CCACHE_PROGRAM} ${FC_COMMAND}")
         endif ()
-        execute_process(COMMAND make TARGET=${OPENBLAS_TARGET} BINARY=${OPENBLAS_BINARY} HOSTCC=gcc CC=${CC_COMMAND} FC=${FC_COMMAND} NO_SHARED=1 ${OPENBLAS_EXTRA_ARGS}
+        execute_process(COMMAND make TARGET=${OPENBLAS_TARGET} BINARY=${OPENBLAS_BINARY} HOSTCC=gcc CC=${CC_COMMAND} NO_SHARED=1 ${OPENBLAS_EXTRA_ARGS}
                         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version})
       endif()
       file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/libopenblas.a")
