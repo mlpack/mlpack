@@ -285,35 +285,6 @@ bool Load(const std::string& filename,
           format f = format::autodetect,
           std::enable_if_t<HasSerialize<T>::value>* = 0);
 
-/**
- * This function loads a set of several dataset files into one matrix.
- * This is usually the case if the dataset is collected on several occasions
- * and not agglomerated into one file, or if the dataset has been partitioned
- * into multiple files.
- *
- * Note, the load will fail if the number of dimension (data points) in all
- * files is not equal, or if the dataset does not have the same filetype. For
- * example, the load will fail one file is CSV and the other is binary.
- *
- * The user needs to specify all the filenames in one std::vector before using
- * this function.
- *
- * @param filenames Names of files to load.
- * @param matrix Matrix to load contents of files into.
- * @param opts DataOptions to be passed to the function
- * @return Boolean value indicating success or failure of load.
- */
-template<typename MatType>
-bool Load(const std::vector<std::string>& filenames,
-          MatType& matrix,
-          TextOptions& opts);
-
-template<typename MatType>
-bool Load(const std::vector<std::string>& filenames,
-          MatType& matrix,
-          const TextOptions& opts);
-
-
 } // namespace data
 } // namespace mlpack
 

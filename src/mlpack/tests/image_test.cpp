@@ -97,15 +97,13 @@ TEST_CASE("LoadPNGImageTest", "[ImageLoadTest]")
 }
 
 /**
- * Test that the image is loaded correctly if the type is specified in the
- * function.
+ * Test when loading an image with the wrong data options
  */
-TEST_CASE("LoadWrongPNGImageTest", "[ImageLoadTest]")
+TEST_CASE("LoadWrongDataOptions", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
-  // This is a rare case where the user is not supposed to used it.
-  // but we should test against it
-  REQUIRE_THROWS_AS(data::Load("test_image.png", matrix, JPG + Fatal),
+  TextOptions opts;
+  REQUIRE_THROWS_AS(data::Load("test_image.png", matrix, opts),
       std::runtime_error);
 }
 
@@ -166,6 +164,46 @@ TEST_CASE("SaveImageWrongInfo", "[ImageLoadTest]")
   arma::Mat<unsigned char> im1;
   im1 = arma::randi<arma::Mat<unsigned char>>(24 * 25 * 7, 1);
   REQUIRE_THROWS_AS(data::Save("APITest.bmp", im1, info, true),
+      std::runtime_error);
+}
+
+/**
+ * Test if an image with a wrong dimesion throws an expected
+ * exception while loading.
+ */
+TEST_CASE("LoadImageWrongInfo", "[ImageLoadTest]")
+{
+  data::ImageInfo info(5, 5, 3, 90);
+
+  arma::Mat<unsigned char> im1;
+  im1 = arma::randi<arma::Mat<unsigned char>>(24 * 25 * 7, 1);
+  REQUIRE_THROWS_AS(data::Load("APITest.bmp", im1, info, true),
+      std::runtime_error);
+}
+
+TEST_CASE("LoadSetOfImagesNoInfo", "[ImageLoadTest]")
+{
+  std::vector<std::string> files =
+      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
+       "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
+       "sheep_9.jpg"};
+
+  arma::Mat<unsigned char> im1;
+  REQUIRE_THROWS_AS(data::Load(files, im1, JPG + Fatal),
+      std::runtime_error);
+}
+
+TEST_CASE("LoadSetOfImagesWrongInfo", "[ImageLoadTest]")
+{
+  data::ImageOptions opts(5, 5, 3, 90);
+  opts.Fatal() = true;
+  std::vector<std::string> files =
+      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
+       "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
+       "sheep_9.jpg"};
+
+  arma::Mat<unsigned char> im1;
+  REQUIRE_THROWS_AS(data::Load(files, im1, opts),
       std::runtime_error);
 }
 

@@ -449,7 +449,7 @@ bool LoadModel(Object& objectToSerialize,
 }
 
 template<typename MatType>
-bool Load(const std::vector<std::string>& filenames,
+bool LoadNumericVector(const std::vector<std::string>& filenames,
           MatType& matrix,
           const TextOptions& opts)
 {
@@ -458,7 +458,7 @@ bool Load(const std::vector<std::string>& filenames,
 }
 
 template<typename MatType>
-bool Load(const std::vector<std::string>& filenames,
+bool LoadNumericVector(const std::vector<std::string>& filenames,
           MatType& matrix,
           TextOptions& opts)
 {

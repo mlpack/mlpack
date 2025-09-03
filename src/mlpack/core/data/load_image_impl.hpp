@@ -20,21 +20,56 @@
 namespace mlpack {
 namespace data {
 
-// Image loading API for multiple files.
-template<typename eT>
+template<typename eT, typename DataOptionsType>
 bool Load(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
-          ImageOptions& opts)
+          const DataOptionsType& opts,
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>*)
 {
-  std::cout << "this should not execute Load for Image" << std::endl;
-  return LoadImage(files, matrix, opts);
+  DataOptionsType tmpOpts(opts);
+  return Load(files, matrix, tmpOpts);
 }
 
+// Image loading API for multiple files.
+// To be organized in the next PR when deprecating the old API.
+template<typename eT, typename DataOptionsType>
+bool Load(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          DataOptionsType& opts,
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>*)
+{
+  std::cout << "this should not execute Load for Image" << std::endl;
+  bool success = false;
+  DetectFromExtension<arma::Mat<eT>>(files.back(), opts);
+  const bool isImageFormat = (opts.Format() == FileType::PNG ||
+        opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
+        opts.Format() == FileType::BMP || opts.Format() == FileType::HDR ||
+        opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
+        opts.Format() == FileType::PIC || opts.Format() == FileType::GIF ||
+        opts.Format() == FileType::ImageType);
+  if (isImageFormat)
+  {
+      std::cout << "we are dealing with an image" << std::endl;
+      ImageOptions imgOpts(std::move(opts));
+      success = LoadImage(files, matrix, imgOpts);
+      opts = std::move(imgOpts);
+  }
+  else
+  {
+    std::cout << "Vector converted to a text opttion" << std::endl;
+    TextOptions txtOpts(std::move(opts));
+    success = LoadNumericVector(files, matrix, txtOpts);
+    opts = std::move(txtOpts);
+  }
+  return success;
+}
 
 template<typename eT>
 bool LoadImage(const std::vector<std::string>& files,
-              arma::Mat<eT>& matrix,
-              ImageOptions& opts)
+               arma::Mat<eT>& matrix,
+               ImageOptions& opts)
 {
   size_t dimension = 0;
   if (files.empty())
@@ -57,7 +92,6 @@ bool LoadImage(const std::vector<std::string>& files,
       oss << " " << x;
     HandleError(oss, opts);
   }
-
   // Temporary variables needed as stb_image.h supports int parameters.
   int tempWidth, tempHeight, tempChannels;
   arma::Mat<unsigned char> images;
