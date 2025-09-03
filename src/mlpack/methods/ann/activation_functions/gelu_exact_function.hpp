@@ -1,5 +1,6 @@
 /**
  * @file methods/ann/activation_functions/gelu_exact_function.hpp
+ * @author Kumar Utkarsh
  *
  * Definition and implementation of the exact Gaussian Error Linear Unit (GELU)
  * function.
@@ -34,26 +35,24 @@ class GELUExactFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = 0.5 * x % (1.0 + arma::erf(x / std::sqrt(2.0)));
+    y = 0.5 * x % (1.0 + erf(x / std::sqrt(2.0)));
   }
 
   //! Compute the first derivative of the exact GELU function for a single value.
-  static double Deriv(const double x, const double /* y */)
+  static double Deriv(const double x, const double y )
   {
     const double phi = std::exp(-0.5 * x * x) / std::sqrt(2.0 * M_PI);
-    const double Phi = 0.5 * (1.0 + std::erf(x / std::sqrt(2.0)));
-    return Phi + x * phi;
+    return  y / (x + 1e-15) + phi;
   }
 
   //! Compute the first derivative for matrices/vectors.
   template<typename InputVecType, typename OutputVecType, typename DerivVecType>
   static void Deriv(const InputVecType& x,
-                    const OutputVecType& /* y */,
+                    const OutputVecType& y,
                     DerivVecType& dy)
   {
     // Using element-wise operations with Armadillo
-    dy = 0.5 * (1.0 + arma::erf(x / std::sqrt(2.0))) + x % (arma::exp(-0.5 * arma::pow(x, 2)) / std::sqrt(2.0 * M_PI));
-  }
+    dy = y / (x + 1e-15) + x % exp(-0.5 * pow(x, 2)) / std::sqrt(2.0 * M_PI);  }
 }; // class GELUExactFunction
 
 } // namespace mlpack

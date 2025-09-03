@@ -4,6 +4,8 @@
 
 _????-??-??_
 
+ * Added `GELUExact` ANN activation layer (#3994).
+
  * Adapt `GRU` ANN layer to the new interface (#3955).
 
  * Fix warning on CRAN for bundled STB (#3950).
