@@ -24,6 +24,7 @@
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
+#include <mlpack/methods/ann/activation_functions/gelu_exact_function.hpp>
 #include <mlpack/methods/ann/activation_functions/elliot_function.hpp>
 #include <mlpack/methods/ann/activation_functions/elish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
@@ -51,6 +52,7 @@ namespace mlpack {
  *  - Mish
  *  - LiSHT
  *  - GELU
+ *  - GELUExact
  *  - ELiSH
  *  - Elliot
  *  - Gaussian
@@ -181,6 +183,12 @@ using LiSHT = BaseLayer<LiSHTFunction, MatType>;
  */
 template<typename MatType = arma::mat>
 using GELU = BaseLayer<GELUFunction, MatType>;
+
+/**
+ * Standard GELUExact-Layer using the GELUExact activation function.
+ */
+template<typename MatType = arma::mat>
+using GELUExact = BaseLayer<GELUExactFunction, MatType>;
 
 /**
  * Standard Elliot-Layer using the Elliot activation function.
