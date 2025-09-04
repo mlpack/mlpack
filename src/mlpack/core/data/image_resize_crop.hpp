@@ -92,7 +92,7 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
   }
   else
   {
-    originalImagesFloat = 
+    originalImagesFloat =
         arma::conv_to<arma::Mat<float>>::from(std::move(images));
   }
 
@@ -168,8 +168,9 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
 
   for (size_t i = 0; i < images.n_cols; ++i)
   {
-      stbir_resize_uint8_linear(originalImages.colptr(i), opts.Width(), opts.Height(),
-          0, resizedImages.colptr(i), newWidth, newHeight, 0, channels);
+      stbir_resize_uint8_linear(originalImages.colptr(i), opts.Width(),
+          opts.Height(), 0, resizedImages.colptr(i), newWidth, newHeight, 0,
+          channels);
   }
 
   images = arma::conv_to<arma::Mat<eT>>::from(std::move(resizedImages));

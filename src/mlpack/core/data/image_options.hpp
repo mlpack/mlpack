@@ -214,7 +214,11 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
   size_t Height() const { return this->AccessMember(height, defaultHeight); }
   size_t& Height() { return this->ModifyMember(height, defaultHeight); }
 
-  size_t Channels() const { return this->AccessMember(channels, defaultChannels); }
+  size_t Channels() const
+  {
+    return this->AccessMember(channels, defaultChannels);
+  }
+
   size_t& Channels() { return this->ModifyMember(channels, defaultChannels); }
 
   size_t Quality() const { return this->AccessMember(quality, defaultQuality); }
