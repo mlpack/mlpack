@@ -631,7 +631,11 @@ macro(compile_OpenBLAS)
     endif()
     file(GLOB OPENBLAS_LIBRARIES ${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib)
   else()
-    execute_process(COMMAND make NO_SHARED=1 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION} libs)
+    set(ENV{NO_SHARED} 1)
+    execute_process(
+        COMMAND make libs
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION} libs)
+    unset(ENV{NO_SHARED}
     file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}/libopenblas.a")
   endif()
   set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
