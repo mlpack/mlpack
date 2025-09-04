@@ -113,7 +113,7 @@ pipeline
                 # If a custom page size is needed, set it.
                 if [ ! -z "$PAGE_SIZE" ];
                 then
-                  EXTRA_CXX_FLAGS="-Wl,-z,common-page-size=\'$PAGE_SIZE\' -Wl,-z,max-page-size=\'$PAGE_SIZE\'";
+                  EXTRA_CXX_FLAGS="-Wl,-z,common-page-size=$PAGE_SIZE -Wl,-z,max-page-size=$PAGE_SIZE";
                 fi
 
                 # Configure ccache.
