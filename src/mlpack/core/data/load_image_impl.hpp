@@ -41,6 +41,12 @@ bool Load(const std::vector<std::string>& files,
               IsDataOptions<DataOptionsType>::value>*)
 {
   bool success = false;
+  if (files.empty())
+  {
+    return HandleError("Load(): given set of filenames is empty;"
+        " loading failed.", opts);
+  }
+
   DetectFromExtension<arma::Mat<eT>>(files.back(), opts);
   const bool isImageFormat = (opts.Format() == FileType::PNG ||
       opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
