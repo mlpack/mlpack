@@ -53,7 +53,7 @@ macro(search_openblas version)
         set(ENV{COMMON_OPT} "${CMAKE_OPENBLAS_FLAGS}") # Pass our flags to OpenBLAS
         set(ENV{CC} "${CMAKE_C_COMPILER}")
         if (CCACHE_PROGRAM)
-          set (ENV{CC} "${CCACHE_PROGRAM} ${CC_COMMAND}")
+          set (ENV{CC} "${CCACHE_PROGRAM} $ENV{CC}")
         endif ()
         set(ENV{TARGET} "${OPENBLAS_TARGET}")
         set(ENV{BINARY} "${OPENBLAS_BINARY}")
