@@ -49,29 +49,25 @@ macro(search_openblas version)
     get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v${version}/OpenBLAS-${version}.tar.gz OpenBLAS OpenBLAS-${version}.tar.gz)
     if (NOT MSVC)
       if (NOT EXISTS "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/libopenblas.a")
+        set(OLD_CC ${ENV{CC}})
         set(ENV{COMMON_OPT} "${CMAKE_OPENBLAS_FLAGS}") # Pass our flags to OpenBLAS
-        set(CC_COMMAND ${CMAKE_C_COMPILER})
+        set(ENV{CC} "${CMAKE_C_COMPILER}")
         if (CCACHE_PROGRAM)
-          set (CC_COMMAND "${CCACHE_PROGRAM} ${CC_COMMAND}")
+          set (ENV{CC} "${CCACHE_PROGRAM} ${CC_COMMAND}")
         endif ()
-        if (OPENBLAS_EXTRA_ARGS)
-          execute_process(COMMAND
-              make TARGET=${OPENBLAS_TARGET}
-                   BINARY=${OPENBLAS_BINARY}
-                   HOSTCC=gcc CC=${CC_COMMAND}
-                   NO_SHARED=1
-                   ${OPENBLAS_EXTRA_ARGS}
-                   libs
-              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version})
-        else()
-          execute_process(COMMAND
-              make TARGET=${OPENBLAS_TARGET}
-                   BINARY=${OPENBLAS_BINARY}
-                   HOSTCC=gcc CC=${CC_COMMAND}
-                   NO_SHARED=1
-                   libs
-              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version})
-        endif()
+        set(ENV{TARGET} "${OPENBLAS_TARGET}")
+        set(ENV{BINARY} "${OPENBLAS_BINARY}")
+        set(ENV{HOSTCC} "gcc")
+        set(ENV{NO_SHARED} 1)
+        execute_process(
+            COMMAND make libs ${OPENBLAS_EXTRA_ARGS}
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version})
+        unset(ENV{NO_SHARED})
+        unset(ENV{HOSTCC})
+        unset(ENV{BINARY})
+        unset(ENV{TARGET})
+        unset(ENV{COMMON_OPT})
+        set(ENV{CC} ${OLD_CC})
       endif()
       file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/libopenblas.a")
       set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
