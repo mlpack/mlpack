@@ -49,7 +49,7 @@ macro(search_openblas version)
     get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v${version}/OpenBLAS-${version}.tar.gz OpenBLAS OpenBLAS-${version}.tar.gz)
     if (NOT MSVC)
       if (NOT EXISTS "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/libopenblas.a")
-        set(OLD_CC ${ENV{CC}})
+        set(OLD_CC $ENV{CC})
         set(ENV{COMMON_OPT} "${CMAKE_OPENBLAS_FLAGS}") # Pass our flags to OpenBLAS
         set(ENV{CC} "${CMAKE_C_COMPILER}")
         if (CCACHE_PROGRAM)
