@@ -41,22 +41,19 @@ bool SaveImage(const std::vector<std::string>& files,
     HandleError(oss, opts);
   }
 
-  // @rcurtin Same here, I would not expect the user to have a vector of
-  // different filetypes that they would like to save. Therefore I
-  // removed the following loop.
-  if (opts.Format() == FileType::ImageType)
+  // Check if we do have any type that is not supported.
+  for  (size_t i = 0; i < files.size() ; ++i)
   {
-    DetectFromExtension<arma::Mat<eT>, ImageOptions>(files.back(), opts);
-  }
-  if (!opts.saveType.count(Extension(files.back())))
-  {
-    std::stringstream oss;
-    oss << "Save(): file type " << opts.FileTypeToString()
-        << " isn't supported. Currently image saving supports: ";
-    for (const auto& x : opts.saveType)
-      oss << "  " << x;
-    oss << "." << std::endl;
-    HandleError(oss, opts);
+    if (!opts.saveType.count(Extension(files.at(i))))
+    {
+      std::stringstream oss;
+      oss << "Save(): file type " << opts.FileTypeToString()
+          << " isn't supported. Currently image saving supports: ";
+      for (const auto& x : opts.saveType)
+        oss << "  " << x;
+      oss << "." << std::endl;
+      HandleError(oss, opts);
+    }
   }
 
   size_t dimension = opts.Width() * opts.Height() * opts.Channels();
@@ -69,12 +66,13 @@ bool SaveImage(const std::vector<std::string>& files,
     HandleError(oss, opts);
   }
   // Unfortunately we cannot move because matrix is const.
-  arma::Mat<unsigned char> tempMatrix =
-      arma::conv_to<arma::Mat<unsigned char>>::from(matrix);
-
+  arma::Mat<eT> tempMatrix;
+  MakeAlias(tempMatrix, matrix, matrix.n_rows, matrix.n_cols, 0, true);
   bool success = false;
   for (size_t i = 0; i < files.size() ; ++i)
   {
+    // Update opts.Format() at each iteration.
+    DetectFromExtension<arma::Mat<eT>, ImageOptions>(files.at(i), opts);
     if (opts.Format() == FileType::PNG)
     {
       success = stbi_write_png(files.at(i).c_str(), opts.Width(), opts.Height(),

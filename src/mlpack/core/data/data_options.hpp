@@ -50,7 +50,6 @@ enum struct FileType
   JPG,        // Joint Photographic Experts Group image type.
   TGA,        // Truevision TGA image type.
   BMP,        // Bitmap image type.
-  HDR,        // High Dynamic Range image format.
   PSD,        // PhotoShop image type.
   GIF,        // Graphics Interchange Format image type.
   PIC,        // PICtor image format.
@@ -312,7 +311,6 @@ class DataOptionsBase
       case FileType::JPG:         return "JPEG image data";
       case FileType::TGA:         return "Truevision TGA image data";
       case FileType::BMP:         return "Bitmap image data";
-      case FileType::HDR:         return "High Dynamic Range image data";
       case FileType::PSD:         return "PhotoShop image data";
       case FileType::GIF:         return "GIF image data";
       case FileType::PIC:         return "PICtor image data";
@@ -461,7 +459,6 @@ static const DataOptions PNG = DataOptions(std::nullopt, FileType::PNG);
 static const DataOptions JPG = DataOptions(std::nullopt, FileType::JPG);
 static const DataOptions TGA = DataOptions(std::nullopt, FileType::TGA);
 static const DataOptions BMP = DataOptions(std::nullopt, FileType::BMP);
-static const DataOptions HDR = DataOptions(std::nullopt, FileType::HDR);
 static const DataOptions PSD = DataOptions(std::nullopt, FileType::PSD);
 static const DataOptions GIF = DataOptions(std::nullopt, FileType::GIF);
 static const DataOptions PIC = DataOptions(std::nullopt, FileType::PIC);

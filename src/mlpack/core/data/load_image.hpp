@@ -44,7 +44,6 @@ bool Load(const std::string& filename,
           const bool fatal)
 {
   // Use the new implementation.
-  std::cout << "this should not execute Load for Image 2" << std::endl;
   opts.Fatal() = fatal;
   opts.Format() = FileType::ImageType;
   std::vector<std::string> files;
@@ -68,7 +67,6 @@ bool Load(const std::vector<std::string>& files,
           const bool fatal)
 {
   // Use the new implementation.
-  std::cout << "this should not execute Load for Image 3" << std::endl;
   opts.Fatal() = fatal;
   opts.Format() = FileType::ImageType;
   return LoadImage(files, matrix, opts);

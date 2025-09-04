@@ -13,6 +13,7 @@
 #define MLPACK_CORE_DATA_SAVE_IMAGE_HPP
 
 #include <mlpack/core/stb/stb.hpp>
+#include <mlpack/core/math/make_alias.hpp>
 
 #include "image_options.hpp"
 

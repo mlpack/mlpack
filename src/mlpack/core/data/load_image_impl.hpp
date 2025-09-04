@@ -40,25 +40,22 @@ bool Load(const std::vector<std::string>& files,
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>*)
 {
-  std::cout << "this should not execute Load for Image" << std::endl;
   bool success = false;
   DetectFromExtension<arma::Mat<eT>>(files.back(), opts);
   const bool isImageFormat = (opts.Format() == FileType::PNG ||
-        opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
-        opts.Format() == FileType::BMP || opts.Format() == FileType::HDR ||
-        opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
-        opts.Format() == FileType::PIC || opts.Format() == FileType::GIF ||
-        opts.Format() == FileType::ImageType);
+      opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
+      opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||
+      opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
+      opts.Format() == FileType::PIC || opts.Format() == FileType::ImageType);
+
   if (isImageFormat)
   {
-      std::cout << "we are dealing with an image" << std::endl;
       ImageOptions imgOpts(std::move(opts));
       success = LoadImage(files, matrix, imgOpts);
       opts = std::move(imgOpts);
   }
   else
   {
-    std::cout << "Vector converted to a text opttion" << std::endl;
     TextOptions txtOpts(std::move(opts));
     success = LoadNumericVector(files, matrix, txtOpts);
     opts = std::move(txtOpts);

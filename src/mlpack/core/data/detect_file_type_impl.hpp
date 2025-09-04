@@ -297,10 +297,6 @@ inline FileType AutoDetectFile(std::fstream& stream,
   {
     detectedLoadType = FileType::PSD;
   }
-  else if (extension == "hdr")
-  {
-    detectedLoadType = FileType::HDR;
-  }
   else if (extension == "gif")
   {
     detectedLoadType = FileType::GIF;
@@ -379,10 +375,6 @@ void DetectFromExtension(const std::string& filename,
   else if (extension == "psd")
   {
     opts.Format() = FileType::PSD;
-  }
-  else if (extension == "hdr")
-  {
-    opts.Format() = FileType::HDR;
   }
   else if (extension == "gif")
   {

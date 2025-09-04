@@ -86,7 +86,11 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
   arma::Mat<float> resizedFloatImages;
 
   // We need to covert to a float if we are resizing a double.
-  if constexpr (std::is_same_v<eT, double> || std::is_same_v<eT, float>)
+  if constexpr (std::is_same_v<eT, float>)
+  {
+    MakeAlias(originalImagesFloat, images, images.n_rows, images.n_cols);
+  }
+  else
   {
     originalImagesFloat = 
         arma::conv_to<arma::Mat<float>>::from(std::move(images));
@@ -150,8 +154,11 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
   size_t newDimension = newWidth * newHeight * opts.Channels();
   arma::Mat<unsigned char> resizedImages;
   arma::Mat<unsigned char> originalImages;
-  if constexpr (std::is_same_v<eT, long unsigned int> ||
-                std::is_same_v<eT, unsigned char>)
+  if constexpr (std::is_same_v<eT, unsigned char>)
+  {
+    MakeAlias(originalImages, images, images.n_rows, images.n_cols);
+  }
+  else
   {
     originalImages =
         arma::conv_to<arma::Mat<unsigned char>>::from(std::move(images));

@@ -143,11 +143,10 @@ bool Save(const std::string& filename,
     return false;
   }
   const bool isImageFormat = (opts.Format() == FileType::PNG ||
-        opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
-        opts.Format() == FileType::BMP || opts.Format() == FileType::HDR ||
-        opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
-        opts.Format() == FileType::PIC || opts.Format() == FileType::GIF ||
-        opts.Format() == FileType::ImageType);
+      opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
+      opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||
+      opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
+      opts.Format() == FileType::PIC || opts.Format() == FileType::ImageType);
 
   // Try to save the file.
   Log::Info << "Saving " << opts.FileTypeToString() << " to '" << filename
@@ -163,7 +162,6 @@ bool Save(const std::string& filename,
       }
       else
       {
-        std::cout << "Saving an image" << std::endl;
         ImageOptions imgOpts(std::move(opts));
         std::vector<std::string> files;
         files.push_back(filename);

@@ -35,7 +35,6 @@ bool Load(const std::string& filename,
           const bool transpose,
           const FileType inputLoadType)
 {
-  std::cout << "executed 2" << std::endl;
   MatrixOptions opts;
   opts.Fatal() = fatal;
   opts.NoTranspose() = !transpose;
@@ -185,11 +184,10 @@ bool Load(const std::string& filename,
     return false;
   }
   const bool isImageFormat = (opts.Format() == FileType::PNG ||
-        opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
-        opts.Format() == FileType::BMP || opts.Format() == FileType::HDR ||
-        opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
-        opts.Format() == FileType::PIC || opts.Format() == FileType::GIF ||
-        opts.Format() == FileType::ImageType);
+      opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
+      opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||
+      opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
+      opts.Format() == FileType::PIC || opts.Format() == FileType::ImageType);
 
   if constexpr (isMatrixType)
   {
@@ -202,7 +200,6 @@ bool Load(const std::string& filename,
       }
       else
       {
-        std::cout << "we are dealing with an image" << std::endl;
         ImageOptions imgOpts(std::move(opts));
         std::vector<std::string> files;
         files.push_back(filename);
@@ -212,7 +209,6 @@ bool Load(const std::string& filename,
     }
     else
     {
-      std::cout << "got converted to a text opttion" << std::endl;
       TextOptions txtOpts(std::move(opts));
       success = LoadNumeric(filename, matrix, stream, txtOpts);
       opts = std::move(txtOpts);

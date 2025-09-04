@@ -221,10 +221,10 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
   size_t& Quality() { return this->ModifyMember(quality, defaultQuality); }
 
   inline static const std::unordered_set<std::string> saveType
-      = {"jpg", "png", "tga", "bmp", "hdr"};
+      = {"jpg", "png", "tga", "bmp"};
 
   inline static const std::unordered_set<std::string> loadType
-      = {"jpg", "png", "tga", "bmp", "psd", "gif", "hdr", "pic", "pnm", "jpeg"};
+      = {"jpg", "png", "tga", "bmp", "psd", "gif", "pic", "pnm", "jpeg"};
 
  private:
   std::optional<size_t> width;
