@@ -80,6 +80,11 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
   {
     channels = STBIR_RGB;
   }
+  else
+  {
+    Log::Fatal << "Numboer of Channels should be either 1 or 3, and cannot be "
+        << opts.Channels() << "." << std::endl;
+  }
 
   size_t newDimension = newWidth * newHeight * opts.Channels();
   arma::Mat<float> originalImagesFloat;

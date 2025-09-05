@@ -155,19 +155,13 @@ bool Save(const std::string& filename,
   {
     if (isImageFormat)
     {
-      if constexpr (isSparseMatrixType)
-      {
-        return HandleError("Cannot load image data into a sparse matrix. "
-        "Please use dense matrix instead.", opts);
-      }
-      else
-      {
-        ImageOptions imgOpts(std::move(opts));
-        std::vector<std::string> files;
-        files.push_back(filename);
-        success = SaveImage(files, matrix, imgOpts);
-        opts = std::move(imgOpts);
-      }
+      arma::Mat<typename ObjectType::elem_type> tmp =
+        arma::conv_to<arma::Mat<typename ObjectType::elem_type>>::from(matrix);
+      ImageOptions imgOpts(std::move(opts));
+      std::vector<std::string> files;
+      files.push_back(filename);
+      SaveImage(files, tmp, imgOpts);
+      opts = std::move(imgOpts);
     }
     else
     {

@@ -61,13 +61,14 @@ bool SaveImage(const std::vector<std::string>& files,
   if (dimension != matrix.n_rows)
   {
     std::stringstream oss;
-    oss << "data::Save(): The given image dimensions do not match the "
-        << "dimensions of the matrix to be saved!";
+    oss << "data::Save(): The given image dimensions, Width: " << opts.Width()
+        << ", Height: " << opts.Height() << ", Channels: "<< opts.Channels()
+        << " do not match the dimensions of the matrix to be saved!";
     HandleError(oss, opts);
   }
   // Unfortunately we cannot move because matrix is const.
-  arma::Mat<eT> tempMatrix;
-  MakeAlias(tempMatrix, matrix, matrix.n_rows, matrix.n_cols, 0, true);
+  arma::Mat<unsigned char> tempMatrix =
+      arma::conv_to<arma::Mat<unsigned char>>::from(matrix);
   bool success = false;
   for (size_t i = 0; i < files.size() ; ++i)
   {

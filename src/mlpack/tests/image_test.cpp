@@ -97,7 +97,7 @@ TEST_CASE("LoadPNGImageTest", "[ImageLoadTest]")
 }
 
 /**
- * Test that the image is loaded correctly if the type is specified in the
+ * Test that the image is loaded correctly if the type is not specified in the
  * function.
  */
 TEST_CASE("LoadPNGImageTestNoFormat", "[ImageLoadTest]")
@@ -114,8 +114,6 @@ TEST_CASE("LoadWrongDataOptions", "[ImageLoadTest]")
   arma::Mat<unsigned char> matrix;
   TextOptions opts;
   opts.Fatal() = true;
-  //REQUIRE_THROWS_AS(data::Load("test_image.png", matrix, opts),
-  //    std::runtime_error);
   REQUIRE(data::Load("test_image.png", matrix, opts) == true);
 }
 
@@ -193,6 +191,9 @@ TEST_CASE("LoadImageWrongInfo", "[ImageLoadTest]")
       std::runtime_error);
 }
 
+/**
+ * Test if loading a set of images with different dimensions will fail..
+ */
 TEST_CASE("LoadSetOfImagesNoInfo", "[ImageLoadTest]")
 {
   std::vector<std::string> files =
