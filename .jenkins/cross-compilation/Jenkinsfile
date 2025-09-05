@@ -134,7 +134,7 @@ pipeline
                     -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
                     -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
                     -DDOWNLOAD_DEPENDENCIES=ON \
-                    -DOPENBLAS_EXTRA_ARGS="NO_FORTRAN=1" \
+                    -DOPENBLAS_EXTRA_ARGS="NO_FORTRAN=1 DYNAMIC_ARCH=0" \
                     -DCMAKE_CXX_FLAGS="$EXTRA_CXX_FLAGS" \
                     ../
                 time make mlpack_test;

@@ -60,7 +60,7 @@ macro(search_openblas version)
         set(ENV{HOSTCC} "gcc")
         set(ENV{NO_SHARED} 1)
         execute_process(
-            COMMAND make libs ${OPENBLAS_EXTRA_ARGS}
+            COMMAND make ${OPENBLAS_EXTRA_ARGS}
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version})
         unset(ENV{NO_SHARED})
         unset(ENV{HOSTCC})
