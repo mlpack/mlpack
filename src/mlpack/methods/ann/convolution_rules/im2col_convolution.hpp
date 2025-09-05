@@ -33,6 +33,226 @@ namespace mlpack {
 template<typename BorderMode = FullConvolution>
 class Im2ColConvolution
 {
+ public:
+  /**
+   * Perform a convolution with dense matrices.
+   *
+   * @param input Input used to perform the convolution.
+   * @param filter Filter used to perform the convolution.
+   * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
+   */
+  template<typename InMatType, typename FilMatType, typename OutMatType>
+  static void
+  Convolution(const InMatType& input,
+              const FilMatType& filter,
+              OutMatType& output,
+              const size_t dW = 1,
+              const size_t dH = 1,
+              const size_t dilationW = 1,
+              const size_t dilationH = 1,
+              const bool appending = false,
+              const typename std::enable_if_t<IsMatrix<InMatType>::value>* = 0)
+  {
+    InMatType inputPadded;
+    PadInput(input, filter, inputPadded, dilationW, dilationH);
+
+    if (!appending)
+      ComputeOutputSize(inputPadded, filter, output, dW, dH,
+          dilationW, dilationH, 1);
+
+    InMatType im2row(output.n_elem, filter.n_elem,
+        GetFillType<InMatType>::none);
+    Im2Row(inputPadded, im2row, filter.n_rows, filter.n_cols, dW, dH,
+        dilationW, dilationH);
+
+    // The filters already have the correct order in memory, just reshape it.
+    FilMatType fil2col;
+    MakeAlias(fil2col, filter, filter.n_elem, 1);
+
+    // The output is also already in the correct order.
+    OutMatType tempOutput;
+    MakeAlias(tempOutput, output, output.n_elem, 1);
+
+    tempOutput += im2row * fil2col;
+  }
+
+  /**
+   * Perform a convolution using 3rd order tensors. Expects that `filter` has
+   * `input.n_slices * output.n_slices` slices. The Nth `input.n_slices` filters
+   * are applied to all input slices and output to the Nth output slice.
+   * eg. 2 input slices: filter 0 applies to input 0, output 0,
+   * fil 1 -> in 1, out 0, fil 2 -> in 0, out 1, fil 3 -> in 1, out 1,
+   * fil 4 -> in 0, out 2, fil 5 -> in 1, out 2, etc.
+   *
+   * @param input Input used to perform the convolution.
+   * @param filter Filter used to perform the convolution.
+   * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
+   */
+  template<typename CubeType>
+  static void Convolution(
+      const CubeType& input,
+      const CubeType& filter,
+      CubeType& output,
+      const size_t dW = 1,
+      const size_t dH = 1,
+      const size_t dilationW = 1,
+      const size_t dilationH = 1,
+      const bool appending = false,
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
+  {
+    using MatType = typename GetDenseMatType<CubeType>::type;
+
+    CubeType inputPadded;
+    PadInput(input, filter, inputPadded, dilationW, dilationH);
+
+    const size_t inMaps = input.n_slices;
+    const size_t outMaps = filter.n_slices / inMaps;
+
+    if (!appending)
+      ComputeOutputSize(inputPadded, filter, output, dW, dH,
+          dilationW, dilationH, outMaps);
+
+    MatType im2row(output.n_rows * output.n_cols, filter.n_rows *
+        filter.n_cols * input.n_slices, GetFillType<MatType>::none);
+    // Arrange im2row so that each row has patches from each input map.
+    for (size_t i = 0; i < input.n_slices; ++i)
+    {
+      MatType im2rowSv;
+      MakeAlias(im2rowSv, im2row, output.n_rows * output.n_cols,
+          filter.n_rows * filter.n_cols, output.n_rows *
+          output.n_cols * filter.n_rows * filter.n_cols * i);
+      Im2Row(inputPadded.slice(i), im2rowSv, filter.n_rows, filter.n_cols,
+          dW, dH, dilationW, dilationH);
+    }
+
+    // The filters already have the correct order in memory, just reshape it.
+    MatType fil2col;
+    MakeAlias(fil2col, filter, filter.n_rows * filter.n_cols * inMaps,
+        outMaps);
+
+    // The output is also already in the correct order.
+    MatType tempOutput;
+    MakeAlias(tempOutput, output, output.n_rows * output.n_cols, outMaps);
+
+    tempOutput += im2row * fil2col;
+  }
+
+  /**
+   * Perform a convolution using dense matrix as input and a 3rd order tensors
+   * as filter and output.
+   *
+   * @param input Input used to perform the convolution.
+   * @param filter Filter used to perform the convolution.
+   * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
+   */
+  template<typename MatType, typename CubeType>
+  static void Convolution(
+      const MatType& input,
+      const CubeType& filter,
+      CubeType& output,
+      const size_t dW = 1,
+      const size_t dH = 1,
+      const size_t dilationW = 1,
+      const size_t dilationH = 1,
+      const bool appending = false,
+      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
+  {
+    MatType inputPadded;
+    PadInput(input, filter, inputPadded, dilationW, dilationH);
+
+    if (!appending)
+      ComputeOutputSize(inputPadded, filter, output, dW, dH,
+          dilationW, dilationH, filter.n_slices);
+
+    MatType im2row(output.n_rows * output.n_cols, filter.n_rows *
+        filter.n_cols, GetFillType<MatType>::none);
+    Im2Row(inputPadded, im2row, filter.n_rows, filter.n_cols, dW, dH,
+        dilationW, dilationH);
+
+    // The filters already have the correct order in memory, just reshape it.
+    MatType fil2col;
+    MakeAlias(fil2col, filter, filter.n_rows * filter.n_cols, filter.n_slices);
+
+    // The output is also already in the correct order.
+    MatType tempOutput;
+    MakeAlias(tempOutput, output, output.n_rows * output.n_cols,
+        filter.n_slices);
+
+    tempOutput += im2row * fil2col;
+  }
+
+  /**
+   * Perform a convolution using a 3rd order tensors as input and output and a
+   * dense matrix as filter.
+   *
+   * @param input Input used to perform the convolution.
+   * @param filter Filter used to perform the convolution.
+   * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.x
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
+   */
+  template<typename MatType, typename CubeType>
+  static void Convolution(
+      const CubeType& input,
+      const MatType& filter,
+      CubeType& output,
+      const size_t dW = 1,
+      const size_t dH = 1,
+      const size_t dilationW = 1,
+      const size_t dilationH = 1,
+      const bool appending = false,
+      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
+  {
+    CubeType inputPadded;
+    PadInput(input, filter, inputPadded, dilationW, dilationH);
+
+    if (!appending)
+      ComputeOutputSize(inputPadded, filter, output, dW, dH,
+          dilationW, dilationH, input.n_slices);
+
+    // The filters already have the correct order in memory, just reshape it.
+    MatType fil2col;
+    MakeAlias(fil2col, filter, filter.n_elem, 1);
+
+    MatType tempOutput;
+    MatType im2row(output.n_rows * output.n_cols, filter.n_elem,
+        GetFillType<CubeType>::none);
+
+    for (size_t i = 0; i < input.n_slices; ++i)
+    {
+      MakeAlias(tempOutput, output, output.n_rows * output.n_cols, 1,
+          i * output.n_rows * output.n_cols);
+      Im2Row(inputPadded.slice(i), im2row, filter.n_rows, filter.n_cols,
+          dW, dH, dilationW, dilationH);
+
+      tempOutput += im2row * fil2col;
+    }
+  }
+
  private:
   /**
    * Take an input and convert each patch into rows. Expects that im2row
@@ -256,226 +476,6 @@ class Im2ColConvolution
     const size_t outputRows = (inputPadded.n_rows - filterRows + dH) / dH;
     const size_t outputCols = (inputPadded.n_cols - filterCols + dW) / dW;
     output.zeros(outputRows, outputCols, outSlices);
-  }
-
- public:
-  /**
-   * Perform a convolution with dense matrices.
-   *
-   * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the convolution.
-   * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
-   * @param dilationW The dilation factor in x direction.
-   * @param dilationH The dilation factor in y direction.
-   * @param appending If true, it will not initialize the output. Instead,
-   *                  it will append the results to the output.
-   */
-  template<typename InMatType, typename FilMatType, typename OutMatType>
-  static void
-  Convolution(const InMatType& input,
-              const FilMatType& filter,
-              OutMatType& output,
-              const size_t dW = 1,
-              const size_t dH = 1,
-              const size_t dilationW = 1,
-              const size_t dilationH = 1,
-              const bool appending = false,
-              const typename std::enable_if_t<IsMatrix<InMatType>::value>* = 0)
-  {
-    InMatType inputPadded;
-    PadInput(input, filter, inputPadded, dilationW, dilationH);
-
-    if (!appending)
-      ComputeOutputSize(inputPadded, filter, output, dW, dH,
-          dilationW, dilationH, 1);
-
-    InMatType im2row(output.n_elem, filter.n_elem,
-        GetFillType<InMatType>::none);
-    Im2Row(inputPadded, im2row, filter.n_rows, filter.n_cols, dW, dH,
-        dilationW, dilationH);
-
-    // The filters already have the correct order in memory, just reshape it.
-    FilMatType fil2col;
-    MakeAlias(fil2col, filter, filter.n_elem, 1);
-
-    // The output is also already in the correct order.
-    OutMatType tempOutput;
-    MakeAlias(tempOutput, output, output.n_elem, 1);
-
-    tempOutput += im2row * fil2col;
-  }
-
-  /**
-   * Perform a convolution using 3rd order tensors. Expects that `filter` has
-   * `input.n_slices * output.n_slices` slices. The Nth `input.n_slices` filters
-   * are applied to all input slices and output to the Nth output slice.
-   * eg. 2 input slices: filter 0 applies to input 0, output 0,
-   * fil 1 -> in 1, out 0, fil 2 -> in 0, out 1, fil 3 -> in 1, out 1,
-   * fil 4 -> in 0, out 2, fil 5 -> in 1, out 2, etc.
-   *
-   * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the convolution.
-   * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
-   * @param dilationW The dilation factor in x direction.
-   * @param dilationH The dilation factor in y direction.
-   * @param appending If true, it will not initialize the output. Instead,
-   *                  it will append the results to the output.
-   */
-  template<typename CubeType>
-  static void Convolution(
-      const CubeType& input,
-      const CubeType& filter,
-      CubeType& output,
-      const size_t dW = 1,
-      const size_t dH = 1,
-      const size_t dilationW = 1,
-      const size_t dilationH = 1,
-      const bool appending = false,
-      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
-  {
-    using MatType = typename GetDenseMatType<CubeType>::type;
-
-    CubeType inputPadded;
-    PadInput(input, filter, inputPadded, dilationW, dilationH);
-
-    const size_t inMaps = input.n_slices;
-    const size_t outMaps = filter.n_slices / inMaps;
-
-    if (!appending)
-      ComputeOutputSize(inputPadded, filter, output, dW, dH,
-          dilationW, dilationH, outMaps);
-
-    MatType im2row(output.n_rows * output.n_cols, filter.n_rows *
-        filter.n_cols * input.n_slices, GetFillType<MatType>::none);
-    // Arrange im2row so that each row has patches from each input map.
-    for (size_t i = 0; i < input.n_slices; ++i)
-    {
-      MatType im2rowSv;
-      MakeAlias(im2rowSv, im2row, output.n_rows * output.n_cols,
-          filter.n_rows * filter.n_cols, output.n_rows *
-          output.n_cols * filter.n_rows * filter.n_cols * i);
-      Im2Row(inputPadded.slice(i), im2rowSv, filter.n_rows, filter.n_cols,
-          dW, dH, dilationW, dilationH);
-    }
-
-    // The filters already have the correct order in memory, just reshape it.
-    MatType fil2col;
-    MakeAlias(fil2col, filter, filter.n_rows * filter.n_cols * inMaps,
-        outMaps);
-
-    // The output is also already in the correct order.
-    MatType tempOutput;
-    MakeAlias(tempOutput, output, output.n_rows * output.n_cols, outMaps);
-
-    tempOutput += im2row * fil2col;
-  }
-
-  /**
-   * Perform a convolution using dense matrix as input and a 3rd order tensors
-   * as filter and output.
-   *
-   * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the convolution.
-   * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
-   * @param dilationW The dilation factor in x direction.
-   * @param dilationH The dilation factor in y direction.
-   * @param appending If true, it will not initialize the output. Instead,
-   *                  it will append the results to the output.
-   */
-  template<typename MatType, typename CubeType>
-  static void Convolution(
-      const MatType& input,
-      const CubeType& filter,
-      CubeType& output,
-      const size_t dW = 1,
-      const size_t dH = 1,
-      const size_t dilationW = 1,
-      const size_t dilationH = 1,
-      const bool appending = false,
-      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
-      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
-  {
-    MatType inputPadded;
-    PadInput(input, filter, inputPadded, dilationW, dilationH);
-
-    if (!appending)
-      ComputeOutputSize(inputPadded, filter, output, dW, dH,
-          dilationW, dilationH, filter.n_slices);
-
-    MatType im2row(output.n_rows * output.n_cols, filter.n_rows *
-        filter.n_cols, GetFillType<MatType>::none);
-    Im2Row(inputPadded, im2row, filter.n_rows, filter.n_cols, dW, dH,
-        dilationW, dilationH);
-
-    // The filters already have the correct order in memory, just reshape it.
-    MatType fil2col;
-    MakeAlias(fil2col, filter, filter.n_rows * filter.n_cols, filter.n_slices);
-
-    // The output is also already in the correct order.
-    MatType tempOutput;
-    MakeAlias(tempOutput, output, output.n_rows * output.n_cols,
-        filter.n_slices);
-
-    tempOutput += im2row * fil2col;
-  }
-
-  /**
-   * Perform a convolution using a 3rd order tensors as input and output and a
-   * dense matrix as filter.
-   *
-   * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the convolution.
-   * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
-   * @param dilationW The dilation factor in x direction.
-   * @param dilationH The dilation factor in y direction.x
-   * @param appending If true, it will not initialize the output. Instead,
-   *                  it will append the results to the output.
-   */
-  template<typename MatType, typename CubeType>
-  static void Convolution(
-      const CubeType& input,
-      const MatType& filter,
-      CubeType& output,
-      const size_t dW = 1,
-      const size_t dH = 1,
-      const size_t dilationW = 1,
-      const size_t dilationH = 1,
-      const bool appending = false,
-      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
-      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
-  {
-    CubeType inputPadded;
-    PadInput(input, filter, inputPadded, dilationW, dilationH);
-
-    if (!appending)
-      ComputeOutputSize(inputPadded, filter, output, dW, dH,
-          dilationW, dilationH, input.n_slices);
-
-    // The filters already have the correct order in memory, just reshape it.
-    MatType fil2col;
-    MakeAlias(fil2col, filter, filter.n_elem, 1);
-
-    MatType tempOutput;
-    MatType im2row(output.n_rows * output.n_cols, filter.n_elem,
-        GetFillType<CubeType>::none);
-
-    for (size_t i = 0; i < input.n_slices; ++i)
-    {
-      MakeAlias(tempOutput, output, output.n_rows * output.n_cols, 1,
-          i * output.n_rows * output.n_cols);
-      Im2Row(inputPadded.slice(i), im2row, filter.n_rows, filter.n_cols,
-          dW, dH, dilationW, dilationH);
-
-      tempOutput += im2row * fil2col;
-    }
   }
 };  // class Im2ColConvolution
 
