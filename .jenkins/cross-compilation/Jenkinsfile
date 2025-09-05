@@ -91,6 +91,7 @@ pipeline
                     arch_names[env.target].toLowerCase() + ':latest'
                 alwaysPull true
                 reuseNode true
+                args -v '/home/jenkins/ccache:/opt/ccache'
               }
             }
 
@@ -120,6 +121,7 @@ pipeline
                 fi
 
                 # Configure ccache.
+                export CCACHE_DIR=/opt/ccache/;
                 ccache --set-config "sloppiness=include_file_ctime";
                 ccache --set-config "hash_dir=false";
                 ccache --zero-stats;
