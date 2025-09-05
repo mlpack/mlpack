@@ -70,7 +70,13 @@ double ImpulseStepDataTest(const size_t dimensions, const size_t rho)
   net.Add<RecurrentLayerType>(dimensions);
 
   const size_t numEpochs = 50;
+  #if ENS_VERSION_MAJOR >= 3
+  RMSProp opt(0.096, 32, 0.9, 1e-08, 700 * numEpochs, 1e-5);
+  #else
+  // Older versions of ensmallen did not adjust the step size for the batch
+  // size.
   RMSProp opt(0.003, 32, 0.9, 1e-08, 700 * numEpochs, 1e-5);
+  #endif
 
   net.Train(trainData, trainResponses, opt);
 
@@ -271,7 +277,13 @@ void BatchSizeTest()
   {
     const size_t batchSize = std::pow((size_t) 2, bsPow);
 
+    #if ENS_VERSION_MAJOR >= 3
+    opt = StandardSGD(0.1, batchSize, batchSize);
+    #else
+    // Older versions of ensmallen did not adjust the step size for the batch
+    // size.
     opt = StandardSGD(0.1 / ((double) batchSize), batchSize, batchSize);
+    #endif
     opt.Shuffle() = false;
     model.Reset(1);
     model.Parameters() = initParams;
@@ -344,7 +356,13 @@ TEST_CASE("LargeRhoValueRnnTest", "[RecurrentNetworkTest]")
 
   // Train the model and ensure that it gives reasonable results.
   // Use a very small learning rate to prevent divergence on this problem.
+  #if ENS_VERSION_MAJOR >= 3
+  ens::StandardSGD opt(1.6e-14, 16, 1 * data.n_cols /* 1 epoch */);
+  #else
+  // Older versions of ensmallen did not adjust the step size for the batch
+  // size.
   ens::StandardSGD opt(1e-15, 16, 1 * data.n_cols /* 1 epoch */);
+  #endif
   model.Train(data, outputs, opt);
 
   // Ensure that none of the weights are NaNs or Inf.
@@ -376,7 +394,13 @@ TEST_CASE("RNNFFNTest", "[RecurrentNetworkTest]")
   arma::cube responses(1, 200, 1, arma::fill::randu);
 
   // Train the FFN.
+  #if ENS_VERSION_MAJOR >= 3
+  ens::StandardSGD optimizer(1e-3, 100, 200, 1e-8, false);
+  #else
+  // Older versions of ensmallen did not adjust the step size for the batch
+  // size.
   ens::StandardSGD optimizer(1e-5, 100, 200, 1e-8, false);
+  #endif
 
   ffn.Train(data.slice(0), responses.slice(0), optimizer);
   rnn.Train(data, responses, optimizer);

@@ -124,7 +124,13 @@ TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
     model.Add<Linear>(1);
 
     const size_t epochs = 500;
+    #if ENS_VERSION_MAJOR >= 3
+    ens::RMSProp optimizer(0.02, 8, 0.99, 1e-8, epochs * trainData.n_cols);
+    #else
+    // Older versions of ensmallen did not adjust the step size for the batch
+    // size.
     ens::RMSProp optimizer(0.0025, 8, 0.99, 1e-8, epochs * trainData.n_cols);
+    #endif
     model.Reset(data.n_rows);
     model.Train(trainData, trainLabels, optimizer);
 
