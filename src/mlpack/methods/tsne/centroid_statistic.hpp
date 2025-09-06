@@ -1,0 +1,76 @@
+/**
+ * @file methods/tsne/centeroid_statistic.hpp
+ * @author Ranjodh Singh
+ *
+ * Definition and Implementation of the Centroid Statistic.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+#ifndef MLPACK_METHODS_TSNE_CENTROID_STATISTIC
+#define MLPACK_METHODS_TSNE_CENTROID_STATISTIC
+
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/tree/tree_traits.hpp>
+
+namespace mlpack
+{
+
+/**
+ * @brief Statistic that stores the Centroid/Center Of Mass/Barycenter
+ *        of a metric tree node.
+ *
+ * @tparam VecType Vector type used to store the centroid (default is
+ *         arma::vec).
+ *
+ * This statistic is intended for use with metric tree nodes (for example,
+ * mlpack::Octree). For leaf nodes, the center of mass is the mean of the
+ * points contained in the leaf. For internal nodes, the centeroid is computed
+ * as the weighted mean of child centeroids, where the weight is the number of
+ * descendants in the corresponding child.
+ *
+ * @see @ref trees
+ */
+class CentroidStatistic
+{
+ public:
+  /** Required Default constructor. */
+  CentroidStatistic() {}
+
+  /**
+   * @brief Construct from a tree node.
+   * @param node Tree node whose centroid is to be computed.
+   */
+  template <typename TreeType>
+  CentroidStatistic(const TreeType& node)
+  {
+    centroid.zeros(node.Dataset().n_rows);
+    for (size_t i = 0; i < node.NumPoints(); ++i)
+    {
+      // Correct handling of cover tree: don't double-count the point which
+      // appears in the children.
+      if (TreeTraits<TreeType>::HasSelfChildren && i == 0 &&
+          node.NumChildren() > 0)
+        continue;
+      centroid += node.Dataset().col(node.Point(i));
+    }
+
+    for (size_t i = 0; i < node.NumChildren(); i++)
+      centroid += node.Child(i).NumDescendants() *
+                  node.Child(i).Stat().Centroid();
+    centroid /= node.NumDescendants();
+  }
+
+  const arma::vec& Centroid() const { return centroid; }
+  arma::vec& Centroid() { return centroid; }
+
+ private:
+  //! the centroid vector
+  arma::vec centroid;
+};
+
+} // namespace mlpack
+
+#endif // MLPACK_METHODS_TSNE_CENTROID_STATISTIC
