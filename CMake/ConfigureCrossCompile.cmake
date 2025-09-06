@@ -47,63 +47,65 @@ macro(search_openblas version)
       message(FATAL_ERROR "Cannot compile OpenBLAS: OPENBLAS_TARGET is not set.  Either set that variable, or set BOARD_NAME correctly!")
     endif()
     get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v${version}/OpenBLAS-${version}.tar.gz OpenBLAS OpenBLAS-${version}.tar.gz)
-    if (NOT MSVC)
-      if (NOT EXISTS "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/libopenblas.a")
-        set(OLD_CC $ENV{CC})
-        set(ENV{COMMON_OPT} "${CMAKE_OPENBLAS_FLAGS}") # Pass our flags to OpenBLAS
-        set(ENV{CC} "${CMAKE_C_COMPILER}")
-        if (CCACHE_PROGRAM)
-          set (ENV{CC} "${CCACHE_PROGRAM} $ENV{CC}")
-        endif ()
-        set(ENV{TARGET} "${OPENBLAS_TARGET}")
-        set(ENV{BINARY} "${OPENBLAS_BINARY}")
-        set(ENV{HOSTCC} "gcc")
-        set(ENV{NO_SHARED} 1)
-        # Set any extra environment variables that the user specified.
-        # First, turn OPENBLAS_EXTRA_ARGS into a list.
-        separate_arguments(ARG_LIST NATIVE_COMMAND ${OPENBLAS_EXTRA_ARGS})
-        foreach (ARG ${ARG_LIST})
-          # ARG will be of the form VAR=value; split on the =.
-          string(REPLACE "=" ";" ARG_LIST_ELEM "${ARG}")
-          list(LENGTH ARG_LIST_ELEM ARG_LEN)
-          if (ARG_LEN EQUAL 2)
-            list(GET ARG_LIST_ELEM 0 ARG_NAME)
-            list(GET ARG_LIST_ELEM 1 ARG_VAL)
-            set(ENV{${ARG_NAME}} ${ARG_VAL})
-          else ()
-            message(WARNING "OpenBLAS flag '${ARG}' is not of the form VAR=val;
-ignored!")
-          endif ()
-        endforeach()
 
-        # Now run the OpenBLAS build with all of the environment variables set.
-        execute_process(
-            COMMAND make
-            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version})
+    set(OPENBLAS_SRC_DIR ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
+    set(OPENBLAS_BUILD_DIR ${OPENBLAS_SRC_DIR}/build)
+    if (MSVC)
+      set(OPENBLAS_OUTPUT_LIB_DIR ${OPENBLAS_BUILD_DIR}/lib/Release)
+    else ()
+      set(OPENBLAS_OUTPUT_LIB_DIR ${OPENBLAS_BUILD_DIR}/lib/)
+    endif ()
+    set(OPENBLAS_BUILD_TYPE "MinSizeRel")
 
-        # Don't leak the environment variables back into the rest of the
-        # configuration.
-        unset(ENV{NO_SHARED})
-        unset(ENV{HOSTCC})
-        unset(ENV{BINARY})
-        unset(ENV{TARGET})
-        unset(ENV{COMMON_OPT})
-        set(ENV{CC} ${OLD_CC})
-        foreach (ARG ${ARG_LIST})
-          string(REPLACE "=" ";" ARG_LIST_ELEM "${ARG}")
-          list(LENGTH ARG_LIST_ELEM ARG_LEN)
-          if (ARG_LEN EQUAL 2)
-            list(GET ARG_LIST_ELEM 0 ARG_NAME)
-            unset(ENV{${ARG_NAME}})
-          endif ()
-        endforeach ()
-      endif()
-      file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/libopenblas.a")
-      set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
-      set(LAPACK_openblas_LIBRARY ${OPENBLAS_LIBRARIES}) 
-      set(BLA_VENDOR OpenBLAS)
-      set(BLAS_FOUND ON)
+    message(STATUS "Compiling OpenBLAS")
+    file(MAKE_DIRECTORY ${OPENBLAS_BUILD_DIR})
+    set(OPENBLAS_C_COMPILER "${CMAKE_C_COMPILER}")
+    if (CCACHE_PROGRAM)
+      set(OPENBLAS_C_COMPILER "${CCACHE_PROGRAM} ${CMAKE_C_COMPILER}")
+    endif ()
+    # -G -A -T to pass settings from current cmake command.
+    execute_process(
+        COMMAND ${CMAKE_COMMAND}
+            -G "${CMAKE_GENERATOR}"
+            -A "${CMAKE_GENERATOR_PLATFORM}"
+            -T "${CMAKE_GENERATOR_TOOLSET}"
+            "-DCMAKE_C_COMPILER=${OPENBLAS_C_COMPILER}"
+            "-DCMAKE_BUILD_TYPE=${OPENBLAS_BUILD_TYPE}"
+            "-DBUILD_SHARED_LIBS=OFF"
+            "-DTARGET=${OPENBLAS_TARGET}"
+            "-DBINARY=${OPENBLAS_BINARY}"
+            "-DBUILD_TESTING=OFF"
+            "${OPENBLAS_EXTRA_FLAGS}"
+            -S ${OPENBLAS_SRC_DIR}
+            -B ${OPENBLAS_BUILD_DIR}
+            WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
+    )
+    if (NOT OPENBLAS_BUILD_SINGLETHREADED)
+      execute_process(
+          COMMAND ${CMAKE_COMMAND}
+              --build ${OPENBLAS_BUILD_DIR}
+              --config ${OPENBLAS_BUILD_TYPE}
+              --parallel
+          WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
+      )
+    else ()
+      execute_process(
+          COMMAND ${CMAKE_COMMAND}
+              --build ${OPENBLAS_BUILD_DIR}
+              --config ${OPENBLAS_BUILD_TYPE}
+          WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
+      )
+    endif ()
+
+    if (MSVC)
+      file(GLOB OPENBLAS_LIBRARIES ${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib)
+    else ()
+      file(GLOB OPENBLAS_LIBRARIES ${OPENBLAS_OUTPUT_LIB_DIR}/libopenblas.a)
     endif()
+    set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
+    set(LAPACK_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
+    set(BLA_VENDOR OpenBLAS)
+    set(BLAS_FOUND ON)
   endif()
   find_library(GFORTRAN NAMES libgfortran.a)
   find_library(PTHREAD NAMES libpthread.a)
