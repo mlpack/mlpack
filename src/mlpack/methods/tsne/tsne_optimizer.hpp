@@ -33,8 +33,10 @@ class DeltaBarDeltaUpdate
                       const double beta2 = 0.8,
                       const double momentum = 0.5,
                       const double minGain = 0.01)
-      : beta1(beta1), beta2(beta2), momentum(momentum),
-        minGain(minGain) { /* Do nothing. */ };
+      : beta1(beta1), beta2(beta2), momentum(momentum), minGain(minGain)
+  {
+    /* Do nothing. */
+  }
 
   //! Access beta1.
   double Beta1() const { return beta1; }

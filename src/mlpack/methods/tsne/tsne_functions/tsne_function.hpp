@@ -2,7 +2,7 @@
  * @file methods/tsne_functions/tsne_function.hpp
  * @author Ranjodh Singh
  *
- * Convenience include for tsne functions.
+ * Compile-time selection of the t-SNE objective function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,32 +19,36 @@
 namespace mlpack
 {
 
-template <typename TSNEPolicy>
-class TSNEFunction
+template <typename TSNEStrategy>
+class TSNEFunctionTraits
 {
-  /* Nothing To Do Here */
+  using type = TSNEApproxFunction<BarnesHutTSNE>;
 };
 
 template <>
-class TSNEFunction<ExactTSNE>
+class TSNEFunctionTraits<ExactTSNE>
 {
  public:
   using type = TSNEExactFunction<>;
 };
 
 template <>
-class TSNEFunction<DualTreeTSNE>
+class TSNEFunctionTraits<DualTreeTSNE>
 {
  public:
-  using type = TSNEApproxFunction<true>;
+  using type = TSNEApproxFunction<DualTreeTSNE>;
 };
 
 template <>
-class TSNEFunction<BarnesHutTSNE>
+class TSNEFunctionTraits<BarnesHutTSNE>
 {
  public:
-  using type = TSNEApproxFunction<false>;
+  using type = TSNEApproxFunction<BarnesHutTSNE>;
 };
+
+// Convenience alias:
+template <typename TSNEStrategy>
+using TSNEFunction = typename TSNEFunctionTraits<TSNEStrategy>::type;
 
 } // namespace mlpack
 

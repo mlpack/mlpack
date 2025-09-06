@@ -18,33 +18,31 @@
 
 #include "tsne.hpp"
 #include "tsne_optimizer.hpp"
-#include "tsne_exaggeration.hpp"
+#include "tsne_learning_scheduler.hpp"
 #include "tsne_functions/tsne_function.hpp"
 
 namespace mlpack
 {
 
-template <typename TSNEPolicy>
-TSNE<TSNEPolicy>::TSNE(const size_t outputDim,
-                       const double perplexity,
-                       const double earlyExaggeration,
-                       const double learningRate,
-                       const size_t maxIter,
-                       const std::string& init,
-                       const double theta)
-    : outputDim(outputDim), perplexity(perplexity),
-      earlyExaggeration(earlyExaggeration), learningRate(learningRate),
-      maxIter(maxIter), init(init), theta(theta)
+template <typename TSNEStrategy>
+TSNE<TSNEStrategy>::TSNE(const size_t outputDim,
+                         const double perplexity,
+                         const double exaggeration,
+                         const double learningRate,
+                         const size_t maxIter,
+                         const std::string& init,
+                         const double theta)
+    : outputDim(outputDim), perplexity(perplexity), exaggeration(exaggeration),
+      learningRate(learningRate), maxIter(maxIter), init(init), theta(theta)
 {
   // Nothing To Do Here
 }
 
-template <typename TSNEPolicy>
+template <typename TSNEStrategy>
 template <typename MatType>
-void TSNE<TSNEPolicy>::Embed(const MatType& X, MatType& Y)
+void TSNE<TSNEStrategy>::Embed(const MatType& X, MatType& Y)
 {
-  // TODO: VERBOSITY(PROGRESSBAR), THROW ERRORS(init, method)
-  // TODO: ADD LEARNING PARAMETER CONTROLS VIA CALLBACKS (ROUND OUTPUT)
+  // To Do: VERBOSITY(PROGRESSBAR)
 
   // Initialize Embedding
   if (init == "pca")
@@ -58,17 +56,18 @@ void TSNE<TSNEPolicy>::Embed(const MatType& X, MatType& Y)
   }
   else
   {
-    // THROW ERROR
+    /* To Do: Throw Error */
   }
 
   // Initialize The Optimizer
   TSNEOptimizer optimizer(learningRate, X.n_cols, maxIter * X.n_cols);
 
   // Initialize Objective Function
-  typename TSNEFunction<TSNEPolicy>::type function(X, perplexity, earlyExaggeration);
+  TSNEFunction<TSNEStrategy> function(X, perplexity);
 
   // Call The Optimizer On The Objective Function
-  optimizer.Optimize(function, Y, ens::ProgressBar());
+  auto schedulerCallback = TSNELearningScheduler(250, exaggeration, 0.5, 0.8);
+  optimizer.Optimize(function, Y, schedulerCallback, ens::ProgressBar());
 }
 
 } // namespace mlpack

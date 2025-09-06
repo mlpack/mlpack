@@ -16,13 +16,14 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/tree/hrectbound.hpp>
 #include <mlpack/core/distances/lmetric.hpp>
+#include <type_traits>
 
 #include "tsne_methods.hpp"
 
 namespace mlpack
 {
 
-template <bool UseDualTree, typename MatType = arma::mat>
+template <typename TSNEStrategy, typename MatType = arma::mat>
 class TSNEApproxRules
 {
  public:
@@ -58,7 +59,7 @@ class TSNEApproxRules
       sumQ += q;
       negF.col(oldFromNew[queryIndex]) += q * q *
                                           (queryPoint - referencePoint);
-      if constexpr (UseDualTree)
+      if constexpr (std::is_same_v<TSNEStrategy, DualTreeTSNE>)
         negF.col(oldFromNew[referenceIndex]) += q * q *
                                                 (referencePoint - queryPoint);
     }

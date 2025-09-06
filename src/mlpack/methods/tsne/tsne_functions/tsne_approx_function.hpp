@@ -26,7 +26,7 @@
 namespace mlpack
 {
 
-template <bool UseDualTree, typename MatType = arma::mat>
+template <typename TSNEStrategy, typename MatType = arma::mat>
 class TSNEApproxFunction
 {
  public:
@@ -36,13 +36,9 @@ class TSNEApproxFunction
 
   TSNEApproxFunction(const MatType& X,
                      const double perplexity,
-                     const double earlyExaggeration,
                      const double theta = 0.5)
-      : earlyExaggeration(earlyExaggeration), theta(theta)
+      : theta(theta)
   {
-    // earlyExaggeration
-    isExaggerating = false;
-
     // Run KNN
     NeighborSearch<NearestNeighborSort, DistanceType> knn(X);
     const size_t neighbors = static_cast<size_t>(3 * perplexity);
@@ -78,9 +74,9 @@ class TSNEApproxFunction
     double sumQ = 0.0, error = 0.0;
     std::vector<size_t> oldFromNew;
     TreeType tree(y, oldFromNew, 1);
-    TSNEApproxRules<UseDualTree> rule(sumQ, g, y, oldFromNew, theta);
+    TSNEApproxRules<TSNEStrategy> rule(sumQ, g, y, oldFromNew, theta);
 
-    if constexpr (UseDualTree)
+    if constexpr (std::is_same_v<TSNEStrategy, DualTreeTSNE>)
     {
       TreeType::DualTreeTraverser traverser(rule);
       traverser.Traverse(tree, tree);
@@ -115,32 +111,14 @@ class TSNEApproxFunction
 
   size_t NumFunctions() { return P.n_cols; }
 
-  void StartExaggerating()
-  {
-    if (!isExaggerating)
-    {
-      isExaggerating = true;
-      P *= earlyExaggeration;
-    }
-  }
-
-  void StopExaggerating()
-  {
-    if (isExaggerating)
-    {
-      isExaggerating = false;
-      P /= earlyExaggeration;
-    }
-  }
+  const arma::sp_mat& InputJointProbabilities() const { return P; }
+  arma::sp_mat& InputJointProbabilities() { return P; }
 
  private:
   arma::sp_mat P;
   MatType D;
   arma::Mat<size_t> N;
-  const double earlyExaggeration;
   const double theta;
-
-  bool isExaggerating;
 };
 
 } // namespace mlpack

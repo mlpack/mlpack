@@ -36,10 +36,10 @@ namespace mlpack
  * }
  * @endcode
  *
- * @tparam TSNEPolicy Gradient computation strategy. Options are: "exact",
+ * @tparam TSNEStrategy Gradient computation strategy. Options are: "exact",
  *        "dual_tree", "barnes_hut". (Default: "barnes_hut").
  */
-template <typename TSNEPolicy = BarnesHutTSNE>
+template <typename TSNEStrategy = BarnesHutTSNE>
 class TSNE
 {
  public:
@@ -50,14 +50,14 @@ class TSNE
    * @param perplexity Perplexity regulates the balance between local and
    *        global structure preservation, typically set between 5 and 50.
    *        (Default: 30.0)
-   * @param earlyExaggeration Amplifies pairwise similarities during the
+   * @param exaggeration Amplifies pairwise similarities during the
    *        initial optimization phase. This helps form tighter clusters and
    *        clearer separation between them. A higher value increases spacing
    *        between clusters, but if the cost grows during initial iterations
    *        consider reducing this value or lowering the learning rate.
    *        (Default: 12.0)
    * @param learningRate Learning rate (step size) for the optimizer.
-   *        (Default: 1.0)
+   *        (Default: 50.0)
    * @param maxIter Maximum number of iterations. (Default: 1000)
    * @param init Initialization method for the output embedding. Supported
    *        options are: "random", "pca". PCA initialization is recommended
@@ -68,7 +68,7 @@ class TSNE
    */
   TSNE(const size_t outputDim = 2,
        const double perplexity = 30.0,
-       const double earlyExaggeration = 12.0,
+       const double exaggeration = 12.0,
        const double learningRate = 50.0,
        const size_t maxIter = 1000,
        const std::string& init = "pca",
@@ -95,10 +95,10 @@ class TSNE
   //! Modify the perplexity.
   double& Perplexity() { return perplexity; }
 
-  //! Get the early exaggeration factor.
-  double EarlyExaggeration() const { return earlyExaggeration; }
-  //! Modify the early exaggeration factor.
-  double& EarlyExaggeration() { return earlyExaggeration; }
+  //! Get the initial exaggeration factor.
+  double Exaggeration() const { return exaggeration; }
+  //! Modify the initial exaggeration factor.
+  double& Exaggeration() { return exaggeration; }
 
   //! Get the learning rate (step size) used by the optimizer.
   double LearningRate() const { return learningRate; }
@@ -125,8 +125,8 @@ class TSNE
   size_t outputDim;
   //! The perplexity of the Gaussian distribution.
   double perplexity;
-  //! Early exaggeration applied during the initial optimization phase.
-  double earlyExaggeration;
+  //! Exaggeration applied during the initial optimization phase.
+  double exaggeration;
   //! Learning rate (aka step size) for optimization.
   double learningRate;
   //! The maximum number of iterations.

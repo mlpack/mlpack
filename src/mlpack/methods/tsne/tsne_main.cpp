@@ -9,6 +9,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#include "tsne_methods.hpp"
 #include <mlpack/core.hpp>
 
 #undef BINDING_NAME
@@ -37,15 +38,13 @@ BINDING_LONG_DESC(
     "is a statistical method for visualizing high-dimensional data "
     "by giving each datapoint a location in a two or three-dimensional map.");
 
-// To Do
-// Example.
+// To Do: Example.
 // BINDING_EXAMPLE("");
 
 // See also...
 BINDING_SEE_ALSO("t-distributed Stochastic Neighbor Embedding on Wikipedia",
                  "https://en.wikipedia.org/wiki/"
                  "T-distributed_stochastic_neighbor_embedding");
-BINDING_SEE_ALSO("TSNE tutorial", "@doc/tutorials/tsne.md");
 BINDING_SEE_ALSO("TSNE C++ class documentation", "@doc/user/methods/tsne.md");
 
 // Parameters for program.
@@ -61,7 +60,7 @@ PARAM_DOUBLE_IN("perplexity",
                 "p",
                 30.0);
 PARAM_DOUBLE_IN(
-    "early_exaggeration",
+    "exaggeration",
     "Amplifies pairwise similarities during the initial optimization phase. "
     "This helps form tighter clusters and clearer separation between them. "
     "A higher value increases the spacing between clusters, but if the cost "
@@ -91,19 +90,48 @@ PARAM_DOUBLE_IN(
     "t",
     0.5);
 
+//! Run TSNE on the specified dataset with the given policy.
+template <typename TSNEStrategy>
+void RunTSNE(util::Params& params, util::Timers& timers, arma::mat& dataset)
+{
+  TSNE<TSNEStrategy> tsne(params.Get<int>("output_dimensions"),
+                          params.Get<double>("perplexity"),
+                          params.Get<double>("exaggeration"),
+                          params.Get<double>("learning_rate"),
+                          params.Get<int>("max_iterations"),
+                          params.Get<std::string>("init"),
+                          params.Get<double>("theta"));
+
+
+  Log::Info << "Running TSNE on dataset..." << endl;
+  timers.Start("tsne");
+  tsne.Embed(params.Get<arma::mat>("input"), dataset);
+  timers.Stop("tsne");
+  Log::Info << "TSNE Finished on dataset..." << endl;
+}
+
 // Binding Fuction
-void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   arma::mat dataset;
 
-  TSNE tsne(params.Get<int>("output_dimensions"),
-            params.Get<double>("perplexity"),
-            params.Get<double>("early_exaggeration"),
-            params.Get<double>("learning_rate"),
-            params.Get<int>("max_iterations"),
-            params.Get<std::string>("init"),
-            params.Get<double>("theta"));
-  tsne.Embed(params.Get<arma::mat>("input"), dataset);
+  const std::string method = params.Get<std::string>("method");
+  if (method == "exact")
+  {
+    RunTSNE<ExactTSNE>(params, timers, dataset);
+  }
+  else if (method == "dual_tree")
+  {
+    RunTSNE<DualTreeTSNE>(params, timers, dataset);
+  }
+  else if (method == "barnes_hut")
+  {
+    RunTSNE<BarnesHutTSNE>(params, timers, dataset);
+  }
+  else
+  {
+    /* To Do: Throw Error */
+  }
 
   if (params.Has("output"))
     params.Get<arma::mat>("output") = std::move(dataset);

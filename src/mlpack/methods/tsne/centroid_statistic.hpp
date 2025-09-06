@@ -49,8 +49,8 @@ class CentroidStatistic
     centroid.zeros(node.Dataset().n_rows);
     for (size_t i = 0; i < node.NumPoints(); ++i)
     {
-      // Correct handling of cover tree: don't double-count the point which
-      // appears in the children.
+      // Correct handling of cover tree: don't double-count the point
+      // which appears in the children. (See dual_tree_kmeans_statistic.hpp)
       if (TreeTraits<TreeType>::HasSelfChildren && i == 0 &&
           node.NumChildren() > 0)
         continue;

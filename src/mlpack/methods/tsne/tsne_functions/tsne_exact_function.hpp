@@ -16,6 +16,8 @@
 #include <mlpack/core/distances/lmetric.hpp>
 #include <mlpack/core/cv/metrics/facilities.hpp>
 
+#include "../tsne_utils.hpp"
+
 namespace mlpack
 {
 
@@ -25,10 +27,7 @@ class TSNEExactFunction
  public:
   using DistanceType = SquaredEuclideanDistance;
 
-  TSNEExactFunction(const MatType& X,
-                    const double perplexity,
-                    const double earlyExaggeration)
-      : earlyExaggeration(earlyExaggeration)
+  TSNEExactFunction(const MatType& X, const double perplexity)
   {
     // Pre Compute P (P_ij's)
     P = binarySearchPerplexity(perplexity,
@@ -75,30 +74,12 @@ class TSNEExactFunction
 
   size_t NumFunctions() { return P.n_cols; }
 
-  void StartExaggerating()
-  {
-    if (!isExaggerating)
-    {
-      isExaggerating = true;
-      P *= earlyExaggeration;
-    }
-  }
-
-  void StopExaggerating()
-  {
-    if (isExaggerating)
-    {
-      isExaggerating = false;
-      P /= earlyExaggeration;
-    }
-  }
+  const MatType& InputJointProbabilities() const { return P; }
+  MatType& InputJointProbabilities() { return P; }
 
  private:
   MatType P;
   MatType q, Q, M;
-  const double earlyExaggeration;
-
-  bool isExaggerating;
 };
 
 } // namespace mlpack
