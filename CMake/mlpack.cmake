@@ -599,57 +599,74 @@ macro(find_mlpack_internal)
 endmacro()
 
 macro(compile_OpenBLAS)
-  set(OPENBLAS_SRC_DIR ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
-  set(OPENBLAS_BUILD_DIR ${OPENBLAS_SRC_DIR}/build)
-  if (MSVC)
+  if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(OPENBLAS_SRC_DIR ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
+    set(OPENBLAS_BUILD_DIR ${OPENBLAS_SRC_DIR}/build)
     set(OPENBLAS_OUTPUT_LIB_DIR ${OPENBLAS_BUILD_DIR}/lib/Release)
-  else ()
-    set(OPENBLAS_OUTPUT_LIB_DIR ${OPENBLAS_BUILD_DIR}/lib/)
-  endif ()
-  # always compile BLAS as release.
-  set(OPENBLAS_BUILD_TYPE "Release")
+    # always compile BLAS as release.
+    set(BLASS_BUILD_TYPE "Release")
 
-  if (NOT EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib" AND
-      NOT EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/libopenblas.a")
-    message(STATUS "Compiling OpenBLAS")
-    file(MAKE_DIRECTORY ${OPENBLAS_BUILD_DIR})
-    set(OPENBLAS_C_COMPILER "${CMAKE_C_COMPILER}")
-    if (CCACHE_PROGRAM)
-      set(OPENBLAS_C_COMPILER "${CCACHE_PROGRAM} ${CMAKE_C_COMPILER}")
-    endif ()
+    if (NOT EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib")
+      message(STATUS "Compiling OpenBLAS")
+      file(MAKE_DIRECTORY ${OPENBLAS_BUILD_DIR})
+      # -G -A -T to pass settings from current cmake command.
+      execute_process(
+              COMMAND ${CMAKE_COMMAND}
+              -G "${CMAKE_GENERATOR}"
+              -A "${CMAKE_GENERATOR_PLATFORM}"
+              -T "${CMAKE_GENERATOR_TOOLSET}"
+              "-DCMAKE_BUILD_TYPE=${BLASS_BUILD_TYPE}"
+              "-DBUILD_SHARED_LIBS=OFF"
+              -S ${OPENBLAS_SRC_DIR} -B ${OPENBLAS_BUILD_DIR}
 
-    # -G -A -T to pass settings from current cmake command.
-    execute_process(
-        COMMAND ${CMAKE_COMMAND}
-            -G "${CMAKE_GENERATOR}"
-            -A "${CMAKE_GENERATOR_PLATFORM}"
-            -T "${CMAKE_GENERATOR_TOOLSET}"
-            "-DCMAKE_BUILD_TYPE=${OPENBLAS_BUILD_TYPE}"
-            "-DCMAKE_C_COMPILER=${OPENBLAS_C_COMPILER}"
-            "-DBUILD_SHARED_LIBS=OFF"
-            "-DBUILD_TESTING=OFF"
-            "${OPENBLAS_EXTRA_FLAGS}"
-            -S ${OPENBLAS_SRC_DIR}
-            -B ${OPENBLAS_BUILD_DIR}
-            WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
-    )
-    execute_process(
-        COMMAND ${CMAKE_COMMAND}
-            --build ${OPENBLAS_BUILD_DIR}
-            --config ${OPENBLAS_BUILD_TYPE}
-            --parallel
-        WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
-    )
-  else()
-    message(STATUS "OpenBLAS is already compiled")
-  endif()
-
-  if (MSVC)
+              WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
+      )
+      execute_process(
+              COMMAND ${CMAKE_COMMAND} --build ${OPENBLAS_BUILD_DIR}
+              --config ${BLASS_BUILD_TYPE} --parallel
+              WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
+      )
+    else()
+      message(STATUS "OpenBLAS is already compiled")
+    endif()
     file(GLOB OPENBLAS_LIBRARIES ${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib)
-  else ()
-    file(GLOB OPENBLAS_LIBRARIES ${OPENBLAS_OUTPUT_LIB_DIR}/libopenblas.a)
-  endif()
+  else()
+    if (NOT EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/libopenblas.a")
+      set(ENV{NO_SHARED} 1)
+      # Set any extra environment variables that the user specified.
+      # First, turn OPENBLAS_EXTRA_ARGS into a list.
+      separate_arguments(ARG_LIST NATIVE_COMMAND ${OPENBLAS_EXTRA_ARGS})
+      foreach (ARG ${ARG_LIST})
+        # ARG will be of the form VAR=value; split on the =.
+        string(REPLACE "=" ";" ARG_LIST_ELEM "${ARG}")
+        list(LENGTH ARG_LIST_ELEM ARG_LEN)
+        if (ARG_LEN EQUAL 2)
+          list(GET ARG_LIST_ELEM 0 ARG_NAME)
+          list(GET ARG_LIST_ELEM 1 ARG_VAL)
+          set(ENV{${ARG_NAME}} ${ARG_VAL})
+        else ()
+          message(WARNING "OpenBLAS flag '${ARG}' is not of the form VAR=val;
+igno")
+        endif ()
+      endforeach()
 
+      execute_process(
+          COMMAND make
+          WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
+
+      unset(ENV{NO_SHARED})
+      foreach (ARG ${ARG_LIST})
+        string(REPLACE "=" ";" ARG_LIST_ELEM "${ARG}")
+        list(LENGTH ARG_LIST_ELEM ARG_LEN)
+        if (ARG_LEN EQUAL 2)
+          list(GET ARG_LIST_ELEM 0 ARG_NAME)
+          unset(ENV{${ARG_NAME}})
+        endif ()
+      endforeach ()
+
+      file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}/libopenblas.a")
+    endif ()
+  endif()
   set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
   set(LAPACK_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
   set(BLAS_FOUND ON)
