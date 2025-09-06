@@ -24,7 +24,7 @@ test_filters = ['tofu': '~[long]',
 // Thanks to NC Semi for hosting the little G4 cube!
 jump_hosts = ['megakelvin': 'millivolt.ncsemiconductor.com']
 
-openblas_extra_flags = ['megakelvin': 'USE_OPENMP=0']
+openblas_extra_flags = ['megakelvin': 'USE_THREAD=0']
 
 pipeline
 {
