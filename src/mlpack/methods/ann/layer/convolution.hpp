@@ -18,6 +18,7 @@
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
+#include <mlpack/methods/ann/convolution_rules/im2col_convolution.hpp>
 #include <mlpack/core/util/to_lower.hpp>
 
 #include "layer.hpp"
@@ -363,17 +364,11 @@ class Convolution : public Layer<MatType>
   //! Locally-stored bias term object.
   MatType bias;
 
-  //! Locally-stored transformed output parameter.
-  CubeType outputTemp;
-
   //! Locally-stored transformed padded input parameter.
   MatType inputPadded;
 
   //! Locally-stored transformed error parameter.
   CubeType gTemp;
-
-  //! Locally-stored transformed gradient parameter.
-  CubeType gradientTemp;
 
   //! Locally-stored padding layer.
   Padding<MatType> padding;
