@@ -99,7 +99,7 @@ class SpecificRandomInitialization
 };
 
 TEMPLATE_TEST_CASE("SVDIncompleteIncrementalRegularizationTest",
-    "[SVDIncrementalTest]", float, double)
+    "[SVDIncrementalTest][long]", float, double)
 {
   using eT = TestType;
 

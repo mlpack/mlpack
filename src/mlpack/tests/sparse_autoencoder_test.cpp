@@ -207,7 +207,7 @@ TEST_CASE("SparseAutoencoderFunctionKLDivergenceEvaluate",
   }
 }
 
-TEST_CASE("SparseAutoencoderFunctionGradient", "[SparseAutoencoderTest]")
+TEST_CASE("SparseAutoencoderFunctionGradient", "[SparseAutoencoderTest][long]")
 {
   const size_t points = 1000;
   const size_t vSize = 20;

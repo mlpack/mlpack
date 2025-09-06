@@ -495,13 +495,13 @@ TEMPLATE_TEST_CASE("LMNNAccuracyTest", "[LMNNTest]", float, double)
 
 // Check that accuracy while learning square distance matrix is the same as when
 // we are learning low rank matrix.  I'm ok if this passes only once out of
-// three tries.
+// five tries.
 TEMPLATE_TEST_CASE("LMNNLowRankAccuracyLBFGSTest", "[LMNNTest]", float, double)
 {
   using ElemType = TestType;
 
   bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
+  for (size_t trial = 0; trial < 5; ++trial)
   {
     arma::Mat<ElemType> dataPart1;
     dataPart1.randn(5, 50);

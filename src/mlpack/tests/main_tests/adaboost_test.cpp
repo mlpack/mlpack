@@ -284,7 +284,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffWeakLearnerOutputTest",
  * (Or converges and remains same)
  */
 TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffItrTest",
-                 "[AdaBoostMainTest][BindingTests]")
+                 "[AdaBoostMainTest][BindingTests][long]")
 {
   arma::mat trainData;
   if (!data::Load("vc2.csv", trainData))

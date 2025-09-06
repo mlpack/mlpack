@@ -21,7 +21,7 @@ using namespace mlpack;
 using namespace ens;
 
 //! Test DDPG on Pendulum task.
-TEST_CASE("PendulumWithDDPG", "[PolicyGradientTest]")
+TEST_CASE("PendulumWithDDPG", "[PolicyGradientTest][long]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights.
@@ -74,7 +74,7 @@ TEST_CASE("PendulumWithDDPG", "[PolicyGradientTest]")
 }
 
 //! Test DDPG on Pendulum task with Gaussian noise.
-TEST_CASE("PendulumWithGaussianDDPG", "[PolicyGradientTest]")
+TEST_CASE("PendulumWithGaussianDDPG", "[PolicyGradientTest][long]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights.
@@ -227,7 +227,7 @@ TEST_CASE("GaussianNoiseTest", "[PolicyGradientTest]")
 }
 
 //! Test TD3 on Pendulum task.
-TEST_CASE("PendulumWithTD3", "[PolicyGradientTest]")
+TEST_CASE("PendulumWithTD3", "[PolicyGradientTest][long]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights.
@@ -313,7 +313,7 @@ TEST_CASE("TD3ForMultipleActions", "[PolicyGradientTest]")
 }
 
 //! Test SAC on Pendulum task.
-TEST_CASE("PendulumWithSAC", "[PolicyGradientTest]")
+TEST_CASE("PendulumWithSAC", "[PolicyGradientTest][long]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights.
