@@ -24,7 +24,7 @@ test_filters = ['tofu': '~[long]',
 // Thanks to NC Semi for hosting the little G4 cube!
 jump_hosts = ['megakelvin': 'millivolt.ncsemiconductor.com']
 
-openblas_extra_flags = ['megakelvin': 'USE_OPENMP=0']
+openblas_extra_flags = ['megakelvin': '-DUSE_OPENMP=0']
 
 pipeline
 {
@@ -138,7 +138,7 @@ pipeline
                     -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
                     -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
                     -DDOWNLOAD_DEPENDENCIES=ON \
-                    -DOPENBLAS_EXTRA_ARGS="NO_FORTRAN=1 DYNAMIC_ARCH=0 $OPENBLAS_EXTRA_FLAGS" \
+                    -DOPENBLAS_EXTRA_ARGS="-DNOFORTRAN=1 $OPENBLAS_EXTRA_FLAGS" \
                     -DCMAKE_CXX_FLAGS="$EXTRA_CXX_FLAGS" \
                     ../
                 time make mlpack_test;

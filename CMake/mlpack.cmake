@@ -611,7 +611,7 @@ macro(compile_OpenBLAS)
 
   if (NOT EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib" AND
       NOT EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/libopenblas.a")
-    message(STATUS "Compiling OpenBLAS")
+    message(STATUS "Compiling OpenBLAS...")
     file(MAKE_DIRECTORY ${OPENBLAS_BUILD_DIR})
     set(OPENBLAS_C_COMPILER "${CMAKE_C_COMPILER}")
     if (CCACHE_PROGRAM)
@@ -632,14 +632,20 @@ macro(compile_OpenBLAS)
             -S ${OPENBLAS_SRC_DIR}
             -B ${OPENBLAS_BUILD_DIR}
             WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
-    )
+            RESULT_VARIABLE CONFIGURE_RESULT)
+    if (NOT CONFIGURE_RESULT EQUAL 0)
+      message(FATAL_ERROR "Error configuring OpenBLAS!")
+    endif ()
     execute_process(
         COMMAND ${CMAKE_COMMAND}
             --build ${OPENBLAS_BUILD_DIR}
             --config ${OPENBLAS_BUILD_TYPE}
             --parallel
         WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
-    )
+        RESULT_VARIABLE BUILD_RESULT)
+    if (NOT BUILD_RESULT EQUAL 0)
+      message(FATAL_ERROR "Error building OpenBLAS!")
+    endif ()
   else()
     message(STATUS "OpenBLAS is already compiled")
   endif()
