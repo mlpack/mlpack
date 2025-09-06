@@ -302,108 +302,88 @@ class Im2ColConvolution
   }
 
   /**
-   * Apply padding to an input matrix (valid mode).
+   * Apply padding to an input matrix.
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the convolution.
    * @param inputPadded Input with padding applied.
    */
-  template<typename InMatType, typename FilMatType,
+  template<typename InMatType, typename FilType,
       typename Border = BorderMode>
-  static std::enable_if_t<std::is_same_v<Border, ValidConvolution>, void>
+  static void
   PadInput(const InMatType& input,
-           const FilMatType& /* filter */,
-           InMatType& inputPadded,
-           const size_t /* dilationW */,
-           const size_t /* dilationH */,
-           const typename std::enable_if_t<IsMatrix<InMatType>::value>* = 0)
-  {
-    MakeAlias(inputPadded, input, input.n_rows, input.n_cols);
-  }
-
-  /**
-   * Apply padding to an input matrix (full mode).
-   *
-   * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the convolution.
-   * @param inputPadded Input with padding applied.
-   */
-  template<typename InMatType, typename FilMatType,
-      typename Border = BorderMode>
-  static std::enable_if_t<std::is_same_v<Border, FullConvolution>, void>
-  PadInput(const InMatType& input,
-           const FilMatType& filter,
+           const FilType& filter,
            InMatType& inputPadded,
            const size_t dilationW,
            const size_t dilationH,
            const typename std::enable_if_t<IsMatrix<InMatType>::value>* = 0)
   {
-    // First, compute the necessary padding for the full convolution.  It is
-    // possible that this might be an overestimate.  Note that these variables
-    // only hold the padding on one side of the input.
-    const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
-    const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
-    const size_t paddingRows = filterRows - 1;
-    const size_t paddingCols = filterCols - 1;
+    if (std::is_same_v<Border, ValidConvolution>)
+    {
+      // Use valid padding (none).
+      MakeAlias(inputPadded, input, input.n_rows, input.n_cols);
+    }
+    else
+    {
+      // Use full padding
 
-    // Pad filter and input to the working output shape.
-    inputPadded = InMatType(input.n_rows + 2 * paddingRows,
-        input.n_cols + 2 * paddingCols);
-    inputPadded.submat(paddingRows, paddingCols, paddingRows + input.n_rows - 1,
-        paddingCols + input.n_cols - 1) = input;
+      // First, compute the necessary padding for the full convolution.  It is
+      // possible that this might be an overestimate.  Note that these variables
+      // only hold the padding on one side of the input.
+      const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
+      const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
+      const size_t paddingRows = filterRows - 1;
+      const size_t paddingCols = filterCols - 1;
+
+      // Pad filter and input to the working output shape.
+      inputPadded = InMatType(input.n_rows + 2 * paddingRows,
+          input.n_cols + 2 * paddingCols);
+      inputPadded.submat(paddingRows, paddingCols, paddingRows + input.n_rows - 1,
+          paddingCols + input.n_cols - 1) = input;
+    }
   }
 
   /**
-   * Apply padding to an input cube (valid mode).
+   * Apply padding to an input cube.
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the convolution.
    * @param inputPadded Input with padding applied.
    */
-  template<typename InCubeType, typename FilMatType,
+  template<typename InCubeType, typename FilType,
       typename Border = BorderMode>
-  static std::enable_if_t<std::is_same_v<Border, ValidConvolution>, void>
+  static void
   PadInput(const InCubeType& input,
-           const FilMatType& /* filter */,
-           InCubeType& inputPadded,
-           const size_t /* dilationW */,
-           const size_t /* dilationH */,
-           const typename std::enable_if_t<IsCube<InCubeType>::value>* = 0)
-  {
-    MakeAlias(inputPadded, input, input.n_rows, input.n_cols, input.n_slices);
-  }
-
-  /**
-   * Apply padding to an input cube (full mode).
-   *
-   * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the convolution.
-   * @param inputPadded Input with padding applied.
-   */
-  template<typename InCubeType, typename FilMatType,
-      typename Border = BorderMode>
-  static std::enable_if_t<std::is_same_v<Border, FullConvolution>, void>
-  PadInput(const InCubeType& input,
-           const FilMatType& filter,
+           const FilType& filter,
            InCubeType& inputPadded,
            const size_t dilationW,
            const size_t dilationH,
            const typename std::enable_if_t<IsCube<InCubeType>::value>* = 0)
   {
-    // First, compute the necessary padding for the full convolution.  It is
-    // possible that this might be an overestimate.  Note that these variables
-    // only hold the padding on one side of the input.
-    const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
-    const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
-    const size_t paddingRows = filterRows - 1;
-    const size_t paddingCols = filterCols - 1;
+    if (std::is_same_v<Border, ValidConvolution>)
+    {
+      // Use valid padding (none).
+      MakeAlias(inputPadded, input, input.n_rows, input.n_cols, input.n_slices);
+    }
+    else
+    {
+      // Use full padding
 
-    // Pad filter and input to the working output shape.
-    inputPadded = InCubeType(input.n_rows + 2 * paddingRows,
-        input.n_cols + 2 * paddingCols, input.n_slices);
-    inputPadded.subcube(paddingRows, paddingCols, 0,
-        paddingRows + input.n_rows - 1, paddingCols + input.n_cols - 1,
-        input.n_slices - 1) = input;
+      // First, compute the necessary padding for the full convolution.  It is
+      // possible that this might be an overestimate.  Note that these variables
+      // only hold the padding on one side of the input.
+      const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
+      const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
+      const size_t paddingRows = filterRows - 1;
+      const size_t paddingCols = filterCols - 1;
+
+      // Pad filter and input to the working output shape.
+      inputPadded = InCubeType(input.n_rows + 2 * paddingRows,
+          input.n_cols + 2 * paddingCols, input.n_slices);
+      inputPadded.subcube(paddingRows, paddingCols, 0,
+          paddingRows + input.n_rows - 1, paddingCols + input.n_cols - 1,
+          input.n_slices - 1) = input;
+    }
   }
 
   /**
@@ -416,11 +396,12 @@ class Im2ColConvolution
    * @param dH Stride of filter application in the y direction.
    * @param dilationW The dilation factor in x direction.
    * @param dilationH The dilation factor in y direction.
+   * @param outSlices The number of slices in the output cube.
    */
-  template<typename InMatType, typename FilMatType, typename OutMatType>
+  template<typename InMatType, typename FilType, typename OutMatType>
   static void
   ComputeOutputSize(const InMatType& inputPadded,
-                    const FilMatType& filter,
+                    const FilType& filter,
                     OutMatType& output,
                     const size_t dW = 1,
                     const size_t dH = 1,
@@ -442,8 +423,7 @@ class Im2ColConvolution
   }
 
   /**
-   * Set the size of the output cube. Expects that the output already has the
-   * correct amount of slices.
+   * Set the size of the output cube.
    *
    * @param inputPadded Input with padding applied.
    * @param filter Filter used to perform the convolution.
@@ -454,10 +434,10 @@ class Im2ColConvolution
    * @param dilationH The dilation factor in y direction.
    * @param outSlices The number of slices in the output cube.
    */
-  template<typename InMatType, typename FilMatType, typename OutCubeType>
+  template<typename InMatType, typename FilType, typename OutCubeType>
   static void
   ComputeOutputSize(const InMatType& inputPadded,
-                    const FilMatType& filter,
+                    const FilType& filter,
                     OutCubeType& output,
                     const size_t dW = 1,
                     const size_t dH = 1,
