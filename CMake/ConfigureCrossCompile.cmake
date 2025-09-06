@@ -59,15 +59,44 @@ macro(search_openblas version)
         set(ENV{BINARY} "${OPENBLAS_BINARY}")
         set(ENV{HOSTCC} "gcc")
         set(ENV{NO_SHARED} 1)
+        # Set any extra environment variables that the user specified.
+        # First, turn OPENBLAS_EXTRA_ARGS into a list.
+        separate_arguments(ARG_LIST NATIVE_COMMAND ${OPENBLAS_EXTRA_ARGS})
+        foreach (ARG ${ARG_LIST})
+          # ARG will be of the form VAR=value; split on the =.
+          string(REPLACE "=" ";" ARG_LIST ${ARG})
+          list(LENGTH ${ARG_LIST} ARG_LEN)
+          if (ARG_LEN EQUAL 2)
+            list(GET ARG_LIST 0 ARG_NAME)
+            list(GET ARG_LIST 1 ARG_VAL)
+            set(ENV{${ARG_NAME}} ${ARG_VAL})
+          else ()
+            message(WARNING "OpenBLAS flag '${ARG}' is not of the form VAR=val;
+ignored!")
+          endif ()
+        endforeach()
+
+        # Now run the OpenBLAS build with all of the environment variables set.
         execute_process(
-            COMMAND make ${OPENBLAS_EXTRA_ARGS}
+            COMMAND make
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version})
+
+        # Don't leak the environment variables back into the rest of the
+        # configuration.
         unset(ENV{NO_SHARED})
         unset(ENV{HOSTCC})
         unset(ENV{BINARY})
         unset(ENV{TARGET})
         unset(ENV{COMMON_OPT})
         set(ENV{CC} ${OLD_CC})
+        foreach (ARG ${ARG_LIST})
+          string(REPLACE "=" ";" ARG_LIST ${ARG})
+          list(LENGTH ${ARG_LIST} ARG_LEN)
+          if (ARG_LEN EQUAL 2)
+            list(GET ARG_LIST 0 ARG_NAME)
+            unset(ENV{${ARG_NAME}})
+          endif ()
+        endforeach ()
       endif()
       file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/libopenblas.a")
       set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
