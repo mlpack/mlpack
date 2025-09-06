@@ -632,8 +632,9 @@ macro(compile_OpenBLAS)
     file(GLOB OPENBLAS_LIBRARIES ${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib)
   else()
     set(ENV{NO_SHARED} 1)
+    message(STATUS "compiling from mlpack.cmake")
     execute_process(
-        COMMAND make
+        COMMAND make ${OPENBLAS_EXTRA_ARGS}
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
     unset(ENV{NO_SHARED})
     file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}/libopenblas.a")
