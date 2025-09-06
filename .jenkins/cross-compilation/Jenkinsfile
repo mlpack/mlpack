@@ -129,6 +129,7 @@ pipeline
                 rm -rf build-${target}/
                 mkdir build-${target}/
                 cd build-${target}/
+                echo "Extra flags: $OPENBLAS_EXTRA_FLAGS"
                 cmake \
                     -DBUILD_TESTS=ON \
                     -DUSE_PRECOMPILED_HEADERS=OFF \
