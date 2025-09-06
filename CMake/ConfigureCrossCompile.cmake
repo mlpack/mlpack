@@ -57,56 +57,44 @@ macro(search_openblas version)
     endif ()
     set(OPENBLAS_BUILD_TYPE "MinSizeRel")
 
-    if (NOT EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib" AND
-        NOT EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/libopenblas.a")
-      message(STATUS "Compiling embedded OpenBLAS...")
-      file(MAKE_DIRECTORY ${OPENBLAS_BUILD_DIR})
-      set(OPENBLAS_C_COMPILER "${CMAKE_C_COMPILER}")
-      if (CCACHE_PROGRAM)
-        set(OPENBLAS_C_COMPILER "${CCACHE_PROGRAM} ${CMAKE_C_COMPILER}")
-      endif ()
-      # -G -A -T to pass settings from current cmake command.
+    message(STATUS "Compiling OpenBLAS")
+    file(MAKE_DIRECTORY ${OPENBLAS_BUILD_DIR})
+    set(OPENBLAS_C_COMPILER "${CMAKE_C_COMPILER}")
+    if (CCACHE_PROGRAM)
+      set(OPENBLAS_C_COMPILER "${CCACHE_PROGRAM} ${CMAKE_C_COMPILER}")
+    endif ()
+    # -G -A -T to pass settings from current cmake command.
+    execute_process(
+        COMMAND ${CMAKE_COMMAND}
+            -G "${CMAKE_GENERATOR}"
+            -A "${CMAKE_GENERATOR_PLATFORM}"
+            -T "${CMAKE_GENERATOR_TOOLSET}"
+            "-DCMAKE_C_COMPILER=${OPENBLAS_C_COMPILER}"
+            "-DCMAKE_BUILD_TYPE=${OPENBLAS_BUILD_TYPE}"
+            "-DBUILD_SHARED_LIBS=OFF"
+            "-DTARGET=${OPENBLAS_TARGET}"
+            "-DBINARY=${OPENBLAS_BINARY}"
+            "-DBUILD_TESTING=OFF"
+            "${OPENBLAS_EXTRA_FLAGS}"
+            -S ${OPENBLAS_SRC_DIR}
+            -B ${OPENBLAS_BUILD_DIR}
+            WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
+    )
+    if (NOT OPENBLAS_BUILD_SINGLETHREADED)
       execute_process(
           COMMAND ${CMAKE_COMMAND}
-              -G "${CMAKE_GENERATOR}"
-              -A "${CMAKE_GENERATOR_PLATFORM}"
-              -T "${CMAKE_GENERATOR_TOOLSET}"
-              "-DCMAKE_C_COMPILER=${OPENBLAS_C_COMPILER}"
-              "-DCMAKE_BUILD_TYPE=${OPENBLAS_BUILD_TYPE}"
-              "-DCMAKE_CROSSCOMPILING=ON"
-              "-DCMAKE_SYSROOT=${CMAKE_SYSROOT}"
-              "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}"
-              "-DBUILD_SHARED_LIBS=OFF"
-              "-DTARGET=${OPENBLAS_TARGET}"
-              "-DBINARY=${OPENBLAS_BINARY}"
-              "-DBUILD_TESTING=OFF"
-              "${OPENBLAS_EXTRA_FLAGS}"
-              -S ${OPENBLAS_SRC_DIR}
-              -B ${OPENBLAS_BUILD_DIR}
-              WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
-              RESULT_VARIABLE CONFIGURE_RESULT)
-      if (NOT CONFIGURE_RESULT EQUAL 0)
-        message(FATAL_ERROR "Error configuring OpenBLAS!")
-      endif ()
-      if (NOT OPENBLAS_BUILD_SINGLETHREADED)
-        execute_process(
-            COMMAND ${CMAKE_COMMAND}
-                --build ${OPENBLAS_BUILD_DIR}
-                --config ${OPENBLAS_BUILD_TYPE}
-                --parallel
-            WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
-            RESULT_VARIABLE BUILD_RESULT)
-      else ()
-        execute_process(
-            COMMAND ${CMAKE_COMMAND}
-                --build ${OPENBLAS_BUILD_DIR}
-                --config ${OPENBLAS_BUILD_TYPE}
-            WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
-            RESULT_VARIABLE BUILD_RESULT)
-      endif ()
-      if (NOT BUILD_RESULT EQUAL 0)
-        message(FATAL_ERROR "Error building OpenBLAS!")
-      endif ()
+              --build ${OPENBLAS_BUILD_DIR}
+              --config ${OPENBLAS_BUILD_TYPE}
+              --parallel
+          WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
+      )
+    else ()
+      execute_process(
+          COMMAND ${CMAKE_COMMAND}
+              --build ${OPENBLAS_BUILD_DIR}
+              --config ${OPENBLAS_BUILD_TYPE}
+          WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
+      )
     endif ()
 
     if (MSVC)
