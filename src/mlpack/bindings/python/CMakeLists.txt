@@ -29,6 +29,8 @@ macro (post_python_bindings)
             -D CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
             -D EXTRA_CXX_FLAGS="-DMLPACK_PRINT_INFO -DMLPACK_PRINT_WARN"
             -D OUTPUT_DIR=${CMAKE_BINARY_DIR}
+            -D CCACHE_PROGRAM=${CCACHE_PROGRAM}
+            -D CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
             -P "${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake"
         BYPRODUCTS "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py"
         COMMENT "Configuring setup.py...")
