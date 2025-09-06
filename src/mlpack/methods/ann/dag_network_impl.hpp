@@ -482,7 +482,9 @@ void DAGNetwork<
                               "Axes not on the concatenation axis (axis = "
                             << axis << ") should be equal, but "
                             << axisDim << " != "
-                            << currentAxisDim << " along axis " << i << ".";
+                            << currentAxisDim << " along axis " << i
+                            << " for layers " << network[firstParent]
+                            << " and " << network[parentIndex] << ".";
               throw std::logic_error(errorMessage.str());
             }
           }
