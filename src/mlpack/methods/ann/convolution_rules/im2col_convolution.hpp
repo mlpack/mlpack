@@ -338,7 +338,8 @@ class Im2ColConvolution
       // Pad filter and input to the working output shape.
       inputPadded = InMatType(input.n_rows + 2 * paddingRows,
           input.n_cols + 2 * paddingCols);
-      inputPadded.submat(paddingRows, paddingCols, paddingRows + input.n_rows - 1,
+      inputPadded.submat(paddingRows, paddingCols,
+          paddingRows + input.n_rows - 1,
           paddingCols + input.n_cols - 1) = input;
     }
   }
