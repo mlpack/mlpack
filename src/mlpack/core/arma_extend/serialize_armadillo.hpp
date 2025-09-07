@@ -29,9 +29,9 @@ template<typename Archive, typename eT>
 void serialize(Archive& ar, arma::SpMat<eT>& mat)
 {
   // This is accurate from Armadillo 3.6.0 onwards.
-  arma::uword n_rows = mat.n_rows;
-  arma::uword n_cols = mat.n_cols;
   arma::uword n_nonzero = mat.n_nonzero;
+  arma::uword n_cols = mat.n_cols;
+  arma::uword n_rows = mat.n_rows;
   arma::uword vec_state = mat.vec_state;
 
   ar(CEREAL_NVP(n_rows));
