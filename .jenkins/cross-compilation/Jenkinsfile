@@ -124,12 +124,12 @@ pipeline
                 export CCACHE_DIR=/opt/ccache/;
                 ccache --set-config "sloppiness=include_file_ctime";
                 ccache --set-config "hash_dir=false";
+                ccache --set-config "max_size=10G";
                 ccache --zero-stats;
 
                 rm -rf build-${target}/
                 mkdir build-${target}/
                 cd build-${target}/
-                echo "Extra flags: $OPENBLAS_EXTRA_FLAGS"
                 cmake \
                     -DBUILD_TESTS=ON \
                     -DUSE_PRECOMPILED_HEADERS=OFF \

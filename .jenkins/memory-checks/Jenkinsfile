@@ -60,7 +60,7 @@ pipeline
           export CCACHE_DIR=/opt/ccache/;
           ccache --set-config "sloppiness=include_file_ctime";
           ccache --set-config "hash_dir=false";
-          ccache --set-config "debug=true";
+          ccache --set-config "max_size=10G";
           ccache --zero-stats
 
           mkdir build
@@ -74,7 +74,7 @@ pipeline
           cd ..
 
           # Print ccache statistics.
-          ccache -sv
+          ccache -s
         '''
       }
     }
