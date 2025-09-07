@@ -25,7 +25,10 @@ _????-??-??_
 
  * Mark long-running tests with the `[long]` tag (#3983).
 
- * Added DAGNetwork class to represent complex neural network structurs (#3944)
+ * Added `DAGNetwork` class to represent complex neural network structures
+   (#3944).
+
+ * Fix mask handling in `MultiHeadAttention` layer (#3998).
 
 ## mlpack 4.6.2
 
