@@ -56,9 +56,9 @@ bool Load(const std::vector<std::string>& files,
 
   if (isImageFormat)
   {
-      ImageOptions imgOpts(std::move(opts));
-      success = LoadImage(files, matrix, imgOpts);
-      opts = std::move(imgOpts);
+    ImageOptions imgOpts(std::move(opts));
+    success = LoadImage(files, matrix, imgOpts);
+    opts = std::move(imgOpts);
   }
   else
   {
@@ -79,7 +79,7 @@ bool LoadImage(const std::vector<std::string>& files,
   {
     std::stringstream oss;
     oss << "Load(): list of images is empty, please specify the files names.";
-    HandleError(oss, opts);
+    return HandleError(oss, opts);
   }
 
   if (opts.Format() == FileType::ImageType)
@@ -93,7 +93,7 @@ bool LoadImage(const std::vector<std::string>& files,
       << " not supported. Supported formats: ";
     for (const auto& x : opts.loadType)
       oss << " " << x;
-    HandleError(oss, opts);
+    return HandleError(oss, opts);
   }
   // Temporary variables needed as stb_image.h supports int parameters.
   int tempWidth, tempHeight, tempChannels;
@@ -110,7 +110,7 @@ bool LoadImage(const std::vector<std::string>& files,
       std::stringstream oss;
       oss << "Load(): failed to load image '" << files.front() << "': "
               << stbi_failure_reason();
-      HandleError(oss, opts);
+      return HandleError(oss, opts);
     }
     if (opts.Width() == 0 || opts.Height() == 0)
     {
@@ -129,7 +129,7 @@ bool LoadImage(const std::vector<std::string>& files,
           << "several images, please check that all the images have the same "
           << "dimensions; if not, load each image in one column and call this"
           << " function iteratively." << std::endl;
-      HandleError(oss, opts);
+      return HandleError(oss, opts);
     }
     images.col(i) = arma::Mat<unsigned char>(imageBuf, dimension, 1,
         false, true);

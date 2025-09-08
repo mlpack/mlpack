@@ -38,7 +38,7 @@ bool SaveImage(const std::vector<std::string>& files,
   {
     std::stringstream oss;
     oss << "Save(): vector of image files is empty; nothing to save.";
-    HandleError(oss, opts);
+    return HandleError(oss, opts);
   }
 
   // Check if we do have any type that is not supported.
@@ -52,7 +52,7 @@ bool SaveImage(const std::vector<std::string>& files,
       for (const auto& x : opts.saveType)
         oss << "  " << x;
       oss << "." << std::endl;
-      HandleError(oss, opts);
+      return HandleError(oss, opts);
     }
   }
 
@@ -64,7 +64,7 @@ bool SaveImage(const std::vector<std::string>& files,
     oss << "data::Save(): The given image dimensions, Width: " << opts.Width()
         << ", Height: " << opts.Height() << ", Channels: "<< opts.Channels()
         << " do not match the dimensions of the matrix to be saved!";
-    HandleError(oss, opts);
+    return HandleError(oss, opts);
   }
   // Unfortunately we cannot move because matrix is const.
   arma::Mat<unsigned char> tempMatrix =
@@ -100,7 +100,7 @@ bool SaveImage(const std::vector<std::string>& files,
     {
       std::stringstream oss;
       oss << "Save(): error saving image to '" << files.at(i) << "'.";
-      HandleError(oss, opts);
+      return HandleError(oss, opts);
     }
   }
   return success;

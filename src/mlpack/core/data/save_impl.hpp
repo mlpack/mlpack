@@ -155,13 +155,25 @@ bool Save(const std::string& filename,
   {
     if (isImageFormat)
     {
-      arma::Mat<typename ObjectType::elem_type> tmp =
-        arma::conv_to<arma::Mat<typename ObjectType::elem_type>>::from(matrix);
-      ImageOptions imgOpts(std::move(opts));
-      std::vector<std::string> files;
-      files.push_back(filename);
-      SaveImage(files, tmp, imgOpts);
-      opts = std::move(imgOpts);
+      if constexpr (isSparseMatrixType)
+      {
+        arma::Mat<typename ObjectType::elem_type> tmp =
+            arma::conv_to<arma::Mat<
+            typename ObjectType::elem_type>>::from(matrix);
+        ImageOptions imgOpts(std::move(opts));
+        std::vector<std::string> files;
+        files.push_back(filename);
+        SaveImage(files, tmp, imgOpts);
+        opts = std::move(imgOpts);
+      }
+      else
+      {
+        ImageOptions imgOpts(std::move(opts));
+        std::vector<std::string> files;
+        files.push_back(filename);
+        SaveImage(files, matrix, imgOpts);
+        opts = std::move(imgOpts);
+      }
     }
     else
     {

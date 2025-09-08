@@ -82,8 +82,8 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
   }
   else
   {
-    Log::Fatal << "Numboer of Channels should be either 1 or 3, and cannot be "
-        << opts.Channels() << "." << std::endl;
+    Log::Fatal << "ResizeImages(): number of channels should be either 1 or 3,"
+        << " not be " << opts.Channels() << "." << std::endl;
   }
 
   size_t newDimension = newWidth * newHeight * opts.Channels();
@@ -153,6 +153,11 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
   {
     channels = STBIR_RGB;
   }
+  else
+  {
+    Log::Fatal << "ResizeImages(): number of channels should be either 1 or 3,"
+        << " not be " << opts.Channels() << "." << std::endl;
+  }
 
   // This is required since STB only accept unsigned chars.
   // set the new matrix size for copy
@@ -173,9 +178,9 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
 
   for (size_t i = 0; i < images.n_cols; ++i)
   {
-      stbir_resize_uint8_linear(originalImages.colptr(i), opts.Width(),
-          opts.Height(), 0, resizedImages.colptr(i), newWidth, newHeight, 0,
-          channels);
+    stbir_resize_uint8_linear(originalImages.colptr(i), opts.Width(),
+        opts.Height(), 0, resizedImages.colptr(i), newWidth, newHeight, 0,
+        channels);
   }
 
   images = arma::conv_to<arma::Mat<eT>>::from(std::move(resizedImages));
