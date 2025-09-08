@@ -267,7 +267,8 @@ TEMPLATE_TEST_CASE("ImagesResizeTest", "[ImageTest]", unsigned char, size_t,
   // test.
   for (size_t i = 0; i < files.size(); i++)
   {
-    REQUIRE(data::Load(files.at(i), image, info, false) == true);
+    info.Reset();
+    REQUIRE(data::Load(files.at(i), image, info, true) == true);
     ResizeImages(image, info, 320, 320);
     REQUIRE(data::Save(reSheeps.at(i), image, info, true) == true);
   }
@@ -326,7 +327,8 @@ TEMPLATE_TEST_CASE("ImagesResizeCropTest", "[ImageTest]", unsigned char,
   // test.
   for (size_t i = 0; i < files.size(); i++)
   {
-    REQUIRE(data::Load(files.at(i), image, info, false) == true);
+    info.Reset();
+    REQUIRE(data::Load(files.at(i), image, info, true) == true);
     ResizeCropImages(image, info, 320, 320);
     REQUIRE(data::Save(reSheeps.at(i), image, info, false) == true);
   }
