@@ -21,6 +21,15 @@ using namespace mlpack;
  */
 TEST_CASE("KNNDualTreeUnmapTest", "[KNNTest]")
 {
+  // This comment isn't going to change anything but it will break ccache for
+  // this file.
+  std::vector<size_t> refMap;
+  refMap.push_back(3);
+  refMap.push_back(4);
+  refMap.push_back(1);
+  refMap.push_back(2);
+  refMap.push_back(0);
+
   std::vector<size_t> queryMap;
   queryMap.push_back(2);
   queryMap.push_back(0);
@@ -28,13 +37,6 @@ TEST_CASE("KNNDualTreeUnmapTest", "[KNNTest]")
   queryMap.push_back(3);
   queryMap.push_back(1);
   queryMap.push_back(5);
-
-  std::vector<size_t> refMap;
-  refMap.push_back(3);
-  refMap.push_back(4);
-  refMap.push_back(1);
-  refMap.push_back(2);
-  refMap.push_back(0);
 
   // Now generate some results.  6 queries, 5 references.
   arma::Mat<size_t> neighbors("3 1 2 0 4;"
