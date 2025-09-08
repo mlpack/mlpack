@@ -10,10 +10,15 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_R_RCPP_MLPACK_H
-#define MLPACK_BINDINGS_R_RCPP_MLPACK_H
+#ifndef MLPACK_BINDINGS_R_MLPACK_H
+#define MLPACK_BINDINGS_R_MLPACK_H
 
-// Also includes Rcpp headers along with RcppArmadillo
+// With RcppArmadillo 15.0.1-1 or later, prefer current Armadillo
+#if !defined(ARMA_USE_CURRENT)
+  #define ARMA_USE_CURRENT
+#endif
+
+// This also includes the Rcpp headers along with RcppArmadillo
 #include <RcppArmadillo.h>
 
 // Rcpp has its own stream object which cooperates more nicely with R's i/o
