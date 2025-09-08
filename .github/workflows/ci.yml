@@ -165,7 +165,7 @@ jobs:
           cmake ${{ matrix.config.cmakeVars }} $CMAKE_BINDING_ARGS -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON ../
 
       - name: Build mlpack
-        run: cd build && make -j{{ matrix.config.cores }}
+        run: cd build && make -j${{ matrix.config.cores }}
 
       # Run the tests manually so that we can get JUnit output.
       - name: Run mlpack_test
