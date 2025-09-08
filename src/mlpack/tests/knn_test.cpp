@@ -21,6 +21,15 @@ using namespace mlpack;
  */
 TEST_CASE("KNNDualTreeUnmapTest", "[KNNTest]")
 {
+  // Now generate some results.  6 queries, 5 references.
+  arma::Mat<size_t> neighbors("3 1 2 0 4;"
+                              "1 0 2 3 4;"
+                              "0 1 2 3 4;"
+                              "4 1 0 3 2;"
+                              "3 0 4 1 2;"
+                              "3 0 4 1 2;");
+  neighbors = neighbors.t();
+
   // This comment isn't going to change anything but it will break ccache for
   // this file.
   std::vector<size_t> refMap;
@@ -38,14 +47,6 @@ TEST_CASE("KNNDualTreeUnmapTest", "[KNNTest]")
   queryMap.push_back(1);
   queryMap.push_back(5);
 
-  // Now generate some results.  6 queries, 5 references.
-  arma::Mat<size_t> neighbors("3 1 2 0 4;"
-                              "1 0 2 3 4;"
-                              "0 1 2 3 4;"
-                              "4 1 0 3 2;"
-                              "3 0 4 1 2;"
-                              "3 0 4 1 2;");
-  neighbors = neighbors.t();
 
   // Integer distances will work fine here.
   arma::mat distances("3 1 2 0 4;"
