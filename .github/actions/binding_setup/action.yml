@@ -78,7 +78,7 @@ runs:
         r-version: "release"
         use-public-rspm: true
 
-    - name: Configure ccache for R
+    - name: Configure R Makevars for ccache
       if: inputs.lang == 'R'
       shell: bash
       run: |
@@ -93,16 +93,12 @@ runs:
           echo 'CXX11=$(CCACHE) g++' >> ~/.R/Makevars
           echo 'CXX14=$(CCACHE) g++' >> ~/.R/Makevars
           echo 'CXX17=$(CCACHE) g++' >> ~/.R/Makevars
-          cat ~/.R/Makevars
 
     - name: "Query R dependencies"
       if: inputs.lang == 'R'
       shell: bash
       run: |
           cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
-          echo "R_HOME: $R_HOME"
-          R CMD config CXX
-          R CMD config CXX17
           Rscript -e 'install.packages(c("remotes", "roxygen2", "pkgbuild"))'
           Rscript -e 'remotes::install_deps(".", dependencies=TRUE)'
 
