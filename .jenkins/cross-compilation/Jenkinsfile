@@ -38,7 +38,8 @@ target_info = [
       'device_name': 'vocore2-ultimate',
       'arch_type': 'mips32',
       'arch_name': 'MIPS24K',
-      'test_filters': '~[long]'
+      'test_filters': '~[long]',
+      'scp_opts': '-O'
   ]
 ]
 
@@ -119,6 +120,7 @@ pipeline
               PAGE_SIZE = "${target_info[env.target]['page_size'] ?: ''}"
               TEST_FILTERS = "${target_info[env.target]['test_filters'] ?: ''}"
               JUMP_HOST = "${target_info[env.target]['jump_host'] ?: ''}"
+              SCP_OPTS = "${target_info[env.target]['scp_opts'] ?: ''}"
             }
 
             steps
@@ -129,7 +131,7 @@ pipeline
               }
 
               // Specifically use bash so `time` is available.
-              sh '''#!/bin/bash -x
+              sh '''#!/bin/bash -xe
                 # If a custom page size is needed, set it.
                 EXTRA_CMAKE_OPTS='';
                 if [ ! -z "$PAGE_SIZE" ];
@@ -164,7 +166,7 @@ pipeline
                   passphraseVariable: 'PASSPHRASE')])
               {
                 // Specifically use bash so `time` is available.
-                sh'''#!/bin/bash -x
+                sh'''#!/bin/bash -xe
                   eval $(ssh-agent -s)
                   echo ${PASSPHRASE} | SSH_ASKPASS=/bin/cat setsid -w ssh-add ${KEY_FILE}
 
@@ -182,9 +184,9 @@ pipeline
                   cat ~/.ssh/config;
 
                   ssh jenkins@${target} -t mkdir -p test_${BRANCH_NAME}_${BUILD_ID}/
-                  scp build-${target}/bin/mlpack_test jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
-                  scp -r src/mlpack/tests/data/* jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
-                  scp -r doc/img/cat.jpg jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
+                  scp ${SCP_OPTS} build-${target}/bin/mlpack_test jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
+                  scp ${SCP_OPTS} -r src/mlpack/tests/data/* jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
+                  scp ${SCP_OPTS} -r doc/img/cat.jpg jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
 
                   # Unpack all compressed test data.
                   ssh jenkins@${target} -t "
@@ -206,7 +208,7 @@ pipeline
                       || echo "Test failure or other problem.";
 
                   # Clean up afterwards.
-                  scp jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/reports/mlpack_test.junit.xml reports/mlpack_test.${target}.junit.xml;
+                  scp ${SCP_OPTS} jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/reports/mlpack_test.junit.xml reports/mlpack_test.${target}.junit.xml;
                   ssh jenkins@${target} -t rm -rf test_${BRANCH_NAME}_${BUILD_ID}/;
                 '''
               }
