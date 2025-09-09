@@ -21,8 +21,6 @@ using namespace mlpack;
  */
 TEST_CASE("KNNDualTreeUnmapTest", "[KNNTest]")
 {
-  // This comment isn't going to change anything but it will break ccache for
-  // this file.
   std::vector<size_t> refMap;
   refMap.push_back(3);
   refMap.push_back(4);
