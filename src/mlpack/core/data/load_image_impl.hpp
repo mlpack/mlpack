@@ -82,19 +82,22 @@ bool LoadImage(const std::vector<std::string>& files,
     return HandleError(oss, opts);
   }
 
-  if (opts.Format() == FileType::ImageType)
+  if (opts.Format() == FileType::ImageType ||
+      opts.Format() == FileType::AutoDetect)
   {
     DetectFromExtension<arma::Mat<eT>, ImageOptions>(files.back(), opts);
+    if (!opts.loadType.count(Extension(files.back())))
+    {
+      std::stringstream oss;
+      oss << "Load(): image type " << opts.FileTypeToString()
+        << " not supported. Supported formats: ";
+      for (const auto& x : opts.loadType)
+        oss << " " << x;
+
+      return HandleError(oss, opts);
+    }
   }
-  if (!opts.loadType.count(Extension(files.back())))
-  {
-    std::stringstream oss;
-    oss << "Load(): image type " << opts.FileTypeToString()
-      << " not supported. Supported formats: ";
-    for (const auto& x : opts.loadType)
-      oss << " " << x;
-    return HandleError(oss, opts);
-  }
+
   // Temporary variables needed as stb_image.h supports int parameters.
   int tempWidth, tempHeight, tempChannels;
   arma::Mat<unsigned char> images;

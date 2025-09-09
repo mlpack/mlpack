@@ -42,23 +42,28 @@ bool SaveImage(const std::vector<std::string>& files,
   }
 
   // Check if we do have any type that is not supported.
-  for  (size_t i = 0; i < files.size() ; ++i)
+  if (opts.Format() == FileType::ImageType ||
+      opts.Format() == FileType::AutoDetect)
   {
-    if (!opts.saveType.count(Extension(files.at(i))))
+    for  (size_t i = 0; i < files.size() ; ++i)
     {
-      std::stringstream oss;
-      oss << "Save(): file type " << opts.FileTypeToString()
-          << " isn't supported. Currently image saving supports: ";
-      for (const auto& x : opts.saveType)
-        oss << "  " << x;
-      oss << "." << std::endl;
-      return HandleError(oss, opts);
+      if (!opts.saveType.count(Extension(files.at(i))))
+      {
+        std::stringstream oss;
+        oss << "Save(): file type " << opts.FileTypeToString()
+            << " isn't supported. Currently image saving supports: ";
+        for (const auto& x : opts.saveType)
+          oss << "  " << x;
+        oss << "." << std::endl;
+        return HandleError(oss, opts);
+      }
     }
   }
 
-  size_t dimension = opts.Width() * opts.Height() * opts.Channels();
+  size_t dimension = opts.Width() * opts.Height() * opts.Channels() *
+      files.size();
   // We only need to check the rows since it is a matrix.
-  if (dimension != matrix.n_rows)
+  if (dimension != matrix.n_rows * matrix.n_cols)
   {
     std::stringstream oss;
     oss << "data::Save(): The given image dimensions, Width: " << opts.Width()
