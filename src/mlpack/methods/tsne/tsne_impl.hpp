@@ -18,7 +18,6 @@
 
 #include "tsne.hpp"
 #include "tsne_optimizer.hpp"
-#include "tsne_learning_scheduler.hpp"
 #include "tsne_functions/tsne_function.hpp"
 
 namespace mlpack
@@ -59,15 +58,32 @@ void TSNE<TSNEStrategy>::Embed(const MatType& X, MatType& Y)
     /* To Do: Throw Error */
   }
 
-  // Initialize The Optimizer
-  TSNEOptimizer optimizer(learningRate, X.n_cols, maxIter * X.n_cols);
-
   // Initialize Objective Function
   TSNEFunction<TSNEStrategy> function(X, perplexity);
 
   // Call The Optimizer On The Objective Function
-  auto schedulerCallback = TSNELearningScheduler(250, exaggeration, 0.5, 0.8);
-  optimizer.Optimize(function, Y, schedulerCallback, ens::ProgressBar());
+  const size_t exploratoryIter = std::min<size_t>(250, maxIter);
+  const size_t convergenceIter = std::max<size_t>(0,
+                                                  maxIter - exploratoryIter);
+
+  TSNEOptimizer exploratoryOptimizer(learningRate,
+                                     X.n_cols,
+                                     exploratoryIter * X.n_cols);
+  TSNEOptimizer convergenceOptimizer(learningRate,
+                                     X.n_cols,
+                                     convergenceIter * X.n_cols);
+
+  Log::Info << "Starting Exploratory Phase of t-SNE Optimization."
+            << std::endl;
+  exploratoryOptimizer.Optimize(function, Y, ens::ProgressBar());
+  Log::Info << "Completed Exploratory Phase of t-SNE Optimization."
+            << std::endl;
+
+  Log::Info << "Starting Convergence Phase of t-SNE Optimization."
+            << std::endl;
+  convergenceOptimizer.Optimize(function, Y, ens::ProgressBar());
+  Log::Info << "Completed Convergence Phase of t-SNE Optimization."
+            << std::endl;
 }
 
 } // namespace mlpack

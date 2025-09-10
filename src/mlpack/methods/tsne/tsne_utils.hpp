@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_TSNE_TSNE_UTILS_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/io.hpp>
 
 namespace mlpack
 {
@@ -39,7 +40,7 @@ arma::sp_mat binarySearchPerplexity(const double perplexity,
     double sumP, sumDP, hDiff, hApprox;
 
     if (i % 1000 == 0)
-      std::cout << "Computing P-values for points " << i + 1 << " To "
+      Log::Info << "Computing P-values for points " << i + 1 << " To "
                 << std::min(n, i + 1000) << std::endl;
 
     Di = D.col(i);
@@ -82,13 +83,13 @@ arma::sp_mat binarySearchPerplexity(const double perplexity,
       step++;
     }
     if (step == maxSteps)
-      std::cout << "Max Steps Reached While Searching For Desired Perplexity"
+      Log::Warn << "Max Steps Reached While Searching For Desired Perplexity"
                 << std::endl;
 
     for (size_t j = 0; j < k; ++j)
       P(i, N(j, i)) = Pi(N(j, i));
   }
-  std::cout << "Mean value of sigma: " << arma::mean(arma::sqrt(1.0 / beta))
+  Log::Info << "Mean value of sigma: " << arma::mean(arma::sqrt(1.0 / beta))
             << std::endl;
 
   return P;
@@ -110,7 +111,7 @@ arma::mat binarySearchPerplexity(const double perplexity, const arma::mat& D)
   for (size_t i = 0; i < n; i++)
   {
     if (i % 1000 == 0)
-      std::cout << "Computing P-values for points " << i + 1 << " To "
+      Log::Info << "Computing P-values for points " << i + 1 << " To "
                 << std::min(n, i + 1000) << std::endl;
 
     betamin = -arma::datum::inf;
@@ -149,13 +150,13 @@ arma::mat binarySearchPerplexity(const double perplexity, const arma::mat& D)
       step++;
     }
     if (step == maxSteps)
-      std::cout << "Max Steps Reached While Searching For Desired Perplexity"
+      Log::Warn << "Max Steps Reached While Searching For Desired Perplexity"
                 << std::endl;
 
     P.row(i).head(i) = Pi.head(i).t();
     P.row(i).tail(n - i - 1) = Pi.tail(n - i - 1).t();
   }
-  std::cout << "Mean value of sigma: " << arma::mean(arma::sqrt(1.0 / beta))
+  Log::Info << "Mean value of sigma: " << arma::mean(arma::sqrt(1.0 / beta))
             << std::endl;
 
   return P;
