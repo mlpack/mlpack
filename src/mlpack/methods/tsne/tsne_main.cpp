@@ -13,7 +13,7 @@
 #include <mlpack/core.hpp>
 
 #undef BINDING_NAME
-#define BINDING_NAME pca
+#define BINDING_NAME tsne
 
 #include <mlpack/core/util/mlpack_main.hpp>
 
@@ -64,16 +64,16 @@ PARAM_DOUBLE_IN(
     "Amplifies pairwise similarities during the initial optimization phase. "
     "This helps form tighter clusters and clearer separation between them. "
     "A higher value increases the spacing between clusters, but if the cost "
-    "function grows during initial itterations, reduce this value or "
+    "function grows during initial iterations, reduce this value or "
     "lower the learning rate.",
     "e",
     12.0);
-PARAM_DOUBLE_IN("learning_rate", "Learning rate for the optimizer.", "l", 1.0);
+PARAM_DOUBLE_IN("learning_rate", "Learning rate for the optimizer.", "l", 50.0);
 PARAM_INT_IN("max_iterations", "Maximum number of iterations.", "n", 1000);
 PARAM_STRING_IN("init",
                 "Initialization method for the output embedding. "
                 "Options are: 'random', 'pca' (default). "
-                "random is not reccomended, as PCA can improve "
+                "random is not recommended, as PCA can improve "
                 " both speed and quality of the embedding.",
                 "r",
                 "pca");
@@ -85,8 +85,8 @@ PARAM_STRING_IN("method",
 PARAM_DOUBLE_IN(
     "theta",
     "Theta regulates the trade-off between "
-    "speed and accuracy for 'barnes_hut' and 'dual_tree' approximations "s
-    "the optimal value for theta is different for the two approximations.",
+    "speed and accuracy for 'barnes_hut' and 'dual_tree' approximations. "
+    "The optimal value for theta is different for the two approximations.",
     "t",
     0.5);
 

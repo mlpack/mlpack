@@ -1,5 +1,5 @@
 /**
- * @file methods/tsne/centeroid_statistic.hpp
+ * @file methods/tsne/centroid_statistic.hpp
  * @author Ranjodh Singh
  *
  * Definition and Implementation of the Centroid Statistic.
@@ -27,8 +27,8 @@ namespace mlpack
  *
  * This statistic is intended for use with metric tree nodes (for example,
  * mlpack::Octree). For leaf nodes, the center of mass is the mean of the
- * points contained in the leaf. For internal nodes, the centeroid is computed
- * as the weighted mean of child centeroids, where the weight is the number of
+ * points contained in the leaf. For internal nodes, the centroid is computed
+ * as the weighted mean of child centroids, where the weight is the number of
  * descendants in the corresponding child.
  *
  * @see @ref trees

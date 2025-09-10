@@ -1,8 +1,8 @@
 /**
- * @file methods/tsne/tsne_policies/tsne_policy.hpp
+ * @file methods/tsne/tsne_utils.hpp
  * @author Ranjodh Singh
  *
- * t-SNE Base Policy
+ * t-SNE Utility Functions
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
