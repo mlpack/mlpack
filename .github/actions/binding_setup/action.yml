@@ -102,6 +102,12 @@ runs:
           Rscript -e 'install.packages(c("remotes", "roxygen2", "pkgbuild"))'
           Rscript -e 'remotes::install_deps(".", dependencies=TRUE)'
 
+    - name: Test RcppEnsmallen source build
+      if: inputs.lang == 'R'
+      shell: bash
+      run: |
+          Rscript -e 'bspm::disable(); install.packages("RcppEnsmallen")'
+
     - name: Install cereal manually for R
       if: inputs.lang == 'R'
       shell: bash
