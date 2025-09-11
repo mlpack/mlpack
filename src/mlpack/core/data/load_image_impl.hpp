@@ -112,7 +112,7 @@ bool LoadImage(const std::vector<std::string>& files,
     if (!imageBuf)
     {
       std::stringstream oss;
-      oss << "Load(): failed to load image '" << files.front() << "': "
+      oss << "Load(): failed to load image '" << files.at(i) << "': "
               << stbi_failure_reason();
       std::cout << oss.str() << std::endl;
       return HandleError(oss, opts);
