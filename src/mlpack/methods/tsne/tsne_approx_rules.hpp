@@ -147,7 +147,8 @@ class TSNEApproxRules
   }
 
   class TraversalInfoType
-  { /* Nothing To Do Here */
+  {
+    /* Nothing To Do Here */
   };
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }

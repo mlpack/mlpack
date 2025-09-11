@@ -130,7 +130,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   }
   else
   {
-    /* To Do: Throw Error */
+    throw std::invalid_argument("invalid method type");
   }
 
   if (params.Has("output"))

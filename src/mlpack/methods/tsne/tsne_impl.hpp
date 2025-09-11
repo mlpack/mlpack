@@ -41,8 +41,6 @@ template <typename TSNEStrategy>
 template <typename MatType>
 void TSNE<TSNEStrategy>::Embed(const MatType& X, MatType& Y)
 {
-  // To Do: VERBOSITY(PROGRESSBAR)
-
   // Initialize Embedding
   if (init == "pca")
   {
@@ -55,7 +53,7 @@ void TSNE<TSNEStrategy>::Embed(const MatType& X, MatType& Y)
   }
   else
   {
-    /* To Do: Throw Error */
+    throw std::invalid_argument("invalid init type");
   }
 
   // Initialize Objective Function
@@ -68,17 +66,24 @@ void TSNE<TSNEStrategy>::Embed(const MatType& X, MatType& Y)
 
   TSNEOptimizer exploratoryOptimizer(learningRate,
                                      X.n_cols,
-                                     exploratoryIter * X.n_cols);
-  TSNEOptimizer convergenceOptimizer(learningRate,
-                                     X.n_cols,
-                                     convergenceIter * X.n_cols);
-
+                                     exploratoryIter * X.n_cols,
+                                     1e-5,
+                                     false,
+                                     DeltaBarDeltaUpdate(0.2, 0.8, 0.5, 0.01));
   Log::Info << "Starting Exploratory Phase of t-SNE Optimization."
             << std::endl;
+  function.InputJointProbabilities() *= exaggeration;
   exploratoryOptimizer.Optimize(function, Y, ens::ProgressBar());
+  function.InputJointProbabilities() /= exaggeration;
   Log::Info << "Completed Exploratory Phase of t-SNE Optimization."
             << std::endl;
 
+  TSNEOptimizer convergenceOptimizer(learningRate,
+                                     X.n_cols,
+                                     convergenceIter * X.n_cols,
+                                     1e-5,
+                                     false,
+                                     DeltaBarDeltaUpdate(0.2, 0.8, 0.8, 0.01));
   Log::Info << "Starting Convergence Phase of t-SNE Optimization."
             << std::endl;
   convergenceOptimizer.Optimize(function, Y, ens::ProgressBar());

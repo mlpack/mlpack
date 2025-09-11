@@ -61,13 +61,18 @@ class TSNEExactFunction
     q = PairwiseDistances(y, DistanceType());
     q = 1.0 / (1.0 + q);
     q.diag().zeros();
+
     Q = q / std::max(arma::datum::eps, arma::accu(q));
     Q.elem(arma::find(Q < arma::datum::eps)).fill(arma::datum::eps);
 
     M = (P - Q) % q;
-    arma::vec S = arma::sum(M, 0).t();
+    arma::vec S = arma::sum(M, 1);
     g = 4.0 * (y * arma::diagmat(S) - y * M);
-    return arma::accu(P % arma::log(P / Q));
+
+    arma::uvec nz = arma::find(P > 0.0);
+    const double kl = arma::accu(P.elem(nz) %
+                                 arma::log(P.elem(nz) / Q.elem(nz)));
+    return kl;
   }
 
   void Shuffle() { /* Nothing To Do Here */ }
