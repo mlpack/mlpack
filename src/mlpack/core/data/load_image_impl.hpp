@@ -79,6 +79,7 @@ bool LoadImage(const std::vector<std::string>& files,
   {
     std::stringstream oss;
     oss << "Load(): list of images is empty, please specify the files names.";
+    std::cout << oss.str() << std::endl;
     return HandleError(oss, opts);
   }
 
@@ -93,7 +94,7 @@ bool LoadImage(const std::vector<std::string>& files,
         << " not supported. Supported formats: ";
       for (const auto& x : opts.loadType)
         oss << " " << x;
-
+      std::cout << oss.str() << std::endl;
       return HandleError(oss, opts);
     }
   }
@@ -113,6 +114,7 @@ bool LoadImage(const std::vector<std::string>& files,
       std::stringstream oss;
       oss << "Load(): failed to load image '" << files.front() << "': "
               << stbi_failure_reason();
+      std::cout << oss.str() << std::endl;
       return HandleError(oss, opts);
     }
     if (opts.Width() == 0 || opts.Height() == 0)
@@ -132,6 +134,7 @@ bool LoadImage(const std::vector<std::string>& files,
           << "several images, please check that all the images have the same "
           << "dimensions; if not, load each image in one column and call this"
           << " function iteratively." << std::endl;
+      std::cout << oss.str() << std::endl;
       return HandleError(oss, opts);
     }
     images.col(i) = arma::Mat<unsigned char>(imageBuf, dimension, 1,
