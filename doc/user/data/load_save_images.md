@@ -11,83 +11,99 @@ Supported formats for saving are `jpg`, `png`, `tga`, and `bmp`.
 
 When loading images, each image is represented as a flattened single column
 vector in a data matrix; each row of the resulting vector will correspond to a
-single pixel value in a single channel.  An auxiliary `data::ImageInfo` class is
-used to store information about the images.
+single pixel value in a single channel.  An auxiliary `data::ImageOptions` class
+is used to store information about the images.
 
-### `data::ImageInfo`
+### `data::ImageOptions`
 
-The `data::ImageInfo` class contains the metadata of the images.
+The `data::ImageOptions` class contains the metadata of the images.
 
 ---
 
 #### Constructors
 
- - `info = data::ImageInfo()`
-   * Create a `data::ImageInfo` object with no data.
-   * Use this constructor if you intend to populate the `data::ImageInfo` via a
+ - `opts = data::ImageOptions()`
+   * Create a `data::ImageOptions` object with no data.
+   * Use this constructor if you intend to populate the `data::ImageOptions` via a
      `data::Load()` call.
 
- - `info = data::ImageInfo(width, height, channels)`
-   * Create a `data::ImageInfo` object with the given image specifications.
+ - `opts = data::ImageOptions(width, height, channels)`
+   * Create a `data::ImageOptions` object with the given image specifications.
    * `width` and `height` are specified as pixels.
 
 ---
 
 #### Accessing and modifying image metadata
 
- - `info.Quality() = q` will set the compression quality (e.g. for saving JPEGs)
+ - `opts.Quality() = q` will set the compression quality (e.g. for saving JPEGs)
    to `q`.
    * `q` should take values between `0` and `100`.
-   * The quality value is ignored unless calling `data::Save()` with `info`.
+   * The quality value is ignored unless calling `data::Save()` with `opts`.
 
- - Calling `info.Channels() = 1` before loading will cause images to be loaded
+ - Calling `opts.Channels() = 1` before loading will cause images to be loaded
    in grayscale.
 
- - Metadata stored in the `data::ImageInfo` can be accessed with the following
+ - Metadata stored in the `data::ImageOptions` can be accessed with the following
    members:
-   * `info.Width()` returns the image width in pixels.
-   * `info.Height()` returns the image height in pixels.
-   * `info.Channels()` returns the number of color channels in the image.
-   * `info.Quality()` returns the compression quality that will be used to save
+   * `opts.Width()` returns the image width in pixels.
+   * `opts.Height()` returns the image height in pixels.
+   * `opts.Channels()` returns the number of color channels in the image.
+   * `opts.Quality()` returns the compression quality that will be used to save
      images (between 0 and 100).
 
 ---
 
 ### Loading images
 
-With a `data::ImageInfo` object, image data can be loaded or saved, handling
+With a `data::ImageOptions` object, image data can be loaded or saved, handling
 either one or multiple images at a time:
 
 <!-- TODO: add parameter to force use of what's in `info` -->
 
- - `data::Load(filename, matrix, info, fatal=false)`
+ - `data::Load(filename, matrix, opts)`
    * Load a ***single image*** from `filename` into `matrix`.
      - Format is chosen by extension (e.g. `image.png` will load as PNG).
 
    * `matrix` will have one column representing the image as a flattened vector.
 
-   * `info` will be populated with information from the image in `filename`.
+   * `opts` will be populated with information from the image in `filename`.
 
-   * If `fatal` is `true`, a `std::runtime_error` will be thrown upon load
-     failure.
+   * To make the function to throw a `std::runtime_error` on failure, please
+     set `opts.Fatal() = true;`
 
    * Returns a `bool` indicating the success of the operation.
 
+   * ***NOTE:*** if the element type of `images` is not `unsigned char`
+     (e.g. if `image` is not `arma::Mat<unsigned char>`, the matrix will be
+     temporarily converted during loading to `unsigned char` and then
+     converted back to the original element type at the end of the loading
+     process.
+
 ---
 
- - `data::Load(files, matrix, info, fatal=false)`
+ - `data::Load(files, matrix, opts)`
    * Load ***multiple images*** from `files` into `matrix`.
      - `files` is of type `std::vector<std::string>` and should contain the list
        of images to be loaded.
      - `matrix` will have `files.size()` columns, each representing the
        corresponding image as a flattened vector.
 
-   * `info` will be populated with information from the images in `files`.
+   * `opts` will be populated with information from the images in `files`.
 
    * If `fatal` is `true`, a `std::runtime_error` will be thrown if any files
      fail to load.
 
    * Returns a `bool` indicating the success of the operation.
+
+   * ***NOTE:*** if the element type of `images` is not `unsigned char`
+     (e.g. if `image` is not `arma::Mat<unsigned char>`, the matrix will be
+     temporarily converted during loading to `unsigned char` and then
+     converted back to the original element type at the end of the loading
+     process.
+
+   * This function expects all the images to have identical
+     dimensions. If this is not the case, iteratively call the above overload 
+     `Load(filename)` with a single image/column in `images`.
 
 ---
 
@@ -98,10 +114,18 @@ either one or multiple images at a time:
    * `matrix` is expected to have only one column representing the image as a
      flattened vector.
 
-   * If `fatal` is `true`, a `std::runtime_error` will be thrown in the event of
-     save failure.
+   * `opts` must have the dimension information from the images in `filename`.
+
+   * To make the function to throw a `std::runtime_error` on failure, please
+     set `opts.Fatal() = true;`
 
    * Returns a `bool` indicating the success of the operation.
+
+   * ***NOTE:*** if the element type of `images` is not `unsigned char`
+     (e.g. if `image` is not `arma::Mat<unsigned char>`, the matrix will be
+     temporarily converted during loading to `unsigned char` and then
+     converted back to the original element type at the end of the loading
+     process.
 
 ---
 
@@ -110,16 +134,46 @@ either one or multiple images at a time:
      - `files` is of type `std::vector<std::string>` and should contain the list
        of files to save to.
      - The format of each file is chosen by extension (e.g. `image.png` will
-       save as PNG); it is allowed for filenames in `files` to have different
-       extensions.
+       save as PNG); it is possible for filenames in `files` to have different
+       extensions, but this is not recommended.
 
    * `matrix` is expected to have `files.size()` columns representing images as
      flattened vectors.
 
-   * If `fatal` is `true`, a `std::runtime_error` will be thrown if any images
-     fail to save.
+   * `opts` must have the dimension information from the images in `filename`.
+
+   * To make the function to throw a `std::runtime_error` on failure, please
+     set `opts.Fatal() = true;`
 
    * Returns a `bool` indicating the success of the operation.
+
+   * ***NOTE:*** if the element type of `images` is not `unsigned char`
+     (e.g. if `image` is not `arma::Mat<unsigned char>`, the matrix will be
+     temporarily converted during loading to `unsigned char` and then
+     converted back to the original element type at the end of the loading
+     process.
+
+   * This function expects all the images to have identical
+     dimensions. If this is not the case, iteratively call the above overload 
+     `Save(filename)` with a single image/column in `images`.
+
+---
+
+The above functions could be used with the following simplified signature:
+
+```
+    // To load a png image immediately, but no need to know the dimensions.
+    mlpack::data::load(filename, matrix, PNG);
+    
+    // The same would apply for JPG as well, if we want to throw an exception.
+    // You can follow the same logic to load other image formats.
+    mlpack::data::load(filename, matrix, JPG + Fatal);
+
+    // Another Images is specified instead of the extension. The format will be
+    decided based on the extension. For instance:
+    // This will load a PNG
+    mlpack::data::load("myimage.png", matrix, Image);
+```
 
 ---
 
@@ -136,29 +190,30 @@ Example of loading and saving a single image:
 
 ```c++
 // See https://www.mlpack.org/static/img/numfocus-logo.png.
-mlpack::data::ImageInfo info;
+mlpack::data::ImageOptions opts;
+opts.Fatal() = true;
 arma::mat matrix;
-mlpack::data::Load("numfocus-logo.png", matrix, info, true);
+mlpack::data::Load("numfocus-logo.png", matrix, opts);
 
 // `matrix` should now contain one column.
 
-// Print information about the image.
+// Print optsrmation about the image.
 std::cout << "Information about the image in 'numfocus-logo.png': "
     << std::endl;
-std::cout << " - " << info.Width() << " pixels in width." << std::endl;
-std::cout << " - " << info.Height() << " pixels in height." << std::endl;
-std::cout << " - " << info.Channels() << " color channels." << std::endl;
+std::cout << " - " << opts.Width() << " pixels in width." << std::endl;
+std::cout << " - " << opts.Height() << " pixels in height." << std::endl;
+std::cout << " - " << opts.Channels() << " color channels." << std::endl;
 
 std::cout << "Value at pixel (x=3, y=4) in the first channel: ";
-const size_t index = (4 * info.Width() * info.Channels()) +
-    (3 * info.Channels());
+const size_t index = (4 * opts.Width() * opts.Channels()) +
+    (3 * opts.Channels());
 std::cout << matrix[index] << "." << std::endl;
 
 // Increment each pixel value, but make sure they are still within the bounds.
 matrix += 1;
 matrix = arma::clamp(matrix, 0, 255);
 
-mlpack::data::Save("numfocus-logo-mod.png", matrix, info);
+mlpack::data::Save("numfocus-logo-mod.png", matrix, opts);
 ```
 
 ---
@@ -178,29 +233,29 @@ images.push_back("ensmallen-favicon.png");
 images.push_back("armadillo-favicon.png");
 images.push_back("bandicoot-favicon.png");
 
-mlpack::data::ImageInfo info;
-info.Channels() = 1; // Force loading in grayscale.
+mlpack::data::ImageOptions opts;
+opts.Channels() = 1; // Force loading in grayscale.
 
 arma::mat matrix;
-mlpack::data::Load(images, matrix, info, true);
+mlpack::data::Load(images, matrix, opts, true);
 
-// Print information about what we loaded.
+// Print optsrmation about what we loaded.
 std::cout << "Loaded " << matrix.n_cols << " images.  Images are of size "
-    << info.Width() << " x " << info.Height() << " with " << info.Channels()
+    << opts.Width() << " x " << opts.Height() << " with " << opts.Channels()
     << " color channel." << std::endl;
 
 // Invert images.
 matrix = (255.0 - matrix);
 
 // Save as compressed JPEGs with low quality.
-info.Quality() = 75;
+opts.Quality() = 75;
 std::vector<std::string> outImages;
 outImages.push_back("mlpack-favicon-inv.jpeg");
 outImages.push_back("ensmallen-favicon-inv.jpeg");
 outImages.push_back("armadillo-favicon-inv.jpeg");
 outImages.push_back("bandicoot-favicon-inv.jpeg");
 
-mlpack::data::Save(outImages, matrix, info);
+mlpack::data::Save(outImages, matrix, opts);
 ```
 
 ### Resize images
@@ -211,7 +266,7 @@ It is possible to resize images in mlpack with the following function:
    * `images` is a [column-major matrix](matrices.md) containing a set of
       images; each image is represented as a flattened vector in one column.
 
-   * `info` is a [`data::ImageInfo&`](#dataimageinfo) containing details about
+   * `opts` is a [`data::ImageOptions&`](#dataimageinfo) containing details about
      the images in `images`, and will be modified to contain the new size of the
      images.
 
@@ -236,7 +291,7 @@ different dimensions:
 ```c++
 // See https://datasets.mlpack.org/sheep.tar.bz2
 arma::Mat<unsigned char> image;
-mlpack::data::ImageInfo info;
+mlpack::data::ImageOptions opts;
 
 // The images are located in our test/data directory. However, any image could
 // be used instead.
@@ -253,12 +308,12 @@ std::vector<std::string> reSheeps =
      "re_sheep_9.jpg"};
 
 // Load and Resize each one of them individually, because they do not have
-// the same dimensions. The `info` will contain the dimension for each one.
+// the same dimensions. The `opts` will contain the dimension for each one.
 for (size_t i = 0; i < files.size(); i++)
 {
-  mlpack::data::Load(files.at(i), image, info, false);
-  mlpack::data::ResizeImages(image, info, 320, 320);
-  mlpack::data::Save(reSheeps.at(i), image, info, false);
+  mlpack::data::Load(files.at(i), image, opts, false);
+  mlpack::data::ResizeImages(image, opts, 320, 320);
+  mlpack::data::Save(reSheeps.at(i), image, opts, false);
 }
 ```
 
@@ -271,17 +326,17 @@ same dimensions.
 
 // See https://datasets.mlpack.org/sheep.tar.bz2
 arma::Mat<unsigned char> images;
-mlpack::data::ImageInfo info;
+mlpack::data::ImageOptions opts;
 
 std::vector<std::string> reSheeps =
     {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
      "re_sheep_5.jpg", "re_sheep_6.jpg", "re_sheep_7.jpg", "re_sheep_8.jpg",
      "re_sheep_9.jpg"};
 
-mlpack::data::Load(reSheeps, images, info, false);
+mlpack::data::Load(reSheeps, images, opts, false);
 
 // Now let us resize all these images at once, to specific dimensions.
-mlpack::data::ResizeImages(images, info, 160, 160);
+mlpack::data::ResizeImages(images, opts, 160, 160);
 
 // The resized images will be saved locally. We are declaring the vector that
 // contains the names of the resized images.
@@ -290,7 +345,7 @@ std::vector<std::string> smSheeps =
      "sm_sheep_5.jpg", "sm_sheep_6.jpg", "sm_sheep_7.jpg", "sm_sheep_8.jpg",
      "sm_sheep_9.jpg"};
 
-mlpack::data::Save(smSheeps, images, info, false);
+mlpack::data::Save(smSheeps, images, opts, false);
 ```
 
 ### Resize and crop images
@@ -334,7 +389,7 @@ that the width and height of the image both no smaller than `outputWidth` and
    * `images` is a [column-major matrix](matrices.md) containing a set of
       images; each image is represented as a flattened vector in one column.
 
-   * `info` is a [`data::ImageInfo&`](#dataimageinfo) containing details about
+   * `opts` is a [`data::ImageOptions&`](#dataimageinfo) containing details about
      the images in `images`.
 
    * `images` and `info` are modified in-place.
@@ -362,7 +417,7 @@ different dimensions:
 ```c++
 // See https://datasets.mlpack.org/sheep.tar.bz2.
 arma::Mat<unsigned char> image;
-mlpack::data::ImageInfo info;
+mlpack::data::ImageOptions opts;
 
 // The images are located in our test/data directory. However, any image could
 // be used instead.
@@ -379,12 +434,12 @@ std::vector<std::string> cropSheeps =
      "crop_sheep_7.jpg", "crop_sheep_8.jpg", "crop_sheep_9.jpg"};
 
 // Load and resize-and-crop each image individually, because they do not have
-// the same dimensions. The `info` will contain the dimension for each one.
+// the same dimensions. The `opts` will contain the dimension for each one.
 for (size_t i = 0; i < files.size(); i++)
 {
-  mlpack::data::Load(files.at(i), image, info, false);
-  mlpack::data::ResizeCropImages(image, info, 320, 320);
-  mlpack::data::Save(cropSheeps.at(i), image, info, false);
+  mlpack::data::Load(files.at(i), image, opts, false);
+  mlpack::data::ResizeCropImages(image, opts, 320, 320);
+  mlpack::data::Save(cropSheeps.at(i), image, opts, false);
   std::cout << "Resized and cropped " << files.at(i) << " to "
       << cropSheeps.at(i) << " with output size 320x320." << std::endl;
 }
