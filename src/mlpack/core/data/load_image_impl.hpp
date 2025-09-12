@@ -102,7 +102,7 @@ bool LoadImage(const std::vector<std::string>& files,
   // Temporary variables needed as stb_image.h supports int parameters.
   int tempWidth, tempHeight, tempChannels;
   arma::Mat<unsigned char> images;
-  unsigned char* imageBuf = std::nullptr;
+  unsigned char* imageBuf = nullptr;
   size_t i = 0;
 
   while (i < files.size())
