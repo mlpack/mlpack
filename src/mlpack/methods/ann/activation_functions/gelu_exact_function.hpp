@@ -43,7 +43,7 @@ class GELUExactFunction
   {
     const double phi = std::exp(-0.5 * x * x) / std::sqrt(2.0 * M_PI);
     // Reuse y to avoid costly Phi(x) computation.
-    return (x == 0.0) ? phi : (y / x + x * phi);
+    return (x == 0.0) ? 0.5 : (y / x + x * phi);
   }
 
   //! Compute the first derivative for matrices/vectors.
