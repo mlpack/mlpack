@@ -42,7 +42,8 @@ class GELUExactFunction
   static double Deriv(const double x, const double y )
   {
     const double phi = std::exp(-0.5 * x * x) / std::sqrt(2.0 * M_PI);
-    return  y / (x + 1e-15) + phi;
+    // Reuse y to avoid costly Phi(x) computation.
+    return (x == 0.0) ? phi : (y / x + x * phi);
   }
 
   //! Compute the first derivative for matrices/vectors.
@@ -51,8 +52,18 @@ class GELUExactFunction
                     const OutputVecType& y,
                     DerivVecType& dy)
   {
-    // Using element-wise operations with Armadillo
-    dy = y / (x + 1e-15) + x % exp(-0.5 * pow(x, 2)) / std::sqrt(2.0 * M_PI);  }
+    dy.set_size(x.n_elem);
+    
+    // Reuse y to avoid costly Phi(x) computation.
+    for (size_t i = 0; i < x.n_elem; ++i)
+    {
+      if (x[i] == 0.0) 
+        dy[i] = 0.5;
+      else
+        dy[i] = y[i] / x[i] 
+              + x[i] * std::exp(-0.5 * x[i] * x[i]) / std::sqrt(2.0 * M_PI);
+    }
+  }
 }; // class GELUExactFunction
 
 } // namespace mlpack
