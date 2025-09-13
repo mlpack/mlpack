@@ -139,7 +139,9 @@ class NaiveConvolution
   }
 
   /**
-   * Perform a convolution using 3rd order tensors.
+   * Perform a convolution using 3rd order tensors. Expects that `filter` has
+   * `input.n_slices * output.n_slices` slices. The Nth `input.n_slices` filters
+   * are applied to all input slices and output to the Nth output slice.
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the convolution.
@@ -166,17 +168,29 @@ class NaiveConvolution
     using MatType = typename GetDenseMatType<CubeType>::type;
     MatType convOutput;
     NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
-        convOutput, dW, dH, dilationW, dilationH, appending);
+        convOutput, dW, dH, dilationW, dilationH, false);
 
-    if (!appending)
-      output = CubeType(convOutput.n_rows, convOutput.n_cols, input.n_slices);
+    const size_t inMaps = input.n_slices;
+    const size_t outMaps = filter.n_slices / inMaps;
 
-    output.slice(0) = convOutput;
-
-    for (size_t i = 1; i < input.n_slices; ++i)
+    if (appending)
     {
-      NaiveConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
-          output.slice(i), dW, dH, dilationW, dilationH, appending);
+      output.slice(0) += convOutput;
+    }
+    else
+    {
+      output = CubeType(convOutput.n_rows, convOutput.n_cols, outMaps);
+      output.slice(0) = convOutput;
+    }
+
+    for (size_t j = 0; j < output.n_slices; ++j)
+    {
+      for (size_t i = (j == 0) ? 1 : 0; i < input.n_slices; ++i)
+      {
+        NaiveConvolution<BorderMode>::Convolution(input.slice(i),
+            filter.slice(j * inMaps + i), output.slice(j), dW, dH,
+            dilationW, dilationH, true);
+      }
     }
   }
 
@@ -209,12 +223,17 @@ class NaiveConvolution
   {
     MatType convOutput;
     NaiveConvolution<BorderMode>::Convolution(input, filter.slice(0),
-        convOutput, dW, dH, dilationW, dilationH, appending);
+        convOutput, dW, dH, dilationW, dilationH, false);
 
-    if (!appending)
+    if (appending)
+    {
+      output.slice(0) += convOutput;
+    }
+    else
+    {
       output = CubeType(convOutput.n_rows, convOutput.n_cols, filter.n_slices);
-
-    output.slice(0) = convOutput;
+      output.slice(0) = convOutput;
+    }
 
     for (size_t i = 1; i < filter.n_slices; ++i)
     {
@@ -252,12 +271,17 @@ class NaiveConvolution
   {
     MatType convOutput;
     NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter,
-        convOutput, dW, dH, dilationW, dilationH, appending);
+        convOutput, dW, dH, dilationW, dilationH, false);
 
-    if (!appending)
+    if (appending)
+    {
+      output.slice(0) += convOutput;
+    }
+    else
+    {
       output = CubeType(convOutput.n_rows, convOutput.n_cols, input.n_slices);
-
-    output.slice(0) = convOutput;
+      output.slice(0) = convOutput;
+    }
 
     for (size_t i = 1; i < input.n_slices; ++i)
     {

@@ -24,7 +24,7 @@ namespace mlpack {
  * Computes the two-dimensional convolution using singular value decomposition.
  * This class allows specification of the type of the border type. The
  * convolution can be computed with the valid border type of the full border
- * type (default).
+ * type (default). Dilation and stride arguments must be equal to one.
  *
  * FullConvolution: returns the full two-dimensional convolution.
  * ValidConvolution: returns only those parts of the convolution that are
@@ -48,25 +48,43 @@ class SVDConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
    */
   template<typename MatType>
   static void Convolution(
       const MatType& input,
       const MatType& filter,
       MatType& output,
+      const size_t dW = 1,
+      const size_t dH = 1,
+      const size_t dilationW = 1,
+      const size_t dilationH = 1,
+      const bool appending = false,
       const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
+    // TODO: Add dilation and stride
+    if (dW != 1 || dH != 1)
+      throw std::invalid_argument("SVD convolution does not support stride");
+    if (dilationW != 1 || dilationH != 1)
+      throw std::invalid_argument("SVD convolution does not support dilation");
+
     using ColType = typename GetColType<MatType>::type;
     // Use the naive convolution in case the filter isn't two dimensional or the
     // filter is bigger than the input.
     if (filter.n_rows > input.n_rows || filter.n_cols > input.n_cols ||
         filter.n_rows == 1 || filter.n_cols == 1)
     {
-      NaiveConvolution<BorderMode>::Convolution(input, filter, output);
+      NaiveConvolution<BorderMode>::Convolution(input, filter, output, dW, dH,
+          dilationW, dilationH, appending);
     }
     else
     {
-      MatType U, V, subOutput;
+      MatType U, V, subOutput, tempOutput;
       ColType s;
 
       svd_econ(U, s, V, filter);
@@ -80,60 +98,94 @@ class SVDConvolution
       if (rank * (filter.n_rows + filter.n_cols) < filter.n_elem)
       {
         MatType subFilter = V.unsafe_col(0) * s(0);
-        NaiveConvolution<BorderMode>::Convolution(input, subFilter, subOutput);
+        NaiveConvolution<BorderMode>::Convolution(input, subFilter, subOutput,
+            dW, dH, dilationW, dilationH);
 
         subOutput = subOutput.t();
         NaiveConvolution<BorderMode>::Convolution(subOutput, U.unsafe_col(0),
-            output);
+            tempOutput, dW, dH, dilationW, dilationH);
 
-        MatType temp;
         for (size_t r = 1; r < rank; r++)
         {
           subFilter = V.unsafe_col(r) * s(r);
           NaiveConvolution<BorderMode>::Convolution(input, subFilter,
-              subOutput);
+              subOutput, dW, dH, dilationW, dilationH);
 
           subOutput = subOutput.t();
           NaiveConvolution<BorderMode>::Convolution(subOutput, U.unsafe_col(r),
-              temp);
-          output += temp;
+              tempOutput, dW, dH, dilationW, dilationH, true);
         }
 
-        output = output.t();
+        if (appending)
+        {
+          output += tempOutput.t();
+        }
+        else
+        {
+          output = tempOutput.t();
+        }
       }
       else
       {
-        FFTConvolution<BorderMode>::Convolution(input, filter, output);
+        FFTConvolution<BorderMode>::Convolution(input, filter, output, dW, dH,
+            dilationW, dilationH, appending);
       }
     }
   }
 
   /**
-   * Perform a convolution using 3rd order tensors.
+   * Perform a convolution using 3rd order tensors. Expects that `filter` has
+   * `input.n_slices * output.n_slices` slices. The Nth `input.n_slices` filters
+   * are applied to all input slices and output to the Nth output slice.
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
    */
   template<typename CubeType>
   static void Convolution(
       const CubeType& input,
       const CubeType& filter,
       CubeType& output,
+      const size_t dW = 1,
+      const size_t dH = 1,
+      const size_t dilationW = 1,
+      const size_t dilationH = 1,
+      const bool appending = false,
       const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     using MatType = typename GetDenseMatType<CubeType>::type;
     MatType convOutput;
     SVDConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
-        convOutput);
+        convOutput, dW, dH, dilationW, dilationH);
 
-    output = CubeType(convOutput.n_rows, convOutput.n_cols, input.n_slices);
-    output.slice(0) = convOutput;
+    const size_t inMaps = input.n_slices;
+    const size_t outMaps = filter.n_slices / inMaps;
 
-    for (size_t i = 1; i < input.n_slices; ++i)
+    if (appending)
     {
-      SVDConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
-          output.slice(i));
+      output.slice(0) += convOutput;
+    }
+    else
+    {
+      output = CubeType(convOutput.n_rows, convOutput.n_cols, outMaps);
+      output.slice(0) = convOutput;
+    }
+
+    for (size_t j = 0; j < output.n_slices; ++j)
+    {
+      for (size_t i = (j == 0) ? 1 : 0; i < input.n_slices; ++i)
+      {
+        SVDConvolution<BorderMode>::Convolution(input.slice(i),
+            filter.slice(j * inMaps + i), output.slice(j), dW, dH,
+            dilationW, dilationH, true);
+      }
     }
   }
 
@@ -144,25 +196,44 @@ class SVDConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
    */
   template<typename MatType, typename CubeType>
   static void Convolution(
       const MatType& input,
       const CubeType& filter,
       CubeType& output,
+      const size_t dW = 1,
+      const size_t dH = 1,
+      const size_t dilationW = 1,
+      const size_t dilationH = 1,
+      const bool appending = false,
       const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
       const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     MatType convOutput;
-    SVDConvolution<BorderMode>::Convolution(input, filter.slice(0), convOutput);
+    SVDConvolution<BorderMode>::Convolution(input, filter.slice(0), convOutput,
+        dW, dH, dilationW, dilationH);
 
-    output = CubeType(convOutput.n_rows, convOutput.n_cols, filter.n_slices);
-    output.slice(0) = convOutput;
+    if (appending)
+    {
+      output.slice(0) += convOutput;
+    }
+    else
+    {
+      output = CubeType(convOutput.n_rows, convOutput.n_cols, filter.n_slices);
+      output.slice(0) = convOutput;
+    }
 
     for (size_t i = 1; i < filter.n_slices; ++i)
     {
       SVDConvolution<BorderMode>::Convolution(input, filter.slice(i),
-          output.slice(i));
+          output.slice(i), dW, dH, dilationW, dilationH, appending);
     }
   }
 
@@ -173,25 +244,43 @@ class SVDConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
    */
   template<typename MatType, typename CubeType>
   static void Convolution(
       const CubeType& input,
       const MatType& filter,
       CubeType& output,
+      const size_t dW = 1,
+      const size_t dH = 1,
+      const size_t dilationW = 1,
+      const size_t dilationH = 1,
+      const bool appending = false,
       const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
       const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     MatType convOutput;
     SVDConvolution<BorderMode>::Convolution(input.slice(0), filter, convOutput);
 
-    output = CubeType(convOutput.n_rows, convOutput.n_cols, input.n_slices);
-    output.slice(0) = convOutput;
+    if (appending)
+    {
+      output.slice(0) += convOutput;
+    }
+    else
+    {
+      output = CubeType(convOutput.n_rows, convOutput.n_cols, input.n_slices);
+      output.slice(0) = convOutput;
+    }
 
     for (size_t i = 1; i < input.n_slices; ++i)
     {
       SVDConvolution<BorderMode>::Convolution(input.slice(i), filter,
-          output.slice(i));
+          output.slice(i), dW, dH, dilationW, dilationH, appending);
     }
   }
 };  // class SVDConvolution
