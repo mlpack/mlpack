@@ -57,8 +57,8 @@ class GELUExactFunction
     for (size_t i = 0; i < x.n_elem; ++i)
     {
       if (x[i] == 0.0) dy[i] = 0.5;
-      else dy[i] = y[i] / x[i] 
-              + x[i] * std::exp(-0.5 * x[i] * x[i]) / std::sqrt(2.0 * M_PI);
+      else dy[i] = y[i] / x[i] +
+          x[i] * std::exp(-0.5 * x[i] * x[i]) / std::sqrt(2.0 * M_PI);
     }
   }
 }; // class GELUExactFunction
