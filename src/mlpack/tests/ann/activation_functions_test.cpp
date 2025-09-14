@@ -587,7 +587,8 @@ TEST_CASE("GELUExactFunctionTest", "[ActivationFunctionsTest]")
                                         "-0.15865525 1.95449974 0.0");
 
   const arma::colvec desiredDerivatives("-0.0852318 1.00694194 1.00006853 "
-                                        "0.0 1.08331547 -0.08331547 1.0852318 0.5");
+                                        "0.0 1.08331547 -0.08331547 1.0852318 "
+                                        "0.5");
 
   CheckActivationCorrect<GELUExactFunction>(activationData, desiredActivations);
   CheckDerivativeCorrect<GELUExactFunction>(activationData, desiredDerivatives);

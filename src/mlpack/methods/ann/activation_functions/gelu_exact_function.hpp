@@ -38,7 +38,7 @@ class GELUExactFunction
     y = 0.5 * x % (1.0 + erf(x / std::sqrt(2.0)));
   }
 
-  //! Compute the first derivative of the exact GELU function for a single value.
+  // Compute the first derivative of the exact GELU function for a single value
   static double Deriv(const double x, const double y )
   {
     const double phi = std::exp(-0.5 * x * x) / std::sqrt(2.0 * M_PI);
@@ -53,14 +53,11 @@ class GELUExactFunction
                     DerivVecType& dy)
   {
     dy.set_size(x.n_elem);
-    
     // Reuse y to avoid costly Phi(x) computation.
     for (size_t i = 0; i < x.n_elem; ++i)
     {
-      if (x[i] == 0.0) 
-        dy[i] = 0.5;
-      else
-        dy[i] = y[i] / x[i] 
+      if (x[i] == 0.0) dy[i] = 0.5;
+      else dy[i] = y[i] / x[i] 
               + x[i] * std::exp(-0.5 * x[i] * x[i]) / std::sqrt(2.0 * M_PI);
     }
   }
