@@ -130,8 +130,8 @@ class DuelingDQN
     concat.Add(std::move(valueNetwork));
     concat.Add(std::move(advantageNetwork));
 
-    completeNetwork.template Add(std::move(featureNetwork));
-    completeNetwork.template Add(std::move(concat));
+    completeNetwork.Add(std::move(featureNetwork));
+    completeNetwork.Add(std::move(concat));
   }
 
   /**

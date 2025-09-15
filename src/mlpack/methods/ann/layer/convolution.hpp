@@ -97,14 +97,14 @@ class Convolution : public Layer<MatType>
    * @param useBias Whether or not to use a bias with the convolution.
    */
   Convolution(const size_t maps,
-                  const size_t kernelWidth,
-                  const size_t kernelHeight,
-                  const size_t strideWidth = 1,
-                  const size_t strideHeight = 1,
-                  const size_t padW = 0,
-                  const size_t padH = 0,
-                  const std::string& paddingType = "none",
-                  const bool useBias = true);
+              const size_t kernelWidth,
+              const size_t kernelHeight,
+              const size_t strideWidth = 1,
+              const size_t strideHeight = 1,
+              const size_t padW = 0,
+              const size_t padH = 0,
+              const std::string& paddingType = "none",
+              const bool useBias = true);
 
   /**
    * Create the Convolution object using the specified number of input maps,
@@ -127,14 +127,14 @@ class Convolution : public Layer<MatType>
    * @param useBias Whether or not to use a bias with the convolution.
    */
   Convolution(const size_t maps,
-                  const size_t kernelWidth,
-                  const size_t kernelHeight,
-                  const size_t strideWidth,
-                  const size_t strideHeight,
-                  const std::tuple<size_t, size_t>& padW,
-                  const std::tuple<size_t, size_t>& padH,
-                  const std::string& paddingType = "none",
-                  const bool useBias = true);
+              const size_t kernelWidth,
+              const size_t kernelHeight,
+              const size_t strideWidth,
+              const size_t strideHeight,
+              const std::tuple<size_t, size_t>& padW,
+              const std::tuple<size_t, size_t>& padH,
+              const std::string& paddingType = "none",
+              const bool useBias = true);
 
   //! Clone the Convolution object. This handles polymorphism correctly.
   Convolution* Clone() const { return new Convolution(*this); }

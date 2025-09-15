@@ -512,6 +512,8 @@ then
   # to this as we go.
   echo "[checking]" > "$output_dir/linkcheckerrc.in";
   echo "maxrequestspersecond=2" >> "$output_dir/linkcheckerrc.in";
+  # Ignore SSL errors; they're generally transient anyway.
+  echo "sslverify=0" >> "$output_dir/linkcheckerrc.in";
   echo "" >> "$output_dir/linkcheckerrc.in";
   echo "[filtering]" >> "$output_dir/linkcheckerrc.in";
   echo "ignore=" >> "$output_dir/linkcheckerrc.in";

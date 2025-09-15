@@ -85,13 +85,13 @@ class NearestInterpolation : public Layer<MatType>
    *
    * @param * (input) The input matrix.
    * @param * (output) The output matrix.
-   * @param gradient The computed backward gradient.
-   * @param output The resulting down-sampled output.
+   * @param gy The computed backward gradient.
+   * @param g The resulting down-sampled output.
    */
   void Backward(const MatType& /* input */,
                 const MatType& /* output */,
-                const MatType& gradient,
-                MatType& output);
+                const MatType& gy,
+                MatType& g);
 
   //! Compute the output dimensions of the layer, based on the internal values
   //! of `InputDimensions()`.

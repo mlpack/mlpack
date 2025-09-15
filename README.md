@@ -28,9 +28,9 @@ library with bindings to other languages.  It is meant to be a machine learning
 analog to LAPACK, and aims to implement a wide array of machine learning methods
 and functions as a "swiss army knife" for machine learning researchers.
 
-mlpack's lightweight C++ implementation makes it ideal for deployment, and it
-can also be used for interactive prototyping via C++ notebooks (these can be
-seen in action on mlpack's [homepage](https://www.mlpack.org/)).
+mlpack's lightweight C++ implementation makes it ideal for deployment and
+production environments; but it can also be used for interactive prototyping via
+C++ notebooks.
 
 In addition to its powerful C++ interface, mlpack also provides command-line
 programs, Python bindings, Julia bindings, Go bindings and R bindings.

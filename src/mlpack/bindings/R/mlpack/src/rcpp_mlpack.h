@@ -13,34 +13,21 @@
 #ifndef MLPACK_BINDINGS_R_RCPP_MLPACK_H
 #define MLPACK_BINDINGS_R_RCPP_MLPACK_H
 
-#include <Rcpp.h>
+// With RcppArmadillo 15.0.1-1 or later, prefer current Armadillo
+#if !defined(ARMA_USE_CURRENT)
+  #define ARMA_USE_CURRENT
+#endif
+
+// This also includes Rcpp headers along with RcppArmadillo
+#include <RcppArmadillo.h>
 
 // Rcpp has its own stream object which cooperates more nicely with R's i/o
-// And as of armadillo and mlpack, we can use this stream object as well.
-#if !defined(ARMA_COUT_STREAM)
-  #define ARMA_COUT_STREAM Rcpp::Rcout
-#endif
-#if !defined(ARMA_CERR_STREAM)
-  #define ARMA_CERR_STREAM Rcpp::Rcerr
-#endif
+// And like armadillo, mlpack can use this stream object as well.
 #if !defined(MLPACK_COUT_STREAM)
   #define MLPACK_COUT_STREAM Rcpp::Rcout
 #endif
 #if !defined(MLPACK_CERR_STREAM)
   #define MLPACK_CERR_STREAM Rcpp::Rcerr
 #endif
-
-// This define makes the R RNG have precedent over the C++11-based
-// RNG provided by Armadillo.
-#if !defined(ARMA_RNG_ALT)
-  #define ARMA_RNG_ALT         RcppArmadillo/rng/Alt_R_RNG.h
-#endif
-
-// To suppress warnings related to core/util/arma_util.hpp.
-#define MLPACK_CORE_UTIL_ARMA_CONFIG_HPP
-
-// Undefine macro due to macro collision.
-#undef Realloc
-#undef Free
 
 #endif

@@ -23,13 +23,54 @@
 
 using namespace mlpack;
 
+/**
+ * Train and evaluate a model with the specified structure.
+ */
+template<typename MatType = arma::mat, typename ModelType>
+void TestNetwork(ModelType& model,
+                 MatType& trainData,
+                 MatType& trainLabels,
+                 MatType& testData,
+                 MatType& testLabels,
+                 const size_t maxEpochs,
+                 const double classificationErrorThreshold)
+{
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.32, 32, 0.88, 1e-8, trainData.n_cols * maxEpochs, -100);
+  #else
+  // Earlier ensmallen versions did not adjust the step size for the batch size.
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols * maxEpochs, -100);
+  #endif
+  model.Train(trainData, trainLabels, opt);
+
+  MatType predictionTemp;
+  model.Predict(testData, predictionTemp);
+  MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
+
+  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+  {
+    prediction(i) = arma::as_scalar(arma::find(
+        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1));
+  }
+
+  size_t correct = accu(prediction == testLabels);
+
+  double classificationError = 1 - double(correct) / testData.n_cols;
+  REQUIRE(classificationError <= classificationErrorThreshold);
+}
+
 // network1 should be allocated with `new`, and trained on some data.
 template<typename MatType = arma::mat, typename ModelType>
 void CheckCopyFunction(ModelType* network1,
                        MatType& trainData,
                        MatType& trainLabels)
 {
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.32, 32, 0.88, 1e-8, trainData.n_cols, -1);
+  #else
+  // Earlier ensmallen versions did not adjust the step size for the batch size.
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols, -1);
+  #endif
   network1->Train(trainData, trainLabels, opt);
 
   arma::mat predictions1;
@@ -52,7 +93,12 @@ void CheckMoveFunction(ModelType* network1,
                        MatType& trainData,
                        MatType& trainLabels)
 {
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.32, 32, 0.88, 1e-8, trainData.n_cols, -1);
+  #else
+  // Earlier ensmallen versions did not adjust the step size for the batch size.
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols, -1);
+  #endif
   network1->Train(trainData, trainLabels, opt);
 
   arma::mat predictions1;
@@ -394,7 +440,7 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   REQUIRE(error <= 0.2);
 }
 
-TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
+TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest][long]")
 {
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
@@ -421,7 +467,14 @@ TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
   ens::VanillaUpdate::Policy<arma::mat, arma::mat> optPolicy(opt,
       model.Parameters().n_rows, model.Parameters().n_cols);
   #endif
+
+  #if ENS_VERSION_MAJOR >= 3
+  double stepSize = 0.1;
+  #else
+  // Older versions of ensmallen did not adjust the step size with the batch
+  // size.
   double stepSize = 0.01;
+  #endif
   size_t batchSize = 10;
 
   size_t iteration = 0;
@@ -683,7 +736,12 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
   model.Add<Linear>(3);
   model.Add<LogSoftMax>();
 
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.32, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+  #else
+  // Older versions of ensmallen did not adjust for the batch size.
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+  #endif
 
   model.Train(trainData, trainLabels, opt);
 
@@ -724,9 +782,9 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
   model.Reset(10);
 
   // Set the parameters of the Add<> module to a matrix of ones.
-  model.Network()[0]->Parameters() = arma::ones(10, 1);
+  model.Network()[1]->Parameters() = arma::ones(10, 1);
   // Set the parameters of the LinearNoBias<> module to a matrix of ones.
-  model.Network()[1]->Parameters() = arma::ones(10, 10);
+  model.Network()[2]->Parameters() = arma::ones(10, 10);
 
   arma::mat input = arma::ones(10, 1);
   arma::mat output;
@@ -784,7 +842,13 @@ TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest]")
   model.Add<Linear>(3);
   model.Add<LogSoftMax>();
 
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.32, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+  #else
+  // Older versions of ensmallen did not adjust the step size for the batch
+  // size.
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+  #endif
 
   double objVal = model.Train(trainData, trainLabels, opt);
 
@@ -828,7 +892,7 @@ TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
  * Test to see if the FFN code compiles when the Optimizer
  * doesn't have the MaxIterations() method.
  */
-TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
+TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest][long]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -852,7 +916,9 @@ TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
   model.Add<Linear>(3);
   model.Add<LogSoftMax>();
 
-  ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
+  // Since we are only checking compilation here, we set the tolerance to the
+  // very large value of 1e5 so it converges quickly.
+  ens::DE opt(200, 1000, 0.6, 0.8, 1e5);
   model.Train(trainData, trainLabels, opt);
 }
 
@@ -893,7 +959,7 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
 /**
  * Train the RBF network on a larger dataset.
  */
-TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
+TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest][long]")
 {
   // Load the dataset.
   arma::mat trainData;

@@ -82,7 +82,7 @@ class RNN
    * @param args The parameters to pass to the constructor of the layer.
    */
   template<typename LayerType, typename... Args>
-  void Add(Args... args)
+  void Add(Args&&... args)
   {
     network.template Add<LayerType>(std::forward<Args>(args)...);
   }

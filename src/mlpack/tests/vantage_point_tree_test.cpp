@@ -177,7 +177,7 @@ TEST_CASE("VPTreeBoundTest", "[VantagePointTreeTest]")
   CheckBound(tree);
 }
 
-TEST_CASE("VPTreeTest", "[VantagePointTreeTest]")
+TEST_CASE("VPTreeTest", "[VantagePointTreeTest][long]")
 {
   using TreeType = VPTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 

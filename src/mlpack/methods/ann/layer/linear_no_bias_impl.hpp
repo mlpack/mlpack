@@ -54,8 +54,8 @@ template<typename MatType, typename RegularizerType>
 LinearNoBias<MatType, RegularizerType>::LinearNoBias(
     LinearNoBias&& layer) :
     Layer<MatType>(std::move(layer)),
-    inSize(0),
-    outSize(0),
+    inSize(std::move(layer.inSize)),
+    outSize(std::move(layer.outSize)),
     regularizer(std::move(layer.regularizer))
 {
   // Reset parameters of other layer.

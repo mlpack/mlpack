@@ -71,38 +71,21 @@ FTSwish<MatType>::operator=(FTSwish&& other)
 template<typename MatType>
 void FTSwish<MatType>::Forward(const MatType& input, MatType& output)
 {
-  #pragma omp for
-  for (size_t i = 0; i < (size_t) input.n_elem; ++i)
-  {
-    if (input(i) >= 0)
-      output(i) = input(i) / (1 + std::exp(-input(i))) + ElemType(T);
-    else
-      output(i) = ElemType(T);
-  }
+  output = ElemType(T) + clamp(input, 0,
+      std::numeric_limits<ElemType>::max()) /
+      (1 + exp(-input));
 }
 
 template<typename MatType>
 void FTSwish<MatType>::Backward(
     const MatType& input,
-    const MatType& /* output */,
+    const MatType& output,
     const MatType& gy,
     MatType& g)
 {
-  #pragma omp for
-  for (size_t i = 0; i < (size_t) input.n_elem; ++i)
-  {
-    if (input(i) >= 0)
-    {
-      const ElemType sigmoidX = 1 / (1 + std::exp(-input(i)));
-      const ElemType fX = input(i) * sigmoidX;
-
-      g(i) = gy(i) * (sigmoidX * (1 - fX) + fX);
-    }
-    else
-    {
-      g(i) = 0;
-    }
-  }
+  const ElemType convT = ElemType(T);
+  g = gy % sign(output - convT) % (((output - convT) / input) %
+      (1 - (output - convT)) + (output - convT));
 }
 
 template<typename MatType>
