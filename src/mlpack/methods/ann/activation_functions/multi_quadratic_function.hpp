@@ -49,7 +49,7 @@ class MultiQuadFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = sqrt((1 + pow(x, 2)));
+    y = sqrt((1 + square(x)));
   }
 
   /**

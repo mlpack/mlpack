@@ -49,7 +49,7 @@ class GaussianFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = exp(-pow(x, 2));
+    y = exp(-square(x));
   }
 
   /**

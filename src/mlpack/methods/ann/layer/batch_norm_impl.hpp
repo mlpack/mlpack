@@ -214,8 +214,8 @@ void BatchNorm<MatType>::Forward(
 
     // Calculate mean and variance over all channels.
     MatType mean = sum(sum(inputTemp, 2), 0) / m;
-    variance = sum(sum(pow(
-        inputTemp.each_slice() - repmat(mean, inputSize, 1), 2), 2), 0) / m;
+    variance = sum(sum(square(
+        inputTemp.each_slice() - repmat(mean, inputSize, 1)), 2), 0) / m;
 
     outputTemp.each_slice() -= repmat(mean, inputSize, 1);
 

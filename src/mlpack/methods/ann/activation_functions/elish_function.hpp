@@ -123,7 +123,7 @@ class ElishFunction
     // this gives approx 3x speedup, despite allocating the temp vector
     DerivVecType ex = conv_to<DerivVecType>::from(x < 0) % exp(x);
     dy = (conv_to<InputVecType>::from(x < 0) %
-            ((ex - 2 / (1 + ex) + 2 / pow(1 + ex, 2)))) +
+            ((ex - 2 / (1 + ex) + 2 / square(1 + ex)))) +
          (conv_to<InputVecType>::from(x > 0) %
             ((y / x) % (1 + x - y)));
     // need to do this here, because the /x above gives nans even when the
