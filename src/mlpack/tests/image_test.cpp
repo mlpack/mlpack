@@ -399,3 +399,41 @@ TEMPLATE_TEST_CASE("ResizeCropUpscaleTest", "[ImageTest]", unsigned char,
   REQUIRE(info.Channels() == inputChannels);
   REQUIRE(image.n_elem == info.Height() * info.Width() * info.Channels());
 }
+
+/**
+ * Test that converts stb image layout to mlpack layout.
+ */
+TEST_CASE("FromSTBLayout", "[ImageTest]")
+{
+  arma::mat image = arma::regspace(0, 26);
+  data::ImageInfo info(3, 3, 3);
+
+  arma::mat newLayout = ImageLayout(image, info);
+
+  std::vector<double> expectedOutput = {
+    0, 9, 18, 3, 12, 21, 6, 15, 24,
+    1, 10, 19, 4, 13, 22, 7, 16, 25,
+    2, 11, 20, 5, 14, 23, 8, 17, 27
+  };
+
+  arma::mat expectedImage(expectedOutput);
+  CheckMatrices(newLayout, expectedImage);
+}
+
+/**
+ * Test that converts mlpack image layout to stb layout.
+ */
+TEST_CASE("ToSTBLayout", "[ImageTest]")
+{
+  data::ImageInfo info(3, 3, 3);
+  std::vector<double> input = {
+    0, 9, 18, 3, 12, 21, 6, 15, 24,
+    1, 10, 19, 4, 13, 22, 7, 16, 25,
+    2, 11, 20, 5, 14, 23, 8, 17, 27
+  };
+  arma::mat inputMat(input);
+
+  arma::mat newLayout = STBLayout(inputMat, info);
+  arma::mat expectedImage = arma::regspace(0, 26);
+  CheckMatrices(newLayout, expectedImage);
+}
