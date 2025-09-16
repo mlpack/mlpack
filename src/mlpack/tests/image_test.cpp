@@ -413,7 +413,7 @@ TEST_CASE("FromSTBLayout", "[ImageTest]")
   std::vector<double> expectedOutput = {
     0, 9, 18, 3, 12, 21, 6, 15, 24,
     1, 10, 19, 4, 13, 22, 7, 16, 25,
-    2, 11, 20, 5, 14, 23, 8, 17, 27
+    2, 11, 20, 5, 14, 23, 8, 17, 26
   };
 
   arma::mat expectedImage(expectedOutput);
@@ -429,7 +429,7 @@ TEST_CASE("ToSTBLayout", "[ImageTest]")
   std::vector<double> input = {
     0, 9, 18, 3, 12, 21, 6, 15, 24,
     1, 10, 19, 4, 13, 22, 7, 16, 25,
-    2, 11, 20, 5, 14, 23, 8, 17, 27
+    2, 11, 20, 5, 14, 23, 8, 17, 26
   };
   arma::mat inputMat(input);
 
