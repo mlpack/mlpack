@@ -411,9 +411,9 @@ TEST_CASE("FromSTBLayout", "[ImageTest]")
   arma::mat newLayout = ImageLayout(image, info);
 
   std::vector<double> expectedOutput = {
-    0, 9, 18, 3, 12, 21, 6, 15, 24,
-    1, 10, 19, 4, 13, 22, 7, 16, 25,
-    2, 11, 20, 5, 14, 23, 8, 17, 26
+    0, 3, 6, 9, 12, 15, 18, 21, 24,
+    1, 4, 7, 10, 13, 16, 19, 22, 25,
+    2, 5, 8, 11, 14, 17, 20, 23, 26,
   };
 
   arma::mat expectedImage(expectedOutput);
@@ -427,9 +427,9 @@ TEST_CASE("ToSTBLayout", "[ImageTest]")
 {
   data::ImageInfo info(3, 3, 3);
   std::vector<double> input = {
-    0, 9, 18, 3, 12, 21, 6, 15, 24,
-    1, 10, 19, 4, 13, 22, 7, 16, 25,
-    2, 11, 20, 5, 14, 23, 8, 17, 26
+    0, 3, 6, 9, 12, 15, 18, 21, 24,
+    1, 4, 7, 10, 13, 16, 19, 22, 25,
+    2, 5, 8, 11, 14, 17, 20, 23, 26,
   };
   arma::mat inputMat(input);
 

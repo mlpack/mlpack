@@ -23,36 +23,22 @@ template <typename eT>
 arma::Mat<eT> ImageLayout(const arma::Mat<eT>& image,
     const mlpack::data::ImageInfo& info)
 {
-  arma::Mat<eT> input =
-    arma::reshape(image, info.Channels(), info.Height() * info.Width()).t();
-  arma::Mat<eT> output(info.Width() * info.Height(), info.Channels(),
-    arma::fill::none);
-
-  for (size_t i = 0; i < input.n_cols; i++)
-  {
-    arma::Mat<eT> col(input.col(i));
-    col.reshape(info.Width(), info.Height());
-    col = col.t();
-    output.col(i) = arma::vectorise(col);
-  }
-  return arma::vectorise(output);
+  arma::Mat<eT> output =
+    arma::vectorise(
+      arma::reshape(image, info.Channels(), info.Height() * info.Width()).t()
+    );
+  return output;
 }
 
 template <typename eT>
 arma::Mat<eT> STBLayout(const arma::Mat<eT>& image,
     const mlpack::data::ImageInfo& info)
 {
-  arma::Mat<eT> input(image);
-  input.reshape(info.Width() * info.Height(), info.Channels());
-  for (size_t i = 0; i < input.n_cols; i++) {
-    arma::Mat<eT> col(input.col(i));
-    col.reshape(info.Height(), info.Width());
-    col = col.t();
-    input.col(i) = arma::vectorise(col);
-  }
-
-  return arma::reshape(input.t(), info.Channels() * info.Height() *
-                       info.Width(), 1);
+  arma::Mat<eT> output =
+    arma::vectorise(
+      arma::reshape(image, info.Height() * info.Width(), info.Channels()).t()
+    );
+  return output;
 }
 
 } // namespace data
