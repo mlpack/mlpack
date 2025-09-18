@@ -106,7 +106,7 @@ jobs:
         with:
           key: ${{ matrix.config.os }}-${{ matrix.config.name }}
           variant: ccache
-          max-size: 5G # Large sizes needed for debug builds.
+          max-size: 1G # Github has a 10GB repo cache limit, so we use 1GB/job.
 
       - name: Configure ccache
         shell: bash
@@ -214,7 +214,7 @@ jobs:
         with:
           key: ${{ runner.os }}
           variant: ccache
-          max-size: 5G
+          max-size: 1G
 
       # Set up Visual Studio.
       - name: Set up Visual Studio
