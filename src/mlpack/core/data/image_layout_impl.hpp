@@ -23,6 +23,19 @@ template <typename eT>
 arma::Mat<eT> ImageLayout(const arma::Mat<eT>& image,
     const mlpack::data::ImageInfo& info)
 {
+  size_t expectedRows = info.Width() * info.Height() * info.Channels();
+  if (expectedRows != image.n_rows)
+  {
+    std::ostringstream errMessage;
+    errMessage << "Expected rows was " << expectedRows
+               << " but image rows was " << image.n_rows << ".";
+    throw std::logic_error(errMessage.str());
+
+  }
+
+  if (info.Channels() == 1)
+    return image;
+
   arma::Mat<eT> output(image.n_rows, image.n_cols);
   for (size_t i = 0; i < image.n_cols; i++)
   {
@@ -41,6 +54,19 @@ template <typename eT>
 arma::Mat<eT> STBLayout(const arma::Mat<eT>& image,
     const mlpack::data::ImageInfo& info)
 {
+  size_t expectedRows = info.Width() * info.Height() * info.Channels();
+  if (expectedRows != image.n_rows)
+  {
+    std::ostringstream errMessage;
+    errMessage << "Expected rows was " << expectedRows
+               << " but image rows was " << image.n_rows << ".";
+    throw std::logic_error(errMessage.str());
+
+  }
+
+  if (info.Channels() == 1)
+    return image;
+
   arma::Mat<eT> output(image.n_rows, image.n_cols);
   for (size_t i = 0; i < image.n_cols; i++)
   {
