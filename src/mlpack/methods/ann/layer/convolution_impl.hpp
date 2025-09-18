@@ -325,6 +325,7 @@ void ConvolutionType<
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
+    CubeType inputTemp;
 
     MakeAlias(inputTemp, (usingPadding ? inputPadded : input), paddedRows,
         paddedCols, inMaps, fullInputOffset * paddedRows * paddedCols);
