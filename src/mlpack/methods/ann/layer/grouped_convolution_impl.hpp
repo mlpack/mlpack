@@ -449,13 +449,13 @@ void GroupedConvolutionType<
   size_t outGroupSize = maps / groups;
 
   // See Forward() for the overall iteration strategy.
-  #pragma omp parallel for schedule(dynamic)
+  #pragma omp parallel for schedule(dynamic) private(outputTemp)
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    CubeType outputCube, rotatedFiltersTemp;
+    CubeType rotatedFiltersTemp;
     for (size_t group = 0; group < groups; group++)
     {
       // Iterate over output maps.
@@ -465,13 +465,13 @@ void GroupedConvolutionType<
         MakeAlias(rotatedFiltersTemp, rotatedFilters, rotatedFilters.n_rows,
             rotatedFilters.n_cols, inGroupSize, (outMap * inGroupSize) *
             (rotatedFilters.n_rows * rotatedFilters.n_cols));
-        MakeAlias(outputCube, output, apparentWidth, apparentHeight,
+        MakeAlias(outputTemp, output, apparentWidth, apparentHeight,
             inGroupSize, (group * inGroupSize + fullInputOffset) *
             (apparentWidth * apparentHeight));
         BackwardConvolutionRule::Convolution(
             dilatedMappedError.slice(outMap + fullOutputOffset),
             rotatedFiltersTemp,
-            outputCube,
+            outputTemp,
             1,
             1,
             1,

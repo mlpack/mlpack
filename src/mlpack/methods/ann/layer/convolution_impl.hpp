@@ -320,7 +320,7 @@ void ConvolutionType<
   //
   // If we eventually have a way to do convolutions for a single kernel
   // in-batch, then this strategy may not be the most efficient solution.
-  #pragma omp parallel for schedule(dynamic)
+  #pragma omp parallel for schedule(dynamic) private(outputTemp)
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
@@ -421,7 +421,7 @@ void ConvolutionType<
       batchSize);
 
   // See Forward() for the overall iteration strategy.
-  #pragma omp parallel for schedule(dynamic)
+  #pragma omp parallel for schedule(dynamic) private(outputTemp)
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
