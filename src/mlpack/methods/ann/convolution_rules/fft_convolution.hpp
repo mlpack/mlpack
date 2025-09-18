@@ -63,7 +63,8 @@ class FFTConvolution
       const size_t dilationW = 1,
       const size_t dilationH = 1,
       const bool appending = false,
-      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
+      const typename std::enable_if_t<IsMatrix<MatType>::value &&
+                                      IsArma<MatType>::value>* = 0)
   {
     // TODO: Add dilation and stride
     if (dW != 1 || dH != 1)
@@ -109,10 +110,11 @@ class FFTConvolution
       const size_t dilationW = 1,
       const size_t dilationH = 1,
       const bool appending = false,
-      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
+      const typename std::enable_if_t<IsCube<CubeType>::value &&
+                                      IsArma<CubeType>::value>* = 0)
   {
     using MatType = typename GetDenseMatType<CubeType>::type;
-    using ComplexCubeType = typename GetComplexType<CubeType>::type;
+    using ComplexCubeType = typename GetComplexCubeType<CubeType>::type;
     using ComplexMatType = typename GetDenseMatType<ComplexCubeType>::type;
 
     // TODO: Add dilation and stride
@@ -180,10 +182,12 @@ class FFTConvolution
       const size_t dilationW = 1,
       const size_t dilationH = 1,
       const bool appending = false,
-      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
-      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
+      const typename std::enable_if_t<IsMatrix<MatType>::value &&
+                                      IsCube<CubeType>::value &&
+                                      IsArma<MatType>::value &&
+                                      IsArma<CubeType>::value>* = 0)
   {
-    using ComplexMatType = typename GetComplexType<MatType>::type;
+    using ComplexMatType = typename GetComplexMatType<MatType>::type;
 
     // TODO: Add dilation and stride
     if (dW != 1 || dH != 1)
@@ -235,10 +239,12 @@ class FFTConvolution
       const size_t dilationW = 1,
       const size_t dilationH = 1,
       const bool appending = false,
-      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
-      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
+      const typename std::enable_if_t<IsMatrix<MatType>::value &&
+                                      IsCube<CubeType>::value &&
+                                      IsArma<MatType>::value &&
+                                      IsArma<CubeType>::value>* = 0)
   {
-    using ComplexMatType = typename GetComplexType<MatType>::type;
+    using ComplexMatType = typename GetComplexMatType<MatType>::type;
 
     // TODO: Add dilation and stride
     if (dW != 1 || dH != 1)

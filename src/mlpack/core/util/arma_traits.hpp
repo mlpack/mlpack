@@ -263,38 +263,21 @@ struct GetSparseMatType<arma::SpMat<eT>>
   using type = arma::SpMat<eT>;
 };
 
-// Get the complex type corresponding to a given type.
+// Get the complex matrix type corresponding to a given MatType.
 
-template<typename T>
-struct GetComplexType;
-
-template<typename eT>
-struct GetComplexType<arma::Mat<eT>>
+template<typename MatType>
+struct GetComplexMatType
 {
-  using type = arma::Mat<std::complex<eT>>;
+  using type = arma::Mat<std::complex<typename MatType::elem_type>>;
 };
 
-template<typename eT>
-struct GetComplexType<arma::Cube<eT>>
+// Get the complex cube type corresponding to a given CubeType.
+
+template<typename CubeType>
+struct GetComplexCubeType
 {
-  using type = arma::Cube<std::complex<eT>>;
+  using type = arma::Cube<std::complex<typename CubeType::elem_type>>;
 };
-
-#if defined(MLPACK_HAS_COOT)
-
-template<typename eT>
-struct GetComplexType<coot::Mat<eT>>
-{
-  using type = coot::Mat<std::complex<eT>>;
-};
-
-template<typename eT>
-struct GetComplexType<coot::Cube<eT>>
-{
-  using type = coot::Cube<std::complex<eT>>;
-};
-
-#endif
 
 // Get whether or not the given type is a base matrix type (e.g. not an
 // expression).
