@@ -326,8 +326,6 @@ void ConvolutionType<
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    CubeType inputTemp, outputTemp;
-
     MakeAlias(inputTemp, (usingPadding ? inputPadded : input), paddedRows,
         paddedCols, inMaps, fullInputOffset * paddedRows * paddedCols);
 
@@ -428,7 +426,7 @@ void ConvolutionType<
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    CubeType outputTemp, rotatedFiltersTemp;
+    CubeType rotatedFiltersTemp;
 
     MakeAlias(outputTemp, output, apparentWidth, apparentHeight, inMaps,
         fullInputOffset * apparentWidth * apparentHeight);
@@ -496,7 +494,6 @@ void ConvolutionType<
 
   MatType temp(apparentWidth * apparentHeight * inMaps * higherInDimensions,
       batchSize);
-  CubeType gradientTemp;
   paddingBackward.Backward(input, {} /* unused */,
       usingPadding ? inputPadded : input, temp);
 

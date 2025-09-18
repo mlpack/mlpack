@@ -364,11 +364,17 @@ class ConvolutionType : public Layer<MatType>
   //! Locally-stored bias term object.
   MatType bias;
 
+  //! Locally-stored transformed output parameter.
+  CubeType outputTemp;
+
   //! Locally-stored transformed padded input parameter.
   MatType inputPadded;
 
   //! Locally-stored transformed error parameter.
   CubeType gTemp;
+
+  //! Locally-stored transformed gradient parameter.
+  CubeType gradientTemp;
 
   //! Locally-stored padding layer.
   PaddingType<MatType> padding;

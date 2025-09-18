@@ -323,8 +323,6 @@ void GroupedConvolutionType<
     padding.Forward(input, inputPadded);
   }
 
-  CubeType outputTemp;
-
   MakeAlias(outputTemp, output, this->outputDimensions[0],
       this->outputDimensions[1], maps * higherInDimensions * batchSize);
   outputTemp.zeros();
@@ -538,7 +536,6 @@ void GroupedConvolutionType<
   // convolution map weights!  The bias will be handled by direct accesses into
   // `gradient`.
   gradient.zeros();
-  CubeType gradientTemp;
   MakeAlias(gradientTemp, gradient, weight.n_rows, weight.n_cols,
       weight.n_slices);
 
