@@ -69,9 +69,9 @@ void CReLU<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   output.rows(0, input.n_rows - 1) =
-      clamp(input, 0, std::numeric_limits<typename MatType::elem_type>::max());
+      clamp(input, 0, std::numeric_limits<ElemType>::max());
   output.rows(input.n_rows, output.n_rows - 1) =
-      clamp(-input, 0, std::numeric_limits<typename MatType::elem_type>::max());
+      clamp(-input, 0, std::numeric_limits<ElemType>::max());
 }
 
 template<typename MatType>

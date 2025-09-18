@@ -159,7 +159,7 @@ typename MatType::elem_type FFN<
 
   // Train the model.
   Timer::Start("ffn_optimization");
-  ElemType out = optimizer.Optimize(*this, parameters, callbacks...);
+  const ElemType out = optimizer.Optimize(*this, parameters, callbacks...);
   Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::Train(): final objective of trained model is " << out
