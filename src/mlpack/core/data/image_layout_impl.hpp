@@ -30,7 +30,6 @@ arma::Mat<eT> ImageLayout(const arma::Mat<eT>& image,
     errMessage << "Expected rows was " << expectedRows
                << " but image rows was " << image.n_rows << ".";
     throw std::logic_error(errMessage.str());
-
   }
 
   if (info.Channels() == 1)
@@ -44,8 +43,7 @@ arma::Mat<eT> ImageLayout(const arma::Mat<eT>& image,
     output.col(i) =
       arma::vectorise(
         arma::reshape(colAlias, info.Channels(), info.Height() * info.Width())
-        .t()
-      );
+        .t());
   }
   return output;
 }
@@ -61,7 +59,6 @@ arma::Mat<eT> STBLayout(const arma::Mat<eT>& image,
     errMessage << "Expected rows was " << expectedRows
                << " but image rows was " << image.n_rows << ".";
     throw std::logic_error(errMessage.str());
-
   }
 
   if (info.Channels() == 1)
@@ -75,8 +72,7 @@ arma::Mat<eT> STBLayout(const arma::Mat<eT>& image,
     output.col(i) =
       arma::vectorise(
         arma::reshape(colAlias, info.Height() * info.Width(), info.Channels())
-        .t()
-      );
+        .t());
   }
   return output;
 }
