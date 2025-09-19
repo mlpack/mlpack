@@ -43,18 +43,42 @@
     CEREAL_REGISTER_TYPE(mlpack::Concat<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Concatenate<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Convolution<__VA_ARGS__, \
+        mlpack::FFTConvolution<mlpack::ValidConvolution>, \
+        mlpack::FFTConvolution<mlpack::FullConvolution>, \
+        mlpack::FFTConvolution<mlpack::ValidConvolution>>); \
+    CEREAL_REGISTER_TYPE(mlpack::Convolution<__VA_ARGS__, \
+        mlpack::Im2ColConvolution<mlpack::ValidConvolution>, \
+        mlpack::Im2ColConvolution<mlpack::FullConvolution>, \
+        mlpack::Im2ColConvolution<mlpack::ValidConvolution>>); \
+    CEREAL_REGISTER_TYPE(mlpack::Convolution<__VA_ARGS__, \
         mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
         mlpack::NaiveConvolution<mlpack::FullConvolution>, \
         mlpack::NaiveConvolution<mlpack::ValidConvolution>>); \
+    CEREAL_REGISTER_TYPE(mlpack::Convolution<__VA_ARGS__, \
+        mlpack::SVDConvolution<mlpack::ValidConvolution>, \
+        mlpack::SVDConvolution<mlpack::FullConvolution>, \
+        mlpack::SVDConvolution<mlpack::ValidConvolution>>); \
     CEREAL_REGISTER_TYPE(mlpack::CReLU<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::DropConnect<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Dropout<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ELU<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::FlexibleReLU<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::GroupedConvolution<__VA_ARGS__, \
+        mlpack::FFTConvolution<mlpack::ValidConvolution>, \
+        mlpack::FFTConvolution<mlpack::FullConvolution>, \
+        mlpack::FFTConvolution<mlpack::ValidConvolution>>); \
+    CEREAL_REGISTER_TYPE(mlpack::GroupedConvolution<__VA_ARGS__, \
+        mlpack::Im2ColConvolution<mlpack::ValidConvolution>, \
+        mlpack::Im2ColConvolution<mlpack::FullConvolution>, \
+        mlpack::Im2ColConvolution<mlpack::ValidConvolution>>); \
+    CEREAL_REGISTER_TYPE(mlpack::GroupedConvolution<__VA_ARGS__, \
         mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
         mlpack::NaiveConvolution<mlpack::FullConvolution>, \
         mlpack::NaiveConvolution<mlpack::ValidConvolution>>); \
+    CEREAL_REGISTER_TYPE(mlpack::GroupedConvolution<__VA_ARGS__, \
+        mlpack::SVDConvolution<mlpack::ValidConvolution>, \
+        mlpack::SVDConvolution<mlpack::FullConvolution>, \
+        mlpack::SVDConvolution<mlpack::ValidConvolution>>); \
     CEREAL_REGISTER_TYPE(mlpack::GRU<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Identity<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::LeakyReLU<__VA_ARGS__>); \
