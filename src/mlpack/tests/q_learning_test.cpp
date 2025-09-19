@@ -22,7 +22,7 @@ using namespace mlpack;
 using namespace ens;
 
 //! Test DQN in Cart Pole task.
-TEST_CASE("CartPoleWithDQN", "[QLearningTest]")
+TEST_CASE("CartPoleWithDQN", "[QLearningTest][long]")
 {
   // Set up the network.
   SimpleDQN<> network(128, 128, 2);
@@ -52,7 +52,7 @@ TEST_CASE("CartPoleWithDQN", "[QLearningTest]")
 }
 
 //! Test DQN in Cart Pole task with Prioritized Replay.
-TEST_CASE("CartPoleWithDQNPrioritizedReplay", "[QLearningTest]")
+TEST_CASE("CartPoleWithDQNPrioritizedReplay", "[QLearningTest][long]")
 {
   // Set up the network.
   SimpleDQN<> network(128, 128, 2);
@@ -107,7 +107,7 @@ TEST_CASE("CartPoleWithDoubleDQN", "[QLearningTest]")
 }
 
 //! Test DQN in Acrobot task.
-TEST_CASE("AcrobotWithDQN", "[QLearningTest]")
+TEST_CASE("AcrobotWithDQN", "[QLearningTest][long]")
 {
   // We will allow three trials, although it would be very uncommon for the test
   // to use more than one.
@@ -137,7 +137,7 @@ TEST_CASE("AcrobotWithDQN", "[QLearningTest]")
 }
 
 //! Test DQN in Mountain Car task.
-TEST_CASE("MountainCarWithDQN", "[QLearningTest]")
+TEST_CASE("MountainCarWithDQN", "[QLearningTest][long]")
 {
   // We will allow five trials total.
   bool converged = false;
@@ -167,7 +167,7 @@ TEST_CASE("MountainCarWithDQN", "[QLearningTest]")
 }
 
 //! Test DQN in DoublePoleCart task.
-TEST_CASE("DoublePoleCartWithDQN", "[QLearningTest]")
+TEST_CASE("DoublePoleCartWithDQN", "[QLearningTest][long]")
 {
   bool converged = false;
   // We will allow four trials total.
@@ -229,7 +229,7 @@ TEST_CASE("DoublePoleCartWithDQN", "[QLearningTest]")
 }
 
 //! Test Dueling DQN in Cart Pole task.
-TEST_CASE("CartPoleWithDuelingDQN", "[QLearningTest]")
+TEST_CASE("CartPoleWithDuelingDQN", "[QLearningTest][long]")
 {
   // Set up the network.
   DuelingDQN<> network(128, 64, 2);
@@ -251,7 +251,7 @@ TEST_CASE("CartPoleWithDuelingDQN", "[QLearningTest]")
 }
 
 //! Test Dueling DQN in Cart Pole task with Prioritized Replay.
-TEST_CASE("CartPoleWithDuelingDQNPrioritizedReplay", "[QLearningTest]")
+TEST_CASE("CartPoleWithDuelingDQNPrioritizedReplay", "[QLearningTest][long]")
 {
   // Set up the network.
   DuelingDQN<> network(128, 64, 2);
@@ -274,7 +274,7 @@ TEST_CASE("CartPoleWithDuelingDQNPrioritizedReplay", "[QLearningTest]")
 }
 
 //! Test Noisy DQN in Cart Pole task.
-TEST_CASE("CartPoleWithNoisyDQN", "[QLearningTest]")
+TEST_CASE("CartPoleWithNoisyDQN", "[QLearningTest][long]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights.
@@ -306,7 +306,7 @@ TEST_CASE("CartPoleWithNoisyDQN", "[QLearningTest]")
 }
 
 //! Test Dueling-Double-Noisy DQN in Cart Pole task.
-TEST_CASE("CartPoleWithDuelingDoubleNoisyDQN", "[QLearningTest]")
+TEST_CASE("CartPoleWithDuelingDoubleNoisyDQN", "[QLearningTest][long]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights.
@@ -339,7 +339,7 @@ TEST_CASE("CartPoleWithDuelingDoubleNoisyDQN", "[QLearningTest]")
 }
 
 //! Test N-step DQN in Cart Pole task.
-TEST_CASE("CartPoleWithNStepDQN", "[QLearningTest]")
+TEST_CASE("CartPoleWithNStepDQN", "[QLearningTest][long]")
 {
   // Set up the network.
   SimpleDQN<> network(128, 128, 2);
@@ -366,7 +366,7 @@ TEST_CASE("CartPoleWithNStepDQN", "[QLearningTest]")
 }
 
 //! Test N-step Prioritized DQN in Cart Pole task.
-TEST_CASE("CartPoleWithNStepPrioritizedDQN", "[QLearningTest]")
+TEST_CASE("CartPoleWithNStepPrioritizedDQN", "[QLearningTest][long]")
 {
   // Set up the network.
   SimpleDQN<> network(128, 128, 2);
@@ -394,7 +394,7 @@ TEST_CASE("CartPoleWithNStepPrioritizedDQN", "[QLearningTest]")
 }
 
 //! Test Categorical DQN in Cart Pole task.
-TEST_CASE("CartPoleWithCategoricalDQN", "[QLearningTest]")
+TEST_CASE("CartPoleWithCategoricalDQN", "[QLearningTest][long]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations.

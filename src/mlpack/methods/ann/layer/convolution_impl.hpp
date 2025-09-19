@@ -18,33 +18,33 @@
 namespace mlpack {
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-ConvolutionType<
+Convolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
->::ConvolutionType() : Layer<MatType>()
+    GradientConvolutionRule
+>::Convolution() : Layer<MatType>()
 {
   // Nothing to do here.
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-ConvolutionType<
+Convolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
->::ConvolutionType(
+    GradientConvolutionRule
+>::Convolution(
     const size_t maps,
     const size_t kernelWidth,
     const size_t kernelHeight,
@@ -54,7 +54,7 @@ ConvolutionType<
     const size_t padH,
     const std::string& paddingType,
     const bool useBias) :
-    ConvolutionType(
+    Convolution(
       maps,
       kernelWidth,
       kernelHeight,
@@ -69,17 +69,17 @@ ConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-ConvolutionType<
+Convolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
->::ConvolutionType(
+    GradientConvolutionRule
+>::Convolution(
     const size_t maps,
     const size_t kernelWidth,
     const size_t kernelHeight,
@@ -106,17 +106,17 @@ ConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-ConvolutionType<
+Convolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
->::ConvolutionType(const ConvolutionType& other) :
+    GradientConvolutionRule
+>::Convolution(const Convolution& other) :
     Layer<MatType>(other),
     maps(other.maps),
     kernelWidth(other.kernelWidth),
@@ -140,17 +140,17 @@ ConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-ConvolutionType<
+Convolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
->::ConvolutionType(ConvolutionType&& other) :
+    GradientConvolutionRule
+>::Convolution(Convolution&& other) :
     Layer<MatType>(std::move(other)),
     maps(std::move(other.maps)),
     kernelWidth(std::move(other.kernelWidth)),
@@ -174,23 +174,23 @@ ConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-ConvolutionType<
+Convolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >&
-ConvolutionType<
+Convolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
->::operator=(const ConvolutionType& other)
+    GradientConvolutionRule
+>::operator=(const Convolution& other)
 {
   if (&other != this)
   {
@@ -218,23 +218,23 @@ ConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-ConvolutionType<
+Convolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >&
-ConvolutionType<
+Convolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
->::operator=(ConvolutionType&& other)
+    GradientConvolutionRule
+>::operator=(Convolution&& other)
 {
   if (&other != this)
   {
@@ -262,16 +262,16 @@ ConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-void ConvolutionType<
+void Convolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >::SetWeights(const MatType& weightsIn)
 {
   MakeAlias(weight, weightsIn, kernelWidth, kernelHeight, maps * inMaps);
@@ -287,16 +287,16 @@ void ConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-void ConvolutionType<
+void Convolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >::Forward(const MatType& input, MatType& output)
 {
   batchSize = input.n_cols;
@@ -354,16 +354,16 @@ void ConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-void ConvolutionType<
+void Convolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
@@ -469,16 +469,16 @@ void ConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-void ConvolutionType<
+void Convolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >::Gradient(
     const MatType& input,
     const MatType& error,
@@ -560,16 +560,16 @@ void ConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-void ConvolutionType<
+void Convolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >::ComputeOutputDimensions()
 {
   // First, we must make sure the padding sizes are up to date, which we can
@@ -586,7 +586,7 @@ void ConvolutionType<
     InitializeSamePadding();
   }
 
-  padding = PaddingType<MatType>(padWLeft, padWRight, padHTop, padHBottom);
+  padding = Padding<MatType>(padWLeft, padWRight, padHTop, padHBottom);
   padding.InputDimensions() = this->inputDimensions;
   padding.ComputeOutputDimensions();
 
@@ -613,7 +613,7 @@ void ConvolutionType<
   apparentHeight = (this->outputDimensions[1] - 1) * strideHeight +
       kernelHeight;
 
-  paddingBackward = PaddingType<MatType>(0, padding.OutputDimensions()[0] -
+  paddingBackward = Padding<MatType>(0, padding.OutputDimensions()[0] -
       apparentWidth, 0, padding.OutputDimensions()[1] - apparentHeight);
   paddingBackward.InputDimensions() = std::vector<size_t>({ apparentWidth,
       apparentHeight, inMaps * higherInDimensions });
@@ -623,17 +623,17 @@ void ConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
 template<typename Archive>
-void ConvolutionType<
+void Convolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >::serialize(Archive& ar, const uint32_t /* version*/)
 {
   ar(cereal::base_class<Layer<MatType>>(this));
@@ -656,16 +656,16 @@ void ConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-void ConvolutionType<
+void Convolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >::InitializeSamePadding()
 {
   /**

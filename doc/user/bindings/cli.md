@@ -215,7 +215,7 @@ $ mlpack_bayesian_linear_regression --input_model_file blr_model.bin
 ### See also
 
  - [Bayesian Interpolation](https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf)
- - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
+ - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
  - [BayesianLinearRegression C++ class documentation](../../user/methods/bayesian_linear_regression.md)
 
 ## mlpack_cf
@@ -1211,6 +1211,74 @@ $ mlpack_hoeffding_tree --input_model_file tree.bin --test_file test_set.arff
  - [mlpack_random_forest](#random_forest)
  - [Mining High-Speed Data Streams (pdf)](http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf)
  - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
+
+## mlpack_image_converter
+{: #image_converter }
+
+#### Image Converter
+{: #image_converter_descr }
+
+```bash
+$ mlpack_image_converter [--channels 0] [--dataset_file <string>]
+        [--height 0] [--help] [--info <string>] --input [] [--quality 90]
+        [--save] [--verbose] [--version] [--width 0] [--output_file <string>]
+```
+
+A utility to load an image or set of images into a single dataset that can then be used by other mlpack methods and utilities. This can also unpack an image dataset into individual files, for instance after mlpack methods have been used. [Detailed documentation](#image_converter_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--channels (-c)` | [`int`](#doc_int) | Number of channels in the image. | `0` |
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--dataset_file (-I)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Input matrix to save as images. | `''` |
+| `--height (-H)` | [`int`](#doc_int) | Height of the images. | `0` |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--input (-i)` | [`string vector`](#doc_string_vector) | Image filenames which have to be loaded/saved. | `**--**` |
+| `--quality (-q)` | [`int`](#doc_int) | Compression of the image if saved as jpg (0-100). | `90` |
+| `--save (-s)` | [`flag`](#doc_flag) | Save a dataset as images. |  |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--width (-w)` | [`int`](#doc_int) | Width of the image. | `0` |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_file (-o)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix to save images data to, Onlyneeded if you are specifying 'save' option. | 
+
+### Detailed documentation
+{: #image_converter_detailed-documentation }
+
+This utility takes an image or an array of images and loads them to a matrix. You can optionally specify the height `--height (-H)` width `--width (-w)` and channel `--channels (-c)` of the images that needs to be loaded; otherwise, these parameters will be automatically detected from the image.
+There are other options too, that can be specified such as `--quality (-q)`.
+
+You can also provide a dataset and save them as images using `--dataset_file (-I)` and `--save (-s)` as an parameter.
+
+### Example
+ An example to load an image : 
+
+```bash
+$ mlpack_image_converter --input X --height 256 --width 256 --channels 3
+  --output_file Y.csv
+```
+
+ An example to save an image is :
+
+```bash
+$ mlpack_image_converter --input X --height 256 --width 256 --channels 3
+  --dataset_file Y.csv --save
+```
+
+### See also
+
+ - [mlpack_preprocess_binarize](#preprocess_binarize)
+ - [mlpack_preprocess_describe](#preprocess_describe)
 
 ## mlpack_kde
 {: #kde }
@@ -3424,7 +3492,7 @@ $ mlpack_adaboost --input_model_file model.bin --test_file test_data.csv
 ### See also
 
  - [AdaBoost on Wikipedia](https://en.wikipedia.org/wiki/AdaBoost)
- - [Improved boosting algorithms using confidence-rated predictions (pdf)](http://rob.schapire.net/papers/SchapireSi98.pdf)
+ - [Improved boosting algorithms using confidence-rated predictions (pdf)](http://www.schapire.net/papers/SchapireSi98.pdf)
  - [Perceptron](#perceptron)
  - [Decision Trees](#decision_tree)
  - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
@@ -3514,7 +3582,7 @@ $ mlpack_linear_regression --input_model_file lr_model.bin --test_file
 
 ```bash
 $ mlpack_preprocess_imputer [--custom_value 0] [--dimension 0] [--help]
-        [--info <string>] --input_file <string> --missing_value <string>
+        [--info <string>] [--input_file <string>] [--missing_value nan]
         --strategy <string> [--verbose] [--version] [--output_file <string>]
 ```
 
@@ -3527,12 +3595,12 @@ This utility provides several imputation strategies for missing data. Given a da
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
 | `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--custom_value (-c)` | [`double`](#doc_double) | User-defined custom imputation value. | `0` |
-| `--dimension (-d)` | [`int`](#doc_int) | The dimension to apply imputation to. | `0` |
+| `--custom_value (-c)` | [`double`](#doc_double) | User-defined custom imputation value; only used if the strategy is 'custom'. | `0` |
+| `--dimension (-d)` | [`int`](#doc_int) | The dimension to apply imputation to.  If not specified, missing values will be imputed in every dimension. | `0` |
 | `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
 | `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--input_file (-i)` | [`string`](#doc_string) | File containing data. | `**--**` |
-| `--missing_value (-m)` | [`string`](#doc_string) | User defined missing value. | `**--**` |
+| `--input_file (-i)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Input matrix to impute values for. | `''` |
+| `--missing_value (-m)` | [`double`](#doc_double) | Value to use to indicate missing elements that will be imputed. | `nan` |
 | `--strategy (-s)` | [`string`](#doc_string) | imputation strategy to be applied. Strategies should be one of 'custom', 'mean', 'median', and 'listwise_deletion'. | `**--**` |
 | `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
 | `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
@@ -3542,21 +3610,21 @@ This utility provides several imputation strategies for missing data. Given a da
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `--output_file (-o)` | [`string`](#doc_string) | File to save output into. | 
+| `--output_file (-o)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix to output that will have imputed values. | 
 
 ### Detailed documentation
 {: #preprocess_imputer_detailed-documentation }
 
 This utility takes a dataset and converts a user-defined missing variable to another to provide more meaningful analysis.
 
-The program does not modify the original file, but instead makes a separate file to save the output data; You can save the output by specifying the file name with`--output_file (-o)`.
+The program does not modify the original matrix, but instead makes a separate matrix for the output, via the `--output_file (-o)`option.
 
 ### Example
-For example, if we consider 'NULL' in dimension 0 to be a missing variable and want to delete whole row containing the NULL in the column-wise`'dataset.csv'`, and save the result to `'result.csv'`, we could run :
+For example, if we consider NaN values in dimension 0 to be a missing variable and want to delete whole data point if it contains a NaN in the column-wise`'dataset.csv'`, we could run:
 
 ```bash
-$ mlpack_preprocess_imputer --input_file dataset --output_file result
-  --missing_value NULL --dimension 0 --strategy listwise_deletion
+$ mlpack_preprocess_imputer --input_file dataset.csv --output_file result.csv
+  --dimension 0 --strategy listwise_deletion
 ```
 
 ### See also
@@ -3564,74 +3632,6 @@ $ mlpack_preprocess_imputer --input_file dataset --output_file result
  - [mlpack_preprocess_binarize](#preprocess_binarize)
  - [mlpack_preprocess_describe](#preprocess_describe)
  - [mlpack_preprocess_split](#preprocess_split)
-
-## mlpack_image_converter
-{: #image_converter }
-
-#### Image Converter
-{: #image_converter_descr }
-
-```bash
-$ mlpack_image_converter [--channels 0] [--dataset_file <string>]
-        [--height 0] [--help] [--info <string>] --input [] [--quality 90]
-        [--save] [--verbose] [--version] [--width 0] [--output_file <string>]
-```
-
-A utility to load an image or set of images into a single dataset that can then be used by other mlpack methods and utilities. This can also unpack an image dataset into individual files, for instance after mlpack methods have been used. [Detailed documentation](#image_converter_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `--channels (-c)` | [`int`](#doc_int) | Number of channels in the image. | `0` |
-| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--dataset_file (-I)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Input matrix to save as images. | `''` |
-| `--height (-H)` | [`int`](#doc_int) | Height of the images. | `0` |
-| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--input (-i)` | [`string vector`](#doc_string_vector) | Image filenames which have to be loaded/saved. | `**--**` |
-| `--quality (-q)` | [`int`](#doc_int) | Compression of the image if saved as jpg (0-100). | `90` |
-| `--save (-s)` | [`flag`](#doc_flag) | Save a dataset as images. |  |
-| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
-| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--width (-w)` | [`int`](#doc_int) | Width of the image. | `0` |
-
-### Output options
-
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `--output_file (-o)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix to save images data to, Onlyneeded if you are specifying 'save' option. | 
-
-### Detailed documentation
-{: #image_converter_detailed-documentation }
-
-This utility takes an image or an array of images and loads them to a matrix. You can optionally specify the height `--height (-H)` width `--width (-w)` and channel `--channels (-c)` of the images that needs to be loaded; otherwise, these parameters will be automatically detected from the image.
-There are other options too, that can be specified such as `--quality (-q)`.
-
-You can also provide a dataset and save them as images using `--dataset_file (-I)` and `--save (-s)` as an parameter.
-
-### Example
- An example to load an image : 
-
-```bash
-$ mlpack_image_converter --input X --height 256 --width 256 --channels 3
-  --output_file Y.csv
-```
-
- An example to save an image is :
-
-```bash
-$ mlpack_image_converter --input X --height 256 --width 256 --channels 3
-  --dataset_file Y.csv --save
-```
-
-### See also
-
- - [mlpack_preprocess_binarize](#preprocess_binarize)
- - [mlpack_preprocess_describe](#preprocess_describe)
 
 ## mlpack_range_search
 {: #range_search }

@@ -4,6 +4,8 @@
 
 _????-??-??_
 
+ * Added `GELUExact` ANN activation layer (#3994).
+
  * Adapt `GRU` ANN layer to the new interface (#3955).
 
  * Fix warning on CRAN for bundled STB (#3950).
@@ -15,6 +17,20 @@ _????-??-??_
  * Accelerate `CELU` layer (#3975).
 
  * Fix dependency detection bugs in `mlpack.cmake` (#3981).
+
+ * Add a `SumReduce` layer (#3991).
+
+ * Update header used by R packages compiling directly against C++ API (#3990).
+
+ * Add `FFN::Add()` and `RNN::Add()` with copy and move semantics; use these
+   instead of passing layers to `Add()` as pointers (#3974).
+
+ * Mark long-running tests with the `[long]` tag (#3983).
+
+ * Added `DAGNetwork` class to represent complex neural network structures
+   (#3944).
+
+ * Fix mask handling in `MultiHeadAttention` layer (#3998).
 
 ## mlpack 4.6.2
 

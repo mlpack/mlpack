@@ -237,7 +237,7 @@ TEST_CASE("RandomPartitionTest", "[KMeansTest]")
 /**
  * Make sure that random initialization fails for a corner case dataset.
  */
-TEST_CASE("RandomInitialAssignmentFailureTest", "[KMeansTest]")
+TEST_CASE("RandomInitialAssignmentFailureTest", "[KMeansTest][long]")
 {
   // This is a very synthetic dataset.  It is one Gaussian with a huge number of
   // points combined with one faraway Gaussian with very few points.  Normally,

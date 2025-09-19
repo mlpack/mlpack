@@ -122,6 +122,8 @@ sed --in-place 's/MLPACK_VERSION_MINOR [0-9]*$/MLPACK_VERSION_MINOR '$MINOR'/' \
     src/mlpack/core/util/version.hpp;
 sed --in-place 's/MLPACK_VERSION_PATCH [0-9]*$/MLPACK_VERSION_PATCH '$PATCH'/' \
     src/mlpack/core/util/version.hpp;
+sed --in-place 's/^#define MLPACK_PRERELEASE/\/\/#define MLPACK_PRERELEASE/' \
+    src/mlpack/core/util/version.hpp;
 
 sed --in-place 's/mlpack-[0-9]\.[0-9]\.[0-9]/mlpack-'$MAJOR'.'$MINOR'.'$PATCH'/g' \
     doc/user/deploy_windows.md;

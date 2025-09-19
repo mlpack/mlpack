@@ -219,7 +219,7 @@ R> stds <- output$stds
 ### See also
 
  - [Bayesian Interpolation](https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf)
- - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
+ - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
  - [BayesianLinearRegression C++ class documentation](../../user/methods/bayesian_linear_regression.md)
 
 ## cf()
@@ -1217,6 +1217,74 @@ R> class_probs <- output$probabilities
  - [random_forest()](#random_forest)
  - [Mining High-Speed Data Streams (pdf)](http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf)
  - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
+
+## image_converter()
+{: #image_converter }
+
+#### Image Converter
+{: #image_converter_descr }
+
+```R
+R> library(mlpack)
+R> d <- image_converter(channels=0, dataset=matrix(numeric(), 0, 0),
+        height=0, input=c(), quality=90, save=FALSE,
+        verbose=getOption("mlpack.verbose", FALSE), width=0)
+R> output <- d$output
+```
+
+A utility to load an image or set of images into a single dataset that can then be used by other mlpack methods and utilities. This can also unpack an image dataset into individual files, for instance after mlpack methods have been used. [Detailed documentation](#image_converter_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `channels` | [`integer`](#doc_integer) | Number of channels in the image. | `0` |
+| `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
+| `dataset` | [`numeric matrix`](#doc_numeric_matrix) | Input matrix to save as images. | `matrix(numeric(), 0, 0)` |
+| `height` | [`integer`](#doc_integer) | Height of the images. | `0` |
+| `input` | [`vector of characters`](#doc_vector_of_characters) | Image filenames which have to be loaded/saved. | `**--**` |
+| `quality` | [`integer`](#doc_integer) | Compression of the image if saved as jpg (0-100). | `90` |
+| `save` | [`logical`](#doc_logical) | Save a dataset as images. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
+| `width` | [`integer`](#doc_integer) | Width of the image. | `0` |
+
+### Output options
+
+Results are returned in a R list.  The keys of the list are the names of the output parameters.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save images data to, Onlyneeded if you are specifying 'save' option. | 
+
+### Detailed documentation
+{: #image_converter_detailed-documentation }
+
+This utility takes an image or an array of images and loads them to a matrix. You can optionally specify the height `height` width `width` and channel `channels` of the images that needs to be loaded; otherwise, these parameters will be automatically detected from the image.
+There are other options too, that can be specified such as `quality`.
+
+You can also provide a dataset and save them as images using `dataset` and `save` as an parameter.
+
+### Example
+ An example to load an image : 
+
+```R
+R> output <- image_converter(input=X, height=256, width=256, channels=3)
+R> Y <- output$output
+```
+
+ An example to save an image is :
+
+```R
+R> image_converter(input=X, height=256, width=256, channels=3, dataset=Y,
+  save=TRUE)
+```
+
+### See also
+
+ - [preprocess_binarize()](#preprocess_binarize)
+ - [preprocess_describe()](#preprocess_describe)
 
 ## kde()
 {: #kde }
@@ -3465,7 +3533,7 @@ R> predictions <- output$predictions
 ### See also
 
  - [AdaBoost on Wikipedia](https://en.wikipedia.org/wiki/AdaBoost)
- - [Improved boosting algorithms using confidence-rated predictions (pdf)](http://rob.schapire.net/papers/SchapireSi98.pdf)
+ - [Improved boosting algorithms using confidence-rated predictions (pdf)](http://www.schapire.net/papers/SchapireSi98.pdf)
  - [Perceptron](#perceptron)
  - [Decision Trees](#decision_tree)
  - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
@@ -3546,72 +3614,4 @@ R> X_test_responses <- output$output_predictions
  - [lars()](#lars)
  - [Linear regression on Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
  - [LinearRegression C++ class documentation](../../user/methods/linear_regression.md)
-
-## image_converter()
-{: #image_converter }
-
-#### Image Converter
-{: #image_converter_descr }
-
-```R
-R> library(mlpack)
-R> d <- image_converter(channels=0, dataset=matrix(numeric(), 0, 0),
-        height=0, input=c(), quality=90, save=FALSE,
-        verbose=getOption("mlpack.verbose", FALSE), width=0)
-R> output <- d$output
-```
-
-A utility to load an image or set of images into a single dataset that can then be used by other mlpack methods and utilities. This can also unpack an image dataset into individual files, for instance after mlpack methods have been used. [Detailed documentation](#image_converter_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `channels` | [`integer`](#doc_integer) | Number of channels in the image. | `0` |
-| `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
-| `dataset` | [`numeric matrix`](#doc_numeric_matrix) | Input matrix to save as images. | `matrix(numeric(), 0, 0)` |
-| `height` | [`integer`](#doc_integer) | Height of the images. | `0` |
-| `input` | [`vector of characters`](#doc_vector_of_characters) | Image filenames which have to be loaded/saved. | `**--**` |
-| `quality` | [`integer`](#doc_integer) | Compression of the image if saved as jpg (0-100). | `90` |
-| `save` | [`logical`](#doc_logical) | Save a dataset as images. | `FALSE` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
-| `width` | [`integer`](#doc_integer) | Width of the image. | `0` |
-
-### Output options
-
-Results are returned in a R list.  The keys of the list are the names of the output parameters.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save images data to, Onlyneeded if you are specifying 'save' option. | 
-
-### Detailed documentation
-{: #image_converter_detailed-documentation }
-
-This utility takes an image or an array of images and loads them to a matrix. You can optionally specify the height `height` width `width` and channel `channels` of the images that needs to be loaded; otherwise, these parameters will be automatically detected from the image.
-There are other options too, that can be specified such as `quality`.
-
-You can also provide a dataset and save them as images using `dataset` and `save` as an parameter.
-
-### Example
- An example to load an image : 
-
-```R
-R> output <- image_converter(input=X, height=256, width=256, channels=3)
-R> Y <- output$output
-```
-
- An example to save an image is :
-
-```R
-R> image_converter(input=X, height=256, width=256, channels=3, dataset=Y,
-  save=TRUE)
-```
-
-### See also
-
- - [preprocess_binarize()](#preprocess_binarize)
- - [preprocess_describe()](#preprocess_describe)
 

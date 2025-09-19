@@ -18,18 +18,18 @@
 namespace mlpack {
 
 template<typename MatType>
-AdaptiveMaxPoolingType<MatType>::AdaptiveMaxPoolingType() :
+AdaptiveMaxPooling<MatType>::AdaptiveMaxPooling() :
     Layer<MatType>()
 {
   // Nothing to do here.
 }
 
 template <typename MatType>
-AdaptiveMaxPoolingType<MatType>::AdaptiveMaxPoolingType(
+AdaptiveMaxPooling<MatType>::AdaptiveMaxPooling(
     const size_t outputWidth,
     const size_t outputHeight) :
     Layer<MatType>(),
-    poolingLayer(MaxPoolingType<MatType>(1, 1)),
+    poolingLayer(MaxPooling<MatType>(1, 1)),
     outputWidth(outputWidth),
     outputHeight(outputHeight)
 {
@@ -37,8 +37,8 @@ AdaptiveMaxPoolingType<MatType>::AdaptiveMaxPoolingType(
 }
 
 template<typename MatType>
-AdaptiveMaxPoolingType<MatType>::AdaptiveMaxPoolingType(
-    const AdaptiveMaxPoolingType& other) :
+AdaptiveMaxPooling<MatType>::AdaptiveMaxPooling(
+    const AdaptiveMaxPooling& other) :
     Layer<MatType>(other),
     poolingLayer(other.poolingLayer),
     outputWidth(other.outputWidth),
@@ -48,8 +48,8 @@ AdaptiveMaxPoolingType<MatType>::AdaptiveMaxPoolingType(
 }
 
 template<typename MatType>
-AdaptiveMaxPoolingType<MatType>::AdaptiveMaxPoolingType(
-    AdaptiveMaxPoolingType&& other) :
+AdaptiveMaxPooling<MatType>::AdaptiveMaxPooling(
+    AdaptiveMaxPooling&& other) :
     Layer<MatType>(std::move(other)),
     poolingLayer(std::move(other.poolingLayer)),
     outputWidth(std::move(other.outputWidth)),
@@ -59,8 +59,8 @@ AdaptiveMaxPoolingType<MatType>::AdaptiveMaxPoolingType(
 }
 
 template<typename MatType>
-AdaptiveMaxPoolingType<MatType>&
-AdaptiveMaxPoolingType<MatType>::operator=(const AdaptiveMaxPoolingType& other)
+AdaptiveMaxPooling<MatType>&
+AdaptiveMaxPooling<MatType>::operator=(const AdaptiveMaxPooling& other)
 {
   if (&other != this)
   {
@@ -74,8 +74,8 @@ AdaptiveMaxPoolingType<MatType>::operator=(const AdaptiveMaxPoolingType& other)
 }
 
 template<typename MatType>
-AdaptiveMaxPoolingType<MatType>&
-AdaptiveMaxPoolingType<MatType>::operator=(AdaptiveMaxPoolingType&& other)
+AdaptiveMaxPooling<MatType>&
+AdaptiveMaxPooling<MatType>::operator=(AdaptiveMaxPooling&& other)
 {
   if (&other != this)
   {
@@ -89,7 +89,7 @@ AdaptiveMaxPoolingType<MatType>::operator=(AdaptiveMaxPoolingType&& other)
 }
 
 template<typename MatType>
-void AdaptiveMaxPoolingType<MatType>::Forward(
+void AdaptiveMaxPooling<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   poolingLayer.Training() = this->training;
@@ -97,7 +97,7 @@ void AdaptiveMaxPoolingType<MatType>::Forward(
 }
 
 template<typename MatType>
-void AdaptiveMaxPoolingType<MatType>::Backward(
+void AdaptiveMaxPooling<MatType>::Backward(
   const MatType& input,
   const MatType& output,
   const MatType& gy,
@@ -107,7 +107,7 @@ void AdaptiveMaxPoolingType<MatType>::Backward(
 }
 
 template<typename MatType>
-void AdaptiveMaxPoolingType<MatType>::ComputeOutputDimensions()
+void AdaptiveMaxPooling<MatType>::ComputeOutputDimensions()
 {
   // The AdaptiveMaxPooling layer only affects the first two dimensions.
   this->outputDimensions = this->inputDimensions;
@@ -139,7 +139,7 @@ void AdaptiveMaxPoolingType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void AdaptiveMaxPoolingType<MatType>::serialize(
+void AdaptiveMaxPooling<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

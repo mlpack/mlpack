@@ -20,14 +20,14 @@
 namespace mlpack {
 
 template<typename MatType>
-MeanPoolingType<MatType>::MeanPoolingType() :
+MeanPooling<MatType>::MeanPooling() :
     Layer<MatType>()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-MeanPoolingType<MatType>::MeanPoolingType(
+MeanPooling<MatType>::MeanPooling(
     const size_t kernelWidth,
     const size_t kernelHeight,
     const size_t strideWidth,
@@ -45,8 +45,8 @@ MeanPoolingType<MatType>::MeanPoolingType(
 }
 
 template<typename MatType>
-MeanPoolingType<MatType>::MeanPoolingType(
-    const MeanPoolingType& other) :
+MeanPooling<MatType>::MeanPooling(
+    const MeanPooling& other) :
     Layer<MatType>(other),
     kernelWidth(other.kernelWidth),
     kernelHeight(other.kernelHeight),
@@ -59,8 +59,8 @@ MeanPoolingType<MatType>::MeanPoolingType(
 }
 
 template<typename MatType>
-MeanPoolingType<MatType>::MeanPoolingType(
-    MeanPoolingType&& other) :
+MeanPooling<MatType>::MeanPooling(
+    MeanPooling&& other) :
     Layer<MatType>(std::move(other)),
     kernelWidth(std::move(other.kernelWidth)),
     kernelHeight(std::move(other.kernelHeight)),
@@ -73,8 +73,8 @@ MeanPoolingType<MatType>::MeanPoolingType(
 }
 
 template<typename MatType>
-MeanPoolingType<MatType>&
-MeanPoolingType<MatType>::operator=(const MeanPoolingType& other)
+MeanPooling<MatType>&
+MeanPooling<MatType>::operator=(const MeanPooling& other)
 {
   if (&other != this)
   {
@@ -91,8 +91,8 @@ MeanPoolingType<MatType>::operator=(const MeanPoolingType& other)
 }
 
 template<typename MatType>
-MeanPoolingType<MatType>&
-MeanPoolingType<MatType>::operator=(MeanPoolingType&& other)
+MeanPooling<MatType>&
+MeanPooling<MatType>::operator=(MeanPooling&& other)
 {
   if (&other != this)
   {
@@ -109,7 +109,7 @@ MeanPoolingType<MatType>::operator=(MeanPoolingType&& other)
 }
 
 template<typename MatType>
-void MeanPoolingType<MatType>::Forward(
+void MeanPooling<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   // Create Alias of input as 2D image as input is 1D vector.
@@ -127,7 +127,7 @@ void MeanPoolingType<MatType>::Forward(
 }
 
 template<typename MatType>
-void MeanPoolingType<MatType>::Backward(
+void MeanPooling<MatType>::Backward(
   const MatType& input,
   const MatType& /* output */,
   const MatType& gy,
@@ -154,7 +154,7 @@ void MeanPoolingType<MatType>::Backward(
 }
 
 template<typename MatType>
-void MeanPoolingType<MatType>::ComputeOutputDimensions()
+void MeanPooling<MatType>::ComputeOutputDimensions()
 {
   this->outputDimensions = this->inputDimensions;
 
@@ -184,7 +184,7 @@ void MeanPoolingType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void MeanPoolingType<MatType>::serialize(
+void MeanPooling<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
@@ -199,7 +199,7 @@ void MeanPoolingType<MatType>::serialize(
 }
 
 template<typename MatType>
-void MeanPoolingType<MatType>::PoolingOperation(
+void MeanPooling<MatType>::PoolingOperation(
     const CubeType& input,
     CubeType& output)
 {
@@ -242,7 +242,7 @@ void MeanPoolingType<MatType>::PoolingOperation(
 }
 
 template<typename MatType>
-void MeanPoolingType<MatType>::Unpooling(
+void MeanPooling<MatType>::Unpooling(
     const MatType& error,
     MatType& output)
 {

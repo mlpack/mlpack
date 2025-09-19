@@ -303,34 +303,6 @@ else ()
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 endif ()
 
-# Determine whether or not this is a git repository, so that we can set the
-# version number if necessary.
-find_package(Git)
-set (USING_GIT "NO")
-if (GIT_FOUND)
-  # Run 'git rev-parse HEAD' to find out if this is a working copy. If the
-  # return code is not 0, then it isn't.
-  execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-      OUTPUT_VARIABLE MLPACK_TMP_REV_INFO
-      ERROR_VARIABLE MLPACK_TMP_REV_INFO_ERROR
-      RESULT_VARIABLE MLPACK_TMP_REV_INFO_RESULT
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
-  if (${MLPACK_TMP_REV_INFO_RESULT} EQUAL 0)
-    set (USING_GIT "YES")
-    add_definitions(-DMLPACK_GIT_VERSION)
-    include(CMake/CreateGitVersionHeader.cmake)
-
-    add_custom_target(mlpack_gitversion ALL
-        COMMAND ${CMAKE_COMMAND} -P CMake/CreateGitVersionHeader.cmake
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Updating gitversion.hpp (if necessary)")
-  # Add gitversion.hpp to the list of sources.
-  set(MLPACK_SRCS ${MLPACK_SRCS}
-      "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/gitversion.hpp")
-  endif ()
-endif ()
-
 # Make a target to generate the man page documentation, but only if we are on a
 # UNIX-like system.
 if (BUILD_CLI_EXECUTABLES AND UNIX)

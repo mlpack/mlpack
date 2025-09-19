@@ -70,7 +70,13 @@ double ImpulseStepDataTest(const size_t dimensions, const size_t rho)
   net.Add<RecurrentLayerType>(dimensions);
 
   const size_t numEpochs = 50;
+  #if ENS_VERSION_MAJOR >= 3
+  RMSProp opt(0.096, 32, 0.9, 1e-08, 700 * numEpochs, 1e-5);
+  #else
+  // Older versions of ensmallen did not adjust the step size for the batch
+  // size.
   RMSProp opt(0.003, 32, 0.9, 1e-08, 700 * numEpochs, 1e-5);
+  #endif
 
   net.Train(trainData, trainResponses, opt);
 
@@ -88,27 +94,27 @@ double ImpulseStepDataTest(const size_t dimensions, const size_t rho)
   return error;
 }
 
-TEST_CASE("RNNImpulseStepLinearRecurrentTest", "[RecurrentNetworkTest]")
+TEST_CASE("RNNImpulseStepLinearRecurrentTest", "[RecurrentNetworkTest][long]")
 {
-  double err = ImpulseStepDataTest<LinearRecurrent>(1, 5);
+  double err = ImpulseStepDataTest<LinearRecurrent<>>(1, 5);
   REQUIRE(err <= 0.001);
 
-  err = ImpulseStepDataTest<LinearRecurrent>(3, 5);
+  err = ImpulseStepDataTest<LinearRecurrent<>>(3, 5);
   REQUIRE(err <= 0.003);
 
-  err = ImpulseStepDataTest<LinearRecurrent>(5, 5);
+  err = ImpulseStepDataTest<LinearRecurrent<>>(5, 5);
   REQUIRE(err <= 0.005);
 }
 
-TEST_CASE("RNNImpulseStepLSTMTest", "[RecurrentNetworkTest]")
+TEST_CASE("RNNImpulseStepLSTMTest", "[RecurrentNetworkTest][long]")
 {
-  double err = ImpulseStepDataTest<LSTM>(1, 5);
+  double err = ImpulseStepDataTest<LSTM<>>(1, 5);
   REQUIRE(err <= 0.001);
 
-  err = ImpulseStepDataTest<LSTM>(3, 5);
+  err = ImpulseStepDataTest<LSTM<>>(3, 5);
   REQUIRE(err <= 0.001);
 
-  err = ImpulseStepDataTest<LSTM>(5, 5);
+  err = ImpulseStepDataTest<LSTM<>>(5, 5);
   REQUIRE(err <= 0.001);
 }
 
@@ -209,10 +215,10 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 10)
 /**
  * Test RNN using multiple timestep input and single output.
  */
-TEMPLATE_TEST_CASE("RNNSineTest", "[RecurrentNetworkTest]",
-    LinearRecurrent,
-    LSTM,
-    GRU)
+TEMPLATE_TEST_CASE("RNNSineTest", "[RecurrentNetworkTest][long]",
+    LinearRecurrent<>,
+    LSTM<>,
+    GRU<>)
 {
   // This can sometimes fail due to bad initializations or bad luck.  So, try it
   // up to three times.
@@ -271,7 +277,13 @@ void BatchSizeTest()
   {
     const size_t batchSize = std::pow((size_t) 2, bsPow);
 
+    #if ENS_VERSION_MAJOR >= 3
+    opt = StandardSGD(0.1, batchSize, batchSize);
+    #else
+    // Older versions of ensmallen did not adjust the step size for the batch
+    // size.
     opt = StandardSGD(0.1 / ((double) batchSize), batchSize, batchSize);
+    #endif
     opt.Shuffle() = false;
     model.Reset(1);
     model.Parameters() = initParams;
@@ -287,9 +299,9 @@ void BatchSizeTest()
  * Ensure recurrent layers work with larger batch sizes.
  */
 TEMPLATE_TEST_CASE("RNNBatchSizeTest", "[RecurrentNetworkTest]",
-    LinearRecurrent,
-    LSTM,
-    GRU)
+    LinearRecurrent<>,
+    LSTM<>,
+    GRU<>)
 {
   BatchSizeTest<TestType>();
 }
@@ -344,7 +356,13 @@ TEST_CASE("LargeRhoValueRnnTest", "[RecurrentNetworkTest]")
 
   // Train the model and ensure that it gives reasonable results.
   // Use a very small learning rate to prevent divergence on this problem.
+  #if ENS_VERSION_MAJOR >= 3
+  ens::StandardSGD opt(1.6e-14, 16, 1 * data.n_cols /* 1 epoch */);
+  #else
+  // Older versions of ensmallen did not adjust the step size for the batch
+  // size.
   ens::StandardSGD opt(1e-15, 16, 1 * data.n_cols /* 1 epoch */);
+  #endif
   model.Train(data, outputs, opt);
 
   // Ensure that none of the weights are NaNs or Inf.
@@ -376,7 +394,13 @@ TEST_CASE("RNNFFNTest", "[RecurrentNetworkTest]")
   arma::cube responses(1, 200, 1, arma::fill::randu);
 
   // Train the FFN.
+  #if ENS_VERSION_MAJOR >= 3
+  ens::StandardSGD optimizer(1e-3, 100, 200, 1e-8, false);
+  #else
+  // Older versions of ensmallen did not adjust the step size for the batch
+  // size.
   ens::StandardSGD optimizer(1e-5, 100, 200, 1e-8, false);
+  #endif
 
   ffn.Train(data.slice(0), responses.slice(0), optimizer);
   rnn.Train(data, responses, optimizer);
@@ -568,9 +592,9 @@ void DistractedSequenceRecallTestNetwork(
  * Train the specified networks on the Derek D. Monner's distracted sequence
  * recall task.
  */
-TEST_CASE("LSTMDistractedSequenceRecallTest", "[RecurrentNetworkTest]")
+TEST_CASE("LSTMDistractedSequenceRecallTest", "[RecurrentNetworkTest][long]")
 {
-  DistractedSequenceRecallTestNetwork<LSTM>(10, 8);
+  DistractedSequenceRecallTestNetwork<LSTM<>>(10, 8);
 }
 
 /**
@@ -665,7 +689,7 @@ TEST_CASE("SequenceClassificationTest", "[RecurrentNetworkTest]")
  * Train a simple RNN to perform a classification task, but in 'single' mode, so
  * the response is only backpropagated at the final time step.
  */
-TEST_CASE("SequenceClassificationSingleTest", "[RecurrentNetworkTest]")
+TEST_CASE("SequenceClassificationSingleTest", "[RecurrentNetworkTest][long]")
 {
   size_t successes = 0;
   const size_t rho = 10;
@@ -906,7 +930,7 @@ template<typename ModelType>
 void ReberGrammarTestNetwork(ModelType& model,
                              const bool embedded = false,
                              const size_t maxEpochs = 30,
-                             const size_t trials = 3)
+                             const size_t trials = 5)
 {
   const size_t trainSize = 1000;
   const size_t testSize = 1000;
@@ -1018,12 +1042,13 @@ TEST_CASE("LSTMReberGrammarTest", "[RecurrentNetworkTest]")
 /**
  * Train the specified networks on an embedded Reber grammar dataset.
  */
-TEMPLATE_TEST_CASE("RNNEmbeddedReberGrammarTest", "[RecurrentNetworkTest]",
-    LSTM,
-    GRU)
+TEMPLATE_TEST_CASE("RNNEmbeddedReberGrammarTest",
+    "[RecurrentNetworkTest][long]",
+    LSTM<>,
+    GRU<>)
 {
   RNN<MeanSquaredError> model(5, false, MeanSquaredError(),
-      RandomInitialization(-0.5, 0.5));
+      RandomInitialization(-0.1, 0.1));
   // Sometimes a few extra units are needed to effectively get the embedded
   // Reber grammar every time.
   model.Add<TestType>(25);
@@ -1036,7 +1061,7 @@ TEMPLATE_TEST_CASE("RNNEmbeddedReberGrammarTest", "[RecurrentNetworkTest]",
  * Test that we can train an RNN on sequences of different lengths, and get
  * roughly the same thing we would for training on non-ragged sequences.
  */
-TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest]")
+TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]")
 {
   const size_t rho = 25;
   const size_t numEpochs = 3;

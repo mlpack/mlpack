@@ -33,28 +33,28 @@ namespace mlpack {
  *         (Default: arma::mat).
  */
 template<typename MatType = arma::mat>
-class ReLU6Type : public Layer<MatType>
+class ReLU6 : public Layer<MatType>
 {
  public:
   /**
-   * Create the ReLU6Type object.
+   * Create the ReLU6 object.
    */
-  ReLU6Type();
+  ReLU6();
 
-  //! Clone the ReLU6Type object. This handles polymorphism correctly.
-  ReLU6Type* Clone() const { return new ReLU6Type(*this); }
+  //! Clone the ReLU6 object. This handles polymorphism correctly.
+  ReLU6* Clone() const { return new ReLU6(*this); }
 
   // Virtual destructor.
-  virtual ~ReLU6Type() { }
+  virtual ~ReLU6() { }
 
-  //! Copy the given ReLU6Type.
-  ReLU6Type(const ReLU6Type& other);
-  //! Take ownership of the given ReLU6Type.
-  ReLU6Type(ReLU6Type&& other);
-  //! Copy the given ReLU6Type.
-  ReLU6Type& operator=(const ReLU6Type& other);
-  //! Take ownership of the given ReLU6Type.
-  ReLU6Type& operator=(ReLU6Type&& other);
+  //! Copy the given ReLU6.
+  ReLU6(const ReLU6& other);
+  //! Take ownership of the given ReLU6.
+  ReLU6(ReLU6&& other);
+  //! Copy the given ReLU6.
+  ReLU6& operator=(const ReLU6& other);
+  //! Take ownership of the given ReLU6.
+  ReLU6& operator=(ReLU6&& other);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -89,11 +89,6 @@ class ReLU6Type : public Layer<MatType>
   template<typename Archive>
   void serialize(Archive& /* ar */, const uint32_t /* version */);
 }; // class ReLU6
-
-// Convenience typedefs.
-
-// Standard ReLU6 layer.
-using ReLU6 = ReLU6Type<arma::mat>;
 
 } // namespace mlpack
 
