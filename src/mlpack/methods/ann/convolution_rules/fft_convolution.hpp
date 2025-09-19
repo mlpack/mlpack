@@ -78,7 +78,10 @@ class FFTConvolution
 
     MatType temp = real(ifft2(fft2(inputPadded) % fft2(filterPadded)));
 
-    ExtractOutput(output, temp, input, filter, appending);
+    if (!appending)
+      ComputeOutputSize(output, input, filter);
+
+    ExtractOutput(output, temp, input, filter);
   }
 
   /**
@@ -150,7 +153,7 @@ class FFTConvolution
         ComplexMatType& filterSlice = fftFilter.slice(j * inMaps + i);
         MatType temp = real(ifft2(inputSlice % filterSlice));
 
-        ExtractOutput(output.slice(j), temp, input, filter, true);
+        ExtractOutput(output.slice(j), temp, input, filter);
       }
     }
   }
@@ -211,7 +214,7 @@ class FFTConvolution
     {
       MatType temp = real(ifft2(fftInput % fft2(filterPadded.slice(i))));
 
-      ExtractOutput(output.slice(i), temp, input, filter, true);
+      ExtractOutput(output.slice(i), temp, input, filter);
     }
   }
 
@@ -268,7 +271,7 @@ class FFTConvolution
     {
       MatType temp = real(ifft2(fft2(inputPadded.slice(i)) % fftFilter));
 
-      ExtractOutput(output.slice(i), temp, input, filter, true);
+      ExtractOutput(output.slice(i), temp, input, filter);
     }
   }
  private:
@@ -410,8 +413,6 @@ class FFTConvolution
    * @param temp The output of IFFT.
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the convolution.
-   * @param appending If true, it will not initialize the output. Instead,
-   *                  it will append the results to the output.
    */
   template<typename OutType, typename InType, typename FilType,
       typename Border = BorderMode>
@@ -419,30 +420,20 @@ class FFTConvolution
   ExtractOutput(OutType& output,
                 const OutType& temp,
                 const InType& input,
-                const FilType& filter,
-                bool appending)
+                const FilType& filter)
   {
     // Extract the region of interest. We don't need to handle the padLastDim in
     // a special way we just cut it out from the output matrix.
     if (std::is_same_v<Border, ValidConvolution>)
     {
-      if (appending)
-        output += temp.submat(filter.n_rows - 1, filter.n_cols - 1,
-            input.n_rows - 1, input.n_cols - 1);
-      else
-        output = temp.submat(filter.n_rows - 1, filter.n_cols - 1,
-            input.n_rows - 1, input.n_cols - 1);
+      output += temp.submat(filter.n_rows - 1, filter.n_cols - 1,
+          input.n_rows - 1, input.n_cols - 1);
     }
     else
     {
-      if (appending)
-        output += temp.submat(filter.n_rows - 1, filter.n_cols - 1,
-            2 * (filter.n_rows - 1) + input.n_rows - 1,
-            2 * (filter.n_cols - 1) + input.n_cols - 1);
-      else
-        output = temp.submat(filter.n_rows - 1, filter.n_cols - 1,
-            2 * (filter.n_rows - 1) + input.n_rows - 1,
-            2 * (filter.n_cols - 1) + input.n_cols - 1);
+      output += temp.submat(filter.n_rows - 1, filter.n_cols - 1,
+          2 * (filter.n_rows - 1) + input.n_rows - 1,
+          2 * (filter.n_cols - 1) + input.n_cols - 1);
     }
   }
 
