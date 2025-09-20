@@ -102,16 +102,6 @@ TEST_CASE("TransposedConvolutionDimensionsTest", "[ANNLayerTest]")
     { "valid",  5,  5, 2, 3, 1, 2, 0, 0, 0, 0,  6, 11 },
     { "valid",  5,  6, 3, 4, 2, 2, 0, 0, 0, 0, 11, 14 },
 
-    // SAME (output spatial == input spatial)
-    { "same",  7,  7, 3, 3, 1, 1, 0, 0, 0, 0,  7,  7 },
-    { "same",  7,  8, 4, 2, 2, 2, 0, 0, 0, 0,  7,  8 },
-    { "same",  8,  7, 5, 1, 1, 3, 0, 0, 0, 0,  8,  7 },
-    { "same",  8,  8, 2, 5, 3, 1, 0, 0, 0, 0,  8,  8 },
-    { "same",  6,  9, 4, 4, 2, 3, 0, 0, 0, 0,  6,  9 },
-    { "same",  9,  6, 3, 5, 1, 2, 0, 0, 0, 0,  9,  6 },
-    { "same", 10, 10, 5, 2, 1, 4, 0, 0, 0, 0, 10, 10 },
-    { "same",  5,  5, 2, 3, 2, 1, 0, 0, 0, 0,  5,  5 },
-
     // NONE (explicit pads)
     { "none",  7,  7, 3, 3, 1, 1, 1, 1, 1, 1,  7,  7 },
     { "none",  8,  8, 4, 2, 2, 2, 1, 2, 2, 1, 15, 13 },
@@ -120,7 +110,10 @@ TEST_CASE("TransposedConvolutionDimensionsTest", "[ANNLayerTest]")
     { "none",  6,  6, 3, 4, 2, 3, 1, 1, 2, 0, 11, 17 },
     { "none",  9,  5, 4, 2, 1, 3, 0, 3, 1, 1,  9, 12 },
     { "none",  5,  9, 5, 5, 2, 2, 2, 2, 2, 2,  9, 17 },
-    { "none", 10, 10, 3, 3, 3, 3, 1, 4, 0, 3, 25, 27 }
+    { "none", 10, 10, 3, 3, 3, 3, 1, 4, 0, 3, 25, 27 },
+
+    // SAME (output spatial == input spatial, stride == 1)
+    { "same",  7,  7, 3, 3, 1, 1, 0, 0, 0, 0,  7,  7 },
   };
 
   const size_t inMaps = 1, maps = 2;

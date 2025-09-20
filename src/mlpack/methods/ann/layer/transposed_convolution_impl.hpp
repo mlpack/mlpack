@@ -521,6 +521,13 @@ void TransposedConvolutionType<
   else if (paddingType == "same")
   {
     InitializeSamePadding();
+    if ((kernelWidth < padWLeft + 1 || kernelWidth < padWRight + 1 ||
+    kernelHeight < padHTop + 1 || kernelHeight < padHBottom + 1))
+    {
+      throw std::logic_error(
+          "TransposedConvolutionType::ComputeOutputDimensions(): "
+          "Cannot apply 'same' padding with the current parameters");
+    }
   }
 
   // Calculate padding for the forward pass of transposed convolution
@@ -529,7 +536,8 @@ void TransposedConvolutionType<
   const size_t padWRightForward = kernelWidth - padWRight - 1;
   const size_t padHTopForward = kernelHeight - padHTop - 1;
   const size_t padHBottomForward = kernelHeight - padHBottom - 1;
-  padding = PaddingType<MatType>(padWLeftForward, padWRightForward,
+
+  padding = Padding<MatType>(padWLeftForward, padWRightForward,
       padHTopForward, padHBottomForward);
 
   // Padding is applied after input expansion, so padding layer
@@ -570,7 +578,7 @@ void TransposedConvolutionType<
 
   // Backward transposed conv uses same padding as regular conv.
   // Input dims are the forward output dims of transposed conv.
-  paddingBackward = PaddingType<MatType>(padWLeft, padWRight,
+  paddingBackward = Padding<MatType>(padWLeft, padWRight,
       padHTop, padHBottom);
   paddingBackward.InputDimensions() = this->outputDimensions;
   paddingBackward.ComputeOutputDimensions();

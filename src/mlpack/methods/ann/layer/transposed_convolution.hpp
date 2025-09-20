@@ -420,10 +420,10 @@ class TransposedConvolutionType : public Layer<MatType>
   CubeType gradientTemp;
 
   //! Locally-stored padding layer.
-  PaddingType<MatType> padding;
+  Padding<MatType> padding;
 
   //! Locally-stored padding layer for backward pass.
-  PaddingType<MatType> paddingBackward;
+  Padding<MatType> paddingBackward;
 
   //! Type of padding.
   std::string paddingType;
