@@ -51,7 +51,7 @@ DataType BernoulliDistribution<DataType>::Sample() const
   sample.randu(probability.n_rows, probability.n_cols);
 
   for (size_t i = 0; i < sample.n_elem; ++i)
-      sample(i) = sample(i) < probability(i);
+    sample(i) = sample(i) < probability(i);
 
   return sample;
 }

@@ -104,8 +104,9 @@ void AlphaDropout<MatType>::Forward(const MatType& input, MatType& output)
     // transformation so as to keep mean and variance of outputs to their
     // original values.
     mask.randu(input.n_rows, input.n_cols);
-    mask.transform( [&](double val) { return (val > ratio); } );
-    output = (input % mask + alphaDash * (1 - mask)) * a + b;
+    mask.transform( [&](ElemType val) { return (val > ElemType(ratio)); } );
+    output = (input % mask + ElemType(alphaDash) * (1 - mask)) * ElemType(a) +
+        ElemType(b);
   }
 }
 
@@ -116,7 +117,7 @@ void AlphaDropout<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  g = gy % mask * a;
+  g = gy % mask * ElemType(a);
 }
 
 template<typename MatType>

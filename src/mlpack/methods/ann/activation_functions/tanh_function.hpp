@@ -34,7 +34,8 @@ class TanhFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
     return std::tanh(x);
   }
@@ -48,7 +49,7 @@ class TanhFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = arma::tanh(x);
+    y = tanh(x);
   }
 
   /**
@@ -58,9 +59,10 @@ class TanhFunction
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double /* x */, const double y)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType /* x */, const ElemType y)
   {
-    return 1 - std::pow(y, 2);
+    return 1 - std::pow(y, ElemType(2));
   }
 
   /**
@@ -75,7 +77,7 @@ class TanhFunction
                     const OutputVecType& y,
                     DerivVecType& dy)
   {
-    dy = 1 - pow(y, 2);
+    dy = 1 - square(y);
   }
 
   /**
@@ -84,7 +86,8 @@ class TanhFunction
    * @param y Input data.
    * @return f^{-1}(x)
    */
-  static double Inv(const double y)
+  template<typename ElemType>
+  static ElemType Inv(const ElemType y)
   {
     return std::atanh(y);
   }
@@ -98,7 +101,7 @@ class TanhFunction
   template<typename InputVecType, typename OutputVecType>
   static void Inv(const InputVecType& y, OutputVecType& x)
   {
-    x = arma::atanh(y);
+    x = atanh(y);
   }
 }; // class TanhFunction
 

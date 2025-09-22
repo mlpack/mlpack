@@ -48,7 +48,10 @@ template <
 class RBF : public Layer<MatType>
 {
  public:
-  //! Create the RBF object.
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
+  // Create the RBF object.
   RBF();
 
   /**
@@ -81,13 +84,13 @@ class RBF : public Layer<MatType>
   // Virtual destructor.
   virtual ~RBF() { }
 
-  //! Copy the given RBF layer.
+  // Copy the given RBF layer.
   RBF(const RBF& other);
-  //! Take ownership of the given RBF layer.
+  // Take ownership of the given RBF layer.
   RBF(RBF&& other);
-  //! Copy the given RBF layer.
+  // Copy the given RBF layer.
   RBF& operator=(const RBF& other);
-  //! Take ownership of the given RBF layer.
+  // Take ownership of the given RBF layer.
   RBF& operator=(RBF&& other);
 
   /**
@@ -106,11 +109,11 @@ class RBF : public Layer<MatType>
                 const MatType& /* gy */,
                 MatType& /* g */);
 
-  //! Compute the output dimensions of the layer given `InputDimensions()`.  The
-  //! RBF layer flattens the input.
+  // Compute the output dimensions of the layer given `InputDimensions()`.  The
+  // RBF layer flattens the input.
   void ComputeOutputDimensions();
 
-  //! Get the size of the weights.
+  // Get the size of the weights.
   size_t WeightSize() const { return 0; }
 
   /**
@@ -120,16 +123,16 @@ class RBF : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored number of output units.
+  // Locally-stored number of output units.
   size_t outSize;
 
-  //! Locally-stored the betas values.
+  // Locally-stored the betas values.
   double betas;
 
-  //! Locally-stored the learnable centre of the shape.
+  // Locally-stored the learnable centre of the shape.
   MatType centres;
 
-  //! Locally-stored the output distances of the shape.
+  // Locally-stored the output distances of the shape.
   MatType distances;
 }; // class RBF
 

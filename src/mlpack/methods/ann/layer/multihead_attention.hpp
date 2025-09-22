@@ -69,7 +69,10 @@ template <
 class MultiheadAttention : public Layer<MatType>
 {
  public:
+  // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
+
   /**
    * Default constructor.
    */
@@ -270,9 +273,6 @@ class MultiheadAttention : public Layer<MatType>
                                    const size_t batchSize,
                                    const CubeType& attnMask,
                                    const MatType& keyPaddingMask);
-
-  //! Element Type of the output.
-  using ElemType = typename MatType::elem_type;
 
   //! Target sequence length.
   size_t tgtSeqLen;

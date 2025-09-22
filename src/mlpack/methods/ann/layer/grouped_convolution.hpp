@@ -77,9 +77,11 @@ template <
 class GroupedConvolution : public Layer<MatType>
 {
  public:
+  // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
 
-  //! Create the GroupedConvolution object.
+  // Create the GroupedConvolution object.
   GroupedConvolution();
 
   /**

@@ -36,9 +36,10 @@ class SwishFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
-    return x / (1.0 + std::exp(-x));
+    return x / (1 + std::exp(-x));
   }
 
   /**
@@ -51,7 +52,7 @@ class SwishFunction
   static void Fn(const MatType& x, MatType& y,
      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
-    y = x / (1.0 + exp(-x));
+    y = x / (1 + exp(-x));
   }
 
   /**
@@ -64,7 +65,7 @@ class SwishFunction
   static void Fn(const VecType& x, VecType& y,
       const typename std::enable_if_t<IsVector<VecType>::value>* = 0)
   {
-    y.set_size(arma::size(x));
+    y.set_size(size(x));
 
     for (size_t i = 0; i < x.n_elem; ++i)
       y(i) = Fn(x(i));
@@ -77,10 +78,11 @@ class SwishFunction
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x, const double y)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType x, const ElemType y)
   {
-    double sigmoid = y / x; // save an exp
-    return x == 0 ? 0.5 : sigmoid * (1.0 + x * (1.0 - sigmoid));
+    const ElemType sigmoid = y / x; // save an exp
+    return (x == 0) ? ElemType(0.5) : sigmoid * (1 + x * (1 - sigmoid));
     // the expression above is indeterminate at 0, even though
     // the expression solely in terms of x is defined (= 0.5)
   }
@@ -97,10 +99,10 @@ class SwishFunction
                     const OutputVecType& y,
                     DerivVecType& dy)
   {
-    dy = (y / x) % (1.0 + x - y);
+    dy = (y / x) % (1 + x - y);
     // the expression above is indeterminate at 0, even though
     // the expression solely in terms of x is defined (= 0.5)
-    dy(arma::find(x == 0)).fill(0.5);
+    dy(find(x == 0)).fill(typename InputVecType::elem_type(0.5));
   }
 }; // class SwishFunction
 
