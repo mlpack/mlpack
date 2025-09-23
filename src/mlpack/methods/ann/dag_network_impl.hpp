@@ -398,6 +398,9 @@ void DAGNetwork<
   network[currentLayer]->InputDimensions() = inputDimensions;
   network[currentLayer]->ComputeOutputDimensions();
 
+  rowsCache.clear();
+  slicesCache.clear();
+
   for (size_t layer = 1; layer < sortedNetwork.size(); layer++)
   {
     currentLayer = sortedNetwork[layer];
@@ -492,13 +495,11 @@ void DAGNetwork<
         }
       }
 
-      rowsCache.clear();
       size_t rows = 1;
       for (size_t j = 0; j < axis; j++)
         rows *= network[currentLayer]->InputDimensions()[j];
       rowsCache.insert({ currentLayer, rows });
 
-      slicesCache.clear();
       size_t slices = 1;
       for (size_t j = axis + 1; j < numOutputDimensions; j++)
         slices *= network[currentLayer]->InputDimensions()[j];
@@ -1008,8 +1009,8 @@ void DAGNetwork<
       {
         const size_t axis = layerAxes[currentLayer];
 
-        size_t rows = rowsCache[currentLayer];
-        size_t slices = slicesCache[currentLayer] * input.n_cols;
+        size_t rows = rowsCache.at(currentLayer);
+        size_t slices = slicesCache.at(currentLayer) * input.n_cols;
 
         CubeType inputAlias;
         MakeAlias(inputAlias, layerInputs[i - 1], rows,
@@ -1095,8 +1096,8 @@ void DAGNetwork<
         const size_t axis = layerAxes[currentLayer];
 
         size_t batchSize = input.n_cols;
-        size_t rows = rowsCache[currentLayer];
-        size_t slices = slicesCache[currentLayer] * batchSize;
+        size_t rows = rowsCache.at(currentLayer);
+        size_t slices = slicesCache.at(currentLayer) * batchSize;
 
         CubeType inputDeltaAlias;
         MakeAlias(inputDeltaAlias, inputDeltas[i], rows,
@@ -1122,7 +1123,7 @@ void DAGNetwork<
        * If a parent has multiple children, you need to accumulate
        * the deltas instead across all it's children in order
        * to correctly calculate that layers gradient w.r.t the
-       * networks loss.
+       * network's loss.
        */
       for (size_t j = 0; j < numParents; j++)
       {
