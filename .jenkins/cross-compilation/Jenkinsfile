@@ -18,9 +18,9 @@ device_names = ['couscous': 'rpi5',
                 'laziji': 'sunblade-150']
 
 page_sizes = ['couscous': '0x4000' /* 16kb for RPi5s */,
-              'tatertot': '0x10000' /* 64kb */,
+              'tatertot': '0x10000' /* 64kb */]
 
-extra_cmake_opts = ['tofu': '-DUSE_OPENMP=OFF'] /* try not to overheat... */
+extra_cmake_opts = ['tofu': '-DUSE_OPENMP=OFF' /* try not to overheat... */]
 
 
 page_sizes = ['couscous': '0x4000' /* 16kb for RPi5s */,
