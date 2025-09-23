@@ -19,14 +19,14 @@
 namespace mlpack {
 
 template<typename MatType>
-MaxPoolingType<MatType>::MaxPoolingType() :
+MaxPooling<MatType>::MaxPooling() :
     Layer<MatType>()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-MaxPoolingType<MatType>::MaxPoolingType(
+MaxPooling<MatType>::MaxPooling(
     const size_t kernelWidth,
     const size_t kernelHeight,
     const size_t strideWidth,
@@ -44,8 +44,8 @@ MaxPoolingType<MatType>::MaxPoolingType(
 }
 
 template<typename MatType>
-MaxPoolingType<MatType>::MaxPoolingType(
-    const MaxPoolingType& other) :
+MaxPooling<MatType>::MaxPooling(
+    const MaxPooling& other) :
     Layer<MatType>(other),
     kernelWidth(other.kernelWidth),
     kernelHeight(other.kernelHeight),
@@ -59,8 +59,8 @@ MaxPoolingType<MatType>::MaxPoolingType(
 }
 
 template<typename MatType>
-MaxPoolingType<MatType>::MaxPoolingType(
-    MaxPoolingType&& other) :
+MaxPooling<MatType>::MaxPooling(
+    MaxPooling&& other) :
     Layer<MatType>(std::move(other)),
     kernelWidth(std::move(other.kernelWidth)),
     kernelHeight(std::move(other.kernelHeight)),
@@ -74,8 +74,8 @@ MaxPoolingType<MatType>::MaxPoolingType(
 }
 
 template<typename MatType>
-MaxPoolingType<MatType>&
-MaxPoolingType<MatType>::operator=(const MaxPoolingType& other)
+MaxPooling<MatType>&
+MaxPooling<MatType>::operator=(const MaxPooling& other)
 {
   if (&other != this)
   {
@@ -93,8 +93,8 @@ MaxPoolingType<MatType>::operator=(const MaxPoolingType& other)
 }
 
 template<typename MatType>
-MaxPoolingType<MatType>&
-MaxPoolingType<MatType>::operator=(MaxPoolingType&& other)
+MaxPooling<MatType>&
+MaxPooling<MatType>::operator=(MaxPooling&& other)
 {
   if (&other != this)
   {
@@ -112,7 +112,7 @@ MaxPoolingType<MatType>::operator=(MaxPoolingType&& other)
 }
 
 template<typename MatType>
-void MaxPoolingType<MatType>::Forward(const MatType& input, MatType& output)
+void MaxPooling<MatType>::Forward(const MatType& input, MatType& output)
 {
   using CubeType = typename GetCubeType<MatType>::type;
   CubeType inputTemp;
@@ -139,7 +139,7 @@ void MaxPoolingType<MatType>::Forward(const MatType& input, MatType& output)
 }
 
 template<typename MatType>
-void MaxPoolingType<MatType>::Backward(
+void MaxPooling<MatType>::Backward(
     const MatType& input,
     const MatType& /* output */,
     const MatType& gy,
@@ -167,7 +167,7 @@ void MaxPoolingType<MatType>::Backward(
 }
 
 template<typename MatType>
-void MaxPoolingType<MatType>::ComputeOutputDimensions()
+void MaxPooling<MatType>::ComputeOutputDimensions()
 {
   this->outputDimensions = this->inputDimensions;
 
@@ -197,7 +197,7 @@ void MaxPoolingType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void MaxPoolingType<MatType>::serialize(
+void MaxPooling<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 

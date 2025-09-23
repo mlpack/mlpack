@@ -22,7 +22,7 @@
 namespace mlpack {
 
 template<typename MatType>
-FlexibleReLUType<MatType>::FlexibleReLUType(const double userAlpha) :
+FlexibleReLU<MatType>::FlexibleReLU(const double userAlpha) :
     Layer<MatType>(),
     userAlpha(userAlpha)
 {
@@ -30,8 +30,8 @@ FlexibleReLUType<MatType>::FlexibleReLUType(const double userAlpha) :
 }
 
 template<typename MatType>
-FlexibleReLUType<MatType>::FlexibleReLUType(
-    const FlexibleReLUType& other) :
+FlexibleReLU<MatType>::FlexibleReLU(
+    const FlexibleReLU& other) :
     Layer<MatType>(other),
     userAlpha(other.userAlpha)
 {
@@ -39,8 +39,8 @@ FlexibleReLUType<MatType>::FlexibleReLUType(
 }
 
 template<typename MatType>
-FlexibleReLUType<MatType>::FlexibleReLUType(
-    FlexibleReLUType&& other) :
+FlexibleReLU<MatType>::FlexibleReLU(
+    FlexibleReLU&& other) :
     Layer<MatType>(std::move(other)),
     userAlpha(std::move(other.userAlpha))
 {
@@ -48,8 +48,8 @@ FlexibleReLUType<MatType>::FlexibleReLUType(
 }
 
 template<typename MatType>
-FlexibleReLUType<MatType>&
-FlexibleReLUType<MatType>::operator=(const FlexibleReLUType& other)
+FlexibleReLU<MatType>&
+FlexibleReLU<MatType>::operator=(const FlexibleReLU& other)
 {
   if (&other != this)
   {
@@ -61,8 +61,8 @@ FlexibleReLUType<MatType>::operator=(const FlexibleReLUType& other)
 }
 
 template<typename MatType>
-FlexibleReLUType<MatType>&
-FlexibleReLUType<MatType>::operator=(FlexibleReLUType&& other)
+FlexibleReLU<MatType>&
+FlexibleReLU<MatType>::operator=(FlexibleReLU&& other)
 {
   if (&other != this)
   {
@@ -74,46 +74,46 @@ FlexibleReLUType<MatType>::operator=(FlexibleReLUType&& other)
 }
 
 template<typename MatType>
-void FlexibleReLUType<MatType>::SetWeights(const MatType& weights)
+void FlexibleReLU<MatType>::SetWeights(const MatType& weights)
 {
   MakeAlias(alpha, weights, 1, 1);
 }
 
 template<typename MatType>
-void FlexibleReLUType<MatType>::CustomInitialize(
+void FlexibleReLU<MatType>::CustomInitialize(
     MatType& W,
     const size_t elements)
 {
   if (elements != 1)
   {
-    throw std::invalid_argument("FlexibleReLUType::CustomInitialize(): wrong "
+    throw std::invalid_argument("FlexibleReLU::CustomInitialize(): wrong "
         "elements size!");
   }
 
-  W(0) = userAlpha;
+  W(0) = ElemType(userAlpha);
 }
 
 template<typename MatType>
-void FlexibleReLUType<MatType>::Forward(
+void FlexibleReLU<MatType>::Forward(
     const MatType& input, MatType& output)
 {
-  output = arma::clamp(input, 0.0,
-      std::numeric_limits<typename MatType::elem_type>::max()) + alpha(0);
+  output = arma::clamp(input, 0,
+      std::numeric_limits<ElemType>::max()) + alpha(0);
 }
 
 template<typename MatType>
-void FlexibleReLUType<MatType>::Backward(
+void FlexibleReLU<MatType>::Backward(
     const MatType& input,
     const MatType& /* output */,
     const MatType& gy,
     MatType& g)
 {
   // Compute the first derivative of FlexibleReLU function.
-  g = gy % (input > 0);
+  g = gy % conv_to<MatType>::from(input > 0);
 }
 
 template<typename MatType>
-void FlexibleReLUType<MatType>::Gradient(
+void FlexibleReLU<MatType>::Gradient(
     const MatType& input,
     const MatType& error,
     MatType& gradient)
@@ -123,7 +123,7 @@ void FlexibleReLUType<MatType>::Gradient(
 
 template<typename MatType>
 template<typename Archive>
-void FlexibleReLUType<MatType>::serialize(
+void FlexibleReLU<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version*/)
 {

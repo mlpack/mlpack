@@ -22,7 +22,7 @@
 namespace mlpack {
 
 template<typename MatType>
-BatchNormType<MatType>::BatchNormType() :
+BatchNorm<MatType>::BatchNorm() :
     Layer<MatType>(),
     minAxis(2),
     maxAxis(2),
@@ -38,7 +38,7 @@ BatchNormType<MatType>::BatchNormType() :
 }
 
 template <typename MatType>
-BatchNormType<MatType>::BatchNormType(
+BatchNorm<MatType>::BatchNorm(
     const size_t minAxis,
     const size_t maxAxis,
     const double eps,
@@ -60,7 +60,7 @@ BatchNormType<MatType>::BatchNormType(
 
 // Copy constructor.
 template<typename MatType>
-BatchNormType<MatType>::BatchNormType(const BatchNormType& layer) :
+BatchNorm<MatType>::BatchNorm(const BatchNorm& layer) :
     Layer<MatType>(layer),
     minAxis(layer.minAxis),
     maxAxis(layer.maxAxis),
@@ -80,7 +80,7 @@ BatchNormType<MatType>::BatchNormType(const BatchNormType& layer) :
 
 // Move constructor.
 template<typename MatType>
-BatchNormType<MatType>::BatchNormType(BatchNormType&& layer) :
+BatchNorm<MatType>::BatchNorm(BatchNorm&& layer) :
     Layer<MatType>(std::move(layer)),
     minAxis(std::move(layer.minAxis)),
     maxAxis(std::move(layer.maxAxis)),
@@ -99,8 +99,8 @@ BatchNormType<MatType>::BatchNormType(BatchNormType&& layer) :
 }
 
 template<typename MatType>
-BatchNormType<MatType>&
-BatchNormType<MatType>::operator=(const BatchNormType& layer)
+BatchNorm<MatType>&
+BatchNorm<MatType>::operator=(const BatchNorm& layer)
 {
   if (&layer != this)
   {
@@ -123,9 +123,9 @@ BatchNormType<MatType>::operator=(const BatchNormType& layer)
 }
 
 template<typename MatType>
-BatchNormType<MatType>&
-BatchNormType<MatType>::operator=(
-    BatchNormType&& layer)
+BatchNorm<MatType>&
+BatchNorm<MatType>::operator=(
+    BatchNorm&& layer)
 {
   if (&layer != this)
   {
@@ -148,7 +148,7 @@ BatchNormType<MatType>::operator=(
 }
 
 template<typename MatType>
-void BatchNormType<MatType>::SetWeights(const MatType& weightsIn)
+void BatchNorm<MatType>::SetWeights(const MatType& weightsIn)
 {
   MakeAlias(weights, weightsIn, WeightSize(), 1);
   // Gamma acts as the scaling parameters for the normalized output.
@@ -158,12 +158,12 @@ void BatchNormType<MatType>::SetWeights(const MatType& weightsIn)
 }
 
 template<typename MatType>
-void BatchNormType<MatType>::CustomInitialize(
+void BatchNorm<MatType>::CustomInitialize(
     MatType& W,
     const size_t elements)
 {
   if (elements != 2 * size) {
-    throw std::invalid_argument("BatchNormType::CustomInitialize(): wrong "
+    throw std::invalid_argument("BatchNorm::CustomInitialize(): wrong "
         "elements size!");
   }
   MatType gammaTemp;
@@ -173,15 +173,15 @@ void BatchNormType<MatType>::CustomInitialize(
   // Beta acts as the shifting parameters for the normalized output.
   MakeAlias(betaTemp, W, size, 1, gammaTemp.n_elem);
 
-  gammaTemp.fill(1.0);
-  betaTemp.fill(0.0);
+  gammaTemp.ones();
+  betaTemp.zeros();
 
   runningMean.zeros(size, 1);
   runningVariance.ones(size, 1);
 }
 
 template<typename MatType>
-void BatchNormType<MatType>::Forward(
+void BatchNorm<MatType>::Forward(
     const MatType& input,
     MatType& output)
 {
@@ -214,8 +214,8 @@ void BatchNormType<MatType>::Forward(
 
     // Calculate mean and variance over all channels.
     MatType mean = sum(sum(inputTemp, 2), 0) / m;
-    variance = sum(sum(pow(
-        inputTemp.each_slice() - repmat(mean, inputSize, 1), 2), 2), 0) / m;
+    variance = sum(sum(square(
+        inputTemp.each_slice() - repmat(mean, inputSize, 1)), 2), 0) / m;
 
     outputTemp.each_slice() -= repmat(mean, inputSize, 1);
 
@@ -224,7 +224,8 @@ void BatchNormType<MatType>::Forward(
     inputMean = outputTemp;
 
     // Normalize output.
-    outputTemp.each_slice() /= sqrt(repmat(variance, inputSize, 1) + eps);
+    outputTemp.each_slice() /= sqrt(repmat(variance, inputSize, 1) +
+        ElemType(eps));
 
     // Re-used in backward propagation.
     normalized.set_size(arma::size(inputTemp));
@@ -235,11 +236,11 @@ void BatchNormType<MatType>::Forward(
 
     count += 1;
     // Value for average factor which used to update running parameters.
-    double averageFactor = average ? 1.0 / count : momentum;
+    ElemType averageFactor = ElemType(average ? 1.0 / count : momentum);
 
-    double nElements = 0.0;
+    ElemType nElements = 0;
     if (m - 1 != 0)
-      nElements = m * (1.0 / (m - 1));
+      nElements = m * (ElemType(1) / (m - 1));
 
     // Update running mean and running variance.
     runningMean = (1 - averageFactor) * runningMean + averageFactor *
@@ -257,20 +258,20 @@ void BatchNormType<MatType>::Forward(
 
     outputTemp.each_slice() -= repmat(runningMean.t(), inputSize, 1);
     outputTemp.each_slice() /= sqrt(repmat(runningVariance.t(),
-        inputSize, 1) + eps);
+        inputSize, 1) + ElemType(eps));
     outputTemp.each_slice() %= repmat(gamma.t(), inputSize, 1);
     outputTemp.each_slice() += repmat(beta.t(), inputSize, 1);
   }
 }
 
 template<typename MatType>
-void BatchNormType<MatType>::Backward(
+void BatchNorm<MatType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
     MatType& g)
 {
-  const MatType stdInv = 1.0 / sqrt(variance + eps);
+  const MatType stdInv = 1 / sqrt(variance + ElemType(eps));
 
   const size_t batchSize = gy.n_cols;
   const size_t inputSize = inputDimension;
@@ -288,24 +289,24 @@ void BatchNormType<MatType>::Backward(
 
   // Step 2: sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
   MatType temp = sum(sum(norm % inputMean, 2), 0);
-  MatType vars = temp % pow(stdInv, 3) * (-0.5);
+  MatType vars = -temp % pow(stdInv, 3) / 2;
 
   // Step 3: dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * 1 / m.
   gTemp = (norm.each_slice() % repmat(stdInv, inputSize, 1)) +
-      ((inputMean.each_slice() % repmat(vars, inputSize, 1) * 2.0) / m);
+      ((inputMean.each_slice() % repmat(vars, inputSize, 1) * 2) / m);
 
   // Step 4: sum (dl / dxhat * -1 / stdInv) + variance *
   // sum (-2 * (x - mu)) / m.
   MatType normTemp = sum(sum((norm.each_slice() %
       repmat(-stdInv, inputSize, 1)) +
-      (inputMean.each_slice() % repmat(vars, inputSize, 1) * (-2.0) / m),
+      -2 * (inputMean.each_slice() % repmat(vars, inputSize, 1) / m),
       2), 0) / m;
   gTemp.each_slice() += repmat(normTemp, inputSize, 1);
 }
 
 template<typename MatType>
-void BatchNormType<MatType>::Gradient(
+void BatchNorm<MatType>::Gradient(
     const MatType& /* input */,
     const MatType& error,
     MatType& gradient)
@@ -326,7 +327,7 @@ void BatchNormType<MatType>::Gradient(
 }
 
 template<typename MatType>
-void BatchNormType<MatType>::ComputeOutputDimensions()
+void BatchNorm<MatType>::ComputeOutputDimensions()
 {
   if (minAxis > maxAxis)
   {
@@ -365,7 +366,7 @@ void BatchNormType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void BatchNormType<MatType>::serialize(
+void BatchNorm<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));

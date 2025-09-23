@@ -56,9 +56,12 @@ namespace mlpack {
  *     type to differ from the input type (Default: arma::mat).
  */
 template<typename MatType = arma::mat>
-class CELUType : public Layer<MatType>
+class CELU : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the CELU object using the specified parameter. The non zero
    * gradient for negative inputs can be adjusted by specifying the CELU
@@ -66,26 +69,26 @@ class CELUType : public Layer<MatType>
    *
    * @param alpha Scale parameter for the negative factor (default = 1.0).
    */
-  CELUType(const double alpha = 1.0);
+  CELU(const double alpha = 1.0);
 
-  //! Clone the CELUType object. This handles polymorphism correctly.
-  CELUType* Clone() const { return new CELUType(*this); }
+  //! Clone the CELU object. This handles polymorphism correctly.
+  CELU* Clone() const { return new CELU(*this); }
 
 
   // Virtual destructor
-  virtual ~CELUType() { }
+  virtual ~CELU() { }
 
   //Copy constructor
-  CELUType(const CELUType& other);
+  CELU(const CELU& other);
 
   //Move Constructor
-  CELUType(CELUType&& other);
+  CELU(CELU&& other);
 
   //Copy assignment operator
-  CELUType& operator=(const CELUType& other);
+  CELU& operator=(const CELU& other);
 
   //Move assignement operator
-  CELUType& operator=(CELUType&& other);
+  CELU& operator=(CELU&& other);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -121,17 +124,9 @@ class CELUType : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally stored first derivative of the activation function.
-  MatType derivative;
-
-  //! CELU Hyperparameter (alpha > 0).
+  // CELU Hyperparameter (alpha > 0).
   double alpha;
-}; // class CELUType
-
-// Convenience typedefs.
-
-// Standard CELU layer.
-using CELU = CELUType<arma::mat>;
+}; // class CELU
 
 } // namespace mlpack
 

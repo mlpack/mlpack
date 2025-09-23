@@ -65,21 +65,23 @@ namespace mlpack {
  *    computation.
  */
 template <
+    typename MatType = arma::mat,
     typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
     typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
-    typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
-    typename MatType = arma::mat
+    typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>
 >
-class ConvolutionType : public Layer<MatType>
+class Convolution : public Layer<MatType>
 {
  public:
+  // Convenience typedefs for element types and reshaping data into cubes.
+  using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
 
-  //! Create the ConvolutionType object.
-  ConvolutionType();
+  // Create the Convolution object.
+  Convolution();
 
   /**
-   * Create the ConvolutionType object using the specified number of output
+   * Create the Convolution object using the specified number of output
    * maps, filter size, stride and padding parameter.
    *
    * @param maps The number of output maps.
@@ -94,15 +96,15 @@ class ConvolutionType : public Layer<MatType>
    *    will be used.
    * @param useBias Whether or not to use a bias with the convolution.
    */
-  ConvolutionType(const size_t maps,
-                  const size_t kernelWidth,
-                  const size_t kernelHeight,
-                  const size_t strideWidth = 1,
-                  const size_t strideHeight = 1,
-                  const size_t padW = 0,
-                  const size_t padH = 0,
-                  const std::string& paddingType = "none",
-                  const bool useBias = true);
+  Convolution(const size_t maps,
+              const size_t kernelWidth,
+              const size_t kernelHeight,
+              const size_t strideWidth = 1,
+              const size_t strideHeight = 1,
+              const size_t padW = 0,
+              const size_t padH = 0,
+              const std::string& paddingType = "none",
+              const bool useBias = true);
 
   /**
    * Create the Convolution object using the specified number of input maps,
@@ -124,33 +126,33 @@ class ConvolutionType : public Layer<MatType>
    *      will be used.
    * @param useBias Whether or not to use a bias with the convolution.
    */
-  ConvolutionType(const size_t maps,
-                  const size_t kernelWidth,
-                  const size_t kernelHeight,
-                  const size_t strideWidth,
-                  const size_t strideHeight,
-                  const std::tuple<size_t, size_t>& padW,
-                  const std::tuple<size_t, size_t>& padH,
-                  const std::string& paddingType = "none",
-                  const bool useBias = true);
+  Convolution(const size_t maps,
+              const size_t kernelWidth,
+              const size_t kernelHeight,
+              const size_t strideWidth,
+              const size_t strideHeight,
+              const std::tuple<size_t, size_t>& padW,
+              const std::tuple<size_t, size_t>& padH,
+              const std::string& paddingType = "none",
+              const bool useBias = true);
 
-  //! Clone the ConvolutionType object. This handles polymorphism correctly.
-  ConvolutionType* Clone() const { return new ConvolutionType(*this); }
+  //! Clone the Convolution object. This handles polymorphism correctly.
+  Convolution* Clone() const { return new Convolution(*this); }
 
-  //! Copy the given ConvolutionType (but not weights).
-  ConvolutionType(const ConvolutionType& layer);
+  //! Copy the given Convolution (but not weights).
+  Convolution(const Convolution& layer);
 
-  //! Take ownership of the given ConvolutionType (but not weights).
-  ConvolutionType(ConvolutionType&&);
+  //! Take ownership of the given Convolution (but not weights).
+  Convolution(Convolution&&);
 
-  //! Copy the given ConvolutionType (but not weights).
-  ConvolutionType& operator=(const ConvolutionType& layer);
+  //! Copy the given Convolution (but not weights).
+  Convolution& operator=(const Convolution& layer);
 
-  //! Take ownership of the given ConvolutionType (but not weights).
-  ConvolutionType& operator=(ConvolutionType&& layer);
+  //! Take ownership of the given Convolution (but not weights).
+  Convolution& operator=(Convolution&& layer);
 
   // Virtual destructor.
-  virtual ~ConvolutionType() { }
+  virtual ~Convolution() { }
 
   /*
    * Set the weight and bias term.
@@ -376,10 +378,10 @@ class ConvolutionType : public Layer<MatType>
   CubeType gradientTemp;
 
   //! Locally-stored padding layer.
-  PaddingType<MatType> padding;
+  Padding<MatType> padding;
 
   //! Locally-stored padding layer for backward pass.
-  PaddingType<MatType> paddingBackward;
+  Padding<MatType> paddingBackward;
 
   //! Type of padding.
   std::string paddingType;
@@ -395,12 +397,6 @@ class ConvolutionType : public Layer<MatType>
   //! Locally-stored apparent height.
   size_t apparentHeight;
 }; // class Convolution
-
-// Standard Convolution layer.
-using Convolution = ConvolutionType<NaiveConvolution<ValidConvolution>,
-                                    NaiveConvolution<FullConvolution>,
-                                    NaiveConvolution<ValidConvolution>,
-                                    arma::mat>;
 
 } // namespace mlpack
 

@@ -24,6 +24,7 @@ namespace mlpack {
 #ifdef MLPACK_HAS_COOT
 
 /* using for bandicoot namespace*/
+using coot::conv_to;
 using coot::dot;
 using coot::exp;
 using coot::find;
@@ -50,6 +51,11 @@ using coot::sum;
 using coot::trans;
 using coot::vectorise;
 using coot::zeros;
+#else
+
+// Only use arma::conv_to if Bandicoot is not available: Bandicoot's conv_to
+// supports Armadillo types too.
+using arma::conv_to;
 
 #endif
 

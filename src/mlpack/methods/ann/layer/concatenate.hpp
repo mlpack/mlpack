@@ -31,29 +31,32 @@ namespace mlpack {
  *    computation.
  */
 template<typename MatType = arma::mat>
-class ConcatenateType : public Layer<MatType>
+class Concatenate : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
-   * Create the ConcatenateType object using the given constant matrix as the
+   * Create the Concatenate object using the given constant matrix as the
    * data to be concatenated to the output of the forward pass.
    */
-  ConcatenateType(const MatType& concat = MatType());
+  Concatenate(const MatType& concat = MatType());
 
-  //! Clone the ConcatenateType object. This handles polymorphism correctly.
-  ConcatenateType* Clone() const { return new ConcatenateType(*this); }
+  //! Clone the Concatenate object. This handles polymorphism correctly.
+  Concatenate* Clone() const { return new Concatenate(*this); }
 
   // Virtual destructor.
-  virtual ~ConcatenateType() { }
+  virtual ~Concatenate() { }
 
-  //! Copy the given ConcatenateType layer.
-  ConcatenateType(const ConcatenateType& other);
-  //! Take ownership of the given ConcatenateType layer.
-  ConcatenateType(ConcatenateType&& other);
-  //! Copy the given ConcatenateType layer.
-  ConcatenateType& operator=(const ConcatenateType& other);
-  //! Take ownership of the given ConcatenateType layer.
-  ConcatenateType& operator=(ConcatenateType&& other);
+  //! Copy the given Concatenate layer.
+  Concatenate(const Concatenate& other);
+  //! Take ownership of the given Concatenate layer.
+  Concatenate(Concatenate&& other);
+  //! Copy the given Concatenate layer.
+  Concatenate& operator=(const Concatenate& other);
+  //! Take ownership of the given Concatenate layer.
+  Concatenate& operator=(Concatenate&& other);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -94,12 +97,9 @@ class ConcatenateType : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Matrix to be concatenated to input.
+  // Matrix to be concatenated to input.
   MatType concat;
 }; // class Concatenate
-
-// Standard Concatenate layer.
-using Concatenate = ConcatenateType<arma::mat>;
 
 } // namespace mlpack
 

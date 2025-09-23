@@ -39,9 +39,12 @@ namespace mlpack {
  *         (Default: arma::mat).
  */
 template<typename MatType = arma::mat>
-class PReLUType : public Layer<MatType>
+class PReLU : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the PReLU object using the specified parameters.
    * The non zero gradient can be adjusted by specifying tha parameter
@@ -50,24 +53,24 @@ class PReLUType : public Layer<MatType>
    *
    * @param userAlpha Non zero gradient
    */
-  PReLUType(const double userAlpha = 0.03);
+  PReLU(const double userAlpha = 0.03);
 
-  //! Clone the PReLUType object. This handles polymorphism correctly.
-  PReLUType* Clone() const { return new PReLUType(*this); }
+  // Clone the PReLU object. This handles polymorphism correctly.
+  PReLU* Clone() const { return new PReLU(*this); }
 
   // Virtual destructor.
-  virtual ~PReLUType() { }
+  virtual ~PReLU() { }
 
-  //! Copy the given PReLUType.
-  PReLUType(const PReLUType& other);
-  //! Take ownership of the given PReLUType.
-  PReLUType(PReLUType&& other);
-  //! Copy the given PReLUType.
-  PReLUType& operator=(const PReLUType& other);
-  //! Take ownership of the given PReLUType.
-  PReLUType& operator=(PReLUType&& other);
+  // Copy the given PReLU.
+  PReLU(const PReLU& other);
+  // Take ownership of the given PReLU.
+  PReLU(PReLU&& other);
+  // Copy the given PReLU.
+  PReLU& operator=(const PReLU& other);
+  // Take ownership of the given PReLU.
+  PReLU& operator=(PReLU&& other);
 
-  //! Reset the layer parameter.
+  // Reset the layer parameter.
   void SetWeights(const MatType& weightsIn);
 
   /**
@@ -115,17 +118,17 @@ class PReLUType : public Layer<MatType>
                 const MatType& error,
                 MatType& gradient);
 
-  //! Get the parameters.
+  // Get the parameters.
   MatType const& Parameters() const { return alpha; }
-  //! Modify the parameters.
+  // Modify the parameters.
   MatType& Parameters() { return alpha; }
 
-  //! Get the non zero gradient.
+  // Get the non zero gradient.
   double const& Alpha() const { return alpha(0); }
-  //! Modify the non zero gradient.
+  // Modify the non zero gradient.
   double& Alpha() { return alpha(0); }
 
-  //! Get size of weights.
+  // Get size of weights.
   size_t WeightSize() const { return 1; }
 
   /**
@@ -135,17 +138,12 @@ class PReLUType : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Leakyness Parameter object.
+  // Leakyness parameter object.
   MatType alpha;
 
-  //! Leakyness Parameter given by user in the range 0 < alpha < 1.
+  // Leakyness parameter given by user in the range 0 < alpha < 1.
   double userAlpha;
 }; // class PReLU
-
-// Convenience typedefs.
-
-// Standard PReLU layer.
-using PReLU = PReLUType<arma::mat>;
 
 } // namespace mlpack
 

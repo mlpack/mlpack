@@ -42,32 +42,34 @@ namespace mlpack {
  *    computation.
  */
 template<typename MatType = arma::mat>
-class FTSwishType : public Layer<MatType>
+class FTSwish : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the Flatten T Swish object using the specified parameters.
    * The thresholded value T can be adjusted via T paramaters.
    * When the x is < 0, T will be used instead of 0.
    * The default value of T is -0.20 as suggested in the paper.
-   * @param T 
    */
-  FTSwishType(const double T = -0.20);
+  FTSwish(const double T = -0.20);
 
-  //! Clone the FTSwishType object. This handles polymorphism correctly.
-  FTSwishType* Clone() const { return new FTSwishType(*this); }
+  //! Clone the FTSwish object. This handles polymorphism correctly.
+  FTSwish* Clone() const { return new FTSwish(*this); }
 
   // Virtual destructor.
-  virtual ~FTSwishType() { }
+  virtual ~FTSwish() { }
 
-  //! Copy the given FTSwishType.
-  FTSwishType(const FTSwishType& other);
-  //! Take ownership of the given FTSwishType.
-  FTSwishType(FTSwishType&& other);
-  //! Copy the given FTSwishType.
-  FTSwishType& operator=(const FTSwishType& other);
-  //! Take ownership of the given FTSwishType.
-  FTSwishType& operator=(FTSwishType&& other);
+  //! Copy the given FTSwish.
+  FTSwish(const FTSwish& other);
+  //! Take ownership of the given FTSwish.
+  FTSwish(FTSwish&& other);
+  //! Copy the given FTSwish.
+  FTSwish& operator=(const FTSwish& other);
+  //! Take ownership of the given FTSwish.
+  FTSwish& operator=(FTSwish&& other);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -105,10 +107,7 @@ class FTSwishType : public Layer<MatType>
  private:
   //! Threshold value for x < 0.
   double T;
-}; // class FTSwishType
-
-// Convenience typedefs.
-using FTSwish = FTSwishType<arma::mat>;
+}; // class FTSwish
 
 } // namespace mlpack
 

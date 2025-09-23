@@ -22,35 +22,35 @@
 namespace mlpack {
 
 template<typename MatType>
-DropConnectType<MatType>::DropConnectType() :
+DropConnect<MatType>::DropConnect() :
     Layer<MatType>(),
     ratio(0.5),
     scale(2.0),
-    baseLayer(new LinearType<MatType>(0))
+    baseLayer(new Linear<MatType>(0))
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-DropConnectType<MatType>::DropConnectType(
+DropConnect<MatType>::DropConnect(
     const size_t outSize,
     const double ratio) :
     Layer<MatType>(),
     ratio(ratio),
     scale(1.0 / (1 - ratio)),
-    baseLayer(new LinearType<MatType>(outSize))
+    baseLayer(new Linear<MatType>(outSize))
 {
   // Nothing to do.
 }
 
 template<typename MatType>
-DropConnectType<MatType>::~DropConnectType()
+DropConnect<MatType>::~DropConnect()
 {
   delete baseLayer;
 }
 
 template<typename MatType>
-DropConnectType<MatType>::DropConnectType(const DropConnectType& other) :
+DropConnect<MatType>::DropConnect(const DropConnect& other) :
     Layer<MatType>(other),
     ratio(other.ratio),
     scale(other.scale),
@@ -60,7 +60,7 @@ DropConnectType<MatType>::DropConnectType(const DropConnectType& other) :
 }
 
 template<typename MatType>
-DropConnectType<MatType>::DropConnectType(DropConnectType&& other) :
+DropConnect<MatType>::DropConnect(DropConnect&& other) :
     Layer<MatType>(std::move(other)),
     ratio(std::move(other.ratio)),
     scale(std::move(other.scale)),
@@ -70,8 +70,8 @@ DropConnectType<MatType>::DropConnectType(DropConnectType&& other) :
 }
 
 template<typename MatType>
-DropConnectType<MatType>&
-DropConnectType<MatType>::operator=(const DropConnectType& other)
+DropConnect<MatType>&
+DropConnect<MatType>::operator=(const DropConnect& other)
 {
   if (&other != this)
   {
@@ -85,8 +85,8 @@ DropConnectType<MatType>::operator=(const DropConnectType& other)
 }
 
 template<typename MatType>
-DropConnectType<MatType>&
-DropConnectType<MatType>::operator=(DropConnectType&& other)
+DropConnect<MatType>&
+DropConnect<MatType>::operator=(DropConnect&& other)
 {
   if (&other != this)
   {
@@ -100,7 +100,7 @@ DropConnectType<MatType>::operator=(DropConnectType&& other)
 }
 
 template<typename MatType>
-void DropConnectType<MatType>::Forward(const MatType& input, MatType& output)
+void DropConnect<MatType>::Forward(const MatType& input, MatType& output)
 {
   // The DropConnect mask will not be multiplied in testing mode.
   if (!this->training)
@@ -114,18 +114,18 @@ void DropConnectType<MatType>::Forward(const MatType& input, MatType& output)
 
     // Scale with input / (1 - ratio) and set values to zero with
     // probability ratio.
-    mask.randu(denoise.n_rows, denoise.n_cols);
-    mask.transform([&](double val) { return (val > ratio); });
+    mask = conv_to<MatType>::from(
+        randu<MatType>(denoise.n_rows, denoise.n_cols) > ElemType(ratio));
 
     baseLayer->Parameters() = denoise % mask;
     baseLayer->Forward(input, output);
 
-    output = output * scale;
+    output = output * ElemType(scale);
   }
 }
 
 template<typename MatType>
-void DropConnectType<MatType>::Backward(
+void DropConnect<MatType>::Backward(
     const MatType& input,
     const MatType& output,
     const MatType& gy,
@@ -135,7 +135,7 @@ void DropConnectType<MatType>::Backward(
 }
 
 template<typename MatType>
-void DropConnectType<MatType>::Gradient(
+void DropConnect<MatType>::Gradient(
     const MatType& input,
     const MatType& error,
     MatType& gradient)
@@ -147,7 +147,7 @@ void DropConnectType<MatType>::Gradient(
 }
 
 template<typename MatType>
-void DropConnectType<MatType>::ComputeOutputDimensions()
+void DropConnect<MatType>::ComputeOutputDimensions()
 {
   // Propagate input dimensions to the base layer.
   baseLayer->InputDimensions() = this->inputDimensions;
@@ -155,14 +155,14 @@ void DropConnectType<MatType>::ComputeOutputDimensions()
 }
 
 template<typename MatType>
-void DropConnectType<MatType>::SetWeights(const MatType& weightsIn)
+void DropConnect<MatType>::SetWeights(const MatType& weightsIn)
 {
   baseLayer->SetWeights(weightsIn);
 }
 
 template<typename MatType>
 template<typename Archive>
-void DropConnectType<MatType>::serialize(
+void DropConnect<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));

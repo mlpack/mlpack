@@ -33,11 +33,14 @@ template<
     typename MatType = arma::mat,
     typename RegularizerType = NoRegularizer
 >
-class LinearNoBiasType : public Layer<MatType>
+class LinearNoBias : public Layer<MatType>
 {
  public:
-  //! Create the LinearNoBias object.
-  LinearNoBiasType();
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
+  // Create the LinearNoBias object.
+  LinearNoBias();
 
   /**
    * Create the LinearNoBias object using the specified number of units.
@@ -45,29 +48,29 @@ class LinearNoBiasType : public Layer<MatType>
    * @param outSize The number of output units.
    * @param regularizer The regularizer to use, optional.
    */
-  LinearNoBiasType(const size_t outSize,
+  LinearNoBias(const size_t outSize,
                    RegularizerType regularizer = RegularizerType());
 
-  //! Clone the LinearNoBiasType object. This handles polymorphism correctly.
-  LinearNoBiasType* Clone() const { return new LinearNoBiasType(*this); }
+  //! Clone the LinearNoBias object. This handles polymorphism correctly.
+  LinearNoBias* Clone() const { return new LinearNoBias(*this); }
 
   //! Reset the layer parameter.
   void SetWeights(const MatType& weightsIn);
 
   //! Copy constructor.
-  LinearNoBiasType(const LinearNoBiasType& layer);
+  LinearNoBias(const LinearNoBias& layer);
 
   //! Move constructor.
-  LinearNoBiasType(LinearNoBiasType&&);
+  LinearNoBias(LinearNoBias&&);
 
   //! Copy assignment operator.
-  LinearNoBiasType& operator=(const LinearNoBiasType& layer);
+  LinearNoBias& operator=(const LinearNoBias& layer);
 
   //! Move assignment operator.
-  LinearNoBiasType& operator=(LinearNoBiasType&& layer);
+  LinearNoBias& operator=(LinearNoBias&& layer);
 
   //! Virtual destructor.
-  virtual ~LinearNoBiasType() { }
+  virtual ~LinearNoBias() { }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -131,12 +134,7 @@ class LinearNoBiasType : public Layer<MatType>
 
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
-}; // class LinearNoBiasType
-
-// Convenience typedefs.
-
-// Standard Linear without bias layer using no regularization.
-using LinearNoBias = LinearNoBiasType<arma::mat, NoRegularizer>;
+}; // class LinearNoBias
 
 } // namespace mlpack
 

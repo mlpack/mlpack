@@ -564,7 +564,7 @@ TEST_CASE("LiSHTFunctionTest", "[ActivationFunctionsTest]")
  */
 TEST_CASE("GELUFunctionTest", "[ActivationFunctionsTest]")
 {
-  // Calculated using torch.nn.gelu().
+  // Calculated using torch.nn.gelu( approximate="tanh" ).
   const arma::colvec desiredActivations("-0.0454023 3.1981304 "
                                         "4.5 -0.0 0.84119199 "
                                         "-0.158808 1.954597694 0.0");
@@ -574,6 +574,24 @@ TEST_CASE("GELUFunctionTest", "[ActivationFunctionsTest]")
 
   CheckActivationCorrect<GELUFunction>(activationData, desiredActivations);
   CheckDerivativeCorrect<GELUFunction>(activationData, desiredDerivatives);
+}
+
+/**
+ * Basic test of the GELUExact function.
+ */
+TEST_CASE("GELUExactFunctionTest", "[ActivationFunctionsTest]")
+{
+  // Calculated using torch.nn.gelu().
+  const arma::colvec desiredActivations("-0.04550026 3.19780116 "
+                                        "4.49998471 -0.0 0.84134475 "
+                                        "-0.15865525 1.95449974 0.0");
+
+  const arma::colvec desiredDerivatives("-0.0852318 1.00694194 1.00006853 "
+                                        "0.0 1.08331547 -0.08331547 1.0852318 "
+                                        "0.5");
+
+  CheckActivationCorrect<GELUExactFunction>(activationData, desiredActivations);
+  CheckDerivativeCorrect<GELUExactFunction>(activationData, desiredDerivatives);
 }
 
 /**

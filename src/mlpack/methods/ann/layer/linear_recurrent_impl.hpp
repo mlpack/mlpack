@@ -18,7 +18,7 @@ namespace mlpack {
 
 // Create the LinearRecurrent layer.
 template<typename MatType, typename RegularizerType>
-LinearRecurrentType<MatType, RegularizerType>::LinearRecurrentType() :
+LinearRecurrent<MatType, RegularizerType>::LinearRecurrent() :
     RecurrentLayer<MatType>(),
     inSize(0),
     outSize(0)
@@ -27,7 +27,7 @@ LinearRecurrentType<MatType, RegularizerType>::LinearRecurrentType() :
 }
 
 template<typename MatType, typename RegularizerType>
-LinearRecurrentType<MatType, RegularizerType>::LinearRecurrentType(
+LinearRecurrent<MatType, RegularizerType>::LinearRecurrent(
     const size_t outSize,
     RegularizerType regularizer) :
     RecurrentLayer<MatType>(),
@@ -40,8 +40,8 @@ LinearRecurrentType<MatType, RegularizerType>::LinearRecurrentType(
 
 // Copy constructor.
 template<typename MatType, typename RegularizerType>
-LinearRecurrentType<MatType, RegularizerType>::LinearRecurrentType(
-    const LinearRecurrentType& layer) :
+LinearRecurrent<MatType, RegularizerType>::LinearRecurrent(
+    const LinearRecurrent& layer) :
     RecurrentLayer<MatType>(layer),
     inSize(layer.inSize),
     outSize(layer.outSize),
@@ -52,8 +52,8 @@ LinearRecurrentType<MatType, RegularizerType>::LinearRecurrentType(
 
 // Move constructor.
 template<typename MatType, typename RegularizerType>
-LinearRecurrentType<MatType, RegularizerType>::LinearRecurrentType(
-    LinearRecurrentType&& layer) :
+LinearRecurrent<MatType, RegularizerType>::LinearRecurrent(
+    LinearRecurrent&& layer) :
     RecurrentLayer<MatType>(std::move(layer)),
     inSize(std::move(layer.inSize)),
     outSize(std::move(layer.outSize)),
@@ -66,9 +66,9 @@ LinearRecurrentType<MatType, RegularizerType>::LinearRecurrentType(
 
 // Copy operator.
 template<typename MatType, typename RegularizerType>
-LinearRecurrentType<MatType, RegularizerType>&
-LinearRecurrentType<MatType, RegularizerType>::operator=(
-    const LinearRecurrentType& layer)
+LinearRecurrent<MatType, RegularizerType>&
+LinearRecurrent<MatType, RegularizerType>::operator=(
+    const LinearRecurrent& layer)
 {
   if (&layer != this)
   {
@@ -83,9 +83,9 @@ LinearRecurrentType<MatType, RegularizerType>::operator=(
 
 // Move operator.
 template<typename MatType, typename RegularizerType>
-LinearRecurrentType<MatType, RegularizerType>&
-LinearRecurrentType<MatType, RegularizerType>::operator=(
-    LinearRecurrentType&& layer)
+LinearRecurrent<MatType, RegularizerType>&
+LinearRecurrent<MatType, RegularizerType>::operator=(
+    LinearRecurrent&& layer)
 {
   if (&layer != this)
   {
@@ -104,7 +104,7 @@ LinearRecurrentType<MatType, RegularizerType>::operator=(
 
 // Set the parameters of the layer.
 template<typename MatType, typename RegularizerType>
-void LinearRecurrentType<MatType, RegularizerType>::SetWeights(
+void LinearRecurrent<MatType, RegularizerType>::SetWeights(
     const MatType& weightsIn)
 {
   MakeAlias(parameters, weightsIn, WeightSize(), 1);
@@ -116,7 +116,7 @@ void LinearRecurrentType<MatType, RegularizerType>::SetWeights(
 
 // Forward pass of linear recurrent layer.
 template<typename MatType, typename RegularizerType>
-void LinearRecurrentType<MatType, RegularizerType>::Forward(
+void LinearRecurrent<MatType, RegularizerType>::Forward(
     const MatType& input, MatType& output)
 {
   // Take the forward step: f(x) = Wx + Uh + b.
@@ -141,7 +141,7 @@ void LinearRecurrentType<MatType, RegularizerType>::Forward(
 
 // Backward pass of linear recurrent layer.
 template<typename MatType, typename RegularizerType>
-void LinearRecurrentType<MatType, RegularizerType>::Backward(
+void LinearRecurrent<MatType, RegularizerType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
@@ -182,7 +182,7 @@ void LinearRecurrentType<MatType, RegularizerType>::Backward(
 
 // Compute the gradient with respect to the input.
 template<typename MatType, typename RegularizerType>
-void LinearRecurrentType<MatType, RegularizerType>::Gradient(
+void LinearRecurrent<MatType, RegularizerType>::Gradient(
     const MatType& input,
     const MatType& error,
     MatType& gradient)
@@ -232,7 +232,7 @@ void LinearRecurrentType<MatType, RegularizerType>::Gradient(
 
 // Get the total number of trainable parameters.
 template<typename MatType, typename RegularizerType>
-size_t LinearRecurrentType<MatType, RegularizerType>::WeightSize() const
+size_t LinearRecurrent<MatType, RegularizerType>::WeightSize() const
 {
   return (inSize * outSize) /* weight matrix */ +
       (outSize * outSize) /* recurrent state matrix */ +
@@ -240,7 +240,7 @@ size_t LinearRecurrentType<MatType, RegularizerType>::WeightSize() const
 }
 
 template<typename MatType, typename RegularizerType>
-size_t LinearRecurrentType<MatType, RegularizerType>::RecurrentSize() const
+size_t LinearRecurrent<MatType, RegularizerType>::RecurrentSize() const
 {
   return outSize;
 }
@@ -248,7 +248,7 @@ size_t LinearRecurrentType<MatType, RegularizerType>::RecurrentSize() const
 // Compute the output dimensions of the layer, assuming that inputDimension has
 // been set.
 template<typename MatType, typename RegularizerType>
-void LinearRecurrentType<MatType, RegularizerType>::ComputeOutputDimensions()
+void LinearRecurrent<MatType, RegularizerType>::ComputeOutputDimensions()
 {
   // Compute the total number of input dimensions.
   inSize = this->inputDimensions[0];
@@ -264,7 +264,7 @@ void LinearRecurrentType<MatType, RegularizerType>::ComputeOutputDimensions()
 // Serialize the layer.
 template<typename MatType, typename RegularizerType>
 template<typename Archive>
-void LinearRecurrentType<MatType, RegularizerType>::serialize(
+void LinearRecurrent<MatType, RegularizerType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<RecurrentLayer<MatType>>(this));

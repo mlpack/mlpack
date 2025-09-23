@@ -25,10 +25,13 @@ namespace mlpack {
  *    computation.
  */
 template<typename MatType = arma::mat>
-class PaddingType : public Layer<MatType>
+class Padding : public Layer<MatType>
 {
  public:
+  // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
+
   /**
    * Create the Padding object using the specified number of output units.
    *
@@ -37,25 +40,26 @@ class PaddingType : public Layer<MatType>
    * @param padHTop Top padding height of the input.
    * @param padHBottom Bottom padding height of the input.
    */
-  PaddingType(const size_t padWLeft = 0,
+  Padding(const size_t padWLeft = 0,
               const size_t padWRight = 0,
               const size_t padHTop = 0,
-              const size_t padHBottom = 0);
+              const size_t padHBottom = 0,
+              const typename MatType::elem_type fillValue = 0);
 
-  //! Clone the PaddingType object. This handles polymorphism correctly.
-  PaddingType* Clone() const { return new PaddingType(*this); }
+  //! Clone the Padding object. This handles polymorphism correctly.
+  Padding* Clone() const { return new Padding(*this); }
 
   //! Virtual destructor.
-  virtual ~PaddingType() { }
+  virtual ~Padding() { }
 
-  //! Copy the given PaddingType.
-  PaddingType(const PaddingType& other);
-  //! Take ownership of the given PaddingType.
-  PaddingType(PaddingType&& other);
-  //! Copy the given PaddingType.
-  PaddingType& operator=(const PaddingType& other);
-  //! Take ownership of the given PaddingType.
-  PaddingType& operator=(PaddingType&& other);
+  //! Copy the given Padding.
+  Padding(const Padding& other);
+  //! Take ownership of the given Padding.
+  Padding(Padding&& other);
+  //! Copy the given Padding.
+  Padding& operator=(const Padding& other);
+  //! Take ownership of the given Padding.
+  Padding& operator=(Padding&& other);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -125,10 +129,10 @@ class PaddingType : public Layer<MatType>
 
   //! Cached number of input maps.
   size_t totalInMaps;
-}; // class PaddingType
 
-// Standard Padding layer.
-using Padding = PaddingType<arma::mat>;
+  //! Pad the input with this value.
+  ElemType fillValue;
+}; // class Padding
 
 } // namespace mlpack
 

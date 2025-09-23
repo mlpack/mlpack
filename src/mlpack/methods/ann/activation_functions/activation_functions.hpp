@@ -35,6 +35,7 @@
 #include "elliot_function.hpp"
 #include "gaussian_function.hpp"
 #include "gelu_function.hpp"
+#include "gelu_exact_function.hpp"
 #include "hard_sigmoid_function.hpp"
 #include "hard_swish_function.hpp"
 #include "identity_function.hpp"

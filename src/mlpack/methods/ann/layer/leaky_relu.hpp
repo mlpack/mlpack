@@ -37,32 +37,35 @@ namespace mlpack {
  *    computation.
  */
 template<typename MatType = arma::mat>
-class LeakyReLUType : public Layer<MatType>
+class LeakyReLU : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the LeakyReLU object using the specified parameters.
    * The non zero gradient can be adjusted by specifying the parameter
    * alpha in the range 0 to 1. Default (alpha = 0.03)
    *
-   * @param alpha Non zero gradient.
+   * @param alpha Nonzero gradient parameter.
    */
-  LeakyReLUType(const typename MatType::elem_type alpha = 0.03);
+  LeakyReLU(const ElemType alpha = ElemType(0.03));
 
-  //! Clone the LeakyReLUType object. This handles polymorphism correctly.
-  LeakyReLUType* Clone() const { return new LeakyReLUType(*this); }
+  // Clone the LeakyReLU object. This handles polymorphism correctly.
+  LeakyReLU* Clone() const { return new LeakyReLU(*this); }
 
   // Virtual destructor.
-  virtual ~LeakyReLUType() { }
+  virtual ~LeakyReLU() { }
 
-  //! Copy the given LeakyReLUType.
-  LeakyReLUType(const LeakyReLUType& other);
-  //! Take ownership of the given LeakyReLUType.
-  LeakyReLUType(LeakyReLUType&& other);
-  //! Copy the given LeakyReLUType.
-  LeakyReLUType& operator=(const LeakyReLUType& other);
-  //! Take ownership of the given LeakyReLUType.
-  LeakyReLUType& operator=(LeakyReLUType&& other);
+  //! Copy the given LeakyReLU.
+  LeakyReLU(const LeakyReLU& other);
+  //! Take ownership of the given LeakyReLU.
+  LeakyReLU(LeakyReLU&& other);
+  //! Copy the given LeakyReLU.
+  LeakyReLU& operator=(const LeakyReLU& other);
+  //! Take ownership of the given LeakyReLU.
+  LeakyReLU& operator=(LeakyReLU&& other);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -98,15 +101,9 @@ class LeakyReLUType : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Leakyness Parameter in the range 0 <alpha< 1
-  typename MatType::elem_type alpha;
-}; // class LeakyReLUType
-
-// Convenience typedefs.
-
-// Standard LeakyReLU layer.
-using LeakyReLU = LeakyReLUType<arma::mat>;
-
+  // Leakyness parameter in the range 0 < alpha < 1.
+  ElemType alpha;
+}; // class LeakyReLU
 
 } // namespace mlpack
 

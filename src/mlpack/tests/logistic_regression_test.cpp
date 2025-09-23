@@ -720,7 +720,13 @@ TEST_CASE("LogisticRegressionInstantiatedOptimizer", "[LogisticRegressionTest]")
 
   // Now do the same with SGD.
   ens::StandardSGD sgdOpt;
+  #if ENS_VERSION_MAJOR >= 3
+  sgdOpt.StepSize() = 0.15 * sgdOpt.BatchSize();
+  #else
+  // Old versions of of ensmallen did not adjust the step size for the batch
+  // size.
   sgdOpt.StepSize() = 0.15;
+  #endif
   sgdOpt.Tolerance() = 1e-75;
   LogisticRegression<> lr2(data, responses, sgdOpt, 0.0005);
 
@@ -1069,7 +1075,7 @@ TEST_CASE("ConstructionThenTraining", "[LogisticRegressionTest]")
 /**
  * Make sure that incremental training works.
  */
-TEST_CASE("IncrementalTraining", "[LogisticRegressionTest]")
+TEST_CASE("IncrementalTraining", "[LogisticRegressionTest][long]")
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution<> g1(arma::vec("1.0 1.0 1.0"),

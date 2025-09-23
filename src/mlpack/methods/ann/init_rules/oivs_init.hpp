@@ -85,7 +85,7 @@ class OivsInitialization
     RandomInitialization randomInit(-gamma, gamma);
     randomInit.Initialize(W, rows, cols);
 
-    W = (b / (k  * rows)) * sqrt(W + 1);
+    W = typename MatType::elem_type(b / (k * rows)) * sqrt(W + 1);
   }
 
   /**
@@ -100,7 +100,7 @@ class OivsInitialization
     RandomInitialization randomInit(-gamma, gamma);
     randomInit.Initialize(W);
 
-    W = (b / (k  * W.n_rows)) * sqrt(W + 1);
+    W = typename MatType::elem_type(b / (k  * W.n_rows)) * sqrt(W + 1);
   }
 
   /**

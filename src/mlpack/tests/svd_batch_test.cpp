@@ -120,7 +120,7 @@ TEMPLATE_TEST_CASE("SVDBatchMomentumTest", "[SVDBatchTest]", float, double)
 /**
  * Make sure the regularization is working okay.
  */
-TEMPLATE_TEST_CASE("SVDBatchRegularizationTest", "[SVDBatchTest]", float,
+TEMPLATE_TEST_CASE("SVDBatchRegularizationTest", "[SVDBatchTest][long]", float,
     double)
 {
   using eT = TestType;

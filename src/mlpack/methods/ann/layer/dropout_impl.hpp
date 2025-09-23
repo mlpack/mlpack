@@ -19,7 +19,7 @@
 namespace mlpack {
 
 template<typename MatType>
-DropoutType<MatType>::DropoutType(
+Dropout<MatType>::Dropout(
     const double ratio) :
     Layer<MatType>(),
     ratio(ratio),
@@ -29,7 +29,7 @@ DropoutType<MatType>::DropoutType(
 }
 
 template<typename MatType>
-DropoutType<MatType>::DropoutType(const DropoutType& other) :
+Dropout<MatType>::Dropout(const Dropout& other) :
     Layer<MatType>(other),
     ratio(other.ratio),
     scale(other.scale)
@@ -38,7 +38,7 @@ DropoutType<MatType>::DropoutType(const DropoutType& other) :
 }
 
 template<typename MatType>
-DropoutType<MatType>::DropoutType(DropoutType&& other) :
+Dropout<MatType>::Dropout(Dropout&& other) :
     Layer<MatType>(std::move(other)),
     ratio(std::move(other.ratio)),
     scale(std::move(other.scale))
@@ -47,8 +47,8 @@ DropoutType<MatType>::DropoutType(DropoutType&& other) :
 }
 
 template<typename MatType>
-DropoutType<MatType>&
-DropoutType<MatType>::operator=(const DropoutType& other)
+Dropout<MatType>&
+Dropout<MatType>::operator=(const Dropout& other)
 {
   if (&other != this)
   {
@@ -61,8 +61,8 @@ DropoutType<MatType>::operator=(const DropoutType& other)
 }
 
 template<typename MatType>
-DropoutType<MatType>&
-DropoutType<MatType>::operator=(DropoutType&& other)
+Dropout<MatType>&
+Dropout<MatType>::operator=(Dropout&& other)
 {
   if (&other != this)
   {
@@ -75,7 +75,7 @@ DropoutType<MatType>::operator=(DropoutType&& other)
 }
 
 template<typename MatType>
-void DropoutType<MatType>::Forward(const MatType& input, MatType& output)
+void Dropout<MatType>::Forward(const MatType& input, MatType& output)
 {
   // The dropout mask will not be multiplied in testing mode.
   if (!this->training)
@@ -86,32 +86,25 @@ void DropoutType<MatType>::Forward(const MatType& input, MatType& output)
   {
     // Scale with input / (1 - ratio) and set values to zero with probability
     // 'ratio'.
-    mask.randu(input.n_rows, input.n_cols);
-    #pragma omp parallel for collapse(2)
-    for (size_t i = 0; i < input.n_rows; ++i)
-    {
-      for (size_t j = 0; j < input.n_cols; ++j)
-      {
-        mask(i, j) = (mask(i, j) > this->ratio) ? 1.0 : 0.0;
-      }
-    }
-    output = input % mask * this->scale;
+    mask = conv_to<MatType>::from(
+        randu<MatType>(input.n_rows, input.n_cols) > ElemType(ratio));
+    output = input % mask * ElemType(scale);
   }
 }
 
 template<typename MatType>
-void DropoutType<MatType>::Backward(
+void Dropout<MatType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
     MatType& g)
 {
-  g = gy % mask * scale;
+  g = gy % mask * ElemType(scale);
 }
 
 template<typename MatType>
 template<typename Archive>
-void DropoutType<MatType>::serialize(
+void Dropout<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

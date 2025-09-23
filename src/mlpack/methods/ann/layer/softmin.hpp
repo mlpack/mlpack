@@ -28,26 +28,29 @@ namespace mlpack {
  *    computation.
  */
 template<typename MatType = arma::mat>
-class SoftminType : public Layer<MatType>
+class Softmin : public Layer<MatType>
 {
  public:
-  //! Create the Softmin object.
-  SoftminType();
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
 
-  //! Clone the SoftminType object. This handles polymorphism correctly.
-  SoftminType* Clone() const { return new SoftminType(*this); }
+  // Create the Softmin object.
+  Softmin();
 
-  //! Virtual destructor.
-  virtual ~SoftminType() { }
+  // Clone the Softmin object. This handles polymorphism correctly.
+  Softmin* Clone() const { return new Softmin(*this); }
 
-  //! Copy the given SoftminType.
-  SoftminType(const SoftminType& other);
-  //! Take ownership of the given SoftminType.
-  SoftminType(SoftminType&& other);
-  //! Copy the given SoftminType.
-  SoftminType& operator=(const SoftminType& other);
-  //! Take ownership of the given SoftminType.
-  SoftminType& operator=(SoftminType&& other);
+  // Virtual destructor.
+  virtual ~Softmin() { }
+
+  // Copy the given Softmin.
+  Softmin(const Softmin& other);
+  // Take ownership of the given Softmin.
+  Softmin(Softmin&& other);
+  // Copy the given Softmin.
+  Softmin& operator=(const Softmin& other);
+  // Take ownership of the given Softmin.
+  Softmin& operator=(Softmin&& other);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -73,16 +76,10 @@ class SoftminType : public Layer<MatType>
                 const MatType& gy,
                 MatType& g);
 
-  //! Serialize the layer.
+  // Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
-}; // class SoftminType
-
-// Convenience typedefs.
-
-// Standard Softmin layer using no regularization.
-using Softmin = SoftminType<arma::mat>;
-
+}; // class Softmin
 
 } // namespace mlpack
 

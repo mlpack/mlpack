@@ -34,12 +34,15 @@ template<
     typename MatType = arma::mat,
     typename RegularizerType = NoRegularizer
 >
-class Linear3DType : public Layer<MatType>
+class Linear3D : public Layer<MatType>
 {
  public:
+  // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
-  //! Create the Linear3D object.
-  Linear3DType();
+
+  // Create the Linear3D object.
+  Linear3D();
 
   /**
    * Create the Linear3D layer object using the specified number of output
@@ -48,23 +51,23 @@ class Linear3DType : public Layer<MatType>
    * @param outSize The number of output units.
    * @param regularizer The regularizer to use, optional.
    */
-  Linear3DType(const size_t outSize,
+  Linear3D(const size_t outSize,
                RegularizerType regularizer = RegularizerType());
 
-  //! Clone the Linear3DType object. This handles polymorphism correctly.
-  Linear3DType* Clone() const { return new Linear3DType(*this); }
+  //! Clone the Linear3D object. This handles polymorphism correctly.
+  Linear3D* Clone() const { return new Linear3D(*this); }
 
   // Virtual destructor.
-  virtual ~Linear3DType() { }
+  virtual ~Linear3D() { }
 
-  //! Copy the given Linear3DType (but not weights).
-  Linear3DType(const Linear3DType& other);
-  //! Take ownership of the given Linear3DType (but not weights).
-  Linear3DType(Linear3DType&& other);
-  //! Copy the given Linear3DType (but not weights).
-  Linear3DType& operator=(const Linear3DType& other);
-  //! Take ownership of the given Linear3DType (but not weights).
-  Linear3DType& operator=(Linear3DType&& other);
+  //! Copy the given Linear3D (but not weights).
+  Linear3D(const Linear3D& other);
+  //! Take ownership of the given Linear3D (but not weights).
+  Linear3D(Linear3D&& other);
+  //! Copy the given Linear3D (but not weights).
+  Linear3D& operator=(const Linear3D& other);
+  //! Take ownership of the given Linear3D (but not weights).
+  Linear3D& operator=(Linear3D&& other);
 
   /*
    * Reset the layer parameter.
@@ -149,9 +152,6 @@ class Linear3DType : public Layer<MatType>
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
 }; // class Linear
-
-// Standard Linear3D layer.
-using Linear3D = Linear3DType<arma::mat, NoRegularizer>;
 
 } // namespace mlpack
 

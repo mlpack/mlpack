@@ -19,7 +19,7 @@
 namespace mlpack {
 
 template<typename MatType>
-HardTanHType<MatType>::HardTanHType(
+HardTanH<MatType>::HardTanH(
     const double maxValue,
     const double minValue) :
     Layer<MatType>(),
@@ -30,7 +30,7 @@ HardTanHType<MatType>::HardTanHType(
 }
 
 template<typename MatType>
-HardTanHType<MatType>::HardTanHType(const HardTanHType& layer) :
+HardTanH<MatType>::HardTanH(const HardTanH& layer) :
     Layer<MatType>(layer),
     maxValue(layer.maxValue),
     minValue(layer.minValue)
@@ -39,7 +39,7 @@ HardTanHType<MatType>::HardTanHType(const HardTanHType& layer) :
 }
 
 template<typename MatType>
-HardTanHType<MatType>::HardTanHType(HardTanHType&& layer) :
+HardTanH<MatType>::HardTanH(HardTanH&& layer) :
     Layer<MatType>(std::move(layer)),
     maxValue(std::move(layer.maxValue)),
     minValue(std::move(layer.minValue))
@@ -48,8 +48,8 @@ HardTanHType<MatType>::HardTanHType(HardTanHType&& layer) :
 }
 
 template<typename MatType>
-HardTanHType<MatType>& HardTanHType<MatType>::operator=(
-    const HardTanHType& layer)
+HardTanH<MatType>& HardTanH<MatType>::operator=(
+    const HardTanH& layer)
 {
   if (&layer != this)
   {
@@ -62,7 +62,7 @@ HardTanHType<MatType>& HardTanHType<MatType>::operator=(
 }
 
 template<typename MatType>
-HardTanHType<MatType>& HardTanHType<MatType>::operator=(HardTanHType&& layer)
+HardTanH<MatType>& HardTanH<MatType>::operator=(HardTanH&& layer)
 {
   if (&layer != this)
   {
@@ -74,19 +74,19 @@ HardTanHType<MatType>& HardTanHType<MatType>::operator=(HardTanHType&& layer)
   return *this;
 }
 template<typename MatType>
-void HardTanHType<MatType>::Forward(
+void HardTanH<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   #pragma omp parallel for
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    output(i) = (input(i) > maxValue ? maxValue :
-        (input(i) < minValue ? minValue : input(i)));
+    output(i) = (input(i) > ElemType(maxValue) ? ElemType(maxValue) :
+        (input(i) < ElemType(minValue) ? ElemType(minValue) : input(i)));
   }
 }
 
 template<typename MatType>
-void HardTanHType<MatType>::Backward(
+void HardTanH<MatType>::Backward(
     const MatType& input,
     const MatType& /* output */,
     const MatType& gy,
@@ -99,7 +99,7 @@ void HardTanHType<MatType>::Backward(
   {
     // input should not have any values greater than maxValue
     // and lesser than minValue
-    if (input(i) <= minValue || input(i) >= maxValue)
+    if (input(i) <= ElemType(minValue) || input(i) >= ElemType(maxValue))
     {
       g(i) = 0;
     }
@@ -108,7 +108,7 @@ void HardTanHType<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void HardTanHType<MatType>::serialize(
+void HardTanH<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

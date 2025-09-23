@@ -55,21 +55,22 @@ namespace mlpack {
  * @tparam MatType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-  typename MatType = arma::mat
->
-class LayerNormType : public Layer<MatType>
+template<typename MatType = arma::mat>
+class LayerNorm : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the LayerNorm object for a specified number of input units.
    *
    * @param eps The epsilon added to variance to ensure numerical stability.
    */
-  LayerNormType(const double eps = 1e-8);
+  LayerNorm(const double eps = 1e-8);
 
-  //! Clone the LayerNormType object. This handles polymorphism correctly.
-  LayerNormType* Clone() const override { return new LayerNormType(*this); }
+  //! Clone the LayerNorm object. This handles polymorphism correctly.
+  LayerNorm* Clone() const override { return new LayerNorm(*this); }
 
   /**
    * Forward pass of Layer Normalization. Transforms the input data
@@ -173,10 +174,7 @@ class LayerNormType : public Layer<MatType>
 
   //! Locally-stored zero mean input.
   MatType inputMean;
-}; // class LayerNormType
-
-// Standard LayerNorm type
-using LayerNorm = LayerNormType<arma::mat>;
+}; // class LayerNorm
 
 } // namespace mlpack
 

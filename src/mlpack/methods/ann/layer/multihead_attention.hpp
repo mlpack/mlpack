@@ -66,14 +66,17 @@ template <
     typename MatType = arma::mat,
     typename RegularizerType = NoRegularizer
 >
-class MultiheadAttentionType : public Layer<MatType>
+class MultiheadAttention : public Layer<MatType>
 {
  public:
+  // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
+
   /**
    * Default constructor.
    */
-  MultiheadAttentionType();
+  MultiheadAttention();
 
   /**
    * Create the MultiheadAttention object using the specified modules.
@@ -87,17 +90,17 @@ class MultiheadAttentionType : public Layer<MatType>
    * @param selfAttention Use self-attention; source key, query, and value all
    *     come from the same inputs
    */
-  MultiheadAttentionType(const size_t tgtSeqLen,
+  MultiheadAttention(const size_t tgtSeqLen,
                          const size_t numHeads,
-                         const MatType& attnMask = MatType(),
+                         const CubeType& attnMask = CubeType(),
                          const MatType& keyPaddingMask = MatType(),
                          const bool selfAttention = false);
 
-  //! Clone the MultiheadAttentionType object. This handles polymorphism
+  //! Clone the MultiheadAttention object. This handles polymorphism
   //! correctly.
-  MultiheadAttentionType* Clone() const override
+  MultiheadAttention* Clone() const override
   {
-    return new MultiheadAttentionType(*this);
+    return new MultiheadAttention(*this);
   }
 
   /**
@@ -175,9 +178,9 @@ class MultiheadAttentionType : public Layer<MatType>
   size_t& NumHeads() { return numHeads; }
 
   //! Get the two dimensional Attention Mask.  Contains values 0 or 1.
-  MatType const& AttentionMask() const { return attnMask; }
+  CubeType const& AttentionMask() const { return attnMask; }
   //! Modify the two dimensional Attention Mask.  Should take values 0 or 1.
-  MatType& AttentionMask() { return attnMask; }
+  CubeType& AttentionMask() { return attnMask; }
 
   //! Get Key Padding Mask.  Contains values 0 or 1.
   MatType const& KeyPaddingMask() const { return keyPaddingMask; }
@@ -265,8 +268,11 @@ class MultiheadAttentionType : public Layer<MatType>
   }
 
  private:
-  //! Element Type of the output.
-  using ElemType = typename MatType::elem_type;
+  static void MaskedForwardSoftmax(CubeType& scores,
+                                   const size_t numHeads,
+                                   const size_t batchSize,
+                                   const CubeType& attnMask,
+                                   const MatType& keyPaddingMask);
 
   //! Target sequence length.
   size_t tgtSeqLen;
@@ -283,11 +289,12 @@ class MultiheadAttentionType : public Layer<MatType>
   //! Dimensionality of each head.
   size_t headDim;
 
-  //! Two dimensional Attention Mask of shape (tgtSeqLen, srcSeqLen).  Takes
-  //! the values [-Inf, 0]
-  MatType attnMask;
+  //! Two dimensional Attention Mask of shape (srcSeqLen, tgtSeqLen, batchSize).
+  //! Takes the values [-Inf, 0]
+  CubeType attnMask;
 
-  //! Key Padding Mask.  Takes the values [-Inf, 0]
+  //! Key Padding Mask.  The shape of keyPaddingMask : (srcSeqLen, batchSize)
+  //! the values [-Inf, 0]
   MatType keyPaddingMask;
 
   //! Whether or not self-attention is used (source key, value, and query all
@@ -337,14 +344,11 @@ class MultiheadAttentionType : public Layer<MatType>
   CubeType attnOut;
 
   //! Softmax layer to represent the probabilities of next sequence.
-  SoftmaxType<MatType> softmax;
+  Softmax<MatType> softmax;
 
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
 }; // class MultiheadAttention
-
-// Standard MultiheadAttention layer using no regularization.
-using MultiheadAttention = MultiheadAttentionType<arma::mat, NoRegularizer>;
 
 } // namespace mlpack
 

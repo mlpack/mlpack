@@ -44,26 +44,29 @@ namespace mlpack {
  *         (Default: arma::mat).
  */
 template<typename MatType = arma::mat>
-class CReLUType : public Layer<MatType>
+class CReLU : public Layer<MatType>
 {
  public:
-  //! Create the CReLU object.
-  CReLUType();
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
 
-  //! Clone the CReLUType object. This handles polymorphism correctly.
-  CReLUType* Clone() const { return new CReLUType(*this); }
+  // Create the CReLU object.
+  CReLU();
+
+  // Clone the CReLU object. This handles polymorphism correctly.
+  CReLU* Clone() const { return new CReLU(*this); }
 
   // Virtual destructor.
-  virtual ~CReLUType() { }
+  virtual ~CReLU() { }
 
-  //! Copy the given CReLUType.
-  CReLUType(const CReLUType& other);
-  //! Take ownership of the given CReLUType.
-  CReLUType(CReLUType&& other);
-  //! Copy the given CReLUType.
-  CReLUType& operator=(const CReLUType& other);
-  //! Take ownership of the given CReLUType.
-  CReLUType& operator=(CReLUType&& other);
+  //! Copy the given CReLU.
+  CReLU(const CReLU& other);
+  //! Take ownership of the given CReLU.
+  CReLU(CReLU&& other);
+  //! Copy the given CReLU.
+  CReLU& operator=(const CReLU& other);
+  //! Take ownership of the given CReLU.
+  CReLU& operator=(CReLU&& other);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -96,12 +99,7 @@ class CReLUType : public Layer<MatType>
   //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& /* ar */, const uint32_t /* version */);
-}; // class CReLUType
-
-// Convenience typedefs.
-
-// Standard CReLU layer.
-using CReLU = CReLUType<arma::mat>;
+}; // class CReLU
 
 } // namespace mlpack
 

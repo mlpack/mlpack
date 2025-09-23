@@ -38,11 +38,14 @@ template<
     typename MatType = arma::mat,
     typename RegularizerType = NoRegularizer
 >
-class LinearType : public Layer<MatType>
+class Linear : public Layer<MatType>
 {
  public:
-  //! Create the Linear object.
-  LinearType();
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
+  // Create the Linear object.
+  Linear();
 
   /**
    * Create the Linear layer object with the specified number of output
@@ -52,25 +55,25 @@ class LinearType : public Layer<MatType>
    * @param regularizer The regularizer to use, optional (default: no
    *     regularizer).
    */
-  LinearType(const size_t outSize,
-             RegularizerType regularizer = RegularizerType());
+  Linear(const size_t outSize,
+         RegularizerType regularizer = RegularizerType());
 
-  virtual ~LinearType() { }
+  virtual ~Linear() { }
 
-  //! Clone the LinearType object. This handles polymorphism correctly.
-  LinearType* Clone() const { return new LinearType(*this); }
-
-  //! Copy the other Linear layer (but not weights).
-  LinearType(const LinearType& layer);
-
-  //! Take ownership of the members of the other Linear layer (but not weights).
-  LinearType(LinearType&& layer);
+  //! Clone the Linear object. This handles polymorphism correctly.
+  Linear* Clone() const { return new Linear(*this); }
 
   //! Copy the other Linear layer (but not weights).
-  LinearType& operator=(const LinearType& layer);
+  Linear(const Linear& layer);
 
   //! Take ownership of the members of the other Linear layer (but not weights).
-  LinearType& operator=(LinearType&& layer);
+  Linear(Linear&& layer);
+
+  //! Copy the other Linear layer (but not weights).
+  Linear& operator=(const Linear& layer);
+
+  //! Take ownership of the members of the other Linear layer (but not weights).
+  Linear& operator=(Linear&& layer);
 
   /**
    * Reset the layer parameter (weights and bias). The method is called to
@@ -162,12 +165,7 @@ class LinearType : public Layer<MatType>
 
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
-}; // class LinearType
-
-// Convenience typedefs.
-
-// Standard Linear layer using no regularization.
-using Linear = LinearType<arma::mat, NoRegularizer>;
+}; // class Linear
 
 } // namespace mlpack
 

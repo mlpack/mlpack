@@ -70,13 +70,15 @@ cmake \
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | C906      | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#c906) | [C906 on riscv](https://www.riscvschool.com/2023/03/09/t-head-xuantie-c906-risc-v/) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| x280      | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#x280) | [x280 on SiFive](https://www.sifive.cn/api/document-file?uid=x280-datasheet) |
+| x280      | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#x280) | [SiFive x280 product brief](https://www.sifive.com/document-file/sifive-intelligence-x280-product-brief) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | KATAMI    | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-i686.html)     | [Sysroot and toolchain prefix](#katami) |[Pentium 3 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_III)          |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | NORTHWOOD | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-64.html)       | [Sysroot and toolchain prefix](#northwood)   |[Pentium 4 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_4)       |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | COPPERMINE | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-i686.html)   | [Sysroot and toolchain prefix](#coppermine) |[Pentium 3 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_III)       |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| POWERPCG4 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_powerpc-440fp.html)   | [Sysroot and toolchain prefix](#powerpcg4) |[Power Mac G4 Cube](https://en.wikipedia.org/wiki/Power_Mac_G4_Cube), [BAE RAD750](https://en.wikipedia.org/wiki/RAD750) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | ULTRASPARC | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_sparc64.html)   | [Sysroot and toolchain prefix](#ultrasparc) |[UltraSPARC on Wikipedia](https://en.wikipedia.org/wiki/UltraSPARC)        |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -189,6 +191,13 @@ the new architecture added to this table.
 ```
 -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2024.02-1/bin/x86-i686-buildroot-linux-gnueabihf-
 -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2024.02-1/x86-i686-buildroot-linux-gnueabihf/sysroot
+```
+
+### POWERPCG4
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/powerpc-440fp--glibc--stable-2024.02-1/bin/powerpc-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/powerpc-440fp--glibc--stable-2024.02-1/powerpc-buildroot-linux-gnu/sysroot
 ```
 
 ### ULTRASPARC

@@ -37,7 +37,10 @@ template<
 class RNN
 {
  public:
+  // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
+
   /**
    * Create the RNN object.
    *
@@ -76,17 +79,51 @@ class RNN
   /**
    * Add a new module to the model.
    *
-   * @param args The layer parameter.
+   * @param args The parameters to pass to the constructor of the layer.
    */
-  template <typename LayerType, typename... Args>
-  void Add(Args... args) { network.template Add<LayerType>(args...); }
+  template<typename LayerType, typename... Args>
+  void Add(Args&&... args)
+  {
+    network.template Add<LayerType>(std::forward<Args>(args)...);
+  }
+
+  /**
+   * Add a new layer to the model, without specifying the matrix type of the
+   * layer as a template parameter.
+   *
+   * @param args The parameters to pass to the constructor of the layer.
+   */
+  template<template<typename...> typename LayerType,
+           typename... Args>
+  void Add(Args&&... args)
+  {
+    network.template Add<LayerType<MatType>>(std::forward<Args>(args)...);
+  }
 
   /**
    * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
    */
+  [[deprecated("Will be removed in mlpack 5.0.0.  Use Add(std::move(layer)).")]]
   void Add(Layer<MatType>* layer) { network.Add(layer); }
+
+  /**
+   * Add a new layer to the model by copying/moving the parameters of the given
+   * layer.  Note that any trainable weights of this layer will be reset!
+   * (Constant parameters are kept.)  Preferably, pass the layer with
+   * std::move().
+   *
+   * @param layer The layer to be added to the model.
+   */
+  template<typename LayerType>
+  void Add(LayerType&& layer,
+           // This SFINAE can be removed in mlpack 5.0.0.
+           typename std::enable_if<!std::is_pointer_v<
+                std::remove_reference_t<LayerType>>>::type* = 0)
+  {
+    network.Add(std::forward<LayerType>(layer));
+  }
 
   //! Get the network model.
   const std::vector<Layer<MatType>*>& Network() const
@@ -128,11 +165,10 @@ class RNN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackTypes>
-  typename MatType::elem_type Train(
-      CubeType predictors,
-      CubeType responses,
-      OptimizerType& optimizer,
-      CallbackTypes&&... callbacks);
+  ElemType Train(CubeType predictors,
+                 CubeType responses,
+                 OptimizerType& optimizer,
+                 CallbackTypes&&... callbacks);
 
   /**
    * Train the recurrent network on the given input data. By default, the
@@ -156,10 +192,9 @@ class RNN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
-  typename MatType::elem_type Train(
-      CubeType predictors,
-      CubeType responses,
-      CallbackTypes&&... callbacks);
+  ElemType Train(CubeType predictors,
+                 CubeType responses,
+                 CallbackTypes&&... callbacks);
 
   /**
    * Train the recurrent network on the given input data using the given
@@ -186,12 +221,11 @@ class RNN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackTypes>
-  typename MatType::elem_type Train(
-      CubeType predictors,
-      CubeType responses,
-      arma::urowvec sequenceLengths,
-      OptimizerType& optimizer,
-      CallbackTypes&&... callbacks);
+  ElemType Train(CubeType predictors,
+                 CubeType responses,
+                 arma::urowvec sequenceLengths,
+                 OptimizerType& optimizer,
+                 CallbackTypes&&... callbacks);
 
   /**
    * Train the recurrent network on the given input data, given that each input
@@ -222,11 +256,10 @@ class RNN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
-  typename MatType::elem_type Train(
-      CubeType predictors,
-      CubeType responses,
-      arma::urowvec sequenceLengths,
-      CallbackTypes&&... callbacks);
+  ElemType Train(CubeType predictors,
+                 CubeType responses,
+                 arma::urowvec sequenceLengths,
+                 CallbackTypes&&... callbacks);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -318,9 +351,7 @@ class RNN
    * @param predictors Input variables.
    * @param responses Target outputs for input variables.
    */
-  typename MatType::elem_type Evaluate(
-      const CubeType& predictors,
-      const CubeType& responses);
+  ElemType Evaluate(const CubeType& predictors, const CubeType& responses);
 
   /**
    * Evaluate the recurrent network with the given predictors and responses.
@@ -332,12 +363,11 @@ class RNN
    *     `predictors.n_cols`, and all values should be less than or equal to
    *     `predictors.n_slices`.
    */
-  typename MatType::elem_type Evaluate(
-      const CubeType& predictors,
-      const CubeType& responses,
-      const arma::urowvec& sequenceLengths);
+  ElemType Evaluate(const CubeType& predictors,
+                    const CubeType& responses,
+                    const arma::urowvec& sequenceLengths);
 
-  //! Serialize the model.
+  // Serialize the model.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
@@ -352,7 +382,7 @@ class RNN
    *
    * @param parameters Matrix model parameters.
    */
-  typename MatType::elem_type Evaluate(const MatType& parameters);
+  ElemType Evaluate(const MatType& parameters);
 
    /**
    * Evaluate the recurrent network with the given parameters, but using only
@@ -368,9 +398,9 @@ class RNN
    * @param batchSize Number of points to be passed at a time to use for
    *        objective function evaluation.
    */
-  typename MatType::elem_type Evaluate(const MatType& parameters,
-                                       const size_t begin,
-                                       const size_t batchSize);
+  ElemType Evaluate(const MatType& parameters,
+                    const size_t begin,
+                    const size_t batchSize);
 
   /**
    * Evaluate the recurrent network with the given parameters.
@@ -381,8 +411,8 @@ class RNN
    * @param gradient Matrix to output gradient into.
    */
   template<typename GradType>
-  typename MatType::elem_type EvaluateWithGradient(const MatType& parameters,
-                                                   GradType& gradient);
+  ElemType EvaluateWithGradient(const MatType& parameters,
+                                GradType& gradient);
 
    /**
    * Evaluate the recurrent network with the given parameters, but using only
@@ -397,10 +427,10 @@ class RNN
    *        objective function evaluation.
    */
   template<typename GradType>
-  typename MatType::elem_type EvaluateWithGradient(const MatType& parameters,
-                                                   const size_t begin,
-                                                   GradType& gradient,
-                                                   const size_t batchSize);
+  ElemType EvaluateWithGradient(const MatType& parameters,
+                                const size_t begin,
+                                GradType& gradient,
+                                const size_t batchSize);
 
   /**
    * Evaluate the gradient of the recurrent network with the given parameters,

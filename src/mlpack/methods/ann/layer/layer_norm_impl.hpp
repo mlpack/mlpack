@@ -21,13 +21,13 @@ namespace mlpack {
 
 
 template <typename MatType>
-LayerNormType<MatType>::LayerNormType(const double eps) :
+LayerNorm<MatType>::LayerNorm(const double eps) :
     eps(eps)
 {
 }
 
 template<typename MatType>
-void LayerNormType<MatType>::SetWeights(const MatType& weightsIn)
+void LayerNorm<MatType>::SetWeights(const MatType& weightsIn)
 {
   MakeAlias(weights, weightsIn, 2 * size, 1);
   MakeAlias(gamma, weightsIn, size, 1);
@@ -35,13 +35,13 @@ void LayerNormType<MatType>::SetWeights(const MatType& weightsIn)
 }
 
 template<typename MatType>
-void LayerNormType<MatType>::CustomInitialize(
+void LayerNorm<MatType>::CustomInitialize(
       MatType& W,
       const size_t elements)
 {
   if (elements != 2 * size)
   {
-    throw std::invalid_argument("LayerNormType::CustomInitialize(): wrong "
+    throw std::invalid_argument("LayerNorm::CustomInitialize(): wrong "
                                 "elements size!");
   }
   MatType gammaTemp;
@@ -51,12 +51,12 @@ void LayerNormType<MatType>::CustomInitialize(
   // Beta acts as the shifting parameters for the normalized output.
   MakeAlias(betaTemp, W, size, 1, gammaTemp.n_elem);
 
-  gammaTemp.fill(1.0);
-  betaTemp.fill(0.0);
+  gammaTemp.ones();
+  betaTemp.zeros();
 }
 
 template<typename MatType>
-void LayerNormType<MatType>::Forward(
+void LayerNorm<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   mean = arma::mean(input, 0);
@@ -65,7 +65,7 @@ void LayerNormType<MatType>::Forward(
   // Normalize the input.
   output = input.each_row() - mean;
   inputMean = output;
-  output.each_row() /= sqrt(variance + eps);
+  output.each_row() /= sqrt(variance + ElemType(eps));
 
   // Reused in the backward and gradient step.
   normalized = output;
@@ -76,19 +76,19 @@ void LayerNormType<MatType>::Forward(
 }
 
 template<typename MatType>
-void LayerNormType<MatType>::Backward(
+void LayerNorm<MatType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
     MatType& g)
 {
-  const MatType stdInv = 1.0 / sqrt(variance + eps);
+  const MatType stdInv = 1 / sqrt(variance + ElemType(eps));
 
   // dl / dxhat.
   const MatType norm = gy.each_col() % gamma;
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
-  const MatType var = sum(norm % inputMean, 0) % pow(stdInv, 3.0) * -0.5;
+  const MatType var = -sum(norm % inputMean, 0) % pow(stdInv, ElemType(3)) / 2;
 
   // dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * 1 / m.
@@ -101,7 +101,7 @@ void LayerNormType<MatType>::Backward(
 }
 
 template<typename MatType>
-void LayerNormType<MatType>::Gradient(
+void LayerNorm<MatType>::Gradient(
     const MatType& /* input */,
     const MatType& error,
     MatType& gradient)
@@ -117,7 +117,7 @@ void LayerNormType<MatType>::Gradient(
 
 template<typename MatType>
 template<typename Archive>
-void LayerNormType<MatType>::serialize(
+void LayerNorm<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));

@@ -19,33 +19,33 @@
 namespace mlpack {
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-GroupedConvolutionType<
+GroupedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
->::GroupedConvolutionType() : Layer<MatType>()
+    GradientConvolutionRule
+>::GroupedConvolution() : Layer<MatType>()
 {
   // Nothing to do here.
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-GroupedConvolutionType<
+GroupedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
->::GroupedConvolutionType(
+    GradientConvolutionRule
+>::GroupedConvolution(
     const size_t maps,
     const size_t kernelWidth,
     const size_t kernelHeight,
@@ -56,7 +56,7 @@ GroupedConvolutionType<
     const size_t padH,
     const std::string& paddingType,
     const bool useBias) :
-    GroupedConvolutionType(
+    GroupedConvolution(
       maps,
       kernelWidth,
       kernelHeight,
@@ -72,17 +72,17 @@ GroupedConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-GroupedConvolutionType<
+GroupedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
->::GroupedConvolutionType(
+    GradientConvolutionRule
+>::GroupedConvolution(
     const size_t maps,
     const size_t kernelWidth,
     const size_t kernelHeight,
@@ -111,17 +111,17 @@ GroupedConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-GroupedConvolutionType<
+GroupedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
->::GroupedConvolutionType(const GroupedConvolutionType& other) :
+    GradientConvolutionRule
+>::GroupedConvolution(const GroupedConvolution& other) :
     Layer<MatType>(other),
     maps(other.maps),
     kernelWidth(other.kernelWidth),
@@ -146,17 +146,17 @@ GroupedConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-GroupedConvolutionType<
+GroupedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
->::GroupedConvolutionType(GroupedConvolutionType&& other) :
+    GradientConvolutionRule
+>::GroupedConvolution(GroupedConvolution&& other) :
     Layer<MatType>(std::move(other)),
     maps(std::move(other.maps)),
     kernelWidth(std::move(other.kernelWidth)),
@@ -181,23 +181,23 @@ GroupedConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-GroupedConvolutionType<
+GroupedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >&
-GroupedConvolutionType<
+GroupedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
->::operator=(const GroupedConvolutionType& other)
+    GradientConvolutionRule
+>::operator=(const GroupedConvolution& other)
 {
   if (&other != this)
   {
@@ -226,23 +226,23 @@ GroupedConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-GroupedConvolutionType<
+GroupedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >&
-GroupedConvolutionType<
+GroupedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
->::operator=(GroupedConvolutionType&& other)
+    GradientConvolutionRule
+>::operator=(GroupedConvolution&& other)
 {
   if (&other != this)
   {
@@ -271,16 +271,16 @@ GroupedConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-void GroupedConvolutionType<
+void GroupedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >::SetWeights(const MatType& weightsIn)
 {
   MakeAlias(weight, weightsIn, kernelWidth, kernelHeight,
@@ -297,16 +297,16 @@ void GroupedConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-void GroupedConvolutionType<
+void GroupedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >::Forward(const MatType& input, MatType& output)
 {
   batchSize = input.n_cols;
@@ -376,16 +376,16 @@ void GroupedConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-void GroupedConvolutionType<
+void GroupedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
@@ -501,16 +501,16 @@ void GroupedConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-void GroupedConvolutionType<
+void GroupedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >::Gradient(
     const MatType& input,
     const MatType& error,
@@ -590,16 +590,16 @@ void GroupedConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-void GroupedConvolutionType<
+void GroupedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >::ComputeOutputDimensions()
 {
   // First, we must make sure the padding sizes are up to date, which we can
@@ -616,7 +616,7 @@ void GroupedConvolutionType<
     InitializeSamePadding();
   }
 
-  padding = PaddingType<MatType>(padWLeft, padWRight, padHTop, padHBottom);
+  padding = Padding<MatType>(padWLeft, padWRight, padHTop, padHBottom);
   padding.InputDimensions() = this->inputDimensions;
   padding.ComputeOutputDimensions();
 
@@ -654,7 +654,7 @@ void GroupedConvolutionType<
   apparentHeight = (this->outputDimensions[1] - 1) * strideHeight +
       kernelHeight;
 
-  paddingBackward = PaddingType<MatType>(0, padding.OutputDimensions()[0] -
+  paddingBackward = Padding<MatType>(0, padding.OutputDimensions()[0] -
       apparentWidth, 0, padding.OutputDimensions()[1] - apparentHeight);
   paddingBackward.InputDimensions() = std::vector<size_t>({ apparentWidth,
       apparentHeight, inMaps * higherInDimensions });
@@ -664,17 +664,17 @@ void GroupedConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
 template<typename Archive>
-void GroupedConvolutionType<
+void GroupedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >::serialize(Archive& ar, const uint32_t /* version*/)
 {
   ar(cereal::base_class<Layer<MatType>>(this));
@@ -698,16 +698,16 @@ void GroupedConvolutionType<
 }
 
 template<
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
-void GroupedConvolutionType<
+void GroupedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >::InitializeSamePadding()
 {
   /*
