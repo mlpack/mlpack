@@ -545,7 +545,8 @@ size_t DAGNetwork<
     MatType
 >::WeightSize()
 {
-  UpdateDimensions("DAGNetwork::WeightSize()");
+  if (!validOutputDimensions)
+    UpdateDimensions("DAGNetwork::WeightSize()");
 
   size_t total = 0;
   for (size_t i = 0; i < network.size(); i++)
