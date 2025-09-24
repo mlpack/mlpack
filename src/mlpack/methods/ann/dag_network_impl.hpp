@@ -272,6 +272,8 @@ void DAGNetwork<
     MatType
 >::CheckGraph()
 {
+  if (graphIsSet)
+    return;
   // Check that the graph has only one input and one output
   size_t inputLayers = 0;
   size_t outputLayers = 0;
@@ -387,8 +389,10 @@ void DAGNetwork<
     MatType
 >::ComputeOutputDimensions()
 {
-  if (!graphIsSet)
-    CheckGraph();
+  if (validOutputDimensions)
+    return;
+
+  CheckGraph();
 
   // `CheckGraph` guarantees that the first layer in `sortedNetwork`
   // has no parents and that there is only one layer with no parents,
@@ -507,6 +511,7 @@ void DAGNetwork<
     }
     network[currentLayer]->ComputeOutputDimensions();
   }
+  validOutputDimensions = true;
 }
 
 template<typename OutputLayerType,
@@ -533,7 +538,6 @@ void DAGNetwork<
   }
 
   ComputeOutputDimensions();
-  validOutputDimensions = true;
 }
 
 template<typename OutputLayerType,
@@ -545,9 +549,7 @@ size_t DAGNetwork<
     MatType
 >::WeightSize()
 {
-  if (!validOutputDimensions)
-    UpdateDimensions("DAGNetwork::WeightSize()");
-
+  UpdateDimensions("DAGNetwork::WeightSize()");
   size_t total = 0;
   for (size_t i = 0; i < network.size(); i++)
     total += network[i]->WeightSize();
@@ -622,8 +624,7 @@ void DAGNetwork<
     MatType& W,
     const size_t elements)
 {
-  if (!graphIsSet)
-    CheckGraph();
+  CheckGraph();
 
   size_t offset = 0;
   const size_t totalWeightSize = elements;
@@ -704,8 +705,10 @@ void DAGNetwork<
     MatType
 >::SetLayerMemory()
 {
-  size_t totalWeightSize = WeightSize();
+  if (layerMemoryIsSet)
+    return;
 
+  size_t totalWeightSize = WeightSize();
   if (totalWeightSize != parameters.n_elem)
   {
     throw std::logic_error("DAGNetwork::SetLayerMemory(): Total layer weight "
@@ -747,11 +750,8 @@ void DAGNetwork<
         "without any layers!");
   }
 
-  if (!graphIsSet)
-    CheckGraph();
-
-  if (!validOutputDimensions)
-    UpdateDimensions(functionName, inputDimensionality);
+  CheckGraph();
+  UpdateDimensions(functionName, inputDimensionality);
 
   if (parameters.n_elem != WeightSize())
   {
@@ -759,8 +759,7 @@ void DAGNetwork<
     InitializeWeights();
   }
 
-  if (!layerMemoryIsSet)
-    SetLayerMemory();
+  SetLayerMemory();
 
   if (setMode)
     SetNetworkMode(training);
