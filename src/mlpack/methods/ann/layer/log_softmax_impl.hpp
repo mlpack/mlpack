@@ -65,23 +65,13 @@ LogSoftMax<MatType>::operator=(LogSoftMax&& other)
 template<typename MatType>
 void LogSoftMax<MatType>::Forward(const MatType& input, MatType& output)
 {
-#if defined(MLPACK_HAS_COOT)
-  if constexpr (coot::is_coot_type<MatType>::value)
-  {
-    MatType maxInput = repmat(max(input), input.n_rows, 1);
-    output = (maxInput - input);
-    output = exp(-output);
-    maxInput.each_row() += log(sum(output));
-    output = input - maxInput;
-  }
-  else
-#endif
+  if constexpr (arma::is_arma_type<MatType>::value)
   {
     MatType maxInput = repmat(max(input, 0), input.n_rows, 1);
     output = (maxInput - input);
 
-    // Approximation of the base-e exponential function. The accuracy, however, is
-    // about 0.00001 lower than using exp. Credits go to Leon Bottou.
+    // Approximation of the base-e exponential function. The accuracy, however,
+    // is about 0.00001 lower than using exp. Credits go to Leon Bottou.
     #pragma omp parallel for
     for (size_t i = 0; i < output.n_elem; ++i)
     {
@@ -124,6 +114,16 @@ void LogSoftMax<MatType>::Forward(const MatType& input, MatType& output)
     }
     output = input - maxInput;
   }
+#if defined(MLPACK_HAS_COOT)
+  else if constexpr (coot::is_coot_type<MatType>::value)
+  {
+    MatType maxInput = repmat(max(input), input.n_rows, 1);
+    output = (maxInput - input);
+    output = exp(-output);
+    maxInput.each_row() += log(sum(output));
+    output = input - maxInput;
+  }
+#endif
 }
 
 template<typename MatType>
