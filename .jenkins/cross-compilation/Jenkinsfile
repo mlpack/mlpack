@@ -8,7 +8,7 @@ arch_names = ['couscous': 'CORTEXA76',
               'chorizo':  'CORTEXA78',
               'tatertot': 'CORTEXA72',
               'megakelvin': 'POWERPCG4',
-              'laziji': 'SPARC64']
+              'laziji': 'ULTRASPARC']
 
 device_names = ['couscous': 'rpi5',
                 'tofu': 'rpi3',
