@@ -241,54 +241,6 @@ class NaiveConvolution
           output.slice(i), dW, dH, dilationW, dilationH, appending);
     }
   }
-
-  /**
-   * Perform a convolution using a 3rd order tensors as input and output and a
-   * dense matrix as filter.
-   *
-   * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the convolution.
-   * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
-   * @param dilationW The dilation factor in x direction.
-   * @param dilationH The dilation factor in y direction.x
-   * @param appending If true, it will not initialize the output. Instead,
-   *                  it will append the results to the output.
-   */
-  template<typename MatType, typename CubeType>
-  static void Convolution(
-      const CubeType& input,
-      const MatType& filter,
-      CubeType& output,
-      const size_t dW = 1,
-      const size_t dH = 1,
-      const size_t dilationW = 1,
-      const size_t dilationH = 1,
-      const bool appending = false,
-      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
-      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
-  {
-    MatType convOutput;
-    NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter,
-        convOutput, dW, dH, dilationW, dilationH, false);
-
-    if (appending)
-    {
-      output.slice(0) += convOutput;
-    }
-    else
-    {
-      output = CubeType(convOutput.n_rows, convOutput.n_cols, input.n_slices);
-      output.slice(0) = convOutput;
-    }
-
-    for (size_t i = 1; i < input.n_slices; ++i)
-    {
-      NaiveConvolution<BorderMode>::Convolution(input.slice(i), filter,
-          output.slice(i), dW, dH, dilationW, dilationH, appending);
-    }
-  }
 };  // class NaiveConvolution
 
 } // namespace mlpack
