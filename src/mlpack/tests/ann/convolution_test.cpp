@@ -145,15 +145,6 @@ TEST_CASE("ValidConvolution2DTest", "[ConvolutionTest]")
   Convolution2DMethodTest<NaiveConvolution<ValidConvolution> >(input, filter,
       output);
 
-  // Perform the convolution through fft.
-  Convolution2DMethodTest<FFTConvolution<ValidConvolution> >(input, filter,
-      output);
-
-  // Perform the convolution using singular value decomposition to
-  // speed up the computation.
-  Convolution2DMethodTest<SVDConvolution<ValidConvolution> >(input, filter,
-      output);
-
   // Perform the convolution using im2col.
   Convolution2DMethodTest<Im2ColConvolution<ValidConvolution> >(input, filter,
       output);
@@ -184,15 +175,6 @@ TEST_CASE("FullConvolution2DTest", "[ConvolutionTest]")
 
   // Perform the naive convolution approach.
   Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
-      output);
-
-  // Perform the convolution through fft.
-  Convolution2DMethodTest<FFTConvolution<FullConvolution> >(input, filter,
-      output);
-
-  // Perform the convolution using singular value decomposition to
-  // speed up the computation.
-  Convolution2DMethodTest<SVDConvolution<FullConvolution> >(input, filter,
       output);
 
   // Perform the convolution using im2col.
@@ -235,15 +217,6 @@ TEST_CASE("ValidConvolution3DTest", "[ConvolutionTest]")
 
   // Perform the naive convolution approach.
   Convolution3DMethodTest<NaiveConvolution<ValidConvolution> >(inputCube,
-      filterCube, outputCube);
-
-  // Perform the convolution through fft.
-  Convolution3DMethodTest<FFTConvolution<ValidConvolution> >(inputCube,
-      filterCube, outputCube);
-
-  // Perform the convolution using using the singular value decomposition to
-  // speed up the computation.
-  Convolution3DMethodTest<SVDConvolution<ValidConvolution> >(inputCube,
       filterCube, outputCube);
 
   // Perform the convolution using im2col.
@@ -292,15 +265,6 @@ TEST_CASE("FullConvolution3DTest", "[ConvolutionTest]")
   Convolution3DMethodTest<NaiveConvolution<FullConvolution> >(inputCube,
       filterCube, outputCube);
 
-  // Perform the convolution through fft.
-  Convolution3DMethodTest<FFTConvolution<FullConvolution> >(inputCube,
-      filterCube, outputCube);
-
-  // Perform the convolution using using the singular value decomposition to
-  // speed up the computation.
-  Convolution3DMethodTest<SVDConvolution<FullConvolution> >(inputCube,
-      filterCube, outputCube);
-
   // Perform the convolution using im2col.
   Convolution3DMethodTest<Im2ColConvolution<FullConvolution> >(inputCube,
       filterCube, outputCube);
@@ -336,15 +300,6 @@ TEST_CASE("ValidConvolutionBatchTest", "[ConvolutionTest]")
 
   // Perform the naive convolution approach.
   ConvolutionMethodBatchTest<NaiveConvolution<ValidConvolution> >(input,
-      filterCube, outputCube);
-
-  // Perform the convolution through fft.
-  ConvolutionMethodBatchTest<FFTConvolution<ValidConvolution> >(input,
-      filterCube, outputCube);
-
-  // Perform the convolution using using the singular value decomposition to
-  // speed up the computation.
-  ConvolutionMethodBatchTest<SVDConvolution<ValidConvolution> >(input,
       filterCube, outputCube);
 
   // Perform the convolution using im2col.
@@ -386,15 +341,6 @@ TEST_CASE("FullConvolutionBatchTest", "[ConvolutionTest]")
 
   // Perform the naive convolution approach.
   ConvolutionMethodBatchTest<NaiveConvolution<FullConvolution> >(input,
-      filterCube, outputCube);
-
-  // Perform the convolution through fft.
-  ConvolutionMethodBatchTest<FFTConvolution<FullConvolution> >(input,
-      filterCube, outputCube);
-
-  // Perform the convolution using using the singular value decomposition to
-  // speed up the computation.
-  ConvolutionMethodBatchTest<SVDConvolution<FullConvolution> >(input,
       filterCube, outputCube);
 
   // Perform the convolution using im2col.
