@@ -18,6 +18,7 @@
 #define MLPACK_CORE_UTIL_USING_HPP
 
 #include "arma_traits.hpp"
+#include "coot_traits.hpp"
 
 namespace mlpack {
 

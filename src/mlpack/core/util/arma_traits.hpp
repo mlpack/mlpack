@@ -239,16 +239,6 @@ struct GetCubeType<arma::Mat<eT>>
   using type = arma::Cube<eT>;
 };
 
-#if defined(MLPACK_HAS_COOT)
-
-template<typename eT>
-struct GetCubeType<coot::Mat<eT>>
-{
-  using type = coot::Cube<eT>;
-};
-
-#endif
-
 // Get the sparse matrix type corresponding to a given MatType.
 
 template<typename MatType>
@@ -371,26 +361,5 @@ struct IsSparse
 {
   constexpr static bool value = arma::is_arma_sparse_type<T>::value;
 };
-
-#if defined(MLPACK_HAS_COOT)
-
-// Get whether or not the given type is any Bandicoot type
-// This includes dense and cube types
-template<typename T>
-struct IsCoot
-{
-  constexpr static bool value = coot::is_coot_type<T>::value ||
-                                coot::is_coot_cube_type<T>::value;
-};
-
-#else
-
-template<typename T>
-struct IsCoot
-{
-  constexpr static bool value = false;
-};
-
-#endif
 
 #endif
