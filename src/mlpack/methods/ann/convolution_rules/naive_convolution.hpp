@@ -13,14 +13,13 @@
 #ifndef MLPACK_METHODS_ANN_CONVOLUTION_RULES_NAIVE_CONVOLUTION_HPP
 #define MLPACK_METHODS_ANN_CONVOLUTION_RULES_NAIVE_CONVOLUTION_HPP
 
-#include <mlpack/prereqs.hpp>
-#include "border_modes.hpp"
+#include "base_convolution.hpp"
 
 namespace mlpack {
 
 /**
  * Computes the two-dimensional convolution. This class allows specification of
- * the type of the border type. The convolution can be compute with the valid
+ * the type of the border type. The convolution can be computed with the valid
  * border type of the full border type (default).
  *
  * FullConvolution: returns the full two-dimensional convolution.
@@ -31,7 +30,7 @@ namespace mlpack {
  * ValidConvolution).
  */
 template<typename BorderMode = FullConvolution>
-class NaiveConvolution
+class NaiveConvolution : public BaseConvolution<BorderMode>
 {
  public:
   /**

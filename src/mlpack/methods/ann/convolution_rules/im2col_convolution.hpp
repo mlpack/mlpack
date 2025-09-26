@@ -13,14 +13,13 @@
 #ifndef MLPACK_METHODS_ANN_CONVOLUTION_RULES_IM2COL_CONVOLUTION_HPP
 #define MLPACK_METHODS_ANN_CONVOLUTION_RULES_IM2COL_CONVOLUTION_HPP
 
-#include <mlpack/prereqs.hpp>
-#include "border_modes.hpp"
+#include "base_convolution.hpp"
 
 namespace mlpack {
 
 /**
  * Computes the two-dimensional convolution. This class allows specification of
- * the type of the border type. The convolution can be compute with the valid
+ * the type of the border type. The convolution can be computed with the valid
  * border type of the full border type (default).
  *
  * FullConvolution: returns the full two-dimensional convolution.
@@ -31,7 +30,7 @@ namespace mlpack {
  * ValidConvolution).
  */
 template<typename BorderMode = FullConvolution>
-class Im2ColConvolution
+class Im2ColConvolution : public BaseConvolution<BorderMode>
 {
  public:
   /**
@@ -67,13 +66,14 @@ class Im2ColConvolution
     using MatType = typename GetDenseMatType<CubeType>::type;
 
     CubeType inputPadded;
-    PadInput(input, filter, inputPadded, dilationW, dilationH);
+    Im2ColConvolution::PadInput(input, filter, inputPadded, dilationW,
+        dilationH);
 
     const size_t inMaps = input.n_slices;
     const size_t outMaps = filter.n_slices / inMaps;
 
     if (!appending)
-      ComputeOutputSize(inputPadded, filter, output, dW, dH,
+      Im2ColConvolution::ComputeOutputSize(inputPadded, filter, output, dW, dH,
           dilationW, dilationH, outMaps);
 
     MatType im2row(output.n_rows * output.n_cols, filter.n_rows *
@@ -129,10 +129,11 @@ class Im2ColConvolution
       const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     MatType inputPadded;
-    PadInput(input, filter, inputPadded, dilationW, dilationH);
+    Im2ColConvolution::PadInput(input, filter, inputPadded, dilationW,
+        dilationH);
 
     if (!appending)
-      ComputeOutputSize(inputPadded, filter, output, dW, dH,
+      Im2ColConvolution::ComputeOutputSize(inputPadded, filter, output, dW, dH,
           dilationW, dilationH, filter.n_slices);
 
     MatType im2row(output.n_rows * output.n_cols, filter.n_rows *
@@ -197,164 +198,6 @@ class Im2ColConvolution
         }
       }
     }
-  }
-
-  /**
-   * Apply padding to an input matrix.
-   *
-   * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the convolution.
-   * @param inputPadded Input with padding applied.
-   */
-  template<typename InMatType, typename FilType,
-      typename Border = BorderMode>
-  static void
-  PadInput(const InMatType& input,
-           const FilType& filter,
-           InMatType& inputPadded,
-           const size_t dilationW,
-           const size_t dilationH,
-           const typename std::enable_if_t<IsMatrix<InMatType>::value>* = 0)
-  {
-    if (std::is_same_v<Border, ValidConvolution>)
-    {
-      // Use valid padding (none).
-      MakeAlias(inputPadded, input, input.n_rows, input.n_cols);
-    }
-    else
-    {
-      // Use full padding
-
-      // First, compute the necessary padding for the full convolution.  It is
-      // possible that this might be an overestimate.  Note that these variables
-      // only hold the padding on one side of the input.
-      const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
-      const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
-      const size_t paddingRows = filterRows - 1;
-      const size_t paddingCols = filterCols - 1;
-
-      // Pad filter and input to the working output shape.
-      inputPadded = InMatType(input.n_rows + 2 * paddingRows,
-          input.n_cols + 2 * paddingCols);
-      inputPadded.submat(paddingRows, paddingCols,
-          paddingRows + input.n_rows - 1,
-          paddingCols + input.n_cols - 1) = input;
-    }
-  }
-
-  /**
-   * Apply padding to an input cube.
-   *
-   * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the convolution.
-   * @param inputPadded Input with padding applied.
-   */
-  template<typename InCubeType, typename FilType,
-      typename Border = BorderMode>
-  static void
-  PadInput(const InCubeType& input,
-           const FilType& filter,
-           InCubeType& inputPadded,
-           const size_t dilationW,
-           const size_t dilationH,
-           const typename std::enable_if_t<IsCube<InCubeType>::value>* = 0)
-  {
-    if (std::is_same_v<Border, ValidConvolution>)
-    {
-      // Use valid padding (none).
-      MakeAlias(inputPadded, input, input.n_rows, input.n_cols, input.n_slices);
-    }
-    else
-    {
-      // Use full padding
-
-      // First, compute the necessary padding for the full convolution.  It is
-      // possible that this might be an overestimate.  Note that these variables
-      // only hold the padding on one side of the input.
-      const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
-      const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
-      const size_t paddingRows = filterRows - 1;
-      const size_t paddingCols = filterCols - 1;
-
-      // Pad filter and input to the working output shape.
-      inputPadded = InCubeType(input.n_rows + 2 * paddingRows,
-          input.n_cols + 2 * paddingCols, input.n_slices);
-      inputPadded.subcube(paddingRows, paddingCols, 0,
-          paddingRows + input.n_rows - 1, paddingCols + input.n_cols - 1,
-          input.n_slices - 1) = input;
-    }
-  }
-
-  /**
-   * Set the size of the output matrix.
-   *
-   * @param inputPadded Input with padding applied.
-   * @param filter Filter used to perform the convolution.
-   * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
-   * @param dilationW The dilation factor in x direction.
-   * @param dilationH The dilation factor in y direction.
-   * @param outSlices The number of slices in the output cube.
-   */
-  template<typename InMatType, typename FilType, typename OutMatType>
-  static void
-  ComputeOutputSize(const InMatType& inputPadded,
-                    const FilType& filter,
-                    OutMatType& output,
-                    const size_t dW = 1,
-                    const size_t dH = 1,
-                    const size_t dilationW = 1,
-                    const size_t dilationH = 1,
-                    const size_t /* outSlices */ = 1,
-                    const typename std::enable_if_t<
-                        IsMatrix<OutMatType>::value>* = 0)
-  {
-    // Compute the output size.  The filterRows and filterCols computation must
-    // take into account the fact that dilation only adds rows or columns
-    // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
-    // 3x3 means an effective kernel size of 5x5, *not* 6x6.
-    const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
-    const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
-    const size_t outputRows = (inputPadded.n_rows - filterRows + dH) / dH;
-    const size_t outputCols = (inputPadded.n_cols - filterCols + dW) / dW;
-    output.zeros(outputRows, outputCols);
-  }
-
-  /**
-   * Set the size of the output cube.
-   *
-   * @param inputPadded Input with padding applied.
-   * @param filter Filter used to perform the convolution.
-   * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
-   * @param dilationW The dilation factor in x direction.
-   * @param dilationH The dilation factor in y direction.
-   * @param outSlices The number of slices in the output cube.
-   */
-  template<typename InMatType, typename FilType, typename OutCubeType>
-  static void
-  ComputeOutputSize(const InMatType& inputPadded,
-                    const FilType& filter,
-                    OutCubeType& output,
-                    const size_t dW = 1,
-                    const size_t dH = 1,
-                    const size_t dilationW = 1,
-                    const size_t dilationH = 1,
-                    const size_t outSlices = 1,
-                    const typename std::enable_if_t<
-                        IsCube<OutCubeType>::value>* = 0)
-  {
-    // Compute the output size.  The filterRows and filterCols computation must
-    // take into account the fact that dilation only adds rows or columns
-    // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
-    // 3x3 means an effective kernel size of 5x5, *not* 6x6.
-    const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
-    const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
-    const size_t outputRows = (inputPadded.n_rows - filterRows + dH) / dH;
-    const size_t outputCols = (inputPadded.n_cols - filterCols + dW) / dW;
-    output.zeros(outputRows, outputCols, outSlices);
   }
 };  // class Im2ColConvolution
 

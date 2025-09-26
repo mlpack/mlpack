@@ -263,22 +263,6 @@ struct GetSparseMatType<arma::SpMat<eT>>
   using type = arma::SpMat<eT>;
 };
 
-// Get the complex matrix type corresponding to a given MatType.
-
-template<typename MatType>
-struct GetComplexMatType
-{
-  using type = arma::Mat<std::complex<typename MatType::elem_type>>;
-};
-
-// Get the complex cube type corresponding to a given CubeType.
-
-template<typename CubeType>
-struct GetComplexCubeType
-{
-  using type = arma::Cube<std::complex<typename CubeType::elem_type>>;
-};
-
 // Get whether or not the given type is a base matrix type (e.g. not an
 // expression).
 
