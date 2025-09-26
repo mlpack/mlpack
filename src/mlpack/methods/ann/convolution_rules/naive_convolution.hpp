@@ -73,7 +73,7 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
     const size_t outMaps = filter.n_slices / inMaps;
 
     if (!appending)
-      NaiveConvolution::ComputeOutputSize(inputPadded, filter, output, dW, dH,
+      NaiveConvolution::InitalizeOutput(inputPadded, filter, output, dW, dH,
           dilationW, dilationH, outMaps);
 
     for (size_t i = 0; i < inMaps; i++)
@@ -119,7 +119,7 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
         dilationH);
 
     if (!appending)
-      NaiveConvolution::ComputeOutputSize(inputPadded, filter, output, dW, dH,
+      NaiveConvolution::InitalizeOutput(inputPadded, filter, output, dW, dH,
           dilationW, dilationH, filter.n_slices);
 
     for (size_t s = 0; s < filter.n_slices; s++)

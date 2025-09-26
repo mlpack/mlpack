@@ -119,7 +119,7 @@ class BaseConvolution
   }
 
   /**
-   * Set the size of the output matrix.
+   * Initalize the output to the required size.
    *
    * @param inputPadded Input with padding applied.
    * @param filter Filter used to perform the convolution.
@@ -132,16 +132,16 @@ class BaseConvolution
    */
   template<typename InMatType, typename FilType, typename OutMatType>
   static void
-  ComputeOutputSize(const InMatType& inputPadded,
-                    const FilType& filter,
-                    OutMatType& output,
-                    const size_t dW = 1,
-                    const size_t dH = 1,
-                    const size_t dilationW = 1,
-                    const size_t dilationH = 1,
-                    const size_t /* outSlices */ = 1,
-                    const typename std::enable_if_t<
-                        IsMatrix<OutMatType>::value>* = 0)
+  InitalizeOutput(const InMatType& inputPadded,
+                  const FilType& filter,
+                  OutMatType& output,
+                  const size_t dW = 1,
+                  const size_t dH = 1,
+                  const size_t dilationW = 1,
+                  const size_t dilationH = 1,
+                  const size_t /* outSlices */ = 1,
+                  const typename std::enable_if_t<
+                      IsMatrix<OutMatType>::value>* = 0)
   {
     // Compute the output size.  The filterRows and filterCols computation must
     // take into account the fact that dilation only adds rows or columns
@@ -155,7 +155,7 @@ class BaseConvolution
   }
 
   /**
-   * Set the size of the output cube.
+   * Initalize the output to the required size.
    *
    * @param inputPadded Input with padding applied.
    * @param filter Filter used to perform the convolution.
@@ -168,16 +168,16 @@ class BaseConvolution
    */
   template<typename InMatType, typename FilType, typename OutCubeType>
   static void
-  ComputeOutputSize(const InMatType& inputPadded,
-                    const FilType& filter,
-                    OutCubeType& output,
-                    const size_t dW = 1,
-                    const size_t dH = 1,
-                    const size_t dilationW = 1,
-                    const size_t dilationH = 1,
-                    const size_t outSlices = 1,
-                    const typename std::enable_if_t<
-                        IsCube<OutCubeType>::value>* = 0)
+  InitalizeOutput(const InMatType& inputPadded,
+                  const FilType& filter,
+                  OutCubeType& output,
+                  const size_t dW = 1,
+                  const size_t dH = 1,
+                  const size_t dilationW = 1,
+                  const size_t dilationH = 1,
+                  const size_t outSlices = 1,
+                  const typename std::enable_if_t<
+                      IsCube<OutCubeType>::value>* = 0)
   {
     // Compute the output size.  The filterRows and filterCols computation must
     // take into account the fact that dilation only adds rows or columns

@@ -73,7 +73,7 @@ class Im2ColConvolution : public BaseConvolution<BorderMode>
     const size_t outMaps = filter.n_slices / inMaps;
 
     if (!appending)
-      Im2ColConvolution::ComputeOutputSize(inputPadded, filter, output, dW, dH,
+      Im2ColConvolution::InitalizeOutput(inputPadded, filter, output, dW, dH,
           dilationW, dilationH, outMaps);
 
     MatType im2row(output.n_rows * output.n_cols, filter.n_rows *
@@ -133,7 +133,7 @@ class Im2ColConvolution : public BaseConvolution<BorderMode>
         dilationH);
 
     if (!appending)
-      Im2ColConvolution::ComputeOutputSize(inputPadded, filter, output, dW, dH,
+      Im2ColConvolution::InitalizeOutput(inputPadded, filter, output, dW, dH,
           dilationW, dilationH, filter.n_slices);
 
     MatType im2row(output.n_rows * output.n_cols, filter.n_rows *
