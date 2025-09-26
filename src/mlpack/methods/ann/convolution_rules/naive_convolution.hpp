@@ -38,8 +38,8 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
    * `input.n_slices * output.n_slices` slices. The Nth `input.n_slices` filters
    * are applied to all input slices and output to the Nth output slice.
    * eg. 2 input slices: filter 0 applies to input 0, output 0,
-   * fil 1 -> in 1, out 0, fil 2 -> in 0, out 1, fil 3 -> in 1, out 1,
-   * fil 4 -> in 0, out 2, fil 5 -> in 1, out 2, etc.
+   * fil 1 * in 1 = out 0, fil 2 * in 0 = out 1, fil 3 * in 1 = out 1,
+   * fil 4 * in 0 = out 2, fil 5 * in 1 = out 2, etc.
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the convolution.
@@ -81,7 +81,7 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
       MatType& inputSlice = inputPadded.slice(i);
       for (size_t j = 0; j < outMaps; j++)
       {
-        Conv2(inputSlice, filter.slice(i * inMaps + j), output.slice(j),
+        Conv2(inputSlice, filter.slice(j * inMaps + i), output.slice(j),
             dW, dH, dilationW, dilationH);
       }
     }
@@ -124,7 +124,7 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
 
     for (size_t s = 0; s < filter.n_slices; s++)
     {
-      Conv2(input, filter.slice(s), output.slice(s), dW, dH,
+      Conv2(inputPadded, filter.slice(s), output.slice(s), dW, dH,
           dilationW, dilationH);
     }
   }

@@ -38,8 +38,8 @@ class Im2ColConvolution : public BaseConvolution<BorderMode>
    * `input.n_slices * output.n_slices` slices. The Nth `input.n_slices` filters
    * are applied to all input slices and output to the Nth output slice.
    * eg. 2 input slices: filter 0 applies to input 0, output 0,
-   * fil 1 -> in 1, out 0, fil 2 -> in 0, out 1, fil 3 -> in 1, out 1,
-   * fil 4 -> in 0, out 2, fil 5 -> in 1, out 2, etc.
+   * fil 1 * in 1 = out 0, fil 2 * in 0 = out 1, fil 3 * in 1 = out 1,
+   * fil 4 * in 0 = out 2, fil 5 * in 1 = out 2, etc.
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the convolution.
