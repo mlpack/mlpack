@@ -154,7 +154,7 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
     // It seems to be about 3.5 times faster to use pointers instead of
     // filter(ki, kj) * input(leftInput + ki, topInput + kj) and output(i, j).
     eT* outputPtr = output.memptr();
-    
+
     for (size_t j = 0; j < output.n_cols; ++j)
     {
       for (size_t i = 0; i < output.n_rows; ++i, outputPtr++)
