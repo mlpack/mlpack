@@ -69,14 +69,10 @@ bool Load(const std::string& filename,
 
   if (!ifs.is_open())
   {
-    if (fatal)
-      Log::Fatal << "Unable to open file '" << filename << "' to load object '"
-          << name << "'." << std::endl;
-    else
-      Log::Warn << "Unable to open file '" << filename << "' to load object '"
-          << name << "'." << std::endl;
-
-    return false;
+    std::stringstream oss;
+    oss << "Unable to open file '" << filename << "' to load object '"
+        << name << "'.";
+    return HandleError(oss, fatal);
   }
   try
   {
