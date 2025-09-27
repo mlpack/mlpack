@@ -16,17 +16,24 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/tree/hrectbound.hpp>
 #include <mlpack/core/distances/lmetric.hpp>
-#include <type_traits>
-
-#include "tsne_methods.hpp"
 
 namespace mlpack
 {
 
-template <typename TSNEStrategy, typename MatType = arma::mat>
+/**
+ * Traversal Rules class for Approximating t-SNE Gradient (Repulsive Term).
+ * This class can be used by both Single and Dual Tree Traversers.
+ *
+ * @tparam IsDualTraversal Indicates whether the traversal is dual (true) or
+           single (false). Allows both barnes-hut and dual-tree approximations
+           to be handled in one class.
+ * @tparam MatType The type of Matrix.
+ */
+template <bool IsDualTraversal, typename MatType = arma::mat>
 class TSNEApproxRules
 {
  public:
+  // Convenience typedefs.
   using VecType = typename GetColType<MatType>::type;
   using DistanceType = SquaredEuclideanDistance;
   using HRectBoundType = HRectBound<DistanceType>;
@@ -59,7 +66,7 @@ class TSNEApproxRules
       sumQ += q;
       negF.col(oldFromNew[queryIndex]) += q * q *
                                           (queryPoint - referencePoint);
-      if constexpr (std::is_same_v<TSNEStrategy, DualTreeTSNE>)
+      if constexpr (IsDualTraversal)
         negF.col(oldFromNew[referenceIndex]) += q * q *
                                                 (referencePoint - queryPoint);
     }

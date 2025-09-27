@@ -19,64 +19,57 @@
 #include <mlpack/methods/neighbor_search.hpp>
 
 #include "../tsne_utils.hpp"
-#include "../tsne_methods.hpp"
 #include "../tsne_approx_rules.hpp"
 #include "../centroid_statistic.hpp"
 
 namespace mlpack
 {
 
-template <typename TSNEStrategy, typename MatType = arma::mat>
+template <bool UseDualTree, typename MatType = arma::mat>
 class TSNEApproxFunction
 {
  public:
-  // To Do
+  // Convenience typedefs.
   using DistanceType = SquaredEuclideanDistance;
   using TreeType = Octree<DistanceType, CentroidStatistic>;
 
   TSNEApproxFunction(const MatType& X,
                      const double perplexity,
                      const double theta = 0.5)
-      : theta(theta)
+      : perplexity(perplexity), theta(theta)
   {
+    degrees_of_freedom = std::max<size_t>(X.n_rows - 1, 1);
+
     // Run KNN
     NeighborSearch<NearestNeighborSort, DistanceType> knn(X);
     const size_t neighbors = static_cast<size_t>(3 * perplexity);
     knn.Search(neighbors, N, D);
 
-    // Pre Compute P (P_ij's)
+    // Pre Compute P
     P = binarySearchPerplexity(perplexity, N, D);
     P = P + P.t();
     P /= std::max(arma::datum::eps, arma::accu(P));
   }
 
-  //   double Evaluate(const MatType& y);
-
-  //   double Evaluate(const MatType& y, const size_t i, const size_t
-  //   batchSize);
-
-  //   void Gradient(const MatType& y, MatType& gradient);
-
-  //   template <typename GradType>
-  //   void Gradient(const MatType& y,
-  //                 const size_t i,
-  //                 GradType& g,
-  //                 const size_t batchSize);
-
-  //   double EvaluateWithGradient(const MatType& y, MatType& g);
-
+  /**
+   * EvaluateWithGradient for differentiable function optimizers
+   * Evaluates the Kullback–Leibler (KL) divergence between input
+   * and the embedding and updates gradients.
+   *
+   * @param y Current embedding
+   * @param g Variable to store the new gradient
+   */
   template <typename GradType>
-  double EvaluateWithGradient(const MatType& y,
-                              const size_t /* i */,
-                              GradType& g,
-                              const size_t /* batchSize */)
+  double EvaluateWithGradient(const MatType& y, GradType& g)
   {
+    // Init
     double sumQ = 0.0, error = 0.0;
     std::vector<size_t> oldFromNew;
     TreeType tree(y, oldFromNew, 1);
-    TSNEApproxRules<TSNEStrategy> rule(sumQ, g, y, oldFromNew, theta);
+    TSNEApproxRules<UseDualTree> rule(sumQ, g, y, oldFromNew, theta);
 
-    if constexpr (std::is_same_v<TSNEStrategy, DualTreeTSNE>)
+    // Negative Force Calculation
+    if constexpr (UseDualTree)
     {
       TreeType::DualTreeTraverser traverser(rule);
       traverser.Traverse(tree, tree);
@@ -87,13 +80,14 @@ class TSNEApproxFunction
       for (size_t i = 0; i < y.n_cols; i++)
         traverser.Traverse(i, tree);
     }
-    g = -g / sumQ;
+    g /= -sumQ;
 
+    // Positive Force Calculation
     for (size_t i = 0; i < y.n_cols; i++)
     {
       for (size_t j = 0; j < N.n_rows; j++)
       {
-        size_t idx = N(j, i);
+        const size_t idx = N(j, i);
         const double distanceSq = DistanceType::Evaluate(y.col(i), y.col(idx));
 
         const double q = 1.0 / (1.0 + distanceSq);
@@ -103,22 +97,34 @@ class TSNEApproxFunction
       }
     }
 
-    g *= 4;
+    g *= 2.0 * (degrees_of_freedom + 1.0) / degrees_of_freedom;
+
     return error;
   }
 
-  void Shuffle() {}
-
-  size_t NumFunctions() { return P.n_cols; }
-
+  //! Get the Input Joint Probabilities.
   const arma::sp_mat& InputJointProbabilities() const { return P; }
+  //! Modify the Input Joint Probabilities.
   arma::sp_mat& InputJointProbabilities() { return P; }
 
  private:
+  //! Degrees of freedom
+  size_t degrees_of_freedom;
+
+  //! Input joint probabilities
   arma::sp_mat P;
-  MatType D;
+
+  //! Nearest neighbor indexes
   arma::Mat<size_t> N;
-  const double theta;
+
+  //! Nearest neibhbor distances
+  MatType D;
+
+  //! The perplexity of the Gaussian distribution.
+  double perplexity;
+
+  //! The coarseness of the approximation.
+  double theta;
 };
 
 } // namespace mlpack

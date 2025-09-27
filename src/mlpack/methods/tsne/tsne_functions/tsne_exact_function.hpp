@@ -25,69 +25,77 @@ template <typename MatType = arma::mat>
 class TSNEExactFunction
 {
  public:
+  // Convenience typedefs.
+  using VecType = typename GetColType<MatType>::type;
   using DistanceType = SquaredEuclideanDistance;
 
   TSNEExactFunction(const MatType& X, const double perplexity)
   {
-    // Pre Compute P (P_ij's)
+    degrees_of_freedom = std::max<size_t>(X.n_rows - 1, 1);
+
+    // Pre Compute P
     P = binarySearchPerplexity(perplexity,
                                PairwiseDistances(X, DistanceType()));
-
     P = P + P.t();
     P /= std::max(arma::datum::eps, arma::accu(P));
   }
 
-  //   double Evaluate(const MatType& y);
-
-  //   double Evaluate(const MatType& y, const size_t i, const size_t
-  //   batchSize);
-
-  //   void Gradient(const MatType& y, MatType& gradient);
-
-  //   template <typename GradType>
-  //   void Gradient(const MatType& y,
-  //                 const size_t i,
-  //                 GradType& g,
-  //                 const size_t batchSize);
-
-  //   double EvaluateWithGradient(const MatType& y, MatType& g);
-
+  /**
+   * EvaluateWithGradient for differentiable function optimizers
+   * Evaluates the Kullback–Leibler (KL) divergence between input
+   * and the embedding and updates gradients.
+   *
+   * @param y Current embedding
+   * @param g Variable to store the new gradient
+   */
   template <typename GradType>
-  double EvaluateWithGradient(const MatType& y,
-                              const size_t /* i */,
-                              GradType& g,
-                              const size_t /* batchSize */)
+  double EvaluateWithGradient(const MatType& y, GradType& g)
   {
     q = PairwiseDistances(y, DistanceType());
-    q = 1.0 / (1.0 + q);
-    q.diag().zeros();
+    q /= degrees_of_freedom;
+    q += 1.0;
+    q = arma::pow(q, -(degrees_of_freedom + 1.0) / 2.0);
 
-    Q = q / std::max(arma::datum::eps, arma::accu(q));
-    Q.elem(arma::find(Q < arma::datum::eps)).fill(arma::datum::eps);
+    Q = q / (2.0 * arma::accu(q));
+    Q.clamp(arma::datum::eps, arma::datum::inf);
 
     M = (P - Q) % q;
-    arma::vec S = arma::sum(M, 1);
-    g = 4.0 * (y * arma::diagmat(S) - y * M);
+    S = arma::sum(M, 1);
 
-    arma::uvec nz = arma::find(P > 0.0);
-    const double kl = arma::accu(P.elem(nz) %
-                                 arma::log(P.elem(nz) / Q.elem(nz)));
-    return kl;
+    g = y;
+    g.each_row() %= S.t();
+    g -= y * M;
+    g *= 2.0 * (degrees_of_freedom + 1.0) / degrees_of_freedom;
+
+    return 2.0 * arma::accu(P %
+        arma::log(arma::clamp(P, arma::datum::eps, arma::datum::inf) / Q));
   }
 
-  void Shuffle() { /* Nothing To Do Here */ }
-
-  size_t NumFunctions() { return P.n_cols; }
-
+  //! Get the input joint probabilities.
   const MatType& InputJointProbabilities() const { return P; }
+  //! Modify the input joint probabilities.
   MatType& InputJointProbabilities() { return P; }
 
  private:
+  //! Degrees of Freedom
+  size_t degrees_of_freedom;
+
+  //! Input joint probabilities
   MatType P;
-  MatType q, Q, M;
+
+  //! Output joint probabilities (Normalized)
+  MatType Q;
+
+  //! Output joint probabilities (Unnormalized)
+  MatType q;
+
+  //! Intermediate matrix used in gradient computation
+  MatType M;
+
+  //! Intermediate vector used in gradient computation
+  VecType S;
 };
 
 } // namespace mlpack
-
 
 #endif // MLPACK_METHODS_TSNE_TSNE_FUNCTIONS_TSNE_EXACT_FUNCTION_HPP

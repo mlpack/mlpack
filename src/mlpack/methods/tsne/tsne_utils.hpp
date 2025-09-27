@@ -18,9 +18,10 @@
 namespace mlpack
 {
 
-arma::sp_mat binarySearchPerplexity(const double perplexity,
-                                    const arma::Mat<size_t>& N,
-                                    const arma::mat& D)
+template <typename eT>
+arma::SpMat<eT> binarySearchPerplexity(const double perplexity,
+                                       const arma::Mat<size_t>& N,
+                                       const arma::Mat<eT>& D)
 {
   const size_t maxSteps = 100;
   const double tolerance = 1e-5;
@@ -29,10 +30,11 @@ arma::sp_mat binarySearchPerplexity(const double perplexity,
   const size_t k = D.n_rows;
   const double hDesired = std::log(perplexity);
 
-  arma::sp_mat P(n, n);
-  arma::vec beta(n, arma::fill::ones);
+  arma::SpMat<eT> P(n, n);
+  arma::Col<eT> beta(n, arma::fill::ones);
 
-  arma::vec Di;
+  arma::Col<eT> Di;
+  arma::SpCol<eT> Pi(n);
   for (size_t i = 0; i < n; i++)
   {
     double betamin = -arma::datum::inf;
@@ -44,7 +46,7 @@ arma::sp_mat binarySearchPerplexity(const double perplexity,
                 << std::min(n, i + 1000) << std::endl;
 
     Di = D.col(i);
-    arma::sp_vec Pi(n);
+    Pi.zeros();
 
     size_t step = 0;
     while (step < maxSteps)
@@ -95,17 +97,20 @@ arma::sp_mat binarySearchPerplexity(const double perplexity,
   return P;
 }
 
-arma::mat binarySearchPerplexity(const double perplexity, const arma::mat& D)
+
+template <typename eT>
+arma::Mat<eT> binarySearchPerplexity(const double perplexity,
+                                     const arma::Mat<eT>& D)
 {
   const size_t maxSteps = 50;
   const double tolerance = 1e-5;
 
   size_t n = D.n_cols;
   double H = std::log(perplexity);
-  arma::vec beta(n, arma::fill::ones);
-  arma::mat P(n, n, arma::fill::zeros);
+  arma::Col<eT> beta(n, arma::fill::ones);
+  arma::Mat<eT> P(n, n, arma::fill::zeros);
 
-  arma::vec Di, Pi;
+  arma::Col<eT> Di, Pi;
   double betamin, betamax;
   double sumP, Happrox, Hdiff;
   for (size_t i = 0; i < n; i++)

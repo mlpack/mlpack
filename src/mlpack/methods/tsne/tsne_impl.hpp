@@ -12,16 +12,13 @@
 #ifndef MLPACK_METHODS_TSNE_TSNE_IMPL_HPP
 #define MLPACK_METHODS_TSNE_TSNE_IMPL_HPP
 
-#include <ensmallen.hpp>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/pca.hpp>
 
 #include "tsne.hpp"
-#include "tsne_optimizer.hpp"
 #include "tsne_functions/tsne_function.hpp"
 
-namespace mlpack
-{
+namespace mlpack {
 
 template <typename TSNEStrategy>
 TSNE<TSNEStrategy>::TSNE(const size_t outputDim,
@@ -60,33 +57,31 @@ void TSNE<TSNEStrategy>::Embed(const MatType& X, MatType& Y)
   TSNEFunction<TSNEStrategy> function(X, perplexity);
 
   // Call The Optimizer On The Objective Function
-  const size_t exploratoryIter = std::min<size_t>(250, maxIter);
-  const size_t convergenceIter = std::max<size_t>(0,
-                                                  maxIter - exploratoryIter);
+  const size_t exploratoryIters = std::min<size_t>(250, maxIter);
+  const size_t convergenceIters = std::max<size_t>(0,
+                                                  maxIter - exploratoryIters);
 
-  TSNEOptimizer exploratoryOptimizer(learningRate,
-                                     X.n_cols,
-                                     exploratoryIter * X.n_cols,
+  // Exploratory Phase
+  ens::DeltaBarDelta exploratoryOptimizer(learningRate,
+                                     exploratoryIters,
                                      1e-5,
-                                     false,
-                                     DeltaBarDeltaUpdate(0.2, 0.8, 0.5, 0.01));
+                                     ens::DeltaBarDeltaUpdate(0.2, 0.8, 0.5, 0.01));
   Log::Info << "Starting Exploratory Phase of t-SNE Optimization."
             << std::endl;
   function.InputJointProbabilities() *= exaggeration;
-  exploratoryOptimizer.Optimize(function, Y, ens::ProgressBar());
+  exploratoryOptimizer.Optimize(function, Y, ens::PrintLoss());
   function.InputJointProbabilities() /= exaggeration;
   Log::Info << "Completed Exploratory Phase of t-SNE Optimization."
             << std::endl;
 
-  TSNEOptimizer convergenceOptimizer(learningRate,
-                                     X.n_cols,
-                                     convergenceIter * X.n_cols,
+  // Convergence Phase
+  ens::DeltaBarDelta convergenceOptimizer(learningRate,
+                                     convergenceIters,
                                      1e-5,
-                                     false,
-                                     DeltaBarDeltaUpdate(0.2, 0.8, 0.8, 0.01));
+                                     ens::DeltaBarDeltaUpdate(0.2, 0.8, 0.8, 0.01));
   Log::Info << "Starting Convergence Phase of t-SNE Optimization."
             << std::endl;
-  convergenceOptimizer.Optimize(function, Y, ens::ProgressBar());
+  convergenceOptimizer.Optimize(function, Y, ens::PrintLoss());
   Log::Info << "Completed Convergence Phase of t-SNE Optimization."
             << std::endl;
 }

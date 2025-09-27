@@ -22,7 +22,7 @@ namespace mlpack
 template <typename TSNEStrategy>
 class TSNEFunctionTraits
 {
-  using type = TSNEApproxFunction<BarnesHutTSNE>;
+  using type = TSNEApproxFunction<false>;
 };
 
 template <>
@@ -36,14 +36,14 @@ template <>
 class TSNEFunctionTraits<DualTreeTSNE>
 {
  public:
-  using type = TSNEApproxFunction<DualTreeTSNE>;
+  using type = TSNEApproxFunction<true>;
 };
 
 template <>
 class TSNEFunctionTraits<BarnesHutTSNE>
 {
  public:
-  using type = TSNEApproxFunction<BarnesHutTSNE>;
+  using type = TSNEApproxFunction<false>;
 };
 
 // Convenience alias:
