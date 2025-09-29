@@ -30,10 +30,11 @@ relevant options for each case. Currently mlpack supports the following:
 1. `data::DataOptions`: provide settings if load is fatal or not, and allow
    specify the Format of the File we are trying to load.
 2. `data::MatrixOptions` provide settings to transpose matrix when loading /
-   saving
-2. `data::TextOptions`: provide settings related to time series data.
+   saving. Inherits directly `DataOptions`
+2. `data::TextOptions`: provide settings related to time series data. Inherits
+   directly `MatrixOptions`
 3. `data::ImageOptions`: provide setttings when loading images. (e,g., Height,
-   Width, etc)
+   Width, etc). Inherits directly `DataOptions`
 
 The settings related to these classes are simplfied to easy interaction. This
 is done by using the `+` operator between these settings when loading /
@@ -198,26 +199,53 @@ does the dataset has headers. The supported options are as following:
 Numeric data or general numeric matrices can be loaded or saved with the
 following functions.
 
- - `data::Load(filename, matrix, fatal=false, transpose=true, format=FileType::AutoDetect)`
- - `data::Save(filename, matrix, fatal=false, transpose=true, format=FileType::AutoDetect)`
-   * `filename` is a `std::string` with a path to the file to be loaded.
+ - `data::Load(filename, matrix, NoFatal + Transpose + Autodetect)`
+ - `data::Save(filename, matrix, NoFatal + Transpose + Autodetect)`
 
-   * By default the format is auto-detected based on the file extension, but can
-     be explicitly specified with `format`; see [Formats](#formats).
+   * `filename` is a `std::string` with a path to the file to be loaded.
 
    * `matrix` is an `arma::mat&`, `arma::Mat<size_t>&`, `arma::sp_mat&`, or
      similar (e.g., a reference to an Armadillo object that data will be loaded
      into or saved from).
 
-   * If `fatal` is `true`, a `std::runtime_error` will be thrown on failure.
+   * `NoFatal` a const boolean that returns a warning if  `MLPACK_PRINT_WARN`
+     is defined during compile time.
+   
+   * `Fatal` a const boolean that throws a `std::runtime_error` on failure.
 
-   * If `transpose` is `true`, then for plaintext formats (CSV/TSV/ASCII), the
-     matrix will be transposed on load or save.  (Keep this `true` if you want a
-     column-major matrix to be loaded or saved with points as rows and
-     dimensions as columns; that is generally what is desired.)
+   * `NoTranspose` a const boolean that loads the matrix as a row-major matrix,
+     usually not desired in mlpack.
 
-   * A `bool` is returned indicating whether the operation was successful.
+   * `Transpose` a const boolean that transposes the matrix during loading in
+     order to have a colunm-major matrix. This is the desired format for (CSV/TSV/ASCII).
 
+   * `Autodetect` a const boolean that automaticaly detects the file type based
+     on extension. The type can be explicitly specifed;
+     see [DataOptions](#DataOptions).
+
+Another signature can be used by specifying the options before calling the
+function. For instance
+
+ - `opts.Fatal() = false;`
+ - `opts.Transpose() = true;`
+
+Then call the load function as follows:
+
+ - `data::Load(filename, matrix, opts)`
+ - `data::Save(filename, matrix, opts)`
+
+   * `opts` can be the following:
+       * Either a `DataOptions` object, that defines two options `Fatal()`. and
+         `Format()`.
+       * Or a `MatrixOptions` object, that defines `Transpose()` in addition to
+         the previous options two options `Fatal()`. and `Format()`.
+       * Or a `TextOptions` object, that defines `HasHeaders()`, `SemiColon()`
+         `MissingToNan()` and `Categorical()`, in addition to `Fatal()`,
+         `Format()` and `Transpose()`.
+
+   * The behavior of the options (`Fatal()`, `Transpose()` etc..) is defined
+     simirarly to `Fatal` and `Transpose` const options. For more information, please refer to 
+     [DataOptions](#DataOptions), [MatrixOptions](#MatrixOptions) and [TextOptions](#TextOptions).
 ---
 
 Example usage:
@@ -225,11 +253,11 @@ Example usage:
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-mlpack::data::Load("satellite.train.csv", dataset, true);
+mlpack::data::Load("satellite.train.csv", dataset, Fatal + Transpose);
 
 // See https://datasets.mlpack.org/satellite.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("satellite.train.labels.csv", labels, true);
+mlpack::data::Load("satellite.train.labels.csv", labels, Fatal + Transpose);
 
 // Print information about the data.
 std::cout << "The data in 'satellite.train.csv' has: " << std::endl;
@@ -246,10 +274,88 @@ dataset += 2;
 dataset.shed_col(dataset.n_cols - 1);
 labels.shed_col(labels.n_cols - 1);
 
-mlpack::data::Save("satellite.train.mod.csv", dataset);
-mlpack::data::Save("satellite.train.labels.mod.csv", labels);
+mlpack::data::Save("satellite.train.mod.csv", dataset, NoFatal + Transpose);
+mlpack::data::Save("satellite.train.labels.mod.csv", labels, NoFatal +
+    Transpose);
 ```
 
+Example usage if the dataset has a semicolon separator: 
+
+```c++
+std::fstream f;
+f.open("semicolon.csv", fstream::out);
+f << "1; 2; 3; 4" << std::endl;
+f << "5; 6; 7; 8" << std::endl;
+f << "9; 10; 11; 12" << std::endl;
+
+arma::mat dataset;
+data::TextOptions opts;
+opts.Fatal() = false;
+opts.NoTranspose() = false;
+opts.Semicolon() = true;
+
+data::Load("semicolon.csv", dataset, NoFatal + Transpose + Semicolon);
+std::cout << "The data in 'missing_to_nan.csv' has: " << std::endl;
+std::cout << " - " << dataset.n_cols << " points." << std::endl;
+std::cout << " - " << dataset.n_rows << " dimensions." << std::endl;
+```
+
+Example usage if the dataset has a missing elements, these would be replaced
+with NaN:
+
+```c++
+std::fstream f;
+f.open("missing_to_nan.csv", fstream::out);
+// Missing 2 value in the first row.
+f << "1, , 3, 4" << std::endl;
+f << "5, 6, 7, 8" << std::endl;
+f << "9, 10, 11, 12" << std::endl;
+
+arma::mat dataset;
+data::TextOptions opts;
+opts.Fatal() = false;
+opts.NoTranspose() = true;
+opts.MissingToNan() = true;
+
+// Also we can write instead of opts, NoFatal + NoTranspose + MIssingToNan.
+data::Load("missing_to_nan.csv", dataset, opts);
+// Print information about the data.
+std::cout << "The data in 'missing_to_nan.csv' has: " << std::endl;
+std::cout << " - " << dataset.n_cols << " points." << std::endl;
+std::cout << " - " << dataset.n_rows << " dimensions." << std::endl;
+std::cout << "Is the value replaced with Nan: "<< std::isnan(dataset.at(0, 1))
+    << std::endl;
+```
+
+Example usage if the dataset has a header and a semicolon separator.
+
+```c++
+fstream f;
+f.open("header_semicolon.csv", fstream::out);
+f << "a;b;c;d" << std::endl;
+f << "1;2;3;4" << std::endl;
+f << "5;6;7;8" << std::endl;
+
+arma::mat dataset;
+// We define opts so we can access the values of the header.
+data::TextOptions opts;
+opts.Fatal() = true;
+opts.NoTranspose() = false;
+opts.Semicolon() = true;
+opts.HasHeaders() = true;
+
+data::Load("header_semicolon.csv", dataset, opts);
+
+// The headers are returned as an Armadillo filed.
+arma::field<std::string> headers = opts.Headers();
+
+std::cout << "The data in 'header_semicolon.csv' has: " << std::endl;
+std::cout << " - " << dataset.n_cols << " points." << std::endl;
+std::cout << " - " << dataset.n_rows << " dimensions." << std::endl;
+
+std::cout << "header values are: " << headers.at(0) << "," << headers.at(1)
+    << "," << headers.at(2) << "," << headers.at(3) << std::endl;
+```
 ---
 
 ## Mixed categorical data
@@ -361,26 +467,29 @@ Example usage to load and manipulate an ARFF file.
 ```c++
 // Load a categorical dataset.
 arma::mat dataset;
-mlpack::data::DatasetInfo info;
+mlpack::data::DataOptions opts;
+opts.Fatal() = true;
+opts.Categorical() = true;
 // See https://datasets.mlpack.org/covertype.train.arff.
-mlpack::data::Load("covertype.train.arff", dataset, info, true);
+mlpack::data::Load("covertype.train.arff", dataset, opts);
 
 arma::Row<size_t> labels;
 // See https://datasets.mlpack.org/covertype.train.labels.csv.
-mlpack::data::Load("covertype.train.labels.csv", labels, true);
+mlpack::data::Load("covertype.train.labels.csv", labels, opts);
 
 // Print information about the data.
 std::cout << "The data in 'covertype.train.arff' has: " << std::endl;
 std::cout << " - " << dataset.n_cols << " points." << std::endl;
-std::cout << " - " << info.Dimensionality() << " dimensions." << std::endl;
+std::cout << " - " << opts.DatasetInfo().Dimensionality() << " dimensions."
+    << std::endl;
 
 // Print information about each dimension.
-for (size_t d = 0; d < info.Dimensionality(); ++d)
+for (size_t d = 0; d < opts.DatasetInfo().Dimensionality(); ++d)
 {
-  if (info.Type(d) == mlpack::data::Datatype::categorical)
+  if (opts.DatasetInfo.Type(d) == mlpack::data::Datatype::categorical)
   {
     std::cout << " - Dimension " << d << " is categorical with "
-        << info.NumMappings(d) << " categories." << std::endl;
+        << opts.DatasetInfo().NumMappings(d) << " categories." << std::endl;
   }
   else
   {
@@ -392,11 +501,11 @@ for (size_t d = 0; d < info.Dimensionality(); ++d)
 // values to the string "hooray!".
 for (size_t d = 0; d < info.Dimensionality(); ++d)
 {
-  if (info.Type(d) == mlpack::data::Datatype::categorical)
+  if (opts.DatasetInfo().Type(d) == mlpack::data::Datatype::categorical)
   {
     // This will create a new mapping if the string "hooray!" does not already
     // exist as a category for dimension d..
-    dataset(d, 4) = info.MapString<double>("hooray!", d);
+    dataset(d, 4) = opts.DatasetInfo().MapString<double>("hooray!", d);
   }
   else
   {
@@ -407,7 +516,7 @@ for (size_t d = 0; d < info.Dimensionality(); ++d)
 
 ---
 
-Example usage to manually create a `data::DatasetInfo` object.
+Example usage to manually create a `data::DatasetOptions` object.
 
 ```c++
 // This will manually create the following data matrix (shown as it would appear
@@ -492,65 +601,6 @@ for (size_t i = 0; i < info.NumMappings(2); ++i)
 
 ---
 
-## Formats
-
-mlpack's `data::Load()` and `data::Save()` functions support a variety of
-different formats in different contexts.
-
----
-
-#### [Numeric data](#numeric-data)
-
-By default, load/save format is ***autodetected***, but can be manually
-specified with the `format` parameter using one of the options below:
-
- - `FileType::AutoDetect` (default): auto-detects the format as one of the
-   formats below using the extension of the filename and inspecting the file
-   contents.
-
- - `FileType::CSVASCII` (autodetect extensions `.csv`, `.tsv`): CSV format
-   with no header.  If loading a sparse matrix and the CSV has three columns,
-   the data is interpreted as a
-   [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat).
-
- - `FileType::RawASCII` (autodetect extensions `.csv`, `.txt`):
-   space-separated values or tab-separated values (TSV) with no header.
-
- - `FileType::ArmaASCII` (autodetect extension `.txt`): space-separated
-   values as saved by Armadillo with the
-   [`arma_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat)
-   format.
-
- - `FileType::CoordASCII` (autodetect extensions `.txt`, `.tsv`; must be
-   loading a sparse matrix type): coordinate list format for sparse data (see
-   [`coord_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat)).
-
- - `FileType::ArmaBinary` (autodetect extension `.bin`): Armadillo's
-   efficient binary matrix format
-   ([`arma_binary`](https://arma.sourceforge.net/docs.html#save_load_mat)).
-
- - `FileType::HDF5Binary` (autodetect extensions `.h5`, `.hdf5`, `.hdf`,
-  `.he5`): [HDF5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format)
-   binary format; only available if Armadillo is configured with
-   [HDF5 support](https://arma.sourceforge.net/docs.html#config_hpp).
-
- - `FileType::RawBinary` (autodetect extension `.bin`): packed binary data
-   with no header and no size information; data will be loaded as a single
-   column vector _(not recommended)_.
-
- - `FileType::PGMBinary` (autodetect extension `.pgm`): PGM image format
-
-***Notes:***
-
-   - ASCII formats (`CSVASCII`, `RawASCII`, `ArmaASCII`) are human-readable but
-     large; to reduce dataset size, consider a binary format such as
-      `ArmaBinary` or `HDF5Binary`.
-   - Sparse data (`arma::sp_mat`, `arma::sp_fmat`, etc.) should be saved in a
-     binary format (`ArmaBinary` or `HDF5Binary`) or as a coordinate list
-     (`CoordASCII`).
-
----
-
 #### [Mixed categorical data](#mixed-categorical-data)
 
 The format of mixed categorical data is detected automatically based on the
@@ -559,34 +609,3 @@ file extension and inspecting the file contents:
  - `.csv`, `.txt`, or `.tsv` indicates CSV/TSV/ASCII format
  - `.arff` indicates [ARFF](https://ml.cms.waikato.ac.nz/weka/arff.html)
 
----
-
-#### [Image data](#image-data)
-
-The format of images are detected automatically based on the file extension.
-
- - The following formats are supported for loading: `.jpg`, `.jpeg`, `.png`,
-   `.tga`, `.bmp`, `.psd`, `.gif`, `.hdr`, `.pic`, `.pnm`
-
- - The following formats are supported for saving: `.jpg`, `.png`, `.tga`,
-   `.bmp`, `.hdr`
-
----
-
-#### [mlpack objects](#mlpack-objects)
-
-By default, load/save format for mlpack objects is autodetected, but can be
-manually specified with the `format` parameter using one of the options below:
-
- - `format::autodetect` (default): auto-detects the format as one of the
-    formats below using the extension of the filename
- - `format::json` (autodetect extension `.json`)
- - `format::xml` (autodetect extension `.xml`)
- - `format::binary` (autodetect extension `.bin`)
-
-***Notes:***
-
- - `format::json` (`.json`) and `format::xml` (`.xml`) produce human-readable
-   files, but they may be quite large.
- - `format::binary` (`.bin`) is recommended for the sake of size; objects in
-   binary format may be an order of magnitude or more smaller than JSON!

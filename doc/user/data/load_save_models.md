@@ -9,6 +9,8 @@ using the [cereal](https://uscilab.github.io/cereal/) serialization toolkit.
 
    * Load/save `object` to/from `filename`.
 
+   * `opts` is a `DataOptions` object that defines `Fatal()` and `Format()`.
+
    * If `opts.Fatal()` is `true`, a `std::runtime_error` will be thrown in the
      event of load or save failure.
 
