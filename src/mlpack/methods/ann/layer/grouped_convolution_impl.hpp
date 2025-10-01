@@ -323,10 +323,6 @@ void GroupedConvolution<
     padding.Forward(input, inputPadded);
   }
 
-  CubeType inputTemp;
-  MakeAlias(inputTemp, (usingPadding ? inputPadded : input),
-      paddedRows, paddedCols, inMaps * higherInDimensions * batchSize);
-
   MakeAlias(outputTemp, output, this->outputDimensions[0],
       this->outputDimensions[1], maps * higherInDimensions * batchSize);
   outputTemp.zeros();
@@ -339,37 +335,44 @@ void GroupedConvolution<
   //
   // If we eventually have a way to do convolutions for a single kernel
   // in-batch, then this strategy may not be the most efficient solution.
+  #pragma omp parallel for schedule(dynamic)
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    #pragma omp parallel for collapse(2)
+    CubeType inputTemp, weightTemp, outputTempTemp;
     for (size_t group = 0; group < groups; group++)
     {
-      // Iterate over output maps.
-      for (size_t outMap = 0; outMap < outGroupSize; ++outMap)
-      {
-        MatType& convOutput = outputTemp.slice(group * outGroupSize + outMap +
-            fullOutputOffset);
-        // Iterate over input maps (we will apply the filter and sum).
-        for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
-        {
-          ForwardConvolutionRule::Convolution(
-              inputTemp.slice((group * inGroupSize) + inMap + fullInputOffset),
-              weight.slice(((group * outGroupSize + outMap) * inGroupSize) +
-                  inMap),
-              convOutput,
-              strideWidth,
-              strideHeight,
-              1,
-              1,
-              true);
-        }
+      MakeAlias(inputTemp, (usingPadding ? inputPadded : input), paddedRows,
+          paddedCols, inGroupSize, (group * inGroupSize + fullInputOffset) *
+          (paddedRows * paddedCols));
+      MakeAlias(weightTemp, weight, weight.n_rows, weight.n_cols,
+          inGroupSize * outGroupSize, (group * outGroupSize * inGroupSize) *
+          (weight.n_rows * weight.n_cols));
+      MakeAlias(outputTempTemp, outputTemp, outputTemp.n_rows,
+          outputTemp.n_cols, outGroupSize,
+          (group * outGroupSize + fullOutputOffset) *
+          (outputTemp.n_rows * outputTemp.n_cols));
+      ForwardConvolutionRule::Convolution(
+          inputTemp,
+          weightTemp,
+          outputTempTemp,
+          strideWidth,
+          strideHeight,
+          1,
+          1,
+          true);
+    }
 
-        // Make sure to add the bias.
-        if (useBias)
-          convOutput += bias(group * outGroupSize + outMap);
+    // Make sure to add the bias.
+    if (useBias)
+    {
+      for (size_t group = 0; group < groups; group++)
+      {
+        for (size_t outMap = 0; outMap < outGroupSize; ++outMap)
+          outputTemp.slice(group * outGroupSize + outMap + fullOutputOffset) +=
+              bias(group * outGroupSize + outMap);
       }
     }
   }
@@ -441,41 +444,39 @@ void GroupedConvolution<
 
   MatType output(apparentWidth * apparentHeight * inMaps * higherInDimensions,
       batchSize);
-  CubeType outputCube;
-  MakeAlias(outputCube, output, apparentWidth, apparentHeight,
-      inMaps * higherInDimensions * batchSize);
 
   size_t inGroupSize = inMaps / groups;
   size_t outGroupSize = maps / groups;
 
   // See Forward() for the overall iteration strategy.
+  #pragma omp parallel for schedule(dynamic) private(outputTemp)
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    #pragma omp parallel for collapse(2)
+    CubeType rotatedFiltersTemp;
     for (size_t group = 0; group < groups; group++)
     {
-      // Iterate over input maps.
-      for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
-      {
-        // Iterate over output maps.
-        MatType& curG = outputCube.slice((group * inGroupSize) + inMap +
-            fullInputOffset);
-        for (size_t outMap = group * outGroupSize; outMap < (group + 1) *
+      // Iterate over output maps.
+      for (size_t outMap = group * outGroupSize; outMap < (group + 1) *
             outGroupSize; ++outMap)
-        {
-          BackwardConvolutionRule::Convolution(
-              dilatedMappedError.slice(outMap + fullOutputOffset),
-              rotatedFilters.slice((outMap * inGroupSize) + inMap),
-              curG,
-              1,
-              1,
-              1,
-              1,
-              true);
-        }
+      {
+        MakeAlias(rotatedFiltersTemp, rotatedFilters, rotatedFilters.n_rows,
+            rotatedFilters.n_cols, inGroupSize, (outMap * inGroupSize) *
+            (rotatedFilters.n_rows * rotatedFilters.n_cols));
+        MakeAlias(outputTemp, output, apparentWidth, apparentHeight,
+            inGroupSize, (group * inGroupSize + fullInputOffset) *
+            (apparentWidth * apparentHeight));
+        BackwardConvolutionRule::Convolution(
+            dilatedMappedError.slice(outMap + fullOutputOffset),
+            rotatedFiltersTemp,
+            outputTemp,
+            1,
+            1,
+            1,
+            1,
+            true);
       }
     }
   }
@@ -516,20 +517,12 @@ void GroupedConvolution<
     const MatType& error,
     MatType& gradient)
 {
-  CubeType mappedError;
-  MakeAlias(mappedError, error, this->outputDimensions[0],
-      this->outputDimensions[1], higherInDimensions * maps * batchSize);
-
   // We are depending here on `inputPadded` being properly set from a call to
   // Forward().
   const bool usingPadding =
       (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0);
   const size_t paddedRows = this->inputDimensions[0] + padWLeft + padWRight;
   const size_t paddedCols = this->inputDimensions[1] + padHTop + padHBottom;
-
-  CubeType inputTemp;
-  MakeAlias(inputTemp, (usingPadding ? inputPadded : input),
-      paddedRows, paddedCols, inMaps * batchSize, 0, false);
 
   MatType temp(apparentWidth * apparentHeight * inMaps * higherInDimensions,
       batchSize);
@@ -549,40 +542,54 @@ void GroupedConvolution<
   size_t inGroupSize = inMaps / groups;
   size_t outGroupSize = maps / groups;
 
+  MatType tempSlice;
+
   // See Forward() for our iteration strategy.
+  #pragma omp parallel for schedule(dynamic) private(tempSlice)
   for (size_t offset = 0; offset < higherInDimensions * batchSize; ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    #pragma omp parallel for collapse(2)
+    CubeType mappedError, gradientTempTemp;
     for (size_t group = 0; group < groups; group++)
     {
-      // Iterate over output maps.
-      for (size_t outMap = 0; outMap < outGroupSize; ++outMap)
+      MakeAlias(mappedError, error, this->outputDimensions[0],
+          this->outputDimensions[1], outGroupSize,
+          (group * outGroupSize + fullOutputOffset) *
+          (this->outputDimensions[0] * this->outputDimensions[1]));
+      // Iterate over input maps (we will apply the filter and sum).
+      for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
       {
-        // Iterate over input maps (we will apply the filter and sum).
-        MatType& curError = mappedError.slice(group * outGroupSize + outMap +
-            fullOutputOffset);
-        for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
-        {
-          MatType output;
-          GradientConvolutionRule::Convolution(
-              tempCube.slice((group * inGroupSize) + inMap + fullInputOffset),
-              curError,
-              gradientTemp.slice(((group * outGroupSize + outMap) *
-                  inGroupSize) + inMap),
-              1,
-              1,
-              strideWidth,
-              strideHeight,
-              true);
-        }
+        MakeAlias(tempSlice, (usingPadding ? inputPadded : input), paddedRows,
+            paddedCols, ((group * inGroupSize) + inMap + fullInputOffset) *
+            (paddedRows * paddedCols));
+        GradientConvolutionRule::Convolution(
+            tempSlice,
+            mappedError,
+            gradientTempTemp,
+            1,
+            1,
+            strideWidth,
+            strideHeight,
+            false);
 
-        if (useBias)
+        // Reorder convolution output slices.
+        #pragma omp critical
+        for (size_t outMap = 0; outMap < outGroupSize; ++outMap)
         {
+          gradientTemp.slice((group * outGroupSize + outMap) * inGroupSize +
+              inMap) += gradientTempTemp.slice(outMap);
+        }
+      }
+
+      if (useBias)
+      {
+        for (size_t outMap = 0; outMap < outGroupSize; ++outMap)
+        {
+          #pragma omp atomic update
           gradient[weight.n_elem + group * outGroupSize + outMap] +=
-              accu(curError);
+              accu(mappedError.slice(outMap));
         }
       }
     }
