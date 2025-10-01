@@ -307,6 +307,11 @@ jobs:
           gem install kramdown kramdown-parser-gfm
           DISABLE_HTML_CHECKS=1 ./scripts/build-docs.sh
 
+      - name: Publish image
+        shell: powershell
+        run: |
+          cp build\APITest.bmp dist\APITest.bmp
+
       - name: Build MSI installer
         shell: powershell
         run: |
@@ -358,9 +363,6 @@ jobs:
               mlpack-win-installer.wixproj
 
       - name: Publish MSI installer
-        shell: powershell
-        run: |
-          cp build\APITest.bmp dist\APITest.bmp
         uses: actions/upload-artifact@v4.4.0
         with:
           name: mlpack-windows-installer
