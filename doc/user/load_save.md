@@ -20,6 +20,30 @@ saving data and objects are also available.
 Numeric data or general numeric matrices can be loaded or saved with the
 following functions.
 
+ - `data::Load(filename, matrix, opts)`
+ - `data::Save(filename, matrix, opts)`
+
+Specifying options using `opts` object can be done as follows:
+
+ - `opts.Fatal() = false;`
+ - `opts.Transpose() = true;`
+
+   * `opts` can be the following:
+       * Either a `DataOptions` object, that defines two options `Fatal()`. and
+         `Format()`.
+       * Or a `MatrixOptions` object, that defines `Transpose()` in addition to
+         the previous options two options `Fatal()`. and `Format()`.
+       * Or a `TextOptions` object, that defines `HasHeaders()`, `SemiColon()`
+         `MissingToNan()` and `Categorical()`, in addition to `Fatal()`,
+         `Format()` and `Transpose()`.
+
+   * The behavior of the options (`Fatal()`, `Transpose()` etc..) is defined
+     simirarly to `Fatal` and `Transpose` const options. For more information, please refer to 
+     [DataOptions](#data-options), [MatrixOptions](#matrix-options) and [TextOptions](#text-options).
+
+Another simplified signature can be used by specifying const boolean options
+directly and add them using the `+` operator.
+
  - `data::Load(filename, matrix, NoFatal + Transpose + Autodetect)`
  - `data::Save(filename, matrix, NoFatal + Transpose + Autodetect)`
 
@@ -42,31 +66,13 @@ following functions.
 
    * `Autodetect` a const boolean that automaticaly detects the file type based
      on extension. The type can be explicitly specifed;
-     see [DataOptions](#DataOptions).
+     see [DataOptions](#data-options).
 
-Another signature can be used by specifying the options before calling the
-function. For instance
+   * A `bool` is returned indicating whether the operation was successful.
 
- - `opts.Fatal() = false;`
- - `opts.Transpose() = true;`
+   * A full list of these options is available: [DataOptions](#data-options),
+     [MatrixOptions](#matrix-options) and [TextOptions](#text-options). 
 
-Then call the load function as follows:
-
- - `data::Load(filename, matrix, opts)`
- - `data::Save(filename, matrix, opts)`
-
-   * `opts` can be the following:
-       * Either a `DataOptions` object, that defines two options `Fatal()`. and
-         `Format()`.
-       * Or a `MatrixOptions` object, that defines `Transpose()` in addition to
-         the previous options two options `Fatal()`. and `Format()`.
-       * Or a `TextOptions` object, that defines `HasHeaders()`, `SemiColon()`
-         `MissingToNan()` and `Categorical()`, in addition to `Fatal()`,
-         `Format()` and `Transpose()`.
-
-   * The behavior of the options (`Fatal()`, `Transpose()` etc..) is defined
-     simirarly to `Fatal` and `Transpose` const options. For more information, please refer to 
-     [DataOptions](#DataOptions), [MatrixOptions](#MatrixOptions) and [TextOptions](#TextOptions).
 ---
 
 Example usage:
@@ -181,37 +187,25 @@ std::cout << "header values are: " << headers.at(0) << "," << headers.at(1)
 
 ## Mixed categorical data
 
-Some mlpack techniques support mixed categorical data, e.g., data where some
+mlpack support loading / saving mixed categorical data, e.g., data where some
 dimensions take only categorical values (e.g. `0`, `1`, `2`, etc.).  When using
 mlpack, string data and other non-numerical data must be mapped to categorical
 values and represented as part of an `arma::mat`.  Category information is
-stored in an auxiliary `data::DatasetInfo` object.
+stored in an auxiliary `data::TextOptions::DatasetInfo()` object.
 
-### `data::DatasetInfo`
+### `data::TextOptions::DatasetInfo`
 
 <!-- TODO: also document in core.md? -->
 
 mlpack represents categorical data via the use of the auxiliary
-`data::DatasetInfo` object, which stores information about which dimensions are
-numeric or categorical and allows conversion from the original category values
-to the numeric values used to represent those categories.
+`data::TextOptions::DatasetInfo` object, which stores information about which
+dimensions are numeric or categorical and allows conversion from the original
+category values to the numeric values used to represent those categories.
 
----
-
-#### Constructors
-
- - `info = data::DatasetInfo()`
-   * Create an empty `data::DatasetInfo` object.
-   * Use this constructor if you intend to populate the `data::DatasetInfo` via
-     a `data::Load()` call.
-
- - `info = data::DatasetInfo(dimensionality)`
-   * Create a `data::DatasetInfo` object with the given dimensionality
-   * All dimensions are assumed to be numeric (not categorical).
-
----
 
 #### Accessing and setting properties
+
+ - `data::DatasetInfo info = opts.DatasetInfo();`
 
  - `info.Type(d)`
    * Get the type (categorical or numeric) of dimension `d`.
@@ -250,9 +244,16 @@ to the numeric values used to represent those categories.
 
 ### Loading categorical data
 
-With a `data::DatasetInfo` object, categorical data can be loaded:
+With a `data::DatasetInfo` object, categorical data can be loaded / saved in a
+similar way to numeric data. However, the `Categorical` flag needs to be set:
 
- - `data::Load(filename, matrix, info, fatal=false, transpose=true)`
+ - `TextOptions opts;`
+
+ - `opts.Categorical() = true;`
+
+ - `data::Load(filename, matrix, opts)`
+ - `data::Save(filename, matrix, opts)`
+
    * `filename` is a `std::string` with a path to the file to be loaded.
 
    * The format is auto-detected based on the extension of the filename and the
@@ -265,21 +266,50 @@ With a `data::DatasetInfo` object, categorical data can be loaded:
      reference to an Armadillo object that data will be loaded into or saved
      from).
 
-   * `info` is a `data::DatasetInfo&` object.  This will be populated with the
-     category information of the file when loading, and used to unmap values
-     when saving.
-
-   * If `fatal` is `true`, a `std::runtime_error` will be thrown on failure.
-
-   * If `transpose` is `true`, then for plaintext formats (CSV/TSV/ASCII), the
-     matrix will be transposed on save.  (Keep this `true` if you want a
-     column-major matrix to be saved with points as rows and dimensions as
-     columns; that is generally what is desired.)
+   * `opts` is a `data::TextOptions` object.  Internally, `DatasetInfo` will
+     be populated with the category information of the file when loading, and
+     used to unmap values when saving. It can be accessed using
+     `opts.DatasetInfo()`
 
    * A `bool` is returned indicating whether the operation was successful.
 
-Saving should be performed with the [numeric](#numeric-data) `data::Load()`
-variant.
+Another simplified signature can be used by specifying const boolean options
+directly and add them using the `+` operator.
+
+ - `data::Load(filename, matrix, NoFatal + Transpose + Categorical)`
+ - `data::Save(filename, matrix, NoFatal + Transpose + Categorical)`
+
+   * `filename` is a `std::string` with a path to the file to be loaded.
+
+   * The format is auto-detected based on the extension of the filename and the
+     contents of the file:
+     - `.csv`, `.tsv`, or `.txt` for CSV/TSV (tab-separated)/ASCII
+       (space-separated)
+     - `.arff` for [ARFF](https://ml.cms.waikato.ac.nz/weka/arff.html)
+
+   * `matrix` is an `arma::mat&`, `arma::Mat<size_t>&`, `arma::sp_mat&`, or
+     similar (e.g., a reference to an Armadillo object that data will be loaded
+     into or saved from).
+
+   * `NoFatal` a const boolean that returns a warning if  `MLPACK_PRINT_WARN`
+     is defined during compile time.
+   
+   * `Fatal` a const boolean that throws a `std::runtime_error` on failure.
+
+   * `NoTranspose` a const boolean that loads the matrix as a row-major matrix,
+     usually not desired in mlpack.
+
+   * `Transpose` a const boolean that transposes the matrix during loading in
+     order to have a colunm-major matrix. This is the desired format for (CSV/TSV/ASCII).
+
+   * `Categotrical` a const boolean indicates that the data contains categorical
+     values and needs to be mapped. Using this flag will not allow the user to
+     access the mapped values.
+
+   * A `bool` is returned indicating whether the operation was successful.
+
+   * A full list of these options is available: [DataOptions](#data-options),
+     [MatrixOptions](#matrix-options) and [TextOptions](#text-options). 
 
 ---
 
@@ -288,9 +318,13 @@ Example usage to load and manipulate an ARFF file.
 ```c++
 // Load a categorical dataset.
 arma::mat dataset;
-mlpack::data::DataOptions opts;
+
+// Define a Text Options to load categorical data.
+mlpack::data::TextOptions opts;
 opts.Fatal() = true;
+opts.NoTranspose() = false; 
 opts.Categorical() = true;
+
 // See https://datasets.mlpack.org/covertype.train.arff.
 mlpack::data::Load("covertype.train.arff", dataset, opts);
 
@@ -320,7 +354,7 @@ for (size_t d = 0; d < opts.DatasetInfo().Dimensionality(); ++d)
 
 // Modify the 5th point.  Increment any numeric values, and set any categorical
 // values to the string "hooray!".
-for (size_t d = 0; d < info.Dimensionality(); ++d)
+for (size_t d = 0; d < opts.DatasetInfo.Dimensionality(); ++d)
 {
   if (opts.DatasetInfo().Type(d) == mlpack::data::Datatype::categorical)
   {
@@ -431,6 +465,7 @@ file extension and inspecting the file contents:
  - `.arff` indicates [ARFF](https://ml.cms.waikato.ac.nz/weka/arff.html)
 
 ## Data Options
+
 It is a generic class that allows the user to specify the
 `data::Load()` and `data::Save()` options when loading and saving dataset
 files. mlpack has an identical data load API in whether we
@@ -451,8 +486,6 @@ is done by using the `+` operator between these settings when loading /
 saving. More details are provided below with examples how to use
 `data::Load / data::Save` functions.
 
-
-## DataOptions
 
 |-------------------------------------------------------------------------------------------------------|
 | Operator | Function | Type  | Comment | 
@@ -563,7 +596,7 @@ following formats only:
 |-------------------------------------------------------------------------------|
 
 
-## MatrixOptions
+## Matrix Options
 
 During standard load / save operation we usually would like to Load the matrix
 in column major (transposed). For this, MatrixOptions is going to be used when
@@ -582,7 +615,7 @@ with points as rows and | dimensions as columns; that is generally what is desir
 | `NoTranspose`  | `.transpose() = false` | bool | The matrix will not be transposed when load / save.  |
 |-------------------------------------------------------------------------------------------------------|
 
-## TextOptions
+## Text Options
 
 This class allows to specify settings related to the characteristic of the
 matrix we are loading. For instance, does it contain categorical values? or
@@ -602,5 +635,3 @@ does the dataset has headers. The supported options are as following:
 |--------------------------------------------------------------------------------------------------------
 | `Categorical`  | `.Categorical()` | bool | Set `true`, if the dataset contains categorical data.      |
 |--------------------------------------------------------------------------------------------------------
-
-
