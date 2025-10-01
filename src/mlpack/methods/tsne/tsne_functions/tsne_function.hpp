@@ -2,7 +2,8 @@
  * @file methods/tsne_functions/tsne_function.hpp
  * @author Ranjodh Singh
  *
- * Compile-time selection of the t-SNE objective function.
+ * Maps each tsne methods (ExactTSNE, BarnesHutTSNE, DualTreeTSNE) to their
+ * corresponding objective functions using type traits and a convenience alias.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

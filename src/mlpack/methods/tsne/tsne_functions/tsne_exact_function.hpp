@@ -21,19 +21,35 @@
 namespace mlpack
 {
 
+/**
+ * Calculate gradient of the KL-divergence objective, designed for
+ * optimization with ensmallen.
+ *
+ * @tparam MatType The type of Matrix.
+ */
 template <typename MatType = arma::mat>
 class TSNEExactFunction
 {
  public:
   // Convenience typedefs.
   using VecType = typename GetColType<MatType>::type;
+  // To Do: Make This A Template Parameters
   using DistanceType = SquaredEuclideanDistance;
 
-  TSNEExactFunction(const MatType& X, const double perplexity)
+  /**
+   * Constructs the TSNEExactFunction object.
+   *
+   * @param X The input data. (Din X N)
+   * @param perplexity The perplexity of the Gaussian distribution.
+   */
+  TSNEExactFunction(const MatType& X,
+                    const double perplexity,
+                    const size_t dof,
+                    const double /* theta */) // To Do: Find another way.
+                    : perplexity(perplexity),
+                    dof(dof)
   {
-    degrees_of_freedom = std::max<size_t>(X.n_rows - 1, 1);
-
-    // Pre Compute P
+    // Precompute P
     P = binarySearchPerplexity(perplexity,
                                PairwiseDistances(X, DistanceType()));
     P = P + P.t();
@@ -43,20 +59,21 @@ class TSNEExactFunction
   /**
    * EvaluateWithGradient for differentiable function optimizers
    * Evaluates the Kullback–Leibler (KL) divergence between input
-   * and the embedding and updates gradients.
+   * and the embedding and updates gradients accordingly.
    *
-   * @param y Current embedding
-   * @param g Variable to store the new gradient
+   * @param y Current embedding.
+   * @param g Variable to store the new gradient.
    */
   template <typename GradType>
   double EvaluateWithGradient(const MatType& y, GradType& g)
   {
     q = PairwiseDistances(y, DistanceType());
-    q /= degrees_of_freedom;
-    q += 1.0;
-    q = arma::pow(q, -(degrees_of_freedom + 1.0) / 2.0);
+    q = (double) dof / (dof + q);
+    // Avoid calls to pow for 2 dimensional embeddings 
+    if (dof != 1)
+      q = arma::pow(q, (1.0 + dof) / 2.0);
 
-    Q = q / (2.0 * arma::accu(q));
+    Q = q / arma::accu(q);
     Q.clamp(arma::datum::eps, arma::datum::inf);
 
     M = (P - Q) % q;
@@ -65,9 +82,10 @@ class TSNEExactFunction
     g = y;
     g.each_row() %= S.t();
     g -= y * M;
-    g *= 2.0 * (degrees_of_freedom + 1.0) / degrees_of_freedom;
+    g *= 2.0 * (1.0 + dof) / dof;
 
-    return 2.0 * arma::accu(P %
+    // This is faster than using arma::dot
+    return arma::accu(P %
         arma::log(arma::clamp(P, arma::datum::eps, arma::datum::inf) / Q));
   }
 
@@ -77,23 +95,26 @@ class TSNEExactFunction
   MatType& InputJointProbabilities() { return P; }
 
  private:
-  //! Degrees of Freedom
-  size_t degrees_of_freedom;
-
-  //! Input joint probabilities
+  //! Input joint probabilities.
   MatType P;
 
-  //! Output joint probabilities (Normalized)
+  //! Output joint probabilities. (Normalized)
   MatType Q;
 
-  //! Output joint probabilities (Unnormalized)
+  //! Output joint probabilities. (Unnormalized)
   MatType q;
 
-  //! Intermediate matrix used in gradient computation
+  //! Intermediate matrix used in gradient computation.
   MatType M;
 
-  //! Intermediate vector used in gradient computation
+  //! Intermediate vector used in gradient computation.
   VecType S;
+
+  //! The perplexity of the Gaussian distribution.
+  double perplexity;
+
+  //! Degrees of Freedom.
+  size_t dof;
 };
 
 } // namespace mlpack

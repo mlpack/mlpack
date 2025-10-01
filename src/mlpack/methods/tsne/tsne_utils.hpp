@@ -2,7 +2,7 @@
  * @file methods/tsne/tsne_utils.hpp
  * @author Ranjodh Singh
  *
- * t-SNE Utility Functions
+ * t-SNE Utility Functions.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,10 +18,14 @@
 namespace mlpack
 {
 
-template <typename eT>
-arma::SpMat<eT> binarySearchPerplexity(const double perplexity,
-                                       const arma::Mat<size_t>& N,
-                                       const arma::Mat<eT>& D)
+template <typename eT,
+          typename MatType = arma::Mat<eT>,
+          typename SpMatType = arma::SpMat<eT>,
+          typename VecType = arma::Col<eT>,
+          typename SpVecType = arma::SpCol<eT>>
+SpMatType binarySearchPerplexity(const double perplexity,
+                                 arma::Mat<eT>& D,
+                                 const arma::Mat<size_t>& N)
 {
   const size_t maxSteps = 100;
   const double tolerance = 1e-5;
@@ -30,13 +34,13 @@ arma::SpMat<eT> binarySearchPerplexity(const double perplexity,
   const size_t k = D.n_rows;
   const double hDesired = std::log(perplexity);
 
-  arma::SpMat<eT> P(n, n);
-  arma::Col<eT> beta(n, arma::fill::ones);
+  SpMatType P(n, n);
+  VecType beta(n, arma::fill::ones);
 
-  arma::Col<eT> Di;
-  arma::SpCol<eT> Pi(n);
   for (size_t i = 0; i < n; i++)
   {
+    VecType Di;
+    SpVecType Pi(n);
     double betamin = -arma::datum::inf;
     double betamax = +arma::datum::inf;
     double sumP, sumDP, hDiff, hApprox;
@@ -91,30 +95,32 @@ arma::SpMat<eT> binarySearchPerplexity(const double perplexity,
     for (size_t j = 0; j < k; ++j)
       P(i, N(j, i)) = Pi(N(j, i));
   }
-  Log::Info << "Mean value of sigma: " << arma::mean(arma::sqrt(1.0 / beta))
+  Log::Info << "Mean value of sigma: " << std::sqrt(n / arma::accu(beta))
             << std::endl;
 
   return P;
 }
 
 
-template <typename eT>
-arma::Mat<eT> binarySearchPerplexity(const double perplexity,
-                                     const arma::Mat<eT>& D)
+template <typename eT,
+          typename MatType = arma::Mat<eT>,
+          typename VecType = arma::Col<eT>>
+MatType binarySearchPerplexity(const double perplexity, const arma::Mat<eT>& D)
 {
   const size_t maxSteps = 50;
   const double tolerance = 1e-5;
 
   size_t n = D.n_cols;
   double H = std::log(perplexity);
-  arma::Col<eT> beta(n, arma::fill::ones);
-  arma::Mat<eT> P(n, n, arma::fill::zeros);
+  VecType beta(n, arma::fill::ones);
+  MatType P(n, n, arma::fill::zeros);
 
-  arma::Col<eT> Di, Pi;
-  double betamin, betamax;
-  double sumP, Happrox, Hdiff;
   for (size_t i = 0; i < n; i++)
   {
+    VecType Di, Pi;
+    double betamin, betamax;
+    double sumP, Happrox, Hdiff;
+
     if (i % 1000 == 0)
       Log::Info << "Computing P-values for points " << i + 1 << " To "
                 << std::min(n, i + 1000) << std::endl;
@@ -161,7 +167,7 @@ arma::Mat<eT> binarySearchPerplexity(const double perplexity,
     P.row(i).head(i) = Pi.head(i).t();
     P.row(i).tail(n - i - 1) = Pi.tail(n - i - 1).t();
   }
-  Log::Info << "Mean value of sigma: " << arma::mean(arma::sqrt(1.0 / beta))
+  Log::Info << "Mean value of sigma: " << std::sqrt(n / arma::accu(beta))
             << std::endl;
 
   return P;

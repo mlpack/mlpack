@@ -34,11 +34,17 @@ BINDING_SHORT_DESC(
 
 // Long description.
 BINDING_LONG_DESC(
-    "t-distributed stochastic neighbor embedding (t-SNE) "
-    "is a statistical method for visualizing high-dimensional data "
-    "by giving each datapoint a location in a two or three-dimensional map.");
+    "The t-SNE algorithm comprises two main stages. "
+    "First, t-SNE constructs a probability distribution over pairs of "
+    "high-dimensional objects in such a way that similar objects are "
+    "assigned a higher probability while dissimilar points are assigned "
+    "a lower probability. Second, t-SNE defines a similar probability "
+    "distribution over the points in the low-dimensional map, and it "
+    "minimizes the Kullback-Leibler divergence (KL divergence) "
+    "between the two distributions with respect to the locations of the "
+    "points in the map.");
 
-// To Do: Example.
+// Example.
 // BINDING_EXAMPLE("");
 
 // See also...
@@ -49,46 +55,36 @@ BINDING_SEE_ALSO("TSNE C++ class documentation", "@doc/user/methods/tsne.md");
 
 // Parameters for program.
 PARAM_MATRIX_IN("input", "Input dataset to perform t-SNE on.", "i");
-PARAM_MATRIX_OUT("output", "Matrix to save modified dataset to.", "o");
+PARAM_MATRIX_OUT("output", "Matrix to save embedding to.", "o");
 PARAM_INT_IN("output_dimensions",
-             "Dimensionality of the embedded space.",
-             "d",
-             2);
+    "Dimensionality of the embedded space.", "d", 2);
 PARAM_DOUBLE_IN("perplexity",
-                "Perplexity regulates the balance between local and global "
-                "structure preservation, typically set between 5 and 50.",
-                "p",
-                30.0);
-PARAM_DOUBLE_IN(
-    "exaggeration",
+    "Perplexity regulates the balance between local and global "
+    "structure preservation, typically set between 5 and 50.",
+    "p", 30.0);
+PARAM_DOUBLE_IN("exaggeration",
     "Amplifies pairwise similarities during the initial optimization phase. "
     "This helps form tighter clusters and clearer separation between them. "
     "A higher value increases the spacing between clusters, but if the cost "
     "function grows during initial iterations, reduce this value or "
-    "lower the learning rate.",
-    "e",
-    12.0);
-PARAM_DOUBLE_IN("learning_rate", "Learning rate for the optimizer.", "l", 50.0);
+    "lower the learning rate.", "e", 12.0);
+PARAM_DOUBLE_IN("learning_rate",
+    "Learning rate for the optimizer. If the given value is zero or negative "
+    ", the learning rate is set to N / exaggeration.", "l", 200.0);
 PARAM_INT_IN("max_iterations", "Maximum number of iterations.", "n", 1000);
 PARAM_STRING_IN("init",
-                "Initialization method for the output embedding. "
-                "Options are: 'random', 'pca' (default). "
-                "random is not recommended, as PCA can improve "
-                " both speed and quality of the embedding.",
-                "r",
-                "pca");
+    "Initialization method for the output embedding. Options: 'pca' (default) "
+    "or 'random'. 'pca' is preferred since it improves both speed and "
+    "quality. Unlike some implementations that first reduce input to ~50 "
+    "dimensions with PCA, here PCA is used only to initialize the output "
+    "embedding matrix using 'output_dimensions' components.", "r", "pca");
 PARAM_STRING_IN("method",
-                "Gradient computation strategy. Options are: "
-                "'exact', 'dual_tree', 'barnes_hut' (default)",
-                "m",
-                "barnes_hut");
-PARAM_DOUBLE_IN(
-    "theta",
-    "Theta regulates the trade-off between "
-    "speed and accuracy for 'barnes_hut' and 'dual_tree' approximations. "
-    "The optimal value for theta is different for the two approximations.",
-    "t",
-    0.5);
+    "Gradient computation strategy. Options are: 'exact', 'dual_tree', "
+    "'barnes_hut' (default)", "m", "barnes_hut");
+PARAM_DOUBLE_IN("theta",
+    "Theta regulates the trade-off between speed and accuracy for "
+    "'barnes_hut' and 'dual_tree' approximations. The optimal value for "
+    "theta is different for the two approximations.", "t", 0.5);
 
 //! Run TSNE on the specified dataset with the given policy.
 template <typename TSNEStrategy>
@@ -101,7 +97,6 @@ void RunTSNE(util::Params& params, util::Timers& timers, arma::mat& dataset)
                           params.Get<int>("max_iterations"),
                           params.Get<std::string>("init"),
                           params.Get<double>("theta"));
-
 
   Log::Info << "Running TSNE on dataset..." << endl;
   timers.Start("tsne");

@@ -12,6 +12,7 @@
 #ifndef MLPACK_METHODS_TSNE_TSNE_IMPL_HPP
 #define MLPACK_METHODS_TSNE_TSNE_IMPL_HPP
 
+#include <armadillo>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/pca.hpp>
 
@@ -38,15 +39,23 @@ template <typename TSNEStrategy>
 template <typename MatType>
 void TSNE<TSNEStrategy>::Embed(const MatType& X, MatType& Y)
 {
+  // To Do: Seperate Functions for
+  // initialize embeddigs and initialize objective function.
+
   // Initialize Embedding
   if (init == "pca")
   {
     PCA pca;
     pca.Apply(X, Y, outputDim);
+    // We want a gaussian with standard deviation 1e-4.
+    Y.each_col() /= arma::stddev(Y, 0, 1);
+    Y *= 1e-4;
   }
   else if (init == "random")
   {
     Y.randn(outputDim, X.n_cols);
+    // We want a gaussian with standard deviation 1e-4.
+    Y *= 1e-4;
   }
   else
   {
@@ -54,22 +63,39 @@ void TSNE<TSNEStrategy>::Embed(const MatType& X, MatType& Y)
   }
 
   // Initialize Objective Function
-  TSNEFunction<TSNEStrategy> function(X, perplexity);
+  // To Do: How are you going to pass theta?
+  const size_t dof = std::max<size_t>(Y.n_rows - 1, 1);
+  TSNEFunction<TSNEStrategy> function(X, perplexity, dof, theta);
+
+  // Automatically choose a good learning rate.
+  // To Do: What if exaggeration is zero?
+  bool isLearningRateAuto = false;
+  if (learningRate == 0)
+  {
+    isLearningRateAuto = true;
+    learningRate = std::max(200.0, X.n_cols / exaggeration);
+  }
 
   // Call The Optimizer On The Objective Function
+  // To Do: Make Early Exaggeration Iterations a parameter
   const size_t exploratoryIters = std::min<size_t>(250, maxIter);
   const size_t convergenceIters = std::max<size_t>(0,
                                                   maxIter - exploratoryIters);
 
   // Exploratory Phase
+  // To Do: Make Mommentum, Kappa, Phi and MinGain parameters
   ens::DeltaBarDelta exploratoryOptimizer(learningRate,
                                      exploratoryIters,
-                                     1e-5,
+                                     1e-12,
                                      ens::DeltaBarDeltaUpdate(0.2, 0.8, 0.5, 0.01));
+  
   Log::Info << "Starting Exploratory Phase of t-SNE Optimization."
             << std::endl;
+  // Start Exaggerating
   function.InputJointProbabilities() *= exaggeration;
+  // Optimize
   exploratoryOptimizer.Optimize(function, Y, ens::PrintLoss());
+  // Stop Exaggerating
   function.InputJointProbabilities() /= exaggeration;
   Log::Info << "Completed Exploratory Phase of t-SNE Optimization."
             << std::endl;
@@ -77,13 +103,21 @@ void TSNE<TSNEStrategy>::Embed(const MatType& X, MatType& Y)
   // Convergence Phase
   ens::DeltaBarDelta convergenceOptimizer(learningRate,
                                      convergenceIters,
-                                     1e-5,
+                                     1e-12,
                                      ens::DeltaBarDeltaUpdate(0.2, 0.8, 0.8, 0.01));
+  
   Log::Info << "Starting Convergence Phase of t-SNE Optimization."
             << std::endl;
+  // Optimize
   convergenceOptimizer.Optimize(function, Y, ens::PrintLoss());
   Log::Info << "Completed Convergence Phase of t-SNE Optimization."
             << std::endl;
+
+  // If the learningRate was set automatically, reset it to
+  // zero so that the next call to embed can recompute it.
+  if (isLearningRateAuto) {
+    learningRate = 0;
+  }
 }
 
 } // namespace mlpack

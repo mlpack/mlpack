@@ -19,34 +19,60 @@
 #include <mlpack/methods/neighbor_search.hpp>
 
 #include "../tsne_utils.hpp"
-#include "../tsne_approx_rules.hpp"
 #include "../centroid_statistic.hpp"
+#include "../tsne_rules/tsne_rules.hpp"
 
 namespace mlpack
 {
 
+/**
+ * Approximate gradient of the KL-divergence objective, designed for 
+ * optimization with ensmallen.
+ *
+ * This class implements an tree-based approximation of the t-SNE objective
+ * that decomposes forces into positive (attractive) and negative (repulsive)
+ * components and computes the gradient efficiently using an octree. It is
+ * templated on whether to use a dual-tree or the barnes-hut method.
+ *
+ * @tparam UseDualTree Indicates whether the traversal is dual (true) or
+           single (false). Allows both barnes-hut and dual-tree approximations
+           to be handled in one class.
+ * @tparam MatType The type of Matrix.
+ */
 template <bool UseDualTree, typename MatType = arma::mat>
 class TSNEApproxFunction
 {
  public:
   // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
+  using SpMatType = typename GetSparseMatType<MatType>::type;
+  // To Do: Make These Template Parameters
   using DistanceType = SquaredEuclideanDistance;
   using TreeType = Octree<DistanceType, CentroidStatistic>;
 
+
+  /**
+   * Constructs the TSNEApproxFunction object.
+   * 
+   * @param X The input data. (Din X N)
+   * @param perplexity The perplexity of the Gaussian distribution.
+   * @param theta The coarseness of the approximation.
+   */
   TSNEApproxFunction(const MatType& X,
                      const double perplexity,
+                     const size_t dof,
                      const double theta = 0.5)
-      : perplexity(perplexity), theta(theta)
+      : perplexity(perplexity), 
+        dof(dof), theta(theta)
   {
-    degrees_of_freedom = std::max<size_t>(X.n_rows - 1, 1);
-
     // Run KNN
+    // To Do: Make number of neibhors a parameter
     NeighborSearch<NearestNeighborSort, DistanceType> knn(X);
     const size_t neighbors = static_cast<size_t>(3 * perplexity);
     knn.Search(neighbors, N, D);
 
-    // Pre Compute P
-    P = binarySearchPerplexity(perplexity, N, D);
+    // Precompute P
+    P = binarySearchPerplexity(perplexity, D, N);
     P = P + P.t();
     P /= std::max(arma::datum::eps, arma::accu(P));
   }
@@ -56,8 +82,8 @@ class TSNEApproxFunction
    * Evaluates the Kullback–Leibler (KL) divergence between input
    * and the embedding and updates gradients.
    *
-   * @param y Current embedding
-   * @param g Variable to store the new gradient
+   * @param y Current embedding.
+   * @param g Variable to store the new gradient.
    */
   template <typename GradType>
   double EvaluateWithGradient(const MatType& y, GradType& g)
@@ -66,7 +92,8 @@ class TSNEApproxFunction
     double sumQ = 0.0, error = 0.0;
     std::vector<size_t> oldFromNew;
     TreeType tree(y, oldFromNew, 1);
-    TSNEApproxRules<UseDualTree> rule(sumQ, g, y, oldFromNew, theta);
+    TSNERules<UseDualTree> rule(
+        sumQ, g, y, oldFromNew, dof, theta);
 
     // Negative Force Calculation
     if constexpr (UseDualTree)
@@ -80,6 +107,7 @@ class TSNEApproxFunction
       for (size_t i = 0; i < y.n_cols; i++)
         traverser.Traverse(i, tree);
     }
+    sumQ = std::max(arma::datum::eps, sumQ);
     g /= -sumQ;
 
     // Positive Force Calculation
@@ -90,38 +118,42 @@ class TSNEApproxFunction
         const size_t idx = N(j, i);
         const double distanceSq = DistanceType::Evaluate(y.col(i), y.col(idx));
 
-        const double q = 1.0 / (1.0 + distanceSq);
+        double q = (double) dof /
+                         (dof + distanceSq);
+        if (dof != 1)
+          q = std::pow<double>(q, (1.0 + dof) / 2.0);
+        
         g.col(i) += q * P(i, idx) * (y.col(i) - y.col(idx));
         error += P(i, idx) *
-                 std::log(P(i, idx) / std::max(arma::datum::eps, q / sumQ));
+                 std::log(std::max<double>(arma::datum::eps, P(i, idx)) /
+                          std::max<double>(arma::datum::eps, q / sumQ));
       }
     }
-
-    g *= 2.0 * (degrees_of_freedom + 1.0) / degrees_of_freedom;
+    g *= 2.0 * (1.0 + dof) / dof;
 
     return error;
   }
 
   //! Get the Input Joint Probabilities.
-  const arma::sp_mat& InputJointProbabilities() const { return P; }
+  const SpMatType& InputJointProbabilities() const { return P; }
   //! Modify the Input Joint Probabilities.
-  arma::sp_mat& InputJointProbabilities() { return P; }
+  SpMatType& InputJointProbabilities() { return P; }
 
  private:
-  //! Degrees of freedom
-  size_t degrees_of_freedom;
+  //! Input joint probabilities.
+  SpMatType P;
 
-  //! Input joint probabilities
-  arma::sp_mat P;
-
-  //! Nearest neighbor indexes
-  arma::Mat<size_t> N;
-
-  //! Nearest neibhbor distances
+  //! Nearest neibhbor distances.
   MatType D;
+  
+  //! Nearest neighbor indexes.
+  arma::Mat<size_t> N;
 
   //! The perplexity of the Gaussian distribution.
   double perplexity;
+
+  //! Degrees of freedom.
+  size_t dof;
 
   //! The coarseness of the approximation.
   double theta;

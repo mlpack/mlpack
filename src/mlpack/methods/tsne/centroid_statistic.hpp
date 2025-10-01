@@ -1,5 +1,6 @@
 /**
  * @file methods/tsne/centroid_statistic.hpp
+ * @author Ryan Curtin
  * @author Ranjodh Singh
  *
  * Definition and Implementation of the Centroid Statistic.
@@ -19,11 +20,8 @@ namespace mlpack
 {
 
 /**
- * @brief Statistic that stores the Centroid/Center Of Mass/Barycenter
- *        of a metric tree node.
- *
- * @tparam VecType Vector type used to store the centroid (default is
- *         arma::vec).
+ * Statistic that stores the Centroid/Center Of Mass/Barycenter
+ * of a metric tree node.
  *
  * This statistic is intended for use with metric tree nodes (for example,
  * mlpack::Octree). For leaf nodes, the center of mass is the mean of the
@@ -31,20 +29,25 @@ namespace mlpack
  * as the weighted mean of child centroids, where the weight is the number of
  * descendants in the corresponding child.
  *
- * @see @ref trees
+ * @tparam VecType Vector type used to store the centroid (default is
+ *         arma::vec).
  */
-class CentroidStatistic
+template<typename VecType = arma::vec>
+class CentroidStatisticType
 {
  public:
-  /** Required Default constructor. */
-  CentroidStatistic() {}
+  /**
+   * Default constructor for the CentroidStatisticType.
+   */
+  CentroidStatisticType() {}
 
   /**
-   * @brief Construct from a tree node.
+   * Construct from a tree node.
+   *
    * @param node Tree node whose centroid is to be computed.
    */
   template <typename TreeType>
-  CentroidStatistic(const TreeType& node)
+  CentroidStatisticType(const TreeType& node)
   {
     centroid.zeros(node.Dataset().n_rows);
     for (size_t i = 0; i < node.NumPoints(); ++i)
@@ -63,13 +66,17 @@ class CentroidStatistic
     centroid /= node.NumDescendants();
   }
 
-  const arma::vec& Centroid() const { return centroid; }
-  arma::vec& Centroid() { return centroid; }
+  //! Get the centroid.
+  const VecType& Centroid() const { return centroid; }
+  //! Modify the centroid.
+  VecType& Centroid() { return centroid; }
 
  private:
-  //! the centroid vector
-  arma::vec centroid;
+  //! The centroid vector.
+  VecType centroid;
 };
+
+using CentroidStatistic = CentroidStatisticType<>;
 
 } // namespace mlpack
 
