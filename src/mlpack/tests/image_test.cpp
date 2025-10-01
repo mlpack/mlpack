@@ -160,7 +160,7 @@ TEST_CASE("SaveImageNewAPITest", "[ImageLoadTest]")
   REQUIRE(im1.n_rows == im2.n_rows);
   for (size_t i = 0; i < im1.n_elem; ++i)
     REQUIRE(im1[i] == im2[i]);
-  remove("APITest.bmp");
+//  remove("APITest.bmp");
 }
 
 /**
