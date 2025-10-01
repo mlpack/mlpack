@@ -20,7 +20,7 @@ namespace mlpack {
 namespace data {
 
 template <typename eT>
-arma::Mat<eT> ImageLayout(const arma::Mat<eT>& image,
+arma::Mat<eT> GroupChannels(const arma::Mat<eT>& image,
     const mlpack::data::ImageInfo& info)
 {
   size_t expectedRows = info.Width() * info.Height() * info.Channels();
@@ -38,18 +38,16 @@ arma::Mat<eT> ImageLayout(const arma::Mat<eT>& image,
   arma::Mat<eT> output(image.n_rows, image.n_cols);
   for (size_t i = 0; i < image.n_cols; i++)
   {
-    arma::Mat<eT> colAlias;
-    MakeAlias(colAlias, image, image.n_rows, 1, i * image.n_rows);
     output.col(i) =
       arma::vectorise(
-        arma::reshape(colAlias, info.Channels(), info.Height() * info.Width())
+        arma::reshape(image.col(i), info.Channels(), info.Height() * info.Width())
         .t());
   }
   return output;
 }
 
 template <typename eT>
-arma::Mat<eT> STBLayout(const arma::Mat<eT>& image,
+arma::Mat<eT> InterleaveChannels(const arma::Mat<eT>& image,
     const mlpack::data::ImageInfo& info)
 {
   size_t expectedRows = info.Width() * info.Height() * info.Channels();
@@ -67,11 +65,9 @@ arma::Mat<eT> STBLayout(const arma::Mat<eT>& image,
   arma::Mat<eT> output(image.n_rows, image.n_cols);
   for (size_t i = 0; i < image.n_cols; i++)
   {
-    arma::Mat<eT> colAlias;
-    MakeAlias(colAlias, image, image.n_rows, 1, i * image.n_rows);
     output.col(i) =
       arma::vectorise(
-        arma::reshape(colAlias, info.Height() * info.Width(), info.Channels())
+        arma::reshape(image.col(i), info.Height() * info.Width(), info.Channels())
         .t());
   }
   return output;

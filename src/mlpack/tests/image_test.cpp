@@ -403,12 +403,12 @@ TEMPLATE_TEST_CASE("ResizeCropUpscaleTest", "[ImageTest]", unsigned char,
 /**
  * Test that converts stb image layout to mlpack layout.
  */
-TEST_CASE("FromSTBLayout", "[ImageTest]")
+TEST_CASE("GroupChannels", "[ImageTest]")
 {
   arma::mat image = arma::regspace(0, 26);
   data::ImageInfo info(3, 3, 3);
 
-  arma::mat newLayout = ImageLayout(image, info);
+  arma::mat newLayout = GroupChannels(image, info);
 
   std::vector<double> expectedOutput = {
     0, 3, 6, 9, 12, 15, 18, 21, 24,
@@ -423,7 +423,7 @@ TEST_CASE("FromSTBLayout", "[ImageTest]")
 /**
  * Test that converts stb image layout to mlpack layout.
  */
-TEST_CASE("ToSTBLayout", "[ImageTest]")
+TEST_CASE("InterleaveChannels", "[ImageTest]")
 {
   data::ImageInfo info(3, 3, 3);
   std::vector<double> data = {
@@ -433,7 +433,7 @@ TEST_CASE("ToSTBLayout", "[ImageTest]")
   };
   arma::mat image(data);
 
-  arma::mat newLayout = STBLayout(image, info);
+  arma::mat newLayout = InterleaveChannels(image, info);
   arma::mat expectedImage = arma::regspace(0, 26);
   CheckMatrices(newLayout, expectedImage);
 }
@@ -441,11 +441,11 @@ TEST_CASE("ToSTBLayout", "[ImageTest]")
 /**
  * Test that converts stb image layout to mlpack layout.
  */
-TEST_CASE("FromSTBLayout2Images", "[ImageTest]")
+TEST_CASE("GroupChannels2Images", "[ImageTest]")
 {
   data::ImageInfo info(3, 3, 3);
   arma::mat images = arma::reshape(arma::regspace(0, 53), 27, 2);
-  arma::mat newImages = ImageLayout(images, info);
+  arma::mat newImages = GroupChannels(images, info);
 
   std::vector<double> expectedOutput = {
     0, 3, 6, 9, 12, 15, 18, 21, 24,
@@ -463,7 +463,7 @@ TEST_CASE("FromSTBLayout2Images", "[ImageTest]")
 /**
  * Test that converts mlpack image layout to stb layout.
  */
-TEST_CASE("ToSTBLayout2Images", "[ImageTest]")
+TEST_CASE("InterleaveChannels2Images", "[ImageTest]")
 {
   data::ImageInfo info(3, 3, 3);
   std::vector<double> input = {
@@ -476,7 +476,7 @@ TEST_CASE("ToSTBLayout2Images", "[ImageTest]")
   };
   arma::mat images = arma::reshape(arma::mat(input), 27, 2);
 
-  arma::mat newLayout = STBLayout(images, info);
+  arma::mat newLayout = InterleaveChannels(images, info);
   arma::mat expectedImage = arma::reshape(arma::regspace(0, 53), 27, 2);
   CheckMatrices(newLayout, expectedImage);
 }
@@ -484,31 +484,31 @@ TEST_CASE("ToSTBLayout2Images", "[ImageTest]")
 /**
  * Test that converts stb image layout to mlpack layout.
  */
-TEST_CASE("FromSTBLayoutEmptyImage", "[ImageTest]")
+TEST_CASE("GroupChannelsEmptyImage", "[ImageTest]")
 {
   arma::mat image;
   data::ImageInfo info(3, 3, 3);
-  REQUIRE_THROWS(ImageLayout(image, info));
+  REQUIRE_THROWS(GroupChannels(image, info));
 }
 
 /**
  * Test that converts mlpack image layout to stb layout.
  */
-TEST_CASE("ToSTBLayoutEmtpyImage", "[ImageTest]")
+TEST_CASE("InterleaveChannelsEmtpyImage", "[ImageTest]")
 {
   data::ImageInfo info(3, 3, 3);
   arma::mat image;
-  REQUIRE_THROWS(STBLayout(image, info));
+  REQUIRE_THROWS(InterleaveChannels(image, info));
 }
 
 /**
  * Test that converts stb image layout to mlpack layout.
  */
-TEST_CASE("FromSTBLayoutOneChannel", "[ImageTest]")
+TEST_CASE("GroupChannelsOneChannel", "[ImageTest]")
 {
   arma::mat image = arma::regspace(0, 8);
   data::ImageInfo info(3, 3, 1);
-  arma::mat newLayout = ImageLayout(image, info);
+  arma::mat newLayout = GroupChannels(image, info);
   arma::mat expectedImage(image);
 
   CheckMatrices(newLayout, expectedImage);
@@ -517,11 +517,11 @@ TEST_CASE("FromSTBLayoutOneChannel", "[ImageTest]")
 /**
  * Test that converts mlpack image layout to stb layout.
  */
-TEST_CASE("ToSTBLayoutOneChannel", "[ImageTest]")
+TEST_CASE("InterleaveChannelsOneChannel", "[ImageTest]")
 {
   arma::mat image = arma::regspace(0, 8);
   data::ImageInfo info(3, 3, 1);
-  arma::mat newLayout = STBLayout(image, info);
+  arma::mat newLayout = InterleaveChannels(image, info);
   arma::mat expectedImage(image);
 
   CheckMatrices(newLayout, expectedImage);
@@ -530,13 +530,13 @@ TEST_CASE("ToSTBLayoutOneChannel", "[ImageTest]")
 /**
  * Test that converts stb image layout to mlpack layout.
  */
-TEST_CASE("FromSTBLayoutOnePixel", "[ImageTest]")
+TEST_CASE("GroupChannelsOnePixel", "[ImageTest]")
 {
   data::ImageInfo info(1, 1, 1);
   arma::mat image(1, 1);
   image.fill(5.0);
 
-  arma::mat newLayout = ImageLayout(image, info);
+  arma::mat newLayout = GroupChannels(image, info);
   arma::mat expectedImage(image);
 
   CheckMatrices(newLayout, expectedImage);
@@ -545,13 +545,13 @@ TEST_CASE("FromSTBLayoutOnePixel", "[ImageTest]")
 /**
  * Test that converts mlpack image layout to stb layout.
  */
-TEST_CASE("ToSTBLayoutOnePixel", "[ImageTest]")
+TEST_CASE("InterleaveChannelsOnePixel", "[ImageTest]")
 {
   data::ImageInfo info(1, 1, 1);
   arma::mat image(1, 1);
   image.fill(5.0);
 
-  arma::mat newLayout = STBLayout(image, info);
+  arma::mat newLayout = InterleaveChannels(image, info);
   arma::mat expectedImage(image);
   CheckMatrices(newLayout, expectedImage);
 }
