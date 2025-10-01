@@ -310,7 +310,7 @@ jobs:
       - name: Publish image
         shell: powershell
         run: |
-          cp build\APITest.bmp dist\APITest.bmp
+          cp build\APITest3.bmp dist\APITest3.bmp
 
       - name: Build MSI installer
         shell: powershell
