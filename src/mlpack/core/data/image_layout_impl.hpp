@@ -39,8 +39,8 @@ arma::Mat<eT> GroupChannels(const arma::Mat<eT>& image,
   for (size_t i = 0; i < image.n_cols; i++)
   {
     output.col(i) = arma::vectorise(
-      arma::reshape(image.col(i), info.Channels(), info.Height() * info.Width()
-        ).t());
+      arma::reshape(image.col(i), info.Channels(), info.Height() * info.Width())
+        .t());
   }
   return output;
 }
@@ -65,8 +65,8 @@ arma::Mat<eT> InterleaveChannels(const arma::Mat<eT>& image,
   for (size_t i = 0; i < image.n_cols; i++)
   {
     output.col(i) = arma::vectorise(
-      arma::reshape(image.col(i), info.Height() * info.Width(), info.Channels()
-        ).t());
+      arma::reshape(image.col(i), info.Height() * info.Width(), info.Channels())
+        .t());
   }
   return output;
 }
