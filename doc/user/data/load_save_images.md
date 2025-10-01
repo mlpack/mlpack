@@ -56,9 +56,12 @@ The `data::ImageOptions` class contains the metadata of the images.
 ### Loading images
 
 With a `data::ImageOptions` object, image data can be loaded or saved, handling
-either one or multiple images at a time:
+either one or multiple images at a time. This object need to be defined before
+calling `data::Load` or `data::Save`:
 
 <!-- TODO: add parameter to force use of what's in `info` -->
+
+ - `data::ImageOptions opts;`
 
  - `data::Load(filename, matrix, opts)`
    * Load a ***single image*** from `filename` into `matrix`.
@@ -90,8 +93,8 @@ either one or multiple images at a time:
 
    * `opts` will be populated with information from the images in `files`.
 
-   * If `fatal` is `true`, a `std::runtime_error` will be thrown if any files
-     fail to load.
+   * To make the function to throw a `std::runtime_error` on failure, please
+     set `opts.Fatal() = true;`
 
    * Returns a `bool` indicating the success of the operation.
 
@@ -107,7 +110,7 @@ either one or multiple images at a time:
 
 ---
 
- - `data::Save(filename, matrix, info, fatal=false)`
+ - `data::Save(filename, matrix, opts)`
    * Save a ***single image*** from `matrix` into the file `filename`.
      - Format is chosen by extension (e.g. `image.png` will save as PNG).
 
@@ -129,7 +132,7 @@ either one or multiple images at a time:
 
 ---
 
- - `data::Save(files, matrix, info, fatal=false)`
+ - `data::Save(files, matrix, opts)`
    * Save ***multiple images*** from `matrix` into `files`.
      - `files` is of type `std::vector<std::string>` and should contain the list
        of files to save to.
