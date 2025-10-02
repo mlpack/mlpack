@@ -163,7 +163,7 @@ bool Save(const std::string& filename,
         ImageOptions imgOpts(std::move(opts));
         std::vector<std::string> files;
         files.push_back(filename);
-        SaveImage(files, tmp, imgOpts);
+        success = SaveImage(files, tmp, imgOpts);
         opts = std::move(imgOpts);
       }
       else
@@ -171,7 +171,7 @@ bool Save(const std::string& filename,
         ImageOptions imgOpts(std::move(opts));
         std::vector<std::string> files;
         files.push_back(filename);
-        SaveImage(files, matrix, imgOpts);
+        success = SaveImage(files, matrix, imgOpts);
         opts = std::move(imgOpts);
       }
     }
