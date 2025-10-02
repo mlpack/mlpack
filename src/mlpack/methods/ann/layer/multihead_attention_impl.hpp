@@ -39,7 +39,7 @@ MultiheadAttention<MatType, RegularizerType>::
 MultiheadAttention(
     const size_t tgtSeqLen,
     const size_t numHeads,
-    const MatType& attnmask,
+    const CubeType& attnmask,
     const MatType& keypaddingmask,
     const bool selfAttention) :
     tgtSeqLen(tgtSeqLen),
@@ -122,7 +122,7 @@ Forward(const MatType& input, MatType& output)
 
   // The scaling factor sqrt(headDim) is used to prevent exploding values
   // after dot product i.e. when qProj is multiplied with kProj.
-  qProj /= std::sqrt(headDim);
+  qProj /= ElemType(std::sqrt(headDim));
 
   // Split the qProj, kProj and vProj into n heads. That's what Multihead
   // Attention is.
@@ -131,40 +131,16 @@ Forward(const MatType& input, MatType& output)
   vProj.reshape(srcSeqLen, headDim, numHeads * batchSize);
 
   // Calculate the scores i.e. perform the matrix multiplication operation
-  // on qProj and kProj. Here score = qProj . kProj'
-  scores = MultiplyCube2Cube(qProj, kProj, false, true);
+  // on qProj and kProj. Here score = kProj . qProj'
+  scores = MultiplyCube2Cube(kProj, qProj, false, true);
 
-  // Apply the attention mask if provided. The attention mask is used to black-
-  // out future sequences and generally used in Encoder-Decoder attention.
-  // The attention mask has elements -inf or 0.
-  // The shape of the attention mask : (tgtSeqLen, srcSeqLen).
-  if (!attnMask.is_empty())
-  {
-    if (attnMask.n_rows != tgtSeqLen || attnMask.n_cols != srcSeqLen)
-      Log::Fatal << "The size of the 'attn_mask' is not correct.\n";
-    scores.each_slice() += attnMask;
-  }
-
-  // Apply the key padding mask when provided. It blacks-out any particular
-  // word in the sequence.
-  // The key padding mask has elements -inf or 0
-  // The shape of keyPaddingMask : (1, srcSeqLen).
-  if (!keyPaddingMask.is_empty())
-  {
-    if (keyPaddingMask.n_rows != 1 || keyPaddingMask.n_cols != srcSeqLen)
-        Log::Fatal << "The size of the 'keyPaddingMask' is not correct.\n";
-    scores.each_slice() += repmat(keyPaddingMask, tgtSeqLen, 1);
-  }
-
-  for (size_t i = 0; i < numHeads * batchSize; ++i)
-  {
-    softmax.Forward(scores.slice(i), scores.slice(i));
-  }
+  // Apply softmax to non-masked elements.
+  MaskedForwardSoftmax(scores, numHeads, batchSize, attnMask, keyPaddingMask);
 
   // Calculate the attention output i.e. matrix multiplication of softmax
   // output and vProj.
   // The shape of attnOutput : (tgtSeqLen, headDim, numHeads * batchSize).
-  attnOut = MultiplyCube2Cube(scores, vProj, false, false);
+  attnOut = MultiplyCube2Cube(scores, vProj, true, false);
 
   // Now we will concatenate output of all the heads i.e. we will reshape
   // attnOut to (tgtSeqLen, embedDim, batchSize).
@@ -173,7 +149,7 @@ Forward(const MatType& input, MatType& output)
   // The final output is the linear projection of attention output.
   for (size_t i = 0; i < batchSize; ++i)
   {
-    output.col(i) = vectorise(trans(attnOut.slice(i) * outWt
+    output.col(i) = vectorise(trans(attnOut.slice(i) * outWt.t()
         + repmat(outBias, tgtSeqLen, 1)));
   }
 }
@@ -207,7 +183,7 @@ Backward(const MatType& /* input */,
   // The shape of gyTemp : (embedDim, tgtSeqLen, batchSize).
   // The shape of outWt : (embedDim, embedDim).
   // The shape of the result : (tgtSeqLen, embedDim, batchSize).
-  gyTemp = MultiplyCube2Mat(gyTemp, outWt, true, true);
+  gyTemp = MultiplyCube2Mat(gyTemp, outWt, true, false);
 
   // Now since the shape of gyTemp is (tgtSeqLen, embedDim, batchSize). We will
   // split it into n heads.
@@ -216,9 +192,9 @@ Backward(const MatType& /* input */,
 
   // Obtain backpropagted error of value.
   // Shape of gyTemp : (tgtSeqLen, headDim, numHeads * batchSize).
-  // Shape of scores : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
+  // Shape of scores : (srcSeqLen, tgtSeqLen, numHeads * batchSize).
   // The shape of tmp : (srcSeqLen, headDim, numHeads * batchSize).
-  CubeType tmp = MultiplyCube2Cube(scores, gyTemp, true, false);
+  CubeType tmp = MultiplyCube2Cube(scores, gyTemp, false, false);
 
   // Concatenate results of all the attention heads.
   tmp.reshape(srcSeqLen, embedDim, batchSize);
@@ -239,8 +215,8 @@ Backward(const MatType& /* input */,
 
   // The shape of gyTemp : (tgtSeqLen, headDim, numHeads * batchSize).
   // The shape of vProj : (srcSeqLen, headDim, numHeads * batchSize).
-  // So the new shape of gyTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
-  gyTemp = MultiplyCube2Cube(gyTemp, vProj, false, true);
+  // So the new shape of gyTemp : (srcSeqLen, tgtSeqLen, numHeads * batchSize).
+  gyTemp = MultiplyCube2Cube(vProj, gyTemp, false, true);
 
   for (size_t i = 0; i < numHeads * batchSize; ++i)
   {
@@ -251,9 +227,9 @@ Backward(const MatType& /* input */,
 
   // Obtain backpropagated error of key.
   // The shape of qProj : (tgtSeqLen, headDim, numHeads * batchSize).
-  // The shape of gyTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
+  // The shape of gyTemp : (srcSeqLen, tgtSeqLen, numHeads * batchSize).
   // The new shape of tmp : (srcSeqLen, headDim, numHeads * batchSize).
-  tmp = MultiplyCube2Cube(gyTemp, qProj, true, false);
+  tmp = MultiplyCube2Cube(gyTemp, qProj, false, false);
 
   // Concatenate results of all the attention heads.
   tmp.reshape(srcSeqLen, embedDim, batchSize);
@@ -276,9 +252,10 @@ Backward(const MatType& /* input */,
 
   // Obtain backpropagated error of the query.
   // The shape of kProj : (srcSeqLen, headDim, numHeads * batchSize).
-  // The shape of gyTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
+  // The shape of gyTemp : (srcSeqLen, tgtSeqLen, numHeads * batchSize).
   // The new shape of tmp : (tgtSeqLen, headDim, numHeads * batchSize).
-  tmp = MultiplyCube2Cube(gyTemp, kProj) / std::sqrt(headDim);
+  tmp = MultiplyCube2Cube(gyTemp, kProj, true, false) /
+      ElemType(std::sqrt(headDim));
 
   // Concatenate results of all the attention heads.
   tmp.reshape(tgtSeqLen, embedDim, batchSize);
@@ -356,22 +333,23 @@ Gradient(const MatType& input,
 
   // Gradient wrt. outWt, i.e. dL/d(outWt). We will take sum of gyTemp along
   // the slices and vectorise the output.
-  gradient.rows(3 * wtSize, 4 * wtSize - 1) = vectorise(sum(gyTemp, 2));
+  CubeType tmpCube = sum(gyTemp, 2);
+  gradient.rows(3 * wtSize, 4 * wtSize - 1) = vectorise(tmpCube.slice(0).t());
 
   // Partial derivative wrt. attnOut.
   // The shape of outWt : (embedDim, embedDim).
   // The shape of errorTemp : (embedDim, tgtSeqLen, batchSize).
   // The shape of gyTemp : (tgtSeqLen, embedDim, batchSize).
-  gyTemp = MultiplyCube2Mat(errorTemp, outWt, true, true);
+  gyTemp = MultiplyCube2Mat(errorTemp, outWt, true, false);
 
   // Now we will split it into n heads i.e. reshape it into a cube of shape
   // (tgtSeqLen, headDim, numHeads * batchSize).
   gyTemp.reshape(tgtSeqLen, headDim, numHeads * batchSize);
 
   // Shape of gyTemp : (tgtSeqLen, headDim, numHeads * batchSize).
-  // Shape of scores : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
+  // Shape of scores : (srcSeqLen, tgtSeqLen, numHeads * batchSize).
   // The new shape of errorTemp : (srcSeqLen, headDim, numHeads * batchSize).
-  errorTemp = MultiplyCube2Cube(scores, gyTemp, true, false);
+  errorTemp = MultiplyCube2Cube(scores, gyTemp, false, false);
 
   // Now we will concatenate the propagated errors from all heads i.e. we
   // will reshape errorTemp to (srcSeqLen, embedDim, batchSize).
@@ -393,22 +371,23 @@ Gradient(const MatType& input,
 
   // Now, the shape of gyTemp : (tgtSeqLen, headDim, numHeads * batchSize).
   // The shape of vProj : (srcSeqLen, headDim, numHeads * batchSize).
-  // The new shape of errorTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
-  errorTemp = MultiplyCube2Cube(gyTemp, vProj, false, true);
+  // The new shape of errorTemp : (srcSeqLen, tgtSeqLen, numHeads * batchSize).
+  errorTemp = MultiplyCube2Cube(vProj, gyTemp, false, true);
 
   for (size_t i = 0; i < numHeads * batchSize; ++i)
   {
-    // The shape of scores : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
-    // The shape of errorTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
+    // The shape of scores : (srcSeqLen, tgtSeqLen, numHeads * batchSize).
+    // The shape of errorTemp : (srcSeqLen, tgtSeqLen, numHeads * batchSize).
     // The new shape of errorTemp remain same.
     softmax.Backward({} /* unused */, scores.slice(i), errorTemp.slice(i),
         errorTemp.slice(i));
   }
 
+
   // The shape of qProj : (tgtSeqLen, headDim, numHeads * batchSize).
-  // The shape of errorTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
+  // The shape of errorTemp : (srcSeqLen, tgtSeqLen, numHeads * batchSize).
   // The shape of gyTemp : (srcSeqLen, headDim, numHeads * batchSize).
-  gyTemp = MultiplyCube2Cube(errorTemp, qProj, true, false);
+  gyTemp = MultiplyCube2Cube(errorTemp, qProj, false, false);
 
   // We will now conctenate the propagated errors from all heads.
   // The new shape of gyTemp : (srcSeqLen, embedDim, batchSize).
@@ -429,13 +408,13 @@ Gradient(const MatType& input,
   gradient.rows(wtSize, 2 * wtSize - 1) = vectorise(sum(gyTemp, 2));
 
   // The shape of kProj : (srcSeqLen, headDim, numHeads * batchSize).
-  // The shape of errorTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
+  // The shape of errorTemp : (srcSeqLen, tgtSeqLen, numHeads * batchSize).
   // The shape of gyTemp : (tgtSeqLen, headDim, numHeads * batchSize).
-  gyTemp = MultiplyCube2Cube(errorTemp, kProj, false, false);
+  gyTemp = MultiplyCube2Cube(errorTemp, kProj, true, false);
 
   // Now, we will concatenate propagated error of all heads.
   gyTemp.reshape(tgtSeqLen, embedDim, batchSize);
-  gyTemp /= std::sqrt(headDim);
+  gyTemp /= ElemType(std::sqrt(headDim));
 
   // Gradient wrt. qBias, i.e. dL/d(qBias). We will take summation over all the
   // batches of gyTemp and over all the sequences.
@@ -489,6 +468,124 @@ serialize(Archive& ar, const uint32_t /* version */)
     vProj.clear();
     scores.clear();
     attnOut.clear();
+  }
+}
+
+template<typename MatType, typename RegularizerType>
+void MultiheadAttention<MatType, RegularizerType>::MaskedForwardSoftmax(
+    CubeType& scores,
+    const size_t numHeads,
+    const size_t batchSize,
+    const CubeType& attnMask,
+    const MatType& keyPaddingMask)
+{
+  if (attnMask.empty() && keyPaddingMask.empty())
+  {
+    // No masking required: we can use the simple implementation.
+    for (size_t i = 0; i < scores.n_slices; ++i)
+    {
+      scores.slice(i) = exp(scores.slice(i).each_row() -
+          max(scores.slice(i), 0));
+      scores.slice(i).each_row() /= sum(scores.slice(i), 0);
+    }
+  }
+  else if (attnMask.empty() && !keyPaddingMask.empty())
+  {
+    // There is one key padding mask column for each element in the batch.
+    for (size_t i = 0; i < batchSize; ++i)
+    {
+      for (size_t h = 0; h < numHeads; ++h)
+      {
+        const size_t s = i * numHeads + h;
+
+        for (size_t c = 0; c < scores.n_cols; ++c)
+        {
+          ElemType maxVal = std::numeric_limits<ElemType>::lowest();
+          for (size_t r = 0; r < scores.n_rows; ++r)
+            if (keyPaddingMask(r, i) >= ElemType(0) && scores(r, c, s) > maxVal)
+              maxVal = scores(r, c, s);
+
+          for (size_t r = 0; r < scores.n_rows; ++r)
+          {
+            if (keyPaddingMask(r, i) < ElemType(0))
+              scores(r, c, s) = ElemType(0);
+            else
+              scores(r, c, s) = std::exp(scores(r, c, s) - maxVal);
+          }
+
+          if (maxVal != std::numeric_limits<ElemType>::lowest())
+            scores.slice(s).col(c) /= sum(scores.slice(s).col(c));
+        }
+      }
+    }
+  }
+  else if (!attnMask.empty() && keyPaddingMask.empty())
+  {
+    // There is one attention mask for each element in the batch.
+    for (size_t i = 0; i < batchSize; ++i)
+    {
+      for (size_t h = 0; h < numHeads; ++h)
+      {
+        const size_t s = i * numHeads + h;
+
+        for (size_t c = 0; c < scores.n_cols; ++c)
+        {
+          ElemType maxVal = std::numeric_limits<ElemType>::lowest();
+          for (size_t r = 0; r < scores.n_rows; ++r)
+            if (attnMask(r, c, i) >= ElemType(0) && scores(r, c, s) > maxVal)
+              maxVal = scores(r, c, s);
+
+          for (size_t r = 0; r < scores.n_rows; ++r)
+          {
+            if (attnMask(r, c, i) < ElemType(0))
+              scores(r, c, s) = ElemType(0);
+            else
+              scores(r, c, s) = std::exp(scores(r, c, s) - maxVal);
+          }
+
+          if (maxVal != std::numeric_limits<ElemType>::lowest())
+            scores.slice(s).col(c) /= sum(scores.slice(s).col(c));
+        }
+      }
+    }
+  }
+  else // !attnMask.empty() && !keyPaddingMask.empty()
+  {
+    // There is one key padding mask column for each element in the batch, and
+    // one attention mask for each element in the batch.
+    for (size_t i = 0; i < batchSize; ++i)
+    {
+      for (size_t h = 0; h < numHeads; ++h)
+      {
+        const size_t s = i * numHeads + h;
+
+        for (size_t c = 0; c < scores.n_cols; ++c)
+        {
+          ElemType maxVal = std::numeric_limits<ElemType>::lowest();
+          for (size_t r = 0; r < scores.n_rows; ++r)
+          {
+            if (attnMask(r, c, i) >= ElemType(0) &&
+                keyPaddingMask(r, i) >= ElemType(0) &&
+                scores(r, c, s) > maxVal)
+            {
+              maxVal = scores(r, c, s);
+            }
+          }
+
+          for (size_t r = 0; r < scores.n_rows; ++r)
+          {
+            if (attnMask(r, c, i) < ElemType(0) ||
+                keyPaddingMask(r, i) < ElemType(0))
+              scores(r, c, s) = ElemType(0);
+            else
+              scores(r, c, s) = std::exp(scores(r, c, s) - maxVal);
+          }
+
+          if (maxVal != std::numeric_limits<ElemType>::lowest())
+            scores.slice(s).col(c) /= sum(scores.slice(s).col(c));
+        }
+      }
+    }
   }
 }
 

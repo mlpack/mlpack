@@ -98,3 +98,14 @@ runs:
           cd build/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/
           CGO_LDFLAGS="-Wl,-no_warn_duplicate_libraries" go test -v $ROOTDIR/src/mlpack/bindings/go/tests/go_binding_test.go 2>&1 |\
               $HOME/go/bin/go-junit-report | tee $ROOTDIR/build/go_bindings.junit.xml;
+
+    #
+    # Markdown bindings.
+    #
+    - name: "Run Markdown binding tests"
+      if: inputs.lang == 'Markdown'
+      shell: bash
+      run: |
+          # Make sure that the generated Markdown bindings match the ones in the
+          # repository.
+          ./scripts/check-markdown-docs.sh build/

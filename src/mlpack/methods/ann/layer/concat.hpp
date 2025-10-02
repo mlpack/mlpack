@@ -34,7 +34,10 @@ template <typename MatType = arma::mat>
 class Concat : public MultiLayer<MatType>
 {
  public:
+  // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
+
   /**
    * Create the Concat object.  The axis used for concatenation will be the last
    * one.

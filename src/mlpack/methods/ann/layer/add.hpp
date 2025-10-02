@@ -28,6 +28,9 @@ template<typename MatType = arma::mat>
 class Add : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the Add object.  The output size of the layer will be the same
    * as the input size.

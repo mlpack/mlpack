@@ -1,36 +1,42 @@
 /**
- * @file methods/ann/ffn.hpp
- * @author Marcus Edel
- * @author Shangtong Zhang
+ * @file methods/ann/dag_network.hpp
+ * @author Andrew Furey
  *
- * Definition of the FFN class, which implements feed forward neural networks.
+ * Definition of the DAGNetwork class, which allows uers to describe a
+ * computational graph to build arbitrary neural networks with skip
+ * connections.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_FFN_HPP
-#define MLPACK_METHODS_ANN_FFN_HPP
+#ifndef MLPACK_METHODS_ANN_DAG_NETWORK_HPP
+#define MLPACK_METHODS_ANN_DAG_NETWORK_HPP
 
 #include <mlpack/core.hpp>
 
-#include "forward_decls.hpp"
 #include "init_rules/init_rules.hpp"
-#include "loss_functions/loss_functions.hpp"
 
 #include <ensmallen.hpp>
 
 namespace mlpack {
 
 /**
- * Implementation of a standard feed forward network.  Any layer that inherits
- * from the base `Layer` class can be added to this model.  For recursive neural
- * networks, see the `RNN` class.
+ * Implementation of a direct acyclic graph. Any layer that inherits
+ * from the base `Layer` class can be added to this model.
  *
- * In general, a network can be created by using the `Add()` method to add
- * layers to the network.  Then, training can be performed with `Train()`, and
- * data points can be passed through the trained network with `Predict()`.
+ * A network can be created by using the `Add()` method to add
+ * layers to the network. Each layer is then linked using `Connect()`.
+ * A node with multiple parents will concatenate the output of its
+ * parents along a specified axis. You can specify the axis of
+ * concatenation with `SetAxis`. If the axis is not specifed, the default
+ * axis will be used, which is 0.
+ *
+ * A DAGNetwork cannot have any cycles. Creating a network with a cycle will
+ * result in an error.
+ *
+ * A DAGNetwork can only have one input layer and one output layer.
  *
  * Although the actual types passed as input will be matrix objects with one
  * data point per column, each data point can be a tensor of arbitrary shape.
@@ -44,21 +50,16 @@ namespace mlpack {
  * @tparam OutputLayerType The output layer type used to evaluate the network.
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
  * @tparam MatType Type of matrix to be given as input to the network.
- * @tparam MatType Type of matrix to be produced as output from the last
- *     layer.
  */
 template<
     typename OutputLayerType = NegativeLogLikelihood,
     typename InitializationRuleType = RandomInitialization,
     typename MatType = arma::mat>
-class FFN
+class DAGNetwork
 {
  public:
-  // Convenience typedef for the element type of the network.
-  using ElemType = typename MatType::elem_type;
-
   /**
-   * Create the FFN object.
+   * Create the DAGNetwork object.
    *
    * Optionally, specify which initialize rule and performance function should
    * be used.
@@ -70,157 +71,119 @@ class FFN
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
    */
-  FFN(OutputLayerType outputLayer = OutputLayerType(),
-      InitializationRuleType initializeRule = InitializationRuleType());
+  DAGNetwork(OutputLayerType outputLayer = OutputLayerType(),
+             InitializationRuleType initializeRule = InitializationRuleType());
 
-  //! Copy constructor.
-  FFN(const FFN& other);
-  //! Move constructor.
-  FFN(FFN&& other);
-  //! Copy operator.
-  FFN& operator=(const FFN& other);
-  //! Move assignment operator.
-  FFN& operator=(FFN&& other);
+  // Copy constructor.
+  DAGNetwork(const DAGNetwork& other);
+  // Move constructor.
+  DAGNetwork(DAGNetwork&& other);
+  // Copy operator.
+  DAGNetwork& operator=(const DAGNetwork& other);
+  // Move assignment operator.
+  DAGNetwork& operator=(DAGNetwork&& other);
 
-  /**
-   * Add a new layer to the model.
-   *
-   * @param args The layer parameter.
-   */
-  template <typename LayerType, typename... Args>
-  void Add(Args&&... args)
+  // Destructor: delete all layers.
+  ~DAGNetwork()
   {
-    network.template Add<LayerType>(std::forward<Args>(args)...);
-    inputDimensionsAreSet = false;
+    for (size_t i = 0; i < network.size(); i++)
+      delete network[i];
   }
 
-  /**
-   * Add a new layer to the model, without specifying the matrix type of the
-   * layer as a template parameter.
-   *
-   * @param args The layer parameter.
-   */
-  template<template<typename...> typename LayerType,
-           typename... Args>
-  void Add(Args&&... args)
-  {
-    network.template Add<LayerType<MatType>>(std::forward<Args>(args)...);
-    inputDimensionsAreSet = false;
-  }
+
+  using CubeType = typename GetCubeType<MatType>::type;
 
   /**
    * Add a new layer to the model.  Note that any trainable weights of this
-   * layer will be reset!  (Any constant parameters are kept.)
+   * layer will be reset!  (Any constant parameters are kept.) This layer
+   * should only receive input from one layer.
    *
    * @param layer The Layer to be added to the model.
+   *
+   * returns the index of the layer in `network`, to be used in `Connect()`
    */
-  [[deprecated("Will be removed in mlpack 5.0.0.  Use Add(std::move(layer)).")]]
-  void Add(Layer<MatType>* layer)
+  template <typename LayerType, typename... Args>
+  size_t Add(Args&&... args)
   {
-    network.Add(layer);
-    inputDimensionsAreSet = false;
+    size_t id = network.size();
+    network.push_back(new LayerType(std::forward<Args>(args)...));
+    AddLayer(id);
+
+    return id;
+  }
+
+  template <template<typename...> typename LayerType, typename... Args>
+  size_t Add(Args&&... args)
+  {
+    size_t id = network.size();
+    network.push_back(new LayerType<MatType>(std::forward<Args>(args)...));
+    AddLayer(id);
+
+    return id;
+  }
+
+  template <typename LayerType>
+  size_t Add(LayerType&& layer,
+             typename std::enable_if_t<
+                 !std::is_pointer_v<std::remove_reference_t<LayerType>>>* = 0)
+  {
+    using NewLayerType =
+        typename std::remove_cv_t<std::remove_reference_t<LayerType>>;
+
+    size_t id = network.size();
+    network.push_back(new NewLayerType(std::forward<LayerType>(layer)));
+    AddLayer(id);
+
+    return id;
   }
 
   /**
-   * Add a new layer to the model by copying/moving the parameters of the given
-   * layer.  Note that any trainable weights of this layer will be reset!
-   * (Constant parameters are kept.)  Preferably, pass the layer with
-   * std::move().
+   * Set the axis to concatenate along for a layer that expects multiple
+   * parent node. Can only be set once per layer.
    *
-   * @param layer The layer to be added to the model.
+   * @param concatAxis The axis to concatenate parent node outputs along.
+   * @param layerId The layer to be added to the model.
    */
-  template<typename LayerType>
-  void Add(LayerType&& layer,
-           // This SFINAE can be removed in mlpack 5.0.0.
-           typename std::enable_if<!std::is_pointer_v<
-                std::remove_reference_t<LayerType>>>::type* = 0)
-  {
-    network.Add(std::forward<LayerType>(layer));
-    inputDimensionsAreSet = false;
-  }
+  void SetAxis(size_t layerId, size_t concatAxis);
 
-  // Get the layers of the network.
+  /**
+   * Create an edge between two layers. If the child node expects multiple
+   * parents, the child must have been added to the network with an axis.
+   *
+   * @param inputLayer The parent node whose output is the input to `outputLayer`
+   * @param outputLayer The child node whose input will come from `inputLayer`
+   */
+  void Connect(size_t parentNodeId, size_t childNodeId);
+
+  // Get the layers of the network, in the order the user specified.
   const std::vector<Layer<MatType>*>& Network() const
   {
-    return network.Network();
+    return network;
   }
 
-  /**
-   * Modify the network model.  Be careful!  If you change the structure of the
-   * network or parameters for layers, its state may become invalid, and the
-   * next time it is used for any operation the parameters will be reset.
-   *
-   * Don't add any layers like this; use `Add()` instead.
-   */
-  std::vector<Layer<MatType>*>& Network()
+  // Get the layers of the network, in topological order.
+  const std::vector<Layer<MatType>*> SortedNetwork()
   {
-    // We can no longer make any assumptions... the user may change anything.
-    inputDimensionsAreSet = false;
-    layerMemoryIsSet = false;
+    if (!graphIsSet)
+      CheckGraph();
 
-    return network.Network();
+    std::vector<Layer<MatType>*> sortedLayers;
+    for (size_t i = 0; i < sortedNetwork.size(); i++)
+    {
+      size_t layerIndex = sortedNetwork[i];
+      sortedLayers.push_back(network[layerIndex]);
+    }
+    return sortedLayers;
   }
 
-  /**
-   * Train the feedforward network on the given input data using the given
-   * optimizer.
-   *
-   * If no parameters have ever been set (e.g. if `Parameters()` is an empty
-   * matrix), or if the parameters' size does not match the number of weights
-   * needed for the current input size (as given by `predictors` and optionally
-   * set further by `InputDimensions()`), then the network will be initialized
-   * using `InitializeRuleType`.
-   *
-   * If parameters are the right size for the given `predictors` and
-   * `InputDimensions()`, then the existing parameters will be used as a
-   * starting point.  (If you want to reinitialize, first call `Reset()`.)
-   *
-   * Note that due to shuffling, training will make a copy of the data, unless
-   * you use `std::move()` to pass the `predictors` and `responses` (that is,
-   * `Train(std::move(predictors), std::move(responses))`).
-   *
-   * @tparam OptimizerType Type of optimizer to use to train the model.
-   * @tparam CallbackTypes Types of Callback Functions.
-   * @param predictors Input training variables.
-   * @param responses Outputs results from input training variables.
-   * @param optimizer Instantiated optimizer used to train the model.
-   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
-   *      See https://www.ensmallen.org/docs.html#callback-documentation.
-   * @return The final objective of the trained model (NaN or Inf on error).
-   */
+
+
   template<typename OptimizerType, typename... CallbackTypes>
   typename MatType::elem_type Train(MatType predictors,
                                     MatType responses,
                                     OptimizerType& optimizer,
                                     CallbackTypes&&... callbacks);
 
-  /**
-   * Train the feedforward network on the given input data. By default, the
-   * RMSProp optimization algorithm is used, but others can be specified
-   * (such as ens::SGD).
-   *
-   * If no parameters have ever been set (e.g. if `Parameters()` is an empty
-   * matrix), or if the parameters' size does not match the number of weights
-   * needed for the current input size (as given by `predictors` and optionally
-   * set further by `InputDimensions()`), then the network will be initialized
-   * using `InitializeRuleType`.
-   *
-   * If parameters are the right size for the given `predictors` and
-   * `InputDimensions()`, then the existing parameters will be used as a
-   * starting point.  (If you want to reinitialize, first call `Reset()`.)
-   *
-   * Note that due to shuffling, training will make a copy of the data, unless
-   * you use `std::move()` to pass the `predictors` and `responses` (that is,
-   * `Train(std::move(predictors), std::move(responses))`).
-   *
-   * @tparam OptimizerType Type of optimizer to use to train the model.
-   * @param predictors Input training variables.
-   * @tparam CallbackTypes Types of Callback Functions.
-   * @param responses Outputs results from input training variables.
-   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
-   *      See https://www.ensmallen.org/docs.html#callback-documentation.
-   * @return The final objective of the trained model (NaN or Inf on error).
-   */
   template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
   typename MatType::elem_type Train(MatType predictors,
                                     MatType responses,
@@ -258,21 +221,35 @@ class FFN
    */
   std::vector<size_t>& InputDimensions()
   {
-    // The user may change the input dimensions, so we will have to propagate
-    // these changes to the network.
-    inputDimensionsAreSet = false;
+    validOutputDimensions = false;
+    graphIsSet = false;
+    layerMemoryIsSet = false;
+
     return inputDimensions;
   }
-  //! Get the logical dimensions of the input.
+
+  // Get the logical dimensions of the input.
   const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
 
-  //! Return the current set of weights.  These are linearized: this contains
-  //! the weights of every layer.
+  const std::vector<size_t>& OutputDimensions()
+  {
+    if (!graphIsSet)
+      CheckGraph();
+
+    if (!validOutputDimensions)
+      UpdateDimensions("DAGNetwork::OutputDimensions()");
+
+    size_t lastLayer = sortedNetwork.back();
+    return network[lastLayer]->OutputDimensions();
+  }
+
+  // Return the current set of weights.  These are linearized: this contains
+  // the weights of every layer.
   const MatType& Parameters() const { return parameters; }
-  //! Modify the current set of weights.  These are linearized: this contains
-  //! the weights of every layer.  Be careful!  If you change the shape of
-  //! `parameters` to something incorrect, it may be re-initialized the next
-  //! time a forward pass is done.
+  // Modify the current set of weights.  These are linearized: this contains
+  // the weights of every layer.  Be careful!  If you change the shape of
+  // `parameters` to something incorrect, it may be re-initialized the next
+  // time a forward pass is done.
   MatType& Parameters() { return parameters; }
 
   /**
@@ -307,26 +284,7 @@ class FFN
    * @param inputs The input data.
    * @param results The predicted results.
    */
-  void Forward(const MatType& inputs, MatType& results);
-
-  /**
-   * Perform a manual partial forward pass of the data.
-   *
-   * This function is meant for the cases when users require a forward pass only
-   * through certain layers and not the entire network.  `Forward()` and
-   * `Backward()` should be used as a pair, and they are designed mainly for
-   * advanced users. You should try to use `Predict()` and `Train()`, if you
-   * can.
-   *
-   * @param inputs The input data for the specified first layer.
-   * @param results The predicted results from the specified last layer.
-   * @param begin The index of the first layer.
-   * @param end The index of the last layer.
-   */
-  void Forward(const MatType& inputs,
-               MatType& results,
-               const size_t begin,
-               const size_t end);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Perform a manual backward pass of the data.
@@ -335,17 +293,18 @@ class FFN
    * designed mainly for advanced users. You should try to use `Predict()` and
    * `Train()` instead, if you can.
    *
-   * @param inputs Inputs of current pass.
-   * @param targets The training target.
+   * @param input Input of the network
+   * @param output Output of the network
+   * @param error  Error from loss function.
    * @param gradients Computed gradients.
-   * @return Training error of the current pass.
    */
-  typename MatType::elem_type Backward(const MatType& inputs,
-                                       const MatType& targets,
-                                       MatType& gradients);
+  void Backward(const MatType& input,
+                const MatType& output,
+                const MatType& error,
+                MatType& gradients);
 
   /**
-   * Evaluate the feedforward network with the given predictors and responses.
+   * Evaluate the network with the given predictors and responses.
    * This functions is usually used to monitor progress while training.
    *
    * @param predictors Input variables.
@@ -367,7 +326,7 @@ class FFN
    * Note: this function is implemented so that it can be used by ensmallen's
    * optimizers.  It's not generally meant to be used otherwise.
    *
-   * Evaluate the feedforward network with the given parameters.
+   * Evaluate the network with the given parameters.
    *
    * @param parameters Matrix model parameters.
    */
@@ -377,7 +336,7 @@ class FFN
    * Note: this function is implemented so that it can be used by ensmallen's
    * optimizers.  It's not generally meant to be used otherwise.
    *
-   * Evaluate the feedforward network with the given parameters, but using only
+   * Evaluate the network with the given parameters, but using only
    * a number of data points. This is useful for optimizers such as SGD, which
    * require a separable objective function.
    *
@@ -398,7 +357,7 @@ class FFN
    * Note: this function is implemented so that it can be used by ensmallen's
    * optimizers.  It's not generally meant to be used otherwise.
    *
-   * Evaluate the feedforward network with the given parameters.
+   * Evaluate the network with the given parameters.
    * This function is usually called by the optimizer to train the model.
    * This just calls the overload of EvaluateWithGradient() with batchSize = 1.
    *
@@ -408,11 +367,12 @@ class FFN
   typename MatType::elem_type EvaluateWithGradient(const MatType& parameters,
                                                    MatType& gradient);
 
+
   /**
    * Note: this function is implemented so that it can be used by ensmallen's
    * optimizers.  It's not generally meant to be used otherwise.
    *
-   * Evaluate the feedforward network with the given parameters, but using only
+   * Evaluate the network with the given parameters, but using only
    * a number of data points. This is useful for optimizers such as SGD, which
    * require a separable objective function.
    *
@@ -423,6 +383,7 @@ class FFN
    * @param batchSize Number of points to be passed at a time to use for
    *        objective function evaluation.
    */
+
   typename MatType::elem_type EvaluateWithGradient(const MatType& parameters,
                                                    const size_t begin,
                                                    MatType& gradient,
@@ -432,7 +393,7 @@ class FFN
    * Note: this function is implemented so that it can be used by ensmallen's
    * optimizers.  It's not generally meant to be used otherwise.
    *
-   * Evaluate the gradient of the feedforward network with the given parameters,
+   * Evaluate the gradient of the network with the given parameters,
    * and with respect to only a number of points in the dataset. This is useful
    * for optimizers such as SGD, which require a separable objective function.
    *
@@ -447,6 +408,7 @@ class FFN
                 const size_t begin,
                 MatType& gradient,
                 const size_t batchSize);
+
 
   /**
    * Note: this function is implemented so that it can be used by ensmallen's
@@ -479,12 +441,41 @@ class FFN
  private:
   // Helper functions.
 
-  //! Use the InitializationPolicy to initialize all the weights in the network.
+  void AddLayer(size_t nodeId)
+  {
+    layerGradients.push_back(MatType());
+    childrenList.insert({ nodeId, {} });
+    parentsList.insert({ nodeId, {} });
+
+    if (network.size() > 1)
+    {
+      layerOutputs.push_back(MatType());
+      layerInputs.push_back(MatType());
+      layerDeltas.push_back(MatType());
+    }
+
+    validOutputDimensions = false;
+    graphIsSet = false;
+    layerMemoryIsSet = false;
+  }
+
+  // Use the InitializationPolicy to initialize all the weights in the network.
   void InitializeWeights();
 
-  //! Make the memory of each layer point to the right place, by calling
-  //! SetWeightPtr() on each layer.
+  // Call each layers `CustomInitialize`
+  void CustomInitialize(MatType& W, const size_t elements);
+
+  // Make the memory of each layer point to the right place, by calling
+  // SetWeights() on each layer.
   void SetLayerMemory();
+
+  /**
+   * Ensure that all the there are no cycles in the graph and that the graph
+   * has one input and one output only. It will topologically sort the network
+   * for the forward and backward passes. This will set `graphIsSet` to true
+   * only if the graph is valid and topologically sorted.
+   */
+  void CheckGraph();
 
   /**
    * Ensure that all the locally-cached information about the network is valid,
@@ -505,6 +496,17 @@ class FFN
                     const bool training = false);
 
   /**
+   * This computes the dimensions of each layer held by the network, and the
+   * output dimensions are set to the output dimensions of the last layer.
+   *
+   * Layers with multiple inputs need an axis to concatenate their output
+   * along, specifed in Add(). Every dimension not along that axis in each
+   * input tensor must be the same, while the dimension along that axis can
+   * vary.
+   */
+  void ComputeOutputDimensions();
+
+  /**
    * Set the input and output dimensions of each layer in the network correctly.
    * The size of the input is taken, in case `inputDimensions` has not been set
    * otherwise (e.g. via `InputDimensions()`).  If `InputDimensions()` is not
@@ -512,6 +514,38 @@ class FFN
    */
   void UpdateDimensions(const std::string& functionName,
                         const size_t inputDimensionality = 0);
+
+  /**
+   * Set the weights of the layers
+   */
+  void SetWeights(const MatType& weightsIn);
+
+  /**
+   * Initialize memory that will be used by each layer for the forward pass,
+   * assuming that the input will have the given `batchSize`.  When `Forward()`
+   * is called, `layerOutputMatrix` is allocated with enough memory to fit
+   * the outputs of each layer and to hold concatenations of output layers
+   * as inputs into layers as specified by `Add()` and `Connect()`.
+   */
+  void InitializeForwardPassMemory(const size_t batchSize);
+
+  /**
+   * TODO: explain how the backward pass memory works.
+   */
+  void InitializeBackwardPassMemory(const size_t batchSize);
+
+  /**
+   * Initialize memory for the gradient pass.  This sets the internal aliases
+   * `layerGradients` appropriately using the memory from the given `gradient`,
+   * such that each layer will output its gradient (via its `Gradient()` method)
+   * into the appropriate member of `layerGradients`.
+   */
+  void InitializeGradientPassMemory(MatType& gradient);
+
+  /**
+   * Compute the loss that should be added to the objective for each layer.
+   */
+  double Loss() const;
 
   /**
    * Check if the optimizer has MaxIterations() parameter, if it does then check
@@ -539,15 +573,37 @@ class FFN
       !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void>
   WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
 
-  //! Instantiated output layer used to evaluate the network.
+  // Instantiated output layer used to evaluate the network.
   OutputLayerType outputLayer;
 
-  //! Instantiated InitializationRule object for initializing the network
-  //! parameter.
+  // Instantiated InitializationRule object for initializing the network
+  // parameter.
   InitializationRuleType initializeRule;
 
-  //! All of the network is stored inside this multilayer.
-  MultiLayer<MatType> network;
+  // The internally-held network, sorted in the order that the user
+  // specified when using `Add()`
+  std::vector<Layer<MatType>*> network;
+
+  // The internally-held network, sorted topologically when `CheckNetwork`
+  // is called if the graph is valid.
+  std::vector<size_t> sortedNetwork;
+
+  // The internally-held map of nodes that holds its edges to outgoing nodes.
+  // Uses network indices as keys.
+  std::unordered_map<size_t, std::vector<size_t>> childrenList;
+
+  // The internally-held map of nodes that holds its edges to incoming nodes.
+  // Uses network indices as keys.
+  std::unordered_map<size_t, std::vector<size_t>> parentsList;
+
+  // The internally-held map of what axes to concatenate along for each layer
+  // with multiple inputs
+  // Uses network indices as keys.
+  std::unordered_map<size_t, size_t> layerAxes;
+
+  // Map layer index in network to layer index in sortedNetwork
+  // Uses network indices as keys.
+  std::unordered_map<size_t, size_t> sortedIndices;
 
   /**
    * Matrix of (trainable) parameters.  Each weight here corresponds to a layer,
@@ -561,7 +617,7 @@ class FFN
    */
   MatType parameters;
 
-  //! Dimensions of input data.
+  // Dimensions of input data.
   std::vector<size_t> inputDimensions;
 
   //! The matrix of data points (predictors).  This member is empty, except
@@ -573,29 +629,63 @@ class FFN
   //! except during training.
   MatType responses;
 
-  //! Locally-stored output of the network from a forward pass; used by the
-  //! backward pass.
+  // Locally-stored output of the network from a forward pass; used by the
+  // backward pass.
   MatType networkOutput;
   //! Locally-stored output of the backward pass; used by the gradient pass.
-  MatType networkDelta;
-  //! Locally-stored error of the backward pass; used by the gradient pass.
   MatType error;
 
-  //! If true, each layer has its memory properly set for a forward/backward
-  //! pass.
+  // This matrix stores all of the outputs of each layer when `Forward()` is
+  // called.  See `InitializeForwardPassMemory()`.
+  MatType layerOutputMatrix;
+  // These are aliases of `layerOutputMatrix` for the input of each layer
+  std::vector<MatType> layerInputs;
+  // These are aliases of `layerOutputMatrix` for the output of each layer.
+  std::vector<MatType> layerOutputs;
+
+  // Memory for the backward pass.
+  MatType layerDeltaMatrix;
+
+  // Needed in case the first layer is a `MultiLayer` so that its
+  // gradients are calculated.
+  MatType networkDelta;
+
+  // A layers delta Loss w.r.t delta Outputs.
+  std::vector<MatType> layerDeltas;
+
+  // A layers output deltas. Uses sortedNetwork indices as keys.
+  std::unordered_map<size_t, MatType> outputDeltas;
+
+  // A layers input deltas. Uses sortedNetwork indices as keys.
+  std::unordered_map<size_t, MatType> inputDeltas;
+
+  // A layers accumulated deltas, for layers with multiple children.
+  // Uses sortedNetwork indices as keys.
+  std::unordered_map<size_t, MatType> accumulatedDeltas;
+
+  // Gradient aliases for each layer.
+  std::vector<MatType> layerGradients;
+
+  // Cache of rows for concatenation.
+  std::unordered_map<size_t, size_t> rowsCache;
+  // Cache of slices for concatenation.
+  std::unordered_map<size_t, size_t> slicesCache;
+
+  // If true, each layer has its inputDimensions properly set.
+  bool validOutputDimensions;
+
+  // If true, the graph is valid and has been topologically sorted.
+  bool graphIsSet;
+
+  // If true, each layer has its activation/gradient memory properly set
+  // for the forward/backward pass.
   bool layerMemoryIsSet;
 
-  //! If true, each layer has its inputDimensions properly set, and
-  //! `totalInputSize` and `totalOutputSize` are valid.
-  bool inputDimensionsAreSet;
-
-  // RNN will call `CheckNetwork()`, which is private.
-  friend class RNN<OutputLayerType, InitializationRuleType, MatType>;
-}; // class FFN
+  bool extraDeltasAllocated;
+};
 
 } // namespace mlpack
 
-// Include implementation.
-#include "ffn_impl.hpp"
+#include "dag_network_impl.hpp"
 
 #endif
