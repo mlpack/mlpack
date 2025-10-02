@@ -14,7 +14,7 @@ vector in a data matrix; each row of the resulting vector will correspond to a
 single pixel value in a single channel.  An auxiliary `data::ImageOptions` class
 is used to store information about the images.
 
-### `data::ImageOptions`
+### [`data::ImageOptions`](#image-options)
 
 The `data::ImageOptions` class contains the metadata of the images.
 
@@ -59,7 +59,7 @@ With a `data::ImageOptions` object, image data can be loaded or saved, handling
 either one or multiple images at a time. This object need to be defined before
 calling `data::Load` or `data::Save`:
 
-<!-- TODO: add parameter to force use of what's in `info` -->
+<!-- TODO: add parameter to force use of what's in `opts` -->
 
  - `data::ImageOptions opts;`
 
@@ -238,9 +238,10 @@ images.push_back("bandicoot-favicon.png");
 
 mlpack::data::ImageOptions opts;
 opts.Channels() = 1; // Force loading in grayscale.
+opts.Fatal() = true;
 
 arma::mat matrix;
-mlpack::data::Load(images, matrix, opts, true);
+mlpack::data::Load(images, matrix, opts);
 
 // Print optsrmation about what we loaded.
 std::cout << "Loaded " << matrix.n_cols << " images.  Images are of size "
@@ -265,18 +266,18 @@ mlpack::data::Save(outImages, matrix, opts);
 
 It is possible to resize images in mlpack with the following function:
 
-- `ResizeImages(images, info, newWidth, newHeight)`
+- `ResizeImages(images, opts, newWidth, newHeight)`
    * `images` is a [column-major matrix](matrices.md) containing a set of
       images; each image is represented as a flattened vector in one column.
 
-   * `opts` is a [`data::ImageOptions&`](#dataimageinfo) containing details about
+   * `opts` is a [`data::ImageOptions&`](#image-options) containing details about
      the images in `images`, and will be modified to contain the new size of the
      images.
 
    * `newWidth` and `newHeight` (of type `size_t`) are the desired new
      dimensions of the resized images.
 
-   * This function returns `void` and modifies `info` and `images`.
+   * This function returns `void` and modifies `opts` and `images`.
 
    * ***NOTE:*** if the element type of `images` is not `unsigned char` or
      `float` (e.g. if `image` is not `arma::Mat<unsigned char>` or
@@ -330,13 +331,14 @@ same dimensions.
 // See https://datasets.mlpack.org/sheep.tar.bz2
 arma::Mat<unsigned char> images;
 mlpack::data::ImageOptions opts;
+opts.Fatal() = false;
 
 std::vector<std::string> reSheeps =
     {"re_sheep_1.jpg", "re_sheep_2.jpg", "re_sheep_3.jpg", "re_sheep_4.jpg",
      "re_sheep_5.jpg", "re_sheep_6.jpg", "re_sheep_7.jpg", "re_sheep_8.jpg",
      "re_sheep_9.jpg"};
 
-mlpack::data::Load(reSheeps, images, opts, false);
+mlpack::data::Load(reSheeps, images, opts);
 
 // Now let us resize all these images at once, to specific dimensions.
 mlpack::data::ResizeImages(images, opts, 160, 160);
@@ -348,7 +350,7 @@ std::vector<std::string> smSheeps =
      "sm_sheep_5.jpg", "sm_sheep_6.jpg", "sm_sheep_7.jpg", "sm_sheep_8.jpg",
      "sm_sheep_9.jpg"};
 
-mlpack::data::Save(smSheeps, images, opts, false);
+mlpack::data::Save(smSheeps, images, opts);
 ```
 
 ### Resize and crop images
@@ -388,14 +390,14 @@ that the width and height of the image both no smaller than `outputWidth` and
   <img src="../img/cat_cropped.jpg" alt="cropped cat">
 </p>
 
-- `ResizeCropImages(images, info, newWidth, newHeight)`
+- `ResizeCropImages(images, opts, newWidth, newHeight)`
    * `images` is a [column-major matrix](matrices.md) containing a set of
       images; each image is represented as a flattened vector in one column.
 
-   * `opts` is a [`data::ImageOptions&`](#dataimageinfo) containing details about
+   * `opts` is a [`data::ImageOptions&`](#image-options) containing details about
      the images in `images`.
 
-   * `images` and `info` are modified in-place.
+   * `images` and `opts` are modified in-place.
 
    * `newWidth` and `newHeight` (of type `size_t`) are the desired new
      dimensions of the resized images.
@@ -421,6 +423,7 @@ different dimensions:
 // See https://datasets.mlpack.org/sheep.tar.bz2.
 arma::Mat<unsigned char> image;
 mlpack::data::ImageOptions opts;
+opts.Fatal() = false;
 
 // The images are located in our test/data directory. However, any image could
 // be used instead.
@@ -440,9 +443,9 @@ std::vector<std::string> cropSheeps =
 // the same dimensions. The `opts` will contain the dimension for each one.
 for (size_t i = 0; i < files.size(); i++)
 {
-  mlpack::data::Load(files.at(i), image, opts, false);
+  mlpack::data::Load(files.at(i), image, opts);
   mlpack::data::ResizeCropImages(image, opts, 320, 320);
-  mlpack::data::Save(cropSheeps.at(i), image, opts, false);
+  mlpack::data::Save(cropSheeps.at(i), image, opts);
   std::cout << "Resized and cropped " << files.at(i) << " to "
       << cropSheeps.at(i) << " with output size 320x320." << std::endl;
 }
