@@ -281,6 +281,13 @@ jobs:
           fail_job: true
           print_output: true
 
+      - name: Publish good image
+        uses: actions/upload-artifact@v4.4.0
+        if: success() || failure()
+        with:
+          name: APITest2.bmp
+          path: build/APITest2.bmp
+
       - name: Publish failing image
         uses: actions/upload-artifact@v4.4.0
         if: success() || failure()
