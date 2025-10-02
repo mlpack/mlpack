@@ -81,6 +81,7 @@ bool SaveImage(const std::vector<std::string>& files,
     DetectFromExtension<arma::Mat<eT>, ImageOptions>(files.at(i), opts);
     if (opts.Format() == FileType::PNG)
     {
+      std::cout << "The image has been saved as PNG correctly." << std::endl;
       success = stbi_write_png(files.at(i).c_str(), opts.Width(), opts.Height(),
           opts.Channels(), tempMatrix.colptr(i),
           opts.Width() * opts.Channels());
@@ -93,25 +94,33 @@ bool SaveImage(const std::vector<std::string>& files,
       success = stbi_write_bmp(files.at(i).c_str(), opts.Width(), opts.Height(),
           opts.Channels(), tempMatrix.colptr(i));
       std::cout << "return from stbi: " << success << std::endl;
+      std::cout << "is matrix empty ? " << tempMatrix.empty() << std::endl; 
+      std::cout << "does matrix have data ? " << tempMatrix.size() << std::endl; 
     }
     else if (opts.Format() == FileType::TGA)
     {
+      std::cout << "The image has been saved as TGA correctly." << std::endl;
       success = stbi_write_tga(files.at(i).c_str(), opts.Width(), opts.Height(),
           opts.Channels(), tempMatrix.colptr(i));
     }
     else if (opts.Format() == FileType::JPG)
     {
+      std::cout << "The image has been saved as JPG correctly." << std::endl;
       success = stbi_write_jpg(files.at(i).c_str(), opts.Width(), opts.Height(),
           opts.Channels(), tempMatrix.colptr(i), opts.Quality());
     }
 
+    std::cout << "value of sucess before if statement: " << success << std::endl;
     if (!success)
     {
+      std::cout << "we should have returned here." << std::endl;
       std::stringstream oss;
       oss << "Save(): error saving image to '" << files.at(i) << "'.";
       return HandleError(oss, opts);
     }
   }
+      
+  std::cout << "real value of sucess before return: " << success << std::endl;
   return success;
 }
 
