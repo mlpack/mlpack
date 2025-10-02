@@ -88,8 +88,11 @@ bool SaveImage(const std::vector<std::string>& files,
     else if (opts.Format() == FileType::BMP)
     {
       std::cout << "The image has been saved as BMP correctly." << std::endl;
+      std::cout << "Width: " << opts.Width() << " Height: " << opts.Height()
+          << " Channels: " << opts.Channels() << std::endl;
       success = stbi_write_bmp(files.at(i).c_str(), opts.Width(), opts.Height(),
           opts.Channels(), tempMatrix.colptr(i));
+      std::cout << "return from stbi: " << success << std::endl;
     }
     else if (opts.Format() == FileType::TGA)
     {
