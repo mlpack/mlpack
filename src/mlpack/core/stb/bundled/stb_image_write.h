@@ -326,7 +326,7 @@ static FILE *stbiw__fopen(char const *filename, char const *mode)
 #elif defined(_MSC_VER) && _MSC_VER >= 1400
   int myflag_2 = fopen_s(&f, filename, mode);
   std::cout << "_fopen_s: " << myflag_2 << std::endl;
-   if (0 != myflag)
+   if (0 != myflag_2)
       f=0;
 #else
    f = fopen(filename, mode);
