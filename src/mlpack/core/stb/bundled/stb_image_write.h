@@ -519,12 +519,14 @@ STBIWDEF int stbi_write_bmp_to_func(stbi_write_func *func, void *context, int x,
 #ifndef STBI_WRITE_NO_STDIO
 STBIWDEF int stbi_write_bmp(char const *filename, int x, int y, int comp, const void *data)
 {
+
    stbi__write_context s = { 0 };
    int f = stbi__start_write_file(&s,filename);
    //printf("f, did we open the file, stb ? %d", f);
+   std::cout << "did we open the file: "<< f << std::endl; 
    if (f) {
       int r = stbi_write_bmp_core(&s, x, y, comp, data);
-      
+      std::cout << "did we write bmp core: "<< r << std::endl; 
      // printf("r, did we write bmp core, stb ? %d", r);
       stbi__end_write_file(&s);
       return r;
