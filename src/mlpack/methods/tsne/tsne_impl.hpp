@@ -21,8 +21,8 @@
 
 namespace mlpack {
 
-template <typename TSNEStrategy>
-TSNE<TSNEStrategy>::TSNE(const size_t outputDim,
+template <typename TSNEMethod>
+TSNE<TSNEMethod>::TSNE(const size_t outputDim,
                          const double perplexity,
                          const double exaggeration,
                          const double learningRate,
@@ -35,9 +35,9 @@ TSNE<TSNEStrategy>::TSNE(const size_t outputDim,
   // Nothing To Do Here
 }
 
-template <typename TSNEStrategy>
+template <typename TSNEMethod>
 template <typename MatType>
-void TSNE<TSNEStrategy>::Embed(const MatType& X, MatType& Y)
+void TSNE<TSNEMethod>::Embed(const MatType& X, MatType& Y)
 {
   // To Do: Seperate Functions for
   // initialize embeddigs and initialize objective function.
@@ -65,7 +65,7 @@ void TSNE<TSNEStrategy>::Embed(const MatType& X, MatType& Y)
   // Initialize Objective Function
   // To Do: How are you going to pass theta?
   const size_t dof = std::max<size_t>(Y.n_rows - 1, 1);
-  TSNEFunction<TSNEStrategy> function(X, perplexity, dof, theta);
+  TSNEFunction<TSNEMethod> function(X, perplexity, dof, theta);
 
   // Automatically choose a good learning rate.
   // To Do: What if exaggeration is zero?

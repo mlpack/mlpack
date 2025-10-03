@@ -79,7 +79,7 @@ PARAM_STRING_IN("init",
     "dimensions with PCA, here PCA is used only to initialize the output "
     "embedding matrix using 'output_dimensions' components.", "r", "pca");
 PARAM_STRING_IN("method",
-    "Gradient computation strategy. Options are: 'exact', 'dual_tree', "
+    "Gradient computation method. Options are: 'exact', 'dual_tree', "
     "'barnes_hut' (default)", "m", "barnes_hut");
 PARAM_DOUBLE_IN("theta",
     "Theta regulates the trade-off between speed and accuracy for "
@@ -87,10 +87,10 @@ PARAM_DOUBLE_IN("theta",
     "theta is different for the two approximations.", "t", 0.5);
 
 //! Run TSNE on the specified dataset with the given policy.
-template <typename TSNEStrategy>
+template <typename TSNEMethod>
 void RunTSNE(util::Params& params, util::Timers& timers, arma::mat& dataset)
 {
-  TSNE<TSNEStrategy> tsne(params.Get<int>("output_dimensions"),
+  TSNE<TSNEMethod> tsne(params.Get<int>("output_dimensions"),
                           params.Get<double>("perplexity"),
                           params.Get<double>("exaggeration"),
                           params.Get<double>("learning_rate"),

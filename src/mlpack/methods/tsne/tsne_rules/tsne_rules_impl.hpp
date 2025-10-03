@@ -37,9 +37,6 @@ double TSNERules<IsDualTraversal, MatType>::BaseCase(
     const size_t queryIndex,
     const size_t referenceIndex)
 {
-  if (queryIndex == referenceIndex)
-    return 0.0;
-
   const VecType& queryPoint = embedding.col(oldFromNew[queryIndex]);
   const VecType& referencePoint = embedding.col(oldFromNew[referenceIndex]);
   const double distanceSq = DistanceType::Evaluate(queryPoint, referencePoint);

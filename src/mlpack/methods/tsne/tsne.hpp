@@ -59,10 +59,10 @@ namespace mlpack
  * }
  * @endcode
  *
- * @tparam TSNEStrategy Gradient computation strategy. Options are: "exact",
+ * @tparam TSNEMethod Gradient computation method. Options are: "exact",
  *        "dual_tree", "barnes_hut". (Default: "barnes_hut").
  */
-template <typename TSNEStrategy = BarnesHutTSNE>
+template <typename TSNEMethod = BarnesHutTSNE>
 class TSNE
 {
  public:

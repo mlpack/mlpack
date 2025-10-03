@@ -20,7 +20,7 @@
 namespace mlpack
 {
 
-template <typename TSNEStrategy>
+template <typename TSNEMethod>
 class TSNEFunctionTraits
 {
   using type = TSNEApproxFunction<false>;
@@ -48,8 +48,8 @@ class TSNEFunctionTraits<BarnesHutTSNE>
 };
 
 // Convenience alias:
-template <typename TSNEStrategy>
-using TSNEFunction = typename TSNEFunctionTraits<TSNEStrategy>::type;
+template <typename TSNEMethod>
+using TSNEFunction = typename TSNEFunctionTraits<TSNEMethod>::type;
 
 } // namespace mlpack
 
