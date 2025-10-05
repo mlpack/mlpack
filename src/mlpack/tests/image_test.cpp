@@ -401,7 +401,7 @@ TEMPLATE_TEST_CASE("ResizeCropUpscaleTest", "[ImageTest]", unsigned char,
 }
 
 /**
- * Test that converts stb image layout to mlpack layout.
+ * Test that groups channels from interleaved channels.
  */
 TEST_CASE("GroupChannels", "[ImageTest]")
 {
@@ -421,7 +421,7 @@ TEST_CASE("GroupChannels", "[ImageTest]")
 }
 
 /**
- * Test that converts stb image layout to mlpack layout.
+ * Test that interleaves channels from grouped channels.
  */
 TEST_CASE("InterleaveChannels", "[ImageTest]")
 {
@@ -439,7 +439,7 @@ TEST_CASE("InterleaveChannels", "[ImageTest]")
 }
 
 /**
- * Test that converts stb image layout to mlpack layout.
+ * Test that groups channels from 2 images whose channels are interleaved.
  */
 TEST_CASE("GroupChannels2Images", "[ImageTest]")
 {
@@ -461,7 +461,7 @@ TEST_CASE("GroupChannels2Images", "[ImageTest]")
 }
 
 /**
- * Test that converts mlpack image layout to stb layout.
+ * Test that interleaves channels from 2 images whose channels are grouped.
  */
 TEST_CASE("InterleaveChannels2Images", "[ImageTest]")
 {
@@ -482,7 +482,7 @@ TEST_CASE("InterleaveChannels2Images", "[ImageTest]")
 }
 
 /**
- * Test that converts stb image layout to mlpack layout.
+ * Test grouping channels on empty image.
  */
 TEST_CASE("GroupChannelsEmptyImage", "[ImageTest]")
 {
@@ -492,7 +492,7 @@ TEST_CASE("GroupChannelsEmptyImage", "[ImageTest]")
 }
 
 /**
- * Test that converts mlpack image layout to stb layout.
+ * Test interleaving channels on empty image.
  */
 TEST_CASE("InterleaveChannelsEmtpyImage", "[ImageTest]")
 {
@@ -502,7 +502,7 @@ TEST_CASE("InterleaveChannelsEmtpyImage", "[ImageTest]")
 }
 
 /**
- * Test that converts stb image layout to mlpack layout.
+ * Test grouping channels when there is only one channel.
  */
 TEST_CASE("GroupChannelsOneChannel", "[ImageTest]")
 {
@@ -515,7 +515,7 @@ TEST_CASE("GroupChannelsOneChannel", "[ImageTest]")
 }
 
 /**
- * Test that converts mlpack image layout to stb layout.
+ * Test interleaving channels when there is only one channel.
  */
 TEST_CASE("InterleaveChannelsOneChannel", "[ImageTest]")
 {
@@ -528,7 +528,7 @@ TEST_CASE("InterleaveChannelsOneChannel", "[ImageTest]")
 }
 
 /**
- * Test that converts stb image layout to mlpack layout.
+ * Test grouping channels when there is only one pixel.
  */
 TEST_CASE("GroupChannelsOnePixel", "[ImageTest]")
 {
@@ -543,7 +543,7 @@ TEST_CASE("GroupChannelsOnePixel", "[ImageTest]")
 }
 
 /**
- * Test that converts mlpack image layout to stb layout.
+ * Test interleaving channels when there is only one pixel.
  */
 TEST_CASE("InterleaveChannelsOnePixel", "[ImageTest]")
 {
