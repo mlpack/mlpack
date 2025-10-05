@@ -21,15 +21,19 @@ namespace data {
 /**
 
  * `data::Load()` returns a matrix where each column represents an image.
- * The rows of each image represent pixel values whose channels are stored
- * consecutively, e.g [r, g, b, r, g, b, ... ]. Some mlpack functionality
+ * The rows of each image represent pixel values whose channels are
+ * interleaved, i.e. [r, g, b, r, g, b, ... ]. Some mlpack functionality
  * such as convolutions require that each channel of the image be grouped
- * together instead, e.g [r, r, ... , g, g, ... , b, b].
-
- * 'GroupChannels()` makes a copy of the image and returns the same image
- * except the channels are grouped together instead of stored consecutively.
+ * together instead, i.e. [r, r, ... , g, g, ... , b, b].
  *
- * @param image Image matrix whose channels are consecutive.
+ * 'GroupChannels()` makes a copy of the image and returns the same image
+ * except the channels are grouped together instead of interleaved.
+ * 
+ * `GroupChannels()` expects that your input image is stored such that channels
+ * are interleaved, i.e. [r, g, b, r, g, b ... ], and will not work as
+ * intended otherwise.
+ *
+ * @param image Image matrix whose channels are interleaved.
  * @param info  ImageInfo describing shape of image.
  * @return Mat  Copy of image whose channels are grouped together.
  */
@@ -39,11 +43,16 @@ inline arma::Mat<eT> GroupChannels(const arma::Mat<eT>& image,
 
 /**
  * The inverse of `GroupChannels()`. Given an image where each channel is
- * grouped together, make a copy and store the channels consecutively.
+ * grouped together, make a copy and interleave the channels,
+ * i.e. [r, g, b, r, g, b, ... ].
+ *
+ * `InterleaveChannels()` expects that your input image is stored such that
+ * the channels are grouped, i.e. [r, r, ..., g, g, ..., b, b], and will not
+ * work as intended otherwise.
  *
  * @param image Image matrix in mlpack layout.
  * @param info  ImageInfo describing shape of image.
- * @return Mat  Copy of image whose channels stored consecutively.
+ * @return Mat  Copy of image whose channels are interleaved.
  */
 template <typename eT>
 inline arma::Mat<eT> InterleaveChannels(const arma::Mat<eT>& image,
