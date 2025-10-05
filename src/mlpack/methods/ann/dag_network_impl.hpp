@@ -871,22 +871,23 @@ void DAGNetwork<
     layerOutputSize += network[currentLayer]->OutputSize();
   }
 
-  size_t totalConcatSize = 0;
+  // Calculate extra memory required for skip connections.
+  size_t extraSize = 0;
   for (size_t i = 1; i < sortedNetwork.size(); i++)
   {
     const size_t currentLayer = sortedNetwork[i];
     Layer<MatType>* layer = network[currentLayer];
     if (parentsList[currentLayer].size() > 1)
     {
-      size_t concatSize = layer->InputDimensions()[0];
+      size_t totalSize = layer->InputDimensions()[0];
       for (size_t j = 1; j < layer->InputDimensions().size(); j++)
-        concatSize *= layer->InputDimensions()[j];
+        totalSize *= layer->InputDimensions()[j];
 
-      totalConcatSize += concatSize;
+      extraSize += totalSize;
     }
   }
 
-  const size_t activationMemorySize = totalConcatSize + layerOutputSize;
+  const size_t activationMemorySize = extraSize + layerOutputSize;
   if (batchSize * activationMemorySize == layerOutputMatrix.n_elem)
     return;
 
@@ -934,12 +935,12 @@ void DAGNetwork<
     }
     else
     {
-      size_t concatSize = layer->InputDimensions()[0];
+      size_t totalSize = layer->InputDimensions()[0];
       for (size_t j = 1; j < layer->InputDimensions().size(); j++)
-        concatSize *= layer->InputDimensions()[j];
-      MakeAlias(layerInputs[i - 1], layerOutputMatrix, concatSize,
+        totalSize *= layer->InputDimensions()[j];
+      MakeAlias(layerInputs[i - 1], layerOutputMatrix, totalSize,
         batchSize, offset);
-      offset += concatSize;
+      offset += totalSize;
     }
   }
 }
@@ -964,23 +965,24 @@ void DAGNetwork<
     const size_t currentLayer = sortedNetwork[i];
     Layer<MatType>* layer = network[currentLayer];
     size_t layerDeltaSize = layer->OutputSize();
-    size_t concatDeltaSize = 0;
+    // Extra memory for skip connections.
+    size_t extraDeltaSize = 0;
 
     if (childrenList[currentLayer].size() > 1)
       layerDeltaSize *= 2;
 
     if (parentsList[currentLayer].size() > 1)
     {
-      concatDeltaSize = layer->InputDimensions()[0];
+      extraDeltaSize = layer->InputDimensions()[0];
       for (size_t j = 1; j < layer->InputDimensions().size(); j++)
-        concatDeltaSize *= layer->InputDimensions()[j];
+        extraDeltaSize *= layer->InputDimensions()[j];
     }
 
     // If at the last layer, we only need to add it's `concatDeltaSize`.
     if (i == sortedNetwork.size() - 1)
       layerDeltaSize = 0;
 
-    deltaMatrixSize += layerDeltaSize + concatDeltaSize;
+    deltaMatrixSize += layerDeltaSize + extraDeltaSize;
   }
 
   if (batchSize * deltaMatrixSize == layerDeltaMatrix.n_elem)
@@ -1095,27 +1097,41 @@ void DAGNetwork<
       // Concatenation
       if (parents.size() > 1)
       {
-        const size_t axis = layerAxes[currentLayer];
-
-        size_t rows = rowsCache.at(currentLayer);
-        size_t slices = slicesCache.at(currentLayer) * input.n_cols;
-
-        CubeType inputAlias;
-        MakeAlias(inputAlias, layerInputs[i - 1], rows,
-          network[currentLayer]->InputDimensions()[axis], slices);
-        size_t startCol = 0;
-
-        for (size_t j = 0; j < parents.size(); j++)
+        if (layerConnection.at(currentLayer) == CONCATENATE)
         {
-          const size_t index = sortedIndices[parents[j]];
-          const MatType& parentOutput = layerOutputs[index];
+          const size_t axis = layerAxes[currentLayer];
 
-          const size_t cols = network[parents[j]]->OutputDimensions()[axis];
-          CubeType parentOutputAlias;
-          MakeAlias(parentOutputAlias, parentOutput, rows, cols, slices);
+          size_t rows = rowsCache.at(currentLayer);
+          size_t slices = slicesCache.at(currentLayer) * input.n_cols;
 
-          inputAlias.cols(startCol, startCol + cols - 1) = parentOutputAlias;
-          startCol += cols;
+          CubeType inputAlias;
+          MakeAlias(inputAlias, layerInputs[i - 1], rows,
+            network[currentLayer]->InputDimensions()[axis], slices);
+          size_t startCol = 0;
+
+          for (size_t j = 0; j < parents.size(); j++)
+          {
+            const size_t index = sortedIndices[parents[j]];
+            const MatType& parentOutput = layerOutputs[index];
+
+            const size_t cols = network[parents[j]]->OutputDimensions()[axis];
+            CubeType parentOutputAlias;
+            MakeAlias(parentOutputAlias, parentOutput, rows, cols, slices);
+
+            inputAlias.cols(startCol, startCol + cols - 1) = parentOutputAlias;
+            startCol += cols;
+          }
+        }
+        else
+        {
+          // elementwise addition
+          layerInputs[i - 1] = layerOutputs[sortedIndices[parents[0]]];
+          for (size_t j = 1; j < parents.size(); j++)
+          {
+            const size_t parentIndex = sortedIndices[parents[j]];
+            const MatType& parentOutput = layerOutputs[parentIndex];
+            layerInputs[i - 1] += parentOutput;
+          }
         }
       }
 
@@ -1180,30 +1196,44 @@ void DAGNetwork<
       const size_t numParents = parentsList[currentLayer].size();
       if (numParents > 1)
       {
-        // Calculating deltas for concatenation.
-        const size_t axis = layerAxes[currentLayer];
-
-        size_t batchSize = input.n_cols;
-        size_t rows = rowsCache.at(currentLayer);
-        size_t slices = slicesCache.at(currentLayer) * batchSize;
-
-        CubeType inputDeltaAlias;
-        MakeAlias(inputDeltaAlias, inputDeltas[i], rows,
-          layer->InputDimensions()[axis], slices);
-
-        const std::vector<size_t>& parents = parentsList[currentLayer];
-        size_t startCol = 0;
-        for (size_t j = 0; j < parents.size(); j++)
+        if (layerConnection.at(currentLayer) == CONCATENATE)
         {
-          Layer<MatType>* parent = network[parents[j]];
-          const size_t parentIndex = sortedIndices[parents[j]];
-          const size_t cols = parent->OutputDimensions()[axis];
-          outputDeltas[parentIndex] = inputDeltaAlias.cols(startCol,
-            startCol + cols - 1);
+          // Calculating deltas for concatenation.
+          const size_t axis = layerAxes[currentLayer];
 
-          outputDeltas[parentIndex].reshape(
-            outputDeltas[parentIndex].n_elem / batchSize, batchSize);
-          startCol += cols;
+          size_t batchSize = input.n_cols;
+          size_t rows = rowsCache.at(currentLayer);
+          size_t slices = slicesCache.at(currentLayer) * batchSize;
+
+          CubeType inputDeltaAlias;
+          MakeAlias(inputDeltaAlias, inputDeltas[i], rows,
+            layer->InputDimensions()[axis], slices);
+
+          const std::vector<size_t>& parents = parentsList[currentLayer];
+          size_t startCol = 0;
+          for (size_t j = 0; j < parents.size(); j++)
+          {
+            Layer<MatType>* parent = network[parents[j]];
+            const size_t parentIndex = sortedIndices[parents[j]];
+            const size_t cols = parent->OutputDimensions()[axis];
+            outputDeltas[parentIndex] = inputDeltaAlias.cols(startCol,
+              startCol + cols - 1);
+
+            outputDeltas[parentIndex].reshape(
+              outputDeltas[parentIndex].n_elem / batchSize, batchSize);
+            startCol += cols;
+          }
+        }
+        else
+        {
+          // element wise addition backward pass
+          const std::vector<size_t>& parents = parentsList[currentLayer];
+          for (size_t j = 0; j < parents.size(); j++)
+          {
+            // Could probably optimize out the copy.
+            const size_t parentIndex = sortedIndices[parents[j]];
+            outputDeltas[parentIndex] = inputDeltas[i];
+          }
         }
       }
 

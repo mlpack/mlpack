@@ -655,8 +655,10 @@ class DAGNetwork
   // called.  See `InitializeForwardPassMemory()`.
   MatType layerOutputMatrix;
   // These are aliases of `layerOutputMatrix` for the input of each layer
+  // Ordered in the same way as `sortedNetwork`.
   std::vector<MatType> layerInputs;
   // These are aliases of `layerOutputMatrix` for the output of each layer.
+  // Ordered in the same way as `sortedNetwork`.
   std::vector<MatType> layerOutputs;
 
   // Memory for the backward pass.
