@@ -38,15 +38,15 @@ namespace mlpack {
  *
  * A node with multiple parents will either concatenate the output of its
  * parents along a specified axis, or accumulate using element-wise addition.
- * You can specify the axis of concatenation with `SetAxis`. If the axis is not specifed, the default
- * axis will be used, which is 0. 
-
- * TODO: by default concat along last axis (e.g. channels if using convs).
+ * You can specify the type of connection using `SetConnection`. If your
+ * connection is a concatenation, you can specify the axis with `SetAxis`.
+ *
+ * If no connection type or axis is set, by default the connection will be
+ * concatenation over the last axis of that layer.
  *
  * A DAGNetwork cannot have any cycles. Creating a network with a cycle will
- * result in an error.
- *
- * A DAGNetwork can only have one input layer and one output layer.
+ * result in an error. A DAGNetwork can only have one input layer and one 
+ * output layer.
  *
  * Although the actual types passed as input will be matrix objects with one
  * data point per column, each data point can be a tensor of arbitrary shape.
@@ -147,15 +147,20 @@ class DAGNetwork
     return id;
   }
 
-  // TODO: doc
+  /**
+   * Set the connection type for a layer that expects multiple parents.
+   *
+   * @param layerId The layer to be added to the model.
+   * @param connection The connection type.
+   */
   void SetConnection(size_t layerId, ConnectionTypes connection);
 
   /**
-   * Set the axis to concatenate along for a layer that expects multiple
-   * parent node. Can only be set once per layer.
+   * Set the axis to concatenate along for some layer that expects multiple
+   * parent.
    *
-   * @param concatAxis The axis to concatenate parent node outputs along.
    * @param layerId The layer to be added to the model.
+   * @param concatAxis The axis to concatenate parent node outputs along.
    */
   void SetAxis(size_t layerId, size_t concatAxis);
 
@@ -512,14 +517,24 @@ class DAGNetwork
    * This computes the dimensions of each layer held by the network, and the
    * output dimensions are set to the output dimensions of the last layer.
    *
-   * Layers with multiple inputs need an axis to concatenate their output
-   * along, specifed in Add(). Every dimension not along that axis in each
-   * input tensor must be the same, while the dimension along that axis can
-   * vary.
+   * Input dimensions of nodes that have multiple parents are also 
+   * calculated here, based on their connection type.
    */
   void ComputeOutputDimensions();
 
+  /**
+   * Compute the input dimensions of a concatenation layer with multiple
+   * parents.
+   *
+   * @param layerId The layer that has multiple parent layers.
+   */
   void ComputeConcatDimensions(size_t layerId);
+
+  /**
+   * Compute the input dimensions of an addition layer with multiple parents.
+   *
+   * @param layerId The layer that has multiple parent layers.
+   */
   void ComputeAdditionDimensions(size_t layerId);
 
   /**
