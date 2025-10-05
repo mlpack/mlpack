@@ -1583,6 +1583,7 @@ void DAGNetwork<
     ar(CEREAL_NVP(childrenList));
     ar(CEREAL_NVP(parentsList));
     ar(CEREAL_NVP(layerAxes));
+    ar(CEREAL_NVP(layerConnections));
     ar(CEREAL_NVP(parameters));
 
     ar(CEREAL_NVP(inputDimensions));
