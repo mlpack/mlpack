@@ -16,8 +16,7 @@
 
 #include "tsne_methods.hpp"
 
-namespace mlpack
-{
+namespace mlpack {
 
 /**
  * An implementation of t-Distributed Stochastic Neighbor Embedding (t-SNE).
@@ -27,35 +26,64 @@ namespace mlpack
  * @code
  * @article{maaten2008visualizing,
  *   title={Visualizing data using t-SNE},
- *   author = {van der Maaten, Laurens and Hinton, Geoffrey},
+ *   author={van der Maaten, Laurens and Hinton, Geoffrey},
  *   journal={Journal of machine learning research},
  *   volume={9},
  *   pages={2579--2605},
- *   month = {11},
+ *   month={11},
  *   year={2008}
  * }
  *
  * @code
  * @article{maaten2014accelerating,
- *   title = {Accelerating t-SNE using Tree-Based Algorithms},
- *   author = {van der Maaten, Laurens},
+ *   title={Accelerating t-SNE using Tree-Based Algorithms},
+ *   author={van der Maaten, Laurens},
  *   journal={Journal of Machine Learning Research},
  *   volume={15},
  *   pages={3221--3245},
- *   month = {01},
+ *   month={01},
  *   year={2015}
  * }
  * @endcode
  *
  * @code
  * @article{maaten2009learning,
- *   title = {Learning a Parametric Embedding by Preserving Local Structure},
- *   author = {van der Maaten, Laurens},
- *   journal = {Journal of Machine Learning Research - Proceedings Track}
- *   volume = {5},
- *   pages = {384-391},
- *   month = {01},
- *   year = {2009},
+ *   title={Learning a Parametric Embedding by Preserving Local Structure},
+ *   author={van der Maaten, Laurens},
+ *   journal={Journal of Machine Learning Research - Proceedings Track}
+ *   volume={5},
+ *   pages={384-391},
+ *   month={01},
+ *   year={2009},
+ * }
+ * @endcode
+ *
+ * @code
+ * @article{belkina2019automated,
+ *   title={Automated optimized parameters for T-distributed stochastic
+ *     neighbor embedding improve visualization and analysis of large
+ *     datasets},
+ *   author={Belkina, Anna C. and Ciccolella, Christopher O. and Anno, Rina and
+ *     Halpert, Richard and Spidlen, Josef and Snyder-Cappione, Jennifer E.},
+ *   journal={Nature Communications},
+ *   volume={10},
+ *   month={11},
+ *   article={5415},
+ *   year={2019},
+ *   doi={10.1038/s41467-019-13055-y}
+ * }
+ * @endcode
+ *
+ * @code
+ * @article{kobak2019art,
+ *   title={The art of using t-SNE for single-cell transcriptomics},
+ *   author={Kobak, Dmitry and Berens, Philipp},
+ *   journal={Nature Communications},
+ *   volume={10},
+ *   month = {11},
+ *   article={5416},
+ *   year={2019},
+ *   doi={10.1038/s41467-019-13056-x}
  * }
  * @endcode
  *
@@ -78,7 +106,7 @@ class TSNE
    *        separation between them. A higher value increases spacing between
    *        clusters, but if the cost grows during initial iterations consider
    *        reducing this value or lowering the learning rate. (Default: 12.0)
-   * @param learningRate Learning rate (step size) for the optimizer. If the 
+   * @param learningRate Learning rate (step size) for the optimizer. If the
    *        specified value is zero, the learning rate is computed
    *        as N / exaggeration everytime Embed is called. (Default: 200.0)
    * @param maxIter Maximum number of iterations. (Default: 1000)

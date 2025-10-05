@@ -15,8 +15,7 @@
 
 #include "./tsne_rules.hpp"
 
-namespace mlpack
-{
+namespace mlpack {
 
 template <bool IsDualTraversal, typename MatType>
 TSNERules<IsDualTraversal, MatType>::TSNERules(
@@ -26,7 +25,7 @@ TSNERules<IsDualTraversal, MatType>::TSNERules(
     const std::vector<size_t>& oldFromNew,
     const size_t dof,
     const double theta)
-    : sumQ(sumQ), negF(negF), embedding(embedding), 
+    : sumQ(sumQ), negF(negF), embedding(embedding),
     oldFromNew(oldFromNew), dof(dof), theta(theta)
 {
   /* Nothing To Do Here */
@@ -34,8 +33,7 @@ TSNERules<IsDualTraversal, MatType>::TSNERules(
 
 template <bool IsDualTraversal, typename MatType>
 double TSNERules<IsDualTraversal, MatType>::BaseCase(
-    const size_t queryIndex,
-    const size_t referenceIndex)
+    const size_t queryIndex, const size_t referenceIndex)
 {
   const VecType& queryPoint = embedding.col(oldFromNew[queryIndex]);
   const VecType& referencePoint = embedding.col(oldFromNew[referenceIndex]);
@@ -87,10 +85,9 @@ double TSNERules<IsDualTraversal, MatType>::Score(
 }
 template <bool IsDualTraversal, typename MatType>
 template <typename TreeType>
-double TSNERules<IsDualTraversal, MatType>::Rescore(
-    const size_t queryIndex,
-    TreeType& referenceNode,
-    const double oldScore)
+double TSNERules<IsDualTraversal, MatType>::Rescore(const size_t queryIndex,
+                                                    TreeType& referenceNode,
+                                                    const double oldScore)
 {
   return oldScore;
 }
@@ -126,7 +123,7 @@ double TSNERules<IsDualTraversal, MatType>::Score(
           queryNode.NumDescendants() * q * q *
           (referencePoint - queryPoint);
     }
-      
+
     return DBL_MAX;
   }
   else
@@ -137,10 +134,9 @@ double TSNERules<IsDualTraversal, MatType>::Score(
 
 template <bool IsDualTraversal, typename MatType>
 template <typename TreeType>
-double TSNERules<IsDualTraversal, MatType>::Rescore(
-    TreeType& queryNode,
-    TreeType& referenceNode,
-    const double oldScore)
+double TSNERules<IsDualTraversal, MatType>::Rescore(TreeType& queryNode,
+                                                    TreeType& referenceNode,
+                                                    const double oldScore)
 {
   return oldScore;
 }

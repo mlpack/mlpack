@@ -17,8 +17,7 @@
 #include "tsne_exact_function.hpp"
 #include "tsne_approx_function.hpp"
 
-namespace mlpack
-{
+namespace mlpack {
 
 template <typename TSNEMethod>
 class TSNEFunctionTraits

@@ -18,8 +18,7 @@
 
 #include "../tsne_utils.hpp"
 
-namespace mlpack
-{
+namespace mlpack {
 
 /**
  * Calculate gradient of the KL-divergence objective, designed for
@@ -41,13 +40,13 @@ class TSNEExactFunction
    *
    * @param X The input data. (Din X N)
    * @param perplexity The perplexity of the Gaussian distribution.
+   * @param dof The degrees of freedom.
    */
   TSNEExactFunction(const MatType& X,
                     const double perplexity,
                     const size_t dof,
-                    const double /* theta */) // To Do: Find another way.
-                    : perplexity(perplexity),
-                    dof(dof)
+                    const double /* theta */)
+      : perplexity(perplexity), dof(dof)
   {
     // Precompute P
     P = binarySearchPerplexity(perplexity,
@@ -68,8 +67,8 @@ class TSNEExactFunction
   double EvaluateWithGradient(const MatType& y, GradType& g)
   {
     q = PairwiseDistances(y, DistanceType());
-    q = (double) dof / (dof + q);
-    // Avoid calls to pow for 2 dimensional embeddings 
+    q = (double)dof / (dof + q);
+    // Avoid calls to pow for 2 dimensional embeddings
     if (dof != 1)
       q = arma::pow(q, (1.0 + dof) / 2.0);
 

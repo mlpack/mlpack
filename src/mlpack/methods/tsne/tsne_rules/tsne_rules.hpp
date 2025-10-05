@@ -17,8 +17,7 @@
 #include <mlpack/core/tree/hrectbound.hpp>
 #include <mlpack/core/distances/lmetric.hpp>
 
-namespace mlpack
-{
+namespace mlpack {
 
 /**
  * Traversal Rules class for Approximating t-SNE Gradient (Repulsive Term).
@@ -46,9 +45,7 @@ class TSNERules
    * @param embedding low dimentional embedding matrix.
    * @param oldFromNew mapping form previous to new order of points.
    * @param dof Degrees of freedom calculated as max(1, input_dims - 1).
-   * @param theta Determines whether to continue descending into child nodes 
-   *              during traversal or to stop when the current approximation 
-   *              is sufficiently accurate.
+   * @param theta The coarseness of the approximation. 
    */
   TSNERules(double& sumQ,
             MatType& negF,
@@ -131,7 +128,7 @@ class TSNERules
  private:
   //! Denominator term for the negative force.
   double& sumQ;
-  
+
   //! Nominator term for the negative force.
   MatType& negF;
 

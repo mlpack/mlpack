@@ -22,11 +22,10 @@
 #include "../centroid_statistic.hpp"
 #include "../tsne_rules/tsne_rules.hpp"
 
-namespace mlpack
-{
+namespace mlpack {
 
 /**
- * Approximate gradient of the KL-divergence objective, designed for 
+ * Approximate gradient of the KL-divergence objective, designed for
  * optimization with ensmallen.
  *
  * This class implements an tree-based approximation of the t-SNE objective
@@ -53,17 +52,17 @@ class TSNEApproxFunction
 
   /**
    * Constructs the TSNEApproxFunction object.
-   * 
+   *
    * @param X The input data. (Din X N)
    * @param perplexity The perplexity of the Gaussian distribution.
+   * @param dof The degrees of freedom.
    * @param theta The coarseness of the approximation.
    */
   TSNEApproxFunction(const MatType& X,
                      const double perplexity,
                      const size_t dof,
                      const double theta = 0.5)
-      : perplexity(perplexity), 
-        dof(dof), theta(theta)
+      : perplexity(perplexity), dof(dof), theta(theta)
   {
     // Run KNN
     // To Do: Make number of neibhors a parameter
@@ -92,8 +91,7 @@ class TSNEApproxFunction
     double sumQ = 0.0, error = 0.0;
     std::vector<size_t> oldFromNew;
     TreeType tree(y, oldFromNew, 1);
-    TSNERules<UseDualTree> rule(
-        sumQ, g, y, oldFromNew, dof, theta);
+    TSNERules<UseDualTree> rule(sumQ, g, y, oldFromNew, dof, theta);
 
     // Negative Force Calculation
     if constexpr (UseDualTree)
@@ -118,11 +116,10 @@ class TSNEApproxFunction
         const size_t idx = N(j, i);
         const double distanceSq = DistanceType::Evaluate(y.col(i), y.col(idx));
 
-        double q = (double) dof /
-                         (dof + distanceSq);
+        double q = (double)dof / (dof + distanceSq);
         if (dof != 1)
           q = std::pow<double>(q, (1.0 + dof) / 2.0);
-        
+
         g.col(i) += q * P(i, idx) * (y.col(i) - y.col(idx));
         error += P(i, idx) *
                  std::log(std::max<double>(arma::datum::eps, P(i, idx)) /
@@ -145,7 +142,7 @@ class TSNEApproxFunction
 
   //! Nearest neibhbor distances.
   MatType D;
-  
+
   //! Nearest neighbor indexes.
   arma::Mat<size_t> N;
 

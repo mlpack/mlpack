@@ -12,8 +12,7 @@
 #ifndef MLPACK_METHODS_TSNE_TSNE_METHODS_HPP
 #define MLPACK_METHODS_TSNE_TSNE_METHODS_HPP
 
-namespace mlpack
-{
+namespace mlpack {
 
 /*
  * The ExactTSNE Class represents the Exact method for t-SNE.

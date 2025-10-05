@@ -91,12 +91,12 @@ template <typename TSNEMethod>
 void RunTSNE(util::Params& params, util::Timers& timers, arma::mat& dataset)
 {
   TSNE<TSNEMethod> tsne(params.Get<int>("output_dimensions"),
-                          params.Get<double>("perplexity"),
-                          params.Get<double>("exaggeration"),
-                          params.Get<double>("learning_rate"),
-                          params.Get<int>("max_iterations"),
-                          params.Get<std::string>("init"),
-                          params.Get<double>("theta"));
+                        params.Get<double>("perplexity"),
+                        params.Get<double>("exaggeration"),
+                        params.Get<double>("learning_rate"),
+                        params.Get<int>("max_iterations"),
+                        params.Get<std::string>("init"),
+                        params.Get<double>("theta"));
 
   Log::Info << "Running TSNE on dataset..." << endl;
   timers.Start("tsne");

@@ -15,8 +15,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
 
-namespace mlpack
-{
+namespace mlpack {
 
 template <typename eT,
           typename MatType = arma::Mat<eT>,
@@ -41,8 +40,8 @@ SpMatType binarySearchPerplexity(const double perplexity,
   {
     VecType Di;
     SpVecType Pi(n);
-    double betamin = -arma::datum::inf;
-    double betamax = +arma::datum::inf;
+    double betaMin = -arma::datum::inf;
+    double betaMax = +arma::datum::inf;
     double sumP, sumDP, hDiff, hApprox;
 
     if (i % 1000 == 0)
@@ -72,19 +71,19 @@ SpMatType binarySearchPerplexity(const double perplexity,
 
       if (hDiff > 0)
       {
-        betamin = beta(i);
-        if (std::isinf(betamax))
+        betaMin = beta(i);
+        if (std::isinf(betaMax))
           beta(i) *= 2.0;
         else
-          beta(i) = (beta(i) + betamax) / 2.0;
+          beta(i) = (beta(i) + betaMax) / 2.0;
       }
       else
       {
-        betamax = beta(i);
-        if (std::isinf(betamin))
+        betaMax = beta(i);
+        if (std::isinf(betaMin))
           beta(i) /= 2.0;
         else
-          beta(i) = (beta(i) + betamin) / 2.0;
+          beta(i) = (beta(i) + betaMin) / 2.0;
       }
       step++;
     }
@@ -92,6 +91,7 @@ SpMatType binarySearchPerplexity(const double perplexity,
       Log::Warn << "Max Steps Reached While Searching For Desired Perplexity"
                 << std::endl;
 
+    // To-Do: Verify for thread-safty
     for (size_t j = 0; j < k; ++j)
       P(i, N(j, i)) = Pi(N(j, i));
   }
@@ -110,23 +110,24 @@ MatType binarySearchPerplexity(const double perplexity, const arma::Mat<eT>& D)
   const size_t maxSteps = 50;
   const double tolerance = 1e-5;
 
-  size_t n = D.n_cols;
-  double H = std::log(perplexity);
+  const size_t n = D.n_cols;
+  const double hDesired = std::log(perplexity);
+
   VecType beta(n, arma::fill::ones);
   MatType P(n, n, arma::fill::zeros);
 
   for (size_t i = 0; i < n; i++)
   {
     VecType Di, Pi;
-    double betamin, betamax;
-    double sumP, Happrox, Hdiff;
+    double betaMin, betaMax;
+    double sumP, hApprox, hDiff;
 
     if (i % 1000 == 0)
       Log::Info << "Computing P-values for points " << i + 1 << " To "
                 << std::min(n, i + 1000) << std::endl;
 
-    betamin = -arma::datum::inf;
-    betamax = +arma::datum::inf;
+    betaMin = -arma::datum::inf;
+    betaMax = +arma::datum::inf;
     Di = D.col(i);
     Di.shed_row(i);
 
@@ -135,28 +136,28 @@ MatType binarySearchPerplexity(const double perplexity, const arma::Mat<eT>& D)
     {
       Pi = arma::exp(-Di * beta(i));
       sumP = std::max(arma::datum::eps, arma::accu(Pi));
-      Happrox = std::log(sumP) + beta(i) * arma::accu(Di % Pi) / sumP;
+      hApprox = std::log(sumP) + beta(i) * arma::accu(Di % Pi) / sumP;
       Pi /= sumP;
 
-      Hdiff = Happrox - H;
-      if (std::abs(Hdiff) <= tolerance)
+      hDiff = hApprox - hDesired;
+      if (std::abs(hDiff) <= tolerance)
         break;
 
-      if (Hdiff > 0)
+      if (hDiff > 0)
       {
-        betamin = beta(i);
-        if (std::isinf(betamax))
+        betaMin = beta(i);
+        if (std::isinf(betaMax))
           beta(i) *= 2.0;
         else
-          beta(i) = (beta(i) + betamax) / 2.0;
+          beta(i) = (beta(i) + betaMax) / 2.0;
       }
       else
       {
-        betamax = beta(i);
-        if (std::isinf(betamin))
+        betaMax = beta(i);
+        if (std::isinf(betaMin))
           beta(i) /= 2.0;
         else
-          beta(i) = (beta(i) + betamin) / 2.0;
+          beta(i) = (beta(i) + betaMin) / 2.0;
       }
       step++;
     }

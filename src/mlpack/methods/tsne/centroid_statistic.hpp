@@ -16,8 +16,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/tree/tree_traits.hpp>
 
-namespace mlpack
-{
+namespace mlpack {
 
 /**
  * Statistic that stores the Centroid/Center Of Mass/Barycenter
@@ -32,7 +31,7 @@ namespace mlpack
  * @tparam VecType Vector type used to store the centroid (default is
  *         arma::vec).
  */
-template<typename VecType = arma::vec>
+template <typename VecType = arma::vec>
 class CentroidStatisticType
 {
  public:
