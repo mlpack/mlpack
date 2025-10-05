@@ -703,7 +703,7 @@ class DAGNetwork
 
   // Connection type for some node that should have multiple parent nodes.
   // If this exists for a layer with <= 1 parent, it gets ignored.
-  std::unordered_map<size_t, ConnectionTypes> layerConnection;
+  std::unordered_map<size_t, ConnectionTypes> layerConnections;
 };
 
 } // namespace mlpack

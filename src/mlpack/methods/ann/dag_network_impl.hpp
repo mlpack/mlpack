@@ -49,6 +49,7 @@ DAGNetwork<
     childrenList(other.childrenList),
     parentsList(other.parentsList),
     layerAxes(other.layerAxes),
+    layerConnections(other.layerConnections),
 
     parameters(other.parameters),
     inputDimensions(other.inputDimensions),
@@ -83,6 +84,7 @@ DAGNetwork<
 
     network(std::move(other.network)),
     layerAxes(std::move(other.layerAxes)),
+    layerConnections(std::move(other.layerConnections)),
 
     parameters(std::move(other.parameters)),
     inputDimensions(std::move(other.inputDimensions)),
@@ -124,6 +126,7 @@ DAGNetwork<
     parentsList = other.parentsList;
     childrenList = other.childrenList;
     layerAxes = other.layerAxes;
+    layerConnections = other.layerConnections;
 
     parameters = other.parameters;
     inputDimensions = other.inputDimensions;
@@ -168,6 +171,7 @@ DAGNetwork<OutputLayerType,
     parentsList = std::move(other.parentsList);
     childrenList = std::move(other.childrenList);
     layerAxes = std::move(other.layerAxes);
+    layerConnections = std::move(other.layerConnections);
 
     parameters = std::move(other.parameters);
     inputDimensions = std::move(other.inputDimensions);
@@ -231,7 +235,7 @@ void DAGNetwork<
     throw std::logic_error(errMessage.str());
   }
 
-  layerConnection[layerId] = connection;
+  layerConnections[layerId] = connection;
 
   validOutputDimensions = false;
   graphIsSet = false;
@@ -577,12 +581,12 @@ void DAGNetwork<
         std::vector<size_t>(numOutputDimensions, 0);
 
       // By default concatenate when a node has multiple children.
-      if (layerConnection.count(currentLayer) == 0)
-        layerConnection.insert({ currentLayer, CONCATENATE });
+      if (layerConnections.count(currentLayer) == 0)
+        layerConnections.insert({ currentLayer, CONCATENATE });
 
       // numParents guaranteed to be > 1.
-      ConnectionTypes connectionType = layerConnection.at(currentLayer);
-      switch (layerConnection.at(currentLayer))
+      ConnectionTypes connectionType = layerConnections.at(currentLayer);
+      switch (layerConnections.at(currentLayer))
       {
         case CONCATENATE:
           ComputeConcatDimensions(currentLayer);
@@ -1097,7 +1101,7 @@ void DAGNetwork<
       // Concatenation
       if (parents.size() > 1)
       {
-        if (layerConnection.at(currentLayer) == CONCATENATE)
+        if (layerConnections.at(currentLayer) == CONCATENATE)
         {
           const size_t axis = layerAxes[currentLayer];
 
@@ -1196,7 +1200,7 @@ void DAGNetwork<
       const size_t numParents = parentsList[currentLayer].size();
       if (numParents > 1)
       {
-        if (layerConnection.at(currentLayer) == CONCATENATE)
+        if (layerConnections.at(currentLayer) == CONCATENATE)
         {
           // Calculating deltas for concatenation.
           const size_t axis = layerAxes[currentLayer];
