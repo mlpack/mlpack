@@ -4,7 +4,8 @@
  *
  * Definition of the DAGNetwork class, which allows uers to describe a
  * computational graph to build arbitrary neural networks with skip
- * connections.
+ * connections. These skip connections can consist of concatenations or
+ * element-wise addition of the input tensors for residual connections.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,6 +21,12 @@
 
 #include <ensmallen.hpp>
 
+enum ConnectionTypes
+{
+  CONCATENATE,
+  ADDITION
+};
+
 namespace mlpack {
 
 /**
@@ -28,10 +35,13 @@ namespace mlpack {
  *
  * A network can be created by using the `Add()` method to add
  * layers to the network. Each layer is then linked using `Connect()`.
- * A node with multiple parents will concatenate the output of its
- * parents along a specified axis. You can specify the axis of
- * concatenation with `SetAxis`. If the axis is not specifed, the default
- * axis will be used, which is 0.
+ *
+ * A node with multiple parents will either concatenate the output of its
+ * parents along a specified axis, or accumulate using element-wise addition.
+ * You can specify the axis of concatenation with `SetAxis`. If the axis is not specifed, the default
+ * axis will be used, which is 0. 
+
+ * TODO: by default concat along last axis (e.g. channels if using convs).
  *
  * A DAGNetwork cannot have any cycles. Creating a network with a cycle will
  * result in an error.
@@ -136,6 +146,9 @@ class DAGNetwork
 
     return id;
   }
+
+  // TODO: doc
+  void SetConnection(size_t layerId, ConnectionTypes connection);
 
   /**
    * Set the axis to concatenate along for a layer that expects multiple
@@ -506,6 +519,9 @@ class DAGNetwork
    */
   void ComputeOutputDimensions();
 
+  void ComputeConcatDimensions(size_t layerId);
+  void ComputeAdditionDimensions(size_t layerId);
+
   /**
    * Set the input and output dimensions of each layer in the network correctly.
    * The size of the input is taken, in case `inputDimensions` has not been set
@@ -666,7 +682,7 @@ class DAGNetwork
   // Gradient aliases for each layer.
   std::vector<MatType> layerGradients;
 
-  // Cache of rows for concatenation.
+  // Cache of rows for concatenation. Useful for forward / backward passes.
   std::unordered_map<size_t, size_t> rowsCache;
   // Cache of slices for concatenation.
   std::unordered_map<size_t, size_t> slicesCache;
@@ -682,6 +698,10 @@ class DAGNetwork
   bool layerMemoryIsSet;
 
   bool extraDeltasAllocated;
+
+  // Connection type for some node that should have multiple parent nodes.
+  // If this exists for a layer with <= 1 parent, it gets ignored.
+  std::unordered_map<size_t, ConnectionTypes> layerConnection;
 };
 
 } // namespace mlpack
