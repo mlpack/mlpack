@@ -324,8 +324,11 @@ static FILE *stbiw__fopen(char const *filename, char const *mode)
 #endif
 
 #elif defined(_MSC_VER) && _MSC_VER >= 1400
+#include <errhandlingapi.h>
+  SetLastError(0);
   int myflag_2 = fopen_s(&f, filename, mode);
-  std::cout << "_fopen_s: " << myflag_2 << std::endl;
+  int last_error = GetLastError();
+  std::cout << "_fopen_s: " << myflag_2  << " last error: "<< last_error << std::endl;
    if (0 != myflag_2)
       f=0;
 #else
