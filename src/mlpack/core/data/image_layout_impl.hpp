@@ -27,8 +27,8 @@ arma::Mat<eT> GroupChannels(const arma::Mat<eT>& image,
   if (expectedRows != image.n_rows)
   {
     std::ostringstream errMessage;
-    errMessage << "Expected rows was " << expectedRows
-               << " but image rows was " << image.n_rows << ".";
+    errMessage << "GroupChannels(): Expected " << expectedRows
+               << " rows but got image with " << image.n_rows << " rows.";
     throw std::logic_error(errMessage.str());
   }
 
@@ -53,8 +53,8 @@ arma::Mat<eT> InterleaveChannels(const arma::Mat<eT>& image,
   if (expectedRows != image.n_rows)
   {
     std::ostringstream errMessage;
-    errMessage << "Expected rows was " << expectedRows
-               << " but image rows was " << image.n_rows << ".";
+    errMessage << "InterleaveChannels(): Expected " << expectedRows
+               << " rows but got image with " << image.n_rows << " rows.";
     throw std::logic_error(errMessage.str());
   }
 
