@@ -60,7 +60,7 @@ image = data::GroupChannels(image, info);
 // Do some computation here, for example data augmentation or convolutional
 // neural network.
 
-// Convert range back to 0-255 and interlevae channels to prepare for saving.
+// Convert range back to 0-255 and interleave channels to prepare for saving.
 image *= 255;
 image = data::InterleaveChannels(image, info);
 data::Save("output.jpg", image, info, true);
