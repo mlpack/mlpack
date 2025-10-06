@@ -153,7 +153,7 @@ TEST_CASE("SaveImageNewAPITest", "[ImageLoadTest]")
   im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
   
   FILE* f;
-  int retval = fopen_s("APITest3.bmp", "wb");
+  int retval = fopen_s(&f, "APITest3.bmp", "wb");
   std::cout << "open value before mlpack / STB: " << retval << "\n";
   fclose(f);
 
