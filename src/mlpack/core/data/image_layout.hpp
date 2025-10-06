@@ -19,7 +19,6 @@ namespace mlpack {
 namespace data {
 
 /**
-
  * `data::Load()` returns a matrix where each column represents an image.
  * The rows of each image represent pixel values whose channels are
  * interleaved, i.e. [r, g, b, r, g, b, ... ]. Some mlpack functionality
