@@ -18,7 +18,7 @@ channels and vice versa, you can use `data::GroupChannels()` and
     - `images` must be a matrix where each column is an image. Each image is
       expected to be interleaved, i.e. in the format `[r, g, b, r, g, b ... ]`.
 
-    - `info` describes the shape of each image.
+    - `info` is an [`ImageInfo`](#dataimageinfo) that describes the shape of each image.
 
     - Returns a matrix where each image from `images` are in the
       format `[r, r, ... , g, g, ... , b, b]`.  The size of the matrix is the same as the size of `images`.
