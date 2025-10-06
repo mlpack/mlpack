@@ -35,7 +35,7 @@ arma::Mat<eT> GroupChannels(const arma::Mat<eT>& image,
   if (info.Channels() == 1)
     return image;
 
-  arma::Mat<eT> output(image.n_rows, image.n_cols);
+  arma::Mat<eT> output(image.n_rows, image.n_cols, arma::fill::none);
   for (size_t i = 0; i < image.n_cols; i++)
   {
     output.col(i) = arma::vectorise(
