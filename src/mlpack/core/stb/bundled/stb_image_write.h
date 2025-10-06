@@ -153,7 +153,6 @@ LICENSE
 
 #include <stdlib.h>
 
-#include <errhandlingapi.h>
 // if STB_IMAGE_WRITE_STATIC causes problems, try defining STBIWDEF to 'inline' or 'static inline'
 #ifndef STBIWDEF
 #ifdef STB_IMAGE_WRITE_STATIC
@@ -325,10 +324,8 @@ static FILE *stbiw__fopen(char const *filename, char const *mode)
 #endif
 
 #elif defined(_MSC_VER) && _MSC_VER >= 1400
-  SetLastError(0);
   int myflag_2 = fopen_s(&f, filename, mode);
-  int last_error = GetLastError();
-  std::cout << "_fopen_s: " << myflag_2  << " last error: "<< last_error << std::endl;
+  std::cout << "_fopen_s: " << myflag_2  << std::endl;
    if (0 != myflag_2)
       f=0;
 #else
