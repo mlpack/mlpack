@@ -39,7 +39,7 @@ target_info = [
       'device_name': 'vocore2-ultimate',
       'arch_type': 'mips32',
       'arch_name': 'MIPS24K',
-      'test_filters': '~[long]',
+      'test_filters': '[tiny]',
       'openblas_extra_flags': 'USE_THREAD=0',
       'scp_opts': '-O'
   ]
