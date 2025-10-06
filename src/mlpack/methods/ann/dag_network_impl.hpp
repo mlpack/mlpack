@@ -460,10 +460,10 @@ void DAGNetwork<
     {
       std::ostringstream errMessage;
       errMessage << "DAGNetwork::ComputeOutputDimensions(): "
-                      "Number of output dimensions for layer " << layerId << " ("
-                   << numOutputDimensions << ") should be equal "
-                      "to the number of output dimensions for layer "
-                   << parentIndex << ", which is " << parentDims << ".";
+        "Number of output dimensions for layer " << layerId
+        << " (" << numOutputDimensions << ") should be equal "
+        "to the number of output dimensions for layer "
+        << parentIndex << ", which is " << parentDims << ".";
       throw std::logic_error(errMessage.str());
     }
   }

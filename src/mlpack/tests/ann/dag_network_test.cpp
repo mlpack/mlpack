@@ -813,7 +813,8 @@ TEST_CASE("DAGNetworkAddMultiLayer", "[DAGNetworkTest]")
  * skip connection layer.
  */
 TEST_CASE("DAGNetworkGradientAccumulatesAndResetsToZeroUsingConcatenation",
-          "[DAGNetworkTest]") { DAGNetwork<MeanSquaredError, ConstInitialization> model =
+          "[DAGNetworkTest]") {
+  DAGNetwork<MeanSquaredError, ConstInitialization> model =
     DAGNetwork(MeanSquaredError(), ConstInitialization(1.0f));
 
   size_t a = model.Add<Add>();
