@@ -21,7 +21,7 @@ channels and vice versa, you can use `data::GroupChannels()` and
     - `info` describes the shape of each image.
 
     - Returns a matrix where each image from `images` are in the
-      format `[r, r, ... , g, g, ... , b, b]`.
+      format `[r, r, ... , g, g, ... , b, b]`.  The size of the matrix is the same as the size of `images`.
 
 ---
 
