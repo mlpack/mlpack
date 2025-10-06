@@ -24,7 +24,7 @@ using namespace mlpack;
 /**
  * Simple Multihead Attention test.
  */
-TEST_CASE("SimpleMultiheadAttentionTest", "[ANNLayerTest]")
+TEST_CASE("SimpleMultiheadAttentionTest", "[ANNLayerTest][tiny]")
 {
   size_t tLen = 5;
   size_t sLen = tLen;
@@ -86,7 +86,7 @@ TEST_CASE("SimpleMultiheadAttentionTest", "[ANNLayerTest]")
 /**
  * Jacobian MultiheadAttention module test.
  */
-TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
+TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest][tiny]")
 {
   // Check when query = key = value.
   for (size_t i = 0; i < 5; ++i)
@@ -165,7 +165,7 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
 /**
  * Numerical gradient test for MultiheadAttention layer.
  */
-TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
+TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest][tiny]")
 {
   struct GradientFunction
   {

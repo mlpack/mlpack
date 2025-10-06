@@ -19,10 +19,10 @@ using namespace mlpack;
 using namespace arma;
 
 /**
- * Make sure the SVD Batch lerning is converging.
+ * Make sure the SVD Batch learning is converging.
  */
-TEMPLATE_TEST_CASE("SVDBatchConvergenceElementTest", "[SVDBatchTest]", float,
-    double)
+TEMPLATE_TEST_CASE("SVDBatchConvergenceElementTest", "[SVDBatchTest][tiny]",
+    float, double)
 {
   using eT = TestType;
 

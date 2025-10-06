@@ -333,8 +333,8 @@ TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char,
 /**
  * Test that if we resize an image, we get the pixels that we expect.
  */
-TEMPLATE_TEST_CASE("ResizeCropPixelTest", "[ImageTest]", unsigned char, size_t,
-    float, double)
+TEMPLATE_TEST_CASE("ResizeCropPixelTest", "[ImageTest][tiny]", unsigned char,
+    size_t, float, double)
 {
   typedef TestType eT;
 

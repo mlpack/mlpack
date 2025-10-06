@@ -298,7 +298,7 @@ void BatchSizeTest()
 /**
  * Ensure recurrent layers work with larger batch sizes.
  */
-TEMPLATE_TEST_CASE("RNNBatchSizeTest", "[RecurrentNetworkTest]",
+TEMPLATE_TEST_CASE("RNNBatchSizeTest", "[RecurrentNetworkTest][tiny]",
     LinearRecurrent<>,
     LSTM<>,
     GRU<>)
@@ -374,7 +374,7 @@ TEST_CASE("LargeRhoValueRnnTest", "[RecurrentNetworkTest]")
  * Test that a simple RNN with no recurrent components behaves the same as an
  * FFN.
  */
-TEST_CASE("RNNFFNTest", "[RecurrentNetworkTest]")
+TEST_CASE("RNNFFNTest", "[RecurrentNetworkTest][tiny]")
 {
   // We'll create an RNN with *no* BPTT, just a simple single-layer linear
   // network.
@@ -1026,7 +1026,7 @@ void ReberGrammarTestNetwork(ModelType& model,
   REQUIRE(successes >= 1);
 }
 
-TEST_CASE("LSTMReberGrammarTest", "[RecurrentNetworkTest]")
+TEST_CASE("LSTMReberGrammarTest", "[RecurrentNetworkTest][tiny]")
 {
   // Note that our performance doesn't exactly match the LSTM paper that
   // originally introduced this task.  But, part of this is probably that they
