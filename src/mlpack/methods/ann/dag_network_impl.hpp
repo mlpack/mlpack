@@ -673,8 +673,8 @@ void DAGNetwork<
   else
   {
     throw std::invalid_argument("DAGNetwork::Reset(): Cannot reset network when"
-        "no input dimensionality is given, and `InputDimensions()` has not been"
-        " set!");
+        " no input dimensionality is given, and `InputDimensions()` has not"
+        " been set!");
   }
 }
 
