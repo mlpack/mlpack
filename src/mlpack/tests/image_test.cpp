@@ -151,6 +151,12 @@ TEST_CASE("SaveImageNewAPITest", "[ImageLoadTest]")
   arma::Mat<unsigned char> im1;
   size_t dimension = opts.Width() * opts.Height() * opts.Channels();
   im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
+  
+  FILE* f;
+  int retval = fopen_s("APITest3.bmp", "wb");
+  std::cout << "open value before mlpack / STB: " << retval << "\n";
+  fclose(f);
+
   REQUIRE(data::Save("APITest3.bmp", im1, opts) == true);
 
   arma::Mat<unsigned char> im2;
