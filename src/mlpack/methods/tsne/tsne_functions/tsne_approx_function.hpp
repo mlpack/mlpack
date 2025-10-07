@@ -130,8 +130,16 @@ class TSNEApproxFunction
     g /= -sumQ;
 
     // Positive Force Calculation
+    std::vector<double> localErrors(omp_get_max_threads());
+
+    #pragma omp parallel for schedule(static)
     for (size_t i = 0; i < y.n_cols; i++)
     {
+      size_t threadId = 0;
+      #ifdef MLPACK_USE_OPENMP
+        threadId = omp_get_thread_num();
+      #endif
+
       for (size_t j = 0; j < N.n_rows; j++)
       {
         const size_t idx = N(j, i);
@@ -142,13 +150,15 @@ class TSNEApproxFunction
           q = std::pow<double>(q, (1.0 + dof) / 2.0);
 
         g.col(i) += q * P(i, idx) * (y.col(i) - y.col(idx));
-        error += P(i, idx) *
+
+        localErrors[threadId] += P(i, idx) *
                  std::log(std::max<double>(arma::datum::eps, P(i, idx)) /
                           std::max<double>(arma::datum::eps, q / sumQ));
       }
     }
     g *= 2.0 * (1.0 + dof) / dof;
 
+    error = std::accumulate(localErrors.begin(), localErrors.end(), 0.0);
     return error;
   }
 
