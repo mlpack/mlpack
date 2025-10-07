@@ -207,7 +207,7 @@ void DAGNetwork<
   {
     std::ostringstream errMessage;
     errMessage << "DAGNetwork::SetAxis(): layer "
-      << layerId << " does not exist in the network.";
+        << layerId << " does not exist in the network.";
     throw std::logic_error(errMessage.str());
   }
 
@@ -230,8 +230,8 @@ void DAGNetwork<
   if (layerId >= network.size())
   {
     std::ostringstream errMessage;
-    errMessage << "DAGNetwork::SetAxis(): layer "
-      << layerId << " does not exist in the network.";
+    errMessage << "DAGNetwork::SetConnection(): layer "
+        << layerId << " does not exist in the network.";
     throw std::logic_error(errMessage.str());
   }
 
@@ -258,18 +258,16 @@ void DAGNetwork<
   if (parentNodeId >= network.size())
   {
     std::ostringstream errMessage;
-    errMessage << "DAGNetwork::Connect(): Layer "
-      << parentNodeId
-      << " must exist in the network before using `Connect`.";
+    errMessage << "DAGNetwork::Connect(): Layer " << parentNodeId
+        << " must exist in the network before using `Connect`.";
     throw std::logic_error(errMessage.str());
   }
 
   if (childNodeId >= network.size())
   {
     std::ostringstream errMessage;
-    errMessage << "DAGNetwork::Connect(): Layer "
-      << childNodeId
-      << " must exist in the network before using `Connect`.";
+    errMessage << "DAGNetwork::Connect(): Layer " << childNodeId
+        << " must exist in the network before using `Connect`.";
     throw std::logic_error(errMessage.str());
   }
 
@@ -279,9 +277,8 @@ void DAGNetwork<
     if (childNodeParents[i] == parentNodeId)
     {
       std::ostringstream errMessage;
-      errMessage << "DAGNetwork::Connect(): Layer "
-        << parentNodeId
-        << " cannot be concatenated with itself.";
+      errMessage << "DAGNetwork::Connect(): Layer " << parentNodeId
+          << " cannot be concatenated with itself.";
       throw std::logic_error(errMessage.str());
     }
   }
@@ -334,9 +331,8 @@ void DAGNetwork<
   if (outputLayers > 1)
   {
     std::ostringstream errMessage;
-    errMessage << "DAGNetwork::CheckGraph(): "
-      "There should be exactly one output node, "
-      "but this network has " << outputLayers << " output nodes.";
+    errMessage << "DAGNetwork::CheckGraph(): There should be exactly one "
+        "output node, but there are " << outputLayers << " output nodes.";
     throw std::logic_error(errMessage.str());
   }
 
@@ -430,8 +426,9 @@ void DAGNetwork<
     if (parentDims != outputDimensions)
     {
       std::ostringstream errMessage;
-      errMessage << "Layer " << firstParent << " shape does not match "
-        << "layer " << parentIndex << " shape for element-wise addition.";
+      errMessage << "DAGNetwork::ComputeAdditionDimensions(): Layer "
+          << firstParent << " shape does not match layer " << parentIndex <<
+          " shape for element-wise addition.";
       throw std::logic_error(errMessage.str());
     }
   }
@@ -459,11 +456,11 @@ void DAGNetwork<
     if (numOutputDimensions != parentDims)
     {
       std::ostringstream errMessage;
-      errMessage << "DAGNetwork::ComputeOutputDimensions(): "
-        "Number of output dimensions for layer " << layerId
-        << " (" << numOutputDimensions << ") should be equal "
-        "to the number of output dimensions for layer "
-        << parentIndex << ", which is " << parentDims << ".";
+      errMessage << "DAGNetwork::ComputeConcatDimensions(): "
+          "Number of output dimensions for layer " << layerId
+          << " (" << numOutputDimensions << ") should be equal "
+          "to the number of output dimensions for layer "
+          << parentIndex << ", which is " << parentDims << ".";
       throw std::logic_error(errMessage.str());
     }
   }
@@ -478,12 +475,10 @@ void DAGNetwork<
   if (axis >= numOutputDimensions)
   {
     std::ostringstream errMessage;
-    errMessage << "DAGNetwork::ComputeOutputDimensions(): "
-                    "The concatenation axis of layer "
-                 << layerId << " is " << axis
-                 << ", but that's greater than or equal to the number "
-                    "of output dimensions, which is "
-                 << numOutputDimensions << ".";
+    errMessage << "DAGNetwork::ComputeConcatDimensions(): The concatenation "
+        "axis of layer " << layerId << " is " << axis
+        << ", but that's greater than or equal to the number of output "
+        "dimensions, which is " << numOutputDimensions << ".";
     throw std::logic_error(errMessage.str());
   }
 
@@ -512,13 +507,11 @@ void DAGNetwork<
         if (axisDim != currentAxisDim)
         {
           std::ostringstream errMessage;
-          errMessage << "DAGNetwork::ComputeOutputDimensions(): "
-                          "Axes not on the concatenation axis (axis = "
-                        << axis << ") should be equal, but "
-                        << axisDim << " != "
-                        << currentAxisDim << " along axis " << i
-                        << " for layers " << firstParent
-                        << " and " << parentIndex << ".";
+          errMessage << "DAGNetwork::ComputeConcatDimensions(): "
+              "Axes not on the concatenation axis (axis = "
+              << axis << ") should be equal, but "<< axisDim << " != "
+              << currentAxisDim << " along axis " << i << " for layers "
+              << firstParent << " and " << parentIndex << ".";
           throw std::logic_error(errMessage.str());
         }
       }
@@ -596,8 +589,8 @@ void DAGNetwork<
           break;
         default:
           std::ostringstream errMessage;
-          errMessage << "Connection type " << connectionType
-            << " does not exist.";
+          errMessage << "DAGNetwork::ComputeOutputDimensions(): Connection "
+              "type " << connectionType << " does not exist.";
           throw std::logic_error(errMessage.str());
       }
     }

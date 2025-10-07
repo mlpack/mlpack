@@ -399,3 +399,159 @@ TEMPLATE_TEST_CASE("ResizeCropUpscaleTest", "[ImageTest]", unsigned char,
   REQUIRE(info.Channels() == inputChannels);
   REQUIRE(image.n_elem == info.Height() * info.Width() * info.Channels());
 }
+
+/**
+ * Test that groups channels from interleaved channels.
+ */
+TEST_CASE("GroupChannels", "[ImageTest]")
+{
+  arma::mat image = arma::regspace(0, 26);
+  data::ImageInfo info(3, 3, 3);
+
+  arma::mat newLayout = GroupChannels(image, info);
+
+  std::vector<double> expectedOutput = {
+    0, 3, 6, 9, 12, 15, 18, 21, 24,
+    1, 4, 7, 10, 13, 16, 19, 22, 25,
+    2, 5, 8, 11, 14, 17, 20, 23, 26,
+  };
+
+  arma::mat expectedImage(expectedOutput);
+  CheckMatrices(newLayout, expectedImage);
+}
+
+/**
+ * Test that interleaves channels from grouped channels.
+ */
+TEST_CASE("InterleaveChannels", "[ImageTest]")
+{
+  data::ImageInfo info(3, 3, 3);
+  std::vector<double> data = {
+    0, 3, 6, 9, 12, 15, 18, 21, 24,
+    1, 4, 7, 10, 13, 16, 19, 22, 25,
+    2, 5, 8, 11, 14, 17, 20, 23, 26,
+  };
+  arma::mat image(data);
+
+  arma::mat newLayout = InterleaveChannels(image, info);
+  arma::mat expectedImage = arma::regspace(0, 26);
+  CheckMatrices(newLayout, expectedImage);
+}
+
+/**
+ * Test that groups channels from 2 images whose channels are interleaved.
+ */
+TEST_CASE("GroupChannels2Images", "[ImageTest]")
+{
+  data::ImageInfo info(3, 3, 3);
+  arma::mat images = arma::reshape(arma::regspace(0, 53), 27, 2);
+  arma::mat newImages = GroupChannels(images, info);
+
+  std::vector<double> expectedOutput = {
+    0, 3, 6, 9, 12, 15, 18, 21, 24,
+    1, 4, 7, 10, 13, 16, 19, 22, 25,
+    2, 5, 8, 11, 14, 17, 20, 23, 26,
+    27, 30, 33, 36, 39, 42, 45, 48, 51,
+    28, 31, 34, 37, 40, 43, 46, 49, 52,
+    29, 32, 35, 38, 41, 44, 47, 50, 53,
+  };
+
+  arma::mat expectedImages = arma::reshape(arma::mat(expectedOutput), 27, 2);
+  CheckMatrices(newImages, expectedImages);
+}
+
+/**
+ * Test that interleaves channels from 2 images whose channels are grouped.
+ */
+TEST_CASE("InterleaveChannels2Images", "[ImageTest]")
+{
+  data::ImageInfo info(3, 3, 3);
+  std::vector<double> input = {
+    0, 3, 6, 9, 12, 15, 18, 21, 24,
+    1, 4, 7, 10, 13, 16, 19, 22, 25,
+    2, 5, 8, 11, 14, 17, 20, 23, 26,
+    27, 30, 33, 36, 39, 42, 45, 48, 51,
+    28, 31, 34, 37, 40, 43, 46, 49, 52,
+    29, 32, 35, 38, 41, 44, 47, 50, 53,
+  };
+  arma::mat images = arma::reshape(arma::mat(input), 27, 2);
+
+  arma::mat newLayout = InterleaveChannels(images, info);
+  arma::mat expectedImage = arma::reshape(arma::regspace(0, 53), 27, 2);
+  CheckMatrices(newLayout, expectedImage);
+}
+
+/**
+ * Test grouping channels on empty image.
+ */
+TEST_CASE("GroupChannelsEmptyImage", "[ImageTest]")
+{
+  arma::mat image;
+  data::ImageInfo info(3, 3, 3);
+  REQUIRE_THROWS(GroupChannels(image, info));
+}
+
+/**
+ * Test interleaving channels on empty image.
+ */
+TEST_CASE("InterleaveChannelsEmtpyImage", "[ImageTest]")
+{
+  data::ImageInfo info(3, 3, 3);
+  arma::mat image;
+  REQUIRE_THROWS(InterleaveChannels(image, info));
+}
+
+/**
+ * Test grouping channels when there is only one channel.
+ */
+TEST_CASE("GroupChannelsOneChannel", "[ImageTest]")
+{
+  arma::mat image = arma::regspace(0, 8);
+  data::ImageInfo info(3, 3, 1);
+  arma::mat newLayout = GroupChannels(image, info);
+  arma::mat expectedImage(image);
+
+  CheckMatrices(newLayout, expectedImage);
+}
+
+/**
+ * Test interleaving channels when there is only one channel.
+ */
+TEST_CASE("InterleaveChannelsOneChannel", "[ImageTest]")
+{
+  arma::mat image = arma::regspace(0, 8);
+  data::ImageInfo info(3, 3, 1);
+  arma::mat newLayout = InterleaveChannels(image, info);
+  arma::mat expectedImage(image);
+
+  CheckMatrices(newLayout, expectedImage);
+}
+
+/**
+ * Test grouping channels when there is only one pixel.
+ */
+TEST_CASE("GroupChannelsOnePixel", "[ImageTest]")
+{
+  data::ImageInfo info(1, 1, 1);
+  arma::mat image(1, 1);
+  image.fill(5.0);
+
+  arma::mat newLayout = GroupChannels(image, info);
+  arma::mat expectedImage(image);
+
+  CheckMatrices(newLayout, expectedImage);
+}
+
+/**
+ * Test interleaving channels when there is only one pixel.
+ */
+TEST_CASE("InterleaveChannelsOnePixel", "[ImageTest]")
+{
+  data::ImageInfo info(1, 1, 1);
+  arma::mat image(1, 1);
+  image.fill(5.0);
+
+  arma::mat newLayout = InterleaveChannels(image, info);
+  arma::mat expectedImage(image);
+  CheckMatrices(newLayout, expectedImage);
+}
