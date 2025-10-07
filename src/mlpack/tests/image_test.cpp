@@ -145,7 +145,7 @@ TEST_CASE("LoadWrongDataOptions", "[ImageLoadTest]")
  */
 TEST_CASE("SaveImageNewAPITest", "[ImageLoadTest]")
 {
-  data::ImageOptions opts(5, 5, 3, 90);
+  data::ImageInfo opts(5, 5, 3, 90);
   opts.Fatal() = false;
 
   arma::Mat<unsigned char> im1;
