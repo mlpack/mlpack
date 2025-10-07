@@ -1139,7 +1139,7 @@ void DAGNetwork<
 
           default:
             throw std::logic_error("DAGNetwork::Forward(): Connection type"
-                "not implemented.");
+                " not implemented.");
         }
       }
 
@@ -1245,11 +1245,12 @@ void DAGNetwork<
               const size_t parentIndex = sortedIndices[parents[j]];
               outputDeltas[parentIndex] = inputDeltas[i];
             }
+            break;
           }
 
           default:
             throw std::logic_error("DAGNetwork::Backward(): Connection type"
-                "not implemented.");
+                " not implemented.");
         }
       }
 
