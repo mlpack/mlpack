@@ -53,7 +53,7 @@ void TSNE<TSNEMethod>::Embed(const MatType& X, MatType& Y)
     PCA pca;
     pca.Apply(X, Y, outputDim);
 
-    // What if stddev has zeros should that case be handled?
+    // To Do: Handle the case where stddev is zero.
     Y.each_col() /= arma::stddev(Y, 0, 1);
     Y *= 1e-4;
   }

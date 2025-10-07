@@ -12,6 +12,7 @@
 #ifndef MLPACK_METHODS_TSNE_TSNE_FUNCTIONS_TSNE_APPROX_FUNCTION_HPP
 #define MLPACK_METHODS_TSNE_TSNE_FUNCTIONS_TSNE_APPROX_FUNCTION_HPP
 
+#include <omp.h>
 #include <armadillo>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/tree/octree.hpp>
@@ -90,21 +91,40 @@ class TSNEApproxFunction
     // Init
     double sumQ = 0.0, error = 0.0;
     std::vector<size_t> oldFromNew;
-
     TreeType tree(y, oldFromNew);
-    RuleType rule(sumQ, g, y, oldFromNew, dof, theta);
 
     // Negative Force Calculation
     if constexpr (UseDualTree)
     {
+      RuleType rule(sumQ, g, y, oldFromNew, dof, theta);
       typename TreeType::DualTreeTraverser traverser(rule);
       traverser.Traverse(tree, tree);
     }
     else
     {
-      typename TreeType::SingleTreeTraverser traverser(rule);
-      for (size_t i = 0; i < y.n_cols; i++)
-        traverser.Traverse(i, tree);
+      const size_t maxThreadCount = omp_get_max_threads();
+      std::vector<double> localSumQs(maxThreadCount);
+
+      #pragma omp parallel
+      {
+        size_t threadId = 0;
+        size_t threadShareSize = y.n_cols;
+        #ifdef MLPACK_USE_OPENMP
+          threadId = omp_get_thread_num();
+          threadShareSize /= omp_get_num_threads();
+        #endif
+
+        RuleType rule(localSumQs[threadId], g, y, oldFromNew, dof, theta);
+        typename TreeType::SingleTreeTraverser traverser(rule);
+
+        for (size_t i = threadId * threadShareSize;
+            i < (threadId + 1) * threadShareSize && i < y.n_cols;
+            i++)
+          traverser.Traverse(i, tree);
+      }
+
+      for (size_t i = 0; i < maxThreadCount; i++)
+        sumQ += localSumQs[i];
     }
     sumQ = std::max(arma::datum::eps, sumQ);
     g /= -sumQ;
