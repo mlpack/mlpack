@@ -1094,7 +1094,7 @@ void DAGNetwork<
       // Concatenation
       if (parents.size() > 1)
       {
-        switch(layerConnections.at(currentLayer))
+        switch (layerConnections.at(currentLayer))
         {
           case CONCATENATE:
           {
