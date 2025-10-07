@@ -146,10 +146,10 @@ TEST_CASE("SaveImageAPITest2", "[ImageLoadTest]")
   arma::Mat<unsigned char> im1;
   size_t dimension = info.Width() * info.Height() * info.Channels();
   im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
-  REQUIRE(data::Save("APITest2.bmp", im1, info, false) == true);
+  REQUIRE(data::Save("APITest2.bmp", im1, info) == true);
 
   arma::Mat<unsigned char> im2;
-  REQUIRE(data::Load("APITest2.bmp", im2, info, false) == true);
+  REQUIRE(data::Load("APITest2.bmp", im2, info) == true);
 
   REQUIRE(im1.n_cols == im2.n_cols);
   REQUIRE(im1.n_rows == im2.n_rows);
