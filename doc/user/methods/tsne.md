@@ -137,21 +137,21 @@ These methods are already implemented and ready for drop-in usage:
 
 - `ExactTSNE`
   - Computes the exact gradient of the t-SNE objective.  
-  - Complexity: O(N^2).
+  - Time Complexity: O(N^2).
   - Provides the most accurate results but quickly becomes impractical for large
     datasets (e.g., beyond a few thousand points).  
   - Use when dataset size is small and exact precision is required.  
 
 - `BarnesHutTSNE` _(default)_  
   - Uses the Barnes-Hut approximation for computing the gradient.
-  - Complexity: O(NlogN).  
+  - Time Complexity: O(NlogN).  
   - Produces high-quality embeddings much faster than the exact method.  
   - Works well for medium to large datasets and is the most commonly used method in
   practice.
 
 - `DualTreeTSNE`
   - Uses a dual-tree based approximation for computing the gradient.  
-  - Complexity: O(NlogN).
+  - Time Complexity: O(NlogN).
   - Can be faster than Barnes-Hut in certain scenarios, especially for
     higher-dimensional embeddings.  
   - Useful when Barnes-Hut performance starts degrading with increasing dataset size

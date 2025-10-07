@@ -13,29 +13,37 @@
 #ifndef MLPACK_METHODS_TSNE_TSNE_RULES_TSNE_RULES_HPP
 #define MLPACK_METHODS_TSNE_TSNE_RULES_TSNE_RULES_HPP
 
+#include <mlpack/core/tree/octree/octree.hpp>
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/tree/octree.hpp>
 #include <mlpack/core/tree/hrectbound.hpp>
 #include <mlpack/core/distances/lmetric.hpp>
+#include <mlpack/core/tree/traversal_info.hpp>
+
+#include "../centroid_statistic.hpp"
 
 namespace mlpack {
 
 /**
- * Traversal Rules class for Approximating t-SNE Gradient (Repulsive Term).
- * This class can be used by both Single and Dual Tree Traversers.
+ * Traversal rules for approximating the t-SNE gradient (repulsive term).
+ * This class supports both single and dual-tree traversers:
+ * - With a single-tree traverser, it performs the Barnes-Hut approximation.
+ * - With a dual-tree traverser, it performs the dual-tree approximation.
  *
- * @tparam IsDualTraversal Indicates whether the traversal is dual (true) or
-           single (false). Allows both barnes-hut and dual-tree approximations
-           to be handled in one class.
+ * Refer to "Accelerating t-SNE using Tree-Based Algorithms" for details.
+ *
+ * @tparam DistanceType The distance metric to use for computation.
+ * @tparam TreeType The tree type to use.
  * @tparam MatType The type of Matrix.
  */
-template <bool IsDualTraversal, typename MatType = arma::mat>
+template <typename DistanceType = SquaredEuclideanDistance,
+          typename TreeType = Octree<DistanceType, CentroidStatistic>,
+          typename MatType = arma::mat>
 class TSNERules
 {
  public:
   // Convenience typedefs.
   using VecType = typename GetColType<MatType>::type;
-  using DistanceType = SquaredEuclideanDistance;
-  using HRectBoundType = HRectBound<DistanceType>;
 
   /**
    * Constructs TSNERules object.
@@ -45,7 +53,7 @@ class TSNERules
    * @param embedding low dimentional embedding matrix.
    * @param oldFromNew mapping form previous to new order of points.
    * @param dof Degrees of freedom calculated as max(1, input_dims - 1).
-   * @param theta The coarseness of the approximation. 
+   * @param theta The coarseness of the approximation.
    */
   TSNERules(double& sumQ,
             MatType& negF,
@@ -55,7 +63,7 @@ class TSNERules
             const double theta = 0.5);
 
   /**
-   * BaseCase.
+   * Computes point-point interactions for the repulsive term.
    *
    * @param queryIndex Index of query point.
    * @param referenceIndex Index of reference point.
@@ -63,63 +71,84 @@ class TSNERules
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
   /**
-   * Determine whether to prune the node referenceNode If so, return DBL_MAX.
-   * Otherwise, return a numeric score indicating how "promising"
-   * the node combination is (lower scores are better).
+   * Computes point-to-node interactions for the repulsive term.
+   *
+   * Determines whether to prune the reference node using the Barnes-Hut
+   * approximation criterion:
+   * \f[
+   * \frac{\text{diameter}}{\text{distance}} < \theta
+   * \f]
+   * where `theta` controls the trade-off between computational speed and
+   * accuracy.
+   *
+   * If the condition is satisfied, the reference node is pruned
+   * (`DBL_MAX` is returned to indicate the same), and the negative force
+   * contribution is computed immediately using the distance between the
+   * query point and the node centroid as an approximation for the distances
+   * between the query point and all points within the reference node.
+   * Otherwise, the computed ratio (`diameter / distance`) is returned,
+   * indicating that the traverser should descend further into the
+   * reference node.
    *
    * @param queryIndex Index of query point.
    * @param referenceNode Candidate node to be recursed into.
    */
-  template <typename TreeType>
   double Score(const size_t queryIndex, TreeType& referenceNode);
 
   /**
-   * Check again if the referenceNode can be pruned, returning DBL_MAX if so.
+   * Check again if the referenceNode can be pruned, returning `DBL_MAX` if so.
    *
    * @param queryIndex Index of query point.
    * @param referenceNode Candidate node to be recursed into.
    * @param oldScore Old score produced by Score() (or Rescore()).
    */
-  template <typename TreeType>
   double Rescore(const size_t queryIndex,
                  TreeType& referenceNode,
                  const double oldScore);
 
   /**
-   * Determine whether to prune the node combination (queryNode, referenceNode)
-   * If so, return DBL_MAX.  Otherwise, return a numeric score indicating how
-   * "promising" the node combination is (lower scores are better).
+   * Computes node-to-node interactions for the repulsive term.
+   *
+   * Determines whether to prune the combination (queryNode, referenceNode)
+   * using the dual-tree approximation criterion:
+   * \f[
+   * \frac{\max(\text{queryNodeDiameter}, \text{referenceNodeDiameter})}
+   * {\text{distance}} < \theta
+   * \f]
+   * where `theta` controls the trade-off between computational speed and
+   * accuracy.
+   *
+   * If the condition is satisfied, the combination (queryNode, referenceNode)
+   * is pruned (`DBL_MAX` is returned to indicate the same), and the negative
+   * force contributions are computed immediately using the distance between
+   * the queryNode centroid and the referenceNode centroid as an approximation
+   * for the distances between all point pairs, where one point belongs to the
+   * queryNode and the other to the referenceNode.
+   * Otherwise, the computed ratio
+   * (`max(queryNodeDiameter, referenceNodeDiameter) / distance`)
+   * is returned, indicating that the traverser should descend further into
+   * the node combination (queryNode, referenceNode).
    *
    * @param queryNode Candidate query node to recurse into.
    * @param referenceNode Candidate reference node to recurse into.
    */
-  template <typename TreeType>
   double Score(TreeType& queryNode, TreeType& referenceNode);
 
   /**
    * Check again if the combination (queryNode, referenceNode) can be pruned,
-   * returning DBL_MAX if so.
+   * returning `DBL_MAX` if so.
    *
    * @param queryNode Candidate query node to recurse into.
    * @param referenceNode Candidate reference node to recurse into.
    * @param oldScore Old score produced by Score() (or Rescore()).
    */
-  template <typename TreeType>
   double Rescore(TreeType& queryNode,
                  TreeType& referenceNode,
                  const double oldScore);
 
-  /**
-   * Calculate the size of the largest side of the hyperrectangle given its
-   * bounds.
-   *
-   * @param bound contains lower and higher bound of the hyperrectangle
-                  in each dimention.
-   */
-  double getMaxSideSq(const HRectBoundType& bound) const;
+  //! Traversal information class for the dual-tree traversals
+  using TraversalInfoType = mlpack::TraversalInfo<TreeType>;
 
-  //! Defines Traversal information class for the dual-tree traversal
-  class TraversalInfoType { /* Nothing To Do Here*/ };
   //! Get the traversal info.
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   //! Modify the traversal info.

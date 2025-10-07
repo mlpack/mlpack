@@ -36,6 +36,7 @@ SpMatType binarySearchPerplexity(const double perplexity,
   SpMatType P(n, n);
   VecType beta(n, arma::fill::ones);
 
+  #pragma omp parallel for schedule(static)
   for (size_t i = 0; i < n; i++)
   {
     VecType Di;
@@ -116,6 +117,7 @@ MatType binarySearchPerplexity(const double perplexity, const arma::Mat<eT>& D)
   VecType beta(n, arma::fill::ones);
   MatType P(n, n, arma::fill::zeros);
 
+  #pragma omp parallel for schedule(static)
   for (size_t i = 0; i < n; i++)
   {
     VecType Di, Pi;

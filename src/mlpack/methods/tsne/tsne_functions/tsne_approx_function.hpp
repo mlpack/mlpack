@@ -38,17 +38,17 @@ namespace mlpack {
            to be handled in one class.
  * @tparam MatType The type of Matrix.
  */
-template <bool UseDualTree, typename MatType = arma::mat>
+template <bool UseDualTree,
+          typename DistanceType = SquaredEuclideanDistance,
+          typename TreeType = Octree<DistanceType, CentroidStatistic>,
+          typename MatType = arma::mat>
 class TSNEApproxFunction
 {
  public:
   // Convenience typedefs.
   using ElemType = typename MatType::elem_type;
   using SpMatType = typename GetSparseMatType<MatType>::type;
-  // To Do: Make These Template Parameters
-  using DistanceType = SquaredEuclideanDistance;
-  using TreeType = Octree<DistanceType, CentroidStatistic>;
-
+  using RuleType = TSNERules<DistanceType, TreeType, MatType>;
 
   /**
    * Constructs the TSNEApproxFunction object.
@@ -67,7 +67,7 @@ class TSNEApproxFunction
     // Run KNN
     // To Do: Make number of neibhors a parameter
     NeighborSearch<NearestNeighborSort, DistanceType> knn(X);
-    const size_t neighbors = static_cast<size_t>(3 * perplexity);
+    const size_t neighbors = static_cast<size_t>(3 * perplexity + 1);
     knn.Search(neighbors, N, D);
 
     // Precompute P
@@ -90,18 +90,19 @@ class TSNEApproxFunction
     // Init
     double sumQ = 0.0, error = 0.0;
     std::vector<size_t> oldFromNew;
-    TreeType tree(y, oldFromNew, 1);
-    TSNERules<UseDualTree> rule(sumQ, g, y, oldFromNew, dof, theta);
+
+    TreeType tree(y, oldFromNew);
+    RuleType rule(sumQ, g, y, oldFromNew, dof, theta);
 
     // Negative Force Calculation
     if constexpr (UseDualTree)
     {
-      TreeType::DualTreeTraverser traverser(rule);
+      typename TreeType::DualTreeTraverser traverser(rule);
       traverser.Traverse(tree, tree);
     }
     else
     {
-      TreeType::SingleTreeTraverser traverser(rule);
+      typename TreeType::SingleTreeTraverser traverser(rule);
       for (size_t i = 0; i < y.n_cols; i++)
         traverser.Traverse(i, tree);
     }

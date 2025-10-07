@@ -19,8 +19,7 @@
 #include "tsne.hpp"
 #include "tsne_functions/tsne_function.hpp"
 
-namespace mlpack
-{
+namespace mlpack {
 
 template <typename TSNEMethod>
 TSNE<TSNEMethod>::TSNE(const size_t outputDim,
@@ -40,15 +39,21 @@ template <typename TSNEMethod>
 template <typename MatType>
 void TSNE<TSNEMethod>::Embed(const MatType& X, MatType& Y)
 {
-  // To Do: Seperate Functions for
+  // Can lead to division by zero
+  assert(exaggeration != 0);
+
+  // To Do: Seperate Functions
   // initialize embeddigs and initialize objective function.
 
-  // Initialize Embedding
-  // We want a gaussian with standard deviation 1e-4.
+  // Initialize Embeddings
+  // Its better if the initialization has stddev of 0.0001.
+  // See "The art of using t-SNE for single-cell transcriptomics".
   if (init == "pca")
   {
     PCA pca;
     pca.Apply(X, Y, outputDim);
+
+    // What if stddev has zeros should that case be handled?
     Y.each_col() /= arma::stddev(Y, 0, 1);
     Y *= 1e-4;
   }
@@ -62,17 +67,18 @@ void TSNE<TSNEMethod>::Embed(const MatType& X, MatType& Y)
     throw std::invalid_argument("invalid init type");
   }
 
-  // Initialize Objective Function
-  // To Do: How are you going to pass theta?
+  // Calculate degrees of freedom
+  // See "Learning a Parametric Embedding by Preserving Local Structure"
   const size_t dof = std::max<size_t>(Y.n_rows - 1, 1);
+  // Initialize Objective Function
   TSNEFunction<TSNEMethod> function(X, perplexity, dof, theta);
 
   // Automatically choose a good learning rate.
-  // To Do: What if exaggeration is zero?
-  bool isLearningRateAuto = false;
-  if (learningRate == 0)
+  // See "Automated optimized parameters for T-distributed stochastic
+  // neighbor embedding improve visualization and analysis of large datasets"
+  const bool isLearningRateAuto = (bool)(learningRate == 0);
+  if (isLearningRateAuto)
   {
-    isLearningRateAuto = true;
     learningRate = std::max(200.0, X.n_cols / exaggeration);
   }
 

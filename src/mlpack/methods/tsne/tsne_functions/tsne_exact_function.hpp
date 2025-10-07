@@ -26,14 +26,13 @@ namespace mlpack {
  *
  * @tparam MatType The type of Matrix.
  */
-template <typename MatType = arma::mat>
+template <typename DistanceType = SquaredEuclideanDistance,
+          typename MatType = arma::mat>
 class TSNEExactFunction
 {
  public:
   // Convenience typedefs.
   using VecType = typename GetColType<MatType>::type;
-  // To Do: Make This A Template Parameters
-  using DistanceType = SquaredEuclideanDistance;
 
   /**
    * Constructs the TSNEExactFunction object.

@@ -17,22 +17,22 @@
 
 namespace mlpack {
 
-template <bool IsDualTraversal, typename MatType>
-TSNERules<IsDualTraversal, MatType>::TSNERules(
+template <typename DistanceType, typename TreeType, typename MatType>
+TSNERules<DistanceType, TreeType, MatType>::TSNERules(
     double& sumQ,
     MatType& negF,
     const MatType& embedding,
     const std::vector<size_t>& oldFromNew,
     const size_t dof,
     const double theta)
-    : sumQ(sumQ), negF(negF), embedding(embedding),
-    oldFromNew(oldFromNew), dof(dof), theta(theta)
+    : sumQ(sumQ), negF(negF), embedding(embedding), oldFromNew(oldFromNew),
+      dof(dof), theta(theta)
 {
   /* Nothing To Do Here */
 }
 
-template <bool IsDualTraversal, typename MatType>
-double TSNERules<IsDualTraversal, MatType>::BaseCase(
+template <typename DistanceType, typename TreeType, typename MatType>
+double TSNERules<DistanceType, TreeType, MatType>::BaseCase(
     const size_t queryIndex, const size_t referenceIndex)
 {
   const VecType& queryPoint = embedding.col(oldFromNew[queryIndex]);
@@ -41,35 +41,31 @@ double TSNERules<IsDualTraversal, MatType>::BaseCase(
 
   if (distanceSq > arma::datum::eps)
   {
-    double q = (double) dof / (dof + distanceSq);
+    double q = (double)dof / (dof + distanceSq);
     if (dof != 1)
       q = std::pow(q, (1.0 + dof) / 2.0);
 
     sumQ += q;
     negF.col(oldFromNew[queryIndex]) += q * q * (queryPoint - referencePoint);
-    if constexpr (IsDualTraversal)
-      negF.col(oldFromNew[referenceIndex]) += q * q *
-                                              (referencePoint - queryPoint);
   }
 
   return distanceSq;
 }
 
-template <bool IsDualTraversal, typename MatType>
-template <typename TreeType>
-double TSNERules<IsDualTraversal, MatType>::Score(
-    const size_t queryIndex,
-    TreeType& referenceNode)
+template <typename DistanceType, typename TreeType, typename MatType>
+double TSNERules<DistanceType, TreeType, MatType>::Score(
+    const size_t queryIndex, TreeType& referenceNode)
 {
   const VecType& queryPoint = embedding.col(oldFromNew[queryIndex]);
   const VecType& referencePoint = referenceNode.Stat().Centroid();
   const double distanceSq = std::max(
       arma::datum::eps, DistanceType::Evaluate(queryPoint, referencePoint));
 
-  const double maxSideSq = getMaxSideSq(referenceNode.Bound());
-  if (maxSideSq / distanceSq < theta * theta)
+  const double diameterSq = referenceNode.Bound().Diameter();
+  const double score = diameterSq / distanceSq;
+  if (score < theta * theta)
   {
-    double q = (double) dof / (dof + distanceSq);
+    double q = (double)dof / (dof + distanceSq);
     if (dof != 1)
       q = std::pow(q, (1.0 + dof) / 2.0);
 
@@ -80,21 +76,19 @@ double TSNERules<IsDualTraversal, MatType>::Score(
   }
   else
   {
-    return maxSideSq / distanceSq;
+    return score;
   }
 }
-template <bool IsDualTraversal, typename MatType>
-template <typename TreeType>
-double TSNERules<IsDualTraversal, MatType>::Rescore(const size_t queryIndex,
-                                                    TreeType& referenceNode,
-                                                    const double oldScore)
+
+template <typename DistanceType, typename TreeType, typename MatType>
+double TSNERules<DistanceType, TreeType, MatType>::Rescore(
+    const size_t queryIndex, TreeType& referenceNode, const double oldScore)
 {
   return oldScore;
 }
 
-template <bool IsDualTraversal, typename MatType>
-template <typename TreeType>
-double TSNERules<IsDualTraversal, MatType>::Score(
+template <typename DistanceType, typename TreeType, typename MatType>
+double TSNERules<DistanceType, TreeType, MatType>::Score(
     TreeType& queryNode, TreeType& referenceNode)
 {
   const VecType& queryPoint = queryNode.Stat().Centroid();
@@ -102,11 +96,12 @@ double TSNERules<IsDualTraversal, MatType>::Score(
   const double distanceSq = std::max(
       arma::datum::eps, DistanceType::Evaluate(queryPoint, referencePoint));
 
-  const double maxSideSq = std::max(getMaxSideSq(queryNode.Bound()),
-                                    getMaxSideSq(referenceNode.Bound()));
-  if (maxSideSq / distanceSq < theta * theta)
+  const double diameterSq = std::max(queryNode.Bound().Diameter(),
+                                   referenceNode.Bound().Diameter());
+  const double score = diameterSq / distanceSq;
+  if (score < theta * theta)
   {
-    double q = (double) dof / (dof + distanceSq);
+    double q = (double)dof / (dof + distanceSq);
     if (dof != 1)
       q = std::pow(q, (1.0 + dof) / 2.0);
 
@@ -128,27 +123,15 @@ double TSNERules<IsDualTraversal, MatType>::Score(
   }
   else
   {
-    return maxSideSq / distanceSq;
+    return score;
   }
 }
 
-template <bool IsDualTraversal, typename MatType>
-template <typename TreeType>
-double TSNERules<IsDualTraversal, MatType>::Rescore(TreeType& queryNode,
-                                                    TreeType& referenceNode,
-                                                    const double oldScore)
+template <typename DistanceType, typename TreeType, typename MatType>
+double TSNERules<DistanceType, TreeType, MatType>::Rescore(
+    TreeType& queryNode, TreeType& referenceNode, const double oldScore)
 {
   return oldScore;
-}
-
-template <bool IsDualTraversal, typename MatType>
-double TSNERules<IsDualTraversal, MatType>::getMaxSideSq(
-    const HRectBoundType& bound) const
-{
-  double maxSide = 0.0;
-  for (size_t i = 0; i < bound.Dim(); i++)
-    maxSide = std::max(maxSide, bound[i].Hi() - bound[i].Lo());
-  return maxSide * maxSide;
 }
 
 } // namespace mlpack
