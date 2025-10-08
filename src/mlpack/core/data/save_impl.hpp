@@ -135,18 +135,22 @@ bool Save(const std::string& filename,
     return false;
   }
 
-  std::fstream stream;
-  success = OpenFile(filename, opts, false, stream);
-  if (!success)
-  {
-    Timer::Stop("saving_data");
-    return false;
-  }
   const bool isImageFormat = (opts.Format() == FileType::PNG ||
       opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
       opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||
       opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
       opts.Format() == FileType::PIC || opts.Format() == FileType::ImageType);
+
+  std::fstream stream;
+  if (!isImageFormat)
+  {
+    success = OpenFile(filename, opts, false, stream);
+    if (!success)
+    {
+      Timer::Stop("saving_data");
+      return false;
+    }
+  }
 
   // Try to save the file.
   Log::Info << "Saving " << opts.FileTypeToString() << " to '" << filename

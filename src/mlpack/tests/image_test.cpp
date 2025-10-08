@@ -120,72 +120,49 @@ TEST_CASE("LoadWrongDataOptions", "[ImageLoadTest]")
 /**
  * Test if the image is saved correctly using API.
  */
-//TEST_CASE("SaveImageAPITest", "[ImageLoadTest]")
-//{
-  //data::ImageInfo info(5, 5, 3, 90);
-
-  //arma::Mat<unsigned char> im1;
-  //size_t dimension = info.Width() * info.Height() * info.Channels();
-  //im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
-  //REQUIRE(data::Save("APITest2.bmp", im1, info, false) == true);
-
-  //arma::Mat<unsigned char> im2;
-  //REQUIRE(data::Load("APITest2.bmp", im2, info, false) == true);
-
-  //REQUIRE(im1.n_cols == im2.n_cols);
-  //REQUIRE(im1.n_rows == im2.n_rows);
-  //for (size_t i = 0; i < im1.n_elem; ++i)
-    //REQUIRE(im1[i] == im2[i]);
- ////remove("APITest.bmp");
-//}
-
-TEST_CASE("SaveImageAPITest2", "[ImageLoadTest]")
+TEST_CASE("SaveImageAPITest", "[ImageLoadTest]")
 {
-  data::ImageOptions info(5, 5, 3, 90);
+  data::ImageInfo info(5, 5, 3, 90);
 
   arma::Mat<unsigned char> im1;
   size_t dimension = info.Width() * info.Height() * info.Channels();
   im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
-  REQUIRE(data::Save("APITest2.bmp", im1, info) == true);
+  REQUIRE(data::Save("APITest.bmp", im1, info, false) == true);
 
   arma::Mat<unsigned char> im2;
-  REQUIRE(data::Load("APITest2.bmp", im2, info) == true);
+  REQUIRE(data::Load("APITest.bmp", im2, info, false) == true);
 
   REQUIRE(im1.n_cols == im2.n_cols);
   REQUIRE(im1.n_rows == im2.n_rows);
   for (size_t i = 0; i < im1.n_elem; ++i)
     REQUIRE(im1[i] == im2[i]);
- //remove("APITest.bmp");
+  remove("APITest.bmp");
 }
+
 
 /**
  * Test if the image is saved correctly using the new API.
  */
-//TEST_CASE("SaveImageNewAPITest", "[ImageLoadTest]")
-//{
-  //data::ImageInfo opts(5, 5, 3, 90);
-  //opts.Fatal() = false;
+TEST_CASE("SaveImageNewAPITest", "[ImageLoadTest]")
+{
+  data::ImageInfo opts(5, 5, 3, 90);
+  opts.Fatal() = false;
 
-  //arma::Mat<unsigned char> im1;
-  //size_t dimension = opts.Width() * opts.Height() * opts.Channels();
-  //im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
+  arma::Mat<unsigned char> im1;
+  size_t dimension = opts.Width() * opts.Height() * opts.Channels();
+  im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
   
-  ////FILE* f;
-  ////int retval = fopen_s(&f, "APITest3.bmp", "wb");
-  ////std::cout << "open value before mlpack / STB: " << retval << "\n";
-  ////fclose(f);
+  REQUIRE(data::Save("APITest.bmp", im1, opts) == true);
 
-  //REQUIRE(data::Save("api.bmp", im1, opts) == true);
+  arma::Mat<unsigned char> im2;
+  REQUIRE(data::Load("APITest.bmp", im2, opts) == true);
 
-  //arma::Mat<unsigned char> im2;
-  //REQUIRE(data::Load("api.bmp", im2, opts) == true);
-
-  //REQUIRE(im1.n_cols == im2.n_cols);
-  //REQUIRE(im1.n_rows == im2.n_rows);
-  //for (size_t i = 0; i < im1.n_elem; ++i)
-    //REQUIRE(im1[i] == im2[i]);
-////  remove("APITest.bmp");
-//}
+  REQUIRE(im1.n_cols == im2.n_cols);
+  REQUIRE(im1.n_rows == im2.n_rows);
+  for (size_t i = 0; i < im1.n_elem; ++i)
+    REQUIRE(im1[i] == im2[i]);
+  remove("APITest.bmp");
+}
 
 /**
  * Test if an image with a wrong dimesion throws an expected
