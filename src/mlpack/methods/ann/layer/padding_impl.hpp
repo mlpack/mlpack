@@ -198,7 +198,11 @@ void Padding<MatType>::serialize(Archive& ar, const uint32_t version)
   ar(CEREAL_NVP(padHBottom));
   ar(CEREAL_NVP(totalInMaps));
 
-  if (version != 0)
+  if (version == 0)
+  {
+    fillValue = 0;
+  }
+  else
   {
     ar(CEREAL_NVP(fillValue));
   }
