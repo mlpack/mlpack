@@ -151,7 +151,7 @@ TEST_CASE("SaveImageNewAPITest", "[ImageLoadTest]")
   arma::Mat<unsigned char> im1;
   size_t dimension = opts.Width() * opts.Height() * opts.Channels();
   im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
-  
+
   REQUIRE(data::Save("APITest.bmp", im1, opts) == true);
 
   arma::Mat<unsigned char> im2;
