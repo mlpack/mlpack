@@ -314,23 +314,17 @@ static FILE *stbiw__fopen(char const *filename, char const *mode)
       return 0;
 
 #if defined(_MSC_VER) && _MSC_VER >= 1400
-   int myflag = _wfopen_s(&f, wFilename, wMode);
-    std::cout << "_wfopen_s: " << myflag << std::endl;
-   if (0 != myflag)
+   if (0 != _wfopen_s(&f, wFilename, wMode))
       f = 0;
 #else
    f = _wfopen(wFilename, wMode);
-  std::cout << "_wfopen: " << f << std::endl;
 #endif
 
 #elif defined(_MSC_VER) && _MSC_VER >= 1400
-  int myflag_2 = fopen_s(&f, filename, mode);
-  std::cout << "_fopen_s: " << myflag_2  << std::endl;
-   if (0 != myflag_2)
+   if (0 != fopen_s(&f, filename, mode))
       f=0;
 #else
    f = fopen(filename, mode);
-  std::cout << "_fopen: " << f << std::endl;
 #endif
    return f;
 }
@@ -525,15 +519,9 @@ STBIWDEF int stbi_write_bmp_to_func(stbi_write_func *func, void *context, int x,
 #ifndef STBI_WRITE_NO_STDIO
 STBIWDEF int stbi_write_bmp(char const *filename, int x, int y, int comp, const void *data)
 {
-
    stbi__write_context s = { 0 };
-   int f = stbi__start_write_file(&s,filename);
-   //printf("f, did we open the file, stb ? %d", f);
-   std::cout << "did we open the file: "<< f << std::endl; 
-   if (f) {
+   if (stbi__start_write_file(&s,filename)) {
       int r = stbi_write_bmp_core(&s, x, y, comp, data);
-      std::cout << "did we write bmp core: "<< r << std::endl; 
-     // printf("r, did we write bmp core, stb ? %d", r);
       stbi__end_write_file(&s);
       return r;
    } else
