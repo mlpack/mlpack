@@ -78,6 +78,7 @@
     CEREAL_REGISTER_TYPE(mlpack::Softmin<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::HardTanH<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::FTSwish<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::NearestInterpolation<__VA_ARGS__>); \
 
 CEREAL_REGISTER_MLPACK_LAYERS(arma::mat);
 

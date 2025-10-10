@@ -169,6 +169,7 @@ template<typename Archive>
 void NearestInterpolation<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<MatType>>(this));
   ar(CEREAL_NVP(scaleFactors));
 }
 
