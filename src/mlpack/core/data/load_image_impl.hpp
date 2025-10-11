@@ -1,6 +1,8 @@
 /**
  * @file core/data/load_image_impl.hpp
  * @author Mehul Kumar Nirala
+ * @author Omar Shrit
+ * @author Ryan Curtin
  *
  * An image loading utility implementation via STB.
  *
@@ -14,154 +16,129 @@
 
 // In case it hasn't been included yet.
 #include "load_image.hpp"
-#include "image_info.hpp"
 
 namespace mlpack {
 namespace data {
 
-// Image loading API.
-template<typename eT>
-bool Load(const std::string& filename,
+template<typename eT, typename DataOptionsType>
+bool Load(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal)
+          const DataOptionsType& opts,
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>*)
 {
-  Timer::Start("loading_image");
-
-  // STB loads into unsigned char matrices, so we may have to convert once
-  // loaded.
-  arma::Mat<unsigned char> tempMatrix;
-  const bool result = LoadImage(filename, tempMatrix, info, fatal);
-
-  // If fatal is true, then the program will have already thrown an exception.
-  if (!result)
-  {
-    Timer::Stop("loading_image");
-    return false;
-  }
-
-  matrix = arma::conv_to<arma::Mat<eT>>::from(tempMatrix);
-  Timer::Stop("loading_image");
-  return true;
+  DataOptionsType tmpOpts(opts);
+  return Load(files, matrix, tmpOpts);
 }
 
 // Image loading API for multiple files.
-template<typename eT>
+// To be organized in the next PR when deprecating the old API.
+template<typename eT, typename DataOptionsType>
 bool Load(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal)
+          DataOptionsType& opts,
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>*)
 {
-  if (files.size() == 0)
+  bool success = false;
+  if (files.empty())
   {
-    std::ostringstream oss;
-    oss << "Load(): vector of image files is empty." << std::endl;
-
-    if (fatal)
-      Log::Fatal << oss.str();
-    else
-      Log::Warn << oss.str();
-
-    return false;
+    return HandleError("Load(): given set of filenames is empty;"
+        " loading failed.", opts);
   }
 
-  arma::Mat<unsigned char> img;
-  bool status = LoadImage(files[0], img, info, fatal);
+  DetectFromExtension<arma::Mat<eT>>(files.back(), opts);
+  const bool isImageFormat = (opts.Format() == FileType::PNG ||
+      opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
+      opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||
+      opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
+      opts.Format() == FileType::PIC || opts.Format() == FileType::ImageType);
 
-  if (!status)
-    return false;
-
-  // Decide matrix dimension using the image height and width.
-  arma::Mat<unsigned char> tmpMatrix(
-      info.Width() * info.Height() * info.Channels(), files.size());
-  tmpMatrix.col(0) = img;
-
-  for (size_t i = 1; i < files.size() ; ++i)
+  if (isImageFormat)
   {
-    arma::Mat<unsigned char> colImg(tmpMatrix.colptr(i), tmpMatrix.n_rows, 1,
-        false, true);
-    status = LoadImage(files[i], colImg, info, fatal);
-
-    if (!status)
-      return false;
+    ImageOptions imgOpts(std::move(opts));
+    success = LoadImage(files, matrix, imgOpts);
+    opts = std::move(imgOpts);
   }
-
-  matrix = arma::conv_to<arma::Mat<eT>>::from(tmpMatrix);
-  return true;
+  else
+  {
+    TextOptions txtOpts(std::move(opts));
+    success = LoadNumericVector(files, matrix, txtOpts);
+    opts = std::move(txtOpts);
+  }
+  return success;
 }
 
-inline bool LoadImage(const std::string& filename,
-                      arma::Mat<unsigned char>& matrix,
-                      ImageInfo& info,
-                      const bool fatal)
+template<typename eT>
+bool LoadImage(const std::vector<std::string>& files,
+               arma::Mat<eT>& matrix,
+               ImageOptions& opts)
 {
-  unsigned char* image;
-
-  if (!ImageFormatSupported(filename))
+  size_t dimension = 0;
+  if (files.empty())
   {
-    std::ostringstream oss;
-    oss << "Load(): file type " << Extension(filename) << " not supported. ";
-    oss << "Currently it supports:";
-    auto x = LoadFileTypes();
-    for (auto extension : x)
-      oss << " " << extension;
-    oss << "." << std::endl;
+    std::stringstream oss;
+    oss << "Load(): list of images is empty, please specify the files names.";
+    return HandleError(oss, opts);
+  }
 
-    if (fatal)
+  if (opts.Format() == FileType::ImageType ||
+      opts.Format() == FileType::AutoDetect)
+  {
+    DetectFromExtension<arma::Mat<eT>, ImageOptions>(files.back(), opts);
+    if (!opts.loadType.count(Extension(files.back())))
     {
-      Log::Fatal << oss.str();
+      std::stringstream oss;
+      oss << "Load(): image type " << opts.FileTypeToString()
+        << " not supported. Supported formats: ";
+      for (const auto& x : opts.loadType)
+        oss << " " << x;
+      return HandleError(oss, opts);
     }
-    else
-    {
-      Log::Warn << oss.str();
-    }
-
-    return false;
   }
 
   // Temporary variables needed as stb_image.h supports int parameters.
   int tempWidth, tempHeight, tempChannels;
+  arma::Mat<unsigned char> images;
+  unsigned char* imageBuf = nullptr;
+  size_t i = 0;
 
-  // For grayscale images.
-  if (info.Channels() == 1)
+  while (i < files.size())
   {
-    image = stbi_load(filename.c_str(), &tempWidth, &tempHeight, &tempChannels,
-        STBI_grey);
-  }
-  else
-  {
-    image = stbi_load(filename.c_str(), &tempWidth, &tempHeight, &tempChannels,
-        STBI_rgb);
-  }
-
-  if (!image)
-  {
-    if (fatal)
+    imageBuf = stbi_load(files.at(i).c_str(), &tempWidth, &tempHeight,
+        &tempChannels, opts.Channels());
+    if (!imageBuf)
     {
-      Log::Fatal << "Load(): failed to load image '" << filename << "': "
-          << stbi_failure_reason() << std::endl;
+      std::stringstream oss;
+      oss << "Load(): failed to load image '" << files.at(i) << "': "
+              << stbi_failure_reason();
+      return HandleError(oss, opts);
     }
-    else
+    if (opts.Width() == 0 || opts.Height() == 0)
     {
-      Log::Warn << "Load(): failed to load image '" << filename << "': "
-          << stbi_failure_reason() << std::endl;
+      opts.Width() = tempWidth;
+      opts.Height() = tempHeight;
+      opts.Channels() = tempChannels;
     }
+    dimension = opts.Width() * opts.Height() * opts.Channels();
+    images.set_size(dimension, files.size());
 
-    return false;
+    if (tempWidth != opts.Width() || tempHeight != opts.Height()
+        || tempChannels != opts.Channels())
+    {
+      std::stringstream oss;
+      oss << "Load(): dimension mismatch: in the case of "
+          << "several images, please check that all the images have the same "
+          << "dimensions; if not, load each image in one column and call this"
+          << " function iteratively." << std::endl;
+      return HandleError(oss, opts);
+    }
+    images.col(i) = arma::Mat<unsigned char>(imageBuf, dimension, 1,
+        false, true);
+    stbi_image_free(imageBuf);
+    i++;
   }
-
-  info.Width() = tempWidth;
-  info.Height() = tempHeight;
-  // Only set the new number of channels if we didn't force grayscale loading.
-  if (info.Channels() != 1)
-    info.Channels() = tempChannels;
-
-  // Copy image into armadillo Mat.
-  matrix = arma::Mat<unsigned char>(image, info.Width() * info.Height() *
-      info.Channels(), 1, true, true);
-
-  // Free the image pointer.
-  stbi_image_free(image);
+  matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(images));
   return true;
 }
 
