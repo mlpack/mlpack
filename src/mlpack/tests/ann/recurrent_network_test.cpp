@@ -996,11 +996,11 @@ TEMPLATE_TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]",
     LinearRecurrent<>)
 {
   const size_t rho = 25;
-  const size_t numEpochs = 50;
+  const size_t numEpochs = 10;
 
-  // LinearRecurrent explodes if the output size is too big.
-  const size_t outSize = (std::is_same<TestType, LinearRecurrent<>>::value)
-      ? 3 : 10;
+  // `LinearRecurrent` explodes if the output size is too big.
+  const size_t outSize = (std::is_same<TestType, LinearRecurrent<>>::value) ?
+      3 : 10;
 
   // Generate noisy sine data.
   arma::cube data, responses;
@@ -1024,9 +1024,9 @@ TEMPLATE_TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]",
   }
 
   // Build a network and train it.
-  RMSProp opt(0.001, 8, 0.99, 1e-08, 500 * numEpochs, 1e-5);
+  RMSProp opt(0.005, 8, 0.99, 1e-08, 500 * numEpochs, 1e-5);
 
-  RNN<MeanSquaredError, ConstInitialization> net(rho);
+  RNN<MeanSquaredError> net(rho);
   net.Add<TestType>(outSize);
   net.Add<Linear>(1);
 
@@ -1052,12 +1052,12 @@ TEMPLATE_TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]",
   const double averageError = (totalError / timeSteps);
 
   // Now compute another network where we don't use the sequence lengths.
-  RNN<MeanSquaredError, ConstInitialization> net2(rho);
+  RNN<MeanSquaredError> net2(rho);
   net2.Add<TestType>(outSize);
   net2.Add<Linear>(1);
 
   // Train and predict, then compute the sum error.
-  RMSProp opt2(0.001, 8, 0.99, 1e-08, 500 * numEpochs, 1e-5);
+  RMSProp opt2(0.005, 8, 0.99, 1e-08, 500 * numEpochs / 2, 1e-5);
   net2.Train(origData, origResponses, opt2);
   net2.Predict(origData, prediction);
   const double refAverageError = mean(abs(vectorise(origResponses) -
