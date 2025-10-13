@@ -297,7 +297,7 @@ class LSTM : public RecurrentLayer<MatType>
 
   // Calling this function will set up workspace memory for the backward pass,
   // if necessary.
-  void SetBackwardWorkspace(const size_t batchSize);
+  void SetBackwardWorkspace(const size_t activePoints);
 }; // class LSTM
 
 } // namespace mlpack

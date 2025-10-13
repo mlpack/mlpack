@@ -257,13 +257,13 @@ void LSTM<MatType>::Backward(
     // from the next time step.
     MatType nextForgetGate;
     MakeAlias(nextForgetGate, this->RecurrentState(this->CurrentStep() + 1),
-        outSize, activePoints, 4 * outSize * activePoints);
+        outSize, activePoints, 4 * outSize * this->batchSize);
 
     deltaCell = deltaY % outputGate % (1 - square(tanh(thisCell))) +
         repmat(peepholeOutputGateWeight, 1, activePoints) % deltaOutputGate +
         repmat(peepholeInputGateWeight, 1, activePoints) % nextDeltaInputGate +
         repmat(peepholeForgetGateWeight, 1, activePoints) %
-               nextDeltaForgetGate +
+            nextDeltaForgetGate +
         nextDeltaCell % nextForgetGate;
   }
 
@@ -447,64 +447,64 @@ void LSTM<MatType>::SetInternalAliases(const size_t activePoints)
 }
 
 template<typename MatType>
-void LSTM<MatType>::SetBackwardWorkspace(const size_t batchSize)
+void LSTM<MatType>::SetBackwardWorkspace(const size_t activePoints)
 {
   // We need to hold enough space for two time steps.
-  workspace.set_size(12 * outSize, batchSize);
+  workspace.set_size(12 * outSize, this->batchSize);
 
   if (this->CurrentStep() % 2 == 0)
   {
-    MakeAlias(deltaY, workspace, outSize, batchSize);
-    MakeAlias(deltaBlockInput, workspace, outSize, batchSize,
-        outSize * batchSize);
-    MakeAlias(deltaInputGate, workspace, outSize, batchSize,
-        2 * outSize * batchSize);
-    MakeAlias(deltaForgetGate, workspace, outSize, batchSize,
-        3 * outSize * batchSize);
-    MakeAlias(deltaOutputGate, workspace, outSize, batchSize,
-        4 * outSize * batchSize);
-    MakeAlias(deltaCell, workspace, outSize, batchSize,
-        5 * outSize * batchSize);
+    MakeAlias(deltaY, workspace, outSize, activePoints);
+    MakeAlias(deltaBlockInput, workspace, outSize, activePoints,
+        outSize * this->batchSize);
+    MakeAlias(deltaInputGate, workspace, outSize, activePoints,
+        2 * outSize * this->batchSize);
+    MakeAlias(deltaForgetGate, workspace, outSize, activePoints,
+        3 * outSize * this->batchSize);
+    MakeAlias(deltaOutputGate, workspace, outSize, activePoints,
+        4 * outSize * this->batchSize);
+    MakeAlias(deltaCell, workspace, outSize, activePoints,
+        5 * outSize * this->batchSize);
 
-    MakeAlias(nextDeltaY, workspace, outSize, batchSize,
-        6 * outSize * batchSize);
-    MakeAlias(nextDeltaBlockInput, workspace, outSize, batchSize,
-        7 * outSize * batchSize);
-    MakeAlias(nextDeltaInputGate, workspace, outSize, batchSize,
-        8 * outSize * batchSize);
-    MakeAlias(nextDeltaForgetGate, workspace, outSize, batchSize,
-        9 * outSize * batchSize);
-    MakeAlias(nextDeltaOutputGate, workspace, outSize, batchSize,
-        10 * outSize * batchSize);
-    MakeAlias(nextDeltaCell, workspace, outSize, batchSize,
-        11 * outSize * batchSize);
+    MakeAlias(nextDeltaY, workspace, outSize, activePoints,
+        6 * outSize * this->batchSize);
+    MakeAlias(nextDeltaBlockInput, workspace, outSize, activePoints,
+        7 * outSize * this->batchSize);
+    MakeAlias(nextDeltaInputGate, workspace, outSize, activePoints,
+        8 * outSize * this->batchSize);
+    MakeAlias(nextDeltaForgetGate, workspace, outSize, activePoints,
+        9 * outSize * this->batchSize);
+    MakeAlias(nextDeltaOutputGate, workspace, outSize, activePoints,
+        10 * outSize * this->batchSize);
+    MakeAlias(nextDeltaCell, workspace, outSize, activePoints,
+        11 * outSize * this->batchSize);
   }
   else
   {
-    MakeAlias(nextDeltaY, workspace, outSize, batchSize);
-    MakeAlias(nextDeltaBlockInput, workspace, outSize, batchSize,
-        outSize * batchSize);
-    MakeAlias(nextDeltaInputGate, workspace, outSize, batchSize,
-        2 * outSize * batchSize);
-    MakeAlias(nextDeltaForgetGate, workspace, outSize, batchSize,
-        3 * outSize * batchSize);
-    MakeAlias(nextDeltaOutputGate, workspace, outSize, batchSize,
-        4 * outSize * batchSize);
-    MakeAlias(nextDeltaCell, workspace, outSize, batchSize,
-        5 * outSize * batchSize);
+    MakeAlias(nextDeltaY, workspace, outSize, activePoints);
+    MakeAlias(nextDeltaBlockInput, workspace, outSize, activePoints,
+        outSize * this->batchSize);
+    MakeAlias(nextDeltaInputGate, workspace, outSize, activePoints,
+        2 * outSize * this->batchSize);
+    MakeAlias(nextDeltaForgetGate, workspace, outSize, activePoints,
+        3 * outSize * this->batchSize);
+    MakeAlias(nextDeltaOutputGate, workspace, outSize, activePoints,
+        4 * outSize * this->batchSize);
+    MakeAlias(nextDeltaCell, workspace, outSize, activePoints,
+        5 * outSize * this->batchSize);
 
-    MakeAlias(deltaY, workspace, outSize, batchSize,
-        6 * outSize * batchSize);
-    MakeAlias(deltaBlockInput, workspace, outSize, batchSize,
-        7 * outSize * batchSize);
-    MakeAlias(deltaInputGate, workspace, outSize, batchSize,
-        8 * outSize * batchSize);
-    MakeAlias(deltaForgetGate, workspace, outSize, batchSize,
-        9 * outSize * batchSize);
-    MakeAlias(deltaOutputGate, workspace, outSize, batchSize,
-        10 * outSize * batchSize);
-    MakeAlias(deltaCell, workspace, outSize, batchSize,
-        11 * outSize * batchSize);
+    MakeAlias(deltaY, workspace, outSize, activePoints,
+        6 * outSize * this->batchSize);
+    MakeAlias(deltaBlockInput, workspace, outSize, activePoints,
+        7 * outSize * this->batchSize);
+    MakeAlias(deltaInputGate, workspace, outSize, activePoints,
+        8 * outSize * this->batchSize);
+    MakeAlias(deltaForgetGate, workspace, outSize, activePoints,
+        9 * outSize * this->batchSize);
+    MakeAlias(deltaOutputGate, workspace, outSize, activePoints,
+        10 * outSize * this->batchSize);
+    MakeAlias(deltaCell, workspace, outSize, activePoints,
+        11 * outSize * this->batchSize);
   }
 }
 
