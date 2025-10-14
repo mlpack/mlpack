@@ -71,7 +71,7 @@ bool Save(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          const DataOptionsBase<DataOptionsType>& opts,
+          const DataOptionsType& opts,
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>*)
 {
@@ -81,9 +81,41 @@ bool Save(const std::string& filename,
 }
 
 template<typename ObjectType, typename DataOptionsType>
+bool SaveNumeric(const std::string& filename,
+                 const ObjectType& matrix,
+                 std::fstream& stream,
+                 DataOptionsBase<DataOptionsType>& opts)
+{
+  bool success = false;
+
+  TextOptions txtOpts(std::move(opts));
+  if constexpr (IsSparseMat<ObjectType>::value)
+  {
+    success = SaveSparse(matrix, txtOpts, filename, stream);
+  }
+  else if constexpr (IsCol<ObjectType>::value)
+  {
+    opts.NoTranspose() = true;
+    success = SaveDense(matrix, txtOpts, filename, stream);
+  }
+  else if constexpr (IsRow<ObjectType>::value)
+  {
+    opts.NoTranspose() = false;
+    success = SaveDense(matrix, txtOpts, filename, stream);
+  }
+  else if constexpr (IsDense<ObjectType>::value)
+  {
+    success = SaveDense(matrix, txtOpts, filename, stream);
+  }
+  opts = std::move(txtOpts);
+
+  return success;
+}
+
+template<typename ObjectType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const ObjectType& matrix,
-          DataOptionsBase<DataOptionsType>& opts,
+          DataOptionsType& opts,
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>*)
 {
@@ -91,6 +123,10 @@ bool Save(const std::string& filename,
   static_assert(!IsArma<ObjectType>::value || !IsSparseMat<ObjectType>::value
       || !HasSerialize<ObjectType>::value, "mlpack can save Armadillo"
       " matrices or a serialized mlpack model only; please use a known type.");
+  const bool isMatrixType = IsArma<ObjectType>::value ||
+      IsSparseMat<ObjectType>::value;
+  const bool isSerializable = HasSerialize<ObjectType>::value;
+  const bool isSparseMatrixType = IsSparseMat<ObjectType>::value;
 
   bool success = DetectFileType<ObjectType>(filename, opts, false);
   if (!success)
@@ -99,64 +135,71 @@ bool Save(const std::string& filename,
     return false;
   }
 
+  const bool isImageFormat = (opts.Format() == FileType::PNG ||
+      opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
+      opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||
+      opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
+      opts.Format() == FileType::PIC || opts.Format() == FileType::ImageType);
+
   std::fstream stream;
-  success = OpenFile(filename, opts, false, stream);
-  if (!success)
+  if (!isImageFormat)
   {
-    Timer::Stop("saving_data");
-    return false;
+    success = OpenFile(filename, opts, false, stream);
+    if (!success)
+    {
+      Timer::Stop("saving_data");
+      return false;
+    }
   }
 
   // Try to save the file.
   Log::Info << "Saving " << opts.FileTypeToString() << " to '" << filename
       << "'." << std::endl;
-  if constexpr (IsArma<ObjectType>::value || IsSparseMat<ObjectType>::value)
+  if constexpr (isMatrixType)
   {
-    TextOptions txtOpts(std::move(opts));
-    if constexpr (IsSparseMat<ObjectType>::value)
+    if (isImageFormat)
     {
-      success = SaveSparse(matrix, txtOpts, filename, stream);
+      if constexpr (isSparseMatrixType)
+      {
+        arma::Mat<typename ObjectType::elem_type> tmp =
+            arma::conv_to<arma::Mat<
+            typename ObjectType::elem_type>>::from(matrix);
+        ImageOptions imgOpts(std::move(opts));
+        std::vector<std::string> files;
+        files.push_back(filename);
+        success = SaveImage(files, tmp, imgOpts);
+        opts = std::move(imgOpts);
+      }
+      else
+      {
+        ImageOptions imgOpts(std::move(opts));
+        std::vector<std::string> files;
+        files.push_back(filename);
+        success = SaveImage(files, matrix, imgOpts);
+        opts = std::move(imgOpts);
+      }
     }
-    else if constexpr (IsCol<ObjectType>::value)
+    else
     {
-      opts.NoTranspose() = true;
-      success = SaveDense(matrix, txtOpts, filename, stream);
+      success = SaveNumeric(filename, matrix, stream, opts);
     }
-    else if constexpr (IsRow<ObjectType>::value)
-    {
-      opts.NoTranspose() = false;
-      success = SaveDense(matrix, txtOpts, filename, stream);
-    }
-    else if constexpr (IsDense<ObjectType>::value)
-    {
-      success = SaveDense(matrix, txtOpts, filename, stream);
-    }
-    opts = std::move(txtOpts);
   }
-  else if constexpr (HasSerialize<ObjectType>::value)
+  else if constexpr (isSerializable)
   {
     success = SaveModel(matrix, opts, stream);
   }
   else
   {
-    if (opts.Fatal())
-      Log::Fatal << "DataOptionsType is unknown!  Please use a known type or "
-          << "or provide specific overloads." << std::endl;
-    else
-      Log::Warn << "DataOptionsType is unknown!  Please use a known type or "
-          << "or provide specific overloads." << std::endl;
-
-    return false;
+    return HandleError("DataOptionsType is unknown!  Please use a known type "
+        "or provide specific overloads.", opts);
   }
 
   if (!success)
   {
     Timer::Stop("saving_data");
-    if (opts.Fatal())
-      Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
-    else
-      Log::Warn << "Save to '" << filename << "' failed." << std::endl;
-    return false;
+    std::stringstream oss;
+    oss << "Save to '" << filename << "' failed.";
+    return HandleError(oss, opts);
   }
 
   Timer::Stop("saving_data");

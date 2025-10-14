@@ -49,6 +49,9 @@ template <typename MatType = arma::mat>
 class HardTanH : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the HardTanH object using the specified parameters. The range
    * of the linear region can be adjusted by specifying the maxValue and

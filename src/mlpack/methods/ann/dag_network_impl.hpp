@@ -272,6 +272,8 @@ void DAGNetwork<
     MatType
 >::CheckGraph()
 {
+  if (graphIsSet)
+    return;
   // Check that the graph has only one input and one output
   size_t inputLayers = 0;
   size_t outputLayers = 0;
@@ -387,8 +389,10 @@ void DAGNetwork<
     MatType
 >::ComputeOutputDimensions()
 {
-  if (!graphIsSet)
-    CheckGraph();
+  if (validOutputDimensions)
+    return;
+
+  CheckGraph();
 
   // `CheckGraph` guarantees that the first layer in `sortedNetwork`
   // has no parents and that there is only one layer with no parents,
@@ -397,6 +401,9 @@ void DAGNetwork<
 
   network[currentLayer]->InputDimensions() = inputDimensions;
   network[currentLayer]->ComputeOutputDimensions();
+
+  rowsCache.clear();
+  slicesCache.clear();
 
   for (size_t layer = 1; layer < sortedNetwork.size(); layer++)
   {
@@ -492,13 +499,11 @@ void DAGNetwork<
         }
       }
 
-      rowsCache.clear();
       size_t rows = 1;
       for (size_t j = 0; j < axis; j++)
         rows *= network[currentLayer]->InputDimensions()[j];
       rowsCache.insert({ currentLayer, rows });
 
-      slicesCache.clear();
       size_t slices = 1;
       for (size_t j = axis + 1; j < numOutputDimensions; j++)
         slices *= network[currentLayer]->InputDimensions()[j];
@@ -506,6 +511,7 @@ void DAGNetwork<
     }
     network[currentLayer]->ComputeOutputDimensions();
   }
+  validOutputDimensions = true;
 }
 
 template<typename OutputLayerType,
@@ -532,7 +538,6 @@ void DAGNetwork<
   }
 
   ComputeOutputDimensions();
-  validOutputDimensions = true;
 }
 
 template<typename OutputLayerType,
@@ -545,7 +550,6 @@ size_t DAGNetwork<
 >::WeightSize()
 {
   UpdateDimensions("DAGNetwork::WeightSize()");
-
   size_t total = 0;
   for (size_t i = 0; i < network.size(); i++)
     total += network[i]->WeightSize();
@@ -620,8 +624,7 @@ void DAGNetwork<
     MatType& W,
     const size_t elements)
 {
-  if (!graphIsSet)
-    CheckGraph();
+  CheckGraph();
 
   size_t offset = 0;
   const size_t totalWeightSize = elements;
@@ -702,8 +705,10 @@ void DAGNetwork<
     MatType
 >::SetLayerMemory()
 {
-  size_t totalWeightSize = WeightSize();
+  if (layerMemoryIsSet)
+    return;
 
+  size_t totalWeightSize = WeightSize();
   if (totalWeightSize != parameters.n_elem)
   {
     throw std::logic_error("DAGNetwork::SetLayerMemory(): Total layer weight "
@@ -745,11 +750,8 @@ void DAGNetwork<
         "without any layers!");
   }
 
-  if (!graphIsSet)
-    CheckGraph();
-
-  if (!validOutputDimensions)
-    UpdateDimensions(functionName, inputDimensionality);
+  CheckGraph();
+  UpdateDimensions(functionName, inputDimensionality);
 
   if (parameters.n_elem != WeightSize())
   {
@@ -757,8 +759,7 @@ void DAGNetwork<
     InitializeWeights();
   }
 
-  if (!layerMemoryIsSet)
-    SetLayerMemory();
+  SetLayerMemory();
 
   if (setMode)
     SetNetworkMode(training);
@@ -1008,8 +1009,8 @@ void DAGNetwork<
       {
         const size_t axis = layerAxes[currentLayer];
 
-        size_t rows = rowsCache[currentLayer];
-        size_t slices = slicesCache[currentLayer] * input.n_cols;
+        size_t rows = rowsCache.at(currentLayer);
+        size_t slices = slicesCache.at(currentLayer) * input.n_cols;
 
         CubeType inputAlias;
         MakeAlias(inputAlias, layerInputs[i - 1], rows,
@@ -1095,8 +1096,8 @@ void DAGNetwork<
         const size_t axis = layerAxes[currentLayer];
 
         size_t batchSize = input.n_cols;
-        size_t rows = rowsCache[currentLayer];
-        size_t slices = slicesCache[currentLayer] * batchSize;
+        size_t rows = rowsCache.at(currentLayer);
+        size_t slices = slicesCache.at(currentLayer) * batchSize;
 
         CubeType inputDeltaAlias;
         MakeAlias(inputDeltaAlias, inputDeltas[i], rows,
@@ -1122,7 +1123,7 @@ void DAGNetwork<
        * If a parent has multiple children, you need to accumulate
        * the deltas instead across all it's children in order
        * to correctly calculate that layers gradient w.r.t the
-       * networks loss.
+       * network's loss.
        */
       for (size_t j = 0; j < numParents; j++)
       {

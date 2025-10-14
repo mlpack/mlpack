@@ -106,7 +106,7 @@ jobs:
         with:
           key: ${{ matrix.config.os }}-${{ matrix.config.name }}
           variant: ccache
-          max-size: 5G # Large sizes needed for debug builds.
+          max-size: 1G # Github has a 10GB repo cache limit, so we use 1GB/job.
 
       - name: Configure ccache
         shell: bash
@@ -114,6 +114,14 @@ jobs:
           ccache --set-config "sloppiness=include_file_ctime"
           ccache --set-config "hash_dir=false"
           ccache --zero-stats
+
+      # Install base build dependencies via apt.
+      - name: Install apt build dependencies (Linux)
+        if: matrix.config.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --allow-unauthenticated \
+              libopenblas-dev libstb-dev libcereal-dev xz-utils
 
       # Set up the build environment for any bindings, if needed.
       - name: Set up binding dependencies
@@ -126,9 +134,6 @@ jobs:
         if: matrix.config.os == 'Linux'
         run: |
           git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
-          sudo apt-get update
-          sudo apt-get install --yes --allow-unauthenticated \
-              libopenblas-dev libstb-dev libcereal-dev xz-utils
           # Install the oldest Armadillo version that we support.
           curl -k -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz | tar -xvJ
           cd armadillo*
@@ -209,7 +214,7 @@ jobs:
         with:
           key: ${{ runner.os }}
           variant: ccache
-          max-size: 5G
+          max-size: 1G
 
       # Set up Visual Studio.
       - name: Set up Visual Studio

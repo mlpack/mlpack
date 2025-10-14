@@ -55,6 +55,9 @@ template<typename MatType = arma::mat>
 class FlexibleReLU : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the FlexibleReLU object using the specified alpha parameter.
    * The trainable alpha parameter controls the range of the ReLU function.

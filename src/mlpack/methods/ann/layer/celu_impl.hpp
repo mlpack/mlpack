@@ -78,8 +78,8 @@ void CELU<MatType>::Forward(
 {
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    output(i) = (input(i) >= 0) ? input(i) : alpha *
-        (std::exp(input(i) / alpha) - 1);
+    output(i) = (input(i) >= 0) ? input(i) : ElemType(alpha) *
+        (std::exp(input(i) / ElemType(alpha)) - 1);
   }
 }
 
@@ -92,7 +92,7 @@ void CELU<MatType>::Backward(
 {
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    g(i) = gy(i) * ((input(i) >= 0) ? 1 : (output(i) / alpha) + 1);
+    g(i) = gy(i) * ((input(i) >= 0) ? 1 : (output(i) / ElemType(alpha)) + 1);
   }
 }
 
