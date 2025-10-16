@@ -781,14 +781,14 @@ std::cout << std::endl << std::endl;
 image = mlpack::data::GroupChannels(image, info);
 
 // Display submatrix of input after grouping channels
-std::cout << "Grouped channels:\n";
+std::cout << "Grouped channels:" << std::endl;
 for (size_t i = 0; i < info.Channels(); i++)
 {
   for (size_t j = 0; j < image.n_rows / info.Channels(); j++)
     std::cout << colors[i] <<
       image.at(i * image.n_rows / info.Channels() + j, 0) << "\033[0m" << ", ";
 }
-std::cout << "\n" << std::endl;
+std::cout << std::endl << std::endl;
 
 // Do some computation here, for example a convolutional neural network.
 
