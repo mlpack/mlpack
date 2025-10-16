@@ -14,14 +14,14 @@
 #define MLPACK_CORE_DATA_IMAGE_LAYOUT_IMPL_HPP
 
 #include "image_layout.hpp"
-#include "image_info.hpp"
+#include "image_options.hpp"
 
 namespace mlpack {
 namespace data {
 
 template <typename eT>
 arma::Mat<eT> GroupChannels(const arma::Mat<eT>& image,
-    const mlpack::data::ImageInfo& info)
+    const ImageInfo& info)
 {
   size_t expectedRows = info.Width() * info.Height() * info.Channels();
   if (expectedRows != image.n_rows)
@@ -47,7 +47,7 @@ arma::Mat<eT> GroupChannels(const arma::Mat<eT>& image,
 
 template <typename eT>
 arma::Mat<eT> InterleaveChannels(const arma::Mat<eT>& image,
-    const mlpack::data::ImageInfo& info)
+    const ImageInfo& info)
 {
   size_t expectedRows = info.Width() * info.Height() * info.Channels();
   if (expectedRows != image.n_rows)
