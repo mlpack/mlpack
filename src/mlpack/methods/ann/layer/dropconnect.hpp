@@ -49,7 +49,10 @@ template<typename MatType = arma::mat>
 class DropConnect : public Layer<MatType>
 {
  public:
-  //! Create the DropConnect object.
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
+  // Create the DropConnect object.
   DropConnect();
 
   /**

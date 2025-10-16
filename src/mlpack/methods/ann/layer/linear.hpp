@@ -41,7 +41,10 @@ template<
 class Linear : public Layer<MatType>
 {
  public:
-  //! Create the Linear object.
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
+  // Create the Linear object.
   Linear();
 
   /**

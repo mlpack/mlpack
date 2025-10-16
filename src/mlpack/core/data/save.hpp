@@ -18,7 +18,6 @@
 #include <mlpack/core/util/log.hpp>
 
 #include "text_options.hpp"
-#include "image_info.hpp"
 #include "detect_file_type.hpp"
 #include "save_image.hpp"
 
@@ -146,14 +145,14 @@ bool Save(const std::string& filename,
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          DataOptionsBase<DataOptionsType>& opts,
+          DataOptionsType& opts,
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>* = 0);
 
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          const DataOptionsBase<DataOptionsType>& opts,
+          const DataOptionsType& opts,
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>* = 0);
 

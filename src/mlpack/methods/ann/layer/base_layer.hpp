@@ -70,6 +70,9 @@ template <
 class BaseLayer : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the BaseLayer object.
    */
@@ -140,7 +143,7 @@ using Sigmoid = BaseLayer<LogisticFunction, MatType>;
  * Standard rectified linear unit non-linearity layer.
  */
 template<typename MatType = arma::mat>
-using ReLU = BaseLayer<RectifierFunction, arma::mat>;
+using ReLU = BaseLayer<RectifierFunction, MatType>;
 
 /**
  * Standard hyperbolic tangent layer.

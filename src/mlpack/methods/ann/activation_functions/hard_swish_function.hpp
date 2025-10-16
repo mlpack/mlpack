@@ -52,7 +52,8 @@ class HardSwishFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
     if (x <= -3)
       return 0;
@@ -68,7 +69,7 @@ class HardSwishFunction
    * @param x Input data.
    * @param y The resulting output activation.
    */
-  template <typename InputVecType, typename OutputVecType>
+  template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType &x, OutputVecType &y)
   {
     y.set_size(size(x));
@@ -85,14 +86,15 @@ class HardSwishFunction
    * @param * (y) Result of Fn(x).
    * @return f'(x).
    */
-  static double Deriv(const double x, const double /* y */)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType x, const ElemType /* y */)
   {
     if (x <= -3)
       return 0;
     else if (x >= 3)
       return 1;
 
-    return (2 * x + 3.0) / 6.0;
+    return (2 * x + 3) / 6;
   }
 
   /**

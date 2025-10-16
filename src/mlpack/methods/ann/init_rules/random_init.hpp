@@ -54,12 +54,14 @@ class RandomInitialization
   template<typename MatType>
   void Initialize(MatType& W, const size_t rows, const size_t cols)
   {
+    typedef typename MatType::elem_type ElemType;
+
     if (W.is_empty())
       W.set_size(rows, cols);
 
     W.randu();
-    W *= (upperBound - lowerBound);
-    W += lowerBound;
+    W *= ElemType(upperBound - lowerBound);
+    W += ElemType(lowerBound);
   }
 
   /**
@@ -71,12 +73,14 @@ class RandomInitialization
   void Initialize(MatType& W,
       const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
+    typedef typename MatType::elem_type ElemType;
+
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
 
     W.randu();
-    W *= (upperBound - lowerBound);
-    W += lowerBound;
+    W *= ElemType(upperBound - lowerBound);
+    W += ElemType(lowerBound);
   }
 
   /**

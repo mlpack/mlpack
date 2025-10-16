@@ -286,4 +286,112 @@ double CheckRegularizerGradient(FunctionType& function, const double eps = 1e-7)
       arma::norm(orgGradient + estGradient);
 }
 
+/**
+ * Train and evaluate a model with the specified structure, returning the
+ * classification error.
+ */
+template<typename MatType = arma::mat, typename ModelType>
+double TestClassificationNetwork(ModelType& model,
+                                 MatType& trainData,
+                                 MatType& trainLabels,
+                                 MatType& testData,
+                                 MatType& testLabels,
+                                 const size_t maxEpochs)
+{
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.32, 32, 0.88, 1e-8, trainData.n_cols * maxEpochs, -100);
+  #else
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols * maxEpochs, -100);
+  #endif
+  model.Train(trainData, trainLabels, opt);
+
+  MatType predictionTemp;
+  model.Predict(testData, predictionTemp);
+  MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
+
+  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+  {
+    prediction(i) = arma::as_scalar(arma::find(
+        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1));
+  }
+
+  size_t correct = accu(prediction == testLabels);
+
+  return (1 - double(correct) / testData.n_cols);
+}
+
+// Utilities for RNN testing.
+
+/**
+ * Generate a super simple impulse whose response is a step function at the same
+ * time step.  The impulse occurs at a random time in each dimension.
+ *
+ * Predicting this sequence is a super easy task for a recurrent network, but
+ * not possible without a recurrent connection.
+ */
+template<typename ElemType = double>
+void GenerateImpulseStepData(arma::Cube<ElemType>& data,
+                             arma::Cube<ElemType>& responses,
+                             const size_t dimensions,
+                             const size_t numSequences,
+                             const size_t seqLen)
+{
+  data.zeros(dimensions, numSequences, seqLen);
+  responses.zeros(dimensions, numSequences, seqLen);
+
+  for (size_t i = 0; i < numSequences; ++i)
+  {
+    for (size_t j = 0; j < dimensions; ++j)
+    {
+      const size_t impulseStep = RandInt(0, seqLen - 1);
+
+      data(j, i, impulseStep) = ElemType(1);
+      responses.subcube(j, i, impulseStep, j, i, seqLen - 1).fill(ElemType(1));
+    }
+  }
+}
+
+/**
+ * Test that the recurrent layer is always able to learn to hold the output at 1
+ * when the input impulse happens.
+ */
+template<typename RecurrentLayerType, typename ElemType = double>
+ElemType ImpulseStepDataTest(const size_t dimensions, const size_t rho)
+{
+  arma::Cube<ElemType> data, responses;
+
+  GenerateImpulseStepData(data, responses, dimensions, 1000, 50);
+
+  arma::Cube<ElemType> trainData = data.cols(0, 699);
+  arma::Cube<ElemType> trainResponses = responses.cols(0, 699);
+  arma::Cube<ElemType> testData = data.cols(700, 999);
+  arma::Cube<ElemType> testResponses = responses.cols(700, 999);
+
+  RNN<MeanSquaredErrorType<arma::Mat<ElemType>>, ConstInitialization,
+      arma::Mat<ElemType>> net(rho);
+  net.template Add<RecurrentLayerType>(dimensions);
+
+  const size_t numEpochs = 50;
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.096, 32, 0.9, 1e-08, 700 * numEpochs, 1e-5);
+  #else
+  ens::RMSProp opt(0.003, 32, 0.9, 1e-08, 700 * numEpochs, 1e-5);
+  #endif
+
+  net.Train(trainData, trainResponses, opt);
+
+  arma::Cube<ElemType> testPreds;
+  net.Predict(testData, testPreds);
+
+  arma::Row<ElemType> testData1 = vectorise(testData.col(0)).t();
+  arma::Row<ElemType> testPred1 = vectorise(testPreds.col(0)).t();
+  arma::Row<ElemType> testResp1 = vectorise(testResponses.col(0)).t();
+
+  // Compute the MSE of the test data.
+  const ElemType error = std::sqrt(sum(square(
+      vectorise(testPreds) - vectorise(testResponses)))) / testPreds.n_elem;
+
+  return error;
+}
+
 #endif

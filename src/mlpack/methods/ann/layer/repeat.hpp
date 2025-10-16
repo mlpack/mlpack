@@ -33,9 +33,11 @@ template <typename MatType = arma::mat>
 class Repeat : public Layer<MatType>
 {
  public:
-  //! Get Specific Col type, not only arma
+  // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
   using UintCol = typename GetUColType<MatType>::type;
   using UintMat = typename GetUDenseMatType<MatType>::type;
+
   /**
    * Create the Repeat object.  Multiples will be empty (e.g. 1s for all
    * dimensions), so this is the equivalent of an Identity Layer.
@@ -60,16 +62,16 @@ class Repeat : public Layer<MatType>
    */
   virtual ~Repeat() { }
 
-  //! Clone the Repeat object. This handles polymorphism correctly.
+  // Clone the Repeat object. This handles polymorphism correctly.
   Repeat* Clone() const override { return new Repeat(*this); }
 
-  //! Copy the given Repeat layer.
+  // Copy the given Repeat layer.
   Repeat(const Repeat& other);
-  //! Take ownership of the given Repeat layer.
+  // Take ownership of the given Repeat layer.
   Repeat(Repeat&& other) noexcept;
-  //! Copy the given Repeat layer.
+  // Copy the given Repeat layer.
   Repeat& operator=(const Repeat& other);
-  //! Take ownership of the given Repeat layer.
+  // Take ownership of the given Repeat layer.
   Repeat& operator=(Repeat&& other) noexcept;
 
   /**
@@ -96,20 +98,20 @@ class Repeat : public Layer<MatType>
                 const MatType& gy,
                 MatType& g) override;
 
-  //! Get the repeat multiples
+  // Get the repeat multiples
   const std::vector<size_t>& Multiples() const { return multiples; }
 
-  //! Get the repeat multiples for modification
+  // Get the repeat multiples for modification
   std::vector<size_t>& Multiples()
   {
     this->validOutputDimensions = false;
     return multiples;
   }
 
-  //! Get the interleave parameter
+  // Get the interleave parameter
   bool Interleave() const { return interleave; }
 
-  //! Get the interleave parameter for modification
+  // Get the interleave parameter for modification
   bool& Interleave() { return interleave; }
 
   /**
@@ -130,10 +132,10 @@ class Repeat : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Parameter to indicate number of times to repeat along each dimension
+  // Parameter to indicate number of times to repeat along each dimension
   std::vector<size_t> multiples;
 
-  //! Parameter to indicate whether to interleave the output
+  // Parameter to indicate whether to interleave the output
   bool interleave;
 
   // Cache the target indices for a single tensor for use

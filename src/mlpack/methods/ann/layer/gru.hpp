@@ -19,7 +19,7 @@ namespace mlpack {
 
 /**
  * An implementation of a gru network layer using the following algorithm.
- * 
+ *
  * r_t = sigmoid(W_r x_t + U_r y_{t - 1})
  * z_t = sigmoid(W_z x_t + U_z y_{t - 1})
  * h_t =    tanh(W_h x_t + r_t % (U_h y_{t - 1}))

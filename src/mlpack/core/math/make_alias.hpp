@@ -146,7 +146,8 @@ void MakeAlias(OutVecType& v,
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Bandicoot will end up copying memory instead of
   // making an alias.
-  coot::dev_mem_t<InVecType::elem_type> newMem = oldVec.get_dev_mem() + offset;
+  coot::dev_mem_t<typename InVecType::elem_type> newMem =
+      oldVec.get_dev_mem() + offset;
   v.~OutVecType();
   new (&v) OutVecType(newMem, numElems, false, strict);
 }
@@ -170,7 +171,8 @@ void MakeAlias(OutMatType& m,
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Bandicoot will end up copying memory instead of
   // making an alias.
-  coot::dev_mem_t<InMatType::elem_type> newMem = oldMat.get_dev_mem() + offset;
+  coot::dev_mem_t<typename InMatType::elem_type> newMem =
+      oldMat.get_dev_mem() + offset;
   m.~OutMatType();
   new (&m) OutMatType(newMem, numRows, numCols);
 }
@@ -195,7 +197,7 @@ void MakeAlias(OutCubeType& c,
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Bandicoot will end up copying memory instead of
   // making an alias.
-  coot::dev_mem_t<InCubeType::elem_type> newMem =
+  coot::dev_mem_t<typename InCubeType::elem_type> newMem =
       oldCube.get_dev_mem() + offset;
   c.~OutCubeType();
   new (&c) OutCubeType(newMem, numRows, numCols, numSlices);
