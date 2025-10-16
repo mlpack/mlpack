@@ -13,7 +13,7 @@
 #ifndef MLPACK_CORE_DATA_IMAGE_LAYOUT_HPP
 #define MLPACK_CORE_DATA_IMAGE_LAYOUT_HPP
 
-#include "image_info.hpp"
+#include "image_options.hpp"
 
 namespace mlpack {
 namespace data {
@@ -38,7 +38,7 @@ namespace data {
  */
 template <typename eT>
 inline arma::Mat<eT> GroupChannels(const arma::Mat<eT>& image,
-    const mlpack::data::ImageInfo& info);
+    const ImageInfo& info);
 
 /**
  * The inverse of `GroupChannels()`. Given an image where each channel is
@@ -55,7 +55,7 @@ inline arma::Mat<eT> GroupChannels(const arma::Mat<eT>& image,
  */
 template <typename eT>
 inline arma::Mat<eT> InterleaveChannels(const arma::Mat<eT>& image,
-    const mlpack::data::ImageInfo& info);
+    const ImageInfo& info);
 
 } // namespace data
 } // namespace mlpack
