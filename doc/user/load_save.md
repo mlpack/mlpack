@@ -723,6 +723,10 @@ To convert the layout of your image from interleaved channels to grouped
 channels and vice versa, you can use `data::GroupChannels()` and
 `data::InterleaveChannels()`.
 
+***NOTE***: Other image related functions (such as `ResizeImages` etc) require
+channels be interleaved. If you need to use `GroupChannels()` make sure to
+resize or crop your images first beforehand.
+
 ---
 
 #### `data::GroupChannels()`
