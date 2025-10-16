@@ -797,13 +797,13 @@ image = mlpack::data::InterleaveChannels(image, info);
 
 // Display input after interleaving channels
 // Should be identical to original.
-std::cout << "Interleaved channels (indentical to original):\n";
+std::cout << "Interleaved channels (indentical to original):" << std::endl;
 for (size_t i = 0; i < image.n_rows; i += info.Channels())
 {
   for (size_t j = 0; j < info.Channels(); j++)
     std::cout << colors[j] << image.at(i + j, 0) << "\033[0m" << ", ";
 }
-std::cout << "\n" << std::endl;
+std::cout << std::endl << std::endl;
 
 mlpack::data::Save("mlpack-favicon.png", image, info, true);
 ```
