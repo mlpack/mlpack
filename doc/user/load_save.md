@@ -769,13 +769,13 @@ std::vector<std::string> colors =
      { "\033[31m", "\033[32m", "\033[34m", "\033[37m" };
 
 // Display input before grouping channels (Load returns channels interleaved).
-std::cout << "Original Image (channels interleaved):\n";
+std::cout << "Original Image (channels interleaved):" << std::endl;
 for (size_t i = 0; i < image.n_rows; i += info.Channels())
 {
   for (size_t j = 0; j < info.Channels(); j++)
     std::cout << colors[j] << image.at(i + j, 0) << "\033[0m" << ", ";
 }
-std::cout << "\n" << std::endl;
+std::cout << std::endl << std::endl;
 
 // Group channels.
 image = mlpack::data::GroupChannels(image, info);
