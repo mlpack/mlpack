@@ -97,7 +97,7 @@ class TSNE
   /**
    * Constructor of the TSNE class.
    *
-   * @param outputDim Dimensionality of the embedded space. (Default: 2)
+   * @param outputDims Dimensionality of the embedded space. (Default: 2)
    * @param perplexity Perplexity regulates the balance between local and
    *        global structure preservation, typically set between 5 and 50.
    *        (Default: 30.0)
@@ -105,9 +105,9 @@ class TSNE
    *        optimization phase. This helps form tighter clusters and clearer
    *        separation between them. A higher value increases spacing between
    *        clusters, but if the cost grows during initial iterations consider
-   *        reducing this value or lowering the learning rate. (Default: 12.0)
-   * @param learningRate Learning rate (step size) for the optimizer. If the
-   *        specified value is zero, the learning rate is computed
+   *        reducing this value or lowering the step size. (Default: 12.0)
+   * @param stepSize Step size (learning rate) for the optimizer. If the
+   *        specified value is zero, the step size is computed
    *        as N / exaggeration everytime Embed is called. (Default: 200.0)
    * @param maxIter Maximum number of iterations. (Default: 1000)
    * @param init Initialization method for the output embedding. Supported
@@ -117,10 +117,10 @@ class TSNE
    *        "barnes_hut" and "dual_tree" approximations. The optimal value
    *        differs between approximations. (Default: 0.5)
    */
-  TSNE(const size_t outputDim = 2,
+  TSNE(const size_t outputDims = 2,
        const double perplexity = 30.0,
        const double exaggeration = 12.0,
-       const double learningRate = 200.0,
+       const double stepSize = 200.0,
        const size_t maxIter = 1000,
        const std::string& init = "pca",
        const double theta = 0.5);
@@ -135,9 +135,9 @@ class TSNE
   void Embed(const MatType& X, MatType& Y);
 
   //! Get the number of output dimensions.
-  size_t OutputDimensions() const { return outputDim; }
+  size_t OutputDimensions() const { return outputDims; }
   //! Modify the number of output dimensions.
-  size_t& OutputDimensions() { return outputDim; }
+  size_t& OutputDimensions() { return outputDims; }
 
   //! Get the perplexity.
   double Perplexity() const { return perplexity; }
@@ -149,10 +149,10 @@ class TSNE
   //! Modify the initial exaggeration factor.
   double& Exaggeration() { return exaggeration; }
 
-  //! Get the learning rate (step size) used by the optimizer.
-  double LearningRate() const { return learningRate; }
-  //! Modify the learning rate.
-  double& LearningRate() { return learningRate; }
+  //! Get the step size (learning rate) used by the optimizer.
+  double StepSize() const { return stepSize; }
+  //! Modify the step size (learning rate) used by the optimizer.
+  double& StepSize() { return stepSize; }
 
   //! Get the maximum number of iterations.
   size_t MaximumIterations() const { return maxIter; }
@@ -171,7 +171,7 @@ class TSNE
 
  private:
   //! The number of dimensions to embed into (e.g., 2 or 3).
-  size_t outputDim;
+  size_t outputDims;
 
   //! The perplexity of the Gaussian distribution.
   double perplexity;
@@ -179,8 +179,8 @@ class TSNE
   //! Exaggeration applied during the initial optimization phase.
   double exaggeration;
 
-  //! Learning rate (aka step size) for optimization.
-  double learningRate;
+  //! The step size (aka learning rate) for optimization.
+  double stepSize;
 
   //! The maximum number of iterations.
   size_t maxIter;

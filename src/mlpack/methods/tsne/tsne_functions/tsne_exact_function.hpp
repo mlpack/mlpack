@@ -48,10 +48,8 @@ class TSNEExactFunction
       : perplexity(perplexity), dof(dof)
   {
     // Precompute P
-    P = binarySearchPerplexity(perplexity,
+    P = computeInputJointProbabilities(perplexity,
                                PairwiseDistances(X, DistanceType()));
-    P = P + P.t();
-    P /= std::max(arma::datum::eps, arma::accu(P));
   }
 
   /**
@@ -65,11 +63,15 @@ class TSNEExactFunction
   template <typename GradType>
   double EvaluateWithGradient(const MatType& y, GradType& g)
   {
+    // To Do: This is Slower (See #3986)
     q = PairwiseDistances(y, DistanceType());
-    q = (double)dof / (dof + q);
-    // Avoid calls to pow for 2 dimensional embeddings
-    if (dof != 1)
-      q = arma::pow(q, (1.0 + dof) / 2.0);
+
+    // Less Rounding Errors This Way
+    // Than q = dof / (dof + dist)
+    q /= dof;
+    q += 1.0;
+    q = arma::pow(q, -(1.0 + dof) / 2.0);
+    q.diag().zeros();
 
     Q = q / arma::accu(q);
     Q.clamp(arma::datum::eps, arma::datum::inf);
@@ -77,12 +79,12 @@ class TSNEExactFunction
     M = (P - Q) % q;
     S = arma::sum(M, 1);
 
-    g = y;
-    g.each_row() %= S.t();
-    g -= y * M;
+    // Less Rounding Errors This Way
+    // Than g = y; g.each_row() %= S.t(); g -= y*M
+    g = y.each_row() % S.t() - y * M;
     g *= 2.0 * (1.0 + dof) / dof;
 
-    // This is faster than using arma::dot
+    // This is way faster than arma::dot
     return arma::accu(P %
         arma::log(arma::clamp(P, arma::datum::eps, arma::datum::inf) / Q));
   }

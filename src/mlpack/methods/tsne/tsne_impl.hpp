@@ -22,15 +22,15 @@
 namespace mlpack {
 
 template <typename TSNEMethod>
-TSNE<TSNEMethod>::TSNE(const size_t outputDim,
+TSNE<TSNEMethod>::TSNE(const size_t outputDims,
                        const double perplexity,
                        const double exaggeration,
-                       const double learningRate,
+                       const double stepSize,
                        const size_t maxIter,
                        const std::string& init,
                        const double theta)
-    : outputDim(outputDim), perplexity(perplexity), exaggeration(exaggeration),
-      learningRate(learningRate), maxIter(maxIter), init(init), theta(theta)
+    : outputDims(outputDims), perplexity(perplexity), exaggeration(exaggeration),
+      stepSize(stepSize), maxIter(maxIter), init(init), theta(theta)
 {
   // Nothing To Do Here
 }
@@ -51,7 +51,7 @@ void TSNE<TSNEMethod>::Embed(const MatType& X, MatType& Y)
   if (init == "pca")
   {
     PCA pca;
-    pca.Apply(X, Y, outputDim);
+    pca.Apply(X, Y, outputDims);
 
     // To Do: Handle the case where stddev is zero.
     Y.each_col() /= arma::stddev(Y, 0, 1);
@@ -59,7 +59,7 @@ void TSNE<TSNEMethod>::Embed(const MatType& X, MatType& Y)
   }
   else if (init == "random")
   {
-    Y.randn(outputDim, X.n_cols);
+    Y.randn(outputDims, X.n_cols);
     Y *= 1e-4;
   }
   else
@@ -70,16 +70,17 @@ void TSNE<TSNEMethod>::Embed(const MatType& X, MatType& Y)
   // Calculate degrees of freedom
   // See "Learning a Parametric Embedding by Preserving Local Structure"
   const size_t dof = std::max<size_t>(Y.n_rows - 1, 1);
+
   // Initialize Objective Function
   TSNEFunction<TSNEMethod> function(X, perplexity, dof, theta);
 
-  // Automatically choose a good learning rate.
+  // Automatically choose a good step size.
   // See "Automated optimized parameters for T-distributed stochastic
   // neighbor embedding improve visualization and analysis of large datasets"
-  const bool isLearningRateAuto = (bool)(learningRate == 0);
-  if (isLearningRateAuto)
+  const bool isStepSizeAuto = (bool)(stepSize == 0);
+  if (isStepSizeAuto)
   {
-    learningRate = std::max(200.0, X.n_cols / exaggeration);
+    stepSize = std::max(200.0, X.n_cols / exaggeration);
   }
 
   // Call The Optimizer On The Objective Function
@@ -91,7 +92,7 @@ void TSNE<TSNEMethod>::Embed(const MatType& X, MatType& Y)
   // Exploratory Phase
   // To Do: Make Mommentum, Kappa, Phi and MinGain parameters
   ens::DeltaBarDelta exploratoryOptimizer(
-      learningRate,
+      stepSize,
       exploratoryIters,
       1e-12,
       ens::DeltaBarDeltaUpdate(0.2, 0.8, 0.5, 0.01));
@@ -101,7 +102,8 @@ void TSNE<TSNEMethod>::Embed(const MatType& X, MatType& Y)
   // Start Exaggerating
   function.InputJointProbabilities() *= exaggeration;
   // Optimize
-  exploratoryOptimizer.Optimize(function, Y, ens::PrintLoss());
+  if (exploratoryIters)
+    exploratoryOptimizer.Optimize(function, Y, ens::PrintLoss());
   // Stop Exaggerating
   function.InputJointProbabilities() /= exaggeration;
   Log::Info << "Completed Exploratory Phase of t-SNE Optimization."
@@ -109,7 +111,7 @@ void TSNE<TSNEMethod>::Embed(const MatType& X, MatType& Y)
 
   // Convergence Phase
   ens::DeltaBarDelta convergenceOptimizer(
-      learningRate,
+      stepSize,
       convergenceIters,
       1e-12,
       ens::DeltaBarDeltaUpdate(0.2, 0.8, 0.8, 0.01));
@@ -117,15 +119,16 @@ void TSNE<TSNEMethod>::Embed(const MatType& X, MatType& Y)
   Log::Info << "Starting Convergence Phase of t-SNE Optimization."
             << std::endl;
   // Optimize
-  convergenceOptimizer.Optimize(function, Y, ens::PrintLoss());
+  if (convergenceIters)
+    convergenceOptimizer.Optimize(function, Y, ens::PrintLoss());
   Log::Info << "Completed Convergence Phase of t-SNE Optimization."
             << std::endl;
 
-  // If the learningRate was set automatically, reset it to
+  // If the stepSize was set automatically, reset it to
   // zero so that the next call to embed can recompute it.
-  if (isLearningRateAuto)
+  if (isStepSizeAuto)
   {
-    learningRate = 0;
+    stepSize = 0;
   }
 }
 

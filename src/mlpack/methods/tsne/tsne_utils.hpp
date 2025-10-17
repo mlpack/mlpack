@@ -17,14 +17,38 @@
 
 namespace mlpack {
 
+/**
+ * Compute the (sparse) input joint probabilities P for t-SNE from
+ * a k-nearest-neighbors distance matrix.
+ *
+ * This function performs the binary-search-over-sigma procedure described in
+ * the original t-SNE paper to obtain conditional probabilities for each
+ * datapoint over its k nearest neighbors, It then symmetrizes and normalizes
+ * these conditional probabilities into a joint distribution using the formula
+ * P_{ij} = (P_{j|i} + P_{i|j}) / (2 * n_samples).
+ *
+ * @tparam eT Element type for numeric values (usually double or float).
+ * @tparam MatType Dense matrix type (defaults to arma::Mat<eT>).
+ * @tparam SpMatType Sparse matrix type (defaults to arma::SpMat<eT>).
+ * @tparam VecType Dense vector type (defaults to arma::Col<eT>).
+ * @tparam SpVecType Sparse vector type (defaults to arma::SpCol<eT>).
+ *
+ * @param perplexity Desired perplexity (controls the bandwidth search).
+ * @param D A k x n matrix containing distances from each point to its k
+ *     nearest neighbors (row i contains distances for neighbors of i).
+ * @param N A k x n matrix containing the neighbor indices (row i lists
+ *     the indices of the k nearest neighbors of point i in the dataset).
+ *
+ * @return A sparse n x n matrix P containing the joint probabilities.
+ */
 template <typename eT,
           typename MatType = arma::Mat<eT>,
           typename SpMatType = arma::SpMat<eT>,
           typename VecType = arma::Col<eT>,
           typename SpVecType = arma::SpCol<eT>>
-SpMatType binarySearchPerplexity(const double perplexity,
-                                 arma::Mat<eT>& D,
-                                 const arma::Mat<size_t>& N)
+SpMatType computeInputJointProbabilities(const double perplexity,
+                                         const arma::Mat<eT>& D,
+                                         const arma::Mat<size_t>& N)
 {
   const size_t maxSteps = 100;
   const double tolerance = 1e-5;
@@ -44,10 +68,6 @@ SpMatType binarySearchPerplexity(const double perplexity,
     double betaMin = -arma::datum::inf;
     double betaMax = +arma::datum::inf;
     double sumP, sumDP, hDiff, hApprox;
-
-    if (i % 1000 == 0)
-      Log::Info << "Computing P-values for points " << i + 1 << " To "
-                << std::min(n, i + 1000) << std::endl;
 
     Di = D.col(i);
     Pi.zeros();
@@ -99,14 +119,48 @@ SpMatType binarySearchPerplexity(const double perplexity,
   Log::Info << "Mean value of sigma: " << std::sqrt(n / arma::accu(beta))
             << std::endl;
 
+  // Symmetrize and Normalize P
+  P = P + P.t();
+  // Probabilies already sum to n, after transposed addition they sum to 2n.
+  P /= std::max(arma::datum::eps, arma::accu(P));
+
   return P;
 }
 
 
+/**
+ * Compute the (dense) input joint probability matrix P for t-SNE from a full
+ * n x n distance matrix.
+ *
+ * This function performs the binary-search-over-sigma procedure described in
+ * the original t-SNE paper to obtain conditional probabilities for each
+ * datapoint over all the other points, It then symmetrizes and normalizes
+ * these conditional probabilities into a joint distribution using the formula
+ * \f[
+ * P_{ij} = \frac{P_{j|i} + P_{i|j}}{2 \cdot n_{\text{samples}}}
+ * \f]
+ *
+ * This overload performs the entire per-point binary search directly and is
+ * intended for use when a full distance matrix is available. If a k-NN
+ * distance representation is used elsewhere, prefer the k-NN (sparse)
+ * overload to avoid redundant computation.
+ *
+ * @tparam eT Element type for numeric values (usually double or float).
+ * @tparam MatType Dense matrix type (defaults to arma::Mat<eT>).
+ * @tparam VecType Dense vector type (defaults to arma::Col<eT>).
+ *
+ * @param perplexity Desired perplexity value used to set the effective
+ *     neighborhood size for each point.
+ * @param D n x n distance matrix where column i contains distances from
+ *     point i to every other point. The diagonal entry D(i,i) is ignored.
+ *
+ * @return A dense n x n matrix P containing the joint probabilities.
+ */
 template <typename eT,
           typename MatType = arma::Mat<eT>,
           typename VecType = arma::Col<eT>>
-MatType binarySearchPerplexity(const double perplexity, const arma::Mat<eT>& D)
+MatType computeInputJointProbabilities(const double perplexity,
+                                       const arma::Mat<eT>& D)
 {
   const size_t maxSteps = 50;
   const double tolerance = 1e-5;
@@ -123,10 +177,6 @@ MatType binarySearchPerplexity(const double perplexity, const arma::Mat<eT>& D)
     VecType Di, Pi;
     double betaMin, betaMax;
     double sumP, hApprox, hDiff;
-
-    if (i % 1000 == 0)
-      Log::Info << "Computing P-values for points " << i + 1 << " To "
-                << std::min(n, i + 1000) << std::endl;
 
     betaMin = -arma::datum::inf;
     betaMax = +arma::datum::inf;
@@ -172,6 +222,11 @@ MatType binarySearchPerplexity(const double perplexity, const arma::Mat<eT>& D)
   }
   Log::Info << "Mean value of sigma: " << std::sqrt(n / arma::accu(beta))
             << std::endl;
+
+  // Symmetrize and Normalize P
+  P = P + P.t();
+  // Probabilies already sum to n, after transposed addition they sum to 2n.
+  P /= std::max(arma::datum::eps, arma::accu(P));
 
   return P;
 }

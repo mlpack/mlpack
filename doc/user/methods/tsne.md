@@ -53,18 +53,18 @@ std::cout << "The transformed data matrix has size " << output.n_rows /* 2 */
 
 ### Constructors
 
-- `tsne = TSNE(outputDim=2, perplexity=30.0, exaggeration=12.0, learningRate=200.0, maxIter=1000, init="pca", theta=0.5)`  
+- `tsne = TSNE(outputDim=2, perplexity=30.0, exaggeration=12.0, stepSize=200.0, maxIter=1000, init="pca", theta=0.5)`
   - `outputDim`: Dimensionality of the embedded space. *(Default: 2)*  
   - `perplexity`: Regulates the balance between local and global structure preservation. Typically set between 5 and 50. *(Default: 30.0)*  
-  - `exaggeration`: Amplifies pairwise similarities during the initial optimization phase, forming tighter clusters and clearer separation. A higher value increases spacing between clusters, but if the cost grows during initial iterations, reduce this value or lower the learning rate. *(Default: 12.0)*  
-  - `learningRate`: Learning rate (step size) for the optimizer. If set to `0`, it is computed as `N / exaggeration` each time `Embed` is called. *(Default: 200.0)*  
+  - `exaggeration`: Amplifies pairwise similarities during the initial optimization phase, forming tighter clusters and clearer separation. A higher value increases spacing between clusters, but if the cost grows during initial iterations, reduce this value or lower the step size. *(Default: 12.0)*  
+  - `stepSize`: Step size (learning rate) for the optimizer. If set to `0`, it is computed as `N / exaggeration` each time `Embed` is called. *(Default: 200.0)*  
   - `maxIter`: Maximum number of iterations. *(Default: 1000)*  
   - `init`: Initialization method for the embedding. Options: `"random"`, `"pca"`. PCA initialization is recommended for speed and quality. *(Default: `"pca"`)*  
   - `theta`: Trade-off between speed and accuracy for `"barnes_hut"` and `"dual_tree"` approximations. Optimal value depends on the chosen method. *(Default: 0.5)*  
 
 ---
 
-### Embed Overloads
+### Embed
 
 - `tsne.Embed(X, Y)`
   - Embed the [column-major matrix](../matrices.md#representing-data-in-mlpack) `X`

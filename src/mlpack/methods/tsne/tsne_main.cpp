@@ -67,10 +67,10 @@ PARAM_DOUBLE_IN("exaggeration",
     "This helps form tighter clusters and clearer separation between them. "
     "A higher value increases the spacing between clusters, but if the cost "
     "function grows during initial iterations, reduce this value or "
-    "lower the learning rate.", "e", 12.0);
-PARAM_DOUBLE_IN("learning_rate",
-    "Learning rate for the optimizer. If the given value is zero or negative "
-    ", the learning rate is set to N / exaggeration.", "l", 200.0);
+    "lower the step size.", "e", 12.0);
+PARAM_DOUBLE_IN("step_size",
+    "Step size for the optimizer. If the given value is zero or negative "
+    ", the step size is set to N / exaggeration.", "s", 200.0);
 PARAM_INT_IN("max_iterations", "Maximum number of iterations.", "n", 1000);
 PARAM_STRING_IN("init",
     "Initialization method for the output embedding. Options: 'pca' (default) "
@@ -93,7 +93,7 @@ void RunTSNE(util::Params& params, util::Timers& timers, arma::mat& dataset)
   TSNE<TSNEMethod> tsne(params.Get<int>("output_dimensions"),
                         params.Get<double>("perplexity"),
                         params.Get<double>("exaggeration"),
-                        params.Get<double>("learning_rate"),
+                        params.Get<double>("step_size"),
                         params.Get<int>("max_iterations"),
                         params.Get<std::string>("init"),
                         params.Get<double>("theta"));

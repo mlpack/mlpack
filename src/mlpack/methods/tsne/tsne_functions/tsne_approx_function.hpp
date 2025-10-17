@@ -66,15 +66,14 @@ class TSNEApproxFunction
       : perplexity(perplexity), dof(dof), theta(theta)
   {
     // Run KNN
-    // To Do: Make number of neibhors a parameter
+    // To Do: Make number of neighbors a parameter
     NeighborSearch<NearestNeighborSort, DistanceType> knn(X);
-    const size_t neighbors = static_cast<size_t>(3 * perplexity + 1);
+    const size_t neighbors = std::min<size_t>(X.n_cols - 1,
+                                 static_cast<size_t>(3 * perplexity));
     knn.Search(neighbors, N, D);
 
     // Precompute P
-    P = binarySearchPerplexity(perplexity, D, N);
-    P = P + P.t();
-    P /= std::max(arma::datum::eps, arma::accu(P));
+    P = computeInputJointProbabilities(perplexity, D, N);
   }
 
   /**
@@ -88,19 +87,14 @@ class TSNEApproxFunction
   template <typename GradType>
   double EvaluateWithGradient(const MatType& y, GradType& g)
   {
-    // Init
-    double sumQ = 0.0, error = 0.0;
+    // Init Tree
+    double sumQ = 0.0;
     std::vector<size_t> oldFromNew;
     TreeType tree(y, oldFromNew);
 
     // Negative Force Calculation
-    if constexpr (UseDualTree)
-    {
-      RuleType rule(sumQ, g, y, oldFromNew, dof, theta);
-      typename TreeType::DualTreeTraverser traverser(rule);
-      traverser.Traverse(tree, tree);
-    }
-    else
+    // TODO: There is still slight instability w.r.t num of threads here
+    if constexpr (!UseDualTree)
     {
       const size_t maxThreadCount = omp_get_max_threads();
       std::vector<double> localSumQs(maxThreadCount);
@@ -108,30 +102,33 @@ class TSNEApproxFunction
       #pragma omp parallel
       {
         size_t threadId = 0;
-        size_t threadShareSize = y.n_cols;
         #ifdef MLPACK_USE_OPENMP
           threadId = omp_get_thread_num();
-          threadShareSize /= omp_get_num_threads();
         #endif
-
+        
         RuleType rule(localSumQs[threadId], g, y, oldFromNew, dof, theta);
         typename TreeType::SingleTreeTraverser traverser(rule);
 
-        for (size_t i = threadId * threadShareSize;
-            i < (threadId + 1) * threadShareSize && i < y.n_cols;
-            i++)
+        #pragma omp for schedule(static)
+        for (size_t i = 0; i < y.n_cols; i++)
           traverser.Traverse(i, tree);
       }
 
-      for (size_t i = 0; i < maxThreadCount; i++)
-        sumQ += localSumQs[i];
+      sumQ = std::accumulate(localSumQs.begin(), localSumQs.end(), 0.0);
+    }
+    else
+    {
+      RuleType rule(sumQ, g, y, oldFromNew, dof, theta);
+      typename TreeType::DualTreeTraverser traverser(rule);
+      traverser.Traverse(tree, tree);
     }
     sumQ = std::max(arma::datum::eps, sumQ);
     g /= -sumQ;
 
     // Positive Force Calculation
-    std::vector<double> localErrors(omp_get_max_threads());
-
+    const size_t maxThreadCount = omp_get_max_threads();
+    std::vector<double> localErrors(maxThreadCount);
+    
     #pragma omp parallel for schedule(static)
     for (size_t i = 0; i < y.n_cols; i++)
     {
@@ -144,13 +141,11 @@ class TSNEApproxFunction
       {
         const size_t idx = N(j, i);
         const double distanceSq = DistanceType::Evaluate(y.col(i), y.col(idx));
-
         double q = (double)dof / (dof + distanceSq);
         if (dof != 1)
           q = std::pow<double>(q, (1.0 + dof) / 2.0);
 
         g.col(i) += q * P(i, idx) * (y.col(i) - y.col(idx));
-
         localErrors[threadId] += P(i, idx) *
                  std::log(std::max<double>(arma::datum::eps, P(i, idx)) /
                           std::max<double>(arma::datum::eps, q / sumQ));
@@ -158,8 +153,7 @@ class TSNEApproxFunction
     }
     g *= 2.0 * (1.0 + dof) / dof;
 
-    error = std::accumulate(localErrors.begin(), localErrors.end(), 0.0);
-    return error;
+    return std::accumulate(localErrors.begin(), localErrors.end(), 0.0);
   }
 
   //! Get the Input Joint Probabilities.
