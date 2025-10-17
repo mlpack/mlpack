@@ -123,8 +123,9 @@ bool LoadImage(const std::vector<std::string>& files,
     dimension = opts.Width() * opts.Height() * opts.Channels();
     images.set_size(dimension, files.size());
 
-    if (tempWidth != opts.Width() || tempHeight != opts.Height()
-        || tempChannels != opts.Channels())
+    if ((size_t) tempWidth != opts.Width() ||
+        (size_t) tempHeight != opts.Height() ||
+        (size_t) tempChannels != opts.Channels())
     {
       std::stringstream oss;
       oss << "Load(): dimension mismatch: in the case of "
