@@ -136,6 +136,88 @@ TEST_CASE("CheckMoveVanillaDAGNetworkTest", "[DAGNetworkTest]")
   CheckMove(model, trainData, trainLabels);
 }
 
+/**
+ * Check whether copying on DAG network is working or not.
+ * Uses element-wise addition and concatenation skip connection layers.
+ */
+TEST_CASE("CheckCopyDAGNetworkTest", "[DAGNetworkTest]")
+{
+  arma::mat trainData;
+  if (!data::Load("thyroid_train.csv", trainData))
+    FAIL("Cannot open thyroid_train.csv");
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
+  trainData.shed_row(trainData.n_rows - 1);
+
+  DAGNetwork<> *model = new DAGNetwork<>();
+  size_t layer0 = model->Add<Linear>(10);
+  size_t layer1 = model->Add<Sigmoid>();
+  size_t layer2 = model->Add<Sigmoid>();
+  size_t layer3 = model->Add<Linear>(20);
+  size_t layer4 = model->Add<Identity>();
+
+  size_t layer5 = model->Add<Linear>(3);
+  size_t layer6 = model->Add<LogSoftMax>();
+
+  model->Connect(layer0, layer1);
+  model->Connect(layer0, layer2);
+  model->Connect(layer0, layer3);
+
+  model->Connect(layer1, layer4);
+  model->Connect(layer2, layer4);
+  model->SetConnection(layer4, CONCATENATE);
+  model->SetAxis(layer4, 0);
+
+  model->Connect(layer3, layer5);
+  model->Connect(layer4, layer5);
+  model->SetConnection(layer5, ADDITION);
+
+  model->Connect(layer5, layer6);
+
+  CheckCopy(model, trainData, trainLabels);
+}
+
+/**
+ * Check whether moving on DAG network is working or not.
+ * Uses element-wise addition and concatenation skip connection layers.
+ */
+TEST_CASE("CheckMoveDAGNetworkTest", "[DAGNetworkTest]")
+{
+  arma::mat trainData;
+  if (!data::Load("thyroid_train.csv", trainData))
+    FAIL("Cannot open thyroid_train.csv");
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
+  trainData.shed_row(trainData.n_rows - 1);
+
+  DAGNetwork<> *model = new DAGNetwork<>();
+  size_t layer0 = model->Add<Linear>(10);
+  size_t layer1 = model->Add<Sigmoid>();
+  size_t layer2 = model->Add<Sigmoid>();
+  size_t layer3 = model->Add<Linear>(20);
+  size_t layer4 = model->Add<Identity>();
+
+  size_t layer5 = model->Add<Linear>(3);
+  size_t layer6 = model->Add<LogSoftMax>();
+
+  model->Connect(layer0, layer1);
+  model->Connect(layer0, layer2);
+  model->Connect(layer0, layer3);
+
+  model->Connect(layer1, layer4);
+  model->Connect(layer2, layer4);
+  model->SetConnection(layer4, CONCATENATE);
+  model->SetAxis(layer4, 0);
+
+  model->Connect(layer3, layer5);
+  model->Connect(layer4, layer5);
+  model->SetConnection(layer5, ADDITION);
+
+  model->Connect(layer5, layer6);
+
+  CheckMove(model, trainData, trainLabels);
+}
+
 TEST_CASE("DAGNetworkSetAxisOnNonExistentLayer", "[DAGNetworkTest]")
 {
   DAGNetwork model;
@@ -211,6 +293,32 @@ void CheckConcatenation(arma::mat& input,
 
   model.Predict(input, testOutput);
   CheckMatrices(testOutput, expectedOutput);
+}
+
+TEST_CASE("DAGNetworkTestElementWiseAddition", "[DAGNetworkTest]")
+{
+  DAGNetwork<MeanSquaredError, ConstInitialization> model =
+    DAGNetwork(MeanSquaredError(), ConstInitialization(1.0f));
+
+  size_t a = model.Add<Identity>();
+  size_t b = model.Add<Identity>();
+  size_t c = model.Add<Identity>();
+  size_t d = model.Add<Identity>();
+
+  model.Connect(a, b);
+  model.Connect(a, c);
+  model.Connect(b, d);
+  model.Connect(c, d);
+  model.SetConnection(d, ADDITION);
+
+  arma::mat input = arma::ones(10);
+  arma::mat expectedOutput = input * 2;
+  arma::mat output;
+
+  std::vector<size_t> inputDimensions = { 10 };
+
+  model.Forward(input, output);
+  CheckMatrices(output, expectedOutput);
 }
 
 TEST_CASE("DAGNetworkTestConcatAxis0", "[DAGNetworkTest]")
@@ -427,7 +535,7 @@ TEST_CASE("DAGNetworkConcatenationAxisOutOfBounds", "[DAGNetworkTest]")
   REQUIRE_THROWS_AS(model.Predict(testInput, testOutput), std::logic_error);
 }
 
-TEST_CASE("DAGNetworkComputeOutputDimensions", "[DAGNetworkTest]")
+TEST_CASE("DAGNetworkComputeConcatDimensions", "[DAGNetworkTest]")
 {
   DAGNetwork model;
   model.InputDimensions() = { 7, 7, 3 };
@@ -441,12 +549,63 @@ TEST_CASE("DAGNetworkComputeOutputDimensions", "[DAGNetworkTest]")
   model.Connect(layer0, layer2);
   model.Connect(layer2, layer3);
   model.Connect(layer1, layer3);
+
+  model.SetConnection(layer3, CONCATENATE);
   model.SetAxis(layer3, 2);
 
   arma::mat testInput = arma::ones(6);
   arma::mat testOutput;
 
   std::vector<size_t> expectedOutputDimensions = { 1, 1, 1 };
+  REQUIRE(model.OutputDimensions() == expectedOutputDimensions);
+}
+
+/*
+ * Test default skip connection is concatenation along last axis.
+ */
+TEST_CASE("DAGNetworkComputeOutputDimensionsImplicit", "[DAGNetworkTest]")
+{
+  DAGNetwork model;
+  model.InputDimensions() = { 7, 7, 3 };
+
+  size_t layer0 = model.Add<Convolution>(1, 3, 3);
+  size_t layer1 = model.Add<Convolution>(3, 3, 3, 1, 1, 1, 1);
+  size_t layer2 = model.Add<Convolution>(1, 3, 3, 1, 1, 1, 1);
+  size_t layer3 = model.Add<Convolution>(1, 5, 5);
+
+  model.Connect(layer0, layer1);
+  model.Connect(layer0, layer2);
+  model.Connect(layer2, layer3);
+  model.Connect(layer1, layer3);
+
+  arma::mat testInput = arma::ones(6);
+  arma::mat testOutput;
+
+  std::vector<size_t> expectedOutputDimensions = { 1, 1, 1 };
+  REQUIRE(model.OutputDimensions() == expectedOutputDimensions);
+}
+
+TEST_CASE("DAGNetworkComputeAdditionDimensions", "[DAGNetworkTest]")
+{
+  DAGNetwork model;
+  model.InputDimensions() = { 7, 7, 3 };
+
+  size_t layer0 = model.Add<Convolution>(1, 3, 3);
+  size_t layer1 = model.Add<Convolution>(3, 3, 3, 1, 1, 1, 1);
+  size_t layer2 = model.Add<Convolution>(3, 3, 3, 1, 1, 1, 1);
+  size_t layer3 = model.Add<Identity>();
+
+  model.Connect(layer0, layer1);
+  model.Connect(layer0, layer2);
+  model.Connect(layer2, layer3);
+  model.Connect(layer1, layer3);
+
+  model.SetConnection(layer3, ADDITION);
+
+  arma::mat testInput = arma::ones(6);
+  arma::mat testOutput;
+
+  std::vector<size_t> expectedOutputDimensions = { 5, 5, 3 };
   REQUIRE(model.OutputDimensions() == expectedOutputDimensions);
 }
 
@@ -477,9 +636,34 @@ TEST_CASE("DAGNetworkWrongDimensionsForConcat", "[DAGNetworkTest]")
   model.Connect(layer0, layer2);
   model.Connect(layer2, layer3);
   model.Connect(layer1, layer3);
+
+  model.SetConnection(layer3, CONCATENATE);
   model.SetAxis(layer3, 1);
 
   arma::mat testInput = arma::ones(13 * 13 * 3);
+  arma::mat testOutput;
+
+  REQUIRE_THROWS_AS(model.Predict(testInput, testOutput), std::logic_error);
+}
+
+TEST_CASE("DAGNetworkWrongDimensionsForAddition", "[DAGNetworkTest]")
+{
+  DAGNetwork model;
+  model.InputDimensions() = { 20 };
+
+  size_t layer0 = model.Add<Identity>();
+  size_t layer1 = model.Add<Linear>(10);
+  size_t layer2 = model.Add<Linear>(15);
+  size_t layer3 = model.Add<Identity>();
+
+  model.Connect(layer0, layer1);
+  model.Connect(layer0, layer2);
+  model.Connect(layer2, layer3);
+  model.Connect(layer1, layer3);
+
+  model.SetConnection(layer3, ADDITION);
+
+  arma::mat testInput = arma::ones(20);
   arma::mat testOutput;
 
   REQUIRE_THROWS_AS(model.Predict(testInput, testOutput), std::logic_error);
@@ -550,6 +734,9 @@ TEST_CASE("DAGNetworkForestTest", "[DAGNetworkTest]")
   REQUIRE_THROWS_AS(model.Predict(testInput, testOutput), std::logic_error);
 }
 
+/*
+ * Test case that uses the output of a layer multiple times.
+ */
 TEST_CASE("DAGNetworkDiamondTest", "[DAGNetworkTest]")
 {
    /*
@@ -574,10 +761,12 @@ TEST_CASE("DAGNetworkDiamondTest", "[DAGNetworkTest]")
   dagnet.Connect(layerA, layerC);
   dagnet.Connect(layerA, layerB);
   dagnet.Connect(layerB, layerC);
+  dagnet.SetConnection(layerC, CONCATENATE);
   dagnet.SetAxis(layerC, 0);
 
   dagnet.Connect(layerB, layerD);
   dagnet.Connect(layerC, layerD);
+  dagnet.SetConnection(layerD, CONCATENATE);
   dagnet.SetAxis(layerD, 0);
 
 
@@ -619,8 +808,12 @@ TEST_CASE("DAGNetworkAddMultiLayer", "[DAGNetworkTest]")
   REQUIRE_NOTHROW(model.Evaluate(input, actual));
 }
 
-TEST_CASE("DAGNetworkGradientAccumulatesAndResetsToZero", "[DAGNetworkTest]")
-{
+/*
+ * Accumulate gradient and reset to zero properly with concatenation
+ * skip connection layer.
+ */
+TEST_CASE("DAGNetworkGradientAccumulatesAndResetsToZeroUsingConcatenation",
+          "[DAGNetworkTest]") {
   DAGNetwork<MeanSquaredError, ConstInitialization> model =
     DAGNetwork(MeanSquaredError(), ConstInitialization(1.0f));
 
@@ -640,6 +833,45 @@ TEST_CASE("DAGNetworkGradientAccumulatesAndResetsToZero", "[DAGNetworkTest]")
   arma::mat deltaLoss = arma::ones(4);
   arma::mat gradients;
   arma::mat expectedGradients = arma::mat({2, 2, 1, 1, 1, 1, 1, 1}).t();
+  MeanSquaredError lossFunction;
+
+  model.Forward(input, output);
+  model.Backward(input, output, deltaLoss, gradients);
+
+  CheckMatrices(gradients, expectedGradients);
+
+  // Gradients at layer a should have been set to zero.
+  model.Forward(input, output);
+  model.Backward(input, output, deltaLoss, gradients);
+  CheckMatrices(gradients, expectedGradients);
+}
+
+/*
+ * Accumulate gradient and reset to zero properly with residual
+ * (element-wise addition) skip connection layer.
+ */
+TEST_CASE("DAGNetworkGradientAccumulatesAndResetsToZeroAddition",
+          "[DAGNetworkTest]")
+{
+  DAGNetwork<MeanSquaredError, ConstInitialization> model =
+    DAGNetwork(MeanSquaredError(), ConstInitialization(1.0f));
+
+  size_t a = model.Add<Add>();
+  size_t b = model.Add<Add>();
+  size_t c = model.Add<Add>();
+
+  model.Connect(a, b);
+  model.Connect(a, c);
+  model.Connect(b, c);
+  model.SetConnection(c, ADDITION);
+
+  arma::mat input  = arma::ones(2);
+  arma::mat actual = arma::ones(2);
+  arma::mat output;
+
+  arma::mat deltaLoss = arma::ones(2);
+  arma::mat gradients;
+  arma::mat expectedGradients = arma::mat({2, 2, 1, 1, 1, 1}).t();
   MeanSquaredError lossFunction;
 
   model.Forward(input, output);
