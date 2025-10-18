@@ -313,46 +313,42 @@ void Convolution<
     padding.Forward(input, inputPadded);
   }
 
-  CubeType inputTemp;
-  MakeAlias(inputTemp, (usingPadding ? inputPadded : input), paddedRows,
-      paddedCols, inMaps * higherInDimensions * batchSize);
-
-  MakeAlias(outputTemp, output, this->outputDimensions[0],
-      this->outputDimensions[1], maps * higherInDimensions * batchSize);
-  outputTemp.zeros();
+  output.zeros();
 
   // We "ignore" dimensions higher than the third---that means that we just pass
   // them through and treat them like different input points.
   //
   // If we eventually have a way to do convolutions for a single kernel
   // in-batch, then this strategy may not be the most efficient solution.
+  #pragma omp parallel for schedule(dynamic) private(outputTemp)
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
+    CubeType inputTemp;
 
-    // Iterate over output maps.
-    #pragma omp parallel for
-    for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
+    MakeAlias(inputTemp, (usingPadding ? inputPadded : input), paddedRows,
+        paddedCols, inMaps, fullInputOffset * paddedRows * paddedCols);
+
+    MakeAlias(outputTemp, output, this->outputDimensions[0],
+        this->outputDimensions[1], maps, fullOutputOffset *
+        this->outputDimensions[0] * this->outputDimensions[1]);
+
+    ForwardConvolutionRule::Convolution(
+        inputTemp,
+        weight,
+        outputTemp,
+        strideWidth,
+        strideHeight,
+        1,
+        1,
+        true);
+
+    // Make sure to add the bias.
+    if (useBias)
     {
-      MatType& convOutput = outputTemp.slice(outMap + fullOutputOffset);
-      // Iterate over input maps (we will apply the filter and sum).
-      for (size_t inMap = 0; inMap < inMaps; ++inMap)
-      {
-        ForwardConvolutionRule::Convolution(
-            inputTemp.slice(inMap + fullInputOffset),
-            weight.slice((outMap * inMaps) + inMap),
-            convOutput,
-            strideWidth,
-            strideHeight,
-            1,
-            1,
-            true);
-      }
-
-      // Make sure to add the bias.
-      if (useBias)
-        convOutput += bias(outMap);
+      for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
+        outputTemp.slice(outMap) += bias(outMap);
     }
   }
 }
@@ -423,34 +419,33 @@ void Convolution<
 
   MatType output(apparentWidth * apparentHeight * inMaps * higherInDimensions,
       batchSize);
-  CubeType outputCube;
-  MakeAlias(outputCube, output, apparentWidth, apparentHeight,
-      inMaps * higherInDimensions * batchSize);
 
   // See Forward() for the overall iteration strategy.
-  #pragma omp parallel for schedule(dynamic)
+  #pragma omp parallel for schedule(dynamic) private(outputTemp)
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    // Iterate over input maps.
-    for (size_t inMap = 0; inMap < (size_t) inMaps; ++inMap)
+    CubeType rotatedFiltersTemp;
+
+    MakeAlias(outputTemp, output, apparentWidth, apparentHeight, inMaps,
+        fullInputOffset * apparentWidth * apparentHeight);
+    // Iterate over output maps.
+    for (size_t outMap = 0; outMap < maps; ++outMap)
     {
-      // Iterate over output maps.
-      MatType& curG = outputCube.slice(inMap + fullInputOffset);
-      for (size_t outMap = 0; outMap < maps; ++outMap)
-      {
-        BackwardConvolutionRule::Convolution(
-            dilatedMappedError.slice(outMap + fullOutputOffset),
-            rotatedFilters.slice((outMap * inMaps) + inMap),
-            curG,
-            1,
-            1,
-            1,
-            1,
-            true);
-      }
+      MakeAlias(rotatedFiltersTemp, rotatedFilters, rotatedFilters.n_rows,
+          rotatedFilters.n_cols, inMaps,
+          outMap * inMaps * rotatedFilters.n_rows * rotatedFilters.n_cols);
+      BackwardConvolutionRule::Convolution(
+          dilatedMappedError.slice(outMap + fullOutputOffset),
+          rotatedFiltersTemp,
+          outputTemp,
+          1,
+          1,
+          1,
+          1,
+          true);
     }
   }
   MatType temp(padding.OutputDimensions()[0] * padding.OutputDimensions()[1] *
@@ -497,18 +492,9 @@ void Convolution<
   // Forward().
   const bool usingPadding =
       (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0);
-  const size_t paddedRows = this->inputDimensions[0] + padWLeft + padWRight;
-  const size_t paddedCols = this->inputDimensions[1] + padHTop + padHBottom;
-
-  CubeType inputTemp;
-  MakeAlias(inputTemp, (usingPadding ? inputPadded : input),
-      paddedRows, paddedCols, inMaps * batchSize, 0, false);
 
   MatType temp(apparentWidth * apparentHeight * inMaps * higherInDimensions,
       batchSize);
-  CubeType tempCube;
-  MakeAlias(tempCube, temp, apparentWidth, apparentHeight,
-      inMaps * higherInDimensions * batchSize);
   paddingBackward.Backward(input, {} /* unused */,
       usingPadding ? inputPadded : input, temp);
 
@@ -519,31 +505,56 @@ void Convolution<
   MakeAlias(gradientTemp, gradient, weight.n_rows, weight.n_cols,
       weight.n_slices);
 
+  MatType tempSlice;
+
   // See Forward() for our iteration strategy.
+  #pragma omp parallel for schedule(dynamic) private(tempSlice)
   for (size_t offset = 0; offset < higherInDimensions * batchSize; ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    #pragma omp parallel for
-    for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
-    {
-      MatType& curError = mappedError.slice(outMap + fullOutputOffset);
-      for (size_t inMap = 0; inMap < inMaps; ++inMap)
-      {
-        GradientConvolutionRule::Convolution(
-            tempCube.slice(inMap + fullInputOffset),
-            curError,
-            gradientTemp.slice((outMap * inMaps) + inMap),
-            1,
-            1,
-            strideWidth,
-            strideHeight,
-            true);
-      }
+    CubeType mappedErrorTemp;
+    MakeAlias(mappedErrorTemp, error, this->outputDimensions[0],
+        this->outputDimensions[1], maps, fullOutputOffset *
+        this->outputDimensions[0] * this->outputDimensions[1]);
 
-      if (useBias)
-        gradient[weight.n_elem + outMap] += accu(curError);
+    for (size_t inMap = 0; inMap < inMaps; ++inMap)
+    {
+      CubeType gradientTempTemp(gradientTemp.n_rows, gradientTemp.n_cols,
+          maps);
+      // Make an alias of the slice directly instead of using a cube to avoid
+      // the overhead of creating a cube every time this function is called
+      MakeAlias(tempSlice, temp, apparentWidth, apparentHeight,
+          (inMap + fullInputOffset) * (apparentWidth * apparentHeight));
+
+      GradientConvolutionRule::Convolution(
+          tempSlice,
+          mappedErrorTemp,
+          gradientTempTemp,
+          1,
+          1,
+          strideWidth,
+          strideHeight,
+          true);
+
+      // Reorder convolution output slices.
+      #pragma omp critical
+      for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
+      {
+        gradientTemp.slice((outMap * inMaps) + inMap) +=
+            gradientTempTemp.slice(outMap);
+      }
+    }
+
+    if (useBias)
+    {
+      for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
+      {
+        #pragma omp atomic update
+        gradient[weight.n_elem + outMap] += accu(mappedErrorTemp
+            .slice(outMap));
+      }
     }
   }
 }
