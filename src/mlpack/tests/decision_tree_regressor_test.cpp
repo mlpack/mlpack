@@ -1049,7 +1049,8 @@ TEST_CASE("CategoricalBuildTest_", "[DecisionTreeRegressorTest][tiny]")
  * Test that we can build a decision tree with weights on a simple categorical
  * dataset.
  */
-TEST_CASE("CategoricalBuildTestWithWeight_", "[DecisionTreeRegressorTest][tiny]")
+TEST_CASE("CategoricalBuildTestWithWeight_",
+    "[DecisionTreeRegressorTest][tiny]")
 {
   arma::mat d;
   arma::rowvec r;

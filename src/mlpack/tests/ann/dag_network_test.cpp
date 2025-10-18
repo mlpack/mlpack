@@ -619,7 +619,8 @@ TEST_CASE("DAGNetworkAddMultiLayer", "[DAGNetworkTest]")
   REQUIRE_NOTHROW(model.Evaluate(input, actual));
 }
 
-TEST_CASE("DAGNetworkGradientAccumulatesAndResetsToZero", "[DAGNetworkTest][tiny]")
+TEST_CASE("DAGNetworkGradientAccumulatesAndResetsToZero",
+    "[DAGNetworkTest][tiny]")
 {
   DAGNetwork<MeanSquaredError, ConstInitialization> model =
     DAGNetwork(MeanSquaredError(), ConstInitialization(1.0f));
