@@ -40,7 +40,7 @@ target_info = [
       'arch_type': 'mips32-softfp',
       'arch_name': 'MIPS24K',
       'test_filters': '[tiny]',
-      'openblas_extra_flags': 'USE_THREAD=0',
+      'openblas_extra_flags': 'MSA_FLAGS= USE_THREAD=0',
       'scp_opts': '-O'
   ]
 ]
