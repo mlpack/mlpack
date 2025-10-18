@@ -25,7 +25,7 @@ using namespace mlpack;
  * the values from another implementation.
  * Link to the implementation - http://cthorey.github.io./backpropagation/
  */
-TEST_CASE("BatchNormTest", "[ANNLayerTest]")
+TEST_CASE("BatchNormTest", "[ANNLayerTest][tiny]")
 {
   arma::mat output;
   arma::mat input = { { 5.1, 3.5, 1.4 },

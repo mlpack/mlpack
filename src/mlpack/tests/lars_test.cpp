@@ -125,7 +125,7 @@ TEMPLATE_TEST_CASE("LARSTestLassoGram", "[LARSTest]", arma::fmat, arma::mat)
   LassoTest<TestType>(100, 10, false, false, true, true);
 }
 
-TEMPLATE_TEST_CASE("LARSTestElasticNetCholesky", "[LARSTest]", arma::fmat,
+TEMPLATE_TEST_CASE("LARSTestElasticNetCholesky", "[LARSTest][tiny]", arma::fmat,
     arma::mat)
 {
   LassoTest<TestType>(100, 10, true, true, false, false);
@@ -134,7 +134,7 @@ TEMPLATE_TEST_CASE("LARSTestElasticNetCholesky", "[LARSTest]", arma::fmat,
   LassoTest<TestType>(100, 10, true, true, true, true);
 }
 
-TEMPLATE_TEST_CASE("LARSTestElasticNetGram", "[LARSTest]", arma::fmat,
+TEMPLATE_TEST_CASE("LARSTestElasticNetGram", "[LARSTest][tiny]", arma::fmat,
     arma::mat)
 {
   LassoTest<TestType>(100, 10, true, false, false, false);

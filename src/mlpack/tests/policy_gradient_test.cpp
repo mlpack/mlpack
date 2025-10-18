@@ -354,7 +354,7 @@ TEST_CASE("PendulumWithSAC", "[PolicyGradientTest][long]")
 }
 
 //! A test to ensure SAC works with multiple actions in action space.
-TEST_CASE("SACForMultipleActions", "[PolicyGradientTest]")
+TEST_CASE("SACForMultipleActions", "[PolicyGradientTest][tiny]")
 {
   FFN<EmptyLoss, GaussianInitialization>
       policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));

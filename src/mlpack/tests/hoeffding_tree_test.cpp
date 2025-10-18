@@ -810,7 +810,7 @@ TEST_CASE("BinaryNumericSplitSimpleFourClassSplitTest", "[HoeffdingTreeTest]")
  * Create a HoeffdingTree that uses the HoeffdingNumericSplit and make sure it
  * can split meaningfully on the correct dimension.
  */
-TEST_CASE("NumericHoeffdingTreeTest", "[HoeffdingTreeTest]")
+TEST_CASE("NumericHoeffdingTreeTest", "[HoeffdingTreeTest][tiny]")
 {
   // Generate data.
   arma::mat dataset(3, 9000);
@@ -875,7 +875,7 @@ TEST_CASE("NumericHoeffdingTreeTest", "[HoeffdingTreeTest]")
  * The same as the previous test, but with the numeric binary split, and with a
  * categorical feature.
  */
-TEST_CASE("BinaryNumericHoeffdingTreeTest", "[HoeffdingTreeTest]")
+TEST_CASE("BinaryNumericHoeffdingTreeTest", "[HoeffdingTreeTest][tiny]")
 {
   // Generate data.
   arma::mat dataset(4, 9000);

@@ -144,7 +144,7 @@ TEST_CASE("PoissonNLLLossTest", "[LossFunctionsTest]")
 /**
  * Simple KL Divergence test.
  */
-TEST_CASE("SimpleKLDivergenceTest", "[LossFunctionsTest]")
+TEST_CASE("SimpleKLDivergenceTest", "[LossFunctionsTest][tiny]")
 {
   arma::mat input, target, output;
   arma::mat expectedOutput;
@@ -239,7 +239,7 @@ TEST_CASE("SimpleMeanSquaredLogarithmicErrorTest", "[LossFunctionsTest]")
 /*
  * Simple test for the mean squared error performance function.
  */
-TEST_CASE("SimpleMeanSquaredErrorTest", "[LossFunctionsTest]")
+TEST_CASE("SimpleMeanSquaredErrorTest", "[LossFunctionsTest][tiny]")
 {
   arma::mat input, output, target;
   MeanSquaredError module;
@@ -1196,7 +1196,7 @@ TEST_CASE("MultiLabelSoftMarginLossWeightedTest", "[LossFunctionsTest]")
 /**
  * Simple Negative Log Likelihood Loss test.
  */
-TEST_CASE("NegativeLogLikelihoodLossTest", "[LossFunctionsTest]")
+TEST_CASE("NegativeLogLikelihoodLossTest", "[LossFunctionsTest][tiny]")
 {
   arma::mat input, target, output;
   arma::mat expectedOutput;
@@ -1244,7 +1244,7 @@ TEST_CASE("NegativeLogLikelihoodLossTest", "[LossFunctionsTest]")
 /**
  * Jacobian negative log likelihood module test.
  */
-TEST_CASE("JacobianNegativeLogLikelihoodLayerTest", "[LossFunctionsTest]")
+TEST_CASE("JacobianNegativeLogLikelihoodLayerTest", "[LossFunctionsTest][tiny]")
 {
   for (size_t i = 0; i < 5; ++i)
   {

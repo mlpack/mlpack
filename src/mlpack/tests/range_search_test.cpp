@@ -464,7 +464,7 @@ TEST_CASE("ExhaustiveSyntheticTest", "[RangeSearchTest]")
  *
  * Errors are produced if the results are not identical.
  */
-TEST_CASE("DualTreeVsNaive1", "[RangeSearchTest]")
+TEST_CASE("DualTreeVsNaive1", "[RangeSearchTest][tiny]")
 {
   arma::mat dataForTree;
 

@@ -160,7 +160,7 @@ TEST_CASE("CosineNodeCosineSplit", "[CosineTreeTest]")
  * Checks CosineTree::ModifiedGramSchmidt() by creating a random basis for the
  * vector subspace and checking if all the vectors are orthogonal to each other.
  */
-TEST_CASE("CosineTreeModifiedGramSchmidt", "[CosineTreeTest]")
+TEST_CASE("CosineTreeModifiedGramSchmidt", "[CosineTreeTest][tiny]")
 {
   // Initialize constants required for the test.
   const size_t numRows = 100;

@@ -20,7 +20,7 @@ using namespace mlpack;
 /**
  * The reconstruction error of the obtained SVD should be small.
  */
-TEST_CASE("QUICSVDReconstructionError", "[QUICSVDTest]")
+TEST_CASE("QUICSVDReconstructionError", "[QUICSVDTest][tiny]")
 {
   // Load the dataset.
   arma::mat dataset;

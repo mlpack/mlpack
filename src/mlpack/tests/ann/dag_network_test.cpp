@@ -550,7 +550,7 @@ TEST_CASE("DAGNetworkForestTest", "[DAGNetworkTest]")
   REQUIRE_THROWS_AS(model.Predict(testInput, testOutput), std::logic_error);
 }
 
-TEST_CASE("DAGNetworkDiamondTest", "[DAGNetworkTest]")
+TEST_CASE("DAGNetworkDiamondTest", "[DAGNetworkTest][tiny]")
 {
    /*
     *
@@ -619,7 +619,7 @@ TEST_CASE("DAGNetworkAddMultiLayer", "[DAGNetworkTest]")
   REQUIRE_NOTHROW(model.Evaluate(input, actual));
 }
 
-TEST_CASE("DAGNetworkGradientAccumulatesAndResetsToZero", "[DAGNetworkTest]")
+TEST_CASE("DAGNetworkGradientAccumulatesAndResetsToZero", "[DAGNetworkTest][tiny]")
 {
   DAGNetwork<MeanSquaredError, ConstInitialization> model =
     DAGNetwork(MeanSquaredError(), ConstInitialization(1.0f));

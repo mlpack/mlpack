@@ -962,7 +962,7 @@ TEST_CASE("MultiSplitTest3", "[DecisionTreeRegressorTest]")
 /**
  * Test that the tree builds correctly on unweighted numerical dataset.
  */
-TEST_CASE("NumericalBuildTest", "[DecisionTreeRegressorTest]")
+TEST_CASE("NumericalBuildTest", "[DecisionTreeRegressorTest][tiny]")
 {
   arma::mat X;
   arma::rowvec Y;
@@ -989,7 +989,7 @@ TEST_CASE("NumericalBuildTest", "[DecisionTreeRegressorTest]")
 /**
  * Test that the tree builds correctly on weighted numerical dataset.
  */
-TEST_CASE("NumericalBuildTestWithWeights", "[DecisionTreeRegressorTest]")
+TEST_CASE("NumericalBuildTestWithWeights", "[DecisionTreeRegressorTest][tiny]")
 {
   arma::mat X;
   arma::rowvec Y;
@@ -1018,7 +1018,7 @@ TEST_CASE("NumericalBuildTestWithWeights", "[DecisionTreeRegressorTest]")
 /**
  * Test that we can build a decision tree on a simple categorical dataset.
  */
-TEST_CASE("CategoricalBuildTest_", "[DecisionTreeRegressorTest]")
+TEST_CASE("CategoricalBuildTest_", "[DecisionTreeRegressorTest][tiny]")
 {
   arma::mat d;
   arma::rowvec r;
@@ -1049,7 +1049,7 @@ TEST_CASE("CategoricalBuildTest_", "[DecisionTreeRegressorTest]")
  * Test that we can build a decision tree with weights on a simple categorical
  * dataset.
  */
-TEST_CASE("CategoricalBuildTestWithWeight_", "[DecisionTreeRegressorTest]")
+TEST_CASE("CategoricalBuildTestWithWeight_", "[DecisionTreeRegressorTest][tiny]")
 {
   arma::mat d;
   arma::rowvec r;

@@ -474,7 +474,7 @@ TEST_CASE("RefinedStartTest", "[KMeansTest]")
  * Test that the k-means++ initialization strategy returns decent initial
  * cluster estimates.
  */
-TEST_CASE("KMeansPlusPlusTest", "[KMeansTest]")
+TEST_CASE("KMeansPlusPlusTest", "[KMeansTest][tiny]")
 {
   // Our dataset will be five Gaussians of largely varying numbers of points and
   // we expect that the refined starting policy should return good guesses at
@@ -540,7 +540,7 @@ TEST_CASE("KMeansPlusPlusTest", "[KMeansTest]")
 /**
  * Make sure sparse k-means works okay.
  */
-TEST_CASE("SparseKMeansTest", "[KMeansTest]")
+TEST_CASE("SparseKMeansTest", "[KMeansTest][tiny]")
 {
   // Huge dimensionality, few points.
   arma::SpMat<double> data(5000, 12);
@@ -583,7 +583,7 @@ TEST_CASE("SparseKMeansTest", "[KMeansTest]")
 
 #endif // ARMA_HAS_SPMAT
 
-TEST_CASE("ElkanTest", "[KMeansTest]")
+TEST_CASE("ElkanTest", "[KMeansTest][tiny]")
 {
   const size_t trials = 5;
 
@@ -617,7 +617,7 @@ TEST_CASE("ElkanTest", "[KMeansTest]")
   }
 }
 
-TEST_CASE("HamerlyTest", "[KMeansTest]")
+TEST_CASE("HamerlyTest", "[KMeansTest][tiny]")
 {
   const size_t trials = 5;
 
@@ -652,7 +652,7 @@ TEST_CASE("HamerlyTest", "[KMeansTest]")
   }
 }
 
-TEST_CASE("PellegMooreTest", "[KMeansTest]")
+TEST_CASE("PellegMooreTest", "[KMeansTest][tiny]")
 {
   const size_t trials = 5;
 
@@ -686,7 +686,7 @@ TEST_CASE("PellegMooreTest", "[KMeansTest]")
   }
 }
 
-TEST_CASE("DTNNTest", "[KMeansTest]")
+TEST_CASE("DTNNTest", "[KMeansTest][tiny]")
 {
   const size_t trials = 5;
 
@@ -718,7 +718,7 @@ TEST_CASE("DTNNTest", "[KMeansTest]")
   }
 }
 
-TEST_CASE("DTNNCoverTreeTest", "[KMeansTest]")
+TEST_CASE("DTNNCoverTreeTest", "[KMeansTest][tiny]")
 {
   const size_t trials = 5;
 

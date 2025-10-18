@@ -905,8 +905,8 @@ TEMPLATE_TEST_CASE("LinearSVMSparseLBFGSTest", "[LinearSVMTest]", float, double)
  * Test training of linear svm for multiple classes on a complex gaussian
  * dataset using L-BFGS optimizer, with different types.
  */
-TEMPLATE_TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest]", float,
-    double)
+TEMPLATE_TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest][tiny]",
+    float, double)
 {
   using ElemType = TestType;
   using MatType = arma::Mat<ElemType>;

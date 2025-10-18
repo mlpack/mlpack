@@ -466,7 +466,7 @@ double KnnAccuracy(const MatType& dataset,
 
 // Check that final accuracy is greater than initial accuracy on
 // simple dataset.
-TEMPLATE_TEST_CASE("LMNNAccuracyTest", "[LMNNTest]", float, double)
+TEMPLATE_TEST_CASE("LMNNAccuracyTest", "[LMNNTest][tiny]", float, double)
 {
   using ElemType = TestType;
 
