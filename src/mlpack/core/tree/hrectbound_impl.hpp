@@ -589,7 +589,7 @@ HRectBound<DistanceType, ElemType>::operator|=(const MatType& data)
   {
     bounds[i] |= RangeType<ElemType>(mins[i], maxs[i]);
     const ElemType width = bounds[i].Width();
-    
+
     minWidth = std::min(minWidth, width);
     maxWidth = std::max(maxWidth, width);
   }
