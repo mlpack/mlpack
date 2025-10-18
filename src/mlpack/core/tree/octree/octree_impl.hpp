@@ -36,11 +36,7 @@ Octree<DistanceType, StatisticType, MatType>::Octree(const MatType& dataset,
     arma::Col<ElemType> center;
     bound.Center(center);
 
-    ElemType maxWidth = 0.0;
-    for (size_t i = 0; i < bound.Dim(); ++i)
-      if (bound[i].Hi() - bound[i].Lo() > maxWidth)
-        maxWidth = bound[i].Hi() - bound[i].Lo();
-
+    ElemType maxWidth = bound.MaxWidth();
     SplitNode(center, maxWidth, maxLeafSize);
 
     furthestDescendantDistance = 0.5 * bound.Diameter();
@@ -78,11 +74,7 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
     arma::Col<ElemType> center;
     bound.Center(center);
 
-    ElemType maxWidth = 0.0;
-    for (size_t i = 0; i < bound.Dim(); ++i)
-      if (bound[i].Hi() - bound[i].Lo() > maxWidth)
-        maxWidth = bound[i].Hi() - bound[i].Lo();
-
+    ElemType maxWidth = bound.MaxWidth();
     SplitNode(center, maxWidth, oldFromNew, maxLeafSize);
 
     furthestDescendantDistance = 0.5 * bound.Diameter();
@@ -121,11 +113,7 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
     arma::Col<ElemType> center;
     bound.Center(center);
 
-    ElemType maxWidth = 0.0;
-    for (size_t i = 0; i < bound.Dim(); ++i)
-      if (bound[i].Hi() - bound[i].Lo() > maxWidth)
-        maxWidth = bound[i].Hi() - bound[i].Lo();
-
+    ElemType maxWidth = bound.MaxWidth();
     SplitNode(center, maxWidth, oldFromNew, maxLeafSize);
 
     furthestDescendantDistance = 0.5 * bound.Diameter();
@@ -162,11 +150,7 @@ Octree<DistanceType, StatisticType, MatType>::Octree(MatType&& dataset,
     arma::Col<ElemType> center;
     bound.Center(center);
 
-    ElemType maxWidth = 0.0;
-    for (size_t i = 0; i < bound.Dim(); ++i)
-      if (bound[i].Hi() - bound[i].Lo() > maxWidth)
-        maxWidth = bound[i].Hi() - bound[i].Lo();
-
+    ElemType maxWidth = bound.MaxWidth();
     SplitNode(center, maxWidth, maxLeafSize);
 
     furthestDescendantDistance = 0.5 * bound.Diameter();
@@ -204,11 +188,7 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
     arma::Col<ElemType> center;
     bound.Center(center);
 
-    ElemType maxWidth = 0.0;
-    for (size_t i = 0; i < bound.Dim(); ++i)
-      if (bound[i].Hi() - bound[i].Lo() > maxWidth)
-        maxWidth = bound[i].Hi() - bound[i].Lo();
-
+    ElemType maxWidth = bound.MaxWidth();
     SplitNode(center, maxWidth, oldFromNew, maxLeafSize);
 
     furthestDescendantDistance = 0.5 * bound.Diameter();
@@ -247,11 +227,7 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
     arma::Col<ElemType> center;
     bound.Center(center);
 
-    ElemType maxWidth = 0.0;
-    for (size_t i = 0; i < bound.Dim(); ++i)
-      if (bound[i].Hi() - bound[i].Lo() > maxWidth)
-        maxWidth = bound[i].Hi() - bound[i].Lo();
-
+    ElemType maxWidth = bound.MaxWidth();
     SplitNode(center, maxWidth, oldFromNew, maxLeafSize);
 
     furthestDescendantDistance = 0.5 * bound.Diameter();
