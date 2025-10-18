@@ -44,6 +44,7 @@
 #include <mlpack/methods/ann/layer/linear_recurrent.hpp>
 #include <mlpack/methods/ann/layer/linear3d.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
+#include <mlpack/methods/ann/layer/lookup.hpp>
 #include <mlpack/methods/ann/layer/lstm.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
