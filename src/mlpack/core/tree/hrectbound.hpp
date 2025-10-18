@@ -105,6 +105,14 @@ class HRectBound
   //! Recompute the minimum width of the bound.
   void RecomputeMinWidth();
 
+  //! Get the maximum width of the bound.
+  ElemType MaxWidth() const { return maxWidth; }
+  //! Modify the maximum width of the bound.
+  ElemType& MaxWidth() { return maxWidth; }
+
+  //! Recompute the maximum width of the bound.
+  void RecomputeMaxWidth();
+
   //! Get the instantiated distance metric associated with the bound.
   [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
   const DistanceType& Metric() const { return distance; }
@@ -247,6 +255,8 @@ class HRectBound
   RangeType<ElemType>* bounds;
   //! Cached minimum width of bound.
   ElemType minWidth;
+  //! Cached maximum width of bound.
+  ElemType maxWidth;
   //! Instantiated distance metric (likely has size 0).
   DistanceType distance;
 };
