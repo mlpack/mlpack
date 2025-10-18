@@ -27,7 +27,8 @@ template<typename DistanceType, typename ElemType>
 inline HRectBound<DistanceType, ElemType>::HRectBound() :
     dim(0),
     bounds(NULL),
-    minWidth(0)
+    minWidth(0),
+    maxWidth(0)
 { /* Nothing to do. */ }
 
 /**
@@ -38,7 +39,8 @@ template<typename DistanceType, typename ElemType>
 inline HRectBound<DistanceType, ElemType>::HRectBound(const size_t dimension) :
     dim(dimension),
     bounds(new RangeType<ElemType>[dim]),
-    minWidth(0)
+    minWidth(0),
+    maxWidth(0)
 { /* Nothing to do. */ }
 
 /**
@@ -49,7 +51,8 @@ inline HRectBound<DistanceType, ElemType>::HRectBound(
     const HRectBound<DistanceType, ElemType>& other) :
     dim(other.Dim()),
     bounds(new RangeType<ElemType>[dim]),
-    minWidth(other.MinWidth())
+    minWidth(other.MinWidth()),
+    maxWidth(other.MaxWidth())
 {
   // Copy other bounds over.
   for (size_t i = 0; i < dim; ++i)
@@ -83,6 +86,7 @@ inline HRectBound<
     bounds[i] = other[i];
 
   minWidth = other.MinWidth();
+  maxWidth = other.MaxWidth();
 
   return *this;
 }
@@ -95,12 +99,14 @@ inline HRectBound<DistanceType, ElemType>::HRectBound(
     HRectBound<DistanceType, ElemType>&& other) :
     dim(other.dim),
     bounds(other.bounds),
-    minWidth(other.minWidth)
+    minWidth(other.minWidth),
+    maxWidth(other.maxWidth)
 {
   // Fix the other bound.
   other.dim = 0;
   other.bounds = NULL;
   other.minWidth = 0.0;
+  other.maxWidth = 0.0;
 }
 
 /**
@@ -115,10 +121,12 @@ HRectBound<DistanceType, ElemType>::operator=(
   {
     bounds = other.bounds;
     minWidth = other.minWidth;
+    maxWidth = other.maxWidth;
     dim = other.dim;
     other.dim = 0;
     other.bounds = nullptr;
     other.minWidth = 0.0;
+    other.maxWidth = 0.0;
   }
   return *this;
 }
@@ -141,7 +149,7 @@ inline void HRectBound<DistanceType, ElemType>::Clear()
 {
   for (size_t i = 0; i < dim; ++i)
     bounds[i] = RangeType<ElemType>();
-  minWidth = 0;
+  minWidth = maxWidth = 0;
 }
 
 /***
@@ -170,6 +178,17 @@ inline void HRectBound<DistanceType, ElemType>::RecomputeMinWidth()
   minWidth = std::numeric_limits<ElemType>::max();
   for (size_t i = 0; i < dim; ++i)
     minWidth = std::min(minWidth, bounds[i].Width());
+}
+
+/**
+ * Recompute the maximum width of the bound.
+ */
+template<typename DistanceType, typename ElemType>
+inline void HRectBound<DistanceType, ElemType>::RecomputeMaxWidth()
+{
+  maxWidth = 0.0;
+  for (size_t i = 0; i < dim; ++i)
+    maxWidth = std::max(maxWidth, bounds[i].Width());
 }
 
 /**
@@ -564,13 +583,15 @@ HRectBound<DistanceType, ElemType>::operator|=(const MatType& data)
   arma::Col<ElemType> mins(min(data, 1));
   arma::Col<ElemType> maxs(max(data, 1));
 
+  maxWidth = 0.0;
   minWidth = std::numeric_limits<ElemType>::max();
   for (size_t i = 0; i < dim; ++i)
   {
     bounds[i] |= RangeType<ElemType>(mins[i], maxs[i]);
     const ElemType width = bounds[i].Width();
-    if (width < minWidth)
-      minWidth = width;
+    
+    minWidth = std::min(minWidth, width);
+    maxWidth = std::max(maxWidth, width);
   }
 
   return *this;
@@ -592,13 +613,15 @@ HRectBound<DistanceType, ElemType>::operator|=(const HRectBound& other)
 
   Log::Assert(other.dim == dim);
 
+  maxWidth = 0.0;
   minWidth = std::numeric_limits<ElemType>::max();
   for (size_t i = 0; i < dim; ++i)
   {
     bounds[i] |= other.bounds[i];
     const ElemType width = bounds[i].Width();
-    if (width < minWidth)
-      minWidth = width;
+
+    minWidth = std::min(minWidth, width);
+    maxWidth = std::max(maxWidth, width);
   }
 
   return *this;
@@ -722,6 +745,7 @@ void HRectBound<DistanceType, ElemType>::serialize(
   // We can't serialize a raw array directly, so wrap it.
   ar(CEREAL_POINTER_ARRAY(bounds, dim));
   ar(CEREAL_NVP(minWidth));
+  ar(CEREAL_NVP(maxWidth));
   ar(CEREAL_NVP(distance));
 }
 
