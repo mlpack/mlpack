@@ -36,10 +36,12 @@ Octree<DistanceType, StatisticType, MatType>::Octree(const MatType& dataset,
     arma::Col<ElemType> center;
     bound.Center(center);
 
-    ElemType maxWidth = bound.MaxWidth();
-    // If all these points are the same. We can't split.
-    if (maxWidth != 0.0)
-      SplitNode(center, maxWidth, maxLeafSize);
+    ElemType maxWidth = 0.0;
+    for (size_t i = 0; i < bound.Dim(); ++i)
+      if (bound[i].Hi() - bound[i].Lo() > maxWidth)
+        maxWidth = bound[i].Hi() - bound[i].Lo();
+
+    SplitNode(center, maxWidth, maxLeafSize);
 
     furthestDescendantDistance = 0.5 * bound.Diameter();
   }
@@ -76,10 +78,12 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
     arma::Col<ElemType> center;
     bound.Center(center);
 
-    ElemType maxWidth = bound.MaxWidth();
-    // If all these points are the same. We can't split.
-    if (maxWidth != 0.0)
-      SplitNode(center, maxWidth, oldFromNew, maxLeafSize);
+    ElemType maxWidth = 0.0;
+    for (size_t i = 0; i < bound.Dim(); ++i)
+      if (bound[i].Hi() - bound[i].Lo() > maxWidth)
+        maxWidth = bound[i].Hi() - bound[i].Lo();
+
+    SplitNode(center, maxWidth, oldFromNew, maxLeafSize);
 
     furthestDescendantDistance = 0.5 * bound.Diameter();
   }
@@ -117,10 +121,12 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
     arma::Col<ElemType> center;
     bound.Center(center);
 
-    ElemType maxWidth = bound.MaxWidth();
-    // If all these points are the same. We can't split.
-    if (maxWidth != 0.0)
-      SplitNode(center, maxWidth, oldFromNew, maxLeafSize);
+    ElemType maxWidth = 0.0;
+    for (size_t i = 0; i < bound.Dim(); ++i)
+      if (bound[i].Hi() - bound[i].Lo() > maxWidth)
+        maxWidth = bound[i].Hi() - bound[i].Lo();
+
+    SplitNode(center, maxWidth, oldFromNew, maxLeafSize);
 
     furthestDescendantDistance = 0.5 * bound.Diameter();
   }
@@ -156,10 +162,12 @@ Octree<DistanceType, StatisticType, MatType>::Octree(MatType&& dataset,
     arma::Col<ElemType> center;
     bound.Center(center);
 
-    ElemType maxWidth = bound.MaxWidth();
-    // If all these points are the same. We can't split.
-    if (maxWidth != 0.0)
-      SplitNode(center, maxWidth, maxLeafSize);
+    ElemType maxWidth = 0.0;
+    for (size_t i = 0; i < bound.Dim(); ++i)
+      if (bound[i].Hi() - bound[i].Lo() > maxWidth)
+        maxWidth = bound[i].Hi() - bound[i].Lo();
+
+    SplitNode(center, maxWidth, maxLeafSize);
 
     furthestDescendantDistance = 0.5 * bound.Diameter();
   }
@@ -196,10 +204,12 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
     arma::Col<ElemType> center;
     bound.Center(center);
 
-    ElemType maxWidth = bound.MaxWidth();
-    // If all these points are the same. We can't split.
-    if (maxWidth != 0.0)
-      SplitNode(center, maxWidth, oldFromNew, maxLeafSize);
+    ElemType maxWidth = 0.0;
+    for (size_t i = 0; i < bound.Dim(); ++i)
+      if (bound[i].Hi() - bound[i].Lo() > maxWidth)
+        maxWidth = bound[i].Hi() - bound[i].Lo();
+
+    SplitNode(center, maxWidth, oldFromNew, maxLeafSize);
 
     furthestDescendantDistance = 0.5 * bound.Diameter();
   }
@@ -237,10 +247,12 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
     arma::Col<ElemType> center;
     bound.Center(center);
 
-    ElemType maxWidth = bound.MaxWidth();
-    // If all these points are the same. We can't split.
-    if (maxWidth != 0.0)
-      SplitNode(center, maxWidth, oldFromNew, maxLeafSize);
+    ElemType maxWidth = 0.0;
+    for (size_t i = 0; i < bound.Dim(); ++i)
+      if (bound[i].Hi() - bound[i].Lo() > maxWidth)
+        maxWidth = bound[i].Hi() - bound[i].Lo();
+
+    SplitNode(center, maxWidth, oldFromNew, maxLeafSize);
 
     furthestDescendantDistance = 0.5 * bound.Diameter();
   }
@@ -276,8 +288,12 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
   // Calculate empirical center of data.
   bound |= dataset->cols(begin, begin + count - 1);
 
-  // If all these points are the same. We can't split.
-  if (bound.MaxWidth() != 0.0)
+  ElemType maxWidth = 0.0;
+  for (size_t i = 0; i < bound.Dim(); ++i)
+    if (bound[i].Hi() - bound[i].Lo() > maxWidth)
+      maxWidth = bound[i].Hi() - bound[i].Lo();
+
+  if (maxWidth != 0.0)
     SplitNode(center, width, maxLeafSize);
 
   // Calculate the distance from the empirical center of this node to the
@@ -312,8 +328,12 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
   // Calculate empirical center of data.
   bound |= dataset->cols(begin, begin + count - 1);
 
-  // If all these points are the same. We can't split.
-  if (bound.MaxWidth() != 0.0)
+  ElemType maxWidth = 0.0;
+  for (size_t i = 0; i < bound.Dim(); ++i)
+    if (bound[i].Hi() - bound[i].Lo() > maxWidth)
+      maxWidth = bound[i].Hi() - bound[i].Lo();
+
+  if (maxWidth != 0.0)
     SplitNode(center, width, oldFromNew, maxLeafSize);
 
   // Calculate the distance from the empirical center of this node to the
