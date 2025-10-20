@@ -32,6 +32,9 @@ _????-??-??_
 
  * Fix mask handling in `MultiHeadAttention` layer (#3998).
 
+ * Fix infinite recursion in `Octree` when the number of identical points
+   exceeds `maxLeafSize` (#4020).
+
 ## mlpack 4.6.2
 
 _2025-05-22_
