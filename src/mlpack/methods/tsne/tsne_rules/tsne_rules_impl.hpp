@@ -17,8 +17,8 @@
 
 namespace mlpack {
 
-template <typename DistanceType, typename TreeType, typename MatType>
-TSNERules<DistanceType, TreeType, MatType>::TSNERules(
+template <typename MatType>
+TSNERules<MatType>::TSNERules(
     double& sumQ,
     MatType& negF,
     const MatType& embedding,
@@ -31,8 +31,8 @@ TSNERules<DistanceType, TreeType, MatType>::TSNERules(
   /* Nothing To Do Here */
 }
 
-template <typename DistanceType, typename TreeType, typename MatType>
-double TSNERules<DistanceType, TreeType, MatType>::BaseCase(
+template <typename MatType>
+double TSNERules<MatType>::BaseCase(
     const size_t queryIndex, const size_t referenceIndex)
 {
   const VecType& queryPoint = embedding.col(oldFromNew[queryIndex]);
@@ -52,8 +52,9 @@ double TSNERules<DistanceType, TreeType, MatType>::BaseCase(
   return distanceSq;
 }
 
-template <typename DistanceType, typename TreeType, typename MatType>
-double TSNERules<DistanceType, TreeType, MatType>::Score(
+template <typename MatType>
+template <typename TreeType>
+double TSNERules<MatType>::Score(
     const size_t queryIndex, TreeType& referenceNode)
 {
   const VecType& queryPoint = embedding.col(oldFromNew[queryIndex]);
@@ -70,8 +71,8 @@ double TSNERules<DistanceType, TreeType, MatType>::Score(
       q = std::pow(q, (1.0 + dof) / 2.0);
 
     sumQ += referenceNode.NumDescendants() * q;
-    negF.col(oldFromNew[queryIndex]) += referenceNode.NumDescendants() * q *
-                                        q * (queryPoint - referencePoint);
+    negF.col(oldFromNew[queryIndex]) += q * q *
+        referenceNode.NumDescendants() * (queryPoint - referencePoint);
     return DBL_MAX;
   }
   else
@@ -80,15 +81,17 @@ double TSNERules<DistanceType, TreeType, MatType>::Score(
   }
 }
 
-template <typename DistanceType, typename TreeType, typename MatType>
-double TSNERules<DistanceType, TreeType, MatType>::Rescore(
+template <typename MatType>
+template <typename TreeType>
+double TSNERules<MatType>::Rescore(
     const size_t queryIndex, TreeType& referenceNode, const double oldScore)
 {
   return oldScore;
 }
 
-template <typename DistanceType, typename TreeType, typename MatType>
-double TSNERules<DistanceType, TreeType, MatType>::Score(
+template <typename MatType>
+template <typename TreeType>
+double TSNERules<MatType>::Score(
     TreeType& queryNode, TreeType& referenceNode)
 {
   const VecType& queryPoint = queryNode.Stat().Centroid();
@@ -96,8 +99,8 @@ double TSNERules<DistanceType, TreeType, MatType>::Score(
   const double distanceSq = std::max(
       arma::datum::eps, DistanceType::Evaluate(queryPoint, referencePoint));
 
-  const double diameterSq = std::max(queryNode.Bound().Diameter(),
-                                   referenceNode.Bound().Diameter());
+  const double diameterSq = std::max(
+      queryNode.Bound().Diameter(), referenceNode.Bound().Diameter());
   const double score = diameterSq / distanceSq;
   if (score < theta * theta)
   {
@@ -108,15 +111,13 @@ double TSNERules<DistanceType, TreeType, MatType>::Score(
     sumQ += queryNode.NumDescendants() * referenceNode.NumDescendants() * q;
     for (size_t i = 0; i < queryNode.NumDescendants(); i++)
     {
-      negF.col(oldFromNew[queryNode.Descendant(i)]) +=
-          referenceNode.NumDescendants() * q * q *
-          (queryPoint - referencePoint);
+      negF.col(oldFromNew[queryNode.Descendant(i)]) += q * q *
+          referenceNode.NumDescendants() * (queryPoint - referencePoint);
     }
     for (size_t i = 0; i < referenceNode.NumDescendants(); i++)
     {
-      negF.col(oldFromNew[referenceNode.Descendant(i)]) +=
-          queryNode.NumDescendants() * q * q *
-          (referencePoint - queryPoint);
+      negF.col(oldFromNew[referenceNode.Descendant(i)]) +=  q * q *
+          queryNode.NumDescendants() * (referencePoint - queryPoint);
     }
 
     return DBL_MAX;
@@ -127,8 +128,9 @@ double TSNERules<DistanceType, TreeType, MatType>::Score(
   }
 }
 
-template <typename DistanceType, typename TreeType, typename MatType>
-double TSNERules<DistanceType, TreeType, MatType>::Rescore(
+template <typename MatType>
+template <typename TreeType>
+double TSNERules<MatType>::Rescore(
     TreeType& queryNode, TreeType& referenceNode, const double oldScore)
 {
   return oldScore;

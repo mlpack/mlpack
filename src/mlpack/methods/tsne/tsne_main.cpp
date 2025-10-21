@@ -45,7 +45,16 @@ BINDING_LONG_DESC(
     "points in the map.");
 
 // Example.
-// BINDING_EXAMPLE("");
+BINDING_EXAMPLE(
+  "For example, to reduce " + PRINT_DATASET("data") + " to two dimensions "
+  "using the Barnes–Hut method with PCA initialization, automatic step size"
+  ", a theta value of 0.5, a perplexity of 30, an exaggeration of 12, and a"
+  " maximum of 500 iterations, and to save the resulting embedding to " +
+  PRINT_DATASET("data_mod") + ", use the following command: \n\n" +
+  PRINT_CALL("tsne","input", "data", "output_dimensions", 2, "method",
+    "barnes_hut", "init", "pca", "step_size", 0.0, "theta", 0.5,
+    "perplexity", 30.0, "exaggeration", 12.0, "max_iterations", 500,
+    "output", "data_mod"));
 
 // See also...
 BINDING_SEE_ALSO("t-distributed Stochastic Neighbor Embedding on Wikipedia",

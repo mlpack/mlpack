@@ -13,43 +13,43 @@
 #ifndef MLPACK_METHODS_TSNE_TSNE_RULES_TSNE_RULES_HPP
 #define MLPACK_METHODS_TSNE_TSNE_RULES_TSNE_RULES_HPP
 
-#include <mlpack/core/tree/octree/octree.hpp>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/tree/octree.hpp>
 #include <mlpack/core/tree/hrectbound.hpp>
-#include <mlpack/core/distances/lmetric.hpp>
+#include <mlpack/core/tree/octree/octree.hpp>
 #include <mlpack/core/tree/traversal_info.hpp>
+#include <mlpack/core/distances/lmetric.hpp>
 
-#include "../centroid_statistic.hpp"
+#include "./tsne_centroid_statistic.hpp"
 
 namespace mlpack {
 
 /**
- * Traversal rules for approximating the t-SNE gradient (repulsive term).
+ * Traversal rules for approximating the t-SNE gradient (negative term).
  * This class supports both single and dual-tree traversers:
  * - With a single-tree traverser, it performs the Barnes-Hut approximation.
  * - With a dual-tree traverser, it performs the dual-tree approximation.
  *
- * Refer to "Accelerating t-SNE using Tree-Based Algorithms" for details.
+ * See "Accelerating t-SNE using Tree-Based Algorithms" for more details.
  *
  * @tparam DistanceType The distance metric to use for computation.
  * @tparam TreeType The tree type to use.
  * @tparam MatType The type of Matrix.
  */
-template <typename DistanceType = SquaredEuclideanDistance,
-          typename TreeType = Octree<DistanceType, CentroidStatistic>,
-          typename MatType = arma::mat>
+template <typename MatType = arma::mat>
 class TSNERules
 {
  public:
   // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
   using VecType = typename GetColType<MatType>::type;
+  using DistanceType = SquaredEuclideanDistance;
 
   /**
    * Constructs TSNERules object.
    *
    * @param sumQ denominator term for the negative force.
-   * @param negF nominator term for the negative force.
+   * @param negF nominator terms for the negative force.
    * @param embedding low dimentional embedding matrix.
    * @param oldFromNew mapping form previous to new order of points.
    * @param dof Degrees of freedom calculated as max(1, input_dims - 1).
@@ -93,6 +93,7 @@ class TSNERules
    * @param queryIndex Index of query point.
    * @param referenceNode Candidate node to be recursed into.
    */
+  template <typename TreeType>
   double Score(const size_t queryIndex, TreeType& referenceNode);
 
   /**
@@ -102,6 +103,7 @@ class TSNERules
    * @param referenceNode Candidate node to be recursed into.
    * @param oldScore Old score produced by Score() (or Rescore()).
    */
+  template <typename TreeType>
   double Rescore(const size_t queryIndex,
                  TreeType& referenceNode,
                  const double oldScore);
@@ -132,6 +134,7 @@ class TSNERules
    * @param queryNode Candidate query node to recurse into.
    * @param referenceNode Candidate reference node to recurse into.
    */
+  template <typename TreeType>
   double Score(TreeType& queryNode, TreeType& referenceNode);
 
   /**
@@ -142,12 +145,13 @@ class TSNERules
    * @param referenceNode Candidate reference node to recurse into.
    * @param oldScore Old score produced by Score() (or Rescore()).
    */
+  template <typename TreeType>
   double Rescore(TreeType& queryNode,
                  TreeType& referenceNode,
                  const double oldScore);
 
   //! Traversal information class for the dual-tree traversals
-  using TraversalInfoType = mlpack::TraversalInfo<TreeType>;
+  class TraversalInfoType { /* Nothing To Do Here */ };
 
   //! Get the traversal info.
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }

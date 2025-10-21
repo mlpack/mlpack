@@ -12,6 +12,7 @@
 #ifndef MLPACK_METHODS_TSNE_TSNE_UTILS_HPP
 #define MLPACK_METHODS_TSNE_TSNE_UTILS_HPP
 
+#include <limits>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
 
@@ -34,10 +35,10 @@ namespace mlpack {
  * @tparam SpVecType Sparse vector type (defaults to arma::SpCol<eT>).
  *
  * @param perplexity Desired perplexity (controls the bandwidth search).
- * @param D A k x n matrix containing distances from each point to its k
- *     nearest neighbors (row i contains distances for neighbors of i).
  * @param N A k x n matrix containing the neighbor indices (row i lists
  *     the indices of the k nearest neighbors of point i in the dataset).
+ * @param D A k x n matrix containing distances from each point to its k
+ *     nearest neighbors (row i contains distances for neighbors of i).
  *
  * @return A sparse n x n matrix P containing the joint probabilities.
  */
@@ -47,8 +48,8 @@ template <typename eT,
           typename VecType = arma::Col<eT>,
           typename SpVecType = arma::SpCol<eT>>
 SpMatType computeInputJointProbabilities(const double perplexity,
-                                         const arma::Mat<eT>& D,
-                                         const arma::Mat<size_t>& N)
+                                         const arma::Mat<size_t>& N,
+                                         const arma::Mat<eT>& D)
 {
   const size_t maxSteps = 100;
   const double tolerance = 1e-5;
@@ -82,7 +83,7 @@ SpMatType computeInputJointProbabilities(const double perplexity,
         sumP += Pi(N(j, i));
         sumDP += Di(j) * Pi(N(j, i));
       }
-      sumP = std::max(sumP, arma::datum::eps);
+      sumP = std::max(arma::datum::eps, sumP);
       hApprox = std::log(sumP) + beta(i) * sumDP / sumP;
       Pi /= sumP;
 
@@ -112,7 +113,6 @@ SpMatType computeInputJointProbabilities(const double perplexity,
       Log::Warn << "Max Steps Reached While Searching For Desired Perplexity"
                 << std::endl;
 
-    // To-Do: Verify for thread-safty
     for (size_t j = 0; j < k; ++j)
       P(i, N(j, i)) = Pi(N(j, i));
   }
@@ -122,7 +122,7 @@ SpMatType computeInputJointProbabilities(const double perplexity,
   // Symmetrize and Normalize P
   P = P + P.t();
   // Probabilies already sum to n, after transposed addition they sum to 2n.
-  P /= std::max(arma::datum::eps, arma::accu(P));
+  P /= std::max(std::numeric_limits<eT>::epsilon(), arma::accu(P));
 
   return P;
 }
@@ -226,7 +226,7 @@ MatType computeInputJointProbabilities(const double perplexity,
   // Symmetrize and Normalize P
   P = P + P.t();
   // Probabilies already sum to n, after transposed addition they sum to 2n.
-  P /= std::max(arma::datum::eps, arma::accu(P));
+  P /= std::max(std::numeric_limits<eT>::epsilon(), arma::accu(P));
 
   return P;
 }

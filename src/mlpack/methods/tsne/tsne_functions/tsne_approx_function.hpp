@@ -2,7 +2,7 @@
  * @file methods/tsne/tsne_function/tsne_approx_function.hpp
  * @author Ranjodh Singh
  *
- * t-SNE Approx Function
+ * t-SNE Approx Function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -12,15 +12,17 @@
 #ifndef MLPACK_METHODS_TSNE_TSNE_FUNCTIONS_TSNE_APPROX_FUNCTION_HPP
 #define MLPACK_METHODS_TSNE_TSNE_FUNCTIONS_TSNE_APPROX_FUNCTION_HPP
 
+#include <mlpack/core/tree/octree/octree.hpp>
+#include <mlpack/core/util/arma_traits.hpp>
 #include <omp.h>
 #include <armadillo>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/tree/octree.hpp>
 #include <mlpack/core/distances/lmetric.hpp>
 #include <mlpack/methods/neighbor_search.hpp>
+#include <type_traits>
 
 #include "../tsne_utils.hpp"
-#include "../centroid_statistic.hpp"
 #include "../tsne_rules/tsne_rules.hpp"
 
 namespace mlpack {
@@ -37,19 +39,21 @@ namespace mlpack {
  * @tparam UseDualTree Indicates whether the traversal is dual (true) or
            single (false). Allows both barnes-hut and dual-tree approximations
            to be handled in one class.
+ * @tparam DistanceType The distance metric to use for computation.
  * @tparam MatType The type of Matrix.
  */
 template <bool UseDualTree,
           typename DistanceType = SquaredEuclideanDistance,
-          typename TreeType = Octree<DistanceType, CentroidStatistic>,
           typename MatType = arma::mat>
 class TSNEApproxFunction
 {
  public:
   // Convenience typedefs.
   using ElemType = typename MatType::elem_type;
+  using VecType = typename GetColType<MatType>::type;
   using SpMatType = typename GetSparseMatType<MatType>::type;
-  using RuleType = TSNERules<DistanceType, TreeType, MatType>;
+  using RuleType = TSNERules<MatType>;
+  using TreeType = Octree<SquaredEuclideanDistance, CentroidStatistic>;
 
   /**
    * Constructs the TSNEApproxFunction object.
@@ -62,19 +66,7 @@ class TSNEApproxFunction
   TSNEApproxFunction(const MatType& X,
                      const double perplexity,
                      const size_t dof,
-                     const double theta = 0.5)
-      : perplexity(perplexity), dof(dof), theta(theta)
-  {
-    // Run KNN
-    // To Do: Make number of neighbors a parameter
-    NeighborSearch<NearestNeighborSort, DistanceType> knn(X);
-    const size_t neighbors = std::min<size_t>(X.n_cols - 1,
-                                 static_cast<size_t>(3 * perplexity));
-    knn.Search(neighbors, N, D);
-
-    // Precompute P
-    P = computeInputJointProbabilities(perplexity, D, N);
-  }
+                     const double theta = 0.5);
 
   /**
    * EvaluateWithGradient for differentiable function optimizers
@@ -85,76 +77,50 @@ class TSNEApproxFunction
    * @param g Variable to store the new gradient.
    */
   template <typename GradType>
-  double EvaluateWithGradient(const MatType& y, GradType& g)
-  {
-    // Init Tree
-    double sumQ = 0.0;
-    std::vector<size_t> oldFromNew;
-    TreeType tree(y, oldFromNew);
+  double EvaluateWithGradient(const MatType& y, GradType& g);
 
-    // Negative Force Calculation
-    // TODO: There is still slight instability w.r.t num of threads here
-    if constexpr (!UseDualTree)
-    {
-      const size_t maxThreadCount = omp_get_max_threads();
-      std::vector<double> localSumQs(maxThreadCount);
+  /**
+   * Calculates the negative (repulsive) component of the gradient
+   * using dual tree approximation (enabled via tag dispatch).
+   * I will calculate the normalized negative gradient and subtract
+   * it from g and also return the normalization value.
+   *
+   * @param g Gradient matrix.
+   * @param y Embedding matrix
+   *
+   * @return The normalization value for the negative gradient.
+   */
+  double CalculateNegativeGradient(
+      MatType &g, const MatType& y, std::true_type /* tag */);
 
-      #pragma omp parallel
-      {
-        size_t threadId = 0;
-        #ifdef MLPACK_USE_OPENMP
-          threadId = omp_get_thread_num();
-        #endif
-        
-        RuleType rule(localSumQs[threadId], g, y, oldFromNew, dof, theta);
-        typename TreeType::SingleTreeTraverser traverser(rule);
+  /**
+   * Calculates the negative (repulsive) component of the gradient
+   * using barnes hut approximation (enabled via tag dispatch).
+   * I will calculate the normalized negative gradient and subtract
+   * it from g and also return the normalization value.
 
-        #pragma omp for schedule(static)
-        for (size_t i = 0; i < y.n_cols; i++)
-          traverser.Traverse(i, tree);
-      }
+   * @param g Gradient matrix.
+   * @param y Embedding matrix.
+   *
+   * @return The normalization value for the negative gradient.
+   */
+  double CalculateNegativeGradient(
+      MatType &g, const MatType& y, std::false_type /* tag */);
 
-      sumQ = std::accumulate(localSumQs.begin(), localSumQs.end(), 0.0);
-    }
-    else
-    {
-      RuleType rule(sumQ, g, y, oldFromNew, dof, theta);
-      typename TreeType::DualTreeTraverser traverser(rule);
-      traverser.Traverse(tree, tree);
-    }
-    sumQ = std::max(arma::datum::eps, sumQ);
-    g /= -sumQ;
-
-    // Positive Force Calculation
-    const size_t maxThreadCount = omp_get_max_threads();
-    std::vector<double> localErrors(maxThreadCount);
-    
-    #pragma omp parallel for schedule(static)
-    for (size_t i = 0; i < y.n_cols; i++)
-    {
-      size_t threadId = 0;
-      #ifdef MLPACK_USE_OPENMP
-        threadId = omp_get_thread_num();
-      #endif
-
-      for (size_t j = 0; j < N.n_rows; j++)
-      {
-        const size_t idx = N(j, i);
-        const double distanceSq = DistanceType::Evaluate(y.col(i), y.col(idx));
-        double q = (double)dof / (dof + distanceSq);
-        if (dof != 1)
-          q = std::pow<double>(q, (1.0 + dof) / 2.0);
-
-        g.col(i) += q * P(i, idx) * (y.col(i) - y.col(idx));
-        localErrors[threadId] += P(i, idx) *
-                 std::log(std::max<double>(arma::datum::eps, P(i, idx)) /
-                          std::max<double>(arma::datum::eps, q / sumQ));
-      }
-    }
-    g *= 2.0 * (1.0 + dof) / dof;
-
-    return std::accumulate(localErrors.begin(), localErrors.end(), 0.0);
-  }
+  /**
+   * Calculates the positive (attractive) component of the gradient
+   * and adds it to the total gradient.
+   * It will calculate the positive gradient term and add it to g.
+   * and also return the kl divergence value.
+   *
+   * @param g Matrix to store the positive gradient.
+   * @param y Current embedding.
+   * @param sumQ The normalization value for the negative gradient.
+   *
+   * @return The KL Divergence Value.
+   */
+  double CalculatePositiveGradient(
+    MatType &g, const MatType& y, const double sumQ);
 
   //! Get the Input Joint Probabilities.
   const SpMatType& InputJointProbabilities() const { return P; }
@@ -182,5 +148,8 @@ class TSNEApproxFunction
 };
 
 } // namespace mlpack
+
+// Include implementation.
+#include "./tsne_approx_function_impl.hpp"
 
 #endif // MLPACK_METHODS_TSNE_TSNE_FUNCTIONS_TSNE_APPROX_FUNCTION_HPP

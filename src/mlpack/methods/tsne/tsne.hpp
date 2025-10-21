@@ -130,9 +130,22 @@ class TSNE
    *
    * @param X The input data. (input_dimensions X N)
    * @param Y The output embedding. (output_dimensions X N)
+   *
+   * @return Final Objective Value. (KL Divergence)
    */
   template <typename MatType = arma::mat>
-  void Embed(const MatType& X, MatType& Y);
+  double Embed(const MatType& X, MatType& Y);
+
+  /**
+   * Initialize the output embedding using pca or randomly.
+   * Output embedding once initialized will have a stddev of 1e-4.
+   * See "The art of using t-SNE for single-cell transcriptomics".
+   * 
+   * @param X The input data. (input_dimensions X N)
+   * @param Y The output embedding. (output_dimensions X N)
+   */
+  template <typename MatType = arma::mat>
+  void InitializeEmbedding(const MatType& X, MatType& Y);
 
   //! Get the number of output dimensions.
   size_t OutputDimensions() const { return outputDims; }
@@ -185,7 +198,7 @@ class TSNE
   //! The maximum number of iterations.
   size_t maxIter;
 
-  //! Initialization method ("pca", "random", ...).
+  //! Initialization method ("pca" or "random").
   std::string init;
 
   //! The coarseness of the approximation.
