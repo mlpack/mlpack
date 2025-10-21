@@ -750,7 +750,9 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
     endif()
   endif()
 
-  find_openmp()
+  if (NOT MLPACK_DISABLE_OPENMP)
+    find_openmp()
+  endif ()
 
 endmacro()
 
