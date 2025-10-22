@@ -75,7 +75,7 @@ TEST_CASE("CartPoleWithDQNPrioritizedReplay", "[QLearningTest][long]")
 }
 
 //! Test Double DQN in Cart Pole task.
-TEST_CASE("CartPoleWithDoubleDQN", "[QLearningTest]")
+TEST_CASE("CartPoleWithDoubleDQN", "[QLearningTest][tiny]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights. If this works 1 of 4 times, I'm fine

@@ -154,7 +154,7 @@ TEST_CASE("TestFindSplit", "[DETTest]")
   REQUIRE(trueRightError == Approx(obRightError).epsilon(1e-12));
 }
 
-TEST_CASE("TestSplitData", "[DETTest]")
+TEST_CASE("TestSplitData", "[DETTest][tiny]")
 {
   arma::mat testData(3, 5);
 

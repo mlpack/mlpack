@@ -29,7 +29,7 @@ using namespace mlpack::util;
  * Test the output of IO using PrefixedOutStream.  We will pass bogus
  * input to a stringstream so that none of it gets to the screen.
  */
-TEST_CASE("TestPrefixedOutStreamBasic", "[PrefixedOutStreamTest]")
+TEST_CASE("TestPrefixedOutStreamBasic", "[PrefixedOutStreamTest][tiny]")
 {
   std::stringstream ss;
   PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR);

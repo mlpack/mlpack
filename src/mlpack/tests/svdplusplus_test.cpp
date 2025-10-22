@@ -17,7 +17,7 @@
 
 using namespace mlpack;
 
-TEST_CASE("SVDPlusPlusEvaluate", "[SVDPlusPlusTest]")
+TEST_CASE("SVDPlusPlusEvaluate", "[SVDPlusPlusTest][tiny]")
 {
   // Define useful constants.
   const size_t numUsers = 100;

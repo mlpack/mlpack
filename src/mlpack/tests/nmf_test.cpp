@@ -22,7 +22,7 @@ using namespace mlpack;
  * Check the if the product of the calculated factorization is close to the
  * input matrix. Default case.
  */
-TEST_CASE("NMFDefaultTest", "[NMFTest]")
+TEST_CASE("NMFDefaultTest", "[NMFTest][tiny]")
 {
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);

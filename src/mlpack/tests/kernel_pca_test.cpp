@@ -85,7 +85,7 @@ TEST_CASE("CircleTransformationTestNaive", "[KernelPCATest]")
  * If KernelPCA is working right, then it should turn a circle dataset into a
  * linearly separable dataset in one dimension (which is easy to check).
  */
-TEST_CASE("CircleTransformationTestNystroem", "[KernelPCATest]")
+TEST_CASE("CircleTransformationTestNystroem", "[KernelPCATest][tiny]")
 {
   // The dataset, which will have three concentric rings in three dimensions.
   arma::mat dataset;

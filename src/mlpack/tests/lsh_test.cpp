@@ -484,7 +484,7 @@ TEST_CASE("DeterministicNoMerge", "[LSHTest]")
  * with increasing number of probes. Also require that at least a few times
  * there's some increase in recall.
  */
-TEST_CASE("MultiprobeTest", "[LSHTest]")
+TEST_CASE("MultiprobeTest", "[LSHTest][tiny]")
 {
   // Test parameters.
   const double epsilonIncrease = 0.01;

@@ -253,7 +253,7 @@ TEST_CASE("SingleDatasetSingleSearch", "[KRANNTest]")
 
 // Test rank-approximate search with just a single dataset in dual-tree mode.
 // These tests just ensure that the method runs okay.
-TEST_CASE("SingleDatasetSearch", "[KRANNTest]")
+TEST_CASE("SingleDatasetSearch", "[KRANNTest][tiny]")
 {
   arma::mat dataset(5, 2500);
   dataset.randn();
@@ -271,7 +271,7 @@ TEST_CASE("SingleDatasetSearch", "[KRANNTest]")
 }
 
 // Test single-tree rank-approximate search with cover trees.
-TEST_CASE("SingleCoverTreeTest", "[KRANNTest]")
+TEST_CASE("SingleCoverTreeTest", "[KRANNTest][tiny]")
 {
   arma::mat refData;
   arma::mat queryData;

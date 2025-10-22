@@ -116,7 +116,7 @@ void CheckMoveFunction(ModelType* network1,
 /**
  * Check whether copying and moving Vanila network is working or not.
  */
-TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
+TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest][tiny]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -813,7 +813,7 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
 /**
  * Test that FFN::Train() returns finite objective value.
  */
-TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest]")
+TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest][tiny]")
 {
   // Load the dataset.
   arma::mat trainData;

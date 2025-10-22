@@ -341,7 +341,7 @@ TEST_CASE("SELUFunctionDerivativeTest", "[ActivationFunctionsTest]")
 /**
  * Basic test of the tanh function.
  */
-TEST_CASE("TanhFunctionTest", "[ActivationFunctionsTest]")
+TEST_CASE("TanhFunctionTest", "[ActivationFunctionsTest][tiny]")
 {
   const arma::colvec desiredActivations("-0.96402758 0.9966824 0.99975321 -1 "
                                         "0.76159416 -0.76159416 0.96402758 0");
@@ -404,7 +404,7 @@ TEST_CASE("SoftsignFunctionTest", "[ActivationFunctionsTest]")
 /**
  * Basic test of the identity function.
  */
-TEST_CASE("IdentityFunctionTest", "[ActivationFunctionsTest]")
+TEST_CASE("IdentityFunctionTest", "[ActivationFunctionsTest][tiny]")
 {
   const arma::colvec desiredDerivatives = arma::ones<arma::colvec>(
       activationData.n_elem);
@@ -435,7 +435,7 @@ TEST_CASE("RectifierFunctionTest", "[ActivationFunctionsTest]")
 /**
  * Basic test of the LeakyReLU function.
  */
-TEST_CASE("LeakyReLUFunctionTest", "[ActivationFunctionsTest]")
+TEST_CASE("LeakyReLUFunctionTest", "[ActivationFunctionsTest][tiny]")
 {
   const arma::colvec desiredActivations("-0.06 3.2 4.5 -3.006 "
                                         "1 -0.03 2 0");

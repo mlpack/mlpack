@@ -120,7 +120,7 @@ TEST_CASE("KDETreeAsArguments", "[KDETest]")
 /**
  * Test dual-tree implementation results against brute force results.
  */
-TEST_CASE("GaussianKDEBruteForceTest", "[KDETest]")
+TEST_CASE("GaussianKDEBruteForceTest", "[KDETest][tiny]")
 {
   arma::mat reference = arma::randu(2, 200);
   arma::mat query = arma::randu(2, 60);
@@ -151,7 +151,7 @@ TEST_CASE("GaussianKDEBruteForceTest", "[KDETest]")
 /**
  * Test single-tree implementation results against brute force results.
  */
-TEST_CASE("GaussianSingleKDEBruteForceTest", "[KDETest]")
+TEST_CASE("GaussianSingleKDEBruteForceTest", "[KDETest][tiny]")
 {
   arma::mat reference = arma::randu(2, 300);
   arma::mat query = arma::randu(2, 100);

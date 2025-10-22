@@ -23,7 +23,7 @@ using namespace arma;
  * Test for convergence of incomplete incremenal learning.
  */
 TEMPLATE_TEST_CASE("SVDIncompleteIncrementalConvergenceTest",
-    "[SVDIncrementalTest]", float, double)
+    "[SVDIncrementalTest][tiny]", float, double)
 {
   using eT = TestType;
 
@@ -51,7 +51,7 @@ TEMPLATE_TEST_CASE("SVDIncompleteIncrementalConvergenceTest",
  * Test for convergence of complete incremenal learning
  */
 TEMPLATE_TEST_CASE("SVDCompleteIncrementalConvergenceTest",
-    "[SVDIncrementalTest]", float, double)
+    "[SVDIncrementalTest][tiny]", float, double)
 {
   using eT = TestType;
 

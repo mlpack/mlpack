@@ -279,7 +279,7 @@ TEST_CASE("LinearRegressionTrainReturnObjective", "[LinearRegressionTest]")
  * Make sure all versions of Train() work correctly.
  */
 TEMPLATE_TEST_CASE("LinearRegressionAllTrainVersionsTest",
-    "[LinearRegressionTest]", arma::fmat, arma::mat)
+    "[LinearRegressionTest][tiny]", arma::fmat, arma::mat)
 {
   using MatType = TestType;
   using RowType = arma::Row<typename MatType::elem_type>;

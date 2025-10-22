@@ -16,7 +16,8 @@
 using namespace mlpack;
 using namespace std;
 
-TEMPLATE_TEST_CASE("Radical_Test_Radical3D", "[RadicalTest]", float, double)
+TEMPLATE_TEST_CASE("Radical_Test_Radical3D", "[RadicalTest][tiny]", float,
+    double)
 {
   using ElemType = TestType;
   using VecType = arma::Col<ElemType>;

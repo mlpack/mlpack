@@ -28,7 +28,7 @@ using namespace mlpack;
  * file "completion_indices.csv". Recovery was verified by solving the SDP with
  * Mosek.
  */
-TEST_CASE("UniformMatrixCompletionSDP", "[MatrixCompletionTest]")
+TEST_CASE("UniformMatrixCompletionSDP", "[MatrixCompletionTest][tiny]")
 {
   arma::mat Xorig, values;
   arma::umat indices;

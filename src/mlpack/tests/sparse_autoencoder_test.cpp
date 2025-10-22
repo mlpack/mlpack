@@ -17,7 +17,7 @@
 
 using namespace mlpack;
 
-TEST_CASE("SparseAutoencoderFunctionEvaluate", "[SparseAutoencoderTest]")
+TEST_CASE("SparseAutoencoderFunctionEvaluate", "[SparseAutoencoderTest][tiny]")
 {
   const size_t vSize = 5;
   const size_t hSize = 3;
