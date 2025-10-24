@@ -69,9 +69,9 @@ namespace mlpack {
  */
 template <
     typename MatType = arma::mat,
-    typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
-    typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
-    typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>
+    typename ForwardConvolutionRule = Im2ColConvolution<ValidConvolution>,
+    typename BackwardConvolutionRule = Im2ColConvolution<FullConvolution>,
+    typename GradientConvolutionRule = Im2ColConvolution<ValidConvolution>
 >
 class GroupedConvolution : public Layer<MatType>
 {
