@@ -14,8 +14,7 @@
 #define MLPACK_METHODS_ANN_CONVOLUTION_RULES_CONVOLUTION_RULES_HPP
 
 #include "border_modes.hpp"
-#include "fft_convolution.hpp"
 #include "naive_convolution.hpp"
-#include "svd_convolution.hpp"
+#include "im2col_convolution.hpp"
 
 #endif

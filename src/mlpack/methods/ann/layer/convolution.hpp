@@ -16,8 +16,7 @@
 
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
-#include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
-#include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
+#include <mlpack/methods/ann/convolution_rules/im2col_convolution.hpp>
 #include <mlpack/core/util/to_lower.hpp>
 
 #include "layer.hpp"
@@ -66,9 +65,9 @@ namespace mlpack {
  */
 template <
     typename MatType = arma::mat,
-    typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
-    typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
-    typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>
+    typename ForwardConvolutionRule = Im2ColConvolution<ValidConvolution>,
+    typename BackwardConvolutionRule = Im2ColConvolution<FullConvolution>,
+    typename GradientConvolutionRule = Im2ColConvolution<ValidConvolution>
 >
 class Convolution : public Layer<MatType>
 {
