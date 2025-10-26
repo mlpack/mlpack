@@ -80,6 +80,8 @@ cmake \
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | POWERPCG4 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_powerpc-440fp.html)   | [Sysroot and toolchain prefix](#powerpcg4) |[Power Mac G4 Cube](https://en.wikipedia.org/wiki/Power_Mac_G4_Cube), [BAE RAD750](https://en.wikipedia.org/wiki/RAD750) |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ULTRASPARC | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_sparc64.html)   | [Sysroot and toolchain prefix](#ultrasparc) |[UltraSPARC on Wikipedia](https://en.wikipedia.org/wiki/UltraSPARC)        |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 If you didn't see your architecture in the table above, use the closest
 architecture with a similar word size, or, adapt the parameters directly in
@@ -196,4 +198,11 @@ the new architecture added to this table.
 ```
 -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/powerpc-440fp--glibc--stable-2024.02-1/bin/powerpc-buildroot-linux-gnu-
 -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/powerpc-440fp--glibc--stable-2024.02-1/powerpc-buildroot-linux-gnu/sysroot
+```
+
+### ULTRASPARC
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/sparc64--glibc--stable-2024.05-1/bin/sparc64-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/sparc64--glibc--stable-2024.05-1/sparc64-buildroot-linux-gnu/sysroot
 ```

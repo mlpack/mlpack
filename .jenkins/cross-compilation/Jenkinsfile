@@ -7,13 +7,21 @@ arch_names = ['couscous': 'CORTEXA76',
               'tofu':     'CORTEXA53',
               'chorizo':  'CORTEXA78',
               'tatertot': 'CORTEXA72',
-              'megakelvin': 'POWERPCG4']
+              'megakelvin': 'POWERPCG4',
+              'laziji': 'ULTRASPARC']
 
 device_names = ['couscous': 'rpi5',
                 'tofu': 'rpi3',
                 'chorizo': 'jetson-orin-nano',
                 'tatertot': 'beaglebone-ai64',
-                'megakelvin': 'mac-g4-cube']
+                'megakelvin': 'mac-g4-cube',
+                'laziji': 'sunblade-150']
+
+page_sizes = ['couscous': '0x4000' /* 16kb for RPi5s */,
+              'tatertot': '0x10000' /* 64kb */]
+
+extra_cmake_opts = ['tofu': '-DUSE_OPENMP=OFF' /* try not to overheat... */]
+
 
 page_sizes = ['couscous': '0x4000' /* 16kb for RPi5s */,
               'tatertot': '0x10000' /* 64kb */]
@@ -74,7 +82,8 @@ pipeline
           axis
           {
             name 'target'
-            values 'couscous', 'tofu', 'chorizo', 'tatertot', 'megakelvin'
+            values 'couscous', 'tofu', 'chorizo', 'tatertot', 'megakelvin',
+                   'laziji'
           }
         }
 
@@ -100,6 +109,7 @@ pipeline
               ARCH_NAME = "${arch_names[env.target]}"
               DEVICE_NAME = "${device_names[env.target]}"
               PAGE_SIZE = "${page_sizes[env.target] ?: ''}"
+              EXTRA_CMAKE_OPTS = "${extra_cmake_opts[env.target] ?: ''}"
               TEST_FILTERS = "${test_filters[env.target] ?: ''}"
               JUMP_HOST = "${jump_hosts[env.target] ?: ''}"
               OPENBLAS_EXTRA_FLAGS = "${openblas_extra_flags[env.target] ?: ''}"
@@ -117,7 +127,7 @@ pipeline
                 # If a custom page size is needed, set it.
                 if [ ! -z "$PAGE_SIZE" ];
                 then
-                  EXTRA_CXX_FLAGS="-Wl,-z,common-page-size=$PAGE_SIZE -Wl,-z,max-page-size=$PAGE_SIZE";
+                  EXTRA_CMAKE_OPTS="${EXTRA_CMAKE_OPTS} "'"-DCMAKE_CXX_FLAGS=\\"-Wl,-z,common-page-size='$PAGE_SIZE' -Wl,-z,max-page-size='$PAGE_SIZE'\\""';
                 fi
 
                 # Configure ccache.
@@ -140,7 +150,7 @@ pipeline
                     -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
                     -DDOWNLOAD_DEPENDENCIES=ON \
                     -DOPENBLAS_EXTRA_ARGS="NO_FORTRAN=1 DYNAMIC_ARCH=0 $OPENBLAS_EXTRA_FLAGS" \
-                    -DCMAKE_CXX_FLAGS="$EXTRA_CXX_FLAGS" \
+                    $EXTRA_CMAKE_OPTS \
                     ../
                 time make mlpack_test;
 
