@@ -33,6 +33,7 @@
 #include "image_layout.hpp"
 #include "image_options.hpp"
 #include "image_resize_crop.hpp"
+#include "image_letterbox.hpp"
 #include "imputer.hpp"
 #include "is_naninf.hpp"
 #include "matrix_options.hpp"
