@@ -324,7 +324,7 @@ TEST_CASE("KFNExhaustiveSyntheticTest", "[KFNTest]")
  *
  * Errors are produced if the results are not identical.
  */
-TEST_CASE("KFNDualTreeVsNaive1", "[KFNTest]")
+TEST_CASE("KFNDualTreeVsNaive1", "[KFNTest][tiny]")
 {
   arma::mat dataset;
 

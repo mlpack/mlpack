@@ -15,7 +15,7 @@
 
 using namespace mlpack;
 
-TEST_CASE("NaiveBayesClassifierTest", "[NBCTest]")
+TEST_CASE("NaiveBayesClassifierTest", "[NBCTest][tiny]")
 {
   const char* trainFilename = "trainSet.csv";
   const char* testFilename = "testSet.csv";

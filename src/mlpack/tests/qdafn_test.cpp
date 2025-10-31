@@ -58,7 +58,7 @@ TEST_CASE("QDAFNTrivialTest", "[QDAFNTest]")
  * distance within 10% of the actual true furthest neighbor distance at least
  * 70% of the time.
  */
-TEST_CASE("QDAFNUniformSet", "[QDAFNTest]")
+TEST_CASE("QDAFNUniformSet", "[QDAFNTest][tiny]")
 {
   arma::mat uniformSet = arma::randu<arma::mat>(25, 1000);
 

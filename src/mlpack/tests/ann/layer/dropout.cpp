@@ -55,7 +55,7 @@ TEST_CASE("SimpleDropoutLayerTest", "[ANNLayerTest]")
  * validate that the layer is producing approximately the correct number of
  * ones.
  */
-TEST_CASE("DropoutProbabilityTest", "[ANNLayerTest]")
+TEST_CASE("DropoutProbabilityTest", "[ANNLayerTest][tiny]")
 {
   arma::mat input = arma::ones(1500, 1);
   const size_t iterations = 10;

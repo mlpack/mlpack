@@ -22,7 +22,7 @@ using namespace std;
 /**
  * Make sure failure occurs when no extension given.
  */
-TEST_CASE("NoExtensionLoad", "[LoadSaveTest]")
+TEST_CASE("NoExtensionLoad", "[LoadSaveTest][tiny]")
 {
   arma::mat out;
   REQUIRE(data::Load("noextension", out) == false);
@@ -31,7 +31,7 @@ TEST_CASE("NoExtensionLoad", "[LoadSaveTest]")
 /**
  * Make sure failure occurs when no extension given.
  */
-TEST_CASE("NoExtensionSave", "[LoadSaveTest]")
+TEST_CASE("NoExtensionSave", "[LoadSaveTest][tiny]")
 {
   arma::mat out;
   REQUIRE(data::Save("noextension", out) == false);
@@ -40,7 +40,7 @@ TEST_CASE("NoExtensionSave", "[LoadSaveTest]")
 /**
  * Make sure load fails if the file does not exist.
  */
-TEST_CASE("NotExistLoad", "[LoadSaveTest]")
+TEST_CASE("NotExistLoad", "[LoadSaveTest][tiny]")
 {
   arma::mat out;
   REQUIRE(data::Load("nonexistentfile_______________.csv", out) == false);
@@ -49,7 +49,7 @@ TEST_CASE("NotExistLoad", "[LoadSaveTest]")
 /**
  * Make sure load fails if the file extension is wrong in automatic detection mode.
  */
-TEST_CASE("WrongExtensionWrongLoad", "[LoadSaveTest]")
+TEST_CASE("WrongExtensionWrongLoad", "[LoadSaveTest][tiny]")
 {
   // Try to load arma::arma_binary file with ".csv" extension
   arma::mat test = "1 5;"
@@ -70,7 +70,7 @@ TEST_CASE("WrongExtensionWrongLoad", "[LoadSaveTest]")
 /**
  * Make sure load is successful even if the file extension is wrong when file type is specified.
  */
-TEST_CASE("WrongExtensionCorrectLoad", "[LoadSaveTest]")
+TEST_CASE("WrongExtensionCorrectLoad", "[LoadSaveTest][tiny]")
 {
   // Try to load arma::arma_binary file with ".csv" extension
   arma::mat test = "1 5;"
@@ -99,7 +99,7 @@ TEST_CASE("WrongExtensionCorrectLoad", "[LoadSaveTest]")
 /**
  * Make sure a CSV is loaded correctly.
  */
-TEST_CASE("LoadCSVTest", "[LoadSaveTest]")
+TEST_CASE("LoadCSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -125,7 +125,7 @@ TEST_CASE("LoadCSVTest", "[LoadSaveTest]")
 /**
  * Make sure a TSV is loaded correctly to a sparse matrix.
  */
-TEST_CASE("LoadSparseTSVTest", "[LoadSaveTest]")
+TEST_CASE("LoadSparseTSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_sparse_file.tsv", fstream::out);
@@ -165,7 +165,7 @@ TEST_CASE("LoadSparseTSVTest", "[LoadSaveTest]")
 /**
  * Make sure a CSV in text format is loaded correctly to a sparse matrix.
  */
-TEST_CASE("LoadSparseTXTTest", "[LoadSaveTest]")
+TEST_CASE("LoadSparseTXTTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_sparse_file.txt", fstream::out);
@@ -204,7 +204,7 @@ TEST_CASE("LoadSparseTXTTest", "[LoadSaveTest]")
 /**
  * Make sure sparse coordinate list autodetection works.
  */
-TEST_CASE("LoadSparseAutodetectTest", "[LoadSaveTest]")
+TEST_CASE("LoadSparseAutodetectTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -233,7 +233,7 @@ TEST_CASE("LoadSparseAutodetectTest", "[LoadSaveTest]")
  * Make sure sparse coordinate list autodetection fails when the number of
  * columns is wrong.
  */
-TEST_CASE("LoadSparseAutodetectNotCoordinateListTest", "[LoadSaveTest]")
+TEST_CASE("LoadSparseAutodetectNotCoordinateListTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -263,7 +263,7 @@ TEST_CASE("LoadSparseAutodetectNotCoordinateListTest", "[LoadSaveTest]")
 /**
  * Make sure a TSV is loaded correctly.
  */
-TEST_CASE("LoadTSVTest", "[LoadSaveTest]")
+TEST_CASE("LoadTSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -289,7 +289,7 @@ TEST_CASE("LoadTSVTest", "[LoadSaveTest]")
 /**
  * Test TSV loading with .tsv extension.
  */
-TEST_CASE("LoadTSVExtensionTest", "[LoadSaveTest]")
+TEST_CASE("LoadTSVExtensionTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.tsv", fstream::out);
@@ -315,7 +315,7 @@ TEST_CASE("LoadTSVExtensionTest", "[LoadSaveTest]")
 /**
  * Test that we can manually specify the format for loading.
  */
-TEST_CASE("LoadAnyExtensionFileTest", "[LoadSaveTest]")
+TEST_CASE("LoadAnyExtensionFileTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.blah", fstream::out);
@@ -341,7 +341,7 @@ TEST_CASE("LoadAnyExtensionFileTest", "[LoadSaveTest]")
 /**
  * Make sure a CSV is saved correctly.
  */
-TEST_CASE("SaveCSVTest", "[LoadSaveTest]")
+TEST_CASE("SaveCSVTest", "[LoadSaveTest][tiny]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
@@ -367,7 +367,7 @@ TEST_CASE("SaveCSVTest", "[LoadSaveTest]")
 /**
  * Make sure a TXT is saved correctly for a sparse matrix
  */
-TEST_CASE("SaveSparseTXTTest", "[LoadSaveTest]")
+TEST_CASE("SaveSparseTXTTest", "[LoadSaveTest][tiny]")
 {
   arma::sp_mat test = "0.1 0 0 0;"
                       "0 0.2 0 0;"
@@ -402,7 +402,7 @@ TEST_CASE("SaveSparseTXTTest", "[LoadSaveTest]")
 /**
  * Make sure a Sparse Matrix is saved and loaded correctly in binary format
  */
-TEST_CASE("SaveSparseBinaryTest", "[LoadSaveTest]")
+TEST_CASE("SaveSparseBinaryTest", "[LoadSaveTest][tiny]")
 {
   arma::sp_mat test = "0.1 0 0 0;"
                       "0 0.2 0 0;"
@@ -437,7 +437,7 @@ TEST_CASE("SaveSparseBinaryTest", "[LoadSaveTest]")
 /**
  * Make sure CSVs can be loaded in transposed form.
  */
-TEST_CASE("LoadTransposedCSVTest", "[LoadSaveTest]")
+TEST_CASE("LoadTransposedCSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -463,7 +463,7 @@ TEST_CASE("LoadTransposedCSVTest", "[LoadSaveTest]")
 /**
  * Make sure ColVec can be loaded.
  */
-TEST_CASE("LoadColVecCSVTest", "[LoadSaveTest]")
+TEST_CASE("LoadColVecCSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -489,7 +489,7 @@ TEST_CASE("LoadColVecCSVTest", "[LoadSaveTest]")
 /**
  * Make sure we can load a transposed column vector.
  */
-TEST_CASE("LoadColVecTransposedCSVTest", "[LoadSaveTest]")
+TEST_CASE("LoadColVecTransposedCSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -516,7 +516,7 @@ TEST_CASE("LoadColVecTransposedCSVTest", "[LoadSaveTest]")
  * Make sure besides numeric data "quoted strings" or
  * 'quoted strings' in csv files are loaded correctly.
  */
-TEST_CASE("LoadQuotedStringInCSVTest", "[LoadSaveTest]")
+TEST_CASE("LoadQuotedStringInCSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -564,7 +564,7 @@ TEST_CASE("LoadQuotedStringInCSVTest", "[LoadSaveTest]")
  * Make sure besides numeric data "quoted strings" or
  * 'quoted strings' in txt files are loaded correctly.
  */
-TEST_CASE("LoadQuotedStringInTXTTest", "[LoadSaveTest]")
+TEST_CASE("LoadQuotedStringInTXTTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.txt", fstream::out);
@@ -606,7 +606,7 @@ TEST_CASE("LoadQuotedStringInTXTTest", "[LoadSaveTest]")
  * Make sure besides numeric data "quoted strings" or
  * 'quoted strings' in tsv files are loaded correctly.
  */
-TEST_CASE("LoadQuotedStringInTSVTest", "[LoadSaveTest]")
+TEST_CASE("LoadQuotedStringInTSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.tsv", fstream::out);
@@ -654,7 +654,7 @@ TEST_CASE("LoadQuotedStringInTSVTest", "[LoadSaveTest]")
  * Make sure Load() throws an exception when trying to load a matrix into a
  * colvec or rowvec.
  */
-TEST_CASE("LoadMatinVec", "[LoadSaveTest]")
+TEST_CASE("LoadMatinVec", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -681,7 +681,7 @@ TEST_CASE("LoadMatinVec", "[LoadSaveTest]")
 /**
  * Make sure that rowvecs can be loaded successfully.
  */
-TEST_CASE("LoadRowVecCSVTest", "[LoadSaveTest]")
+TEST_CASE("LoadRowVecCSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -708,7 +708,7 @@ TEST_CASE("LoadRowVecCSVTest", "[LoadSaveTest]")
 /**
  * Make sure that we can load transposed row vectors.
  */
-TEST_CASE("LoadRowVecTransposedCSVTest", "[LoadSaveTest]")
+TEST_CASE("LoadRowVecTransposedCSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -734,7 +734,7 @@ TEST_CASE("LoadRowVecTransposedCSVTest", "[LoadSaveTest]")
 /**
  * Make sure TSVs can be loaded in transposed form.
  */
-TEST_CASE("LoadTransposedTSVTest", "[LoadSaveTest]")
+TEST_CASE("LoadTransposedTSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -760,7 +760,7 @@ TEST_CASE("LoadTransposedTSVTest", "[LoadSaveTest]")
 /**
  * Check TSV loading with .tsv extension.
  */
-TEST_CASE("LoadTransposedTSVExtensionTest", "[LoadSaveTest]")
+TEST_CASE("LoadTransposedTSVExtensionTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.tsv", fstream::out);
@@ -786,7 +786,7 @@ TEST_CASE("LoadTransposedTSVExtensionTest", "[LoadSaveTest]")
 /**
  * Make sure CSVs can be loaded in non-transposed form.
  */
-TEST_CASE("LoadNonTransposedCSVTest", "[LoadSaveTest]")
+TEST_CASE("LoadNonTransposedCSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -812,7 +812,7 @@ TEST_CASE("LoadNonTransposedCSVTest", "[LoadSaveTest]")
 /**
  * Make sure CSVs can be saved in non-transposed form.
  */
-TEST_CASE("SaveNonTransposedCSVTest", "[LoadSaveTest]")
+TEST_CASE("SaveNonTransposedCSVTest", "[LoadSaveTest][tiny]")
 {
   arma::mat test = "1 2;"
                    "3 4;"
@@ -838,7 +838,7 @@ TEST_CASE("SaveNonTransposedCSVTest", "[LoadSaveTest]")
 /**
  * Make sure arma_ascii is loaded correctly.
  */
-TEST_CASE("LoadArmaASCIITest", "[LoadSaveTest]")
+TEST_CASE("LoadArmaASCIITest", "[LoadSaveTest][tiny]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
@@ -863,7 +863,7 @@ TEST_CASE("LoadArmaASCIITest", "[LoadSaveTest]")
 /**
  * Make sure a CSV is saved correctly.
  */
-TEST_CASE("SaveArmaASCIITest", "[LoadSaveTest]")
+TEST_CASE("SaveArmaASCIITest", "[LoadSaveTest][tiny]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
@@ -888,7 +888,7 @@ TEST_CASE("SaveArmaASCIITest", "[LoadSaveTest]")
 /**
  * Make sure raw_ascii is loaded correctly.
  */
-TEST_CASE("LoadRawASCIITest", "[LoadSaveTest]")
+TEST_CASE("LoadRawASCIITest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.txt", fstream::out);
@@ -914,7 +914,7 @@ TEST_CASE("LoadRawASCIITest", "[LoadSaveTest]")
 /**
  * Make sure CSV is loaded correctly as .txt.
  */
-TEST_CASE("LoadCSVTxtTest", "[LoadSaveTest]")
+TEST_CASE("LoadCSVTxtTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.txt", fstream::out);
@@ -940,7 +940,7 @@ TEST_CASE("LoadCSVTxtTest", "[LoadSaveTest]")
 /**
  * Make sure arma_binary is loaded correctly.
  */
-TEST_CASE("LoadArmaBinaryTest", "[LoadSaveTest]")
+TEST_CASE("LoadArmaBinaryTest", "[LoadSaveTest][tiny]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
@@ -967,7 +967,7 @@ TEST_CASE("LoadArmaBinaryTest", "[LoadSaveTest]")
 /**
  * Make sure arma_binary is saved correctly.
  */
-TEST_CASE("SaveArmaBinaryTest", "[LoadSaveTest]")
+TEST_CASE("SaveArmaBinaryTest", "[LoadSaveTest][tiny]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
@@ -991,7 +991,7 @@ TEST_CASE("SaveArmaBinaryTest", "[LoadSaveTest]")
 /**
  * Make sure that we can manually specify the format.
  */
-TEST_CASE("SaveArmaBinaryArbitraryExtensionTest", "[LoadSaveTest]")
+TEST_CASE("SaveArmaBinaryArbitraryExtensionTest", "[LoadSaveTest][tiny]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
@@ -1017,7 +1017,7 @@ TEST_CASE("SaveArmaBinaryArbitraryExtensionTest", "[LoadSaveTest]")
 /**
  * Make sure raw_binary is loaded correctly.
  */
-TEST_CASE("LoadRawBinaryTest", "[LoadSaveTest]")
+TEST_CASE("LoadRawBinaryTest", "[LoadSaveTest][tiny]")
 {
   arma::mat test = "1 2;"
                    "3 4;"
@@ -1044,7 +1044,7 @@ TEST_CASE("LoadRawBinaryTest", "[LoadSaveTest]")
 /**
  * Make sure load as PGM is successful.
  */
-TEST_CASE("LoadPGMBinaryTest", "[LoadSaveTest]")
+TEST_CASE("LoadPGMBinaryTest", "[LoadSaveTest][tiny]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
@@ -1071,7 +1071,7 @@ TEST_CASE("LoadPGMBinaryTest", "[LoadSaveTest]")
 /**
  * Make sure save as PGM is successful.
  */
-TEST_CASE("SavePGMBinaryTest", "[LoadSaveTest]")
+TEST_CASE("SavePGMBinaryTest", "[LoadSaveTest][tiny]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
@@ -1097,7 +1097,7 @@ TEST_CASE("SavePGMBinaryTest", "[LoadSaveTest]")
 /**
  * Make sure load as HDF5 is successful.
  */
-TEST_CASE("LoadHDF5Test", "[LoadSaveTest]")
+TEST_CASE("LoadHDF5Test", "[LoadSaveTest][tiny]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
@@ -1156,7 +1156,7 @@ TEST_CASE("LoadHDF5Test", "[LoadSaveTest]")
 /**
  * Make sure save as HDF5 is successful.
  */
-TEST_CASE("SaveHDF5Test", "[LoadSaveTest]")
+TEST_CASE("SaveHDF5Test", "[LoadSaveTest][tiny]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
@@ -1212,7 +1212,7 @@ TEST_CASE("SaveHDF5Test", "[LoadSaveTest]")
 /**
  * Test normalization of labels.
  */
-TEST_CASE("NormalizeLabelSmallDatasetTest", "[LoadSaveTest]")
+TEST_CASE("NormalizeLabelSmallDatasetTest", "[LoadSaveTest][tiny]")
 {
   arma::irowvec labels("-1 1 1 -1 -1 -1 1 1");
   arma::Row<size_t> newLabels;
@@ -1243,7 +1243,7 @@ TEST_CASE("NormalizeLabelSmallDatasetTest", "[LoadSaveTest]")
 /**
  * Harder label normalization test.
  */
-TEST_CASE("NormalizeLabelTest", "[LoadSaveTest]")
+TEST_CASE("NormalizeLabelTest", "[LoadSaveTest][tiny]")
 {
   arma::rowvec randLabels(5000);
   for (size_t i = 0; i < 5000; ++i)
@@ -1307,7 +1307,7 @@ class Test
  *
  * Make sure to remove this one when releasing mlpack 5.0.0
  */
-TEST_CASE("LoadBinaryTest", "[LoadSaveTest]")
+TEST_CASE("LoadBinaryTest", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
@@ -1326,7 +1326,7 @@ TEST_CASE("LoadBinaryTest", "[LoadSaveTest]")
   REQUIRE(y.inb.s == x.inb.s);
 }
 
-TEST_CASE("LoadBinaryTestOptions", "[LoadSaveTest]")
+TEST_CASE("LoadBinaryTestOptions", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
@@ -1349,7 +1349,7 @@ TEST_CASE("LoadBinaryTestOptions", "[LoadSaveTest]")
   REQUIRE(y.inb.s == x.inb.s);
 }
 
-TEST_CASE("LoadBinaryTestInOptions", "[LoadSaveTest]")
+TEST_CASE("LoadBinaryTestInOptions", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
@@ -1368,7 +1368,7 @@ TEST_CASE("LoadBinaryTestInOptions", "[LoadSaveTest]")
   REQUIRE(y.inb.s == x.inb.s);
 }
 
-TEST_CASE("LoadAutoDetectTestInOptions", "[LoadSaveTest]")
+TEST_CASE("LoadAutoDetectTestInOptions", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
@@ -1407,7 +1407,7 @@ TEST_CASE("LoadAutoDetectTestInOptions", "[LoadSaveTest]")
   REQUIRE(y.inb.s == x.inb.s);
 }
 
-TEST_CASE("LoadBinaryTestBadOptions", "[LoadSaveTest]")
+TEST_CASE("LoadBinaryTestBadOptions", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
@@ -1428,7 +1428,7 @@ TEST_CASE("LoadBinaryTestBadOptions", "[LoadSaveTest]")
  *
  * Make sure to remove this one when releasing mlpack 5.0.0
  */
-TEST_CASE("LoadXMLTest", "[LoadSaveTest]")
+TEST_CASE("LoadXMLTest", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
@@ -1447,7 +1447,7 @@ TEST_CASE("LoadXMLTest", "[LoadSaveTest]")
   REQUIRE(y.inb.s == x.inb.s);
 }
 
-TEST_CASE("LoadXMLTestOptions", "[LoadSaveTest]")
+TEST_CASE("LoadXMLTestOptions", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
@@ -1469,7 +1469,7 @@ TEST_CASE("LoadXMLTestOptions", "[LoadSaveTest]")
   REQUIRE(y.inb.s == x.inb.s);
 }
 
-TEST_CASE("LoadXMLTestInOptions", "[LoadSaveTest]")
+TEST_CASE("LoadXMLTestInOptions", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
@@ -1493,7 +1493,7 @@ TEST_CASE("LoadXMLTestInOptions", "[LoadSaveTest]")
  *
  * Make sure to remove this one when releasing mlpack 5.0.0
  */
-TEST_CASE("LoadJsonTest", "[LoadSaveTest]")
+TEST_CASE("LoadJsonTest", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
@@ -1512,7 +1512,7 @@ TEST_CASE("LoadJsonTest", "[LoadSaveTest]")
   REQUIRE(y.inb.s == x.inb.s);
 }
 
-TEST_CASE("LoadJsonTestOptions", "[LoadSaveTest]")
+TEST_CASE("LoadJsonTestOptions", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
   data::DataOptions opts;
@@ -1534,7 +1534,7 @@ TEST_CASE("LoadJsonTestOptions", "[LoadSaveTest]")
   REQUIRE(y.inb.s == x.inb.s);
 }
 
-TEST_CASE("LoadJsonTestInOptions", "[LoadSaveTest]")
+TEST_CASE("LoadJsonTestInOptions", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
@@ -1556,7 +1556,7 @@ TEST_CASE("LoadJsonTestInOptions", "[LoadSaveTest]")
 /**
  * Test DatasetInfo by making a map for a dimension.
  */
-TEST_CASE("DatasetInfoTest", "[LoadSaveTest]")
+TEST_CASE("DatasetInfoTest", "[LoadSaveTest][tiny]")
 {
   DatasetInfo di(100);
 
@@ -1604,7 +1604,7 @@ TEST_CASE("DatasetInfoTest", "[LoadSaveTest]")
 /**
  * Test loading regular CSV with DatasetInfo.  Everything should be numeric.
  */
-TEST_CASE("RegularCSVDatasetInfoLoad", "[LoadSaveTest]")
+TEST_CASE("RegularCSVDatasetInfoLoad", "[LoadSaveTest][tiny]")
 {
   vector<string> testFiles;
   testFiles.push_back("fake.csv");
@@ -1646,7 +1646,7 @@ TEST_CASE("RegularCSVDatasetInfoLoad", "[LoadSaveTest]")
  * Test non-transposed loading of regular CSVs with DatasetInfo.  Everything
  * should be numeric.
  */
-TEST_CASE("NontransposedCSVDatasetInfoLoad", "[LoadSaveTest]")
+TEST_CASE("NontransposedCSVDatasetInfoLoad", "[LoadSaveTest][tiny]")
 {
   vector<string> testFiles;
   testFiles.push_back("fake.csv");
@@ -1687,7 +1687,7 @@ TEST_CASE("NontransposedCSVDatasetInfoLoad", "[LoadSaveTest]")
 /**
  * Create a file with a categorical string feature, then load it.
  */
-TEST_CASE("CategoricalCSVLoadTest00", "[LoadSaveTest]")
+TEST_CASE("CategoricalCSVLoadTest00", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -1748,7 +1748,7 @@ TEST_CASE("CategoricalCSVLoadTest00", "[LoadSaveTest]")
   remove("test.csv");
 }
 
-TEST_CASE("CategoricalCSVLoadTest01", "[LoadSaveTest]")
+TEST_CASE("CategoricalCSVLoadTest01", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -1794,7 +1794,7 @@ TEST_CASE("CategoricalCSVLoadTest01", "[LoadSaveTest]")
   remove("test.csv");
 }
 
-TEST_CASE("CategoricalCSVLoadTest02", "[LoadSaveTest]")
+TEST_CASE("CategoricalCSVLoadTest02", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -1839,7 +1839,7 @@ TEST_CASE("CategoricalCSVLoadTest02", "[LoadSaveTest]")
   remove("test.csv");
 }
 
-TEST_CASE("CategoricalCSVLoadTest03", "[LoadSaveTest]")
+TEST_CASE("CategoricalCSVLoadTest03", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -1884,7 +1884,7 @@ TEST_CASE("CategoricalCSVLoadTest03", "[LoadSaveTest]")
   remove("test.csv");
 }
 
-TEST_CASE("CategoricalCSVLoadTest04", "[LoadSaveTest]")
+TEST_CASE("CategoricalCSVLoadTest04", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -1929,7 +1929,7 @@ TEST_CASE("CategoricalCSVLoadTest04", "[LoadSaveTest]")
   remove("test.csv");
 }
 
-TEST_CASE("CategoricalNontransposedCSVLoadTest00", "[LoadSaveTest]")
+TEST_CASE("CategoricalNontransposedCSVLoadTest00", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -2022,7 +2022,7 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest00", "[LoadSaveTest]")
   remove("test.csv");
 }
 
-TEST_CASE("CategoricalNontransposedCSVLoadTest01", "[LoadSaveTest]")
+TEST_CASE("CategoricalNontransposedCSVLoadTest01", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -2068,7 +2068,7 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest01", "[LoadSaveTest]")
   remove("test.csv");
 }
 
-TEST_CASE("CategoricalNontransposedCSVLoadTest02", "[LoadSaveTest]")
+TEST_CASE("CategoricalNontransposedCSVLoadTest02", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -2114,7 +2114,7 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest02", "[LoadSaveTest]")
   remove("test.csv");
 }
 
-TEST_CASE("CategoricalNontransposedCSVLoadTest03", "[LoadSaveTest]")
+TEST_CASE("CategoricalNontransposedCSVLoadTest03", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -2160,7 +2160,7 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest03", "[LoadSaveTest]")
   remove("test.csv");
 }
 
-TEST_CASE("CategoricalNontransposedCSVLoadTest04", "[LoadSaveTest]")
+TEST_CASE("CategoricalNontransposedCSVLoadTest04", "[LoadSaveTest][tiny]")
 {
     fstream f;
     f.open("test.csv", fstream::out);
@@ -2209,7 +2209,7 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest04", "[LoadSaveTest]")
 /**
  * A harder test CSV based on the concerns in #658.
  */
-TEST_CASE("HarderKeonTest", "[LoadSaveTest]")
+TEST_CASE("HarderKeonTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -2255,7 +2255,7 @@ TEST_CASE("HarderKeonTest", "[LoadSaveTest]")
 /**
  * A simple ARFF load test.  Two attributes, both numeric.
  */
-TEST_CASE("SimpleARFFTest", "[LoadSaveTest]")
+TEST_CASE("SimpleARFFTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.arff", fstream::out);
@@ -2293,7 +2293,7 @@ TEST_CASE("SimpleARFFTest", "[LoadSaveTest]")
  * Another simple ARFF load test.  Three attributes, two categorical, one
  * numeric.
  */
-TEST_CASE("SimpleARFFCategoricalTest", "[LoadSaveTest]")
+TEST_CASE("SimpleARFFCategoricalTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.arff", fstream::out);
@@ -2352,7 +2352,7 @@ TEST_CASE("SimpleARFFCategoricalTest", "[LoadSaveTest]")
  * A harder ARFF test, where we have each type of supported value, and some
  * random whitespace too.
  */
-TEST_CASE("HarderARFFTest", "[LoadSaveTest]")
+TEST_CASE("HarderARFFTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.arff", fstream::out);
@@ -2418,7 +2418,7 @@ TEST_CASE("HarderARFFTest", "[LoadSaveTest]")
 /**
  * If we pass a bad DatasetInfo, it should throw.
  */
-TEST_CASE("BadDatasetInfoARFFTest", "[LoadSaveTest]")
+TEST_CASE("BadDatasetInfoARFFTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.arff", fstream::out);
@@ -2450,7 +2450,7 @@ TEST_CASE("BadDatasetInfoARFFTest", "[LoadSaveTest]")
 /**
  * If file is not found, it should throw.
  */
-TEST_CASE("NonExistentFileARFFTest", "[LoadSaveTest]")
+TEST_CASE("NonExistentFileARFFTest", "[LoadSaveTest][tiny]")
 {
   arma::mat dataset;
   DatasetInfo info;
@@ -2462,7 +2462,7 @@ TEST_CASE("NonExistentFileARFFTest", "[LoadSaveTest]")
  * A test to check whether the arff loader is case insensitive to declarations:
  * @relation, @attribute, @data.
  */
-TEST_CASE("CaseTest", "[LoadSaveTest]")
+TEST_CASE("CaseTest", "[LoadSaveTest][tiny]")
 {
   arma::mat dataset;
 
@@ -2478,7 +2478,7 @@ TEST_CASE("CaseTest", "[LoadSaveTest]")
  * Ensure that a failure happens if we set a category to use capital letters but
  * it receives them in lowercase.
  */
-TEST_CASE("CategoryCaseTest", "[LoadSaveTest]")
+TEST_CASE("CategoryCaseTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.arff", fstream::out);
@@ -2513,7 +2513,7 @@ TEST_CASE("CategoryCaseTest", "[LoadSaveTest]")
 /**
  * Test that a CSV with the wrong number of columns fails.
  */
-TEST_CASE("MalformedCSVTest", "[LoadSaveTest]")
+TEST_CASE("MalformedCSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -2533,7 +2533,7 @@ TEST_CASE("MalformedCSVTest", "[LoadSaveTest]")
 /**
  * Test that a TSV can load with LoadCSV.
  */
-TEST_CASE("LoadCSVTSVTest", "[LoadSaveTest]")
+TEST_CASE("LoadCSVTSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.tsv", fstream::out);
@@ -2558,7 +2558,7 @@ TEST_CASE("LoadCSVTSVTest", "[LoadSaveTest]")
 /**
  * Test that a text file can load with LoadCSV.
  */
-TEST_CASE("LoadCSVTXTTest", "[LoadSaveTest]")
+TEST_CASE("LoadCSVTXTTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.txt", fstream::out);
@@ -2583,7 +2583,7 @@ TEST_CASE("LoadCSVTXTTest", "[LoadSaveTest]")
 /**
  * Test that a non-transposed CSV with the wrong number of columns fails.
  */
-TEST_CASE("MalformedNoTransposeCSVTest", "[LoadSaveTest]")
+TEST_CASE("MalformedNoTransposeCSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -2603,7 +2603,7 @@ TEST_CASE("MalformedNoTransposeCSVTest", "[LoadSaveTest]")
 /**
  * Test that a non-transposed TSV can load with LoadCSV.
  */
-TEST_CASE("LoadCSVNoTransposeTSVTest", "[LoadSaveTest]")
+TEST_CASE("LoadCSVNoTransposeTSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.tsv", fstream::out);
@@ -2634,7 +2634,7 @@ TEST_CASE("LoadCSVNoTransposeTSVTest", "[LoadSaveTest]")
 /**
  * Test that a non-transposed text file can load with LoadCSV.
  */
-TEST_CASE("LoadCSVNoTransposeTXTTest", "[LoadSaveTest]")
+TEST_CASE("LoadCSVNoTransposeTXTTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.txt", fstream::out);
@@ -2666,7 +2666,7 @@ TEST_CASE("LoadCSVNoTransposeTXTTest", "[LoadSaveTest]")
  * Make sure if we load a CSV with a header, that that header doesn't get loaded
  * as a point.
  */
-TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
+TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -2690,7 +2690,7 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
   REQUIRE(headers.at(3) == "d");
 }
 
-TEST_CASE("DataOptionsTest", "[LoadSaveTest]")
+TEST_CASE("DataOptionsTest", "[LoadSaveTest][tiny]")
 {
   data::DataOptions opts1, opts2, opts3;
 
@@ -2723,7 +2723,7 @@ TEST_CASE("DataOptionsTest", "[LoadSaveTest]")
   REQUIRE(opts3.Format() == FileType::CSVASCII);
 }
 
-TEST_CASE("MatrixOptionsTest", "[LoadSaveTest]")
+TEST_CASE("MatrixOptionsTest", "[LoadSaveTest][tiny]")
 {
   data::MatrixOptions opts1, opts2, opts3;
 
@@ -2768,7 +2768,7 @@ TEST_CASE("MatrixOptionsTest", "[LoadSaveTest]")
   REQUIRE_THROWS_AS(opts3 = opts1 + opts2, std::invalid_argument);
 }
 
-TEST_CASE("TextOptionsTest", "[LoadSaveTest]")
+TEST_CASE("TextOptionsTest", "[LoadSaveTest][tiny]")
 {
   data::TextOptions opts1, opts2, opts3;
 
@@ -2856,7 +2856,7 @@ TEST_CASE("TextOptionsTest", "[LoadSaveTest]")
   REQUIRE_THROWS_AS(opts3 = opts1 + opts2, std::invalid_argument);
 }
 
-TEST_CASE("MatrixDataOptionsTest", "[LoadSaveTest]")
+TEST_CASE("MatrixDataOptionsTest", "[LoadSaveTest][tiny]")
 {
   data::MatrixOptions opts1;
   data::DataOptions opts2;
@@ -2909,7 +2909,7 @@ TEST_CASE("MatrixDataOptionsTest", "[LoadSaveTest]")
   REQUIRE_THROWS_AS(opts3 = opts1 + opts2, std::invalid_argument);
 }
 
-TEST_CASE("TextDataOptionsTest", "[LoadSaveTest]")
+TEST_CASE("TextDataOptionsTest", "[LoadSaveTest][tiny]")
 {
   data::TextOptions opts1;
   data::DataOptions opts2;
@@ -3002,7 +3002,7 @@ TEST_CASE("TextDataOptionsTest", "[LoadSaveTest]")
   REQUIRE(opts3.Semicolon() == true);
 }
 
-TEST_CASE("MatrixTextOptionsTest", "[LoadSaveTest]")
+TEST_CASE("MatrixTextOptionsTest", "[LoadSaveTest][tiny]")
 {
   data::TextOptions opts1;
   data::MatrixOptions opts2;
@@ -3099,7 +3099,7 @@ TEST_CASE("MatrixTextOptionsTest", "[LoadSaveTest]")
 // available in Armadillo.
 #if ARMA_VERSION_MAJOR >= 12
 
-TEST_CASE("LoadCSVNoHeaderTest", "[LoadSaveTest]")
+TEST_CASE("LoadCSVNoHeaderTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -3123,7 +3123,7 @@ TEST_CASE("LoadCSVNoHeaderTest", "[LoadSaveTest]")
 
 #endif
 
-TEST_CASE("LoadVectorCSVFiles", "[LoadSaveTest]")
+TEST_CASE("LoadVectorCSVFiles", "[LoadSaveTest][tiny]")
 {
   std::vector<std::string> files = {"f0.csv", "f1.csv", "f2.csv", "f3.csv",
       "f4.csv", "f5.csv", "f6.csv", "f7.csv", "f8.csv", "f9.csv"};
@@ -3137,7 +3137,7 @@ TEST_CASE("LoadVectorCSVFiles", "[LoadSaveTest]")
   REQUIRE(dataset(0, 10) == 1.0);
 }
 
-TEST_CASE("LoadVectorCSVOneFile", "[LoadSaveTest]")
+TEST_CASE("LoadVectorCSVOneFile", "[LoadSaveTest][tiny]")
 {
   std::vector<std::string> files = {"f0.csv"};
 
@@ -3149,7 +3149,7 @@ TEST_CASE("LoadVectorCSVOneFile", "[LoadSaveTest]")
   REQUIRE(dataset.n_cols == 10);
 }
 
-TEST_CASE("LoadVectorCSVEmptyFile", "[LoadSaveTest]")
+TEST_CASE("LoadVectorCSVEmptyFile", "[LoadSaveTest][tiny]")
 {
   std::vector<std::string> files;
 
@@ -3159,7 +3159,7 @@ TEST_CASE("LoadVectorCSVEmptyFile", "[LoadSaveTest]")
   REQUIRE(data::Load(files, dataset, opts) == false);
 }
 
-TEST_CASE("LoadVectorCSVDiffCols", "[LoadSaveTest]")
+TEST_CASE("LoadVectorCSVDiffCols", "[LoadSaveTest][tiny]")
 {
   std::vector<std::string> files = {"f0.csv", "f10.csv"};
 
@@ -3168,7 +3168,7 @@ TEST_CASE("LoadVectorCSVDiffCols", "[LoadSaveTest]")
   REQUIRE(data::Load(files, dataset, opts) == false);
 }
 
-TEST_CASE("LoadVectorCSVDiffHeaders", "[LoadSaveTest]")
+TEST_CASE("LoadVectorCSVDiffHeaders", "[LoadSaveTest][tiny]")
 {
   std::vector<std::string> files = {"f0header.csv", "f10header.csv"};
 
@@ -3182,7 +3182,7 @@ TEST_CASE("LoadVectorCSVDiffHeaders", "[LoadSaveTest]")
 // available in Armadillo.
 #if ARMA_VERSION_MAJOR >= 12
 
-TEST_CASE("LoadVectorCSVDiffNoHeaders", "[LoadSaveTest]")
+TEST_CASE("LoadVectorCSVDiffNoHeaders", "[LoadSaveTest][tiny]")
 {
   std::vector<std::string> files = {"f0header.csv", "f10header.csv"};
 
@@ -3207,7 +3207,7 @@ TEST_CASE("LoadVectorCSVDiffNoHeaders", "[LoadSaveTest]")
 
 #endif
 
-TEST_CASE("LoadVectorCSVFilesNoTranspose", "[LoadSaveTest]")
+TEST_CASE("LoadVectorCSVFilesNoTranspose", "[LoadSaveTest][tiny]")
 {
   std::vector<std::string> files = {"f0.csv", "f1.csv", "f2.csv", "f3.csv",
       "f4.csv", "f5.csv", "f6.csv", "f7.csv", "f8.csv", "f9.csv"};
@@ -3226,7 +3226,7 @@ TEST_CASE("LoadVectorCSVFilesNoTranspose", "[LoadSaveTest]")
 // available in Armadillo.
 #if ARMA_VERSION_MAJOR >= 12
 
-TEST_CASE("LoadCSVMissingNanTest", "[LoadSaveTest]")
+TEST_CASE("LoadCSVMissingNanTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -3249,7 +3249,7 @@ TEST_CASE("LoadCSVMissingNanTest", "[LoadSaveTest]")
   remove("test.csv");
 }
 
-TEST_CASE("LoadCSVMissingNanTestTransposed", "[LoadSaveTest]")
+TEST_CASE("LoadCSVMissingNanTestTransposed", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -3272,7 +3272,7 @@ TEST_CASE("LoadCSVMissingNanTestTransposed", "[LoadSaveTest]")
   remove("test.csv");
 }
 
-TEST_CASE("LoadCSVMissingNanTestTransposedInOptions", "[LoadSaveTest]")
+TEST_CASE("LoadCSVMissingNanTestTransposedInOptions", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -3293,7 +3293,7 @@ TEST_CASE("LoadCSVMissingNanTestTransposedInOptions", "[LoadSaveTest]")
 
 #endif
 
-TEST_CASE("LoadCSVSemicolon", "[LoadSaveTest]")
+TEST_CASE("LoadCSVSemicolon", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -3315,7 +3315,7 @@ TEST_CASE("LoadCSVSemicolon", "[LoadSaveTest]")
   remove("test.csv");
 }
 
-TEST_CASE("LoadCSVSemicolonInOptions", "[LoadSaveTest]")
+TEST_CASE("LoadCSVSemicolonInOptions", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -3333,7 +3333,7 @@ TEST_CASE("LoadCSVSemicolonInOptions", "[LoadSaveTest]")
   remove("test.csv");
 }
 
-TEST_CASE("LoadCSVSemicolonHeader", "[LoadSaveTest]")
+TEST_CASE("LoadCSVSemicolonHeader", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -3364,7 +3364,7 @@ TEST_CASE("LoadCSVSemicolonHeader", "[LoadSaveTest]")
 
 #if ARMA_VERSION_MAJOR >= 12
 
-TEST_CASE("LoadCSVSemicolonMissingToNanHeader", "[LoadSaveTest]")
+TEST_CASE("LoadCSVSemicolonMissingToNanHeader", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -3395,7 +3395,7 @@ TEST_CASE("LoadCSVSemicolonMissingToNanHeader", "[LoadSaveTest]")
   remove("test.csv");
 }
 
-TEST_CASE("LoadCSVSemicolonMissingToNanHeaderInOptions", "[LoadSaveTest]")
+TEST_CASE("LoadCSVSemicolonMissingToNanHeaderInOptions", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test.csv", fstream::out);

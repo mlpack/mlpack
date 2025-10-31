@@ -319,7 +319,7 @@ TEMPLATE_TEST_CASE("NCASGDSimpleDataset", "[NCATest]", float, double)
   REQUIRE(arma::norm(finalGradient, 2) < 1e-4);
 }
 
-TEMPLATE_TEST_CASE("NCALBFGSSimpleDataset", "[NCATest]", float, double)
+TEMPLATE_TEST_CASE("NCALBFGSSimpleDataset", "[NCATest][tiny]", float, double)
 {
   using eT = TestType;
 

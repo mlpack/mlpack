@@ -127,8 +127,9 @@ TEMPLATE_TEST_CASE("LocalCoordinateCodingTestDictionaryStep",
   REQUIRE(norm(grad, "fro") == Approx(0.0).margin(tol));
 }
 
+// This is the only LCC test that runs on tiny MPUs...
 TEMPLATE_TEST_CASE("LocalCoordinateCodingSerializationTest",
-    "[LocalCoordinateCodingTest]", arma::mat, arma::fmat)
+    "[LocalCoordinateCodingTest][tiny]", arma::mat, arma::fmat)
 {
   using MatType = TestType;
 

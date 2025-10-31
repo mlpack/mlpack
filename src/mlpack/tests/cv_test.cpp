@@ -550,7 +550,7 @@ TEST_CASE("SimpleCVWithDTTest", "[CVTest]")
 /**
  * Test k-fold cross-validation with the MSE metric.
  */
-TEST_CASE("KFoldCVMSETest", "[CVTest]")
+TEST_CASE("KFoldCVMSETest", "[CVTest][tiny]")
 {
   // Defining dataset with two sets of responses for the same two data points.
   arma::mat data("0 1  0 1");
@@ -573,7 +573,7 @@ TEST_CASE("KFoldCVMSETest", "[CVTest]")
 /**
  * Test k-fold cross-validation with the Accuracy metric.
  */
-TEST_CASE("KFoldCVAccuracyTest", "[CVTest]")
+TEST_CASE("KFoldCVAccuracyTest", "[CVTest][tiny]")
 {
   // Making a 10-points dataset. The last point should be classified wrong when
   // it is tested separately.

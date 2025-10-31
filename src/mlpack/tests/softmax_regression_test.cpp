@@ -220,8 +220,8 @@ TEST_CASE("SoftmaxRegressionTwoClasses", "[SoftmaxRegressionTest]")
   REQUIRE(testAcc == Approx(100.0).epsilon(0.02));
 }
 
-TEMPLATE_TEST_CASE("SoftmaxRegressionFitIntercept", "[SoftmaxRegressionTest]",
-    arma::fmat, arma::mat)
+TEMPLATE_TEST_CASE("SoftmaxRegressionFitIntercept",
+    "[SoftmaxRegressionTest][tiny]", arma::fmat, arma::mat)
 {
   using MatType = TestType;
 

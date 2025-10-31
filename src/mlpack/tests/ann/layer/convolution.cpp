@@ -120,7 +120,7 @@ TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
 /**
  * Convolution layer numerical gradient test.
  */
-TEST_CASE("GradientConvolutionLayerTest", "[ANNLayerTest]")
+TEST_CASE("GradientConvolutionLayerTest", "[ANNLayerTest][tiny]")
 {
   struct GradientFunction
   {

@@ -19,7 +19,7 @@ using namespace mlpack;
 /**
  * Test the RandomInitialization class with a constant value.
  */
-TEST_CASE("ConstantInitTest", "[InitRulesTest]")
+TEST_CASE("ConstantInitTest", "[InitRulesTest][tiny]")
 {
   arma::mat weights;
   RandomInitialization constantInit(1, 1);
@@ -317,7 +317,7 @@ TEST_CASE("GlorotInitNormalTest", "[InitRulesTest]")
 /**
  * Simple test of the HeInitialization class.
  */
-TEST_CASE("HeInitTest", "[InitRulesTest]")
+TEST_CASE("HeInitTest", "[InitRulesTest][tiny]")
 {
   const size_t rows = 4;
   const size_t cols = 4;
@@ -342,7 +342,7 @@ TEST_CASE("HeInitTest", "[InitRulesTest]")
 /**
  * Simple test of the LecunNormalInitialization class.
  */
-TEST_CASE("LecunNormalInitTest", "[InitRulesTest]")
+TEST_CASE("LecunNormalInitTest", "[InitRulesTest][tiny]")
 {
   const size_t rows = 4;
   const size_t cols = 4;

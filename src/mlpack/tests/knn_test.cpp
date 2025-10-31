@@ -649,7 +649,7 @@ TEST_CASE("KNNExhaustiveSyntheticTest", "[KNNTest]")
  *
  * Errors are produced if the results are not identical.
  */
-TEST_CASE("KNNDualTreeVsNaive", "[KNNTest]")
+TEST_CASE("KNNDualTreeVsNaive", "[KNNTest][tiny]")
 {
   arma::mat dataset;
 
@@ -682,7 +682,7 @@ TEST_CASE("KNNDualTreeVsNaive", "[KNNTest]")
  *
  * Errors are produced if the results are not identical.
  */
-TEST_CASE("KNNDualTreeVsNaive2", "[KNNTest]")
+TEST_CASE("KNNDualTreeVsNaive2", "[KNNTest][tiny]")
 {
   arma::mat dataset;
 
@@ -1094,7 +1094,7 @@ TEST_CASE("SparseKNNCoverTreeTest", "[KNNTest]")
 }
 */
 
-TEST_CASE("KNNModelTest", "[KNNTest]")
+TEST_CASE("KNNModelTest", "[KNNTest][tiny]")
 {
   // Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
   // results.

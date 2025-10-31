@@ -581,7 +581,7 @@ TEST_CASE("RangeContainsRange", "[MathTest]")
 /**
  * Make sure shuffling data works.
  */
-TEST_CASE("ShuffleTest", "[MathTest]")
+TEST_CASE("ShuffleTest", "[MathTest][tiny]")
 {
   arma::mat data(3, 10);
   arma::Row<size_t> labels(10);
@@ -617,7 +617,7 @@ TEST_CASE("ShuffleTest", "[MathTest]")
 /**
  * Make sure shuffling sparse data works.
  */
-TEST_CASE("SparseShuffleTest", "[MathTest]")
+TEST_CASE("SparseShuffleTest", "[MathTest][tiny]")
 {
   arma::sp_mat data(3, 10);
   arma::Row<size_t> labels(10);
@@ -655,7 +655,7 @@ TEST_CASE("SparseShuffleTest", "[MathTest]")
 /**
  * Make sure shuffling cubes works.
  */
-TEST_CASE("CubeShuffleTest", "[MathTest]")
+TEST_CASE("CubeShuffleTest", "[MathTest][tiny]")
 {
   arma::cube data(3, 10, 5);
   arma::cube labels(1, 10, 5);
@@ -699,7 +699,7 @@ TEST_CASE("CubeShuffleTest", "[MathTest]")
 /**
  * Make sure shuffling cubes with ragged sequence lengths works.
  */
-TEST_CASE("RaggedCubeShuffleTest", "[MathTest]")
+TEST_CASE("RaggedCubeShuffleTest", "[MathTest][tiny]")
 {
   arma::cube data(3, 5, 5);
   arma::cube labels(1, 5, 5);
@@ -768,7 +768,7 @@ TEST_CASE("RaggedCubeShuffleTest", "[MathTest]")
 /**
  * Make sure shuffling data with weights works.
  */
-TEST_CASE("ShuffleWeightsTest", "[MathTest]")
+TEST_CASE("ShuffleWeightsTest", "[MathTest][tiny]")
 {
   arma::mat data(3, 10);
   arma::Row<size_t> labels(10);
@@ -814,7 +814,7 @@ TEST_CASE("ShuffleWeightsTest", "[MathTest]")
 /**
  * Make sure shuffling sparse data with weights works.
  */
-TEST_CASE("SparseShuffleWeightsTest", "[MathTest]")
+TEST_CASE("SparseShuffleWeightsTest", "[MathTest][tiny]")
 {
   arma::sp_mat data(3, 10);
   arma::Row<size_t> labels(10);
@@ -863,7 +863,7 @@ TEST_CASE("SparseShuffleWeightsTest", "[MathTest]")
  * Make sure shuffling data works when the same matrices are given as input and
  * output.
  */
-TEST_CASE("InplaceShuffleTest", "[MathTest]")
+TEST_CASE("InplaceShuffleTest", "[MathTest][tiny]")
 {
   arma::mat data(3, 10);
   arma::Row<size_t> labels(10);
@@ -900,7 +900,7 @@ TEST_CASE("InplaceShuffleTest", "[MathTest]")
  * Make sure shuffling sparse data works when the input and output matrices are
  * the same.
  */
-TEST_CASE("InplaceSparseShuffleTest", "[MathTest]")
+TEST_CASE("InplaceSparseShuffleTest", "[MathTest][tiny]")
 {
   arma::sp_mat data(3, 10);
   arma::Row<size_t> labels(10);
@@ -936,7 +936,7 @@ TEST_CASE("InplaceSparseShuffleTest", "[MathTest]")
 /**
  * Make sure shuffling cubes works when the input and output cubes are the same.
  */
-TEST_CASE("InplaceCubeShuffleTest", "[MathTest]")
+TEST_CASE("InplaceCubeShuffleTest", "[MathTest][tiny]")
 {
   arma::cube data(3, 10, 5);
   arma::cube labels(1, 10, 5);
@@ -981,7 +981,7 @@ TEST_CASE("InplaceCubeShuffleTest", "[MathTest]")
  * Make sure shuffling data with weights works when the same matrices are given
  * as input and output.
  */
-TEST_CASE("InplaceShuffleWeightsTest", "[MathTest]")
+TEST_CASE("InplaceShuffleWeightsTest", "[MathTest][tiny]")
 {
   arma::mat data(3, 10);
   arma::Row<size_t> labels(10);
@@ -1029,7 +1029,7 @@ TEST_CASE("InplaceShuffleWeightsTest", "[MathTest]")
  * Make sure shuffling sparse data with weights works when the input and output
  * matrices are the same.
  */
-TEST_CASE("InplaceSparseShuffleWeightsTest", "[MathTest]")
+TEST_CASE("InplaceSparseShuffleWeightsTest", "[MathTest][tiny]")
 {
   arma::sp_mat data(3, 10);
   arma::Row<size_t> labels(10);

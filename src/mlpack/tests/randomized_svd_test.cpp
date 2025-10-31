@@ -21,7 +21,7 @@ using namespace mlpack;
  * The reconstruction and sigular value error of the obtained SVD should be
  * small.
  */
-TEST_CASE("RandomizedSVDReconstructionError", "[RandomizedSVDTest]")
+TEST_CASE("RandomizedSVDReconstructionError", "[RandomizedSVDTest][tiny]")
 {
   arma::mat U = arma::randn<arma::mat>(3, 20);
   arma::mat V = arma::randn<arma::mat>(10, 3);

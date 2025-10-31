@@ -122,7 +122,8 @@ TEMPLATE_TEST_CASE("CustomImputationNaNTest", "[ImputationTest]", float, double)
  * Make sure MeanImputation method replaces data 0 to mean value of each
  * dimensions.
  */
-TEMPLATE_TEST_CASE("MeanImputationTest", "[ImputationTest]", float, double)
+TEMPLATE_TEST_CASE("MeanImputationTest", "[ImputationTest][tiny]", float,
+    double)
 {
   typedef TestType ElemType;
 

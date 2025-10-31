@@ -91,7 +91,7 @@ void CheckDuplication(const Row<size_t>& trainLabels,
     REQUIRE(counts[i] == 1);
 }
 
-TEST_CASE("SplitShuffleDataResultMat", "[SplitDataTest]")
+TEST_CASE("SplitShuffleDataResultMat", "[SplitDataTest][tiny]")
 {
   mat input(2, 10);
   input = reshape(linspace(0, 19, 20), 2, 10);
@@ -105,7 +105,7 @@ TEST_CASE("SplitShuffleDataResultMat", "[SplitDataTest]")
   CheckMatEqual(input, concat);
 }
 
-TEST_CASE("SplitDataResultMat", "[SplitDataTest]")
+TEST_CASE("SplitDataResultMat", "[SplitDataTest][tiny]")
 {
   mat input(2, 10);
   input = reshape(linspace(0, 19, 20), 2, 10);
@@ -150,7 +150,7 @@ TEST_CASE("TotalRatioSplitData", "[SplitDataTest]")
   CheckMatrices(input, concat);
 }
 
-TEST_CASE("SplitLabeledDataResultMat", "[SplitDataTest]")
+TEST_CASE("SplitLabeledDataResultMat", "[SplitDataTest][tiny]")
 {
   mat input(2, 10);
   input.randu();
@@ -284,7 +284,7 @@ TEST_CASE("TotalRatioStratifiedSplitData", "[SplitDataTest]")
 /**
  * Check if data is stratified according to labels.
  */
-TEST_CASE("StratifiedSplitDataResultTest", "[SplitDataTest]")
+TEST_CASE("StratifiedSplitDataResultTest", "[SplitDataTest][tiny]")
 {
   mat input(5, 24);
   input.randu();
@@ -409,7 +409,7 @@ TEST_CASE("SplitDataResultField", "[SplitDataTest]")
 /**
  * Test for Split() with labels of type arma::Mat with shuffleData = False.
  */
-TEST_CASE("SplitMatrixLabeledData", "[SplitDataTest]")
+TEST_CASE("SplitMatrixLabeledData", "[SplitDataTest][tiny]")
 {
   const mat input(2, 10, fill::randu);
   const mat labels(2, 10, fill::randu);
@@ -471,7 +471,7 @@ TEST_CASE("SplitLabeledDataResultField", "[SplitDataTest]")
 /**
  * Split arma::cube data without labels.
  */
-TEST_CASE("SplitCubeData", "[SplitDataTest]")
+TEST_CASE("SplitCubeData", "[SplitDataTest][tiny]")
 {
   cube input(10, 30, 5, fill::randu);
 
@@ -493,7 +493,7 @@ TEST_CASE("SplitCubeData", "[SplitDataTest]")
 /**
  * Split arma::cube data without labels, and shuffle it.
  */
-TEST_CASE("SplitCubeDataShuffle", "[SplitDataTest]")
+TEST_CASE("SplitCubeDataShuffle", "[SplitDataTest][tiny]")
 {
   cube input(10, 30, 5, fill::randu);
 
@@ -542,7 +542,7 @@ TEST_CASE("SplitCubeDataShuffle", "[SplitDataTest]")
 /**
  * Split arma::cube data with labels but without shuffling.
  */
-TEST_CASE("SplitCubeDataWithLabels", "[SplitDataTest]")
+TEST_CASE("SplitCubeDataWithLabels", "[SplitDataTest][tiny]")
 {
   // These have the same shape that might be used for RNNs.
   cube input(10, 30, 5, fill::randu);
@@ -577,7 +577,7 @@ TEST_CASE("SplitCubeDataWithLabels", "[SplitDataTest]")
 /**
  * Split arma::cube data with labels and with shuffling.
  */
-TEST_CASE("SplitCubeDataShuffleWithLabels", "[SplitDataTest]")
+TEST_CASE("SplitCubeDataShuffleWithLabels", "[SplitDataTest][tiny]")
 {
   // These have the same shape that might be used for RNNs.
   cube input(10, 30, 5, fill::randu);

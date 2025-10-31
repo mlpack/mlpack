@@ -23,7 +23,7 @@ using namespace ens;
  * Test CVFunction runs cross-validation in according with specified fixed
  * arguments and passed parameters.
  */
-TEST_CASE("CVFunctionTest", "[HPTTest]")
+TEST_CASE("CVFunctionTest", "[HPTTest][tiny]")
 {
   arma::mat xs = arma::randn(5, 100);
   arma::vec beta = arma::randn(5, 1);
@@ -226,7 +226,7 @@ void FindLARSBestLambdas(arma::mat& xs,
  * Test grid-search optimization leads to the best parameters from the specified
  * ones.
  */
-TEST_CASE("GridSearchTest", "[HPTTest]")
+TEST_CASE("GridSearchTest", "[HPTTest][tiny]")
 {
   arma::mat xs;
   arma::rowvec ys;
@@ -352,7 +352,7 @@ TEST_CASE("HPTMaximizationTest", "[HPTTest]")
 /**
  * Test HyperParameterTuner works with GradientDescent.
  */
-TEST_CASE("HPTGradientDescentTest", "[HPTTest]")
+TEST_CASE("HPTGradientDescentTest", "[HPTTest][tiny]")
 {
   // Constructor arguments for the fake CV function (QuadraticTestFunction).
   double a = 1.0;

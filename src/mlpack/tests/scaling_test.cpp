@@ -25,7 +25,7 @@ arma::mat temp;
 /**
  * Test For MinMax Scaler Class.
  */
-TEST_CASE("MinMaxScalerTest", "[ScalingTest]")
+TEST_CASE("MinMaxScalerTest", "[ScalingTest][tiny]")
 {
   arma::mat scaled = "0 0.2500 0.5000 1.000;"
                      "0 0.2500 0.5000 1.000;";
@@ -40,7 +40,7 @@ TEST_CASE("MinMaxScalerTest", "[ScalingTest]")
 /**
  * Test For MaxAbs Scaler Class.
  */
-TEST_CASE("MaxAbsScalerTest", "[ScalingTest]")
+TEST_CASE("MaxAbsScalerTest", "[ScalingTest][tiny]")
 {
   arma::mat scaled = "-1 -0.5 0 1;"
                      "0.1111111111 0.3333333333 0.55555556 1.0000;";
@@ -55,7 +55,7 @@ TEST_CASE("MaxAbsScalerTest", "[ScalingTest]")
 /**
  * Test For Standard Scaler Class.
  */
-TEST_CASE("StandardScalerTest", "[ScalingTest]")
+TEST_CASE("StandardScalerTest", "[ScalingTest][tiny]")
 {
   arma::mat scaled = "-1.18321596 -0.50709255  0.16903085 1.52127766;"
                      "-1.18321596 -0.50709255  0.16903085 1.52127766;";
@@ -70,7 +70,7 @@ TEST_CASE("StandardScalerTest", "[ScalingTest]")
 /**
  * Test For MeanNormalization Scaler Class.
  */
-TEST_CASE("MeanNormalizationTest", "[ScalingTest]")
+TEST_CASE("MeanNormalizationTest", "[ScalingTest][tiny]")
 {
   arma::mat scaled = "-0.43750000000 -0.187500000 0.062500000 0.562500000;"
                      "-0.43750000000 -0.187500000 0.062500000 0.562500000;";
