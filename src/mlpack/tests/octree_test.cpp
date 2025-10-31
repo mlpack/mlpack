@@ -341,3 +341,13 @@ TEST_CASE("OctreeSerializationTest", "[OctreeTest]")
   delete binaryTree;
   delete jsonTree;
 }
+
+/**
+ * Test octree when dataset has more duplicate points than maxLeafSize.
+ * See issue #4018 for more details.
+ */
+TEST_CASE("OctreeDuplicatePointsTest", "[OctreeTest]")
+{
+  arma::mat dataset(2, 150, arma::fill::ones);
+  Octree<> tree(dataset, 149);
+}

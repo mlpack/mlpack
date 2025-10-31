@@ -100,7 +100,7 @@ void NearestInterpolation<MatType>::Forward(
 
   for (size_t i = 0; i < outRowSize; ++i)
   {
-    size_t rOrigin = std::floor(i  / scaleFactors[0]);
+    size_t rOrigin = std::floor(i / scaleFactors[0]);
     for (size_t j = 0; j < outColSize; ++j)
     {
       size_t cOrigin = std::floor(j / scaleFactors[1]);
@@ -169,6 +169,7 @@ template<typename Archive>
 void NearestInterpolation<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<MatType>>(this));
   ar(CEREAL_NVP(scaleFactors));
 }
 

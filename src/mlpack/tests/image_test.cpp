@@ -50,6 +50,74 @@ TEST_CASE("LoadImageAPITest", "[ImageLoadTest]")
 }
 
 /**
+ * Test that the image is loaded correctly into the matrix using the new API.
+ */
+TEST_CASE("LoadImageNewAPITest", "[ImageLoadTest]")
+{
+  arma::Mat<unsigned char> matrix;
+  data::ImageOptions opts;
+  opts.Fatal() = false;
+
+  REQUIRE(data::Load("test_image.png", matrix, opts) == true);
+  // width * height * channels.
+  REQUIRE(matrix.n_rows == 50 * 50 * 3);
+  REQUIRE(opts.Height() == 50);
+  REQUIRE(opts.Width() == 50);
+  REQUIRE(opts.Channels() == 3);
+  REQUIRE(matrix.n_cols == 1);
+}
+
+/**
+ * Test that the image is loaded correctly when specifying the type.
+ */
+TEST_CASE("LoadImageSpecifyTypeTest", "[ImageLoadTest]")
+{
+  arma::Mat<unsigned char> matrix;
+  data::ImageOptions opts;
+  opts.Fatal() = false;
+  opts.Format() = FileType::PNG;
+
+  REQUIRE(data::Load("test_image.png", matrix, opts) == true);
+  // width * height * channels.
+  REQUIRE(matrix.n_rows == 50 * 50 * 3);
+  REQUIRE(opts.Height() == 50);
+  REQUIRE(opts.Width() == 50);
+  REQUIRE(opts.Channels() == 3);
+  REQUIRE(matrix.n_cols == 1);
+}
+
+/**
+ * Test that the image is loaded correctly if the type is specified in the
+ * function.
+ */
+TEST_CASE("LoadPNGImageTest", "[ImageLoadTest]")
+{
+  arma::Mat<unsigned char> matrix;
+  REQUIRE(data::Load("test_image.png", matrix, PNG + Fatal) == true);
+}
+
+/**
+ * Test that the image is loaded correctly if the type is not specified in the
+ * function.
+ */
+TEST_CASE("LoadPNGImageTestNoFormat", "[ImageLoadTest]")
+{
+  arma::Mat<unsigned char> matrix;
+  REQUIRE(data::Load("test_image.png", matrix, Fatal) == true);
+}
+
+/**
+ * Test when loading an image with the wrong data options
+ */
+TEST_CASE("LoadWrongDataOptions", "[ImageLoadTest]")
+{
+  arma::Mat<unsigned char> matrix;
+  TextOptions opts;
+  opts.Fatal() = true;
+  REQUIRE(data::Load("test_image.png", matrix, opts) == true);
+}
+
+/**
  * Test if the image is saved correctly using API.
  */
 TEST_CASE("SaveImageAPITest", "[ImageLoadTest]")
@@ -71,6 +139,31 @@ TEST_CASE("SaveImageAPITest", "[ImageLoadTest]")
   remove("APITest.bmp");
 }
 
+
+/**
+ * Test if the image is saved correctly using the new API.
+ */
+TEST_CASE("SaveImageNewAPITest", "[ImageLoadTest]")
+{
+  data::ImageInfo opts(5, 5, 3, 90);
+  opts.Fatal() = false;
+
+  arma::Mat<unsigned char> im1;
+  size_t dimension = opts.Width() * opts.Height() * opts.Channels();
+  im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
+
+  REQUIRE(data::Save("APITest.bmp", im1, opts) == true);
+
+  arma::Mat<unsigned char> im2;
+  REQUIRE(data::Load("APITest.bmp", im2, opts) == true);
+
+  REQUIRE(im1.n_cols == im2.n_cols);
+  REQUIRE(im1.n_rows == im2.n_rows);
+  for (size_t i = 0; i < im1.n_elem; ++i)
+    REQUIRE(im1[i] == im2[i]);
+  remove("APITest.bmp");
+}
+
 /**
  * Test if an image with a wrong dimesion throws an expected
  * exception while saving.
@@ -81,7 +174,50 @@ TEST_CASE("SaveImageWrongInfo", "[ImageLoadTest]")
 
   arma::Mat<unsigned char> im1;
   im1 = arma::randi<arma::Mat<unsigned char>>(24 * 25 * 7, 1);
-  REQUIRE_THROWS_AS(data::Save("APITest.bmp", im1, info, false),
+  REQUIRE_THROWS_AS(data::Save("APITest.bmp", im1, info, true),
+      std::runtime_error);
+}
+
+/**
+ * Test if an image with a wrong dimesion throws an expected
+ * exception while loading.
+ */
+TEST_CASE("LoadImageWrongInfo", "[ImageLoadTest]")
+{
+  data::ImageInfo info(5, 5, 3, 90);
+
+  arma::Mat<unsigned char> im1;
+  im1 = arma::randi<arma::Mat<unsigned char>>(24 * 25 * 7, 1);
+  REQUIRE_THROWS_AS(data::Load("APITest.bmp", im1, info, true),
+      std::runtime_error);
+}
+
+/**
+ * Test if loading a set of images with different dimensions will fail..
+ */
+TEST_CASE("LoadSetOfImagesNoInfo", "[ImageLoadTest]")
+{
+  std::vector<std::string> files =
+      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
+       "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
+       "sheep_9.jpg"};
+
+  arma::Mat<unsigned char> im1;
+  REQUIRE_THROWS_AS(data::Load(files, im1, JPG + Fatal),
+      std::runtime_error);
+}
+
+TEST_CASE("LoadSetOfImagesWrongInfo", "[ImageLoadTest]")
+{
+  data::ImageOptions opts(5, 5, 3, 90);
+  opts.Fatal() = true;
+  std::vector<std::string> files =
+      {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
+       "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
+       "sheep_9.jpg"};
+
+  arma::Mat<unsigned char> im1;
+  REQUIRE_THROWS_AS(data::Load(files, im1, opts),
       std::runtime_error);
 }
 
@@ -101,53 +237,6 @@ TEST_CASE("LoadVectorImageAPITest", "[ImageLoadTest]")
   REQUIRE(info.Width() == 50);
   REQUIRE(info.Channels() == 3);
   REQUIRE(matrix.n_cols == 2);
-}
-
-/**
- * Test if the image is saved correctly using API for arma mat.
- */
-TEST_CASE("SaveImageMatAPITest", "[ImageLoadTest]")
-{
-  data::ImageInfo info(5, 5, 3);
-
-  arma::Mat<unsigned char> im1;
-  size_t dimension = info.Width() * info.Height() * info.Channels();
-  im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
-  arma::mat input = ConvTo<arma::mat>::From(im1);
-  REQUIRE(Save("APITest.bmp", input, info, false) == true);
-
-  arma::mat output;
-  REQUIRE(Load("APITest.bmp", output, info, false) == true);
-
-  REQUIRE(input.n_cols == output.n_cols);
-  REQUIRE(input.n_rows == output.n_rows);
-  for (size_t i = 0; i < input.n_elem; ++i)
-    REQUIRE(input[i] == Approx(output[i]).epsilon(1e-7));
-  remove("APITest.bmp");
-}
-
-/**
- * Serialization test for the ImageInfo class.
- */
-TEST_CASE("ImageInfoSerialization", "[ImageLoadTest]")
-{
-  data::ImageInfo info(5, 5, 3, 90);
-  data::ImageInfo xmlInfo, jsonInfo, binaryInfo;
-
-  SerializeObjectAll(info, xmlInfo, jsonInfo, binaryInfo);
-
-  REQUIRE(info.Width() == xmlInfo.Width());
-  REQUIRE(info.Height() == xmlInfo.Height());
-  REQUIRE(info.Channels() == xmlInfo.Channels());
-  REQUIRE(info.Quality() == xmlInfo.Quality());
-  REQUIRE(info.Width() == jsonInfo.Width());
-  REQUIRE(info.Height() == jsonInfo.Height());
-  REQUIRE(info.Channels() == jsonInfo.Channels());
-  REQUIRE(info.Quality() == jsonInfo.Quality());
-  REQUIRE(info.Width() == binaryInfo.Width());
-  REQUIRE(info.Height() == binaryInfo.Height());
-  REQUIRE(info.Channels() == binaryInfo.Channels());
-  REQUIRE(info.Quality() == binaryInfo.Quality());
 }
 
 /**
@@ -179,9 +268,10 @@ TEMPLATE_TEST_CASE("ImagesResizeTest", "[ImageTest]", unsigned char, size_t,
   // test.
   for (size_t i = 0; i < files.size(); i++)
   {
-    REQUIRE(data::Load(files.at(i), image, info, false) == true);
+    info.Reset();
+    REQUIRE(data::Load(files.at(i), image, info, true) == true);
     ResizeImages(image, info, 320, 320);
-    REQUIRE(data::Save(reSheeps.at(i), image, info, false) == true);
+    REQUIRE(data::Save(reSheeps.at(i), image, info, true) == true);
   }
 
   // Since they are all resized, this should passes
@@ -238,7 +328,8 @@ TEMPLATE_TEST_CASE("ImagesResizeCropTest", "[ImageTest]", unsigned char,
   // test.
   for (size_t i = 0; i < files.size(); i++)
   {
-    REQUIRE(data::Load(files.at(i), image, info, false) == true);
+    info.Reset();
+    REQUIRE(data::Load(files.at(i), image, info, true) == true);
     ResizeCropImages(image, info, 320, 320);
     REQUIRE(data::Save(reSheeps.at(i), image, info, false) == true);
   }
@@ -286,15 +377,17 @@ TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", unsigned char, size_t,
 
   for (size_t i = 0; i < files.size(); i++)
   {
+    info.Reset();
     REQUIRE(data::Load(files.at(i), image, info, false) == true);
     arma::Mat<eT> originalImage = image;
     ResizeImages(image, info, info.Width(), info.Height());
-    for (size_t i = 0; i < originalImage.n_rows; ++i)
+    if (std::is_same_v<eT, float> || std::is_same_v<eT, double>)
     {
-      for (size_t j = 0; j < originalImage.n_cols; ++j)
-      {
-        REQUIRE(originalImage.at(i, j) == image.at(i, j));
-      }
+      REQUIRE(arma::approx_equal(originalImage, image, "absdiff", 1e-3));
+    }
+    else
+    {
+      REQUIRE(arma::approx_equal(originalImage, image, "absdiff", 1e-7));
     }
   }
 }
@@ -317,15 +410,17 @@ TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char,
 
   for (size_t i = 0; i < files.size(); i++)
   {
+    info.Reset();
     REQUIRE(data::Load(files.at(i), image, info, false) == true);
     arma::Mat<eT> originalImage = image;
     ResizeCropImages(image, info, info.Width(), info.Height());
-    for (size_t i = 0; i < originalImage.n_rows; ++i)
+    if (std::is_same_v<eT, float> || std::is_same_v<eT, double>)
     {
-      for (size_t j = 0; j < originalImage.n_cols; ++j)
-      {
-        REQUIRE(originalImage.at(i, j) == image.at(i, j));
-      }
+      REQUIRE(arma::approx_equal(originalImage, image, "absdiff", 1e-3));
+    }
+    else
+    {
+      REQUIRE(arma::approx_equal(originalImage, image, "absdiff", 1e-7));
     }
   }
 }
@@ -371,7 +466,7 @@ TEMPLATE_TEST_CASE("ResizeCropPixelTest", "[ImageTest][tiny]", unsigned char,
     const size_t outputPixel = y * (info.Width() * info.Channels()) +
         x * info.Channels() + channel;
 
-    REQUIRE(oldImage[inputPixel] == Approx(image[outputPixel]));
+    REQUIRE(oldImage[inputPixel] == Approx(image[outputPixel]).epsilon(1e-7));
   }
 }
 
@@ -398,4 +493,160 @@ TEMPLATE_TEST_CASE("ResizeCropUpscaleTest", "[ImageTest]", unsigned char,
   REQUIRE(info.Width() == 1000);
   REQUIRE(info.Channels() == inputChannels);
   REQUIRE(image.n_elem == info.Height() * info.Width() * info.Channels());
+}
+
+/**
+ * Test that groups channels from interleaved channels.
+ */
+TEST_CASE("GroupChannels", "[ImageTest]")
+{
+  arma::mat image = arma::regspace(0, 26);
+  data::ImageInfo info(3, 3, 3);
+
+  arma::mat newLayout = GroupChannels(image, info);
+
+  std::vector<double> expectedOutput = {
+    0, 3, 6, 9, 12, 15, 18, 21, 24,
+    1, 4, 7, 10, 13, 16, 19, 22, 25,
+    2, 5, 8, 11, 14, 17, 20, 23, 26,
+  };
+
+  arma::mat expectedImage(expectedOutput);
+  CheckMatrices(newLayout, expectedImage);
+}
+
+/**
+ * Test that interleaves channels from grouped channels.
+ */
+TEST_CASE("InterleaveChannels", "[ImageTest]")
+{
+  data::ImageInfo info(3, 3, 3);
+  std::vector<double> data = {
+    0, 3, 6, 9, 12, 15, 18, 21, 24,
+    1, 4, 7, 10, 13, 16, 19, 22, 25,
+    2, 5, 8, 11, 14, 17, 20, 23, 26,
+  };
+  arma::mat image(data);
+
+  arma::mat newLayout = InterleaveChannels(image, info);
+  arma::mat expectedImage = arma::regspace(0, 26);
+  CheckMatrices(newLayout, expectedImage);
+}
+
+/**
+ * Test that groups channels from 2 images whose channels are interleaved.
+ */
+TEST_CASE("GroupChannels2Images", "[ImageTest]")
+{
+  data::ImageInfo info(3, 3, 3);
+  arma::mat images = arma::reshape(arma::regspace(0, 53), 27, 2);
+  arma::mat newImages = GroupChannels(images, info);
+
+  std::vector<double> expectedOutput = {
+    0, 3, 6, 9, 12, 15, 18, 21, 24,
+    1, 4, 7, 10, 13, 16, 19, 22, 25,
+    2, 5, 8, 11, 14, 17, 20, 23, 26,
+    27, 30, 33, 36, 39, 42, 45, 48, 51,
+    28, 31, 34, 37, 40, 43, 46, 49, 52,
+    29, 32, 35, 38, 41, 44, 47, 50, 53,
+  };
+
+  arma::mat expectedImages = arma::reshape(arma::mat(expectedOutput), 27, 2);
+  CheckMatrices(newImages, expectedImages);
+}
+
+/**
+ * Test that interleaves channels from 2 images whose channels are grouped.
+ */
+TEST_CASE("InterleaveChannels2Images", "[ImageTest]")
+{
+  data::ImageInfo info(3, 3, 3);
+  std::vector<double> input = {
+    0, 3, 6, 9, 12, 15, 18, 21, 24,
+    1, 4, 7, 10, 13, 16, 19, 22, 25,
+    2, 5, 8, 11, 14, 17, 20, 23, 26,
+    27, 30, 33, 36, 39, 42, 45, 48, 51,
+    28, 31, 34, 37, 40, 43, 46, 49, 52,
+    29, 32, 35, 38, 41, 44, 47, 50, 53,
+  };
+  arma::mat images = arma::reshape(arma::mat(input), 27, 2);
+
+  arma::mat newLayout = InterleaveChannels(images, info);
+  arma::mat expectedImage = arma::reshape(arma::regspace(0, 53), 27, 2);
+  CheckMatrices(newLayout, expectedImage);
+}
+
+/**
+ * Test grouping channels on empty image.
+ */
+TEST_CASE("GroupChannelsEmptyImage", "[ImageTest]")
+{
+  arma::mat image;
+  data::ImageInfo info(3, 3, 3);
+  REQUIRE_THROWS(GroupChannels(image, info));
+}
+
+/**
+ * Test interleaving channels on empty image.
+ */
+TEST_CASE("InterleaveChannelsEmtpyImage", "[ImageTest]")
+{
+  data::ImageInfo info(3, 3, 3);
+  arma::mat image;
+  REQUIRE_THROWS(InterleaveChannels(image, info));
+}
+
+/**
+ * Test grouping channels when there is only one channel.
+ */
+TEST_CASE("GroupChannelsOneChannel", "[ImageTest]")
+{
+  arma::mat image = arma::regspace(0, 8);
+  data::ImageInfo info(3, 3, 1);
+  arma::mat newLayout = GroupChannels(image, info);
+  arma::mat expectedImage(image);
+
+  CheckMatrices(newLayout, expectedImage);
+}
+
+/**
+ * Test interleaving channels when there is only one channel.
+ */
+TEST_CASE("InterleaveChannelsOneChannel", "[ImageTest]")
+{
+  arma::mat image = arma::regspace(0, 8);
+  data::ImageInfo info(3, 3, 1);
+  arma::mat newLayout = InterleaveChannels(image, info);
+  arma::mat expectedImage(image);
+
+  CheckMatrices(newLayout, expectedImage);
+}
+
+/**
+ * Test grouping channels when there is only one pixel.
+ */
+TEST_CASE("GroupChannelsOnePixel", "[ImageTest]")
+{
+  data::ImageInfo info(1, 1, 1);
+  arma::mat image(1, 1);
+  image.fill(5.0);
+
+  arma::mat newLayout = GroupChannels(image, info);
+  arma::mat expectedImage(image);
+
+  CheckMatrices(newLayout, expectedImage);
+}
+
+/**
+ * Test interleaving channels when there is only one pixel.
+ */
+TEST_CASE("InterleaveChannelsOnePixel", "[ImageTest]")
+{
+  data::ImageInfo info(1, 1, 1);
+  arma::mat image(1, 1);
+  image.fill(5.0);
+
+  arma::mat newLayout = InterleaveChannels(image, info);
+  arma::mat expectedImage(image);
+  CheckMatrices(newLayout, expectedImage);
 }

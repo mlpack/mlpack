@@ -49,6 +49,7 @@ DAGNetwork<
     childrenList(other.childrenList),
     parentsList(other.parentsList),
     layerAxes(other.layerAxes),
+    layerConnections(other.layerConnections),
 
     parameters(other.parameters),
     inputDimensions(other.inputDimensions),
@@ -83,6 +84,7 @@ DAGNetwork<
 
     network(std::move(other.network)),
     layerAxes(std::move(other.layerAxes)),
+    layerConnections(std::move(other.layerConnections)),
 
     parameters(std::move(other.parameters)),
     inputDimensions(std::move(other.inputDimensions)),
@@ -124,6 +126,7 @@ DAGNetwork<
     parentsList = other.parentsList;
     childrenList = other.childrenList;
     layerAxes = other.layerAxes;
+    layerConnections = other.layerConnections;
 
     parameters = other.parameters;
     inputDimensions = other.inputDimensions;
@@ -168,6 +171,7 @@ DAGNetwork<OutputLayerType,
     parentsList = std::move(other.parentsList);
     childrenList = std::move(other.childrenList);
     layerAxes = std::move(other.layerAxes);
+    layerConnections = std::move(other.layerConnections);
 
     parameters = std::move(other.parameters);
     inputDimensions = std::move(other.inputDimensions);
@@ -198,15 +202,40 @@ void DAGNetwork<
     MatType
 >::SetAxis(size_t layerId, size_t concatAxis)
 {
+  // TODO: check if connection type is set?
   if (layerId >= network.size())
   {
-    std::ostringstream errorMessage;
-    errorMessage << "DAGNetwork::SetAxis(): layer "
-      << layerId << " does not exist in the network.";
-    throw std::logic_error(errorMessage.str());
+    std::ostringstream errMessage;
+    errMessage << "DAGNetwork::SetAxis(): layer "
+        << layerId << " does not exist in the network.";
+    throw std::logic_error(errMessage.str());
   }
 
   layerAxes[layerId] = concatAxis;
+
+  validOutputDimensions = false;
+  graphIsSet = false;
+  layerMemoryIsSet = false;
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::SetConnection(size_t layerId, ConnectionTypes connection)
+{
+  if (layerId >= network.size())
+  {
+    std::ostringstream errMessage;
+    errMessage << "DAGNetwork::SetConnection(): layer "
+        << layerId << " does not exist in the network.";
+    throw std::logic_error(errMessage.str());
+  }
+
+  layerConnections[layerId] = connection;
 
   validOutputDimensions = false;
   graphIsSet = false;
@@ -228,20 +257,18 @@ void DAGNetwork<
 
   if (parentNodeId >= network.size())
   {
-    std::ostringstream errorMessage;
-    errorMessage << "DAGNetwork::Connect(): Layer "
-      << parentNodeId
-      << " must exist in the network before using `Connect`.";
-    throw std::logic_error(errorMessage.str());
+    std::ostringstream errMessage;
+    errMessage << "DAGNetwork::Connect(): Layer " << parentNodeId
+        << " must exist in the network before using `Connect`.";
+    throw std::logic_error(errMessage.str());
   }
 
   if (childNodeId >= network.size())
   {
-    std::ostringstream errorMessage;
-    errorMessage << "DAGNetwork::Connect(): Layer "
-      << childNodeId
-      << " must exist in the network before using `Connect`.";
-    throw std::logic_error(errorMessage.str());
+    std::ostringstream errMessage;
+    errMessage << "DAGNetwork::Connect(): Layer " << childNodeId
+        << " must exist in the network before using `Connect`.";
+    throw std::logic_error(errMessage.str());
   }
 
   std::vector<size_t>& childNodeParents = parentsList[childNodeId];
@@ -249,11 +276,10 @@ void DAGNetwork<
   {
     if (childNodeParents[i] == parentNodeId)
     {
-      std::ostringstream errorMessage;
-      errorMessage << "DAGNetwork::Connect(): Layer "
-        << parentNodeId
-        << " cannot be concatenated with itself.";
-      throw std::logic_error(errorMessage.str());
+      std::ostringstream errMessage;
+      errMessage << "DAGNetwork::Connect(): Layer " << parentNodeId
+          << " cannot be concatenated with itself.";
+      throw std::logic_error(errMessage.str());
     }
   }
   childNodeParents.push_back(parentNodeId);
@@ -272,6 +298,8 @@ void DAGNetwork<
     MatType
 >::CheckGraph()
 {
+  if (graphIsSet)
+    return;
   // Check that the graph has only one input and one output
   size_t inputLayers = 0;
   size_t outputLayers = 0;
@@ -294,19 +322,18 @@ void DAGNetwork<
 
   if (inputLayers > 1)
   {
-    std::ostringstream errorMessage;
-    errorMessage << "DAGNetwork::CheckGraph(): "
+    std::ostringstream errMessage;
+    errMessage << "DAGNetwork::CheckGraph(): "
       "There should be exactly one input node, "
       "but this network has " << inputLayers << " input nodes.";
-    throw std::logic_error(errorMessage.str());
+    throw std::logic_error(errMessage.str());
   }
   if (outputLayers > 1)
   {
-    std::ostringstream errorMessage;
-    errorMessage << "DAGNetwork::CheckGraph(): "
-      "There should be exactly one output node, "
-      "but this network has " << outputLayers << " output nodes.";
-    throw std::logic_error(errorMessage.str());
+    std::ostringstream errMessage;
+    errMessage << "DAGNetwork::CheckGraph(): There should be exactly one "
+        "output node, but there are " << outputLayers << " output nodes.";
+    throw std::logic_error(errMessage.str());
   }
 
   /*
@@ -377,6 +404,131 @@ void DAGNetwork<
 
   graphIsSet = true;
 }
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::ComputeAdditionDimensions(size_t layerId)
+{
+  const size_t firstParent = parentsList[layerId][0];
+  const std::vector<size_t> outputDimensions =
+    network[firstParent]->OutputDimensions();
+
+  for (size_t i = 1; i < parentsList[layerId].size(); i++)
+  {
+    const size_t parentIndex = parentsList[layerId][i];
+    const std::vector<size_t> parentDims =
+      network[parentIndex]->OutputDimensions();
+
+    if (parentDims != outputDimensions)
+    {
+      std::ostringstream errMessage;
+      errMessage << "DAGNetwork::ComputeAdditionDimensions(): Layer "
+          << firstParent << " shape does not match layer " << parentIndex <<
+          " shape for element-wise addition.";
+      throw std::logic_error(errMessage.str());
+    }
+  }
+  network[layerId]->InputDimensions() = outputDimensions;
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::ComputeConcatDimensions(size_t layerId)
+{
+  const size_t firstParent = parentsList[layerId].front();
+  const size_t numOutputDimensions =
+    network[firstParent]->OutputDimensions().size();
+  const size_t numParents = parentsList[layerId].size();
+
+  for (size_t i = 1; i < numParents; i++)
+  {
+    const size_t parentIndex = parentsList[layerId][i];
+    const size_t parentDims = network[parentIndex]->OutputDimensions().size();
+    if (numOutputDimensions != parentDims)
+    {
+      std::ostringstream errMessage;
+      errMessage << "DAGNetwork::ComputeConcatDimensions(): "
+          "Number of output dimensions for layer " << layerId
+          << " (" << numOutputDimensions << ") should be equal "
+          "to the number of output dimensions for layer "
+          << parentIndex << ", which is " << parentDims << ".";
+      throw std::logic_error(errMessage.str());
+    }
+  }
+
+  // If layerAxes for layerId is not set, set it to the last dimension
+  // by default.
+  if (layerAxes.count(layerId) == 0)
+    layerAxes.insert({ layerId,
+      network[firstParent]->OutputDimensions().size() - 1 });
+
+  const size_t axis = layerAxes[layerId];
+  if (axis >= numOutputDimensions)
+  {
+    std::ostringstream errMessage;
+    errMessage << "DAGNetwork::ComputeConcatDimensions(): The concatenation "
+        "axis of layer " << layerId << " is " << axis
+        << ", but that's greater than or equal to the number of output "
+        "dimensions, which is " << numOutputDimensions << ".";
+    throw std::logic_error(errMessage.str());
+  }
+
+  for (size_t i = 0; i < numOutputDimensions; i++)
+  {
+    if (i == axis)
+    {
+      for (size_t j = 0; j < numParents; j++)
+      {
+        const size_t parentIndex = parentsList[layerId][j];
+        network[layerId]->InputDimensions()[i] +=
+            network[parentIndex]->OutputDimensions()[i];
+      }
+    }
+    else
+    {
+      // Set dimensions not along the concatenation axis to axisDim
+      // as long as these dimensions are all equal.
+      const size_t axisDim = network[firstParent]->OutputDimensions()[i];
+      for (size_t j = 1; j < parentsList[layerId].size(); j++)
+      {
+        const size_t parentIndex = parentsList[layerId][j];
+        Layer<MatType>* parent = network[parentIndex];
+        const size_t currentAxisDim = parent->OutputDimensions()[i];
+
+        if (axisDim != currentAxisDim)
+        {
+          std::ostringstream errMessage;
+          errMessage << "DAGNetwork::ComputeConcatDimensions(): "
+              "Axes not on the concatenation axis (axis = "
+              << axis << ") should be equal, but "<< axisDim << " != "
+              << currentAxisDim << " along axis " << i << " for layers "
+              << firstParent << " and " << parentIndex << ".";
+          throw std::logic_error(errMessage.str());
+        }
+      }
+      network[layerId]->InputDimensions()[i] = axisDim;
+    }
+  }
+
+  size_t rows = 1;
+  for (size_t j = 0; j < axis; j++)
+    rows *= network[layerId]->InputDimensions()[j];
+  rowsCache.insert({ layerId, rows });
+
+  size_t slices = 1;
+  for (size_t j = axis + 1; j < numOutputDimensions; j++)
+    slices *= network[layerId]->InputDimensions()[j];
+  slicesCache.insert({ layerId, slices });
+}
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
@@ -387,8 +539,10 @@ void DAGNetwork<
     MatType
 >::ComputeOutputDimensions()
 {
-  if (!graphIsSet)
-    CheckGraph();
+  if (validOutputDimensions)
+    return;
+
+  CheckGraph();
 
   // `CheckGraph` guarantees that the first layer in `sortedNetwork`
   // has no parents and that there is only one layer with no parents,
@@ -397,6 +551,9 @@ void DAGNetwork<
 
   network[currentLayer]->InputDimensions() = inputDimensions;
   network[currentLayer]->ComputeOutputDimensions();
+
+  rowsCache.clear();
+  slicesCache.clear();
 
   for (size_t layer = 1; layer < sortedNetwork.size(); layer++)
   {
@@ -410,102 +567,36 @@ void DAGNetwork<
     }
     else
     {
-      // numParents guaranteed to be > 1.
-
       const size_t numOutputDimensions =
         network[firstParent]->OutputDimensions().size();
 
-      for (size_t i = 1; i < numParents; i++)
-      {
-        size_t parentIndex = parentsList[currentLayer][i];
-        size_t parentDims = network[parentIndex]->OutputDimensions().size();
-        if (numOutputDimensions != parentDims)
-        {
-          std::ostringstream errorMessage;
-          errorMessage << "DAGNetwork::ComputeOutputDimensions(): "
-                          "Number of output dimensions for layer 0 ("
-                       << numOutputDimensions << ") should be equal "
-                          "to the number of output dimensions for layer "
-                       << parentIndex << ", which is " << parentDims << ".";
-          throw std::logic_error(errorMessage.str());
-        }
-      }
-
-      // If layerAxes for currentLayer is not set, set it to the last dimension
-      // by default.
-      if (layerAxes.count(currentLayer) == 0)
-        layerAxes.insert({ currentLayer,
-          network[firstParent]->OutputDimensions().size() - 1 });
-
-      const size_t axis = layerAxes[currentLayer];
-      if (axis >= numOutputDimensions)
-      {
-        std::ostringstream errorMessage;
-        errorMessage << "DAGNetwork::ComputeOutputDimensions(): "
-                        "The concatenation axis of layer "
-                     << currentLayer << " is " << axis
-                     << ", but that's greater than or equal to the number "
-                        "of output dimensions, which is "
-                     << numOutputDimensions << ".";
-        throw std::logic_error(errorMessage.str());
-      }
-
       network[currentLayer]->InputDimensions() =
-          std::vector<size_t>(numOutputDimensions, 0);
+        std::vector<size_t>(numOutputDimensions, 0);
 
-      for (size_t i = 0; i < numOutputDimensions; i++)
+      // By default concatenate when a node has multiple children.
+      if (layerConnections.count(currentLayer) == 0)
+        layerConnections.insert({ currentLayer, CONCATENATE });
+
+      // numParents guaranteed to be > 1.
+      ConnectionTypes connectionType = layerConnections.at(currentLayer);
+      switch (layerConnections.at(currentLayer))
       {
-        if (i == axis)
-        {
-          for (size_t j = 0; j < numParents; j++)
-          {
-            const size_t parentIndex = parentsList[currentLayer][j];
-            network[currentLayer]->InputDimensions()[i] +=
-                network[parentIndex]->OutputDimensions()[i];
-          }
-        }
-        else
-        {
-          // Set dimensions not along the concatenation axis to axisDim
-          // as long as these dimensions are all equal.
-          const size_t axisDim = network[firstParent]->OutputDimensions()[i];
-          for (size_t j = 1; j < parentsList[currentLayer].size(); j++)
-          {
-            const size_t parentIndex = parentsList[currentLayer][j];
-            Layer<MatType>* parent = network[parentIndex];
-            const size_t currentAxisDim = parent->OutputDimensions()[i];
-
-            if (axisDim != currentAxisDim)
-            {
-              std::ostringstream errorMessage;
-              errorMessage << "DAGNetwork::ComputeOutputDimensions(): "
-                              "Axes not on the concatenation axis (axis = "
-                            << axis << ") should be equal, but "
-                            << axisDim << " != "
-                            << currentAxisDim << " along axis " << i
-                            << " for layers " << network[firstParent]
-                            << " and " << network[parentIndex] << ".";
-              throw std::logic_error(errorMessage.str());
-            }
-          }
-          network[currentLayer]->InputDimensions()[i] = axisDim;
-        }
+        case CONCATENATE:
+          ComputeConcatDimensions(currentLayer);
+          break;
+        case ADDITION:
+          ComputeAdditionDimensions(currentLayer);
+          break;
+        default:
+          std::ostringstream errMessage;
+          errMessage << "DAGNetwork::ComputeOutputDimensions(): Connection "
+              "type " << connectionType << " does not exist.";
+          throw std::logic_error(errMessage.str());
       }
-
-      rowsCache.clear();
-      size_t rows = 1;
-      for (size_t j = 0; j < axis; j++)
-        rows *= network[currentLayer]->InputDimensions()[j];
-      rowsCache.insert({ currentLayer, rows });
-
-      slicesCache.clear();
-      size_t slices = 1;
-      for (size_t j = axis + 1; j < numOutputDimensions; j++)
-        slices *= network[currentLayer]->InputDimensions()[j];
-      slicesCache.insert({ currentLayer, slices });
     }
     network[currentLayer]->ComputeOutputDimensions();
   }
+  validOutputDimensions = true;
 }
 
 template<typename OutputLayerType,
@@ -532,7 +623,6 @@ void DAGNetwork<
   }
 
   ComputeOutputDimensions();
-  validOutputDimensions = true;
 }
 
 template<typename OutputLayerType,
@@ -545,7 +635,6 @@ size_t DAGNetwork<
 >::WeightSize()
 {
   UpdateDimensions("DAGNetwork::WeightSize()");
-
   size_t total = 0;
   for (size_t i = 0; i < network.size(); i++)
     total += network[i]->WeightSize();
@@ -577,8 +666,8 @@ void DAGNetwork<
   else
   {
     throw std::invalid_argument("DAGNetwork::Reset(): Cannot reset network when"
-        "no input dimensionality is given, and `InputDimensions()` has not been"
-        " set!");
+        " no input dimensionality is given, and `InputDimensions()` has not"
+        " been set!");
   }
 }
 
@@ -620,8 +709,7 @@ void DAGNetwork<
     MatType& W,
     const size_t elements)
 {
-  if (!graphIsSet)
-    CheckGraph();
+  CheckGraph();
 
   size_t offset = 0;
   const size_t totalWeightSize = elements;
@@ -702,8 +790,10 @@ void DAGNetwork<
     MatType
 >::SetLayerMemory()
 {
-  size_t totalWeightSize = WeightSize();
+  if (layerMemoryIsSet)
+    return;
 
+  size_t totalWeightSize = WeightSize();
   if (totalWeightSize != parameters.n_elem)
   {
     throw std::logic_error("DAGNetwork::SetLayerMemory(): Total layer weight "
@@ -745,11 +835,8 @@ void DAGNetwork<
         "without any layers!");
   }
 
-  if (!graphIsSet)
-    CheckGraph();
-
-  if (!validOutputDimensions)
-    UpdateDimensions(functionName, inputDimensionality);
+  CheckGraph();
+  UpdateDimensions(functionName, inputDimensionality);
 
   if (parameters.n_elem != WeightSize())
   {
@@ -757,8 +844,7 @@ void DAGNetwork<
     InitializeWeights();
   }
 
-  if (!layerMemoryIsSet)
-    SetLayerMemory();
+  SetLayerMemory();
 
   if (setMode)
     SetNetworkMode(training);
@@ -782,22 +868,23 @@ void DAGNetwork<
     layerOutputSize += network[currentLayer]->OutputSize();
   }
 
-  size_t totalConcatSize = 0;
+  // Calculate extra memory required for skip connections.
+  size_t extraSize = 0;
   for (size_t i = 1; i < sortedNetwork.size(); i++)
   {
     const size_t currentLayer = sortedNetwork[i];
     Layer<MatType>* layer = network[currentLayer];
     if (parentsList[currentLayer].size() > 1)
     {
-      size_t concatSize = layer->InputDimensions()[0];
+      size_t totalSize = layer->InputDimensions()[0];
       for (size_t j = 1; j < layer->InputDimensions().size(); j++)
-        concatSize *= layer->InputDimensions()[j];
+        totalSize *= layer->InputDimensions()[j];
 
-      totalConcatSize += concatSize;
+      extraSize += totalSize;
     }
   }
 
-  const size_t activationMemorySize = totalConcatSize + layerOutputSize;
+  const size_t activationMemorySize = extraSize + layerOutputSize;
   if (batchSize * activationMemorySize == layerOutputMatrix.n_elem)
     return;
 
@@ -845,12 +932,12 @@ void DAGNetwork<
     }
     else
     {
-      size_t concatSize = layer->InputDimensions()[0];
+      size_t totalSize = layer->InputDimensions()[0];
       for (size_t j = 1; j < layer->InputDimensions().size(); j++)
-        concatSize *= layer->InputDimensions()[j];
-      MakeAlias(layerInputs[i - 1], layerOutputMatrix, concatSize,
+        totalSize *= layer->InputDimensions()[j];
+      MakeAlias(layerInputs[i - 1], layerOutputMatrix, totalSize,
         batchSize, offset);
-      offset += concatSize;
+      offset += totalSize;
     }
   }
 }
@@ -875,23 +962,24 @@ void DAGNetwork<
     const size_t currentLayer = sortedNetwork[i];
     Layer<MatType>* layer = network[currentLayer];
     size_t layerDeltaSize = layer->OutputSize();
-    size_t concatDeltaSize = 0;
+    // Extra memory for skip connections.
+    size_t extraDeltaSize = 0;
 
     if (childrenList[currentLayer].size() > 1)
       layerDeltaSize *= 2;
 
     if (parentsList[currentLayer].size() > 1)
     {
-      concatDeltaSize = layer->InputDimensions()[0];
+      extraDeltaSize = layer->InputDimensions()[0];
       for (size_t j = 1; j < layer->InputDimensions().size(); j++)
-        concatDeltaSize *= layer->InputDimensions()[j];
+        extraDeltaSize *= layer->InputDimensions()[j];
     }
 
     // If at the last layer, we only need to add it's `concatDeltaSize`.
     if (i == sortedNetwork.size() - 1)
       layerDeltaSize = 0;
 
-    deltaMatrixSize += layerDeltaSize + concatDeltaSize;
+    deltaMatrixSize += layerDeltaSize + extraDeltaSize;
   }
 
   if (batchSize * deltaMatrixSize == layerDeltaMatrix.n_elem)
@@ -1006,27 +1094,52 @@ void DAGNetwork<
       // Concatenation
       if (parents.size() > 1)
       {
-        const size_t axis = layerAxes[currentLayer];
-
-        size_t rows = rowsCache[currentLayer];
-        size_t slices = slicesCache[currentLayer] * input.n_cols;
-
-        CubeType inputAlias;
-        MakeAlias(inputAlias, layerInputs[i - 1], rows,
-          network[currentLayer]->InputDimensions()[axis], slices);
-        size_t startCol = 0;
-
-        for (size_t j = 0; j < parents.size(); j++)
+        switch (layerConnections.at(currentLayer))
         {
-          const size_t index = sortedIndices[parents[j]];
-          const MatType& parentOutput = layerOutputs[index];
+          case CONCATENATE:
+          {
+            const size_t axis = layerAxes[currentLayer];
 
-          const size_t cols = network[parents[j]]->OutputDimensions()[axis];
-          CubeType parentOutputAlias;
-          MakeAlias(parentOutputAlias, parentOutput, rows, cols, slices);
+            size_t rows = rowsCache.at(currentLayer);
+            size_t slices = slicesCache.at(currentLayer) * input.n_cols;
 
-          inputAlias.cols(startCol, startCol + cols - 1) = parentOutputAlias;
-          startCol += cols;
+            CubeType inputAlias;
+            MakeAlias(inputAlias, layerInputs[i - 1], rows,
+              network[currentLayer]->InputDimensions()[axis], slices);
+            size_t startCol = 0;
+
+            for (size_t j = 0; j < parents.size(); j++)
+            {
+              const size_t index = sortedIndices[parents[j]];
+              const MatType& parentOutput = layerOutputs[index];
+
+              const size_t cols =
+                network[parents[j]]->OutputDimensions()[axis];
+              CubeType parentOutputAlias;
+              MakeAlias(parentOutputAlias, parentOutput, rows, cols, slices);
+
+              inputAlias.cols(startCol, startCol + cols - 1) =
+                parentOutputAlias;
+              startCol += cols;
+            }
+            break;
+          }
+
+          case ADDITION:
+          {
+            layerInputs[i - 1] = layerOutputs[sortedIndices[parents[0]]];
+            for (size_t j = 1; j < parents.size(); j++)
+            {
+              const size_t parentIndex = sortedIndices[parents[j]];
+              const MatType& parentOutput = layerOutputs[parentIndex];
+              layerInputs[i - 1] += parentOutput;
+            }
+            break;
+          }
+
+          default:
+            throw std::logic_error("DAGNetwork::Forward(): Connection type"
+                " not implemented.");
         }
       }
 
@@ -1091,30 +1204,53 @@ void DAGNetwork<
       const size_t numParents = parentsList[currentLayer].size();
       if (numParents > 1)
       {
-        // Calculating deltas for concatenation.
-        const size_t axis = layerAxes[currentLayer];
-
-        size_t batchSize = input.n_cols;
-        size_t rows = rowsCache[currentLayer];
-        size_t slices = slicesCache[currentLayer] * batchSize;
-
-        CubeType inputDeltaAlias;
-        MakeAlias(inputDeltaAlias, inputDeltas[i], rows,
-          layer->InputDimensions()[axis], slices);
-
-        const std::vector<size_t>& parents = parentsList[currentLayer];
-        size_t startCol = 0;
-        for (size_t j = 0; j < parents.size(); j++)
+        switch (layerConnections.at(currentLayer))
         {
-          Layer<MatType>* parent = network[parents[j]];
-          const size_t parentIndex = sortedIndices[parents[j]];
-          const size_t cols = parent->OutputDimensions()[axis];
-          outputDeltas[parentIndex] = inputDeltaAlias.cols(startCol,
-            startCol + cols - 1);
+          case CONCATENATE:
+          {
+            // Calculating deltas for concatenation.
+            const size_t axis = layerAxes[currentLayer];
 
-          outputDeltas[parentIndex].reshape(
-            outputDeltas[parentIndex].n_elem / batchSize, batchSize);
-          startCol += cols;
+            size_t batchSize = input.n_cols;
+            size_t rows = rowsCache.at(currentLayer);
+            size_t slices = slicesCache.at(currentLayer) * batchSize;
+
+            CubeType inputDeltaAlias;
+            MakeAlias(inputDeltaAlias, inputDeltas[i], rows,
+              layer->InputDimensions()[axis], slices);
+
+            const std::vector<size_t>& parents = parentsList[currentLayer];
+            size_t startCol = 0;
+            for (size_t j = 0; j < parents.size(); j++)
+            {
+              Layer<MatType>* parent = network[parents[j]];
+              const size_t parentIndex = sortedIndices[parents[j]];
+              const size_t cols = parent->OutputDimensions()[axis];
+              outputDeltas[parentIndex] = inputDeltaAlias.cols(startCol,
+                startCol + cols - 1);
+
+              outputDeltas[parentIndex].reshape(
+                outputDeltas[parentIndex].n_elem / batchSize, batchSize);
+              startCol += cols;
+            }
+            break;
+          }
+
+          case ADDITION:
+          {
+            const std::vector<size_t>& parents = parentsList[currentLayer];
+            for (size_t j = 0; j < parents.size(); j++)
+            {
+              // NOTE: Could probably optimize out the copy.
+              const size_t parentIndex = sortedIndices[parents[j]];
+              outputDeltas[parentIndex] = inputDeltas[i];
+            }
+            break;
+          }
+
+          default:
+            throw std::logic_error("DAGNetwork::Backward(): Connection type"
+                " not implemented.");
         }
       }
 
@@ -1122,7 +1258,7 @@ void DAGNetwork<
        * If a parent has multiple children, you need to accumulate
        * the deltas instead across all it's children in order
        * to correctly calculate that layers gradient w.r.t the
-       * networks loss.
+       * network's loss.
        */
       for (size_t j = 0; j < numParents; j++)
       {
@@ -1460,6 +1596,7 @@ void DAGNetwork<
     ar(CEREAL_NVP(childrenList));
     ar(CEREAL_NVP(parentsList));
     ar(CEREAL_NVP(layerAxes));
+    ar(CEREAL_NVP(layerConnections));
     ar(CEREAL_NVP(parameters));
 
     ar(CEREAL_NVP(inputDimensions));

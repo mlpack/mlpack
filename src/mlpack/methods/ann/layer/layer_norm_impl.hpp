@@ -51,8 +51,8 @@ void LayerNorm<MatType>::CustomInitialize(
   // Beta acts as the shifting parameters for the normalized output.
   MakeAlias(betaTemp, W, size, 1, gammaTemp.n_elem);
 
-  gammaTemp.fill(1.0);
-  betaTemp.fill(0.0);
+  gammaTemp.ones();
+  betaTemp.zeros();
 }
 
 template<typename MatType>
@@ -65,7 +65,7 @@ void LayerNorm<MatType>::Forward(
   // Normalize the input.
   output = input.each_row() - mean;
   inputMean = output;
-  output.each_row() /= sqrt(variance + eps);
+  output.each_row() /= sqrt(variance + ElemType(eps));
 
   // Reused in the backward and gradient step.
   normalized = output;
@@ -82,13 +82,13 @@ void LayerNorm<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  const MatType stdInv = 1.0 / sqrt(variance + eps);
+  const MatType stdInv = 1 / sqrt(variance + ElemType(eps));
 
   // dl / dxhat.
   const MatType norm = gy.each_col() % gamma;
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
-  const MatType var = sum(norm % inputMean, 0) % pow(stdInv, 3.0) * -0.5;
+  const MatType var = -sum(norm % inputMean, 0) % pow(stdInv, ElemType(3)) / 2;
 
   // dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * 1 / m.

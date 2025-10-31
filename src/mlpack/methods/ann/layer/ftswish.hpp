@@ -45,12 +45,14 @@ template<typename MatType = arma::mat>
 class FTSwish : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the Flatten T Swish object using the specified parameters.
    * The thresholded value T can be adjusted via T paramaters.
    * When the x is < 0, T will be used instead of 0.
    * The default value of T is -0.20 as suggested in the paper.
-   * @param T 
    */
   FTSwish(const double T = -0.20);
 

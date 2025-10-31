@@ -288,8 +288,13 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
   // Calculate empirical center of data.
   bound |= dataset->cols(begin, begin + count - 1);
 
-  // Now split the node.
-  SplitNode(center, width, maxLeafSize);
+  ElemType maxWidth = 0.0;
+  for (size_t i = 0; i < bound.Dim(); ++i)
+    if (bound[i].Hi() - bound[i].Lo() > maxWidth)
+      maxWidth = bound[i].Hi() - bound[i].Lo();
+
+  if (maxWidth != 0.0)
+    SplitNode(center, width, maxLeafSize);
 
   // Calculate the distance from the empirical center of this node to the
   // empirical center of the parent.
@@ -323,8 +328,13 @@ Octree<DistanceType, StatisticType, MatType>::Octree(
   // Calculate empirical center of data.
   bound |= dataset->cols(begin, begin + count - 1);
 
-  // Now split the node.
-  SplitNode(center, width, oldFromNew, maxLeafSize);
+  ElemType maxWidth = 0.0;
+  for (size_t i = 0; i < bound.Dim(); ++i)
+    if (bound[i].Hi() - bound[i].Lo() > maxWidth)
+      maxWidth = bound[i].Hi() - bound[i].Lo();
+
+  if (maxWidth != 0.0)
+    SplitNode(center, width, oldFromNew, maxLeafSize);
 
   // Calculate the distance from the empirical center of this node to the
   // empirical center of the parent.

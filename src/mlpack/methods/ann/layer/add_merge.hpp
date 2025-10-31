@@ -28,6 +28,9 @@ template<typename MatType = arma::mat>
 class AddMerge : public MultiLayer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create an empty AddMerge that holds no layers of its own.  Be sure to add
    * layers with Add() before using!
