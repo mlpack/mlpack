@@ -40,7 +40,7 @@ namespace mlpack {
 template <typename OutputLayerType = EmptyLoss,
           typename InitializationRuleType = RandomInitialization,
           typename MatType = arma::mat>
-class YOLOv3tiny
+class YOLOv3Tiny
 {
  public:
 
@@ -50,14 +50,14 @@ class YOLOv3tiny
   using Type = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
 
-  YOLOv3tiny() { /* Nothing to do. */ }
+  YOLOv3Tiny() { /* Nothing to do. */ }
 
-  YOLOv3tiny(const size_t imgSize,
+  YOLOv3Tiny(const size_t imgSize,
              const size_t numClasses,
              const size_t predictionsPerCell,
              const std::vector<Type>& anchors);
 
-  ~YOLOv3tiny() { /* Nothing to do. */ }
+  ~YOLOv3Tiny() { /* Nothing to do. */ }
 
   ModelType& Model() { return model; }
 

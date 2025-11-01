@@ -19,11 +19,11 @@ namespace mlpack {
 template <typename OutputLayerType,
           typename InitializationRuleType,
           typename MatType>
-YOLOv3tiny<
+YOLOv3Tiny<
            OutputLayerType,
            InitializationRuleType,
            MatType
->::YOLOv3tiny(const size_t imgSize,
+>::YOLOv3Tiny(const size_t imgSize,
               const size_t numClasses,
               const size_t predictionsPerCell,
               const std::vector<Type>& anchors) :
@@ -34,7 +34,7 @@ YOLOv3tiny<
   if (anchors.size() != predictionsPerCell * 4)
   {
     std::ostringstream errMessage;
-    errMessage << "YOLOv3tiny::YOLOv3tiny(): Expected " << predictionsPerCell *
+    errMessage << "YOLOv3Tiny::YOLOv3Tiny(): Expected " << predictionsPerCell *
       4 << " anchor points, but received " << anchors.size();
     throw std::logic_error(errMessage.str());
   }
@@ -123,7 +123,7 @@ YOLOv3tiny<
 template <typename OutputLayerType,
           typename InitializationRuleType,
           typename MatType>
-size_t YOLOv3tiny<OutputLayerType, InitializationRuleType, MatType>
+size_t YOLOv3Tiny<OutputLayerType, InitializationRuleType, MatType>
 ::ConvolutionBlock(const size_t maps,
                    const size_t kernel,
                    const bool batchNorm,
@@ -153,7 +153,7 @@ size_t YOLOv3tiny<OutputLayerType, InitializationRuleType, MatType>
 template <typename OutputLayerType,
           typename InitializationRuleType,
           typename MatType>
-size_t YOLOv3tiny<OutputLayerType, InitializationRuleType, MatType>
+size_t YOLOv3Tiny<OutputLayerType, InitializationRuleType, MatType>
 ::MaxPool2x2(const size_t stride)
 {
   // All max pool layers have kernel size 2
@@ -172,7 +172,7 @@ size_t YOLOv3tiny<OutputLayerType, InitializationRuleType, MatType>
 template <typename OutputLayerType,
           typename InitializationRuleType,
           typename MatType>
-size_t YOLOv3tiny<OutputLayerType, InitializationRuleType, MatType>
+size_t YOLOv3Tiny<OutputLayerType, InitializationRuleType, MatType>
 ::YOLO(const size_t imgSize,
        const size_t gridSize,
        const std::vector<Type>& anchors)

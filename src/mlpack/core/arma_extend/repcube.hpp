@@ -15,7 +15,7 @@ namespace arma {
 #if ARMA_VERSION_MAJOR < 15
 
 template<typename eT>
-Cube<eT> newrepcube(const Cube<eT>& X,
+Cube<eT> repcube(const Cube<eT>& X,
                    const uword copies_per_row,
                    const uword copies_per_col,
                    const uword copies_per_slice)
@@ -49,7 +49,7 @@ Cube<eT> newrepcube(const Cube<eT>& X,
 }
 
 template<typename eT>
-Cube<eT> newrepcube(const Mat<eT>& X,
+Cube<eT> repcube(const Mat<eT>& X,
                    const uword copies_per_row,
                    const uword copies_per_col,
                    const uword copies_per_slice)
