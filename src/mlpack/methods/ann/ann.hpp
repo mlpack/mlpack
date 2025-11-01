@@ -31,4 +31,6 @@
 #include "dag_network.hpp"
 #include "rnn.hpp"
 
+#include "models/models.hpp"
+
 #endif
