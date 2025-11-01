@@ -28,6 +28,7 @@
 #include <mlpack/core/cereal/is_loading.hpp>
 #include <mlpack/core/cereal/is_saving.hpp>
 #include <mlpack/core/arma_extend/serialize_armadillo.hpp>
+#include <mlpack/core/arma_extend/repcube.hpp>
 #include <mlpack/core/cereal/array_wrapper.hpp>
 #include <mlpack/core/cereal/pointer_vector_wrapper.hpp>
 #include <mlpack/core/cereal/pointer_wrapper.hpp>

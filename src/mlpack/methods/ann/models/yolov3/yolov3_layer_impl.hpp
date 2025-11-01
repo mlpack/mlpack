@@ -160,10 +160,12 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
 
   const size_t cols = predictionsPerCell - 1;
   MatType offset = arma::regspace<MatType>(0, this->inputDimensions[0] - 1);
-  CubeType xOffset = arma::repcube(offset, this->inputDimensions[0],
+  CubeType xOffset = arma::newrepcube(offset, this->inputDimensions[0],
     predictionsPerCell, batchSize);
-  CubeType yOffset = arma::repcube(arma::vectorise(arma::repmat(offset.t(),
-    this->inputDimensions[0], 1)), 1, predictionsPerCell, batchSize);
+
+  arma::Col<Type> offsetT = arma::vectorise(arma::repmat(offset.t(),
+    this->inputDimensions[0], 1));
+  CubeType yOffset = arma::newrepcube(offsetT, 1, predictionsPerCell, batchSize);
 
   // TODO: add if (this->training)
 
@@ -179,12 +181,12 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
 
   // w
   outputCube.tube(grid * 2, 0, grid * 3 - 1, cols) =
-    arma::repcube(w, 1, 1, batchSize) %
+    arma::newrepcube(w, 1, 1, batchSize) %
     arma::exp(inputCube.tube(grid * 2, 0, grid * 3 - 1, cols));
 
   // h
   outputCube.tube(grid * 3, 0, grid * 4 - 1, cols) =
-    arma::repcube(h, 1, 1, batchSize) %
+    arma::newrepcube(h, 1, 1, batchSize) %
     arma::exp(inputCube.tube(grid * 3, 0, grid * 4 - 1, cols));
 
   // apply logistic sigmoid to objectness and classification logits.
