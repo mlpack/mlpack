@@ -737,7 +737,7 @@ TEST_CASE("DAGNetworkForestTest", "[DAGNetworkTest]")
 /*
  * Test case that uses the output of a layer multiple times.
  */
-TEST_CASE("DAGNetworkDiamondTest", "[DAGNetworkTest]")
+TEST_CASE("DAGNetworkDiamondTest", "[DAGNetworkTest][tiny]")
 {
    /*
     *
@@ -813,7 +813,8 @@ TEST_CASE("DAGNetworkAddMultiLayer", "[DAGNetworkTest]")
  * skip connection layer.
  */
 TEST_CASE("DAGNetworkGradientAccumulatesAndResetsToZeroUsingConcatenation",
-          "[DAGNetworkTest]") {
+    "[DAGNetworkTest][tiny]")
+{
   DAGNetwork<MeanSquaredError, ConstInitialization> model =
     DAGNetwork(MeanSquaredError(), ConstInitialization(1.0f));
 

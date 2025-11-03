@@ -23,7 +23,7 @@ using namespace mlpack;
 /**
  * Simple test for Max Pooling layer.
  */
-TEST_CASE("MaxPoolingTestCase", "[ANNLayerTest]")
+TEST_CASE("MaxPoolingTestCase", "[ANNLayerTest][tiny]")
 {
   // For rectangular input to pooling layers.
   arma::mat input = arma::mat(12, 1);

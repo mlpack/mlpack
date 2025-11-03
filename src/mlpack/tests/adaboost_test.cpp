@@ -24,7 +24,7 @@ using namespace mlpack;
  * checks whether the hamming loss breaches the upperbound, which is provided by
  * ztAccumulator.
  */
-TEMPLATE_TEST_CASE("HammingLossBoundIris", "[AdaBoostTest]", mat, fmat)
+TEMPLATE_TEST_CASE("HammingLossBoundIris", "[AdaBoostTest][tiny]", mat, fmat)
 {
   using MatType = TestType;
   using eT = typename MatType::elem_type;
@@ -349,7 +349,7 @@ TEMPLATE_TEST_CASE("HammingLossIris_DS", "[AdaBoostTest]", mat, fmat)
  * weak learner is close to that of a boosted weak learner using adaboost.
  * This is for the weak learner: decision stumps.
  */
-TEMPLATE_TEST_CASE("WeakLearnerErrorIris_DS", "[AdaBoostTest]", mat, fmat)
+TEMPLATE_TEST_CASE("WeakLearnerErrorIris_DS", "[AdaBoostTest][tiny]", mat, fmat)
 {
   using MatType = TestType;
   using eT = typename MatType::elem_type;

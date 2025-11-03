@@ -103,7 +103,7 @@ void ConvolutionMethodBatchTest(const arma::mat input,
 /**
  * Test the convolution (valid) methods using 3rd order tensors.
  */
-TEST_CASE("ValidConvolution3DTest", "[ConvolutionTest]")
+TEST_CASE("ValidConvolution3DTest", "[ConvolutionTest][tiny]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
@@ -145,7 +145,7 @@ TEST_CASE("ValidConvolution3DTest", "[ConvolutionTest]")
 /**
  * Test the convolution (full) methods using 3rd order tensors.
  */
-TEST_CASE("FullConvolution3DTest", "[ConvolutionTest]")
+TEST_CASE("FullConvolution3DTest", "[ConvolutionTest][tiny]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;

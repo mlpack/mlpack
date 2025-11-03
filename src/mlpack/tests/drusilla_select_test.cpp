@@ -45,7 +45,7 @@ TEST_CASE("DrusillaSelectExtremeOutlierTest", "[DrusillaSelectTest]")
 
 // If we use only one projection with the number of points equal to what is in
 // the dataset, we should end up with the exact result.
-TEST_CASE("DrusillaSelectExhaustiveExactTest", "[DrusillaSelectTest]")
+TEST_CASE("DrusillaSelectExhaustiveExactTest", "[DrusillaSelectTest][tiny]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 100);
 

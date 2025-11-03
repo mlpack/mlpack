@@ -79,7 +79,7 @@ TEST_CASE("GMMProbabilityComponentTest", "[GMMTest]")
  * dimensions.  We will vary the dataset size from small to large.  The EM
  * algorithm is used for training the GMM.
  */
-TEST_CASE("GMMTrainEMOneGaussian", "[GMMTest]")
+TEST_CASE("GMMTrainEMOneGaussian", "[GMMTest][tiny]")
 {
   for (size_t iterations = 0; iterations < 4; iterations++)
   {
@@ -882,7 +882,7 @@ TEST_CASE("DiagonalGMMProbabilityComponentTest", "[GMMTest]")
  * in two dimensions.  We will vary the dataset size from small to large.
  * The EM algorithm is used for training the DiagonalGMM.
  */
-TEST_CASE("DiagonalGMMTrainEMOneGaussian", "[GMMTest]")
+TEST_CASE("DiagonalGMMTrainEMOneGaussian", "[GMMTest][tiny]")
 {
   for (size_t iterations = 0; iterations < 4; iterations++)
   {

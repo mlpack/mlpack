@@ -1284,7 +1284,7 @@ void GenerateVectorOfTree(TreeType* node,
  *
  * Then, we do that whole process a handful of times.
  */
-TEST_CASE("KdTreeTest", "[TreeTest]")
+TEST_CASE("KdTreeTest", "[TreeTest][tiny]")
 {
   using TreeType = KDTree<EuclideanDistance, EmptyStatistic, arma::mat>;
 

@@ -56,7 +56,8 @@ MatType GetMeanShiftData()
 /**
  * 30-point 3-class test case for Mean Shift.
  */
-TEMPLATE_TEST_CASE("MeanShiftSimpleTest", "[MeanShiftTest]", float, double)
+TEMPLATE_TEST_CASE("MeanShiftSimpleTest", "[MeanShiftTest][tiny]", float,
+    double)
 {
   using ElemType = TestType;
 
