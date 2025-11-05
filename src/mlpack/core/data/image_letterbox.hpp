@@ -77,7 +77,7 @@ void LetterboxImage(arma::Mat<eT>& src,
     height = srcOpt.Height() * imgSize / srcOpt.Width();
   }
 
-  arma::Mat<eT> dest(imgSize * imgSize * srcOpt.Channels(), 1);
+  arma::Mat<eT> dest(imgSize * imgSize * srcOpt.Channels(), 1, arma::fill::none);
 
   // Resize, then embed src within dest.
   ResizeImages(src, srcOpt, width, height);
@@ -91,24 +91,7 @@ void LetterboxImage(arma::Mat<eT>& src,
   const size_t dx = (imgSize - width) / 2;
   const size_t dy = (imgSize - height) / 2;
 
-  // TODO: not sure if this is much slower.
-  // cubeDest.fill(fillValue);
-
-  if (dx > 0)
-  {
-    cubeDest.subcube(0, 0, 0, srcOpt.Channels() - 1, dx - 1, imgSize - 1)
-      .fill(fillValue);
-    cubeDest.subcube(0, dx + width, 0, srcOpt.Channels() - 1, imgSize - 1,
-      imgSize - 1).fill(fillValue);
-  }
-  else
-  {
-    cubeDest.subcube(0, 0, 0, srcOpt.Channels() - 1, imgSize - 1, dy - 1)
-      .fill(fillValue);
-    cubeDest.subcube(0, 0, dy + height, srcOpt.Channels() - 1, imgSize - 1,
-      imgSize - 1).fill(fillValue);
-  }
-
+  cubeDest.fill(fillValue);
   // Fill RGB
   cubeDest.subcube(0, dx, dy, srcOpt.Channels() - 1, srcOpt.Width() + dx - 1,
     srcOpt.Height() + dy - 1) = cubeSrc;
