@@ -77,7 +77,8 @@ void LetterboxImage(arma::Mat<eT>& src,
     height = srcOpt.Height() * imgSize / srcOpt.Width();
   }
 
-  arma::Mat<eT> dest(imgSize * imgSize * srcOpt.Channels(), 1, arma::fill::none);
+  arma::Mat<eT> dest(imgSize * imgSize * srcOpt.Channels(), 1,
+                     arma::fill::none);
 
   // Resize, then embed src within dest.
   ResizeImages(src, srcOpt, width, height);
