@@ -38,6 +38,8 @@ _????-??-??_
  * Fix infinite recursion in `Octree` when the number of identical points
    exceeds `maxLeafSize` (#4020).
 
+ * Fix thread-specific random seed initialization (#4027).
+
 ## mlpack 4.6.2
 
 _2025-05-22_
