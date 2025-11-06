@@ -128,6 +128,35 @@ consists only of including it.  So, your program should include mlpack:
 #include <mlpack.hpp>
 ```
 
+### Simple Example: Loading and Saving Data
+
+```c++
+#include <mlpack.hpp>
+#include <iostream>
+
+using namespace mlpack;
+using namespace arma;
+using namespace std;
+
+int main()
+{
+  // Load a dataset
+  mat data;
+  data::Load("data.csv", data);
+  
+  // Print dataset information
+  cout << "Dataset size: " << data.n_rows << " x " << data.n_cols << endl;
+  
+  // Save the dataset in a different format
+  data::Save("data.txt", data);
+  
+  return 0;
+}
+```
+
+
+
+
 and when you link, be sure to link against Armadillo.  If your example program
 is `my_program.cpp`, your compiler is GCC, and you would like to compile with
 OpenMP support (recommended) and optimizations, compile like this:
