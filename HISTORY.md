@@ -25,6 +25,8 @@ _????-??-??_
 
  * Mark long-running tests with the `[long]` tag (#3983).
 
+ * Add `Embedding` layer (#3999).
+
 ## mlpack 4.6.2
 
 _2025-05-22_
