@@ -1,24 +1,24 @@
 /**
- * @file methods/ann/layer/lookup_impl.hpp
+ * @file methods/ann/layer/embedding_impl.hpp
  * @author Marcus Edel
  *
- * Implementation of the Lookup (embedding) layer class.
+ * Implementation of the Embedding layer class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_LOOKUP_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_LOOKUP_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_EMBEDDING_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_EMBEDDING_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "lookup.hpp"
+#include "embedding.hpp"
 
 namespace mlpack {
 
 template<typename MatType, typename RegularizerType>
-Lookup<MatType, RegularizerType>::Lookup() :
+Embedding<MatType, RegularizerType>::Embedding() :
     Layer<MatType>(),
     vocabSize(0),
     embeddingSize(0)
@@ -27,13 +27,13 @@ Lookup<MatType, RegularizerType>::Lookup() :
 }
 
 template<typename MatType, typename RegularizerType>
-Lookup<MatType, RegularizerType>::Lookup(
-    const size_t vocabSize, 
+Embedding<MatType, RegularizerType>::Embedding(
+    const size_t vocabSize,
     const size_t embeddingSize,
     RegularizerType regularizer) :
     Layer<MatType>(),
-    vocabSize(0),
-    embeddingSize(0),
+    vocabSize(vocabSize),
+    embeddingSize(embeddingSize),
     regularizer(regularizer)
 {
   // Nothing to do here.
@@ -41,7 +41,7 @@ Lookup<MatType, RegularizerType>::Lookup(
 
 // Copy constructor.
 template<typename MatType, typename RegularizerType>
-Lookup<MatType, RegularizerType>::Lookup(const Lookup& layer) :
+Embedding<MatType, RegularizerType>::Embedding(const Embedding& layer) :
     Layer<MatType>(layer),
     vocabSize(layer.vocabSize),
     embeddingSize(layer.embeddingSize),
@@ -52,7 +52,7 @@ Lookup<MatType, RegularizerType>::Lookup(const Lookup& layer) :
 
 // Move constructor.
 template<typename MatType, typename RegularizerType>
-Lookup<MatType, RegularizerType>::Lookup(Lookup&& layer) :
+Embedding<MatType, RegularizerType>::Embedding(Embedding&& layer) :
     Layer<MatType>(std::move(layer)),
     vocabSize(std::move(layer.vocabSize)),
     embeddingSize(std::move(layer.embeddingSize)),
@@ -64,8 +64,8 @@ Lookup<MatType, RegularizerType>::Lookup(Lookup&& layer) :
 }
 
 template<typename MatType, typename RegularizerType>
-Lookup<MatType, RegularizerType>&
-Lookup<MatType, RegularizerType>::operator=(const Lookup& layer)
+Embedding<MatType, RegularizerType>&
+Embedding<MatType, RegularizerType>::operator=(const Embedding& layer)
 {
   if (&layer != this)
   {
@@ -79,9 +79,9 @@ Lookup<MatType, RegularizerType>::operator=(const Lookup& layer)
 }
 
 template<typename MatType, typename RegularizerType>
-Lookup<MatType, RegularizerType>&
-Lookup<MatType, RegularizerType>::operator=(
-    Lookup&& layer)
+Embedding<MatType, RegularizerType>&
+Embedding<MatType, RegularizerType>::operator=(
+    Embedding&& layer)
 {
   if (&layer != this)
   {
@@ -99,43 +99,44 @@ Lookup<MatType, RegularizerType>::operator=(
 }
 
 template<typename MatType, typename RegularizerType>
-void Lookup<MatType, RegularizerType>::SetWeights(const MatType& weightsIn)
+void Embedding<MatType, RegularizerType>::SetWeights(const MatType& weightsIn)
 {
-  MakeAlias(weights, weightsIn, vocabSize, embeddingSize);
+  // The weights matrix is of size (embeddingSize, vocabSize).  Each vocabulary
+  // item's embedding is represented in a single column.
+  MakeAlias(weights, weightsIn, embeddingSize, vocabSize);
 }
 
 template<typename MatType, typename RegularizerType>
-void Lookup<MatType, RegularizerType>::Forward(
+void Embedding<MatType, RegularizerType>::Forward(
     const MatType& input, MatType& output)
 {
-  const size_t seqLength = input.n_rows;
   const size_t batchSize = input.n_cols;
-
-  output.set_size(seqLength * embeddingSize, batchSize);
-
   for (size_t i = 0; i < batchSize; ++i)
   {
-    //! ith column of output is a vectorized form of a matrix of shape
-    //! (seqLength, embeddingSize) selected as a combination of rows from the
-    //! weights. The MultiheadAttention class requires this particular ordering
-    //! of matrix dimensions.
-    output.col(i) = arma::vectorise(weights.rows(
-        arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
+    // ith column of output is a vectorized form of a matrix of shape
+    // (seqLength, embeddingSize) selected as a combination of rows from the
+    // weights. The MultiheadAttention class requires this particular ordering
+    // of matrix dimensions.
+    output.col(i) = vectorise(weights.cols(
+        arma::conv_to<arma::uvec>::from(input.col(i))));
   }
 }
 
 template<typename MatType, typename RegularizerType>
-void Lookup<MatType, RegularizerType>::Backward(
+void Embedding<MatType, RegularizerType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
-    const MatType& gy,
+    const MatType& /* gy */,
     MatType& g)
 {
-  Log::Fatal << "Lookup cannot be used as an intermediate layer." << std::endl;
+  // NOTE: Embedding should be the first layer of a network, and shouldn't be
+  // used as an intermediate layer!  So Backward() does nothing except set g to
+  // zeros.
+  g.zeros();
 }
 
 template<typename MatType, typename RegularizerType>
-void Lookup<MatType, RegularizerType>::Gradient(
+void Embedding<MatType, RegularizerType>::Gradient(
     const MatType& input,
     const MatType& error,
     MatType& gradient)
@@ -144,33 +145,36 @@ void Lookup<MatType, RegularizerType>::Gradient(
   const size_t batchSize = input.n_cols;
 
   const CubeType errorTemp;
-  MakeAlias(const_cast<CubeType&>(errorTemp), error, seqLength, embeddingSize,
+  MakeAlias(const_cast<CubeType&>(errorTemp), error, embeddingSize, seqLength,
       batchSize, 0, false);
+  MatType gradTemp;
+  MakeAlias(gradTemp, gradient, embeddingSize, vocabSize);
 
-  gradient.set_size(arma::size(weights));
   gradient.zeros();
-
-  for (size_t i = 0; i < batchSize; ++i)
+  for (size_t j = 0; j < batchSize; ++j)
   {
-    gradient.rows(arma::conv_to<arma::uvec>::from(input.col(i)) - 1)
-        += errorTemp.slice(i);
+    for (size_t i = 0; i < seqLength; ++i)
+    {
+      gradTemp.col((size_t) input(i, j)) += errorTemp.slice(j).col(i);
+    }
   }
 }
 
 template<typename MatType, typename RegularizerType>
-void Lookup<MatType, RegularizerType>::ComputeOutputDimensions()
+void Embedding<MatType, RegularizerType>::ComputeOutputDimensions()
 {
-  this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
-    1);
-
-  // The Linear layer flattens its input.
-  this->outputDimensions[0] = this->embeddingSize * this->inputDimensions[0];
-
+  // The Embedding layer returns a two-dimensional output and flattens its
+  // input.
+  this->outputDimensions.clear();
+  this->outputDimensions.push_back(this->embeddingSize);
+  this->outputDimensions.push_back(this->inputDimensions[0]);
+  for (size_t i = 1; i < this->inputDimensions.size(); ++i)
+    this->outputDimensions[1] *= this->inputDimensions[i];
 }
 
 template<typename MatType, typename RegularizerType>
 template<typename Archive>
-void Lookup<MatType, RegularizerType>::serialize(
+void Embedding<MatType, RegularizerType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));

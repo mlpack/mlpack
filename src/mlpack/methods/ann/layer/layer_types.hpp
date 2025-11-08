@@ -32,6 +32,7 @@
 #include <mlpack/methods/ann/layer/dropconnect.hpp>
 #include <mlpack/methods/ann/layer/dropout.hpp>
 #include <mlpack/methods/ann/layer/elu.hpp>
+#include <mlpack/methods/ann/layer/embedding.hpp>
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
 #include <mlpack/methods/ann/layer/grouped_convolution.hpp>
 #include <mlpack/methods/ann/layer/gru.hpp>
@@ -44,7 +45,6 @@
 #include <mlpack/methods/ann/layer/linear_recurrent.hpp>
 #include <mlpack/methods/ann/layer/linear3d.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
-#include <mlpack/methods/ann/layer/lookup.hpp>
 #include <mlpack/methods/ann/layer/lstm.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>

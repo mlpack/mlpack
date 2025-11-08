@@ -49,6 +49,7 @@
     CEREAL_REGISTER_TYPE(mlpack::DropConnect<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Dropout<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ELU<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Embedding<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::FlexibleReLU<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::GroupedConvolution<__VA_ARGS__, \
         mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
