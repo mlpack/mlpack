@@ -98,8 +98,8 @@ void ELU<MatType>::Forward(
 {
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    output(i) = (input(i) >= 0) ? lambda * input(i) : lambda * alpha *
-        (std::exp(input(i)) - 1);
+    output(i) = (input(i) >= 0) ? ElemType(lambda) * input(i) :
+        ElemType(lambda) * ElemType(alpha) * (std::exp(input(i)) - 1);
   }
 }
 

@@ -79,7 +79,7 @@ TEST_CASE("OutlierTest", "[DBSCANTest]")
 /**
  * Check that the Gaussian clusters are correctly found.
  */
-TEST_CASE("GaussiansTest", "[DBSCANTest]")
+TEST_CASE("GaussiansTest", "[DBSCANTest][tiny]")
 {
   arma::mat points(3, 300);
 

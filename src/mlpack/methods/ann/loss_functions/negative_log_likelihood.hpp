@@ -48,8 +48,8 @@ class NegativeLogLikelihoodType
    * @param target The target vector, that contains the class index in the range
    *        between 1 and the number of classes.
    */
-  double Forward(const MatType& prediction,
-                 const MatType& target);
+  typename MatType::elem_type Forward(const MatType& prediction,
+                                      const MatType& target);
 
   /**
    * Ordinary feed backward pass of a neural network. The negative log

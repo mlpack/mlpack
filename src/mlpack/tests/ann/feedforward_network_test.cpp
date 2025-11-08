@@ -19,6 +19,7 @@
 
 #include "../catch.hpp"
 #include "../serialization.hpp"
+#include "ann_test_tools.hpp"
 
 using namespace mlpack;
 
@@ -34,7 +35,12 @@ void TestNetwork(ModelType& model,
                  const size_t maxEpochs,
                  const double classificationErrorThreshold)
 {
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.32, 32, 0.88, 1e-8, trainData.n_cols * maxEpochs, -100);
+  #else
+  // Earlier ensmallen versions did not adjust the step size for the batch size.
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols * maxEpochs, -100);
+  #endif
   model.Train(trainData, trainLabels, opt);
 
   MatType predictionTemp;
@@ -59,7 +65,12 @@ void CheckCopyFunction(ModelType* network1,
                        MatType& trainData,
                        MatType& trainLabels)
 {
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.32, 32, 0.88, 1e-8, trainData.n_cols, -1);
+  #else
+  // Earlier ensmallen versions did not adjust the step size for the batch size.
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols, -1);
+  #endif
   network1->Train(trainData, trainLabels, opt);
 
   arma::mat predictions1;
@@ -82,7 +93,12 @@ void CheckMoveFunction(ModelType* network1,
                        MatType& trainData,
                        MatType& trainLabels)
 {
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.32, 32, 0.88, 1e-8, trainData.n_cols, -1);
+  #else
+  // Earlier ensmallen versions did not adjust the step size for the batch size.
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols, -1);
+  #endif
   network1->Train(trainData, trainLabels, opt);
 
   arma::mat predictions1;
@@ -100,7 +116,7 @@ void CheckMoveFunction(ModelType* network1,
 /**
  * Check whether copying and moving Vanila network is working or not.
  */
-TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
+TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest][tiny]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -397,7 +413,9 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  double error = TestClassificationNetwork(model, trainData, trainLabels,
+      testData, testLabels, 10);
+  REQUIRE(error <= 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
@@ -417,7 +435,9 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   model1.Add<Linear>(2);
   model1.Add<LogSoftMax>();
   // Vanilla neural net with logistic activation function.
-  TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
+  error = TestClassificationNetwork(model1, dataset, labels, dataset, labels,
+      10);
+  REQUIRE(error <= 0.2);
 }
 
 TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest][long]")
@@ -447,7 +467,14 @@ TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest][long]")
   ens::VanillaUpdate::Policy<arma::mat, arma::mat> optPolicy(opt,
       model.Parameters().n_rows, model.Parameters().n_cols);
   #endif
+
+  #if ENS_VERSION_MAJOR >= 3
+  double stepSize = 0.1;
+  #else
+  // Older versions of ensmallen did not adjust the step size with the batch
+  // size.
   double stepSize = 0.01;
+  #endif
   size_t batchSize = 10;
 
   size_t iteration = 0;
@@ -550,7 +577,9 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  double error = TestClassificationNetwork(model, trainData, trainLabels,
+      testData, testLabels, 10);
+  REQUIRE(error <= 0.1);
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
   // Make sure the data loaded okay.
@@ -572,7 +601,9 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   model1.Add<Linear>(2);
   model1.Add<LogSoftMax>();
   // Vanilla neural net with logistic activation function.
-  TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
+  error = TestClassificationNetwork(model1, dataset, labels, dataset, labels,
+      10);
+  REQUIRE(error <= 0.2);
 }
 
 /**
@@ -630,7 +661,8 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  double error = TestClassificationNetwork(model, trainData, trainLabels,
+      testData, testLabels, 10);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
@@ -651,7 +683,9 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
   model1.Add<LogSoftMax>();
 
   // Vanilla neural net with logistic activation function.
-  TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
+  error = TestClassificationNetwork(model1, dataset, labels, dataset, labels,
+      10);
+  REQUIRE(error <= 0.2);
 }
 
 /**
@@ -702,7 +736,12 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
   model.Add<Linear>(3);
   model.Add<LogSoftMax>();
 
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.32, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+  #else
+  // Older versions of ensmallen did not adjust for the batch size.
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+  #endif
 
   model.Train(trainData, trainLabels, opt);
 
@@ -774,7 +813,7 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
 /**
  * Test that FFN::Train() returns finite objective value.
  */
-TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest]")
+TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest][tiny]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -803,7 +842,13 @@ TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest]")
   model.Add<Linear>(3);
   model.Add<LogSoftMax>();
 
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.32, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+  #else
+  // Older versions of ensmallen did not adjust the step size for the batch
+  // size.
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+  #endif
 
   double objVal = model.Train(trainData, trainLabels, opt);
 
@@ -959,7 +1004,9 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest][long]")
   model.Add<Linear>(3);
 
   // RBFN neural net with MeanSquaredError.
-  TestNetwork<>(model, trainData, trainLabels1, testData, testLabels, 10, 0.1);
+  double error = TestClassificationNetwork(model, trainData, trainLabels1,
+      testData, testLabels, 10);
+  REQUIRE(error <= 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
@@ -992,5 +1039,7 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest][long]")
   model1.Add<Linear>(2);
 
   // RBFN neural net with MeanSquaredError.
-  TestNetwork<>(model1, dataset, labels1, dataset, labels, 10, 0.1);
+  error = TestClassificationNetwork(model1, dataset, labels1, dataset, labels,
+      10);
+  REQUIRE(error <= 0.1);
 }

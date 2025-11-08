@@ -34,18 +34,18 @@ class LogisticFunction
    * @param x Input data.
    * @return f(x).
    */
-  template<typename eT>
-  static double Fn(const eT x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
-    if (x < arma::Datum<eT>::log_max)
+    if (x < arma::Datum<ElemType>::log_max)
     {
-      if (x > -arma::Datum<eT>::log_max)
-        return 1.0 / (1.0 + std::exp(-x));
+      if (x > -arma::Datum<ElemType>::log_max)
+        return 1 / (1 + std::exp(-x));
 
-      return 0.0;
+      return 0;
     }
 
-    return 1.0;
+    return 1;
   }
 
   /**
@@ -57,7 +57,7 @@ class LogisticFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = (1.0 / (1 + exp(-x)));
+    y = (1 / (1 + exp(-x)));
   }
 
   /**
@@ -67,9 +67,10 @@ class LogisticFunction
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double /* x */, const double y)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType /* x */, const ElemType y)
   {
-    return y * (1.0 - y);
+    return y * (1 - y);
   }
 
   /**
@@ -84,7 +85,7 @@ class LogisticFunction
                     const OutputVecType& y,
                     DerivVecType& dy)
   {
-    dy = y % (1.0 - y);
+    dy = y % (1 - y);
   }
 
   /**
@@ -93,7 +94,8 @@ class LogisticFunction
    * @param y Input data.
    * @return f^{-1}(y)
    */
-  static double Inv(const double y)
+  template<typename ElemType>
+  static ElemType Inv(const ElemType y)
   {
     return arma::trunc_log(y / (1 - y));
   }

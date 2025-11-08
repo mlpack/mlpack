@@ -631,8 +631,16 @@ macro(compile_OpenBLAS)
     endif()
     file(GLOB OPENBLAS_LIBRARIES ${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib)
   else()
-    execute_process(COMMAND make NO_SHARED=1 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
-    file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}/libopenblas.a")
+    if (NOT EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/libopenblas.a")
+      # Set any extra variables for make that the user specified.
+      # First, turn OPENBLAS_EXTRA_ARGS into a list.
+      separate_arguments(ARG_LIST NATIVE_COMMAND ${OPENBLAS_EXTRA_ARGS})
+      execute_process(
+          COMMAND make NO_SHARED=1 ${ARG_LIST}
+          WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
+
+      file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}/libopenblas.a")
+    endif ()
   endif()
   set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
   set(LAPACK_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
@@ -717,7 +725,9 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
     endif()
   endif()
 
-  find_openmp()
+  if (NOT MLPACK_DISABLE_OPENMP)
+    find_openmp()
+  endif ()
 
 endmacro()
 

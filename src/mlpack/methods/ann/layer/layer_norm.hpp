@@ -59,6 +59,9 @@ template<typename MatType = arma::mat>
 class LayerNorm : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the LayerNorm object for a specified number of input units.
    *

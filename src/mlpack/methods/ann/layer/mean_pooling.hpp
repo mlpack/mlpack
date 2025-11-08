@@ -29,8 +29,11 @@ template <typename MatType = arma::mat>
 class MeanPooling : public Layer<MatType>
 {
  public:
+  // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
-  //! Create the MeanPooling object.
+
+  // Create the MeanPooling object.
   MeanPooling();
 
   /**
@@ -44,10 +47,10 @@ class MeanPooling : public Layer<MatType>
    *              input will be skipped.
    */
   MeanPooling(const size_t kernelWidth,
-                  const size_t kernelHeight,
-                  const size_t strideWidth = 1,
-                  const size_t strideHeight = 1,
-                  const bool floor = true);
+              const size_t kernelHeight,
+              const size_t strideWidth = 1,
+              const size_t strideHeight = 1,
+              const bool floor = true);
 
   // Virtual destructor.
   virtual ~MeanPooling() { }

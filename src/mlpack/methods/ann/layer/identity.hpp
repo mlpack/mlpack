@@ -31,7 +31,10 @@ template <typename MatType = arma::mat>
 class Identity : public Layer<MatType>
 {
  public:
-  //! Create the AdaptiveMaxPooling object.
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
+  // Create the AdaptiveMaxPooling object.
   Identity();
 
   // Virtual destructor.

@@ -79,7 +79,7 @@ template<typename MatType>
 void ReLU6<MatType>::Forward(
     const MatType& input, MatType& output)
 {
-  output = arma::clamp(input, 0.0, 6.0);
+  output = arma::clamp(input, 0, 6);
 }
 
 template<typename MatType>
@@ -95,7 +95,7 @@ void ReLU6<MatType>::Backward(
     if (input(i) < 6 && input(i) > 0)
       g(i) = gy(i);
     else
-      g(i) = 0.0;
+      g(i) = 0;
   }
 }
 

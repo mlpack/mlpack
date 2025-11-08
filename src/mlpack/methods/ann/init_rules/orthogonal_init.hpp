@@ -46,7 +46,7 @@ class OrthogonalInitialization
     ColType s;
 
     svd_econ(W, s, V, randu<MatType>(rows, cols));
-    W *= gain;
+    W *= typename MatType::elem_type(gain);
   }
 
   /**
@@ -64,7 +64,7 @@ class OrthogonalInitialization
     ColType s;
 
     svd_econ(W, s, V, randu<MatType>(W.n_rows, W.n_cols));
-    W *= gain;
+    W *= typename MatType::elem_type(gain);
   }
 
   /**

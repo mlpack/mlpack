@@ -13,6 +13,12 @@
 #ifndef MLPACK_BINDINGS_R_RCPP_MLPACK_H
 #define MLPACK_BINDINGS_R_RCPP_MLPACK_H
 
+// With RcppArmadillo 15.0.1-1 or later, prefer current Armadillo
+#if !defined(ARMA_USE_CURRENT)
+  #define ARMA_USE_CURRENT
+#endif
+
+// This also includes Rcpp headers along with RcppArmadillo
 #include <RcppArmadillo.h>
 
 // Rcpp has its own stream object which cooperates more nicely with R's i/o

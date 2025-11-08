@@ -20,7 +20,7 @@ using namespace std;
 /**
  * Test one hot encoding for small input.
  */
-TEST_CASE("OneHotEncodingTest01", "[OneHotEncodingTest]")
+TEST_CASE("OneHotEncodingTest01", "[OneHotEncodingTest][tiny]")
 {
   arma::Mat<size_t> matrix;
   matrix = "1 0;"

@@ -47,6 +47,9 @@ template<typename MatType = arma::mat>
 class Dropout : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the Dropout object using the specified ratio parameter.
    *
@@ -54,7 +57,7 @@ class Dropout : public Layer<MatType>
    */
   Dropout(const double ratio = 0.5);
 
-  //! Clone the Dropout object. This handles polymorphism correctly.
+  // Clone the Dropout object. This handles polymorphism correctly.
   Dropout* Clone() const { return new Dropout(*this); }
 
   // Virtual destructor.

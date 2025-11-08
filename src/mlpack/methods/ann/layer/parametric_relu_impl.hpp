@@ -89,7 +89,7 @@ void PReLU<MatType>::CustomInitialize(
         "elements size!");
   }
 
-  W(0) = userAlpha;
+  W(0) = ElemType(userAlpha);
 }
 
 template<typename MatType>

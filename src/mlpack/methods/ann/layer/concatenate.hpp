@@ -34,6 +34,9 @@ template<typename MatType = arma::mat>
 class Concatenate : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the Concatenate object using the given constant matrix as the
    * data to be concatenated to the output of the forward pass.
@@ -94,7 +97,7 @@ class Concatenate : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Matrix to be concatenated to input.
+  // Matrix to be concatenated to input.
   MatType concat;
 }; // class Concatenate
 

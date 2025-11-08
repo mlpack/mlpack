@@ -34,22 +34,25 @@ template<typename MatType = arma::mat>
 class Softmax : public Layer<MatType>
 {
  public:
-  //! Create the Softmax object.
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
+  // Create the Softmax object.
   Softmax();
 
-  //! Clone the Softmax object. This handles polymorphism correctly.
+  // Clone the Softmax object. This handles polymorphism correctly.
   Softmax* Clone() const { return new Softmax(*this); }
 
-  //! Virtual destructor.
+  // Virtual destructor.
   virtual ~Softmax() { }
 
-  //! Copy the given Softmax.
+  // Copy the given Softmax.
   Softmax(const Softmax& other);
-  //! Take ownership of the given Softmax.
+  // Take ownership of the given Softmax.
   Softmax(Softmax&& other);
-  //! Copy the given Softmax.
+  // Copy the given Softmax.
   Softmax& operator=(const Softmax& other);
-  //! Take ownership of the given Softmax.
+  // Take ownership of the given Softmax.
   Softmax& operator=(Softmax&& other);
 
   /**
@@ -76,7 +79,7 @@ class Softmax : public Layer<MatType>
                 const MatType& gy,
                 MatType& g);
 
-  //! Serialize the layer.
+  // Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 }; // class Softmax
