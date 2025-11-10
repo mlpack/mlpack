@@ -168,13 +168,9 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
   {
     channels = STBIR_RGB;
   }
-  else if (opts.Channels() == 4)
-  {
-    channels = STBIR_4CHANNEL;
-  }
   else
   {
-    Log::Fatal << "ResizeImages(): number of channels should be either 1 or 3, 4"
+    Log::Fatal << "ResizeImages(): number of channels should be either 1 or 3,"
         << " not " << opts.Channels() << "." << std::endl;
   }
 
