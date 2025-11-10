@@ -39,14 +39,14 @@ YOLOv3Layer<MatType>::YOLOv3Layer(
     throw std::logic_error(errMessage.str());
   }
 
-  w = MatType(grid, predictionsPerCell, arma::fill::none);
-  h = MatType(grid, predictionsPerCell, arma::fill::none);
+  anchorsW = MatType(grid, predictionsPerCell, arma::fill::none);
+  anchorsH = MatType(grid, predictionsPerCell, arma::fill::none);
 
   // Could maybe use .each_row()?
   for (size_t i = 0; i < predictionsPerCell; i++)
   {
-    w.col(i).fill(anchors[i * 2]);
-    h.col(i).fill(anchors[i * 2 + 1]);
+    anchorsW.col(i).fill(anchors[i * 2]);
+    anchorsH.col(i).fill(anchors[i * 2 + 1]);
   }
 }
 
@@ -57,8 +57,8 @@ YOLOv3Layer(const YOLOv3Layer& other) :
     imgSize(imgSize),
     numAttributes(numAttributes),
     gridSize(gridSize),
-    w(w),
-    h(h),
+    anchorsW(anchorsW),
+    anchorsH(anchorsH),
     predictionsPerCell(predictionsPerCell)
 {
   // Nothing to do here.
@@ -71,8 +71,8 @@ YOLOv3Layer(YOLOv3Layer&& other) :
     imgSize(std::move(imgSize)),
     numAttributes(std::move(numAttributes)),
     gridSize(std::move(gridSize)),
-    w(std::move(w)),
-    h(std::move(h)),
+    anchorsW(std::move(anchorsW)),
+    anchorsH(std::move(anchorsH)),
     predictionsPerCell(std::move(predictionsPerCell))
 {
   // Nothing to do here.
@@ -89,8 +89,8 @@ operator=(const YOLOv3Layer& other)
     imgSize = other.imgSize;
     numAttributes = other.numAttributes;
     gridSize = other.gridSize;
-    w = other.w;
-    h = other.h;
+    anchorsW = other.anchorsW;
+    anchorsH = other.anchorsH;
     predictionsPerCell = other.predictionsPerCell;
   }
   return *this;
@@ -107,8 +107,8 @@ operator=(YOLOv3Layer&& other)
     imgSize = std::move(other.imgSize);
     numAttributes = std::move(other.numAttributes);
     gridSize = std::move(other.gridSize);
-    w = std::move(other.w);
-    h = std::move(other.h);
+    anchorsW = std::move(other.anchorsW);
+    anchorsH = std::move(other.anchorsH);
     predictionsPerCell = std::move(other.predictionsPerCell);
   }
   return *this;
@@ -131,7 +131,8 @@ void YOLOv3Layer<MatType>::ComputeOutputDimensions()
     throw std::logic_error("YOLOv3Layer::ComputeOutputDimensions(): "
       "Input dimensions must be square.");
 
-  if (grid != this->inputDimensions[0] * this->inputDimensions[1])
+  if (grid != this->inputDimensions[0] * this->inputDimensions[1] ||
+      gridSize != this->inputDimensions[0])
   {
     throw std::logic_error("YOLOv3Layer::ComputeOutputDimensions(): "
       "Grid is the wrong size.");
@@ -158,17 +159,38 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
   MakeAlias(reshapedCube, output, numAttributes,
     predictionsPerCell * grid, batchSize);
 
-  const size_t cols = predictionsPerCell - 1;
-  MatType offset = arma::regspace<MatType>(0, this->inputDimensions[0] - 1);
-  CubeType xOffset = arma::repcube(offset, this->inputDimensions[0],
+  // Input dimensions: gridSize 
+  MatType offset = arma::regspace<MatType>(0, gridSize - 1);
+
+#if ARMA_VERSION_MAJOR < 15
+  // If arma::repcube is not available
+  CubeType anchorsWBS(anchorsW.n_rows, anchorsW.n_cols, batchSize);
+  CubeType anchorsHBS(anchorsW.n_rows, anchorsW.n_cols, batchSize);
+  CubeType xOffset(grid, predictionsPerCell, batchSize);
+
+  arma::Col<Type> offsetT =
+    arma::vectorise(arma::repmat(offset.t(), gridSize, 1));
+  CubeType yOffset(grid, predictionsPerCell, batchSize);
+  for (size_t i = 0; i < batchSize; i++)
+  {
+    anchorsWBS.slice(i) = anchorsW;
+    anchorsWBS.slice(i) = anchorsH;
+    xOffset.slice(i) = arma::repmat(offset, gridSize, predictionsPerCell);
+    yOffset.slice(i) = arma::repmat(offsetT, 1, predictionsPerCell);
+  }
+#else
+  CubeType anchorsWBS = arma::repcube(anchorsW, 1, 1, batchSize);
+  CubeType anchorsHBS = arma::repcube(anchorsH, 1, 1, batchSize);
+  CubeType xOffset = arma::repcube(offset, gridSize,
     predictionsPerCell, batchSize);
 
-  arma::Col<Type> offsetT = arma::vectorise(arma::repmat(offset.t(),
-    this->inputDimensions[0], 1));
-  CubeType yOffset = arma::repcube(offsetT, 1, predictionsPerCell, batchSize);
+  CubeType yOffset = arma::repcube(
+    arma::vectorise(arma::repmat(offset.t(), gridSize, 1)),
+    1, predictionsPerCell, batchSize);
+#endif
 
-  // TODO: add if (this->training)
-
+  // TODO: add if (this->training). Add check for different batchSize.
+  const size_t cols = predictionsPerCell - 1;
   // x
   outputCube.tube(0, 0, grid - 1, cols) =
     (xOffset + 1 / (1 + arma::exp(-inputCube.tube(0, 0, grid - 1, cols))))
@@ -181,17 +203,15 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
 
   // w
   outputCube.tube(grid * 2, 0, grid * 3 - 1, cols) =
-    arma::repcube(w, 1, 1, batchSize) %
-    arma::exp(inputCube.tube(grid * 2, 0, grid * 3 - 1, cols));
+    anchorsWBS % arma::exp(inputCube.tube(grid * 2, 0, grid * 3 - 1, cols));
 
   // h
   outputCube.tube(grid * 3, 0, grid * 4 - 1, cols) =
-    arma::repcube(h, 1, 1, batchSize) %
-    arma::exp(inputCube.tube(grid * 3, 0, grid * 4 - 1, cols));
+    anchorsHBS % arma::exp(inputCube.tube(grid * 3, 0, grid * 4 - 1, cols));
 
   // apply logistic sigmoid to objectness and classification logits.
-  outputCube.tube(grid * 4, 0, outputCube.n_rows - 1, cols) =
-    1. / (1. + arma::exp(-inputCube.tube(grid * 4, 0, inputCube.n_rows - 1, cols)));
+  outputCube.tube(grid * 4, 0, outputCube.n_rows - 1, cols) = 1. /
+    (1 + arma::exp(-inputCube.tube(grid * 4, 0, inputCube.n_rows - 1, cols)));
 
   // Reshape, for each batch item.
   for (size_t i = 0; i < reshapedCube.n_slices; i++)
@@ -226,8 +246,8 @@ void YOLOv3Layer<MatType>::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(numAttributes));
   ar(CEREAL_NVP(gridSize));
   ar(CEREAL_NVP(grid));
-  ar(CEREAL_NVP(w));
-  ar(CEREAL_NVP(h));
+  ar(CEREAL_NVP(anchorsW));
+  ar(CEREAL_NVP(anchorsH));
   ar(CEREAL_NVP(predictionsPerCell));
 }
 

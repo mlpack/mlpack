@@ -67,9 +67,9 @@ class YOLOv3Layer : public Layer<MatType>
   // Cached gridSize * gridSize
   size_t grid;
 
-  MatType w;
+  MatType anchorsW;
 
-  MatType h;
+  MatType anchorsH;
 
   size_t predictionsPerCell;
 };
