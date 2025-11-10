@@ -138,9 +138,13 @@ class YOLOv3Tiny
               const size_t gridSize,
               const std::vector<Type>& anchors);
 
+  // DAGNetwork containing the graph of the YOLOv3Tiny model
   ModelType model;
+  // Width and height of input image
   size_t imgSize;
+  // Predictions per cell for each YOLO layer
   size_t predictionsPerCell;
+  // Number of output classes + 5 for (x, y, w, h, objectness)
   size_t numAttributes;
 };
 
