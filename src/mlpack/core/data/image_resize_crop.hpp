@@ -44,7 +44,6 @@ namespace data {
 template<typename eT>
 void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
     const size_t newWidth, const size_t newHeight,
-    bool clamp = false, eT minVal = 0.0, eT maxVal = 255.0,
     const typename std::enable_if_t<std::is_floating_point<eT>::value>* = 0)
 {
   // First check if we are resizing one image or a group of images, the check
@@ -115,15 +114,8 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
   }
 
   images = arma::conv_to<arma::Mat<eT>>::from(std::move(resizedFloatImages));
-  
-  if (clamp)
-  {
-    images.clamp(minVal, maxVal);
-  }
-  else
-  {
-    images.clamp(minOriginal, maxOriginal);
-  }
+
+  images.clamp(minOriginal, maxOriginal);
 
   opts.Width() = newWidth;
   opts.Height() = newHeight;
