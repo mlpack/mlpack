@@ -528,7 +528,6 @@ mlpack::data::Save(outImages, matrix, info);
 It is possible to resize images in mlpack with the following function:
 
 - `ResizeImages(images, info, newWidth, newHeight)`
-
    * `images` is a [column-major matrix](matrices.md) containing a set of
       images; each image is represented as a flattened vector in one column.
 
