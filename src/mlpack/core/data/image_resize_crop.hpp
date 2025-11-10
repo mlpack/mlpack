@@ -44,6 +44,7 @@ namespace data {
 template<typename eT>
 void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
     const size_t newWidth, const size_t newHeight,
+    bool clamp = false, eT minVal = 0.0, eT maxVal = 255.0,
     const typename std::enable_if_t<std::is_floating_point<eT>::value>* = 0)
 {
   // First check if we are resizing one image or a group of images, the check
@@ -101,6 +102,10 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
         arma::conv_to<arma::Mat<float>>::from(std::move(images));
   }
 
+  // recover the original min/max values for clamping.
+  float minOriginal = images.min(); 
+  float maxOriginal = images.max(); 
+
   resizedFloatImages.set_size(newDimension, images.n_cols);
   for (size_t i = 0; i < images.n_cols; ++i)
   {
@@ -110,6 +115,16 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
   }
 
   images = arma::conv_to<arma::Mat<eT>>::from(std::move(resizedFloatImages));
+  
+  if (clamp)
+  {
+    images.clamp(minVal, maxVal);
+  }
+  else
+  {
+    images.clamp(minOriginal, maxOriginal);
+  }
+
   opts.Width() = newWidth;
   opts.Height() = newHeight;
 }
@@ -153,9 +168,13 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
   {
     channels = STBIR_RGB;
   }
+  else if (opts.Channels() == 4)
+  {
+    channels = STBIR_4CHANNEL;
+  }
   else
   {
-    Log::Fatal << "ResizeImages(): number of channels should be either 1 or 3,"
+    Log::Fatal << "ResizeImages(): number of channels should be either 1 or 3, 4"
         << " not " << opts.Channels() << "." << std::endl;
   }
 

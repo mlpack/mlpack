@@ -527,7 +527,8 @@ mlpack::data::Save(outImages, matrix, info);
 
 It is possible to resize images in mlpack with the following function:
 
-- `ResizeImages(images, info, newWidth, newHeight)`
+- `ResizeImages(images, info, newWidth, newHeight, clamp = false, minVal = 0.0,
+   maxValue = 255.0)`
    * `images` is a [column-major matrix](matrices.md) containing a set of
       images; each image is represented as a flattened vector in one column.
 
@@ -545,6 +546,11 @@ It is possible to resize images in mlpack with the following function:
      `arma::fmat`), the matrix will be temporarily converted during resizing;
      therefore, using `unsigned char` or `float` as the element type is the most
      efficient.
+
+   * **NOTE:** if the element type of `images` is float, then a clamp of the
+     resized images is necessary. By default, the resize function will clamp to
+     the original min and max pixels values, unless to specific values if the
+     user define `clamp = true;`
 
    * This function expects all the images to have identical
      dimensions. If this is not the case, iteratively call `ResizeImages()` with
