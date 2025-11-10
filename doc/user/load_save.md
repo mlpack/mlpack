@@ -843,6 +843,11 @@ mlpack::data::ImageOptions opt;
 mlpack::data::Load("jurassic-park.png", image, opt, true);
 mlpack::data::LetterboxImage(image, opt, 416, 127.0);
 // Image dimensions are now 416x416.
+mlpack::data::Save("jurassic-park-letterbox.png", image, opt, true);
+
+std::cout << "Dimensions: " << opt.Width() << " x " << opt.Height()
+          << " x " << opt.Channels() << "\n";
+std::cout << "Total size: " << image.n_rows << "\n";
 ```
 
 ## mlpack objects
