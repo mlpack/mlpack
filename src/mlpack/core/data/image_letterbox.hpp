@@ -41,6 +41,18 @@ void LetterboxImage(arma::Mat<eT>& src,
   const size_t expectedRows =
     srcOpt.Width() * srcOpt.Height() * srcOpt.Channels();
 
+  if (expectedRows == 0)
+  {
+    std::ostringstream errMessage;
+    errMessage << "LetterboxImage(): Dimensions cannot contain a zero."
+      " Received: " << srcOpt.Width() << " x " << srcOpt.Height()
+      << " x " << srcOpt.Channels() << ".";
+    throw std::logic_error(errMessage.str());
+  }
+
+  if (src.n_rows == 0)
+    throw std::logic_error("LetterboxImage(): Matrix rows cannot be zero.");
+
   if (src.n_rows != expectedRows)
   {
     std::ostringstream errMessage;

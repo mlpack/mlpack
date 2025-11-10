@@ -650,3 +650,63 @@ TEST_CASE("InterleaveChannelsOnePixel", "[ImageTest]")
   arma::mat expectedImage(image);
   CheckMatrices(newLayout, expectedImage);
 }
+
+/**
+ * Test Letterbox returns image correctly sized.
+ */
+TEST_CASE("LetterboxImage", "[ImageTest]")
+{
+  data::ImageOptions opt(10, 20, 1);
+  arma::mat image(200, 1);
+  const size_t newWidth = 16;
+  data::LetterboxImage(image, opt, newWidth, 0.5);
+  const size_t imageSize = opt.Width() * opt.Height() * opt.Channels();
+  REQUIRE(image.n_rows * image.n_cols == imageSize);
+  REQUIRE(image.n_rows * image.n_cols == newWidth * newWidth * opt.Channels());
+}
+
+/**
+ * Test Letterbox on image with no pixels.
+ */
+TEST_CASE("LetterboxImageNoPixels", "[ImageTest]")
+{
+  data::ImageOptions opt(0, 0, 1);
+  arma::mat image(0, 1);
+  REQUIRE_THROWS(data::LetterboxImage(image, opt, 4, 0.5));
+}
+
+/**
+ * Test Letterbox throws error when image doesn't match image options.
+ */
+TEST_CASE("LetterboxImageIncorrectImageOptions", "[ImageTest]")
+{
+  data::ImageOptions opt(5, 6, 1);
+  arma::mat image(10, 1);
+  image.fill(5.0);
+
+  REQUIRE_THROWS(data::LetterboxImage(image, opt, 4, 0.5));
+}
+
+/**
+ * Test Letterbox throws error when more than one image exists.
+ */
+TEST_CASE("LetterboxImageMultipleImages", "[ImageTest]")
+{
+  data::ImageOptions opt(10, 2, 1);
+  arma::mat image(10, 2);
+  image.fill(5.0);
+
+  REQUIRE_THROWS(data::LetterboxImage(image, opt, 4, 0.5));
+}
+
+/**
+ * Test Letterbox throws error when channels != 1 or 3.
+ */
+TEST_CASE("LetterboxImageIncorrectChannels", "[ImageTest]")
+{
+  data::ImageOptions opt(5, 2, 2);
+  arma::mat image(20, 1);
+  image.fill(5.0);
+
+  REQUIRE_THROWS(data::LetterboxImage(image, opt, 4, 0.5));
+}
