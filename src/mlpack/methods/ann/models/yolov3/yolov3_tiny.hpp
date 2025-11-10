@@ -25,6 +25,13 @@ namespace mlpack {
 /**
  * YOLOv3-tiny is a small one-stage object detection model.
  *
+ * The input to the model must be a square image. Look at image_letterbox.hpp
+ * to preprocess images before inference.
+ *
+ * The output of the model is a matrix. The rows are data points per
+ * bounding box (including x, y, w, h, objectness, and classifications).
+ * The columns represent each bounding box.
+ *
  * For more information, refer to the following paper:
  *
  * @code
@@ -52,6 +59,18 @@ class YOLOv3Tiny
 
   YOLOv3Tiny() { /* Nothing to do. */ }
 
+  /**
+   * Create the YOLOv3Tiny model.
+   *
+   * @param imgSize The width and height of input images. Pretrained weights
+       used 416.
+   * @param numClasses The number of output classes. Pretrained weights were
+       trained on COCO which has 80 classes.
+   * @param predictionsPerCell Each YOLO layer predicts `predictionsPerCell`
+       boxes per grid cell. Pretrained weights use 3.
+   * @param anchors Vector of anchor width and heights. Formatted as
+      [w0, h0, w1, h1, ..., w(predictionsPerCell-1), h(predictionsPerCell-1)]
+   */
   YOLOv3Tiny(const size_t imgSize,
              const size_t numClasses,
              const size_t predictionsPerCell,
@@ -61,23 +80,60 @@ class YOLOv3Tiny
 
   ModelType& Model() { return model; }
 
+  /**
+   * Ordinary feed forward pass of the network.
+   *
+   * @param input Input data used for evaluating the specified function.
+      The input matrix dimensions should be (imgSize * imgSize, batchSize).
+   * @param output Resulting bounding boxes.
+   */
   void Predict(const MatType& input, MatType& output)
   {
     model.Predict(input, output);
   }
 
+  // Serialize the model.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
 
+  /**
+   * Adds a MultiLayer to the internal DAGNetwork. The MultiLayer includes
+   * a Convolutions, BatchNorm (if batchNorm is true) and LeakyReLU.
+   * If batchNorm is true, the convolution layer will not have a bias,
+   * otherwise it will.
+   * 
+   * The convolution kernel size must be 3 or 1. If the kernel size is 3,
+   * padding will be added.
+   *
+   * @param maps Number of output maps of the convolution layer.
+   * @param kernel Size of the convolution kernel
+   * @param batchNorm Boolean for including a batchnorm layer.
+   * @param reluSlope Slope used in LeakyReLU. Default is 0.1 because
+      pretrained weights used 0.1.
+   */
   size_t ConvolutionBlock(const size_t maps,
                           const size_t kernel,
                           const bool batchNorm = true,
                           const Type reluSlope = 0.1);
 
+  /**
+   * Adds a MultiLayer to the internal DAGNetwork. The MultiLayer includes
+   * a MaxPooling layer and an optional Padding layer depending on the stride
+   * size.
+   *
+   * @param stride Stride of the MaxPooling kernel.
+   */
   size_t MaxPool2x2(const size_t stride);
 
+  /**
+   * Adds a YOLOv3Layer to the internal DAGNetwork.
+   *
+   * @param imgSize Width and height of input image.
+   * @param gridSize Grid size of output.
+   * @param anchors Width and height anchor points.
+   */
   size_t YOLO(const size_t imgSize,
               const size_t gridSize,
               const std::vector<Type>& anchors);
