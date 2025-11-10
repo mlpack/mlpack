@@ -181,6 +181,35 @@ size_t YOLOv3Tiny<OutputLayerType, InitializationRuleType, MatType>
     numAttributes, gridSize, predictionsPerCell, anchors);
 }
 
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+template<typename Archive>
+void YOLOv3Tiny<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::serialize(Archive& ar, const uint32_t /* version */)
+{
+  #if !defined(MLPACK_ENABLE_ANN_SERIALIZATION) && \
+      !defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
+    // Note: if you define MLPACK_IGNORE_ANN_SERIALIZATION_WARNING, you had
+    // better ensure that every layer you are serializing has had
+    // CEREAL_REGISTER_TYPE() called somewhere.  See layer/serialization.hpp for
+    // more information.
+    throw std::runtime_error("Cannot serialize a neural network unless "
+        "MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See the \"Additional "
+        "build options\" section of the README for more information.");
+
+    (void) ar;
+  #else
+    ar(CEREAL_NVP(model));
+    ar(CEREAL_NVP(imgSize));
+    ar(CEREAL_NVP(predictionsPerCell));
+    ar(CEREAL_NVP(numAttributes));
+  #endif
+}
+
 } // namespace mlpack
 
 #endif

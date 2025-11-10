@@ -233,7 +233,6 @@ void YOLOv3Layer<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  // TODO: just derivative of sigmoid
   throw std::runtime_error("YOLOv3::Backward() not implemented.");
 }
 

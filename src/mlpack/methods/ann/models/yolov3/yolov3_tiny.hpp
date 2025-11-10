@@ -66,6 +66,9 @@ class YOLOv3Tiny
     model.Predict(input, output);
   }
 
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */);
+
  private:
 
   size_t ConvolutionBlock(const size_t maps,
@@ -83,7 +86,6 @@ class YOLOv3Tiny
   size_t imgSize;
   size_t predictionsPerCell;
   size_t numAttributes;
-  MatType parameters;
 };
 
 } // namespace mlpack
