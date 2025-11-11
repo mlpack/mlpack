@@ -35,7 +35,8 @@ namespace data {
 template<typename eT>
 void LetterboxImage(arma::Mat<eT>& src,
                     ImageOptions& srcOpt,
-                    const size_t imgSize,
+                    const size_t width,
+                    const size_t height,
                     const eT fillValue)
 {
   const size_t expectedRows =
@@ -77,32 +78,32 @@ void LetterboxImage(arma::Mat<eT>& src,
     throw std::logic_error(errMessage.str());
   }
 
-  size_t width, height;
-  if (srcOpt.Width() < srcOpt.Height())
+  size_t newWidth, newHeight;
+  if (width * 1. / srcOpt.Width() > height * 1. / srcOpt.Height())
   {
-    height = imgSize;
-    width = srcOpt.Width() * imgSize / srcOpt.Height();
+    newHeight = height;
+    newWidth = srcOpt.Width() * width / srcOpt.Height();
   }
   else
   {
-    width = imgSize;
-    height = srcOpt.Height() * imgSize / srcOpt.Width();
+    newWidth = width;
+    newHeight = srcOpt.Height() * height / srcOpt.Width();
   }
 
-  arma::Mat<eT> dest(imgSize * imgSize * srcOpt.Channels(), 1,
+  arma::Mat<eT> dest(width * height * srcOpt.Channels(), 1,
                      arma::fill::none);
 
   // Resize, then embed src within dest.
-  ResizeImages(src, srcOpt, width, height);
+  ResizeImages(src, srcOpt, newWidth, newHeight);
   arma::Cube<eT> cubeSrc, cubeDest;
 
   // Channels as rows, because default assumption is that channels are
   // interleaved (see image_layout.hpp for more info).
   MakeAlias(cubeSrc, src, srcOpt.Channels(), srcOpt.Width(), srcOpt.Height());
-  MakeAlias(cubeDest, dest, srcOpt.Channels(), imgSize, imgSize);
+  MakeAlias(cubeDest, dest, srcOpt.Channels(), width, height);
 
-  const size_t dx = (imgSize - width) / 2;
-  const size_t dy = (imgSize - height) / 2;
+  const size_t dx = (width - newWidth) / 2;
+  const size_t dy = (height - newHeight) / 2;
 
   cubeDest.fill(fillValue);
   // Fill RGB
@@ -110,7 +111,7 @@ void LetterboxImage(arma::Mat<eT>& src,
     srcOpt.Height() + dy - 1) = cubeSrc;
 
   src = std::move(dest);
-  srcOpt = ImageOptions(imgSize, imgSize, srcOpt.Channels());
+  srcOpt = ImageOptions(width, height, srcOpt.Channels());
 }
 
 } // namespace data
