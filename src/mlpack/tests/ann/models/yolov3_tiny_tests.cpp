@@ -26,7 +26,7 @@ TEST_CASE("YOLOv3TinyImageSize", "[YOLOv3TinyTest]")
   const size_t numClasses = 80;
   const size_t predictionsPerCell = 3;
   const std::vector<double> anchors =
-    { 10,14,  23,27,  37,58,  81,82,  135,169,  344,319 };
+    { 10, 14, 23, 27, 37, 58, 81, 82, 135, 169, 344, 319 };
   YOLOv3Tiny<> model(imgSize, numClasses, predictionsPerCell, anchors);
 
   arma::mat testInput(imgSize * imgSize * 3, 1);
@@ -47,7 +47,7 @@ TEST_CASE("YOLOv3TinyClasses", "[YOLOv3TinyTest]")
   const size_t numClasses = 3;
   const size_t predictionsPerCell = 3;
   const std::vector<double> anchors =
-    { 10,14,  23,27,  37,58,  81,82,  135,169,  344,319 };
+    { 10, 14, 23, 27, 37, 58, 81, 82, 135, 169, 344, 319 };
   YOLOv3Tiny<> model(imgSize, numClasses, predictionsPerCell, anchors);
 
   arma::mat testInput(imgSize * imgSize * 3, 1);
@@ -68,7 +68,7 @@ TEST_CASE("YOLOv3TinyPredictionsPerCell", "[YOLOv3TinyTest]")
   const size_t numClasses = 80;
   const size_t predictionsPerCell = 1;
   const std::vector<double> anchors =
-    { 10,14,  23,27 };
+    { 10, 14, 23, 27 };
   YOLOv3Tiny<> model(imgSize, numClasses, predictionsPerCell, anchors);
 
   arma::mat testInput(imgSize * imgSize * 3, 1);
@@ -88,9 +88,8 @@ TEST_CASE("YOLOv3TinyPredictionsPerCell", "[YOLOv3TinyTest]")
   const size_t imgSize = 416;
   const size_t numClasses = 80;
   const size_t predictionsPerCell = 1;
-  const std::vector<double> anchors = { 0,1, 2,3, 4,5, 6,7 };
-  YOLOv3Tiny<> model;
-  REQUIRE_THROWS(model = YOLOv3Tiny(imgSize, numClasses, predictionsPerCell, anchors));
+  const std::vector<double> anchors = { 0, 1, 2, 3, 4, 5, 6, 7 };
+  REQUIRE_THROWS(YOLOv3Tiny(imgSize, numClasses, predictionsPerCell, anchors));
 }
 
 #define MLPACK_ANN_IGNORE_SERIALIZATION_WARNING
@@ -114,7 +113,7 @@ TEST_CASE("YOLOv3TinySerialize", "[YOLOv3TinyTest]")
   const size_t numClasses = 80;
   const size_t predictionsPerCell = 3;
   const std::vector<double> anchors =
-    { 10,14,  23,27,  37,58,  81,82,  135,169,  344,319 };
+    { 10, 14, 23, 27, 37, 58, 81, 82, 135, 169, 344, 319 };
   YOLOv3Tiny<> model(imgSize, numClasses, predictionsPerCell, anchors);
 
   arma::mat testData(imgSize * imgSize * 3, 1, arma::fill::randu);

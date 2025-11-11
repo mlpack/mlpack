@@ -54,7 +54,6 @@ class YOLOv3Layer : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-
   using Type = typename MatType::elem_type;
 
   using CubeType = typename GetCubeType<MatType>::type;

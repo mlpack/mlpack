@@ -162,7 +162,7 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
   MakeAlias(reshapedCube, output, numAttributes,
     predictionsPerCell * grid, batchSize);
 
-  // Input dimensions: gridSize 
+  // Input dimensions: gridSize
   MatType offset = arma::regspace<MatType>(0, gridSize - 1);
 
 #if ARMA_VERSION_MAJOR < 15
@@ -200,9 +200,8 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
     * stride;
 
   // y
-  outputCube.tube(grid, 0, grid * 2 - 1, cols) =
-    (yOffset + 1 / (1 + arma::exp(-inputCube.tube(grid, 0, grid * 2 - 1, cols))
-    )) * stride;
+  outputCube.tube(grid, 0, grid * 2 - 1, cols) = (yOffset + 1 /
+    (1 + arma::exp(-inputCube.tube(grid, 0, grid * 2 - 1, cols)))) * stride;
 
   // w
   outputCube.tube(grid * 2, 0, grid * 3 - 1, cols) =
@@ -222,9 +221,8 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
     reshapedCube.slice(i) =
       arma::reshape(
         arma::reshape(
-          outputCube.slice(i), grid, numAttributes * predictionsPerCell
-        ).t(),
-        numAttributes, predictionsPerCell * grid
+          outputCube.slice(i), grid, numAttributes * predictionsPerCell).t(),
+          numAttributes, predictionsPerCell * grid
       );
   }
 }

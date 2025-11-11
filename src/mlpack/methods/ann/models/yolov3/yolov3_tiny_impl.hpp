@@ -65,16 +65,19 @@ YOLOv3Tiny<
 
   // Detection head for larger objects.
   size_t convolution14 = ConvolutionBlock(512, 3);
-  size_t convolution15 = ConvolutionBlock(predictionsPerCell * numAttributes, 1, false);
+  size_t convolution15 =
+    ConvolutionBlock(predictionsPerCell * numAttributes, 1, false);
   size_t detections16 = YOLO(imgSize, imgSize / 32, largeAnchors);
 
   size_t convolution17 = ConvolutionBlock(128, 1);
   // Upsample for more fine-grained detections.
-  size_t upsample18 = model.template Add<NearestInterpolation<MatType>>(scaleFactor);
+  size_t upsample18 =
+    model.template Add<NearestInterpolation<MatType>>(scaleFactor);
 
   // Detection head for smaller objects.
   size_t convolution19 = ConvolutionBlock(256, 3);
-  size_t convolution20 = ConvolutionBlock(predictionsPerCell * numAttributes, 1, false);
+  size_t convolution20 =
+    ConvolutionBlock(predictionsPerCell * numAttributes, 1, false);
   size_t detections21 = YOLO(imgSize, imgSize / 16, smallAnchors);
 
   // the DAGNetwork class requires a layer for concatenations, so we use

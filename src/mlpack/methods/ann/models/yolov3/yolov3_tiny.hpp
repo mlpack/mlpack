@@ -50,7 +50,6 @@ template <typename OutputLayerType = EmptyLoss,
 class YOLOv3Tiny
 {
  public:
-
   // Helper types.
   using ModelType =
     DAGNetwork<OutputLayerType, InitializationRuleType, MatType>;
@@ -102,7 +101,6 @@ class YOLOv3Tiny
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-
   /**
    * Adds a MultiLayer to the internal DAGNetwork. The MultiLayer includes
    * a Convolutions, BatchNorm (if batchNorm is true) and LeakyReLU.
