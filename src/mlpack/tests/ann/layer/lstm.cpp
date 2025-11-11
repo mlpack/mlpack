@@ -45,7 +45,7 @@ LSTM<MatType> SetupLSTM(const size_t inputSize,
 /**
  * LSTM layer numerical gradient test.
  */
-TEST_CASE("GradientLSTMLayerTest", "[ANNLayerTest]")
+TEST_CASE("GradientLSTMLayerTest", "[ANNLayerTest][tiny]")
 {
   // LSTM function gradient instantiation.
   struct GradientFunction

@@ -1,7 +1,8 @@
 /**
  * @file core/data/save_image_impl.hpp
  * @author Mehul Kumar Nirala
- *
+ * @author Omar Shrit
+ * @author Ryan Curtin
  * Implementation of image saving functionality via STB.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -14,154 +15,101 @@
 
 // In case it hasn't been included yet.
 #include "save_image.hpp"
-#include "image_info.hpp"
 
 namespace mlpack {
 namespace data {
 
-/**
- * Save the given image to the given filename.
- *
- * @param filename Filename to save to.
- * @param matrix Matrix containing image to be saved.
- * @param info Information about the image (width/height/channels/etc.).
- * @param fatal Whether an exception should be thrown on save failure.
- */
-template<typename eT>
-bool Save(const std::string& filename,
-          arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal)
-{
-  arma::Mat<unsigned char> tmpMatrix =
-      arma::conv_to<arma::Mat<unsigned char>>::from(matrix);
-
-  return SaveImage(filename, tmpMatrix, info, fatal);
-}
-
 // Image saving API for multiple files.
 template<typename eT>
 bool Save(const std::vector<std::string>& files,
-          arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal)
+          const arma::Mat<eT>& matrix,
+          ImageOptions& opts)
+
 {
-  if (files.size() == 0)
-  {
-    if (fatal)
-    {
-      Log::Fatal << "Save(): vector of image files is empty; nothing to save."
-          << std::endl;
-    }
-    else
-    {
-      Log::Warn << "Save(): vector of image files is empty; nothing to save."
-          << std::endl;
-    }
-
-    return false;
-  }
-
-  arma::Mat<unsigned char> img;
-  bool status = true;
-
-  for (size_t i = 0; i < files.size() ; ++i)
-  {
-    arma::Mat<eT> colImg(matrix.colptr(i), matrix.n_rows, 1,
-        false, true);
-    status &= Save(files[i], colImg, info, fatal);
-  }
-
-  return status;
+  return SaveImage(files, matrix, opts);
 }
 
-inline bool SaveImage(const std::string& filename,
-                      arma::Mat<unsigned char>& image,
-                      ImageInfo& info,
-                      const bool fatal)
+template<typename eT>
+bool SaveImage(const std::vector<std::string>& files,
+               const arma::Mat<eT>& matrix,
+               ImageOptions& opts)
 {
-  // Check to see if the file type is supported.
-  if (!ImageFormatSupported(filename, true))
+  if (files.empty())
   {
-    std::ostringstream oss;
-    oss << "Save(): file type " << Extension(filename) << " not supported.\n";
-    oss << "Currently image saving supports ";
-    for (auto extension : SaveFileTypes())
-      oss << "  " << extension;
-    oss << "." << std::endl;
+    std::stringstream oss;
+    oss << "Save(): vector of image files is empty; nothing to save.";
+    return HandleError(oss, opts);
+  }
 
-    if (fatal)
+  // Check if we do have any type that is not supported.
+  if (opts.Format() == FileType::ImageType ||
+      opts.Format() == FileType::AutoDetect)
+  {
+    for  (size_t i = 0; i < files.size() ; ++i)
     {
-      Log::Fatal << oss.str();
-    }
-    else
-    {
-      Log::Warn << oss.str();
-    }
-
-    return false;
-  }
-
-  // Ensure the shape of the matrix is correct.
-  if (image.n_cols > 1)
-  {
-    Log::Warn << "Save(): given input image matrix contains more than 1 image."
-        << std::endl;
-    Log::Warn << "Only the first image will be saved!" << std::endl;
-  }
-
-  if (info.Width() * info.Height() * info.Channels() != image.n_elem)
-  {
-    Log::Fatal << "data::Save(): The given image dimensions do not match the "
-        << "dimensions of the matrix to be saved!" << std::endl;
-  }
-
-  bool status = false;
-  unsigned char* imageMem = image.memptr();
-
-  if ("png" == Extension(filename))
-  {
-    status = stbi_write_png(filename.c_str(), info.Width(), info.Height(),
-        info.Channels(), imageMem, info.Width() * info.Channels());
-  }
-  else if ("bmp" == Extension(filename))
-  {
-    status = stbi_write_bmp(filename.c_str(), info.Width(), info.Height(),
-        info.Channels(), imageMem);
-  }
-  else if ("tga" == Extension(filename))
-  {
-    status = stbi_write_tga(filename.c_str(), info.Width(), info.Height(),
-        info.Channels(), imageMem);
-  }
-  else if ("hdr" == Extension(filename))
-  {
-    // We'll have to convert to float...
-    arma::fmat tmpImage = arma::conv_to<arma::fmat>::from(image);
-    status = stbi_write_hdr(filename.c_str(), info.Width(), info.Height(),
-        info.Channels(), tmpImage.memptr());
-  }
-  else if ("jpg" == Extension(filename))
-  {
-    status = stbi_write_jpg(filename.c_str(), info.Width(), info.Height(),
-        info.Channels(), imageMem, info.Quality());
-  }
-
-  if (!status)
-  {
-    if (fatal)
-    {
-      Log::Fatal << "Save(): error saving image to '" << filename << "'."
-          << std::endl;
-    }
-    else
-    {
-      Log::Warn << "Save(): error saving image to '" << filename << "'."
-          << std::endl;
+      if (!opts.saveType.count(Extension(files.at(i))))
+      {
+        std::stringstream oss;
+        oss << "Save(): file type " << opts.FileTypeToString()
+            << " isn't supported. Currently image saving supports: ";
+        for (const auto& x : opts.saveType)
+          oss << "  " << x;
+        oss << "." << std::endl;
+        return HandleError(oss, opts);
+      }
     }
   }
 
-  return status;
+  size_t dimension = opts.Width() * opts.Height() * opts.Channels() *
+      files.size();
+  // We only need to check the rows since it is a matrix.
+  if (dimension != matrix.n_rows * matrix.n_cols)
+  {
+    std::stringstream oss;
+    oss << "data::Save(): The given image dimensions, Width: " << opts.Width()
+        << ", Height: " << opts.Height() << ", Channels: "<< opts.Channels()
+        << " do not match the dimensions of the matrix to be saved!";
+    return HandleError(oss, opts);
+  }
+  // Unfortunately we cannot move because matrix is const.
+  arma::Mat<unsigned char> tempMatrix =
+      arma::conv_to<arma::Mat<unsigned char>>::from(matrix);
+  bool success = false;
+  for (size_t i = 0; i < files.size() ; ++i)
+  {
+    // Update opts.Format() at each iteration.
+    DetectFromExtension<arma::Mat<eT>, ImageOptions>(files.at(i), opts);
+    if (opts.Format() == FileType::PNG)
+    {
+      success = stbi_write_png(files.at(i).c_str(), opts.Width(), opts.Height(),
+          opts.Channels(), tempMatrix.colptr(i),
+          opts.Width() * opts.Channels());
+    }
+    else if (opts.Format() == FileType::BMP)
+    {
+      success = stbi_write_bmp(files.at(i).c_str(), opts.Width(), opts.Height(),
+          opts.Channels(), tempMatrix.colptr(i));
+    }
+    else if (opts.Format() == FileType::TGA)
+    {
+      success = stbi_write_tga(files.at(i).c_str(), opts.Width(), opts.Height(),
+          opts.Channels(), tempMatrix.colptr(i));
+    }
+    else if (opts.Format() == FileType::JPG)
+    {
+      success = stbi_write_jpg(files.at(i).c_str(), opts.Width(), opts.Height(),
+          opts.Channels(), tempMatrix.colptr(i), opts.Quality());
+    }
+
+    if (!success)
+    {
+      std::stringstream oss;
+      oss << "Save(): error saving image to '" << files.at(i) << "'.";
+      return HandleError(oss, opts);
+    }
+  }
+
+  return success;
 }
 
 } // namespace data

@@ -74,7 +74,7 @@ TEST_CASE("AKFNApproxVsExact1", "[AKFNTest]")
  *
  * Errors are produced if the results are not according to relative error.
  */
-TEST_CASE("AKFNApproxVsExact2", "[AKFNTest]")
+TEST_CASE("AKFNApproxVsExact2", "[AKFNTest][tiny]")
 {
   arma::mat dataset;
 

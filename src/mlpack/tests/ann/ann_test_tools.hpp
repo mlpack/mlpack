@@ -298,7 +298,11 @@ double TestClassificationNetwork(ModelType& model,
                                  MatType& testLabels,
                                  const size_t maxEpochs)
 {
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.32, 32, 0.88, 1e-8, trainData.n_cols * maxEpochs, -100);
+  #else
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols * maxEpochs, -100);
+  #endif
   model.Train(trainData, trainLabels, opt);
 
   MatType predictionTemp;
@@ -368,7 +372,11 @@ ElemType ImpulseStepDataTest(const size_t dimensions, const size_t rho)
   net.template Add<RecurrentLayerType>(dimensions);
 
   const size_t numEpochs = 50;
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.096, 32, 0.9, 1e-08, 700 * numEpochs, 1e-5);
+  #else
   ens::RMSProp opt(0.003, 32, 0.9, 1e-08, 700 * numEpochs, 1e-5);
+  #endif
 
   net.Train(trainData, trainResponses, opt);
 

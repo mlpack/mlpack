@@ -116,7 +116,7 @@ TEST_CASE("EmptyClassifyTest", "[RandomForestTest]")
  * Test unweighted numeric learning, making sure that we get better performance
  * than a single decision tree.
  */
-TEST_CASE("UnweightedNumericLearningTest", "[RandomForestTest]")
+TEST_CASE("UnweightedNumericLearningTest", "[RandomForestTest][tiny]")
 {
   // Load the vc2 dataset.
   arma::mat dataset;
@@ -156,7 +156,7 @@ TEST_CASE("UnweightedNumericLearningTest", "[RandomForestTest]")
  * Test weighted numeric learning, making sure that we get better performance
  * than a single decision tree.
  */
-TEST_CASE("WeightedNumericLearningTest", "[RandomForestTest]")
+TEST_CASE("WeightedNumericLearningTest", "[RandomForestTest][tiny]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
@@ -212,7 +212,7 @@ TEST_CASE("WeightedNumericLearningTest", "[RandomForestTest]")
  * Test unweighted categorical learning.  Ensure that we get better performance
  * with a random forest.
  */
-TEST_CASE("UnweightedCategoricalLearningTest", "[RandomForestTest]")
+TEST_CASE("UnweightedCategoricalLearningTest", "[RandomForestTest][tiny]")
 {
   arma::mat d;
   arma::Row<size_t> l;
@@ -248,7 +248,7 @@ TEST_CASE("UnweightedCategoricalLearningTest", "[RandomForestTest]")
 /**
  * Test weighted categorical learning.
  */
-TEST_CASE("WeightedCategoricalLearningTest", "[RandomForestTest]")
+TEST_CASE("WeightedCategoricalLearningTest", "[RandomForestTest][tiny]")
 {
   arma::mat d;
   arma::Row<size_t> l;

@@ -498,17 +498,18 @@ void Serialization()
  * Make sure that correct number of recommendations are generated when query
  * set for all methods.
  */
-TEMPLATE_TEST_CASE("CFGetRecommendationsAllUsersTest", "[CFTest]",
+TEMPLATE_TEST_CASE("CFGetRecommendationsAllUsersTest", "[CFTest][tiny]",
     RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
-    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, QUIC_SVDPolicy,
+    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy,
     BlockKrylovSVDPolicy)
 {
   GetRecommendationsAllUsers<TestType>();
 }
 
-// The SVDPlusPlus policy takes noticeably longer.
+// The SVDPlusPlus policy takes noticeably longer and the QUIC_SVDPolicy
+// requires a lot of RAM.
 TEMPLATE_TEST_CASE("CFGetRecommendationsAllUsersTest", "[CFTest][long]",
-    SVDPlusPlusPolicy)
+    QUIC_SVDPolicy, SVDPlusPlusPolicy)
 {
   GetRecommendationsAllUsers<TestType>();
 }

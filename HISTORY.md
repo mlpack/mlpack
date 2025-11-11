@@ -30,7 +30,13 @@ _????-??-??_
  * Added `DAGNetwork` class to represent complex neural network structures
    (#3944).
 
- * Fix mask handling in `MultiHeadAttention` layer (#3998).
+ * Fix mask handling in `MultiHeadAttention` layer (#3998)
+
+ * Added `data::GroupChannels()` and `data::InterleaveChannels()` for
+  preprocessing images before using `Convolution` layers. (#4006)
+
+ * Fix infinite recursion in `Octree` when the number of identical points
+   exceeds `maxLeafSize` (#4020).
 
 ## mlpack 4.6.2
 

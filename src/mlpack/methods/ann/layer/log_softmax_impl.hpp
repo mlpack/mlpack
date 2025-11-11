@@ -65,80 +65,64 @@ LogSoftMax<MatType>::operator=(LogSoftMax&& other)
 template<typename MatType>
 void LogSoftMax<MatType>::Forward(const MatType& input, MatType& output)
 {
-  ForwardImpl(input, output);
-}
-
-template<typename MatType>
-void LogSoftMax<MatType>::ForwardImpl(
-    const MatType& input,
-    MatType& output,
-    const typename std::enable_if_t<arma::is_arma_type<MatType>::value>*)
-{
-  MatType maxInput = repmat(max(input, 0), input.n_rows, 1);
-  output = (maxInput - input);
-
-  // Approximation of the base-e exponential function. The accuracy, however, is
-  // about 0.00001 lower than using exp. Credits go to Leon Bottou.
-  #pragma omp parallel for
-  for (size_t i = 0; i < output.n_elem; ++i)
+  if constexpr (IsArma<MatType>::value)
   {
-    double x = output(i);
-    //! Fast approximation of exp(-x) for x positive.
-    static constexpr double A0 = 1.0;
-    static constexpr double A1 = 0.125;
-    static constexpr double A2 = 0.0078125;
-    static constexpr double A3 = 0.00032552083;
-    static constexpr double A4 = 1.0172526e-5;
+    MatType maxInput = repmat(max(input, 0), input.n_rows, 1);
+    output = (maxInput - input);
 
-    if (x < 13.0)
+    // Approximation of the base-e exponential function. The accuracy, however,
+    // is about 0.00001 lower than using exp. Credits go to Leon Bottou.
+    #pragma omp parallel for
+    for (size_t i = 0; i < output.n_elem; ++i)
     {
-      double y = A0 + x * (A1 + x * (A2 + x * (A3 + x * A4)));
-      y *= y;
-      y *= y;
-      y *= y;
-      y = 1 / y;
-      output(i) = ElemType(y);
+      double x = output(i);
+      //! Fast approximation of exp(-x) for x positive.
+      static constexpr double A0 = 1.0;
+      static constexpr double A1 = 0.125;
+      static constexpr double A2 = 0.0078125;
+      static constexpr double A3 = 0.00032552083;
+      static constexpr double A4 = 1.0172526e-5;
+
+      if (x < 13.0)
+      {
+        double y = A0 + x * (A1 + x * (A2 + x * (A3 + x * A4)));
+        y *= y;
+        y *= y;
+        y *= y;
+        y = 1 / y;
+        output(i) = ElemType(y);
+      }
+      else
+      {
+        output(i) = 0;
+      }
     }
-    else
+
+    #pragma omp parallel for
+    for (size_t col = 0; col < maxInput.n_cols; ++col)
     {
-      output(i) = 0;
+      ElemType colSum = 0;
+      for (size_t row = 0; row < output.n_rows; ++row)
+      {
+        colSum += output(row, col);
+      }
+      ElemType logSum = std::log(colSum);
+      for (size_t row = 0; row < maxInput.n_rows; ++row)
+      {
+        maxInput(row, col) += logSum;
+      }
     }
+    output = input - maxInput;
   }
-
-  #pragma omp parallel for
-  for (size_t col = 0; col < maxInput.n_cols; ++col)
+  else if constexpr (IsCoot<MatType>::value)
   {
-    ElemType colSum = 0;
-    for (size_t row = 0; row < output.n_rows; ++row)
-    {
-      colSum += output(row, col);
-    }
-    ElemType logSum = std::log(colSum);
-    for (size_t row = 0; row < maxInput.n_rows; ++row)
-    {
-      maxInput(row, col) += logSum;
-    }
+    MatType maxInput = repmat(max(input), input.n_rows, 1);
+    output = (maxInput - input);
+    output = exp(-output);
+    maxInput.each_row() += log(sum(output));
+    output = input - maxInput;
   }
-
-  output = input - maxInput;
 }
-
-#ifdef MLPACK_HAS_COOT
-
-template<typename MatType>
-void LogSoftMax<MatType>::ForwardImpl(
-    const MatType& input,
-    MatType& output,
-    const typename std::enable_if_t<coot::is_coot_type<MatType>::value>*)
-{
-  MatType maxInput = repmat(max(input), input.n_rows, 1);
-  output = (maxInput - input);
-  output = exp(-output);
-  maxInput.each_row() += log(sum(output));
-  output = input - maxInput;
-}
-
-#endif
 
 template<typename MatType>
 void LogSoftMax<MatType>::Backward(

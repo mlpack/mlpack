@@ -22,7 +22,7 @@ using namespace mlpack;
  * dimension for simplicity -- the correct functionality of distance functions
  * is not tested here.
  */
-TEST_CASE("EMSTExhaustiveSyntheticTest", "[EMSTTest]")
+TEST_CASE("EMSTExhaustiveSyntheticTest", "[EMSTTest][tiny]")
 {
   // Set up our data.
   arma::mat data(1, 11);

@@ -402,6 +402,16 @@ class Octree
       const VecType& point,
       typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
+  //! Return the index of the beginning point of this subset.
+  size_t Begin() const { return begin; }
+  //! Modify the index of the beginning point of this subset.
+  size_t& Begin() { return begin; }
+
+  //! Return the number of points in this subset.
+  size_t Count() const { return count; }
+  //! Modify the number of points in this subset.
+  size_t& Count() { return count; }
+
   //! Store the center of the bounding region in the given vector.
   template<typename VecType>
   void Center(VecType& center) const { bound.Center(center); }
