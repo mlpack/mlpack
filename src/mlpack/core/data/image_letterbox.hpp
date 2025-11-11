@@ -62,14 +62,6 @@ void LetterboxImage(arma::Mat<eT>& src,
     throw std::logic_error(errMessage.str());
   }
 
-  if (src.n_cols != 1)
-  {
-    std::ostringstream errMessage;
-    errMessage << "LetterboxImage(): Expected 1 image but received "
-      << src.n_cols;
-    throw std::logic_error(errMessage.str());
-  }
-
   if (srcOpt.Channels() != 1 && srcOpt.Channels() != 3)
   {
     std::ostringstream errMessage;
@@ -90,25 +82,31 @@ void LetterboxImage(arma::Mat<eT>& src,
     newHeight = srcOpt.Height() * width / srcOpt.Width();
   }
 
-  arma::Mat<eT> dest(width * height * srcOpt.Channels(), 1,
+  const size_t numImages = src.n_cols;
+  arma::Mat<eT> dest(width * height * srcOpt.Channels(), numImages,
                      arma::fill::none);
 
   // Resize, then embed src within dest.
   ResizeImages(src, srcOpt, newWidth, newHeight);
   arma::Cube<eT> cubeSrc, cubeDest;
 
-  // Channels as rows, because default assumption is that channels are
+  // Channels as rows, because assumption is that channels are
   // interleaved (see image_layout.hpp for more info).
-  MakeAlias(cubeSrc, src, srcOpt.Channels(), srcOpt.Width(), srcOpt.Height());
-  MakeAlias(cubeDest, dest, srcOpt.Channels(), width, height);
+  MakeAlias(cubeSrc, src, srcOpt.Channels() * srcOpt.Width(), srcOpt.Height(),
+            numImages);
+  MakeAlias(cubeDest, dest, srcOpt.Channels() * width, height, numImages);
 
   const size_t dx = (width - newWidth) / 2;
   const size_t dy = (height - newHeight) / 2;
 
   cubeDest.fill(fillValue);
   // Fill RGB
-  cubeDest.subcube(0, dx, dy, srcOpt.Channels() - 1, srcOpt.Width() + dx - 1,
-    srcOpt.Height() + dy - 1) = cubeSrc;
+  cubeDest.subcube(dx * srcOpt.Channels(),
+                   dy,
+                   0,
+                   ((srcOpt.Width() + dx) * srcOpt.Channels()) - 1,
+                   srcOpt.Height() + dy - 1,
+                   numImages - 1) = cubeSrc;
 
   src = std::move(dest);
   srcOpt = ImageOptions(width, height, srcOpt.Channels());
