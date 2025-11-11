@@ -819,6 +819,26 @@ The letterbox transform resizes an image's dimensions to `imgSize x imgSize` but
 keeps the aspect ratio of the original image. Whitespace is then filled in
 with `fillValue`.
 
+*Original image with size of* `640`x`326` *pixels:*
+
+<p align="center">
+  <img src="../img/cat.jpg" alt="cat">
+</p>
+
+*Original image with target size of* `416`x`416` *pixels after letterbox:*
+
+<p align="center">
+  <img src="../img/cat_square_letterbox.jpg"
+       alt="cat with square letterbox transform">
+</p>
+
+*Original image with target size of* `300`x`208` *pixels after letterbox:*
+
+<p align="center">
+  <img src="../img/cat_rect_letterbox.jpg"
+       alt="cat with rectangular letterbox transform">
+</p>
+
 - `LetterboxImage(src, opt, imgSize, fillValue)`
   * `src` is a [column-major matrix](matrices.md) containing a single image,
     where the image is represented as a flattened vector in one column.
@@ -828,13 +848,13 @@ with `fillValue`.
     `src`.
   * `fillValue` is the white space value that pads out the resized image.
     Each channel will be filled in with this value, i.e if `fillValue` is 127
-    then each RGB channel will be 127. Only images with 1 or 3 channels
-    can be used.
+    then each RGB channel will be 127.
+  * Only images with 1 or 3 channels can be used.
 
 #### Example
 
 An example that loads an image, resizes the image to some square image
-while keeping the aspect ratio using `LetterboxImage`.
+while keeping the aspect ratio using `LetterboxImage()`.
 
 ```c++
 // Download: https://datasets.mlpack.org/jurassic-park.png
