@@ -82,12 +82,12 @@ void LetterboxImage(arma::Mat<eT>& src,
   if (width * 1. / srcOpt.Width() > height * 1. / srcOpt.Height())
   {
     newHeight = height;
-    newWidth = srcOpt.Width() * width / srcOpt.Height();
+    newWidth = srcOpt.Width() * height / srcOpt.Height();
   }
   else
   {
     newWidth = width;
-    newHeight = srcOpt.Height() * height / srcOpt.Width();
+    newHeight = srcOpt.Height() * width / srcOpt.Width();
   }
 
   arma::Mat<eT> dest(width * height * srcOpt.Channels(), 1,
