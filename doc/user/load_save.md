@@ -861,7 +861,7 @@ while keeping the aspect ratio using `LetterboxImage()`.
 arma::mat image;
 mlpack::data::ImageOptions opt;
 mlpack::data::Load("jurassic-park.png", image, opt, true);
-mlpack::data::LetterboxImage(image, opt, 416, 127.0);
+mlpack::data::LetterboxImage(image, opt, 416, 416, 127.0);
 // Image dimensions are now 416x416.
 mlpack::data::Save("jurassic-park-letterbox.png", image, opt, true);
 
