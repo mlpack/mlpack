@@ -656,13 +656,17 @@ TEST_CASE("InterleaveChannelsOnePixel", "[ImageTest]")
  */
 TEST_CASE("LetterboxImage", "[ImageTest]")
 {
-  data::ImageOptions opt(10, 20, 1);
-  arma::mat image(200, 1);
-  const size_t newWidth = 16;
-  data::LetterboxImage(image, opt, newWidth, 0.5);
-  const size_t imageSize = opt.Width() * opt.Height() * opt.Channels();
-  REQUIRE(image.n_rows * image.n_cols == imageSize);
-  REQUIRE(image.n_rows * image.n_cols == newWidth * newWidth * opt.Channels());
+  data::ImageOptions opt(40, 20, 1);
+  const size_t imgSize = 16;
+  arma::mat image(800, 1);
+
+  const double fillValue = 0.5;
+  data::LetterboxImage(image, opt, imgSize, imgSize, fillValue);
+
+  REQUIRE(image.n_rows == imgSize * imgSize * opt.Channels());
+  REQUIRE(image.n_cols == 1);
+  REQUIRE(image.at(0, 0) == fillValue);
+  REQUIRE(image.at(image.n_rows - 1, 0) == fillValue);
 }
 
 /**
@@ -672,7 +676,7 @@ TEST_CASE("LetterboxImageNoPixels", "[ImageTest]")
 {
   data::ImageOptions opt(0, 0, 1);
   arma::mat image(0, 1);
-  REQUIRE_THROWS(data::LetterboxImage(image, opt, 4, 0.5));
+  REQUIRE_THROWS(data::LetterboxImage(image, opt, 4, 4, 0.5));
 }
 
 /**
@@ -684,19 +688,24 @@ TEST_CASE("LetterboxImageIncorrectImageOptions", "[ImageTest]")
   arma::mat image(10, 1);
   image.fill(5.0);
 
-  REQUIRE_THROWS(data::LetterboxImage(image, opt, 4, 0.5));
+  REQUIRE_THROWS(data::LetterboxImage(image, opt, 4, 4, 0.5));
 }
 
 /**
- * Test Letterbox throws error when more than one image exists.
+ * Test Letterbox when more than one image exists.
  */
 TEST_CASE("LetterboxImageMultipleImages", "[ImageTest]")
 {
-  data::ImageOptions opt(10, 2, 1);
-  arma::mat image(10, 2);
-  image.fill(5.0);
+  data::ImageOptions opt(32, 24, 1);
+  arma::mat images(32 * 24, 2);
+  images.fill(5.0);
 
-  REQUIRE_THROWS(data::LetterboxImage(image, opt, 4, 0.5));
+  const double fillValue = 0.5;
+  data::LetterboxImage(images, opt, 24, 24, fillValue);
+
+  CheckMatrices(images.col(0), images.col(1));
+  REQUIRE(images.at(0, 0) == fillValue);
+  REQUIRE(images.at(images.n_rows - 1, 0) == fillValue);
 }
 
 /**
@@ -708,5 +717,24 @@ TEST_CASE("LetterboxImageIncorrectChannels", "[ImageTest]")
   arma::mat image(20, 1);
   image.fill(5.0);
 
-  REQUIRE_THROWS(data::LetterboxImage(image, opt, 4, 0.5));
+  REQUIRE_THROWS(data::LetterboxImage(image, opt, 4, 4, 0.5));
+}
+
+/**
+ * Test Letterbox when output width and height are different
+ */
+TEST_CASE("LetterboxImageRectangularOutput", "[ImageTest]")
+{
+  data::ImageOptions opt(40, 20, 1);
+  const size_t width = 16;
+  const size_t height = 12;
+  arma::mat image(40 * 20, 1);
+  image.fill(5.0);
+
+  const double fillValue = 0.5;
+  data::LetterboxImage(image, opt, width, height, fillValue);
+
+  REQUIRE(image.n_rows == width * height * opt.Channels());
+  REQUIRE(image.at(0, 0) == fillValue);
+  REQUIRE(image.at(image.n_rows - 1, 0) == fillValue);
 }
