@@ -66,7 +66,7 @@ YOLOv3Tiny<
   // Detection head for larger objects.
   size_t convolution14 = ConvolutionBlock(512, 3);
   size_t convolution15 = ConvolutionBlock(predictionsPerCell * numAttributes, 1, false);
-  size_t detections16 = YOLO(imgSize, 13, largeAnchors);
+  size_t detections16 = YOLO(imgSize, imgSize / 32, largeAnchors);
 
   size_t convolution17 = ConvolutionBlock(128, 1);
   // Upsample for more fine-grained detections.
@@ -75,7 +75,7 @@ YOLOv3Tiny<
   // Detection head for smaller objects.
   size_t convolution19 = ConvolutionBlock(256, 3);
   size_t convolution20 = ConvolutionBlock(predictionsPerCell * numAttributes, 1, false);
-  size_t detections21 = YOLO(imgSize, 26, smallAnchors);
+  size_t detections21 = YOLO(imgSize, imgSize / 16, smallAnchors);
 
   // the DAGNetwork class requires a layer for concatenations, so we use
   // the Identity layer for pure concatentation, and no other compute.

@@ -69,7 +69,9 @@ class YOLOv3Tiny
    * @param predictionsPerCell Each YOLO layer predicts `predictionsPerCell`
        boxes per grid cell. Pretrained weights use 3.
    * @param anchors Vector of anchor width and heights. Formatted as
-      [w0, h0, w1, h1, ..., w(predictionsPerCell-1), h(predictionsPerCell-1)]
+      [w0, h0, w1, h1, ... ]. Each anchors is a [w, h] pair. There must be
+      predictionsPerCell * 2 anchors, since YOLOv3Tiny has two output layers.
+      Therefore, anchors.size() must be predictionsPerCell * 4.
    */
   YOLOv3Tiny(const size_t imgSize,
              const size_t numClasses,
@@ -78,6 +80,9 @@ class YOLOv3Tiny
 
   ~YOLOv3Tiny() { /* Nothing to do. */ }
 
+  /**
+   * Returns the graph representation of the model.
+   */
   ModelType& Model() { return model; }
 
   /**

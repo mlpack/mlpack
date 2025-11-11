@@ -1,0 +1,133 @@
+/**
+ * @file tests/models/yolov3.cpp
+ * @author Andrew Furey
+ *
+ * Tests all the models and layers in models/yolov3/
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+
+#include <mlpack/core.hpp>
+#include <mlpack/methods/ann/models/yolov3/yolov3_tiny.hpp>
+#include "../../catch.hpp"
+#include "../../serialization.hpp"
+
+using namespace mlpack;
+
+/*
+ * Test different input image sizes. Other params are set to the default.
+ */
+TEST_CASE("YOLOv3TinyImageSize", "[YOLOv3TinyTest]")
+{
+  const size_t imgSize = 320;
+  const size_t numClasses = 80;
+  const size_t predictionsPerCell = 3;
+  const std::vector<double> anchors =
+    { 10,14,  23,27,  37,58,  81,82,  135,169,  344,319 };
+  YOLOv3Tiny<> model(imgSize, numClasses, predictionsPerCell, anchors);
+
+  arma::mat testInput(imgSize * imgSize * 3, 1);
+  arma::mat testOutput;
+  model.Predict(testInput, testOutput);
+
+  const size_t expectedRows =
+    (10 * 10 + 20 * 20) * predictionsPerCell * (5 + numClasses);
+  REQUIRE(testOutput.n_rows == expectedRows);
+}
+
+/*
+ * Test number of classes. Other params are set to the default.
+ */
+TEST_CASE("YOLOv3TinyClasses", "[YOLOv3TinyTest]")
+{
+  const size_t imgSize = 416;
+  const size_t numClasses = 3;
+  const size_t predictionsPerCell = 3;
+  const std::vector<double> anchors =
+    { 10,14,  23,27,  37,58,  81,82,  135,169,  344,319 };
+  YOLOv3Tiny<> model(imgSize, numClasses, predictionsPerCell, anchors);
+
+  arma::mat testInput(imgSize * imgSize * 3, 1);
+  arma::mat testOutput;
+  model.Predict(testInput, testOutput);
+
+  const size_t expectedRows =
+    (13 * 13 + 26 * 26) * predictionsPerCell * (5 + numClasses);
+  REQUIRE(testOutput.n_rows == expectedRows);
+}
+
+/*
+ * Test predictions per cell. Other params are set to the default.
+ */
+TEST_CASE("YOLOv3TinyPredictionsPerCell", "[YOLOv3TinyTest]")
+{
+  const size_t imgSize = 416;
+  const size_t numClasses = 80;
+  const size_t predictionsPerCell = 1;
+  const std::vector<double> anchors =
+    { 10,14,  23,27 };
+  YOLOv3Tiny<> model(imgSize, numClasses, predictionsPerCell, anchors);
+
+  arma::mat testInput(imgSize * imgSize * 3, 1);
+  arma::mat testOutput;
+  model.Predict(testInput, testOutput);
+
+  const size_t expectedRows =
+    (13 * 13 + 26 * 26) * predictionsPerCell * (5 + numClasses);
+  REQUIRE(testOutput.n_rows == expectedRows);
+}
+
+/*
+ * Test incorrect number of anchors.
+ */
+TEST_CASE("YOLOv3TinyPredictionsPerCell", "[YOLOv3TinyTest]")
+{
+  const size_t imgSize = 416;
+  const size_t numClasses = 80;
+  const size_t predictionsPerCell = 1;
+  const std::vector<double> anchors = { 0,1, 2,3, 4,5, 6,7 };
+  YOLOv3Tiny<> model;
+  REQUIRE_THROWS(model = YOLOv3Tiny(imgSize, numClasses, predictionsPerCell, anchors));
+}
+
+#define MLPACK_ANN_IGNORE_SERIALIZATION_WARNING
+CEREAL_REGISTER_TYPE(mlpack::Layer<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::Identity<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::MultiLayer<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::Convolution<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::BatchNorm<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::LeakyReLU<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::Padding<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::MaxPooling<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::NearestInterpolation<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::YOLOv3Layer<arma::fmat>)
+
+/*
+ * Test serialize.
+ */
+TEST_CASE("YOLOv3TinySerialize", "[YOLOv3TinyTest]")
+{
+  const size_t imgSize = 416;
+  const size_t numClasses = 80;
+  const size_t predictionsPerCell = 3;
+  const std::vector<double> anchors =
+    { 10,14,  23,27,  37,58,  81,82,  135,169,  344,319 };
+  YOLOv3Tiny<> model(imgSize, numClasses, predictionsPerCell, anchors);
+
+  arma::mat testData(imgSize * imgSize * 3, 1, arma::fill::randu);
+
+  YOLOv3Tiny<> xmlModel, jsonModel, binaryModel;
+  SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
+
+  arma::mat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
+  model.Predict(testData, predictions);
+  xmlModel.Predict(testData, xmlPredictions);
+  jsonModel.Predict(testData, jsonPredictions);
+  binaryModel.Predict(testData, binaryPredictions);
+
+  CheckMatrices(predictions, xmlPredictions, jsonPredictions,
+      binaryPredictions);
+}

@@ -131,11 +131,14 @@ void YOLOv3Layer<MatType>::ComputeOutputDimensions()
     throw std::logic_error("YOLOv3Layer::ComputeOutputDimensions(): "
       "Input dimensions must be square.");
 
-  if (grid != this->inputDimensions[0] * this->inputDimensions[1] ||
-      gridSize != this->inputDimensions[0])
+  if (gridSize != this->inputDimensions[0] ||
+      gridSize != this->inputDimensions[1])
   {
-    throw std::logic_error("YOLOv3Layer::ComputeOutputDimensions(): "
-      "Grid is the wrong size.");
+    std::ostringstream errMessage;
+    errMessage << "YOLOv3Layer::ComputeOutputDimensions(): "
+      << "Expected grid size was " << gridSize << " but input dimensions were "
+      << this->inputDimensions[0] << " x " << this->inputDimensions[1];
+    throw std::logic_error(errMessage.str());
   }
 
   this->outputDimensions = { numAttributes, grid * predictionsPerCell };
