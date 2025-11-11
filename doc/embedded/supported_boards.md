@@ -214,3 +214,8 @@ the new architecture added to this table.
 -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/sparc64--glibc--stable-2024.05-1/bin/sparc64-buildroot-linux-gnu-
 -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/sparc64--glibc--stable-2024.05-1/sparc64-buildroot-linux-gnu/sysroot
 ```
+
+***Note:*** the sparc64 instruction set does not support unaligned loads;
+therefore, if [image operations](../user/load_save.md#image-data) are being
+performed, add `#define STBIR_MEMCPY_NOUNALIGNED` to your code before including
+mlpack, or add the compiler option `-DSTBIR_MEMCPY_NOUNALIGNED`.

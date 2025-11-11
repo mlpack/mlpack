@@ -51,6 +51,8 @@ target_info = [
       // OpenBLAS doesn't compile and run successfully on SPARC64 so we manually
       // download a precompiled reference BLAS implementation.
       'blas_url': 'https://files.mlpack.org/librefblas-sparc64.a'
+      // STB will perform unaligned accesses unless we tell it not to, which
+      // causes bus errors on sparc64.
       'extra_cxxflags': '-DSTBIR_MEMCPY_NOUNALIGNED'
   ]
 ]
