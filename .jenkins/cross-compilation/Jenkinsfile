@@ -153,9 +153,7 @@ pipeline
                 # If a custom page size is needed, set it.
                 if [ ! -z "$PAGE_SIZE" ];
                 then
-                  EXTRA_CMAKE_OPTS="${EXTRA_CMAKE_OPTS} "'"-DCMAKE_CXX_FLAGS=\\"-Wl,-z,common-page-size='$PAGE_SIZE' -Wl,-z,max-page-size='$PAGE_SIZE' $EXTRA_CXXFLAGS\\""';
-                else
-                  EXTRA_CMAKE_OPTS="${EXTRA_CMAKE_OPTS} "'"-DCMAKE_CXX_FLAGS=\\"$EXTRA_CXXFLAGS\\""';
+                  EXTRA_CXXFLAGS="${EXTRA_CXXFLAGS} -Wl,-z,common-page-size='$PAGE_SIZE' -Wl,-z,max-page-size='$PAGE_SIZE'";
                 fi
 
                 # Configure ccache.
@@ -178,6 +176,7 @@ pipeline
                     -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
                     -DDOWNLOAD_DEPENDENCIES=ON \
                     -DOPENBLAS_EXTRA_ARGS="NO_FORTRAN=1 DYNAMIC_ARCH=0 $OPENBLAS_EXTRA_FLAGS" \
+                    -DCMAKE_CXX_FLAGS="$EXTRA_CXXFLAGS" \
                     $EXTRA_CMAKE_OPTS \
                     ../
                 # If we have a custom BLAS library move it into place...
