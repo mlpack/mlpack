@@ -218,12 +218,10 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
   // Reshape, for each batch item.
   for (size_t i = 0; i < reshapedCube.n_slices; i++)
   {
-    reshapedCube.slice(i) =
+    reshapedCube.slice(i) = arma::reshape(
       arma::reshape(
-        arma::reshape(
-          outputCube.slice(i), grid, numAttributes * predictionsPerCell).t(),
-          numAttributes, predictionsPerCell * grid
-      );
+        outputCube.slice(i), grid, numAttributes * predictionsPerCell).t(),
+        numAttributes, predictionsPerCell * grid);
   }
 }
 
