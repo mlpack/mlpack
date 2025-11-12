@@ -83,7 +83,7 @@ TEST_CASE("YOLOv3TinyPredictionsPerCell", "[YOLOv3TinyTest]")
 /*
  * Test incorrect number of anchors.
  */
-TEST_CASE("YOLOv3TinyPredictionsPerCell", "[YOLOv3TinyTest]")
+TEST_CASE("YOLOv3TinyIncorrectAnchors", "[YOLOv3TinyTest]")
 {
   const size_t imgSize = 416;
   const size_t numClasses = 80;
