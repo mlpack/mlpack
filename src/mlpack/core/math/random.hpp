@@ -23,19 +23,32 @@ namespace mlpack {
 // whenever we set a seed with RandGen() or RandomSeed().
 inline size_t RandGenSeedOffset()
 {
-  // The use of `seedCounter` ensures that each individual RNG gets its own
-  // separate seed.  Otherwise, in OpenMP-enabled loops that use random numbers,
-  // it is possible that each individual thread could generate the same sequence
-  // of random numbers.
+  #if defined(MLPACK_USE_OPENMP)
+  // With OpenMP, we will assign seeds for each thread according to their thread
+  // ID.
+  static thread_local size_t threadSeed = omp_get_thread_num();
+  #else
+  // In a non-OpenMP multithreaded environment, we will assign a different seed
+  // to each thread, but in a first-come first-serve manner.  This means that
+  // with different runs, it's possible that different threads get different
+  // seeds.
   static std::atomic<size_t> seedCounter(0);
   static thread_local size_t threadSeed = (seedCounter++);
+  #endif
   return threadSeed;
+}
+
+// Keep the random seed that has been set.
+inline std::atomic<size_t>& RandomSeedValue()
+{
+  static std::atomic<size_t> seed(std::mt19937::default_seed);
+  return seed;
 }
 
 //! Global random object.
 inline std::mt19937& RandGen()
 {
-  static thread_local std::mt19937 randGen(std::mt19937::default_seed +
+  static thread_local std::mt19937 randGen(RandomSeedValue() +
       RandGenSeedOffset());
   return randGen;
 }
@@ -65,6 +78,7 @@ inline std::normal_distribution<>& RandNormalDist()
 inline void RandomSeed(const size_t seed)
 {
   #if (!defined(BINDING_TYPE) || BINDING_TYPE != BINDING_TYPE_TEST)
+    RandomSeedValue() = seed;
     RandGen().seed((uint32_t) (seed + RandGenSeedOffset()));
     #if (BINDING_TYPE == BINDING_TYPE_R)
       // To suppress Found 'srand', possibly from 'srand' (C).
