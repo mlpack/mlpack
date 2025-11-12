@@ -15,6 +15,28 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 
+/**
+ * Helper layer for YOLOv3.
+ *
+ * Returns bounding boxes in YOLO format. Bounding boxes consist of
+ * a center x and center y coordinate, width and height, objectness score
+ * and class probabilities.
+ *
+ * This layer outputs `gridSize` x `gridSize` x `predictionsPerCell`
+ * bounding boxes.
+ *
+ * For more information, refer to the following paper:
+ *
+ * @code
+ * @article{yolov3,
+ *   title     ={YOLOv3: An Incremental Improvement},
+ *   author    ={Redmon, Joseph and Farhadi, Ali},
+ *   journal   = {arXiv},
+ *   year      ={2018}
+ * }
+ * @endcode
+ *
+ */
 namespace mlpack {
 
 template <typename MatType = arma::mat>
@@ -23,6 +45,22 @@ class YOLOv3Layer : public Layer<MatType>
  public:
   YOLOv3Layer() { /* Nothing to do. */ }
 
+  /**
+   * YOLOv3Layer constructor.
+   *
+   * Input dimensions are expected to be 3d, normally from the outputs of a
+   * convolution layer.
+   *
+   * @param imgSize The width and height of input images. Pretrained weights
+       used 416.
+   * @param numAttributes Total number of attributes representing a bounding
+       box. The same as 5 plus the number of classes in the dataset.
+   * @param predictionsPerCell Each YOLO layer predicts `predictionsPerCell`
+       boxes per grid cell. Pretrained weights use 3.
+   * @param anchors Vector of anchor width and heights. Formatted as
+      [w0, h0, w1, h1, ... ]. Each anchors is a [w, h] pair. There must be
+      `predictionsPerCell` anchor pairs.
+   */
   YOLOv3Layer(const size_t imgSize,
               const size_t numAttributes,
               const size_t gridSize,
@@ -42,14 +80,32 @@ class YOLOv3Layer : public Layer<MatType>
 
   void ComputeOutputDimensions() override;
 
-  // Output format: cx, cy, w, h
+  /**
+   * NOTE: This will be changed when training is implemented.
+   *
+   * Takes in 3d input and outputs bounding boxes, based on anchors,
+   * input image size and cell position.
+   *
+   * Outputs bounding boxes, whose coordinates are represent by center x and
+   * center y position. If you require x1, y1, x2, y2, you will need to
+   * convert.
+   *
+   * @param input Input data representing outputs of model.
+   * @param output Resulting bounding boxes after being normalized to image.
+   */
   void Forward(const MatType& input, MatType& output) override;
 
+  /**
+   * NOTE: This will be changed when training is implemented.
+   *
+   * Currently not implemented.
+   */
   void Backward(const MatType& input,
                 const MatType& output,
                 const MatType& gy,
                 MatType& g) override;
 
+  // Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
@@ -58,18 +114,20 @@ class YOLOv3Layer : public Layer<MatType>
 
   using CubeType = typename GetCubeType<MatType>::type;
 
+  // Original input image size.
   size_t imgSize;
-
+  // Number of attributes representing a bounding box.
   size_t numAttributes;
-
+  // Width and height of grid, since grids must be square.
+  // Should be equivalent to inputDimensions[0] and inputdDimensions[1].
   size_t gridSize;
   // Cached gridSize * gridSize
   size_t grid;
-
+  // Matrix of anchor widths.
   MatType anchorsW;
-
+  // Matrix of anchor height.
   MatType anchorsH;
-
+  // Number of bounding boxes per cell.
   size_t predictionsPerCell;
 };
 
