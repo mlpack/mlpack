@@ -102,8 +102,8 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
   }
 
   // recover the original min/max values for clamping.
-  float minOriginal = images.min(); 
-  float maxOriginal = images.max(); 
+  float minOriginal = images.min();
+  float maxOriginal = images.max();
 
   resizedFloatImages.set_size(newDimension, images.n_cols);
   for (size_t i = 0; i < images.n_cols; ++i)
