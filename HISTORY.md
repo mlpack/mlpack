@@ -4,6 +4,8 @@
 
 _????-??-??_
 
+ * Optimize convolution (#3988).
+ 
  * Added `GELUExact` ANN activation layer (#3994).
 
  * Adapt `GRU` ANN layer to the new interface (#3955).
