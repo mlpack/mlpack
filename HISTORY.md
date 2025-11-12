@@ -3,6 +3,7 @@
 ## mlpack ?.?.?
 
 _????-??-??_
+ * Fixed generated artifiacts in resized float images by using clamping (#4030).
 
  * Added `GELUExact` ANN activation layer (#3994).
 
