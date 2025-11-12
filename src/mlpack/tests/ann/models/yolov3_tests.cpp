@@ -10,12 +10,25 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
+#define MLPACK_ANN_IGNORE_SERIALIZATION_WARNING
+
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/models/yolov3/yolov3_tiny.hpp>
 #include "../../catch.hpp"
 #include "../../serialization.hpp"
 
 using namespace mlpack;
+
+CEREAL_REGISTER_TYPE(mlpack::Layer<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::Identity<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::MultiLayer<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::Convolution<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::BatchNorm<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::LeakyReLU<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::Padding<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::MaxPooling<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::NearestInterpolation<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::YOLOv3Layer<arma::fmat>)
 
 /*
  * Test different input image sizes. Other params are set to the default.
@@ -91,18 +104,6 @@ TEST_CASE("YOLOv3TinyIncorrectAnchors", "[YOLOv3TinyTest]")
   const std::vector<double> anchors = { 0, 1, 2, 3, 4, 5, 6, 7 };
   REQUIRE_THROWS(YOLOv3Tiny(imgSize, numClasses, predictionsPerCell, anchors));
 }
-
-#define MLPACK_ANN_IGNORE_SERIALIZATION_WARNING
-CEREAL_REGISTER_TYPE(mlpack::Layer<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::Identity<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::MultiLayer<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::Convolution<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::BatchNorm<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::LeakyReLU<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::Padding<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::MaxPooling<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::NearestInterpolation<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::YOLOv3Layer<arma::fmat>)
 
 /*
  * Test serialize.
