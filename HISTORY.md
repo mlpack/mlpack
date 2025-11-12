@@ -3,6 +3,7 @@
 ## mlpack ?.?.?
 
 _????-??-??_
+ * Fixed generated artifiacts in resized float images by using clamping (#4030).
 
  * Optimize convolution (#3988).
  
