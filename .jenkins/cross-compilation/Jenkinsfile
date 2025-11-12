@@ -153,8 +153,9 @@ pipeline
                 # If a custom page size is needed, set it.
                 if [ ! -z "$PAGE_SIZE" ];
                 then
-                  EXTRA_CMAKE_OPTS="${EXTRA_CMAKE_OPTS}
-"'"-DCMAKE_CXX_FLAGS=\\"-Wl,-z,common-page-size='$PAGE_SIZE' -Wl,-z,max-page-size='$PAGE_SIZE' $EXTRA_CXXFLAGS\\""';
+                  EXTRA_CMAKE_OPTS="${EXTRA_CMAKE_OPTS} "'"-DCMAKE_CXX_FLAGS=\\"-Wl,-z,common-page-size='$PAGE_SIZE' -Wl,-z,max-page-size='$PAGE_SIZE' $EXTRA_CXXFLAGS\\""';
+                else
+                  EXTRA_CMAKE_OPTS="${EXTRA_CMAKE_OPTS} "'"-DCMAKE_CXX_FLAGS=\\"$EXTRA_CXXFLAGS\\""';
                 fi
 
                 # Configure ccache.
@@ -182,8 +183,9 @@ pipeline
                 # If we have a custom BLAS library move it into place...
                 if [ ! -z "$BLAS_URL" ]; then
                     curl $BLAS_URL > deps/OpenBLAS*/libopenblas_*.a;
+                    ls -l deps/OpenBLAS*/
                 fi
-                time make mlpack_test;
+                VERBOSE=1 make mlpack_test;
 
                 # Print ccache results.
                 ccache -s;
