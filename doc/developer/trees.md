@@ -1002,7 +1002,7 @@ of the tree and the best leaf.  It can be used with any `TreeType` that
 satisfies the [`TreeType` API requirements](#the-treetype-api).
 
 `GreedySingleTreeTraversal` is used by [`KNN`](../user/methods/knn.md)
-(k-nearest-neighbor search) for its
+(k-nearest-neighbor search) and [`KFN`](../user/methods/kfn.md) for its
 [greedy search strategy](../user/methods/knn.md#search-strategies), where
 approximate nearest neighbors are returned by recursing directly to the closest
 leaf in a tree.
@@ -1286,7 +1286,7 @@ automatically, and must be done in the `RuleType`'s `BaseCase()`, `Score()`, and
 
 ## A list of trees in mlpack and more information
 
-mlpack contains several ready-to-use implementations of trees that satisfy the
+mlpack contains numerous ready-to-use implementations of trees that satisfy the
 TreeType policy API:
 
  - [`KDTree`](../user/core/trees/kdtree.md)
@@ -1296,13 +1296,23 @@ TreeType policy API:
  - [`RPTree`](../user/core/trees/rp_tree.md)
  - [`MaxRPTree`](../user/core/trees/max_rp_tree.md)
  - [`UBTree`](../user/core/trees/ub_tree.md)
- - `RTree`
- - `RStarTree`
- - `StandardCoverTree`
+ - [`CoverTree`](../user/core/trees/cover_tree.md)
+ - [`Octree`](../user/core/trees/octree.md)
+ - [`RTree`](../user/core/trees/r_tree.md)
+ - [`RStarTree`](../user/core/trees/r_star_tree.md)
+ - [`XTree`](../user/core/trees/x_tree.md)
+ - [`RPlusTree`](../user/core/trees/r_plus_tree.md)
+ - [`RPlusPlusTree`](../user/core/trees/r_plus_plus_tree.md)
+ - [`HilbertRTree`](../user/core/trees/hilbert_r_tree.md)
+ - [`SPTree`](../user/core/trees/sp_tree.md)
+ - [`MeanSPTree`](../user/core/trees/mean_sp_tree.md)
+ - [`NonOrtSPTree`](../user/core/trees/non_ort_sp_tree.md)
+ - [`NonOrtMeanSPTree`](../user/core/trees/non_ort_mean_sp_tree.md)
 
 Often, these are template typedefs of more flexible tree classes:
 
- - [`BinarySpaceTree`](../user/core/trees/binary_space_tree.md) -- binary trees,
+ - [`BinarySpaceTree`](../user/core/trees/binary_space_tree.md): binary trees,
    such as the KD-tree and ball tree
- - `RectangleTree` -- the R tree and variants
- - `CoverTree` -- the cover tree and variants
+ - [`RectangleTree`](../user/core/trees/rectangle_tree.md): the R tree and
+   variants
+ - [`SpillTree`](../user/core/trees/spill_tree.md): the spill tree and variants
