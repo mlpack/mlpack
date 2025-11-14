@@ -47,6 +47,9 @@ template<typename MatType = arma::mat>
 class AlphaDropout : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the Alpha_Dropout object using the specified ratio.
    *

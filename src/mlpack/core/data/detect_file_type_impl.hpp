@@ -44,23 +44,19 @@ bool OpenFile(const std::string& filename,
 
   if (!stream.is_open())
   {
-    if (opts.Fatal() && isLoading)
-      Log::Fatal << "Cannot open file '" << filename << "' for loading.  "
-          << "Please check if the file exists." << std::endl;
-
-    else if (!opts.Fatal() && isLoading)
-      Log::Warn << "Cannot open file '" << filename << "' for loading.  "
-          << "Please check if the file exists." << std::endl;
-
-    else if (opts.Fatal() && !isLoading)
-      Log::Fatal << "Cannot open file '" << filename << "' for saving.  "
-          << "Please check if you have permissions for writing." << std::endl;
-
-    else if (!opts.Fatal() && !isLoading)
-      Log::Warn << "Cannot open file '" << filename << "' for saving.  "
-          << "Please check if you have permissions for writing." << std::endl;
-
-    return false;
+    std::stringstream oss;
+    if (isLoading)
+    {
+      oss << "Cannot open file '" << filename << "' for loading.  "
+          << "Please check if the file exists.";
+      return HandleError(oss, opts);
+    }
+    else if (!isLoading)
+    {
+      oss << "Cannot open file '" << filename << "' for saving.  "
+          << "Please check if you have permissions for writing.";
+      return HandleError(oss, opts);
+    }
   }
   return true;
 }
@@ -283,9 +279,40 @@ inline FileType AutoDetectFile(std::fstream& stream,
   }
   else if (extension == "arff")
   {
-    return FileType::ARFFASCII;
+    detectedLoadType = FileType::ARFFASCII;
   }
-
+  else if (extension == "png")
+  {
+    detectedLoadType = FileType::PNG;
+  }
+  else if (extension == "jpg" || extension == "jpeg")
+  {
+    detectedLoadType = FileType::JPG;
+  }
+  else if (extension == "tga")
+  {
+    detectedLoadType = FileType::TGA;
+  }
+  else if (extension == "psd")
+  {
+    detectedLoadType = FileType::PSD;
+  }
+  else if (extension == "gif")
+  {
+    detectedLoadType = FileType::GIF;
+  }
+  else if (extension == "pic")
+  {
+    detectedLoadType = FileType::PIC;
+  }
+  else if (extension == "pnm")
+  {
+    detectedLoadType = FileType::PNM;
+  }
+  else if (extension == "bmp")
+  {
+    detectedLoadType = FileType::BMP;
+  }
   else // Unknown extension...
   {
     detectedLoadType = FileType::FileTypeUnknown;
@@ -333,6 +360,38 @@ void DetectFromExtension(const std::string& filename,
   {
     opts.Format() = FileType::ARFFASCII;
   }
+  else if (extension == "png")
+  {
+    opts.Format() = FileType::PNG;
+  }
+  else if (extension == "jpg" || extension == "jpeg")
+  {
+    opts.Format() = FileType::JPG;
+  }
+  else if (extension == "tga")
+  {
+    opts.Format() = FileType::TGA;
+  }
+  else if (extension == "psd")
+  {
+    opts.Format() = FileType::PSD;
+  }
+  else if (extension == "gif")
+  {
+    opts.Format() = FileType::GIF;
+  }
+  else if (extension == "pic")
+  {
+    opts.Format() = FileType::PIC;
+  }
+  else if (extension == "pnm")
+  {
+    opts.Format() = FileType::PNM;
+  }
+  else if (extension == "bmp")
+  {
+    opts.Format() = FileType::BMP;
+  }
   else
   {
     opts.Format() = FileType::FileTypeUnknown;
@@ -375,17 +434,10 @@ bool DetectFileType(const std::string& filename,
       DetectFromSerializedExtension<ObjectType>(filename, opts);
       if (opts.Format() == FileType::FileTypeUnknown)
       {
-        if (opts.Fatal())
-          Log::Fatal << "Unable to detect type of '" << filename
-              << "'; incorrect extension? (allowed: xml/bin/json)"
-              << std::endl;
-        else
-        {
-          Log::Warn << "Unable to detect type of '" << filename
-              << "' ; incorrect extension? (allowed: xml/bin/json)"
-              << std::endl;
-          return false;
-        }
+        std::stringstream oss;
+        oss << "Unable to detect type of '" << filename
+            << "'; incorrect extension? (allowed: xml/bin/json)";
+        return HandleError(oss, opts);
       }
     }
   }
@@ -405,15 +457,10 @@ bool DetectFileType(const std::string& filename,
       // Provide error if we don't know the type.
       if (opts.Format() == FileType::FileTypeUnknown)
       {
-        if (opts.Fatal())
-          Log::Fatal << "Unable to detect type of '" << filename << "'; "
-              << "incorrect extension?" << std::endl;
-        else
-        {
-          Log::Warn << "Unable to detect type of '" << filename << "'; "
-              << "incorrect extension?" << std::endl;
-          return false;
-        }
+        std::stringstream oss;
+        oss <<  "Unable to detect type of '" << filename << "'; "
+            << "incorrect extension?";
+        return HandleError(oss, opts);
       }
     }
   }

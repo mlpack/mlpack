@@ -632,37 +632,12 @@ macro(compile_OpenBLAS)
     file(GLOB OPENBLAS_LIBRARIES ${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib)
   else()
     if (NOT EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/libopenblas.a")
-      set(ENV{NO_SHARED} 1)
-      # Set any extra environment variables that the user specified.
+      # Set any extra variables for make that the user specified.
       # First, turn OPENBLAS_EXTRA_ARGS into a list.
       separate_arguments(ARG_LIST NATIVE_COMMAND ${OPENBLAS_EXTRA_ARGS})
-      foreach (ARG ${ARG_LIST})
-        # ARG will be of the form VAR=value; split on the =.
-        string(REPLACE "=" ";" ARG_LIST_ELEM "${ARG}")
-        list(LENGTH ARG_LIST_ELEM ARG_LEN)
-        if (ARG_LEN EQUAL 2)
-          list(GET ARG_LIST_ELEM 0 ARG_NAME)
-          list(GET ARG_LIST_ELEM 1 ARG_VAL)
-          set(ENV{${ARG_NAME}} ${ARG_VAL})
-        else ()
-          message(WARNING "OpenBLAS flag '${ARG}' is not of the form VAR=val;
-igno")
-        endif ()
-      endforeach()
-
       execute_process(
-          COMMAND make
+          COMMAND make NO_SHARED=1 ${ARG_LIST}
           WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
-
-      unset(ENV{NO_SHARED})
-      foreach (ARG ${ARG_LIST})
-        string(REPLACE "=" ";" ARG_LIST_ELEM "${ARG}")
-        list(LENGTH ARG_LIST_ELEM ARG_LEN)
-        if (ARG_LEN EQUAL 2)
-          list(GET ARG_LIST_ELEM 0 ARG_NAME)
-          unset(ENV{${ARG_NAME}})
-        endif ()
-      endforeach ()
 
       file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}/libopenblas.a")
     endif ()
@@ -750,7 +725,9 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
     endif()
   endif()
 
-  find_openmp()
+  if (NOT MLPACK_DISABLE_OPENMP)
+    find_openmp()
+  endif ()
 
 endmacro()
 

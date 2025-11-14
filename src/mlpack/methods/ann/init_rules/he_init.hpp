@@ -66,7 +66,8 @@ class HeInitialization
     // He initialization rule says to initialize weights with random
     // values taken from a gaussian distribution with mean = 0 and
     // standard deviation = sqrt(2/rows), i.e. variance = (2/rows).
-    const double variance = 2.0 / (double) rows;
+    typedef typename MatType::elem_type ElemType;
+    const ElemType variance = 2 / (ElemType) rows;
 
     if (W.is_empty())
       W.set_size(rows, cols);
@@ -89,7 +90,8 @@ class HeInitialization
     // He initialization rule says to initialize weights with random
     // values taken from a gaussian distribution with mean = 0 and
     // standard deviation = sqrt(2 / rows), i.e. variance = (2 / rows).
-    const double variance = 2.0 / (double) W.n_rows;
+    typedef typename MatType::elem_type ElemType;
+    const ElemType variance = 2 / (ElemType) W.n_rows;
 
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty matrix." << std::endl;

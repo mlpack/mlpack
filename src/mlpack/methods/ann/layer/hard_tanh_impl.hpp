@@ -80,8 +80,8 @@ void HardTanH<MatType>::Forward(
   #pragma omp parallel for
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    output(i) = (input(i) > maxValue ? maxValue :
-        (input(i) < minValue ? minValue : input(i)));
+    output(i) = (input(i) > ElemType(maxValue) ? ElemType(maxValue) :
+        (input(i) < ElemType(minValue) ? ElemType(minValue) : input(i)));
   }
 }
 
@@ -99,7 +99,7 @@ void HardTanH<MatType>::Backward(
   {
     // input should not have any values greater than maxValue
     // and lesser than minValue
-    if (input(i) <= minValue || input(i) >= maxValue)
+    if (input(i) <= ElemType(minValue) || input(i) >= ElemType(maxValue))
     {
       g(i) = 0;
     }

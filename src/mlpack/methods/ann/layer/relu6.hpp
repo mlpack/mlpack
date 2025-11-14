@@ -14,7 +14,7 @@
  *  url = {https://arxiv.org/pdf/1704.04861}
  * }
  * @endcode
- * 
+ *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -36,24 +36,27 @@ template<typename MatType = arma::mat>
 class ReLU6 : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the ReLU6 object.
    */
   ReLU6();
 
-  //! Clone the ReLU6 object. This handles polymorphism correctly.
+  // Clone the ReLU6 object. This handles polymorphism correctly.
   ReLU6* Clone() const { return new ReLU6(*this); }
 
   // Virtual destructor.
   virtual ~ReLU6() { }
 
-  //! Copy the given ReLU6.
+  // Copy the given ReLU6.
   ReLU6(const ReLU6& other);
-  //! Take ownership of the given ReLU6.
+  // Take ownership of the given ReLU6.
   ReLU6(ReLU6&& other);
-  //! Copy the given ReLU6.
+  // Copy the given ReLU6.
   ReLU6& operator=(const ReLU6& other);
-  //! Take ownership of the given ReLU6.
+  // Take ownership of the given ReLU6.
   ReLU6& operator=(ReLU6&& other);
 
   /**
@@ -80,7 +83,7 @@ class ReLU6 : public Layer<MatType>
                 const MatType& gy,
                 MatType& g);
 
-  //! Get size of weights.
+  // Get size of weights.
   size_t WeightSize() const { return 0; }
 
   /**

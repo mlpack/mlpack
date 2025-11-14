@@ -218,8 +218,8 @@ TEST_CASE("TwoPoints", "[PerceptronTest]")
  * non-linearly separable dataset.  We test on multiple element types to ensure
  * that MatType can be set correctly.
  */
-TEMPLATE_TEST_CASE("NonLinearlySeparableDataset", "[PerceptronTest]", float,
-    double)
+TEMPLATE_TEST_CASE("NonLinearlySeparableDataset", "[PerceptronTest][tiny]",
+    float, double)
 {
   using eT = TestType;
 

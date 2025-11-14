@@ -4,7 +4,6 @@
  *
  * Definition of Flatten T Swish layer first introduced in the acoustic model,
  * Hock Hung Chieng, Noorhaniza Wahid, Pauline Ong, Sai Raj Kishore Perla,
- * 
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -72,8 +71,8 @@ FTSwish<MatType>::operator=(FTSwish&& other)
 template<typename MatType>
 void FTSwish<MatType>::Forward(const MatType& input, MatType& output)
 {
-  output = T + clamp(input, 0,
-      std::numeric_limits<typename MatType::elem_type>::max()) /
+  output = ElemType(T) + clamp(input, 0,
+      std::numeric_limits<ElemType>::max()) /
       (1 + exp(-input));
 }
 
@@ -84,8 +83,9 @@ void FTSwish<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  g = gy % sign(output - T) % (((output - T) / input) % (1 - (output - T)) +
-      (output - T));
+  const ElemType convT = ElemType(T);
+  g = gy % sign(output - convT) % (((output - convT) / input) %
+      (1 - (output - convT)) + (output - convT));
 }
 
 template<typename MatType>

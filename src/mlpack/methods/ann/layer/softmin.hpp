@@ -31,22 +31,25 @@ template<typename MatType = arma::mat>
 class Softmin : public Layer<MatType>
 {
  public:
-  //! Create the Softmin object.
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
+  // Create the Softmin object.
   Softmin();
 
-  //! Clone the Softmin object. This handles polymorphism correctly.
+  // Clone the Softmin object. This handles polymorphism correctly.
   Softmin* Clone() const { return new Softmin(*this); }
 
-  //! Virtual destructor.
+  // Virtual destructor.
   virtual ~Softmin() { }
 
-  //! Copy the given Softmin.
+  // Copy the given Softmin.
   Softmin(const Softmin& other);
-  //! Take ownership of the given Softmin.
+  // Take ownership of the given Softmin.
   Softmin(Softmin&& other);
-  //! Copy the given Softmin.
+  // Copy the given Softmin.
   Softmin& operator=(const Softmin& other);
-  //! Take ownership of the given Softmin.
+  // Take ownership of the given Softmin.
   Softmin& operator=(Softmin&& other);
 
   /**
@@ -73,7 +76,7 @@ class Softmin : public Layer<MatType>
                 const MatType& gy,
                 MatType& g);
 
-  //! Serialize the layer.
+  // Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 }; // class Softmin

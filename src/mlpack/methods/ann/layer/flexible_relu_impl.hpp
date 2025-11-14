@@ -90,15 +90,15 @@ void FlexibleReLU<MatType>::CustomInitialize(
         "elements size!");
   }
 
-  W(0) = userAlpha;
+  W(0) = ElemType(userAlpha);
 }
 
 template<typename MatType>
 void FlexibleReLU<MatType>::Forward(
     const MatType& input, MatType& output)
 {
-  output = arma::clamp(input, 0.0,
-      std::numeric_limits<typename MatType::elem_type>::max()) + alpha(0);
+  output = arma::clamp(input, 0,
+      std::numeric_limits<ElemType>::max()) + alpha(0);
 }
 
 template<typename MatType>
@@ -109,7 +109,7 @@ void FlexibleReLU<MatType>::Backward(
     MatType& g)
 {
   // Compute the first derivative of FlexibleReLU function.
-  g = gy % (input > 0);
+  g = gy % conv_to<MatType>::from(input > 0);
 }
 
 template<typename MatType>

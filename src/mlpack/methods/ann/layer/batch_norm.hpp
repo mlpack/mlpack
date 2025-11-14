@@ -53,7 +53,10 @@ template <typename MatType = arma::mat>
 class BatchNorm : public Layer<MatType>
 {
  public:
+  // Convenience typedefs to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
+
   /**
    * Create the BatchNorm object.
    *
