@@ -132,3 +132,74 @@ TEST_CASE("GradientEmbeddingLayerTest", "[ANNLayerTest]")
 
   REQUIRE(CheckGradient(function) <= 1e-6);
 }
+
+/**
+ * Test the embedding layer with attention directly after it.
+ */
+TEST_CASE("GradientEmbeddingMultiheadAttentionLayerTest", "[ANNLayerTest]")
+{
+  // Embedding function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input.set_size(seqLength, batchSize);
+      for (size_t i = 0; i < input.n_elem; ++i)
+      {
+        input(i) = RandInt(0, vocabSize - 1);
+      }
+      target = arma::zeros(vocabSize, batchSize);
+      for (size_t i = 0; i < batchSize; ++i)
+      {
+        const size_t targetWord = RandInt(0, vocabSize - 1);
+        target(targetWord, i) = 1;
+      }
+
+      arma::cube attnMask = arma::zeros(seqLength, seqLength, batchSize);
+      for (size_t k = 0; k < batchSize; ++k)
+      {
+        for (size_t i = 0; i < seqLength; ++i)
+        {
+          for (size_t j = 0; j < seqLength; ++j)
+          {
+            if (i < j)
+              attnMask(i, j, k) = -std::numeric_limits<double>::infinity();
+          }
+        }
+      }
+
+      arma::mat keyPaddingMask = arma::zeros(seqLength, batchSize);
+      keyPaddingMask.row(seqLength - 1).fill(
+          -std::numeric_limits<double>::infinity());
+
+      model = FFN<CrossEntropyError, GlorotInitialization>();
+      model.Add<Embedding>(vocabSize, embeddingSize);
+      model.Add<MultiheadAttention>(seqLength, numHeads, attnMask,
+          keyPaddingMask, true);
+      model.Add<Linear>(vocabSize);
+      model.Add<Softmax>();
+      model.InputDimensions() = std::vector<size_t>({ seqLength });
+      model.ResetData(input, target);
+    }
+
+    double Gradient(arma::mat& gradient)
+    {
+      double error = model.Evaluate(model.Parameters(), 0, batchSize);
+      model.Gradient(model.Parameters(), 0, gradient, batchSize);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model.Parameters(); }
+
+    FFN<CrossEntropyError, GlorotInitialization> model;
+    arma::mat input, target;
+
+    const size_t seqLength = 10;
+    const size_t embeddingSize = 8;
+    const size_t vocabSize = 20;
+    const size_t batchSize = 4;
+    const size_t numHeads = 4;
+  } function;
+
+  REQUIRE(CheckGradient(function) <= 1e-6);
+}
