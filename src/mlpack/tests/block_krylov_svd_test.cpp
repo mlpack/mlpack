@@ -45,7 +45,7 @@ void CreateNoisyLowRankMatrix(arma::mat& data,
  * small.
  */
 TEST_CASE("RandomizedBlockKrylovSVDReconstructionError",
-          "[BlockKrylovSVDTest]")
+          "[BlockKrylovSVDTest][tiny]")
 {
   arma::mat U = arma::randn<arma::mat>(3, 20);
   arma::mat V = arma::randn<arma::mat>(10, 3);

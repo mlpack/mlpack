@@ -1,17 +1,17 @@
 /**
- * @file methods/ann/convolution_rules/naive_convolution.hpp
- * @author Shangtong Zhang
- * @author Marcus Edel
+ * @file methods/ann/convolution_rules/im2col_convolution.hpp
+ * @author Zachary Ng
  *
- * Implementation of the convolution.
+ * Implementation of the im2col convolution. This is actually im2row because we
+ * use column major order.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_CONVOLUTION_RULES_NAIVE_CONVOLUTION_HPP
-#define MLPACK_METHODS_ANN_CONVOLUTION_RULES_NAIVE_CONVOLUTION_HPP
+#ifndef MLPACK_METHODS_ANN_CONVOLUTION_RULES_IM2COL_CONVOLUTION_HPP
+#define MLPACK_METHODS_ANN_CONVOLUTION_RULES_IM2COL_CONVOLUTION_HPP
 
 #include "base_convolution.hpp"
 
@@ -30,7 +30,7 @@ namespace mlpack {
  * ValidConvolution).
  */
 template<typename BorderMode = FullConvolution>
-class NaiveConvolution : public BaseConvolution<BorderMode>
+class Im2ColConvolution : public BaseConvolution<BorderMode>
 {
  public:
   /**
@@ -66,25 +66,39 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
     using MatType = typename GetDenseMatType<CubeType>::type;
 
     CubeType inputPadded;
-    NaiveConvolution::PadInput(input, filter, inputPadded, dilationW,
+    Im2ColConvolution::PadInput(input, filter, inputPadded, dilationW,
         dilationH);
 
     const size_t inMaps = input.n_slices;
     const size_t outMaps = filter.n_slices / inMaps;
 
     if (!appending)
-      NaiveConvolution::InitalizeOutput(inputPadded, filter, output, dW, dH,
+      Im2ColConvolution::InitalizeOutput(inputPadded, filter, output, dW, dH,
           dilationW, dilationH, outMaps);
 
-    for (size_t i = 0; i < inMaps; i++)
+    MatType im2row(output.n_rows * output.n_cols, filter.n_rows *
+        filter.n_cols * input.n_slices, GetFillType<MatType>::none);
+    // Arrange im2row so that each row has patches from each input map.
+    for (size_t i = 0; i < input.n_slices; ++i)
     {
-      MatType& inputSlice = inputPadded.slice(i);
-      for (size_t j = 0; j < outMaps; j++)
-      {
-        Conv2(inputSlice, filter.slice(j * inMaps + i), output.slice(j),
-            dW, dH, dilationW, dilationH);
-      }
+      MatType im2rowSv;
+      MakeAlias(im2rowSv, im2row, output.n_rows * output.n_cols,
+          filter.n_rows * filter.n_cols, output.n_rows *
+          output.n_cols * filter.n_rows * filter.n_cols * i);
+      Im2Row(inputPadded.slice(i), im2rowSv, filter.n_rows, filter.n_cols,
+          dW, dH, dilationW, dilationH);
     }
+
+    // The filters already have the correct order in memory, just reshape it.
+    MatType fil2col;
+    MakeAlias(fil2col, filter, filter.n_rows * filter.n_cols * inMaps,
+        outMaps);
+
+    // The output is also already in the correct order.
+    MatType tempOutput;
+    MakeAlias(tempOutput, output, output.n_rows * output.n_cols, outMaps);
+
+    tempOutput += im2row * fil2col;
   }
 
   /**
@@ -115,62 +129,77 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
       const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     MatType inputPadded;
-    NaiveConvolution::PadInput(input, filter, inputPadded, dilationW,
+    Im2ColConvolution::PadInput(input, filter, inputPadded, dilationW,
         dilationH);
 
     if (!appending)
-      NaiveConvolution::InitalizeOutput(inputPadded, filter, output, dW, dH,
+      Im2ColConvolution::InitalizeOutput(inputPadded, filter, output, dW, dH,
           dilationW, dilationH, filter.n_slices);
 
-    for (size_t s = 0; s < filter.n_slices; s++)
-    {
-      Conv2(inputPadded, filter.slice(s), output.slice(s), dW, dH,
-          dilationW, dilationH);
-    }
+    MatType im2row(output.n_rows * output.n_cols, filter.n_rows *
+        filter.n_cols, GetFillType<MatType>::none);
+    Im2Row(inputPadded, im2row, filter.n_rows, filter.n_cols, dW, dH,
+        dilationW, dilationH);
+
+    // The filters already have the correct order in memory, just reshape it.
+    MatType fil2col;
+    MakeAlias(fil2col, filter, filter.n_rows * filter.n_cols, filter.n_slices);
+
+    // The output is also already in the correct order.
+    MatType tempOutput;
+    MakeAlias(tempOutput, output, output.n_rows * output.n_cols,
+        filter.n_slices);
+
+    tempOutput += im2row * fil2col;
   }
  private:
   /**
-   * Perform a valid convolution.
+   * Take an input and convert each patch into rows. Expects that im2row
+   * already has the correct shape.
    *
    * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the convolution.
-   * @param output Output data that contains the results of the convolution.
+   * @param im2row Patches of the input as rows.
+   * @param filterRows Number of rows in a filter.
+   * @param filterCols Number of columns in a filter.
    * @param dW Stride of filter application in the x direction.
    * @param dH Stride of filter application in the y direction.
    * @param dilationW The dilation factor in x direction.
    * @param dilationH The dilation factor in y direction.
    */
   template<typename MatType>
-  static void Conv2(const MatType& input,
-                    const MatType& filter,
-                    MatType& output,
-                    const size_t dW,
-                    const size_t dH,
-                    const size_t dilationW,
-                    const size_t dilationH)
+  static void Im2Row(const MatType& input,
+                     MatType& im2row,
+                     const size_t filterRows,
+                     const size_t filterCols,
+                     const size_t dW = 1,
+                     const size_t dH = 1,
+                     const size_t dilationW = 1,
+                     const size_t dilationH = 1)
   {
-    using eT = typename MatType::elem_type;
+    const size_t dFilterRows = filterRows * dilationH - (dilationH - 1);
+    const size_t dFilterCols = filterCols * dilationW - (dilationW - 1);
+    const size_t outputRows = (input.n_rows - dFilterRows + dH) / dH;
+    const size_t outputCols = (input.n_cols - dFilterCols + dW) / dW;
 
-    // It seems to be about 3.5 times faster to use pointers instead of
-    // filter(ki, kj) * input(leftInput + ki, topInput + kj) and output(i, j).
-    eT* outputPtr = output.memptr();
-
-    for (size_t j = 0; j < output.n_cols; ++j)
+    for (size_t j = 0; j < outputCols; j++)
     {
-      for (size_t i = 0; i < output.n_rows; ++i, outputPtr++)
+      for (size_t i = 0; i < outputRows; i++)
       {
-        const eT* kernelPtr = filter.memptr();
-        for (size_t kj = 0; kj < filter.n_cols; ++kj)
+        size_t nRow = j * outputRows + i;
+        size_t nCol = 0;
+        for (size_t kj = 0; kj < filterCols; kj++)
         {
-          const eT* inputPtr = input.colptr(kj * dilationW + j * dW) + i * dH;
-          for (size_t ki = 0; ki < filter.n_rows; ++ki, ++kernelPtr,
-              inputPtr += dilationH)
-            *outputPtr += *kernelPtr * (*inputPtr);
+          for (size_t ki = 0; ki < filterRows; ki++)
+          {
+            im2row.at(nRow, nCol) = input.at(i * dH + ki * dilationH,
+                j * dW + kj * dilationW);
+            nCol++;
+          }
         }
       }
     }
   }
-};  // class NaiveConvolution
+};  // class Im2ColConvolution
 
 } // namespace mlpack
 

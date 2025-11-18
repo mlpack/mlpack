@@ -30,6 +30,7 @@
 #include "dataset_mapper.hpp"
 #include "data_options.hpp"
 #include "detect_file_type.hpp"
+#include "image_layout.hpp"
 #include "image_options.hpp"
 #include "image_resize_crop.hpp"
 #include "imputer.hpp"
