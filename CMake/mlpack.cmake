@@ -77,7 +77,7 @@
 # get_deps(LINK DEPS_NAME PACKAGE)
 #-------------------
 #
-# This macro allows to download dependenices from the link that is provided to
+# This macro allows to download dependencies from the link that is provided to
 # them. You need to pass the LINK to download from, the name of
 # the dependency, and the filename to store the downloaded package to such
 # as armadillo.tar.gz and they are downloaded into
