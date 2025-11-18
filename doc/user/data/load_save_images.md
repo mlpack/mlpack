@@ -1,9 +1,7 @@
 # Image data loading
 
-If the STB image library is available on the system (`stb_image.h` and
-`stb_image_write.h` must be available on the compiler's include search path),
-then mlpack will define the `MLPACK_HAS_STB` macro, and support for loading
-individual images or sets of images will be available.
+mlpack load, save and resize images using the STB image library. STB is a
+header only library that is bundled and shipped with mlpack.
 
 Supported formats for loading are `jpg`, `png`, `tga`, `bmp`, `psd`, `gif`, `pic`, and `pnm`.
 
