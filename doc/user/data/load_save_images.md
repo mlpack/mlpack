@@ -14,13 +14,13 @@ vector in a data matrix; each row of the resulting vector will correspond to a
 single pixel value in a single channel.  An auxiliary `data::ImageOptions` class
 is used to store information about the images.
 
-### [`data::ImageOptions`](#image-options)
+## [`data::ImageOptions`](#image-options)
 
 The `data::ImageOptions` class contains the metadata of the images.
 
 ---
 
-#### Constructors
+### Constructors
 
  - `opts = data::ImageOptions()`
    * Create a `data::ImageOptions` object with no data.
@@ -33,7 +33,7 @@ The `data::ImageOptions` class contains the metadata of the images.
 
 ---
 
-#### Accessing and modifying image metadata
+### Accessing and modifying image metadata
 
  - `opts.Quality() = q` will set the compression quality (e.g. for saving JPEGs)
    to `q`.
@@ -53,7 +53,7 @@ The `data::ImageOptions` class contains the metadata of the images.
 
 ---
 
-### Loading images
+## Loading images
 
 With a `data::ImageOptions` object, image data can be loaded or saved, handling
 either one or multiple images at a time. This object need to be defined before
@@ -262,7 +262,7 @@ outImages.push_back("bandicoot-favicon-inv.jpeg");
 mlpack::data::Save(outImages, matrix, opts);
 ```
 
-### Resize images
+## Resize images
 
 It is possible to resize images in mlpack with the following function:
 
@@ -353,7 +353,7 @@ std::vector<std::string> smSheeps =
 mlpack::data::Save(smSheeps, images, opts);
 ```
 
-### Resize and crop images
+## Resize and crop images
 
 In addition to resizing images, mlpack also provides resize-and-crop
 functionality.  This is useful when the desired aspect ratio of an image differs
@@ -451,7 +451,7 @@ for (size_t i = 0; i < files.size(); i++)
 }
 ```
 
-### Changing the memory layout of images
+## Changing the memory layout of images
 
 When loading images using `data::Load()` channels are interleaved, i.e.
 the underlying vector contains the values `[r, g, b, r, g, b, ... ]`
@@ -473,11 +473,11 @@ beforehand.
 
 #### `data::GroupChannels()`
 
- * `data::GroupChannels(images, info)`
+ * `data::GroupChannels(images, opts)`
     - `images` must be a matrix where each column is an image. Each image is
       expected to be interleaved, i.e. in the format `[r, g, b, r, g, b ... ]`.
 
-    - `info` describes the shape of each image.
+    - `opts` ImageOptions object describes the shape of each image.
 
     - Returns a matrix where each image from `images` are in the
       format `[r, r, ... , g, g, ... , b, b]`.
@@ -486,13 +486,13 @@ beforehand.
 
 #### `data::InterleaveChannels()`
 
- * `data::InterleaveChannels(images, info)`
+ * `data::InterleaveChannels(images, opts)`
     - Performs the reverse of `data::GroupChannels()`.
 
     - `images` must be a matrix where each column is an image. Each image is
       expected to be grouped, i.e. in the format `[r, r, ..., g, g, ..., b, b]`.
 
-    - `info` describes the shape of each image.
+    - `opts` ImagesOptions object describes the shape of each image.
 
     - Returns a matrix where each image from `images` are in the
       format `[r, g, b, r, g, b ... ]`.
@@ -508,49 +508,50 @@ back to interleaved channels and save the image.
 ```c++
 // Download: https://datasets.mlpack.org/images/mlpack-favicon.png
 arma::mat image;
-mlpack::data::ImageInfo info;
-mlpack::data::Load("mlpack-favicon.png", image, info, true);
+mlpack::data::ImageOptions opts;
+opts.Fatal() = true;
+mlpack::data::Load("mlpack-favicon.png", image, info);
 
 std::vector<std::string> colors =
      { "\033[31m", "\033[32m", "\033[34m", "\033[37m" };
 
 // Display input before grouping channels (Load returns channels interleaved).
 std::cout << "Original Image (channels interleaved):" << std::endl;
-for (size_t i = 0; i < image.n_rows; i += info.Channels())
+for (size_t i = 0; i < image.n_rows; i += opts.Channels())
 {
-  for (size_t j = 0; j < info.Channels(); j++)
+  for (size_t j = 0; j < opts.Channels(); j++)
     std::cout << colors[j] << image.at(i + j, 0) << "\033[0m" << ", ";
 }
 std::cout << std::endl << std::endl;
 
 // Group channels.
-image = mlpack::data::GroupChannels(image, info);
+image = mlpack::data::GroupChannels(image, opts);
 
 // Display submatrix of input after grouping channels
 std::cout << "Grouped channels:" << std::endl;
-for (size_t i = 0; i < info.Channels(); i++)
+for (size_t i = 0; i < opts.Channels(); i++)
 {
-  for (size_t j = 0; j < image.n_rows / info.Channels(); j++)
+  for (size_t j = 0; j < image.n_rows / opts.Channels(); j++)
     std::cout << colors[i] <<
-      image.at(i * image.n_rows / info.Channels() + j, 0) << "\033[0m" << ", ";
+      image.at(i * image.n_rows / opts.Channels() + j, 0) << "\033[0m" << ", ";
 }
 std::cout << std::endl << std::endl;
 
 // Do some computation here, for example a convolutional neural network.
 
 // Interleave channels to prepare for saving.
-image = mlpack::data::InterleaveChannels(image, info);
+image = mlpack::data::InterleaveChannels(image, opts);
 
 // Display input after interleaving channels
 // Should be identical to original.
 std::cout << "Interleaved channels (indentical to original):" << std::endl;
-for (size_t i = 0; i < image.n_rows; i += info.Channels())
+for (size_t i = 0; i < image.n_rows; i += opts.Channels())
 {
-  for (size_t j = 0; j < info.Channels(); j++)
+  for (size_t j = 0; j < opts.Channels(); j++)
     std::cout << colors[j] << image.at(i + j, 0) << "\033[0m" << ", ";
 }
 std::cout << std::endl << std::endl;
 
-mlpack::data::Save("mlpack-favicon.png", image, info, true);
+mlpack::data::Save("mlpack-favicon.png", image, opts);
 ```
 

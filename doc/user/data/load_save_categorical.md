@@ -1,4 +1,4 @@
-## Mixed categorical data
+# Mixed categorical data
 
 mlpack support loading / saving mixed categorical data, e.g., data where some
 dimensions take only categorical values (e.g. `0`, `1`, `2`, etc.).  When using
@@ -6,7 +6,7 @@ mlpack, string data and other non-numerical data must be mapped to categorical
 values and represented as part of an `arma::mat`.  Category information is
 stored in an auxiliary `data::TextOptions::DatasetInfo()` object.
 
-### `data::TextOptions::DatasetInfo`
+## `data::TextOptions::DatasetInfo`
 
 <!-- TODO: also document in core.md? -->
 
@@ -16,7 +16,7 @@ dimensions are numeric or categorical and allows conversion from the original
 category values to the numeric values used to represent those categories.
 
 
-#### Accessing and setting properties
+### Accessing and setting properties
 
  - `data::DatasetInfo info = opts.DatasetInfo();`
 
@@ -37,7 +37,7 @@ category values to the numeric values used to represent those categories.
 
 ---
 
-#### Map to and from numeric values
+### Map to and from numeric values
 
  - `info.MapString<double>(value, d)`
    * Given `value` (a `std::string`), return the `double` representing the
@@ -55,7 +55,7 @@ category values to the numeric values used to represent those categories.
 
 ---
 
-### Loading categorical data
+## Loading categorical data
 
 With a `data::DatasetInfo` object, categorical data can be loaded / saved in a
 similar way to numeric data. However, the `Categorical` flag needs to be set:

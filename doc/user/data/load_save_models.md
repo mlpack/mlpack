@@ -1,4 +1,4 @@
-## mlpack objects
+# mlpack objects
 
 Machine learning models (aka mlpack objects) can be saved with
 `data::Save()` and loaded with `data::Load()`.  Serialization is performed
@@ -78,6 +78,4 @@ mlpack::data::Save("range.json", r2, JSON + Fatal);
 //     }
 // }
 ```
-
 ---
-

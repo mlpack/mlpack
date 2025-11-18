@@ -1,4 +1,4 @@
-## Numeric data
+# Numeric data
 
 Numeric data or general numeric matrices can be loaded or saved with the
 following functions.
@@ -89,6 +89,8 @@ mlpack::data::Save("satellite.train.labels.mod.csv", labels, NoFatal +
     Transpose);
 ```
 
+### Load dataset with a semicolon as a separator
+
 Example usage if the dataset has a semicolon separator: 
 
 ```c++
@@ -109,6 +111,8 @@ std::cout << "The data in 'missing_to_nan.csv' has: " << std::endl;
 std::cout << " - " << dataset.n_cols << " points." << std::endl;
 std::cout << " - " << dataset.n_rows << " dimensions." << std::endl;
 ```
+
+### Load dataset with a missing elements
 
 Example usage if the dataset has a missing elements, these would be replaced
 with NaN:
@@ -136,6 +140,8 @@ std::cout << " - " << dataset.n_rows << " dimensions." << std::endl;
 std::cout << "Is the value replaced with Nan: "<< std::isnan(dataset.at(0, 1))
     << std::endl;
 ```
+
+### Load dataset with a header and a semicolon separator
 
 Example usage if the dataset has a header and a semicolon separator.
 
