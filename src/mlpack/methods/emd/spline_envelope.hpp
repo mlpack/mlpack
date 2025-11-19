@@ -1,0 +1,107 @@
+// spline_envelope.hpp
+#ifndef MLPACK_METHODS_EMD_SPLINE_ENVELOPE_HPP
+#define MLPACK_METHODS_EMD_SPLINE_ENVELOPE_HPP
+
+#include <mlpack/prereqs.hpp>
+
+namespace mlpack {
+namespace emd {
+
+template<typename eT>
+inline void BuildSplineEnvelope(const arma::Col<eT>& h,
+                                const arma::uvec& idx,
+                                arma::Col<eT>& env)
+{
+  const arma::uword N = h.n_elem;
+  env.set_size(N);
+
+  const arma::uword m = idx.n_elem;
+  if (m < 2)
+  {
+    env = h;
+    return;
+  }
+
+  arma::Col<eT> x(m), y(m);
+  for (arma::uword k = 0; k < m; ++k)
+  {
+    x[k] = static_cast<eT>(idx[k]);
+    y[k] = h[idx[k]];
+  }
+
+  arma::Col<eT> c(m, arma::fill::zeros);
+
+  if (m > 2)
+  {
+    arma::Col<eT> hSeg(m - 1);
+    for (arma::uword i = 0; i < m - 1; ++i)
+      hSeg[i] = x[i + 1] - x[i];
+
+    arma::Col<eT> alpha(m - 1, arma::fill::zeros);
+    for (arma::uword i = 1; i < m - 1; ++i)
+    {
+      const eT invHi   = eT(1) / hSeg[i];
+      const eT invHim1 = eT(1) / hSeg[i - 1];
+      const eT s1 = (y[i + 1] - y[i]) * invHi;
+      const eT s0 = (y[i]     - y[i - 1]) * invHim1;
+      alpha[i] = eT(3) * (s1 - s0);
+    }
+
+    arma::Col<eT> l(m), mu(m), z(m);
+    l[0]  = eT(1);
+    mu[0] = eT(0);
+    z[0]  = eT(0);
+
+    for (arma::uword i = 1; i < m - 1; ++i)
+    {
+      l[i]  = eT(2) * (x[i + 1] - x[i - 1]) - hSeg[i - 1] * mu[i - 1];
+      mu[i] = hSeg[i] / l[i];
+      z[i]  = (alpha[i] - hSeg[i - 1] * z[i - 1]) / l[i];
+    }
+
+    l[m - 1] = eT(1);
+    z[m - 1] = eT(0);
+    c[m - 1] = eT(0);
+
+    for (arma::sword j = static_cast<arma::sword>(m) - 2; j >= 0; --j)
+    {
+      c[j] = z[j] - mu[j] * c[j + 1];
+    }
+  }
+  
+  env.zeros();
+  arma::uword seg = 0;
+  for (; seg + 1 < m; ++seg)
+  {
+    const arma::uword i0 = idx[seg];
+    const arma::uword i1 = idx[seg + 1];
+
+    const eT x0 = x[seg];
+    const eT x1 = x[seg + 1];
+    const eT hSegLen = x1 - x0;
+
+    if (hSegLen == eT(0))
+      continue;
+
+    for (arma::uword i = i0; i <= i1; ++i)
+    {
+      const eT xv = static_cast<eT>(i);
+      const eT A  = (x1 - xv) / hSegLen;
+      const eT B  = (xv - x0) / hSegLen;
+
+      //natural cubic spline formula:
+      // s(x) = A*y_i + B*y_{i+1} +
+      //        ((A^3 - A)*c_i + (B^3 - B)*c_{i+1}) * h_i^2 / 6
+      const eT Ai3 = A * A * A;
+      const eT Bi3 = B * B * B;
+      const eT termC = ((Ai3 - A) * c[seg] +
+                        (Bi3 - B) * c[seg + 1]) * (hSegLen * hSegLen) / eT(6);
+      env[i] = A * y[seg] + B * y[seg + 1] + termC;
+    }
+  }
+}
+
+} // namespace emd
+} // namespace mlpack
+
+#endif
