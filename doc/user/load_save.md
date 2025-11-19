@@ -13,9 +13,25 @@ signature looks like:
 
 ## `data::Load()`
 
- - `data::Load(filename, object)`
+ - `data::Load(filename, X)`
+   * Load `X` from the given file `filename` with default options:
+     - the format of the file is auto-detected, and
+     - an exception is *not* thrown on an error.
+   * Returns a `bool` indicating whether the load was a success.
+   * `X` can be [any supported load type](#load-types).
+   
  - `data::Load(filename, object, Option1 + Option2 + ...)`
- - `data::Load(filename, object, options)`
+   * Load `X` from the given file `filename` with the given options.
+   * Returns a `bool` indicating whether the load was a success.
+   * `X` can be [any supported load type](#load-types).
+   * The given options must be from the [list of standalone options](#data-options) and be appropriate for the type of `X`.
+
+ 
+ - `data::Load(filename, object, opts)`
+   * Load `X` from the given file `filename` with the given options specified in `opts`.
+   * Returns a `bool` indicating whether the load was a success.
+   * `X` can be [any supported load type](#load-types).
+   * `opts` is a [`DataOptions` object](#data-options) whose subtype matches the type of `X`.
 
  - `data::Save(filename, object)`
  - `data::Save(filename, object, Option1 + Option2 + ...)`
