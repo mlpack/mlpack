@@ -107,7 +107,7 @@ opts.NoTranspose() = false;
 opts.Semicolon() = true;
 
 data::Load("semicolon.csv", dataset, NoFatal + Transpose + Semicolon);
-std::cout << "The data in 'missing_to_nan.csv' has: " << std::endl;
+std::cout << "The data in 'semicolon.csv' has: " << std::endl;
 std::cout << " - " << dataset.n_cols << " points." << std::endl;
 std::cout << " - " << dataset.n_rows << " dimensions." << std::endl;
 ```
