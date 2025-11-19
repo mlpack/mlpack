@@ -43,7 +43,10 @@ inline void FindExtrema(const arma::Col<eT>& h,
       minTemp.push_back(i);
   }
 
+<<<<<<< HEAD
   // end points are extrema (simplified from libeemd for now)
+=======
+>>>>>>> 9e92deba0f (EMD function with upstream fetch)
   if (!maxTemp.empty())
   {
     if (maxTemp.front() != 0)
@@ -80,8 +83,15 @@ inline void SiftingStep(const arma::Col<eT>& h,
   arma::Col<eT> upper(N), lower(N);
 
   FindExtrema(h, maxIdx, minIdx);
+<<<<<<< HEAD
   BuildSplineEnvelope(h, maxIdx, upper); //cubic spline 
   BuildSplineEnvelope(h, minIdx, lower); // implementation seperate
+=======
+//   BuildEnvelope(h, maxIdx, upper);
+//   BuildEnvelope(h, minIdx, lower);
+  BuildSplineEnvelope(h, maxIdx, upper);
+  BuildSplineEnvelope(h, minIdx, lower);
+>>>>>>> 9e92deba0f (EMD function with upstream fetch)
   hNext.set_size(N);
   for (arma::uword i = 0; i < N; ++i)
   {
@@ -89,11 +99,16 @@ inline void SiftingStep(const arma::Col<eT>& h,
     hNext[i] = h[i] - m;
   }
 }
+<<<<<<< HEAD
 // no enforcment of # zero crossings  = # extrema
 // and local mean = 0  
 // more rigorous conditons to be added once this works. 
 
 // repeat sifting
+=======
+
+// Compute the first IMF of `signal` via repeated sifting.
+>>>>>>> 9e92deba0f (EMD function with upstream fetch)
 template<typename eT>
 inline void FirstImf(const arma::Col<eT>& signal,
                      arma::Col<eT>& imf,
@@ -107,7 +122,11 @@ inline void FirstImf(const arma::Col<eT>& signal,
   {
     SiftingStep(h, hNew);
 
+<<<<<<< HEAD
     // convergence based on relative L2 change.
+=======
+    // Simple convergence: relative L2 change.
+>>>>>>> 9e92deba0f (EMD function with upstream fetch)
     const double num = arma::norm(hNew - h, 2);
     const double den = arma::norm(h, 2);
     const double relChange = (den > 0.0) ? (num / den) : num;
