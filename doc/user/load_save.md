@@ -52,8 +52,8 @@ std::cout << "Loaded iris.csv; size " << x.n_rows << " x " << x.n_cols << "."
 For more information regarding loading / saving each data type, please visit
 the following pages:
 
- * [Numeric data](#data/load_save_numeric.md)
- * [Categorical data](#data/load_save_categorical.md)
- * [Image data](#data/load_save_images.md)
- * [mlpack objects / models](#data/load_save_models.md)
- * [Data Options](#data/data_options.md)
+ * [Numeric data](data/load_save_numeric.md)
+ * [Categorical data](data/load_save_categorical.md)
+ * [Image data](data/load_save_images.md)
+ * [mlpack objects / models](data/load_save_models.md)
+ * [Data Options](data/data_options.md)
