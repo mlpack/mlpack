@@ -278,7 +278,7 @@ void DAGNetwork<
     {
       std::ostringstream errMessage;
       errMessage << "DAGNetwork::Connect(): Layer " << parentNodeId
-          << " cannot be concatenated with itself.";
+          << " cannot have a connection with itself.";
       throw std::logic_error(errMessage.str());
     }
   }
@@ -897,9 +897,9 @@ void DAGNetwork<
   // gets used for layerOutputs.
   // layerInputs will be aliases to layerOutputs unless
   // those layers have multiple parents. It's inputs will need
-  // to be concatenated first). If thats the case
+  // to be concatenated/added first. If thats the case
   // those layerInputs will aliases to the second section
-  // of layerOutputMatrix (totalConcatSize).
+  // of layerOutputMatrix (activationMemorySize).
 
   //setup layerOutputs
   for (size_t i = 0; i < sortedNetwork.size() - 1; i++)
@@ -920,7 +920,7 @@ void DAGNetwork<
   for (size_t i = 1; i < sortedNetwork.size(); i++)
   {
     const size_t currentLayer = sortedNetwork[i];
-    Layer<MatType>* layer = network[currentLayer];
+    const Layer<MatType>* layer = network[currentLayer];
     const std::vector<size_t>& parents = parentsList[currentLayer];
     const size_t numParents = parents.size();
 
@@ -928,7 +928,7 @@ void DAGNetwork<
     {
       const size_t parentIndex = sortedIndices[parents.front()];
       MakeAlias(layerInputs[i - 1], layerOutputs[parentIndex],
-        layerOutputs[parentIndex].n_rows, layerOutputs[parentIndex].n_cols, 0);
+        layerOutputs[parentIndex].n_rows, layerOutputs[parentIndex].n_cols);
     }
     else
     {
@@ -961,23 +961,24 @@ void DAGNetwork<
   {
     const size_t currentLayer = sortedNetwork[i];
     Layer<MatType>* layer = network[currentLayer];
-    size_t layerDeltaSize = layer->OutputSize();
-    // Extra memory for skip connections.
-    size_t extraDeltaSize = 0;
 
+    size_t layerDeltaSize = layer->OutputSize();
+    // If at the last layer, we only need to add it's `extraDeltaSize`.
+    if (i == sortedNetwork.size() - 1)
+      layerDeltaSize = 0;
+
+    // If the layer has multiple children, need memory to accumulate gradients.
     if (childrenList[currentLayer].size() > 1)
       layerDeltaSize *= 2;
 
+    // Extra memory for skip connections.
+    size_t extraDeltaSize = 0;
     if (parentsList[currentLayer].size() > 1)
     {
       extraDeltaSize = layer->InputDimensions()[0];
       for (size_t j = 1; j < layer->InputDimensions().size(); j++)
         extraDeltaSize *= layer->InputDimensions()[j];
     }
-
-    // If at the last layer, we only need to add it's `concatDeltaSize`.
-    if (i == sortedNetwork.size() - 1)
-      layerDeltaSize = 0;
 
     deltaMatrixSize += layerDeltaSize + extraDeltaSize;
   }
@@ -1078,7 +1079,7 @@ void DAGNetwork<
   const size_t lastLayer = sortedNetwork.back();
   networkOutput.set_size(network[lastLayer]->OutputSize(), input.n_cols);
 
-  // equivalent to MultiLayer->Forward(), but with a concat.
+  // equivalent to MultiLayer->Forward(), but with a skip connection.
   if (sortedNetwork.size() > 1)
   {
     InitializeForwardPassMemory(input.n_cols);
@@ -1091,7 +1092,7 @@ void DAGNetwork<
       const size_t currentLayer = sortedNetwork[i];
       const std::vector<size_t>& parents = parentsList[currentLayer];
 
-      // Concatenation
+      // Skip connections
       if (parents.size() > 1)
       {
         switch (layerConnections.at(currentLayer))
@@ -1144,7 +1145,7 @@ void DAGNetwork<
       }
 
       // Don't execute if it's the last iteration
-      // network[lastLayer] might need a concatenation.
+      // network[lastLayer] might need a concatenation/addition.
       if (i < sortedNetwork.size() - 1)
         network[currentLayer]->Forward(layerInputs[i - 1], layerOutputs[i]);
     }
