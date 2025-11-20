@@ -33,7 +33,7 @@ namespace data {
  * @param fillValue The whitespace value.
  */
 template<typename eT>
-void LetterboxImage(arma::Mat<eT>& src,
+void LetterboxImages(arma::Mat<eT>& src,
                     ImageOptions& srcOpt,
                     const size_t width,
                     const size_t height,
@@ -45,19 +45,19 @@ void LetterboxImage(arma::Mat<eT>& src,
   if (expectedRows == 0)
   {
     std::ostringstream errMessage;
-    errMessage << "LetterboxImage(): Dimensions cannot contain a zero."
+    errMessage << "LetterboxImages(): Dimensions cannot contain a zero."
       " Received: " << srcOpt.Width() << " x " << srcOpt.Height()
       << " x " << srcOpt.Channels() << ".";
     throw std::logic_error(errMessage.str());
   }
 
   if (src.n_rows == 0)
-    throw std::logic_error("LetterboxImage(): Matrix rows cannot be zero.");
+    throw std::logic_error("LetterboxImages(): Matrix rows cannot be zero.");
 
   if (src.n_rows != expectedRows)
   {
     std::ostringstream errMessage;
-    errMessage << "LetterboxImage(): Expected size of image was "
+    errMessage << "LetterboxImages(): Expected size of image was "
       << expectedRows << " but received " << src.n_rows;
     throw std::logic_error(errMessage.str());
   }
@@ -65,7 +65,7 @@ void LetterboxImage(arma::Mat<eT>& src,
   if (srcOpt.Channels() != 1 && srcOpt.Channels() != 3)
   {
     std::ostringstream errMessage;
-    errMessage << "LetterboxImage(): Must have only 1 or 3 channels, but "
+    errMessage << "LetterboxImages(): Must have only 1 or 3 channels, but "
       "received " << srcOpt.Channels();
     throw std::logic_error(errMessage.str());
   }
