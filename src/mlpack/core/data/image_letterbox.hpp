@@ -116,4 +116,3 @@ void LetterboxImages(arma::Mat<eT>& src,
 } // namespace mlpack
 
 #endif
-
