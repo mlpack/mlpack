@@ -40,8 +40,10 @@ YOLOv3Tiny<
   }
 
   const size_t mid = predictionsPerCell * 2;
-  const std::vector<ElemType> smallAnchors(anchors.begin(), anchors.begin() + mid);
-  const std::vector<ElemType> largeAnchors(anchors.begin() + mid, anchors.end());
+
+  const std::vector<ElemType>
+    smallAnchors(anchors.begin(), anchors.begin() + mid),
+    largeAnchors(anchors.begin() + mid, anchors.end());
 
   const std::vector<double> scaleFactor = { 2.0, 2.0 };
 
