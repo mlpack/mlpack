@@ -732,7 +732,7 @@ TEST_CASE("LetterboxImagesRectangularOutput", "[ImageTest]")
   image.fill(5.0);
 
   const double fillValue = 0.5;
-  data::LetterboxImage(image, opt, width, height, fillValue);
+  data::LetterboxImages(image, opt, width, height, fillValue);
 
   REQUIRE(image.n_rows == width * height * opt.Channels());
   REQUIRE(image.n_cols == 3);
