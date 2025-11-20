@@ -26,7 +26,7 @@ YOLOv3Tiny<
 >::YOLOv3Tiny(const size_t imgSize,
               const size_t numClasses,
               const size_t predictionsPerCell,
-              const std::vector<Type>& anchors) :
+              const std::vector<ElemType>& anchors) :
   imgSize(imgSize),
   predictionsPerCell(predictionsPerCell),
   numAttributes(numClasses + 5)
@@ -40,8 +40,8 @@ YOLOv3Tiny<
   }
 
   const size_t mid = predictionsPerCell * 2;
-  const std::vector<Type> smallAnchors(anchors.begin(), anchors.begin() + mid);
-  const std::vector<Type> largeAnchors(anchors.begin() + mid, anchors.end());
+  const std::vector<ElemType> smallAnchors(anchors.begin(), anchors.begin() + mid);
+  const std::vector<ElemType> largeAnchors(anchors.begin() + mid, anchors.end());
 
   const std::vector<double> scaleFactor = { 2.0, 2.0 };
 
@@ -67,7 +67,9 @@ YOLOv3Tiny<
   size_t convolution14 = ConvolutionBlock(512, 3);
   size_t convolution15 =
     ConvolutionBlock(predictionsPerCell * numAttributes, 1, false);
-  size_t detections16 = YOLO(imgSize, imgSize / 32, largeAnchors);
+  size_t detections16 =
+    model.template Add<YOLOv3Layer<MatType>>(imgSize, numAttributes,
+      imgSize / 32, predictionsPerCell, largeAnchors);
 
   size_t convolution17 = ConvolutionBlock(128, 1);
   // Upsample for more fine-grained detections.
@@ -78,10 +80,13 @@ YOLOv3Tiny<
   size_t convolution19 = ConvolutionBlock(256, 3);
   size_t convolution20 =
     ConvolutionBlock(predictionsPerCell * numAttributes, 1, false);
-  size_t detections21 = YOLO(imgSize, imgSize / 16, smallAnchors);
+  size_t detections21 =
+    model.template Add<YOLOv3Layer<MatType>>(imgSize, numAttributes,
+      imgSize / 16, predictionsPerCell, smallAnchors);
 
-  // the DAGNetwork class requires a layer for concatenations, so we use
-  // the Identity layer for pure concatentation, and no other compute.
+
+  // the DAGNetwork class requires one explicit output layer for concatenations,
+  // so we use the Identity layer for pure concatentation, and no other compute.
   size_t concatLayer22 = model.template Add<Identity<MatType>>();
 
   model.Connect(convolution0, maxPool1);
@@ -130,13 +135,13 @@ size_t YOLOv3Tiny<OutputLayerType, InitializationRuleType, MatType>
 ::ConvolutionBlock(const size_t maps,
                    const size_t kernel,
                    const bool batchNorm,
-                   const Type reluSlope)
+                   const ElemType reluSlope)
 {
   if (kernel != 3 && kernel != 1)
   {
     std::ostringstream errMessage;
     errMessage << "Kernel size for convolutions in yolov3-tiny must be 3"
-        "or 1, but you gave " << kernel << ".\n";
+        "or 1, but you gave " << kernel;
     throw std::logic_error(errMessage.str());
   }
 
@@ -165,23 +170,11 @@ size_t YOLOv3Tiny<OutputLayerType, InitializationRuleType, MatType>
   {
     // One layer with odd input size, with kernel size 2, stride 1.
     // Padding on the right and bottom are needed.
-    Type min = -arma::datum::inf;
+    ElemType min = -arma::Datum<ElemType>::inf;
     block.template Add<Padding<MatType>>(0, 1, 0, 1, min);
   }
   block.template Add<MaxPooling<MatType>>(2, 2, stride, stride);
   return model.Add(block);
-}
-
-template <typename OutputLayerType,
-          typename InitializationRuleType,
-          typename MatType>
-size_t YOLOv3Tiny<OutputLayerType, InitializationRuleType, MatType>
-::YOLO(const size_t imgSize,
-       const size_t gridSize,
-       const std::vector<Type>& anchors)
-{
-  return model.template Add<YOLOv3Layer<MatType>>(imgSize,
-    numAttributes, gridSize, predictionsPerCell, anchors);
 }
 
 template<typename OutputLayerType,
@@ -194,23 +187,10 @@ void YOLOv3Tiny<
     MatType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
-  #if !defined(MLPACK_ENABLE_ANN_SERIALIZATION) && \
-      !defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
-    // Note: if you define MLPACK_IGNORE_ANN_SERIALIZATION_WARNING, you had
-    // better ensure that every layer you are serializing has had
-    // CEREAL_REGISTER_TYPE() called somewhere.  See layer/serialization.hpp for
-    // more information.
-    throw std::runtime_error("Cannot serialize a neural network unless "
-        "MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See the \"Additional "
-        "build options\" section of the README for more information.");
-
-    (void) ar;
-  #else
-    ar(CEREAL_NVP(model));
-    ar(CEREAL_NVP(imgSize));
-    ar(CEREAL_NVP(predictionsPerCell));
-    ar(CEREAL_NVP(numAttributes));
-  #endif
+  ar(CEREAL_NVP(model));
+  ar(CEREAL_NVP(imgSize));
+  ar(CEREAL_NVP(predictionsPerCell));
+  ar(CEREAL_NVP(numAttributes));
 }
 
 } // namespace mlpack

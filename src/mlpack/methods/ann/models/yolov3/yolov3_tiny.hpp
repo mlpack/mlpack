@@ -22,6 +22,7 @@
 #include <mlpack/methods/ann/models/yolov3/yolov3_layer.hpp>
 
 namespace mlpack {
+
 /**
  * YOLOv3-tiny is a small one-stage object detection model.
  *
@@ -36,10 +37,10 @@ namespace mlpack {
  *
  * @code
  * @article{yolov3,
- *   title     ={YOLOv3: An Incremental Improvement},
- *   author    ={Redmon, Joseph and Farhadi, Ali},
+ *   title     = {YOLOv3: An Incremental Improvement},
+ *   author    = {Redmon, Joseph and Farhadi, Ali},
  *   journal   = {arXiv},
- *   year      ={2018}
+ *   year      = {2018}
  * }
  * @endcode
  *
@@ -53,7 +54,7 @@ class YOLOv3Tiny
   // Helper types.
   using ModelType =
     DAGNetwork<OutputLayerType, InitializationRuleType, MatType>;
-  using Type = typename MatType::elem_type;
+  using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
 
   YOLOv3Tiny() { /* Nothing to do. */ }
@@ -75,7 +76,7 @@ class YOLOv3Tiny
   YOLOv3Tiny(const size_t imgSize,
              const size_t numClasses,
              const size_t predictionsPerCell,
-             const std::vector<Type>& anchors);
+             const std::vector<ElemType>& anchors);
 
   ~YOLOv3Tiny() { /* Nothing to do. */ }
 
@@ -119,7 +120,7 @@ class YOLOv3Tiny
   size_t ConvolutionBlock(const size_t maps,
                           const size_t kernel,
                           const bool batchNorm = true,
-                          const Type reluSlope = 0.1);
+                          const ElemType reluSlope = 0.1);
 
   /**
    * Adds a MultiLayer to the internal DAGNetwork. The MultiLayer includes
@@ -129,17 +130,6 @@ class YOLOv3Tiny
    * @param stride Stride of the MaxPooling kernel.
    */
   size_t MaxPool2x2(const size_t stride);
-
-  /**
-   * Adds a YOLOv3Layer to the internal DAGNetwork.
-   *
-   * @param imgSize Width and height of input image.
-   * @param gridSize Grid size of output.
-   * @param anchors Width and height anchor points.
-   */
-  size_t YOLO(const size_t imgSize,
-              const size_t gridSize,
-              const std::vector<Type>& anchors);
 
   // DAGNetwork containing the graph of the YOLOv3Tiny model
   ModelType model;

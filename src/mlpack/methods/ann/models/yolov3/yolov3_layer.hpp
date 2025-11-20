@@ -16,7 +16,8 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 
 /**
- * Helper layer for YOLOv3.
+ * Helper layer for YOLOv3. Used as the last layer to normalize bounding
+ * boxes and classification probilities.
  *
  * Returns bounding boxes in YOLO format. Bounding boxes consist of
  * a center x and center y coordinate, width and height, objectness score
@@ -29,10 +30,10 @@
  *
  * @code
  * @article{yolov3,
- *   title     ={YOLOv3: An Incremental Improvement},
- *   author    ={Redmon, Joseph and Farhadi, Ali},
+ *   title     = {YOLOv3: An Incremental Improvement},
+ *   author    = {Redmon, Joseph and Farhadi, Ali},
  *   journal   = {arXiv},
- *   year      ={2018}
+ *   year      = {2018}
  * }
  * @endcode
  *
@@ -110,9 +111,21 @@ class YOLOv3Layer : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  using Type = typename MatType::elem_type;
+  using ElemType = typename MatType::elem_type;
 
   using CubeType = typename GetCubeType<MatType>::type;
+
+  void GenerateAnchors()
+  {
+    anchorsW = MatType(grid, predictionsPerCell, arma::fill::none);
+    anchorsH = MatType(grid, predictionsPerCell, arma::fill::none);
+
+    for (size_t i = 0; i < predictionsPerCell; i++)
+    {
+      anchorsW.col(i).fill(anchors[i * 2]);
+      anchorsH.col(i).fill(anchors[i * 2 + 1]);
+    }
+  }
 
   // Original input image size.
   size_t imgSize;
@@ -123,12 +136,14 @@ class YOLOv3Layer : public Layer<MatType>
   size_t gridSize;
   // Cached gridSize * gridSize
   size_t grid;
+  // Vector of anchor pairs.
+  std::vector<ElemType> anchors;
+  // Number of bounding boxes per cell.
+  size_t predictionsPerCell;
   // Matrix of anchor widths.
   MatType anchorsW;
   // Matrix of anchor height.
   MatType anchorsH;
-  // Number of bounding boxes per cell.
-  size_t predictionsPerCell;
 };
 
 } // namespace mlpack

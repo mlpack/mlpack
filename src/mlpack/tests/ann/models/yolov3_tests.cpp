@@ -12,23 +12,22 @@
 
 #define MLPACK_ANN_IGNORE_SERIALIZATION_WARNING
 
-#include <mlpack/core.hpp>
-#include <mlpack/methods/ann/models/yolov3/yolov3_tiny.hpp>
+#include <mlpack.hpp>
 #include "../../catch.hpp"
 #include "../../serialization.hpp"
 
 using namespace mlpack;
 
-CEREAL_REGISTER_TYPE(mlpack::Layer<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::Identity<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::MultiLayer<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::Convolution<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::BatchNorm<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::LeakyReLU<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::Padding<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::MaxPooling<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::NearestInterpolation<arma::fmat>)
-CEREAL_REGISTER_TYPE(mlpack::YOLOv3Layer<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::Layer<arma::mat>)
+CEREAL_REGISTER_TYPE(mlpack::Identity<arma::mat>)
+CEREAL_REGISTER_TYPE(mlpack::MultiLayer<arma::mat>)
+CEREAL_REGISTER_TYPE(mlpack::Convolution<arma::mat>)
+CEREAL_REGISTER_TYPE(mlpack::BatchNorm<arma::mat>)
+CEREAL_REGISTER_TYPE(mlpack::LeakyReLU<arma::mat>)
+CEREAL_REGISTER_TYPE(mlpack::Padding<arma::mat>)
+CEREAL_REGISTER_TYPE(mlpack::MaxPooling<arma::mat>)
+CEREAL_REGISTER_TYPE(mlpack::NearestInterpolation<arma::mat>)
+CEREAL_REGISTER_TYPE(mlpack::YOLOv3Layer<arma::mat>)
 
 /*
  * Test different input image sizes. Other params are set to the default.

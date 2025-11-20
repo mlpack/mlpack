@@ -22,12 +22,13 @@ YOLOv3Layer<MatType>::YOLOv3Layer(
     const size_t numAttributes,
     const size_t gridSize,
     const size_t predictionsPerCell,
-    const std::vector<typename MatType::elem_type> anchors) :
+    const std::vector<ElemType> anchors) :
     Layer<MatType>(),
     imgSize(imgSize),
     numAttributes(numAttributes),
     gridSize(gridSize),
     grid(gridSize * gridSize),
+    anchors(anchors),
     predictionsPerCell(predictionsPerCell)
 {
   if (anchors.size() != 2 * predictionsPerCell)
@@ -39,27 +40,19 @@ YOLOv3Layer<MatType>::YOLOv3Layer(
     throw std::logic_error(errMessage.str());
   }
 
-  anchorsW = MatType(grid, predictionsPerCell, arma::fill::none);
-  anchorsH = MatType(grid, predictionsPerCell, arma::fill::none);
-
-  // Could maybe use .each_row()?
-  for (size_t i = 0; i < predictionsPerCell; i++)
-  {
-    anchorsW.col(i).fill(anchors[i * 2]);
-    anchorsH.col(i).fill(anchors[i * 2 + 1]);
-  }
+  GenerateAnchors();
 }
 
 template<typename MatType>
 YOLOv3Layer<MatType>::
 YOLOv3Layer(const YOLOv3Layer& other) :
     Layer<MatType>(),
-    imgSize(imgSize),
-    numAttributes(numAttributes),
-    gridSize(gridSize),
-    anchorsW(anchorsW),
-    anchorsH(anchorsH),
-    predictionsPerCell(predictionsPerCell)
+    imgSize(other.imgSize),
+    numAttributes(other.numAttributes),
+    gridSize(other.gridSize),
+    grid(other.grid),
+    anchors(other.anchors),
+    predictionsPerCell(other.predictionsPerCell)
 {
   // Nothing to do here.
 }
@@ -71,8 +64,8 @@ YOLOv3Layer(YOLOv3Layer&& other) :
     imgSize(std::move(imgSize)),
     numAttributes(std::move(numAttributes)),
     gridSize(std::move(gridSize)),
-    anchorsW(std::move(anchorsW)),
-    anchorsH(std::move(anchorsH)),
+    grid(std::move(grid)),
+    anchors(std::move(anchors)),
     predictionsPerCell(std::move(predictionsPerCell))
 {
   // Nothing to do here.
@@ -89,8 +82,8 @@ operator=(const YOLOv3Layer& other)
     imgSize = other.imgSize;
     numAttributes = other.numAttributes;
     gridSize = other.gridSize;
-    anchorsW = other.anchorsW;
-    anchorsH = other.anchorsH;
+    grid = other.grid;
+    anchors = other.anchors;
     predictionsPerCell = other.predictionsPerCell;
   }
   return *this;
@@ -107,8 +100,8 @@ operator=(YOLOv3Layer&& other)
     imgSize = std::move(other.imgSize);
     numAttributes = std::move(other.numAttributes);
     gridSize = std::move(other.gridSize);
-    anchorsW = std::move(other.anchorsW);
-    anchorsH = std::move(other.anchorsH);
+    grid = std::move(other.grid);
+    anchors = std::move(anchors);
     predictionsPerCell = std::move(other.predictionsPerCell);
   }
   return *this;
@@ -147,7 +140,7 @@ void YOLOv3Layer<MatType>::ComputeOutputDimensions()
 template <typename MatType>
 void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
 {
-  Type stride = imgSize / (Type)(gridSize);
+  ElemType stride = imgSize / (ElemType)(gridSize);
   size_t batchSize = input.n_cols;
   output.set_size(input.n_rows, batchSize);
 
@@ -232,7 +225,7 @@ void YOLOv3Layer<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  throw std::runtime_error("YOLOv3::Backward() not implemented.");
+  throw std::runtime_error("YOLOv3Layer::Backward() not implemented.");
 }
 
 template <typename MatType>
@@ -244,9 +237,13 @@ void YOLOv3Layer<MatType>::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(numAttributes));
   ar(CEREAL_NVP(gridSize));
   ar(CEREAL_NVP(grid));
-  ar(CEREAL_NVP(anchorsW));
-  ar(CEREAL_NVP(anchorsH));
+  ar(CEREAL_NVP(anchors));
   ar(CEREAL_NVP(predictionsPerCell));
+
+  if (cereal::is_loading<Archive>())
+  {
+    GenerateAnchors();
+  }
 }
 
 } // namespace mlpack
