@@ -728,13 +728,18 @@ TEST_CASE("LetterboxImagesRectangularOutput", "[ImageTest]")
   data::ImageOptions opt(40, 20, 1);
   const size_t width = 16;
   const size_t height = 12;
-  arma::mat image(40 * 20, 1);
+  arma::mat image(40 * 20, 3);
   image.fill(5.0);
 
   const double fillValue = 0.5;
-  data::LetterboxImages(image, opt, width, height, fillValue);
+  data::LetterboxImage(image, opt, width, height, fillValue);
 
   REQUIRE(image.n_rows == width * height * opt.Channels());
+  REQUIRE(image.n_cols == 3);
   REQUIRE(image.at(0, 0) == fillValue);
+  REQUIRE(image.at(0, 1) == fillValue);
+  REQUIRE(image.at(0, 2) == fillValue);
   REQUIRE(image.at(image.n_rows - 1, 0) == fillValue);
+  REQUIRE(image.at(image.n_rows - 1, 1) == fillValue);
+  REQUIRE(image.at(image.n_rows - 1, 2) == fillValue);
 }
