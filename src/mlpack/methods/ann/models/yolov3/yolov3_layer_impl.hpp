@@ -164,7 +164,7 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
   CubeType anchorsHBS(anchorsW.n_rows, anchorsW.n_cols, batchSize);
   CubeType xOffset(grid, predictionsPerCell, batchSize);
 
-  arma::Col<Type> offsetT =
+  arma::Col<ElemType> offsetT =
     arma::vectorise(arma::repmat(offset.t(), gridSize, 1));
   CubeType yOffset(grid, predictionsPerCell, batchSize);
   for (size_t i = 0; i < batchSize; i++)
