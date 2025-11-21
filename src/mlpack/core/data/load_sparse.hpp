@@ -16,6 +16,9 @@
 
 #include "text_options.hpp"
 
+namespace mlpack {
+namespace data {
+
 template <typename eT>
 bool LoadSparse(const std::string& filename,
                 arma::SpMat<eT>& matrix,
@@ -84,3 +87,7 @@ bool LoadSparse(const std::string& filename,
   return success;
 }
 
+} // namespace data
+} // namespace mlpack
+
+#endif

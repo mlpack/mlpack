@@ -17,6 +17,9 @@
 // In case it hasn't already been included.
 #include "load.hpp"
 
+namespace mlpack {
+namespace data {
+
 /**
  * Loads a matrix from file, guessing the filetype from the extension.  This
  * will transpose the matrix at load time (unless the transpose parameter is set
@@ -317,3 +320,7 @@ bool Load(const std::string& filename,
   return success;
 }
 
+} // namespace data
+} // namespace mlpack
+
+#endif
