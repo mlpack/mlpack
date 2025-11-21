@@ -240,7 +240,7 @@ void YOLOv3Layer<MatType>::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(anchors));
   ar(CEREAL_NVP(predictionsPerCell));
 
-  if (cereal::is_loading<Archive>())
+  if (Archive::is_loading::value)
   {
     GenerateAnchors();
   }
