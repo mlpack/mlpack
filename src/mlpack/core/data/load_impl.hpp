@@ -31,6 +31,17 @@ bool Load(const std::string& filename,
   return Load(filename, matrix, tmpOpts);
 }
 
+template<typename eT, typename DataOptionsType>
+bool Load(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          const DataOptionsType& opts,
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>*)
+{
+  DataOptionsType tmpOpts(opts);
+  return Load(files, matrix, tmpOpts);
+}
+
 template<typename ObjectType, typename DataOptionsType>
 bool Load(const std::string& filename,
           ObjectType& matrix,
@@ -124,6 +135,42 @@ bool Load(const std::string& filename,
   return success;
 }
 
+template<typename eT, typename DataOptionsType>
+bool Load(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          DataOptionsType& opts,
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>*)
+{
+  bool success = false;
+  if (files.empty())
+  {
+    return HandleError("Load(): given set of filenames is empty;"
+        " loading failed.", opts);
+  }
+
+  DetectFromExtension<arma::Mat<eT>>(files.back(), opts);
+  const bool isImageFormat = (opts.Format() == FileType::PNG ||
+      opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
+      opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||
+      opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
+      opts.Format() == FileType::PIC || opts.Format() == FileType::ImageType);
+
+  if (isImageFormat)
+  {
+    ImageOptions imgOpts(std::move(opts));
+    success = LoadImage(files, matrix, imgOpts);
+    opts = std::move(imgOpts);
+  }
+  else
+  {
+    TextOptions txtOpts(std::move(opts));
+    success = LoadNumericVector(files, matrix, txtOpts);
+    opts = std::move(txtOpts);
+  }
+  return success;
+}
+
 template<typename eT>
 bool LoadCategorical(const std::string& filename,
                      arma::Mat<eT>& matrix,
@@ -178,42 +225,6 @@ bool LoadCategorical(const std::string& filename,
   Timer::Stop("loading_data");
 
   return true;
-}
-
-template<typename Object>
-bool LoadModel(Object& objectToSerialize,
-               DataOptionsBase<PlainDataOptions>& opts,
-               std::fstream& stream)
-{
-  try
-  {
-    if (opts.Format() == FileType::XML)
-    {
-      cereal::XMLInputArchive ar(stream);
-      ar(cereal::make_nvp("model", objectToSerialize));
-    }
-    else if (opts.Format() == FileType::JSON)
-    {
-     cereal::JSONInputArchive ar(stream);
-     ar(cereal::make_nvp("model", objectToSerialize));
-    }
-    else if (opts.Format() == FileType::BIN)
-    {
-      cereal::BinaryInputArchive ar(stream);
-      ar(cereal::make_nvp("model", objectToSerialize));
-    }
-
-    return true;
-  }
-  catch (cereal::Exception& e)
-  {
-    if (opts.Fatal())
-      Log::Fatal << e.what() << std::endl;
-    else
-      Log::Warn << e.what() << std::endl;
-
-    return false;
-  }
 }
 
 } // namespace data
