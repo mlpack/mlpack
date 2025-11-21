@@ -1,4 +1,4 @@
-<object data="../img/pipeline-top-1.svg" type="image/svg+xml" id="pipeline-top">loadsave
+<object data="../img/pipeline-top-1.svg" type="image/svg+xml" id="pipeline-top">
 </object>
 
 # Data loading and I/O
@@ -844,7 +844,7 @@ with `fillValue`.
     where the image is represented as a flattened vector in one column.
   * `opt` is a [`data::imageOptions&`](#dataimageinfo) containing info on
     the dimensions of the image.
-  * `width` and `height` are a `const size_t` determining the new width and
+  * `width` and `height` are `const size_t`s determining the new width and
     height of `src`.
   * `fillValue` is the white space value that pads out the resized image.
     Each channel will be filled in with this value, i.e., if `fillValue` is 127
