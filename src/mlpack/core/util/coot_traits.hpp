@@ -66,6 +66,36 @@ struct IsCube<coot::Cube<eT> >
   static const bool value = true;
 };
 
+template<typename CootType>
+struct GetArmaType
+{
+  using type = arma::mat;
+};
+
+template<typename eT>
+struct GetArmaType<coot::Mat<eT>>
+{
+  using type = arma::Mat<eT>;
+};
+
+template<typename eT>
+struct GetArmaType<coot::Cube<eT>>
+{
+  using type = arma::Cube<eT>;
+};
+
+template<typename eT>
+struct GetArmaType<coot::Col<eT>>
+{
+  using type = arma::Col<eT>;
+};
+
+template<typename eT>
+struct GetArmaType<coot::Row<eT>>
+{
+  using type = arma::Row<eT>;
+};
+
 #else
 
 template<typename T>

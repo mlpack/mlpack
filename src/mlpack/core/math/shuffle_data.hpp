@@ -13,8 +13,71 @@
 #define MLPACK_CORE_MATH_SHUFFLE_DATA_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/conv_to.hpp>
 
 namespace mlpack {
+
+#if defined(MLPACK_HAS_COOT)
+
+/**
+ * Shuffle two Bandicoot objects.
+ *
+ * Shuffled data will be output into outputFirst and outputSecond.
+ */
+template<typename FirstType, typename SecondType>
+void ShuffleData(const FirstType& inputFirst,
+                 const SecondType& inputSecond,
+                 FirstType& outputFirst,
+                 SecondType& outputSecond,
+                 const std::enable_if_t<IsCoot<FirstType>::value &&
+                     IsCoot<SecondType>::value>* = 0)
+{
+  // Convert to Armadillo types.
+  using FirstArmaType = typename GetArmaType<FirstType>::type;
+  using SecondArmaType = typename GetArmaType<SecondType>::type;
+  FirstArmaType firstArma = ConvTo<FirstArmaType>::from(inputFirst);
+  SecondArmaType secondArma = ConvTo<SecondArmaType>::from(inputSecond);
+  
+  ShuffleData(firstArma, secondArma, firstArma, secondArma);
+
+  // Convert back to Bandicoot types.
+  outputFirst = ConvTo<FirstType>::from(firstArma);
+  outputSecond = ConvTo<FirstType>::from(secondArma);
+}
+
+/**
+ * Shuffle three Bandicoot objects.
+ *
+ * Shuffled data will be output into outputFirst, outputSecond, and outputThird.
+ */
+template<typename FirstType, typename SecondType, typename ThirdType>
+void ShuffleData(const FirstType& inputFirst,
+                 const SecondType& inputSecond,
+                 const ThirdType& inputThird,
+                 FirstType& outputFirst,
+                 SecondType& outputSecond,
+                 ThirdType& outputThird,
+                 const std::enable_if_t<IsCoot<FirstType>::value &&
+                     IsCoot<SecondType>::value &&
+                     IsCoot<ThirdType>::value>* = 0)
+{
+  // Convert to Armadillo types.
+  using FirstArmaType = typename GetArmaType<FirstType>::type;
+  using SecondArmaType = typename GetArmaType<SecondType>::type;
+  using ThirdArmaType = typename GetArmaType<ThirdType>::type;
+  FirstArmaType firstArma = ConvTo<FirstArmaType>::from(inputFirst);
+  SecondArmaType secondArma = ConvTo<SecondArmaType>::from(inputSecond);
+  ThirdArmaType thirdArma = ConvTo<SecondArmaType>::from(inputThird);
+  
+  ShuffleData(firstArma, secondArma, thirdArma, firstArma, secondArma, thirdArma);
+
+  // Convert back to Bandicoot types.
+  outputFirst = ConvTo<FirstType>::from(firstArma);
+  outputSecond = ConvTo<FirstType>::from(secondArma);
+  outputThird = ConvTo<FirstType>::from(thirdArma);
+}
+
+#endif // defined(MLPACK_HAS_COOT)
 
 /**
  * Shuffle a dataset and associated labels (or responses).  It is expected that
@@ -28,8 +91,8 @@ void ShuffleData(const MatType& inputPoints,
                  const LabelsType& inputLabels,
                  MatType& outputPoints,
                  LabelsType& outputLabels,
-                 const std::enable_if_t<!arma::is_SpMat<MatType>::value>* = 0,
-                 const std::enable_if_t<!arma::is_Cube<MatType>::value>* = 0)
+                 const std::enable_if_t<!IsSparseMat<MatType>::value>* = 0,
+                 const std::enable_if_t<!IsCube<MatType>::value>* = 0)
 {
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -51,8 +114,8 @@ void ShuffleData(const MatType& inputPoints,
                  const LabelsType& inputLabels,
                  MatType& outputPoints,
                  LabelsType& outputLabels,
-                 const std::enable_if_t<arma::is_SpMat<MatType>::value>* = 0,
-                 const std::enable_if_t<!arma::is_Cube<MatType>::value>* = 0)
+                 const std::enable_if_t<IsSparseMat<MatType>::value>* = 0,
+                 const std::enable_if_t<!IsCube<MatType>::value>* = 0)
 {
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -103,9 +166,9 @@ void ShuffleData(const MatType& inputPoints,
                  const LabelsType& inputLabels,
                  MatType& outputPoints,
                  LabelsType& outputLabels,
-                 const std::enable_if_t<!arma::is_SpMat<MatType>::value>* = 0,
-                 const std::enable_if_t<arma::is_Cube<MatType>::value>* = 0,
-                 const std::enable_if_t<arma::is_Cube<LabelsType>::value>* = 0)
+                 const std::enable_if_t<!IsSparseMat<MatType>::value>* = 0,
+                 const std::enable_if_t<IsCube<MatType>::value>* = 0,
+                 const std::enable_if_t<IsCube<LabelsType>::value>* = 0)
 {
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -160,9 +223,9 @@ void ShuffleData(const MatType& inputPoints,
                  MatType& outputPoints,
                  LabelsType& outputLabels,
                  WeightsType& outputWeights,
-                 const std::enable_if_t<!arma::is_SpMat<MatType>::value>* = 0,
-                 const std::enable_if_t<arma::is_Cube<MatType>::value>* = 0,
-                 const std::enable_if_t<arma::is_Cube<LabelsType>::value>* = 0)
+                 const std::enable_if_t<!IsSparseMat<MatType>::value>* = 0,
+                 const std::enable_if_t<IsCube<MatType>::value>* = 0,
+                 const std::enable_if_t<IsCube<LabelsType>::value>* = 0)
 {
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -230,8 +293,8 @@ void ShuffleData(const MatType& inputPoints,
                  MatType& outputPoints,
                  LabelsType& outputLabels,
                  WeightsType& outputWeights,
-                 const std::enable_if_t<!arma::is_SpMat<MatType>::value>* = 0,
-                 const std::enable_if_t<!arma::is_Cube<MatType>::value>* = 0)
+                 const std::enable_if_t<!IsSparseMat<MatType>::value>* = 0,
+                 const std::enable_if_t<!IsCube<MatType>::value>* = 0)
 {
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -258,8 +321,8 @@ void ShuffleData(const MatType& inputPoints,
                  MatType& outputPoints,
                  LabelsType& outputLabels,
                  WeightsType& outputWeights,
-                 const std::enable_if_t<arma::is_SpMat<MatType>::value>* = 0,
-                 const std::enable_if_t<!arma::is_Cube<MatType>::value>* = 0)
+                 const std::enable_if_t<IsSparseMat<MatType>::value>* = 0,
+                 const std::enable_if_t<!IsCube<MatType>::value>* = 0)
 {
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
