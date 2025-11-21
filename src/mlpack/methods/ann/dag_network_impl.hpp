@@ -963,7 +963,7 @@ void DAGNetwork<
     Layer<MatType>* layer = network[currentLayer];
 
     size_t layerDeltaSize = layer->OutputSize();
-    // If at the last layer, we only need to add it's `extraDeltaSize`.
+    // If at the last layer, we only need to add its `extraDeltaSize`.
     if (i == sortedNetwork.size() - 1)
       layerDeltaSize = 0;
 
