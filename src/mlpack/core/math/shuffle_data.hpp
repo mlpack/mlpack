@@ -91,8 +91,10 @@ void ShuffleData(const MatType& inputPoints,
                  const LabelsType& inputLabels,
                  MatType& outputPoints,
                  LabelsType& outputLabels,
-                 const std::enable_if_t<!IsSparseMat<MatType>::value>* = 0,
-                 const std::enable_if_t<!IsCube<MatType>::value>* = 0)
+                 const std::enable_if_t<!IsSparseMat<MatType>::value &&
+                     !IsCube<MatType>::value &&
+                     IsArma<MatType>::value &&
+                     IsArma<LabelsType>::value>* = 0)
 {
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -114,8 +116,10 @@ void ShuffleData(const MatType& inputPoints,
                  const LabelsType& inputLabels,
                  MatType& outputPoints,
                  LabelsType& outputLabels,
-                 const std::enable_if_t<IsSparseMat<MatType>::value>* = 0,
-                 const std::enable_if_t<!IsCube<MatType>::value>* = 0)
+                 const std::enable_if_t<IsSparseMat<MatType>::value &&
+                     !IsCube<MatType>::value &&
+                     IsArma<MatType>::value &&
+                     IsArma<LabelsType>::value>* = 0)
 {
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -166,9 +170,11 @@ void ShuffleData(const MatType& inputPoints,
                  const LabelsType& inputLabels,
                  MatType& outputPoints,
                  LabelsType& outputLabels,
-                 const std::enable_if_t<!IsSparseMat<MatType>::value>* = 0,
-                 const std::enable_if_t<IsCube<MatType>::value>* = 0,
-                 const std::enable_if_t<IsCube<LabelsType>::value>* = 0)
+                 const std::enable_if_t<!IsSparseMat<MatType>::value &&
+                     IsCube<MatType>::value &&
+                     IsCube<LabelsType>::value &&
+                     IsArma<MatType>::value &&
+                     IsArma<LabelsType>::value>* = 0)
 {
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -223,9 +229,12 @@ void ShuffleData(const MatType& inputPoints,
                  MatType& outputPoints,
                  LabelsType& outputLabels,
                  WeightsType& outputWeights,
-                 const std::enable_if_t<!IsSparseMat<MatType>::value>* = 0,
-                 const std::enable_if_t<IsCube<MatType>::value>* = 0,
-                 const std::enable_if_t<IsCube<LabelsType>::value>* = 0)
+                 const std::enable_if_t<!IsSparseMat<MatType>::value &&
+                     IsCube<MatType>::value &&
+                     IsCube<LabelsType>::value &&
+                     IsArma<MatType>::value &&
+                     IsArma<LabelsType>::value &&
+                     IsArma<WeightsType>::value>* = 0)
 {
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -293,8 +302,11 @@ void ShuffleData(const MatType& inputPoints,
                  MatType& outputPoints,
                  LabelsType& outputLabels,
                  WeightsType& outputWeights,
-                 const std::enable_if_t<!IsSparseMat<MatType>::value>* = 0,
-                 const std::enable_if_t<!IsCube<MatType>::value>* = 0)
+                 const std::enable_if_t<!IsSparseMat<MatType>::value &&
+                     !IsCube<MatType>::value &&
+                     IsArma<MatType>::value &&
+                     IsArma<LabelsType>::value &&
+                     IsArma<WeightsType>::value>* = 0)
 {
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -321,8 +333,11 @@ void ShuffleData(const MatType& inputPoints,
                  MatType& outputPoints,
                  LabelsType& outputLabels,
                  WeightsType& outputWeights,
-                 const std::enable_if_t<IsSparseMat<MatType>::value>* = 0,
-                 const std::enable_if_t<!IsCube<MatType>::value>* = 0)
+                 const std::enable_if_t<IsSparseMat<MatType>::value &&
+                     !IsCube<MatType>::value &&
+                     IsArma<MatType>::value &&
+                     IsArma<LabelsType>::value &&
+                     IsArma<WeightsType>::value>* = 0)
 {
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
