@@ -1,6 +1,7 @@
 /**
  * @file core/data/load_deprecated.hpp
  * @author Omar Shrit
+ * @author Ryan Curtin
  *
  * Shim to the old deprecated load() functions defined in load.hpp.
  *
@@ -318,6 +319,139 @@ bool Load(const std::string& filename,
   info = opts.DatasetInfo();
 
   return success;
+}
+
+/**
+ * Image load/save interfaces.
+ */
+
+//
+// Old Image loading interface, to be removed in mlpack 5.0.0
+//
+
+/**
+ * Load the image file into the given matrix.
+ *
+ * @param filename Name of the image file.
+ * @param matrix Matrix to load the image into.
+ * @param info An object of ImageInfo class.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          ImageInfo& opts,
+          const bool fatal)
+{
+  // Use the new implementation.
+  opts.Fatal() = fatal;
+  opts.Format() = FileType::ImageType;
+  std::vector<std::string> files;
+  files.push_back(filename);
+  return LoadImage(files, matrix, opts);
+}
+
+/**
+ * Load the image file into the given matrix.
+ *
+ * @param files A vector consisting of filenames.
+ * @param matrix Matrix to save the image from.
+ * @param info An object of ImageInfo class.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Load(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageInfo& opts,
+          const bool fatal)
+{
+  // Use the new implementation.
+  opts.Fatal() = fatal;
+  opts.Format() = FileType::ImageType;
+  return LoadImage(files, matrix, opts);
+}
+
+// Load a model from file.
+template<typename T>
+bool Load(const std::string& filename,
+          const std::string& name,
+          T& t,
+          const bool fatal,
+          format f,
+          std::enable_if_t<HasSerialize<T>::value>*)
+{
+  if (f == format::autodetect)
+  {
+    std::string extension = Extension(filename);
+
+    if (extension == "xml")
+      f = format::xml;
+    else if (extension == "bin")
+      f = format::binary;
+    else if (extension == "json")
+      f = format::json;
+    else
+    {
+      if (fatal)
+        Log::Fatal << "Unable to detect type of '" << filename << "'; incorrect"
+            << " extension?" << std::endl;
+      else
+        Log::Warn << "Unable to detect type of '" << filename << "'; load "
+            << "failed.  Incorrect extension?" << std::endl;
+
+      return false;
+    }
+  }
+
+  // Now load the given format.
+  std::ifstream ifs;
+#ifdef _WIN32 // Open non-text in binary mode on Windows.
+  if (f == format::binary)
+    ifs.open(filename, std::ifstream::in | std::ifstream::binary);
+  else
+    ifs.open(filename, std::ifstream::in);
+#else
+  ifs.open(filename, std::ifstream::in);
+#endif
+
+  if (!ifs.is_open())
+  {
+    std::stringstream oss;
+    oss << "Unable to open file '" << filename << "' to load object '"
+        << name << "'.";
+    return HandleError(oss, fatal);
+  }
+  try
+  {
+    if (f == format::xml)
+    {
+      cereal::XMLInputArchive ar(ifs);
+      ar(cereal::make_nvp(name.c_str(), t));
+    }
+    else if (f == format::json)
+    {
+     cereal::JSONInputArchive ar(ifs);
+     ar(cereal::make_nvp(name.c_str(), t));
+    }
+    else if (f == format::binary)
+    {
+      cereal::BinaryInputArchive ar(ifs);
+      ar(cereal::make_nvp(name.c_str(), t));
+    }
+
+    return true;
+  }
+  catch (cereal::Exception& e)
+  {
+    if (fatal)
+      Log::Fatal << e.what() << std::endl;
+    else
+      Log::Warn << e.what() << std::endl;
+
+    return false;
+  }
 }
 
 } // namespace data
