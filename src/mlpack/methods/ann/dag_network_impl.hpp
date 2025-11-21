@@ -897,7 +897,7 @@ void DAGNetwork<
   // gets used for layerOutputs.
   // layerInputs will be aliases to layerOutputs unless
   // those layers have multiple parents. It's inputs will need
-  // to be concatenated/added first. If thats the case
+  // to be concatenated/added first. If that's the case
   // those layerInputs will aliases to the second section
   // of layerOutputMatrix (activationMemorySize).
 
