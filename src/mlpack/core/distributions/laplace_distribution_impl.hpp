@@ -97,7 +97,7 @@ inline void LaplaceDistribution<MatType>::Train(const MatType& observations)
   //   \theta_k = (1 / n) \sum_{i = 1}^{n} x_ik
   // so L'(\theta) = 0 when \theta is the mean of the observations.  I am not
   // 100% certain my calculus and linear algebra is right, but I think it is...
-  mean = arma::mean(observations, 1);
+  mean = mean(observations, 1);
 
   // The maximum likelihood estimate of the scale parameter is the mean
   // deviation from the mean.

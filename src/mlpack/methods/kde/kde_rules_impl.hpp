@@ -226,7 +226,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
         sample(oldSize + i) =
             EvaluateKernel(queryIndex, referenceNode.Descendant(randomPoint));
       }
-      meanSample = arma::mean(sample);
+      meanSample = mean(sample);
       const double stddev = arma::stddev(sample);
       const double mThreshBase =
           z * stddev * (1 + relError) / (relError * meanSample);
@@ -441,7 +441,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
           sample(oldSize + i) =
               EvaluateKernel(queryIndex, referenceNode.Descendant(randomPoint));
         }
-        meanSample = arma::mean(sample);
+        meanSample = mean(sample);
         const double stddev = arma::stddev(sample);
         const double mThreshBase =
             z * stddev * (1 + relError) / (relError * meanSample);

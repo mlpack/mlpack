@@ -54,7 +54,7 @@ class MeanNormalization
   template<typename MatType>
   void Fit(const MatType& input)
   {
-    itemMean = arma::mean(input, 1);
+    itemMean = mean(input, 1);
     itemMin = min(input, 1);
     itemMax = arma::max(input, 1);
     scale = itemMax - itemMin;
