@@ -31,6 +31,12 @@ struct GetCubeType<coot::Mat<eT>>
 };
 
 template<typename eT>
+struct GetDenseMatType<coot::Cube<eT>>
+{
+  using type = coot::Mat<eT>;
+};
+
+template<typename eT>
 struct IsVector<coot::Col<eT> >
 {
   static const bool value = true;
