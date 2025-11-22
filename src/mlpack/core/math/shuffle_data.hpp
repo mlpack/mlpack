@@ -17,57 +17,68 @@
 namespace mlpack {
 
 /**
- * Shuffle a dataset and associated labels (or responses).  It is expected that
- * inputPoints and inputLabels have the same number of columns (so, be sure that
- * inputLabels, if it is a vector, is a row vector).
- *
- * Shuffled data will be output into outputPoints and outputLabels.
+ * Reorder a dense matrix or row vector.
  */
-template<typename MatType, typename LabelsType>
-void ShuffleData(const MatType& inputPoints,
-                 const LabelsType& inputLabels,
-                 MatType& outputPoints,
-                 LabelsType& outputLabels,
-                 const std::enable_if_t<!IsSparseMat<MatType>::value &&
-                     !IsCube<MatType>::value &&
-                     IsArma<MatType>::value &&
-                     IsArma<LabelsType>::value>* = 0)
+template<typename MatType>
+void ReorderData(const arma::uvec& ordering,
+                 const MatType& in,
+                 MatType& out,
+                 const std::enable_if_t<IsArma<MatType>::value &&
+                     !IsSparse<MatType>::value &&
+                     !IsCube<MatType>::value>* = 0)
 {
-  // Generate ordering.
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
-      inputPoints.n_cols - 1, inputPoints.n_cols));
-
-  outputPoints = inputPoints.cols(ordering);
-  outputLabels = inputLabels.cols(ordering);
+  out = in.cols(ordering);
 }
 
 /**
- * Shuffle a sparse dataset and associated labels (or responses).  It is
- * expected that inputPoints and inputLabels have the same number of columns
- * (so, be sure that inputLabels, if it is a vector, is a row vector).
- *
- * Shuffled data will be output into outputPoints and outputLabels.
+ * Reorder a cube.
  */
-template<typename MatType, typename LabelsType>
-void ShuffleData(const MatType& inputPoints,
-                 const LabelsType& inputLabels,
-                 MatType& outputPoints,
-                 LabelsType& outputLabels,
-                 const std::enable_if_t<IsSparseMat<MatType>::value &&
-                     !IsCube<MatType>::value &&
-                     IsArma<MatType>::value &&
-                     IsArma<LabelsType>::value>* = 0)
+template<typename CubeType>
+void ReorderData(const arma::uvec& ordering,
+                 const CubeType& in,
+                 CubeType& out,
+                 const std::enable_if_t<IsArma<CubeType>::value &&
+                     IsCube<CubeType>::value>* = 0)
 {
-  // Generate ordering.
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
-      inputPoints.n_cols - 1, inputPoints.n_cols));
+  // Properly handle the case where the input and output data are the same
+  // object.
+  CubeType* outPtr = &out;
+  if (&in == &out)
+    outPtr = new CubeType();
 
+  outPtr->set_size(in.n_rows, in.n_cols,
+      in.n_slices);
+  for (size_t i = 0; i < ordering.n_elem; ++i)
+  {
+    outPtr->tube(0, ordering[i], outPtr->n_rows - 1, ordering[i]) =
+        in.tube(0, i, in.n_rows - 1, i);
+  }
+
+  // Clean up memory if needed.
+  if (&in == &out)
+  {
+    out = std::move(*outPtr);
+    delete outPtr;
+  }
+}
+
+/**
+ * Reorder a sparse matrix.
+ */
+template<typename SpMatType>
+void ReorderData(const arma::uvec& ordering,
+                 const SpMatType& in,
+                 SpMatType& out,
+                 const std::enable_if_t<IsArma<SpMatType>::value &&
+                     IsSparse<SpMatType>::value>* = 0)
+{
   // Extract coordinate list representation.
-  arma::umat locations(2, inputPoints.n_nonzero);
-  arma::Col<typename MatType::elem_type> values(inputPoints.n_nonzero);
-  typename MatType::const_iterator it = inputPoints.begin();
+  arma::umat locations(2, in.n_nonzero);
+  using ColType = typename GetDenseColType<SpMatType>::type;
+  ColType values(in.n_nonzero);
+  typename SpMatType::const_iterator it = in.begin();
   size_t index = 0;
-  while (it != inputPoints.end())
+  while (it != in.end())
   {
     locations(0, index) = it.row();
     locations(1, index) = ordering[it.col()];
@@ -76,253 +87,47 @@ void ShuffleData(const MatType& inputPoints,
     ++index;
   }
 
-  if (&inputPoints == &outputPoints || &inputLabels == &outputLabels)
+  if (&in == &out)
   {
-    MatType newOutputPoints(locations, values, inputPoints.n_rows,
-        inputPoints.n_cols, true);
-    LabelsType newOutputLabels(inputLabels.n_elem);
-    newOutputLabels.cols(ordering) = inputLabels;
+    SpMatType newOut(locations, values, in.n_rows,
+        in.n_cols, true);
 
-    outputPoints = std::move(newOutputPoints);
-    outputLabels = std::move(newOutputLabels);
+    out = std::move(newOut);
   }
   else
   {
-    outputPoints = MatType(locations, values, inputPoints.n_rows,
-        inputPoints.n_cols, true);
-    outputLabels.set_size(inputLabels.n_elem);
-    outputLabels.cols(ordering) = inputLabels;
-  }
-}
-
-/**
- * Shuffle a cube-shaped dataset and associated labels (or responses) which are
- * also cube-shaped.  It is expected that inputPoints and inputLabels have the
- * same number of columns.
- *
- * Shuffled data will be output into outputPoints and outputLabels.
- */
-template<typename MatType, typename LabelsType>
-void ShuffleData(const MatType& inputPoints,
-                 const LabelsType& inputLabels,
-                 MatType& outputPoints,
-                 LabelsType& outputLabels,
-                 const std::enable_if_t<!IsSparseMat<MatType>::value &&
-                     IsCube<MatType>::value &&
-                     IsCube<LabelsType>::value &&
-                     IsArma<MatType>::value &&
-                     IsArma<LabelsType>::value>* = 0)
-{
-  // Generate ordering.
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
-      inputPoints.n_cols - 1, inputPoints.n_cols));
-
-  // Properly handle the case where the input and output data are the same
-  // object.
-  MatType* outputPointsPtr = &outputPoints;
-  LabelsType* outputLabelsPtr = &outputLabels;
-  if (&inputPoints == &outputPoints)
-    outputPointsPtr = new MatType();
-  if (&inputLabels == &outputLabels)
-    outputLabelsPtr = new LabelsType();
-
-  outputPointsPtr->set_size(inputPoints.n_rows, inputPoints.n_cols,
-      inputPoints.n_slices);
-  outputLabelsPtr->set_size(inputLabels.n_rows, inputLabels.n_cols,
-      inputLabels.n_slices);
-  for (size_t i = 0; i < ordering.n_elem; ++i)
-  {
-    outputPointsPtr->tube(0, ordering[i], outputPointsPtr->n_rows - 1,
-        ordering[i]) = inputPoints.tube(0, i, inputPoints.n_rows - 1, i);
-    outputLabelsPtr->tube(0, ordering[i], outputLabelsPtr->n_rows - 1,
-        ordering[i]) = inputLabels.tube(0, i, inputLabels.n_rows - 1, i);
-  }
-
-  // Clean up memory if needed.
-  if (&inputPoints == &outputPoints)
-  {
-    outputPoints = std::move(*outputPointsPtr);
-    delete outputPointsPtr;
-  }
-
-  if (&inputLabels == &outputLabels)
-  {
-    outputLabels = std::move(*outputLabelsPtr);
-    delete outputLabelsPtr;
-  }
-}
-
-/**
- * Shuffle a cube-shaped dataset and associated labels (or responses) which are
- * also cube-shaped.  Also shuffle its weights.  It is expected that inputPoints, 
- * inputLabels, and inputWeights have the same number of columns.
- *
- * Shuffled data will be output into outputPoints, outputLabels, and outputWeights.
- */
-template<typename MatType, typename LabelsType, typename WeightsType>
-void ShuffleData(const MatType& inputPoints,
-                 const LabelsType& inputLabels,
-                 const WeightsType& inputWeights,
-                 MatType& outputPoints,
-                 LabelsType& outputLabels,
-                 WeightsType& outputWeights,
-                 const std::enable_if_t<!IsSparseMat<MatType>::value &&
-                     IsCube<MatType>::value &&
-                     IsCube<LabelsType>::value &&
-                     IsArma<MatType>::value &&
-                     IsArma<LabelsType>::value &&
-                     IsArma<WeightsType>::value>* = 0)
-{
-  // Generate ordering.
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
-      inputPoints.n_cols - 1, inputPoints.n_cols));
-
-  // Properly handle the case where the input and output data are the same
-  // object.
-  MatType* outputPointsPtr = &outputPoints;
-  LabelsType* outputLabelsPtr = &outputLabels;
-  WeightsType* outputWeightsPtr = &outputWeights;
-  if (&inputPoints == &outputPoints)
-    outputPointsPtr = new MatType();
-  if (&inputLabels == &outputLabels)
-    outputLabelsPtr = new LabelsType();
-  if (&inputWeights == &outputWeights)
-    outputWeightsPtr = new WeightsType();
-
-  outputPointsPtr->set_size(inputPoints.n_rows, inputPoints.n_cols,
-      inputPoints.n_slices);
-  outputLabelsPtr->set_size(inputLabels.n_rows, inputLabels.n_cols,
-      inputLabels.n_slices);
-  outputWeightsPtr->set_size(inputWeights.n_cols);
-  for (size_t i = 0; i < ordering.n_elem; ++i)
-  {
-    outputPointsPtr->tube(0, ordering[i], outputPointsPtr->n_rows - 1,
-        ordering[i]) = inputPoints.tube(0, i, inputPoints.n_rows - 1, i);
-    outputLabelsPtr->tube(0, ordering[i], outputLabelsPtr->n_rows - 1,
-        ordering[i]) = inputLabels.tube(0, i, inputLabels.n_rows - 1, i);
-    outputWeightsPtr->at(ordering[i]) = inputWeights[i];
-  }
-
-  // Clean up memory if needed.
-  if (&inputPoints == &outputPoints)
-  {
-    outputPoints = std::move(*outputPointsPtr);
-    delete outputPointsPtr;
-  }
-
-  if (&inputLabels == &outputLabels)
-  {
-    outputLabels = std::move(*outputLabelsPtr);
-    delete outputLabelsPtr;
-  }
-
-  if (&inputWeights == &outputWeights)
-  {
-    outputWeights = std::move(*outputWeightsPtr);
-    delete outputWeightsPtr;
-  }
-}
-
-/**
- * Shuffle a dataset and associated labels (or responses) and weights.  It is
- * expected that inputPoints and inputLabels and inputWeights have the same
- * number of columns (so, be sure that inputLabels, if it is a vector, is a row
- * vector).
- *
- * Shuffled data will be output into outputPoints and outputLabels and
- * outputWeights.
- */
-template<typename MatType, typename LabelsType, typename WeightsType>
-void ShuffleData(const MatType& inputPoints,
-                 const LabelsType& inputLabels,
-                 const WeightsType& inputWeights,
-                 MatType& outputPoints,
-                 LabelsType& outputLabels,
-                 WeightsType& outputWeights,
-                 const std::enable_if_t<!IsSparseMat<MatType>::value &&
-                     !IsCube<MatType>::value &&
-                     IsArma<MatType>::value &&
-                     IsArma<LabelsType>::value &&
-                     IsArma<WeightsType>::value>* = 0)
-{
-  // Generate ordering.
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
-      inputPoints.n_cols - 1, inputPoints.n_cols));
-
-  outputPoints = inputPoints.cols(ordering);
-  outputLabels = inputLabels.cols(ordering);
-  outputWeights = inputWeights.cols(ordering);
-}
-
-/**
- * Shuffle a sparse dataset and associated labels (or responses) and weights.
- * It is expected that inputPoints and inputLabels and inputWeights have the
- * same number of columns (so, be sure that inputLabels, if it is a vector, is a
- * row vector).
- *
- * Shuffled data will be output into outputPoints and outputLabels and
- * outputWeights.
- */
-template<typename MatType, typename LabelsType, typename WeightsType>
-void ShuffleData(const MatType& inputPoints,
-                 const LabelsType& inputLabels,
-                 const WeightsType& inputWeights,
-                 MatType& outputPoints,
-                 LabelsType& outputLabels,
-                 WeightsType& outputWeights,
-                 const std::enable_if_t<IsSparseMat<MatType>::value &&
-                     !IsCube<MatType>::value &&
-                     IsArma<MatType>::value &&
-                     IsArma<LabelsType>::value &&
-                     IsArma<WeightsType>::value>* = 0)
-{
-  // Generate ordering.
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
-      inputPoints.n_cols - 1, inputPoints.n_cols));
-
-  // Extract coordinate list representation.
-  arma::umat locations(2, inputPoints.n_nonzero);
-  arma::Col<typename MatType::elem_type> values(inputPoints.n_nonzero);
-  typename MatType::const_iterator it = inputPoints.begin();
-  size_t index = 0;
-  while (it != inputPoints.end())
-  {
-    locations(0, index) = it.row();
-    locations(1, index) = ordering[it.col()];
-    values(index) = (*it);
-    ++it;
-    ++index;
-  }
-
-  if (&inputPoints == &outputPoints || &inputLabels == &outputLabels ||
-      &inputWeights == &outputWeights)
-  {
-    MatType newOutputPoints(locations, values, inputPoints.n_rows,
-        inputPoints.n_cols, true);
-    LabelsType newOutputLabels(inputLabels.n_elem);
-    WeightsType newOutputWeights(inputWeights.n_elem);
-    newOutputLabels.cols(ordering) = inputLabels;
-    newOutputWeights.cols(ordering) = inputWeights;
-
-    outputPoints = std::move(newOutputPoints);
-    outputLabels = std::move(newOutputLabels);
-    outputWeights = std::move(newOutputWeights);
-  }
-  else
-  {
-    outputPoints = MatType(locations, values, inputPoints.n_rows,
-        inputPoints.n_cols, true);
-    outputLabels.set_size(inputLabels.n_elem);
-    outputLabels.cols(ordering) = inputLabels;
-    outputWeights.set_size(inputWeights.n_elem);
-    outputWeights.cols(ordering) = inputWeights;
+    out = SpMatType(locations, values, in.n_rows,
+        in.n_cols, true);
   }
 }
 
 #if defined(MLPACK_HAS_COOT)
 
 /**
- * Shuffle two Bandicoot objects.
+ * Reorder a Bandicoot object.
+ */
+template<typename MatType>
+void ReorderData(const arma::uvec& ordering,
+                 const MatType& in,
+                 MatType& out,
+                 const std::enable_if_t<IsCoot<MatType>::value>* = 0)
+{
+  // Convert to Armadillo
+  using ArmaType = typename GetArmaType<MatType>::type;
+  ArmaType inArma = coot::conv_to<ArmaType>::from(in);
+
+  ReorderData(ordering, inArma, inArma);
+
+  // Convert back to bandicoot
+  out = MatType(inArma);
+}
+
+#endif
+
+/**
+ * Shuffle two objects. It is expected that inputFirst and inputSecond have
+ * the same number of columns (so, be sure that, if it is a vector, is a
+ * row vector).
  *
  * Shuffled data will be output into outputFirst and outputSecond.
  */
@@ -330,25 +135,21 @@ template<typename FirstType, typename SecondType>
 void ShuffleData(const FirstType& inputFirst,
                  const SecondType& inputSecond,
                  FirstType& outputFirst,
-                 SecondType& outputSecond,
-                 const std::enable_if_t<IsCoot<FirstType>::value &&
-                     IsCoot<SecondType>::value>* = 0)
+                 SecondType& outputSecond)
 {
-  // Convert to Armadillo types.
-  using FirstArmaType = typename GetArmaType<FirstType>::type;
-  using SecondArmaType = typename GetArmaType<SecondType>::type;
-  FirstArmaType firstArma = coot::conv_to<FirstArmaType>::from(inputFirst);
-  SecondArmaType secondArma = coot::conv_to<SecondArmaType>::from(inputSecond);
-  
-  ShuffleData(firstArma, secondArma, firstArma, secondArma);
+  // Generate ordering.
+  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
+      inputFirst.n_cols - 1, inputFirst.n_cols));
 
-  // Convert back to original types.
-  outputFirst = FirstType(firstArma);
-  outputSecond = SecondType(secondArma);
+  // Shuffle data with the ordering
+  ReorderData(ordering, inputFirst, outputFirst);
+  ReorderData(ordering, inputSecond, outputSecond);
 }
 
 /**
- * Shuffle three Bandicoot objects.
+ * Shuffle three objects. It is expected that inputFirst, inputSecond, and
+ * inputThird have the same number of columns (so, be sure that, if it is a
+ * vector, is a row vector).
  *
  * Shuffled data will be output into outputFirst, outputSecond, and outputThird.
  */
@@ -358,28 +159,17 @@ void ShuffleData(const FirstType& inputFirst,
                  const ThirdType& inputThird,
                  FirstType& outputFirst,
                  SecondType& outputSecond,
-                 ThirdType& outputThird,
-                 const std::enable_if_t<IsCoot<FirstType>::value &&
-                     IsCoot<SecondType>::value &&
-                     IsCoot<ThirdType>::value>* = 0)
+                 ThirdType& outputThird)
 {
-  // Convert to Armadillo types.
-  using FirstArmaType = typename GetArmaType<FirstType>::type;
-  using SecondArmaType = typename GetArmaType<SecondType>::type;
-  using ThirdArmaType = typename GetArmaType<ThirdType>::type;
-  FirstArmaType firstArma = coot::conv_to<FirstArmaType>::from(inputFirst);
-  SecondArmaType secondArma = coot::conv_to<SecondArmaType>::from(inputSecond);
-  ThirdArmaType thirdArma = coot::conv_to<ThirdArmaType>::from(inputThird);
-  
-  ShuffleData(firstArma, secondArma, thirdArma, firstArma, secondArma, thirdArma);
+  // Generate ordering.
+  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
+      inputFirst.n_cols - 1, inputFirst.n_cols));
 
-  // Convert back to original types.
-  outputFirst = FirstType(firstArma);
-  outputSecond = SecondType(secondArma);
-  outputThird = ThirdType(thirdArma);
+  // Shuffle data with the ordering
+  ReorderData(ordering, inputFirst, outputFirst);
+  ReorderData(ordering, inputSecond, outputSecond);
+  ReorderData(ordering, inputThird, outputThird);
 }
-
-#endif // defined(MLPACK_HAS_COOT)
 
 } // namespace mlpack
 
