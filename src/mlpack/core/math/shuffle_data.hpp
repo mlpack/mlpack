@@ -27,7 +27,21 @@ void ReorderData(const arma::uvec& ordering,
                      !IsSparse<MatType>::value &&
                      !IsCube<MatType>::value>* = 0)
 {
-  out = in.cols(ordering);
+  // Properly handle the case where the input and output data are the same
+  // object.
+  MatType* outPtr = &out;
+  if (&in == &out)
+    outPtr = new MatType();
+
+  outPtr->set_size(in.n_rows, in.n_cols);
+  outPtr->cols(ordering) = in;
+
+  // Clean up memory if needed.
+  if (&in == &out)
+  {
+    out = std::move(*outPtr);
+    delete outPtr;
+  }
 }
 
 /**
