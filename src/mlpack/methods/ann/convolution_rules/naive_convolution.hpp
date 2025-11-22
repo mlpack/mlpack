@@ -147,7 +147,8 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
                     const size_t dW,
                     const size_t dH,
                     const size_t dilationW,
-                    const size_t dilationH)
+                    const size_t dilationH,
+                    const std::enable_if_t<IsArma<MatType>::value>* = 0)
   {
     using eT = typename MatType::elem_type;
 
@@ -170,6 +171,45 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
       }
     }
   }
+
+#if defined(MLPACK_HAS_COOT)
+
+  /**
+   * Perform a valid convolution on Bandicoot matrices.
+   *
+   * @param input Input used to perform the convolution.
+   * @param filter Filter used to perform the convolution.
+   * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   */
+  template<typename MatType>
+  static void Conv2(const MatType& input,
+                    const MatType& filter,
+                    MatType& output,
+                    const size_t dW,
+                    const size_t dH,
+                    const size_t dilationW,
+                    const size_t dilationH,
+                    const std::enable_if_t<IsCoot<MatType>::value>* = 0)
+  {
+    for (size_t j = 0; j < output.n_cols; ++j)
+    {
+      for (size_t i = 0; i < output.n_rows; ++i)
+      {
+        for (size_t kj = 0; kj < filter.n_cols; ++kj)
+        {
+          for (size_t ki = 0; ki < filter.n_rows; ++ki)
+            output.at(i, j) += filter.at(ki, kj) * input.at(i + ki, j + kj);
+        }
+      }
+    }
+  }
+
+#endif // defined(MLPACK_HAS_COOT)
+
 };  // class NaiveConvolution
 
 } // namespace mlpack
