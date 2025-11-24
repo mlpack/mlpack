@@ -115,7 +115,6 @@ class YOLOv3Layer : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-
   void GenerateAnchors()
   {
     anchorsW = MatType(grid, predictionsPerCell, arma::fill::none);
@@ -141,6 +140,8 @@ class YOLOv3Layer : public Layer<MatType>
   std::vector<ElemType> anchors;
   // Number of bounding boxes per cell.
   size_t predictionsPerCell;
+  // Anchors setup
+  bool anchorsSetup;
   // Matrix of anchor widths.
   MatType anchorsW;
   // Matrix of anchor height.

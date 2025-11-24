@@ -29,7 +29,8 @@ YOLOv3Layer<MatType>::YOLOv3Layer(
     gridSize(gridSize),
     grid(gridSize * gridSize),
     anchors(anchors),
-    predictionsPerCell(predictionsPerCell)
+    predictionsPerCell(predictionsPerCell),
+    anchorsSetup(false)
 {
   if (anchors.size() != 2 * predictionsPerCell)
   {
@@ -39,8 +40,6 @@ YOLOv3Layer<MatType>::YOLOv3Layer(
                 << anchors.size() / 2 << ".";
     throw std::logic_error(errMessage.str());
   }
-
-  GenerateAnchors();
 }
 
 template<typename MatType>
@@ -52,7 +51,8 @@ YOLOv3Layer(const YOLOv3Layer& other) :
     gridSize(other.gridSize),
     grid(other.grid),
     anchors(other.anchors),
-    predictionsPerCell(other.predictionsPerCell)
+    predictionsPerCell(other.predictionsPerCell),
+    anchorsSetup(false)
 {
   // Nothing to do here.
 }
@@ -66,7 +66,8 @@ YOLOv3Layer(YOLOv3Layer&& other) :
     gridSize(std::move(gridSize)),
     grid(std::move(grid)),
     anchors(std::move(anchors)),
-    predictionsPerCell(std::move(predictionsPerCell))
+    predictionsPerCell(std::move(predictionsPerCell)),
+    anchorsSetup(false)
 {
   // Nothing to do here.
 }
@@ -85,6 +86,7 @@ operator=(const YOLOv3Layer& other)
     grid = other.grid;
     anchors = other.anchors;
     predictionsPerCell = other.predictionsPerCell;
+    anchorsSetup = false;
   }
   return *this;
 }
@@ -103,6 +105,7 @@ operator=(YOLOv3Layer&& other)
     grid = std::move(other.grid);
     anchors = std::move(anchors);
     predictionsPerCell = std::move(other.predictionsPerCell);
+    anchorsSetup = false;
   }
   return *this;
 }
@@ -157,6 +160,12 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
 
   // Input dimensions: gridSize
   MatType offset = arma::regspace<MatType>(0, gridSize - 1);
+
+  if (!anchorsSetup)
+  {
+    anchorsSetup = true;
+    GenerateAnchors();
+  }
 
 #if ARMA_VERSION_MAJOR < 15
   // If arma::repcube is not available
@@ -242,7 +251,7 @@ void YOLOv3Layer<MatType>::serialize(Archive& ar, const uint32_t /* version */)
 
   if (Archive::is_loading::value)
   {
-    GenerateAnchors();
+    anchorsSetup = false;
   }
 }
 
