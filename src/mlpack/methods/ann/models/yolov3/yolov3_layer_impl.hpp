@@ -170,7 +170,7 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
 #if ARMA_VERSION_MAJOR < 15
   // If arma::repcube is not available
   CubeType anchorsWBS(anchorsW.n_rows, anchorsW.n_cols, batchSize);
-  CubeType anchorsHBS(anchorsW.n_rows, anchorsW.n_cols, batchSize);
+  CubeType anchorsHBS(anchorsH.n_rows, anchorsH.n_cols, batchSize);
   CubeType xOffset(grid, predictionsPerCell, batchSize);
 
   arma::Col<ElemType> offsetT =
@@ -179,7 +179,7 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
   for (size_t i = 0; i < batchSize; i++)
   {
     anchorsWBS.slice(i) = anchorsW;
-    anchorsWBS.slice(i) = anchorsH;
+    anchorsHBS.slice(i) = anchorsH;
     xOffset.slice(i) = arma::repmat(offset, gridSize, predictionsPerCell);
     yOffset.slice(i) = arma::repmat(offsetT, 1, predictionsPerCell);
   }
