@@ -813,6 +813,63 @@ std::cout << std::endl << std::endl;
 mlpack::data::Save("mlpack-favicon.png", image, info, true);
 ```
 
+### Letterbox transform
+
+The letterbox transform resizes an image's dimensions to `width x height` but
+keeps the aspect ratio of the original image. Whitespace is then filled in
+with `fillValue`.
+
+*Original image with size of* `640`x`326` *pixels:*
+
+<p align="center">
+  <img src="../img/cat.jpg" alt="cat">
+</p>
+
+*Image with target size of* `416`x`416` *pixels after letterbox:*
+
+<p align="center">
+  <img src="../img/cat_square_letterbox.jpg"
+       alt="cat with square letterbox transform">
+</p>
+
+*Image with target size of* `300`x`208` *pixels after letterbox:*
+
+<p align="center">
+  <img src="../img/cat_rect_letterbox.jpg"
+       alt="cat with rectangular letterbox transform">
+</p>
+
+- `LetterboxImages(src, opt, width, height, fillValue)`
+  * `src` is a [column-major matrix](matrices.md) containing a single image,
+    where the image is represented as a flattened vector in one column.
+  * `opt` is a [`data::imageOptions&`](#dataimageinfo) containing info on
+    the dimensions of the image.
+  * `width` and `height` are `const size_t`s determining the new width and
+    height of `src`.
+  * `fillValue` is the white space value that pads out the resized image.
+    Each channel will be filled in with this value, i.e., if `fillValue` is 127
+    then each RGB channel will be 127.
+  * Only images with 1 or 3 channels can be used.
+
+#### Example
+
+An example that loads an image, resizes the image to some square image
+while keeping the aspect ratio using `LetterboxImages()`.
+
+```c++
+// Download: https://datasets.mlpack.org/jurassic-park.png
+arma::mat image;
+mlpack::data::ImageOptions opt;
+mlpack::data::Load("jurassic-park.png", image, opt, true);
+mlpack::data::LetterboxImages(image, opt, 416, 416, 127.0);
+// Image dimensions are now 416x416.
+mlpack::data::Save("jurassic-park-letterbox.png", image, opt, true);
+
+std::cout << "Dimensions: " << opt.Width() << " x " << opt.Height()
+          << " x " << opt.Channels() << "\n";
+std::cout << "Total size: " << image.n_rows << "\n";
+```
+
 ## mlpack objects
 
 All mlpack objects can be saved with `data::Save()` and loaded with
