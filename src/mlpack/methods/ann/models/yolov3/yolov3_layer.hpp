@@ -44,6 +44,10 @@ template <typename MatType = arma::mat>
 class YOLOv3Layer : public Layer<MatType>
 {
  public:
+  using ElemType = typename MatType::elem_type;
+
+  using CubeType = typename GetCubeType<MatType>::type;
+
   YOLOv3Layer() { /* Nothing to do. */ }
 
   /**
@@ -66,7 +70,7 @@ class YOLOv3Layer : public Layer<MatType>
               const size_t numAttributes,
               const size_t gridSize,
               const size_t predictionsPerCell,
-              const std::vector<typename MatType::elem_type> anchors);
+              const std::vector<ElemType> anchors);
 
   YOLOv3Layer* Clone() const override { return new YOLOv3Layer(*this); }
 
@@ -111,9 +115,6 @@ class YOLOv3Layer : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  using ElemType = typename MatType::elem_type;
-
-  using CubeType = typename GetCubeType<MatType>::type;
 
   void GenerateAnchors()
   {
