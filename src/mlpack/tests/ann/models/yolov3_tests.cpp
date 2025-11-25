@@ -32,7 +32,7 @@ CEREAL_REGISTER_TYPE(mlpack::YOLOv3Layer<arma::mat>)
 /*
  * Test different input image sizes. Other params are set to the default.
  */
-TEST_CASE("YOLOv3TinyImageSize", "[YOLOv3TinyTest]")
+TEST_CASE("YOLOv3TinyImageSize", "[YOLOv3TinyTest][long]")
 {
   const size_t imgSize = 320;
   const size_t numClasses = 80;
@@ -53,7 +53,7 @@ TEST_CASE("YOLOv3TinyImageSize", "[YOLOv3TinyTest]")
 /*
  * Test number of classes. Other params are set to the default.
  */
-TEST_CASE("YOLOv3TinyClasses", "[YOLOv3TinyTest]")
+TEST_CASE("YOLOv3TinyClasses", "[YOLOv3TinyTest][long]")
 {
   const size_t imgSize = 416;
   const size_t numClasses = 3;
@@ -74,7 +74,7 @@ TEST_CASE("YOLOv3TinyClasses", "[YOLOv3TinyTest]")
 /*
  * Test predictions per cell. Other params are set to the default.
  */
-TEST_CASE("YOLOv3TinyPredictionsPerCell", "[YOLOv3TinyTest]")
+TEST_CASE("YOLOv3TinyPredictionsPerCell", "[YOLOv3TinyTest][long]")
 {
   const size_t imgSize = 416;
   const size_t numClasses = 80;
@@ -95,7 +95,7 @@ TEST_CASE("YOLOv3TinyPredictionsPerCell", "[YOLOv3TinyTest]")
 /*
  * Test incorrect number of anchors.
  */
-TEST_CASE("YOLOv3TinyIncorrectAnchors", "[YOLOv3TinyTest]")
+TEST_CASE("YOLOv3TinyIncorrectAnchors", "[YOLOv3TinyTest][long]")
 {
   const size_t imgSize = 416;
   const size_t numClasses = 80;
@@ -107,7 +107,7 @@ TEST_CASE("YOLOv3TinyIncorrectAnchors", "[YOLOv3TinyTest]")
 /*
  * Test serialize.
  */
-TEST_CASE("YOLOv3TinySerialize", "[YOLOv3TinyTest]")
+TEST_CASE("YOLOv3TinySerialize", "[YOLOv3TinyTest][long]")
 {
   const size_t imgSize = 416;
   const size_t numClasses = 80;
