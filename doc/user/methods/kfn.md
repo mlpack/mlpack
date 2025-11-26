@@ -29,14 +29,14 @@ efficient dual-tree or single-tree algorithm is used.
   <text x="115" y="55"  text-anchor="middle" fill="black" font-style="italic">r₀</text>
   <text x="85"  y="10"  text-anchor="middle" fill="black" font-style="italic">r₁</text>
   <text x="440" y="220" text-anchor="middle" fill="black" font-style="italic">r₂</text>
-  <text x="30"  y="180" text-anchor="middle" fill="black" font-style="italic">r₃</text>
+  <text x="30"  y="190" text-anchor="middle" fill="black" font-style="italic">r₃</text>
   <text x="215" y="225" text-anchor="middle" fill="black" font-style="italic">r₄</text>
 
   <!-- Two query points. -->
   <circle cx="360" cy="170" r="5" fill="#000088" />
   <circle cx="110" cy="135" r="5" fill="#000088" />
   <text x="375" y="175" text-anchor="middle" fill="black" font-style="italic">q₀</text>
-  <text x="125" y="140" text-anchor="middle" fill="black" font-style="italic">q₁</text>
+  <text x="125" y="130" text-anchor="middle" fill="black" font-style="italic">q₁</text>
 </svg>
 <p style="font-size: 85%">
 The exact furthest neighbor of the query point <i>q₀</i> is <i>r₃</i>.
