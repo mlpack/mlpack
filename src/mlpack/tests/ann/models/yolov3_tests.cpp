@@ -130,7 +130,7 @@ TEST_CASE("YOLOv3TinySerialize", "[YOLOv3TinyTest][long]")
 
   arma::mat testData(imgSize * imgSize * 3, 1, arma::fill::randu);
 
-  YOLOv3Tiny<> xmlModel, jsonModel, binaryModel;
+  YOLOv3Tiny<EmptyLoss, ConstInitialization> xmlModel, jsonModel, binaryModel;
   SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
 
   arma::mat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
