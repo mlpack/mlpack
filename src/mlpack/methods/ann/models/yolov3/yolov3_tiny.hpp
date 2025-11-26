@@ -76,6 +76,7 @@ class YOLOv3Tiny
   YOLOv3Tiny(const size_t imgSize,
              const size_t numClasses,
              const size_t predictionsPerCell,
+             const size_t maxDetections,
              const std::vector<ElemType>& anchors);
 
   ~YOLOv3Tiny() { /* Nothing to do. */ }
@@ -92,9 +93,41 @@ class YOLOv3Tiny
       The input matrix dimensions should be (imgSize * imgSize, batchSize).
    * @param output Resulting bounding boxes.
    */
-  void Predict(const MatType& input, MatType& output)
+  void Predict(const MatType& input,
+               MatType& output,
+               arma::ucolvec& numDetections)
   {
-    model.Predict(input, output);
+    const size_t batchSize = input.n_cols;
+    MatType batchedOutput;
+    model.Predict(input, batchedOutput);
+
+    CubeType batchedOutputAlias;
+    MakeAlias(batchedOutputAlias, batchedOutput,
+              numAttributes, numBoxes, batchSize);
+
+    output = MatType(numAttributes * maxDetections, batchSize,
+                     arma::fill::zeros);
+    CubeType outputAlias;
+    MakeAlias(outputAlias, output,
+              numAttributes, maxDetections, batchSize);
+
+    numDetections = arma::ucolvec(batchSize, arma::fill::zeros);
+    for (size_t i = 0; i < batchSize; i++)
+    {
+      arma::ucolvec indices;
+
+      MatType bboxes = batchedOutputAlias.slice(i);
+      MatType confs = batchedOutputAlias.slice(i).row(4);
+      NMS<true>::Evaluate<MatType, MatType, arma::ucolvec>
+        (bboxes, confs, indices);
+
+      numDetections(i) = std::min<size_t>(maxDetections, indices.n_rows);
+      for (size_t j = 0; j < numDetections(i); j++)
+      {
+        outputAlias.slice(i).col(j) =
+          batchedOutputAlias.slice(i).col(indices(j));
+      }
+    }
   }
 
   // Serialize the model.
@@ -139,6 +172,11 @@ class YOLOv3Tiny
   size_t predictionsPerCell;
   // Number of output classes + 5 for (x, y, w, h, objectness)
   size_t numAttributes;
+  // Max detections used during batched inference, because NMS returns variable
+  // number of outputs.
+  size_t maxDetections;
+  // Total number of boxes
+  size_t numBoxes;
 };
 
 } // namespace mlpack

@@ -50,7 +50,7 @@ void NMS<UseCoordinates>::Evaluate(
   arma::ucolvec sortedIndices = arma::sort_index(confidenceScores);
 
   // Pre-Compute area of each bounding box.
-  arma::mat area;
+  BoundingBoxesType area;
   if (UseCoordinates)
   {
     area = (boundingBoxes.row(2) - boundingBoxes.row(0)) %
