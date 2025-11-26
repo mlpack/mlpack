@@ -22,7 +22,7 @@ YOLOv3Layer<MatType>::YOLOv3Layer(
     const size_t numAttributes,
     const size_t gridSize,
     const size_t predictionsPerCell,
-    const std::vector<ElemType> anchors) :
+    const std::vector<ElemType>& anchors) :
     Layer<MatType>(),
     imgSize(imgSize),
     numAttributes(numAttributes),

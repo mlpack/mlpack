@@ -70,7 +70,7 @@ class YOLOv3Layer : public Layer<MatType>
               const size_t numAttributes,
               const size_t gridSize,
               const size_t predictionsPerCell,
-              const std::vector<ElemType> anchors);
+              const std::vector<ElemType>& anchors);
 
   YOLOv3Layer* Clone() const override { return new YOLOv3Layer(*this); }
 
@@ -89,11 +89,9 @@ class YOLOv3Layer : public Layer<MatType>
    * NOTE: This will be changed when training is implemented.
    *
    * Takes in 3d input and outputs bounding boxes, based on anchors,
-   * input image size and cell position.
+   * input image size and cell position, for each batch item.
    *
-   * Outputs bounding boxes, whose coordinates are represent by center x and
-   * center y position. If you require x1, y1, x2, y2, you will need to
-   * convert.
+   * Bounding boxes are outputted in the format: x1, y1, x2, y2.
    *
    * @param input Input data representing outputs of model.
    * @param output Resulting bounding boxes after being normalized to image.
