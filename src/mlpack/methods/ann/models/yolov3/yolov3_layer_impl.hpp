@@ -234,10 +234,10 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
 
 template <typename MatType>
 void YOLOv3Layer<MatType>::Backward(
-    const MatType& input,
-    const MatType& output,
-    const MatType& gy,
-    MatType& g)
+    const MatType& /* input */,
+    const MatType& /* output */,
+    const MatType& /* gy */,
+    MatType& /* g */)
 {
   throw std::runtime_error("YOLOv3Layer::Backward() not implemented.");
 }
