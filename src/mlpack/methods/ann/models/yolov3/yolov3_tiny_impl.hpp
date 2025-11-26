@@ -197,6 +197,8 @@ void YOLOv3Tiny<
   ar(CEREAL_NVP(imgSize));
   ar(CEREAL_NVP(predictionsPerCell));
   ar(CEREAL_NVP(numAttributes));
+  ar(CEREAL_NVP(maxDetections));
+  ar(CEREAL_NVP(numBoxes));
 }
 
 } // namespace mlpack
