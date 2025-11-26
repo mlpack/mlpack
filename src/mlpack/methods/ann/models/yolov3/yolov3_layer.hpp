@@ -138,8 +138,6 @@ class YOLOv3Layer : public Layer<MatType>
   std::vector<ElemType> anchors;
   // Number of bounding boxes per cell.
   size_t predictionsPerCell;
-  // Anchors setup
-  bool anchorsSetup;
   // Matrix of anchor widths.
   MatType anchorsW;
   // Matrix of anchor height.
