@@ -108,7 +108,8 @@ TEST_CASE("YOLOv3TinyIncorrectAnchors", "[YOLOv3TinyTest][long]")
   const size_t predictionsPerCell = 1;
   const size_t max = 100;
   const std::vector<double> anchors = { 0, 1, 2, 3, 4, 5, 6, 7 };
-  REQUIRE_THROWS(YOLOv3Tiny(imgSize, numClasses, predictionsPerCell, max, anchors));
+  REQUIRE_THROWS(YOLOv3Tiny(imgSize, numClasses, predictionsPerCell, max,
+                            anchors));
 }
 
 /*
