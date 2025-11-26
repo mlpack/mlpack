@@ -43,6 +43,7 @@ inline void FindExtrema(const arma::Col<eT>& h,
       minTemp.push_back(i);
   }
 
+  // end points are extrema (simplified from libeemd for now)
   if (!maxTemp.empty())
   {
     if (maxTemp.front() != 0)
@@ -79,10 +80,8 @@ inline void SiftingStep(const arma::Col<eT>& h,
   arma::Col<eT> upper(N), lower(N);
 
   FindExtrema(h, maxIdx, minIdx);
-//   BuildEnvelope(h, maxIdx, upper);
-//   BuildEnvelope(h, minIdx, lower);
-  BuildSplineEnvelope(h, maxIdx, upper);
-  BuildSplineEnvelope(h, minIdx, lower);
+  BuildSplineEnvelope(h, maxIdx, upper); //cubic spline 
+  BuildSplineEnvelope(h, minIdx, lower); // implementation seperate
   hNext.set_size(N);
   for (arma::uword i = 0; i < N; ++i)
   {
@@ -90,8 +89,11 @@ inline void SiftingStep(const arma::Col<eT>& h,
     hNext[i] = h[i] - m;
   }
 }
+// no enforcment of # zero crossings  = # extrema
+// and local mean = 0  
+// more rigorous conditons to be added once this works. 
 
-// Compute the first IMF of `signal` via repeated sifting.
+// repeat sifting
 template<typename eT>
 inline void FirstImf(const arma::Col<eT>& signal,
                      arma::Col<eT>& imf,
@@ -105,7 +107,7 @@ inline void FirstImf(const arma::Col<eT>& signal,
   {
     SiftingStep(h, hNew);
 
-    // Simple convergence: relative L2 change.
+    // convergence based on relative L2 change.
     const double num = arma::norm(hNew - h, 2);
     const double den = arma::norm(h, 2);
     const double relChange = (den > 0.0) ? (num / den) : num;
