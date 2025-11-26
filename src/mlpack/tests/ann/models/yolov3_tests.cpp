@@ -40,7 +40,8 @@ TEST_CASE("YOLOv3TinyImageSize", "[YOLOv3TinyTest][long]")
   const size_t max = 100;
   const std::vector<double> anchors =
     { 10, 14, 23, 27, 37, 58, 81, 82, 135, 169, 344, 319 };
-  YOLOv3Tiny<> model(imgSize, numClasses, predictionsPerCell, max, anchors);
+  YOLOv3Tiny<EmptyLoss, ConstInitialization>
+    model(imgSize, numClasses, predictionsPerCell, max, anchors);
 
   arma::mat testInput(imgSize * imgSize * 3, 1);
   arma::mat testOutput;
@@ -62,7 +63,9 @@ TEST_CASE("YOLOv3TinyClasses", "[YOLOv3TinyTest][long]")
   const size_t max = 100;
   const std::vector<double> anchors =
     { 10, 14, 23, 27, 37, 58, 81, 82, 135, 169, 344, 319 };
-  YOLOv3Tiny<> model(imgSize, numClasses, predictionsPerCell, max, anchors);
+
+  YOLOv3Tiny<EmptyLoss, ConstInitialization>
+    model(imgSize, numClasses, predictionsPerCell, max, anchors);
 
   arma::mat testInput(imgSize * imgSize * 3, 1);
   arma::mat testOutput;
@@ -84,7 +87,9 @@ TEST_CASE("YOLOv3TinyPredictionsPerCell", "[YOLOv3TinyTest][long]")
   const size_t max = 100;
   const std::vector<double> anchors =
     { 10, 14, 23, 27 };
-  YOLOv3Tiny<> model(imgSize, numClasses, predictionsPerCell, max, anchors);
+
+  YOLOv3Tiny<EmptyLoss, ConstInitialization>
+    model(imgSize, numClasses, predictionsPerCell, max, anchors);
 
   arma::mat testInput(imgSize * imgSize * 3, 1);
   arma::mat testOutput;
@@ -120,7 +125,8 @@ TEST_CASE("YOLOv3TinySerialize", "[YOLOv3TinyTest][long]")
   const size_t max = 100;
   const std::vector<double> anchors =
     { 10, 14, 23, 27, 37, 58, 81, 82, 135, 169, 344, 319 };
-  YOLOv3Tiny<> model(imgSize, numClasses, predictionsPerCell, max, anchors);
+  YOLOv3Tiny<EmptyLoss, ConstInitialization>
+    model(imgSize, numClasses, predictionsPerCell, max, anchors);
 
   arma::mat testData(imgSize * imgSize * 3, 1, arma::fill::randu);
 
