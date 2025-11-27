@@ -48,8 +48,8 @@ and can have the type of tree specified via template parameters:
 
  * [`KNN`](../methods/knn.md): `k`-nearest-neighbor search (exact and
    approximate)
- * [`NeighborSearch`](/src/mlpack/methods/neighbor_search/neighbor_search.hpp)
-   (for k-nearest-neighbor and k-furthest-neighbor)
+ * [`KFN`](../methods/kfn.md): `k`-furthest-neighbor search (exact and
+   approximate)
  * [`RangeSearch`](/src/mlpack/methods/range_search/range_search.hpp)
  * [`KDE`](/src/mlpack/methods/kde/kde.hpp)
  * [`FastMKS`](/src/mlpack/methods/fastmks/fastmks.hpp)

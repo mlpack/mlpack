@@ -52,7 +52,7 @@ BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
 BINDING_SEE_ALSO("@preprocess_imputer", "#preprocess_imputer");
 #endif
 BINDING_SEE_ALSO("One-hot encoding on Wikipedia",
-        "https://en.m.wikipedia.org/wiki/One-hot");
+    "https://en.wikipedia.org/wiki/One-hot");
 
 // Define parameters for data.
 PARAM_MATRIX_AND_INFO_IN_REQ("input", "Matrix containing data.", "i");

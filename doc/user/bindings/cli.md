@@ -3021,7 +3021,7 @@ $ mlpack_preprocess_one_hot_encoding --input_file X.arff --output_file
 
  - [mlpack_preprocess_binarize](#preprocess_binarize)
  - [mlpack_preprocess_describe](#preprocess_describe)
- - [One-hot encoding on Wikipedia](https://en.m.wikipedia.org/wiki/One-hot)
+ - [One-hot encoding on Wikipedia](https://en.wikipedia.org/wiki/One-hot)
 
 ## mlpack_radical
 {: #radical }
