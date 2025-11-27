@@ -31,11 +31,15 @@ void NMS<UseCoordinates>::Evaluate(
     OutputType& selectedIndices,
     const double threshold)
 {
-  Log::Assert(confidenceScores.n_cols == boundingBoxes.n_cols, "Each "
-      "bounding box must correspond to atleast and only 1 bounding box. "
-      "Found " + std::to_string(confidenceScores.n_cols) + " confidence "
-      "scores for " + std::to_string(boundingBoxes.n_cols) +
-      " bounding boxes.");
+  Log::Assert(boundingBoxes.n_rows >= 4, "Bounding boxes must "
+      "contain at least 4 rows determining coordinates of bounding "
+      "box either in {x1, y1, x2, y2} or {x, y, w, h} format.");
+
+  Log::Assert(confidenceScores.n_rows == boundingBoxes.n_cols, "Each "
+    "bounding box must correspond to at least and only 1 bounding box. "
+    "Found " + std::to_string(confidenceScores.n_cols) + " confidence "
+    "scores for " + std::to_string(boundingBoxes.n_cols) +
+    " bounding boxes.");
 
   // Clear selected bounding boxes.
   selectedIndices.clear();
