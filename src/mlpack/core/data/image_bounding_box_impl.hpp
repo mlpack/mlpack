@@ -44,7 +44,6 @@ inline void DrawLetter(MatType& src,
   const typename MatType::elem_type y,
   const size_t size)
 {
-  std::cout << "Drawing " << letter << "\n";
   const size_t fontWidth = 8;
   for (size_t i = 0; i < fontWidth; i++)
   {
