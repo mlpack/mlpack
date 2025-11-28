@@ -632,6 +632,10 @@ class DAGNetwork
   // Uses network indices as keys.
   std::unordered_map<size_t, size_t> layerAxes;
 
+  // Connection type for some node that should have multiple parent nodes.
+  // If this exists for a layer with <= 1 parent, it gets ignored.
+  std::unordered_map<size_t, ConnectionTypes> layerConnections;
+
   // Map layer index in network to layer index in sortedNetwork
   // Uses network indices as keys.
   std::unordered_map<size_t, size_t> sortedIndices;
@@ -715,10 +719,6 @@ class DAGNetwork
   bool layerMemoryIsSet;
 
   bool extraDeltasAllocated;
-
-  // Connection type for some node that should have multiple parent nodes.
-  // If this exists for a layer with <= 1 parent, it gets ignored.
-  std::unordered_map<size_t, ConnectionTypes> layerConnections;
 };
 
 } // namespace mlpack

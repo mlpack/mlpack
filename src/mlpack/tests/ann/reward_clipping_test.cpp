@@ -21,7 +21,7 @@ using namespace mlpack;
 using namespace ens;
 
 // Test checking that reward clipping works with vanilla update.
-TEST_CASE("ClippedRewardTest", "[RewardClippingTest]")
+TEST_CASE("ClippedRewardTest", "[RewardClippingTest][tiny]")
 {
   Pendulum task;
   RewardClipping<Pendulum> rewardClipping(task, -2.0, +2.0);

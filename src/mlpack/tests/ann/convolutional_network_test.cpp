@@ -442,7 +442,7 @@ TEST_CASE("CheckCopyVanillaNetworkTest", "[ConvolutionalNetworkTest][long]")
   CheckMoveFunction<>(model1, X, Y, 8);
 }
 
-TEST_CASE("Issue2986", "[ConvolutionalNetworkTest]")
+TEST_CASE("Issue2986", "[ConvolutionalNetworkTest][tiny]")
 {
   // Ensure that the code snippet in issue #2986 succeeds without any issues.
   arma::mat input, output, delta;

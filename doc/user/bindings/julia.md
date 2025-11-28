@@ -3052,7 +3052,7 @@ julia> X_ouput = preprocess_one_hot_encoding(X; dimensions=1)
 
  - [preprocess_binarize()](#preprocess_binarize)
  - [preprocess_describe()](#preprocess_describe)
- - [One-hot encoding on Wikipedia](https://en.m.wikipedia.org/wiki/One-hot)
+ - [One-hot encoding on Wikipedia](https://en.wikipedia.org/wiki/One-hot)
 
 ## radical()
 {: #radical }
