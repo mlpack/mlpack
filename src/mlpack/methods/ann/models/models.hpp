@@ -12,6 +12,8 @@
 #ifndef MLPACK_METHODS_ANN_MODELS_MODELS_HPP
 #define MLPACK_METHODS_ANN_MODELS_MODELS_HPP
 
+// YOLOv3 object detection models
+#include "yolov3/yolov3.hpp"
 #include "yolov3/yolov3_tiny.hpp"
 
 #endif
