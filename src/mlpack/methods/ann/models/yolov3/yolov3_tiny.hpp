@@ -117,8 +117,8 @@ class YOLOv3Tiny
     {
       arma::ucolvec indices;
 
-      MatType bboxes = batchedOutputAlias.slice(i);
-      MatType confs = batchedOutputAlias.slice(i).row(4);
+      MatType& bboxes = batchedOutputAlias.slice(i);
+      MatType& confs = batchedOutputAlias.slice(i).row(4).t();
       NMS<true>::Evaluate<MatType, MatType, arma::ucolvec>
         (bboxes, confs, indices);
 

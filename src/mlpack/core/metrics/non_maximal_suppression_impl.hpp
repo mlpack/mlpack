@@ -36,8 +36,8 @@ void NMS<UseCoordinates>::Evaluate(
       "box either in {x1, y1, x2, y2} or {x, y, w, h} format.");
 
   Log::Assert(confidenceScores.n_rows == boundingBoxes.n_cols, "Each "
-    "bounding box must correspond to at least and only 1 bounding box. "
-    "Found " + std::to_string(confidenceScores.n_cols) + " confidence "
+    "confidence score must correspond to 1 bounding box. Found" +
+    std::to_string(confidenceScores.n_rows) + " confidence "
     "scores for " + std::to_string(boundingBoxes.n_cols) +
     " bounding boxes.");
 
