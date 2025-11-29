@@ -45,8 +45,7 @@ TEST_CASE("YOLOv3TinyImageSize", "[YOLOv3TinyTest][long]")
 
   arma::mat testInput(imgSize * imgSize * 3, 1);
   arma::mat testOutput;
-  arma::ucolvec numOutputs;
-  model.Predict(testInput, testOutput, numOutputs);
+  model.Predict(testInput, testOutput);
 
   const size_t expectedRows = max * (5 + numClasses);
   REQUIRE(testOutput.n_rows == expectedRows);
@@ -69,8 +68,7 @@ TEST_CASE("YOLOv3TinyClasses", "[YOLOv3TinyTest][long]")
 
   arma::mat testInput(imgSize * imgSize * 3, 1);
   arma::mat testOutput;
-  arma::ucolvec numOutputs;
-  model.Predict(testInput, testOutput, numOutputs);
+  model.Predict(testInput, testOutput);
 
   const size_t expectedRows = max * (5 + numClasses);
   REQUIRE(testOutput.n_rows == expectedRows);
@@ -93,8 +91,7 @@ TEST_CASE("YOLOv3TinyPredictionsPerCell", "[YOLOv3TinyTest][long]")
 
   arma::mat testInput(imgSize * imgSize * 3, 1);
   arma::mat testOutput;
-  arma::ucolvec numOutputs;
-  model.Predict(testInput, testOutput, numOutputs);
+  model.Predict(testInput, testOutput);
 
   const size_t expectedRows = max * (5 + numClasses);
   REQUIRE(testOutput.n_rows == expectedRows);
@@ -134,11 +131,10 @@ TEST_CASE("YOLOv3TinySerialize", "[YOLOv3TinyTest][long]")
   SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
 
   arma::mat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
-  arma::ucolvec numPredictions, numXml, numJson, numBinary;
-  model.Predict(testData, predictions, numPredictions);
-  xmlModel.Predict(testData, xmlPredictions, numXml);
-  jsonModel.Predict(testData, jsonPredictions, numJson);
-  binaryModel.Predict(testData, binaryPredictions, numBinary);
+  model.Predict(testData, predictions);
+  xmlModel.Predict(testData, xmlPredictions);
+  jsonModel.Predict(testData, jsonPredictions);
+  binaryModel.Predict(testData, binaryPredictions);
 
   CheckMatrices(predictions, xmlPredictions, jsonPredictions,
       binaryPredictions);
