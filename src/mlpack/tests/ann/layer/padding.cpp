@@ -23,7 +23,7 @@ using namespace mlpack;
 /**
  * Simple padding layer test.
  */
-TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
+TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest][tiny]")
 {
   arma::mat output, input, delta;
   Padding module(1, 2, 3, 4);

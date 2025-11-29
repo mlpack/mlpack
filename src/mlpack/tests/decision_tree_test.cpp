@@ -1029,7 +1029,7 @@ TEST_CASE("BestCategoricalBuildTestWithWeightNoisy", "[DecisionTreeTest]")
  * A basic construction of the decision tree---ensure that we can create the
  * tree and that it split at least once.
  */
-TEST_CASE("BasicConstructionTest", "[DecisionTreeTest]")
+TEST_CASE("BasicConstructionTest", "[DecisionTreeTest][tiny]")
 {
   arma::mat dataset(10, 100, arma::fill::randu);
   arma::Row<size_t> labels(100);
@@ -1054,7 +1054,7 @@ TEST_CASE("BasicConstructionTest", "[DecisionTreeTest]")
 /**
  * Construct a tree with weighted labels.
  */
-TEST_CASE("BasicConstructionTestWithWeight", "[DecisionTreeTest]")
+TEST_CASE("BasicConstructionTestWithWeight", "[DecisionTreeTest][tiny]")
 {
   arma::mat dataset(10, 100, arma::fill::randu);
   arma::Row<size_t> labels(100);
@@ -1084,7 +1084,7 @@ TEST_CASE("BasicConstructionTestWithWeight", "[DecisionTreeTest]")
  * Construct the decision tree on numeric data only and see that we can fit it
  * exactly and achieve perfect performance on the training set.
  */
-TEST_CASE("PerfectTrainingSet", "[DecisionTreeTest]")
+TEST_CASE("PerfectTrainingSet", "[DecisionTreeTest][tiny]")
 {
   arma::mat dataset(10, 100, arma::fill::randu);
   arma::Row<size_t> labels(100);
@@ -1123,7 +1123,7 @@ TEST_CASE("PerfectTrainingSet", "[DecisionTreeTest]")
 /**
  * Construct the decision tree with weighted labels
  */
-TEST_CASE("PerfectTrainingSetWithWeight", "[DecisionTreeTest]")
+TEST_CASE("PerfectTrainingSetWithWeight", "[DecisionTreeTest][tiny]")
 {
   // Completely random dataset with no structure.
   arma::mat dataset(10, 100, arma::fill::randu);
@@ -1315,7 +1315,7 @@ TEST_CASE("SimpleGeneralizationFMatTest", "[DecisionTreeTest]")
 /**
  * Test that we can build a decision tree on a simple categorical dataset.
  */
-TEST_CASE("CategoricalBuildTest", "[DecisionTreeTest]")
+TEST_CASE("CategoricalBuildTest", "[DecisionTreeTest][tiny]")
 {
   arma::mat d;
   arma::Row<size_t> l;
@@ -1350,7 +1350,7 @@ TEST_CASE("CategoricalBuildTest", "[DecisionTreeTest]")
  * Test that we can build a decision tree with weights on a simple categorical
  * dataset.
  */
-TEST_CASE("CategoricalBuildTestWithWeight", "[DecisionTreeTest]")
+TEST_CASE("CategoricalBuildTestWithWeight", "[DecisionTreeTest][tiny]")
 {
   arma::mat d;
   arma::Row<size_t> l;

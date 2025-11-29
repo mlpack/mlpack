@@ -428,8 +428,8 @@ TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char,
 /**
  * Test that if we resize an image, we get the pixels that we expect.
  */
-TEMPLATE_TEST_CASE("ResizeCropPixelTest", "[ImageTest]", unsigned char, size_t,
-    float, double)
+TEMPLATE_TEST_CASE("ResizeCropPixelTest", "[ImageTest][tiny]", unsigned char,
+    size_t, float, double)
 {
   typedef TestType eT;
 
@@ -649,4 +649,97 @@ TEST_CASE("InterleaveChannelsOnePixel", "[ImageTest]")
   arma::mat newLayout = InterleaveChannels(image, info);
   arma::mat expectedImage(image);
   CheckMatrices(newLayout, expectedImage);
+}
+
+/**
+ * Test Letterbox returns image correctly sized.
+ */
+TEST_CASE("LetterboxImages", "[ImageTest]")
+{
+  data::ImageOptions opt(40, 20, 1);
+  const size_t imgSize = 16;
+  arma::mat image(800, 1);
+
+  const double fillValue = 0.5;
+  data::LetterboxImages(image, opt, imgSize, imgSize, fillValue);
+
+  REQUIRE(image.n_rows == imgSize * imgSize * opt.Channels());
+  REQUIRE(image.n_cols == 1);
+  REQUIRE(image.at(0, 0) == fillValue);
+  REQUIRE(image.at(image.n_rows - 1, 0) == fillValue);
+}
+
+/**
+ * Test Letterbox on image with no pixels.
+ */
+TEST_CASE("LetterboxImagesNoPixels", "[ImageTest]")
+{
+  data::ImageOptions opt(0, 0, 1);
+  arma::mat image(0, 1);
+  REQUIRE_THROWS(data::LetterboxImages(image, opt, 4, 4, 0.5));
+}
+
+/**
+ * Test Letterbox throws error when image doesn't match image options.
+ */
+TEST_CASE("LetterboxImagesIncorrectImageOptions", "[ImageTest]")
+{
+  data::ImageOptions opt(5, 6, 1);
+  arma::mat image(10, 1);
+  image.fill(5.0);
+
+  REQUIRE_THROWS(data::LetterboxImages(image, opt, 4, 4, 0.5));
+}
+
+/**
+ * Test Letterbox when more than one image exists.
+ */
+TEST_CASE("LetterboxImagesMultipleImages", "[ImageTest]")
+{
+  data::ImageOptions opt(32, 24, 1);
+  arma::mat images(32 * 24, 2);
+  images.fill(5.0);
+
+  const double fillValue = 0.5;
+  data::LetterboxImages(images, opt, 24, 24, fillValue);
+
+  CheckMatrices(images.col(0), images.col(1));
+  REQUIRE(images.at(0, 0) == fillValue);
+  REQUIRE(images.at(images.n_rows - 1, 0) == fillValue);
+}
+
+/**
+ * Test Letterbox throws error when channels != 1 or 3.
+ */
+TEST_CASE("LetterboxImagesIncorrectChannels", "[ImageTest]")
+{
+  data::ImageOptions opt(5, 2, 2);
+  arma::mat image(20, 1);
+  image.fill(5.0);
+
+  REQUIRE_THROWS(data::LetterboxImages(image, opt, 4, 4, 0.5));
+}
+
+/**
+ * Test Letterbox when output width and height are different
+ */
+TEST_CASE("LetterboxImagesRectangularOutput", "[ImageTest]")
+{
+  data::ImageOptions opt(40, 20, 1);
+  const size_t width = 16;
+  const size_t height = 12;
+  arma::mat image(40 * 20, 3);
+  image.fill(5.0);
+
+  const double fillValue = 0.5;
+  data::LetterboxImages(image, opt, width, height, fillValue);
+
+  REQUIRE(image.n_rows == width * height * opt.Channels());
+  REQUIRE(image.n_cols == 3);
+  REQUIRE(image.at(0, 0) == fillValue);
+  REQUIRE(image.at(0, 1) == fillValue);
+  REQUIRE(image.at(0, 2) == fillValue);
+  REQUIRE(image.at(image.n_rows - 1, 0) == fillValue);
+  REQUIRE(image.at(image.n_rows - 1, 1) == fillValue);
+  REQUIRE(image.at(image.n_rows - 1, 2) == fillValue);
 }

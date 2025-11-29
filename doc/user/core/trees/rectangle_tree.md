@@ -537,7 +537,7 @@ The `RStarTreeSplit` class implements the improved R\*-tree splitting strategy
 and can be used with the [`RectangleTree`](#rectangletree) class.  This is the
 splitting strategy used for the [`RStarTree`](r_star_tree.md) class, and is the
 strategy proposed in the
-[R\*-tree paper (pdf)](https://core.ac.uk/download/pdf/12165134.pdf).  The
+[R\*-tree paper (pdf)](https://files.core.ac.uk/download/pdf/12165134.pdf).  The
 strategy computes, for each possible binary split in each dimension,
 
  * The combined volume of the two child nodes,

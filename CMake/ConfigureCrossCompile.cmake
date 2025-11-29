@@ -55,57 +55,33 @@ macro(search_openblas version)
         if (CCACHE_PROGRAM)
           set (ENV{CC} "${CCACHE_PROGRAM} $ENV{CC}")
         endif ()
-        set(ENV{TARGET} "${OPENBLAS_TARGET}")
-        set(ENV{BINARY} "${OPENBLAS_BINARY}")
-        set(ENV{HOSTCC} "gcc")
-        set(ENV{NO_SHARED} 1)
-        # Set any extra environment variables that the user specified.
-        # First, turn OPENBLAS_EXTRA_ARGS into a list.
+        # Turn OPENBLAS_EXTRA_ARGS into a list so that we can use them as
+        # parameters to make.
         separate_arguments(ARG_LIST NATIVE_COMMAND ${OPENBLAS_EXTRA_ARGS})
-        foreach (ARG ${ARG_LIST})
-          # ARG will be of the form VAR=value; split on the =.
-          string(REPLACE "=" ";" ARG_LIST_ELEM "${ARG}")
-          list(LENGTH ARG_LIST_ELEM ARG_LEN)
-          if (ARG_LEN EQUAL 2)
-            list(GET ARG_LIST_ELEM 0 ARG_NAME)
-            list(GET ARG_LIST_ELEM 1 ARG_VAL)
-            set(ENV{${ARG_NAME}} ${ARG_VAL})
-          else ()
-            message(WARNING "OpenBLAS flag '${ARG}' is not of the form VAR=val;
-ignored!")
-          endif ()
-        endforeach()
 
-        # Now run the OpenBLAS build with all of the environment variables set.
+        # Now run the OpenBLAS build with all of the configuration variables set.
         execute_process(
-            COMMAND make
+            COMMAND make NO_SHARED=1 HOSTCC=gcc TARGET=${OPENBLAS_TARGET} BINARY=${OPENBLAS_BINARY} ${ARG_LIST}
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version})
 
         # Don't leak the environment variables back into the rest of the
         # configuration.
-        unset(ENV{NO_SHARED})
-        unset(ENV{HOSTCC})
-        unset(ENV{BINARY})
-        unset(ENV{TARGET})
         unset(ENV{COMMON_OPT})
         set(ENV{CC} ${OLD_CC})
-        foreach (ARG ${ARG_LIST})
-          string(REPLACE "=" ";" ARG_LIST_ELEM "${ARG}")
-          list(LENGTH ARG_LIST_ELEM ARG_LEN)
-          if (ARG_LEN EQUAL 2)
-            list(GET ARG_LIST_ELEM 0 ARG_NAME)
-            unset(ENV{${ARG_NAME}})
-          endif ()
-        endforeach ()
       endif()
       file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/libopenblas.a")
       set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
-      set(LAPACK_openblas_LIBRARY ${OPENBLAS_LIBRARIES}) 
+      set(LAPACK_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
       set(BLA_VENDOR OpenBLAS)
       set(BLAS_FOUND ON)
     endif()
   endif()
   find_library(GFORTRAN NAMES libgfortran.a)
+  if (GFORTRAN)
+    set(CROSS_COMPILE_SUPPORT_LIBRARIES ${GFORTRAN})
+  endif()
   find_library(PTHREAD NAMES libpthread.a)
-  set(CROSS_COMPILE_SUPPORT_LIBRARIES ${GFORTRAN} ${PTHREAD})
+  if (PTHREAD)
+    set(CROSS_COMPILE_SUPPORT_LIBRARIES ${PTHREAD})
+  endif()
 endmacro()

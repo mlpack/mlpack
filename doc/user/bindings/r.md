@@ -3054,7 +3054,7 @@ R> X_ouput <- output$output
 
  - [preprocess_binarize()](#preprocess_binarize)
  - [preprocess_describe()](#preprocess_describe)
- - [One-hot encoding on Wikipedia](https://en.m.wikipedia.org/wiki/One-hot)
+ - [One-hot encoding on Wikipedia](https://en.wikipedia.org/wiki/One-hot)
 
 ## radical()
 {: #radical }
