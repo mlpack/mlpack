@@ -204,12 +204,12 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
 
   // w
   outputCube.tube(grid * 2, 0, grid * 3 - 1, cols) =
-    arma::repcube(anchorsW, 1, 1, batchSize) %
+    anchorsWBS %
     arma::exp(inputCube.tube(grid * 2, 0, grid * 3 - 1, cols));
 
   // h
   outputCube.tube(grid * 3, 0, grid * 4 - 1, cols) =
-    arma::repcube(anchorsH, 1, 1, batchSize) %
+    anchorsHBS %
     arma::exp(inputCube.tube(grid * 3, 0, grid * 4 - 1, cols));
 
   // apply logistic sigmoid to objectness and classification logits.
