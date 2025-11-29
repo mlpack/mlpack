@@ -72,6 +72,8 @@ struct IsCube<coot::Cube<eT> >
   static const bool value = true;
 };
 
+// Get the Armadillo equivalent of a Bandicoot type
+
 template<typename MatType>
 struct GetArmaType
 {
