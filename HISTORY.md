@@ -38,6 +38,8 @@ _????-??-??_
  * Fix infinite recursion in `Octree` when the number of identical points
    exceeds `maxLeafSize` (#4020).
 
+ * Add YOLOv3Tiny for object detection (#4023).
+
 ## mlpack 4.6.2
 
 _2025-05-22_
