@@ -192,31 +192,25 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
   // TODO: add if (this->training). Add check for different batchSize.
   const size_t cols = predictionsPerCell - 1;
 
-  // x1
+  // x
   outputCube.tube(0, 0, grid - 1, cols) =
     (xOffset + 1 / (1 + arma::exp(-inputCube.tube(0, 0, grid - 1, cols))))
-    * stride
-    - anchorsWBS % arma::exp(inputCube.tube(grid * 2, 0, grid * 3 - 1, cols))
-    / 2;
+    * stride;
 
-  // y1
-  outputCube.tube(grid, 0, grid * 2 - 1, cols) = (yOffset + 1 /
-    (1 + arma::exp(-inputCube.tube(grid, 0, grid * 2 - 1, cols)))) * stride
-    - anchorsHBS % arma::exp(inputCube.tube(grid * 3, 0, grid * 4 - 1, cols))
-    / 2;
+  // y
+  outputCube.tube(grid, 0, grid * 2 - 1, cols) =
+    (yOffset + 1 / (1 + arma::exp(-inputCube.tube(grid, 0, grid * 2 - 1, cols))
+    )) * stride;
 
-  // x2
+  // w
   outputCube.tube(grid * 2, 0, grid * 3 - 1, cols) =
-    (xOffset + 1 / (1 + arma::exp(-inputCube.tube(0, 0, grid - 1, cols))))
-    * stride
-    + anchorsWBS % arma::exp(inputCube.tube(grid * 2, 0, grid * 3 - 1, cols))
-    / 2;
+    arma::repcube(anchorsW, 1, 1, batchSize) %
+    arma::exp(inputCube.tube(grid * 2, 0, grid * 3 - 1, cols));
 
-  // y2
-  outputCube.tube(grid * 3, 0, grid * 4 - 1, cols) = (yOffset + 1 /
-    (1 + arma::exp(-inputCube.tube(grid, 0, grid * 2 - 1, cols)))) * stride
-    + anchorsHBS % arma::exp(inputCube.tube(grid * 3, 0, grid * 4 - 1, cols))
-    / 2;
+  // h
+  outputCube.tube(grid * 3, 0, grid * 4 - 1, cols) =
+    arma::repcube(anchorsH, 1, 1, batchSize) %
+    arma::exp(inputCube.tube(grid * 3, 0, grid * 4 - 1, cols));
 
   // apply logistic sigmoid to objectness and classification logits.
   outputCube.tube(grid * 4, 0, outputCube.n_rows - 1, cols) = 1. /

@@ -95,40 +95,9 @@ class YOLOv3
    * @param numDetections Number of bounding boxes in output per batch.
    */
   void Predict(const MatType& input,
-               MatType& output,
-               arma::ucolvec& numDetections)
+               MatType& output)
   {
-    const size_t batchSize = input.n_cols;
-    MatType batchedOutput;
-    model.Predict(input, batchedOutput);
-
-    CubeType batchedOutputAlias;
-    MakeAlias(batchedOutputAlias, batchedOutput,
-              numAttributes, numBoxes, batchSize);
-
-    output = MatType(numAttributes * maxDetections, batchSize,
-                     arma::fill::zeros);
-    CubeType outputAlias;
-    MakeAlias(outputAlias, output,
-              numAttributes, maxDetections, batchSize);
-
-    numDetections = arma::ucolvec(batchSize, arma::fill::zeros);
-    for (size_t i = 0; i < batchSize; i++)
-    {
-      arma::ucolvec indices;
-
-      const MatType& bboxes = batchedOutputAlias.slice(i);
-      const MatType& confs = batchedOutputAlias.slice(i).row(4).t();
-      NMS<true>::Evaluate<MatType, MatType, arma::ucolvec>
-        (bboxes, confs, indices);
-
-      numDetections(i) = std::min<size_t>(maxDetections, indices.n_rows);
-      for (size_t j = 0; j < numDetections(i); j++)
-      {
-        outputAlias.slice(i).col(j) =
-          batchedOutputAlias.slice(i).col(indices(j));
-      }
-    }
+    model.Predict(input, output);
   }
 
   // Serialize the model.
