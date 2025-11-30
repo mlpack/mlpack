@@ -18,6 +18,8 @@
 // In case it hasn't already been included.
 #include "load.hpp"
 
+#include "image_options.hpp"
+
 namespace mlpack {
 namespace data {
 

@@ -174,6 +174,48 @@ bool Save(const std::string& filename,
   return Save(filename, matrix, opts);
 }
 
+/**
+ * Save the image file from the given matrix.
+ *
+ * @param filename Name of the image file.
+ * @param matrix Matrix to save the image from.
+ * @param info An object of ImageInfo class.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Save(const std::string& filename,
+          const arma::Mat<eT>& matrix,
+          ImageInfo& opts,
+          const bool fatal)
+{
+  opts.Fatal() = fatal;
+  opts.Format() = FileType::ImageType;
+  std::vector<std::string> files;
+  files.push_back(filename);
+  return SaveImage(files, matrix, opts);
+}
+
+/**
+ * Save the image file from the given matrix.
+ *
+ * @param files A vector consisting of filenames.
+ * @param matrix Matrix to save the image from.
+ * @param info An object of ImageInfo class.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Save(const std::vector<std::string>& files,
+          const arma::Mat<eT>& matrix,
+          ImageInfo& opts,
+          const bool fatal)
+{
+  opts.Fatal() = fatal;
+  opts.Format() = FileType::ImageType;
+  return SaveImage(files, matrix, opts);
+}
+
 // Save a model to file.
 // Keep this implementation until mlpack 5.0.0 Then we can remove it.
 template<typename T>

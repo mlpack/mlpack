@@ -16,8 +16,6 @@
 
 #include <mlpack/core/stb/stb.hpp>
 
-#include "image_options.hpp"
-
 namespace mlpack {
 namespace data {
 

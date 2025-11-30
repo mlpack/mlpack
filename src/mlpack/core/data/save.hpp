@@ -17,8 +17,10 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/log.hpp>
 
+#include "image_options.hpp"
 #include "text_options.hpp"
 #include "detect_file_type.hpp"
+#include "save_deprecated.hpp"
 #include "save_image.hpp"
 
 namespace mlpack {
@@ -49,6 +51,21 @@ bool Save(const std::string& filename,
           const DataOptionsType& opts,
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>* = 0);
+
+template<typename eT>
+bool Save(const std::vector<std::string>& files,
+          const arma::Mat<eT>& matrix,
+          ImageOptions& opts);
+
+// Image saving API for multiple files.
+template<typename eT>
+bool Save(const std::vector<std::string>& files,
+          const arma::Mat<eT>& matrix,
+          ImageOptions& opts)
+
+{
+  return SaveImage(files, matrix, opts);
+}
 
 } // namespace data
 } // namespace mlpack

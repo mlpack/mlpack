@@ -21,6 +21,7 @@
 
 #include "extension.hpp"
 #include "string_algorithms.hpp"
+#include "image_options.hpp"
 #include "text_options.hpp"
 #include "dataset_mapper.hpp"
 #include "detect_file_type.hpp"
@@ -30,6 +31,7 @@
 #include "load_numeric.hpp"
 #include "load_categorical.hpp"
 #include "load_image.hpp"
+#include "load_model.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
