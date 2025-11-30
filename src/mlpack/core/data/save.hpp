@@ -15,7 +15,6 @@
 #define MLPACK_CORE_DATA_SAVE_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/log.hpp>
 
 #include "image_options.hpp"
 #include "text_options.hpp"
