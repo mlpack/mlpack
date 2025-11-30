@@ -1026,7 +1026,7 @@ TEMPLATE_TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]",
   // Build a network and train it.
   RMSProp opt(0.001, 8, 0.99, 1e-08, 500 * numEpochs, 1e-5);
 
-  RNN<MeanSquaredError> net(rho);
+  RNN<MeanSquaredError, ConstInitialization> net(rho);
   net.Add<TestType>(outSize);
   net.Add<Linear>(1);
 
@@ -1052,7 +1052,7 @@ TEMPLATE_TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]",
   const double averageError = (totalError / timeSteps);
 
   // Now compute another network where we don't use the sequence lengths.
-  RNN<MeanSquaredError> net2(rho);
+  RNN<MeanSquaredError, ConstInitialization> net2(rho);
   net2.Add<TestType>(outSize);
   net2.Add<Linear>(1);
 
