@@ -76,7 +76,6 @@ class YOLOv3Tiny
   YOLOv3Tiny(const size_t imgSize,
              const size_t numClasses,
              const size_t predictionsPerCell,
-             const size_t maxDetections,
              const std::vector<ElemType>& anchors);
 
   ~YOLOv3Tiny() { /* Nothing to do. */ }
@@ -92,7 +91,6 @@ class YOLOv3Tiny
    * @param input Input data used for evaluating the specified function.
       The input matrix dimensions should be (imgSize * imgSize, batchSize).
    * @param output Resulting bounding boxes.
-   * @param numDetections Number of bounding boxes in output per batch.
    */
   void Predict(const MatType& input,
                MatType& output)
@@ -142,11 +140,6 @@ class YOLOv3Tiny
   size_t predictionsPerCell;
   // Number of output classes + 5 for (x, y, w, h, objectness)
   size_t numAttributes;
-  // Max detections used during batched inference, because NMS returns variable
-  // number of outputs.
-  size_t maxDetections;
-  // Total number of boxes
-  size_t numBoxes;
 };
 
 } // namespace mlpack

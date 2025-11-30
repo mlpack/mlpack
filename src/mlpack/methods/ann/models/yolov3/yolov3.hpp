@@ -76,7 +76,6 @@ class YOLOv3
   YOLOv3(const size_t imgSize,
          const size_t numClasses,
          const size_t predictionsPerCell,
-         const size_t maxDetections,
          const std::vector<ElemType>& anchors);
 
   ~YOLOv3() { /* Nothing to do. */ }
@@ -152,11 +151,6 @@ class YOLOv3
   size_t predictionsPerCell;
   // Number of output classes + 5 for (x, y, w, h, objectness)
   size_t numAttributes;
-  // Max detections used during batched inference, because NMS returns variable
-  // number of outputs.
-  size_t maxDetections;
-  // Total number of boxes
-  size_t numBoxes;
 };
 
 } // namespace mlpack

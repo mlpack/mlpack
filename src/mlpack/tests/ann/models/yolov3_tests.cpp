@@ -37,17 +37,17 @@ TEST_CASE("YOLOv3TinyImageSize", "[YOLOv3TinyTest][long]")
   const size_t imgSize = 320;
   const size_t numClasses = 80;
   const size_t predictionsPerCell = 3;
-  const size_t max = 100;
   const std::vector<double> anchors =
     { 10, 14, 23, 27, 37, 58, 81, 82, 135, 169, 344, 319 };
   YOLOv3Tiny<EmptyLoss, ConstInitialization>
-    model(imgSize, numClasses, predictionsPerCell, max, anchors);
+    model(imgSize, numClasses, predictionsPerCell, anchors);
 
   arma::mat testInput(imgSize * imgSize * 3, 1);
   arma::mat testOutput;
   model.Predict(testInput, testOutput);
 
-  const size_t expectedRows = max * (5 + numClasses);
+  const size_t expectedRows = (10 * 10 + 20 * 20) * predictionsPerCell *
+    (5 + numClasses);
   REQUIRE(testOutput.n_rows == expectedRows);
 }
 
@@ -64,13 +64,14 @@ TEST_CASE("YOLOv3TinyClasses", "[YOLOv3TinyTest][long]")
     { 10, 14, 23, 27, 37, 58, 81, 82, 135, 169, 344, 319 };
 
   YOLOv3Tiny<EmptyLoss, ConstInitialization>
-    model(imgSize, numClasses, predictionsPerCell, max, anchors);
+    model(imgSize, numClasses, predictionsPerCell, anchors);
 
   arma::mat testInput(imgSize * imgSize * 3, 1);
   arma::mat testOutput;
   model.Predict(testInput, testOutput);
 
-  const size_t expectedRows = max * (5 + numClasses);
+  const size_t expectedRows = (13 * 13 + 26 * 26) * predictionsPerCell *
+    (5 + numClasses);
   REQUIRE(testOutput.n_rows == expectedRows);
 }
 
@@ -82,18 +83,18 @@ TEST_CASE("YOLOv3TinyPredictionsPerCell", "[YOLOv3TinyTest][long]")
   const size_t imgSize = 416;
   const size_t numClasses = 80;
   const size_t predictionsPerCell = 1;
-  const size_t max = 100;
   const std::vector<double> anchors =
     { 10, 14, 23, 27 };
 
   YOLOv3Tiny<EmptyLoss, ConstInitialization>
-    model(imgSize, numClasses, predictionsPerCell, max, anchors);
+    model(imgSize, numClasses, predictionsPerCell, anchors);
 
   arma::mat testInput(imgSize * imgSize * 3, 1);
   arma::mat testOutput;
   model.Predict(testInput, testOutput);
 
-  const size_t expectedRows = max * (5 + numClasses);
+  const size_t expectedRows = (13 * 13 + 26 * 26) * predictionsPerCell *
+    (5 + numClasses);
   REQUIRE(testOutput.n_rows == expectedRows);
 }
 
@@ -105,10 +106,8 @@ TEST_CASE("YOLOv3TinyIncorrectAnchors", "[YOLOv3TinyTest][long]")
   const size_t imgSize = 416;
   const size_t numClasses = 80;
   const size_t predictionsPerCell = 1;
-  const size_t max = 100;
   const std::vector<double> anchors = { 0, 1, 2, 3, 4, 5, 6, 7 };
-  REQUIRE_THROWS(YOLOv3Tiny(imgSize, numClasses, predictionsPerCell, max,
-                            anchors));
+  REQUIRE_THROWS(YOLOv3Tiny(imgSize, numClasses, predictionsPerCell, anchors));
 }
 
 /*
@@ -119,11 +118,10 @@ TEST_CASE("YOLOv3TinySerialize", "[YOLOv3TinyTest][long]")
   const size_t imgSize = 416;
   const size_t numClasses = 80;
   const size_t predictionsPerCell = 3;
-  const size_t max = 100;
   const std::vector<double> anchors =
     { 10, 14, 23, 27, 37, 58, 81, 82, 135, 169, 344, 319 };
   YOLOv3Tiny<EmptyLoss, ConstInitialization>
-    model(imgSize, numClasses, predictionsPerCell, max, anchors);
+    model(imgSize, numClasses, predictionsPerCell, anchors);
 
   arma::mat testData(imgSize * imgSize * 3, 1, arma::fill::randu);
 
