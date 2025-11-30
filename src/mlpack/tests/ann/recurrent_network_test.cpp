@@ -1017,7 +1017,7 @@ TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]")
   }
 
   // Build a network and train it.
-  RMSProp opt(0.003, 1, 0.99, 1e-08, 500 * numEpochs, 1e-5);
+  RMSProp opt(0.003, 8, 0.99, 1e-08, 500 * numEpochs, 1e-5);
 
   RNN<MeanSquaredError> net(rho);
   net.Add<LSTM>(10);
@@ -1050,7 +1050,7 @@ TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]")
   net2.Add<Linear>(1);
 
   // Train and predict, then compute the sum error.
-  RMSProp opt2(0.003, 1, 0.99, 1e-08, 500 * numEpochs / 2, 1e-5);
+  RMSProp opt2(0.003, 8, 0.99, 1e-08, 500 * numEpochs / 2, 1e-5);
   net2.Train(origData, origResponses, opt2);
   net2.Predict(origData, prediction);
   const double refAverageError = mean(abs(vectorise(origResponses) -

@@ -269,6 +269,19 @@ void LSTM<MatType>::Backward(
   deltaInputGate = deltaCell % blockInput % (inputGate % (1 - inputGate));
   deltaBlockInput = deltaCell % inputGate % (1 - square(blockInput));
 
+  // Zero out masked columns.
+  for (size_t i = 0; i < this->mask.n_elem; i++)
+  {
+    if (this->mask[i] == 0)
+    {
+      deltaBlockInput.col(i).zeros();
+      deltaInputGate.col(i).zeros();
+      deltaForgetGate.col(i).zeros();
+      deltaOutputGate.col(i).zeros();
+      thisCell.col(i).zeros();
+    }
+  }
+
   // Finally, compute deltaX (which is what we wanted all along).
   g = blockInputWeight.t() * deltaBlockInput +
       inputGateWeight.t() * deltaInputGate +
