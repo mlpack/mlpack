@@ -1023,59 +1023,49 @@ TEMPLATE_TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]",
                       responses.n_rows - 1, c, responses.n_slices - 1).randu();
   }
 
-  // Try the test up to 5 times in case we get unlucky with initalization.
-  bool success = false;
-  for (size_t i = 0; i < 5; i++)
+  // Build a network and train it.
+  RMSProp opt(0.001, 8, 0.99, 1e-08, 500 * numEpochs, 1e-5);
+
+  RNN<MeanSquaredError> net(rho);
+  net.Add<TestType>(outSize);
+  net.Add<Linear>(1);
+
+  // Train on all the data.
+  net.Train(data, responses, lengths, opt);
+
+  // Make sure that the predictions match the data reasonably.
+  arma::cube prediction;
+  net.Predict(data, prediction, lengths);
+
+  // Sum the error for all sequences.
+  size_t timeSteps = 0;
+  double totalError = 0.0;
+  for (size_t c = 0; c < 500; ++c)
   {
-    // Build a network and train it.
-    RMSProp opt(0.001, 8, 0.99, 1e-08, 500 * numEpochs, 1e-5);
-
-    RNN<MeanSquaredError> net(rho);
-    net.Add<TestType>(outSize);
-    net.Add<Linear>(1);
-
-    // Train on all the data.
-    net.Train(data, responses, lengths, opt);
-
-    // Make sure that the predictions match the data reasonably.
-    arma::cube prediction;
-    net.Predict(data, prediction, lengths);
-
-    // Sum the error for all sequences.
-    size_t timeSteps = 0;
-    double totalError = 0.0;
-    for (size_t c = 0; c < 500; ++c)
-    {
-      timeSteps += lengths[c];
-      totalError += accu(abs(vectorise(responses.subcube(
-          0, c, 0, responses.n_rows - 1, c, lengths[c] - 1)) -
-          vectorise(prediction.subcube(
-          0, c, 0, prediction.n_rows - 1, c, lengths[c] - 1))));
-    }
-
-    const double averageError = (totalError / timeSteps);
-
-    // Now compute another network where we don't use the sequence lengths.
-    RNN<MeanSquaredError> net2(rho);
-    net2.Add<TestType>(outSize);
-    net2.Add<Linear>(1);
-
-    // Train and predict, then compute the sum error.
-    RMSProp opt2(0.001, 8, 0.99, 1e-08, 500 * numEpochs, 1e-5);
-    net2.Train(origData, origResponses, opt2);
-    net2.Predict(origData, prediction);
-    const double refAverageError = mean(abs(vectorise(origResponses) -
-        vectorise(prediction)));
-
-    // There can be some margin in the results because we are not training on as
-    // much data for the ragged sequences.
-    if (abs(averageError - refAverageError) <= 0.1)
-    {
-      success = true;
-      break;
-    }
+    timeSteps += lengths[c];
+    totalError += accu(abs(vectorise(responses.subcube(
+        0, c, 0, responses.n_rows - 1, c, lengths[c] - 1)) -
+        vectorise(prediction.subcube(
+        0, c, 0, prediction.n_rows - 1, c, lengths[c] - 1))));
   }
-  REQUIRE(success);
+
+  const double averageError = (totalError / timeSteps);
+
+  // Now compute another network where we don't use the sequence lengths.
+  RNN<MeanSquaredError> net2(rho);
+  net2.Add<TestType>(outSize);
+  net2.Add<Linear>(1);
+
+  // Train and predict, then compute the sum error.
+  RMSProp opt2(0.001, 8, 0.99, 1e-08, 500 * numEpochs, 1e-5);
+  net2.Train(origData, origResponses, opt2);
+  net2.Predict(origData, prediction);
+  const double refAverageError = mean(abs(vectorise(origResponses) -
+      vectorise(prediction)));
+
+  // There can be some margin in the results because we are not training on as
+  // much data for the ragged sequences.
+  REQUIRE(abs(averageError - refAverageError) <= 0.1);
 }
 
 /**
