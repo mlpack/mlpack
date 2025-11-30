@@ -3,9 +3,10 @@
  * @author Ryan Curtin
  * @author Omar Shrit
  *
- * Load an Armadillo matrix from file.  This is necessary because Armadillo does
- * not transpose matrices on input, and it allows us to give better error
- * output.
+ * mlpack Load function interface from a file.
+ *
+ * This Load interface allows to load numeric / image / models from disk into
+ * an armadillo matrix.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -16,20 +17,13 @@
 #define MLPACK_CORE_DATA_LOAD_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <algorithm>
-#include <exception>
 
-#include "extension.hpp"
-#include "string_algorithms.hpp"
 #include "image_options.hpp"
 #include "text_options.hpp"
-#include "dataset_mapper.hpp"
 #include "detect_file_type.hpp"
 #include "load_deprecated.hpp"
 #include "load_arff.hpp"
-#include "load_sparse.hpp"
 #include "load_numeric.hpp"
-#include "load_categorical.hpp"
 #include "load_image.hpp"
 #include "load_model.hpp"
 

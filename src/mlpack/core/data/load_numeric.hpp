@@ -13,7 +13,10 @@
 #ifndef MLPACK_CORE_DATA_LOAD_NUMERIC_HPP
 #define MLPACK_CORE_DATA_LOAD_NUMERIC_HPP
 
+#include "text_options.hpp"
+#include "load_categorical.hpp"
 #include "load_dense.hpp"
+#include "load_sparse.hpp"
 
 namespace mlpack {
 namespace data {
