@@ -185,7 +185,7 @@ void LinearRecurrent<MatType, RegularizerType>::Backward(
     if (this->mask[i] == 0)
     {
       g.col(i).zeros();
-      this->RecurrentGradient(this->CurrentStep()).col(i).zeros();
+      this->RecurrentGradient(this->PreviousStep()).col(i).zeros();
     }
   }
 }
