@@ -208,7 +208,6 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
     }
   }
 #endif // defined(MLPACK_HAS_COOT)
-
 };  // class NaiveConvolution
 
 } // namespace mlpack
