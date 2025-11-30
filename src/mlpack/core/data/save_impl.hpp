@@ -15,7 +15,6 @@
 
 // In case it hasn't already been included.
 #include "save.hpp"
-#include "extension.hpp"
 
 namespace mlpack {
 namespace data {
@@ -30,38 +29,6 @@ bool Save(const std::string& filename,
   //! just use default copy ctor with = operator and make a copy.
   DataOptionsType copyOpts(opts);
   return Save(filename, matrix, copyOpts);
-}
-
-template<typename ObjectType, typename DataOptionsType>
-bool SaveNumeric(const std::string& filename,
-                 const ObjectType& matrix,
-                 std::fstream& stream,
-                 DataOptionsBase<DataOptionsType>& opts)
-{
-  bool success = false;
-
-  TextOptions txtOpts(std::move(opts));
-  if constexpr (IsSparseMat<ObjectType>::value)
-  {
-    success = SaveSparse(matrix, txtOpts, filename, stream);
-  }
-  else if constexpr (IsCol<ObjectType>::value)
-  {
-    opts.NoTranspose() = true;
-    success = SaveDense(matrix, txtOpts, filename, stream);
-  }
-  else if constexpr (IsRow<ObjectType>::value)
-  {
-    opts.NoTranspose() = false;
-    success = SaveDense(matrix, txtOpts, filename, stream);
-  }
-  else if constexpr (IsDense<ObjectType>::value)
-  {
-    success = SaveDense(matrix, txtOpts, filename, stream);
-  }
-  opts = std::move(txtOpts);
-
-  return success;
 }
 
 template<typename ObjectType, typename DataOptionsType>
@@ -156,108 +123,6 @@ bool Save(const std::string& filename,
 
   Timer::Stop("saving_data");
 
-  return success;
-}
-
-template<typename eT>
-bool SaveDense(const arma::Mat<eT>& matrix,
-               TextOptions& opts,
-               const std::string& filename,
-               std::fstream& stream)
-{
-  bool success = false;
-  arma::Mat<eT> tmp;
-  // Transpose the matrix.
-  if (!opts.NoTranspose())
-  {
-    tmp = trans(matrix);
-    success = SaveMatrix(tmp, opts, filename, stream);
-  }
-  else
-    success = SaveMatrix(matrix, opts, filename, stream);
-
-  return success;
-}
-
-// Save a Sparse Matrix
-template<typename eT>
-bool SaveSparse(const arma::SpMat<eT>& matrix,
-                TextOptions& opts,
-                const std::string& filename,
-                std::fstream& stream)
-{
-  bool success = false;
-  arma::SpMat<eT> tmp;
-
-  // Transpose the matrix.
-  if (!opts.NoTranspose())
-  {
-    arma::SpMat<eT> tmp = trans(matrix);
-    success = SaveMatrix(tmp, opts, filename, stream);
-  }
-  else
-    success = SaveMatrix(matrix, opts, filename, stream);
-
-  return success;
-}
-
-template<typename Object>
-bool SaveModel(Object& objectToSerialize,
-               const DataOptionsBase<PlainDataOptions>& opts,
-               std::fstream& stream)
-{
-  try
-  {
-    if (opts.Format() == FileType::XML)
-    {
-      cereal::XMLOutputArchive ar(stream);
-      ar(cereal::make_nvp("model", objectToSerialize));
-    }
-    else if (opts.Format() == FileType::JSON)
-    {
-      cereal::JSONOutputArchive ar(stream);
-      ar(cereal::make_nvp("model", objectToSerialize));
-    }
-    else if (opts.Format() == FileType::BIN)
-    {
-      cereal::BinaryOutputArchive ar(stream);
-      ar(cereal::make_nvp("model", objectToSerialize));
-    }
-    return true;
-  }
-  catch (cereal::Exception& e)
-  {
-    if (opts.Fatal())
-      Log::Fatal << e.what() << std::endl;
-    else
-      Log::Warn << e.what() << std::endl;
-
-    return false;
-  }
-}
-
-template<typename MatType, typename DataOptionsType>
-bool SaveMatrix(const MatType& matrix,
-                const DataOptionsType& opts,
-#ifdef ARMA_USE_HDF5
-                const std::string& filename,
-#else
-                const std::string& /* filename */,
-#endif
-                std::fstream& stream)
-{
-  bool success = false;
-  if (opts.Format() == FileType::HDF5Binary)
-  {
-#ifdef ARMA_USE_HDF5
-    // We can't save with streams for HDF5.
-    success = matrix.save(filename, opts.ArmaFormat());
-#endif
-  }
-  else
-  {
-    success = matrix.save(stream, opts.ArmaFormat());
-  }
   return success;
 }
 

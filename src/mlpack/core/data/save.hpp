@@ -21,6 +21,8 @@
 #include "text_options.hpp"
 #include "detect_file_type.hpp"
 #include "save_deprecated.hpp"
+#include "save_numeric.hpp"
+#include "save_model.hpp"
 #include "save_image.hpp"
 
 namespace mlpack {
