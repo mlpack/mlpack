@@ -29,7 +29,7 @@ YOLOv3<
           const std::vector<ElemType>& anchors) :
   imgSize(imgSize),
   predictionsPerCell(predictionsPerCell),
-  numAttributes(numClasses + 5),
+  numAttributes(numClasses + 5)
 {
   if (anchors.size() != predictionsPerCell * 6)
   {
