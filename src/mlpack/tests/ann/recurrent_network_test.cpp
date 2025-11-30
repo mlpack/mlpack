@@ -990,7 +990,10 @@ TEMPLATE_TEST_CASE("RNNEmbeddedReberGrammarTest",
  * Test that we can train an RNN on sequences of different lengths, and get
  * roughly the same thing we would for training on non-ragged sequences.
  */
-TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]")
+TEMPLATE_TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]",
+    LSTM<>,
+    GRU<>,
+    LinearRecurrent<>)
 {
   const size_t rho = 25;
   const size_t numEpochs = 3;
