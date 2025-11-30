@@ -128,9 +128,9 @@ class RecurrentLayer : public Layer<MatType>
   void CurrentStep(const size_t& step, const bool end = false);
 
   // Get the current mask.
-  const arma::urowvec& Mask() const { return mask; };
+  const arma::urowvec& Mask() const { return mask; }
   // Modify the current mask.
-  arma::urowvec& Mask() { return mask; };
+  arma::urowvec& Mask() { return mask; }
 
   // Get the previous step.  This is a very simple function but can lead to
   // slightly more readable code in Forward(), Backward(), and Gradient()
