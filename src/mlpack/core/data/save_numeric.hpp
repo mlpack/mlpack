@@ -45,7 +45,7 @@ bool SaveNumeric(const std::string& filename,
     const bool oldNoTranspose = txtOpts.NoTranspose();
     txtOpts.NoTranspose() = false; // Force transpose for a row.
     success = SaveDense(matrix, txtOpts, filename, stream);
-    txtOpts.NoTranspose() = oldNoTranspose.
+    txtOpts.NoTranspose() = oldNoTranspose;
   }
   else if constexpr (IsDense<ObjectType>::value)
   {
