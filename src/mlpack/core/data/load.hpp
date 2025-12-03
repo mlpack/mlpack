@@ -115,7 +115,5 @@ bool Load(const std::vector<std::string>& files,
 
 // Include implementation of Load() for matrix.
 #include "load_impl.hpp"
-// Include implementation of Load() for vectors.
-#include "load_vec_impl.hpp"
 
 #endif
