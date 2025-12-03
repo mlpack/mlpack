@@ -35,7 +35,7 @@ bool SaveImage(const std::vector<std::string>& files,
   if (opts.Format() == FileType::ImageType ||
       opts.Format() == FileType::AutoDetect)
   {
-    for  (size_t i = 0; i < files.size() ; ++i)
+    for (size_t i = 0; i < files.size() ; ++i)
     {
       if (!opts.saveType.count(Extension(files.at(i))))
       {
