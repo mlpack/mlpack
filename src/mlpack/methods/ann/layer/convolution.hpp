@@ -296,42 +296,31 @@ class Convolution : public Layer<MatType>
   void InitializeSamePadding();
 
   /**
+   * Rotates a 3rd-order tensor counterclockwise by 180 degrees.
+   *
+   * @param input The input data to be rotated.
+   * @param output The rotated output.
+   */
+  void Rotate180(const CubeType& input, CubeType& output)
+  {
+    output = CubeType(input.n_rows, input.n_cols, input.n_slices);
+
+    // * left-right flip, up-down flip */
+    for (size_t s = 0; s < output.n_slices; s++)
+      output.slice(s) = fliplr(flipud(input.slice(s)));
+  }
+
+  /**
    * Rotates a dense matrix counterclockwise by 180 degrees.
    *
    * @param input The input data to be rotated.
    * @param output The rotated output.
    */
-  template<typename MType, std::enable_if_t<IsArma<MType>::value, bool> = false>
-  void Rotate180(const MType& input, MType& output)
+  void Rotate180(const MatType& input, MatType& output)
   {
     // * left-right flip, up-down flip */
     output = fliplr(flipud(input));
   }
-
-#if defined(MLPACK_HAS_COOT)
-
-  /**
-   * Rotates a Bandicoot dense matrix counterclockwise by 180 degrees. Bandicoot
-   * does not currently have `fliplr` or `flipud`
-   *
-   * @param input The input data to be rotated.
-   * @param output The rotated output.
-   */
-  template<typename MType, std::enable_if_t<IsCoot<MType>::value, bool> = false>
-  void Rotate180(const MType& input, MType& output)
-  {
-    // Convert to Armadillo
-    using ArmaType = typename GetArmaType<MType>::type;
-    ArmaType inArma = coot::conv_to<ArmaType>::from(input);
-
-    // * left-right flip, up-down flip */
-    inArma = fliplr(flipud(inArma));
-
-    // Convert back to bandicoot
-    output = MType(inArma);
-  }
-
-#endif // defined(MLPACK_HAS_COOT)
 
   //! Locally-stored number of output channels.
   size_t maps;
