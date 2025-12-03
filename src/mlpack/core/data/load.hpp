@@ -6,7 +6,7 @@
  * mlpack Load function interface from a file.
  *
  * This Load interface allows to load numeric / image / models from disk into
- * an armadillo matrix.
+ * an Armadillo matrix or mlpack object.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
