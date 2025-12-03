@@ -35,8 +35,10 @@ bool SaveNumeric(const std::string& filename,
   }
   else if constexpr (IsCol<ObjectType>::value)
   {
-    opts.NoTranspose() = true;
+    const bool oldNoTranspose = txtOpts.NoTranspose();
+    txtOpts.NoTranspose() = true; // Force no transpose for a column.
     success = SaveDense(matrix, txtOpts, filename, stream);
+    txtOpts.NoTranspose() = oldNoTranspose;
   }
   else if constexpr (IsRow<ObjectType>::value)
   {
