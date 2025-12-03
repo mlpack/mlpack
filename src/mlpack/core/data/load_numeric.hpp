@@ -41,11 +41,11 @@ bool LoadNumeric(const std::string& filename,
   }
   else if constexpr (IsCol<MatType>::value)
   {
-    success = LoadCol(filename, matrix, txtOpts, stream);
+    success = LoadDenseCol(filename, matrix, txtOpts, stream);
   }
   else if constexpr (IsRow<MatType>::value)
   {
-    success = LoadRow(filename, matrix, txtOpts, stream);
+    success = LoadDenseRow(filename, matrix, txtOpts, stream);
   }
   else if constexpr (IsDense<MatType>::value)
   {
@@ -61,7 +61,7 @@ bool LoadNumeric(const std::string& filename,
 }
 
 template<typename MatType>
-bool LoadNumericVector(const std::vector<std::string>& filenames,
+bool LoadNumericMultifile(const std::vector<std::string>& filenames,
           MatType& matrix,
           const TextOptions& opts)
 {
@@ -70,7 +70,7 @@ bool LoadNumericVector(const std::vector<std::string>& filenames,
 }
 
 template<typename MatType>
-bool LoadNumericVector(const std::vector<std::string>& filenames,
+bool LoadNumericMultifile(const std::vector<std::string>& filenames,
           MatType& matrix,
           TextOptions& opts)
 {

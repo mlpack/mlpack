@@ -165,7 +165,7 @@ bool Load(const std::vector<std::string>& files,
   else
   {
     TextOptions txtOpts(std::move(opts));
-    success = LoadNumericVector(files, matrix, txtOpts);
+    success = LoadNumericMultifile(files, matrix, txtOpts);
     opts = std::move(txtOpts);
   }
   return success;
