@@ -229,7 +229,8 @@ void PrintR(util::Params& params,
 
   // Add binding name as class to the output.
   cout << "  # Add binding name as class to the output." << endl;
-  cout << "  class(out) <- c(\"" << bindingName << "\", \"mlpack\", \"list\")" << endl;
+  cout << "  class(out) <- c(\"mlpack_" << bindingName
+       << "\", \"mlpack_model_binding\", \"list\")" << endl;
 
   cout << endl;
   cout << "  return(out)" << endl << "}" << endl;
