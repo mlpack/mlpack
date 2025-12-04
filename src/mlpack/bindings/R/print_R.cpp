@@ -93,7 +93,8 @@ void PrintR(util::Params& params,
 
   // Next, print information on the output options.
   if (outputOptions.size() > 0)
-    cout << "#' @return A list with several components defining the class attributes:" << endl;
+    cout << "#' @return A list with several components defining the "
+         << "class attributes:" << endl;
 
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
