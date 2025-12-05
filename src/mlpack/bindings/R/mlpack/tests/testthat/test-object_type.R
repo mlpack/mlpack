@@ -1,5 +1,3 @@
-library(testthat)
-
 test_that("Test for mlpack S3 class ", {
 
     set.seed(1234)
