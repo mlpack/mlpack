@@ -1,5 +1,5 @@
 /**
- * @file core/data/save_text_impl.hpp
+ * @file save_text_impl.hpp
  * @author Ryan Curtin
  * @author Omar Shrit
  *
@@ -10,7 +10,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_SAVE_TEXT_IMPL_HPP
+#ifndef MLPACK_CORE_DATA_SAVE_TEXT_IMPL_HPP 
 #define MLPACK_CORE_DATA_SAVE_TEXT_IMPL_HPP
 
 // In case it hasn't already been included.

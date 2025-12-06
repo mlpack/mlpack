@@ -1,5 +1,5 @@
 /**
- * @file core/data/load_text_impl.hpp
+ * @file load_text_impl.hpp
  * @author Ryan Curtin
  * @author Omar Shrit
  * @author Gopi Tatiraju
