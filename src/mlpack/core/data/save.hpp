@@ -161,5 +161,5 @@ bool Save(const std::string& filename,
 
 // Include implementation.
 #include "save_impl.hpp"
-
+#include "save_text_impl.hpp"
 #endif

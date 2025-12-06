@@ -295,4 +295,5 @@ bool Load(const std::string& filename,
 // Include implementation of Load() for vectors.
 #include "load_vec_impl.hpp"
 
+#include "load_text_impl.hpp"
 #endif
