@@ -17,9 +17,8 @@
 
 #include <mlpack/core/util/to_lower.hpp>
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
-#include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
-#include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
+#include <mlpack/methods/ann/convolution_rules/im2col_convolution.hpp>
 
 #include "layer.hpp"
 #include "padding.hpp"
@@ -52,29 +51,27 @@ class TransposedConvolutionType : public Layer<MatType>
 
   /**
    * Create the TransposedConvolutionType object using the specified number of
-   output
-    * maps, filter size, stride and padding parameter.
-    *
-    * Note: The equivalent stride of a transposed convolution operation is always
-    * equal to 1. In this implementation, stride of filter represents the stride
-    * of the associated convolution operation.
-    * Note: Padding of input represents padding of associated convolution
-    * operation.
-    *
-    * @param maps The number of output maps.
-    * @param kernelWidth Width of the filter/kernel.
-    * @param kernelHeight Height of the filter/kernel.
-    * @param strideWidth Stride of filter application in the x direction.
-    * @param strideHeight Stride of filter application in the y direction.
-    * @param padW Padding width of the input.
-    * @param padH Padding height of the input.
-    * @param paddingType The type of padding ("valid", "same" or "none").
-    *      valid: applies no padding.
-    *      same: applies padding to keep output size equal to input.
-    *      none: applies the padding specified by `padW` and `padH`. (Default)
-    * @param useBias Whether or not to use a bias with the convolution.
-
-    */
+   * output maps, filter size, stride and padding parameter.
+   *
+   * Note: The equivalent stride of a transposed convolution operation is always
+   * equal to 1. In this implementation, stride of filter represents the stride
+   * of the associated convolution operation.
+   * Note: Padding of input represents padding of associated convolution
+   * operation.
+   *
+   * @param maps The number of output maps.
+   * @param kernelWidth Width of the filter/kernel.
+   * @param kernelHeight Height of the filter/kernel.
+   * @param strideWidth Stride of filter application in the x direction.
+   * @param strideHeight Stride of filter application in the y direction.
+   * @param padW Padding width of the input.
+   * @param padH Padding height of the input.
+   * @param paddingType The type of padding ("valid", "same" or "none").
+   *    valid: applies no padding.
+   *    same: applies padding to keep output size equal to input.
+   *    none: applies the padding specified by `padW` and `padH`. (Default)
+   * @param useBias Whether or not to use a bias with the convolution.
+   */
   TransposedConvolutionType(const size_t maps,
                             const size_t kernelWidth,
                             const size_t kernelHeight,
@@ -82,7 +79,7 @@ class TransposedConvolutionType : public Layer<MatType>
                             const size_t strideHeight = 1,
                             const size_t padW = 0,
                             const size_t padH = 0,
-                            const std::string &paddingType = "None",
+                            const std::string& paddingType = "None",
                             const bool useBias = true);
 
   /**
@@ -101,15 +98,15 @@ class TransposedConvolutionType : public Layer<MatType>
    * @param strideWidth Stride of filter application in the x direction.
    * @param strideHeight Stride of filter application in the y direction.
    * @param padW A two-value tuple indicating padding widths of the input.
-   *             First value is padding at left side. Second value is padding on
-   *             right side.
+   *   First value is padding at left side. Second value is padding on
+   *   right side.
    * @param padH A two-value tuple indicating padding heights of the input.
-   *             First value is padding at top. Second value is padding on
-   *             bottom.
+   *   First value is padding at top. Second value is padding on
+   *   bottom.
    * @param paddingType The type of padding ("valid", "same" or "none").
-   *      valid: applies no padding.
-   *      same: applies padding to keep output size equal to input.
-   *      none: applies the padding specified by `padW` and `padH`. (Default)
+   *   valid: applies no padding.
+   *   same: applies padding to keep output size equal to input.
+   *   none: applies the padding specified by `padW` and `padH`. (Default)
    * @param useBias Whether or not to use a bias with the convolution.
    */
   TransposedConvolutionType(const size_t maps,
@@ -117,37 +114,37 @@ class TransposedConvolutionType : public Layer<MatType>
                             const size_t kernelHeight,
                             const size_t strideWidth,
                             const size_t strideHeight,
-                            const std::tuple<size_t, size_t> &padW,
-                            const std::tuple<size_t, size_t> &padH,
-                            const std::string &paddingType = "none",
+                            const std::tuple<size_t, size_t>& padW,
+                            const std::tuple<size_t, size_t>& padH,
+                            const std::string& paddingType = "None",
                             const bool useBias = true);
 
-  //! Clone the TranposedConvolutionType object. This handles polymorphism
-  //! correctly.
+  //! Clone the TransposedConvolutionType object.
+  //! This handles polymorphism correctly.
   TransposedConvolutionType *Clone() const
   {
     return new TransposedConvolutionType(*this);
   }
 
   //! Copy the given TransposedConvolutionType (but not weights).
-  TransposedConvolutionType(const TransposedConvolutionType &layer);
+  TransposedConvolutionType(const TransposedConvolutionType& layer);
 
   //! Take ownership of the given TransposedConvolutionType (but not weights).
-  TransposedConvolutionType(TransposedConvolutionType &&);
+  TransposedConvolutionType(TransposedConvolutionType&& layer);
 
   //! Copy the given TransposedConvolutionType (but not weights).
-  TransposedConvolutionType &operator=(const TransposedConvolutionType &layer);
+  TransposedConvolutionType& operator=(const TransposedConvolutionType& layer);
 
   //! Take ownership of the given TransposedConvolutionType (but not weights).
-  TransposedConvolutionType &operator=(TransposedConvolutionType &&layer);
+  TransposedConvolutionType& operator=(TransposedConvolutionType&& layer);
 
-  // Virtual destructor.
+  //! Virtual destructor.
   virtual ~TransposedConvolutionType() {}
 
-  /*
-    * Set the weight and bias term.
-    */
-  void SetWeights(const MatType &weightsIn);
+  /**
+   * Set the weight and bias term.
+   */
+  void SetWeights(const MatType& weightsIn);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -156,7 +153,7 @@ class TransposedConvolutionType : public Layer<MatType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const MatType &input, MatType &output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -184,62 +181,62 @@ class TransposedConvolutionType : public Layer<MatType>
                 MatType& gradient);
 
   //! Get the parameters.
-  MatType const &Parameters() const { return weights; }
+  MatType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  MatType &Parameters() { return weights; }
+  MatType& Parameters() { return weights; }
 
   //! Get the weight of the layer as a cube.
-  CubeType const &Weight() const { return weight; }
+  CubeType const& Weight() const { return weight; }
   //! Modify the weight of the layer as a cube.
-  CubeType &Weight() { return weight; }
+  CubeType& Weight() { return weight; }
 
   //! Get the bias of the layer.
-  MatType const &Bias() const { return bias; }
+  MatType const& Bias() const { return bias; }
   //! Modify the bias of the layer.
-  MatType &Bias() { return bias; }
+  MatType& Bias() { return bias; }
 
   //! Get the number of output maps.
-  size_t const &Maps() const { return maps; }
+  size_t const& Maps() const { return maps; }
 
   //! Get the kernel width.
-  size_t const &KernelWidth() const { return kernelWidth; }
+  size_t const& KernelWidth() const { return kernelWidth; }
   //! Modify the kernel width.
-  size_t &KernelWidth() { return kernelWidth; }
+  size_t& KernelWidth() { return kernelWidth; }
 
   //! Get the kernel height.
-  size_t const &KernelHeight() const { return kernelHeight; }
+  size_t const& KernelHeight() const { return kernelHeight; }
   //! Modify the kernel height.
-  size_t &KernelHeight() { return kernelHeight; }
+  size_t& KernelHeight() { return kernelHeight; }
 
   //! Get the stride width.
-  size_t const &StrideWidth() const { return strideWidth; }
+  size_t const& StrideWidth() const { return strideWidth; }
   //! Modify the stride width.
-  size_t &StrideWidth() { return strideWidth; }
+  size_t& StrideWidth() { return strideWidth; }
 
   //! Get the stride height.
-  size_t const &StrideHeight() const { return strideHeight; }
+  size_t const& StrideHeight() const { return strideHeight; }
   //! Modify the stride height.
-  size_t &StrideHeight() { return strideHeight; }
+  size_t& StrideHeight() { return strideHeight; }
 
   //! Get the top padding height.
-  size_t const &PadHTop() const { return padHTop; }
+  size_t const& PadHTop() const { return padHTop; }
   //! Modify the top padding height.
-  size_t &PadHTop() { return padHTop; }
+  size_t& PadHTop() { return padHTop; }
 
   //! Get the bottom padding height.
-  size_t const &PadHBottom() const { return padHBottom; }
+  size_t const& PadHBottom() const { return padHBottom; }
   //! Modify the bottom padding height.
-  size_t &PadHBottom() { return padHBottom; }
+  size_t& PadHBottom() { return padHBottom; }
 
   //! Get the left padding width.
-  size_t const &PadWLeft() const { return padWLeft; }
+  size_t const& PadWLeft() const { return padWLeft; }
   //! Modify the left padding width.
-  size_t &PadWLeft() { return padWLeft; }
+  size_t& PadWLeft() { return padWLeft; }
 
   //! Get the right padding width.
-  size_t const &PadWRight() const { return padWRight; }
+  size_t const& PadWRight() const { return padWRight; }
   //! Modify the right padding width.
-  size_t &PadWRight() { return padWRight; }
+  size_t& PadWRight() { return padWRight; }
 
   //! Get size of weights for the layer.
   size_t WeightSize() const
@@ -254,7 +251,7 @@ class TransposedConvolutionType : public Layer<MatType>
    * Serialize the layer.
    */
   template <typename Archive>
-  void serialize(Archive &ar, const uint32_t /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   /**
@@ -268,10 +265,10 @@ class TransposedConvolutionType : public Layer<MatType>
    * @return The transposed convolution output size.
    */
   size_t TConvOutSize(const size_t size,
-                     const size_t k,
-                     const size_t s,
-                     const size_t pSideOne,
-                     const size_t pSideTwo)
+                      const size_t k,
+                      const size_t s,
+                      const size_t pSideOne,
+                      const size_t pSideTwo)
   {
     return (s * (size - 1) + k - pSideOne - pSideTwo);
   }
@@ -287,11 +284,11 @@ class TransposedConvolutionType : public Layer<MatType>
    * @param input The input data to be rotated.
    * @param output The rotated output.
    */
-  void Rotate180(const CubeType &input, CubeType &output)
+  void Rotate180(const CubeType& input, CubeType& output)
   {
-    output = CubeType(input.n_rows, input.n_cols, input.n_slices);
+    output.set_size(input.n_rows, input.n_cols, input.n_slices);
 
-    // * left-right flip, up-down flip */
+    // left-right flip, up-down flip
     for (size_t s = 0; s < output.n_slices; s++)
       output.slice(s) = fliplr(flipud(input.slice(s)));
   }
@@ -302,21 +299,20 @@ class TransposedConvolutionType : public Layer<MatType>
    * @param input The input data to be rotated.
    * @param output The rotated output.
    */
-  void Rotate180(const MatType &input, MatType &output)
+  void Rotate180(const MatType& input, MatType& output)
   {
-    // * left-right flip, up-down flip */
+    // left-right flip, up-down flip
     output = fliplr(flipud(input));
   }
 
-  /*
-    * Insert zeros between the units of the given input data.
-    * Note: This function should be used before using padding layer.
-    *
-    * @param input The input to be padded.
-    * @param output The padded output data.
-    */
-  template <typename CubeType>
-  void InsertZeros(const CubeType &input, CubeType &output)
+  /**
+   * Insert zeros between the units of the given input data.
+   * Note: This function should be used before using padding layer.
+   *
+   * @param input The input to be padded.
+   * @param output The padded output data.
+   */
+  void InsertZeros(const CubeType& input, CubeType& output)
   {
     for (size_t slice = 0; slice < input.n_slices; slice++)
     {
@@ -332,14 +328,14 @@ class TransposedConvolutionType : public Layer<MatType>
     }
   }
 
-  /*
-    * Insert zeros between the units of the given input data.
-    * Note: This function should be used before using padding layer.
-    *
-    * @param input The input to be padded.
-    * @param output The padded output data.
-    */
-  void InsertZeros(const MatType &input, MatType &output)
+  /**
+   * Insert zeros between the units of the given input data.
+   * Note: This function should be used before using padding layer.
+   *
+   * @param input The input to be padded.
+   * @param output The padded output data.
+   */
+  void InsertZeros(const MatType& input, MatType& output)
   {
     const size_t expandedRows = strideWidth *
         (this->inputDimensions[0] - 1) + 1;
@@ -347,9 +343,9 @@ class TransposedConvolutionType : public Layer<MatType>
         (this->inputDimensions[1] - 1) + 1;
     const size_t outputSize = expandedRows * expandedCols * inMaps
         * higherInDimensions;
-    if (output.size() != outputSize) {
+
+    if (output.size() != outputSize)
       output = zeros(outputSize, batchSize);
-    }
 
     CubeType reshapedInput, reshapedOutput;
     MakeAlias(reshapedInput, input, this->inputDimensions[0],
@@ -389,12 +385,6 @@ class TransposedConvolutionType : public Layer<MatType>
   //! Locally-stored top padding height.
   size_t padHTop;
 
-  //! Locally-stored number of zeros added to the right of input.
-  size_t aW;
-
-  //! Locally-stored number of zeros added to the bottom of input.
-  size_t aH;
-
   //! Locally-stored useBias.
   bool useBias;
 
@@ -409,9 +399,6 @@ class TransposedConvolutionType : public Layer<MatType>
 
   //! Locally-stored transformed input parameter.
   CubeType inputTemp;
-
-  //! Locally-stored transformed output parameter.
-  CubeType outputTemp;
 
   //! Locally-stored transformed error parameter.
   CubeType gTemp;

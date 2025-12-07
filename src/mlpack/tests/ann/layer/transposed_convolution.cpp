@@ -244,8 +244,8 @@ TEST_CASE("TransposedConvolutionForwardBackwardTest", "[ANNLayerTest]")
     delta.set_size(arma::size(input));
     module.Backward(input, output, output, delta);
 
-    REQUIRE(accu(delta) == 6504.0);
     REQUIRE(accu(output) == 1512.0);
+    REQUIRE(accu(delta) == 6504.0);
     REQUIRE(weights.n_elem == 16 + 1);
   }
 
@@ -270,8 +270,8 @@ TEST_CASE("TransposedConvolutionForwardBackwardTest", "[ANNLayerTest]")
     delta.set_size(arma::size(input));
     module.Backward(input, output, output, delta);
 
-    REQUIRE(accu(delta) == 19154.0);
     REQUIRE(accu(output) == 2370.0);
+    REQUIRE(accu(delta) == 19154.0);
     REQUIRE(weights.n_elem == 9 + 1);
   }
 
@@ -296,8 +296,8 @@ TEST_CASE("TransposedConvolutionForwardBackwardTest", "[ANNLayerTest]")
     delta.set_size(arma::size(input));
     module.Backward(input, output, output, delta);
 
-    REQUIRE(accu(delta) == 86208.0);
     REQUIRE(accu(output) == 6000.0);
+    REQUIRE(accu(delta) == 86208.0);
     REQUIRE(weights.n_elem == 9 + 1);
   }
 
@@ -322,8 +322,8 @@ TEST_CASE("TransposedConvolutionForwardBackwardTest", "[ANNLayerTest]")
     delta.set_size(arma::size(input));
     module.Backward(input, output, output, delta);
 
-    REQUIRE(accu(delta) == 960.0);
     REQUIRE(accu(output) == 120.0);
+    REQUIRE(accu(delta) == 960.0);
     REQUIRE(weights.n_elem == 9 + 1);
   }
 
@@ -375,8 +375,8 @@ TEST_CASE("TransposedConvolutionForwardBackwardTest", "[ANNLayerTest]")
     delta.set_size(arma::size(input));
     module.Backward(input, output, output, delta);
 
-    REQUIRE(accu(delta) == 6336.0);
     REQUIRE(accu(output) == 416.0);
+    REQUIRE(accu(delta) == 6336.0);
     REQUIRE(weights.n_elem == 9 + 1);
   }
 }

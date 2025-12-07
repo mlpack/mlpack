@@ -29,7 +29,8 @@ TransposedConvolutionType<
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::TransposedConvolutionType() {
+>::TransposedConvolutionType()
+{
   // Nothing to do here.
 }
 
@@ -50,8 +51,9 @@ TransposedConvolutionType<
     const size_t kernelHeight,
     const size_t strideWidth,
     const size_t strideHeight,
-    const size_t padW, const size_t padH,
-    const std::string &paddingType,
+    const size_t padW,
+    const size_t padH,
+    const std::string& paddingType,
     const bool useBias) :
     TransposedConvolutionType(
         maps,
@@ -302,74 +304,75 @@ void TransposedConvolutionType<
   // the modified input in member variable inputTemp so that Gradient function
   // can reuse it. Otherwise inputTemp will just be an alias to the input
   // passed here.
-  MatType inputExpanded, inputPadded;
-  if (expandInput || usingPadding) {
+  if (expandInput || usingPadding)
+  {
     inputTemp.set_size(padding.OutputDimensions()[0],
         padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
-  } else {
+  }
+  else
+  {
     MakeAlias(inputTemp, input, padding.OutputDimensions()[0],
         padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
   }
 
   // If we are using padding the final input will be stored in `inputPadded`.
-  // If we aren't using padding the final input may be in `inputExpanded`
+  // If we aren't using padding the final input may be in `inputExpanded`.
+  // If there is neither padding nor input expansion (no zero insertion), then
+  // `inputTemp` simply aliases `input`. All the cases are therefore handled.
+  MatType inputExpanded, inputPadded;
   MakeAlias(usingPadding ? inputPadded : inputExpanded,
       inputTemp, padding.OutputDimensions()[0] * padding.OutputDimensions()[1]
       * inMaps * higherInDimensions, batchSize);
 
   if (expandInput)
-  {
     InsertZeros(input, inputExpanded);
-  }
   if (usingPadding)
-  {
     padding.Forward(expandInput ? inputExpanded : input, inputPadded);
-  }
 
-  MakeAlias(outputTemp, output, this->outputDimensions[0],
-      this->outputDimensions[1], maps * higherInDimensions * batchSize);
-  outputTemp.zeros();
+  output.zeros();
 
   // weights need to be flipped for the forward pass
   CubeType rotatedFilters(weight.n_rows, weight.n_cols, weight.n_slices);
   #pragma omp parallel for schedule(static)
   for (size_t map = 0; map < (size_t)(maps * inMaps); ++map)
-  {
     Rotate180(weight.slice(map), rotatedFilters.slice(map));
-  }
+
+  CubeType outputBatch;
 
   // We "ignore" dimensions higher than the third---that means that we just pass
   // them through and treat them like different input points.
   //
   // If we eventually have a way to do convolutions for a single kernel
   // in-batch, then this strategy may not be the most efficient solution.
+  #pragma omp parallel for schedule(dynamic) private(outputBatch)
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    // Iterate over output maps.
-    #pragma omp parallel for
-    for (size_t outMap = 0; outMap < (size_t)maps; ++outMap)
-    {
-      MatType &convOutput = outputTemp.slice(outMap + fullOutputOffset);
-      // Iterate over input maps (we will apply the filter and sum).
-      for (size_t inMap = 0; inMap < inMaps; ++inMap)
-      {
-        ForwardConvolutionRule::Convolution(
-            inputTemp.slice(inMap + fullInputOffset),
-            rotatedFilters.slice((outMap * inMaps) + inMap),
-            convOutput,
-            1,
-            1,
-            1,
-            1,
-            true);
-      }
+    CubeType inputBatch;
 
-      // Make sure to add the bias.
-      if (useBias)
-        convOutput += bias(outMap);
+    MakeAlias(inputBatch, inputTemp, inputTemp.n_rows, inputTemp.n_cols, inMaps,
+        fullInputOffset * inputTemp.n_rows * inputTemp.n_cols);
+    MakeAlias(outputBatch, output, this->outputDimensions[0],
+        this->outputDimensions[1], maps, fullOutputOffset *
+        this->outputDimensions[0] * this->outputDimensions[1]);
+
+    ForwardConvolutionRule::Convolution(
+        inputBatch,
+        rotatedFilters,
+        outputBatch,
+        1,
+        1,
+        1,
+        1,
+        true);
+
+    // Make sure to add the bias.
+    if (useBias)
+    {
+      for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
+          outputBatch.slice(outMap) += bias(outMap);
     }
   }
 }
@@ -385,18 +388,18 @@ void TransposedConvolutionType<
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::Backward(const MatType & /* input */,
-            const MatType & /* output */,
-            const MatType &gy,
-            MatType &g)
+>::Backward(const MatType& /* input */,
+            const MatType& /* output */,
+            const MatType& gy,
+            MatType& g)
 {
   MatType errorPadded;
-
   const bool usingPaddingBackward = (
       paddingBackward.PadWLeft() != 0 || paddingBackward.PadWRight() != 0 ||
       paddingBackward.PadHTop() != 0 || paddingBackward.PadHBottom() != 0);
 
-  if (usingPaddingBackward) {
+  if (usingPaddingBackward)
+  {
     errorPadded.set_size(paddingBackward.OutputDimensions()[0]
         * paddingBackward.OutputDimensions()[1] * maps * higherInDimensions,
         batchSize);
@@ -415,27 +418,31 @@ void TransposedConvolutionType<
             inMaps * higherInDimensions * batchSize);
   gTemp.zeros();
 
+  CubeType gTempBatch;
+
   // See Forward() for the overall iteration strategy.
-  #pragma omp parallel for schedule(dynamic)
-  for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset) {
+  #pragma omp parallel for schedule(dynamic) private(gTempBatch)
+  for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
+  {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    // Iterate over input maps.
-    for (size_t inMap = 0; inMap < (size_t)inMaps; ++inMap) {
-      // Iterate over output maps.
-      for (size_t outMap = 0; outMap < maps; ++outMap) {
-        BackwardConvolutionRule::Convolution(
-            mappedError.slice(outMap + fullOutputOffset),
-            weight.slice((outMap * inMaps) + inMap),
-            gTemp.slice(inMap + fullInputOffset),
-            strideWidth,
-            strideHeight,
-            1,
-            1,
-            true);
-      }
-    }
+    CubeType mappedErrorBatch;
+    MakeAlias(mappedErrorBatch, mappedError, mappedError.n_rows,
+        mappedError.n_cols, maps,
+        fullOutputOffset * mappedError.n_rows * mappedError.n_cols);
+    MakeAlias(gTempBatch, gTemp, gTemp.n_rows, gTemp.n_cols,
+        inMaps, fullInputOffset * gTemp.n_rows * gTemp.n_cols);
+
+    BackwardConvolutionRule::Convolution(
+        mappedErrorBatch,
+        weight,
+        gTempBatch,
+        strideWidth,
+        strideHeight,
+        1,
+        1,
+        true);
   }
 }
 
@@ -465,32 +472,47 @@ void TransposedConvolutionType<
   gradient.zeros();
   MakeAlias(gradientTemp, gradient, kernelWidth, kernelHeight, inMaps * maps);
 
-  MatType curError, rotatedCurError;
-
   // See Forward() for our iteration strategy.
-  for (size_t offset = 0; offset < higherInDimensions * batchSize; ++offset) {
+  #pragma omp parallel for schedule(dynamic)
+  for (size_t offset = 0; offset < higherInDimensions * batchSize; ++offset)
+  {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    #pragma omp parallel for
-    for (size_t outMap = 0; outMap < (size_t)maps; ++outMap) {
-      for (size_t inMap = 0; inMap < inMaps; ++inMap) {
-        GradientConvolutionRule::Convolution(
-            inputTemp.slice(inMap + fullInputOffset),
-            mappedError.slice(outMap + fullOutputOffset),
-            curError,
-            1,
-            1,
-            1,
-            1,
-            false);
-        Rotate180(curError, rotatedCurError);
-        gradientTemp.slice((outMap * inMaps) + inMap) += rotatedCurError;
-      }
+    CubeType mappedErrorTemp;
+    MakeAlias(mappedErrorTemp, mappedError, this->outputDimensions[0],
+        this->outputDimensions[1], maps, fullOutputOffset *
+        this->outputDimensions[0] * this->outputDimensions[1]);
 
-      if (useBias) {
-        gradient[weight.n_elem + outMap] =
-            accu(mappedError.slice(outMap + fullOutputOffset));
+    CubeType curError, rotatedCurError;
+    for (size_t inMap = 0; inMap < inMaps; ++inMap)
+    {
+      GradientConvolutionRule::Convolution(
+          inputTemp.slice(inMap + fullInputOffset),
+          mappedErrorTemp,
+          curError,
+          1,
+          1,
+          1,
+          1,
+          false);
+      Rotate180(curError, rotatedCurError);
+
+      #pragma omp critical
+      for (size_t outMap = 0; outMap < (size_t) maps; outMap++)
+      {
+        gradientTemp.slice((outMap * inMaps) + inMap) +=
+            rotatedCurError.slice(outMap);
+      }
+    }
+
+    if (useBias)
+    {
+      for (size_t outMap = 0; outMap < (size_t) maps; outMap++)
+      {
+        #pragma omp atomic update
+        gradient[weight.n_elem + outMap] +=
+            accu(mappedErrorTemp.slice(outMap));
       }
     }
   }
@@ -522,7 +544,7 @@ void TransposedConvolutionType<
   {
     InitializeSamePadding();
     if ((kernelWidth < padWLeft + 1 || kernelWidth < padWRight + 1 ||
-    kernelHeight < padHTop + 1 || kernelHeight < padHBottom + 1))
+         kernelHeight < padHTop + 1 || kernelHeight < padHBottom + 1))
     {
       throw std::logic_error(
           "TransposedConvolutionType::ComputeOutputDimensions(): "
@@ -547,7 +569,7 @@ void TransposedConvolutionType<
   {
     padding.InputDimensions()[0] = strideWidth
         * (this->inputDimensions[0] - 1) + 1;
-    padding.InputDimensions()[1] = strideWidth
+    padding.InputDimensions()[1] = strideHeight
         * (this->inputDimensions[1] - 1) + 1;
   }
   padding.ComputeOutputDimensions();
@@ -568,7 +590,7 @@ void TransposedConvolutionType<
   // Compute and cache the total number of input maps.
   inMaps = (this->inputDimensions.size() >= 3) ? this->inputDimensions[2] : 1;
 
-  // dimensions higher than the third are treated as different input points.
+  // Dimensions higher than the third are treated as different input points.
   higherInDimensions = 1;
   for (size_t i = 3; i < this->inputDimensions.size(); ++i)
   {
@@ -640,8 +662,8 @@ void TransposedConvolutionType<
    */
   size_t totalVerticalPadding = (strideWidth - 1) * this->inputDimensions[0] +
       kernelWidth - strideWidth;
-  size_t totalHorizontalPadding = (strideHeight - 1) * this->inputDimensions[1]
-      + kernelHeight - strideHeight;
+  size_t totalHorizontalPadding = (strideHeight - 1) *
+      this->inputDimensions[1] + kernelHeight - strideHeight;
 
   padWLeft = totalVerticalPadding / 2;
   padWRight = totalVerticalPadding - totalVerticalPadding / 2;
