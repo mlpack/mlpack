@@ -10,15 +10,12 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include <ensmallen_bits/callbacks/print_loss.hpp>
 #include <mlpack/core.hpp>
-#include <mlpack/core/data/save.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/layer/convolution.hpp>
 #include <mlpack/methods/ann/layer/transposed_convolution.hpp>
 
 #include "../catch.hpp"
-#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
