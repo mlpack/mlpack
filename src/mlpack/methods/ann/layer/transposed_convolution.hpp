@@ -36,21 +36,22 @@ namespace mlpack
  * @tparam MatType Matrix representation to accept as input and use for
  *    computation.
  */
-template <typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
-          typename BackwardConvolutionRule = NaiveConvolution<ValidConvolution>,
-          typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
-          typename MatType = arma::mat
+template <
+    typename MatType = arma::mat,
+    typename ForwardConvolutionRule = Im2ColConvolution<ValidConvolution>,
+    typename BackwardConvolutionRule = Im2ColConvolution<ValidConvolution>,
+    typename GradientConvolutionRule = Im2ColConvolution<ValidConvolution>
 >
-class TransposedConvolutionType : public Layer<MatType>
+class TransposedConvolution : public Layer<MatType>
 {
  public:
   using CubeType = typename GetCubeType<MatType>::type;
 
   //! Create the Transposed Convolution object.
-  TransposedConvolutionType();
+  TransposedConvolution();
 
   /**
-   * Create the TransposedConvolutionType object using the specified number of
+   * Create the TransposedConvolution object using the specified number of
    * output maps, filter size, stride and padding parameter.
    *
    * Note: The equivalent stride of a transposed convolution operation is always
@@ -72,18 +73,18 @@ class TransposedConvolutionType : public Layer<MatType>
    *    none: applies the padding specified by `padW` and `padH`. (Default)
    * @param useBias Whether or not to use a bias with the convolution.
    */
-  TransposedConvolutionType(const size_t maps,
-                            const size_t kernelWidth,
-                            const size_t kernelHeight,
-                            const size_t strideWidth = 1,
-                            const size_t strideHeight = 1,
-                            const size_t padW = 0,
-                            const size_t padH = 0,
-                            const std::string& paddingType = "None",
-                            const bool useBias = true);
+  TransposedConvolution(const size_t maps,
+                        const size_t kernelWidth,
+                        const size_t kernelHeight,
+                        const size_t strideWidth = 1,
+                        const size_t strideHeight = 1,
+                        const size_t padW = 0,
+                        const size_t padH = 0,
+                        const std::string& paddingType = "None",
+                        const bool useBias = true);
 
   /**
-   * Create the TransposedConvolutionType object using the specified number of
+   * Create the TransposedConvolution object using the specified number of
    * output maps, filter size, stride and padding parameter.
    *
    * Note: The equivalent stride of a transposed convolution operation is always
@@ -109,37 +110,37 @@ class TransposedConvolutionType : public Layer<MatType>
    *   none: applies the padding specified by `padW` and `padH`. (Default)
    * @param useBias Whether or not to use a bias with the convolution.
    */
-  TransposedConvolutionType(const size_t maps,
-                            const size_t kernelWidth,
-                            const size_t kernelHeight,
-                            const size_t strideWidth,
-                            const size_t strideHeight,
-                            const std::tuple<size_t, size_t>& padW,
-                            const std::tuple<size_t, size_t>& padH,
-                            const std::string& paddingType = "None",
-                            const bool useBias = true);
+  TransposedConvolution(const size_t maps,
+                        const size_t kernelWidth,
+                        const size_t kernelHeight,
+                        const size_t strideWidth,
+                        const size_t strideHeight,
+                        const std::tuple<size_t, size_t>& padW,
+                        const std::tuple<size_t, size_t>& padH,
+                        const std::string& paddingType = "None",
+                        const bool useBias = true);
 
-  //! Clone the TransposedConvolutionType object.
+  //! Clone the TransposedConvolution object.
   //! This handles polymorphism correctly.
-  TransposedConvolutionType *Clone() const
+  TransposedConvolution *Clone() const
   {
-    return new TransposedConvolutionType(*this);
+    return new TransposedConvolution(*this);
   }
 
-  //! Copy the given TransposedConvolutionType (but not weights).
-  TransposedConvolutionType(const TransposedConvolutionType& layer);
+  //! Copy the given TransposedConvolution (but not weights).
+  TransposedConvolution(const TransposedConvolution& layer);
 
-  //! Take ownership of the given TransposedConvolutionType (but not weights).
-  TransposedConvolutionType(TransposedConvolutionType&& layer);
+  //! Take ownership of the given TransposedConvolution (but not weights).
+  TransposedConvolution(TransposedConvolution&& layer);
 
-  //! Copy the given TransposedConvolutionType (but not weights).
-  TransposedConvolutionType& operator=(const TransposedConvolutionType& layer);
+  //! Copy the given TransposedConvolution (but not weights).
+  TransposedConvolution& operator=(const TransposedConvolution& layer);
 
-  //! Take ownership of the given TransposedConvolutionType (but not weights).
-  TransposedConvolutionType& operator=(TransposedConvolutionType&& layer);
+  //! Take ownership of the given TransposedConvolution (but not weights).
+  TransposedConvolution& operator=(TransposedConvolution&& layer);
 
   //! Virtual destructor.
-  virtual ~TransposedConvolutionType() {}
+  virtual ~TransposedConvolution() {}
 
   /**
    * Set the weight and bias term.
@@ -421,12 +422,6 @@ class TransposedConvolutionType : public Layer<MatType>
   //! Locally-cached higher-order input dimensions.
   size_t higherInDimensions;
 }; // class TransposedConvolution
-
-// Standard Transposed Convolution layer
-using TransposedConvolution =
-    TransposedConvolutionType<NaiveConvolution<ValidConvolution>,
-                              NaiveConvolution<ValidConvolution>,
-                              NaiveConvolution<ValidConvolution>, arma::mat>;
 
 } // namespace mlpack
 
