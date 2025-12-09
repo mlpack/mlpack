@@ -46,7 +46,7 @@ _????-??-??_
  * Fix thread-specific random seed initialization (#4027).
 
  * R bindings now return class attributes as vector with the given model,
-   mlpack model bindings and list as fallback.
+   mlpack model bindings and list as fallback (#4045).
 
 ## mlpack 4.6.2
 
