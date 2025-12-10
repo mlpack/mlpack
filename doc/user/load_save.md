@@ -36,7 +36,15 @@ and [format detection/selection](#formats).
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
 
- - `data::Load(filename, object, Option1 + Option2 + ...)`
+ - `data::Load(filenames, X)`
+   * Load `X` from a set of  file `filenames` with default options:
+     - the format of the all files is [auto-detected](#formats) based on the
+       extension of the file, and
+     - an exception is *not* thrown on an error.
+   * Returns a `bool` indicating whether the load was a success.
+   * `X` can be [any supported load type](#types).
+
+ - `data::Load(filename, X, Option1 + Option2 + ...)`
    * Load `X` from the given file `filename` with the given options.
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
@@ -44,12 +52,16 @@ and [format detection/selection](#formats).
      [list of standalone operators](#dataoptions) and be appropriate for the type
      of `X`.
 
- - `data::Load(filename, object, opts)`
+ - `data::Load(filename, X, opts)`
    * Load `X` from the given file `filename` with the given options specified in `opts`.
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
    * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
      type of `X`.
+
+***Note:*** when loading a set of files into one matrix `X`, all files should have
+the same format and number of data points internally.  See [image data](#image-data) for more
+details.
 
 ***Note:*** when loading images, it is possible to load
 multiple images into one matrix `X`.  See [image data](#image-data) for more
@@ -527,6 +539,12 @@ saving are supported.
  * When calling [`data::Load()`](#dataload) and [`data::Save()`](#datasave), `X`
    should have type [`arma::mat`](matrices.md) or any other supported matrix
    type (e.g. `arma::fmat`, `arma::umat`, and so forth).
+
+ * When calling [`data::Load()`](#dataload) on a set of `filesname`. All
+   files need to be a `std::vector<std::string>`. In addition, all files
+   should have the same metadata that are described in [`DataOptions`](#dataoptions)
+   parameters. All of these files will be concatenated and loaded into the
+   supported matrix type `X`.
 
  * When loading and saving with an instantiated [`DataOptions`](#dataoptions)
    object, the [`MatrixOptions`](#matrixoptions) and
@@ -1424,7 +1442,7 @@ with `fillValue`.
 - `LetterboxImages(src, opt, width, height, fillValue)`
   * `src` is a [column-major matrix](matrices.md) containing a single image,
     where the image is represented as a flattened vector in one column.
-  * `opt` is a [`data::imageOptions&`](#dataimageinfo) containing info on
+  * `opt` is a [`data::imageOptions&`](#imageoptions) containing info on
     the dimensions of the image.
   * `width` and `height` are `const size_t`s determining the new width and
     height of `src`.
