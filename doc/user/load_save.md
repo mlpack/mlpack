@@ -955,6 +955,7 @@ of the flattened vector.
    - [`ResizeImages()`](#resizing-images)
    - [`ResizeAndCropImages()`](#resize-and-crop-images)
    - [`GroupChannels()` and `InterleaveChannels()`](#changing-the-memory-layout-of-images)
+   - [LetterboxImages()](#letterbox-transform)
 
 ---
 
