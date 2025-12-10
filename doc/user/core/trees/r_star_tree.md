@@ -33,7 +33,7 @@ functionality is required, then the R-\*-tree or other variants of
  * [`KNN`](../../methods/knn.md)
  * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [R\*-Tree on Wikipedia](https://en.wikipedia.org/wiki/R*-tree)
- * [The R\*-tree: An Efficient And Robust Access Method for Points and Rectangles (pdf)](https://dl.acm.org/doi/10.1145/93597.98741)
+ * [The R\*-tree: An Efficient And Robust Access Method for Points and Rectangles (pdf)](https://infolab.usc.edu/csci599/Fall2001/paper/rstar-tree.pdf)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 
 ## Template parameters
