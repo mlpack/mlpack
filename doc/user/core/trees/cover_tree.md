@@ -268,7 +268,7 @@ accessing them does not require any computation.
      `node.Dataset().col(node.Point())` (e.g. the point held by `node`).
 
  * A `CoverTree` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ## Bounding distances with the tree
 

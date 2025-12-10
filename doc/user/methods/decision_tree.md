@@ -78,7 +78,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
-| `datasetInfo` | [`data::DatasetInfo`](../load_save.md#loading-categorical-data) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
+| `datasetInfo` | [`data::DatasetInfo`](../load_save.md#datadatasetinfo) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
 | `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../core/normalizing_labels.md) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `weights` | [`arma::rowvec`](../matrices.md) | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
@@ -180,7 +180,7 @@ that is used should be the same type that was used for training.
 ### Other Functionality
 
  * A `DecisionTree` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `tree.NumChildren()` will return a `size_t` indicating the number of children
    in the node `tree`. If there was no split, zero is returned. 

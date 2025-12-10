@@ -152,7 +152,7 @@ that type implements the Armadillo API.  So, e.g., `arma::fmat` can be used.
 ### Other Functionality
 
  * An `NCA` object can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
    Note that this is only meaningful if a custom `DistanceType` is being used,
    and that custom `DistanceType` has state to be saved.
 
