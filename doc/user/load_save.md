@@ -37,7 +37,7 @@ and [format detection/selection](#formats).
    * `X` can be [any supported load type](#types).
 
  - `data::Load(filenames, X)`
-   * Load `X` from a set of  file `filenames` with default options:
+   * Load `X` from a set of files `filenames` (of type `std::vector<std::string>`) with default options:
      - the format of the all files is [auto-detected](#formats) based on the
        extension of the file, and
      - an exception is *not* thrown on an error.
