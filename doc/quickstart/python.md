@@ -6,6 +6,8 @@ gives a few examples of usage, and pointers to deeper documentation.
 This quickstart guide is also available for [C++](cpp.md),
 [the command line](cli.md), [Julia](julia.md), [R](r.md), and [Go](go.md).
 
+Note: If you're using Python 3.10 or higher, ensure that mlpack is installed via pip using a compatible binary wheel, as source builds may fail due to dependency changes.
+
 ## Installing mlpack
 
 Installing the mlpack bindings for Python is straightforward.  It's easy to use
@@ -32,7 +34,7 @@ For information on that, follow the instructions in the
 
 ## Simple mlpack quickstart example
 
-As a really simple example of how to use mlpack from Python, let's do some
+As a really simple example of how to use MLpack from Python, let's do some
 simple classification on a subset of the standard machine learning `covertype`
 dataset.  We'll first split the dataset into a training set and a testing set,
 then we'll train an mlpack random forest on the training data, and finally we'll
