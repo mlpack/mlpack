@@ -105,6 +105,7 @@ jobs:
         uses: hendrikmuhs/ccache-action@v1.2
         with:
           key: ${{ matrix.config.os }}-${{ matrix.config.name }}
+          append-timestamp: false
           variant: ccache
           max-size: 1G # Github has a 10GB repo cache limit, so we use 1GB/job.
 
@@ -213,6 +214,7 @@ jobs:
         uses: hendrikmuhs/ccache-action@v1.2
         with:
           key: ${{ runner.os }}
+          append-timestamp: false
           variant: ccache
           max-size: 1G
 
