@@ -3098,7 +3098,7 @@ So, a simple example where we want to encode 1st and 3rd feature from dataset `'
 
  - [preprocess_binarize()](#preprocess_binarize)
  - [preprocess_describe()](#preprocess_describe)
- - [One-hot encoding on Wikipedia](https://en.m.wikipedia.org/wiki/One-hot)
+ - [One-hot encoding on Wikipedia](https://en.wikipedia.org/wiki/One-hot)
 
 ## radical()
 {: #radical }

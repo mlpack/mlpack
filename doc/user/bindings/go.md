@@ -3744,7 +3744,7 @@ X_ouput := mlpack.PreprocessOneHotEncoding(X, param)
 
  - [PreprocessBinarize()](#preprocess_binarize)
  - [PreprocessDescribe()](#preprocess_describe)
- - [One-hot encoding on Wikipedia](https://en.m.wikipedia.org/wiki/One-hot)
+ - [One-hot encoding on Wikipedia](https://en.wikipedia.org/wiki/One-hot)
 
 ## Radical()
 {: #radical }

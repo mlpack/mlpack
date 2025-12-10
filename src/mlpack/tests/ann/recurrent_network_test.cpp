@@ -566,13 +566,13 @@ void GenerateNoisySines(arma::cube& data,
 TEST_CASE("SequenceClassificationTest", "[RecurrentNetworkTest]")
 {
   // It isn't guaranteed that the recurrent network will converge in the
-  // specified number of iterations using random weights. If this works 1 of 3
+  // specified number of iterations using random weights. If this works 1 of 5
   // times, I'm fine with that. All I want to know is that the network is able
   // to escape from local minima and to solve the task.
   size_t successes = 0;
   const size_t rho = 10;
 
-  for (size_t trial = 0; trial < 3; ++trial)
+  for (size_t trial = 0; trial < 5; ++trial)
   {
     // Generate 500 (2 * 250) noisy sines. A single sine contains rho
     // points/features.

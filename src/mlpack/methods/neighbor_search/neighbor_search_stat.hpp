@@ -106,6 +106,10 @@ class NeighborSearchStat
 // k-nearest-neighbor search (e.g. the KNN or KNNType<> class).
 using NearestNeighborStat = NeighborSearchStat<NearestNeighborSort>;
 
+// This is the type that must be used as the StatisticType for
+// k-furthest-neighbor search (e.g. the KFN or KFNType<> class).
+using FurthestNeighborStat = NeighborSearchStat<FurthestNeighborSort>;
+
 } // namespace mlpack
 
 #endif
