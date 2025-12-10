@@ -34,7 +34,7 @@ For information on that, follow the instructions in the
 
 ## Simple mlpack quickstart example
 
-As a really simple example of how to use MLpack from Python, let's do some
+As a really simple example of how to use mlpack from Python, let's do some
 simple classification on a subset of the standard machine learning `covertype`
 dataset.  We'll first split the dataset into a training set and a testing set,
 then we'll train an mlpack random forest on the training data, and finally we'll
