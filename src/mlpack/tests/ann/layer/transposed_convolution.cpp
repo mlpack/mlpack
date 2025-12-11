@@ -13,24 +13,23 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
+#include <string>
+
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/layer/transposed_convolution.hpp>
 
 #include "../../catch.hpp"
-#include "../../test_catch_tools.hpp"
-#include "../ann_test_tools.hpp"
-#include "../ann_test_tools.hpp"
 
 using namespace mlpack;
 
 /**
  * Test that the functions that can modify and access the parameters of the
- * Transposed Convolution layer work.
+ * TransposedConvolution layer work.
  */
 TEST_CASE("TransposedConvolutionParametersTest", "[ANNLayerTest]")
 {
-  // Parameter order: outSize, kW, kH, dW, dH, padW, padH, paddingType.
+  // Parameter order: maps, kW, kH, dW, dH, padW, padH, paddingType.
   TransposedConvolution layer1(2, 3, 4, 5, 6, std::tuple<size_t, size_t>(7, 8),
       std::tuple<size_t, size_t>(9, 10), "none");
   TransposedConvolution layer2(3, 4, 5, 6, 7, std::tuple<size_t, size_t>(8, 9),
@@ -68,26 +67,53 @@ TEST_CASE("TransposedConvolutionParametersTest", "[ANNLayerTest]")
 }
 
 /**
- * Test the functions that compute dimensions for
- * Transposed Convolution layer.
+ * Test the functions that set weights of TransposedConvolution layer.
+ */
+TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t maps = 3;
+  size_t inMaps = 3;
+  size_t kW = 4, kH = 4;
+  TransposedConvolution module = TransposedConvolution(maps,
+      kW, kH, 1, 1, 1, 1);
+  module.InputDimensions() = std::vector<size_t>({5, 5, inMaps});
+  module.ComputeOutputDimensions();
+
+  arma::mat weights = arma::zeros(kW * kH * inMaps * maps + maps);
+  module.SetWeights(weights);
+
+  REQUIRE(std::equal(module.Weight().begin(),
+      module.Weight().end(), module.Parameters().begin()));
+  REQUIRE(std::equal(module.Bias().begin(),
+      module.Bias().end(), module.Parameters().end() - maps));
+  REQUIRE(module.Weight().n_rows == kW);
+  REQUIRE(module.Weight().n_cols == kH);
+  REQUIRE(module.Weight().n_slices == inMaps * maps);
+  REQUIRE(module.Bias().n_rows == maps);
+  REQUIRE(module.Bias().n_cols == 1);
+  REQUIRE(module.Parameters().n_rows == (maps * inMaps * kW * kH) + maps);
+}
+
+/**
+ * Test the functions that compute dimensions for TransposedConvolution layer.
  */
 TEST_CASE("TransposedConvolutionDimensionsTest", "[ANNLayerTest]")
 {
   struct Config
   {
     std::string paddingType;
-    size_t inputWidth;
-    size_t inputHeight;
-    size_t kernelWidth;
-    size_t kernelHeight;
-    size_t strideWidth;
-    size_t strideHeight;
-    size_t padWLeft;
-    size_t padWRight;
-    size_t padHTop;
-    size_t padHBottom;
-    size_t expecedOutputWidth;
-    size_t expecedOutputHeight;
+    size_t inW;
+    size_t inH;
+    size_t kW;
+    size_t kH;
+    size_t dW;
+    size_t dH;
+    size_t pWLeft;
+    size_t pWRight;
+    size_t pHTop;
+    size_t pHBottom;
+    size_t expectedOutputWidth;
+    size_t expectedOutputHeight;
   };
 
   const std::vector<Config> configs = {
@@ -120,269 +146,171 @@ TEST_CASE("TransposedConvolutionDimensionsTest", "[ANNLayerTest]")
   for (size_t i = 0; i < configs.size(); ++i)
   {
     const auto& c = configs[i];
-    std::ostringstream sectionName;
-    sectionName << "Config " << i << ": paddingType=" << c.paddingType
-                << ", input=" << c.inputWidth << "x" << c.inputHeight
-                << ", kernel=" << c.kernelWidth << "x" << c.kernelHeight
-                << ", stride=" << c.strideWidth << "x" << c.strideHeight
-                << ", padW=" << c.padWLeft << "," << c.padWRight
-                << ", padH=" << c.padHTop << "," << c.padHBottom;
-    SECTION(sectionName.str())
+    std::string sectionName = "Case - " + std::to_string(i);
+    SECTION(sectionName)
     {
-      TransposedConvolution module(
-          maps,
-          c.kernelWidth,
-          c.kernelHeight,
-          c.strideWidth,
-          c.strideHeight,
-          std::make_tuple(c.padWLeft, c.padWRight),
-          std::make_tuple(c.padHTop, c.padHBottom),
-          c.paddingType);
+      TransposedConvolution module(maps, c.kW, c.kH, c.dW, c.dH,
+          std::make_tuple(c.pWLeft, c.pWRight),
+          std::make_tuple(c.pHTop, c.pHBottom), c.paddingType);
 
-      module.InputDimensions() = { c.inputWidth, c.inputHeight, inMaps };
+      module.InputDimensions() = { c.inW, c.inH, inMaps };
       module.ComputeOutputDimensions();
 
       // WeightSize = inMaps * maps * kernelWidth * kernelHeight + maps (bias).
-      size_t expectedWeightSize = inMaps * maps * c.kernelWidth
-          * c.kernelHeight + maps;
+      size_t expectedWeightSize = inMaps * maps * c.kW * c.kH + maps;
       REQUIRE(module.WeightSize() == expectedWeightSize);
 
       // OutputSize = (outputWidth * outputHeight * maps).
-      size_t expectedOutputSize = c.expecedOutputWidth * c.expecedOutputHeight
-          * maps;
+      size_t expectedOutputSize = c.expectedOutputWidth *
+          c.expectedOutputHeight * maps;
       REQUIRE(module.OutputSize() == expectedOutputSize);
     }
   }
 }
 
 /**
- * Test The Functions That Set Weights of Transposed Convolution Layer.
+ * Test the Forward and Backward passes of the TransposedConvolution layer.
  */
-TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
-{
-  size_t maps = 3;
-  size_t inMaps = 3;
-  size_t kernelWidth = 4, kernelHeight = 4;
-  TransposedConvolution module = TransposedConvolution(
-      maps,
-      kernelWidth,
-      kernelHeight,
-      1,
-      1,
-      1,
-      1);
-  module.InputDimensions() = std::vector<size_t>({5, 5, inMaps});
-  module.ComputeOutputDimensions();
-
-  arma::mat weights = arma::zeros(kernelWidth*kernelHeight*inMaps*maps+maps);
-  module.SetWeights(weights);
-
-  REQUIRE(std::equal(module.Weight().begin(),
-      module.Weight().end(), module.Parameters().begin()));
-  REQUIRE(std::equal(module.Bias().begin(),
-      module.Bias().end(), module.Parameters().end() - maps));
-  REQUIRE(module.Weight().n_rows == kernelWidth);
-  REQUIRE(module.Weight().n_cols == kernelHeight);
-  REQUIRE(module.Weight().n_slices == inMaps * maps);
-  REQUIRE(module.Bias().n_rows == maps);
-  REQUIRE(module.Bias().n_cols == 1);
-  REQUIRE(module.Parameters().n_rows ==
-      (maps * inMaps * kernelWidth * kernelHeight) + maps);
-}
-
-/**
- * Test the Forward and Backward pass of the Transposed Convolution layer.
- **/
 TEST_CASE("TransposedConvolutionForwardBackwardTest", "[ANNLayerTest]")
 {
-  arma::mat input, output, weights, delta;
-
-  SECTION("3x3 Kernel, stride=1, no padding")
+  struct Config
   {
-    TransposedConvolution module(1, 3, 3, 1, 1, 0, 0);
-    input = arma::linspace<arma::colvec>(0, 15, 16);
-    module.InputDimensions() = {4, 4};
-    module.ComputeOutputDimensions();
+    size_t maps;
+    size_t kW;
+    size_t kH;
+    size_t dW;
+    size_t dH;
+    size_t pW;
+    size_t pH;
+    size_t inW;
+    size_t inH;
+    std::map<size_t, double> weightAssignments;
 
-    weights.set_size(module.WeightSize(), 1);
-    weights.zeros();
-    weights[0] = 1.0;
-    weights[8] = 2.0;
-    module.SetWeights(weights);
+    double expectedOutputSum;
+    double expectedDeltaSum;
+    double expectedGradSum;
+    size_t expectedTotalWeights; // Including bias
+  };
 
-    output.set_size(module.OutputSize(), 1);
-    module.Forward(input, output);
-
-    delta.set_size(arma::size(input));
-    module.Backward(input, output, output, delta);
-
-    REQUIRE(accu(output) == 360.0);
-    REQUIRE(accu(delta) == 720.0);
-    REQUIRE(weights.n_elem == 9 + 1);
-  }
-
-  SECTION("4x4 kernel, pad=1, stride=1")
+  std::vector<Config> configs = {
+      {
+        1, 3, 3, 1, 1, 0, 0, 4, 4,
+        {{0, 1.0}, {8, 2.0}},
+        360.0, 720.0, 15915.0, 10
+      },
+      {
+        1, 4, 4, 1, 1, 1, 1, 5, 5,
+        {{0, 1.0}, {3, 1.0}, {6, 1.0}, {9, 1.0}, {12, 1.0}, {15, 2.0}},
+        1512.0, 6504.0, 215350.0, 17
+      },
+      {
+        1, 3, 3, 1, 1, 1, 1, 5, 5,
+        {{1, 2.0}, {2, 4.0}, {3, 3.0}, {8, 1.0}},
+        2370.0, 19154.0, 240789.0, 10
+      },
+      {
+        1, 3, 3, 1, 1, 0, 0, 5, 5,
+        {{2, 2.0}, {4, 4.0}, {6, 6.0}, {8, 8.0}},
+        6000.0, 86208.0, 524352.0, 10
+      },
+      {
+        1, 3, 3, 2, 2, 0, 0, 2, 2,
+        {{2, 8.0}, {4, 6.0}, {6, 4.0}, {8, 2.0}},
+        120.0, 960.0, 550.0, 10
+      },
+      {
+        1, 3, 3, 2, 2, 1, 1, 3, 3,
+        {{0, 8.0}, {3, 6.0}, {6, 2.0}, {8, 4.0}},
+        410.0, 4444.0, 6684.0, 10
+      },
+      {
+        1, 3, 3, 2, 2, 1, 1, 3, 3,
+        {{0, 8.0}, {2, 6.0}, {4, 2.0}, {8, 4.0}},
+        416.0, 6336.0, 7048.0, 10
+      },
+      {
+        1, 3, 1, 1, 2, 0, 0, 4, 1,
+        {{0, 1.0}, {1, 0.0}, {2, -1.0}},
+        0.0, 6.0, 0.0, 4
+      },
+      {
+        1, 3, 2, 1, 1, 0, 0, 5, 4,
+        {{0, 1.0}, {2, 2.0}, {5, 3.0}},
+        1140.0, 5339.0, 58272.0, 7
+      },
+      {
+        1, 3, 2, 1, 1, 0, 1, 3, 4,
+        {{0, 1.0}, {1, 3.0}, {4, 5.0}, {5, 7.0}},
+        684.0, 8658.0, 20829.0, 7
+      },
+      {
+        1, 2, 3, 2, 2, 0, 0, 3, 3,
+        {{0, 1.0}, {3, 2.0}, {5, 3.0}},
+        216.0, 504.0, 1840.0, 7
+      },
+      {
+        1, 2, 3, 2, 1, 0, 1, 3, 4,
+        {{0, 1.0}, {1, 2.0}, {2, 3.0}, {5, 4.0}},
+        531.0, 2310.0, 9439.0, 7
+      },
+      {
+        1, 3, 3, 1, 1, 0, 0, 1, 1,
+        {{0, 1.0}, {1, 2.0}, {2, 3.0}, {3, 4.0}, {4, 5.0},
+         {5, 6.0}, {6, 7.0}, {7, 8.0}, {8, 9.0}},
+        0.0, 0.0, 0.0, 10
+      },
+      {
+        1, 3, 1, 1, 2, 1, 0, 1, 4,
+        {{0, 1.0}, {1, 2.0}, {2, 3.0}},
+        12.0, 24.0, 40.0, 4
+      },
+      {
+        1, 3, 3, 1, 1, 1, 1, 4, 4,
+        {{9, 3.0}},
+        48.0, 0.0, 2298.0, 10
+      }
+  };
+  
+  for (size_t i = 0; i < configs.size(); ++i)
   {
-    TransposedConvolution module(1, 4, 4, 1, 1, 1, 1);
-    input = arma::linspace<arma::colvec>(0, 24, 25);
-    module.InputDimensions() = {5, 5};
-    module.ComputeOutputDimensions();
+    const auto& c = configs[i];
+    std::string sectionName = "Case - " + std::to_string(i);
+    SECTION(sectionName)
+    {
+      arma::mat input, output, weights, delta, grad;
+      TransposedConvolution module(c.maps, c.kW, c.kH, c.dW, c.dH, c.pW, c.pH);
 
-    weights.set_size(module.WeightSize(), 1);
-    weights.zeros();
-    weights[0] = 1.0;
-    weights[3] = 1.0;
-    weights[6] = 1.0;
-    weights[9] = 1.0;
-    weights[12] = 1.0;
-    weights[15] = 2.0;
-    module.SetWeights(weights);
+      size_t inputSize = c.inW * c.inH;
+      input = arma::linspace<arma::colvec>(0, inputSize - 1, inputSize);
 
-    output.set_size(module.OutputSize(), 1);
-    module.Forward(input, output);
+      module.InputDimensions() = {c.inW, c.inH};
+      module.ComputeOutputDimensions();
 
-    delta.set_size(arma::size(input));
-    module.Backward(input, output, output, delta);
+      weights.set_size(module.WeightSize(), 1);
+      weights.zeros();
+      for (auto const& [index, value]: c.weightAssignments)
+        weights[index] = value;
+      module.SetWeights(weights);
 
-    REQUIRE(accu(output) == 1512.0);
-    REQUIRE(accu(delta) == 6504.0);
-    REQUIRE(weights.n_elem == 16 + 1);
-  }
+      output.set_size(module.OutputSize(), 1);
+      module.Forward(input, output);
 
-  SECTION("3x3 kernel, pad=1, stride=1")
-  {
-    TransposedConvolution module(1, 3, 3, 1, 1, 1, 1);
-    input = arma::linspace<arma::colvec>(0, 24, 25);
-    module.InputDimensions() = {5, 5};
-    module.ComputeOutputDimensions();
+      delta.set_size(arma::size(input));
+      module.Backward(input, output, output, delta);
 
-    weights.set_size(module.WeightSize(), 1);
-    weights.zeros();
-    weights[1] = 2.0;
-    weights[2] = 4.0;
-    weights[3] = 3.0;
-    weights[8] = 1.0;
-    module.SetWeights(weights);
+      grad.set_size(arma::size(weights));
+      module.Gradient(input, output, grad);
 
-    output.set_size(module.OutputSize(), 1);
-    module.Forward(input, output);
-
-    delta.set_size(arma::size(input));
-    module.Backward(input, output, output, delta);
-
-    REQUIRE(accu(output) == 2370.0);
-    REQUIRE(accu(delta) == 19154.0);
-    REQUIRE(weights.n_elem == 9 + 1);
-  }
-
-  SECTION("3x3 kernel, stride=1, no padding")
-  {
-    TransposedConvolution module(1, 3, 3, 1, 1, 0, 0);
-    input = arma::linspace<arma::colvec>(0, 24, 25);
-    module.InputDimensions() = {5, 5};
-    module.ComputeOutputDimensions();
-
-    weights.set_size(module.WeightSize(), 1);
-    weights.zeros();
-    weights[2] = 2.0;
-    weights[4] = 4.0;
-    weights[6] = 6.0;
-    weights[8] = 8.0;
-    module.SetWeights(weights);
-
-    output.set_size(module.OutputSize(), 1);
-    module.Forward(input, output);
-
-    delta.set_size(arma::size(input));
-    module.Backward(input, output, output, delta);
-
-    REQUIRE(accu(output) == 6000.0);
-    REQUIRE(accu(delta) == 86208.0);
-    REQUIRE(weights.n_elem == 9 + 1);
-  }
-
-  SECTION("3x3 kernel, stride=2, no padding")
-  {
-    TransposedConvolution module(1, 3, 3, 2, 2, 0, 0);
-    input = arma::linspace<arma::colvec>(0, 3, 4);
-    module.InputDimensions() = {2, 2};
-    module.ComputeOutputDimensions();
-
-    weights.set_size(module.WeightSize(), 1);
-    weights.zeros();
-    weights[2] = 8.0;
-    weights[4] = 6.0;
-    weights[6] = 4.0;
-    weights[8] = 2.0;
-    module.SetWeights(weights);
-
-    output.set_size(module.OutputSize(), 1);
-    module.Forward(input, output);
-
-    delta.set_size(arma::size(input));
-    module.Backward(input, output, output, delta);
-
-    REQUIRE(accu(output) == 120.0);
-    REQUIRE(accu(delta) == 960.0);
-    REQUIRE(weights.n_elem == 9 + 1);
-  }
-
-  SECTION("3x3 kernel, stride=2, pad=1")
-  {
-    TransposedConvolution module(1, 3, 3, 2, 2, 1, 1);
-    input = arma::linspace<arma::colvec>(0, 8, 9);
-    module.InputDimensions() = {3, 3};
-    module.ComputeOutputDimensions();
-
-    weights.set_size(module.WeightSize(), 1);
-    weights.zeros();
-
-    weights[0] = 8.0;
-    weights[3] = 6.0;
-    weights[6] = 2.0;
-    weights[8] = 4.0;
-    module.SetWeights(weights);
-
-    output.set_size(module.OutputSize(), 1);
-    module.Forward(input, output);
-
-    delta.set_size(arma::size(input));
-    module.Backward(input, output, output, delta);
-
-    REQUIRE(accu(output) == 410.0);
-    REQUIRE(accu(delta) == 4444.0);
-    REQUIRE(weights.n_elem == 9 + 1);
-  }
-
-  SECTION("3x3 kernel, stride=2, pad=1")
-  {
-    TransposedConvolution module(1, 3, 3, 2, 2, 1, 1);
-    input = arma::linspace<arma::colvec>(0, 8, 9);
-    module.InputDimensions() = {3, 3};
-    module.ComputeOutputDimensions();
-
-    weights.set_size(module.WeightSize(), 1);
-    weights.zeros();
-    weights[0] = 8.0;
-    weights[2] = 6.0;
-    weights[4] = 2.0;
-    weights[8] = 4.0;
-    module.SetWeights(weights);
-
-    output.set_size(module.OutputSize(), 1);
-    module.Forward(input, output);
-
-    delta.set_size(arma::size(input));
-    module.Backward(input, output, output, delta);
-
-    REQUIRE(accu(output) == 416.0);
-    REQUIRE(accu(delta) == 6336.0);
-    REQUIRE(weights.n_elem == 9 + 1);
+      REQUIRE(accu(output) == c.expectedOutputSum);
+      REQUIRE(accu(delta) == c.expectedDeltaSum);
+      REQUIRE(accu(grad) == c.expectedGradSum);
+      REQUIRE(weights.n_elem == c.expectedTotalWeights);
+    }
   }
 }
 
 /**
- * Test the numerical gradient of the Transposed Convolution layer.
+ * Test the numerical gradient of the TransposedConvolution layer.
  */
 TEST_CASE("TransposedConvolutionGradientTest", "[ANNLayerTest]")
 {
