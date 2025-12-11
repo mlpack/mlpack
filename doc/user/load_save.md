@@ -28,25 +28,39 @@ and [format detection/selection](#formats).
 
 ## `data::Load()`
 
- - `data::Load(filenames, X)`
- - `data::Load(filenames, X, Option1 + Option2 + ...)`
+ - `data::Load(filename, X)`
+ - `data::Load(filename, X, Option1 + Option2 + ...)`
  - `data::Load(filename, X, opts)`
-
-   * Load `X` from a set of files `filenames` (of type `std::vector<std::string>`) Or
-     - Load `X` from a single file (of type `std::string`) with default options:
+   * Load `X` from a single file `filename` (of type `std::string`) with
+     default options:
      - the format of the file is [auto-detected](#formats) based on the
        extension of the file, and
      - an exception is *not* thrown on an error.
-     - If loading a set of files (text or image) into one matrix `X`, all files should have the
-       same metadata described in [`DataOptions`](#dataoptions). 
    * `X` can be [any supported load type](#types).
-    * The given options `Options1, Options2 ...` must be from the
+   * The given options `Options1, Options2 ...` must be from the
      [list of standalone operators](#dataoptions) and be appropriate for the type
      of `X`.
-    * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
+   * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
      type of `X`.
    * Returns a `bool` indicating whether the load was a success.
+
+For some types of data, it is also possible to load multiple images at once from a set of files:
+
+ - `data::Load(filenames, X)`
+ - `data::Load(filenames, X, Option1 + Option2 + ...)`
+ - `data::Load(filenames, X, opts)`
+    * Load data from `filenames` (a `std::vector<std::string>`) into the matrix `X`.
+    - For [numeric data](#numeric-data), data loaded from each file is concatenated into `X`.
+    - For [image data](#image-data), each image is flattened into one column of `X`.
+    - Metadata (e.g. image size, number of columns, etc.) in all files in `filenames` must match or loading will fail.
+    - Loading options can be specified by either standalone options or an instantiated [`DataOptions` object](#dataoptions).
+    - an exception is *not* thrown on an error.
    * `X` can be [any supported load type](#types).
+   * The given options `Options1, Options2 ...` must be from the
+     [list of standalone operators](#dataoptions) and be appropriate for the type of `X`.
+   * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
+     type of `X`.
+   * Returns a `bool` indicating whether the load was a success.
 
 ---
 
@@ -82,28 +96,23 @@ See also the other examples for each [supported load type](#types):
 ## `data::Save()`
 
  - `data::Save(filename, X)`
+ - `data::Save(filename, object, Option1 + Option2 + ...)`
+ - `data::Save(filename, object, opts)`
    * Save `X` to the given file `filename` with default options:
      - the format of the file is auto-detected based on the extension of the
        file, and
      - an exception is *not* thrown on an error.
-   * Returns a `bool` indicating whether the save was a success.
-   * `X` can be [any supported save type](#types).
-
- - `data::Save(filename, object, Option1 + Option2 + ...)`
-   * Save `X` to the given file `filename` with the given options.
-   * Returns a `bool` indicating whether the save was a success.
    * `X` can be [any supported save type](#types).
    * The given options must be from the
      [list of standalone options](#dataoptions) and be appropriate for the type
      of `X`.
-
- - `data::Save(filename, object, opts)`
-   * Save `X` to the given file `filename` with the given options specified in
-     `opts`.
-   * Returns a `bool` indicating whether the save was a success.
-   * `X` can be [any supported save type](#types).
    * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
      type of `X`.
+   * Returns a `bool` indicating whether the save was a success.
+
+***Note:*** when saving images, it is possible to save
+into multiple images from one matrix `X`.  See [image data](#image-data) for more
+details.
 
 ---
 
