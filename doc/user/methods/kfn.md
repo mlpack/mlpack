@@ -386,8 +386,8 @@ compute quality metrics of the approximate search.
    [tree-traversing search strategy](#search-strategies) was used.
 
  - A `KFN` object can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).  Note
-   that for large reference sets, this will also serialize the dataset
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
+   Note that for large reference sets, this will also serialize the dataset
    (`kfn.ReferenceSet()`) and the tree (`kfn.Tree()`), and so the resulting file
    may be quite large.
 
