@@ -28,44 +28,25 @@ and [format detection/selection](#formats).
 
 ## `data::Load()`
 
- - `data::Load(filename, X)`
-   * Load `X` from the given file `filename` with default options:
+ - `data::Load(filenames, X)`
+ - `data::Load(filenames, X, Option1 + Option2 + ...)`
+ - `data::Load(filename, X, opts)`
+
+   * Load `X` from a set of files `filenames` (of type `std::vector<std::string>`) Or
+     - Load `X` from a single file (of type `std::string`) with default options:
      - the format of the file is [auto-detected](#formats) based on the
        extension of the file, and
      - an exception is *not* thrown on an error.
-   * Returns a `bool` indicating whether the load was a success.
+     - If loading a set of files (text or image) into one matrix `X`, all files should have the
+       same metadata described in [`DataOptions`](#dataoptions). 
    * `X` can be [any supported load type](#types).
-
- - `data::Load(filenames, X)`
-   * Load `X` from a set of files `filenames` (of type `std::vector<std::string>`) with default options:
-     - the format of the all files is [auto-detected](#formats) based on the
-       extension of the file, and
-     - an exception is *not* thrown on an error.
-   * Returns a `bool` indicating whether the load was a success.
-   * `X` can be [any supported load type](#types).
-
- - `data::Load(filename, X, Option1 + Option2 + ...)`
-   * Load `X` from the given file `filename` with the given options.
-   * Returns a `bool` indicating whether the load was a success.
-   * `X` can be [any supported load type](#types).
-   * The given options must be from the
+    * The given options `Options1, Options2 ...` must be from the
      [list of standalone operators](#dataoptions) and be appropriate for the type
      of `X`.
-
- - `data::Load(filename, X, opts)`
-   * Load `X` from the given file `filename` with the given options specified in `opts`.
+    * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
+     type of `X`.
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
-   * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
-     type of `X`.
-
-***Note:*** when loading a set of files into one matrix `X`, all files should have
-the same format and number of data points internally.  See [image data](#image-data) for more
-details.
-
-***Note:*** when loading images, it is possible to load
-multiple images into one matrix `X`.  See [image data](#image-data) for more
-details.
 
 ---
 
@@ -85,7 +66,7 @@ Among other things, the file format can be easily specified:
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat x;
-mlpack::data::Load("iris.csv", x, CSV);
+mlpack::data::Load("iris.csv", x, mlpack::data::CSV);
 
 std::cout << "Loaded iris.csv; size " << x.n_rows << " x " << x.n_cols << "."
     << std::endl;
@@ -141,7 +122,7 @@ Among other things, the file format can be easily specified manually:
 ```c++
 // Generate a 5-dimensional matrix of random data.
 arma::mat dataset(5, 1000, arma::fill::randu);
-mlpack::data::Save("dataset.csv", dataset, CSV);
+mlpack::data::Save("dataset.csv", dataset, mlpack::data::CSV);
 
 std::cout << "Saved random data to 'dataset.csv'." << std::endl;
 ```
@@ -563,11 +544,11 @@ to disk.
 
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-mlpack::data::Load("satellite.train.csv", dataset, Fatal);
+mlpack::data::Load("satellite.train.csv", dataset, mlpack::data::Fatal);
 
 // See https://datasets.mlpack.org/satellite.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("satellite.train.labels.csv", labels, Fatal);
+mlpack::data::Load("satellite.train.labels.csv", labels, mlpack::data::Fatal);
 
 // Print information about the data.
 std::cout << "The data in 'satellite.train.csv' has: " << std::endl;
@@ -586,8 +567,8 @@ labels.shed_col(labels.n_cols - 1);
 
 // Don't throw an exception if saving fails.  Technically there is no need to
 // explicitly specify NoFatal---it is the default.
-mlpack::data::Save("satellite.train.mod.csv", dataset, NoFatal);
-mlpack::data::Save("satellite.train.labels.mod.csv", labels, NoFatal);
+mlpack::data::Save("satellite.train.mod.csv", dataset, mlpack::data::NoFatal);
+mlpack::data::Save("satellite.train.labels.mod.csv", labels, mlpack::data::NoFatal);
 ```
 
 ---
@@ -597,10 +578,11 @@ Load a dataset stored in a binary format and save it as a CSV.
 ```c++
 // See https://datasets.mlpack.org/iris.bin.
 arma::mat dataset;
-mlpack::data::Load("iris.bin", dataset, Fatal + ArmaBin);
+mlpack::data::Load("iris.bin",
+    dataset, mlpack::data::Fatal + mlpack::data::ArmaBin);
 
 // Save it back to disk as a CSV.
-mlpack::data::Save("iris.converted.csv", dataset, CSV);
+mlpack::data::Save("iris.converted.csv", dataset, mlpack::data::CSV);
 ```
 
 ---
@@ -977,31 +959,8 @@ of the flattened vector.
 
 ---
 
-When working with images, the following overloads of [`data::Load()`](#dataload) and
-[`data::Save()`](#datasave) are also available:
-
- * `data::Load(filenames, X, opts)`
-   - Load multiple images simultaneously into `X` (an `arma::mat` or other
-     [matrix type](matrices.md)).
-
-   - `filenames` is a `std::vector<std::string>` representing all the images that
-     should be loaded.
-
-   - `opts` is an [`ImageOptions`](#imageoptions) that image metadata will be
-     stored into.
-
-   - The `i`th image in `filenames` will be loaded into the `i`th column of `X`
-     as a flattened single column.
-
-   - All images in `filenames` must have the same size; otherwise, an exception
-     will be thrown.
-
-   - `opts.Width()`, `opts.Height()`, and `opts.Channels()` will be set to the
-     parameters of the loaded images; see
-     [`ImageOptions` members](#imageoptions-standalone-operators-and-members)
-     for more details.
-
-   - If all images are loaded successfully, `true` will be returned.
+When working with images, the following overload for
+[`data::Save()`](#datasave) is also available:
 
  * `data::Save(filenames, X, opts)`
    - Save each column in `X` (an `arma::mat` or other
@@ -1157,6 +1116,7 @@ different dimensions:
 // See https://datasets.mlpack.org/sheep.tar.bz2
 arma::Mat<unsigned char> image;
 mlpack::data::ImageOptions opts;
+opts.Fatal() = false;
 
 // The images are located in our test/data directory. However, any image could
 // be used instead.
@@ -1176,9 +1136,9 @@ std::vector<std::string> reSheeps =
 // the same dimensions. The `opts` will contain the dimension for each one.
 for (size_t i = 0; i < files.size(); i++)
 {
-  mlpack::data::Load(files.at(i), image, opts, false);
+  mlpack::data::Load(files.at(i), image, opts);
   mlpack::data::ResizeImages(image, opts, 320, 320);
-  mlpack::data::Save(reSheeps.at(i), image, opts, false);
+  mlpack::data::Save(reSheeps.at(i), image, opts);
 }
 ```
 
@@ -1369,7 +1329,7 @@ image is converted back to interleaved channels and saved.
 arma::mat image;
 mlpack::data::ImageOptions opts;
 opts.Fatal() = true;
-mlpack::data::Load("mlpack-favicon.png", image, info);
+mlpack::data::Load("mlpack-favicon.png", image, opts);
 
 std::vector<std::string> colors =
      { "\033[31m", "\033[32m", "\033[34m", "\033[37m" };
@@ -1413,6 +1373,7 @@ std::cout << std::endl << std::endl;
 
 mlpack::data::Save("mlpack-favicon.png", image, opts);
 ```
+
 ### Letterbox transform
 
 The letterbox transform resizes an image's dimensions to `width x height` but
@@ -1460,7 +1421,8 @@ while keeping the aspect ratio using `LetterboxImages()`.
 // Download: https://datasets.mlpack.org/jurassic-park.png
 arma::mat image;
 mlpack::data::ImageOptions opt;
-mlpack::data::Load("jurassic-park.png", image, opt, true);
+opts.Fatal() = true;
+mlpack::data::Load("jurassic-park.png", image, opt);
 mlpack::data::LetterboxImages(image, opt, 416, 416, 127.0);
 // Image dimensions are now 416x416.
 mlpack::data::Save("jurassic-park-letterbox.png", image, opt, true);
@@ -1509,14 +1471,14 @@ mlpack::data::Save("range.bin", r, opts);
 
 // Load the range into a new object.
 mlpack::math::Range r2;
-mlpack::data::Load("range.bin", r2, BIN + Fatal);
+mlpack::data::Load("range.bin", r2, mlpack::data::BIN + mlpack::data::Fatal);
 
 std::cout << "Loaded range: [" << r2.Lo() << ", " << r2.Hi() << "]."
     << std::endl;
 
 // Modify and save the range as JSON.
 r2.Lo() = 4.0;
-mlpack::data::Save("range.json", r2, JSON + Fatal);
+mlpack::data::Save("range.json", r2, mlpack::data::JSON + mlpack::data::Fatal);
 
 // Now 'range.json' will contain the following:
 //
@@ -1549,7 +1511,7 @@ mlpack::LinearRegression lr(data, responses, 0.3, true);a
 
 // Save the model using the binary format as a standalone parameter, throwing an
 // exception on failure.
-mlpack::data::Save("lr-model.bin", lr, Fatal + BIN);
+mlpack::data::Save("lr-model.bin", lr, mlpack::data::Fatal + mlpack::data::BIN);
 std::cout << "Saved model to lr-model.bin." << std::endl;
 
 // Now load the model back, using format autodetection on the filename
