@@ -1,5 +1,5 @@
 /**
- * @file tests/ann/layer/lookup.cpp
+ * @file tests/ann/layer/embedding.cpp
  * @author Kumar Utkarsh
  *
  * Tests the Embedding layer.

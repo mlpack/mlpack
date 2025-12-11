@@ -2,6 +2,7 @@
  * @file methods/ann/layer/embedding.hpp
  * @author Marcus Edel
  * @author Kumar Utkarsh
+ * @author Ryan Curtin
  *
  * Definition of the Embedding (embedding) layer class.
  *
@@ -53,7 +54,9 @@ class Embedding : public Layer<MatType>
    * dimensions.  The vocabulary size (number of possible inputs) and the
    * embedding size (dimensionality of the output) must be given.
    *
-   * @param outSize The output dimension.
+   * @param vocabSize The size of the input vocabulary (number of different
+   *     possible input values).
+   * @param embeddingSize Number of dimensions to use for the embedding.
    * @param regularizer The regularizer to use, optional (default: no
    *     regularizer).
    */
