@@ -592,7 +592,7 @@ Load a dataset that has a semicolon as a separator instead of a comma.
 ```c++
 // First write the semicolon file to disk.
 std::fstream f;
-f.open("semicolon.csv", fstream::out);
+f.open("semicolon.csv", std::fstream::out);
 f << "1; 2; 3; 4" << std::endl;
 f << "5; 6; 7; 8" << std::endl;
 f << "9; 10; 11; 12" << std::endl;
@@ -619,7 +619,7 @@ using the [`MissingToNan`](#textoptions-standalone-operators-and-members) option
 ```c++
 // First write a CSV file to disk with some missing values.
 std::fstream f;
-f.open("missing_to_nan.csv", fstream::out);
+f.open("missing_to_nan.csv", std::fstream::out);
 // Missing 2 value in the first row.
 f << "1, , 3, 4" << std::endl;
 f << "5, 6, 7, 8" << std::endl;
@@ -646,7 +646,7 @@ Then, change the headers and save back to a new CSV.
 arma::fmat dataset;
 // We have to make a TextOptions object so that we can recover the headers.
 mlpack::data::TextOptions opts;
-opts.Format() = FileType::CSV;
+opts.Format() = mlpack::data::FileType::CSVASCII;
 opts.HasHeaders() = true;
 mlpack::data::Load("Admission_Predict.csv", dataset, opts);
 
@@ -788,20 +788,25 @@ opts.Categorical() = true;
 // See https://datasets.mlpack.org/covertype.train.arff.
 mlpack::data::Load("covertype.train.arff", dataset, opts);
 
-arma::Row<size_t> labels;
-// See https://datasets.mlpack.org/covertype.train.labels.csv.
-mlpack::data::Load("covertype.train.labels.csv", labels, opts);
-
 // Print information about the data.
 std::cout << "The data in 'covertype.train.arff' has: " << std::endl;
 std::cout << " - " << dataset.n_cols << " points." << std::endl;
 std::cout << " - " << opts.DatasetInfo().Dimensionality() << " dimensions."
     << std::endl;
 
+arma::Row<size_t> labels;
+// We need to have a second options, since we are loading two different
+// data types and extension.
+mlpack::data::TextOptions labelOpts;
+labelOpts.Fatal() = true;
+// See https://datasets.mlpack.org/covertype.train.labels.csv.
+mlpack::data::Load("covertype.train.labels.csv", labels, labelOpts);
+
+
 // Print information about each dimension.
 for (size_t d = 0; d < opts.DatasetInfo().Dimensionality(); ++d)
 {
-  if (opts.DatasetInfo.Type(d) == mlpack::data::Datatype::categorical)
+  if (opts.DatasetInfo().Type(d) == mlpack::data::Datatype::categorical)
   {
     std::cout << " - Dimension " << d << " is categorical with "
         << opts.DatasetInfo().NumMappings(d) << " categories." << std::endl;
@@ -814,7 +819,7 @@ for (size_t d = 0; d < opts.DatasetInfo().Dimensionality(); ++d)
 
 // Modify the 5th point.  Increment any numeric values, and set any categorical
 // values to the string "hooray!".
-for (size_t d = 0; d < opts.DatasetInfo.Dimensionality(); ++d)
+for (size_t d = 0; d < opts.DatasetInfo().Dimensionality(); ++d)
 {
   if (opts.DatasetInfo().Type(d) == mlpack::data::Datatype::categorical)
   {
@@ -1420,15 +1425,15 @@ while keeping the aspect ratio using `LetterboxImages()`.
 ```c++
 // Download: https://datasets.mlpack.org/jurassic-park.png
 arma::mat image;
-mlpack::data::ImageOptions opt;
+mlpack::data::ImageOptions opts;
 opts.Fatal() = true;
-mlpack::data::Load("jurassic-park.png", image, opt);
-mlpack::data::LetterboxImages(image, opt, 416, 416, 127.0);
+mlpack::data::Load("jurassic-park.png", image, opts);
+mlpack::data::LetterboxImages(image, opts, 416, 416, 127.0);
 // Image dimensions are now 416x416.
-mlpack::data::Save("jurassic-park-letterbox.png", image, opt, true);
+mlpack::data::Save("jurassic-park-letterbox.png", image, opts, true);
 
-std::cout << "Dimensions: " << opt.Width() << " x " << opt.Height()
-          << " x " << opt.Channels() << "\n";
+std::cout << "Dimensions: " << opts.Width() << " x " << opts.Height()
+          << " x " << opts.Channels() << "\n";
 std::cout << "Total size: " << image.n_rows << "\n";
 ```
 
@@ -1462,9 +1467,9 @@ Simple example: create a `math::Range` object, then save and load it.
 mlpack::math::Range r(3.0, 6.0);
 
 // How we can use DataOptions with loading / saving objects.
-data::DataOptions opts;
+mlpack::data::DataOptions opts;
 opts.Fatal() = true;
-opts.Format() = FileType::BIN;
+opts.Format() = mlpack::data::FileType::BIN;
 
 // Save the Range to 'range.bin', using the name "range".
 mlpack::data::Save("range.bin", r, opts);
@@ -1499,6 +1504,8 @@ disk, then reload it.
 ```c++
 // See https://datasets.mlpack.org/admission_predict.csv.
 arma::mat data;
+mlpack::data::DataOptions opts;
+opts.Fatal () = false;
 mlpack::data::Load("admission_predict.csv", data, true);
 
 // See https://datasets.mlpack.org/admission_predict.responses.csv.
@@ -1507,7 +1514,7 @@ mlpack::data::Load("admission_predict.responses.csv", responses, true);
 
 // Train a linear regression model, fitting an intercept term and using an L2
 // regularization parameter of 0.3.
-mlpack::LinearRegression lr(data, responses, 0.3, true);a
+mlpack::LinearRegression lr(data, responses, 0.3, true);
 
 // Save the model using the binary format as a standalone parameter, throwing an
 // exception on failure.
@@ -1517,7 +1524,7 @@ std::cout << "Saved model to lr-model.bin." << std::endl;
 // Now load the model back, using format autodetection on the filename
 // extension.
 mlpack::LinearRegression loadedModel;
-if (!mlpack::data::Load("lr-model.bin", loadedModel))
+if (!mlpack::data::Load("lr-model.bin", loadedModel, opts))
 {
   std::cout << "Model not loaded successfully from 'lr-model.bin'!"
       << std::endl;
