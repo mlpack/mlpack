@@ -41,7 +41,7 @@ _????-??-??_
  * Fix infinite recursion in `Octree` when the number of identical points
    exceeds `maxLeafSize` (#4020).
 
- * Add YOLOv3Tiny for object detection (#4023).
+ * Add YOLOv3Tiny and YOLOv3 for object detection (#4023).
 
  * Fix thread-specific random seed initialization (#4027).
 
