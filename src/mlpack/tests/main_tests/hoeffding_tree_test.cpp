@@ -29,11 +29,13 @@ BINDING_TEST_FIXTURE(HoeffdingTreeTestFixture);
  * number of input points are equal.
  */
 TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingTreeOutputDimensionTest",
-                 "[HoeffdingTreeMainTest][BindingTest]")
+                 "[HoeffdingTreeMainTest][BindingsTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
-  if (!data::Load("vc2.csv", inputData, info))
+  TextOptions opts;
+  opts.Categorical() = true;
+
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -41,17 +43,17 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingTreeOutputDimensionTest",
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   RUN_BINDING();
 
@@ -70,11 +72,13 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingTreeOutputDimensionTest",
  */
 TEST_CASE_METHOD(HoeffdingTreeTestFixture,
                  "HoeffdingTreeCategoricalOutputDimensionTest",
-                 "[HoeffdingTreeMainTest][BindingTest]")
+                 "[HoeffdingTreeMainTest][BindingsTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
-  if (!data::Load("braziltourism.arff", inputData, info))
+  TextOptions opts;
+  opts.Categorical() = true;
+
+  if (!data::Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
@@ -82,17 +86,17 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("braziltourism_test.arff", testData, info))
+  if (!data::Load("braziltourism_test.arff", testData, opts))
     FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   RUN_BINDING();
 
@@ -110,11 +114,13 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
  * dimension give the same output.
  */
 TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingTreeLabelLessTest",
-                 "[HoeffdingTreeMainTest][BindingTest]")
+                 "[HoeffdingTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
-  if (!data::Load("vc2.csv", inputData, info))
+  TextOptions opts;
+  opts.Categorical() = true;
+
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -122,7 +128,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingTreeLabelLessTest",
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Append labels to the training set.
@@ -133,10 +139,10 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingTreeLabelLessTest",
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   RUN_BINDING();
 
@@ -161,8 +167,8 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingTreeLabelLessTest",
   inputData.shed_row(inputData.n_rows - 1);
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
   // Pass Labels.
   SetInputParam("labels", std::move(labels));
 
@@ -187,11 +193,13 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingTreeLabelLessTest",
  * Ensure that saved model can be used again.
  */
 TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelReuseTest",
-                 "[HoeffdingTreeMainTest][BindingTest]")
+                 "[HoeffdingTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
-  if (!data::Load("vc2.csv", inputData, info))
+  TextOptions opts;
+  opts.Categorical() = true;
+
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -199,17 +207,17 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelReuseTest",
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   RUN_BINDING();
 
@@ -222,11 +230,11 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelReuseTest",
   HoeffdingTreeModel* m = params.Get<HoeffdingTreeModel*>("output_model");
   ResetSettings();
 
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input trained model.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
   SetInputParam("input_model", m);
 
   RUN_BINDING();
@@ -253,11 +261,13 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelReuseTest",
  * Ensure that saved model trained on categorical dataset can be used again.
  */
 TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelCategoricalReuseTest",
-                 "[HoeffdingTreeMainTest][BindingTest]")
+                 "[HoeffdingTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
-  if (!data::Load("braziltourism.arff", inputData, info))
+  TextOptions opts;
+  opts.Categorical() = true;
+
+  if (!data::Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
@@ -265,17 +275,17 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelCategoricalReuseTest",
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("braziltourism_test.arff", testData, info))
+  if (!data::Load("braziltourism_test.arff", testData, opts))
     FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   RUN_BINDING();
 
@@ -288,11 +298,11 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelCategoricalReuseTest",
   HoeffdingTreeModel* m = params.Get<HoeffdingTreeModel*>("output_model");
   ResetSettings();
 
-  if (!data::Load("braziltourism_test.arff", testData, info))
+  if (!data::Load("braziltourism_test.arff", testData, opts))
     FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   // Input trained model.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
   SetInputParam("input_model", m);
 
   RUN_BINDING();
@@ -319,12 +329,14 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelCategoricalReuseTest",
  * Ensure that small min_samples creates larger model.
  */
 TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMinSamplesTest",
-                 "[HoeffdingTreeMainTest][BindingTest]")
+                 "[HoeffdingTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
+  TextOptions opts;
+  opts.Categorical() = true;
+
   int nodes;
-  if (!data::Load("vc2.csv", inputData, info))
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -332,15 +344,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMinSamplesTest",
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   SetInputParam("min_samples", 10);
   SetInputParam("confidence", 0.25);
@@ -353,21 +365,21 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMinSamplesTest",
   ResetSettings();
   CleanMemory();
 
-  if (!data::Load("vc2.csv", inputData, info))
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   if (!data::Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   SetInputParam("min_samples", 2000);
   SetInputParam("confidence", 0.25);
@@ -383,12 +395,14 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMinSamplesTest",
  * Ensure that large max_samples creates smaller model.
  */
 TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMaxSamplesTest",
-                 "[HoeffdingTreeMainTest][BindingTest]")
+                 "[HoeffdingTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
+  TextOptions opts;
+  opts.Categorical() = true;
+
   int nodes;
-  if (!data::Load("vc2.csv", inputData, info))
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -396,15 +410,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMaxSamplesTest",
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   SetInputParam("max_samples", 50000);
   SetInputParam("confidence", 0.95);
@@ -417,21 +431,21 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMaxSamplesTest",
   ResetSettings();
   CleanMemory();
 
-  if (!data::Load("vc2.csv", inputData, info))
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   if (!data::Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   SetInputParam("max_samples", 5);
   SetInputParam("confidence", 0.95);
@@ -447,12 +461,14 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMaxSamplesTest",
  * Ensure that small confidence value creates larger model.
  */
 TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingConfidenceTest",
-                 "[HoeffdingTreeMainTest][BindingTest]")
+                 "[HoeffdingTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
+  TextOptions opts;
+  opts.Categorical() = true;
+
   int nodes;
-  if (!data::Load("vc2.csv", inputData, info))
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -460,15 +476,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingConfidenceTest",
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   SetInputParam("confidence", 0.95);
 
@@ -481,21 +497,21 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingConfidenceTest",
   ResetSettings();
   CleanMemory();
 
-  if (!data::Load("vc2.csv", inputData, info))
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   if (!data::Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   // Model with low confidence.
   SetInputParam("confidence", 0.25);
@@ -510,12 +526,14 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingConfidenceTest",
  * Ensure that large number of passes creates larger model.
  */
 TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingPassesTest",
-                 "[HoeffdingTreeMainTest][BindingTest]")
+                 "[HoeffdingTreeMainTest][BindingsTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
+  TextOptions opts;
+  opts.Categorical() = true;
+
   int nodes;
-  if (!data::Load("vc2.csv", inputData, info))
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -523,15 +541,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingPassesTest",
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   SetInputParam("passes", 1);
 
@@ -544,21 +562,21 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingPassesTest",
   ResetSettings();
   CleanMemory();
 
-  if (!data::Load("vc2.csv", inputData, info))
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   if (!data::Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   // Model with larger number of passes.
   SetInputParam("passes", 100);
@@ -575,11 +593,13 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingPassesTest",
  */
 TEST_CASE_METHOD(HoeffdingTreeTestFixture,
                  "HoeffdingBinarySplittingStrategyTest",
-                 "[HoeffdingTreeMainTest][BindingTest]")
+                 "[HoeffdingTreeMainTest][BindingsTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
-  if (!data::Load("vc2.csv", inputData, info))
+  TextOptions opts;
+  opts.Categorical() = true;
+
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -587,15 +607,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   SetInputParam("numeric_split_strategy", (string) "binary");
   SetInputParam("max_samples", 50);
@@ -614,12 +634,14 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
  */
 TEST_CASE_METHOD(HoeffdingTreeTestFixture,
                  "HoeffdingDomingosSplittingStrategyTest",
-                 "[HoeffdingTreeMainTest][BindingTest]")
+                 "[HoeffdingTreeMainTest][BindingsTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
+  TextOptions opts;
+  opts.Categorical() = true;
+
   int nodes;
-  if (!data::Load("vc2.csv", inputData, info))
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -627,15 +649,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   SetInputParam("numeric_split_strategy", (string) "domingos");
   SetInputParam("max_samples", 50);
@@ -650,21 +672,21 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
   ResetSettings();
   CleanMemory();
 
-  if (!data::Load("vc2.csv", inputData, info))
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   if (!data::Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   SetInputParam("numeric_split_strategy", (string) "domingos");
   SetInputParam("max_samples", 50);
@@ -682,13 +704,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
  * is greater than total number of samples passed.
  */
 TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingBinningTest",
-                 "[HoeffdingTreeMainTest][BindingTests]")
+                 "[HoeffdingTreeMainTest][BindingsTests]")
 {
   arma::mat inputData;
   arma::mat modData;
   arma::Row<size_t> modLabels;
-  DatasetInfo info;
-  if (!data::Load("vc2.csv", inputData, info))
+  TextOptions opts;
+  opts.Categorical() = true;
+
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -696,18 +720,18 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingBinningTest",
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   modData = inputData.cols(0, 49);
   modLabels = labels.cols(0, 49);
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, modData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), modData));
   SetInputParam("labels", std::move(modLabels));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   SetInputParam("numeric_split_strategy", (string) "domingos");
   SetInputParam("min_samples", 10);
