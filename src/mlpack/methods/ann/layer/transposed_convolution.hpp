@@ -17,7 +17,6 @@
 
 #include <mlpack/core/util/to_lower.hpp>
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
-#include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/im2col_convolution.hpp>
 
 #include "layer.hpp"
@@ -398,14 +397,14 @@ class TransposedConvolution : public Layer<MatType>
   //! Locally-stored bias term object.
   MatType bias;
 
+  //! Locally-stored expandInput term.
+  bool expandInput;
+
+  //! Locally-stored padInput term.
+  bool padInput;
+
   //! Locally-stored transformed input parameter.
   CubeType inputTemp;
-
-  //! Locally-stored transformed error parameter.
-  CubeType gTemp;
-
-  //! Locally-stored transformed gradient parameter.
-  CubeType gradientTemp;
 
   //! Locally-stored padding layer.
   Padding<MatType> padding;

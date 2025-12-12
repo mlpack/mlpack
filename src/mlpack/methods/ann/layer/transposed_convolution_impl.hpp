@@ -15,6 +15,7 @@
 
 // In case it hasn't yet been included.
 #include "transposed_convolution.hpp"
+#include <mlpack/core/math/make_alias.hpp>
 
 namespace mlpack {
 
@@ -295,16 +296,11 @@ void TransposedConvolution<
 {
   batchSize = input.n_cols;
 
-  const bool expandInput = (strideWidth > 1 || strideHeight > 1);
-  const bool usingPadding = (
-      padding.PadWLeft() != 0 || padding.PadWRight() != 0 ||
-      padding.PadHTop() != 0 || padding.PadHBottom() != 0);
-
   // If input requires processing (expanding and/or padding) we will store
   // the modified input in member variable inputTemp so that Gradient function
   // can reuse it. Otherwise inputTemp will just be an alias to the input
   // passed here.
-  if (expandInput || usingPadding)
+  if (expandInput || padInput)
   {
     inputTemp.set_size(padding.OutputDimensions()[0],
         padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
@@ -320,18 +316,18 @@ void TransposedConvolution<
   // If there is neither padding nor input expansion (no zero insertion), then
   // `inputTemp` simply aliases `input`. All the cases are therefore handled.
   MatType inputExpanded, inputPadded;
-  MakeAlias(usingPadding ? inputPadded : inputExpanded,
+  MakeAlias(padInput ? inputPadded : inputExpanded,
       inputTemp, padding.OutputDimensions()[0] * padding.OutputDimensions()[1]
       * inMaps * higherInDimensions, batchSize);
 
   if (expandInput)
     InsertZeros(input, inputExpanded);
-  if (usingPadding)
+  if (padInput)
     padding.Forward(expandInput ? inputExpanded : input, inputPadded);
 
   output.zeros();
 
-  // weights need to be flipped for the forward pass
+  // Weights need to be flipped for the forward pass
   CubeType rotatedFilters(weight.n_rows, weight.n_cols, weight.n_slices);
   #pragma omp parallel for schedule(static)
   for (size_t map = 0; map < (size_t)(maps * inMaps); ++map)
@@ -341,7 +337,6 @@ void TransposedConvolution<
 
   // We "ignore" dimensions higher than the third---that means that we just pass
   // them through and treat them like different input points.
-  //
   // If we eventually have a way to do convolutions for a single kernel
   // in-batch, then this strategy may not be the most efficient solution.
   #pragma omp parallel for schedule(dynamic) private(outputBatch)
@@ -351,7 +346,6 @@ void TransposedConvolution<
     const size_t fullOutputOffset = offset * maps;
 
     CubeType inputBatch;
-
     MakeAlias(inputBatch, inputTemp, inputTemp.n_rows, inputTemp.n_cols, inMaps,
         fullInputOffset * inputTemp.n_rows * inputTemp.n_cols);
     MakeAlias(outputBatch, output, this->outputDimensions[0],
@@ -408,12 +402,12 @@ void TransposedConvolution<
   }
 
   CubeType mappedError;
-  MakeAlias(mappedError,
-      (usingPaddingBackward ? errorPadded : gy),
+  MakeAlias(mappedError, (usingPaddingBackward ? errorPadded : gy),
       paddingBackward.OutputDimensions()[0],
       paddingBackward.OutputDimensions()[1],
       maps * higherInDimensions * batchSize);
 
+  CubeType gTemp;
   MakeAlias(gTemp, g, this->inputDimensions[0], this->inputDimensions[1],
             inMaps * higherInDimensions * batchSize);
   gTemp.zeros();
@@ -438,12 +432,12 @@ void TransposedConvolution<
         mappedErrorBatch,
         weight,
         gTempBatch,
-        strideWidth,
         strideHeight,
+        strideWidth,
         1,
         1,
         true);
-  }
+  } 
 }
 
 template<
@@ -458,19 +452,22 @@ void TransposedConvolution<
     BackwardConvolutionRule,
     GradientConvolutionRule
 >::Gradient(
-    const MatType& /* input */,
+    const MatType& input,
     const MatType& error,
     MatType& gradient)
 {
-  CubeType mappedError;
-  MakeAlias(mappedError, error, this->outputDimensions[0],
-      this->outputDimensions[1], maps * higherInDimensions * batchSize);
-
+  // TODO: Is this needed?
+  if (!(expandInput || padInput)) {
+    MakeAlias(inputTemp, input, padding.OutputDimensions()[0],
+        padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
+  }
+  
   // We will make an alias for the gradient, but note that this is only for the
   // convolution map weights!  The bias will be handled by direct accesses into
   // `gradient`.
-  gradient.zeros();
+  CubeType gradientTemp;
   MakeAlias(gradientTemp, gradient, kernelWidth, kernelHeight, inMaps * maps);
+  gradient.zeros();
 
   // See Forward() for our iteration strategy.
   #pragma omp parallel for schedule(dynamic)
@@ -479,8 +476,8 @@ void TransposedConvolution<
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    CubeType mappedErrorTemp;
-    MakeAlias(mappedErrorTemp, mappedError, this->outputDimensions[0],
+    CubeType errorTemp;
+    MakeAlias(errorTemp, error, this->outputDimensions[0],
         this->outputDimensions[1], maps, fullOutputOffset *
         this->outputDimensions[0] * this->outputDimensions[1]);
 
@@ -489,7 +486,7 @@ void TransposedConvolution<
     {
       GradientConvolutionRule::Convolution(
           inputTemp.slice(inMap + fullInputOffset),
-          mappedErrorTemp,
+          errorTemp,
           curError,
           1,
           1,
@@ -511,8 +508,7 @@ void TransposedConvolution<
       for (size_t outMap = 0; outMap < (size_t) maps; outMap++)
       {
         #pragma omp atomic update
-        gradient[weight.n_elem + outMap] +=
-            accu(mappedErrorTemp.slice(outMap));
+        gradient[weight.n_elem + outMap] += accu(errorTemp.slice(outMap));
       }
     }
   }
@@ -606,6 +602,11 @@ void TransposedConvolution<
   paddingBackward.ComputeOutputDimensions();
 
   this->outputDimensions[2] = maps;
+
+  // Flags
+  expandInput = (strideWidth > 1 || strideHeight > 1);
+  padInput = (padding.PadWLeft() != 0 || padding.PadWRight() != 0 ||
+              padding.PadHTop() != 0 || padding.PadHBottom() != 0);
 }
 
 template<
