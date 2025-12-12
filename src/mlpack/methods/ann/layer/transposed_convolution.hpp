@@ -66,6 +66,8 @@ class TransposedConvolution : public Layer<MatType>
    * @param strideHeight Stride of filter application in the y direction.
    * @param padW Padding width of the input.
    * @param padH Padding height of the input.
+   * @param OutputPadW Output padding added to the right side of the input.
+   * @param OutputPadH Output padding added to the bottom side of the input.
    * @param paddingType The type of padding ("valid", "same" or "none").
    *    valid: applies no padding.
    *    same: applies padding to keep output size equal to input.
@@ -79,6 +81,8 @@ class TransposedConvolution : public Layer<MatType>
                         const size_t strideHeight = 1,
                         const size_t padW = 0,
                         const size_t padH = 0,
+                        const size_t outputPadW = 0,
+                        const size_t outputPadH = 0,
                         const std::string& paddingType = "None",
                         const bool useBias = true);
 
@@ -103,6 +107,8 @@ class TransposedConvolution : public Layer<MatType>
    * @param padH A two-value tuple indicating padding heights of the input.
    *   First value is padding at top. Second value is padding on
    *   bottom.
+   * @param OutputPadW Output padding added to the right side of the input.
+   * @param OutputPadH Output padding added to the bottom side of the input.
    * @param paddingType The type of padding ("valid", "same" or "none").
    *   valid: applies no padding.
    *   same: applies padding to keep output size equal to input.
@@ -116,6 +122,8 @@ class TransposedConvolution : public Layer<MatType>
                         const size_t strideHeight,
                         const std::tuple<size_t, size_t>& padW,
                         const std::tuple<size_t, size_t>& padH,
+                        const size_t outputPadW = 0,
+                        const size_t outputPadH = 0,
                         const std::string& paddingType = "None",
                         const bool useBias = true);
 
@@ -384,6 +392,12 @@ class TransposedConvolution : public Layer<MatType>
 
   //! Locally-stored top padding height.
   size_t padHTop;
+
+  //! Locally-stored output padding width.
+  size_t outputPadW;
+
+  //! Locally-stored output padding height.
+  size_t outputPadH;
 
   //! Locally-stored useBias.
   bool useBias;

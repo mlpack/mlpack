@@ -54,6 +54,8 @@ TransposedConvolution<
     const size_t strideHeight,
     const size_t padW,
     const size_t padH,
+    const size_t outputPadW,
+    const size_t outputPadH,
     const std::string& paddingType,
     const bool useBias) :
     TransposedConvolution(
@@ -64,6 +66,8 @@ TransposedConvolution<
         strideHeight,
         std::tuple<size_t, size_t>(padW, padW),
         std::tuple<size_t, size_t>(padH, padH),
+        outputPadW,
+        outputPadH,
         paddingType,
         useBias)
 {
@@ -89,6 +93,8 @@ TransposedConvolution<
     const size_t strideHeight,
     const std::tuple<size_t, size_t>& padW,
     const std::tuple<size_t, size_t>& padH,
+    const size_t outputPadW,
+    const size_t outputPadH,
     const std::string& paddingType,
     const bool useBias) :
     Layer<MatType>(),
@@ -101,6 +107,8 @@ TransposedConvolution<
     padWRight(std::get<1>(padW)),
     padHBottom(std::get<1>(padH)),
     padHTop(std::get<0>(padH)),
+    outputPadW(outputPadW),
+    outputPadH(outputPadH),
     useBias(useBias)
 {
   // Transform paddingType to lowercase.
@@ -129,6 +137,8 @@ TransposedConvolution<
     padWRight(other.padWRight),
     padHBottom(other.padHBottom),
     padHTop(other.padHTop),
+    outputPadW(other.outputPadW),
+    outputPadH(other.outputPadH),
     useBias(other.useBias),
     padding(other.padding),
     paddingBackward(other.paddingBackward),
@@ -161,6 +171,8 @@ TransposedConvolution<
     padWRight(std::move(other.padWRight)),
     padHBottom(std::move(other.padHBottom)),
     padHTop(std::move(other.padHTop)),
+    outputPadW(std::move(other.outputPadW)),
+    outputPadH(std::move(other.outputPadH)),
     useBias(std::move(other.useBias)),
     padding(std::move(other.padding)),
     paddingBackward(std::move(other.paddingBackward)),
@@ -202,6 +214,8 @@ TransposedConvolution<
     padWRight = other.padWRight;
     padHBottom = other.padHBottom;
     padHTop = other.padHTop;
+    outputPadW = other.outputPadW;
+    outputPadH = other.outputPadH;
     useBias = other.useBias;
     padding = other.padding;
     paddingBackward = other.paddingBackward;
@@ -244,6 +258,8 @@ TransposedConvolution<
     padWRight = std::move(other.padWRight);
     padHBottom = std::move(other.padHBottom);
     padHTop = std::move(other.padHTop);
+    outputPadW = other.outputPadW;
+    outputPadH = other.outputPadH;
     useBias = std::move(other.useBias);
     padding = std::move(other.padding);
     paddingBackward = std::move(other.paddingBackward);
@@ -555,8 +571,8 @@ void TransposedConvolution<
   const size_t padHTopForward = kernelHeight - padHTop - 1;
   const size_t padHBottomForward = kernelHeight - padHBottom - 1;
 
-  padding = Padding<MatType>(padWLeftForward, padWRightForward,
-      padHTopForward, padHBottomForward);
+  padding = Padding<MatType>(padWLeftForward, padWRightForward + outputPadW,
+      padHTopForward, padHBottomForward + outputPadH);
 
   // Padding is applied after input expansion, so padding layer
   // for the forward pass must account for the expanded size.
@@ -569,10 +585,6 @@ void TransposedConvolution<
         * (this->inputDimensions[1] - 1) + 1;
   }
   padding.ComputeOutputDimensions();
-
-  // TODO: Add this alignment back along with output padding
-  // aW = (outputWidth + kernelWidth - totalPadWidth - 2) % strideWidth;
-  // aH = (outputHeight + kernelHeight - totalPadHeight - 2) % strideHeight;
 
   // We must ensure that the output has at least 3 dimensions, since we will
   // be adding some number of maps to the output.

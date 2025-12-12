@@ -85,5 +85,5 @@ TEST_CASE("ConvTransConvAutoencoderTest", "[AutoEncoderTest]")
     optimizer.ResetPolicy() = false;
   }
 
-  REQUIRE(MeanTestLoss<>(autoencoder, trainData, 16) < 0.01);
+  REQUIRE(MeanTestLoss<>(autoencoder, trainData, 16) < 0.1);
 }

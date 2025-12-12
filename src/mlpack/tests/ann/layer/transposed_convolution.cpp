@@ -31,9 +31,9 @@ TEST_CASE("TransposedConvolutionParametersTest", "[ANNLayerTest]")
 {
   // Parameter order: maps, kW, kH, dW, dH, padW, padH, paddingType.
   TransposedConvolution layer1(2, 3, 4, 5, 6, std::tuple<size_t, size_t>(7, 8),
-      std::tuple<size_t, size_t>(9, 10), "none");
+      std::tuple<size_t, size_t>(9, 10), 0, 0, "none");
   TransposedConvolution layer2(3, 4, 5, 6, 7, std::tuple<size_t, size_t>(8, 9),
-      std::tuple<size_t, size_t>(10, 11), "none");
+      std::tuple<size_t, size_t>(10, 11), 0, 0, "none");
 
   // Make sure we can get the parameters successfully.
   REQUIRE(layer1.KernelWidth() == 3);
@@ -151,7 +151,7 @@ TEST_CASE("TransposedConvolutionDimensionsTest", "[ANNLayerTest]")
     {
       TransposedConvolution module(maps, c.kW, c.kH, c.dW, c.dH,
           std::make_tuple(c.pWLeft, c.pWRight),
-          std::make_tuple(c.pHTop, c.pHBottom), c.paddingType);
+          std::make_tuple(c.pHTop, c.pHBottom), 0, 0, c.paddingType);
 
       module.InputDimensions() = { c.inW, c.inH, inMaps };
       module.ComputeOutputDimensions();
@@ -322,7 +322,7 @@ TEST_CASE("TransposedConvolutionGradientTest", "[ANNLayerTest]")
     {
       model = new FFN<NegativeLogLikelihood, RandomInitialization>();
       model->ResetData(input, target);
-      model->Add<TransposedConvolution>(1, 3, 3, 1, 1, 0, 0, "same");
+      model->Add<TransposedConvolution>(1, 3, 3, 1, 1, 0, 0, 0, 0, "same");
       model->Add<LogSoftMax>();
       model->InputDimensions() = std::vector<size_t>({ 6, 6 });
     }
