@@ -453,7 +453,7 @@ void TransposedConvolution<
         1,
         1,
         true);
-  } 
+  }
 }
 
 template<
@@ -477,7 +477,7 @@ void TransposedConvolution<
     MakeAlias(inputTemp, input, padding.OutputDimensions()[0],
         padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
   }
-  
+
   // We will make an alias for the gradient, but note that this is only for the
   // convolution map weights!  The bias will be handled by direct accesses into
   // `gradient`.

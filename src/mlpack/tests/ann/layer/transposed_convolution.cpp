@@ -270,7 +270,7 @@ TEST_CASE("TransposedConvolutionForwardBackwardTest", "[ANNLayerTest]")
         48.0, 0.0, 2298.0, 10
       }
   };
-  
+
   for (size_t i = 0; i < configs.size(); ++i)
   {
     const auto& c = configs[i];
@@ -288,7 +288,7 @@ TEST_CASE("TransposedConvolutionForwardBackwardTest", "[ANNLayerTest]")
 
       weights.set_size(module.WeightSize(), 1);
       weights.zeros();
-      for (auto const& [index, value]: c.weightAssignments)
+      for (auto const& [index, value] : c.weightAssignments)
         weights[index] = value;
       module.SetWeights(weights);
 
