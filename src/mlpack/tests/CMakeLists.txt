@@ -14,7 +14,9 @@ add_executable(mlpack_test
   ann/convolutional_network_test.cpp
   ann/convolution_test.cpp
   ann/custom_layer.hpp
+  ann/dag_network_test.cpp
   ann/feedforward_network_test.cpp
+  ann/fp16_test.cpp
   ann/init_rules_test.cpp
   ann/ksinit_test.cpp
   ann/loss_functions_test.cpp
@@ -24,6 +26,7 @@ add_executable(mlpack_test
   ann/augmented_rnns_tasks_test.cpp
   ann/reward_clipping_test.cpp
   ann/rl_components_test.cpp
+  ann/models/yolov3_tests.cpp
 
   # These tests have not yet been adapted to the new inheritance-based ANN
   # implementation.

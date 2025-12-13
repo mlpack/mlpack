@@ -41,13 +41,14 @@ RBF<MatType, Activation>::RBF(
     {
       double maxDis = 0;
       MatType temp = centres.each_col() - centres.col(i);
-      maxDis = max(pow(sum(pow((temp), 2), 0), 0.5).t());
+      maxDis = max(sqrt(sum(square(temp), 0)).t());
       if (maxDis > sigmas)
         sigmas = maxDis;
     }
     this->betas = std::pow(2 * outSize, 0.5) / sigmas;
   }
 }
+
 template<typename MatType, typename Activation>
 RBF<MatType, Activation>::RBF(
     const size_t outSize,
@@ -65,7 +66,7 @@ RBF<MatType, Activation>::RBF(
     {
       double maxDis = 0;
       MatType temp = centres.each_col() - centres.col(i);
-      maxDis = max(pow(sum(pow((temp), 2), 0), 0.5).t());
+      maxDis = max(sqrt(sum(square(temp), 0)).t());
       if (maxDis > sigmas)
         sigmas = maxDis;
     }
@@ -143,9 +144,9 @@ void RBF<MatType, Activation>::Forward(
   for (size_t i = 0; i < input.n_cols; i++)
   {
     MatType temp = centres.each_col() - input.col(i);
-    distances.col(i) = pow(sum(pow((temp), 2), 0), 0.5).t();
+    distances.col(i) = sqrt(sum(square(temp), 0)).t();
   }
-  Activation::Fn(distances * std::pow(betas, 0.5), output);
+  Activation::Fn(distances * ElemType(std::pow(betas, 0.5)), output);
 }
 
 

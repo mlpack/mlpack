@@ -50,10 +50,12 @@ class GaussianInitialization
                   const size_t rows,
                   const size_t cols)
   {
+    typedef typename MatType::elem_type ElemType;
+
     if (W.is_empty())
       W.set_size(rows, cols);
 
-    W = randn<MatType>(rows, cols) * stddev + mean;
+    W = randn<MatType>(rows, cols) * ElemType(stddev) + ElemType(mean);
   }
 
   /**
@@ -65,10 +67,12 @@ class GaussianInitialization
   void Initialize(MatType& W,
       const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
+    typedef typename MatType::elem_type ElemType;
+
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
 
-    W = randn<MatType>(W.n_rows, W.n_cols) * stddev + mean;
+    W = randn<MatType>(W.n_rows, W.n_cols) * ElemType(stddev) + ElemType(mean);
   }
 
   /**

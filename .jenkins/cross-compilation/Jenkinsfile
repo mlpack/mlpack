@@ -2,27 +2,60 @@
 // First, the cross-compilation host compiles mlpack tests for each
 // architecture, and then copies them to the destination host and runs them.
 
-// Define the ARCH_NAME and device name for each host we will run on.
-arch_names = ['couscous': 'CORTEXA76',
-              'tofu':     'CORTEXA53',
-              'chorizo':  'CORTEXA78',
-              'tatertot': 'CORTEXA72',
-              'megakelvin': 'POWERPCG4']
-
-device_names = ['couscous': 'rpi5',
-                'tofu': 'rpi3',
-                'chorizo': 'jetson-orin-nano',
-                'tatertot': 'beaglebone-ai64',
-                'megakelvin': 'mac-g4-cube']
-
-page_sizes = ['couscous': '0x4000' /* 16kb for RPi5s */,
-              'tatertot': '0x10000' /* 64kb */]
-
-test_filters = ['tofu': '~[long]',
-                'megakelvin': '~[long]']
-
-// Thanks to NC Semi for hosting the little G4 cube!
-jump_hosts = ['megakelvin': 'millivolt.ncsemiconductor.com']
+target_info = [
+  'couscous': [
+      'device_name': 'rpi5',
+      'arch_type': 'arm64',
+      'arch_name': 'CORTEXA76',
+      'page_size': '0x4000' /* 16kb for RPi5s */
+  ],
+  'tofu': [
+      'device_name': 'rpi3b+',
+      'arch_type': 'arm64',
+      'arch_name': 'CORTEXA53',
+      'test_filters': '~[long]'
+  ],
+  'chorizo': [
+      'device_name': 'jetson-orin-nano',
+      'arch_type': 'arm64',
+      'arch_name': 'CORTEXA78'
+  ],
+  'tatertot': [
+      'device_name': 'beaglebone-ai64',
+      'arch_type': 'arm64',
+      'arch_name': 'CORTEXA72',
+      'page_size': '0x10000' /* 64kb */
+  ],
+  // Thanks to NC Semi for hosting the little G4 cube!
+  'megakelvin': [
+      'device_name': 'mac-g4-cube',
+      'arch_type': 'ppc32',
+      'arch_name': 'POWERPCG4',
+      'test_filters': '~[long]',
+      'jump_host': 'millivolt.ncsemiconductor.com',
+      'openblas_extra_flags': 'USE_THREAD=0'
+  ],
+  'cayenne': [
+      'device_name': 'vocore2-ultimate',
+      'arch_type': 'mips32-softfp',
+      'arch_name': 'MIPS24K',
+      'test_filters': '[tiny]',
+      'openblas_extra_flags': 'MSA_FLAGS= USE_THREAD=0',
+      'scp_opts': '-O'
+  ],
+  'laziji': [
+      'device_name': 'sunblade-150',
+      'arch_type': 'sparc64',
+      'arch_name': 'ULTRASPARC',
+      'test_filters': '~[long]',
+      // OpenBLAS doesn't compile and run successfully on SPARC64 so we manually
+      // download a precompiled reference BLAS implementation.
+      'blas_url': 'https://files.mlpack.org/librefblas-sparc64.a',
+      // STB will perform unaligned accesses unless we tell it not to, which
+      // causes bus errors on sparc64.
+      'extra_cxxflags': '-DSTBIR_MEMCPY_NOUNALIGNED'
+  ]
+]
 
 pipeline
 {
@@ -72,7 +105,8 @@ pipeline
           axis
           {
             name 'target'
-            values 'couscous', 'tofu', 'chorizo', 'tatertot', 'megakelvin'
+            values 'couscous', 'tofu', 'chorizo', 'tatertot', 'megakelvin',
+                   'cayenne', 'laziji'
           }
         }
 
@@ -85,20 +119,26 @@ pipeline
             {
               docker
               {
-                image 'mlpack/mlpack-cross-compile-' +
-                    arch_names[env.target].toLowerCase() + ':latest'
+                image 'mlpack/cross-compile-' +
+                    target_info[env.target]['arch_type'].toLowerCase() +
+                    ':latest'
                 alwaysPull true
                 reuseNode true
+                args '-v /home/jenkins/ccache:/opt/ccache'
               }
             }
 
             environment
             {
-              ARCH_NAME = "${arch_names[env.target]}"
-              DEVICE_NAME = "${device_names[env.target]}"
-              PAGE_SIZE = "${page_sizes[env.target] ?: ''}"
-              TEST_FILTERS = "${test_filters[env.target] ?: ''}"
-              JUMP_HOST = "${jump_hosts[env.target] ?: ''}"
+              ARCH_NAME = "${target_info[env.target]['arch_name']}"
+              DEVICE_NAME = "${target_info[env.target]['device_name']}"
+              PAGE_SIZE = "${target_info[env.target]['page_size'] ?: ''}"
+              TEST_FILTERS = "${target_info[env.target]['test_filters'] ?: ''}"
+              JUMP_HOST = "${target_info[env.target]['jump_host'] ?: ''}"
+              OPENBLAS_EXTRA_FLAGS = "${target_info[env.target]['openblas_extra_flags'] ?: ''}"
+              SCP_OPTS = "${target_info[env.target]['scp_opts'] ?: ''}"
+              BLAS_URL = "${target_info[env.target]['blas_url'] ?: ''}"
+              EXTRA_CXXFLAGS = "${target_info[env.target]['extra_cxxflags'] ?: ''}"
             }
 
             steps
@@ -109,28 +149,45 @@ pipeline
               }
 
               // Specifically use bash so `time` is available.
-              sh '''#!/bin/bash -x
+              sh '''#!/bin/bash -xe
                 # If a custom page size is needed, set it.
-                EXTRA_CMAKE_OPTS='';
                 if [ ! -z "$PAGE_SIZE" ];
                 then
-                  EXTRA_CMAKE_OPTS='"-DCMAKE_CXX_FLAGS=\\"-Wl,-z,common-page-size='$PAGE_SIZE' -Wl,-z,max-page-size='$PAGE_SIZE'\\""';
+                  EXTRA_CXXFLAGS="${EXTRA_CXXFLAGS} -Wl,-z,common-page-size='$PAGE_SIZE' -Wl,-z,max-page-size='$PAGE_SIZE'";
                 fi
+
+                # Configure ccache.
+                export CCACHE_DIR=/opt/ccache/;
+                ccache --set-config "sloppiness=include_file_ctime";
+                ccache --set-config "hash_dir=false";
+                ccache --set-config "max_size=10G";
+                ccache --zero-stats;
 
                 rm -rf build-${target}/
                 mkdir build-${target}/
                 cd build-${target}/
                 cmake \
                     -DBUILD_TESTS=ON \
+                    -DUSE_PRECOMPILED_HEADERS=OFF \
                     -DARCH_NAME=${ARCH_NAME} \
                     -DCMAKE_CROSSCOMPILING=ON \
                     -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake \
                     -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
                     -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
                     -DDOWNLOAD_DEPENDENCIES=ON \
+                    -DOPENBLAS_EXTRA_ARGS="NO_FORTRAN=1 DYNAMIC_ARCH=0 $OPENBLAS_EXTRA_FLAGS" \
+                    -DCMAKE_CXX_FLAGS="$EXTRA_CXXFLAGS" \
                     $EXTRA_CMAKE_OPTS \
                     ../
+                # If we have a custom BLAS library move it into place...
+                if [ ! -z "$BLAS_URL" ]; then
+                    curl $BLAS_URL > deps/OpenBLAS*/libopenblas_*.a;
+                    ls -l deps/OpenBLAS*/
+                fi
                 time make mlpack_test;
+
+                # Print ccache results.
+                ccache -s;
               '''
 
               script
@@ -144,7 +201,7 @@ pipeline
                   passphraseVariable: 'PASSPHRASE')])
               {
                 // Specifically use bash so `time` is available.
-                sh'''#!/bin/bash -x
+                sh'''#!/bin/bash -xe
                   eval $(ssh-agent -s)
                   echo ${PASSPHRASE} | SSH_ASKPASS=/bin/cat setsid -w ssh-add ${KEY_FILE}
 
@@ -162,9 +219,9 @@ pipeline
                   cat ~/.ssh/config;
 
                   ssh jenkins@${target} -t mkdir -p test_${BRANCH_NAME}_${BUILD_ID}/
-                  scp build-${target}/bin/mlpack_test jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
-                  scp -r src/mlpack/tests/data/* jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
-                  scp -r doc/img/cat.jpg jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
+                  scp ${SCP_OPTS} build-${target}/bin/mlpack_test jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
+                  scp ${SCP_OPTS} -r src/mlpack/tests/data/* jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
+                  scp ${SCP_OPTS} -r doc/img/cat.jpg jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
 
                   # Unpack all compressed test data.
                   ssh jenkins@${target} -t "
@@ -186,7 +243,7 @@ pipeline
                       || echo "Test failure or other problem.";
 
                   # Clean up afterwards.
-                  scp jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/reports/mlpack_test.junit.xml reports/mlpack_test.${target}.junit.xml;
+                  scp ${SCP_OPTS} jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/reports/mlpack_test.junit.xml reports/mlpack_test.${target}.junit.xml;
                   ssh jenkins@${target} -t rm -rf test_${BRANCH_NAME}_${BUILD_ID}/;
                 '''
               }

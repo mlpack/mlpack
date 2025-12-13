@@ -428,7 +428,7 @@ TEMPLATE_TEST_CASE("PCAExpressionTest", "[PCATest]", ExactSVDPolicy,
 /**
  * Test PCA on 32-bit data.
  */
-TEMPLATE_TEST_CASE("PCAFloatTest", "[PCATest]", ExactSVDPolicy,
+TEMPLATE_TEST_CASE("PCAFloatTest", "[PCATest][tiny]", ExactSVDPolicy,
     RandomizedSVDPCAPolicy, RandomizedBlockKrylovSVDPolicy, QUICSVDPolicy)
 {
   using DecompositionPolicy = TestType;

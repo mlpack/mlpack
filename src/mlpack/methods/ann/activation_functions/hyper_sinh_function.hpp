@@ -56,12 +56,13 @@ class HyperSinhFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
     if (x > 0)
-      return (std::sinh(x) / 3.0);
+      return (std::sinh(x) / 3);
     else
-      return (std::pow(x, 3.0) / 4.0);
+      return (std::pow(x, ElemType(3)) / 4);
   }
 
   /**
@@ -94,12 +95,13 @@ class HyperSinhFunction
    * @param y Input activation.
    * @return f'(x)
    */
-  static double Deriv(const double /* x */, const double y)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType /* x */, const ElemType y)
   {
     if (y > 0)
-      return (std::pow((1.0 / 9.0) + (y * y), 0.5));
+      return (std::pow(ElemType(1.0 / 9.0) + (y * y), ElemType(0.5)));
     else
-      return (3.0  * std::pow(std::pow(y, 2) / 4, 1.0 / 3.0));
+      return (3 * std::pow(std::pow(y, ElemType(2)) / 4, ElemType(1.0 / 3.0)));
   }
 
   /**
@@ -113,17 +115,20 @@ class HyperSinhFunction
                     const OutputVecType& y,
                     DerivVecType& dy)
   {
+    typedef typename InputVecType::elem_type ElemType;
+
     dy.set_size(size(y));
     #pragma omp for
     for (size_t i = 0; i < y.n_elem; ++i)
     {
       if (y(i) > 0)
       {
-        dy(i) = (std::pow((1.0 / 9.0) + (y(i) * y(i)), 0.5));
+        dy(i) = (std::pow(ElemType(1.0 / 9.0) + (y(i) * y(i)), ElemType(0.5)));
       }
       else
       {
-        dy(i) = (3.0 * std::pow(std::pow(y(i), 2) / 4, 1.0 / 3.0));
+        dy(i) = (3 * std::pow(std::pow(y(i), ElemType(2)) / 4,
+            ElemType(1.0 / 3.0)));
       }
     }
   }

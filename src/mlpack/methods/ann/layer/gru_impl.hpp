@@ -127,8 +127,8 @@ void GRU<MatType>::Forward(const MatType& input, MatType& output)
   }
 
   // Apply sigmoid activation function.
-  resetGate = 1.0 / (1.0 + exp(-resetGate));
-  updateGate = 1.0 / (1.0 + exp(-updateGate));
+  resetGate = 1 / (1 + exp(-resetGate));
+  updateGate = 1 / (1 + exp(-updateGate));
 
   // Calculate candidate activation vector.
   hiddenGate = hiddenGateWeight * input;
@@ -148,7 +148,7 @@ void GRU<MatType>::Forward(const MatType& input, MatType& output)
   // Add recurrent portion to output.
   if (this->HasPreviousStep())
   {
-    output += (1.0 - updateGate) % prevOutput;
+    output += (1 - updateGate) % prevOutput;
   }
 
   currentOutput = output;
@@ -172,7 +172,7 @@ void GRU<MatType>::Backward(
   // The hidden gate uses a tanh activation function.
   // The derivative of tanh(x) is actually 1 - tanh^2(x) but
   // tanh has already been applied to hiddenGate in Forward().
-  deltaHidden = deltaHidden % (1.0 - square(hiddenGate));
+  deltaHidden = deltaHidden % (1 - square(hiddenGate));
 
   // y_t = (1 - z_t) % y_{t - 1} + z_t % h_t
   // dz_t = dy % h_t - dy % y_{t - 1}
@@ -182,14 +182,14 @@ void GRU<MatType>::Backward(
   // The reset and update gate use sigmoid activation.
   // The derivative is sigmoid(x) * (1 - sigmoid(x)).  Since sigmoid has
   // already been applied to the gates, it's just `x * (1 - x)`
-  deltaUpdate = deltaUpdate % (updateGate % (1.0 - updateGate));
+  deltaUpdate = deltaUpdate % (updateGate % (1 - updateGate));
 
   if (this->HasPreviousStep())
   {
     // h_t = tanh(W_h x_t + r_t % (U_h y_{t - 1}))
     // dr_t = dh_t % (U_h y_{t - 1})
     deltaReset = deltaHidden % (recurrentHiddenGateWeight * prevOutput);
-    deltaReset = deltaReset % (resetGate % (1.0 - resetGate));
+    deltaReset = deltaReset % (resetGate % (1 - resetGate));
   }
   else
   {

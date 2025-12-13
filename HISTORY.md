@@ -3,6 +3,11 @@
 ## mlpack ?.?.?
 
 _????-??-??_
+ * Fixed generated artifiacts in resized float images by using clamping (#4030).
+
+ * Optimize convolution (#3988).
+
+ * Added `GELUExact` ANN activation layer (#3994).
 
  * Adapt `GRU` ANN layer to the new interface (#3955).
 
@@ -24,6 +29,24 @@ _????-??-??_
    instead of passing layers to `Add()` as pointers (#3974).
 
  * Mark long-running tests with the `[long]` tag (#3983).
+
+ * Added `DAGNetwork` class to represent complex neural network structures
+   (#3944).
+
+ * Fix mask handling in `MultiHeadAttention` layer (#3998)
+
+ * Added `data::GroupChannels()` and `data::InterleaveChannels()` for
+  preprocessing images before using `Convolution` layers. (#4006)
+
+ * Fix infinite recursion in `Octree` when the number of identical points
+   exceeds `maxLeafSize` (#4020).
+
+ * Add YOLOv3Tiny for object detection (#4023).
+
+ * Fix thread-specific random seed initialization (#4027).
+
+ * R bindings now return class attributes as vector with the given model,
+   mlpack model bindings and list as fallback (#4045).
 
 ## mlpack 4.6.2
 

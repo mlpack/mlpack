@@ -159,8 +159,8 @@ void LSTM<MatType>::Forward(const MatType& input, MatType& output)
 
   // Apply nonlinearities.  (TODO: fast sigmoid?)
   blockInput = tanh(blockInput);
-  inputGate = 1.0 / (1.0 + exp(-inputGate));
-  forgetGate = 1.0 / (1.0 + exp(-forgetGate));
+  inputGate = 1 / (1 + exp(-inputGate));
+  forgetGate = 1 / (1 + exp(-forgetGate));
 
   // Compute the cell state.
   if (this->HasPreviousStep())
@@ -182,7 +182,7 @@ void LSTM<MatType>::Forward(const MatType& input, MatType& output)
   }
 
   // Apply nonlinearity for output gate.
-  outputGate = 1.0 / (1.0 + exp(-outputGate));
+  outputGate = 1 / (1 + exp(-outputGate));
 
   // Finally, we can compute the output itself.
   output = tanh(thisCell) % outputGate;
@@ -239,12 +239,12 @@ void LSTM<MatType>::Backward(
                   recurrentOutputGateWeight.t() * nextDeltaOutputGate;
   }
 
-  deltaOutputGate = deltaY % tanh(thisCell) % (outputGate % (1.0 - outputGate));
+  deltaOutputGate = deltaY % tanh(thisCell) % (outputGate % (1 - outputGate));
 
   // Only first two terms if at final step
   if (this->AtFinalStep())
   {
-    deltaCell = deltaY % outputGate % (1.0 - square(tanh(thisCell))) +
+    deltaCell = deltaY % outputGate % (1 - square(tanh(thisCell))) +
         repmat(peepholeOutputGateWeight, 1, batchSize) % deltaOutputGate;
   }
   else
@@ -255,7 +255,7 @@ void LSTM<MatType>::Backward(
     MakeAlias(nextForgetGate, this->RecurrentState(this->CurrentStep() + 1),
         outSize, batchSize, 4 * outSize * batchSize);
 
-    deltaCell = deltaY % outputGate % (1.0 - square(tanh(thisCell))) +
+    deltaCell = deltaY % outputGate % (1 - square(tanh(thisCell))) +
         repmat(peepholeOutputGateWeight, 1, batchSize) % deltaOutputGate +
         repmat(peepholeInputGateWeight, 1, batchSize) % nextDeltaInputGate +
         repmat(peepholeForgetGateWeight, 1, batchSize) % nextDeltaForgetGate +
@@ -263,11 +263,11 @@ void LSTM<MatType>::Backward(
   }
 
   if (this->HasPreviousStep())
-    deltaForgetGate = deltaCell % prevCell % (forgetGate % (1.0 - forgetGate));
+    deltaForgetGate = deltaCell % prevCell % (forgetGate % (1 - forgetGate));
   else
     deltaForgetGate.zeros();
-  deltaInputGate = deltaCell % blockInput % (inputGate % (1.0 - inputGate));
-  deltaBlockInput = deltaCell % inputGate % (1.0 - square(blockInput));
+  deltaInputGate = deltaCell % blockInput % (inputGate % (1 - inputGate));
+  deltaBlockInput = deltaCell % inputGate % (1 - square(blockInput));
 
   // Finally, compute deltaX (which is what we wanted all along).
   g = blockInputWeight.t() * deltaBlockInput +

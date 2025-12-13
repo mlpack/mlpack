@@ -59,6 +59,9 @@ template<typename MatType = arma::mat>
 class CELU : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the CELU object using the specified parameter. The non zero
    * gradient for negative inputs can be adjusted by specifying the CELU

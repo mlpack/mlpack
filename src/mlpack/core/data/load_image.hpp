@@ -1,6 +1,7 @@
 /**
  * @file core/data/load_image.hpp
  * @author Mehul Kumar Nirala
+ * @author Omar Shrit
  *
  * Implementation of image loading functionality via STB.
  *
@@ -15,55 +16,84 @@
 
 #include <mlpack/core/stb/stb.hpp>
 
-#include "image_info.hpp"
-
 namespace mlpack {
 namespace data {
 
-/**
- * Image load/save interfaces.
- */
-
-/**
- * Load the image file into the given matrix.
- *
- * @param filename Name of the image file.
- * @param matrix Matrix to load the image into.
- * @param info An object of ImageInfo class.
- * @param fatal If an error should be reported as fatal (default false).
- * @return Boolean value indicating success or failure of load.
- */
 template<typename eT>
-bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal = false);
+bool LoadImage(const std::vector<std::string>& files,
+               arma::Mat<eT>& matrix,
+               ImageOptions& opts)
+{
+  size_t dimension = 0;
+  if (files.empty())
+  {
+    std::stringstream oss;
+    oss << "Load(): list of images is empty, please specify the files names.";
+    return HandleError(oss, opts);
+  }
 
-/**
- * Load the image file into the given matrix.
- *
- * @param files A vector consisting of filenames.
- * @param matrix Matrix to save the image from.
- * @param info An object of ImageInfo class.
- * @param fatal If an error should be reported as fatal (default false).
- * @return Boolean value indicating success or failure of load.
- */
-template<typename eT>
-bool Load(const std::vector<std::string>& files,
-          arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal = false);
+  if (opts.Format() == FileType::ImageType ||
+      opts.Format() == FileType::AutoDetect)
+  {
+    DetectFromExtension<arma::Mat<eT>, ImageOptions>(files.back(), opts);
+    if (!opts.loadType.count(Extension(files.back())))
+    {
+      std::stringstream oss;
+      oss << "Load(): image type " << opts.FileTypeToString()
+        << " not supported. Supported formats: ";
+      for (const auto& x : opts.loadType)
+        oss << " " << x;
+      return HandleError(oss, opts);
+    }
+  }
 
-// Implementation found in load_image.hpp.
-inline bool LoadImage(const std::string& filename,
-                      arma::Mat<unsigned char>& matrix,
-                      ImageInfo& info,
-                      const bool fatal = false);
+  // Temporary variables needed as stb_image.h supports int parameters.
+  int tempWidth, tempHeight, tempChannels;
+  arma::Mat<unsigned char> images;
+  unsigned char* imageBuf = nullptr;
+  size_t i = 0;
+
+  while (i < files.size())
+  {
+    imageBuf = stbi_load(files.at(i).c_str(), &tempWidth, &tempHeight,
+        &tempChannels, opts.Channels());
+    if (!imageBuf)
+    {
+      std::stringstream oss;
+      oss << "Load(): failed to load image '" << files.at(i) << "': "
+              << stbi_failure_reason();
+      return HandleError(oss, opts);
+    }
+    if (opts.Width() == 0 || opts.Height() == 0)
+    {
+      opts.Width() = tempWidth;
+      opts.Height() = tempHeight;
+      opts.Channels() = tempChannels;
+    }
+    dimension = opts.Width() * opts.Height() * opts.Channels();
+    images.set_size(dimension, files.size());
+
+    if ((size_t) tempWidth != opts.Width() ||
+        (size_t) tempHeight != opts.Height() ||
+        (size_t) tempChannels != opts.Channels())
+    {
+      std::stringstream oss;
+      oss << "Load(): dimension mismatch: in the case of "
+          << "several images, please check that all the images have the same "
+          << "dimensions; if not, load each image in one column and call this"
+          << " function iteratively." << std::endl;
+      return HandleError(oss, opts);
+    }
+    images.col(i) = arma::Mat<unsigned char>(imageBuf, dimension, 1,
+        false, true);
+    stbi_image_free(imageBuf);
+    i++;
+  }
+  matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(images));
+  return true;
+}
 
 } // namespace data
 } // namespace mlpack
-
-// Include implementation of Load() for images.
-#include "load_image_impl.hpp"
 
 #endif

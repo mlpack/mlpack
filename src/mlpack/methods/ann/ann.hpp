@@ -28,6 +28,9 @@
 #include "regularizer/regularizer.hpp"
 
 #include "ffn.hpp"
+#include "dag_network.hpp"
 #include "rnn.hpp"
+
+#include "models/models.hpp"
 
 #endif

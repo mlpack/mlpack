@@ -22,7 +22,7 @@ namespace mlpack {
  *
  * @f{eqnarray*}{
  * f(x) &=& e^{-1 * x^2} \\
- * f'(x) &=& 2 * -x * f(x) 
+ * f'(x) &=& 2 * -x * f(x)
  * @f}
  */
 class GaussianFunction
@@ -34,10 +34,10 @@ class GaussianFunction
    * @param x Input data.
    * @return f(x).
    */
-  template<typename eT>
-  static double Fn(const eT x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
-    return std::exp(-1 * std::pow(x, 2));
+    return std::exp(-std::pow(x, ElemType(2)));
   }
 
   /**
@@ -49,7 +49,7 @@ class GaussianFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = exp(-1 * pow(x, 2));
+    y = exp(-square(x));
   }
 
   /**
@@ -59,7 +59,8 @@ class GaussianFunction
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x, const double y)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType x, const ElemType y)
   {
     return -2 * x * y;
   }

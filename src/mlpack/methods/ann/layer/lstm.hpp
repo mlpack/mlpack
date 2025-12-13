@@ -56,7 +56,10 @@ template<typename MatType = arma::mat>
 class LSTM : public RecurrentLayer<MatType>
 {
  public:
-  //! Create the LSTM object.
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
+  // Create the LSTM object.
   LSTM();
 
   /**
@@ -67,16 +70,16 @@ class LSTM : public RecurrentLayer<MatType>
    */
   LSTM(const size_t outSize);
 
-  //! Clone the LSTM object. This handles polymorphism correctly.
+  // Clone the LSTM object. This handles polymorphism correctly.
   LSTM* Clone() const { return new LSTM(*this); }
 
-  //! Copy the given LSTM object.
+  // Copy the given LSTM object.
   LSTM(const LSTM& other);
-  //! Take ownership of the given LSTM object's data.
+  // Take ownership of the given LSTM object's data.
   LSTM(LSTM&& other);
-  //! Copy the given LSTM object.
+  // Copy the given LSTM object.
   LSTM& operator=(const LSTM& other);
-  //! Take ownership of the given LSTM object's data.
+  // Take ownership of the given LSTM object's data.
   LSTM& operator=(LSTM&& other);
 
   virtual ~LSTM() { }

@@ -33,6 +33,7 @@
     CEREAL_REGISTER_TYPE(mlpack::Mish<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::LiSHT<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::GELU<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::GELUExact<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Elliot<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Elish<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Gaussian<__VA_ARGS__>); \
@@ -42,6 +43,10 @@
     CEREAL_REGISTER_TYPE(mlpack::Concat<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Concatenate<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Convolution<__VA_ARGS__, \
+        mlpack::Im2ColConvolution<mlpack::ValidConvolution>, \
+        mlpack::Im2ColConvolution<mlpack::FullConvolution>, \
+        mlpack::Im2ColConvolution<mlpack::ValidConvolution>>); \
+    CEREAL_REGISTER_TYPE(mlpack::Convolution<__VA_ARGS__, \
         mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
         mlpack::NaiveConvolution<mlpack::FullConvolution>, \
         mlpack::NaiveConvolution<mlpack::ValidConvolution>>); \
@@ -50,6 +55,10 @@
     CEREAL_REGISTER_TYPE(mlpack::Dropout<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ELU<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::FlexibleReLU<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::GroupedConvolution<__VA_ARGS__, \
+        mlpack::Im2ColConvolution<mlpack::ValidConvolution>, \
+        mlpack::Im2ColConvolution<mlpack::FullConvolution>, \
+        mlpack::Im2ColConvolution<mlpack::ValidConvolution>>); \
     CEREAL_REGISTER_TYPE(mlpack::GroupedConvolution<__VA_ARGS__, \
         mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
         mlpack::NaiveConvolution<mlpack::FullConvolution>, \
@@ -77,6 +86,7 @@
     CEREAL_REGISTER_TYPE(mlpack::Softmin<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::HardTanH<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::FTSwish<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::NearestInterpolation<__VA_ARGS__>); \
 
 CEREAL_REGISTER_MLPACK_LAYERS(arma::mat);
 

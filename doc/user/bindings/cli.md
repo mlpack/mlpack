@@ -2892,7 +2892,7 @@ $ mlpack_preprocess_scale [--epsilon 1e-06] [--help] [--info <string>]
         [--output_model_file <string>]
 ```
 
-A utility to perform feature scaling on datasets using one of sixtechniques.  Both scaling and inverse scaling are supported, andscalers can be saved and then applied to other datasets. [Detailed documentation](#preprocess_scale_detailed-documentation).
+A utility to perform feature scaling on datasets using one of six techniques.  Both scaling and inverse scaling are supported, and scalers can be saved and then applied to other datasets. [Detailed documentation](#preprocess_scale_detailed-documentation).
 
 
 
@@ -3021,7 +3021,7 @@ $ mlpack_preprocess_one_hot_encoding --input_file X.arff --output_file
 
  - [mlpack_preprocess_binarize](#preprocess_binarize)
  - [mlpack_preprocess_describe](#preprocess_describe)
- - [One-hot encoding on Wikipedia](https://en.m.wikipedia.org/wiki/One-hot)
+ - [One-hot encoding on Wikipedia](https://en.wikipedia.org/wiki/One-hot)
 
 ## mlpack_radical
 {: #radical }

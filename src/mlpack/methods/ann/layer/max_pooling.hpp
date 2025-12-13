@@ -59,8 +59,11 @@ template<typename MatType = arma::mat>
 class MaxPooling : public Layer<MatType>
 {
  public:
+  // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
-  //! Create the MaxPooling object.
+
+  // Create the MaxPooling object.
   MaxPooling();
 
   /**

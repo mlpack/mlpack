@@ -39,9 +39,10 @@ class HardSigmoidFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
-    return std::min(1.0, std::max(0.0, 0.2 * x + 0.5));
+    return std::min(ElemType(1), std::max(ElemType(0), x / 5 + ElemType(0.5)));
   }
 
   /**
@@ -67,13 +68,14 @@ class HardSigmoidFunction
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double /* x */, const double y)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType /* x */, const ElemType y)
   {
-    if (y == 0.0 || y == 1.0)
+    if (y == 0 || y == 1)
     {
-      return 0.0;
+      return 0;
     }
-    return 0.2;
+    return ElemType(0.2);
   }
 
   /**
