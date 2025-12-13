@@ -270,7 +270,7 @@ double KFoldCV<MLAlgorithm,
     return 0.0;
   }
 
-  return mean(evaluations.elem(arma::find_finite(evaluations)));
+  return mean(evaluations.elem(find_finite(evaluations)));
 }
 
 template<typename MLAlgorithm,

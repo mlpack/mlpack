@@ -60,7 +60,7 @@ void LayerNorm<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   meanObj = mean(input, 0);
-  variance = arma::var(input, 1, 0);
+  variance = var(input, 1, 0);
 
   // Normalize the input.
   output = input.each_row() - meanObj;

@@ -56,7 +56,7 @@ class MeanNormalization
   {
     itemMean = mean(input, 1);
     itemMin = min(input, 1);
-    itemMax = arma::max(input, 1);
+    itemMax = max(input, 1);
     scale = itemMax - itemMin;
     // Handling zeros in scale vector.
     scale.for_each([](arma::vec::elem_type& val) { val =

@@ -33,7 +33,7 @@ inline CosineTree<MatType>::CosineTree(const MatType& dataset) :
   for (size_t i = 0; i < numColumns; ++i)
   {
     indices[i] = i;
-    double l2Norm = (double) arma::norm(dataset.col(i), 2);
+    double l2Norm = (double) norm(dataset.col(i), 2);
     l2NormsSquared(i) = l2Norm * l2Norm;
   }
 
@@ -92,7 +92,7 @@ inline CosineTree<MatType>::CosineTree(const MatType& dataset,
 
   // Define root node of the tree and add it to the queue.
   CosineTree root(dataset);
-  VecType tempVector = arma::zeros<VecType>(dataset.n_rows);
+  VecType tempVector = VecType(dataset.n_rows, GetFillType<VecType>::zeros);
   root.L2Error(-1.0); // We don't know what the error is.
   root.BasisVector(tempVector);
   treeQueue.push_back(&root);
@@ -412,8 +412,8 @@ inline void CosineTree<MatType>::ModifiedGramSchmidt(
   }
 
   // Normalize the modified centroid vector.
-  if (arma::norm(newBasisVector, 2))
-    newBasisVector /= arma::norm(newBasisVector, 2);
+  if (norm(newBasisVector, 2))
+    newBasisVector /= norm(newBasisVector, 2);
 }
 
 template<typename MatType>
@@ -475,7 +475,7 @@ inline double CosineTree<MatType>::MonteCarloError(
     }
 
     // Calculate the Frobenius norm squared of the projected vector.
-    double frobProjection = arma::norm(projection, "frob");
+    double frobProjection = norm(projection, "frob");
     double frobProjectionSquared = frobProjection * frobProjection;
 
     // Calculate the weighted projection magnitude.
@@ -484,7 +484,7 @@ inline double CosineTree<MatType>::MonteCarloError(
 
   // Compute mean and standard deviation of the weighted samples.
   double mu = mean(weightedMagnitudes);
-  double sigma = arma::stddev(weightedMagnitudes);
+  double sigma = stddev(weightedMagnitudes);
 
   if (!sigma)
   {
@@ -536,7 +536,7 @@ inline void CosineTree<MatType>::CosineNodeSplit()
 
   // Compute maximum and minimum cosine values.
   double cosineMax, cosineMin;
-  cosineMax = arma::max(cosines % (cosines < 1));
+  cosineMax = max(cosines % (cosines < 1));
   cosineMin = min(cosines);
 
   std::vector<size_t> leftIndices, rightIndices;
@@ -670,7 +670,7 @@ inline void CosineTree<MatType>::CalculateCosines(
     else
     {
       cosines(i) =
-          std::abs(arma::norm_dot(dataset->col(indices[splitPointIndex]),
+          std::abs(norm_dot(dataset->col(indices[splitPointIndex]),
                                   dataset->col(indices[i])));
     }
   }

@@ -94,12 +94,12 @@ bool RPTreeMeanSplit<BoundType, MatType>::GetDotMedian(
   for (size_t k = 0; k < samples.n_elem; ++k)
     values[k] = dot(data.col(samples[k]), direction);
 
-  const ElemType maximum = arma::max(values);
+  const ElemType maximum = max(values);
   const ElemType minimum = min(values);
   if (minimum == maximum)
     return false;
 
-  splitVal = arma::median(values);
+  splitVal = median(values);
 
   if (splitVal == maximum)
     splitVal = minimum;
@@ -128,12 +128,12 @@ bool RPTreeMeanSplit<BoundType, MatType>::GetMeanMedian(
     values[k] = dot(tmp, tmp);
   }
 
-  const ElemType maximum = arma::max(values);
+  const ElemType maximum = max(values);
   const ElemType minimum = min(values);
   if (minimum == maximum)
     return false;
 
-  splitVal = arma::median(values);
+  splitVal = median(values);
 
   if (splitVal == maximum)
     splitVal = minimum;
