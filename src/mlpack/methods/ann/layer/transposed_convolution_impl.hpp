@@ -591,9 +591,9 @@ void TransposedConvolution<
   this->outputDimensions = std::vector<size_t>(std::max(
       this->inputDimensions.size(), size_t(3)), 1);
   this->outputDimensions[0] = TConvOutSize(this->inputDimensions[0],
-      kernelWidth, strideWidth, padWLeft, padWRight);
+      kernelWidth, strideWidth, padWLeft, padWRight, outputPadW);
   this->outputDimensions[1] = TConvOutSize(this->inputDimensions[1],
-      kernelHeight, strideHeight, padHTop, padHBottom);
+      kernelHeight, strideHeight, padHTop, padHBottom, outputPadH);
 
   // Compute and cache the total number of input maps.
   inMaps = (this->inputDimensions.size() >= 3) ? this->inputDimensions[2] : 1;

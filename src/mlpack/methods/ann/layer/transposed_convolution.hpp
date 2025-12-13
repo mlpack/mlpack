@@ -276,9 +276,10 @@ class TransposedConvolution : public Layer<MatType>
                       const size_t k,
                       const size_t s,
                       const size_t pSideOne,
-                      const size_t pSideTwo)
+                      const size_t pSideTwo,
+                      const size_t outputPad)
   {
-    return (s * (size - 1) + k - pSideOne - pSideTwo);
+    return (s * (size - 1) + k - pSideOne - pSideTwo + outputPad);
   }
 
   /**
