@@ -422,4 +422,15 @@ TEST_CASE("LinearRegressionSparseTrainingTest", "[LinearRegressionTest]")
   lr.Predict(data, predictions);
 
   REQUIRE(predictions.n_elem == 5000);
+} 
+
+TEST_CASE("LinearRegressionMismatchedInputTest",
+          "[LinearRegressionTest]")
+{
+  arma::mat predictors(3, 10, arma::fill::randu);
+  arma::rowvec responses(5, arma::fill::randu);
+
+  REQUIRE_THROWS(
+      LinearRegression<>(predictors, responses));
 }
+
