@@ -422,7 +422,7 @@ TEST_CASE("LinearRegressionSparseTrainingTest", "[LinearRegressionTest]")
   lr.Predict(data, predictions);
 
   REQUIRE(predictions.n_elem == 5000);
-} 
+}
 
 TEST_CASE("LinearRegressionMismatchedInputTest",
           "[LinearRegressionTest]")
