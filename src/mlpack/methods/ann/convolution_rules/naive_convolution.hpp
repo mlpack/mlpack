@@ -195,15 +195,30 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
                     const size_t dilationH,
                     const std::enable_if_t<IsCoot<MatType>::value>* = 0)
   {
+    bool useDilation = (dilationW != 1) || (dilationH != 1);
+    MatType dilatedFilter;
+    const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
+    const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
+    if (useDilation)
+    {
+      // Get the non-zero rows and columns of the dilated kernel.
+      coot::uvec rows, cols;
+      rows = coot::linspace<coot::uvec>(0, filterRows - 1, filter.n_rows);
+      cols = coot::linspace<coot::uvec>(0, filterCols - 1, filter.n_cols);
+
+      // Dilate the kernel.
+      dilatedFilter.zeros(filterRows, filterCols);
+      dilatedFilter.submat(rows, cols) = filter;
+    }
+
+    // Apply convolution.
     for (size_t j = 0; j < output.n_cols; ++j)
     {
       for (size_t i = 0; i < output.n_rows; ++i)
       {
-        for (size_t kj = 0; kj < filter.n_cols; ++kj)
-        {
-          for (size_t ki = 0; ki < filter.n_rows; ++ki)
-            output.at(i, j) += filter.at(ki, kj) * input.at(i + ki, j + kj);
-        }
+        output.at(i, j) = accu((useDilation ? dilatedFilter : filter) %
+            input.submat(i * dH, j * dW, i * dH + filterRows - 1,
+                j * dW + filterCols - 1));
       }
     }
   }
