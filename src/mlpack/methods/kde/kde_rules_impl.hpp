@@ -227,9 +227,9 @@ Score(const size_t queryIndex, TreeType& referenceNode)
             EvaluateKernel(queryIndex, referenceNode.Descendant(randomPoint));
       }
       meanSample = mean(sample);
-      const double stddev = stddev(sample);
+      const double sampleStddev = stddev(sample);
       const double mThreshBase =
-          z * stddev * (1 + relError) / (relError * meanSample);
+          z * sampleStddev * (1 + relError) / (relError * meanSample);
       const size_t mThresh = std::ceil(mThreshBase * mThreshBase);
 
       if (sample.size() < mThresh)
@@ -442,9 +442,9 @@ Score(TreeType& queryNode, TreeType& referenceNode)
               EvaluateKernel(queryIndex, referenceNode.Descendant(randomPoint));
         }
         meanSample = mean(sample);
-        const double stddev = stddev(sample);
+        const double sampleStddev = stddev(sample);
         const double mThreshBase =
-            z * stddev * (1 + relError) / (relError * meanSample);
+            z * sampleStddev * (1 + relError) / (relError * meanSample);
         const size_t mThresh = std::ceil(mThreshBase * mThreshBase);
 
         if (sample.size() < mThresh)
