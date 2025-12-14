@@ -36,6 +36,12 @@ struct GetDenseMatType<coot::Cube<eT>>
   using type = coot::Mat<eT>;
 };
 
+template<typename MatType>
+struct GetURowType<MatType, std::enable_if_t<IsCoot<MatType>::value>>
+{
+  using type = coot::Row<coot::uword>;
+};
+
 template<typename eT>
 struct IsVector<coot::Col<eT> >
 {

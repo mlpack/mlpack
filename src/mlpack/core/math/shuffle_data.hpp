@@ -19,12 +19,11 @@ namespace mlpack {
 /**
  * Reorder a dense matrix or row vector.
  */
-template<typename MatType>
-void ReorderData(const arma::uvec& ordering,
+template<typename UVecType, typename MatType>
+void ReorderData(const UVecType& ordering,
                  const MatType& in,
                  MatType& out,
-                 const std::enable_if_t<IsArma<MatType>::value &&
-                     !IsSparse<MatType>::value &&
+                 const std::enable_if_t<!IsSparse<MatType>::value &&
                      !IsCube<MatType>::value>* = 0)
 {
   // Properly handle the case where the input and output data are the same
@@ -47,12 +46,11 @@ void ReorderData(const arma::uvec& ordering,
 /**
  * Reorder a cube.
  */
-template<typename CubeType>
-void ReorderData(const arma::uvec& ordering,
+template<typename UVecType, typename CubeType>
+void ReorderData(const UVecType& ordering,
                  const CubeType& in,
                  CubeType& out,
-                 const std::enable_if_t<IsArma<CubeType>::value &&
-                     IsCube<CubeType>::value>* = 0)
+                 const std::enable_if_t<IsCube<CubeType>::value>* = 0)
 {
   // Properly handle the case where the input and output data are the same
   // object.
@@ -79,12 +77,11 @@ void ReorderData(const arma::uvec& ordering,
 /**
  * Reorder a sparse matrix.
  */
-template<typename SpMatType>
-void ReorderData(const arma::uvec& ordering,
+template<typename UVecType, typename SpMatType>
+void ReorderData(const UVecType& ordering,
                  const SpMatType& in,
                  SpMatType& out,
-                 const std::enable_if_t<IsArma<SpMatType>::value &&
-                     IsSparse<SpMatType>::value>* = 0)
+                 const std::enable_if_t<IsSparse<SpMatType>::value>* = 0)
 {
   // Extract coordinate list representation.
   arma::umat locations(2, in.n_nonzero);
@@ -115,29 +112,6 @@ void ReorderData(const arma::uvec& ordering,
   }
 }
 
-#if defined(MLPACK_HAS_COOT)
-
-/**
- * Reorder a Bandicoot object.
- */
-template<typename MatType>
-void ReorderData(const arma::uvec& ordering,
-                 const MatType& in,
-                 MatType& out,
-                 const std::enable_if_t<IsCoot<MatType>::value>* = 0)
-{
-  // Convert to Armadillo
-  using ArmaType = typename GetArmaType<MatType>::type;
-  ArmaType inArma = coot::conv_to<ArmaType>::from(in);
-
-  ReorderData(ordering, inArma, inArma);
-
-  // Convert back to bandicoot
-  out = MatType(inArma);
-}
-
-#endif
-
 /**
  * Shuffle two objects. It is expected that inputFirst and inputSecond have
  * the same number of columns (so, be sure that, if it is a vector, is a
@@ -152,7 +126,8 @@ void ShuffleData(const FirstType& inputFirst,
                  SecondType& outputSecond)
 {
   // Generate ordering.
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
+  using UVecType = typename GetURowType<FirstType>::type;
+  UVecType ordering = shuffle(linspace<UVecType>(0,
       inputFirst.n_cols - 1, inputFirst.n_cols));
 
   // Shuffle data with the ordering
@@ -176,7 +151,8 @@ void ShuffleData(const FirstType& inputFirst,
                  ThirdType& outputThird)
 {
   // Generate ordering.
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
+  using UVecType = typename GetURowType<FirstType>::type;
+  UVecType ordering = shuffle(linspace<UVecType>(0,
       inputFirst.n_cols - 1, inputFirst.n_cols));
 
   // Shuffle data with the ordering
