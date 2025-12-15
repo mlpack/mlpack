@@ -34,11 +34,13 @@ NegativeLogLikelihoodType<MatType>::Forward(
 {
   using ElemType = typename MatType::elem_type;
 
-  // Sanity check the inputs.
+  // Sanity check the inputs in debug mode.
+  #ifdef DEBUG
   Log::Assert(all(vectorise(target >= ElemType(0) &&
                             target < ElemType(prediction.n_rows))),
       "NegativeLogLikelihood::Forward(): labels must be between 0 and "
       "(numClasses - 1).");
+  #endif
 
   // Assemble the indices in `prediction` we are looking for.
   // For each i, we want to access prediction(target(i), i).
@@ -59,6 +61,7 @@ void NegativeLogLikelihoodType<MatType>::Backward(
       const MatType& target,
       MatType& loss)
 {
+  #ifdef DEBUG
   using ElemType = typename MatType::elem_type;
 
   // Sanity check the inputs.
@@ -66,6 +69,7 @@ void NegativeLogLikelihoodType<MatType>::Backward(
                             target < ElemType(prediction.n_rows))),
       "NegativeLogLikelihood::Forward(): labels must be between 0 and "
       "(numClasses - 1).");
+  #endif
 
   loss = zeros<MatType>(prediction.n_rows, prediction.n_cols);
   loss.elem(conv_to<typename GetUColType<MatType>::type>::from(
