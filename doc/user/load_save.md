@@ -1011,6 +1011,7 @@ number of channels are unavailable after loading!).
 // See https://www.mlpack.org/static/img/numfocus-logo.png.
 arma::mat image;
 mlpack::data::Load("numfocus-logo.png", image, PNG);
+
 // If we wanted image metadata, we would need to pass an ImageOptions.  See the
 // next example.
 //
