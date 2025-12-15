@@ -29,20 +29,27 @@ and [format detection/selection](#formats).
 ## `data::Load()`
 
  - `data::Load(filename, X)`
- - `data::Load(filename, X, Option1 + Option2 + ...)`
- - `data::Load(filename, X, opts)`
-   * Load `X` from a single file `filename` (of type `std::string`) with
-     default options:
+   * Load `X` from the given file `filename` with default options:
      - the format of the file is [auto-detected](#formats) based on the
        extension of the file, and
      - an exception is *not* thrown on an error.
+   * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
-   * The given options `Options1, Options2 ...` must be from the
+
+ - `data::Load(filename, object, Option1 + Option2 + ...)`
+   * Load `X` from the given file `filename` with the given options.
+   * Returns a `bool` indicating whether the load was a success.
+   * `X` can be [any supported load type](#types).
+   * The given options must be from the
      [list of standalone operators](#dataoptions) and be appropriate for the type
      of `X`.
+
+ - `data::Load(filename, object, opts)`
+   * Load `X` from the given file `filename` with the given options specified in `opts`.
+   * Returns a `bool` indicating whether the load was a success.
+   * `X` can be [any supported load type](#types).
    * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
      type of `X`.
-   * Returns a `bool` indicating whether the load was a success.
 
 For some types of data, it is also possible to load multiple images at once from a set of files:
 
