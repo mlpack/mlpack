@@ -472,7 +472,7 @@ is set.
 ***Notes:***
 
  - `FileType::BIN` (`.bin`) is recommended for the sake of size; objects in
-   binary FileType may be an order of magnitude or more smaller than JSON!
+   binary format may be an order of magnitude or more smaller than JSON!
 
  - `FileType::JSON` (`.json`) and `FileType::XML` (`.xml`) produce human-readable
    files, but they may be quite large.
