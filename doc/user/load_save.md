@@ -530,11 +530,9 @@ saving are supported.
    should have type [`arma::mat`](matrices.md) or any other supported matrix
    type (e.g. `arma::fmat`, `arma::umat`, and so forth).
 
- * When calling [`data::Load()`](#dataload) on a set of `filesname`. All
-   files need to be a `std::vector<std::string>`. In addition, all files
-   should have the same metadata that are described in [`DataOptions`](#dataoptions)
-   parameters. All of these files will be concatenated and loaded into the
-   supported matrix type `X`.
+ * When calling [`data::Load()`](#dataload) with a vector `filenames`, all files
+   must have the same number of dimensions and header names (if using
+   CSVs with headers).  All files will be concatenated into the output matrix `X`.
 
  * When loading and saving with an instantiated [`DataOptions`](#dataoptions)
    object, the [`MatrixOptions`](#matrixoptions) and
