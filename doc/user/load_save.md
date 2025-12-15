@@ -103,19 +103,28 @@ See also the other examples for each [supported load type](#types):
 ## `data::Save()`
 
  - `data::Save(filename, X)`
- - `data::Save(filename, object, Option1 + Option2 + ...)`
- - `data::Save(filename, object, opts)`
    * Save `X` to the given file `filename` with default options:
      - the format of the file is auto-detected based on the extension of the
        file, and
      - an exception is *not* thrown on an error.
+   * Returns a `bool` indicating whether the save was a success.
+   * `X` can be [any supported save type](#types).
+
+ - `data::Save(filename, object, Option1 + Option2 + ...)`
+   * Save `X` to the given file `filename` with the given options.
+   * Returns a `bool` indicating whether the save was a success.
    * `X` can be [any supported save type](#types).
    * The given options must be from the
      [list of standalone options](#dataoptions) and be appropriate for the type
      of `X`.
+
+ - `data::Save(filename, object, opts)`
+   * Save `X` to the given file `filename` with the given options specified in
+     `opts`.
+   * Returns a `bool` indicating whether the save was a success.
+   * `X` can be [any supported save type](#types).
    * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
      type of `X`.
-   * Returns a `bool` indicating whether the save was a success.
 
 ***Note:*** when saving images, it is possible to save
 into multiple images from one matrix `X`.  See [image data](#image-data) for more
