@@ -986,7 +986,7 @@ When working with images, the following overload for
    - `opts` is an [`ImageOptions`](#imageoptions) that contains image metadata.
 
    - `opts.Width()`, `opts.Height()`, `opts.Channels()`, and `opts.Quality()`
-     should be set to the desired parameters; see
+     should be set to the desired parameters before calling; see
      [`ImageOptions` members](#imageoptions-standalone-operators-and-members)
      for more details.
 
