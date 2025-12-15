@@ -678,6 +678,20 @@ mlpack::data::Save("Admission_Predict.mod.csv", dataset, opts);
 
 ---
 
+Load a CSV containing a coordinate list into a sparse matrix and print the
+overall size of the loaded matrix.
+
+```c++
+// See https://datasets.mlpack.org/movielens-100k.csv.
+arma::sp_mat dataset;
+// A 3-column CSV into a sparse matrix is interpreted as a coordinate list.
+mlpack::data::Load("movielens-100k.csv", dataset, mlpack::data::CSV);
+
+std::cout << "Loaded data from movielens-100k.csv; matrix size: "
+    << dataset.n_rows << " x " << dataset.n_cols << "." << std::endl;
+```
+---
+
 ## Mixed categorical data
 
 mlpack supports mixed categorical data, e.g., data where some dimensions take
