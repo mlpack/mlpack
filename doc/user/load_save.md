@@ -419,11 +419,13 @@ is set.
 | `PIC`                     | `opts.Format() = FileType::PIC`       | [Image data](#image-data). | Load/save as a PIC (PICtor) image.  *Only for loading.* |
 | `PNM`                     | `opts.Format() = FileType::PNM`       | [Image data](#image-data). | Load/save as a PNM (Portable Anymap) image.  *Only for loading.* |
 |---------------------------|---------------------------------------|----------------------------|-------------------|
+| _Save behavior._          |                                       |                            |                   |
+| _(n/a)_                   | `opts.Quality()`                      | [Image data](#image-data) with JPEG format. | Desired JPEG quality level for saving (a `size_t` in the range from 0 to 100). |
+|---------------------------|---------------------------------------|----------------------------|-------------------|
 | _Metadata._               |                                       |                            |                   |
 | _(n/a)_                   | `opts.Height()`                       | [Image data](#image-data)  | Returns a `size_t` representing the height in pixels of the loaded image(s), or the desired height in pixels for saving. |
 | _(n/a)_                   | `opts.Width()`                        | [Image data](#image-data)  | Returns a `size_t` representing the height in pixels of the loaded image(s), or the desired height in pixels for saving. |
 | _(n/a)_                   | `opts.Channels()`                     | [Image data](#image-data)  | Returns a `size_t` representing the height in pixels of the loaded image(s), or the desired height in pixels for saving. |
-| _(n/a)_                   | `opts.Quality()`                      | [Image data](#image-data) with JPEG format. | Returns a `size_t` representing the desired JPEG quality level (0 to 100). |
 |---------------------------|---------------------------------------|----------------------------|-------------------|
 
 ***Notes:***
