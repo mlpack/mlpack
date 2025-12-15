@@ -721,7 +721,7 @@ is stored in an auxiliary [`data::DatasetInfo`](#datadatasetinfo) object.
    [`TextOptions`](#textoptions) `opts` must be passed to
    [`data::Load()`](#dataload); then, the associated
    [`data::DatasetInfo`](#datadatasetinfo) is accessible via
-   `opts.DatasetInfo()`](#textoptions-standalone-operators-and-members).
+   [`opts.DatasetInfo()`](#textoptions-standalone-operators-and-members).
 
  * When saving, reverse mappings from positive integers to the original unique
    non-numeric values in `opts.DatasetInfo()` are applied.  To set these
