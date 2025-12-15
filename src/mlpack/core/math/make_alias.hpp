@@ -162,7 +162,7 @@ void MakeAlias(OutMatType& m,
                const size_t numRows,
                const size_t numCols,
                const size_t offset = 0,
-               const bool strict = true,
+               const bool /* strict */ = true,
                const typename std::enable_if_t<
                    IsMatrix<OutMatType>::value &&
                    IsCoot<InMatType>::value &&
