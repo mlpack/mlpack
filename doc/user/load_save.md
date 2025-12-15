@@ -334,7 +334,6 @@ then an exception will be thrown; otherwise, a warning will be printed if
 is set.
 
 <!-- TODO for Omar: what happens when HasHeaders() is true for saving? -->
-<!-- TODO for Omar: what happened to tab support?  is that implicit? -->
 
 | ***Standalone operator*** | ***Member function***       | ***Available for:***      | ***Description*** |
 |---------------------------|-----------------------------|---------------------------|-------------------|
