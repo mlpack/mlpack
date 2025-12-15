@@ -59,6 +59,7 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
  * `lr = LinearRegression(data, responses,          lambda=0.0, intercept=true)`
  * `lr = LinearRegression(data, responses, weights, lambda=0.0, intercept=true)`
    - Train model, optionally with instance weights.
+The predictor matrix must have one column per data point, and the response vector must contain the same number of elements. If the number of responses does not match the number of predictor columns, LinearRegression will throw an exception.
 
 ---
 
