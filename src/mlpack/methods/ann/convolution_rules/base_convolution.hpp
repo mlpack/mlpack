@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_ANN_CONVOLUTION_RULES_BASE_CONVOLUTION_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/using.hpp>
 #include "border_modes.hpp"
 
 namespace mlpack {

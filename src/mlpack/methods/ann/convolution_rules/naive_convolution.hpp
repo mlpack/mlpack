@@ -202,9 +202,10 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
     if (useDilation)
     {
       // Get the non-zero rows and columns of the dilated kernel.
-      coot::uvec rows, cols;
-      rows = coot::linspace<coot::uvec>(0, filterRows - 1, filter.n_rows);
-      cols = coot::linspace<coot::uvec>(0, filterCols - 1, filter.n_cols);
+      using UVecType = typename GetURowType<MatType>::type;
+      UVecType rows, cols;
+      rows = linspace<UVecType>(0, filterRows - 1, filter.n_rows);
+      cols = linspace<UVecType>(0, filterCols - 1, filter.n_cols);
 
       // Dilate the kernel.
       dilatedFilter.zeros(filterRows, filterCols);
