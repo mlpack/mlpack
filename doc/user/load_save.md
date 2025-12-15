@@ -57,8 +57,8 @@ For some types of data, it is also possible to load multiple images at once from
  - `data::Load(filenames, X, Option1 + Option2 + ...)`
  - `data::Load(filenames, X, opts)`
     * Load data from `filenames` (a `std::vector<std::string>`) into the matrix `X`.
-    - For [numeric data](#numeric-data), data loaded from each file is concatenated into `X`.
-    - For [image data](#image-data), each image is flattened into one column of `X`.
+      - For [numeric data](#numeric-data), data loaded from each file is concatenated into `X`.
+      - For [image data](#image-data), each image is flattened into one column of `X`.
     - Metadata (e.g. image size, number of columns, etc.) in all files in `filenames` must match or loading will fail.
     - Loading options can be specified by either standalone options or an instantiated [`DataOptions` object](#dataoptions).
     - an exception is *not* thrown on an error.
