@@ -963,7 +963,7 @@ of the flattened vector.
  * Supported image saving formats are JPEG, PNG, TGA, and BMP.
 
  * Accessing the metadata of an image after loading can be done with
-   [`opts.Width()`, `opts.Height()`, and `opts.Channels()`.  See the
+   `opts.Width()`, `opts.Height()`, and `opts.Channels()`.  See the
    [`ImageOptions` member documentation](#imageoptions-standalone-operators-and-members)
    for more details.
 
