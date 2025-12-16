@@ -62,12 +62,6 @@ For some types of data, it is also possible to load multiple images at once from
     - Metadata (e.g. image size, number of columns, etc.) in all files in `filenames` must match or loading will fail.
     - Loading options can be specified by either standalone options or an instantiated [`DataOptions` object](#dataoptions).
     - an exception is *not* thrown on an error.
-   * `X` can be [any supported load type](#types).
-   * The given options `Options1, Options2 ...` must be from the
-     [list of standalone operators](#dataoptions) and be appropriate for the type of `X`.
-   * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
-     type of `X`.
-   * Returns a `bool` indicating whether the load was a success.
 
 ---
 
@@ -279,7 +273,7 @@ calls to set members of an instantiated `DataOptions` object.
 | `NoFatal` _(default)_     | `opts.Fatal() = false;` | All [data types](#types). | `false` will be returned on failure.  A warning will also be printed if [`MLPACK_PRINT_WARN`](compile.md#configuring-mlpack-with-compile-time-definitions) is defined. |
 |---------------------------|-------------------------|---------------------------|-------------------|
 | [_Formats._](#formats)    |                         |                           |                   |
-| `AutoDetect` _(default)_  | `opts.Format() = FileType::AutoDetect` | All [data types](#types). | The format of the file is autodetected using the extension fo the filename and (if loading) inspecting the file contents. |
+| `AutoDetect` _(default)_  | `opts.Format() = mlpack::data::FileType::AutoDetect;` | All [data types](#types). | The format of the file is autodetected using the extension fo the filename and (if loading) inspecting the file contents. |
 |---------------------------|-------------------------|---------------------------|-------------------|
 
 ### `MatrixOptions`
@@ -314,11 +308,11 @@ is set.
 | `NoTranspose`             | `opts.Transpose() = false;` | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | The matrix will not be transposed to [column-major form](matrices.md#representing-data-in-mlpack) on load/save. |
 |---------------------------|-----------------------------|---------------------------|-------------------|
 | [_Formats._](#formats)    |                             |                           |                   |
-| `PGM`                     | `opts.Format() = FileType::PGMBinary;`  | [Numeric](#numeric-data) data. | Load/save in the PGM image format; data should have values in the range `[0, 255]`.  The size of the image will be the same as the size of the matrix (after any transpose is applied). |
-| `PPM`                     | `opts.Format() = FileType::PPMBinary;`  | [Numeric](#numeric-data) data. | Load/save in the PPM image format; data should have values in the range `[0, 255]`.  The size of the image will be the same as the size of the matrix (after any transpose is applied). |
-| `HDF5`                    | `opts.Format() = FileType::HDF5Binary;` | [Numeric](#numeric-data) data. | Load/save in the [HDF5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format) binary format; only available if Armadillo is configured with [HDF5 support](https://arma.sourceforge.net/docs.html#config_hpp). |
-| `ArmaBin`                 | `opts.Format() = FileType::ArmaBinary;` | [Numeric](#numeric-data) data. | Load/save in the space-efficient [`arma_binary`](https://arma.sourceforge.net/docs.html#save_load_mat) format (packed binary data). |
-| `RawBinary`               | `opts.Format() = FileType::RawBinary;`  | [Numeric](#numeric-data) data. | Load/save as packed binary data with no header and no size information; data will be loaded as a single column vector _(not recommended)_. |
+| `PGM`                     | `opts.Format() = mlpack::data::FileType::PGMBinary;`  | [Numeric](#numeric-data) data. | Load/save in the PGM image format; data should have values in the range `[0, 255]`.  The size of the image will be the same as the size of the matrix (after any transpose is applied). |
+| `PPM`                     | `opts.Format() = mlpack::data::FileType::PPMBinary;`  | [Numeric](#numeric-data) data. | Load/save in the PPM image format; data should have values in the range `[0, 255]`.  The size of the image will be the same as the size of the matrix (after any transpose is applied). |
+| `HDF5`                    | `opts.Format() = mlpack::data::FileType::HDF5Binary;` | [Numeric](#numeric-data) data. | Load/save in the [HDF5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format) binary format; only available if Armadillo is configured with [HDF5 support](https://arma.sourceforge.net/docs.html#config_hpp). |
+| `ArmaBin`                 | `opts.Format() = mlpack::data::FileType::ArmaBinary;` | [Numeric](#numeric-data) data. | Load/save in the space-efficient [`arma_binary`](https://arma.sourceforge.net/docs.html#save_load_mat) format (packed binary data). |
+| `RawBinary`               | `opts.Format() = mlpack::data::FileType::RawBinary;`  | [Numeric](#numeric-data) data. | Load/save as packed binary data with no header and no size information; data will be loaded as a single column vector _(not recommended)_. |
 |---------------------------|-----------------------------|---------------------------|-------------------|
 
 ### `TextOptions`
@@ -360,11 +354,11 @@ is set.
 | `MissingToNan` | `opts.MissingToNan() = true;` | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | If `true`, any missing data elements will be represented as `NaN` instead of 0. |
 |---------------------------|-----------------------------|---------------------------|-------------------|
 | [_Formats._](#formats)    |                             |                           |                   |
-| `CSV`                     | `opts.Format() = FileType::CSVASCII;` | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | CSV or TSV format.  If loading a sparse matrix and the CSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
-| `ArmaAscii`               | `opts.Format() = FileType::ArmaASCII;` | [Numeric](#numeric-data) data. | Space-separated values as saved by Armadillo with the [`arma_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat) format. |
-| `RawAscii`                | `opts.Format() = FileType::RawASCII;` | [Numeric](#numeric-data) data. | Space-separated values or tab-separated values (TSV) with no header. |
-| `CoordAscii`              | `opts.Format() = FileType::CoordAscii;` | [Numeric](#numeric-data) data where `X` is a sparse matrix (e.g. `arma::sp_mat`). | Coordinate list format for sparse data (see [`coord_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat)). |
-| `ARFF`                    | `opts.Format() = FileType::ARFFAscii;` | [Categorical](#mixed-categorical-data) data. | ARFF filetype. Used specifically to load mixed categorical dataset.  See [ARFF documentation](https://ml.cms.waikato.ac.nz/weka/arff.html).  *Only for loading.* |
+| `CSV`                     | `opts.Format() = mlpack::data::FileType::CSVASCII;` | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | CSV or TSV format.  If loading a sparse matrix and the CSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
+| `ArmaAscii`               | `opts.Format() = mlpack::data::FileType::ArmaASCII;` | [Numeric](#numeric-data) data. | Space-separated values as saved by Armadillo with the [`arma_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat) format. |
+| `RawAscii`                | `opts.Format() = mlpack::data::FileType::RawASCII;` | [Numeric](#numeric-data) data. | Space-separated values or tab-separated values (TSV) with no header. |
+| `CoordAscii`              | `opts.Format() = mlpack::data::FileType::CoordAscii;` | [Numeric](#numeric-data) data where `X` is a sparse matrix (e.g. `arma::sp_mat`). | Coordinate list format for sparse data (see [`coord_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat)). |
+| `ARFF`                    | `opts.Format() = mlpack::data::FileType::ARFFAscii;` | [Categorical](#mixed-categorical-data) data. | ARFF filetype. Used specifically to load mixed categorical dataset.  See [ARFF documentation](https://ml.cms.waikato.ac.nz/weka/arff.html).  *Only for loading.* |
 |---------------------------|-----------------------------|---------------------------|-------------------|
 | _Metadata._               |                             |                           |                   |
 | _(n/a)_                   | `opts.Headers()`            | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | Returns a `std::vector<std::string>` with headers detected after loading a CSV, or headers used as the first row when saving a CSV. |
@@ -425,15 +419,15 @@ is set.
 | ***Standalone operator*** | ***Member function***                 | ***Available for:***       | ***Description*** |
 |---------------------------|---------------------------------------|----------------------------|-------------------|
 | [_Formats._](#formats)    |                                       |                            |                   |
-| `Image`                   | `opts.Format() = FileType::ImageType` | [Image data](#image-data). | Load in the image format detected by the header of the file; save in the image format specified by the filename's extension. |
-| `PNG`                     | `opts.Format() = FileType::PNG`       | [Image data](#image-data). | Load/save as a PNG image. |
-| `JPG`                     | `opts.Format() = FileType::JPG`       | [Image data](#image-data). | Load/save as a JPEG image. |
-| `TGA`                     | `opts.Format() = FileType::TGA`       | [Image data](#image-data). | Load/save as a TGA image. |
-| `BMP`                     | `opts.Format() = FileType::BMP`       | [Image data](#image-data). | Load/save as a BMP image. |
-| `PSD`                     | `opts.Format() = FileType::PSD`       | [Image data](#image-data). | Load/save as a PSD (Photoshop) image.  *Only for loading.* |
-| `GIF`                     | `opts.Format() = FileType::GIF`       | [Image data](#image-data). | Load/save as a GIF image.  *Only for loading.* |
-| `PIC`                     | `opts.Format() = FileType::PIC`       | [Image data](#image-data). | Load/save as a PIC (PICtor) image.  *Only for loading.* |
-| `PNM`                     | `opts.Format() = FileType::PNM`       | [Image data](#image-data). | Load/save as a PNM (Portable Anymap) image.  *Only for loading.* |
+| `Image`                   | `opts.Format() = mlpack::data::FileType::ImageType;` | [Image data](#image-data). | Load in the image format detected by the header of the file; save in the image format specified by the filename's extension. |
+| `PNG`                     | `opts.Format() = mlpack::data::FileType::PNG;`       | [Image data](#image-data). | Load/save as a PNG image. |
+| `JPG`                     | `opts.Format() = mlpack::data::FileType::JPG;`       | [Image data](#image-data). | Load/save as a JPEG image. |
+| `TGA`                     | `opts.Format() = mlpack::data::FileType::TGA;`       | [Image data](#image-data). | Load/save as a TGA image. |
+| `BMP`                     | `opts.Format() = mlpack::data::FileType::BMP;`       | [Image data](#image-data). | Load/save as a BMP image. |
+| `PSD`                     | `opts.Format() = mlpack::data::FileType::PSD;`       | [Image data](#image-data). | Load/save as a PSD (Photoshop) image.  *Only for loading.* |
+| `GIF`                     | `opts.Format() = mlpack::data::FileType::GIF;`       | [Image data](#image-data). | Load/save as a GIF image.  *Only for loading.* |
+| `PIC`                     | `opts.Format() = mlpack::data::FileType::PIC;`       | [Image data](#image-data). | Load/save as a PIC (PICtor) image.  *Only for loading.* |
+| `PNM`                     | `opts.Format() = mlpack::data::FileType::PNM;`       | [Image data](#image-data). | Load/save as a PNM (Portable Anymap) image.  *Only for loading.* |
 |---------------------------|---------------------------------------|----------------------------|-------------------|
 | _Save behavior._          |                                       |                            |                   |
 | _(n/a)_                   | `opts.Quality()`                      | [Image data](#image-data) with JPEG format. | Desired JPEG quality level for saving (a `size_t` in the range from 0 to 100). |
@@ -481,9 +475,9 @@ is set.
 | ***Standalone operator*** | ***Member function***                 | ***Available for:***      | ***Description*** |
 |---------------------------|---------------------------------------|---------------------------|-------------------|
 | [_Formats._](#formats)    |                                       |                           |                   |
-| `BIN`                     | `opts.Format() = FileType::BIN`       | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using an efficient packed binary format. |
-| `JSON`                    | `opts.Format() = FileType::JSON`      | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using human- and machine-readable JSON. |
-| `XML`                     | `opts.Format() = FileType::XML`       | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using XML (warning: may be very large). |
+| `BIN`                     | `opts.Format() = mlpack::data::FileType::BIN;`       | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using an efficient packed binary format. |
+| `JSON`                    | `opts.Format() = mlpack::data::FileType::JSON;`      | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using human- and machine-readable JSON. |
+| `XML`                     | `opts.Format() = mlpack::data::FileType::XML;`       | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using XML (warning: may be very large). |
 |---------------------------|---------------------------------------|---------------------------|-------------------|
 
 ***Notes:***
