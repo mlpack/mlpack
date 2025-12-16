@@ -656,7 +656,6 @@ std::cout << dataset;
 ---
 
 Load a CSV into a 32-bit floating point matrix and print the headers (column names).
-Then, change the headers and save back to a new CSV.
 
 ```c++
 // See https://datasets.mlpack.org/Admission_Predict.csv.
@@ -673,15 +672,6 @@ for (size_t i = 0; i < opts.Headers().size(); ++i)
   std::cout << " - Column " << i << ": '" << opts.Headers()[i] << "'."
       << std::endl;
 }
-
-// Now change the first three column names.  (These aren't actually better
-// column names, they are way worse, but this is just an example...)
-opts.Headers()[0] = "Score on the GRE";
-opts.Headers()[1] = "Score on the TOEFL";
-opts.Headers()[2] = "Rating of the University";
-
-// Save the dataset with the new headers.
-mlpack::data::Save("Admission_Predict.mod.csv", dataset, opts);
 ```
 
 ---
