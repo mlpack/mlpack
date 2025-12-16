@@ -61,7 +61,6 @@ For some types of data, it is also possible to load multiple images at once from
       - For [image data](#image-data), each image is flattened into one column of `X`.
     - Metadata (e.g. image size, number of columns, etc.) in all files in `filenames` must match or loading will fail.
     - Loading options can be specified by either standalone options or an instantiated [`DataOptions` object](#dataoptions).
-    - an exception is *not* thrown on an error.
 
 ---
 
@@ -361,7 +360,7 @@ is set.
 | `ARFF`                    | `opts.Format() = mlpack::data::FileType::ARFFAscii;` | [Categorical](#mixed-categorical-data) data. | ARFF filetype. Used specifically to load mixed categorical dataset.  See [ARFF documentation](https://ml.cms.waikato.ac.nz/weka/arff.html).  *Only for loading.* |
 |---------------------------|-----------------------------|---------------------------|-------------------|
 | _Metadata._               |                             |                           |                   |
-| _(n/a)_                   | `opts.Headers()`            | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | Returns a `std::vector<std::string>` with headers detected after loading a CSV, or headers used as the first row when saving a CSV. |
+| _(n/a)_                   | `opts.Headers()`            | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | Returns a `std::vector<std::string>` with headers detected after loading a CSV. |
 | _(n/a)_                   | `opts.DatasetInfo()`        | [Categorical](#mixed-categorical-data) data. | Returns a [`data::DatasetInfo`](#datadatasetinfo) with dimension information after loading, or that will be used for dimension information during saving. |
 |---------------------------|-----------------------------|---------------------------|-------------------|
 
