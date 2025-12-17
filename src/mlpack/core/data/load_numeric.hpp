@@ -1,5 +1,5 @@
 /**
- * @file core/data/load.hpp
+ * @file core/data/load_numeric.hpp
  * @author Omar Shrit
  *
  * Load numeric csv using Armadillo parser. Distinguish between the cases, if
@@ -13,115 +13,154 @@
 #ifndef MLPACK_CORE_DATA_LOAD_NUMERIC_HPP
 #define MLPACK_CORE_DATA_LOAD_NUMERIC_HPP
 
+#include "text_options.hpp"
+#include "load_categorical.hpp"
+#include "load_dense.hpp"
+#include "load_sparse.hpp"
+
 namespace mlpack {
 namespace data {
 
-// These help assemble the Armadillo csv_opts flags.
-inline const arma::csv_opts::opts& NoTransposeOpt(const bool noTranspose)
-{
-  if (noTranspose)
-    return arma::csv_opts::none;
-  else
-    return arma::csv_opts::trans;
-}
-
-inline const arma::csv_opts::opts& HasHeadersOpt(const bool hasHeaders)
-{
-  if (hasHeaders)
-    return arma::csv_opts::with_header;
-  else
-    return arma::csv_opts::no_header;
-}
-
-inline const arma::csv_opts::opts& SemicolonOpt(const bool semicolon)
-{
-  if (semicolon)
-    return arma::csv_opts::semicolon;
-  else
-    return arma::csv_opts::none;
-}
-
-inline const arma::csv_opts::opts& MissingToNanOpt(const bool missingToNan)
-{
-  if (missingToNan)
-  {
-    #if ARMA_VERSION_MAJOR >= 12
-    return arma::csv_opts::strict;
-    #else
-    return arma::csv_opts::none;
-    #endif
-  }
-  else
-  {
-    return arma::csv_opts::none;
-  }
-}
-
 template<typename MatType>
-bool LoadCSVASCII(const std::string& filename,
-                  MatType& matrix,
-                  TextOptions& opts)
+bool LoadNumeric(const std::string& filename,
+                 MatType& matrix,
+                 std::fstream& stream,
+                 TextOptions& opts)
 {
   bool success = false;
 
-  // Show a warning if strict is not available.
-  #if ARMA_VERSION_MAJOR < 12
-  if (opts.MissingToNan())
+  TextOptions txtOpts(std::move(opts));
+  if constexpr (IsSparseMat<MatType>::value)
   {
-    if (opts.Fatal())
-    {
-      Log::Fatal << "data::Load(): MissingToNan() requires Armadillo version "
-          << ">= 12.0!" << std::endl;
-    }
-    else
-    {
-      Log::Warn << "data::Load(): MissingToNan() requires Armadillo version "
-          << ">= 12.0!  Option ignored." << std::endl;
-    }
+    success = LoadSparse(filename, matrix, txtOpts, stream);
   }
-  #endif
-
-  // Build Armadillo flags for loading based on our settings.
-  arma::csv_opts::opts flags =
-      NoTransposeOpt(opts.NoTranspose()) +
-      HasHeadersOpt(opts.HasHeaders()) +
-      SemicolonOpt(opts.Semicolon()) +
-      MissingToNanOpt(opts.MissingToNan());
-
-  if (opts.HasHeaders())
+  else if (txtOpts.Categorical() ||
+      (txtOpts.Format() == FileType::ARFFASCII))
   {
-    success = matrix.load(arma::csv_name(filename, opts.Headers(), flags),
-        arma::csv_ascii);
+    success = LoadCategorical(filename, matrix, txtOpts);
+  }
+  else if constexpr (IsCol<MatType>::value)
+  {
+    success = LoadDenseCol(filename, matrix, txtOpts, stream);
+  }
+  else if constexpr (IsRow<MatType>::value)
+  {
+    success = LoadDenseRow(filename, matrix, txtOpts, stream);
+  }
+  else if constexpr (IsDense<MatType>::value)
+  {
+    success = LoadDense(filename, matrix, txtOpts, stream);
   }
   else
   {
-    success = matrix.load(arma::csv_name(filename, flags), arma::csv_ascii);
+    return HandleError("data::Load(): unknown matrix-like type given!",
+        txtOpts);
   }
-
+  opts = std::move(txtOpts);
   return success;
 }
 
-template<typename eT, typename DataOptionsType>
-bool LoadHDF5(const std::string& filename,
-              arma::Mat<eT>& matrix,
-              const DataOptionsBase<DataOptionsType>& opts)
+template<typename MatType>
+bool LoadNumericMultifile(const std::vector<std::string>& filenames,
+          MatType& matrix,
+          const TextOptions& opts)
 {
-#ifndef ARMA_USE_HDF5
-  // Ensure that HDF5 is supported.
-  Timer::Stop("loading_data");
-  if (opts.Fatal())
-    Log::Fatal << "Attempted to load '" << filename << "' as HDF5 data, but "
-        << "Armadillo was compiled without HDF5 support.  Load failed."
-        << std::endl;
-  else
-    Log::Warn << "Attempted to load '" << filename << "' as HDF5 data, but "
-        << "Armadillo was compiled without HDF5 support.  Load failed."
-        << std::endl;
+  TextOptions copyOpts(opts);
+  return Load(filenames, matrix, copyOpts);
+}
 
-  return false;
-#endif
+template<typename MatType>
+bool LoadNumericMultifile(const std::vector<std::string>& filenames,
+          MatType& matrix,
+          TextOptions& opts)
+{
+  bool success = false;
+  MatType tmp;
+  arma::field<std::string> firstHeaders;
+  if (filenames.empty())
+  {
+    return HandleError("Load(): given set of filenames is empty;"
+        " loading failed.", opts);
+  }
 
-  return matrix.load(filename, opts.ArmaFormat());
+  for (size_t i = 0; i < filenames.size(); ++i)
+  {
+    success = Load(filenames.at(i), matrix, opts);
+    if (opts.HasHeaders())
+    {
+      if (i == 0)
+        firstHeaders = opts.Headers();
+      else
+      {
+        arma::field<std::string>& headers = opts.Headers();
+
+        // Make sure that the headers in this file match the first file's
+        // headers.
+        for (size_t j = 0; j < headers.size(); ++j)
+        {
+          if (firstHeaders.at(j) != headers.at(j))
+          {
+            std::stringstream oss;
+            oss << "Load(): header column " << j << " in file '"
+                << filenames[j] << "' ('" << headers[j] << "') does not match"
+                << " header column " << j << " in first file '"
+                << filenames[0] << "' ('" << firstHeaders[j] << "'); load "
+                << "failed.";
+            matrix.clear();
+            return HandleError(oss, opts);
+          }
+        }
+      }
+    }
+
+    if (success)
+    {
+      if (i == 0)
+      {
+        tmp = std::move(matrix);
+      }
+      else
+      {
+        if (!opts.NoTranspose()) // if transpose
+        {
+          if (tmp.n_rows != matrix.n_rows)
+          {
+            std::stringstream oss;
+            oss << "Load(): dimension mismatch; file '" << filenames[i]
+                << "' has " << matrix.n_rows << " dimensions, but first file "
+                << "'" << filenames[0] << "' has " << tmp.n_rows
+                << " dimensions.";
+            return HandleError(oss, opts);
+          }
+          else
+            tmp = join_rows(tmp, matrix);
+        }
+        else
+        {
+          if (tmp.n_cols != matrix.n_cols)
+          {
+            std::stringstream oss;
+            oss <<  "Load(): dimension mismatch; file '" << filenames[i]
+                << "' has " << matrix.n_cols << " dimensions, but first file "
+                << "'" << filenames[0] << "' has " << tmp.n_cols
+                << " dimensions.";
+            return HandleError(oss, opts);
+          }
+          else
+          {
+            tmp = join_cols(tmp, matrix);
+          }
+        }
+      }
+    }
+    else
+      break;
+  }
+
+  if (success)
+    matrix = std::move(tmp);
+
+  return success;
 }
 
 } // namespace data

@@ -6,7 +6,7 @@ _????-??-??_
  * Fixed generated artifiacts in resized float images by using clamping (#4030).
 
  * Optimize convolution (#3988).
- 
+
  * Added `GELUExact` ANN activation layer (#3994).
 
  * Adapt `GRU` ANN layer to the new interface (#3955).
@@ -41,9 +41,14 @@ _????-??-??_
  * Fix infinite recursion in `Octree` when the number of identical points
    exceeds `maxLeafSize` (#4020).
 
+ * Add `Embedding` layer (#3999).
+
  * Add YOLOv3Tiny for object detection (#4023).
 
  * Fix thread-specific random seed initialization (#4027).
+
+ * R bindings now return class attributes as vector with the given model,
+   mlpack model bindings and list as fallback (#4045).
 
 ## mlpack 4.6.2
 
