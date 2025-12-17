@@ -7,7 +7,7 @@ or have found a bug that you know how to fix, please submit a pull request!
 
 mlpack does not accept any source code which has been created
 (directly or indirectly) with the aid of Large Language Models (LLMs).
-This is due unclear code provenance and questionable quality of LLM generated code.
+This is due to unclear code provenance and questionable quality of LLM generated code.
 
 If you would like to learn more about how to get started contributing, see the
 [Community](https://www.mlpack.org/doc/developer/community.html) page, and if you are
