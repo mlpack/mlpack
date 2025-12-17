@@ -88,13 +88,11 @@ inline void FindExtrema(const ColType& h,
   minIdx = arma::conv_to<arma::uvec>::from(minTemp);
 }
 
-// Helper: norms that don’t assume `arma::Col<>` input.
-// Easiest/safest is to compute norms on a CPU copy.
 template<typename ColType>
 inline double L2NormCpuCopy(const ColType& x)
 {
   using eT = typename ColType::elem_type;
-  const arma::Col<eT> xc(x); // if this doesn’t compile for coot, use conv_to<>.
+  const arma::Col<eT> xc(x);
   return arma::norm(xc, 2);
 }
 
@@ -137,8 +135,7 @@ inline void FirstImf(const ColType& signal,
   {
     SiftingStep(h, hNew);
 
-    // convergence based on relative L2 change (computed on CPU copy).
-    // (Keeps compilation broad even if ColType isn’t an arma type.)
+    // convergence based on relative L2 change (computed on CPU copy)
     const arma::Col<typename ColType::elem_type> diff(hNew - h);
     const double num = arma::norm(diff, 2);
     const double den = L2NormCpuCopy(h);
@@ -159,10 +156,10 @@ namespace mlpack
 {
 
 /**
- * Perform Empirical Mode Decomposition (EMD) on a 1D signal
+ * Empirical Mode Decomposition (EMD) on a 1D signal
  *
- * @tparam ColType  Armadillo-API compatible column vector type.
- * @tparam MatType  Armadillo-API compatible matrix type.
+ * @tparam ColType  Armadillo compatible column vector type.
+ * @tparam MatType  Armadillo compatible matrix type.
  * @param signal Input 1D signal (length N).
  * @param imfs Output matrix of extracted IMFs, size N x K.
  * @param residue Output final residue, size N x 1.

@@ -9,6 +9,10 @@ using namespace arma;
 
 TEST_CASE("EMDToy", "[EMD]")
 {
+  // Synthetic two tone, zero-trend signal. We expect near-exact
+  // reconstruction because the IMFs should capture both sine components and
+  // leave a near-zero residue. If this fails, spline envelopes or sifting
+  // convergence likely need improvement.
   arma::vec t = arma::linspace<arma::vec>(0.0, 1.0, 1000);
   arma::vec x = arma::sin(2 * arma::datum::pi * 5.0 * t)
               + 0.5 * arma::sin(2 * arma::datum::pi * 20.0 * t);
@@ -27,6 +31,9 @@ TEST_CASE("EMDToy", "[EMD]")
 
 TEST_CASE("EMDDiagnosticToy", "[EMD]")
 {
+  // Mixed frequencies with a  slow linear trend. Small reconstruction
+  // error (1e-3) to tolerate spline interpolation/finite sifting. Failure
+  // liekly means stopping criterion issue.
   arma::vec t = arma::linspace<arma::vec>(0, 1, 2000);
   arma::vec x = arma::sin(2*datum::pi*3*t) +
                 0.3*arma::sin(2*datum::pi*12*t) +
@@ -53,6 +60,9 @@ TEST_CASE("EMDDiagnosticToy", "[EMD]")
 
 TEST_CASE("EMDDiagnostic", "[EMD]")
 {
+  // Realistic nonstationary toy signal from CSV. Ensures I/O path function and
+  // reconstruction stays accurate within `relErr`. Failures may mean issues with
+  // dataset extrema, spline envelope instability due to closely spaced extrema
   vec x;
   REQUIRE(data::Load("nonstationary_signal_toy.csv", x, false));
 
@@ -77,7 +87,9 @@ TEST_CASE("EMDDiagnostic", "[EMD]")
 
 TEST_CASE("EMDMonotoneNoImf", "[EMD]")
 {
-  // Monotone input should yield no IMFs and residue equals input.
+  // Monotone input should yield 0 IMFs and residue equals input. This guards
+  // the extrema detection/endpoints logic; failure would mean we are fabricating
+  // IMFs when fewer than two extrema exist.
   arma::vec x = arma::linspace<arma::vec>(0.0, 5.0, 500);
 
   arma::mat imfs;
@@ -91,6 +103,7 @@ TEST_CASE("EMDMonotoneNoImf", "[EMD]")
 TEMPLATE_TEST_CASE("EMDTemplateReconstruction", "[EMD]", float, double)
 {
   // Validate reconstruction accuracy for both float and double paths
+  // with the templated spline envelope wrapper.
   using eT = TestType;
   arma::Col<eT> t = arma::linspace<arma::Col<eT>>(eT(0), eT(1), 800);
   arma::Col<eT> x = arma::sin(eT(2) * eT(arma::datum::pi) * eT(4) * t)
@@ -100,7 +113,7 @@ TEMPLATE_TEST_CASE("EMDTemplateReconstruction", "[EMD]", float, double)
   arma::Col<eT> r;
   emd::EMD(x, imfs, r);
 
-  // extracted one IMF and can be reconstructed
+  // Extract at least one IMF and achieve accurate reconstruction.
   REQUIRE(imfs.n_cols >= 1);
 
   arma::Col<eT> recon = r;
