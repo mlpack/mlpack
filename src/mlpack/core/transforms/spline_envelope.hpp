@@ -1,11 +1,34 @@
-// spline_envelope.hpp
-#ifndef MLPACK_METHODS_EMD_SPLINE_ENVELOPE_HPP
-#define MLPACK_METHODS_EMD_SPLINE_ENVELOPE_HPP
+/**
+ * @file core/transforms/spline_envelope.hpp
+ * @author Mohammad Mundiwala
+ *
+ * Implementation of a spline envelope builder for EMD.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+#ifndef MLPACK_CORE_TRANSFORMS_SPLINE_ENVELOPE_HPP
+#define MLPACK_CORE_TRANSFORMS_SPLINE_ENVELOPE_HPP
 
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace emd {
+
+// Generic to support Armadillo-compatible column types
+template<typename ColType>
+inline void BuildSplineEnvelope(const ColType& h,
+                                const arma::uvec& idx,
+                                ColType& env)
+{
+  using eT = typename ColType::elem_type;
+  arma::Col<eT> hCpu(h);
+  arma::Col<eT> envCpu;
+  BuildSplineEnvelope(hCpu, idx, envCpu);
+  env = envCpu;
+}
 
 template<typename eT>
 inline void BuildSplineEnvelope(const arma::Col<eT>& h,
