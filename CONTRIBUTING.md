@@ -5,6 +5,10 @@ contribute to mlpack and join the community!  If you would like to make
 improvements to the library, add new features that are useful to you and others,
 or have found a bug that you know how to fix, please submit a pull request!
 
+mlpack does not accept any source code which has been created
+(directly or indirectly) with the aid of Large Language Models (LLMs).
+This is due unclear code provenance and questionable quality of LLM generated code.
+
 If you would like to learn more about how to get started contributing, see the
 [Community](https://www.mlpack.org/doc/developer/community.html) page, and if you are
 interested in participating in Google Summer of Code, see
