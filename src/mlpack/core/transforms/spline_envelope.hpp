@@ -17,7 +17,7 @@
 namespace mlpack {
 namespace emd {
 
-// Generic to support Armadillo-compatible column types
+// Generic to support Armadillo compatible column types
 template<typename ColType>
 inline void BuildSplineEnvelope(const ColType& h,
                                 const arma::uvec& idx,
@@ -35,6 +35,10 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
                                 const arma::uvec& idx,
                                 arma::Col<eT>& env)
 {
+  // Build a natural cubic spline through extrema (idx) and evaluate it on the
+  // integer grid of the signal to obtain the envelope. This follows the
+  // standard tridiagonal solve for natural splines (zero second-derivative at
+  // endpoints), as in classical EMD 
   const size_t N = h.n_elem;
   env.set_size(N);
 
@@ -45,6 +49,7 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
     return;
   }
 
+  // x: knot positions (indices) and y: knot values.
   arma::Col<eT> x = arma::conv_to<arma::Col<eT>>::from(idx);
   arma::Col<eT> y = h.elem(idx);
 
@@ -52,6 +57,7 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
 
   if (m > 2)
   {
+    // Step 1: assemble h_i segment lengths and rhs alpha.
     arma::Col<eT> hSeg = arma::diff(x);
 
     arma::Col<eT> alpha(m - 1, arma::fill::zeros);
@@ -61,9 +67,10 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
       const eT invHim1 = eT(1) / hSeg[i - 1];
       const eT s1 = (y[i + 1] - y[i]) * invHi;
       const eT s0 = (y[i]     - y[i - 1]) * invHim1;
-      alpha[i] = eT(3) * (s1 - s0); // keep scaler for readability
+      alpha[i] = eT(3) * (s1 - s0); // kept scaler for readability
     }
 
+    // Step 2: solve tridiagonal system for spline second deriv (c).
     arma::Col<eT> l(m), mu(m), z(m);
     l[0]  = eT(1);
     mu[0] = eT(0);
@@ -86,6 +93,7 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
     }
   }
   
+  // Step 3: evaluate spline on each segment and fill envelope values
   env.zeros();
   size_t seg = 0;
   for (; seg + 1 < m; ++seg)

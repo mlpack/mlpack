@@ -18,22 +18,14 @@
 namespace mlpack
 {
 
-template<typename eT>
-inline eT LinearExtrapolate(const eT x0,
-                            const eT y0,
-                            const eT x1,
-                            const eT y1,
-                            const eT x)
-{
-  return y0 + (y1 - y0) * (x - x0) / (x1 - x0);
-}
-
-
 template<typename ColType>
 inline void FindExtrema(const ColType& h,
                         arma::uvec& maxIdx,
                         arma::uvec& minIdx)
 {
+  // Identify indices of strict local maxima and minima (discrete neighbors) and
+  // always include endpoints. This determines whether the residue is monotone
+  // and supplies knots for spline envelopes in sifting.
   using eT = typename ColType::elem_type;
   const size_t N = h.n_elem;
 
@@ -91,6 +83,7 @@ inline void FindExtrema(const ColType& h,
 template<typename ColType>
 inline double L2NormCpuCopy(const ColType& x)
 {
+  // Compute L2 norm on arma::Col copy for portability across types
   using eT = typename ColType::elem_type;
   const arma::Col<eT> xc(x);
   return arma::norm(xc, 2);
@@ -100,6 +93,8 @@ template<typename ColType>
 inline void SiftingStep(const ColType& h,
                         ColType& hNext)
 {
+  // One sifting iteration: build upper/lower spline envelopes through maxima
+  // and minima, take mean, subtract from the IMF.
   using eT = typename ColType::elem_type;
   const size_t N = h.n_elem;
 
@@ -128,6 +123,9 @@ inline void FirstImf(const ColType& signal,
                      const size_t maxSiftIter = 10,
                      const double tol = 1e-3)
 {
+  // Iteratively sift until the IMF stabilizes (rel L2 change < tol)
+  // or until maxSiftIter is reached. 
+  //Produces the first IMF of the residue.
   ColType h = signal;
   ColType hNew(signal.n_elem);
 
@@ -135,7 +133,7 @@ inline void FirstImf(const ColType& signal,
   {
     SiftingStep(h, hNew);
 
-    // convergence based on relative L2 change (computed on CPU copy)
+    // Convergence based on relative L2 change (CPU norm for portability).
     const arma::Col<typename ColType::elem_type> diff(hNew - h);
     const double num = arma::norm(diff, 2);
     const double den = L2NormCpuCopy(h);
@@ -156,7 +154,12 @@ namespace mlpack
 {
 
 /**
- * Empirical Mode Decomposition (EMD) on a 1D signal
+ * Empirical Mode Decomposition (EMD) on a 1D signal.
+ *
+ * Algorithm outline: repeatedly extract IMFs via sifting (cubic spline
+ * envelopes of extrema) until the residue is monotone or a limit is reached.
+ * Supports any Armadillo-compatible column/matrix types with matching element
+ * types (enforced via SFINAE).
  *
  * @tparam ColType  Armadillo compatible column vector type.
  * @tparam MatType  Armadillo compatible matrix type.
@@ -197,12 +200,12 @@ inline void EMD(const ColType& signal,
   {
     // Stop if residue is monotone (fewer than 2 extrema).
     arma::uvec maxIdx, minIdx;
-    FindExtrema(residue, maxIdx, minIdx); // make this accept ColType&
+    FindExtrema(residue, maxIdx, minIdx); 
     if (maxIdx.n_elem + minIdx.n_elem < 2)
       break;
 
     ColType imf;
-    FirstImf(residue, imf, maxSiftIter, tol); // make this accept ColType&
+    FirstImf(residue, imf, maxSiftIter, tol); // produce next IMF via sifting
 
     const double imfNorm = arma::norm(imf, 2);
     if (imfNorm < std::numeric_limits<double>::epsilon() * signalNorm)
@@ -225,4 +228,4 @@ inline void EMD(const ColType& signal,
 }
 
 } // namespace mlpack
-#endif // MLPACK_METHODS_EMD_HPP
+#endif // MLPACK_CORE_TRANSFORMS_EMD_HPP
