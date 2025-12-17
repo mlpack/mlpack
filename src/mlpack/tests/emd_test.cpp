@@ -40,7 +40,7 @@ TEST_CASE("EMDDiagnosticToy", "[EMD]")
   for (uword k = 0; k < imfs.n_cols; ++k)
     UNSCOPED_INFO("IMF[" << k << "] L2 = " << arma::norm(imfs.col(k)));
 
-  // Reconstruction accuracy on mixed tones with slow trend.
+  // Reconstruction accuracy on mixed tones with trend
   arma::vec recon = r;
   for (uword k = 0; k < imfs.n_cols; ++k)
     recon += imfs.col(k);
@@ -64,7 +64,7 @@ TEST_CASE("EMDDiagnostic", "[EMD]")
   for (uword k = 0; k < imfs.n_cols; ++k)
     UNSCOPED_INFO("IMF[" << k << "] L2 = " << arma::norm(imfs.col(k)));
 
-  // Reconstruction accuracy on csv toy signal.
+  // Reconstruction accuracy on csv toy 
   arma::vec recon = r;
   for (uword k = 0; k < imfs.n_cols; ++k)
     recon += imfs.col(k);
@@ -90,7 +90,7 @@ TEST_CASE("EMDMonotoneNoImf", "[EMD]")
 
 TEMPLATE_TEST_CASE("EMDTemplateReconstruction", "[EMD]", float, double)
 {
-  // Validate reconstruction accuracy for both float and double paths.
+  // Validate reconstruction accuracy for both float and double paths
   using eT = TestType;
   arma::Col<eT> t = arma::linspace<arma::Col<eT>>(eT(0), eT(1), 800);
   arma::Col<eT> x = arma::sin(eT(2) * eT(arma::datum::pi) * eT(4) * t)
@@ -100,7 +100,7 @@ TEMPLATE_TEST_CASE("EMDTemplateReconstruction", "[EMD]", float, double)
   arma::Col<eT> r;
   emd::EMD(x, imfs, r);
 
-  // Check we extracted at least one IMF and can reconstruct.
+  // extracted one IMF and can be reconstructed
   REQUIRE(imfs.n_cols >= 1);
 
   arma::Col<eT> recon = r;
