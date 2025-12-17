@@ -1,71 +1,43 @@
+# `EMD`
 
- # `EMD`
+Empirical Mode Decomposition (EMD) adaptively decomposes a 1D signal into a
+small set of Intrinsic Mode Functions (IMFs) plus a residue. This is often used
+for vibration/sensor pipelines as a time-domain alternative to FFT.
 
- ML pipelines trained on data from vibration sensors require advanced data 
- preprocessing techniques that may be as expensive as the model training. 
- Empirical Mode Decomposition is used heavily in the signal processing 
- applications as an alternative to FFT (which can be used through armadillo).
+## Inputs
 
-## Data
+- `signal` (`arma::Col<eT>`): uniformly sampled 1D signal (any Armadillo
+  column type / scalar `eT`).
+- `maxImfs` (`size_t`, default `10`): maximum number of IMFs to extract.
+- `maxSiftIter` (`size_t`, default `10`): maximum sifting iterations per IMF.
+- `tol` (`double`, default `1e-3`): sifting stopping tolerance (relative L2
+  change per iteration).
 
-Input 
-`signal` (`arma::Col<eT>`)
+## Outputs
 
-- Column vector 
-- Any armadillo compatible scaler type `<eT>` 
-- Assumed to be uniformly sampled in time (does not consider a time vector)
+- `imfs` (`arma::Mat<eT>`): shape `N x K`, each column an IMF, `K <= maxImfs`.
+- `residue` (`arma::Col<eT>`): final residual signal after removing all IMFs.
 
-`maxImfs` (`size_t`, default `10`)
+## Reconstruction
 
-- number of IMFs to extract
+The original signal can be reconstructed as
 
-`maxSiftIter` (default `10`)
+`signal ~ Σ_k imfs.col(k) + residue`
 
-- Max number of sifting iterations used to extract a single IMF
+## Example
 
-`tol` (default `1e-3`)
+```c++
+// Example: simple sine + trend.
+arma::vec t = arma::linspace(0.0, 1.0, 1000);
+arma::vec signal = arma::sin(2.0 * arma::datum::pi * 10.0 * t) + 0.5 * t;
 
-- tolerance for the IMF sifting step 
-- controls how much the IMF changes per sift iteration
+arma::mat imfs;
+arma::vec residue;
 
-Output 
-`imfs` (`arma::` Mat<eT>)
+// Use defaults: up to 10 IMFs, 10 sifts per IMF, tol = 1e-3
+mlpack::EMD(signal, imfs, residue);
 
-- `N x K` matrix, where each col is one IMF and `K` is $\leq$ `maxImfs`
-
-`residue` (`arma::Col<eT>`)
-- Residual signal left over from removing IMFS
-
-Reconstructing the original signal using the decomposed elements looks like:
-
-$\mathrm{signal} \approx \sum_{k=1}^{K} \mathrm{imfs.col}(k) + \mathrm{residue} $
-
- ## Example
- Example usage:
- ```c++
-#include <mlpack/methods/emd/emd.hpp>
-
-using namespace mlpack;
-using namespace mlpack::emd;
-
-int main()
-{
-  // Example: simple sine + trend.
-  arma::vec t = arma::linspace(0.0, 1.0, 1000);
-  arma::vec signal = arma::sin(2.0 * arma::datum::pi * 10.0 * t) + 0.5 * t;
-
-  arma::mat imfs;
-  arma::vec residue;
-
-  // Use defaults: up to 10 IMFs, 10 sifts per IMF, tol = 1e-3
-  Emd(signal, imfs, residue);
-
-    // or use custom : 7 IMFs (maxImfs), 6 maxSiftIter per IMF, tol = 5e-4
-  Emd(signal, imfs, residue, 7, 6, 5e-4)
-  return 0;
-}
- ```
-
-
-
-
+  // Or use custom settings: 7 IMFs, 6 sifts/IMF, tighter tolerance.
+EMD(signal, imfs, residue, 7 /* maxImfs */, 6 /* maxSiftIter */, 5e-4);
+return 0;
+```

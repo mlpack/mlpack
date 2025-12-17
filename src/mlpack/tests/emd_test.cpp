@@ -1,7 +1,17 @@
+/**
+ * @file tests/emd_test.cpp
+ * @author Mohammad Mundiwala
+ *
+ * Tests for EMD.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core.hpp>
 #include "catch.hpp"
-
 
 #include <mlpack/core/transforms/emd.hpp>
 using namespace mlpack;
@@ -26,7 +36,9 @@ TEST_CASE("EMDToy", "[EMD]")
   for (arma::uword k = 0; k < imfs.n_cols; ++k)
     recon += imfs.col(k);
 
-  REQUIRE(arma::norm(recon - x, 2) / arma::norm(x, 2) < 1e-6);
+  const double relErr = arma::norm(recon - x, 2) / arma::norm(x, 2);
+  UNSCOPED_INFO("Toy two-tone reconstruction relErr=" << relErr);
+  REQUIRE(relErr < 1e-6);
 }
 
 TEST_CASE("EMDDiagnosticToy", "[EMD]")
@@ -88,7 +100,7 @@ TEST_CASE("EMDDiagnostic", "[EMD]")
 TEST_CASE("EMDMonotoneNoImf", "[EMD]")
 {
   // Monotone input should yield 0 IMFs and residue equals input. This guards
-  // the extrema detection/endpoints logic; failure would mean we are fabricating
+  // the extrema endpoints logic, failure would mean there are
   // IMFs when fewer than two extrema exist.
   arma::vec x = arma::linspace<arma::vec>(0.0, 5.0, 500);
 
@@ -121,5 +133,6 @@ TEMPLATE_TEST_CASE("EMDTemplateReconstruction", "[EMD]", float, double)
     recon += imfs.col(k);
 
   const double relErr = arma::norm(recon - x, 2) / arma::norm(x, 2);
+  UNSCOPED_INFO("Template reconstruction relErr=" << relErr);
   REQUIRE(relErr < 1e-3);
 }
