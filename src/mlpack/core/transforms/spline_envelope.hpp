@@ -35,30 +35,24 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
                                 const arma::uvec& idx,
                                 arma::Col<eT>& env)
 {
-  const arma::uword N = h.n_elem;
+  const size_t N = h.n_elem;
   env.set_size(N);
 
-  const arma::uword m = idx.n_elem;
+  const size_t m = idx.n_elem;
   if (m < 2)
   {
     env = h;
     return;
   }
 
-  arma::Col<eT> x(m), y(m);
-  for (arma::uword k = 0; k < m; ++k)
-  {
-    x[k] = static_cast<eT>(idx[k]);
-    y[k] = h[idx[k]];
-  }
+  arma::Col<eT> x = arma::conv_to<arma::Col<eT>>::from(idx);
+  arma::Col<eT> y = h.elem(idx);
 
   arma::Col<eT> c(m, arma::fill::zeros);
 
   if (m > 2)
   {
-    arma::Col<eT> hSeg(m - 1);
-    for (arma::uword i = 0; i < m - 1; ++i)
-      hSeg[i] = x[i + 1] - x[i];
+    arma::Col<eT> hSeg = arma::diff(x);
 
     arma::Col<eT> alpha(m - 1, arma::fill::zeros);
     for (arma::uword i = 1; i < m - 1; ++i)
@@ -67,7 +61,7 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
       const eT invHim1 = eT(1) / hSeg[i - 1];
       const eT s1 = (y[i + 1] - y[i]) * invHi;
       const eT s0 = (y[i]     - y[i - 1]) * invHim1;
-      alpha[i] = eT(3) * (s1 - s0);
+      alpha[i] = eT(3) * (s1 - s0); // keep scaler for readability
     }
 
     arma::Col<eT> l(m), mu(m), z(m);
@@ -93,7 +87,7 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
   }
   
   env.zeros();
-  arma::uword seg = 0;
+  size_t seg = 0;
   for (; seg + 1 < m; ++seg)
   {
     const arma::uword i0 = idx[seg];
