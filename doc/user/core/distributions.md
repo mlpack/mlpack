@@ -67,7 +67,7 @@ dimension 1 could be, e.g., `0.4`, and `P(4)` in dimension 2 could be, e.g.,
      probabilities in a dimension is 1!
 
  * A `DiscreteDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
 
 ### Compute probabilities of points
 
@@ -273,7 +273,7 @@ covariance, see
    covariance.
 
  * A `GaussianDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
 
 ### Compute probabilities of points
 
@@ -417,7 +417,7 @@ Gaussian distribution, see [`GaussianDistribution`](#gaussiandistribution).)
    covariance matrix.
 
  * A `DiagonalGaussianDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
 
 ### Compute probabilities of points
 
@@ -568,7 +568,7 @@ statistics.  See more on
    parameter to `b`.
 
  * A `GammaDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
 
 ### Compute probabilities of points
 
@@ -721,7 +721,7 @@ also called the *double exponential distribution*.  See more on
    parameter.  `l.Scale() = s` will set the scale parameter to `s`.
 
  * A `LaplaceDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
 
 ### Compute probabilities of points
 
@@ -889,7 +889,7 @@ This class is meant to be used with mlpack's
    This can be modified.
 
  * A `RegressionDistribution` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
 
 ### Compute probabilities of points
 

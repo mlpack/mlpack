@@ -156,7 +156,7 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
 ### Other Functionality
 
  * A `MeanShift` object can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `EstimateRadius(data, ratio=0.2)` returns a `double` that estimates a good
    value to use for the radius parameter.  `ratio` (between 0 and 1) controls

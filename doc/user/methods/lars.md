@@ -204,7 +204,7 @@ can be used to make predictions for new data.
 ### Other Functionality
 
  * A `LARS` model can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `lars.Beta()` will return an `arma::vec` with the model parameters.  This
    will have length equal to the dimensionality of the model.  Note that

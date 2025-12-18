@@ -103,7 +103,7 @@ time!
 ### Serialization
 
  * A `Radical` object can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
    Only the parameters to be used when calling `Apply()` are serialized (e.g.
    the five constructor parameters.)
 
