@@ -714,7 +714,8 @@ for (size_t i = 0; i < files.size(); i++)
 
 Image-related utilities such as `GroupChannels()` and
 `InterleaveChannels()` have been moved to a dedicated page.
-See [Working with Images](images.md) for details.
+See [Working with Images](data/images.md) for details.
+
 
 
 // Do some computation here, for example a convolutional neural network.
