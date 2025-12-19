@@ -201,15 +201,11 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
     const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
     if (useDilation)
     {
-      // Get the non-zero rows and columns of the dilated kernel.
       using UVecType = typename GetURowType<MatType>::type;
-      UVecType rows, cols;
-      rows = linspace<UVecType>(0, filterRows - 1, filter.n_rows);
-      cols = linspace<UVecType>(0, filterCols - 1, filter.n_cols);
-
-      // Dilate the kernel.
+      // Dilate the kernel by setting the non-zero rows and columns.
       dilatedFilter.zeros(filterRows, filterCols);
-      dilatedFilter.submat(rows, cols) = filter;
+      dilatedFilter.submat(linspace<UVecType>(0, filterRows - 1, filter.n_rows),
+          linspace<UVecType>(0, filterCols - 1, filter.n_cols)) = filter;
     }
 
     // Apply convolution.

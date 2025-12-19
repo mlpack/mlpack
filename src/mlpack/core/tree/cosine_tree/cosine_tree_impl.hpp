@@ -671,7 +671,7 @@ inline void CosineTree<MatType>::CalculateCosines(
     {
       cosines(i) =
           std::abs(norm_dot(dataset->col(indices[splitPointIndex]),
-                                  dataset->col(indices[i])));
+                            dataset->col(indices[i])));
     }
   }
 }

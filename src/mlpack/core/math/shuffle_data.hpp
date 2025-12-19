@@ -26,21 +26,8 @@ void ReorderData(const UVecType& ordering,
                  const std::enable_if_t<!IsSparse<MatType>::value &&
                      !IsCube<MatType>::value>* = 0)
 {
-  // Properly handle the case where the input and output data are the same
-  // object.
-  MatType* outPtr = &out;
-  if (&in == &out)
-    outPtr = new MatType();
-
-  outPtr->set_size(in.n_rows, in.n_cols);
-  outPtr->cols(ordering) = in;
-
-  // Clean up memory if needed.
-  if (&in == &out)
-  {
-    out = std::move(*outPtr);
-    delete outPtr;
-  }
+  out.set_size(in.n_rows, in.n_cols);
+  out.cols(ordering) = in;
 }
 
 /**
@@ -98,18 +85,8 @@ void ReorderData(const UVecType& ordering,
     ++index;
   }
 
-  if (&in == &out)
-  {
-    SpMatType newOut(locations, values, in.n_rows,
-        in.n_cols, true);
-
-    out = std::move(newOut);
-  }
-  else
-  {
-    out = SpMatType(locations, values, in.n_rows,
-        in.n_cols, true);
-  }
+  out = SpMatType(locations, values, in.n_rows,
+      in.n_cols, true);
 }
 
 /**
