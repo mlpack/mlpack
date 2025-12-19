@@ -14,7 +14,7 @@ does not grant additional privileges or reduce our expectations.
 
 Each contributor is responsible for the proposed content, regardless of where
 the content came from.  The responsibility includes ensuring that the content
-can be submitted to mlpack and does not violate copyright(s) and/or other
+can be submitted to mlpack and does not violate copyright(s) and other
 intellectual property rights.  Source code in mlpack is licensed under
 the BSD license; see `LICENSE.txt` for details.
 
