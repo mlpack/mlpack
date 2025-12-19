@@ -5,9 +5,18 @@ contribute to mlpack and join the community!  If you would like to make
 improvements to the library, add new features that are useful to you and others,
 or have found a bug that you know how to fix, please submit a pull request!
 
-mlpack does not accept any source code which has been created
-(directly or indirectly) with the aid of Large Language Models (LLMs).
-This is due to unclear code provenance and questionable quality of LLM generated code.
+Each contributor needs to understand the content they are proposing for mlpack,
+and how the proposed content changes and/or expands functionality in mlpack.
+Content includes source code, documentation, and other meterial such as images
+and datasets.  The pull request must justify the proposed content in the
+description.  Using coding assistants or tools like Large Laguage Models (LLMs) 
+does not grant additional privileges or reduce our expectations.
+
+Each contributor is responsible for the proposed content, regardless of where
+the content came from.  The responsibility includes ensuring that the content
+can be submitted to mlpack and does not violate copyright(s) and/or other
+intellectual property rights.  Source code in mlpack is licensed under
+the BSD license; see `LICENSE.txt` for details.
 
 If you would like to learn more about how to get started contributing, see the
 [Community](https://www.mlpack.org/doc/developer/community.html) page, and if you are
