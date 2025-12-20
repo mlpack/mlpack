@@ -196,6 +196,17 @@ void GRU<MatType>::Backward(
     deltaReset.zeros(deltaHidden.n_rows, deltaHidden.n_cols);
   }
 
+  // Zero out masked columns.
+  for (size_t i = 0; i < this->mask.n_elem; i++)
+  {
+    if (this->mask[i] == 0)
+    {
+      deltaReset.col(i).zeros();
+      deltaUpdate.col(i).zeros();
+      deltaHidden.col(i).zeros();
+    }
+  }
+
   // Calculate the input error.
   // r_t = sigmoid(W_r x_t + U_r y_{t - 1})
   // z_t = sigmoid(W_z x_t + U_z y_{t - 1})

@@ -580,9 +580,6 @@ typename MatType::elem_type RNN<
 {
   network.CheckNetwork("RNN::EvaluateWithGradient()", predictors.n_rows);
 
-  if (sequenceLengths.n_elem > 0 && batchSize != 1)
-    throw std::invalid_argument("Batch size must be 1 for ragged sequences!");
-
   ElemType loss = 0;
 
   // We must save anywhere between 1 and `bpttSteps` states, but we are limited
@@ -612,10 +609,20 @@ typename MatType::elem_type RNN<
   // subsequence of length `bpttSteps`.  Before we've taken `bpttSteps` though,
   // we will be backpropagating shorter sequences.
   const size_t steps = (sequenceLengths.n_elem == 0) ? predictors.n_slices :
-      sequenceLengths[begin];
+      sequenceLengths.subvec(begin, begin + batchSize - 1).max();
+  arma::urowvec mask(batchSize);
   for (size_t t = 0; t < steps; ++t)
   {
     SetCurrentStep(t, (t == (steps - 1)));
+
+    if (sequenceLengths.n_elem > 0)
+    {
+      // Get masking for the current step.
+      for (size_t i = 0; i < batchSize; i++)
+        mask[i] = (t < sequenceLengths[begin + i]);
+
+      SetMask(mask);
+    }
 
     // Make an alias of the step's data for the forward pass.
     MakeAlias(stepData, predictors.slice(t), predictors.n_rows, batchSize,
@@ -682,6 +689,9 @@ typename MatType::elem_type RNN<
       gradient += currentGradient;
     }
   }
+
+  if (sequenceLengths.n_elem > 0)
+    ClearMask();
 
   return loss;
 }
@@ -779,7 +789,7 @@ void RNN<
     MatType
 >::SetCurrentStep(const size_t step, const bool end)
 {
-  // Iterate over all layers and set the memory size.
+  // Iterate over all layers and set the current step.
   for (Layer<MatType>* l : network.Network())
   {
     // We can only call CurrentStep() on RecurrentLayers.
@@ -787,6 +797,50 @@ void RNN<
         dynamic_cast<RecurrentLayer<MatType>*>(l);
     if (r != nullptr)
       r->CurrentStep(step, end);
+  }
+}
+
+template<
+    typename OutputLayerType,
+    typename InitializationRuleType,
+    typename MatType
+>
+void RNN<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::SetMask(const arma::urowvec& mask)
+{
+  // Iterate over all layers and set the mask.
+  for (Layer<MatType>* l : network.Network())
+  {
+    // We can only call Mask() on RecurrentLayers.
+    RecurrentLayer<MatType>* r =
+        dynamic_cast<RecurrentLayer<MatType>*>(l);
+    if (r != nullptr)
+      r->Mask() = mask;
+  }
+}
+
+template<
+    typename OutputLayerType,
+    typename InitializationRuleType,
+    typename MatType
+>
+void RNN<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::ClearMask()
+{
+  // Iterate over all layers and clear the mask.
+  for (Layer<MatType>* l : network.Network())
+  {
+    // We can only call Mask() on RecurrentLayers.
+    RecurrentLayer<MatType>* r =
+        dynamic_cast<RecurrentLayer<MatType>*>(l);
+    if (r != nullptr)
+      r->Mask().clear();
   }
 }
 
