@@ -39,7 +39,7 @@ typename MatType::elem_type PoissonNLLLossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
-  MatType loss(arma::size(prediction));
+  MatType loss(size(prediction));
 
   if (logInput)
     loss = exp(prediction) - target % prediction;

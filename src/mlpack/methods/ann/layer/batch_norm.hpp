@@ -192,7 +192,7 @@ class BatchNorm : public Layer<MatType>
   MatType& TrainingVariance() { return runningVariance; }
 
   //! Get the number of input units / channels.
-  size_t InputSize() const { return size; }
+  size_t InputSize() const { return inputUnits; }
 
   //! Get the epsilon value.
   const double &Epsilon() const { return eps; }
@@ -206,7 +206,7 @@ class BatchNorm : public Layer<MatType>
   bool Average() const { return average; }
 
   //! Get size of weights.
-  size_t WeightSize() const { return 2 * size; }
+  size_t WeightSize() const { return 2 * inputUnits; }
 
   //! Compute the output dimensions of the layer given `InputDimensions()`.
   void ComputeOutputDimensions();
@@ -256,7 +256,7 @@ class BatchNorm : public Layer<MatType>
 
   //! Locally-stored number of input units.  (This is the product of all
   //! dimensions between minAxis and maxAxis, inclusive.)
-  size_t size;
+  size_t inputUnits;
 
   //! Locally-stored number of higher dimension we are not applying
   //! batch normalization to.  This is the product of this->inputDimensions

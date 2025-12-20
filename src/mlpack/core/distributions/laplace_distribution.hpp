@@ -69,7 +69,7 @@ class LaplaceDistribution
    * @param scale Scale of distribution.
    */
   LaplaceDistribution(const size_t dimensionality, const double scale) :
-      mean(zeros<VecType>(dimensionality)), scale(scale) { }
+      distMean(zeros<VecType>(dimensionality)), scale(scale) { }
 
   /**
    * Construct the Laplace distribution with the given mean and scale
@@ -79,10 +79,10 @@ class LaplaceDistribution
    * @param scale Scale of distribution.
    */
   LaplaceDistribution(const VecType& mean, const double scale) :
-      mean(mean), scale(scale) { }
+      distMean(mean), scale(scale) { }
 
   //! Return the dimensionality of this distribution.
-  size_t Dimensionality() const { return mean.n_elem; }
+  size_t Dimensionality() const { return distMean.n_elem; }
 
   /**
    * Return the probability of the given observation.
@@ -132,9 +132,9 @@ class LaplaceDistribution
    */
   VecType Random() const
   {
-    VecType result(mean.n_elem);
+    VecType result(distMean.n_elem);
     result.randu();
-    result = mean + scale *
+    result = distMean + scale *
         log(1.0 + 2.0 * sign(result - 0.5) * (result - 0.5));
     return result;
   }
@@ -173,9 +173,9 @@ class LaplaceDistribution
 
 
   //! Return the mean.
-  const VecType& Mean() const { return mean; }
+  const VecType& Mean() const { return distMean; }
   //! Modify the mean.
-  VecType& Mean() { return mean; }
+  VecType& Mean() { return distMean; }
 
   //! Return the scale parameter.
   ElemType Scale() const { return scale; }
@@ -188,13 +188,13 @@ class LaplaceDistribution
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar(CEREAL_NVP(mean));
+    ar(CEREAL_NVP(distMean));
     ar(CEREAL_NVP(scale));
   }
 
  private:
   //! Mean of the distribution.
-  VecType mean;
+  VecType distMean;
   //! Scale parameter of the distribution.
   ElemType scale;
 };

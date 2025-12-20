@@ -147,7 +147,8 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
                     const size_t dW,
                     const size_t dH,
                     const size_t dilationW,
-                    const size_t dilationH)
+                    const size_t dilationH,
+                    const std::enable_if_t<IsArma<MatType>::value>* = 0)
   {
     using eT = typename MatType::elem_type;
 
@@ -162,14 +163,63 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
         const eT* kernelPtr = filter.memptr();
         for (size_t kj = 0; kj < filter.n_cols; ++kj)
         {
-          const eT* inputPtr = input.colptr(kj * dilationW + j * dW) + i * dH;
+          const eT* inputPtr = input.colptr(kj * dilationH + j * dH) + i * dW;
           for (size_t ki = 0; ki < filter.n_rows; ++ki, ++kernelPtr,
-              inputPtr += dilationH)
+              inputPtr += dilationW)
             *outputPtr += *kernelPtr * (*inputPtr);
         }
       }
     }
   }
+
+#if defined(MLPACK_HAS_COOT)
+
+  /**
+   * Perform a valid convolution on Bandicoot matrices.
+   *
+   * @param input Input used to perform the convolution.
+   * @param filter Filter used to perform the convolution.
+   * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
+   */
+  template<typename MatType>
+  static void Conv2(const MatType& input,
+                    const MatType& filter,
+                    MatType& output,
+                    const size_t dW,
+                    const size_t dH,
+                    const size_t dilationW,
+                    const size_t dilationH,
+                    const std::enable_if_t<IsCoot<MatType>::value>* = 0)
+  {
+    bool useDilation = (dilationW != 1) || (dilationH != 1);
+    MatType dilatedFilter;
+    const size_t filterRows = filter.n_rows * dilationW - (dilationW - 1);
+    const size_t filterCols = filter.n_cols * dilationH - (dilationH - 1);
+    if (useDilation)
+    {
+      using UVecType = typename GetURowType<MatType>::type;
+      // Dilate the kernel by setting the non-zero rows and columns.
+      dilatedFilter.zeros(filterRows, filterCols);
+      dilatedFilter.submat(linspace<UVecType>(0, filterRows - 1, filter.n_rows),
+          linspace<UVecType>(0, filterCols - 1, filter.n_cols)) = filter;
+    }
+
+    // Apply convolution.
+    for (size_t j = 0; j < output.n_cols; ++j)
+    {
+      for (size_t i = 0; i < output.n_rows; ++i)
+      {
+        output.at(i, j) = accu((useDilation ? dilatedFilter : filter) %
+            input.submat(i * dW, j * dH, i * dW + filterRows - 1,
+                j * dH + filterCols - 1));
+      }
+    }
+  }
+#endif // defined(MLPACK_HAS_COOT)
 };  // class NaiveConvolution
 
 } // namespace mlpack

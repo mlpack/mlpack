@@ -364,7 +364,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
   ModelMatType logLikelihoods;
   LogLikelihood(data, logLikelihoods);
 
-  predictionProbs.set_size(arma::size(logLikelihoods));
+  predictionProbs.set_size(size(logLikelihoods));
   double maxValue, logProbX;
   for (size_t j = 0; j < data.n_cols; ++j)
   {

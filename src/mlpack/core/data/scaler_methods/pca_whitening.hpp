@@ -69,7 +69,7 @@ class PCAWhitening
   template<typename MatType>
   void Fit(const MatType& input)
   {
-    itemMean = arma::mean(input, 1);
+    itemMean = mean(input, 1);
     // Get eigenvectors and eigenvalues of covariance of input matrix.
     eig_sym(eigenValues, eigenVectors, ColumnCovariance(
         input.each_col() - itemMean));

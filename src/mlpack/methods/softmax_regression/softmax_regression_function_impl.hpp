@@ -335,7 +335,7 @@ inline void SoftmaxRegressionFunction<MatType>::PartialGradient(
     const size_t j,
     GradType& gradient) const
 {
-  gradient.zeros(arma::size(parameters));
+  gradient.zeros(size(parameters));
 
   DenseMatType probabilities;
   GetProbabilitiesMatrix(parameters, probabilities, 0, data.n_cols);

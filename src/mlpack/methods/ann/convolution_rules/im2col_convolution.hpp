@@ -176,26 +176,28 @@ class Im2ColConvolution : public BaseConvolution<BorderMode>
                      const size_t dilationW = 1,
                      const size_t dilationH = 1)
   {
-    const size_t dFilterRows = filterRows * dilationH - (dilationH - 1);
-    const size_t dFilterCols = filterCols * dilationW - (dilationW - 1);
-    const size_t outputRows = (input.n_rows - dFilterRows + dH) / dH;
-    const size_t outputCols = (input.n_cols - dFilterCols + dW) / dW;
+    const size_t dFilterRows = filterRows * dilationW - (dilationW - 1);
+    const size_t dFilterCols = filterCols * dilationH - (dilationH - 1);
+    const size_t outputRows = (input.n_rows - dFilterRows + dW) / dW;
+    const size_t outputCols = (input.n_cols - dFilterCols + dH) / dH;
 
+    bool useDilation = (dilationW != 1) || (dilationH != 1);
+    using UVecType = typename GetURowType<MatType>::type;
+
+    size_t outRow = 0;
     for (size_t j = 0; j < outputCols; j++)
     {
+      size_t inCol = j * dH;
       for (size_t i = 0; i < outputRows; i++)
       {
-        size_t nRow = j * outputRows + i;
-        size_t nCol = 0;
-        for (size_t kj = 0; kj < filterCols; kj++)
-        {
-          for (size_t ki = 0; ki < filterRows; ki++)
-          {
-            im2row.at(nRow, nCol) = input.at(i * dH + ki * dilationH,
-                j * dW + kj * dilationW);
-            nCol++;
-          }
-        }
+        size_t inRow = i * dW;
+        if (useDilation)
+          im2row.row(outRow++) = trans(vectorise(input.submat(
+              linspace<UVecType>(inRow, inRow + dFilterRows - 1, filterRows),
+              linspace<UVecType>(inCol, inCol + dFilterCols - 1, filterCols))));
+        else
+          im2row.row(outRow++) = trans(vectorise(input.submat(inRow, inCol,
+              inRow + filterRows - 1, inCol + filterCols - 1)));
       }
     }
   }

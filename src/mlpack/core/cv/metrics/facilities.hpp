@@ -28,7 +28,8 @@ template<typename DataType, typename DistanceType>
 DataType PairwiseDistances(const DataType& data,
                            const DistanceType& distance)
 {
-  DataType distances = DataType(data.n_cols, data.n_cols, arma::fill::none);
+  DataType distances = DataType(data.n_cols, data.n_cols,
+      GetFillType<DataType>::none);
   for (size_t i = 0; i < data.n_cols; i++)
   {
     for (size_t j = 0; j < i; j++)

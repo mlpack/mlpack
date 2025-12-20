@@ -116,7 +116,7 @@ class SoftsignFunction
   template<typename InputVecType, typename OutputVecType>
   static void Inv(const InputVecType& y, OutputVecType& x)
   {
-    x.set_size(arma::size(y));
+    x.set_size(size(y));
 
     for (size_t i = 0; i < y.n_elem; ++i)
       x(i) = Inv(y(i));

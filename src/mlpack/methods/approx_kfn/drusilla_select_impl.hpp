@@ -80,7 +80,7 @@ void DrusillaSelect<MatType>::Train(
   candidateSet.set_size(referenceSet.n_rows, l * m);
   candidateIndices.set_size(l * m);
 
-  arma::vec dataMean(arma::mean(referenceSet, 1));
+  arma::vec dataMean(mean(referenceSet, 1));
   arma::vec norms(referenceSet.n_cols);
 
   MatType refCopy(referenceSet.n_rows, referenceSet.n_cols);
