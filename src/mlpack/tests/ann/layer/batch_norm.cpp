@@ -174,13 +174,14 @@ template<typename LayerType>
 void ANNLayerSerializationTest(LayerType& layer)
 {
   arma::mat input(5, 100, arma::fill::randu);
-  arma::mat output(5, 100, arma::fill::randu);
+  arma::mat output = arma::randi<arma::mat>(1, 100,
+      arma::distr_param(0, 4));
 
   FFN<> model;
   model.Add<Linear>(10);
   model.Add<LayerType>(layer);
   model.Add<ReLU>();
-  model.Add<Linear>(output.n_rows);
+  model.Add<Linear>(5);
   model.Add<LogSoftMax>();
 
   ens::StandardSGD opt(0.1, 1, 5, -100, false);
