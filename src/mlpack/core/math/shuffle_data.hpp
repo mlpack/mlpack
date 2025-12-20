@@ -39,12 +39,25 @@ void ReorderData(const UVecType& ordering,
                  CubeType& out,
                  const std::enable_if_t<IsCube<CubeType>::value>* = 0)
 {
-  out.set_size(in.n_rows, in.n_cols,
+  // Properly handle the case where the input and output data are the same
+  // object.
+  CubeType* outPtr = &out;
+  if (&in == &out)
+    outPtr = new CubeType();
+
+  outPtr->set_size(in.n_rows, in.n_cols,
       in.n_slices);
   for (size_t i = 0; i < ordering.n_elem; ++i)
   {
-    out.tube(0, ordering[i], out.n_rows - 1, ordering[i]) =
+    outPtr->tube(0, ordering[i], outPtr->n_rows - 1, ordering[i]) =
         in.tube(0, i, in.n_rows - 1, i);
+  }
+
+  // Clean up memory if needed.
+  if (&in == &out)
+  {
+    out = std::move(*outPtr);
+    delete outPtr;
   }
 }
 
