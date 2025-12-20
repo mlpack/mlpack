@@ -163,9 +163,9 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
         const eT* kernelPtr = filter.memptr();
         for (size_t kj = 0; kj < filter.n_cols; ++kj)
         {
-          const eT* inputPtr = input.colptr(kj * dilationW + j * dW) + i * dH;
+          const eT* inputPtr = input.colptr(kj * dilationH + j * dH) + i * dW;
           for (size_t ki = 0; ki < filter.n_rows; ++ki, ++kernelPtr,
-              inputPtr += dilationH)
+              inputPtr += dilationW)
             *outputPtr += *kernelPtr * (*inputPtr);
         }
       }
@@ -197,8 +197,8 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
   {
     bool useDilation = (dilationW != 1) || (dilationH != 1);
     MatType dilatedFilter;
-    const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
-    const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
+    const size_t filterRows = filter.n_rows * dilationW - (dilationW - 1);
+    const size_t filterCols = filter.n_cols * dilationH - (dilationH - 1);
     if (useDilation)
     {
       using UVecType = typename GetURowType<MatType>::type;
@@ -214,8 +214,8 @@ class NaiveConvolution : public BaseConvolution<BorderMode>
       for (size_t i = 0; i < output.n_rows; ++i)
       {
         output.at(i, j) = accu((useDilation ? dilatedFilter : filter) %
-            input.submat(i * dH, j * dW, i * dH + filterRows - 1,
-                j * dW + filterCols - 1));
+            input.submat(i * dW, j * dH, i * dW + filterRows - 1,
+                j * dH + filterCols - 1));
       }
     }
   }

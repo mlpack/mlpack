@@ -176,10 +176,10 @@ class Im2ColConvolution : public BaseConvolution<BorderMode>
                      const size_t dilationW = 1,
                      const size_t dilationH = 1)
   {
-    const size_t dFilterRows = filterRows * dilationH - (dilationH - 1);
-    const size_t dFilterCols = filterCols * dilationW - (dilationW - 1);
-    const size_t outputRows = (input.n_rows - dFilterRows + dH) / dH;
-    const size_t outputCols = (input.n_cols - dFilterCols + dW) / dW;
+    const size_t dFilterRows = filterRows * dilationW - (dilationW - 1);
+    const size_t dFilterCols = filterCols * dilationH - (dilationH - 1);
+    const size_t outputRows = (input.n_rows - dFilterRows + dW) / dW;
+    const size_t outputCols = (input.n_cols - dFilterCols + dH) / dH;
 
     bool useDilation = (dilationW != 1) || (dilationH != 1);
     using UVecType = typename GetURowType<MatType>::type;
@@ -187,10 +187,10 @@ class Im2ColConvolution : public BaseConvolution<BorderMode>
     size_t outRow = 0;
     for (size_t j = 0; j < outputCols; j++)
     {
-      size_t inCol = j * dW;
+      size_t inCol = j * dH;
       for (size_t i = 0; i < outputRows; i++)
       {
-        size_t inRow = i * dH;
+        size_t inRow = i * dW;
         if (useDilation)
           im2row.row(outRow++) = trans(vectorise(input.submat(
               linspace<UVecType>(inRow, inRow + dFilterRows - 1, filterRows),
