@@ -52,7 +52,7 @@ double TSNEApproxFunction<
 
   // Calculate Attractive Part
   const double error = CalculateAttractiveForces(g, y, sumQ);
-  
+
   g *= 2.0 * (1.0 + dof) / dof;
 
   return error;
@@ -150,7 +150,7 @@ double TSNEApproxFunction<
       double q = (double)dof / (dof + distanceSq);
       if (dof != 1)
         q = std::pow(q, (1.0 + dof) / 2.0);
-      
+
       const double p = (double)P[i * n + idx];
       if (p)
       {
@@ -158,7 +158,6 @@ double TSNEApproxFunction<
         localErrors[threadId] += p * std::log(
             p / std::max(std::numeric_limits<double>::epsilon(), q / sumQ));
       }
-      
     }
   }
 

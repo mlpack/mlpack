@@ -76,7 +76,7 @@ TEST_CASE("TSNEPCAInitTest", "[TSNETest]")
 
   arma::mat X(nDims, nPoints, arma::fill::randn), Y;
   tsne.InitializeEmbedding(X, Y);
-  
+
   arma::vec stdDev = stddev(Y, 0, 1);
   for (size_t i = 0; i < nDims; i++)
     REQUIRE(stdDev[i] == Approx(1e-4));
@@ -93,7 +93,7 @@ TEST_CASE("TSNERandomInitTest", "[TSNETest]")
 
   arma::mat X(nDims, nPoints, arma::fill::randn), Y;
   tsne.InitializeEmbedding(X, Y);
-  
+
   arma::vec stdDev = stddev(Y, 0, 1);
   for (size_t i = 0; i < nDims; i++)
     REQUIRE(stdDev[i] == Approx(1e-4).margin(1e-6));
