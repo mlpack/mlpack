@@ -73,7 +73,8 @@ class TSNEApproxFunction
    * @param g The variable used to store the new gradient.
    */
   template <typename GradType>
-  double EvaluateWithGradient(const MatType& y, GradType& g);
+  typename MatType::elem_type EvaluateWithGradient(
+      const MatType& y, GradType& g);
 
   /**
    * Calculates the repulsive part of the gradient using Dual-Tree

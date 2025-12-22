@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
+#include <mlpack/core/distances/mahalanobis_distance.hpp>
 #include <omp.h>
 #include <limits>
 #include <armadillo>
@@ -339,77 +340,225 @@ TEST_CASE("TSNEGradientDualTreeMultithreadDeterminismTest", "[TSNETest]")
   // REQUIRE(arma::approx_equal(YParallel, YSeq, "absdiff", 1e-3));
 }
 
-// /* TSNE n_jobs does not impact output */
-// TEST_CASE("TSNETsneNJobsTest", "[TSNETest]")
-// {
-//   // IMPLEMENT:
-//   // - Run TSNE with n_jobs=1 and n_jobs=2 (angle=0, same seed) and assert
-//   // embeddings match.
-//   SUCCEED();
-// }
+/**
+ * Test t-SNE Exact Method Final Error on Iris dataset.
+ */
+TEST_CASE("TSNEExactIrisFloat", "[TSNETest]")
+{
+  // To Do: Verify KL at various points.
+  arma::fmat X;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
 
-// /* Numeric type coverage: double, float, etc. */
-// TEST_CASE("TSNETypeCoverageTest", "[TSNETest]")
-// {
-//   // IMPLEMENT:
-//   // - Ensure TSNE handles float32 and float64 inputs:
-//   //   * For projects with single-precision internals, output dtype may be
-//   //   float32.
-//   // - Assert output dtype and no crashes.
-//   SUCCEED();
-// }
+  TSNE<arma::fmat, SquaredEuclideanDistance, ExactTSNE> tsne(
+      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
-// /* Precomputed distances usage and validations */
-// TEST_CASE("TSNEPrecomputedDistancesValidationTest", "[TSNETest]")
-// {
-//   // IMPLEMENT:
-//   // - Validate errors are raised for:
-//   //   * non-square distance matrices,
-//   //   * non-positive distances,
-//   //   * sparse precomputed distances with 'exact' method.
-//   SUCCEED();
-// }
+  arma::fmat Y;
+  const double finalObjective = tsne.Embed(X, Y);
 
-// /* Chebyshev metric special-case (non-squared metric) */
-// TEST_CASE("TSNEChebyshevMetricTest", "[TSNETest]")
-// {
-//   // IMPLEMENT:
-//   // - Run TSNE with metric = "chebyshev" for a small random X and ensure no
-//   // exceptions.
-//   SUCCEED();
-// }
+  std::cout << finalObjective << std::endl;
+}
 
-// /* TSNE with Mahalanobis metric requires matrix V/VI */
-// TEST_CASE("TSNETsneMahalanobisTest", "[TSNETest]")
-// {
-//   // IMPLEMENT:
-//   // - Check that missing V/VI raises error.
-//   // - Build precomputed Mahalanobis distances and compare embedding to
-//   // metric='mahalanobis' with V provided.
-//   SUCCEED();
-// }
+/**
+ * Test t-SNE Barnes-hut Method Final Error on Iris dataset.
+ */
+TEST_CASE("TSNEBarnesHutIrisFloat", "[TSNETest]")
+{
+  arma::fmat X;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
 
-// /* Metric coverage: Manhattan, Mahalanobis, Chebyshev */
-// TEST_CASE("TSNEMetricsTest", "[TSNETest]")
-// {
-//   // IMPLEMENT:
-//   // - Test that TSNE accepts metric="manhattan" and "mahalanobis" (requires V
-//   // or VI).
-//   // - For mahalanobis, assert that missing params raises an error and that
-//   // providing V
-//   //   reproduces a precomputed-Mahalanobis run.
-//   // - Check chebyshev metric runs without requiring squaring distances.
-//   SUCCEED();
-// }
+  TSNE<arma::fmat, SquaredEuclideanDistance, BarnesHutTSNE> tsne(
+      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  arma::fmat Y;
+  const double finalObjective = tsne.Embed(X, Y);
+
+  std::cout << finalObjective << std::endl;
+}
+
+/**
+ * Test t-SNE Dual-Tree Method Final Error on Iris dataset.
+ */
+TEST_CASE("TSNEDualTreeIrisFloat", "[TSNETest]")
+{
+  arma::fmat X;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<arma::fmat, SquaredEuclideanDistance, DualTreeTSNE> tsne(
+      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  arma::fmat Y;
+  const double finalObjective = tsne.Embed(X, Y);
+
+  std::cout << finalObjective << std::endl;
+}
+
+/**
+ * Test t-SNE Exact Method Final Error on Iris dataset.
+ */
+TEST_CASE("TSNEExactIrisFloatManhattan", "[TSNETest]")
+{
+  // To Do: Verify KL at various points.
+  arma::fmat X;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<arma::fmat, EuclideanDistance, ExactTSNE> tsne(
+      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  arma::fmat Y;
+  const double finalObjective = tsne.Embed(X, Y);
+
+  std::cout << finalObjective << std::endl;
+}
+
+/**
+ * Test t-SNE Barnes-hut Method Final Error on Iris dataset.
+ */
+TEST_CASE("TSNEBarnesHutIrisFloatEuclidean", "[TSNETest]")
+{
+  arma::fmat X;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<arma::fmat, ManhattanDistance, BarnesHutTSNE> tsne(
+      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  arma::fmat Y;
+  const double finalObjective = tsne.Embed(X, Y);
+
+  std::cout << finalObjective << std::endl;
+}
 
 
-// /* Reduction to one component */
-// TEST_CASE("TSNEReductionOneComponentTest", "[TSNETest]")
+/**
+ * Test t-SNE Exact Method Final Error on Iris dataset.
+ */
+TEST_CASE("TSNEExactIrisFloat1D", "[TSNETest]")
+{
+  // To Do: Verify KL at various points.
+  arma::fmat X;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<arma::fmat, SquaredEuclideanDistance, ExactTSNE> tsne(
+      1, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  arma::fmat Y;
+  const double finalObjective = tsne.Embed(X, Y);
+
+  std::cout << finalObjective << std::endl;
+}
+
+/**
+ * Test t-SNE Barnes-hut Method Final Error on Iris dataset.
+ */
+TEST_CASE("TSNEBarnesHutIrisFloat1D", "[TSNETest]")
+{
+  arma::fmat X;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<arma::fmat, SquaredEuclideanDistance, BarnesHutTSNE> tsne(
+      1, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  arma::fmat Y;
+  const double finalObjective = tsne.Embed(X, Y);
+
+  std::cout << finalObjective << std::endl;
+}
+
+/**
+ * Test t-SNE Dual-Tree Method Final Error on Iris dataset.
+ */
+TEST_CASE("TSNEDualTreeIrisFloat1D", "[TSNETest]")
+{
+  arma::fmat X;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<arma::fmat, SquaredEuclideanDistance, DualTreeTSNE> tsne(
+      1, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  arma::fmat Y;
+  const double finalObjective = tsne.Embed(X, Y);
+
+  std::cout << finalObjective << std::endl;
+}
+
+/**
+ * Test t-SNE Exact Method Final Error on Iris dataset.
+ */
+TEST_CASE("TSNEExactIrisFloat3D", "[TSNETest]")
+{
+  // To Do: Verify KL at various points.
+  arma::fmat X;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<arma::fmat, SquaredEuclideanDistance, ExactTSNE> tsne(
+      3, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  arma::fmat Y;
+  const double finalObjective = tsne.Embed(X, Y);
+
+  std::cout << finalObjective << std::endl;
+}
+
+/**
+ * Test t-SNE Barnes-hut Method Final Error on Iris dataset.
+ */
+TEST_CASE("TSNEBarnesHutIrisFloat3D", "[TSNETest]")
+{
+  arma::fmat X;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<arma::fmat, SquaredEuclideanDistance, BarnesHutTSNE> tsne(
+      3, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  arma::fmat Y;
+  const double finalObjective = tsne.Embed(X, Y);
+
+  std::cout << finalObjective << std::endl;
+}
+
+/**
+ * Test t-SNE Dual-Tree Method Final Error on Iris dataset.
+ */
+TEST_CASE("TSNEDualTreeIrisFloat3D", "[TSNETest]")
+{
+  arma::fmat X;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<arma::fmat, SquaredEuclideanDistance, DualTreeTSNE> tsne(
+      3, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  arma::fmat Y;
+  const double finalObjective = tsne.Embed(X, Y);
+
+  std::cout << finalObjective << std::endl;
+}
+
+// /**
+//  * Test t-SNE Dual-Tree Method Final Error on Iris dataset.
+//  */
+// TEST_CASE("TSNEDualTreeIrisFloatChebyshev", "[TSNETest]")
 // {
-//   // IMPLEMENT:
-//   // - Run TSNE with n_components = 1 and check output shape (n_samples x 1)
-//   // and finiteness.
-//   SUCCEED();
+//   arma::fmat X;
+//   if (!data::Load("iris.csv", X))
+//     FAIL("Cannot load test dataset iris.csv!");
+
+//   TSNE<arma::fmat, ChebyshevDistance, DualTreeTSNE> tsne(
+//       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+//   arma::fmat Y;
+//   const double finalObjective = tsne.Embed(X, Y);
+
+//   std::cout << finalObjective << std::endl;
 // }
 
 // /* Uniform grid recovery */
@@ -474,15 +623,13 @@ TEST_CASE("TSNEGradientDualTreeMultithreadDeterminismTest", "[TSNETest]")
 //   SUCCEED();
 // }
 
-// /* TSNE with various distance metrics produces consistent precomputed results
-//  */
-// TEST_CASE("TSNETsneWithDifferentDistanceMetricsTest", "[TSNETest]")
+// /* Precomputed distances usage and validations */
+// TEST_CASE("TSNEPrecomputedDistancesValidationTest", "[TSNETest]")
 // {
 //   // IMPLEMENT:
-//   // - For metric in {manhattan, cosine} and method in {barnes_hut, exact}:
-//   //   compute embedding with metric direct and with metric='precomputed' using
-//   //   the metric function.
-//   // - Assert the two results are equal (or raise expected xfail when known
-//   // mismatch).
+//   // - Validate errors are raised for:
+//   //   * non-square distance matrices,
+//   //   * non-positive distances,
+//   //   * sparse precomputed distances with 'exact' method.
 //   SUCCEED();
 // }

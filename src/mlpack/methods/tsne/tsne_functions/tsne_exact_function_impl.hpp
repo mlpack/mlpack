@@ -44,8 +44,10 @@ TSNEExactFunction<MatType, DistanceType>::TSNEExactFunction(
 
 template <typename MatType, typename DistanceType>
 template <typename GradType>
-double TSNEExactFunction<MatType, DistanceType>::EvaluateWithGradient(
-    const MatType& y, GradType& g)
+typename MatType::elem_type TSNEExactFunction<
+    MatType,
+    DistanceType
+>::EvaluateWithGradient(const MatType& y, GradType& g)
 {
   q = PairwiseDistances(y, SquaredEuclideanDistance());
 

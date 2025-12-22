@@ -57,7 +57,8 @@ class TSNEExactFunction
    * @param g The variable used to store the new gradient.
    */
   template <typename GradType>
-  double EvaluateWithGradient(const MatType& y, GradType& g);
+  typename MatType::elem_type EvaluateWithGradient(
+      const MatType& y, GradType& g);
 
   //! Get the input joint probabilities.
   const MatType& InputJointProbabilities() const { return P; }

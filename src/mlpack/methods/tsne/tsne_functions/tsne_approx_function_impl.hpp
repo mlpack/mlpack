@@ -25,14 +25,14 @@ TSNEApproxFunction<UseDualTree, MatType, DistanceType>::TSNEApproxFunction(
     : perplexity(perplexity), dof(dof), theta(theta)
 {
   // Run KNN
-  NeighborSearch<NearestNeighborSort, DistanceType> knn(X);
+  NeighborSearch<NearestNeighborSort, DistanceType, MatType> knn(X);
   const size_t neighbors = std::min<size_t>(
       X.n_cols - 1, (size_t)(3 * perplexity));
   knn.Search(neighbors, N, D);
 
   // Square if not SquaredEuclideanDistance
   if (!std::is_same_v<DistanceType, SquaredEuclideanDistance>)
-    D = arma::square(D);
+    D = square(D);
 
   // Precompute P
   P = computeInputProbabilities(perplexity, N, D);
@@ -40,7 +40,7 @@ TSNEApproxFunction<UseDualTree, MatType, DistanceType>::TSNEApproxFunction(
 
 template <bool UseDualTree, typename MatType, typename DistanceType>
 template <typename GradType>
-double TSNEApproxFunction<
+typename MatType::elem_type TSNEApproxFunction<
     UseDualTree,
     MatType,
     DistanceType
@@ -143,15 +143,16 @@ double TSNEApproxFunction<
 
     for (size_t j = 0; j < k; j++)
     {
-      const size_t idx = N[j * k + i];
-      const double distanceSq = (double)DistanceType::Evaluate(y.col(i),
-                                                               y.col(idx));
+      const size_t idx = N[i * k + j];
+
+      const double distanceSq = (double)SquaredEuclideanDistance::Evaluate(
+          y.col(i), y.col(idx));
 
       double q = (double)dof / (dof + distanceSq);
       if (dof != 1)
         q = std::pow(q, (1.0 + dof) / 2.0);
 
-      const double p = (double)P[i * n + idx];
+      const double p = (double)P[idx * n + i];
       if (p)
       {
         g.col(i) += q * p * (y.col(i) - y.col(idx));
