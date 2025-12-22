@@ -2,7 +2,7 @@
  * @file methods/tsne/tsne_function/tsne_approx_function_impl.hpp
  * @author Ranjodh Singh
  *
- * t-SNE Approx Function Implementation.
+ * Implementation of the approximate objective function for t-SNE.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -13,25 +13,21 @@
 #define MLPACK_METHODS_TSNE_TSNE_FUNCTIONS_TSNE_APPROX_FUNCTION_IMPL_HPP
 
 #include "./tsne_approx_function.hpp"
-#include <armadillo>
-#include <limits>
 
 namespace mlpack {
 
-template <bool UseDualTree, typename DistanceType, typename MatType>
-TSNEApproxFunction<UseDualTree, DistanceType, MatType>::TSNEApproxFunction(
+template <bool UseDualTree, typename MatType, typename DistanceType>
+TSNEApproxFunction<UseDualTree, MatType, DistanceType>::TSNEApproxFunction(
     const MatType& X,
     const double perplexity,
     const size_t dof,
     const double theta)
     : perplexity(perplexity), dof(dof), theta(theta)
 {
-  // To Do: Make number of neighbors a parameter
-
   // Run KNN
   NeighborSearch<NearestNeighborSort, DistanceType> knn(X);
   const size_t neighbors = std::min<size_t>(
-      X.n_cols - 1, static_cast<size_t>(3 * perplexity));
+      X.n_cols - 1, (size_t)(3 * perplexity));
   knn.Search(neighbors, N, D);
 
   // Square if not SquaredEuclideanDistance
@@ -39,32 +35,35 @@ TSNEApproxFunction<UseDualTree, DistanceType, MatType>::TSNEApproxFunction(
     D = arma::square(D);
 
   // Precompute P
-  P = computeInputJointProbabilities(perplexity, N, D);
+  P = computeInputProbabilities(perplexity, N, D);
 }
 
-template <bool UseDualTree, typename DistanceType, typename MatType>
+template <bool UseDualTree, typename MatType, typename DistanceType>
 template <typename GradType>
 double TSNEApproxFunction<
     UseDualTree,
-    DistanceType,
-    MatType
+    MatType,
+    DistanceType
 >::EvaluateWithGradient(const MatType& y, GradType& g)
 {
-  // Calculate Negative Gradient
-  using tag = typename std::integral_constant<bool, UseDualTree>;
-  const double sumQ = CalculateNegativeGradient(g, y, tag{});
-  const double error = CalculatePositiveGradient(g, y, sumQ);
+  // Calculate Repulsive Part
+  const double sumQ = CalculateRepuliveForces(g, y,
+      std::bool_constant<UseDualTree>{});
+
+  // Calculate Attractive Part
+  const double error = CalculateAttractiveForces(g, y, sumQ);
+  
   g *= 2.0 * (1.0 + dof) / dof;
 
   return error;
 }
 
-template <bool UseDualTree, typename DistanceType, typename MatType>
+template <bool UseDualTree, typename MatType, typename DistanceType>
 double TSNEApproxFunction<
     UseDualTree,
-    DistanceType,
-    MatType
->::CalculateNegativeGradient(
+    MatType,
+    DistanceType
+>::CalculateRepuliveForces(
     MatType& g, const MatType& y, std::true_type /* tag */)
 {
   // Init
@@ -72,29 +71,26 @@ double TSNEApproxFunction<
   std::vector<size_t> oldFromNew;
   TreeType tree(y, oldFromNew);
   RuleType rule(sumQ, g, y, oldFromNew, dof, theta);
-  TreeType::DualTreeTraverser traverser(rule);
+  typename TreeType::DualTreeTraverser traverser(rule);
 
   // Traverse
   traverser.Traverse(tree, tree);
 
   // Normalize
-  sumQ = std::max(arma::datum::eps, sumQ);
+  sumQ = std::max(std::numeric_limits<double>::epsilon(), sumQ);
   g /= -sumQ;
 
   return sumQ;
 }
 
-template <bool UseDualTree, typename DistanceType, typename MatType>
+template <bool UseDualTree, typename MatType, typename DistanceType>
 double TSNEApproxFunction<
     UseDualTree,
-    DistanceType,
-    MatType
->::CalculateNegativeGradient(
+    MatType,
+    DistanceType
+>::CalculateRepuliveForces(
     MatType& g, const MatType& y, std::false_type /* tag */)
 {
-  // To Do: Instead of relying on number of threads for sumQ
-  // Make a vector of length equal to number of points.
-
   // Init
   std::vector<size_t> oldFromNew;
   TreeType tree(y, oldFromNew);
@@ -110,7 +106,7 @@ double TSNEApproxFunction<
     #endif
 
     RuleType rule(localSumQs[threadId], g, y, oldFromNew, dof, theta);
-    TreeType::SingleTreeTraverser traverser(rule);
+    typename TreeType::SingleTreeTraverser traverser(rule);
 
     #pragma omp for schedule(static)
     for (size_t i = 0; i < y.n_cols; i++)
@@ -118,22 +114,22 @@ double TSNEApproxFunction<
   }
 
   // Normalize
-  const double sumQ = std::max(arma::datum::eps,
+  const double sumQ = std::max(std::numeric_limits<double>::epsilon(),
       std::accumulate(localSumQs.begin(), localSumQs.end(), 0.0));
   g /= -sumQ;
 
   return sumQ;
 }
 
-template <bool UseDualTree, typename DistanceType, typename MatType>
+template <bool UseDualTree, typename MatType, typename DistanceType>
 double TSNEApproxFunction<
     UseDualTree,
-    DistanceType,
-    MatType
->::CalculatePositiveGradient(MatType& g, const MatType& y, const double sumQ)
+    MatType,
+    DistanceType
+>::CalculateAttractiveForces(MatType& g, const MatType& y, const double sumQ)
 {
-  // To Do: Instead of relying on number of threads for sumQ
-  // Make a vector of length equal to number of points.
+  const size_t k = N.n_rows;
+  const size_t n = N.n_cols;
   const size_t maxThreadCount = omp_get_max_threads();
   std::vector<double> localErrors(maxThreadCount);
 
@@ -145,18 +141,24 @@ double TSNEApproxFunction<
         threadId = omp_get_thread_num();
     #endif
 
-    for (size_t j = 0; j < N.n_rows; j++)
+    for (size_t j = 0; j < k; j++)
     {
-      const size_t idx = N(j, i);
-      const double distanceSq = DistanceType::Evaluate(y.col(i), y.col(idx));
+      const size_t idx = N[j * k + i];
+      const double distanceSq = (double)DistanceType::Evaluate(y.col(i),
+                                                               y.col(idx));
+
       double q = (double)dof / (dof + distanceSq);
       if (dof != 1)
         q = std::pow(q, (1.0 + dof) / 2.0);
-
-      g.col(i) += q * P(i, idx) * (y.col(i) - y.col(idx));
-      localErrors[threadId] += P(i, idx) * std::log(
-          std::max<double>(arma::datum::eps, P(i, idx)) /
-          std::max<double>(arma::datum::eps, q / sumQ));
+      
+      const double p = (double)P[i * n + idx];
+      if (p)
+      {
+        g.col(i) += q * p * (y.col(i) - y.col(idx));
+        localErrors[threadId] += p * std::log(
+            p / std::max(std::numeric_limits<double>::epsilon(), q / sumQ));
+      }
+      
     }
   }
 

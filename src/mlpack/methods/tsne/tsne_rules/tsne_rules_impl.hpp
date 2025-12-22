@@ -2,8 +2,8 @@
  * @file methods/tsne/tsne_rules/tsne_rules_impl.hpp
  * @author Ranjodh Singh
  *
- * Implements the pruning rules and base case rules necessary
- * to perform a tree-based approximation of the t-SNE Gradient Function.
+ * Implements the pruning rules and base case rules required
+ * to perform a tree-based approximation of the t-SNE gradient.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,12 +20,12 @@ namespace mlpack {
 template <typename MatType>
 TSNERules<MatType>::TSNERules(
     double& sumQ,
-    MatType& negF,
+    MatType& repF,
     const MatType& embedding,
     const std::vector<size_t>& oldFromNew,
     const size_t dof,
     const double theta)
-    : sumQ(sumQ), negF(negF), embedding(embedding), oldFromNew(oldFromNew),
+    : sumQ(sumQ), repF(repF), embedding(embedding), oldFromNew(oldFromNew),
       dof(dof), theta(theta)
 {
   /* Nothing To Do Here */
@@ -37,7 +37,8 @@ double TSNERules<MatType>::BaseCase(
 {
   const VecType& queryPoint = embedding.col(oldFromNew[queryIndex]);
   const VecType& referencePoint = embedding.col(oldFromNew[referenceIndex]);
-  const double distanceSq = DistanceType::Evaluate(queryPoint, referencePoint);
+  const double distanceSq = (double)DistanceType::Evaluate(queryPoint,
+                                                           referencePoint);
 
   if (distanceSq > arma::datum::eps)
   {
@@ -46,7 +47,7 @@ double TSNERules<MatType>::BaseCase(
       q = std::pow(q, (1.0 + dof) / 2.0);
 
     sumQ += q;
-    negF.col(oldFromNew[queryIndex]) += q * q * (queryPoint - referencePoint);
+    repF.col(oldFromNew[queryIndex]) += q * q * (queryPoint - referencePoint);
   }
 
   return distanceSq;
@@ -59,10 +60,10 @@ double TSNERules<MatType>::Score(
 {
   const VecType& queryPoint = embedding.col(oldFromNew[queryIndex]);
   const VecType& referencePoint = referenceNode.Stat().Centroid();
-  const double distanceSq = std::max(
-      arma::datum::eps, DistanceType::Evaluate(queryPoint, referencePoint));
+  const double distanceSq = std::max(arma::datum::eps,
+      (double)DistanceType::Evaluate(queryPoint, referencePoint));
 
-  const double diameterSq = referenceNode.Bound().Diameter();
+  const double diameterSq = (double)referenceNode.Bound().Diameter();
   const double score = diameterSq / distanceSq;
   if (score < theta * theta)
   {
@@ -70,9 +71,10 @@ double TSNERules<MatType>::Score(
     if (dof != 1)
       q = std::pow(q, (1.0 + dof) / 2.0);
 
-    sumQ += referenceNode.NumDescendants() * q;
-    negF.col(oldFromNew[queryIndex]) += q * q *
+    sumQ += q * referenceNode.NumDescendants();
+    repF.col(oldFromNew[queryIndex]) += q * q *
         referenceNode.NumDescendants() * (queryPoint - referencePoint);
+
     return DBL_MAX;
   }
   else
@@ -96,10 +98,10 @@ double TSNERules<MatType>::Score(
 {
   const VecType& queryPoint = queryNode.Stat().Centroid();
   const VecType& referencePoint = referenceNode.Stat().Centroid();
-  const double distanceSq = std::max(
-      arma::datum::eps, DistanceType::Evaluate(queryPoint, referencePoint));
+  const double distanceSq = std::max(arma::datum::eps,
+      (double)DistanceType::Evaluate(queryPoint, referencePoint));
 
-  const double diameterSq = std::max(
+  const double diameterSq = (double)std::max(
       queryNode.Bound().Diameter(), referenceNode.Bound().Diameter());
   const double score = diameterSq / distanceSq;
   if (score < theta * theta)
@@ -108,15 +110,15 @@ double TSNERules<MatType>::Score(
     if (dof != 1)
       q = std::pow(q, (1.0 + dof) / 2.0);
 
-    sumQ += queryNode.NumDescendants() * referenceNode.NumDescendants() * q;
+    sumQ += q * queryNode.NumDescendants() * referenceNode.NumDescendants();
     for (size_t i = 0; i < queryNode.NumDescendants(); i++)
     {
-      negF.col(oldFromNew[queryNode.Descendant(i)]) += q * q *
+      repF.col(oldFromNew[queryNode.Descendant(i)]) += q * q *
           referenceNode.NumDescendants() * (queryPoint - referencePoint);
     }
     for (size_t i = 0; i < referenceNode.NumDescendants(); i++)
     {
-      negF.col(oldFromNew[referenceNode.Descendant(i)]) +=  q * q *
+      repF.col(oldFromNew[referenceNode.Descendant(i)]) +=  q * q *
           queryNode.NumDescendants() * (referencePoint - queryPoint);
     }
 

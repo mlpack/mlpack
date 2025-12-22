@@ -2,8 +2,8 @@
  * @file methods/tsne/tsne_rules/tsne_rules.hpp
  * @author Ranjodh Singh
  *
- * Defines the pruning rules and base case rules necessary
- * to perform a tree-based approximation of the t-SNE Gradient Function.
+ * Defines the pruning rules and base case rules required
+ * to perform a tree-based approximation of the t-SNE gradient.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -15,28 +15,23 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/tree/octree.hpp>
-#include <mlpack/core/tree/hrectbound.hpp>
-#include <mlpack/core/tree/octree/octree.hpp>
-#include <mlpack/core/tree/traversal_info.hpp>
-#include <mlpack/core/distances/lmetric.hpp>
 
 #include "./tsne_centroid_statistic.hpp"
 
 namespace mlpack {
 
 /**
- * Traversal rules for approximating the t-SNE gradient (negative term).
+ * Traversal rules for approximating the repulsive part of the t-SNE gradient.
+ *
  * This class supports both single and dual-tree traversers:
  * - With a single-tree traverser, it performs the Barnes-Hut approximation.
  * - With a dual-tree traverser, it performs the dual-tree approximation.
  *
  * See "Accelerating t-SNE using Tree-Based Algorithms" for more details.
  *
- * @tparam DistanceType The distance metric to use for computation.
- * @tparam TreeType The tree type to use.
  * @tparam MatType The type of Matrix.
  */
-template <typename MatType = arma::mat>
+template <typename MatType>
 class TSNERules
 {
  public:
@@ -46,21 +41,21 @@ class TSNERules
   using DistanceType = SquaredEuclideanDistance;
 
   /**
-   * Constructs TSNERules object.
+   * Constructs the TSNERules object.
    *
-   * @param sumQ denominator term for the negative force.
-   * @param negF nominator terms for the negative force.
-   * @param embedding low dimentional embedding matrix.
-   * @param oldFromNew mapping form previous to new order of points.
-   * @param dof Degrees of freedom calculated as max(1, input_dims - 1).
-   * @param theta The coarseness of the approximation.
+   * @param sumQ Normalization value for the repulsive forces.
+   * @param repF Matrix used to store the repulsive forces.
+   * @param embedding Low-dimentional embedding matrix.
+   * @param oldFromNew Mapping from the previous to the new order of points.
+   * @param dof Degrees of freedom.
+   * @param theta Coarseness of the approximation.
    */
   TSNERules(double& sumQ,
-            MatType& negF,
+            MatType& repF,
             const MatType& embedding,
             const std::vector<size_t>& oldFromNew,
-            const size_t dof = 1,
-            const double theta = 0.5);
+            const size_t dof,
+            const double theta);
 
   /**
    * Computes point-point interactions for the repulsive term.
@@ -82,7 +77,7 @@ class TSNERules
    * accuracy.
    *
    * If the condition is satisfied, the reference node is pruned
-   * (`DBL_MAX` is returned to indicate the same), and the negative force
+   * (`DBL_MAX` is returned to indicate the same), and the repulsive force
    * contribution is computed immediately using the distance between the
    * query point and the node centroid as an approximation for the distances
    * between the query point and all points within the reference node.
@@ -121,7 +116,7 @@ class TSNERules
    * accuracy.
    *
    * If the condition is satisfied, the combination (queryNode, referenceNode)
-   * is pruned (`DBL_MAX` is returned to indicate the same), and the negative
+   * is pruned (`DBL_MAX` is returned to indicate the same), and the repulsive
    * force contributions are computed immediately using the distance between
    * the queryNode centroid and the referenceNode centroid as an approximation
    * for the distances between all point pairs, where one point belongs to the
@@ -159,22 +154,22 @@ class TSNERules
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
 
  private:
-  //! Denominator term for the negative force.
+  //! Normalization term for the repulsive forces.
   double& sumQ;
 
-  //! Nominator term for the negative force.
-  MatType& negF;
+  //! Matrix used to store the repulsive forces.
+  MatType& repF;
 
-  //! The low dimentional embedding matrix.
+  //! Low-dimentional embedding matrix.
   const MatType& embedding;
 
-  //! Mapping form new to previous order of points.
+  //! Mapping from new to previous order of points.
   const std::vector<size_t>& oldFromNew;
 
   //! Degrees of freedom
   const size_t dof;
 
-  //! The coarseness of the approximation.
+  //! Coarseness of the approximation.
   const double theta;
 
   //! Traversal information for the dual-tree traversal

@@ -14,31 +14,14 @@
 
 namespace mlpack {
 
-/*
- * The ExactTSNE Class represents the Exact method for t-SNE.
- */
-class ExactTSNE
-{
-  /* Nothing to do here */
-};
+//! The Exact method.
+class ExactTSNE { /* Nothing to do here */ };
 
-/*
- * The DualTreeTSNE Class represents the Dual-Tree approximation method for
- * t-SNE.
- */
-class DualTreeTSNE
-{
-  /* Nothing to do here */
-};
+//! The Dual-Tree approximation method.
+class DualTreeTSNE { /* Nothing to do here */ };
 
-/*
- * The BarnesHutTSNE Class represents the Barnes-Hut approximation method for
- * t-SNE.
- */
-class BarnesHutTSNE
-{
-  /* Nothing to do here */
-};
+//! The Barnes-Hut approximation method.
+class BarnesHutTSNE { /* Nothing to do here */ };
 
 } // namespace mlpack
 

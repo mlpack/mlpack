@@ -18,8 +18,7 @@
 namespace mlpack {
 
 /**
- * Statistic that stores the Centroid/Center Of Mass/Barycenter
- * of a metric tree node.
+ * Statistic that stores the Centroid of a metric tree node.
  *
  * This statistic is intended for use with metric tree nodes (for example,
  * mlpack::Octree). For leaf nodes, the center of mass is the mean of the
@@ -30,7 +29,7 @@ namespace mlpack {
  * @tparam VecType Vector type used to store the centroid (default is
  *         arma::vec).
  */
-template <typename VecType = arma::vec>
+template <typename VecType>
 class CentroidStatisticType
 {
  public:
@@ -74,7 +73,7 @@ class CentroidStatisticType
   VecType centroid;
 };
 
-using CentroidStatistic = CentroidStatisticType<>;
+using CentroidStatistic = CentroidStatisticType<arma::vec>;
 
 } // namespace mlpack
 

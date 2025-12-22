@@ -12,15 +12,20 @@
 #ifndef MLPACK_METHODS_TSNE_TSNE_HPP
 #define MLPACK_METHODS_TSNE_TSNE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/methods/pca.hpp>
 
 #include "tsne_methods.hpp"
+#include "tsne_functions/tsne_function.hpp"
 
 namespace mlpack {
 
 /**
- * An implementation of t-Distributed Stochastic Neighbor Embedding (t-SNE).
- *
+ * This class implements t-Distributed Stochastic Neighbor Embedding (t-SNE),
+ * a nonlinear dimensionality reduction algorithm designed to embed high
+ * dimensional data into a low dimensional space while preserving local
+ * neighborhood structure, making it especially suitable for visualization
+ * of high-dimensional datasets.
+ * 
  * For more information, see these papers:
  *
  * @code
@@ -87,53 +92,60 @@ namespace mlpack {
  * }
  * @endcode
  *
- * @tparam TSNEMethod Gradient computation method. Options are: "exact",
- *        "dual_tree", "barnes_hut". (Default: "barnes_hut").
+ * @tparam TSNEMethod Gradient computation method. Options are: "ExactTSNE",
+ *        "DualTreeTSNE", "BarnesHutTSNE". (Default: "BarnesHutTSNE").
  */
-template <typename TSNEMethod = BarnesHutTSNE>
+template <
+    typename MatType = arma::mat,
+    typename DistanceType = SquaredEuclideanDistance,
+    typename TSNEMethod = BarnesHutTSNE
+>
 class TSNE
 {
  public:
   /**
-   * Constructor of the TSNE class.
+   * Constructs the TSNE object.
    *
    * @param outputDims Dimensionality of the embedded space. (Default: 2)
    * @param perplexity Perplexity regulates the balance between local and
-   *        global structure preservation, typically set between 5 and 50.
-   *        (Default: 30.0)
+   *    global structure preservation, typically set between 5 and 50.
+   *    (Default: 30.0)
    * @param exaggeration Amplifies pairwise similarities during the initial
-   *        optimization phase. This helps form tighter clusters and clearer
-   *        separation between them. A higher value increases spacing between
-   *        clusters, but if the cost grows during initial iterations consider
-   *        reducing this value or lowering the step size. (Default: 12.0)
+   *    optimization phase. This helps form tighter clusters and clearer
+   *    separation between them. A higher value increases spacing between
+   *    clusters, but if the cost grows during initial iterations consider
+   *    reducing this value or lowering the step size. (Default: 12.0)
    * @param stepSize Step size (learning rate) for the optimizer. If the
-   *        specified value is zero, the step size is computed
-   *        as N / exaggeration everytime Embed is called. (Default: 200.0)
+   *    specified value is zero, the step size is computed as number of points
+   *    divided by exaggeration everytime `Embed` is called. (Default: 200.0)
    * @param maxIter Maximum number of iterations. (Default: 1000)
+   * @param tolerance Minimum improvement in the objective value required to
+   *    perform another iteration. (Default: 1e-12)
    * @param init Initialization method for the output embedding. Supported
-   *        options are: "random", "pca". PCA initialization is recommended
-   *        because it often improves both speed and quality. (Default: "pca")
+   *    options are "random" and "pca". PCA initialization is recommended
+   *    because it often improves both speed and quality. (Default: "pca")
    * @param theta Theta regulates the trade-off between speed and accuracy for
-   *        "barnes_hut" and "dual_tree" approximations. The optimal value
-   *        differs between approximations. (Default: 0.5)
+   *    the "barnes-hut" and "dual-tree" methods. Higher values of theta result
+   *    in coarser approximations, and the optimal value depends on the chosen
+   *    methods. (Default: 0.5)
    */
   TSNE(const size_t outputDims = 2,
        const double perplexity = 30.0,
        const double exaggeration = 12.0,
        const double stepSize = 200.0,
        const size_t maxIter = 1000,
+       const double tolerance = 1e-12,
        const std::string& init = "pca",
        const double theta = 0.5);
 
   /**
    * Embed the given data into a lower-dimensional space.
    *
-   * @param X The input data. (input_dimensions X N)
-   * @param Y The output embedding. (output_dimensions X N)
+   * @param X The input data. (input_dimensions X number_of_points)
+   * @param Y The output embedding. (output_dimensions X number_of_points)
    *
    * @return Final Objective Value. (KL Divergence)
    */
-  template <typename MatType = arma::mat>
   double Embed(const MatType& X, MatType& Y);
 
   /**
@@ -141,10 +153,9 @@ class TSNE
    * Output embedding once initialized will have a stddev of 1e-4.
    * See "The art of using t-SNE for single-cell transcriptomics".
    * 
-   * @param X The input data. (input_dimensions X N)
-   * @param Y The output embedding. (output_dimensions X N)
+   * @param X The input data. (input_dimensions X number_of_points)
+   * @param Y The output embedding. (output_dimensions X number_of_points)
    */
-  template <typename MatType = arma::mat>
   void InitializeEmbedding(const MatType& X, MatType& Y);
 
   //! Get the number of output dimensions.
@@ -167,6 +178,11 @@ class TSNE
   //! Modify the step size (learning rate) used by the optimizer.
   double& StepSize() { return stepSize; }
 
+  //! Get the tolerance for the optimizer.
+  double Tolerance() const { return tolerance; }
+  //! Modify the tolerance for the optimizer.
+  double& Tolerance() { return tolerance; }
+
   //! Get the maximum number of iterations.
   size_t MaximumIterations() const { return maxIter; }
   //! Modify the maximum number of iterations.
@@ -183,13 +199,13 @@ class TSNE
   double& Theta() { return theta; }
 
  private:
-  //! The number of dimensions to embed into (e.g., 2 or 3).
+  //! The number of dimensions in the output (e.g., 2 or 3).
   size_t outputDims;
 
   //! The perplexity of the Gaussian distribution.
   double perplexity;
 
-  //! Exaggeration applied during the initial optimization phase.
+  //! The exaggeration applied during the initial optimization phase.
   double exaggeration;
 
   //! The step size (aka learning rate) for optimization.
@@ -198,7 +214,10 @@ class TSNE
   //! The maximum number of iterations.
   size_t maxIter;
 
-  //! Initialization method ("pca" or "random").
+  //! The maximum absolute tolerance to terminate optimization.
+  double tolerance;
+
+  //! The initialization method ("pca" or "random").
   std::string init;
 
   //! The coarseness of the approximation.

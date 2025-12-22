@@ -12,21 +12,24 @@
 #ifndef MLPACK_METHODS_TSNE_TSNE_UTILS_HPP
 #define MLPACK_METHODS_TSNE_TSNE_UTILS_HPP
 
-#include <limits>
-#include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
 
 namespace mlpack {
 
 /**
- * Compute the (sparse) input joint probabilities P for t-SNE from
+ * Compute the (sparse) input probabilities P for t-SNE from
  * a k-nearest-neighbors distance matrix.
  *
  * This function performs the binary-search-over-sigma procedure described in
  * the original t-SNE paper to obtain conditional probabilities for each
- * datapoint over its k nearest neighbors, It then symmetrizes and normalizes
- * these conditional probabilities into a joint distribution using the formula
- * P_{ij} = (P_{j|i} + P_{i|j}) / (2 * n_samples).
+ * datapoint over its k nearest neighbors.
+ *
+ * When `normalize` is true, which is the default, the conditional
+ * probabilities are symmetrized and normalized to produce a joint distribution
+ * given by:
+ * \f[
+ * P_{ij} = \frac{P_{i|j} + P_{j|i}}{2 \cdot n_{\text{samples}}}
+ * \f]
  *
  * @tparam eT Element type for numeric values (usually double or float).
  * @tparam MatType Dense matrix type (defaults to arma::Mat<eT>).
@@ -35,21 +38,24 @@ namespace mlpack {
  * @tparam SpVecType Sparse vector type (defaults to arma::SpCol<eT>).
  *
  * @param perplexity Desired perplexity (controls the bandwidth search).
- * @param N A k x n matrix containing the neighbor indices (row i lists
+ * @param N A k x n matrix containing the neighbor indices (column i lists
  *     the indices of the k nearest neighbors of point i in the dataset).
  * @param D A k x n matrix containing distances from each point to its k
- *     nearest neighbors (row i contains distances for neighbors of i).
+ *     nearest neighbors (column i contains distances for neighbors of i).
+ * @param normalize If true, conditional probabilities are symmetrized and
+ *     normalized into a joint distribution.
  *
- * @return A sparse n x n matrix P containing the joint probabilities.
+ * @return A sparse n x n matrix P containing the required probabilities.
  */
 template <typename eT,
           typename MatType = arma::Mat<eT>,
           typename SpMatType = arma::SpMat<eT>,
           typename VecType = arma::Col<eT>,
           typename SpVecType = arma::SpCol<eT>>
-SpMatType computeInputJointProbabilities(const double perplexity,
-                                         const arma::Mat<size_t>& N,
-                                         const arma::Mat<eT>& D)
+SpMatType computeInputProbabilities(const double perplexity,
+                                    const arma::Mat<size_t>& N,
+                                    const arma::Mat<eT>& D,
+                                    bool normalize = true)
 {
   const size_t maxSteps = 100;
   const double tolerance = 1e-5;
@@ -59,19 +65,16 @@ SpMatType computeInputJointProbabilities(const double perplexity,
   const double hDesired = std::log(perplexity);
 
   SpMatType P(n, n);
-  VecType beta(n, arma::fill::ones);
+  std::vector<double> beta(n, 1.0);
 
   #pragma omp parallel for schedule(static)
   for (size_t i = 0; i < n; i++)
   {
-    VecType Di;
-    SpVecType Pi(n);
-    double betaMin = -arma::datum::inf;
-    double betaMax = +arma::datum::inf;
-    double sumP, sumDP, hDiff, hApprox;
+    VecType Di = D.col(i), Pi(k);
 
-    Di = D.col(i);
-    Pi.zeros();
+    double betaMin, betaMax, sumP, sumDP, hDiff, hApprox;
+    betaMin = -std::numeric_limits<double>::infinity();
+    betaMax = +std::numeric_limits<double>::infinity();
 
     size_t step = 0;
     while (step < maxSteps)
@@ -79,12 +82,12 @@ SpMatType computeInputJointProbabilities(const double perplexity,
       sumP = sumDP = 0.0;
       for (size_t j = 0; j < k; j++)
       {
-        Pi(N(j, i)) = std::exp(-Di(j) * beta(i));
-        sumP += Pi(N(j, i));
-        sumDP += Di(j) * Pi(N(j, i));
+        Pi[j] = std::exp(-Di[j] * beta[i]);
+        sumP += Pi[j];
+        sumDP += Di[j] * Pi[j];
       }
-      sumP = std::max(arma::datum::eps, sumP);
-      hApprox = std::log(sumP) + beta(i) * sumDP / sumP;
+      sumP = std::max(std::numeric_limits<double>::epsilon(), sumP);
+      hApprox = std::log(sumP) + beta[i] * sumDP / sumP;
       Pi /= sumP;
 
       hDiff = hApprox - hDesired;
@@ -93,19 +96,19 @@ SpMatType computeInputJointProbabilities(const double perplexity,
 
       if (hDiff > 0)
       {
-        betaMin = beta(i);
+        betaMin = beta[i];
         if (std::isinf(betaMax))
-          beta(i) *= 2.0;
+          beta[i] *= 2.0;
         else
-          beta(i) = (beta(i) + betaMax) / 2.0;
+          beta[i] = (beta[i] + betaMax) / 2.0;
       }
       else
       {
-        betaMax = beta(i);
+        betaMax = beta[i];
         if (std::isinf(betaMin))
-          beta(i) /= 2.0;
+          beta[i] /= 2.0;
         else
-          beta(i) = (beta(i) + betaMin) / 2.0;
+          beta[i] = (beta[i] + betaMin) / 2.0;
       }
       step++;
     }
@@ -114,36 +117,38 @@ SpMatType computeInputJointProbabilities(const double perplexity,
                 << std::endl;
 
     for (size_t j = 0; j < k; ++j)
-      P(i, N(j, i)) = Pi(N(j, i));
+    {
+      const size_t idx = N[i * k + j];
+      P[idx * n + i] = Pi[j];
+    }
   }
-  Log::Info << "Mean value of sigma: " << std::sqrt(n / arma::accu(beta))
-            << std::endl;
 
   // Symmetrize and Normalize P
-  P = P + P.t();
-  // Probabilies already sum to n, after transposed addition they sum to 2n.
-  P /= std::max(std::numeric_limits<eT>::epsilon(), arma::accu(P));
+  if (normalize)
+    P = (P + P.t()) / (2 * std::max(arma::Datum<eT>::eps, accu(P)));
 
   return P;
 }
 
 
 /**
- * Compute the (dense) input joint probability matrix P for t-SNE from a full
+ * Compute the (dense) input probability matrix P for t-SNE from a full
  * n x n distance matrix.
  *
  * This function performs the binary-search-over-sigma procedure described in
  * the original t-SNE paper to obtain conditional probabilities for each
- * datapoint over all the other points, It then symmetrizes and normalizes
- * these conditional probabilities into a joint distribution using the formula
+ * datapoint over all the other points.
+ *
+ * When `normalize` is true, which is the default, the conditional
+ * probabilities are symmetrized and normalized to produce a joint distribution
+ * given by:
  * \f[
- * P_{ij} = \frac{P_{j|i} + P_{i|j}}{2 \cdot n_{\text{samples}}}
+ * P_{ij} = \frac{P_{i|j} + P_{j|i}}{2 \cdot n_{\text{samples}}}
  * \f]
  *
- * This overload performs the entire per-point binary search directly and is
- * intended for use when a full distance matrix is available. If a k-NN
- * distance representation is used elsewhere, prefer the k-NN (sparse)
- * overload to avoid redundant computation.
+ * This overload performs the binary search on a full n x n distance matrix.
+ * If you are using a k-nearest-neighbors approximation, use the sparse
+ * overload instead.
  *
  * @tparam eT Element type for numeric values (usually double or float).
  * @tparam MatType Dense matrix type (defaults to arma::Mat<eT>).
@@ -154,41 +159,43 @@ SpMatType computeInputJointProbabilities(const double perplexity,
  * @param D n x n distance matrix where column i contains distances from
  *     point i to every other point. The diagonal entry D(i,i) is ignored.
  *
- * @return A dense n x n matrix P containing the joint probabilities.
+ * @return A dense n x n matrix P containing the required probabilities.
  */
 template <typename eT,
           typename MatType = arma::Mat<eT>,
           typename VecType = arma::Col<eT>>
-MatType computeInputJointProbabilities(const double perplexity,
-                                       const arma::Mat<eT>& D)
+MatType computeInputProbabilities(const double perplexity,
+                                  const arma::Mat<eT>& D,
+                                  bool normalize = true)
 {
-  const size_t maxSteps = 50;
+  const size_t maxSteps = 100;
   const double tolerance = 1e-5;
 
   const size_t n = D.n_cols;
   const double hDesired = std::log(perplexity);
 
-  VecType beta(n, arma::fill::ones);
   MatType P(n, n, arma::fill::zeros);
+  std::vector<double> beta(n, 1.0);
 
   #pragma omp parallel for schedule(static)
   for (size_t i = 0; i < n; i++)
   {
     VecType Di, Pi;
-    double betaMin, betaMax;
-    double sumP, hApprox, hDiff;
 
-    betaMin = -arma::datum::inf;
-    betaMax = +arma::datum::inf;
+    double betaMin, betaMax, sumP, hApprox, hDiff;
+    betaMin = -std::numeric_limits<double>::infinity();
+    betaMax = +std::numeric_limits<double>::infinity();
+
     Di = D.col(i);
     Di.shed_row(i);
 
     size_t step = 0;
     while (step < maxSteps)
     {
-      Pi = arma::exp(-Di * beta(i));
-      sumP = std::max(arma::datum::eps, arma::accu(Pi));
-      hApprox = std::log(sumP) + beta(i) * arma::accu(Di % Pi) / sumP;
+      Pi = exp(-Di * beta[i]);
+      sumP = std::max(
+          std::numeric_limits<double>::epsilon(), (double)accu(Pi));
+      hApprox = std::log(sumP) + beta[i] * (double)accu(Di % Pi) / sumP;
       Pi /= sumP;
 
       hDiff = hApprox - hDesired;
@@ -197,19 +204,19 @@ MatType computeInputJointProbabilities(const double perplexity,
 
       if (hDiff > 0)
       {
-        betaMin = beta(i);
+        betaMin = beta[i];
         if (std::isinf(betaMax))
-          beta(i) *= 2.0;
+          beta[i] *= 2.0;
         else
-          beta(i) = (beta(i) + betaMax) / 2.0;
+          beta[i] = (beta[i] + betaMax) / 2.0;
       }
       else
       {
-        betaMax = beta(i);
+        betaMax = beta[i];
         if (std::isinf(betaMin))
-          beta(i) /= 2.0;
+          beta[i] /= 2.0;
         else
-          beta(i) = (beta(i) + betaMin) / 2.0;
+          beta[i] = (beta[i] + betaMin) / 2.0;
       }
       step++;
     }
@@ -220,13 +227,10 @@ MatType computeInputJointProbabilities(const double perplexity,
     P.row(i).head(i) = Pi.head(i).t();
     P.row(i).tail(n - i - 1) = Pi.tail(n - i - 1).t();
   }
-  Log::Info << "Mean value of sigma: " << std::sqrt(n / arma::accu(beta))
-            << std::endl;
 
   // Symmetrize and Normalize P
-  P = P + P.t();
-  // Probabilies already sum to n, after transposed addition they sum to 2n.
-  P /= std::max(std::numeric_limits<eT>::epsilon(), arma::accu(P));
+  if (normalize)
+    P = (P + P.t()) / (2 * std::max(arma::Datum<eT>::eps, accu(P)));
 
   return P;
 }

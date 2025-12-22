@@ -2,8 +2,8 @@
  * @file methods/tsne_functions/tsne_function.hpp
  * @author Ranjodh Singh
  *
- * Maps each tsne methods (ExactTSNE, BarnesHutTSNE, DualTreeTSNE) to their
- * corresponding objective functions using type traits and a convenience alias.
+ * Maps each tsne method (ExactTSNE, BarnesHutTSNE, DualTreeTSNE) to its
+ * corresponding objective function using type traits and a convenience alias.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,36 +19,38 @@
 
 namespace mlpack {
 
-template <typename TSNEMethod>
+template <typename MatType, typename DistanceType, typename TSNEMethod>
 class TSNEFunctionTraits
 {
-  using type = TSNEApproxFunction<false>;
+  using type = TSNEBarnesHutFunction<MatType, DistanceType>;
 };
 
-template <>
-class TSNEFunctionTraits<ExactTSNE>
+template <typename MatType, typename DistanceType>
+class TSNEFunctionTraits<MatType, DistanceType, ExactTSNE>
 {
  public:
-  using type = TSNEExactFunction<>;
+  using type = TSNEExactFunction<MatType, DistanceType>;
 };
 
-template <>
-class TSNEFunctionTraits<DualTreeTSNE>
+template <typename MatType, typename DistanceType>
+class TSNEFunctionTraits<MatType, DistanceType, DualTreeTSNE>
 {
  public:
-  using type = TSNEApproxFunction<true>;
+  using type = TSNEDualTreeFunction<MatType, DistanceType>;
 };
 
-template <>
-class TSNEFunctionTraits<BarnesHutTSNE>
+template <typename MatType, typename DistanceType>
+class TSNEFunctionTraits<MatType, DistanceType, BarnesHutTSNE>
 {
  public:
-  using type = TSNEApproxFunction<false>;
+  using type = TSNEBarnesHutFunction<MatType, DistanceType>;
 };
 
 // Convenience alias:
-template <typename TSNEMethod>
-using TSNEFunction = typename TSNEFunctionTraits<TSNEMethod>::type;
+template <typename MatType, typename DistanceType, typename TSNEMethod>
+using TSNEFunction = typename TSNEFunctionTraits<MatType,
+                                                 DistanceType,
+                                                 TSNEMethod>::type;
 
 } // namespace mlpack
 
