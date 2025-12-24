@@ -127,7 +127,7 @@ class TSNEApproxFunction
 
   //! k-nearest neighbor distances.
   MatType D;
-  
+
   //! Input space similarity distribution (normalized).
   SpMatType P;
 

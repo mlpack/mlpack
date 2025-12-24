@@ -85,7 +85,7 @@ TEST_CASE("TSNEInitializationTest", "[TSNETest]")
   stdDev = stddev(Y, 0, 1);
   for (size_t i = 0; i < nDims; i++)
     REQUIRE(stdDev[i] == Approx(1e-4));
- }
+}
 
 /**
  * Test t-SNE Exact Input Joint Probabilities Computation
@@ -502,7 +502,6 @@ TEST_CASE("TSNEDualTreeMultithreadDeterminismTest", "[TSNETest]")
 
 #endif
 
-
 // /* Uniform grid recovery */
 // TEST_CASE("TSNEUniformGridRecoveryTest", "[TSNETest]")
 // {
@@ -511,8 +510,8 @@ TEST_CASE("TSNEDualTreeMultithreadDeterminismTest", "[TSNETest]")
 //   // - Run TSNE (several seeds) and check nearest-neighbor spacing: min
 //   // distance > 0.1,
 //   //   smallest/mean and largest/mean ratios in acceptable bounds.
-//   // - If first run fails, rerun using previous embedding as init and re-check.
-//   SUCCEED();
+//   // - If first run fails, rerun using previous embedding as init and
+//   re-check. SUCCEED();
 // }
 
 // /* Trustworthiness tests */
@@ -527,7 +526,8 @@ TEST_CASE("TSNEDualTreeMultithreadDeterminismTest", "[TSNETest]")
 //   SUCCEED();
 // }
 
-// /* Preserve trustworthiness approximately (exact/barnes_hut + init random/pca)
+// /* Preserve trustworthiness approximately (exact/barnes_hut + init
+// random/pca)
 //  */
 // TEST_CASE("TSNEPreserveTrustworthinessApproximatelyTest", "[TSNETest]")
 // {
@@ -539,19 +539,22 @@ TEST_CASE("TSNEDualTreeMultithreadDeterminismTest", "[TSNETest]")
 //   SUCCEED();
 // }
 
-// /** Gradient descent stopping conditions (mapping test_gradient_descent_stops)
+// /** Gradient descent stopping conditions (mapping
+// test_gradient_descent_stops)
 //  */
 // TEST_CASE("TSNEGradientDescentStopsTest", "[TSNETest]")
 // {
 //   // IMPLEMENT:
 //   // - Port the ObjectiveSmallGradient and flat_function behaviours:
-//   //   * Check stopping on min_grad_norm triggers "gradient norm" message (if
+//   //   * Check stopping on min_grad_norm triggers "gradient norm" message
+//   (if
 //   //   logging exists).
-//   //   * Check n_iter_without_progress behaviour triggers appropriate stop and
+//   //   * Check n_iter_without_progress behaviour triggers appropriate stop
+//   and
 //   //   message.
 //   //   * Check max_iter stops at expected iteration count.
-//   // - If your _gradient_descent writes to stdout, capture and assert messages.
-//   SUCCEED();
+//   // - If your _gradient_descent writes to stdout, capture and assert
+//   messages. SUCCEED();
 // }
 
 // /* n_iter_without_progress and min_grad_norm behaviour tests */
@@ -560,7 +563,8 @@ TEST_CASE("TSNEDualTreeMultithreadDeterminismTest", "[TSNETest]")
 //   // IMPLEMENT:
 //   // - Test edge cases for n_iter_without_progress negative handling and
 //   // min_grad_norm.
-//   // - Assert the verbose output includes "did not make any progress" message
+//   // - Assert the verbose output includes "did not make any progress"
+//   message
 //   // when appropriate.
 //   SUCCEED();
 // }

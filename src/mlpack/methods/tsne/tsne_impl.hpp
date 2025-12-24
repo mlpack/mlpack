@@ -71,7 +71,7 @@ double TSNE<TSNEMethod, MatType, DistanceType>::Embed(
                                           : std::numeric_limits<size_t>::max();
 
   // Exploratory Phase
-  ens::DeltaBarDelta exploratoryOptimizer(
+  ens::MomentumDeltaBarDelta exploratoryOptimizer(
       stepSize, exploratoryIters, tolerance, 0.2, 0.8, 0.5, 0.01);
 
   Log::Info << "Starting Exploratory Phase of t-SNE Optimization."

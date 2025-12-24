@@ -66,7 +66,7 @@ double TSNEApproxFunction<
   double sumQ = 0.0;
   std::vector<size_t> oldFromNew;
   TreeType tree(y, oldFromNew);
-  
+
   RuleType rule(sumQ, g, y, oldFromNew, dof, theta);
   typename TreeType::DualTreeTraverser traverser(rule);
 
