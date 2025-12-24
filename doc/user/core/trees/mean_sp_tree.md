@@ -301,7 +301,7 @@ on bound quantities for trees.
    - This is equivalent to calling `node.Bound().Center(center)`.
 
  * A `MeanSPTree` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ## Bounding distances with the tree
 

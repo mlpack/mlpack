@@ -150,7 +150,7 @@ mlpack has support to load mixed categorical data:
    dimension is numeric or categorical.  ([full
    documentation](load_save.md#datadatasetinfo))
  * `data::Load(filename, matrix, info, fatal=false, transpose=true)` ([full
-   documentation](load_save.md#loading-categorical-data))
+   documentation](load_save.md#mixed-categorical-data))
 
 For example, consider the following CSV file that contains strings:
 
