@@ -1,5 +1,5 @@
 /**
- * @file methods/tsne/tsne_function/tsne_approx_function_impl.hpp
+ * @file methods/tsne/tsne_functions/tsne_approx_function_impl.hpp
  * @author Ranjodh Singh
  *
  * Implementation of the approximate objective function for t-SNE.
@@ -24,17 +24,14 @@ TSNEApproxFunction<UseDualTree, MatType, DistanceType>::TSNEApproxFunction(
     const double theta)
     : perplexity(perplexity), dof(dof), theta(theta)
 {
-  // Run KNN
-  NeighborSearch<NearestNeighborSort, DistanceType, MatType> knn(X);
   const size_t neighbors = std::min<size_t>(
-      X.n_cols - 1, (size_t)(3 * perplexity));
-  knn.Search(neighbors, N, D);
+      X.n_cols - 1, (size_t)(3.0 * perplexity + 1.0));
 
-  // Square if not SquaredEuclideanDistance
+  NeighborSearch<NearestNeighborSort, DistanceType, MatType> knn(X);
+  knn.Search(neighbors, N, D);
   if (!std::is_same_v<DistanceType, SquaredEuclideanDistance>)
     D = square(D);
 
-  // Precompute P
   P = computeInputProbabilities(perplexity, N, D);
 }
 
@@ -47,11 +44,11 @@ typename MatType::elem_type TSNEApproxFunction<
 >::EvaluateWithGradient(const MatType& y, GradType& g)
 {
   // Calculate Repulsive Part
-  const double sumQ = CalculateRepuliveForces(g, y,
+  const double sumQ = CalculateRepulsiveForces(g, y,
       std::bool_constant<UseDualTree>{});
 
   // Calculate Attractive Part
-  const double error = CalculateAttractiveForces(g, y, sumQ);
+  const ElemType error = CalculateAttractiveForces(g, y, sumQ);
 
   g *= 2.0 * (1.0 + dof) / dof;
 
@@ -63,20 +60,18 @@ double TSNEApproxFunction<
     UseDualTree,
     MatType,
     DistanceType
->::CalculateRepuliveForces(
+>::CalculateRepulsiveForces(
     MatType& g, const MatType& y, std::true_type /* tag */)
 {
-  // Init
   double sumQ = 0.0;
   std::vector<size_t> oldFromNew;
   TreeType tree(y, oldFromNew);
+  
   RuleType rule(sumQ, g, y, oldFromNew, dof, theta);
   typename TreeType::DualTreeTraverser traverser(rule);
 
-  // Traverse
   traverser.Traverse(tree, tree);
 
-  // Normalize
   sumQ = std::max(std::numeric_limits<double>::epsilon(), sumQ);
   g /= -sumQ;
 
@@ -88,16 +83,18 @@ double TSNEApproxFunction<
     UseDualTree,
     MatType,
     DistanceType
->::CalculateRepuliveForces(
+>::CalculateRepulsiveForces(
     MatType& g, const MatType& y, std::false_type /* tag */)
 {
-  // Init
   std::vector<size_t> oldFromNew;
   TreeType tree(y, oldFromNew);
-  const size_t maxThreadCount = omp_get_max_threads();
+
+  size_t maxThreadCount = 0;
+  #ifdef MLPACK_USE_OPENMP
+    maxThreadCount = omp_get_max_threads();
+  #endif
   std::vector<double> localSumQs(maxThreadCount);
 
-  // Traverse
   #pragma omp parallel
   {
     size_t threadId = 0;
@@ -113,7 +110,6 @@ double TSNEApproxFunction<
       traverser.Traverse(i, tree);
   }
 
-  // Normalize
   const double sumQ = std::max(std::numeric_limits<double>::epsilon(),
       std::accumulate(localSumQs.begin(), localSumQs.end(), 0.0));
   g /= -sumQ;
@@ -122,7 +118,7 @@ double TSNEApproxFunction<
 }
 
 template <bool UseDualTree, typename MatType, typename DistanceType>
-double TSNEApproxFunction<
+typename MatType::elem_type TSNEApproxFunction<
     UseDualTree,
     MatType,
     DistanceType
@@ -130,11 +126,15 @@ double TSNEApproxFunction<
 {
   const size_t k = N.n_rows;
   const size_t n = N.n_cols;
-  const size_t maxThreadCount = omp_get_max_threads();
+
+  size_t maxThreadCount = 0;
+  #ifdef MLPACK_USE_OPENMP
+    maxThreadCount = omp_get_max_threads();
+  #endif
   std::vector<double> localErrors(maxThreadCount);
 
   #pragma omp parallel for schedule(static)
-  for (size_t i = 0; i < y.n_cols; i++)
+  for (size_t i = 0; i < n; i++)
   {
     size_t threadId = 0;
     #ifdef MLPACK_USE_OPENMP
@@ -143,8 +143,7 @@ double TSNEApproxFunction<
 
     for (size_t j = 0; j < k; j++)
     {
-      const size_t idx = N[i * k + j];
-
+      const size_t idx = N(j, i);
       const double distanceSq = (double)SquaredEuclideanDistance::Evaluate(
           y.col(i), y.col(idx));
 
@@ -152,17 +151,17 @@ double TSNEApproxFunction<
       if (dof != 1)
         q = std::pow(q, (1.0 + dof) / 2.0);
 
-      const double p = (double)P[idx * n + i];
-      if (p)
-      {
-        g.col(i) += q * p * (y.col(i) - y.col(idx));
-        localErrors[threadId] += p * std::log(
-            p / std::max(std::numeric_limits<double>::epsilon(), q / sumQ));
-      }
+      const double p = (double)P(i, idx);
+      g.col(i) += q * p * (y.col(i) - y.col(idx));
+
+      localErrors[threadId] += p * std::log(
+          std::max(std::numeric_limits<double>::epsilon(), p)
+          / std::max(std::numeric_limits<double>::epsilon(), q / sumQ));
     }
   }
 
-  return std::accumulate(localErrors.begin(), localErrors.end(), 0.0);
+  return (ElemType)std::accumulate(
+      localErrors.begin(), localErrors.end(), 0.0);
 }
 
 } // namespace mlpack

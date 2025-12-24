@@ -29,7 +29,7 @@ BINDING_USER_NAME("t-distributed Stochastic Neighbor Embedding");
 BINDING_SHORT_DESC(
     "t-distributed stochastic neighbor embedding (t-SNE) "
     "is a statistical method for visualizing high-dimensional data "
-    "by giving each datapoint a location in a two or three-dimensional map.");
+    "by giving each data point a location in a two- or three-dimensional map.");
 
 // Long description.
 BINDING_LONG_DESC(
@@ -45,12 +45,12 @@ BINDING_LONG_DESC(
 
 // Example.
 BINDING_EXAMPLE(
-  "For example, to reduce " + PRINT_DATASET("data") + " to two dimensions "
-  "using the Barnes-Hut method with PCA initialization, automatic step size"
-  ", a theta value of 0.5, a perplexity of 30, an exaggeration of 12, and a"
-  " maximum of 500 iterations, and to save the resulting embedding to " +
-  PRINT_DATASET("data_mod") + ", use the following command: \n\n" +
-  PRINT_CALL("tsne", "input", "data", "output_dimensions", 2, "method",
+    "For example, to reduce " + PRINT_DATASET("data") + " to two dimensions "
+    "using the Barnes-Hut method with PCA initialization, automatic step size, "
+    "a theta value of 0.5, a perplexity of 30, an exaggeration of 12, and a "
+    "maximum of 500 iterations, and to save the resulting embedding to " +
+    PRINT_DATASET("data_mod") + ", use the following command: \n\n" +
+    PRINT_CALL("tsne", "input", "data", "output_dimensions", 2, "method",
     "barnes-hut", "init", "pca", "step_size", 0.0, "theta", 0.5,
     "perplexity", 30.0, "exaggeration", 12.0, "max_iterations", 500,
     "output", "data_mod"));
@@ -83,8 +83,8 @@ PARAM_DOUBLE_IN("exaggeration",
     "function grows during initial iterations, reduce this value or "
     "lower the step size.", "e", 12.0);
 PARAM_DOUBLE_IN("step_size",
-    "Step size for the optimizer. If the given value is zero or negative"
-    ", the step size is set to number_of_points / exaggeration.", "s", 200.0);
+    "Step size for the optimizer. If the given value is zero or negative, "
+    "the step size is set to number_of_points / exaggeration.", "s", 200.0);
 PARAM_INT_IN("max_iterations", "Maximum number of iterations.", "n", 1000);
 PARAM_DOUBLE_IN("tolerance", "Minimum improvement in the objective value "
     "required to perform another iteration.", "l", 1e-12);
@@ -105,9 +105,10 @@ PARAM_DOUBLE_IN("theta",
     "methods.", "t", 0.5);
 //! Run TSNE on the specified dataset with the given policy.
 template <typename TSNEMethod>
-void RunTSNE(util::Params& params, util::Timers& timers, arma::mat& dataset)
+void RunTSNE(
+    util::Params& params, util::Timers& /* timers */, arma::mat& dataset)
 {
-  TSNE<arma::mat, SquaredEuclideanDistance, TSNEMethod> tsne(
+  TSNE<TSNEMethod> tsne(
       params.Get<int>("output_dimensions"),
       params.Get<double>("perplexity"),
       params.Get<double>("exaggeration"),
@@ -117,14 +118,12 @@ void RunTSNE(util::Params& params, util::Timers& timers, arma::mat& dataset)
       params.Get<std::string>("init"),
       params.Get<double>("theta"));
 
-  Log::Info << "Running TSNE on dataset..." << endl;
-  timers.Start("tsne");
+  Log::Info << "Running t-SNE optimization..." << endl;
   tsne.Embed(params.Get<arma::mat>("input"), dataset);
-  timers.Stop("tsne");
-  Log::Info << "TSNE Finished on dataset..." << endl;
+  Log::Info << "t-SNE optimization completed." << endl;
 }
 
-// Binding Fuction
+// Binding Function
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   arma::mat dataset;

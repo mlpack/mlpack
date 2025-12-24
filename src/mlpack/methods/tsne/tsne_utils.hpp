@@ -22,7 +22,7 @@ namespace mlpack {
  *
  * This function performs the binary-search-over-sigma procedure described in
  * the original t-SNE paper to obtain conditional probabilities for each
- * datapoint over its k nearest neighbors.
+ * data point over its k nearest neighbors.
  *
  * When `normalize` is true, which is the default, the conditional
  * probabilities are symmetrized and normalized to produce a joint distribution
@@ -37,7 +37,7 @@ namespace mlpack {
  * @tparam VecType Dense vector type (defaults to arma::Col<eT>).
  * @tparam SpVecType Sparse vector type (defaults to arma::SpCol<eT>).
  *
- * @param perplexity Desired perplexity (controls the bandwidth search).
+ * @param perplexity Desired perplexity.
  * @param N A k x n matrix containing the neighbor indices (column i lists
  *     the indices of the k nearest neighbors of point i in the dataset).
  * @param D A k x n matrix containing distances from each point to its k
@@ -72,22 +72,17 @@ SpMatType computeInputProbabilities(const double perplexity,
   {
     VecType Di = D.col(i), Pi(k);
 
-    double betaMin, betaMax, sumP, sumDP, hDiff, hApprox;
+    double betaMin, betaMax, sumP, hApprox, hDiff;
     betaMin = -std::numeric_limits<double>::infinity();
     betaMax = +std::numeric_limits<double>::infinity();
 
     size_t step = 0;
     while (step < maxSteps)
     {
-      sumP = sumDP = 0.0;
-      for (size_t j = 0; j < k; j++)
-      {
-        Pi[j] = std::exp(-Di[j] * beta[i]);
-        sumP += Pi[j];
-        sumDP += Di[j] * Pi[j];
-      }
-      sumP = std::max(std::numeric_limits<double>::epsilon(), sumP);
-      hApprox = std::log(sumP) + beta[i] * sumDP / sumP;
+      Pi = exp(-Di * beta[i]);
+      sumP = std::max(
+          std::numeric_limits<double>::epsilon(), (double)accu(Pi));
+      hApprox = std::log(sumP) + beta[i] * (double)accu(Di % Pi) / sumP;
       Pi /= sumP;
 
       hDiff = hApprox - hDesired;
@@ -117,13 +112,10 @@ SpMatType computeInputProbabilities(const double perplexity,
                 << std::endl;
 
     for (size_t j = 0; j < k; ++j)
-    {
-      const size_t idx = N[i * k + j];
-      P[idx * n + i] = Pi[j];
-    }
+      P(i, N(j, i)) = Pi[j];
   }
 
-  // Symmetrize and Normalize P
+  // Symmetrize and normalize P
   if (normalize)
     P = (P + P.t()) / (2 * std::max(arma::Datum<eT>::eps, accu(P)));
 
@@ -137,7 +129,7 @@ SpMatType computeInputProbabilities(const double perplexity,
  *
  * This function performs the binary-search-over-sigma procedure described in
  * the original t-SNE paper to obtain conditional probabilities for each
- * datapoint over all the other points.
+ * data point over all the other points.
  *
  * When `normalize` is true, which is the default, the conditional
  * probabilities are symmetrized and normalized to produce a joint distribution
@@ -154,10 +146,11 @@ SpMatType computeInputProbabilities(const double perplexity,
  * @tparam MatType Dense matrix type (defaults to arma::Mat<eT>).
  * @tparam VecType Dense vector type (defaults to arma::Col<eT>).
  *
- * @param perplexity Desired perplexity value used to set the effective
- *     neighborhood size for each point.
+ * @param perplexity Desired perplexity.
  * @param D n x n distance matrix where column i contains distances from
  *     point i to every other point. The diagonal entry D(i,i) is ignored.
+ * @param normalize If true, conditional probabilities are symmetrized and
+ *     normalized into a joint distribution.
  *
  * @return A dense n x n matrix P containing the required probabilities.
  */
@@ -180,14 +173,12 @@ MatType computeInputProbabilities(const double perplexity,
   #pragma omp parallel for schedule(static)
   for (size_t i = 0; i < n; i++)
   {
-    VecType Di, Pi;
+    VecType Di = D.col(i), Pi;
+    Di.shed_row(i);
 
     double betaMin, betaMax, sumP, hApprox, hDiff;
     betaMin = -std::numeric_limits<double>::infinity();
     betaMax = +std::numeric_limits<double>::infinity();
-
-    Di = D.col(i);
-    Di.shed_row(i);
 
     size_t step = 0;
     while (step < maxSteps)
@@ -228,7 +219,7 @@ MatType computeInputProbabilities(const double perplexity,
     P.row(i).tail(n - i - 1) = Pi.tail(n - i - 1).t();
   }
 
-  // Symmetrize and Normalize P
+  // Symmetrize and normalize P
   if (normalize)
     P = (P + P.t()) / (2 * std::max(arma::Datum<eT>::eps, accu(P)));
 

@@ -2,7 +2,7 @@
 
 The `TSNE` class implements t-distributed Stochastic Neighbor Embedding
 (t-SNE), a nonlinear dimensionality reduction technique designed mainly for
-visualization. It captures pairwise similarities in the high-dimensional space
+visualization of high-dimensional datasets. It captures pairwise similarities in the high-dimensional space
 and finds a low-dimensional representation that preserves them.
 
 The t-SNE algorithm works in two stages. First, it builds a probability
@@ -10,10 +10,10 @@ distribution over pairs of points in the high-dimensional space using a
 Gaussian kernel, assigning higher probabilities to closer points and lower
 probabilities to farther ones. Second, it models pairwise similarities in the
 low-dimensional space with a heavy-tailed Student’s t-distribution and adjusts
-point positions by minimizing the Kullback–Leibler (KL) divergence between the
-two distributions using gradient descent.
+point positions by minimizing the Kullback-Leibler (KL) divergence between the
+two distributions.
 
-This implementation provides multiple strategies for computing the KL
+This implementation provides multiple methods for computing the KL
 divergence and its gradient. (see [methods](#methods) for more detail)
 
 #### Simple usage example
@@ -31,8 +31,8 @@ arma::mat output;
 tsne.Embed(dataset, output);
 
 // Print some information about the modified dataset.
-std::cout << "The transformed data matrix has size " << output.n_rows /* 2 */
-    << " x " << output.n_cols << "." << std::endl;
+std::cout << "The transformed data matrix has size ";
+std::cout << output.n_rows << " x " << output.n_cols << "." << std::endl;
 ```
 <p style="text-align: center; font-size: 85%"><a href="#examples">More examples...</a></p>
 
@@ -53,14 +53,15 @@ std::cout << "The transformed data matrix has size " << output.n_rows /* 2 */
 
 ### Constructors
 
-- `tsne = TSNE(outputDim=2, perplexity=30.0, exaggeration=12.0, stepSize=200.0, maxIter=1000, init="pca", theta=0.5)`
+- `tsne = TSNE(outputDim=2, perplexity=30.0, exaggeration=12.0, stepSize=200.0, maxIter=1000, tolerance = 1e-12, init="pca", theta=0.5)`
   - `outputDim`: Dimensionality of the embedded space. *(Default: 2)*  
   - `perplexity`: Regulates the balance between local and global structure preservation. Typically set between 5 and 50. *(Default: 30.0)*  
-  - `exaggeration`: Amplifies pairwise similarities during the initial optimization phase, forming tighter clusters and clearer separation. A higher value increases spacing between clusters, but if the cost grows during initial iterations, reduce this value or lower the step size. *(Default: 12.0)*  
-  - `stepSize`: Step size (learning rate) for the optimizer. If set to `0`, it is computed as `N / exaggeration` each time `Embed` is called. *(Default: 200.0)*  
+  - `exaggeration`: Amplifies pairwise similarities during the initial optimization phase. This helps form tighter clusters and clearer separation between them. A higher value increases spacing between clusters, but if the cost grows during initial iterations consider reducing this value or lowering the step size. *(Default: 12.0)*  
+  - `stepSize`: Step size (learning rate) for the optimizer. If the specified value is `0`, the step size is computed as number of points divided by exaggeration every time `Embed` is called. *(Default: 200.0)*  
   - `maxIter`: Maximum number of iterations. *(Default: 1000)*  
+  - `tolerance`: Minimum improvement in the objective value required to perform another iteration. *(Default: 1e-12)*
   - `init`: Initialization method for the embedding. Options: `"random"`, `"pca"`. PCA initialization is recommended for speed and quality. *(Default: `"pca"`)*  
-  - `theta`: Trade-off between speed and accuracy for `"barnes_hut"` and `"dual_tree"` approximations. Optimal value depends on the chosen method. *(Default: 0.5)*  
+  - `theta`: Regulates the trade-off between speed and accuracy for the `barnes-hut` and `dual-tree` methods. Higher values of theta result in coarser approximations, and the optimal value depends on the chosen methods (Default: 0.5)*  
 
 ---
 
@@ -124,14 +125,17 @@ mlpack::data::Save("satellite.train.3d.csv", output, true);
 By default, `TSNE` uses the Barnes-Hut method to approximate the gradient
 calculation.  However, for smaller datasets, it may be possible to use the exact
 method, and for some situations the dual-tree approximation may be preferable.
-The `TSNE` class has a template parameter `TSNEMethod` that allows different gradient
-computation strategies to be used.  The full signature of the class is:
+The `TSNE` class has a template parameter `TSNEMethod` that allows the different
+gradient computation methods to be used.  The full signature of the class is:
 
 ```
-TSNE<TSNEMethod>
+TSNE<TSNEMethod, MatType, DistanceType>
 ```
 
-`TSNEMethod` specifies the TSNEMethod to be used to compute the t-SNE gradient.
+ * `TSNEMethod`: specifies the TSNEMethod to be used to compute the t-SNE gradient.
+ * `MatType`: specifies the type of matrix used for representation of data.
+ * `DistanceType`: specifies the [distance metric](../core/distances.md) to be
+   used for finding nearest neighbors.
 
 These methods are already implemented and ready for drop-in usage:
 

@@ -1,8 +1,8 @@
 /**
- * @file methods/tsne_functions/tsne_function.hpp
+ * @file methods/tsne/tsne_functions/tsne_function.hpp
  * @author Ranjodh Singh
  *
- * Maps each tsne method (ExactTSNE, BarnesHutTSNE, DualTreeTSNE) to its
+ * Maps each t-SNE method (ExactTSNE, BarnesHutTSNE, DualTreeTSNE) to its
  * corresponding objective function using type traits and a convenience alias.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -22,7 +22,7 @@ namespace mlpack {
 template <typename MatType, typename DistanceType, typename TSNEMethod>
 class TSNEFunctionTraits
 {
-  using type = TSNEBarnesHutFunction<MatType, DistanceType>;
+  // Nothing To Do Here
 };
 
 template <typename MatType, typename DistanceType>

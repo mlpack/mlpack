@@ -1,5 +1,5 @@
 /**
- * @file methods/tsne/tsne_functions/tsne_exact_function.hpp
+ * @file methods/tsne/tsne_functions/tsne_exact_function_impl.hpp
  * @author Ranjodh Singh
  *
  * Implementation of the exact objective function for t-SNE.
@@ -24,20 +24,15 @@ TSNEExactFunction<MatType, DistanceType>::TSNEExactFunction(
     const double /* theta */)
     : perplexity(perplexity), dof(dof)
 {
-  // To Do: Implement Seperate Evaluate and Gradient too.
-  // To Do: Document the fact that if any other metric is
+  // TODO: Implement seperate Evaluate and Gradient too.
+  // TODO: Document the fact that if any other metric is
   // given as tparam, it should not be a squared distance type.
-  // Also that the given metric will only be used for calculating P.
-  // Since, Q is a student's t-dist and it's kernel depends on euclidean.
   // Also find a way to decide at compile time whether metric needs squaring.
 
   MatType D = PairwiseDistances(X, DistanceType());
-
-  // Square if not SquaredEuclideanDistance
   if (!std::is_same_v<DistanceType, SquaredEuclideanDistance>)
       D = arma::square(D);
 
-  // Precompute P
   P = computeInputProbabilities(perplexity, D);
   P.clamp(arma::Datum<ElemType>::eps, arma::Datum<ElemType>::inf);
 }
@@ -50,18 +45,15 @@ typename MatType::elem_type TSNEExactFunction<
 >::EvaluateWithGradient(const MatType& y, GradType& g)
 {
   q = PairwiseDistances(y, SquaredEuclideanDistance());
-
-  q = (q + dof) / dof;
-  q = pow(q, -(1.0 + dof) / 2.0);
+  q = pow((q + dof) / dof, -(1.0 + dof) / 2.0);
   q.diag().zeros();
 
   Q = q / std::max(arma::Datum<ElemType>::eps, accu(q));
   Q.clamp(arma::Datum<ElemType>::eps, arma::Datum<ElemType>::inf);
 
-  M = (P - Q) % q;
-  S = sum(M, 1);
-
-  g = (2.0 * (1.0 + dof) / dof) * (y.each_row() % S.t() - y * M);
+  deltaPQ = (P - Q) % q;
+  const double c = 2.0 * (1.0 + dof) / dof;
+  g = c * (y.each_row() % sum(deltaPQ, 1).t() - y * deltaPQ);
 
   // This is way faster than arma::dot
   return accu(P % log(P / Q));

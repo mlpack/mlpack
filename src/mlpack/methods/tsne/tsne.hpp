@@ -21,8 +21,8 @@ namespace mlpack {
 
 /**
  * This class implements t-Distributed Stochastic Neighbor Embedding (t-SNE),
- * a nonlinear dimensionality reduction algorithm designed to embed high
- * dimensional data into a low dimensional space while preserving local
+ * a nonlinear dimensionality reduction algorithm designed to embed
+ * high-dimensional data into a low-dimensional space while preserving local
  * neighborhood structure, making it especially suitable for visualization
  * of high-dimensional datasets.
  * 
@@ -38,6 +38,7 @@ namespace mlpack {
  *   month={11},
  *   year={2008}
  * }
+ * @endcode
  *
  * @code
  * @article{maaten2014accelerating,
@@ -55,7 +56,7 @@ namespace mlpack {
  * @article{maaten2009learning,
  *   title={Learning a Parametric Embedding by Preserving Local Structure},
  *   author={van der Maaten, Laurens},
- *   journal={Journal of Machine Learning Research - Proceedings Track}
+ *   journal={Journal of Machine Learning Research - Proceedings Track},
  *   volume={5},
  *   pages={384-391},
  *   month={01},
@@ -96,9 +97,9 @@ namespace mlpack {
  *        "DualTreeTSNE", "BarnesHutTSNE". (Default: "BarnesHutTSNE").
  */
 template <
+    typename TSNEMethod = BarnesHutTSNE,
     typename MatType = arma::mat,
-    typename DistanceType = SquaredEuclideanDistance,
-    typename TSNEMethod = BarnesHutTSNE
+    typename DistanceType = SquaredEuclideanDistance
 >
 class TSNE
 {
@@ -117,7 +118,7 @@ class TSNE
    *    reducing this value or lowering the step size. (Default: 12.0)
    * @param stepSize Step size (learning rate) for the optimizer. If the
    *    specified value is zero, the step size is computed as number of points
-   *    divided by exaggeration everytime `Embed` is called. (Default: 200.0)
+   *    divided by exaggeration every time `Embed` is called. (Default: 200.0)
    * @param maxIter Maximum number of iterations. (Default: 1000)
    * @param tolerance Minimum improvement in the objective value required to
    *    perform another iteration. (Default: 1e-12)
@@ -139,7 +140,7 @@ class TSNE
        const double theta = 0.5);
 
   /**
-   * Embed the given data into a lower-dimensional space.
+   * Embeds the given data into a lower-dimensional space.
    *
    * @param X The input data. (input_dimensions X number_of_points)
    * @param Y The output embedding. (output_dimensions X number_of_points)
@@ -150,7 +151,7 @@ class TSNE
 
   /**
    * Initialize the output embedding using pca or randomly.
-   * Output embedding once initialized will have a stddev of 1e-4.
+   * Output embedding once initialized will have a standard deviation of 1e-4.
    * See "The art of using t-SNE for single-cell transcriptomics".
    * 
    * @param X The input data. (input_dimensions X number_of_points)
@@ -199,10 +200,10 @@ class TSNE
   double& Theta() { return theta; }
 
  private:
-  //! The number of dimensions in the output (e.g., 2 or 3).
+  //! The number of dimensions in the output.
   size_t outputDims;
 
-  //! The perplexity of the Gaussian distribution.
+  //! The perplexity of the input space similarity distribution.
   double perplexity;
 
   //! The exaggeration applied during the initial optimization phase.
@@ -214,13 +215,13 @@ class TSNE
   //! The maximum number of iterations.
   size_t maxIter;
 
-  //! The maximum absolute tolerance to terminate optimization.
+  //! The maximum absolute tolerance used to terminate optimization.
   double tolerance;
 
-  //! The initialization method ("pca" or "random").
+  //! The initialization method, either "pca" or "random".
   std::string init;
 
-  //! The coarseness of the approximation.
+  //! The coarseness parameter of the approximation.
   double theta;
 };
 

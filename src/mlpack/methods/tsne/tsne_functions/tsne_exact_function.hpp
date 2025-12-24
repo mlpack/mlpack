@@ -14,7 +14,6 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/distances/lmetric.hpp>
-#include <mlpack/core/cv/metrics/facilities.hpp>
 
 #include "../tsne_utils.hpp"
 
@@ -23,24 +22,28 @@ namespace mlpack {
 /**
  * Exact objective function for t-SNE.
  *
+ * @note The specified distance metric is used only for computing input
+ * space similarities. Similarities in the embedding space are computed
+ * using the Euclidean distance via the Student's t-distribution kernel.
+ *
  * @tparam MatType The type of Matrix.
- * @tparam DistanceType The distance metric.
+ * @tparam DistanceType The distance metric for computing input space
+ *     similarities.
  */
-template <typename MatType,
-          typename DistanceType>
+template <typename MatType, typename DistanceType>
 class TSNEExactFunction
 {
  public:
   // Convenience typedefs.
   using ElemType = typename MatType::elem_type;
-  using VecType = typename GetColType<MatType>::type;
 
   /**
    * Constructs the TSNEExactFunction object.
    *
    * @param X The input data.
-   * @param perplexity Perplexity of the Gaussian distribution.
+   * @param perplexity Perplexity of the input space similarity distribution.
    * @param dof Degrees of freedom.
+   * @param theta Unused parameter, present for compatibility.
    */
   TSNEExactFunction(const MatType& X,
                     const double perplexity,
@@ -51,10 +54,12 @@ class TSNEExactFunction
    * EvaluateWithGradient for differentiable function optimizers.
    *
    * Returns the Kullback-Leibler (KL) divergence between the input and
-   * the embedding, and stores its gradient w.r.t to the embedding in `g`.
+   * the embedding, and stores its gradient w.r.t. the embedding in `g`.
    *
    * @param y The embedding matrix.
-   * @param g The variable used to store the new gradient.
+   * @param g The variable to store the gradient.
+   *
+   * @return The KL divergence value.
    */
   template <typename GradType>
   typename MatType::elem_type EvaluateWithGradient(
@@ -66,22 +71,19 @@ class TSNEExactFunction
   MatType& InputJointProbabilities() { return P; }
 
  private:
-  //! Input joint probabilities.
+  //! Input space similarity distribution (normalized).
   MatType P;
 
-  //! Output joint probabilities. (Unnormalized)
+  //! Embedding space similarity distribution. (unnormalized)
   MatType q;
 
-  //! Output joint probabilities. (Normalized)
+  //! Embedding space similarity distribution. (normalized)
   MatType Q;
 
-  //! Intermediate matrix used in gradient computation.
-  MatType M;
+  //! Matrix holding an intermediate term for gradient computation.
+  MatType deltaPQ;
 
-  //! Intermediate vector used in gradient computation.
-  VecType S;
-
-  //! Perplexity of the Gaussian distribution.
+  //! Perplexity of the input space similarity distribution.
   double perplexity;
 
   //! Degrees of freedom.

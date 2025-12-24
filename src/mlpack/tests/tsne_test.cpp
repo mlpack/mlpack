@@ -1,5 +1,5 @@
 /**
- * @file tests/regularized_svd_test.cpp
+ * @file tests/tsne_test.cpp
  * @author Ranjodh Singh
  *
  * t-SNE Tests.
@@ -10,17 +10,11 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include <mlpack/core/distances/mahalanobis_distance.hpp>
-#include <omp.h>
-#include <limits>
-#include <armadillo>
 #include <mlpack/core.hpp>
-#include <mlpack/core/distances/lmetric.hpp>
-#include <mlpack/core/cv/metrics/facilities.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
-#include "./catch.hpp"
-#include "./test_catch_tools.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 #include "../methods/tsne/tsne.hpp"
 #include "../methods/tsne/tsne_utils.hpp"
@@ -69,49 +63,44 @@ TEST_CASE("TSNEParameterTest", "[TSNETest]")
 /**
  * Test t-SNE PCA Initialization
  */
-TEST_CASE("TSNEPCAInitTest", "[TSNETest]")
+TEST_CASE("TSNEInitializationTest", "[TSNETest]")
 {
+  using MatType = arma::mat;
+  using VecType = GetColType<MatType>::type;
+
   const size_t nDims = 2;
   const size_t nPoints = 10;
   TSNE tsne(nDims, 30.0, 12.0, 200.0, 1000, 1e-12, "pca", 0.5);
 
-  arma::mat X(nDims, nPoints, arma::fill::randn), Y;
+  MatType X(nDims, nPoints, arma::fill::randn), Y;
   tsne.InitializeEmbedding(X, Y);
 
-  arma::vec stdDev = stddev(Y, 0, 1);
+  VecType stdDev = stddev(Y, 0, 1);
   for (size_t i = 0; i < nDims; i++)
     REQUIRE(stdDev[i] == Approx(1e-4));
-}
 
-/**
- * Test t-SNE Random Initialization
- */
-TEST_CASE("TSNERandomInitTest", "[TSNETest]")
-{
-  const size_t nDims = 2;
-  const size_t nPoints = 10;
-  TSNE tsne(nDims, 30.0, 12.0, 200.0, 1000, 1e-12, "random", 0.5);
-
-  arma::mat X(nDims, nPoints, arma::fill::randn), Y;
+  tsne.Initialization() = "random";
   tsne.InitializeEmbedding(X, Y);
 
-  arma::vec stdDev = stddev(Y, 0, 1);
+  stdDev = stddev(Y, 0, 1);
   for (size_t i = 0; i < nDims; i++)
-    REQUIRE(stdDev[i] == Approx(1e-4).margin(1e-6));
-}
+    REQUIRE(stdDev[i] == Approx(1e-4));
+ }
 
 /**
  * Test t-SNE Exact Input Joint Probabilities Computation
  */
 TEST_CASE("TSNEExactPCalcTest", "[TSNETest]")
 {
-  arma::mat X;
+  using MatType = arma::mat;
+
+  MatType X;
   if (!data::Load("iris.csv", X))
     FAIL("Cannot load test dataset iris.csv!");
 
   const double desiredPerplexity = 30.0;
-  arma::mat D = PairwiseDistances(X, SquaredEuclideanDistance());
-  arma::mat P = computeInputProbabilities(30.0, D, false);
+  MatType D = PairwiseDistances(X, SquaredEuclideanDistance());
+  MatType P = computeInputProbabilities(30.0, D, false);
   const double meanPerplexity = mean(exp(-sum(
       P % log(clamp(P, arma::datum::eps, arma::datum::inf)), 1)));
 
@@ -123,7 +112,12 @@ TEST_CASE("TSNEExactPCalcTest", "[TSNETest]")
  */
 TEST_CASE("TSNEApproxPCalcTest", "[TSNETest]")
 {
-  arma::mat X;
+  using MatType = arma::mat;
+  using UMatType = arma::Mat<size_t>;
+  using VecType = GetColType<MatType>::type;
+  using SpMatType = GetSparseMatType<MatType>::type;
+
+  MatType X;
   if (!data::Load("iris.csv", X))
     FAIL("Cannot load test dataset iris.csv!");
 
@@ -133,19 +127,19 @@ TEST_CASE("TSNEApproxPCalcTest", "[TSNETest]")
   const size_t k = std::min<size_t>(
       (size_t)(n - 1), (size_t)(3 * desiredPerplexity));
 
-  arma::mat distances;
-  arma::Mat<size_t> neighbors;
+  MatType distances;
+  UMatType neighbors;
   NeighborSearch<
       NearestNeighborSort,
       SquaredEuclideanDistance,
-      arma::mat
+      MatType
   > knn(X);
   knn.Search(k, neighbors, distances);
 
-  arma::sp_mat P = computeInputProbabilities(
+  SpMatType P = computeInputProbabilities(
       desiredPerplexity, neighbors, distances, false);
 
-  arma::vec perplexities(n);
+  VecType perplexities(n);
   for (size_t i = 0; i < n; i++)
   {
     for (size_t j = 0; j < k; j++)
@@ -166,17 +160,16 @@ TEST_CASE("TSNEApproxPCalcTest", "[TSNETest]")
  */
 TEST_CASE("TSNEExactIris", "[TSNETest]")
 {
-  // To Do: Verify KL at various points.
-  arma::mat X;
+  using MatType = arma::mat;
+
+  MatType X, Y;
   if (!data::Load("iris.csv", X))
     FAIL("Cannot load test dataset iris.csv!");
 
-  TSNE<arma::mat, SquaredEuclideanDistance, ExactTSNE> tsne(
+  TSNE<ExactTSNE, MatType> tsne(
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
-  arma::mat Y;
   const double finalObjective = tsne.Embed(X, Y);
-
   std::cout << finalObjective << std::endl;
 }
 
@@ -185,16 +178,16 @@ TEST_CASE("TSNEExactIris", "[TSNETest]")
  */
 TEST_CASE("TSNEBarnesHutIris", "[TSNETest]")
 {
-  arma::mat X;
+  using MatType = arma::mat;
+
+  MatType X, Y;
   if (!data::Load("iris.csv", X))
     FAIL("Cannot load test dataset iris.csv!");
 
-  TSNE<arma::mat, SquaredEuclideanDistance, BarnesHutTSNE> tsne(
+  TSNE<BarnesHutTSNE, MatType> tsne(
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
-  arma::mat Y;
   const double finalObjective = tsne.Embed(X, Y);
-
   std::cout << finalObjective << std::endl;
 }
 
@@ -203,363 +196,312 @@ TEST_CASE("TSNEBarnesHutIris", "[TSNETest]")
  */
 TEST_CASE("TSNEDualTreeIris", "[TSNETest]")
 {
-  arma::mat X;
+  using MatType = arma::mat;
+
+  MatType X, Y;
   if (!data::Load("iris.csv", X))
     FAIL("Cannot load test dataset iris.csv!");
 
-  TSNE<arma::mat, SquaredEuclideanDistance, DualTreeTSNE> tsne(
+  TSNE<DualTreeTSNE, MatType> tsne(
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
-  arma::mat Y;
   const double finalObjective = tsne.Embed(X, Y);
-
   std::cout << finalObjective << std::endl;
 }
 
-/* Barnes-Hut should match Exact under specific conditions. */
+/**
+ * Test t-SNE Exact Method Final Error on Iris dataset with fmat.
+ */
+TEST_CASE("TSNEExactIrisFmat", "[TSNETest]")
+{
+  using MatType = arma::fmat;
+
+  MatType X, Y;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<ExactTSNE, MatType> tsne(
+      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  const double finalObjective = tsne.Embed(X, Y);
+  std::cout << finalObjective << std::endl;
+}
+
+/**
+ * Test t-SNE Barnes-hut Method Final Error on Iris dataset with fmat.
+ */
+TEST_CASE("TSNEBarnesHutIrisFmat", "[TSNETest]")
+{
+  using MatType = arma::fmat;
+
+  MatType X, Y;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<BarnesHutTSNE, MatType> tsne(
+      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  const double finalObjective = tsne.Embed(X, Y);
+  std::cout << finalObjective << std::endl;
+}
+
+/**
+ * Test t-SNE Dual-Tree Method Final Error on Iris dataset with fmat.
+ */
+TEST_CASE("TSNEDualTreeIrisFmat", "[TSNETest]")
+{
+  using MatType = arma::fmat;
+
+  MatType X, Y;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<DualTreeTSNE, MatType> tsne(
+      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  const double finalObjective = tsne.Embed(X, Y);
+  std::cout << finalObjective << std::endl;
+}
+
+/**
+ * Test t-SNE Exact Method Final Error on Iris dataset with fmat
+ * and ManhattanDistance.
+ */
+TEST_CASE("TSNEExactIrisFmatManhattan", "[TSNETest]")
+{
+  using MatType = arma::fmat;
+
+  MatType X, Y;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<ExactTSNE, MatType, ManhattanDistance> tsne(
+      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  const double finalObjective = tsne.Embed(X, Y);
+  std::cout << finalObjective << std::endl;
+}
+
+/**
+ * Test t-SNE Barnes-hut Method Final Error on Iris dataset with fmat
+ * and ManhattanDistance.
+ */
+TEST_CASE("TSNEBarnesHutIrisFmatManhattan", "[TSNETest]")
+{
+  using MatType = arma::fmat;
+
+  MatType X, Y;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<BarnesHutTSNE, MatType, ManhattanDistance> tsne(
+      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  const double finalObjective = tsne.Embed(X, Y);
+  std::cout << finalObjective << std::endl;
+}
+
+/**
+ * Test t-SNE Dual-Tree Method Final Error on Iris dataset with fmat
+ * and ManhattanDistance.
+ */
+TEST_CASE("TSNEDualTreeIrisFmatManhattan", "[TSNETest]")
+{
+  using MatType = arma::fmat;
+
+  MatType X, Y;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<DualTreeTSNE, MatType, ManhattanDistance> tsne(
+      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  const double finalObjective = tsne.Embed(X, Y);
+  std::cout << finalObjective << std::endl;
+}
+
+/**
+ * Test t-SNE Exact Method Final Error on Iris dataset with fmat and
+ * EuclideanDistance.
+ */
+TEST_CASE("TSNEExactIrisFmatEuclidean", "[TSNETest]")
+{
+  using MatType = arma::fmat;
+
+  MatType X, Y;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<ExactTSNE, MatType, EuclideanDistance> tsne(
+      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  const double finalObjective = tsne.Embed(X, Y);
+  std::cout << finalObjective << std::endl;
+}
+
+/**
+ * Test t-SNE Barnes-hut Method Final Error on Iris dataset with fmat and
+ * EuclideanDistance.
+ */
+TEST_CASE("TSNEBarnesHutIrisFmatEuclidean", "[TSNETest]")
+{
+  using MatType = arma::fmat;
+
+  MatType X, Y;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<BarnesHutTSNE, MatType, EuclideanDistance> tsne(
+      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  const double finalObjective = tsne.Embed(X, Y);
+  std::cout << finalObjective << std::endl;
+}
+
+/**
+ * Test t-SNE Dual-Tree Method Final Error on Iris dataset with fmat and
+ * EuclideanDistance.
+ */
+TEST_CASE("TSNEDualTreeIrisFmatEuclidean", "[TSNETest]")
+{
+  using MatType = arma::fmat;
+
+  MatType X, Y;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNE<DualTreeTSNE, MatType, EuclideanDistance> tsne(
+      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
+
+  const double finalObjective = tsne.Embed(X, Y);
+  std::cout << finalObjective << std::endl;
+}
+
+/**
+ * Test whether BarnesHutTSNE with theta == 0 matches ExactTSNE.
+ */
 TEST_CASE("TSNEBarnesHutMatchExact", "[TSNETest]")
 {
-  arma::mat X;
+  using MatType = arma::mat;
+
+  MatType X, YExact, YBarnesHut;
   if (!data::Load("iris.csv", X))
     FAIL("Cannot load test dataset iris.csv!");
 
-  TSNE<arma::mat, SquaredEuclideanDistance, ExactTSNE> tsneExact(
+  TSNE<ExactTSNE, MatType> tsneExact(
+      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.0);
+  TSNE<BarnesHutTSNE, MatType> tsneBarnesHut(
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.0);
 
-  arma::mat YExact;
   const double finalObjectiveExact = tsneExact.Embed(X, YExact);
-
-  TSNE<arma::mat, SquaredEuclideanDistance, BarnesHutTSNE> tsneBarnesHut(
-      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.0);
-
-  arma::mat YBarnesHut;
   const double finalObjectiveBarnesHut = tsneBarnesHut.Embed(X, YBarnesHut);
 
-  std::cout << finalObjectiveBarnesHut << ' '
-            << finalObjectiveExact << std::endl;
+  std::cout << finalObjectiveExact << ' '
+            << finalObjectiveBarnesHut << std::endl;
 
-  // REQUIRE(finalObjectiveBarnesHut ==
-  //         Approx(finalObjectiveExact).margin(1e-3));
-  // REQUIRE(arma::approx_equal(YExact, YBarnesHut, "absdiff", 1e-3));
+  REQUIRE(finalObjectiveExact ==
+          Approx(finalObjectiveBarnesHut).margin(1e-3));
+  REQUIRE(arma::approx_equal(YExact, YBarnesHut, "absdiff", 1e-3));
 }
 
-/* Dual-tree angle == 0 should match Barnes-Hut */
-TEST_CASE("TSNEDualTreeAngleZeroMatchBarnesHut", "[TSNETest]")
+/**
+ * Test whether DualTreeTSNE with theta == 0 matches BarnesHutTSNE
+ * with theta == 0.
+ */
+TEST_CASE("TSNEDualTreeMatchBarnesHut", "[TSNETest]")
 {
-  arma::mat X;
+  using MatType = arma::mat;
+
+  MatType X, YDualTree, YBarnesHut;
   if (!data::Load("iris.csv", X))
     FAIL("Cannot load test dataset iris.csv!");
 
-  TSNE<arma::mat, SquaredEuclideanDistance, DualTreeTSNE> tsneDualTree(
+  TSNE<DualTreeTSNE, MatType> tsneDualTree(
+      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.0);
+  TSNE<BarnesHutTSNE, MatType> tsneBarnesHut(
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.0);
 
-  arma::mat YDualTree;
   const double finalObjectiveDualTree = tsneDualTree.Embed(X, YDualTree);
-
-  TSNE<arma::mat, SquaredEuclideanDistance, BarnesHutTSNE> tsneBarnesHut(
-      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.0);
-
-  arma::mat YBarnesHut;
   const double finalObjectiveBarnesHut = tsneBarnesHut.Embed(X, YBarnesHut);
 
-  std::cout << finalObjectiveBarnesHut << ' '
-            << finalObjectiveDualTree << std::endl;
+  std::cout << finalObjectiveDualTree << ' '
+            << finalObjectiveBarnesHut << std::endl;
 
-  // REQUIRE(finalObjectiveDualTree ==
-  //         Approx(finalObjectiveBarnesHut).margin(1e-3));
-  // REQUIRE(arma::approx_equal(YDualTree, YBarnesHut, "absdiff", 1e-3));
+  REQUIRE(finalObjectiveDualTree ==
+          Approx(finalObjectiveBarnesHut).margin(1e-3));
+  REQUIRE(arma::approx_equal(YDualTree, YBarnesHut, "absdiff", 1e-3));
 }
 
-/* Barnes-Hut gradient multi-threading determinism */
-TEST_CASE("TSNEGradientBHMultithreadDeterminismTest", "[TSNETest]")
+#ifdef MLPACK_USE_OPENMP
+
+/**
+ * Verify that BarnesHutTSNE produces approximately equal results
+ * when executed in parallel and in sequential modes.
+ */
+TEST_CASE("TSNEBHMultithreadDeterminismTest", "[TSNETest]")
 {
-  arma::mat X;
+  using MatType = arma::mat;
+
+  MatType X, YSeq, YParallel;
   if (!data::Load("iris.csv", X))
     FAIL("Cannot load test dataset iris.csv!");
 
-  // Initial max threads
   const size_t maxThreads = omp_get_max_threads();
-
-  // Sequential Mode
   omp_set_num_threads(1);
 
-  TSNE<arma::mat, SquaredEuclideanDistance, BarnesHutTSNE> tsneSeq(
+  TSNE<BarnesHutTSNE, MatType> tsneSeq(
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-
-  arma::mat YSeq;
   const double finalObjectiveSeq = tsneSeq.Embed(X, YSeq);
 
-  // Parallel Mode
   omp_set_num_threads(maxThreads);
 
-  TSNE<arma::mat, SquaredEuclideanDistance, BarnesHutTSNE> tsneParallel(
+  TSNE<BarnesHutTSNE, MatType> tsneParallel(
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-
-  arma::mat YParallel;
   const double finalObjectiveParallel = tsneParallel.Embed(X, YParallel);
 
-  std::cout << finalObjectiveSeq << ' ' << finalObjectiveParallel << std::endl;
+  std::cout << finalObjectiveSeq << ' '
+            << finalObjectiveParallel << std::endl;
 
-  // REQUIRE(finalObjectiveParallel ==
-  //         Approx(finalObjectiveSeq).margin(1e-3));
-  // REQUIRE(arma::approx_equal(YParallel, YSeq, "absdiff", 1e-3));
+  REQUIRE(finalObjectiveSeq ==
+          Approx(finalObjectiveParallel).margin(1e-3));
+  REQUIRE(arma::approx_equal(YParallel, YSeq, "absdiff", 1e-3));
 }
 
-/* Dual-Tree gradient multi-threading determinism */
-TEST_CASE("TSNEGradientDualTreeMultithreadDeterminismTest", "[TSNETest]")
+/**
+ * Verify that DualTreeTSNE produces approximately equal results
+ * when executed in parallel and in sequential modes.
+ */
+TEST_CASE("TSNEDualTreeMultithreadDeterminismTest", "[TSNETest]")
 {
-  arma::mat X;
+  using MatType = arma::mat;
+
+  MatType X, YSeq, YParallel;
   if (!data::Load("iris.csv", X))
     FAIL("Cannot load test dataset iris.csv!");
 
-  // Initial max threads
   const size_t maxThreads = omp_get_max_threads();
-
-  // Sequential Mode
   omp_set_num_threads(1);
 
-  TSNE<arma::mat, SquaredEuclideanDistance, DualTreeTSNE> tsneSeq(
+  TSNE<DualTreeTSNE, MatType> tsneSeq(
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-
-  arma::mat YSeq;
   const double finalObjectiveSeq = tsneSeq.Embed(X, YSeq);
 
-  // Parallel Mode
   omp_set_num_threads(maxThreads);
 
-  TSNE<arma::mat, SquaredEuclideanDistance, DualTreeTSNE> tsneParallel(
+  TSNE<DualTreeTSNE, MatType> tsneParallel(
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-
-  arma::mat YParallel;
   const double finalObjectiveParallel = tsneParallel.Embed(X, YParallel);
 
-  std::cout << finalObjectiveSeq << ' ' << finalObjectiveParallel << std::endl;
+  std::cout << finalObjectiveSeq << ' '
+            << finalObjectiveParallel << std::endl;
 
-  // REQUIRE(finalObjectiveParallel ==
-  //         Approx(finalObjectiveSeq).margin(1e-3));
-  // REQUIRE(arma::approx_equal(YParallel, YSeq, "absdiff", 1e-3));
+  REQUIRE(finalObjectiveSeq ==
+          Approx(finalObjectiveParallel).margin(1e-3));
+  REQUIRE(arma::approx_equal(YParallel, YSeq, "absdiff", 1e-3));
 }
 
-/**
- * Test t-SNE Exact Method Final Error on Iris dataset.
- */
-TEST_CASE("TSNEExactIrisFloat", "[TSNETest]")
-{
-  // To Do: Verify KL at various points.
-  arma::fmat X;
-  if (!data::Load("iris.csv", X))
-    FAIL("Cannot load test dataset iris.csv!");
+#endif
 
-  TSNE<arma::fmat, SquaredEuclideanDistance, ExactTSNE> tsne(
-      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-
-  arma::fmat Y;
-  const double finalObjective = tsne.Embed(X, Y);
-
-  std::cout << finalObjective << std::endl;
-}
-
-/**
- * Test t-SNE Barnes-hut Method Final Error on Iris dataset.
- */
-TEST_CASE("TSNEBarnesHutIrisFloat", "[TSNETest]")
-{
-  arma::fmat X;
-  if (!data::Load("iris.csv", X))
-    FAIL("Cannot load test dataset iris.csv!");
-
-  TSNE<arma::fmat, SquaredEuclideanDistance, BarnesHutTSNE> tsne(
-      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-
-  arma::fmat Y;
-  const double finalObjective = tsne.Embed(X, Y);
-
-  std::cout << finalObjective << std::endl;
-}
-
-/**
- * Test t-SNE Dual-Tree Method Final Error on Iris dataset.
- */
-TEST_CASE("TSNEDualTreeIrisFloat", "[TSNETest]")
-{
-  arma::fmat X;
-  if (!data::Load("iris.csv", X))
-    FAIL("Cannot load test dataset iris.csv!");
-
-  TSNE<arma::fmat, SquaredEuclideanDistance, DualTreeTSNE> tsne(
-      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-
-  arma::fmat Y;
-  const double finalObjective = tsne.Embed(X, Y);
-
-  std::cout << finalObjective << std::endl;
-}
-
-/**
- * Test t-SNE Exact Method Final Error on Iris dataset.
- */
-TEST_CASE("TSNEExactIrisFloatManhattan", "[TSNETest]")
-{
-  // To Do: Verify KL at various points.
-  arma::fmat X;
-  if (!data::Load("iris.csv", X))
-    FAIL("Cannot load test dataset iris.csv!");
-
-  TSNE<arma::fmat, EuclideanDistance, ExactTSNE> tsne(
-      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-
-  arma::fmat Y;
-  const double finalObjective = tsne.Embed(X, Y);
-
-  std::cout << finalObjective << std::endl;
-}
-
-/**
- * Test t-SNE Barnes-hut Method Final Error on Iris dataset.
- */
-TEST_CASE("TSNEBarnesHutIrisFloatEuclidean", "[TSNETest]")
-{
-  arma::fmat X;
-  if (!data::Load("iris.csv", X))
-    FAIL("Cannot load test dataset iris.csv!");
-
-  TSNE<arma::fmat, ManhattanDistance, BarnesHutTSNE> tsne(
-      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-
-  arma::fmat Y;
-  const double finalObjective = tsne.Embed(X, Y);
-
-  std::cout << finalObjective << std::endl;
-}
-
-
-/**
- * Test t-SNE Exact Method Final Error on Iris dataset.
- */
-TEST_CASE("TSNEExactIrisFloat1D", "[TSNETest]")
-{
-  // To Do: Verify KL at various points.
-  arma::fmat X;
-  if (!data::Load("iris.csv", X))
-    FAIL("Cannot load test dataset iris.csv!");
-
-  TSNE<arma::fmat, SquaredEuclideanDistance, ExactTSNE> tsne(
-      1, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-
-  arma::fmat Y;
-  const double finalObjective = tsne.Embed(X, Y);
-
-  std::cout << finalObjective << std::endl;
-}
-
-/**
- * Test t-SNE Barnes-hut Method Final Error on Iris dataset.
- */
-TEST_CASE("TSNEBarnesHutIrisFloat1D", "[TSNETest]")
-{
-  arma::fmat X;
-  if (!data::Load("iris.csv", X))
-    FAIL("Cannot load test dataset iris.csv!");
-
-  TSNE<arma::fmat, SquaredEuclideanDistance, BarnesHutTSNE> tsne(
-      1, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-
-  arma::fmat Y;
-  const double finalObjective = tsne.Embed(X, Y);
-
-  std::cout << finalObjective << std::endl;
-}
-
-/**
- * Test t-SNE Dual-Tree Method Final Error on Iris dataset.
- */
-TEST_CASE("TSNEDualTreeIrisFloat1D", "[TSNETest]")
-{
-  arma::fmat X;
-  if (!data::Load("iris.csv", X))
-    FAIL("Cannot load test dataset iris.csv!");
-
-  TSNE<arma::fmat, SquaredEuclideanDistance, DualTreeTSNE> tsne(
-      1, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-
-  arma::fmat Y;
-  const double finalObjective = tsne.Embed(X, Y);
-
-  std::cout << finalObjective << std::endl;
-}
-
-/**
- * Test t-SNE Exact Method Final Error on Iris dataset.
- */
-TEST_CASE("TSNEExactIrisFloat3D", "[TSNETest]")
-{
-  // To Do: Verify KL at various points.
-  arma::fmat X;
-  if (!data::Load("iris.csv", X))
-    FAIL("Cannot load test dataset iris.csv!");
-
-  TSNE<arma::fmat, SquaredEuclideanDistance, ExactTSNE> tsne(
-      3, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-
-  arma::fmat Y;
-  const double finalObjective = tsne.Embed(X, Y);
-
-  std::cout << finalObjective << std::endl;
-}
-
-/**
- * Test t-SNE Barnes-hut Method Final Error on Iris dataset.
- */
-TEST_CASE("TSNEBarnesHutIrisFloat3D", "[TSNETest]")
-{
-  arma::fmat X;
-  if (!data::Load("iris.csv", X))
-    FAIL("Cannot load test dataset iris.csv!");
-
-  TSNE<arma::fmat, SquaredEuclideanDistance, BarnesHutTSNE> tsne(
-      3, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-
-  arma::fmat Y;
-  const double finalObjective = tsne.Embed(X, Y);
-
-  std::cout << finalObjective << std::endl;
-}
-
-/**
- * Test t-SNE Dual-Tree Method Final Error on Iris dataset.
- */
-TEST_CASE("TSNEDualTreeIrisFloat3D", "[TSNETest]")
-{
-  arma::fmat X;
-  if (!data::Load("iris.csv", X))
-    FAIL("Cannot load test dataset iris.csv!");
-
-  TSNE<arma::fmat, SquaredEuclideanDistance, DualTreeTSNE> tsne(
-      3, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-
-  arma::fmat Y;
-  const double finalObjective = tsne.Embed(X, Y);
-
-  std::cout << finalObjective << std::endl;
-}
-
-// /**
-//  * Test t-SNE Dual-Tree Method Final Error on Iris dataset.
-//  */
-// TEST_CASE("TSNEDualTreeIrisFloatChebyshev", "[TSNETest]")
-// {
-//   arma::fmat X;
-//   if (!data::Load("iris.csv", X))
-//     FAIL("Cannot load test dataset iris.csv!");
-
-//   TSNE<arma::fmat, ChebyshevDistance, DualTreeTSNE> tsne(
-//       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-
-//   arma::fmat Y;
-//   const double finalObjective = tsne.Embed(X, Y);
-
-//   std::cout << finalObjective << std::endl;
-// }
 
 // /* Uniform grid recovery */
 // TEST_CASE("TSNEUniformGridRecoveryTest", "[TSNETest]")

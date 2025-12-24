@@ -16,8 +16,8 @@
 
 namespace mlpack {
 
-template <typename MatType, typename DistanceType, typename TSNEMethod>
-TSNE<MatType, DistanceType, TSNEMethod>::TSNE(
+template <typename TSNEMethod, typename MatType, typename DistanceType>
+TSNE<TSNEMethod, MatType, DistanceType>::TSNE(
     const size_t outputDims,
     const double perplexity,
     const double exaggeration,
@@ -33,8 +33,8 @@ TSNE<MatType, DistanceType, TSNEMethod>::TSNE(
   // Nothing To Do Here
 }
 
-template <typename MatType, typename DistanceType, typename TSNEMethod>
-double TSNE<MatType, DistanceType, TSNEMethod>::Embed(
+template <typename TSNEMethod, typename MatType, typename DistanceType>
+double TSNE<TSNEMethod, MatType, DistanceType>::Embed(
     const MatType& X, MatType& Y)
 {
   // To Do: Make Early Exaggeration Iterations a parameter.
@@ -51,13 +51,13 @@ double TSNE<MatType, DistanceType, TSNEMethod>::Embed(
   // Automatically choose a good step size.
   // See "Automated optimized parameters for T-distributed stochastic
   // neighbor embedding improve visualization and analysis of large datasets"
-  const bool isStepSizeAuto = (bool)(stepSize == 0);
+  const bool isStepSizeAuto = (stepSize == 0.0);
   if (isStepSizeAuto)
     stepSize = std::max(200.0, X.n_cols / exaggeration);
 
   // Calculate degrees of freedom.
   // See "Learning a Parametric Embedding by Preserving Local Structure".
-  const size_t dof = std::max(1UL, outputDims - 1);
+  const size_t dof = std::max<size_t>(1, outputDims - 1);
 
   double finalObjective = std::numeric_limits<double>::infinity();
 
@@ -104,16 +104,16 @@ double TSNE<MatType, DistanceType, TSNEMethod>::Embed(
   Log::Info << "Final Objective: " << finalObjective << std::endl;
 
   // If the stepSize was set automatically, reset it to
-  // zero so that the next call to embed can recompute it.
+  // zero so that the next call to `Embed()` can recompute it.
   if (isStepSizeAuto)
     stepSize = 0;
 
   return finalObjective;
 }
 
-template <typename MatType, typename DistanceType, typename TSNEMethod>
-void TSNE<MatType, DistanceType, TSNEMethod>::InitializeEmbedding(
-    const MatType &X, MatType &Y)
+template <typename TSNEMethod, typename MatType, typename DistanceType>
+void TSNE<TSNEMethod, MatType, DistanceType>::InitializeEmbedding(
+    const MatType& X, MatType& Y)
 {
   if (init == "pca")
   {

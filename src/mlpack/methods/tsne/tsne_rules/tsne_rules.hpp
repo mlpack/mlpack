@@ -14,9 +14,9 @@
 #define MLPACK_METHODS_TSNE_TSNE_RULES_TSNE_RULES_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/tree/octree.hpp>
+#include <mlpack/core/distances/distances.hpp>
 
-#include "./tsne_centroid_statistic.hpp"
+#include "../tsne_statistic.hpp"
 
 namespace mlpack {
 
@@ -45,8 +45,8 @@ class TSNERules
    *
    * @param sumQ Normalization value for the repulsive forces.
    * @param repF Matrix used to store the repulsive forces.
-   * @param embedding Low-dimentional embedding matrix.
-   * @param oldFromNew Mapping from the previous to the new order of points.
+   * @param embedding Low-Dimentional embedding matrix.
+   * @param oldFromNew Mappings from new to old ordering of points.
    * @param dof Degrees of freedom.
    * @param theta Coarseness of the approximation.
    */
@@ -160,10 +160,10 @@ class TSNERules
   //! Matrix used to store the repulsive forces.
   MatType& repF;
 
-  //! Low-dimentional embedding matrix.
+  //! The embedding matrix.
   const MatType& embedding;
 
-  //! Mapping from new to previous order of points.
+  //! Mapping from new to old ordering of points.
   const std::vector<size_t>& oldFromNew;
 
   //! Degrees of freedom

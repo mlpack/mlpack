@@ -1,5 +1,5 @@
 /**
- * @file methods/tsne/centroid_statistic.hpp
+ * @file methods/tsne/tsne_statistic.hpp
  * @author Ryan Curtin
  *
  * Definition and Implementation of the Centroid Statistic for t-SNE.
@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_TSNE_CENTROID_STATISTIC
-#define MLPACK_METHODS_TSNE_CENTROID_STATISTIC
+#ifndef MLPACK_METHODS_TSNE_TSNE_STATISTIC
+#define MLPACK_METHODS_TSNE_TSNE_STATISTIC
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/tree/tree_traits.hpp>
@@ -26,8 +26,7 @@ namespace mlpack {
  * as the weighted mean of child centroids, where the weight is the number of
  * descendants in the corresponding child.
  *
- * @tparam VecType Vector type used to store the centroid (default is
- *         arma::vec).
+ * @tparam VecType Vector type used to store the centroid.
  */
 template <typename VecType>
 class CentroidStatisticType
@@ -57,9 +56,10 @@ class CentroidStatisticType
       centroid += node.Dataset().col(node.Point(i));
     }
 
-    for (size_t i = 0; i < node.NumChildren(); i++)
+    for (size_t i = 0; i < node.NumChildren(); ++i)
       centroid += node.Child(i).NumDescendants() *
                   node.Child(i).Stat().Centroid();
+
     centroid /= node.NumDescendants();
   }
 
@@ -77,4 +77,4 @@ using CentroidStatistic = CentroidStatisticType<arma::vec>;
 
 } // namespace mlpack
 
-#endif // MLPACK_METHODS_TSNE_CENTROID_STATISTIC
+#endif // MLPACK_METHODS_TSNE_TSNE_STATISTIC

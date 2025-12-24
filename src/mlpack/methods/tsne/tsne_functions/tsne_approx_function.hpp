@@ -1,5 +1,5 @@
 /**
- * @file methods/tsne/tsne_function/tsne_approx_function.hpp
+ * @file methods/tsne/tsne_functions/tsne_approx_function.hpp
  * @author Ranjodh Singh
  *
  * Definition of the approximate objective function for t-SNE.
@@ -12,7 +12,6 @@
 #ifndef MLPACK_METHODS_TSNE_TSNE_FUNCTIONS_TSNE_APPROX_FUNCTION_HPP
 #define MLPACK_METHODS_TSNE_TSNE_FUNCTIONS_TSNE_APPROX_FUNCTION_HPP
 
-#include <omp.h>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/tree/octree.hpp>
 #include <mlpack/methods/neighbor_search.hpp>
@@ -25,19 +24,22 @@ namespace mlpack {
 /**
  * Approximate objective function for t-SNE.
  *
- * This class implements an tree-based approximation of the t-SNE objective
+ * This class implements a tree-based approximation of the t-SNE objective
  * that decomposes forces into attractive and repulsive components and computes
  * the gradient efficiently using an octree. The implementation is templated to
  * support both the Dual-Tree and the Barnes-Hut method.
  *
+ * @note The specified distance metric is used only for computing input
+ * space similarities. Similarities in the embedding space are computed
+ * using the Euclidean distance via the Student's t-distribution kernel.
+ *
  * @tparam UseDualTree Flag indicating whether to use the Dual-Tree method
- *         instead of the Barnes-Hut method.
+ *     instead of the Barnes-Hut method.
  * @tparam MatType The type of Matrix.
- * @tparam DistanceType The distance metric.
+ * @tparam DistanceType The distance metric for computing input space
+ *     similarities.
  */
-template <bool UseDualTree,
-          typename MatType,
-          typename DistanceType>
+template <bool UseDualTree, typename MatType, typename DistanceType>
 class TSNEApproxFunction
 {
  public:
@@ -54,7 +56,7 @@ class TSNEApproxFunction
    * Constructs the TSNEApproxFunction object.
    *
    * @param X The input data.
-   * @param perplexity Perplexity of the Gaussian distribution.
+   * @param perplexity Perplexity of the input space similarity distribution.
    * @param dof Degrees of freedom.
    * @param theta Coarseness of the approximation.
    */
@@ -67,10 +69,12 @@ class TSNEApproxFunction
    * EvaluateWithGradient for differentiable function optimizers.
    *
    * Returns the Kullback-Leibler (KL) divergence between the input and
-   * the embedding, and stores its gradient w.r.t to the embedding in `g`.
+   * the embedding, and stores its gradient w.r.t. the embedding in `g`.
    *
    * @param y The embedding matrix.
-   * @param g The variable used to store the new gradient.
+   * @param g The variable to store the gradient.
+   *
+   * @return The KL divergence value.
    */
   template <typename GradType>
   typename MatType::elem_type EvaluateWithGradient(
@@ -81,12 +85,12 @@ class TSNEApproxFunction
    * approximation.
    *
    * @param g The gradient matrix.
-   * @param y The embedding matrix
+   * @param y The embedding matrix.
    *
    * @return The normalization value for the repulsive forces.
    */
-  double CalculateRepuliveForces(
-      MatType &g, const MatType& y, std::true_type /* tag */);
+  double CalculateRepulsiveForces(
+      MatType& g, const MatType& y, std::true_type /* tag */);
 
   /**
    * Calculates the repulsive part of the gradient using Barnes-Hut
@@ -97,8 +101,8 @@ class TSNEApproxFunction
    *
    * @return The normalization value for the repulsive forces.
    */
-  double CalculateRepuliveForces(
-      MatType &g, const MatType& y, std::false_type /* tag */);
+  double CalculateRepulsiveForces(
+      MatType& g, const MatType& y, std::false_type /* tag */);
 
   /**
    * Calculates the attractive part of the gradient.
@@ -107,10 +111,10 @@ class TSNEApproxFunction
    * @param y The embedding matrix.
    * @param sumQ The normalization value for the repulsive forces.
    *
-   * @return The KL Divergence Value.
+   * @return The KL divergence value.
    */
-  double CalculateAttractiveForces(
-      MatType &g, const MatType& y, const double sumQ);
+  typename MatType::elem_type CalculateAttractiveForces(
+      MatType& g, const MatType& y, const double sumQ);
 
   //! Get the Input Joint Probabilities.
   const SpMatType& InputJointProbabilities() const { return P; }
@@ -118,16 +122,16 @@ class TSNEApproxFunction
   SpMatType& InputJointProbabilities() { return P; }
 
  private:
-  //! Input joint probabilities.
-  SpMatType P;
-
-  //! Nearest neibhbor distances.
-  MatType D;
-
-  //! Nearest neighbor indices.
+  //! k-nearest neighbor indices.
   arma::Mat<size_t> N;
 
-  //! Perplexity of the Gaussian distribution.
+  //! k-nearest neighbor distances.
+  MatType D;
+  
+  //! Input space similarity distribution (normalized).
+  SpMatType P;
+
+  //! Perplexity of the input space similarity distribution.
   double perplexity;
 
   //! Degrees of freedom.
@@ -137,11 +141,11 @@ class TSNEApproxFunction
   double theta;
 };
 
-// Convenience typedef for TSNEDualTreeFunction
+// Convenience alias for TSNEDualTreeFunction
 template<typename MatType, typename DistanceType>
 using TSNEDualTreeFunction = TSNEApproxFunction<true, MatType, DistanceType>;
 
-// Convenience typedef for TSNEBarnesHutFunction
+// Convenience alias for TSNEBarnesHutFunction
 template<typename MatType, typename DistanceType>
 using TSNEBarnesHutFunction = TSNEApproxFunction<false, MatType, DistanceType>;
 
