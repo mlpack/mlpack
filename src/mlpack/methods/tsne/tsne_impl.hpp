@@ -78,12 +78,12 @@ double TSNE<TSNEMethod, MatType, DistanceType>::Embed(
             << std::endl;
 
   // Start Exaggerating
-  function.InputJointProbabilities() *= exaggeration;
+  function.InputSimilarities() *= exaggeration;
 
   finalObjective = exploratoryOptimizer.Optimize(function, Y);
 
   // Stop Exaggerating
-  function.InputJointProbabilities() /= exaggeration;
+  function.InputSimilarities() /= exaggeration;
 
   Log::Info << "Completed Exploratory Phase of t-SNE Optimization."
             << std::endl;
@@ -119,6 +119,7 @@ void TSNE<TSNEMethod, MatType, DistanceType>::InitializeEmbedding(
   {
     PCA pca;
     pca.Apply(X, Y, outputDims);
+    Y /= stddev(Y.row(0)); 
   }
   else if (init == "random")
   {
@@ -129,7 +130,7 @@ void TSNE<TSNEMethod, MatType, DistanceType>::InitializeEmbedding(
     throw std::invalid_argument("invalid initialization type");
   }
 
-  Y = (Y.each_col() / stddev(Y, 0, 1)) * 1e-4;
+  Y *= 1e-4;
 }
 
 } // namespace mlpack

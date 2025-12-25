@@ -33,7 +33,7 @@ TSNEExactFunction<MatType, DistanceType>::TSNEExactFunction(
   if (!std::is_same_v<DistanceType, SquaredEuclideanDistance>)
       D = arma::square(D);
 
-  P = computeInputProbabilities(perplexity, D);
+  P = computeInputSimilarities(perplexity, D);
   P.clamp(arma::Datum<ElemType>::eps, arma::Datum<ElemType>::inf);
 }
 

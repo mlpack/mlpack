@@ -95,6 +95,9 @@ namespace mlpack {
  *
  * @tparam TSNEMethod Gradient computation method. Options are: "ExactTSNE",
  *        "DualTreeTSNE", "BarnesHutTSNE". (Default: "BarnesHutTSNE").
+ * @tparam MatType The type of Matrix.
+ * @tparam DistanceType The distance metric for computing input space
+ *     similarities.
  */
 template <
     typename TSNEMethod = BarnesHutTSNE,

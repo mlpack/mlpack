@@ -32,7 +32,7 @@ TSNEApproxFunction<UseDualTree, MatType, DistanceType>::TSNEApproxFunction(
   if (!std::is_same_v<DistanceType, SquaredEuclideanDistance>)
     D = square(D);
 
-  P = computeInputProbabilities(perplexity, N, D);
+  P = computeInputSimilarities(perplexity, N, D);
 }
 
 template <bool UseDualTree, typename MatType, typename DistanceType>

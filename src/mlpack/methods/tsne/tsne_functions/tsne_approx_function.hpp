@@ -116,10 +116,10 @@ class TSNEApproxFunction
   typename MatType::elem_type CalculateAttractiveForces(
       MatType& g, const MatType& y, const double sumQ);
 
-  //! Get the Input Joint Probabilities.
-  const SpMatType& InputJointProbabilities() const { return P; }
-  //! Modify the Input Joint Probabilities.
-  SpMatType& InputJointProbabilities() { return P; }
+  //! Get the input space similarity distribution.
+  const SpMatType& InputSimilarities() const { return P; }
+  //! Modify the input space similarity distribution.
+  SpMatType& InputSimilarities() { return P; }
 
  private:
   //! k-nearest neighbor indices.

@@ -65,10 +65,10 @@ class TSNEExactFunction
   typename MatType::elem_type EvaluateWithGradient(
       const MatType& y, GradType& g);
 
-  //! Get the input joint probabilities.
-  const MatType& InputJointProbabilities() const { return P; }
-  //! Modify the input joint probabilities.
-  MatType& InputJointProbabilities() { return P; }
+  //! Get the input space similarity distribution.
+  const MatType& InputSimilarities() const { return P; }
+  //! Modify the input space similarity distribution.
+  MatType& InputSimilarities() { return P; }
 
  private:
   //! Input space similarity distribution (normalized).
