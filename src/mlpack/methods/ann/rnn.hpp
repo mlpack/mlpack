@@ -40,6 +40,7 @@ class RNN
   // Convenience typedefs.
   using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
+  using URowType = typename GetURowType<MatType>::type;
 
   /**
    * Create the RNN object.
@@ -223,7 +224,7 @@ class RNN
   template<typename OptimizerType, typename... CallbackTypes>
   ElemType Train(CubeType predictors,
                  CubeType responses,
-                 arma::urowvec sequenceLengths,
+                 URowType sequenceLengths,
                  OptimizerType& optimizer,
                  CallbackTypes&&... callbacks);
 
@@ -258,7 +259,7 @@ class RNN
   template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
   ElemType Train(CubeType predictors,
                  CubeType responses,
-                 arma::urowvec sequenceLengths,
+                 URowType sequenceLengths,
                  CallbackTypes&&... callbacks);
 
   /**
@@ -290,7 +291,7 @@ class RNN
    */
   void Predict(const CubeType& predictors,
                CubeType& results,
-               const arma::urowvec& sequenceLengths);
+               const URowType& sequenceLengths);
 
   // Return the nujmber of weights in the model.
   size_t WeightSize() { return network.WeightSize(); }
@@ -365,7 +366,7 @@ class RNN
    */
   ElemType Evaluate(const CubeType& predictors,
                     const CubeType& responses,
-                    const arma::urowvec& sequenceLengths);
+                    const URowType& sequenceLengths);
 
   // Serialize the model.
   template<typename Archive>
@@ -473,7 +474,7 @@ class RNN
    */
   void ResetData(CubeType predictors,
                  CubeType responses,
-                 arma::urowvec sequenceLengths = arma::urowvec());
+                 URowType sequenceLengths = URowType());
 
  private:
   // Helper functions.
@@ -509,8 +510,8 @@ class RNN
   CubeType responses;
 
   // The length of each input sequence.  If this is empty, then every sequence
-  // is assuemd to have the same length (`predictors.n_slices`).
-  arma::urowvec sequenceLengths;
+  // is assumed to have the same length (`predictors.n_slices`).
+  URowType sequenceLengths;
 }; // class RNNType
 
 } // namespace mlpack

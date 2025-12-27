@@ -161,7 +161,7 @@ typename MatType::elem_type RNN<
     OptimizerType& optimizer,
     CallbackTypes&&... callbacks)
 {
-  ResetData(std::move(predictors), std::move(responses), arma::urowvec());
+  ResetData(std::move(predictors), std::move(responses), URowType());
 
   network.WarnMessageMaxIterations(optimizer, this->predictors.n_cols);
 
@@ -212,7 +212,7 @@ typename MatType::elem_type RNN<
 >::Train(
     CubeType predictors,
     CubeType responses,
-    arma::urowvec sequenceLengths,
+    URowType sequenceLengths,
     OptimizerType& optimizer,
     CallbackTypes&&... callbacks)
 {
@@ -248,7 +248,7 @@ typename MatType::elem_type RNN<
 >::Train(
     CubeType predictors,
     CubeType responses,
-    arma::urowvec sequenceLengths,
+    URowType sequenceLengths,
     CallbackTypes&&... callbacks)
 {
   OptimizerType optimizer;
@@ -315,7 +315,7 @@ void RNN<
 >::Predict(
     const CubeType& predictors,
     CubeType& results,
-    const arma::urowvec& sequenceLengths)
+    const URowType& sequenceLengths)
 {
   // Ensure that the network is configured correctly.
   network.CheckNetwork("RNN::Predict()", predictors.n_rows, true, false);
@@ -424,7 +424,7 @@ typename MatType::elem_type RNN<
 >::Evaluate(
     const CubeType& predictors,
     const CubeType& responses,
-    const arma::urowvec& sequenceLengths)
+    const URowType& sequenceLengths)
 {
   // Ensure that the network is configured correctly.
   network.CheckNetwork("RNN::Evaluate()", predictors.n_rows);
@@ -762,7 +762,7 @@ void RNN<
 >::ResetData(
     CubeType predictors,
     CubeType responses,
-    arma::urowvec sequenceLengths)
+    URowType sequenceLengths)
 {
   this->predictors = std::move(predictors);
   this->responses = std::move(responses);
