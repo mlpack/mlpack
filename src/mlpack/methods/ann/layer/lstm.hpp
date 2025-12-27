@@ -293,7 +293,7 @@ class LSTM : public RecurrentLayer<MatType>
 
   // Calling this function will set all the aliases for the functions above to
   // the correct places in the current recurrent state methods.
-  void SetInternalAliases(const size_t batchSize);
+  void SetInternalAliases(const size_t activePoints);
 
   // Calling this function will set up workspace memory for the backward pass,
   // if necessary.

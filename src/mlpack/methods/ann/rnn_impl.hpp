@@ -605,25 +605,45 @@ typename MatType::elem_type RNN<
   // having to do with the output layer.
   loss += ElemType(network.network.Loss());
 
+  // Reorder the data so the sequence lengths are in descending order.
+  if (sequenceLengths.n_elem > 0)
+  {
+    arma::urowvec batchLengths;
+    MakeAlias(batchLengths, sequenceLengths, batchSize, begin);
+    arma::uvec ordering = arma::sort_index(batchLengths, "descending");
+
+    ReorderData(ordering, predictors, predictors);
+    ReorderData(ordering, responses, responses);
+  }
+
   // For backpropagation through time, we must backpropagate for every
   // subsequence of length `bpttSteps`.  Before we've taken `bpttSteps` though,
   // we will be backpropagating shorter sequences.
   const size_t steps = (sequenceLengths.n_elem == 0) ? predictors.n_slices :
       sequenceLengths.subvec(begin, begin + batchSize - 1).max();
+  size_t activePoints = batchSize;
   for (size_t t = 0; t < steps; ++t)
   {
     SetCurrentStep(t, (t == (steps - 1)));
 
+    // Calculate the number of active points.
     if (sequenceLengths.n_elem > 0)
     {
-      // Calculate number of active points.
+      for (size_t i = activePoints; i > 0; i--)
+      {
+        if (sequenceLengths[begin + i - 1] >= t)
+        {
+          activePoints = i;
+          break;
+        }
+      }
     }
 
     // Make an alias of the step's data for the forward pass.
-    MakeAlias(stepData, predictors.slice(t), predictors.n_rows, batchSize,
+    MakeAlias(stepData, predictors.slice(t), predictors.n_rows, activePoints,
         begin * predictors.slice(t).n_rows);
     MakeAlias(outputData, outputs.slice(t % effectiveBPTTSteps), outputs.n_rows,
-        outputs.n_cols);
+        activePoints);
     network.network.Forward(stepData, outputData);
 
     // Determine what the response should be.  If we are in single mode but not
@@ -646,9 +666,9 @@ typename MatType::elem_type RNN<
         error.zeros();
 
         MakeAlias(stepData, predictors.slice(t - step), predictors.n_rows,
-            batchSize, begin * predictors.slice(t - step).n_rows);
+            activePoints, begin * predictors.slice(t - step).n_rows);
         MakeAlias(outputData, outputs.slice((t - step) % effectiveBPTTSteps),
-            outputs.n_rows, outputs.n_cols);
+            outputs.n_rows, activePoints);
       }
       else
       {
@@ -656,11 +676,11 @@ typename MatType::elem_type RNN<
         // error.
         const size_t responseStep = (single) ? 0 : t - step;
         MakeAlias(stepData, predictors.slice(t - step), predictors.n_rows,
-            batchSize, begin * predictors.slice(t - step).n_rows);
+            activePoints, begin * predictors.slice(t - step).n_rows);
         MakeAlias(responseData, responses.slice(responseStep), responses.n_rows,
-            batchSize, begin * responses.slice(responseStep).n_rows);
+            activePoints, begin * responses.slice(responseStep).n_rows);
         MakeAlias(outputData, outputs.slice((t - step) % effectiveBPTTSteps),
-            outputs.n_rows, outputs.n_cols);
+            outputs.n_rows, activePoints);
 
         // We only need to do this on the first time step of BPTT.
         loss += network.outputLayer.Forward(outputData, responseData);
@@ -675,7 +695,8 @@ typename MatType::elem_type RNN<
       // TODO: note that we could avoid the copy of currentGradient by having
       // each layer *add* its gradient to `gradient`.  However that would
       // require some amount of refactoring.
-      MatType networkDelta(predictors.n_rows, batchSize, arma::fill::none);
+      MatType networkDelta(predictors.n_rows, activePoints,
+          GetFillType<MatType>::none);
       GradType currentGradient(gradient.n_rows, gradient.n_cols,
           GetFillType<MatType>::zeros);
       network.network.Backward(stepData, outputData, error, networkDelta);

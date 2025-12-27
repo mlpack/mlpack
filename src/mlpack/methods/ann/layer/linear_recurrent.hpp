@@ -163,8 +163,22 @@ class LinearRecurrent : public RecurrentLayer<MatType>
   // Bias vector.
   MatType bias;
 
+  // Aliases of the recurrent states.
+  MatType currentOutput;
+  MatType previousOutput;
+  MatType currentGradient;
+  MatType previousGradient;
+
   // Locally-stored regularizer object.
   RegularizerType regularizer;
+
+  // Calling this function will set all the aliases for the functions above to
+  // the correct places in the current recurrent state methods.
+  void SetStateAliases(const size_t activePoints);
+
+  // Calling this function will set all the aliases for the functions above to
+  // the correct places in the current recurrent gradient methods.
+  void SetGradientAliases(const size_t activePoints);
 };
 
 } // namespace mlpack

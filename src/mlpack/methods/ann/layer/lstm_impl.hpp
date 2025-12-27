@@ -126,11 +126,11 @@ template<typename MatType>
 void LSTM<MatType>::Forward(const MatType& input, MatType& output)
 {
   // Convenience alias.
-  const size_t batchSize = input.n_cols;
+  const size_t activePoints = input.n_cols;
 
   // The internal quantities are stored as recurrent state; so, set aliases
   // correctly for this time step.
-  SetInternalAliases(batchSize);
+  SetInternalAliases(activePoints);
 
   // Compute internal state:
   //
@@ -142,19 +142,19 @@ void LSTM<MatType>::Forward(const MatType& input, MatType& output)
   // y_t  =    tanh(c_t) % o_t
 
   // Start by computing all non-recurrent portions.
-  blockInput = blockInputWeight * input + repmat(blockInputBias, 1, batchSize);
-  inputGate = inputGateWeight * input + repmat(inputGateBias, 1, batchSize);
-  forgetGate = forgetGateWeight * input + repmat(forgetGateBias, 1, batchSize);
-  outputGate = outputGateWeight * input + repmat(outputGateBias, 1, batchSize);
+  blockInput = blockInputWeight * input + repmat(blockInputBias, 1, activePoints);
+  inputGate = inputGateWeight * input + repmat(inputGateBias, 1, activePoints);
+  forgetGate = forgetGateWeight * input + repmat(forgetGateBias, 1, activePoints);
+  outputGate = outputGateWeight * input + repmat(outputGateBias, 1, activePoints);
 
   // Now add in recurrent portions, if needed.
   if (this->HasPreviousStep())
   {
     blockInput += recurrentBlockInputWeight * prevRecurrent;
     inputGate += recurrentInputGateWeight * prevRecurrent +
-        repmat(peepholeInputGateWeight, 1, batchSize) % prevCell;
+        repmat(peepholeInputGateWeight, 1, activePoints) % prevCell;
     forgetGate += recurrentForgetGateWeight * prevRecurrent +
-        repmat(peepholeForgetGateWeight, 1, batchSize) % prevCell;
+        repmat(peepholeForgetGateWeight, 1, activePoints) % prevCell;
   }
 
   // Apply nonlinearities.  (TODO: fast sigmoid?)
@@ -172,13 +172,13 @@ void LSTM<MatType>::Forward(const MatType& input, MatType& output)
   if (this->HasPreviousStep())
   {
     outputGate += recurrentOutputGateWeight * prevRecurrent +
-        repmat(peepholeOutputGateWeight, 1, batchSize) % thisCell;
+        repmat(peepholeOutputGateWeight, 1, activePoints) % thisCell;
   }
   else
   {
     // If we don't have a previous step, we still have to consider the peephole
     // connection.
-    outputGate += repmat(peepholeOutputGateWeight, 1, batchSize) % thisCell;
+    outputGate += repmat(peepholeOutputGateWeight, 1, activePoints) % thisCell;
   }
 
   // Apply nonlinearity for output gate.
@@ -222,9 +222,9 @@ void LSTM<MatType>::Backward(
   //
   // Before we start, set all the internal aliases, which will contain this time
   // step's values as computed in Forward().
-  const size_t batchSize = output.n_cols;
-  SetInternalAliases(batchSize);
-  SetBackwardWorkspace(batchSize);
+  const size_t activePoints = output.n_cols;
+  SetInternalAliases(activePoints);
+  SetBackwardWorkspace(activePoints);
 
   // First attempt...
   if (this->AtFinalStep())
@@ -245,7 +245,7 @@ void LSTM<MatType>::Backward(
   if (this->AtFinalStep())
   {
     deltaCell = deltaY % outputGate % (1 - square(tanh(thisCell))) +
-        repmat(peepholeOutputGateWeight, 1, batchSize) % deltaOutputGate;
+        repmat(peepholeOutputGateWeight, 1, activePoints) % deltaOutputGate;
   }
   else
   {
@@ -253,12 +253,12 @@ void LSTM<MatType>::Backward(
     // from the next time step.
     MatType nextForgetGate;
     MakeAlias(nextForgetGate, this->RecurrentState(this->CurrentStep() + 1),
-        outSize, batchSize, 4 * outSize * batchSize);
+        outSize, activePoints, 4 * outSize * activePoints);
 
     deltaCell = deltaY % outputGate % (1 - square(tanh(thisCell))) +
-        repmat(peepholeOutputGateWeight, 1, batchSize) % deltaOutputGate +
-        repmat(peepholeInputGateWeight, 1, batchSize) % nextDeltaInputGate +
-        repmat(peepholeForgetGateWeight, 1, batchSize) % nextDeltaForgetGate +
+        repmat(peepholeOutputGateWeight, 1, activePoints) % deltaOutputGate +
+        repmat(peepholeInputGateWeight, 1, activePoints) % nextDeltaInputGate +
+        repmat(peepholeForgetGateWeight, 1, activePoints) % nextDeltaForgetGate +
         nextDeltaCell % nextForgetGate;
   }
 
@@ -410,29 +410,29 @@ size_t LSTM<MatType>::RecurrentSize() const
 }
 
 template<typename MatType>
-void LSTM<MatType>::SetInternalAliases(const size_t batchSize)
+void LSTM<MatType>::SetInternalAliases(const size_t activePoints)
 {
   // Make all of the aliases for internal state point to the correct place.
   MatType& state = this->RecurrentState(this->CurrentStep());
 
   // First make aliases for the recurrent connections.
-  MakeAlias(thisRecurrent, state, outSize, batchSize);
-  MakeAlias(thisCell, state, outSize, batchSize, outSize * batchSize);
+  MakeAlias(thisRecurrent, state, outSize, activePoints);
+  MakeAlias(thisCell, state, outSize, activePoints, outSize * this->batchSize);
 
   // Now make aliases for the internal state members that we use as scratch
   // space for computation.
-  MakeAlias(blockInput, state, outSize, batchSize, 2 * outSize * batchSize);
-  MakeAlias(inputGate, state, outSize, batchSize, 3 * outSize * batchSize);
-  MakeAlias(forgetGate, state, outSize, batchSize, 4 * outSize * batchSize);
-  MakeAlias(outputGate, state, outSize, batchSize, 5 * outSize * batchSize);
+  MakeAlias(blockInput, state, outSize, activePoints, 2 * outSize * this->batchSize);
+  MakeAlias(inputGate, state, outSize, activePoints, 3 * outSize * this->batchSize);
+  MakeAlias(forgetGate, state, outSize, activePoints, 4 * outSize * this->batchSize);
+  MakeAlias(outputGate, state, outSize, activePoints, 5 * outSize * this->batchSize);
 
   // Make aliases for the previous time step, too, if we can.
   if (this->HasPreviousStep())
   {
     MatType& prevState = this->RecurrentState(this->PreviousStep());
 
-    MakeAlias(prevRecurrent, prevState, outSize, batchSize);
-    MakeAlias(prevCell, prevState, outSize, batchSize, outSize * batchSize);
+    MakeAlias(prevRecurrent, prevState, outSize, activePoints);
+    MakeAlias(prevCell, prevState, outSize, activePoints, outSize * this->batchSize);
   }
 }
 

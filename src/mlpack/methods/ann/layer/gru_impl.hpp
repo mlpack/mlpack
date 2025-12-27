@@ -104,10 +104,10 @@ template<typename MatType>
 void GRU<MatType>::Forward(const MatType& input, MatType& output)
 {
   // Convenience alias.
-  const size_t batchSize = input.n_cols;
+  const size_t activePoints = input.n_cols;
 
   // Set aliases from the recurrent state.
-  MakeStateAliases(batchSize);
+  MakeStateAliases(activePoints);
 
   // Compute internal state using the following algorithm.
   // r_t = sigmoid(W_r x_t + U_r y_{t - 1})
@@ -162,8 +162,8 @@ void GRU<MatType>::Backward(
     MatType& g)
 {
   // Get aliases from the recurrent state.
-  const size_t batchSize = output.n_cols;
-  MakeStateAliases(batchSize);
+  const size_t activePoints = output.n_cols;
+  MakeStateAliases(activePoints);
 
   // Work backwards to get error at each gate.
   // y_t = (1 - z_t) % y_{t - 1} + z_t % h_t
@@ -279,19 +279,19 @@ void GRU<MatType>::serialize(Archive& ar, const uint32_t /* version */)
 }
 
 template<typename MatType>
-void GRU<MatType>::MakeStateAliases(size_t batchSize)
+void GRU<MatType>::MakeStateAliases(size_t activePoints)
 {
   MatType& state = this->RecurrentState(this->CurrentStep());
 
-  MakeAlias(currentOutput, state, outSize, batchSize);
-  MakeAlias(resetGate, state, outSize, batchSize, outSize * batchSize);
-  MakeAlias(updateGate, state, outSize, batchSize, 2 * outSize * batchSize);
-  MakeAlias(hiddenGate, state, outSize, batchSize, 3 * outSize * batchSize);
+  MakeAlias(currentOutput, state, outSize, activePoints);
+  MakeAlias(resetGate, state, outSize, activePoints, outSize * this->batchSize);
+  MakeAlias(updateGate, state, outSize, activePoints, 2 * outSize * this->batchSize);
+  MakeAlias(hiddenGate, state, outSize, activePoints, 3 * outSize * this->batchSize);
 
   if (this->HasPreviousStep())
   {
     MatType& prevState = this->RecurrentState(this->PreviousStep());
-    MakeAlias(prevOutput, prevState, outSize, batchSize);
+    MakeAlias(prevOutput, prevState, outSize, activePoints);
   }
 }
 

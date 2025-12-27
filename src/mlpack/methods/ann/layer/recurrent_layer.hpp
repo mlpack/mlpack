@@ -145,6 +145,10 @@ class RecurrentLayer : public Layer<MatType>
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
+ protected:
+  // The number of points in the current batch.
+  size_t batchSize;
+
  private:
   // The current time step index.  This is set by the enclosing network during
   // forward and backward passes.

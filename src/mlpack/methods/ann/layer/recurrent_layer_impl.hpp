@@ -61,6 +61,7 @@ void RecurrentLayer<MatType>::ClearRecurrentState(
     const size_t bpttSteps,
     const size_t batchSize)
 {
+  this->batchSize = batchSize;
   const size_t numRecurrentElements = this->RecurrentSize();
   if (bpttSteps == 0)
   {

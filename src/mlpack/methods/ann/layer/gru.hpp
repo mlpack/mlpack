@@ -181,7 +181,7 @@ class GRU : public RecurrentLayer<MatType>
   MatType nextDeltaHidden;
 
   // Makes internal state aliases from the recurrent state.
-  void MakeStateAliases(size_t batchSize);
+  void MakeStateAliases(size_t activePoints);
 }; // class GRU
 
 } // namespace mlpack
