@@ -142,10 +142,14 @@ void LSTM<MatType>::Forward(const MatType& input, MatType& output)
   // y_t  =    tanh(c_t) % o_t
 
   // Start by computing all non-recurrent portions.
-  blockInput = blockInputWeight * input + repmat(blockInputBias, 1, activePoints);
-  inputGate = inputGateWeight * input + repmat(inputGateBias, 1, activePoints);
-  forgetGate = forgetGateWeight * input + repmat(forgetGateBias, 1, activePoints);
-  outputGate = outputGateWeight * input + repmat(outputGateBias, 1, activePoints);
+  blockInput = blockInputWeight * input + repmat(blockInputBias, 1,
+      activePoints);
+  inputGate = inputGateWeight * input + repmat(inputGateBias, 1,
+      activePoints);
+  forgetGate = forgetGateWeight * input + repmat(forgetGateBias, 1,
+      activePoints);
+  outputGate = outputGateWeight * input + repmat(outputGateBias, 1,
+      activePoints);
 
   // Now add in recurrent portions, if needed.
   if (this->HasPreviousStep())
@@ -258,7 +262,8 @@ void LSTM<MatType>::Backward(
     deltaCell = deltaY % outputGate % (1 - square(tanh(thisCell))) +
         repmat(peepholeOutputGateWeight, 1, activePoints) % deltaOutputGate +
         repmat(peepholeInputGateWeight, 1, activePoints) % nextDeltaInputGate +
-        repmat(peepholeForgetGateWeight, 1, activePoints) % nextDeltaForgetGate +
+        repmat(peepholeForgetGateWeight, 1, activePoints) %
+               nextDeltaForgetGate +
         nextDeltaCell % nextForgetGate;
   }
 
@@ -421,10 +426,14 @@ void LSTM<MatType>::SetInternalAliases(const size_t activePoints)
 
   // Now make aliases for the internal state members that we use as scratch
   // space for computation.
-  MakeAlias(blockInput, state, outSize, activePoints, 2 * outSize * this->batchSize);
-  MakeAlias(inputGate, state, outSize, activePoints, 3 * outSize * this->batchSize);
-  MakeAlias(forgetGate, state, outSize, activePoints, 4 * outSize * this->batchSize);
-  MakeAlias(outputGate, state, outSize, activePoints, 5 * outSize * this->batchSize);
+  MakeAlias(blockInput, state, outSize, activePoints, 2 * outSize *
+      this->batchSize);
+  MakeAlias(inputGate, state, outSize, activePoints, 3 * outSize *
+      this->batchSize);
+  MakeAlias(forgetGate, state, outSize, activePoints, 4 * outSize *
+      this->batchSize);
+  MakeAlias(outputGate, state, outSize, activePoints, 5 * outSize *
+      this->batchSize);
 
   // Make aliases for the previous time step, too, if we can.
   if (this->HasPreviousStep())
@@ -432,7 +441,8 @@ void LSTM<MatType>::SetInternalAliases(const size_t activePoints)
     MatType& prevState = this->RecurrentState(this->PreviousStep());
 
     MakeAlias(prevRecurrent, prevState, outSize, activePoints);
-    MakeAlias(prevCell, prevState, outSize, activePoints, outSize * this->batchSize);
+    MakeAlias(prevCell, prevState, outSize, activePoints, outSize *
+        this->batchSize);
   }
 }
 

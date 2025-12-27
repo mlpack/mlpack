@@ -285,8 +285,10 @@ void GRU<MatType>::MakeStateAliases(size_t activePoints)
 
   MakeAlias(currentOutput, state, outSize, activePoints);
   MakeAlias(resetGate, state, outSize, activePoints, outSize * this->batchSize);
-  MakeAlias(updateGate, state, outSize, activePoints, 2 * outSize * this->batchSize);
-  MakeAlias(hiddenGate, state, outSize, activePoints, 3 * outSize * this->batchSize);
+  MakeAlias(updateGate, state, outSize, activePoints, 2 * outSize *
+      this->batchSize);
+  MakeAlias(hiddenGate, state, outSize, activePoints, 3 * outSize *
+      this->batchSize);
 
   if (this->HasPreviousStep())
   {
