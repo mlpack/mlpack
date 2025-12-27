@@ -488,12 +488,6 @@ class RNN
   //! Set the current step index of all recurrent layers to `step`.
   void SetCurrentStep(const size_t step, const bool end);
 
-  // Set the current mask of all recurrent layers.
-  void SetMask(const arma::urowvec& mask);
-
-  // Clear the current mask of all recurrent layers.
-  void ClearMask();
-
   //! Number of timesteps to consider for backpropagation through time (BPTT).
   size_t bpttSteps;
   //! Whether the network expects only one single response per sequence, or one

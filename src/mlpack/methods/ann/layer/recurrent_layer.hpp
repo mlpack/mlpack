@@ -127,11 +127,6 @@ class RecurrentLayer : public Layer<MatType>
   // meant to be done by the enclosing network.)
   void CurrentStep(const size_t& step, const bool end = false);
 
-  // Get the current mask.
-  const arma::urowvec& Mask() const { return mask; }
-  // Modify the current mask.
-  arma::urowvec& Mask() { return mask; }
-
   // Get the previous step.  This is a very simple function but can lead to
   // slightly more readable code in Forward(), Backward(), and Gradient()
   // implementations.
@@ -149,12 +144,6 @@ class RecurrentLayer : public Layer<MatType>
   //! Serialize the recurrent layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
-
- protected:
-  // This holds the masking at the current time step. If masking is set, the
-  // number of elements is the same as the batch size. If masking is not set,
-  // this is empty.
-  arma::urowvec mask;
 
  private:
   // The current time step index.  This is set by the enclosing network during

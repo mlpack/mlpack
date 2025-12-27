@@ -178,16 +178,6 @@ void LinearRecurrent<MatType, RegularizerType>::Backward(
           recurrentWeights.t() * this->RecurrentGradient(this->CurrentStep());
     }
   }
-
-  // Zero out masked columns.
-  for (size_t i = 0; i < this->mask.n_elem; i++)
-  {
-    if (this->mask[i] == 0)
-    {
-      g.col(i).zeros();
-      this->RecurrentGradient(this->PreviousStep()).col(i).zeros();
-    }
-  }
 }
 
 // Compute the gradient with respect to the input.

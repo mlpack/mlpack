@@ -610,18 +610,13 @@ typename MatType::elem_type RNN<
   // we will be backpropagating shorter sequences.
   const size_t steps = (sequenceLengths.n_elem == 0) ? predictors.n_slices :
       sequenceLengths.subvec(begin, begin + batchSize - 1).max();
-  arma::urowvec mask(batchSize);
   for (size_t t = 0; t < steps; ++t)
   {
     SetCurrentStep(t, (t == (steps - 1)));
 
     if (sequenceLengths.n_elem > 0)
     {
-      // Get masking for the current step.
-      for (size_t i = 0; i < batchSize; i++)
-        mask[i] = (t < sequenceLengths[begin + i]);
-
-      SetMask(mask);
+      // Calculate number of active points.
     }
 
     // Make an alias of the step's data for the forward pass.
@@ -689,9 +684,6 @@ typename MatType::elem_type RNN<
       gradient += currentGradient;
     }
   }
-
-  if (sequenceLengths.n_elem > 0)
-    ClearMask();
 
   return loss;
 }
@@ -797,50 +789,6 @@ void RNN<
         dynamic_cast<RecurrentLayer<MatType>*>(l);
     if (r != nullptr)
       r->CurrentStep(step, end);
-  }
-}
-
-template<
-    typename OutputLayerType,
-    typename InitializationRuleType,
-    typename MatType
->
-void RNN<
-    OutputLayerType,
-    InitializationRuleType,
-    MatType
->::SetMask(const arma::urowvec& mask)
-{
-  // Iterate over all layers and set the mask.
-  for (Layer<MatType>* l : network.Network())
-  {
-    // We can only call Mask() on RecurrentLayers.
-    RecurrentLayer<MatType>* r =
-        dynamic_cast<RecurrentLayer<MatType>*>(l);
-    if (r != nullptr)
-      r->Mask() = mask;
-  }
-}
-
-template<
-    typename OutputLayerType,
-    typename InitializationRuleType,
-    typename MatType
->
-void RNN<
-    OutputLayerType,
-    InitializationRuleType,
-    MatType
->::ClearMask()
-{
-  // Iterate over all layers and clear the mask.
-  for (Layer<MatType>* l : network.Network())
-  {
-    // We can only call Mask() on RecurrentLayers.
-    RecurrentLayer<MatType>* r =
-        dynamic_cast<RecurrentLayer<MatType>*>(l);
-    if (r != nullptr)
-      r->Mask().clear();
   }
 }
 
