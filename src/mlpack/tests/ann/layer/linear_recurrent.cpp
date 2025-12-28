@@ -306,6 +306,7 @@ TEST_CASE("LinearRecurrentGradientStateTest", "[ANNLayerTest]")
     // First compute the gradient when we are at the last time step, so that the
     // recurrent state connection contributes nothing.
     l.CurrentStep(2, true /* end of sequence */);
+    // TODO: Do `Backward()` before `Gradient()` to set aliases.
     l.Gradient(input, error, gradientOutput);
 
     // Now compute the delta when we set the output error to 0, so all error

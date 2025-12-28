@@ -429,29 +429,59 @@ typename MatType::elem_type RNN<
   // Ensure that the network is configured correctly.
   network.CheckNetwork("RNN::Evaluate()", predictors.n_rows);
 
+  // Convenience alias.
+  size_t batchSize = predictors.n_cols;
+
   // Add the loss of the network unrelated to output.
   ElemType lossSum = ElemType(network.network.Loss());
 
-  MatType forwardOutput, inputAlias;
-  for (size_t i = 0; i < predictors.n_cols; i++)
+  // Reset recurrent memory state.
+  ResetMemoryState(1, batchSize);
+
+  // Reorder the data so the sequence lengths are in descending order.
+  CubeType reordPredictors, reordResponses;
+  if (sequenceLengths.n_elem > 0)
   {
-    // Reset memory for a new sequence.
-    ResetMemoryState(0, 1);
+    // Make copies and reorder those to preserve the constness of the original
+    // arguments.
+    reordPredictors = predictors;
+    reordResponses = responses;
+    URowType tempLengths = sequenceLengths;
+    ReorderBatch(0, batchSize, reordPredictors, reordResponses,
+        tempLengths);
+  }
+  else
+  {
+    // Reordering isn't needed so we just make aliases.
+    MakeAlias(reordPredictors, predictors, predictors.n_rows, predictors.n_cols,
+        predictors.n_slices);
+    MakeAlias(reordResponses, responses, responses.n_rows, responses.n_cols,
+        responses.n_slices);
+  }
 
-    // Iterate over all time slices.
-    size_t slices = sequenceLengths[i];
-    for (size_t t = 0; t < slices; t++)
+  MatType forwardOutput, inputAlias, responseAlias;
+  // Iterate over all time slices.
+  size_t slices = sequenceLengths.max();
+  size_t activePoints = batchSize;
+  for (size_t t = 0; t < slices; t++)
+  {
+    SetCurrentStep(t, (t == slices - 1));
+
+    // Calculate the number of active points.
+    if (sequenceLengths.n_elem > 0)
+      activePoints = accu(sequenceLengths > t);
+
+    // Get the input and response data.
+    MakeAlias(inputAlias, reordPredictors, predictors.n_rows,
+        activePoints, predictors.n_rows * predictors.n_cols * t);
+
+    // Do a forward pass and calculate the loss.
+    network.Forward(inputAlias, forwardOutput);
+    if (!single || t == slices - 1)
     {
-      SetCurrentStep(t, (t == slices - 1));
-      // Get the input data.
-      MakeAlias(inputAlias, predictors, predictors.n_rows, 1,
-          i * predictors.n_rows);
-
-      // Do a forward pass and calculate the loss.
-      network.Forward(inputAlias, forwardOutput);
-      if (!single || t == predictors.n_slices - 1)
-        lossSum += network.outputLayer.Forward(forwardOutput,
-            responses.slice(single ? 0 : t).col(i));
+      MakeAlias(responseAlias, reordResponses, responses.n_rows, activePoints,
+          responses.n_rows * responses.n_cols * (single ? 0 : t));
+      lossSum += network.outputLayer.Forward(forwardOutput, responseAlias);
     }
   }
 
