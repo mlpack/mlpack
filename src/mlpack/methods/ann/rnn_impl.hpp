@@ -608,12 +608,24 @@ typename MatType::elem_type RNN<
   // Reorder the data so the sequence lengths are in descending order.
   if (sequenceLengths.n_elem > 0)
   {
-    arma::urowvec batchLengths;
+    using UColType = typename GetUColType<MatType>::type;
+    UColType batchLengths;
     MakeAlias(batchLengths, sequenceLengths, batchSize, begin);
-    arma::uvec ordering = arma::sort_index(batchLengths, "descending");
 
-    ReorderData(ordering, predictors, predictors);
-    ReorderData(ordering, responses, responses);
+    // Get the new ordering of this batch.
+    UColType ordering = sort_index(batchLengths, "descending");
+
+    // Reorder all slices to use the new ordering.
+    MatType batchPredictors, batchResponses;
+    for (size_t i = 0; i < predictors.n_slices; i++)
+    {
+      MakeAlias(batchPredictors, predictors.slice(i), predictors.n_rows,
+          batchSize, begin * predictors.n_rows);
+      MakeAlias(batchResponses, responses.slice(i), responses.n_rows,
+          batchSize, begin * responses.n_rows);
+      ReorderData(ordering, batchPredictors, batchPredictors);
+      ReorderData(ordering, batchResponses, batchResponses);
+    }
   }
 
   // For backpropagation through time, we must backpropagate for every
@@ -629,14 +641,8 @@ typename MatType::elem_type RNN<
     // Calculate the number of active points.
     if (sequenceLengths.n_elem > 0)
     {
-      for (size_t i = activePoints; i > 0; i--)
-      {
-        if (sequenceLengths[begin + i - 1] >= t)
-        {
-          activePoints = i;
-          break;
-        }
-      }
+      activePoints = accu(sequenceLengths
+          .cols(begin, begin + batchSize - 1) > t);
     }
 
     // Make an alias of the step's data for the forward pass.
