@@ -97,4 +97,3 @@ add_markdown_docs(range_search range_search "cli" "")
 
 # tSNE CLI Executable
 add_cli_executable(tsne tsne)
-add_markdown_docs(tsne tsne "cli" "")

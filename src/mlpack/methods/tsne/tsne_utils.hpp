@@ -30,7 +30,7 @@ template<typename VecType>
 inline VecType binarySearchPerplexity(
     const VecType& DSqi,
     const double perplexity,
-    const double tolerance = 1e-5, 
+    const double tolerance = 1e-5,
     const size_t maxSteps = 100)
 {
   VecType Pi(size(DSqi));

@@ -422,16 +422,19 @@ TEST_CASE("TSNEBarnesHutMatchExact", "[TSNETest]")
   MatType Y(2, 150, arma::fill::randn);
   MatType gradientExact(2, 150, arma::fill::zeros);
   MatType gradientBarnesHut(2, 150, arma::fill::zeros);
-  
-  const double finalObjectiveExact = tsneExact.EvaluateWithGradient(Y, gradientExact);
-  const double finalObjectiveBarnesHut = tsneBarnesHut.EvaluateWithGradient(Y, gradientBarnesHut);
+
+  const double finalObjectiveExact = tsneExact.EvaluateWithGradient(
+      Y, gradientExact);
+  const double finalObjectiveBarnesHut = tsneBarnesHut.EvaluateWithGradient(
+      Y, gradientBarnesHut);
 
   std::cout << finalObjectiveExact << ' '
             << finalObjectiveBarnesHut << std::endl;
 
   REQUIRE(finalObjectiveExact ==
-          Approx(finalObjectiveBarnesHut).margin(1e-9));
-  REQUIRE(arma::approx_equal(gradientExact, gradientBarnesHut, "absdiff", 1e-9));
+      Approx(finalObjectiveBarnesHut).margin(1e-9));
+  REQUIRE(arma::approx_equal(
+      gradientExact, gradientBarnesHut, "absdiff", 1e-9));
 }
 
 /**
@@ -453,16 +456,19 @@ TEST_CASE("TSNEDualTreeMatchExact", "[TSNETest]")
   MatType Y(2, 150, arma::fill::randn);
   MatType gradientExact(2, 150, arma::fill::zeros);
   MatType gradientDualTree(2, 150, arma::fill::zeros);
-  
-  const double finalObjectiveExact = tsneExact.EvaluateWithGradient(Y, gradientExact);
-  const double finalObjectiveDualTree = tsneDualTree.EvaluateWithGradient(Y, gradientDualTree);
+
+  const double finalObjectiveExact = tsneExact.EvaluateWithGradient(
+      Y, gradientExact);
+  const double finalObjectiveDualTree = tsneDualTree.EvaluateWithGradient(
+      Y, gradientDualTree);
 
   std::cout << finalObjectiveExact << ' '
             << finalObjectiveDualTree << std::endl;
 
   REQUIRE(finalObjectiveExact ==
-          Approx(finalObjectiveDualTree).margin(1e-9));
-  REQUIRE(arma::approx_equal(gradientExact, gradientDualTree, "absdiff", 1e-9));
+      Approx(finalObjectiveDualTree).margin(1e-9));
+  REQUIRE(arma::approx_equal(
+      gradientExact, gradientDualTree, "absdiff", 1e-9));
 }
 
 /**
@@ -478,23 +484,26 @@ TEST_CASE("TSNEDualTreeMatchBarnesHut", "[TSNETest]")
     FAIL("Cannot load test dataset iris.csv!");
 
   TSNEFunction<BarnesHutTSNE, MatType, SquaredEuclideanDistance> tsneBarnesHut(
-    X, 50.0, 1, 0.0);
+      X, 50.0, 1, 0.0);
   TSNEFunction<DualTreeTSNE, MatType, SquaredEuclideanDistance> tsneDualTree(
-    X, 50.0, 1, 0.0);
+      X, 50.0, 1, 0.0);
 
   MatType Y(2, 150, arma::fill::randn);
   MatType gradientBarnesHut(2, 150, arma::fill::zeros);
   MatType gradientDualTree(2, 150, arma::fill::zeros);
-  
-  const double finalObjectiveBarnesHut = tsneBarnesHut.EvaluateWithGradient(Y, gradientBarnesHut);
-  const double finalObjectiveDualTree = tsneDualTree.EvaluateWithGradient(Y, gradientDualTree);
+
+  const double finalObjectiveBarnesHut = tsneBarnesHut.EvaluateWithGradient(
+      Y, gradientBarnesHut);
+  const double finalObjectiveDualTree = tsneDualTree.EvaluateWithGradient(
+      Y, gradientDualTree);
 
   std::cout << finalObjectiveBarnesHut << ' '
             << finalObjectiveDualTree << std::endl;
 
   REQUIRE(finalObjectiveBarnesHut ==
-          Approx(finalObjectiveDualTree).margin(1e-9));
-  REQUIRE(arma::approx_equal(gradientBarnesHut, gradientDualTree, "absdiff", 1e-9));
+      Approx(finalObjectiveDualTree).margin(1e-9));
+  REQUIRE(arma::approx_equal(
+      gradientBarnesHut, gradientDualTree, "absdiff", 1e-9));
 }
 
 #ifdef MLPACK_USE_OPENMP

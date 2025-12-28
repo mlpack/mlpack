@@ -119,7 +119,7 @@ void TSNE<TSNEMethod, MatType, DistanceType>::InitializeEmbedding(
   {
     PCA pca;
     pca.Apply(X, Y, outputDims);
-    Y /= stddev(Y.row(0)); 
+    Y /= stddev(Y.row(0));
   }
   else if (init == "random")
   {

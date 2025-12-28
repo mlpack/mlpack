@@ -47,7 +47,7 @@ class TSNEApproxFunction
   using ElemType = typename MatType::elem_type;
   using VecType = typename GetColType<MatType>::type;
   using SpMatType = typename GetSparseMatType<MatType>::type;
-  
+
   using RuleType = TSNERules<MatType>;
   using TreeType = Octree<SquaredEuclideanDistance,
                           CentroidStatistic<VecType>,
