@@ -149,7 +149,7 @@ void MakeAlias(OutVecType& v,
   coot::dev_mem_t<typename InVecType::elem_type> newMem =
       oldVec.get_dev_mem() + offset;
   v.~OutVecType();
-  new (&v) OutVecType(newMem, numElems, false, strict);
+  new (&v) OutVecType(newMem, numElems);
 }
 
 /**
