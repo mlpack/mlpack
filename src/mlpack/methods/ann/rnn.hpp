@@ -489,6 +489,13 @@ class RNN
   //! Set the current step index of all recurrent layers to `step`.
   void SetCurrentStep(const size_t step, const bool end);
 
+  // Reorders the data in a batch to have sequence lengths in descending order.
+  void ReorderBatch(const size_t begin,
+                    const size_t batchSize,
+                    CubeType& predictors,
+                    CubeType& responses,
+                    URowType& sequenceLengths);
+
   //! Number of timesteps to consider for backpropagation through time (BPTT).
   size_t bpttSteps;
   //! Whether the network expects only one single response per sequence, or one

@@ -520,26 +520,34 @@ typename MatType::elem_type RNN<
   ResetMemoryState(1, batchSize);
   MatType output(network.network.OutputSize(), batchSize);
 
-  if (sequenceLengths.n_elem > 0 && batchSize != 1)
-    throw std::invalid_argument("Batch size must be 1 for ragged sequences!");
+  // Reorder the data so the sequence lengths are in descending order.
+  if (sequenceLengths.n_elem > 0)
+    ReorderBatch(begin, batchSize, predictors, responses, sequenceLengths);
 
   ElemType loss = 0;
   MatType stepData, responseData;
   const size_t steps = (sequenceLengths.n_elem == 0) ? predictors.n_slices :
-      sequenceLengths[begin];
+      sequenceLengths.subvec(begin, begin + batchSize - 1).max();
+  size_t activePoints = batchSize;
   for (size_t t = 0; t < steps; ++t)
   {
     // Manually reset the data of the network to be an alias of the current time
     // step.
     SetCurrentStep(t, (t == steps));
+
+    // Calculate the number of active points.
+    if (sequenceLengths.n_elem > 0)
+      activePoints = accu(sequenceLengths
+          .subvec(begin, begin + batchSize - 1) > t);
+
     MakeAlias(network.predictors, predictors.slice(t), predictors.n_rows,
-        batchSize, begin * predictors.slice(t).n_rows);
+        activePoints, begin * predictors.slice(t).n_rows);
     const size_t responseStep = (single) ? 0 : t;
     MakeAlias(network.responses, responses.slice(responseStep),
-        responses.n_rows, batchSize,
+        responses.n_rows, activePoints,
         begin * responses.slice(responseStep).n_rows);
 
-    loss += network.Evaluate(output, begin, batchSize);
+    loss += network.Evaluate(output, begin, activePoints);
   }
 
   return loss;
@@ -607,26 +615,7 @@ typename MatType::elem_type RNN<
 
   // Reorder the data so the sequence lengths are in descending order.
   if (sequenceLengths.n_elem > 0)
-  {
-    using UColType = typename GetUColType<MatType>::type;
-    UColType batchLengths;
-    MakeAlias(batchLengths, sequenceLengths, batchSize, begin);
-
-    // Get the new ordering of this batch.
-    UColType ordering = sort_index(batchLengths, "descending");
-
-    // Reorder all slices to use the new ordering.
-    MatType batchPredictors, batchResponses;
-    for (size_t i = 0; i < predictors.n_slices; i++)
-    {
-      MakeAlias(batchPredictors, predictors.slice(i), predictors.n_rows,
-          batchSize, begin * predictors.n_rows);
-      MakeAlias(batchResponses, responses.slice(i), responses.n_rows,
-          batchSize, begin * responses.n_rows);
-      ReorderData(ordering, batchPredictors, batchPredictors);
-      ReorderData(ordering, batchResponses, batchResponses);
-    }
-  }
+    ReorderBatch(begin, batchSize, predictors, responses, sequenceLengths);
 
   // For backpropagation through time, we must backpropagate for every
   // subsequence of length `bpttSteps`.  Before we've taken `bpttSteps` though,
@@ -640,10 +629,8 @@ typename MatType::elem_type RNN<
 
     // Calculate the number of active points.
     if (sequenceLengths.n_elem > 0)
-    {
       activePoints = accu(sequenceLengths
-          .cols(begin, begin + batchSize - 1) > t);
-    }
+          .subvec(begin, begin + batchSize - 1) > t);
 
     // Make an alias of the step's data for the forward pass.
     MakeAlias(stepData, predictors.slice(t), predictors.n_rows, activePoints,
@@ -816,6 +803,41 @@ void RNN<
         dynamic_cast<RecurrentLayer<MatType>*>(l);
     if (r != nullptr)
       r->CurrentStep(step, end);
+  }
+}
+
+template<
+    typename OutputLayerType,
+    typename InitializationRuleType,
+    typename MatType
+>
+void RNN<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::ReorderBatch(const size_t begin,
+                const size_t batchSize,
+                CubeType& predictors,
+                CubeType& responses,
+                URowType& sequenceLengths)
+{
+  using UColType = typename GetUColType<MatType>::type;
+  UColType batchLengths;
+  MakeAlias(batchLengths, sequenceLengths, batchSize, begin);
+
+  // Get the new ordering of this batch.
+  UColType ordering = sort_index(batchLengths, "descending");
+
+  // Reorder all slices to use the new ordering.
+  MatType batchPredictors, batchResponses;
+  for (size_t i = 0; i < predictors.n_slices; i++)
+  {
+    MakeAlias(batchPredictors, predictors.slice(i), predictors.n_rows,
+        batchSize, begin * predictors.n_rows);
+    MakeAlias(batchResponses, responses.slice(i), responses.n_rows,
+        batchSize, begin * responses.n_rows);
+    ReorderData(ordering, batchPredictors, batchPredictors);
+    ReorderData(ordering, batchResponses, batchResponses);
   }
 }
 
