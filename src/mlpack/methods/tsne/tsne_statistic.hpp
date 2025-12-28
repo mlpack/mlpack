@@ -29,13 +29,13 @@ namespace mlpack {
  * @tparam VecType Vector type used to store the centroid.
  */
 template <typename VecType>
-class CentroidStatisticType
+class CentroidStatistic
 {
  public:
   /**
-   * Default constructor for the CentroidStatisticType.
+   * Default constructor for the CentroidStatistic.
    */
-  CentroidStatisticType() {}
+  CentroidStatistic() {}
 
   /**
    * Construct from a tree node.
@@ -43,7 +43,7 @@ class CentroidStatisticType
    * @param node Tree node whose centroid is to be computed.
    */
   template <typename TreeType>
-  CentroidStatisticType(const TreeType& node)
+  CentroidStatistic(const TreeType& node)
   {
     centroid.zeros(node.Dataset().n_rows);
     for (size_t i = 0; i < node.NumPoints(); ++i)
@@ -72,8 +72,6 @@ class CentroidStatisticType
   //! The centroid vector.
   VecType centroid;
 };
-
-using CentroidStatistic = CentroidStatisticType<arma::vec>;
 
 } // namespace mlpack
 

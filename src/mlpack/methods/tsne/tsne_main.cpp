@@ -104,9 +104,9 @@ PARAM_DOUBLE_IN("theta",
     "in coarser approximations, and the optimal value depends on the chosen "
     "methods.", "t", 0.5);
 //! Run TSNE on the specified dataset with the given policy.
-template <typename TSNEMethod>
+template <typename TSNEMethod, typename MatType>
 void RunTSNE(
-    util::Params& params, util::Timers& /* timers */, arma::mat& dataset)
+    util::Params& params, util::Timers& /* timers */, MatType& dataset)
 {
   TSNE<TSNEMethod> tsne(
       params.Get<int>("output_dimensions"),
@@ -119,7 +119,7 @@ void RunTSNE(
       params.Get<double>("theta"));
 
   Log::Info << "Running t-SNE optimization..." << endl;
-  tsne.Embed(params.Get<arma::mat>("input"), dataset);
+  tsne.Embed(params.Get<MatType>("input"), dataset);
   Log::Info << "t-SNE optimization completed." << endl;
 }
 

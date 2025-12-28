@@ -37,16 +37,19 @@ double TSNERules<MatType>::BaseCase(
 {
   const VecType& queryPoint = embedding.col(oldFromNew[queryIndex]);
   const VecType& referencePoint = embedding.col(oldFromNew[referenceIndex]);
-  const double distanceSq = (double)DistanceType::Evaluate(queryPoint,
-                                                           referencePoint);
 
-  if (distanceSq > arma::datum::eps)
+  const double distanceSq = (double)SquaredEuclideanDistance::Evaluate(
+      queryPoint, referencePoint);
+
+  if (distanceSq > DBL_EPSILON)
   {
     double q = (double)dof / (dof + distanceSq);
     if (dof != 1)
       q = std::pow(q, (1.0 + dof) / 2.0);
 
+    #pragma omp atomic
     sumQ += q;
+
     repF.col(oldFromNew[queryIndex]) += q * q * (queryPoint - referencePoint);
   }
 
@@ -60,10 +63,11 @@ double TSNERules<MatType>::Score(
 {
   const VecType& queryPoint = embedding.col(oldFromNew[queryIndex]);
   const VecType& referencePoint = referenceNode.Stat().Centroid();
-  const double distanceSq = std::max(arma::datum::eps,
-      (double)DistanceType::Evaluate(queryPoint, referencePoint));
 
+  const double distanceSq = std::max(DBL_EPSILON,
+      (double)SquaredEuclideanDistance::Evaluate(queryPoint, referencePoint));
   const double diameterSq = (double)referenceNode.Bound().Diameter();
+
   const double score = diameterSq / distanceSq;
   if (score < theta * theta)
   {
@@ -71,7 +75,9 @@ double TSNERules<MatType>::Score(
     if (dof != 1)
       q = std::pow(q, (1.0 + dof) / 2.0);
 
+    #pragma omp atomic
     sumQ += q * referenceNode.NumDescendants();
+
     repF.col(oldFromNew[queryIndex]) += q * q *
         referenceNode.NumDescendants() * (queryPoint - referencePoint);
 
@@ -98,11 +104,12 @@ double TSNERules<MatType>::Score(
 {
   const VecType& queryPoint = queryNode.Stat().Centroid();
   const VecType& referencePoint = referenceNode.Stat().Centroid();
-  const double distanceSq = std::max(arma::datum::eps,
-      (double)DistanceType::Evaluate(queryPoint, referencePoint));
 
+  const double distanceSq = std::max(DBL_EPSILON,
+      (double)SquaredEuclideanDistance::Evaluate(queryPoint, referencePoint));
   const double diameterSq = (double)std::max(
       queryNode.Bound().Diameter(), referenceNode.Bound().Diameter());
+
   const double score = diameterSq / distanceSq;
   if (score < theta * theta)
   {
@@ -110,7 +117,9 @@ double TSNERules<MatType>::Score(
     if (dof != 1)
       q = std::pow(q, (1.0 + dof) / 2.0);
 
+    #pragma omp atomic
     sumQ += q * queryNode.NumDescendants() * referenceNode.NumDescendants();
+
     for (size_t i = 0; i < queryNode.NumDescendants(); i++)
     {
       repF.col(oldFromNew[queryNode.Descendant(i)]) += q * q *

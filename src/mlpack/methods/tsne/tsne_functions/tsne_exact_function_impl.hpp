@@ -31,7 +31,7 @@ TSNEExactFunction<MatType, DistanceType>::TSNEExactFunction(
 
   MatType D = PairwiseDistances(X, DistanceType());
   if (!std::is_same_v<DistanceType, SquaredEuclideanDistance>)
-      D = arma::square(D);
+      D = square(D);
 
   P = computeInputSimilarities(perplexity, D);
   P.clamp(arma::Datum<ElemType>::eps, arma::Datum<ElemType>::inf);
@@ -52,10 +52,11 @@ typename MatType::elem_type TSNEExactFunction<
   Q.clamp(arma::Datum<ElemType>::eps, arma::Datum<ElemType>::inf);
 
   deltaPQ = (P - Q) % q;
+
   const double c = 2.0 * (1.0 + dof) / dof;
   g = c * (y.each_row() % sum(deltaPQ, 1).t() - y * deltaPQ);
 
-  // This is way faster than arma::dot
+  // This is way faster than dot
   return accu(P % log(P / Q));
 }
 

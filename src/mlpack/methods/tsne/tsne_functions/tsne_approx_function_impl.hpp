@@ -72,7 +72,7 @@ double TSNEApproxFunction<
 
   traverser.Traverse(tree, tree);
 
-  sumQ = std::max(std::numeric_limits<double>::epsilon(), sumQ);
+  sumQ = std::max(DBL_EPSILON, sumQ);
   g /= -sumQ;
 
   return sumQ;
@@ -86,32 +86,18 @@ double TSNEApproxFunction<
 >::CalculateRepulsiveForces(
     MatType& g, const MatType& y, std::false_type /* tag */)
 {
+  double sumQ = 0.0;
   std::vector<size_t> oldFromNew;
   TreeType tree(y, oldFromNew);
 
-  size_t maxThreadCount = 0;
-  #ifdef MLPACK_USE_OPENMP
-    maxThreadCount = omp_get_max_threads();
-  #endif
-  std::vector<double> localSumQs(maxThreadCount);
+  RuleType rule(sumQ, g, y, oldFromNew, dof, theta);
+  typename TreeType::SingleTreeTraverser traverser(rule);
 
-  #pragma omp parallel
-  {
-    size_t threadId = 0;
-    #ifdef MLPACK_USE_OPENMP
-      threadId = omp_get_thread_num();
-    #endif
+  #pragma omp for schedule(static)
+  for (size_t i = 0; i < y.n_cols; i++)
+    traverser.Traverse(i, tree);
 
-    RuleType rule(localSumQs[threadId], g, y, oldFromNew, dof, theta);
-    typename TreeType::SingleTreeTraverser traverser(rule);
-
-    #pragma omp for schedule(static)
-    for (size_t i = 0; i < y.n_cols; i++)
-      traverser.Traverse(i, tree);
-  }
-
-  const double sumQ = std::max(std::numeric_limits<double>::epsilon(),
-      std::accumulate(localSumQs.begin(), localSumQs.end(), 0.0));
+  sumQ = std::max(DBL_EPSILON, sumQ);
   g /= -sumQ;
 
   return sumQ;
@@ -127,23 +113,15 @@ typename MatType::elem_type TSNEApproxFunction<
   const size_t k = N.n_rows;
   const size_t n = N.n_cols;
 
-  size_t maxThreadCount = 0;
-  #ifdef MLPACK_USE_OPENMP
-    maxThreadCount = omp_get_max_threads();
-  #endif
-  std::vector<double> localErrors(maxThreadCount);
-
-  #pragma omp parallel for schedule(static)
+  double error = 0.0;
+  #pragma omp parallel for reduction(+:error)
   for (size_t i = 0; i < n; i++)
   {
-    size_t threadId = 0;
-    #ifdef MLPACK_USE_OPENMP
-        threadId = omp_get_thread_num();
-    #endif
-
     for (size_t j = 0; j < k; j++)
     {
       const size_t idx = N(j, i);
+      const double p = (double)P(i, idx);
+
       const double distanceSq = (double)SquaredEuclideanDistance::Evaluate(
           y.col(i), y.col(idx));
 
@@ -151,17 +129,14 @@ typename MatType::elem_type TSNEApproxFunction<
       if (dof != 1)
         q = std::pow(q, (1.0 + dof) / 2.0);
 
-      const double p = (double)P(i, idx);
-      g.col(i) += q * p * (y.col(i) - y.col(idx));
+      g.col(i) += p * q * (y.col(i) - y.col(idx));
 
-      localErrors[threadId] += p * std::log(
-          std::max(std::numeric_limits<double>::epsilon(), p)
-          / std::max(std::numeric_limits<double>::epsilon(), q / sumQ));
+      error += p * std::log(
+          std::max(DBL_EPSILON, p) / std::max(DBL_EPSILON, q / sumQ));
     }
   }
 
-  return (ElemType)std::accumulate(
-      localErrors.begin(), localErrors.end(), 0.0);
+  return error;
 }
 
 } // namespace mlpack

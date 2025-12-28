@@ -47,9 +47,10 @@ class TSNEApproxFunction
   using ElemType = typename MatType::elem_type;
   using VecType = typename GetColType<MatType>::type;
   using SpMatType = typename GetSparseMatType<MatType>::type;
+  
   using RuleType = TSNERules<MatType>;
   using TreeType = Octree<SquaredEuclideanDistance,
-                          CentroidStatisticType<VecType>,
+                          CentroidStatistic<VecType>,
                           MatType>;
 
   /**
@@ -123,7 +124,7 @@ class TSNEApproxFunction
 
  private:
   //! k-nearest neighbor indices.
-  arma::Mat<size_t> N;
+  arma::umat N;
 
   //! k-nearest neighbor distances.
   MatType D;

@@ -61,7 +61,7 @@ double TSNE<TSNEMethod, MatType, DistanceType>::Embed(
 
   double finalObjective = std::numeric_limits<double>::infinity();
 
-  TSNEFunction<MatType, DistanceType, TSNEMethod> function(
+  TSNEFunction<TSNEMethod, MatType, DistanceType> function(
       X, perplexity, dof, theta);
 
   // Optimization is done in two phases.

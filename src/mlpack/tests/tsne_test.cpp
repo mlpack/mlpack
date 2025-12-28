@@ -27,6 +27,8 @@ using namespace mlpack;
  */
 TEST_CASE("TSNEParameterTest", "[TSNETest]")
 {
+  std::cout << std::setprecision(20);
+
   TSNE tsne(2, 30.0, 12.0, 200.0, 1000, 1e-12, "pca", 0.5);
 
   // Make sure we can get the parameters successfully.
@@ -77,14 +79,14 @@ TEST_CASE("TSNEInitializationTest", "[TSNETest]")
 
   VecType stdDev = stddev(Y, 0, 1);
   for (size_t i = 0; i < nDims; i++)
-    REQUIRE(stdDev[i] == Approx(1e-4));
+    REQUIRE(stdDev[i] == Approx(1e-4).margin(1e-4));
 
   tsne.Initialization() = "random";
   tsne.InitializeEmbedding(X, Y);
 
   stdDev = stddev(Y, 0, 1);
   for (size_t i = 0; i < nDims; i++)
-    REQUIRE(stdDev[i] == Approx(1e-4));
+    REQUIRE(stdDev[i] == Approx(1e-4).margin(1e-4));
 }
 
 /**
@@ -100,9 +102,9 @@ TEST_CASE("TSNEExactPCalcTest", "[TSNETest]")
 
   const double desiredPerplexity = 30.0;
   MatType D = PairwiseDistances(X, SquaredEuclideanDistance());
-  MatType P = computeInputProbabilities(30.0, D, false);
+  MatType P = computeInputSimilarities(desiredPerplexity, D, false);
   const double meanPerplexity = mean(exp(-sum(
-      P % log(clamp(P, arma::datum::eps, arma::datum::inf)), 1)));
+      P % log(clamp(P, arma::datum::eps, arma::datum::inf)))));
 
   REQUIRE(meanPerplexity == Approx(desiredPerplexity).margin(1e-6));
 }
@@ -113,7 +115,7 @@ TEST_CASE("TSNEExactPCalcTest", "[TSNETest]")
 TEST_CASE("TSNEApproxPCalcTest", "[TSNETest]")
 {
   using MatType = arma::mat;
-  using UMatType = arma::Mat<size_t>;
+  using UMatType = arma::umat;
   using VecType = GetColType<MatType>::type;
   using SpMatType = GetSparseMatType<MatType>::type;
 
@@ -121,11 +123,11 @@ TEST_CASE("TSNEApproxPCalcTest", "[TSNETest]")
   if (!data::Load("iris.csv", X))
     FAIL("Cannot load test dataset iris.csv!");
 
-  const double desiredPerplexity = 3.0;
+  const double desiredPerplexity = 50.0;
 
   const size_t n = X.n_cols;
   const size_t k = std::min<size_t>(
-      (size_t)(n - 1), (size_t)(3 * desiredPerplexity));
+      (n - 1), (size_t)(3.0 * desiredPerplexity + 1.0));
 
   MatType distances;
   UMatType neighbors;
@@ -136,7 +138,7 @@ TEST_CASE("TSNEApproxPCalcTest", "[TSNETest]")
   > knn(X);
   knn.Search(k, neighbors, distances);
 
-  SpMatType P = computeInputProbabilities(
+  SpMatType P = computeInputSimilarities(
       desiredPerplexity, neighbors, distances, false);
 
   VecType perplexities(n);
@@ -144,7 +146,7 @@ TEST_CASE("TSNEApproxPCalcTest", "[TSNETest]")
   {
     for (size_t j = 0; j < k; j++)
     {
-      const double p = (double) P(i, neighbors(j, i));
+      const double p = (double) P(neighbors(j, i), i);
       if (p)
         perplexities(i) += p * std::log(p);
     }
@@ -170,7 +172,9 @@ TEST_CASE("TSNEExactIris", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << finalObjective << std::endl;
+  std::cout << "Exact " << finalObjective << std::endl;
+
+  REQUIRE(finalObjective <= Approx(0.14));
 }
 
 /**
@@ -188,7 +192,9 @@ TEST_CASE("TSNEBarnesHutIris", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << finalObjective << std::endl;
+  std::cout << "Barnes-Hut " << finalObjective << std::endl;
+
+  REQUIRE(finalObjective <= Approx(0.14));
 }
 
 /**
@@ -206,7 +212,9 @@ TEST_CASE("TSNEDualTreeIris", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << finalObjective << std::endl;
+  std::cout << "Dual-Tree " << finalObjective << std::endl;
+
+  REQUIRE(finalObjective <= Approx(0.16));
 }
 
 /**
@@ -224,7 +232,9 @@ TEST_CASE("TSNEExactIrisFmat", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << finalObjective << std::endl;
+  std::cout << "Exact Fmat " << finalObjective << std::endl;
+
+  REQUIRE(finalObjective <= Approx(0.16));
 }
 
 /**
@@ -242,7 +252,9 @@ TEST_CASE("TSNEBarnesHutIrisFmat", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << finalObjective << std::endl;
+  std::cout << "Barnes-Hut Fmat " << finalObjective << std::endl;
+
+  REQUIRE(finalObjective <= Approx(0.16));
 }
 
 /**
@@ -260,16 +272,18 @@ TEST_CASE("TSNEDualTreeIrisFmat", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << finalObjective << std::endl;
+  std::cout << "Dual-Tree Fmat " << finalObjective << std::endl;
+
+  REQUIRE(finalObjective <= Approx(0.16));
 }
 
 /**
- * Test t-SNE Exact Method Final Error on Iris dataset with fmat
- * and ManhattanDistance.
+ * Test t-SNE Exact Method Final Error on Iris dataset with
+ * ManhattanDistance.
  */
-TEST_CASE("TSNEExactIrisFmatManhattan", "[TSNETest]")
+TEST_CASE("TSNEExactIrisManhattan", "[TSNETest]")
 {
-  using MatType = arma::fmat;
+  using MatType = arma::mat;
 
   MatType X, Y;
   if (!data::Load("iris.csv", X))
@@ -279,16 +293,18 @@ TEST_CASE("TSNEExactIrisFmatManhattan", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << finalObjective << std::endl;
+  std::cout << "Exact Manhattan " << finalObjective << std::endl;
+
+  REQUIRE(finalObjective <= Approx(0.16));
 }
 
 /**
- * Test t-SNE Barnes-hut Method Final Error on Iris dataset with fmat
- * and ManhattanDistance.
+ * Test t-SNE Barnes-hut Method Final Error on Iris dataset with
+ * ManhattanDistance.
  */
-TEST_CASE("TSNEBarnesHutIrisFmatManhattan", "[TSNETest]")
+TEST_CASE("TSNEBarnesHutIrisManhattan", "[TSNETest]")
 {
-  using MatType = arma::fmat;
+  using MatType = arma::mat;
 
   MatType X, Y;
   if (!data::Load("iris.csv", X))
@@ -298,16 +314,18 @@ TEST_CASE("TSNEBarnesHutIrisFmatManhattan", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << finalObjective << std::endl;
+  std::cout << "Barnes-Hut Manhattan " << finalObjective << std::endl;
+
+  REQUIRE(finalObjective <= Approx(0.16));
 }
 
 /**
- * Test t-SNE Dual-Tree Method Final Error on Iris dataset with fmat
- * and ManhattanDistance.
+ * Test t-SNE Dual-Tree Method Final Error on Iris dataset with
+ * ManhattanDistance.
  */
-TEST_CASE("TSNEDualTreeIrisFmatManhattan", "[TSNETest]")
+TEST_CASE("TSNEDualTreeIrisManhattan", "[TSNETest]")
 {
-  using MatType = arma::fmat;
+  using MatType = arma::mat;
 
   MatType X, Y;
   if (!data::Load("iris.csv", X))
@@ -317,16 +335,18 @@ TEST_CASE("TSNEDualTreeIrisFmatManhattan", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << finalObjective << std::endl;
+  std::cout << "Dual-Tree Manhattan " << finalObjective << std::endl;
+
+  REQUIRE(finalObjective <= Approx(0.16));
 }
 
 /**
- * Test t-SNE Exact Method Final Error on Iris dataset with fmat and
+ * Test t-SNE Exact Method Final Error on Iris dataset with
  * EuclideanDistance.
  */
-TEST_CASE("TSNEExactIrisFmatEuclidean", "[TSNETest]")
+TEST_CASE("TSNEExactIrisEuclidean", "[TSNETest]")
 {
-  using MatType = arma::fmat;
+  using MatType = arma::mat;
 
   MatType X, Y;
   if (!data::Load("iris.csv", X))
@@ -336,16 +356,18 @@ TEST_CASE("TSNEExactIrisFmatEuclidean", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << finalObjective << std::endl;
+  std::cout << "Exact Euclidean " << finalObjective << std::endl;
+
+  REQUIRE(finalObjective <= Approx(0.16));
 }
 
 /**
- * Test t-SNE Barnes-hut Method Final Error on Iris dataset with fmat and
+ * Test t-SNE Barnes-hut Method Final Error on Iris dataset with
  * EuclideanDistance.
  */
-TEST_CASE("TSNEBarnesHutIrisFmatEuclidean", "[TSNETest]")
+TEST_CASE("TSNEBarnesHutIrisEuclidean", "[TSNETest]")
 {
-  using MatType = arma::fmat;
+  using MatType = arma::mat;
 
   MatType X, Y;
   if (!data::Load("iris.csv", X))
@@ -355,16 +377,18 @@ TEST_CASE("TSNEBarnesHutIrisFmatEuclidean", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << finalObjective << std::endl;
+  std::cout << "Barnes-Hut Euclidean " << finalObjective << std::endl;
+
+  REQUIRE(finalObjective <= Approx(0.16));
 }
 
 /**
- * Test t-SNE Dual-Tree Method Final Error on Iris dataset with fmat and
+ * Test t-SNE Dual-Tree Method Final Error on Iris dataset with
  * EuclideanDistance.
  */
-TEST_CASE("TSNEDualTreeIrisFmatEuclidean", "[TSNETest]")
+TEST_CASE("TSNEDualTreeIrisEuclidean", "[TSNETest]")
 {
-  using MatType = arma::fmat;
+  using MatType = arma::mat;
 
   MatType X, Y;
   if (!data::Load("iris.csv", X))
@@ -374,7 +398,9 @@ TEST_CASE("TSNEDualTreeIrisFmatEuclidean", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << finalObjective << std::endl;
+  std::cout << "Dual-Tree Euclidean " << finalObjective << std::endl;
+
+  REQUIRE(finalObjective <= Approx(0.16));
 }
 
 /**
@@ -384,24 +410,59 @@ TEST_CASE("TSNEBarnesHutMatchExact", "[TSNETest]")
 {
   using MatType = arma::mat;
 
-  MatType X, YExact, YBarnesHut;
+  MatType X;
   if (!data::Load("iris.csv", X))
     FAIL("Cannot load test dataset iris.csv!");
 
-  TSNE<ExactTSNE, MatType> tsneExact(
-      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.0);
-  TSNE<BarnesHutTSNE, MatType> tsneBarnesHut(
-      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.0);
+  TSNEFunction<ExactTSNE, MatType, SquaredEuclideanDistance> tsneExact(
+    X, 50.0, 1, 0.0);
+  TSNEFunction<BarnesHutTSNE, MatType, SquaredEuclideanDistance> tsneBarnesHut(
+    X, 50.0, 1, 0.0);
 
-  const double finalObjectiveExact = tsneExact.Embed(X, YExact);
-  const double finalObjectiveBarnesHut = tsneBarnesHut.Embed(X, YBarnesHut);
+  MatType Y(2, 150, arma::fill::randn);
+  MatType gradientExact(2, 150, arma::fill::zeros);
+  MatType gradientBarnesHut(2, 150, arma::fill::zeros);
+  
+  const double finalObjectiveExact = tsneExact.EvaluateWithGradient(Y, gradientExact);
+  const double finalObjectiveBarnesHut = tsneBarnesHut.EvaluateWithGradient(Y, gradientBarnesHut);
 
   std::cout << finalObjectiveExact << ' '
             << finalObjectiveBarnesHut << std::endl;
 
   REQUIRE(finalObjectiveExact ==
-          Approx(finalObjectiveBarnesHut).margin(1e-3));
-  REQUIRE(arma::approx_equal(YExact, YBarnesHut, "absdiff", 1e-3));
+          Approx(finalObjectiveBarnesHut).margin(1e-9));
+  REQUIRE(arma::approx_equal(gradientExact, gradientBarnesHut, "absdiff", 1e-9));
+}
+
+/**
+ * Test whether DualTreeTSNE with theta == 0 matches ExactTSNE.
+ */
+TEST_CASE("TSNEDualTreeMatchExact", "[TSNETest]")
+{
+  using MatType = arma::mat;
+
+  MatType X;
+  if (!data::Load("iris.csv", X))
+    FAIL("Cannot load test dataset iris.csv!");
+
+  TSNEFunction<ExactTSNE, MatType, SquaredEuclideanDistance> tsneExact(
+    X, 50.0, 1, 0.0);
+  TSNEFunction<DualTreeTSNE, MatType, SquaredEuclideanDistance> tsneDualTree(
+    X, 50.0, 1, 0.0);
+
+  MatType Y(2, 150, arma::fill::randn);
+  MatType gradientExact(2, 150, arma::fill::zeros);
+  MatType gradientDualTree(2, 150, arma::fill::zeros);
+  
+  const double finalObjectiveExact = tsneExact.EvaluateWithGradient(Y, gradientExact);
+  const double finalObjectiveDualTree = tsneDualTree.EvaluateWithGradient(Y, gradientDualTree);
+
+  std::cout << finalObjectiveExact << ' '
+            << finalObjectiveDualTree << std::endl;
+
+  REQUIRE(finalObjectiveExact ==
+          Approx(finalObjectiveDualTree).margin(1e-9));
+  REQUIRE(arma::approx_equal(gradientExact, gradientDualTree, "absdiff", 1e-9));
 }
 
 /**
@@ -412,24 +473,28 @@ TEST_CASE("TSNEDualTreeMatchBarnesHut", "[TSNETest]")
 {
   using MatType = arma::mat;
 
-  MatType X, YDualTree, YBarnesHut;
+  MatType X;
   if (!data::Load("iris.csv", X))
     FAIL("Cannot load test dataset iris.csv!");
 
-  TSNE<DualTreeTSNE, MatType> tsneDualTree(
-      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.0);
-  TSNE<BarnesHutTSNE, MatType> tsneBarnesHut(
-      2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.0);
+  TSNEFunction<BarnesHutTSNE, MatType, SquaredEuclideanDistance> tsneBarnesHut(
+    X, 50.0, 1, 0.0);
+  TSNEFunction<DualTreeTSNE, MatType, SquaredEuclideanDistance> tsneDualTree(
+    X, 50.0, 1, 0.0);
 
-  const double finalObjectiveDualTree = tsneDualTree.Embed(X, YDualTree);
-  const double finalObjectiveBarnesHut = tsneBarnesHut.Embed(X, YBarnesHut);
+  MatType Y(2, 150, arma::fill::randn);
+  MatType gradientBarnesHut(2, 150, arma::fill::zeros);
+  MatType gradientDualTree(2, 150, arma::fill::zeros);
+  
+  const double finalObjectiveBarnesHut = tsneBarnesHut.EvaluateWithGradient(Y, gradientBarnesHut);
+  const double finalObjectiveDualTree = tsneDualTree.EvaluateWithGradient(Y, gradientDualTree);
 
-  std::cout << finalObjectiveDualTree << ' '
-            << finalObjectiveBarnesHut << std::endl;
+  std::cout << finalObjectiveBarnesHut << ' '
+            << finalObjectiveDualTree << std::endl;
 
-  REQUIRE(finalObjectiveDualTree ==
-          Approx(finalObjectiveBarnesHut).margin(1e-3));
-  REQUIRE(arma::approx_equal(YDualTree, YBarnesHut, "absdiff", 1e-3));
+  REQUIRE(finalObjectiveBarnesHut ==
+          Approx(finalObjectiveDualTree).margin(1e-9));
+  REQUIRE(arma::approx_equal(gradientBarnesHut, gradientDualTree, "absdiff", 1e-9));
 }
 
 #ifdef MLPACK_USE_OPENMP
@@ -463,8 +528,8 @@ TEST_CASE("TSNEBHMultithreadDeterminismTest", "[TSNETest]")
             << finalObjectiveParallel << std::endl;
 
   REQUIRE(finalObjectiveSeq ==
-          Approx(finalObjectiveParallel).margin(1e-3));
-  REQUIRE(arma::approx_equal(YParallel, YSeq, "absdiff", 1e-3));
+          Approx(finalObjectiveParallel).margin(1e-6));
+  REQUIRE(arma::approx_equal(YParallel, YSeq, "absdiff", 1e-6));
 }
 
 /**
@@ -496,8 +561,8 @@ TEST_CASE("TSNEDualTreeMultithreadDeterminismTest", "[TSNETest]")
             << finalObjectiveParallel << std::endl;
 
   REQUIRE(finalObjectiveSeq ==
-          Approx(finalObjectiveParallel).margin(1e-3));
-  REQUIRE(arma::approx_equal(YParallel, YSeq, "absdiff", 1e-3));
+          Approx(finalObjectiveParallel).margin(1e-6));
+  REQUIRE(arma::approx_equal(YParallel, YSeq, "absdiff", 1e-6));
 }
 
 #endif

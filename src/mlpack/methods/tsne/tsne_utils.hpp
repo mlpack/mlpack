@@ -154,7 +154,7 @@ SpMatType computeInputSimilarities(const double perplexity,
     Ptmp.col(i) = binarySearchPerplexity(DSqi, perplexity);
   }
 
-  arma::umat locations(2, k * n);
+  UMatType locations(2, k * n);
   #pragma omp parallel for schedule(static)
   for (size_t i = 0; i < n; i++)
   {

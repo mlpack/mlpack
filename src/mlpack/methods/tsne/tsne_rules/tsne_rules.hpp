@@ -38,7 +38,6 @@ class TSNERules
   // Convenience typedefs.
   using ElemType = typename MatType::elem_type;
   using VecType = typename GetColType<MatType>::type;
-  using DistanceType = SquaredEuclideanDistance;
 
   /**
    * Constructs the TSNERules object.

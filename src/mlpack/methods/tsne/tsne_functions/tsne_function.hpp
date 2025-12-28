@@ -19,38 +19,38 @@
 
 namespace mlpack {
 
-template <typename MatType, typename DistanceType, typename TSNEMethod>
+template <typename TSNEMethod, typename MatType, typename DistanceType>
 class TSNEFunctionTraits
 {
   // Nothing To Do Here
 };
 
 template <typename MatType, typename DistanceType>
-class TSNEFunctionTraits<MatType, DistanceType, ExactTSNE>
+class TSNEFunctionTraits<ExactTSNE, MatType, DistanceType>
 {
  public:
   using type = TSNEExactFunction<MatType, DistanceType>;
 };
 
 template <typename MatType, typename DistanceType>
-class TSNEFunctionTraits<MatType, DistanceType, DualTreeTSNE>
+class TSNEFunctionTraits<DualTreeTSNE, MatType, DistanceType>
 {
  public:
   using type = TSNEDualTreeFunction<MatType, DistanceType>;
 };
 
 template <typename MatType, typename DistanceType>
-class TSNEFunctionTraits<MatType, DistanceType, BarnesHutTSNE>
+class TSNEFunctionTraits<BarnesHutTSNE, MatType, DistanceType>
 {
  public:
   using type = TSNEBarnesHutFunction<MatType, DistanceType>;
 };
 
 // Convenience alias:
-template <typename MatType, typename DistanceType, typename TSNEMethod>
-using TSNEFunction = typename TSNEFunctionTraits<MatType,
-                                                 DistanceType,
-                                                 TSNEMethod>::type;
+template <typename TSNEMethod, typename MatType, typename DistanceType>
+using TSNEFunction = typename TSNEFunctionTraits<TSNEMethod,
+                                                 MatType,
+                                                 DistanceType>::type;
 
 } // namespace mlpack
 
