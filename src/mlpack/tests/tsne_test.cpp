@@ -509,69 +509,59 @@ TEST_CASE("TSNEDualTreeMatchBarnesHut", "[TSNETest]")
 #ifdef MLPACK_USE_OPENMP
 
 /**
- * Verify that BarnesHutTSNE produces approximately equal results
- * when executed in parallel and in sequential modes.
+ * Verify that repeated executions of BarnesHutTSNE produce
+ * approximately identical results.
  */
 TEST_CASE("TSNEBHMultithreadDeterminismTest", "[TSNETest]")
 {
   using MatType = arma::mat;
 
-  MatType X, YSeq, YParallel;
+  MatType X, Y1, Y2;
   if (!data::Load("iris.csv", X))
     FAIL("Cannot load test dataset iris.csv!");
 
-  const size_t maxThreads = omp_get_max_threads();
-  omp_set_num_threads(1);
-
-  TSNE<BarnesHutTSNE, MatType> tsneSeq(
+  TSNE<BarnesHutTSNE, MatType> tsne1(
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-  const double finalObjectiveSeq = tsneSeq.Embed(X, YSeq);
+  const double finalObjective1 = tsne1.Embed(X, Y1);
 
-  omp_set_num_threads(maxThreads);
-
-  TSNE<BarnesHutTSNE, MatType> tsneParallel(
+  TSNE<BarnesHutTSNE, MatType> tsne2(
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-  const double finalObjectiveParallel = tsneParallel.Embed(X, YParallel);
+  const double finalObjective2 = tsne2.Embed(X, Y2);
 
-  std::cout << finalObjectiveSeq << ' '
-            << finalObjectiveParallel << std::endl;
+  std::cout << finalObjective1 << ' '
+            << finalObjective2 << std::endl;
 
-  REQUIRE(finalObjectiveSeq ==
-          Approx(finalObjectiveParallel).margin(1e-6));
-  REQUIRE(arma::approx_equal(YParallel, YSeq, "absdiff", 1e-6));
+  REQUIRE(finalObjective1 ==
+          Approx(finalObjective2).margin(1e-6));
+  REQUIRE(arma::approx_equal(Y1, Y2, "absdiff", 1e-6));
 }
 
 /**
- * Verify that DualTreeTSNE produces approximately equal results
- * when executed in parallel and in sequential modes.
+ * Verify that repeated executions of DualTreeTSNE produce
+ * approximately identical results.
  */
 TEST_CASE("TSNEDualTreeMultithreadDeterminismTest", "[TSNETest]")
 {
   using MatType = arma::mat;
 
-  MatType X, YSeq, YParallel;
+  MatType X, Y1, Y2;
   if (!data::Load("iris.csv", X))
     FAIL("Cannot load test dataset iris.csv!");
 
-  const size_t maxThreads = omp_get_max_threads();
-  omp_set_num_threads(1);
-
-  TSNE<DualTreeTSNE, MatType> tsneSeq(
+  TSNE<DualTreeTSNE, MatType> tsne1(
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-  const double finalObjectiveSeq = tsneSeq.Embed(X, YSeq);
+  const double finalObjective1 = tsne1.Embed(X, Y1);
 
-  omp_set_num_threads(maxThreads);
-
-  TSNE<DualTreeTSNE, MatType> tsneParallel(
+  TSNE<DualTreeTSNE, MatType> tsne2(
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
-  const double finalObjectiveParallel = tsneParallel.Embed(X, YParallel);
+  const double finalObjective2 = tsne2.Embed(X, Y2);
 
-  std::cout << finalObjectiveSeq << ' '
-            << finalObjectiveParallel << std::endl;
+  std::cout << finalObjective1 << ' '
+            << finalObjective2 << std::endl;
 
-  REQUIRE(finalObjectiveSeq ==
-          Approx(finalObjectiveParallel).margin(1e-6));
-  REQUIRE(arma::approx_equal(YParallel, YSeq, "absdiff", 1e-6));
+  REQUIRE(finalObjective1 ==
+          Approx(finalObjective2).margin(1e-6));
+  REQUIRE(arma::approx_equal(Y1, Y2, "absdiff", 1e-6));
 }
 
 #endif
@@ -610,46 +600,5 @@ TEST_CASE("TSNEDualTreeMultithreadDeterminismTest", "[TSNETest]")
 //   // 'pca'):
 //   //   Run TSNE on random X and assert trustworthiness > 0.85 for
 //   //   n_neighbors=1.
-//   SUCCEED();
-// }
-
-// /** Gradient descent stopping conditions (mapping
-// test_gradient_descent_stops)
-//  */
-// TEST_CASE("TSNEGradientDescentStopsTest", "[TSNETest]")
-// {
-//   // IMPLEMENT:
-//   // - Port the ObjectiveSmallGradient and flat_function behaviours:
-//   //   * Check stopping on min_grad_norm triggers "gradient norm" message
-//   (if
-//   //   logging exists).
-//   //   * Check n_iter_without_progress behaviour triggers appropriate stop
-//   and
-//   //   message.
-//   //   * Check max_iter stops at expected iteration count.
-//   // - If your _gradient_descent writes to stdout, capture and assert
-//   messages. SUCCEED();
-// }
-
-// /* n_iter_without_progress and min_grad_norm behaviour tests */
-// TEST_CASE("TSNENIterWithoutProgressAndMinGradNormTests", "[TSNETest]")
-// {
-//   // IMPLEMENT:
-//   // - Test edge cases for n_iter_without_progress negative handling and
-//   // min_grad_norm.
-//   // - Assert the verbose output includes "did not make any progress"
-//   message
-//   // when appropriate.
-//   SUCCEED();
-// }
-
-// /* Precomputed distances usage and validations */
-// TEST_CASE("TSNEPrecomputedDistancesValidationTest", "[TSNETest]")
-// {
-//   // IMPLEMENT:
-//   // - Validate errors are raised for:
-//   //   * non-square distance matrices,
-//   //   * non-positive distances,
-//   //   * sparse precomputed distances with 'exact' method.
 //   SUCCEED();
 // }

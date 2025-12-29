@@ -47,9 +47,7 @@ double TSNERules<MatType>::BaseCase(
     if (dof != 1)
       q = std::pow(q, (1.0 + dof) / 2.0);
 
-    #pragma omp atomic
     sumQ += q;
-
     repF.col(oldFromNew[queryIndex]) += q * q * (queryPoint - referencePoint);
   }
 
@@ -75,9 +73,7 @@ double TSNERules<MatType>::Score(
     if (dof != 1)
       q = std::pow(q, (1.0 + dof) / 2.0);
 
-    #pragma omp atomic
     sumQ += q * referenceNode.NumDescendants();
-
     repF.col(oldFromNew[queryIndex]) += q * q *
         referenceNode.NumDescendants() * (queryPoint - referencePoint);
 
@@ -117,9 +113,7 @@ double TSNERules<MatType>::Score(
     if (dof != 1)
       q = std::pow(q, (1.0 + dof) / 2.0);
 
-    #pragma omp atomic
     sumQ += q * queryNode.NumDescendants() * referenceNode.NumDescendants();
-
     for (size_t i = 0; i < queryNode.NumDescendants(); i++)
     {
       repF.col(oldFromNew[queryNode.Descendant(i)]) += q * q *

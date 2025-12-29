@@ -86,18 +86,32 @@ double TSNEApproxFunction<
 >::CalculateRepulsiveForces(
     MatType& g, const MatType& y, std::false_type /* tag */)
 {
-  double sumQ = 0.0;
   std::vector<size_t> oldFromNew;
   TreeType tree(y, oldFromNew);
 
-  RuleType rule(sumQ, g, y, oldFromNew, dof, theta);
-  typename TreeType::SingleTreeTraverser traverser(rule);
+  size_t maxThreads = 1;
+  #ifdef MLPACK_USE_OPENMP
+    maxThreads = omp_get_max_threads();
+  #endif
+  std::vector<double> sumQs(maxThreads);
 
-  #pragma omp for schedule(static)
-  for (size_t i = 0; i < y.n_cols; i++)
-    traverser.Traverse(i, tree);
+  #pragma omp parallel
+  {
+    size_t threadId = 0;
+    #ifdef MLPACK_USE_OPENMP
+      threadId = omp_get_thread_num();
+    #endif
 
-  sumQ = std::max(DBL_EPSILON, sumQ);
+    RuleType rule(sumQs[threadId], g, y, oldFromNew, dof, theta);
+    typename TreeType::SingleTreeTraverser traverser(rule);
+
+    #pragma omp for schedule(static)
+    for (size_t i = 0; i < y.n_cols; i++)
+      traverser.Traverse(i, tree);
+  }
+
+  const double sumQ = std::max(DBL_EPSILON,
+      std::accumulate(sumQs.begin(), sumQs.end(), 0.0));
   g /= -sumQ;
 
   return sumQ;
@@ -117,6 +131,7 @@ typename MatType::elem_type TSNEApproxFunction<
   #pragma omp parallel for reduction(+:error)
   for (size_t i = 0; i < n; i++)
   {
+    double localError = 0.0;
     for (size_t j = 0; j < k; j++)
     {
       const size_t idx = N(j, i);
@@ -131,9 +146,10 @@ typename MatType::elem_type TSNEApproxFunction<
 
       g.col(i) += p * q * (y.col(i) - y.col(idx));
 
-      error += p * std::log(
+      localError += p * std::log(
           std::max(DBL_EPSILON, p) / std::max(DBL_EPSILON, q / sumQ));
     }
+    error += localError;
   }
 
   return error;

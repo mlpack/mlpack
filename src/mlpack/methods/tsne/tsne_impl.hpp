@@ -37,14 +37,15 @@ template <typename TSNEMethod, typename MatType, typename DistanceType>
 double TSNE<TSNEMethod, MatType, DistanceType>::Embed(
     const MatType& X, MatType& Y)
 {
-  // To Do: Make Early Exaggeration Iterations a parameter.
-  // To Do: Make Mommentum, Kappa, Phi and MinGain parameters.
-  // To Do: Switch PrintLoss() with ProgressBar() when its done
-  //        and make it only activate when user asks for it (flag).
+  // TODO: Make Early Exaggeration Iterations a parameter.
+  // TODO: Make Mommentum, Kappa, Phi and MinGain parameters.
+  // TODO: Switch PrintLoss() with ProgressBar() when its done
+  //       and make it only activate when user asks for it (flag -v).
 
   assert(maxIter >= 250);
   assert(outputDims > 0);
   assert(exaggeration > 0.0);
+  assert(perplexity < X.n_cols);
 
   InitializeEmbedding(X, Y);
 

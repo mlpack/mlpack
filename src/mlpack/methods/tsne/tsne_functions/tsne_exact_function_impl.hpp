@@ -24,11 +24,6 @@ TSNEExactFunction<MatType, DistanceType>::TSNEExactFunction(
     const double /* theta */)
     : perplexity(perplexity), dof(dof)
 {
-  // TODO: Implement seperate Evaluate and Gradient too.
-  // TODO: Document the fact that if any other metric is
-  // given as tparam, it should not be a squared distance type.
-  // Also find a way to decide at compile time whether metric needs squaring.
-
   MatType D = PairwiseDistances(X, DistanceType());
   if (!std::is_same_v<DistanceType, SquaredEuclideanDistance>)
       D = square(D);
