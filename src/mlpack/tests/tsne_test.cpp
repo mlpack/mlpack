@@ -27,8 +27,6 @@ using namespace mlpack;
  */
 TEST_CASE("TSNEParameterTest", "[TSNETest]")
 {
-  std::cout << std::setprecision(20);
-
   TSNE tsne(2, 30.0, 12.0, 200.0, 1000, 1e-12, "pca", 0.5);
 
   // Make sure we can get the parameters successfully.
@@ -47,9 +45,9 @@ TEST_CASE("TSNEParameterTest", "[TSNETest]")
   tsne.Exaggeration() = 4.0;
   tsne.StepSize() = 50.0;
   tsne.Tolerance() = 1e-9;
-  tsne.MaximumIterations() = 400;
+  tsne.MaximumIterations() = 500;
   tsne.Initialization() = "random";
-  tsne.Theta() = 0.3;
+  tsne.Theta() = 0.0;
 
   // Make sure we can get the parameters successfully.
   REQUIRE(tsne.OutputDimensions() == 3);
@@ -57,9 +55,9 @@ TEST_CASE("TSNEParameterTest", "[TSNETest]")
   REQUIRE(tsne.Exaggeration() == 4.0);
   REQUIRE(tsne.StepSize() == 50.0);
   REQUIRE(tsne.Tolerance() == 1e-9);
-  REQUIRE(tsne.MaximumIterations() == 400);
+  REQUIRE(tsne.MaximumIterations() == 500);
   REQUIRE(tsne.Initialization() == "random");
-  REQUIRE(tsne.Theta() == 0.3);
+  REQUIRE(tsne.Theta() == 0.0);
 }
 
 /**
@@ -71,8 +69,8 @@ TEST_CASE("TSNEInitializationTest", "[TSNETest]")
   using VecType = GetColType<MatType>::type;
 
   const size_t nDims = 2;
-  const size_t nPoints = 10;
-  TSNE tsne(nDims, 30.0, 12.0, 200.0, 1000, 1e-12, "pca", 0.5);
+  const size_t nPoints = 150;
+  TSNE tsne(nDims, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   MatType X(nDims, nPoints, arma::fill::randn), Y;
   tsne.InitializeEmbedding(X, Y);
@@ -144,9 +142,10 @@ TEST_CASE("TSNEApproxPCalcTest", "[TSNETest]")
   VecType perplexities(n);
   for (size_t i = 0; i < n; i++)
   {
+    perplexities(i) = 0;
     for (size_t j = 0; j < k; j++)
     {
-      const double p = (double) P(neighbors(j, i), i);
+      const double p = (double)P(neighbors(j, i), i);
       if (p)
         perplexities(i) += p * std::log(p);
     }
@@ -172,7 +171,6 @@ TEST_CASE("TSNEExactIris", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << "Exact " << finalObjective << std::endl;
 
   REQUIRE(finalObjective <= Approx(0.14));
 }
@@ -192,7 +190,6 @@ TEST_CASE("TSNEBarnesHutIris", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << "Barnes-Hut " << finalObjective << std::endl;
 
   REQUIRE(finalObjective <= Approx(0.14));
 }
@@ -212,7 +209,6 @@ TEST_CASE("TSNEDualTreeIris", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << "Dual-Tree " << finalObjective << std::endl;
 
   REQUIRE(finalObjective <= Approx(0.16));
 }
@@ -232,7 +228,6 @@ TEST_CASE("TSNEExactIrisFmat", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << "Exact Fmat " << finalObjective << std::endl;
 
   REQUIRE(finalObjective <= Approx(0.16));
 }
@@ -252,7 +247,6 @@ TEST_CASE("TSNEBarnesHutIrisFmat", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << "Barnes-Hut Fmat " << finalObjective << std::endl;
 
   REQUIRE(finalObjective <= Approx(0.16));
 }
@@ -272,7 +266,6 @@ TEST_CASE("TSNEDualTreeIrisFmat", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << "Dual-Tree Fmat " << finalObjective << std::endl;
 
   REQUIRE(finalObjective <= Approx(0.16));
 }
@@ -293,7 +286,6 @@ TEST_CASE("TSNEExactIrisManhattan", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << "Exact Manhattan " << finalObjective << std::endl;
 
   REQUIRE(finalObjective <= Approx(0.16));
 }
@@ -314,7 +306,6 @@ TEST_CASE("TSNEBarnesHutIrisManhattan", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << "Barnes-Hut Manhattan " << finalObjective << std::endl;
 
   REQUIRE(finalObjective <= Approx(0.16));
 }
@@ -335,7 +326,6 @@ TEST_CASE("TSNEDualTreeIrisManhattan", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << "Dual-Tree Manhattan " << finalObjective << std::endl;
 
   REQUIRE(finalObjective <= Approx(0.16));
 }
@@ -356,7 +346,6 @@ TEST_CASE("TSNEExactIrisEuclidean", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << "Exact Euclidean " << finalObjective << std::endl;
 
   REQUIRE(finalObjective <= Approx(0.16));
 }
@@ -377,7 +366,6 @@ TEST_CASE("TSNEBarnesHutIrisEuclidean", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << "Barnes-Hut Euclidean " << finalObjective << std::endl;
 
   REQUIRE(finalObjective <= Approx(0.16));
 }
@@ -398,7 +386,6 @@ TEST_CASE("TSNEDualTreeIrisEuclidean", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
 
   const double finalObjective = tsne.Embed(X, Y);
-  std::cout << "Dual-Tree Euclidean " << finalObjective << std::endl;
 
   REQUIRE(finalObjective <= Approx(0.16));
 }
@@ -427,9 +414,6 @@ TEST_CASE("TSNEBarnesHutMatchExact", "[TSNETest]")
       Y, gradientExact);
   const double finalObjectiveBarnesHut = tsneBarnesHut.EvaluateWithGradient(
       Y, gradientBarnesHut);
-
-  std::cout << finalObjectiveExact << ' '
-            << finalObjectiveBarnesHut << std::endl;
 
   REQUIRE(finalObjectiveExact ==
       Approx(finalObjectiveBarnesHut).margin(1e-9));
@@ -461,9 +445,6 @@ TEST_CASE("TSNEDualTreeMatchExact", "[TSNETest]")
       Y, gradientExact);
   const double finalObjectiveDualTree = tsneDualTree.EvaluateWithGradient(
       Y, gradientDualTree);
-
-  std::cout << finalObjectiveExact << ' '
-            << finalObjectiveDualTree << std::endl;
 
   REQUIRE(finalObjectiveExact ==
       Approx(finalObjectiveDualTree).margin(1e-9));
@@ -497,9 +478,6 @@ TEST_CASE("TSNEDualTreeMatchBarnesHut", "[TSNETest]")
   const double finalObjectiveDualTree = tsneDualTree.EvaluateWithGradient(
       Y, gradientDualTree);
 
-  std::cout << finalObjectiveBarnesHut << ' '
-            << finalObjectiveDualTree << std::endl;
-
   REQUIRE(finalObjectiveBarnesHut ==
       Approx(finalObjectiveDualTree).margin(1e-9));
   REQUIRE(arma::approx_equal(
@@ -528,12 +506,9 @@ TEST_CASE("TSNEBHMultithreadDeterminismTest", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
   const double finalObjective2 = tsne2.Embed(X, Y2);
 
-  std::cout << finalObjective1 << ' '
-            << finalObjective2 << std::endl;
-
   REQUIRE(finalObjective1 ==
-          Approx(finalObjective2).margin(1e-6));
-  REQUIRE(arma::approx_equal(Y1, Y2, "absdiff", 1e-6));
+          Approx(finalObjective2).margin(1e-9));
+  REQUIRE(arma::approx_equal(Y1, Y2, "absdiff", 1e-9));
 }
 
 /**
@@ -556,49 +531,9 @@ TEST_CASE("TSNEDualTreeMultithreadDeterminismTest", "[TSNETest]")
       2, 30.0, 12.0, 0.0, 500, 1e-12, "pca", 0.5);
   const double finalObjective2 = tsne2.Embed(X, Y2);
 
-  std::cout << finalObjective1 << ' '
-            << finalObjective2 << std::endl;
-
   REQUIRE(finalObjective1 ==
-          Approx(finalObjective2).margin(1e-6));
-  REQUIRE(arma::approx_equal(Y1, Y2, "absdiff", 1e-6));
+          Approx(finalObjective2).margin(1e-9));
+  REQUIRE(arma::approx_equal(Y1, Y2, "absdiff", 1e-9));
 }
 
 #endif
-
-// /* Uniform grid recovery */
-// TEST_CASE("TSNEUniformGridRecoveryTest", "[TSNETest]")
-// {
-//   // IMPLEMENT:
-//   // - Use a 2D uniform grid embedded in higher-D (X_2d_grid equivalent).
-//   // - Run TSNE (several seeds) and check nearest-neighbor spacing: min
-//   // distance > 0.1,
-//   //   smallest/mean and largest/mean ratios in acceptable bounds.
-//   // - If first run fails, rerun using previous embedding as init and
-//   re-check. SUCCEED();
-// }
-
-// /* Trustworthiness tests */
-// TEST_CASE("TSNETrustworthinessTest", "[TSNETest]")
-// {
-//   // IMPLEMENT:
-//   // - Test trustworthiness for:
-//   //   * Affine transform -> trustworthiness == 1.0
-//   //   * Random permutation -> trustworthiness < 0.6
-//   //   * Small controlled permutation -> exact numeric trustworthiness
-//   // - Also implement n_neighbors validation throwing when invalid.
-//   SUCCEED();
-// }
-
-// /* Preserve trustworthiness approximately (exact/barnes_hut + init
-// random/pca)
-//  */
-// TEST_CASE("TSNEPreserveTrustworthinessApproximatelyTest", "[TSNETest]")
-// {
-//   // IMPLEMENT:
-//   // - For both methods ('exact', 'barnes_hut') and both inits ('random',
-//   // 'pca'):
-//   //   Run TSNE on random X and assert trustworthiness > 0.85 for
-//   //   n_neighbors=1.
-//   SUCCEED();
-// }
