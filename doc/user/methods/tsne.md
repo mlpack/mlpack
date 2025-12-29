@@ -76,10 +76,9 @@ std::cout << output.n_rows << " x " << output.n_cols << "." << std::endl;
 
 * `double klDivergence = tsne.Embed(X, Y)`
   * Embed the [column-major matrix](../matrices.md#representing-data-in-mlpack) `X` into a lower-dimensional space, storing the result in `Y`.
-  * `X` should be a floating-point matrix (e.g. `arma::mat`, `arma::fmat`,
-     etc.) or an expression that evaluates to one.
-  * `Y` will be overwritten with the output embedding, and will have
-     `outputDims` rows and the same number of columns as `X`.
+  * `X` should be a floating-point matrix (e.g. `arma::mat`, `arma::fmat`, etc.) or an expression that evaluates to one.
+  * `Y` will be overwritten with the output embedding, and will have `outputDims` rows and the same number of columns as `X`.
+  * `isInitialized` is a boolean flag indicating whether the embedding matrix `Y` has been preinitialized by the caller.
   * Returns the final objective value (Kullback-Leibler divergence).
 
 ---

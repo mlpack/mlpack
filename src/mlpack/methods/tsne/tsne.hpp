@@ -147,10 +147,12 @@ class TSNE
    *
    * @param X The input data. (input_dimensions X number_of_points)
    * @param Y The output embedding. (output_dimensions X number_of_points)
+   * @param isInitialized Indicates whether the embedding matrix has already
+   *     been initialized.
    *
    * @return Final Objective Value. (KL Divergence)
    */
-  double Embed(const MatType& X, MatType& Y);
+  double Embed(const MatType& X, MatType& Y, const bool isInitialized = false);
 
   /**
    * Initialize the output embedding using pca or randomly.

@@ -35,7 +35,7 @@ TSNE<TSNEMethod, MatType, DistanceType>::TSNE(
 
 template <typename TSNEMethod, typename MatType, typename DistanceType>
 double TSNE<TSNEMethod, MatType, DistanceType>::Embed(
-    const MatType& X, MatType& Y)
+    const MatType& X, MatType& Y, const bool isInitialized)
 {
   // TODO: Make Early Exaggeration Iterations a parameter.
   // TODO: Make Mommentum, Kappa, Phi and MinGain parameters.
@@ -47,7 +47,8 @@ double TSNE<TSNEMethod, MatType, DistanceType>::Embed(
   assert(exaggeration > 0.0);
   assert(perplexity < X.n_cols);
 
-  InitializeEmbedding(X, Y);
+  if (!isInitialized)
+    InitializeEmbedding(X, Y);
 
   // Automatically choose a good step size.
   // See "Automated optimized parameters for T-distributed stochastic
