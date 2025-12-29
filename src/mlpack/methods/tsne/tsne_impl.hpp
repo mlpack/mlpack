@@ -52,9 +52,9 @@ double TSNE<TSNEMethod, MatType, DistanceType>::Embed(
   // Automatically choose a good step size.
   // See "Automated optimized parameters for T-distributed stochastic
   // neighbor embedding improve visualization and analysis of large datasets"
-  const bool isStepSizeAuto = (stepSize == 0.0);
+  const bool isStepSizeAuto = (stepSize <= 0.0);
   if (isStepSizeAuto)
-    stepSize = std::max(200.0, X.n_cols / exaggeration);
+    stepSize = std::max(50.0, X.n_cols / exaggeration / 4.0);
 
   // Calculate degrees of freedom.
   // See "Learning a Parametric Embedding by Preserving Local Structure".

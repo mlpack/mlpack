@@ -119,9 +119,9 @@ class TSNE
    *    separation between them. A higher value increases spacing between
    *    clusters, but if the cost grows during initial iterations consider
    *    reducing this value or lowering the step size. (Default: 12.0)
-   * @param stepSize Step size (learning rate) for the optimizer. If the
-   *    specified value is zero, the step size is computed as number of points
-   *    divided by exaggeration every time `Embed` is called. (Default: 200.0)
+   * @param stepSize Step size (learning rate) for the optimizer. the step
+   *    size is set to max(50.0, N / exaggeration / 4.0), where N is number
+   *    of points in the dataset. (Default: 0.0)
    * @param maxIter Maximum number of iterations. (Default: 1000)
    * @param tolerance Minimum improvement in the objective value required to
    *    perform another iteration. (Default: 1e-12)
@@ -136,7 +136,7 @@ class TSNE
   TSNE(const size_t outputDims = 2,
        const double perplexity = 30.0,
        const double exaggeration = 12.0,
-       const double stepSize = 200.0,
+       const double stepSize = 0.0,
        const size_t maxIter = 1000,
        const double tolerance = 1e-12,
        const std::string& init = "pca",

@@ -84,7 +84,8 @@ PARAM_DOUBLE_IN("exaggeration",
     "lower the step size.", "e", 12.0);
 PARAM_DOUBLE_IN("step_size",
     "Step size for the optimizer. If the given value is zero or negative, "
-    "the step size is set to number_of_points / exaggeration.", "s", 200.0);
+    "the step size is set to max(50.0, N / exaggeration / 4.0), where N is "
+    "the number of points in the dataset.", "s", 0.0);
 PARAM_INT_IN("max_iterations", "Maximum number of iterations.", "n", 1000);
 PARAM_DOUBLE_IN("tolerance", "Minimum improvement in the objective value "
     "required to perform another iteration.", "l", 1e-12);
@@ -103,6 +104,8 @@ PARAM_DOUBLE_IN("theta",
     "'barnes-hut' and 'dual-tree' methods. Higher values of theta result "
     "in coarser approximations, and the optimal value depends on the chosen "
     "methods.", "t", 0.5);
+
+
 //! Run TSNE on the specified dataset with the given policy.
 template <typename TSNEMethod, typename MatType>
 void RunTSNE(
