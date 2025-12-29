@@ -3707,3 +3707,69 @@ Because the number of points returned for each query point may differ, the resul
  - [Tree-independent dual-tree algorithms (pdf)](http://proceedings.mlr.press/v28/curtin13.pdf)
  - [RangeSearch C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/range_search/range_search.hpp)
 
+## mlpack_tsne
+{: #tsne }
+
+#### t-distributed Stochastic Neighbor Embedding
+{: #tsne_descr }
+
+```bash
+$ mlpack_tsne [--exaggeration 12] [--help] [--info <string>] [--init
+        'pca'] [--input_file <string>] [--max_iterations 1000] [--method
+        'barnes-hut'] [--output_dimensions 2] [--perplexity 30] [--step_size 0]
+        [--theta 0.5] [--tolerance 1e-12] [--verbose] [--version] [--output_file
+        <string>]
+```
+
+t-distributed stochastic neighbor embedding (t-SNE) is a statistical method for visualizing high-dimensional data by giving each data point a location in a two- or three-dimensional map. [Detailed documentation](#tsne_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--exaggeration (-e)` | [`double`](#doc_double) | Amplifies pairwise similarities during the initial optimization phase. This helps form tighter clusters and clearer separation between them. A higher value increases the spacing between clusters, but if the cost function grows during initial iterations, reduce this value or lower the step size. | `12` |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--init (-r)` | [`string`](#doc_string) | Initialization method for the output embedding. Options: 'pca' (default) or 'random'. 'pca' is preferred since it improves both speed and quality. Unlike some implementations that first reduce input to ~50 dimensions with PCA, here PCA is used only to initialize the output embedding matrix using 'output_dimensions' components. | `'pca'` |
+| `--input_file (-i)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Input dataset to perform t-SNE on. | `''` |
+| `--max_iterations (-n)` | [`int`](#doc_int) | Maximum number of iterations. | `1000` |
+| `--method (-m)` | [`string`](#doc_string) | Gradient computation method. Options are: 'exact', 'dual-tree', 'barnes-hut' (default). Please see the references for details about these methods and their trade-offs. | `'barnes-hut'` |
+| `--output_dimensions (-d)` | [`int`](#doc_int) | Dimensionality of the embedded space. | `2` |
+| `--perplexity (-p)` | [`double`](#doc_double) | Perplexity regulates the balance between local and global structure preservation, typically set between 5 and 50. | `30` |
+| `--step_size (-s)` | [`double`](#doc_double) | Step size for the optimizer. If the given value is zero or negative, the step size is set to max(50.0, N / exaggeration / 4.0), where N is the number of points in the dataset. | `0` |
+| `--theta (-t)` | [`double`](#doc_double) | Theta regulates the trade-off between speed and accuracy for the 'barnes-hut' and 'dual-tree' methods. Higher values of theta result in coarser approximations, and the optimal value depends on the chosen methods. | `0.5` |
+| `--tolerance (-l)` | [`double`](#doc_double) | Minimum improvement in the objective value required to perform another iteration. | `1e-12` |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_file (-o)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Output path to save embedding to. | 
+
+### Detailed documentation
+{: #tsne_detailed-documentation }
+
+The t-SNE algorithm comprises two main stages. First, t-SNE constructs a probability distribution over pairs of high-dimensional objects in such a way that similar objects are assigned a higher probability while dissimilar points are assigned a lower probability. Second, t-SNE defines a similar probability distribution over the points in the low-dimensional map, and it minimizes the Kullback-Leibler divergence (KL divergence) between the two distributions with respect to the locations of the points in the map.
+
+### Example
+For example, to reduce `'data.csv'` to two dimensions using the Barnes-Hut method with PCA initialization, automatic step size, a theta value of 0.5, a perplexity of 30, an exaggeration of 12, and a maximum of 500 iterations, and to save the resulting embedding to `'data_mod.csv'`, use the following command: 
+
+```bash
+$ mlpack_tsne --input_file data.csv --output_dimensions 2 --method barnes-hut
+  --init pca --step_size 0 --theta 0.5 --perplexity 30 --exaggeration 12
+  --max_iterations 500 --output_file data_mod.csv
+```
+
+### See also
+
+ - [t-distributed Stochastic Neighbor Embedding on Wikipedia](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding)
+ - [Visualizing Data using t-SNE](https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf)
+ - [Accelerating t-SNE using Tree-Based Algorithms](https://www.jmlr.org/papers/volume15/vandermaaten14a/vandermaaten14a.pdf)
+ - [TSNE C++ class documentation](../../user/methods/tsne.md)
+
