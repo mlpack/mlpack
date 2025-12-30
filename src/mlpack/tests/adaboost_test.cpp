@@ -134,11 +134,16 @@ TEMPLATE_TEST_CASE("HammingLossBoundVertebralColumn", "[AdaBoostTest]", mat,
   using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("vc2.csv", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("vc2_labels.txt", labels, labelOpts))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
