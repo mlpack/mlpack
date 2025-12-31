@@ -390,11 +390,16 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorIris_DS", "[AdaBoostTest][tiny]", mat, fmat)
   using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("iris.csv", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("iris.csv", inputData, opts))
     FAIL("Cannot load test dataset iris.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("iris_labels.txt", labels, labelOpts))
     FAIL("Cannot load labels for iris_labels.txt");
 
   // no need to map the labels here
