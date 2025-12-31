@@ -290,11 +290,16 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorNonLinearSepData", "[AdaBoostTest][long]",
   using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("train_nonlinsep.txt", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("train_nonlinsep.txt", inputData, opts))
     FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   Mat<size_t> labels;
-  if (!data::Load("train_labels_nonlinsep.txt", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("train_labels_nonlinsep.txt", labels, labelOpts))
     FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
