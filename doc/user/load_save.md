@@ -67,10 +67,17 @@ For some types of data, it is also possible to load multiple images at once from
 *Simple example:*
 
 ```c++
-// See https://datasets.mlpack.org/iris.csv.
-arma::mat x;
+// Simple example demonstrating how to load a dataset into an Armadillo matrix
+// using mlpack.  The iris dataset can be downloaded from:
+// https://datasets.mlpack.org/iris.csv.
+
+arma::mat x; // Matrix to store the loaded data (rows = features, columns = samples).
+
+// Load the CSV file into matrix `x`.
+// The file format is automatically detected from the file extension.
 mlpack::data::Load("iris.csv", x);
 
+// Print the dimensions of the loaded dataset.
 std::cout << "Loaded iris.csv; size " << x.n_rows << " x " << x.n_cols << "."
     << std::endl;
 ```
@@ -78,12 +85,21 @@ std::cout << "Loaded iris.csv; size " << x.n_rows << " x " << x.n_cols << "."
 Among other things, the file format can be easily specified:
 
 ```c++
-// See https://datasets.mlpack.org/iris.csv.
-arma::mat x;
+// This example is similar to the previous one, but explicitly specifies
+// the file format instead of relying on automatic detection.
+// The iris dataset can be downloaded from:
+// https://datasets.mlpack.org/iris.csv.
+
+arma::mat x; // Matrix to store the loaded data.
+
+// Load the CSV file into matrix `x`, explicitly specifying the CSV format.
+// This can be useful when loading data with ambiguous or missing file extensions.
 mlpack::data::Load("iris.csv", x, mlpack::data::CSV);
 
+// Print the dimensions of the loaded dataset.
 std::cout << "Loaded iris.csv; size " << x.n_rows << " x " << x.n_cols << "."
     << std::endl;
+
 ```
 
 See also the other examples for each [supported load type](#types):
