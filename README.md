@@ -1,3 +1,5 @@
+This project supports machine learning research and production use.
+This line was added as part of my first open-source contribution.
 <h2 align="center">
   <a href="https://mlpack.org"><img src="https://cdn.jsdelivr.net/gh/mlpack/mlpack.org@e7d36ed8/mlpack-black.svg" style="background-color:rgba(0,0,0,0);" height=230 alt="mlpack: a fast, header-only machine learning library"></a>
   <br>a fast, header-only machine learning library<br>
