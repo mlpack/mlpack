@@ -173,17 +173,18 @@ can be used to make class predictions for new data.
 
 #### Classification Parameters:
 
+
+
 | **usage** | **name** | **type** | **description** |
 |-----------|----------|----------|-----------------|
 | _single-point_ | `point` | [`arma::vec`](../matrices.md) | Single point for classification. |
 | _single-point_ | `prediction` | `size_t&` | `size_t` to store class prediction into. |
 | _single-point_ | `probabilitiesVec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into; will have length 2. |
-||||
 | _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md#representing-data-in-mlpack) points for classification. |
 | _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into; will be set to length `data.n_cols`. |
 | _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to 2; number of columns will be equal to `data.n_cols`). |
-||||
-| _all_ | `decisionBoundary` | `double` | If the logistic function value for a point is greater than `decisionBoundary`, it is classified as class `1`.  Defaults to `0.5`. |
+| _all_ | `decisionBoundary` | `double` | If the logistic function value for a point is greater than `decisionBoundary`, it is classified as class `1`. Defaults to `0.5`. |
+
 
 ### Other Functionality
 
@@ -305,7 +306,7 @@ adaDelta.MaxIterations() = 100 * dataset.n_cols; // 100 epochs maximum.
 
 // Use the custom callback and an L2 penalty parameter of 0.01.
 lr.Train(dataset, labels, adaDelta, 0.01, ModelCheckpoint(lr),
-    ens::ProgressBar());
+ens::ProgressBar());
 
 // Now files like model-1.bin, model-2.bin, etc. should be saved on disk.
 ```
@@ -322,13 +323,13 @@ mlpack::data::Load("model-1.bin", "lr_model", lr, true);
 
 // Print the dimensionality of the model and some other statistics.
 std::cout << "The dimensionality of the model in model-1.bin is "
-    << (lr.Parameters().n_elem - 1) << "." << std::endl;
+<< (lr.Parameters().n_elem - 1) << "." << std::endl;
 std::cout << "The bias parameter for the model is " << lr.Parameters()[0]
-    << "." << std::endl;
+<< "." << std::endl;
 
 arma::vec point(lr.Parameters().n_elem - 1, arma::fill::randu);
 std::cout << "The predicted class for a random point, using a decision boundary"
-    << " of 0.2, is " << lr.Classify(point, 0.2) << "." << std::endl;
+<< " of 0.2, is " << lr.Classify(point, 0.2) << "." << std::endl;
 ```
 
 ---
@@ -340,11 +341,11 @@ Perform incremental training on multiple datasets with multiple calls to
 // Generate two random datasets.
 arma::mat firstDataset(5, 1000, arma::fill::randu); // 1000 points.
 arma::Row<size_t> firstLabels =
-    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 1));
+ arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 1));
 
 arma::mat secondDataset(5, 1500, arma::fill::randu); // 1500 points.
 arma::Row<size_t> secondLabels =
-    arma::randi<arma::Row<size_t>>(1500, arma::distr_param(0, 1));
+arma::randi<arma::Row<size_t>>(1500, arma::distr_param(0, 1));
 
 // Train a model on the first dataset with an L2 regularization penalty
 // parameter of 0.01.
@@ -352,7 +353,7 @@ mlpack::LogisticRegression lr(firstDataset, firstLabels, 0.01);
 
 // Now compute the objective on the second dataset and print it.
 std::cout << "Objective on second dataset: "
-    << lr.ComputeError(secondDataset, secondLabels) << "." << std::endl;
+<< lr.ComputeError(secondDataset, secondLabels) << "." << std::endl;
 
 // Train for a second round on the second dataset.
 lr.Train(secondDataset, secondLabels);
@@ -360,50 +361,21 @@ lr.Train(secondDataset, secondLabels);
 // Now compute the objective on the second dataset again and print it.
 // (Note that it may not be all that much better because this is random data!)
 std::cout << "Objective on second dataset after second training: "
-    << lr.ComputeError(secondDataset, secondLabels) << "." << std::endl;
+  << lr.ComputeError(secondDataset, secondLabels) << "." << std::endl;
 ```
 
 ---
-
 ### Advanced Functionality: Different Element Types
 
 The `LogisticRegression` class has one template parameter that can be used to
 control the element type of the model.  The full signature of the class is:
 
-```
-LogisticRegression<MatType>
-```
-
-`MatType` specifies the type of matrix used for training data and internal
-representation of model parameters.  Any matrix type that implements the
-Armadillo API can be used.  The example below trains a logistic regression model
-on sparse 32-bit floating point data.
-
 ```c++
-// Create random, sparse 100-dimensional data.
-arma::sp_fmat dataset;
-dataset.sprandu(100, 5000, 0.3);
-arma::Row<size_t> labels =
-    arma::randi<arma::Row<size_t>>(5000, arma::distr_param(0, 1));
-
-// Train with L2 regularization penalty parameter of 0.1.
-mlpack::LogisticRegression<arma::sp_fmat> lr(dataset, labels, 0.1);
-
-// Now classify a test point.
-arma::sp_fvec point;
-point.sprandu(100, 1, 0.3);
-
-size_t prediction;
-arma::fvec probabilitiesVec;
-lr.Classify(point, prediction, probabilitiesVec);
-
-std::cout << "Prediction for random test point: " << prediction << "."
-    << std::endl;
-std::cout << "Class probabilities for random test point: "
-    << probabilitiesVec.t();
+LogisticRegression<MatType>
+`MatType` specifies the type of matrix used for training data and internal
+representation of model parameters (e.g. `arma::mat`, `arma::fmat`, `arma::sp_mat`).
 ```
 
-***Note***: if `MatType` is a sparse object (e.g. `sp_fmat`), the internal
-parameter representation will be a *dense* vector containing elements of the
-same type (e.g. `frowvec`).  This is because L2-regularized logistic regression,
-even when training on sparse data, does not necessarily produce sparse models.
+
+
+
