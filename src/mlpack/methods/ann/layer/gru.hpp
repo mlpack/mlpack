@@ -171,17 +171,22 @@ class GRU : public RecurrentLayer<MatType>
   MatType prevOutput;
 
   // Backwards workspace
+  MatType workspace;
   MatType deltaReset;
   MatType deltaUpdate;
   MatType deltaHidden;
 
-  // Backwards workspace of previous step
+  // Backwards workspace of CurrentStep() + 1
   MatType nextDeltaReset;
   MatType nextDeltaUpdate;
   MatType nextDeltaHidden;
 
   // Makes internal state aliases from the recurrent state.
   void MakeStateAliases(size_t activePoints);
+
+  // Calling this function will set up workspace memory for the backward pass,
+  // if necessary.
+  void SetBackwardWorkspace(const size_t activePoints);
 }; // class GRU
 
 } // namespace mlpack

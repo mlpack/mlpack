@@ -164,6 +164,7 @@ void GRU<MatType>::Backward(
   // Get aliases from the recurrent state.
   const size_t activePoints = output.n_cols;
   MakeStateAliases(activePoints);
+  SetBackwardWorkspace(activePoints);
 
   // Work backwards to get error at each gate.
   // y_t = (1 - z_t) % y_{t - 1} + z_t % h_t
@@ -212,8 +213,9 @@ void GRU<MatType>::Gradient(
     const MatType& /* error */,
     MatType& gradient)
 {
-  // This implementation reuses the deltas from Backward() and assumes that
-  // they have not been changed.
+  // This implementation reuses the recurrent state aliases that are set in
+  // `Backward()`. This relies on `Gradient()` being called immediately after
+  // `Backward()`.
 
   size_t offset = 0;
   // Non recurrent reset gate weights.
@@ -245,11 +247,6 @@ void GRU<MatType>::Gradient(
         0) = vectorise(nextDeltaHidden * currentOutput.t());
     offset += recurrentHiddenGateWeight.n_elem;
   }
-
-  // Move delta to nextDelta for the next step.
-  nextDeltaReset = std::move(deltaReset);
-  nextDeltaUpdate = std::move(deltaUpdate);
-  nextDeltaHidden = std::move(deltaHidden);
 }
 
 template<typename MatType>
@@ -263,8 +260,7 @@ template<typename MatType>
 size_t GRU<MatType>::RecurrentSize() const
 {
   // The recurrent state has to store the output, reset gate, update gate,
-  // and hidden gate. The last 3 aren't recurrent but are stored in Forward()
-  // and used in Backward()
+  // and hidden gate.
   return outSize * 4;
 }
 
@@ -294,6 +290,44 @@ void GRU<MatType>::MakeStateAliases(size_t activePoints)
   {
     MatType& prevState = this->RecurrentState(this->PreviousStep());
     MakeAlias(prevOutput, prevState, outSize, activePoints);
+  }
+}
+
+template<typename MatType>
+void GRU<MatType>::SetBackwardWorkspace(const size_t activePoints)
+{
+  // We need to hold enough space for two time steps.
+  workspace.set_size(6 * outSize, this->batchSize);
+
+  if (this->CurrentStep() % 2 == 0)
+  {
+    MakeAlias(deltaReset, workspace, outSize, activePoints);
+    MakeAlias(deltaUpdate, workspace, outSize, activePoints,
+        outSize * this->batchSize);
+    MakeAlias(deltaHidden, workspace, outSize, activePoints,
+        2 * outSize * this->batchSize);
+
+    MakeAlias(nextDeltaReset, workspace, outSize, activePoints,
+        3 * outSize * this->batchSize);
+    MakeAlias(nextDeltaUpdate, workspace, outSize, activePoints,
+        4 * outSize * this->batchSize);
+    MakeAlias(nextDeltaHidden, workspace, outSize, activePoints,
+        5 * outSize * this->batchSize);
+  }
+  else
+  {
+    MakeAlias(nextDeltaReset, workspace, outSize, activePoints);
+    MakeAlias(nextDeltaUpdate, workspace, outSize, activePoints,
+        outSize * this->batchSize);
+    MakeAlias(nextDeltaHidden, workspace, outSize, activePoints,
+        2 * outSize * this->batchSize);
+
+    MakeAlias(deltaReset, workspace, outSize, activePoints,
+        3 * outSize * this->batchSize);
+    MakeAlias(deltaUpdate, workspace, outSize, activePoints,
+        4 * outSize * this->batchSize);
+    MakeAlias(deltaHidden, workspace, outSize, activePoints,
+        5 * outSize * this->batchSize);
   }
 }
 

@@ -664,7 +664,7 @@ typename MatType::elem_type RNN<
 
     // Make an alias of the step's data for the forward pass.
     MakeAlias(stepData, predictors.slice(t), predictors.n_rows, activePoints,
-        begin * predictors.slice(t).n_rows);
+        begin * predictors.n_rows);
     MakeAlias(outputData, outputs.slice(t % effectiveBPTTSteps), outputs.n_rows,
         activePoints);
     network.network.Forward(stepData, outputData);
@@ -699,9 +699,9 @@ typename MatType::elem_type RNN<
         // error.
         const size_t responseStep = (single) ? 0 : t - step;
         MakeAlias(stepData, predictors.slice(t - step), predictors.n_rows,
-            activePoints, begin * predictors.slice(t - step).n_rows);
+            activePoints, begin * predictors.n_rows);
         MakeAlias(responseData, responses.slice(responseStep), responses.n_rows,
-            activePoints, begin * responses.slice(responseStep).n_rows);
+            activePoints, begin * responses.n_rows);
         MakeAlias(outputData, outputs.slice((t - step) % effectiveBPTTSteps),
             outputs.n_rows, activePoints);
 
