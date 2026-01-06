@@ -76,17 +76,14 @@ class Im2ColConvolution : public BaseConvolution<BorderMode>
       Im2ColConvolution::InitalizeOutput(inputPadded, filter, output, dW, dH,
           dilationW, dilationH, outMaps);
 
-    MatType im2row(output.n_rows * output.n_cols, filter.n_rows *
-        filter.n_cols * input.n_slices, GetFillType<MatType>::none);
+    // `im2row` is held transposed.
+    MatType im2row(filter.n_rows * filter.n_cols * input.n_slices,
+        output.n_rows * output.n_cols, GetFillType<MatType>::none);
     // Arrange im2row so that each row has patches from each input map.
     for (size_t i = 0; i < input.n_slices; ++i)
     {
-      MatType im2rowSv;
-      MakeAlias(im2rowSv, im2row, output.n_rows * output.n_cols,
-          filter.n_rows * filter.n_cols, output.n_rows *
-          output.n_cols * filter.n_rows * filter.n_cols * i);
-      Im2Row(inputPadded.slice(i), im2rowSv, filter.n_rows, filter.n_cols,
-          dW, dH, dilationW, dilationH);
+      Im2Row(inputPadded.slice(i), im2row, filter.n_rows, filter.n_cols,
+          filter.n_rows * filter.n_cols * i, dW, dH, dilationW, dilationH);
     }
 
     // The filters already have the correct order in memory, just reshape it.
@@ -98,7 +95,7 @@ class Im2ColConvolution : public BaseConvolution<BorderMode>
     MatType tempOutput;
     MakeAlias(tempOutput, output, output.n_rows * output.n_cols, outMaps);
 
-    tempOutput += im2row * fil2col;
+    tempOutput += trans(im2row) * fil2col;
   }
 
   /**
@@ -136,9 +133,10 @@ class Im2ColConvolution : public BaseConvolution<BorderMode>
       Im2ColConvolution::InitalizeOutput(inputPadded, filter, output, dW, dH,
           dilationW, dilationH, filter.n_slices);
 
-    MatType im2row(output.n_rows * output.n_cols, filter.n_rows *
-        filter.n_cols, GetFillType<MatType>::none);
-    Im2Row(inputPadded, im2row, filter.n_rows, filter.n_cols, dW, dH,
+    // `im2row` is held transposed.
+    MatType im2row(filter.n_rows * filter.n_cols, output.n_rows * output.n_cols,
+        GetFillType<MatType>::none);
+    Im2Row(inputPadded, im2row, filter.n_rows, filter.n_cols, 0, dW, dH,
         dilationW, dilationH);
 
     // The filters already have the correct order in memory, just reshape it.
@@ -150,17 +148,18 @@ class Im2ColConvolution : public BaseConvolution<BorderMode>
     MakeAlias(tempOutput, output, output.n_rows * output.n_cols,
         filter.n_slices);
 
-    tempOutput += im2row * fil2col;
+    tempOutput += trans(im2row) * fil2col;
   }
  private:
   /**
-   * Take an input and convert each patch into rows. Expects that im2row
-   * already has the correct shape.
+   * Take an input and convert each patch into columns (held transposed).
+   * This function expects that `im2row` has the expected dimensions.
    *
    * @param input Input used to perform the convolution.
    * @param im2row Patches of the input as rows.
    * @param filterRows Number of rows in a filter.
    * @param filterCols Number of columns in a filter.
+   * @param startRow The starting row for the input image.
    * @param dW Stride of filter application in the x direction.
    * @param dH Stride of filter application in the y direction.
    * @param dilationW The dilation factor in x direction.
@@ -171,33 +170,41 @@ class Im2ColConvolution : public BaseConvolution<BorderMode>
                      MatType& im2row,
                      const size_t filterRows,
                      const size_t filterCols,
+                     const size_t startRow = 0,
                      const size_t dW = 1,
                      const size_t dH = 1,
                      const size_t dilationW = 1,
                      const size_t dilationH = 1)
   {
+    using UVecType = typename GetURowType<MatType>::type;
+
     const size_t dFilterRows = filterRows * dilationW - (dilationW - 1);
     const size_t dFilterCols = filterCols * dilationH - (dilationH - 1);
     const size_t outputRows = (input.n_rows - dFilterRows + dW) / dW;
     const size_t outputCols = (input.n_cols - dFilterCols + dH) / dH;
+    const bool useDilation = (dilationW != 1) || (dilationH != 1);
 
-    bool useDilation = (dilationW != 1) || (dilationH != 1);
-    using UVecType = typename GetURowType<MatType>::type;
-
-    size_t outRow = 0;
+    size_t outCol = 0;
+    const size_t filterElems = filterRows * filterCols;
+    MatType colAlias;
     for (size_t j = 0; j < outputCols; j++)
     {
       size_t inCol = j * dH;
       for (size_t i = 0; i < outputRows; i++)
       {
         size_t inRow = i * dW;
+        // Use an alias instead of `.col()` to avoid the creation of a
+        // temporary subview object.
+        MakeAlias(colAlias, im2row, filterElems, 1, outCol * im2row.n_rows +
+            startRow);
         if (useDilation)
-          im2row.row(outRow++) = trans(vectorise(input.submat(
-              linspace<UVecType>(inRow, inRow + dFilterRows - 1, filterRows),
-              linspace<UVecType>(inCol, inCol + dFilterCols - 1, filterCols))));
+          colAlias = vectorise(input.submat(linspace<UVecType>(inRow,
+              inRow + dFilterRows - 1, filterRows),
+              linspace<UVecType>(inCol, inCol + dFilterCols - 1, filterCols)));
         else
-          im2row.row(outRow++) = trans(vectorise(input.submat(inRow, inCol,
-              inRow + filterRows - 1, inCol + filterCols - 1)));
+          colAlias = vectorise(input.submat(inRow, inCol,
+              inRow + filterRows - 1, inCol + filterCols - 1));
+        outCol++;
       }
     }
   }
