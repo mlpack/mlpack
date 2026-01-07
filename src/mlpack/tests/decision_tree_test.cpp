@@ -861,7 +861,14 @@ TEST_CASE("BestCategoricalBuildBinaryTest", "[DecisionTreeTest]")
   data::DatasetInfo dataInfo;
 
   data::Load("mushroom.data.csv", dataset, dataInfo);
-  data::Load("mushroom.labels.csv", labels, true);
+
+  // 1. Create options for the labels
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  labelOpts.Categorical() = true;
+
+  // 2. Pass 'labelOpts' to the label loader
+  data::Load("mushroom.labels.csv", labels, labelOpts);
 
   arma::mat trainDataset, testDataset;
   arma::Row<size_t> trainLabels, testLabels;
@@ -1198,11 +1205,25 @@ TEST_CASE("ClassProbabilityTest", "[DecisionTreeTest]")
 TEST_CASE("SimpleGeneralizationTest", "[DecisionTreeTest]")
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+
+  // 1. Create options for the dataset
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+
+  // 2. Pass 'opts' to the Load function
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+
+  // 3. Create options for the labels
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  labelOpts.Categorical() = false;
+
+  // 4. Pass 'labelOpts' to the label loader
+  if (!data::Load("vc2_labels.txt", labels, labelOpts))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -1214,11 +1235,25 @@ TEST_CASE("SimpleGeneralizationTest", "[DecisionTreeTest]")
 
   // Load testing data.
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+
+  // 5. Create options for the test dataset
+  data::TextOptions testOpts;
+  testOpts.HasHeaders() = false;
+  testOpts.Categorical() = false;
+
+  // 6. Pass 'testOpts' to the test data loader
+  if (!data::Load("vc2_test.csv", testData, testOpts))
     FAIL("Cannot load test dataset vc2_test.csv!");
 
   arma::Mat<size_t> trueTestLabels;
-  if (!data::Load("vc2_test_labels.txt", trueTestLabels))
+
+  // 7. Create options for the test labels
+  data::TextOptions testLabelOpts;
+  testLabelOpts.HasHeaders() = false;
+  testLabelOpts.Categorical() = false;
+
+  // 8. Pass 'testLabelOpts' to the test label loader
+  if (!data::Load("vc2_test_labels.txt", trueTestLabels, testLabelOpts))
     FAIL("Cannot load labels for vc2_test_labels.txt");
 
   // Get the predicted test labels.
@@ -1258,11 +1293,25 @@ TEST_CASE("SimpleGeneralizationTest", "[DecisionTreeTest]")
 TEST_CASE("SimpleGeneralizationFMatTest", "[DecisionTreeTest]")
 {
   arma::fmat inputData;
-  if (!data::Load("vc2.csv", inputData))
+
+  // 1. Create options for the dataset
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+
+  // 2. Pass 'opts' to the Load function
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+
+  // 3. Create options for the labels
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  labelOpts.Categorical() = false;
+
+  // 4. Pass 'labelOpts' to the label loader
+  if (!data::Load("vc2_labels.txt", labels, labelOpts))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -1274,11 +1323,25 @@ TEST_CASE("SimpleGeneralizationFMatTest", "[DecisionTreeTest]")
 
   // Load testing data.
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+
+  // 5. Create options for the test dataset
+  data::TextOptions testOpts;
+  testOpts.HasHeaders() = false;
+  testOpts.Categorical() = false;
+
+  // 6. Pass 'testOpts' to the test data loader
+  if (!data::Load("vc2_test.csv", testData, testOpts))
     FAIL("Cannot load test dataset vc2_test.csv!");
 
   arma::Mat<size_t> trueTestLabels;
-  if (!data::Load("vc2_test_labels.txt", trueTestLabels))
+
+  // 7. Create options for the test labels
+  data::TextOptions testLabelOpts;
+  testLabelOpts.HasHeaders() = false;
+  testLabelOpts.Categorical() = false;
+
+  // 8. Pass 'testLabelOpts' to the test label loader
+  if (!data::Load("vc2_test_labels.txt", trueTestLabels, testLabelOpts))
     FAIL("Cannot load labels for vc2_test_labels.txt");
 
   // Get the predicted test labels.
@@ -1393,9 +1456,23 @@ TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  if (!data::Load("vc2.csv", dataset))
+
+  // 1. Create options for the dataset
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+
+  // 2. Pass 'opts' to the Load function
+  if (!data::Load("vc2.csv", dataset, opts))
     FAIL("Cannot load test dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+
+  // 3. Create options for the labels
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  labelOpts.Categorical() = false;
+
+  // 4. Pass 'labelOpts' to the label loader
+  if (!data::Load("vc2_labels.txt", labels, labelOpts))
     FAIL("Cannot load labels for vc2_labels.txt!");
 
   // Add some noise.
@@ -1421,9 +1498,23 @@ TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
   // Now we can check that we get good performance on the VC2 test set.
   arma::mat testData;
   arma::Row<size_t> testLabels;
-  if (!data::Load("vc2_test.csv", testData))
+
+  // 5. Create options for the test dataset
+  data::TextOptions testOpts;
+  testOpts.HasHeaders() = false;
+  testOpts.Categorical() = false;
+
+  // 6. Pass 'testOpts' to the test data loader
+  if (!data::Load("vc2_test.csv", testData, testOpts))
     FAIL("Cannot load test dataset vc2_test.csv!");
-  if (!data::Load("vc2_test_labels.txt", testLabels))
+
+  // 7. Create options for the test labels
+  data::TextOptions testLabelOpts;
+  testLabelOpts.HasHeaders() = false;
+  testLabelOpts.Categorical() = false;
+
+  // 8. Pass 'testLabelOpts' to the test label loader
+  if (!data::Load("vc2_test_labels.txt", testLabels, testLabelOpts))
     FAIL("Cannot load labels for vc2_test_labels.txt!");
 
   arma::Row<size_t> predictions;
@@ -1506,9 +1597,23 @@ TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  if (!data::Load("vc2.csv", dataset))
+
+  // 1. Create options for the dataset
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+
+  // 2. Pass 'opts' to the Load function
+  if (!data::Load("vc2.csv", dataset, opts))
     FAIL("Cannot load test dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+
+  // 3. Create options for the labels
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  labelOpts.Categorical() = false;
+
+  // 4. Pass 'labelOpts' to the label loader
+  if (!data::Load("vc2_labels.txt", labels, labelOpts))
     FAIL("Cannot load labels for vc2_labels.txt!");
 
   // Add some noise.
@@ -1534,9 +1639,23 @@ TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
   // Now we can check that we get good performance on the VC2 test set.
   arma::mat testData;
   arma::Row<size_t> testLabels;
-  if (!data::Load("vc2_test.csv", testData))
+
+  // 5. Create options for the test dataset
+  data::TextOptions testOpts;
+  testOpts.HasHeaders() = false;
+  testOpts.Categorical() = false;
+
+  // 6. Pass 'testOpts' to the test data loader
+  if (!data::Load("vc2_test.csv", testData, testOpts))
     FAIL("Cannot load test dataset vc2_test.csv!");
-  if (!data::Load("vc2_test_labels.txt", testLabels))
+
+  // 7. Create options for the test labels
+  data::TextOptions testLabelOpts;
+  testLabelOpts.HasHeaders() = false;
+  testLabelOpts.Categorical() = false;
+
+  // 8. Pass 'testLabelOpts' to the test label loader
+  if (!data::Load("vc2_test_labels.txt", testLabels, testLabelOpts))
     FAIL("Cannot load labels for vc2_test_labels.txt!");
 
   arma::Row<size_t> predictions;
