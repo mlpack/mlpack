@@ -7,7 +7,7 @@ or have found a bug that you know how to fix, please submit a pull request!
 
 Each contributor needs to understand the content they are proposing for mlpack,
 and how the proposed content changes and/or expands functionality in mlpack.
-Content includes source code, documentation, and other meterial such as images
+Content includes source code, documentation, and other material such as images
 and datasets.  The pull request must justify the proposed content in the
 description.  Using coding assistants or tools like Large Laguage Models (LLMs) 
 does not grant additional privileges or reduce our expectations.
