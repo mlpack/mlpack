@@ -1828,9 +1828,24 @@ TEST_CASE("DifferentMaximumDepthTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  if (!data::Load("vc2.csv", dataset))
+
+  // 1. Create options for the dataset
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+
+  // 2. Pass 'opts' to the Load function
+  if (!data::Load("vc2.csv", dataset, opts))
     FAIL("Cannot load test dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+
+  // 3. Create options for the labels
+  // (We use a separate object just to be safe and explicit, matching the PR style)
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  labelOpts.Categorical() = false;
+
+  // 4. Pass 'labelOpts' to the label loader
+  if (!data::Load("vc2_labels.txt", labels, labelOpts))
     FAIL("Cannot load labels for vc2_labels.txt!");
 
   DecisionTree<> d(dataset, labels, 3, 10, 1e-7, 1);
