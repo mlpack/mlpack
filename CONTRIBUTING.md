@@ -5,6 +5,13 @@ contribute to mlpack and join the community!  If you would like to make
 improvements to the library, add new features that are useful to you and others,
 or have found a bug that you know how to fix, please submit a pull request!
 
+If you would like to learn more about how to get started contributing, see the
+[Community](https://www.mlpack.org/doc/developer/community.html) page, and if you are
+interested in participating in Google Summer of Code, see
+[mlpack and Google Summer of Code](http://www.mlpack.org/doc/developer/gsoc.html).
+
+## Usage of LLMs / Coding Assistants
+
 Each contributor needs to understand the content they are proposing for mlpack,
 and how the proposed content changes and/or expands functionality in mlpack.
 Content includes source code, documentation, and other material such as images
@@ -17,11 +24,6 @@ the content came from.  The responsibility includes ensuring that the content
 can be submitted to mlpack and does not violate intellectual property rights
 such as copyright(s).  Source code in mlpack is licensed under the BSD license;
 see `LICENSE.txt` for details.
-
-If you would like to learn more about how to get started contributing, see the
-[Community](https://www.mlpack.org/doc/developer/community.html) page, and if you are
-interested in participating in Google Summer of Code, see
-[mlpack and Google Summer of Code](http://www.mlpack.org/doc/developer/gsoc.html).
 
 ## Pull request process
 
