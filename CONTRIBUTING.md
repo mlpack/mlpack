@@ -9,7 +9,7 @@ Each contributor needs to understand the content they are proposing for mlpack,
 and how the proposed content changes and/or expands functionality in mlpack.
 Content includes source code, documentation, and other material such as images
 and datasets.  The pull request must justify the proposed content in the
-description.  Using coding assistants or tools like Large Laguage Models (LLMs) 
+description.  Using coding assistants or tools like Large Language Models (LLMs) 
 does not grant additional privileges or reduce our expectations.
 
 Each contributor is responsible for the proposed content, regardless of where
