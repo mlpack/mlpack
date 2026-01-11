@@ -992,15 +992,18 @@ TEMPLATE_TEST_CASE("RNNEmbeddedReberGrammarTest",
  */
 TEMPLATE_TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]",
     LSTM<>,
-    GRU<>,
-    LinearRecurrent<>)
+    GRU<>)
 {
   const size_t rho = 25;
-  const size_t numEpochs = 10;
+  const size_t numEpochs = 3;
 
-  // `LinearRecurrent` explodes if the output size is too big.
-  const size_t outSize = (std::is_same<TestType, LinearRecurrent<>>::value) ?
-      3 : 10;
+  #if ENS_VERSION_MAJOR >= 3
+  const double stepSize = 0.024;
+  #else
+  // Older versions of ensmallen did not adjust the step size for the batch
+  // size.
+  const double stepSize = 0.003;
+  #endif
 
   // Generate noisy sine data.
   arma::cube data, responses;
@@ -1024,10 +1027,10 @@ TEMPLATE_TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]",
   }
 
   // Build a network and train it.
-  RMSProp opt(0.005, 8, 0.99, 1e-08, 500 * numEpochs, 1e-5);
+  RMSProp opt(stepSize, 8, 0.99, 1e-08, 500 * numEpochs, 1e-5);
 
   RNN<MeanSquaredError> net(rho);
-  net.Add<TestType>(outSize);
+  net.Add<TestType>(10);
   net.Add<Linear>(1);
 
   // Train on all the data.
@@ -1053,11 +1056,11 @@ TEMPLATE_TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]",
 
   // Now compute another network where we don't use the sequence lengths.
   RNN<MeanSquaredError> net2(rho);
-  net2.Add<TestType>(outSize);
+  net2.Add<TestType>(10);
   net2.Add<Linear>(1);
 
   // Train and predict, then compute the sum error.
-  RMSProp opt2(0.005, 8, 0.99, 1e-08, 500 * numEpochs / 2, 1e-5);
+  RMSProp opt2(stepSize, 8, 0.99, 1e-08, 500 * numEpochs / 2, 1e-5);
   net2.Train(origData, origResponses, opt2);
   net2.Predict(origData, prediction);
   const double refAverageError = mean(abs(vectorise(origResponses) -
@@ -1066,6 +1069,98 @@ TEMPLATE_TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]",
   // There can be some margin in the results because we are not training on as
   // much data for the ragged sequences.
   REQUIRE(abs(averageError - refAverageError) <= 0.1);
+}
+
+/**
+ * Test that we can train a RecurrentLinear RNN on sequences of different
+ * lengths, and get roughly the same thing we would for training on non-ragged
+ * sequences.
+ */
+TEST_CASE("RNNRecurrentLinearRaggedSequenceTest",
+    "[RecurrentNetworkTest][long]")
+{
+  const size_t rho = 10;
+  const size_t numEpochs = 10;
+
+  #if ENS_VERSION_MAJOR >= 3
+  const double stepSize = 0.08;
+  #else
+  // Older versions of ensmallen did not adjust the step size for the batch
+  // size.
+  const double stepSize = 0.01;
+  #endif
+
+  // Generate data.
+  // The response is equal to the sum of the predictors.
+  // eg. for predictors: 0, 5, 3, 1,  3
+  //          responses: 0, 5, 8, 9, 12
+  arma::cube predictors, responses;
+  arma::urowvec sequenceLengths;
+
+  predictors.randn(1, 500, rho + 20);
+  responses.zeros(1, 500, rho + 20);
+  for (size_t c = 0; c < 500; c++)
+  {
+    for (size_t t = 0; t < responses.n_slices; t++)
+    {
+      responses(0, c, t) = arma::accu(predictors.subcube(0, c, 0, 0, c, t));
+    }
+  }
+
+  // Assign random sequence lengths for each sequence.
+  arma::urowvec lengths = arma::randi<arma::urowvec>(500,
+                                                     DistrParam(10, 30));
+
+  arma::cube origPredictors = predictors;
+  arma::cube origResponses = responses;
+
+  // Set garbage data for anything past the end of a sequence.
+  for (size_t c = 0; c < 500; c++)
+  {
+    if (lengths[c] == 30)
+      continue;
+
+    predictors.subcube(0, c, lengths[c],
+                       0, c, predictors.n_slices - 1).randn();
+    responses.subcube(0, c, lengths[c],
+                      0, c, responses.n_slices - 1).fill(500);
+  }
+
+  // Train on non-ragged sequences
+  RMSProp opt1(stepSize, 8, 0.99, 1e-08, 500 * numEpochs / 2, 1e-5);
+  RNN<MeanSquaredError> net1(rho);
+  net1.Add<LinearRecurrent>(1);
+  net1.Train(origPredictors, origResponses, opt1);
+
+  // Test the error of the network non-ragged sequences;
+  arma::cube prediction1;
+  net1.Predict(origPredictors, prediction1);
+  const double refAverageError = mean(abs(vectorise(origResponses) -
+      vectorise(prediction1)));
+
+  // Train on ragged sequences
+  RMSProp opt2(stepSize, 8, 0.99, 1e-08, 500 * numEpochs, 1e-5);
+  RNN<MeanSquaredError> net2(rho);
+  net2.Add<LinearRecurrent>(1);
+  net2.Train(predictors, responses, lengths, opt2);
+
+  // Test the error of the network trained on ragged sequences;
+  arma::cube prediction2;
+  net2.Predict(predictors, prediction2, lengths);
+  size_t timeSteps = 0;
+  double totalError = 0.0;
+  for (size_t c = 0; c < 500; ++c)
+  {
+    timeSteps += lengths[c];
+    totalError += accu(abs(
+        vectorise(origResponses.subcube(0, c, 0, 0, c, lengths[c] - 1)) -
+        vectorise(prediction2.subcube(0, c, 0, 0, c, lengths[c] - 1))));
+  }
+  const double averageError = (totalError / timeSteps);
+
+  // There can be some margin in the results because we are not training on as
+  // much data for the ragged sequences.
+  REQUIRE(abs(refAverageError - averageError) <= 0.1);
 }
 
 /**
