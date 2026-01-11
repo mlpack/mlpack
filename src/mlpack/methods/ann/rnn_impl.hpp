@@ -852,7 +852,7 @@ void RNN<
                 URowType& sequenceLengths)
 {
   using UColType = typename GetUColType<MatType>::type;
-  UColType batchLengths;
+  URowType batchLengths;
   MakeAlias(batchLengths, sequenceLengths, batchSize, begin);
 
   // Get the new ordering of this batch.
@@ -866,9 +866,10 @@ void RNN<
         batchSize, begin * predictors.n_rows);
     MakeAlias(batchResponses, responses.slice(i), responses.n_rows,
         batchSize, begin * responses.n_rows);
-    ReorderData(ordering, batchPredictors, batchPredictors);
-    ReorderData(ordering, batchResponses, batchResponses);
+    batchPredictors = batchPredictors.cols(ordering);
+    batchResponses = batchResponses.cols(ordering);
   }
+  batchLengths = batchLengths.cols(ordering);
 }
 
 } // namespace mlpack
