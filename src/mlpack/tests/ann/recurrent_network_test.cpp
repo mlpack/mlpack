@@ -1074,7 +1074,8 @@ TEMPLATE_TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]",
 /**
  * Test that we can train a RecurrentLinear RNN on sequences of different
  * lengths, and get roughly the same thing we would for training on non-ragged
- * sequences.
+ * sequences. This is a seperate test from `RNNRaggedSequenceTest` because the
+ * `LinearRecurrent` layer can't model sine waves.
  */
 TEST_CASE("RNNRecurrentLinearRaggedSequenceTest",
     "[RecurrentNetworkTest][long]")
