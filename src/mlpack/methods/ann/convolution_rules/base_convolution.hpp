@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_ANN_CONVOLUTION_RULES_BASE_CONVOLUTION_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/using.hpp>
 #include "border_modes.hpp"
 
 namespace mlpack {
@@ -62,8 +63,8 @@ class BaseConvolution
       // First, compute the necessary padding for the full convolution.  It is
       // possible that this might be an overestimate.  Note that these variables
       // only hold the padding on one side of the input.
-      const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
-      const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
+      const size_t filterRows = filter.n_rows * dilationW - (dilationW - 1);
+      const size_t filterCols = filter.n_cols * dilationH - (dilationH - 1);
       const size_t paddingRows = filterRows - 1;
       const size_t paddingCols = filterCols - 1;
 
@@ -104,8 +105,8 @@ class BaseConvolution
       // First, compute the necessary padding for the full convolution.  It is
       // possible that this might be an overestimate.  Note that these variables
       // only hold the padding on one side of the input.
-      const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
-      const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
+      const size_t filterRows = filter.n_rows * dilationW - (dilationW - 1);
+      const size_t filterCols = filter.n_cols * dilationH - (dilationH - 1);
       const size_t paddingRows = filterRows - 1;
       const size_t paddingCols = filterCols - 1;
 
@@ -147,10 +148,10 @@ class BaseConvolution
     // take into account the fact that dilation only adds rows or columns
     // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
     // 3x3 means an effective kernel size of 5x5, *not* 6x6.
-    const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
-    const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
-    const size_t outputRows = (inputPadded.n_rows - filterRows + dH) / dH;
-    const size_t outputCols = (inputPadded.n_cols - filterCols + dW) / dW;
+    const size_t filterRows = filter.n_rows * dilationW - (dilationW - 1);
+    const size_t filterCols = filter.n_cols * dilationH - (dilationH - 1);
+    const size_t outputRows = (inputPadded.n_rows - filterRows + dW) / dW;
+    const size_t outputCols = (inputPadded.n_cols - filterCols + dH) / dH;
     output.zeros(outputRows, outputCols);
   }
 
@@ -183,10 +184,10 @@ class BaseConvolution
     // take into account the fact that dilation only adds rows or columns
     // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
     // 3x3 means an effective kernel size of 5x5, *not* 6x6.
-    const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
-    const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
-    const size_t outputRows = (inputPadded.n_rows - filterRows + dH) / dH;
-    const size_t outputCols = (inputPadded.n_cols - filterCols + dW) / dW;
+    const size_t filterRows = filter.n_rows * dilationW - (dilationW - 1);
+    const size_t filterCols = filter.n_cols * dilationH - (dilationH - 1);
+    const size_t outputRows = (inputPadded.n_rows - filterRows + dW) / dW;
+    const size_t outputCols = (inputPadded.n_cols - filterCols + dH) / dH;
     output.zeros(outputRows, outputCols, outSlices);
   }
 };  // class BaseConvolution
