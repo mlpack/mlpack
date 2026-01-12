@@ -14,8 +14,7 @@
 
 #include "load_categorical.hpp"
 
-namespace mlpack{
-namespace data{
+namespace mlpack {
 
 template<typename MatType>
 bool LoadCSV::LoadCategoricalCSV(MatType& matrix,
@@ -372,7 +371,6 @@ bool LoadCSV::NonTransposeParse(arma::Mat<T>& inout,
   return true;
 }
 
-} //namespace data
-} //namespace mlpack
+} // namespace mlpack
 
 #endif

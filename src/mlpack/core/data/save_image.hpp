@@ -101,7 +101,6 @@ bool SaveImage(const std::vector<std::string>& files,
   return success;
 }
 
-} //namespace data
-} //namespace mlpack
+} // namespace mlpack
 
 #endif

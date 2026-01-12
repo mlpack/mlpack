@@ -28,7 +28,6 @@
 #include "load_model.hpp"
 
 namespace mlpack {
-namespace data /** Functions to load and save matrices and models. */ {
 
 /**
  * Loads a matrix from file, guessing the filetype from the extension.  This

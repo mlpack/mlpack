@@ -25,7 +25,6 @@
 #include "save_image.hpp"
 
 namespace mlpack {
-namespace data /** Functions to load and save matrices. */ {
 
 /**
  * This function defines a unified data saving interface for the library.
