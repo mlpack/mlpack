@@ -111,7 +111,6 @@ class StandardScaler
   arma::vec itemStdDev;
 }; // class StandardScaler
 
-} // namespace data
 } // namespace mlpack
 
 #endif

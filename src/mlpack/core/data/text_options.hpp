@@ -273,7 +273,6 @@ struct IsDataOptions<TextOptions>
   constexpr static bool value = true;
 };
 
-} // namespace data
 } // namespace mlpack
 
 #endif

@@ -39,7 +39,6 @@ bool SaveSparse(const arma::SpMat<eT>& matrix,
   return success;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

@@ -342,7 +342,6 @@ class StringEncodingDictionary<int>
   size_t size;
 };
 
-} // namespace data
 } // namespace mlpack
 
 #endif

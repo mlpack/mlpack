@@ -121,7 +121,6 @@ inline std::vector<std::string> Tokenize(
   return tokens;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

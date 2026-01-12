@@ -58,7 +58,6 @@ struct HasSerialize
   static const bool value = (sizeof(chk<T>(0)) == sizeof(yes));
 };
 
-} // namespace data
 } // namespace mlpack
 
 #endif

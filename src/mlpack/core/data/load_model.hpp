@@ -57,7 +57,6 @@ bool LoadModel(Object& objectToSerialize,
   }
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

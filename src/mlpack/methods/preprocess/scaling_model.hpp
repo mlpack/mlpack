@@ -133,7 +133,6 @@ class ScalingModel
   }
 };
 
-} // namespace data
 } // namespace mlpack
 
 // Include implementation.

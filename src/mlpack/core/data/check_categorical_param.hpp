@@ -34,7 +34,6 @@ inline void CheckCategoricalParam(util::Params& params,
     Log::Fatal << errMsg2 << std::endl;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

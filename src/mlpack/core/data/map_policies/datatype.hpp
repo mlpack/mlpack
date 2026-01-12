@@ -26,7 +26,6 @@ enum Datatype : bool /* [> bool is all the precision we need for two types <] */
   categorical = 1
 };
 
-} // namespace data
 } // namespace mlpack
 
 #endif

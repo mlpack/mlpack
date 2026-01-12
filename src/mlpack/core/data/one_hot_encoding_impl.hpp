@@ -168,7 +168,6 @@ void OneHotEncoding(const arma::Mat<eT>& input,
   OneHotEncoding(input, arma::Col<size_t>(indices), output);
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

@@ -342,7 +342,6 @@ class TfIdfEncodingPolicy
 template<typename TokenType>
 using TfIdfEncoding = StringEncoding<TfIdfEncodingPolicy,
                                      StringEncodingDictionary<TokenType>>;
-} // namespace data
 } // namespace mlpack
 
 #endif

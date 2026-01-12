@@ -56,7 +56,6 @@ bool SaveModel(Object& objectToSerialize,
   }
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

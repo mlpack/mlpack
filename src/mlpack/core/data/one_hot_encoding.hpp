@@ -61,7 +61,6 @@ void OneHotEncoding(const arma::Mat<eT>& input,
                     arma::Mat<eT>& output,
                     const data::DatasetInfo& datasetInfo);
 
-} // namespace data
 } // namespace mlpack
 
 // Include implementation.

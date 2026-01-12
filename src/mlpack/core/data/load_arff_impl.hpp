@@ -335,7 +335,6 @@ bool LoadARFF(const std::string& filename,
   return true;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

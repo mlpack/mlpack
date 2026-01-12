@@ -31,7 +31,6 @@ inline std::string Extension(const std::string& filename)
   return extension;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

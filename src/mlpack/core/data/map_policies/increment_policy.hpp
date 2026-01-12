@@ -146,7 +146,6 @@ class IncrementPolicy
   bool forceAllMappings;
 }; // class IncrementPolicy
 
-} // namespace data
 } // namespace mlpack
 
 #endif

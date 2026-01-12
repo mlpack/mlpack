@@ -55,7 +55,6 @@ void ConfusionMatrix(const arma::Row<size_t> predictors,
                      arma::Mat<eT>& output,
                      const size_t numClasses);
 
-} // namespace data
 } // namespace mlpack
 
 // Include implementation.

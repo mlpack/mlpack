@@ -98,7 +98,6 @@ bool DetectFileType(const std::string& filename,
  */
 inline size_t CountCols(std::fstream& stream);
 
-} // namespace data
 } // namespace mlpack
 
 #include "detect_file_type_impl.hpp"

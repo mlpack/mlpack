@@ -111,7 +111,6 @@ class SplitByAnyOf
   MaskType mask;
 };
 
-} // namespace data
 } // namespace mlpack
 
 #endif

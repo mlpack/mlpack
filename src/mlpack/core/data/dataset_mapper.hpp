@@ -194,7 +194,6 @@ class DatasetMapper
 // Use typedef to provide backward compatibility
 using DatasetInfo = DatasetMapper<data::IncrementPolicy>;
 
-} // namespace data
 } // namespace mlpack
 
 #include "dataset_mapper_impl.hpp"

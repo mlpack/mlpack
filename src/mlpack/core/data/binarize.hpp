@@ -85,7 +85,6 @@ void Binarize(const arma::Mat<T>& input,
     output(dimension, i) = input(dimension, i) > threshold;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

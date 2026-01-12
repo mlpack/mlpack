@@ -537,7 +537,6 @@ inline bool HandleError(const std::string& msg, bool fatal)
   return HandleError(oss, fatal);
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

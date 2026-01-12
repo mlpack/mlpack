@@ -455,7 +455,6 @@ bool Load(const std::string& filename,
   }
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

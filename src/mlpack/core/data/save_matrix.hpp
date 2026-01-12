@@ -40,7 +40,6 @@ bool SaveMatrix(const MatType& matrix,
   return success;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

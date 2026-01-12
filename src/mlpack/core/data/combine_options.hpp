@@ -141,7 +141,6 @@ operator+(const DataOptionsBase<Derived1>& a,
   }
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

@@ -252,7 +252,6 @@ struct IsDataOptions<ImageOptions>
 // This should be removed with mlpack 5.0.0
 using ImageInfo = ImageOptions;
 
-} // namespace data
 } // namespace mlpack
 
 #endif

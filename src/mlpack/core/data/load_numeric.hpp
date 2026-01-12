@@ -162,7 +162,6 @@ bool LoadNumericMultifile(const std::vector<std::string>& filenames,
   return success;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

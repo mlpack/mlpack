@@ -152,7 +152,6 @@ class MinMaxScaler
   arma::vec scalerowmin;
 }; // class MinMaxScaler
 
-} // namespace data
 } // namespace mlpack
 
 #endif

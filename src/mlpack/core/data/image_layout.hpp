@@ -56,7 +56,6 @@ template <typename eT>
 inline arma::Mat<eT> InterleaveChannels(const arma::Mat<eT>& image,
     const ImageInfo& info);
 
-} // namespace data
 } // namespace mlpack
 
 #include "image_layout_impl.hpp"

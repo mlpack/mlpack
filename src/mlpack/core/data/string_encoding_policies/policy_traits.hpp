@@ -32,7 +32,6 @@ struct StringEncodingPolicyTraits
   static const bool onePassEncoding = false;
 };
 
-} // namespace data
 } // namespace mlpack
 
 #endif

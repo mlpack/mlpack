@@ -274,7 +274,6 @@ bool LoadDense(const std::string& filename,
   return success;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

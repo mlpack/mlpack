@@ -207,7 +207,6 @@ class StringEncoding
   DictionaryType dictionary;
 };
 
-} // namespace data
 } // namespace mlpack
 
 // Include implementation.

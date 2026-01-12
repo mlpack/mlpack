@@ -143,7 +143,6 @@ struct StringEncodingPolicyTraits<DictionaryEncodingPolicy>
 template<typename TokenType>
 using DictionaryEncoding = StringEncoding<DictionaryEncodingPolicy,
                                           StringEncodingDictionary<TokenType>>;
-} // namespace data
 } // namespace mlpack
 
 #endif

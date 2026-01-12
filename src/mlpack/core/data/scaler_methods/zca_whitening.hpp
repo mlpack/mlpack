@@ -110,7 +110,6 @@ class ZCAWhitening
   PCAWhitening pca;
 }; // class ZCAWhitening
 
-} // namespace data
 } // namespace mlpack
 
 #endif

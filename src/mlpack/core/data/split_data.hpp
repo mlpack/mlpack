@@ -732,7 +732,6 @@ Split(const FieldType& input,
                          std::move(testData));
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

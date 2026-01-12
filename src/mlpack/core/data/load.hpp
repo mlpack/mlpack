@@ -110,7 +110,6 @@ bool Load(const std::vector<std::string>& files,
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>* = 0);
 
-} // namespace data
 } // namespace mlpack
 
 // Include implementation of Load() for matrix.

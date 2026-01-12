@@ -58,7 +58,6 @@ class CharExtract
   }
 };
 
-} // namespace data
 } // namespace mlpack
 
 #endif

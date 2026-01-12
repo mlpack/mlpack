@@ -115,7 +115,6 @@ class MaxAbsScaler
   arma::vec scale;
 }; // class MaxAbsScaler
 
-} // namespace data
 } // namespace mlpack
 
 #endif

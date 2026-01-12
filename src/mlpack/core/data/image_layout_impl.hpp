@@ -70,7 +70,6 @@ arma::Mat<eT> InterleaveChannels(const arma::Mat<eT>& image,
   return output;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

@@ -111,7 +111,6 @@ void LetterboxImages(arma::Mat<eT>& src,
   srcOpt = ImageOptions(width, height, srcOpt.Channels());
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

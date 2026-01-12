@@ -65,7 +65,6 @@ inline bool IsNaNInf(T& val, const std::string& token)
   return false;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

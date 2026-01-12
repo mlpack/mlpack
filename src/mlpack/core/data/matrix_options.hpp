@@ -299,7 +299,6 @@ struct IsDataOptions<PlainMatrixOptions>
   constexpr static bool value = true;
 };
 
-} // namespace data
 } // namespace mlpack
 
 #endif

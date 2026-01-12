@@ -68,7 +68,6 @@ bool Save(const std::vector<std::string>& files,
   return SaveImage(files, matrix, opts);
 }
 
-} // namespace data
 } // namespace mlpack
 
 // Include implementation.

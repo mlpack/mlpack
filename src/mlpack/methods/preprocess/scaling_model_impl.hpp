@@ -261,7 +261,6 @@ void ScalingModel::InverseTransform(const MatType& input, MatType& output)
   }
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

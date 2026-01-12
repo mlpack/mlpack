@@ -54,7 +54,6 @@ bool LoadARFF(const std::string& filename,
               DatasetMapper<PolicyType>& info,
               bool fatal);
 
-} // namespace data
 } // namespace mlpack
 
 // Include implementation.

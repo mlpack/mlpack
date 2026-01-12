@@ -204,7 +204,6 @@ void StringEncoding<EncodingPolicyType, DictionaryType>::serialize(
   ar(CEREAL_NVP(dictionary));
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

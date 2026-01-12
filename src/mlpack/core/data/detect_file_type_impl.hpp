@@ -493,5 +493,4 @@ inline size_t CountCols(std::fstream& f)
   return cols;
 }
 
-} // namespace data
 } // namespace mlpack

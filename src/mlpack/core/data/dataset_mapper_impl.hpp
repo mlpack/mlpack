@@ -247,7 +247,6 @@ inline void DatasetMapper<PolicyType, InputType>::Policy(PolicyType&& policy)
   this->policy = std::forward<PolicyType>(policy);
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

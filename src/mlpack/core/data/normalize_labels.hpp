@@ -46,7 +46,6 @@ void RevertLabels(const arma::Row<size_t>& labels,
                   const arma::Col<eT>& mapping,
                   arma::Row<eT>& labelsOut);
 
-} // namespace data
 } // namespace mlpack
 
 // Include implementation.

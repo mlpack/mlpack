@@ -92,7 +92,6 @@ bool LoadImage(const std::vector<std::string>& files,
   return true;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

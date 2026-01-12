@@ -138,7 +138,6 @@ class PCAWhitening
   arma::vec eigenValues;
 }; // class PCAWhitening
 
-} // namespace data
 } // namespace mlpack
 
 #endif

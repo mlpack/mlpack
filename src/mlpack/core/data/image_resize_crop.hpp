@@ -275,7 +275,6 @@ void ResizeCropImages(arma::Mat<eT>& images, ImageOptions& opts,
   opts.Height() = newHeight;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

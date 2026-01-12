@@ -226,7 +226,6 @@ bool LoadCategorical(const std::string& filename,
   return true;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

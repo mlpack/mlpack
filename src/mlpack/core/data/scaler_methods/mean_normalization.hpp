@@ -122,7 +122,6 @@ class MeanNormalization
   arma::vec scale;
 }; // class MeanNormalization
 
-} // namespace data
 } // namespace mlpack
 
 #endif

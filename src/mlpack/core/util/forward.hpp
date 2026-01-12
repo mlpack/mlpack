@@ -43,7 +43,6 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 // DatasetInfo.
 void CheckCategoricalParam(util::Params& p, const std::string& paramName);
 
-} // namespace data
 } // namespace mlpack
 
 #endif
