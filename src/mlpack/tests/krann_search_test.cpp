@@ -29,9 +29,9 @@ TEST_CASE("NaiveGuaranteeTest", "[KRANNTest][long]")
   arma::mat refData;
   arma::mat queryData;
 
-  if (!data::Load("rann_test_r_3_900.csv", refData, NoFatal + Transpose))
+  if (!data::Load("rann_test_r_3_900.csv", refData))
     FAIL("Cannot load dataset rann_test_r_3_900.csv");
-  if (!data::Load("rann_test_q_3_100.csv", queryData, NoFatal + Transpose))
+  if (!data::Load("rann_test_q_3_100.csv", queryData))
     FAIL("Cannot load dataset rann_test_q_3_100.csv");
 
   RASearch<> rsRann(refData, true, false, 1.0);
@@ -85,9 +85,9 @@ TEST_CASE("SingleTreeSearch", "[KRANNTest]")
   arma::mat refData;
   arma::mat queryData;
 
-  if (!data::Load("rann_test_r_3_900.csv", refData, NoFatal + Transpose))
+  if (!data::Load("rann_test_r_3_900.csv", refData))
     FAIL("Cannot load dataset rann_test_r_3_900.csv");
-  if (!data::Load("rann_test_q_3_100.csv", queryData, NoFatal + Transpose))
+  if (!data::Load("rann_test_q_3_100.csv", queryData))
     FAIL("Cannot load dataset rann_test_q_3_100.csv");
 
   // Search for 1 rank-approximate nearest-neighbors in the top 30% of the point
@@ -147,9 +147,9 @@ TEST_CASE("DualTreeSearch", "[KRANNTest][long]")
   arma::mat refData;
   arma::mat queryData;
 
-  if (!data::Load("rann_test_r_3_900.csv", refData, NoFatal + Transpose))
+  if (!data::Load("rann_test_r_3_900.csv", refData))
     FAIL("Cannot load dataset rann_test_r_3_900.csv");
-  if (!data::Load("rann_test_q_3_100.csv", queryData, NoFatal + Transpose))
+  if (!data::Load("rann_test_q_3_100.csv", queryData))
     FAIL("Cannot load dataset rann_test_q_3_100.csv");
 
   // Search for 1 rank-approximate nearest-neighbors in the top 30% of the point
@@ -277,9 +277,9 @@ TEST_CASE("SingleCoverTreeTest", "[KRANNTest][tiny]")
   arma::mat refData;
   arma::mat queryData;
 
-  if (!data::Load("rann_test_r_3_900.csv", refData, NoFatal + Transpose))
+  if (!data::Load("rann_test_r_3_900.csv", refData))
     FAIL("Cannot load dataset rann_test_r_3_900.csv");
-  if (!data::Load("rann_test_q_3_100.csv", queryData, NoFatal + Transpose))
+  if (!data::Load("rann_test_q_3_100.csv", queryData))
     FAIL("Cannot load dataset rann_test_q_3_100.csv");
 
   // Search for 1 rank-approximate nearest-neighbors in the top 30% of the point
@@ -341,9 +341,9 @@ TEST_CASE("DualCoverTreeTest", "[KRANNTest]")
   arma::mat refData;
   arma::mat queryData;
 
-  if (!data::Load("rann_test_r_3_900.csv", refData, NoFatal + Transpose))
+  if (!data::Load("rann_test_r_3_900.csv", refData))
     FAIL("Cannot load dataset rann_test_r_3_900.csv");
-  if (!data::Load("rann_test_q_3_100.csv", queryData, NoFatal + Transpose))
+  if (!data::Load("rann_test_q_3_100.csv", queryData))
     FAIL("Cannot load dataset rann_test_q_3_100.csv");
 
   // Search for 1 rank-approximate nearest-neighbors in the top 30% of the point
@@ -631,9 +631,9 @@ TEST_CASE("RAModelTest", "[KRANNTest][long]")
   // Ensure that we can build an RAModel<NearestNeighborSearch> and get correct
   // results.
   arma::mat queryData, referenceData;
-  if (!data::Load("rann_test_r_3_900.csv", referenceData, NoFatal + Transpose))
+  if (!data::Load("rann_test_r_3_900.csv", referenceData))
     FAIL("Cannot load dataset rann_test_r_3_900.csv");
-  if (!data::Load("rann_test_q_3_100.csv", queryData, NoFatal + Transpose))
+  if (!data::Load("rann_test_q_3_100.csv", queryData))
     FAIL("Cannot load dataset rann_test_q_3_100.csv");
 
   // Build all the possible models.
