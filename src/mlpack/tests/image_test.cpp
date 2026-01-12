@@ -27,7 +27,7 @@ TEST_CASE("LoadInvalidExtensionFile", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
   ImageOptions opts;
-
+  opts.Fatal() = true;
   REQUIRE_THROWS_AS(data::Load("invalidExtension.p4ng", matrix, opts),
       std::runtime_error);
 }
