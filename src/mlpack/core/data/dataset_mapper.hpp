@@ -21,7 +21,6 @@
 #include "map_policies/increment_policy.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * Auxiliary information for a dataset, including mappings to/from strings (or

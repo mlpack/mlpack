@@ -17,7 +17,6 @@
 #include "image_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 template <typename eT>
 arma::Mat<eT> GroupChannels(const arma::Mat<eT>& image,

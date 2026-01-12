@@ -18,7 +18,6 @@
 #include "load.hpp"
 
 namespace mlpack {
-namespace data {
 
 template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,

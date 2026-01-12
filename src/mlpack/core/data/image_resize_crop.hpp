@@ -19,7 +19,6 @@
 #include "image_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * Image resize/crop interfaces.

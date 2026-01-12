@@ -17,7 +17,6 @@
 #include "string_algorithms.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * A utility function to load an ARFF dataset as numeric features (that is, as

@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * A confusion matrix is a summary of prediction results on a classification

@@ -15,7 +15,6 @@
 #include "detect_file_type.hpp"
 
 namespace mlpack {
-namespace data {
 
 template<typename DataOptionsType>
 bool OpenFile(const std::string& filename,

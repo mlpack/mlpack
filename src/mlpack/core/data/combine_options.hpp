@@ -15,7 +15,6 @@
 #include "text_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 // This template metaprogram encodes what the result of combining two different
 // DataOptions types are.  For now it exhaustively considers every possibility,

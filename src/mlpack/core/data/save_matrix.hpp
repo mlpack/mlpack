@@ -14,7 +14,6 @@
 #define MLPACK_CORE_DATA_SAVE_MATRIX_HPP
 
 namespace mlpack {
-namespace data {
 
 template<typename MatType, typename DataOptionsType>
 bool SaveMatrix(const MatType& matrix,

@@ -17,7 +17,6 @@
 #include "dataset_mapper.hpp"
 
 namespace mlpack {
-namespace data {
 
 // Default constructor.
 template<typename PolicyType, typename InputType>

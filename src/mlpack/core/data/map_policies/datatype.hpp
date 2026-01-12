@@ -14,7 +14,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 /**
  * The Datatype enum specifies the types of data mlpack algorithms can use.
  * The vast majority of mlpack algorithms can only use numeric data (i.e.

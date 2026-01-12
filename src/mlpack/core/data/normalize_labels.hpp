@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * Given a set of labels of a particular datatype, convert them to unsigned

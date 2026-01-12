@@ -19,7 +19,6 @@
 #include "text_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 // These help assemble the Armadillo csv_opts flags.
 inline const arma::csv_opts::opts& NoTransposeOpt(const bool noTranspose)

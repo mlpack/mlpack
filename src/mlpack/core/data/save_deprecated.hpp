@@ -18,7 +18,6 @@
 #include "extension.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * Saves a matrix to file, guessing the filetype from the extension.  This

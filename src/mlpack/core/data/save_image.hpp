@@ -17,7 +17,6 @@
 #include <mlpack/core/math/make_alias.hpp>
 
 namespace mlpack {
-namespace data {
 
 template<typename eT>
 bool SaveImage(const std::vector<std::string>& files,

@@ -19,7 +19,6 @@
 #include "data_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 template<typename Derived>
 class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>

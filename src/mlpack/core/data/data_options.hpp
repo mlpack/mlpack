@@ -20,7 +20,6 @@
 #include "map_policies/map_policies.hpp"
 
 namespace mlpack {
-namespace data {
 
 enum struct FileType
 {

@@ -17,7 +17,6 @@
 #include "text_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 template <typename eT>
 bool LoadSparse(const std::string& filename,

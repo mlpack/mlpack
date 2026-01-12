@@ -14,7 +14,6 @@
 #define MLPACK_CORE_DATA_STRING_ALGORITHMS_HPP
 
 namespace mlpack {
-namespace data {
 
 /**
  * Trim off characters from start and end of

@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * This helper function splits any `input` data into training and testing parts.

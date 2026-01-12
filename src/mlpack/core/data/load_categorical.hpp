@@ -52,7 +52,6 @@
 #include "dataset_mapper.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * Load the csv file. This class contains functions

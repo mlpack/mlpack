@@ -17,7 +17,6 @@
 #include <mlpack/core/util/params.hpp>
 
 namespace mlpack {
-namespace data {
 
 inline void CheckCategoricalParam(util::Params& params,
                                   const std::string& paramName)

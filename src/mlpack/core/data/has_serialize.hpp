@@ -20,7 +20,6 @@
 #include <type_traits>
 
 namespace mlpack {
-namespace data {
 
 // This gives us a HasSerializeCheck<T, U> type (where U is a function pointer)
 // we can use with SFINAE to catch when a type has a Serialize() function.

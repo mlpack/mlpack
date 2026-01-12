@@ -18,7 +18,6 @@
 #include "is_naninf.hpp"
 
 namespace mlpack {
-namespace data {
 
 template<typename eT, typename PolicyType>
 bool LoadARFF(const std::string& filename,

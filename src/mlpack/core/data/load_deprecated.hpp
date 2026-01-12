@@ -21,7 +21,6 @@
 #include "image_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * Loads a matrix from file, guessing the filetype from the extension.  This

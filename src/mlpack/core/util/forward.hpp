@@ -30,7 +30,6 @@ class Timers;
 #include "params.hpp"
 
 namespace mlpack {
-namespace data {
 
 class IncrementPolicy;
 

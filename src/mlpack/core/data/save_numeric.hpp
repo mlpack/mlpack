@@ -18,7 +18,6 @@
 #include "save_dense.hpp"
 
 namespace mlpack {
-namespace data {
 
 template<typename ObjectType, typename DataOptionsType>
 bool SaveNumeric(const std::string& filename,

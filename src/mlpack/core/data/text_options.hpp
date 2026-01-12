@@ -19,7 +19,6 @@
 #include "matrix_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 class TextOptions : public MatrixOptionsBase<TextOptions>
 {

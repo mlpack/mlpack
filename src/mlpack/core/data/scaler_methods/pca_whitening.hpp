@@ -16,7 +16,6 @@
 #include <mlpack/core/math/ccov.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * A simple PCAWhitening class.

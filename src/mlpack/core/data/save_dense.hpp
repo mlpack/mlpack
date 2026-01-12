@@ -16,7 +16,6 @@
 #include "save_matrix.hpp"
 
 namespace mlpack {
-namespace data {
 
 template<typename eT>
 bool SaveDense(const arma::Mat<eT>& matrix,

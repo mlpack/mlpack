@@ -17,7 +17,6 @@
 #include "scaling_model.hpp"
 
 namespace mlpack {
-namespace data {
 
 inline ScalingModel::ScalingModel(const int minvalue,
                                   const int maxvalue,

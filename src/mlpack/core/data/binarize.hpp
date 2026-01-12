@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * Given an input dataset and threshold, set values greater than threshold to

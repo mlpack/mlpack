@@ -19,7 +19,6 @@
 #include "image_resize_crop.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * Resize an image to `imgSize` x `imgSize` while keeping the original

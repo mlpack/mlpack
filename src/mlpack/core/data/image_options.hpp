@@ -21,7 +21,6 @@
 #include "data_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * Implements meta-data of images required by data::Load and

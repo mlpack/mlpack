@@ -17,7 +17,6 @@
 #include <mlpack/core/stb/stb.hpp>
 
 namespace mlpack {
-namespace data {
 
 template<typename eT>
 bool LoadImage(const std::vector<std::string>& files,

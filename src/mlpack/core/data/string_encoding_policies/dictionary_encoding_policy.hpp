@@ -18,7 +18,6 @@
 #include <mlpack/core/data/string_encoding.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * DicitonaryEnocdingPolicy is used as a helper class for StringEncoding.

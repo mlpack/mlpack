@@ -16,7 +16,6 @@
 #include "save_matrix.hpp"
 
 namespace mlpack {
-namespace data {
 
 // Save a Sparse Matrix
 template<typename eT>

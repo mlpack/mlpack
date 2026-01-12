@@ -19,7 +19,6 @@
 #include "load_sparse.hpp"
 
 namespace mlpack {
-namespace data {
 
 template<typename MatType>
 bool LoadNumeric(const std::string& filename,

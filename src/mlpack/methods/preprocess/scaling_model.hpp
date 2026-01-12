@@ -21,7 +21,6 @@
 #include <mlpack/core/data/scaler_methods/standard_scaler.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * The model to save to disk.

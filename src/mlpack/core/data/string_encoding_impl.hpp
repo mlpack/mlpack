@@ -18,7 +18,6 @@
 #include <type_traits>
 
 namespace mlpack {
-namespace data {
 
 template<typename EncodingPolicyType, typename DictionaryType>
 template<typename ... ArgTypes>

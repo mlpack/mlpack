@@ -16,7 +16,6 @@
 #include "image_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * `data::Load()` returns a matrix where each column represents an image.
