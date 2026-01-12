@@ -561,7 +561,6 @@ TEST_CASE("SetParamDatasetInfoMatTest", "[CLIOptionTest]")
   util::ParamData d;
 
   // Create initial value.
-  using namespace data;
   string filename = "test.csv";
   arma::mat m(3, 3, arma::fill::randu);
   DatasetInfo di(3);

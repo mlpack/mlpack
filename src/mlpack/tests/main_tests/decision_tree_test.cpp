@@ -20,7 +20,6 @@
 #include "../catch.hpp"
 
 using namespace mlpack;
-using namespace data;
 
 BINDING_TEST_FIXTURE(DecisionTreeTestFixture);
 

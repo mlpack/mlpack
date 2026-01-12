@@ -20,7 +20,6 @@
 #include "../test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace data;
 
 BINDING_TEST_FIXTURE(HoeffdingTreeTestFixture);
 
