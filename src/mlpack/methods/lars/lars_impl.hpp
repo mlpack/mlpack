@@ -510,7 +510,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
   {
     if (fitIntercept)
     {
-      offsetX = arma::mean(matX, 1);
+      offsetX = mean(matX, 1);
       dataTrans = (matX.each_col() - offsetX).t();
     }
 
@@ -536,7 +536,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
     // We don't need to transpose the data---it's already in row-major form.
     if (fitIntercept)
     {
-      offsetX = arma::mean(matX, 0).t();
+      offsetX = mean(matX, 0).t();
       dataTrans = (matX.each_row() - offsetX.t());
     }
 
@@ -558,7 +558,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
 
   if (fitIntercept)
   {
-    this->offsetY = arma::mean(y);
+    this->offsetY = mean(y);
     yCentered = y - this->offsetY;
   }
 
