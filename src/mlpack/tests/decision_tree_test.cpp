@@ -1972,7 +1972,7 @@ TEST_CASE("DifferentMaximumDepthTest", "[DecisionTreeTest]")
     FAIL("Cannot load test dataset vc2.csv!");
 
   // 3. Create options for the labels
-  // (We use a separate object just to be safe and explicit, matching the PR style)
+
   data::TextOptions labelOpts;
   labelOpts.HasHeaders() = false;
   labelOpts.Categorical() = false;
