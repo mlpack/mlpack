@@ -27,7 +27,6 @@ TEST_CASE("LoadInvalidExtensionFile", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
   ImageOptions opts;
-  opts.Fatal() = false;
 
   REQUIRE_THROWS_AS(data::Load("invalidExtension.p4ng", matrix, opts),
       std::runtime_error);
@@ -40,7 +39,6 @@ TEST_CASE("LoadImageNewAPITest", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
   data::ImageOptions opts;
-  opts.Fatal() = false;
 
   REQUIRE(data::Load("test_image.png", matrix, opts) == true);
   // width * height * channels.
@@ -58,7 +56,6 @@ TEST_CASE("LoadImageSpecifyTypeTest", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
   data::ImageOptions opts;
-  opts.Fatal() = false;
   opts.Format() = FileType::PNG;
 
   REQUIRE(data::Load("test_image.png", matrix, opts) == true);
@@ -97,7 +94,6 @@ TEST_CASE("LoadWrongDataOptions", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
   TextOptions opts;
-  opts.Fatal() = true;
   REQUIRE(data::Load("test_image.png", matrix, opts) == true);
 }
 
@@ -107,7 +103,6 @@ TEST_CASE("LoadWrongDataOptions", "[ImageLoadTest]")
 TEST_CASE("SaveImageNewAPITest", "[ImageLoadTest]")
 {
   data::ImageInfo opts(5, 5, 3, 90);
-  opts.Fatal() = false;
 
   arma::Mat<unsigned char> im1;
   size_t dimension = opts.Width() * opts.Height() * opts.Channels();
@@ -190,7 +185,6 @@ TEST_CASE("LoadVectorImageAPITest", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
   data::ImageOptions opts;
-  opts.Fatal() = false;
   std::vector<std::string> files = {"test_image.png", "test_image.png"};
   REQUIRE(data::Load(files, matrix, opts) == true);
   // width * height * channels.
@@ -231,27 +225,23 @@ TEMPLATE_TEST_CASE("ImagesResizeTest", "[ImageTest]", unsigned char, size_t,
   for (size_t i = 0; i < files.size(); i++)
   {
     opts.Reset();
-    opts.Fatal() = true;
     REQUIRE(data::Load(files.at(i), image, opts) == true);
     ResizeImages(image, opts, 320, 320);
     REQUIRE(data::Save(reSheeps.at(i), image, opts) == true);
   }
 
-  resizedOpts.Fatal() = false;
   // Since they are all resized, this should passes
   REQUIRE(data::Load(reSheeps, images, resizedOpts) == true);
 
   REQUIRE(opts.Width() == resizedOpts.Width());
   REQUIRE(opts.Height() == resizedOpts.Height());
 
-  opts.Fatal() = false;
   REQUIRE(data::Load(reSheeps, images, opts) == true);
 
   ResizeImages(images, opts, 160, 160);
 
   REQUIRE(data::Save(smSheeps, images, opts) == true);
 
-  resizedOpts2.Fatal() = false;
   REQUIRE(data::Load(smSheeps, images, resizedOpts2) == true);
 
   REQUIRE(opts.Width() == resizedOpts2.Width());
@@ -295,28 +285,23 @@ TEMPLATE_TEST_CASE("ImagesResizeCropTest", "[ImageTest]", unsigned char,
   for (size_t i = 0; i < files.size(); i++)
   {
     opts.Reset();
-    opts.Fatal() = true;
     REQUIRE(data::Load(files.at(i), image, opts) == true);
     ResizeCropImages(image, opts, 320, 320);
-    opts.Fatal() = false;
     REQUIRE(data::Save(reSheeps.at(i), image, opts) == true);
   }
 
   // Since they are all resized, this should passes
-  resizedOpts.Fatal() = false;
   REQUIRE(data::Load(reSheeps, images, resizedOpts) == true);
 
   REQUIRE(opts.Width() == resizedOpts.Width());
   REQUIRE(opts.Height() == resizedOpts.Height());
 
-  opts.Fatal() = false;
   REQUIRE(data::Load(reSheeps, images, opts) == true);
 
   ResizeCropImages(images, opts, 160, 160);
 
   REQUIRE(data::Save(smSheeps, images, opts) == true);
 
-  resizedOpts2.Fatal() = false;
   REQUIRE(data::Load(smSheeps, images, resizedOpts2) == true);
 
   REQUIRE(opts.Width() == resizedOpts2.Width());
@@ -349,7 +334,6 @@ TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", unsigned char, size_t,
   for (size_t i = 0; i < files.size(); i++)
   {
     opts.Reset();
-    opts.Fatal() = false;
     REQUIRE(data::Load(files.at(i), image, opts) == true);
     arma::Mat<eT> originalImage = image;
     ResizeImages(image, opts, opts.Width(), opts.Height());
@@ -383,7 +367,6 @@ TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char,
   for (size_t i = 0; i < files.size(); i++)
   {
     opts.Reset();
-    opts.Fatal() = false;
     REQUIRE(data::Load(files.at(i), image, opts) == true);
     arma::Mat<eT> originalImage = image;
     ResizeCropImages(image, opts, opts.Width(), opts.Height());
@@ -409,7 +392,6 @@ TEMPLATE_TEST_CASE("ResizeCropPixelTest", "[ImageTest][tiny]", unsigned char,
   // Load cat.jpg, which has a strange aspect ratio.
   arma::Mat<eT> image;
   data::ImageOptions opts;
-  opts.Fatal() = false;
   REQUIRE(data::Load("cat.jpg", image, opts) == true);
 
   // When we crop to match the height of the image, no resizing is needed and we
@@ -455,7 +437,6 @@ TEMPLATE_TEST_CASE("ResizeCropUpscaleTest", "[ImageTest]", unsigned char,
   // Load cat.jpg, which has a strange aspect ratio.
   arma::Mat<eT> image;
   data::ImageOptions opts;
-  opts.Fatal() = false;
   REQUIRE(data::Load("cat.jpg", image, opts) == true);
 
   // When we crop to match the height of the image, no resizing is needed and we
