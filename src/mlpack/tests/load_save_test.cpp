@@ -3321,7 +3321,7 @@ TEST_CASE("LoadCSVMissingNanTestTransposedInOptions", "[LoadSaveTest][tiny]")
 
   arma::mat dataset;
 
-  data::Load("test.csv", dataset + MissingToNan);
+  data::Load("test.csv", dataset, MissingToNan);
 
   REQUIRE(dataset.n_rows == 4);
   REQUIRE(dataset.n_cols == 3);
@@ -3364,7 +3364,7 @@ TEST_CASE("LoadCSVSemicolonInOptions", "[LoadSaveTest][tiny]")
 
   arma::mat dataset;
 
-  data::Load("test.csv", dataset + Semicolon);
+  data::Load("test.csv", dataset, Semicolon);
 
   REQUIRE(dataset.n_rows == 4);
   REQUIRE(dataset.n_cols == 3);
