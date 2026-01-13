@@ -238,9 +238,9 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   arma::field<std::string>& Headers() { return headers; }
 
   // Get the DatasetInfo for categorical data.
-  const DataInfo& DatasetInfo() const { return datasetInfo; }
+  const DatasetMapper<IncrementPolicy>& DatasetInfo() const { return datasetInfo; }
   // Modify the DatasetInfo.
-  DataInfo& DatasetInfo() { return datasetInfo; }
+  DatasetMapper<IncrementPolicy>& DatasetInfo() { return datasetInfo; }
 
  private:
   std::optional<bool> hasHeaders;
@@ -251,7 +251,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   // These are not optional, but if either is specified, then it should be taken
   // to mean that `hasHeaders` or `categorical` has been specified as true.
   arma::field<std::string> headers;
-  DataInfo datasetInfo;
+  DatasetMapper<IncrementPolicy> datasetInfo;
 
   constexpr static const bool defaultHasHeaders = false;
   constexpr static const bool defaultSemicolon = false;
