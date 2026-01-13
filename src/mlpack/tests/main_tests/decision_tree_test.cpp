@@ -32,8 +32,10 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeOutputDimensionTest",
                  "[DecisionTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
-  if (!data::Load("vc2.csv", inputData, info))
+  TextOptions opts;
+  opts.Categorical() = true;
+
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -44,18 +46,18 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeOutputDimensionTest",
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   RUN_BINDING();
 
@@ -78,8 +80,10 @@ TEST_CASE_METHOD(DecisionTreeTestFixture,
                  "[DecisionTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
-  if (!data::Load("braziltourism.arff", inputData, info))
+  TextOptions opts;
+  opts.Categorical() = true;
+
+  if (!data::Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
@@ -90,18 +94,18 @@ TEST_CASE_METHOD(DecisionTreeTestFixture,
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   arma::mat testData;
-  if (!data::Load("braziltourism_test.arff", testData, info))
+  if (!data::Load("braziltourism_test.arff", testData, opts))
     FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   RUN_BINDING();
 
@@ -122,8 +126,10 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeMinimumLeafSizeTest",
                  "[DecisionTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
-  if (!data::Load("braziltourism.arff", inputData, info))
+  TextOptions opts;
+  opts.Categorical() = true;
+
+  if (!data::Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
@@ -134,7 +140,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeMinimumLeafSizeTest",
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
@@ -151,8 +157,10 @@ TEST_CASE_METHOD(DecisionTreeTestFixture,
                  "[DecisionTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
-  if (!data::Load("braziltourism.arff", inputData, info))
+  TextOptions opts;
+  opts.Categorical() = true;
+
+  if (!data::Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
@@ -163,7 +171,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture,
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
@@ -179,8 +187,10 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionMinimumGainSplitTest",
                  "[DecisionTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
-  if (!data::Load("braziltourism.arff", inputData, info))
+  TextOptions opts;
+  opts.Categorical() = true;
+
+  if (!data::Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
@@ -191,7 +201,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionMinimumGainSplitTest",
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
@@ -207,8 +217,10 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionRegularisationTest",
                  "[DecisionTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
-  if (!data::Load("braziltourism.arff", inputData, info))
+  TextOptions opts;
+  opts.Categorical() = true;
+
+  if (!data::Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
@@ -219,14 +231,14 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionRegularisationTest",
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", labels);
   SetInputParam("weights", weights);
 
   SetInputParam("minimum_gain_split", 1e-7);
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, inputData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), inputData));
   arma::Row<size_t> pred;
   RUN_BINDING();
   pred = std::move(params.Get<arma::Row<size_t>>("predictions"));
@@ -234,14 +246,14 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionRegularisationTest",
   CleanMemory();
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
   SetInputParam("minimum_gain_split", 0.5);
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, inputData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), inputData));
   arma::Row<size_t> predRegularised;
   RUN_BINDING();
   predRegularised = std::move(params.Get<arma::Row<size_t>>("predictions"));
@@ -264,8 +276,10 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelReuseTest",
                  "[DecisionTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
-  if (!data::Load("vc2.csv", inputData, info))
+  TextOptions opts;
+  opts.Categorical() = true;
+
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -276,18 +290,18 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelReuseTest",
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   RUN_BINDING();
 
@@ -300,7 +314,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelReuseTest",
   ResetSettings();
 
   // Input trained model.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
   SetInputParam("input_model", m);
 
   RUN_BINDING();
@@ -326,8 +340,10 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeTrainingVerTest",
                  "[DecisionTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
-  if (!data::Load("vc2.csv", inputData, info))
+  TextOptions opts;
+  opts.Categorical() = true;
+
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -338,7 +354,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeTrainingVerTest",
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
@@ -362,8 +378,10 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelCategoricalReuseTest",
                  "[DecisionTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
-  if (!data::Load("braziltourism.arff", inputData, info))
+  TextOptions opts;
+  opts.Categorical() = true;
+
+  if (!data::Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
@@ -374,18 +392,18 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelCategoricalReuseTest",
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   arma::mat testData;
-  if (!data::Load("braziltourism_test.arff", testData, info))
+  if (!data::Load("braziltourism_test.arff", testData, opts))
     FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   RUN_BINDING();
 
@@ -401,7 +419,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelCategoricalReuseTest",
   ResetSettings();
 
   // Input trained model.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
   SetInputParam("input_model", model);
 
   RUN_BINDING();
@@ -427,8 +445,10 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeMaximumDepthTest",
                  "[DecisionTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
-  DatasetInfo info;
-  if (!data::Load("vc2.csv", inputData, info))
+  TextOptions opts;
+  opts.Categorical() = true;
+
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -439,17 +459,17 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeMaximumDepthTest",
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, info))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", labels);
   SetInputParam("weights", weights);
   SetInputParam("maximum_depth", (int) 0);
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   RUN_BINDING();
 
@@ -460,13 +480,13 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeMaximumDepthTest",
   CleanMemory();
 
   // Input training data.
-  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
   SetInputParam("maximum_depth", (int) 2);
 
   // Input test data.
-  SetInputParam("test", std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), testData));
 
   RUN_BINDING();
 

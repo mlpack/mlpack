@@ -184,7 +184,7 @@ used to make class predictions for new data.
 ### Other Functionality
 
  * An `AdaBoost` model can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `ab.NumClasses()` will return a `size_t` indicating the number of classes the
    model was trained on.

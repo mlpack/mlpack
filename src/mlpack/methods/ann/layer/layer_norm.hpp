@@ -112,7 +112,7 @@ class LayerNorm : public Layer<MatType>
   MatType& Parameters() override { return weights; }
 
   //! Get the mean across single training data.
-  MatType Mean() { return mean; }
+  MatType Mean() { return meanObj; }
 
   //! Get the variance across single training data.
   MatType Variance() { return variance; }
@@ -164,7 +164,7 @@ class LayerNorm : public Layer<MatType>
   MatType weights;
 
   //! Locally-stored mean object.
-  MatType mean;
+  MatType meanObj;
 
   //! Locally-stored variance object.
   MatType variance;

@@ -28,8 +28,8 @@ BINDING_USER_NAME("Scale Data");
 
 // Short description.
 BINDING_SHORT_DESC(
-    "A utility to perform feature scaling on datasets using one of six"
-    "techniques.  Both scaling and inverse scaling are supported, and"
+    "A utility to perform feature scaling on datasets using one of six "
+    "techniques.  Both scaling and inverse scaling are supported, and "
     "scalers can be saved and then applied to other datasets.");
 
 // Long description.

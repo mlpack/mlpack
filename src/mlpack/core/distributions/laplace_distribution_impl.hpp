@@ -27,7 +27,7 @@ LaplaceDistribution<MatType>::LogProbability(
 {
   // Evaluate the PDF of the Laplace distribution to determine
   // the log probability.
-  return -std::log(2. * scale) - arma::norm(observation - mean, 2) / scale;
+  return -std::log(2. * scale) - norm(observation - distMean, 2) / scale;
 }
 
 /**
@@ -97,13 +97,13 @@ inline void LaplaceDistribution<MatType>::Train(const MatType& observations)
   //   \theta_k = (1 / n) \sum_{i = 1}^{n} x_ik
   // so L'(\theta) = 0 when \theta is the mean of the observations.  I am not
   // 100% certain my calculus and linear algebra is right, but I think it is...
-  mean = arma::mean(observations, 1);
+  distMean = mean(observations, 1);
 
   // The maximum likelihood estimate of the scale parameter is the mean
   // deviation from the mean.
   scale = 0.0;
   for (size_t i = 0; i < observations.n_cols; ++i)
-    scale += arma::norm(observations.col(i) - mean, 2);
+    scale += norm(observations.col(i) - distMean, 2);
   scale /= observations.n_cols;
 }
 
@@ -118,17 +118,17 @@ inline void LaplaceDistribution<MatType>::Train(const MatType& observations,
 {
   // I am not completely sure that this change results in a valid maximum
   // likelihood estimator given probabilities of points.
-  mean.zeros(observations.n_rows);
+  distMean.zeros(observations.n_rows);
   for (size_t i = 0; i < observations.n_cols; ++i)
-    mean += observations.col(i) * probabilities(i);
-  mean /= accu(probabilities);
+    distMean += observations.col(i) * probabilities(i);
+  distMean /= accu(probabilities);
 
   // This is the same formula as the previous function, but here we are
   // multiplying by the probability that the point is actually from
   // this distribution.
   scale = 0.0;
   for (size_t i = 0; i < observations.n_cols; ++i)
-    scale += probabilities(i) * arma::norm(observations.col(i) - mean, 2);
+    scale += probabilities(i) * norm(observations.col(i) - distMean, 2);
   scale /= accu(probabilities);
 }
 

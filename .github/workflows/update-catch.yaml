@@ -19,7 +19,7 @@ jobs:
     #    if: ${{ github.repository == 'mlpack/mlpack' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Get Latest Catch Tagged Release
         id: catch-header
         run: |

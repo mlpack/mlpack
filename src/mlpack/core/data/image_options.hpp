@@ -18,6 +18,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include "extension.hpp"
+#include "data_options.hpp"
 
 namespace mlpack {
 namespace data {

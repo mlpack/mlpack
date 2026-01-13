@@ -325,7 +325,7 @@ on bound quantities for trees.
    - This is equivalent to calling `node.Bound().Center(center)`.
 
  * A `BinarySpaceTree` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ## Bounding distances with the tree
 
@@ -533,7 +533,7 @@ accessed and modified.
    by `b`.
 
  * An `HRectBound` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ***Note:*** if a custom `ElemType` was specified in the constructor, then:
 
@@ -903,7 +903,7 @@ The properties of the `BallBound` can be directly accessed and modified.
    `center`.  `center` should be of type `arma::vec`.
 
  * A `BallBound` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ***Note:*** if a custom `ElemType` and/or `VecType` were specified in the
 constructor, then:
@@ -1222,7 +1222,7 @@ be accessed and modified.
    by `b`.
 
  * A `HollowBallBound` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ***Note:*** if a custom `ElemType` was specified in the constructor, then:
 
@@ -1586,7 +1586,7 @@ bound](#growing-the-bound-2) for ways to grow a `CellBound`.
    by `b`.
 
  * A `CellBound` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ***Note:*** if a custom `ElemType` was specified in the constructor, then:
 

@@ -55,8 +55,8 @@ class StandardScaler
   template<typename MatType>
   void Fit(const MatType& input)
   {
-    itemMean = arma::mean(input, 1);
-    itemStdDev = arma::stddev(input, 1, 1);
+    itemMean = mean(input, 1);
+    itemStdDev = stddev(input, 1, 1);
     // Handle zeros in scale vector.
     itemStdDev.for_each([](arma::vec::elem_type& val) { val =
         (val == 0) ? 1 : val; });
