@@ -23,7 +23,7 @@ TEST_CASE("DigammaLarge", "[DigammaTest]")
 {
   arma::mat data;
 
-  if (!data::Load("digamma_data.csv", data, true, false))
+  if (!Load("digamma_data.csv", data, true, false))
     FAIL("Cannot load data digamma_data.csv");
 
   for (size_t i = 0; i < data.n_rows; i++)
@@ -37,7 +37,7 @@ TEST_CASE("DigammaNegative", "[DigammaTest]")
 {
   arma::mat data;
 
-  if (!data::Load("digamma_neg_data.csv", data, true, false))
+  if (!Load("digamma_neg_data.csv", data, true, false))
     FAIL("Cannot load data digamma_neg_data.csv");
 
   for (size_t i = 0; i < data.n_rows; i++)
@@ -51,7 +51,7 @@ TEST_CASE("DigammaSmall", "[DigammaTest]")
 {
   arma::mat data;
 
-  if (!data::Load("digamma_small_data.csv", data, true, false))
+  if (!Load("digamma_small_data.csv", data, true, false))
     FAIL("Cannot load data digamma_small_data.csv");
 
   for (size_t i = 0; i < data.n_rows; i++)
@@ -65,7 +65,7 @@ TEST_CASE("DigammaNearPositiveRoots", "[DigammaTest]")
 {
   arma::mat data;
 
-  if (!data::Load("digamma_root_data.csv", data, true, false))
+  if (!Load("digamma_root_data.csv", data, true, false))
     FAIL("Cannot load data digamma_root_data.csv");
 
   for (size_t i = 0; i < data.n_rows; i++)

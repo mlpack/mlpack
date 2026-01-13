@@ -160,12 +160,12 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     arma::Row<size_t> trainLabels, testLabels;
     if (stratifyData)
     {
-      data::StratifiedSplit(data, labelsRow, trainData, testData, trainLabels,
+      StratifiedSplit(data, labelsRow, trainData, testData, trainLabels,
           testLabels, testRatio, !shuffleData);
     }
     else
     {
-      data::Split(data, labelsRow, trainData, testData, trainLabels, testLabels,
+      Split(data, labelsRow, trainData, testData, trainLabels, testLabels,
           testRatio, !shuffleData);
     }
     timers.Stop("splitting_data");
@@ -187,7 +187,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   {
     timers.Start("splitting_data");
     arma::mat trainData, testData;
-    data::Split(data, trainData, testData, testRatio, !shuffleData);
+    Split(data, trainData, testData, testRatio, !shuffleData);
     timers.Stop("splitting_data");
 
     Log::Info << "Training data contains " << trainData.n_cols << " points."

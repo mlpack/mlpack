@@ -29,7 +29,7 @@ TEST_CASE("MinMaxScalerTest", "[ScalingTest][tiny]")
 {
   arma::mat scaled = "0 0.2500 0.5000 1.000;"
                      "0 0.2500 0.5000 1.000;";
-  data::MinMaxScaler scale;
+  MinMaxScaler scale;
   scale.Fit(dataset);
   scale.Transform(dataset, scaleddataset);
   scale.InverseTransform(scaleddataset, temp);
@@ -44,7 +44,7 @@ TEST_CASE("MaxAbsScalerTest", "[ScalingTest][tiny]")
 {
   arma::mat scaled = "-1 -0.5 0 1;"
                      "0.1111111111 0.3333333333 0.55555556 1.0000;";
-  data::MaxAbsScaler scale;
+  MaxAbsScaler scale;
   scale.Fit(dataset);
   scale.Transform(dataset, scaleddataset);
   scale.InverseTransform(scaleddataset, temp);
@@ -59,7 +59,7 @@ TEST_CASE("StandardScalerTest", "[ScalingTest][tiny]")
 {
   arma::mat scaled = "-1.18321596 -0.50709255  0.16903085 1.52127766;"
                      "-1.18321596 -0.50709255  0.16903085 1.52127766;";
-  data::StandardScaler scale;
+  StandardScaler scale;
   scale.Fit(dataset);
   scale.Transform(dataset, scaleddataset);
   scale.InverseTransform(scaleddataset, temp);
@@ -74,7 +74,7 @@ TEST_CASE("MeanNormalizationTest", "[ScalingTest][tiny]")
 {
   arma::mat scaled = "-0.43750000000 -0.187500000 0.062500000 0.562500000;"
                      "-0.43750000000 -0.187500000 0.062500000 0.562500000;";
-  data::MeanNormalization scale;
+  MeanNormalization scale;
   scale.Fit(dataset);
   scale.Transform(dataset, scaleddataset);
   scale.InverseTransform(scaleddataset, temp);
@@ -90,7 +90,7 @@ TEST_CASE("SameInputOutputTest", "[ScalingTest]")
   temp = dataset;
   arma::mat scaled = "-0.43750000000 -0.187500000 0.062500000 0.562500000;"
                      "-0.43750000000 -0.187500000 0.062500000 0.562500000;";
-  data::MeanNormalization scale;
+  MeanNormalization scale;
   scale.Fit(temp);
   scale.Transform(temp, temp);
   CheckMatrices(scaled, temp);
@@ -104,7 +104,7 @@ TEST_CASE("SameInputOutputTest", "[ScalingTest]")
 TEST_CASE("ZeroMatrixTest", "[ScalingTest]")
 {
   arma::mat input(2, 4);
-  data::MeanNormalization scale;
+  MeanNormalization scale;
   scale.Fit(input);
   scale.Transform(input, temp);
   CheckMatrices(input, temp);
@@ -121,7 +121,7 @@ TEST_CASE("ZeroScaleTest", "[ScalingTest]")
             "2 6 10 18;";
   arma::mat scaled = "0 0 0 0;"
                      "0 0.2500 0.5000 1.000;";
-  data::MinMaxScaler scale;
+  MinMaxScaler scale;
   scale.Fit(dataset);
   scale.Transform(dataset, scaleddataset);
   scale.InverseTransform(scaleddataset, temp);
@@ -134,7 +134,7 @@ TEST_CASE("ZeroScaleTest", "[ScalingTest]")
  */
 TEST_CASE("PCAWhiteningTest", "[ScalingTest]")
 {
-  data::PCAWhitening scale;
+  PCAWhitening scale;
   arma::mat output;
   scale.Fit(dataset);
   scale.Transform(dataset, output);
@@ -153,7 +153,7 @@ TEST_CASE("PCAWhiteningTest", "[ScalingTest]")
  */
 TEST_CASE("ZCAWhiteningTest", "[ScalingTest]")
 {
-  data::ZCAWhitening scale;
+  ZCAWhitening scale;
   arma::mat output;
   scale.Fit(dataset);
   scale.Transform(dataset, output);

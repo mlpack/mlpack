@@ -52,7 +52,7 @@ bool LoadNumeric(const std::string& filename,
   }
   else
   {
-    return HandleError("data::Load(): unknown matrix-like type given!",
+    return HandleError("Load(): unknown matrix-like type given!",
         txtOpts);
   }
   opts = std::move(txtOpts);

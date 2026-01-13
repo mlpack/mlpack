@@ -99,7 +99,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
         "file.");
     ReportIgnoredParam(params, "channels", "Number of channels determined from "
         "file.");
-    data::ImageInfo info;
+    ImageInfo info;
     Load(fileNames, out, info, true);
     if (params.Has("output"))
       params.Get<arma::mat>("output") = std::move(out);
@@ -126,7 +126,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     const size_t width = params.Get<int>("width");
     const size_t channels = params.Get<int>("channels");
     const size_t quality = params.Get<int>("quality");
-    data::ImageInfo info(width, height, channels, quality);
+    ImageInfo info(width, height, channels, quality);
     Save(fileNames, params.Get<arma::mat>("dataset"), info, true);
   }
 }

@@ -157,11 +157,11 @@ bool LoadARFF(const std::string& filename,
   else if (info.Dimensionality() != dimensionality)
   {
     if (fatal)
-      Log::Fatal << "data::LoadARFF(): given DatasetInfo has dimensionality "
+      Log::Fatal << "LoadARFF(): given DatasetInfo has dimensionality "
           << info.Dimensionality() << ", but data has dimensionality "
           << dimensionality << std::endl;
     else
-      Log::Warn << "data::LoadARFF(): given DatasetInfo has dimensionality "
+      Log::Warn << "LoadARFF(): given DatasetInfo has dimensionality "
           << info.Dimensionality() << ", but data has dimensionality "
           << dimensionality << std::endl;
     return false;

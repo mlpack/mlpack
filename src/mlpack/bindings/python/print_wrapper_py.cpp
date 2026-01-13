@@ -236,7 +236,7 @@ void PrintWrapperPY(const std::string& category,
           // If this is a matrix parameter.
           if (itr->second.cppType == "arma::mat" ||
               itr->second.cppType ==
-                  "std::tuple<mlpack::data::DatasetInfo, arma::mat>" ||
+                  "std::tuple<mlpack::DatasetInfo, arma::mat>" ||
               itr->second.cppType == "arma::Mat<size_t>")
           {
             numMatrixInputs++;

@@ -2,8 +2,8 @@
  * @file core/data/extension.hpp
  * @author Ryan Curtin
  *
- * Given a filename, extract its extension.  This is used by data::Load() and
- * data::Save().
+ * Given a filename, extract its extension.  This is used by Load() and
+ * Save().
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

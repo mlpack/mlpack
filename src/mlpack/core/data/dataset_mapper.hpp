@@ -25,7 +25,7 @@ namespace mlpack {
 /**
  * Auxiliary information for a dataset, including mappings to/from strings (or
  * other types) and the datatype of each dimension.  DatasetMapper objects are
- * optionally produced by data::Load(), and store the type of each dimension
+ * optionally produced by Load(), and store the type of each dimension
  * (Datatype::numeric or Datatype::categorical) as well as mappings from strings
  * to unsigned integers and vice versa.
  *
@@ -141,7 +141,7 @@ class DatasetMapper
   /**
    * Get the dimensionality of the DatasetMapper object (that is, how many
    * dimensions it has information for).  If this object was created by a call
-   * to mlpack::data::Load(), then the dimensionality will be the same as the
+   * to mlpack::Load(), then the dimensionality will be the same as the
    * number of rows (dimensions) in the dataset.
    */
   size_t Dimensionality() const;
@@ -192,7 +192,7 @@ class DatasetMapper
 };
 
 // Use typedef to provide backward compatibility
-using DatasetInfo = DatasetMapper<data::IncrementPolicy>;
+using DatasetInfo = DatasetMapper<IncrementPolicy>;
 
 } // namespace mlpack
 

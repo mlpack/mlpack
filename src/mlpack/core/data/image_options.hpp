@@ -23,8 +23,8 @@
 namespace mlpack {
 
 /**
- * Implements meta-data of images required by data::Load and
- * data::Save for loading and saving images into arma::Mat.
+ * Implements meta-data of images required by Load and
+ * Save for loading and saving images into arma::Mat.
  */
 class ImageOptions : public DataOptionsBase<ImageOptions>
 {

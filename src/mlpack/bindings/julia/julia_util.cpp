@@ -245,7 +245,7 @@ void SetParamUCol(void* params,
 }
 
 /**
- * Call params.SetParam<std::tuple<data::DatasetInfo, arma::mat>>().
+ * Call params.SetParam<std::tuple<DatasetInfo, arma::mat>>().
  */
 void SetParamMatWithInfo(void* params,
                          const char* paramName,
@@ -256,12 +256,12 @@ void SetParamMatWithInfo(void* params,
                          const bool pointsAreRows)
 {
   util::Params* p = (util::Params*) params;
-  data::DatasetInfo d(pointsAreRows ? cols : rows);
+  DatasetInfo d(pointsAreRows ? cols : rows);
   bool hasCategoricals = false;
   for (size_t i = 0; i < d.Dimensionality(); ++i)
   {
-    d.Type(i) = (dimensions[i]) ? data::Datatype::categorical :
-        data::Datatype::numeric;
+    d.Type(i) = (dimensions[i]) ? Datatype::categorical :
+        Datatype::numeric;
     if (dimensions[i])
       hasCategoricals = true;
   }
@@ -295,9 +295,9 @@ void SetParamMatWithInfo(void* params,
     }
   }
 
-  std::get<0>(p->Get<std::tuple<data::DatasetInfo, arma::mat>>(
+  std::get<0>(p->Get<std::tuple<DatasetInfo, arma::mat>>(
       paramName)) = std::move(d);
-  std::get<1>(p->Get<std::tuple<data::DatasetInfo, arma::mat>>(
+  std::get<1>(p->Get<std::tuple<DatasetInfo, arma::mat>>(
       paramName)) = std::move(m);
   p->SetPassed(paramName);
 }
@@ -630,7 +630,7 @@ size_t* GetParamURow(void* params, const char* paramName)
 size_t GetParamMatWithInfoRows(void* params, const char* paramName)
 {
   util::Params* p = (util::Params*) params;
-  return std::get<1>(p->Get<std::tuple<data::DatasetInfo, arma::mat>>(
+  return std::get<1>(p->Get<std::tuple<DatasetInfo, arma::mat>>(
       paramName)).n_rows;
 }
 
@@ -640,7 +640,7 @@ size_t GetParamMatWithInfoRows(void* params, const char* paramName)
 size_t GetParamMatWithInfoCols(void* params, const char* paramName)
 {
   util::Params* p = (util::Params*) params;
-  return std::get<1>(p->Get<std::tuple<data::DatasetInfo, arma::mat>>(
+  return std::get<1>(p->Get<std::tuple<DatasetInfo, arma::mat>>(
       paramName)).n_cols;
 }
 
@@ -653,12 +653,12 @@ bool* GetParamMatWithInfoBoolPtr(void* params, const char* paramName)
 {
   util::Params* p = (util::Params*) params;
 
-  const data::DatasetInfo& d = std::get<0>(
-      p->Get<std::tuple<data::DatasetInfo, arma::mat>>(paramName));
+  const DatasetInfo& d = std::get<0>(
+      p->Get<std::tuple<DatasetInfo, arma::mat>>(paramName));
 
   bool* dims = new bool[d.Dimensionality()];
   for (size_t i = 0; i < d.Dimensionality(); ++i)
-    dims[i] = (d.Type(i) == data::Datatype::numeric) ? false : true;
+    dims[i] = (d.Type(i) == Datatype::numeric) ? false : true;
 
   return dims;
 }
@@ -673,16 +673,16 @@ double* GetParamMatWithInfoPtr(void* params, const char* paramName)
 
   // Are we using preallocated memory?  If so we have to handle this more
   // carefully.
-  data::DatasetInfo& di = std::get<0>(
-      p->Get<std::tuple<data::DatasetInfo, arma::mat>>(paramName));
+  DatasetInfo& di = std::get<0>(
+      p->Get<std::tuple<DatasetInfo, arma::mat>>(paramName));
   arma::mat& m = std::get<1>(
-      p->Get<std::tuple<data::DatasetInfo, arma::mat>>(paramName));
+      p->Get<std::tuple<DatasetInfo, arma::mat>>(paramName));
 
   // Add 1 to any categorical columns, to map them back to the 1-indexed values
   // expected in Julia.
   for (size_t d = 0; d < di.Dimensionality(); ++d)
   {
-    if (di.Type(d) == data::Datatype::categorical)
+    if (di.Type(d) == Datatype::categorical)
       m.row(d) += 1.0;
   }
 

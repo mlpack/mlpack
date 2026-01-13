@@ -141,7 +141,7 @@ TEST_CASE("ConfusionMatrixTest", "[CVTest]")
   arma::Row<size_t> predictedLabels("0 0 0 0 0  1 1 1 1 1");
   // Confusion matrix.
   arma::Mat<int> output;
-  data::ConfusionMatrix(predictedLabels, labels, output, 2);
+  ConfusionMatrix(predictedLabels, labels, output, 2);
   REQUIRE(output(0, 0) == 4);
   REQUIRE(output(0, 1) == 1);
   REQUIRE(output(1, 0) == 2);
@@ -504,7 +504,7 @@ TEST_CASE("SimpleCVWithDTTest", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
-  data::DatasetInfo datasetInfo;
+  DatasetInfo datasetInfo;
   MockCategoricalData(data, labels, datasetInfo);
 
   arma::mat trainingData = data.cols(0, 1999);
@@ -683,7 +683,7 @@ TEST_CASE("KFoldCVWithDTTest", "[CVTest]")
 {
   arma::mat originalData;
   arma::Row<size_t> originalLabels;
-  data::DatasetInfo datasetInfo;
+  DatasetInfo datasetInfo;
   MockCategoricalData(originalData, originalLabels, datasetInfo);
 
   // Each fold will be filled with this dataset.
@@ -744,7 +744,7 @@ TEST_CASE("KFoldCVWithDTTestLargeKNoShuffle", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
-  data::DatasetInfo datasetInfo;
+  DatasetInfo datasetInfo;
   MockCategoricalData(data, labels, datasetInfo);
 
   size_t numClasses = 5;
@@ -770,7 +770,7 @@ TEST_CASE("KFoldCVWithDTTestUnevenBinsNoShuffle", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
-  data::DatasetInfo datasetInfo;
+  DatasetInfo datasetInfo;
   MockCategoricalData(data, labels, datasetInfo);
 
   size_t numClasses = 5;
@@ -794,7 +794,7 @@ TEST_CASE("KFoldCVWithDTTestLargeK", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
-  data::DatasetInfo datasetInfo;
+  DatasetInfo datasetInfo;
   MockCategoricalData(data, labels, datasetInfo);
 
   size_t numClasses = 5;
@@ -819,7 +819,7 @@ TEST_CASE("KFoldCVWithDTTestUnevenBins", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
-  data::DatasetInfo datasetInfo;
+  DatasetInfo datasetInfo;
   MockCategoricalData(data, labels, datasetInfo);
 
   size_t numClasses = 5;
@@ -843,7 +843,7 @@ TEST_CASE("KFoldCVWithDTTestLargeKWeighted", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
-  data::DatasetInfo datasetInfo;
+  DatasetInfo datasetInfo;
   MockCategoricalData(data, labels, datasetInfo);
   arma::rowvec weights(data.n_cols, arma::fill::randu);
 
@@ -869,7 +869,7 @@ TEST_CASE("KFoldCVWithDTTestUnevenBinsWeighted", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
-  data::DatasetInfo datasetInfo;
+  DatasetInfo datasetInfo;
   MockCategoricalData(data, labels, datasetInfo);
   arma::rowvec weights(data.n_cols, arma::fill::randu);
 

@@ -193,7 +193,7 @@ bool Load(const std::string& filename,
  * mlpack requires column-major matrices, this should be left at its default
  * value of 'true'.
  *
- * If the given `info` has already been used with a different `data::Load()`
+ * If the given `info` has already been used with a different `Load()`
  * call where the dataset has the same dimensionality, then the mappings and
  * dimension types inside of `info` will be *re-used*.  If the given `info` is a
  * new `DatasetMapper` object (e.g. its dimensionality is 0), then new mappings

@@ -146,7 +146,7 @@ void OneHotEncoding(const arma::Mat<eT>& input,
  * Overloaded function for the above function, which takes a matrix as input
  * and also a DatasetInfo object and outputs a matrix.
  * This function encodes all the dimensions marked `Datatype::categorical`
- * in the data::DatasetInfo.
+ * in the DatasetInfo.
  *
  * @param input Input dataset to be encoded.
  * @param output Encoded matrix.
@@ -155,12 +155,12 @@ void OneHotEncoding(const arma::Mat<eT>& input,
 template<typename eT>
 void OneHotEncoding(const arma::Mat<eT>& input,
                     arma::Mat<eT>& output,
-                    const data::DatasetInfo& datasetInfo)
+                    const DatasetInfo& datasetInfo)
 {
   std::vector<size_t> indices;
   for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
   {
-    if (datasetInfo.Type(i) == data::Datatype::categorical)
+    if (datasetInfo.Type(i) == Datatype::categorical)
     {
       indices.push_back(i);
     }

@@ -30,9 +30,9 @@ void PrintOutputProcessing(
     util::ParamData& d,
     const std::string& /* functionName */,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
-    const std::enable_if_t<!data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!HasSerialize<T>::value>*,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   std::string type;
   if (std::is_same_v<T, bool>)
@@ -69,7 +69,7 @@ void PrintOutputProcessing(
     const std::string& /* functionName */,
     const std::enable_if_t<arma::is_arma_type<T>::value>*,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   std::string uChar = (std::is_same_v<typename T::elem_type, size_t>) ?
       "U" : "";
@@ -101,9 +101,9 @@ void PrintOutputProcessing(
     util::ParamData& d,
     const std::string& functionName,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
-    const std::enable_if_t<data::HasSerialize<T>::value>*,
+    const std::enable_if_t<HasSerialize<T>::value>*,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   std::string type = util::StripType(d.cppType);
   std::cout << functionName << "_internal.GetParam"
@@ -118,7 +118,7 @@ void PrintOutputProcessing(
     util::ParamData& d,
     const std::string& /* functionName */,
     const std::enable_if_t<std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   std::cout << "GetParamMatWithInfo(p, \"" << d.name << "\", juliaOwnedMemory)";
 }

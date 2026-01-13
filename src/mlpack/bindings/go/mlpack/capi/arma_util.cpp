@@ -322,7 +322,7 @@ int mlpackNumElemUcol(void* params, const char* identifier)
 }
 
 /**
- * Call IO::SetParam<std::tuple<data::DatasetInfo, arma::mat>>().
+ * Call IO::SetParam<std::tuple<DatasetInfo, arma::mat>>().
  */
 void mlpackToArmaMatWithInfo(void* params,
                              const char* identifier,
@@ -332,12 +332,12 @@ void mlpackToArmaMatWithInfo(void* params,
                              const size_t cols)
 {
   util::Params& p = *((util::Params*) params);
-  data::DatasetInfo d(rows);
+  DatasetInfo d(rows);
   bool hasCategoricals = false;
   for (size_t i = 0; i < d.Dimensionality(); ++i)
   {
-    d.Type(i) = (dimensions[i]) ? data::Datatype::categorical :
-        data::Datatype::numeric;
+    d.Type(i) = (dimensions[i]) ? Datatype::categorical :
+        Datatype::numeric;
     if (dimensions[i])
       hasCategoricals = true;
   }
@@ -364,9 +364,9 @@ void mlpackToArmaMatWithInfo(void* params,
     }
   }
 
-  std::get<0>(p.Get<std::tuple<data::DatasetInfo, arma::mat>>(identifier)) =
+  std::get<0>(p.Get<std::tuple<DatasetInfo, arma::mat>>(identifier)) =
       std::move(d);
-  std::get<1>(p.Get<std::tuple<data::DatasetInfo, arma::mat>>(identifier)) =
+  std::get<1>(p.Get<std::tuple<DatasetInfo, arma::mat>>(identifier)) =
       std::move(m);
   p.SetPassed(identifier);
 }
@@ -377,7 +377,7 @@ void mlpackToArmaMatWithInfo(void* params,
 int mlpackArmaMatWithInfoElements(void* params, const char* identifier)
 {
   util::Params& p = *((util::Params*) params);
-  using TupleType = std::tuple<data::DatasetInfo, arma::mat>;
+  using TupleType = std::tuple<DatasetInfo, arma::mat>;
   return std::get<1>(p.Get<TupleType>(identifier)).n_elem;
 }
 
@@ -387,7 +387,7 @@ int mlpackArmaMatWithInfoElements(void* params, const char* identifier)
 int mlpackArmaMatWithInfoRows(void* params, const char* identifier)
 {
   util::Params& p = *((util::Params*) params);
-  using TupleType = std::tuple<data::DatasetInfo, arma::mat>;
+  using TupleType = std::tuple<DatasetInfo, arma::mat>;
   return std::get<1>(p.Get<TupleType>(identifier)).n_rows;
 }
 
@@ -397,7 +397,7 @@ int mlpackArmaMatWithInfoRows(void* params, const char* identifier)
 int mlpackArmaMatWithInfoCols(void* params, const char* identifier)
 {
   util::Params& p = *((util::Params*) params);
-  using TupleType = std::tuple<data::DatasetInfo, arma::mat>;
+  using TupleType = std::tuple<DatasetInfo, arma::mat>;
   return std::get<1>(p.Get<TupleType>(identifier)).n_cols;
 }
 
@@ -408,7 +408,7 @@ int mlpackArmaMatWithInfoCols(void* params, const char* identifier)
 void* mlpackArmaPtrMatWithInfoPtr(void* params, const char* identifier)
 {
   util::Params& p = *((util::Params*) params);
-  using TupleType = std::tuple<data::DatasetInfo, arma::mat>;
+  using TupleType = std::tuple<DatasetInfo, arma::mat>;
   arma::mat& m = std::get<1>(p.Get<TupleType>(identifier));
   if (m.is_empty())
   {

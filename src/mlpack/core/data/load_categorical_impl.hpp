@@ -81,11 +81,11 @@ bool LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
       else if (info.Dimensionality() != rows)
       {
         if (fatal)
-          Log::Fatal << "data::LoadCSV(): given DatasetInfo has dimensionality "
+          Log::Fatal << "LoadCSV(): given DatasetInfo has dimensionality "
               << info.Dimensionality() << ", but data has dimensionality "
               << rows << std::endl;
         else
-          Log::Warn << "data::LoadCSV(): given DatasetInfo has dimensionality "
+          Log::Warn << "LoadCSV(): given DatasetInfo has dimensionality "
               << info.Dimensionality() << ", but data has dimensionality "
               << rows << std::endl;
         return false;
@@ -166,11 +166,11 @@ bool LoadCSV::InitializeMapper(size_t& rows, size_t& cols,
   else if (info.Dimensionality() != rows)
   {
     if (fatal)
-      Log::Fatal << "data::LoadCSV(): given DatasetInfo has dimensionality "
+      Log::Fatal << "LoadCSV(): given DatasetInfo has dimensionality "
           << info.Dimensionality() << ", but data has dimensionality "
           << rows << std::endl;
     else
-      Log::Warn << "data::LoadCSV(): given DatasetInfo has dimensionality "
+      Log::Warn << "LoadCSV(): given DatasetInfo has dimensionality "
           << info.Dimensionality() << ", but data has dimensionality "
           << rows << std::endl;
     return false;

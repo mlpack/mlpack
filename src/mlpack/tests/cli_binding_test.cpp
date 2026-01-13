@@ -135,7 +135,7 @@ TEST_CASE("GetParamUnloadedMatTest", "[CLIOptionTest]")
   // Create value.
   string filename = "test.csv";
   arma::mat test(5, 5, arma::fill::ones);
-  data::Save("test.csv", test);
+  Save("test.csv", test);
   arma::mat m;
   using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
@@ -190,7 +190,7 @@ TEST_CASE("GetParamUnloadedUmatTest", "[CLIOptionTest]")
   // Create value.
   string filename = "test.csv";
   arma::Mat<size_t> test(5, 5, arma::fill::ones);
-  data::Save("test.csv", test);
+  Save("test.csv", test);
   arma::Mat<size_t> m;
   using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
@@ -233,12 +233,12 @@ TEST_CASE("GetParamDatasetInfoMatTest", "[CLIOptionTest]")
   f.close();
 
   // Create tuples.
-  data::DatasetInfo dd;
+  DatasetInfo dd;
   arma::mat m;
 
   using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
-  tuple<data::DatasetInfo, arma::mat> tuple1 = make_tuple(dd, m);
+  tuple<DatasetInfo, arma::mat> tuple1 = make_tuple(dd, m);
   tuple<decltype(tuple1), TupleType> tuple2 = make_tuple(tuple1, testTuple);
 
   d.value = tuple2;
@@ -248,17 +248,17 @@ TEST_CASE("GetParamDatasetInfoMatTest", "[CLIOptionTest]")
   d.noTranspose = false;
 
   // Set up object to load into.
-  tuple<data::DatasetInfo, arma::mat>* output = NULL;
-  GetParam<tuple<data::DatasetInfo, arma::mat>>((util::ParamData&) d,
+  tuple<DatasetInfo, arma::mat>* output = NULL;
+  GetParam<tuple<DatasetInfo, arma::mat>>((util::ParamData&) d,
       (void*) NULL, (void*) &output);
 
   REQUIRE(get<0>(*output).Dimensionality() == 3);
   REQUIRE((int) get<0>(*output).Type(0) ==
-      (int) data::Datatype::numeric);
+      (int) Datatype::numeric);
   REQUIRE((int) get<0>(*output).Type(1) ==
-      (int) data::Datatype::numeric);
+      (int) Datatype::numeric);
   REQUIRE((int) get<0>(*output).Type(2) ==
-      (int) data::Datatype::categorical);
+      (int) Datatype::categorical);
   REQUIRE(get<1>(*output).n_rows == 3);
   REQUIRE(get<1>(*output).n_cols == 7);
 
@@ -272,7 +272,7 @@ TEST_CASE("GetParamModelTest", "[CLIOptionTest]")
   // Create value.
   string filename = "kernel.bin";
   GaussianKernel gk(5.0);
-  data::Save("kernel.bin", "model", gk);
+  Save("kernel.bin", "model", gk);
 
   // Create tuple.
   tuple<GaussianKernel*, string> t = make_tuple((GaussianKernel*) NULL,
@@ -361,11 +361,11 @@ TEST_CASE("GetRawParamDatasetInfoTest", "[CLIOptionTest]")
   string filename = "test.csv";
 
   // Create tuples.
-  data::DatasetInfo dd(3);
+  DatasetInfo dd(3);
   arma::mat m(3, 3, arma::fill::randu);
   using TupleType = tuple<string, size_t, size_t>;
   TupleType testTuple{filename, 0, 0};
-  tuple<data::DatasetInfo, arma::mat> tuple1 = make_tuple(dd, m);
+  tuple<DatasetInfo, arma::mat> tuple1 = make_tuple(dd, m);
   tuple<decltype(tuple1), TupleType> tuple2 = make_tuple(tuple1, testTuple);
 
   d.value = tuple2;
@@ -375,8 +375,8 @@ TEST_CASE("GetRawParamDatasetInfoTest", "[CLIOptionTest]")
   d.noTranspose = false;
 
   // Set up object to load into.
-  tuple<data::DatasetInfo, arma::mat>* output = NULL;
-  GetRawParam<tuple<data::DatasetInfo, arma::mat>>((util::ParamData&) d,
+  tuple<DatasetInfo, arma::mat>* output = NULL;
+  GetRawParam<tuple<DatasetInfo, arma::mat>>((util::ParamData&) d,
       (void*) NULL, (void*) &output);
 
   REQUIRE(get<0>(*output).Dimensionality() == 3);
@@ -405,7 +405,7 @@ TEST_CASE("OutputParamMatTest", "[CLIOptionTest]")
       (void*) NULL);
 
   arma::mat m2;
-  REQUIRE(data::Load("test.csv", m2));
+  REQUIRE(Load("test.csv", m2));
 
   CheckMatrices(m, m2);
 
@@ -433,7 +433,7 @@ TEST_CASE("OutputParamUmatTest", "[CLIOptionTest]")
       (void*) NULL);
 
   arma::Mat<size_t> m2;
-  REQUIRE(data::Load("test.csv", m2));
+  REQUIRE(Load("test.csv", m2));
 
   CheckMatrices(m, m2);
 
@@ -458,7 +458,7 @@ TEST_CASE("OutputParamModelTest", "[CLIOptionTest]")
       (void*) NULL);
 
   GaussianKernel gk2(1.0);
-  REQUIRE(data::Load("kernel.bin", "model", gk2));
+  REQUIRE(Load("kernel.bin", "model", gk2));
 
   REQUIRE(gk.Bandwidth() == gk2.Bandwidth());
 
