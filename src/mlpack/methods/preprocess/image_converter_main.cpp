@@ -21,7 +21,6 @@ using namespace mlpack;
 using namespace mlpack::util;
 using namespace arma;
 using namespace std;
-using namespace mlpack::data;
 
 // Program Name.
 BINDING_USER_NAME("Image Converter");
