@@ -206,10 +206,10 @@ Train a linear SVM using a custom SGD-like optimizer with callbacks.
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-mlpack::data::Load("satellite.train.csv", dataset, true);
+mlpack::data::Load("satellite.train.csv", dataset, Fatal);
 // See https://datasets.mlpack.org/satellite.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("satellite.train.labels.csv", labels, true);
+mlpack::data::Load("satellite.train.labels.csv", labels, Fatal);
 
 mlpack::LinearSVM svm;
 svm.Lambda() = 0.1;
@@ -225,10 +225,10 @@ svm.Train(dataset, labels, 2, optimizer, ens::ProgressBar(), ens::Report());
 
 // See https://datasets.mlpack.org/satellite.test.csv.
 arma::mat testDataset;
-mlpack::data::Load("satellite.test.csv", testDataset, true);
+mlpack::data::Load("satellite.test.csv", testDataset, Fatal);
 // See https://datasets.mlpack.org/satellite.test.labels.csv.
 arma::Row<size_t> testLabels;
-mlpack::data::Load("satellite.test.labels.csv", testLabels, true);
+mlpack::data::Load("satellite.test.labels.csv", testLabels, Fatal);
 
 std::cout << std::endl;
 std::cout << "Accuracy on training set: "
@@ -257,7 +257,7 @@ class ModelCheckpoint
                 const double /* objective */)
   {
     const std::string filename = "model-" + std::to_string(epoch) + ".bin";
-    mlpack::data::Save(filename, "svm", model, true);
+    mlpack::data::Save(filename, model, Fatal);
     return false; // Do not terminate the optimization.
   }
 
@@ -271,10 +271,10 @@ With that callback available, the code to train the model is below:
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-mlpack::data::Load("satellite.train.csv", dataset, true);
+mlpack::data::Load("satellite.train.csv", dataset, Fatal);
 // See https://datasets.mlpack.org/satellite.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("satellite.train.labels.csv", labels, true);
+mlpack::data::Load("satellite.train.labels.csv", labels, Fatal);
 
 mlpack::LinearSVM svm;
 
@@ -298,7 +298,7 @@ Load a linear SVM from disk and print some information about it.
 mlpack::LinearSVM svm;
 // This assumes that a model called "svm" has been saved to the file
 // "model-1.bin" (as in the previous example).
-mlpack::data::Load("model-1.bin", "svm", svm, true);
+mlpack::data::Load("model-1.bin", svm, Fatal);
 
 // Print the dimensionality of the model and some other statistics.
 std::cout << "The dimensionality of the model in model-1.bin is "

@@ -141,7 +141,7 @@ variance.
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat data;
-mlpack::data::Load("satellite.train.csv", data, true);
+mlpack::data::Load("satellite.train.csv", data, Fatal);
 const size_t origDim = data.n_rows;
 
 mlpack::PCA pca;
@@ -162,7 +162,7 @@ the transformed data.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::fmat data;
-mlpack::data::Load("iris.csv", data, true);
+mlpack::data::Load("iris.csv", data, Fatal);
 
 mlpack::PCA pca(true /* scale data when transforming */);
 
@@ -239,7 +239,7 @@ MNIST data, timing how long each decomposition takes.
 ```c++
 arma::mat data;
 // See https://datasets.mlpack.org/mnist.train.csv.
-mlpack::data::Load("mnist.train.csv", data, true);
+mlpack::data::Load("mnist.train.csv", data, Fatal);
 
 arma::mat output1, output2, output3, output4;
 

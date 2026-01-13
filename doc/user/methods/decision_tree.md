@@ -210,23 +210,24 @@ Train a decision tree on mixed categorical data and save it:
 ```c++
 // Load a categorical dataset.
 arma::mat dataset;
-mlpack::data::DatasetInfo info;
+TextOptions opts = Categorical + Fatal;
 // See https://datasets.mlpack.org/covertype.train.arff.
-mlpack::data::Load("covertype.train.arff", dataset, info, true);
+mlpack::data::Load("covertype.train.arff", dataset, opts);
 
 arma::Row<size_t> labels;
 // See https://datasets.mlpack.org/covertype.train.labels.csv.
-mlpack::data::Load("covertype.train.labels.csv", labels, true);
+mlpack::data::Load("covertype.train.labels.csv", labels, Fatal);
 
 // Create the tree.
 mlpack::DecisionTree tree;
 // Train on the given dataset, specifying a minimum leaf size of 5.
-tree.Train(dataset, info, labels, 7 /* classes */, 5 /* minimum leaf size */);
+tree.Train(dataset, opts.DatasetInfo(), labels,
+    7 /* classes */, 5 /* minimum leaf size */);
 
 // Load categorical test data.
 arma::mat testDataset;
 // See https://datasets.mlpack.org/covertype.test.arff.
-mlpack::data::Load("covertype.test.arff", testDataset, info, true);
+mlpack::data::Load("covertype.test.arff", testDataset, opts);
 
 // Predict class of first test point.
 const size_t firstPrediction = tree.Classify(testDataset.col(0));
@@ -241,7 +242,7 @@ std::cout << "Class probabilities of second test point: " <<
     secondProbabilities.t();
 
 // Save the tree to `tree.bin`.
-mlpack::data::Save("tree.bin", "tree", tree);
+mlpack::data::Save("tree.bin", tree);
 ```
 
 ---
@@ -252,7 +253,7 @@ Load a tree and print some information about it.
 mlpack::DecisionTree tree;
 // This call assumes a tree called "tree" has already been saved to `tree.bin`
 // with `data::Save()`.
-mlpack::data::Load("tree.bin", "tree", tree, true);
+mlpack::data::Load("tree.bin", tree, Fatal);
 
 if (tree.NumChildren() > 0)
 {

@@ -563,7 +563,7 @@ mlpack::data::Load("cloud.csv", dataset);
 mlpack::KFN kfn(std::move(dataset));
 
 // Save the KFN object to disk with the name 'kfn'.
-mlpack::data::Save("kfn.bin", "kfn", kfn);
+mlpack::data::Save("kfn.bin", kfn);
 
 std::cout << "Successfully saved KFN model to 'kfn.bin'." << std::endl;
 ```
@@ -576,7 +576,7 @@ Load a `KFN` object from disk, and inspect the
 ```c++
 // Load the KFN object with name 'kfn' from 'kfn.bin'.
 mlpack::KFN kfn;
-mlpack::data::Load("kfn.bin", "kfn", kfn);
+mlpack::data::Load("kfn.bin", kfn);
 
 // Inspect the KDTree held by the KFN object.
 std::cout << "The KDTree in the KFN object in 'kfn.bin' holds "

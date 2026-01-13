@@ -222,10 +222,10 @@ callbacks.
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-mlpack::data::Load("satellite.train.csv", dataset, true);
+mlpack::data::Load("satellite.train.csv", dataset, Fatal);
 // See https://datasets.mlpack.org/satellite.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("satellite.train.labels.csv", labels, true);
+mlpack::data::Load("satellite.train.labels.csv", labels, Fatal);
 
 mlpack::LogisticRegression lr;
 lr.Lambda() = 0.1;
@@ -241,10 +241,10 @@ lr.Train(dataset, labels, optimizer, ens::ProgressBar(), ens::Report());
 
 // See https://datasets.mlpack.org/satellite.test.csv.
 arma::mat testDataset;
-mlpack::data::Load("satellite.test.csv", testDataset, true);
+mlpack::data::Load("satellite.test.csv", testDataset, Fatal);
 // See https://datasets.mlpack.org/satellite.test.labels.csv.
 arma::Row<size_t> testLabels;
-mlpack::data::Load("satellite.test.labels.csv", testLabels, true);
+mlpack::data::Load("satellite.test.labels.csv", testLabels, Fatal);
 
 std::cout << std::endl;
 std::cout << "Accuracy on training set: "
@@ -292,10 +292,10 @@ With that callback available, the code to train the model is below:
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-mlpack::data::Load("satellite.train.csv", dataset, true);
+mlpack::data::Load("satellite.train.csv", dataset, Fatal);
 // See https://datasets.mlpack.org/satellite.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("satellite.train.labels.csv", labels, true);
+mlpack::data::Load("satellite.train.labels.csv", labels, Fatal);
 
 mlpack::LogisticRegression lr;
 
@@ -318,7 +318,7 @@ Load an existing logistic regression model and print some information about it.
 mlpack::LogisticRegression lr;
 // This assumes that a model called "lr_model" has been saved to the file
 // "model-1.bin" (as in the previous example).
-mlpack::data::Load("model-1.bin", "lr_model", lr, true);
+mlpack::data::Load("model-1.bin", lr, Fatal);
 
 // Print the dimensionality of the model and some other statistics.
 std::cout << "The dimensionality of the model in model-1.bin is "

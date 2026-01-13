@@ -618,7 +618,7 @@ Load a `KNN` object from disk, and inspect the
 ```c++
 // Load the KNN object with name 'knn' from 'knn.bin'.
 mlpack::KNN knn;
-mlpack::data::Load("knn.bin", "knn", knn);
+mlpack::data::Load("knn.bin", knn);
 
 // Inspect the KDTree held by the KNN object.
 std::cout << "The KDTree in the KNN object in 'knn.bin' holds "

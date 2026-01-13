@@ -179,7 +179,7 @@ error.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::data::Load("cloud.csv", dataset, true);
+mlpack::data::Load("cloud.csv", dataset, Fatal);
 
 mlpack::SparseCoding sc;
 sc.Atoms() = 50;
@@ -210,13 +210,13 @@ Train a sparse coding model on the iris dataset and save the model to disk.
 ```c++
 // See https://datasets.mlpack.org/iris.train.csv.
 arma::mat dataset;
-mlpack::data::Load("iris.train.csv", dataset, true);
+mlpack::data::Load("iris.train.csv", dataset, Fatal);
 
 // Train the model in the constructor.
 mlpack::SparseCoding sc(dataset, 10 /* atoms */, 0.1 /* L1 penalty */);
 
 // Save the model to disk.
-mlpack::data::Save("sc.bin", "sc", sc);
+mlpack::data::Save("sc.bin", sc);
 ```
 
 ---
@@ -227,11 +227,11 @@ iris dataset.
 ```c++
 // Load model from disk.
 mlpack::SparseCoding sc;
-mlpack::data::Load("sc.bin", "sc", sc);
+mlpack::data::Load("sc.bin", sc);
 
 // See https://datasets.mlpack.org/iris.test.csv.
 arma::mat dataset;
-mlpack::data::Load("iris.test.csv", dataset, true);
+mlpack::data::Load("iris.test.csv", dataset, Fatal);
 
 // Encode the test points.
 arma::mat codes;
@@ -250,10 +250,10 @@ dictionary sizes and checking the objective value on a held-out test dataset.
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat trainData;
-mlpack::data::Load("satellite.train.csv", trainData, true);
+mlpack::data::Load("satellite.train.csv", trainData, Fatal);
 // See https://datasets.mlpack.org/satellite.test.csv.
 arma::mat testData;
-mlpack::data::Load("satellite.test.csv", testData, true);
+mlpack::data::Load("satellite.test.csv", testData, Fatal);
 
 for (size_t atoms = 20; atoms < 100; atoms += 10)
 {
@@ -305,7 +305,7 @@ floating point data.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::fmat dataset;
-mlpack::data::Load("cloud.csv", dataset, true);
+mlpack::data::Load("cloud.csv", dataset, Fatal);
 
 mlpack::SparseCoding<arma::fmat> sc;
 sc.Atoms() = 30;
@@ -361,7 +361,7 @@ dictionary.
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat trainData;
-mlpack::data::Load("satellite.train.csv", trainData, true);
+mlpack::data::Load("satellite.train.csv", trainData, Fatal);
 
 const size_t atoms = 25;
 const double lambda1 = 0.1;

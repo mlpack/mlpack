@@ -163,11 +163,11 @@ objective function with `ComputeError()`, and save the model.
 ```c++
 // See https://datasets.mlpack.org/admission_predict.csv.
 arma::mat data;
-mlpack::data::Load("admission_predict.csv", data, true);
+mlpack::data::Load("admission_predict.csv", data, Fatal);
 
 // See https://datasets.mlpack.org/admission_predict.responses.csv.
 arma::rowvec responses;
-mlpack::data::Load("admission_predict.responses.csv", responses, true);
+mlpack::data::Load("admission_predict.responses.csv", responses, Fatal);
 
 // Generate random instance weights for each point, in the range 0.5 to 1.5.
 arma::rowvec weights(data.n_cols, arma::fill::randu);
@@ -182,7 +182,7 @@ std::cout << "MSE on the training set: " << lr.ComputeError(data, responses)
     << "." << std::endl;
 
 // Finally, save the model with the name "lr".
-mlpack::data::Save("lr_model.bin", "lr", lr, true);
+mlpack::data::Save("lr_model.bin", lr, Fatal);
 ```
 
 ---
@@ -194,7 +194,7 @@ make some predictions individually for random points.
 mlpack::LinearRegression lr;
 
 // Load the model named "lr" from "lr_model.bin".
-mlpack::data::Load("lr_model.bin", "lr", lr, true);
+mlpack::data::Load("lr_model.bin", lr, Fatal);
 
 // Print some information about the model.
 const size_t dimensionality =

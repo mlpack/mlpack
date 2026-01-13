@@ -200,13 +200,13 @@ disk.
 ```c++
 // Load a categorical dataset.
 arma::mat data;
-mlpack::data::DatasetInfo info;
+TextOptions opts = Categorical + Fatal;
 // See https://datasets.mlpack.org/telecom_churn.arff.
-mlpack::data::Load("telecom_churn.arff", data, info, true);
+mlpack::data::Load("telecom_churn.arff", data, opts);
 
 arma::rowvec responses;
 // See https://datasets.mlpack.org/telecom_churn.responses.csv.
-mlpack::data::Load("telecom_churn.responses.csv", responses, true);
+mlpack::data::Load("telecom_churn.responses.csv", responses, Fatal);
 
 // Split data into training set (80%) and test set (20%).
 arma::mat trainData, testData;
@@ -218,7 +218,7 @@ mlpack::data::Split(data, responses, trainData, testData, trainResponses,
 mlpack::DecisionTreeRegressor tree;
 // Train on the given dataset, specifying a minimum gain of 1e-6 and keeping the
 // default minimum leaf size.
-const double mse = tree.Train(trainData, info, trainResponses,
+const double mse = tree.Train(trainData, opts.DatasetInfo(), trainResponses,
     10 /* minimum leaf size */, 1e-6 /* minimum gain */);
 // Print the MSE of the trained tree.
 std::cout << "MSE of trained tree is " << mse << "." << std::endl;
@@ -238,7 +238,7 @@ std::cout << "Average error on test set: " << testAverageError << "."
     << std::endl;
 
 // Save the tree to "tree.bin" with the name "tree".
-mlpack::data::Save("tree.bin", "tree", tree);
+mlpack::data::Save("tree.bin", tree);
 ```
 
 ---
@@ -249,7 +249,7 @@ Load a tree and print some information about it.
 mlpack::DecisionTreeRegressor tree;
 // This call assumes a tree called "tree" has already been saved to `tree.bin`
 // with `data::Save()`.
-mlpack::data::Load("tree.bin", "tree", tree, true);
+mlpack::data::Load("tree.bin", tree, Fatal);
 
 std::cout << "Information about the DecisionTreeRegressor in `tree.bin`:"
     << std::endl;
