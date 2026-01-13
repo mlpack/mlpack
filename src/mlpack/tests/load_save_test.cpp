@@ -1010,9 +1010,11 @@ TEST_CASE("SaveArmaBinaryArbitraryExtensionTest", "[LoadSaveTest][tiny]")
                    "3 7;"
                    "4 8;";
 
-  REQUIRE(data::Save("test_file.blerp.blah", test, ArmaBin) == true);
+  REQUIRE(data::Save("test_file.blerp.blah", test,
+      NoFatal + Transpose + ArmaBin) == true);
 
-  REQUIRE(data::Load("test_file.blerp.blah", test, ArmaBin) == true);
+  REQUIRE(data::Load("test_file.blerp.blah", test,
+      NoFatal + Transpose + ArmaBin) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
