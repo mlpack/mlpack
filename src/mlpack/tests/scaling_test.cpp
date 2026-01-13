@@ -14,7 +14,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::data;
 using namespace std;
 
 arma::mat dataset = "-1 -0.5 0 1;"

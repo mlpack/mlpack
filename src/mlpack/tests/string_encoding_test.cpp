@@ -17,7 +17,6 @@
 #include "serialization.hpp"
 
 using namespace mlpack;
-using namespace mlpack::data;
 using namespace std;
 
 //! Common input for some tests.

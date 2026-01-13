@@ -24,7 +24,6 @@
 #include "mock_categorical_data.hpp"
 
 using namespace mlpack;
-using namespace mlpack::data;
 
 /**
  * Test metrics for binary classification.
