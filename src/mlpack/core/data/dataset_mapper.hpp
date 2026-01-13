@@ -192,7 +192,7 @@ class DatasetMapper
 };
 
 // Use typedef to provide backward compatibility
-using DatasetInfo = DatasetMapper<IncrementPolicy>;
+using DataInfo = DatasetMapper<IncrementPolicy>;
 
 } // namespace mlpack
 
