@@ -238,7 +238,11 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   arma::field<std::string>& Headers() { return headers; }
 
   // Get the DatasetInfo for categorical data.
-  const DatasetMapper<IncrementPolicy>& DatasetInfo() const { return datasetInfo; }
+  const DatasetMapper<IncrementPolicy>& DatasetInfo() const
+  {
+    return datasetInfo;
+  }
+
   // Modify the DatasetInfo.
   DatasetMapper<IncrementPolicy>& DatasetInfo() { return datasetInfo; }
 
