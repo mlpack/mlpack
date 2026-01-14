@@ -363,10 +363,13 @@ class RNN
    * @param sequenceLengths Length of each input sequences.  Should have size
    *     `predictors.n_cols`, and all values should be less than or equal to
    *     `predictors.n_slices`.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
    */
   ElemType Evaluate(const CubeType& predictors,
                     const CubeType& responses,
-                    const URowType& sequenceLengths);
+                    const URowType& sequenceLengths,
+                    const size_t batchSize);
 
   // Serialize the model.
   template<typename Archive>

@@ -424,13 +424,11 @@ typename MatType::elem_type RNN<
 >::Evaluate(
     const CubeType& predictors,
     const CubeType& responses,
-    const URowType& sequenceLengths)
+    const URowType& sequenceLengths
+    const size_t batchSize)
 {
   // Ensure that the network is configured correctly.
   network.CheckNetwork("RNN::Evaluate()", predictors.n_rows);
-
-  // Convenience alias.
-  size_t batchSize = predictors.n_cols;
 
   // Add the loss of the network unrelated to output.
   ElemType lossSum = ElemType(network.network.Loss());
