@@ -43,8 +43,7 @@ TEST_CASE("NoExtensionSave", "[LoadSaveTest][tiny]")
 TEST_CASE("NotExistLoad", "[LoadSaveTest][tiny]")
 {
   arma::mat out;
-  REQUIRE(data::Load("nonexistentfile_______________.csv", out,
-      NoFatal + Transpose) == false);
+  REQUIRE(data::Load("nonexistentfile_______________.csv", out) == false);
 }
 
 /**
@@ -328,8 +327,7 @@ TEST_CASE("LoadAnyExtensionFileTest", "[LoadSaveTest][tiny]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.blah", test,
-        NoFatal + Transpose + RawAscii));
+  REQUIRE(data::Load("test_file.blah", test, RawAscii));
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -1010,11 +1008,9 @@ TEST_CASE("SaveArmaBinaryArbitraryExtensionTest", "[LoadSaveTest][tiny]")
                    "3 7;"
                    "4 8;";
 
-  REQUIRE(data::Save("test_file.blerp.blah", test,
-      NoFatal + Transpose + ArmaBin) == true);
+  REQUIRE(data::Save("test_file.blerp.blah", test, ArmaBin) == true);
 
-  REQUIRE(data::Load("test_file.blerp.blah", test,
-      NoFatal + Transpose + ArmaBin) == true);
+  REQUIRE(data::Load("test_file.blerp.blah", test, ArmaBin) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
