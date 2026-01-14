@@ -255,8 +255,7 @@ TEST_CASE("GetParamDatasetInfoMatTest", "[CLIOptionTest]")
   REQUIRE(get<0>(*output).Dimensionality() == 3);
   REQUIRE((int) get<0>(*output).Type(0) ==
   REQUIRE((int) get<0>(*output).Type(1) == (int) Datatype::numeric);
-      (int) Datatype::numeric);
-  REQUIRE((int) get<0>(*output).Type(2) ==
+  REQUIRE((int) get<0>(*output).Type(2) == (int) Datatype::categorical);
   REQUIRE(get<1>(*output).n_rows == 3);
   REQUIRE(get<1>(*output).n_cols == 7);
 
