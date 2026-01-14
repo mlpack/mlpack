@@ -119,11 +119,6 @@ template<typename MatType, typename RegularizerType>
 void LinearRecurrent<MatType, RegularizerType>::Forward(
     const MatType& input, MatType& output)
 {
-  // Convenience alias.
-  const size_t activeBatchSize = input.n_cols;
-
-  SetStateAliases(activeBatchSize);
-
   // Take the forward step: f(x) = Wx + Uh + b.
   if (!this->HasPreviousStep())
   {
@@ -148,19 +143,13 @@ void LinearRecurrent<MatType, RegularizerType>::Forward(
 template<typename MatType, typename RegularizerType>
 void LinearRecurrent<MatType, RegularizerType>::Backward(
     const MatType& /* input */,
-    const MatType& output,
+    const MatType& /* output */,
     const MatType& gy,
     MatType& g)
 {
   // For the linear recurrent layer, we must compute the derivative of the
   // output with respect to the input through two different paths: via the
   // output, and via the hidden recurrence.
-
-  // Convenience alias.
-  const size_t activeBatchSize = output.n_cols;
-
-  SetStateAliases(activeBatchSize);
-  SetGradientAliases(activeBatchSize);
 
   // Via the output, the result is the same as for the regular linear layer.
   g = weights.t() * gy;
@@ -201,10 +190,6 @@ void LinearRecurrent<MatType, RegularizerType>::Gradient(
   // The derivative of the output layer with respect to the weights can be
   // computed as the sum through two paths: the current output, and the
   // recurrent connection.
-
-  // This implementation assumes that `Gradient()` is being called after
-  // `Backward()` so the recurrent state and gradient aliases should already
-  // be set.
 
   // First, through the output path.  This is the same as the non-recurrent
   // linear layer.
@@ -276,10 +261,14 @@ void LinearRecurrent<MatType, RegularizerType>::ComputeOutputDimensions()
 }
 
 template<typename MatType, typename RegularizerType>
-void LinearRecurrent<MatType, RegularizerType>::SetStateAliases(
-    const size_t activeBatchSize)
+void LinearRecurrent<MatType, RegularizerType>::OnStepChanged(
+    const size_t step,
+    const size_t /* batchSize */,
+    const size_t activeBatchSize,
+    const bool backwards)
 {
-  MakeAlias(currentOutput, this->RecurrentState(this->CurrentStep()),
+  // Make aliases for the output from the recurrent state.
+  MakeAlias(currentOutput, this->RecurrentState(step),
       outSize, activeBatchSize);
 
   if (this->HasPreviousStep())
@@ -287,19 +276,18 @@ void LinearRecurrent<MatType, RegularizerType>::SetStateAliases(
     MakeAlias(previousOutput, this->RecurrentState(this->PreviousStep()),
         outSize, activeBatchSize);
   }
-}
 
-template<typename MatType, typename RegularizerType>
-void LinearRecurrent<MatType, RegularizerType>::SetGradientAliases(
-    const size_t activeBatchSize)
-{
-  MakeAlias(currentGradient, this->RecurrentGradient(this->CurrentStep()),
-      outSize, activeBatchSize);
-
-  if (this->HasPreviousStep())
+  // Make aliases for the gradient from the recurrent gradient.
+  if (backwards)
   {
-    MakeAlias(previousGradient, this->RecurrentGradient(this->PreviousStep()),
+    MakeAlias(currentGradient, this->RecurrentGradient(step),
         outSize, activeBatchSize);
+
+    if (this->HasPreviousStep())
+    {
+      MakeAlias(previousGradient, this->RecurrentGradient(this->PreviousStep()),
+          outSize, activeBatchSize);
+    }
   }
 }
 

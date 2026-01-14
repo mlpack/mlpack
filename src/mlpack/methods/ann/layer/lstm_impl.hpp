@@ -128,10 +128,6 @@ void LSTM<MatType>::Forward(const MatType& input, MatType& output)
   // Convenience alias.
   const size_t activeBatchSize = input.n_cols;
 
-  // The internal quantities are stored as recurrent state; so, set aliases
-  // correctly for this time step.
-  SetInternalAliases(activeBatchSize);
-
   // Compute internal state:
   //
   // z_t  =    tanh(W_z x_t + R_z y_{t - 1} + b_z)
@@ -223,12 +219,7 @@ void LSTM<MatType>::Backward(
   // dz_t = dc_t % i_t       % (1 - z_t .^ 2)
   //
   // dx_t = W_z^T dz_t + W_i^T di_t + W_f^T df_t + W_o^T do_t
-  //
-  // Before we start, set all the internal aliases, which will contain this time
-  // step's values as computed in Forward().
   const size_t activeBatchSize = output.n_cols;
-  SetInternalAliases(activeBatchSize);
-  SetBackwardWorkspace(activeBatchSize);
 
   // First attempt...
   if (this->AtFinalStep())
@@ -253,12 +244,6 @@ void LSTM<MatType>::Backward(
   }
   else
   {
-    // To update the cell state, we actually need to use the forget gate values
-    // from the next time step.
-    MatType nextForgetGate;
-    MakeAlias(nextForgetGate, this->RecurrentState(this->CurrentStep() + 1),
-        outSize, activeBatchSize, 4 * outSize * this->batchSize);
-
     deltaCell = deltaY % outputGate % (1 - square(tanh(thisCell))) +
         repmat(peepholeOutputGateWeight, 1, activeBatchSize) % deltaOutputGate +
         repmat(peepholeInputGateWeight, 1, activeBatchSize) % nextDeltaInputGate +
@@ -290,10 +275,6 @@ void LSTM<MatType>::Gradient(
     const MatType& /* error */,
     MatType& gradient)
 {
-  // This implementation depends on Gradient() being called just after
-  // Backward(), which is something we can safely assume.  So, the workspace
-  // aliases are already set by SetBackwardWorkspace().
-  //
   // In this implementation we won't use aliases; we'll just address the correct
   // part of the gradient directly.
 
@@ -415,25 +396,28 @@ size_t LSTM<MatType>::RecurrentSize() const
 }
 
 template<typename MatType>
-void LSTM<MatType>::SetInternalAliases(const size_t activeBatchSize)
+void LSTM<MatType>::OnStepChanged(const size_t step,
+                                  const size_t batchSize,
+                                  const size_t activeBatchSize,
+                                  const bool backwards)
 {
   // Make all of the aliases for internal state point to the correct place.
-  MatType& state = this->RecurrentState(this->CurrentStep());
+  MatType& state = this->RecurrentState(step);
 
   // First make aliases for the recurrent connections.
   MakeAlias(thisRecurrent, state, outSize, activeBatchSize);
-  MakeAlias(thisCell, state, outSize, activeBatchSize, outSize * this->batchSize);
+  MakeAlias(thisCell, state, outSize, activeBatchSize, outSize * batchSize);
 
   // Now make aliases for the internal state members that we use as scratch
   // space for computation.
   MakeAlias(blockInput, state, outSize, activeBatchSize, 2 * outSize *
-      this->batchSize);
+      batchSize);
   MakeAlias(inputGate, state, outSize, activeBatchSize, 3 * outSize *
-      this->batchSize);
+      batchSize);
   MakeAlias(forgetGate, state, outSize, activeBatchSize, 4 * outSize *
-      this->batchSize);
+      batchSize);
   MakeAlias(outputGate, state, outSize, activeBatchSize, 5 * outSize *
-      this->batchSize);
+      batchSize);
 
   // Make aliases for the previous time step, too, if we can.
   if (this->HasPreviousStep())
@@ -442,69 +426,77 @@ void LSTM<MatType>::SetInternalAliases(const size_t activeBatchSize)
 
     MakeAlias(prevRecurrent, prevState, outSize, activeBatchSize);
     MakeAlias(prevCell, prevState, outSize, activeBatchSize, outSize *
-        this->batchSize);
+        batchSize);
   }
-}
 
-template<typename MatType>
-void LSTM<MatType>::SetBackwardWorkspace(const size_t activeBatchSize)
-{
-  // We need to hold enough space for two time steps.
-  workspace.set_size(12 * outSize, this->batchSize);
-
-  if (this->CurrentStep() % 2 == 0)
+  // Also set the workspaces for the backwards pass, if requested.
+  if (backwards)
   {
-    MakeAlias(deltaY, workspace, outSize, activeBatchSize);
-    MakeAlias(deltaBlockInput, workspace, outSize, activeBatchSize,
-        outSize * this->batchSize);
-    MakeAlias(deltaInputGate, workspace, outSize, activeBatchSize,
-        2 * outSize * this->batchSize);
-    MakeAlias(deltaForgetGate, workspace, outSize, activeBatchSize,
-        3 * outSize * this->batchSize);
-    MakeAlias(deltaOutputGate, workspace, outSize, activeBatchSize,
-        4 * outSize * this->batchSize);
-    MakeAlias(deltaCell, workspace, outSize, activeBatchSize,
-        5 * outSize * this->batchSize);
+    // We need to hold enough space for two time steps.
+    workspace.set_size(12 * outSize, batchSize);
 
-    MakeAlias(nextDeltaY, workspace, outSize, activeBatchSize,
-        6 * outSize * this->batchSize);
-    MakeAlias(nextDeltaBlockInput, workspace, outSize, activeBatchSize,
-        7 * outSize * this->batchSize);
-    MakeAlias(nextDeltaInputGate, workspace, outSize, activeBatchSize,
-        8 * outSize * this->batchSize);
-    MakeAlias(nextDeltaForgetGate, workspace, outSize, activeBatchSize,
-        9 * outSize * this->batchSize);
-    MakeAlias(nextDeltaOutputGate, workspace, outSize, activeBatchSize,
-        10 * outSize * this->batchSize);
-    MakeAlias(nextDeltaCell, workspace, outSize, activeBatchSize,
-        11 * outSize * this->batchSize);
-  }
-  else
-  {
-    MakeAlias(nextDeltaY, workspace, outSize, activeBatchSize);
-    MakeAlias(nextDeltaBlockInput, workspace, outSize, activeBatchSize,
-        outSize * this->batchSize);
-    MakeAlias(nextDeltaInputGate, workspace, outSize, activeBatchSize,
-        2 * outSize * this->batchSize);
-    MakeAlias(nextDeltaForgetGate, workspace, outSize, activeBatchSize,
-        3 * outSize * this->batchSize);
-    MakeAlias(nextDeltaOutputGate, workspace, outSize, activeBatchSize,
-        4 * outSize * this->batchSize);
-    MakeAlias(nextDeltaCell, workspace, outSize, activeBatchSize,
-        5 * outSize * this->batchSize);
+    if (step % 2 == 0)
+    {
+      MakeAlias(deltaY, workspace, outSize, activeBatchSize);
+      MakeAlias(deltaBlockInput, workspace, outSize, activeBatchSize,
+          outSize * batchSize);
+      MakeAlias(deltaInputGate, workspace, outSize, activeBatchSize,
+          2 * outSize * batchSize);
+      MakeAlias(deltaForgetGate, workspace, outSize, activeBatchSize,
+          3 * outSize * batchSize);
+      MakeAlias(deltaOutputGate, workspace, outSize, activeBatchSize,
+          4 * outSize * batchSize);
+      MakeAlias(deltaCell, workspace, outSize, activeBatchSize,
+          5 * outSize * batchSize);
 
-    MakeAlias(deltaY, workspace, outSize, activeBatchSize,
-        6 * outSize * this->batchSize);
-    MakeAlias(deltaBlockInput, workspace, outSize, activeBatchSize,
-        7 * outSize * this->batchSize);
-    MakeAlias(deltaInputGate, workspace, outSize, activeBatchSize,
-        8 * outSize * this->batchSize);
-    MakeAlias(deltaForgetGate, workspace, outSize, activeBatchSize,
-        9 * outSize * this->batchSize);
-    MakeAlias(deltaOutputGate, workspace, outSize, activeBatchSize,
-        10 * outSize * this->batchSize);
-    MakeAlias(deltaCell, workspace, outSize, activeBatchSize,
-        11 * outSize * this->batchSize);
+      MakeAlias(nextDeltaY, workspace, outSize, activeBatchSize,
+          6 * outSize * batchSize);
+      MakeAlias(nextDeltaBlockInput, workspace, outSize, activeBatchSize,
+          7 * outSize * batchSize);
+      MakeAlias(nextDeltaInputGate, workspace, outSize, activeBatchSize,
+          8 * outSize * batchSize);
+      MakeAlias(nextDeltaForgetGate, workspace, outSize, activeBatchSize,
+          9 * outSize * batchSize);
+      MakeAlias(nextDeltaOutputGate, workspace, outSize, activeBatchSize,
+          10 * outSize * batchSize);
+      MakeAlias(nextDeltaCell, workspace, outSize, activeBatchSize,
+          11 * outSize * batchSize);
+    }
+    else
+    {
+      MakeAlias(nextDeltaY, workspace, outSize, activeBatchSize);
+      MakeAlias(nextDeltaBlockInput, workspace, outSize, activeBatchSize,
+          outSize * batchSize);
+      MakeAlias(nextDeltaInputGate, workspace, outSize, activeBatchSize,
+          2 * outSize * batchSize);
+      MakeAlias(nextDeltaForgetGate, workspace, outSize, activeBatchSize,
+          3 * outSize * batchSize);
+      MakeAlias(nextDeltaOutputGate, workspace, outSize, activeBatchSize,
+          4 * outSize * batchSize);
+      MakeAlias(nextDeltaCell, workspace, outSize, activeBatchSize,
+          5 * outSize * batchSize);
+
+      MakeAlias(deltaY, workspace, outSize, activeBatchSize,
+          6 * outSize * batchSize);
+      MakeAlias(deltaBlockInput, workspace, outSize, activeBatchSize,
+          7 * outSize * batchSize);
+      MakeAlias(deltaInputGate, workspace, outSize, activeBatchSize,
+          8 * outSize * batchSize);
+      MakeAlias(deltaForgetGate, workspace, outSize, activeBatchSize,
+          9 * outSize * batchSize);
+      MakeAlias(deltaOutputGate, workspace, outSize, activeBatchSize,
+          10 * outSize * batchSize);
+      MakeAlias(deltaCell, workspace, outSize, activeBatchSize,
+          11 * outSize * batchSize);
+    }
+
+    if (!this->AtFinalStep())
+    {
+      // To update the cell state, we actually need to use the forget gate
+      // values from the next time step.
+      MakeAlias(nextForgetGate, this->RecurrentState(this->CurrentStep() + 1),
+          outSize, activeBatchSize, 4 * outSize * batchSize);
+    }
   }
 }
 

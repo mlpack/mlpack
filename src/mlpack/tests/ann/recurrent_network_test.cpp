@@ -1208,7 +1208,7 @@ TEST_CASE("RNNRaggedEvaluateTest", "[RecurrentNetworkTest]")
   // The input is all zeros so the output should also be all zeros.
   // The loss at each slice should then be equal to the mean squared error
   // between 0 (output) and 1 (labels) which is 1.
-  double loss = net.Evaluate(predictors, labels, lengths);
+  double loss = net.Evaluate(predictors, labels, lengths, 4);
 
   // The total loss should be equal to the total number of slices.
   int totalSlices = 0;

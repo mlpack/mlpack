@@ -289,7 +289,8 @@ void RNN<
     // Iterate over all time steps.
     for (size_t t = 0; t < predictors.n_slices; ++t)
     {
-      SetCurrentStep(t, (t == predictors.n_slices - 1));
+      SetCurrentStep(t, (t == predictors.n_slices - 1), effectiveBatchSize,
+          effectiveBatchSize);
 
       // Create aliases for the input and output.  If we are in single mode, we
       // always output into the same slice.
@@ -334,7 +335,7 @@ void RNN<
     const size_t steps = sequenceLengths[i];
     for (size_t t = 0; t < steps; ++t)
     {
-      SetCurrentStep(t, (t == steps - 1));
+      SetCurrentStep(t, (t == steps - 1), 1, 1);
 
       // Create aliases for the input and output.  If we are in single mode, we
       // always output into the same slice.
@@ -401,7 +402,8 @@ typename MatType::elem_type RNN<
   MatType forwardOutput;
   for (size_t t = 0; t < predictors.n_slices; t++)
   {
-    SetCurrentStep(t, (t == predictors.n_slices - 1));
+    SetCurrentStep(t, (t == predictors.n_slices - 1), predictors.n_cols,
+        predictors.n_cols);
     // Do a forward pass and calculate the loss.
     network.Forward(predictors.slice(t), forwardOutput);
     if (!single || t == predictors.n_slices - 1)
@@ -424,7 +426,7 @@ typename MatType::elem_type RNN<
 >::Evaluate(
     const CubeType& predictors,
     const CubeType& responses,
-    const URowType& sequenceLengths
+    const URowType& sequenceLengths,
     const size_t batchSize)
 {
   // Ensure that the network is configured correctly.
@@ -463,11 +465,11 @@ typename MatType::elem_type RNN<
   size_t activeBatchSize = batchSize;
   for (size_t t = 0; t < slices; t++)
   {
-    SetCurrentStep(t, (t == slices - 1));
-
     // Calculate the number of active points.
     if (sequenceLengths.n_elem > 0)
       activeBatchSize = accu(sequenceLengths > t);
+
+    SetCurrentStep(t, (t == slices - 1), batchSize, activeBatchSize);
 
     // Get the input and response data.
     MakeAlias(inputAlias, reordPredictors, predictors.n_rows,
@@ -559,14 +561,14 @@ typename MatType::elem_type RNN<
   size_t activeBatchSize = batchSize;
   for (size_t t = 0; t < steps; ++t)
   {
-    // Manually reset the data of the network to be an alias of the current time
-    // step.
-    SetCurrentStep(t, (t == steps));
-
     // Calculate the number of active points.
     if (sequenceLengths.n_elem > 0)
       activeBatchSize = accu(sequenceLengths
           .subvec(begin, begin + batchSize - 1) > t);
+
+    // Manually reset the data of the network to be an alias of the current time
+    // step.
+    SetCurrentStep(t, (t == steps), batchSize, activeBatchSize);
 
     MakeAlias(network.predictors, predictors.slice(t), predictors.n_rows,
         activeBatchSize, begin * predictors.slice(t).n_rows);
@@ -653,12 +655,12 @@ typename MatType::elem_type RNN<
   size_t activeBatchSize = batchSize;
   for (size_t t = 0; t < steps; ++t)
   {
-    SetCurrentStep(t, (t == (steps - 1)));
-
     // Calculate the number of active points.
     if (sequenceLengths.n_elem > 0)
       activeBatchSize = accu(sequenceLengths
           .subvec(begin, begin + batchSize - 1) > t);
+
+    SetCurrentStep(t, (t == (steps - 1)), batchSize, activeBatchSize);
 
     // Make an alias of the step's data for the forward pass.
     MakeAlias(stepData, predictors.slice(t), predictors.n_rows, activeBatchSize,
@@ -679,7 +681,7 @@ typename MatType::elem_type RNN<
     MatType error;
     for (size_t step = 0; step < std::min(t + 1, effectiveBPTTSteps); ++step)
     {
-      SetCurrentStep(t - step, (step == 0));
+      SetCurrentStep(t - step, (step == 0), batchSize, activeBatchSize, true);
 
       if (step > 0)
       {
@@ -821,7 +823,11 @@ void RNN<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::SetCurrentStep(const size_t step, const bool end)
+>::SetCurrentStep(const size_t step,
+                  const bool end,
+                  size_t batchSize,
+                  size_t activeBatchSize,
+                  bool backwards)
 {
   // Iterate over all layers and set the current step.
   for (Layer<MatType>* l : network.Network())
@@ -830,7 +836,10 @@ void RNN<
     RecurrentLayer<MatType>* r =
         dynamic_cast<RecurrentLayer<MatType>*>(l);
     if (r != nullptr)
+    {
       r->CurrentStep(step, end);
+      r->OnStepChanged(step, batchSize, activeBatchSize, backwards);
+    }
   }
 }
 

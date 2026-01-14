@@ -137,6 +137,12 @@ class GRU : public RecurrentLayer<MatType>
     this->outputDimensions[0] = outSize;
   }
 
+  // Update the internal aliases of the layer when the step changes.
+  void OnStepChanged(const size_t step,
+                     const size_t batchSize,
+                     const size_t activeBatchSize,
+                     const bool backwards);
+
   /**
    * Serialize the layer
    */
@@ -180,13 +186,6 @@ class GRU : public RecurrentLayer<MatType>
   MatType nextDeltaReset;
   MatType nextDeltaUpdate;
   MatType nextDeltaHidden;
-
-  // Makes internal state aliases from the recurrent state.
-  void MakeStateAliases(size_t activeBatchSize);
-
-  // Calling this function will set up workspace memory for the backward pass,
-  // if necessary.
-  void SetBackwardWorkspace(const size_t activeBatchSize);
 }; // class GRU
 
 } // namespace mlpack

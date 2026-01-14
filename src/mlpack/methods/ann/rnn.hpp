@@ -490,7 +490,11 @@ class RNN
   void ResetMemoryState(const size_t memorySize, const size_t batchSize);
 
   //! Set the current step index of all recurrent layers to `step`.
-  void SetCurrentStep(const size_t step, const bool end);
+  void SetCurrentStep(const size_t step,
+                      const bool end,
+                      size_t batchSize,
+                      size_t activeBatchSize,
+                      bool backwards = false);
 
   // Reorders the data in a batch to have sequence lengths in descending order.
   void ReorderBatch(const size_t begin,

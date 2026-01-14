@@ -220,6 +220,12 @@ class LSTM : public RecurrentLayer<MatType>
     this->outputDimensions[0] = outSize;
   }
 
+  // Update the internal aliases of the layer when the step changes.
+  void OnStepChanged(const size_t step,
+                     const size_t batchSize,
+                     const size_t activeBatchSize,
+                     const bool backwards);
+
   /**
    * Serialize the layer.
    */
@@ -290,14 +296,7 @@ class LSTM : public RecurrentLayer<MatType>
   MatType nextDeltaForgetGate;
   MatType nextDeltaOutputGate;
   MatType nextDeltaCell;
-
-  // Calling this function will set all the aliases for the functions above to
-  // the correct places in the current recurrent state methods.
-  void SetInternalAliases(const size_t activeBatchSize);
-
-  // Calling this function will set up workspace memory for the backward pass,
-  // if necessary.
-  void SetBackwardWorkspace(const size_t activeBatchSize);
+  MatType nextForgetGate;
 }; // class LSTM
 
 } // namespace mlpack

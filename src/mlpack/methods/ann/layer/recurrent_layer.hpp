@@ -127,6 +127,16 @@ class RecurrentLayer : public Layer<MatType>
   // meant to be done by the enclosing network.)
   void CurrentStep(const size_t& step, const bool end = false);
 
+  /**
+   * Update the internal state of the layer when the step changes. This is
+   * meant to be called by the enclosing network. A child recurrent class
+   * should override this.
+   */
+  virtual void OnStepChanged(const size_t /* step */,
+                             const size_t /* batchSize */,
+                             const size_t /* activeBatchSize */,
+                             const bool /* backwards */) { }
+
   // Get the previous step.  This is a very simple function but can lead to
   // slightly more readable code in Forward(), Backward(), and Gradient()
   // implementations.
@@ -144,10 +154,6 @@ class RecurrentLayer : public Layer<MatType>
   //! Serialize the recurrent layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
-
- protected:
-  // The number of points in the current batch.
-  size_t batchSize;
 
  private:
   // The current time step index.  This is set by the enclosing network during
