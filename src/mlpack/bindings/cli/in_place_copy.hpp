@@ -52,8 +52,7 @@ void InPlaceCopyInternal(
     util::ParamData& input,
     const std::enable_if_t<
         arma::is_arma_type<T>::value ||
-        std::is_same_v<T, std::tuple<mlpack::DatasetInfo, arma::mat>>>*
-            = 0)
+        std::is_same_v<T, std::tuple<mlpack::DatasetInfo, arma::mat>>>* = 0)
 {
   // Make the output filename the same as the input filename.
   using TupleType = std::tuple<T, typename ParameterType<T>::type>;
