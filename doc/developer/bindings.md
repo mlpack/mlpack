@@ -1163,6 +1163,36 @@ are used to parse the command line input properly.
 
 ## Python bindings
 
+> **Note on Python Usage**
+>
+> When using `mlpack.logistic_regression` from Python, it is recommended to use **keyword arguments only**.
+> Positional arguments (for example, `logistic_regression(X, y)`) may lead to confusing runtime errors due to parameter misinterpretation.
+>
+> In particular:
+> - The `batch_size` parameter must be explicitly provided as an integer.
+> - Training data should be passed using the `training` keyword.
+> - Labels should be passed using the `labels` keyword.
+> - The trained model is returned under the key `output_model`.
+>
+> Example:
+>
+> ```python
+> from mlpack import logistic_regression
+> import numpy as np
+>
+> X = np.array([[1, 2], [2, 3], [3, 4], [4, 5]], dtype=float)
+> y = np.array([0, 0, 1, 1], dtype=int)
+>
+> out = logistic_regression(
+>     training=X,
+>     labels=y,
+>     batch_size=4
+> )
+>
+> model = out["output_model"]
+> ```
+
+
 This section describes the internal functionality of the mlpack Python binding
 generator.  If you are only interested in writing new bindings or building the
 bindings, this section is probably not worth reading.  But if you are interested
