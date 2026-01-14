@@ -59,8 +59,7 @@ std::string DefaultParamImpl(
     util::ParamData& data,
     const std::enable_if_t<
         arma::is_arma_type<T>::value ||
-        std::is_same_v<T, std::tuple<mlpack::DatasetInfo,
-                                     arma::mat>>>* = 0);
+        std::is_same_v<T, std::tuple<mlpack::DatasetInfo, arma::mat>>>* = 0);
 
 /**
  * Return the default value of a model option (this returns the default
