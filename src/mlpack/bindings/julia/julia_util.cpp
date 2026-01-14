@@ -260,8 +260,7 @@ void SetParamMatWithInfo(void* params,
   bool hasCategoricals = false;
   for (size_t i = 0; i < d.Dimensionality(); ++i)
   {
-    d.Type(i) = (dimensions[i]) ? Datatype::categorical :
-        Datatype::numeric;
+    d.Type(i) = (dimensions[i]) ? Datatype::categorical : Datatype::numeric;
     if (dimensions[i])
       hasCategoricals = true;
   }
