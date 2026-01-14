@@ -120,9 +120,9 @@ void LinearRecurrent<MatType, RegularizerType>::Forward(
     const MatType& input, MatType& output)
 {
   // Convenience alias.
-  const size_t activePoints = input.n_cols;
+  const size_t activeBatchSize = input.n_cols;
 
-  SetStateAliases(activePoints);
+  SetStateAliases(activeBatchSize);
 
   // Take the forward step: f(x) = Wx + Uh + b.
   if (!this->HasPreviousStep())
@@ -157,10 +157,10 @@ void LinearRecurrent<MatType, RegularizerType>::Backward(
   // output, and via the hidden recurrence.
 
   // Convenience alias.
-  const size_t activePoints = output.n_cols;
+  const size_t activeBatchSize = output.n_cols;
 
-  SetStateAliases(activePoints);
-  SetGradientAliases(activePoints);
+  SetStateAliases(activeBatchSize);
+  SetGradientAliases(activeBatchSize);
 
   // Via the output, the result is the same as for the regular linear layer.
   g = weights.t() * gy;
@@ -277,29 +277,29 @@ void LinearRecurrent<MatType, RegularizerType>::ComputeOutputDimensions()
 
 template<typename MatType, typename RegularizerType>
 void LinearRecurrent<MatType, RegularizerType>::SetStateAliases(
-    const size_t activePoints)
+    const size_t activeBatchSize)
 {
   MakeAlias(currentOutput, this->RecurrentState(this->CurrentStep()),
-      outSize, activePoints);
+      outSize, activeBatchSize);
 
   if (this->HasPreviousStep())
   {
     MakeAlias(previousOutput, this->RecurrentState(this->PreviousStep()),
-        outSize, activePoints);
+        outSize, activeBatchSize);
   }
 }
 
 template<typename MatType, typename RegularizerType>
 void LinearRecurrent<MatType, RegularizerType>::SetGradientAliases(
-    const size_t activePoints)
+    const size_t activeBatchSize)
 {
   MakeAlias(currentGradient, this->RecurrentGradient(this->CurrentStep()),
-      outSize, activePoints);
+      outSize, activeBatchSize);
 
   if (this->HasPreviousStep())
   {
     MakeAlias(previousGradient, this->RecurrentGradient(this->PreviousStep()),
-        outSize, activePoints);
+        outSize, activeBatchSize);
   }
 }
 

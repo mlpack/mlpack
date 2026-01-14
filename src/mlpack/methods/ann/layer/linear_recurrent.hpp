@@ -174,11 +174,11 @@ class LinearRecurrent : public RecurrentLayer<MatType>
 
   // Calling this function will set all the aliases for the functions above to
   // the correct places in the current recurrent state methods.
-  void SetStateAliases(const size_t activePoints);
+  void SetStateAliases(const size_t activeBatchSize);
 
   // Calling this function will set all the aliases for the functions above to
   // the correct places in the current recurrent gradient methods.
-  void SetGradientAliases(const size_t activePoints);
+  void SetGradientAliases(const size_t activeBatchSize);
 };
 
 } // namespace mlpack

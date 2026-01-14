@@ -462,24 +462,24 @@ typename MatType::elem_type RNN<
   MatType forwardOutput, inputAlias, responseAlias;
   // Iterate over all time slices.
   size_t slices = sequenceLengths.max();
-  size_t activePoints = batchSize;
+  size_t activeBatchSize = batchSize;
   for (size_t t = 0; t < slices; t++)
   {
     SetCurrentStep(t, (t == slices - 1));
 
     // Calculate the number of active points.
     if (sequenceLengths.n_elem > 0)
-      activePoints = accu(sequenceLengths > t);
+      activeBatchSize = accu(sequenceLengths > t);
 
     // Get the input and response data.
     MakeAlias(inputAlias, reordPredictors, predictors.n_rows,
-        activePoints, predictors.n_rows * predictors.n_cols * t);
+        activeBatchSize, predictors.n_rows * predictors.n_cols * t);
 
     // Do a forward pass and calculate the loss.
     network.Forward(inputAlias, forwardOutput);
     if (!single || t == slices - 1)
     {
-      MakeAlias(responseAlias, reordResponses, responses.n_rows, activePoints,
+      MakeAlias(responseAlias, reordResponses, responses.n_rows, activeBatchSize,
           responses.n_rows * responses.n_cols * (single ? 0 : t));
       lossSum += network.outputLayer.Forward(forwardOutput, responseAlias);
     }
@@ -558,7 +558,7 @@ typename MatType::elem_type RNN<
   MatType stepData, responseData;
   const size_t steps = (sequenceLengths.n_elem == 0) ? predictors.n_slices :
       sequenceLengths.subvec(begin, begin + batchSize - 1).max();
-  size_t activePoints = batchSize;
+  size_t activeBatchSize = batchSize;
   for (size_t t = 0; t < steps; ++t)
   {
     // Manually reset the data of the network to be an alias of the current time
@@ -567,17 +567,17 @@ typename MatType::elem_type RNN<
 
     // Calculate the number of active points.
     if (sequenceLengths.n_elem > 0)
-      activePoints = accu(sequenceLengths
+      activeBatchSize = accu(sequenceLengths
           .subvec(begin, begin + batchSize - 1) > t);
 
     MakeAlias(network.predictors, predictors.slice(t), predictors.n_rows,
-        activePoints, begin * predictors.slice(t).n_rows);
+        activeBatchSize, begin * predictors.slice(t).n_rows);
     const size_t responseStep = (single) ? 0 : t;
     MakeAlias(network.responses, responses.slice(responseStep),
-        responses.n_rows, activePoints,
+        responses.n_rows, activeBatchSize,
         begin * responses.slice(responseStep).n_rows);
 
-    loss += network.Evaluate(output, begin, activePoints);
+    loss += network.Evaluate(output, begin, activeBatchSize);
   }
 
   return loss;
@@ -652,21 +652,21 @@ typename MatType::elem_type RNN<
   // we will be backpropagating shorter sequences.
   const size_t steps = (sequenceLengths.n_elem == 0) ? predictors.n_slices :
       sequenceLengths.subvec(begin, begin + batchSize - 1).max();
-  size_t activePoints = batchSize;
+  size_t activeBatchSize = batchSize;
   for (size_t t = 0; t < steps; ++t)
   {
     SetCurrentStep(t, (t == (steps - 1)));
 
     // Calculate the number of active points.
     if (sequenceLengths.n_elem > 0)
-      activePoints = accu(sequenceLengths
+      activeBatchSize = accu(sequenceLengths
           .subvec(begin, begin + batchSize - 1) > t);
 
     // Make an alias of the step's data for the forward pass.
-    MakeAlias(stepData, predictors.slice(t), predictors.n_rows, activePoints,
+    MakeAlias(stepData, predictors.slice(t), predictors.n_rows, activeBatchSize,
         begin * predictors.n_rows);
     MakeAlias(outputData, outputs.slice(t % effectiveBPTTSteps), outputs.n_rows,
-        activePoints);
+        activeBatchSize);
     network.network.Forward(stepData, outputData);
 
     // Determine what the response should be.  If we are in single mode but not
@@ -689,9 +689,9 @@ typename MatType::elem_type RNN<
         error.zeros();
 
         MakeAlias(stepData, predictors.slice(t - step), predictors.n_rows,
-            activePoints, begin * predictors.slice(t - step).n_rows);
+            activeBatchSize, begin * predictors.slice(t - step).n_rows);
         MakeAlias(outputData, outputs.slice((t - step) % effectiveBPTTSteps),
-            outputs.n_rows, activePoints);
+            outputs.n_rows, activeBatchSize);
       }
       else
       {
@@ -699,11 +699,11 @@ typename MatType::elem_type RNN<
         // error.
         const size_t responseStep = (single) ? 0 : t - step;
         MakeAlias(stepData, predictors.slice(t - step), predictors.n_rows,
-            activePoints, begin * predictors.n_rows);
+            activeBatchSize, begin * predictors.n_rows);
         MakeAlias(responseData, responses.slice(responseStep), responses.n_rows,
-            activePoints, begin * responses.n_rows);
+            activeBatchSize, begin * responses.n_rows);
         MakeAlias(outputData, outputs.slice((t - step) % effectiveBPTTSteps),
-            outputs.n_rows, activePoints);
+            outputs.n_rows, activeBatchSize);
 
         // We only need to do this on the first time step of BPTT.
         loss += network.outputLayer.Forward(outputData, responseData);
@@ -718,7 +718,7 @@ typename MatType::elem_type RNN<
       // TODO: note that we could avoid the copy of currentGradient by having
       // each layer *add* its gradient to `gradient`.  However that would
       // require some amount of refactoring.
-      MatType networkDelta(predictors.n_rows, activePoints,
+      MatType networkDelta(predictors.n_rows, activeBatchSize,
           GetFillType<MatType>::none);
       GradType currentGradient(gradient.n_rows, gradient.n_cols,
           GetFillType<MatType>::zeros);
