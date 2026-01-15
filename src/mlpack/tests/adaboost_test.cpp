@@ -30,12 +30,17 @@ TEMPLATE_TEST_CASE("HammingLossBoundIris", "[AdaBoostTest][tiny]", mat, fmat)
   using eT = typename MatType::elem_type;
 
   MatType inputData;
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
 
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData, opts))
     FAIL("Cannot load test dataset iris.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  data::TextOptions labelInfo;
+  labelInfo.HasHeaders() = false;
+  if (!data::Load("iris_labels.txt", labels, labelInfo))
     FAIL("Cannot load labels for iris iris_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
@@ -75,11 +80,16 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorIris", "[AdaBoostTest]", mat, fmat)
   using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("iris.csv", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("iris.csv", inputData, opts))
     FAIL("Cannot load test dataset iris.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("iris_labels.txt", labels, labelOpts))
     FAIL("Cannot load labels for iris iris_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
@@ -124,11 +134,16 @@ TEMPLATE_TEST_CASE("HammingLossBoundVertebralColumn", "[AdaBoostTest]", mat,
   using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("vc2.csv", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("vc2_labels.txt", labels, labelOpts))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
@@ -170,11 +185,16 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorVertebralColumn", "[AdaBoostTest]", mat,
   using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("vc2.csv", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("vc2_labels.txt", labels, labelOpts))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
@@ -219,11 +239,16 @@ TEMPLATE_TEST_CASE("HammingLossBoundNonLinearSepData", "[AdaBoostTest]", mat,
   using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("train_nonlinsep.txt", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("train_nonlinsep.txt", inputData, opts))
     FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   Mat<size_t> labels;
-  if (!data::Load("train_labels_nonlinsep.txt", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("train_labels_nonlinsep.txt", labels, labelOpts))
     FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
@@ -245,11 +270,11 @@ TEMPLATE_TEST_CASE("HammingLossBoundNonLinearSepData", "[AdaBoostTest]", mat,
   Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
 
-  size_t countError = accu(labels == predictedLabels);
+  size_t countError = accu(labels != predictedLabels);
   eT hammingLoss = (eT) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
-  REQUIRE(std::isfinite(ztProduct) <= true);
+  REQUIRE(std::isfinite(ztProduct) == true);
   REQUIRE(hammingLoss <= ztProduct);
 }
 
@@ -265,11 +290,16 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorNonLinearSepData", "[AdaBoostTest][long]",
   using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("train_nonlinsep.txt", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("train_nonlinsep.txt", inputData, opts))
     FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   Mat<size_t> labels;
-  if (!data::Load("train_labels_nonlinsep.txt", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("train_labels_nonlinsep.txt", labels, labelOpts))
     FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
@@ -313,11 +343,16 @@ TEMPLATE_TEST_CASE("HammingLossIris_DS", "[AdaBoostTest]", mat, fmat)
   using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("iris.csv", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("iris.csv", inputData, opts))
     FAIL("Cannot load test dataset iris.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("iris_labels.txt", labels, labelOpts))
     FAIL("Cannot load labels for iris_labels.txt");
 
   // Define your own weak learner, decision stumps in this case.
@@ -355,11 +390,16 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorIris_DS", "[AdaBoostTest][tiny]", mat, fmat)
   using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("iris.csv", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("iris.csv", inputData, opts))
     FAIL("Cannot load test dataset iris.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("iris_labels.txt", labels, labelOpts))
     FAIL("Cannot load labels for iris_labels.txt");
 
   // no need to map the labels here
@@ -406,11 +446,16 @@ TEMPLATE_TEST_CASE("HammingLossBoundVertebralColumn_DS", "[AdaBoostTest]", mat,
   using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("vc2.csv", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("vc2_labels.txt", labels, labelOpts))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Define your own weak learner, decision stumps in this case.
@@ -452,11 +497,16 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorVertebralColumn_DS", "[AdaBoostTest]", mat,
   using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("vc2.csv", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("vc2_labels.txt", labels, labelOpts))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Define your own weak learner, decision stumps in this case.
@@ -498,11 +548,16 @@ TEMPLATE_TEST_CASE("HammingLossBoundNonLinearSepData_DS",
   using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("train_nonlinsep.txt", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("train_nonlinsep.txt", inputData, opts))
     FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   Mat<size_t> labels;
-  if (!data::Load("train_labels_nonlinsep.txt", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("train_labels_nonlinsep.txt", labels, labelOpts))
     FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   // Define your own weak learner, decision stumps in this case.
@@ -544,11 +599,16 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorNonLinearSepData_DS", "[AdaBoostTest]", mat,
   using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("train_nonlinsep.txt", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("train_nonlinsep.txt", inputData, opts))
     FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   Mat<size_t> labels;
-  if (!data::Load("train_labels_nonlinsep.txt", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("train_labels_nonlinsep.txt", labels, labelOpts))
     FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   // Define your own weak learner, decision stumps in this case.
@@ -592,11 +652,16 @@ TEMPLATE_TEST_CASE("ClassifyTest_VERTEBRALCOL", "[AdaBoostTest][long]", mat,
   using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("vc2.csv", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("vc2_labels.txt", labels, labelOpts))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Define your own weak learner, perceptron in this case.
@@ -604,12 +669,12 @@ TEMPLATE_TEST_CASE("ClassifyTest_VERTEBRALCOL", "[AdaBoostTest][long]", mat,
   size_t perceptronIter = 1000;
 
   MatType testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2_test.csv!");
 
   Mat<size_t> trueTestLabels;
 
-  if (!data::Load("vc2_test_labels.txt", trueTestLabels))
+  if (!data::Load("vc2_test_labels.txt", trueTestLabels, labelOpts))
     FAIL("Cannot load labels for vc2_test_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
@@ -666,11 +731,16 @@ TEMPLATE_TEST_CASE("ClassifyTest_NONLINSEP", "[AdaBoostTest]", mat, fmat)
   using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("train_nonlinsep.txt", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("train_nonlinsep.txt", inputData, opts))
     FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   Mat<size_t> labels;
-  if (!data::Load("train_labels_nonlinsep.txt", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("train_labels_nonlinsep.txt", labels, labelOpts))
     FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   // Define your own weak learner; in this test decision stumps are used.
@@ -680,11 +750,11 @@ TEMPLATE_TEST_CASE("ClassifyTest_NONLINSEP", "[AdaBoostTest]", mat, fmat)
 
   MatType testData;
 
-  if (!data::Load("test_nonlinsep.txt", testData))
+  if (!data::Load("test_nonlinsep.txt", testData, opts))
     FAIL("Cannot load test dataset test_nonlinsep.txt!");
 
   Mat<size_t> trueTestLabels;
-  if (!data::Load("test_labels_nonlinsep.txt", trueTestLabels))
+  if (!data::Load("test_labels_nonlinsep.txt", trueTestLabels, labelOpts))
     FAIL("Cannot load labels for test_labels_nonlinsep.txt");
 
   Row<size_t> dsPrediction(labels.n_cols);
@@ -737,11 +807,16 @@ TEMPLATE_TEST_CASE("ClassifyTest_IRIS", "[AdaBoostTest]", mat, fmat)
   using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("iris_train.csv", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("iris_train.csv", inputData, opts))
     FAIL("Cannot load test dataset iris_train.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("iris_train_labels.csv", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("iris_train_labels.csv", labels, labelOpts))
     FAIL("Cannot load labels for iris_train_labels.csv");
   const size_t numClasses = max(labels.row(0)) + 1;
 
@@ -760,14 +835,14 @@ TEMPLATE_TEST_CASE("ClassifyTest_IRIS", "[AdaBoostTest]", mat, fmat)
       iterations, tolerance, perceptronIter);
 
   MatType testData;
-  if (!data::Load("iris_test.csv", testData))
+  if (!data::Load("iris_test.csv", testData, opts))
     FAIL("Cannot load test dataset iris_test.csv!");
 
   Row<size_t> predictedLabels(testData.n_cols);
   a.Classify(testData, predictedLabels);
 
   Mat<size_t> trueTestLabels;
-  if (!data::Load("iris_test_labels.csv", trueTestLabels))
+  if (!data::Load("iris_test_labels.csv", trueTestLabels, labelOpts))
     FAIL("Cannot load test dataset iris_test_labels.csv!");
 
   Row<size_t> predictedLabels1(testData.n_cols),
@@ -809,11 +884,16 @@ TEMPLATE_TEST_CASE("TrainTest", "[AdaBoostTest]", mat, fmat)
 
   // First train on the iris dataset.
   MatType inputData;
-  if (!data::Load("iris_train.csv", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("iris_train.csv", inputData, opts))
     FAIL("Cannot load test dataset iris_train.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("iris_train_labels.csv", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("iris_train_labels.csv", labels, labelOpts))
     FAIL("Cannot load labels for iris_train_labels.csv");
 
   const size_t numClasses = max(labels.row(0)) + 1;
@@ -830,9 +910,9 @@ TEMPLATE_TEST_CASE("TrainTest", "[AdaBoostTest]", mat, fmat)
       iterations, tolerance, perceptronIter);
 
   // Now load another dataset...
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt", labels, labelOpts))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   const size_t newNumClasses = max(labels.row(0)) + 1;
@@ -844,11 +924,11 @@ TEMPLATE_TEST_CASE("TrainTest", "[AdaBoostTest]", mat, fmat)
 
   // Load test set to see if it trained on vc2 correctly.
   MatType testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!data::Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2_test.csv!");
 
   Mat<size_t> trueTestLabels;
-  if (!data::Load("vc2_test_labels.txt", trueTestLabels))
+  if (!data::Load("vc2_test_labels.txt", trueTestLabels, labelOpts))
     FAIL("Cannot load labels for vc2_test_labels.txt");
 
   // Define parameters for AdaBoost.
@@ -1029,11 +1109,16 @@ TEMPLATE_TEST_CASE("AdaBoostParamsConstructor", "[AdaBoostTest]", fmat, mat)
   using MatType = TestType;
 
   MatType inputData;
-  if (!data::Load("iris.csv", inputData))
+  data::TextOptions opts;
+  opts.HasHeaders() = false;
+  opts.Categorical() = false;
+  if (!data::Load("iris.csv", inputData, opts))
     FAIL("Cannot load test dataset iris.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  data::TextOptions labelOpts;
+  labelOpts.HasHeaders() = false;
+  if (!data::Load("iris_labels.txt", labels, labelOpts))
     FAIL("Cannot load labels for iris iris_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
