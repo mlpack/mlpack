@@ -304,7 +304,6 @@ TEST_CASE("LinearRecurrentGradientStateTest", "[ANNLayerTest]")
 
     // Create a random input and error to compute the gradient with.
     input.randu(size, batchSize);
-    output.randu(size, batchSize);
     error.randu(size, batchSize);
     l.RecurrentState(0) = arma::randu<arma::mat>(size, batchSize);
     l.RecurrentState(1) = arma::randu<arma::mat>(size, batchSize);
@@ -317,9 +316,6 @@ TEST_CASE("LinearRecurrentGradientStateTest", "[ANNLayerTest]")
     // recurrent state connection contributes nothing.
     l.CurrentStep(2, true /* end of sequence */);
     l.OnStepChanged(2, batchSize, batchSize, true);
-    // Do a backward pass to initalize internal aliases for `Gradient()`.
-    arma::mat backwardGradient;
-    l.Backward(input, output, error, backwardGradient);
     l.Gradient(input, error, gradientOutput);
 
     // Now compute the delta when we set the output error to 0, so all error
