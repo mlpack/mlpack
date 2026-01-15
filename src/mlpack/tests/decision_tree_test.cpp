@@ -17,6 +17,7 @@
 #include "mock_categorical_data.hpp"
 
 using namespace mlpack;
+using namespace mlpack::data;
 
 /**
  * Make sure the Gini gain is zero when the labels are perfect.
@@ -858,10 +859,13 @@ TEST_CASE("BestCategoricalBuildBinaryTest", "[DecisionTreeTest]")
   // into a training set and test set.
   arma::mat dataset;
   arma::Row<size_t> labels;
-  data::DatasetInfo dataInfo;
+  TextOptions opts;
+  opts.Categorical() = true;
+  opts.Fatal() = false;
+  opts.NoTranspose() = false;
 
-  data::Load("mushroom.data.csv", dataset, dataInfo);
-  data::Load("mushroom.labels.csv", labels, true);
+  data::Load("mushroom.data.csv", dataset, opts);
+  data::Load("mushroom.labels.csv", labels, Fatal + Transpose);
 
   arma::mat trainDataset, testDataset;
   arma::Row<size_t> trainLabels, testLabels;
@@ -875,7 +879,7 @@ TEST_CASE("BestCategoricalBuildBinaryTest", "[DecisionTreeTest]")
   double minGainSplit = 10e-7;
 
   DecisionTree<GiniGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit>
-      tree(trainDataset, dataInfo, trainLabels, numClasses,
+      tree(trainDataset, opts.DatasetInfo(), trainLabels, numClasses,
            minLeaf, minGainSplit, maxDepth);
   // Compute the accuracy of the DecisionTree. It should
   // be well over 95%.
