@@ -489,8 +489,8 @@ typename MatType::elem_type RNN<
       network.Forward(inputAlias, forwardOutput);
       if (!single || t == slices - 1)
       {
-        MakeAlias(responseAlias, reordResponses.slice((single ? 0 : t)), responses.n_rows,
-            activeBatchSize, begin * responses.n_rows);
+        MakeAlias(responseAlias, reordResponses.slice((single ? 0 : t)),
+            responses.n_rows, activeBatchSize, begin * responses.n_rows);
         lossSum += network.outputLayer.Forward(forwardOutput, responseAlias);
       }
     }
