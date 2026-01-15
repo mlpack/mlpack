@@ -66,7 +66,7 @@ namespace mlpack {
 template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
-          const bool fatal = false,
+          const bool fatal,
           const bool transpose = true,
           const FileType inputLoadType = FileType::AutoDetect);
 
@@ -103,7 +103,7 @@ bool Load(const std::string& filename,
 template<typename eT>
 bool Load(const std::string& filename,
           arma::SpMat<eT>& matrix,
-          const bool fatal = false,
+          const bool fatal,
           const bool transpose = true,
           const FileType inputLoadType = FileType::AutoDetect);
 
@@ -137,7 +137,7 @@ bool Load(const std::string& filename,
 template<typename eT>
 bool Load(const std::string& filename,
           arma::Col<eT>& vec,
-          const bool fatal = false);
+          const bool fatal);
 
 /**
  * Load a row vector from a file, guessing the filetype from the extension.
@@ -169,7 +169,7 @@ bool Load(const std::string& filename,
 template<typename eT>
 bool Load(const std::string& filename,
           arma::Row<eT>& rowvec,
-          const bool fatal = false);
+          const bool fatal);
 
 /**
  * Loads a matrix from a file, guessing the filetype from the extension and

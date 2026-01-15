@@ -25,6 +25,8 @@ namespace mlpack {
 #ifdef MLPACK_HAS_COOT
 
 /* using for bandicoot namespace*/
+using coot::accu;
+using coot::all;
 using coot::conv_to;
 using coot::dot;
 using coot::exp;
@@ -63,6 +65,8 @@ using arma::conv_to;
 #endif
 
 /* using for armadillo namespace */
+using arma::accu;
+using arma::all;
 using arma::dot;
 using arma::exp;
 using arma::find;
@@ -75,6 +79,7 @@ using arma::join_cols;
 using arma::join_rows;
 using arma::linspace;
 using arma::log;
+using arma::linspace;
 using arma::min;
 using arma::max;
 using arma::mean;
