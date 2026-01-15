@@ -833,7 +833,6 @@ TEST_CASE("OutputMatrixNoTransposeParamTest", "[IOTest]")
   arma::mat dataset2;
 
   if (!Load("test.csv", dataset2, NoFatal + NoTranspose))
-
     FAIL("Cannot load dataset test.csv");
 
   REQUIRE(dataset.n_cols == dataset2.n_cols);
