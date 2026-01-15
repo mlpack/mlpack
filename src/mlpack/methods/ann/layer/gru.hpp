@@ -181,8 +181,7 @@ class GRU : public RecurrentLayer<MatType>
   MatType deltaReset;
   MatType deltaUpdate;
   MatType deltaHidden;
-
-  // Backwards workspace of CurrentStep() + 1
+  // These correspond to, e.g., dy_{t + 1}.
   MatType nextDeltaReset;
   MatType nextDeltaUpdate;
   MatType nextDeltaHidden;
