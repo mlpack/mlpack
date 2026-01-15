@@ -831,7 +831,9 @@ TEST_CASE("OutputMatrixNoTransposeParamTest", "[IOTest]")
 
   // Now load the matrix back and make sure it was saved correctly.
   arma::mat dataset2;
-  if (!Load("test.csv", dataset2, false, false))
+
+  if (!Load("test.csv", dataset2, NoFatal + NoTranspose))
+
     FAIL("Cannot load dataset test.csv");
 
   REQUIRE(dataset.n_cols == dataset2.n_cols);

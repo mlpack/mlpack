@@ -22,6 +22,7 @@
 #include "ann_test_tools.hpp"
 
 using namespace mlpack;
+using namespace mlpack::data;
 
 /**
  * Train and evaluate a model with the specified structure.
@@ -175,7 +176,7 @@ TEST_CASE("CheckCopyMovingLinear3DNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  Load("thyroid_train.csv", trainData, true);
+  Load("thyroid_train.csv", trainData, Fatal + Transpose);
 
   // Normalize labels to [0, 2].
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
@@ -286,7 +287,7 @@ TEST_CASE("CheckCopyMovingDropoutNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  Load("thyroid_train.csv", trainData, true);
+  Load("thyroid_train.csv", trainData, Fatal + Transpose);
 
   // Normalize labels to [0, 2].
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
@@ -938,7 +939,7 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
   trainData.shed_row(trainData.n_rows - 1);
 
   arma::mat testData;
-  Load("thyroid_test.csv", testData, true);
+  Load("thyroid_test.csv", testData, Fatal + Transpose);
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);

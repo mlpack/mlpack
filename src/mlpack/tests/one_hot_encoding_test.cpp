@@ -188,16 +188,17 @@ TEST_CASE("OneHotEncodingDatasetinfoTest", "[OneHotEncodingTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  DatasetInfo info;
-  if (!Load("test.csv", matrix, info))
+  TextOptions opts = Categorical;
+
+  if (!data::Load("test.csv", matrix, opts))
     FAIL("Cannot load dataset test.csv");
   arma::umat output;
-  OneHotEncoding(matrix, output, info);
+  OneHotEncoding(matrix, output, opts.DatasetInfo());
   REQUIRE(output.n_cols == 7);
   REQUIRE(output.n_rows == 6);
-  REQUIRE(info.Type(0) == Datatype::numeric);
-  REQUIRE(info.Type(1) == Datatype::numeric);
-  REQUIRE(info.Type(2) == Datatype::categorical);
+  REQUIRE(opts.DatasetInfo().Type(0) == Datatype::numeric);
+  REQUIRE(opts.DatasetInfo().Type(1) == Datatype::numeric);
+  REQUIRE(opts.DatasetInfo().Type(2) == Datatype::categorical);
 
   REQUIRE(output(0, 0) == 1);
   REQUIRE(output(1, 0) == 2);
