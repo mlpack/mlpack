@@ -190,7 +190,7 @@ TEST_CASE("OneHotEncodingDatasetinfoTest", "[OneHotEncodingTest]")
   arma::umat matrix;
   TextOptions opts = Categorical;
 
-  if (!data::Load("test.csv", matrix, opts))
+  if (!Load("test.csv", matrix, opts))
     FAIL("Cannot load dataset test.csv");
   arma::umat output;
   OneHotEncoding(matrix, output, opts.DatasetInfo());

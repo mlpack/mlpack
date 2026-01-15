@@ -132,7 +132,7 @@ TEST_CASE("SaveImageWrongOptions", "[ImageLoadTest]")
   opts.Fatal() = true;
   arma::Mat<unsigned char> im1;
   im1 = arma::randi<arma::Mat<unsigned char>>(24 * 25 * 7, 1);
-  REQUIRE_THROWS_AS(data::Save("APITest.bmp", im1, opts),
+  REQUIRE_THROWS_AS(Save("APITest.bmp", im1, opts),
       std::runtime_error);
 }
 
@@ -142,11 +142,11 @@ TEST_CASE("SaveImageWrongOptions", "[ImageLoadTest]")
  */
 TEST_CASE("LoadImageWrongOptions", "[ImageLoadTest]")
 {
-  data::ImageOptions opts(5, 5, 3, 90);
+  ImageOptions opts(5, 5, 3, 90);
   opts.Fatal() = true;
   arma::Mat<unsigned char> im1;
   im1 = arma::randi<arma::Mat<unsigned char>>(24 * 25 * 7, 1);
-  REQUIRE_THROWS_AS(data::Load("APITest.bmp", im1, opts),
+  REQUIRE_THROWS_AS(Load("APITest.bmp", im1, opts),
       std::runtime_error);
 }
 
@@ -188,7 +188,7 @@ TEST_CASE("LoadVectorImageAPITest", "[ImageLoadTest]")
   arma::Mat<unsigned char> matrix;
   ImageOptions opts;
   std::vector<std::string> files = {"test_image.png", "test_image.png"};
-  REQUIRE(data::Load(files, matrix, opts) == true);
+  REQUIRE(Load(files, matrix, opts) == true);
   // width * height * channels.
   REQUIRE(matrix.n_rows == 50 * 50 * 3);
   REQUIRE(opts.Height() == 50);
@@ -442,7 +442,7 @@ TEMPLATE_TEST_CASE("ResizeCropUpscaleTest", "[ImageTest]", unsigned char,
   // Load cat.jpg, which has a strange aspect ratio.
   arma::Mat<eT> image;
   ImageOptions opts;
-  REQUIRE(data::Load("cat.jpg", image, opts) == true);
+  REQUIRE(Load("cat.jpg", image, opts) == true);
 
   // When we crop to match the height of the image, no resizing is needed and we
   // can compare pixels directly.
