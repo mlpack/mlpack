@@ -303,12 +303,8 @@ TEMPLATE_TEST_CASE("GradientRepeatTest", "[ANNLayerTest]", arma::mat,
                                          inputDimensions.end(), 1,
                                          std::multiplies<>());
       input = arma::randu<MatType>(inputSize, batchSize);
-      target = arma::zeros<MatType>(vocabSize, batchSize);
-      for (size_t i = 0; i < target.n_elem; ++i)
-      {
-        const size_t label = RandInt(1, vocabSize);
-        target(i) = label;
-      }
+      target = arma::randi<MatType>(1, batchSize,
+          arma::distr_param(0, vocabSize - 1));
 
       model = new FFN<NegativeLogLikelihoodType<MatType>,
                       RandomInitialization, MatType>();
