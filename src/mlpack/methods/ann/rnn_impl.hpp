@@ -455,42 +455,42 @@ typename MatType::elem_type RNN<
     MakeAlias(reordLengths, sequenceLengths, sequenceLengths.n_elem);
   }
 
-  for (size_t begin = 0; begin < predictors.n_cols; begin += batchSize)
+  for (size_t i = 0; i < predictors.n_cols; i += batchSize)
   {
     size_t effectiveBatchSize = std::min(batchSize,
-        size_t(predictors.n_cols) - begin);
+        size_t(predictors.n_cols) - i);
 
     // Reset recurrent memory state.
     ResetMemoryState(0, effectiveBatchSize);
 
     // Reorder the data so the sequence lengths are in descending order.
     if (batchSize > 1)
-      ReorderBatch(begin, effectiveBatchSize, reordPredictors, reordResponses,
+      ReorderBatch(i, effectiveBatchSize, reordPredictors, reordResponses,
           reordLengths);
 
     MatType forwardOutput, inputAlias, responseAlias;
     // Iterate over all time slices.
     size_t slices = reordLengths
-        .subvec(begin, begin + effectiveBatchSize - 1).max();
+        .subvec(i, i + effectiveBatchSize - 1).max();
     size_t activeBatchSize = effectiveBatchSize;
     for (size_t t = 0; t < slices; t++)
     {
       // Calculate the number of active points.
       activeBatchSize = accu(reordLengths
-          .subvec(begin, begin + effectiveBatchSize - 1) > t);
+          .subvec(i, i + effectiveBatchSize - 1) > t);
 
       SetCurrentStep(t, (t == slices - 1), effectiveBatchSize, activeBatchSize);
 
       // Get the input and response data.
       MakeAlias(inputAlias, reordPredictors.slice(t), predictors.n_rows,
-          activeBatchSize, begin * predictors.n_rows);
+          activeBatchSize, i * predictors.n_rows);
 
       // Do a forward pass and calculate the loss.
       network.Forward(inputAlias, forwardOutput);
       if (!single || t == slices - 1)
       {
         MakeAlias(responseAlias, reordResponses.slice((single ? 0 : t)),
-            responses.n_rows, activeBatchSize, begin * responses.n_rows);
+            responses.n_rows, activeBatchSize, i * responses.n_rows);
         lossSum += network.outputLayer.Forward(forwardOutput, responseAlias);
       }
     }
