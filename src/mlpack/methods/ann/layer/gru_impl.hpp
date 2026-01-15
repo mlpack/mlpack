@@ -299,7 +299,7 @@ void GRU<MatType>::OnStepChanged(const size_t step,
           outSize * batchSize);
       MakeAlias(nextDeltaHidden, workspace, outSize, activeBatchSize,
           2 * outSize * batchSize);
-  
+
       MakeAlias(deltaReset, workspace, outSize, activeBatchSize,
           3 * outSize * batchSize);
       MakeAlias(deltaUpdate, workspace, outSize, activeBatchSize,

@@ -178,7 +178,8 @@ void LSTM<MatType>::Forward(const MatType& input, MatType& output)
   {
     // If we don't have a previous step, we still have to consider the peephole
     // connection.
-    outputGate += repmat(peepholeOutputGateWeight, 1, activeBatchSize) % thisCell;
+    outputGate += repmat(peepholeOutputGateWeight, 1, activeBatchSize) %
+        thisCell;
   }
 
   // Apply nonlinearity for output gate.
@@ -246,7 +247,8 @@ void LSTM<MatType>::Backward(
   {
     deltaCell = deltaY % outputGate % (1 - square(tanh(thisCell))) +
         repmat(peepholeOutputGateWeight, 1, activeBatchSize) % deltaOutputGate +
-        repmat(peepholeInputGateWeight, 1, activeBatchSize) % nextDeltaInputGate +
+        repmat(peepholeInputGateWeight, 1, activeBatchSize) %
+            nextDeltaInputGate +
         repmat(peepholeForgetGateWeight, 1, activeBatchSize) %
             nextDeltaForgetGate +
         nextDeltaCell % nextForgetGate;
