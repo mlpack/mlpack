@@ -435,54 +435,64 @@ typename MatType::elem_type RNN<
   // Add the loss of the network unrelated to output.
   ElemType lossSum = ElemType(network.network.Loss());
 
-  // Reset recurrent memory state.
-  ResetMemoryState(1, batchSize);
-
-  // Reorder the data so the sequence lengths are in descending order.
   CubeType reordPredictors, reordResponses;
-  if (sequenceLengths.n_elem > 0)
+  URowType reordLengths;
+  if (batchSize > 1)
   {
-    // Make copies and reorder those to preserve the constness of the original
-    // arguments.
+    // Make copies of the arguments so they can be reordered while the orignal
+    // arguments stay constant.
     reordPredictors = predictors;
     reordResponses = responses;
-    URowType tempLengths = sequenceLengths;
-    ReorderBatch(0, batchSize, reordPredictors, reordResponses,
-        tempLengths);
+    reordLengths = sequenceLengths;
   }
   else
   {
-    // Reordering isn't needed so we just make aliases.
-    MakeAlias(reordPredictors, predictors, predictors.n_rows, predictors.n_cols,
-        predictors.n_slices);
-    MakeAlias(reordResponses, responses, responses.n_rows, responses.n_cols,
-        responses.n_slices);
+    // Reordering isn't actually needed so we just make aliases.
+    MakeAlias(reordPredictors, predictors, predictors.n_rows,
+        predictors.n_cols, predictors.n_slices);
+    MakeAlias(reordResponses, responses, responses.n_rows,
+        responses.n_cols, responses.n_slices);
+    MakeAlias(reordLengths, sequenceLengths, sequenceLengths.n_elem);
   }
 
-  MatType forwardOutput, inputAlias, responseAlias;
-  // Iterate over all time slices.
-  size_t slices = sequenceLengths.max();
-  size_t activeBatchSize = batchSize;
-  for (size_t t = 0; t < slices; t++)
+  for (size_t begin = 0; begin < predictors.n_cols; begin += batchSize)
   {
-    // Calculate the number of active points.
-    if (sequenceLengths.n_elem > 0)
-      activeBatchSize = accu(sequenceLengths > t);
+    size_t effectiveBatchSize = std::min(batchSize,
+        size_t(predictors.n_cols) - begin);
 
-    SetCurrentStep(t, (t == slices - 1), batchSize, activeBatchSize);
+    // Reset recurrent memory state.
+    ResetMemoryState(0, effectiveBatchSize);
 
-    // Get the input and response data.
-    MakeAlias(inputAlias, reordPredictors, predictors.n_rows,
-        activeBatchSize, predictors.n_rows * predictors.n_cols * t);
+    // Reorder the data so the sequence lengths are in descending order.
+    if (batchSize > 1)
+      ReorderBatch(begin, effectiveBatchSize, reordPredictors, reordResponses,
+          reordLengths);
 
-    // Do a forward pass and calculate the loss.
-    network.Forward(inputAlias, forwardOutput);
-    if (!single || t == slices - 1)
+    MatType forwardOutput, inputAlias, responseAlias;
+    // Iterate over all time slices.
+    size_t slices = reordLengths
+        .subvec(begin, begin + effectiveBatchSize - 1).max();
+    size_t activeBatchSize = effectiveBatchSize;
+    for (size_t t = 0; t < slices; t++)
     {
-      MakeAlias(responseAlias, reordResponses, responses.n_rows,
-          activeBatchSize, responses.n_rows * responses.n_cols *
-          (single ? 0 : t));
-      lossSum += network.outputLayer.Forward(forwardOutput, responseAlias);
+      // Calculate the number of active points.
+      activeBatchSize = accu(reordLengths
+          .subvec(begin, begin + effectiveBatchSize - 1) > t);
+
+      SetCurrentStep(t, (t == slices - 1), effectiveBatchSize, activeBatchSize);
+
+      // Get the input and response data.
+      MakeAlias(inputAlias, reordPredictors.slice(t), predictors.n_rows,
+          activeBatchSize, begin * predictors.n_rows);
+
+      // Do a forward pass and calculate the loss.
+      network.Forward(inputAlias, forwardOutput);
+      if (!single || t == slices - 1)
+      {
+        MakeAlias(responseAlias, reordResponses.slice((single ? 0 : t)), responses.n_rows,
+            activeBatchSize, begin * responses.n_rows);
+        lossSum += network.outputLayer.Forward(forwardOutput, responseAlias);
+      }
     }
   }
 
@@ -548,11 +558,11 @@ typename MatType::elem_type RNN<
   // The core of the computation here is to pass through each step.  Since we
   // are not computing the gradient, we can be "clever" and use only one memory
   // cell---we don't need to know about the past.
-  ResetMemoryState(1, batchSize);
+  ResetMemoryState(0, batchSize);
   MatType output(network.network.OutputSize(), batchSize);
 
   // Reorder the data so the sequence lengths are in descending order.
-  if (sequenceLengths.n_elem > 0)
+  if (sequenceLengths.n_elem > 0 && batchSize > 1)
     ReorderBatch(begin, batchSize, predictors, responses, sequenceLengths);
 
   ElemType loss = 0;
@@ -645,7 +655,7 @@ typename MatType::elem_type RNN<
   loss += ElemType(network.network.Loss());
 
   // Reorder the data so the sequence lengths are in descending order.
-  if (sequenceLengths.n_elem > 0)
+  if (sequenceLengths.n_elem > 0 && batchSize > 1)
     ReorderBatch(begin, batchSize, predictors, responses, sequenceLengths);
 
   // For backpropagation through time, we must backpropagate for every
