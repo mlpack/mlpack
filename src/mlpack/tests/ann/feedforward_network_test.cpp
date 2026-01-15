@@ -22,7 +22,6 @@
 #include "ann_test_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::data;
 
 /**
  * Train and evaluate a model with the specified structure.

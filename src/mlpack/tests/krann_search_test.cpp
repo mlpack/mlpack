@@ -18,7 +18,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::data;
 
 // Test the correctness and guarantees of KRANN when in naive mode.
 TEST_CASE("NaiveGuaranteeTest", "[KRANNTest][long]")

@@ -17,7 +17,6 @@
 #include "mock_categorical_data.hpp"
 
 using namespace mlpack;
-using namespace mlpack::data;
 
 /**
  * Make sure the Gini gain is zero when the labels are perfect.
