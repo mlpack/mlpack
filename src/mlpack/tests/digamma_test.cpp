@@ -67,6 +67,7 @@ TEST_CASE("DigammaNearPositiveRoots", "[DigammaTest]")
   arma::mat data;
 
   if (!Load("digamma_root_data.csv", data, Fatal + NoTranspose))
+
     FAIL("Cannot load data digamma_root_data.csv");
 
   for (size_t i = 0; i < data.n_rows; i++)
