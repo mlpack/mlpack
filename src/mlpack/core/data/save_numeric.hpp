@@ -51,7 +51,7 @@ bool SaveNumeric(const std::string& filename,
   {
     success = SaveDense(matrix, txtOpts, filename, stream);
   }
-  opts = std::move(txtOpts);
+  static_cast<DataOptionsType&>(opts) = std::move(txtOpts);
 
   return success;
 }
