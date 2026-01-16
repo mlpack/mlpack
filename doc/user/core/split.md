@@ -162,7 +162,7 @@ splitting.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat dataset;
-mlpack::Load("movielens-100k.csv", dataset, true);
+mlpack::Load("movielens-100k.csv", dataset, Fatal);
 
 arma::sp_mat trainData, testData;
 
@@ -195,11 +195,11 @@ percentage of each class in the original dataset and in the split datasets.
 ```c++
 // See https://datasets.mlpack.org/covertype.data.csv.
 arma::mat dataset;
-mlpack::Load("covertype.data.csv", dataset, true);
+mlpack::Load("covertype.data.csv", dataset, Fatal);
 
 // See https://datasets.mlpack.org/covertype.labels.csv.
 arma::Row<size_t> labels;
-mlpack::Load("covertype.labels.csv", labels, true);
+mlpack::Load("covertype.labels.csv", labels, Fatal);
 
 arma::mat trainData, testData;
 arma::Row<size_t> trainLabels, testLabels;

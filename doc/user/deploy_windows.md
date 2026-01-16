@@ -185,7 +185,7 @@ In a real-life application, you may want to load a previously trained model to
 classify new samples.  We load the model from a file using:
 
 ```c++
-mlpack::Load("mymodel.xml", "model", rf);
+mlpack::Load("mymodel.xml", rf);
 ```
 
 ## Classifying a new sample
