@@ -18,6 +18,7 @@
 
 using namespace std;
 using namespace mlpack;
+using namespace mlpack::data;
 
 // Test the correctness and guarantees of KRANN when in naive mode.
 TEST_CASE("NaiveGuaranteeTest", "[KRANNTest][long]")
@@ -36,7 +37,7 @@ TEST_CASE("NaiveGuaranteeTest", "[KRANNTest][long]")
   RASearch<> rsRann(refData, true, false, 1.0);
 
   arma::mat qrRanks;
-  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false))
+  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, NoFatal + NoTranspose))
     FAIL("Cannot load dataset rann_test_qr_ranks.csv");
 
   size_t numRounds = 1000;
@@ -98,7 +99,7 @@ TEST_CASE("SingleTreeSearch", "[KRANNTest]")
 
   // The relative ranks for the given query reference pair
   arma::Mat<size_t> qrRanks;
-  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false))
+  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, NoFatal + NoTranspose))
     FAIL("Cannot load dataset rann_test_qr_ranks.csv");
 
   size_t numRounds = 1000;
@@ -159,7 +160,7 @@ TEST_CASE("DualTreeSearch", "[KRANNTest][long]")
   RASearch<> tsdRann(refData, false, false, 1.0, 0.95, false, false, 5);
 
   arma::Mat<size_t> qrRanks;
-  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false))
+  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, NoFatal + NoTranspose))
     FAIL("Cannot load dataset rann_test_qr_ranks.csv");
 
   size_t numRounds = 1000;
@@ -293,7 +294,7 @@ TEST_CASE("SingleCoverTreeTest", "[KRANNTest][tiny]")
 
   // The relative ranks for the given query reference pair.
   arma::Mat<size_t> qrRanks;
-  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false))
+  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, NoFatal + NoTranspose))
     FAIL("Cannot load dataset rann_test_qr_ranks.csv");
 
   size_t numRounds = 100;
@@ -362,7 +363,7 @@ TEST_CASE("DualCoverTreeTest", "[KRANNTest]")
 
   arma::Mat<size_t> qrRanks;
   // No transpose.
-  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false))
+  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, NoFatal + NoTranspose))
     FAIL("Cannot load dataset rann_test_qr_ranks.csv");
 
   size_t numRounds = 100;
@@ -661,7 +662,7 @@ TEST_CASE("RAModelTest", "[KRANNTest][long]")
   util::Timers timers;
 
   arma::Mat<size_t> qrRanks;
-  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false))
+  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, NoFatal + NoTranspose))
     FAIL("Cannot load dataset rann_test_qr_ranks.csv");
 
   for (size_t j = 0; j < 3; ++j)
