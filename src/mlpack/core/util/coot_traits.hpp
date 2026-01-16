@@ -42,6 +42,12 @@ struct GetURowType<MatType, std::enable_if_t<IsCoot<MatType>::value>>
   using type = coot::Row<coot::uword>;
 };
 
+template<typename MatType>
+struct GetUColType<MatType, std::enable_if_t<IsCoot<MatType>::value>>
+{
+  using type = coot::Col<coot::uword>;
+};
+
 template<typename eT>
 struct IsVector<coot::Col<eT> >
 {

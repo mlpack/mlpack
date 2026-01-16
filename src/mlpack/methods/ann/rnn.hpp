@@ -363,10 +363,13 @@ class RNN
    * @param sequenceLengths Length of each input sequences.  Should have size
    *     `predictors.n_cols`, and all values should be less than or equal to
    *     `predictors.n_slices`.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
    */
   ElemType Evaluate(const CubeType& predictors,
                     const CubeType& responses,
-                    const URowType& sequenceLengths);
+                    const URowType& sequenceLengths,
+                    const size_t batchSize);
 
   // Serialize the model.
   template<typename Archive>
@@ -487,7 +490,18 @@ class RNN
   void ResetMemoryState(const size_t memorySize, const size_t batchSize);
 
   //! Set the current step index of all recurrent layers to `step`.
-  void SetCurrentStep(const size_t step, const bool end);
+  void SetCurrentStep(const size_t step,
+                      const bool end,
+                      size_t batchSize,
+                      size_t activeBatchSize,
+                      bool backwards = false);
+
+  // Reorders the data in a batch to have sequence lengths in descending order.
+  void ReorderBatch(const size_t begin,
+                    const size_t batchSize,
+                    CubeType& predictors,
+                    CubeType& responses,
+                    URowType& sequenceLengths);
 
   //! Number of timesteps to consider for backpropagation through time (BPTT).
   size_t bpttSteps;

@@ -143,6 +143,12 @@ class LinearRecurrent : public RecurrentLayer<MatType>
   // has been set.
   void ComputeOutputDimensions();
 
+  // Update the internal aliases of the layer when the step changes.
+  void OnStepChanged(const size_t step,
+                     const size_t batchSize,
+                     const size_t activeBatchSize,
+                     const bool backwards);
+
   // Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
@@ -162,6 +168,12 @@ class LinearRecurrent : public RecurrentLayer<MatType>
   MatType recurrentWeights;
   // Bias vector.
   MatType bias;
+
+  // Aliases of the recurrent states.
+  MatType currentOutput;
+  MatType previousOutput;
+  MatType currentGradient;
+  MatType previousGradient;
 
   // Locally-stored regularizer object.
   RegularizerType regularizer;
