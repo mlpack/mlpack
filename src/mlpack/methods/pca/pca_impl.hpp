@@ -54,7 +54,7 @@ void PCA<DecompositionPolicy>::Apply(const MatType& data,
 
   // Center the data into a temporary matrix.
   OutMatType centeredData = arma::conv_to<OutMatType>::from(data);
-  centeredData.each_col() -= arma::mean(centeredData, 1);
+  centeredData.each_col() -= mean(centeredData, 1);
 
   // Scale the data if the user asked for it.
   ScaleData(centeredData);
@@ -160,7 +160,7 @@ double PCA<DecompositionPolicy>::Apply(const MatType& data,
 
   // Center the data into a temporary matrix.
   BaseMatType centeredData = arma::conv_to<OutMatType>::from(data);
-  centeredData.each_col() -= arma::mean(centeredData, 1);
+  centeredData.each_col() -= mean(centeredData, 1);
 
   // This check cannot happen until here, as `data` may not have a .n_rows
   // member if it is an expression.

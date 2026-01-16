@@ -59,12 +59,12 @@ inline void GammaDistribution<MatType>::Train(const MatType& rdata,
                                               const ElemType tol)
 {
   // If fittingSet is empty, nothing to do.
-  if (arma::size(rdata) == arma::size(arma::mat()))
+  if (rdata.is_empty())
     return;
 
   // Calculate log(mean(x)) and mean(log(x)) of each dataset row.
-  const VecType meanLogxVec = arma::mean(log(rdata), 1);
-  const VecType meanxVec = arma::mean(rdata, 1);
+  const VecType meanLogxVec = mean(log(rdata), 1);
+  const VecType meanxVec = mean(rdata, 1);
   const VecType logMeanxVec = log(meanxVec);
 
   // Call the statistics-only GammaDistribution::Train() function to fit the
@@ -79,7 +79,7 @@ inline void GammaDistribution<MatType>::Train(const MatType& rdata,
                                               const ElemType tol)
 {
   // If fittingSet is empty, nothing to do.
-  if (arma::size(rdata) == arma::size(arma::mat()))
+  if (rdata.is_empty())
     return;
 
   VecType meanLogxVec(rdata.n_rows);

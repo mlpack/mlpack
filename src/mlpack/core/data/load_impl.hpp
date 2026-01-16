@@ -42,6 +42,12 @@ bool Load(const std::vector<std::string>& files,
   return Load(files, matrix, tmpOpts, false);
 }
 
+template<typename MatType>
+bool Load(const std::string& filename, MatType& matrix)
+{
+  return Load(filename, matrix, DataOptions());
+}
+
 template<typename ObjectType, typename DataOptionsType>
 bool Load(const std::string& filename,
           ObjectType& matrix,
