@@ -95,7 +95,7 @@ folder in your project directory.
 
 ```c++
 mat dataset;
-bool loaded = mlpack::data::Load("data/german.csv", dataset);
+bool loaded = mlpack::Load("data/german.csv", dataset);
 if (!loaded)
   return -1;
 ```
@@ -173,7 +173,7 @@ Alternatively, we could extract the model from the cross-validation stage by
 using `cv.Model()`.
 
 ```c++
-mlpack::data::Save("mymodel.xml", "model", rf, false);
+mlpack::Save("mymodel.xml", "model", rf, false);
 ```
 
 We can also save the model in `bin` format (`"mymodel.bin"`) which would result
@@ -185,7 +185,7 @@ In a real-life application, you may want to load a previously trained model to
 classify new samples.  We load the model from a file using:
 
 ```c++
-mlpack::data::Load("mymodel.xml", "model", rf);
+mlpack::Load("mymodel.xml", "model", rf);
 ```
 
 ## Classifying a new sample

@@ -325,7 +325,7 @@ on bound quantities for trees.
    - This is equivalent to calling `node.Bound().Center(center)`.
 
  * A `BinarySpaceTree` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
+   [`Save()` and `Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ## Bounding distances with the tree
 
@@ -533,7 +533,7 @@ accessed and modified.
    by `b`.
 
  * An `HRectBound` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
+   [`Save()` and `Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ***Note:*** if a custom `ElemType` was specified in the constructor, then:
 
@@ -903,7 +903,7 @@ The properties of the `BallBound` can be directly accessed and modified.
    `center`.  `center` should be of type `arma::vec`.
 
  * A `BallBound` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
+   [`Save()` and `Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ***Note:*** if a custom `ElemType` and/or `VecType` were specified in the
 constructor, then:
@@ -1222,7 +1222,7 @@ be accessed and modified.
    by `b`.
 
  * A `HollowBallBound` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
+   [`Save()` and `Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ***Note:*** if a custom `ElemType` was specified in the constructor, then:
 
@@ -1586,7 +1586,7 @@ bound](#growing-the-bound-2) for ways to grow a `CellBound`.
    by `b`.
 
  * A `CellBound` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
+   [`Save()` and `Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ***Note:*** if a custom `ElemType` was specified in the constructor, then:
 
@@ -2268,7 +2268,7 @@ about the tree.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::data::Load("cloud.csv", dataset, true);
+mlpack::Load("cloud.csv", dataset, true);
 
 // Build the binary space tree with a leaf size of 10.  (This means that nodes
 // are split until they contain 10 or fewer points.)
@@ -2314,7 +2314,7 @@ and maximum distances between different nodes in the tree.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::data::Load("corel-histogram.csv", dataset, true);
+mlpack::Load("corel-histogram.csv", dataset, true);
 
 // Convenience typedef for the tree type.
 using TreeType = mlpack::BinarySpaceTree<mlpack::EuclideanDistance,
@@ -2386,7 +2386,7 @@ Build a `BinarySpaceTree` on 32-bit floating point data and save it to disk.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::fmat dataset;
-mlpack::data::Load("corel-histogram.csv", dataset);
+mlpack::Load("corel-histogram.csv", dataset);
 
 // Build the BinarySpaceTree using 32-bit floating point data as the matrix
 // type.  We will still use the default EmptyStatistic and EuclideanDistance
@@ -2398,7 +2398,7 @@ mlpack::BinarySpaceTree<mlpack::EuclideanDistance,
                         mlpack::MidpointSplit> tree(std::move(dataset), 100);
 
 // Save the tree to disk with the name 'tree'.
-mlpack::data::Save("tree.bin", "tree", tree);
+mlpack::Save("tree.bin", "tree", tree);
 
 std::cout << "Saved tree with " << tree.Dataset().n_cols << " points to "
     << "'tree.bin'." << std::endl;
@@ -2421,7 +2421,7 @@ using TreeType = mlpack::BinarySpaceTree<mlpack::EuclideanDistance,
                                          mlpack::MidpointSplit>;
 
 TreeType tree;
-mlpack::data::Load("tree.bin", "tree", tree);
+mlpack::Load("tree.bin", "tree", tree);
 std::cout << "Tree loaded with " << tree.NumDescendants() << " points."
     << std::endl;
 
@@ -2464,7 +2464,7 @@ Build a `BinarySpaceTree` and map between original points and new points.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::data::Load("cloud.csv", dataset, true);
+mlpack::Load("cloud.csv", dataset, true);
 
 // Build the tree.
 std::vector<size_t> oldFromNew, newFromOld;

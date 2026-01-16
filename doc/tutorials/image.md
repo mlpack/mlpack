@@ -65,15 +65,15 @@ Loading a test image is shown below. It also fills up the `ImageInfo` class
 object.
 
 ```c++
-data::ImageInfo info;
-data::Load("test_image.png", matrix, info, false, true);
+ImageInfo info;
+Load("test_image.png", matrix, info, false, true);
 ```
 
 `ImageInfo` requires height, width, number of channels of the image.
 
 ```c++
 size_t height = 64, width = 64, channels = 1;
-data::ImageInfo info(width, height, channels);
+ImageInfo info(width, height, channels);
 ```
 
 More than one image can be loaded into the same matrix.
@@ -101,9 +101,9 @@ bool Load(const std::vector<std::string>& files,
 ```
 
 ```c++
-data::ImageInfo info;
+ImageInfo info;
 std::vector<std::string>> files{"test_image1.bmp","test_image2.bmp"};
-data::Load(files, matrix, info, false, true);
+Load(files, matrix, info, false, true);
 ```
 
 ## Saving
@@ -136,11 +136,11 @@ bool Save(const std::string& filename,
 ```
 
 ```c++
-data::ImageInfo info;
+ImageInfo info;
 info.width = info.height = 25;
 info.channels = 3;
 info.quality = 90;
-data::Save("test_image.bmp", matrix, info, false, true);
+Save("test_image.bmp", matrix, info, false, true);
 ```
 
 If the matrix contains more than one image, only the first one is saved.
@@ -168,12 +168,12 @@ bool Save(const std::vector<std::string>& files,
 ```
 
 ```c++
-data::ImageInfo info;
+ImageInfo info;
 info.width = info.height = 25;
 info.channels = 3;
 info.quality = 90;
 std::vector<std::string>> files{"test_image1.bmp", "test_image2.bmp"};
-data::Save(files, matrix, info, false, true);
+Save(files, matrix, info, false, true);
 ```
 
 Multiple images are saved according to the vector of filenames specified.

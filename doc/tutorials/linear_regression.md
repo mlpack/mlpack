@@ -379,13 +379,13 @@ lr.Parameters() = parameters; // Set the model.
 ### Load a model from file
 
 If you have a generated model in a file somewhere you would like to load and
-use, you can use `data::Load()` to load it.
+use, you can use `Load()` to load it.
 
 ```c++
 std::string filename; // The path and name of your file.
 
 LinearRegression lr;
-data::Load(filename, "lr_model", lr);
+Load(filename, "lr_model", lr);
 ```
 
 Here, `"lr_model"` is the name given to the model.  The

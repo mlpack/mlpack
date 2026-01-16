@@ -15,7 +15,7 @@ for classifying points with _discrete labels_ (i.e.  `0`, `1`, `2`).
 // Train a Hoeffding tree on random numeric data; predict labels on test data:
 
 // All data and labels are uniform random; 10 dimensional data, 5 classes.
-// Replace with a data::Load() call or similar for a real application.
+// Replace with a Load() call or similar for a real application.
 arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
 arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
@@ -99,7 +99,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
-| `datasetInfo` | [`data::DatasetInfo`](../load_save.md#datadatasetinfo) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
+| `datasetInfo` | [`DatasetInfo`](../load_save.md#datadatasetinfo) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
 | `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../core/normalizing_labels.md) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `dimensionality` | `size_t` | When using on numeric-only data, this specifies the number of dimensions in the data. | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
@@ -230,7 +230,7 @@ that is used should be the same type that was used for training.
 ### Other Functionality
 
  * A `HoeffdingTree` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `tree.NumChildren()` will return a `size_t` indicating the number of children
    in the node `tree`.
@@ -279,11 +279,11 @@ Train a Hoeffding tree incrementally on mixed categorical data:
 arma::mat dataset;
 TextOptions opts = Categorical + Fatal;
 // See https://datasets.mlpack.org/covertype.train.arff.
-mlpack::data::Load("covertype.train.arff", dataset, opts);
+mlpack::Load("covertype.train.arff", dataset, opts);
 
 arma::Row<size_t> labels;
 // See https://datasets.mlpack.org/covertype.train.labels.csv.
-mlpack::data::Load("covertype.train.labels.csv", labels, Fatal);
+mlpack::Load("covertype.train.labels.csv", labels, Fatal);
 
 // Create the tree.
 mlpack::HoeffdingTree tree(info, 7 /* classes */);
@@ -295,7 +295,7 @@ for (size_t i = 0; i < dataset.n_cols; ++i)
 // Load categorical test data.
 arma::mat testDataset;
 // See https://datasets.mlpack.org/covertype.test.arff.
-mlpack::data::Load("covertype.test.arff", testDataset, opts);
+mlpack::Load("covertype.test.arff", testDataset, opts);
 
 // Predict class of first test point.
 const size_t firstPrediction = tree.Classify(testDataset.col(0));
@@ -319,23 +319,23 @@ set during training, and save the model to disk.
 // Load a categorical dataset.
 arma::mat dataset;
 TextOptions opts = Categorical + Fatal;
-mlpack::data::DatasetInfo info;
+mlpack::DatasetInfo info;
 // See https://datasets.mlpack.org/covertype.train.arff.
-mlpack::data::Load("covertype.train.arff", dataset, opts);
+mlpack::Load("covertype.train.arff", dataset, opts);
 
 arma::Row<size_t> labels;
 // See https://datasets.mlpack.org/covertype.train.labels.csv.
-mlpack::data::Load("covertype.train.labels.csv", labels, Fatal);
+mlpack::Load("covertype.train.labels.csv", labels, Fatal);
 
 // Also load test data.
 
 // See https://datasets.mlpack.org/covertype.test.arff.
 arma::mat testDataset;
-mlpack::data::Load("covertype.test.arff", testDataset, opts);
+mlpack::Load("covertype.test.arff", testDataset, opts);
 
 // See https://datasets.mlpack.org/covertype.test.labels.csv.
 arma::Row<size_t> testLabels;
-mlpack::data::Load("covertype.test.labels.csv", testLabels, Fatal);
+mlpack::Load("covertype.test.labels.csv", testLabels, Fatal);
 
 // Create the tree with custom parameters.
 mlpack::HoeffdingTree tree(info, 7 /* number of classes */);
@@ -360,7 +360,7 @@ for (size_t start = 0; start < dataset.n_cols; start += 10000)
 }
 
 // Save the fully trained tree in `tree.bin` with name `tree`.
-mlpack::data::Save("tree.bin", tree, Fatal);
+mlpack::Save("tree.bin", tree, Fatal);
 ```
 
 ---
@@ -370,8 +370,8 @@ Load a tree and print some information about it.
 ```c++
 mlpack::HoeffdingTree tree;
 // This call assumes a tree called "tree" has already been saved to `tree.bin`
-// with `data::Save()`.
-mlpack::data::Load("tree.bin", tree, Fatal);
+// with `Save()`.
+mlpack::Load("tree.bin", tree, Fatal);
 
 if (tree.NumChildren() > 0)
 {
@@ -400,10 +400,10 @@ arma::mat dataset, testDataset;
 arma::Row<size_t> labels, testLabels;
 TextOptions opts = Categorical + Fatal;
 
-mlpack::data::Load("covertype.train.arff", dataset, opts);
-mlpack::data::Load("covertype.train.labels.csv", labels, Fatal);
-mlpack::data::Load("covertype.test.arff", testDataset, opts);
-mlpack::data::Load("covertype.test.labels.csv", testLabels, Fatal);
+mlpack::Load("covertype.train.arff", dataset, opts);
+mlpack::Load("covertype.train.labels.csv", labels, Fatal);
+mlpack::Load("covertype.test.arff", testDataset, opts);
+mlpack::Load("covertype.test.labels.csv", testLabels, Fatal);
 
 // Create a tree, and train on the training data.
 mlpack::HoeffdingTree tree(info, 7 /* number of classes */, 0.98);

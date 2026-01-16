@@ -15,7 +15,7 @@ or `1`).  For multi-class logistic regression, see
 // Train a logistic regression model on random data and predict labels:
 
 // All data and labels are uniform random; 5 dimensional data, 2 classes.
-// Replace with a data::Load() call or similar for a real application.
+// Replace with a Load() call or similar for a real application.
 arma::mat dataset(5, 1000, arma::fill::randu); // 1000 points.
 arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 1));
@@ -188,7 +188,7 @@ can be used to make class predictions for new data.
 ### Other Functionality
 
  * A `LogisticRegression` model can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `lr.Parameters()` will return an `arma::rowvec` filled with the weights of
    the model.  This vector has length equal to the dimensionality plus one, and
@@ -222,10 +222,10 @@ callbacks.
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-mlpack::data::Load("satellite.train.csv", dataset, Fatal);
+mlpack::Load("satellite.train.csv", dataset, Fatal);
 // See https://datasets.mlpack.org/satellite.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("satellite.train.labels.csv", labels, Fatal);
+mlpack::Load("satellite.train.labels.csv", labels, Fatal);
 
 mlpack::LogisticRegression lr;
 lr.Lambda() = 0.1;
@@ -241,10 +241,10 @@ lr.Train(dataset, labels, optimizer, ens::ProgressBar(), ens::Report());
 
 // See https://datasets.mlpack.org/satellite.test.csv.
 arma::mat testDataset;
-mlpack::data::Load("satellite.test.csv", testDataset, Fatal);
+mlpack::Load("satellite.test.csv", testDataset, Fatal);
 // See https://datasets.mlpack.org/satellite.test.labels.csv.
 arma::Row<size_t> testLabels;
-mlpack::data::Load("satellite.test.labels.csv", testLabels, Fatal);
+mlpack::Load("satellite.test.labels.csv", testLabels, Fatal);
 
 std::cout << std::endl;
 std::cout << "Accuracy on training set: "
@@ -278,7 +278,7 @@ class ModelCheckpoint
                 const double /* objective */)
   {
     const std::string filename = "model-" + std::to_string(epoch) + ".bin";
-    mlpack::data::Save(filename, "lr_model", model, true);
+    mlpack::Save(filename, "lr_model", model, true);
     return false; // Do not terminate the optimization.
   }
 
@@ -292,10 +292,10 @@ With that callback available, the code to train the model is below:
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-mlpack::data::Load("satellite.train.csv", dataset, Fatal);
+mlpack::Load("satellite.train.csv", dataset, Fatal);
 // See https://datasets.mlpack.org/satellite.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("satellite.train.labels.csv", labels, Fatal);
+mlpack::Load("satellite.train.labels.csv", labels, Fatal);
 
 mlpack::LogisticRegression lr;
 
@@ -318,7 +318,7 @@ Load an existing logistic regression model and print some information about it.
 mlpack::LogisticRegression lr;
 // This assumes that a model called "lr_model" has been saved to the file
 // "model-1.bin" (as in the previous example).
-mlpack::data::Load("model-1.bin", lr, Fatal);
+mlpack::Load("model-1.bin", lr, Fatal);
 
 // Print the dimensionality of the model and some other statistics.
 std::cout << "The dimensionality of the model in model-1.bin is "

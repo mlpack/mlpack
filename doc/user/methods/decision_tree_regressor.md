@@ -19,7 +19,7 @@ test set:
 // Train a decision tree regressor on random numeric data and make predictions.
 
 // All data and responses are uniform random; this uses 10 dimensional data.
-// Replace with a data::Load() call or similar for a real application.
+// Replace with a Load() call or similar for a real application.
 arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
 arma::rowvec responses = arma::randn<arma::rowvec>(1000);
 arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
@@ -83,7 +83,7 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
-| `datasetInfo` | [`data::DatasetInfo`](../load_save.md#datadatasetinfo) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
+| `datasetInfo` | [`DatasetInfo`](../load_save.md#datadatasetinfo) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
 | `responses` | [`arma::rowvec`](../matrices.md) | Training responses (e.g. values to predict).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `weights` | [`arma::rowvec`](../matrices.md) | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
@@ -169,7 +169,7 @@ that is used should be the same type that was used for training.
 ### Other Functionality
 
  * A `DecisionTreeRegressor` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `tree.NumChildren()` will return a `size_t` indicating the number of children
    in the node `tree`.
@@ -202,16 +202,16 @@ disk.
 arma::mat data;
 TextOptions opts = Categorical + Fatal;
 // See https://datasets.mlpack.org/telecom_churn.arff.
-mlpack::data::Load("telecom_churn.arff", data, opts);
+mlpack::Load("telecom_churn.arff", data, opts);
 
 arma::rowvec responses;
 // See https://datasets.mlpack.org/telecom_churn.responses.csv.
-mlpack::data::Load("telecom_churn.responses.csv", responses, Fatal);
+mlpack::Load("telecom_churn.responses.csv", responses, Fatal);
 
 // Split data into training set (80%) and test set (20%).
 arma::mat trainData, testData;
 arma::rowvec trainResponses, testResponses;
-mlpack::data::Split(data, responses, trainData, testData, trainResponses,
+mlpack::Split(data, responses, trainData, testData, trainResponses,
     testResponses, 0.2);
 
 // Create the tree.
@@ -238,7 +238,7 @@ std::cout << "Average error on test set: " << testAverageError << "."
     << std::endl;
 
 // Save the tree to "tree.bin" with the name "tree".
-mlpack::data::Save("tree.bin", tree);
+mlpack::Save("tree.bin", tree);
 ```
 
 ---
@@ -248,8 +248,8 @@ Load a tree and print some information about it.
 ```c++
 mlpack::DecisionTreeRegressor tree;
 // This call assumes a tree called "tree" has already been saved to `tree.bin`
-// with `data::Save()`.
-mlpack::data::Load("tree.bin", tree, Fatal);
+// with `Save()`.
+mlpack::Load("tree.bin", tree, Fatal);
 
 std::cout << "Information about the DecisionTreeRegressor in `tree.bin`:"
     << std::endl;

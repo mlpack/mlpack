@@ -301,7 +301,7 @@ on bound quantities for trees.
    - This is equivalent to calling `node.Bound().Center(center)`.
 
  * A `MeanSPTree` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
+   [`Save()` and `Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ## Bounding distances with the tree
 
@@ -424,7 +424,7 @@ tree.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::data::Load("cloud.csv", dataset, true);
+mlpack::Load("cloud.csv", dataset, true);
 
 // Build the mean-split spill tree with a tau (margin) of 0.2 and a leaf size of
 // 10.  (This means that nodes are split until they contain 10 or fewer points.)
@@ -470,7 +470,7 @@ maximum distances between different nodes in the tree.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::data::Load("corel-histogram.csv", dataset, true);
+mlpack::Load("corel-histogram.csv", dataset, true);
 
 // Build trees on the first half and the second half of points.  Use a tau
 // (overlap) parameter of 0.3, which is tuned to this dataset, and a rho value
@@ -538,7 +538,7 @@ Build a `MeanSPTree` on 32-bit floating point data and save it to disk.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::fmat dataset;
-mlpack::data::Load("corel-histogram.csv", dataset);
+mlpack::Load("corel-histogram.csv", dataset);
 
 // Build the MeanSPTree using 32-bit floating point data as the matrix type.
 // We will still use the default EmptyStatistic and EuclideanDistance
@@ -548,7 +548,7 @@ mlpack::MeanSPTree<mlpack::EuclideanDistance,
                    arma::fmat> tree(std::move(dataset), 0.1, 20, 0.95);
 
 // Save the tree to disk with the name 'tree'.
-mlpack::data::Save("tree.bin", "tree", tree);
+mlpack::Save("tree.bin", "tree", tree);
 
 std::cout << "Saved tree with " << tree.Dataset().n_cols << " points to "
     << "'tree.bin'." << std::endl;
@@ -569,7 +569,7 @@ using TreeType = mlpack::MeanSPTree<mlpack::EuclideanDistance,
                                     arma::fmat>;
 
 TreeType tree;
-mlpack::data::Load("tree.bin", "tree", tree);
+mlpack::Load("tree.bin", "tree", tree);
 std::cout << "Tree loaded with " << tree.NumDescendants() << " points."
     << std::endl;
 
@@ -710,7 +710,7 @@ class SpillNearestNeighborRule
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::data::Load("corel-histogram.csv", dataset, true);
+mlpack::Load("corel-histogram.csv", dataset, true);
 
 // Build two trees, one with a lot of overlap, and one with no overlap
 // (e.g. tau = 0).

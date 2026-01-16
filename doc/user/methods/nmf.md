@@ -157,7 +157,7 @@ element type.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_fmat V;
-mlpack::data::Load("movielens-100k.csv", V, Fatal);
+mlpack::Load("movielens-100k.csv", V, Fatal);
 
 // Create the NMF object.
 mlpack::NMF nmf;
@@ -182,7 +182,7 @@ Compare quality of decompositions of MovieLens with different ranks.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::data::Load("movielens-100k.csv", V, Fatal);
+mlpack::Load("movielens-100k.csv", V, Fatal);
 
 // Create the NMF object.
 mlpack::NMF nmf;
@@ -468,7 +468,7 @@ Use a pre-specified initialization for `W` and `H`.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::data::Load("movielens-100k.csv", V, Fatal);
+mlpack::Load("movielens-100k.csv", V, Fatal);
 
 arma::mat W, H;
 
@@ -495,7 +495,7 @@ RMSE of the held-out validation set is sufficiently low.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::data::Load("movielens-100k.csv", V, Fatal);
+mlpack::Load("movielens-100k.csv", V, Fatal);
 
 arma::mat W, H;
 
@@ -523,7 +523,7 @@ validation set.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::data::Load("movielens-100k.csv", V, Fatal);
+mlpack::Load("movielens-100k.csv", V, Fatal);
 
 arma::mat W1, W2, W3;
 arma::mat H1, H2, H3;
@@ -602,7 +602,7 @@ Then we can use it in the test program:
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_fmat V;
-mlpack::data::Load("movielens-100k.csv", V, Fatal);
+mlpack::Load("movielens-100k.csv", V, Fatal);
 
 CustomTimeTermination t(5 /* seconds */);
 mlpack::NMF<CustomTimeTermination> nmf(t);
