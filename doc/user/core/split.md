@@ -97,7 +97,7 @@ Split the unlabeled `cloud` dataset, using 20% of the dataset for the test set.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, true);
+mlpack::Load("cloud.csv", dataset, Fatal);
 
 arma::mat trainData, testData;
 
@@ -123,12 +123,12 @@ point elements to represent both the data and responses.
 ```c++
 // See https://datasets.mlpack.org/telecom_churn.arff.
 arma::fmat dataset;
-mlpack::DatasetInfo info; // Holds which dimensions are categorical.
-mlpack::Load("telecom_churn.arff", dataset, info, true);
+TextOptions opts = Categorical;
+mlpack::Load("telecom_churn.arff", dataset, Fatal + Categorical);
 
 // See https://datasets.mlpack.org/telecom_churn.responses.csv.
 arma::frowvec labels;
-mlpack::Load("telecom_churn.responses.csv", labels, true);
+mlpack::Load("telecom_churn.responses.csv", labels, Fatal);
 
 arma::fmat trainData, testData;
 arma::frowvec trainLabels, testLabels;

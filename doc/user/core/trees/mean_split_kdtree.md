@@ -422,7 +422,7 @@ about the tree.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, true);
+mlpack::Load("cloud.csv", dataset, Fatal);
 
 // Build the kd-tree with a leaf size of 10.  (This means that nodes are split
 // until they contain 10 or fewer points.)
@@ -467,7 +467,7 @@ and maximum distances between different nodes in the tree.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, true);
+mlpack::Load("corel-histogram.csv", dataset, Fatal);
 
 // Build mean-split kd-trees on the first half and the second half of points.
 mlpack::MeanSplitKDTree<> tree1(dataset.cols(0, dataset.n_cols / 2));
@@ -543,7 +543,7 @@ mlpack::MeanSplitKDTree<mlpack::EuclideanDistance,
                         arma::fmat> tree(std::move(dataset), 100);
 
 // Save the MeanSplitKDTree to disk with the name 'tree'.
-mlpack::Save("tree.bin", "tree", tree);
+mlpack::Save("tree.bin", tree);
 
 std::cout << "Saved tree with " << tree.Dataset().n_cols << " points to "
     << "'tree.bin'." << std::endl;
@@ -564,7 +564,7 @@ using TreeType = mlpack::MeanSplitKDTree<mlpack::EuclideanDistance,
                                          arma::fmat>;
 
 TreeType tree;
-mlpack::Load("tree.bin", "tree", tree);
+mlpack::Load("tree.bin", tree);
 std::cout << "Tree loaded with " << tree.NumDescendants() << " points."
     << std::endl;
 
@@ -607,7 +607,7 @@ Build a `MeanSplitKDTree` and map between original points and new points.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, true);
+mlpack::Load("cloud.csv", dataset, Fatal);
 
 // Build the tree.
 std::vector<size_t> oldFromNew, newFromOld;
@@ -641,7 +641,7 @@ Compare the `MeanSplitKDTree` to a `KDTree` on a dataset.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, true);
+mlpack::Load("corel-histogram.csv", dataset, Fatal);
 
 // Build the trees.
 mlpack::KDTree<> kdtree(dataset);

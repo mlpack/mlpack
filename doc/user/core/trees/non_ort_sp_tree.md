@@ -414,7 +414,7 @@ the tree.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, true);
+mlpack::Load("cloud.csv", dataset, Fatal);
 
 // Build the spill tree with a tau (margin) of 0.2 and a leaf size of 10.
 // (This means that nodes are split until they contain 10 or fewer points.)
@@ -458,7 +458,7 @@ and maximum distances between different nodes in the tree.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, true);
+mlpack::Load("corel-histogram.csv", dataset, Fatal);
 
 // Build trees on the first half and the second half of points.  Use a tau
 // (overlap) parameter of 0.3, which is tuned to this dataset, and a rho value
@@ -536,7 +536,7 @@ mlpack::NonOrtSPTree<mlpack::EuclideanDistance,
                      arma::fmat> tree(std::move(dataset), 0.1, 20, 0.6);
 
 // Save the tree to disk with the name 'tree'.
-mlpack::Save("tree.bin", "tree", tree);
+mlpack::Save("tree.bin", tree);
 
 std::cout << "Saved tree with " << tree.Dataset().n_cols << " points to "
     << "'tree.bin'." << std::endl;
@@ -557,7 +557,7 @@ using TreeType = mlpack::NonOrtSPTree<mlpack::EuclideanDistance,
                                       arma::fmat>;
 
 TreeType tree;
-mlpack::Load("tree.bin", "tree", tree);
+mlpack::Load("tree.bin", tree);
 std::cout << "Tree loaded with " << tree.NumDescendants() << " points."
     << std::endl;
 
@@ -698,7 +698,7 @@ class SpillNearestNeighborRule
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, true);
+mlpack::Load("corel-histogram.csv", dataset, Fatal);
 
 // Build two trees, one with a lot of overlap, and one with no overlap
 // (e.g. tau = 0).

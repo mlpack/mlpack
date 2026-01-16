@@ -2268,7 +2268,7 @@ about the tree.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, true);
+mlpack::Load("cloud.csv", dataset, Fatal);
 
 // Build the binary space tree with a leaf size of 10.  (This means that nodes
 // are split until they contain 10 or fewer points.)
@@ -2314,7 +2314,7 @@ and maximum distances between different nodes in the tree.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, true);
+mlpack::Load("corel-histogram.csv", dataset, Fatal);
 
 // Convenience typedef for the tree type.
 using TreeType = mlpack::BinarySpaceTree<mlpack::EuclideanDistance,
@@ -2398,7 +2398,7 @@ mlpack::BinarySpaceTree<mlpack::EuclideanDistance,
                         mlpack::MidpointSplit> tree(std::move(dataset), 100);
 
 // Save the tree to disk with the name 'tree'.
-mlpack::Save("tree.bin", "tree", tree);
+mlpack::Save("tree.bin", tree);
 
 std::cout << "Saved tree with " << tree.Dataset().n_cols << " points to "
     << "'tree.bin'." << std::endl;
@@ -2421,7 +2421,7 @@ using TreeType = mlpack::BinarySpaceTree<mlpack::EuclideanDistance,
                                          mlpack::MidpointSplit>;
 
 TreeType tree;
-mlpack::Load("tree.bin", "tree", tree);
+mlpack::Load("tree.bin", tree);
 std::cout << "Tree loaded with " << tree.NumDescendants() << " points."
     << std::endl;
 
@@ -2464,7 +2464,7 @@ Build a `BinarySpaceTree` and map between original points and new points.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, true);
+mlpack::Load("cloud.csv", dataset, Fatal);
 
 // Build the tree.
 std::vector<size_t> oldFromNew, newFromOld;
