@@ -385,7 +385,7 @@ use, you can use `Load()` to load it.
 std::string filename; // The path and name of your file.
 
 LinearRegression lr;
-Load(filename, "lr_model", lr);
+Load(filename, lr);
 ```
 
 Here, `"lr_model"` is the name given to the model.  The

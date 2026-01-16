@@ -178,7 +178,7 @@ reconstruction error.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, true);
+mlpack::Load("cloud.csv", dataset, Fatal);
 
 mlpack::LocalCoordinateCoding lcc;
 lcc.Atoms() = 50;
@@ -209,7 +209,7 @@ disk.
 ```c++
 // See https://datasets.mlpack.org/iris.train.csv.
 arma::mat dataset;
-mlpack::Load("iris.train.csv", dataset, true);
+mlpack::Load("iris.train.csv", dataset, Fatal);
 
 // Train the model in the constructor.
 mlpack::LocalCoordinateCoding lcc(dataset,
@@ -217,7 +217,7 @@ mlpack::LocalCoordinateCoding lcc(dataset,
                                   0.1 /* L1 penalty */);
 
 // Save the model to disk.
-mlpack::Save("lcc.bin", "lcc", lcc);
+mlpack::Save("lcc.bin", lcc);
 ```
 
 ---
@@ -229,10 +229,10 @@ held-out test dataset.
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat trainData;
-mlpack::Load("satellite.train.csv", trainData, true);
+mlpack::Load("satellite.train.csv", trainData, Fatal);
 // See https://datasets.mlpack.org/satellite.test.csv.
 arma::mat testData;
-mlpack::Load("satellite.test.csv", testData, true);
+mlpack::Load("satellite.test.csv", testData, Fatal);
 
 for (double lambdaPow = -6; lambdaPow <= -2; lambdaPow += 1)
 {
@@ -286,7 +286,7 @@ API can be used.  The example below trains a local coordinate coding model on
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::fmat dataset;
-mlpack::Load("cloud.csv", dataset, true);
+mlpack::Load("cloud.csv", dataset, Fatal);
 
 mlpack::LocalCoordinateCoding<arma::fmat> lcc;
 lcc.Atoms() = 30;
@@ -338,7 +338,7 @@ dictionary.
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat trainData;
-mlpack::Load("satellite.train.csv", trainData, true);
+mlpack::Load("satellite.train.csv", trainData, Fatal);
 
 const size_t atoms = 25;
 const double lambda = 1e-5;

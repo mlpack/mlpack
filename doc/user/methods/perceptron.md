@@ -195,10 +195,10 @@ and save the resulting model to disk.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-mlpack::Load("iris.csv", dataset, true);
+mlpack::Load("iris.csv", dataset, Fatal);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-mlpack::Load("iris.labels.csv", labels, true);
+mlpack::Load("iris.labels.csv", labels, Fatal);
 
 // Create a Perceptron object.
 mlpack::Perceptron p;
@@ -235,7 +235,7 @@ Load a saved perceptron from disk and print information about it.
 mlpack::Perceptron p;
 // This call assumes a perceptron called "p" has already been saved to
 // `perceptron.bin` with `Save()`.
-mlpack::Load("perceptron.bin", "p", p, true);
+mlpack::Load("perceptron.bin", p, Fatal);
 
 if (p.NumClasses() > 0)
 {
