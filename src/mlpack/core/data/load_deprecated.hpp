@@ -315,7 +315,7 @@ bool Load(const std::string& filename,
   opts.Categorical() = true;
   opts.DatasetInfo() = info;
 
-  bool success = Load(filename, matrix, opts, false);
+  bool success = Load(filename, matrix, opts);
 
   info = opts.DatasetInfo();
 
