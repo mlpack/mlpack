@@ -16,7 +16,6 @@
 
 using namespace mlpack;
 using namespace arma;
-using namespace mlpack::data;
 
 TEST_CASE("BinarizeOneDimension", "[BinarizeTest]")
 {

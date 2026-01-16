@@ -17,7 +17,6 @@
 #include "save.hpp"
 
 namespace mlpack {
-namespace data {
 
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
@@ -126,7 +125,6 @@ bool Save(const std::string& filename,
   return success;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

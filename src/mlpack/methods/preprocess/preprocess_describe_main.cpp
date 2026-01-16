@@ -19,7 +19,6 @@
 #include <iomanip>
 
 using namespace mlpack;
-using namespace mlpack::data;
 using namespace mlpack::util;
 using namespace std;
 

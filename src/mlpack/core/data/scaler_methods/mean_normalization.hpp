@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * A simple Mean Normalization class
@@ -123,7 +122,6 @@ class MeanNormalization
   arma::vec scale;
 }; // class MeanNormalization
 
-} // namespace data
 } // namespace mlpack
 
 #endif

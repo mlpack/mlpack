@@ -42,7 +42,7 @@ template<typename T>
 struct ParameterType
 {
   using type =
-      typename ParameterTypeDeducer<data::HasSerialize<T>::value, T>::type;
+      typename ParameterTypeDeducer<HasSerialize<T>::value, T>::type;
 };
 
 /**
@@ -83,7 +83,7 @@ struct ParameterType<arma::Mat<eT>>
  * For matrix+dataset info types, we should accept a std::string.
  */
 template<typename eT, typename PolicyType>
-struct ParameterType<std::tuple<mlpack::data::DatasetMapper<PolicyType,
+struct ParameterType<std::tuple<mlpack::DatasetMapper<PolicyType,
                          std::string>, arma::Mat<eT>>>
 {
   using type = std::tuple<std::string, size_t, size_t>;

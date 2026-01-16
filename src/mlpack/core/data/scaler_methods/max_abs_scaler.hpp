@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * A simple MaxAbs Scaler class.
@@ -116,7 +115,6 @@ class MaxAbsScaler
   arma::vec scale;
 }; // class MaxAbsScaler
 
-} // namespace data
 } // namespace mlpack
 
 #endif

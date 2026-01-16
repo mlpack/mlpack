@@ -106,7 +106,7 @@ class RandomForest
    */
   template<typename MatType, typename LabelsType>
   RandomForest(const MatType& dataset,
-               const data::DatasetInfo& datasetInfo,
+               const DatasetInfo& datasetInfo,
                const LabelsType& labels,
                const size_t numClasses,
                const size_t numTrees = 20,
@@ -174,7 +174,7 @@ class RandomForest
            typename LabelsType,
            typename WeightsType>
   RandomForest(const MatType& dataset,
-               const data::DatasetInfo& datasetInfo,
+               const DatasetInfo& datasetInfo,
                const LabelsType& labels,
                const size_t numClasses,
                const WeightsType& weights,
@@ -246,7 +246,7 @@ class RandomForest
    */
   template<typename MatType, typename LabelsType>
   double Train(const MatType& data,
-               const data::DatasetInfo& datasetInfo,
+               const DatasetInfo& datasetInfo,
                const LabelsType& labels,
                const size_t numClasses,
                const size_t numTrees = 20,
@@ -324,7 +324,7 @@ class RandomForest
            typename LabelsType,
            typename WeightsType>
   double Train(const MatType& data,
-               const data::DatasetInfo& datasetInfo,
+               const DatasetInfo& datasetInfo,
                const LabelsType& labels,
                const size_t numClasses,
                const WeightsType& weights,
@@ -436,7 +436,7 @@ class RandomForest
            typename LabelsType,
            typename WeightsType>
   double TrainInternal(const MatType& data,
-                       const data::DatasetInfo& datasetInfo,
+                       const DatasetInfo& datasetInfo,
                        const LabelsType& labels,
                        const size_t numClasses,
                        const WeightsType& weights,

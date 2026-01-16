@@ -18,7 +18,6 @@
 #include "load.hpp"
 
 namespace mlpack {
-namespace data {
 
 template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
@@ -233,7 +232,6 @@ bool LoadCategorical(const std::string& filename,
   return true;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

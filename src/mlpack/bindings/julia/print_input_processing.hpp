@@ -25,9 +25,9 @@ void PrintInputProcessing(
     util::ParamData& d,
     const std::string& functionName,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
+        std::tuple<DatasetInfo, arma::mat>>>* = 0);
 
 /**
  * Print the input processing for an Armadillo type.
@@ -38,7 +38,7 @@ void PrintInputProcessing(
     const std::string& functionName,
     const std::enable_if_t<arma::is_arma_type<T>::value>* = 0,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
+        std::tuple<DatasetInfo, arma::mat>>>* = 0);
 
 /**
  * Print the input processing for a serializable type.
@@ -48,9 +48,9 @@ void PrintInputProcessing(
     util::ParamData& d,
     const std::string& functionName,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<HasSerialize<T>::value>* = 0,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
+        std::tuple<DatasetInfo, arma::mat>>>* = 0);
 
 /**
  * Print the input processing (basically calling params.Get<>()) for a
@@ -61,7 +61,7 @@ void PrintInputProcessing(
     util::ParamData& d,
     const std::string& functionName,
     const std::enable_if_t<std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
+        std::tuple<DatasetInfo, arma::mat>>>* = 0);
 
 /**
  * Print the input processing (basically calling params.Get<>()) for a type.

@@ -16,7 +16,6 @@
 #include <mlpack/core/math/ccov.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * A simple PCAWhitening class.
@@ -139,7 +138,6 @@ class PCAWhitening
   arma::vec eigenValues;
 }; // class PCAWhitening
 
-} // namespace data
 } // namespace mlpack
 
 #endif

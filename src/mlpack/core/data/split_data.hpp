@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * This helper function splits any `input` data into training and testing parts.
@@ -191,9 +190,9 @@ void StratifiedSplit(const arma::Mat<T>& input,
   const bool typeCheck = (arma::is_Row<LabelsType>::value)
       || (arma::is_Col<LabelsType>::value);
   if (!typeCheck)
-    throw std::runtime_error("data::Split(): when stratified sampling is done, "
+    throw std::runtime_error("Split(): when stratified sampling is done, "
         "labels must have type `arma::Row<>`!");
-  util::CheckSameSizes(input, inputLabel, "data::Split()");
+  util::CheckSameSizes(input, inputLabel, "Split()");
   size_t trainIdx = 0;
   size_t testIdx = 0;
   size_t trainSize = 0;
@@ -309,7 +308,7 @@ void Split(const MatType& input,
            const double testRatio,
            const bool shuffleData = true)
 {
-  util::CheckSameSizes(input, inputLabel, "data::Split()");
+  util::CheckSameSizes(input, inputLabel, "Split()");
   if (shuffleData)
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -422,8 +421,8 @@ void Split(const MatType& input,
            const double testRatio,
            const bool shuffleData = true)
 {
-  util::CheckSameSizes(input, inputLabels, "data::Split()");
-  util::CheckSameSizes(input, inputWeights, "data::Split()");
+  util::CheckSameSizes(input, inputLabels, "Split()");
+  util::CheckSameSizes(input, inputWeights, "Split()");
   if (shuffleData)
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -625,7 +624,7 @@ void Split(const FieldType& input,
            const double testRatio,
            const bool shuffleData = true)
 {
-  util::CheckSameSizes(input, inputLabel, "data::Split()");
+  util::CheckSameSizes(input, inputLabel, "Split()");
   if (shuffleData)
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -733,7 +732,6 @@ Split(const FieldType& input,
                          std::move(testData));
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

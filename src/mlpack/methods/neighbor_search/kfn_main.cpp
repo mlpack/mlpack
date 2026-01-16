@@ -272,7 +272,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     if (params.Has("query"))
     {
       // Workaround: this avoids printing load information twice for the CLI
-      // bindings, where GetPrintable() will trigger a call to data::Load(),
+      // bindings, where GetPrintable() will trigger a call to Load(),
       // which prints loading information in the middle of the Log::Info
       // message.
       (void) params.Get<arma::mat>("query");

@@ -17,7 +17,6 @@
 #include <mlpack/core/data/map_policies/datatype.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * IncrementPolicy is used as a helper class for DatasetMapper. It tells how the
@@ -147,7 +146,6 @@ class IncrementPolicy
   bool forceAllMappings;
 }; // class IncrementPolicy
 
-} // namespace data
 } // namespace mlpack
 
 #endif

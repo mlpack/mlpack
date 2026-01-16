@@ -24,9 +24,9 @@ std::string GetPrintableParam(
     util::ParamData& data,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
     const std::enable_if_t<!util::IsStdVector<T>::value>*,
-    const std::enable_if_t<!data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!HasSerialize<T>::value>*,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   std::ostringstream oss;
   oss << std::any_cast<T>(data.value);
@@ -61,7 +61,7 @@ template<typename T>
 std::string GetPrintableParam(
     util::ParamData& data,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
-    const std::enable_if_t<data::HasSerialize<T>::value>*)
+    const std::enable_if_t<HasSerialize<T>::value>*)
 {
   // Extract the string from the tuple that's being held.
   std::ostringstream oss;
@@ -74,7 +74,7 @@ template<typename T>
 std::string GetPrintableParam(
     util::ParamData& /* data */,
     const std::enable_if_t<std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* /* junk */)
+        std::tuple<DatasetInfo, arma::mat>>>* /* junk */)
 {
   return "matrix/DatatsetInfo tuple";
 }

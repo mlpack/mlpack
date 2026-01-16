@@ -757,10 +757,10 @@
  *      here---it will cause problems.
  * @param ALIAS One-character string representing the alias of the parameter.
  */
-#define TUPLE_TYPE std::tuple<mlpack::data::DatasetInfo, arma::mat>
+#define TUPLE_TYPE std::tuple<mlpack::DatasetInfo, arma::mat>
 #define PARAM_MATRIX_AND_INFO_IN(ID, DESC, ALIAS) \
     PARAM(TUPLE_TYPE, ID, DESC, ALIAS, \
-        "std::tuple<mlpack::data::DatasetInfo, arma::mat>", false, true, true, \
+        "std::tuple<mlpack::DatasetInfo, arma::mat>", false, true, true, \
         TUPLE_TYPE())
 
 /**
@@ -789,10 +789,10 @@
  *      here---it will cause problems.
  * @param ALIAS One-character string representing the alias of the parameter.
  */
-#define TUPLE_TYPE std::tuple<mlpack::data::DatasetInfo, arma::mat>
+#define TUPLE_TYPE std::tuple<mlpack::DatasetInfo, arma::mat>
 #define PARAM_MATRIX_AND_INFO_IN_REQ(ID, DESC, ALIAS) \
     PARAM(TUPLE_TYPE, ID, DESC, ALIAS, \
-        "std::tuple<mlpack::data::DatasetInfo, arma::mat>", true, true, true, \
+        "std::tuple<mlpack::DatasetInfo, arma::mat>", true, true, true, \
         TUPLE_TYPE())
 
 /**
