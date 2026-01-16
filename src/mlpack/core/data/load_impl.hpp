@@ -51,7 +51,7 @@ template<typename ObjectType, typename DataOptionsType>
 bool Load(const std::string& filename,
           ObjectType& matrix,
           DataOptionsType& opts,
-          const bool copyBack, 
+          const bool copyBack,
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>*)
 {
